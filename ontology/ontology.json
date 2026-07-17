@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "document": "board-game-ontology",
+    "version": "0.1.0",
+    "description": "桌游本体 — 统一定义游戏中的静态结构概念与流程时序概念。不定义具体游戏规则。",
+    "convention": "每个概念的 fields.required 表示：若另一个概念继承或引用此概念，则必须提供这些字段的值。程序递归收集父链上的所有 required 字段。"
+  },
+  "concepts": [
+    {
+      "id": "object",
+      "name": { "zh": "对象", "en": "Object" },
+      "level": 0,
+      "abstract": true,
+      "definition": {
+        "zh": "可被识别、引用或操作的实体或抽象概念。",
+        "en": "An entity or abstract concept that can be identified, referenced, or operated upon."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": {
+              "zh": "该对象实例的唯一标识符。在整个游戏中不可重复。没有 id，程序无法区分、查找和关联此对象。",
+              "en": "Unique identifier for this object instance. Must be unique within the game. Without an id, programs cannot distinguish, find, or relate this object."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "attributes",
+            "type": "map<string, any>",
+            "description": {
+              "zh": "描述该对象固有特征的键值对集合。由游戏规则预定义，描述对象「是什么」而非「此刻怎样」。注意：attributes 对应的是 Property（属性），不是 State（状态）。",
+              "en": "A map of key-value pairs describing the object's intrinsic characteristics. Predefined by game rules. Describes what the object 'is', not what it 'currently is' (which would be State)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "zone",
+      "name": { "zh": "区域", "en": "Zone" },
+      "level": 0,
+      "abstract": true,
+      "definition": {
+        "zh": "游戏中的抽象逻辑容器，表示一组物件的空间归属关系。不依赖版图和实体，只由规则决定。",
+        "en": "An abstract logical container in the game, representing the spatial belonging of a set of objects. Independent of board and physical components; defined solely by rules."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": { "zh": "该区域实例的唯一标识符。", "en": "Unique identifier for this zone instance." }
+          },
+          {
+            "id": "contains",
+            "type": "concept_ref[]",
+            "description": {
+              "zh": "声明此区域允许存放哪些类型的 Object。值为本体 concept id 数组（如 [\"card\", \"token\"]）。空数组 [] 表示不限制类型。程序校验 Transfer 时：若 what 的类型不在 contains 中，Transfer 非法。",
+              "en": "Declares what types of Object this zone allows. Array of concept ids (e.g. [\"card\", \"token\"]). Empty array [] means any type is allowed. Programs check this when validating a Transfer."
+            }
+          },
+          {
+            "id": "owner",
+            "type": "player | null",
+            "description": {
+              "zh": "此区域是否归属于某个玩家。null = 公共区域（供应堆、市场），所有玩家均可访问。指向 Player = 专属区域（手牌、个人面板），对手不可直接操作。",
+              "en": "Whether this zone belongs to a player. null = public zone (supply, market). A Player reference = private zone (hand, personal board)."
+            }
+          },
+          {
+            "id": "visibility",
+            "type": "enum",
+            "enum": ["public", "private", "protected", "partially_public", "hidden"],
+            "description": {
+              "zh": "此区域的信息可见性。public = 全员可见；private = 仅 owner 可见；protected = owner 可选择展示；partially_public = 部分内容公开；hidden = 全员不可见。",
+              "en": "Information visibility for this zone. public = all can see; private = only owner; protected = owner may reveal; partially_public = partial contents visible; hidden = no one can see."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "capacity",
+            "type": "integer | null",
+            "description": {
+              "zh": "可容纳的对象数量上限。null = 无上限。达到上限后，以此区域为目标的 Transfer 将被拒绝。",
+              "en": "Maximum number of objects this zone can hold. null = unlimited. When full, Transfers targeting this zone are rejected."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "state",
+      "name": { "zh": "状态", "en": "State" },
+      "level": 0,
+      "abstract": false,
+      "definition": {
+        "zh": "某个时刻游戏世界中为真的断言。描述游戏实体「此刻怎样」，而非「是什么」。State 是运行时事实，随时可被改变。",
+        "en": "A true assertion about the game world at a given moment. Describes what a game entity 'currently is', not what it 'is'. State is a runtime fact, changeable at any time."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": { "zh": "该状态实例的唯一标识符。", "en": "Unique identifier for this state instance." }
+          },
+          {
+            "id": "subject",
+            "type": "concept_ref",
+            "description": {
+              "zh": "此状态描述的实体。回答「谁此刻怎样」中的「谁」。指向游戏中一个具体实例（Player、Zone、Piece 等）。例如「Player A 持有 3 个蓝宝石」中，subject = Player A。",
+              "en": "The entity this state describes — the 'who' in 'who is currently in what state'. Points to a concrete game instance. E.g., in 'Player A has 3 blue gems', subject = Player A."
+            }
+          },
+        ],
+        "optional": [
+          {
+            "id": "value_type",
+            "type": "string",
+            "description": {
+              "zh": "状态值的类型约束。如 \"integer\"、\"boolean\"、\"player\"。程序修改状态时以此校验。",
+              "en": "Type constraint for the state value. E.g., \"integer\", \"boolean\", \"player\". Programs validate state changes against this."
+            }
+          },
+          {
+            "id": "initial_value",
+            "type": "any",
+            "description": {
+              "zh": "游戏开始时的初始值。用于 setup 和 reset。",
+              "en": "Initial value when the game starts. Used for setup and reset."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "property",
+      "name": { "zh": "属性", "en": "Property" },
+      "level": 0,
+      "abstract": false,
+      "definition": {
+        "zh": "对象或区域固有的、由游戏规则预先定义的特征。描述游戏实体「是什么」「拥有什么能力」「具备什么特点」。默认不可变——在对象进入游戏时即确定，仅在 Effect 明确修改时才变化。",
+        "en": "An intrinsic characteristic of an object or zone, pre-defined by game rules. Describes what a game entity 'is', 'what abilities it has', 'what traits it possesses'. Immutable by default — set when the object enters the game, only changed by an explicit Effect."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": { "zh": "该属性实例的唯一标识符。", "en": "Unique identifier for this property instance." }
+          },
+          {
+            "id": "domain",
+            "type": "concept_ref",
+            "description": {
+              "zh": "此属性附着于什么概念或实体。回答「谁拥有这个特征」。可以指向本体概念（\"card\"，表示所有卡牌）或具体实例（\"level_1_card_03\"）。",
+              "en": "What concept or entity this property attaches to. Answers 'who has this characteristic'. Can point to an ontology concept (\"card\") or a specific instance (\"level_1_card_03\")."
+            }
+          },
+        ],
+        "optional": [
+          {
+            "id": "value_type",
+            "type": "string",
+            "description": {
+              "zh": "属性值的类型约束。如 \"integer\"、\"boolean\"、\"cost_map\"、\"effect_spec\"。",
+              "en": "Type constraint for the property value. E.g., \"integer\", \"boolean\", \"cost_map\", \"effect_spec\"."
+            }
+          },
+          {
+            "id": "mutable",
+            "type": "boolean",
+            "default": false,
+            "description": {
+              "zh": "是否可被游戏效果修改。默认 false（静态）。若为 true，修改必须经由 Effect 触发，不可被玩家随意更改。",
+              "en": "Whether this property can be modified by game effects. Default false (static). If true, modification must go through an Effect — players cannot arbitrarily change it."
+            }
+          },
+          {
+            "id": "default_value",
+            "type": "any",
+            "description": {
+              "zh": "对象被创建或进入游戏时的默认值。",
+              "en": "Default value when the object is created or enters the game."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "event",
+      "name": { "zh": "事件", "en": "Event" },
+      "level": 0,
+      "abstract": true,
+      "definition": {
+        "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏状态或流程有意义的、不可再分的原子事实。Event 是流程本体的根概念——一切「发生了什么」都始于 Event。",
+        "en": "An atomic fact that occurs during gameplay, recognized and defined by game rules, meaningful to game state or flow, and not further divisible. Event is the root of the procedure ontology — everything that 'happens' starts from Event."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": {
+              "zh": "该事件实例的唯一标识符。",
+              "en": "Unique identifier for this event instance."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "actor",
+            "type": "player | null",
+            "description": {
+              "zh": "导致此事件发生的主体。若事件由玩家主动发起（如 Action），actor 为该玩家。若事件由规则自动引发（如 Trigger），actor 为 null。",
+              "en": "The entity that caused this event. If initiated by a player (e.g. Action), actor is that player. If automatically triggered by rules (e.g. Trigger), actor is null."
+            }
+          },
+          {
+            "id": "target",
+            "type": "concept_ref | null",
+            "description": {
+              "zh": "此事件作用的目标。可以是 Object、Zone、Player 等。若事件无特定目标（如「回合开始」），target 为 null。",
+              "en": "The target this event acts upon. Can be an Object, Zone, Player, etc. If the event has no specific target (e.g. 'turn begins'), target is null."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "condition",
+      "name": { "zh": "条件", "en": "Condition" },
+      "level": 0,
+      "abstract": false,
+      "definition": {
+        "zh": "用于判断某个命题在当前游戏状态下是否成立的表达式。Condition 本身不改变任何东西——它只回答「是」或「否」。Condition 是 Rule Engine 的核心判断单元：Action 的合法性检查、Trigger 的激活判断、Endgame 的触发检测，全部由 Condition 驱动。",
+        "en": "An expression that evaluates whether a proposition is true under the current game state. A Condition changes nothing — it only answers 'yes' or 'no'. Condition is the core judgment unit of the Rule Engine: action legality checks, trigger activation, and endgame detection are all driven by Conditions."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": {
+              "zh": "该条件实例的唯一标识符。",
+              "en": "Unique identifier for this condition instance."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "params",
+            "type": "map<string, any>",
+            "description": {
+              "zh": "此条件的参数。内容由具体的条件类型决定。例如 SupplyCount 条件：{ \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }。复合条件（AND/OR）：{ \"op\": \"and\", \"operands\": [condition_ref, ...] }。程序根据条件的 id 查找对应的 evaluator 函数，传入 params 和当前 GameState，返回 boolean。",
+              "en": "Parameters for this condition. Content is determined by the specific condition type. E.g., a SupplyCount condition: { \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }. Compound conditions (AND/OR): { \"op\": \"and\", \"operands\": [condition_ref, ...] }. The program looks up the evaluator function by the condition's id, passes params and current GameState, and returns a boolean."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer",
+      "name": { "zh": "转移", "en": "Transfer" },
+      "level": 1,
+      "parent": "event",
+      "abstract": false,
+      "definition": {
+        "zh": "对象在区域之间移动或所有权变更的事件。",
+        "en": "An event where an object moves between zones or its ownership changes."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "source",
+            "type": "zone",
+            "description": {
+              "zh": "对象移出的源区域。必须是游戏中已定义的一个 Zone 实例。",
+              "en": "The zone the object moves from. Must be a defined Zone instance."
+            }
+          },
+          {
+            "id": "target",
+            "type": "zone",
+            "description": {
+              "zh": "对象移入的目标区域。可以是另一个 Zone，也可以与 source 相同（如区域内重排序）。",
+              "en": "The zone the object moves to. May differ from source or be the same (e.g. reordering within a zone)."
+            }
+          },
+          {
+            "id": "what",
+            "type": "object",
+            "description": {
+              "zh": "被移动的对象。指向游戏中一个具体的 Object 实例。",
+              "en": "The object being moved. References a concrete Object instance."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "ownership_change",
+            "type": "boolean",
+            "default": false,
+            "description": {
+              "zh": "是否同时改变所有权。若为 true，则 target 区域关联的 Player 成为新所有者。",
+              "en": "Whether ownership also changes. If true, the player associated with the target zone becomes the new owner."
+            }
+          },
+          {
+            "id": "quantity",
+            "type": "integer",
+            "default": 1,
+            "description": {
+              "zh": "转移的对象数量。Token（可互换）可能 > 1；Piece（不可互换）通常 = 1。",
+              "en": "Quantity transferred. Tokens (interchangeable) may be > 1; Pieces (unique) are usually = 1."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
