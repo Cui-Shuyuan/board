@@ -264,11 +264,143 @@
       }
     },
     {
-      "id": "transfer",
-      "name": { "zh": "转移", "en": "Transfer" },
+      "id": "procedure",
+      "name": { "zh": "流程", "en": "Procedure" },
+      "level": 0,
+      "abstract": true,
+      "definition": {
+        "zh": "具有明确开始与结束边界的执行单元。Procedure 是游戏流程的骨架——它定义了「游戏现在处于什么阶段」「接下来该做什么」。Procedure 之间的嵌套是自由形式的：Round 里可以有 Phase，Phase 里可以有 Round，Turn 里可以有 Phase，一整局游戏本身也可以视为一个 Round。没有固定的「轮→回合→阶段」层级，具体嵌套关系由每款游戏的规则决定。所有 Procedure 子类（Round、Turn、Phase 等）共享同一套字段，区别仅在于语义，不在结构。",
+        "en": "An execution unit with clear start and end boundaries. Procedure is the skeleton of game flow. Nesting among Procedures is free-form: a Round can contain Phases, a Phase can contain Rounds, a Turn can contain Phases, and an entire game can itself be a Round. There is no fixed 'Round → Turn → Phase' hierarchy — the nesting is determined by each game's rules. All Procedure subclasses (Round, Turn, Phase, etc.) share the same fields; they differ only in semantics, not structure."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "id",
+            "type": "string",
+            "description": {
+              "zh": "该流程实例的唯一标识符。",
+              "en": "Unique identifier for this procedure instance."
+            }
+          },
+          {
+            "id": "start",
+            "type": "condition | trigger",
+            "description": {
+              "zh": "此流程的进入条件。定义了「什么情况发生时，此流程被激活」。可以是一个 Condition（如「所有玩家完成行动后」），也可以是一个 Trigger（如「回合标记重置时」）。当此条件满足时，程序将执行权移入此 Procedure。",
+              "en": "The entry condition for this procedure. Defines 'when does this procedure become active'. Can be a Condition or a Trigger. When met, the program transfers execution into this Procedure."
+            }
+          },
+          {
+            "id": "end",
+            "type": "condition | trigger",
+            "description": {
+              "zh": "此流程的退出条件。定义了「什么情况发生时，此流程终止」。当此条件满足时，程序将执行权从本 Procedure 移出，交给下一个 Procedure 或父级 Procedure。如果是循环型 Procedure（如 Round），end 条件触发后可能回到自身的 start，形成循环。",
+              "en": "The exit condition for this procedure. Defines 'when does this procedure terminate'. When met, the program transfers execution out of this Procedure. For cyclical Procedures (e.g. a Round), the end condition may loop back to its own start, forming a cycle."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "children",
+            "type": "procedure[]",
+            "description": {
+              "zh": "嵌套在此流程内部的子流程。子流程在当前 Procedure 激活后按游戏规则定义的顺序执行。Round、Turn、Phase 可以任意嵌套——一个 Phase 里可能包含多个 Round，一个 Turn 里可能有多个 Phase。若为空，表示此 Procedure 是叶子节点，直接包含 Action 而非子流程。",
+              "en": "Child procedures nested within this procedure. Executed in the order defined by game rules while the parent is active. Round, Turn, and Phase can nest in any arrangement — a Phase may contain multiple Rounds, a Turn may contain multiple Phases. If empty, this is a leaf Procedure that contains Actions directly."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "round",
+      "name": { "zh": "轮", "en": "Round" },
       "level": 1,
-      "parent": "event",
+      "parent": "procedure",
       "abstract": false,
+      "definition": {
+        "zh": "游戏程序结构中一个完整的、可重复的循环单元。一轮内部结构固定——每次循环执行相同的 Phase 序列。一整局游戏本身就是一个最外层的 Round（「再来一局」=「再来一轮」）。Round 的 children 只能是 Phase：Round 不直接包含 Turn 或另一个 Round，它通过 Phase 间接组织下级流程。",
+        "en": "A complete, repeatable cycle in game procedure structure. Its internal structure is fixed — each cycle executes the same sequence of Phases. An entire game is itself an outermost Round. A Round's children can only be Phases: a Round does not directly contain Turns or other Rounds; it organizes lower-level flow indirectly through Phases."
+      },
+      "fields": {
+        "required": [],
+        "optional": [
+          {
+            "id": "children",
+            "type": "phase[]",
+            "description": {
+              "zh": "此轮包含的阶段序列。每轮按此顺序执行各 Phase。仅允许 Phase 类型的 Procedure 作为直接子节点。",
+              "en": "The sequence of Phases in this round. Each cycle executes Phases in this order. Only Phase-type Procedures are allowed as direct children."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn",
+      "name": { "zh": "回合", "en": "Turn" },
+      "level": 1,
+      "parent": "procedure",
+      "abstract": false,
+      "definition": {
+        "zh": "将排他的行动权授予单一玩家的执行单元。同一时刻至多一个 Turn 处于激活状态。Turn 的 children 只能是 Phase——即使是「玩家选择一个行动」这种简单场景，也隐含了一个「选择行动阶段」。Turn 不直接包含 Action，它通过 Phase 定义玩家在此回合内可以做什么。",
+        "en": "An execution unit that grants exclusive action rights to a single player. At most one Turn is active at any given moment. A Turn's children can only be Phases — even a simple 'player chooses an action' scenario implicitly contains a 'choose action phase'. A Turn does not directly contain Actions; it defines what a player can do during this turn through its Phases."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "player",
+            "type": "player",
+            "description": {
+              "zh": "此回合所属的玩家。回答了「轮到谁了」的问题。当 Turn 激活时，只有该玩家可以执行合法 Action。",
+              "en": "The player who owns this turn. Answers 'whose turn is it'. When the Turn is active, only this player can execute legal Actions."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "children",
+            "type": "phase[]",
+            "description": {
+              "zh": "此回合包含的阶段序列。仅允许 Phase 类型的 Procedure 作为直接子节点。",
+              "en": "The sequence of Phases in this turn. Only Phase-type Procedures are allowed as direct children."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "phase",
+      "name": { "zh": "阶段", "en": "Phase" },
+      "level": 1,
+      "parent": "procedure",
+      "abstract": false,
+      "definition": {
+        "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。Phase 是唯一承载「规则上下文」的 Procedure——当前 Phase 决定了哪些 Action 合法、哪些 Effect 生效。Phase 不强制绑定玩家，允许完全的自动机阶段（无人阶段，仅有 Trigger 驱动）。Phase 的 children 可以是 Round、Turn 或另一个 Phase，也可以是叶子节点（直接包含 Action 列表）。",
+        "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. Phase is the only Procedure that carries 'rule context' — the current Phase determines which Actions are legal and which Effects are active. A Phase is not required to bind to a player, allowing fully automated phases (player-less, driven only by Triggers). A Phase's children can be Rounds, Turns, other Phases, or it can be a leaf node containing an Action list directly."
+      },
+      "fields": {
+        "required": [],
+        "optional": [
+          {
+            "id": "children",
+            "type": "procedure[]",
+            "description": {
+              "zh": "此阶段包含的子流程。可以包含 Round、Turn、Phase 任意组合。若为空，此 Phase 为叶子节点——直接暴露一组合法 Action 供玩家选择（或完全由 Trigger 自动驱动）。",
+              "en": "Child procedures within this phase. Can contain any combination of Rounds, Turns, or Phases. If empty, this is a leaf Phase — it directly exposes a set of legal Actions for the player to choose from (or is fully driven by Triggers)."
+            }
+          },
+          {
+            "id": "actions",
+            "type": "action[]",
+            "description": {
+              "zh": "此阶段内玩家可执行的 Action 列表。仅当 children 为空（叶子 Phase）时此字段有意义——它定义了当前规则上下文中的合法行动。非叶子 Phase 的合法 Action 由其子流程决定。",
+              "en": "The list of Actions a player can execute during this phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context. Non-leaf Phases derive their legal actions from their children."
+            }
+          }
+        ]
+      }
+    },
+    {
       "definition": {
         "zh": "对象在区域之间移动或所有权变更的事件。",
         "en": "An event where an object moves between zones or its ownership changes."
