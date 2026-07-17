@@ -39,6 +39,158 @@
       }
     },
     {
+      "id": "player",
+      "name": { "zh": "玩家", "en": "Player" },
+      "level": 1,
+      "parent": "object",
+      "abstract": false,
+      "definition": {
+        "zh": "直接参与游戏并能够做出决策的实体。Player 是游戏中的能动主体——它发起 Action、拥有 Object、积累 Score、最终参与胜负判定。",
+        "en": "An entity that directly participates in the game and is capable of making decisions. Player is the active agent in the game — it initiates Actions, owns Objects, accumulates Score, and ultimately participates in victory determination."
+      },
+      "fields": {
+        "required": [],
+        "optional": [
+          {
+            "id": "name",
+            "type": "string",
+            "description": {
+              "zh": "玩家的显示名称。用于 UI 展示和日志记录。若未指定，可用 id 作为默认显示名。",
+              "en": "Display name for the player. Used in UI and logging. If not specified, the id serves as the default display name."
+            }
+          },
+          {
+            "id": "order",
+            "type": "integer",
+            "description": {
+              "zh": "玩家在回合顺序中的位置（从 1 开始）。用于决定行动先后。若游戏采用其他顺序机制（如同时行动、竞标决定顺序），此字段可为空。",
+              "en": "The player's position in turn order (1-based). Used to determine action sequence. May be empty if the game uses other ordering mechanisms (e.g. simultaneous action, bidding)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "resource",
+      "name": { "zh": "资源", "en": "Resource" },
+      "level": 1,
+      "parent": "object",
+      "abstract": false,
+      "definition": {
+        "zh": "一种可被玩家拥有、计数和转移的价值对象。Resource 的核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 Resource 的所有个体完全等价、可互相替代。",
+        "en": "A value object that can be owned, counted, and transferred by players. The defining feature of a Resource is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same Resource type are completely equivalent and interchangeable."
+      },
+      "fields": {
+        "required": [],
+        "optional": [
+          {
+            "id": "unit",
+            "type": "string",
+            "description": {
+              "zh": "此资源的计量单位。如宝石用「颗」、钱币用「枚」、木材用「根」。仅供 UI 和 LLM 生成自然语言时使用，不影响规则逻辑。",
+              "en": "The unit of measurement for this resource. E.g., '颗' for gems, '枚' for coins. For UI and natural language generation only; does not affect rule logic."
+            }
+          },
+          {
+            "id": "appearance",
+            "type": "string",
+            "description": {
+              "zh": "此资源的外观描述。如「蓝色六边形宝石，表面有切割纹理」「金黄色圆形硬币，正面有五角星图案」。用于动画生成、UI 渲染和 AI 讲解时帮助玩家识别实物，不影响规则逻辑。",
+              "en": "Visual description of this resource. E.g., 'blue hexagonal gem with cut texture', 'golden round coin with a star on the front'. Used for animation, UI rendering, and AI explanations to help players identify physical pieces. Does not affect rule logic."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "piece",
+      "name": { "zh": "物件", "en": "Piece" },
+      "level": 1,
+      "parent": "object",
+      "abstract": false,
+      "definition": {
+        "zh": "可通过 Play（打出）进入游戏、并通过自身 Effect（效果）改变游戏状态的游戏零件。Piece 与 Token 的本质区别：Piece 携带 Effect，可以被 Play——打出它、建造它、激活它，游戏状态会因此改变。Effect 的静态形态就是 Property——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 Effect 的规格说明。Token 没有 Effect，不能被 Play——Token 只负责标记某个事实，Token 本身不做任何事。",
+        "en": "A game component that enters the game through Play and changes game state through its own Effects. The essential difference between Piece and Token: a Piece carries Effects and can be Played — when you play it, build it, or activate it, the game state changes as a result. Effects in static form are Properties — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all Effect specifications. A Token has no Effects and cannot be Played — Tokens only mark facts; a Token itself does nothing."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "appearance",
+            "type": "string",
+            "description": {
+              "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
+              "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "aid",
+      "name": { "zh": "辅助物", "en": "Aid" },
+      "level": 1,
+      "parent": "object",
+      "abstract": false,
+      "definition": {
+        "zh": "用于向玩家展示信息、辅助玩家识别和操作的游戏实体。Aid 的核心特征是「可有可无」——它不参与游戏逻辑的运作，不产生、不修改、不删除游戏中的任何元素。Aid 不等于它所呈现的东西：公共版图被收起来，供应堆和市场依然存在；手牌放在桌上，它们依然属于手牌区域；桌子太小把 token 挤到旁边，它们依然是供应堆的一部分。Zone 是抽象的归属关系容器，不因物理载体的有无或位置而改变。熟练玩家在脑中记住了所有 Zone 的布局后，完全可以不借助 Aid 进行游戏。",
+        "en": "A game entity used to present information to players and assist in recognition and operation. The defining trait of an Aid is that it is 'optional' — it does not participate in game logic and does not create, modify, or delete any game element. An Aid is not the thing it depicts: put the public board away and the supply and market still exist; place your hand cards on the table and they still belong to the Hand zone; table too small so tokens overflow to the side — they are still part of the Supply. Zones are abstract belonging containers, independent of the presence or position of any physical carrier. A skilled player who has memorized all Zone layouts can play entirely without Aids."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "appearance",
+            "type": "string",
+            "description": {
+              "zh": "此辅助物的外观描述。必须说明形状、材质、尺寸和上面印了什么。如「折叠式硬纸板，展开后为 60cm×40cm 的矩形版图，表面印有世界地图、区域边界和计分轨」「210mm×148mm 的过塑卡片，正面印有所有行动的图标速查表」。",
+              "en": "Visual description of this aid. Must describe shape, material, size, and what is printed on it. E.g., 'folded cardboard board, 60cm×40cm when unfolded, printed with a world map, region borders, and a scoring track', '210mm×148mm laminated card with a quick-reference icon chart of all actions printed on the front'."
+            }
+          },
+          {
+            "id": "maps_to",
+            "type": "concept_ref[]",
+            "description": {
+              "zh": "此辅助物在视觉上对应哪些游戏逻辑实体。注意：Aid 不「包含」这些实体，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
+              "en": "Which game logic entities this Aid visually corresponds to. Note: the Aid does not 'contain' these entities; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "token",
+      "name": { "zh": "指示物", "en": "Token" },
+      "level": 1,
+      "parent": "object",
+      "abstract": false,
+      "definition": {
+        "zh": "用于在物理层面标记某个游戏事实的小型对象。Token 的本质特征：没有 Effect，不能被 Play——Token 自身不改变任何游戏状态，它只是被动地标记一个已经存在的事实。你把伤害 Token 放在一张卡上，Token 什么都没做，是「此卡已受伤」这个规则事实在产生影响。你把起始玩家 Token 传给下家，Token 本身不改变任何东西，是「起始玩家变更」这个规则事件改变了游戏。Token 可以被移动、放置、计数，但它永远不会「打出」一个效果。",
+        "en": "A small physical object used to mark a game fact. The defining trait of a Token: it has no Effects and cannot be Played — a Token itself never changes game state; it only passively marks an already-existing fact. Placing a damage token on a card: the token does nothing; it is the rules fact 'this card is wounded' that has impact. Passing the starting player token: the token changes nothing; it is the rules event 'starting player changed' that alters the game. Tokens can be moved, placed, and counted, but they are never 'played' to produce an effect."
+      },
+      "fields": {
+        "required": [
+          {
+            "id": "appearance",
+            "type": "string",
+            "description": {
+              "zh": "此指示物的外观描述。如「直径 15mm 的圆形塑料圆片，蓝色半透明」「15mm×15mm 的方形木质方块，红色」「10mm 直径的球形玻璃珠，金色」。",
+              "en": "Visual description of this token. E.g., '15mm diameter round plastic disc, blue translucent', '15mm×15mm square wooden cube, red', '10mm diameter spherical glass bead, golden'."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "represents",
+            "type": "concept_ref",
+            "description": {
+              "zh": "此指示物代表什么逻辑概念。如伤害 Token 指向 State「受伤」、起始玩家 Token 指向 State「起始玩家」。注意：Resource 自身已携带 appearance，不需要 Token 代表——蓝宝石直接描述自己。represents 仅在 Token 代表的不是 Resource 时使用。若一个 Token 是多用途的（红色方块既能计分又能标归属），此字段为空，Token 的具体含义由它当前所在的 Zone 或使用上下文决定。",
+              "en": "What logical concept this token represents. E.g., a damage token points to State 'wounded', a starting player token points to State 'starting_player'. Note: Resources already carry their own appearance and don't need a Token to represent them — a blue gem describes itself directly. Use 'represents' only when the Token represents something other than a Resource. For multi-purpose Tokens (a red cube that can track score or mark ownership), leave this empty — the Token's meaning is determined by its current Zone or usage context."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "zone",
       "name": { "zh": "区域", "en": "Zone" },
       "level": 0,
