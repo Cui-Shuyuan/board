@@ -2,14 +2,16 @@
 
 ## 项目记忆
 
-**先读取 memory/ 目录下的所有文件了解项目全貌。** 关键文件：
-- `memory/project-overview.md` — 核心架构与设计理念
+**先读取 memory/ 目录下的所有文件了解项目全貌。** 如需了解原始讨论细节，可读根目录下的 `聊天记录.txt`。
+
+关键文件：
+- `memory/project-overview.md` — 核心架构、应用场景、开发阶段
 - `memory/ontology-design.md` — 本体 JSON 约定与当前进度
 - `memory/user-preferences.md` — 用户的设计偏好与工作方式
 
 ## 当前状态
 
-正在进行桌游本体的 JSON 建模。核心文件：
+处于**第一阶段：定义世界模型**。正在进行桌游本体的 JSON 建模。核心文件：
 - `ontology/ontology.json` — 统一本体定义（Level 0 基础概念 + Level 1 游戏概念）
 
 已完成的 Level 0（7个）：Object、Zone、State、Property、Event、Condition、Procedure

@@ -26,8 +26,23 @@ metadata:
 - 部署：Windows 主机本地运行，平板走内网 HTTP/WebSocket
 - 店内网络：路由器 Guest Network 隔离客人设备
 
+## 应用场景
+
+一家桌游主题小店。每张桌子配一台平板，客人坐下后选择游戏，AI 讲师开始按教程树（Tutorial Tree）讲解规则。客人可以随时按住说话提问（「为什么不能拿两个蓝？」「我下一步最好做什么？」），AI 回答。全程 Push-to-Talk 作为唯一语音输入方式，状态机只在 Idle → Recording → Thinking → Speaking → Idle 之间切换。
+
+## 开发阶段
+
+1. **第一阶段（当前）：定义世界模型** — 将桌游世界的抽象概念（Object/Zone/Event/Condition/Procedure 等）写成结构化 JSON 本体。这一层以后几乎不改。
+2. **第二阶段：Rule DSL** — 用 JSON 表达具体游戏的规则条件和效果，程序可解析执行。
+3. **第三阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。
+4. **第四阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
+5. **第五阶段：UI** — PWA/Flutter 前端，平板作为主要交互入口。
+
 ## 项目路径
 D:\workspace\board
+
+## 原始讨论
+项目根目录下的 `聊天记录.txt` 包含了项目起始时的完整讨论，涵盖架构推演、技术选型、部署方案等全部细节。
 
 **Why:** 这是项目的根本定位和架构基础。后续所有设计决策都以此为出发点。
 **How to apply:** 遇到架构选择时，优先考虑"程序确定性"而非"LLM 智能性"。
