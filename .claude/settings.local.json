@@ -4,7 +4,9 @@
       "Bash(git init *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash(cp \"C:/Users/崔书源/.claude/projects/D--workspace-board/memory/\"* \"D:/workspace/board/memory/\")",
+      "Bash(rm -rf \"C:/Users/崔书源/.claude/projects/D--workspace-board/memory\")"
     ]
   }
 }

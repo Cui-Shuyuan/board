@@ -1,0 +1,3 @@
+- [AI桌游讲师项目总览](project-overview.md) — 核心架构、设计理念、技术选型
+- [桌游本体设计](ontology-design.md) — JSON schema 约定、关键决策、当前进度
+- [用户偏好](user-preferences.md) — 设计哲学、工作方式
