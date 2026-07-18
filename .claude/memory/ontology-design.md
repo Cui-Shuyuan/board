@@ -63,6 +63,9 @@ D:\workspace\board\ontology\ontology.json（统一本体，50 个概念）
 - **precondition**：`<condition>[]`，optional。事件发生前必须满足的条件列表
 - **rules**：`map<string, string>`，optional。中英双语描述超越结构化字段的执行规则约束
 
+### Trigger 的 <event>[] 结构 ★
+Trigger 是一组按序执行的 `<event>[]`（required 字段），不是所有 trigger 都是 transfer。元素可以是任意 Event 子类——拿宝石的 trigger 只有 1 个 `<transfer>`，购买发展卡的 trigger 有 2 个 event：`<transfer>`（支付 cost）+ `<play>`（卡从 market/hand 打出至 development_area）。数组顺序即执行顺序。
+
 ### Transfer 字段改名 ★
 `what` → `<object>`，与其他概念引用 key 统一。
 
@@ -127,8 +130,11 @@ Player Holding、Development Area
 ### Level 2 Aid（4 个）
 Public Board、Private Board、Player Aid、Rulebook
 
-### Level 2 Action（2 个）
-Activation、Play
+### Level 2 Action（1 个）
+Activation
+
+### Level 2 Event（1 个）
+Play（★ 从 Action 移至 Event——并非所有打出都是玩家主动想做的，也可以是 trigger 的 <event>[] 中的一员）
 
 ### Level 2 Content（2 个）
 Instant Effect、Continuous Content

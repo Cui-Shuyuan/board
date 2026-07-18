@@ -1351,8 +1351,23 @@
           "en": "Inherited from <event>, narrowed here to null: a <trigger> is not initiated by any <player> and has no executor. This is the essential difference between a <trigger> and an <action>."
         }
       },
+      "<event>": {
+        "type": "<event>[]",
+        "description": {
+          "zh": "<trigger> 被激活后按序启动的后续 <event> 列表。有序——数组顺序即执行顺序。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。",
+          "en": "The ordered list of follow-up <event>s launched when the <trigger> is activated. Ordered — array order is execution order. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play)."
+        }
+      },
       "constraints": {
-        "required": [],
+        "required": [
+          {
+            "id": "<event>",
+            "description": {
+              "zh": "<trigger> 的职责是启动后续 <event>——没有 <event> 列表的 <trigger> 是空调度器。此约束要求子类声明被激活后按序执行哪些 <event>。",
+              "en": "A <trigger>'s job is to launch follow-up <event>s — a <trigger> without an <event> list is an empty dispatcher. This constraint requires subclasses to declare which <event>s execute in order upon activation."
+            }
+          }
+        ],
         "optional": []
       }
     },
@@ -1744,11 +1759,11 @@
         "en": "Play"
       },
       "level": 2,
-      "parent": "<action>",
+      "parent": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "将一张 <piece>（通常为 <card>）从 <player_holding>（通常为 <hand>）转移至公开 <zone>（通常为 <development_area> 或 <discard_pile>）的 <action>。<play> 继承自 <action>。它是桌游中最核心的玩家操作——<player> 打出一张 <card>，支付其 <cost>，使其脱离私有状态并进入公开/已使用状态。<play> 在物理层面必然包含一个 <transfer> 事件（<piece> 从 <player_holding> 移动到公开 <zone>），但在逻辑层面独立于 <transfer>——<play> 侧重玩家意图、合法性校验（<cost> 是否可支付、时机是否正确）及后续 <effect> 的触发，而非单纯的物件位移。",
-        "en": "An <action> that moves a <piece> (typically a <card>) from a <player_holding> (typically a <hand>) to a public <zone> (typically a <development_area> or <discard_pile>). <play> extends <action>. It is the most central player operation in board games — a <player> plays a <card>, pays its <cost>, and moves it from private to public/used state. <play> necessarily involves a <transfer> event physically (the <piece> moves from <player_holding> to a public <zone>), but is logically distinct from <transfer> — <play> focuses on player intent, legality validation (can the <cost> be paid, is the timing correct), and triggering subsequent <effect>s, rather than mere physical displacement."
+        "zh": "将一个 <piece>（通常为 <card>）从其当前 <zone>（如 <player_holding>、<market>）转移至公开 <zone>（通常为 <development_area> 或 <discard_pile>）并使其生效的 <event>。<play> 继承自 <event>。它是桌游中最核心的入场操作——一张 <piece> 脱离原有区域、进入公开/已使用状态，其 <effect> 自此生效。<play> 不一定由 <player> 主动发起：它可以是玩家 <action> 的直接内容（玩家主动打出一张牌），也可以是 <trigger> 的 <event> 列表中的一员（如「购买」规则中，支付 <cost> 后由规则自动将卡牌打出入场）——并非所有打出都是玩家主动想做的。<play> 在物理层面必然包含物件位移，但在逻辑层面独立于 <transfer>——<play> 侧重入场合法性（<cost> 是否已支付、时机是否正确）及后续 <effect> 的生效，而非单纯的位移。",
+        "en": "An <event> that moves a <piece> (typically a <card>) from its current <zone> (e.g., a <player_holding>, a <market>) to a public <zone> (typically a <development_area> or <discard_pile>) and puts it into effect. <play> extends <event>. It is the most central enter-play operation in board games — a <piece> leaves its original zone, enters a public/used state, and its <effect> takes effect from then on. <play> is not necessarily initiated by a <player>: it can be the direct content of a player <action> (a player actively playing a card), or a member of a <trigger>'s <event> list (e.g., in a 'purchase' rule, after the <cost> is paid, the rules automatically play the card into play) — not every play is something a player actively chooses to do. <play> necessarily involves physical displacement, but is logically distinct from <transfer> — <play> focuses on enter-play legality (has the <cost> been paid, is the timing correct) and subsequent <effect>s taking effect, rather than mere displacement."
       },
       "constraints": {
         "required": [

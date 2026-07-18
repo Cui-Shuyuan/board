@@ -35,7 +35,8 @@
 - Level 2 Reserve（4）：Supply、Market、Deck、Pool
 - Level 2 Player Zone（2）：Player Holding、Development Area
 - Level 2 Aid（4）：Public Board、Private Board、Player Aid、Rulebook
-- Level 2 Action（2）：Activation、Play
+- Level 2 Action（1）：Activation
+- Level 2 Event（1）：Play
 - Level 2 Content（2）：Instant Effect、Continuous Content
 - Level 2 Token（1）：Starting Player Marker
 - Level 3 Player Holding（1）：Hand
