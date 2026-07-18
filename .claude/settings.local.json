@@ -6,7 +6,26 @@
       "Bash(git commit *)",
       "Bash(git config *)",
       "Bash(cp \"C:/Users/崔书源/.claude/projects/D--workspace-board/memory/\"* \"D:/workspace/board/memory/\")",
-      "Bash(rm -rf \"C:/Users/崔书源/.claude/projects/D--workspace-board/memory\")"
+      "Bash(rm -rf \"C:/Users/崔书源/.claude/projects/D--workspace-board/memory\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\(f'JSON valid. {len\\(data[\\\\\"concepts\\\\\"]\\)} concepts:'\\); [print\\(f'  [{c.get\\(\\\\\"level\\\\\",\\\\\"?\\\\\"\\)}] {c[\\\\\"id\\\\\"]} \\(parent={c.get\\(\\\\\"parent\\\\\",\\\\\"none\\\\\"\\)}, abstract={c.get\\(\\\\\"abstract\\\\\",\\\\\"?\\\\\"\\)}\\)'\\) for c in data['concepts']]\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); c = [c for c in data['concepts'] if c['id']=='reserve'][0]; print\\(json.dumps\\(c, ensure_ascii=False, indent=2\\)\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\(f'OK — {len\\(data[\\\\\"concepts\\\\\"]\\)} concepts'\\); [print\\(f'  [{c[\\\\\"level\\\\\"]}] {c[\\\\\"id\\\\\"]} → {c.get\\(\\\\\"parent\\\\\",\\\\\"-\\\\\"\\)}'\\) for c in data['concepts']]\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\(f'OK — {len\\(data[\\\\\"concepts\\\\\"]\\)} concepts'\\); [print\\(f'  [{c[\\\\\"level\\\\\"]}] {c[\\\\\"id\\\\\"]} → {c.get\\(\\\\\"parent\\\\\",\\\\\"-\\\\\"\\)}  abstract={c.get\\(\\\\\"abstract\\\\\",False\\)}'\\) for c in data['concepts']]\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); c=[c for c in data['concepts'] if c['id']=='cost'][0]; print\\(json.dumps\\(c, ensure_ascii=False, indent=2\\)\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); c=[c for c in data['concepts'] if c['id']=='cost'][0]; print\\('required:', [f['id'] for f in c['fields']['required']]\\); print\\('optional:', [f['id'] for f in c['fields']['optional']]\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\(f'OK — {len\\(data[\\\\\"concepts\\\\\"]\\)} concepts'\\); c=[c for c in data['concepts'] if c['id']=='content'][0]; print\\('required:', [f['id'] for f in c['fields']['required']]\\)\")",
+      "Bash(python -c \"import json; json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\('OK'\\); print\\(\\); print\\('=== concept_ref 剩余使用 ==='\\); import re; lines=open\\('ontology/ontology.json','r',encoding='utf-8'\\).readlines\\(\\); [print\\(f'  L{i+1}: {l.strip\\(\\)}'\\) for i,l in enumerate\\(lines\\) if 'concept_ref' in l]\")",
+      "Bash(python -c \"import json; json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\('JSON OK'\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\(f'OK — {len\\(data[\\\\\"concepts\\\\\"]\\)} concepts'\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); c=[c for c in data['concepts'] if c['id']=='supply'][0]; print\\('Supply optional:', [f['id'] for f in c['fields']['optional']]\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\('ontology/ontology.json','r',encoding='utf-8'\\)\\); print\\('OK'\\); s=[c for c in data['concepts'] if c['id']=='supply'][0]; print\\('Supply top-level keys:', [k for k in s if k not in \\('id','name','level','parent','abstract','definition','fields'\\)]\\); d=[c for c in data['concepts'] if c['id']=='discard_pile'][0]; print\\('Discard Pile top-level keys:', [k for k in d if k not in \\('id','name','level','parent','abstract','definition','fields'\\)]\\); p=[c for c in data['concepts'] if c['id']=='player_zone'][0]; print\\('Player Zone top-level keys:', [k for k in p if k not in \\('id','name','level','parent','abstract','definition','fields'\\)]\\)\")",
+      "Bash(python3 -c ' *)",
+      "Bash(cd \"D:\\\\\\\\workspace\\\\\\\\board\")",
+      "Bash(node -e ' *)",
+      "Bash(python -c \"import json; json.load\\(open\\('ontology/ontology.json', encoding='utf-8'\\)\\); print\\('Valid JSON'\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(python3 *)"
     ]
   }
 }

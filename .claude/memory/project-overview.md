@@ -32,7 +32,8 @@ metadata:
 
 ## 开发阶段
 
-1. **第一阶段（当前）：定义世界模型** — 将桌游世界的抽象概念（Object/Zone/Event/Condition/Procedure 等）写成结构化 JSON 本体。这一层以后几乎不改。
+1. **第一阶段（基本完成）：定义世界模型** — 49 个本体概念覆盖 Level 0~3，可持续补充。
+2. **第二阶段（进行中）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor）。当前进度：概念层（Resource/Content/Card/Tile）和 Zone 层（Supply/Market/Deck）已完成，待写 Action 层和 Procedure 层。
 2. **第二阶段：Rule DSL** — 用 JSON 表达具体游戏的规则条件和效果，程序可解析执行。
 3. **第三阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。
 4. **第四阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
