@@ -3,36 +3,44 @@
     "document": "board-game-ontology",
     "version": "0.1.0",
     "description": "桌游本体 — 统一定义游戏中的静态结构概念与流程时序概念。不定义具体游戏规则。",
-    "convention": "每个概念的 fields.required 表示：若另一个概念继承或引用此概念，则必须提供这些字段的值。程序递归收集父链上的所有 required 字段。"
+    "convention": "每个概念的 constraints.required 表示：若另一个概念继承或引用此概念，则必须提供这些字段的值。程序递归收集父链上的所有 required 约束和顶层字段。\n\n类型约定（type field convention）：字段的 type 值分为三类——(1) 概念引用：type 为已有概念的 id（如 player、zone、object、cost、content、information_visibility），表示该字段的值是对该概念实例的引用。带有 | null 后缀表示可空；(2) 泛引用：type 为 concept_ref，表示引用目标不限于单一概念，程序或 LLM 需根据上下文确定具体目标类型；(3) 原始类型：直接使用类型名——string、integer、boolean、any、map<string, any>、enum。enum 类型附带内联的 enum 数组枚举合法值。\n\n交叉引用约定（cross-reference convention）：所有 definition 和 field description 文本中，引用其他概念时使用 <concept_id> 占位符包裹概念 id。例如「指向游戏中一个具体的 <object> 实例（<player>、<zone>、<piece> 等，均为 <object> 的子类）」。LLM 读取时可据此识别交叉引用并沿 <concept_id> 查找对应概念的定义。"
   },
   "concepts": [
     {
       "id": "object",
-      "name": { "zh": "对象", "en": "Object" },
+      "name": {
+        "zh": "对象",
+        "en": "Object"
+      },
       "level": 0,
       "abstract": true,
       "definition": {
         "zh": "可被识别、引用或操作的实体或抽象概念。",
         "en": "An entity or abstract concept that can be identified, referenced, or operated upon."
       },
-      "fields": {
+      "attributes": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "描述该对象固有特征的键值对集合。由游戏规则预定义，描述对象「是什么」而非「此刻怎样」。注意：attributes 对应的是 Property（属性），不是 State（状态）。",
+          "en": "A map of key-value pairs describing the object's intrinsic characteristics. Predefined by game rules. Describes what the object 'is', not what it 'currently is' (which would be State)."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
             "description": {
-              "zh": "该对象实例的唯一标识符。在整个游戏中不可重复。没有 id，程序无法区分、查找和关联此对象。",
-              "en": "Unique identifier for this object instance. Must be unique within the game. Without an id, programs cannot distinguish, find, or relate this object."
+              "zh": "唯一标识符。所有 <object> 实例必须通过此字段被识别和引用。由 <object> 自身定义，隐式赋予所有子类实例。",
+              "en": "Unique identifier. All <object> instances must be identifiable and referenceable through this field. Defined by <object> itself, implicitly available to all subclass instances."
             }
           }
         ],
         "optional": [
           {
             "id": "attributes",
-            "type": "map<string, any>",
             "description": {
-              "zh": "描述该对象固有特征的键值对集合。由游戏规则预定义，描述对象「是什么」而非「此刻怎样」。注意：attributes 对应的是 Property（属性），不是 State（状态）。",
-              "en": "A map of key-value pairs describing the object's intrinsic characteristics. Predefined by game rules. Describes what the object 'is', not what it 'currently is' (which would be State)."
+              "zh": "描述对象固有特征的键值对集合。由游戏规则预定义，描述对象「是什么」而非「此刻怎样」。",
+              "en": "A map of key-value pairs describing the object's intrinsic characteristics. Predefined by game rules. Describes what the object 'is', not what it 'currently is'."
             }
           }
         ]
@@ -40,31 +48,39 @@
     },
     {
       "id": "player",
-      "name": { "zh": "玩家", "en": "Player" },
+      "name": {
+        "zh": "玩家",
+        "en": "Player"
+      },
       "level": 1,
       "parent": "object",
       "abstract": false,
       "definition": {
-        "zh": "直接参与游戏并能够做出决策的实体。Player 是游戏中的能动主体——它发起 Action、拥有 Object、积累 Score、最终参与胜负判定。",
-        "en": "An entity that directly participates in the game and is capable of making decisions. Player is the active agent in the game — it initiates Actions, owns Objects, accumulates Score, and ultimately participates in victory determination."
+        "zh": "直接参与游戏并能够做出决策的实体。<player> 是游戏中的能动主体——它发起 <action>、拥有 <object>、积累 Score、最终参与胜负判定。<player> 继承自 <object>。",
+        "en": "An entity that directly participates in the game and is capable of making decisions. <player> is the active agent in the game — it initiates <action>s, owns <object>s, accumulates Score, and ultimately participates in victory determination. <player> extends <object>."
       },
-      "fields": {
+      "order": {
+        "type": "integer",
+        "description": {
+          "zh": "玩家在回合顺序中的位置（从 1 开始）。用于决定行动先后。若游戏采用其他顺序机制（如同时行动、竞标决定顺序），此字段可为空。",
+          "en": "The player's position in turn order (1-based). Used to determine action sequence. May be empty if the game uses other ordering mechanisms (e.g. simultaneous action, bidding)."
+        }
+      },
+      "constraints": {
         "required": [],
         "optional": [
           {
             "id": "name",
-            "type": "string",
             "description": {
-              "zh": "玩家的显示名称。用于 UI 展示和日志记录。若未指定，可用 id 作为默认显示名。",
-              "en": "Display name for the player. Used in UI and logging. If not specified, the id serves as the default display name."
+              "zh": "玩家名称，用于 UI 显示和 LLM 自然语言生成，不影响规则逻辑。",
+              "en": "Player name for UI display and LLM natural language generation. Does not affect rule logic."
             }
           },
           {
             "id": "order",
-            "type": "integer",
             "description": {
-              "zh": "玩家在回合顺序中的位置（从 1 开始）。用于决定行动先后。若游戏采用其他顺序机制（如同时行动、竞标决定顺序），此字段可为空。",
-              "en": "The player's position in turn order (1-based). Used to determine action sequence. May be empty if the game uses other ordering mechanisms (e.g. simultaneous action, bidding)."
+              "zh": "玩家在回合顺序中的位置（从 1 开始）。若游戏采用同时行动等非固定顺序机制可省略。",
+              "en": "Player's position in turn order (1-based). May be omitted for games with non-fixed ordering like simultaneous action."
             }
           }
         ]
@@ -72,31 +88,46 @@
     },
     {
       "id": "resource",
-      "name": { "zh": "资源", "en": "Resource" },
+      "name": {
+        "zh": "资源",
+        "en": "Resource"
+      },
       "level": 1,
       "parent": "object",
       "abstract": false,
       "definition": {
-        "zh": "一种可被玩家拥有、计数和转移的价值对象。Resource 的核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 Resource 的所有个体完全等价、可互相替代。",
-        "en": "A value object that can be owned, counted, and transferred by players. The defining feature of a Resource is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same Resource type are completely equivalent and interchangeable."
+        "zh": "一种可被 <player> 拥有、计数和转移的价值对象。<resource> 继承自 <object>。其核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 <resource> 的所有个体完全等价、可互相替代。",
+        "en": "A value object that can be owned, counted, and transferred by <player>s. <resource> extends <object>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable."
       },
-      "fields": {
+      "unit": {
+        "type": "string",
+        "description": {
+          "zh": "此资源的计量单位。如宝石用「颗」、钱币用「枚」、木材用「根」。仅供 UI 和 LLM 生成自然语言时使用，不影响规则逻辑。",
+          "en": "The unit of measurement for this resource. E.g., '颗' for gems, '枚' for coins. For UI and natural language generation only; does not affect rule logic."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "此资源的外观描述。如「蓝色六边形宝石，表面有切割纹理」「金黄色圆形硬币，正面有五角星图案」。用于动画生成、UI 渲染和 AI 讲解时帮助玩家识别实物，不影响规则逻辑。",
+          "en": "Visual description of this resource. E.g., 'blue hexagonal gem with cut texture', 'golden round coin with a star on the front'. Used for animation, UI rendering, and AI explanations to help players identify physical pieces. Does not affect rule logic."
+        }
+      },
+      "constraints": {
         "required": [],
         "optional": [
           {
             "id": "unit",
-            "type": "string",
             "description": {
-              "zh": "此资源的计量单位。如宝石用「颗」、钱币用「枚」、木材用「根」。仅供 UI 和 LLM 生成自然语言时使用，不影响规则逻辑。",
-              "en": "The unit of measurement for this resource. E.g., '颗' for gems, '枚' for coins. For UI and natural language generation only; does not affect rule logic."
+              "zh": "资源计量单位（如「颗」「枚」「根」），仅供 UI 和 LLM 自然语言生成使用，不影响规则逻辑。",
+              "en": "Unit of measurement for this resource (e.g., 'piece', 'token', 'stick'). For UI and LLM natural language generation only; does not affect rule logic."
             }
           },
           {
             "id": "appearance",
-            "type": "string",
             "description": {
-              "zh": "此资源的外观描述。如「蓝色六边形宝石，表面有切割纹理」「金黄色圆形硬币，正面有五角星图案」。用于动画生成、UI 渲染和 AI 讲解时帮助玩家识别实物，不影响规则逻辑。",
-              "en": "Visual description of this resource. E.g., 'blue hexagonal gem with cut texture', 'golden round coin with a star on the front'. Used for animation, UI rendering, and AI explanations to help players identify physical pieces. Does not affect rule logic."
+              "zh": "资源外观描述——形状、颜色、图案等关键视觉信息。用于 UI 渲染和 AI 向玩家解释规则时帮助识别实物。",
+              "en": "Visual description of this resource — shape, color, patterns. Used for UI rendering and AI explanations to help players identify physical pieces."
             }
           }
         ]
@@ -104,53 +135,78 @@
     },
     {
       "id": "piece",
-      "name": { "zh": "物件", "en": "Piece" },
+      "name": {
+        "zh": "物件",
+        "en": "Piece"
+      },
       "level": 1,
       "parent": "object",
       "abstract": false,
       "definition": {
-        "zh": "可通过 Play（打出）进入游戏、并通过自身 Effect（效果）改变游戏状态的游戏零件。Piece 与 Token 的本质区别：Piece 携带 Effect，可以被 Play——打出它、建造它、激活它，游戏状态会因此改变。Effect 的静态形态就是 Property——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 Effect 的规格说明。Token 没有 Effect，不能被 Play——Token 只负责标记某个事实，Token 本身不做任何事。",
-        "en": "A game component that enters the game through Play and changes game state through its own Effects. The essential difference between Piece and Token: a Piece carries Effects and can be Played — when you play it, build it, or activate it, the game state changes as a result. Effects in static form are Properties — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all Effect specifications. A Token has no Effects and cannot be Played — Tokens only mark facts; a Token itself does nothing."
+        "zh": "可通过 <play> 进入游戏、并通过自身 <effect> 改变游戏状态的游戏零件。<piece> 继承自 <object>。<piece> 与 <token> 的本质区别：<piece> 携带 <effect>，可以被 <play>——打出它、建造它、激活它，游戏状态会因此改变。<effect> 的静态形态就是 <property>——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 <effect> 的规格说明。<token> 没有 <effect>，不能被 <play>——<token> 只负责标记某个事实，<token> 本身不做任何事。",
+        "en": "A game component that enters the game through <play> and changes game state through its own <effect>s. <piece> extends <object>. The essential difference between <piece> and <token>: a <piece> carries <effect>s and can be <play>ed — when you play it, build it, or activate it, the game state changes as a result. <effect>s in static form are <property>s — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all <effect> specifications. A <token> has no <effect>s and cannot be <play>ed — <token>s only mark facts; a <token> itself does nothing."
       },
-      "fields": {
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
+          "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "appearance",
-            "type": "string",
             "description": {
-              "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
-              "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
+              "zh": "物件外观描述，必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注位置、图案和颜色。AI 回答「怎么看」类问题时主要依赖此字段。",
+              "en": "Visual description of this piece. Must include key visual information for AI to explain rules — where information is printed, patterns and colors. AI relies on this field for 'how do I see...' questions."
             }
           }
-        ]
+        ],
+        "optional": []
       }
     },
     {
       "id": "aid",
-      "name": { "zh": "辅助物", "en": "Aid" },
+      "name": {
+        "zh": "辅助物",
+        "en": "Aid"
+      },
       "level": 1,
       "parent": "object",
       "abstract": false,
       "definition": {
-        "zh": "用于向玩家展示信息、辅助玩家识别和操作的游戏实体。Aid 的核心特征是「可有可无」——它不参与游戏逻辑的运作，不产生、不修改、不删除游戏中的任何元素。Aid 不等于它所呈现的东西：公共版图被收起来，供应堆和市场依然存在；手牌放在桌上，它们依然属于手牌区域；桌子太小把 token 挤到旁边，它们依然是供应堆的一部分。Zone 是抽象的归属关系容器，不因物理载体的有无或位置而改变。熟练玩家在脑中记住了所有 Zone 的布局后，完全可以不借助 Aid 进行游戏。",
-        "en": "A game entity used to present information to players and assist in recognition and operation. The defining trait of an Aid is that it is 'optional' — it does not participate in game logic and does not create, modify, or delete any game element. An Aid is not the thing it depicts: put the public board away and the supply and market still exist; place your hand cards on the table and they still belong to the Hand zone; table too small so tokens overflow to the side — they are still part of the Supply. Zones are abstract belonging containers, independent of the presence or position of any physical carrier. A skilled player who has memorized all Zone layouts can play entirely without Aids."
+        "zh": "用于向 <player> 展示信息、辅助玩家识别和操作的游戏实体。<aid> 继承自 <object>。其核心特征是「可有可无」——它不参与游戏逻辑的运作，不产生、不修改、不删除游戏中的任何元素。<aid> 不等于它所呈现的东西：公共版图被收起来，<supply> 和 <market> 依然存在；手牌放在桌上，它们依然属于手牌 <zone>；桌子太小把 <token> 挤到旁边，它们依然是 <supply> 的一部分。<zone> 是抽象的归属关系容器，不因物理载体的有无或位置而改变。熟练玩家在脑中记住了所有 <zone> 的布局后，完全可以不借助 <aid> 进行游戏。",
+        "en": "A game entity used to present information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it is 'optional' — it does not participate in game logic and does not create, modify, or delete any game element. An <aid> is not the thing it depicts: put the public board away and the <supply> and <market> still exist; place your hand cards on the table and they still belong to the hand <zone>; table too small so <token>s overflow to the side — they are still part of the <supply>. <zone>s are abstract belonging containers, independent of the presence or position of any physical carrier. A skilled player who has memorized all <zone> layouts can play entirely without <aid>s."
       },
-      "fields": {
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "此辅助物的外观描述。必须说明形状、材质、尺寸和上面印了什么。如「折叠式硬纸板，展开后为 60cm×40cm 的矩形版图，表面印有世界地图、区域边界和计分轨」「210mm×148mm 的过塑卡片，正面印有所有行动的图标速查表」。",
+          "en": "Visual description of this aid. Must describe shape, material, size, and what is printed on it. E.g., 'folded cardboard board, 60cm×40cm when unfolded, printed with a world map, region borders, and a scoring track', '210mm×148mm laminated card with a quick-reference icon chart of all actions printed on the front'."
+        }
+      },
+      "maps_to": {
+        "type": "concept_ref[]",
+        "description": {
+          "zh": "此辅助物在视觉上对应哪些游戏逻辑实体。注意：Aid 不「包含」这些实体，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
+          "en": "Which game logic entities this Aid visually corresponds to. Note: the Aid does not 'contain' these entities; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "appearance",
-            "type": "string",
             "description": {
-              "zh": "此辅助物的外观描述。必须说明形状、材质、尺寸和上面印了什么。如「折叠式硬纸板，展开后为 60cm×40cm 的矩形版图，表面印有世界地图、区域边界和计分轨」「210mm×148mm 的过塑卡片，正面印有所有行动的图标速查表」。",
-              "en": "Visual description of this aid. Must describe shape, material, size, and what is printed on it. E.g., 'folded cardboard board, 60cm×40cm when unfolded, printed with a world map, region borders, and a scoring track', '210mm×148mm laminated card with a quick-reference icon chart of all actions printed on the front'."
+              "zh": "辅助物外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局和辅助工具时的核心信息来源。",
+              "en": "Visual description of this aid — shape, material, size, and what is printed on it. Core information source when AI introduces board layout and helper tools to players."
             }
           },
           {
             "id": "maps_to",
-            "type": "concept_ref[]",
             "description": {
-              "zh": "此辅助物在视觉上对应哪些游戏逻辑实体。注意：Aid 不「包含」这些实体，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
-              "en": "Which game logic entities this Aid visually corresponds to. Note: the Aid does not 'contain' these entities; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
+              "zh": "视觉映射——声明此 Aid 在视觉上对应哪些游戏逻辑实体。注意：Aid 不「包含」这些实体，它只是画出了它们。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
+              "en": "Visual mapping — declares which game logic entities this Aid visually corresponds to. Note: the Aid does not 'contain' these entities; it merely depicts them. Zones exist and are defined purely by rules, independent of any Aid."
             }
           }
         ],
@@ -159,32 +215,47 @@
     },
     {
       "id": "token",
-      "name": { "zh": "指示物", "en": "Token" },
+      "name": {
+        "zh": "指示物",
+        "en": "Token"
+      },
       "level": 1,
       "parent": "object",
       "abstract": false,
       "definition": {
-        "zh": "用于在物理层面标记某个游戏事实的小型对象。Token 的本质特征：没有 Effect，不能被 Play——Token 自身不改变任何游戏状态，它只是被动地标记一个已经存在的事实。你把伤害 Token 放在一张卡上，Token 什么都没做，是「此卡已受伤」这个规则事实在产生影响。你把起始玩家 Token 传给下家，Token 本身不改变任何东西，是「起始玩家变更」这个规则事件改变了游戏。Token 可以被移动、放置、计数，但它永远不会「打出」一个效果。",
-        "en": "A small physical object used to mark a game fact. The defining trait of a Token: it has no Effects and cannot be Played — a Token itself never changes game state; it only passively marks an already-existing fact. Placing a damage token on a card: the token does nothing; it is the rules fact 'this card is wounded' that has impact. Passing the starting player token: the token changes nothing; it is the rules event 'starting player changed' that alters the game. Tokens can be moved, placed, and counted, but they are never 'played' to produce an effect."
+        "zh": "用于在物理层面标记某个游戏事实的小型对象。<token> 继承自 <object>。其本质特征：没有 <effect>，不能被 <play>——<token> 自身不改变任何游戏状态，它只是被动地标记一个已经存在的事实。你把伤害 <token> 放在一张卡上，<token> 什么都没做，是「此卡已受伤」这个规则 <state> 在产生影响。你把起始玩家 <token> 传给下家，<token> 本身不改变任何东西，是「起始玩家变更」这个规则 <event> 改变了游戏。<token> 可以被移动、放置、计数，但它永远不会像 <piece> 那样「打出」一个 <effect>。",
+        "en": "A small physical object used to mark a game fact. <token> extends <object>. Its defining trait: it has no <effect>s and cannot be <play>ed — a <token> itself never changes game state; it only passively marks an already-existing fact. Placing a damage <token> on a card: the <token> does nothing; it is the rules <state> 'this card is wounded' that has impact. Passing the starting player <token>: the <token> changes nothing; it is the rules <event> 'starting player changed' that alters the game. <token>s can be moved, placed, and counted, but unlike <piece>s, they are never <play>ed to produce an <effect>."
       },
-      "fields": {
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "此指示物的外观描述。如「直径 15mm 的圆形塑料圆片，蓝色半透明」「15mm×15mm 的方形木质方块，红色」「10mm 直径的球形玻璃珠，金色」。",
+          "en": "Visual description of this token. E.g., '15mm diameter round plastic disc, blue translucent', '15mm×15mm square wooden cube, red', '10mm diameter spherical glass bead, golden'."
+        }
+      },
+      "represents": {
+        "type": "concept_ref",
+        "description": {
+          "zh": "此指示物代表什么逻辑概念。如伤害 Token 指向 State「受伤」、起始玩家 Token 指向 State「起始玩家」。注意：Resource 自身已携带 appearance，不需要 Token 代表——蓝宝石直接描述自己。represents 仅在 Token 代表的不是 Resource 时使用。若一个 Token 是多用途的（红色方块既能计分又能标归属），此字段为空，Token 的具体含义由它当前所在的 Zone 或使用上下文决定。",
+          "en": "What logical concept this token represents. E.g., a damage token points to State 'wounded', a starting player token points to State 'starting_player'. Note: Resources already carry their own appearance and don't need a Token to represent them — a blue gem describes itself directly. Use 'represents' only when the Token represents something other than a Resource. For multi-purpose Tokens (a red cube that can track score or mark ownership), leave this empty — the Token's meaning is determined by its current Zone or usage context."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "appearance",
-            "type": "string",
             "description": {
-              "zh": "此指示物的外观描述。如「直径 15mm 的圆形塑料圆片，蓝色半透明」「15mm×15mm 的方形木质方块，红色」「10mm 直径的球形玻璃珠，金色」。",
-              "en": "Visual description of this token. E.g., '15mm diameter round plastic disc, blue translucent', '15mm×15mm square wooden cube, red', '10mm diameter spherical glass bead, golden'."
+              "zh": "指示物外观描述——形状、尺寸、颜色、材质。Token 没有 Effect，外观是其唯一可被玩家直接感知的特征。",
+              "en": "Visual description of this token — shape, size, color, material. Tokens have no Effects; appearance is the only characteristic directly perceivable by players."
             }
           }
         ],
         "optional": [
           {
             "id": "represents",
-            "type": "concept_ref",
             "description": {
-              "zh": "此指示物代表什么逻辑概念。如伤害 Token 指向 State「受伤」、起始玩家 Token 指向 State「起始玩家」。注意：Resource 自身已携带 appearance，不需要 Token 代表——蓝宝石直接描述自己。represents 仅在 Token 代表的不是 Resource 时使用。若一个 Token 是多用途的（红色方块既能计分又能标归属），此字段为空，Token 的具体含义由它当前所在的 Zone 或使用上下文决定。",
-              "en": "What logical concept this token represents. E.g., a damage token points to State 'wounded', a starting player token points to State 'starting_player'. Note: Resources already carry their own appearance and don't need a Token to represent them — a blue gem describes itself directly. Use 'represents' only when the Token represents something other than a Resource. For multi-purpose Tokens (a red cube that can track score or mark ownership), leave this empty — the Token's meaning is determined by its current Zone or usage context."
+              "zh": "此 Token 代表什么逻辑概念（如 State「受伤」、State「起始玩家」）。若为多用途 Token（如红色方块既计分又标归属），则省略此字段，含义由所在 Zone 或上下文决定。",
+              "en": "What logical concept this Token represents (e.g., State 'wounded', State 'starting player'). Omit for multi-purpose Tokens — meaning is determined by Zone or context."
             }
           }
         ]
@@ -192,53 +263,67 @@
     },
     {
       "id": "zone",
-      "name": { "zh": "区域", "en": "Zone" },
+      "name": {
+        "zh": "区域",
+        "en": "Zone"
+      },
       "level": 0,
       "abstract": true,
       "definition": {
-        "zh": "游戏中的抽象逻辑容器，表示一组物件的空间归属关系。不依赖版图和实体，只由规则决定。",
-        "en": "An abstract logical container in the game, representing the spatial belonging of a set of objects. Independent of board and physical components; defined solely by rules."
+        "zh": "游戏中的抽象逻辑容器，表示一组 <object> 的空间归属关系。不依赖版图和实体，只由规则决定。<zone> 是 Level 0 抽象概念，子类包括 <reserve>、<discard_pile>、<player_zone>。",
+        "en": "An abstract logical container in the game, representing the spatial belonging of a set of <object>s. Independent of board and physical components; defined solely by rules. <zone> is a Level 0 abstract concept; subclasses include <reserve>, <discard_pile>, <player_zone>."
       },
-      "fields": {
+      "contains": {
+        "type": "concept_ref[]",
+        "description": {
+          "zh": "声明此 <zone> 允许存放哪些类型的 <object>。值为本体概念 id 数组（如 [\"card\", \"token\"]）。空数组 [] 表示不限制类型。程序校验 <transfer> 时：若 what 的类型不在 contains 中，<transfer> 非法。",
+          "en": "Declares what types of Object this zone allows. Array of concept ids (e.g. [\"card\", \"token\"]). Empty array [] means any type is allowed. Programs check this when validating a Transfer."
+        }
+      },
+      "capacity": {
+        "type": "integer | null",
+        "description": {
+          "zh": "可容纳的对象数量上限。null = 无上限。达到上限后，以此区域为目标的 Transfer 将被拒绝。",
+          "en": "Maximum number of objects this zone can hold. null = unlimited. When full, Transfers targeting this zone are rejected."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
-            "description": { "zh": "该区域实例的唯一标识符。", "en": "Unique identifier for this zone instance." }
+            "description": {
+              "zh": "Zone 的唯一标识符。继承自 <object>，用于在游戏规则中精确引用特定 Zone 实例。",
+              "en": "Unique identifier of the Zone. Inherited from <object>, used to precisely reference a specific Zone instance in game rules."
+            }
           },
           {
             "id": "contains",
-            "type": "concept_ref[]",
             "description": {
-              "zh": "声明此区域允许存放哪些类型的 Object。值为本体 concept id 数组（如 [\"card\", \"token\"]）。空数组 [] 表示不限制类型。程序校验 Transfer 时：若 what 的类型不在 contains 中，Transfer 非法。",
-              "en": "Declares what types of Object this zone allows. Array of concept ids (e.g. [\"card\", \"token\"]). Empty array [] means any type is allowed. Programs check this when validating a Transfer."
+              "zh": "声明此 Zone 允许存放哪些类型的 <object>。程序校验 <transfer> 时以此过滤——若 what 的类型不在 contains 中，<transfer> 非法。空数组表示不限类型。",
+              "en": "Declares what types of <object> this Zone allows. Programs check this when validating a <transfer> — if what's type is not in contains, the <transfer> is illegal. Empty array means any type is allowed."
             }
           },
           {
-            "id": "owner",
-            "type": "player | null",
+            "id": "<ownership>",
             "description": {
-              "zh": "此区域是否归属于某个玩家。null = 公共区域（供应堆、市场），所有玩家均可访问。指向 Player = 专属区域（手牌、个人面板），对手不可直接操作。",
-              "en": "Whether this zone belongs to a player. null = public zone (supply, market). A Player reference = private zone (hand, personal board)."
+              "zh": "此 Zone 的所有权归属。决定该 Zone 及其中的 <object> 属于哪个 <player>。null 表示公共区域，所有玩家均可访问。",
+              "en": "Ownership of this Zone. Determines which <player> owns this Zone and its contents. null means public — all players can access."
             }
           },
           {
-            "id": "visibility",
-            "type": "enum",
-            "enum": ["public", "private", "protected", "partially_public", "hidden"],
+            "id": "<information_visibility>",
             "description": {
-              "zh": "此区域的信息可见性。public = 全员可见；private = 仅 owner 可见；protected = owner 可选择展示；partially_public = 部分内容公开；hidden = 全员不可见。",
-              "en": "Information visibility for this zone. public = all can see; private = only owner; protected = owner may reveal; partially_public = partial contents visible; hidden = no one can see."
+              "zh": "此 Zone 的信息可见性级别。决定 Zone 中的内容可被哪些 <player> 观察——公开区全员可见，手牌区仅拥有者可见，牌堆区仅顶部部分可见等。",
+              "en": "Information visibility level of this Zone. Determines which <player>s can observe its contents — public zones are visible to all, hand zones are owner-only, deck zones may be partially visible at the top, etc."
             }
           }
         ],
         "optional": [
           {
             "id": "capacity",
-            "type": "integer | null",
             "description": {
-              "zh": "可容纳的对象数量上限。null = 无上限。达到上限后，以此区域为目标的 Transfer 将被拒绝。",
-              "en": "Maximum number of objects this zone can hold. null = unlimited. When full, Transfers targeting this zone are rejected."
+              "zh": "Zone 可容纳的对象数量上限。null 表示无上限。达到上限后，以此 Zone 为目标的 <transfer> 将被拒绝。",
+              "en": "Maximum number of objects this Zone can hold. null = unlimited. When full, <transfer>s targeting this Zone are rejected."
             }
           }
         ]
@@ -246,44 +331,67 @@
     },
     {
       "id": "state",
-      "name": { "zh": "状态", "en": "State" },
+      "name": {
+        "zh": "状态",
+        "en": "State"
+      },
       "level": 0,
       "abstract": false,
       "definition": {
-        "zh": "某个时刻游戏世界中为真的断言。描述游戏实体「此刻怎样」，而非「是什么」。State 是运行时事实，随时可被改变。",
-        "en": "A true assertion about the game world at a given moment. Describes what a game entity 'currently is', not what it 'is'. State is a runtime fact, changeable at any time."
+        "zh": "某个时刻游戏世界中为真的断言。描述游戏实体「此刻怎样」，而非「是什么」。<state> 是运行时事实，随时可被 <effect> 改变。",
+        "en": "A true assertion about the game world at a given moment. Describes what a game entity 'currently is', not what it 'is'. <state> is a runtime fact, changeable at any time by <effect>s."
       },
-      "fields": {
+      "subject": {
+        "type": "<object>",
+        "description": {
+          "zh": "此状态描述的实体。回答「谁此刻怎样」中的「谁」。指向游戏中一个具体的 <object> 实例（<player>、<zone>、<piece> 等，均为 <object> 的子类）。例如「Player A 持有 3 个蓝宝石」中，subject = Player A。",
+          "en": "The entity this state describes — the 'who' in 'who is currently in what state'. Points to a concrete <object> instance (<player>, <zone>, <piece>, etc. — all subclasses of <object>). E.g., in 'Player A has 3 blue gems', subject = Player A."
+        }
+      },
+      "value_type": {
+        "type": "string",
+        "description": {
+          "zh": "状态值的类型约束。如 \"integer\"、\"boolean\"、\"player\"。程序修改状态时以此校验。",
+          "en": "Type constraint for the state value. E.g., \"integer\", \"boolean\", \"player\". Programs validate state changes against this."
+        }
+      },
+      "initial_value": {
+        "type": "any",
+        "description": {
+          "zh": "游戏开始时的初始值。用于 setup 和 reset。",
+          "en": "Initial value when the game starts. Used for setup and reset."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
-            "description": { "zh": "该状态实例的唯一标识符。", "en": "Unique identifier for this state instance." }
+            "description": {
+              "zh": "State 的唯一标识符。用于在规则中精确引用特定状态实例（如「Player A 的分数」「Card X 的横置状态」）。",
+              "en": "Unique identifier of the State. Used to precisely reference a specific state instance in rules."
+            }
           },
           {
             "id": "subject",
-            "type": "concept_ref",
             "description": {
-              "zh": "此状态描述的实体。回答「谁此刻怎样」中的「谁」。指向游戏中一个具体实例（Player、Zone、Piece 等）。例如「Player A 持有 3 个蓝宝石」中，subject = Player A。",
-              "en": "The entity this state describes — the 'who' in 'who is currently in what state'. Points to a concrete game instance. E.g., in 'Player A has 3 blue gems', subject = Player A."
+              "zh": "此 State 描述的实体——回答「谁此刻怎样」中的「谁」。指向一个具体的 <object> 实例（<player>、<zone>、<piece> 等）。",
+              "en": "The entity this State describes — the 'who' in 'who is currently in what state'. Points to a concrete <object> instance."
             }
-          },
+          }
         ],
         "optional": [
           {
             "id": "value_type",
-            "type": "string",
             "description": {
-              "zh": "状态值的类型约束。如 \"integer\"、\"boolean\"、\"player\"。程序修改状态时以此校验。",
-              "en": "Type constraint for the state value. E.g., \"integer\", \"boolean\", \"player\". Programs validate state changes against this."
+              "zh": "State 值的类型约束（如 integer、boolean、player）。程序修改 State 时以此校验值的合法性。",
+              "en": "Type constraint for the State value. Programs validate state changes against this."
             }
           },
           {
             "id": "initial_value",
-            "type": "any",
             "description": {
-              "zh": "游戏开始时的初始值。用于 setup 和 reset。",
-              "en": "Initial value when the game starts. Used for setup and reset."
+              "zh": "游戏开始时的初始值，用于 setup 和 reset。确保每次游戏开始时 State 从一致的状态出发。",
+              "en": "Initial value when the game starts. Used for setup and reset to ensure consistent starting state."
             }
           }
         ]
@@ -291,53 +399,135 @@
     },
     {
       "id": "property",
-      "name": { "zh": "属性", "en": "Property" },
+      "name": {
+        "zh": "属性",
+        "en": "Property"
+      },
       "level": 0,
       "abstract": false,
       "definition": {
-        "zh": "对象或区域固有的、由游戏规则预先定义的特征。描述游戏实体「是什么」「拥有什么能力」「具备什么特点」。默认不可变——在对象进入游戏时即确定，仅在 Effect 明确修改时才变化。",
-        "en": "An intrinsic characteristic of an object or zone, pre-defined by game rules. Describes what a game entity 'is', 'what abilities it has', 'what traits it possesses'. Immutable by default — set when the object enters the game, only changed by an explicit Effect."
+        "zh": "<object> 或 <zone> 固有的、由游戏规则预先定义的特征。描述游戏实体「是什么」「拥有什么能力」「具备什么特点」。默认不可变——在 <object> 进入游戏时即确定，仅在 <effect> 明确修改时才变化。<property> 是 <cost>、<content>、<effect>、<information_visibility> 的父概念。",
+        "en": "An intrinsic characteristic of an <object> or <zone>, pre-defined by game rules. Describes what a game entity 'is', 'what abilities it has', 'what traits it possesses'. Immutable by default — set when the <object> enters the game, only changed by an explicit <effect>. <property> is the parent of <cost>, <content>, <effect>, <information_visibility>."
       },
-      "fields": {
+      "domain": {
+        "type": "concept_ref",
+        "description": {
+          "zh": "此属性附着于什么概念或实体。回答「谁拥有这个特征」。可以指向本体概念（\"card\"，表示所有卡牌）或具体实例（\"level_1_card_03\"）。",
+          "en": "What concept or entity this property attaches to. Answers 'who has this characteristic'. Can point to an ontology concept (\"card\") or a specific instance (\"level_1_card_03\")."
+        }
+      },
+      "value_type": {
+        "type": "string",
+        "description": {
+          "zh": "属性值的类型约束。如 \"integer\"、\"boolean\"、\"cost_map\"、\"effect_spec\"。",
+          "en": "Type constraint for the property value. E.g., \"integer\", \"boolean\", \"cost_map\", \"effect_spec\"."
+        }
+      },
+      "mutable": {
+        "type": "boolean",
+        "default": false,
+        "description": {
+          "zh": "是否可被游戏效果修改。默认 false（静态）。若为 true，修改必须经由 Effect 触发，不可被玩家随意更改。",
+          "en": "Whether this property can be modified by game effects. Default false (static). If true, modification must go through an Effect — players cannot arbitrarily change it."
+        }
+      },
+      "default_value": {
+        "type": "any",
+        "description": {
+          "zh": "对象被创建或进入游戏时的默认值。",
+          "en": "Default value when the object is created or enters the game."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
-            "description": { "zh": "该属性实例的唯一标识符。", "en": "Unique identifier for this property instance." }
+            "description": {
+              "zh": "Property 的唯一标识符。用于在规则中精确引用特定属性（如「Card X 的费用」「Zone Y 的可见性」）。",
+              "en": "Unique identifier of the Property. Used to precisely reference a specific property in rules."
+            }
           },
           {
             "id": "domain",
-            "type": "concept_ref",
             "description": {
-              "zh": "此属性附着于什么概念或实体。回答「谁拥有这个特征」。可以指向本体概念（\"card\"，表示所有卡牌）或具体实例（\"level_1_card_03\"）。",
-              "en": "What concept or entity this property attaches to. Answers 'who has this characteristic'. Can point to an ontology concept (\"card\") or a specific instance (\"level_1_card_03\")."
+              "zh": "此 Property 附着于什么概念或实体——回答「谁拥有这个特征」。可指向本体概念（如 \"card\"，表示所有卡牌）或具体实例。",
+              "en": "What concept or entity this Property attaches to — answers 'who has this characteristic'. Can point to an ontology concept or a specific instance."
             }
-          },
+          }
         ],
         "optional": [
           {
             "id": "value_type",
-            "type": "string",
             "description": {
-              "zh": "属性值的类型约束。如 \"integer\"、\"boolean\"、\"cost_map\"、\"effect_spec\"。",
-              "en": "Type constraint for the property value. E.g., \"integer\", \"boolean\", \"cost_map\", \"effect_spec\"."
+              "zh": "Property 值的类型约束（如 integer、boolean、cost_map、effect_spec）。",
+              "en": "Type constraint for the Property value."
             }
           },
           {
             "id": "mutable",
-            "type": "boolean",
-            "default": false,
             "description": {
-              "zh": "是否可被游戏效果修改。默认 false（静态）。若为 true，修改必须经由 Effect 触发，不可被玩家随意更改。",
-              "en": "Whether this property can be modified by game effects. Default false (static). If true, modification must go through an Effect — players cannot arbitrarily change it."
+              "zh": "是否可被 <effect> 修改。默认 false（静态属性）。若为 true，修改必须经由 <effect> 触发，不可被玩家随意更改。",
+              "en": "Whether this Property can be modified by <effect>s. Default false. Changes must go through an <effect>."
             }
           },
           {
             "id": "default_value",
-            "type": "any",
             "description": {
-              "zh": "对象被创建或进入游戏时的默认值。",
-              "en": "Default value when the object is created or enters the game."
+              "zh": "对象被创建或进入游戏时的默认值。确保 Property 始终有定义良好的初始态。",
+              "en": "Default value when the object is created or enters the game. Ensures Property always has a well-defined initial state."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ownership",
+      "name": {
+        "zh": "所有权",
+        "en": "Ownership"
+      },
+      "level": 1,
+      "parent": "state",
+      "abstract": false,
+      "definition": {
+        "zh": "表示某个 <zone> 或 <object> 归属于哪个 <player> 的 <state>。<ownership> 继承自 <state>。所有权的建立有三种途径：(1) <zone> 推导——<object> 位于 owner 非 null 的 <zone> 中时，该 <zone> 的 owner 隐式拥有该 <object>；(2) 固有归属——<object> 在游戏开始时就已确定属于某 <player>（如玩家自带的牌组），不随 <zone> 变化而改变；(3) 游戏中获取——经由 <transfer>（ownership_change=true）或 <effect> 显式变更所有权。所有权可在游戏过程中被改变——转移、抢夺、赠予或剥夺均须经由规则定义的 <effect> 或 <transfer> 触发。",
+        "en": "A <state> representing which <player> a <zone> or <object> belongs to. <ownership> extends <state>. It is established in three ways: (1) <zone> derivation — when an <object> is in a <zone> whose owner is non-null, that <zone>'s owner implicitly owns the <object>; (2) Intrinsic — the <object> belonged to a <player> from the start of the game, independent of <zone> changes; (3) Acquired — explicitly changed via <transfer> (ownership_change=true) or an <effect> during gameplay. Ownership can change during the game — transferring, stealing, gifting, or revoking must all be triggered by rules-defined <effect>s or <transfer>s."
+      },
+      "owner": {
+        "type": "<player> | null",
+        "description": {
+          "zh": "拥有所有权的 <player>。<state> 的 subject 字段则指向被拥有的 <zone> 或 <object>。null 表示无所有者（公共区域）。",
+          "en": "The <player> who holds ownership. The <state>'s subject field points to the <zone> or <object> being owned."
+        }
+      },
+      "source": {
+        "type": "enum",
+        "enum": [
+          "intrinsic",
+          "zone",
+          "transfer"
+        ],
+        "description": {
+          "zh": "所有权的来源。intrinsic = 游戏开始时即确定（如自备牌组）；zone = 由所在 Zone 的 owner 推导（默认行为）；transfer = 经由 Transfer 或 Effect 在游戏中获得。若未指定，程序默认按 zone 推导。",
+          "en": "The source of ownership. intrinsic = determined at game start (e.g., personal deck); zone = derived from containing Zone's owner (default); transfer = acquired via Transfer or Effect during gameplay. If unspecified, defaults to zone derivation."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "owner",
+            "description": {
+              "zh": "拥有所有权的 <player>。State 的 subject 字段则指向被拥有的 <zone> 或 <object>。null 表示无所有者（公共区域）。",
+              "en": "The <player> who holds ownership. The State's subject field points to the <zone> or <object> being owned. null = public."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "所有权来源：intrinsic（游戏开始即确定，如自备牌组）、zone（由所在 Zone 的 owner 推导，默认行为）、transfer（经由 <transfer> 或 <effect> 在游戏中获得）。若未指定，程序默认按 zone 推导。",
+              "en": "Source of ownership: intrinsic (from game start), zone (derived from containing Zone, default), transfer (acquired via <transfer> or <effect> during gameplay). Defaults to zone derivation if unspecified."
             }
           }
         ]
@@ -345,39 +535,53 @@
     },
     {
       "id": "event",
-      "name": { "zh": "事件", "en": "Event" },
+      "name": {
+        "zh": "事件",
+        "en": "Event"
+      },
       "level": 0,
       "abstract": true,
       "definition": {
-        "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏状态或流程有意义的、不可再分的原子事实。Event 是流程本体的根概念——一切「发生了什么」都始于 Event。",
-        "en": "An atomic fact that occurs during gameplay, recognized and defined by game rules, meaningful to game state or flow, and not further divisible. Event is the root of the procedure ontology — everything that 'happens' starts from Event."
+        "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏 <state> 或流程有意义的、不可再分的原子事实。<event> 是流程本体的根概念——一切「发生了什么」都始于 <event>。子类包括 <transfer>、<action>、<trigger>、<resolve>、<activation>、<play>。",
+        "en": "An atomic fact that occurs during gameplay, recognized and defined by game rules, meaningful to game <state> or flow, and not further divisible. <event> is the root of the procedure ontology — everything that 'happens' starts from <event>. Subclasses include <transfer>, <action>, <trigger>, <resolve>, <activation>, <play>."
       },
-      "fields": {
+      "actor": {
+        "type": "<player> | null",
+        "description": {
+          "zh": "导致此事件发生的主体。若事件由玩家主动发起（如 <action>），actor 为该 <player>。若事件由规则自动引发（如 Trigger），actor 为 null。",
+          "en": "The entity that caused this event. If initiated by a player (e.g. <action>), actor is that <player>. If automatically triggered by rules (e.g. Trigger), actor is null."
+        }
+      },
+      "target": {
+        "type": "<object> | null",
+        "description": {
+          "zh": "此事件作用的目标。可以是任意 <object> 的子类实例（<player>、<zone>、<piece> 等）。若事件无特定目标（如「回合开始」），target 为 null。",
+          "en": "The target this event acts upon. Can be any <object> subclass instance (<player>, <zone>, <piece>, etc.). If the event has no specific target (e.g. 'turn begins'), target is null."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
             "description": {
-              "zh": "该事件实例的唯一标识符。",
-              "en": "Unique identifier for this event instance."
+              "zh": "Event 的唯一标识符。用于在规则中精确引用特定事件实例，追溯游戏历史中的因果关系链。",
+              "en": "Unique identifier of the Event. Used to precisely reference a specific event instance and trace causal chains in game history."
             }
           }
         ],
         "optional": [
           {
             "id": "actor",
-            "type": "player | null",
             "description": {
-              "zh": "导致此事件发生的主体。若事件由玩家主动发起（如 Action），actor 为该玩家。若事件由规则自动引发（如 Trigger），actor 为 null。",
-              "en": "The entity that caused this event. If initiated by a player (e.g. Action), actor is that player. If automatically triggered by rules (e.g. Trigger), actor is null."
+              "zh": "导致此 Event 发生的主体。<action> 中必为 <player>，<trigger> 中为 null。若 Event 由规则自动引发则省略。",
+              "en": "The entity that caused this Event. Required for <action>s (always a <player>), null for <trigger>s. Omitted if the Event is automatically triggered by rules."
             }
           },
           {
             "id": "target",
-            "type": "concept_ref | null",
             "description": {
-              "zh": "此事件作用的目标。可以是 Object、Zone、Player 等。若事件无特定目标（如「回合开始」），target 为 null。",
-              "en": "The target this event acts upon. Can be an Object, Zone, Player, etc. If the event has no specific target (e.g. 'turn begins'), target is null."
+              "zh": "此 Event 作用的目标——可以是任意 <object> 的子类实例。若 Event 无特定目标（如「回合开始」）则为 null。",
+              "en": "The target this Event acts upon. Can be any <object> subclass instance. null if the Event has no specific target."
             }
           }
         ]
@@ -385,79 +589,275 @@
     },
     {
       "id": "condition",
-      "name": { "zh": "条件", "en": "Condition" },
+      "name": {
+        "zh": "条件",
+        "en": "Condition"
+      },
       "level": 0,
       "abstract": false,
       "definition": {
-        "zh": "用于判断某个命题在当前游戏状态下是否成立的表达式。Condition 本身不改变任何东西——它只回答「是」或「否」。Condition 是 Rule Engine 的核心判断单元：Action 的合法性检查、Trigger 的激活判断、Endgame 的触发检测，全部由 Condition 驱动。",
-        "en": "An expression that evaluates whether a proposition is true under the current game state. A Condition changes nothing — it only answers 'yes' or 'no'. Condition is the core judgment unit of the Rule Engine: action legality checks, trigger activation, and endgame detection are all driven by Conditions."
+        "zh": "用于判断某个命题在当前游戏 <state> 下是否成立的表达式。<condition> 本身不改变任何东西——它只回答「是」或「否」。<condition> 是 Rule Engine 的核心判断单元：<action> 的合法性检查、<trigger> 的激活判断、<endgame_condition> 的触发检测，全部由 <condition> 驱动。",
+        "en": "An expression that evaluates whether a proposition is true under the current game <state>. A <condition> changes nothing — it only answers 'yes' or 'no'. <condition> is the core judgment unit of the Rule Engine: <action> legality checks, <trigger> activation, and <endgame_condition> detection are all driven by <condition>s."
       },
-      "fields": {
+      "params": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "此条件的参数。内容由具体的条件类型决定。例如 SupplyCount 条件：{ \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }。复合条件（AND/OR）：{ \"op\": \"and\", \"operands\": [condition_ref, ...] }。程序根据条件的 id 查找对应的 evaluator 函数，传入 params 和当前 GameState，返回 boolean。",
+          "en": "Parameters for this condition. Content is determined by the specific condition type. E.g., a SupplyCount condition: { \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }. Compound conditions (AND/OR): { \"op\": \"and\", \"operands\": [condition_ref, ...] }. The program looks up the evaluator function by the condition's id, passes params and current GameState, and returns a boolean."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
             "description": {
-              "zh": "该条件实例的唯一标识符。",
-              "en": "Unique identifier for this condition instance."
+              "zh": "Condition 的唯一标识符。程序根据此 id 查找对应的 evaluator 函数，传入 params 和当前 GameState，返回 boolean。",
+              "en": "Unique identifier of the Condition. The program looks up the corresponding evaluator function by this id, passes params and current GameState, and returns a boolean."
             }
           }
         ],
         "optional": [
           {
             "id": "params",
-            "type": "map<string, any>",
             "description": {
-              "zh": "此条件的参数。内容由具体的条件类型决定。例如 SupplyCount 条件：{ \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }。复合条件（AND/OR）：{ \"op\": \"and\", \"operands\": [condition_ref, ...] }。程序根据条件的 id 查找对应的 evaluator 函数，传入 params 和当前 GameState，返回 boolean。",
-              "en": "Parameters for this condition. Content is determined by the specific condition type. E.g., a SupplyCount condition: { \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }. Compound conditions (AND/OR): { \"op\": \"and\", \"operands\": [condition_ref, ...] }. The program looks up the evaluator function by the condition's id, passes params and current GameState, and returns a boolean."
+              "zh": "此 Condition 的参数，内容由具体的条件类型决定（如 SupplyCount 条件：{ resource, operator, value }）。程序根据条件 id 查找 evaluator 并传入 params。",
+              "en": "Parameters for this Condition. Content is determined by the specific condition type. The program looks up the evaluator by condition id and passes these params."
             }
           }
         ]
       }
     },
     {
+      "id": "cost",
+      "name": {
+        "zh": "费用",
+        "en": "Cost"
+      },
+      "level": 1,
+      "parent": "property",
+      "abstract": false,
+      "definition": {
+        "zh": "<effect> 的内部组成部分之一——指明一个 <effect> 在被触发前必须被履行的代价。<cost> 继承自 <property>。其形态不限于支付 <resource>：支付 3 个蓝宝石是 <cost>，横置一张牌是 <cost>，弃掉一张手牌是 <cost>，跳过下个回合也是 <cost>。<cost> 的运行时逻辑：(1) 由 <condition> 检查前提是否可满足；(2) 满足后执行对应 <event>（<transfer>、状态变更等）。<cost> 不满足则该 <effect> 不可触发。<cost> 可以为空（免费效果），但此时 <content> 不可为空。",
+        "en": "An internal component of an <effect> — specifies the cost that must be fulfilled before the <effect> can be triggered. <cost> extends <property>. Its form is not limited to <resource> payment: paying 3 blue gems is a <cost>, tapping a card is a <cost>, discarding a card is a <cost>, skipping a turn is a <cost>. Runtime logic: (1) a <condition> checks if the prerequisite can be met; (2) if met, the corresponding <event> executes (<transfer>, state change, etc.). If the <cost> is not satisfied, the <effect> cannot be triggered. <cost> may be empty (free effect), but <content> must not be empty in that case."
+      },
+      "params": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "此费用的参数。内容由具体的 Cost 类型决定——不限于资源支付。典型结构：支付资源 { \"resources\": { \"blue\": 3 } }、弃牌 { \"discard\": 1 }、牺牲 { \"sacrifice\": \"piece_ref\" }、横置 { \"tap\": \"self\" }、跳过回合 { \"skip\": \"next_turn\" }。程序根据 params 的内容构造对应的 Condition（检查前提是否可满足）和 Event（执行实际动作）。复合费用（AND/OR）通过 params 内部结构表达。",
+          "en": "Parameters for this cost. Content is determined by the specific cost type — not limited to resource payment. Typical structures: pay resources { \"resources\": { \"blue\": 3 } }, discard { \"discard\": 1 }, sacrifice { \"sacrifice\": \"piece_ref\" }, tap { \"tap\": \"self\" }, skip turn { \"skip\": \"next_turn\" }. Based on params, the program constructs a corresponding Condition (to check if the prerequisite can be met) and Event (to execute the actual action). Compound costs (AND/OR) are expressed through the internal structure of params."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "params",
+            "description": {
+              "zh": "此 Cost 的具体参数——不限于资源支付。如支付资源 { resources: { blue: 3 } }、弃牌 { discard: 1 }、横置 { tap: \"self\" }。程序根据 params 构造对应的 Condition（检查前提）和 Event（执行动作）。",
+              "en": "Specific parameters for this Cost — not limited to resource payment. E.g., pay resources, discard, tap. The program constructs corresponding Conditions and Events based on params."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "content",
+      "name": {
+        "zh": "效果内容",
+        "en": "Content"
+      },
+      "level": 1,
+      "parent": "property",
+      "abstract": false,
+      "definition": {
+        "zh": "<effect> 的内部组成部分之一——描述 <effect> 结算时应当发生的具体事件。<content> 继承自 <property>。由一个或多个待执行的事件描述组成（如造成伤害、抽取卡牌、获取 <resource>、移动 <token>、改变 <state>、摧毁 <piece> 等），在 <resolve> 阶段被实例化为真实的 <event> 并应用到游戏状态。<content> 与 <cost> 互补构成完整的 <effect>：<cost> 先执行，<content> 后发生。<content> 可以为空，但 <cost> 和 <content> 不可同时为空。",
+        "en": "An internal component of an <effect> — describes the specific events that should occur when the <effect> resolves. <content> extends <property>. It consists of one or more event descriptions (e.g., deal damage, draw cards, gain <resource>s, move <token>s, change <state>s, destroy <piece>s). During the <resolve> phase, these descriptions are instantiated as real <event>s and applied to the game state. <content> and <cost> together form a complete <effect>: <cost> executes first, <content> follows. <content> may be empty, but <cost> and <content> must not both be empty."
+      },
+      "target": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "此效果内容作用的目标规范——描述「效果作用于谁」。target 是抽象的类型规约，具体实例在实际游戏中被触发后才由玩家选择或规则指定。典型结构：对一名敌人 { \"scope\": \"enemy\", \"count\": 1 }、对自己 { \"scope\": \"self\" }、对任意玩家 { \"scope\": \"any_player\" }、对目标生物 { \"scope\": \"target_creature\" }、对全体敌人 { \"scope\": \"all_enemies\" }。「抽2张牌」这类效果——抽牌动作的执行者就是效果的受益者，target = { \"scope\": \"self\" }。程序根据 target.scope 确定选择范围（如 enemy 枚举所有敌方 Player，self 固定为效果发起者），count 控制选择数量。",
+          "en": "The target specification for this effect content — describes 'who or what the effect acts upon'. target is an abstract type specification; the concrete instance is chosen by the player or determined by rules only when the effect fires in an actual game. Typical structures: one enemy { \"scope\": \"enemy\", \"count\": 1 }, self { \"scope\": \"self\" }, any player { \"scope\": \"any_player\" }, target creature { \"scope\": \"target_creature\" }, all enemies { \"scope\": \"all_enemies\" }. For effects like 'draw 2 cards' — the executor of the draw is the beneficiary, target = { \"scope\": \"self\" }. The program uses target.scope to determine the selection pool (e.g., enemy enumerates all opposing Players, self is fixed to the effect initiator), and count controls how many to select."
+        }
+      },
+      "params": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "此效果内容的参数。描述效果的具体行为——对 target 做什么。典型结构：造成伤害 { \"damage\": 2 }、抽牌 { \"draw\": 3 }、获取资源 { \"gain\": { \"gold\": 1 } }、移动 { \"move\": { \"from\": \"hand\", \"to\": \"discard_pile\" } }、改变状态 { \"set_state\": \"tapped\" }。注意 target 已独立为必填字段，params 仅描述动作本身。程序根据 params 的内容构造对应的 Event 并执行。复合 Content（一次效果做多件事）通过 params 内部结构表达。",
+          "en": "Parameters for this effect content. Describes the specific action — what to do to the target. Typical structures: deal damage { \"damage\": 2 }, draw cards { \"draw\": 3 }, gain resources { \"gain\": { \"gold\": 1 } }, move { \"move\": { \"from\": \"hand\", \"to\": \"discard_pile\" } }, change state { \"set_state\": \"tapped\" }. Note: target is a separate required field; params describes only the action itself. The program constructs and executes corresponding Events based on params. Compound Content (one effect does multiple things) is expressed through params' internal structure."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "target",
+            "description": {
+              "zh": "效果内容作用的目标规范——描述「效果作用于谁」。是抽象的类型规约（如 { scope: \"enemy\", count: 1 }），具体实例在实际游戏触发后才由玩家选择或规则指定。",
+              "en": "Target specification for this effect content — describes 'who the effect acts upon'. An abstract spec; the concrete instance is chosen by the player or determined by rules only at runtime."
+            }
+          },
+          {
+            "id": "params",
+            "description": {
+              "zh": "效果的具体行为参数——对 target 做什么。如造成伤害 { damage: 2 }、抽牌 { draw: 3 }、获取资源 { gain: { gold: 1 } }。程序根据 params 构造对应的 Event 并执行。",
+              "en": "Parameters describing the specific action — what to do to the target. E.g., deal damage, draw cards, gain resources. The program constructs and executes corresponding Events based on params."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "effect",
+      "name": {
+        "zh": "效果",
+        "en": "Effect"
+      },
+      "level": 1,
+      "parent": "property",
+      "abstract": false,
+      "definition": {
+        "zh": "指明在满足特定条件时将要发生的代价与结果的完整规格。<effect> 继承自 <property>。由 <cost> 和 <content> 两个内部组成部分构成——<cost> 定义触发前必须履行的代价，<content> 定义结算时应发生的具体事件。<cost> 和 <content> 可以有一个为空（免费效果或纯代价效果），但不可同时为空。<effect> 是 <piece> 的核心——<piece> 之所以是 <piece> 而非 <token>，正因为它携带 <effect> 并可被 <play>。<effect> 的运行时生命周期：静默（dormant）→ 被 <activation> 激活（pending）→ 经由 <resolve> 结算，<content> 实例化为真实 <event> 应用到游戏状态。",
+        "en": "A complete specification of the cost and result that will occur when certain conditions are met. <effect> extends <property>. It consists of two internal components — <cost> defines what must be fulfilled before triggering, <content> defines the specific events that occur during resolution. <cost> and <content> may have one empty (free effect or pure-cost effect), but must not both be empty. <effect> is the core of a <piece> — the reason a <piece> is a <piece> rather than a <token> is precisely that it carries an <effect> and can be <play>ed. Runtime lifecycle: dormant → activated by <activation> (pending) → resolved via <resolve>, where <content> is instantiated as real <event>s and applied to game state."
+      },
+      "<cost>": {
+        "type": "<cost> | null",
+        "description": {
+          "zh": "触发此效果前必须履行的代价。null = 免费效果（如「回合开始时抽一张牌」）。",
+          "en": "The cost that must be fulfilled before triggering this effect. null = free effect (e.g., 'draw a card at the start of your turn')."
+        }
+      },
+      "<content>": {
+        "type": "<content> | null",
+        "description": {
+          "zh": "此效果结算时应发生的具体事件。null = 纯代价效果，Content 的价值由 Piece 自身或游戏规则隐式提供。两种常见情形：(1) Piece 自身的属性或能力已经值回 Cost——例如支付 5 点生命值打出一张高战力生物牌，「获得一个高战力生物」由 Piece 进入 Development Area 这一事实完成；(2) 规则赋予的隐性 Content——例如某 Piece 本身没有效果，但集齐一定数量即获胜，此时 Content 由 Victory Condition 提供，不在 Piece 自身定义。注意：Cost 和 Content 不可同时为 null。",
+          "en": "The specific events that should occur when this effect resolves. null = pure-cost effect, where Content's value is implicitly provided by the Piece itself or by game rules. Two common cases: (1) the Piece's own oversized stats or abilities already justify the Cost — e.g., paying 5 life to play a high-power creature, where 'gain a high-power creature' is accomplished by the Piece entering the Development Area; (2) rules-granted implicit Content — e.g., a Piece has no effect on its own, but collecting a certain number wins the game; the Content is provided by the Victory Condition, not the Piece itself. Note: Cost and Content must not both be null."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "<cost>",
+            "description": {
+              "zh": "触发此 Effect 前必须履行的代价。null 表示免费效果（如「回合开始时抽一张牌」）。与 <content> 不可同时为 null。",
+              "en": "The cost that must be fulfilled before triggering this Effect. null = free effect. Must not be null simultaneously with <content>."
+            }
+          },
+          {
+            "id": "<content>",
+            "description": {
+              "zh": "此 Effect 结算时应发生的具体事件。null 表示 Content 由 Piece 自身或游戏规则隐式提供。与 <cost> 不可同时为 null。",
+              "en": "The specific events that should occur when this Effect resolves. null = implicitly provided by Piece or rules. Must not be null simultaneously with <cost>."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "information_visibility",
+      "name": {
+        "zh": "信息可见性",
+        "en": "Information Visibility"
+      },
+      "level": 1,
+      "parent": "property",
+      "abstract": false,
+      "definition": {
+        "zh": "决定游戏 <object> 或 <zone> 的信息可以被哪些 <player> 观察，以及这种观察是强制的还是可选的规则。<information_visibility> 继承自 <property>。定义了五种基本状态：Public（公开，必须对所有玩家可见）、Private（私有，仅拥有者可观察且不可公开）、Protected（保护，拥有者可选择是否向其他玩家临时展示）、Partially Public（部分公开，仅部分内容对全员可见）、Hidden（隐藏，所有玩家均不可观察）。可在游戏过程中被 <effect> 改变——一张面朝下的卡被翻转后，其可见性从 Hidden 变为 Public。",
+        "en": "A rule that determines which <player>s can observe the information of a game <object> or <zone>, and whether such observation is mandatory or optional. <information_visibility> extends <property>. It defines five basic states: Public (must be visible to all players), Private (only the owner can observe, cannot be shared), Protected (owner may choose to temporarily reveal to others), Partially Public (only part of the content is visible to all), Hidden (no player can observe). Can be changed during gameplay by <effect>s — a face-down card flipped face-up changes from Hidden to Public."
+      },
+      "type": "enum",
+      "enum": {
+        "public": {
+          "zh": "公开——所有 <player> 均可无条件观察此信息。游戏规则强制此信息对所有玩家可见，不可隐藏。",
+          "en": "Public — all <player>s can observe this information unconditionally. Game rules mandate this information be visible to all players and cannot be hidden."
+        },
+        "private": {
+          "zh": "私有——仅拥有此信息的 <player> 可观察，且不可主动向其他 <player> 公开。其他玩家无法通过任何合法手段获知此信息的内容。",
+          "en": "Private — only the <player> who owns this information can observe it, and they cannot voluntarily reveal it to other <player>s. Other players have no legitimate means to learn its content."
+        },
+        "protected": {
+          "zh": "保护——拥有此信息的 <player> 可观察，且可选择是否在特定时刻向其他 <player> 临时展示。展示行为由拥有者主动控制，展示后信息自动恢复为仅拥有者可观察。",
+          "en": "Protected — the <player> who owns this information can observe it and may choose to temporarily reveal it to other <player>s at specific moments. Revelation is actively controlled by the owner; after revelation, the information automatically returns to owner-only visibility."
+        },
+        "partially_public": {
+          "zh": "部分公开——一个信息集合中，一部分对所有 <player> 可见，其余部分为私有或隐藏。这涵盖两种典型场景：(1) 单一实体内部的部分可见——如一张卡牌的费用公开但效果文本隐藏，或卡牌背面全员可见而正面内容私有；(2) 集合中部分实体可见、部分不可见——如一个牌堆仅最顶上一张正面翻出（全员可见），其余全部背面朝下（隐藏）。核心判定标准：信息集合整体不被完全暴露，存在可见子集与不可见子集的边界。",
+          "en": "Partially public — within a collection of information, one part is visible to all <player>s while the rest is private or hidden. This covers two typical scenarios: (1) partial visibility within a single entity — e.g., a card's cost is public but its effect text is hidden, or a card's back is visible to all while its front content is private; (2) some entities in a collection are visible while others are not — e.g., a deck where only the top card is face-up (visible to all) and all others are face-down (hidden). The core criterion: the information collection as a whole is not fully exposed; there exists a boundary between the visible subset and the invisible subset."
+        },
+        "hidden": {
+          "zh": "隐藏——所有 <player> 均不可观察此信息。信息存在于游戏状态中但不对任何玩家暴露，通常用于随机化组件（如牌堆顶部的未知卡牌）或尚未揭晓的游戏内容。",
+          "en": "Hidden — no <player> can observe this information. The information exists in the game state but is exposed to no one, typically used for randomized components (e.g., unknown cards on top of a deck) or unrevealed game content."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "procedure",
-      "name": { "zh": "流程", "en": "Procedure" },
+      "name": {
+        "zh": "流程",
+        "en": "Procedure"
+      },
       "level": 0,
       "abstract": true,
       "definition": {
-        "zh": "具有明确开始与结束边界的执行单元。Procedure 是游戏流程的骨架——它定义了「游戏现在处于什么阶段」「接下来该做什么」。Procedure 之间的嵌套是自由形式的：Round 里可以有 Phase，Phase 里可以有 Round，Turn 里可以有 Phase，一整局游戏本身也可以视为一个 Round。没有固定的「轮→回合→阶段」层级，具体嵌套关系由每款游戏的规则决定。所有 Procedure 子类（Round、Turn、Phase 等）共享同一套字段，区别仅在于语义，不在结构。",
-        "en": "An execution unit with clear start and end boundaries. Procedure is the skeleton of game flow. Nesting among Procedures is free-form: a Round can contain Phases, a Phase can contain Rounds, a Turn can contain Phases, and an entire game can itself be a Round. There is no fixed 'Round → Turn → Phase' hierarchy — the nesting is determined by each game's rules. All Procedure subclasses (Round, Turn, Phase, etc.) share the same fields; they differ only in semantics, not structure."
+        "zh": "具有明确开始与结束边界的执行单元。<procedure> 是游戏流程的骨架——它定义了「游戏现在处于什么阶段」「接下来该做什么」。嵌套是自由形式的：<round> 里可以有 <phase>，<phase> 里可以有 <round>，<turn> 里可以有 <phase>，一整局游戏本身也可以视为一个 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。所有 <procedure> 子类（<round>、<turn>、<phase> 等）共享同一套字段，区别仅在于语义，不在结构。",
+        "en": "An execution unit with clear start and end boundaries. <procedure> is the skeleton of game flow. Nesting is free-form: a <round> can contain <phase>s, a <phase> can contain <round>s, a <turn> can contain <phase>s, and an entire game can itself be a <round>. There is no fixed hierarchy — the nesting is determined by each game's rules. All <procedure> subclasses (<round>, <turn>, <phase>, etc.) share the same fields; they differ only in semantics, not structure."
       },
-      "fields": {
+      "start": {
+        "type": "condition | trigger",
+        "description": {
+          "zh": "此流程的进入条件。定义了「什么情况发生时，此流程被激活」。可以是一个 Condition（如「所有玩家完成行动后」），也可以是一个 Trigger（如「回合标记重置时」）。当此条件满足时，程序将执行权移入此 Procedure。",
+          "en": "The entry condition for this procedure. Defines 'when does this procedure become active'. Can be a Condition or a Trigger. When met, the program transfers execution into this Procedure."
+        }
+      },
+      "end": {
+        "type": "condition | trigger",
+        "description": {
+          "zh": "此流程的退出条件。定义了「什么情况发生时，此流程终止」。当此条件满足时，程序将执行权从本 Procedure 移出，交给下一个 Procedure 或父级 Procedure。如果是循环型 Procedure（如 Round），end 条件触发后可能回到自身的 start，形成循环。",
+          "en": "The exit condition for this procedure. Defines 'when does this procedure terminate'. When met, the program transfers execution out of this Procedure. For cyclical Procedures (e.g. a Round), the end condition may loop back to its own start, forming a cycle."
+        }
+      },
+      "children": {
+        "type": "<procedure>[]",
+        "description": {
+          "zh": "嵌套在此流程内部的子流程。子流程在当前 <procedure> 激活后按游戏规则定义的顺序执行。<round>、<turn>、<phase> 可以任意嵌套——一个 <phase> 里可能包含多个 <round>，一个 <turn> 里可能有多个 <phase>。若为空，表示此 <procedure> 是叶子节点，直接包含 <action> 而非子流程。",
+          "en": "Child procedures nested within this procedure. Executed in the order defined by game rules while the parent is active. <round>, <turn>, and <phase> can nest in any arrangement — a <phase> may contain multiple <round>s, a <turn> may contain multiple <phase>s. If empty, this is a leaf <procedure> that contains Actions directly."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "id",
-            "type": "string",
             "description": {
-              "zh": "该流程实例的唯一标识符。",
-              "en": "Unique identifier for this procedure instance."
+              "zh": "Procedure 的唯一标识符。用于在规则中精确引用特定流程实例，管理流程间的嵌套和跳转关系。",
+              "en": "Unique identifier of the Procedure. Used to precisely reference a specific procedure instance and manage nesting and transitions."
             }
           },
           {
             "id": "start",
-            "type": "condition | trigger",
             "description": {
-              "zh": "此流程的进入条件。定义了「什么情况发生时，此流程被激活」。可以是一个 Condition（如「所有玩家完成行动后」），也可以是一个 Trigger（如「回合标记重置时」）。当此条件满足时，程序将执行权移入此 Procedure。",
-              "en": "The entry condition for this procedure. Defines 'when does this procedure become active'. Can be a Condition or a Trigger. When met, the program transfers execution into this Procedure."
+              "zh": "此 Procedure 的进入条件——什么情况发生时此流程被激活。可以是 <condition> 或 Trigger。定义「什么时候开始」。",
+              "en": "Entry condition for this Procedure — when does it become active. Can be a <condition> or Trigger. Defines 'when to start'."
             }
           },
           {
             "id": "end",
-            "type": "condition | trigger",
             "description": {
-              "zh": "此流程的退出条件。定义了「什么情况发生时，此流程终止」。当此条件满足时，程序将执行权从本 Procedure 移出，交给下一个 Procedure 或父级 Procedure。如果是循环型 Procedure（如 Round），end 条件触发后可能回到自身的 start，形成循环。",
-              "en": "The exit condition for this procedure. Defines 'when does this procedure terminate'. When met, the program transfers execution out of this Procedure. For cyclical Procedures (e.g. a Round), the end condition may loop back to its own start, forming a cycle."
+              "zh": "此 Procedure 的退出条件——什么情况发生时此流程终止。循环型 Procedure 的 end 可能回到自身的 start，形成循环。定义「什么时候结束」。",
+              "en": "Exit condition for this Procedure — when does it terminate. For cyclical Procedures, the end may loop back to start. Defines 'when to end'."
             }
           }
         ],
         "optional": [
           {
             "id": "children",
-            "type": "procedure[]",
             "description": {
-              "zh": "嵌套在此流程内部的子流程。子流程在当前 Procedure 激活后按游戏规则定义的顺序执行。Round、Turn、Phase 可以任意嵌套——一个 Phase 里可能包含多个 Round，一个 Turn 里可能有多个 Phase。若为空，表示此 Procedure 是叶子节点，直接包含 Action 而非子流程。",
-              "en": "Child procedures nested within this procedure. Executed in the order defined by game rules while the parent is active. Round, Turn, and Phase can nest in any arrangement — a Phase may contain multiple Rounds, a Turn may contain multiple Phases. If empty, this is a leaf Procedure that contains Actions directly."
+              "zh": "嵌套在此 Procedure 内部的子流程。空数组表示叶子节点，直接包含 <action> 而非子流程。<round>、<turn>、<phase> 可任意嵌套。",
+              "en": "Child Procedures nested within this one. Empty means a leaf node containing <action>s directly. <round>, <turn>, <phase> can nest freely."
             }
           }
         ]
@@ -465,23 +865,32 @@
     },
     {
       "id": "round",
-      "name": { "zh": "轮", "en": "Round" },
+      "name": {
+        "zh": "轮",
+        "en": "Round"
+      },
       "level": 1,
       "parent": "procedure",
       "abstract": false,
       "definition": {
-        "zh": "游戏程序结构中一个完整的、可重复的循环单元。一轮内部结构固定——每次循环执行相同的 Phase 序列。一整局游戏本身就是一个最外层的 Round（「再来一局」=「再来一轮」）。Round 的 children 只能是 Phase：Round 不直接包含 Turn 或另一个 Round，它通过 Phase 间接组织下级流程。",
-        "en": "A complete, repeatable cycle in game procedure structure. Its internal structure is fixed — each cycle executes the same sequence of Phases. An entire game is itself an outermost Round. A Round's children can only be Phases: a Round does not directly contain Turns or other Rounds; it organizes lower-level flow indirectly through Phases."
+        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。一轮内部结构固定——每次循环执行相同的 <phase> 序列。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 children 只能是 <phase>：<round> 不直接包含 <turn> 或另一个 <round>，它通过 <phase> 间接组织下级流程。",
+        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. Its internal structure is fixed — each cycle executes the same sequence of <phase>s. An entire game is itself an outermost <round>. A <round>'s children can only be <phase>s: a <round> does not directly contain <turn>s or other <round>s; it organizes lower-level flow indirectly through <phase>s."
       },
-      "fields": {
+      "children": {
+        "type": "<phase>[]",
+        "description": {
+          "zh": "此轮包含的阶段序列。每轮按此顺序执行各 <phase>。仅允许 <phase> 类型的 <procedure> 作为直接子节点。",
+          "en": "The sequence of Phases in this round. Each cycle executes Phases in this order. Only <phase>-type <procedure>s are allowed as direct children."
+        }
+      },
+      "constraints": {
         "required": [],
         "optional": [
           {
             "id": "children",
-            "type": "phase[]",
             "description": {
-              "zh": "此轮包含的阶段序列。每轮按此顺序执行各 Phase。仅允许 Phase 类型的 Procedure 作为直接子节点。",
-              "en": "The sequence of Phases in this round. Each cycle executes Phases in this order. Only Phase-type Procedures are allowed as direct children."
+              "zh": "此 Round 包含的 <phase> 序列。每轮按此顺序执行各 Phase。仅允许 <phase> 作为直接子节点。",
+              "en": "The sequence of <phase>s in this Round. Each cycle executes Phases in this order. Only <phase>s are allowed as direct children."
             }
           }
         ]
@@ -489,32 +898,32 @@
     },
     {
       "id": "turn",
-      "name": { "zh": "回合", "en": "Turn" },
+      "name": {
+        "zh": "回合",
+        "en": "Turn"
+      },
       "level": 1,
       "parent": "procedure",
       "abstract": false,
       "definition": {
-        "zh": "将排他的行动权授予单一玩家的执行单元。同一时刻至多一个 Turn 处于激活状态。Turn 的 children 只能是 Phase——即使是「玩家选择一个行动」这种简单场景，也隐含了一个「选择行动阶段」。Turn 不直接包含 Action，它通过 Phase 定义玩家在此回合内可以做什么。",
-        "en": "An execution unit that grants exclusive action rights to a single player. At most one Turn is active at any given moment. A Turn's children can only be Phases — even a simple 'player chooses an action' scenario implicitly contains a 'choose action phase'. A Turn does not directly contain Actions; it defines what a player can do during this turn through its Phases."
+        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。<turn> 的 children 只能是 <phase>——即使是「玩家选择一个行动」这种简单场景，也隐含了一个「选择行动阶段」。<turn> 不直接包含 <action>，它通过 <phase> 定义玩家在此回合内可以做什么。",
+        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. A <turn>'s children can only be <phase>s — even a simple 'player chooses an action' scenario implicitly contains a 'choose action phase'. A <turn> does not directly contain <action>s; it defines what a player can do during this turn through its <phase>s."
       },
-      "fields": {
-        "required": [
-          {
-            "id": "player",
-            "type": "player",
-            "description": {
-              "zh": "此回合所属的玩家。回答了「轮到谁了」的问题。当 Turn 激活时，只有该玩家可以执行合法 Action。",
-              "en": "The player who owns this turn. Answers 'whose turn is it'. When the Turn is active, only this player can execute legal Actions."
-            }
-          }
-        ],
+      "children": {
+        "type": "<phase>[]",
+        "description": {
+          "zh": "此回合包含的阶段序列。仅允许 <phase> 类型的 <procedure> 作为直接子节点。",
+          "en": "The sequence of Phases in this turn. Only <phase>-type <procedure>s are allowed as direct children."
+        }
+      },
+      "constraints": {
+        "required": [],
         "optional": [
           {
             "id": "children",
-            "type": "phase[]",
             "description": {
-              "zh": "此回合包含的阶段序列。仅允许 Phase 类型的 Procedure 作为直接子节点。",
-              "en": "The sequence of Phases in this turn. Only Phase-type Procedures are allowed as direct children."
+              "zh": "此 Turn 包含的 <phase> 序列。仅允许 <phase> 作为直接子节点。空数组表示此 Turn 直接包含 Action。",
+              "en": "The sequence of <phase>s in this Turn. Only <phase>s are allowed as direct children."
             }
           }
         ]
@@ -522,88 +931,642 @@
     },
     {
       "id": "phase",
-      "name": { "zh": "阶段", "en": "Phase" },
+      "name": {
+        "zh": "阶段",
+        "en": "Phase"
+      },
       "level": 1,
       "parent": "procedure",
       "abstract": false,
       "definition": {
-        "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。Phase 是唯一承载「规则上下文」的 Procedure——当前 Phase 决定了哪些 Action 合法、哪些 Effect 生效。Phase 不强制绑定玩家，允许完全的自动机阶段（无人阶段，仅有 Trigger 驱动）。Phase 的 children 可以是 Round、Turn 或另一个 Phase，也可以是叶子节点（直接包含 Action 列表）。",
-        "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. Phase is the only Procedure that carries 'rule context' — the current Phase determines which Actions are legal and which Effects are active. A Phase is not required to bind to a player, allowing fully automated phases (player-less, driven only by Triggers). A Phase's children can be Rounds, Turns, other Phases, or it can be a leaf node containing an Action list directly."
+        "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。<phase> 继承自 <procedure>。是唯一承载「规则上下文」的 <procedure>——当前 <phase> 决定了哪些 <action> 合法、哪些 <effect> 生效。不强制绑定 <player>，允许完全的自动机阶段（无人阶段，仅有 <trigger> 驱动）。<phase> 的 children 可以是 <round>、<turn> 或另一个 <phase>，也可以是叶子节点（直接包含 <action> 列表）。",
+        "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. <phase> extends <procedure>. It is the only <procedure> that carries 'rule context' — the current <phase> determines which <action>s are legal and which <effect>s are active. Not required to bind to a <player>, allowing fully automated phases (player-less, driven only by <trigger>s). A <phase>'s children can be <round>s, <turn>s, other <phase>s, or it can be a leaf node containing an <action> list directly."
       },
-      "fields": {
+      "children": {
+        "type": "<procedure>[]",
+        "description": {
+          "zh": "此阶段包含的子流程。可以包含 <round>、<turn>、<phase> 任意组合。若为空，此 <phase> 为叶子节点——直接暴露一组合法 <action> 供玩家选择（或完全由 Trigger 自动驱动）。",
+          "en": "Child procedures within this phase. Can contain any combination of <round>s, <turn>s, or <phase>s. If empty, this is a leaf <phase> — it directly exposes a set of legal Actions for the player to choose from (or is fully driven by Triggers)."
+        }
+      },
+      "actions": {
+        "type": "<action>[]",
+        "description": {
+          "zh": "此阶段内玩家可执行的 <action> 列表。仅当 children 为空（叶子 <phase>）时此字段有意义——它定义了当前规则上下文中的合法行动。非叶子 <phase> 的合法 <action> 由其子流程决定。",
+          "en": "The list of Actions a player can execute during this phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context. Non-leaf Phases derive their legal actions from their children."
+        }
+      },
+      "constraints": {
         "required": [],
         "optional": [
           {
             "id": "children",
-            "type": "procedure[]",
             "description": {
-              "zh": "此阶段包含的子流程。可以包含 Round、Turn、Phase 任意组合。若为空，此 Phase 为叶子节点——直接暴露一组合法 Action 供玩家选择（或完全由 Trigger 自动驱动）。",
-              "en": "Child procedures within this phase. Can contain any combination of Rounds, Turns, or Phases. If empty, this is a leaf Phase — it directly exposes a set of legal Actions for the player to choose from (or is fully driven by Triggers)."
+              "zh": "此 Phase 包含的子流程——可以是 <round>、<turn>、<phase> 任意组合。若为空，此 Phase 为叶子节点，直接暴露一组合法 <action>。",
+              "en": "Child Procedures within this Phase — can be any combination of <round>s, <turn>s, <phase>s. If empty, this is a leaf Phase exposing legal <action>s directly."
             }
           },
           {
             "id": "actions",
-            "type": "action[]",
             "description": {
-              "zh": "此阶段内玩家可执行的 Action 列表。仅当 children 为空（叶子 Phase）时此字段有意义——它定义了当前规则上下文中的合法行动。非叶子 Phase 的合法 Action 由其子流程决定。",
-              "en": "The list of Actions a player can execute during this phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context. Non-leaf Phases derive their legal actions from their children."
+              "zh": "此 Phase 内玩家可执行的 <action> 列表。仅当 children 为空（叶子 Phase）时此字段有意义——它定义了当前规则上下文中的合法行动。",
+              "en": "The list of <action>s available during this Phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context."
             }
           }
         ]
       }
     },
     {
-      "definition": {
-        "zh": "对象在区域之间移动或所有权变更的事件。",
-        "en": "An event where an object moves between zones or its ownership changes."
+      "id": "transfer",
+      "name": {
+        "zh": "转移",
+        "en": "Transfer"
       },
-      "fields": {
+      "level": 1,
+      "parent": "event",
+      "abstract": false,
+      "definition": {
+        "zh": "<object> 在 <zone> 之间移动或 <ownership> 变更的 <event>。<transfer> 继承自 <event>。",
+        "en": "An <event> where an <object> moves between <zone>s or its <ownership> changes. <transfer> extends <event>."
+      },
+      "source": {
+        "type": "<zone>",
+        "description": {
+          "zh": "<object> 移出的源 <zone>。必须是游戏中已定义的一个 <zone> 实例。",
+          "en": "The <zone> the <object> moves from. Must be a defined <zone> instance."
+        }
+      },
+      "destination": {
+        "type": "<zone>",
+        "description": {
+          "zh": "<object> 移入的目标 <zone>。可以是另一个 <zone>，也可以与 source 相同（如区域内重排序）。",
+          "en": "The destination <zone> the <object> moves to. May differ from source or be the same (e.g. reordering within a <zone>)."
+        }
+      },
+      "what": {
+        "type": "<object>",
+        "description": {
+          "zh": "被移动的 <object>。指向游戏中一个具体的 <object> 实例。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。",
+          "en": "The <object> being moved. References a concrete <object> instance. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon."
+        }
+      },
+      "ownership_change": {
+        "type": "boolean",
+        "default": false,
+        "description": {
+          "zh": "是否同时改变 <ownership>。若为 true，则 destination <zone> 关联的 <player> 成为新所有者。",
+          "en": "Whether <ownership> also changes. If true, the <player> associated with the destination <zone> becomes the new owner."
+        }
+      },
+      "quantity": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "转移的 <object> 数量。<token>（可互换）可能 > 1；<piece>（不可互换）通常 = 1。",
+          "en": "Quantity of <object>s transferred. <token>s (interchangeable) may be > 1; <piece>s (unique) are usually = 1."
+        }
+      },
+      "constraints": {
         "required": [
           {
             "id": "source",
-            "type": "zone",
             "description": {
-              "zh": "对象移出的源区域。必须是游戏中已定义的一个 Zone 实例。",
-              "en": "The zone the object moves from. Must be a defined Zone instance."
+              "zh": "<object> 移出的源 <zone>。必须是游戏中已定义的一个 <zone> 实例。没有 source，转移无从发生。",
+              "en": "The <zone> the <object> moves from. Must be a defined <zone> instance. Without a source, the transfer cannot occur."
             }
           },
           {
-            "id": "target",
-            "type": "zone",
+            "id": "destination",
             "description": {
-              "zh": "对象移入的目标区域。可以是另一个 Zone，也可以与 source 相同（如区域内重排序）。",
-              "en": "The zone the object moves to. May differ from source or be the same (e.g. reordering within a zone)."
+              "zh": "<object> 移入的目标 <zone>。可以是另一个 <zone>，也可以与 source 相同（如区域内重排序）。",
+              "en": "The destination <zone> the <object> moves to. May differ from source or be the same (e.g., reordering within a <zone>)."
             }
           },
           {
             "id": "what",
-            "type": "object",
             "description": {
-              "zh": "被移动的对象。指向游戏中一个具体的 Object 实例。",
-              "en": "The object being moved. References a concrete Object instance."
+              "zh": "被移动的 <object>。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。",
+              "en": "The <object> being moved. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon."
             }
           }
         ],
         "optional": [
           {
             "id": "ownership_change",
-            "type": "boolean",
-            "default": false,
             "description": {
-              "zh": "是否同时改变所有权。若为 true，则 target 区域关联的 Player 成为新所有者。",
-              "en": "Whether ownership also changes. If true, the player associated with the target zone becomes the new owner."
+              "zh": "是否同时改变 <ownership>。若为 true，destination <zone> 关联的 <player> 成为新所有者。默认 false。",
+              "en": "Whether <ownership> also changes. If true, the <player> associated with the destination <zone> becomes the new owner. Default false."
             }
           },
           {
             "id": "quantity",
-            "type": "integer",
-            "default": 1,
             "description": {
-              "zh": "转移的对象数量。Token（可互换）可能 > 1；Piece（不可互换）通常 = 1。",
-              "en": "Quantity transferred. Tokens (interchangeable) may be > 1; Pieces (unique) are usually = 1."
+              "zh": "转移的 <object> 数量。<token>（可互换）可能大于 1；<piece>（不可互换）通常为 1。默认 1。",
+              "en": "Quantity of <object>s transferred. <token>s (interchangeable) may be > 1; <piece>s (unique) are usually 1. Default 1."
             }
           }
         ]
+      }
+    },
+    {
+      "id": "action",
+      "name": {
+        "zh": "行动",
+        "en": "Action"
+      },
+      "level": 1,
+      "parent": "event",
+      "abstract": false,
+      "definition": {
+        "zh": "由 <player> 主动发起并执行的 <event>。<action> 继承自 <event>。它是对游戏规则说「我现在要做这件事」的声明——玩家做出决策并执行，该 <action> 的发生随即成为 <trigger> 的激活原因，由 <trigger> 启动后续的 <effect> 结算（支付 <cost>、改变 <state> 等）。与 <trigger> 的关系：<action> 是原因，<trigger> 是响应机制——一切后续的游戏状态变更由 <trigger> 而非 <action> 直接发起。<action> 的合法性由当前 <phase> 的规则上下文决定。",
+        "en": "An <event> actively initiated and executed by a <player>. <action> extends <event>. It is a declaration to the game rules: 'I am now doing this' — the player decides and executes, and the occurrence of this <action> then becomes the activation cause for a <trigger>, which launches the subsequent <effect> resolution (paying <cost>, changing <state>, etc.). Relationship with <trigger>: <action> is the cause, <trigger> is the response mechanism — all subsequent game state changes are initiated by the <trigger>, not by the <action> directly. An <action>'s legality is determined by the current <phase>'s rule context."
+      },
+      "actor": {
+        "type": "<player>",
+        "description": {
+          "zh": "从 <event> 继承，此处窄化：<action> 的执行者始终是一个 <player>，不可为 null。每个 <action> 必有一个做出决策的玩家——这正是 <action> 与 <trigger> 的本质区别。",
+          "en": "Inherited from <event>, narrowed here: the executor of an <action> is always a <player>, never null. Every <action> has a decision-making player — this is the essential difference between an <action> and a <trigger>."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "actor",
+            "description": {
+              "zh": "执行此 <action> 的 <player>。从 <event> 继承并窄化：<action> 的 actor 始终是一个 <player>，不可为 null。每个 <action> 必有一个做出决策的玩家——这正是 <action> 与 <trigger> 的本质区别。",
+              "en": "The <player> executing this <action>. Inherited from <event> and narrowed: an <action>'s actor is always a <player>, never null. Every <action> has a decision-making player — the essential difference from <trigger>."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "endgame_condition",
+      "name": {
+        "zh": "终局条件",
+        "en": "Endgame Condition"
+      },
+      "level": 1,
+      "parent": "condition",
+      "abstract": false,
+      "definition": {
+        "zh": "标记游戏终局流程启动的 <condition>。<endgame_condition> 继承自 <condition>——结构上与普通 <condition> 无异，区别仅在于语义角色：当此 <condition> 评估为 true 时，游戏进入终局流程。终局流程的具体行为由游戏规则定义——可能是立即终止（如「<deck> 被抽空时游戏立刻结束」），也可能先执行一个收尾阶段（如「触发后所有 <player> 补完当前 <round> 再结算」）。典型触发条件：「任意 <player> 达到 10 分」「最后一张 <card> 被抽走」「所有 <tile> 放置完毕」。一局游戏可以有多个 <endgame_condition>——任一满足即触发终局流程。",
+        "en": "A <condition> that marks the start of the endgame process. <endgame_condition> extends <condition> — structurally identical to an ordinary <condition>, differing only in its semantic role: when this <condition> evaluates to true, the game enters its endgame process. What happens during endgame is defined by the specific game's rules — it could be immediate termination (e.g., 'game ends instantly when the <deck> runs out'), or a wrap-up phase first (e.g., 'all <player>s finish the current <round> before final scoring'). Typical trigger conditions: 'any <player> reaches 10 points', 'the last <card> is drawn', 'all <tile>s have been placed'. A game may have multiple <endgame_condition>s — satisfying any one triggers the endgame process."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "victory_condition",
+      "name": {
+        "zh": "胜利条件",
+        "en": "Victory Condition"
+      },
+      "level": 1,
+      "parent": "condition",
+      "abstract": false,
+      "definition": {
+        "zh": "在终局流程完成后、决定哪位 <player> 胜出的 <condition>。<victory_condition> 继承自 <condition>——结构上与普通 <condition> 无异，语义角色是判决胜负。与 <endgame_condition> 的分工：<endgame_condition> 回答「游戏何时结束」，<victory_condition> 回答「结束后谁赢」。典型例子：「分数最高的 <player> 获胜」「最后存活的 <player> 获胜」「所有 <player> 共同获胜（合作游戏）」。允许多人平局，允许合作胜利，允许无人获胜（全员失败）。",
+        "en": "A <condition> that determines which <player> wins, evaluated after the endgame process completes. <victory_condition> extends <condition> — structurally identical to an ordinary <condition>, its semantic role is to adjudicate victory. Division of labor with <endgame_condition>: <endgame_condition> answers 'when does the game end', <victory_condition> answers 'who wins after it ends'. Typical examples: 'the <player> with the highest score wins', 'the last surviving <player> wins', 'all <player>s win together (cooperative game)'. Allows for ties, cooperative victories, and scenarios where no one wins (everyone loses)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "trigger",
+      "name": {
+        "zh": "触发",
+        "en": "Trigger"
+      },
+      "level": 1,
+      "parent": "event",
+      "abstract": false,
+      "definition": {
+        "zh": "游戏规则中负责启动 <event> 的统一机制。<trigger> 继承自 <event>。其角色是「事件调度器」——当一个 <event> 发生（如 <action> 执行完毕、<phase> 切换、<condition> 满足）时，<trigger> 被激活，并启动对应的后续 <event>（如结算 <effect>、执行 <transfer>、改变 <state>）。一切游戏状态变更最终都由 <trigger> 负责发起。<trigger> 不由任何 <player> 直接控制，而由规则自动响应——它的 actor 始终为 null。与 <action> 的关系：<action> 是 <trigger> 最常见的触发原因——玩家打出一张牌（<action>），规则自动识别此事件并激活对应的 <trigger>，<trigger> 再启动「支付费用」「获得资源」「造成伤害」等后续 <event>。",
+        "en": "The unified mechanism in game rules responsible for launching <event>s. <trigger> extends <event>. Its role is that of an 'event dispatcher' — when an <event> occurs (e.g., an <action> completes, a <phase> transitions, a <condition> is met), the <trigger> is activated and launches corresponding follow-up <event>s (e.g., resolving an <effect>, executing a <transfer>, changing a <state>). All game state changes are ultimately initiated by a <trigger>. A <trigger> is not directly controlled by any <player> — it responds automatically to the rules, and its actor is always null. Relationship with <action>: <action> is the most common cause of <trigger> activation — a player plays a card (<action>), the rules automatically recognize this event and activate the corresponding <trigger>, which then launches follow-up <event>s such as 'pay cost', 'gain resource', 'deal damage'."
+      },
+      "actor": {
+        "type": "null",
+        "description": {
+          "zh": "从 <event> 继承，此处窄化为 null：<trigger> 不由任何 <player> 主动发起，没有执行者。这正是 <trigger> 与 <action> 的本质区别。",
+          "en": "Inherited from <event>, narrowed here to null: a <trigger> is not initiated by any <player> and has no executor. This is the essential difference between a <trigger> and an <action>."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "resolve",
+      "name": {
+        "zh": "结算",
+        "en": "Resolve"
+      },
+      "level": 1,
+      "parent": "event",
+      "abstract": false,
+      "definition": {
+        "zh": "将一个已被激活的 <effect> 的 <content> 实际应用到游戏 <state> 的 <event>。<resolve> 继承自 <event>。它是 <effect> 生命周期的最后一步：<trigger> 激活 <effect>（进入 pending 状态后），<resolve> 将 <content> 中描述的事件描述实例化为真实的 <event>（如 <transfer>、<state> 变更等）并执行。结算完毕后，该 <effect> 回归静默（dormant）或从游戏中移除。<resolve> 本身是规则自动执行的——actor 为 null。",
+        "en": "An <event> that actually applies the <content> of an activated <effect> to the game <state>. <resolve> extends <event>. It is the final step of the <effect> lifecycle: after a <trigger> activates the <effect> (placing it in pending state), <resolve> instantiates the event descriptions in <content> as real <event>s (e.g., <transfer>s, <state> changes, etc.) and executes them. After resolution, the <effect> returns to dormant state or is removed from the game. <resolve> is automatically executed by the rules — its actor is null."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<content>",
+            "description": {
+              "zh": "<resolve> 的本质是将 <content> 实例化为真实的 <event> 并应用到游戏状态——没有 <content>，<resolve> 无事可做。此约束要求子类提供一份可结算的 <content>，指明结算时应发生哪些具体事件。",
+              "en": "The essence of <resolve> is instantiating <content> as real <event>s and applying them to game state — without <content>, <resolve> has nothing to do. This constraint requires subclasses to provide a resolvable <content> specifying what concrete events should occur during resolution."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "shuffle",
+      "name": {
+        "zh": "洗混",
+        "en": "Shuffle"
+      },
+      "level": 1,
+      "parent": "event",
+      "abstract": false,
+      "definition": {
+        "zh": "对某个 <zone>（通常为 <deck> 类型 <reserve>）中全部或部分 <object> 的顺序进行随机重排的 <event>。<shuffle> 继承自 <event>。其结果是使 <object> 的排列从当前已知或可推测的顺序变为不可预测的顺序，同时将该 <zone> 的信息状态从 Partially Public 重置为 Hidden。<shuffle> 可由 <player> 作为 <action> 的一部分主动执行（actor 为 <player>），也可由规则通过 <trigger> 自动要求（actor 为 null）——例如「每当 <discard_pile> 被洗入 <deck> 时自动洗混」。",
+        "en": "An <event> that randomly reorders all or some <object>s in a <zone> (typically a <deck>-type <reserve>). <shuffle> extends <event>. Its result is transitioning the object ordering from a known or inferable sequence to an unpredictable one, while resetting the <zone>'s information state from Partially Public to Hidden. <shuffle> may be actively performed by a <player> as part of an <action> (actor is <player>), or automatically required by rules via a <trigger> (actor is null) — e.g., 'shuffle automatically whenever the <discard_pile> is merged into the <deck>'."
+      },
+      "target": {
+        "type": "<zone>",
+        "description": {
+          "zh": "从 <event> 继承，此处窄化为 <zone>：被洗混的目标区域。通常为 <deck> 类型 <reserve>，该 <zone> 中的 <object> 顺序将被随机重排。",
+          "en": "Inherited from <event>, narrowed here to <zone>: the target zone being shuffled. Typically a <deck>-type <reserve>, whose <object> ordering will be randomly rearranged."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "reserve",
+      "name": {
+        "zh": "储备区",
+        "en": "Reserve"
+      },
+      "level": 1,
+      "parent": "zone",
+      "abstract": true,
+      "definition": {
+        "zh": "一种用于存放游戏组件的存储型 <zone>。<reserve> 继承自 <zone>，abstract。核心语义是「存放备用」——游戏物件在此被汇集、叠放或陈列，作为游戏物资的库存。物件在 <reserve> 中处于「备用」状态，直到被抽取、购买或以其他方式移入使用中。典型的 <reserve> 子类包括：<supply>（<token>/<resource> 的可计数存储池）、<market>（待获取 <piece> 的陈列区）、<deck>（按序抽取的叠放区）、<pool>（随机化组件的存储区）。",
+        "en": "A storage-type <zone> for holding game components. <reserve> extends <zone>, abstract. Core semantic is 'keeping in storage' — game objects are pooled, stacked, or displayed here as the game's material inventory. Objects in a <reserve> are in a 'reserve' state until drawn, purchased, or otherwise moved into active use. Typical <reserve> subclasses: <supply> (countable storage pool of <token>s/<resource>s), <market> (display area of acquirable <piece>s), <deck> (ordered draw stack), <pool> (storage zone for randomizable components)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "discard_pile",
+      "name": {
+        "zh": "弃牌堆",
+        "en": "Discard Pile"
+      },
+      "level": 1,
+      "parent": "zone",
+      "abstract": false,
+      "definition": {
+        "zh": "存放已使用、已消耗或主动弃置的游戏物件的 <zone>。<discard_pile> 继承自 <zone>。物件离开活跃使用状态后进入弃牌堆——卡牌被使用后弃入、<token> 被消耗后归入、<piece> 被摧毁后置入。通常是面朝上的（全员可见），内容物成为所有玩家的公共信息。在许多游戏中可被重新洗入 <deck> 以实现物件的循环复用。在仅有一叠共用卡牌且使用后即弃入的游戏中，弃牌堆就是 <deck> 的「反面」——一个空了，另一个满到可以洗回来。",
+        "en": "A <zone> that holds game components that have been used, consumed, or voluntarily discarded. <discard_pile> extends <zone>. Objects enter after leaving active use — cards played and resolved, <token>s consumed, <piece>s destroyed. Typically face-up (visible to all), making its contents public information. In many games it can be reshuffled back into the <deck> to recycle components. In games with a single shared deck, the <discard_pile> is the <deck>'s 'mirror' — when one empties, the other is full enough to shuffle back."
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_zone",
+      "name": {
+        "zh": "玩家区域",
+        "en": "Player Zone"
+      },
+      "level": 1,
+      "parent": "zone",
+      "abstract": true,
+      "definition": {
+        "zh": "归属于特定 <player> 的 <zone>，用于存放该玩家个人的游戏组件。<player_zone> 继承自 <zone>，abstract。是 <reserve> 的对偶概念——<reserve> 存放共享的游戏物资，<player_zone> 存放属于单个玩家的东西。owner 始终指向一个 <player> 实例（不可为 null）。典型的子类包括：<player_holding>（玩家手持或暂存的 <piece>）、<development_area>（玩家已打出/建造、正处于活跃使用中的 <piece> 所在区域）。",
+        "en": "A <zone> that belongs to a specific <player>, holding that player's personal game components. <player_zone> extends <zone>, abstract. It is the counterpart to <reserve> — while <reserve> stores shared game materials, <player_zone> stores what belongs to an individual player. owner is always a <player> reference (never null). Typical subclasses: <player_holding> (where a player keeps <piece>s in hand or temporarily), <development_area> (where a player's played/built <piece>s reside in active use)."
+      },
+      "<ownership>": {
+        "type": "<player>",
+        "description": {
+          "zh": "从 <zone> 继承，此处窄化：<player_zone> 始终归属于一个 <player>，不可为 null。",
+          "en": "Inherited from <zone>, narrowed here: <player_zone> always belongs to a <player>, never null."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "card",
+      "name": {
+        "zh": "卡牌",
+        "en": "Card"
+      },
+      "level": 2,
+      "parent": "piece",
+      "abstract": false,
+      "definition": {
+        "zh": "一种 <piece>，通常为扁平矩形，有正面和背面两个面。<card> 继承自 <piece>。正面承载该卡牌的全部身份信息——名称、费用（<cost>）、效果文本（<effect>）、插画等；背面通常与同 <deck> 中其他卡牌一致，用于隐藏正面信息。卡牌是桌游中最常见的 <piece> 形态，也是 <play> 的主要对象——玩家从手牌（<player_holding> 的子类）中打出卡牌，支付其 <cost>，触发其 <effect>。",
+        "en": "A type of <piece>, typically flat and rectangular, with a front face and a back face. <card> extends <piece>. The front face carries the card's full identity — name, <cost>, <effect> text, illustration, etc.; the back face is usually identical across all cards in a <deck>, serving to conceal the front. Cards are the most common <piece> form in board games and the primary target of <play> — players play cards from their hand (a subclass of <player_holding>), pay their <cost>, and trigger their <effect>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "tile",
+      "name": {
+        "zh": "板块",
+        "en": "Tile"
+      },
+      "level": 2,
+      "parent": "piece",
+      "abstract": false,
+      "definition": {
+        "zh": "一种 <piece>，通常较 <card> 更小更厚，形状不定——六边形、正方形、长方形或不规则形状均有。<tile> 继承自 <piece>。典型例子包括卡坦岛的六角地形板块、卡卡颂的地图板块、Azul 的装饰砖块、多米诺骨牌式拼接板块。",
+        "en": "A type of <piece>, typically smaller and thicker than a <card>, with variable shapes — hexagonal, square, rectangular, or irregular. <tile> extends <piece>. Typical examples: Catan hexagonal terrain tiles, Carcassonne map tiles, Azul decorative tiles, domino-style placement tiles."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "supply",
+      "name": {
+        "zh": "供应堆",
+        "en": "Supply"
+      },
+      "level": 2,
+      "parent": "reserve",
+      "abstract": false,
+      "definition": {
+        "zh": "存放无差别的、所有 <player> 可以直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>。核心特征：<object> 完全相同且可互相替代（通常是 <token> 或 <resource>），获取方式为直接取用而不需抽取或随机——玩家对「取多少」有完全控制力，对「取哪个」无需控制。对象数量可能有限或无限。不支持顺序操作和洗混。典型例子：璀璨宝石的宝石供应堆、卡坦岛的資源卡供应堆。",
+        "en": "A <reserve> that holds undifferentiated <object>s which all <player>s can directly take from. <supply> extends <reserve>. Core traits: <object>s are identical and interchangeable (typically <token>s or <resource>s), accessed by direct taking without drawing or randomness — players fully control 'how many' but don't need to control 'which one'. Quantity may be limited or unlimited. No ordering or shuffling. Typical examples: Splendor's gem supply, Catan's resource card supply."
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "market",
+      "name": {
+        "zh": "市场",
+        "en": "Market"
+      },
+      "level": 2,
+      "parent": "reserve",
+      "abstract": false,
+      "definition": {
+        "zh": "存放可见的、各不相同的 <object>，供 <player> 主动选择获取的 <reserve>。<market> 继承自 <reserve>。与 <supply> 的对偶概念——<supply> 存放无差别物件（<player> 只管「取多少」），<market> 存放各不相同物件（<player> 需要决定「取哪个」）。核心特征：(1) 物件各不相同——通常为 <piece>（如 <card>、<tile>），每件有独立的身份和 <property>；(2) 完全可见——所有物件面朝上陈列，成为所有 <player> 的公共信息；(3) 主动选择——<player> 从陈列的物件中指定具体哪一件来获取，而非无差别取用；(4) 获取通常伴随 <cost>——玩家支付对应费用后获得所选物件。典型例子：璀璨宝石的中央卡牌陈列区、四季物语的公共骰子区、 dominion 的王国卡牌供应区。",
+        "en": "A <reserve> that holds visible, distinct <object>s from which <player>s can actively choose and acquire. <market> extends <reserve>. The counterpart to <supply> — while <supply> holds undifferentiated items (player only decides 'how many'), <market> holds distinct items (player must decide 'which one'). Core traits: (1) items are distinct — typically <piece>s (e.g., <card>, <tile>), each with its own identity and <property>; (2) fully visible — all items are displayed face-up as public information for all <player>s; (3) active choice — <player>s designate a specific item to acquire rather than taking undifferentiated units; (4) acquisition usually involves a <cost> — the player pays the associated cost to obtain the chosen item. Typical examples: Splendor's central card display, Seasons' public dice pool, Dominion's Kingdom card supply."
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "deck",
+      "name": {
+        "zh": "牌堆",
+        "en": "Deck"
+      },
+      "level": 2,
+      "parent": "reserve",
+      "abstract": false,
+      "definition": {
+        "zh": "存放有序叠放的 <object> 序列、从固定位置（通常为顶部）抽取的 <reserve>。<deck> 继承自 <reserve>。与 <supply> 和 <market> 不同——<supply> 无序取用、<market> 主动挑选，<deck> 则是从固定的抽取位置按序获取，玩家无法选择取哪一张。核心特征：(1) 有序序列——<object> 之间有严格的先后顺序；(2) 固定抽取位——每次从同一位置（顶部）取走最上方的一张；(3) 支持洗混——<shuffle> 可随机重排整个 <deck> 的顺序，是 <deck> 特有的操作；(4) 默认隐藏——面朝下放置，<information_visibility> 通常为 hidden，洗混后信息状态重置为不可预测。典型例子：Uno 的抽牌堆、璀璨宝石的贵族卡牌堆、卡坦岛的发展卡牌堆。",
+        "en": "A <reserve> that holds an ordered stack of <object>s, drawn from a fixed position (typically the top). <deck> extends <reserve>. Unlike <supply> (undifferentiated taking) and <market> (active choice), a <deck> is drawn from sequentially at a fixed position — the player cannot choose which one to take. Core traits: (1) ordered sequence — <object>s have a strict sequential order; (2) fixed draw position — the topmost <object> is always taken; (3) supports <shuffle> — randomly reordering is a <deck>-specific operation; (4) hidden by default — face-down, <information_visibility> is typically hidden, reset to unpredictable after <shuffle>. Typical examples: Uno's draw pile, Splendor's noble tile deck, Catan's development card deck."
+      },
+      "<information_visibility>": "hidden",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "pool",
+      "name": {
+        "zh": "池",
+        "en": "Pool"
+      },
+      "level": 2,
+      "parent": "reserve",
+      "abstract": false,
+      "definition": {
+        "zh": "存放各不相同的 <object>、通过随机方式抽取的无序 <reserve>。<pool> 继承自 <reserve>。与 <deck> 的关键区别：<deck> 有固定顺序、从顶部按序抽取、支持 <shuffle>；<pool> 无序、每次抽取为独立随机事件、不支持 <shuffle>——你把手伸进袋子里摸一个，摸到什么是独立概率，不依赖之前的抽取。核心特征：(1) 无序集合——<object> 之间没有先后关系；(2) 随机抽取——每次获取哪一个由随机决定，非玩家选择（区别于 <market>），也非按序获取（区别于 <deck>）；(3) 身份后验——<object> 被抽出后其身份才公开；(4) 概率可调——向 <pool> 中添加或移除特定 <object> 可改变后续抽取的概率分布。典型例子：Scrabble 的字母袋、卡卡颂的板块抽袋、Orléans 的随从抽袋。",
+        "en": "An unordered <reserve> holding distinct <object>s, accessed by random draw. <pool> extends <reserve>. Key difference from <deck>: a <deck> has a fixed order, draws from the top sequentially, and supports <shuffle>; a <pool> is unordered, each draw is an independent random event, and <shuffle> is not supported — you reach into a bag and pull one out; what you get is an independent probability, not dependent on previous draws. Core traits: (1) unordered collection — no sequence among <object>s; (2) random draw — which one you get is determined randomly, not by player choice (unlike <market>) nor by sequence (unlike <deck>); (3) identity post-hoc — the <object>'s identity is only revealed after drawing; (4) adjustable probability — adding or removing specific <object>s changes the probability distribution of subsequent draws. Typical examples: Scrabble's letter bag, Carcassonne's tile bag, Orléans' follower bag."
+      },
+      "<information_visibility>": "hidden",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_holding",
+      "name": {
+        "zh": "玩家保留区",
+        "en": "Player Holding"
+      },
+      "level": 2,
+      "parent": "player_zone",
+      "abstract": false,
+      "definition": {
+        "zh": "归属于单个 <player> 的私有 <player_zone>，用于存放该 <player> 已获得但尚未激活的 <piece> 或 <token>。<player_holding> 继承自 <player_zone>。其核心语义是「保留但未投入使用」——此区域中的 <object> 尚未触发 <effect>，不直接参与公共游戏逻辑（如计分、战斗、生产）。<player> 通常可从 <player_holding> 中打出 <piece> 以将其移入公开区域。常见用途：手牌、已保留的卡牌、秘密任务指示物、未建造的板块、个人目标标记。",
+        "en": "A private <player_zone> belonging to a single <player>, holding <piece>s or <token>s that the <player> has acquired but not yet activated. <player_holding> extends <player_zone>. Its core semantic is 'reserved but not yet in play' — <object>s here have not had their <effect>s triggered and do not directly participate in public game logic (e.g., scoring, combat, production). The <player> can typically <play> <piece>s from their <player_holding> to move them into a public zone. Common uses: hand cards, reserved cards, secret mission tokens, unbuilt tiles, personal objective markers."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "development_area",
+      "name": {
+        "zh": "发展区",
+        "en": "Development Area"
+      },
+      "level": 2,
+      "parent": "player_zone",
+      "abstract": false,
+      "definition": {
+        "zh": "归属于单个 <player> 的公开 <player_zone>，用于放置该 <player> 已打出、已购买或已建造的 <piece>。<development_area> 继承自 <player_zone>。与 <player_holding> 构成对偶——<player_holding> 是「手里攥着还没用的」，<development_area> 是「已经摆出来正在生效的」。核心特征：(1) 公开可见——<information_visibility> 通常为 public，成为所有 <player> 判断对手实力的主要依据；(2) 效果激活——此区域中的 <piece> 的 <effect> 已经或正在持续生效，直接参与公共游戏逻辑；(3) 通常不可逆——<piece> 一旦进入此区域，通常无法退回 <player_holding>，除非规则明确允许。典型例子：万智牌中的战场、璀璨宝石中已购买的卡牌列、卡卡颂中已放置的地图板块。",
+        "en": "A public <player_zone> belonging to a single <player>, holding <piece>s that the <player> has played, purchased, or built. <development_area> extends <player_zone>. The counterpart to <player_holding> — <player_holding> is 'what you're holding but haven't used yet', <development_area> is 'what you've already deployed and is now taking effect'. Core traits: (1) publicly visible — <information_visibility> is typically public, making this the main basis for opponents to assess your strength; (2) effects active — <piece>s here have their <effect>s already or continuously active, directly participating in public game logic; (3) typically irreversible — once a <piece> enters this zone, it usually cannot be returned to <player_holding> unless explicitly allowed by rules. Typical examples: the battlefield in Magic: The Gathering, the purchased card row in Splendor, placed map tiles in Carcassonne."
+      },
+      "<information_visibility>": "public",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "public_board",
+      "name": {
+        "zh": "公共版图",
+        "en": "Public Board"
+      },
+      "level": 2,
+      "parent": "aid",
+      "abstract": false,
+      "definition": {
+        "zh": "用于直观呈现游戏全局或局部 <zone> 布局的大型物理 <aid>。<public_board> 继承自 <aid>。它在视觉上标识一个或多个 <zone> 的位置、边界和内容，但不产生 <zone>——<zone> 的存在和属性完全由游戏规则独立定义，<public_board> 只是把它们画了出来。物理形态不固定，可由多个部分拼接而成。",
+        "en": "A large physical <aid> that visually presents the layout of game-wide or local <zone>s. <public_board> extends <aid>. It visually marks the positions, boundaries, and contents of one or more <zone>s, but does not create <zone>s — <zone>s exist and are defined purely by game rules; the <public_board> merely depicts them. Physical form is not fixed and may consist of multiple assembled parts."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "private_board",
+      "name": {
+        "zh": "个人面板",
+        "en": "Private Board"
+      },
+      "level": 2,
+      "parent": "aid",
+      "abstract": false,
+      "definition": {
+        "zh": "分配给单个 <player> 的专属物理 <aid>，用于标识该 <player> 私有 <zone> 的布局。<private_board> 继承自 <aid>。通常每个 <player> 各持一块，标识该 <player> 专属的 <player_zone>（如 <player_holding>、<development_area>）的位置及内容。与 <public_board> 的区别：前者全员共用，后者每人一块。",
+        "en": "A personal physical <aid> assigned to a single <player>, marking the layout of that <player>'s private <zone>s. <private_board> extends <aid>. Typically each <player> has one, marking the positions and contents of that <player>'s <player_zone>s (e.g., <player_holding>, <development_area>). Difference from <public_board>: the former is shared by all, the latter is one per player."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_aid",
+      "name": {
+        "zh": "玩家提示卡",
+        "en": "Player Aid"
+      },
+      "level": 2,
+      "parent": "aid",
+      "abstract": false,
+      "definition": {
+        "zh": "记录规则摘要、流程参考或计分信息的便携 <aid>。<player_aid> 继承自 <aid>。通常为卡片或薄板形式，内容为游戏规则的浓缩或索引——如回合流程速查、所有 <action> 的图标说明、计分规则摘要。可有正反两面。",
+        "en": "A portable <aid> recording rule summaries, procedure references, or scoring information. <player_aid> extends <aid>. Typically a card or thin board containing condensed or indexed game rules — e.g., turn flow quick-reference, icon guide for all <action>s, scoring rule summary. May have two sides."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "rulebook",
+      "name": {
+        "zh": "规则书",
+        "en": "Rulebook"
+      },
+      "level": 2,
+      "parent": "aid",
+      "abstract": false,
+      "definition": {
+        "zh": "完整记录游戏规则、流程和组件说明的文档型 <aid>。<rulebook> 继承自 <aid>。通常在游戏开始前阅读学习，游戏中可作为参考查阅。不参与游戏逻辑的运作——即使没有 <rulebook>，游戏规则依然存在并生效。<rulebook> 只是规则的书面载体，不是规则本身。",
+        "en": "A document-type <aid> that fully records the game's rules, procedures, and component descriptions. <rulebook> extends <aid>. Typically read before the game starts and used as a reference during play. Does not participate in game logic — even without the <rulebook>, the game rules still exist and apply. The <rulebook> is merely the written carrier of rules, not the rules themselves."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "hand",
+      "name": {
+        "zh": "手牌",
+        "en": "Hand"
+      },
+      "level": 3,
+      "parent": "player_holding",
+      "abstract": false,
+      "definition": {
+        "zh": "存放 <card> 的 <player_holding>，是最常见的玩家保留区形态。<hand> 继承自 <player_holding>。<information_visibility> 通常为 private（仅拥有者可观察）或 protected（拥有者可选择向其他 <player> 展示），但具体可见性由游戏规则决定。<hand> 是 <play> 的主要源区域——<player> 从手牌中打出 <card>，将其移入 <development_area> 或 <discard_pile>。",
+        "en": "A <player_holding> that holds <card>s, the most common form of player holding. <hand> extends <player_holding>. <information_visibility> is typically private (only the owner can observe) or protected (owner may choose to reveal to other <player>s), but the specific visibility is determined by game rules. <hand> is the primary source zone for <play> — a <player> plays a <card> from their hand, moving it to the <development_area> or <discard_pile>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "activation",
+      "name": {
+        "zh": "激活",
+        "en": "Activation"
+      },
+      "level": 2,
+      "parent": "action",
+      "abstract": false,
+      "definition": {
+        "zh": "使某个 <effect> 从静默（dormant）进入待结算（pending）状态的 <action>。<activation> 继承自 <action>。它是 <player> 对游戏规则说「我要使用这个效果」的声明——<player> 选择一张 <piece> 上的一个 <effect> 并将其激活，该 <effect> 随即进入 pending 状态，等待后续的 <resolve> 将其 <content> 应用到游戏 <state>。<activation> 不等同于 <resolve>——激活后效果可能排队等待，多个同时激活的 <effect> 需要通过优先级决定结算顺序。",
+        "en": "An <action> that transitions an <effect> from dormant to pending state. <activation> extends <action>. It is the <player>'s declaration to the game rules: 'I want to use this effect' — the <player> selects an <effect> on a <piece> and activates it, placing it in pending state to await subsequent <resolve> which applies its <content> to the game <state>. <activation> is not the same as <resolve> — after activation, effects may queue; multiple simultaneously activated <effect>s require priority ordering for resolution."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<effect>",
+            "description": {
+              "zh": "被激活的 <effect>。<activation> 的本质是使一个 <effect> 从静默转入待结算——没有 <effect>，激活无事可做。此约束要求子类指明激活的是哪个 <effect>。",
+              "en": "The <effect> being activated. The essence of <activation> is transitioning an <effect> from dormant to pending — without an <effect>, activation has nothing to do. This constraint requires subclasses to specify which <effect> is being activated."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "play",
+      "name": {
+        "zh": "打出",
+        "en": "Play"
+      },
+      "level": 2,
+      "parent": "action",
+      "abstract": false,
+      "definition": {
+        "zh": "将一张 <piece>（通常为 <card>）从 <player_holding>（通常为 <hand>）转移至公开 <zone>（通常为 <development_area> 或 <discard_pile>）的 <action>。<play> 继承自 <action>。它是桌游中最核心的玩家操作——<player> 打出一张 <card>，支付其 <cost>，使其脱离私有状态并进入公开/已使用状态。<play> 在物理层面必然包含一个 <transfer> 事件（<piece> 从 <player_holding> 移动到公开 <zone>），但在逻辑层面独立于 <transfer>——<play> 侧重玩家意图、合法性校验（<cost> 是否可支付、时机是否正确）及后续 <effect> 的触发，而非单纯的物件位移。",
+        "en": "An <action> that moves a <piece> (typically a <card>) from a <player_holding> (typically a <hand>) to a public <zone> (typically a <development_area> or <discard_pile>). <play> extends <action>. It is the most central player operation in board games — a <player> plays a <card>, pays its <cost>, and moves it from private to public/used state. <play> necessarily involves a <transfer> event physically (the <piece> moves from <player_holding> to a public <zone>), but is logically distinct from <transfer> — <play> focuses on player intent, legality validation (can the <cost> be paid, is the timing correct), and triggering subsequent <effect>s, rather than mere physical displacement."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<piece>",
+            "description": {
+              "zh": "被打出的 <piece>。<play> 的本质是玩家选择一张 <piece> 并将其投入使用——没有 <piece>，打出操作无事可做。此约束要求子类指明打出的是哪张 <piece>。",
+              "en": "The <piece> being played. The essence of <play> is a player selecting a <piece> and putting it into use — without a <piece>, play has nothing to do. This constraint requires subclasses to specify which <piece> is being played."
+            }
+          }
+        ],
+        "optional": []
       }
     }
   ]
