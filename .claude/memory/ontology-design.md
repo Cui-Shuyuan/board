@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-19，50 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-19，51 个概念）
 metadata:
   node_type: memory
   type: project
@@ -10,7 +10,7 @@ metadata:
 # 桌游本体设计
 
 ## 文件位置
-D:\workspace\board\ontology\ontology.json（统一本体，50 个概念）
+D:\workspace\board\ontology\ontology.json（统一本体，51 个概念）
 
 ## 统一本体
 最初分为 Structure Ontology（静态结构）和 Procedure Ontology（流程时序）两个文件，后合并。JSON 给程序读，不考虑 LLM 上下文长度。
@@ -63,8 +63,14 @@ D:\workspace\board\ontology\ontology.json（统一本体，50 个概念）
 - **precondition**：`<condition>[]`，optional。事件发生前必须满足的条件列表
 - **rules**：`map<string, string>`，optional。中英双语描述超越结构化字段的执行规则约束
 
-### Trigger 的 <event>[] 结构 ★
-Trigger 是一组按序执行的 `<event>[]`（required 字段），不是所有 trigger 都是 transfer。元素可以是任意 Event 子类——拿宝石的 trigger 只有 1 个 `<transfer>`，购买发展卡的 trigger 有 2 个 event：`<transfer>`（支付 cost）+ `<play>`（卡从 market/hand 打出至 development_area）。
+### Trigger 的四要素结构 ★
+Trigger 的本质是「**timing + condition → events**」，四个 required 字段：
+- `<timing>`——触发时机（条件检查钟声）：状态变化瞬间 / 阶段边界 / 某 event 完成后。**满足条件不代表立即触发——时机到且条件满足才触发**；时机未至条件满足只是待命。Timing 是 Level 0 概念（与 Condition 平级，带 params 供程序 watcher 侦测）。**timing 只属于 trigger 和 procedure（起止边界），event 不持有 timing**——trigger 触发后 event 序列按 order 依次执行，顺序本身就是时序，逐事件声明「在上一个 event 后」纯属冗余。字段 key 即类型，写作 `"<timing>": {...}` 而非 `"timing": {"type": "<timing>"}`
+- `<condition>`——纯状态事实（如「宝石总数 >10」），不含时机描述。每个 trigger 都必须有 condition，即使被 action 触发：「此 action 的 precondition 满足且 declaration 合法」本身就是 condition。trigger 不用 precondition 字段
+- `<event>[]`——触发后启动的后续事件列表
+- `ordered`——顺序语义（见下）
+
+**术语约定：trigger 用「触发」，不用「激活」**——激活（Activation）是玩家侧的 action 概念；trigger 不以玩家意志为转移。英文用 fire。
 
 **顺序语义（ordered + order 双字段，均 required）**：
 - `ordered: true`——顺序是规则语义，每个 event 必须声明 `order`（整数从 1 起），引擎按序执行。如购买：先返回宝石再打出，颠倒会让新卡 discount 对本次购买生效
@@ -97,10 +103,10 @@ Zone (L0, abstract)
 ### Procedure 嵌套模型
 Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure。
 
-## 当前进度（50 个概念）
+## 当前进度（51 个概念）
 
-### Level 0（7 个）
-Object、Zone、State、Property、Event、Condition、Procedure
+### Level 0（8 个）
+Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
 ### Level 1 Structure（5 个）
 Player、Resource、Piece、Aid、Token

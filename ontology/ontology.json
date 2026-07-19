@@ -728,6 +728,46 @@
       }
     },
     {
+      "id": "timing",
+      "name": {
+        "zh": "时机",
+        "en": "Timing"
+      },
+      "level": 0,
+      "abstract": false,
+      "definition": {
+        "zh": "时间轴上的一个位置。<timing> 回答「何时发生」，是游戏时间秩序的基础。<timing> 可以是：某个状态变化的瞬间（「任何使宝石总数变化的 <event> 结算完成时」）、阶段边界（「一名 <player> 的回合结束时」）、或某个 <event> 完成后（「此 <action> 执行完毕时」）。<timing> 的持有者有两类：一是 <trigger>——决定何时检查 <condition>，时机到达且条件满足才触发；二是 <procedure>（<round>、<turn>、<phase>）——划定自身的起止边界。普通 <event> 不持有 <timing>——<trigger> 触发后其 <event> 序列按 order 依次执行，顺序本身就是时序，无需逐事件声明。<timing> 本身不改变游戏状态，它只是时间秩序的描述。",
+        "en": "A position on the timeline. <timing> answers 'when does it happen' and is the foundation of the game's temporal order. A <timing> can be: the instant of a state change ('when any <event> that changes the gem total finishes resolving'), a phase boundary ('when a <player>'s turn ends'), or the completion of some <event> ('when this <action> finishes executing'). <timing> has two kinds of holders: <trigger>s — which use it to decide when to check the <condition>, firing only when the timing arrives and the condition holds; and <procedure>s (<round>, <turn>, <phase>) — which use it to delimit their own start and end. Ordinary <event>s do not hold <timing> — once a <trigger> fires, its <event> sequence executes in order, and the sequence itself is the temporality; no per-event declaration is needed. <timing> itself changes no game state — it is merely a description of temporal order."
+      },
+      "params": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "此时机的参数，内容由具体的时机类型决定。例如事件完成后：{ \"after\": \"<event_id>\" }；阶段边界：{ \"boundary\": \"turn_end\" }；状态变化瞬间：{ \"on_change\": { \"zone\": \"<zone_id>\", \"watch\": \"count\" } }。程序根据时机的 id 查找对应的 watcher 函数，在游戏循环中侦测时机是否到达，返回 boolean。",
+          "en": "Parameters for this timing. Content is determined by the specific timing type. E.g., after an event completes: { \"after\": \"<event_id>\" }; a phase boundary: { \"boundary\": \"turn_end\" }; the instant of a state change: { \"on_change\": { \"zone\": \"<zone_id>\", \"watch\": \"count\" } }. The program looks up the watcher function by the timing's id, detects in the game loop whether the timing has arrived, and returns a boolean."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Timing 的唯一标识符。程序根据此 id 查找对应的 watcher 函数，在游戏循环中侦测时机是否到达。",
+              "en": "Unique identifier of the Timing. The program looks up the corresponding watcher function by this id and detects in the game loop whether the timing has arrived."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "params",
+            "description": {
+              "zh": "此 Timing 的参数，内容由具体的时机类型决定（如阶段边界：{ boundary: \"turn_end\" }）。程序根据时机 id 查找 watcher 并传入 params。",
+              "en": "Parameters for this Timing. Content is determined by the specific timing type (e.g., phase boundary: { boundary: \"turn_end\" }). The program looks up the watcher by timing id and passes these params."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "cost",
       "name": {
         "zh": "费用",
@@ -1341,8 +1381,8 @@
       "parent": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "游戏规则中负责启动 <event> 的统一机制。<trigger> 继承自 <event>。其角色是「事件调度器」——当一个 <event> 发生（如 <action> 执行完毕、<phase> 切换、<condition> 满足）时，<trigger> 被激活，并启动对应的后续 <event>（如结算 <effect>、执行 <transfer>、改变 <state>）。一切游戏状态变更最终都由 <trigger> 负责发起。<trigger> 不由任何 <player> 直接控制，而由规则自动响应——它的 actor 始终为 null。与 <action> 的关系：<action> 是 <trigger> 最常见的触发原因——玩家打出一张牌（<action>），规则自动识别此事件并激活对应的 <trigger>，<trigger> 再启动「支付费用」「获得资源」「造成伤害」等后续 <event>。",
-        "en": "The unified mechanism in game rules responsible for launching <event>s. <trigger> extends <event>. Its role is that of an 'event dispatcher' — when an <event> occurs (e.g., an <action> completes, a <phase> transitions, a <condition> is met), the <trigger> is activated and launches corresponding follow-up <event>s (e.g., resolving an <effect>, executing a <transfer>, changing a <state>). All game state changes are ultimately initiated by a <trigger>. A <trigger> is not directly controlled by any <player> — it responds automatically to the rules, and its actor is always null. Relationship with <action>: <action> is the most common cause of <trigger> activation — a player plays a card (<action>), the rules automatically recognize this event and activate the corresponding <trigger>, which then launches follow-up <event>s such as 'pay cost', 'gain resource', 'deal damage'."
+        "zh": "游戏规则中负责启动 <event> 的统一机制。<trigger> 继承自 <event>。其角色是「事件调度器」——本质为「timing + condition → events」：时机（timing）到达且此时 <condition> 满足，<trigger> 才触发，启动对应的后续 <event>（如结算 <effect>、执行 <transfer>、改变 <state>）。满足 <condition> 本身不会触发——时机未至，条件持续满足也只是待命；时机到达时条件不满足，同样不触发。一切游戏状态变更最终都由 <trigger> 负责发起。<trigger> 不由任何 <player> 直接控制，而由规则自动响应——触发不以玩家意志为转移，它的 actor 始终为 null。与 <action> 的关系：<action> 是 <trigger> 最常见的触发原因——玩家打出一张牌（<action>），规则自动识别此事件并触发对应的 <trigger>，<trigger> 再启动「支付费用」「获得资源」「造成伤害」等后续 <event>。",
+        "en": "The unified mechanism in game rules responsible for launching <event>s. <trigger> extends <event>. Its role is that of an 'event dispatcher' — its essence is 'timing + condition → events': when the timing arrives AND the <condition> holds at that moment, the <trigger> fires and launches corresponding follow-up <event>s (e.g., resolving an <effect>, executing a <transfer>, changing a <state>). Satisfying the <condition> alone does not fire it — before the timing arrives, a continuously satisfied condition merely stands by; if the condition does not hold when the timing arrives, it does not fire either. All game state changes are ultimately initiated by a <trigger>. A <trigger> is not directly controlled by any <player> — it responds automatically to the rules, firing regardless of player will, and its actor is always null. Relationship with <action>: <action> is the most common cause of <trigger> firing — a player plays a card (<action>), the rules automatically recognize this event and fire the corresponding <trigger>, which then launches follow-up <event>s such as 'pay cost', 'gain resource', 'deal damage'."
       },
       "actor": {
         "type": "null",
@@ -1351,11 +1391,23 @@
           "en": "Inherited from <event>, narrowed here to null: a <trigger> is not initiated by any <player> and has no executor. This is the essential difference between a <trigger> and an <action>."
         }
       },
+      "<timing>": {
+        "description": {
+          "zh": "<trigger> 的触发时机——<condition> 的检查钟声。时机到达且此时 <condition> 满足，<trigger> 才触发。时机可以是：某个状态变化的瞬间（「任何使宝石总数变化的 <event> 结算完成时」）、阶段边界（「一名 <player> 的回合结束时」）、或某个 <event> 完成后（「此 <action> 执行完毕时」）。满足 <condition> 不代表立即触发——时机未至，条件满足只是待命；时机到达时条件不满足则不触发。",
+          "en": "The firing timing of the <trigger> — the bell that prompts the <condition> check. The <trigger> fires only when the timing arrives AND the <condition> holds at that moment. A timing can be: the instant of a state change ('when any <event> that changes the gem total finishes resolving'), a phase boundary ('when a <player>'s turn ends'), or the completion of some <event> ('when this <action> finishes executing'). Satisfying the <condition> does not mean firing immediately — before the timing arrives, a satisfied condition merely stands by; if the condition does not hold when the timing arrives, it does not fire."
+        }
+      },
+      "<condition>": {
+        "description": {
+          "zh": "触发本 <trigger> 所需满足的 <condition>——一个纯粹的状态事实（如「宝石总数 >10」「某 <noble> 的 requirement 被满足」），不包含时机描述（时机由 timing 字段表达）。<trigger> 的本质即「timing + condition → events」。每一个 <trigger> 都必须有 <condition>，即使是被 <action> 触发的 <trigger>——「此 <action> 的 precondition 满足且 <declaration> 合法」本身就是 <condition>。",
+          "en": "The <condition> that must hold for this <trigger> to fire — a pure state fact (e.g., 'gem total >10', 'a <noble>'s requirement is met'), containing no timing description (timing is expressed by the timing field). The essence of a <trigger> is 'timing + condition → events'. Every <trigger> must have a <condition> — even for <action>-bound <trigger>s, 'this <action>'s precondition is met and its <declaration> is legal' is itself the <condition>."
+        }
+      },
       "<event>": {
         "type": "<event>[]",
         "description": {
-          "zh": "<trigger> 被激活后启动的后续 <event> 列表。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。列表是否有执行顺序由 <trigger> 的 ordered 字段声明——ordered 为 true 时每个 <event> 必须声明 order 字段。",
-          "en": "The list of follow-up <event>s launched when the <trigger> is activated. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play). Whether the list has an execution order is declared by the <trigger>'s ordered field — when ordered is true, every <event> must declare an order field."
+          "zh": "<trigger> 被触发后启动的后续 <event> 列表。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。列表是否有执行顺序由 <trigger> 的 ordered 字段声明——ordered 为 true 时每个 <event> 必须声明 order 字段。",
+          "en": "The list of follow-up <event>s launched after the <trigger> fires. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play). Whether the list has an execution order is declared by the <trigger>'s ordered field — when ordered is true, every <event> must declare an order field."
         }
       },
       "ordered": {
@@ -1367,6 +1419,20 @@
       },
       "constraints": {
         "required": [
+          {
+            "id": "<timing>",
+            "description": {
+              "zh": "每一个 <trigger> 都必须声明触发时机——满足 <condition> 不代表立即触发，时机到达且条件满足才触发。没有 <timing> 的 <trigger> 无法确定何时检查条件。",
+              "en": "Every <trigger> must declare its firing timing — satisfying the <condition> does not mean firing immediately; it fires only when the timing arrives and the condition holds. A <trigger> without <timing> cannot determine when to check its condition."
+            }
+          },
+          {
+            "id": "<condition>",
+            "description": {
+              "zh": "每一个 <trigger> 都必须有触发条件——即使是被 <action> 触发的 <trigger>，「此 <action> 的 precondition 满足且 <declaration> 合法」本身就是 <condition>。没有 <condition> 的 <trigger> 无法确定能否触发。",
+              "en": "Every <trigger> must have a firing condition — even for <action>-bound <trigger>s, 'this <action>'s precondition is met and its <declaration> is legal' is itself the <condition>. A <trigger> without a <condition> cannot determine whether to fire."
+            }
+          },
           {
             "id": "<event>",
             "description": {
