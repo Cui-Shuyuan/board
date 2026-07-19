@@ -14,11 +14,12 @@
 
 **第一阶段「定义世界模型」已完成。** 桌游本体的 JSON 建模 51 个概念全部就位，覆盖 Level 0 ~ Level 3。
 
-**第二阶段「Rule DSL」进行中。** 首个游戏：璀璨宝石（Splendor），规则文件为 `games/splendor/splendor.json`。Resource/Content/Card/Tile/Zone 层已完成，Action 层进行中，待写 Trigger 层和 Procedure 层。
+**第二阶段「Rule DSL」进行中。** 首个游戏：璀璨宝石（Splendor），规则文件为 `games/splendor/concepts.json`（概念层已完成：objects/actions/triggers/conditions）和 `games/splendor/flow.json`（流程层，结构讨论中）。
 
 核心文件：
 - `ontology/ontology.json` — 统一本体定义，51 个概念（Level 0 ~ Level 3）
-- `games/splendor/splendor.json` — 璀璨宝石结构化规则（进行中）
+- `games/splendor/concepts.json` — 璀璨宝石概念定义（objects 22、actions 4、triggers 4、conditions 13）
+- `games/splendor/flow.json` — 璀璨宝石流程定义（待定）
 - `Board Game Structure Ontology v0.md` — 静态结构概念的原始定义（权威参考）
 - `Board Game Procedure Ontology v0.md` — 流程时序概念的原始定义（权威参考）
 

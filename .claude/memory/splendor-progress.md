@@ -8,7 +8,8 @@ metadata:
 # 璀璨宝石（Splendor）规则定义进度
 
 ## 文件位置
-`D:\workspace\board\games\splendor\splendor.json`
+`D:\workspace\board\games\splendor\concepts.json`（概念层，已完成）
+`D:\workspace\board\games\splendor\flow.json`（流程层，结构讨论中）
 
 ## 文件结构
 按类别分组，不再混在一个 concepts 数组里：

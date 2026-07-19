@@ -1,0 +1,11 @@
+{
+  "meta": {
+    "game": "splendor",
+    "name": { "zh": "璀璨宝石", "en": "Splendor" },
+    "version": "0.1.0",
+    "description": {
+      "zh": "璀璨宝石的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、回合结构、终局流程）。结构待定——待讨论后落地。",
+      "en": "Flow definition for Splendor — the complete sequence of a game from Setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, turn structure, endgame process). Structure TBD — to be finalized after discussion."
+    }
+  }
+}

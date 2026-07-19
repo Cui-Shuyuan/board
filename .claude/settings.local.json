@@ -27,7 +27,8 @@
       "Bash(python -c ' *)",
       "Bash(python3 *)",
       "Bash(python -c \"import json; json.load\\(open\\('games/splendor/splendor.json', encoding='utf-8'\\)\\); print\\('JSON valid'\\)\")",
-      "Bash(python -X utf8 -c ' *)"
+      "Bash(python -X utf8 -c ' *)",
+      "Bash(git mv *)"
     ]
   }
 }
