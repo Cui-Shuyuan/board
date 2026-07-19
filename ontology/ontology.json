@@ -1363,11 +1363,25 @@
       "parent": "<condition>",
       "abstract": false,
       "definition": {
-        "zh": "在终局流程完成后、决定哪位 <player> 胜出的 <condition>。<victory_condition> 继承自 <condition>——结构上与普通 <condition> 无异，语义角色是判决胜负。与 <endgame_condition> 的分工：<endgame_condition> 回答「游戏何时结束」，<victory_condition> 回答「结束后谁赢」。典型例子：「分数最高的 <player> 获胜」「最后存活的 <player> 获胜」「所有 <player> 共同获胜（合作游戏）」。允许多人平局，允许合作胜利，允许无人获胜（全员失败）。",
-        "en": "A <condition> that determines which <player> wins, evaluated after the endgame process completes. <victory_condition> extends <condition> — structurally identical to an ordinary <condition>, its semantic role is to adjudicate victory. Division of labor with <endgame_condition>: <endgame_condition> answers 'when does the game end', <victory_condition> answers 'who wins after it ends'. Typical examples: 'the <player> with the highest score wins', 'the last surviving <player> wins', 'all <player>s win together (cooperative game)'. Allows for ties, cooperative victories, and scenarios where no one wins (everyone loses)."
+        "zh": "在终局流程完成后、决定哪位 <player> 胜出的 <condition>。<victory_condition> 继承自 <condition>，其判定标准是一个按优先级排序的 <condition> 序列——按顺序满足条件的 <player>（们）是胜者。判定流程：满足第 1 条 <condition> 的 <player> 为候选胜者；候选多于 1 人时，在候选中继续应用下一条 <condition> 筛选，直到只剩 1 人或序列用完；序列用完仍有多名候选则为平局。与 <endgame_condition> 的分工：<endgame_condition> 回答「游戏何时结束」，<victory_condition> 回答「结束后谁赢」。允许合作胜利（所有 <player> 共同获胜），允许无人获胜（全员失败）。",
+        "en": "A <condition> that determines which <player> wins, evaluated after the endgame process completes. <victory_condition> extends <condition>, and its adjudication standard is an ordered sequence of <condition>s — the <player>(s) satisfying the criteria in order win. Adjudication: <player>s satisfying the 1st <condition> become winner candidates; if more than one remains, apply the next <condition> to the candidates, continuing until exactly one remains or the sequence is exhausted; if multiple candidates remain after the sequence, the result is a tie. Division of labor with <endgame_condition>: <endgame_condition> answers 'when does the game end', <victory_condition> answers 'who wins after it ends'. Cooperative victories (all <player>s win together) are allowed, as is no winner at all (everyone loses)."
+      },
+      "<condition>[]": {
+        "description": {
+          "zh": "胜负判定的条件序列，按优先级从高到低排序。每条<condition>都是对单个<player>求值的判定式（如「声望最高」「发展卡最少」）——允许并列，并列者视为同时满足。判定流程：满足第 1 条的<player>为候选；多于 1 人则在候选中应用下一条继续筛选；直到只剩 1 人或序列用完。",
+          "en": "The ordered sequence of victory criteria, sorted from highest to lowest priority. Each <condition> is a predicate evaluated per <player> (e.g., 'highest prestige', 'fewest development cards') — ties count as satisfied simultaneously. Adjudication: <player>s satisfying the 1st criterion become candidates; if more than one remains, apply the next criterion to the candidates; continue until exactly one remains or the sequence is exhausted."
+        }
       },
       "constraints": {
-        "required": [],
+        "required": [
+          {
+            "id": "<condition>[]",
+            "description": {
+              "zh": "胜负判定必须给出形式化的条件序列——没有条件序列，程序无法确定胜者。",
+              "en": "Victory adjudication must provide a formalized condition sequence — without it, the program cannot determine the winner."
+            }
+          }
+        ],
         "optional": []
       }
     },
@@ -1403,8 +1417,7 @@
           "en": "The <condition> that must hold for this <trigger> to fire — a pure state fact (e.g., 'gem total >10', 'a <noble>'s requirement is met'), containing no timing description (timing is expressed by the timing field). The essence of a <trigger> is 'timing + condition → events'. Every <trigger> must have a <condition> — even for <action>-bound <trigger>s, 'this <action>'s precondition is met and its <declaration> is legal' is itself the <condition>."
         }
       },
-      "<event>": {
-        "type": "<event>[]",
+      "<event>[]": {
         "description": {
           "zh": "<trigger> 被触发后启动的后续 <event> 列表。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。列表是否有执行顺序由 <trigger> 的 ordered 字段声明——ordered 为 true 时每个 <event> 必须声明 order 字段。",
           "en": "The list of follow-up <event>s launched after the <trigger> fires. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play). Whether the list has an execution order is declared by the <trigger>'s ordered field — when ordered is true, every <event> must declare an order field."
@@ -1434,10 +1447,10 @@
             }
           },
           {
-            "id": "<event>",
+            "id": "<event>[]",
             "description": {
-              "zh": "<trigger> 的职责是启动后续 <event>——没有 <event> 列表的 <trigger> 是空调度器。此约束要求子类声明被激活后按序执行哪些 <event>。",
-              "en": "A <trigger>'s job is to launch follow-up <event>s — a <trigger> without an <event> list is an empty dispatcher. This constraint requires subclasses to declare which <event>s execute in order upon activation."
+              "zh": "<trigger> 的职责是启动后续 <event>——没有 <event> 列表的 <trigger> 是空调度器。此约束要求子类声明被触发后执行哪些 <event>。",
+              "en": "A <trigger>'s job is to launch follow-up <event>s — a <trigger> without an <event> list is an empty dispatcher. This constraint requires subclasses to declare which <event>s execute upon firing."
             }
           },
           {

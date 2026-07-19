@@ -33,7 +33,7 @@ D:\workspace\board\ontology\ontology.json（统一本体，51 个概念）
 ## 类型与引用约定
 - **type 值三类**：(1) 概念引用 — 使用 `<concept_id>` 格式包裹，可带 `| null`；(2) 泛引用 — `concept_ref`（已弃用）；(3) 原始类型 — string、integer、boolean、any、map<string, any>、enum
 - **`<concept_id>` 交叉引用**：所有 definition 和 description 中用 `<concept_id>` 包裹概念引用
-- **字段 key 即类型**：当字段 key 本身是 `<concept_id>` 格式时（如 `"<ownership>"`、`"<declaration>"`），不再重复声明 `type` 字段——key 自身即表达了类型。仅当 key 是语义化命名（如 `current_player`）或需要窄化类型（如 `"type": "<gem>[]"`）时才保留 `type`
+- **字段 key 即类型**：当字段 key 本身是 `<concept_id>` 格式时（如 `"<ownership>"`、`"<declaration>"`），不再重复声明 `type` 字段——key 自身即表达了类型。**数组标记直接写在 key 里**（`"<event>[]"`、`"<condition>[]"`），不用 `"<event>": {"type": "<event>[]"}` 这种重复声明。仅当 key 是语义化命名（如 `current_player`）、需要窄化类型（如 `"<ownership>": {"type": "<player>"}`）或允许空值（如 `"<cost>": {"type": "<cost> | null"}`）时才保留 `type`
 - **`concept_ref` / `concept_ref[]`** 已弃用，统一改用 `<concept_id>` 格式
 
 ## 关键设计决策
@@ -127,7 +127,7 @@ Reserve（abstract）、Discard Pile、Player Zone（abstract）
 Action、Trigger、Resolve、Shuffle
 
 ### Level 1 Condition（2 个）
-Endgame Condition、Victory Condition
+Endgame Condition、Victory Condition（★ victory_condition 形式化为 `<condition>[]` required 字段——按优先级排序的判定条件序列：满足第 1 条的玩家为候选胜者，多人则下一条继续筛，直到剩 1 人或序列用完；每条都是对单个玩家求值的判定式，允许并列）
 
 ### Level 2 Piece（2 个）
 Card、Tile

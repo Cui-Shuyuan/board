@@ -15,8 +15,8 @@ metadata:
 - `objects`（22 个）——resource / content / card / tile / zone 等静态概念
 - `actions`（4 个）——parent 为 `<action>`
 - `triggers`（3 个）——parent 为 `<trigger>` 的独立 trigger
-- `conditions`（10 个）——**所有 condition 统一定义于此**，使用处只写纯引用（trigger 的 `<condition>` 为字符串、precondition 为单元素数组）：gems_available_any / gems_available_same_color / card_purchasable / card_reservable / gold_available / exceed_gem_limit / noble_satisfied / action_declaration_legal（所有内嵌 trigger 共用的通用绑定条件）/ no_action_available（复合：四行动条件取反求与）/ reach_15_prestige（extends `<endgame_condition>`）
-- 顶层引用——`<player_holding>` / `<development_area>` / `<hand>` / `<starting_player_marker>` / `<victory_condition>`
+- `conditions`（13 个）——**所有 condition 统一定义于此**，使用处只写纯引用（trigger 的 `<condition>` 为字符串、precondition 为单元素数组）：gems_available_any / gems_available_same_color / card_purchasable / card_reservable / gold_available / exceed_gem_limit / noble_satisfied / action_declaration_legal（所有内嵌 trigger 共用的通用绑定条件）/ no_action_available（复合：四行动条件取反求与）/ reach_15_prestige（extends `<endgame_condition>`）/ highest_prestige_wins（extends `<victory_condition>`）/ prestige_highest / fewest_development_cards（判胜用的两条单玩家判定式）
+- 顶层引用——`<player_holding>` / `<development_area>` / `<hand>` / `<starting_player_marker>`
 - 未来 Procedure 层新增 `procedures` 组
 
 ## 当前进度
@@ -65,8 +65,8 @@ metadata:
 - `enter_endgame`（extends `<trigger>`。timing=回合结束时；condition 引用 `reach_15_prestige`；event 为描述性「进入终局流程」，具体流程留给流程文档）
 - `skip_turn`（extends `<trigger>`。timing=回合开始、宣告 action 前；condition 引用 `no_action_available`；event=回合直接结束进入下一玩家，回合末 trigger 照常检查）
 - `no_action_available`（extends `<condition>`，复合条件：gems_available_any / gems_available_same_color / card_purchasable / card_reservable 四者取反求与，params 声明 op=and + not operands）
-- `reach_15_prestige`（extends `<endgame_condition>`，conditions 组。任意玩家声望 ≥15，params={threshold:15} 与 victory_condition 共用）
-- 顶层引用 `<victory_condition>`：最高分获胜，平分则发展卡少者胜；threshold=15 与 endgame_condition 共用
+- `reach_15_prestige`（extends `<endgame_condition>`，conditions 组。任意玩家声望 ≥15，params={threshold:15}）
+- `highest_prestige_wins`（extends `<victory_condition>`，conditions 组。形式化为 `"<condition>": ["<prestige_highest>", "<fewest_development_cards>"]`——按序满足的玩家为胜者，允许多平局）
 
 **Trigger 层已完成（4 个）**：discard_excess_gems、attract_noble、enter_endgame、skip_turn
 

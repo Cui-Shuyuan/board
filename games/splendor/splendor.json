@@ -605,7 +605,7 @@
         },
         "<condition>": "<action_declaration_legal>",
         "ordered": true,
-        "<event>": [
+        "<event>[]": [
           {
             "type": "<transfer>",
             "order": 1,
@@ -677,7 +677,7 @@
         },
         "<condition>": "<action_declaration_legal>",
         "ordered": true,
-        "<event>": [
+        "<event>[]": [
           {
             "type": "<transfer>",
             "order": 1,
@@ -750,7 +750,7 @@
         },
         "<condition>": "<action_declaration_legal>",
         "ordered": true,
-        "<event>": [
+        "<event>[]": [
           {
             "type": "<transfer>",
             "order": 1,
@@ -844,7 +844,7 @@
         },
         "<condition>": "<action_declaration_legal>",
         "ordered": false,
-        "<event>": [
+        "<event>[]": [
           {
             "type": "<transfer>",
             "description": {
@@ -940,7 +940,7 @@
       },
       "<condition>": "<exceed_gem_limit>",
       "ordered": true,
-      "<event>": [
+      "<event>[]": [
         {
           "type": "<transfer>",
           "order": 1,
@@ -996,7 +996,7 @@
       },
       "<condition>": "<noble_satisfied>",
       "ordered": true,
-      "<event>": [
+      "<event>[]": [
         {
           "type": "<transfer>",
           "order": 1,
@@ -1042,8 +1042,8 @@
       "parent": "<trigger>",
       "abstract": false,
       "definition": {
-        "zh": "璀璨宝石中的「进入终局」<trigger>。当任意<player>的<prestige_point>总数达到 15 时，游戏进入终局流程——终局流程的具体内容（补完当前<round>使所有<player>完成相同数量的<turn>、随后游戏结束、按<victory_condition>判定胜负）由流程文档定义，此处仅声明触发条件。达到阈值后不再触发——终局流程只进入一次。",
-        "en": "The 'enter endgame' <trigger> in Splendor. When any <player>'s total <prestige_point>s reach 15, the game enters its endgame process — the specifics of that process (finishing the current <round> so all <player>s complete an equal number of <turn>s, then ending the game and adjudicating by <victory_condition>) are defined by the procedure document; only the firing condition is declared here. It fires only once — the endgame process is entered exactly once."
+        "zh": "璀璨宝石中的「进入终局」<trigger>。当任意<player>的<prestige_point>总数达到 15 时，游戏进入终局流程——终局流程的具体内容（补完当前<round>使所有<player>完成相同数量的<turn>、随后游戏结束、按<highest_prestige_wins>判定胜负）由流程文档定义，此处仅声明触发条件。达到阈值后不再触发——终局流程只进入一次。",
+        "en": "The 'enter endgame' <trigger> in Splendor. When any <player>'s total <prestige_point>s reach 15, the game enters its endgame process — the specifics of that process (finishing the current <round> so all <player>s complete an equal number of <turn>s, then ending the game and adjudicating by <highest_prestige_wins>) are defined by the procedure document; only the firing condition is declared here. It fires only once — the endgame process is entered exactly once."
       },
       "<timing>": {
         "description": {
@@ -1053,13 +1053,13 @@
       },
       "<condition>": "<reach_15_prestige>",
       "ordered": true,
-      "<event>": [
+      "<event>[]": [
         {
           "type": "<event>",
           "order": 1,
           "description": {
-            "zh": "游戏进入终局流程。此后的具体流程——补完当前<round>使所有<player>完成相同数量的<turn>、游戏结束、按<victory_condition>判定胜负——由流程文档定义，此处仅标记游戏状态切换为「终局」。",
-            "en": "The game enters its endgame process. The specifics that follow — finishing the current <round> so all <player>s complete an equal number of <turn>s, ending the game, adjudicating by <victory_condition> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
+            "zh": "游戏进入终局流程。此后的具体流程——补完当前<round>使所有<player>完成相同数量的<turn>、游戏结束、按<highest_prestige_wins>判定胜负——由流程文档定义，此处仅标记游戏状态切换为「终局」。",
+            "en": "The game enters its endgame process. The specifics that follow — finishing the current <round> so all <player>s complete an equal number of <turn>s, ending the game, adjudicating by <highest_prestige_wins> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
           }
         }
       ]
@@ -1081,7 +1081,7 @@
       },
       "<condition>": "<no_action_available>",
       "ordered": true,
-      "<event>": [
+      "<event>[]": [
         {
           "type": "<event>",
           "order": 1,
@@ -1197,15 +1197,46 @@
       "parent": "<endgame_condition>",
       "abstract": false,
       "definition": {
-        "zh": "璀璨宝石的终局条件：任意<player>的<prestige_point>总数 ≥15。<prestige_point>只在自己的回合内变化（购买<development_card>、<attract_noble>获得<noble>），故在回合结束时检查任意<player>即可。满足此条件时游戏进入终局流程，终局流程完成后按<victory_condition>判定胜负。",
-        "en": "Splendor's endgame condition: any <player>'s total <prestige_point>s ≥15. <prestige_point>s only change during one's own turn (purchasing a <development_card>, gaining a <noble> via <attract_noble>), so checking all <player>s at end of any turn suffices. When satisfied, the game enters its endgame process, after which victory is adjudicated by <victory_condition>."
+        "zh": "璀璨宝石的终局条件：任意<player>的<prestige_point>总数 ≥15。<prestige_point>只在自己的回合内变化（购买<development_card>、<attract_noble>获得<noble>），故在回合结束时检查任意<player>即可。满足此条件时游戏进入终局流程，终局流程完成后按<highest_prestige_wins>判定胜负。",
+        "en": "Splendor's endgame condition: any <player>'s total <prestige_point>s ≥15. <prestige_point>s only change during one's own turn (purchasing a <development_card>, gaining a <noble> via <attract_noble>), so checking all <player>s at end of any turn suffices. When satisfied, the game enters its endgame process, after which victory is adjudicated by <highest_prestige_wins>."
       },
       "params": {
         "type": "map<string, any>",
         "description": {
-          "zh": "判定参数：{ \"threshold\": 15 }。阈值与<victory_condition>的 threshold 共用同一数值。程序据此构造「任意<player>的<prestige_point>总数 ≥ threshold」的 evaluator。",
-          "en": "Evaluation parameters: { \"threshold\": 15 }. The threshold shares the same value as <victory_condition>'s threshold. The program builds an evaluator for 'any <player>'s total <prestige_point>s ≥ threshold' from this."
+          "zh": "判定参数：{ \"threshold\": 15 }。程序据此构造「任意<player>的<prestige_point>总数 ≥ threshold」的 evaluator。",
+          "en": "Evaluation parameters: { \"threshold\": 15 }. The program builds an evaluator for 'any <player>'s total <prestige_point>s ≥ threshold' from this."
         }
+      }
+    },
+    {
+      "id": "highest_prestige_wins",
+      "name": { "zh": "最高声望获胜", "en": "Highest Prestige Wins" },
+      "parent": "<victory_condition>",
+      "abstract": false,
+      "definition": {
+        "zh": "璀璨宝石的胜利条件：终局流程完成后，按顺序满足以下条件的<player>（们）是胜者——1. <prestige_point>总数最高；2. <development_area>中<development_card>数量最少（用更少卡牌达到同样分数，效率更高）。允许多人平局。",
+        "en": "Splendor's victory condition: after the endgame process completes, the <player>(s) satisfying the following criteria in order win — 1. highest total <prestige_point>s; 2. fewest <development_card>s in the <development_area> (reaching the same score with fewer cards means higher efficiency). Ties among multiple players are allowed."
+      },
+      "<condition>[]": ["<prestige_highest>", "<fewest_development_cards>"]
+    },
+    {
+      "id": "prestige_highest",
+      "name": { "zh": "声望最高", "en": "Highest Prestige" },
+      "parent": "<condition>",
+      "abstract": false,
+      "definition": {
+        "zh": "该<player>的<prestige_point>总数为全场最高。允许并列——并列最高者同时满足。用于<highest_prestige_wins>的第 1 条判定。",
+        "en": "The <player>'s total <prestige_point>s are the highest in the game. Ties allowed — all players tied for highest satisfy it simultaneously. Used as the 1st criterion of <highest_prestige_wins>."
+      }
+    },
+    {
+      "id": "fewest_development_cards",
+      "name": { "zh": "发展卡最少", "en": "Fewest Development Cards" },
+      "parent": "<condition>",
+      "abstract": false,
+      "definition": {
+        "zh": "该<player>的<development_area>中<development_card>数量为全场最少。允许并列——并列最少者同时满足。用于<highest_prestige_wins>的第 2 条判定。",
+        "en": "The <player> has the fewest <development_card>s in their <development_area> in the game. Ties allowed — all players tied for fewest satisfy it simultaneously. Used as the 2nd criterion of <highest_prestige_wins>."
       }
     }
   ],
@@ -1280,20 +1311,6 @@
     "appearance": {
       "zh": "由两个零件拼成的钻石形状。",
       "en": "Two pieces that fit together to form a diamond shape."
-    }
-  },
-  "<victory_condition>": {
-    "description": {
-      "zh": "璀璨宝石的胜利条件：终局流程完成后，<prestige_point>总数最高的<player>获胜；若平分，则<development_area>中<development_card>数量较少的<player>获胜（用更少卡牌达到同样分数，效率更高）。",
-      "en": "Splendor's victory condition: after the endgame process completes, the <player> with the highest total <prestige_point>s wins; on a tie, the <player> with fewer <development_card>s in their <development_area> wins (reaching the same score with fewer cards means higher efficiency)."
-    },
-    "threshold": {
-      "type": "integer",
-      "default": 15,
-      "description": {
-        "zh": "触发终局的<prestige_point>阈值，固定为 15。与<endgame_condition>共用此数值——达到即触发终局流程，终局流程完成后按上述规则判定胜负。",
-        "en": "The <prestige_point> threshold that triggers the endgame, fixed at 15. Shared with the <endgame_condition> — reaching it starts the endgame process, after which victory is adjudicated by the rules above."
-      }
     }
   }
 }
