@@ -604,11 +604,9 @@
           }
         },
         "<condition>": "<action_declaration_legal>",
-        "ordered": true,
         "<event>[]": [
           {
             "type": "<transfer>",
-            "order": 1,
             "description": {
               "zh": "将<declaration>中指定的<gem>从<gem_supply>移入该<player>的<player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。<ownership_change>隐式发生。",
               "en": "Moves the <gem>s specified in <declaration> from <gem_supply> to the <player>'s <player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. <ownership_change> occurs implicitly."
@@ -676,11 +674,9 @@
           }
         },
         "<condition>": "<action_declaration_legal>",
-        "ordered": true,
         "<event>[]": [
           {
             "type": "<transfer>",
-            "order": 1,
             "description": {
               "zh": "将<declaration>中指定颜色的 2 颗<gem>从<gem_supply>移入该<player>的<player_holding>。<ownership_change>隐式发生。",
               "en": "Moves 2 <gem>s of the color specified in <declaration> from <gem_supply> to the <player>'s <player_holding>. <ownership_change> occurs implicitly."
@@ -749,11 +745,10 @@
           }
         },
         "<condition>": "<action_declaration_legal>",
-        "ordered": true,
         "<event>[]": [
           {
+            "id": "pay_cost",
             "type": "<transfer>",
-            "order": 1,
             "description": {
               "zh": "将一定种类和数量的<gem>从 actor 的<player_holding>返回供应堆——数量为发展卡的<cost>逐色减去 actor <development_area>中已有<discount>（每色最低为 0），<gold>可替代任意颜色。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
               "en": "Returns a set of <gem>s from the actor's <player_holding> to the supply — the quantity per color being the development card's <cost> reduced by <discount>s already in the actor's <development_area> (minimum 0 per color), with <gold> substituting for any color. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
@@ -781,8 +776,9 @@
             }
           },
           {
+            "id": "play_card",
             "type": "<play>",
-            "order": 2,
+            "do_after": ["pay_cost"],
             "description": {
               "zh": "将目标<development_card>打出至 actor 的<development_area>。目标卡可来自<card_market>（当面购买）或 actor 的<hand>（购买已保留的卡牌）。打出后<ownership_change>隐式发生，该卡的<discount>与<prestige_point>自此生效，但不作用于本次购买。若目标卡来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<deck>已空则空位不再补充）；若来自<hand>，不触发补牌。",
               "en": "Plays the target <development_card> into the actor's <development_area>. The target may come from <card_market> (face-up purchase) or the actor's <hand> (buying a reserved card). After the play, <ownership_change> occurs implicitly and the card's <discount> and <prestige_point>s take effect from now on, but do not apply to this purchase. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <deck> is empty, the slot stays vacant); if it came from <hand>, no replenishment occurs."
@@ -843,9 +839,9 @@
           }
         },
         "<condition>": "<action_declaration_legal>",
-        "ordered": false,
         "<event>[]": [
           {
+            "id": "reserve_card",
             "type": "<transfer>",
             "description": {
               "zh": "将目标<development_card>移入 actor 的<hand>。明面保留时源为<card_market>，暗面保留时源为<declaration>指定等级的<development_deck>顶部。<ownership_change>隐式发生。若来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<deck>已空则空位不再补充）。暗面保留的卡牌进入<hand>后仅对 actor 可见——<hand>为 private <zone>。",
@@ -882,6 +878,7 @@
             }
           },
           {
+            "id": "take_gold_bonus",
             "type": "<transfer>",
             "description": {
               "zh": "将 1 个<gold>从<gold_supply>移入 actor 的<player_holding>。这是保留卡牌的附带收益——<gold>是百搭<gem>，可在购买时替代任意颜色。",
@@ -939,11 +936,9 @@
         }
       },
       "<condition>": "<exceed_gem_limit>",
-      "ordered": true,
       "<event>[]": [
         {
           "type": "<transfer>",
-          "order": 1,
           "description": {
             "zh": "将超出 10 颗部分的<gem>和<gold>从超限的<player>的<player_holding>返回供应堆。返回哪些颜色由该<player>自行选择——这是本<trigger>中唯一的玩家决策点。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
             "en": "Returns the <gem>s and <gold> exceeding 10 from the <player_holding> of the <player> who exceeded the limit to the supply. Which colors to return is chosen by that <player> — the only player decision point in this <trigger>. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
@@ -995,11 +990,9 @@
         }
       },
       "<condition>": "<noble_satisfied>",
-      "ordered": true,
       "<event>[]": [
         {
           "type": "<transfer>",
-          "order": 1,
           "description": {
             "zh": "将一枚满足条件的<noble>从<noble_market>移入刚结束回合的<player>的<development_area>。<ownership_change>隐式发生，该<noble>自此提供 3 点<prestige_point>。",
             "en": "Moves a satisfied <noble> from <noble_market> into the <development_area> of the <player> whose turn just ended. <ownership_change> occurs implicitly, and the <noble> provides 3 <prestige_point>s from now on."
@@ -1052,11 +1045,9 @@
         }
       },
       "<condition>": "<reach_15_prestige>",
-      "ordered": true,
       "<event>[]": [
         {
           "type": "<event>",
-          "order": 1,
           "description": {
             "zh": "游戏进入终局流程。此后的具体流程——补完当前<round>使所有<player>完成相同数量的<turn>、游戏结束、按<highest_prestige_wins>判定胜负——由流程文档定义，此处仅标记游戏状态切换为「终局」。",
             "en": "The game enters its endgame process. The specifics that follow — finishing the current <round> so all <player>s complete an equal number of <turn>s, ending the game, adjudicating by <highest_prestige_wins> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
@@ -1080,11 +1071,9 @@
         }
       },
       "<condition>": "<no_action_available>",
-      "ordered": true,
       "<event>[]": [
         {
           "type": "<event>",
-          "order": 1,
           "description": {
             "zh": "当前<player>的<turn>直接结束——不执行任何<action>，不触发任何与<action>绑定的<trigger>，流程进入下一<player>的<turn>。回合结束时的<trigger>（<attract_noble>、<enter_endgame>）照常检查。",
             "en": "The current <player>'s <turn> ends immediately — no <action> is performed and no <action>-bound <trigger> fires; play passes to the next <player>'s <turn>. End-of-turn <trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."

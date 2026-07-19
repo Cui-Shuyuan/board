@@ -1419,15 +1419,8 @@
       },
       "<event>[]": {
         "description": {
-          "zh": "<trigger> 被触发后启动的后续 <event> 列表。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。列表是否有执行顺序由 <trigger> 的 ordered 字段声明——ordered 为 true 时每个 <event> 必须声明 order 字段。",
-          "en": "The list of follow-up <event>s launched after the <trigger> fires. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play). Whether the list has an execution order is declared by the <trigger>'s ordered field — when ordered is true, every <event> must declare an order field."
-        }
-      },
-      "ordered": {
-        "type": "boolean",
-        "description": {
-          "zh": "<event> 列表是否有执行顺序。true：顺序是规则语义的一部分——每个 <event> 必须声明 order 字段（整数，从 1 开始），引擎按 order 升序执行；颠倒顺序可能改变结果（如先打出卡牌后支付费用，新卡的效果会对本次支付生效）。false：所有 <event> 可交换（commutative）——不声明 order 字段；契约是任一 <event> 的合法性不依赖其他 <event> 已执行，且任意执行顺序产生相同的最终状态（如保留卡牌时的「拿卡」和「拿黄金」），AI 应向玩家表述为「同时进行 / 不分先后」，禁止编造顺序。",
-          "en": "Whether the <event> list has an execution order. true: order is part of the rule semantics — every <event> must declare an order field (integer, starting from 1), and the engine executes in ascending order; reversing the order may change the outcome (e.g., playing a card before paying would let the new card's effect apply to that very payment). false: all <event>s are commutative — no order field is declared; the contract is that no <event>'s legality depends on another <event> having executed, and any execution order yields the same final state (e.g., 'take the card' and 'take the gold' when reserving), and the AI must describe them to players as 'simultaneous / in no particular order', never inventing an order."
+          "zh": "<trigger> 被触发后启动的后续 <event> 列表。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。每个 <event> 可声明 `do_after` 字段引用其他 <event> 的 id，表示必须等被引用的 <event> 完成后才能执行；无 `do_after` 的 <event> 互相独立，可任意顺序或并行执行。为了支持 `do_after`，每个可能需要被引用的 <event> 都应声明 `id`。",
+          "en": "The list of follow-up <event>s launched after the <trigger> fires. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play). Each <event> may declare a `do_after` field referencing another <event>'s id, meaning it must wait for the referenced <event> to complete; <event>s without `do_after` are independent of each other and may execute in any order or in parallel. To support `do_after`, every <event> that might be referenced should declare an `id`."
         }
       },
       "constraints": {
@@ -1451,13 +1444,6 @@
             "description": {
               "zh": "<trigger> 的职责是启动后续 <event>——没有 <event> 列表的 <trigger> 是空调度器。此约束要求子类声明被触发后执行哪些 <event>。",
               "en": "A <trigger>'s job is to launch follow-up <event>s — a <trigger> without an <event> list is an empty dispatcher. This constraint requires subclasses to declare which <event>s execute upon firing."
-            }
-          },
-          {
-            "id": "ordered",
-            "description": {
-              "zh": "顺序语义必须显式声明，不允许缺省——否则无法区分「必须按序」与「无所谓顺序」，AI 可能向玩家编造不存在的先后。",
-              "en": "Order semantics must be declared explicitly, no default allowed — otherwise 'must be sequential' cannot be distinguished from 'order does not matter', and the AI might invent a nonexistent order for players."
             }
           }
         ],

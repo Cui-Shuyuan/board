@@ -62,18 +62,24 @@ metadata:
 - `<development_area>`（contains=`<development_card>[] | <noble>[]`，无上限，public）
 - `<starting_player_marker>`（游戏专属外观：两个零件拼成钻石形状）
 
-**Trigger 层**：
+**Trigger 层**（event 顺序统一用 `do_after` 表达依赖，无 `do_after` 的事件互相独立）：
 - `discard_excess_gems`（extends `<trigger>`，独立 trigger 不绑定 action。timing=使宝石总数变化的 event 结算完成的瞬间（**超限时立即触发**，非回合结束），condition=holding 中 gem+gold 总数 >10；单 transfer 将超出部分返回供应堆，颜色由该玩家自选）
 - `attract_noble`（extends `<trigger>`。condition=回合刚结束且 noble_market 中至少一枚 noble 的 requirement 被 development_area 满足；单 transfer noble→development_area，多枚满足时玩家择一、每回合一枚）
 - `enter_endgame`（extends `<trigger>`。timing=回合结束时；condition 引用 `reach_15_prestige`；event 为描述性「进入终局流程」，具体流程留给流程文档）
 - `skip_turn`（extends `<trigger>`。timing=回合开始、宣告 action 前；condition 引用 `no_action_available`；event=回合直接结束进入下一玩家，回合末 trigger 照常检查）
-- `no_action_available`（extends `<condition>`，复合条件：gems_available_any / gems_available_same_color / card_purchasable / card_reservable 四者取反求与，params 声明 op=and + not operands）
-- `reach_15_prestige`（extends `<endgame_condition>`，conditions 组。任意玩家声望 ≥15，params={threshold:15}）
-- `highest_prestige_wins`（extends `<victory_condition>`，conditions 组。形式化为 `"<condition>": ["<prestige_highest>", "<fewest_development_cards>"]`——按序满足的玩家为胜者，允许多平局）
-- `all_players_acted_this_round`（extends `<condition>`，本轮每个玩家都已完成一个 turn，用于 player_turns 循环边界）
-- `no_remaining_players`（extends `<condition>`，本轮尚未行动的玩家已全部补完 turn，用于终局 final_turns 循环边界）
+- `purchase_development_card` 的内嵌 trigger：`pay_cost` event 与 `play_card` event，`play_card` 声明 `do_after: ["pay_cost"]`
+- `reserve_development_card` 的内嵌 trigger：`reserve_card` event 与 `take_gold_bonus` event，二者互相独立，均无 `do_after`
 
 **Trigger 层已完成（4 个）**：discard_excess_gems、attract_noble、enter_endgame、skip_turn
+
+**Conditions 层**（13 个核心条件 + 2 个 flow 控制条件）：
+- `gems_available_any` / `gems_available_same_color` / `card_purchasable` / `card_reservable` / `gold_available` / `exceed_gem_limit` / `noble_satisfied` / `action_declaration_legal`
+- `no_action_available`（复合：四行动条件取反求与）
+- `reach_15_prestige`（extends `<endgame_condition>`，任意玩家声望 ≥15）
+- `highest_prestige_wins`（extends `<victory_condition>`，形式化为 `"<condition>": ["<prestige_highest>", "<fewest_development_cards>"]`）
+- `prestige_highest` / `fewest_development_cards`（判胜用的两条单玩家判定式）
+- `all_players_acted_this_round`（本轮每个玩家都已完成一个 turn，用于 player_turns 循环边界）
+- `no_remaining_players`（本轮尚未行动的玩家已全部补完 turn，用于终局 final_turns 循环边界）
 
 ### 已完成（flow.json）
 
@@ -114,4 +120,4 @@ metadata:
 - **trigger 的激活时机由 `<timing>` 字段显式表达，condition 只写纯状态事实**——如 discard_excess_gems：`<timing>`=「使宝石总数变化的 event 结算完成的瞬间」+ condition=「总数 >10」；attract_noble：`<timing>`=「回合结束时」+ condition=「noble requirement 被满足」。时机不同保证不会同时触发；内嵌 trigger 的 `<timing>`=「此 action 执行完毕时」+ 绑定说明，condition=「此 action 的 precondition 满足且 declaration 合法」
 
 **Why:** 追踪 Splendor 规则定义的进度，新会话无需重新遍历文件。
-**How to apply:** 概念层与流程层均已完成。concepts.json 现有 objects 21 个（`<noble_deck>` 已删除，`<game_box>` 已移至 ontology）、actions 4 个、triggers 4 个、conditions 15 个（新增 `<all_players_acted_this_round>`、`<no_remaining_players>`）；flow.json 已按方案 C 完成 setup → main_gameplay → endgame 的完整流程定义，setup 阶段使用 `do_after` 表达事件依赖。下一步可选：补充 flow.json 的 JSON Schema，或开始引擎实现。
+**How to apply:** 概念层与流程层均已完成。concepts.json 现有 objects 21 个、actions 4 个、triggers 4 个（event 顺序改用 `do_after` 表达）、conditions 15 个；`<game_box>` 已升入 ontology；flow.json 已按方案 C 完成 setup → main_gameplay → endgame 的完整流程定义，setup 阶段使用 `do_after` 表达事件依赖。下一步可选：补充 flow.json 的 JSON Schema，或开始引擎实现。

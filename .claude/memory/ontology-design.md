@@ -64,18 +64,19 @@ D:\workspace\board\ontology\ontology.json（统一本体，51 个概念）
 - **rules**：`map<string, string>`，optional。中英双语描述超越结构化字段的执行规则约束
 
 ### Trigger 的四要素结构 ★
-Trigger 的本质是「**timing + condition → events**」，四个 required 字段：
-- `<timing>`——触发时机（条件检查钟声）：状态变化瞬间 / 阶段边界 / 某 event 完成后。**满足条件不代表立即触发——时机到且条件满足才触发**；时机未至条件满足只是待命。Timing 是 Level 0 概念（与 Condition 平级，带 params 供程序 watcher 侦测）。**timing 只属于 trigger 和 procedure（起止边界），event 不持有 timing**——trigger 触发后 event 序列按 order 依次执行，顺序本身就是时序，逐事件声明「在上一个 event 后」纯属冗余。字段 key 即类型，写作 `"<timing>": {...}` 而非 `"timing": {"type": "<timing>"}`
+Trigger 的本质是「**timing + condition → events**」，三个 required 字段：
+- `<timing>`——触发时机（条件检查钟声）：状态变化瞬间 / 阶段边界 / 某 event 完成后。**满足条件不代表立即触发——时机到且条件满足才触发**；时机未至条件满足只是待命。Timing 是 Level 0 概念（与 Condition 平级，带 params 供程序 watcher 侦测）。**timing 只属于 trigger 和 procedure（起止边界），event 不持有 timing**——trigger 触发后 event 序列按依赖关系执行。字段 key 即类型，写作 `"<timing>": {...}` 而非 `"timing": {"type": "<timing>"}`
 - `<condition>`——纯状态事实（如「宝石总数 >10」），不含时机描述。每个 trigger 都必须有 condition，即使被 action 触发：「此 action 的 precondition 满足且 declaration 合法」本身就是 condition。trigger 不用 precondition 字段
 - `<event>[]`——触发后启动的后续事件列表
-- `ordered`——顺序语义（见下）
 
 **术语约定：trigger 用「触发」，不用「激活」**——激活（Activation）是玩家侧的 action 概念；trigger 不以玩家意志为转移。英文用 fire。
 
-**顺序语义（ordered + order 双字段，均 required）**：
-- `ordered: true`——顺序是规则语义，每个 event 必须声明 `order`（整数从 1 起），引擎按序执行。如购买：先返回宝石再打出，颠倒会让新卡 discount 对本次购买生效
-- `ordered: false`——event 可交换（commutative），**不写 order 字段**。契约：任一 event 合法性不依赖其他 event 已执行，任意顺序结果相同。如保留：拿卡与拿 gold 互不依赖。AI 必须表述为「同时进行/不分先后」，禁止编造顺序
-- ordered 设为 required 且不允许缺省——防止 AI 向玩家编造不存在的先后
+**Event 顺序语义（do_after）**：
+- 每个 `<event>` 可声明 `id` 和 `do_after: ["<event_id>", ...]`，表示必须等被引用的 event 完成后才能执行
+- 无 `do_after` 的 event 互相独立，可任意顺序或并行执行
+- 如购买发展卡：`pay_cost` 无依赖，`play_card` 声明 `do_after: ["pay_cost"]`——若颠倒，新卡的 discount 会对本次购买生效
+- 如保留发展卡：两个 event 互相独立，均不写 `do_after`，AI 应表述为「同时进行 / 不分先后」
+- 单 event trigger 无需 `id` 和 `do_after`
 
 ### Transfer 字段改名 ★
 `what` → `<object>`，与其他概念引用 key 统一。
