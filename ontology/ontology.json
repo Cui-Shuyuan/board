@@ -1693,6 +1693,26 @@
       }
     },
     {
+      "id": "game_box",
+      "name": {
+        "zh": "游戏盒",
+        "en": "Game Box"
+      },
+      "level": 2,
+      "parent": "<reserve>",
+      "abstract": false,
+      "definition": {
+        "zh": "存放当前未进入游戏流程的 <object> 的 <reserve>。<game_box> 继承自 <reserve>。与 <supply>、<market>、<deck>、<pool> 不同——后四者是游戏中的 <reserve>，其内容直接参与当前游戏状态和规则判定；而 <game_box> 中的 <object> 暂时游离于当前游戏流程之外，既不可被 <player> 取用，也不触发任何游戏规则。核心特征：(1) 初始容器——游戏设置前，所有组件通常先放在 <game_box> 中；(2) setup 阶段入口——游戏设置时从这里取出组件，放入合适的游戏内 <reserve>；(3) 流程外暂存——游戏过程中，某些规则可能要求将 <object> 移回 <game_box>，表示该 <object> 暂时从当前游戏流程中移除（区别于 <discard_pile> 的永久弃置）；(4) 不直接参与规则——<game_box> 中的 <object> 不计入胜负、不可被选择或操作，直到再次进入某个游戏内 <reserve>。典型例子：璀璨宝石盒中尚未分发的发展卡和贵族板块、某些游戏中被规则临时移出流程的卡牌或指示物。",
+        "en": "A <reserve> holding <object>s that are not currently part of the game flow. <game_box> extends <reserve>. Unlike <supply>, <market>, <deck>, and <pool> — which are in-game <reserve>s whose contents directly participate in the current game state and rules — <object>s in <game_box> are temporarily outside the current game flow: they cannot be taken by <player>s and trigger no game rules. Core traits: (1) initial container — before setup, all components usually start here; (2) setup entry point — during setup, components are taken from here and placed into appropriate in-game <reserve>s; (3) out-of-flow holding — during gameplay, certain rules may move <object>s back into <game_box>, indicating they are temporarily removed from the current game flow (distinct from permanent discarding to <discard_pile>); (4) non-participatory — <object>s in <game_box> do not count toward victory, cannot be selected or operated, until they re-enter an in-game <reserve>. Typical examples: undistributed development cards and noble tiles in the Splendor box, or cards/tokens temporarily removed from play by certain game rules."
+      },
+      "<ownership>": null,
+      "<information_visibility>": "hidden",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "player_holding",
       "name": {
         "zh": "玩家保留区",

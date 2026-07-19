@@ -4,8 +4,8 @@
     "name": { "zh": "璀璨宝石", "en": "Splendor" },
     "version": "0.1.0",
     "description": {
-      "zh": "璀璨宝石的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、回合结构、终局流程）。",
-      "en": "Flow definition for Splendor — the complete sequence of a game from setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, turn structure, endgame process)."
+      "zh": "璀璨宝石的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、回合结构、终局流程）。Setup 阶段使用 do_after 表达事件间的依赖关系：无 do_after 的事件互相独立，可任意顺序或并行执行；do_after 引用的事件必须先完成。",
+      "en": "Flow definition for Splendor — the complete sequence of a game from setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, turn structure, endgame process). The setup phase uses do_after to express dependencies between events: events without do_after are independent and may execute in any order or in parallel; events listed in do_after must complete first."
     }
   },
   "procedures": [
@@ -18,19 +18,58 @@
           "type": "<phase>",
           "events": [
             {
+              "id": "prepare_level_1_deck",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将游戏盒中所有一级发展卡移至一级发展卡牌堆，使其成为一个<deck>。",
+                "en": "Move all level I development cards from the game box into the level I development deck, forming it into a <deck>."
+              },
+              "source": "<game_box>",
+              "destination": "<development_deck_level_1>",
+              "<object>": "<development_card_level_1>",
+              "quantity": "all"
+            },
+            {
+              "id": "prepare_level_2_deck",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将游戏盒中所有二级发展卡移至二级发展卡牌堆，使其成为一个<deck>。",
+                "en": "Move all level II development cards from the game box into the level II development deck, forming it into a <deck>."
+              },
+              "source": "<game_box>",
+              "destination": "<development_deck_level_2>",
+              "<object>": "<development_card_level_2>",
+              "quantity": "all"
+            },
+            {
+              "id": "prepare_level_3_deck",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将游戏盒中所有三级发展卡移至三级发展卡牌堆，使其成为一个<deck>。",
+                "en": "Move all level III development cards from the game box into the level III development deck, forming it into a <deck>."
+              },
+              "source": "<game_box>",
+              "destination": "<development_deck_level_3>",
+              "<object>": "<development_card_level_3>",
+              "quantity": "all"
+            },
+            {
               "id": "shuffle_level_1_deck",
               "type": "<shuffle>",
-              "target": "<development_deck_level_1>"
+              "target": "<development_deck_level_1>",
+              "do_after": ["prepare_level_1_deck"]
             },
             {
               "id": "shuffle_level_2_deck",
               "type": "<shuffle>",
-              "target": "<development_deck_level_2>"
+              "target": "<development_deck_level_2>",
+              "do_after": ["prepare_level_2_deck"]
             },
             {
               "id": "shuffle_level_3_deck",
               "type": "<shuffle>",
-              "target": "<development_deck_level_3>"
+              "target": "<development_deck_level_3>",
+              "do_after": ["prepare_level_3_deck"]
             },
             {
               "id": "deal_card_market_level_1",
@@ -39,7 +78,8 @@
               "destination": "<card_market>",
               "<object>": "<development_card_level_1>",
               "quantity": 4,
-              "slot": "level_1"
+              "slot": "level_1",
+              "do_after": ["shuffle_level_1_deck"]
             },
             {
               "id": "deal_card_market_level_2",
@@ -48,7 +88,8 @@
               "destination": "<card_market>",
               "<object>": "<development_card_level_2>",
               "quantity": 4,
-              "slot": "level_2"
+              "slot": "level_2",
+              "do_after": ["shuffle_level_2_deck"]
             },
             {
               "id": "deal_card_market_level_3",
@@ -57,20 +98,21 @@
               "destination": "<card_market>",
               "<object>": "<development_card_level_3>",
               "quantity": 4,
-              "slot": "level_3"
-            },
-            {
-              "id": "shuffle_noble_deck",
-              "type": "<shuffle>",
-              "target": "<noble_deck>"
+              "slot": "level_3",
+              "do_after": ["shuffle_level_3_deck"]
             },
             {
               "id": "deal_nobles",
               "type": "<transfer>",
-              "source": "<noble_deck>",
+              "description": {
+                "zh": "从游戏盒中随机取出 player_count + 1 枚贵族板块，放入贵族市场。",
+                "en": "Randomly take player_count + 1 noble tiles from the game box and place them into the noble market."
+              },
+              "source": "<game_box>",
               "destination": "<noble_market>",
               "<object>": "<noble>",
-              "quantity": { "expr": "player_count + 1" }
+              "quantity": { "expr": "player_count + 1" },
+              "random": true
             },
             {
               "id": "distribute_gems",

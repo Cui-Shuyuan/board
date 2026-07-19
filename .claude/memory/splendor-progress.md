@@ -13,9 +13,9 @@ metadata:
 
 ## 文件结构
 按类别分组，不再混在一个 concepts 数组里：
-- `objects`（22 个）——resource / content / card / tile / zone 等静态概念
+- `objects`（21 个）——resource / content / card / tile / zone 等静态概念
 - `actions`（4 个）——parent 为 `<action>`
-- `triggers`（3 个）——parent 为 `<trigger>` 的独立 trigger
+- `triggers`（4 个）——parent 为 `<trigger>` 的独立 trigger
 - `conditions`（13 个）——**所有 condition 统一定义于此**，使用处只写纯引用（trigger 的 `<condition>` 为字符串、precondition 为单元素数组）：gems_available_any / gems_available_same_color / card_purchasable / card_reservable / gold_available / exceed_gem_limit / noble_satisfied / action_declaration_legal（所有内嵌 trigger 共用的通用绑定条件）/ no_action_available（复合：四行动条件取反求与）/ reach_15_prestige（extends `<endgame_condition>`）/ highest_prestige_wins（extends `<victory_condition>`）/ prestige_highest / fewest_development_cards（判胜用的两条单玩家判定式）
 - 顶层引用——`<player_holding>` / `<development_area>` / `<hand>` / `<starting_player_marker>`
 - `flow.json` 流程层——`procedures` 组（game round → setup / main_gameplay / endgame phases）
@@ -44,10 +44,9 @@ metadata:
 - `gem_supply`（extends `<supply>`，contains=`<gem>[]`）
 - `gold_supply`（extends `<supply>`，contains=`<gold>[]`）
 - `development_deck` → level_1 / 2 / 3（extends `<deck>`，contains=对应等级发展卡）
-- `noble_deck`（extends `<deck>`，contains=`<noble>[]`，setup 时洗牌并发贵族）
 - `noble_market`（extends `<market>`，contains=`<noble>[]`，被动触发非主动购买）
 - `card_market`（extends `<market>`，contains=`<development_card>[]`，3 组×4 张按等级陈列，买走/保留后从对应牌堆顶部补牌）
-- `game_box`（extends `<supply>`，虚拟初始池，setup 时从中分发 gem/gold）
+- `<game_box>` 已入 ontology（extends `<reserve>`），作为「当前未进入游戏流程的 object 的 zone」，setup 时从中分发组件，游戏中也可能接收被移出流程的 object
 
 **Action 层**：
 - `take_gems_different`（extends `<action>`，取 1~3 颗不同色宝石，数量由供应情况决定）
@@ -78,9 +77,12 @@ metadata:
 
 ### 已完成（flow.json）
 
-**流程层结构**（方案 C：声明式流程树 + `loop until` 原语）：
+**流程层结构**（方案 C：声明式流程树 + `loop until` 原语 + `do_after` 依赖）：
 - `game`：整局游戏作为一个 `<round>`
-- `setup`：全自动 leaf phase，顺序执行 shuffle、deal market、deal nobles、distribute gems/gold、choose starting player
+- `setup`：全自动 leaf phase，使用 `do_after` 表达事件依赖——无 `do_after` 的事件互相独立，可任意顺序或并行
+  - 发展卡：从 `<game_box>` 准备 deck → shuffle → deal market（三个等级互相独立）
+  - 贵族：从 `<game_box>` 随机取 `player_count + 1` 枚到 `<noble_market>`
+  - 分发 gem/gold、决定起始玩家：与其他事件无依赖
 - `main_gameplay`：loop until `<reach_15_prestige>`，每次循环产生一个 `turn_cycle` round
 - `turn_cycle` → `player_turns` phase → loop until `<all_players_acted_this_round>` → 每个玩家一个 `player_turn` → 内嵌 `action_phase`
 - `endgame`：包含 `final_turn_cycle` round → `final_turns` phase → loop until `<no_remaining_players>`（给本轮未行动玩家各补一个 turn），然后 `scoring` phase 按 `<highest_prestige_wins>` 判胜
@@ -89,7 +91,9 @@ metadata:
 - 每个 `<turn>` 都显式包含一个 child `<phase>`（action_phase），不省略。
 - `start`/`end` 字段采用默认值（`<on_entry>`、`<when_children_done>`、`<when_events_done>`、`<when_action_resolved>`），仅在需要时覆盖。
 - trigger 的 `<timing>` 保持宽泛文本，不引用 flow 命名边界。
+- setup 阶段使用 `do_after` 表达事件依赖：无 `do_after` 的事件互相独立，引擎可自由安排顺序或并行执行。
 - setup 中 2/3/4 人差异只体现在贵族数量（`player_count + 1`）和宝石数量（按人数内联）两处。
+- 发展卡在 setup 中先从 `<game_box>` 移入 `<development_deck>` 形成 deck，再 shuffle，再发 market；贵族直接从 `<game_box>` 随机选取，不使用 deck。
 
 ### 下一阶段
 
@@ -110,4 +114,4 @@ metadata:
 - **trigger 的激活时机由 `<timing>` 字段显式表达，condition 只写纯状态事实**——如 discard_excess_gems：`<timing>`=「使宝石总数变化的 event 结算完成的瞬间」+ condition=「总数 >10」；attract_noble：`<timing>`=「回合结束时」+ condition=「noble requirement 被满足」。时机不同保证不会同时触发；内嵌 trigger 的 `<timing>`=「此 action 执行完毕时」+ 绑定说明，condition=「此 action 的 precondition 满足且 declaration 合法」
 
 **Why:** 追踪 Splendor 规则定义的进度，新会话无需重新遍历文件。
-**How to apply:** 概念层与流程层均已完成。concepts.json 现有 objects 24 个（新增 `<noble_deck>`、`<game_box>`）、actions 4 个、triggers 4 个、conditions 15 个（新增 `<all_players_acted_this_round>`、`<no_remaining_players>`）；flow.json 已按方案 C 完成 setup → main_gameplay → endgame 的完整流程定义。下一步可选：补充 flow.json 的 JSON Schema，或开始引擎实现。
+**How to apply:** 概念层与流程层均已完成。concepts.json 现有 objects 21 个（`<noble_deck>` 已删除，`<game_box>` 已移至 ontology）、actions 4 个、triggers 4 个、conditions 15 个（新增 `<all_players_acted_this_round>`、`<no_remaining_players>`）；flow.json 已按方案 C 完成 setup → main_gameplay → endgame 的完整流程定义，setup 阶段使用 `do_after` 表达事件依赖。下一步可选：补充 flow.json 的 JSON Schema，或开始引擎实现。

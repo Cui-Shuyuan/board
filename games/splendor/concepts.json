@@ -413,25 +413,6 @@
       }
     },
     {
-      "id": "noble_deck",
-      "name": { "zh": "贵族牌堆", "en": "Noble Deck" },
-      "parent": "<deck>",
-      "abstract": false,
-      "definition": {
-        "zh": "璀璨宝石中存放<noble>的<deck>。游戏设置时从此<deck>中抽取 player_count + 1 枚<noble>放入<noble_market>。卡牌面朝下放置，抽取前进行<shuffle>。",
-        "en": "A <deck> holding <noble>s in Splendor. During setup, player_count + 1 <noble>s are drawn from this <deck> into the <noble_market>. Tiles are stacked face-down and <shuffle>d before drawing."
-      },
-      "contains": {
-        "type": "<noble>[]",
-        "description": {
-          "zh": "此<deck>存放的<object>类型：<noble>。",
-          "en": "The <object> type this <deck> holds: <noble>."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "hidden"
-    },
-    {
       "id": "card_market",
       "name": { "zh": "发展卡市场", "en": "Development Card Market" },
       "parent": "<market>",
@@ -589,25 +570,6 @@
           "en": "Visual description of <gold>. Poker-chip style round thick disc, with a gold symbol printed in the center and a golden ring around the edge. Same size as the five <gem>s but distinctly different in color."
         }
       }
-    },
-    {
-      "id": "game_box",
-      "name": { "zh": "游戏盒", "en": "Game Box" },
-      "parent": "<supply>",
-      "abstract": false,
-      "definition": {
-        "zh": "璀璨宝石的游戏盒——一个虚拟的<supply>，存放游戏设置前所有未进入游戏状态的组件（初始<gem>、<gold>、<development_card>、<noble>等）。Setup 阶段从这些组件中按需取出并放入游戏内的各<zone>。游戏进行中不再使用此<zone>。",
-        "en": "The Splendor game box — a virtual <supply> holding all components before they enter the game state (initial <gem>s, <gold>, <development_card>s, <noble>s, etc.). During setup, components are taken from here and placed into in-game <zone>s as needed. This <zone> is not used during gameplay."
-      },
-      "contains": {
-        "type": "<gem>[] | <gold>[] | <development_card>[] | <noble>[]",
-        "description": {
-          "zh": "此<supply>存放的<object>类型：所有游戏组件的初始池。",
-          "en": "The <object> types this <supply> holds: the initial pool of all game components."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "hidden"
     }
   ],
   "actions": [
