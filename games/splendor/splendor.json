@@ -582,8 +582,8 @@
       },
       "precondition": {
         "description": {
-          "zh": "执行前提：<gem_supply>中至少存在 1 颗<gem>（任意颜色）。供应堆完全为空时此<action>不可选。注意：<player_holding>总数限制（10 颗）不在此处校验——拿取后若超出 10 颗，由回合结束时的 discard trigger 统一处理。",
-          "en": "Precondition: <gem_supply> has at least 1 <gem> (any color). This <action> is unavailable only when the supply is completely empty. Note: the <player_holding> limit (10) is not checked here."
+          "zh": "执行前提：<gem_supply>中至少存在 1 颗<gem>（任意颜色），且<declaration>合法——所选颜色两两不同、各色在<gem_supply>中至少有 1 颗存量；可用颜色 ≥3 种时须选满 3 种，仅 1~2 种时须选全部可用颜色。供应堆完全为空时此<action>不可选。注意：<player_holding>总数限制（10 颗）不在此处校验——拿取后若超出 10 颗，由回合结束时的 discard trigger 统一处理。",
+          "en": "Precondition: <gem_supply> has at least 1 <gem> (any color), and the <declaration> is legal — the chosen colors are pairwise distinct and each has at least 1 in <gem_supply>; when ≥3 colors are available exactly 3 must be chosen, when only 1-2 all available colors must be chosen. This <action> is unavailable only when the supply is completely empty. Note: the <player_holding> limit (10) is not checked here."
         }
       },
       "<declaration>": {
@@ -600,9 +600,11 @@
           "zh": "因<player>选择拿取不同色宝石而触发的<event>序列。仅含一个<event>：一次<transfer>，将<declaration>中指定的<gem>从<gem_supply>移入该<player>的<player_holding>。",
           "en": "The <event> sequence triggered by the <player> choosing to take different-colored gems. Contains a single <event>: a <transfer> that moves the <gem>s specified in <declaration> from <gem_supply> to the <player>'s <player_holding>."
         },
+        "ordered": true,
         "<event>": [
           {
             "type": "<transfer>",
+            "order": 1,
             "description": {
               "zh": "将<declaration>中指定的<gem>从<gem_supply>移入该<player>的<player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。<ownership_change>隐式发生。",
               "en": "Moves the <gem>s specified in <declaration> from <gem_supply> to the <player>'s <player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. <ownership_change> occurs implicitly."
@@ -634,10 +636,6 @@
                 "zh": "<transfer>的数量。不固定——≥3 种颜色可选时为 3，1~2 种时等于<declaration>中 colors 数组的长度。",
                 "en": "Quantity of the <transfer>. Not fixed — 3 when ≥3 colors available, equals the length of the colors array in <declaration> when 1-2."
               }
-            },
-            "rules": {
-              "zh": "所选<gem>颜色必须两两不同。若<gem_supply>中可用颜色 ≥3 种，<player>任选 3 种各取 1 颗；若仅有 1~2 种颜色有存量，则必须取走所有可用颜色各 1 颗。",
-              "en": "The chosen <gem>s must be of distinct colors. If <gem_supply> has ≥3 colors available, the <player> picks any 3 and takes 1 of each. If only 1-2 colors are in stock, the <player> must take 1 of each available color."
             }
           }
         ]
@@ -654,8 +652,8 @@
       },
       "precondition": {
         "description": {
-          "zh": "执行前提：<gem_supply>中至少存在一种颜色的<gem>存量 ≥4。所有颜色存量均 <4 时此<action>不可选。注意：<player_holding>总数限制（10 颗）不在此处校验——拿取后若超出 10 颗，由回合结束时的 discard trigger 统一处理。",
-          "en": "Precondition: at least one color in <gem_supply> has ≥4 <gem>s in stock. This <action> is unavailable when every color has fewer than 4. Note: the <player_holding> limit (10) is not checked here — if the total exceeds 10 after taking, the end-of-turn discard trigger handles it."
+          "zh": "执行前提：<gem_supply>中至少存在一种颜色的<gem>存量 ≥4，且<declaration>合法——所选颜色在<gem_supply>中的存量 ≥4，拿取后该颜色剩余 ≥2 颗。所有颜色存量均 <4 时此<action>不可选。注意：<player_holding>总数限制（10 颗）不在此处校验——拿取后若超出 10 颗，由回合结束时的 discard trigger 统一处理。",
+          "en": "Precondition: at least one color in <gem_supply> has ≥4 <gem>s in stock, and the <declaration> is legal — the chosen color has ≥4 in <gem_supply>, leaving at least 2 after taking. This <action> is unavailable when every color has fewer than 4. Note: the <player_holding> limit (10) is not checked here — if the total exceeds 10 after taking, the end-of-turn discard trigger handles it."
         }
       },
       "<declaration>": {
@@ -672,9 +670,11 @@
           "zh": "因<player>选择拿取同色宝石而触发的<event>序列。仅含一个<event>：一次<transfer>，将<declaration>中指定颜色的 2 颗<gem>从<gem_supply>移入该<player>的<player_holding>。",
           "en": "The <event> sequence triggered by the <player> choosing to take same-colored gems. Contains a single <event>: a <transfer> that moves 2 <gem>s of the color specified in <declaration> from <gem_supply> to the <player>'s <player_holding>."
         },
+        "ordered": true,
         "<event>": [
           {
             "type": "<transfer>",
+            "order": 1,
             "description": {
               "zh": "将<declaration>中指定颜色的 2 颗<gem>从<gem_supply>移入该<player>的<player_holding>。<ownership_change>隐式发生。",
               "en": "Moves 2 <gem>s of the color specified in <declaration> from <gem_supply> to the <player>'s <player_holding>. <ownership_change> occurs implicitly."
@@ -707,10 +707,6 @@
                 "zh": "<transfer>的数量。固定为 2。",
                 "en": "Quantity of the <transfer>. Fixed at 2."
               }
-            },
-            "rules": {
-              "zh": "仅当<declaration>所选颜色在<gem_supply>中的存量 ≥4 时才允许拿取。拿取后该颜色剩余 ≥2 颗。",
-              "en": "Taking is only allowed when the color chosen in <declaration> has ≥4 in <gem_supply>. At least 2 of that color remain after taking."
             }
           }
         ]
@@ -727,8 +723,8 @@
       },
       "precondition": {
         "description": {
-          "zh": "执行前提：目标<development_card>位于<card_market>或 actor 的<hand>中，且 actor 的<player_holding>足以返回所需<gem>——各色持有量（<gold>可补任意颜色的缺口）不少于该卡<cost>逐色减去<discount>后的数量。与拿取宝石不同，此<action>不受<player_holding>上限约束——返回只会减少持有量。",
-          "en": "Precondition: the target <development_card> is in <card_market> or in the actor's <hand>, and the actor's <player_holding> holds enough <gem>s to return — each color's holdings (<gold> filling any color's gap) are no less than the card's <cost> reduced by <discount>s per color. Unlike taking gems, this <action> is not constrained by the <player_holding> limit — returning only reduces holdings."
+          "zh": "执行前提：目标<development_card>位于<card_market>或 actor 的<hand>中，actor 的<player_holding>足以返回所需<gem>——各色持有量（<gold>可补任意颜色的缺口）不少于该卡<cost>逐色减去<discount>后的数量，且<declaration>的 payment 合法——各色<gem>数量不超过该色返回数量（max(0, <cost>[色] − 该色<discount>总数)），<gold>补足差额，各色<gem>+<gold>恰好等于返回数量。与拿取宝石不同，此<action>不受<player_holding>上限约束——返回只会减少持有量。",
+          "en": "Precondition: the target <development_card> is in <card_market> or in the actor's <hand>, the actor's <player_holding> holds enough <gem>s to return — each color's holdings (<gold> filling any color's gap) are no less than the card's <cost> reduced by <discount>s per color, and the <declaration>'s payment is legal — <gem>s of each color do not exceed that color's return quantity (max(0, <cost>[color] − total <discount>s of that color)), <gold> makes up the difference, and <gem>s + <gold> per color exactly equal the return quantity. Unlike taking gems, this <action> is not constrained by the <player_holding> limit — returning only reduces holdings."
         }
       },
       "<declaration>": {
@@ -745,9 +741,11 @@
           "zh": "因<player>购买<development_card>而触发的<event>序列，按序包含两个<event>：(1) 一次<transfer>——将一定种类和数量的<gem>从 actor 的<player_holding>返回供应堆，数量为发展卡的<cost>减去<discount>；(2) 一次<play>——将目标<development_card>从<card_market>或 actor 的<hand>打出至 actor 的<development_area>。",
           "en": "The <event> sequence triggered by the <player> purchasing a <development_card>, containing two <event>s in order: (1) a <transfer> — returning a set of <gem>s from the actor's <player_holding> to the supply, the quantity being the development card's <cost> reduced by <discount>s; (2) a <play> — playing the target <development_card> from <card_market> or the actor's <hand> into the actor's <development_area>."
         },
+        "ordered": true,
         "<event>": [
           {
             "type": "<transfer>",
+            "order": 1,
             "description": {
               "zh": "将一定种类和数量的<gem>从 actor 的<player_holding>返回供应堆——数量为发展卡的<cost>逐色减去 actor <development_area>中已有<discount>（每色最低为 0），<gold>可替代任意颜色。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
               "en": "Returns a set of <gem>s from the actor's <player_holding> to the supply — the quantity per color being the development card's <cost> reduced by <discount>s already in the actor's <development_area> (minimum 0 per color), with <gold> substituting for any color. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
@@ -772,17 +770,14 @@
                 "zh": "被<transfer>的<object>。即<declaration>的 payment 中声明的各色<gem>和<gold>。",
                 "en": "The <object>s being <transfer>red. The <gem>s of each color and <gold> declared in the <declaration>'s payment."
               }
-            },
-            "rules": {
-              "zh": "各色返回数量 = max(0, <cost>[色] − actor<development_area>中该色<discount>总数)。payment 中各色<gem>数量不得超过该色返回数量，<gold>补足差额；各色<gem>+<gold>之和必须恰好等于返回数量。",
-              "en": "The quantity returned per color = max(0, <cost>[color] − total <discount>s of that color in the actor's <development_area>). <gem>s of each color in payment may not exceed that color's return quantity, and <gold> makes up the difference; <gem>s + <gold> per color must exactly equal the return quantity."
             }
           },
           {
             "type": "<play>",
+            "order": 2,
             "description": {
-              "zh": "将目标<development_card>打出至 actor 的<development_area>。目标卡可来自<card_market>（当面购买）或 actor 的<hand>（购买已保留的卡牌）。打出后<ownership_change>隐式发生，该卡的<discount>与<prestige_point>自此生效。",
-              "en": "Plays the target <development_card> into the actor's <development_area>. The target may come from <card_market> (face-up purchase) or the actor's <hand> (buying a reserved card). After the play, <ownership_change> occurs implicitly and the card's <discount> and <prestige_point>s take effect from now on."
+              "zh": "将目标<development_card>打出至 actor 的<development_area>。目标卡可来自<card_market>（当面购买）或 actor 的<hand>（购买已保留的卡牌）。打出后<ownership_change>隐式发生，该卡的<discount>与<prestige_point>自此生效，但不作用于本次购买。若目标卡来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<deck>已空则空位不再补充）；若来自<hand>，不触发补牌。",
+              "en": "Plays the target <development_card> into the actor's <development_area>. The target may come from <card_market> (face-up purchase) or the actor's <hand> (buying a reserved card). After the play, <ownership_change> occurs implicitly and the card's <discount> and <prestige_point>s take effect from now on, but do not apply to this purchase. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <deck> is empty, the slot stays vacant); if it came from <hand>, no replenishment occurs."
             },
             "source": {
               "type": "<card_market> | <hand>",
@@ -804,10 +799,118 @@
                 "zh": "被打出的<object>。即<declaration>中指定的目标<development_card>，固定 1 张。",
                 "en": "The <object> being played. The target <development_card> specified in <declaration>, exactly 1 card."
               }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "reserve_development_card",
+      "name": { "zh": "保留发展卡", "en": "Reserve Development Card" },
+      "parent": "<action>",
+      "abstract": false,
+      "definition": {
+        "zh": "璀璨宝石中的「保留发展卡」<action>。玩家将一张<development_card>移入自己的<hand>——可以明面保留（从<card_market>任选一张）或暗面保留（从某一等级<development_deck>顶部取一张，事先不知道是哪张），同时从<gold_supply>拿取 1 个<gold>（若有库存）。<hand>上限为 3 张，满员时不可保留。保留的卡牌此后只能通过「购买发展卡」<action>打出至<development_area>。",
+        "en": "The 'reserve development card' <action> in Splendor. The player moves one <development_card> into their <hand> — either openly (choosing any card from <card_market>) or blindly (taking the top card of one level's <development_deck>, sight unseen) — and takes 1 <gold> from <gold_supply> (if in stock). The <hand> holds at most 3 cards; reserving is unavailable when full. A reserved card can later only be played into the <development_area> via the 'purchase development card' <action>."
+      },
+      "precondition": {
+        "description": {
+          "zh": "执行前提：actor 的<hand>未满（当前 <3 张），且<card_market>或任一<development_deck>中至少还有一张<development_card>可保留。注意：<player_holding>总数限制（10 颗）不在此处校验——拿取<gold>后若超出 10 颗，由回合结束时的 discard trigger 统一处理。",
+          "en": "Precondition: the actor's <hand> is not full (currently <3 cards), and at least one <development_card> is available in <card_market> or any <development_deck>. Note: the <player_holding> limit (10) is not checked here — if the total exceeds 10 after taking <gold>, the end-of-turn discard trigger handles it."
+        }
+      },
+      "<declaration>": {
+        "params": {
+          "type": "map<string, any>",
+          "description": {
+            "zh": "玩家的保留声明。格式：{ \"card\": \"<development_card 的 id 或 null>\", \"deck\": \"<development_deck_level_1|2|3 或 null>\" }。二者恰好其一非 null——card 非 null 表示明面保留（该卡必须位于<card_market>），deck 非 null 表示暗面保留（取该<development_deck>顶部一张，声明时不知道是哪张）。",
+            "en": "The player's reserve declaration. Format: { \"card\": \"<development_card id or null>\", \"deck\": \"<development_deck_level_1|2|3 or null>\" }. Exactly one of the two is non-null — a non-null card means an open reserve (that card must be in <card_market>); a non-null deck means a blind reserve (the top card of that <development_deck>, unknown at declaration time)."
+          }
+        }
+      },
+      "<trigger>": {
+        "description": {
+          "zh": "因<player>保留<development_card>而触发的<event>序列，包含两个不分先后的<event>：(1) 一次<transfer>——目标<development_card>从<card_market>或对应<development_deck>顶部移入 actor 的<hand>；(2) 一次<transfer>——1 个<gold>从<gold_supply>移入 actor 的<player_holding>（仅当<gold_supply>非空时执行）。两个<event>互不依赖，任意顺序执行结果相同。",
+          "en": "The <event> sequence triggered by the <player> reserving a <development_card>, containing two <event>s in no particular order: (1) a <transfer> — the target <development_card> moves from <card_market> or the top of the corresponding <development_deck> into the actor's <hand>; (2) a <transfer> — 1 <gold> moves from <gold_supply> into the actor's <player_holding> (executed only when <gold_supply> is non-empty). The two <event>s are independent of each other and yield the same result in any execution order."
+        },
+        "ordered": false,
+        "<event>": [
+          {
+            "type": "<transfer>",
+            "description": {
+              "zh": "将目标<development_card>移入 actor 的<hand>。明面保留时源为<card_market>，暗面保留时源为<declaration>指定等级的<development_deck>顶部。<ownership_change>隐式发生。若来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<deck>已空则空位不再补充）。暗面保留的卡牌进入<hand>后仅对 actor 可见——<hand>为 private <zone>。",
+              "en": "Moves the target <development_card> into the actor's <hand>. For an open reserve the source is <card_market>; for a blind reserve it is the top of the <development_deck> of the level specified in <declaration>. <ownership_change> occurs implicitly. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <deck> is empty, the slot stays vacant). A blindly reserved card in <hand> is visible only to the actor — <hand> is a private <zone>."
             },
-            "rules": {
-              "zh": "该卡的<discount>即刻生效，但不作用于本次购买。若目标卡来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<deck>已空则空位不再补充）；若来自<hand>，不触发补牌。",
-              "en": "The card's <discount> takes effect immediately but does not apply to this purchase. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <deck> is empty, the slot stays vacant); if it came from <hand>, no replenishment occurs."
+            "source": {
+              "type": "<card_market> | <development_deck>",
+              "description": {
+                "zh": "<transfer>的源<zone>。由<declaration>决定——card 非 null 时为<card_market>，deck 非 null 时为对应等级的<development_deck>。",
+                "en": "Source <zone> of the <transfer>. Determined by <declaration> — <card_market> when card is non-null, the corresponding level's <development_deck> when deck is non-null."
+              }
+            },
+            "destination": {
+              "type": "<hand>",
+              "description": {
+                "zh": "<transfer>的目标<zone>。指向 actor 的<hand>。",
+                "en": "Destination <zone> of the <transfer>. Points to the actor's <hand>."
+              }
+            },
+            "<object>": {
+              "type": "<development_card>",
+              "description": {
+                "zh": "被<transfer>的<object>。明面保留时即<declaration>中指定的<development_card>；暗面保留时为指定<development_deck>顶部的一张，执行前对 actor 未知。固定 1 张。",
+                "en": "The <object> being <transfer>red. For an open reserve, the <development_card> specified in <declaration>; for a blind reserve, the top card of the specified <development_deck>, unknown to the actor until executed. Exactly 1 card."
+              }
+            },
+            "quantity": {
+              "type": "integer",
+              "default": 1,
+              "description": {
+                "zh": "<transfer>的数量。固定为 1。",
+                "en": "Quantity of the <transfer>. Fixed at 1."
+              }
+            }
+          },
+          {
+            "type": "<transfer>",
+            "description": {
+              "zh": "将 1 个<gold>从<gold_supply>移入 actor 的<player_holding>。这是保留卡牌的附带收益——<gold>是百搭<gem>，可在购买时替代任意颜色。",
+              "en": "Moves 1 <gold> from <gold_supply> into the actor's <player_holding>. This is the bonus for reserving — <gold> is a wild <gem> that substitutes for any color when purchasing."
+            },
+            "precondition": {
+              "description": {
+                "zh": "当<gold_supply>非空时执行本<event>。<gold_supply>已空则跳过——保留卡牌仍然成立，只是不获得<gold>。",
+                "en": "This <event> executes only when <gold_supply> is non-empty; if it is empty, skip — the reserve still stands, just without gaining <gold>."
+              }
+            },
+            "source": {
+              "type": "<gold_supply>",
+              "description": {
+                "zh": "<transfer>的源<zone>。固定为<gold_supply>。",
+                "en": "Source <zone> of the <transfer>. Fixed to <gold_supply>."
+              }
+            },
+            "destination": {
+              "type": "<player_holding>",
+              "description": {
+                "zh": "<transfer>的目标<zone>。指向 actor 的<player_holding>。",
+                "en": "Destination <zone> of the <transfer>. Points to the actor's <player_holding>."
+              }
+            },
+            "<object>": {
+              "type": "<gold>",
+              "description": {
+                "zh": "被<transfer>的<object>。1 个<gold>。",
+                "en": "The <object> being <transfer>red. 1 <gold>."
+              }
+            },
+            "quantity": {
+              "type": "integer",
+              "default": 1,
+              "description": {
+                "zh": "<transfer>的数量。固定为 1。",
+                "en": "Quantity of the <transfer>. Fixed at 1."
+              }
             }
           }
         ]
@@ -860,8 +963,8 @@
     "contains": {
       "type": "<development_card>[]",
       "description": {
-        "zh": "此<hand>存放的<object>类型：<development_card>（所有三个等级）。保留卡牌时从<card_market>直接移入。",
-        "en": "The <object> type this <hand> holds: <development_card> (all three levels). Moved directly from <card_market> when reserving."
+        "zh": "此<hand>存放的<object>类型：<development_card>（所有三个等级）。保留卡牌时从<card_market>（明面保留）或对应等级<development_deck>顶部（暗面保留）移入。",
+        "en": "The <object> type this <hand> holds: <development_card> (all three levels). Moved in from <card_market> (open reserve) or from the top of the corresponding <development_deck> (blind reserve) when reserving."
       }
     },
     "capacity": {

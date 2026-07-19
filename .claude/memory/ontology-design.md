@@ -64,7 +64,12 @@ D:\workspace\board\ontology\ontology.json（统一本体，50 个概念）
 - **rules**：`map<string, string>`，optional。中英双语描述超越结构化字段的执行规则约束
 
 ### Trigger 的 <event>[] 结构 ★
-Trigger 是一组按序执行的 `<event>[]`（required 字段），不是所有 trigger 都是 transfer。元素可以是任意 Event 子类——拿宝石的 trigger 只有 1 个 `<transfer>`，购买发展卡的 trigger 有 2 个 event：`<transfer>`（支付 cost）+ `<play>`（卡从 market/hand 打出至 development_area）。数组顺序即执行顺序。
+Trigger 是一组按序执行的 `<event>[]`（required 字段），不是所有 trigger 都是 transfer。元素可以是任意 Event 子类——拿宝石的 trigger 只有 1 个 `<transfer>`，购买发展卡的 trigger 有 2 个 event：`<transfer>`（支付 cost）+ `<play>`（卡从 market/hand 打出至 development_area）。
+
+**顺序语义（ordered + order 双字段，均 required）**：
+- `ordered: true`——顺序是规则语义，每个 event 必须声明 `order`（整数从 1 起），引擎按序执行。如购买：先返回宝石再打出，颠倒会让新卡 discount 对本次购买生效
+- `ordered: false`——event 可交换（commutative），**不写 order 字段**。契约：任一 event 合法性不依赖其他 event 已执行，任意顺序结果相同。如保留：拿卡与拿 gold 互不依赖。AI 必须表述为「同时进行/不分先后」，禁止编造顺序
+- ordered 设为 required 且不允许缺省——防止 AI 向玩家编造不存在的先后
 
 ### Transfer 字段改名 ★
 `what` → `<object>`，与其他概念引用 key 统一。
