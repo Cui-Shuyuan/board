@@ -28,7 +28,17 @@
       "Bash(python3 *)",
       "Bash(python -c \"import json; json.load\\(open\\('games/splendor/splendor.json', encoding='utf-8'\\)\\); print\\('JSON valid'\\)\")",
       "Bash(python -X utf8 -c ' *)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(dotnet *)",
+      "Bash(curl -sSL https://dot.net/v1/dotnet-install.sh)",
+      "Bash(bash /dev/stdin --channel 9.0 --install-dir 'C:\\\\Users\\\\崔书源/.dotnet')",
+      "Bash(curl -sSL https://dot.net/v1/dotnet-install.sh -o 'C:\\\\Users\\\\崔书源/dotnet-install.sh')",
+      "Bash(chmod +x 'C:\\\\Users\\\\崔书源/dotnet-install.sh')",
+      "Bash('C:\\\\Users\\\\崔书源/dotnet-install.sh' --channel 9.0 --install-dir 'C:\\\\Users\\\\崔书源/.dotnet' --os win)",
+      "Bash(powershell -Command \"& {Invoke-WebRequest 'https://dot.net/v1/dotnet-install.ps1' -OutFile '\\\\$env:USERPROFILE\\\\dotnet-install.ps1'; & '\\\\$env:USERPROFILE\\\\dotnet-install.ps1' -Channel 9.0 -InstallDir '\\\\$env:USERPROFILE\\\\.dotnet'}\")",
+      "Bash(curl -sSL -o 'C:\\\\Users\\\\崔书源/dotnet-install.ps1' https://dot.net/v1/dotnet-install.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File 'C:\\\\Users\\\\崔书源/dotnet-install.ps1' -Channel 9.0 -InstallDir 'C:\\\\Users\\\\崔书源/.dotnet')",
+      "Bash(mkdir *)"
     ]
   }
 }

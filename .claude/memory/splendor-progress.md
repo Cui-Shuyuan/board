@@ -101,10 +101,20 @@ metadata:
 - setup 中 2/3/4 人差异只体现在贵族数量（`player_count + 1`）和宝石数量（按人数内联）两处。
 - 发展卡在 setup 中先从 `<game_box>` 移入 `<development_deck>` 形成 deck，再 shuffle，再发 market；贵族直接从 `<game_box>` 随机选取，不使用 deck。
 
+### Runtime 交互模型
+
+璀璨宝石的规则层（concepts.json / flow.json）完成后，下一步是验证「LLM + 程序 Runtime」的交互模式。详见 [[interaction-model]]。针对 Splendor 的关键结论：
+
+- **不做状态追踪和图像识别**：程序不读取 board、手牌或牌堆。
+- **LLM 只做概念识别与语言组织**：把客人问题映射到 action / trigger / condition，然后调用规则接口。
+- **状态依赖问题由 LLM 反问**：例如「我现在能买这张卡吗？」→ 反问客人当前宝石、金币、已买折扣卡；客人回答后，程序做判定，LLM 组织答案。
+- **问题统一为「解释某个概念/行动/触发器的条件与效果」**：不预写 FAQ，答案由 LLM 根据结构化规则自由组织。
+
 ### 下一阶段
 
-- 可补写一个 `flow.json` 的 JSON Schema 到 `ontology/` 或 `.claude/schemas/`，供未来游戏复用。
-- 引擎实现：procedure 栈推进、`loop until` 边界检查、与 trigger 系统协作。
+1. 设计并验证 LLM 工具接口 schema（读取概念、查询条件、判定状态等）。
+2. 用 Splendor 的真实问题跑通单次回答内的多轮工具调用。
+3. 视情况补写 `flow.json` 的 JSON Schema 或进入引擎实现。
 
 ## 设计约定
 

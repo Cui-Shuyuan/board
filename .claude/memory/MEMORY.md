@@ -1,4 +1,5 @@
 - [AI桌游讲师项目总览](project-overview.md) — 核心架构、设计理念、技术选型
 - [桌游本体设计](ontology-design.md) — JSON schema 约定、关键决策、当前进度（51 概念）
-- [璀璨宝石规则进度](splendor-progress.md) — 概念层已完成（concepts.json），flow.json 流程结构讨论中
+- [璀璨宝石规则进度](splendor-progress.md) — 概念层与流程层已完成，Runtime 交互模型已明确
+- [交互模型与 Runtime 目标](interaction-model.md) — LLM 与程序分工、无状态/无 CV 的阶段目标
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式
