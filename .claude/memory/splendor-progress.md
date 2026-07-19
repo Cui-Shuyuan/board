@@ -73,7 +73,9 @@ metadata:
 
 ### 待写
 
-- Procedure 层：回合结构、Setup、终局流程（**先写专门的流程文档**，用形式化语言描述一局游戏从开始到结束的完整流程，再回头落到 `procedures` 组）
+- **flow.json 流程形式化**（结构讨论中，新会话继续）。要表达：Setup（洗牌×3、发市场 12 张、发贵族=人数+1、按人数配宝石、定起始玩家）→ 回合循环（turn：宣告 action → 结算 → 回合末检查）→ 终局（补完本轮 → 判胜）
+- **讨论过的三条路线**：A 声明式流程树（贴合 ontology Procedure 嵌套：game → setup / round / endgame，turn → 3 个 phase）；B 状态机（states+transitions，程序好执行但绕开 ontology）；C 混合（A 为主体 + 极少量控制原语 until/then 表达循环与条件）。**Claude 推荐 C**
+- **两个待定问题**：(1) trigger 的 timing 是否升级为引用 flow 中的命名边界（如 `<timing>: "<turn_end>"`，形式化但 concepts/flow 双向耦合）；(2) Setup 是 ordered event 列表还是需按玩家数分支的结构（4/3/2 人宝石数不同）
 
 ## 设计约定
 
@@ -89,4 +91,4 @@ metadata:
 - **trigger 的激活时机由 `<timing>` 字段显式表达，condition 只写纯状态事实**——如 discard_excess_gems：`<timing>`=「使宝石总数变化的 event 结算完成的瞬间」+ condition=「总数 >10」；attract_noble：`<timing>`=「回合结束时」+ condition=「noble requirement 被满足」。时机不同保证不会同时触发；内嵌 trigger 的 `<timing>`=「此 action 执行完毕时」+ 绑定说明，condition=「此 action 的 precondition 满足且 declaration 合法」
 
 **Why:** 追踪 Splendor 规则定义的进度，新会话无需重新遍历文件。
-**How to apply:** Action 层和 Trigger 层已完成。下一步：先写流程文档（形式化描述一局游戏从 setup 到终局判胜的完整流程），再落 Procedure 层到 `procedures` 组。
+**How to apply:** 概念层全部完成（concepts.json：objects 22、actions 4、triggers 4、conditions 13）。下一步：在 flow.json 中形式化游戏流程——结构讨论见「待写」，从三条路线（推荐 C 混合）和两个待定问题继续。
