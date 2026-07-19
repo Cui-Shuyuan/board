@@ -4,8 +4,192 @@
     "name": { "zh": "璀璨宝石", "en": "Splendor" },
     "version": "0.1.0",
     "description": {
-      "zh": "璀璨宝石的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、回合结构、终局流程）。结构待定——待讨论后落地。",
-      "en": "Flow definition for Splendor — the complete sequence of a game from Setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, turn structure, endgame process). Structure TBD — to be finalized after discussion."
+      "zh": "璀璨宝石的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、回合结构、终局流程）。",
+      "en": "Flow definition for Splendor — the complete sequence of a game from setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, turn structure, endgame process)."
     }
-  }
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "type": "<round>",
+      "children": [
+        {
+          "id": "setup",
+          "type": "<phase>",
+          "events": [
+            {
+              "id": "shuffle_level_1_deck",
+              "type": "<shuffle>",
+              "target": "<development_deck_level_1>"
+            },
+            {
+              "id": "shuffle_level_2_deck",
+              "type": "<shuffle>",
+              "target": "<development_deck_level_2>"
+            },
+            {
+              "id": "shuffle_level_3_deck",
+              "type": "<shuffle>",
+              "target": "<development_deck_level_3>"
+            },
+            {
+              "id": "deal_card_market_level_1",
+              "type": "<transfer>",
+              "source": "<development_deck_level_1>",
+              "destination": "<card_market>",
+              "<object>": "<development_card_level_1>",
+              "quantity": 4,
+              "slot": "level_1"
+            },
+            {
+              "id": "deal_card_market_level_2",
+              "type": "<transfer>",
+              "source": "<development_deck_level_2>",
+              "destination": "<card_market>",
+              "<object>": "<development_card_level_2>",
+              "quantity": 4,
+              "slot": "level_2"
+            },
+            {
+              "id": "deal_card_market_level_3",
+              "type": "<transfer>",
+              "source": "<development_deck_level_3>",
+              "destination": "<card_market>",
+              "<object>": "<development_card_level_3>",
+              "quantity": 4,
+              "slot": "level_3"
+            },
+            {
+              "id": "shuffle_noble_deck",
+              "type": "<shuffle>",
+              "target": "<noble_deck>"
+            },
+            {
+              "id": "deal_nobles",
+              "type": "<transfer>",
+              "source": "<noble_deck>",
+              "destination": "<noble_market>",
+              "<object>": "<noble>",
+              "quantity": { "expr": "player_count + 1" }
+            },
+            {
+              "id": "distribute_gems",
+              "type": "<transfer>",
+              "source": "<game_box>",
+              "destination": "<gem_supply>",
+              "<object>": "<gem>",
+              "quantity_per_color": {
+                "2": { "diamond": 4, "sapphire": 4, "emerald": 4, "ruby": 4, "onyx": 4 },
+                "3": { "diamond": 5, "sapphire": 5, "emerald": 5, "ruby": 5, "onyx": 5 },
+                "4": { "diamond": 7, "sapphire": 7, "emerald": 7, "ruby": 7, "onyx": 7 }
+              }
+            },
+            {
+              "id": "distribute_gold",
+              "type": "<transfer>",
+              "source": "<game_box>",
+              "destination": "<gold_supply>",
+              "<object>": "<gold>",
+              "quantity": 5
+            },
+            {
+              "id": "choose_starting_player",
+              "type": "<event>",
+              "rules": {
+                "zh": "随机选择一名玩家持有<starting_player_marker>，并将<starting_player>状态设为该玩家。",
+                "en": "Randomly choose one player to hold the <starting_player_marker> and set <starting_player> to that player."
+              }
+            }
+          ]
+        },
+        {
+          "id": "main_gameplay",
+          "type": "<phase>",
+          "loop": { "until": "<reach_15_prestige>" },
+          "children": [
+            {
+              "id": "turn_cycle",
+              "type": "<round>",
+              "children": [
+                {
+                  "id": "player_turns",
+                  "type": "<phase>",
+                  "loop": { "until": "<all_players_acted_this_round>" },
+                  "children": [
+                    {
+                      "id": "player_turn",
+                      "type": "<turn>",
+                      "actor": "next_player_in_turn_order",
+                      "children": [
+                        {
+                          "id": "action_phase",
+                          "type": "<phase>",
+                          "actions": [
+                            "<take_gems_different>",
+                            "<take_gems_same>",
+                            "<purchase_development_card>",
+                            "<reserve_development_card>"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "endgame",
+          "type": "<phase>",
+          "children": [
+            {
+              "id": "final_turn_cycle",
+              "type": "<round>",
+              "children": [
+                {
+                  "id": "final_turns",
+                  "type": "<phase>",
+                  "loop": { "until": "<no_remaining_players>" },
+                  "children": [
+                    {
+                      "id": "final_player_turn",
+                      "type": "<turn>",
+                      "actor": "next_remaining_player",
+                      "children": [
+                        {
+                          "id": "endgame_action_phase",
+                          "type": "<phase>",
+                          "actions": [
+                            "<take_gems_different>",
+                            "<take_gems_same>",
+                            "<purchase_development_card>",
+                            "<reserve_development_card>"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "scoring",
+              "type": "<phase>",
+              "events": [
+                {
+                  "id": "adjudicate_victory",
+                  "type": "<event>",
+                  "rules": {
+                    "zh": "按<highest_prestige_wins>判定胜者：先比较<prestige_point>总数，并列者再比较<development_area>中<development_card>数量。",
+                    "en": "Adjudicate by <highest_prestige_wins>: highest total <prestige_point>s, then fewest <development_card>s in <development_area>."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

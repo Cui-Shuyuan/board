@@ -413,6 +413,25 @@
       }
     },
     {
+      "id": "noble_deck",
+      "name": { "zh": "贵族牌堆", "en": "Noble Deck" },
+      "parent": "<deck>",
+      "abstract": false,
+      "definition": {
+        "zh": "璀璨宝石中存放<noble>的<deck>。游戏设置时从此<deck>中抽取 player_count + 1 枚<noble>放入<noble_market>。卡牌面朝下放置，抽取前进行<shuffle>。",
+        "en": "A <deck> holding <noble>s in Splendor. During setup, player_count + 1 <noble>s are drawn from this <deck> into the <noble_market>. Tiles are stacked face-down and <shuffle>d before drawing."
+      },
+      "contains": {
+        "type": "<noble>[]",
+        "description": {
+          "zh": "此<deck>存放的<object>类型：<noble>。",
+          "en": "The <object> type this <deck> holds: <noble>."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "hidden"
+    },
+    {
       "id": "card_market",
       "name": { "zh": "发展卡市场", "en": "Development Card Market" },
       "parent": "<market>",
@@ -570,6 +589,25 @@
           "en": "Visual description of <gold>. Poker-chip style round thick disc, with a gold symbol printed in the center and a golden ring around the edge. Same size as the five <gem>s but distinctly different in color."
         }
       }
+    },
+    {
+      "id": "game_box",
+      "name": { "zh": "游戏盒", "en": "Game Box" },
+      "parent": "<supply>",
+      "abstract": false,
+      "definition": {
+        "zh": "璀璨宝石的游戏盒——一个虚拟的<supply>，存放游戏设置前所有未进入游戏状态的组件（初始<gem>、<gold>、<development_card>、<noble>等）。Setup 阶段从这些组件中按需取出并放入游戏内的各<zone>。游戏进行中不再使用此<zone>。",
+        "en": "The Splendor game box — a virtual <supply> holding all components before they enter the game state (initial <gem>s, <gold>, <development_card>s, <noble>s, etc.). During setup, components are taken from here and placed into in-game <zone>s as needed. This <zone> is not used during gameplay."
+      },
+      "contains": {
+        "type": "<gem>[] | <gold>[] | <development_card>[] | <noble>[]",
+        "description": {
+          "zh": "此<supply>存放的<object>类型：所有游戏组件的初始池。",
+          "en": "The <object> types this <supply> holds: the initial pool of all game components."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "hidden"
     }
   ],
   "actions": [
@@ -1230,13 +1268,23 @@
       }
     },
     {
-      "id": "fewest_development_cards",
-      "name": { "zh": "发展卡最少", "en": "Fewest Development Cards" },
+      "id": "all_players_acted_this_round",
+      "name": { "zh": "本轮所有玩家已行动", "en": "All Players Acted This Round" },
       "parent": "<condition>",
       "abstract": false,
       "definition": {
-        "zh": "该<player>的<development_area>中<development_card>数量为全场最少。允许并列——并列最少者同时满足。用于<highest_prestige_wins>的第 2 条判定。",
-        "en": "The <player> has the fewest <development_card>s in their <development_area> in the game. Ties allowed — all players tied for fewest satisfy it simultaneously. Used as the 2nd criterion of <highest_prestige_wins>."
+        "zh": "当前<round>中，每个<player>都至少完成过一个<turn>（包括因<skip_turn>而跳过的空<turn>）。用于控制<player_turns> phase 的循环边界。",
+        "en": "In the current <round>, every <player> has completed at least one <turn> (including empty <turn>s skipped by <skip_turn>). Used to control the loop boundary of the <player_turns> phase."
+      }
+    },
+    {
+      "id": "no_remaining_players",
+      "name": { "zh": "无未行动玩家", "en": "No Remaining Players" },
+      "parent": "<condition>",
+      "abstract": false,
+      "definition": {
+        "zh": "触发<enter_endgame>的<round>中，所有尚未行动的<player>都已在本<phase>中补完了各自的<turn>。用于控制终局<final_turns> phase 的循环边界。",
+        "en": "In the <round> that triggered <enter_endgame>, all <player>s who had not yet acted have now completed their <turn> in this <phase>. Used to control the loop boundary of the endgame <final_turns> phase."
       }
     }
   ],

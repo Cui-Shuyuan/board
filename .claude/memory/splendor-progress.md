@@ -9,7 +9,7 @@ metadata:
 
 ## 文件位置
 `D:\workspace\board\games\splendor\concepts.json`（概念层，已完成）
-`D:\workspace\board\games\splendor\flow.json`（流程层，结构讨论中）
+`D:\workspace\board\games\splendor\flow.json`（流程层，**已完成**）
 
 ## 文件结构
 按类别分组，不再混在一个 concepts 数组里：
@@ -18,6 +18,7 @@ metadata:
 - `triggers`（3 个）——parent 为 `<trigger>` 的独立 trigger
 - `conditions`（13 个）——**所有 condition 统一定义于此**，使用处只写纯引用（trigger 的 `<condition>` 为字符串、precondition 为单元素数组）：gems_available_any / gems_available_same_color / card_purchasable / card_reservable / gold_available / exceed_gem_limit / noble_satisfied / action_declaration_legal（所有内嵌 trigger 共用的通用绑定条件）/ no_action_available（复合：四行动条件取反求与）/ reach_15_prestige（extends `<endgame_condition>`）/ highest_prestige_wins（extends `<victory_condition>`）/ prestige_highest / fewest_development_cards（判胜用的两条单玩家判定式）
 - 顶层引用——`<player_holding>` / `<development_area>` / `<hand>` / `<starting_player_marker>`
+- `flow.json` 流程层——`procedures` 组（game round → setup / main_gameplay / endgame phases）
 - 未来 Procedure 层新增 `procedures` 组
 
 ## 当前进度
@@ -39,12 +40,14 @@ metadata:
 **Tile 层**（`<tile>` 子类）：
 - `<noble>`（贵族板块，requirement=发展卡颜色数量条件，固定 3 分）
 
-**Zone 层**：
+**Zone 层**（`<zone>` 子类）：
 - `gem_supply`（extends `<supply>`，contains=`<gem>[]`）
 - `gold_supply`（extends `<supply>`，contains=`<gold>[]`）
 - `development_deck` → level_1 / 2 / 3（extends `<deck>`，contains=对应等级发展卡）
+- `noble_deck`（extends `<deck>`，contains=`<noble>[]`，setup 时洗牌并发贵族）
 - `noble_market`（extends `<market>`，contains=`<noble>[]`，被动触发非主动购买）
 - `card_market`（extends `<market>`，contains=`<development_card>[]`，3 组×4 张按等级陈列，买走/保留后从对应牌堆顶部补牌）
+- `game_box`（extends `<supply>`，虚拟初始池，setup 时从中分发 gem/gold）
 
 **Action 层**：
 - `take_gems_different`（extends `<action>`，取 1~3 颗不同色宝石，数量由供应情况决定）
@@ -68,14 +71,30 @@ metadata:
 - `no_action_available`（extends `<condition>`，复合条件：gems_available_any / gems_available_same_color / card_purchasable / card_reservable 四者取反求与，params 声明 op=and + not operands）
 - `reach_15_prestige`（extends `<endgame_condition>`，conditions 组。任意玩家声望 ≥15，params={threshold:15}）
 - `highest_prestige_wins`（extends `<victory_condition>`，conditions 组。形式化为 `"<condition>": ["<prestige_highest>", "<fewest_development_cards>"]`——按序满足的玩家为胜者，允许多平局）
+- `all_players_acted_this_round`（extends `<condition>`，本轮每个玩家都已完成一个 turn，用于 player_turns 循环边界）
+- `no_remaining_players`（extends `<condition>`，本轮尚未行动的玩家已全部补完 turn，用于终局 final_turns 循环边界）
 
 **Trigger 层已完成（4 个）**：discard_excess_gems、attract_noble、enter_endgame、skip_turn
 
-### 待写
+### 已完成（flow.json）
 
-- **flow.json 流程形式化**（结构讨论中，新会话继续）。要表达：Setup（洗牌×3、发市场 12 张、发贵族=人数+1、按人数配宝石、定起始玩家）→ 回合循环（turn：宣告 action → 结算 → 回合末检查）→ 终局（补完本轮 → 判胜）
-- **讨论过的三条路线**：A 声明式流程树（贴合 ontology Procedure 嵌套：game → setup / round / endgame，turn → 3 个 phase）；B 状态机（states+transitions，程序好执行但绕开 ontology）；C 混合（A 为主体 + 极少量控制原语 until/then 表达循环与条件）。**Claude 推荐 C**
-- **两个待定问题**：(1) trigger 的 timing 是否升级为引用 flow 中的命名边界（如 `<timing>: "<turn_end>"`，形式化但 concepts/flow 双向耦合）；(2) Setup 是 ordered event 列表还是需按玩家数分支的结构（4/3/2 人宝石数不同）
+**流程层结构**（方案 C：声明式流程树 + `loop until` 原语）：
+- `game`：整局游戏作为一个 `<round>`
+- `setup`：全自动 leaf phase，顺序执行 shuffle、deal market、deal nobles、distribute gems/gold、choose starting player
+- `main_gameplay`：loop until `<reach_15_prestige>`，每次循环产生一个 `turn_cycle` round
+- `turn_cycle` → `player_turns` phase → loop until `<all_players_acted_this_round>` → 每个玩家一个 `player_turn` → 内嵌 `action_phase`
+- `endgame`：包含 `final_turn_cycle` round → `final_turns` phase → loop until `<no_remaining_players>`（给本轮未行动玩家各补一个 turn），然后 `scoring` phase 按 `<highest_prestige_wins>` 判胜
+
+**关键实现约定**：
+- 每个 `<turn>` 都显式包含一个 child `<phase>`（action_phase），不省略。
+- `start`/`end` 字段采用默认值（`<on_entry>`、`<when_children_done>`、`<when_events_done>`、`<when_action_resolved>`），仅在需要时覆盖。
+- trigger 的 `<timing>` 保持宽泛文本，不引用 flow 命名边界。
+- setup 中 2/3/4 人差异只体现在贵族数量（`player_count + 1`）和宝石数量（按人数内联）两处。
+
+### 下一阶段
+
+- 可补写一个 `flow.json` 的 JSON Schema 到 `ontology/` 或 `.claude/schemas/`，供未来游戏复用。
+- 引擎实现：procedure 栈推进、`loop until` 边界检查、与 trigger 系统协作。
 
 ## 设计约定
 
@@ -91,4 +110,4 @@ metadata:
 - **trigger 的激活时机由 `<timing>` 字段显式表达，condition 只写纯状态事实**——如 discard_excess_gems：`<timing>`=「使宝石总数变化的 event 结算完成的瞬间」+ condition=「总数 >10」；attract_noble：`<timing>`=「回合结束时」+ condition=「noble requirement 被满足」。时机不同保证不会同时触发；内嵌 trigger 的 `<timing>`=「此 action 执行完毕时」+ 绑定说明，condition=「此 action 的 precondition 满足且 declaration 合法」
 
 **Why:** 追踪 Splendor 规则定义的进度，新会话无需重新遍历文件。
-**How to apply:** 概念层全部完成（concepts.json：objects 22、actions 4、triggers 4、conditions 13）。下一步：在 flow.json 中形式化游戏流程——结构讨论见「待写」，从三条路线（推荐 C 混合）和两个待定问题继续。
+**How to apply:** 概念层与流程层均已完成。concepts.json 现有 objects 24 个（新增 `<noble_deck>`、`<game_box>`）、actions 4 个、triggers 4 个、conditions 15 个（新增 `<all_players_acted_this_round>`、`<no_remaining_players>`）；flow.json 已按方案 C 完成 setup → main_gameplay → endgame 的完整流程定义。下一步可选：补充 flow.json 的 JSON Schema，或开始引擎实现。
