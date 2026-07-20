@@ -11,7 +11,11 @@ public class Program
 
         builder.Services.Configure<LLMOptions>(
             builder.Configuration.GetSection("LLM"));
+        builder.Services.Configure<RulesOptions>(
+            builder.Configuration.GetSection("Rules"));
 
+        builder.Services.AddSingleton<GameRulesService>();
+        builder.Services.AddScoped<ChatOrchestratorService>();
         builder.Services.AddHttpClient<ILLMService, DeepSeekLLMService>();
         builder.Services.AddControllers();
 
@@ -19,6 +23,8 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
         app.MapControllers();
 
         app.Run();
