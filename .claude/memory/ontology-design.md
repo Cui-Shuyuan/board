@@ -104,13 +104,16 @@ Zone (L0, abstract)
 ### Procedure 嵌套模型
 Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure。
 
-## 当前进度（53 个概念）
+## 当前进度（54 个概念）
 
 ### Level 0（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
 ### Level 1 Structure（5 个）
 Player、Resource、Piece、Aid、Token
+
+### Level 2 Structure（1 个）★ 新增
+Score（extends Resource）
 
 ### Level 1 Procedure（4 个）
 Round、Turn、Phase、Transfer

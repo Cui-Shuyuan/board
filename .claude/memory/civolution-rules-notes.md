@@ -48,10 +48,18 @@ metadata:
 
 ```
 State（L0）
-├── 玩家分数（player.score）
+├── 玩家拥有 N 个 <score>（玩家分数状态）
+├── 玩家拥有 N 个 <food>（食物状态）
 ├── 5 条 progress track 位置
 ├── Favor of Agera 位置
 └── 天气/阶段位置
+
+Resource（L1）
+├── Score（L2，胜利点数/成功点数）
+├── Food
+├── Money
+├── 各种材料
+└── ...
 
 Event（L0）
 ├── gain_score

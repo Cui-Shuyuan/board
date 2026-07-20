@@ -134,6 +134,24 @@
       }
     },
     {
+      "id": "score",
+      "name": {
+        "zh": "分数",
+        "en": "Score"
+      },
+      "level": 2,
+      "parent": "<resource>",
+      "abstract": false,
+      "definition": {
+        "zh": "一种特殊的 <resource>，代表玩家在游戏中获得的分数或胜利点数（victory points）。<score> 继承自 <resource>，核心特征是可被计数和增减，通常不用于支付费用或转移给其他玩家，而是用于胜负判定。典型例子包括璀璨宝石中的声望点数、文明演化中的成功点数。",
+        "en": "A special <resource> representing a player's points or victory points. <score> extends <resource>. Its defining feature is that it is countable and can be increased or decreased; it is typically not spent as a cost or transferred to other players, but is used for victory determination. Typical examples include prestige points in Splendor and success points in Civolution."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "piece",
       "name": {
         "zh": "物件",
@@ -1864,8 +1882,8 @@
       "parent": "<track>",
       "abstract": false,
       "definition": {
-        "zh": "用于记录 <player> 分数的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <token> 在上面指示自己的当前分数。分数本身是一个 <state>，分轨只是其可视化载体。",
-        "en": "A <track> used to record <player> scores. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <token> to indicate their current score. The score itself is a <state>; the score track is merely its visual carrier."
+        "zh": "用于记录 <player> 的 <score> 数量的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <token> 在上面指示自己当前拥有多少 <score>。<score> 本身是 <resource>，「玩家有 N 分」才是 <state>；分轨只是这个 <state> 的可视化载体。",
+        "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <token> to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is merely the visual carrier of this <state>."
       },
       "constraints": {
         "required": [],
