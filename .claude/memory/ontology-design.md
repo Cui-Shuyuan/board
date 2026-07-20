@@ -104,7 +104,7 @@ Zone (L0, abstract)
 ### Procedure 嵌套模型
 Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure。
 
-## 当前进度（51 个概念）
+## 当前进度（53 个概念）
 
 ### Level 0（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
@@ -139,8 +139,8 @@ Supply、Market、Deck、Pool
 ### Level 2 Player Zone（2 个）
 Player Holding、Development Area
 
-### Level 2 Aid（4 个）
-Public Board、Private Board、Player Aid、Rulebook
+### Level 2 Aid（5 个）★ +1
+Public Board、Private Board、Player Aid、Rulebook、Track
 
 ### Level 2 Action（1 个）
 Activation
@@ -157,5 +157,21 @@ Starting Player Marker
 ### Level 3 Player Holding（1 个）
 Hand
 
+### Level 3 Aid（1 个）★ 新增
+Score Track
+
+## 为《文明演化》扩展本体的计划
+
+第二款游戏《文明演化》的复杂度远高于 Splendor，现有 53 个概念无法直接覆盖以下机制，已获准扩展 ontology：
+
+- **轨道机制**: `<track>` 已入 ontology（extends `<aid>`），`<score_track>` 已入 ontology（extends `<track>`）。具体游戏的进程轨、恩惠轨、天气轨等作为游戏级概念定义，不入统一本体。
+- **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
+- **升级机制**: `<upgrade>`，表达模组从等级一翻至等级二、替换为等级三
+- **区域与地点**: `<region>`（大陆板块上的连续同色区域）、`<terrain>`（森林/草原等七种类型）、`<campsite>`、`<location>`（地点板块，extends `<tile>`）
+- **选择与替代**: `<alternative_cost>` / `<choice>`，用于「支付资源或满足条件」「二选一行动」
+- **被动/持续效果**: `<passive_effect>` / `<location_effect>`，表达地点在激活模组时追加的效果
+
+扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
+
 **Why:** 本体是整个系统的类型系统，后续 Rule DSL、Tutorial Tree、Controller 都建立在它之上。
-**How to apply:** 第一阶段世界模型定义基本完成（可持续补充）。当前正在第二阶段：为璀璨宝石（Splendor）编写结构化规则。所有规则表达使用本体中定义的概念和字段。
+**How to apply:** 第一阶段世界模型定义基本完成（可持续补充）。当前正在第二阶段：为璀璨宝石（Splendor）编写结构化规则，并准备为第二款游戏《文明演化》扩展本体。所有规则表达使用本体中定义的概念和字段。

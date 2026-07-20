@@ -1808,6 +1808,71 @@
       }
     },
     {
+      "id": "track",
+      "name": {
+        "zh": "轨",
+        "en": "Track"
+      },
+      "level": 2,
+      "parent": "<aid>",
+      "abstract": false,
+      "definition": {
+        "zh": "用于可视化记录某个数值或进度当前状态的带刻度 <aid>。<track> 继承自 <aid>。它本身不定义也不改变游戏状态，只是帮助玩家和程序跟踪某个 <state> 的当前值。轨道上通常放置一个或多个 <token> 作为位置指示物。典型例子包括计分轨、进程轨、恩惠轨等。",
+        "en": "A scaled <aid> used to visually record the current value or progress of some numeric or ordinal <state>. <track> extends <aid>. It does not define or change game state itself; it merely helps players and programs track the current value of a <state>. One or more <token>s are usually placed on the track as position indicators. Typical examples include score tracks, progress tracks, and favor tracks."
+      },
+      "scale": {
+        "type": "string",
+        "description": {
+          "zh": "此轨的刻度范围或单位描述。如「0–100 的环形计分轨」「0–12 的进程轨」。仅供展示和规则解释参考，不影响规则逻辑。",
+          "en": "Description of the track's scale or range, e.g. '0–100 circular score track', '0–12 progress track'. For display and rule explanation only; does not affect rule logic."
+        }
+      },
+      "marker": {
+        "type": "<token> | null",
+        "description": {
+          "zh": "用于指示当前位置的 <token> 类型。多个 <player> 可共用同一类标记并通过颜色区分；若为 null，则表示该轨没有专用标记，仅作为印刷刻度存在。",
+          "en": "The type of <token> used to indicate the current position. Multiple <player>s may share the same marker type distinguished by color; if null, the track has no dedicated marker and exists only as printed scale."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "scale",
+            "description": {
+              "zh": "轨的刻度范围或单位描述，用于规则讲解和 UI 展示。",
+              "en": "Scale or range description of the track, used for rule explanation and UI display."
+            }
+          },
+          {
+            "id": "marker",
+            "description": {
+              "zh": "指示轨道上当前位置的 <token> 类型。",
+              "en": "The type of <token> indicating the current position on the track."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "score_track",
+      "name": {
+        "zh": "分轨",
+        "en": "Score Track"
+      },
+      "level": 3,
+      "parent": "<track>",
+      "abstract": false,
+      "definition": {
+        "zh": "用于记录 <player> 分数的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <token> 在上面指示自己的当前分数。分数本身是一个 <state>，分轨只是其可视化载体。",
+        "en": "A <track> used to record <player> scores. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <token> to indicate their current score. The score itself is a <state>; the score track is merely its visual carrier."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "hand",
       "name": {
         "zh": "手牌",
