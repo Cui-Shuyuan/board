@@ -38,6 +38,42 @@ metadata:
 - **进程轨（Progress tracks）**：5 条 — Technology、Prestige、Knowledge、Construction、Culture；每条 0–12 格，推过头后每步改为 2 分
 - **阿格拉恩惠轨（Favor of Agera track）**：影响恩惠检定（favor test）
 
+### 公共版图组成
+
+公共版图不是单一组件，而是由**多个 aid 拼成的整体**：
+
+| 组件 | ontology 归类 | 说明 |
+|---|---|---|
+| **4 frame pieces 拼成的 score track 外框** | `<score_track>` | 既是公共版图边界，也是玩家分数的可视化轨道 |
+| **8 continent tiles** | `<public_board>` / aid | 7 块 2×1 + 1 块 1×1，拼成大陆 |
+| **24 sites** | `<tile>`（地点板块） | 背面朝上放在 continent 的凹槽中 |
+| **Progress board（进程版图）** | `<public_board>` | 左侧大板，含 9 个功能区 |
+| **Sequence board（流程版图）** | `<public_board>` | 右侧大板，含阶段序列、天气轨等 |
+
+#### 进程版图（Progress board）9 个区域
+
+| 区域 | 英文 | 用途 |
+|---|---|---|
+| a | Hunting table | 狩猎时查表：地形 + 骰子点数 → 食物数量 |
+| b | Progress tracks | 5 条进程轨：Technology、Prestige、Knowledge、Construction、Culture |
+| c | Final scoring area | 终局计分区，按 9 个类别依次计分 |
+| d1 | Hunting token display | 狩猎标记供应/展示 |
+| d2 | Dice display | 白骰子/粉骰子供应/展示 |
+| d3 | 100-point token display | 100 分标记/阻挡标记供应 |
+| d4 | Goal chip display | 蓝色目标芯片展示 |
+| d5 | Income chip display | 白色收入芯片展示 |
+| d6 | Attribute chip display | 黄色属性芯片展示 |
+
+#### 流程版图（Sequence board）5 个区域
+
+| 区域 | 英文 | 用途 |
+|---|---|---|
+| e | Phase sequence | 阶段序列，六边形阶段标记指示当前阶段 |
+| f | Weather gauge | 天气轨，天气标记移动决定天气效果 |
+| g | Event card spaces | 事件牌格：背面朝上堆 + 正面朝上展示 |
+| h | Era scoring area | 时代计分区，4 个时代各翻 1 张计分类别瓷砖 |
+| i | Favor of Agera track | 阿格拉恩惠轨，影响恩惠检定 |
+
 ### Track 概念的 ontology 归属（已确定）
 
 采取 **B 方案**：**<track> 作为 <aid> 的子类**，物理轨道只是记录 state 的工具。
