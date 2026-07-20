@@ -1,0 +1,463 @@
+{
+  "meta": {
+    "game": "civolution",
+    "name": { "zh": "文明演化", "en": "Civolution" },
+    "version": "0.1.0",
+    "description": {
+      "zh": "文明演化的流程定义骨架（Phase D 草案）。基于口播稿与英文规则书，先建立 Setup、4 时代 × 8 阶段、终局计分的整体流程；具体 action/trigger/condition 细节在 concepts.json 中补全。",
+      "en": "Flow definition skeleton for Civolution (Phase D draft). Based on the Chinese script and English rulebook; establishes Setup, 4 eras × 8 phases, and final scoring. Detailed actions/triggers/conditions will be filled in concepts.json."
+    }
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "type": "<round>",
+      "children": [
+        {
+          "id": "setup",
+          "type": "<phase>",
+          "description": {
+            "zh": "游戏设置阶段，分为公共设置和个人设置。",
+            "en": "Game setup phase, divided into public setup and player setup."
+          },
+          "events": [
+            {
+              "id": "assemble_public_board",
+              "type": "<event>",
+              "description": {
+                "zh": "拼接分轨形成外框，随机放置 8 块大陆板块填满公共版图。",
+                "en": "Assemble the frame and randomly place the 8 continent tiles to fill the public board."
+              }
+            },
+            {
+              "id": "place_sites",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将 24 块地点板块背面朝上随机放置在公共版图的地点格中。",
+                "en": "Place the 24 site tiles face down on the site spaces of the public board."
+              },
+              "source": "<site_supply>",
+              "destination": "<public_board>",
+              "<object>": "<site_tile>",
+              "quantity": 24,
+              "face_down": true
+            },
+            {
+              "id": "place_progress_and_sequence_boards",
+              "type": "<event>",
+              "description": {
+                "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
+                "en": "Place the progress board and sequence board on either side of the public board."
+              }
+            },
+            {
+              "id": "prepare_phase_indicator",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将阶段标记放到流程版图阶段轨的阶段一位置。",
+                "en": "Place the phase indicator on phase 1 of the sequence board's phase track."
+              },
+              "source": "<game_box>",
+              "destination": "<sequence_board>",
+              "<object>": "<phase_indicator>",
+              "quantity": 1
+            },
+            {
+              "id": "prepare_weather_indicator",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将天气标记放到流程版图天气轨的适中位置。",
+                "en": "Place the weather indicator on a moderate space of the weather gauge."
+              },
+              "source": "<game_box>",
+              "destination": "<sequence_board>",
+              "<object>": "<weather_indicator>",
+              "quantity": 1
+            },
+            {
+              "id": "prepare_event_deck",
+              "type": "<transfer>",
+              "description": {
+                "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
+                "en": "Shuffle event cards, draw 4, and place them face down on the event card spaces; return the rest to the box."
+              },
+              "source": "<game_box>",
+              "destination": "<sequence_board>",
+              "<object>": "<event_card>",
+              "quantity": 4,
+              "face_down": true
+            },
+            {
+              "id": "prepare_research_decks",
+              "type": "<shuffle>",
+              "target": "<research_deck>",
+              "description": {
+                "zh": "将五种研究牌分别洗混后形成供应堆。",
+                "en": "Shuffle the five types of research cards into separate supply decks."
+              }
+            },
+            {
+              "id": "prepare_starting_decks",
+              "type": "<shuffle>",
+              "target": "<starting_marker_deck>",
+              "description": {
+                "zh": "洗混初始标记牌和初始芯片牌备用。",
+                "en": "Shuffle the starting marker deck and starting chip deck."
+              }
+            },
+            {
+              "id": "prepare_scoring_tiles",
+              "type": "<transfer>",
+              "description": {
+                "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区；再随机抽取 3 张按图标背面朝上覆盖终局计分区。",
+                "en": "Draw 4 scoring tiles and place them face up in the era scoring area; draw 3 more and place them point-side up over the final scoring area."
+              },
+              "source": "<scoring_tile_supply>",
+              "destination": "<sequence_board>",
+              "<object>": "<scoring_tile>",
+              "quantity": 7
+            },
+            {
+              "id": "prepare_hundred_point_tokens",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将若干一百分指示物翻面作为阻挡标记覆盖不可用区域，剩余作为供应堆。",
+                "en": "Flip some 100-point tokens as blocking tokens to cover unavailable areas; the rest form the supply."
+              },
+              "source": "<game_box>",
+              "destination": "<progress_board>",
+              "<object>": "<hundred_point_token>",
+              "quantity": { "expr": "per_player_count_setup" }
+            },
+            {
+              "id": "prepare_hunting_tokens",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将若干狩猎指示物翻面作为阻挡标记覆盖不可用营地，剩余作为供应堆。",
+                "en": "Flip some hunting tokens as blocking tokens to cover unavailable campsites; the rest form the supply."
+              },
+              "source": "<game_box>",
+              "destination": "<progress_board>",
+              "<object>": "<hunting_token>",
+              "quantity": { "expr": "per_player_count_setup" }
+            },
+            {
+              "id": "prepare_dice_pool",
+              "type": "<transfer>",
+              "description": {
+                "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
+                "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
+              },
+              "source": "<game_box>",
+              "destination": "<progress_board>",
+              "<object>": "<activation_die> | <fate_die>",
+              "quantity": { "expr": "player_count + 1" }
+            },
+            {
+              "id": "prepare_chip_display",
+              "type": "<transfer>",
+              "description": {
+                "zh": "随机抽取若干目标芯片、收入芯片、属性芯片正面朝上放到芯片展示区，剩余放回袋子。",
+                "en": "Draw goal, income, and attribute chips and place them face up in the chip display; return the rest to their bags."
+              },
+              "source": "<game_box>",
+              "destination": "<chip_display>",
+              "<object>": "<goal_chip> | <income_chip> | <attribute_chip>",
+              "quantity": { "expr": "per_player_count_setup" }
+            },
+            {
+              "id": "place_material_tiles",
+              "type": "<transfer>",
+              "description": {
+                "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
+                "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
+              },
+              "source": "<material_tile_supply>",
+              "destination": "<public_board>",
+              "<object>": "<material_tile>",
+              "quantity": "all"
+            },
+            {
+              "id": "player_setup_modules",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入个人面板模组区。",
+                "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
+              },
+              "source": "<module_supply>",
+              "destination": "<module_area>",
+              "<object>": "<main_module>",
+              "quantity": 15,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_dice",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家拿取 6 个白骰子放到骰子格（点数随机），1 个粉骰子放在面板旁。",
+                "en": "Each player takes 6 activation dice, places them on dice spaces with random values, and 1 fate die beside the console."
+              },
+              "source": "<progress_board>",
+              "destination": "<dice_area>",
+              "<object>": "<activation_die>",
+              "quantity": 6,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_stage_tiles",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到个人面板对应位置。",
+                "en": "Each player takes stage-4 and stage-5 tiles, inactive side up, and places them on the console."
+              },
+              "source": "<game_box>",
+              "destination": "<player_console>",
+              "<object>": "<stage_tile>",
+              "quantity": 2,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_buildings",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家拿取所有聚落、农场、船、圆片和部落放到个人面板对应位置，并在船上放两个标记。",
+                "en": "Each player takes all settlements, farms, boats, discs, and tribes to their console; place two markers on boats."
+              },
+              "source": "<game_box>",
+              "destination": "<player_console>",
+              "<object>": "<settlement> | <farm> | <boat> | <tribe>",
+              "quantity": "all",
+              "per_player": true
+            },
+            {
+              "id": "player_setup_score_and_track_tokens",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家拿取圆片：1 个放到计分版图 0 分、1 个放到阿格拉恩惠轨、5 个放到五条进程轨 0 格。",
+                "en": "Each player takes discs: 1 to score board 0, 1 to Favor of Agera track, 5 to the five progress tracks at 0."
+              },
+              "source": "<game_box>",
+              "destination": "<score_board> | <favor_of_ager_track> | <progress_board>",
+              "<object>": "<disc>",
+              "quantity": 7,
+              "per_player": true
+            },
+            {
+              "id": "player_place_initial_tribes",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
+                "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
+              },
+              "source": "<player_console>",
+              "destination": "<public_board>",
+              "<object>": "<tribe>",
+              "quantity": 2,
+              "per_player": true
+            },
+            {
+              "id": "player_place_initial_markers",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家拿 6 个标记：2 个放到公共版图两个初始区域中营地以外位置，4 个放到个人面板重置列顶部。",
+                "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
+              },
+              "source": "<game_box>",
+              "destination": "<public_board> | <player_console>",
+              "<object>": "<marker>",
+              "quantity": 6,
+              "per_player": true
+            },
+            {
+              "id": "choose_starting_player",
+              "type": "<event>",
+              "description": {
+                "zh": "决定起始玩家，获得起始纪念碑。",
+                "en": "Determine the starting player, who receives the starting monolith."
+              }
+            },
+            {
+              "id": "draft_starting_marker_cards",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得上面标记，其余放回盒子。",
+                "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers, returns the rest to the box."
+              },
+              "source": "<starting_marker_deck>",
+              "destination": "<game_box>",
+              "<object>": "<starting_marker_card>",
+              "quantity": { "expr": "player_count * 2" }
+            },
+            {
+              "id": "draft_starting_chip_cards",
+              "type": "<transfer>",
+              "description": {
+                "zh": "翻开玩家数量 +1 张初始芯片牌，每张贴一张目标芯片；从起始玩家右手边玩家开始逆时针选一张，将目标芯片放入目标区，模组翻面至等级二，牌塞入收入区成为首个收入芯片。",
+                "en": "Reveal player_count + 1 starting chip cards, each with a goal chip; draft them counter-clockwise, place goal chip, upgrade module, and slide card under console as first income chip."
+              },
+              "source": "<starting_chip_deck>",
+              "destination": "<income_area>",
+              "<object>": "<starting_chip_card>",
+              "quantity": { "expr": "player_count" }
+            },
+            {
+              "id": "draft_starting_research_cards",
+              "type": "<transfer>",
+              "description": {
+                "zh": "每位玩家从五个研究牌堆各抽两张，每种选一张保留，另一张放回牌堆底。",
+                "en": "Each player draws 2 cards from each of the 5 research decks, keeps 1 of each type, returns the other to the bottom of its deck."
+              },
+              "source": "<research_deck>",
+              "destination": "<player_holding>",
+              "<object>": "<research_card>",
+              "quantity": 5,
+              "per_player": true
+            }
+          ]
+        },
+        {
+          "id": "era_loop",
+          "type": "<round>",
+          "loop": { "for": 4, "counter": "era_number" },
+          "description": {
+            "zh": "游戏共进行 4 个时代，每个时代包含 8 个阶段。",
+            "en": "The game consists of 4 eras, each with 8 phases."
+          },
+          "children": [
+            {
+              "id": "phase_1_new_cards",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段一：新的卡牌。翻开事件牌堆和五个研究牌堆顶部各一张牌，覆盖之前已翻开的同堆牌。",
+                "en": "Phase 1: New Cards. Reveal the top card of the event deck and each of the 5 research decks, covering any previously revealed cards from the same deck."
+              }
+            },
+            {
+              "id": "phase_2_new_goals",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段二：新的目标。从起始玩家开始顺时针，每位玩家可选择从展示区拿取一枚目标芯片安装到目标列，或跳过。随后补满展示区空位。",
+                "en": "Phase 2: New Goals. Starting with the start player and going clockwise, each player may take a goal chip from the display and install it in the goal column, or pass. Then refill empty display spaces."
+              }
+            },
+            {
+              "id": "phase_3_extra_harvest",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段三：额外收获。从起始玩家开始顺时针，每位玩家选择一个有自己部落的区域，从该区域可产出的三种材料中选择一种获得一个，放入对应仓库。",
+                "en": "Phase 3: Extra Harvest. Starting with the start player and going clockwise, each player chooses a territory containing their tribe, selects one of the three materials it produces, and gains one into the corresponding storage."
+              }
+            },
+            {
+              "id": "phase_4_action",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段四：行动阶段。从起始玩家开始顺时针进行多轮回合；每回合玩家必须选择激活一个模组或执行重置。当阶段标记被推到红色的重置结束格后，所有玩家再一起进行一轮完整回合，行动阶段结束。",
+                "en": "Phase 4: Action Phase. Players take turns clockwise; each turn a player must activate a module or perform a Reset. After the phase indicator reaches the red reset-end space, all players take one more full round, then the Action Phase ends."
+              },
+              "children": [
+                {
+                  "id": "action_turn_cycle",
+                  "type": "<round>",
+                  "loop": { "until": "<action_phase_end>" },
+                  "children": [
+                    {
+                      "id": "player_action_turn",
+                      "type": "<turn>",
+                      "actor": "next_player_in_turn_order",
+                      "actions": [
+                        "<activate_module>",
+                        "<reset>"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "phase_5_site",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段五：地点阶段。结算与三种地点相关的效果（如已翻开）。",
+                "en": "Phase 5: Site Phase. Resolve effects related to three specific site types (if revealed)."
+              }
+            },
+            {
+              "id": "phase_6_feeding",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段六：喂养阶段。按规则喂饱或饿死部落。营地/船上的部落需 1 食物，野外部落需 2 食物。",
+                "en": "Phase 6: Feeding Phase. Feed or starve tribes according to the rules: 1 food for tribes on campsites/boats, 2 food for tribes in the wilderness."
+              }
+            },
+            {
+              "id": "phase_7_event",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段七：事件阶段。依次执行：1) 结算天气效果；2) 结算事件牌效果；3) 时代计分；4) 确定新的起始玩家（本阶段得分最高者）。",
+                "en": "Phase 7: Event Phase. Execute in order: 1) resolve weather effect; 2) resolve event card effect; 3) era scoring; 4) determine new starting player (highest scorer this phase)."
+              },
+              "children": [
+                {
+                  "id": "event_weather",
+                  "type": "<phase>",
+                  "description": { "zh": "结算天气效果", "en": "Resolve weather effect" }
+                },
+                {
+                  "id": "event_card_resolution",
+                  "type": "<phase>",
+                  "description": { "zh": "结算事件牌效果", "en": "Resolve event card effect" }
+                },
+                {
+                  "id": "event_era_scoring",
+                  "type": "<phase>",
+                  "description": { "zh": "时代计分", "en": "Era scoring" }
+                },
+                {
+                  "id": "event_new_starting_player",
+                  "type": "<phase>",
+                  "description": { "zh": "确定新的起始玩家", "en": "Determine new starting player" }
+                }
+              ]
+            },
+            {
+              "id": "phase_8_income",
+              "type": "<phase>",
+              "description": {
+                "zh": "阶段八：收入阶段。依次执行：1) 回收狩猎指示物；2) 执行收入芯片（从上到下、从左到右）；3) 结算雕像收入；4) 检查死亡部落惩罚等时代结束效果。",
+                "en": "Phase 8: Income Phase. Execute in order: 1) return hunting tokens; 2) execute income chips top-to-bottom, left-to-right; 3) resolve statue income; 4) apply end-of-era effects such as dead tribe penalties."
+              }
+            }
+          ]
+        },
+        {
+          "id": "final_scoring",
+          "type": "<phase>",
+          "description": {
+            "zh": "终局计分阶段。将阶段标记放到终局计分轨起点，每推进一格按该计分项计算所有玩家分数，直到终点。随后比较总分，最高者获胜。",
+            "en": "Final scoring phase. Move the phase indicator to the final scoring track start; advance it step by step, scoring all players for each category, until the end. The player with the highest total score wins."
+          },
+          "children": [
+            {
+              "id": "final_scoring_track_resolution",
+              "type": "<round>",
+              "loop": { "until": "<final_scoring_track_end>" },
+              "description": {
+                "zh": "沿终局计分轨逐项计分。",
+                "en": "Score each category along the final scoring track."
+              }
+            },
+            {
+              "id": "determine_winner",
+              "type": "<event>",
+              "description": {
+                "zh": "比较所有玩家的成功点数，最高者获胜；平局按规则决定。",
+                "en": "Compare all players' success points; the highest wins, with tiebreakers per the rules."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

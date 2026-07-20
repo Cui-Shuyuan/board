@@ -14,7 +14,7 @@ metadata:
 - **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
 - **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
 - **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
-- **当前状态**: Phase A 进行中 —— `concepts.json` 的 `objects` 层骨架已产出，包含资源、piece、token、terrain、zone、supply/market、aid 等约 80 个对象定义；待用户 review 后再进入 Phase B
+- **当前状态**: Phase A 进行中 —— `concepts.json` 的 `objects` 层骨架已产出；Phase D 草案 `flow.json` 骨架已产出，覆盖 Setup、4 时代 × 8 阶段、终局计分。待用户 review 后再进入 Phase B 核心机制。
 
 ## 为什么选这款游戏
 
@@ -49,10 +49,11 @@ metadata:
 
 ## 计划阶段（Phase A~E）
 
-- **Phase A**: 对象清单 + ontology 扩展草案（进行中，objects 层骨架已完成）
+- **Phase A**: 对象清单 + ontology 扩展草案（骨架已完成，待 review）
   - 已扩展 ontology：新增 `dice`、`terrain`、`region`、`campsite`、`site`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`favor_test`、`upgrade` 共 11 个概念
-  - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层
-  - 剩余：对象层 review、修正 parent 引用、补充少量遗漏（如 progress_track 概念是否进 ontology）
+  - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（约 80 个对象）
+  - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
+  - 剩余：对象层 review、修正 parent/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
 - **Phase B**: 核心机制（区域/相邻/迁徙/生产/运输/建造/安装研究牌/收入芯片）
 - **Phase C**: 22 个模组（1~3 等级拆分为 actions）
 - **Phase D**: 流程层（4 时代 × 8 阶段 + 终局计分）
@@ -60,7 +61,8 @@ metadata:
 
 ## 阻塞项
 
-- 当前 `concepts.json` 是 Phase A 骨架，需要用户 review 后确认对象命名、parent 引用、遗漏项
+- 当前 `concepts.json` 和 `flow.json` 是 Phase A/D 骨架，需要用户 review 后确认对象命名、parent 引用、遗漏项
+- flow.json 中存在占位引用（如 `<activate_module>`、`<reset>`、`<action_phase_end>`），需要在 concepts.json 的 actions/conditions 层补全
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
 - Phase B~D 依赖对象层定稿，避免后续大量返工
@@ -69,6 +71,7 @@ metadata:
 
 - 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念
 - 2026-07-21: 完成 `games/civolution/concepts.json` 的 `objects` 层骨架，覆盖资源、piece、token、terrain、dice、zone、supply/market、aid 等约 80 个对象定义
+- 2026-07-21: 完成 `games/civolution/flow.json` 流程骨架，覆盖 Setup、4 时代 × 8 阶段、终局计分
 
 ## 相关记忆
 
