@@ -14,7 +14,7 @@ metadata:
 - **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
 - **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
 - **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
-- **当前状态**: Phase A 进行中 —— `concepts.json` 的 `objects` 层骨架已产出；Phase D 草案 `flow.json` 骨架已产出，覆盖 Setup、4 时代 × 8 阶段、终局计分。待用户 review 后再进入 Phase B 核心机制。
+- **当前状态**: Phase A 骨架已完成，等待用户 review。namespace 方案（`<ontology::concept_id>`）已确认；对象清单与 8 阶段流程骨架待明天 review，之后再进入 Phase B 核心机制。
 
 ## 为什么选这款游戏
 
@@ -29,6 +29,7 @@ metadata:
 3. **多模态素材**: `pdftoppm` 已安装，可将 PDF 转成图片用 `Read` 工具分析；已有卡牌图片（`card/神权制.jpg`）验证过 piece 表结构。
 4. **牌表与地点表是必要的**: 研究牌、事件牌、地点牌需整理成结构化表后，再转进 `concepts.json`。
 5. **规则来源优先级**: 英文 PDF 规则书 > `.txt` 提取文本 > 口播稿.md。口播稿用于理解讲解重点，规则书用于确认精确数值与流程。
+6. **namespace 方案已确认**: ontology 概念引用统一使用 `<ontology::concept_id>` 格式（如 `<ontology::resource>`），游戏自定义概念保持 `<game_concept>` 原样。后端 `get_concept` / `search_concepts` 已同步支持带/不带 namespace 的查询。
 
 ## 评估结论
 
@@ -72,6 +73,8 @@ metadata:
 - 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念
 - 2026-07-21: 完成 `games/civolution/concepts.json` 的 `objects` 层骨架，覆盖资源、piece、token、terrain、dice、zone、supply/market、aid 等约 80 个对象定义
 - 2026-07-21: 完成 `games/civolution/flow.json` 流程骨架，覆盖 Setup、4 时代 × 8 阶段、终局计分
+- 2026-07-21: 完成 Splendor 与 Civolution 的 ontology namespace 替换（`<ontology::concept_id>`），并完成后端 `get_concept` / `search_concepts` 的 namespace 查询支持
+- 2026-07-21: 用户确认 namespace 格式；对象清单与流程骨架待明天 review
 
 ## 相关记忆
 
@@ -81,4 +84,4 @@ metadata:
 - [[runtime-architecture]] — 后端接口与验证方式
 
 **Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
-**How to apply:** 当前节点为 Phase A 骨架完成，等待用户 review；review 通过后进入 Phase B 核心机制或继续补全对象层遗漏。
+**How to apply:** 当前节点为 Phase A 骨架完成、namespace 方案已确认；等待用户明天 review 对象清单与 8 阶段流程；review 通过后进入 Phase B 核心机制。

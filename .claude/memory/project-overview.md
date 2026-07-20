@@ -34,10 +34,33 @@ metadata:
 
 1. **第一阶段（基本完成）：定义世界模型** — 51 个本体概念覆盖 Level 0~3，可持续补充。
 2. **第二阶段（基本完成）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor），`concepts.json` 与 `flow.json` 已完成。
-3. **第三阶段（进行中）：Runtime / Intent Interface** — 设计 LLM 与程序交互方式。LLM 负责语言理解与概念识别，程序负责规则判定；不做计算机视觉、不追踪实时状态，状态依赖问题由 LLM 反问客人。详见 [[interaction-model]]。
-4. **第四阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。
-5. **第五阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
-6. **第六阶段：UI** — PWA/Flutter 前端，平板作为主要交互入口。
+3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。详见 [[splendor-progress]]、[[runtime-architecture]] 与 [[interaction-model]]。
+4. **第四阶段（当前重点）：补充更多游戏与游戏元信息** — 在 `games/` 下录入第二款桌游，验证系统在非 LLM 熟知规则上的真实表现；为每款游戏增加 `manifest.json` 供前端选游戏。
+5. **第五阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。
+6. **第六阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
+7. **第七阶段：UI** — PWA/Flutter 前端，平板作为主要交互入口。
+
+## 关键实现现状
+
+- **后端服务**：`backend/BoardAI.Api/`，.NET 9，监听 `http://localhost:5000`
+- **规则查询**：`Controllers/RulesController.cs` + `Services/GameRulesService.cs`，按游戏目录读取 `ontology/ontology.json`、`games/{game}/concepts.json`、`games/{game}/flow.json`
+- **对话接口**：`Controllers/ChatController.cs` + `Services/ChatOrchestratorService.cs`，无状态设计，请求带 `game_id` + `messages` 历史，返回 `{ "reply": "..." }`
+- **工具调用**：LLM 可调 `search_concepts`、`get_concept`、`get_action_conditions`；工具结果中的 `<concept_id>` 引用也被提示为可继续查询
+- **Prompt 管理**：`appsettings.json` 中的 `LLM:SystemPrompt` 是唯一来源，支持 `{game_name}` 占位符；`LLMOptions.cs` 中默认 prompt 为空。经过多次迭代，已去掉冗余工具列表，加入"查到足够信息就停"等约束。
+- **日志**：控制台输出每轮 reasoning、工具调用参数与结果，JSON 已美化且中文正常显示
+
+## 当前重点
+
+第三阶段 Runtime 已通过 Splendor 验证，回答质量达到可用水平（简洁、TTS 友好、支持多轮上下文、能拒绝非桌游问题）。
+
+**第二款游戏《文明演化》（Civolution）正在进行 Phase A**。已完成：
+- `games/civolution/concepts.json` 对象清单层骨架（约 80 个对象）
+- `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
+- ontology namespace 方案确认（`<ontology::concept_id>`）并完成后端查询支持
+
+**当前阻塞**：等待用户 review 对象清单与 8 阶段流程骨架，确认无误后进入 Phase B 核心机制。详见 [[civolution-progress]]。
+
+短期仍需为每款游戏补 `manifest.json` 供前端选游戏。
 
 ## 项目路径
 D:\workspace\board
