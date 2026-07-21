@@ -48,10 +48,10 @@ metadata:
 | **4 frame pieces 拼成的 score track 外框** | `<public_board>` 的一部分（aid） | 物理外框属于公共版图，逻辑上 `maps_to` `<score_track>`（zone） |
 | **8 continent tiles** | `<continent>`（zone） | 7 块 2×1 + 1 块 1×1，拼成大陆；是公共游戏区域，不属于公共版图 aid |
 | **24 sites** | `<tile>`（地点板块） | 背面朝上放在 continent 的凹槽中 |
-| **Progress board（进程版图）** | `<public_board>` | 左侧大板，含 9 个功能区 |
-| **Sequence board（流程版图）** | `<public_board>` | 右侧大板，含阶段序列、天气轨等 |
+| **Progress board（`<progress_board>`）** | `<public_board>` | 左侧大板，含 9 个功能区 |
+| **Sequence board（`<sequence_board>`）** | `<public_board>` | 右侧大板，含阶段序列、天气轨等 |
 
-#### 进程版图（Progress board）9 个区域
+#### `<progress_board>`（Progress board）9 个区域
 
 | 区域 | 英文 | 用途 |
 |---|---|---|
@@ -65,7 +65,7 @@ metadata:
 | d5 | Income chip display | 白色收入芯片展示 |
 | d6 | Attribute chip display | 黄色属性芯片展示 |
 
-#### 流程版图（Sequence board）5 个区域
+#### `<sequence_board>`（Sequence board）5 个区域
 
 | 区域 | 英文 | 用途 |
 |---|---|---|

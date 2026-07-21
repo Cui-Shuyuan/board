@@ -699,7 +699,7 @@
       "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "六边形 <marker>，放置在流程版图阶段序列上指示当前阶段。<phase_indicator> 继承自 <ontology::marker>。行动阶段中玩家执行重置时沿黄色箭头移动。",
+        "zh": "六边形 <marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。<phase_indicator> 继承自 <ontology::marker>。行动阶段中玩家执行重置时沿黄色箭头移动。",
         "en": "A hexagonal <marker> placed on the phase sequence of the sequence board to indicate the current phase. <phase_indicator> extends <ontology::marker>. Moves along the yellow arrow during the Action phase when players perform a Reset."
       }
     },
@@ -712,7 +712,7 @@
       "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "圆柱形 <marker>，放置在流程版图天气轨上指示当前天气。<weather_indicator> 继承自 <ontology::marker>。每时代事件阶段根据事件牌移动并结算效果。",
+        "zh": "圆柱形 <marker>，放置在 <sequence_board> 天气轨上指示当前天气。<weather_indicator> 继承自 <ontology::marker>。每时代事件阶段根据事件牌移动并结算效果。",
         "en": "A cylindrical <marker> placed on the weather gauge of the sequence board to indicate the current weather. <weather_indicator> extends <ontology::marker>. Moved and resolved each era during the Event phase based on the event card."
       }
     },
@@ -725,7 +725,7 @@
       "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "放置在流程版图阿格拉恩惠轨上指示当前恩惠等级的 <marker>。<favor_marker> 继承自 <ontology::marker>。影响恩惠检定、雕像收入和终局计分。",
+        "zh": "放置在 <sequence_board> 阿格拉恩惠轨上指示当前恩惠等级的 <marker>。<favor_marker> 继承自 <ontology::marker>。影响恩惠检定、雕像收入和终局计分。",
         "en": "A <marker> placed on the Favor of Agera track of the sequence board to indicate the current favor level. <favor_marker> extends <ontology::marker>. Affects favor tests, statue income, and final scoring."
       }
     },
@@ -751,7 +751,7 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "由进程版图、流程版图等 <ontology::aid> 与计分轨区域共同构成的公共游戏版图。<public_board> 继承自 <ontology::public_board>。它只提供视觉辅助与状态跟踪，中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
+        "zh": "由 <progress_board>、<sequence_board> 等 <ontology::aid> 与计分轨区域共同构成的公共游戏版图。<public_board> 继承自 <ontology::public_board>。它只提供视觉辅助与状态跟踪，中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
         "en": "The shared game board formed by the progress board, sequence board, and score track area. <public_board> extends <ontology::public_board>. It only provides visual aid and state tracking; the central play area is held by the <continent> public zone, whose <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
       },
       "components": [
