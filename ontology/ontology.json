@@ -12,7 +12,6 @@
         "zh": "对象",
         "en": "Object"
       },
-      "level": 0,
       "abstract": true,
       "definition": {
         "zh": "可被识别、引用或操作的实体或抽象概念。",
@@ -52,7 +51,6 @@
         "zh": "玩家",
         "en": "Player"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -92,7 +90,6 @@
         "zh": "资源",
         "en": "Resource"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -139,12 +136,11 @@
         "zh": "分数",
         "en": "Score"
       },
-      "level": 2,
       "parent": "<resource>",
       "abstract": false,
       "definition": {
-        "zh": "一种特殊的 <resource>，代表玩家在游戏中获得的分数或胜利点数（victory points）。<score> 继承自 <resource>，核心特征是可被计数和增减，通常不用于支付费用或转移给其他玩家，而是用于胜负判定。典型例子包括璀璨宝石中的声望点数、文明演化中的成功点数。",
-        "en": "A special <resource> representing a player's points or victory points. <score> extends <resource>. Its defining feature is that it is countable and can be increased or decreased; it is typically not spent as a cost or transferred to other players, but is used for victory determination. Typical examples include prestige points in Splendor and success points in Civolution."
+        "zh": "一种特殊的 <resource>，代表玩家在游戏中获得的分数或胜利点数（victory points）。<score> 继承自 <resource>，核心特征是可被计数和增减，通常不用于支付费用或转移给其他玩家，而是用于胜负判定。典型例子包括璀璨宝石中的声望点数、文明演化中的分数。",
+        "en": "A special <resource> representing a player's points or victory points. <score> extends <resource>. Its defining feature is that it is countable and can be increased or decreased; it is typically not spent as a cost or transferred to other players, but is used for victory determination. Typical examples include prestige points in Splendor and score points in Civolution."
       },
       "constraints": {
         "required": [],
@@ -157,7 +153,6 @@
         "zh": "物件",
         "en": "Piece"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -190,7 +185,6 @@
         "zh": "辅助物",
         "en": "Aid"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -205,10 +199,10 @@
         }
       },
       "maps_to": {
-        "type": "concept_ref[]",
+        "type": "<zone>[]",
         "description": {
-          "zh": "此辅助物在视觉上对应哪些游戏逻辑实体。注意：Aid 不「包含」这些实体，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
-          "en": "Which game logic entities this Aid visually corresponds to. Note: the Aid does not 'contain' these entities; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
+          "zh": "此辅助物在视觉上对应哪些 <zone>。注意：Aid 不「包含」这些 zone，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
+          "en": "Which <zone>s this Aid visually corresponds to. Note: the Aid does not 'contain' these zones; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
         }
       },
       "constraints": {
@@ -219,16 +213,17 @@
               "zh": "辅助物外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局和辅助工具时的核心信息来源。",
               "en": "Visual description of this aid — shape, material, size, and what is printed on it. Core information source when AI introduces board layout and helper tools to players."
             }
-          },
+          }
+        ],
+        "optional": [
           {
             "id": "maps_to",
             "description": {
-              "zh": "视觉映射——声明此 Aid 在视觉上对应哪些游戏逻辑实体。注意：Aid 不「包含」这些实体，它只是画出了它们。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
-              "en": "Visual mapping — declares which game logic entities this Aid visually corresponds to. Note: the Aid does not 'contain' these entities; it merely depicts them. Zones exist and are defined purely by rules, independent of any Aid."
+              "zh": "视觉映射——声明此 Aid 在视觉上对应哪些 <zone>。只有确实对应某个/某些 zone 的 Aid（如版图、轨道）才需要填写；规则书、玩家提示卡等纯文档型 Aid 可省略。注意：Aid 不「包含」这些 zone，它只是画出了它们。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
+              "en": "Visual mapping — declares which <zone>s this Aid visually corresponds to. Only fill this when the aid actually depicts zones (e.g. boards, tracks); document-type aids such as rulebooks and player aids may omit it. Note: the Aid does not 'contain' these zones; it merely depicts them. Zones exist and are defined purely by rules, independent of any Aid."
             }
           }
-        ],
-        "optional": []
+        ]
       }
     },
     {
@@ -237,7 +232,6 @@
         "zh": "指示物",
         "en": "Token"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -285,7 +279,6 @@
         "zh": "起始玩家标记",
         "en": "Starting Player Marker"
       },
-      "level": 2,
       "parent": "<token>",
       "abstract": false,
       "definition": {
@@ -317,7 +310,6 @@
         "zh": "区域",
         "en": "Zone"
       },
-      "level": 0,
       "abstract": true,
       "definition": {
         "zh": "游戏中的抽象逻辑容器，表示一组 <object> 的空间归属关系。不依赖版图和实体，只由规则决定。<zone> 是 Level 0 抽象概念，子类包括 <reserve>、<discard_pile>、<player_zone>。",
@@ -385,7 +377,6 @@
         "zh": "状态",
         "en": "State"
       },
-      "level": 0,
       "abstract": false,
       "definition": {
         "zh": "某个时刻游戏世界中为真的断言。描述游戏实体「此刻怎样」，而非「是什么」。<state> 是运行时事实，随时可被 <effect> 改变。",
@@ -453,7 +444,6 @@
         "zh": "属性",
         "en": "Property"
       },
-      "level": 0,
       "abstract": false,
       "definition": {
         "zh": "<object> 或 <zone> 固有的、由游戏规则预先定义的特征。描述游戏实体「是什么」「拥有什么能力」「具备什么特点」。默认不可变——在 <object> 进入游戏时即确定，仅在 <effect> 明确修改时才变化。<property> 是 <cost>、<content>、<effect>、<information_visibility> 的父概念。",
@@ -536,7 +526,6 @@
         "zh": "所有权",
         "en": "Ownership"
       },
-      "level": 1,
       "parent": "<state>",
       "abstract": false,
       "definition": {
@@ -589,7 +578,6 @@
         "zh": "起始玩家",
         "en": "Starting Player"
       },
-      "level": 1,
       "parent": "<state>",
       "abstract": false,
       "definition": {
@@ -629,7 +617,6 @@
         "zh": "事件",
         "en": "Event"
       },
-      "level": 0,
       "abstract": true,
       "definition": {
         "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏 <state> 或流程有意义的、不可再分的原子事实。<event> 是流程本体的根概念——一切「发生了什么」都始于 <event>。子类包括 <transfer>、<action>、<trigger>、<resolve>、<activation>、<play>。",
@@ -711,7 +698,6 @@
         "zh": "条件",
         "en": "Condition"
       },
-      "level": 0,
       "abstract": false,
       "definition": {
         "zh": "用于判断某个命题在当前游戏 <state> 下是否成立的表达式。<condition> 本身不改变任何东西——它只回答「是」或「否」。<condition> 是 Rule Engine 的核心判断单元：<action> 的合法性检查、<trigger> 的激活判断、<endgame_condition> 的触发检测，全部由 <condition> 驱动。",
@@ -751,7 +737,6 @@
         "zh": "时机",
         "en": "Timing"
       },
-      "level": 0,
       "abstract": false,
       "definition": {
         "zh": "时间轴上的一个位置。<timing> 回答「何时发生」，是游戏时间秩序的基础。<timing> 可以是：某个状态变化的瞬间（「任何使宝石总数变化的 <event> 结算完成时」）、阶段边界（「一名 <player> 的回合结束时」）、或某个 <event> 完成后（「此 <action> 执行完毕时」）。<timing> 的持有者有两类：一是 <trigger>——决定何时检查 <condition>，时机到达且条件满足才触发；二是 <procedure>（<round>、<turn>、<phase>）——划定自身的起止边界。普通 <event> 不持有 <timing>——<trigger> 触发后其 <event> 序列按 order 依次执行，顺序本身就是时序，无需逐事件声明。<timing> 本身不改变游戏状态，它只是时间秩序的描述。",
@@ -791,7 +776,6 @@
         "zh": "费用",
         "en": "Cost"
       },
-      "level": 1,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -824,7 +808,6 @@
         "zh": "效果内容",
         "en": "Content"
       },
-      "level": 1,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -871,7 +854,6 @@
         "zh": "效果",
         "en": "Effect"
       },
-      "level": 1,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -918,7 +900,6 @@
         "zh": "即时效果",
         "en": "Instant Effect"
       },
-      "level": 2,
       "parent": "<content>",
       "abstract": false,
       "definition": {
@@ -936,7 +917,6 @@
         "zh": "永续内容",
         "en": "Continuous Content"
       },
-      "level": 2,
       "parent": "<content>",
       "abstract": false,
       "definition": {
@@ -954,7 +934,6 @@
         "zh": "行动声明",
         "en": "Declaration"
       },
-      "level": 1,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -987,7 +966,6 @@
         "zh": "信息可见性",
         "en": "Information Visibility"
       },
-      "level": 1,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -1028,7 +1006,6 @@
         "zh": "流程",
         "en": "Procedure"
       },
-      "level": 0,
       "abstract": true,
       "definition": {
         "zh": "具有明确开始与结束边界的执行单元。<procedure> 是游戏流程的骨架——它定义了「游戏现在处于什么阶段」「接下来该做什么」。嵌套是自由形式的：<round> 里可以有 <phase>，<phase> 里可以有 <round>，<turn> 里可以有 <phase>，一整局游戏本身也可以视为一个 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。所有 <procedure> 子类（<round>、<turn>、<phase> 等）共享同一套字段，区别仅在于语义，不在结构。",
@@ -1096,7 +1073,6 @@
         "zh": "轮",
         "en": "Round"
       },
-      "level": 1,
       "parent": "<procedure>",
       "abstract": false,
       "definition": {
@@ -1129,7 +1105,6 @@
         "zh": "回合",
         "en": "Turn"
       },
-      "level": 1,
       "parent": "<procedure>",
       "abstract": false,
       "definition": {
@@ -1162,7 +1137,6 @@
         "zh": "阶段",
         "en": "Phase"
       },
-      "level": 1,
       "parent": "<procedure>",
       "abstract": false,
       "definition": {
@@ -1209,7 +1183,6 @@
         "zh": "转移",
         "en": "Transfer"
       },
-      "level": 1,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -1300,7 +1273,6 @@
         "zh": "行动",
         "en": "Action"
       },
-      "level": 1,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -1359,7 +1331,6 @@
         "zh": "终局条件",
         "en": "Endgame Condition"
       },
-      "level": 1,
       "parent": "<condition>",
       "abstract": false,
       "definition": {
@@ -1377,7 +1348,6 @@
         "zh": "胜利条件",
         "en": "Victory Condition"
       },
-      "level": 1,
       "parent": "<condition>",
       "abstract": false,
       "definition": {
@@ -1409,7 +1379,6 @@
         "zh": "触发",
         "en": "Trigger"
       },
-      "level": 1,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -1474,7 +1443,6 @@
         "zh": "结算",
         "en": "Resolve"
       },
-      "level": 1,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -1500,7 +1468,6 @@
         "zh": "洗混",
         "en": "Shuffle"
       },
-      "level": 1,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -1525,7 +1492,6 @@
         "zh": "储备区",
         "en": "Reserve"
       },
-      "level": 1,
       "parent": "<zone>",
       "abstract": true,
       "definition": {
@@ -1543,7 +1509,6 @@
         "zh": "弃牌堆",
         "en": "Discard Pile"
       },
-      "level": 1,
       "parent": "<zone>",
       "abstract": false,
       "definition": {
@@ -1563,7 +1528,6 @@
         "zh": "玩家区域",
         "en": "Player Zone"
       },
-      "level": 1,
       "parent": "<zone>",
       "abstract": true,
       "definition": {
@@ -1588,7 +1552,6 @@
         "zh": "卡牌",
         "en": "Card"
       },
-      "level": 2,
       "parent": "<piece>",
       "abstract": false,
       "definition": {
@@ -1606,7 +1569,6 @@
         "zh": "板块",
         "en": "Tile"
       },
-      "level": 2,
       "parent": "<piece>",
       "abstract": false,
       "definition": {
@@ -1624,7 +1586,6 @@
         "zh": "供应堆",
         "en": "Supply"
       },
-      "level": 2,
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
@@ -1644,7 +1605,6 @@
         "zh": "市场",
         "en": "Market"
       },
-      "level": 2,
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
@@ -1664,7 +1624,6 @@
         "zh": "牌堆",
         "en": "Deck"
       },
-      "level": 2,
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
@@ -1683,7 +1642,6 @@
         "zh": "池",
         "en": "Pool"
       },
-      "level": 2,
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
@@ -1702,7 +1660,6 @@
         "zh": "游戏盒",
         "en": "Game Box"
       },
-      "level": 2,
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
@@ -1722,7 +1679,6 @@
         "zh": "玩家保留区",
         "en": "Player Holding"
       },
-      "level": 2,
       "parent": "<player_zone>",
       "abstract": false,
       "definition": {
@@ -1740,7 +1696,6 @@
         "zh": "发展区",
         "en": "Development Area"
       },
-      "level": 2,
       "parent": "<player_zone>",
       "abstract": false,
       "definition": {
@@ -1759,16 +1714,30 @@
         "zh": "公共版图",
         "en": "Public Board"
       },
-      "level": 2,
       "parent": "<aid>",
       "abstract": false,
       "definition": {
-        "zh": "用于直观呈现游戏全局或局部 <zone> 布局的大型物理 <aid>。<public_board> 继承自 <aid>。它在视觉上标识一个或多个 <zone> 的位置、边界和内容，但不产生 <zone>——<zone> 的存在和属性完全由游戏规则独立定义，<public_board> 只是把它们画了出来。物理形态不固定，可由多个部分拼接而成。",
-        "en": "A large physical <aid> that visually presents the layout of game-wide or local <zone>s. <public_board> extends <aid>. It visually marks the positions, boundaries, and contents of one or more <zone>s, but does not create <zone>s — <zone>s exist and are defined purely by game rules; the <public_board> merely depicts them. Physical form is not fixed and may consist of multiple assembled parts."
+        "zh": "用于直观呈现游戏全局或局部 <zone> 布局的大型物理 <aid>。<public_board> 继承自 <aid>。它在视觉上标识一个或多个 <zone> 的位置、边界和内容，但不产生 <zone>——<zone> 的存在和属性完全由游戏规则独立定义，<public_board> 只是把它们画了出来。物理形态不固定，可由多个 <aid> 拼接而成；拼接而成的公共版图通过 <components> 列出其组成部分。",
+        "en": "A large physical <aid> that visually presents the layout of game-wide or local <zone>s. <public_board> extends <aid>. It visually marks the positions, boundaries, and contents of one or more <zone>s, but does not create <zone>s — <zone>s exist and are defined purely by game rules; the <public_board> merely depicts them. Physical form is not fixed and may consist of multiple assembled <aid>s; an assembled public board lists its parts via <components>."
+      },
+      "components": {
+        "type": "<aid>[]",
+        "description": {
+          "zh": "当此公共版图由多个 <aid> 拼接而成时，列出组成它的 <aid> 实例。单块公共版图可省略此字段。注意：此处只应包含 aid，不包含 <piece>、<tile> 等游戏零件——后者属于游戏状态，应放在 <zone> 中。",
+          "en": "When this public board is physically assembled from multiple <aid>s, list the <aid> instances that compose it. Omit for a single-piece board. Note: only aids should be listed here; <piece>s, <tile>s, and other game components belong to game state and should reside in <zone>s."
+        }
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          {
+            "id": "components",
+            "description": {
+              "zh": "组成公共版图的 <aid> 列表。用于表达「由多块 aid 拼成的公共版图」这一物理形态。",
+              "en": "List of <aid>s composing the public board. Used to express a public board physically assembled from multiple aid parts."
+            }
+          }
+        ]
       }
     },
     {
@@ -1777,7 +1746,6 @@
         "zh": "个人面板",
         "en": "Private Board"
       },
-      "level": 2,
       "parent": "<aid>",
       "abstract": false,
       "definition": {
@@ -1795,7 +1763,6 @@
         "zh": "玩家提示卡",
         "en": "Player Aid"
       },
-      "level": 2,
       "parent": "<aid>",
       "abstract": false,
       "definition": {
@@ -1813,7 +1780,6 @@
         "zh": "规则书",
         "en": "Rulebook"
       },
-      "level": 2,
       "parent": "<aid>",
       "abstract": false,
       "definition": {
@@ -1831,7 +1797,6 @@
         "zh": "轨",
         "en": "Track"
       },
-      "level": 2,
       "parent": "<aid>",
       "abstract": false,
       "definition": {
@@ -1873,18 +1838,46 @@
       }
     },
     {
+      "id": "score_zone",
+      "name": {
+        "zh": "分数区",
+        "en": "Score Zone"
+      },
+      "parent": "<zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "用于放置所有玩家分数标记的公共 <zone>。<score_zone> 继承自 <zone>。每个玩家在此处有一个代表自己当前 <score> 位置的 <token>；分轨（<score_track>）是这个 zone 的可视化载体。",
+        "en": "A public <zone> for placing all players' score markers. <score_zone> extends <zone>. Each player has a <token> here indicating their current <score> position; the <score_track> is the visual carrier of this zone."
+      },
+      "contains": {
+        "type": "<token>[]",
+        "description": {
+          "zh": "此区域存放所有玩家的分数标记。",
+          "en": "This zone holds all players' score markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "score_track",
       "name": {
         "zh": "分轨",
         "en": "Score Track"
       },
-      "level": 3,
       "parent": "<track>",
       "abstract": false,
       "definition": {
-        "zh": "用于记录 <player> 的 <score> 数量的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <token> 在上面指示自己当前拥有多少 <score>。<score> 本身是 <resource>，「玩家有 N 分」才是 <state>；分轨只是这个 <state> 的可视化载体。",
-        "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <token> to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is merely the visual carrier of this <state>."
+        "zh": "用于记录 <player> 的 <score> 数量的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <token> 在 <score_zone> 上指示自己当前拥有多少 <score>。<score> 本身是 <resource>，「玩家有 N 分」才是 <state>；分轨只是这个 <state> 的可视化载体。",
+        "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <token> on the <score_zone> to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is merely the visual carrier of this <state>."
       },
+      "maps_to": [
+        "<score_zone>"
+      ],
       "constraints": {
         "required": [],
         "optional": []
@@ -1896,7 +1889,6 @@
         "zh": "手牌",
         "en": "Hand"
       },
-      "level": 3,
       "parent": "<player_holding>",
       "abstract": false,
       "definition": {
@@ -1914,7 +1906,6 @@
         "zh": "激活",
         "en": "Activation"
       },
-      "level": 2,
       "parent": "<action>",
       "abstract": false,
       "definition": {
@@ -1940,7 +1931,6 @@
         "zh": "骰子",
         "en": "Dice"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -1973,7 +1963,6 @@
         "zh": "地形",
         "en": "Terrain"
       },
-      "level": 1,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -1991,7 +1980,6 @@
         "zh": "区域",
         "en": "Region"
       },
-      "level": 2,
       "parent": "<zone>",
       "abstract": false,
       "definition": {
@@ -2024,7 +2012,6 @@
         "zh": "营地",
         "en": "Campsite"
       },
-      "level": 2,
       "parent": "<object>",
       "abstract": false,
       "definition": {
@@ -2042,7 +2029,6 @@
         "zh": "地点板块",
         "en": "Site"
       },
-      "level": 2,
       "parent": "<tile>",
       "abstract": false,
       "definition": {
@@ -2060,7 +2046,6 @@
         "zh": "替代费用",
         "en": "Alternative Cost"
       },
-      "level": 2,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -2093,7 +2078,6 @@
         "zh": "选择",
         "en": "Choice"
       },
-      "level": 1,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -2126,7 +2110,6 @@
         "zh": "被动效果",
         "en": "Passive Effect"
       },
-      "level": 2,
       "parent": "<property>",
       "abstract": false,
       "definition": {
@@ -2159,7 +2142,6 @@
         "zh": "掷骰",
         "en": "Die Roll"
       },
-      "level": 2,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -2177,7 +2159,6 @@
         "zh": "恩惠检定",
         "en": "Favor Test"
       },
-      "level": 2,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -2195,7 +2176,6 @@
         "zh": "升级",
         "en": "Upgrade"
       },
-      "level": 2,
       "parent": "<event>",
       "abstract": false,
       "definition": {
@@ -2213,7 +2193,6 @@
         "zh": "打出",
         "en": "Play"
       },
-      "level": 2,
       "parent": "<event>",
       "abstract": false,
       "definition": {

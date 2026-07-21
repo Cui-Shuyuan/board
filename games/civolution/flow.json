@@ -28,19 +28,19 @@
               "id": "assemble_public_board",
               "type": "<ontology::event>",
               "description": {
-                "zh": "拼接分轨形成外框，随机放置 8 块大陆板块填满公共版图。",
-                "en": "Assemble the frame and randomly place the 8 continent tiles to fill the public board."
+                "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；随机放置 8 块大陆板块拼成大陆。",
+                "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly place the 8 continent tiles to form the continent."
               }
             },
             {
               "id": "place_sites",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "将 24 块地点板块背面朝上随机放置在公共版图的地点格中。",
-                "en": "Place the 24 site tiles face down on the site spaces of the public board."
+                "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
+                "en": "Place the 24 site tiles face down on the site spaces of the continent."
               },
               "source": "<site_supply>",
-              "destination": "<ontology::public_board>",
+              "destination": "<continent>",
               "<object>": "<site_tile>",
               "quantity": 24,
               "face_down": true
@@ -57,11 +57,11 @@
               "id": "prepare_phase_indicator",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "将阶段标记放到流程版图阶段轨的阶段一位置。",
-                "en": "Place the phase indicator on phase 1 of the sequence board's phase track."
+                "zh": "将阶段标记放到流程版图阶段序列的阶段一位置。",
+                "en": "Place the phase indicator on phase 1 of the sequence board's phase sequence."
               },
               "source": "<ontology::game_box>",
-              "destination": "<sequence_board>",
+              "destination": "<phase_sequence_zone>",
               "<object>": "<phase_indicator>",
               "quantity": 1
             },
@@ -73,19 +73,19 @@
                 "en": "Place the weather indicator on a moderate space of the weather gauge."
               },
               "source": "<ontology::game_box>",
-              "destination": "<sequence_board>",
+              "destination": "<weather_gauge_zone>",
               "<object>": "<weather_indicator>",
               "quantity": 1
             },
             {
-              "id": "prepare_event_deck",
+              "id": "prepare_event_cards",
               "type": "<ontology::transfer>",
               "description": {
                 "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
                 "en": "Shuffle event cards, draw 4, and place them face down on the event card spaces; return the rest to the box."
               },
               "source": "<ontology::game_box>",
-              "destination": "<sequence_board>",
+              "destination": "<event_card_space>",
               "<object>": "<event_card>",
               "quantity": 4,
               "face_down": true
@@ -109,16 +109,29 @@
               }
             },
             {
-              "id": "prepare_scoring_tiles",
+              "id": "prepare_era_scoring_tiles",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区；再随机抽取 3 张按图标背面朝上覆盖终局计分区。",
-                "en": "Draw 4 scoring tiles and place them face up in the era scoring area; draw 3 more and place them point-side up over the final scoring area."
+                "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区。",
+                "en": "Draw 4 scoring tiles and place them face up in the era scoring area."
               },
               "source": "<scoring_tile_supply>",
-              "destination": "<sequence_board>",
+              "destination": "<era_scoring_area>",
               "<object>": "<scoring_tile>",
-              "quantity": 7
+              "quantity": 4
+            },
+            {
+              "id": "prepare_final_scoring_tiles",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "随机抽取 3 张计分板块按图标背面朝上覆盖终局计分区。",
+                "en": "Draw 3 scoring tiles and place them point-side up over the final scoring area."
+              },
+              "source": "<scoring_tile_supply>",
+              "destination": "<final_scoring_area>",
+              "<object>": "<scoring_tile>",
+              "quantity": 3,
+              "face_down": true
             },
             {
               "id": "prepare_hundred_point_tokens",
@@ -163,15 +176,43 @@
               }
             },
             {
-              "id": "prepare_chip_display",
+              "id": "prepare_goal_chip_display",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "随机抽取若干目标芯片、收入芯片、属性芯片正面朝上放到芯片展示区，剩余放回袋子。",
-                "en": "Draw goal, income, and attribute chips and place them face up in the chip display; return the rest to their bags."
+                "zh": "随机抽取若干目标芯片正面朝上放到目标芯片展示区，剩余放回袋子。",
+                "en": "Draw goal chips and place them face up in the goal chip display; return the rest to the bag."
               },
               "source": "<ontology::game_box>",
-              "destination": "<chip_display>",
-              "<object>": "<goal_chip> | <income_chip> | <attribute_chip>",
+              "destination": "<goal_chip_display>",
+              "<object>": "<goal_chip>",
+              "quantity": {
+                "expr": "per_player_count_setup"
+              }
+            },
+            {
+              "id": "prepare_income_chip_display",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "随机抽取若干收入芯片正面朝上放到收入芯片展示区，剩余放回袋子。",
+                "en": "Draw income chips and place them face up in the income chip display; return the rest to the bag."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<income_chip_display>",
+              "<object>": "<income_chip>",
+              "quantity": {
+                "expr": "per_player_count_setup"
+              }
+            },
+            {
+              "id": "prepare_attribute_chip_display",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "随机抽取若干属性芯片正面朝上放到属性芯片展示区，剩余放回袋子。",
+                "en": "Draw attribute chips and place them face up in the attribute chip display; return the rest to the bag."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<attribute_chip_display>",
+              "<object>": "<attribute_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
               }
@@ -184,7 +225,7 @@
                 "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
               },
               "source": "<material_tile_supply>",
-              "destination": "<ontology::public_board>",
+              "destination": "<continent>",
               "<object>": "<material_tile>",
               "quantity": "all"
             },
@@ -248,7 +289,7 @@
                 "en": "Each player takes discs: 1 to score board 0, 1 to Favor of Agera track, 5 to the five progress tracks at 0."
               },
               "source": "<ontology::game_box>",
-              "destination": "<score_board> | <favor_of_ager_track> | <progress_board>",
+              "destination": "<score_track> | <favor_of_ager_track> | <progress_board>",
               "<object>": "<disc>",
               "quantity": 7,
               "per_player": true
@@ -261,7 +302,7 @@
                 "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
               },
               "source": "<player_console>",
-              "destination": "<ontology::public_board>",
+              "destination": "<continent>",
               "<object>": "<tribe>",
               "quantity": 2,
               "per_player": true
@@ -270,11 +311,11 @@
               "id": "player_place_initial_markers",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿 6 个标记：2 个放到公共版图两个初始区域中营地以外位置，4 个放到个人面板重置列顶部。",
+                "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到个人面板重置列顶部。",
                 "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
               },
               "source": "<ontology::game_box>",
-              "destination": "<ontology::public_board> | <player_console>",
+              "destination": "<continent> | <player_console>",
               "<object>": "<marker>",
               "quantity": 6,
               "per_player": true

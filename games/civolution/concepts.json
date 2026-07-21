@@ -13,27 +13,6 @@
   },
   "objects": [
     {
-      "id": "success_point",
-      "name": {
-        "zh": "成功点数",
-        "en": "Success Point"
-      },
-      "parent": "<ontology::score>",
-      "abstract": false,
-      "definition": {
-        "zh": "文明演化中的胜利点数/成功点数。<success_point> 继承自 <ontology::score>。玩家通过推进进程轨、建造、安装研究牌、完成目标芯片、时代计分、终局计分等方式获得。游戏结束时拥有最多 <success_point> 的玩家获胜。",
-        "en": "Victory/success points in Civolution. <success_point> extends <ontology::score>. Players gain them through advancing progress tracks, building, installing research cards, completing goal chips, era scoring, and final scoring. The player with the most <success_point> at game end wins."
-      },
-      "unit": {
-        "type": "string",
-        "default": "分",
-        "description": {
-          "zh": "成功点数的计量单位为「分」。",
-          "en": "Unit of measurement for success points: 'points'."
-        }
-      }
-    },
-    {
       "id": "food",
       "name": {
         "zh": "食物",
@@ -120,8 +99,8 @@
       "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
-        "zh": "放置在公共版图区域或船上的未运输材料标记。<raw_material> 继承自 <ontology::token>。它代表某种材料但尚未进入玩家仓库，需要通过运输才能变成 <stored_material>。",
-        "en": "A material marker placed on a region or boat on the public board, not yet transported to storage. <raw_material> extends <ontology::token>. It represents a material but is not yet in the player's storage; must be transported to become a <stored_material>."
+        "zh": "放置在 <continent> 区域或船上的未运输材料标记。<raw_material> 继承自 <ontology::token>。它代表某种材料但尚未进入玩家仓库，需要通过运输才能变成 <stored_material>。",
+        "en": "A material marker placed on a <continent> region or boat, not yet transported to storage. <raw_material> extends <ontology::token>. It represents a material but is not yet in the player's storage; must be transported to become a <stored_material>."
       },
       "represents": {
         "type": "<stored_material>",
@@ -168,8 +147,8 @@
       "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
-        "zh": "代表玩家文明在公共版图上存在的核心 <ontology::piece>。<tribe> 继承自 <ontology::piece>。每个部落有两种状态：站立（strong）和躺倒（weak）。只有站立部落可以迁徙；躺倒部落在喂养阶段若未被喂饱会死亡。",
-        "en": "The core <ontology::piece> representing a player's civilization on the public board. <tribe> extends <ontology::piece>. Each tribe has two states: strong (upright) and weak (lying). Only strong tribes can migrate; weak tribes die in the Feeding phase if not fed."
+        "zh": "代表玩家文明在 <continent> 上存在的核心 <ontology::piece>。<tribe> 继承自 <ontology::piece>。每个部落有两种状态：站立（strong）和躺倒（weak）。只有站立部落可以迁徙；躺倒部落在喂养阶段若未被喂饱会死亡。",
+        "en": "The core <ontology::piece> representing a player's civilization on the <continent>. <tribe> extends <ontology::piece>. Each tribe has two states: strong (upright) and weak (lying). Only strong tribes can migrate; weak tribes die in the Feeding phase if not fed."
       },
       "appearance": {
         "type": "string",
@@ -509,8 +488,8 @@
       "parent": "<ontology::site>",
       "abstract": false,
       "definition": {
-        "zh": "放置在公共版图上的特殊地点，翻开前背面朝上。<site_tile> 继承自 <ontology::site>。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。每种效果不同。",
-        "en": "Special sites placed on the public board, face down until revealed. <site_tile> extends <ontology::site>. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Each has a different effect."
+        "zh": "放置在 <continent> 上的特殊地点，翻开前背面朝上。<site_tile> 继承自 <ontology::site>。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。每种效果不同。",
+        "en": "Special sites placed on the <continent>, face down until revealed. <site_tile> extends <ontology::site>. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Each has a different effect."
       }
     },
     {
@@ -522,8 +501,8 @@
       "parent": "<ontology::tile>",
       "abstract": false,
       "definition": {
-        "zh": "拼成公共版图的 <ontology::tile>。<continent_tile> 继承自 <ontology::tile>。共 8 块，其中 7 块为 2×1 大小，1 块为 1×1 大小。板块正面印有不同的 <ontology::terrain> 区域和营地位置。",
-        "en": "A <ontology::tile> forming part of the public continent board. <continent_tile> extends <ontology::tile>. There are 8 tiles: seven 2×1 and one 1×1. The front is printed with different <ontology::terrain> regions and encampment positions."
+        "zh": "拼成 <continent> 的 <ontology::tile>。<continent_tile> 继承自 <ontology::tile>。共 8 块，其中 7 块为 2×1 大小，1 块为 1×1 大小。板块正面印有不同的 <ontology::terrain> 区域和营地位置。",
+        "en": "A <ontology::tile> forming part of the <continent>. <continent_tile> extends <ontology::tile>. There are 8 tiles: seven 2×1 and one 1×1. The front is printed with different <ontology::terrain> regions and encampment positions."
       }
     },
     {
@@ -738,6 +717,19 @@
       }
     },
     {
+      "id": "favor_marker",
+      "name": {
+        "zh": "恩惠标记",
+        "en": "Favor Marker"
+      },
+      "parent": "<ontology::token>",
+      "abstract": false,
+      "definition": {
+        "zh": "放置在流程版图阿格拉恩惠轨上指示当前恩惠等级的标记。<favor_marker> 继承自 <ontology::token>。影响恩惠检定、雕像收入和终局计分。",
+        "en": "A marker placed on the Favor of Agera track of the sequence board to indicate the current favor level. <favor_marker> extends <ontology::token>. Affects favor tests, statue income, and final scoring."
+      }
+    },
+    {
       "id": "starting_monolith",
       "name": {
         "zh": "起始纪念碑",
@@ -759,8 +751,15 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "由 <continent_tile> 拼接而成的公共游戏版图。<ontology::public_board> 继承自 <ontology::public_board>（本体）。包含多个 <ontology::region>、<ontology::campsite>、<site_tile> 和 <material_tile>，是 <tribe>、<settlement>、<farm>、<boat> 等 <ontology::piece> 的主要放置区。",
-        "en": "The shared game board assembled from <continent_tile>s. <ontology::public_board> extends the <ontology::public_board> ontology. It contains multiple <ontology::region>s, <ontology::campsite>s, <site_tile>s, and <material_tile>s, and is the main placement area for <tribe>, <settlement>, <farm>, and <boat> pieces."
+        "zh": "由分轨、进程版图、流程版图等 <ontology::aid> 拼接而成的公共游戏版图。<public_board> 继承自 <ontology::public_board>。它只提供视觉辅助与状态跟踪，中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
+        "en": "The shared game board assembled from the score track, progress board, sequence board, and other <ontology::aid>s. <public_board> extends <ontology::public_board>. It only provides visual aid and state tracking; the central play area is held by the <continent> public zone, whose <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
+      },
+      "components": {
+        "type": "<ontology::aid>[]",
+        "description": {
+          "zh": "组成公共版图的辅助物：<score_track>、<progress_board>、<sequence_board>。",
+          "en": "Aids composing the public board: <score_track>, <progress_board>, and <sequence_board>."
+        }
       }
     },
     {
@@ -769,12 +768,21 @@
         "zh": "大陆",
         "en": "Continent"
       },
-      "parent": "<ontology::public_board>",
+      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
-        "zh": "本局游戏中由全部 <continent_tile> 拼接形成的大陆。<continent> 继承自 <ontology::public_board>。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
-        "en": "The entire landmass formed by all <continent_tile>s in this game. <continent> extends <ontology::public_board>. In 2/3-player games, blocking tokens cover some unavailable campsites."
-      }
+        "zh": "本局游戏中由全部 <continent_tile> 拼接形成的公共游戏区域。<continent> 继承自 <ontology::zone>。它承载 <territory>、<campsite>、<site_tile>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
+        "en": "The public play area formed by all <continent_tile>s in this game. <continent> extends <ontology::zone>. It holds <territory>s, <campsite>s, <site_tile>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable campsites."
+      },
+      "contains": {
+        "type": "<ontology::tile>[] | <ontology::piece>[] | <ontology::token>[]",
+        "description": {
+          "zh": "大陆区域可存放的游戏零件类型：板块（大陆板块、地点板块、材料板块）、物件（部落、聚落、农场、船）和指示物（原材料、各种标记）。",
+          "en": "Game component types the continent zone can hold: tiles (continent, site, and material tiles), pieces (tribes, settlements, farms, boats), and tokens (raw materials and various markers)."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "territory",
@@ -785,8 +793,8 @@
       "parent": "<ontology::region>",
       "abstract": false,
       "definition": {
-        "zh": "公共版图上的一片连续 <ontology::terrain> 区域。<territory> 继承自 <ontology::region>。每个领地有一个地形类型，可能有一个或多个营地。领地是生产、狩猎、迁徙、建造等活动的基本单位。",
-        "en": "A contiguous area of the same <ontology::terrain> on the public board. <territory> extends <ontology::region>. Each territory has one terrain type and may have one or more campsites. Territories are the basic unit for production, hunting, migration, and building."
+        "zh": "<continent> 上的一片连续 <ontology::terrain> 区域。<territory> 继承自 <ontology::region>。每个领地有一个地形类型，可能有一个或多个营地。领地是生产、狩猎、迁徙、建造等活动的基本单位。",
+        "en": "A contiguous area of the same <ontology::terrain> on the <continent>. <territory> extends <ontology::region>. Each territory has one terrain type and may have one or more campsites. Territories are the basic unit for production, hunting, migration, and building."
       }
     },
     {
@@ -803,16 +811,16 @@
       }
     },
     {
-      "id": "score_board",
+      "id": "score_track",
       "name": {
-        "zh": "计分版图",
-        "en": "Score Board"
+        "zh": "计分轨",
+        "en": "Score Track"
       },
-      "parent": "<ontology::public_board>",
+      "parent": "<ontology::score_track>",
       "abstract": false,
       "definition": {
-        "zh": "独立的计分轨 <ontology::public_board>，用于记录所有玩家的 <success_point>。<score_board> 继承自 <ontology::public_board>。玩家分数超过 100 时使用 <hundred_point_token> 表示。",
-        "en": "A separate scoring-track <ontology::public_board> used to track all players' <success_point>s. <score_board> extends <ontology::public_board>. <hundred_point_token>s are used when scores exceed 100."
+        "zh": "由 4 块外框组件拼接而成的计分轨。<score_track> 继承自 <ontology::score_track>，其 <maps_to> 已默认指向 <ontology::score_zone>。玩家分数超过 100 时使用 <hundred_point_token> 表示。",
+        "en": "A score track assembled from 4 frame pieces. <score_track> extends <ontology::score_track>, whose <maps_to> already points to <ontology::score_zone>. <hundred_point_token>s are used when scores exceed 100."
       }
     },
     {
@@ -821,12 +829,196 @@
         "zh": "流程版图",
         "en": "Sequence Board"
       },
-      "parent": "<ontology::private_board>",
+      "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "记录当前时代、当前阶段、当前天气的 <ontology::private_board>。<sequence_board> 继承自 <ontology::private_board>。上有 <favor_of_ager_track>、天气轨和阶段序列。",
-        "en": "A <ontology::private_board> tracking the current era, current phase, and current weather. <sequence_board> extends <ontology::private_board>. Holds the <favor_of_ager_track>, weather gauge, and phase sequence."
-      }
+        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。<sequence_board> 继承自 <ontology::public_board>。其 <maps_to> 包含阶段序列区、天气轨标记区、事件牌格、时代计分区以及阿格拉恩惠轨标记区，所有玩家共用。",
+        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. <sequence_board> extends <ontology::public_board>. Its <maps_to> includes the phase sequence zone, weather gauge zone, event card spaces, era scoring area, and Favor of Agera track zone, shared by all players."
+      },
+      "maps_to": [
+        "<phase_sequence_zone>",
+        "<weather_gauge_zone>",
+        "<event_card_space>",
+        "<era_scoring_area>",
+        "<favor_of_ager_track_zone>"
+      ]
+    },
+    {
+      "id": "progress_board",
+      "name": {
+        "zh": "进程版图",
+        "en": "Progress Board"
+      },
+      "parent": "<ontology::public_board>",
+      "abstract": false,
+      "definition": {
+        "zh": "印刷狩猎表、5 条进程轨、终局计分区等参考信息的公共 <ontology::public_board>。<progress_board> 继承自 <ontology::public_board>。其 <maps_to> 包含进程轨标记区、终局计分区以及展示供应区（骰子、狩猎标记、100 分标记、目标/收入/属性芯片）。",
+        "en": "A shared <ontology::public_board> printed with the hunting table, five progress tracks, final scoring area, and other reference information. <progress_board> extends <ontology::public_board>. Its <maps_to> includes the progress track zone, final scoring area, and display/supply zones (dice, hunting tokens, 100-point tokens, goal/income/attribute chips)."
+      },
+      "maps_to": [
+        "<progress_track_zone>",
+        "<final_scoring_area>",
+        "<dice_display>",
+        "<hunting_token_display>",
+        "<hundred_point_token_display>",
+        "<goal_chip_display>",
+        "<income_chip_display>",
+        "<attribute_chip_display>"
+      ]
+    },
+    {
+      "id": "progress_track_zone",
+      "name": {
+        "zh": "进程轨标记区",
+        "en": "Progress Track Zone"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上 5 条进程轨（科技、声望、知识、建造、文化）的标记区域。<progress_track_zone> 继承自 <ontology::zone>。每个玩家有 5 个标记放在对应轨道上，记录各进程轨的当前位置。",
+        "en": "The marker area for the five progress tracks (Technology, Prestige, Knowledge, Construction, Culture) on the <progress_board>. <progress_track_zone> extends <ontology::zone>. Each player has 5 markers on the corresponding tracks, recording the current position of each progress track."
+      },
+      "contains": {
+        "type": "<ontology::token>[]",
+        "description": {
+          "zh": "此区域存放所有玩家的进程轨标记。",
+          "en": "This zone holds all players' progress track markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "dice_display",
+      "name": {
+        "zh": "骰子展示区",
+        "en": "Dice Display"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上用于放置公共骰子供应的区域。<dice_display> 继承自 <ontology::zone>。设置时根据玩家数量拿取白骰子和粉骰子放在此处。",
+        "en": "The area on the <progress_board> for the public dice supply. <dice_display> extends <ontology::zone>. Activation and fate dice are taken from here according to player count during setup."
+      },
+      "contains": {
+        "type": "<ontology::dice>[]",
+        "description": {
+          "zh": "此区域存放公共的白骰子和粉骰子。",
+          "en": "This zone holds the public activation and fate dice."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "hunting_token_display",
+      "name": {
+        "zh": "狩猎标记展示区",
+        "en": "Hunting Token Display"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上用于放置 <hunting_token> 供应的区域。<hunting_token_display> 继承自 <ontology::zone>。设置时部分标记需翻面作为阻挡标记覆盖营地，其余作为供应堆。",
+        "en": "The area on the <progress_board> for the <hunting_token> supply. <hunting_token_display> extends <ontology::zone>. Some tokens are flipped as blocking tokens to cover encampments during setup; the rest form the supply."
+      },
+      "contains": {
+        "type": "<hunting_token>[]",
+        "description": {
+          "zh": "此区域存放 <hunting_token>。",
+          "en": "This zone holds <hunting_token>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "hundred_point_token_display",
+      "name": {
+        "zh": "一百分标记展示区",
+        "en": "100-Point Token Display"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上用于放置 <hundred_point_token> 供应的区域。<hundred_point_token_display> 继承自 <ontology::zone>。设置时部分标记需翻面作为阻挡标记，其余作为供应堆。",
+        "en": "The area on the <progress_board> for the <hundred_point_token> supply. <hundred_point_token_display> extends <ontology::zone>. Some tokens are flipped as blocking tokens during setup; the rest form the supply."
+      },
+      "contains": {
+        "type": "<hundred_point_token>[]",
+        "description": {
+          "zh": "此区域存放 <hundred_point_token>。",
+          "en": "This zone holds <hundred_point_token>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "goal_chip_display",
+      "name": {
+        "zh": "目标芯片展示区",
+        "en": "Goal Chip Display"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上展示可拿取 <goal_chip> 的区域。<goal_chip_display> 继承自 <ontology::zone>。设置时随机抽取若干目标芯片正面朝上放到此处。",
+        "en": "The area on the <progress_board> displaying available <goal_chip>s. <goal_chip_display> extends <ontology::zone>. A number of goal chips are drawn and placed face up here during setup."
+      },
+      "contains": {
+        "type": "<goal_chip>[]",
+        "description": {
+          "zh": "此区域存放正面朝上展示的 <goal_chip>。",
+          "en": "This zone holds face-up displayed <goal_chip>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "income_chip_display",
+      "name": {
+        "zh": "收入芯片展示区",
+        "en": "Income Chip Display"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上展示可拿取 <income_chip> 的区域。<income_chip_display> 继承自 <ontology::zone>。设置时随机抽取若干收入芯片正面朝上放到此处。",
+        "en": "The area on the <progress_board> displaying available <income_chip>s. <income_chip_display> extends <ontology::zone>. A number of income chips are drawn and placed face up here during setup."
+      },
+      "contains": {
+        "type": "<income_chip>[]",
+        "description": {
+          "zh": "此区域存放正面朝上展示的 <income_chip>。",
+          "en": "This zone holds face-up displayed <income_chip>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "attribute_chip_display",
+      "name": {
+        "zh": "属性芯片展示区",
+        "en": "Attribute Chip Display"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<progress_board> 上展示可拿取 <attribute_chip> 的区域。<attribute_chip_display> 继承自 <ontology::zone>。设置时随机抽取若干属性芯片正面朝上放到此处。",
+        "en": "The area on the <progress_board> displaying available <attribute_chip>s. <attribute_chip_display> extends <ontology::zone>. A number of attribute chips are drawn and placed face up here during setup."
+      },
+      "contains": {
+        "type": "<attribute_chip>[]",
+        "description": {
+          "zh": "此区域存放正面朝上展示的 <attribute_chip>。",
+          "en": "This zone holds face-up displayed <attribute_chip>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "favor_of_ager_track",
@@ -839,7 +1031,11 @@
       "definition": {
         "zh": "位于 <sequence_board> 上的分数轨，记录当前阿格拉恩惠等级。<favor_of_ager_track> 继承自 <ontology::track>。影响 <ontology::favor_test> 成功范围、雕像收入和终局计分。",
         "en": "A scoring track on the <sequence_board> recording the current Favor of Agera level. <favor_of_ager_track> extends <ontology::track>. It affects the success range of <ontology::favor_test>s, statue income, and final scoring."
-      }
+      },
+      "marker": "<favor_marker>",
+      "maps_to": [
+        "<favor_of_ager_track_zone>"
+      ]
     },
     {
       "id": "weather_gauge",
@@ -852,7 +1048,94 @@
       "definition": {
         "zh": "位于 <sequence_board> 上的轨，记录当前天气。<weather_gauge> 继承自 <ontology::track>。天气有晴天、雨天、雪天、暴风雪、干燥等，影响收成、狩猎和灾难。",
         "en": "A track on the <sequence_board> recording the current weather. <weather_gauge> extends <ontology::track>. Weather states include sunny, rainy, snowy, blizzard, dry, etc., affecting harvest, hunting, and disasters."
-      }
+      },
+      "marker": "<weather_indicator>",
+      "maps_to": [
+        "<weather_gauge_zone>"
+      ]
+    },
+    {
+      "id": "phase_sequence",
+      "name": {
+        "zh": "阶段序列",
+        "en": "Phase Sequence"
+      },
+      "parent": "<ontology::track>",
+      "abstract": false,
+      "definition": {
+        "zh": "位于 <sequence_board> 上的轨，记录当前阶段。<phase_sequence> 继承自 <ontology::track>。阶段标记沿黄色箭头移动，指示 8 个阶段中的当前阶段。",
+        "en": "A track on the <sequence_board> recording the current phase. <phase_sequence> extends <ontology::track>. The phase indicator moves along the yellow arrow to show the current of the 8 phases."
+      },
+      "marker": "<phase_indicator>",
+      "maps_to": [
+        "<phase_sequence_zone>"
+      ]
+    },
+    {
+      "id": "phase_sequence_zone",
+      "name": {
+        "zh": "阶段序列区",
+        "en": "Phase Sequence Zone"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<sequence_board> 上用于放置 <phase_indicator> 的区域。<phase_sequence_zone> 继承自 <ontology::zone>。阶段标记在此区域内指示当前阶段。",
+        "en": "The area on the <sequence_board> for placing the <phase_indicator>. <phase_sequence_zone> extends <ontology::zone>. The phase indicator shows the current phase within this zone."
+      },
+      "contains": {
+        "type": "<phase_indicator>[]",
+        "description": {
+          "zh": "此区域存放阶段标记。",
+          "en": "This zone holds the phase indicator."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "weather_gauge_zone",
+      "name": {
+        "zh": "天气轨标记区",
+        "en": "Weather Gauge Zone"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<sequence_board> 上用于放置 <weather_indicator> 的区域。<weather_gauge_zone> 继承自 <ontology::zone>。天气标记在此区域内指示当前天气。",
+        "en": "The area on the <sequence_board> for placing the <weather_indicator>. <weather_gauge_zone> extends <ontology::zone>. The weather indicator shows the current weather within this zone."
+      },
+      "contains": {
+        "type": "<weather_indicator>[]",
+        "description": {
+          "zh": "此区域存放天气标记。",
+          "en": "This zone holds the weather indicator."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
+    },
+    {
+      "id": "favor_of_ager_track_zone",
+      "name": {
+        "zh": "阿格拉恩惠轨标记区",
+        "en": "Favor of Agera Track Zone"
+      },
+      "parent": "<ontology::zone>",
+      "abstract": false,
+      "definition": {
+        "zh": "<sequence_board> 上用于放置 <favor_marker> 的区域。<favor_of_ager_track_zone> 继承自 <ontology::zone>。恩惠标记在此区域内指示当前阿格拉恩惠等级。",
+        "en": "The area on the <sequence_board> for placing the <favor_marker>. <favor_of_ager_track_zone> extends <ontology::zone>. The favor marker shows the current Favor of Agera level within this zone."
+      },
+      "contains": {
+        "type": "<favor_marker>[]",
+        "description": {
+          "zh": "此区域存放阿格拉恩惠标记。",
+          "en": "This zone holds the Favor of Agera marker."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "era_scoring_area",
@@ -860,12 +1143,21 @@
         "zh": "时代计分区",
         "en": "Era Scoring Area"
       },
-      "parent": "<public_zone>",
+      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
-        "zh": "<sequence_board> 上用于放置本时代计分 <scoring_tile> 的区域。<era_scoring_area> 继承自 <public_zone>。时代计分阶段按图标类别结算。",
-        "en": "An area on the <sequence_board> for placing the era <scoring_tile>s. <era_scoring_area> extends <public_zone>. Resolved during the Era Scoring phase by icon category."
-      }
+        "zh": "<sequence_board> 上用于放置本时代计分 <scoring_tile> 的区域。<era_scoring_area> 继承自 <ontology::zone>。时代计分阶段按图标类别结算。",
+        "en": "An area on the <sequence_board> for placing the era <scoring_tile>s. <era_scoring_area> extends <ontology::zone>. Resolved during the Era Scoring phase by icon category."
+      },
+      "contains": {
+        "type": "<scoring_tile>[]",
+        "description": {
+          "zh": "此区域存放本时代计分 <scoring_tile>。",
+          "en": "This zone holds era <scoring_tile>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "final_scoring_area",
@@ -873,12 +1165,21 @@
         "zh": "终局计分区",
         "en": "Final Scoring Area"
       },
-      "parent": "<public_zone>",
+      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
-        "zh": "<sequence_board> 上用于放置终局计分 <scoring_tile> 的区域。<final_scoring_area> 继承自 <public_zone>。游戏结束时按分数面朝上的数值结算。",
-        "en": "An area on the <sequence_board> for placing final <scoring_tile>s. <final_scoring_area> extends <public_zone>. Resolved at game end by the point values shown face up."
-      }
+        "zh": "<progress_board> 上用于放置终局计分 <scoring_tile> 的区域。<final_scoring_area> 继承自 <ontology::zone>。游戏结束时按分数面朝上的数值结算。",
+        "en": "An area on the <progress_board> for placing final <scoring_tile>s. <final_scoring_area> extends <ontology::zone>. Resolved at game end by the point values shown face up."
+      },
+      "contains": {
+        "type": "<scoring_tile>[]",
+        "description": {
+          "zh": "此区域存放终局计分 <scoring_tile>。",
+          "en": "This zone holds final <scoring_tile>s."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "player_console",
@@ -1037,19 +1338,6 @@
       }
     },
     {
-      "id": "chip_display",
-      "name": {
-        "zh": "芯片展示区",
-        "en": "Chip Display"
-      },
-      "parent": "<ontology::market>",
-      "abstract": false,
-      "definition": {
-        "zh": "公共版图上展示可拿取 <goal_chip> 和 <attribute_chip> 的区域。<chip_display> 继承自 <ontology::market>。",
-        "en": "The public area displaying available <goal_chip>s and <attribute_chip>s. <chip_display> extends <ontology::market>."
-      }
-    },
-    {
       "id": "module_supply",
       "name": {
         "zh": "模组供应",
@@ -1084,8 +1372,8 @@
       "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "放置未使用 <continent_tile> 的区域。<continent_tile_supply> 继承自 <ontology::supply>。设置时洗混并拼接成公共版图。",
-        "en": "The area holding unused <continent_tile>s. <continent_tile_supply> extends <ontology::supply>. Shuffled and assembled into the public board during setup."
+        "zh": "放置未使用 <continent_tile> 的区域。<continent_tile_supply> 继承自 <ontology::supply>。设置时洗混并拼接成 <continent>。",
+        "en": "The area holding unused <continent_tile>s. <continent_tile_supply> extends <ontology::supply>. Shuffled and assembled into the <continent> during setup."
       }
     },
     {
@@ -1115,17 +1403,26 @@
       }
     },
     {
-      "id": "event_deck",
+      "id": "event_card_space",
       "name": {
-        "zh": "事件牌堆",
-        "en": "Event Deck"
+        "zh": "事件牌格",
+        "en": "Event Card Spaces"
       },
-      "parent": "<ontology::deck>",
+      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
-        "zh": "放置 <event_card> 的牌堆。<event_deck> 继承自 <ontology::deck>。每个时代翻开最上面一张。",
-        "en": "The deck holding <event_card>s. <event_deck> extends <ontology::deck>. The top card is revealed each era."
-      }
+        "zh": "<sequence_board> 上用于放置本时代 <event_card> 的区域。<event_card_space> 继承自 <ontology::zone>。设置时抽取 4 张事件牌背面朝上放在此处，每时代翻开最上面一张结算天气与事件。",
+        "en": "An area on the <sequence_board> for placing the current era's <event_card>s. <event_card_space> extends <ontology::zone>. During setup, 4 event cards are drawn and placed face down here; the top card is revealed each era to resolve weather and the event."
+      },
+      "contains": {
+        "type": "<event_card>[]",
+        "description": {
+          "zh": "此区域存放本时代的事件牌。",
+          "en": "This zone holds the current era's event cards."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "research_deck",

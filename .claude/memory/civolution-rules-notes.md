@@ -78,37 +78,37 @@ metadata:
 
 采取 **B 方案**：**<track> 作为 <aid> 的子类**，物理轨道只是记录 state 的工具。
 
-- **<track>**（L2，extends <aid>）：带刻度的辅助物，用于可视化某个 state 的当前值
-- **<score_track>**（L3，extends <track>）：分轨，记录玩家分数
+- **<track>**（extends <aid>）：带刻度的辅助物，用于可视化某个 state 的当前值
+- **<score_track>**（extends <track>）：分轨，记录玩家分数
 - 其他轨道（progress tracks、Favor of Agera track、weather gauge）在游戏级别定义，不入统一本体
 
 ```
-State（L0）
+State
 ├── 玩家拥有 N 个 <score>（玩家分数状态）
 ├── 玩家拥有 N 个 <food>（食物状态）
 ├── 5 条 progress track 位置
 ├── Favor of Agera 位置
 └── 天气/阶段位置
 
-Resource（L1）
-├── Score（L2，胜利点数/成功点数）
+Resource
+├── Score（胜利点数/分数）
 ├── Food
 ├── Money
 ├── 各种材料
 └── ...
 
-Event（L0）
+Event
 ├── gain_score
 ├── advance_track
 └── change_weather / change_phase
 
-Aid（L1）
+Aid
 ├── Public board
 ├── Private board
 ├── Player aid
 ├── Rulebook
-└── Track（L2）
-    └── Score track（L3）
+└── Track
+    └── Score track
 ```
 
 ### 模组（Modules）

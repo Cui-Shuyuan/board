@@ -21,13 +21,12 @@ D:\workspace\board\ontology\ontology.json（统一本体，51 个概念）
 - `Board Game Procedure Ontology v0.md` — 流程时序概念
 
 ## 基础约定
-- 每个概念都有 `id`、`name`（中英双语）、`level`、`abstract`、`definition`、`constraints`
+- 每个概念都有 `id`、`name`（中英双语）、`abstract`、`definition`、`constraints`
 - **字段声明在概念顶层**（不再嵌套在 `fields` 内） 如 `"owner": { "type": "player | null", "default": null, ... }`。字段名即 JSON key，声明内容包括 `type`、`description`、可选的 `default`
 - **`constraints.required`** = 子类必须实现的字段 ID 列表。格式为 `[{ "id": "<field_id>", "description": { "zh": "...", "en": "..." } }]`
 - **`constraints.optional`** = 子类可选实现的字段 ID 列表，格式同上
 - **`id` 字段特殊处理**：由 Object 定义，所有实例隐式拥有。因与概念自身的 `"id"` 元数据冲突，不在顶层声明，仅保留在 Object 的 constraints 中
-- `parent` 字段表示继承关系。Level 0 概念无 parent
-- `level`: 0 = 基础概念（不可再分），1+ = 游戏概念
+- `parent` 字段表示继承关系。基础概念无 `parent`
 - `abstract: true` = 基类，不可直接实例化
 
 ## 类型与引用约定
@@ -65,7 +64,7 @@ D:\workspace\board\ontology\ontology.json（统一本体，51 个概念）
 
 ### Trigger 的四要素结构 ★
 Trigger 的本质是「**timing + condition → events**」，三个 required 字段：
-- `<timing>`——触发时机（条件检查钟声）：状态变化瞬间 / 阶段边界 / 某 event 完成后。**满足条件不代表立即触发——时机到且条件满足才触发**；时机未至条件满足只是待命。Timing 是 Level 0 概念（与 Condition 平级，带 params 供程序 watcher 侦测）。**timing 只属于 trigger 和 procedure（起止边界），event 不持有 timing**——trigger 触发后 event 序列按依赖关系执行。字段 key 即类型，写作 `"<timing>": {...}` 而非 `"timing": {"type": "<timing>"}`
+- `<timing>`——触发时机（条件检查钟声）：状态变化瞬间 / 阶段边界 / 某 event 完成后。**满足条件不代表立即触发——时机到且条件满足才触发**；时机未至条件满足只是待命。Timing 是基础概念（与 Condition 平级，带 params 供程序 watcher 侦测）。**timing 只属于 trigger 和 procedure（起止边界），event 不持有 timing**——trigger 触发后 event 序列按依赖关系执行。字段 key 即类型，写作 `"<timing>": {...}` 而非 `"timing": {"type": "<timing>"}`
 - `<condition>`——纯状态事实（如「宝石总数 >10」），不含时机描述。每个 trigger 都必须有 condition，即使被 action 触发：「此 action 的 precondition 满足且 declaration 合法」本身就是 condition。trigger 不用 precondition 字段
 - `<event>[]`——触发后启动的后续事件列表
 
@@ -93,12 +92,12 @@ Ownership extends State。三种来源：Zone 推导、固有归属、游戏中�
 
 ### Zone 体系
 ```
-Zone (L0, abstract)
-├── Reserve (L1, abstract) → Supply / Market / Deck / Pool (L2)
-├── Discard Pile (L1)
-└── Player Zone (L1, abstract)
-    ├── Player Holding (L2) → Hand (L3)
-    └── Development Area (L2)
+Zone (abstract)
+├── Reserve (abstract) → Supply / Market / Deck / Pool
+├── Discard Pile
+└── Player Zone (abstract)
+    ├── Player Holding → Hand
+    └── Development Area
 ```
 
 ### Procedure 嵌套模型
@@ -106,61 +105,61 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（54 个概念）
 
-### Level 0（8 个）
+### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
-### Level 1 Structure（5 个）
+### 结构概念（5 个）
 Player、Resource、Piece、Aid、Token
 
-### Level 2 Structure（1 个）★ 新增
+### 结构扩展（1 个）★ 新增
 Score（extends Resource）
 
-### Level 1 Procedure（4 个）
+### 流程概念（4 个）
 Round、Turn、Phase、Transfer
 
-### Level 1 State（2 个）
+### 状态概念（2 个）
 Ownership、Starting Player
 
-### Level 1 Property（5 个）★ +1
+### 属性概念（5 个）★ +1
 Cost、Content、Effect、Declaration、Information Visibility
 
-### Level 1 Zone（3 个）
+### 区域概念（3 个）
 Reserve（abstract）、Discard Pile、Player Zone（abstract）
 
-### Level 1 Event（4 个）
+### 事件概念（4 个）
 Action、Trigger、Resolve、Shuffle
 
-### Level 1 Condition（2 个）
+### 条件概念（2 个）
 Endgame Condition、Victory Condition（★ victory_condition 形式化为 `<condition>[]` required 字段——按优先级排序的判定条件序列：满足第 1 条的玩家为候选胜者，多人则下一条继续筛，直到剩 1 人或序列用完；每条都是对单个玩家求值的判定式，允许并列）
 
-### Level 2 Piece（2 个）
+### Piece 扩展（2 个）
 Card、Tile
 
-### Level 2 Reserve（4 个）
+### Reserve 扩展（4 个）
 Supply、Market、Deck、Pool
 
-### Level 2 Player Zone（2 个）
+### Player Zone 扩展（2 个）
 Player Holding、Development Area
 
-### Level 2 Aid（5 个）★ +1
+### Aid 扩展（5 个）★ +1
 Public Board、Private Board、Player Aid、Rulebook、Track
 
-### Level 2 Action（1 个）
+### Action 扩展（1 个）
 Activation
 
-### Level 2 Event（1 个）
+### Event 扩展（1 个）
 Play（★ 从 Action 移至 Event——并非所有打出都是玩家主动想做的，也可以是 trigger 的 <event>[] 中的一员）
 
-### Level 2 Content（2 个）
+### Content 扩展（2 个）
 Instant Effect、Continuous Content
 
-### Level 2 Token（1 个）
+### Token 扩展（1 个）
 Starting Player Marker
 
-### Level 3 Player Holding（1 个）
+### Player Holding 扩展（1 个）
 Hand
 
-### Level 3 Aid（1 个）★ 新增
+### Aid 扩展（1 个）★ 新增
 Score Track
 
 ## 为《文明演化》扩展本体的计划
