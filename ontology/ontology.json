@@ -1799,16 +1799,16 @@
       }
     },
     {
-      "id": "private_board",
+      "id": "player_board",
       "name": {
-        "zh": "个人面板",
-        "en": "Private Board"
+        "zh": "玩家面板",
+        "en": "Player Board"
       },
       "parent": "<aid>",
       "abstract": false,
       "definition": {
-        "zh": "分配给单个 <player> 的专属物理 <aid>，用于标识该 <player> 私有 <zone> 的布局。<private_board> 继承自 <aid>。通常每个 <player> 各持一块，标识该 <player> 专属的 <player_zone>（如 <player_holding>、<development_area>）的位置及内容。与 <public_board> 的区别：前者全员共用，后者每人一块。",
-        "en": "A personal physical <aid> assigned to a single <player>, marking the layout of that <player>'s private <zone>s. <private_board> extends <aid>. Typically each <player> has one, marking the positions and contents of that <player>'s <player_zone>s (e.g., <player_holding>, <development_area>). Difference from <public_board>: the former is shared by all, the latter is one per player."
+        "zh": "分配给单个 <player> 的专属物理 <aid>，用于标识该 <player> 私有 <zone> 的布局。<player_board> 继承自 <aid>。通常每个 <player> 各持一块，标识该 <player> 专属的 <player_zone>（如 <player_holding>、<development_area>）的位置及内容。与 <public_board> 的区别：<public_board> 全员共用，<player_board> 每人一块。",
+        "en": "A personal physical <aid> assigned to a single <player>, marking the layout of that <player>'s private <zone>s. <player_board> extends <aid>. Typically each <player> has one, marking the positions and contents of that <player>'s <player_zone>s (e.g., <player_holding>, <development_area>). Difference from <public_board>: <public_board> is shared by all, while <player_board> is one per player."
       },
       "constraints": {
         "required": [],

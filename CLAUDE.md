@@ -12,35 +12,35 @@
 
 ## 当前状态
 
-**第一阶段「定义世界模型」已完成。** 桌游本体的 JSON 建模 51 个概念全部就位，覆盖 Level 0 ~ Level 3。
+**第一阶段「定义世界模型」已完成。** 桌游本体的 JSON 建模 51 个概念全部就位，可持续补充。
 
 **第二阶段「Rule DSL」进行中。** 首个游戏：璀璨宝石（Splendor），规则文件为 `games/splendor/concepts.json`（概念层已完成：objects/actions/triggers/conditions）和 `games/splendor/flow.json`（流程层，结构讨论中）。
 
 核心文件：
-- `ontology/ontology.json` — 统一本体定义，51 个概念（Level 0 ~ Level 3）
+- `ontology/ontology.json` — 统一本体定义，51 个概念
 - `games/splendor/concepts.json` — 璀璨宝石概念定义（objects 22、actions 4、triggers 4、conditions 13）
 - `games/splendor/flow.json` — 璀璨宝石流程定义（待定）
 - `Board Game Structure Ontology v0.md` — 静态结构概念的原始定义（权威参考）
 - `Board Game Procedure Ontology v0.md` — 流程时序概念的原始定义（权威参考）
 
 已完成（51 个概念）：
-- Level 0（8）：Object、Zone、State、Property、Event、Condition、Timing、Procedure
-- Level 1 Structure（5）：Player、Resource、Piece、Aid、Token
-- Level 1 Procedure（4）：Round、Turn、Phase、Transfer
-- Level 1 State（2）：Ownership、Starting Player
-- Level 1 Property（5）：Cost、Content、Effect、Declaration、Information Visibility
-- Level 1 Zone（3）：Reserve、Discard Pile、Player Zone
-- Level 1 Event（4）：Action、Trigger、Resolve、Shuffle
-- Level 1 Condition（2）：Endgame Condition、Victory Condition
-- Level 2 Piece（2）：Card、Tile
-- Level 2 Reserve（4）：Supply、Market、Deck、Pool
-- Level 2 Player Zone（2）：Player Holding、Development Area
-- Level 2 Aid（4）：Public Board、Private Board、Player Aid、Rulebook
-- Level 2 Action（1）：Activation
-- Level 2 Event（1）：Play
-- Level 2 Content（2）：Instant Effect、Continuous Content
-- Level 2 Token（1）：Starting Player Marker
-- Level 3 Player Holding（1）：Hand
+- 基础概念（8）：Object、Zone、State、Property、Event、Condition、Timing、Procedure
+- 结构概念（5）：Player、Resource、Piece、Aid、Token
+- 流程概念（4）：Round、Turn、Phase、Transfer
+- 状态概念（2）：Ownership、Starting Player
+- 属性概念（5）：Cost、Content、Effect、Declaration、Information Visibility
+- 区域概念（3）：Reserve、Discard Pile、Player Zone
+- 事件概念（4）：Action、Trigger、Resolve、Shuffle
+- 条件概念（2）：Endgame Condition、Victory Condition
+- Piece（2）：Card、Tile
+- Reserve（4）：Supply、Market、Deck、Pool
+- Player Zone（2）：Player Holding、Development Area
+- Aid（4）：Public Board、Player Board、Player Aid、Rulebook
+- Action（1）：Activation
+- Event（1）：Play
+- Content（2）：Instant Effect、Continuous Content
+- Token（1）：Starting Player Marker
+- Player Holding（1）：Hand
 
 ## JSON 结构约定
 

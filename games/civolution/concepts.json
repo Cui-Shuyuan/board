@@ -1286,11 +1286,11 @@
         "zh": "个人面板",
         "en": "Player Console"
       },
-      "parent": "<ontology::private_board>",
+      "parent": "<ontology::player_board>",
       "abstract": false,
       "definition": {
-        "zh": "每位玩家的个人游戏面板，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。<player_console> 继承自 <ontology::private_board>。",
-        "en": "Each player's personal board containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. <player_console> extends <ontology::private_board>."
+        "zh": "每位玩家的个人游戏面板，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。<player_console> 继承自 <ontology::player_board>。",
+        "en": "Each player's personal board containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. <player_console> extends <ontology::player_board>."
       }
     },
     {

@@ -146,7 +146,7 @@ Supply、Personal Supply、Market、Deck、Pool
 Player Holding、Development Area
 
 ### Aid 扩展（4 个）
-Public Board、Private Board、Player Aid、Rulebook
+Public Board、Player Board、Player Aid、Rulebook
 
 ### Action 扩展（1 个）
 Activation

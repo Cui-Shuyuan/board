@@ -422,7 +422,7 @@ Piece
 
 ---
 
-## Private Board（个人面板）
+## Player Board（玩家面板）
 
 类型：Aid
 
