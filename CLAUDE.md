@@ -33,7 +33,7 @@
 - 事件概念（4）：Action、Trigger、Resolve、Shuffle
 - 条件概念（2）：Endgame Condition、Victory Condition
 - Piece（2）：Card、Tile
-- Reserve（4）：Supply（基类；派生 Public Supply、Player Supply）、Market、Deck、Pool
+- Reserve（4）：Supply、Market、Deck、Pool
 - Player Zone（2）：Player Holding、Development Area
 - Aid（4）：Public Board、Player Board、Player Aid、Rulebook
 - Action（1）：Activation

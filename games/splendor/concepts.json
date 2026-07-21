@@ -367,17 +367,17 @@
         "zh": "宝石供应堆",
         "en": "Gem Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "璀璨宝石中的宝石供应堆——一种<ontology::public_supply>。存放游戏中所有可供<ontology::player>拿取的<gem>（五种颜色）。所有<ontology::player>均可从此<ontology::public_supply>直接取用——无需抽取、无需随机，<ontology::player>对「取多少、取哪些颜色」有完全控制力（受拿取规则限制）。<gem>被<ontology::player>花费后回归此<ontology::public_supply>。注意：<gold>存放在独立的<gold_supply>中，获取方式不同。",
-        "en": "Gem supply in Splendor — a <ontology::public_supply>. Holds all <gem>s (five colors) available for <ontology::player>s to take. All <ontology::player>s can take directly from this <ontology::public_supply> — no drawing, no randomness; the <ontology::player> has full control over 'how many and which colors' (subject to taking rules). <gem>s spent by <ontology::player>s are returned to this <ontology::public_supply>. Note: <gold> is stored in a separate <gold_supply> with different acquisition rules."
+        "zh": "璀璨宝石中的宝石供应堆——一种<ontology::supply>。存放游戏中所有可供<ontology::player>拿取的<gem>（五种颜色）。所有<ontology::player>均可从此<ontology::supply>直接取用——无需抽取、无需随机，<ontology::player>对「取多少、取哪些颜色」有完全控制力（受拿取规则限制）。<gem>被<ontology::player>花费后回归此<ontology::supply>。注意：<gold>存放在独立的<gold_supply>中，获取方式不同。",
+        "en": "Gem supply in Splendor — a <ontology::supply>. Holds all <gem>s (five colors) available for <ontology::player>s to take. All <ontology::player>s can take directly from this <ontology::supply> — no drawing, no randomness; the <ontology::player> has full control over 'how many and which colors' (subject to taking rules). <gem>s spent by <ontology::player>s are returned to this <ontology::supply>. Note: <gold> is stored in a separate <gold_supply> with different acquisition rules."
       },
       "contains": {
         "type": "<gem>[]",
         "description": {
-          "zh": "此<ontology::public_supply>存放的<ontology::object>类型：<gem>（五种颜色）。",
-          "en": "The <ontology::object> types this <ontology::public_supply> holds: <gem> (five colors)."
+          "zh": "此<ontology::supply>存放的<ontology::object>类型：<gem>（五种颜色）。",
+          "en": "The <ontology::object> types this <ontology::supply> holds: <gem> (five colors)."
         }
       },
       "<ownership>": null,
@@ -389,17 +389,17 @@
         "zh": "黄金供应堆",
         "en": "Gold Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "璀璨宝石中的黄金供应堆——一种<ontology::public_supply>。仅存放<gold>。<gold>不能通过「拿取宝石」<ontology::action>获取——<ontology::player>只能通过「保留卡牌」<ontology::action>从此<ontology::public_supply>获得 1 颗<gold>（若还有剩余）。<gold>被<ontology::player>花费后回归此<ontology::public_supply>。",
-        "en": "Gold supply in Splendor — a <ontology::public_supply>. Holds only <gold>. <gold> cannot be acquired through the 'take gems' <ontology::action> — <ontology::player>s only gain 1 <gold> from this <ontology::public_supply> via the 'reserve card' <ontology::action> (if any remain). <gold> spent by <ontology::player>s is returned to this <ontology::public_supply>."
+        "zh": "璀璨宝石中的黄金供应堆——一种<ontology::supply>。仅存放<gold>。<gold>不能通过「拿取宝石」<ontology::action>获取——<ontology::player>只能通过「保留卡牌」<ontology::action>从此<ontology::supply>获得 1 颗<gold>（若还有剩余）。<gold>被<ontology::player>花费后回归此<ontology::supply>。",
+        "en": "Gold supply in Splendor — a <ontology::supply>. Holds only <gold>. <gold> cannot be acquired through the 'take gems' <ontology::action> — <ontology::player>s only gain 1 <gold> from this <ontology::supply> via the 'reserve card' <ontology::action> (if any remain). <gold> spent by <ontology::player>s is returned to this <ontology::supply>."
       },
       "contains": {
         "type": "<gold>[]",
         "description": {
-          "zh": "此<ontology::public_supply>存放的<ontology::object>类型：仅<gold>。",
-          "en": "The <ontology::object> type this <ontology::public_supply> holds: <gold> only."
+          "zh": "此<ontology::supply>存放的<ontology::object>类型：仅<gold>。",
+          "en": "The <ontology::object> type this <ontology::supply> holds: <gold> only."
         }
       },
       "<ownership>": null,

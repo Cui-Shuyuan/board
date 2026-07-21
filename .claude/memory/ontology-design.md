@@ -93,11 +93,7 @@ Ownership extends State。三种来源：Zone 推导、固有归属、游戏中�
 ### Zone 体系
 ```
 Zone (abstract)
-├── Reserve (abstract)
-│   ├── Supply (abstract) → Public Supply / Player Supply
-│   ├── Market
-│   ├── Deck
-│   └── Pool
+├── Reserve (abstract) → Supply / Market / Deck / Pool
 ├── Discard Pile
 ├── Player Zone (abstract)
 │   ├── Player Holding → Hand
@@ -144,9 +140,9 @@ Endgame Condition、Victory Condition
 Card、Tile
 
 ### Reserve 扩展（4 个）
-Supply（基类）、Market、Deck、Pool
+Supply、Market、Deck、Pool
 
-Supply 的 concrete 子类：Public Supply、Player Supply
+Supply 的 public/player 区分由 <ownership> 字段表达（null = 公共，player = 玩家专属）。
 
 ### Player Zone 扩展（2 个）
 Player Holding、Development Area
@@ -174,7 +170,7 @@ Hand
 - **Token 作为 Resource 与 Marker 的物理基类**：`<token>` 是桌游中最常见的小型计数/标记物；`<resource>` 继承 `<token>`（作为可被消耗的价值物），`<marker>` 继承 `<token>`（作为状态/位置指示物）。
 - **Track 是 Zone 的子类**：轨道不再属于 `<aid>`，而是一种「有序 zone」，其中 marker 只做内部位置移动，不发生 zone 间 transfer。
 - **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。
-- **供应堆基类与公共/玩家子类**：`<supply>` 是抽象基类，表示「可直接取用的可计数存储池」；`<public_supply>` 对所有玩家开放，`<player_supply>` 仅对特定玩家开放。仓库等已属于玩家的存储区应归类为 `<player_holding>`。
+- **Reserve 的 public/player 区分由 ownership 表达**：`<supply>`、`<market>`、`<deck>`、`<pool>` 都通过 `<ownership>`（null = 公共，`<player>` = 玩家专属）区分公共区与个人区，不再为 public/player 单独建子类。仓库等已属于玩家的存储区仍应归类为 `<player_holding>`。
 
 ## 为《文明演化》扩展本体的计划
 

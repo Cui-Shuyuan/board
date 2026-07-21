@@ -1367,8 +1367,8 @@
       "parent": "<ontology::player_holding>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上存放 <stored_material> 的区域。<storage_area> 继承自 <ontology::player_holding>。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::public_supply> 或 <ontology::player_supply>，因为其中的材料已归玩家所有。",
-        "en": "The area on the <player_console> for storing <stored_material>s. <storage_area> extends <ontology::player_holding>. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::public_supply> or <ontology::player_supply>, because its contents are already owned by the player."
+        "zh": "<player_console> 上存放 <stored_material> 的区域。<storage_area> 继承自 <ontology::player_holding>。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::supply> 或 <ontology::supply>，因为其中的材料已归玩家所有。",
+        "en": "The area on the <player_console> for storing <stored_material>s. <storage_area> extends <ontology::player_holding>. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::supply> or <ontology::supply>, because its contents are already owned by the player."
       }
     },
     {
@@ -1442,11 +1442,11 @@
         "zh": "模组供应",
         "en": "Module Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "放置未使用 <module> 的公共区域。<module_supply> 继承自 <ontology::public_supply>。设置时每位玩家拿取自己的一套模组。",
-        "en": "The public area holding unused <module>s. <module_supply> extends <ontology::public_supply>. During setup each player takes their own set of modules."
+        "zh": "放置未使用 <module> 的公共区域。<module_supply> 继承自 <ontology::supply>。设置时每位玩家拿取自己的一套模组。",
+        "en": "The public area holding unused <module>s. <module_supply> extends <ontology::supply>. During setup each player takes their own set of modules."
       }
     },
     {
@@ -1455,11 +1455,11 @@
         "zh": "地点板块供应",
         "en": "Site Tile Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "放置未使用 <site_tile> 的区域。<site_supply> 继承自 <ontology::public_supply>。设置时洗混并随机放到大陆对应位置，背面朝上。",
-        "en": "The area holding unused <site_tile>s. <site_supply> extends <ontology::public_supply>. Shuffled and randomly placed face down on the continent during setup."
+        "zh": "放置未使用 <site_tile> 的区域。<site_supply> 继承自 <ontology::supply>。设置时洗混并随机放到大陆对应位置，背面朝上。",
+        "en": "The area holding unused <site_tile>s. <site_supply> extends <ontology::supply>. Shuffled and randomly placed face down on the continent during setup."
       }
     },
     {
@@ -1468,11 +1468,11 @@
         "zh": "大陆板块供应",
         "en": "Continent Tile Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "放置未使用 <continent_tile> 的区域。<continent_tile_supply> 继承自 <ontology::public_supply>。设置时洗混并拼接成 <continent>。",
-        "en": "The area holding unused <continent_tile>s. <continent_tile_supply> extends <ontology::public_supply>. Shuffled and assembled into the <continent> during setup."
+        "zh": "放置未使用 <continent_tile> 的区域。<continent_tile_supply> 继承自 <ontology::supply>。设置时洗混并拼接成 <continent>。",
+        "en": "The area holding unused <continent_tile>s. <continent_tile_supply> extends <ontology::supply>. Shuffled and assembled into the <continent> during setup."
       }
     },
     {
@@ -1481,11 +1481,11 @@
         "zh": "材料板块供应",
         "en": "Material Tile Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "放置未使用 <material_tile> 的区域。<material_tile_supply> 继承自 <ontology::public_supply>。设置时随机放到大陆对应材料格上。",
-        "en": "The area holding unused <material_tile>s. <material_tile_supply> extends <ontology::public_supply>. Randomly placed on the corresponding material spaces of the continent during setup."
+        "zh": "放置未使用 <material_tile> 的区域。<material_tile_supply> 继承自 <ontology::supply>。设置时随机放到大陆对应材料格上。",
+        "en": "The area holding unused <material_tile>s. <material_tile_supply> extends <ontology::supply>. Randomly placed on the corresponding material spaces of the continent during setup."
       }
     },
     {
@@ -1494,11 +1494,11 @@
         "zh": "计分板块供应",
         "en": "Scoring Tile Supply"
       },
-      "parent": "<ontology::public_supply>",
+      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
-        "zh": "放置未使用 <scoring_tile> 的区域。<scoring_tile_supply> 继承自 <ontology::public_supply>。设置时抽出 4 张时代计分和 3 张终局计分。",
-        "en": "The area holding unused <scoring_tile>s. <scoring_tile_supply> extends <ontology::public_supply>. During setup, 4 are drawn for era scoring and 3 for final scoring."
+        "zh": "放置未使用 <scoring_tile> 的区域。<scoring_tile_supply> 继承自 <ontology::supply>。设置时抽出 4 张时代计分和 3 张终局计分。",
+        "en": "The area holding unused <scoring_tile>s. <scoring_tile_supply> extends <ontology::supply>. During setup, 4 are drawn for era scoring and 3 for final scoring."
       }
     },
     {

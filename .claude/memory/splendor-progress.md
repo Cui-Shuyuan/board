@@ -41,8 +41,8 @@ metadata:
 - `<noble>`（贵族板块，requirement=发展卡颜色数量条件，固定 3 分）
 
 **Zone 层**（`<zone>` 子类）：
-- `gem_supply`（extends `<public_supply>`，contains=`<gem>[]`）
-- `gold_supply`（extends `<public_supply>`，contains=`<gold>[]`）
+- `gem_supply`（extends `<supply>`，ownership=null，contains=`<gem>[]`）
+- `gold_supply`（extends `<supply>`，ownership=null，contains=`<gold>[]`）
 - `development_deck` → level_1 / 2 / 3（extends `<deck>`，contains=对应等级发展卡）
 - `noble_market`（extends `<market>`，contains=`<noble>[]`，被动触发非主动购买）
 - `card_market`（extends `<market>`，contains=`<development_card>[]`，3 组×4 张按等级陈列，买走/保留后从对应牌堆顶部补牌）
