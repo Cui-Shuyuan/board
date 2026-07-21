@@ -227,7 +227,7 @@
       "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
-        "zh": "用通用标记放置在建造点上的建筑标记。<statue> 继承自 <ontology::token>。建造后推进任意进程轨 1 格，并在之后的每个收入阶段按阿格拉恩惠轨位置计分。每位玩家在每个建造点可建 1 个聚落加 1 个雕像，或 2 个雕像。",
+        "zh": "用通用标记放置在建造点上的建筑标记。<statue> 继承自 <ontology::token>。建造后推进任意进程轨 1 格，并在之后的每个收入阶段按 <favor_of_ager_track> 位置计分。每位玩家在每个建造点可建 1 个聚落加 1 个雕像，或 2 个雕像。",
         "en": "A building marker placed on a Building ground using a generic marker. <statue> extends <ontology::token>. Building one advances any progress track by 1 step, and each statue scores in subsequent Income phases based on the Favor of Agera track position. Each player may build 1 settlement + 1 statue or 2 statues per Building ground."
       }
     },
@@ -725,8 +725,8 @@
       "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "放置在 <sequence_board> 阿格拉恩惠轨上指示当前恩惠等级的 <marker>。<favor_marker> 继承自 <ontology::marker>。影响恩惠检定、雕像收入和终局计分。",
-        "en": "A <marker> placed on the Favor of Agera track of the sequence board to indicate the current favor level. <favor_marker> extends <ontology::marker>. Affects favor tests, statue income, and final scoring."
+        "zh": "放置在 <favor_of_ager_track> 上指示当前恩惠等级的 <marker>。<favor_marker> 继承自 <ontology::marker>。影响恩惠检定、雕像收入和终局计分。",
+        "en": "A <marker> placed on the <favor_of_ager_track> to indicate the current favor level. <favor_marker> extends <ontology::marker>. Affects favor tests, statue income, and final scoring."
       }
     },
     {
@@ -855,8 +855,8 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。<sequence_board> 继承自 <ontology::public_board>。其上印有阶段序列、天气轨、阿格拉恩惠轨、事件牌格和时代计分区；其 <maps_to> 包含这些 zone/track，所有玩家共用。",
-        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. <sequence_board> extends <ontology::public_board>. It is printed with the phase sequence, weather gauge, Favor of Agera track, event card spaces, and era scoring area; its <maps_to> includes these zones/tracks, shared by all players."
+        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。<sequence_board> 继承自 <ontology::public_board>。其上印有阶段序列、天气轨、<favor_of_ager_track>、事件牌格和时代计分区；其 <maps_to> 包含这些 zone/track，所有玩家共用。",
+        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. <sequence_board> extends <ontology::public_board>. It is printed with the phase sequence, weather gauge, <favor_of_ager_track>, event card spaces, and era scoring area; its <maps_to> includes these zones/tracks, shared by all players."
       },
       "maps_to": [
         "<phase_sequence>",

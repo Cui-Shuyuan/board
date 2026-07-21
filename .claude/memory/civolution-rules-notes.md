@@ -36,7 +36,7 @@ metadata:
 - **标记（Marker）**：创意标记（idea marker）、计划标记（planning marker）、焦点标记（focus marker）
 - **特征（Feature）**：6 种特征标记，放在个人面板的特征格上；英文规则书目前明确提到 Intelligence、Dexterity，其余待从图例/词汇表确认
 - **进程轨（Progress tracks）**：5 条 — Technology、Prestige、Knowledge、Construction、Culture；每条 0–12 格，推过头后每步改为 2 分
-- **阿格拉恩惠轨（Favor of Agera track）**：影响恩惠检定（favor test）
+- **`<favor_of_ager_track>`（阿格拉恩惠轨 / Favor of Agera track）**：影响恩惠检定（favor test）
 - **仓库（Storage area）**：`<storage_area>` 已改为继承 `<player_holding>`——其中的材料已经属于玩家，只是尚未消耗；它不是 `<supply>`（供应堆中的物件尚未属于玩家，无论公共还是玩家专属）。
 
 ### 公共版图组成
@@ -73,7 +73,7 @@ metadata:
 | f | Weather gauge | 天气轨，天气标记移动决定天气效果 |
 | g | Event card spaces | 事件牌格：背面朝上堆 + 正面朝上展示 |
 | h | Era scoring area | 时代计分区，4 个时代各翻 1 张计分类别瓷砖 |
-| i | Favor of Agera track | 阿格拉恩惠轨，影响恩惠检定 |
+| i | `<favor_of_ager_track>` | 阿格拉恩惠轨，影响恩惠检定 |
 
 ### Track 概念的 ontology 归属（已确定）
 
@@ -84,14 +84,14 @@ metadata:
   - **`<marker>`**：用于指示状态/位置的 token
 - **`<track>`**（extends `<zone>`）：存放 marker 的有序区域
 - **`<score_track>`**（extends `<track>`）：分轨，记录玩家分数
-- 其他轨道（progress tracks、Favor of Agera track、weather gauge、phase sequence）在游戏级别定义为 `<track>` 子类，不入统一本体
+- 其他轨道（progress tracks、`<favor_of_ager_track>`、weather gauge、phase sequence）在游戏级别定义为 `<track>` 子类，不入统一本体
 
 ```
 State
 ├── 玩家拥有 N 个 <score>（玩家分数状态）
 ├── 玩家拥有 N 个 <food>（食物状态）
 ├── 5 条 progress track 位置
-├── Favor of Agera 位置
+├── <favor_of_ager_track> 位置
 └── 天气/阶段位置
 
 Resource（extends Token）
@@ -154,7 +154,7 @@ Token
 ### 进程轨奖励（Track bonuses）
 每推过一条进程轨上的奖励线可获得：
 1. 升级一个主模组（模组上的一个费用数值颜色需与轨道颜色匹配）
-2. 推进阿格拉恩惠轨 1 格 **或** 触发一个收入芯片效果
+2. 推进 `<favor_of_ager_track>` 1 格 **或** 触发一个收入芯片效果
 3. 同 1
 4. 3 分
 5. 翻转 stage tile **或** 3 分
@@ -240,7 +240,7 @@ Token
 | 表达特征 | Expression feature | 白色数字表示持有数量 |
 | 镇定特征 | （待确认，可能是 Calm/Composure） | 需看图例或词汇表 |
 | 进程轨 | progress tracks | 5 条，Technology / Prestige / Knowledge / Construction / Culture |
-| 阿格拉恩惠轨 | Favor of Agera track | 恩惠检定通过区间 |
+| `<favor_of_ager_track>` | Favor of Agera track | 恩惠检定通过区间 |
 | 地点 | sites | 包括 Building ground、Gorge、Glacier、Mystic oak 等 9 种 |
 | 阶段标记 | phase indicator | 六边形标记 |
 | 天气标记 | weather indicator | 在 weather gauge 上移动 |

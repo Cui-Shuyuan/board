@@ -294,8 +294,8 @@
               "id": "player_setup_favor_marker",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿取 1 个恩惠标记放到阿格拉恩惠轨起始位置。",
-                "en": "Each player takes 1 favor marker and places it on the Favor of Agera track start."
+                "zh": "每位玩家拿取 1 个恩惠标记放到 <favor_of_ager_track> 起始位置。",
+                "en": "Each player takes 1 favor marker and places it on the <favor_of_ager_track> start."
               },
               "source": "<ontology::game_box>",
               "destination": "<favor_of_ager_track>",
