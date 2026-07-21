@@ -95,15 +95,16 @@ Ownership extends State。三种来源：Zone 推导、固有归属、游戏中�
 Zone (abstract)
 ├── Reserve (abstract) → Supply / Market / Deck / Pool
 ├── Discard Pile
-└── Player Zone (abstract)
-    ├── Player Holding → Hand
-    └── Development Area
+├── Player Zone (abstract)
+│   ├── Player Holding → Hand
+│   └── Development Area
+└── Track → Score Track
 ```
 
 ### Procedure 嵌套模型
 Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure。
 
-## 当前进度（54 个概念）
+## 当前进度（核心概念持续扩展中）
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
@@ -111,8 +112,8 @@ Object、Zone、State、Property、Event、Condition、Timing、Procedure
 ### 结构概念（5 个）
 Player、Resource、Piece、Aid、Token
 
-### 结构扩展（1 个）★ 新增
-Score（extends Resource）
+### 结构扩展（2 个）★ +Marker
+Score（extends Resource）、Marker（extends Token）
 
 ### 流程概念（4 个）
 Round、Turn、Phase、Transfer
@@ -120,17 +121,20 @@ Round、Turn、Phase、Transfer
 ### 状态概念（2 个）
 Ownership、Starting Player
 
-### 属性概念（5 个）★ +1
+### 属性概念（5 个）
 Cost、Content、Effect、Declaration、Information Visibility
 
 ### 区域概念（3 个）
 Reserve（abstract）、Discard Pile、Player Zone（abstract）
 
+### 区域/轨道扩展（2 个）★ Track 改为 Zone 子类
+Track（extends Zone）、Score Track（extends Track）
+
 ### 事件概念（4 个）
 Action、Trigger、Resolve、Shuffle
 
 ### 条件概念（2 个）
-Endgame Condition、Victory Condition（★ victory_condition 形式化为 `<condition>[]` required 字段——按优先级排序的判定条件序列：满足第 1 条的玩家为候选胜者，多人则下一条继续筛，直到剩 1 人或序列用完；每条都是对单个玩家求值的判定式，允许并列）
+Endgame Condition、Victory Condition
 
 ### Piece 扩展（2 个）
 Card、Tile
@@ -141,14 +145,14 @@ Supply、Market、Deck、Pool
 ### Player Zone 扩展（2 个）
 Player Holding、Development Area
 
-### Aid 扩展（5 个）★ +1
-Public Board、Private Board、Player Aid、Rulebook、Track
+### Aid 扩展（4 个）
+Public Board、Private Board、Player Aid、Rulebook
 
 ### Action 扩展（1 个）
 Activation
 
 ### Event 扩展（1 个）
-Play（★ 从 Action 移至 Event——并非所有打出都是玩家主动想做的，也可以是 trigger 的 <event>[] 中的一员）
+Play
 
 ### Content 扩展（2 个）
 Instant Effect、Continuous Content
@@ -159,14 +163,17 @@ Starting Player Marker
 ### Player Holding 扩展（1 个）
 Hand
 
-### Aid 扩展（1 个）★ 新增
-Score Track
+## 关键设计决策更新
+
+- **Token 作为 Resource 与 Marker 的物理基类**：`<token>` 是桌游中最常见的小型计数/标记物；`<resource>` 继承 `<token>`（作为可被消耗的价值物），`<marker>` 继承 `<token>`（作为状态/位置指示物）。
+- **Track 是 Zone 的子类**：轨道不再属于 `<aid>`，而是一种「有序 zone」，其中 marker 只做内部位置移动，不发生 zone 间 transfer。
+- **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。
 
 ## 为《文明演化》扩展本体的计划
 
-第二款游戏《文明演化》的复杂度远高于 Splendor，现有 53 个概念无法直接覆盖以下机制，已获准扩展 ontology：
+第二款游戏《文明演化》的复杂度远高于 Splendor，现有核心概念无法直接覆盖以下机制，已获准扩展 ontology：
 
-- **轨道机制**: `<track>` 已入 ontology（extends `<aid>`），`<score_track>` 已入 ontology（extends `<track>`）。具体游戏的进程轨、恩惠轨、天气轨等作为游戏级概念定义，不入统一本体。
+- **轨道机制**: `<track>` 已在 ontology 中改为 `<zone>` 子类，`<score_track>` 继承 `<track>`。具体游戏的进程轨、恩惠轨、天气轨、阶段序列等作为游戏级概念定义，不入统一本体。
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`，表达模组从等级一翻至等级二、替换为等级三
 - **区域与地点**: `<region>`（大陆板块上的连续同色区域）、`<terrain>`（森林/草原等七种类型）、`<campsite>`、`<location>`（地点板块，extends `<tile>`）

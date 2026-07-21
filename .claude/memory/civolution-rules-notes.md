@@ -44,8 +44,8 @@ metadata:
 
 | 组件 | ontology 归类 | 说明 |
 |---|---|---|
-| **4 frame pieces 拼成的 score track 外框** | `<score_track>` | 既是公共版图边界，也是玩家分数的可视化轨道 |
-| **8 continent tiles** | `<public_board>` / aid | 7 块 2×1 + 1 块 1×1，拼成大陆 |
+| **4 frame pieces 拼成的 score track 外框** | `<public_board>` 的一部分（aid） | 物理外框属于公共版图，逻辑上 `maps_to` `<score_track>`（zone） |
+| **8 continent tiles** | `<continent>`（zone） | 7 块 2×1 + 1 块 1×1，拼成大陆；是公共游戏区域，不属于公共版图 aid |
 | **24 sites** | `<tile>`（地点板块） | 背面朝上放在 continent 的凹槽中 |
 | **Progress board（进程版图）** | `<public_board>` | 左侧大板，含 9 个功能区 |
 | **Sequence board（流程版图）** | `<public_board>` | 右侧大板，含阶段序列、天气轨等 |
@@ -76,11 +76,14 @@ metadata:
 
 ### Track 概念的 ontology 归属（已确定）
 
-采取 **B 方案**：**<track> 作为 <aid> 的子类**，物理轨道只是记录 state 的工具。
+采取 **C 方案**：**`<track>` 作为 `<zone>` 的子类**，是一种「有序 zone」，其中的 `<marker>` 只做内部位置移动，不发生 zone 间 transfer。
 
-- **<track>**（extends <aid>）：带刻度的辅助物，用于可视化某个 state 的当前值
-- **<score_track>**（extends <track>）：分轨，记录玩家分数
-- 其他轨道（progress tracks、Favor of Agera track、weather gauge）在游戏级别定义，不入统一本体
+- **`<token>`**：物理基类，所有小型计数/标记物的父类
+  - **`<resource>`**：可被消耗/产出的 token（食物、材料、宝石等）
+  - **`<marker>`**：用于指示状态/位置的 token
+- **`<track>`**（extends `<zone>`）：存放 marker 的有序区域
+- **`<score_track>`**（extends `<track>`）：分轨，记录玩家分数
+- 其他轨道（progress tracks、Favor of Agera track、weather gauge、phase sequence）在游戏级别定义为 `<track>` 子类，不入统一本体
 
 ```
 State
@@ -90,25 +93,21 @@ State
 ├── Favor of Agera 位置
 └── 天气/阶段位置
 
-Resource
+Resource（extends Token）
 ├── Score（胜利点数/分数）
 ├── Food
 ├── Money
 ├── 各种材料
 └── ...
 
-Event
-├── gain_score
-├── advance_track
-└── change_weather / change_phase
-
-Aid
-├── Public board
-├── Private board
-├── Player aid
-├── Rulebook
-└── Track
-    └── Score track
+Token
+├── Resource
+└── Marker
+    ├── score_marker
+    ├── progress_marker
+    ├── phase_indicator
+    ├── weather_indicator
+    └── favor_marker
 ```
 
 ### 模组（Modules）
