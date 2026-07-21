@@ -188,8 +188,8 @@
       "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "用于向 <player> 展示信息、辅助玩家识别和操作的游戏实体。<aid> 继承自 <object>。其核心特征是「可有可无」——它不参与游戏逻辑的运作，不产生、不修改、不删除游戏中的任何元素。<aid> 不等于它所呈现的东西：公共版图被收起来，<public_supply> 和 <market> 依然存在；手牌放在桌上，它们依然属于手牌 <zone>；桌子太小把 <token> 挤到旁边，它们依然是 <public_supply> 的一部分。<zone> 是抽象的归属关系容器，不因物理载体的有无或位置而改变。熟练玩家在脑中记住了所有 <zone> 的布局后，完全可以不借助 <aid> 进行游戏。",
-        "en": "A game entity used to present information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it is 'optional' — it does not participate in game logic and does not create, modify, or delete any game element. An <aid> is not the thing it depicts: put the public board away and the <public_supply> and <market> still exist; place your hand cards on the table and they still belong to the hand <zone>; table too small so <token>s overflow to the side — they are still part of the <public_supply>. <zone>s are abstract belonging containers, independent of the presence or position of any physical carrier. A skilled player who has memorized all <zone> layouts can play entirely without <aid>s."
+        "zh": "用于向 <player> 展示信息、辅助玩家识别和操作的游戏实体。<aid> 继承自 <object>。其核心特征是「可有可无」——它不参与游戏逻辑的运作，不产生、不修改、不删除游戏中的任何元素。<aid> 不等于它所呈现的东西：公共版图被收起来，<supply> 和 <market> 依然存在；手牌放在桌上，它们依然属于手牌 <zone>；桌子太小把 <token> 挤到旁边，它们依然是 <supply> 的一部分。<zone> 是抽象的归属关系容器，不因物理载体的有无或位置而改变。熟练玩家在脑中记住了所有 <zone> 的布局后，完全可以不借助 <aid> 进行游戏。",
+        "en": "A game entity used to present information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it is 'optional' — it does not participate in game logic and does not create, modify, or delete any game element. An <aid> is not the thing it depicts: put the public board away and the <supply> and <market> still exist; place your hand cards on the table and they still belong to the hand <zone>; table too small so <token>s overflow to the side — they are still part of the <supply>. <zone>s are abstract belonging containers, independent of the presence or position of any physical carrier. A skilled player who has memorized all <zone> layouts can play entirely without <aid>s."
       },
       "appearance": {
         "type": "string",
@@ -1528,8 +1528,8 @@
       "parent": "<zone>",
       "abstract": true,
       "definition": {
-        "zh": "一种用于存放游戏组件的存储型 <zone>。<reserve> 继承自 <zone>，abstract。核心语义是「存放备用」——游戏物件在此被汇集、叠放或陈列，作为游戏物资的库存。物件在 <reserve> 中处于「备用」状态，直到被抽取、购买或以其他方式移入使用中。典型的 <reserve> 子类包括：<public_supply>（<token>/<resource> 的可计数公共存储池）、<player_supply>（按玩家划分的专属存储池）、<market>（待获取 <piece> 的陈列区）、<deck>（按序抽取的叠放区）、<pool>（随机化组件的存储区）。",
-        "en": "A storage-type <zone> for holding game components. <reserve> extends <zone>, abstract. Core semantic is 'keeping in storage' — game objects are pooled, stacked, or displayed here as the game's material inventory. Objects in a <reserve> are in a 'reserve' state until drawn, purchased, or otherwise moved into active use. Typical <reserve> subclasses: <public_supply> (countable public storage pool of <token>s/<resource>s), <player_supply> (per-player exclusive storage pool), <market> (display area of acquirable <piece>s), <deck> (ordered draw stack), <pool> (storage zone for randomizable components)."
+        "zh": "一种用于存放游戏组件的存储型 <zone>。<reserve> 继承自 <zone>，abstract。核心语义是「存放备用」——游戏物件在此被汇集、叠放或陈列，作为游戏物资的库存。物件在 <reserve> 中处于「备用」状态，直到被抽取、购买或以其他方式移入使用中。典型的 <reserve> 子类包括：<supply>（直接取用的可计数存储池，基类；具体分为 <public_supply> 和 <player_supply>）、<market>（待获取 <piece> 的陈列区）、<deck>（按序抽取的叠放区）、<pool>（随机化组件的存储区）。",
+        "en": "A storage-type <zone> for holding game components. <reserve> extends <zone>, abstract. Core semantic is 'keeping in storage' — game objects are pooled, stacked, or displayed here as the game's material inventory. Objects in a <reserve> are in a 'reserve' state until drawn, purchased, or otherwise moved into active use. Typical <reserve> subclasses: <supply> (countable direct-take storage pool, abstract; concrete forms are <public_supply> and <player_supply>), <market> (display area of acquirable <piece>s), <deck> (ordered draw stack), <pool> (storage zone for randomizable components)."
       },
       "constraints": {
         "required": [],
@@ -1614,16 +1614,33 @@
       }
     },
     {
+      "id": "supply",
+      "name": {
+        "zh": "供应堆",
+        "en": "Supply"
+      },
+      "parent": "<reserve>",
+      "abstract": true,
+      "definition": {
+        "zh": "存放无差别的、可直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>，abstract。核心语义是「备用且直接取用」——此区域中的 <object> 完全相同且可互相替代（通常为 <token> 或 <resource>），获取方式为直接取用而不需抽取或随机：玩家只决定「取多少」，不决定「取哪个」。对象数量可能有限或无限，不支持顺序操作和洗混。<supply> 是基类，具体访问权限由子类决定：<public_supply> 对所有 <player> 开放，<player_supply> 仅对特定 <player> 开放。",
+        "en": "A <reserve> that holds undifferentiated <object>s which can be directly taken. <supply> extends <reserve>, abstract. Core semantic is 'kept in storage and directly taken' — objects here are identical and interchangeable (typically <token>s or <resource>s), accessed by direct taking without drawing or randomness: the player only decides 'how many', not 'which one'. Quantity may be limited or unlimited; no ordering or shuffling. <supply> is a base class; concrete access rights are determined by subclasses: <public_supply> is open to all <player>s, while <player_supply> is exclusive to a specific <player>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "public_supply",
       "name": {
         "zh": "公共供应堆",
         "en": "Public Supply"
       },
-      "parent": "<reserve>",
+      "parent": "<supply>",
       "abstract": false,
       "definition": {
-        "zh": "存放无差别的、所有 <player> 均可直接取用的 <object> 的 <reserve>。<public_supply> 继承自 <reserve>。核心特征：<object> 完全相同且可互相替代（通常是 <token> 或 <resource>），获取方式为直接取用而不需抽取或随机——玩家对「取多少」有完全控制力，对「取哪个」无需控制；任何玩家都可以从中拿取，不存在专属访问权。对象数量可能有限或无限。不支持顺序操作和洗混。与 <player_supply> 形成对偶——<player_supply> 只供特定玩家取用。典型例子：璀璨宝石的宝石供应堆、卡坦岛的资源卡供应堆。",
-        "en": "A <reserve> that holds undifferentiated <object>s which all <player>s can directly take from. <public_supply> extends <reserve>. Core traits: <object>s are identical and interchangeable (typically <token>s or <resource>s), accessed by direct taking without drawing or randomness — players fully control 'how many' but don't need to control 'which one'; any player may take from it, with no exclusive access. Quantity may be limited or unlimited. No ordering or shuffling. Counterpart to <player_supply> — <player_supply> is only accessible to one specific player. Typical examples: Splendor's gem supply, Catan's resource card supply."
+        "zh": "所有 <player> 均可直接取用的 <supply>。<public_supply> 继承自 <supply>。核心特征：任何玩家都可以从中拿取，不存在专属访问权；<ownership> 为 null，<information_visibility> 通常为 public。与 <player_supply> 形成对偶——<player_supply> 只供特定玩家取用。典型例子：璀璨宝石的宝石供应堆、卡坦岛的资源卡供应堆。",
+        "en": "A <supply> that all <player>s can directly take from. <public_supply> extends <supply>. Core trait: any player may take from it, with no exclusive access; <ownership> is null and <information_visibility> is typically public. Counterpart to <player_supply> — <player_supply> is only accessible to one specific player. Typical examples: Splendor's gem supply, Catan's resource card supply."
       },
       "<ownership>": null,
       "<information_visibility>": "public",
@@ -1638,17 +1655,17 @@
         "zh": "玩家供应堆",
         "en": "Player Supply"
       },
-      "parent": "<reserve>",
+      "parent": "<supply>",
       "abstract": false,
       "definition": {
-        "zh": "按 <player> 划分的私有 <reserve>，用于存放暂时不属于任何 <player>、但只有特定 <player> 才能从中拿取的 <object>。<player_supply> 继承自 <reserve>。与 <public_supply> 的核心区别：<public_supply> 是公共的，所有玩家均可取用；<player_supply> 是专属的，只有被分配到的玩家可以从中拿取，其他玩家即使物理上能够触碰也不能作为合法操作目标。此区域中的 object 通常尚未被玩家「获得」——它们只是被预先划拨到该玩家面前，等待被消耗、安装或转移。典型例子：某些游戏中每位玩家面前从公共供应堆分出的个人资源池、待选组件的私有缓冲区。",
-        "en": "A private <reserve> partitioned by <player>, holding <object>s that do not yet belong to any <player> but can only be taken by a specific <player>. <player_supply> extends <reserve>. Core difference from <public_supply>: <public_supply> is public and all players may take from it; <player_supply> is exclusive, only the assigned player may take from it, and other players cannot legally target it even if physically reachable. Objects here are typically not yet 'acquired' by the player — they are merely pre-allocated in front of that player, awaiting consumption, installation, or transfer. Typical examples: individual resource pools dealt from a common supply in some games, private buffers of draftable components."
+        "zh": "按 <player> 划分的私有 <supply>，用于存放暂时不属于任何 <player>、但只有特定 <player> 才能从中拿取的 <object>。<player_supply> 继承自 <supply>。与 <public_supply> 的核心区别：<public_supply> 是公共的，所有玩家均可取用；<player_supply> 是专属的，只有被分配到的玩家可以从中拿取，其他玩家即使物理上能够触碰也不能作为合法操作目标。此区域中的 object 通常尚未被玩家「获得」——它们只是被预先划拨到该玩家面前，等待被消耗、安装或转移。典型例子：某些游戏中每位玩家面前从公共供应堆分出的玩家资源池、待选组件的私有缓冲区。",
+        "en": "A private <supply> partitioned by <player>, holding <object>s that do not yet belong to any <player> but can only be taken by a specific <player>. <player_supply> extends <supply>. Core difference from <public_supply>: <public_supply> is public and all players may take from it; <player_supply> is exclusive, only the assigned player may take from it, and other players cannot legally target it even if physically reachable. Objects here are typically not yet 'acquired' by the player — they are merely pre-allocated in front of that player, awaiting consumption, installation, or transfer. Typical examples: player resource pools dealt from a common supply in some games, private buffers of draftable components."
       },
       "<ownership>": {
         "type": "<player>",
         "description": {
-          "zh": "此 <reserve> 归属于特定 <player>，用于表达专属访问权；但其中的 <object> 未必已归该玩家所有，只是仅允许该玩家操作。",
-          "en": "This <reserve> belongs to a specific <player>, expressing exclusive access; however, the <object>s inside are not necessarily owned by that player yet — they are simply restricted to that player's operations."
+          "zh": "此 <supply> 归属于特定 <player>，用于表达专属访问权；但其中的 <object> 未必已归该玩家所有，只是仅允许该玩家操作。",
+          "en": "This <supply> belongs to a specific <player>, expressing exclusive access; however, the <object>s inside are not necessarily owned by that player yet — they are simply restricted to that player's operations."
         }
       },
       "<information_visibility>": "private",
@@ -1721,8 +1738,8 @@
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
-        "zh": "存放当前未进入游戏流程的 <object> 的 <reserve>。<game_box> 继承自 <reserve>。与 <public_supply>、<market>、<deck>、<pool> 不同——后四者是游戏中的 <reserve>，其内容直接参与当前游戏状态和规则判定；而 <game_box> 中的 <object> 暂时游离于当前游戏流程之外，既不可被 <player> 取用，也不触发任何游戏规则。核心特征：(1) 初始容器——游戏设置前，所有组件通常先放在 <game_box> 中；(2) setup 阶段入口——游戏设置时从这里取出组件，放入合适的游戏内 <reserve>；(3) 流程外暂存——游戏过程中，某些规则可能要求将 <object> 移回 <game_box>，表示该 <object> 暂时从当前游戏流程中移除（区别于 <discard_pile> 的永久弃置）；(4) 不直接参与规则——<game_box> 中的 <object> 不计入胜负、不可被选择或操作，直到再次进入某个游戏内 <reserve>。典型例子：璀璨宝石盒中尚未分发的发展卡和贵族板块、某些游戏中被规则临时移出流程的卡牌或指示物。",
-        "en": "A <reserve> holding <object>s that are not currently part of the game flow. <game_box> extends <reserve>. Unlike <public_supply>, <market>, <deck>, and <pool> — which are in-game <reserve>s whose contents directly participate in the current game state and rules — <object>s in <game_box> are temporarily outside the current game flow: they cannot be taken by <player>s and trigger no game rules. Core traits: (1) initial container — before setup, all components usually start here; (2) setup entry point — during setup, components are taken from here and placed into appropriate in-game <reserve>s; (3) out-of-flow holding — during gameplay, certain rules may move <object>s back into <game_box>, indicating they are temporarily removed from the current game flow (distinct from permanent discarding to <discard_pile>); (4) non-participatory — <object>s in <game_box> do not count toward victory, cannot be selected or operated, until they re-enter an in-game <reserve>. Typical examples: undistributed development cards and noble tiles in the Splendor box, or cards/tokens temporarily removed from play by certain game rules."
+        "zh": "存放当前未进入游戏流程的 <object> 的 <reserve>。<game_box> 继承自 <reserve>。与 <supply>、<market>、<deck>、<pool> 不同——这些游戏中的 <reserve> 内容直接参与当前游戏状态和规则判定；而 <game_box> 中的 <object> 暂时游离于当前游戏流程之外，既不可被 <player> 取用，也不触发任何游戏规则。核心特征：(1) 初始容器——游戏设置前，所有组件通常先放在 <game_box> 中；(2) setup 阶段入口——游戏设置时从这里取出组件，放入合适的游戏内 <reserve>；(3) 流程外暂存——游戏过程中，某些规则可能要求将 <object> 移回 <game_box>，表示该 <object> 暂时从当前游戏流程中移除（区别于 <discard_pile> 的永久弃置）；(4) 不直接参与规则——<game_box> 中的 <object> 不计入胜负、不可被选择或操作，直到再次进入某个游戏内 <reserve>。典型例子：璀璨宝石盒中尚未分发的发展卡和贵族板块、某些游戏中被规则临时移出流程的卡牌或指示物。",
+        "en": "A <reserve> holding <object>s that are not currently part of the game flow. <game_box> extends <reserve>. Unlike <supply>, <market>, <deck>, and <pool> — in-game <reserve>s whose contents directly participate in the current game state and rules — <object>s in <game_box> are temporarily outside the current game flow: they cannot be taken by <player>s and trigger no game rules. Core traits: (1) initial container — before setup, all components usually start here; (2) setup entry point — during setup, components are taken from here and placed into appropriate in-game <reserve>s; (3) out-of-flow holding — during gameplay, certain rules may move <object>s back into <game_box>, indicating they are temporarily removed from the current game flow (distinct from permanent discarding to <discard_pile>); (4) non-participatory — <object>s in <game_box> do not count toward victory, cannot be selected or operated, until they re-enter an in-game <reserve>. Typical examples: undistributed development cards and noble tiles in the Splendor box, or cards/tokens temporarily removed from play by certain game rules."
       },
       "<ownership>": null,
       "<information_visibility>": "hidden",
