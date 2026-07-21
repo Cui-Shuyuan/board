@@ -763,19 +763,6 @@
       ]
     },
     {
-      "id": "civolution_setting",
-      "name": {
-        "zh": "文明演化背景设定",
-        "en": "Civolution Setting"
-      },
-      "parent": "<ontology::setting>",
-      "abstract": false,
-      "definition": {
-        "zh": "《文明演化》的世界观与背景故事。<civolution_setting> 继承自 <ontology::setting>。玩家们扮演参加「文明演化试炼」的远古部落，而阿格拉（Agera）是这场试炼的主考官。<favor_of_ager_track>（阿格拉恩惠轨）记录各部落获得阿格拉青睐的程度：部落发展越好、完成越多考验，阿格拉的恩惠就越高，相应地在雕像计分和终局计分中也会获得更多分数。背景设定只用于解释风味和命名来源，不直接影响规则执行。",
-        "en": "The world view and backstory of Civolution. <civolution_setting> extends <ontology::setting>. Players take on the role of ancient tribes participating in the 'Civilization Evolution Trial', and Agera is the examiner of this trial. The <favor_of_ager_track> records how much favor each tribe has earned from Agera: the better a tribe develops and the more trials it completes, the higher Agera's favor, which in turn yields more points from statue income and final scoring. The setting is only used to explain flavor and naming; it does not directly affect rule execution."
-      }
-    },
-    {
       "id": "continent",
       "name": {
         "zh": "大陆",

@@ -1840,8 +1840,8 @@
       "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "描述游戏虚构世界、时代背景、核心冲突与关键角色的信息整体。<setting> 继承自 <object>。它不直接参与规则判定，也不改变游戏状态，但为风味性术语和组件命名（如 <favor_of_ager_track> 中的「阿格拉」）提供解释依据，并用于回答玩家关于「为什么叫这个名字」「这个世界是怎么回事」的问题。通常在游戏规则书、盒背或辅助介绍中呈现。",
-        "en": "The body of information describing a game's fictional world, era, central conflict, and key characters. <setting> extends <object>. It does not directly participate in rule resolution or change game state, but provides explanatory context for flavor terms and component names (e.g., 'Agera' in <favor_of_ager_track>), and is used to answer player questions like 'Why is it called that?' or 'What is this world about?'. Usually presented in the rulebook, box back, or introductory material."
+        "zh": "游戏的虚构世界观、时代背景与关键角色设定，用于解释风味名称、主题和叙事元素，不直接参与规则判定。<setting> 继承自 <object>。例如，在《文明演化》中，玩家是创世技术学院的学生，正在参加名为「文明演化」的考试；考试场地是一片僻静的大陆，每位考生都必须成为当地的一名神祇，发展并引领自己的文明，在与其他文明的竞争中取得成功，胜者将晋升为创世技术学院的正式成员。阿格拉（Agera）是这场考试的主考官，因此代表考生获得其青睐程度的轨被称为 <favor_of_ager_track>（阿格拉恩惠轨）。",
+        "en": "The fictional world view, historical backdrop, and key character setup of a game, used to explain flavor names, themes, and narrative elements without directly participating in rule adjudication. <setting> extends <object>. For example, in Civolution, players are students of the Genesis Tech Academy taking an exam called 'Civilization Evolution'. The exam takes place on a remote continent; each candidate must become a local deity, develop and lead their own civilization, and outcompete the others. The winner becomes a full member of the Genesis Tech Academy. Agera is the examiner of this exam, so the track that records how much favor each candidate has earned is called the <favor_of_ager_track> (Favor of Agera track)."
       },
       "constraints": {
         "required": [],

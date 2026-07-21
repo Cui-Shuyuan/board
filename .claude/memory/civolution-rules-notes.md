@@ -32,7 +32,7 @@ metadata:
 - **营地（Encampment）**：公共版图上的圆；黄色火边营地=fire encampment，站上去得分数
 - **地点（Site）**：独立板块，不能站人，背面朝上放置，通过 Exploration 模组翻开
 - **部落（Tribe）状态**：strong（站立，upright）/ weak（躺倒，lying）；只有 strong 部落能迁徙，weak 部落在喂养阶段不喂会死亡
-- **背景设定（`<civolution_setting>`）**：《文明演化》的世界观。玩家们扮演参加「文明演化试炼」的远古部落，阿格拉（Agera）是试炼主考官；`<favor_of_ager_track>` 表示部落获得阿格拉恩惠的程度。
+- **背景设定（`<ontology::setting>`）**：《文明演化》的世界观。玩家是创世技术学院的学生，正在参加名为「文明演化」的考试；考试场地是一片僻静的大陆，每位考生要成为当地神祇、发展引领自己的文明并与其他文明竞争，胜者晋升为学院正式成员。阿格拉（Agera）是考试主考官，`<favor_of_ager_track>` 表示考生获得阿格拉恩惠的程度。
 - **骰子**：activation dice（白骰子，6 面）、fate dice（粉骰子，6 面）
 - **标记（Marker）**：创意标记（idea marker）、计划标记（planning marker）、焦点标记（focus marker）
 - **特征（Feature）**：6 种特征标记，放在个人面板的特征格上；英文规则书目前明确提到 Intelligence、Dexterity，其余待从图例/词汇表确认
