@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-19，51 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-22，68 个概念）
 metadata:
   node_type: memory
   type: project
@@ -106,6 +106,8 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
+本体已从最初的 51 个概念扩展到 **68 个概念**，新增内容主要来自第二款游戏《文明演化》的机制扩展（见下文「为《文明演化》扩展本体的计划」）。
+
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
@@ -175,11 +177,13 @@ Hand
 - **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。
 - **Reserve 的 public/player 区分由 ownership 表达**：`<supply>`、`<market>`、`<deck>`、`<pool>` 都通过 `<ownership>`（null = 公共，`<player>` = 玩家专属）区分公共区与个人区，不再为 public/player 单独建子类。仓库等已属于玩家的存储区仍应归类为 `<player_holding>`。
 - **新增背景设定概念 `<setting>`**：用于描述游戏世界观、时代背景与关键角色，解释风味命名（如 `<favor_of_ager_track>` 中的「阿格拉」），不直接参与规则判定。
+- **ontology 概念直接引用，不在游戏层重复封装**：游戏文件里已有通用概念就直接用 `<ontology::concept_id>` 或声明其实例，不新建 `<game_xxx>` 包装。
 
 ## 为《文明演化》扩展本体的计划
 
 第二款游戏《文明演化》的复杂度远高于 Splendor，现有核心概念无法直接覆盖以下机制，已获准扩展 ontology：
 
+- **背景与世界观**: `<setting>` 已在 ontology 中加入，并承载《文明演化》的创世技术学院/阿格拉考官故事。
 - **轨道机制**: `<track>` 已在 ontology 中改为 `<zone>` 子类，`<score_track>` 继承 `<track>`。具体游戏的进程轨、恩惠轨、天气轨、阶段序列等作为游戏级概念定义，不入统一本体。
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`，表达模组从等级一翻至等级二、替换为等级三
@@ -190,4 +194,4 @@ Hand
 扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
 
 **Why:** 本体是整个系统的类型系统，后续 Rule DSL、Tutorial Tree、Controller 都建立在它之上。
-**How to apply:** 第一阶段世界模型定义基本完成（可持续补充）。当前正在第二阶段：为璀璨宝石（Splendor）编写结构化规则，并准备为第二款游戏《文明演化》扩展本体。所有规则表达使用本体中定义的概念和字段。
+**How to apply:** 第一阶段世界模型定义已扩展至 68 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。

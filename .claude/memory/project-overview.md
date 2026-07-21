@@ -54,9 +54,10 @@ metadata:
 第三阶段 Runtime 已通过 Splendor 验证，回答质量达到可用水平（简洁、TTS 友好、支持多轮上下文、能拒绝非桌游问题）。
 
 **第二款游戏《文明演化》（Civolution）正在进行 Phase A**。已完成：
-- `games/civolution/concepts.json` 对象清单层骨架（约 80 个对象）
+- `games/civolution/concepts.json` 对象清单层骨架（约 80 个对象），并已根据讨论完成多项修正：`private_board` → `player_board` 重命名、supply 公共/玩家区系统一用 `<ownership>` 表达、进程/流程版图改为 `<progress_board>` / `<sequence_board>` 引用、新增 `<favor_of_ager_track>`、新增 `<ontology::setting>` 并写入创世技术学院/阿格拉背景
 - `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
 - ontology namespace 方案确认（`<ontology::concept_id>`）并完成后端查询支持
+- 明确设计约定：ontology 已有概念直接引用，不在游戏层重复封装
 
 **当前阻塞**：等待用户 review 对象清单与 8 阶段流程骨架，确认无误后进入 Phase B 核心机制。详见 [[civolution-progress]]。
 
