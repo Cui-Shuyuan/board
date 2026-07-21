@@ -696,11 +696,11 @@
         "zh": "阶段标记",
         "en": "Phase Indicator"
       },
-      "parent": "<ontology::token>",
+      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "六边形标记，放置在流程版图阶段序列上指示当前阶段。<phase_indicator> 继承自 <ontology::token>。行动阶段中玩家执行重置时沿黄色箭头移动。",
-        "en": "A hexagonal marker placed on the phase sequence of the sequence board to indicate the current phase. <phase_indicator> extends <ontology::token>. Moves along the yellow arrow during the Action phase when players perform a Reset."
+        "zh": "六边形 <marker>，放置在流程版图阶段序列上指示当前阶段。<phase_indicator> 继承自 <ontology::marker>。行动阶段中玩家执行重置时沿黄色箭头移动。",
+        "en": "A hexagonal <marker> placed on the phase sequence of the sequence board to indicate the current phase. <phase_indicator> extends <ontology::marker>. Moves along the yellow arrow during the Action phase when players perform a Reset."
       }
     },
     {
@@ -709,11 +709,11 @@
         "zh": "天气标记",
         "en": "Weather Indicator"
       },
-      "parent": "<ontology::token>",
+      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "圆柱形标记，放置在流程版图天气轨上指示当前天气。<weather_indicator> 继承自 <ontology::token>。每时代事件阶段根据事件牌移动并结算效果。",
-        "en": "A cylindrical marker placed on the weather gauge of the sequence board to indicate the current weather. <weather_indicator> extends <ontology::token>. Moved and resolved each era during the Event phase based on the event card."
+        "zh": "圆柱形 <marker>，放置在流程版图天气轨上指示当前天气。<weather_indicator> 继承自 <ontology::marker>。每时代事件阶段根据事件牌移动并结算效果。",
+        "en": "A cylindrical <marker> placed on the weather gauge of the sequence board to indicate the current weather. <weather_indicator> extends <ontology::marker>. Moved and resolved each era during the Event phase based on the event card."
       }
     },
     {
@@ -722,11 +722,11 @@
         "zh": "恩惠标记",
         "en": "Favor Marker"
       },
-      "parent": "<ontology::token>",
+      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "放置在流程版图阿格拉恩惠轨上指示当前恩惠等级的标记。<favor_marker> 继承自 <ontology::token>。影响恩惠检定、雕像收入和终局计分。",
-        "en": "A marker placed on the Favor of Agera track of the sequence board to indicate the current favor level. <favor_marker> extends <ontology::token>. Affects favor tests, statue income, and final scoring."
+        "zh": "放置在流程版图阿格拉恩惠轨上指示当前恩惠等级的 <marker>。<favor_marker> 继承自 <ontology::marker>。影响恩惠检定、雕像收入和终局计分。",
+        "en": "A <marker> placed on the Favor of Agera track of the sequence board to indicate the current favor level. <favor_marker> extends <ontology::marker>. Affects favor tests, statue income, and final scoring."
       }
     },
     {
@@ -751,16 +751,16 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "由分轨、进程版图、流程版图等 <ontology::aid> 拼接而成的公共游戏版图。<public_board> 继承自 <ontology::public_board>。它只提供视觉辅助与状态跟踪，中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
-        "en": "The shared game board assembled from the score track, progress board, sequence board, and other <ontology::aid>s. <public_board> extends <ontology::public_board>. It only provides visual aid and state tracking; the central play area is held by the <continent> public zone, whose <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
+        "zh": "由进程版图、流程版图等 <ontology::aid> 与计分轨区域共同构成的公共游戏版图。<public_board> 继承自 <ontology::public_board>。它只提供视觉辅助与状态跟踪，中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
+        "en": "The shared game board formed by the progress board, sequence board, and score track area. <public_board> extends <ontology::public_board>. It only provides visual aid and state tracking; the central play area is held by the <continent> public zone, whose <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
       },
-      "components": {
-        "type": "<ontology::aid>[]",
-        "description": {
-          "zh": "组成公共版图的辅助物：<score_track>、<progress_board>、<sequence_board>。",
-          "en": "Aids composing the public board: <score_track>, <progress_board>, and <sequence_board>."
-        }
-      }
+      "components": [
+        "<progress_board>",
+        "<sequence_board>"
+      ],
+      "maps_to": [
+        "<score_track>"
+      ]
     },
     {
       "id": "continent",
@@ -819,8 +819,31 @@
       "parent": "<ontology::score_track>",
       "abstract": false,
       "definition": {
-        "zh": "由 4 块外框组件拼接而成的计分轨。<score_track> 继承自 <ontology::score_track>，其 <maps_to> 已默认指向 <ontology::score_zone>。玩家分数超过 100 时使用 <hundred_point_token> 表示。",
-        "en": "A score track assembled from 4 frame pieces. <score_track> extends <ontology::score_track>, whose <maps_to> already points to <ontology::score_zone>. <hundred_point_token>s are used when scores exceed 100."
+        "zh": "由 4 块外框组件拼接而成的计分轨。<score_track> 继承自 <ontology::score_track>。每位玩家各用一个 <score_marker> 在此轨上指示当前分数；分数超过 100 时使用 <hundred_point_token> 表示。",
+        "en": "A score track assembled from 4 frame pieces. <score_track> extends <ontology::score_track>. Each player uses a <score_marker> on this track to indicate their current score; <hundred_point_token>s are used when scores exceed 100."
+      },
+      "contains": {
+        "type": "<score_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的分数标记。",
+          "en": "This track holds all players' score markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "scale": "0–100+"
+    },
+    {
+      "id": "score_marker",
+      "name": {
+        "zh": "分数标记",
+        "en": "Score Marker"
+      },
+      "parent": "<ontology::marker>",
+      "abstract": false,
+      "definition": {
+        "zh": "放置在 <score_track> 上指示玩家当前分数的标记。<score_marker> 继承自 <ontology::marker>。每位玩家有 1 个。",
+        "en": "A marker placed on the <score_track> to indicate a player's current score. <score_marker> extends <ontology::marker>. Each player has 1."
       }
     },
     {
@@ -832,20 +855,15 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。<sequence_board> 继承自 <ontology::public_board>。其 <components> 包含阶段序列、天气轨和阿格拉恩惠轨；其 <maps_to> 包含阶段序列区、天气轨标记区、事件牌格、时代计分区以及阿格拉恩惠轨标记区，所有玩家共用。",
-        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. <sequence_board> extends <ontology::public_board>. Its <components> include the phase sequence, weather gauge, and Favor of Agera track; its <maps_to> includes the phase sequence zone, weather gauge zone, event card spaces, era scoring area, and Favor of Agera track zone, shared by all players."
+        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。<sequence_board> 继承自 <ontology::public_board>。其上印有阶段序列、天气轨、阿格拉恩惠轨、事件牌格和时代计分区；其 <maps_to> 包含这些 zone/track，所有玩家共用。",
+        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. <sequence_board> extends <ontology::public_board>. It is printed with the phase sequence, weather gauge, Favor of Agera track, event card spaces, and era scoring area; its <maps_to> includes these zones/tracks, shared by all players."
       },
-      "components": [
+      "maps_to": [
         "<phase_sequence>",
         "<weather_gauge>",
-        "<favor_of_ager_track>"
-      ],
-      "maps_to": [
-        "<phase_sequence_zone>",
-        "<weather_gauge_zone>",
         "<event_card_space>",
         "<era_scoring_area>",
-        "<favor_of_ager_track_zone>"
+        "<favor_of_ager_track>"
       ]
     },
     {
@@ -857,23 +875,18 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "印刷狩猎表、5 条进程轨、终局计分区等参考信息的公共 <ontology::public_board>。<progress_board> 继承自 <ontology::public_board>。其 <components> 包含狩猎表与 5 条进程轨；其 <maps_to> 包含各进程轨标记区、终局计分区以及展示供应区（骰子、狩猎标记、100 分标记、目标/收入/属性芯片）。",
-        "en": "A shared <ontology::public_board> printed with the hunting table, five progress tracks, final scoring area, and other reference information. <progress_board> extends <ontology::public_board>. Its <components> include the hunting table and five progress tracks; its <maps_to> includes each progress track zone, final scoring area, and display/supply zones (dice, hunting tokens, 100-point tokens, goal/income/attribute chips)."
+        "zh": "印刷狩猎表、5 条进程轨、终局计分区等参考信息的公共 <ontology::public_board>。<progress_board> 继承自 <ontology::public_board>。其 <components> 包含作为 aid 的狩猎表；其 <maps_to> 包含 5 条进程轨、终局计分区以及展示供应区（骰子、狩猎标记、100 分标记、目标/收入/属性芯片）。",
+        "en": "A shared <ontology::public_board> printed with the hunting table, five progress tracks, final scoring area, and other reference information. <progress_board> extends <ontology::public_board>. Its <components> include the hunting table as an aid; its <maps_to> includes the five progress tracks, final scoring area, and display/supply zones (dice, hunting tokens, 100-point tokens, goal/income/attribute chips)."
       },
       "components": [
-        "<hunting_table>",
+        "<hunting_table>"
+      ],
+      "maps_to": [
         "<technology_track>",
         "<prestige_track>",
         "<knowledge_track>",
         "<construction_track>",
-        "<culture_track>"
-      ],
-      "maps_to": [
-        "<technology_track_zone>",
-        "<prestige_track_zone>",
-        "<knowledge_track_zone>",
-        "<construction_track_zone>",
-        "<culture_track_zone>",
+        "<culture_track>",
         "<final_scoring_area>",
         "<dice_display>",
         "<hunting_token_display>",
@@ -902,11 +915,11 @@
         "zh": "进程标记",
         "en": "Progress Marker"
       },
-      "parent": "<ontology::token>",
+      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "放置在进程轨上指示玩家当前进程等级的标记。每位玩家有 5 个，分别放在 5 条进程轨上。<progress_marker> 继承自 <ontology::token>。",
-        "en": "A marker placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. <progress_marker> extends <ontology::token>."
+        "zh": "放置在进程轨上指示玩家当前进程等级的 <marker>。每位玩家有 5 个，分别放在 5 条进程轨上。<progress_marker> 继承自 <ontology::marker>。",
+        "en": "A <marker> placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. <progress_marker> extends <ontology::marker>."
       }
     },
     {
@@ -921,11 +934,16 @@
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的科技等级。<technology_track> 继承自 <ontology::track>。推进可解锁奖励，推过头后每步改为 2 分。",
         "en": "A progress track on the <progress_board> recording a player's technology level. <technology_track> extends <ontology::track>. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
       },
-      "scale": "0–12",
-      "marker": "<progress_marker>",
-      "maps_to": [
-        "<technology_track_zone>"
-      ]
+      "contains": {
+        "type": "<progress_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的科技进程标记。",
+          "en": "This track holds all players' technology progress markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "scale": "0–12"
     },
     {
       "id": "prestige_track",
@@ -939,11 +957,16 @@
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的声望等级。<prestige_track> 继承自 <ontology::track>。推进可解锁奖励，推过头后每步改为 2 分。",
         "en": "A progress track on the <progress_board> recording a player's prestige level. <prestige_track> extends <ontology::track>. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
       },
-      "scale": "0–12",
-      "marker": "<progress_marker>",
-      "maps_to": [
-        "<prestige_track_zone>"
-      ]
+      "contains": {
+        "type": "<progress_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的声望进程标记。",
+          "en": "This track holds all players' prestige progress markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "scale": "0–12"
     },
     {
       "id": "knowledge_track",
@@ -957,11 +980,16 @@
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的知识等级。<knowledge_track> 继承自 <ontology::track>。推进可解锁奖励，推过头后每步改为 2 分。",
         "en": "A progress track on the <progress_board> recording a player's knowledge level. <knowledge_track> extends <ontology::track>. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
       },
-      "scale": "0–12",
-      "marker": "<progress_marker>",
-      "maps_to": [
-        "<knowledge_track_zone>"
-      ]
+      "contains": {
+        "type": "<progress_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的知识进程标记。",
+          "en": "This track holds all players' knowledge progress markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "scale": "0–12"
     },
     {
       "id": "construction_track",
@@ -975,11 +1003,16 @@
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的建设等级。<construction_track> 继承自 <ontology::track>。推进可解锁奖励，推过头后每步改为 2 分。",
         "en": "A progress track on the <progress_board> recording a player's construction level. <construction_track> extends <ontology::track>. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
       },
-      "scale": "0–12",
-      "marker": "<progress_marker>",
-      "maps_to": [
-        "<construction_track_zone>"
-      ]
+      "contains": {
+        "type": "<progress_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的建设进程标记。",
+          "en": "This track holds all players' construction progress markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "scale": "0–12"
     },
     {
       "id": "culture_track",
@@ -993,121 +1026,16 @@
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的文化等级。<culture_track> 继承自 <ontology::track>。推进可解锁奖励，推过头后每步改为 2 分。",
         "en": "A progress track on the <progress_board> recording a player's culture level. <culture_track> extends <ontology::track>. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
       },
-      "scale": "0–12",
-      "marker": "<progress_marker>",
-      "maps_to": [
-        "<culture_track_zone>"
-      ]
-    },
-    {
-      "id": "technology_track_zone",
-      "name": {
-        "zh": "科技轨标记区",
-        "en": "Technology Track Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<progress_board> 上 <technology_track> 的标记区域。<technology_track_zone> 继承自 <ontology::zone>。每位玩家在此放置 1 个 <progress_marker> 指示科技等级。",
-        "en": "The marker area for the <technology_track> on the <progress_board>. <technology_track_zone> extends <ontology::zone>. Each player places 1 <progress_marker> here to indicate technology level."
-      },
       "contains": {
         "type": "<progress_marker>[]",
         "description": {
-          "zh": "此区域存放所有玩家的科技进程标记。",
-          "en": "This zone holds all players' technology progress markers."
+          "zh": "此轨存放所有玩家的文化进程标记。",
+          "en": "This track holds all players' culture progress markers."
         }
       },
       "<ownership>": null,
-      "<information_visibility>": "public"
-    },
-    {
-      "id": "prestige_track_zone",
-      "name": {
-        "zh": "声望轨标记区",
-        "en": "Prestige Track Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<progress_board> 上 <prestige_track> 的标记区域。<prestige_track_zone> 继承自 <ontology::zone>。每位玩家在此放置 1 个 <progress_marker> 指示声望等级。",
-        "en": "The marker area for the <prestige_track> on the <progress_board>. <prestige_track_zone> extends <ontology::zone>. Each player places 1 <progress_marker> here to indicate prestige level."
-      },
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此区域存放所有玩家的声望进程标记。",
-          "en": "This zone holds all players' prestige progress markers."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public"
-    },
-    {
-      "id": "knowledge_track_zone",
-      "name": {
-        "zh": "知识轨标记区",
-        "en": "Knowledge Track Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<progress_board> 上 <knowledge_track> 的标记区域。<knowledge_track_zone> 继承自 <ontology::zone>。每位玩家在此放置 1 个 <progress_marker> 指示知识等级。",
-        "en": "The marker area for the <knowledge_track> on the <progress_board>. <knowledge_track_zone> extends <ontology::zone>. Each player places 1 <progress_marker> here to indicate knowledge level."
-      },
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此区域存放所有玩家的知识进程标记。",
-          "en": "This zone holds all players' knowledge progress markers."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public"
-    },
-    {
-      "id": "construction_track_zone",
-      "name": {
-        "zh": "建设轨标记区",
-        "en": "Construction Track Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<progress_board> 上 <construction_track> 的标记区域。<construction_track_zone> 继承自 <ontology::zone>。每位玩家在此放置 1 个 <progress_marker> 指示建设等级。",
-        "en": "The marker area for the <construction_track> on the <progress_board>. <construction_track_zone> extends <ontology::zone>. Each player places 1 <progress_marker> here to indicate construction level."
-      },
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此区域存放所有玩家的建设进程标记。",
-          "en": "This zone holds all players' construction progress markers."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public"
-    },
-    {
-      "id": "culture_track_zone",
-      "name": {
-        "zh": "文化轨标记区",
-        "en": "Culture Track Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<progress_board> 上 <culture_track> 的标记区域。<culture_track_zone> 继承自 <ontology::zone>。每位玩家在此放置 1 个 <progress_marker> 指示文化等级。",
-        "en": "The marker area for the <culture_track> on the <progress_board>. <culture_track_zone> extends <ontology::zone>. Each player places 1 <progress_marker> here to indicate culture level."
-      },
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此区域存放所有玩家的文化进程标记。",
-          "en": "This zone holds all players' culture progress markers."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public"
+      "<information_visibility>": "public",
+      "scale": "0–12"
     },
     {
       "id": "dice_display",
@@ -1253,10 +1181,16 @@
         "zh": "位于 <sequence_board> 上的分数轨，记录当前阿格拉恩惠等级。<favor_of_ager_track> 继承自 <ontology::track>。影响 <ontology::favor_test> 成功范围、雕像收入和终局计分。",
         "en": "A scoring track on the <sequence_board> recording the current Favor of Agera level. <favor_of_ager_track> extends <ontology::track>. It affects the success range of <ontology::favor_test>s, statue income, and final scoring."
       },
-      "marker": "<favor_marker>",
-      "maps_to": [
-        "<favor_of_ager_track_zone>"
-      ]
+      "contains": {
+        "type": "<favor_marker>[]",
+        "description": {
+          "zh": "此轨存放阿格拉恩惠标记。",
+          "en": "This track holds the Favor of Agera marker."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
+      "scale": "0–?"
     },
     {
       "id": "weather_gauge",
@@ -1270,10 +1204,15 @@
         "zh": "位于 <sequence_board> 上的轨，记录当前天气。<weather_gauge> 继承自 <ontology::track>。天气有晴天、雨天、雪天、暴风雪、干燥等，影响收成、狩猎和灾难。",
         "en": "A track on the <sequence_board> recording the current weather. <weather_gauge> extends <ontology::track>. Weather states include sunny, rainy, snowy, blizzard, dry, etc., affecting harvest, hunting, and disasters."
       },
-      "marker": "<weather_indicator>",
-      "maps_to": [
-        "<weather_gauge_zone>"
-      ]
+      "contains": {
+        "type": "<weather_indicator>[]",
+        "description": {
+          "zh": "此轨存放天气标记。",
+          "en": "This track holds the weather indicator."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public"
     },
     {
       "id": "phase_sequence",
@@ -1287,72 +1226,11 @@
         "zh": "位于 <sequence_board> 上的轨，记录当前阶段。<phase_sequence> 继承自 <ontology::track>。阶段标记沿黄色箭头移动，指示 8 个阶段中的当前阶段。",
         "en": "A track on the <sequence_board> recording the current phase. <phase_sequence> extends <ontology::track>. The phase indicator moves along the yellow arrow to show the current of the 8 phases."
       },
-      "marker": "<phase_indicator>",
-      "maps_to": [
-        "<phase_sequence_zone>"
-      ]
-    },
-    {
-      "id": "phase_sequence_zone",
-      "name": {
-        "zh": "阶段序列区",
-        "en": "Phase Sequence Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<sequence_board> 上用于放置 <phase_indicator> 的区域。<phase_sequence_zone> 继承自 <ontology::zone>。阶段标记在此区域内指示当前阶段。",
-        "en": "The area on the <sequence_board> for placing the <phase_indicator>. <phase_sequence_zone> extends <ontology::zone>. The phase indicator shows the current phase within this zone."
-      },
       "contains": {
         "type": "<phase_indicator>[]",
         "description": {
-          "zh": "此区域存放阶段标记。",
-          "en": "This zone holds the phase indicator."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public"
-    },
-    {
-      "id": "weather_gauge_zone",
-      "name": {
-        "zh": "天气轨标记区",
-        "en": "Weather Gauge Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<sequence_board> 上用于放置 <weather_indicator> 的区域。<weather_gauge_zone> 继承自 <ontology::zone>。天气标记在此区域内指示当前天气。",
-        "en": "The area on the <sequence_board> for placing the <weather_indicator>. <weather_gauge_zone> extends <ontology::zone>. The weather indicator shows the current weather within this zone."
-      },
-      "contains": {
-        "type": "<weather_indicator>[]",
-        "description": {
-          "zh": "此区域存放天气标记。",
-          "en": "This zone holds the weather indicator."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public"
-    },
-    {
-      "id": "favor_of_ager_track_zone",
-      "name": {
-        "zh": "阿格拉恩惠轨标记区",
-        "en": "Favor of Agera Track Zone"
-      },
-      "parent": "<ontology::zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "<sequence_board> 上用于放置 <favor_marker> 的区域。<favor_of_ager_track_zone> 继承自 <ontology::zone>。恩惠标记在此区域内指示当前阿格拉恩惠等级。",
-        "en": "The area on the <sequence_board> for placing the <favor_marker>. <favor_of_ager_track_zone> extends <ontology::zone>. The favor marker shows the current Favor of Agera level within this zone."
-      },
-      "contains": {
-        "type": "<favor_marker>[]",
-        "description": {
-          "zh": "此区域存放阿格拉恩惠标记。",
-          "en": "This zone holds the Favor of Agera marker."
+          "zh": "此轨存放阶段标记。",
+          "en": "This track holds the phase indicator."
         }
       },
       "<ownership>": null,

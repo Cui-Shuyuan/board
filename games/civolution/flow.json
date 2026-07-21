@@ -61,7 +61,7 @@
                 "en": "Place the phase indicator on phase 1 of the sequence board's phase sequence."
               },
               "source": "<ontology::game_box>",
-              "destination": "<phase_sequence_zone>",
+              "destination": "<phase_sequence>",
               "<object>": "<phase_indicator>",
               "quantity": 1
             },
@@ -73,7 +73,7 @@
                 "en": "Place the weather indicator on a moderate space of the weather gauge."
               },
               "source": "<ontology::game_box>",
-              "destination": "<weather_gauge_zone>",
+              "destination": "<weather_gauge>",
               "<object>": "<weather_indicator>",
               "quantity": 1
             },
@@ -141,8 +141,7 @@
                 "en": "Flip some 100-point tokens as blocking tokens to cover unavailable areas; the rest form the supply."
               },
               "source": "<ontology::game_box>",
-              "destination": "<progress_board>",
-              "<object>": "<hundred_point_token>",
+              "destination": "<hundred_point_token_display>",
               "quantity": {
                 "expr": "per_player_count_setup"
               }
@@ -155,8 +154,7 @@
                 "en": "Flip some hunting tokens as blocking tokens to cover unavailable campsites; the rest form the supply."
               },
               "source": "<ontology::game_box>",
-              "destination": "<progress_board>",
-              "<object>": "<hunting_token>",
+              "destination": "<hunting_token_display>",
               "quantity": {
                 "expr": "per_player_count_setup"
               }
@@ -169,8 +167,7 @@
                 "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
               },
               "source": "<ontology::game_box>",
-              "destination": "<progress_board>",
-              "<object>": "<activation_die> | <fate_die>",
+              "destination": "<dice_display>",
               "quantity": {
                 "expr": "player_count + 1"
               }
@@ -249,8 +246,7 @@
                 "zh": "每位玩家拿取 6 个白骰子放到骰子格（点数随机），1 个粉骰子放在面板旁。",
                 "en": "Each player takes 6 activation dice, places them on dice spaces with random values, and 1 fate die beside the console."
               },
-              "source": "<progress_board>",
-              "destination": "<dice_area>",
+              "source": "<dice_display>",
               "<object>": "<activation_die>",
               "quantity": 6,
               "per_player": true
@@ -285,13 +281,91 @@
               "id": "player_setup_score_and_track_tokens",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿取圆片：1 个放到计分版图 0 分、1 个放到阿格拉恩惠轨、5 个放到五条进程轨 0 格。",
-                "en": "Each player takes discs: 1 to score board 0, 1 to Favor of Agera track, 5 to the five progress tracks at 0."
+                "zh": "每位玩家拿取 1 个分数标记放到计分轨 0 分位置。",
+                "en": "Each player takes 1 score marker and places it on the score track at 0."
               },
               "source": "<ontology::game_box>",
-              "destination": "<score_track> | <favor_of_ager_track> | <progress_board>",
-              "<object>": "<disc>",
-              "quantity": 7,
+              "destination": "<score_track>",
+              "<object>": "<score_marker>",
+              "quantity": 1,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_favor_marker",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家拿取 1 个恩惠标记放到阿格拉恩惠轨起始位置。",
+                "en": "Each player takes 1 favor marker and places it on the Favor of Agera track start."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<favor_of_ager_track>",
+              "<object>": "<favor_marker>",
+              "quantity": 1,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_technology_marker",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家拿取 1 个进程标记放到科技轨 0 格。",
+                "en": "Each player takes 1 progress marker and places it on the technology track at 0."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<technology_track>",
+              "<object>": "<progress_marker>",
+              "quantity": 1,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_prestige_marker",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家拿取 1 个进程标记放到声望轨 0 格。",
+                "en": "Each player takes 1 progress marker and places it on the prestige track at 0."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<prestige_track>",
+              "<object>": "<progress_marker>",
+              "quantity": 1,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_knowledge_marker",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家拿取 1 个进程标记放到知识轨 0 格。",
+                "en": "Each player takes 1 progress marker and places it on the knowledge track at 0."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<knowledge_track>",
+              "<object>": "<progress_marker>",
+              "quantity": 1,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_construction_marker",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家拿取 1 个进程标记放到建设轨 0 格。",
+                "en": "Each player takes 1 progress marker and places it on the construction track at 0."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<construction_track>",
+              "<object>": "<progress_marker>",
+              "quantity": 1,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_culture_marker",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家拿取 1 个进程标记放到文化轨 0 格。",
+                "en": "Each player takes 1 progress marker and places it on the culture track at 0."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<culture_track>",
+              "<object>": "<progress_marker>",
+              "quantity": 1,
               "per_player": true
             },
             {

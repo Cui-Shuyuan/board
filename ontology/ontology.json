@@ -90,11 +90,11 @@
         "zh": "资源",
         "en": "Resource"
       },
-      "parent": "<object>",
+      "parent": "<token>",
       "abstract": false,
       "definition": {
-        "zh": "一种可被 <player> 拥有、计数和转移的价值对象。<resource> 继承自 <object>。其核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 <resource> 的所有个体完全等价、可互相替代。",
-        "en": "A value object that can be owned, counted, and transferred by <player>s. <resource> extends <object>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable."
+        "zh": "一种可被 <player> 拥有、计数、转移和消耗的价值 <token>。<resource> 继承自 <token>。其核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 <resource> 的所有个体完全等价、可互相替代。与 <marker> 的区别在于：resource 会被 action 的 <cost> 消耗或作为 <effect> 产出，而 marker 只用于指示状态。",
+        "en": "A value <token> that can be owned, counted, transferred, and spent by <player>s. <resource> extends <token>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable. Unlike a <marker>, a resource is consumed by an action's <cost> or produced by an <effect>; a marker only indicates state."
       },
       "unit": {
         "type": "string",
@@ -235,8 +235,8 @@
       "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "用于在物理层面标记某个游戏事实的小型对象。<token> 继承自 <object>。其本质特征：没有 <effect>，不能被 <play>——<token> 自身不改变任何游戏状态，它只是被动地标记一个已经存在的事实。你把伤害 <token> 放在一张卡上，<token> 什么都没做，是「此卡已受伤」这个规则 <state> 在产生影响。你把起始玩家 <token> 传给下家，<token> 本身不改变任何东西，是「起始玩家变更」这个规则 <event> 改变了游戏。<token> 可以被移动、放置、计数，但它永远不会像 <piece> 那样「打出」一个 <effect>。",
-        "en": "A small physical object used to mark a game fact. <token> extends <object>. Its defining trait: it has no <effect>s and cannot be <play>ed — a <token> itself never changes game state; it only passively marks an already-existing fact. Placing a damage <token> on a card: the <token> does nothing; it is the rules <state> 'this card is wounded' that has impact. Passing the starting player <token>: the <token> changes nothing; it is the rules <event> 'starting player changed' that alters the game. <token>s can be moved, placed, and counted, but unlike <piece>s, they are never <play>ed to produce an <effect>."
+        "zh": "桌游中最常见的小型物理计数/标记物。<token> 继承自 <object>。它是 <marker> 和 <resource> 的共同基类：既可以作为标记物指示某个状态或位置，也可以作为资源被玩家拥有、计数和消耗。<token> 本身不携带 <effect>，不能被 <play>——它不会因为被放置或移动而自己改变游戏状态；真正改变状态的是规则 <event>。例如把伤害 <token> 放到卡上，卡「受伤」这个 <state> 才生效；消耗 1 个食物 <token> 的是某个 action 的 cost，而不是 <token> 自己。",
+        "en": "The most common small physical counter/marker in board games. <token> extends <object>. It is the common base class for <marker> and <resource>: it can serve as a marker indicating some state or position, or as a resource owned, counted, and spent by players. A <token> itself carries no <effect> and cannot be <play>ed — placing or moving it does not change game state by itself; the rules <event> does. For example, placing a damage <token> on a card makes the 'wounded' <state> take effect; spending a food <token> is the cost of an action, not an effect of the token."
       },
       "appearance": {
         "type": "string",
@@ -248,8 +248,8 @@
       "represents": {
         "type": "concept_ref",
         "description": {
-          "zh": "此指示物代表什么逻辑概念。如伤害 Token 指向 State「受伤」、起始玩家 Token 指向 State「起始玩家」。注意：Resource 自身已携带 appearance，不需要 Token 代表——蓝宝石直接描述自己。represents 仅在 Token 代表的不是 Resource 时使用。若一个 Token 是多用途的（红色方块既能计分又能标归属），此字段为空，Token 的具体含义由它当前所在的 Zone 或使用上下文决定。",
-          "en": "What logical concept this token represents. E.g., a damage token points to State 'wounded', a starting player token points to State 'starting_player'. Note: Resources already carry their own appearance and don't need a Token to represent them — a blue gem describes itself directly. Use 'represents' only when the Token represents something other than a Resource. For multi-purpose Tokens (a red cube that can track score or mark ownership), leave this empty — the Token's meaning is determined by its current Zone or usage context."
+          "zh": "此指示物代表什么逻辑概念。如伤害 Token 指向 State「受伤」、起始玩家 Token 指向 State「起始玩家」。若一个 Token 是多用途的（红色方块既能计分又能标归属），此字段为空，Token 的具体含义由它当前所在的 Zone 或使用上下文决定。",
+          "en": "What logical concept this token represents. E.g., a damage token points to State 'wounded', a starting player token points to State 'starting_player'. For multi-purpose Tokens (a red cube that can track score or mark ownership), leave this empty — the Token's meaning is determined by its current Zone or usage context."
         }
       },
       "constraints": {
@@ -257,8 +257,8 @@
           {
             "id": "appearance",
             "description": {
-              "zh": "指示物外观描述——形状、尺寸、颜色、材质。Token 没有 Effect，外观是其唯一可被玩家直接感知的特征。",
-              "en": "Visual description of this token — shape, size, color, material. Tokens have no Effects; appearance is the only characteristic directly perceivable by players."
+              "zh": "指示物外观描述——形状、尺寸、颜色、材质。Token 的外观是 AI 向玩家解释实物识别时的核心信息。",
+              "en": "Visual description of this token — shape, size, color, material. Appearance is the core information for AI to help players identify physical pieces."
             }
           }
         ],
@@ -274,16 +274,49 @@
       }
     },
     {
+      "id": "marker",
+      "name": {
+        "zh": "标记物",
+        "en": "Marker"
+      },
+      "parent": "<token>",
+      "abstract": false,
+      "definition": {
+        "zh": "用于指示某个 <state> 或位置的 <token>。<marker> 继承自 <token>。它不被当作资源消耗，而是被放置、移动或移除来反映游戏规则中的状态变化。典型例子包括：阶段标记、天气标记、进程轨标记、计分标记、起始玩家标记等。",
+        "en": "A <token> used to indicate a <state> or position. <marker> extends <token>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules. Typical examples include phase indicators, weather indicators, progress track markers, score markers, and starting player markers."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "标记物外观描述——形状、尺寸、颜色、材质。",
+              "en": "Visual description of this marker — shape, size, color, material."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "represents",
+            "description": {
+              "zh": "此标记物代表的逻辑概念（如 State「起始玩家」、State「当前阶段」）。",
+              "en": "The logical concept this marker represents (e.g., State 'starting player', State 'current phase')."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "starting_player_marker",
       "name": {
         "zh": "起始玩家标记",
         "en": "Starting Player Marker"
       },
-      "parent": "<token>",
+      "parent": "<marker>",
       "abstract": false,
       "definition": {
-        "zh": "用于标记谁是起始<player>的<token>。<starting_player_marker>继承自<token>。它是许多桌游中的通用组件——持有此标记的<player>即为当前<round>的起始玩家。每<round>结束后，标记传递给下一位<player>，对应的<starting_player>状态随之更新。<starting_player_marker>自身没有<effect>，不可被<play>——它只是被动标记<starting_player>这一事实。",
-        "en": "A <token> used to mark who is the starting <player>. <starting_player_marker> extends <token>. It is a common component in many board games — the <player> holding this marker is the starting player for the current <round>. After each <round>, the marker is passed to the next <player>, and the corresponding <starting_player> state is updated. The <starting_player_marker> itself has no <effect> and cannot be <play>ed — it passively marks the fact of <starting_player>."
+        "zh": "用于标记谁是起始 <player> 的 <marker>。<starting_player_marker> 继承自 <marker>。它是许多桌游中的通用组件——持有此标记的 <player> 即为当前 <round> 的起始玩家。每 <round> 结束后，标记传递给下一位 <player>，对应的 <starting_player> 状态随之更新。",
+        "en": "A <marker> used to mark who is the starting <player>. <starting_player_marker> extends <marker>. It is a common component in many board games — the <player> holding this marker is the starting player for the current <round>. After each <round>, the marker is passed to the next <player>, and the corresponding <starting_player> state is updated."
       },
       "appearance": {
         "type": "string",
@@ -295,8 +328,8 @@
       "represents": {
         "type": "<starting_player>",
         "description": {
-          "zh": "此<token>代表的逻辑概念：<starting_player>。持有此标记的<player>即为起始玩家。",
-          "en": "The logical concept this <token> represents: <starting_player>. The <player> holding this marker is the starting player."
+          "zh": "此 <marker> 代表的逻辑概念：<starting_player>。持有此标记的 <player> 即为起始玩家。",
+          "en": "The logical concept this <marker> represents: <starting_player>. The <player> holding this marker is the starting player."
         }
       },
       "constraints": {
@@ -312,8 +345,8 @@
       },
       "abstract": true,
       "definition": {
-        "zh": "游戏中的抽象逻辑容器，表示一组 <object> 的空间归属关系。不依赖版图和实体，只由规则决定。<zone> 是 Level 0 抽象概念，子类包括 <reserve>、<discard_pile>、<player_zone>。",
-        "en": "An abstract logical container in the game, representing the spatial belonging of a set of <object>s. Independent of board and physical components; defined solely by rules. <zone> is a Level 0 abstract concept; subclasses include <reserve>, <discard_pile>, <player_zone>."
+        "zh": "游戏中的抽象逻辑容器，表示一组 <object> 的空间归属关系。不依赖版图和实体，只由规则决定。<zone> 是抽象概念，子类包括 <reserve>、<discard_pile>、<player_zone>、<track> 等。",
+        "en": "An abstract logical container in the game, representing the spatial belonging of a set of <object>s. Independent of board and physical components; defined solely by rules. <zone> is an abstract concept; subclasses include <reserve>, <discard_pile>, <player_zone>, <track>, etc."
       },
       "contains": {
         "type": "concept_ref[]",
@@ -1797,24 +1830,26 @@
         "zh": "轨",
         "en": "Track"
       },
-      "parent": "<aid>",
+      "parent": "<zone>",
       "abstract": false,
       "definition": {
-        "zh": "用于可视化记录某个数值或进度当前状态的带刻度 <aid>。<track> 继承自 <aid>。它本身不定义也不改变游戏状态，只是帮助玩家和程序跟踪某个 <state> 的当前值。轨道上通常放置一个或多个 <token> 作为位置指示物。典型例子包括计分轨、进程轨、恩惠轨等。",
-        "en": "A scaled <aid> used to visually record the current value or progress of some numeric or ordinal <state>. <track> extends <aid>. It does not define or change game state itself; it merely helps players and programs track the current value of a <state>. One or more <token>s are usually placed on the track as position indicators. Typical examples include score tracks, progress tracks, and favor tracks."
+        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。典型例子包括计分轨、进程轨、天气轨、阶段序列、恩惠轨等。",
+        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. Typical examples include score tracks, progress tracks, weather gauges, phase sequences, and favor tracks."
       },
+      "contains": {
+        "type": "<marker>[]",
+        "description": {
+          "zh": "此轨存放的标记物类型。通常每个玩家在此放置一个 marker。",
+          "en": "The type of markers this track holds. Usually each player places one marker on it."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
       "scale": {
         "type": "string",
         "description": {
           "zh": "此轨的刻度范围或单位描述。如「0–100 的环形计分轨」「0–12 的进程轨」。仅供展示和规则解释参考，不影响规则逻辑。",
           "en": "Description of the track's scale or range, e.g. '0–100 circular score track', '0–12 progress track'. For display and rule explanation only; does not affect rule logic."
-        }
-      },
-      "marker": {
-        "type": "<token> | null",
-        "description": {
-          "zh": "用于指示当前位置的 <token> 类型。多个 <player> 可共用同一类标记并通过颜色区分；若为 null，则表示该轨没有专用标记，仅作为印刷刻度存在。",
-          "en": "The type of <token> used to indicate the current position. Multiple <player>s may share the same marker type distinguished by color; if null, the track has no dedicated marker and exists only as printed scale."
         }
       },
       "constraints": {
@@ -1826,41 +1861,8 @@
               "zh": "轨的刻度范围或单位描述，用于规则讲解和 UI 展示。",
               "en": "Scale or range description of the track, used for rule explanation and UI display."
             }
-          },
-          {
-            "id": "marker",
-            "description": {
-              "zh": "指示轨道上当前位置的 <token> 类型。",
-              "en": "The type of <token> indicating the current position on the track."
-            }
           }
         ]
-      }
-    },
-    {
-      "id": "score_zone",
-      "name": {
-        "zh": "分数区",
-        "en": "Score Zone"
-      },
-      "parent": "<zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "用于放置所有玩家分数标记的公共 <zone>。<score_zone> 继承自 <zone>。每个玩家在此处有一个代表自己当前 <score> 位置的 <token>；分轨（<score_track>）是这个 zone 的可视化载体。",
-        "en": "A public <zone> for placing all players' score markers. <score_zone> extends <zone>. Each player has a <token> here indicating their current <score> position; the <score_track> is the visual carrier of this zone."
-      },
-      "contains": {
-        "type": "<token>[]",
-        "description": {
-          "zh": "此区域存放所有玩家的分数标记。",
-          "en": "This zone holds all players' score markers."
-        }
-      },
-      "<ownership>": null,
-      "<information_visibility>": "public",
-      "constraints": {
-        "required": [],
-        "optional": []
       }
     },
     {
@@ -1872,12 +1874,18 @@
       "parent": "<track>",
       "abstract": false,
       "definition": {
-        "zh": "用于记录 <player> 的 <score> 数量的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <token> 在 <score_zone> 上指示自己当前拥有多少 <score>。<score> 本身是 <resource>，「玩家有 N 分」才是 <state>；分轨只是这个 <state> 的可视化载体。",
-        "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <token> on the <score_zone> to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is merely the visual carrier of this <state>."
+        "zh": "用于记录 <player> 的 <score> 数量的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <marker> 在此轨上指示自己当前拥有多少 <score>。<score> 本身是 <resource>，「玩家有 N 分」才是 <state>；分轨是这个 <state> 的可视化载体。",
+        "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <marker> on this track to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is the visual carrier of this <state>."
       },
-      "maps_to": [
-        "<score_zone>"
-      ],
+      "contains": {
+        "type": "<marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的分数标记。",
+          "en": "This track holds all players' score markers."
+        }
+      },
+      "<ownership>": null,
+      "<information_visibility>": "public",
       "constraints": {
         "required": [],
         "optional": []
