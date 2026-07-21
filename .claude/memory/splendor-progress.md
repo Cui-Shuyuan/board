@@ -41,8 +41,8 @@ metadata:
 - `<noble>`（贵族板块，requirement=发展卡颜色数量条件，固定 3 分）
 
 **Zone 层**（`<zone>` 子类）：
-- `gem_supply`（extends `<supply>`，contains=`<gem>[]`）
-- `gold_supply`（extends `<supply>`，contains=`<gold>[]`）
+- `gem_supply`（extends `<public_supply>`，contains=`<gem>[]`）
+- `gold_supply`（extends `<public_supply>`，contains=`<gold>[]`）
 - `development_deck` → level_1 / 2 / 3（extends `<deck>`，contains=对应等级发展卡）
 - `noble_market`（extends `<market>`，contains=`<noble>[]`，被动触发非主动购买）
 - `card_market`（extends `<market>`，contains=`<development_card>[]`，3 组×4 张按等级陈列，买走/保留后从对应牌堆顶部补牌）
@@ -52,7 +52,7 @@ metadata:
 - `take_gems_different`（extends `<action>`，取 1~3 颗不同色宝石，数量由供应情况决定）
 - `take_gems_same`（extends `<action>`，取 2 颗同色宝石，前提是该色存量 ≥4）
 - `purchase_development_card`（extends `<action>`，购买发展卡。declaration 含 card+payment；trigger 含 2 个 event：`<transfer>` 支付（gem→gem_supply、gold→gold_supply，逐色 max(0, cost−discount)，gold 百搭）+ `<play>`（卡从 market/hand → development_area，market 来源则补牌））
-- `reserve_development_card`（extends `<action>`，保留发展卡。declaration 二选一：card=明面保留 / deck=暗面保留；trigger **ordered=false** 含 2 个 event：卡→hand（market 来源则补牌）+ gold_supply→player_holding 拿 1 gold（precondition：supply 非空，空则跳过）。hand 上限 3）
+- `reserve_development_card`（extends `<action>`，保留发展卡。declaration 二选一：card=明面保留 / deck=暗面保留；trigger **ordered=false** 含 2 个 event：卡→hand（market 来源则补牌）+ gold_supply→player_holding 拿 1 gold（precondition：gold_supply 非空，空则跳过）。hand 上限 3）
 
 **Action 层已完成（4 个）**：take_gems_different、take_gems_same、purchase_development_card、reserve_development_card
 
@@ -101,20 +101,39 @@ metadata:
 - setup 中 2/3/4 人差异只体现在贵族数量（`player_count + 1`）和宝石数量（按人数内联）两处。
 - 发展卡在 setup 中先从 `<game_box>` 移入 `<development_deck>` 形成 deck，再 shuffle，再发 market；贵族直接从 `<game_box>` 随机选取，不使用 deck。
 
-### Runtime 交互模型
+## Runtime 交互模型（已实现并验证）
 
-璀璨宝石的规则层（concepts.json / flow.json）完成后，下一步是验证「LLM + 程序 Runtime」的交互模式。详见 [[interaction-model]]。针对 Splendor 的关键结论：
+璀璨宝石的规则层完成后，已验证「LLM + 程序 Runtime」的交互模式。针对 Splendor 的关键结论：
 
 - **不做状态追踪和图像识别**：程序不读取 board、手牌或牌堆。
 - **LLM 只做概念识别与语言组织**：把客人问题映射到 action / trigger / condition，然后调用规则接口。
 - **状态依赖问题由 LLM 反问**：例如「我现在能买这张卡吗？」→ 反问客人当前宝石、金币、已买折扣卡；客人回答后，程序做判定，LLM 组织答案。
 - **问题统一为「解释某个概念/行动/触发器的条件与效果」**：不预写 FAQ，答案由 LLM 根据结构化规则自由组织。
 
-### 下一阶段
+## 后端实现
 
-1. 设计并验证 LLM 工具接口 schema（读取概念、查询条件、判定状态等）。
-2. 用 Splendor 的真实问题跑通单次回答内的多轮工具调用。
-3. 视情况补写 `flow.json` 的 JSON Schema 或进入引擎实现。
+`backend/BoardAI.Api/` 已提供最小可用服务：
+
+- `POST /api/chat`：请求体 `{ "game_id": "splendor", "messages": [...] }`，返回 `{ "reply": "..." }`
+- 无状态设计：历史由前端维护，后端只在 system prompt 前拼接
+- LLM 可调工具：
+  - `search_concepts(game_id, query)`
+  - `get_concept(game_id, concept_id)`
+  - `get_action_conditions(game_id, action_id)`
+- `GameRulesService` 动态读取 `games/{game_id}/concepts.json` 和 `flow.json`，顶层引用键也动态检测
+- Prompt 单一来源：`appsettings.json` 中的 `LLM:SystemPrompt`，含 `{game_name}` 占位符
+- 已验证效果：回答简洁、TTS 友好（汉字数字、无 markdown、无加号/引号/括号）、能处理多轮上下文、能拒绝非桌游问题
+- 典型可用回答示例：
+  - "贵族不用买，回合结束时如果自己面前的卡满足贵族条件，贵族自动加入你，给你三分。"
+  - "不需要正好十五分。任意玩家声望达到十五或超过十五就会触发终局，这轮打完后比声望，平手比谁的卡更少。"
+
+## 下一阶段
+
+1. **录入第二款桌游**：已选定《文明演化》（Civolution），位于 `games/civolution/`。该游戏复杂度远高于 Splendor，已完成可行性评估与分阶段计划（详见 [[civolution-progress]]）。推进前需补充卡牌/地点图像或文字牌表，并确认等级二/三模组效果与研究牌能力。
+2. **游戏元信息**：为每款游戏增加 `manifest.json`（显示名称、玩家人数、时长、封面等），供前端选游戏界面使用。
+3. **前端会话绑定**：前端选游戏后固定 `game_id`，并维护 `messages` 历史。
+4. **意图细分**：当前所有问题都走「概念解释」路径，后续可增加「状态判定」「行动合法性检查」「最佳行动建议」等 Intent。
+5. **Tutorial Tree**：从规则解释过渡到结构化教程流程。
 
 ## 设计约定
 
@@ -130,4 +149,4 @@ metadata:
 - **trigger 的激活时机由 `<timing>` 字段显式表达，condition 只写纯状态事实**——如 discard_excess_gems：`<timing>`=「使宝石总数变化的 event 结算完成的瞬间」+ condition=「总数 >10」；attract_noble：`<timing>`=「回合结束时」+ condition=「noble requirement 被满足」。时机不同保证不会同时触发；内嵌 trigger 的 `<timing>`=「此 action 执行完毕时」+ 绑定说明，condition=「此 action 的 precondition 满足且 declaration 合法」
 
 **Why:** 追踪 Splendor 规则定义的进度，新会话无需重新遍历文件。
-**How to apply:** 概念层与流程层均已完成。concepts.json 现有 objects 21 个、actions 4 个、triggers 4 个（event 顺序改用 `do_after` 表达）、conditions 15 个；`<game_box>` 已升入 ontology；flow.json 已按方案 C 完成 setup → main_gameplay → endgame 的完整流程定义，setup 阶段使用 `do_after` 表达事件依赖。下一步可选：补充 flow.json 的 JSON Schema，或开始引擎实现。
+**How to apply:** 概念层与流程层均已完成。后端 Runtime 已通过 Splendor 验证，下一步重点是换一款游戏做真实压力测试，并补充前端选游戏与会话管理。

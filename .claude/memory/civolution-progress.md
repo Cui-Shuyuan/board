@@ -71,7 +71,7 @@ metadata:
 ## 最近进展
 
 - 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念
-- 2026-07-21: 完成 `games/civolution/concepts.json` 的 `objects` 层骨架，覆盖资源、piece、token、terrain、dice、zone、supply/market、aid 等约 80 个对象定义
+- 2026-07-21: 完成 `games/civolution/concepts.json` 的 `objects` 层骨架，覆盖资源、piece、token、terrain、dice、zone、public_supply/market、aid 等约 80 个对象定义
 - 2026-07-21: 完成 `games/civolution/flow.json` 流程骨架，覆盖 Setup、4 时代 × 8 阶段、终局计分
 - 2026-07-21: 完成 Splendor 与 Civolution 的 ontology namespace 替换（`<ontology::concept_id>`），并完成后端 `get_concept` / `search_concepts` 的 namespace 查询支持
 - 2026-07-21: 用户确认 namespace 格式；对象清单与流程骨架待明天 review

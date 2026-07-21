@@ -37,7 +37,7 @@ metadata:
 - **特征（Feature）**：6 种特征标记，放在个人面板的特征格上；英文规则书目前明确提到 Intelligence、Dexterity，其余待从图例/词汇表确认
 - **进程轨（Progress tracks）**：5 条 — Technology、Prestige、Knowledge、Construction、Culture；每条 0–12 格，推过头后每步改为 2 分
 - **阿格拉恩惠轨（Favor of Agera track）**：影响恩惠检定（favor test）
-- **仓库（Storage area）**：`<storage_area>` 已改为继承 `<player_holding>`——其中的材料已经属于玩家，只是尚未消耗；它不是 `<supply>` 或 `<personal_supply>`。
+- **仓库（Storage area）**：`<storage_area>` 已改为继承 `<player_holding>`——其中的材料已经属于玩家，只是尚未消耗；它不是 `<public_supply>` 或 `<player_supply>`。
 
 ### 公共版图组成
 
