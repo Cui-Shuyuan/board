@@ -150,6 +150,9 @@ Player Holding、Development Area
 ### Aid 扩展（4 个）
 Public Board、Player Board、Player Aid、Rulebook
 
+### 背景概念（1 个）★
+Setting
+
 ### Action 扩展（1 个）
 Activation
 
@@ -171,6 +174,7 @@ Hand
 - **Track 是 Zone 的子类**：轨道不再属于 `<aid>`，而是一种「有序 zone」，其中 marker 只做内部位置移动，不发生 zone 间 transfer。
 - **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。
 - **Reserve 的 public/player 区分由 ownership 表达**：`<supply>`、`<market>`、`<deck>`、`<pool>` 都通过 `<ownership>`（null = 公共，`<player>` = 玩家专属）区分公共区与个人区，不再为 public/player 单独建子类。仓库等已属于玩家的存储区仍应归类为 `<player_holding>`。
+- **新增背景设定概念 `<setting>`**：用于描述游戏世界观、时代背景与关键角色，解释风味命名（如 `<favor_of_ager_track>` 中的「阿格拉」），不直接参与规则判定。
 
 ## 为《文明演化》扩展本体的计划
 

@@ -1832,6 +1832,23 @@
       }
     },
     {
+      "id": "setting",
+      "name": {
+        "zh": "背景设定",
+        "en": "Setting"
+      },
+      "parent": "<object>",
+      "abstract": false,
+      "definition": {
+        "zh": "描述游戏虚构世界、时代背景、核心冲突与关键角色的信息整体。<setting> 继承自 <object>。它不直接参与规则判定，也不改变游戏状态，但为风味性术语和组件命名（如 <favor_of_ager_track> 中的「阿格拉」）提供解释依据，并用于回答玩家关于「为什么叫这个名字」「这个世界是怎么回事」的问题。通常在游戏规则书、盒背或辅助介绍中呈现。",
+        "en": "The body of information describing a game's fictional world, era, central conflict, and key characters. <setting> extends <object>. It does not directly participate in rule resolution or change game state, but provides explanatory context for flavor terms and component names (e.g., 'Agera' in <favor_of_ager_track>), and is used to answer player questions like 'Why is it called that?' or 'What is this world about?'. Usually presented in the rulebook, box back, or introductory material."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "track",
       "name": {
         "zh": "轨",
