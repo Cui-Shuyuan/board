@@ -93,7 +93,7 @@ Ownership extends State。三种来源：Zone 推导、固有归属、游戏中�
 ### Zone 体系
 ```
 Zone (abstract)
-├── Reserve (abstract) → Supply / Market / Deck / Pool
+├── Reserve (abstract) → Supply / Personal Supply / Market / Deck / Pool
 ├── Discard Pile
 ├── Player Zone (abstract)
 │   ├── Player Holding → Hand
@@ -139,8 +139,8 @@ Endgame Condition、Victory Condition
 ### Piece 扩展（2 个）
 Card、Tile
 
-### Reserve 扩展（4 个）
-Supply、Market、Deck、Pool
+### Reserve 扩展（5 个）★ +Personal Supply
+Supply、Personal Supply、Market、Deck、Pool
 
 ### Player Zone 扩展（2 个）
 Player Holding、Development Area
@@ -168,6 +168,7 @@ Hand
 - **Token 作为 Resource 与 Marker 的物理基类**：`<token>` 是桌游中最常见的小型计数/标记物；`<resource>` 继承 `<token>`（作为可被消耗的价值物），`<marker>` 继承 `<token>`（作为状态/位置指示物）。
 - **Track 是 Zone 的子类**：轨道不再属于 `<aid>`，而是一种「有序 zone」，其中 marker 只做内部位置移动，不发生 zone 间 transfer。
 - **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。
+- **个人供应堆与公共供应堆分离**：新增 `<personal_supply>`，按玩家划分、专属取用，但其中的物件尚未归该玩家所有；`<supply>` 明确为公共供应堆，所有玩家均可取用。仓库等已属于玩家的存储区应归类为 `<player_holding>`。
 
 ## 为《文明演化》扩展本体的计划
 

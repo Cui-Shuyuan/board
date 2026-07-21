@@ -1616,17 +1616,42 @@
     {
       "id": "supply",
       "name": {
-        "zh": "供应堆",
-        "en": "Supply"
+        "zh": "公共供应堆",
+        "en": "Public Supply"
       },
       "parent": "<reserve>",
       "abstract": false,
       "definition": {
-        "zh": "存放无差别的、所有 <player> 可以直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>。核心特征：<object> 完全相同且可互相替代（通常是 <token> 或 <resource>），获取方式为直接取用而不需抽取或随机——玩家对「取多少」有完全控制力，对「取哪个」无需控制。对象数量可能有限或无限。不支持顺序操作和洗混。典型例子：璀璨宝石的宝石供应堆、卡坦岛的資源卡供应堆。",
-        "en": "A <reserve> that holds undifferentiated <object>s which all <player>s can directly take from. <supply> extends <reserve>. Core traits: <object>s are identical and interchangeable (typically <token>s or <resource>s), accessed by direct taking without drawing or randomness — players fully control 'how many' but don't need to control 'which one'. Quantity may be limited or unlimited. No ordering or shuffling. Typical examples: Splendor's gem supply, Catan's resource card supply."
+        "zh": "存放无差别的、所有 <player> 均可直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>。核心特征：<object> 完全相同且可互相替代（通常是 <token> 或 <resource>），获取方式为直接取用而不需抽取或随机——玩家对「取多少」有完全控制力，对「取哪个」无需控制；任何玩家都可以从中拿取，不存在专属访问权。对象数量可能有限或无限。不支持顺序操作和洗混。与 <personal_supply> 形成对偶——<personal_supply> 只供特定玩家取用。典型例子：璀璨宝石的宝石供应堆、卡坦岛的资源卡供应堆。",
+        "en": "A <reserve> that holds undifferentiated <object>s which all <player>s can directly take from. <supply> extends <reserve>. Core traits: <object>s are identical and interchangeable (typically <token>s or <resource>s), accessed by direct taking without drawing or randomness — players fully control 'how many' but don't need to control 'which one'; any player may take from it, with no exclusive access. Quantity may be limited or unlimited. No ordering or shuffling. Counterpart to <personal_supply> — <personal_supply> is only accessible to one specific player. Typical examples: Splendor's gem supply, Catan's resource card supply."
       },
       "<ownership>": null,
       "<information_visibility>": "public",
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "personal_supply",
+      "name": {
+        "zh": "个人供应堆",
+        "en": "Personal Supply"
+      },
+      "parent": "<reserve>",
+      "abstract": false,
+      "definition": {
+        "zh": "按 <player> 划分的私有 <reserve>，用于存放暂时不属于任何 <player>、但只有特定 <player> 才能从中拿取的 <object>。<personal_supply> 继承自 <reserve>。与 <supply> 的核心区别：<supply> 是公共的，所有玩家均可取用；<personal_supply> 是专属的，只有被分配到的玩家可以从中拿取，其他玩家即使物理上能够触碰也不能作为合法操作目标。此区域中的 object 通常尚未被玩家「获得」——它们只是被预先划拨到该玩家面前，等待被消耗、安装或转移。典型例子：某些游戏中每位玩家面前从公共供应堆分出的个人资源池、待选组件的私有缓冲区。",
+        "en": "A private <reserve> partitioned by <player>, holding <object>s that do not yet belong to any <player> but can only be taken by a specific <player>. <personal_supply> extends <reserve>. Core difference from <supply>: <supply> is public and all players may take from it; <personal_supply> is exclusive, only the assigned player may take from it, and other players cannot legally target it even if physically reachable. Objects here are typically not yet 'acquired' by the player — they are merely pre-allocated in front of that player, awaiting consumption, installation, or transfer. Typical examples: individual resource pools dealt from a common supply in some games, private buffers of draftable components."
+      },
+      "<ownership>": {
+        "type": "<player>",
+        "description": {
+          "zh": "此 <reserve> 归属于特定 <player>，用于表达专属访问权；但其中的 <object> 未必已归该玩家所有，只是仅允许该玩家操作。",
+          "en": "This <reserve> belongs to a specific <player>, expressing exclusive access; however, the <object>s inside are not necessarily owned by that player yet — they are simply restricted to that player's operations."
+        }
+      },
+      "<information_visibility>": "private",
       "constraints": {
         "required": [],
         "optional": []
@@ -1715,8 +1740,8 @@
       "parent": "<player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "归属于单个 <player> 的私有 <player_zone>，用于存放该 <player> 已获得但尚未激活的 <piece> 或 <token>。<player_holding> 继承自 <player_zone>。其核心语义是「保留但未投入使用」——此区域中的 <object> 尚未触发 <effect>，不直接参与公共游戏逻辑（如计分、战斗、生产）。<player> 通常可从 <player_holding> 中打出 <piece> 以将其移入公开区域。常见用途：手牌、已保留的卡牌、秘密任务指示物、未建造的板块、个人目标标记。",
-        "en": "A private <player_zone> belonging to a single <player>, holding <piece>s or <token>s that the <player> has acquired but not yet activated. <player_holding> extends <player_zone>. Its core semantic is 'reserved but not yet in play' — <object>s here have not had their <effect>s triggered and do not directly participate in public game logic (e.g., scoring, combat, production). The <player> can typically <play> <piece>s from their <player_holding> to move them into a public zone. Common uses: hand cards, reserved cards, secret mission tokens, unbuilt tiles, personal objective markers."
+        "zh": "归属于单个 <player> 的私有 <player_zone>，用于存放该 <player> 已获得但尚未激活的 <piece> 或 <token>。<player_holding> 继承自 <player_zone>。其核心语义是「保留但未投入使用」——此区域中的 <object> 已经归该玩家所有，但尚未触发 <effect>，不直接参与公共游戏逻辑（如计分、战斗、生产）。<player> 通常可从 <player_holding> 中打出 <piece> 以将其移入公开区域。常见用途：手牌、已保留的卡牌、秘密任务指示物、未建造的板块、个人目标标记、仓库中的资源/材料。注意：因为其中的物件已经属于玩家，所以它不同于 <personal_supply>（个人供应堆中的物件尚未属于玩家）。",
+        "en": "A private <player_zone> belonging to a single <player>, holding <piece>s or <token>s that the <player> has acquired but not yet activated. <player_holding> extends <player_zone>. Its core semantic is 'reserved but not yet in play' — <object>s here already belong to the player but have not had their <effect>s triggered and do not directly participate in public game logic (e.g., scoring, combat, production). The <player> can typically <play> <piece>s from their <player_holding> to move them into a public zone. Common uses: hand cards, reserved cards, secret mission tokens, unbuilt tiles, personal objective markers, resources/materials in storage. Note: because its contents are already owned by the player, it is distinct from <personal_supply> (whose contents are not yet owned)."
       },
       "constraints": {
         "required": [],

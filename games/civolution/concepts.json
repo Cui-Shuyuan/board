@@ -1364,11 +1364,11 @@
         "zh": "仓库区",
         "en": "Storage Area"
       },
-      "parent": "<ontology::player_zone>",
+      "parent": "<ontology::player_holding>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上存放 <stored_material> 的区域。<storage_area> 继承自 <ontology::player_zone>。同类型材料堆叠放置，可通过交易模组出售换钱。",
-        "en": "The area on the <player_console> for storing <stored_material>s. <storage_area> extends <ontology::player_zone>. Same-type materials are stacked and can be sold via the Trade module."
+        "zh": "<player_console> 上存放 <stored_material> 的区域。<storage_area> 继承自 <ontology::player_holding>。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::supply> 或 <ontology::personal_supply>，因为其中的材料已归玩家所有。",
+        "en": "The area on the <player_console> for storing <stored_material>s. <storage_area> extends <ontology::player_holding>. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::supply> or <ontology::personal_supply>, because its contents are already owned by the player."
       }
     },
     {
