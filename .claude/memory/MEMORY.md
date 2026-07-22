@@ -4,6 +4,7 @@
 - [璀璨宝石规则进度](splendor-progress.md) — 概念层与流程层已完成，Runtime 已验证
 - [交互模型与 Runtime 目标](interaction-model.md) — LLM 与程序分工、无状态/无 CV 的阶段目标
 - [Runtime 架构](runtime-architecture.md) — BoardAI.Api 后端接口、工具设计与实现决策
+- [向量语义检索](vector-search.md) — Qdrant + BGE-small-zh ONNX 部署、索引重建、搜索路由
 - [文明演化规则进度](civolution-progress.md) — 第二款游戏素材已确认，Phase A 骨架待 review
 - [文明演化规则学习笔记](civolution-rules-notes.md) — 规则学习收获与 piece 表设计草案
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式

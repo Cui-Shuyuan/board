@@ -8,11 +8,11 @@ namespace BoardAI.Api.Controllers;
 [Route("api/[controller]")]
 public class ChatController : ControllerBase
 {
-    private readonly ILLMService _llmService;
+    private readonly ChatOrchestratorService _orchestrator;
 
-    public ChatController(ILLMService llmService)
+    public ChatController(ChatOrchestratorService orchestrator)
     {
-        _llmService = llmService;
+        _orchestrator = orchestrator;
     }
 
     [HttpPost]
@@ -20,12 +20,12 @@ public class ChatController : ControllerBase
     {
         try
         {
-            var reply = await _llmService.ChatAsync(request.Message);
+            var reply = await _orchestrator.ProcessAsync(request.GameId, request.Messages);
             return Ok(new ChatResponse { Reply = reply });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { error = $"LLM request failed: {ex.Message}" });
+            return StatusCode(500, new { error = $"Chat failed: {ex.Message}" });
         }
     }
 }

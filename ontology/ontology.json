@@ -90,11 +90,11 @@
         "zh": "资源",
         "en": "Resource"
       },
-      "parent": "<token>",
+      "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "一种可被 <player> 拥有、计数、转移和消耗的价值 <token>。<resource> 继承自 <token>。其核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 <resource> 的所有个体完全等价、可互相替代。与 <marker> 的区别在于：resource 会被 action 的 <cost> 消耗或作为 <effect> 产出，而 marker 只用于指示状态。",
-        "en": "A value <token> that can be owned, counted, transferred, and spent by <player>s. <resource> extends <token>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable. Unlike a <marker>, a resource is consumed by an action's <cost> or produced by an <effect>; a marker only indicates state."
+        "zh": "一种可被 <player> 拥有、计数、转移和消耗的价值概念。<resource> 继承自 <object>。其核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 <resource> 的所有个体完全等价、可互相替代。与 <marker> 的区别在于：resource 会被 action 的 <cost> 消耗或作为 <effect> 产出，而 marker 只用于指示状态。",
+        "en": "A value concept that can be owned, counted, transferred, and spent by <player>s. <resource> extends <object>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable. Unlike a <marker>, a resource is consumed by an action's <cost> or produced by an <effect>; a marker only indicates state."
       },
       "unit": {
         "type": "string",
@@ -108,6 +108,14 @@
         "description": {
           "zh": "此资源的外观描述。如「蓝色六边形宝石，表面有切割纹理」「金黄色圆形硬币，正面有五角星图案」。用于动画生成、UI 渲染和 AI 讲解时帮助玩家识别实物，不影响规则逻辑。",
           "en": "Visual description of this resource. E.g., 'blue hexagonal gem with cut texture', 'golden round coin with a star on the front'. Used for animation, UI rendering, and AI explanations to help players identify physical pieces. Does not affect rule logic."
+        }
+      },
+      "token": {
+        "type": "<token> | null",
+        "default": null,
+        "description": {
+          "zh": "用于表示此资源的那个看得见摸得着的小零件。如棕色八角柱代表食物。若为 null，说明此资源本身外观特征明显、玩家一看就知道是什么（如璀璨宝石的扑克筹码——宝石本身就是那样），不需要额外说明「用哪个零件代表它」。",
+          "en": "The tangible small piece used to represent this resource. E.g., a brown octagonal pillar represents food. If null, the resource itself has obvious visual characteristics and players can identify it at a glance (e.g., Splendor's poker chips — the gem is self-evidently what it is), so no extra explanation of 'which piece represents it' is needed."
         }
       },
       "constraints": {
@@ -125,6 +133,13 @@
             "description": {
               "zh": "资源外观描述——形状、颜色、图案等关键视觉信息。用于 UI 渲染和 AI 向玩家解释规则时帮助识别实物。",
               "en": "Visual description of this resource — shape, color, patterns. Used for UI rendering and AI explanations to help players identify physical pieces."
+            }
+          },
+          {
+            "id": "token",
+            "description": {
+              "zh": "用于表示此资源的物理 <token>。如棕色八角柱代表食物。null 表示资源本身辨识度高，不需要额外的小零件来代表。",
+              "en": "The physical <token> used to represent this resource. E.g., a brown pillar represents food. null means the resource is self-evident and needs no extra piece to represent it."
             }
           }
         ]
@@ -235,8 +250,8 @@
       "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "桌游中最常见的小型物理计数/标记物。<token> 继承自 <object>。它是 <marker> 和 <resource> 的共同基类：既可以作为标记物指示某个状态或位置，也可以作为资源被玩家拥有、计数和消耗。<token> 本身不携带 <effect>，不能被 <play>——它不会因为被放置或移动而自己改变游戏状态；真正改变状态的是规则 <event>。例如把伤害 <token> 放到卡上，卡「受伤」这个 <state> 才生效；消耗 1 个食物 <token> 的是某个 action 的 cost，而不是 <token> 自己。",
-        "en": "The most common small physical counter/marker in board games. <token> extends <object>. It is the common base class for <marker> and <resource>: it can serve as a marker indicating some state or position, or as a resource owned, counted, and spent by players. A <token> itself carries no <effect> and cannot be <play>ed — placing or moving it does not change game state by itself; the rules <event> does. For example, placing a damage <token> on a card makes the 'wounded' <state> take effect; spending a food <token> is the cost of an action, not an effect of the token."
+        "zh": "桌游中最常见的小型物理零件。<token> 继承自 <object>。它代表盒子里那些看得见摸得着、但自身高度抽象的小零件——八角柱、圆片、方块、米宝等。一个 <token> 本身不决定自己代表什么；它与游戏概念的关联是外在的、可变的——同一个棕色八角柱，放在仓库里代表食物，放到重置轨上代表重置标记。<token> 本身不携带 <effect>，不能被 <play>——它不会因为被放置或移动而自己改变游戏状态；真正改变状态的是规则 <event>。例如把伤害 <token> 放到卡上，卡「受伤」这个 <state> 才生效；消耗 1 个食物对应的 <token> 的是某个 action 的 cost，而不是 <token> 自己。",
+        "en": "The most common small physical piece in board games. <token> extends <object>. It represents those tangible, highly abstract little parts in the box — octagonal pillars, discs, cubes, meeples, etc. A <token> itself does not determine what it represents; its association with game concepts is external and mutable — the same brown pillar represents food when in the storage area, and a reset marker when placed on the reset track. A <token> itself carries no <effect> and cannot be <play>ed — placing or moving it does not change game state by itself; the rules <event> does. For example, placing a damage <token> on a card makes the 'wounded' <state> take effect; spending the <token> representing food is the cost of an action, not an effect of the token."
       },
       "appearance": {
         "type": "string",
@@ -279,11 +294,26 @@
         "zh": "标记物",
         "en": "Marker"
       },
-      "parent": "<token>",
+      "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "用于指示某个 <state> 或位置的 <token>。<marker> 继承自 <token>。它不被当作资源消耗，而是被放置、移动或移除来反映游戏规则中的状态变化。典型例子包括：阶段标记、天气标记、进程轨标记、计分标记、起始玩家标记等。",
-        "en": "A <token> used to indicate a <state> or position. <marker> extends <token>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules. Typical examples include phase indicators, weather indicators, progress track markers, score markers, and starting player markers."
+        "zh": "用于指示某个 <state> 或位置的概念。<marker> 继承自 <object>。它不被当作资源消耗，而是被放置、移动或移除来反映游戏规则中的状态变化。典型例子包括：阶段标记、天气标记、进程轨标记、计分标记、起始玩家标记等。",
+        "en": "A concept used to indicate a <state> or position. <marker> extends <object>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules. Typical examples include phase indicators, weather indicators, progress track markers, score markers, and starting player markers."
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "此标记物的外观描述——形状、尺寸、颜色、材质。如「直径 15mm 的圆形塑料圆片，蓝色半透明」「六边形厚纸板片，正面印有太阳图标」。",
+          "en": "Visual description of this marker — shape, size, color, material. E.g., '15mm diameter round plastic disc, blue translucent', 'hexagonal cardboard piece with a sun icon printed on the front'."
+        }
+      },
+      "token": {
+        "type": "<token> | null",
+        "default": null,
+        "description": {
+          "zh": "用于表示此标记物的那个看得见摸得着的小零件。如蓝色圆片代表分轨标记。若为 null，说明此标记物本身外观特征明显、玩家一看就知道是什么（如璀璨宝石的起始玩家标记——两个零件拼成钻石形状，不需要额外解释）。",
+          "en": "The tangible small piece used to represent this marker. E.g., a blue disc represents a score track marker. If null, the marker itself has obvious visual characteristics and players can identify it at a glance (e.g., Splendor's starting player marker — two pieces forming a diamond shape, no extra explanation needed)."
+        }
       },
       "constraints": {
         "required": [
@@ -301,6 +331,13 @@
             "description": {
               "zh": "此标记物代表的逻辑概念（如 State「起始玩家」、State「当前阶段」）。",
               "en": "The logical concept this marker represents (e.g., State 'starting player', State 'current phase')."
+            }
+          },
+          {
+            "id": "token",
+            "description": {
+              "zh": "用于表示此标记物的物理 <token>。如蓝色圆片代表分轨标记。null 表示标记物本身辨识度高，不需要额外的小零件来代表。",
+              "en": "The physical <token> used to represent this marker. E.g., a blue disc represents a score track marker. null means the marker is self-evident and needs no extra piece to represent it."
             }
           }
         ]
@@ -1653,9 +1690,17 @@
       },
       "<ownership>": null,
       "<information_visibility>": "public",
+      "capacity": {
+        "type": "integer | null",
+        "default": null,
+        "description": {
+          "zh": "市场展示 <object> 的数量上限。null 表示无固定上限。",
+          "en": "Maximum number of <object>s this market can display. null means no fixed limit."
+        }
+      },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": ["capacity"]
       }
     },
     {

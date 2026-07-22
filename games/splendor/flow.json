@@ -182,6 +182,7 @@
         {
           "id": "main_gameplay",
           "type": "<ontology::phase>",
+          "do_after": ["setup"],
           "loop": {
             "until": "<reach_15_prestige>"
           },
@@ -223,6 +224,7 @@
         {
           "id": "endgame",
           "type": "<ontology::phase>",
+          "do_after": ["main_gameplay"],
           "children": [
             {
               "id": "final_turn_cycle",
@@ -259,6 +261,7 @@
             {
               "id": "scoring",
               "type": "<ontology::phase>",
+              "do_after": ["final_turn_cycle"],
               "events": [
                 {
                   "id": "adjudicate_victory",

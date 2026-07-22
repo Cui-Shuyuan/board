@@ -8,6 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.18" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.21.2" />
+    <PackageReference Include="Qdrant.Client" Version="1.18.1" />
+    <PackageReference Include="Tokenizers.HuggingFace" Version="3.23.1" />
   </ItemGroup>
+
 
 </Project>

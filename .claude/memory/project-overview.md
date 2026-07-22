@@ -34,7 +34,7 @@ metadata:
 
 1. **第一阶段（基本完成）：定义世界模型** — 51 个本体概念已定义，可持续补充。
 2. **第二阶段（基本完成）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor），`concepts.json` 与 `flow.json` 已完成。
-3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。详见 [[splendor-progress]]、[[runtime-architecture]] 与 [[interaction-model]]。
+3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。**2026-07-22 升级为向量语义搜索**（Qdrant + BGE-small-zh ONNX），解决中文同义词/近义词检索问题（如"白色骰子" → "白色的六面骰"）。详见 [[vector-search]] 与 [[runtime-architecture]]。
 4. **第四阶段（当前重点）：补充更多游戏与游戏元信息** — 在 `games/` 下录入第二款桌游，验证系统在非 LLM 熟知规则上的真实表现；为每款游戏增加 `manifest.json` 供前端选游戏。
 5. **第五阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。
 6. **第六阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
@@ -45,9 +45,10 @@ metadata:
 - **后端服务**：`backend/BoardAI.Api/`，.NET 9，监听 `http://localhost:5000`
 - **规则查询**：`Controllers/RulesController.cs` + `Services/GameRulesService.cs`，按游戏目录读取 `ontology/ontology.json`、`games/{game}/concepts.json`、`games/{game}/flow.json`
 - **对话接口**：`Controllers/ChatController.cs` + `Services/ChatOrchestratorService.cs`，无状态设计，请求带 `game_id` + `messages` 历史，返回 `{ "reply": "..." }`
-- **工具调用**：LLM 可调 `search_concepts`、`get_concept`、`get_action_conditions`；工具结果中的 `<concept_id>` 引用也被提示为可继续查询
+- **工具调用**：LLM 可调 `search_concepts`、`get_concept`、`get_action_conditions`；`search_concepts` 已升级为**向量语义搜索**（BGE-small-zh ONNX + Qdrant），向量优先、关键词降级
+- **向量检索**：Qdrant（独立进程，按游戏分 collection）+ `EmbeddingService`（ONNX 推理）+ `scripts/rebuild_index.py`（Python 离线重建脚本）。索引涵盖 ontology、concepts.json、flow.json。详见 [[vector-search]]
 - **Prompt 管理**：`appsettings.json` 中的 `LLM:SystemPrompt` 是唯一来源，支持 `{game_name}` 占位符；`LLMOptions.cs` 中默认 prompt 为空。经过多次迭代，已去掉冗余工具列表，加入"查到足够信息就停"等约束。
-- **日志**：控制台输出每轮 reasoning、工具调用参数与结果，JSON 已美化且中文正常显示
+- **日志**：控制台输出每轮 reasoning、工具调用参数与结果，JSON 已美化且中文正常显示；每次请求打印 `[Chat] game: xxx, question: xxx, count: N`
 
 ## 当前重点
 

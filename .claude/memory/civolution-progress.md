@@ -14,7 +14,7 @@ metadata:
 - **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
 - **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
 - **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
-- **当前状态**: Phase A 骨架已完成，等待用户 review。namespace 方案（`<ontology::concept_id>`）已确认；对象清单与 8 阶段流程骨架待明天 review，之后再进入 Phase B 核心机制。
+- **当前状态**: Phase A review 进行中。进程版图与流程版图全部组件已过完；剩余：player_console 及其内部 zone、supply 类（module_supply 等）、deck 类、piece/token 类、大陆与地形、骰子等待 review。
 
 ## 为什么选这款游戏
 
@@ -63,7 +63,7 @@ metadata:
 
 ## 阻塞项
 
-- 当前 `concepts.json` 和 `flow.json` 是 Phase A/D 骨架，需要用户 review 后确认对象命名、parent 引用、遗漏项
+- 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 player_console、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
 - flow.json 中存在占位引用（如 `<activate_module>`、`<reset>`、`<action_phase_end>`），需要在 concepts.json 的 actions/conditions 层补全
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
@@ -71,14 +71,19 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-23**: 完成进程版图与流程版图全部组件的逐项 review，主要改动：
+  - **parent 归类修正**：`final_scoring_area` zone→track（本质是标记逐格推进的轨）；`dice_display`/`hunting_token_display`/`hundred_point_token_display` zone→supply；`goal_chip_display`/`income_chip_display`/`attribute_chip_display` zone→market
+  - **market 新增 capacity**：ontology `market` 加 `capacity` 字段（`integer | null`），游戏层 `goal_chip_display`=6、`income_chip_display`=玩家人数+2、`attribute_chip_display`=3；`dice_display` 按玩家人数+1 每种骰子
+  - **全局 namespace 引用**：`<ownership>` → `<ontology::ownership>`（21处）、`<information_visibility>` → `<ontology::information_visibility>`（21处）
+  - **定义清理**：全文去掉「继承自/extends」冗余表述，`parent` 字段已足够
+  - **8 个阶段概念**：按英文规则书名称定义 `phase_1_new_cards` ~ `phase_8_income`，不设 order（顺序由 flow.json 的 `do_after` 表达）
+  - **`event_card_space` 两格结构**：右格背面朝上牌堆、左格正面朝上当前时代牌；定义中 "区域" → `<ontology::zone>`
+  - **Splendor flow.json**：phase 排序从 `order` 改为 `do_after` 依赖链，与复杂流程一致
 - 2026-07-22: 完成对象清单层细节修正：`private_board` → `player_board` 重命名；supply 的 public/player 区系统一用 `<ownership>` 表达，不再拆分子类；Civolution 中的「进程版图/流程版图」改为 `<progress_board>` / `<sequence_board>` 概念引用
-- 2026-07-22: 新增 `<favor_of_ager_track>` 概念并替换所有「阿格拉恩惠轨」文本；新增 `<ontology::setting>` 概念承载世界观/背景，删除冗余的 `<civolution_setting>`，把《文明演化》创世技术学院/阿格拉考官故事写入 ontology
+- 2026-07-22: 新增 `<favor_of_ager_track>` 概念并替换所有「阿格拉恩惠轨」文本；新增 `<ontology::setting>` 概念承载世界观/背景，删除冗余的 `<civolution_setting>`
 - 2026-07-22: 明确设计约定：ontology 已有概念直接引用，不在游戏层再包一层
-- 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念
-- 2026-07-21: 完成 `games/civolution/concepts.json` 的 `objects` 层骨架，覆盖资源、piece、token、terrain、dice、zone、supply/market、aid 等约 80 个对象定义
-- 2026-07-21: 完成 `games/civolution/flow.json` 流程骨架，覆盖 Setup、4 时代 × 8 阶段、终局计分
-- 2026-07-21: 完成 Splendor 与 Civolution 的 ontology namespace 替换（`<ontology::concept_id>`），并完成后端 `get_concept` / `search_concepts` 的 namespace 查询支持
-- 2026-07-21: 用户确认 namespace 格式；对象清单与流程骨架待 review
+- 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念；完成 `concepts.json` objects 层骨架和 `flow.json` 流程骨架
+- 2026-07-21: 完成 namespace 替换并同步后端查询支持
 
 ## 相关记忆
 

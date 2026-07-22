@@ -82,8 +82,16 @@ metadata:
 ### 4. 顶层引用动态检测
 `GameRulesService` 不再硬编码 `"<hand>"`、`"<player_holding>"` 等 Splendor 专属顶层键，而是从 `games/{game}/concepts.json` 的顶层对象属性中自动检测。不同游戏可以有不同顶层引用。
 
-### 5. 搜索质量优化
-`search_concepts` 已改为按空白/标点分词、任意词命中即返回（OR 逻辑），并在解码后的字符串字段中递归匹配，解决了早期中文多词查询因 JSON 转义而 miss 的问题。
+### 5. 搜索质量优化：向量检索
+`search_concepts` 已升级为**向量优先 + 关键词降级**双路由：
+- 向量检索：BGE-small-zh ONNX 模型（512 维）→ Qdrant 余弦相似度 → top-10
+- 关键词降级：原有的分词 + 子串匹配（向量不可用或无结果时自动切换）
+
+Qdrant 按游戏分 collection（`board_{gameId}`），索引涵盖 ontology、concepts.json（objects/actions/triggers/conditions/top_level_refs）、flow.json（递归展开全流程树）。
+
+向量索引通过 Python 脚本 `scripts/rebuild_index.py` 独立管理，不依赖 .NET。启动服务时不再重建索引（已持久化在 Qdrant 磁盘），改规则后需手动跑脚本。
+
+详见 [[vector-search]]。
 
 ### 6. Namespace 支持
 为避免 ontology 概念与游戏自定义概念重名（如 Civolution 中游戏自有的 `activity` 与 ontology 的 `action`），规则查询支持 `ontology::concept_id` 前缀：

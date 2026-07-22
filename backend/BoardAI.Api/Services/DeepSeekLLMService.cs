@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
@@ -21,15 +22,16 @@ public class DeepSeekLLMService : ILLMService
             new AuthenticationHeaderValue("Bearer", _options.ApiKey);
     }
 
-    public async Task<string> ChatAsync(string userInput, CancellationToken cancellationToken = default)
+    public async Task<LLMChatResponse> ChatWithMessagesAsync(
+        List<ChatMessage> messages,
+        List<ToolDefinition>? tools = null,
+        CancellationToken cancellationToken = default)
     {
         var request = new
         {
             model = _options.Model,
-            messages = new[]
-            {
-                new { role = "user", content = userInput }
-            }
+            messages = messages,
+            tools = tools?.Count > 0 ? tools : null
         };
 
         var response = await _httpClient.PostAsJsonAsync(
@@ -39,16 +41,14 @@ public class DeepSeekLLMService : ILLMService
 
         response.EnsureSuccessStatusCode();
 
-        var result = await response.Content.ReadFromJsonAsync<DeepSeekResponse>(cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<LLMChatResponse>(cancellationToken);
 
-        var content = result?.Choices?.FirstOrDefault()?.Message?.Content;
-
-        if (string.IsNullOrWhiteSpace(content))
+        if (result?.Choices == null || result.Choices.Count == 0)
         {
             throw new InvalidOperationException("LLM returned empty response.");
         }
 
-        return content;
+        return result;
     }
 }
 

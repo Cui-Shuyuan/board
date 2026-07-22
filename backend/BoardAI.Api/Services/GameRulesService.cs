@@ -7,17 +7,19 @@ namespace BoardAI.Api.Services;
 public class GameRulesService
 {
     private readonly string _basePath;
+    private readonly VectorSearchService? _vectorSearch;
     private readonly Dictionary<string, JsonDocument> _loadedFiles = new();
 
     private static readonly string[] ConceptArrayTypes = { "objects", "actions", "triggers", "conditions" };
 
-    public GameRulesService(IOptions<RulesOptions> options)
+    public GameRulesService(IOptions<RulesOptions> options, VectorSearchService? vectorSearch = null)
     {
         _basePath = options.Value.BasePath;
         if (string.IsNullOrWhiteSpace(_basePath))
         {
             throw new InvalidOperationException("Rules:BasePath is not configured.");
         }
+        _vectorSearch = vectorSearch;
     }
 
     public IReadOnlyList<string> GetGames()
@@ -199,12 +201,42 @@ public class GameRulesService
         return result;
     }
 
-    public IReadOnlyList<ConceptSummary> SearchConcepts(string game, string query)
+    public async Task<IReadOnlyList<ConceptSummary>> SearchConceptsAsync(string game, string query)
+    {
+        // 1. 向量搜索优先
+        if (_vectorSearch != null && !string.IsNullOrWhiteSpace(query))
+        {
+            try
+            {
+                var results = await _vectorSearch.SearchAsync(game, query, topK: 10);
+                if (results.Count > 0)
+                {
+                    return results.Select(r => new ConceptSummary
+                    {
+                        Id = r.ConceptId,
+                        Name = r.NameZh,
+                        Type = r.Type,
+                    }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Vector search failed: {ex.Message}");
+            }
+        }
+
+        // 2. 降级：关键词搜索
+        return KeywordSearch(game, query);
+    }
+
+    /// <summary>
+    /// 原有关键词搜索逻辑（向量搜索不可用或没结果时降级）。
+    /// </summary>
+    public IReadOnlyList<ConceptSummary> KeywordSearch(string game, string query)
     {
         var terms = Tokenize(query).ToList();
         if (terms.Count == 0) return Array.Empty<ConceptSummary>();
 
-        // Detect namespace in query, e.g. "ontology::resource"
         var (ns, localQuery) = ParseNamespace(query);
         var localTerms = Tokenize(localQuery).ToList();
 
@@ -239,6 +271,165 @@ public class GameRulesService
         }
 
         return results;
+    }
+
+    /// <summary>
+    /// 提取游戏所有概念的索引条目，用于向量化。
+    /// </summary>
+    public IReadOnlyList<ConceptIndexItem> GetIndexItems(string game)
+    {
+        var result = new List<ConceptIndexItem>();
+
+        // ontology 概念（不限定 game）
+        foreach (var c in ListConcepts(game, "ontology"))
+        {
+            var detail = GetConcept(game, c.Id);
+            result.Add(new ConceptIndexItem
+            {
+                ConceptId = c.Id,
+                Type = "ontology",
+                NameZh = c.Name,
+                NameEn = ExtractEnName(detail),
+                SearchText = BuildSearchText(c, detail),
+            });
+        }
+
+        foreach (var type in ConceptArrayTypes)
+        {
+            foreach (var c in ListConcepts(game, type))
+            {
+                var detail = GetConcept(game, c.Id);
+                result.Add(new ConceptIndexItem
+                {
+                    ConceptId = c.Id,
+                    Type = type,
+                    NameZh = c.Name,
+                    NameEn = ExtractEnName(detail),
+                    SearchText = BuildSearchText(c, detail),
+                });
+            }
+        }
+
+        // 顶层引用
+        foreach (var c in ListConcepts(game, "top_level_refs"))
+        {
+            var detail = GetConcept(game, c.Id);
+            result.Add(new ConceptIndexItem
+            {
+                ConceptId = c.Id,
+                Type = "top_level_ref",
+                NameZh = c.Name,
+                NameEn = ExtractEnName(detail),
+                SearchText = BuildSearchText(c, detail),
+            });
+        }
+
+        // flow.json 流程
+        var flow = LoadGameFlow(game);
+        if (flow != null)
+        {
+            ExtractFlowItems(flow.RootElement, result);
+        }
+
+        return result;
+    }
+
+    private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result)
+    {
+        if (!root.TryGetProperty("procedures", out var procedures)) return;
+
+        foreach (var proc in procedures.EnumerateArray())
+        {
+            WalkFlowNode(proc, result);
+        }
+    }
+
+    private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result)
+    {
+        var id = node.TryGetProperty("id", out var idProp) ? idProp.GetString() ?? "" : "";
+        if (string.IsNullOrEmpty(id)) return;
+
+        var zhParts = new List<string> { id };
+
+        var nodeType = node.TryGetProperty("type", out var tp) ? tp.GetString() ?? "" : "";
+        if (!string.IsNullOrEmpty(nodeType))
+            zhParts.Add(nodeType);
+
+        if (node.TryGetProperty("name", out var name) && name.TryGetProperty("zh", out var nzh))
+            zhParts.Add(nzh.GetString()!);
+        if (node.TryGetProperty("description", out var desc) && desc.TryGetProperty("zh", out var dzh))
+            zhParts.Add(dzh.GetString()!);
+
+        result.Add(new ConceptIndexItem
+        {
+            ConceptId = id,
+            Type = "flow",
+            NameZh = node.TryGetProperty("name", out var nm) && nm.TryGetProperty("zh", out var nz)
+                ? nz.GetString() : id,
+            NameEn = null,
+            SearchText = string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))),
+        });
+
+        // 递归 children
+        if (node.TryGetProperty("children", out var children))
+        {
+            foreach (var child in children.EnumerateArray())
+            {
+                WalkFlowNode(child, result);
+            }
+        }
+
+        // events（嵌入的 event 节点也索引入）
+        if (node.TryGetProperty("events", out var events))
+        {
+            foreach (var evt in events.EnumerateArray())
+            {
+                WalkFlowNode(evt, result);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 为指定游戏重建向量索引。
+    /// </summary>
+    public async Task BuildEmbeddingIndexAsync(string game)
+    {
+        if (_vectorSearch == null) return;
+        var items = GetIndexItems(game);
+        await _vectorSearch.RebuildIndexAsync(game, items);
+    }
+
+    // ---- 私有辅助 ----
+
+    private static string BuildSearchText(ConceptSummary summary, JsonElement? detail)
+    {
+        var parts = new List<string> { summary.Id, summary.Name };
+        if (detail.HasValue)
+        {
+            var detailEl = detail.Value;
+            if (detailEl.TryGetProperty("name", out var name))
+            {
+                if (name.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString()!);
+                if (name.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
+            }
+            if (detailEl.TryGetProperty("definition", out var def))
+            {
+                if (def.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString()!);
+                if (def.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
+            }
+        }
+        return string.Join(" ", parts.Where(p => !string.IsNullOrEmpty(p)));
+    }
+
+    private static string? ExtractEnName(JsonElement? element)
+    {
+        if (element.HasValue
+            && element.Value.TryGetProperty("name", out var name)
+            && name.TryGetProperty("en", out var en))
+        {
+            return en.GetString();
+        }
+        return null;
     }
 
     private JsonDocument LoadOntology()

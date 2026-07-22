@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using BoardAI.Api.Models;
@@ -36,6 +37,8 @@ public class ChatOrchestratorService
         List<ChatMessage> history,
         CancellationToken cancellationToken = default)
     {
+        var sw = Stopwatch.StartNew();
+
         if (string.IsNullOrWhiteSpace(gameId))
         {
             throw new ArgumentException("game_id is required", nameof(gameId));
@@ -52,10 +55,11 @@ public class ChatOrchestratorService
 
         messages.AddRange(history);
 
-        _logger.LogInformation("[Chat] Game: {GameId}, Received {Count} history messages. Latest user input: {UserInput}",
+        var latestUser = history.LastOrDefault(m => m.Role == "user");
+        _logger.LogInformation("[Chat] game: {GameId}, question: {Question}, count: {Count}",
             gameId,
-            history.Count,
-            history.LastOrDefault(m => m.Role == "user")?.Content ?? string.Empty);
+            latestUser?.Content ?? "(empty)",
+            history.Count);
 
         var tools = BuildTools(gameId);
 
@@ -73,7 +77,8 @@ public class ChatOrchestratorService
             if (assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0)
             {
                 var reply = assistantMessage.Content ?? string.Empty;
-                _logger.LogInformation("[Chat] Game {GameId}, Final reply: {Reply}", gameId, reply);
+                sw.Stop();
+                _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms): {Reply}", gameId, round + 1, sw.Elapsed.TotalMilliseconds, reply);
                 return reply;
             }
 
@@ -89,7 +94,7 @@ public class ChatOrchestratorService
             // Execute each tool call and add results
             foreach (var toolCall in assistantMessage.ToolCalls)
             {
-                var result = ExecuteTool(toolCall, gameId, cancellationToken);
+                var result = await ExecuteToolAsync(toolCall, gameId, cancellationToken);
                 _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}", gameId, toolCall.Function.Name, FormatForLog(result));
                 messages.Add(new ChatMessage
                 {
@@ -116,7 +121,8 @@ public class ChatOrchestratorService
         }
 
         var finalReply = finalMessage.Content ?? string.Empty;
-        _logger.LogInformation("[Chat] Game {GameId}, Final reply: {Reply}", gameId, finalReply);
+        sw.Stop();
+        _logger.LogInformation("[Chat] Game {GameId}, Final reply after {Rounds} rounds ({Elapsed:F0}ms): {Reply}", gameId, MaxToolRounds, sw.Elapsed.TotalMilliseconds, finalReply);
         return finalReply;
     }
 
@@ -187,7 +193,7 @@ public class ChatOrchestratorService
         };
     }
 
-    private string ExecuteTool(ToolCall toolCall, string gameId, CancellationToken cancellationToken)
+    private async Task<string> ExecuteToolAsync(ToolCall toolCall, string gameId, CancellationToken cancellationToken)
     {
         try
         {
@@ -198,7 +204,7 @@ public class ChatOrchestratorService
                 case "search_concepts":
                     {
                         var query = args.RootElement.GetProperty("query").GetString() ?? string.Empty;
-                        var results = _rulesService.SearchConcepts(gameId, query);
+                        var results = await _rulesService.SearchConceptsAsync(gameId, query);
                         return JsonSerializer.Serialize(results);
                     }
 

@@ -243,12 +243,26 @@
               "id": "player_setup_dice",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿取 6 个白骰子放到骰子格（点数随机），1 个粉骰子放在面板旁。",
-                "en": "Each player takes 6 activation dice, places them on dice spaces with random values, and 1 fate die beside the console."
+                "zh": "每位玩家从游戏盒中拿取 6 个白骰子，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到控制台骰子区对应点数格上。",
+                "en": "Each player takes 6 activation dice from the game box, sets them to show each value 1-6, and places each on the corresponding dice space of their console."
               },
-              "source": "<dice_display>",
+              "source": "<ontology::game_box>",
+              "destination": "<dice_area>",
               "<object>": "<activation_die>",
               "quantity": 6,
+              "per_player": true
+            },
+            {
+              "id": "player_setup_fate_die",
+              "type": "<ontology::transfer>",
+              "description": {
+                "zh": "每位玩家从游戏盒中拿取 1 个粉骰子放在控制台旁边备用。",
+                "en": "Each player takes 1 fate die from the game box and places it beside their console."
+              },
+              "source": "<ontology::game_box>",
+              "destination": "<player_console>",
+              "<object>": "<fate_die>",
+              "quantity": 1,
               "per_player": true
             },
             {
@@ -461,8 +475,8 @@
               "id": "phase_1_new_cards",
               "type": "<ontology::phase>",
               "description": {
-                "zh": "阶段一：新的卡牌。翻开事件牌堆和五个研究牌堆顶部各一张牌，覆盖之前已翻开的同堆牌。",
-                "en": "Phase 1: New Cards. Reveal the top card of the event deck and each of the 5 research decks, covering any previously revealed cards from the same deck."
+                "zh": "阶段一：新的卡牌。翻开事件牌堆顶部一张（覆盖上时代的事件牌），显示本时代天气变化方向和事件效果。然后翻开 5 个背面朝下研究牌堆各顶部一张，放到对应的正面朝上研究牌堆上（第一时代新建堆，后续覆盖上时代卡牌）。",
+                "en": "Phase 1: New Cards. Reveal the top card of the face-down event stack (covering the previous era's event card), showing this era's weather change direction and event effect. Then reveal the top card from each of the 5 face-down research stacks onto the corresponding face-up research stack (forming new stacks in era 1, covering the previous card thereafter)."
               }
             },
             {
@@ -474,7 +488,7 @@
               }
             },
             {
-              "id": "phase_3_extra_harvest",
+              "id": "phase_3_extra_find",
               "type": "<ontology::phase>",
               "description": {
                 "zh": "阶段三：额外收获。从起始玩家开始顺时针，每位玩家选择一个有自己部落的区域，从该区域可产出的三种材料中选择一种获得一个，放入对应仓库。",
@@ -485,8 +499,8 @@
               "id": "phase_4_action",
               "type": "<ontology::phase>",
               "description": {
-                "zh": "阶段四：行动阶段。从起始玩家开始顺时针进行多轮回合；每回合玩家必须选择激活一个模组或执行重置。当阶段标记被推到红色的重置结束格后，所有玩家再一起进行一轮完整回合，行动阶段结束。",
-                "en": "Phase 4: Action Phase. Players take turns clockwise; each turn a player must activate a module or perform a Reset. After the phase indicator reaches the red reset-end space, all players take one more full round, then the Action Phase ends."
+                "zh": "阶段四：行动阶段。阶段标记从第一个黄色 reset space 开始。从起始玩家顺时针轮流转，每回合必须二选一：激活一个模组（支付恰好 2 个对应点数的白骰子或计划/焦点标记）或执行 Reset（前提：当前骰子区白骰子不超过 3 个）。Reset 分三步——A: 沿黄色箭头推动阶段标记到下一个 reset space（若到达红色 reset end space 则触发行动阶段结束）；B: 回收已使用的骰子并全部重掷；C: 将最左侧重置标记移入 idea space 或 food space。阶段标记到达红色格后，先补完当前轮，所有玩家再执行最后一轮完整回合，由起始玩家右手边的玩家结束行动阶段。",
+                "en": "Phase 4: Action Phase. The phase indicator starts on the first yellow reset space. Players take turns clockwise; each turn must either activate a module (pay exactly 2 activation dice of matching values, or planning/focus markers) or perform a Reset (only if the player has ≤3 activation dice on dice spaces). Reset has three steps — A: Advance the phase indicator along the yellow arrow to the next reset space (if it reaches the red reset-end space, the Action Phase end is triggered); B: Retrieve all used dice and re-roll them; C: Move the leftmost reset marker to the idea space or food space. When the phase indicator reaches the red space, complete the current round, then all players take one final full round, ending with the player right of the starting player."
               },
               "children": [
                 {
@@ -571,8 +585,8 @@
               "id": "phase_8_income",
               "type": "<ontology::phase>",
               "description": {
-                "zh": "阶段八：收入阶段。依次执行：1) 回收狩猎指示物；2) 执行收入芯片（从上到下、从左到右）；3) 结算雕像收入；4) 检查死亡部落惩罚等时代结束效果。",
-                "en": "Phase 8: Income Phase. Execute in order: 1) return hunting tokens; 2) execute income chips top-to-bottom, left-to-right; 3) resolve statue income; 4) apply end-of-era effects such as dead tribe penalties."
+                "zh": "阶段八：收入阶段。依次执行：A) 执行收入芯片（从上到下、从左到右）；B) 结算雕像收入（每座雕像按阿格拉恩惠轨当前位置计分）；C) 回收大陆上所有狩猎指示物至展示区；D) 每位玩家从供应堆补满空的重置列。完成后将阶段标记移回阶段一，开始新时代（或进入终局计分）。",
+                "en": "Phase 8: Income Phase. Execute in order: A) Execute income chips top-to-bottom, left-to-right; B) Score statues (each statue scores points based on the Favor of Agera track position); C) Return all hunting tokens from the continent to the display; D) Each player refills empty reset columns with markers from supply. Then return the phase indicator to Phase 1 for the next era (or proceed to final scoring)."
               }
             }
           ]
@@ -581,27 +595,43 @@
           "id": "final_scoring",
           "type": "<ontology::phase>",
           "description": {
-            "zh": "终局计分阶段。将阶段标记放到终局计分轨起点，每推进一格按该计分项计算所有玩家分数，直到终点。随后比较总分，最高者获胜。",
-            "en": "Final scoring phase. Move the phase indicator to the final scoring track start; advance it step by step, scoring all players for each category, until the end. The player with the highest total score wins."
+            "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点。分三轮计分：第一轮沿终局计分轨逐格结算 9 个计分项（技术/声望/知识/建设/文化/进化/繁荣/人口/扩张），每项用该格下方印的每单位分值计算；第二轮结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4 和阶段 5 仅在对应 stage tile 已激活时才计分）；第三轮结算 point bonus 卡——每张带分数加成图标的卡牌为其所在列的所有卡牌和收入芯片额外加分。总分最高者获胜。",
+            "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the final scoring track start. Score in three rounds: Round 1 — advance along the final scoring track, scoring each of the 9 categories (Technology/Prestige/Knowledge/Construction/Culture/Evolution/Prosperity/Population/Expansion) using the point value printed below each space. Round 2 — score the stage partition: each chip and card scores the points left of its stage (stages 4 and 5 only score if the corresponding stage tile is active). Round 3 — score point bonus cards: each card with the bonus icon grants extra points for all cards and income chips in its column. Highest total score wins."
           },
           "children": [
             {
-              "id": "final_scoring_track_resolution",
+              "id": "final_scoring_categories",
               "type": "<ontology::round>",
               "loop": {
                 "until": "<final_scoring_track_end>"
               },
               "description": {
-                "zh": "沿终局计分轨逐项计分。",
-                "en": "Score each category along the final scoring track."
+                "zh": "第一轮：沿终局计分轨逐项结算 9 个计分项。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
+                "en": "Round 1: Score each of the 9 scoring categories along the final scoring track. Points per unit for each category are determined by the printed value below the space (or the scoring tile covering it)."
+              }
+            },
+            {
+              "id": "final_scoring_stage_partition",
+              "type": "<ontology::phase>",
+              "description": {
+                "zh": "第二轮：控制台阶段分区计分。逐一检查阶段 1-5 中安装的每张卡牌和芯片，按阶段左侧分数计分。阶段 4/5 需对应的 stage tile 已激活才计分。",
+                "en": "Round 2: Score the stage partition. Check each card and chip in stages 1-5, scoring the points left of its stage. Stages 4/5 only score if the corresponding stage tile is active."
+              }
+            },
+            {
+              "id": "final_scoring_point_bonus_cards",
+              "type": "<ontology::phase>",
+              "description": {
+                "zh": "第三轮：point bonus 卡计分。每张带加成图标的卡牌为其所在列所有卡牌和收入芯片（含自身）提供额外分数。",
+                "en": "Round 3: Score point bonus cards. Each card with the bonus icon grants extra points for all cards and income chips in its column (including itself)."
               }
             },
             {
               "id": "determine_winner",
               "type": "<ontology::event>",
               "description": {
-                "zh": "比较所有玩家的成功点数，最高者获胜；平局按规则决定。",
-                "en": "Compare all players' success points; the highest wins, with tiebreakers per the rules."
+                "zh": "比较所有玩家的成功点数，最高者获胜。平局时，已执行更多模组升级的玩家胜出；仍平局则按座位顺序（从起始玩家顺时针）先到者胜。",
+                "en": "Compare all players' success points; the highest wins. Tiebreaker: the tied player with more module upgrades wins; if still tied, the tied player earliest in seating order (clockwise from starting player) wins."
               }
             }
           ]

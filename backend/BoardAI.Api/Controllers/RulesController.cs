@@ -55,12 +55,36 @@ public class RulesController : ControllerBase
     }
 
     [HttpGet("games/{game}/search")]
-    public IActionResult Search(string game, [FromQuery] string q)
+    public async Task<IActionResult> Search(string game, [FromQuery] string q)
     {
         if (string.IsNullOrWhiteSpace(q))
         {
             return BadRequest(new { error = "q parameter is required" });
         }
-        return Ok(_rulesService.SearchConcepts(game, q));
+        return Ok(await _rulesService.SearchConceptsAsync(game, q));
+    }
+
+    /// <summary>
+    /// 重建指定游戏的向量索引（改了规则文件后调用）。
+    /// </summary>
+    [HttpPost("admin/rebuild-index/{game}")]
+    public async Task<IActionResult> RebuildIndex(string game)
+    {
+        await _rulesService.BuildEmbeddingIndexAsync(game);
+        return Ok(new { message = $"Index rebuilt for '{game}'" });
+    }
+
+    /// <summary>
+    /// 重建全部游戏的向量索引。
+    /// </summary>
+    [HttpPost("admin/rebuild-all")]
+    public async Task<IActionResult> RebuildAll()
+    {
+        var games = _rulesService.GetGames();
+        foreach (var game in games)
+        {
+            await _rulesService.BuildEmbeddingIndexAsync(game);
+        }
+        return Ok(new { rebuilt = games, message = $"Rebuilt {games.Count} game(s)" });
     }
 }
