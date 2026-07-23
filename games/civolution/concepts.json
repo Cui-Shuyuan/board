@@ -271,17 +271,25 @@
         "zh": "模组",
         "en": "Module"
       },
-      "parent": "<ontology::piece>",
+      "parent": "<ontology::effect>",
       "abstract": false,
       "definition": {
-        "zh": "玩家个人面板上的可激活 <ontology::piece>，提供各种行动。共有 22 个模组：15 个主模组（可升级）、6 个特征模组和 1 个睡眠模组。激活模组需要支付两个对应点数的白骰子（或用计划/焦点标记替代）。",
-        "en": "An activatable <ontology::piece> on a player's console that provides various actions. There are 22 modules in total: 15 main modules (upgradable), 6 feature modules, and 1 Sleep module. Activating a module requires paying 2 activation dice of the matching values (or using planning/focus markers instead)."
+        "zh": "玩家可激活的 <ontology::effect>。模组的本质是一个效果——激活模组是 <ontology::action>（玩家宣告选择），支付两颗对应点数的白骰子是 <ontology::cost>，模组做的事是 <ontology::content>。共有 22 个模组：15 个主模组（可升级，带 level state）、6 个特征模组和 1 个睡眠模组。物理上，模组在等级一、二时由一块 <ontology::tile> 承载；等级三时印在 <player_console> 上（board content）。但无论物理载体如何变化，模组始终是同一个 effect——它的 identity 不因载体改变而改变。",
+        "en": "An activatable <ontology::effect>. A module is fundamentally an effect — activating a module is an <ontology::action> (the player declares their choice), paying two activation dice of matching values is the <ontology::cost>, and what the module does is the <ontology::content>. There are 22 modules in total: 15 main modules (upgradable, with level state), 6 feature modules, and 1 Sleep module. Physically, a module at levels 1-2 is carried by an <ontology::tile>; at level 3 it is printed on the <player_console> (board content). But regardless of physical carrier, the module remains the same effect — its identity does not change with its carrier."
+      },
+      "level": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "此模组效果的当前等级。每个等级对应不同的 cost 和 content。升级（<ontology::upgrade>）改变此 state——先提升 level，翻面或移除板块是 state change 的物理后果，而非升级的原因。",
+          "en": "The current level of this module effect. Each level has different cost and content. Upgrading (<ontology::upgrade>) changes this state — the level increases first; flipping or removing the tile is the physical consequence of the state change, not its cause."
+        }
       },
       "appearance": {
         "type": "string",
         "description": {
-          "zh": "矩形 cardboard 板块，正面印有费用点数（左下、右下）和行动图标，背面或下层为升级后的更强效果。",
-          "en": "A rectangular cardboard tile printed with activation costs (bottom-left and bottom-right) and action icons; the back or lower layer shows the upgraded, stronger effect."
+          "zh": "等级一、二时为矩形 cardboard 板块，正面印有费用点数和行动图标，背面为升级效果。等级三时印在控制台模组槽底部，不可移动。",
+          "en": "At levels 1-2: a rectangular cardboard tile printed with activation costs and action icons, with the upgraded effect on the back. At level 3: printed directly on the console module slot, unmovable."
         }
       },
       "module_type": {
@@ -306,8 +314,8 @@
       "parent": "<module>",
       "abstract": false,
       "definition": {
-        "zh": "可升级的行动模组，共有 15 种：迁徙、繁育、生产、运输、给养、探索、建造、计划、研究、成就、洞悉、突变、发明、交易、活动。每个主模组有等级一、二、三，通过升级行动翻面或移除上层板块实现。",
-        "en": "Upgradable action modules. There are 15 types: Migration, Procreation, Production, Transport, Sustenance, Exploration, Building, Planning, Research, Achievement, Insight, Mutation, Invention, Trade, Activity. Each has levels I, II, and III, upgraded by flipping or removing the upper tile."
+        "zh": "可升级的行动模组 effect，共有 15 种：迁徙、繁育、生产、运输、给养、探索、建造、计划、研究、成就、洞悉、突变、发明、交易、活动。每个主模组有 level 1~3——level 不同，cost 和 content 不同，但模组的 identity 不变。升级由 <ontology::upgrade> event 驱动：先改变 effect 的 level state，再执行对应的物理操作（level 1→2 翻面，level 2→3 移除板块露出板印效果）。",
+        "en": "Upgradable action module effects. There are 15 types: Migration, Procreation, Production, Transport, Sustenance, Exploration, Building, Planning, Research, Achievement, Insight, Mutation, Invention, Trade, Activity. Each has levels 1-3 — different levels have different cost and content, but the module's identity is unchanged. Upgrading is driven by an <ontology::upgrade> event: first change the effect's level state, then execute the corresponding physical operation (level 1→2 flip tile, level 2→3 remove tile to reveal board-printed effect)."
       }
     },
     {
@@ -319,8 +327,8 @@
       "parent": "<module>",
       "abstract": false,
       "definition": {
-        "zh": "用于获取特征标记的模组，共 6 个，分别对应 6 种特征。激活需要两个相同点数的白骰子。",
-        "en": "Modules used to gain feature markers. There are 6, each corresponding to one of the 6 features. Activation requires 2 activation dice showing the same value."
+        "zh": "不可升级的模组 effect，共 6 个，分别对应 6 种特征。激活需要两个相同点数的白骰子。",
+        "en": "Non-upgradable module effects. There are 6, each corresponding to one of the 6 features. Activation requires 2 activation dice showing the same value."
       }
     },
     {
@@ -332,8 +340,8 @@
       "parent": "<module>",
       "abstract": false,
       "definition": {
-        "zh": "填充用模组，可用任意两个白骰子激活。效果是获得 2 个创意标记或 1 个焦点标记。",
-        "en": "A filler module that can be activated with any two activation dice. Its effect is to gain 2 idea markers or 1 focus marker."
+        "zh": "不可升级的填充用模组 effect，可用任意两个白骰子激活。效果是获得 2 个创意标记或 1 个焦点标记。",
+        "en": "A non-upgradable filler module effect that can be activated with any two activation dice. Its effect is to gain 2 idea markers or 1 focus marker."
       }
     },
     {

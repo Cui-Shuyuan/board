@@ -71,6 +71,11 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-24**: 理清模块本质与安装模型：
+  - **模块是 effect，带 level state**：模块的 parent 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
+  - **安装 = transfer**：卡牌/芯片安装到控制台就是从 source zone transfer 到控制台上逻辑坐标的 zone。Zone 是纯概念不绑定物理尺寸，所以纸片可以互相叠压。控制台每个行列坐标就是一个 zone（有独立 capacity）。
+  - **实体承载的 zone 不会销毁**：初始芯片牌在 setup 后 zone 还在，只是没有规则再引用它——不需要引入 availability 概念。
+  - **三级模组不是三个 effect**：不拆成三个独立 effect 用 availability 开关，而是一个 effect 带 level state。目标列升级奖励图标是 board 上的 instant effect + trigger，不是被盖住的 tile。
 - **2026-07-23**: 完成本体重大重构——Board 概念拆分与 Zone 宿主模型修正：
   - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
   - **Zone 可由实体承载**：card 和 board 都可以提供 zone。`<card>` 新增可选 `zones` 字段。Civolution 的 `starting_chip_card` 已标注设置阶段提供的临时目标芯片 zone。

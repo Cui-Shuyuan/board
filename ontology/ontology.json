@@ -2325,8 +2325,8 @@
       "parent": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "将一个可升级的 <piece> 从当前等级提升至下一等级的 <event>。<upgrade> 继承自 <event>。升级通常表现为翻面（从等级一到等级二）或移除上层板块以露出下层（从等级二到等级三）。升级后的 <piece> 通常拥有更强或额外的效果。",
-        "en": "An <event> that advances an upgradable <piece> from its current level to the next level. <upgrade> extends <event>. An upgrade is usually represented by flipping the piece (level I to level II) or removing the upper tile to reveal the lower one (level II to level III). The upgraded <piece> typically has stronger or additional effects."
+        "zh": "改变一个 <effect> 的 level state 的 <event>。<upgrade> 继承自 <event>。升级的本质是 state change——effect 的 level 从 N 变为 N+1，对应的 cost 和 content 随之变化。常见的物理表现（翻面、移除上层板块露出下层）是 state change 的后果，而非升级的原因——规则要求玩家「作为升级的结果，将板块翻面」，而非「因为翻了面，所以升级了」。因果关系：state change 在先，物理操作是规则指令的被执行结果。",
+        "en": "An <event> that changes the level state of an <effect>. <upgrade> extends <event>. The essence of an upgrade is a state change — the effect's level goes from N to N+1, and the corresponding cost and content change accordingly. Common physical manifestations (flipping, removing the upper tile to reveal the lower layer) are consequences of the state change, not its cause — the rules instruct the player 'as a result of upgrading, flip the tile', not 'because you flipped it, it is now upgraded'. Causality: state change comes first; the physical operation is the executed result of the rules' instruction."
       },
       "constraints": {
         "required": [],
