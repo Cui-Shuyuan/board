@@ -71,6 +71,11 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-23**: 完成本体重大重构——Board 概念拆分与 Zone 宿主模型修正：
+  - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
+  - **Zone 可由实体承载**：card 和 board 都可以提供 zone。`<card>` 新增可选 `zones` 字段。Civolution 的 `starting_chip_card` 已标注设置阶段提供的临时目标芯片 zone。
+  - **Board 的 `zones` 字段替代 `maps_to`**：`zones` 表达物理宿主关系（附带 position 和 description），而非 aid 时代的弱视觉映射。Civolution 的 `player_console`、`progress_board`、`sequence_board`、`public_board` 均已从 `maps_to` 迁移至 `zones`，每个 zone 附带面板上的物理位置描述。
+  - **`player_console` 新增 `content`**：面板自带的基础活动图标——玩家无需安装任何研究牌即可使用的 innate 能力。
 - **2026-07-23**: 完成进程版图与流程版图全部组件的逐项 review，主要改动：
   - **parent 归类修正**：`final_scoring_area` zone→track（本质是标记逐格推进的轨）；`dice_display`/`hunting_token_display`/`hundred_point_token_display` zone→supply；`goal_chip_display`/`income_chip_display`/`attribute_chip_display` zone→market
   - **market 新增 capacity**：ontology `market` 加 `capacity` 字段（`integer | null`），游戏层 `goal_chip_display`=6、`income_chip_display`=玩家人数+2、`attribute_chip_display`=3；`dice_display` 按玩家人数+1 每种骰子

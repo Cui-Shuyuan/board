@@ -195,6 +195,67 @@
       }
     },
     {
+      "id": "board",
+      "name": {
+        "zh": "版图",
+        "en": "Board"
+      },
+      "parent": "<object>",
+      "abstract": false,
+      "definition": {
+        "zh": "一种承载游戏状态的物理组件。<board> 继承自 <object>。与 <aid> 的本质区别：<aid> 是纯被动参考物——上面的信息只是画上去的，收起来也不影响游戏；<board> 则承载游戏状态——上面可以放置 <piece> 和 <token>、可以容纳 <zone>（zone 虽由规则定义，但 board 是它的物理宿主）、可以携带自身的 <content>（如玩家面板上印着的活动图标能力，不依赖任何外部 <piece> 即可使用）。与 <piece> 的本质区别：<piece> 可以被 <transfer>——打出、交换、弃掉、移动；<board> 不可被转移——它固定属于某个 <player> 或公共区域，整个游戏过程中不会易主。<board> 的子类包括 <public_board> 和 <player_board>。",
+        "en": "A physical component that carries game state. <board> extends <object>. The essential difference from <aid>: an <aid> is a purely passive reference — the information on it is merely printed, and putting it away does not affect the game; a <board> carries game state — <piece>s and <token>s are placed on it, it can host <zone>s (zones are defined by rules, but the board is their physical host), and it can carry its own <content> (e.g., the activity icon ability printed on a player console, usable without any external <piece>). The essential difference from <piece>: a <piece> can be <transfer>red — played, exchanged, discarded, moved; a <board> cannot be transferred — it is fixed to a <player> or the public area and never changes hands during the game. Subclasses include <public_board> and <player_board>."
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "此版图的外观描述。必须说明形状、材质、尺寸和上面印了什么。如「折叠式硬纸板，展开后为 60cm×40cm 的矩形版图，表面印有世界地图、区域边界和计分轨」「约 A4 大小的硬纸板，印有模组槽位、阶段区和各种标记格」。",
+          "en": "Visual description of this board. Must describe shape, material, size, and what is printed on it. E.g., 'folded cardboard board, 60cm×40cm when unfolded, printed with a world map, region borders, and a scoring track', 'roughly A4-sized cardboard printed with module slots, stage partitions, and various marker spaces'."
+        }
+      },
+      "zones": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "此版图上承载的 <zone>。key 为 zone 的 id（如 \"<income_chip_area>\"），value 为对象，至少包含 `position`（该 zone 在版图上的物理位置描述，如「左上角」「右半部」），可选包含 `description`（补充说明）。注意：zone 本身由规则独立定义——board 不「创造」zone，board 只是 zone 的物理宿主。客人问「某某东西放哪」时，系统通过此字段找到位置信息并给出精确回答。",
+          "en": "The <zone>s hosted on this board. Key is the zone id (e.g., \"<income_chip_area>\"); value is an object containing at minimum `position` (physical location description on the board, e.g., 'top-left corner', 'right half'), optionally `description` for additional notes. Note: zones are independently defined by rules — the board does not 'create' zones, it is merely their physical host. When a guest asks 'where do I put X', the system uses this field to find the position and give a precise answer."
+        }
+      },
+      "content": {
+        "type": "array",
+        "description": {
+          "zh": "此版图自身携带的效果或能力。不需要打出任何 <piece> 即可使用——这些能力直接印在版图上，由版图自身赋予玩家。例如 Civolution 玩家面板上的基础活动图标。数组中的每项描述一个独立的能力或效果。这些内容在版图进入游戏时自动生效，不依赖任何外部 <piece>。",
+          "en": "Effects or abilities carried by this board itself. Usable without playing any <piece> — these abilities are directly printed on the board and granted to the player by the board itself. E.g., the basic activity icon on a Civolution player console. Each entry in the array describes one independent ability or effect. These contents take effect automatically when the board enters the game, independent of any external <piece>."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "版图外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局时的核心信息来源。",
+              "en": "Visual description of this board — shape, material, size, and what is printed on it. Core information source when AI introduces board layout to players."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "zones",
+            "description": {
+              "zh": "此版图承载的 <zone> 及其物理位置。key 为 zone id，value 含 position 字段。客人问位置相关问题时系统从此字段检索。仅当此 board 上确实有 zone 时才需填写。",
+              "en": "The <zone>s hosted on this board with their physical positions. Key is zone id; value contains a position field. The system searches this field when guests ask position-related questions. Only needed when this board actually hosts zones."
+            }
+          },
+          {
+            "id": "content",
+            "description": {
+              "zh": "此版图自身携带的效果或能力——不依赖任何外部 <piece> 即可使用。如玩家面板上印着的基础活动图标。",
+              "en": "Effects or abilities carried by this board itself — usable without any external <piece>. E.g., the basic activity icon printed on a player console."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "aid",
       "name": {
         "zh": "辅助物",
@@ -203,8 +264,8 @@
       "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "用于向 <player> 展示信息、辅助玩家识别和操作的游戏实体。<aid> 继承自 <object>。其核心特征是「可有可无」——它不参与游戏逻辑的运作，不产生、不修改、不删除游戏中的任何元素。<aid> 不等于它所呈现的东西：公共版图被收起来，<supply> 和 <market> 依然存在；手牌放在桌上，它们依然属于手牌 <zone>；桌子太小把 <token> 挤到旁边，它们依然是 <supply> 的一部分。<zone> 是抽象的归属关系容器，不因物理载体的有无或位置而改变。熟练玩家在脑中记住了所有 <zone> 的布局后，完全可以不借助 <aid> 进行游戏。",
-        "en": "A game entity used to present information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it is 'optional' — it does not participate in game logic and does not create, modify, or delete any game element. An <aid> is not the thing it depicts: put the public board away and the <supply> and <market> still exist; place your hand cards on the table and they still belong to the hand <zone>; table too small so <token>s overflow to the side — they are still part of the <supply>. <zone>s are abstract belonging containers, independent of the presence or position of any physical carrier. A skilled player who has memorized all <zone> layouts can play entirely without <aid>s."
+        "zh": "用于向 <player> 展示参考信息、辅助玩家识别和操作的游戏实体。<aid> 继承自 <object>。其核心特征是「不承载游戏状态」——它上面的信息只是画上去的，不因游戏进程而改变；它上面不放置 <piece> 或 <token>，也不容纳 <zone>。<aid> 是纯参考物：规则书被合上、玩家提示卡被收起来，游戏规则依然存在并生效。熟练玩家在脑中记住了所有规则后，完全可以不借助 <aid> 进行游戏。注意：如果一块板子上面可以放置棋子、需要翻面、会被放标记——它承载游戏状态，则它不是 <aid>，应归入 <board>。",
+        "en": "A game entity used to present reference information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it 'carries no game state' — the information on it is merely printed and does not change with gameplay; no <piece>s or <token>s are placed on it, and it hosts no <zone>s. An <aid> is a pure reference: close the rulebook, put away the player aid, and the game rules still exist and apply. A skilled player who has memorized all rules can play entirely without <aid>s. Note: if a board has pieces placed on it, needs to be flipped, or receives markers — it carries game state — then it is not an <aid> and should be categorized as a <board>."
       },
       "appearance": {
         "type": "string",
@@ -1625,12 +1686,20 @@
       "parent": "<piece>",
       "abstract": false,
       "definition": {
-        "zh": "一种 <piece>，通常为扁平矩形，有正面和背面两个面。<card> 继承自 <piece>。正面承载该卡牌的全部身份信息——名称、费用（<cost>）、效果文本（<effect>）、插画等；背面通常与同 <deck> 中其他卡牌一致，用于隐藏正面信息。卡牌是桌游中最常见的 <piece> 形态，也是 <play> 的主要对象——玩家从手牌（<player_holding> 的子类）中打出卡牌，支付其 <cost>，触发其 <effect>。",
-        "en": "A type of <piece>, typically flat and rectangular, with a front face and a back face. <card> extends <piece>. The front face carries the card's full identity — name, <cost>, <effect> text, illustration, etc.; the back face is usually identical across all cards in a <deck>, serving to conceal the front. Cards are the most common <piece> form in board games and the primary target of <play> — players play cards from their hand (a subclass of <player_holding>), pay their <cost>, and trigger their <effect>."
+        "zh": "一种 <piece>，通常为扁平矩形，有正面和背面两个面。<card> 继承自 <piece>。正面承载该卡牌的全部身份信息——名称、费用（<cost>）、效果文本（<effect>）、插画等；背面通常与同 <deck> 中其他卡牌一致，用于隐藏正面信息。卡牌是桌游中最常见的 <piece> 形态，也是 <play> 的主要对象——玩家从手牌（<player_holding> 的子类）中打出卡牌，支付其 <cost>，触发其 <effect>。某些 <card> 可以承载 <zone>——例如 Arkham Horror 的地点牌上面可以放置线索标记，Civolution 的初始芯片牌在设置阶段可以提供容纳目标芯片的 zone。这种 zone 的生命周期绑定在卡牌上——卡牌被移除时，其承载的 zone 也随之消失。",
+        "en": "A type of <piece>, typically flat and rectangular, with a front face and a back face. <card> extends <piece>. The front face carries the card's full identity — name, <cost>, <effect> text, illustration, etc.; the back face is usually identical across all cards in a <deck>, serving to conceal the front. Cards are the most common <piece> form in board games and the primary target of <play> — players play cards from their hand (a subclass of <player_holding>), pay their <cost>, and trigger their <effect>. Some <card>s can host <zone>s — e.g., location cards in Arkham Horror can hold clue tokens, and the starting chip card in Civolution provides a zone for goal chips during setup. Such a zone's lifecycle is bound to the card — when the card is removed, its hosted zone disappears with it."
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          {
+            "id": "zones",
+            "description": {
+              "zh": "此卡牌承载的 <zone>。部分卡牌可以充当 zone 的宿主——如 Arkham Horror 地点牌上的线索区、Civolution 初始芯片牌上的目标芯片区。zone 的生命周期绑定在此卡牌上——卡牌被移除时 zone 随之消失。普通卡牌（不承载 zone）可省略此字段。",
+              "en": "The <zone>s hosted on this card. Some cards serve as zone hosts — e.g., the clue zone on Arkham Horror location cards, the goal chip zone on Civolution's starting chip card. The zone's lifecycle is bound to the card — when the card is removed, the zone disappears with it. Omit for ordinary cards that don't host zones."
+            }
+          }
+        ]
       }
     },
     {
@@ -1799,17 +1868,17 @@
         "zh": "公共版图",
         "en": "Public Board"
       },
-      "parent": "<aid>",
+      "parent": "<board>",
       "abstract": false,
       "definition": {
-        "zh": "用于直观呈现游戏全局或局部 <zone> 布局的大型物理 <aid>。<public_board> 继承自 <aid>。它在视觉上标识一个或多个 <zone> 的位置、边界和内容，但不产生 <zone>——<zone> 的存在和属性完全由游戏规则独立定义，<public_board> 只是把它们画了出来。物理形态不固定，可由多个 <aid> 拼接而成；拼接而成的公共版图通过 <components> 列出其组成部分。",
-        "en": "A large physical <aid> that visually presents the layout of game-wide or local <zone>s. <public_board> extends <aid>. It visually marks the positions, boundaries, and contents of one or more <zone>s, but does not create <zone>s — <zone>s exist and are defined purely by game rules; the <public_board> merely depicts them. Physical form is not fixed and may consist of multiple assembled <aid>s; an assembled public board lists its parts via <components>."
+        "zh": "所有玩家共用的 <board>，承载公共游戏状态。<public_board> 继承自 <board>。它上面可以容纳公共 <zone>（如轨、展示区）、放置公共 <piece> 和 <token>，并可能携带自身的 <content>。<zone> 的存在和属性由游戏规则独立定义，<public_board> 是它们的物理宿主。物理形态不固定，可由多块板拼接而成；拼接而成的公共版图通过 <components> 列出其组成部分。",
+        "en": "A <board> shared by all players, carrying public game state. <public_board> extends <board>. It can host public <zone>s (e.g., tracks, display areas), hold public <piece>s and <token>s, and may carry its own <content>. <zone>s exist and are defined independently by game rules; the <public_board> is their physical host. Physical form is not fixed and may consist of multiple assembled boards; an assembled public board lists its parts via <components>."
       },
       "components": {
-        "type": "<aid>[]",
+        "type": "<board>[] | <aid>[]",
         "description": {
-          "zh": "当此公共版图由多个 <aid> 拼接而成时，列出组成它的 <aid> 实例。单块公共版图可省略此字段。注意：此处只应包含 aid，不包含 <piece>、<tile> 等游戏零件——后者属于游戏状态，应放在 <zone> 中。",
-          "en": "When this public board is physically assembled from multiple <aid>s, list the <aid> instances that compose it. Omit for a single-piece board. Note: only aids should be listed here; <piece>s, <tile>s, and other game components belong to game state and should reside in <zone>s."
+          "zh": "当此公共版图由多块板拼接而成时，列出组成它的 <board> 或 <aid> 实例。单块公共版图可省略此字段。注意：此处只应包含 board 和纯参考 aid，不包含 <piece>、<tile> 等游戏零件——后者属于游戏状态，应放在 <zone> 中。",
+          "en": "When this public board is physically assembled from multiple boards, list the <board> or <aid> instances that compose it. Omit for a single-piece board. Note: only boards and pure reference aids should be listed here; <piece>s, <tile>s, and other game components belong to game state and should reside in <zone>s."
         }
       },
       "constraints": {
@@ -1831,11 +1900,11 @@
         "zh": "玩家面板",
         "en": "Player Board"
       },
-      "parent": "<aid>",
+      "parent": "<board>",
       "abstract": false,
       "definition": {
-        "zh": "分配给单个 <player> 的专属物理 <aid>，用于标识该 <player> 私有 <zone> 的布局。<player_board> 继承自 <aid>。通常每个 <player> 各持一块，标识该 <player> 专属的 <player_zone>（如 <player_holding>、<development_area>）的位置及内容。与 <public_board> 的区别：<public_board> 全员共用，<player_board> 每人一块。",
-        "en": "A personal physical <aid> assigned to a single <player>, marking the layout of that <player>'s private <zone>s. <player_board> extends <aid>. Typically each <player> has one, marking the positions and contents of that <player>'s <player_zone>s (e.g., <player_holding>, <development_area>). Difference from <public_board>: <public_board> is shared by all, while <player_board> is one per player."
+        "zh": "分配给单个 <player> 的专属 <board>，承载该玩家的个人游戏状态。<player_board> 继承自 <board>。它上面可以容纳该玩家专属的 <player_zone>（如模组区、仓库区、收入区等），并可能携带自身的 <content>（如面板上印着的基础活动图标）。通常每个 <player> 各持一块。与 <public_board> 的区别：<public_board> 全员共用，<player_board> 每人一块。",
+        "en": "A personal <board> assigned to a single <player>, carrying that player's individual game state. <player_board> extends <board>. It can host that player's personal <player_zone>s (e.g., module area, storage area, income area) and may carry its own <content> (e.g., the basic activity icon printed on it). Typically each <player> has one. Difference from <public_board>: <public_board> is shared by all, while <player_board> is one per player."
       },
       "constraints": {
         "required": [],

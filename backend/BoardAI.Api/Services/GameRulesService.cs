@@ -203,30 +203,93 @@ public class GameRulesService
 
     public async Task<IReadOnlyList<ConceptSummary>> SearchConceptsAsync(string game, string query)
     {
-        // 1. 向量搜索优先
-        if (_vectorSearch != null && !string.IsNullOrWhiteSpace(query))
+        if (string.IsNullOrWhiteSpace(query))
+            return Array.Empty<ConceptSummary>();
+
+        // 把 query 拆成子查询，加上原句一起并行搜
+        var subQueries = SplitQuery(query);
+        var allQueries = new HashSet<string>(subQueries) { query };
+
+        // 并行：每个子句同时跑向量搜索 + 关键词搜索
+        var tasks = new List<Task<List<(ConceptSummary Summary, float Score)>>>();
+        foreach (var q in allQueries)
         {
-            try
+            if (_vectorSearch != null)
+                tasks.Add(VectorSearchAsync(game, q, topK: 5));
+            tasks.Add(KeywordSearchWithScoreAsync(game, q));
+        }
+
+        var allBatches = await Task.WhenAll(tasks);
+
+        // 合并去重：同一概念保留最高分
+        var merged = new Dictionary<string, (ConceptSummary Summary, float Score)>();
+        foreach (var batch in allBatches)
+        {
+            foreach (var (summary, score) in batch)
             {
-                var results = await _vectorSearch.SearchAsync(game, query, topK: 10);
-                if (results.Count > 0)
-                {
-                    return results.Select(r => new ConceptSummary
-                    {
-                        Id = r.ConceptId,
-                        Name = r.NameZh,
-                        Type = r.Type,
-                    }).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Vector search failed: {ex.Message}");
+                if (!merged.TryGetValue(summary.Id, out var existing) || existing.Score < score)
+                    merged[summary.Id] = (summary, score);
             }
         }
 
-        // 2. 降级：关键词搜索
-        return KeywordSearch(game, query);
+        return merged.Values
+            .OrderByDescending(x => x.Score)
+            .Select(x => x.Summary)
+            .ToList();
+    }
+
+    private async Task<List<(ConceptSummary Summary, float Score)>> VectorSearchAsync(
+        string game, string query, int topK)
+    {
+        try
+        {
+            var results = await _vectorSearch!.SearchAsync(game, query, topK: topK);
+            return results.Select(r => (
+                new ConceptSummary { Id = r.ConceptId, Name = r.NameZh, Type = r.Type },
+                r.Score
+            )).ToList();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Vector search failed for '{query}': {ex.Message}");
+            return new();
+        }
+    }
+
+    private Task<List<(ConceptSummary Summary, float Score)>> KeywordSearchWithScoreAsync(
+        string game, string query)
+    {
+        return Task.Run(() =>
+        {
+            var results = KeywordSearch(game, query);
+            return results.Select(r =>
+            {
+                // 关键词匹配给高分：精确 ID 命中 > 名字命中 > 内容命中
+                var terms = Tokenize(query).ToList();
+                float score = 1.0f;
+                if (terms.Any(t => r.Id.Equals(t, StringComparison.InvariantCultureIgnoreCase)))
+                    score = 1.0f;
+                else if (terms.Any(t => r.Name.Contains(t, StringComparison.InvariantCultureIgnoreCase)))
+                    score = 0.95f;
+                else
+                    score = 0.90f;
+                return (r, score);
+            }).ToList();
+        });
+    }
+
+    /// <summary>
+    /// 按标点和空格拆 query，不做 lowercase，保留 LLM 原始意图。
+    /// </summary>
+    private static string[] SplitQuery(string query)
+    {
+        return query.Split(
+            new[] { ' ', '\t', '\n', '\r', '，', '。', '、', '？', '！', '；', '：', '"', '"' },
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(t => t.Trim())
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Distinct()
+            .ToArray();
     }
 
     /// <summary>

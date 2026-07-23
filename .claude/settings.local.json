@@ -81,7 +81,14 @@
       "Bash(pkill -f \"BoardAI.Api\")",
       "Bash(rm -rf /d/qdrant/data/*)",
       "Bash(taskkill //F //IM qdrant.exe)",
-      "Bash(taskkill //F //IM BoardAI.Api.exe)"
+      "Bash(taskkill //F //IM BoardAI.Api.exe)",
+      "Bash(pip list *)",
+      "Bash(pipx --version)",
+      "Bash(/tmp/bgvenv/bin/python -m pip install --only-binary :all: numpy onnxruntime requests)",
+      "Bash(/c/Windows/py.exe --version)",
+      "Bash(cmd.exe /c \"where python\")",
+      "Bash(pacman -Ss mingw-w64-ucrt-x86_64-python-numpy)",
+      "Bash(pipx install *)"
     ]
   }
 }

@@ -160,6 +160,40 @@
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
         }
+
+        /* ---- 聊天区思考气泡 ---- */
+        .message.thinking {
+            align-self: flex-start;
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-bottom-left-radius: 4px;
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 88px;
+        }
+        .thinking-dot {
+            width: 8px;
+            height: 8px;
+            background: #c7c7cc;
+            border-radius: 50%;
+            animation: thinkPulse 1.6s infinite ease-in-out both;
+        }
+        .thinking-dot:nth-child(1) { animation-delay: 0s; }
+        .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes thinkPulse {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                background: #c7c7cc;
+            }
+            30% {
+                transform: translateY(-8px);
+                background: #007aff;
+            }
+        }
     </style>
 </head>
 <body>
@@ -188,7 +222,7 @@
             <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
-            <span>思考中…</span>
+            <span>正在思考，请稍候…</span>
         </div>
     </footer>
 
@@ -230,6 +264,8 @@
             }
         }
 
+        let thinkingBubble = null;
+
         function addMessage(role, content, extra) {
             const empty = chatMain.querySelector('.empty-state');
             if (empty) empty.remove();
@@ -251,9 +287,39 @@
             addMessage('system', text);
         }
 
+        function showThinking() {
+            removeThinking();
+            const empty = chatMain.querySelector('.empty-state');
+            if (empty) empty.remove();
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message thinking';
+            bubble.id = 'thinkingBubble';
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'thinking-dot';
+                bubble.appendChild(dot);
+            }
+            chatMain.appendChild(bubble);
+            chatMain.scrollTop = chatMain.scrollHeight;
+            thinkingBubble = bubble;
+        }
+
+        function removeThinking() {
+            if (thinkingBubble) {
+                thinkingBubble.remove();
+                thinkingBubble = null;
+            }
+        }
+
         function setLoading(isLoading) {
             sendBtn.disabled = isLoading;
             loadingIndicator.style.display = isLoading ? 'flex' : 'none';
+            if (isLoading) {
+                showThinking();
+            } else {
+                removeThinking();
+            }
         }
 
         async function sendMessage() {
@@ -308,6 +374,7 @@
 
         clearBtn.addEventListener('click', () => {
             messages = [];
+            thinkingBubble = null;
             chatMain.innerHTML = '<div class="empty-state">选择游戏后发送消息开始对话</div>';
         });
 

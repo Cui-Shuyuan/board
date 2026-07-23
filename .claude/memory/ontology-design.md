@@ -106,16 +106,19 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **68 个概念**，新增内容主要来自第二款游戏《文明演化》的机制扩展（见下文「为《文明演化》扩展本体的计划」）。
+本体已从最初的 51 个概念扩展到 **69 个概念**，新增内容主要来自第二款游戏《文明演化》的机制扩展（见下文「为《文明演化》扩展本体的计划」）。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
-### 结构概念（5 个）
-Player、Resource、Piece、Aid、Token
+### 结构概念（6 个）★ +Board
+Player、Resource、Piece、**Board**、Aid、Token
 
 ### 结构扩展（2 个）★ +Marker
 Score（extends Resource）、Marker（extends Token）
+
+### Board 扩展（2 个）★ 从 Aid 拆分
+Public Board（extends Board）、Player Board（extends Board）
 
 ### 流程概念（4 个）
 Round、Turn、Phase、Transfer
@@ -149,8 +152,10 @@ Supply 的 public/player 区分由 <ownership> 字段表达（null = 公共，pl
 ### Player Zone 扩展（2 个）
 Player Holding、Development Area
 
-### Aid 扩展（4 个）
-Public Board、Player Board、Player Aid、Rulebook
+### Aid 扩展（2 个）★ 缩窄为纯参考物
+Player Aid、Rulebook
+
+注：Public Board 和 Player Board 已从 Aid 拆分至新的 Board 概念。Board 承载游戏状态（上面可放 piece/token、可容纳 zone、可携带自身 content），Aid 则缩窄为纯被动参考物——不承载状态、不放置组件、不提供 zone。详见下方「Board 概念拆分」。
 
 ### 背景概念（1 个）★
 Setting
@@ -178,6 +183,9 @@ Hand
 - **Reserve 的 public/player 区分由 ownership 表达**：`<supply>`、`<market>`、`<deck>`、`<pool>` 都通过 `<ownership>`（null = 公共，`<player>` = 玩家专属）区分公共区与个人区，不再为 public/player 单独建子类。仓库等已属于玩家的存储区仍应归类为 `<player_holding>`。
 - **新增背景设定概念 `<setting>`**：用于描述游戏世界观、时代背景与关键角色，解释风味命名（如 `<favor_of_ager_track>` 中的「阿格拉」），不直接参与规则判定。
 - **ontology 概念直接引用，不在游戏层重复封装**：游戏文件里已有通用概念就直接用 `<ontology::concept_id>` 或声明其实例，不新建 `<game_xxx>` 包装。
+- **Board 概念拆分 ★**：`<board>` 是从 `<aid>` 中拆出的新基础概念（与 `<aid>`、`<piece>` 同级，均为 `<object>` 的子类）。核心判据：**是否承载游戏状态**。Board 承载状态——上面可以放置 piece 和 token、可以 host zone（zone 由规则定义，board 是物理宿主）、可以携带自身 content（如玩家面板上的活动图标）；Aid 不承载状态——纯被动参考物，收起来也不影响游戏。Board 不可被 transfer（区别于 piece），不可携带 effect 后被 play（同样区别于 piece）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
+- **Zone 可由实体承载 ★**：zone 的来源不再仅限于规则——card 和 board 都可以承载 zone。例如 Arkham Horror 地点牌上的线索区、Civolution 初始芯片牌上的目标芯片区（card 承载 zone）、控制台左上角的收入芯片区（board 承载 zone）。实体承载的 zone 生命周期绑定在宿主上——宿主被移除时 zone 随之消失。这只是承认了桌游中已有的物理事实，zone 的独立逻辑定义不受影响。
+- **Board 的 zones 字段替代 maps_to**：原 `<aid>` 的 `maps_to` 表达的是"视觉上画出了这些 zone"（单向弱关联）。Board 的 `zones` 表达的是"这些 zone 在我身上"（物理宿主关系），每个 zone 附带 `position` 和 `description`，供系统回答客人"放哪"类问题。
 
 ## 为《文明演化》扩展本体的计划
 

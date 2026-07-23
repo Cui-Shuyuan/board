@@ -444,8 +444,14 @@
       "parent": "<ontology::card>",
       "abstract": false,
       "definition": {
-        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置完成后塞入个人面板成为第一个收入芯片。",
-        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. After setup, it is slid under the console as the first income chip."
+        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入个人面板成为第一个收入芯片，其承载的 zone 随之消失。",
+        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the console as the first income chip, and its hosted zone disappears."
+      },
+      "zones": {
+        "<starting_chip_zone>": {
+          "position": { "zh": "此牌正面", "en": "face of this card" },
+          "description": { "zh": "设置阶段第 16 步，此牌翻开后提供临时 zone 供玩家放置选取的目标芯片。设置完成后此 zone 随牌一起消失。", "en": "During setup step 16, once revealed, this card provides a temporary zone for placing selected goal chips. This zone disappears with the card after setup." }
+        }
       }
     },
     {
@@ -652,8 +658,8 @@
       "parent": "<ontology::dice>",
       "abstract": false,
       "definition": {
-        "zh": "白色的六面骰子，每位玩家初始从游戏盒中拿取 6 个放入控制台骰子区（Setup 时翻至 ⚀⚁⚂⚃⚄⚅ 六个面各一个）。激活模组时必须支付恰好 2 个激活骰子——这两个骰子的点数必须分别匹配模组左下角和右下角的数值。已使用的骰子放在控制台下方，执行 Reset（前提：骰子区还剩不超过 3 个骰子）时回收全部已用骰子并全部重掷，重新分配到对应点数格上。骰子点数可通过花费创意标记（idea marker）加减 1 修改（1 和 6 视为相邻）。计划标记（planning marker）或焦点标记（focus marker）可替代对应点数的激活骰子。",
-        "en": "A white six-sided die. Each player starts with 6 from the game box, placed on the dice spaces of their console (set to show each value ⚀-⚅ once during Setup). To activate a module, exactly 2 activation dice must be paid — their values must match the two numbers printed at the bottom-left and bottom-right of the module. Used dice are placed below the console. A Reset (only allowed when ≤3 dice remain on dice spaces) retrieves and re-rolls all used dice, placing them onto matching value spaces. Die values can be modified by ±1 by spending idea markers (1 and 6 are adjacent). Planning markers or focus markers can substitute for an activation die of the matching value."
+        "zh": "白色的六面骰子，点数 1-6，用于支付模组激活费用。",
+        "en": "A white six-sided die with values 1-6, used to pay module activation costs."
       },
       "sides": {
         "type": "integer",
@@ -785,16 +791,19 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "由 <progress_board>、<sequence_board> 等 <ontology::aid> 与计分轨区域共同构成的公共游戏版图。它只提供视觉辅助与状态跟踪，中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
-        "en": "The shared game board formed by the progress board, sequence board, and score track area. It only provides visual aid and state tracking; the central play area is held by the <continent> public zone, whose <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
+        "zh": "由 <progress_board>、<sequence_board> 与计分轨区域共同构成的公共游戏版图。它承载公共游戏状态——进程轨、天气轨、展示区等；中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
+        "en": "The shared game board formed by the progress board, sequence board, and score track area. It carries public game state — progress tracks, weather gauge, display areas, etc. The central play area is held by the <continent> public zone; its <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
       },
       "components": [
         "<progress_board>",
         "<sequence_board>"
       ],
-      "maps_to": [
-        "<score_track>"
-      ]
+      "zones": {
+        "<score_track>": {
+          "position": { "zh": "公共版图外框", "en": "outer frame of the public board" },
+          "description": { "zh": "由 4 块外框组件拼接而成的计分轨，环绕大陆区域", "en": "score track assembled from 4 frame pieces, surrounding the continent area" }
+        }
+      }
     },
     {
       "id": "continent",
@@ -890,16 +899,31 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。其上印有<phase_sequence>、<weather_gauge>、<favor_of_ager_track>、<event_card_space>和<era_scoring_area>；其 <maps_to> 包含这些 zone/track，所有玩家共用。",
-        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. It is printed with the phase sequence, weather gauge, <favor_of_ager_track>, event card spaces, and era scoring area; its <maps_to> includes these zones/tracks, shared by all players."
+        "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。其上承载了阶段流程、天气轨、阿格拉恩惠轨、事件牌格和时代计分区；所有玩家共用。",
+        "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. It hosts the phase sequence, weather gauge, <favor_of_ager_track>, event card spaces, and era scoring area; shared by all players."
       },
-      "maps_to": [
-        "<phase_sequence>",
-        "<weather_gauge>",
-        "<event_card_space>",
-        "<era_scoring_area>",
-        "<favor_of_ager_track>"
-      ]
+      "zones": {
+        "<phase_sequence>": {
+          "position": { "zh": "流程版图上部", "en": "upper part of the sequence board" },
+          "description": { "zh": "阶段序列，六边形阶段标记沿黄色箭头移动指示当前阶段", "en": "phase sequence; the hexagonal phase indicator moves along the yellow arrow to show the current phase" }
+        },
+        "<weather_gauge>": {
+          "position": { "zh": "流程版图中部偏上", "en": "upper-middle of the sequence board" },
+          "description": { "zh": "天气轨，天气标记移动决定当前天气效果", "en": "weather gauge; the weather indicator moves to determine the current weather effect" }
+        },
+        "<favor_of_ager_track>": {
+          "position": { "zh": "流程版图中部", "en": "middle of the sequence board" },
+          "description": { "zh": "阿格拉恩惠轨，影响恩惠检定、雕像收入和终局计分", "en": "Favor of Agera track; affects favor tests, statue income, and final scoring" }
+        },
+        "<event_card_space>": {
+          "position": { "zh": "流程版图中部偏下", "en": "lower-middle of the sequence board" },
+          "description": { "zh": "事件牌格，右格背面朝上牌堆，左格正面朝上展示当前时代事件牌", "en": "event card spaces; right slot holds face-down stack, left slot shows current era's event card face up" }
+        },
+        "<era_scoring_area>": {
+          "position": { "zh": "流程版图下部", "en": "lower part of the sequence board" },
+          "description": { "zh": "时代计分区，每个时代按覆盖的计分板块类别结算", "en": "era scoring area; each era scores by the category of the scoring tile placed here" }
+        }
+      }
     },
     {
       "id": "progress_board",
@@ -910,26 +934,57 @@
       "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
-        "zh": "印刷狩猎表、5 条进程轨、终局计分区等参考信息的公共 <ontology::public_board>。其 <components> 包含作为 aid 的狩猎表；其 <maps_to> 包含 5 条进程轨、终局计分区以及展示供应区（骰子、狩猎标记、100 分标记、目标/收入/属性芯片）。",
-        "en": "A shared <ontology::public_board> printed with the hunting table, five progress tracks, final scoring area, and other reference information. Its <components> include the hunting table as an aid; its <maps_to> includes the five progress tracks, final scoring area, and display/supply zones (dice, hunting tokens, 100-point tokens, goal/income/attribute chips)."
+        "zh": "印刷狩猎表、5 条进程轨、终局计分区等参考信息的公共 <ontology::public_board>。其 <components> 包含作为 aid 的狩猎表；其 zones 承载 5 条进程轨、终局计分区以及展示供应区（骰子、狩猎标记、100 分标记、目标/收入/属性芯片）。",
+        "en": "A shared <ontology::public_board> printed with the hunting table, five progress tracks, final scoring area, and other reference information. Its <components> include the hunting table as an aid; its zones host the five progress tracks, final scoring area, and display/supply zones (dice, hunting tokens, 100-point tokens, goal/income/attribute chips)."
       },
       "components": [
         "<hunting_table>"
       ],
-      "maps_to": [
-        "<technology_track>",
-        "<prestige_track>",
-        "<knowledge_track>",
-        "<construction_track>",
-        "<culture_track>",
-        "<final_scoring_area>",
-        "<dice_display>",
-        "<hunting_token_display>",
-        "<hundred_point_token_display>",
-        "<goal_chip_display>",
-        "<income_chip_display>",
-        "<attribute_chip_display>"
-      ]
+      "zones": {
+        "<technology_track>": {
+          "position": { "zh": "进程版图中部，5 条进程轨之一", "en": "middle of the progress board, one of 5 progress tracks" }
+        },
+        "<prestige_track>": {
+          "position": { "zh": "进程版图中部，5 条进程轨之一", "en": "middle of the progress board, one of 5 progress tracks" }
+        },
+        "<knowledge_track>": {
+          "position": { "zh": "进程版图中部，5 条进程轨之一", "en": "middle of the progress board, one of 5 progress tracks" }
+        },
+        "<construction_track>": {
+          "position": { "zh": "进程版图中部，5 条进程轨之一", "en": "middle of the progress board, one of 5 progress tracks" }
+        },
+        "<culture_track>": {
+          "position": { "zh": "进程版图中部，5 条进程轨之一", "en": "middle of the progress board, one of 5 progress tracks" }
+        },
+        "<final_scoring_area>": {
+          "position": { "zh": "进程版图下部", "en": "lower part of the progress board" },
+          "description": { "zh": "终局计分时逐格推进标记，按覆盖的计分板块类别结算", "en": "during final scoring, a marker advances cell by cell; each cell's scoring tile determines the category to evaluate" }
+        },
+        "<dice_display>": {
+          "position": { "zh": "进程版图右上区域", "en": "upper-right area of the progress board" },
+          "description": { "zh": "公共骰子供應區，存放激活骰和命运骰", "en": "public dice supply holding activation dice and fate dice" }
+        },
+        "<hunting_token_display>": {
+          "position": { "zh": "进程版图右侧区域", "en": "right area of the progress board" },
+          "description": { "zh": "狩猎标记供应/展示区", "en": "hunting token supply/display area" }
+        },
+        "<hundred_point_token_display>": {
+          "position": { "zh": "进程版图右侧区域", "en": "right area of the progress board" },
+          "description": { "zh": "100 分标记/阻挡标记供应区", "en": "100-point token / blocking token supply area" }
+        },
+        "<goal_chip_display>": {
+          "position": { "zh": "进程版图右下区域", "en": "lower-right area of the progress board" },
+          "description": { "zh": "目标芯片展示区，上限 6 个", "en": "goal chip display area, capacity 6" }
+        },
+        "<income_chip_display>": {
+          "position": { "zh": "进程版图右下区域", "en": "lower-right area of the progress board" },
+          "description": { "zh": "收入芯片展示区，上限为玩家人数 + 2", "en": "income chip display area, capacity = player count + 2" }
+        },
+        "<attribute_chip_display>": {
+          "position": { "zh": "进程版图右下区域", "en": "lower-right area of the progress board" },
+          "description": { "zh": "属性芯片展示区，上限 3 个", "en": "attribute chip display area, capacity 3" }
+        }
+      }
     },
     {
       "id": "hunting_table",
@@ -1341,9 +1396,72 @@
       "parent": "<ontology::player_board>",
       "abstract": false,
       "definition": {
-        "zh": "每位玩家的个人游戏面板，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。",
-        "en": "Each player's personal board containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. "
-      }
+        "zh": "每位玩家的个人游戏面板，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。面板自身携带一个基础活动图标——玩家无需安装任何研究牌即可使用此能力。",
+        "en": "Each player's personal board containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. The console itself carries a basic activity icon — usable without any installed research cards."
+      },
+      "zones": {
+        "<module_area>": {
+          "position": { "zh": "面板右半部", "en": "right half of the console" },
+          "description": { "zh": "22 个固定槽位，放置主模组、特征模组和睡眠模组", "en": "22 fixed slots for main modules, feature modules, and the sleep module" }
+        },
+        "<dice_area>": {
+          "position": { "zh": "面板顶部", "en": "top of the console" },
+          "description": { "zh": "骰子掷出后按点数放在对应格上，也可放置计划标记和焦点标记", "en": "rolled dice are placed on matching value spaces; also holds planning markers and focus markers" }
+        },
+        "<stage_partition>": {
+          "position": { "zh": "面板中央偏左", "en": "center-left of the console" },
+          "description": { "zh": "按阶段 1~5 划分，用于安装研究牌。阶段 4 和 5 初始未激活", "en": "divided into stages 1-5 for installing research cards; stages 4 and 5 start inactive" }
+        },
+        "<goal_column>": {
+          "position": { "zh": "面板左侧", "en": "left side of the console" },
+          "description": { "zh": "用于安装目标芯片的列，每叠完成后可升级一个主模组", "en": "column for installing goal chips; completing a stack allows upgrading a main module" }
+        },
+        "<attribute_column>": {
+          "position": { "zh": "面板左侧，目标列旁", "en": "left side of the console, next to goal column" },
+          "description": { "zh": "用于安装属性芯片的列，安装后提供持续效果", "en": "column for installing attribute chips that provide continuous effects" }
+        },
+        "<income_area>": {
+          "position": { "zh": "面板左上角", "en": "top-left corner of the console" },
+          "description": { "zh": "用于安装收入芯片的区域，收入阶段从上到下、从左到右依次执行", "en": "area for installing income chips; executed top-to-bottom, left-to-right during the Income phase" }
+        },
+        "<storage_area>": {
+          "position": { "zh": "面板底部", "en": "bottom of the console" },
+          "description": { "zh": "存放已运输到仓库中的材料，同类型材料堆叠放置", "en": "stores materials transported here; same-type materials are stacked" }
+        },
+        "<food_space>": {
+          "position": { "zh": "面板底部偏左", "en": "bottom-left of the console" },
+          "description": { "zh": "存放食物标记的格子，每 3 个一列排列", "en": "space for food markers, arranged in columns of 3" }
+        },
+        "<money_space>": {
+          "position": { "zh": "面板底部偏右", "en": "bottom-right of the console" },
+          "description": { "zh": "存放钱币标记的格子，每 2 个一列排列", "en": "space for money markers, arranged in columns of 2" }
+        },
+        "<feature_space>": {
+          "position": { "zh": "面板左下角", "en": "bottom-left corner of the console" },
+          "description": { "zh": "6 个特征格，分别对应 6 种特征标记", "en": "6 feature spaces, one for each feature type" }
+        },
+        "<idea_space>": {
+          "position": { "zh": "面板左下角，特征格旁", "en": "bottom-left of the console, next to feature spaces" },
+          "description": { "zh": "放置创意标记的格子，上限 12 个", "en": "space for idea markers; capacity 12" }
+        },
+        "<dead_tribe_area>": {
+          "position": { "zh": "面板底部边缘", "en": "bottom edge of the console" },
+          "description": { "zh": "放置因未喂饱而死亡的部落", "en": "area for tribes that died from starvation" }
+        },
+        "<reset_column>": {
+          "position": { "zh": "面板右侧边缘", "en": "right edge of the console" },
+          "description": { "zh": "4 列重置轨道，每列有一个重置标记。执行 Reset 时沿列步进", "en": "4 reset columns, each holding a reset marker; stepped through during a Reset" }
+        }
+      },
+      "content": [
+        {
+          "id": "innate_activity",
+          "description": {
+            "zh": "玩家面板自带的基础活动图标。无需安装任何研究牌即可使用——玩家在行动阶段可以选择激活此活动图标，支付对应费用后执行基础活动效果。这是面板直接赋予玩家的能力，不依赖任何外部 <piece>。",
+            "en": "The basic activity icon printed on the player console. Usable without installing any research cards — during the Action phase, the player may choose to activate this activity icon, pay the corresponding cost, and perform the basic activity effect. This ability is granted directly by the console, independent of any external <piece>."
+          }
+        }
+      ]
     },
     {
       "id": "module_area",
