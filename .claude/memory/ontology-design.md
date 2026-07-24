@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-22，68 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-24，71 个概念）
 metadata:
   node_type: memory
   type: project
@@ -10,7 +10,7 @@ metadata:
 # 桌游本体设计
 
 ## 文件位置
-D:\workspace\board\ontology\ontology.json（统一本体，51 个概念）
+D:\workspace\board\ontology\ontology.json（统一本体，71 个概念）
 
 ## 统一本体
 最初分为 Structure Ontology（静态结构）和 Procedure Ontology（流程时序）两个文件，后合并。JSON 给程序读，不考虑 LLM 上下文长度。
@@ -202,7 +202,7 @@ Hand
 - **背景与世界观**: `<setting>` 已在 ontology 中加入，并承载《文明演化》的创世技术学院/阿格拉考官故事。
 - **轨道机制**: `<track>` 已在 ontology 中改为 `<zone>` 子类，`<score_track>` 继承 `<track>`。具体游戏的进程轨、恩惠轨、天气轨、阶段序列等作为游戏级概念定义，不入统一本体。
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
-- **升级机制**: `<upgrade>`，表达模组从等级一翻至等级二、替换为等级三
+- **升级机制**: `<upgrade>`（trigger），表达模组 level 提升；`<lose>` / `<gain>`（event），用于载体切换时的 effect 所有权转移
 - **区域与地点**: `<region>`（大陆板块上的连续同色区域）、`<terrain>`（森林/草原等七种类型）、`<campsite>`、`<location>`（地点板块，extends `<tile>`）
 - **选择与替代**: `<alternative_cost>` / `<choice>`，用于「支付资源或满足条件」「二选一行动」
 - **被动/持续效果**: `<passive_effect>` / `<location_effect>`，表达地点在激活模组时追加的效果
@@ -210,4 +210,4 @@ Hand
 扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
 
 **Why:** 本体是整个系统的类型系统，后续 Rule DSL、Tutorial Tree、Controller 都建立在它之上。
-**How to apply:** 第一阶段世界模型定义已扩展至 68 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。
+**How to apply:** 第一阶段世界模型定义已扩展至 71 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。

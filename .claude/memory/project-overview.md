@@ -32,7 +32,7 @@ metadata:
 
 ## 开发阶段
 
-1. **第一阶段（基本完成）：定义世界模型** — 51 个本体概念已定义，可持续补充。
+1. **第一阶段（基本完成）：定义世界模型** — 71 个本体概念已定义，可持续补充。
 2. **第二阶段（基本完成）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor），`concepts.json` 与 `flow.json` 已完成。
 3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。**2026-07-22 升级为向量语义搜索**（Qdrant + BGE-small-zh ONNX），解决中文同义词/近义词检索问题（如"白色骰子" → "白色的六面骰"）。详见 [[vector-search]] 与 [[runtime-architecture]]。
 4. **第四阶段（当前重点）：补充更多游戏与游戏元信息** — 在 `games/` 下录入第二款桌游，验证系统在非 LLM 熟知规则上的真实表现；为每款游戏增加 `manifest.json` 供前端选游戏。
@@ -55,12 +55,13 @@ metadata:
 第三阶段 Runtime 已通过 Splendor 验证，回答质量达到可用水平（简洁、TTS 友好、支持多轮上下文、能拒绝非桌游问题）。
 
 **第二款游戏《文明演化》（Civolution）正在进行 Phase A**。已完成：
-- `games/civolution/concepts.json` 对象清单层骨架（约 80 个对象），并已根据讨论完成多项修正：`private_board` → `player_board` 重命名、supply 公共/玩家区系统一用 `<ownership>` 表达、进程/流程版图改为 `<progress_board>` / `<sequence_board>` 引用、新增 `<favor_of_ager_track>`、新增 `<ontology::setting>` 并写入创世技术学院/阿格拉背景
+- `games/civolution/concepts.json` 对象清单层（169 个对象），已完成多项重构：`private_board` → `player_board` 重命名、supply 公共/玩家区统一用 `<ownership>` 表达、进程/流程版图改为 `<progress_board>` / `<sequence_board>` 引用、新增 `<favor_of_ager_track>`、新增 `<ontology::setting>`
+- 模块升级模型重构（2026-07-24）：采用 Lose + Gain 模型——15 个主模块各拆为 3 个独立 effect 实例（45 个），新增 15 个 module tile，删除 `module.level` 字段。`<upgrade>` 改为 trigger，`<lose>`/`<gain>` 新增为 Event 子类
 - `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
 - ontology namespace 方案确认（`<ontology::concept_id>`）并完成后端查询支持
 - 明确设计约定：ontology 已有概念直接引用，不在游戏层重复封装
 
-**当前阻塞**：等待用户 review 对象清单与 8 阶段流程骨架，确认无误后进入 Phase B 核心机制。详见 [[civolution-progress]]。
+**当前阻塞**：剩余 player_console、supply、deck、piece/token、大陆/地形、骰子等组件待 review；flow.json 中占位 action 待补全。详见 [[civolution-progress]]。
 
 短期仍需为每款游戏补 `manifest.json` 供前端选游戏。
 

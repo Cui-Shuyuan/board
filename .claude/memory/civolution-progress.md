@@ -14,7 +14,7 @@ metadata:
 - **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
 - **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
 - **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
-- **当前状态**: Phase A review 进行中。进程版图与流程版图全部组件已过完；剩余：player_console 及其内部 zone、supply 类（module_supply 等）、deck 类、piece/token 类、大陆与地形、骰子等待 review。
+- **当前状态**: Phase A 进行中。进程版图与流程版图已 review 完成；模块升级模型已重构为 Lose + Gain（15 主模块拆为 45 个 effect 实例 + 15 个 tile，player_console.content 已扩展至 16 项）。剩余：supply 类、deck 类、piece/token 类、大陆与地形、骰子等待 review。对象总数：169。
 
 ## 为什么选这款游戏
 
@@ -35,7 +35,7 @@ metadata:
 ## 评估结论
 
 - **可以做**，但工程量大。
-- 当前本体 68 个概念无法直接覆盖文明演化的骰子、轨道、模组升级、地点被动效果等机制。
+- 当前本体 71 个概念，已可覆盖文明演化的骰子、轨道、模组升级、地点被动效果等核心机制。
 - 口播稿存在信息缺口：大量「等级二/等级三效果如图」、研究牌具体能力、24 个地点效果大部分缺失、部分数值模糊。
 - 建议先做「能解释核心规则」的最小可用版，再逐步补全高级模组和牌表。
 
@@ -53,7 +53,7 @@ metadata:
 
 - **Phase A**: 对象清单 + ontology 扩展草案（骨架已完成，待 review）
   - 已扩展 ontology：新增 `dice`、`terrain`、`region`、`campsite`、`site`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`favor_test`、`upgrade`、`setting` 共 12 个概念
-  - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（约 80 个对象）
+  - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（169 个对象，含 45 个 effect 实例 + 15 个 module tile）
   - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
   - 剩余：对象层 review、修正 parent/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
 - **Phase B**: 核心机制（区域/相邻/迁徙/生产/运输/建造/安装研究牌/收入芯片）
@@ -114,4 +114,4 @@ metadata:
 - [[runtime-architecture]] — 后端接口与验证方式
 
 **Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
-**How to apply:** 当前节点为 Phase A 骨架完成、namespace 方案已确认；等待用户明天 review 对象清单与 8 阶段流程；review 通过后进入 Phase B 核心机制。
+**How to apply:** 当前节点为 Phase A 进行中——模块升级模型已重构（Lose + Gain），对象清单扩展至 169。剩余组件 review 完成后进入 Phase B 核心机制。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。

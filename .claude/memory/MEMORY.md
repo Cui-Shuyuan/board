@@ -1,10 +1,10 @@
 - [AI桌游讲师项目总览](project-overview.md) — 核心架构、设计理念、技术选型
-- [桌游本体设计](ontology-design.md) — JSON schema 约定、关键决策、当前进度（68 概念）
+- [桌游本体设计](ontology-design.md) — JSON schema 约定、关键决策、当前进度（71 概念）
 - [ontology 概念直接引用约定](ontology-direct-use.md) — 设计约定：已有 ontology 概念不在游戏层重复封装
 - [璀璨宝石规则进度](splendor-progress.md) — 概念层与流程层已完成，Runtime 已验证
 - [交互模型与 Runtime 目标](interaction-model.md) — LLM 与程序分工、无状态/无 CV 的阶段目标
 - [Runtime 架构](runtime-architecture.md) — BoardAI.Api 后端接口、工具设计与实现决策
 - [向量语义检索](vector-search.md) — Qdrant + BGE-small-zh ONNX 部署、索引重建、搜索路由
-- [文明演化规则进度](civolution-progress.md) — 第二款游戏素材已确认，Phase A 骨架待 review
+- [文明演化规则进度](civolution-progress.md) — 第二款游戏 Phase A 进行中，模块已重构为 Lose + Gain 模型
 - [文明演化规则学习笔记](civolution-rules-notes.md) — 规则学习收获与 piece 表设计草案
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式
