@@ -534,21 +534,51 @@
             "parent": "<ontology::tile>",
             "abstract": false,
             "definition": {
-                "zh": "放置在公共版图上的特殊 <ontology::tile>，通常初始背面朝上，通过特定条件翻开后持续生效。每个 <site> 有独特效果，在特定阶段或触发条件下结算。",
-                "en": "A special <ontology::tile> placed on the public board, usually face down at first and revealed by a specific condition to take lasting effect. Each <site> has a unique effect that resolves in specific phases or under trigger conditions."
+                "zh": "放置在 <continent> 上的特殊 <ontology::tile>，翻开前背面朝上，通过特定条件翻开后持续生效。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。建造点带有 <building_slot> 可建造 <settlement> 或 <statue>；其他地点仅有 effect 不带 zone。",
+                "en": "A special <ontology::tile> placed on the <continent>, face down until revealed by a specific condition, then taking lasting effect. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Building ground carries a <building_slot> for <settlement> or <statue>; other sites have only an effect without a zone."
+            },
+            "<ontology::zone>[]": [
+                "<building_slot>"
+            ]
+        },
+        {
+            "id": "site_slot",
+            "name": {
+                "zh": "地点板块格",
+                "en": "Site Slot"
+            },
+            "parent": "<ontology::zone>",
+            "abstract": false,
+            "definition": {
+                "zh": "位于 <continent_tile> 上的一个 <ontology::zone>，用于放置一块 <site>。仅 1×1 大陆板块上有此格，其余 7 块 2×1 板块没有。",
+                "en": "A <ontology::zone> on a <continent_tile> that holds one <site>. Only the 1×1 continent tile has this slot; the seven 2×1 tiles do not."
+            },
+            "contains": {
+                "type": "<site>",
+                "description": {
+                    "zh": "此格最多放置一块 <site>。",
+                    "en": "This slot holds at most one <site>."
+                }
             }
         },
         {
-            "id": "site_tile",
+            "id": "building_slot",
             "name": {
-                "zh": "地点板块",
-                "en": "Site Tile"
+                "zh": "建造格",
+                "en": "Building Slot"
             },
-            "parent": "<site>",
+            "parent": "<ontology::zone>",
             "abstract": false,
             "definition": {
-                "zh": "放置在 <continent> 上的特殊地点，翻开前背面朝上。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。每种效果不同。",
-                "en": "Special sites placed on the <continent>, face down until revealed. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Each has a different effect."
+                "zh": "位于建造点 <site> 上的一个 <ontology::zone>，用于建造 <settlement> 或 <statue>。仅建造点类型的地点板块上有此格。",
+                "en": "A <ontology::zone> on a building ground <site> that can hold a <settlement> or <statue>. Only the building ground site has this slot."
+            },
+            "contains": {
+                "type": "<settlement> | <statue>",
+                "description": {
+                    "zh": "此格可以建造一个 <settlement> 或一个 <statue>。",
+                    "en": "This slot can hold one <settlement> or one <statue>."
+                }
             }
         },
         {
@@ -560,39 +590,20 @@
             "parent": "<ontology::tile>",
             "abstract": false,
             "definition": {
-                "zh": "拼成 <continent> 的 <ontology::tile>。正面印有不同的地形区域、<material_slot> 和营地位置。",
-                "en": "A <ontology::tile> forming part of the <continent>. The front is printed with different terrain zones, <material_slot>s, and encampment positions."
+                "zh": "拼成 <continent> 的 <ontology::tile>。正面印有不同的 <territory>、<material_slot>、<encampment>、<fire_encampment>；仅 1×1 板块额外带有 <site_slot>。",
+                "en": "A <ontology::tile> forming part of the <continent>. The front is printed with different terrain zones, <material_slot>s, and encampment positions; only the 1×1 tile additionally carries a <site_slot>."
             },
             "size": {
                 "zh": "7 块为 2×1，1 块为 1×1",
                 "en": "Seven 2×1 tiles and one 1×1 tile"
             },
-            "<ontology::zone>[]": {
-                "<territory>": {
-                    "description": {
-                        "zh": "此板块上印有的各地形区域。每片独立成为一个地形 zone（森林/草原/丘陵/沼泽/山脉/沙漠/海洋）。每块板块实例的地形 zone 组合不同，由 setup 时使用的具体板块决定。",
-                        "en": "The terrain zones printed on this tile. Each area is an independent terrain zone (Forest/Grassland/Hills/Swamp/Mountains/Desert/Water). The exact combination varies per tile instance."
-                    }
-                },
-                "<material_slot>": {
-                    "description": {
-                        "zh": "此板块上每个陆地区域各有一个 <material_slot>，用于放置 <material_tile>。",
-                        "en": "Each land territory on this tile has one <material_slot> for placing a <material_tile>."
-                    }
-                },
-                "<encampment>": {
-                    "description": {
-                        "zh": "此板块上的圆形营地位置，用于放置 <tribe>。",
-                        "en": "Circular encampment positions on this tile for placing <tribe>s."
-                    }
-                },
-                "<fire_encampment>": {
-                    "description": {
-                        "zh": "此板块上的篝火营地，站上去的 <tribe> 可得分。",
-                        "en": "Fire encampments on this tile; <tribe>s standing here earn bonus points."
-                    }
-                }
-            }
+            "<ontology::zone>[]": [
+                "<territory>",
+                "<material_slot>",
+                "<encampment>",
+                "<fire_encampment>",
+                "<site_slot>"
+            ]
         },
         {
             "id": "material_tile",
@@ -860,8 +871,8 @@
             "parent": "<ontology::public_board>",
             "abstract": false,
             "definition": {
-                "zh": "由 <progress_board>、<sequence_board> 与计分轨区域共同构成的公共游戏版图。它承载公共游戏状态——进程轨、天气轨、展示区等；中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site_tile>、<material_tile> 等是游戏零件，不属于公共版图本身。",
-                "en": "The shared game board formed by the progress board, sequence board, and score track area. It carries public game state — progress tracks, weather gauge, display areas, etc. The central play area is held by the <continent> public zone; its <continent_tile>s, <site_tile>s, and <material_tile>s are game components, not part of the public board itself."
+                "zh": "由 <progress_board>、<sequence_board> 与计分轨区域共同构成的公共游戏版图。它承载公共游戏状态——进程轨、天气轨、展示区等；中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site>、<material_tile> 等是游戏零件，不属于公共版图本身。",
+                "en": "The shared game board formed by the progress board, sequence board, and score track area. It carries public game state — progress tracks, weather gauge, display areas, etc. The central play area is held by the <continent> public zone; its <continent_tile>s, <site>s, and <material_tile>s are game components, not part of the public board itself."
             },
             "components": [
                 "<progress_board>",
@@ -889,8 +900,8 @@
             "parent": "<ontology::zone>",
             "abstract": false,
             "definition": {
-                "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。它承载 <territory>、<encampment>、<site_tile>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
-                "en": "The public play area formed by all <continent_tile>s arranged in a 5×3 rectangular grid inside the score track frame. During setup, the 8 continent tiles (7 × 2×1 + 1 × 1×1 = 15 cells) are randomly arranged to fill this grid. It holds <territory>s, <encampment>s, <site_tile>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable encampments."
+                "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。它承载 <territory>、<encampment>、<site>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
+                "en": "The public play area formed by all <continent_tile>s arranged in a 5×3 rectangular grid inside the score track frame. During setup, the 8 continent tiles (7 × 2×1 + 1 × 1×1 = 15 cells) are randomly arranged to fill this grid. It holds <territory>s, <encampment>s, <site>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable encampments."
             },
             "grid": {
                 "dimensions": {
@@ -2207,8 +2218,8 @@
             "parent": "<ontology::phase>",
             "abstract": false,
             "definition": {
-                "zh": "每个时代的第五个 <ontology::phase>。结算 <continent> 上已翻开的 <site_tile> 效果。",
-                "en": "The fifth <ontology::phase> of each era. Resolve effects of revealed <site_tile>s on the <continent>."
+                "zh": "每个时代的第五个 <ontology::phase>。结算 <continent> 上已翻开的 <site> 效果。",
+                "en": "The fifth <ontology::phase> of each era. Resolve effects of revealed <site>s on the <continent>."
             }
         },
         {
