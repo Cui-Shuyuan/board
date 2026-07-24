@@ -129,6 +129,25 @@ def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
     return results
 
 
+def extract_instances(file_path: Path) -> list[dict[str, Any]]:
+    """从 instances.json 提取所有实例"""
+    data = load_json(file_path)
+    results = []
+
+    instance_array_types = ["effects", "modules", "cards", "continent_tiles", "sites", "chips"]
+    for arr_type in instance_array_types:
+        for c in data.get(arr_type, []):
+            results.append({
+                "concept_id": c.get("id", ""),
+                "type": arr_type,
+                "name_zh": c.get("name", {}).get("zh", ""),
+                "name_en": c.get("name", {}).get("en", ""),
+                "search_text": build_search_text(c),
+            })
+
+    return results
+
+
 def extract_flow(file_path: Path) -> list[dict[str, Any]]:
     """从 flow.json 递归提取所有流程节点"""
     data = load_json(file_path)
@@ -194,6 +213,10 @@ def rebuild_game(game_id: str):
     concepts_path = BOARD_ROOT / "games" / game_id / "concepts.json"
     if concepts_path.exists():
         items.extend(extract_concepts(concepts_path))
+
+    instances_path = BOARD_ROOT / "games" / game_id / "instances.json"
+    if instances_path.exists():
+        items.extend(extract_instances(instances_path))
 
     flow_path = BOARD_ROOT / "games" / game_id / "flow.json"
     if flow_path.exists():

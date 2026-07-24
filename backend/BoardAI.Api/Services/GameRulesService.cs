@@ -11,6 +11,7 @@ public class GameRulesService
     private readonly Dictionary<string, JsonDocument> _loadedFiles = new();
 
     private static readonly string[] ConceptArrayTypes = { "objects", "actions", "triggers", "conditions" };
+    private static readonly string[] InstanceArrayTypes = { "effects", "modules", "cards", "continent_tiles", "sites", "chips" };
 
     public GameRulesService(IOptions<RulesOptions> options, VectorSearchService? vectorSearch = null)
     {
@@ -45,6 +46,15 @@ public class GameRulesService
             }
             types.Add("top_level_refs");
             types.Add("flow");
+        }
+        var instances = LoadGameInstances(game);
+        if (instances != null)
+        {
+            foreach (var type in InstanceArrayTypes)
+            {
+                if (instances.RootElement.TryGetProperty(type, out var arr) && arr.GetArrayLength() > 0)
+                    types.Add(type);
+            }
         }
         return types;
     }
@@ -87,6 +97,12 @@ public class GameRulesService
         if (ConceptArrayTypes.Contains(type))
         {
             return ExtractArrayConcepts(concepts, type);
+        }
+
+        if (InstanceArrayTypes.Contains(type))
+        {
+            var instances = LoadGameInstances(game);
+            return instances == null ? Array.Empty<ConceptSummary>() : ExtractArrayConcepts(instances, type);
         }
 
         return Array.Empty<ConceptSummary>();
@@ -133,6 +149,17 @@ public class GameRulesService
             {
                 if (TryFindFlowProcedure(flow.RootElement, localId, out var procedure))
                     results.Add(procedure);
+            }
+
+            // Search instances (effects, modules, cards, tiles, sites, chips)
+            var instances = LoadGameInstances(game);
+            if (instances != null)
+            {
+                foreach (var type in InstanceArrayTypes)
+                {
+                    if (TryFindInArray(instances.RootElement, type, localId, out var instance))
+                        results.Add(instance);
+                }
             }
         }
 
@@ -314,6 +341,12 @@ public class GameRulesService
             all.AddRange(ListConcepts(game, "triggers"));
             all.AddRange(ListConcepts(game, "conditions"));
             all.AddRange(ListConcepts(game, "top_level_refs"));
+            all.AddRange(ListConcepts(game, "effects"));
+            all.AddRange(ListConcepts(game, "modules"));
+            all.AddRange(ListConcepts(game, "cards"));
+            all.AddRange(ListConcepts(game, "continent_tiles"));
+            all.AddRange(ListConcepts(game, "sites"));
+            all.AddRange(ListConcepts(game, "chips"));
         }
 
         var activeTerms = localTerms.Count > 0 ? localTerms : terms;
@@ -358,6 +391,23 @@ public class GameRulesService
         }
 
         foreach (var type in ConceptArrayTypes)
+        {
+            foreach (var c in ListConcepts(game, type))
+            {
+                var detail = GetConcept(game, c.Id);
+                result.Add(new ConceptIndexItem
+                {
+                    ConceptId = c.Id,
+                    Type = type,
+                    NameZh = c.Name,
+                    NameEn = ExtractEnName(detail),
+                    SearchText = BuildSearchText(c, detail),
+                });
+            }
+        }
+
+        // instances.json 实例
+        foreach (var type in InstanceArrayTypes)
         {
             foreach (var c in ListConcepts(game, type))
             {
@@ -511,6 +561,13 @@ public class GameRulesService
     private JsonDocument? LoadGameFlow(string game)
     {
         var path = Path.Combine(_basePath, "games", game, "flow.json");
+        if (!File.Exists(path)) return null;
+        return LoadJson(path);
+    }
+
+    private JsonDocument? LoadGameInstances(string game)
+    {
+        var path = Path.Combine(_basePath, "games", game, "instances.json");
         if (!File.Exists(path)) return null;
         return LoadJson(path);
     }

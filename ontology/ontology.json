@@ -171,8 +171,8 @@
       "parent": "<object>",
       "abstract": false,
       "definition": {
-        "zh": "可通过 <play> 进入游戏、并通过自身 <effect> 改变游戏状态的游戏零件。<piece> 继承自 <object>。<piece> 与 <token> 的本质区别：<piece> 携带 <effect>，可以被 <play>——打出它、建造它、激活它，游戏状态会因此改变。<effect> 的静态形态就是 <property>——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 <effect> 的规格说明。<token> 没有 <effect>，不能被 <play>——<token> 只负责标记某个事实，<token> 本身不做任何事。",
-        "en": "A game component that enters the game through <play> and changes game state through its own <effect>s. <piece> extends <object>. The essential difference between <piece> and <token>: a <piece> carries <effect>s and can be <play>ed — when you play it, build it, or activate it, the game state changes as a result. <effect>s in static form are <property>s — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all <effect> specifications. A <token> has no <effect>s and cannot be <play>ed — <token>s only mark facts; a <token> itself does nothing."
+        "zh": "一种游戏零件，携带 <effect> 并可改变游戏状态。<piece> 继承自 <object>。并非所有 piece 都由玩家持有——归游戏系统所有（<ownership> 为 null）的 piece 不可被玩家 <play>，而是作为游戏环境的一部分存在（如地图板块、遭遇牌库）。只有 <ownership> 归属于 <player> 的 piece 才可被该玩家 <play>——打出它、建造它、激活它，游戏状态会因此改变。<piece> 与 <token> 的本质区别：<piece> 携带 <effect>；<token> 没有 <effect>，只负责标记事实。<effect> 的静态形态是 <property>——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 <effect> 的规格说明。某些 <piece>（如 <card>、<tile>）可以承载 <zone>——zone 的生命周期绑定在宿主 piece 上，宿主被移除时 zone 随之消失。",
+        "en": "A game component that carries <effect>s and can change game state. <piece> extends <object>. Not all pieces are owned by players — pieces owned by the game system (<ownership> is null) cannot be <play>ed by players; they exist as part of the game environment (e.g., map tiles, encounter decks). Only pieces whose <ownership> belongs to a <player> can be <play>ed by that player — playing, building, or activating it causes game state changes. The essential difference between <piece> and <token>: a <piece> carries <effect>s; a <token> has no <effect>s and only marks facts. <effect>s in static form are <property>s — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all <effect> specifications. Some <piece>s (e.g., <card>, <tile>) can host <zone>s — the zone's lifecycle is bound to the host piece and disappears when the host is removed."
       },
       "appearance": {
         "type": "string",
@@ -191,7 +191,15 @@
             }
           }
         ],
-        "optional": []
+        "optional": [
+          {
+            "id": "zones",
+            "description": {
+              "zh": "此 piece 承载的 <zone>。部分 piece 可以充当 zone 的宿主——如卡牌上的线索区、板块上的领地区。zone 的生命周期绑定在此 piece 上——piece 被移除时 zone 随之消失。不承载 zone 的 piece 可省略此字段。",
+              "en": "The <zone>s hosted on this piece. Some pieces serve as zone hosts — e.g., a clue zone on a card, a territory zone on a tile. The zone's lifecycle is bound to the piece — when the piece is removed, the zone disappears with it. Omit for pieces that don't host zones."
+            }
+          }
+        ]
       }
     },
     {
@@ -1686,20 +1694,12 @@
       "parent": "<piece>",
       "abstract": false,
       "definition": {
-        "zh": "一种 <piece>，通常为扁平矩形，有正面和背面两个面。<card> 继承自 <piece>。正面承载该卡牌的全部身份信息——名称、费用（<cost>）、效果文本（<effect>）、插画等；背面通常与同 <deck> 中其他卡牌一致，用于隐藏正面信息。卡牌是桌游中最常见的 <piece> 形态，也是 <play> 的主要对象——玩家从手牌（<player_holding> 的子类）中打出卡牌，支付其 <cost>，触发其 <effect>。某些 <card> 可以承载 <zone>——例如 Arkham Horror 的地点牌上面可以放置线索标记，Civolution 的初始芯片牌在设置阶段可以提供容纳目标芯片的 zone。这种 zone 的生命周期绑定在卡牌上——卡牌被移除时，其承载的 zone 也随之消失。",
-        "en": "A type of <piece>, typically flat and rectangular, with a front face and a back face. <card> extends <piece>. The front face carries the card's full identity — name, <cost>, <effect> text, illustration, etc.; the back face is usually identical across all cards in a <deck>, serving to conceal the front. Cards are the most common <piece> form in board games and the primary target of <play> — players play cards from their hand (a subclass of <player_holding>), pay their <cost>, and trigger their <effect>. Some <card>s can host <zone>s — e.g., location cards in Arkham Horror can hold clue tokens, and the starting chip card in Civolution provides a zone for goal chips during setup. Such a zone's lifecycle is bound to the card — when the card is removed, its hosted zone disappears with it."
+        "zh": "一种 <piece>，通常为扁平矩形，有正面和背面两个面。<card> 继承自 <piece>。正面承载该卡牌的全部身份信息——名称、费用（<cost>）、效果文本（<effect>）、插画等；背面通常与同 <deck> 中其他卡牌一致，用于隐藏正面信息。卡牌是桌游中最常见的 <piece> 形态，也是 <play> 的主要对象——玩家从手牌（<player_holding> 的子类）中打出卡牌，支付其 <cost>，触发其 <effect>。",
+        "en": "A type of <piece>, typically flat and rectangular, with a front face and a back face. <card> extends <piece>. The front face carries the card's full identity — name, <cost>, <effect> text, illustration, etc.; the back face is usually identical across all cards in a <deck>, serving to conceal the front. Cards are the most common <piece> form in board games and the primary target of <play> — players play cards from their hand (a subclass of <player_holding>), pay their <cost>, and trigger their <effect>."
       },
       "constraints": {
         "required": [],
-        "optional": [
-          {
-            "id": "zones",
-            "description": {
-              "zh": "此卡牌承载的 <zone>。部分卡牌可以充当 zone 的宿主——如 Arkham Horror 地点牌上的线索区、Civolution 初始芯片牌上的目标芯片区。zone 的生命周期绑定在此卡牌上——卡牌被移除时 zone 随之消失。普通卡牌（不承载 zone）可省略此字段。",
-              "en": "The <zone>s hosted on this card. Some cards serve as zone hosts — e.g., the clue zone on Arkham Horror location cards, the goal chip zone on Civolution's starting chip card. The zone's lifecycle is bound to the card — when the card is removed, the zone disappears with it. Omit for ordinary cards that don't host zones."
-            }
-          }
-        ]
+        "optional": []
       }
     },
     {

@@ -1,0 +1,810 @@
+{
+	"meta":  {
+		 "game":  "civolution",
+		 "name":  {
+				  "zh":  "文明演化",
+				  "en":  "Civolution"
+			  },
+		 "version":  "0.1.0",
+		 "description":  {
+					 "zh":  "文明演化的具体实例清单。存放效果、模块板块、卡牌、大陆板块、地点、芯片等具体实例的详细数据。",
+					 "en":  "Instance catalog for Civolution. Stores detailed data for effects, module tiles, cards, continent tiles, sites, chips, and other concrete instances."
+				 }
+		 },
+	"effects":  [
+			{
+			"id":  "effect_migration_lv1",
+			"name":  {
+					 "zh":  "迁徙（等级一）",
+					 "en":  "Migration (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "迁徙模组的等级一效果。domain 为 <tile_migration> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Migration module. Domain is <tile_migration> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_migration_lv2",
+			"name":  {
+					 "zh":  "迁徙（等级二）",
+					 "en":  "Migration (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "迁徙模组的等级二效果。domain 为 <tile_migration> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Migration module. Domain is <tile_migration> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_migration_lv3",
+			"name":  {
+					 "zh":  "迁徙（等级三）",
+					 "en":  "Migration (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "迁徙模组的等级三效果。domain 初始为 null——升至 L3 时由 <player_console> gain。印于控制台模组槽底部。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Migration module. Domain initially null — gained by <player_console> on reaching L3. Printed at the bottom of the console module slot. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_procreation_lv1",
+			"name":  {
+					 "zh":  "繁育（等级一）",
+					 "en":  "Procreation (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "繁育模组的等级一效果。domain 为 <tile_procreation> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Procreation module. Domain is <tile_procreation> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_procreation_lv2",
+			"name":  {
+					 "zh":  "繁育（等级二）",
+					 "en":  "Procreation (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "繁育模组的等级二效果。domain 为 <tile_procreation> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Procreation module. Domain is <tile_procreation> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_procreation_lv3",
+			"name":  {
+					 "zh":  "繁育（等级三）",
+					 "en":  "Procreation (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "繁育模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Procreation module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_production_lv1",
+			"name":  {
+					 "zh":  "生产（等级一）",
+					 "en":  "Production (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "生产模组的等级一效果。domain 为 <tile_production> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Production module. Domain is <tile_production> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_production_lv2",
+			"name":  {
+					 "zh":  "生产（等级二）",
+					 "en":  "Production (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "生产模组的等级二效果。domain 为 <tile_production> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Production module. Domain is <tile_production> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_production_lv3",
+			"name":  {
+					 "zh":  "生产（等级三）",
+					 "en":  "Production (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "生产模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Production module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_transport_lv1",
+			"name":  {
+					 "zh":  "运输（等级一）",
+					 "en":  "Transport (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "运输模组的等级一效果。domain 为 <tile_transport> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Transport module. Domain is <tile_transport> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_transport_lv2",
+			"name":  {
+					 "zh":  "运输（等级二）",
+					 "en":  "Transport (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "运输模组的等级二效果。domain 为 <tile_transport> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Transport module. Domain is <tile_transport> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_transport_lv3",
+			"name":  {
+					 "zh":  "运输（等级三）",
+					 "en":  "Transport (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "运输模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Transport module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_sustenance_lv1",
+			"name":  {
+					 "zh":  "给养（等级一）",
+					 "en":  "Sustenance (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "给养模组的等级一效果。domain 为 <tile_sustenance> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Sustenance module. Domain is <tile_sustenance> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_sustenance_lv2",
+			"name":  {
+					 "zh":  "给养（等级二）",
+					 "en":  "Sustenance (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "给养模组的等级二效果。domain 为 <tile_sustenance> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Sustenance module. Domain is <tile_sustenance> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_sustenance_lv3",
+			"name":  {
+					 "zh":  "给养（等级三）",
+					 "en":  "Sustenance (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "给养模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Sustenance module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_exploration_lv1",
+			"name":  {
+					 "zh":  "探索（等级一）",
+					 "en":  "Exploration (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "探索模组的等级一效果。domain 为 <tile_exploration> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Exploration module. Domain is <tile_exploration> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_exploration_lv2",
+			"name":  {
+					 "zh":  "探索（等级二）",
+					 "en":  "Exploration (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "探索模组的等级二效果。domain 为 <tile_exploration> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Exploration module. Domain is <tile_exploration> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_exploration_lv3",
+			"name":  {
+					 "zh":  "探索（等级三）",
+					 "en":  "Exploration (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "探索模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Exploration module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_building_lv1",
+			"name":  {
+					 "zh":  "建造（等级一）",
+					 "en":  "Building (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "建造模组的等级一效果。domain 为 <tile_building> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Building module. Domain is <tile_building> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_building_lv2",
+			"name":  {
+					 "zh":  "建造（等级二）",
+					 "en":  "Building (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "建造模组的等级二效果。domain 为 <tile_building> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Building module. Domain is <tile_building> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_building_lv3",
+			"name":  {
+					 "zh":  "建造（等级三）",
+					 "en":  "Building (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "建造模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Building module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_planning_lv1",
+			"name":  {
+					 "zh":  "计划（等级一）",
+					 "en":  "Planning (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "计划模组的等级一效果。domain 为 <tile_planning> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Planning module. Domain is <tile_planning> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_planning_lv2",
+			"name":  {
+					 "zh":  "计划（等级二）",
+					 "en":  "Planning (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "计划模组的等级二效果。domain 为 <tile_planning> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Planning module. Domain is <tile_planning> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_planning_lv3",
+			"name":  {
+					 "zh":  "计划（等级三）",
+					 "en":  "Planning (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "计划模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Planning module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_research_lv1",
+			"name":  {
+					 "zh":  "研究（等级一）",
+					 "en":  "Research (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "研究模组的等级一效果。domain 为 <tile_research> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Research module. Domain is <tile_research> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_research_lv2",
+			"name":  {
+					 "zh":  "研究（等级二）",
+					 "en":  "Research (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "研究模组的等级二效果。domain 为 <tile_research> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Research module. Domain is <tile_research> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_research_lv3",
+			"name":  {
+					 "zh":  "研究（等级三）",
+					 "en":  "Research (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "研究模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Research module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_achievement_lv1",
+			"name":  {
+					 "zh":  "成就（等级一）",
+					 "en":  "Achievement (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "成就模组的等级一效果。domain 为 <tile_achievement> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Achievement module. Domain is <tile_achievement> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_achievement_lv2",
+			"name":  {
+					 "zh":  "成就（等级二）",
+					 "en":  "Achievement (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "成就模组的等级二效果。domain 为 <tile_achievement> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Achievement module. Domain is <tile_achievement> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_achievement_lv3",
+			"name":  {
+					 "zh":  "成就（等级三）",
+					 "en":  "Achievement (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "成就模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Achievement module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_insight_lv1",
+			"name":  {
+					 "zh":  "洞悉（等级一）",
+					 "en":  "Insight (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "洞悉模组的等级一效果。domain 为 <tile_insight> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Insight module. Domain is <tile_insight> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_insight_lv2",
+			"name":  {
+					 "zh":  "洞悉（等级二）",
+					 "en":  "Insight (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "洞悉模组的等级二效果。domain 为 <tile_insight> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Insight module. Domain is <tile_insight> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_insight_lv3",
+			"name":  {
+					 "zh":  "洞悉（等级三）",
+					 "en":  "Insight (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "洞悉模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Insight module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_mutation_lv1",
+			"name":  {
+					 "zh":  "突变（等级一）",
+					 "en":  "Mutation (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "突变模组的等级一效果。domain 为 <tile_mutation> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Mutation module. Domain is <tile_mutation> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_mutation_lv2",
+			"name":  {
+					 "zh":  "突变（等级二）",
+					 "en":  "Mutation (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "突变模组的等级二效果。domain 为 <tile_mutation> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Mutation module. Domain is <tile_mutation> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_mutation_lv3",
+			"name":  {
+					 "zh":  "突变（等级三）",
+					 "en":  "Mutation (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "突变模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Mutation module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_invention_lv1",
+			"name":  {
+					 "zh":  "发明（等级一）",
+					 "en":  "Invention (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "发明模组的等级一效果。domain 为 <tile_invention> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Invention module. Domain is <tile_invention> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_invention_lv2",
+			"name":  {
+					 "zh":  "发明（等级二）",
+					 "en":  "Invention (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "发明模组的等级二效果。domain 为 <tile_invention> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Invention module. Domain is <tile_invention> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_invention_lv3",
+			"name":  {
+					 "zh":  "发明（等级三）",
+					 "en":  "Invention (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "发明模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Invention module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_trade_lv1",
+			"name":  {
+					 "zh":  "交易（等级一）",
+					 "en":  "Trade (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "交易模组的等级一效果。domain 为 <tile_trade> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Trade module. Domain is <tile_trade> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_trade_lv2",
+			"name":  {
+					 "zh":  "交易（等级二）",
+					 "en":  "Trade (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "交易模组的等级二效果。domain 为 <tile_trade> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Trade module. Domain is <tile_trade> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_trade_lv3",
+			"name":  {
+					 "zh":  "交易（等级三）",
+					 "en":  "Trade (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "交易模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Trade module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_activity_lv1",
+			"name":  {
+					 "zh":  "活动（等级一）",
+					 "en":  "Activity (Level 1)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "活动模组的等级一效果。domain 为 <tile_activity> 正面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 1 effect of the Activity module. Domain is <tile_activity> front. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_activity_lv2",
+			"name":  {
+					 "zh":  "活动（等级二）",
+					 "en":  "Activity (Level 2)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "活动模组的等级二效果。domain 为 <tile_activity> 反面。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 2 effect of the Activity module. Domain is <tile_activity> back. Cost and content TBD in Phase B."
+					   }
+			},
+			{
+			"id":  "effect_activity_lv3",
+			"name":  {
+					 "zh":  "活动（等级三）",
+					 "en":  "Activity (Level 3)"
+				 },
+			"parent":  "<ontology::effect>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "活动模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
+					   "en":  "Level 3 effect of the Activity module. Domain initially null. Cost and content TBD in Phase B."
+					   }
+			}
+		],
+	"modules":  [
+			{
+			"id":  "tile_migration",
+			"name":  {
+					 "zh":  "迁徙板块",
+					 "en":  "Migration Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "迁徙模组的物理板块。正面承载 <effect_migration_lv1>，反面承载 <effect_migration_lv2>。L1→L2 翻面，L2→L3 移除。",
+					   "en":  "Physical tile for the Migration module. Front carries <effect_migration_lv1>, back carries <effect_migration_lv2>. Flipped for L1→L2, removed for L2→L3."
+					   }
+			},
+			{
+			"id":  "tile_procreation",
+			"name":  {
+					 "zh":  "繁育板块",
+					 "en":  "Procreation Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "繁育模组的物理板块。正面承载 <effect_procreation_lv1>，反面承载 <effect_procreation_lv2>。",
+					   "en":  "Physical tile for the Procreation module. Front carries <effect_procreation_lv1>, back carries <effect_procreation_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_production",
+			"name":  {
+					 "zh":  "生产板块",
+					 "en":  "Production Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "生产模组的物理板块。正面承载 <effect_production_lv1>，反面承载 <effect_production_lv2>。",
+					   "en":  "Physical tile for the Production module. Front carries <effect_production_lv1>, back carries <effect_production_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_transport",
+			"name":  {
+					 "zh":  "运输板块",
+					 "en":  "Transport Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "运输模组的物理板块。正面承载 <effect_transport_lv1>，反面承载 <effect_transport_lv2>。",
+					   "en":  "Physical tile for the Transport module. Front carries <effect_transport_lv1>, back carries <effect_transport_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_sustenance",
+			"name":  {
+					 "zh":  "给养板块",
+					 "en":  "Sustenance Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "给养模组的物理板块。正面承载 <effect_sustenance_lv1>，反面承载 <effect_sustenance_lv2>。",
+					   "en":  "Physical tile for the Sustenance module. Front carries <effect_sustenance_lv1>, back carries <effect_sustenance_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_exploration",
+			"name":  {
+					 "zh":  "探索板块",
+					 "en":  "Exploration Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "探索模组的物理板块。正面承载 <effect_exploration_lv1>，反面承载 <effect_exploration_lv2>。",
+					   "en":  "Physical tile for the Exploration module. Front carries <effect_exploration_lv1>, back carries <effect_exploration_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_building",
+			"name":  {
+					 "zh":  "建造板块",
+					 "en":  "Building Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "建造模组的物理板块。正面承载 <effect_building_lv1>，反面承载 <effect_building_lv2>。",
+					   "en":  "Physical tile for the Building module. Front carries <effect_building_lv1>, back carries <effect_building_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_planning",
+			"name":  {
+					 "zh":  "计划板块",
+					 "en":  "Planning Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "计划模组的物理板块。正面承载 <effect_planning_lv1>，反面承载 <effect_planning_lv2>。",
+					   "en":  "Physical tile for the Planning module. Front carries <effect_planning_lv1>, back carries <effect_planning_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_research",
+			"name":  {
+					 "zh":  "研究板块",
+					 "en":  "Research Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "研究模组的物理板块。正面承载 <effect_research_lv1>，反面承载 <effect_research_lv2>。",
+					   "en":  "Physical tile for the Research module. Front carries <effect_research_lv1>, back carries <effect_research_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_achievement",
+			"name":  {
+					 "zh":  "成就板块",
+					 "en":  "Achievement Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "成就模组的物理板块。正面承载 <effect_achievement_lv1>，反面承载 <effect_achievement_lv2>。",
+					   "en":  "Physical tile for the Achievement module. Front carries <effect_achievement_lv1>, back carries <effect_achievement_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_insight",
+			"name":  {
+					 "zh":  "洞悉板块",
+					 "en":  "Insight Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "洞悉模组的物理板块。正面承载 <effect_insight_lv1>，反面承载 <effect_insight_lv2>。",
+					   "en":  "Physical tile for the Insight module. Front carries <effect_insight_lv1>, back carries <effect_insight_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_mutation",
+			"name":  {
+					 "zh":  "突变板块",
+					 "en":  "Mutation Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "突变模组的物理板块。正面承载 <effect_mutation_lv1>，反面承载 <effect_mutation_lv2>。",
+					   "en":  "Physical tile for the Mutation module. Front carries <effect_mutation_lv1>, back carries <effect_mutation_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_invention",
+			"name":  {
+					 "zh":  "发明板块",
+					 "en":  "Invention Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "发明模组的物理板块。正面承载 <effect_invention_lv1>，反面承载 <effect_invention_lv2>。",
+					   "en":  "Physical tile for the Invention module. Front carries <effect_invention_lv1>, back carries <effect_invention_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_trade",
+			"name":  {
+					 "zh":  "交易板块",
+					 "en":  "Trade Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "交易模组的物理板块。正面承载 <effect_trade_lv1>，反面承载 <effect_trade_lv2>。",
+					   "en":  "Physical tile for the Trade module. Front carries <effect_trade_lv1>, back carries <effect_trade_lv2>."
+					   }
+			},
+			{
+			"id":  "tile_activity",
+			"name":  {
+					 "zh":  "活动板块",
+					 "en":  "Activity Tile"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "活动模组的物理板块。正面承载 <effect_activity_lv1>，反面承载 <effect_activity_lv2>。",
+					   "en":  "Physical tile for the Activity module. Front carries <effect_activity_lv1>, back carries <effect_activity_lv2>."
+					   }
+			}
+		],
+	"cards":  [
+
+		  ],
+	"continent_tiles":  [
+
+			],
+	"sites":  [
+
+		  ],
+	"chips":  [
+
+		  ]
+}

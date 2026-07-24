@@ -28,8 +28,8 @@
               "id": "assemble_public_board",
               "type": "<ontology::event>",
               "description": {
-                "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；随机放置 8 块大陆板块拼成大陆。",
-                "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly place the 8 continent tiles to form the continent."
+                "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
+                "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly arrange the 8 continent tiles to fill the 5×3 grid inside the score track frame, forming the continent."
               }
             },
             {

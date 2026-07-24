@@ -194,6 +194,8 @@ Hand
 - **Lose / Gain 新增为 Event 子类 ★**：`<lose>`——`<object>` 失去一个 `<property>`（domain → null）；`<gain>`——`<object>` 获得一个 `<property>`（domain → 新实体）。用于 effect 载体切换等场景。Event 子类列表从 6 个扩充为 8 个。
 - **安装是 transfer ★**：将卡牌/芯片安装到控制台 = 从 source zone transfer 到控制台上某个逻辑坐标的 zone。zone 是纯概念，不绑定物理尺寸——所以卡牌可以互相叠压而逻辑上各属各的 zone。控制台每个行列坐标就是一个 zone，有独立的 capacity。
 - **实体承载的 zone 不会销毁 ★**：初始芯片牌在 setup 后仍然保有它承载的 zone——只是不再有任何规则引用它。zone 不需要 availability 概念——zone 一直在，只是规则是否引用它的区别。
+- **`zones` 字段从 `<card>` 提升至 `<piece>` ★**（2026-07-25）：card、tile 都可能承载 zone，与其各自声明不如在公共父类 `<piece>` 上统一定义为 optional 字段。`<board>` 的 `zones` 独立保留（board 不是 piece）。
+- **Piece 的 play 能力由 ownership 决定 ★**（2026-07-25）：并非所有 piece 都由玩家持有——归游戏系统所有（`<ownership>` 为 null）的 piece（如地图板块、遭遇牌库）不可被玩家 play。只有 `<ownership>` 归属于 `<player>` 的 piece 才可被该玩家 play。`<piece>` 定义已更新以反映此规则。
 
 ## 为《文明演化》扩展本体的计划
 
