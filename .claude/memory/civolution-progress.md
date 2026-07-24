@@ -14,7 +14,7 @@ metadata:
 - **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
 - **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
 - **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
-- **当前状态**: Phase A 进行中。进程版图与流程版图已 review 完成；模块升级模型已重构为 Lose + Gain（15 主模块拆为 45 个 effect 实例 + 15 个 tile，player_console.content 已扩展至 16 项）。剩余：supply 类、deck 类、piece/token 类、大陆与地形、骰子等待 review。对象总数：169。
+- **当前状态**: Phase A 进行中。进程版图与流程版图已 review 完成；模块升级模型已重构为 Lose + Gain（15 主模块拆为 45 个 effect 实例 + 15 个 tile，player_console.content 已扩展至 16 项）。2026-07-25：terrain/region 从 ontology 移除，7 种地形改为游戏层 `<ontology::zone>` 子类，territory 保留为游戏层 zone 概念。剩余：supply 类、deck 类、piece/token 类、骰子等待 review。对象总数：169。
 
 ## 为什么选这款游戏
 
@@ -52,7 +52,7 @@ metadata:
 ## 计划阶段（Phase A~E）
 
 - **Phase A**: 对象清单 + ontology 扩展草案（骨架已完成，待 review）
-  - 已扩展 ontology：新增 `dice`、`terrain`、`region`、`campsite`、`site`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`favor_test`、`upgrade`、`setting` 共 12 个概念
+  - 已扩展 ontology：新增 `dice`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`upgrade`、`setting` 共 7 个概念。注：`terrain`、`region` 最初加入但于 2026-07-25 移回游戏层——地形类型本质是 zone 子类（`forest extends zone`），无需 ontology 概念；`campsite`、`site`、`favor_test` 也已移回游戏层
   - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（169 个对象，含 45 个 effect 实例 + 15 个 module tile）
   - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
   - 剩余：对象层 review、修正 parent/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
@@ -77,9 +77,9 @@ metadata:
 
 ## 最近进展
 
-- **2026-07-25**: 概念与实例分离 + ontology 清理：
+- **2026-07-25**: 概念与实例分离 + ontology 清理 + terrain/region 移除：
   - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。
-  - **ontology 清理**：`<campsite>`、`<site>`、`<favor_test>` 从 ontology 移回游戏层（ontology 71→68）。concepts.json 新增 `site`、`favor_test`，`campsite` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。
+  - **ontology 清理**：`<campsite>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`campsite` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` parent 改为 `<ontology::zone>`。
   - **后端更新**：`GameRulesService` 全面支持 `instances.json`，Python `rebuild_index.py` 新增 `extract_instances()`。
   - **大陆板块**：`continent_tile` 加 `size` 字段，`continent` zone 加 `grid`（5×3=15 格）和铺满约束。
   - **`<piece>` 定义修正**：`zones` 提升至 `<piece>`；play 能力由 ownership 决定。

@@ -39,7 +39,7 @@
                 "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
                 "en": "Place the 24 site tiles face down on the site spaces of the continent."
               },
-              "source": "<site_supply>",
+              "source": "<ontology::game_box>",
               "destination": "<continent>",
               "<object>": "<site_tile>",
               "quantity": 24,
@@ -115,7 +115,7 @@
                 "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区。",
                 "en": "Draw 4 scoring tiles and place them face up in the era scoring area."
               },
-              "source": "<scoring_tile_supply>",
+              "source": "<ontology::game_box>",
               "destination": "<era_scoring_area>",
               "<object>": "<scoring_tile>",
               "quantity": 4
@@ -127,7 +127,7 @@
                 "zh": "随机抽取 3 张计分板块按图标背面朝上覆盖终局计分区。",
                 "en": "Draw 3 scoring tiles and place them point-side up over the final scoring area."
               },
-              "source": "<scoring_tile_supply>",
+              "source": "<ontology::game_box>",
               "destination": "<final_scoring_area>",
               "<object>": "<scoring_tile>",
               "quantity": 3,
@@ -221,7 +221,7 @@
                 "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
                 "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
               },
-              "source": "<material_tile_supply>",
+              "source": "<ontology::game_box>",
               "destination": "<continent>",
               "<object>": "<material_tile>",
               "quantity": "all"
@@ -233,7 +233,7 @@
                 "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入个人面板模组区。",
                 "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
               },
-              "source": "<module_supply>",
+              "source": "<ontology::game_box>",
               "destination": "<module_area>",
               "<object>": "<main_module>",
               "quantity": 15,

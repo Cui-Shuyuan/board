@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-25，68 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-25，66 个概念）
 metadata:
   node_type: memory
   type: project
@@ -106,7 +106,7 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **68 个概念**。新增内容部分来自第二款游戏《文明演化》的机制扩展，但 2026-07-25 已将 Civolution 专属的 `<campsite>`、`<site>`、`<favor_test>` 移回游戏层。
+本体已从最初的 51 个概念扩展到 **66 个概念**。新增内容部分来自第二款游戏《文明演化》的机制扩展，但 Civolution 专属概念（`<campsite>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>`）已于 2026-07-25 移回游戏层。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
@@ -196,7 +196,7 @@ Hand
 - **实体承载的 zone 不会销毁 ★**：初始芯片牌在 setup 后仍然保有它承载的 zone——只是不再有任何规则引用它。zone 不需要 availability 概念——zone 一直在，只是规则是否引用它的区别。
 - **`zones` 字段从 `<card>` 提升至 `<piece>` ★**（2026-07-25）：card、tile 都可能承载 zone，与其各自声明不如在公共父类 `<piece>` 上统一定义为 optional 字段。`<board>` 的 `zones` 独立保留（board 不是 piece）。
 - **Piece 的 play 能力由 ownership 决定 ★**（2026-07-25）：并非所有 piece 都由玩家持有——归游戏系统所有（`<ownership>` 为 null）的 piece（如地图板块、遭遇牌库）不可被玩家 play。只有 `<ownership>` 归属于 `<player>` 的 piece 才可被该玩家 play。`<piece>` 定义已更新以反映此规则。
-- **Civolution 专属概念移出 ontology ★**（2026-07-25）：`<campsite>`、`<site>`、`<favor_test>` 从 ontology 移至 Civolution `concepts.json`。判据：概念是否引用其他 Civolution 专属概念（如 `<favor_of_ager_track>`、`<tribe>`）或定义是否写死 Civolution 机制细节（如「火边营地」「探索翻开」）。ontology 从 71 减至 68 概念。
+- **Civolution 专属概念移出 ontology ★**（2026-07-25）：`<campsite>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移至 Civolution 游戏层。判据：概念是否引用其他 Civolution 专属概念，或定义是否写死 Civolution 机制细节。其中 terrain/region 经讨论确认：地形类型本质是 zone 子类（`forest extends zone`），无需单独 ontology 概念；且 region 的"连续同色"定义与 Civolution 实际规则（跨板块同色仍算不同区域）矛盾。ontology 从 71 减至 66 概念。
 
 ## 为《文明演化》扩展本体的计划
 
@@ -206,7 +206,7 @@ Hand
 - **轨道机制**: `<track>` 已在 ontology 中改为 `<zone>` 子类，`<score_track>` 继承 `<track>`。具体游戏的进程轨、恩惠轨、天气轨、阶段序列等作为游戏级概念定义，不入统一本体。
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`（trigger），表达模组 level 提升；`<lose>` / `<gain>`（event），用于载体切换时的 effect 所有权转移
-- **区域与地点**: `<region>`（大陆板块上的连续同色区域）、`<terrain>`（森林/草原等七种类型）。注：`<campsite>` 和 `<site>`（原 `<location>`）已于 2026-07-25 移回 Civolution 游戏层
+- **地点**: `<site>`（地点板块效果）、`<site_tile>`、`<campsite>`。已全部移回 Civolution 游戏层。注：`<terrain>` 和 `<region>` 最初作为 ontology 概念引入，2026-07-25 经讨论确认地形类型本质上是 zone 的子类（如 `forest extends zone`），且 Civolution 规则中"连续同色算同一区域"的定义与实际规则（跨板块同色仍算不同区域）矛盾，二者已从 ontology 移除，地形类型改为 Civolution 游戏层 zone 子类
 - **选择与替代**: `<alternative_cost>` / `<choice>`，用于「支付资源或满足条件」「二选一行动」
 - **被动/持续效果**: `<passive_effect>` / `<location_effect>`，表达地点在激活模组时追加的效果
 

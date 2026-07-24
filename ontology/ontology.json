@@ -193,7 +193,7 @@
         ],
         "optional": [
           {
-            "id": "zones",
+            "id": "<ontology::zone>[]",
             "description": {
               "zh": "此 piece 承载的 <zone>。部分 piece 可以充当 zone 的宿主——如卡牌上的线索区、板块上的领地区。zone 的生命周期绑定在此 piece 上——piece 被移除时 zone 随之消失。不承载 zone 的 piece 可省略此字段。",
               "en": "The <zone>s hosted on this piece. Some pieces serve as zone hosts — e.g., a clue zone on a card, a territory zone on a tile. The zone's lifecycle is bound to the piece — when the piece is removed, the zone disappears with it. Omit for pieces that don't host zones."
@@ -221,11 +221,10 @@
           "en": "Visual description of this board. Must describe shape, material, size, and what is printed on it. E.g., 'folded cardboard board, 60cm×40cm when unfolded, printed with a world map, region borders, and a scoring track', 'roughly A4-sized cardboard printed with module slots, stage partitions, and various marker spaces'."
         }
       },
-      "zones": {
-        "type": "map<string, any>",
+      "<ontology::zone>[]": {
         "description": {
-          "zh": "此版图上承载的 <zone>。key 为 zone 的 id（如 \"<income_chip_area>\"），value 为对象，至少包含 `position`（该 zone 在版图上的物理位置描述，如「左上角」「右半部」），可选包含 `description`（补充说明）。注意：zone 本身由规则独立定义——board 不「创造」zone，board 只是 zone 的物理宿主。客人问「某某东西放哪」时，系统通过此字段找到位置信息并给出精确回答。",
-          "en": "The <zone>s hosted on this board. Key is the zone id (e.g., \"<income_chip_area>\"); value is an object containing at minimum `position` (physical location description on the board, e.g., 'top-left corner', 'right half'), optionally `description` for additional notes. Note: zones are independently defined by rules — the board does not 'create' zones, it is merely their physical host. When a guest asks 'where do I put X', the system uses this field to find the position and give a precise answer."
+          "zh": "此版图上承载的 <zone>。每个 zone 至少包含 `position`（该 zone 在版图上的物理位置描述，如「左上角」「右半部」），可选包含 `description`（补充说明）。注意：zone 本身由规则独立定义——board 不「创造」zone，board 只是 zone 的物理宿主。客人问「某某东西放哪」时，系统通过此字段找到位置信息并给出精确回答。",
+          "en": "The <zone>s hosted on this board. Each zone contains at minimum `position` (physical location description on the board, e.g., 'top-left corner', 'right half'), optionally `description` for additional notes. Note: zones are independently defined by rules — the board does not 'create' zones, it is merely their physical host. When a guest asks 'where do I put X', the system uses this field to find the position and give a precise answer."
         }
       },
       "content": {
@@ -247,10 +246,10 @@
         ],
         "optional": [
           {
-            "id": "zones",
+            "id": "<ontology::zone>[]",
             "description": {
-              "zh": "此版图承载的 <zone> 及其物理位置。key 为 zone id，value 含 position 字段。客人问位置相关问题时系统从此字段检索。仅当此 board 上确实有 zone 时才需填写。",
-              "en": "The <zone>s hosted on this board with their physical positions. Key is zone id; value contains a position field. The system searches this field when guests ask position-related questions. Only needed when this board actually hosts zones."
+              "zh": "此版图承载的 <zone> 及其物理位置。客人问位置相关问题时系统从此字段检索。仅当此 board 上确实有 zone 时才需填写。",
+              "en": "The <zone>s hosted on this board with their physical positions. The system searches this field when guests ask position-related questions. Only needed when this board actually hosts zones."
             }
           },
           {
@@ -2101,55 +2100,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "id": "terrain",
-      "name": {
-        "zh": "地形",
-        "en": "Terrain"
-      },
-      "parent": "<object>",
-      "abstract": false,
-      "definition": {
-        "zh": "描述游戏版图上某片区域的自然或地貌类型。<terrain> 继承自 <object>。它是分类概念，本身不携带 <effect>，但会影响相邻、资源产出、移动等规则。典型例子包括森林、草原、山脉、水域等。",
-        "en": "A classification describing the natural or landscape type of an area on the game board. <terrain> extends <object>. It is a categorical concept that carries no <effect> itself but influences adjacency, resource production, movement, and other rules. Typical examples include Forest, Grassland, Mountains, Water, etc."
-      },
-      "constraints": {
-        "required": [],
-        "optional": []
-      }
-    },
-    {
-      "id": "region",
-      "name": {
-        "zh": "区域",
-        "en": "Region"
-      },
-      "parent": "<zone>",
-      "abstract": false,
-      "definition": {
-        "zh": "由连续同类型 <terrain> 组成的一片版图区域。<region> 继承自 <zone>，是一种逻辑容器。同一 <terrain> 类型但不相连的部分算作不同 <region>；相邻 <region> 之间通过边界接壤。<region> 可以包含 <piece>、<token> 等，并关联一个 <terrain> 类型。",
-        "en": "A board area consisting of contiguous spaces of the same <terrain> type. <region> extends <zone> as a logical container. Areas of the same <terrain> type that are not connected count as separate <region>s; adjacent <region>s share a border. A <region> may contain <piece>s, <token>s, and is associated with a <terrain> type."
-      },
-      "<terrain>": {
-        "type": "<terrain>",
-        "description": {
-          "zh": "此区域的地形类型。",
-          "en": "The terrain type of this region."
-        }
-      },
-      "constraints": {
-        "required": [
-          {
-            "id": "<terrain>",
-            "description": {
-              "zh": "区域所属的地形类型。",
-              "en": "The terrain type this region belongs to."
-            }
-          }
-        ],
-        "optional": []
       }
     },
     {
