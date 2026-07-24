@@ -63,19 +63,30 @@ metadata:
 
 ## 阻塞项
 
-- 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 player_console、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
+- 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 player_console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
 - flow.json 中存在占位引用（如 `<activate_module>`、`<reset>`、`<action_phase_end>`），需要在 concepts.json 的 actions/conditions 层补全
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
 - Phase B~D 依赖对象层定稿，避免后续大量返工
 
+### 2026-07-24 新增待办
+
+- **[timing]** upgrade trigger 的 `<timing>` 暂留空——需等 Phase B 效果独立定义完成后，确定触发 upgrade 的具体 effect 再填充
+- **[effect 独立定义]** 效果（effect）需独立定义为 concept 实例，模组只引用。当前 45 个 effect 实例为容器（无 cost/content），具体内容待 Phase B 填充。一个模组有两个骰子槽位（左下/右下），可能引用不同 effect；不同模组可共享同一 effect
+- **[tile 多 effect 组合]** tile 可承载多个 effect（对应多个骰子槽位），关系为 AND（并）或 OR（或）。需考虑 composite effect 或在 tile 上表达 effect 组合关系
+
 ## 最近进展
 
-- **2026-07-24**: 理清模组本质与安装模型：
-  - **模组是 effect，带 level state**：模组的 parent 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
+- **2026-07-24（晚间）**: 重构模块升级模型——Lose + Gain：
+  - **模块各等级改为独立 effect 实例**：15 个主模块各拆为 3 个 effect 实例（effect_xxx_lv1/lv2/lv3），通过 id 前缀保持模块 identity。L1/L2 由 tile 正反面持有，L3 由 player_console 持有。共新增 45 个 effect 实例 + 15 个 tile 概念。`module.level` 字段已删除。
+  - **`<upgrade>` 父类改为 `<trigger>`**：核心语义是 level 提升，不再硬编码 lose/gain。同一载体（tile 翻面 L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。
+  - **新增 `<lose>` 和 `<gain>` 作为 Event 子类**：`<lose>`——object 失去 property（domain → null）；`<gain>`——object 获得 property（domain → 新实体）。ontology 概念总数：69 → 71。
+  - **player_console.content 已更新**：从 1 项扩展为 16 项（1 innate_activity + 15 lv3 effect），所有 lv3 effect 初始不可用，升级时由 console `<gain>`。
+- **2026-07-24（凌晨）**: 理清模组本质与安装模型：
+  - **模组是 effect，带 level state**：[已废弃，见上方晚间更新] 模组的 parent 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
   - **安装 = transfer**：卡牌/芯片安装到控制台就是从 source zone transfer 到控制台上逻辑坐标的 zone。Zone 是纯概念不绑定物理尺寸，所以纸片可以互相叠压。控制台每个行列坐标就是一个 zone（有独立 capacity）。
   - **实体承载的 zone 不会销毁**：初始芯片牌在 setup 后 zone 还在，只是没有规则再引用它——不需要引入 availability 概念。
-  - **三级模组不是三个 effect**：不拆成三个独立 effect 用 availability 开关，而是一个 effect 带 level state。目标列升级奖励图标是 board 上的 instant effect + trigger，不是被盖住的 tile。
+  - **三级模组不是三个 effect**：[已废弃，见上方晚间更新——现已改为三个独立 effect 实例，通过 id 前缀关联]
 - **2026-07-23**: 完成本体重大重构——Board 概念拆分与 Zone 宿主模型修正：
   - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
   - **Zone 可由实体承载**：card 和 board 都可以提供 zone。`<card>` 新增可选 `zones` 字段。Civolution 的 `starting_chip_card` 已标注设置阶段提供的临时目标芯片 zone。

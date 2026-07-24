@@ -750,8 +750,8 @@
       },
       "abstract": true,
       "definition": {
-        "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏 <state> 或流程有意义的、不可再分的原子事实。<event> 是流程本体的根概念——一切「发生了什么」都始于 <event>。子类包括 <transfer>、<action>、<trigger>、<resolve>、<activation>、<play>。",
-        "en": "An atomic fact that occurs during gameplay, recognized and defined by game rules, meaningful to game <state> or flow, and not further divisible. <event> is the root of the procedure ontology — everything that 'happens' starts from <event>. Subclasses include <transfer>, <action>, <trigger>, <resolve>, <activation>, <play>."
+        "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏 <state> 或流程有意义的、不可再分的原子事实。<event> 是流程本体的根概念——一切「发生了什么」都始于 <event>。子类包括 <transfer>、<action>、<trigger>、<resolve>、<activation>、<play>、<lose>、<gain>。",
+        "en": "An atomic fact that occurs during gameplay, recognized and defined by game rules, meaningful to game <state> or flow, and not further divisible. <event> is the root of the procedure ontology — everything that 'happens' starts from <event>. Subclasses include <transfer>, <action>, <trigger>, <resolve>, <activation>, <play>, <lose>, <gain>."
       },
       "actor": {
         "type": "<player> | null",
@@ -2317,16 +2317,108 @@
       }
     },
     {
+      "id": "lose",
+      "name": {
+        "zh": "失去",
+        "en": "Lose"
+      },
+      "parent": "<event>",
+      "abstract": false,
+      "definition": {
+        "zh": "<object> 失去一个 <property>。失去后该 property 的 domain 变为 null。常用于 effect 的载体切换——当 effect 不再由某个实体持有时，该实体 lose 此 effect。",
+        "en": "An <object> loses a <property>. The property's domain becomes null after losing. Commonly used when an effect's carrier changes — when an effect is no longer held by an entity, that entity loses this effect."
+      },
+      "subject": {
+        "type": "<object>",
+        "description": {
+          "zh": "失去属性的实体。lose 事件发生前，该 property 的 domain 指向此 entity。",
+          "en": "The entity losing the property. Before the lose event, the property's domain points to this entity."
+        }
+      },
+      "<property>": {
+        "type": "<property>",
+        "description": {
+          "zh": "被失去的属性或效果。lose 事件发生后，此 property 的 domain 变为 null。",
+          "en": "The property or effect being lost. After the lose event, this property's domain becomes null."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "subject",
+            "description": {
+              "zh": "失去属性的实体。必须指明是哪个 <object> 在失去属性。",
+              "en": "The entity losing the property. Must specify which <object> is losing the property."
+            }
+          },
+          {
+            "id": "<property>",
+            "description": {
+              "zh": "被失去的属性。必须指明失去的是哪个 <property>（或 <effect>）。",
+              "en": "The property being lost. Must specify which <property> (or <effect>) is being lost."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "gain",
+      "name": {
+        "zh": "获得",
+        "en": "Gain"
+      },
+      "parent": "<event>",
+      "abstract": false,
+      "definition": {
+        "zh": "<object> 获得一个 <property>。获得后该 property 的 domain 指向此 object。常用于 effect 的载体切换——当 effect 改由新的实体持有时，新实体 gain 此 effect。",
+        "en": "An <object> gains a <property>. The property's domain points to this object after gaining. Commonly used when an effect's carrier changes — when an effect becomes held by a new entity, that entity gains this effect."
+      },
+      "subject": {
+        "type": "<object>",
+        "description": {
+          "zh": "获得属性的实体。gain 事件发生后，该 property 的 domain 指向此 entity。",
+          "en": "The entity gaining the property. After the gain event, the property's domain points to this entity."
+        }
+      },
+      "<property>": {
+        "type": "<property>",
+        "description": {
+          "zh": "被获得的属性或效果。gain 事件发生后，此 property 的 domain 指向 subject。",
+          "en": "The property or effect being gained. After the gain event, this property's domain points to the subject."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "subject",
+            "description": {
+              "zh": "获得属性的实体。必须指明是哪个 <object> 在获得属性。",
+              "en": "The entity gaining the property. Must specify which <object> is gaining the property."
+            }
+          },
+          {
+            "id": "<property>",
+            "description": {
+              "zh": "被获得的属性。必须指明获得的是哪个 <property>（或 <effect>）。",
+              "en": "The property being gained. Must specify which <property> (or <effect>) is being gained."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
       "id": "upgrade",
       "name": {
         "zh": "升级",
         "en": "Upgrade"
       },
-      "parent": "<event>",
+      "parent": "<trigger>",
       "abstract": false,
       "definition": {
-        "zh": "改变一个 <effect> 的 level state 的 <event>。<upgrade> 继承自 <event>。升级的本质是 state change——effect 的 level 从 N 变为 N+1，对应的 cost 和 content 随之变化。常见的物理表现（翻面、移除上层板块露出下层）是 state change 的后果，而非升级的原因——规则要求玩家「作为升级的结果，将板块翻面」，而非「因为翻了面，所以升级了」。因果关系：state change 在先，物理操作是规则指令的被执行结果。",
-        "en": "An <event> that changes the level state of an <effect>. <upgrade> extends <event>. The essence of an upgrade is a state change — the effect's level goes from N to N+1, and the corresponding cost and content change accordingly. Common physical manifestations (flipping, removing the upper tile to reveal the lower layer) are consequences of the state change, not its cause — the rules instruct the player 'as a result of upgrading, flip the tile', not 'because you flipped it, it is now upgraded'. Causality: state change comes first; the physical operation is the executed result of the rules' instruction."
+        "zh": "一个 <trigger>：effect 的 level 提升。level 提升可能伴随载体切换——当新旧 level 由不同实体承载时，旧载体 <lose> 旧 effect、新载体 <gain> 新 effect；当同一载体承载（如 tile 翻面）时，仅为 level 变化，无 lose/gain。物理操作（翻面、移除板块）是 level 变化的物理后果。<upgrade> 继承 trigger 的 <timing>、<condition>、<event>[]——具体 event 链由游戏定义。",
+        "en": "A <trigger>: an effect's level increases. Level increase may involve carrier switch — when old and new levels are carried by different entities, the old carrier <lose>s the old effect and the new carrier <gain>s the new effect; when carried by the same entity (e.g., tile flip), it is purely a level change with no lose/gain. Physical operations (flip, remove tile) are consequences of the level change. <upgrade> inherits <trigger>'s <timing>, <condition>, <event>[] — the specific event chain is defined by the game."
       },
       "constraints": {
         "required": [],
