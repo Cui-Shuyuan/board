@@ -2129,8 +2129,8 @@
       "parent": "<zone>",
       "abstract": false,
       "definition": {
-        "zh": "由连续同类型 <terrain> 组成的一片版图区域。<region> 继承自 <zone>，是一种逻辑容器。同一 <terrain> 类型但不相连的部分算作不同 <region>；相邻 <region> 之间通过边界接壤。<region> 可以包含 <campsite>、<piece>、<token> 等，并可能关联一个 <terrain> 类型和一个 <material_tile>。",
-        "en": "A board area consisting of contiguous spaces of the same <terrain> type. <region> extends <zone> as a logical container. Areas of the same <terrain> type that are not connected count as separate <region>s; adjacent <region>s share a border. A <region> may contain <campsite>s, <piece>s, <token>s, and may be associated with a <terrain> type and a material tile."
+        "zh": "由连续同类型 <terrain> 组成的一片版图区域。<region> 继承自 <zone>，是一种逻辑容器。同一 <terrain> 类型但不相连的部分算作不同 <region>；相邻 <region> 之间通过边界接壤。<region> 可以包含 <piece>、<token> 等，并关联一个 <terrain> 类型。",
+        "en": "A board area consisting of contiguous spaces of the same <terrain> type. <region> extends <zone> as a logical container. Areas of the same <terrain> type that are not connected count as separate <region>s; adjacent <region>s share a border. A <region> may contain <piece>s, <token>s, and is associated with a <terrain> type."
       },
       "<terrain>": {
         "type": "<terrain>",
@@ -2149,40 +2149,6 @@
             }
           }
         ],
-        "optional": []
-      }
-    },
-    {
-      "id": "campsite",
-      "name": {
-        "zh": "营地",
-        "en": "Campsite"
-      },
-      "parent": "<object>",
-      "abstract": false,
-      "definition": {
-        "zh": "位于 <region> 内的特定位置，用于容纳 <tribe> 等 <piece>。<campsite> 继承自 <object>。一个 <region> 内可能有多个 <campsite>，某些营地可能有特殊效果（如火边营地提供分数）。<campsite> 本身不改变游戏状态，只是位置标记。",
-        "en": "A specific location within a <region> that can hold <piece>s such as <tribe>s. <campsite> extends <object>. A <region> may contain multiple <campsite>s, and some campsites may have special effects (e.g., fire encampments grant points). A <campsite> itself does not change game state; it is merely a position marker."
-      },
-      "constraints": {
-        "required": [],
-        "optional": []
-      }
-    },
-    {
-      "id": "site",
-      "name": {
-        "zh": "地点板块",
-        "en": "Site"
-      },
-      "parent": "<tile>",
-      "abstract": false,
-      "definition": {
-        "zh": "放置在公共版图上、影响相邻 <region> 的特殊 <tile>。<site> 继承自 <tile>。通常初始背面朝上，通过特定 <action>（如探索）翻开后生效。每个 <site> 有独特的被动效果，在特定阶段或触发条件下结算。",
-        "en": "A special <tile> placed on the public board that affects adjacent <region>s. <site> extends <tile>. Usually placed face down at the start and revealed by a specific <action> (e.g., exploration) to take effect. Each <site> has a unique passive effect that resolves in specific phases or under trigger conditions."
-      },
-      "constraints": {
-        "required": [],
         "optional": []
       }
     },
@@ -2259,8 +2225,8 @@
       "parent": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "持续生效、无需玩家主动触发的效果规格。<passive_effect> 继承自 <property>。与需要 <activation> 的 <effect> 不同，被动效果一旦满足其前提条件就会自动生效，常见于 <site>、已安装的 <card> 或 <attribute_chip>。其运行时不产生独立的 <event>，而是修改规则判定或提供额外奖励。",
-        "en": "A continuously active effect specification that does not require the player to actively trigger it. <passive_effect> extends <property>. Unlike <effect>s that require <activation>, passive effects automatically apply once their prerequisites are met, commonly found on <site>s, installed <card>s, or <attribute_chip>s. At runtime they do not produce standalone <event>s but modify rule evaluations or grant additional bonuses."
+        "zh": "持续生效、无需玩家主动触发的效果规格。<passive_effect> 继承自 <property>。与需要 <activation> 的 <effect> 不同，被动效果一旦满足其前提条件就会自动生效，常见于已安装的 <card> 或特定 <tile>。其运行时不产生独立的 <event>，而是修改规则判定或提供额外奖励。",
+        "en": "A continuously active effect specification that does not require the player to actively trigger it. <passive_effect> extends <property>. Unlike <effect>s that require <activation>, passive effects automatically apply once their prerequisites are met, commonly found on installed <card>s or certain <tile>s. At runtime they do not produce standalone <event>s but modify rule evaluations or grant additional bonuses."
       },
       "trigger": {
         "type": "<trigger> | null",
@@ -2293,23 +2259,6 @@
       "definition": {
         "zh": "投掷一颗或多颗 <dice> 以产生随机数值的 <event>。<die_roll> 继承自 <event>。结果由骰子朝上的一面决定，可用于判定、费用、资源获取等。玩家通常可以花费创意标记等资源修改骰子点数。",
         "en": "An <event> in which one or more <dice> are rolled to generate random values. <die_roll> extends <event>. The result is determined by the face(s) that land upward and can be used for checks, costs, resource gains, etc. Players may often spend resources such as idea markers to modify die results."
-      },
-      "constraints": {
-        "required": [],
-        "optional": []
-      }
-    },
-    {
-      "id": "favor_test",
-      "name": {
-        "zh": "恩惠检定",
-        "en": "Favor Test"
-      },
-      "parent": "<event>",
-      "abstract": false,
-      "definition": {
-        "zh": "投掷玩家持有的全部粉骰子，并根据 <favor_of_ager_track> 当前位置判定是否通过的 <event>。<favor_test> 继承自 <event>。只要有一颗骰子的点数落在轨道允许的范围内，即视为通过。常用于模组升级后的额外行动。",
-        "en": "An <event> in which a player rolls all their fate dice and checks whether any die result falls within the range allowed by the current position on the Favor of Agera track. <favor_test> extends <event>. Passing requires at least one die to show an allowed value. Commonly used for bonus actions after upgrading modules."
       },
       "constraints": {
         "required": [],

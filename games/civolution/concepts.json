@@ -526,12 +526,25 @@
 					   }
 			},
 			{
+			"id":  "site",
+			"name":  {
+					 "zh":  "地点板块",
+					 "en":  "Site"
+				 },
+			"parent":  "<ontology::tile>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "放置在公共版图上的特殊 <ontology::tile>，通常初始背面朝上，通过特定条件翻开后持续生效。每个 <site> 有独特效果，在特定阶段或触发条件下结算。",
+					   "en":  "A special <ontology::tile> placed on the public board, usually face down at first and revealed by a specific condition to take lasting effect. Each <site> has a unique effect that resolves in specific phases or under trigger conditions."
+					   }
+			},
+			{
 			"id":  "site_tile",
 			"name":  {
 					 "zh":  "地点板块",
 					 "en":  "Site Tile"
 				 },
-			"parent":  "<ontology::site>",
+			"parent":  "<site>",
 			"abstract":  false,
 			"definition":  {
 					   "zh":  "放置在 <continent> 上的特殊地点，翻开前背面朝上。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。每种效果不同。",
@@ -872,7 +885,7 @@
 					 "zh":  "营地",
 					 "en":  "Campsite"
 				 },
-			"parent":  "<ontology::campsite>",
+			"parent":  "<ontology::object>",
 			"abstract":  false,
 			"definition":  {
 					   "zh":  "位于 <territory> 内的圆形标记位置，用于放置 <tribe>。某些特殊营地（如火边营地）可提供分数。",
@@ -1398,8 +1411,8 @@
 			"parent":  "<ontology::track>",
 			"abstract":  false,
 			"definition":  {
-					   "zh":  "位于 <sequence_board> 上的轨，记录当前阿格拉恩惠等级。影响 <ontology::favor_test> 成功范围、雕像收入和终局计分。",
-					   "en":  "A track on the <sequence_board> recording the current Favor of Agera level. It affects the success range of <ontology::favor_test>s, statue income, and final scoring."
+					   "zh":  "位于 <sequence_board> 上的轨，记录当前阿格拉恩惠等级。影响 <favor_test> 成功范围、雕像收入和终局计分。",
+					   "en":  "A track on the <sequence_board> recording the current Favor of Agera level. It affects the success range of <favor_test>s, statue income, and final scoring."
 					   },
 			"contains":  {
 					 "type":  "<favor_marker>[]",
@@ -2241,6 +2254,19 @@
 			"definition":  {
 					   "zh":  "每个时代的第八个 <ontology::phase>。依次执行：A) 执行 <income_chip>（从上到下、从左到右）；B) 结算 <statue> 收入（按 <favor_of_ager_track> 位置计分）；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家补满空 <reset_column>。完成后将 <phase_indicator> 移回阶段一。第四时代执行完 A、B 后进入终局计分。",
 					   "en":  "The eighth <ontology::phase> of each era. Execute in order: A) resolve <income_chip>s top-to-bottom, left-to-right; B) score <statue>s (points based on <favor_of_ager_track> position); C) return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) refill empty <reset_column>s. Then return <phase_indicator> to Phase 1. After the 4th era, skip C/D after A/B and proceed to final scoring."
+					   }
+			},
+			{
+			"id":  "favor_test",
+			"name":  {
+					 "zh":  "恩惠检定",
+					 "en":  "Favor Test"
+				 },
+			"parent":  "<ontology::event>",
+			"abstract":  false,
+			"definition":  {
+					   "zh":  "投掷玩家持有的全部 <fate_die>，并根据 <favor_of_ager_track> 当前位置判定是否通过的 <ontology::event>。只要有一颗骰子的点数落在轨道允许的范围内，即视为通过。常用于模组升级后的额外行动。",
+					   "en":  "An <ontology::event> in which a player rolls all their <fate_die> and checks whether any die result falls within the range allowed by the current position on the <favor_of_ager_track>. Passing requires at least one die to show an allowed value. Commonly used for bonus actions after upgrading modules."
 					   }
 			}
 		],

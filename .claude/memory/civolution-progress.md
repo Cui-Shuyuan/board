@@ -77,12 +77,12 @@ metadata:
 
 ## 最近进展
 
-- **2026-07-25**: 概念与实例分离 + 大陆板块建模：
-  - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组，当前 effects 和 modules 已填充，其余为空待补。`concepts.json` 对象从 169 减至 109。
-  - **后端更新**：`GameRulesService` 新增 `LoadGameInstances`、`InstanceArrayTypes`；`GetConcepts`、`ListConcepts`、`KeywordSearch`、`GetConceptTypes`、`GetIndexItems` 均纳入 instances 数据。
-  - **Python 索引脚本更新**：`rebuild_index.py` 新增 `extract_instances()`，实例纳入向量索引。
-  - **大陆板块**：`continent_tile` 加 `size` 字段，`continent` zone 加 `grid`（5×3=15 格）和铺满约束，flow.json setup 事件细化。
-  - **`<piece>` 定义修正**：`zones` 从 `<card>` 提升至 `<piece>`；play 能力由 ownership 决定——归游戏系统的 piece 不可被玩家 play。
+- **2026-07-25**: 概念与实例分离 + ontology 清理：
+  - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。
+  - **ontology 清理**：`<campsite>`、`<site>`、`<favor_test>` 从 ontology 移回游戏层（ontology 71→68）。concepts.json 新增 `site`、`favor_test`，`campsite` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。
+  - **后端更新**：`GameRulesService` 全面支持 `instances.json`，Python `rebuild_index.py` 新增 `extract_instances()`。
+  - **大陆板块**：`continent_tile` 加 `size` 字段，`continent` zone 加 `grid`（5×3=15 格）和铺满约束。
+  - **`<piece>` 定义修正**：`zones` 提升至 `<piece>`；play 能力由 ownership 决定。
 - **2026-07-24（晚间）**: 重构模块升级模型——Lose + Gain：
   - **模块各等级改为独立 effect 实例**：15 个主模块各拆为 3 个 effect 实例（effect_xxx_lv1/lv2/lv3），通过 id 前缀保持模块 identity。L1/L2 由 tile 正反面持有，L3 由 player_console 持有。共新增 45 个 effect 实例 + 15 个 tile 概念。`module.level` 字段已删除。
   - **`<upgrade>` 父类改为 `<trigger>`**：核心语义是 level 提升，不再硬编码 lose/gain。同一载体（tile 翻面 L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。

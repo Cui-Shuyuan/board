@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-24，71 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-25，68 个概念）
 metadata:
   node_type: memory
   type: project
@@ -10,7 +10,7 @@ metadata:
 # 桌游本体设计
 
 ## 文件位置
-D:\workspace\board\ontology\ontology.json（统一本体，71 个概念）
+D:\workspace\board\ontology\ontology.json（统一本体，68 个概念）
 
 ## 统一本体
 最初分为 Structure Ontology（静态结构）和 Procedure Ontology（流程时序）两个文件，后合并。JSON 给程序读，不考虑 LLM 上下文长度。
@@ -106,7 +106,7 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **71 个概念**（新增 `<lose>`、`<gain>`），新增内容主要来自第二款游戏《文明演化》的机制扩展（见下文「为《文明演化》扩展本体的计划」）。
+本体已从最初的 51 个概念扩展到 **68 个概念**。新增内容部分来自第二款游戏《文明演化》的机制扩展，但 2026-07-25 已将 Civolution 专属的 `<campsite>`、`<site>`、`<favor_test>` 移回游戏层。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
@@ -196,6 +196,7 @@ Hand
 - **实体承载的 zone 不会销毁 ★**：初始芯片牌在 setup 后仍然保有它承载的 zone——只是不再有任何规则引用它。zone 不需要 availability 概念——zone 一直在，只是规则是否引用它的区别。
 - **`zones` 字段从 `<card>` 提升至 `<piece>` ★**（2026-07-25）：card、tile 都可能承载 zone，与其各自声明不如在公共父类 `<piece>` 上统一定义为 optional 字段。`<board>` 的 `zones` 独立保留（board 不是 piece）。
 - **Piece 的 play 能力由 ownership 决定 ★**（2026-07-25）：并非所有 piece 都由玩家持有——归游戏系统所有（`<ownership>` 为 null）的 piece（如地图板块、遭遇牌库）不可被玩家 play。只有 `<ownership>` 归属于 `<player>` 的 piece 才可被该玩家 play。`<piece>` 定义已更新以反映此规则。
+- **Civolution 专属概念移出 ontology ★**（2026-07-25）：`<campsite>`、`<site>`、`<favor_test>` 从 ontology 移至 Civolution `concepts.json`。判据：概念是否引用其他 Civolution 专属概念（如 `<favor_of_ager_track>`、`<tribe>`）或定义是否写死 Civolution 机制细节（如「火边营地」「探索翻开」）。ontology 从 71 减至 68 概念。
 
 ## 为《文明演化》扩展本体的计划
 
@@ -205,11 +206,11 @@ Hand
 - **轨道机制**: `<track>` 已在 ontology 中改为 `<zone>` 子类，`<score_track>` 继承 `<track>`。具体游戏的进程轨、恩惠轨、天气轨、阶段序列等作为游戏级概念定义，不入统一本体。
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`（trigger），表达模组 level 提升；`<lose>` / `<gain>`（event），用于载体切换时的 effect 所有权转移
-- **区域与地点**: `<region>`（大陆板块上的连续同色区域）、`<terrain>`（森林/草原等七种类型）、`<campsite>`、`<location>`（地点板块，extends `<tile>`）
+- **区域与地点**: `<region>`（大陆板块上的连续同色区域）、`<terrain>`（森林/草原等七种类型）。注：`<campsite>` 和 `<site>`（原 `<location>`）已于 2026-07-25 移回 Civolution 游戏层
 - **选择与替代**: `<alternative_cost>` / `<choice>`，用于「支付资源或满足条件」「二选一行动」
 - **被动/持续效果**: `<passive_effect>` / `<location_effect>`，表达地点在激活模组时追加的效果
 
 扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
 
 **Why:** 本体是整个系统的类型系统，后续 Rule DSL、Tutorial Tree、Controller 都建立在它之上。
-**How to apply:** 第一阶段世界模型定义已扩展至 71 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。
+**How to apply:** 第一阶段世界模型定义已扩展至 68 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。
