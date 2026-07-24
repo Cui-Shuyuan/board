@@ -52,7 +52,7 @@ metadata:
 ## 计划阶段（Phase A~E）
 
 - **Phase A**: 对象清单 + ontology 扩展草案（骨架已完成，待 review）
-  - 已扩展 ontology：新增 `dice`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`upgrade`、`setting` 共 7 个概念。注：`terrain`、`region` 最初加入但于 2026-07-25 移回游戏层——地形类型本质是 zone 子类（`forest extends zone`），无需 ontology 概念；`campsite`、`site`、`favor_test` 也已移回游戏层
+  - 已扩展 ontology：新增 `dice`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`upgrade`、`setting` 共 7 个概念。注：`terrain`、`region` 最初加入但于 2026-07-25 移回游戏层——地形类型本质是 zone 子类（`forest extends zone`），无需 ontology 概念；`encampment`、`site`、`favor_test` 也已移回游戏层
   - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（169 个对象，含 45 个 effect 实例 + 15 个 module tile）
   - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
   - 剩余：对象层 review、修正 parent/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
@@ -79,9 +79,18 @@ metadata:
 
 - **2026-07-25**: 概念与实例分离 + ontology 清理 + terrain/region 移除：
   - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。
-  - **ontology 清理**：`<campsite>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`campsite` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` parent 改为 `<ontology::zone>`。
+  - **ontology 清理**：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`encampment` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` parent 改为 `<ontology::zone>`。
   - **后端更新**：`GameRulesService` 全面支持 `instances.json`，Python `rebuild_index.py` 新增 `extract_instances()`。
   - **大陆板块**：`continent_tile` 加 `size` 字段，`continent` zone 加 `grid`（5×3=15 格）和铺满约束。
+- **2026-07-25（晚间）**: 对象层补充 + 命名修正 + 格式化：
+  - **新增 `<material_slot>`**（材料板块格，extends zone）：位于 continent_tile 上，每陆地区域一个，放置 material_tile 决定产出材料类型
+  - **新增 `<encampment>` + `<fire_encampment>`**：英文规则书用 encampment（非 campsite），fire_encampment inherits encampment
+  - **命名修正**：campsite → encampment，fireside_encampment → fire_encampment，对齐英文规则书
+  - **`continent_tile` 声明 `"<ontology::zone>[]"`**：引用 `<territory>`、`<material_slot>`、`<encampment>`、`<fire_encampment>`
+  - **`starting_chip_card` zone 声明**：`"zones"` → `"<ontology::zone>[]"`
+  - **移除 4 个纯 setup supply**：`module_supply`、`site_supply`、`material_tile_supply`、`scoring_tile_supply`——setup 用 `<ontology::game_box>` 即可
+  - **ontology piece/board zones 字段统一**：`"zones"` → `"<ontology::zone>[]"`（key 即类型）
+  - **制表符→4空格**：concepts.json + instances.json 统一格式化
   - **`<piece>` 定义修正**：`zones` 提升至 `<piece>`；play 能力由 ownership 决定。
 - **2026-07-24（晚间）**: 重构模块升级模型——Lose + Gain：
   - **模块各等级改为独立 effect 实例**：15 个主模块各拆为 3 个 effect 实例（effect_xxx_lv1/lv2/lv3），通过 id 前缀保持模块 identity。L1/L2 由 tile 正反面持有，L3 由 player_console 持有。共新增 45 个 effect 实例 + 15 个 tile 概念。`module.level` 字段已删除。
