@@ -68,7 +68,13 @@ def apply_media(concepts: dict, game_dir: Path, id_mapping: dict[str, str]) -> t
         obj = objects[idx]
         if "media" not in obj:
             obj["media"] = {}
-        obj["media"]["component"] = build_media_path(item)
+        if "component" not in obj["media"]:
+            obj["media"]["component"] = []
+        if not isinstance(obj["media"]["component"], list):
+            obj["media"]["component"] = [obj["media"]["component"]]
+        path = build_media_path(item)
+        if path not in obj["media"]["component"]:
+            obj["media"]["component"].append(path)
         matched.append(f"{target_id} -> {obj['media']['component']}")
 
     return matched, unmatched

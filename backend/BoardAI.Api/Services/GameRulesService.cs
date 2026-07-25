@@ -624,17 +624,19 @@ public class GameRulesService
         return results;
     }
 
-    private static Dictionary<string, string>? ExtractMedia(JsonElement item)
+    private static Dictionary<string, JsonElement>? ExtractMedia(JsonElement item)
     {
         if (!item.TryGetProperty("media", out var mediaElement) || mediaElement.ValueKind != JsonValueKind.Object)
             return null;
 
-        var media = new Dictionary<string, string>();
+        var media = new Dictionary<string, JsonElement>();
         foreach (var property in mediaElement.EnumerateObject())
         {
-            if (property.Value.ValueKind == JsonValueKind.String)
+            // 支持 string 或 string[]，其他类型忽略
+            if (property.Value.ValueKind == JsonValueKind.String ||
+                property.Value.ValueKind == JsonValueKind.Array)
             {
-                media[property.Name] = property.Value.GetString() ?? string.Empty;
+                media[property.Name] = property.Value.Clone();
             }
         }
         return media.Count > 0 ? media : null;
@@ -745,5 +747,5 @@ public class ConceptSummary
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
-    public Dictionary<string, string>? Media { get; set; }
+    public Dictionary<string, JsonElement>? Media { get; set; }
 }
