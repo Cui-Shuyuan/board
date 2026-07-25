@@ -552,8 +552,8 @@
             "parent": "<ontology::zone>",
             "abstract": false,
             "definition": {
-                "zh": "位于 <continent> 上的一个 <ontology::zone>，由大陆板块与计分轨外框拼合后形成，用于放置一块 <site>。共 25 个，是放置物理地点板块的凹槽。注意与 <continent_tile> 上直接印有的 <site>（建造点，不可移动）区分——前者是凹槽 zone，后者是板块自带的嵌入 tile。",
-                "en": "A <ontology::zone> on the <continent> formed by the assembly of continent tiles and the score track frame, holding one <site>. There are 25 in total, each being a recess for a physical site tile. Distinct from a <site> printed directly on a <continent_tile> (Building Ground, which is fixed) — the former is a slot zone, the latter is an embedded tile on the tile itself."
+                "zh": "位于 <continent> 上的一种 <ontology::zone>，由 <continent_tile> 之间、以及 <continent_tile> 与 <score_track> 拼合后的空位形成，共 25 个，是放置物理地点板块的凹槽。注意与 <continent_tile> 上直接印有的 <site>（建造点，不可移动）区分——前者是凹槽 <ontology::zone>，后者是板块自带的嵌入 <ontology::tile>。",
+                "en": "A <ontology::zone> on the <continent>, formed by the gaps between <continent_tile>s and between <continent_tile>s and the <score_track> after assembly. There are 25 in total, each a recess for placing a physical site tile. Not to be confused with a <site> printed directly on a <continent_tile> (Building Ground, which cannot be moved) — the former is a recess <ontology::zone>, the latter is an embedded <ontology::tile> carried via <piece>.parts."
             },
             "contains": {
                 "type": "<site>",
