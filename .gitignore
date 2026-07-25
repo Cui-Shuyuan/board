@@ -17,6 +17,5 @@ obj/
 .env
 .env.local
 
-# Build
-dist/
-build/
+# Qdrant runtime data
+backend/BoardAI.Api/storage/

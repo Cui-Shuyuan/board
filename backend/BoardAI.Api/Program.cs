@@ -1,5 +1,6 @@
 using BoardAI.Api.Models;
 using BoardAI.Api.Services;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api;
@@ -51,6 +52,17 @@ public class Program
         app.UseAuthorization();
         app.UseDefaultFiles();
         app.UseStaticFiles();
+
+        // 暴露 games/ 目录下的图片等媒体资源
+        var gamesPath = Path.Combine(
+            builder.Configuration.GetValue<string>("Rules:BasePath") ?? builder.Environment.ContentRootPath,
+            "games");
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(gamesPath),
+            RequestPath = "/games"
+        });
+
         app.MapControllers();
 
         app.Run();

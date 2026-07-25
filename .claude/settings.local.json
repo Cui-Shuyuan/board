@@ -91,7 +91,21 @@
       "Bash(pipx install *)",
       "Bash(magick convert *)",
       "Bash(convert games/civolution/components-06.ppm games/civolution/components-06.png)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "PowerShell(New-Item *)",
+      "Bash(jq --version)",
+      "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe -c \"import PIL, requests; print\\('PIL', PIL.__version__, 'requests ok'\\)\")",
+      "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe -m pip install Pillow requests python-dotenv)",
+      "PowerShell($env:MOONSHOT_API_KEY)",
+      "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\extract_components.py --game civolution --page 4)",
+      "WebFetch(domain:platform.kimi.ai)",
+      "PowerShell($env:MOONSHOT_BASE_URL=\"https://api.moonshot.cn/v1\"; D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\extract_components.py --game civolution --page 4)",
+      "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\crop_from_manifest.py --game civolution --page 4; D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\crop_from_manifest.py --game civolution --page 5)",
+      "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\crop_from_manifest.py --game civolution --page 4)",
+      "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\link_media_to_concepts.py --game civolution)",
+      "PowerShell(Get-Process *)",
+      "Bash(D:/qdrant/qdrant.exe *)",
+      "PowerShell(Test-NetConnection *)"
     ]
   }
 }

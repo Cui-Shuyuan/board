@@ -612,14 +612,32 @@ public class GameRulesService
         foreach (var item in array.EnumerateArray())
         {
             var id = item.GetProperty("id").GetString() ?? string.Empty;
-            results.Add(new ConceptSummary
+            var summary = new ConceptSummary
             {
                 Id = id,
                 Name = ExtractName(item),
-                Type = propertyName
-            });
+                Type = propertyName,
+                Media = ExtractMedia(item)
+            };
+            results.Add(summary);
         }
         return results;
+    }
+
+    private static Dictionary<string, string>? ExtractMedia(JsonElement item)
+    {
+        if (!item.TryGetProperty("media", out var mediaElement) || mediaElement.ValueKind != JsonValueKind.Object)
+            return null;
+
+        var media = new Dictionary<string, string>();
+        foreach (var property in mediaElement.EnumerateObject())
+        {
+            if (property.Value.ValueKind == JsonValueKind.String)
+            {
+                media[property.Name] = property.Value.GetString() ?? string.Empty;
+            }
+        }
+        return media.Count > 0 ? media : null;
     }
 
     private static IReadOnlyList<ConceptSummary> ExtractFlowConcepts(JsonDocument flow)
@@ -727,4 +745,5 @@ public class ConceptSummary
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
+    public Dictionary<string, string>? Media { get; set; }
 }

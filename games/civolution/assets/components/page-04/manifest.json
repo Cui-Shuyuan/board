@@ -1,0 +1,401 @@
+{
+  "source": "games/civolution/_review_pages/components-04.png",
+  "page": 4,
+  "image_size": {
+    "width": 1241,
+    "height": 1654
+  },
+  "model": "manual-claude-vision",
+  "items": [
+    {
+      "concept_id": "progress_board",
+      "label_en": "Progress board",
+      "label_zh": "进程版图",
+      "bbox_norm": [
+        0.06,
+        0.12,
+        0.155,
+        0.27
+      ],
+      "file": "progress_board.png",
+      "description": "左侧大版图，含多条进程轨和终局计分区。",
+      "review_status": "manual",
+      "bbox_px": []
+    },
+    {
+      "concept_id": "sequence_board",
+      "label_en": "Sequence board",
+      "label_zh": "流程版图",
+      "bbox_norm": [
+        0.155,
+        0.12,
+        0.30,
+        0.27
+      ],
+      "file": "sequence_board.png",
+      "description": "右侧大版图，含阶段序列和天气轨。",
+      "review_status": "manual",
+      "bbox_px": []
+    },
+    {
+      "concept_id": "player_console",
+      "label_en": "4 consoles",
+      "label_zh": "玩家控制台",
+      "bbox_norm": [
+        0.31,
+        0.1,
+        0.7,
+        0.28
+      ],
+      "file": "player_console.png",
+      "description": "4 个玩家个人控制台整体展示。",
+      "review_status": "manual",
+      "bbox_px": [
+        384,
+        165,
+        868,
+        463
+      ]
+    },
+    {
+      "concept_id": "adhesive_strip",
+      "label_en": "50 double-sided adhesive strips",
+      "label_zh": "双面胶条",
+      "bbox_norm": [
+        0.71,
+        0.1,
+        0.97,
+        0.23
+      ],
+      "file": "adhesive_strip.png",
+      "description": "双面胶条 sheet 示意图。",
+      "review_status": "manual",
+      "bbox_px": [
+        881,
+        165,
+        1203,
+        380
+      ]
+    },
+    {
+      "concept_id": "frame_piece",
+      "label_en": "4 frame pieces",
+      "label_zh": "计分轨外框",
+      "bbox_norm": [
+        0.04,
+        0.29,
+        0.3,
+        0.42
+      ],
+      "file": "frame_piece.png",
+      "description": "拼成计分轨外框的 4 个异形纸板。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        479,
+        372,
+        694
+      ]
+    },
+    {
+      "concept_id": "research_card",
+      "label_en": "160 research cards",
+      "label_zh": "研究牌",
+      "bbox_norm": [
+        0.04,
+        0.43,
+        0.97,
+        0.58
+      ],
+      "file": "research_card.png",
+      "description": "五种研究牌（发明、变异、洞悉、建造、成就）正反面整体展示。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        711,
+        1203,
+        959
+      ]
+    },
+    {
+      "concept_id": "event_card",
+      "label_en": "20 event cards",
+      "label_zh": "事件牌",
+      "bbox_norm": [
+        0.04,
+        0.59,
+        0.21,
+        0.69
+      ],
+      "file": "event_card.png",
+      "description": "事件牌正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        975,
+        260,
+        1141
+      ]
+    },
+    {
+      "concept_id": "starting_marker_card",
+      "label_en": "12 starting marker cards",
+      "label_zh": "起始标记卡",
+      "bbox_norm": [
+        0.22,
+        0.59,
+        0.39,
+        0.69
+      ],
+      "file": "starting_marker_card.png",
+      "description": "起始标记卡正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        273,
+        975,
+        483,
+        1141
+      ]
+    },
+    {
+      "concept_id": "starting_chip_card",
+      "label_en": "10 starting chip cards",
+      "label_zh": "起始芯片卡",
+      "bbox_norm": [
+        0.4,
+        0.59,
+        0.57,
+        0.69
+      ],
+      "file": "starting_chip_card.png",
+      "description": "起始芯片卡正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        496,
+        975,
+        707,
+        1141
+      ]
+    },
+    {
+      "concept_id": "goal_chip",
+      "label_en": "65 goal chips",
+      "label_zh": "目标芯片",
+      "bbox_norm": [
+        0.58,
+        0.59,
+        0.75,
+        0.69
+      ],
+      "file": "goal_chip.png",
+      "description": "蓝色目标芯片正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        719,
+        975,
+        930,
+        1141
+      ]
+    },
+    {
+      "concept_id": "income_chip",
+      "label_en": "25 income chips",
+      "label_zh": "收入芯片",
+      "bbox_norm": [
+        0.04,
+        0.7,
+        0.21,
+        0.8
+      ],
+      "file": "income_chip.png",
+      "description": "白色收入芯片正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        1157,
+        260,
+        1323
+      ]
+    },
+    {
+      "concept_id": "attribute_chip",
+      "label_en": "12 attribute chips",
+      "label_zh": "属性芯片",
+      "bbox_norm": [
+        0.22,
+        0.7,
+        0.39,
+        0.8
+      ],
+      "file": "attribute_chip.png",
+      "description": "黄色属性芯片正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        273,
+        1157,
+        483,
+        1323
+      ]
+    },
+    {
+      "concept_id": "hundred_point_token",
+      "label_en": "12 100-point tokens",
+      "label_zh": "百分标记",
+      "bbox_norm": [
+        0.04,
+        0.81,
+        0.21,
+        0.9
+      ],
+      "file": "hundred_point_token.png",
+      "description": "100 分标记正反面。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        1339,
+        260,
+        1488
+      ]
+    },
+    {
+      "concept_id": "stage_tile",
+      "label_en": "8 stage tiles",
+      "label_zh": "阶段瓷砖",
+      "bbox_norm": [
+        0.22,
+        0.81,
+        0.65,
+        0.9
+      ],
+      "file": "stage_tile.png",
+      "description": "阶段 4/5 瓷砖正反面对比展示。",
+      "review_status": "manual",
+      "bbox_px": [
+        273,
+        1339,
+        806,
+        1488
+      ]
+    },
+    {
+      "concept_id": "scoring_tile",
+      "label_en": "9 scoring tiles",
+      "label_zh": "计分类别瓷砖",
+      "bbox_norm": [
+        0.04,
+        0.9,
+        0.45,
+        0.95
+      ],
+      "file": "scoring_tile.png",
+      "description": "9 个终局计分类别瓷砖（图标面/分数面）。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        1488,
+        558,
+        1571
+      ]
+    },
+    {
+      "concept_id": "storage_bag",
+      "label_en": "3 bags",
+      "label_zh": "收纳袋",
+      "bbox_norm": [
+        0.46,
+        0.9,
+        0.75,
+        0.95
+      ],
+      "file": "storage_bag.png",
+      "description": "3 个用于存放芯片的布袋。",
+      "review_status": "manual",
+      "bbox_px": [
+        570,
+        1488,
+        930,
+        1571
+      ]
+    },
+    {
+      "concept_id": "activation_die",
+      "label_en": "29 activation dice",
+      "label_zh": "激活骰",
+      "bbox_norm": [
+        0.04,
+        0.95,
+        0.25,
+        1.0
+      ],
+      "file": "activation_die.png",
+      "description": "白色六面激活骰。",
+      "review_status": "manual",
+      "bbox_px": [
+        49,
+        1571,
+        310,
+        1654
+      ]
+    },
+    {
+      "concept_id": "fate_die",
+      "label_en": "9 fate dice",
+      "label_zh": "命运骰",
+      "bbox_norm": [
+        0.26,
+        0.95,
+        0.47,
+        1.0
+      ],
+      "file": "fate_die.png",
+      "description": "粉色六面命运骰。",
+      "review_status": "manual",
+      "bbox_px": [
+        322,
+        1571,
+        583,
+        1654
+      ]
+    },
+    {
+      "concept_id": "phase_indicator",
+      "label_en": "1 phase indicator",
+      "label_zh": "阶段标记",
+      "bbox_norm": [
+        0.48,
+        0.95,
+        0.7,
+        1.0
+      ],
+      "file": "phase_indicator.png",
+      "description": "黄色六边形阶段指示标记。",
+      "review_status": "manual",
+      "bbox_px": [
+        595,
+        1571,
+        868,
+        1654
+      ]
+    },
+    {
+      "concept_id": "weather_indicator",
+      "label_en": "1 weather indicator",
+      "label_zh": "天气标记",
+      "bbox_norm": [
+        0.71,
+        0.95,
+        0.97,
+        1.0
+      ],
+      "file": "weather_indicator.png",
+      "description": "白色圆形天气指示标记。",
+      "review_status": "manual",
+      "bbox_px": [
+        881,
+        1571,
+        1203,
+        1654
+      ]
+    }
+  ]
+}
