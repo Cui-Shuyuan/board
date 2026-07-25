@@ -77,6 +77,13 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-25（深夜）**: site 重构 + tile.parts 机制 + ontology constraints 精简：
+  - **site_tile 并入 site**：删除过度抽象的 `site_tile`，`site extends tile` 一个概念足够。9 种地点（含建造点）均为 `<site>` 实例。全局替换 `<site_tile>` → `<site>`（concepts.json 4 处 + flow.json 1 处）。
+  - **site 新增 `"<ontology::zone>[]": ["<building_slot>"]`**：建造点带有 building_slot 可建 settlement/statue；其他 8 种地点仅有 effect 不声明 zone。概念层并集声明，实例层各自裁剪。
+  - **新增 `<building_slot>`**（extends zone）：建造点 site 上的建造格，contains `<settlement> | <statue>`。
+  - **新增 `<site_slot>`**（extends zone）：位于 `<continent>` 上（非 continent_tile），由大陆板块与计分轨外框拼合后形成的 25 个凹槽，每个放置一块 `<site>`。与印在 1×1 板块上的建造点（parts 机制）区分——前者是凹槽 zone，后者是板块自带的嵌入身份。
+  - **`<tile>.parts` 机制**：ontology 中 `<tile>` 新增 `parts` 字段（`<tile>[]`，default null）。一块实体板承载多个逻辑 tile 身份——"拿刀裁开即两块独立 tile"。1×1 大陆板块通过 `parts` 同时承担 `<continent_tile>` 和 `<site>` 两种身份。continent_tile 上不再需要 `"<site>"` 字段。
+  - **ontology constraints.optional 精简**：36 个 LOCAL 字段从对象格式改为字符串格式，3 个 CONCEPT_REF 保留对象格式。净减 255 行冗余描述。
 - **2026-07-25**: 概念与实例分离 + ontology 清理 + terrain/region 移除：
   - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。
   - **ontology 清理**：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`encampment` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` parent 改为 `<ontology::zone>`。

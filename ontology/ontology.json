@@ -35,13 +35,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "attributes",
-            "description": {
-              "zh": "描述对象固有特征的键值对集合。由游戏规则预定义，描述对象「是什么」而非「此刻怎样」。",
-              "en": "A map of key-value pairs describing the object's intrinsic characteristics. Predefined by game rules. Describes what the object 'is', not what it 'currently is'."
-            }
-          }
+          "attributes"
         ]
       }
     },
@@ -74,13 +68,7 @@
               "en": "Player name for UI display and LLM natural language generation. Does not affect rule logic."
             }
           },
-          {
-            "id": "order",
-            "description": {
-              "zh": "玩家在回合顺序中的位置（从 1 开始）。若游戏采用同时行动等非固定顺序机制可省略。",
-              "en": "Player's position in turn order (1-based). May be omitted for games with non-fixed ordering like simultaneous action."
-            }
-          }
+          "order"
         ]
       }
     },
@@ -121,27 +109,9 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "unit",
-            "description": {
-              "zh": "资源计量单位（如「颗」「枚」「根」），仅供 UI 和 LLM 自然语言生成使用，不影响规则逻辑。",
-              "en": "Unit of measurement for this resource (e.g., 'piece', 'token', 'stick'). For UI and LLM natural language generation only; does not affect rule logic."
-            }
-          },
-          {
-            "id": "appearance",
-            "description": {
-              "zh": "资源外观描述——形状、颜色、图案等关键视觉信息。用于 UI 渲染和 AI 向玩家解释规则时帮助识别实物。",
-              "en": "Visual description of this resource — shape, color, patterns. Used for UI rendering and AI explanations to help players identify physical pieces."
-            }
-          },
-          {
-            "id": "token",
-            "description": {
-              "zh": "用于表示此资源的物理 <token>。如棕色八角柱代表食物。null 表示资源本身辨识度高，不需要额外的小零件来代表。",
-              "en": "The physical <token> used to represent this resource. E.g., a brown pillar represents food. null means the resource is self-evident and needs no extra piece to represent it."
-            }
-          }
+          "unit",
+          "appearance",
+          "token"
         ]
       }
     },
@@ -245,20 +215,8 @@
           }
         ],
         "optional": [
-          {
-            "id": "<ontology::zone>[]",
-            "description": {
-              "zh": "此版图承载的 <zone> 及其物理位置。客人问位置相关问题时系统从此字段检索。仅当此 board 上确实有 zone 时才需填写。",
-              "en": "The <zone>s hosted on this board with their physical positions. The system searches this field when guests ask position-related questions. Only needed when this board actually hosts zones."
-            }
-          },
-          {
-            "id": "content",
-            "description": {
-              "zh": "此版图自身携带的效果或能力——不依赖任何外部 <piece> 即可使用。如玩家面板上印着的基础活动图标。",
-              "en": "Effects or abilities carried by this board itself — usable without any external <piece>. E.g., the basic activity icon printed on a player console."
-            }
-          }
+          "<ontology::zone>[]",
+          "content"
         ]
       }
     },
@@ -299,13 +257,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "maps_to",
-            "description": {
-              "zh": "视觉映射——声明此 Aid 在视觉上对应哪些 <zone>。只有确实对应某个/某些 zone 的 Aid（如版图、轨道）才需要填写；规则书、玩家提示卡等纯文档型 Aid 可省略。注意：Aid 不「包含」这些 zone，它只是画出了它们。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
-              "en": "Visual mapping — declares which <zone>s this Aid visually corresponds to. Only fill this when the aid actually depicts zones (e.g. boards, tracks); document-type aids such as rulebooks and player aids may omit it. Note: the Aid does not 'contain' these zones; it merely depicts them. Zones exist and are defined purely by rules, independent of any Aid."
-            }
-          }
+          "maps_to"
         ]
       }
     },
@@ -346,13 +298,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "represents",
-            "description": {
-              "zh": "此 Token 代表什么逻辑概念（如 State「受伤」、State「起始玩家」）。若为多用途 Token（如红色方块既计分又标归属），则省略此字段，含义由所在 Zone 或上下文决定。",
-              "en": "What logical concept this Token represents (e.g., State 'wounded', State 'starting player'). Omit for multi-purpose Tokens — meaning is determined by Zone or context."
-            }
-          }
+          "represents"
         ]
       }
     },
@@ -401,13 +347,7 @@
               "en": "The logical concept this marker represents (e.g., State 'starting player', State 'current phase')."
             }
           },
-          {
-            "id": "token",
-            "description": {
-              "zh": "用于表示此标记物的物理 <token>。如蓝色圆片代表分轨标记。null 表示标记物本身辨识度高，不需要额外的小零件来代表。",
-              "en": "The physical <token> used to represent this marker. E.g., a blue disc represents a score track marker. null means the marker is self-evident and needs no extra piece to represent it."
-            }
-          }
+          "token"
         ]
       }
     },
@@ -499,13 +439,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "capacity",
-            "description": {
-              "zh": "Zone 可容纳的对象数量上限。null 表示无上限。达到上限后，以此 Zone 为目标的 <transfer> 将被拒绝。",
-              "en": "Maximum number of objects this Zone can hold. null = unlimited. When full, <transfer>s targeting this Zone are rejected."
-            }
-          }
+          "capacity"
         ]
       }
     },
@@ -559,20 +493,8 @@
           }
         ],
         "optional": [
-          {
-            "id": "value_type",
-            "description": {
-              "zh": "State 值的类型约束（如 integer、boolean、player）。程序修改 State 时以此校验值的合法性。",
-              "en": "Type constraint for the State value. Programs validate state changes against this."
-            }
-          },
-          {
-            "id": "initial_value",
-            "description": {
-              "zh": "游戏开始时的初始值，用于 setup 和 reset。确保每次游戏开始时 State 从一致的状态出发。",
-              "en": "Initial value when the game starts. Used for setup and reset to ensure consistent starting state."
-            }
-          }
+          "value_type",
+          "initial_value"
         ]
       }
     },
@@ -634,27 +556,9 @@
           }
         ],
         "optional": [
-          {
-            "id": "value_type",
-            "description": {
-              "zh": "Property 值的类型约束（如 integer、boolean、cost_map、effect_spec）。",
-              "en": "Type constraint for the Property value."
-            }
-          },
-          {
-            "id": "mutable",
-            "description": {
-              "zh": "是否可被 <effect> 修改。默认 false（静态属性）。若为 true，修改必须经由 <effect> 触发，不可被玩家随意更改。",
-              "en": "Whether this Property can be modified by <effect>s. Default false. Changes must go through an <effect>."
-            }
-          },
-          {
-            "id": "default_value",
-            "description": {
-              "zh": "对象被创建或进入游戏时的默认值。确保 Property 始终有定义良好的初始态。",
-              "en": "Default value when the object is created or enters the game. Ensures Property always has a well-defined initial state."
-            }
-          }
+          "value_type",
+          "mutable",
+          "default_value"
         ]
       }
     },
@@ -700,13 +604,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "source",
-            "description": {
-              "zh": "所有权来源：intrinsic（游戏开始即确定，如自备牌组）、zone（由所在 Zone 的 owner 推导，默认行为）、transfer（经由 <transfer> 或 <effect> 在游戏中获得）。若未指定，程序默认按 zone 推导。",
-              "en": "Source of ownership: intrinsic (from game start), zone (derived from containing Zone, default), transfer (acquired via <transfer> or <effect> during gameplay). Defaults to zone derivation if unspecified."
-            }
-          }
+          "source"
         ]
       }
     },
@@ -799,34 +697,10 @@
           }
         ],
         "optional": [
-          {
-            "id": "actor",
-            "description": {
-              "zh": "导致此 Event 发生的主体。<action> 中必为 <player>，<trigger> 中为 null。若 Event 由规则自动引发则省略。",
-              "en": "The entity that caused this Event. Required for <action>s (always a <player>), null for <trigger>s. Omitted if the Event is automatically triggered by rules."
-            }
-          },
-          {
-            "id": "target",
-            "description": {
-              "zh": "此 Event 作用的目标——可以是任意 <object> 的子类实例。若 Event 无特定目标（如「回合开始」）则为 null。",
-              "en": "The target this Event acts upon. Can be any <object> subclass instance. null if the Event has no specific target."
-            }
-          },
-          {
-            "id": "precondition",
-            "description": {
-              "zh": "此 Event 发生前必须满足的 <condition> 列表。空数组或省略表示无条件触发。",
-              "en": "A list of <condition>s that must be met before this Event occurs. Empty or omitted means unconditional."
-            }
-          },
-          {
-            "id": "rules",
-            "description": {
-              "zh": "此 Event 的执行规则说明（中英双语）。描述结构化字段之外的具体约束，供 LLM 和程序实现参考。",
-              "en": "Execution rules for this Event (bilingual). Describes specific constraints beyond structured fields, for LLM and program reference."
-            }
-          }
+          "actor",
+          "target",
+          "precondition",
+          "rules"
         ]
       }
     },
@@ -859,13 +733,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "params",
-            "description": {
-              "zh": "此 Condition 的参数，内容由具体的条件类型决定（如 SupplyCount 条件：{ resource, operator, value }）。程序根据条件 id 查找 evaluator 并传入 params。",
-              "en": "Parameters for this Condition. Content is determined by the specific condition type. The program looks up the evaluator by condition id and passes these params."
-            }
-          }
+          "params"
         ]
       }
     },
@@ -898,13 +766,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "params",
-            "description": {
-              "zh": "此 Timing 的参数，内容由具体的时机类型决定（如阶段边界：{ boundary: \"turn_end\" }）。程序根据时机 id 查找 watcher 并传入 params。",
-              "en": "Parameters for this Timing. Content is determined by the specific timing type (e.g., phase boundary: { boundary: \"turn_end\" }). The program looks up the watcher by timing id and passes these params."
-            }
-          }
+          "params"
         ]
       }
     },
@@ -1015,20 +877,8 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "<cost>",
-            "description": {
-              "zh": "触发此 Effect 前必须履行的代价。null 表示免费效果（如「回合开始时抽一张牌」）。与 <content> 不可同时为 null。",
-              "en": "The cost that must be fulfilled before triggering this Effect. null = free effect. Must not be null simultaneously with <content>."
-            }
-          },
-          {
-            "id": "<content>",
-            "description": {
-              "zh": "此 Effect 结算时应发生的具体事件。null 表示 Content 由 Piece 自身或游戏规则隐式提供。与 <cost> 不可同时为 null。",
-              "en": "The specific events that should occur when this Effect resolves. null = implicitly provided by Piece or rules. Must not be null simultaneously with <cost>."
-            }
-          }
+          "<cost>",
+          "<content>"
         ]
       }
     },
@@ -1195,13 +1045,7 @@
           }
         ],
         "optional": [
-          {
-            "id": "children",
-            "description": {
-              "zh": "嵌套在此 Procedure 内部的子流程。空数组表示叶子节点，直接包含 <action> 而非子流程。<round>、<turn>、<phase> 可任意嵌套。",
-              "en": "Child Procedures nested within this one. Empty means a leaf node containing <action>s directly. <round>, <turn>, <phase> can nest freely."
-            }
-          }
+          "children"
         ]
       }
     },
@@ -1227,13 +1071,7 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "children",
-            "description": {
-              "zh": "此 Round 包含的 <phase> 序列。每轮按此顺序执行各 Phase。仅允许 <phase> 作为直接子节点。",
-              "en": "The sequence of <phase>s in this Round. Each cycle executes Phases in this order. Only <phase>s are allowed as direct children."
-            }
-          }
+          "children"
         ]
       }
     },
@@ -1259,13 +1097,7 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "children",
-            "description": {
-              "zh": "此 Turn 包含的 <phase> 序列。仅允许 <phase> 作为直接子节点。空数组表示此 Turn 直接包含 Action。",
-              "en": "The sequence of <phase>s in this Turn. Only <phase>s are allowed as direct children."
-            }
-          }
+          "children"
         ]
       }
     },
@@ -1298,20 +1130,8 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "children",
-            "description": {
-              "zh": "此 Phase 包含的子流程——可以是 <round>、<turn>、<phase> 任意组合。若为空，此 Phase 为叶子节点，直接暴露一组合法 <action>。",
-              "en": "Child Procedures within this Phase — can be any combination of <round>s, <turn>s, <phase>s. If empty, this is a leaf Phase exposing legal <action>s directly."
-            }
-          },
-          {
-            "id": "actions",
-            "description": {
-              "zh": "此 Phase 内玩家可执行的 <action> 列表。仅当 children 为空（叶子 Phase）时此字段有意义——它定义了当前规则上下文中的合法行动。",
-              "en": "The list of <action>s available during this Phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context."
-            }
-          }
+          "children",
+          "actions"
         ]
       }
     },
@@ -1388,20 +1208,8 @@
           }
         ],
         "optional": [
-          {
-            "id": "ownership_change",
-            "description": {
-              "zh": "是否同时改变 <ownership>。若为 true，destination <zone> 关联的 <player> 成为新所有者。默认 false。",
-              "en": "Whether <ownership> also changes. If true, the <player> associated with the destination <zone> becomes the new owner. Default false."
-            }
-          },
-          {
-            "id": "quantity",
-            "description": {
-              "zh": "转移的 <object> 数量。<token>（可互换）可能大于 1；<piece>（不可互换）通常为 1。默认 1。",
-              "en": "Quantity of <object>s transferred. <token>s (interchangeable) may be > 1; <piece>s (unique) are usually 1. Default 1."
-            }
-          }
+          "ownership_change",
+          "quantity"
         ]
       }
     },
@@ -1713,9 +1521,19 @@
         "zh": "一种 <piece>，通常较 <card> 更小更厚，形状不定——六边形、正方形、长方形或不规则形状均有。<tile> 继承自 <piece>。典型例子包括卡坦岛的六角地形板块、卡卡颂的地图板块、Azul 的装饰砖块、多米诺骨牌式拼接板块。",
         "en": "A type of <piece>, typically smaller and thicker than a <card>, with variable shapes — hexagonal, square, rectangular, or irregular. <tile> extends <piece>. Typical examples: Catan hexagonal terrain tiles, Carcassonne map tiles, Azul decorative tiles, domino-style placement tiles."
       },
+      "parts": {
+        "type": "<tile>[]",
+        "default": null,
+        "description": {
+          "zh": "此物理板块所包含的逻辑 <tile> 列表。当一块实体板上印有多个逻辑身份独立的板块时使用——实体只有一个，但规则层面它等于多块逻辑板块拼合而成。例如《文明演化》中 1×1 大陆板块上印有建造点，同时承担 <continent_tile> 和 <site> 两种逻辑身份。每个元素是一个 tile 实例，拥有独立的 concept parent、zone 和 effect。",
+          "en": "A list of logical <tile>s that compose this physical tile. Used when one physical board carries multiple logically independent tile identities — e.g., the 1×1 continent tile in Civolution has a building ground printed on it, serving as both a <continent_tile> and a <site>. Each element is a tile instance with its own concept parent, zones, and effects."
+        }
+      },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          "parts"
+        ]
       }
     },
     {
@@ -1768,7 +1586,9 @@
       },
       "constraints": {
         "required": [],
-        "optional": ["capacity"]
+        "optional": [
+          "capacity"
+        ]
       }
     },
     {
@@ -1883,13 +1703,7 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "components",
-            "description": {
-              "zh": "组成公共版图的 <aid> 列表。用于表达「由多块 aid 拼成的公共版图」这一物理形态。",
-              "en": "List of <aid>s composing the public board. Used to express a public board physically assembled from multiple aid parts."
-            }
-          }
+          "components"
         ]
       }
     },
@@ -1992,13 +1806,7 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "scale",
-            "description": {
-              "zh": "轨的刻度范围或单位描述，用于规则讲解和 UI 展示。",
-              "en": "Scale or range description of the track, used for rule explanation and UI display."
-            }
-          }
+          "scale"
         ]
       }
     },
@@ -2092,13 +1900,7 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "sides",
-            "description": {
-              "zh": "骰子面数，用于规则说明和随机结果范围。",
-              "en": "Number of faces, used for rule explanation and random result range."
-            }
-          }
+          "sides"
         ]
       }
     },
@@ -2188,13 +1990,7 @@
       "constraints": {
         "required": [],
         "optional": [
-          {
-            "id": "trigger",
-            "description": {
-              "zh": "被动效果的生效前提，null 表示无条件持续生效。",
-              "en": "Prerequisite for the passive effect; null means always active."
-            }
-          }
+          "trigger"
         ]
       }
     },

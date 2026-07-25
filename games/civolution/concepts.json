@@ -550,8 +550,8 @@
             "parent": "<ontology::zone>",
             "abstract": false,
             "definition": {
-                "zh": "位于 <continent_tile> 上的一个 <ontology::zone>，用于放置一块 <site>。仅 1×1 大陆板块上有此格，其余 7 块 2×1 板块没有。",
-                "en": "A <ontology::zone> on a <continent_tile> that holds one <site>. Only the 1×1 continent tile has this slot; the seven 2×1 tiles do not."
+                "zh": "位于 <continent> 上的一个 <ontology::zone>，由大陆板块与计分轨外框拼合后形成，用于放置一块 <site>。共 25 个，是放置物理地点板块的凹槽。注意与 <continent_tile> 上直接印有的 <site>（建造点，不可移动）区分——前者是凹槽 zone，后者是板块自带的嵌入 tile。",
+                "en": "A <ontology::zone> on the <continent> formed by the assembly of continent tiles and the score track frame, holding one <site>. There are 25 in total, each being a recess for a physical site tile. Distinct from a <site> printed directly on a <continent_tile> (Building Ground, which is fixed) — the former is a slot zone, the latter is an embedded tile on the tile itself."
             },
             "contains": {
                 "type": "<site>",
@@ -590,8 +590,8 @@
             "parent": "<ontology::tile>",
             "abstract": false,
             "definition": {
-                "zh": "拼成 <continent> 的 <ontology::tile>。正面印有不同的 <territory>、<material_slot>、<encampment>、<fire_encampment>；仅 1×1 板块额外带有 <site_slot>。",
-                "en": "A <ontology::tile> forming part of the <continent>. The front is printed with different terrain zones, <material_slot>s, and encampment positions; only the 1×1 tile additionally carries a <site_slot>."
+                "zh": "拼成 <continent> 的 <ontology::tile>。正面印有不同的 <territory>、<material_slot>、<encampment>、<fire_encampment>；仅 1×1 板块通过 <ontology::tile> 的 parts 机制额外承担 <site> 逻辑身份（建造点）。",
+                "en": "A <ontology::tile> forming part of the <continent>. The front is printed with different terrain zones, <material_slot>s, and encampment positions; the 1×1 tile instance additionally carries a <site> logical identity (Building Ground) via the <ontology::tile> parts mechanism."
             },
             "size": {
                 "zh": "7 块为 2×1，1 块为 1×1",
@@ -601,8 +601,7 @@
                 "<territory>",
                 "<material_slot>",
                 "<encampment>",
-                "<fire_encampment>",
-                "<site_slot>"
+                "<fire_encampment>"
             ]
         },
         {
@@ -900,8 +899,8 @@
             "parent": "<ontology::zone>",
             "abstract": false,
             "definition": {
-                "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。它承载 <territory>、<encampment>、<site>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
-                "en": "The public play area formed by all <continent_tile>s arranged in a 5×3 rectangular grid inside the score track frame. During setup, the 8 continent tiles (7 × 2×1 + 1 × 1×1 = 15 cells) are randomly arranged to fill this grid. It holds <territory>s, <encampment>s, <site>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable encampments."
+                "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。拼合后大陆板块与计分轨外框共同形成 25 个 <site_slot>，每个可放置一块 <site>。此外大陆还承载 <territory>、<encampment>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
+                "en": "The public play area formed by all <continent_tile>s arranged in a 5×3 rectangular grid inside the score track frame. During setup, the 8 continent tiles (7 × 2×1 + 1 × 1×1 = 15 cells) are randomly arranged to fill this grid. After assembly, the continent tiles and the score track frame together form 25 <site_slot>s, each holding one <site>. The continent also holds <territory>s, <encampment>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable encampments."
             },
             "grid": {
                 "dimensions": {
@@ -913,6 +912,9 @@
                     "en": "The grid layout of the continent area. 5×3 = 15 cells total, must be exactly filled by <continent_tile>s during setup (7×2 + 1×1 = 15)."
                 }
             },
+            "<ontology::zone>[]": [
+                "<site_slot>"
+            ],
             "contains": {
                 "type": "<ontology::tile>[] | <ontology::piece>[] | <ontology::token>[]",
                 "description": {
