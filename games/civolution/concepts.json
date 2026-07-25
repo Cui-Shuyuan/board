@@ -539,9 +539,7 @@
                 "en": "A special <ontology::tile> placed on the <continent>, face down until revealed by a specific condition, then taking lasting effect. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Building ground carries a <building_slot> for <settlement> or <statue>; other sites have only an effect without a zone."
             },
             "parts": [
-                {
-                    "as": "<building_slot>"
-                }
+                "<building_slot>"
             ]
         },
         {
@@ -601,18 +599,10 @@
                 "en": "Seven 2×1 tiles and one 1×1 tile"
             },
             "parts": [
-                {
-                    "as": "<territory>"
-                },
-                {
-                    "as": "<material_slot>"
-                },
-                {
-                    "as": "<encampment>"
-                },
-                {
-                    "as": "<fire_encampment>"
-                }
+                "<territory>",
+                "<material_slot>",
+                "<encampment>",
+                "<fire_encampment>"
             ]
         },
         {
@@ -934,9 +924,7 @@
             "<ontology::ownership>": null,
             "<ontology::information_visibility>": "public",
             "parts": [
-                {
-                    "as": "<site_slot>"
-                }
+                "<site_slot>"
             ]
         },
         {
