@@ -77,12 +77,14 @@ metadata:
 
 ## 最近进展
 
-- **2026-07-25（深夜）**: site 重构 + piece.parts 统一：
+- **2026-07-25（深夜）**: site 重构 + piece.parts 统一 + 图片提取探索：
   - **site_tile 并入 site**：删除过度抽象的 `site_tile`。全局替换 `<site_tile>` → `<site>`。
   - **新增 `<building_slot>`**（extends zone）：建造点 site 上的建造格。
   - **新增 `<site_slot>`**（extends zone）：continent 上 25 个凹槽（非 continent_tile），拼合后形成。
   - **`<piece>.parts` 统一机制**：ontology 中 `<piece>` 新增 `parts`（`any[]`）。zone 不再单独挂在 piece 上——territory、encampment、material_slot 都是 part。Civolution 8 个概念 + Splendor 2 个概念已全部迁移。纯引用用字符串 `"<territory>"`，带属性的用 `{ "as": "<score_track>", "position": ... }`。
+  - **site.parts 新增 `<ontology::effect>`**：建造点和 8 个普通地点的效果都通过 parts 体现。
   - **constraints.optional 精简**：36 个 LOCAL 字段改为字符串格式，净减 255 行。
+  - **图片提取探索**：`pdftoppm` 导出 PDF 第 6/7 页（组件展示）成功，但 DeepSeek v4 Pro 不支持多模态输入导致 Read 工具返回 `[Unsupported Image]`。结论：需要换用多模态模型（如 Kimi）才能让 LLM 直接识别组件并裁剪坐标。
   - **site.parts 新增 `<ontology::effect>`**：建造点和 8 个普通地点的效果都通过 parts 体现。
 - **2026-07-25**: 概念与实例分离 + ontology 清理 + terrain/region 移除：
   - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。

@@ -60,8 +60,10 @@ metadata:
 - `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
 - ontology namespace 方案确认（`<ontology::concept_id>`）并完成后端查询支持
 - 明确设计约定：ontology 已有概念直接引用，不在游戏层重复封装
+- **`<piece>.parts` 统一机制**：物理载体与逻辑身份解耦，替代 `<ontology::zone>[]` 和分散的 piece 字段。Civolution 8 概念 + Splendor 2 概念已迁移完成
+- **图片提取尝试**：从 PDF 规则书直接裁切组件图片。DeepSeek v4 Pro 不支持多模态导致失败，计划换 Kimi 重试
 
-**当前阻塞**：剩余 player_console、supply、deck、piece/token、大陆/地形、骰子等组件待 review；flow.json 中占位 action 待补全。详见 [[civolution-progress]]。
+**当前阻塞**：剩余 supply、deck、piece/token、骰子、研究牌、芯片等组件待 review；flow.json 中占位 action 待补全。详见 [[civolution-progress]]。
 
 短期仍需为每款游戏补 `manifest.json` 供前端选游戏。
 

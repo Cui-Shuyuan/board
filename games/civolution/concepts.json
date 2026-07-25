@@ -552,8 +552,8 @@
             "parent": "<ontology::zone>",
             "abstract": false,
             "definition": {
-                "zh": "位于 <continent> 上的一种 <ontology::zone>，由 <continent_tile> 之间、以及 <continent_tile> 与 <score_track> 拼合后的空位形成，共 25 个，是放置物理地点板块的凹槽。注意与 <continent_tile> 上直接印有的 <site>（建造点，不可移动）区分——前者是凹槽 <ontology::zone>，后者是板块自带的嵌入 <ontology::tile>。",
-                "en": "A <ontology::zone> on the <continent>, formed by the gaps between <continent_tile>s and between <continent_tile>s and the <score_track> after assembly. There are 25 in total, each a recess for placing a physical site tile. Not to be confused with a <site> printed directly on a <continent_tile> (Building Ground, which cannot be moved) — the former is a recess <ontology::zone>, the latter is an embedded <ontology::tile> carried via <piece>.parts."
+                "zh": "位于 <continent> 上的一种 <ontology::zone>，由 <continent_tile> 之间、以及 <continent_tile> 与 <score_track> 拼合后的空位形成，共 25 个，是放置物理地点板块的凹槽。",
+                "en": "A <ontology::zone> on the <continent>, formed by the gaps between <continent_tile>s and between <continent_tile>s and the <score_track> after assembly. There are 25 in total, each a recess for placing a physical site tile."
             },
             "contains": {
                 "type": "<site>",

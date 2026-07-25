@@ -88,7 +88,10 @@
       "Bash(/c/Windows/py.exe --version)",
       "Bash(cmd.exe /c \"where python\")",
       "Bash(pacman -Ss mingw-w64-ucrt-x86_64-python-numpy)",
-      "Bash(pipx install *)"
+      "Bash(pipx install *)",
+      "Bash(magick convert *)",
+      "Bash(convert games/civolution/components-06.ppm games/civolution/components-06.png)",
+      "Bash(git rm *)"
     ]
   }
 }
