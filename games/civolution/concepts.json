@@ -529,7 +529,7 @@
         {
             "id": "site",
             "name": {
-                "zh": "地点板块",
+                "zh": "地点",
                 "en": "Site"
             },
             "parent": "<ontology::tile>",
@@ -539,6 +539,7 @@
                 "en": "A special <ontology::tile> placed on the <continent>, face down until revealed by a specific condition, then taking lasting effect. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Building ground carries a <building_slot> for <settlement> or <statue>; other sites have only an effect without a zone."
             },
             "parts": [
+                "<ontology::effect>",
                 "<building_slot>"
             ]
         },
