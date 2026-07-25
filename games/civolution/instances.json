@@ -47,8 +47,8 @@
             "parent": "<ontology::effect>",
             "abstract": false,
             "definition": {
-                "zh": "迁徙模组的等级三效果。domain 初始为 null——升至 L3 时由 <player_console> gain。印于控制台模组槽底部。cost 和 content 待 Phase B 填充。",
-                "en": "Level 3 effect of the Migration module. Domain initially null — gained by <player_console> on reaching L3. Printed at the bottom of the console module slot. Cost and content TBD in Phase B."
+                "zh": "迁徙模组的等级三效果。domain 初始为 null——升至 L3 时由 <console> gain。印于控制台模组槽底部。cost 和 content 待 Phase B 填充。",
+                "en": "Level 3 effect of the Migration module. Domain initially null — gained by <console> on reaching L3. Printed at the bottom of the console module slot. Cost and content TBD in Phase B."
             }
         },
         {

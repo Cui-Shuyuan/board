@@ -228,10 +228,10 @@ public class GameRulesService
         return result;
     }
 
-    public async Task<IReadOnlyList<ConceptSummary>> SearchConceptsAsync(string game, string query)
+    public async Task<SearchConceptsResult> SearchConceptsAsync(string game, string query)
     {
         if (string.IsNullOrWhiteSpace(query))
-            return Array.Empty<ConceptSummary>();
+            return new SearchConceptsResult { Results = new List<ConceptSummary>(), Query = query };
 
         // 把 query 拆成子查询，加上原句一起并行搜
         var subQueries = SplitQuery(query);
@@ -259,10 +259,38 @@ public class GameRulesService
             }
         }
 
-        return merged.Values
+        var results = merged.Values
             .OrderByDescending(x => x.Score)
             .Select(x => x.Summary)
             .ToList();
+
+        return new SearchConceptsResult
+        {
+            Results = results,
+            Query = query
+        };
+    }
+
+    public ListConceptsResult ListAllConceptIds(string game)
+    {
+        var byType = new Dictionary<string, List<ConceptSummary>>();
+        foreach (var type in GetConceptTypes(game))
+        {
+            var concepts = ListConcepts(game, type);
+            if (concepts.Count > 0)
+                byType[type] = concepts.Select(c => new ConceptSummary
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Type = c.Type
+                }).ToList();
+        }
+
+        return new ListConceptsResult
+        {
+            ByType = byType,
+            TotalCount = byType.Values.Sum(v => v.Count)
+        };
     }
 
     private async Task<List<(ConceptSummary Summary, float Score)>> VectorSearchAsync(
@@ -748,4 +776,20 @@ public class ConceptSummary
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public Dictionary<string, JsonElement>? Media { get; set; }
+}
+
+public class SearchConceptsResult
+{
+    public List<ConceptSummary> Results { get; set; } = new();
+    public int Count => Results.Count;
+    public string Query { get; set; } = string.Empty;
+    public string Strategy { get; set; } = "hybrid_vector_keyword";
+    public string Note { get; set; } = "Top results only — NOT exhaustive. If you need to see ALL concepts (e.g., to browse what exists), use list_concept_ids.";
+}
+
+public class ListConceptsResult
+{
+    public Dictionary<string, List<ConceptSummary>> ByType { get; set; } = new();
+    public int TotalCount { get; set; }
+    public string Note { get; set; } = "Exhaustive listing of ALL concept IDs and names grouped by type. Use this to confirm a concept doesn't exist or to browse the full catalog.";
 }

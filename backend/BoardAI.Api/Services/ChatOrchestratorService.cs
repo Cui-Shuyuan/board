@@ -189,6 +189,21 @@ public class ChatOrchestratorService
                     }
                     """).RootElement
                 }
+            },
+            new()
+            {
+                Function = new FunctionDefinition
+                {
+                    Name = "list_concept_ids",
+                    Description = "列出当前游戏所有概念的 ID 和名称，按类型分组。这是穷举列表——用于确认某个概念是否存在，或浏览全部概念目录。极轻量，不包含详细定义。只在 search_concepts 找不到预期概念或需要穷举浏览时使用。",
+                    Parameters = JsonDocument.Parse("""
+                    {
+                      "type": "object",
+                      "properties": {},
+                      "required": []
+                    }
+                    """).RootElement
+                }
             }
         };
     }
@@ -222,6 +237,12 @@ public class ChatOrchestratorService
                         var actionId = args.RootElement.GetProperty("action_id").GetString() ?? string.Empty;
                         var conditions = _rulesService.GetActionConditions(gameId, actionId);
                         return JsonSerializer.Serialize(conditions);
+                    }
+
+                case "list_concept_ids":
+                    {
+                        var result = _rulesService.ListAllConceptIds(gameId);
+                        return JsonSerializer.Serialize(result);
                     }
 
                 default:

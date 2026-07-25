@@ -72,10 +72,11 @@ metadata:
 - 游戏名动态注入，prompt 本身保持通用
 
 ### 3. 工具集合最小化
-当前只暴露 3 个工具给 LLM（具体 schema 由代码在每次请求时随 `tools` 参数传入，不在 system prompt 中重复描述）：
-- `search_concepts(game_id, query)`
+当前暴露 4 个工具给 LLM（具体 schema 由代码在每次请求时随 `tools` 参数传入，不在 system prompt 中重复描述）：
+- `search_concepts(game_id, query)` — 语义搜索，返回带元数据的 SearchConceptsResult（含 count/strategy/note，告知 LLM 这是 Top-K 非穷举）
 - `get_concept(game_id, concept_id)`
 - `get_action_conditions(game_id, action_id)`
+- `list_concept_ids(game_id)` — **2026-07-26 新增**：穷举全量概念 ID+名称，按类型分组，极轻量。LLM 需要确认某概念不存在或浏览全量目录时用，替代反复换关键词搜索
 
 所有工具的第一个参数都是 `game_id`，保证多游戏场景下不会查错数据。
 
@@ -122,6 +123,12 @@ Qdrant 按游戏分 collection（`board_{gameId}`），索引涵盖 ontology、c
 - 工具返回中的 `<concept_id>` 引用可继续查
 
 System prompt 中不再重复列出可用工具（工具 schema 已通过 `tools` 参数单独传递），以减轻 prompt 负担。
+
+### 9. 搜索元数据与工具选择策略（2026-07-26）
+解决 LLM 不信任部分搜索结果、反复换关键词查全量的循环问题：
+- `search_concepts` 返回 `SearchConceptsResult` 包装，包含 `count`、`strategy`（"hybrid_vector_keyword"）、`note`（"NOT exhaustive"）
+- 新增 `list_concept_ids` 工具让 LLM 一次性看全量 ID+名称，替代重复搜索
+- System prompt 中明确工具选择决策：search_concepts 找入口 → get_concept 跟引用 → list_concept_ids 仅兜底穷举
 
 ## LLM 调用次数
 `MaxToolRounds` 设为 `int.MaxValue`，不再限制 LLM 为一题调几次工具，方便观察复杂问题上的真实查询深度。实际生产时可根据成本和延迟再收紧。

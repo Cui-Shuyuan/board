@@ -14,7 +14,7 @@ metadata:
 - **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
 - **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
 - **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
-- **当前状态**: Phase A 进行中。进程版图与流程版图已 review 完成；模块升级模型已重构为 Lose + Gain（15 主模块拆为 45 个 effect 实例 + 15 个 tile，player_console.content 已扩展至 16 项）。2026-07-25：terrain/region 从 ontology 移除，7 种地形改为游戏层 `<ontology::zone>` 子类，territory 保留为游戏层 zone 概念。剩余：supply 类、deck 类、piece/token 类、骰子等待 review。对象总数：169。
+- **当前状态**: Phase A 进行中。进程版图与流程版图已 review 完成；模块升级模型已重构为 Lose + Gain（15 主模块拆为 45 个 effect 实例 + 15 个 tile，console.content 已扩展至 16 项）。2026-07-25：terrain/region 从 ontology 移除，7 种地形改为游戏层 `<ontology::zone>` 子类，territory 保留为游戏层 zone 概念。2026-07-26：`territory_token` 删除（本质即 hunting_token）；`site_slot` 修正为 24 格（非 25）；`site` 概念与 `building_slot` 边界澄清（site_slot 是分轨与大陆间的空位，building_slot 是建造点 site 自带的建造格）。对象总数：168。
 
 ## 为什么选这款游戏
 
@@ -63,7 +63,7 @@ metadata:
 
 ## 阻塞项
 
-- 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 player_console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
+- 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
 - flow.json 中存在占位引用（如 `<activate_module>`、`<reset>`、`<action_phase_end>`），需要在 concepts.json 的 actions/conditions 层补全
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
@@ -76,6 +76,15 @@ metadata:
 - **[tile 多 effect 组合]** tile 可承载多个 effect（对应多个骰子槽位），关系为 AND（并）或 OR（或）。需考虑 composite effect 或在 tile 上表达 effect 组合关系
 
 ## 最近进展
+
+- **2026-07-25（图片提取突破）**: OpenCV + PDF 布局分析成功提取组件图片：
+  - **正确页面定位**：组件目录页是 PDF 第 4-5 页（非之前误用的 setup 页 6-7）
+  - **方法演进**：纯 CV 阈值/边缘检测 → 失败（页面排版复杂）→ **投影分析法**：水平投影找组件行 + 垂直投影找行内单个组件 → 成功
+  - **脚本**：`scripts/extract_components_cv.py`，使用 PyMuPDF（fitz）渲染 600dpi 页面 + OpenCV 投影分析 + 文字标签锚定命名
+  - **输出**：126 个组件裁切 → `games/civolution/media/`（5.1 MB），其中 55 个大图（>30KB）为高质量组件照片
+  - **标注图**：`page-04_600dpi_annotated.jpg`、`page-05_600dpi_annotated.jpg` 供人工审核检测框质量
+  - **关键发现**：PDF 页面是单张全页渲染图（非独立嵌入图片），组件是整张图内的子区域
+  - **人工审核需要**：自动检测无法完美区分文字标签和组件照片（部分细长标签条、小图标被误检），建议人工筛选后保留 40-60 张关键组件图
 
 - **2026-07-25（深夜）**: site 重构 + piece.parts 统一 + 图片提取探索：
   - **site_tile 并入 site**：删除过度抽象的 `site_tile`。全局替换 `<site_tile>` → `<site>`。
@@ -102,10 +111,10 @@ metadata:
   - **制表符→4空格**：concepts.json + instances.json 统一格式化
   - **`<piece>` 定义修正**：`zones` 提升至 `<piece>`；play 能力由 ownership 决定。
 - **2026-07-24（晚间）**: 重构模块升级模型——Lose + Gain：
-  - **模块各等级改为独立 effect 实例**：15 个主模块各拆为 3 个 effect 实例（effect_xxx_lv1/lv2/lv3），通过 id 前缀保持模块 identity。L1/L2 由 tile 正反面持有，L3 由 player_console 持有。共新增 45 个 effect 实例 + 15 个 tile 概念。`module.level` 字段已删除。
+  - **模块各等级改为独立 effect 实例**：15 个主模块各拆为 3 个 effect 实例（effect_xxx_lv1/lv2/lv3），通过 id 前缀保持模块 identity。L1/L2 由 tile 正反面持有，L3 由 console 持有。共新增 45 个 effect 实例 + 15 个 tile 概念。`module.level` 字段已删除。
   - **`<upgrade>` 父类改为 `<trigger>`**：核心语义是 level 提升，不再硬编码 lose/gain。同一载体（tile 翻面 L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。
   - **新增 `<lose>` 和 `<gain>` 作为 Event 子类**：`<lose>`——object 失去 property（domain → null）；`<gain>`——object 获得 property（domain → 新实体）。ontology 概念总数：69 → 71。
-  - **player_console.content 已更新**：从 1 项扩展为 16 项（1 innate_activity + 15 lv3 effect），所有 lv3 effect 初始不可用，升级时由 console `<gain>`。
+  - **console.content 已更新**：从 1 项扩展为 16 项（1 innate_activity + 15 lv3 effect），所有 lv3 effect 初始不可用，升级时由 console `<gain>`。
 - **2026-07-24（凌晨）**: 理清模组本质与安装模型：
   - **模组是 effect，带 level state**：[已废弃，见上方晚间更新] 模组的 parent 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
   - **安装 = transfer**：卡牌/芯片安装到控制台就是从 source zone transfer 到控制台上逻辑坐标的 zone。Zone 是纯概念不绑定物理尺寸，所以纸片可以互相叠压。控制台每个行列坐标就是一个 zone（有独立 capacity）。
@@ -114,8 +123,8 @@ metadata:
 - **2026-07-23**: 完成本体重大重构——Board 概念拆分与 Zone 宿主模型修正：
   - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
   - **Zone 可由实体承载**：card 和 board 都可以提供 zone。`<card>` 新增可选 `zones` 字段。Civolution 的 `starting_chip_card` 已标注设置阶段提供的临时目标芯片 zone。
-  - **Board 的 `zones` 字段替代 `maps_to`**：`zones` 表达物理宿主关系（附带 position 和 description），而非 aid 时代的弱视觉映射。Civolution 的 `player_console`、`progress_board`、`sequence_board`、`public_board` 均已从 `maps_to` 迁移至 `zones`，每个 zone 附带面板上的物理位置描述。
-  - **`player_console` 新增 `content`**：面板自带的基础活动图标——玩家无需安装任何研究牌即可使用的 innate 能力。
+  - **Board 的 `zones` 字段替代 `maps_to`**：`zones` 表达物理宿主关系（附带 position 和 description），而非 aid 时代的弱视觉映射。Civolution 的 `console`、`progress_board`、`sequence_board`、`public_board` 均已从 `maps_to` 迁移至 `zones`，每个 zone 附带面板上的物理位置描述。
+  - **`console` 新增 `content`**：面板自带的基础活动图标——玩家无需安装任何研究牌即可使用的 innate 能力。
 - **2026-07-23**: 完成进程版图与流程版图全部组件的逐项 review，主要改动：
   - **parent 归类修正**：`final_scoring_area` zone→track（本质是标记逐格推进的轨）；`dice_display`/`hunting_token_display`/`hundred_point_token_display` zone→supply；`goal_chip_display`/`income_chip_display`/`attribute_chip_display` zone→market
   - **market 新增 capacity**：ontology `market` 加 `capacity` 字段（`integer | null`），游戏层 `goal_chip_display`=6、`income_chip_display`=玩家人数+2、`attribute_chip_display`=3；`dice_display` 按玩家人数+1 每种骰子
@@ -129,6 +138,14 @@ metadata:
 - 2026-07-22: 明确设计约定：ontology 已有概念直接引用，不在游戏层再包一层
 - 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念；完成 `concepts.json` objects 层骨架和 `flow.json` 流程骨架
 - 2026-07-21: 完成 namespace 替换并同步后端查询支持
+- **2026-07-26（概念修正 + 前端图片渲染）**:
+  - **删除 `<territory_token>`**：概念本质即 `<hunting_token>`（狩猎指示物），双面标记（正面狩猎/背面阻挡）。删除后全局无残留引用。
+  - **`<site_slot>` 修正为 24 格**：site_slot 是分轨与大陆板块之间的空位，共 24 格。第 25 个位置由建造点 site 自带的 `<building_slot>` 提供，非 site_slot。
+  - **前端图片渲染修复**：`wwwroot/index.html` 的 `addMessage` 对 assistant 消息改用 `innerHTML` + `mdToHtml()` 转换，`![alt](url)` 语法自动转为 `<img>` 标签，LLM 回复中的组件图片得以正常显示。
+  - **搜索信任问题修复**：`search_concepts` 返回带元数据的 `SearchConceptsResult`（count/strategy/note），告知 LLM 是 Top-K 非穷举。新增 `list_concept_ids` 工具：穷举全量概念 ID+名称，按类型分组，极轻量。System prompt 明确工具选择策略：search_concepts 找入口 → get_concept 跟引用 → list_concept_ids 仅兜底穷举。解决 LLM 不信任部分结果、反复换关键词查全量的问题。
+  - **`player_console` → `console` 重命名**：概念 ID、文件路径、flow.json 与 concepts.json 中所有 `<player_console>` 引用、civolution-progress.md 全文替换。
+
+- **2026-07-26（组件图片按边框裁切）**: 用 OpenCV CCOMP 轮廓层级法从 PDF 规则书检测黑色矩形边框裁切组件，产出一批裁切图到 `media/by_border/`。
 
 ## 相关记忆
 

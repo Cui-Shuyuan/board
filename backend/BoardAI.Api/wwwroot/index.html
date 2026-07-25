@@ -266,13 +266,33 @@
 
         let thinkingBubble = null;
 
+        function mdToHtml(text) {
+            // 先转义已有 HTML，防止 XSS
+            const escaped = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            // Markdown 图片语法 → <img>
+            const withImg = escaped.replace(
+                /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g,
+                '<img src="$2" alt="$1" style="max-width:100%;border-radius:8px;margin:4px 0;" loading="lazy">'
+            );
+            // 换行 → <br>
+            return withImg.replace(/\n/g, '<br>');
+        }
+
         function addMessage(role, content, extra) {
             const empty = chatMain.querySelector('.empty-state');
             if (empty) empty.remove();
 
             const div = document.createElement('div');
             div.className = `message ${role}`;
-            div.textContent = content;
+            // assistant 消息用 innerHTML 渲染图片，其他用 textContent
+            if (role === 'assistant') {
+                div.innerHTML = mdToHtml(content);
+            } else {
+                div.textContent = content;
+            }
             if (extra) {
                 const meta = document.createElement('div');
                 meta.className = 'meta';

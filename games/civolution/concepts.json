@@ -64,8 +64,8 @@
       "parent": "<ontology::resource>",
       "abstract": false,
       "definition": {
-        "zh": "已运输到个人面板仓库中的原材料。是建造聚落/雕像、支付研究牌费用、出售换钱的资源。同类型材料完全等价。",
-        "en": "Raw materials that have been transported to the storage spaces on a player's console. Used to build settlements/statues, pay research card costs, or sell for money. Same-type materials are equivalent."
+        "zh": "已运输到<console>仓库中的原材料。是建造聚落/雕像、支付研究牌费用、出售换钱的资源。同类型材料完全等价。",
+        "en": "Raw materials that have been transported to the storage spaces on a <console>. Used to build settlements/statues, pay research card costs, or sell for money. Same-type materials are equivalent."
       },
       "material_type": {
         "type": "enum",
@@ -101,8 +101,8 @@
       "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
-        "zh": "Civolution 中最核心的抽象物理零件。高度不到一厘米的八角柱形小木块，每位玩家一种颜色，每人 50 个（共 200 个）。同一个八角柱放在不同区域代表完全不同的概念——放在食物格上代表食物，放在仓库区代表材料，放在特征格上代表特征标记，放在创意格上代表创意标记。颜色本身不决定八角柱代表什么——它所在的位置（zone）才是决定因素。注意：每位玩家的供应上限为 50 个，耗尽时可将控制台或大陆上的标记退回供应堆（但雕像、重置标记和船上的标记除外）。",
-        "en": "The most central abstract physical piece in Civolution. A tiny octagonal pillar less than 1cm tall, one color per player, 50 per player (200 total). The same pillar represents entirely different concepts depending on where it is placed — on a food space it represents food, in the storage area it represents a material, on a feature space it represents a feature marker, on the idea space it represents an idea marker. The color itself does not determine what the pillar represents — its location (zone) is the deciding factor. Note: each player's supply is limited to 50. When exhausted, markers may be returned from the console or continent to the supply (except statues, reset markers, and markers on boats)."
+        "zh": "Civolution 中最核心的抽象物理零件。高度不到一厘米的八角柱形小木块，每位玩家一种颜色，每人 50 个（共 200 个）。同一个八角柱放在不同区域代表完全不同的概念——放在食物格上代表食物，放在仓库区代表材料，放在特征格上代表特征标记，放在创意格上代表创意标记。颜色本身不决定八角柱代表什么——它所在的位置（zone）才是决定因素。注意：每位玩家的供应上限为 50 个，耗尽时可将<console>或大陆上的标记退回供应堆（但雕像、重置标记和船上的标记除外）。",
+        "en": "The most central abstract physical piece in Civolution. A tiny octagonal pillar less than 1cm tall, one color per player, 50 per player (200 total). The same pillar represents entirely different concepts depending on where it is placed — on a food space it represents food, in the storage area it represents a material, on a feature space it represents a feature marker, on the idea space it represents an idea marker. The color itself does not determine what the pillar represents — its location (zone) is the deciding factor. Note: each player's supply is limited to 50. When exhausted, markers may be returned from the <console> or continent to the supply (except statues, reset markers, and markers on boats)."
       },
       "appearance": "高度不到一厘米的小木块，截面为正八边形。每位玩家一种颜色，每人 50 个，共 200 个。",
       "represents": null,
@@ -162,8 +162,8 @@
       "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
-        "zh": "放置在个人面板特征格上的标记，代表玩家拥有的某种特征。特征用于满足研究牌费用、获取属性芯片、时代计分等。",
-        "en": "A marker placed on a feature space of a player's console, representing a feature the player has. Features are used to satisfy research card costs, acquire attribute chips, and score in the Evolution category."
+        "zh": "放置在<console>特征格上的标记，代表玩家拥有的某种特征。特征用于满足研究牌费用、获取属性芯片、时代计分等。",
+        "en": "A marker placed on a feature space of a <console>, representing a feature the player has. Features are used to satisfy research card costs, acquire attribute chips, and score in the Evolution category."
       },
       "feature_type": {
         "type": "enum",
@@ -304,14 +304,14 @@
       "parent": "<ontology::effect>",
       "abstract": false,
       "definition": {
-        "zh": "玩家可激活的 <ontology::effect>。模组的本质是一个效果——激活模组是 <ontology::action>（玩家宣告选择），支付两颗对应点数的白骰子是 <ontology::cost>，模组做的事是 <ontology::content>。共有 22 个模组：15 个主模组（可升级）、6 个特征模组和 1 个睡眠模组。每个等级的模组效果是独立的 <ontology::effect> 实例——各等级的 effect 分别由对应物理载体持有，通过 id 前缀关联。等级一时 tile 正面持有 effect_lv1，等级二时 tile 反面持有 effect_lv2，等级三时 effect_lv3 由 <player_console> 持有。升级由 <ontology::upgrade> trigger 驱动——level 提升可能伴随载体切换：同一载体（tile 翻面）仅为 level 变化；载体切换（tile→board）时旧载体 <ontology::lose> 旧 effect、新载体 <ontology::gain> 新 effect。",
-        "en": "An activatable <ontology::effect>. A module is fundamentally an effect — activating a module is an <ontology::action> (the player declares their choice), paying two activation dice of matching values is the <ontology::cost>, and what the module does is the <ontology::content>. There are 22 modules in total: 15 main modules (upgradable), 6 feature modules, and 1 Sleep module. Each level's module effect is an independent <ontology::effect> instance — each level's effect is held by the corresponding physical carrier, linked by id prefix. At level 1 the tile front holds effect_lv1; at level 2 the tile back holds effect_lv2; at level 3 effect_lv3 is held by the <player_console>. Upgrading is driven by an <ontology::upgrade> trigger — level increase may involve carrier switch: same carrier (tile flip) is purely a level change; carrier switch (tile→board) means the old carrier <ontology::lose>s the old effect and the new carrier <ontology::gain>s the new effect."
+        "zh": "玩家可激活的 <ontology::effect>。模组的本质是一个效果——激活模组是 <ontology::action>（玩家宣告选择），支付两颗对应点数的白骰子是 <ontology::cost>，模组做的事是 <ontology::content>。共有 22 个模组：15 个主模组（可升级）、6 个特征模组和 1 个睡眠模组。每个等级的模组效果是独立的 <ontology::effect> 实例——各等级的 effect 分别由对应物理载体持有，通过 id 前缀关联。等级一时 tile 正面持有 effect_lv1，等级二时 tile 反面持有 effect_lv2，等级三时 effect_lv3 由 <console> 持有。升级由 <ontology::upgrade> trigger 驱动——level 提升可能伴随载体切换：同一载体（tile 翻面）仅为 level 变化；载体切换（tile→board）时旧载体 <ontology::lose> 旧 effect、新载体 <ontology::gain> 新 effect。",
+        "en": "An activatable <ontology::effect>. A module is fundamentally an effect — activating a module is an <ontology::action> (the player declares their choice), paying two activation dice of matching values is the <ontology::cost>, and what the module does is the <ontology::content>. There are 22 modules in total: 15 main modules (upgradable), 6 feature modules, and 1 Sleep module. Each level's module effect is an independent <ontology::effect> instance — each level's effect is held by the corresponding physical carrier, linked by id prefix. At level 1 the tile front holds effect_lv1; at level 2 the tile back holds effect_lv2; at level 3 effect_lv3 is held by the <console>. Upgrading is driven by an <ontology::upgrade> trigger — level increase may involve carrier switch: same carrier (tile flip) is purely a level change; carrier switch (tile→board) means the old carrier <ontology::lose>s the old effect and the new carrier <ontology::gain>s the new effect."
       },
       "appearance": {
         "type": "string",
         "description": {
-          "zh": "等级一、二时为矩形 cardboard 板块，正面印有费用点数和行动图标，背面为升级效果。等级三时印在控制台模组槽底部，不可移动。",
-          "en": "At levels 1-2: a rectangular cardboard tile printed with activation costs and action icons, with the upgraded effect on the back. At level 3: printed directly on the console module slot, unmovable."
+          "zh": "等级一、二时为矩形 cardboard 板块，正面印有费用点数和行动图标，背面为升级效果。等级三时印在<console>模组槽底部，不可移动。",
+          "en": "At levels 1-2: a rectangular cardboard tile printed with activation costs and action icons, with the upgraded effect on the back. At level 3: printed directly on the <console> module slot, unmovable."
         }
       },
       "module_type": {
@@ -341,8 +341,8 @@
       "parent": "<module>",
       "abstract": false,
       "definition": {
-        "zh": "可升级的行动模组 effect，共有 15 种：迁徙、繁育、生产、运输、给养、探索、建造、计划、研究、成就、洞悉、突变、发明、交易、活动。每个主模组对应 3 个独立的 <ontology::effect> 实例——effect_xxx_lv1（domain = tile 正面）、effect_xxx_lv2（domain = tile 反面）、effect_xxx_lv3（domain = <player_console>）。升级由 <ontology::upgrade> trigger 驱动——L1→L2 时同一 tile 翻面，L2→L3 时旧载体 <ontology::lose> lv2 effect、新载体 <ontology::gain> lv3 effect。各等级的 cost 和 content 待 Phase B 填充。",
-        "en": "Upgradable action module effects. There are 15 types: Migration, Procreation, Production, Transport, Sustenance, Exploration, Building, Planning, Research, Achievement, Insight, Mutation, Invention, Trade, Activity. Each main module maps to 3 independent <ontology::effect> instances — effect_xxx_lv1 (domain = tile front), effect_xxx_lv2 (domain = tile back), effect_xxx_lv3 (domain = <player_console>). Upgrading is driven by an <ontology::upgrade> trigger — L1→L2 is a tile flip on the same carrier, L2→L3 means the old carrier <ontology::lose>s the lv2 effect and the new carrier <ontology::gain>s the lv3 effect. Cost and content for each level are TBD in Phase B."
+        "zh": "可升级的行动模组 effect，共有 15 种：迁徙、繁育、生产、运输、给养、探索、建造、计划、研究、成就、洞悉、突变、发明、交易、活动。每个主模组对应 3 个独立的 <ontology::effect> 实例——effect_xxx_lv1（domain = tile 正面）、effect_xxx_lv2（domain = tile 反面）、effect_xxx_lv3（domain = <console>）。升级由 <ontology::upgrade> trigger 驱动——L1→L2 时同一 tile 翻面，L2→L3 时旧载体 <ontology::lose> lv2 effect、新载体 <ontology::gain> lv3 effect。各等级的 cost 和 content 待 Phase B 填充。",
+        "en": "Upgradable action module effects. There are 15 types: Migration, Procreation, Production, Transport, Sustenance, Exploration, Building, Planning, Research, Achievement, Insight, Mutation, Invention, Trade, Activity. Each main module maps to 3 independent <ontology::effect> instances — effect_xxx_lv1 (domain = tile front), effect_xxx_lv2 (domain = tile back), effect_xxx_lv3 (domain = <console>). Upgrading is driven by an <ontology::upgrade> trigger — L1→L2 is a tile flip on the same carrier, L2→L3 means the old carrier <ontology::lose>s the lv2 effect and the new carrier <ontology::gain>s the lv3 effect. Cost and content for each level are TBD in Phase B."
       }
     },
     {
@@ -380,7 +380,7 @@
       "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
-        "zh": "放置在个人面板创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意骰子点数加减 1（1 和 6 相连）。",
+        "zh": "放置在<console>创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意骰子点数加减 1（1 和 6 相连）。",
         "en": "A marker placed on a player's idea space, used to modify die values. Spending 1 idea marker increases or decreases a die value by 1 (1 and 6 are adjacent)."
       }
     },
@@ -419,8 +419,8 @@
       "parent": "<ontology::card>",
       "abstract": false,
       "definition": {
-        "zh": "可安装到个人面板阶段区的 <ontology::card>。每张研究牌分三部分：上部为能力（可能为活动能力或被动效果），中部为 5 个费用格，下部为安装奖励。共 5 种类型：建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）。",
-        "en": "A <ontology::card> that can be installed in the stage partition of a player's console. Each card has three parts: top ability (activity or passive effect), middle 5 cost spaces, bottom install bonus. Five types: Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown)."
+        "zh": "可安装到<console>阶段区的 <ontology::card>。每张研究牌分三部分：上部为能力（可能为活动能力或被动效果），中部为 5 个费用格，下部为安装奖励。共 5 种类型：建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）。",
+        "en": "A <ontology::card> that can be installed in the stage partition of a <console>. Each card has three parts: top ability (activity or passive effect), middle 5 cost spaces, bottom install bonus. Five types: Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown)."
       },
       "appearance": {
         "type": "string",
@@ -494,8 +494,8 @@
       "parent": "<ontology::card>",
       "abstract": false,
       "definition": {
-        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入个人面板成为第一个收入芯片，其承载的 zone 随之消失。",
-        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the console as the first income chip, and its hosted zone disappears."
+        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入<console>成为第一个收入芯片，其承载的 zone 随之消失。",
+        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the <console> as the first income chip, and its hosted zone disappears."
       },
       "parts": [
         {
@@ -525,8 +525,8 @@
       "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
-        "zh": "可安装到个人面板的白色芯片，提供收入阶段可执行的持续效果。每张收入芯片有两个可选效果，执行时二选一。收入芯片可安装在任意列。",
-        "en": "A white chip that can be installed in a player's console, providing an effect usable in Income phases. Each income chip has two optional effects; when executing, choose one. Income chips can be installed in any column."
+        "zh": "可安装到<console>的白色芯片，提供收入阶段可执行的持续效果。每张收入芯片有两个可选效果，执行时二选一。收入芯片可安装在任意列。",
+        "en": "A white chip that can be installed in a <console>, providing an effect usable in Income phases. Each income chip has two optional effects; when executing, choose one. Income chips can be installed in any column."
       },
       "media": {
         "component": [
@@ -543,8 +543,8 @@
       "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
-        "zh": "蓝色的芯片，玩家从展示区拿取后安装在个人面板目标列。安装后可能揭示升级奖励。每叠目标芯片安装完后可升级一个模组。",
-        "en": "A blue chip taken from the display and installed in the goal column of a player's console. Installing one may reveal an upgrade bonus. Completing a stack of goal chips allows upgrading one main module."
+        "zh": "蓝色的芯片，玩家从展示区拿取后安装在<console>目标列。安装后可能揭示升级奖励。每叠目标芯片安装完后可升级一个模组。",
+        "en": "A blue chip taken from the display and installed in the goal column of a <console>. Installing one may reveal an upgrade bonus. Completing a stack of goal chips allows upgrading one main module."
       },
       "media": {
         "component": [
@@ -597,8 +597,8 @@
       "parent": "<ontology::tile>",
       "abstract": false,
       "definition": {
-        "zh": "标识个人面板阶段 4 和阶段 5 是否激活的 <ontology::tile>。未激活面朝上时，该阶段的卡牌/芯片终局不计分；激活后翻面，才计分。",
-        "en": "A <ontology::tile> indicating whether stage 4 or stage 5 of a player's console is active. When the inactive side is up, cards/chips in that stage score nothing at final scoring; flip to active to enable scoring."
+        "zh": "标识<console>阶段 4 和阶段 5 是否激活的 <ontology::tile>。未激活面朝上时，该阶段的卡牌/芯片终局不计分；激活后翻面，才计分。",
+        "en": "A <ontology::tile> indicating whether stage 4 or stage 5 of a <console> is active. When the inactive side is up, cards/chips in that stage score nothing at final scoring; flip to active to enable scoring."
       },
       "media": {
         "component": [
@@ -624,7 +624,7 @@
       ],
       "media": {
         "component": [
-          "assets/components/page-05/site.png"
+          "media/components/site.png"
         ]
       }
     },
@@ -637,8 +637,8 @@
       "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
-        "zh": "位于 <continent> 上的一种 <ontology::zone>，由 <continent_tile> 之间、以及 <continent_tile> 与 <score_track> 拼合后的空位形成，共 25 个，是放置物理地点板块的凹槽。",
-        "en": "A <ontology::zone> on the <continent>, formed by the gaps between <continent_tile>s and between <continent_tile>s and the <score_track> after assembly. There are 25 in total, each a recess for placing a physical site tile."
+        "zh": "位于 <continent> 上的一种 <ontology::zone>，由 <continent_tile> 之间、以及 <continent_tile> 与 <score_track> 拼合后的空位形成，共 24 格。",
+        "en": "A <ontology::zone> on the <continent>, formed by the gaps between <continent_tile>s and between <continent_tile>s and the <score_track> after assembly. There are 24 slots in total."
       },
       "contains": {
         "type": "<site>",
@@ -692,7 +692,7 @@
       ],
       "media": {
         "component": [
-          "assets/components/page-05/continent_tile.png"
+          "media/components/continent_tile.png"
         ]
       }
     },
@@ -705,12 +705,12 @@
       "parent": "<ontology::tile>",
       "abstract": false,
       "definition": {
-        "zh": "放置在 <material_slot> 上的 <ontology::tile>，决定该 slot 所在领地可产出的材料类型。正面朝上时表示该领地已开发，可产出对应材料。",
+        "zh": "放置在 <material_slot> 上的 <ontology::tile>，决定其所在领地可产出的材料类型。正面朝上时表示该领地已开发，可产出对应材料。",
         "en": "A <ontology::tile> placed on a <material_slot>, determining what material the territory can produce. When face up, the territory is developed and can produce the corresponding material."
       },
       "media": {
         "component": [
-          "assets/components/page-05/material_tile.png"
+          "media/components/material_tile.png"
         ]
       }
     },
@@ -909,24 +909,6 @@
       }
     },
     {
-      "id": "territory_token",
-      "name": {
-        "zh": "领土标记",
-        "en": "Territory Token"
-      },
-      "parent": "<ontology::token>",
-      "abstract": false,
-      "definition": {
-        "zh": "双面标记，正面为狩猎指示物，背面为阻挡标记。在 2/3 人游戏中用于覆盖不可用营地。",
-        "en": "A double-sided token: front is a hunting token, back is a blocking token. Used to cover unavailable encampments in 2/3-player games."
-      },
-      "media": {
-        "component": [
-          "assets/components/page-05/territory_token.png"
-        ]
-      }
-    },
-    {
       "id": "phase_indicator",
       "name": {
         "zh": "阶段标记",
@@ -935,12 +917,12 @@
       "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "六边形 <marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。行动阶段中玩家执行重置时沿黄色箭头移动。",
-        "en": "A hexagonal <marker> placed on the phase sequence of the sequence board to indicate the current phase. Moves along the yellow arrow during the Action phase when players perform a Reset."
+        "zh": "六边形 <ontology::marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。",
+        "en": "A hexagonal <ontology::marker> placed on the phase sequence of the sequence board to indicate the current phase."
       },
       "media": {
         "component": [
-          "assets/components/page-04/phase_indicator.png"
+          "media/components/phase_indicator.png"
         ]
       }
     },
@@ -1032,8 +1014,8 @@
       "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
-        "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。拼合后大陆板块与计分轨外框共同形成 25 个 <site_slot>，每个可放置一块 <site>。此外大陆还承载 <territory>、<encampment>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
-        "en": "The public play area formed by all <continent_tile>s arranged in a 5×3 rectangular grid inside the score track frame. During setup, the 8 continent tiles (7 × 2×1 + 1 × 1×1 = 15 cells) are randomly arranged to fill this grid. After assembly, the continent tiles and the score track frame together form 25 <site_slot>s, each holding one <site>. The continent also holds <territory>s, <encampment>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable encampments."
+        "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。拼合后大陆板块与计分轨外框共同形成 24 个 <site_slot>，每个可放置一块 <site>。此外大陆还承载 <territory>、<encampment>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
+        "en": "The public play area formed by all <continent_tile>s arranged in a 5×3 rectangular grid inside the score track frame. During setup, the 8 continent tiles (7 × 2×1 + 1 × 1×1 = 15 cells) are randomly arranged to fill this grid. After assembly, the continent tiles and the score track frame together form 24 <site_slot>s, each holding one <site>. The continent also holds <territory>s, <encampment>s, <material_tile>s, and player-placed components such as <tribe>s, <settlement>s, <farm>s, and <boat>s. In 2/3-player games, blocking tokens cover some unavailable encampments."
       },
       "grid": {
         "dimensions": {
@@ -1205,7 +1187,7 @@
       ],
       "media": {
         "component": [
-          "assets/components/page-04/sequence_board.png"
+          "media/components/sequence_board.png"
         ]
       }
     },
@@ -1340,7 +1322,7 @@
       ],
       "media": {
         "component": [
-          "assets/components/page-04/progress_board.png"
+          "media/components/progress_board.png"
         ]
       }
     },
@@ -1746,143 +1728,143 @@
       "<ontology::information_visibility>": "public"
     },
     {
-      "id": "player_console",
+      "id": "console",
       "name": {
-        "zh": "个人面板",
+        "zh": "控制台",
         "en": "Player Console"
       },
       "parent": "<ontology::player_board>",
       "abstract": false,
       "definition": {
-        "zh": "每位玩家的个人游戏面板，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。面板自身携带一个基础活动图标——玩家无需安装任何研究牌即可使用此能力。",
-        "en": "Each player's personal board containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. The console itself carries a basic activity icon — usable without any installed research cards."
+        "zh": "每位玩家的<console>，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。<console>自身携带一个基础活动图标——玩家无需安装任何研究牌即可使用此能力。",
+        "en": "Each player's <console> containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. The <console> itself carries a basic activity icon — usable without any installed research cards."
       },
       "content": [
         {
           "id": "innate_activity",
           "description": {
-            "zh": "玩家面板自带的基础活动图标。无需安装任何研究牌即可使用——玩家在行动阶段可以选择激活此活动图标，支付对应费用后执行基础活动效果。这是面板直接赋予玩家的能力，不依赖任何外部 <piece>。",
-            "en": "The basic activity icon printed on the player console. Usable without installing any research cards — during the Action phase, the player may choose to activate this activity icon, pay the corresponding cost, and perform the basic activity effect. This ability is granted directly by the console, independent of any external <piece>."
+            "zh": "<console>自带的基础活动图标。无需安装任何研究牌即可使用——玩家在行动阶段可以选择激活此活动图标，支付对应费用后执行基础活动效果。这是<console>直接赋予玩家的能力，不依赖任何外部 <piece>。",
+            "en": "The basic activity icon printed on the <console>. Usable without installing any research cards — during the Action phase, the player may choose to activate this activity icon, pay the corresponding cost, and perform the basic activity effect. This ability is granted directly by the <console>, independent of any external <piece>."
           }
         },
         {
           "id": "effect_migration_lv3_on_console",
           "effect_ref": "<effect_migration_lv3>",
           "description": {
-            "zh": "迁徙模组等级三效果，印于控制台模组槽底部。初始不可用——对应模组升至 L3 时由控制台 <ontology::gain>。",
-            "en": "Level 3 effect of the Migration module, printed at the bottom of the console module slot. Initially unavailable — gained by the console via <ontology::gain> when the module reaches L3."
+            "zh": "迁徙模组等级三效果，印于<console>模组槽底部。初始不可用——对应模组升至 L3 时由<console> <ontology::gain>。",
+            "en": "Level 3 effect of the Migration module, printed at the bottom of the <console> module slot. Initially unavailable — gained by the <console> via <ontology::gain> when the module reaches L3."
           }
         },
         {
           "id": "effect_procreation_lv3_on_console",
           "effect_ref": "<effect_procreation_lv3>",
           "description": {
-            "zh": "繁育模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Procreation module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "繁育模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Procreation module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_production_lv3_on_console",
           "effect_ref": "<effect_production_lv3>",
           "description": {
-            "zh": "生产模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Production module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "生产模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Production module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_transport_lv3_on_console",
           "effect_ref": "<effect_transport_lv3>",
           "description": {
-            "zh": "运输模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Transport module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "运输模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Transport module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_sustenance_lv3_on_console",
           "effect_ref": "<effect_sustenance_lv3>",
           "description": {
-            "zh": "给养模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Sustenance module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "给养模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Sustenance module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_exploration_lv3_on_console",
           "effect_ref": "<effect_exploration_lv3>",
           "description": {
-            "zh": "探索模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Exploration module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "探索模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Exploration module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_building_lv3_on_console",
           "effect_ref": "<effect_building_lv3>",
           "description": {
-            "zh": "建造模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Building module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "建造模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Building module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_planning_lv3_on_console",
           "effect_ref": "<effect_planning_lv3>",
           "description": {
-            "zh": "计划模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Planning module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "计划模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Planning module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_research_lv3_on_console",
           "effect_ref": "<effect_research_lv3>",
           "description": {
-            "zh": "研究模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Research module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "研究模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Research module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_achievement_lv3_on_console",
           "effect_ref": "<effect_achievement_lv3>",
           "description": {
-            "zh": "成就模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Achievement module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "成就模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Achievement module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_insight_lv3_on_console",
           "effect_ref": "<effect_insight_lv3>",
           "description": {
-            "zh": "洞悉模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Insight module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "洞悉模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Insight module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_mutation_lv3_on_console",
           "effect_ref": "<effect_mutation_lv3>",
           "description": {
-            "zh": "突变模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Mutation module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "突变模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Mutation module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_invention_lv3_on_console",
           "effect_ref": "<effect_invention_lv3>",
           "description": {
-            "zh": "发明模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Invention module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "发明模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Invention module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_trade_lv3_on_console",
           "effect_ref": "<effect_trade_lv3>",
           "description": {
-            "zh": "交易模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Trade module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "交易模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Trade module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         },
         {
           "id": "effect_activity_lv3_on_console",
           "effect_ref": "<effect_activity_lv3>",
           "description": {
-            "zh": "活动模组等级三效果，印于控制台模组槽底部。初始不可用。",
-            "en": "Level 3 effect of the Activity module, printed at the bottom of the console module slot. Initially unavailable."
+            "zh": "活动模组等级三效果，印于<console>模组槽底部。初始不可用。",
+            "en": "Level 3 effect of the Activity module, printed at the bottom of the <console> module slot. Initially unavailable."
           }
         }
       ],
@@ -1891,7 +1873,7 @@
           "as": "<module_area>",
           "position": {
             "zh": "面板右半部",
-            "en": "right half of the console"
+            "en": "right half of the <console>"
           },
           "description": {
             "zh": "22 个固定槽位，放置主模组、特征模组和睡眠模组",
@@ -1902,7 +1884,7 @@
           "as": "<dice_area>",
           "position": {
             "zh": "面板顶部",
-            "en": "top of the console"
+            "en": "top of the <console>"
           },
           "description": {
             "zh": "骰子掷出后按点数放在对应格上，也可放置计划标记和焦点标记",
@@ -1913,7 +1895,7 @@
           "as": "<stage_partition>",
           "position": {
             "zh": "面板中央偏左",
-            "en": "center-left of the console"
+            "en": "center-left of the <console>"
           },
           "description": {
             "zh": "按阶段 1~5 划分，用于安装研究牌。阶段 4 和 5 初始未激活",
@@ -1924,7 +1906,7 @@
           "as": "<goal_column>",
           "position": {
             "zh": "面板左侧",
-            "en": "left side of the console"
+            "en": "left side of the <console>"
           },
           "description": {
             "zh": "用于安装目标芯片的列，每叠完成后可升级一个主模组",
@@ -1935,7 +1917,7 @@
           "as": "<attribute_column>",
           "position": {
             "zh": "面板左侧，目标列旁",
-            "en": "left side of the console, next to goal column"
+            "en": "left side of the <console>, next to goal column"
           },
           "description": {
             "zh": "用于安装属性芯片的列，安装后提供持续效果",
@@ -1946,7 +1928,7 @@
           "as": "<income_area>",
           "position": {
             "zh": "面板左上角",
-            "en": "top-left corner of the console"
+            "en": "top-left corner of the <console>"
           },
           "description": {
             "zh": "用于安装收入芯片的区域，收入阶段从上到下、从左到右依次执行",
@@ -1957,7 +1939,7 @@
           "as": "<storage_area>",
           "position": {
             "zh": "面板底部",
-            "en": "bottom of the console"
+            "en": "bottom of the <console>"
           },
           "description": {
             "zh": "存放已运输到仓库中的材料，同类型材料堆叠放置",
@@ -1968,7 +1950,7 @@
           "as": "<food_space>",
           "position": {
             "zh": "面板底部偏左",
-            "en": "bottom-left of the console"
+            "en": "bottom-left of the <console>"
           },
           "description": {
             "zh": "存放食物标记的格子，每 3 个一列排列",
@@ -1979,7 +1961,7 @@
           "as": "<money_space>",
           "position": {
             "zh": "面板底部偏右",
-            "en": "bottom-right of the console"
+            "en": "bottom-right of the <console>"
           },
           "description": {
             "zh": "存放钱币标记的格子，每 2 个一列排列",
@@ -1990,7 +1972,7 @@
           "as": "<feature_space>",
           "position": {
             "zh": "面板左下角",
-            "en": "bottom-left corner of the console"
+            "en": "bottom-left corner of the <console>"
           },
           "description": {
             "zh": "6 个特征格，分别对应 6 种特征标记",
@@ -2001,7 +1983,7 @@
           "as": "<idea_space>",
           "position": {
             "zh": "面板左下角，特征格旁",
-            "en": "bottom-left of the console, next to feature spaces"
+            "en": "bottom-left of the <console>, next to feature spaces"
           },
           "description": {
             "zh": "放置创意标记的格子，上限 12 个",
@@ -2012,7 +1994,7 @@
           "as": "<dead_tribe_area>",
           "position": {
             "zh": "面板底部边缘",
-            "en": "bottom edge of the console"
+            "en": "bottom edge of the <console>"
           },
           "description": {
             "zh": "放置因未喂饱而死亡的部落",
@@ -2023,7 +2005,7 @@
           "as": "<reset_column>",
           "position": {
             "zh": "面板右侧边缘",
-            "en": "right edge of the console"
+            "en": "right edge of the <console>"
           },
           "description": {
             "zh": "4 列重置轨道，每列有一个重置标记。执行 Reset 时沿列步进",
@@ -2033,7 +2015,7 @@
       ],
       "media": {
         "component": [
-          "assets/components/page-04/player_console.png"
+          "media/components/console.png"
         ]
       }
     },
@@ -2046,8 +2028,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上放置 <module> 的区域，有固定的 22 个槽位。主模组可升级，睡眠模组和特征模组固定不变。",
-        "en": "The area on the <player_console> where <module>s are placed, with 22 fixed slots. Main modules can be upgraded; sleep and feature modules are fixed."
+        "zh": "<console> 上放置 <module> 的区域，有固定的 22 个槽位。主模组可升级，睡眠模组和特征模组固定不变。",
+        "en": "The area on the <console> where <module>s are placed, with 22 fixed slots. Main modules can be upgraded; sleep and feature modules are fixed."
       }
     },
     {
@@ -2059,8 +2041,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上放置 <activation_die>、<fate_die>、<planning_marker> 的区域。骰子掷出后放在对应点数格上。",
-        "en": "The area on the <player_console> for <activation_die>s, <fate_die>s, and <planning_marker>s. Rolled dice are placed on the matching value spaces."
+        "zh": "<console> 上放置 <activation_die>、<fate_die>、<planning_marker> 的区域。骰子掷出后放在对应点数格上。",
+        "en": "The area on the <console> for <activation_die>s, <fate_die>s, and <planning_marker>s. Rolled dice are placed on the matching value spaces."
       }
     },
     {
@@ -2072,8 +2054,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上放置 <idea_marker> 的格子。上限 12 个，超过不丢弃但无法继续获得。",
-        "en": "A space on the <player_console> for holding <idea_marker>s. Capacity is 12; excess markers cannot be gained but are not discarded."
+        "zh": "<console> 上放置 <idea_marker> 的格子。上限 12 个，超过不丢弃但无法继续获得。",
+        "en": "A space on the <console> for holding <idea_marker>s. Capacity is 12; excess markers cannot be gained but are not discarded."
       }
     },
     {
@@ -2085,8 +2067,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上放置 <feature_marker> 的格子，共 6 种。某些效果可覆盖特征标记的获取上限。",
-        "en": "A space on the <player_console> for holding <feature_marker>s, one for each of the 6 features. Some effects may bypass the normal feature-marker cap."
+        "zh": "<console> 上放置 <feature_marker> 的格子，共 6 种。某些效果可覆盖特征标记的获取上限。",
+        "en": "A space on the <console> for holding <feature_marker>s, one for each of the 6 features. Some effects may bypass the normal feature-marker cap."
       }
     },
     {
@@ -2098,8 +2080,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上按阶段 1~5 划分、用于安装 <research_card> 的区域。阶段 4 和阶段 5 初始未激活，需通过建造第 4 个聚落激活。",
-        "en": "The area on the <player_console> divided into stages 1-5 for installing <research_card>s. Stages 4 and 5 start inactive and are unlocked by building the 4th settlement."
+        "zh": "<console> 上按阶段 1~5 划分、用于安装 <research_card> 的区域。阶段 4 和阶段 5 初始未激活，需通过建造第 4 个聚落激活。",
+        "en": "The area on the <console> divided into stages 1-5 for installing <research_card>s. Stages 4 and 5 start inactive and are unlocked by building the 4th settlement."
       }
     },
     {
@@ -2111,8 +2093,8 @@
       "parent": "<ontology::player_holding>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上存放 <stored_material> 的区域。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::supply> 或 <ontology::supply>，因为其中的材料已归玩家所有。",
-        "en": "The area on the <player_console> for storing <stored_material>s. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::supply> or <ontology::supply>, because its contents are already owned by the player."
+        "zh": "<console> 上存放 <stored_material> 的区域。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::supply> 或 <ontology::supply>，因为其中的材料已归玩家所有。",
+        "en": "The area on the <console> for storing <stored_material>s. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::supply> or <ontology::supply>, because its contents are already owned by the player."
       }
     },
     {
@@ -2124,8 +2106,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上用于安装 <goal_chip> 的列。每完成一叠目标芯片可升级一个主模组。",
-        "en": "The column on the <player_console> for installing <goal_chip>s. Completing a stack of goal chips allows upgrading one main module."
+        "zh": "<console> 上用于安装 <goal_chip> 的列。每完成一叠目标芯片可升级一个主模组。",
+        "en": "The column on the <console> for installing <goal_chip>s. Completing a stack of goal chips allows upgrading one main module."
       }
     },
     {
@@ -2137,8 +2119,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上用于安装 <attribute_chip> 的列。属性芯片一旦安装即提供持续效果。",
-        "en": "The column on the <player_console> for installing <attribute_chip>s. Installed attribute chips provide continuous effects."
+        "zh": "<console> 上用于安装 <attribute_chip> 的列。属性芯片一旦安装即提供持续效果。",
+        "en": "The column on the <console> for installing <attribute_chip>s. Installed attribute chips provide continuous effects."
       }
     },
     {
@@ -2150,8 +2132,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上用于安装 <income_chip> 的区域。收入阶段从上到下、从左到右依次执行。",
-        "en": "The area on the <player_console> for installing <income_chip>s. Income chips execute top-to-bottom, left-to-right during the Income phase."
+        "zh": "<console> 上用于安装 <income_chip> 的区域。收入阶段从上到下、从左到右依次执行。",
+        "en": "The area on the <console> for installing <income_chip>s. Income chips execute top-to-bottom, left-to-right during the Income phase."
       }
     },
     {
@@ -2163,8 +2145,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上存放食物标记的格子。狩猎、收入芯片和某些效果可获得食物标记。喂养阶段从此格支付食物。食物标记按每 3 个一列排列，每完整列在 Prosperity 计分时算 1 个活跃钻石。",
-        "en": "A space on the <player_console> for holding food markers. Food markers are gained through hunting, income chips, and certain effects. Food is paid from this space during the Feeding phase. Food markers are arranged in columns of 3; each complete column counts as 1 active diamond for Prosperity scoring."
+        "zh": "<console> 上存放食物标记的格子。狩猎、收入芯片和某些效果可获得食物标记。喂养阶段从此格支付食物。食物标记按每 3 个一列排列，每完整列在 Prosperity 计分时算 1 个活跃钻石。",
+        "en": "A space on the <console> for holding food markers. Food markers are gained through hunting, income chips, and certain effects. Food is paid from this space during the Feeding phase. Food markers are arranged in columns of 3; each complete column counts as 1 active diamond for Prosperity scoring."
       }
     },
     {
@@ -2176,8 +2158,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上存放钱币标记的格子。通过交易模组出售材料获得。钱币标记按每 2 个一列排列，每完整列在 Prosperity 计分时算 1 个活跃钻石。",
-        "en": "A space on the <player_console> for holding money markers. Money is gained by selling materials via the Trade module. Money markers are arranged in columns of 2; each complete column counts as 1 active diamond for Prosperity scoring."
+        "zh": "<console> 上存放钱币标记的格子。通过交易模组出售材料获得。钱币标记按每 2 个一列排列，每完整列在 Prosperity 计分时算 1 个活跃钻石。",
+        "en": "A space on the <console> for holding money markers. Money is gained by selling materials via the Trade module. Money markers are arranged in columns of 2; each complete column counts as 1 active diamond for Prosperity scoring."
       }
     },
     {
@@ -2189,8 +2171,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上放置因未喂饱而死亡的 <tribe> 的区域。死亡部落在终局计分时有影响。",
-        "en": "The area on the <player_console> for <tribe>s that died from starvation. Dead tribes affect final scoring."
+        "zh": "<console> 上放置因未喂饱而死亡的 <tribe> 的区域。死亡部落在终局计分时有影响。",
+        "en": "The area on the <console> for <tribe>s that died from starvation. Dead tribes affect final scoring."
       }
     },
     {
@@ -2202,8 +2184,8 @@
       "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
-        "zh": "<player_console> 上的 4 列重置轨道，每列有一个 <reset_marker>。执行 Reset 时，将最左侧的重置标记沿列逐步下移：A 步（移动阶段标记至下一个 reset space）、B 步（回收并重掷所有已使用的激活骰子）、C 步（将重置标记移至 idea space 或 food space）。重置列也为空时标志着阶段标记已被推动的次数。",
-        "en": "The 4 reset columns on the <player_console>, each holding a <reset_marker>. When performing a Reset, move the leftmost reset marker step by step down its column: step A (move the phase indicator to the next reset space), step B (retrieve and re-roll all used activation dice), step C (place the reset marker onto the idea or food space). The number of empty reset columns tracks how many times the phase indicator has been moved."
+        "zh": "<console> 上的 4 列重置轨道，每列有一个 <reset_marker>。执行 Reset 时，将最左侧的重置标记沿列逐步下移：A 步（移动阶段标记至下一个 reset space）、B 步（回收并重掷所有已使用的激活骰子）、C 步（将重置标记移至 idea space 或 food space）。重置列也为空时标志着阶段标记已被推动的次数。",
+        "en": "The 4 reset columns on the <console>, each holding a <reset_marker>. When performing a Reset, move the leftmost reset marker step by step down its column: step A (move the phase indicator to the next reset space), step B (retrieve and re-roll all used activation dice), step C (place the reset marker onto the idea or food space). The number of empty reset columns tracks how many times the phase indicator has been moved."
       }
     },
     {
@@ -2215,8 +2197,8 @@
       "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
-        "zh": "放置在 <reset_column> 中的标记。每位玩家初始有 4 个，Setup 时放在 4 个重置列顶部。执行 Reset 时沿列步进，完成 C 步后移入 idea space 或 food space。收入阶段结束时，所有空的重置列重新从供应堆补满。注意：重置标记不能从控制台召回以补充供应堆上限（与其他标记不同）。",
-        "en": "A marker placed in a <reset_column>. Each player starts with 4, placed at the top of the 4 reset columns during Setup. Steps down the column during a Reset; after step C, moves to the idea space or food space. At the end of the Income phase, all empty reset columns are refilled from supply. Note: reset markers cannot be recalled from the console to replenish the supply limit (unlike other markers)."
+        "zh": "放置在 <reset_column> 中的标记。每位玩家初始有 4 个，Setup 时放在 4 个重置列顶部。执行 Reset 时沿列步进，完成 C 步后移入 idea space 或 food space。收入阶段结束时，所有空的重置列重新从供应堆补满。注意：重置标记不能从<console>召回以补充供应堆上限（与其他标记不同）。",
+        "en": "A marker placed in a <reset_column>. Each player starts with 4, placed at the top of the 4 reset columns during Setup. Steps down the column during a Reset; after step C, moves to the idea space or food space. At the end of the Income phase, all empty reset columns are refilled from supply. Note: reset markers cannot be recalled from the <console> to replenish the supply limit (unlike other markers)."
       },
       "token": "<octagonal_pillar>"
     },
@@ -2307,8 +2289,8 @@
       "parent": "<ontology::deck>",
       "abstract": false,
       "definition": {
-        "zh": "放置 <starting_chip_card> 的牌堆。设置后作为第一个收入芯片塞入个人面板。",
-        "en": "The deck holding <starting_chip_card>s. After setup, it becomes the first income chip slid under the console."
+        "zh": "放置 <starting_chip_card> 的牌堆。设置后作为第一个收入芯片塞入<console>。",
+        "en": "The deck holding <starting_chip_card>s. After setup, it becomes the first income chip slid under the <console>."
       }
     },
     {

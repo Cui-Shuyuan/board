@@ -230,7 +230,7 @@
               "id": "player_setup_modules",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入个人面板模组区。",
+                "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入控制台模组区。",
                 "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
               },
               "source": "<ontology::game_box>",
@@ -260,7 +260,7 @@
                 "en": "Each player takes 1 fate die from the game box and places it beside their console."
               },
               "source": "<ontology::game_box>",
-              "destination": "<player_console>",
+              "destination": "<console>",
               "<object>": "<fate_die>",
               "quantity": 1,
               "per_player": true
@@ -269,11 +269,11 @@
               "id": "player_setup_stage_tiles",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到个人面板对应位置。",
+                "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到控制台对应位置。",
                 "en": "Each player takes stage-4 and stage-5 tiles, inactive side up, and places them on the console."
               },
               "source": "<ontology::game_box>",
-              "destination": "<player_console>",
+              "destination": "<console>",
               "<object>": "<stage_tile>",
               "quantity": 2,
               "per_player": true
@@ -282,11 +282,11 @@
               "id": "player_setup_buildings",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿取所有聚落、农场、船、圆片和部落放到个人面板对应位置，并在船上放两个标记。",
+                "zh": "每位玩家拿取所有聚落、农场、船、圆片和部落放到控制台对应位置，并在船上放两个标记。",
                 "en": "Each player takes all settlements, farms, boats, discs, and tribes to their console; place two markers on boats."
               },
               "source": "<ontology::game_box>",
-              "destination": "<player_console>",
+              "destination": "<console>",
               "<object>": "<settlement> | <farm> | <boat> | <tribe>",
               "quantity": "all",
               "per_player": true
@@ -389,7 +389,7 @@
                 "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
                 "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
               },
-              "source": "<player_console>",
+              "source": "<console>",
               "destination": "<continent>",
               "<object>": "<tribe>",
               "quantity": 2,
@@ -399,11 +399,11 @@
               "id": "player_place_initial_markers",
               "type": "<ontology::transfer>",
               "description": {
-                "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到个人面板重置列顶部。",
+                "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到控制台重置列顶部。",
                 "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
               },
               "source": "<ontology::game_box>",
-              "destination": "<continent> | <player_console>",
+              "destination": "<continent> | <console>",
               "<object>": "<marker>",
               "quantity": 6,
               "per_player": true
