@@ -235,28 +235,6 @@
           "en": "Development card level, located center of the card back. I=low (cheap, few <prestige_point>s), II=mid, III=high (expensive, many <prestige_point>s). Determines which <ontology::deck> the card belongs to — during setup, cards are separated into three independent <ontology::deck>s by level."
         }
       },
-      "<prestige_point>": {
-        "type": "integer",
-        "default": 0,
-        "description": {
-          "zh": "位于卡牌正面左上角。数值 0~5，0 时不显示数字。购买此卡后获得对应数量的<prestige_point>。",
-          "en": "Located top-left of the card front. Value 0-5, not shown when 0. The player gains this many <prestige_point>s after purchasing the card."
-        }
-      },
-      "<cost>": {
-        "type": "<ontology::cost>",
-        "description": {
-          "zh": "购买此卡所需支付的费用，位于卡牌正面左下角。以若干<gem>的组合体现——如 3 颗<blue> + 2 颗<white> + 1 颗<green>。玩家支付此<ontology::cost>（可用<gold>替代任意颜色，可用<discount>抵扣）后方可获得此卡。",
-          "en": "The cost to purchase this card, located bottom-left of the card front. Expressed as a combination of <gem>s — e.g., 3 <sapphire> + 2 <diamond> + 1 <emerald>. The player must pay this <ontology::cost> (using <gold> as wild and <discount>s to reduce) to acquire the card."
-        }
-      },
-      "<discount>": {
-        "type": "<discount>",
-        "description": {
-          "zh": "此卡提供的折扣效果，位于卡牌正面右上角。以一颗某种颜色的<gem>图标体现——表示该<ontology::player>此后购买任意<development_card>时，对应颜色费用减 1。",
-          "en": "The discount this card provides, located top-right of the card front. Shown as a single <gem> icon of a specific color — this means the <ontology::player> subsequently pays 1 fewer <gem> of that color when buying any <development_card>."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -265,32 +243,37 @@
               "zh": "每张<development_card>必有等级——决定其归属<ontology::deck>和强度区间。",
               "en": "Every <development_card> has a level — determines its <ontology::deck> and power bracket."
             }
-          },
-          {
-            "id": "<ontology::cost>",
-            "description": {
-              "zh": "每张<development_card>必有购买费用——没有费用则无从交易。",
-              "en": "Every <development_card> has a purchase cost — without one, there is no transaction."
-            }
-          },
-          {
-            "id": "<discount>",
-            "description": {
-              "zh": "每张<development_card>必提供一种颜色的折扣——这是该卡的核心永续效果。",
-              "en": "Every <development_card> provides a discount of one color — this is the card's core continuous content."
-            }
           }
         ],
-        "optional": [
-          {
-            "id": "<prestige_point>",
-            "description": {
-              "zh": "<prestige_point>可为零——零分时不显示数字，但仍需在实例中声明（显式 0 优于隐式缺失）。",
-              "en": "<prestige_point> may be zero — when zero the number is hidden, but should still be declared in instances (explicit 0 is better than implicit absence)."
-            }
+        "optional": []
+      },
+      "parts": [
+        {
+          "as": "<prestige_point>",
+          "type": "integer",
+          "default": 0,
+          "description": {
+            "zh": "位于卡牌正面左上角。数值 0~5，0 时不显示数字。购买此卡后获得对应数量的<prestige_point>。",
+            "en": "Located top-left of the card front. Value 0-5, not shown when 0. The player gains this many <prestige_point>s after purchasing the card."
           }
-        ]
-      }
+        },
+        {
+          "as": "<cost>",
+          "type": "<ontology::cost>",
+          "description": {
+            "zh": "购买此卡所需支付的费用，位于卡牌正面左下角。以若干<gem>的组合体现——如 3 颗<blue> + 2 颗<white> + 1 颗<green>。玩家支付此<ontology::cost>（可用<gold>替代任意颜色，可用<discount>抵扣）后方可获得此卡。",
+            "en": "The cost to purchase this card, located bottom-left of the card front. Expressed as a combination of <gem>s — e.g., 3 <sapphire> + 2 <diamond> + 1 <emerald>. The player must pay this <ontology::cost> (using <gold> as wild and <discount>s to reduce) to acquire the card."
+          }
+        },
+        {
+          "as": "<discount>",
+          "type": "<discount>",
+          "description": {
+            "zh": "此卡提供的折扣效果，位于卡牌正面右上角。以一颗某种颜色的<gem>图标体现——表示该<ontology::player>此后购买任意<development_card>时，对应颜色费用减 1。",
+            "en": "The discount this card provides, located top-right of the card front. Shown as a single <gem> icon of a specific color — this means the <ontology::player> subsequently pays 1 fewer <gem> of that color when buying any <development_card>."
+          }
+        }
+      ]
     },
     {
       "id": "development_card_level_1",
@@ -585,21 +568,25 @@
           "en": "Visual description of <noble>. Must describe the front face layout — top-left shows <prestige_point> value (fixed at 3), bottom shows the requirement (patterns and quantities of <development_card>s, e.g. '3 blue + 3 green + 3 white'), center is a noble portrait illustration. The back has a uniform pattern. AI uses this field as the primary source when explaining 'how to read a noble tile'."
         }
       },
-      "<prestige_point>": {
-        "type": "integer",
-        "default": 3,
-        "description": {
-          "zh": "位于板块正面左上角。固定为 3——每枚<noble>提供 3 点<prestige_point>。",
-          "en": "Located top-left of the tile front. Fixed at 3 — each <noble> provides 3 <prestige_point>s."
+      "parts": [
+        {
+          "as": "<prestige_point>",
+          "type": "integer",
+          "default": 3,
+          "description": {
+            "zh": "位于板块正面左上角。固定为 3——每枚<noble>提供 3 点<prestige_point>。",
+            "en": "Located top-left of the tile front. Fixed at 3 — each <noble> provides 3 <prestige_point>s."
+          }
+        },
+        {
+          "as": "requirement",
+          "type": "map<string, integer>",
+          "description": {
+            "zh": "获取条件，位于板块正面下方。以若干<development_card>的颜色和数量体现——如 { \"blue\": 3, \"green\": 3, \"white\": 3 } 表示需要<ontology::development_area>中至少有 3 张蓝色<development_card>、3 张绿色、3 张白色。当<ontology::player>的<ontology::development_area>满足此条件时，可在其回合结束时自动获得此<noble>。",
+            "en": "Acquisition requirement, located at the bottom of the tile front. Expressed as colors and quantities of <development_card>s — e.g., { \"blue\": 3, \"green\": 3, \"white\": 3 } means the <ontology::development_area> must contain at least 3 blue, 3 green, and 3 white <development_card>s. When a <ontology::player>'s <ontology::development_area> meets this requirement, they automatically gain this <noble> at the end of their turn."
+          }
         }
-      },
-      "requirement": {
-        "type": "map<string, integer>",
-        "description": {
-          "zh": "获取条件，位于板块正面下方。以若干<development_card>的颜色和数量体现——如 { \"blue\": 3, \"green\": 3, \"white\": 3 } 表示需要<ontology::development_area>中至少有 3 张蓝色<development_card>、3 张绿色、3 张白色。当<ontology::player>的<ontology::development_area>满足此条件时，可在其回合结束时自动获得此<noble>。",
-          "en": "Acquisition requirement, located at the bottom of the tile front. Expressed as colors and quantities of <development_card>s — e.g., { \"blue\": 3, \"green\": 3, \"white\": 3 } means the <ontology::development_area> must contain at least 3 blue, 3 green, and 3 white <development_card>s. When a <ontology::player>'s <ontology::development_area> meets this requirement, they automatically gain this <noble> at the end of their turn."
-        }
-      }
+      ]
     },
     {
       "id": "prestige_point",

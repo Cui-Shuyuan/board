@@ -447,8 +447,9 @@
                 "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入个人面板成为第一个收入芯片，其承载的 zone 随之消失。",
                 "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the console as the first income chip, and its hosted zone disappears."
             },
-            "<ontology::zone>[]": {
-                "<starting_chip_zone>": {
+            "parts": [
+                {
+                    "as": "<starting_chip_zone>",
                     "position": {
                         "zh": "此牌正面",
                         "en": "face of this card"
@@ -458,7 +459,7 @@
                         "en": "During setup step 16, once revealed, this card provides a temporary zone for placing selected goal chips. This zone disappears with the card after setup."
                     }
                 }
-            }
+            ]
         },
         {
             "id": "income_chip",
@@ -537,8 +538,10 @@
                 "zh": "放置在 <continent> 上的特殊 <ontology::tile>，翻开前背面朝上，通过特定条件翻开后持续生效。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。建造点带有 <building_slot> 可建造 <settlement> 或 <statue>；其他地点仅有 effect 不带 zone。",
                 "en": "A special <ontology::tile> placed on the <continent>, face down until revealed by a specific condition, then taking lasting effect. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Building ground carries a <building_slot> for <settlement> or <statue>; other sites have only an effect without a zone."
             },
-            "<ontology::zone>[]": [
-                "<building_slot>"
+            "parts": [
+                {
+                    "as": "<building_slot>"
+                }
             ]
         },
         {
@@ -597,11 +600,19 @@
                 "zh": "7 块为 2×1，1 块为 1×1",
                 "en": "Seven 2×1 tiles and one 1×1 tile"
             },
-            "<ontology::zone>[]": [
-                "<territory>",
-                "<material_slot>",
-                "<encampment>",
-                "<fire_encampment>"
+            "parts": [
+                {
+                    "as": "<territory>"
+                },
+                {
+                    "as": "<material_slot>"
+                },
+                {
+                    "as": "<encampment>"
+                },
+                {
+                    "as": "<fire_encampment>"
+                }
             ]
         },
         {
@@ -877,8 +888,9 @@
                 "<progress_board>",
                 "<sequence_board>"
             ],
-            "<ontology::zone>[]": {
-                "<score_track>": {
+            "parts": [
+                {
+                    "as": "<score_track>",
                     "position": {
                         "zh": "公共版图外框",
                         "en": "outer frame of the public board"
@@ -888,7 +900,7 @@
                         "en": "score track assembled from 4 frame pieces, surrounding the continent area"
                     }
                 }
-            }
+            ]
         },
         {
             "id": "continent",
@@ -912,9 +924,6 @@
                     "en": "The grid layout of the continent area. 5×3 = 15 cells total, must be exactly filled by <continent_tile>s during setup (7×2 + 1×1 = 15)."
                 }
             },
-            "<ontology::zone>[]": [
-                "<site_slot>"
-            ],
             "contains": {
                 "type": "<ontology::tile>[] | <ontology::piece>[] | <ontology::token>[]",
                 "description": {
@@ -923,7 +932,12 @@
                 }
             },
             "<ontology::ownership>": null,
-            "<ontology::information_visibility>": "public"
+            "<ontology::information_visibility>": "public",
+            "parts": [
+                {
+                    "as": "<site_slot>"
+                }
+            ]
         },
         {
             "id": "territory",
@@ -1013,8 +1027,9 @@
                 "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。其上承载了阶段流程、天气轨、阿格拉恩惠轨、事件牌格和时代计分区；所有玩家共用。",
                 "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. It hosts the phase sequence, weather gauge, <favor_of_ager_track>, event card spaces, and era scoring area; shared by all players."
             },
-            "<ontology::zone>[]": {
-                "<phase_sequence>": {
+            "parts": [
+                {
+                    "as": "<phase_sequence>",
                     "position": {
                         "zh": "流程版图上部",
                         "en": "upper part of the sequence board"
@@ -1024,7 +1039,8 @@
                         "en": "phase sequence; the hexagonal phase indicator moves along the yellow arrow to show the current phase"
                     }
                 },
-                "<weather_gauge>": {
+                {
+                    "as": "<weather_gauge>",
                     "position": {
                         "zh": "流程版图中部偏上",
                         "en": "upper-middle of the sequence board"
@@ -1034,7 +1050,8 @@
                         "en": "weather gauge; the weather indicator moves to determine the current weather effect"
                     }
                 },
-                "<favor_of_ager_track>": {
+                {
+                    "as": "<favor_of_ager_track>",
                     "position": {
                         "zh": "流程版图中部",
                         "en": "middle of the sequence board"
@@ -1044,7 +1061,8 @@
                         "en": "Favor of Agera track; affects favor tests, statue income, and final scoring"
                     }
                 },
-                "<event_card_space>": {
+                {
+                    "as": "<event_card_space>",
                     "position": {
                         "zh": "流程版图中部偏下",
                         "en": "lower-middle of the sequence board"
@@ -1054,7 +1072,8 @@
                         "en": "event card spaces; right slot holds face-down stack, left slot shows current era's event card face up"
                     }
                 },
-                "<era_scoring_area>": {
+                {
+                    "as": "<era_scoring_area>",
                     "position": {
                         "zh": "流程版图下部",
                         "en": "lower part of the sequence board"
@@ -1064,7 +1083,7 @@
                         "en": "era scoring area; each era scores by the category of the scoring tile placed here"
                     }
                 }
-            }
+            ]
         },
         {
             "id": "progress_board",
@@ -1081,38 +1100,44 @@
             "components": [
                 "<hunting_table>"
             ],
-            "<ontology::zone>[]": {
-                "<technology_track>": {
+            "parts": [
+                {
+                    "as": "<technology_track>",
                     "position": {
                         "zh": "进程版图中部，5 条进程轨之一",
                         "en": "middle of the progress board, one of 5 progress tracks"
                     }
                 },
-                "<prestige_track>": {
+                {
+                    "as": "<prestige_track>",
                     "position": {
                         "zh": "进程版图中部，5 条进程轨之一",
                         "en": "middle of the progress board, one of 5 progress tracks"
                     }
                 },
-                "<knowledge_track>": {
+                {
+                    "as": "<knowledge_track>",
                     "position": {
                         "zh": "进程版图中部，5 条进程轨之一",
                         "en": "middle of the progress board, one of 5 progress tracks"
                     }
                 },
-                "<construction_track>": {
+                {
+                    "as": "<construction_track>",
                     "position": {
                         "zh": "进程版图中部，5 条进程轨之一",
                         "en": "middle of the progress board, one of 5 progress tracks"
                     }
                 },
-                "<culture_track>": {
+                {
+                    "as": "<culture_track>",
                     "position": {
                         "zh": "进程版图中部，5 条进程轨之一",
                         "en": "middle of the progress board, one of 5 progress tracks"
                     }
                 },
-                "<final_scoring_area>": {
+                {
+                    "as": "<final_scoring_area>",
                     "position": {
                         "zh": "进程版图下部",
                         "en": "lower part of the progress board"
@@ -1122,7 +1147,8 @@
                         "en": "during final scoring, a marker advances cell by cell; each cell's scoring tile determines the category to evaluate"
                     }
                 },
-                "<dice_display>": {
+                {
+                    "as": "<dice_display>",
                     "position": {
                         "zh": "进程版图右上区域",
                         "en": "upper-right area of the progress board"
@@ -1132,7 +1158,8 @@
                         "en": "public dice supply holding activation dice and fate dice"
                     }
                 },
-                "<hunting_token_display>": {
+                {
+                    "as": "<hunting_token_display>",
                     "position": {
                         "zh": "进程版图右侧区域",
                         "en": "right area of the progress board"
@@ -1142,7 +1169,8 @@
                         "en": "hunting token supply/display area"
                     }
                 },
-                "<hundred_point_token_display>": {
+                {
+                    "as": "<hundred_point_token_display>",
                     "position": {
                         "zh": "进程版图右侧区域",
                         "en": "right area of the progress board"
@@ -1152,7 +1180,8 @@
                         "en": "100-point token / blocking token supply area"
                     }
                 },
-                "<goal_chip_display>": {
+                {
+                    "as": "<goal_chip_display>",
                     "position": {
                         "zh": "进程版图右下区域",
                         "en": "lower-right area of the progress board"
@@ -1162,7 +1191,8 @@
                         "en": "goal chip display area, capacity 6"
                     }
                 },
-                "<income_chip_display>": {
+                {
+                    "as": "<income_chip_display>",
                     "position": {
                         "zh": "进程版图右下区域",
                         "en": "lower-right area of the progress board"
@@ -1172,7 +1202,8 @@
                         "en": "income chip display area, capacity = player count + 2"
                     }
                 },
-                "<attribute_chip_display>": {
+                {
+                    "as": "<attribute_chip_display>",
                     "position": {
                         "zh": "进程版图右下区域",
                         "en": "lower-right area of the progress board"
@@ -1182,7 +1213,7 @@
                         "en": "attribute chip display area, capacity 3"
                     }
                 }
-            }
+            ]
         },
         {
             "id": "hunting_table",
@@ -1597,138 +1628,6 @@
                 "zh": "每位玩家的个人游戏面板，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。面板自身携带一个基础活动图标——玩家无需安装任何研究牌即可使用此能力。",
                 "en": "Each player's personal board containing the module area, stage partition, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. The console itself carries a basic activity icon — usable without any installed research cards."
             },
-            "<ontology::zone>[]": {
-                "<module_area>": {
-                    "position": {
-                        "zh": "面板右半部",
-                        "en": "right half of the console"
-                    },
-                    "description": {
-                        "zh": "22 个固定槽位，放置主模组、特征模组和睡眠模组",
-                        "en": "22 fixed slots for main modules, feature modules, and the sleep module"
-                    }
-                },
-                "<dice_area>": {
-                    "position": {
-                        "zh": "面板顶部",
-                        "en": "top of the console"
-                    },
-                    "description": {
-                        "zh": "骰子掷出后按点数放在对应格上，也可放置计划标记和焦点标记",
-                        "en": "rolled dice are placed on matching value spaces; also holds planning markers and focus markers"
-                    }
-                },
-                "<stage_partition>": {
-                    "position": {
-                        "zh": "面板中央偏左",
-                        "en": "center-left of the console"
-                    },
-                    "description": {
-                        "zh": "按阶段 1~5 划分，用于安装研究牌。阶段 4 和 5 初始未激活",
-                        "en": "divided into stages 1-5 for installing research cards; stages 4 and 5 start inactive"
-                    }
-                },
-                "<goal_column>": {
-                    "position": {
-                        "zh": "面板左侧",
-                        "en": "left side of the console"
-                    },
-                    "description": {
-                        "zh": "用于安装目标芯片的列，每叠完成后可升级一个主模组",
-                        "en": "column for installing goal chips; completing a stack allows upgrading a main module"
-                    }
-                },
-                "<attribute_column>": {
-                    "position": {
-                        "zh": "面板左侧，目标列旁",
-                        "en": "left side of the console, next to goal column"
-                    },
-                    "description": {
-                        "zh": "用于安装属性芯片的列，安装后提供持续效果",
-                        "en": "column for installing attribute chips that provide continuous effects"
-                    }
-                },
-                "<income_area>": {
-                    "position": {
-                        "zh": "面板左上角",
-                        "en": "top-left corner of the console"
-                    },
-                    "description": {
-                        "zh": "用于安装收入芯片的区域，收入阶段从上到下、从左到右依次执行",
-                        "en": "area for installing income chips; executed top-to-bottom, left-to-right during the Income phase"
-                    }
-                },
-                "<storage_area>": {
-                    "position": {
-                        "zh": "面板底部",
-                        "en": "bottom of the console"
-                    },
-                    "description": {
-                        "zh": "存放已运输到仓库中的材料，同类型材料堆叠放置",
-                        "en": "stores materials transported here; same-type materials are stacked"
-                    }
-                },
-                "<food_space>": {
-                    "position": {
-                        "zh": "面板底部偏左",
-                        "en": "bottom-left of the console"
-                    },
-                    "description": {
-                        "zh": "存放食物标记的格子，每 3 个一列排列",
-                        "en": "space for food markers, arranged in columns of 3"
-                    }
-                },
-                "<money_space>": {
-                    "position": {
-                        "zh": "面板底部偏右",
-                        "en": "bottom-right of the console"
-                    },
-                    "description": {
-                        "zh": "存放钱币标记的格子，每 2 个一列排列",
-                        "en": "space for money markers, arranged in columns of 2"
-                    }
-                },
-                "<feature_space>": {
-                    "position": {
-                        "zh": "面板左下角",
-                        "en": "bottom-left corner of the console"
-                    },
-                    "description": {
-                        "zh": "6 个特征格，分别对应 6 种特征标记",
-                        "en": "6 feature spaces, one for each feature type"
-                    }
-                },
-                "<idea_space>": {
-                    "position": {
-                        "zh": "面板左下角，特征格旁",
-                        "en": "bottom-left of the console, next to feature spaces"
-                    },
-                    "description": {
-                        "zh": "放置创意标记的格子，上限 12 个",
-                        "en": "space for idea markers; capacity 12"
-                    }
-                },
-                "<dead_tribe_area>": {
-                    "position": {
-                        "zh": "面板底部边缘",
-                        "en": "bottom edge of the console"
-                    },
-                    "description": {
-                        "zh": "放置因未喂饱而死亡的部落",
-                        "en": "area for tribes that died from starvation"
-                    }
-                },
-                "<reset_column>": {
-                    "position": {
-                        "zh": "面板右侧边缘",
-                        "en": "right edge of the console"
-                    },
-                    "description": {
-                        "zh": "4 列重置轨道，每列有一个重置标记。执行 Reset 时沿列步进",
-                        "en": "4 reset columns, each holding a reset marker; stepped through during a Reset"
-                    }
-                }
-            },
             "content": [
                 {
                     "id": "innate_activity",
@@ -1855,6 +1754,151 @@
                     "description": {
                         "zh": "活动模组等级三效果，印于控制台模组槽底部。初始不可用。",
                         "en": "Level 3 effect of the Activity module, printed at the bottom of the console module slot. Initially unavailable."
+                    }
+                }
+            ],
+            "parts": [
+                {
+                    "as": "<module_area>",
+                    "position": {
+                        "zh": "面板右半部",
+                        "en": "right half of the console"
+                    },
+                    "description": {
+                        "zh": "22 个固定槽位，放置主模组、特征模组和睡眠模组",
+                        "en": "22 fixed slots for main modules, feature modules, and the sleep module"
+                    }
+                },
+                {
+                    "as": "<dice_area>",
+                    "position": {
+                        "zh": "面板顶部",
+                        "en": "top of the console"
+                    },
+                    "description": {
+                        "zh": "骰子掷出后按点数放在对应格上，也可放置计划标记和焦点标记",
+                        "en": "rolled dice are placed on matching value spaces; also holds planning markers and focus markers"
+                    }
+                },
+                {
+                    "as": "<stage_partition>",
+                    "position": {
+                        "zh": "面板中央偏左",
+                        "en": "center-left of the console"
+                    },
+                    "description": {
+                        "zh": "按阶段 1~5 划分，用于安装研究牌。阶段 4 和 5 初始未激活",
+                        "en": "divided into stages 1-5 for installing research cards; stages 4 and 5 start inactive"
+                    }
+                },
+                {
+                    "as": "<goal_column>",
+                    "position": {
+                        "zh": "面板左侧",
+                        "en": "left side of the console"
+                    },
+                    "description": {
+                        "zh": "用于安装目标芯片的列，每叠完成后可升级一个主模组",
+                        "en": "column for installing goal chips; completing a stack allows upgrading a main module"
+                    }
+                },
+                {
+                    "as": "<attribute_column>",
+                    "position": {
+                        "zh": "面板左侧，目标列旁",
+                        "en": "left side of the console, next to goal column"
+                    },
+                    "description": {
+                        "zh": "用于安装属性芯片的列，安装后提供持续效果",
+                        "en": "column for installing attribute chips that provide continuous effects"
+                    }
+                },
+                {
+                    "as": "<income_area>",
+                    "position": {
+                        "zh": "面板左上角",
+                        "en": "top-left corner of the console"
+                    },
+                    "description": {
+                        "zh": "用于安装收入芯片的区域，收入阶段从上到下、从左到右依次执行",
+                        "en": "area for installing income chips; executed top-to-bottom, left-to-right during the Income phase"
+                    }
+                },
+                {
+                    "as": "<storage_area>",
+                    "position": {
+                        "zh": "面板底部",
+                        "en": "bottom of the console"
+                    },
+                    "description": {
+                        "zh": "存放已运输到仓库中的材料，同类型材料堆叠放置",
+                        "en": "stores materials transported here; same-type materials are stacked"
+                    }
+                },
+                {
+                    "as": "<food_space>",
+                    "position": {
+                        "zh": "面板底部偏左",
+                        "en": "bottom-left of the console"
+                    },
+                    "description": {
+                        "zh": "存放食物标记的格子，每 3 个一列排列",
+                        "en": "space for food markers, arranged in columns of 3"
+                    }
+                },
+                {
+                    "as": "<money_space>",
+                    "position": {
+                        "zh": "面板底部偏右",
+                        "en": "bottom-right of the console"
+                    },
+                    "description": {
+                        "zh": "存放钱币标记的格子，每 2 个一列排列",
+                        "en": "space for money markers, arranged in columns of 2"
+                    }
+                },
+                {
+                    "as": "<feature_space>",
+                    "position": {
+                        "zh": "面板左下角",
+                        "en": "bottom-left corner of the console"
+                    },
+                    "description": {
+                        "zh": "6 个特征格，分别对应 6 种特征标记",
+                        "en": "6 feature spaces, one for each feature type"
+                    }
+                },
+                {
+                    "as": "<idea_space>",
+                    "position": {
+                        "zh": "面板左下角，特征格旁",
+                        "en": "bottom-left of the console, next to feature spaces"
+                    },
+                    "description": {
+                        "zh": "放置创意标记的格子，上限 12 个",
+                        "en": "space for idea markers; capacity 12"
+                    }
+                },
+                {
+                    "as": "<dead_tribe_area>",
+                    "position": {
+                        "zh": "面板底部边缘",
+                        "en": "bottom edge of the console"
+                    },
+                    "description": {
+                        "zh": "放置因未喂饱而死亡的部落",
+                        "en": "area for tribes that died from starvation"
+                    }
+                },
+                {
+                    "as": "<reset_column>",
+                    "position": {
+                        "zh": "面板右侧边缘",
+                        "en": "right edge of the console"
+                    },
+                    "description": {
+                        "zh": "4 列重置轨道，每列有一个重置标记。执行 Reset 时沿列步进",
+                        "en": "4 reset columns, each holding a reset marker; stepped through during a Reset"
                     }
                 }
             ]
