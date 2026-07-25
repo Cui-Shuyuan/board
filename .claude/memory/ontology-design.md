@@ -197,7 +197,7 @@ Hand
 - **`zones` 字段从 `<card>` 提升至 `<piece>` ★**（2026-07-25）：card、tile 都可能承载 zone，与其各自声明不如在公共父类 `<piece>` 上统一定义为 optional 字段。`<board>` 的 `zones` 独立保留（board 不是 piece）。
 - **Piece 的 play 能力由 ownership 决定 ★**（2026-07-25）：并非所有 piece 都由玩家持有——归游戏系统所有（`<ownership>` 为 null）的 piece（如地图板块、遭遇牌库）不可被玩家 play。只有 `<ownership>` 归属于 `<player>` 的 piece 才可被该玩家 play。`<piece>` 定义已更新以反映此规则。
 - **Civolution 专属概念移出 ontology ★**（2026-07-25）：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移至 Civolution 游戏层。判据：概念是否引用其他 Civolution 专属概念，或定义是否写死 Civolution 机制细节。其中 terrain/region 经讨论确认：地形类型本质是 zone 子类（`forest extends zone`），无需单独 ontology 概念；且 region 的"连续同色"定义与 Civolution 实际规则（跨板块同色仍算不同区域）矛盾。ontology 从 71 减至 66 概念。
-- **Tile.parts — 物理载体与逻辑身份解耦 ★**（2026-07-25）：`<tile>` 新增 `parts` 字段（`<tile>[]`，default null）。一块实体纸板可以承载多个逻辑 tile 身份——如同一块板上印着 continent_tile 和 site，规则引擎分别按两种身份查询。和"一种 token 代表多种资源"是同一模式：物理合一、逻辑分立。例如《文明演化》中 1×1 大陆板块上印有建造点，通过 `parts` 同时承担 `<continent_tile>` 和 `<site>` 两种逻辑身份。
+- **Piece.parts — 物理载体与逻辑身份解耦 ★**（2026-07-25）：`<piece>` 新增 `parts` 字段（`any[]`，default null）。一块实体卡/板可能印有多种身份独立的东西——territory zone、cost、discount、prestige_point、site 都是 part。和"一种 token 代表多种资源"是同一模式：物理合一、逻辑分立。用法：纯概念引用直接用字符串 `"<territory>"`；带额外属性（position、description、type）的用对象 `{ "as": "<score_track>", "position": {...} }`。替代了原先分散的 `<ontology::zone>[]` 声明——zone 现在只是 part 的一种。Civolution 和 Splendor 两款游戏已全部迁移。
 - **Constraints.optional 格式精简 ★**（2026-07-25）：constraints.optional 中，字段若在当前概念自身定义（LOCAL），使用简洁字符串格式 `"optional": ["field_id"]`——描述已在字段定义处，无需重复。字段若无本地定义（CONCEPT_REF，如继承自外部概念），保留对象格式 `"optional": [{ "id": "field_id", "description": {...} }]`——description 是唯一文档来源。全 ontology 36 个 LOCAL 字段已简化，3 个 CONCEPT_REF 保留。
 
 ## 为《文明演化》扩展本体的计划
