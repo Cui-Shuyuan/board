@@ -791,6 +791,14 @@
           "en": "Parameters for this cost. Content is determined by the specific cost type — not limited to resource payment. Typical structures: pay resources { \"resources\": { \"blue\": 3 } }, discard { \"discard\": 1 }, sacrifice { \"sacrifice\": \"piece_ref\" }, tap { \"tap\": \"self\" }, skip turn { \"skip\": \"next_turn\" }. Based on params, the program constructs a corresponding Condition (to check if the prerequisite can be met) and Event (to execute the actual action). Compound costs (AND/OR) are expressed through the internal structure of params."
         }
       },
+      "options": {
+        "type": "map<string, any> | null",
+        "default": null,
+        "description": {
+          "zh": "当此 <cost> 包含多个选项时的选择配置。格式：{ \"items\": [\"<cost_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }。null = 单一费用。",
+          "en": "Selection configuration when this <cost> contains multiple options. Format: { \"items\": [\"<cost_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }. null = single cost."
+        }
+      },
       "constraints": {
         "required": [
           {
@@ -801,7 +809,9 @@
             }
           }
         ],
-        "optional": []
+        "optional": [
+          "options"
+        ]
       }
     },
     {
@@ -830,6 +840,14 @@
           "en": "Parameters for this effect content. Describes the specific action — what to do to the target. Typical structures: deal damage { \"damage\": 2 }, draw cards { \"draw\": 3 }, gain resources { \"gain\": { \"gold\": 1 } }, move { \"move\": { \"from\": \"hand\", \"to\": \"discard_pile\" } }, change state { \"set_state\": \"tapped\" }. Note: target is a separate required field; params describes only the action itself. The program constructs and executes corresponding Events based on params. Compound Content (one effect does multiple things) is expressed through params' internal structure."
         }
       },
+      "options": {
+        "type": "map<string, any> | null",
+        "default": null,
+        "description": {
+          "zh": "当此 <content> 包含多个选项时的选择配置。格式：{ \"items\": [\"<content_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }。null = 单一内容。",
+          "en": "Selection configuration when this <content> contains multiple options. Format: { \"items\": [\"<content_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }. null = single content."
+        }
+      },
       "constraints": {
         "required": [
           {
@@ -847,7 +865,9 @@
             }
           }
         ],
-        "optional": []
+        "optional": [
+          "options"
+        ]
       }
     },
     {
@@ -876,11 +896,20 @@
           "en": "The specific events that should occur when this effect resolves. null = pure-cost effect, where Content's value is implicitly provided by the Piece itself or by game rules. Two common cases: (1) the Piece's own oversized stats or abilities already justify the Cost — e.g., paying 5 life to play a high-power creature, where 'gain a high-power creature' is accomplished by the Piece entering the Development Area; (2) rules-granted implicit Content — e.g., a Piece has no effect on its own, but collecting a certain number wins the game; the Content is provided by the Victory Condition, not the Piece itself. Note: Cost and Content must not both be null."
         }
       },
+      "options": {
+        "type": "map<string, any> | null",
+        "default": null,
+        "description": {
+          "zh": "当此 <effect> 包含多个选项时的选择配置。格式：{ \"items\": [\"<effect_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }。null = 单选项（默认，<cost> 和 <content> 各只有一个）。",
+          "en": "Selection configuration when this <effect> contains multiple options. Format: { \"items\": [\"<effect_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }. null = single option (default; <cost> and <content> are each singular)."
+        }
+      },
       "constraints": {
         "required": [],
         "optional": [
           "<cost>",
-          "<content>"
+          "<content>",
+          "options"
         ]
       }
     },
@@ -2138,15 +2167,15 @@
       }
     },
     {
-      "id": "multiple_effect_choice_enum",
+      "id": "multiple_choice_enum",
       "name": {
-        "zh": "多效果选择方式",
-        "en": "Multiple Effect Choice"
+        "zh": "多选方式",
+        "en": "Multiple Choice"
       },
       "abstract": false,
       "definition": {
-        "zh": "当 <effect> 的 content 包含多个选项时，决定选择方式的枚举。用于天气轨 slot、模组效果等场景。",
-        "en": "Enum determining how to choose when an <effect>'s content contains multiple options. Used in weather gauge slots, module effects, etc."
+        "zh": "当 <effect>、<cost> 或 <content> 包含多个选项时，决定选择方式的枚举。不限于 effect——cost（如「支付 2 食物或 1 金币」）和 content（如「获得 1 食物或抽 1 张牌」）同样适用。",
+        "en": "Enum determining how to choose when an <effect>, <cost>, or <content> contains multiple options. Not limited to effects — cost (e.g., 'pay 2 food or 1 gold') and content (e.g., 'gain 1 food or draw 1 card') also use it."
       },
       "values": {
         "type": "enum",
