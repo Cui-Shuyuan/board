@@ -77,6 +77,12 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-26（天气轨效果模型）**: 天气轨从纯文本描述升级为结构化 trigger + effect 模型：
+  - 新增 5 个概念：`<activate_income_chip>`（specifies `<ontology::activation>`）、`<perform_activity>`（specifies `<ontology::activation>`）、`<lose_food>`（specifies `<ontology::effect>`，cost=null）、`<remove_tribe>`（specifies `<ontology::effect>`，cost=null）、`<weather_effect>`（specifies `<ontology::trigger>`，timing=事件阶段天气标记移动完成，无 condition）
+  - weather_gauge 新增 `<ontology::trigger>` 引用 `<weather_effect>`，5 个 slot 从 `description` 文本升级为 `"<ontology::effect>": <ref>` 结构化引用
+  - 单引用格式：`"<ontology::effect>": "<activate_income_chip>"`；多选格式：`"<ontology::effect>": {"options": [...], "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"}`
+  - phase_sequence 补 8 个 slot（每阶段名称+概要），final_scoring_area 补 `slots` 字段
+  - ontology: `scale` → `slots`（必填），新增 `<multiple_choice_enum>`，effect/cost/content 各加 `options` 可选字段
 - **2026-07-26（关系重构）**: `parent` 已拆分为 `extends` / `specifies` / `instance_of` 三种关系。Civolution concepts.json 中 7 个 extends（module、research_card、stored_material、feature_marker、continent、continent_tile、site）+ 101 个 specifies。instances.json 中 60 个 instance_of。后端代码零改动。详见 [[ontology-design]]。
 
 - **2026-07-25（图片提取突破）**: OpenCV + PDF 布局分析成功提取组件图片：

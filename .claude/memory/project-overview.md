@@ -32,7 +32,7 @@ metadata:
 
 ## 开发阶段
 
-1. **第一阶段（基本完成）：定义世界模型** — 71 个本体概念已定义，可持续补充。
+1. **第一阶段（基本完成）：定义世界模型** — 67 个本体概念已定义，可持续补充。
 2. **第二阶段（基本完成）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor），`concepts.json` 与 `flow.json` 已完成。
 3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。**2026-07-22 升级为向量语义搜索**（Qdrant + BGE-small-zh ONNX），解决中文同义词/近义词检索问题（如"白色骰子" → "白色的六面骰"）。详见 [[vector-search]] 与 [[runtime-architecture]]。
 4. **第四阶段（当前重点）：补充更多游戏与游戏元信息** — 在 `games/` 下录入第二款桌游，验证系统在非 LLM 熟知规则上的真实表现；为每款游戏增加 `manifest.json` 供前端选游戏。

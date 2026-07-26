@@ -106,10 +106,13 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **66 个概念**。新增内容部分来自第二款游戏《文明演化》的机制扩展，但 Civolution 专属概念（`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>`）已于 2026-07-25 移回游戏层。
+本体已从最初的 51 个概念扩展到 **67 个概念**。新增内容部分来自第二款游戏《文明演化》的机制扩展，但 Civolution 专属概念（`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>`）已于 2026-07-25 移回游戏层。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
+
+### 枚举概念（1 个）★
+Multiple Choice Enum（多选方式：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE）
 
 ### 结构概念（6 个）★ +Board
 Player、Resource、Piece、**Board**、Aid、Token
@@ -132,8 +135,10 @@ Cost、Content、Effect、Declaration、Information Visibility
 ### 区域概念（3 个）
 Reserve（abstract）、Discard Pile、Player Zone（abstract）
 
-### 区域/轨道扩展（2 个）★ Track 改为 Zone 子类
+### 区域/轨道扩展（2 个）★ Track 改为 Zone 子类，slots 替代 scale
 Track（extends Zone）、Score Track（extends Track）
+
+`<track>` 的 `scale` 可选字段已改为 `slots` 必填字段（`string | slot_spec[]`）。数值轨写取值范围字符串（`"0–12"`），槽位轨写对象数组（每个 slot 含 `name` + `<ontology::effect>`）。
 
 ### 事件概念（4 + 2 新增）
 Action、Trigger、Resolve、Shuffle、**Lose（新增）**、**Gain（新增）**
@@ -199,20 +204,26 @@ Hand
 - **Civolution 专属概念移出 ontology ★**（2026-07-25）：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移至 Civolution 游戏层。判据：概念是否引用其他 Civolution 专属概念，或定义是否写死 Civolution 机制细节。其中 terrain/region 经讨论确认：地形类型本质是 zone 子类（`forest extends zone`），无需单独 ontology 概念；且 region 的"连续同色"定义与 Civolution 实际规则（跨板块同色仍算不同区域）矛盾。ontology 从 71 减至 66 概念。
 - **Piece.parts — 物理载体与逻辑身份解耦 ★**（2026-07-25）：`<piece>` 新增 `parts` 字段（`any[]`，default null）。一块实体卡/板可能印有多种身份独立的东西——territory zone、cost、discount、prestige_point、site 都是 part。和"一种 token 代表多种资源"是同一模式：物理合一、逻辑分立。用法：纯概念引用直接用字符串 `"<territory>"`；带额外属性（position、description、type）的用对象 `{ "as": "<score_track>", "position": {...} }`。替代了原先分散的 `<ontology::zone>[]` 声明——zone 现在只是 part 的一种。Civolution 和 Splendor 两款游戏已全部迁移。
 - **Constraints.optional 格式精简 ★**（2026-07-25）：constraints.optional 中，字段若在当前概念自身定义（LOCAL），使用简洁字符串格式 `"optional": ["field_id"]`——描述已在字段定义处，无需重复。字段若无本地定义（CONCEPT_REF，如继承自外部概念），保留对象格式 `"optional": [{ "id": "field_id", "description": {...} }]`——description 是唯一文档来源。全 ontology 36 个 LOCAL 字段已简化，3 个 CONCEPT_REF 保留。
+- **Track.slots 替代 scale ★**（2026-07-26）：`<track>` 的 `scale`（可选）改为 `slots`（必填），类型 `string | slot_spec[]`。数值轨写范围字符串（`"0–12"`），槽位轨写对象数组（`name` + `<ontology::effect>`）。统一了计分轨/进程轨与天气轨/阶段流程的表述方式。
+- **Effect/Cost/Content 新增 options 字段 ★**（2026-07-26）：`<effect>`、`<cost>`、`<content>` 各新增 `options` 可选字段（`map | null`，default null）。非空时必含 `type`（引用 `<multiple_choice_enum>`）和 `items` 数组。将多选逻辑从使用处的 ad-hoc 结构提升为可复用的字段约定。
+- **Multiple Choice Enum ★**（2026-07-26）：新增 `<multiple_choice_enum>` 概念（67 个概念），三个枚举值——`EXECUTE_ALL`（全部执行）、`CHOOSE_ONE`（选择 1 个）、`CHOOSE_AT_LEAST_ONE`（选择至少 1 个）。适用于任何需要多选项的场景，不限于 effect。
 
 ## 为《文明演化》扩展本体的计划
 
-第二款游戏《文明演化》的复杂度远高于 Splendor，现有核心概念无法直接覆盖以下机制，已获准扩展 ontology：
+第二款游戏《文明演化》的复杂度远高于 Splendor，已完成的 ontology 扩展：
 
-- **背景与世界观**: `<setting>` 已在 ontology 中加入，并承载《文明演化》的创世技术学院/阿格拉考官故事。
-- **轨道机制**: `<track>` 已在 ontology 中改为 `<zone>` 子类，`<score_track>` 继承 `<track>`。具体游戏的进程轨、恩惠轨、天气轨、阶段序列等作为游戏级概念定义，不入统一本体。
+- **背景与世界观**: `<setting>` — 已加入，承载创世技术学院/阿格拉考官故事。
+- **轨道机制**: `<track>` — 已改为 `<zone>` 子类，`slots` 字段替代 `scale`。`<score_track>` 继承 `<track>`。
+- **选择机制**: `<alternative_cost>` / `<choice>` / `<multiple_choice_enum>` — 已完成。
+- **效果多选**: `<effect>`、`<cost>`、`<content>` 的 `options` 字段 — 已完成。
+
+仍需扩展：
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`（trigger），表达模组 level 提升；`<lose>` / `<gain>`（event），用于载体切换时的 effect 所有权转移
-- **地点**: `<site>`（地点板块效果）、`<site_tile>`、`<encampment>`。已全部移回 Civolution 游戏层。注：`<terrain>` 和 `<region>` 最初作为 ontology 概念引入，2026-07-25 经讨论确认地形类型本质上是 zone 的子类（如 `forest extends zone`），且 Civolution 规则中"连续同色算同一区域"的定义与实际规则（跨板块同色仍算不同区域）矛盾，二者已从 ontology 移除，地形类型改为 Civolution 游戏层 zone 子类
-- **选择与替代**: `<alternative_cost>` / `<choice>`，用于「支付资源或满足条件」「二选一行动」
+- **地点**: `<site>`、`<encampment>` — 已移回 Civolution 游戏层。`<terrain>` 和 `<region>` 确认无需 ontology 概念（地形 = zone 子类）。
 - **被动/持续效果**: `<passive_effect>` / `<location_effect>`，表达地点在激活模组时追加的效果
 
 扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
 
 **Why:** 本体是整个系统的类型系统，后续 Rule DSL、Tutorial Tree、Controller 都建立在它之上。
-**How to apply:** 第一阶段世界模型定义已扩展至 68 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。
+**How to apply:** 第一阶段世界模型定义已扩展至 67 个概念（可持续补充）。当前正在为第二款游戏《文明演化》扩展本体并编写其结构化规则。所有规则表达使用本体中定义的概念和字段。
