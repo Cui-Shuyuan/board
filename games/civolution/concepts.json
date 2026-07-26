@@ -1647,8 +1647,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "位于 <sequence_board> 上的轨，记录当前天气。共 5 格，从热端到冷端依次为：炎热、温暖、适中（起始位）、雨水、寒冷。事件阶段（Phase 7）移动天气标记后，标记所在格的效果必发——按座次顺位（起始玩家开始，顺时针），所有玩家逐一结算该格效果。炎热和寒冷为白线极端格，触发负面效果；适中为中央起始格。",
-        "en": "A track on the <sequence_board> recording the current weather. 5 slots from hot to cold: Hot, Warm, Mild (starting space), Rain, Cold. During the Event phase (Phase 7), after the weather indicator moves, the effect of its current slot is mandatory — all players resolve it one by one in seating order (starting player → clockwise). Hot and Cold are white-line extreme spaces triggering negative effects; Mild is the center starting space."
+        "zh": "位于 <sequence_board> 上的轨，记录当前天气。共 5 格，从热端到冷端依次为：炎热、温暖、适中（起始位）、雨水、寒冷。炎热和寒冷为白线极端格。由 <weather_effect> 触发结算。",
+        "en": "A track on the <sequence_board> recording the current weather. 5 slots from hot to cold: Hot, Warm, Mild (starting space), Rain, Cold. Hot and Cold are white-line extreme spaces. Resolution is triggered by <weather_effect>."
       },
       "contains": {
         "type": "<weather_indicator>",
@@ -1659,12 +1659,13 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
+      "<ontology::trigger>": "<weather_effect>",
       "slots": [
-        { "name": { "zh": "炎热", "en": "Hot" }, "description": { "zh": "热端白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "Hot-end white line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } },
-        { "name": { "zh": "温暖", "en": "Warm" }, "description": { "zh": "触发 <activate_income_chip>：从控制台层级分区中选择 1 个收入芯片激活其效果一次。", "en": "Triggers <activate_income_chip>: choose 1 income chip from the stage partition of your console and activate its effect once." } },
-        { "name": { "zh": "适中", "en": "Mild" }, "description": { "zh": "中央起始格。二选一：<activate_income_chip> 或 <perform_activity>。", "en": "Center starting space. Choose one: <activate_income_chip> or <perform_activity>." } },
-        { "name": { "zh": "雨水", "en": "Rain" }, "description": { "zh": "触发 <perform_activity>：选择 1 个可用活动能力并激活其效果一次。", "en": "Triggers <perform_activity>: choose 1 available activity ability and activate its effect once." } },
-        { "name": { "zh": "寒冷", "en": "Cold" }, "description": { "zh": "冷端白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "Cold-end white line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } }
+        { "name": { "zh": "炎热", "en": "Hot" }, "effect": { "content": ["<lose_food>", "<remove_tribe>"], "type": "选择1个执行" } },
+        { "name": { "zh": "温暖", "en": "Warm" }, "effect": { "content": "<activate_income_chip>" } },
+        { "name": { "zh": "适中", "en": "Mild" }, "effect": { "content": ["<activate_income_chip>", "<perform_activity>"], "type": "选择1个执行" } },
+        { "name": { "zh": "雨水", "en": "Rain" }, "effect": { "content": "<perform_activity>" } },
+        { "name": { "zh": "寒冷", "en": "Cold" }, "effect": { "content": ["<lose_food>", "<remove_tribe>"], "type": "选择1个执行" } }
       ],
       "specifies": "<ontology::track>"
     },
@@ -2485,6 +2486,46 @@
         }
       },
       "specifies": "<ontology::activation>"
+    },
+    {
+      "id": "lose_food",
+      "name": { "zh": "失去食物", "en": "Lose Food" },
+      "abstract": false,
+      "definition": {
+        "zh": "失去 1 个 <food> 标记。将该玩家仓库中的 1 个 <food> 标记返回供应堆。此效果为负面，出现在天气轨炎热/寒冷格等位置。",
+        "en": "Lose 1 <food> marker. Return 1 <food> marker from the player's storage to the supply. This is a negative effect, appearing in weather gauge Hot/Cold slots and other locations."
+      },
+      "specifies": "<ontology::lose>"
+    },
+    {
+      "id": "remove_tribe",
+      "name": { "zh": "移除部落", "en": "Remove Tribe" },
+      "abstract": false,
+      "definition": {
+        "zh": "从大陆上移除 1 个 <tribe>。选择玩家的 1 个位于大陆任意区域的 <tribe>，将其返回个人供应区。此效果为负面，出现在天气轨炎热/寒冷格等位置。玩家可使用「Deus ex machina」特殊行动挽救该部落。",
+        "en": "Remove 1 <tribe> from the continent. Choose 1 <tribe> located anywhere on the continent and return it to the player's supply. This is a negative effect, appearing in weather gauge Hot/Cold slots and other locations. The player may use the 'Deus ex machina' special action to save the tribe."
+      },
+      "specifies": "<ontology::lose>"
+    },
+    {
+      "id": "weather_effect",
+      "name": { "zh": "天气效果触发", "en": "Weather Effect Trigger" },
+      "abstract": false,
+      "definition": {
+        "zh": "天气效果 <ontology::trigger>。事件阶段天气标记移动完成后，按座次顺位（起始玩家起顺时针）所有玩家逐一结算当前天气格的 effect。正面效果可放弃，负面效果必须执行。",
+        "en": "Weather effect <ontology::trigger>. After the weather indicator finishes moving during the Event phase, all players in seating order (starting player → clockwise) resolve the current weather slot's effect one by one. Positive effects may be forgone; negative effects are mandatory."
+      },
+      "<ontology::timing>": {
+        "zh": "事件阶段（Phase 7）天气标记移动完成后",
+        "en": "After the weather indicator finishes moving during the Event phase (Phase 7)"
+      },
+      "<ontology::event>[]": [
+        {
+          "zh": "所有玩家按座次顺位（起始玩家起顺时针）逐一结算当前天气标记所在格的 effect。正面效果可放弃，负面效果必须执行。",
+          "en": "All players in seating order (starting player → clockwise) resolve the effect of the current weather slot one by one. Positive effects may be forgone; negative effects are mandatory."
+        }
+      ],
+      "specifies": "<ontology::trigger>"
     }
   ],
   "top_level_refs": {
