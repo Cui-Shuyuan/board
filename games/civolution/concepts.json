@@ -1690,14 +1690,14 @@
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "slots": [
-        { "name": { "zh": "第一阶段", "en": "Phase 1" }, "description": { "zh": "新卡牌（New Cards）：翻开事件牌 + 5 张研究牌", "en": "New Cards: reveal event card + 5 research cards" } },
-        { "name": { "zh": "第二阶段", "en": "Phase 2" }, "description": { "zh": "新目标（New Goals）：按座位顺序可选 1 枚目标芯片", "en": "New Goals: choose 1 goal chip in seating order" } },
-        { "name": { "zh": "第三阶段", "en": "Phase 3" }, "description": { "zh": "额外收获（Extra Find）：有部落的陆地区域拿取材料", "en": "Extra Find: take 1 material per territory with a tribe" } },
-        { "name": { "zh": "第四阶段", "en": "Phase 4" }, "description": { "zh": "行动阶段（Action Phase）：轮流激活模组或 Reset", "en": "Action Phase: take turns activating modules or Reset" } },
-        { "name": { "zh": "第五阶段", "en": "Phase 5" }, "description": { "zh": "地点阶段（Site Phase）：结算翻开地点的效果", "en": "Site Phase: resolve revealed site effects" } },
-        { "name": { "zh": "第六阶段", "en": "Phase 6" }, "description": { "zh": "喂养阶段（Feeding Phase）：喂部落 → 站立部落得分", "en": "Feeding Phase: feed tribes → strong tribes score" } },
-        { "name": { "zh": "第七阶段", "en": "Phase 7" }, "description": { "zh": "事件阶段（Event Phase）：天气效果 → 事件效果 → 时代计分 → 新起始玩家", "en": "Event Phase: weather → event → era scoring → new starting player" } },
-        { "name": { "zh": "第八阶段", "en": "Phase 8" }, "description": { "zh": "收入阶段（Income Phase）：执行收入芯片 → 雕像计分 → 移除狩猎标记 → 补充重置标记", "en": "Income Phase: income chips → statue scoring → remove hunting tokens → replenish reset markers" } }
+        { "name": { "zh": "第一阶段", "en": "Phase 1" }, "<ontology::effect>": "<phase_1_new_cards>" },
+        { "name": { "zh": "第二阶段", "en": "Phase 2" }, "<ontology::effect>": "<phase_2_new_goals>" },
+        { "name": { "zh": "第三阶段", "en": "Phase 3" }, "<ontology::effect>": "<phase_3_extra_find>" },
+        { "name": { "zh": "第四阶段", "en": "Phase 4" }, "<ontology::effect>": "<phase_4_action>" },
+        { "name": { "zh": "第五阶段", "en": "Phase 5" }, "<ontology::effect>": "<phase_5_site>" },
+        { "name": { "zh": "第六阶段", "en": "Phase 6" }, "<ontology::effect>": "<phase_6_feeding>" },
+        { "name": { "zh": "第七阶段", "en": "Phase 7" }, "<ontology::effect>": "<phase_7_event>" },
+        { "name": { "zh": "第八阶段", "en": "Phase 8" }, "<ontology::effect>": "<phase_8_income>" }
       ],
       "specifies": "<ontology::track>"
     },
