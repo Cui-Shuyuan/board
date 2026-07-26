@@ -970,8 +970,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "黄色的六边形 <ontology::marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。",
-        "en": "A hexagonal yellow <ontology::marker> placed on the phase sequence of the sequence board to indicate the current phase."
+        "zh": "黄色的六边形（六角形）<ontology::marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。终局计分时移入 <final_scoring_area_hex> 逐格推进。",
+        "en": "A hexagonal yellow <ontology::marker> placed on the phase sequence of the sequence board to indicate the current phase. During final scoring, it moves into the <final_scoring_area_hex> and advances cell by cell."
       },
       "media": {
         "component": [

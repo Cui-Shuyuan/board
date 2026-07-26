@@ -130,6 +130,12 @@ System prompt 中不再重复列出可用工具（工具 schema 已通过 `tools
 - 新增 `list_concept_ids` 工具让 LLM 一次性看全量 ID+名称，替代重复搜索
 - System prompt 中明确工具选择决策：search_concepts 找入口 → get_concept 跟引用 → list_concept_ids 仅兜底穷举
 
+### 10. 搜索合并策略升级：MAX → SUM + 归一化（2026-07-27）
+修复多词查询时单通道高分概念挤掉全通道匹配概念的问题：
+- **旧逻辑（MAX）**：同一概念取所有通道最高分 → OR 语义，匹配一个词就能排前面
+- **新逻辑（SUM + 归一化）**：同一概念累加所有通道分数，再除以子词数量 → AND 语义，匹配词越多得分越高
+- 效果：查询「黄色 六角形 小」时，`phase_indicator`（三词全中）归一化分远高于 `attribute_chip`（只中两词）
+
 ## LLM 调用次数
 `MaxToolRounds` 设为 `int.MaxValue`，不再限制 LLM 为一题调几次工具，方便观察复杂问题上的真实查询深度。实际生产时可根据成本和延迟再收紧。
 

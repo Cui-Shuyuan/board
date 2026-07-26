@@ -248,19 +248,23 @@ public class GameRulesService
 
         var allBatches = await Task.WhenAll(tasks);
 
-        // 合并去重：同一概念保留最高分
+        // 合并去重：同一概念累加各通道分数（AND 语义——匹配子词越多得分越高）
         var merged = new Dictionary<string, (ConceptSummary Summary, float Score)>();
         foreach (var batch in allBatches)
         {
             foreach (var (summary, score) in batch)
             {
-                if (!merged.TryGetValue(summary.Id, out var existing) || existing.Score < score)
-                    merged[summary.Id] = (summary, score);
+                if (!merged.TryGetValue(summary.Id, out var existing))
+                    merged[summary.Id] = (summary, 0);
+                merged[summary.Id] = (summary, merged[summary.Id].Score + score);
             }
         }
 
+        // 按子词数量归一化：匹配词越多的概念得分越高
+        var divisor = Math.Max(subQueries.Length, 1);
         var results = merged.Values
-            .OrderByDescending(x => x.Score)
+            .Select(x => (x.Summary, NormalizedScore: x.Score / divisor))
+            .OrderByDescending(x => x.NormalizedScore)
             .Select(x => x.Summary)
             .ToList();
 

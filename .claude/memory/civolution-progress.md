@@ -85,6 +85,7 @@ metadata:
   - **外观描述补全**：`<scoring_tile>`（小型矩形 + 一角弧形角，双面）、`<site>`（正八边形 + 一角弧形角）、`<hundred_point_token>`（正方形而非圆形）。
   - **命名对齐规则书**：`一百分指示物` → `100分指示物`，TTS 友好工作留给 LLM。
   - **event_card_space 英文描述修正**：左格为 face-up stack（非单张），去掉 setup 流程细节。
+  - **phase_indicator 定义补全**：加入「六角形」同义词和终局计分流程引用，提升对「六角形黄色东西」类问题的搜索命中。
 - **2026-07-26（天气轨效果模型）**: 天气轨从纯文本描述升级为结构化 trigger + effect 模型：
   - 新增 5 个概念：`<activate_income_chip>`（specifies `<ontology::activation>`）、`<perform_activity>`（specifies `<ontology::activation>`）、`<lose_food>`（specifies `<ontology::effect>`，cost=null）、`<remove_tribe>`（specifies `<ontology::effect>`，cost=null）、`<weather_effect>`（specifies `<ontology::trigger>`，timing=事件阶段天气标记移动完成，无 condition）
   - weather_gauge 新增 `<ontology::trigger>` 引用 `<weather_effect>`，5 个 slot 从 `description` 文本升级为 `"<ontology::effect>": <ref>` 结构化引用
