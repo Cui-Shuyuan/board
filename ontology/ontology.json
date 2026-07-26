@@ -795,8 +795,8 @@
         "type": "map<string, any> | null",
         "default": null,
         "description": {
-          "zh": "当此 <cost> 包含多个选项时的选择配置。格式：{ \"items\": [\"<cost_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }。null = 单一费用。",
-          "en": "Selection configuration when this <cost> contains multiple options. Format: { \"items\": [\"<cost_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }. null = single cost."
+          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。",
+          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array."
         }
       },
       "constraints": {
@@ -844,8 +844,8 @@
         "type": "map<string, any> | null",
         "default": null,
         "description": {
-          "zh": "当此 <content> 包含多个选项时的选择配置。格式：{ \"items\": [\"<content_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }。null = 单一内容。",
-          "en": "Selection configuration when this <content> contains multiple options. Format: { \"items\": [\"<content_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }. null = single content."
+          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。",
+          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array."
         }
       },
       "constraints": {
@@ -900,8 +900,8 @@
         "type": "map<string, any> | null",
         "default": null,
         "description": {
-          "zh": "当此 <effect> 包含多个选项时的选择配置。格式：{ \"items\": [\"<effect_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }。null = 单选项（默认，<cost> 和 <content> 各只有一个）。",
-          "en": "Selection configuration when this <effect> contains multiple options. Format: { \"items\": [\"<effect_ref>\", ...], \"type\": \"<multiple_choice_enum.XXX>\" }. null = single option (default; <cost> and <content> are each singular)."
+          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。",
+          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array."
         }
       },
       "constraints": {
@@ -1934,14 +1934,14 @@
       "extends": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "满足其中任意一个即可的费用形式。<alternative_cost> 继承自 <property>。用于表达「支付 A 或满足 B 即可」的规则——玩家只需完成所列条件之一，该费用即视为已支付。多个替代条件之间是 OR 关系。",
-        "en": "A cost form where fulfilling any one of the listed conditions is sufficient. <alternative_cost> extends <property>. Used to express rules like 'pay A or satisfy B' — the player only needs to complete one of the listed conditions for the cost to be considered paid. Multiple alternative conditions are in an OR relationship."
+        "zh": "满足其中任意一个即可的费用形式。多个替代条件之间是 OR 关系。",
+        "en": "A cost form where satisfying any one of the listed conditions is sufficient. Multiple alternatives are OR-related."
       },
       "options": {
         "type": "<cost>[]",
         "description": {
-          "zh": "可供选择的替代条件列表。玩家只需满足其中一项。",
-          "en": "List of alternative conditions; the player only needs to satisfy one."
+          "zh": "替代费用选项列表。",
+          "en": "List of alternative cost options."
         }
       },
       "constraints": {
@@ -1949,8 +1949,8 @@
           {
             "id": "options",
             "description": {
-              "zh": "替代条件选项列表，玩家满足其中任意一个即可。",
-              "en": "List of alternative cost options; satisfying any one is enough."
+              "zh": "替代费用选项列表。",
+              "en": "List of alternative cost options."
             }
           }
         ],
@@ -1966,14 +1966,14 @@
       "extends": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "描述玩家在执行某个 <action> 或 <effect> 时必须做出的多选一决策。<choice> 继承自 <property>。它本身不是费用或效果，而是对「玩家必须选择一项」这一规则事实的声明。典型例子：「二选一行动」「从三种资源中选择一种」。",
-        "en": "Describes a multi-option decision a player must make when executing an <action> or <effect>. <choice> extends <property>. It is neither a cost nor an effect itself, but a declaration of the rule fact that 'the player must choose one option'. Typical examples: 'choose one of two actions', 'choose one of three resources'."
+        "zh": "玩家在执行 <action> 或 <effect> 时必须做出的多选决策。",
+        "en": "A multi-option decision a player must make when executing an <action> or <effect>."
       },
       "options": {
         "type": "map<string, any>[]",
         "description": {
-          "zh": "可选的选项列表。每个选项是一个规格对象，由具体游戏规则定义。",
-          "en": "List of available options. Each option is a specification object defined by the game rules."
+          "zh": "可选项列表。",
+          "en": "List of available options."
         }
       },
       "constraints": {
@@ -1981,8 +1981,8 @@
           {
             "id": "options",
             "description": {
-              "zh": "玩家可选择的选项列表。",
-              "en": "List of options available to the player."
+              "zh": "可选项列表。",
+              "en": "List of available options."
             }
           }
         ],
@@ -2174,8 +2174,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "当 <effect>、<cost> 或 <content> 包含多个选项时，决定选择方式的枚举。不限于 effect——cost（如「支付 2 食物或 1 金币」）和 content（如「获得 1 食物或抽 1 张牌」）同样适用。",
-        "en": "Enum determining how to choose when an <effect>, <cost>, or <content> contains multiple options. Not limited to effects — cost (e.g., 'pay 2 food or 1 gold') and content (e.g., 'gain 1 food or draw 1 card') also use it."
+        "zh": "多选项的选择方式枚举，适用于 <effect>、<cost>、<content> 的 options 字段。",
+        "en": "Enum for multi-option selection, used by the options field of <effect>, <cost>, and <content>."
       },
       "values": {
         "type": "enum",
