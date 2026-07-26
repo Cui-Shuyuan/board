@@ -1661,7 +1661,7 @@
       "<ontology::information_visibility>": "public",
       "slots": [
         { "name": { "zh": "炎热", "en": "Hot" }, "description": { "zh": "热端白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "Hot-end white line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } },
-        { "name": { "zh": "温暖", "en": "Warm" }, "description": { "zh": "触发 <activate_income_chip>：从控制台层级分区中选择 1 个收入芯片激活其效果一次，或改为获得 1 分。", "en": "Triggers <activate_income_chip>: choose 1 income chip from the stage partition of your console and activate its effect once, or gain 1 success point instead." } },
+        { "name": { "zh": "温暖", "en": "Warm" }, "description": { "zh": "触发 <activate_income_chip>：从控制台层级分区中选择 1 个收入芯片激活其效果一次。", "en": "Triggers <activate_income_chip>: choose 1 income chip from the stage partition of your console and activate its effect once." } },
         { "name": { "zh": "适中", "en": "Mild" }, "description": { "zh": "中央起始格。二选一：<activate_income_chip> 或 <perform_activity>。", "en": "Center starting space. Choose one: <activate_income_chip> or <perform_activity>." } },
         { "name": { "zh": "雨水", "en": "Rain" }, "description": { "zh": "雨水过渡格。效果待从 PDF 规则书确认。", "en": "Rain intermediate space. Effect TBD from PDF rulebook." } },
         { "name": { "zh": "寒冷", "en": "Cold" }, "description": { "zh": "冷端白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "Cold-end white line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } }
@@ -2462,8 +2462,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "执行你的 1 个收入芯片的行动。从控制台层级分区中选择 1 个收入芯片，激活其 <ontology::effect> 一次。也可选择不执行效果，改为获得 1 分。此行动出现在天气轨 <warm> 格、进程轨奖励等多个位置。",
-        "en": "Perform the action of 1 of your income chips. Choose 1 income chip from the stage partition of your console and activate its <ontology::effect> once. You may alternatively gain 1 success point instead. This action appears in the weather gauge <warm> slot, track bonuses, and other locations."
+        "zh": "执行你的 1 个收入芯片的行动。从控制台层级分区中选择 1 个收入芯片，激活其 <ontology::effect> 一次。此行动出现在天气轨 <warm> 格、进程轨奖励等多个位置。",
+        "en": "Perform the action of 1 of your income chips. Choose 1 income chip from the stage partition of your console and activate its <ontology::effect> once. This action appears in the weather gauge <warm> slot, track bonuses, and other locations."
       },
       "specifies": "<ontology::activation>"
     },
