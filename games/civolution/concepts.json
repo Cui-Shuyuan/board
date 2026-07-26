@@ -2492,20 +2492,30 @@
       "name": { "zh": "失去食物", "en": "Lose Food" },
       "abstract": false,
       "definition": {
-        "zh": "失去 1 个 <food> 标记。将该玩家仓库中的 1 个 <food> 标记返回供应堆。此效果为负面，出现在天气轨炎热/寒冷格等位置。",
-        "en": "Lose 1 <food> marker. Return 1 <food> marker from the player's storage to the supply. This is a negative effect, appearing in weather gauge Hot/Cold slots and other locations."
+        "zh": "失去 1 个食物标记的负面效果。",
+        "en": "Negative effect of losing 1 food marker."
       },
-      "specifies": "<ontology::lose>"
+      "<ontology::cost>": null,
+      "<ontology::content>": {
+        "zh": "将该玩家仓库中的 1 个 <food> 标记返回供应堆。",
+        "en": "Return 1 <food> marker from the player's storage to the supply."
+      },
+      "specifies": "<ontology::effect>"
     },
     {
       "id": "remove_tribe",
       "name": { "zh": "移除部落", "en": "Remove Tribe" },
       "abstract": false,
       "definition": {
-        "zh": "从大陆上移除 1 个 <tribe>。选择玩家的 1 个位于大陆任意区域的 <tribe>，将其返回个人供应区。此效果为负面，出现在天气轨炎热/寒冷格等位置。玩家可使用「Deus ex machina」特殊行动挽救该部落。",
-        "en": "Remove 1 <tribe> from the continent. Choose 1 <tribe> located anywhere on the continent and return it to the player's supply. This is a negative effect, appearing in weather gauge Hot/Cold slots and other locations. The player may use the 'Deus ex machina' special action to save the tribe."
+        "zh": "从大陆移除 1 个部落的负面效果。",
+        "en": "Negative effect of removing 1 tribe from the continent."
       },
-      "specifies": "<ontology::lose>"
+      "<ontology::cost>": null,
+      "<ontology::content>": {
+        "zh": "选择玩家的 1 个位于大陆任意区域的 <tribe>，将其返回个人供应区。",
+        "en": "Choose 1 <tribe> located anywhere on the continent and return it to the player's supply."
+      },
+      "specifies": "<ontology::effect>"
     },
     {
       "id": "weather_effect",
