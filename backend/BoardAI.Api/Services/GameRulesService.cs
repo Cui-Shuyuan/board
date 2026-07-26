@@ -263,16 +263,31 @@ public class GameRulesService
         // 按子词数量归一化：匹配词越多的概念得分越高
         var divisor = Math.Max(subQueries.Length, 1);
         var results = merged.Values
-            .Select(x => (x.Summary, NormalizedScore: x.Score / divisor))
-            .OrderByDescending(x => x.NormalizedScore)
-            .Select(x => x.Summary)
+            .Select(x => { x.Summary.Score = x.Score / divisor; return x.Summary; })
+            .OrderByDescending(x => x.Score)
             .ToList();
+
+        // 向量搜索结果没有 description，从概念数据中补上
+        PopulateDescriptions(game, results);
 
         return new SearchConceptsResult
         {
             Results = results,
             Query = query
         };
+    }
+
+    private void PopulateDescriptions(string game, List<ConceptSummary> results)
+    {
+        foreach (var r in results)
+        {
+            if (!string.IsNullOrEmpty(r.Description)) continue;
+            var detail = GetConcept(game, r.Id);
+            if (detail.HasValue)
+            {
+                r.Description = ExtractDescriptionZh(detail.Value);
+            }
+        }
     }
 
     public ListConceptsResult ListAllConceptIds(string game)
@@ -649,6 +664,7 @@ public class GameRulesService
                 Id = id,
                 Name = ExtractName(item),
                 Type = propertyName,
+                Description = ExtractDescriptionZh(item),
                 Media = ExtractMedia(item)
             };
             results.Add(summary);
@@ -735,6 +751,16 @@ public class GameRulesService
         return string.Empty;
     }
 
+    private static string? ExtractDescriptionZh(JsonElement element)
+    {
+        if (element.TryGetProperty("definition", out var def) &&
+            def.TryGetProperty("zh", out var zh))
+        {
+            return zh.GetString();
+        }
+        return null;
+    }
+
     private static IEnumerable<string> Tokenize(string query)
     {
         return query.Split(
@@ -779,6 +805,8 @@ public class ConceptSummary
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
+    public float Score { get; set; }
+    public string? Description { get; set; }
     public Dictionary<string, JsonElement>? Media { get; set; }
 }
 
