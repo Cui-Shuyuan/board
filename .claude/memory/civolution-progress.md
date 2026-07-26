@@ -77,6 +77,14 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-27（概念补全 + parts 格式升级）**:
+  - **新增 2 个概念**：`<card_name>`（specifies `<ontology::object>`，卡牌名称标签）和 `<weather_trend>`（specifies `<ontology::object>`，事件牌天气趋势指示器）。二者均为通用概念，后续实例化各卡牌时通过 parts 引用。
+  - **event_card parts 维护**：事件牌三部分——`<card_name>`（左上角）、`<weather_trend>`（右上角）、`<ontology::instant_effect>`（下半部分，全部即时效果）。
+  - **parts 格式升级**：全局 `"as": "<concept>"` → `"<concept>": {...}`，概念 ID 直接做 key。Civolution 7 概念 + Splendor 2 概念共 ~37 个 part 全部迁移。
+  - **终局计分区重构**：`<final_scoring_area>` 从 track 改为 zone，拆为两个子概念——`<final_scoring_area_icons>`（图标 zone，放置计分板块）和 `<final_scoring_area_hex>`（六角格 track，slots=null，终局计分时阶段标记逐格推进）。
+  - **外观描述补全**：`<scoring_tile>`（小型矩形 + 一角弧形角，双面）、`<site>`（正八边形 + 一角弧形角）、`<hundred_point_token>`（正方形而非圆形）。
+  - **命名对齐规则书**：`一百分指示物` → `100分指示物`，TTS 友好工作留给 LLM。
+  - **event_card_space 英文描述修正**：左格为 face-up stack（非单张），去掉 setup 流程细节。
 - **2026-07-26（天气轨效果模型）**: 天气轨从纯文本描述升级为结构化 trigger + effect 模型：
   - 新增 5 个概念：`<activate_income_chip>`（specifies `<ontology::activation>`）、`<perform_activity>`（specifies `<ontology::activation>`）、`<lose_food>`（specifies `<ontology::effect>`，cost=null）、`<remove_tribe>`（specifies `<ontology::effect>`，cost=null）、`<weather_effect>`（specifies `<ontology::trigger>`，timing=事件阶段天气标记移动完成，无 condition）
   - weather_gauge 新增 `<ontology::trigger>` 引用 `<weather_effect>`，5 个 slot 从 `description` 文本升级为 `"<ontology::effect>": <ref>` 结构化引用
