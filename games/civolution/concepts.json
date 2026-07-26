@@ -1662,9 +1662,9 @@
       "<ontology::trigger>": "<weather_effect>",
       "slots": [
         { "name": { "zh": "炎热", "en": "Hot" }, "effect": { "content": ["<lose_food>", "<remove_tribe>"], "type": "选择1个执行" } },
-        { "name": { "zh": "温暖", "en": "Warm" }, "effect": { "content": "<activate_income_chip>" } },
+        { "name": { "zh": "温暖", "en": "Warm" }, "effect": "<activate_income_chip>" },
         { "name": { "zh": "适中", "en": "Mild" }, "effect": { "content": ["<activate_income_chip>", "<perform_activity>"], "type": "选择1个执行" } },
-        { "name": { "zh": "雨水", "en": "Rain" }, "effect": { "content": "<perform_activity>" } },
+        { "name": { "zh": "雨水", "en": "Rain" }, "effect": "<perform_activity>" },
         { "name": { "zh": "寒冷", "en": "Cold" }, "effect": { "content": ["<lose_food>", "<remove_tribe>"], "type": "选择1个执行" } }
       ],
       "specifies": "<ontology::track>"
