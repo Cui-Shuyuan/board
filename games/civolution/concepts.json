@@ -1647,8 +1647,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "位于 <sequence_board> 上的轨，记录当前天气。天气有晴天、雨天、雪天、暴风雪、干燥等，影响收成、狩猎和灾难。",
-        "en": "A track on the <sequence_board> recording the current weather. Weather states include sunny, rainy, snowy, blizzard, dry, etc., affecting harvest, hunting, and disasters."
+        "zh": "位于 <sequence_board> 上的轨，记录当前天气。共 5 格，从热端到冷端依次为：炎热、温暖、适中（起始位）、雨水、寒冷。炎热和寒冷为白线极端格，触发负面效果；适中为中央起始格。天气影响收成、狩猎和灾难。",
+        "en": "A track on the <sequence_board> recording the current weather. 5 slots from hot to cold: Hot, Warm, Mild (starting space), Rain, Cold. Hot and Cold are white-line extreme spaces triggering negative effects; Mild is the center starting space. Weather affects harvest, hunting, and disasters."
       },
       "contains": {
         "type": "<weather_indicator>",
@@ -1660,14 +1660,11 @@
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "slots": [
-        {
-          "name": { "zh": "极寒", "en": "Cold" },
-          "description": { "zh": "白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "White line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." }
-        },
-        { "name": { "zh": "寒冷", "en": "Cold (intermediate)" }, "description": { "zh": "低温区过渡格。具体名称和效果待从 PDF 规则书确认。", "en": "Cold-region intermediate space. Exact name and effect TBD from PDF rulebook." } },
-        { "name": { "zh": "温和", "en": "Mild" }, "description": { "zh": "起始天气格，无特殊效果。", "en": "Starting weather space. No special effect." } },
-        { "name": { "zh": "温暖", "en": "Warm (intermediate)" }, "description": { "zh": "高温区过渡格。具体名称和效果待从 PDF 规则书确认。", "en": "Warm-region intermediate space. Exact name and effect TBD from PDF rulebook." } },
-        { "name": { "zh": "极热", "en": "Hot" }, "description": { "zh": "白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "White line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } }
+        { "name": { "zh": "炎热", "en": "Hot" }, "description": { "zh": "热端白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "Hot-end white line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } },
+        { "name": { "zh": "温暖", "en": "Warm" }, "description": { "zh": "温暖过渡格。效果待从 PDF 规则书确认。", "en": "Warm intermediate space. Effect TBD from PDF rulebook." } },
+        { "name": { "zh": "适中", "en": "Mild" }, "description": { "zh": "中央起始格，天气标记的游戏起始位置。", "en": "Center starting space; the weather indicator begins play here." } },
+        { "name": { "zh": "雨水", "en": "Rain" }, "description": { "zh": "雨水过渡格。效果待从 PDF 规则书确认。", "en": "Rain intermediate space. Effect TBD from PDF rulebook." } },
+        { "name": { "zh": "寒冷", "en": "Cold" }, "description": { "zh": "冷端白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "Cold-end white line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } }
       ],
       "specifies": "<ontology::track>"
     },
