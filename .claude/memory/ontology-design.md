@@ -26,7 +26,7 @@ D:\workspace\board\ontology\ontology.json（统一本体，68 个概念）
 - **`constraints.required`** = 子类必须实现的字段 ID 列表。格式为 `[{ "id": "<field_id>", "description": { "zh": "...", "en": "..." } }]`
 - **`constraints.optional`** = 子类可选实现的字段 ID 列表，格式同上
 - **`id` 字段特殊处理**：由 Object 定义，所有实例隐式拥有。因与概念自身的 `"id"` 元数据冲突，不在顶层声明，仅保留在 Object 的 constraints 中
-- `parent` 字段表示继承关系。基础概念无 `parent`
+- **`extends` / `specifies` / `instance_of`** 三种层级关系：`extends`=结构扩展（加新字段）、`specifies`=参数绑定（填已有字段）、`instance_of`=具体个体（字段全满）。三者均可链化——extends 和 specifies 可任意深度交替，instance_of 是唯一终端。基础概念无 `extends`
 - `abstract: true` = 基类，不可直接实例化
 
 ## 类型与引用约定
@@ -186,11 +186,11 @@ Hand
 - **Reserve 的 public/player 区分由 ownership 表达**：`<supply>`、`<market>`、`<deck>`、`<pool>` 都通过 `<ownership>`（null = 公共，`<player>` = 玩家专属）区分公共区与个人区，不再为 public/player 单独建子类。仓库等已属于玩家的存储区仍应归类为 `<player_holding>`。
 - **新增背景设定概念 `<setting>`**：用于描述游戏世界观、时代背景与关键角色，解释风味命名（如 `<favor_of_ager_track>` 中的「阿格拉」），不直接参与规则判定。
 - **ontology 概念直接引用，不在游戏层重复封装**：游戏文件里已有通用概念就直接用 `<ontology::concept_id>` 或声明其实例，不新建 `<game_xxx>` 包装。
-- **Board 概念拆分 ★**：`<board>` 是从 `<aid>` 中拆出的新基础概念（与 `<aid>`、`<piece>` 同级，均为 `<object>` 的子类）。核心判据：**是否承载游戏状态**。Board 承载状态——上面可以放置 piece 和 token、可以 host zone（zone 由规则定义，board 是物理宿主）、可以携带自身 content（如玩家面板上的活动图标）；Aid 不承载状态——纯被动参考物，收起来也不影响游戏。Board 不可被 transfer（区别于 piece），不可携带 effect 后被 play（同样区别于 piece）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
+- **Board 概念拆分 ★**：`<board>` 是从 `<aid>` 中拆出的新基础概念（与 `<aid>`、`<piece>` 同级，均为 `<object>` 的子类）。核心判据：**是否承载游戏状态**。Board 承载状态——上面可以放置 piece 和 token、可以 host zone（zone 由规则定义，board 是物理宿主）、可以携带自身 content（如玩家面板上的活动图标）；Aid 不承载状态——纯被动参考物，收起来也不影响游戏。Board 不可被 transfer（区别于 piece），不可携带 effect 后被 play（同样区别于 piece）。`<public_board>` 和 `<player_board>` 的 extends 已从 `<aid>` 改为 `<board>`。
 - **Zone 可由实体承载 ★**：zone 的来源不再仅限于规则——card 和 board 都可以承载 zone。例如 Arkham Horror 地点牌上的线索区、Civolution 初始芯片牌上的目标芯片区（card 承载 zone）、控制台左上角的收入芯片区（board 承载 zone）。实体承载的 zone 生命周期绑定在宿主上——宿主被移除时 zone 随之消失。这只是承认了桌游中已有的物理事实，zone 的独立逻辑定义不受影响。
 - **Board 的 zones 字段替代 maps_to**：原 `<aid>` 的 `maps_to` 表达的是"视觉上画出了这些 zone"（单向弱关联）。Board 的 `zones` 表达的是"这些 zone 在我身上"（物理宿主关系），每个 zone 附带 `position` 和 `description`，供系统回答客人"放哪"类问题。
 - **Module 是 effect，各等级为独立实例 ★**：模组的本质是 `<effect>`。2026-07-24 重构：每个等级的模组效果改为独立的 `<effect>` 实例——`effect_xxx_lv1`、`effect_xxx_lv2`、`effect_xxx_lv3`，各自由对应物理载体持有（L1/L2 由 tile 正反面持有，L3 由 board 持有）。升级通过 id 前缀（`effect_xxx`）保持模块 identity。
-- **升级是 trigger，lose/gain 是 event ★**：`<upgrade>` 的 parent 从 `<event>` 改为 `<trigger>`——核心语义是 level 提升，继承 trigger 的 timing + condition → events[]。是否涉及 `<lose>`/`<gain>` 由游戏层决定：同一载体翻面（L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。
+- **升级是 trigger，lose/gain 是 event ★**：`<upgrade>` 的 extends 从 `<event>` 改为 `<trigger>`——核心语义是 level 提升，继承 trigger 的 timing + condition → events[]。是否涉及 `<lose>`/`<gain>` 由游戏层决定：同一载体翻面（L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。
 - **Lose / Gain 新增为 Event 子类 ★**：`<lose>`——`<object>` 失去一个 `<property>`（domain → null）；`<gain>`——`<object>` 获得一个 `<property>`（domain → 新实体）。用于 effect 载体切换等场景。Event 子类列表从 6 个扩充为 8 个。
 - **安装是 transfer ★**：将卡牌/芯片安装到控制台 = 从 source zone transfer 到控制台上某个逻辑坐标的 zone。zone 是纯概念，不绑定物理尺寸——所以卡牌可以互相叠压而逻辑上各属各的 zone。控制台每个行列坐标就是一个 zone，有独立的 capacity。
 - **实体承载的 zone 不会销毁 ★**：初始芯片牌在 setup 后仍然保有它承载的 zone——只是不再有任何规则引用它。zone 不需要 availability 概念——zone 一直在，只是规则是否引用它的区别。

@@ -18,7 +18,6 @@
         "zh": "食物",
         "en": "Food"
       },
-      "parent": "<ontology::resource>",
       "abstract": false,
       "definition": {
         "zh": "文明演化中的食物资源，用于喂养阶段喂饱部落。玩家通过狩猎、收入芯片、天气效果等获得。每有一个在营地或船上的部落需要 1 食物，每有一个在营地之外的部落需要 2 食物。",
@@ -32,7 +31,8 @@
           "en": "Unit of measurement for food: 'marker'."
         }
       },
-      "token": "<octagonal_pillar>"
+      "token": "<octagonal_pillar>",
+      "specifies": "<ontology::resource>"
     },
     {
       "id": "money",
@@ -40,7 +40,6 @@
         "zh": "钱币",
         "en": "Money"
       },
-      "parent": "<ontology::resource>",
       "abstract": false,
       "definition": {
         "zh": "文明演化中的钱币资源，主要用于交易模组购买材料。玩家通过出售仓库中的材料获得。",
@@ -53,7 +52,8 @@
           "zh": "钱币的计量单位为「个」。",
           "en": "Unit of measurement for money: 'marker'."
         }
-      }
+      },
+      "specifies": "<ontology::resource>"
     },
     {
       "id": "stored_material",
@@ -61,7 +61,7 @@
         "zh": "仓库材料",
         "en": "Stored Material"
       },
-      "parent": "<ontology::resource>",
+      "extends": "<ontology::resource>",
       "abstract": false,
       "definition": {
         "zh": "已运输到<console>仓库中的原材料。是建造聚落/雕像、支付研究牌费用、出售换钱的资源。同类型材料完全等价。",
@@ -98,7 +98,6 @@
         "zh": "八角柱",
         "en": "Octagonal Pillar"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "Civolution 中最核心的抽象物理零件。高度不到一厘米的八角柱形小木块，每位玩家一种颜色，每人 50 个（共 200 个）。同一个八角柱放在不同区域代表完全不同的概念——放在食物格上代表食物，放在仓库区代表材料，放在特征格上代表特征标记，放在创意格上代表创意标记。颜色本身不决定八角柱代表什么——它所在的位置（zone）才是决定因素。注意：每位玩家的供应上限为 50 个，耗尽时可将<console>或大陆上的标记退回供应堆（但雕像、重置标记和船上的标记除外）。",
@@ -110,7 +109,8 @@
         "component": [
           "assets/components/page-05/octagonal_pillar.png"
         ]
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "stackable_disc",
@@ -118,7 +118,6 @@
         "zh": "可叠放圆片",
         "en": "Stackable Disc"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "Civolution 中用于轨道标记的物理零件。外形像纽扣电池——扁圆柱体，一面中央凸起一块，另一面中央凹陷下去。多个同色圆片可以通过凸起嵌入上一个圆片的凹洞而稳固叠放，适合在计分轨、进程轨等需要堆叠标记的场景中使用。每位玩家有自己的颜色。",
@@ -130,7 +129,8 @@
         "component": [
           "assets/components/page-05/stackable_disc.png"
         ]
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "raw_material",
@@ -138,7 +138,6 @@
         "zh": "原材料",
         "en": "Raw Material"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "放置在 <continent> 区域或船上的未运输材料标记。它代表某种材料但尚未进入玩家仓库，需要通过运输才能变成 <stored_material>。",
@@ -151,7 +150,8 @@
           "en": "Which <stored_material> this marker will become when transported, determined by the material tile of its region."
         }
       },
-      "token": "<octagonal_pillar>"
+      "token": "<octagonal_pillar>",
+      "specifies": "<ontology::token>"
     },
     {
       "id": "feature_marker",
@@ -159,7 +159,7 @@
         "zh": "特征标记",
         "en": "Feature Marker"
       },
-      "parent": "<ontology::token>",
+      "extends": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "放置在<console>特征格上的标记，代表玩家拥有的某种特征。特征用于满足研究牌费用、获取属性芯片、时代计分等。",
@@ -188,7 +188,6 @@
         "zh": "部落",
         "en": "Tribe"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "代表玩家文明在 <continent> 上存在的核心 <ontology::piece>。每个部落有两种状态：站立（strong）和躺倒（weak）。只有站立部落可以迁徙；躺倒部落在喂养阶段若未被喂饱会死亡。",
@@ -205,7 +204,8 @@
         "component": [
           "assets/components/page-05/tribe.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "settlement",
@@ -213,7 +213,6 @@
         "zh": "聚落",
         "en": "Settlement"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "玩家建造在建造点上的大型建筑 <ontology::piece>。每位玩家最多建造 4 个聚落。建造后获得收入芯片并立即执行，建造第 4 个时可激活层级四或层级五板块。",
@@ -230,7 +229,8 @@
         "component": [
           "assets/components/page-05/settlement.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "farm",
@@ -238,7 +238,6 @@
         "zh": "农场",
         "en": "Farm"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "玩家建造在陆地区域的农业建筑 <ontology::piece>。每位玩家最多建造 3 个农场。农场可减少同区域部落在喂养阶段的食物消耗，且建造后获得一个创意标记。",
@@ -255,7 +254,8 @@
         "component": [
           "assets/components/page-05/farm.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "boat",
@@ -263,7 +263,6 @@
         "zh": "船",
         "en": "Boat"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "玩家建造在水域区域的 <ontology::piece>。每艘船最多容纳 2 个同玩家部落，并提供在水域区域进行迁徙、生产、狩猎等活动的能力。每位玩家最多建造 2 艘船。",
@@ -280,7 +279,8 @@
         "component": [
           "assets/components/page-05/boat.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "statue",
@@ -288,12 +288,12 @@
         "zh": "雕像",
         "en": "Statue"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "用通用标记放置在建造点上的建筑标记。建造后推进任意进程轨 1 格，并在之后的每个收入阶段按 <favor_of_ager_track> 位置计分。每位玩家在每个建造点可建 1 个聚落加 1 个雕像，或 2 个雕像。",
         "en": "A building marker placed on a Building ground using a generic marker. Building one advances any progress track by 1 step, and each statue scores in subsequent Income phases based on the Favor of Agera track position. Each player may build 1 settlement + 1 statue or 2 statues per Building ground."
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "module",
@@ -301,7 +301,7 @@
         "zh": "模组",
         "en": "Module"
       },
-      "parent": "<ontology::effect>",
+      "extends": "<ontology::effect>",
       "abstract": false,
       "definition": {
         "zh": "玩家可激活的 <ontology::effect>。模组的本质是一个效果——激活模组是 <ontology::action>（玩家宣告选择），支付两颗对应点数的白骰子是 <ontology::cost>，模组做的事是 <ontology::content>。共有 22 个模组：15 个主模组（可升级）、6 个特征模组和 1 个睡眠模组。每个等级的模组效果是独立的 <ontology::effect> 实例——各等级的 effect 分别由对应物理载体持有，通过 id 前缀关联。等级一时 tile 正面持有 effect_lv1，等级二时 tile 反面持有 effect_lv2，等级三时 effect_lv3 由 <console> 持有。升级由 <ontology::upgrade> trigger 驱动——level 提升可能伴随载体切换：同一载体（tile 翻面）仅为 level 变化；载体切换（tile→board）时旧载体 <ontology::lose> 旧 effect、新载体 <ontology::gain> 新 effect。",
@@ -338,12 +338,12 @@
         "zh": "主模组",
         "en": "Main Module"
       },
-      "parent": "<module>",
       "abstract": false,
       "definition": {
         "zh": "可升级的行动模组 effect，共有 15 种：迁徙、繁育、生产、运输、给养、探索、建造、计划、研究、成就、洞悉、突变、发明、交易、活动。每个主模组对应 3 个独立的 <ontology::effect> 实例——effect_xxx_lv1（domain = tile 正面）、effect_xxx_lv2（domain = tile 反面）、effect_xxx_lv3（domain = <console>）。升级由 <ontology::upgrade> trigger 驱动——L1→L2 时同一 tile 翻面，L2→L3 时旧载体 <ontology::lose> lv2 effect、新载体 <ontology::gain> lv3 effect。各等级的 cost 和 content 待 Phase B 填充。",
         "en": "Upgradable action module effects. There are 15 types: Migration, Procreation, Production, Transport, Sustenance, Exploration, Building, Planning, Research, Achievement, Insight, Mutation, Invention, Trade, Activity. Each main module maps to 3 independent <ontology::effect> instances — effect_xxx_lv1 (domain = tile front), effect_xxx_lv2 (domain = tile back), effect_xxx_lv3 (domain = <console>). Upgrading is driven by an <ontology::upgrade> trigger — L1→L2 is a tile flip on the same carrier, L2→L3 means the old carrier <ontology::lose>s the lv2 effect and the new carrier <ontology::gain>s the lv3 effect. Cost and content for each level are TBD in Phase B."
-      }
+      },
+      "specifies": "<module>"
     },
     {
       "id": "feature_module",
@@ -351,12 +351,12 @@
         "zh": "特征模组",
         "en": "Feature Module"
       },
-      "parent": "<module>",
       "abstract": false,
       "definition": {
         "zh": "不可升级的模组 effect，共 6 个，分别对应 6 种特征。激活需要两个相同点数的白骰子。",
         "en": "Non-upgradable module effects. There are 6, each corresponding to one of the 6 features. Activation requires 2 activation dice showing the same value."
-      }
+      },
+      "specifies": "<module>"
     },
     {
       "id": "sleep_module",
@@ -364,12 +364,12 @@
         "zh": "睡眠模组",
         "en": "Sleep Module"
       },
-      "parent": "<module>",
       "abstract": false,
       "definition": {
         "zh": "不可升级的填充用模组 effect，可用任意两个白骰子激活。效果是获得 2 个创意标记或 1 个焦点标记。",
         "en": "A non-upgradable filler module effect that can be activated with any two activation dice. Its effect is to gain 2 idea markers or 1 focus marker."
-      }
+      },
+      "specifies": "<module>"
     },
     {
       "id": "idea_marker",
@@ -377,12 +377,12 @@
         "zh": "创意标记",
         "en": "Idea Marker"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "放置在<console>创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意骰子点数加减 1（1 和 6 相连）。",
         "en": "A marker placed on a player's idea space, used to modify die values. Spending 1 idea marker increases or decreases a die value by 1 (1 and 6 are adjacent)."
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "planning_marker",
@@ -390,12 +390,12 @@
         "zh": "计划标记",
         "en": "Planning Marker"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "放置在骰子格上的标记，可替代对应点数的白骰子用于激活模组。只能替代白骰子，不能替代粉骰子。",
         "en": "A marker placed on a dice space, usable in place of an activation die of the matching value. Can only replace activation dice, not fate dice."
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "focus_marker",
@@ -403,12 +403,12 @@
         "zh": "焦点标记",
         "en": "Focus Marker"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "特殊的计划标记，可当作任意一个骰子格中的计划标记使用。一个焦点标记相当于一个任意点数的白骰子。",
         "en": "A special planning marker that can be used as a planning marker of any value. One focus marker is equivalent to an activation die of any value."
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "research_card",
@@ -416,7 +416,7 @@
         "zh": "研究牌",
         "en": "Research Card"
       },
-      "parent": "<ontology::card>",
+      "extends": "<ontology::card>",
       "abstract": false,
       "definition": {
         "zh": "可安装到<console>阶段区的 <ontology::card>。每张研究牌分三部分：上部为能力（可能为活动能力或被动效果），中部为 5 个费用格，下部为安装奖励。共 5 种类型：建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）。",
@@ -455,7 +455,6 @@
         "zh": "事件牌",
         "en": "Event Card"
       },
-      "parent": "<ontology::card>",
       "abstract": false,
       "definition": {
         "zh": "每时代翻开一张的 <ontology::card>，决定本时代天气变化和事件奖励。右上角指示天气标记移动方向和步数，下方为事件效果。",
@@ -465,7 +464,8 @@
         "component": [
           "assets/components/page-04/event_card.png"
         ]
-      }
+      },
+      "specifies": "<ontology::card>"
     },
     {
       "id": "starting_marker_card",
@@ -473,7 +473,6 @@
         "zh": "初始标记牌",
         "en": "Starting Marker Card"
       },
-      "parent": "<ontology::card>",
       "abstract": false,
       "definition": {
         "zh": "设置阶段使用的 <ontology::card>，记录玩家初始可获得的标记。设置完成后放回盒子。",
@@ -483,7 +482,8 @@
         "component": [
           "assets/components/page-04/starting_marker_card.png"
         ]
-      }
+      },
+      "specifies": "<ontology::card>"
     },
     {
       "id": "starting_chip_card",
@@ -491,7 +491,6 @@
         "zh": "初始芯片牌",
         "en": "Starting Chip Card"
       },
-      "parent": "<ontology::card>",
       "abstract": false,
       "definition": {
         "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入<console>成为第一个收入芯片，其承载的 zone 随之消失。",
@@ -514,7 +513,8 @@
         "component": [
           "assets/components/page-04/starting_chip_card.png"
         ]
-      }
+      },
+      "specifies": "<ontology::card>"
     },
     {
       "id": "income_chip",
@@ -522,7 +522,6 @@
         "zh": "收入芯片",
         "en": "Income Chip"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "可安装到<console>的白色芯片，提供收入阶段可执行的持续效果。每张收入芯片有两个可选效果，执行时二选一。收入芯片可安装在任意列。",
@@ -532,7 +531,8 @@
         "component": [
           "assets/components/page-04/income_chip.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "goal_chip",
@@ -540,7 +540,6 @@
         "zh": "目标芯片",
         "en": "Goal Chip"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "蓝色的芯片，玩家从展示区拿取后安装在<console>目标列。安装后可能揭示升级奖励。每叠目标芯片安装完后可升级一个模组。",
@@ -550,7 +549,8 @@
         "component": [
           "assets/components/page-04/goal_chip.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "attribute_chip",
@@ -558,7 +558,6 @@
         "zh": "属性芯片",
         "en": "Attribute Chip"
       },
-      "parent": "<ontology::piece>",
       "abstract": false,
       "definition": {
         "zh": "黄色的芯片，玩家在自己的回合任何时候满足条件即可拿取并安装。安装后提供持续效果。",
@@ -568,7 +567,8 @@
         "component": [
           "assets/components/page-04/attribute_chip.png"
         ]
-      }
+      },
+      "specifies": "<ontology::piece>"
     },
     {
       "id": "scoring_tile",
@@ -576,7 +576,6 @@
         "zh": "计分板块",
         "en": "Scoring Tile"
       },
-      "parent": "<ontology::tile>",
       "abstract": false,
       "definition": {
         "zh": "双面 <ontology::tile>，一面印有计分类别图标，另一面印有分数。设置时 4 张图标面朝上放入时代计分区，3 张分数面朝上覆盖终局计分区对应格。",
@@ -586,7 +585,8 @@
         "component": [
           "assets/components/page-04/scoring_tile.png"
         ]
-      }
+      },
+      "specifies": "<ontology::tile>"
     },
     {
       "id": "stage_tile",
@@ -594,7 +594,6 @@
         "zh": "层级板块",
         "en": "Stage Tile"
       },
-      "parent": "<ontology::tile>",
       "abstract": false,
       "definition": {
         "zh": "标识<console>阶段 4 和阶段 5 是否激活的 <ontology::tile>。未激活面朝上时，该阶段的卡牌/芯片终局不计分；激活后翻面，才计分。",
@@ -604,7 +603,8 @@
         "component": [
           "assets/components/page-04/stage_tile.png"
         ]
-      }
+      },
+      "specifies": "<ontology::tile>"
     },
     {
       "id": "site",
@@ -612,7 +612,7 @@
         "zh": "地点",
         "en": "Site"
       },
-      "parent": "<ontology::tile>",
+      "extends": "<ontology::tile>",
       "abstract": false,
       "definition": {
         "zh": "放置在 <continent> 上的特殊 <ontology::tile>，翻开前背面朝上，通过特定条件翻开后持续生效。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。建造点带有 <building_slot> 可建造 <settlement> 或 <statue>；其他地点仅有 effect 不带 zone。",
@@ -634,7 +634,6 @@
         "zh": "地点板块格",
         "en": "Site Slot"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "位于 <continent> 上的一种 <ontology::zone>，由 <continent_tile> 之间、以及 <continent_tile> 与 <score_track> 拼合后的空位形成，共 24 格。",
@@ -646,7 +645,8 @@
           "zh": "此格最多放置一块 <site>。",
           "en": "This slot holds at most one <site>."
         }
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "building_slot",
@@ -654,7 +654,6 @@
         "zh": "建造格",
         "en": "Building Slot"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "位于建造点 <site> 上的一个 <ontology::zone>，用于建造 <settlement> 或 <statue>。仅建造点类型的地点板块上有此格。",
@@ -666,7 +665,8 @@
           "zh": "此格可以建造一个 <settlement> 或一个 <statue>。",
           "en": "This slot can hold one <settlement> or one <statue>."
         }
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "continent_tile",
@@ -674,7 +674,7 @@
         "zh": "大陆板块",
         "en": "Continent Tile"
       },
-      "parent": "<ontology::tile>",
+      "extends": "<ontology::tile>",
       "abstract": false,
       "definition": {
         "zh": "拼成 <continent> 的 <ontology::tile>。正面印有不同的 <territory>、<material_slot>、<encampment>、<fire_encampment>；仅 1×1 板块通过 <ontology::tile> 的 parts 机制额外承担 <site> 逻辑身份（建造点）。",
@@ -702,7 +702,6 @@
         "zh": "材料板块",
         "en": "Material Tile"
       },
-      "parent": "<ontology::tile>",
       "abstract": false,
       "definition": {
         "zh": "放置在 <material_slot> 上的 <ontology::tile>，决定其所在领地可产出的材料类型。正面朝上时表示该领地已开发，可产出对应材料。",
@@ -712,7 +711,8 @@
         "component": [
           "media/components/material_tile.png"
         ]
-      }
+      },
+      "specifies": "<ontology::tile>"
     },
     {
       "id": "material_slot",
@@ -720,7 +720,6 @@
         "zh": "材料板块格",
         "en": "Material Slot"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "位于 <continent_tile> 上的一个 <ontology::zone>，用于放置一块 <material_tile>。每个陆地区域（非海洋）的领地上各有一个 <material_slot>。放在此格上的 <material_tile> 决定了该领地可产出的材料类型——正面朝上表示该材料已解锁可生产，背面朝上表示尚未开发。",
@@ -732,7 +731,8 @@
           "zh": "此格最多放置一块 <material_tile>。",
           "en": "This slot holds at most one <material_tile>."
         }
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_forest",
@@ -740,12 +740,12 @@
         "zh": "森林",
         "en": "Forest"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "深绿色的地形区域（zone）。大陆板块上每片森林就是一个 forest zone，可放置部落、进行狩猎与生产。",
         "en": "A dark green terrain zone. Each forest area on a continent tile is a forest zone where tribes can be placed for hunting and production."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_grassland",
@@ -753,12 +753,12 @@
         "zh": "草原",
         "en": "Grassland"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "浅绿色的地形区域（zone）。大陆板块上每片草原就是一个 grassland zone。",
         "en": "A light green terrain zone. Each grassland area on a continent tile is a grassland zone."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_hills",
@@ -766,12 +766,12 @@
         "zh": "丘陵",
         "en": "Hills"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "土黄色的地形区域（zone）。大陆板块上每片丘陵就是一个 hills zone。",
         "en": "A yellowish-brown terrain zone. Each hills area on a continent tile is a hills zone."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_swamp",
@@ -779,12 +779,12 @@
         "zh": "沼泽",
         "en": "Swamp"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "紫色的地形区域（zone）。大陆板块上每片沼泽就是一个 swamp zone。",
         "en": "A purple terrain zone. Each swamp area on a continent tile is a swamp zone."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_mountains",
@@ -792,12 +792,12 @@
         "zh": "山脉",
         "en": "Mountains"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "灰色的地形区域（zone），通常有立体边缘便于识别边界。大陆板块上每片山脉就是一个 mountains zone。",
         "en": "A gray terrain zone, often with raised edges to identify borders. Each mountains area on a continent tile is a mountains zone."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_desert",
@@ -805,12 +805,12 @@
         "zh": "沙漠",
         "en": "Desert"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "黄色的地形区域（zone）。大陆板块上每片沙漠就是一个 desert zone。",
         "en": "A yellow terrain zone. Each desert area on a continent tile is a desert zone."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "terrain_water",
@@ -818,12 +818,12 @@
         "zh": "海洋",
         "en": "Water"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "蓝色的地形区域（zone），代表水域。大陆板块上每片水域就是一个 water zone，可造船、航行。",
         "en": "A blue terrain zone representing water areas. Each water area on a continent tile is a water zone where boats can be built and sailed."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "activation_die",
@@ -831,7 +831,6 @@
         "zh": "激活骰",
         "en": "Activation Die"
       },
-      "parent": "<ontology::dice>",
       "abstract": false,
       "definition": {
         "zh": "白色的六面骰子，点数 1-6，用于支付模组激活费用。",
@@ -849,7 +848,8 @@
         "component": [
           "assets/components/page-04/activation_die.png"
         ]
-      }
+      },
+      "specifies": "<ontology::dice>"
     },
     {
       "id": "fate_die",
@@ -857,7 +857,6 @@
         "zh": "命运骰",
         "en": "Fate Die"
       },
-      "parent": "<ontology::dice>",
       "abstract": false,
       "definition": {
         "zh": "粉色的六面骰，用于恩惠检定、狩猎、幸运收获等。",
@@ -875,7 +874,8 @@
         "component": [
           "assets/components/page-04/fate_die.png"
         ]
-      }
+      },
+      "specifies": "<ontology::dice>"
     },
     {
       "id": "hundred_point_token",
@@ -883,7 +883,6 @@
         "zh": "一百分指示物",
         "en": "100-Point Token"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "双面圆形指示物，正面为 100 分，背面为阻挡标记。玩家分数每超过 100 时拿取一个；设置时部分需翻面作为阻挡标记覆盖不可用区域。",
@@ -893,7 +892,8 @@
         "component": [
           "assets/components/page-04/hundred_point_token.png"
         ]
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "hunting_token",
@@ -901,12 +901,12 @@
         "zh": "狩猎指示物",
         "en": "Hunting Token"
       },
-      "parent": "<ontology::token>",
       "abstract": false,
       "definition": {
         "zh": "放置在已狩猎区域上的标记，表示本时代该区域不能再被狩猎。收入阶段结束时全部回收。背面也用作阻挡标记覆盖营地。",
         "en": "A marker placed on a hunted territory, indicating that territory cannot be hunted again this era. All are returned at the end of the Income phase. The back is also used as a blocking token for encampments."
-      }
+      },
+      "specifies": "<ontology::token>"
     },
     {
       "id": "phase_indicator",
@@ -914,7 +914,6 @@
         "zh": "阶段标记",
         "en": "Phase Indicator"
       },
-      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
         "zh": "六边形 <ontology::marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。",
@@ -924,7 +923,8 @@
         "component": [
           "media/components/phase_indicator.png"
         ]
-      }
+      },
+      "specifies": "<ontology::marker>"
     },
     {
       "id": "weather_indicator",
@@ -932,7 +932,6 @@
         "zh": "天气标记",
         "en": "Weather Indicator"
       },
-      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
         "zh": "圆柱形 <marker>，放置在 <sequence_board> 天气轨上指示当前天气。每时代事件阶段根据事件牌移动并结算效果。",
@@ -942,7 +941,8 @@
         "component": [
           "assets/components/page-04/weather_indicator.png"
         ]
-      }
+      },
+      "specifies": "<ontology::marker>"
     },
     {
       "id": "favor_marker",
@@ -950,12 +950,12 @@
         "zh": "恩惠标记",
         "en": "Favor Marker"
       },
-      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
         "zh": "放置在 <favor_of_ager_track> 上指示当前恩惠等级的 <marker>。影响恩惠检定、雕像收入和终局计分。",
         "en": "A <marker> placed on the <favor_of_ager_track> to indicate the current favor level. Affects favor tests, statue income, and final scoring."
-      }
+      },
+      "specifies": "<ontology::marker>"
     },
     {
       "id": "starting_monolith",
@@ -963,7 +963,6 @@
         "zh": "起始纪念碑",
         "en": "Starting Monolith"
       },
-      "parent": "<ontology::starting_player_marker>",
       "abstract": false,
       "definition": {
         "zh": "文明演化中的 <ontology::starting_player_marker>，标记当前起始玩家。",
@@ -973,7 +972,8 @@
         "component": [
           "assets/components/page-05/starting_monolith.png"
         ]
-      }
+      },
+      "specifies": "<ontology::starting_player_marker>"
     },
     {
       "id": "public_board",
@@ -981,7 +981,6 @@
         "zh": "公共版图",
         "en": "Public Board"
       },
-      "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
         "zh": "由 <progress_board>、<sequence_board> 与计分轨区域共同构成的公共游戏版图。它承载公共游戏状态——进程轨、天气轨、展示区等；中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site>、<material_tile> 等是游戏零件，不属于公共版图本身。",
@@ -1003,7 +1002,8 @@
             "en": "score track assembled from 4 frame pieces, surrounding the continent area"
           }
         }
-      ]
+      ],
+      "specifies": "<ontology::public_board>"
     },
     {
       "id": "continent",
@@ -1011,7 +1011,7 @@
         "zh": "大陆",
         "en": "Continent"
       },
-      "parent": "<ontology::zone>",
+      "extends": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "本局游戏中由全部 <continent_tile> 在计分轨外框内部的 5×3 矩形网格中拼接形成的公共游戏区域。setup 时 8 块大陆板块（7 块 2×1 + 1 块 1×1 = 15 格）随机排列铺满此网格。拼合后大陆板块与计分轨外框共同形成 24 个 <site_slot>，每个可放置一块 <site>。此外大陆还承载 <territory>、<encampment>、<material_tile> 以及玩家放置的 <tribe>、<settlement>、<farm>、<boat> 等游戏零件。2/3 人局时会使用阻挡标记覆盖部分不可用营地。",
@@ -1046,12 +1046,12 @@
         "zh": "领地",
         "en": "Territory"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "<continent> 上的一片具体土地。每个领地由其所在 continent_tile 决定地形（森林/草原/丘陵/沼泽/山脉/沙漠/海洋七种之一），可能有一个或多个营地。领地是生产、狩猎、迁徙、建造等活动的基本单位。即使两块相邻领地为同一地形类型，规则上也视为两个不同的领地。",
         "en": "A specific plot of land on the <continent>. Each territory has a terrain type (one of seven: Forest/Grassland/Hills/Swamp/Mountains/Desert/Water) determined by its continent tile, and may have one or more encampments. Territories are the basic unit for production, hunting, migration, and building. Even two adjacent territories of the same terrain type count as separate territories."
-      }
+      },
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "encampment",
@@ -1059,12 +1059,12 @@
         "zh": "营地",
         "en": "Campsite"
       },
-      "parent": "<ontology::object>",
       "abstract": false,
       "definition": {
         "zh": "位于大陆地形区域内的圆形标记位置，用于放置 <tribe>。",
         "en": "A circular marker position within a <territory> used to hold <tribe>s."
-      }
+      },
+      "specifies": "<ontology::object>"
     },
     {
       "id": "fire_encampment",
@@ -1072,12 +1072,12 @@
         "zh": "篝火营地",
         "en": "Fire Encampment"
       },
-      "parent": "<encampment>",
       "abstract": false,
       "definition": {
         "zh": "一种特殊的 <encampment>，上面印有篝火图标。站在这类营地上的 <tribe> 在喂养阶段结算后可获得额外分数。黄色火边标记表示此营地可得分。",
         "en": "A special <encampment> marked with a campfire icon. <tribe>s standing on this encampment earn bonus points after the Feeding phase. The yellow fire symbol indicates this encampment grants points."
-      }
+      },
+      "specifies": "<encampment>"
     },
     {
       "id": "score_track",
@@ -1085,7 +1085,6 @@
         "zh": "计分轨",
         "en": "Score Track"
       },
-      "parent": "<ontology::score_track>",
       "abstract": false,
       "definition": {
         "zh": "由 4 块外框组件拼接而成的计分轨。每位玩家各用一个 <score_marker> 在此轨上指示当前分数；分数超过 100 时使用 <hundred_point_token> 表示。",
@@ -1100,7 +1099,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–100+"
+      "scale": "0–100+",
+      "specifies": "<ontology::score_track>"
     },
     {
       "id": "score_marker",
@@ -1108,13 +1108,13 @@
         "zh": "分数标记",
         "en": "Score Marker"
       },
-      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
         "zh": "放置在 <score_track> 上指示玩家当前分数的标记。每位玩家有 1 个。",
         "en": "A marker placed on the <score_track> to indicate a player's current score. Each player has 1."
       },
-      "token": "<stackable_disc>"
+      "token": "<stackable_disc>",
+      "specifies": "<ontology::marker>"
     },
     {
       "id": "sequence_board",
@@ -1122,7 +1122,6 @@
         "zh": "流程版图",
         "en": "Sequence Board"
       },
-      "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
         "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。其上承载了阶段流程、天气轨、阿格拉恩惠轨、事件牌格和时代计分区；所有玩家共用。",
@@ -1189,7 +1188,8 @@
         "component": [
           "media/components/sequence_board.png"
         ]
-      }
+      },
+      "specifies": "<ontology::public_board>"
     },
     {
       "id": "progress_board",
@@ -1197,7 +1197,6 @@
         "zh": "进程版图",
         "en": "Progress Board"
       },
-      "parent": "<ontology::public_board>",
       "abstract": false,
       "definition": {
         "zh": "印刷狩猎表、5 条进程轨、终局计分区等参考信息的公共 <ontology::public_board>。其 <components> 包含作为 aid 的狩猎表；其 zones 承载 5 条进程轨、终局计分区以及展示供应区（骰子、狩猎标记、100 分标记、目标/收入/属性芯片）。",
@@ -1324,7 +1323,8 @@
         "component": [
           "media/components/progress_board.png"
         ]
-      }
+      },
+      "specifies": "<ontology::public_board>"
     },
     {
       "id": "hunting_table",
@@ -1332,12 +1332,12 @@
         "zh": "狩猎表",
         "en": "Hunting Table"
       },
-      "parent": "<ontology::aid>",
       "abstract": false,
       "definition": {
         "zh": "印刷在 <progress_board> 上的参考表，用于查询狩猎时根据地形和骰子点数获得的食物数量。本身不改变游戏状态，只提供规则参考。",
         "en": "A reference table printed on the <progress_board> used to look up how much food hunting yields based on terrain and die result. it does not change game state, only provides rule reference."
-      }
+      },
+      "specifies": "<ontology::aid>"
     },
     {
       "id": "progress_marker",
@@ -1345,13 +1345,13 @@
         "zh": "进程标记",
         "en": "Progress Marker"
       },
-      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
         "zh": "放置在进程轨上指示玩家当前进程等级的 <marker>。每位玩家有 5 个，分别放在 5 条进程轨上。",
         "en": "A <marker> placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. "
       },
-      "token": "<stackable_disc>"
+      "token": "<stackable_disc>",
+      "specifies": "<ontology::marker>"
     },
     {
       "id": "technology_track",
@@ -1359,7 +1359,6 @@
         "zh": "科技轨",
         "en": "Technology Track"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的科技等级。推进可解锁奖励，推过头后每步改为 2 分。",
@@ -1374,7 +1373,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12"
+      "scale": "0–12",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "prestige_track",
@@ -1382,7 +1382,6 @@
         "zh": "声望轨",
         "en": "Prestige Track"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的声望等级。推进可解锁奖励，推过头后每步改为 2 分。",
@@ -1397,7 +1396,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12"
+      "scale": "0–12",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "knowledge_track",
@@ -1405,7 +1405,6 @@
         "zh": "知识轨",
         "en": "Knowledge Track"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的知识等级。推进可解锁奖励，推过头后每步改为 2 分。",
@@ -1420,7 +1419,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12"
+      "scale": "0–12",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "construction_track",
@@ -1428,7 +1428,6 @@
         "zh": "建设轨",
         "en": "Construction Track"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的建设等级。推进可解锁奖励，推过头后每步改为 2 分。",
@@ -1443,7 +1442,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12"
+      "scale": "0–12",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "culture_track",
@@ -1451,7 +1451,6 @@
         "zh": "文化轨",
         "en": "Culture Track"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <progress_board> 上的进程轨，记录玩家的文化等级。推进可解锁奖励，推过头后每步改为 2 分。",
@@ -1466,7 +1465,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12"
+      "scale": "0–12",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "dice_display",
@@ -1474,7 +1474,6 @@
         "zh": "骰子展示区",
         "en": "Dice Display"
       },
-      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
         "zh": "<progress_board> 上的公共 <ontology::supply>，存放 <activation_die> 和 <fate_die>。设置时每种骰子各放入「玩家人数 + 1」个（如 2 人局各 3 个、4 人局各 5 个）；游戏中玩家激活模组或结算效果时从此处拿取。",
@@ -1495,7 +1494,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::supply>"
     },
     {
       "id": "hunting_token_display",
@@ -1503,7 +1503,6 @@
         "zh": "狩猎标记展示区",
         "en": "Hunting Token Display"
       },
-      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
         "zh": "<progress_board> 上的公共 <ontology::supply>，存放 <hunting_token>。设置时部分标记需翻面作为阻挡标记覆盖营地，其余作为供应堆。",
@@ -1517,7 +1516,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::supply>"
     },
     {
       "id": "hundred_point_token_display",
@@ -1525,7 +1525,6 @@
         "zh": "一百分标记展示区",
         "en": "100-Point Token Display"
       },
-      "parent": "<ontology::supply>",
       "abstract": false,
       "definition": {
         "zh": "<progress_board> 上的公共 <ontology::supply>，存放 <hundred_point_token>。设置时部分标记需翻面作为阻挡标记，其余作为供应堆。",
@@ -1539,7 +1538,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::supply>"
     },
     {
       "id": "goal_chip_display",
@@ -1547,7 +1547,6 @@
         "zh": "目标芯片展示区",
         "en": "Goal Chip Display"
       },
-      "parent": "<ontology::market>",
       "abstract": false,
       "definition": {
         "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <goal_chip>。",
@@ -1562,7 +1561,8 @@
       },
       "capacity": 6,
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::market>"
     },
     {
       "id": "income_chip_display",
@@ -1570,7 +1570,6 @@
         "zh": "收入芯片展示区",
         "en": "Income Chip Display"
       },
-      "parent": "<ontology::market>",
       "abstract": false,
       "definition": {
         "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <income_chip>。设置时随机抽取若干收入芯片放入此处。展示数量上限取决于玩家人数：2 人局最多 4 个、3 人局 5 个、4 人局 6 个。",
@@ -1591,7 +1590,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::market>"
     },
     {
       "id": "attribute_chip_display",
@@ -1599,7 +1599,6 @@
         "zh": "属性芯片展示区",
         "en": "Attribute Chip Display"
       },
-      "parent": "<ontology::market>",
       "abstract": false,
       "definition": {
         "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <attribute_chip>。",
@@ -1614,7 +1613,8 @@
       },
       "capacity": 3,
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::market>"
     },
     {
       "id": "favor_of_ager_track",
@@ -1622,7 +1622,6 @@
         "zh": "阿格拉恩惠轨",
         "en": "Favor of Agera Track"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <sequence_board> 上的轨，记录当前阿格拉恩惠等级。影响 <favor_test> 成功范围、雕像收入和终局计分。",
@@ -1637,7 +1636,8 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–?"
+      "scale": "0–?",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "weather_gauge",
@@ -1645,7 +1645,6 @@
         "zh": "天气轨",
         "en": "Weather Gauge"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <sequence_board> 上的轨，记录当前天气。天气有晴天、雨天、雪天、暴风雪、干燥等，影响收成、狩猎和灾难。",
@@ -1659,7 +1658,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "phase_sequence",
@@ -1667,7 +1667,6 @@
         "zh": "阶段流程",
         "en": "Phase Sequence"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <sequence_board> 上的轨，记录当前阶段。阶段标记沿黄色箭头移动，指示 8 个阶段中的当前阶段。",
@@ -1681,7 +1680,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "era_scoring_area",
@@ -1689,7 +1689,6 @@
         "zh": "时代计分区",
         "en": "Era Scoring Area"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "<sequence_board> 上用于放置本时代计分 <scoring_tile> 的区域。时代计分阶段按图标类别结算。",
@@ -1703,7 +1702,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "final_scoring_area",
@@ -1711,7 +1711,6 @@
         "zh": "终局计分区",
         "en": "Final Scoring Area"
       },
-      "parent": "<ontology::track>",
       "abstract": false,
       "definition": {
         "zh": "位于 <progress_board> 上的 <ontology::track>，用于终局计分。设置时随机抽取 3 张 <scoring_tile> 分数面朝上覆盖在对应格上。游戏结束时，用一个标记从左至右逐格推进——推到哪格就按该格 <scoring_tile> 的类别结算对应分数，起到辅助玩家逐项计分的 aid 作用；但因格上放置了随机抽取的计分板块，属于 track 而非纯 aid。",
@@ -1725,7 +1724,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::track>"
     },
     {
       "id": "console",
@@ -1733,7 +1733,6 @@
         "zh": "控制台",
         "en": "Player Console"
       },
-      "parent": "<ontology::player_board>",
       "abstract": false,
       "definition": {
         "zh": "每位玩家的<console>，包含模组区、阶段区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。<console>自身携带一个基础活动图标——玩家无需安装任何研究牌即可使用此能力。",
@@ -2017,7 +2016,8 @@
         "component": [
           "media/components/console.png"
         ]
-      }
+      },
+      "specifies": "<ontology::player_board>"
     },
     {
       "id": "module_area",
@@ -2025,12 +2025,12 @@
         "zh": "模组区",
         "en": "Module Area"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上放置 <module> 的区域，有固定的 22 个槽位。主模组可升级，睡眠模组和特征模组固定不变。",
         "en": "The area on the <console> where <module>s are placed, with 22 fixed slots. Main modules can be upgraded; sleep and feature modules are fixed."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "dice_area",
@@ -2038,12 +2038,12 @@
         "zh": "骰子区",
         "en": "Dice Area"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上放置 <activation_die>、<fate_die>、<planning_marker> 的区域。骰子掷出后放在对应点数格上。",
         "en": "The area on the <console> for <activation_die>s, <fate_die>s, and <planning_marker>s. Rolled dice are placed on the matching value spaces."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "idea_space",
@@ -2051,12 +2051,12 @@
         "zh": "创意格",
         "en": "Idea Space"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上放置 <idea_marker> 的格子。上限 12 个，超过不丢弃但无法继续获得。",
         "en": "A space on the <console> for holding <idea_marker>s. Capacity is 12; excess markers cannot be gained but are not discarded."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "feature_space",
@@ -2064,12 +2064,12 @@
         "zh": "特征格",
         "en": "Feature Space"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上放置 <feature_marker> 的格子，共 6 种。某些效果可覆盖特征标记的获取上限。",
         "en": "A space on the <console> for holding <feature_marker>s, one for each of the 6 features. Some effects may bypass the normal feature-marker cap."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "stage_partition",
@@ -2077,12 +2077,12 @@
         "zh": "阶段区",
         "en": "Stage Partition"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上按阶段 1~5 划分、用于安装 <research_card> 的区域。阶段 4 和阶段 5 初始未激活，需通过建造第 4 个聚落激活。",
         "en": "The area on the <console> divided into stages 1-5 for installing <research_card>s. Stages 4 and 5 start inactive and are unlocked by building the 4th settlement."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "storage_area",
@@ -2090,12 +2090,12 @@
         "zh": "仓库区",
         "en": "Storage Area"
       },
-      "parent": "<ontology::player_holding>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上存放 <stored_material> 的区域。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::supply> 或 <ontology::supply>，因为其中的材料已归玩家所有。",
         "en": "The area on the <console> for storing <stored_material>s. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::supply> or <ontology::supply>, because its contents are already owned by the player."
-      }
+      },
+      "specifies": "<ontology::player_holding>"
     },
     {
       "id": "goal_column",
@@ -2103,12 +2103,12 @@
         "zh": "目标列",
         "en": "Goal Column"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上用于安装 <goal_chip> 的列。每完成一叠目标芯片可升级一个主模组。",
         "en": "The column on the <console> for installing <goal_chip>s. Completing a stack of goal chips allows upgrading one main module."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "attribute_column",
@@ -2116,12 +2116,12 @@
         "zh": "属性列",
         "en": "Attribute Column"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上用于安装 <attribute_chip> 的列。属性芯片一旦安装即提供持续效果。",
         "en": "The column on the <console> for installing <attribute_chip>s. Installed attribute chips provide continuous effects."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "income_area",
@@ -2129,12 +2129,12 @@
         "zh": "收入区",
         "en": "Income Area"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上用于安装 <income_chip> 的区域。收入阶段从上到下、从左到右依次执行。",
         "en": "The area on the <console> for installing <income_chip>s. Income chips execute top-to-bottom, left-to-right during the Income phase."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "food_space",
@@ -2142,12 +2142,12 @@
         "zh": "食物格",
         "en": "Food Space"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上存放食物标记的格子。狩猎、收入芯片和某些效果可获得食物标记。喂养阶段从此格支付食物。食物标记按每 3 个一列排列，每完整列在 Prosperity 计分时算 1 个活跃钻石。",
         "en": "A space on the <console> for holding food markers. Food markers are gained through hunting, income chips, and certain effects. Food is paid from this space during the Feeding phase. Food markers are arranged in columns of 3; each complete column counts as 1 active diamond for Prosperity scoring."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "money_space",
@@ -2155,12 +2155,12 @@
         "zh": "钱币格",
         "en": "Money Space"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上存放钱币标记的格子。通过交易模组出售材料获得。钱币标记按每 2 个一列排列，每完整列在 Prosperity 计分时算 1 个活跃钻石。",
         "en": "A space on the <console> for holding money markers. Money is gained by selling materials via the Trade module. Money markers are arranged in columns of 2; each complete column counts as 1 active diamond for Prosperity scoring."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "dead_tribe_area",
@@ -2168,12 +2168,12 @@
         "zh": "死亡部落区",
         "en": "Dead Tribe Area"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上放置因未喂饱而死亡的 <tribe> 的区域。死亡部落在终局计分时有影响。",
         "en": "The area on the <console> for <tribe>s that died from starvation. Dead tribes affect final scoring."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "reset_column",
@@ -2181,12 +2181,12 @@
         "zh": "重置列",
         "en": "Reset Column"
       },
-      "parent": "<ontology::player_zone>",
       "abstract": false,
       "definition": {
         "zh": "<console> 上的 4 列重置轨道，每列有一个 <reset_marker>。执行 Reset 时，将最左侧的重置标记沿列逐步下移：A 步（移动阶段标记至下一个 reset space）、B 步（回收并重掷所有已使用的激活骰子）、C 步（将重置标记移至 idea space 或 food space）。重置列也为空时标志着阶段标记已被推动的次数。",
         "en": "The 4 reset columns on the <console>, each holding a <reset_marker>. When performing a Reset, move the leftmost reset marker step by step down its column: step A (move the phase indicator to the next reset space), step B (retrieve and re-roll all used activation dice), step C (place the reset marker onto the idea or food space). The number of empty reset columns tracks how many times the phase indicator has been moved."
-      }
+      },
+      "specifies": "<ontology::player_zone>"
     },
     {
       "id": "reset_marker",
@@ -2194,13 +2194,13 @@
         "zh": "重置标记",
         "en": "Reset Marker"
       },
-      "parent": "<ontology::marker>",
       "abstract": false,
       "definition": {
         "zh": "放置在 <reset_column> 中的标记。每位玩家初始有 4 个，Setup 时放在 4 个重置列顶部。执行 Reset 时沿列步进，完成 C 步后移入 idea space 或 food space。收入阶段结束时，所有空的重置列重新从供应堆补满。注意：重置标记不能从<console>召回以补充供应堆上限（与其他标记不同）。",
         "en": "A marker placed in a <reset_column>. Each player starts with 4, placed at the top of the 4 reset columns during Setup. Steps down the column during a Reset; after step C, moves to the idea space or food space. At the end of the Income phase, all empty reset columns are refilled from supply. Note: reset markers cannot be recalled from the <console> to replenish the supply limit (unlike other markers)."
       },
-      "token": "<octagonal_pillar>"
+      "token": "<octagonal_pillar>",
+      "specifies": "<ontology::marker>"
     },
     {
       "id": "research_display",
@@ -2208,14 +2208,14 @@
         "zh": "研究牌展示区",
         "en": "Research Display"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "公共版图旁用于摆放 10 个研究牌堆的区域，由 5 个 <research_deck>（背面朝下牌堆）和 5 个 <face_up_research_stack>（正面朝上牌堆）组成。每时代阶段一从每个背面朝下牌堆顶翻一张到对应的正面朝上牌堆（第一时代新建堆，后续时代覆盖）。玩家可通过 Research 模组从正面或背面牌堆顶拿取卡牌。当正面朝上牌堆被拿空时，立即从对应背面朝下牌堆翻一张补充。",
         "en": "The area beside the game boards for the 10 research stacks: 5 <research_deck>s (face-down) and 5 <face_up_research_stack>s (face-up). Each era in Phase 1, reveal the top card from each face-down stack onto the corresponding face-up stack (forming a new stack in era 1, covering the previous card thereafter). Players can take the top card from either stack type via the Research module. When a face-up stack empties, immediately reveal the top card from the corresponding face-down stack."
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "face_up_research_stack",
@@ -2223,14 +2223,14 @@
         "zh": "正面朝上研究牌堆",
         "en": "Face-Up Research Stack"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "每种研究牌类型各有一个的正面朝上牌堆，展示该类型当前可被直接拿取的 <research_card>。与对应的 <research_deck> 配对——当此堆被拿空时，立即从对应背面朝下堆翻一张补充。",
         "en": "One per research card type, a face-up stack showing the currently available <research_card> of that type. Paired with the corresponding <research_deck> — when this stack empties, immediately reveal the top card from the face-down stack."
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "event_card_space",
@@ -2238,7 +2238,6 @@
         "zh": "事件牌格",
         "en": "Event Card Spaces"
       },
-      "parent": "<ontology::zone>",
       "abstract": false,
       "definition": {
         "zh": "<sequence_board> 上用于放置 <event_card> 的 <ontology::zone>，分左右两格：右边一格放置背面朝上的事件牌堆，供每时代抽取；左边一格放置本时代已翻开的那张事件牌，正面朝上展示天气变化与事件效果。设置时洗混事件牌后抽 4 张背面朝上放在右格，每时代翻开最上面一张移至左格。",
@@ -2252,7 +2251,8 @@
         }
       },
       "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public"
+      "<ontology::information_visibility>": "public",
+      "specifies": "<ontology::zone>"
     },
     {
       "id": "research_deck",
@@ -2260,12 +2260,12 @@
         "zh": "研究牌堆",
         "en": "Research Deck"
       },
-      "parent": "<ontology::deck>",
       "abstract": false,
       "definition": {
         "zh": "5 个背面朝下的研究牌堆，按卡牌类型区分（建造/洞悉/突变/成就/发明），每堆 32 张。Setup 时分别洗混，与 5 个 <face_up_research_stack> 一一配对。每时代阶段一翻一张到对应正面堆；被拿空后继续从背面翻。",
         "en": "5 face-down research stacks, one per card type (Building/Insight/Mutation/Achievement/Invention), 32 cards each. Shuffled separately during setup. Each is paired with a <face_up_research_stack>. Phase 1 reveals the top card to the face-up stack each era; when the face-up stack empties, reveal the next card from here."
-      }
+      },
+      "specifies": "<ontology::deck>"
     },
     {
       "id": "starting_marker_deck",
@@ -2273,12 +2273,12 @@
         "zh": "初始标记牌堆",
         "en": "Starting Marker Deck"
       },
-      "parent": "<ontology::deck>",
       "abstract": false,
       "definition": {
         "zh": "放置 <starting_marker_card> 的牌堆。设置后不再使用。",
         "en": "The deck holding <starting_marker_card>s. Not used after setup."
-      }
+      },
+      "specifies": "<ontology::deck>"
     },
     {
       "id": "starting_chip_deck",
@@ -2286,12 +2286,12 @@
         "zh": "初始芯片牌堆",
         "en": "Starting Chip Deck"
       },
-      "parent": "<ontology::deck>",
       "abstract": false,
       "definition": {
         "zh": "放置 <starting_chip_card> 的牌堆。设置后作为第一个收入芯片塞入<console>。",
         "en": "The deck holding <starting_chip_card>s. After setup, it becomes the first income chip slid under the <console>."
-      }
+      },
+      "specifies": "<ontology::deck>"
     },
     {
       "id": "rulebook",
@@ -2299,12 +2299,12 @@
         "zh": "规则书",
         "en": "Rulebook"
       },
-      "parent": "<ontology::rulebook>",
       "abstract": false,
       "definition": {
         "zh": "《文明演化》纸质规则书，用于查询详细规则。",
         "en": "The printed rulebook for Civolution, used for detailed rule lookups."
-      }
+      },
+      "specifies": "<ontology::rulebook>"
     },
     {
       "id": "player_aid",
@@ -2312,12 +2312,12 @@
         "zh": "玩家辅助卡",
         "en": "Player Aid"
       },
-      "parent": "<ontology::player_aid>",
       "abstract": false,
       "definition": {
         "zh": "帮助玩家理解阶段顺序和图标含义的辅助卡。",
         "en": "A card helping players understand phase order and icon meanings. "
-      }
+      },
+      "specifies": "<ontology::player_aid>"
     },
     {
       "id": "phase_1_new_cards",
@@ -2325,12 +2325,12 @@
         "zh": "新的卡牌",
         "en": "New Cards"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第一个 <ontology::phase>。翻开事件牌堆顶一张（覆盖上时代事件牌），显示本时代天气变化方向和事件效果；然后翻开 5 个背面朝下研究牌堆各顶部一张，放到对应的正面朝上研究牌堆上。",
         "en": "The first <ontology::phase> of each era. Reveal the top event card (covering the previous era's), showing this era's weather change and event effect; then reveal the top card from each of the 5 face-down research decks onto the corresponding face-up stacks."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_2_new_goals",
@@ -2338,12 +2338,12 @@
         "zh": "新的目标",
         "en": "New Goals"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第二个 <ontology::phase>。从起始玩家开始顺时针，每位玩家可选择从 <goal_chip_display> 拿取一枚 <goal_chip> 安装到 <goal_column>，或跳过；随后补满展示区空位。",
         "en": "The second <ontology::phase> of each era. Starting with the start player clockwise, each player may take a <goal_chip> from the <goal_chip_display> into their <goal_column>, or pass; then refill empty display spaces."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_3_extra_find",
@@ -2351,12 +2351,12 @@
         "zh": "额外收获",
         "en": "Extra Find"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第三个 <ontology::phase>。从起始玩家开始顺时针，每位玩家选择一个有自己 <tribe> 的大陆区域，从该区域可产出的材料中选一种获得一个 <raw_material>，放置到对应位置。",
         "en": "The third <ontology::phase> of each era. Starting with the start player clockwise, each player chooses a <territory> containing their <tribe>, selects one of the materials it produces, and gains a <raw_material>."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_4_action",
@@ -2364,12 +2364,12 @@
         "zh": "行动阶段",
         "en": "Action Phase"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的主要 <ontology::phase>。玩家顺时针轮流行动，每回合必须二选一：激活一个 <module>（支付恰好 2 个对应点数的 <activation_die>，或用 <planning_marker>/<focus_marker> 替代）或执行 Reset（前提：骰子区剩余 ≤3 个 <activation_die>）。阶段标记沿 <phase_sequence> 的黄色箭头逐步推进，到达红色格后触发行动阶段结束。",
         "en": "The main <ontology::phase> of each era. Players take turns clockwise; each turn must either activate a <module> (pay exactly 2 <activation_die>s of matching values, or use <planning_marker>/<focus_marker>) or perform a Reset (only if ≤3 <activation_die>s remain on dice spaces). The phase indicator advances along the <phase_sequence>'s yellow arrow; reaching the red space triggers the end of the Action phase."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_5_site",
@@ -2377,12 +2377,12 @@
         "zh": "地点阶段",
         "en": "Site Phase"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第五个 <ontology::phase>。结算 <continent> 上已翻开的 <site> 效果。",
         "en": "The fifth <ontology::phase> of each era. Resolve effects of revealed <site>s on the <continent>."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_6_feeding",
@@ -2390,12 +2390,12 @@
         "zh": "喂养阶段",
         "en": "Feeding Phase"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第六个 <ontology::phase>。玩家从 <food_space> 支付 <food> 喂养 <tribe>：营地/船上的部落各需 1 个，野外部落各需 2 个。未喂饱的部落死亡，移入 <dead_tribe_area>。之后所有站立部落得 1 分。",
         "en": "The sixth <ontology::phase> of each era. Players pay <food> from their <food_space> to feed <tribe>s: 1 each for tribes on encampments/boats, 2 each for tribes in the wilderness. Unfed tribes die and move to <dead_tribe_area>. Then each standing tribe scores 1 point."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_7_event",
@@ -2403,12 +2403,12 @@
         "zh": "事件阶段",
         "en": "Event Phase"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第七个 <ontology::phase>。依次执行：结算天气效果、结算 <event_card> 效果、时代计分（按 <era_scoring_area> 中 <scoring_tile> 类别）、确定新的起始玩家（本阶段得分最高者）。",
         "en": "The seventh <ontology::phase> of each era. Execute in order: resolve weather effect, resolve <event_card> effect, era scoring (by <scoring_tile>s in the <era_scoring_area>), determine new starting player (highest scorer this phase)."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "phase_8_income",
@@ -2416,12 +2416,12 @@
         "zh": "收入阶段",
         "en": "Income Phase"
       },
-      "parent": "<ontology::phase>",
       "abstract": false,
       "definition": {
         "zh": "每个时代的第八个 <ontology::phase>。依次执行：A) 执行 <income_chip>（从上到下、从左到右）；B) 结算 <statue> 收入（按 <favor_of_ager_track> 位置计分）；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家补满空 <reset_column>。完成后将 <phase_indicator> 移回阶段一。第四时代执行完 A、B 后进入终局计分。",
         "en": "The eighth <ontology::phase> of each era. Execute in order: A) resolve <income_chip>s top-to-bottom, left-to-right; B) score <statue>s (points based on <favor_of_ager_track> position); C) return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) refill empty <reset_column>s. Then return <phase_indicator> to Phase 1. After the 4th era, skip C/D after A/B and proceed to final scoring."
-      }
+      },
+      "specifies": "<ontology::phase>"
     },
     {
       "id": "favor_test",
@@ -2429,12 +2429,12 @@
         "zh": "恩惠检定",
         "en": "Favor Test"
       },
-      "parent": "<ontology::event>",
       "abstract": false,
       "definition": {
         "zh": "投掷玩家持有的全部 <fate_die>，并根据 <favor_of_ager_track> 当前位置判定是否通过的 <ontology::event>。只要有一颗骰子的点数落在轨道允许的范围内，即视为通过。常用于模组升级后的额外行动。",
         "en": "An <ontology::event> in which a player rolls all their <fate_die> and checks whether any die result falls within the range allowed by the current position on the <favor_of_ager_track>. Passing requires at least one die to show an allowed value. Commonly used for bonus actions after upgrading modules."
-      }
+      },
+      "specifies": "<ontology::event>"
     }
   ],
   "top_level_refs": {

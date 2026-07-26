@@ -44,13 +44,19 @@
 
 ## JSON 结构约定
 
+概念有三种层级关系，用不同的键表达：
+
+- `"extends": "<concept_id>"` — 子概念声明了父概念没有的新字段（结构扩展）
+- `"specifies": "<concept_id>"` — 子概念只填充父概念已有的字段槽位（参数绑定）
+- `"instance_of": "<concept_id>"` — 所有字段全填满、不可再分（具体个体）
+
 概念的自身字段声明在顶层（字段名即 key），`constraints.required/optional` 是子类需实现的字段 ID 列表：
 
 ```json
 {
   "id": "supply",
   "level": 2,
-  "parent": "reserve",
+  "extends": "reserve",
   "abstract": false,
   "definition": { "zh": "...", "en": "..." },
   "owner": { "type": "player | null", "default": null, "description": "..." },

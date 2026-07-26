@@ -72,7 +72,7 @@ def embed(text: str) -> np.ndarray:
 
 # ---- 从 JSON 提取概念 ----
 def load_json(path: Path) -> dict:
-    with open(path, encoding="utf-8") as f:
+    with open(path, encoding="utf-8-sig") as f:
         return json.load(f)
 
 

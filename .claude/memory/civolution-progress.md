@@ -55,7 +55,7 @@ metadata:
   - 已扩展 ontology：新增 `dice`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`upgrade`、`setting` 共 7 个概念。注：`terrain`、`region` 最初加入但于 2026-07-25 移回游戏层——地形类型本质是 zone 子类（`forest extends zone`），无需 ontology 概念；`encampment`、`site`、`favor_test` 也已移回游戏层
   - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（169 个对象，含 45 个 effect 实例 + 15 个 module tile）
   - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
-  - 剩余：对象层 review、修正 parent/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
+  - 剩余：对象层 review、修正 extends/specifies/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
 - **Phase B**: 核心机制（区域/相邻/迁徙/生产/运输/建造/安装研究牌/收入芯片）
 - **Phase C**: 22 个模组（1~3 等级拆分为 actions）
 - **Phase D**: 流程层（4 时代 × 8 阶段 + 终局计分）
@@ -97,7 +97,7 @@ metadata:
   - **site.parts 新增 `<ontology::effect>`**：建造点和 8 个普通地点的效果都通过 parts 体现。
 - **2026-07-25**: 概念与实例分离 + ontology 清理 + terrain/region 移除：
   - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。
-  - **ontology 清理**：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`encampment` parent 改为 `<ontology::object>`，`site_tile` parent 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` parent 改为 `<ontology::zone>`。
+  - **ontology 清理**：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`encampment` extends 改为 `<ontology::object>`，`site_tile` extends 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` extends 改为 `<ontology::zone>`。
   - **后端更新**：`GameRulesService` 全面支持 `instances.json`，Python `rebuild_index.py` 新增 `extract_instances()`。
   - **大陆板块**：`continent_tile` 加 `size` 字段，`continent` zone 加 `grid`（5×3=15 格）和铺满约束。
 - **2026-07-25（晚间）**: 对象层补充 + 命名修正 + 格式化：
@@ -116,20 +116,20 @@ metadata:
   - **新增 `<lose>` 和 `<gain>` 作为 Event 子类**：`<lose>`——object 失去 property（domain → null）；`<gain>`——object 获得 property（domain → 新实体）。ontology 概念总数：69 → 71。
   - **console.content 已更新**：从 1 项扩展为 16 项（1 innate_activity + 15 lv3 effect），所有 lv3 effect 初始不可用，升级时由 console `<gain>`。
 - **2026-07-24（凌晨）**: 理清模组本质与安装模型：
-  - **模组是 effect，带 level state**：[已废弃，见上方晚间更新] 模组的 parent 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
+  - **模组是 effect，带 level state**：[已废弃，见上方晚间更新] 模组的 extends 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
   - **安装 = transfer**：卡牌/芯片安装到控制台就是从 source zone transfer 到控制台上逻辑坐标的 zone。Zone 是纯概念不绑定物理尺寸，所以纸片可以互相叠压。控制台每个行列坐标就是一个 zone（有独立 capacity）。
   - **实体承载的 zone 不会销毁**：初始芯片牌在 setup 后 zone 还在，只是没有规则再引用它——不需要引入 availability 概念。
   - **三级模组不是三个 effect**：[已废弃，见上方晚间更新——现已改为三个独立 effect 实例，通过 id 前缀关联]
 - **2026-07-23**: 完成本体重大重构——Board 概念拆分与 Zone 宿主模型修正：
-  - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 parent 已从 `<aid>` 改为 `<board>`。
+  - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 extends 已从 `<aid>` 改为 `<board>`。
   - **Zone 可由实体承载**：card 和 board 都可以提供 zone。`<card>` 新增可选 `zones` 字段。Civolution 的 `starting_chip_card` 已标注设置阶段提供的临时目标芯片 zone。
   - **Board 的 `zones` 字段替代 `maps_to`**：`zones` 表达物理宿主关系（附带 position 和 description），而非 aid 时代的弱视觉映射。Civolution 的 `console`、`progress_board`、`sequence_board`、`public_board` 均已从 `maps_to` 迁移至 `zones`，每个 zone 附带面板上的物理位置描述。
   - **`console` 新增 `content`**：面板自带的基础活动图标——玩家无需安装任何研究牌即可使用的 innate 能力。
 - **2026-07-23**: 完成进程版图与流程版图全部组件的逐项 review，主要改动：
-  - **parent 归类修正**：`final_scoring_area` zone→track（本质是标记逐格推进的轨）；`dice_display`/`hunting_token_display`/`hundred_point_token_display` zone→supply；`goal_chip_display`/`income_chip_display`/`attribute_chip_display` zone→market
+  - **extends 归类修正**：`final_scoring_area` zone→track（本质是标记逐格推进的轨）；`dice_display`/`hunting_token_display`/`hundred_point_token_display` zone→supply；`goal_chip_display`/`income_chip_display`/`attribute_chip_display` zone→market
   - **market 新增 capacity**：ontology `market` 加 `capacity` 字段（`integer | null`），游戏层 `goal_chip_display`=6、`income_chip_display`=玩家人数+2、`attribute_chip_display`=3；`dice_display` 按玩家人数+1 每种骰子
   - **全局 namespace 引用**：`<ownership>` → `<ontology::ownership>`（21处）、`<information_visibility>` → `<ontology::information_visibility>`（21处）
-  - **定义清理**：全文去掉「继承自/extends」冗余表述，`parent` 字段已足够
+  - **定义清理**：全文去掉「继承自」冗余表述，`extends` / `specifies` / `instance_of` 字段已足够
   - **8 个阶段概念**：按英文规则书名称定义 `phase_1_new_cards` ~ `phase_8_income`，不设 order（顺序由 flow.json 的 `do_after` 表达）
   - **`event_card_space` 两格结构**：右格背面朝上牌堆、左格正面朝上当前时代牌；定义中 "区域" → `<ontology::zone>`
   - **Splendor flow.json**：phase 排序从 `order` 改为 `do_after` 依赖链，与复杂流程一致

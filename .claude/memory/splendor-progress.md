@@ -14,8 +14,8 @@ metadata:
 ## 文件结构
 按类别分组，不再混在一个 concepts 数组里：
 - `objects`（21 个）——resource / content / card / tile / zone 等静态概念
-- `actions`（4 个）——parent 为 `<action>`
-- `triggers`（4 个）——parent 为 `<trigger>` 的独立 trigger
+- `actions`（4 个）——specifies `<ontology::action>`
+- `triggers`（4 个）——specifies `<ontology::trigger>`
 - `conditions`（13 个）——**所有 condition 统一定义于此**，使用处只写纯引用（trigger 的 `<condition>` 为字符串、precondition 为单元素数组）：gems_available_any / gems_available_same_color / card_purchasable / card_reservable / gold_available / exceed_gem_limit / noble_satisfied / action_declaration_legal（所有内嵌 trigger 共用的通用绑定条件）/ no_action_available（复合：四行动条件取反求与）/ reach_15_prestige（extends `<endgame_condition>`）/ highest_prestige_wins（extends `<victory_condition>`）/ prestige_highest / fewest_development_cards（判胜用的两条单玩家判定式）
 - 顶层引用——`<player_holding>` / `<development_area>` / `<hand>` / `<starting_player_marker>`
 - `flow.json` 流程层——`procedures` 组（game round → setup / main_gameplay / endgame phases）
@@ -137,7 +137,7 @@ metadata:
 
 ## 设计约定
 
-- 游戏概念文件中的 `parent` 值用 `<>` 包裹（如 `"parent": "<resource>"`）
+- 游戏概念文件中的层级关系用三种键表达：`extends`（结构扩展）、`specifies`（参数绑定）、`instance_of`（具体个体）。概念引用用 `<>` 包裹（如 `"extends": "<ontology::resource>"`）
 - 所有 definition/description 中引用概念用 `<concept_id>` 格式
 - 叶子概念（无子类）不需要 `constraints` 块
 - 通用概念优先入 ontology，游戏专属概念放在游戏文件中
