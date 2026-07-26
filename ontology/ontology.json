@@ -2136,6 +2136,35 @@
         ],
         "optional": []
       }
+    },
+    {
+      "id": "multiple_effect_choice_enum",
+      "name": {
+        "zh": "多效果选择方式",
+        "en": "Multiple Effect Choice"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "当 <effect> 的 content 包含多个选项时，决定选择方式的枚举。用于天气轨 slot、模组效果等场景。",
+        "en": "Enum determining how to choose when an <effect>'s content contains multiple options. Used in weather gauge slots, module effects, etc."
+      },
+      "values": {
+        "type": "enum",
+        "enum": {
+          "EXECUTE_ALL": {
+            "zh": "全部执行",
+            "en": "Execute All"
+          },
+          "CHOOSE_ONE": {
+            "zh": "选择 1 个执行",
+            "en": "Choose One"
+          },
+          "CHOOSE_AT_LEAST_ONE": {
+            "zh": "选择至少 1 个执行",
+            "en": "Choose At Least One"
+          }
+        }
+      }
     }
   ]
 }
