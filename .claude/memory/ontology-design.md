@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-25，66 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-26，66 个概念）
 metadata:
   node_type: memory
   type: project
@@ -10,7 +10,7 @@ metadata:
 # 桌游本体设计
 
 ## 文件位置
-D:\workspace\board\ontology\ontology.json（统一本体，68 个概念）
+D:\workspace\board\ontology\ontology.json（统一本体，66 个概念）
 
 ## 统一本体
 最初分为 Structure Ontology（静态结构）和 Procedure Ontology（流程时序）两个文件，后合并。JSON 给程序读，不考虑 LLM 上下文长度。

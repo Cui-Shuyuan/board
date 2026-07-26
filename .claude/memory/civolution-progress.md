@@ -77,6 +77,8 @@ metadata:
 
 ## 最近进展
 
+- **2026-07-26（关系重构）**: `parent` 已拆分为 `extends` / `specifies` / `instance_of` 三种关系。Civolution concepts.json 中 7 个 extends（module、research_card、stored_material、feature_marker、continent、continent_tile、site）+ 101 个 specifies。instances.json 中 60 个 instance_of。后端代码零改动。详见 [[ontology-design]]。
+
 - **2026-07-25（图片提取突破）**: OpenCV + PDF 布局分析成功提取组件图片：
   - **正确页面定位**：组件目录页是 PDF 第 4-5 页（非之前误用的 setup 页 6-7）
   - **方法演进**：纯 CV 阈值/边缘检测 → 失败（页面排版复杂）→ **投影分析法**：水平投影找组件行 + 垂直投影找行内单个组件 → 成功

@@ -23,6 +23,8 @@ metadata:
 
 ## 当前进度
 
+> **2026-07-26 重构**：`parent` 已拆分为 `extends` / `specifies` / `instance_of` 三种关系。Splendor 中 6 个概念使用 extends（gem、development_card、development_deck、card_market、discount、noble），38 个概念使用 specifies（gem 颜色变体、发展卡等级、所有 action/trigger/condition 等）。后端代码零改动。
+
 ### 已完成
 
 **Resource 层**（`<resource>` 子类）：
