@@ -916,8 +916,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "六边形 <ontology::marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。",
-        "en": "A hexagonal <ontology::marker> placed on the phase sequence of the sequence board to indicate the current phase."
+        "zh": "黄色的六边形 <ontology::marker>，放置在 <sequence_board> 阶段序列上指示当前阶段。",
+        "en": "A hexagonal yellow <ontology::marker> placed on the phase sequence of the sequence board to indicate the current phase."
       },
       "media": {
         "component": [
@@ -934,12 +934,12 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "圆柱形 <marker>，放置在 <sequence_board> 天气轨上指示当前天气。每时代事件阶段根据事件牌移动并结算效果。",
-        "en": "A cylindrical <marker> placed on the weather gauge of the sequence board to indicate the current weather. Moved and resolved each era during the Event phase based on the event card."
+        "zh": "白色的圆柱形 <marker>，放置在 <sequence_board> 天气轨上指示当前天气。",
+        "en": "A cylindrical white <marker> placed on the weather gauge of the sequence board to indicate the current weather."
       },
       "media": {
         "component": [
-          "assets/components/page-04/weather_indicator.png"
+          "media/components/weather_indicator.png"
         ]
       },
       "specifies": "<ontology::marker>"
@@ -1099,7 +1099,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–100+",
+      "slots": "0–100+",
       "specifies": "<ontology::score_track>"
     },
     {
@@ -1373,7 +1373,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12",
+      "slots": "0–12",
       "specifies": "<ontology::track>"
     },
     {
@@ -1396,7 +1396,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12",
+      "slots": "0–12",
       "specifies": "<ontology::track>"
     },
     {
@@ -1419,7 +1419,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12",
+      "slots": "0–12",
       "specifies": "<ontology::track>"
     },
     {
@@ -1442,7 +1442,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12",
+      "slots": "0–12",
       "specifies": "<ontology::track>"
     },
     {
@@ -1465,7 +1465,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–12",
+      "slots": "0–12",
       "specifies": "<ontology::track>"
     },
     {
@@ -1636,7 +1636,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "scale": "0–?",
+      "slots": "0–?",
       "specifies": "<ontology::track>"
     },
     {
@@ -1659,6 +1659,16 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
+      "slots": [
+        {
+          "name": { "zh": "极寒", "en": "Cold" },
+          "description": { "zh": "白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "White line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." }
+        },
+        { "name": { "zh": "寒冷", "en": "Cold (intermediate)" }, "description": { "zh": "低温区过渡格。具体名称和效果待从 PDF 规则书确认。", "en": "Cold-region intermediate space. Exact name and effect TBD from PDF rulebook." } },
+        { "name": { "zh": "温和", "en": "Mild" }, "description": { "zh": "起始天气格，无特殊效果。", "en": "Starting weather space. No special effect." } },
+        { "name": { "zh": "温暖", "en": "Warm (intermediate)" }, "description": { "zh": "高温区过渡格。具体名称和效果待从 PDF 规则书确认。", "en": "Warm-region intermediate space. Exact name and effect TBD from PDF rulebook." } },
+        { "name": { "zh": "极热", "en": "Hot" }, "description": { "zh": "白线极端格。天气标记越过白线时退回此格。触发白线后方的负面效果：失去 1 个食物标记回供应堆，或从大陆上移除 1 个部落回个人供应区（二选一）。", "en": "White line extreme space. If the weather indicator crosses the white line, it is placed back here. Triggers the negative effect beyond the line: return 1 food marker to supply, or remove 1 tribe from the continent (choose one)." } }
+      ],
       "specifies": "<ontology::track>"
     },
     {
@@ -1681,6 +1691,16 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
+      "slots": [
+        { "name": { "zh": "第一阶段", "en": "Phase 1" }, "description": { "zh": "新卡牌（New Cards）：翻开事件牌 + 5 张研究牌", "en": "New Cards: reveal event card + 5 research cards" } },
+        { "name": { "zh": "第二阶段", "en": "Phase 2" }, "description": { "zh": "新目标（New Goals）：按座位顺序可选 1 枚目标芯片", "en": "New Goals: choose 1 goal chip in seating order" } },
+        { "name": { "zh": "第三阶段", "en": "Phase 3" }, "description": { "zh": "额外收获（Extra Find）：有部落的陆地区域拿取材料", "en": "Extra Find: take 1 material per territory with a tribe" } },
+        { "name": { "zh": "第四阶段", "en": "Phase 4" }, "description": { "zh": "行动阶段（Action Phase）：轮流激活模组或 Reset", "en": "Action Phase: take turns activating modules or Reset" } },
+        { "name": { "zh": "第五阶段", "en": "Phase 5" }, "description": { "zh": "地点阶段（Site Phase）：结算翻开地点的效果", "en": "Site Phase: resolve revealed site effects" } },
+        { "name": { "zh": "第六阶段", "en": "Phase 6" }, "description": { "zh": "喂养阶段（Feeding Phase）：喂部落 → 站立部落得分", "en": "Feeding Phase: feed tribes → strong tribes score" } },
+        { "name": { "zh": "第七阶段", "en": "Phase 7" }, "description": { "zh": "事件阶段（Event Phase）：天气效果 → 事件效果 → 时代计分 → 新起始玩家", "en": "Event Phase: weather → event → era scoring → new starting player" } },
+        { "name": { "zh": "第八阶段", "en": "Phase 8" }, "description": { "zh": "收入阶段（Income Phase）：执行收入芯片 → 雕像计分 → 移除狩猎标记 → 补充重置标记", "en": "Income Phase: income chips → statue scoring → remove hunting tokens → replenish reset markers" } }
+      ],
       "specifies": "<ontology::track>"
     },
     {
@@ -1725,6 +1745,7 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
+      "slots": "1–3，各格印有不同类别图标，设置时随机抽取计分板块按图标匹配放置",
       "specifies": "<ontology::track>"
     },
     {

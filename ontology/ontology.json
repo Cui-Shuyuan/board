@@ -1788,18 +1788,18 @@
       },
       "<ownership>": null,
       "<information_visibility>": "public",
-      "scale": {
-        "type": "string",
+      "slots": {
+        "type": "string | slot_spec[]",
         "description": {
-          "zh": "此轨的刻度范围或单位描述。如「0–100 的环形计分轨」「0–12 的进程轨」。仅供展示和规则解释参考，不影响规则逻辑。",
-          "en": "Description of the track's scale or range, e.g. '0–100 circular score track', '0–12 progress track'. For display and rule explanation only; does not affect rule logic."
+          "zh": "此轨的槽位定义，必填。若为数值轨（各位置含义相同），写取值范围字符串如「0–12」「0–100+」。若为槽位轨（各位置内容不同），写 slot_spec 对象数组，每个对象含 name（中英双语）和 description（中英双语），按轨上物理顺序排列。",
+          "en": "Slot definitions for this track, required. For numeric tracks (all positions share the same meaning), use a range string like '0–12' or '0–100+'. For slot-based tracks (each position has distinct content), use an array of slot_spec objects, each with name (bilingual) and description (bilingual), in physical order along the track."
         }
       },
       "constraints": {
-        "required": [],
-        "optional": [
-          "scale"
-        ]
+        "required": [
+          "slots"
+        ],
+        "optional": []
       }
     },
     {
