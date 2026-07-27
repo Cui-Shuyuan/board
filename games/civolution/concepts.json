@@ -2643,7 +2643,111 @@
           }
         ]
       },
+      "card_type": {
+        "type": "enum",
+        "enum": [
+          {
+            "id": "ACHIEVEMENT_CARD_TYPE",
+            "name": { "zh": "成就", "en": "Achievement" },
+            "definition": {
+              "zh": "研究牌类型：成就（紫色）。",
+              "en": "Research card type: Achievement (purple)."
+            }
+          },
+          {
+            "id": "BUILDING_CARD_TYPE",
+            "name": { "zh": "建造", "en": "Building" },
+            "definition": {
+              "zh": "研究牌类型：建造（蓝色）。",
+              "en": "Research card type: Building (blue)."
+            }
+          },
+          {
+            "id": "INSIGHT_CARD_TYPE",
+            "name": { "zh": "洞悉", "en": "Insight" },
+            "definition": {
+              "zh": "研究牌类型：洞悉（黄色）。",
+              "en": "Research card type: Insight (yellow)."
+            }
+          },
+          {
+            "id": "MUTATION_CARD_TYPE",
+            "name": { "zh": "突变", "en": "Mutation" },
+            "definition": {
+              "zh": "研究牌类型：突变（绿色）。",
+              "en": "Research card type: Mutation (green)."
+            }
+          },
+          {
+            "id": "INVENTION_CARD_TYPE",
+            "name": { "zh": "发明", "en": "Invention" },
+            "definition": {
+              "zh": "研究牌类型：发明（棕色）。",
+              "en": "Research card type: Invention (brown)."
+            }
+          }
+        ],
+        "description": {
+          "zh": "要安装的研究牌类型。每种类型在层级分区中独占一列。",
+          "en": "The type of research card to install. Each type occupies one dedicated column in the stage partition."
+        }
+      },
       "specifies": "<ontology::effect>"
+    },
+    {
+      "id": "install_achievement_card",
+      "name": { "zh": "安装成就牌", "en": "Install Achievement Card" },
+      "abstract": false,
+      "definition": {
+        "zh": "将手牌中的一张成就类型的 <research_card> 安装到层级分区。",
+        "en": "Install an Achievement-type <research_card> from hand into the stage partition."
+      },
+      "card_type": "<install_research_card>.<card_type>.<ACHIEVEMENT_CARD_TYPE>",
+      "specifies": "<install_research_card>"
+    },
+    {
+      "id": "install_building_card",
+      "name": { "zh": "安装建造牌", "en": "Install Building Card" },
+      "abstract": false,
+      "definition": {
+        "zh": "将手牌中的一张建造类型的 <research_card> 安装到层级分区。",
+        "en": "Install a Building-type <research_card> from hand into the stage partition."
+      },
+      "card_type": "<install_research_card>.<card_type>.<BUILDING_CARD_TYPE>",
+      "specifies": "<install_research_card>"
+    },
+    {
+      "id": "install_insight_card",
+      "name": { "zh": "安装洞悉牌", "en": "Install Insight Card" },
+      "abstract": false,
+      "definition": {
+        "zh": "将手牌中的一张洞悉类型的 <research_card> 安装到层级分区。",
+        "en": "Install an Insight-type <research_card> from hand into the stage partition."
+      },
+      "card_type": "<install_research_card>.<card_type>.<INSIGHT_CARD_TYPE>",
+      "specifies": "<install_research_card>"
+    },
+    {
+      "id": "install_mutation_card",
+      "name": { "zh": "安装突变牌", "en": "Install Mutation Card" },
+      "abstract": false,
+      "definition": {
+        "zh": "将手牌中的一张突变类型的 <research_card> 安装到层级分区。",
+        "en": "Install a Mutation-type <research_card> from hand into the stage partition."
+      },
+      "card_type": "<install_research_card>.<card_type>.<MUTATION_CARD_TYPE>",
+      "specifies": "<install_research_card>"
+    },
+    {
+      "id": "install_invention_card",
+      "name": { "zh": "安装发明牌", "en": "Install Invention Card" },
+      "abstract": false,
+      "definition": {
+        "zh": "将手牌中的一张发明类型的 <research_card> 安装到层级分区。",
+        "en": "Install an Invention-type <research_card> from hand into the stage partition."
+      },
+      "card_type": "<install_research_card>.<card_type>.<INVENTION_CARD_TYPE>",
+      "specifies": "<install_research_card>"
     },
     {
       "id": "lose_food",
