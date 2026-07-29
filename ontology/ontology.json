@@ -2166,31 +2166,6 @@
       }
     },
     {
-      "id": "cost_type",
-      "name": {
-        "zh": "费用类型",
-        "en": "Cost Type"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "费用履行方式的枚举，区分消耗型（支付后资源减少）与持有型（仅检查是否达到门槛，不消耗）。",
-        "en": "Enum for cost fulfillment mode, distinguishing between consumption (resources are spent) and possession (only a threshold check, nothing is spent)."
-      },
-      "values": {
-        "type": "enum",
-        "enum": {
-          "CONSUME": {
-            "zh": "消耗",
-            "en": "Consume"
-          },
-          "POSSESS": {
-            "zh": "持有",
-            "en": "Possess"
-          }
-        }
-      }
-    },
-    {
       "id": "multiple_choice_enum",
       "name": {
         "zh": "多选方式",
