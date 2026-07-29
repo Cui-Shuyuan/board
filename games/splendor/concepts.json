@@ -713,14 +713,9 @@
                     "zh": "因<ontology::player>选择拿取不同色宝石而触发的<ontology::event>序列。仅含一个<ontology::event>：一次<ontology::transfer>，将<ontology::declaration>中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。",
                     "en": "The <ontology::event> sequence triggered by the <ontology::player> choosing to take different-colored gems. Contains a single <ontology::event>: a <ontology::transfer> that moves the <gem>s specified in <ontology::declaration> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>."
                 },
-                "<timing>": {
-                    "description": {
-                        "zh": "此<ontology::action>执行完毕时。此<ontology::trigger>绑定此<ontology::action>的<ontology::declaration>，二者合起来构成完整的<ontology::action>。",
-                        "en": "When this <ontology::action> finishes executing. This <ontology::trigger> is bound to this <ontology::action>'s <ontology::declaration>; together they form the complete <ontology::action>."
-                    }
-                },
                 "<condition>": "<action_declaration_legal>",
-                "<event>[]": [
+                "<cost>": null,
+                "<ontology::content>": [
                     {
                         "type": "<ontology::transfer>",
                         "description": {
@@ -788,14 +783,9 @@
                     "zh": "因<ontology::player>选择拿取同色宝石而触发的<ontology::event>序列。仅含一个<ontology::event>：一次<ontology::transfer>，将<ontology::declaration>中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。",
                     "en": "The <ontology::event> sequence triggered by the <ontology::player> choosing to take same-colored gems. Contains a single <ontology::event>: a <ontology::transfer> that moves 2 <gem>s of the color specified in <ontology::declaration> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>."
                 },
-                "<timing>": {
-                    "description": {
-                        "zh": "此<ontology::action>执行完毕时。此<ontology::trigger>绑定此<ontology::action>的<ontology::declaration>，二者合起来构成完整的<ontology::action>。",
-                        "en": "When this <ontology::action> finishes executing. This <ontology::trigger> is bound to this <ontology::action>'s <ontology::declaration>; together they form the complete <ontology::action>."
-                    }
-                },
                 "<condition>": "<action_declaration_legal>",
-                "<event>[]": [
+                "<cost>": null,
+                "<ontology::content>": [
                     {
                         "type": "<ontology::transfer>",
                         "description": {
@@ -864,14 +854,9 @@
                     "zh": "因<ontology::player>购买<development_card>而触发的<ontology::event>序列，按序包含两个<ontology::event>：(1) 一次<ontology::transfer>——将一定种类和数量的<gem>从 actor 的<ontology::player_holding>返回供应堆，数量为发展卡的<ontology::cost>减去<discount>；(2) 一次<ontology::play>——将目标<development_card>从<card_market>或 actor 的<ontology::hand>打出至 actor 的<ontology::development_area>。",
                     "en": "The <ontology::event> sequence triggered by the <ontology::player> purchasing a <development_card>, containing two <ontology::event>s in order: (1) a <ontology::transfer> — returning a set of <gem>s from the actor's <ontology::player_holding> to the supply, the quantity being the development card's <ontology::cost> reduced by <discount>s; (2) a <ontology::play> — playing the target <development_card> from <card_market> or the actor's <ontology::hand> into the actor's <ontology::development_area>."
                 },
-                "<timing>": {
-                    "description": {
-                        "zh": "此<ontology::action>执行完毕时。此<ontology::trigger>绑定此<ontology::action>的<ontology::declaration>，二者合起来构成完整的<ontology::action>。",
-                        "en": "When this <ontology::action> finishes executing. This <ontology::trigger> is bound to this <ontology::action>'s <ontology::declaration>; together they form the complete <ontology::action>."
-                    }
-                },
                 "<condition>": "<action_declaration_legal>",
-                "<event>[]": [
+                "<cost>": null,
+                "<ontology::content>": [
                     {
                         "id": "pay_cost",
                         "type": "<ontology::transfer>",
@@ -965,14 +950,9 @@
                     "zh": "因<ontology::player>保留<development_card>而触发的<ontology::event>序列，包含两个不分先后的<ontology::event>：(1) 一次<ontology::transfer>——目标<development_card>从<card_market>或对应<development_deck>顶部移入 actor 的<ontology::hand>；(2) 一次<ontology::transfer>——1 个<gold>从<gold_supply>移入 actor 的<ontology::player_holding>（仅当<gold_supply>非空时执行）。两个<ontology::event>互不依赖，任意顺序执行结果相同。",
                     "en": "The <ontology::event> sequence triggered by the <ontology::player> reserving a <development_card>, containing two <ontology::event>s in no particular order: (1) a <ontology::transfer> — the target <development_card> moves from <card_market> or the top of the corresponding <development_deck> into the actor's <ontology::hand>; (2) a <ontology::transfer> — 1 <gold> moves from <gold_supply> into the actor's <ontology::player_holding> (executed only when <gold_supply> is non-empty). The two <ontology::event>s are independent of each other and yield the same result in any execution order."
                 },
-                "<timing>": {
-                    "description": {
-                        "zh": "此<ontology::action>执行完毕时。此<ontology::trigger>绑定此<ontology::action>的<ontology::declaration>，二者合起来构成完整的<ontology::action>。",
-                        "en": "When this <ontology::action> finishes executing. This <ontology::trigger> is bound to this <ontology::action>'s <ontology::declaration>; together they form the complete <ontology::action>."
-                    }
-                },
                 "<condition>": "<action_declaration_legal>",
-                "<event>[]": [
+                "<cost>": null,
+                "<ontology::content>": [
                     {
                         "id": "reserve_card",
                         "type": "<ontology::transfer>",
@@ -1067,14 +1047,10 @@
                 "zh": "璀璨宝石中的「弃置超额宝石」<ontology::trigger>。当一名<ontology::player>的<ontology::player_holding>中的<gem>与<gold>总数超过 10 时，本<ontology::trigger>立即触发——该<ontology::player>必须马上选择并返回若干颗使总数降回 10，然后才继续后续流程。这是<ontology::player_holding>上限（10 颗）的强制执行机制——拿取宝石和保留卡牌的<ontology::action>均不校验上限，统一由本<ontology::trigger>在超限的瞬间处理。返回的<gem>和<gold>分别回到<gem_supply>和<gold_supply>。与<attract_noble>的触发时机不同——本<ontology::trigger>在超限时立即触发，<attract_noble>在回合结束时触发，二者不会同时被触发。",
                 "en": "The 'discard excess gems' <ontology::trigger> in Splendor. When the total number of <gem>s and <gold> in a <ontology::player>'s <ontology::player_holding> exceeds 10, this <ontology::trigger> fires immediately — that <ontology::player> must choose and return gems right away until the total is back down to 10 before any further processing continues. This is the enforcement mechanism for the <ontology::player_holding> limit (10) — neither the take-gems nor the reserve <ontology::action> checks the limit; it is uniformly handled by this <ontology::trigger> the moment the limit is exceeded. Returned <gem>s and <gold> go back to <gem_supply> and <gold_supply> respectively. Unlike <attract_noble>'s timing — this <ontology::trigger> fires immediately upon exceeding the limit, while <attract_noble> fires at end of turn; the two never fire at the same time."
             },
-            "<timing>": {
-                "description": {
-                    "zh": "任何使<ontology::player>的<ontology::player_holding>中<gem>与<gold>总数发生变化的<ontology::event>（拿取宝石的<ontology::transfer>、保留卡牌获得<gold>的<ontology::transfer>）结算完成的瞬间。",
-                    "en": "The moment any <ontology::event> that changes the total number of <gem>s and <gold> in a <ontology::player>'s <ontology::player_holding> finishes resolving (the gem-taking <ontology::transfer>, the <gold>-gaining <ontology::transfer> from reserving)."
-                }
-            },
             "<condition>": "<exceed_gem_limit>",
-            "<event>[]": [
+            "specifies": "<ontology::trigger>",
+            "<cost>": null,
+            "<ontology::content>": [
                 {
                     "type": "<ontology::transfer>",
                     "description": {
@@ -1110,8 +1086,7 @@
                         }
                     }
                 }
-            ],
-            "specifies": "<ontology::trigger>"
+            ]
         },
         {
             "id": "attract_noble",
@@ -1124,14 +1099,10 @@
                 "zh": "璀璨宝石中的「贵族来访」<ontology::trigger>。当一名<ontology::player>的回合结束时，若其<ontology::development_area>中各色<development_card>的数量满足了<noble_market>中某枚<noble>的 requirement，该<noble>自动来访——移入该<ontology::player>的<ontology::development_area>并提供 3 点<prestige_point>。玩家不能拒绝贵族来访；若同时有多枚<noble>满足条件，由该<ontology::player>选择其中一枚，每回合至多获得一枚<noble>。与<card_market>的主动购买不同，<noble>不可购买，只能通过本<ontology::trigger>获得。",
                 "en": "The 'attract noble' <ontology::trigger> in Splendor. When a <ontology::player>'s turn ends, if the numbers of <development_card>s of each color in their <ontology::development_area> meet the requirement of a <noble> in <noble_market>, that <noble> automatically visits — moving into the <ontology::player>'s <ontology::development_area> and providing 3 <prestige_point>s. The visit cannot be refused; if multiple <noble>s qualify at once, the <ontology::player> chooses one of them, gaining at most one <noble> per turn. Unlike active purchases from <card_market>, <noble>s cannot be bought and can only be gained via this <ontology::trigger>."
             },
-            "<timing>": {
-                "description": {
-                    "zh": "一名<ontology::player>的回合结束时。",
-                    "en": "When a <ontology::player>'s turn ends."
-                }
-            },
             "<condition>": "<noble_satisfied>",
-            "<event>[]": [
+            "specifies": "<ontology::trigger>",
+            "<cost>": null,
+            "<ontology::content>": [
                 {
                     "type": "<ontology::transfer>",
                     "description": {
@@ -1168,8 +1139,7 @@
                         }
                     }
                 }
-            ],
-            "specifies": "<ontology::trigger>"
+            ]
         },
         {
             "id": "enter_endgame",
@@ -1182,14 +1152,10 @@
                 "zh": "璀璨宝石中的「进入终局」<ontology::trigger>。当任意<ontology::player>的<prestige_point>总数达到 15 时，游戏进入终局流程——终局流程的具体内容（补完当前<ontology::round>使所有<ontology::player>完成相同数量的<ontology::turn>、随后游戏结束、按<highest_prestige_wins>判定胜负）由流程文档定义，此处仅声明触发条件。达到阈值后不再触发——终局流程只进入一次。",
                 "en": "The 'enter endgame' <ontology::trigger> in Splendor. When any <ontology::player>'s total <prestige_point>s reach 15, the game enters its endgame process — the specifics of that process (finishing the current <ontology::round> so all <ontology::player>s complete an equal number of <ontology::turn>s, then ending the game and adjudicating by <highest_prestige_wins>) are defined by the procedure document; only the firing condition is declared here. It fires only once — the endgame process is entered exactly once."
             },
-            "<timing>": {
-                "description": {
-                    "zh": "一名<ontology::player>的回合结束时（与<attract_noble>同一时机——若该回合同时满足贵族条件与终局条件，两个<ontology::trigger>都被触发）。",
-                    "en": "When a <ontology::player>'s turn ends (the same timing as <attract_noble> — if a turn satisfies both a noble requirement and the endgame condition, both <ontology::trigger>s fire)."
-                }
-            },
             "<condition>": "<reach_15_prestige>",
-            "<event>[]": [
+            "specifies": "<ontology::trigger>",
+            "<cost>": null,
+            "<ontology::content>": [
                 {
                     "type": "<ontology::event>",
                     "description": {
@@ -1197,8 +1163,7 @@
                         "en": "The game enters its endgame process. The specifics that follow — finishing the current <ontology::round> so all <ontology::player>s complete an equal number of <ontology::turn>s, ending the game, adjudicating by <highest_prestige_wins> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
                     }
                 }
-            ],
-            "specifies": "<ontology::trigger>"
+            ]
         },
         {
             "id": "skip_turn",
@@ -1211,14 +1176,10 @@
                 "zh": "璀璨宝石中的「跳过回合」<ontology::trigger>。若当前<ontology::player>没有任何可合法执行的<ontology::action>，其回合直接结束——不执行任何<ontology::action>，流程进入下一<ontology::player>的<ontology::turn>。这保证了极端局面（供应耗尽、无卡可买可留）下游戏仍能继续，不会因无行动可选而卡死。",
                 "en": "The 'skip turn' <ontology::trigger> in Splendor. If the current <ontology::player> has no legally executable <ontology::action>, their turn ends immediately — no <ontology::action> is performed, and play passes to the next <ontology::player>'s <ontology::turn>. This ensures the game continues even in extreme situations (exhausted supplies, nothing to buy or reserve) instead of deadlocking."
             },
-            "<timing>": {
-                "description": {
-                    "zh": "当前<ontology::player>的<ontology::turn>开始、即将宣告<ontology::action>时。",
-                    "en": "When the current <ontology::player>'s <ontology::turn> begins, just before they declare an <ontology::action>."
-                }
-            },
             "<condition>": "<no_action_available>",
-            "<event>[]": [
+            "specifies": "<ontology::trigger>",
+            "<cost>": null,
+            "<ontology::content>": [
                 {
                     "type": "<ontology::event>",
                     "description": {
@@ -1226,8 +1187,7 @@
                         "en": "The current <ontology::player>'s <ontology::turn> ends immediately — no <ontology::action> is performed and no <ontology::action>-bound <ontology::trigger> fires; play passes to the next <ontology::player>'s <ontology::turn>. End-of-turn <ontology::trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."
                     }
                 }
-            ],
-            "specifies": "<ontology::trigger>"
+            ]
         }
     ],
     "conditions": [

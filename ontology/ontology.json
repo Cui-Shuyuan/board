@@ -876,25 +876,11 @@
         "zh": "效果",
         "en": "Effect"
       },
-      "extends": "<property>",
+      "extends": "<trigger>",
       "abstract": false,
       "definition": {
-        "zh": "指明在满足特定条件时将要发生的代价与结果的完整规格。<effect> 继承自 <property>。由 <cost> 和 <content> 两个内部组成部分构成——<cost> 定义触发前必须履行的代价，<content> 定义结算时应发生的具体事件。<cost> 和 <content> 可以有一个为空（免费效果或纯代价效果），但不可同时为空。<effect> 是 <piece> 的核心——<piece> 之所以是 <piece> 而非 <token>，正因为它携带 <effect> 并可被 <play>。<effect> 的运行时生命周期：静默（dormant）→ 被 <activation> 激活（pending）→ 经由 <resolve> 结算，<content> 实例化为真实 <event> 应用到游戏状态。",
-        "en": "A complete specification of the cost and result that will occur when certain conditions are met. <effect> extends <property>. It consists of two internal components — <cost> defines what must be fulfilled before triggering, <content> defines the specific events that occur during resolution. <cost> and <content> may have one empty (free effect or pure-cost effect), but must not both be empty. <effect> is the core of a <piece> — the reason a <piece> is a <piece> rather than a <token> is precisely that it carries an <effect> and can be <play>ed. Runtime lifecycle: dormant → activated by <activation> (pending) → resolved via <resolve>, where <content> is instantiated as real <event>s and applied to game state."
-      },
-      "<cost>": {
-        "type": "<cost> | null",
-        "description": {
-          "zh": "触发此效果前必须履行的代价。null = 免费效果（如「回合开始时抽一张牌」）。",
-          "en": "The cost that must be fulfilled before triggering this effect. null = free effect (e.g., 'draw a card at the start of your turn')."
-        }
-      },
-      "<content>": {
-        "type": "<content> | null",
-        "description": {
-          "zh": "此效果结算时应发生的具体事件。null = 纯代价效果，Content 的价值由 Piece 自身或游戏规则隐式提供。两种常见情形：(1) Piece 自身的属性或能力已经值回 Cost——例如支付 5 点生命值打出一张高战力生物牌，「获得一个高战力生物」由 Piece 进入 Development Area 这一事实完成；(2) 规则赋予的隐性 Content——例如某 Piece 本身没有效果，但集齐一定数量即获胜，此时 Content 由 Victory Condition 提供，不在 Piece 自身定义。注意：Cost 和 Content 不可同时为 null。",
-          "en": "The specific events that should occur when this effect resolves. null = pure-cost effect, where Content's value is implicitly provided by the Piece itself or by game rules. Two common cases: (1) the Piece's own oversized stats or abilities already justify the Cost — e.g., paying 5 life to play a high-power creature, where 'gain a high-power creature' is accomplished by the Piece entering the Development Area; (2) rules-granted implicit Content — e.g., a Piece has no effect on its own, but collecting a certain number wins the game; the Content is provided by the Victory Condition, not the Piece itself. Note: Cost and Content must not both be null."
-        }
+        "zh": "一种 <trigger>——效果是玩家视角下的触发，语义侧重「有 cost 要付」。结构与 <trigger> 完全相同（condition → cost → content），保留此概念仅为语义区分。<effect> 额外增加 <options> 字段以支持多选费用。",
+        "en": "A type of <trigger> — an effect is a player-facing trigger, semantically emphasizing 'there is a cost to pay'. Structurally identical to <trigger> (condition → cost → content); retained solely for semantic distinction. <effect> additionally adds an <options> field to support multi-choice costs."
       },
       "options": {
         "type": "map<string, any> | null",
@@ -907,8 +893,6 @@
       "constraints": {
         "required": [],
         "optional": [
-          "<cost>",
-          "<content>",
           "options"
         ]
       }
@@ -1331,7 +1315,7 @@
         "zh": "在终局流程完成后、决定哪位 <player> 胜出的 <condition>。<victory_condition> 继承自 <condition>，其判定标准是一个按优先级排序的 <condition> 序列——按顺序满足条件的 <player>（们）是胜者。判定流程：满足第 1 条 <condition> 的 <player> 为候选胜者；候选多于 1 人时，在候选中继续应用下一条 <condition> 筛选，直到只剩 1 人或序列用完；序列用完仍有多名候选则为平局。与 <endgame_condition> 的分工：<endgame_condition> 回答「游戏何时结束」，<victory_condition> 回答「结束后谁赢」。允许合作胜利（所有 <player> 共同获胜），允许无人获胜（全员失败）。",
         "en": "A <condition> that determines which <player> wins, evaluated after the endgame process completes. <victory_condition> extends <condition>, and its adjudication standard is an ordered sequence of <condition>s — the <player>(s) satisfying the criteria in order win. Adjudication: <player>s satisfying the 1st <condition> become winner candidates; if more than one remains, apply the next <condition> to the candidates, continuing until exactly one remains or the sequence is exhausted; if multiple candidates remain after the sequence, the result is a tie. Division of labor with <endgame_condition>: <endgame_condition> answers 'when does the game end', <victory_condition> answers 'who wins after it ends'. Cooperative victories (all <player>s win together) are allowed, as is no winner at all (everyone loses)."
       },
-      "<condition>[]": {
+      "<condition>": {
         "description": {
           "zh": "胜负判定的条件序列，按优先级从高到低排序。每条<condition>都是对单个<player>求值的判定式（如「声望最高」「发展卡最少」）——允许并列，并列者视为同时满足。判定流程：满足第 1 条的<player>为候选；多于 1 人则在候选中应用下一条继续筛选；直到只剩 1 人或序列用完。",
           "en": "The ordered sequence of victory criteria, sorted from highest to lowest priority. Each <condition> is a predicate evaluated per <player> (e.g., 'highest prestige', 'fewest development cards') — ties count as satisfied simultaneously. Adjudication: <player>s satisfying the 1st criterion become candidates; if more than one remains, apply the next criterion to the candidates; continue until exactly one remains or the sequence is exhausted."
@@ -1359,59 +1343,64 @@
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "游戏规则中负责启动 <event> 的统一机制。<trigger> 继承自 <event>。其角色是「事件调度器」——本质为「timing + condition → events」：时机（timing）到达且此时 <condition> 满足，<trigger> 才触发，启动对应的后续 <event>（如结算 <effect>、执行 <transfer>、改变 <state>）。满足 <condition> 本身不会触发——时机未至，条件持续满足也只是待命；时机到达时条件不满足，同样不触发。一切游戏状态变更最终都由 <trigger> 负责发起。<trigger> 不由任何 <player> 直接控制，而由规则自动响应——触发不以玩家意志为转移，它的 actor 始终为 null。与 <action> 的关系：<action> 是 <trigger> 最常见的触发原因——玩家打出一张牌（<action>），规则自动识别此事件并触发对应的 <trigger>，<trigger> 再启动「支付费用」「获得资源」「造成伤害」等后续 <event>。",
-        "en": "The unified mechanism in game rules responsible for launching <event>s. <trigger> extends <event>. Its role is that of an 'event dispatcher' — its essence is 'timing + condition → events': when the timing arrives AND the <condition> holds at that moment, the <trigger> fires and launches corresponding follow-up <event>s (e.g., resolving an <effect>, executing a <transfer>, changing a <state>). Satisfying the <condition> alone does not fire it — before the timing arrives, a continuously satisfied condition merely stands by; if the condition does not hold when the timing arrives, it does not fire either. All game state changes are ultimately initiated by a <trigger>. A <trigger> is not directly controlled by any <player> — it responds automatically to the rules, firing regardless of player will, and its actor is always null. Relationship with <action>: <action> is the most common cause of <trigger> firing — a player plays a card (<action>), the rules automatically recognize this event and fire the corresponding <trigger>, which then launches follow-up <event>s such as 'pay cost', 'gain resource', 'deal damage'."
+        "zh": "游戏规则中负责启动 <event> 的统一机制。<trigger> 是递归结构——<condition> 定义触发门槛，<cost> 定义可支付的代价（null = 无需支付），<content> 指向递归的 <trigger> 或终结的 <event>。若 <content> 是 <trigger>，递归进入下一层 effect；若是 <event>，链条终结。<target> 声明此 trigger 作用的对象。一切游戏状态变更最终都由 <trigger> 发起。<trigger> 不由任何 <player> 直接控制——actor 始终为 null。",
+        "en": "The unified mechanism in game rules responsible for launching <event>s. <trigger> is a recursive structure — <condition> defines the firing gate, <cost> defines the payable cost (null = no cost needed), and <content> points to a recursive <trigger> or a terminal <event>. If <content> is a <trigger>, recursion continues into the next effect layer; if an <event>, the chain terminates. <target> declares what this trigger acts upon. All game state changes are ultimately initiated by a <trigger>. A <trigger> is not directly controlled by any <player> — its actor is always null."
       },
       "actor": {
         "type": "null",
         "description": {
-          "zh": "从 <event> 继承，此处窄化为 null：<trigger> 不由任何 <player> 主动发起，没有执行者。这正是 <trigger> 与 <action> 的本质区别。",
-          "en": "Inherited from <event>, narrowed here to null: a <trigger> is not initiated by any <player> and has no executor. This is the essential difference between a <trigger> and an <action>."
-        }
-      },
-      "<timing>": {
-        "description": {
-          "zh": "<trigger> 的触发时机——<condition> 的检查钟声。时机到达且此时 <condition> 满足，<trigger> 才触发。时机可以是：某个状态变化的瞬间（「任何使宝石总数变化的 <event> 结算完成时」）、阶段边界（「一名 <player> 的回合结束时」）、或某个 <event> 完成后（「此 <action> 执行完毕时」）。满足 <condition> 不代表立即触发——时机未至，条件满足只是待命；时机到达时条件不满足则不触发。",
-          "en": "The firing timing of the <trigger> — the bell that prompts the <condition> check. The <trigger> fires only when the timing arrives AND the <condition> holds at that moment. A timing can be: the instant of a state change ('when any <event> that changes the gem total finishes resolving'), a phase boundary ('when a <player>'s turn ends'), or the completion of some <event> ('when this <action> finishes executing'). Satisfying the <condition> does not mean firing immediately — before the timing arrives, a satisfied condition merely stands by; if the condition does not hold when the timing arrives, it does not fire."
+          "zh": "从 <event> 继承，此处窄化为 null：<trigger> 不由任何 <player> 主动发起，没有执行者。",
+          "en": "Inherited from <event>, narrowed here to null: a <trigger> is not initiated by any <player> and has no executor."
         }
       },
       "<condition>": {
         "description": {
-          "zh": "触发本 <trigger> 所需满足的 <condition>——一个纯粹的状态事实（如「宝石总数 >10」「某 <noble> 的 requirement 被满足」），不包含时机描述（时机由 timing 字段表达）。<trigger> 的本质即「timing + condition → events」。每一个 <trigger> 都必须有 <condition>，即使是被 <action> 触发的 <trigger>——「此 <action> 的 precondition 满足且 <declaration> 合法」本身就是 <condition>。",
-          "en": "The <condition> that must hold for this <trigger> to fire — a pure state fact (e.g., 'gem total >10', 'a <noble>'s requirement is met'), containing no timing description (timing is expressed by the timing field). The essence of a <trigger> is 'timing + condition → events'. Every <trigger> must have a <condition> — even for <action>-bound <trigger>s, 'this <action>'s precondition is met and its <declaration> is legal' is itself the <condition>."
+          "zh": "此 <trigger> 的触发门槛——定义了「满足什么条件才可以激活此 trigger」。可以是状态事实（如「等级 ≥5」）、timing（如「回合结束时」）、或 action 引用（如「<perform_activity> 被触发，目标为本 trigger」）。条件满足不代表立即触发——还有 cost 需要被支付（若有）。",
+          "en": "The firing gate for this <trigger> — defines 'under what conditions this trigger may be activated'. Can be a state fact (e.g., 'level ≥ 5'), a timing (e.g., 'end of turn'), or an action reference (e.g., '<perform_activity> triggered, targeting this trigger'). Meeting the condition does not mean immediate firing — cost must also be paid (if any)."
         }
       },
-      "<event>[]": {
+      "<cost>": {
+        "type": "<cost> | null",
         "description": {
-          "zh": "<trigger> 被触发后启动的后续 <event> 列表。元素可以是任意 <event> 子类：<transfer>、<play>、<resolve>、<state> 变更等。例如「购买」<action> 的 <trigger> 含两个 <event>：一次 <transfer>（支付费用）和一次 <play>（卡牌入场）。每个 <event> 可声明 `do_after` 字段引用其他 <event> 的 id，表示必须等被引用的 <event> 完成后才能执行；无 `do_after` 的 <event> 互相独立，可任意顺序或并行执行。为了支持 `do_after`，每个可能需要被引用的 <event> 都应声明 `id`。",
-          "en": "The list of follow-up <event>s launched after the <trigger> fires. Elements may be any <event> subclass: <transfer>, <play>, <resolve>, <state> changes, etc. For example, a 'purchase' <action>'s <trigger> contains two <event>s: a <transfer> (paying the cost) and a <play> (the card entering play). Each <event> may declare a `do_after` field referencing another <event>'s id, meaning it must wait for the referenced <event> to complete; <event>s without `do_after` are independent of each other and may execute in any order or in parallel. To support `do_after`, every <event> that might be referenced should declare an `id`."
+          "zh": "满足 <condition> 后可支付的代价。null = 无需支付（如阶段推进这类纯规则 trigger）。<cost> 自身包含 <condition>（支付资格——满足什么条件才可以付这个）和 <event>（实际执行的 transfer）。",
+          "en": "The cost that may be paid after meeting the <condition>. null = no cost needed (e.g., pure rule triggers like phase advancement). <cost> itself contains <condition> (payment gate) and <event> (the actual transfer executed)."
+        }
+      },
+      "<content>": {
+        "type": "<trigger> | <event>",
+        "description": {
+          "zh": "cost 被足额支付后触发的内容。可以是另一个 <trigger>（递归进入下一层）或一个 <event>（终结，直接改变游戏状态）。",
+          "en": "The content triggered after the cost is fully paid. May be another <trigger> (recursive) or an <event> (terminal, directly changing game state)."
+        }
+      },
+      "target": {
+        "type": "concept_ref | null",
+        "description": {
+          "zh": "此 <trigger> 作用的目标对象。null = 目标由上下文隐式确定（如全局规则 trigger）。",
+          "en": "The target object this <trigger> acts upon. null = target is implicitly determined by context (e.g., global rule triggers)."
         }
       },
       "constraints": {
         "required": [
           {
-            "id": "<timing>",
-            "description": {
-              "zh": "每一个 <trigger> 都必须声明触发时机——满足 <condition> 不代表立即触发，时机到达且条件满足才触发。没有 <timing> 的 <trigger> 无法确定何时检查条件。",
-              "en": "Every <trigger> must declare its firing timing — satisfying the <condition> does not mean firing immediately; it fires only when the timing arrives and the condition holds. A <trigger> without <timing> cannot determine when to check its condition."
-            }
-          },
-          {
             "id": "<condition>",
             "description": {
-              "zh": "每一个 <trigger> 都必须有触发条件——即使是被 <action> 触发的 <trigger>，「此 <action> 的 precondition 满足且 <declaration> 合法」本身就是 <condition>。没有 <condition> 的 <trigger> 无法确定能否触发。",
-              "en": "Every <trigger> must have a firing condition — even for <action>-bound <trigger>s, 'this <action>'s precondition is met and its <declaration> is legal' is itself the <condition>. A <trigger> without a <condition> cannot determine whether to fire."
+              "zh": "每一个 <trigger> 都必须有触发条件——没有条件就无法确定何时激活。",
+              "en": "Every <trigger> must have a firing condition — without one, there is no way to determine when to activate it."
             }
           },
           {
-            "id": "<event>[]",
+            "id": "<content>",
             "description": {
-              "zh": "<trigger> 的职责是启动后续 <event>——没有 <event> 列表的 <trigger> 是空调度器。此约束要求子类声明被触发后执行哪些 <event>。",
-              "en": "A <trigger>'s job is to launch follow-up <event>s — a <trigger> without an <event> list is an empty dispatcher. This constraint requires subclasses to declare which <event>s execute upon firing."
+              "zh": "每一个 <trigger> 都必须声明被触发后的后续内容——可以是递归的 <trigger> 或终结的 <event>。",
+              "en": "Every <trigger> must declare what follows after firing — either a recursive <trigger> or a terminal <event>."
             }
           }
         ],
-        "optional": []
+        "optional": [
+          "<cost>",
+          "target"
+        ]
       }
     },
     {
@@ -1990,32 +1979,6 @@
       }
     },
     {
-      "id": "passive_effect",
-      "name": {
-        "zh": "被动效果",
-        "en": "Passive Effect"
-      },
-      "extends": "<property>",
-      "abstract": false,
-      "definition": {
-        "zh": "持续生效、无需玩家主动触发的效果规格。<passive_effect> 继承自 <property>。与需要 <activation> 的 <effect> 不同，被动效果一旦满足其前提条件就会自动生效，常见于已安装的 <card> 或特定 <tile>。其运行时不产生独立的 <event>，而是修改规则判定或提供额外奖励。",
-        "en": "A continuously active effect specification that does not require the player to actively trigger it. <passive_effect> extends <property>. Unlike <effect>s that require <activation>, passive effects automatically apply once their prerequisites are met, commonly found on installed <card>s or certain <tile>s. At runtime they do not produce standalone <event>s but modify rule evaluations or grant additional bonuses."
-      },
-      "trigger": {
-        "type": "<trigger> | null",
-        "description": {
-          "zh": "此被动效果的生效前提。null 表示始终生效。",
-          "en": "The prerequisite for this passive effect to apply. null means always active."
-        }
-      },
-      "constraints": {
-        "required": [],
-        "optional": [
-          "trigger"
-        ]
-      }
-    },
-    {
       "id": "die_roll",
       "name": {
         "zh": "掷骰",
@@ -2164,6 +2127,67 @@
           }
         ],
         "optional": []
+      }
+    },
+    {
+      "id": "push_track",
+      "name": {
+        "zh": "推进轨道",
+        "en": "Push Track"
+      },
+      "extends": "<event>",
+      "abstract": false,
+      "definition": {
+        "zh": "将一条 <track> 上的标记向前推进若干格。桌游中最通用的位移 <event> 之一——计分、进程、天气等所有轨道共享此语义。",
+        "en": "Advance a marker on a <track> by a number of steps. One of the most universal displacement <event>s in board games — shared semantics across score tracks, progress tracks, weather gauges, etc."
+      },
+      "required": [
+        {
+          "step": {
+            "type": "integer",
+            "description": {
+              "zh": "往前推进几个格。",
+              "en": "Number of steps to advance."
+            }
+          }
+        },
+        {
+          "<track>": {
+            "description": {
+              "zh": "要推进的轨道。类型在子类中窄化为具体轨道。",
+              "en": "The track to advance on. Narrowed to a specific track in subclasses."
+            }
+          }
+        }
+      ],
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "cost_type",
+      "name": {
+        "zh": "费用类型",
+        "en": "Cost Type"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "费用履行方式的枚举，区分消耗型（支付后资源减少）与持有型（仅检查是否达到门槛，不消耗）。",
+        "en": "Enum for cost fulfillment mode, distinguishing between consumption (resources are spent) and possession (only a threshold check, nothing is spent)."
+      },
+      "values": {
+        "type": "enum",
+        "enum": {
+          "CONSUME": {
+            "zh": "消耗",
+            "en": "Consume"
+          },
+          "POSSESS": {
+            "zh": "持有",
+            "en": "Possess"
+          }
+        }
       }
     },
     {
