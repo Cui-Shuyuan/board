@@ -100,16 +100,15 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **68 个概念**。
+本体已从最初的 51 个概念扩展到 **67 个概念**。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
 注：`<timing>` 已于 2026-07-30 合并进 `<condition>`——"回合结束时"本身就是一个条件。概念保留但不再独立出现在 trigger 字段中。
 
-### 枚举概念（2 个）★
+### 枚举概念（1 个）★
 Multiple Choice Enum（多选方式：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE）
-**Cost Type**（费用类型：CONSUME / POSSESS）
 
 ### 结构概念（6 个）★ +Board
 Player、Resource、Piece、**Board**、Aid、Token

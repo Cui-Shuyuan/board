@@ -78,7 +78,7 @@ metadata:
 ## 最近进展
 
 - **2026-07-30（trigger/effect 模型重构 + activity_01 形式化）**:
-    - **ontology 重构**：trigger 从 "timing + condition → events" 改为 "condition + cost + content" 递归模型。effect extends trigger，仅额外增加 options。删除 `<passive_effect>`。新增 `<cost_type>` 枚举（CONSUME / POSSESS）和 `<push_track>` event。
+    - **ontology 重构**：trigger 从 "timing + condition → events" 改为 "condition + cost + content" 递归模型。effect extends trigger，仅额外增加 options。删除 `<passive_effect>`。新增 `<push_track>` event。
     - **activity 概念**：新增 `<activity>`（specifies `<ontology::effect>`），预填 condition="<perform_activity>"。
     - **activity_01 实例**：进 `<activity>s` 数组，结构化 cost（condition + transfer：money_space → supply）和 content（push_any_progress_track）。
     - **push_any_progress_track**：specifies `<ontology::push_track>`，track 绑为 5 条进程轨的 CHOOSE_ONE。
