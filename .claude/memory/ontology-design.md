@@ -62,20 +62,13 @@ D:\workspace\board\ontology\ontology.json（统一本体，66 个概念）
 - **precondition**：`<condition>[]`，optional。事件发生前必须满足的条件列表
 - **rules**：`map<string, string>`，optional。中英双语描述超越结构化字段的执行规则约束
 
-### Trigger 的四要素结构 ★
-Trigger 的本质是「**timing + condition → events**」，三个 required 字段：
-- `<timing>`——触发时机（条件检查钟声）：状态变化瞬间 / 阶段边界 / 某 event 完成后。**满足条件不代表立即触发——时机到且条件满足才触发**；时机未至条件满足只是待命。Timing 是基础概念（与 Condition 平级，带 params 供程序 watcher 侦测）。**timing 只属于 trigger 和 procedure（起止边界），event 不持有 timing**——trigger 触发后 event 序列按依赖关系执行。字段 key 即类型，写作 `"<timing>": {...}` 而非 `"timing": {"type": "<timing>"}`
-- `<condition>`——纯状态事实（如「宝石总数 >10」），不含时机描述。每个 trigger 都必须有 condition，即使被 action 触发：「此 action 的 precondition 满足且 declaration 合法」本身就是 condition。trigger 不用 precondition 字段
-- `<event>[]`——触发后启动的后续事件列表
-
-**术语约定：trigger 用「触发」，不用「激活」**——激活（Activation）是玩家侧的 action 概念；trigger 不以玩家意志为转移。英文用 fire。
-
-**Event 顺序语义（do_after）**：
-- 每个 `<event>` 可声明 `id` 和 `do_after: ["<event_id>", ...]`，表示必须等被引用的 event 完成后才能执行
-- 无 `do_after` 的 event 互相独立，可任意顺序或并行执行
-- 如购买发展卡：`pay_cost` 无依赖，`play_card` 声明 `do_after: ["pay_cost"]`——若颠倒，新卡的 discount 会对本次购买生效
-- 如保留发展卡：两个 event 互相独立，均不写 `do_after`，AI 应表述为「同时进行 / 不分先后」
-- 单 event trigger 无需 `id` 和 `do_after`
+### Trigger 的递归结构 ★（2026-07-30 重构）
+Trigger 的本质是「**condition + cost + content**」的递归调度器：
+- `<condition>`——触发门槛：定义了「满足什么条件才可以激活此 trigger」。timing 已融入 condition（如「回合结束时」本身就是一个条件）。
+- `<cost>`——可选代价（null = 无需支付）。cost 自身含 `<condition>`（支付资格）和 `<event>`（实际执行的 transfer）。
+- `<content>`——cost 支付后触发的内容：指向另一个 `<trigger>`（递归下一层）或 `<event>`（终结链条）。
+- `target`——可选，作用目标对象。
+- 因果链：Action → Trigger（condition 满足 → cost 支付 → content 触发）→ 递归或终结于 Event。
 
 ### Transfer 字段改名 ★
 `what` → `<object>`，与其他概念引用 key 统一。
@@ -84,9 +77,10 @@ Trigger 的本质是「**timing + condition → events**」，三个 required �
 Ownership extends State。三种来源：Zone 推导、固有归属、游戏中获取。变更须经 Effect 或 Transfer 触发。
 
 ### Event 体系与因果关系链
+- **Effect** extends Trigger：效果是玩家视角下的 trigger，结构完全相同（condition → cost → content），额外增加 options 字段支持多选费用。
 - **Action**：player 的决策声明，actor 必为 player
 - **Trigger**：规则的事件调度器。actor 为 null。每个 Action 必定绑定一个 Trigger
-- 因果链：Action → Trigger → 后续 Event
+- 因果链：Action → Trigger（递归 condition → cost → content）→ 终结于 Event
 - **Resolve**：将 Effect 的 Content 实例化为真实 Event
 - **Shuffle**：重排 Deck 中 Object 顺序
 
@@ -106,13 +100,16 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **67 个概念**。新增内容部分来自第二款游戏《文明演化》的机制扩展，但 Civolution 专属概念（`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>`）已于 2026-07-25 移回游戏层。
+本体已从最初的 51 个概念扩展到 **68 个概念**。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
 
-### 枚举概念（1 个）★
+注：`<timing>` 已于 2026-07-30 合并进 `<condition>`——"回合结束时"本身就是一个条件。概念保留但不再独立出现在 trigger 字段中。
+
+### 枚举概念（2 个）★
 Multiple Choice Enum（多选方式：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE）
+**Cost Type**（费用类型：CONSUME / POSSESS）
 
 ### 结构概念（6 个）★ +Board
 Player、Resource、Piece、**Board**、Aid、Token
@@ -140,8 +137,8 @@ Track（extends Zone）、Score Track（extends Track）
 
 `<track>` 的 `scale` 可选字段已改为 `slots` 必填字段（`string | slot_spec[]`）。数值轨写取值范围字符串（`"0–12"`），槽位轨写对象数组（每个 slot 含 `name` + `<ontology::effect>`）。
 
-### 事件概念（4 + 2 新增）
-Action、Trigger、Resolve、Shuffle、**Lose（新增）**、**Gain（新增）**
+### 事件概念（4 + 3 新增）
+Action、Trigger、Resolve、Shuffle、**Lose（新增）**、**Gain（新增）**、**Push Track（新增）**
 
 ### 条件概念（2 个）
 Endgame Condition、Victory Condition
@@ -222,7 +219,7 @@ Hand
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`（trigger），表达模组 level 提升；`<lose>` / `<gain>`（event），用于载体切换时的 effect 所有权转移
 - **地点**: `<site>`、`<encampment>` — 已移回 Civolution 游戏层。`<terrain>` 和 `<region>` 确认无需 ontology 概念（地形 = zone 子类）。
-- **被动/持续效果**: `<passive_effect>` / `<location_effect>`，表达地点在激活模组时追加的效果
+- **被动/持续效果**: 已通过 trigger/effect 的 `<condition>` 字段处理——passive_effect 已于 2026-07-30 删除，统一为 trigger 模型。
 
 扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
 
