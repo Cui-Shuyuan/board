@@ -85,7 +85,7 @@ metadata:
     - **Splendor 迁移**：8 处 trigger 全迁新模型（删 timing，event[] → content，加 cost=null）。
 - **2026-07-27（概念补全 + parts 格式升级）**:
   - **新增 2 个概念**：`<card_name>`（specifies `<ontology::object>`，卡牌名称标签）和 `<weather_trend>`（specifies `<ontology::object>`，事件牌天气趋势指示器）。二者均为通用概念，后续实例化各卡牌时通过 parts 引用。
-  - **event_card parts 维护**：事件牌三部分——`<card_name>`（左上角）、`<weather_trend>`（右上角）、`<ontology::instant_effect>`（下半部分，全部即时效果）。
+  - **event_card parts 维护**：事件牌三部分——`<card_name>`（左上角）、`<weather_trend>`（右上角）、`<ontology::instant_content>`（下半部分，全部即时内容；2026-07-30 由 instant_effect 改名）。
   - **parts 格式升级**：全局 `"as": "<concept>"` → `"<concept>": {...}`，概念 ID 直接做 key。Civolution 7 概念 + Splendor 2 概念共 ~37 个 part 全部迁移。
   - **终局计分区重构**：`<final_scoring_area>` 从 track 改为 zone，拆为两个子概念——`<final_scoring_area_icons>`（图标 zone，放置计分板块）和 `<final_scoring_area_hex>`（六角格 track，slots=null，终局计分时阶段标记逐格推进）。
   - **外观描述补全**：`<scoring_tile>`（小型矩形 + 一角弧形角，双面）、`<site>`（正八边形 + 一角弧形角）、`<hundred_point_token>`（正方形而非圆形）。

@@ -715,37 +715,40 @@
                 },
                 "<ontology::content>": [
                     {
-                        "type": "<ontology::transfer>",
-                        "description": {
-                            "zh": "将<ontology::declaration>中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。<ownership_change>隐式发生。",
-                            "en": "Moves the <gem>s specified in <ontology::declaration> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. <ownership_change> occurs implicitly."
-                        },
-                        "source": {
-                            "type": "<gem_supply>",
+                        "type": "<ontology::instant_content>",
+                        "<ontology::event>": {
+                            "type": "<ontology::transfer>",
                             "description": {
-                                "zh": "<ontology::transfer>的源<ontology::zone>。固定为<gem_supply>。",
-                                "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <gem_supply>."
-                            }
-                        },
-                        "destination": {
-                            "type": "<ontology::player_holding>",
-                            "description": {
-                                "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::player_holding>。",
-                                "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
-                            }
-                        },
-                        "<object>": {
-                            "type": "<gem>[]",
-                            "description": {
-                                "zh": "被<ontology::transfer>的<ontology::object>。即<ontology::declaration>中玩家选择的<gem>，颜色各不同，数量 1~3 取决于<gem_supply>可用情况。",
-                                "en": "The <ontology::object>s being <ontology::transfer>red. The <gem>s chosen by the player in <ontology::declaration>, distinct colors, quantity 1-3 depending on <gem_supply> availability."
-                            }
-                        },
-                        "quantity": {
-                            "type": "integer",
-                            "description": {
-                                "zh": "<ontology::transfer>的数量。不固定——≥3 种颜色可选时为 3，1~2 种时等于<ontology::declaration>中 colors 数组的长度。",
-                                "en": "Quantity of the <ontology::transfer>. Not fixed — 3 when ≥3 colors available, equals the length of the colors array in <ontology::declaration> when 1-2."
+                                "zh": "将<ontology::declaration>中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。<ownership_change>隐式发生。",
+                                "en": "Moves the <gem>s specified in <ontology::declaration> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. <ownership_change> occurs implicitly."
+                            },
+                            "source": {
+                                "type": "<gem_supply>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的源<ontology::zone>。固定为<gem_supply>。",
+                                    "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <gem_supply>."
+                                }
+                            },
+                            "destination": {
+                                "type": "<ontology::player_holding>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::player_holding>。",
+                                    "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
+                                }
+                            },
+                            "<object>": {
+                                "type": "<gem>[]",
+                                "description": {
+                                    "zh": "被<ontology::transfer>的<ontology::object>。即<ontology::declaration>中玩家选择的<gem>，颜色各不同，数量 1~3 取决于<gem_supply>可用情况。",
+                                    "en": "The <ontology::object>s being <ontology::transfer>red. The <gem>s chosen by the player in <ontology::declaration>, distinct colors, quantity 1-3 depending on <gem_supply> availability."
+                                }
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "description": {
+                                    "zh": "<ontology::transfer>的数量。不固定——≥3 种颜色可选时为 3，1~2 种时等于<ontology::declaration>中 colors 数组的长度。",
+                                    "en": "Quantity of the <ontology::transfer>. Not fixed — 3 when ≥3 colors available, equals the length of the colors array in <ontology::declaration> when 1-2."
+                                }
                             }
                         }
                     }
@@ -785,38 +788,41 @@
                 },
                 "<ontology::content>": [
                     {
-                        "type": "<ontology::transfer>",
-                        "description": {
-                            "zh": "将<ontology::declaration>中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。<ownership_change>隐式发生。",
-                            "en": "Moves 2 <gem>s of the color specified in <ontology::declaration> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. <ownership_change> occurs implicitly."
-                        },
-                        "source": {
-                            "type": "<gem_supply>",
+                        "type": "<ontology::instant_content>",
+                        "<ontology::event>": {
+                            "type": "<ontology::transfer>",
                             "description": {
-                                "zh": "<ontology::transfer>的源<ontology::zone>。固定为<gem_supply>。",
-                                "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <gem_supply>."
-                            }
-                        },
-                        "destination": {
-                            "type": "<ontology::player_holding>",
-                            "description": {
-                                "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::player_holding>。",
-                                "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
-                            }
-                        },
-                        "<object>": {
-                            "type": "<gem>[]",
-                            "description": {
-                                "zh": "被<ontology::transfer>的<ontology::object>。即<ontology::declaration>中玩家选择颜色的 2 颗<gem>，两颗颜色相同。",
-                                "en": "The <ontology::object>s being <ontology::transfer>red. 2 <gem>s of the color chosen by the player in <ontology::declaration>, both of the same color."
-                            }
-                        },
-                        "quantity": {
-                            "type": "integer",
-                            "default": 2,
-                            "description": {
-                                "zh": "<ontology::transfer>的数量。固定为 2。",
-                                "en": "Quantity of the <ontology::transfer>. Fixed at 2."
+                                "zh": "将<ontology::declaration>中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。<ownership_change>隐式发生。",
+                                "en": "Moves 2 <gem>s of the color specified in <ontology::declaration> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. <ownership_change> occurs implicitly."
+                            },
+                            "source": {
+                                "type": "<gem_supply>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的源<ontology::zone>。固定为<gem_supply>。",
+                                    "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <gem_supply>."
+                                }
+                            },
+                            "destination": {
+                                "type": "<ontology::player_holding>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::player_holding>。",
+                                    "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
+                                }
+                            },
+                            "<object>": {
+                                "type": "<gem>[]",
+                                "description": {
+                                    "zh": "被<ontology::transfer>的<ontology::object>。即<ontology::declaration>中玩家选择颜色的 2 颗<gem>，两颗颜色相同。",
+                                    "en": "The <ontology::object>s being <ontology::transfer>red. 2 <gem>s of the color chosen by the player in <ontology::declaration>, both of the same color."
+                                }
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "default": 2,
+                                "description": {
+                                    "zh": "<ontology::transfer>的数量。固定为 2。",
+                                    "en": "Quantity of the <ontology::transfer>. Fixed at 2."
+                                }
                             }
                         }
                     }
@@ -856,63 +862,69 @@
                 },
                 "<ontology::content>": [
                     {
-                        "id": "pay_cost",
-                        "type": "<ontology::transfer>",
-                        "description": {
-                            "zh": "将一定种类和数量的<gem>从 actor 的<ontology::player_holding>返回供应堆——数量为发展卡的<ontology::cost>逐色减去 actor <ontology::development_area>中已有<discount>（每色最低为 0），<gold>可替代任意颜色。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
-                            "en": "Returns a set of <gem>s from the actor's <ontology::player_holding> to the supply — the quantity per color being the development card's <ontology::cost> reduced by <discount>s already in the actor's <ontology::development_area> (minimum 0 per color), with <gold> substituting for any color. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
-                        },
-                        "source": {
-                            "type": "<ontology::player_holding>",
+                        "type": "<ontology::instant_content>",
+                        "<ontology::event>": {
+                            "id": "pay_cost",
+                            "type": "<ontology::transfer>",
                             "description": {
-                                "zh": "<ontology::transfer>的源<ontology::zone>。指向 actor 的<ontology::player_holding>。",
-                                "en": "Source <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
-                            }
-                        },
-                        "destination": {
-                            "type": "<gem_supply> | <gold_supply>",
-                            "description": {
-                                "zh": "<ontology::transfer>的目标<ontology::zone>。<gem>回到<gem_supply>，<gold>回到<gold_supply>——按<ontology::object>类型分别归入。",
-                                "en": "Destination <ontology::zone> of the <ontology::transfer>. <gem>s return to <gem_supply>, <gold> to <gold_supply> — each <ontology::object> type goes to its own supply."
-                            }
-                        },
-                        "<object>": {
-                            "type": "<gem>[] | <gold>[]",
-                            "description": {
-                                "zh": "被<ontology::transfer>的<ontology::object>。即<ontology::declaration>的 payment 中声明的各色<gem>和<gold>。",
-                                "en": "The <ontology::object>s being <ontology::transfer>red. The <gem>s of each color and <gold> declared in the <ontology::declaration>'s payment."
+                                "zh": "将一定种类和数量的<gem>从 actor 的<ontology::player_holding>返回供应堆——数量为发展卡的<ontology::cost>逐色减去 actor <ontology::development_area>中已有<discount>（每色最低为 0），<gold>可替代任意颜色。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
+                                "en": "Returns a set of <gem>s from the actor's <ontology::player_holding> to the supply — the quantity per color being the development card's <ontology::cost> reduced by <discount>s already in the actor's <ontology::development_area> (minimum 0 per color), with <gold> substituting for any color. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
+                            },
+                            "source": {
+                                "type": "<ontology::player_holding>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的源<ontology::zone>。指向 actor 的<ontology::player_holding>。",
+                                    "en": "Source <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
+                                }
+                            },
+                            "destination": {
+                                "type": "<gem_supply> | <gold_supply>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的目标<ontology::zone>。<gem>回到<gem_supply>，<gold>回到<gold_supply>——按<ontology::object>类型分别归入。",
+                                    "en": "Destination <ontology::zone> of the <ontology::transfer>. <gem>s return to <gem_supply>, <gold> to <gold_supply> — each <ontology::object> type goes to its own supply."
+                                }
+                            },
+                            "<object>": {
+                                "type": "<gem>[] | <gold>[]",
+                                "description": {
+                                    "zh": "被<ontology::transfer>的<ontology::object>。即<ontology::declaration>的 payment 中声明的各色<gem>和<gold>。",
+                                    "en": "The <ontology::object>s being <ontology::transfer>red. The <gem>s of each color and <gold> declared in the <ontology::declaration>'s payment."
+                                }
                             }
                         }
                     },
                     {
-                        "id": "play_card",
-                        "type": "<ontology::play>",
-                        "do_after": [
-                            "pay_cost"
-                        ],
-                        "description": {
-                            "zh": "将目标<development_card>打出至 actor 的<ontology::development_area>。目标卡可来自<card_market>（当面购买）或 actor 的<ontology::hand>（购买已保留的卡牌）。打出后<ownership_change>隐式发生，该卡的<discount>与<prestige_point>自此生效，但不作用于本次购买。若目标卡来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<ontology::deck>已空则空位不再补充）；若来自<ontology::hand>，不触发补牌。",
-                            "en": "Plays the target <development_card> into the actor's <ontology::development_area>. The target may come from <card_market> (face-up purchase) or the actor's <ontology::hand> (buying a reserved card). After the play, <ownership_change> occurs implicitly and the card's <discount> and <prestige_point>s take effect from now on, but do not apply to this purchase. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <ontology::deck> is empty, the slot stays vacant); if it came from <ontology::hand>, no replenishment occurs."
-                        },
-                        "source": {
-                            "type": "<card_market> | <ontology::hand>",
+                        "type": "<ontology::instant_content>",
+                        "<ontology::event>": {
+                            "id": "play_card",
+                            "type": "<ontology::play>",
+                            "do_after": [
+                                "pay_cost"
+                            ],
                             "description": {
-                                "zh": "<ontology::play>的源<ontology::zone>。<card_market>或 actor 的<ontology::hand>——由<ontology::declaration>中 card 当前所在位置决定。",
-                                "en": "Source <ontology::zone> of the <ontology::play>. <card_market> or the actor's <ontology::hand> — determined by where the card in <ontology::declaration> currently resides."
-                            }
-                        },
-                        "destination": {
-                            "type": "<ontology::development_area>",
-                            "description": {
-                                "zh": "<ontology::play>的目标<ontology::zone>。指向 actor 的<ontology::development_area>。",
-                                "en": "Destination <ontology::zone> of the <ontology::play>. Points to the actor's <ontology::development_area>."
-                            }
-                        },
-                        "<object>": {
-                            "type": "<development_card>",
-                            "description": {
-                                "zh": "被打出的<ontology::object>。即<ontology::declaration>中指定的目标<development_card>，固定 1 张。",
-                                "en": "The <ontology::object> being played. The target <development_card> specified in <ontology::declaration>, exactly 1 card."
+                                "zh": "将目标<development_card>打出至 actor 的<ontology::development_area>。目标卡可来自<card_market>（当面购买）或 actor 的<ontology::hand>（购买已保留的卡牌）。打出后<ownership_change>隐式发生，该卡的<discount>与<prestige_point>自此生效，但不作用于本次购买。若目标卡来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<ontology::deck>已空则空位不再补充）；若来自<ontology::hand>，不触发补牌。",
+                                "en": "Plays the target <development_card> into the actor's <ontology::development_area>. The target may come from <card_market> (face-up purchase) or the actor's <ontology::hand> (buying a reserved card). After the play, <ownership_change> occurs implicitly and the card's <discount> and <prestige_point>s take effect from now on, but do not apply to this purchase. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <ontology::deck> is empty, the slot stays vacant); if it came from <ontology::hand>, no replenishment occurs."
+                            },
+                            "source": {
+                                "type": "<card_market> | <ontology::hand>",
+                                "description": {
+                                    "zh": "<ontology::play>的源<ontology::zone>。<card_market>或 actor 的<ontology::hand>——由<ontology::declaration>中 card 当前所在位置决定。",
+                                    "en": "Source <ontology::zone> of the <ontology::play>. <card_market> or the actor's <ontology::hand> — determined by where the card in <ontology::declaration> currently resides."
+                                }
+                            },
+                            "destination": {
+                                "type": "<ontology::development_area>",
+                                "description": {
+                                    "zh": "<ontology::play>的目标<ontology::zone>。指向 actor 的<ontology::development_area>。",
+                                    "en": "Destination <ontology::zone> of the <ontology::play>. Points to the actor's <ontology::development_area>."
+                                }
+                            },
+                            "<object>": {
+                                "type": "<development_card>",
+                                "description": {
+                                    "zh": "被打出的<ontology::object>。即<ontology::declaration>中指定的目标<development_card>，固定 1 张。",
+                                    "en": "The <ontology::object> being played. The target <development_card> specified in <ontology::declaration>, exactly 1 card."
+                                }
                             }
                         }
                     }
@@ -952,79 +964,85 @@
                 },
                 "<ontology::content>": [
                     {
-                        "id": "reserve_card",
-                        "type": "<ontology::transfer>",
-                        "description": {
-                            "zh": "将目标<development_card>移入 actor 的<ontology::hand>。明面保留时源为<card_market>，暗面保留时源为<ontology::declaration>指定等级的<development_deck>顶部。<ownership_change>隐式发生。若来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<ontology::deck>已空则空位不再补充）。暗面保留的卡牌进入<ontology::hand>后仅对 actor 可见——<ontology::hand>为 private <ontology::zone>。",
-                            "en": "Moves the target <development_card> into the actor's <ontology::hand>. For an open reserve the source is <card_market>; for a blind reserve it is the top of the <development_deck> of the level specified in <ontology::declaration>. <ownership_change> occurs implicitly. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <ontology::deck> is empty, the slot stays vacant). A blindly reserved card in <ontology::hand> is visible only to the actor — <ontology::hand> is a private <ontology::zone>."
-                        },
-                        "source": {
-                            "type": "<card_market> | <development_deck>",
+                        "type": "<ontology::instant_content>",
+                        "<ontology::event>": {
+                            "id": "reserve_card",
+                            "type": "<ontology::transfer>",
                             "description": {
-                                "zh": "<ontology::transfer>的源<ontology::zone>。由<ontology::declaration>决定——card 非 null 时为<card_market>，deck 非 null 时为对应等级的<development_deck>。",
-                                "en": "Source <ontology::zone> of the <ontology::transfer>. Determined by <ontology::declaration> — <card_market> when card is non-null, the corresponding level's <development_deck> when deck is non-null."
-                            }
-                        },
-                        "destination": {
-                            "type": "<ontology::hand>",
-                            "description": {
-                                "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::hand>。",
-                                "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::hand>."
-                            }
-                        },
-                        "<object>": {
-                            "type": "<development_card>",
-                            "description": {
-                                "zh": "被<ontology::transfer>的<ontology::object>。明面保留时即<ontology::declaration>中指定的<development_card>；暗面保留时为指定<development_deck>顶部的一张，执行前对 actor 未知。固定 1 张。",
-                                "en": "The <ontology::object> being <ontology::transfer>red. For an open reserve, the <development_card> specified in <ontology::declaration>; for a blind reserve, the top card of the specified <development_deck>, unknown to the actor until executed. Exactly 1 card."
-                            }
-                        },
-                        "quantity": {
-                            "type": "integer",
-                            "default": 1,
-                            "description": {
-                                "zh": "<ontology::transfer>的数量。固定为 1。",
-                                "en": "Quantity of the <ontology::transfer>. Fixed at 1."
+                                "zh": "将目标<development_card>移入 actor 的<ontology::hand>。明面保留时源为<card_market>，暗面保留时源为<ontology::declaration>指定等级的<development_deck>顶部。<ownership_change>隐式发生。若来自<card_market>，立即从对应等级<development_deck>顶部翻一张新卡补入空位（该<ontology::deck>已空则空位不再补充）。暗面保留的卡牌进入<ontology::hand>后仅对 actor 可见——<ontology::hand>为 private <ontology::zone>。",
+                                "en": "Moves the target <development_card> into the actor's <ontology::hand>. For an open reserve the source is <card_market>; for a blind reserve it is the top of the <development_deck> of the level specified in <ontology::declaration>. <ownership_change> occurs implicitly. If the target came from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot (if that <ontology::deck> is empty, the slot stays vacant). A blindly reserved card in <ontology::hand> is visible only to the actor — <ontology::hand> is a private <ontology::zone>."
+                            },
+                            "source": {
+                                "type": "<card_market> | <development_deck>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的源<ontology::zone>。由<ontology::declaration>决定——card 非 null 时为<card_market>，deck 非 null 时为对应等级的<development_deck>。",
+                                    "en": "Source <ontology::zone> of the <ontology::transfer>. Determined by <ontology::declaration> — <card_market> when card is non-null, the corresponding level's <development_deck> when deck is non-null."
+                                }
+                            },
+                            "destination": {
+                                "type": "<ontology::hand>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::hand>。",
+                                    "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::hand>."
+                                }
+                            },
+                            "<object>": {
+                                "type": "<development_card>",
+                                "description": {
+                                    "zh": "被<ontology::transfer>的<ontology::object>。明面保留时即<ontology::declaration>中指定的<development_card>；暗面保留时为指定<development_deck>顶部的一张，执行前对 actor 未知。固定 1 张。",
+                                    "en": "The <ontology::object> being <ontology::transfer>red. For an open reserve, the <development_card> specified in <ontology::declaration>; for a blind reserve, the top card of the specified <development_deck>, unknown to the actor until executed. Exactly 1 card."
+                                }
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "default": 1,
+                                "description": {
+                                    "zh": "<ontology::transfer>的数量。固定为 1。",
+                                    "en": "Quantity of the <ontology::transfer>. Fixed at 1."
+                                }
                             }
                         }
                     },
                     {
-                        "id": "take_gold_bonus",
-                        "type": "<ontology::transfer>",
-                        "description": {
-                            "zh": "将 1 个<gold>从<gold_supply>移入 actor 的<ontology::player_holding>。这是保留卡牌的附带收益——<gold>是百搭<gem>，可在购买时替代任意颜色。",
-                            "en": "Moves 1 <gold> from <gold_supply> into the actor's <ontology::player_holding>. This is the bonus for reserving — <gold> is a wild <gem> that substitutes for any color when purchasing."
-                        },
-                        "precondition": [
-                            "<gold_available>"
-                        ],
-                        "source": {
-                            "type": "<gold_supply>",
+                        "type": "<ontology::instant_content>",
+                        "<ontology::event>": {
+                            "id": "take_gold_bonus",
+                            "type": "<ontology::transfer>",
                             "description": {
-                                "zh": "<ontology::transfer>的源<ontology::zone>。固定为<gold_supply>。",
-                                "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <gold_supply>."
-                            }
-                        },
-                        "destination": {
-                            "type": "<ontology::player_holding>",
-                            "description": {
-                                "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::player_holding>。",
-                                "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
-                            }
-                        },
-                        "<object>": {
-                            "type": "<gold>",
-                            "description": {
-                                "zh": "被<ontology::transfer>的<ontology::object>。1 个<gold>。",
-                                "en": "The <ontology::object> being <ontology::transfer>red. 1 <gold>."
-                            }
-                        },
-                        "quantity": {
-                            "type": "integer",
-                            "default": 1,
-                            "description": {
-                                "zh": "<ontology::transfer>的数量。固定为 1。",
-                                "en": "Quantity of the <ontology::transfer>. Fixed at 1."
+                                "zh": "将 1 个<gold>从<gold_supply>移入 actor 的<ontology::player_holding>。这是保留卡牌的附带收益——<gold>是百搭<gem>，可在购买时替代任意颜色。",
+                                "en": "Moves 1 <gold> from <gold_supply> into the actor's <ontology::player_holding>. This is the bonus for reserving — <gold> is a wild <gem> that substitutes for any color when purchasing."
+                            },
+                            "precondition": [
+                                "<gold_available>"
+                            ],
+                            "source": {
+                                "type": "<gold_supply>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的源<ontology::zone>。固定为<gold_supply>。",
+                                    "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <gold_supply>."
+                                }
+                            },
+                            "destination": {
+                                "type": "<ontology::player_holding>",
+                                "description": {
+                                    "zh": "<ontology::transfer>的目标<ontology::zone>。指向 actor 的<ontology::player_holding>。",
+                                    "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the actor's <ontology::player_holding>."
+                                }
+                            },
+                            "<object>": {
+                                "type": "<gold>",
+                                "description": {
+                                    "zh": "被<ontology::transfer>的<ontology::object>。1 个<gold>。",
+                                    "en": "The <ontology::object> being <ontology::transfer>red. 1 <gold>."
+                                }
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "default": 1,
+                                "description": {
+                                    "zh": "<ontology::transfer>的数量。固定为 1。",
+                                    "en": "Quantity of the <ontology::transfer>. Fixed at 1."
+                                }
                             }
                         }
                     }
@@ -1050,37 +1068,40 @@
             "specifies": "<ontology::trigger>",
             "<ontology::content>": [
                 {
-                    "type": "<ontology::transfer>",
-                    "description": {
-                        "zh": "将超出 10 颗部分的<gem>和<gold>从超限的<ontology::player>的<ontology::player_holding>返回供应堆。返回哪些颜色由该<ontology::player>自行选择——这是本<ontology::trigger>中唯一的玩家决策点。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
-                        "en": "Returns the <gem>s and <gold> exceeding 10 from the <ontology::player_holding> of the <ontology::player> who exceeded the limit to the supply. Which colors to return is chosen by that <ontology::player> — the only player decision point in this <ontology::trigger>. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
-                    },
-                    "source": {
-                        "type": "<ontology::player_holding>",
+                    "type": "<ontology::instant_content>",
+                    "<ontology::event>": {
+                        "type": "<ontology::transfer>",
                         "description": {
-                            "zh": "<ontology::transfer>的源<ontology::zone>。指向超限的<ontology::player>的<ontology::player_holding>。",
-                            "en": "Source <ontology::zone> of the <ontology::transfer>. Points to the <ontology::player_holding> of the <ontology::player> who exceeded the limit."
-                        }
-                    },
-                    "destination": {
-                        "type": "<gem_supply> | <gold_supply>",
-                        "description": {
-                            "zh": "<ontology::transfer>的目标<ontology::zone>。<gem>回到<gem_supply>，<gold>回到<gold_supply>——按<ontology::object>类型分别归入。",
-                            "en": "Destination <ontology::zone> of the <ontology::transfer>. <gem>s return to <gem_supply>, <gold> to <gold_supply> — each <ontology::object> type goes to its own supply."
-                        }
-                    },
-                    "<object>": {
-                        "type": "<gem>[] | <gold>[]",
-                        "description": {
-                            "zh": "被<ontology::transfer>的<ontology::object>。由超限的<ontology::player>从自己的<ontology::player_holding>中选择的<gem>和<gold>，颜色与数量组合任选，总数等于超出部分。",
-                            "en": "The <ontology::object>s being <ontology::transfer>red. <gem>s and <gold> chosen by the <ontology::player> who exceeded the limit from their own <ontology::player_holding>, any combination of colors, totaling the excess."
-                        }
-                    },
-                    "quantity": {
-                        "type": "integer",
-                        "description": {
-                            "zh": "<ontology::transfer>的数量。不固定——等于该<ontology::player>的<ontology::player_holding>中<gem>与<gold>总数减去 10。",
-                            "en": "Quantity of the <ontology::transfer>. Not fixed — equals the total number of <gem>s and <gold> in the <ontology::player>'s <ontology::player_holding> minus 10."
+                            "zh": "将超出 10 颗部分的<gem>和<gold>从超限的<ontology::player>的<ontology::player_holding>返回供应堆。返回哪些颜色由该<ontology::player>自行选择——这是本<ontology::trigger>中唯一的玩家决策点。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
+                            "en": "Returns the <gem>s and <gold> exceeding 10 from the <ontology::player_holding> of the <ontology::player> who exceeded the limit to the supply. Which colors to return is chosen by that <ontology::player> — the only player decision point in this <ontology::trigger>. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
+                        },
+                        "source": {
+                            "type": "<ontology::player_holding>",
+                            "description": {
+                                "zh": "<ontology::transfer>的源<ontology::zone>。指向超限的<ontology::player>的<ontology::player_holding>。",
+                                "en": "Source <ontology::zone> of the <ontology::transfer>. Points to the <ontology::player_holding> of the <ontology::player> who exceeded the limit."
+                            }
+                        },
+                        "destination": {
+                            "type": "<gem_supply> | <gold_supply>",
+                            "description": {
+                                "zh": "<ontology::transfer>的目标<ontology::zone>。<gem>回到<gem_supply>，<gold>回到<gold_supply>——按<ontology::object>类型分别归入。",
+                                "en": "Destination <ontology::zone> of the <ontology::transfer>. <gem>s return to <gem_supply>, <gold> to <gold_supply> — each <ontology::object> type goes to its own supply."
+                            }
+                        },
+                        "<object>": {
+                            "type": "<gem>[] | <gold>[]",
+                            "description": {
+                                "zh": "被<ontology::transfer>的<ontology::object>。由超限的<ontology::player>从自己的<ontology::player_holding>中选择的<gem>和<gold>，颜色与数量组合任选，总数等于超出部分。",
+                                "en": "The <ontology::object>s being <ontology::transfer>red. <gem>s and <gold> chosen by the <ontology::player> who exceeded the limit from their own <ontology::player_holding>, any combination of colors, totaling the excess."
+                            }
+                        },
+                        "quantity": {
+                            "type": "integer",
+                            "description": {
+                                "zh": "<ontology::transfer>的数量。不固定——等于该<ontology::player>的<ontology::player_holding>中<gem>与<gold>总数减去 10。",
+                                "en": "Quantity of the <ontology::transfer>. Not fixed — equals the total number of <gem>s and <gold> in the <ontology::player>'s <ontology::player_holding> minus 10."
+                            }
                         }
                     }
                 }
@@ -1102,38 +1123,41 @@
             "specifies": "<ontology::trigger>",
             "<ontology::content>": [
                 {
-                    "type": "<ontology::transfer>",
-                    "description": {
-                        "zh": "将一枚满足条件的<noble>从<noble_market>移入刚结束回合的<ontology::player>的<ontology::development_area>。<ownership_change>隐式发生，该<noble>自此提供 3 点<prestige_point>。",
-                        "en": "Moves a satisfied <noble> from <noble_market> into the <ontology::development_area> of the <ontology::player> whose turn just ended. <ownership_change> occurs implicitly, and the <noble> provides 3 <prestige_point>s from now on."
-                    },
-                    "source": {
-                        "type": "<noble_market>",
+                    "type": "<ontology::instant_content>",
+                    "<ontology::event>": {
+                        "type": "<ontology::transfer>",
                         "description": {
-                            "zh": "<ontology::transfer>的源<ontology::zone>。固定为<noble_market>。",
-                            "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <noble_market>."
-                        }
-                    },
-                    "destination": {
-                        "type": "<ontology::development_area>",
-                        "description": {
-                            "zh": "<ontology::transfer>的目标<ontology::zone>。指向刚结束回合的<ontology::player>的<ontology::development_area>。",
-                            "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the <ontology::development_area> of the <ontology::player> whose turn just ended."
-                        }
-                    },
-                    "<object>": {
-                        "type": "<noble>",
-                        "description": {
-                            "zh": "被<ontology::transfer>的<ontology::object>。<noble_market>中 requirement 被满足的一枚<noble>。若同时有多枚<noble>满足条件，由该<ontology::player>选择其中一枚——这是本<ontology::trigger>中唯一的玩家决策点。每回合至多获得一枚<noble>。",
-                            "en": "The <ontology::object> being <ontology::transfer>red. A <noble> in <noble_market> whose requirement is met. If multiple <noble>s qualify at once, the <ontology::player> chooses one of them — the only player decision point in this <ontology::trigger>. At most one <noble> is gained per turn."
-                        }
-                    },
-                    "quantity": {
-                        "type": "integer",
-                        "default": 1,
-                        "description": {
-                            "zh": "<ontology::transfer>的数量。固定为 1。",
-                            "en": "Quantity of the <ontology::transfer>. Fixed at 1."
+                            "zh": "将一枚满足条件的<noble>从<noble_market>移入刚结束回合的<ontology::player>的<ontology::development_area>。<ownership_change>隐式发生，该<noble>自此提供 3 点<prestige_point>。",
+                            "en": "Moves a satisfied <noble> from <noble_market> into the <ontology::development_area> of the <ontology::player> whose turn just ended. <ownership_change> occurs implicitly, and the <noble> provides 3 <prestige_point>s from now on."
+                        },
+                        "source": {
+                            "type": "<noble_market>",
+                            "description": {
+                                "zh": "<ontology::transfer>的源<ontology::zone>。固定为<noble_market>。",
+                                "en": "Source <ontology::zone> of the <ontology::transfer>. Fixed to <noble_market>."
+                            }
+                        },
+                        "destination": {
+                            "type": "<ontology::development_area>",
+                            "description": {
+                                "zh": "<ontology::transfer>的目标<ontology::zone>。指向刚结束回合的<ontology::player>的<ontology::development_area>。",
+                                "en": "Destination <ontology::zone> of the <ontology::transfer>. Points to the <ontology::development_area> of the <ontology::player> whose turn just ended."
+                            }
+                        },
+                        "<object>": {
+                            "type": "<noble>",
+                            "description": {
+                                "zh": "被<ontology::transfer>的<ontology::object>。<noble_market>中 requirement 被满足的一枚<noble>。若同时有多枚<noble>满足条件，由该<ontology::player>选择其中一枚——这是本<ontology::trigger>中唯一的玩家决策点。每回合至多获得一枚<noble>。",
+                                "en": "The <ontology::object> being <ontology::transfer>red. A <noble> in <noble_market> whose requirement is met. If multiple <noble>s qualify at once, the <ontology::player> chooses one of them — the only player decision point in this <ontology::trigger>. At most one <noble> is gained per turn."
+                            }
+                        },
+                        "quantity": {
+                            "type": "integer",
+                            "default": 1,
+                            "description": {
+                                "zh": "<ontology::transfer>的数量。固定为 1。",
+                                "en": "Quantity of the <ontology::transfer>. Fixed at 1."
+                            }
                         }
                     }
                 }
@@ -1155,10 +1179,13 @@
             "specifies": "<ontology::trigger>",
             "<ontology::content>": [
                 {
-                    "type": "<ontology::event>",
-                    "description": {
-                        "zh": "游戏进入终局流程。此后的具体流程——补完当前<ontology::round>使所有<ontology::player>完成相同数量的<ontology::turn>、游戏结束、按<highest_prestige_wins>判定胜负——由流程文档定义，此处仅标记游戏状态切换为「终局」。",
-                        "en": "The game enters its endgame process. The specifics that follow — finishing the current <ontology::round> so all <ontology::player>s complete an equal number of <ontology::turn>s, ending the game, adjudicating by <highest_prestige_wins> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
+                    "type": "<ontology::instant_content>",
+                    "<ontology::event>": {
+                        "type": "<ontology::event>",
+                        "description": {
+                            "zh": "游戏进入终局流程。此后的具体流程——补完当前<ontology::round>使所有<ontology::player>完成相同数量的<ontology::turn>、游戏结束、按<highest_prestige_wins>判定胜负——由流程文档定义，此处仅标记游戏状态切换为「终局」。",
+                            "en": "The game enters its endgame process. The specifics that follow — finishing the current <ontology::round> so all <ontology::player>s complete an equal number of <ontology::turn>s, ending the game, adjudicating by <highest_prestige_wins> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
+                        }
                     }
                 }
             ],
@@ -1179,10 +1206,13 @@
             "specifies": "<ontology::trigger>",
             "<ontology::content>": [
                 {
-                    "type": "<ontology::event>",
-                    "description": {
-                        "zh": "当前<ontology::player>的<ontology::turn>直接结束——不执行任何<ontology::action>，不触发任何与<ontology::action>绑定的<ontology::trigger>，流程进入下一<ontology::player>的<ontology::turn>。回合结束时的<ontology::trigger>（<attract_noble>、<enter_endgame>）照常检查。",
-                        "en": "The current <ontology::player>'s <ontology::turn> ends immediately — no <ontology::action> is performed and no <ontology::action>-bound <ontology::trigger> fires; play passes to the next <ontology::player>'s <ontology::turn>. End-of-turn <ontology::trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."
+                    "type": "<ontology::instant_content>",
+                    "<ontology::event>": {
+                        "type": "<ontology::event>",
+                        "description": {
+                            "zh": "当前<ontology::player>的<ontology::turn>直接结束——不执行任何<ontology::action>，不触发任何与<ontology::action>绑定的<ontology::trigger>，流程进入下一<ontology::player>的<ontology::turn>。回合结束时的<ontology::trigger>（<attract_noble>、<enter_endgame>）照常检查。",
+                            "en": "The current <ontology::player>'s <ontology::turn> ends immediately — no <ontology::action> is performed and no <ontology::action>-bound <ontology::trigger> fires; play passes to the next <ontology::player>'s <ontology::turn>. End-of-turn <ontology::trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."
+                        }
                     }
                 }
             ],

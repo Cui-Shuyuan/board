@@ -62,13 +62,19 @@ D:\workspace\board\ontology\ontology.json（统一本体，66 个概念）
 - **precondition**：`<condition>[]`，optional。事件发生前必须满足的条件列表
 - **rules**：`map<string, string>`，optional。中英双语描述超越结构化字段的执行规则约束
 
-### Trigger 的递归结构 ★（2026-07-30 重构）
+### Trigger 的递归结构 ★（2026-07-30 重构 + 语义修正）
 Trigger 的本质是「**condition + cost + content**」的递归调度器：
-- `<condition>`——触发门槛：定义了「满足什么条件才可以激活此 trigger」。timing 已融入 condition（如「回合结束时」本身就是一个条件）。
+- `<condition>`——触发门槛：**对 game state 的谓词**，任意时刻可求值、无副作用。trigger 对它**按边沿评估**（谓词由假变真的瞬间激活）。timing 已融入 condition（如「回合结束时」本身就是一个瞬间谓词）。
 - `<cost>`——可选代价（null = 无需支付）。cost 自身含 `<condition>`（支付资格）和 `<event>`（实际执行的 transfer）。
-- `<content>`——cost 支付后触发的内容：指向另一个 `<trigger>`（递归下一层）或 `<event>`（终结链条）。
+- `<content>`——cost 支付后触发的内容：类型为 **`<trigger> | <content>`**（不再是 `| <event>`），指向另一个 `<trigger>`（递归下一层）或终结的 `<content>`——**`<instant_content>`（一次性 resolve 执行，链条终结）或 `<continuous_content>`（进入生效池按条件电平维持）**。类型上保证递归必然终结。
 - `target`——可选，作用目标对象。
-- 因果链：Action → Trigger（condition 满足 → cost 支付 → content 触发）→ 递归或终结于 Event。
+- 因果链：Action → Trigger（condition 边沿跳变 → cost 支付 → content 触发）→ 递归或终结于 Content。
+
+### 边沿/电平语义二分 ★★（2026-07-30，光环讨论）
+「所有效果都由 trigger 触发」结论被证明武断——光环效果（「只要此牌在发展区，手牌上限+1」）无法用触发解释。修正为：**所有效果由 trigger 结构统一描述，执行语义由终结 content 的类型决定**：
+- **`<instant_content>`**（由 `<instant_effect>` 改名）——边沿语义：condition 假→真时经 `<resolve>` 一次性实例化为 `<event>` 执行。event 降为它 resolve 时引用的运行时发生，不再是链条终结类型。
+- **`<continuous_content>`**——电平语义：激活后进入「生效池」，按 `active_condition` 维持（条件成立即适用、不成立即停止、再成立再适用）。**派生值 = 基础值 + Σ 生效池命中的修饰，查询时现算**——来源离场无需任何「反向触发」，条件变假修饰自动消失。`active_condition` 为 null 时沿用所属 trigger 的 condition（标准光环坍缩为一个谓词：边沿=「进入」，电平=「在场」）；非 null 覆盖（「打出后永久生效」：condition=打出瞬间谓词，active_condition=永远）。
+- 光环的 condition 必须是**状态事实**（「此牌在发展区」），不能绑定 action（「打出此牌」）——否则犯进场枚举错误（被其他效果移入发展区时光环不亮），与离场枚举错误对称。
 
 ### Transfer 字段改名 ★
 `what` → `<object>`，与其他概念引用 key 统一。
@@ -80,8 +86,8 @@ Ownership extends State。三种来源：Zone 推导、固有归属、游戏中�
 - **Effect** extends Trigger：效果是玩家视角下的 trigger，结构完全相同（condition → cost → content），额外增加 options 字段支持多选费用。
 - **Action**：player 的决策声明，actor 必为 player
 - **Trigger**：规则的事件调度器。actor 为 null。每个 Action 必定绑定一个 Trigger
-- 因果链：Action → Trigger（递归 condition → cost → content）→ 终结于 Event
-- **Resolve**：将 Effect 的 Content 实例化为真实 Event
+- 因果链：Action → Trigger（递归 condition → cost → content）→ 终结于 `<instant_content>` / `<continuous_content>`
+- **Resolve**：将 `<instant_content>` 实例化为真实 Event
 - **Shuffle**：重排 Deck 中 Object 顺序
 
 ### Zone 体系
@@ -170,8 +176,8 @@ Play、**Lose（新增）**、**Gain（新增）**
 ### Trigger 扩展（1 个，由 Event 迁移）
 **Upgrade（父类从 `<event>` 改为 `<trigger>`）**
 
-### Content 扩展（2 个）
-Instant Effect、Continuous Content
+### Content 扩展（2 个）★ 改名
+Instant Content（由 Instant Effect 改名）、Continuous Content（新增 active_condition 可选字段）
 
 ### Token 扩展（1 个）
 Starting Player Marker
@@ -218,7 +224,7 @@ Hand
 - **骰子机制**: `<dice>` / `<die>`、`<die_roll>`、点数修改、创意标记效果
 - **升级机制**: `<upgrade>`（trigger），表达模组 level 提升；`<lose>` / `<gain>`（event），用于载体切换时的 effect 所有权转移
 - **地点**: `<site>`、`<encampment>` — 已移回 Civolution 游戏层。`<terrain>` 和 `<region>` 确认无需 ontology 概念（地形 = zone 子类）。
-- **被动/持续效果**: 已通过 trigger/effect 的 `<condition>` 字段处理——passive_effect 已于 2026-07-30 删除，统一为 trigger 模型。
+- **被动/持续效果**: 已通过边沿/电平语义二分处理——continuous content 进入生效池按 active_condition 电平维持（见上方「边沿/电平语义二分」）。passive_effect 已删除，统一为 trigger 模型。
 
 扩展前应先查两个 v0 文档确认是否有对应原始概念；若无，再按当前约定新增。
 

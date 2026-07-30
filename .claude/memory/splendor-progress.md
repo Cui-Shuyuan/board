@@ -64,7 +64,7 @@ metadata:
 - `<development_area>`（contains=`<development_card>[] | <noble>[]`，无上限，public）
 - `<starting_player_marker>`（游戏专属外观：两个零件拼成钻石形状）
 
-**Trigger 层**（event 顺序统一用 `do_after` 表达依赖，无 `do_after` 的事件互相独立）：
+**Trigger 层**（event 顺序统一用 `do_after` 表达依赖，无 `do_after` 的事件互相独立；**2026-07-30 起 content 终结统一包 `<ontology::instant_content>`，event 移入其 `<ontology::event>` 字段**，共 10 处已迁移）：
 - `discard_excess_gems`（extends `<trigger>`，独立 trigger 不绑定 action。timing=使宝石总数变化的 event 结算完成的瞬间（**超限时立即触发**，非回合结束），condition=holding 中 gem+gold 总数 >10；单 transfer 将超出部分返回供应堆，颜色由该玩家自选）
 - `attract_noble`（extends `<trigger>`。condition=回合刚结束且 noble_market 中至少一枚 noble 的 requirement 被 development_area 满足；单 transfer noble→development_area，多枚满足时玩家择一、每回合一枚）
 - `enter_endgame`（extends `<trigger>`。timing=回合结束时；condition 引用 `reach_15_prestige`；event 为描述性「进入终局流程」，具体流程留给流程文档）

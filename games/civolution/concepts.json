@@ -463,7 +463,7 @@
                     }
                 },
                 {
-                    "<ontology::instant_effect>": {
+                    "<ontology::instant_content>": {
                         "position": {
                             "zh": "下三分之一",
                             "en": "bottom third"
@@ -531,7 +531,7 @@
                         }
                     }
                 },
-                "<ontology::instant_effect>"
+                "<ontology::instant_content>"
             ],
             "media": {
                 "component": [
@@ -2806,8 +2806,8 @@
                     {
                         "id": "resolve_instant_bonus",
                         "description": {
-                            "zh": "结算即时奖励。若研究牌的 parts 中包含 <ontology::instant_effect>（闪电图标，位于牌下三分之一），此步骤开始时触发该效果。玩家必须结算；若效果不可执行则作废。若该牌无此 part，此步骤跳过。",
-                            "en": "Resolve instant bonus. If the research card's parts include an <ontology::instant_effect> (lightning icon, in the bottom third of the card), that effect is triggered at the start of this step. The player must resolve it; if it cannot be executed, it is forfeited. If the card has no such part, skip this step."
+                            "zh": "结算即时奖励。若研究牌的 parts 中包含 <ontology::instant_content>（闪电图标，位于牌下三分之一），此步骤开始时触发该效果。玩家必须结算；若效果不可执行则作废。若该牌无此 part，此步骤跳过。",
+                            "en": "Resolve instant bonus. If the research card's parts include an <ontology::instant_content> (lightning icon, in the bottom third of the card), that effect is triggered at the start of this step. The player must resolve it; if it cannot be executed, it is forfeited. If the card has no such part, skip this step."
                         },
                         "do_after": [
                             "gain_slot_scores"

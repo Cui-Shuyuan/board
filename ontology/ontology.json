@@ -714,8 +714,8 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "用于判断某个命题在当前游戏 <state> 下是否成立的表达式。<condition> 本身不改变任何东西——它只回答「是」或「否」。<condition> 是 Rule Engine 的核心判断单元：<action> 的合法性检查、<trigger> 的激活判断、<endgame_condition> 的触发检测，全部由 <condition> 驱动。",
-        "en": "An expression that evaluates whether a proposition is true under the current game <state>. A <condition> changes nothing — it only answers 'yes' or 'no'. <condition> is the core judgment unit of the Rule Engine: <action> legality checks, <trigger> activation, and <endgame_condition> detection are all driven by <condition>s."
+        "zh": "对游戏 <state> 的一个谓词——判断某个命题在当前状态下是否成立，任意时刻可求值、无副作用（只读状态，绝不改变状态）。<condition> 只回答「是」或「否」。谓词的形态不限：位置事实（「此牌在 <development_area> 中」）、历史派生事实（「打出后未超过 3 回合」）、跨玩家比较（「生命值并非全场最高」）、瞬间事实（「回合刚结束」「某 <event> 刚结算完」——只在一瞬为真的 state 事实）均为 <condition>。<condition> 是 Rule Engine 的核心判断单元：<action> 的合法性检查、<trigger> 的激活判断、<endgame_condition> 的触发检测，全部由 <condition> 驱动。<trigger> 对 <condition> 按边沿评估（谓词由假变真的跳变即「进入」，由真变假即「离开」），<continuous_content> 按电平维持（谓词本身）。",
+        "en": "A predicate over the game <state> — evaluates whether a proposition holds under the current state. Evaluable at any moment, side-effect-free (reads state only, never changes it). A <condition> only answers 'yes' or 'no'. Predicates take many forms: location facts ('this card is in the <development_area>'), history-derived facts ('no more than 3 rounds since it was played'), cross-player comparisons ('health is not the highest'), and instantaneous facts ('the turn just ended', 'an <event> just finished resolving' — state facts true only for an instant). <condition> is the core judgment unit of the Rule Engine: <action> legality checks, <trigger> activation, and <endgame_condition> detection are all driven by <condition>s. A <trigger> evaluates its <condition> on the edge (the false→true transition is 'entering', true→false is 'leaving'); a <continuous_content> is maintained on the level (the predicate itself)."
       },
       "params": {
         "type": "map<string, any>",
@@ -781,35 +781,38 @@
       "extends": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "<effect> 的内部组成部分之一——指明一个 <effect> 在被触发前必须被履行的代价。<cost> 继承自 <property>。其形态不限于支付 <resource>：支付 3 个蓝宝石是 <cost>，横置一张牌是 <cost>，弃掉一张手牌是 <cost>，跳过下个回合也是 <cost>。<cost> 的运行时逻辑：(1) 由 <condition> 检查前提是否可满足；(2) 满足后执行对应 <event>（<transfer>、状态变更等）。<cost> 不满足则该 <effect> 不可触发。<cost> 可以为空（免费效果），但此时 <content> 不可为空。",
-        "en": "An internal component of an <effect> — specifies the cost that must be fulfilled before the <effect> can be triggered. <cost> extends <property>. Its form is not limited to <resource> payment: paying 3 blue gems is a <cost>, tapping a card is a <cost>, discarding a card is a <cost>, skipping a turn is a <cost>. Runtime logic: (1) a <condition> checks if the prerequisite can be met; (2) if met, the corresponding <event> executes (<transfer>, state change, etc.). If the <cost> is not satisfied, the <effect> cannot be triggered. <cost> may be empty (free effect), but <content> must not be empty in that case."
+        "zh": "<effect> 的内部组成部分之一——指明一个 <effect> 在被触发前必须被履行的代价。<cost> 继承自 <property>。其形态不限于支付 <resource>：支付 3 个蓝宝石是 <cost>，横置一张牌是 <cost>，弃掉一张手牌是 <cost>，跳过下个回合也是 <cost>。<cost> 由两个独立字段组成：<condition> 定义支付资格（满足什么条件才可以用这种方式支付），<event> 定义实际支付动作（<transfer>、状态变更等）。<condition> 满足后执行 <event> 完成支付。<condition> 为 null = 无条件，<event> 为 null = 无需支付（条件本身就是代价）。单一 <cost> 表达一种支付方式；多种可选支付方式通过 <options> 字段表达——每个 option item 是独立的 { <condition> + <event> } 对，玩家按 <multiple_choice_enum> 规则选择。<cost> 整体可以为 null（免费效果）。",
+        "en": "An internal component of an <effect> — specifies the cost that must be fulfilled before the <effect> can be triggered. <cost> extends <property>. Its form is not limited to <resource> payment: paying 3 blue gems is a <cost>, tapping a card is a <cost>, discarding a card is a <cost>, skipping a turn is a <cost>. <cost> consists of two independent fields: <condition> defines the payment qualification (under what conditions this payment method can be used), <event> defines the actual payment action (<transfer>, state change, etc.). After <condition> is met, <event> executes to complete the payment. <condition> = null means unconditional; <event> = null means no payment needed (the condition itself is the cost). A single <cost> expresses one payment method; multiple mutually exclusive methods are expressed via the <options> field — each option item is an independent { <condition> + <event> } pair, and the player chooses according to the <multiple_choice_enum> rule. <cost> as a whole may be null (free effect)."
       },
-      "params": {
-        "type": "map<string, any>",
+      "<condition>": {
+        "type": "<condition> | null",
+        "default": null,
         "description": {
-          "zh": "此费用的参数。内容由具体的 Cost 类型决定——不限于资源支付。典型结构：支付资源 { \"resources\": { \"blue\": 3 } }、弃牌 { \"discard\": 1 }、牺牲 { \"sacrifice\": \"piece_ref\" }、横置 { \"tap\": \"self\" }、跳过回合 { \"skip\": \"next_turn\" }。程序根据 params 的内容构造对应的 Condition（检查前提是否可满足）和 Event（执行实际动作）。复合费用（AND/OR）通过 params 内部结构表达。",
-          "en": "Parameters for this cost. Content is determined by the specific cost type — not limited to resource payment. Typical structures: pay resources { \"resources\": { \"blue\": 3 } }, discard { \"discard\": 1 }, sacrifice { \"sacrifice\": \"piece_ref\" }, tap { \"tap\": \"self\" }, skip turn { \"skip\": \"next_turn\" }. Based on params, the program constructs a corresponding Condition (to check if the prerequisite can be met) and Event (to execute the actual action). Compound costs (AND/OR) are expressed through the internal structure of params."
+          "zh": "支付资格——满足什么条件才可以用此方式支付。null = 无条件（任何玩家都可以选择这种支付方式）。例如「等级 ≥5」意味着只有满足该条件的玩家才能选择这种支付方式；不满足则需换另一种（通过 <options> 表达多选）。",
+          "en": "Payment qualification — what condition must be met to use this payment method. null = unconditional (any player can choose this payment method). E.g., 'level ≥ 5' means only players meeting this condition can choose this method; those who don't must pick another (expressed via <options>)."
+        }
+      },
+      "<event>": {
+        "type": "<event> | null",
+        "default": null,
+        "description": {
+          "zh": "实际支付动作——<condition> 满足后执行的 <transfer> 或其他 <event>。null = 无需支付（条件本身就是代价，满足即免费）。例如支付 1 金币就是一个从玩家持有区到供应堆的 <transfer>。",
+          "en": "The actual payment action — a <transfer> or other <event> executed after <condition> is met. null = no payment needed (the condition itself is the cost; meeting it is sufficient). E.g., paying 1 coin is a <transfer> from the player's holding to the supply."
         }
       },
       "options": {
         "type": "map<string, any> | null",
         "default": null,
         "description": {
-          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。",
-          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array."
+          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。每个 item 是独立的 { <condition> + <event> } 对，表达一种可选的支付方式。玩家按 type 规则（CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / EXECUTE_ALL）选择并执行其中一种或多种。",
+          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array. Each item is an independent { <condition> + <event> } pair expressing one payment option. The player selects and executes one or more according to the type rule (CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / EXECUTE_ALL)."
         }
       },
       "constraints": {
-        "required": [
-          {
-            "id": "params",
-            "description": {
-              "zh": "此 Cost 的具体参数——不限于资源支付。如支付资源 { resources: { blue: 3 } }、弃牌 { discard: 1 }、横置 { tap: \"self\" }。程序根据 params 构造对应的 Condition（检查前提）和 Event（执行动作）。",
-              "en": "Specific parameters for this Cost — not limited to resource payment. E.g., pay resources, discard, tap. The program constructs corresponding Conditions and Events based on params."
-            }
-          }
-        ],
+        "required": [],
         "optional": [
+          "<condition>",
+          "<event>",
           "options"
         ]
       }
@@ -898,16 +901,16 @@
       }
     },
     {
-      "id": "instant_effect",
+      "id": "instant_content",
       "name": {
-        "zh": "即时效果",
-        "en": "Instant Effect"
+        "zh": "即时内容",
+        "en": "Instant Content"
       },
       "extends": "<content>",
       "abstract": false,
       "definition": {
-        "zh": "一种在结算后立即执行完毕、不产生持续影响的<content>。<instant_effect>继承自<content>——它是「效果内容」的一种形态。是最常见的效果内容——「获得 2 金币」「抽一张牌」「造成 3 点伤害」均为<instant_effect>。生命周期：对应的<effect>被<activation>激活后，<instant_effect>经<resolve>一次性执行其<params>所描述的事件到<target>，随后终止。与<continuous_content>的对偶：<instant_effect>是一次性的（fire and forget），<continuous_content>是持续性的（always on）。",
-        "en": "A <content> that executes once upon resolution and produces no ongoing effect. <instant_effect> extends <content> — it is a form of 'effect content'. The most common content form — 'gain 2 gold', 'draw a card', 'deal 3 damage' are all <instant_effect>s. Lifecycle: after the containing <effect> is activated via <activation>, <instant_effect> is <resolve>d — its <params> are executed once against its <target>, then it terminates. Counterpart to <continuous_content>: <instant_effect> is fire-and-forget, <continuous_content> is always-on."
+        "zh": "一种在结算后立即执行完毕、不产生持续影响的<content>。<instant_content>继承自<content>——它是「效果内容」的一种形态，也是<trigger>递归链条的两种终结形态之一（另一种是<continuous_content>）。是最常见的效果内容——「获得 2 金币」「抽一张牌」「造成 3 点伤害」均为<instant_content>。生命周期：所属<trigger>的<condition>边沿跳变（由假变真）时激活，<cost>（若有）支付后，<instant_content>经<resolve>一次性执行其<params>所描述的<event>到<target>，随后终结。注意：<instant_content>自身不是<event>——它是对即将发生的<event>的描述，<event>是它在<resolve>时实例化出的运行时发生。与<continuous_content>的对偶：<instant_content>是一次性的（fire and forget），<continuous_content>是条件维持的（maintained while condition holds）。",
+        "en": "A <content> that executes once upon resolution and produces no ongoing effect. <instant_content> extends <content> — it is a form of 'effect content' and one of the two terminal forms of a <trigger> recursion chain (the other being <continuous_content>). The most common content form — 'gain 2 gold', 'draw a card', 'deal 3 damage' are all <instant_content>s. Lifecycle: activated when the containing <trigger>'s <condition> crosses its edge (false→true); after the <cost> (if any) is paid, the <instant_content> is <resolve>d — its <params>-described <event> executes once against its <target>, then the chain terminates. Note: an <instant_content> is not itself an <event> — it describes an <event> about to happen; the <event> is the runtime occurrence it instantiates into at <resolve>. Counterpart to <continuous_content>: <instant_content> is fire-and-forget, <continuous_content> is maintained-while-condition-holds."
       },
       "constraints": {
         "required": [],
@@ -923,12 +926,22 @@
       "extends": "<content>",
       "abstract": false,
       "definition": {
-        "zh": "一种在结算后持续生效、持续修改游戏规则或状态的<content>。<continuous_content>继承自<content>——它是「效果内容」的一种形态。与<instant_effect>的核心区别：<instant_effect>执行一次后结束，<continuous_content>只要来源<piece>在正确的<zone>中就持续生效、无需反复激活。典型例子：「你的所有生物获得+1力量」「蓝牌费用-1」「每回合额外抽一张牌」均为<continuous_content>。<continuous_content>通常不经过<activation>——当来源<piece>进入指定的<zone>（如<development_area>）时自动开始生效，离开时自动失效。对应的<effect>的<cost>通常为 null（被动生效，无需支付代价）。<continuous_content>从<content>继承了<target>和<params>——<target>指明效果持续作用于谁，<params>描述持续修改的内容。",
-        "en": "A <content> that persists after resolution and continuously modifies game rules or state. <continuous_content> extends <content> — it is a form of 'effect content'. Core difference from <instant_effect>: <instant_effect> executes once and ends; <continuous_content> remains active as long as the source <piece> is in the correct <zone>, without repeated activation. Typical examples: 'all your creatures gain +1 power', 'blue cards cost 1 less', 'draw an extra card each turn'. <continuous_content> typically does not go through <activation> — it automatically takes effect when the source <piece> enters the designated <zone> (e.g., <development_area>) and deactivates when it leaves. The containing <effect>'s <cost> is usually null (passive, no cost to maintain). <continuous_content> inherits <target> and <params> from <content> — <target> specifies who the effect continuously applies to, <params> describes the ongoing modification."
+        "zh": "一种被激活后按条件持续生效、持续修改游戏规则或派生值的<content>。<continuous_content>继承自<content>——它是「效果内容」的一种形态，也是<trigger>递归链条的两种终结形态之一（另一种是<instant_content>）。与<instant_content>的核心区别：<instant_content>结算一次后终结，<continuous_content>被激活后进入「生效池」，按其生效条件（active_condition）电平维持——条件成立即适用，不成立即停止适用，再次成立再次适用。典型例子：「只要此牌在你的<development_area>中，手牌上限+1」「你的所有生物获得+1力量」「蓝牌费用-1」均为<continuous_content>。生效方式：<continuous_content>不修改存储的状态值，而是作为修饰参与派生值的查询时计算——派生值 = 基础值 + Σ 当前生效池中命中的修饰。因此来源离场时无需任何「反向触发」：条件变假，修饰自动消失。对应的<effect>的<cost>通常为 null（被动生效，无需支付代价；若有 cost，在激活时支付一次）。<continuous_content>从<content>继承了<target>和<params>——<target>指明效果持续作用于谁，<params>描述持续修改的内容。",
+        "en": "A <content> that, once activated, persists according to a condition, continuously modifying game rules or derived values. <continuous_content> extends <content> — it is a form of 'effect content' and one of the two terminal forms of a <trigger> recursion chain (the other being <instant_content>). Core difference from <instant_content>: an <instant_content> resolves once and terminates, whereas a <continuous_content> enters an 'active pool' upon activation and is maintained on the level of its active_condition — it applies while the condition holds, stops when it ceases, and applies again if it holds again. Typical examples: 'as long as this card is in your <development_area>, your hand limit is +1', 'all your creatures get +1 power', 'blue cards cost 1 less'. How it applies: a <continuous_content> does not mutate stored state values; it participates as a modifier in the query-time computation of derived values — derived value = base value + Σ modifiers currently in the active pool. Hence no 'reverse trigger' is ever needed when the source leaves: the condition turns false and the modifier disappears automatically. The containing <effect>'s <cost> is usually null (passive, nothing to pay; if a cost exists, it is paid once upon activation). <continuous_content> inherits <target> and <params> from <content> — <target> specifies who the effect continuously applies to, <params> describes the ongoing modification."
+      },
+      "active_condition": {
+        "type": "<condition> | null",
+        "default": null,
+        "description": {
+          "zh": "生效条件——此 <continuous_content> 按电平维持时所用的谓词。null = 沿用所属 <trigger> 的 <condition>（标准光环情形：「此牌在你的 <development_area> 中」既是触发谓词也是维持谓词，触发边沿即「进入」，条件本身即「在场」）。非 null 时覆盖之——典型如「打出后本局永久生效」：所属 <trigger> 的 <condition> 为「此牌被打出」（瞬间谓词），active_condition 为「永远」。",
+          "en": "The active condition — the predicate by which this <continuous_content> is level-maintained. null = inherit the containing <trigger>'s <condition> (the standard aura case: 'this card is in your <development_area>' serves as both the firing predicate and the maintenance predicate; the firing edge is 'entering', the predicate itself is 'being present'). When non-null, it overrides — e.g. 'permanently active after being played': the containing <trigger>'s <condition> is 'this card is played' (an instantaneous predicate) and active_condition is 'always'."
+        }
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          "active_condition"
+        ]
       }
     },
     {
@@ -1343,8 +1356,8 @@
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "游戏规则中负责启动 <event> 的统一机制。<trigger> 是递归结构——<condition> 定义触发门槛，<cost> 定义可支付的代价（null = 无需支付），<content> 指向递归的 <trigger> 或终结的 <event>。若 <content> 是 <trigger>，递归进入下一层 effect；若是 <event>，链条终结。<target> 声明此 trigger 作用的对象。一切游戏状态变更最终都由 <trigger> 发起。<trigger> 不由任何 <player> 直接控制——actor 始终为 null。",
-        "en": "The unified mechanism in game rules responsible for launching <event>s. <trigger> is a recursive structure — <condition> defines the firing gate, <cost> defines the payable cost (null = no cost needed), and <content> points to a recursive <trigger> or a terminal <event>. If <content> is a <trigger>, recursion continues into the next effect layer; if an <event>, the chain terminates. <target> declares what this trigger acts upon. All game state changes are ultimately initiated by a <trigger>. A <trigger> is not directly controlled by any <player> — its actor is always null."
+        "zh": "游戏规则中效果与状态变更的统一描述结构。<trigger> 是递归结构——<condition> 定义触发门槛（一个对 <state> 的谓词，按边沿评估：谓词由假变真的瞬间激活此 trigger），<cost> 定义可支付的代价（null = 无需支付），<content> 指向递归的 <trigger> 或终结的 <content>。终结形态有两种，执行语义由终结的 content 类型决定：<instant_content>——经 <resolve> 一次性实例化为 <event> 并执行，链条终结（fire and forget）；<continuous_content>——进入生效池，按其生效条件电平维持，条件变假自动失效，不产生任何「反向触发」。<target> 声明此 trigger 作用的对象。一切游戏状态变更与持续修饰最终都由 <trigger> 结构描述——「触发执行」仅适用于 <instant_content>，<continuous_content> 是被激活后由条件维持的。<trigger> 不由任何 <player> 直接控制——actor 始终为 null。",
+        "en": "The unified descriptive structure for effects and state changes in game rules. <trigger> is recursive — <condition> defines the firing gate (a predicate over <state>, evaluated on the edge: this trigger activates the instant the predicate transitions false→true), <cost> defines the payable cost (null = no cost needed), and <content> points to a recursive <trigger> or a terminal <content>. There are two terminal forms, and the execution semantics are determined by the terminal content's type: <instant_content> — instantiated into an <event> via <resolve> and executed once, terminating the chain (fire and forget); <continuous_content> — enters the active pool and is level-maintained by its active condition, lapsing automatically when the condition turns false, with no 'reverse trigger' of any kind. <target> declares what this trigger acts upon. All game state changes and persistent modifiers are ultimately described by the <trigger> structure — but 'triggered execution' applies only to <instant_content>; a <continuous_content> is activated once and then maintained by its condition. A <trigger> is not directly controlled by any <player> — its actor is always null."
       },
       "actor": {
         "type": "null",
@@ -1355,8 +1368,8 @@
       },
       "<condition>": {
         "description": {
-          "zh": "此 <trigger> 的触发门槛——定义了「满足什么条件才可以激活此 trigger」。可以是状态事实（如「等级 ≥5」）、timing（如「回合结束时」）、或 action 引用（如「<perform_activity> 被触发，目标为本 trigger」）。条件满足不代表立即触发——还有 cost 需要被支付（若有）。",
-          "en": "The firing gate for this <trigger> — defines 'under what conditions this trigger may be activated'. Can be a state fact (e.g., 'level ≥ 5'), a timing (e.g., 'end of turn'), or an action reference (e.g., '<perform_activity> triggered, targeting this trigger'). Meeting the condition does not mean immediate firing — cost must also be paid (if any)."
+          "zh": "此 <trigger> 的触发门槛——一个对 <state> 的谓词，定义了「满足什么条件才可以激活此 trigger」。按边沿评估：谓词由假变真的瞬间激活。可以是状态事实（如「等级 ≥5」「此牌在 <development_area> 中」）、timing（如「回合结束时」——本身即瞬间谓词）、或 action 引用（如「<perform_activity> 被触发，目标为本 trigger」）。条件满足不代表立即触发——还有 cost 需要被支付（若有）。当 <content> 终结于 <continuous_content> 且其 active_condition 为 null 时，此谓词同时充当维持谓词（电平语义）。",
+          "en": "The firing gate for this <trigger> — a predicate over <state>, defining 'under what conditions this trigger may be activated'. Evaluated on the edge: it activates the instant the predicate transitions false→true. Can be a state fact (e.g., 'level ≥ 5', 'this card is in the <development_area>'), a timing (e.g., 'end of turn' — itself an instantaneous predicate), or an action reference (e.g., '<perform_activity> triggered, targeting this trigger'). Meeting the condition does not mean immediate firing — cost must also be paid (if any). When the <content> terminates in a <continuous_content> whose active_condition is null, this predicate doubles as the maintenance predicate (level semantics)."
         }
       },
       "<cost>": {
@@ -1367,10 +1380,10 @@
         }
       },
       "<content>": {
-        "type": "<trigger> | <event>",
+        "type": "<trigger> | <content>",
         "description": {
-          "zh": "cost 被足额支付后触发的内容。可以是另一个 <trigger>（递归进入下一层）或一个 <event>（终结，直接改变游戏状态）。",
-          "en": "The content triggered after the cost is fully paid. May be another <trigger> (recursive) or an <event> (terminal, directly changing game state)."
+          "zh": "cost 被足额支付后触发的内容。可以是另一个 <trigger>（递归进入下一层），或终结的 <content>——<instant_content>（经 <resolve> 一次性实例化为 <event> 执行，链条终结）或 <continuous_content>（进入生效池按条件电平维持）。类型上保证递归必然终结。",
+          "en": "The content triggered after the cost is fully paid. May be another <trigger> (recursive, entering the next layer), or a terminal <content> — <instant_content> (instantiated into an <event> via <resolve> and executed once, terminating the chain) or <continuous_content> (entering the active pool, level-maintained by its condition). The type system guarantees the recursion always terminates."
         }
       },
       "target": {
@@ -1392,8 +1405,8 @@
           {
             "id": "<content>",
             "description": {
-              "zh": "每一个 <trigger> 都必须声明被触发后的后续内容——可以是递归的 <trigger> 或终结的 <event>。",
-              "en": "Every <trigger> must declare what follows after firing — either a recursive <trigger> or a terminal <event>."
+              "zh": "每一个 <trigger> 都必须声明被触发后的后续内容——可以是递归的 <trigger> 或终结的 <content>（<instant_content> / <continuous_content>）。",
+              "en": "Every <trigger> must declare what follows after firing — either a recursive <trigger> or a terminal <content> (<instant_content> / <continuous_content>)."
             }
           }
         ],
