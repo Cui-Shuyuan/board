@@ -2795,6 +2795,7 @@
                 ]
             },
             "<ontology::content>": {
+                "type": "<ontology::instant_content>",
                 "<ontology::event>[]": [
                     {
                         "id": "gain_slot_scores",
@@ -2919,6 +2920,7 @@
             },
             "<ontology::cost>": null,
             "<ontology::content>": {
+                "type": "<ontology::instant_content>",
                 "zh": "将该玩家仓库中的 1 个 <food> 标记返回供应堆。",
                 "en": "Return 1 <food> marker from the player's storage to the supply."
             }
@@ -2941,6 +2943,7 @@
             },
             "<ontology::cost>": null,
             "<ontology::content>": {
+                "type": "<ontology::instant_content>",
                 "zh": "选择玩家的 1 个位于大陆任意区域的 <tribe>，将其返回个人供应区。",
                 "en": "Choose 1 <tribe> located anywhere on the continent and return it to the player's supply."
             }
@@ -2985,6 +2988,7 @@
             },
             "<ontology::cost>": null,
             "<ontology::content>": {
+                "type": "<ontology::instant_content>",
                 "zh": "所有玩家按座次顺位（起始玩家起顺时针）逐一结算当前天气标记所在格的 effect。正面效果可放弃，负面效果必须执行。",
                 "en": "All players in seating order (starting player → clockwise) resolve the effect of the current weather slot one by one. Positive effects may be forgone; negative effects are mandatory."
             },
