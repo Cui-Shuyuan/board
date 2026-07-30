@@ -75,6 +75,7 @@ Trigger 的本质是「**condition + cost + content**」的递归调度器：
 - **`<instant_content>`**（由 `<instant_effect>` 改名）——边沿语义：condition 假→真时经 `<resolve>` 一次性实例化为 `<event>` 执行。event 降为它 resolve 时引用的运行时发生，不再是链条终结类型。
 - **`<continuous_content>`**——电平语义：激活后进入「生效池」，按 `active_condition` 维持（条件成立即适用、不成立即停止、再成立再适用）。**派生值 = 基础值 + Σ 生效池命中的修饰，查询时现算**——来源离场无需任何「反向触发」，条件变假修饰自动消失。`active_condition` 为 null 时沿用所属 trigger 的 condition（标准光环坍缩为一个谓词：边沿=「进入」，电平=「在场」）；非 null 覆盖（「打出后永久生效」：condition=打出瞬间谓词，active_condition=永远）。
 - 光环的 condition 必须是**状态事实**（「此牌在发展区」），不能绑定 action（「打出此牌」）——否则犯进场枚举错误（被其他效果移入发展区时光环不亮），与离场枚举错误对称。
+- **分类判据（2026-07-31）**：「每次 X 发生时……」类效应**不是** continuous_content——「每次」说明内容是离散事件，应建模为 instant_content + 含电平合取项的 trigger condition（武装门电平 + 开火边沿，如「此牌在场 ∧ 其他玩家刚打出一张牌」；已发生的 transfer 作为历史留在 state 中，不因来源离场回滚）。判据：**内容写历史（不可撤销的状态变更）→ instant；参与计算（派生值修饰）→ continuous**。真正的 continuous_content 没有「每次」，只有「只要」。已写入 `<continuous_content>` / `<instant_content>` 定义。
 
 ### Transfer 字段改名 ★
 `what` → `<object>`，与其他概念引用 key 统一。
