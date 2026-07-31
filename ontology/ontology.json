@@ -781,123 +781,71 @@
       "extends": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "<effect> 的内部组成部分之一——指明一个 <effect> 在被触发前必须被履行的代价。<cost> 继承自 <property>。其形态不限于支付 <resource>：支付 3 个蓝宝石是 <cost>，横置一张牌是 <cost>，弃掉一张手牌是 <cost>，跳过下个回合也是 <cost>。<cost> 由两个独立字段组成：<condition> 定义支付资格（满足什么条件才可以用这种方式支付），<event> 定义实际支付动作（<transfer>、状态变更等）。<condition> 满足后执行 <event> 完成支付。<condition> 为 null = 无条件，<event> 为 null = 无需支付（条件本身就是代价）。单一 <cost> 表达一种支付方式；多种可选支付方式通过 <options> 字段表达——每个 option item 是独立的 { <condition> + <event> } 对，玩家按 <multiple_choice_enum> 规则选择。<cost> 整体可以为 null（免费效果）。",
-        "en": "An internal component of an <effect> — specifies the cost that must be fulfilled before the <effect> can be triggered. <cost> extends <property>. Its form is not limited to <resource> payment: paying 3 blue gems is a <cost>, tapping a card is a <cost>, discarding a card is a <cost>, skipping a turn is a <cost>. <cost> consists of two independent fields: <condition> defines the payment qualification (under what conditions this payment method can be used), <event> defines the actual payment action (<transfer>, state change, etc.). After <condition> is met, <event> executes to complete the payment. <condition> = null means unconditional; <event> = null means no payment needed (the condition itself is the cost). A single <cost> expresses one payment method; multiple mutually exclusive methods are expressed via the <options> field — each option item is an independent { <condition> + <event> } pair, and the player chooses according to the <multiple_choice_enum> rule. <cost> as a whole may be null (free effect)."
+        "zh": "<effect> 或 <trigger> 在结算前必须履行的代价。<cost> 继承自 <property>。代价分两种性质：<instant_cost>——一次性支付，伴随实际资源转移；<continuous_cost>——纯粹的状态检查，不消耗任何东西。二者均缺省即免费。",
+        "en": "The cost that must be fulfilled before an <effect> or <trigger> resolves. <cost> extends <property>. Costs come in two forms: <instant_cost> — a one-time payment involving an actual resource transfer; <continuous_cost> — a pure state check that consumes nothing. When both are absent, the cost is free."
       },
-      "<condition>": {
-        "type": "<condition> | null",
+      "<instant_cost>": {
+        "type": "<instant_cost>",
         "default": null,
         "description": {
-          "zh": "支付资格——满足什么条件才可以用此方式支付。null = 无条件（任何玩家都可以选择这种支付方式）。例如「等级 ≥5」意味着只有满足该条件的玩家才能选择这种支付方式；不满足则需换另一种（通过 <options> 表达多选）。",
-          "en": "Payment qualification — what condition must be met to use this payment method. null = unconditional (any player can choose this payment method). E.g., 'level ≥ 5' means only players meeting this condition can choose this method; those who don't must pick another (expressed via <options>)."
+          "zh": "一次性支付的代价，伴随实际的 <event>。",
+          "en": "A one-time cost involving an actual <event>."
         }
       },
-      "<event>": {
-        "type": "<event> | null",
+      "<continuous_cost>": {
+        "type": "<continuous_cost>",
         "default": null,
         "description": {
-          "zh": "实际支付动作——<condition> 满足后执行的 <transfer> 或其他 <event>。null = 无需支付（条件本身就是代价，满足即免费）。例如支付 1 金币就是一个从玩家持有区到供应堆的 <transfer>。",
-          "en": "The actual payment action — a <transfer> or other <event> executed after <condition> is met. null = no payment needed (the condition itself is the cost; meeting it is sufficient). E.g., paying 1 coin is a <transfer> from the player's holding to the supply."
-        }
-      },
-      "options": {
-        "type": "map<string, any> | null",
-        "default": null,
-        "description": {
-          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。每个 item 是独立的 { <condition> + <event> } 对，表达一种可选的支付方式。玩家按 type 规则（CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / EXECUTE_ALL）选择并执行其中一种或多种。",
-          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array. Each item is an independent { <condition> + <event> } pair expressing one payment option. The player selects and executes one or more according to the type rule (CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / EXECUTE_ALL)."
+          "zh": "纯粹的状态条件，不消耗任何资源。",
+          "en": "A pure state condition that consumes nothing."
         }
       },
       "constraints": {
         "required": [],
         "optional": [
-          "<condition>",
-          "<event>",
-          "options"
+          "<instant_cost>",
+          "<continuous_cost>"
         ]
       }
     },
     {
       "id": "content",
-      "name": {
-        "zh": "效果内容",
-        "en": "Content"
-      },
+      "name": { "zh": "内容", "en": "Content" },
       "extends": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "<effect> 的内部组成部分之一——描述 <effect> 结算时应当发生的具体事件。<content> 继承自 <property>。由一个或多个待执行的事件描述组成（如造成伤害、抽取卡牌、获取 <resource>、移动 <token>、改变 <state>、摧毁 <piece> 等），在 <resolve> 阶段被实例化为真实的 <event> 并应用到游戏状态。<content> 与 <cost> 互补构成完整的 <effect>：<cost> 先执行，<content> 后发生。<content> 可以为空，但 <cost> 和 <content> 不可同时为空。",
-        "en": "An internal component of an <effect> — describes the specific events that should occur when the <effect> resolves. <content> extends <property>. It consists of one or more event descriptions (e.g., deal damage, draw cards, gain <resource>s, move <token>s, change <state>s, destroy <piece>s). During the <resolve> phase, these descriptions are instantiated as real <event>s and applied to the game state. <content> and <cost> together form a complete <effect>: <cost> executes first, <content> follows. <content> may be empty, but <cost> and <content> must not both be empty."
+        "zh": "效果结算时发生的事情。三个独立字段分别承载不同性质的内容，可任意组合。<content> 继承自 <property>。与 <cost> 互补：cost 先支付，content 后发生。",
+        "en": "What happens when an effect resolves. Three independent fields carry different kinds of content, freely combinable. <content> extends <property>. Complementary to <cost>: cost is paid first, then content occurs."
       },
-      "target": {
-        "type": "map<string, any>",
-        "description": {
-          "zh": "此效果内容作用的目标规范——描述「效果作用于谁」。target 是抽象的类型规约，具体实例在实际游戏中被触发后才由玩家选择或规则指定。典型结构：对一名敌人 { \"scope\": \"enemy\", \"count\": 1 }、对自己 { \"scope\": \"self\" }、对任意玩家 { \"scope\": \"any_player\" }、对目标生物 { \"scope\": \"target_creature\" }、对全体敌人 { \"scope\": \"all_enemies\" }。「抽2张牌」这类效果——抽牌动作的执行者就是效果的受益者，target = { \"scope\": \"self\" }。程序根据 target.scope 确定选择范围（如 enemy 枚举所有敌方 Player，self 固定为效果发起者），count 控制选择数量。",
-          "en": "The target specification for this effect content — describes 'who or what the effect acts upon'. target is an abstract type specification; the concrete instance is chosen by the player or determined by rules only when the effect fires in an actual game. Typical structures: one enemy { \"scope\": \"enemy\", \"count\": 1 }, self { \"scope\": \"self\" }, any player { \"scope\": \"any_player\" }, target creature { \"scope\": \"target_creature\" }, all enemies { \"scope\": \"all_enemies\" }. For effects like 'draw 2 cards' — the executor of the draw is the beneficiary, target = { \"scope\": \"self\" }. The program uses target.scope to determine the selection pool (e.g., enemy enumerates all opposing Players, self is fixed to the effect initiator), and count controls how many to select."
-        }
-      },
-      "params": {
-        "type": "map<string, any>",
-        "description": {
-          "zh": "此效果内容的参数。描述效果的具体行为——对 target 做什么。典型结构：造成伤害 { \"damage\": 2 }、抽牌 { \"draw\": 3 }、获取资源 { \"gain\": { \"gold\": 1 } }、移动 { \"move\": { \"from\": \"hand\", \"to\": \"discard_pile\" } }、改变状态 { \"set_state\": \"tapped\" }。注意 target 已独立为必填字段，params 仅描述动作本身。程序根据 params 的内容构造对应的 Event 并执行。复合 Content（一次效果做多件事）通过 params 内部结构表达。",
-          "en": "Parameters for this effect content. Describes the specific action — what to do to the target. Typical structures: deal damage { \"damage\": 2 }, draw cards { \"draw\": 3 }, gain resources { \"gain\": { \"gold\": 1 } }, move { \"move\": { \"from\": \"hand\", \"to\": \"discard_pile\" } }, change state { \"set_state\": \"tapped\" }. Note: target is a separate required field; params describes only the action itself. The program constructs and executes corresponding Events based on params. Compound Content (one effect does multiple things) is expressed through params' internal structure."
-        }
-      },
-      "options": {
-        "type": "map<string, any> | null",
+      "<effect>": {
         "default": null,
-        "description": {
-          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。",
-          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array."
-        }
+        "description": { "zh": "递归的效果——触发后进入下一层 cost → content。", "en": "A recursive effect — upon firing, enters the next cost → content layer." }
+      },
+      "<instant_content>": {
+        "default": null,
+        "description": { "zh": "一次性执行完毕的内容。", "en": "Content that executes once and is done." }
+      },
+      "<continuous_content>": {
+        "default": null,
+        "description": { "zh": "激活后电平维持的内容。", "en": "Content that is level-maintained after activation." }
       },
       "constraints": {
-        "required": [
-          {
-            "id": "target",
-            "description": {
-              "zh": "效果内容作用的目标规范——描述「效果作用于谁」。是抽象的类型规约（如 { scope: \"enemy\", count: 1 }），具体实例在实际游戏触发后才由玩家选择或规则指定。",
-              "en": "Target specification for this effect content — describes 'who the effect acts upon'. An abstract spec; the concrete instance is chosen by the player or determined by rules only at runtime."
-            }
-          },
-          {
-            "id": "params",
-            "description": {
-              "zh": "效果的具体行为参数——对 target 做什么。如造成伤害 { damage: 2 }、抽牌 { draw: 3 }、获取资源 { gain: { gold: 1 } }。程序根据 params 构造对应的 Event 并执行。",
-              "en": "Parameters describing the specific action — what to do to the target. E.g., deal damage, draw cards, gain resources. The program constructs and executes corresponding Events based on params."
-            }
-          }
-        ],
-        "optional": [
-          "options"
-        ]
+        "required": [],
+        "optional": ["<effect>", "<instant_content>", "<continuous_content>"]
       }
     },
     {
       "id": "effect",
-      "name": {
-        "zh": "效果",
-        "en": "Effect"
-      },
+      "name": { "zh": "效果", "en": "Effect" },
       "extends": "<trigger>",
       "abstract": false,
       "definition": {
-        "zh": "一种 <trigger>——效果是玩家视角下的触发，语义侧重「有 cost 要付」。结构与 <trigger> 完全相同（condition → cost → content），保留此概念仅为语义区分。<effect> 额外增加 <options> 字段以支持多选费用。",
-        "en": "A type of <trigger> — an effect is a player-facing trigger, semantically emphasizing 'there is a cost to pay'. Structurally identical to <trigger> (condition → cost → content); retained solely for semantic distinction. <effect> additionally adds an <options> field to support multi-choice costs."
-      },
-      "options": {
-        "type": "map<string, any> | null",
-        "default": null,
-        "description": {
-          "zh": "多选项配置。非空时必含 type（<multiple_choice_enum>）和 items 数组。",
-          "en": "Multi-option configuration. When non-null, must contain type (<multiple_choice_enum>) and items array."
-        }
+        "zh": "玩家或 <piece> 视角下的 <trigger>——由外部主动调用或效果链递归触发，通常不携带 condition。可作为 <content> 的递归节点：一个 effect 的 content 触发下一个 effect。与 trigger 结构相同，语义区分：effect 是主动/递归的，trigger 是游戏自动的。",
+        "en": "A player- or <piece>-facing <trigger> — externally invoked or recursively chained from another effect's content, typically carrying no condition. Serves as the recursive node in <content>: one effect's content fires the next effect. Structurally identical to trigger; semantic distinction: effect is active/recursive, trigger is game-automatic."
       },
       "constraints": {
         "required": [],
-        "optional": [
-          "options"
-        ]
+        "optional": []
       }
     },
     {
@@ -1349,71 +1297,32 @@
     },
     {
       "id": "trigger",
-      "name": {
-        "zh": "触发",
-        "en": "Trigger"
-      },
+      "name": { "zh": "触发", "en": "Trigger" },
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "游戏规则中效果与状态变更的统一描述结构。<trigger> 是递归结构——<condition> 定义触发门槛（一个对 <state> 的谓词，按边沿评估：谓词由假变真的瞬间激活此 trigger），<cost> 定义可支付的代价（null = 无需支付），<content> 指向递归的 <trigger> 或终结的 <content>。终结形态有两种，执行语义由终结的 content 类型决定：<instant_content>——经 <resolve> 一次性实例化为 <event> 并执行，链条终结（fire and forget）；<continuous_content>——进入生效池，按其生效条件电平维持，条件变假自动失效，不产生任何「反向触发」。<target> 声明此 trigger 作用的对象。一切游戏状态变更与持续修饰最终都由 <trigger> 结构描述——「触发执行」仅适用于 <instant_content>，<continuous_content> 是被激活后由条件维持的。<trigger> 不由任何 <player> 直接控制——actor 始终为 null。",
-        "en": "The unified descriptive structure for effects and state changes in game rules. <trigger> is recursive — <condition> defines the firing gate (a predicate over <state>, evaluated on the edge: this trigger activates the instant the predicate transitions false→true), <cost> defines the payable cost (null = no cost needed), and <content> points to a recursive <trigger> or a terminal <content>. There are two terminal forms, and the execution semantics are determined by the terminal content's type: <instant_content> — instantiated into an <event> via <resolve> and executed once, terminating the chain (fire and forget); <continuous_content> — enters the active pool and is level-maintained by its active condition, lapsing automatically when the condition turns false, with no 'reverse trigger' of any kind. <target> declares what this trigger acts upon. All game state changes and persistent modifiers are ultimately described by the <trigger> structure — but 'triggered execution' applies only to <instant_content>; a <continuous_content> is activated once and then maintained by its condition. A <trigger> is not directly controlled by any <player> — its actor is always null."
-      },
-      "actor": {
-        "type": "null",
-        "description": {
-          "zh": "从 <event> 继承，此处窄化为 null：<trigger> 不由任何 <player> 主动发起，没有执行者。",
-          "en": "Inherited from <event>, narrowed here to null: a <trigger> is not initiated by any <player> and has no executor."
-        }
+        "zh": "condition → cost → content 递归结构。携带 <condition> 监听状态变化，边沿激活后经 <cost> 支付进入 <content>。与 <effect> 互为对偶：effect 不携带 condition，由外部主动调用；trigger 携带 condition，自动响应状态变化。",
+        "en": "A recursive condition → cost → content structure. Carries a <condition> to listen for state changes; upon edge activation, pays <cost> and enters <content>. Isomorphic counterpart to <effect>: an effect carries no condition and is externally invoked; a trigger carries a condition and auto-responds to state changes."
       },
       "<condition>": {
-        "description": {
-          "zh": "此 <trigger> 的触发门槛——一个对 <state> 的谓词，定义了「满足什么条件才可以激活此 trigger」。按边沿评估：谓词由假变真的瞬间激活。可以是状态事实（如「等级 ≥5」「此牌在 <development_area> 中」）、timing（如「回合结束时」——本身即瞬间谓词）、或 action 引用（如「<perform_activity> 被触发，目标为本 trigger」）。条件满足不代表立即触发——还有 cost 需要被支付（若有）。当 <content> 终结于 <continuous_content> 且其 active_condition 为 null 时，此谓词同时充当维持谓词（电平语义）。",
-          "en": "The firing gate for this <trigger> — a predicate over <state>, defining 'under what conditions this trigger may be activated'. Evaluated on the edge: it activates the instant the predicate transitions false→true. Can be a state fact (e.g., 'level ≥ 5', 'this card is in the <development_area>'), a timing (e.g., 'end of turn' — itself an instantaneous predicate), or an action reference (e.g., '<perform_activity> triggered, targeting this trigger'). Meeting the condition does not mean immediate firing — cost must also be paid (if any). When the <content> terminates in a <continuous_content> whose active_condition is null, this predicate doubles as the maintenance predicate (level semantics)."
-        }
+        "default": null,
+        "description": { "zh": "触发门槛——对 <state> 的谓词，按边沿评估。", "en": "The firing gate — a predicate over <state>, evaluated on the edge." }
       },
       "<cost>": {
-        "type": "<cost> | null",
-        "description": {
-          "zh": "满足 <condition> 后可支付的代价。null = 无需支付（如阶段推进这类纯规则 trigger）。<cost> 自身包含 <condition>（支付资格——满足什么条件才可以付这个）和 <event>（实际执行的 transfer）。",
-          "en": "The cost that may be paid after meeting the <condition>. null = no cost needed (e.g., pure rule triggers like phase advancement). <cost> itself contains <condition> (payment gate) and <event> (the actual transfer executed)."
-        }
+        "default": null,
+        "description": { "zh": "满足 condition 后可支付的代价。", "en": "The cost that may be paid after meeting the condition." }
       },
       "<content>": {
-        "type": "<trigger> | <content>",
-        "description": {
-          "zh": "cost 被足额支付后触发的内容。可以是另一个 <trigger>（递归进入下一层），或终结的 <content>——<instant_content>（经 <resolve> 一次性实例化为 <event> 执行，链条终结）或 <continuous_content>（进入生效池按条件电平维持）。类型上保证递归必然终结。",
-          "en": "The content triggered after the cost is fully paid. May be another <trigger> (recursive, entering the next layer), or a terminal <content> — <instant_content> (instantiated into an <event> via <resolve> and executed once, terminating the chain) or <continuous_content> (entering the active pool, level-maintained by its condition). The type system guarantees the recursion always terminates."
-        }
+        "default": null,
+        "description": { "zh": "代价支付后触发的内容。三个独立字段，可任意组合。", "en": "The content triggered after cost payment. Three independent fields, freely combinable." }
       },
       "target": {
-        "type": "concept_ref | null",
-        "description": {
-          "zh": "此 <trigger> 作用的目标对象。null = 目标由上下文隐式确定（如全局规则 trigger）。",
-          "en": "The target object this <trigger> acts upon. null = target is implicitly determined by context (e.g., global rule triggers)."
-        }
+        "default": null,
+        "description": { "zh": "作用的目标对象。", "en": "The target object this trigger acts upon." }
       },
       "constraints": {
-        "required": [
-          {
-            "id": "<condition>",
-            "description": {
-              "zh": "每一个 <trigger> 都必须有触发条件——没有条件就无法确定何时激活。",
-              "en": "Every <trigger> must have a firing condition — without one, there is no way to determine when to activate it."
-            }
-          },
-          {
-            "id": "<content>",
-            "description": {
-              "zh": "每一个 <trigger> 都必须声明被触发后的后续内容——可以是递归的 <trigger> 或终结的 <content>（<instant_content> / <continuous_content>）。",
-              "en": "Every <trigger> must declare what follows after firing — either a recursive <trigger> or a terminal <content> (<instant_content> / <continuous_content>)."
-            }
-          }
-        ],
-        "optional": [
-          "<cost>",
-          "target"
-        ]
+        "required": [],
+        "optional": ["<condition>", "<cost>", "<content>", "target"]
       }
     },
     {

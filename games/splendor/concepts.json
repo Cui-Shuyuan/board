@@ -626,20 +626,6 @@
                 "zh": "璀璨宝石中的折扣效果——一种<ontology::continuous_content>。当一张<ontology::card>被打出并进入<ontology::development_area>后，该<ontology::card>提供对应颜色的永久<discount>：此后该<ontology::player>购买任意<ontology::card>时，所需<gem>费用中对应颜色减少 1 颗。<discount>可叠加——若<ontology::development_area>中有多张同色<ontology::card>，<discount>累加（如两张蓝色<ontology::card>提供 2 颗蓝宝石<discount>）。<discount>不经过<ontology::activation>——<ontology::card>进入<ontology::development_area>后自动开始生效。此<ontology::effect>的<ontology::cost>为 null（被动生效，无需支付代价），<ontology::content>为 null（不是一次性事件）。",
                 "en": "Discount effect in Splendor — a <ontology::continuous_content>. When a <ontology::card> is played into the <ontology::development_area>, it provides a permanent <discount> of its color: thereafter, when that <ontology::player> buys any <ontology::card>, the required <gem> cost of the corresponding color is reduced by 1. <discount>s stack — multiple cards of the same color in the <ontology::development_area> provide cumulative <discount>s (e.g. two blue <ontology::card>s give 2 sapphire <discount>). <discount> does not go through <ontology::activation> — it automatically takes effect when the <ontology::card> enters the <ontology::development_area>. This <ontology::effect>'s <ontology::cost> is null (passive, no cost to activate), <ontology::content> is null (not a one-time event)."
             },
-            "target": {
-                "type": "<ontology::player>",
-                "description": {
-                    "zh": "<discount>的受益者——即拥有来源<ontology::card>的<ontology::player>。<discount>仅对该<ontology::player>的后续购买生效。scope = self。",
-                    "en": "The beneficiary of the <discount> — the <ontology::player> who owns the source <ontology::card>. The <discount> only applies to this <ontology::player>'s future purchases. scope = self."
-                }
-            },
-            "params": {
-                "type": "map<string, any>",
-                "description": {
-                    "zh": "<discount>的参数。{ \"gem_color\": \"<gem>颜色枚举值\", \"amount\": 1 }。amount 默认 1——每张<ontology::card>提供 1 颗对应颜色的<discount>。多张同色<ontology::card>的<discount>累加。",
-                    "en": "Discount parameters. { \"gem_color\": \"<gem> color enum value\", \"amount\": 1 }. amount defaults to 1 — each <ontology::card> provides 1 discount of its color. Multiple <ontology::card>s of the same color stack."
-                }
-            },
             "gem_color": {
                 "type": "enum",
                 "enum": [
