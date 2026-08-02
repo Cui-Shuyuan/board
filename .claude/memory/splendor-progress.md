@@ -50,11 +50,11 @@ metadata:
 - `card_market`（extends `<market>`，contains=`<development_card>[]`，3 组×4 张按等级陈列，买走/保留后从对应牌堆顶部补牌）
 - `<game_box>` 已入 ontology（extends `<reserve>`），作为「当前未进入游戏流程的 object 的 zone」，setup 时从中分发组件，游戏中也可能接收被移出流程的 object
 
-**Action 层**：
-- `take_gems_different`（extends `<action>`，取 1~3 颗不同色宝石，数量由供应情况决定）
-- `take_gems_same`（extends `<action>`，取 2 颗同色宝石，前提是该色存量 ≥4）
-- `purchase_development_card`（extends `<action>`，购买发展卡。declaration 含 card+payment；trigger 含 2 个 event：`<transfer>` 支付（gem→gem_supply、gold→gold_supply，逐色 max(0, cost−discount)，gold 百搭）+ `<play>`（卡从 market/hand → development_area，market 来源则补牌））
-- `reserve_development_card`（extends `<action>`，保留发展卡。declaration 二选一：card=明面保留 / deck=暗面保留；trigger **ordered=false** 含 2 个 event：卡→hand（market 来源则补牌）+ gold_supply→player_holding 拿 1 gold（precondition：gold_supply 非空，空则跳过）。hand 上限 3）
+**Action 层**（specifies `<ontology::action>`，action 即 trigger 的一种——由玩家决策点燃）：
+- `take_gems_different`（specifies `<action>`，取 1~3 颗不同色宝石，数量由供应情况决定。condition=gems_available_any，content 为一次 transfer）
+- `take_gems_same`（specifies `<action>`，取 2 颗同色宝石，前提是该色存量 ≥4。condition=gems_available_same_color，content 为一次 transfer）
+- `purchase_development_card`（specifies `<action>`，购买发展卡。多步骤流程见 flow.json）
+- `reserve_development_card`（specifies `<action>`，保留发展卡。多步骤流程见 flow.json）
 
 **Action 层已完成（4 个）**：take_gems_different、take_gems_same、purchase_development_card、reserve_development_card
 
@@ -69,13 +69,12 @@ metadata:
 - `attract_noble`（extends `<trigger>`。condition=回合刚结束且 noble_market 中至少一枚 noble 的 requirement 被 development_area 满足；单 transfer noble→development_area，多枚满足时玩家择一、每回合一枚）
 - `enter_endgame`（extends `<trigger>`。timing=回合结束时；condition 引用 `reach_15_prestige`；event 为描述性「进入终局流程」，具体流程留给流程文档）
 - `skip_turn`（extends `<trigger>`。timing=回合开始、宣告 action 前；condition 引用 `no_action_available`；event=回合直接结束进入下一玩家，回合末 trigger 照常检查）
-- `purchase_development_card` 的内嵌 trigger：`pay_cost` event 与 `play_card` event，`play_card` 声明 `do_after: ["pay_cost"]`
-- `reserve_development_card` 的内嵌 trigger：`reserve_card` event 与 `take_gold_bonus` event，二者互相独立，均无 `do_after`
+Action 不再内嵌独立的 trigger——action 自身就是 trigger，其 condition/cost/content 直接声明在 action 顶层。
 
 **Trigger 层已完成（4 个）**：discard_excess_gems、attract_noble、enter_endgame、skip_turn
 
 **Conditions 层**（13 个核心条件 + 2 个 flow 控制条件）：
-- `gems_available_any` / `gems_available_same_color` / `card_purchasable` / `card_reservable` / `gold_available` / `exceed_gem_limit` / `noble_satisfied` / `action_declaration_legal`
+- `gems_available_any` / `gems_available_same_color` / `card_purchasable` / `card_reservable` / `gold_available` / `exceed_gem_limit` / `noble_satisfied`
 - `no_action_available`（复合：四行动条件取反求与）
 - `reach_15_prestige`（extends `<endgame_condition>`，任意玩家声望 ≥15）
 - `highest_prestige_wins`（extends `<victory_condition>`，形式化为 `"<condition>": ["<prestige_highest>", "<fewest_development_cards>"]`）
@@ -146,9 +145,8 @@ metadata:
 - ontology 概念的游戏专属值用顶层 key 引用（如 `"<hand>": { ... }`、`"<starting_player_marker>": { ... }`）
 - 顶层引用只声明游戏专属值，不重复定义本体已有的字段
 - **条件进 precondition，行为内化进 description**——合法性/可执行条件写 precondition（并引用 conditions 组）；事件做什么（含补牌、数量计算、可见性）内化到 event 的 description；`rules` 自由文本字段仅保留给真正无法结构化的约束（当前 Action 层已全部清空 rules）
-- **所有 condition 抽入 conditions 组统一定义，使用处只留纯引用**——trigger 的 `<condition>` 写 `"<condition>": "<x>"` 字符串引用；precondition 写 `"precondition": ["<x>"]` 单元素数组（ontology 中 Event.precondition 类型为 `<condition>[]`）。所有细节（declaration 合法性、跳过语义、上限说明）都写进 conditions 组的具体 condition 定义里，引用处零描述
-- **内嵌 trigger 用「此`<action>`」表述**——不点名具体 action（避免复制粘贴隐患）。timing=「此 action 执行完毕时」并注明 trigger 绑定此 action 的 declaration、二者合起来构成完整 action；condition=「此 action 的 precondition 满足且 declaration 合法」。独立 trigger 的 timing/condition 描述具体游戏事实
-- **trigger 的激活时机由 `<timing>` 字段显式表达，condition 只写纯状态事实**——如 discard_excess_gems：`<timing>`=「使宝石总数变化的 event 结算完成的瞬间」+ condition=「总数 >10」；attract_noble：`<timing>`=「回合结束时」+ condition=「noble requirement 被满足」。时机不同保证不会同时触发；内嵌 trigger 的 `<timing>`=「此 action 执行完毕时」+ 绑定说明，condition=「此 action 的 precondition 满足且 declaration 合法」
+- **所有 condition 抽入 conditions 组统一定义，使用处只留纯引用**——action/trigger 的 `<condition>` 写 `"<condition>": "<x>"` 字符串引用。所有细节都写进 conditions 组的具体 condition 定义里，引用处零描述
+- **Action 即 trigger**（2026-08-03 重构）——action 自身持有 condition/cost/content，不再需要 declaration 和内嵌 trigger。玩家决策直接点燃 action（即 trigger），由 pipeline 依次结算。独立 trigger 的 condition 写具体游戏事实
 
 **Why:** 追踪 Splendor 规则定义的进度，新会话无需重新遍历文件。
 **How to apply:** 概念层与流程层均已完成。后端 Runtime 已通过 Splendor 验证，下一步重点是换一款游戏做真实压力测试，并补充前端选游戏与会话管理。

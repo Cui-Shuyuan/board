@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-08-02，67 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-08-03，66 个概念——Declaration 已弃用）
 metadata:
   node_type: memory
   type: project
@@ -52,11 +52,15 @@ D:\workspace\board\ontology\concepts.json（统一本体，67 个概念）
 - **Content**（extends Property）：Effect 结算时发生的具体事件
 - **Effect**（extends Property）：Cost + Content 的完整规格
 
-### Action 三件套：Declaration / Trigger / Action ★ 新增
-与 Effect 完全对偶：
-- **Declaration**（extends Property）：玩家宣告的选择内容。`params` 为 required 字段
-- **Action**（extends Event）：Declaration + Trigger 的完整规格。`actor`、`<declaration>`、`<trigger>` 均为 required
-- 因果链：Action → Trigger → 后续 Event（Transfer、State 变更等）
+### Action 三件套 → 统一 Trigger 模型 ★★（2026-08-03）
+
+**Declaration 已弃用。** Action 和 Effect 均 specifies Trigger，三者共享完全相同的结构（condition → cost → target → content），区别仅在于点火源和称呼习惯：
+- **纯 Trigger**：condition 边沿激活，规则自动执行
+- **Effect**：specifies trigger，绑定在 piece 上、由 condition 边沿激活
+- **Action**：specifies trigger，不依赖 piece、由 player 决策点燃
+
+判据：不依赖 piece + 由玩家做出 = action；依赖 piece + 由状态边沿点燃 = effect。
+Action 的 content 槽位可以嵌套 action/effect/任意 content——嵌套不改变被嵌套概念的类型。
 
 ### Event 新增字段 ★
 - **precondition**：`<condition>[]`，optional。事件发生前必须满足的条件列表
@@ -83,12 +87,14 @@ Trigger 的本质是「**condition + cost + content**」的递归调度器：
 ### Ownership 归属模型
 Ownership extends State。三种来源：Zone 推导、固有归属、游戏中获取。变更须经 Effect 或 Transfer 触发。
 
-### Event 体系与因果关系链
-- **Effect** extends Trigger：效果是玩家视角下的 trigger，结构完全相同（condition → cost → content），额外增加 options 字段支持多选费用。
-- **Action**：player 的决策声明，actor 必为 player
-- **Trigger**：规则的事件调度器。actor 为 null。每个 Action 必定绑定一个 Trigger
-- 因果链：Action → Trigger（递归 condition → cost → content）→ 终结于 `<instant_content>` / `<continuous_content>`
-- **Resolve**：将 `<instant_content>` 实例化为真实 Event
+### Event 体系与因果关系链 ★（2026-08-03 重构）
+- **Trigger** 是体系核心：condition → cost → target → content 的可执行规格。
+- **Effect** specifies Trigger：绑定在 piece 上，由 condition 边沿激活。含 instant_effect 和 continuous_effect。
+- **Action** specifies Trigger：不依赖 piece，由 player 决策点燃。自身不声明独有字段。
+- **Activation** specifies Action：将 target 窄化为「选哪个 effect」。
+- 三者共享同一台机器，区别如同 card 和 tile——称呼习惯不同，本质相同。
+- 因果链：Trigger（condition 边沿跳变 → cost 支付 → content 触发）→ 递归或终结于 Content
+- **Resolve**：将 content 实例化为真实 Event
 - **Shuffle**：重排 Deck 中 Object 顺序
 
 ### Zone 体系
@@ -132,8 +138,8 @@ Round、Turn、Phase、Transfer
 ### 状态概念（2 个）
 Ownership、Starting Player
 
-### 属性概念（5 个）
-Cost、Content、Effect、Declaration、Information Visibility
+### 属性概念（4 个）★ Declaration 已弃用
+Cost、Content、Effect、Information Visibility
 
 ### 区域概念（3 个）
 Reserve（abstract）、Discard Pile、Player Zone（abstract）
