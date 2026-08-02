@@ -297,7 +297,7 @@
     },
     {
       "id": "module",
-      "extends": "<ontology::effect>",
+      "specifies": "<ontology::effect>",
       "name": {
         "zh": "模组",
         "en": "Module"

@@ -80,7 +80,7 @@ metadata:
 - **2026-08-01~02（cost/content 模型重构 + 控制台 review + 芯片安装体系）**:
     - **cost 二分**：`instant_cost`（一次性支付）+ `continuous_cost`（状态检查），替代旧 `condition` + `event`
     - **content 三字段**：`<instant_content>`（无条件一次执行）、`<continuous_content>`（无条件电平维持）、`<effect>`（条件触发，含 `instant_effect` 一次机会 + `continuous_effect` 持续武装）
-    - **effect extends trigger**：不再携带顶层 condition，由调用方决定时机。`instant_effect`（condition 失败永远消失）和 `continuous_effect`（持续监听，end_condition = null 永不自动终结）
+    - **effect specifies trigger**：不再携带顶层 condition，由调用方决定时机。`instant_effect`（condition 失败永远消失）和 `continuous_effect`（持续监听，end_condition = null 永不自动终结）
     - **play 重构**：三步 `pay_cost` → `transfer_piece` → `resolve`，替代旧 effect 模式的安装操作。`install_xxx_chip` 和 `install_research_card` 底层均改为 `<ontology::play>`
     - **resolve 语义**：只接触 content 三种形态——instant 执行一次、continuous 进入生效池、effect 分 instant/continuous 武装
     - **三种芯片 parts 定义完成**：`goal_chip`（chip_name / cost / chip_number）、`income_chip`（effect）、`attribute_chip`（chip_name / cost / effect）
@@ -96,7 +96,7 @@ metadata:
     - **后端兼容**：`GameRulesService` 同步更新
 
 - **2026-07-30（trigger/effect 模型重构 + activity_01 形式化）**:
-    - **ontology 重构**：trigger 从 "timing + condition → events" 改为 "condition + cost + content" 递归模型。effect extends trigger，仅额外增加 options。删除 `<passive_effect>`。新增 `<push_track>` event。
+    - **ontology 重构**：trigger 从 "timing + condition → events" 改为 "condition + cost + content" 递归模型。effect specifies trigger，仅额外增加 options。删除 `<passive_effect>`。新增 `<push_track>` event。
     - **activity 概念**：新增 `<activity>`（specifies `<ontology::effect>`），预填 condition="<perform_activity>"。
     - **activity_01 实例**：进 `<activity>s` 数组，结构化 cost（condition + transfer：money_space → supply）和 content（push_any_progress_track）。
     - **push_any_progress_track**：specifies `<ontology::push_track>`，track 绑为 5 条进程轨的 CHOOSE_ONE。
