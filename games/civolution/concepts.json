@@ -432,43 +432,27 @@
             "extends": "<ontology::card>",
             "abstract": false,
             "definition": {
-                "zh": "可安装到层级分区的 <ontology::card>。每张研究牌纵向分为三部分：上部能力区（安装后唯一露出）、中部五个费用格、下部即时奖励。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。",
-                "en": "A <ontology::card> that can be installed into the stage partition. Each card is divided vertically into three sections: top ability area (the only visible part after installation), middle five cost slots, and bottom instant bonus. Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition."
+                "zh": "可安装到层级分区的 <ontology::card>。纵向分为三部分：上部能力区（安装后唯一露出）、中部五个费用格、下部即时奖励。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。",
+                "en": "A <ontology::card> that can be installed into the stage partition. Vertically divided into three sections: top ability area (the only visible part after installation), middle five cost slots, and bottom instant bonus. Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition."
+            },
+            "<ontology::cost>": {
+                "count": 5,
+                "description": {
+                    "zh": "安装费用。五个费用格，从左到右编号 1~5（空格也占编号）。分两类：支付型——从仓库返还指定类型和数量的储存材料或标记至供应堆；持有型——需持有不少于指定类型和数量的特征标记，或已建造不少于指定数量的聚落。单个费用格内可能有两种可选条件，满足其一即可。空格自动视为已满足。相邻费用格之间可能有包含图标——满足前者时后者自动视为已满足。",
+                    "en": "Install cost. Five cost slots, numbered 1-5 left to right (empty slots count). Two types: payment — return specified stored materials or markers from storage to supply; possession — possess at least the specified number of feature markers or have built at least the specified number of settlements. A single slot may contain two alternative conditions. Empty slots are auto-satisfied. Adjacent slots may have an inclusion icon."
+                }
             },
             "parts": [
                 "<card_name>",
                 {
-                    "type": "<ontology::continuous_content>",
+                    "type": "<ontology::effect>",
                     "position": {
-                        "zh": "上三分之一",
-                        "en": "top third"
+                        "zh": "上三分之一与下三分之一",
+                        "en": "top third and bottom third"
                     },
                     "description": {
-                        "zh": "安装后唯一露出的部分。可能是活动（配合 Activity 模组触发）、持续效果（条件满足时自动触发），或没有效果（仅占位）。具体效果由各 <research_card> 实例定义。",
-                        "en": "The only visible part after installation. May be an activity effect (triggered via the Activity module), a continuous effect (triggers automatically when conditions are met), or no effect (space-filler only). Specific effect defined per card instance."
-                    }
-                },
-                {
-                    "type": "<ontology::condition>",
-                    "count": 5,
-                    "position": {
-                        "zh": "中间三分之一",
-                        "en": "middle third"
-                    },
-                    "description": {
-                        "zh": "五个费用格，从左到右编号 1~5（空格也占编号）。分两类：支付型（红色，从仓库返还指定类型和数量的储存材料或标记至供应堆）和持有型（白色，需持有不少于指定类型和数量的特征标记，或已建造不少于指定数量的聚落）。单个费用格内可能有两种可选条件，满足其一即可。空格自动视为已满足。相邻费用格之间可能有包含图标——满足前者时后者自动视为已满足。",
-                        "en": "Five cost slots, numbered 1-5 left to right (empty slots count). Two types: payment (red, return specified type and quantity of stored materials or markers from storage to supply) and possession (white, must possess at least the specified number of feature markers, or have built at least the specified number of settlements). A single slot may contain two alternative conditions; satisfying one suffices. Empty slots are auto-satisfied. Adjacent slots may have an inclusion icon — satisfying the former auto-satisfies the latter."
-                    }
-                },
-                {
-                    "type": "<ontology::instant_content>",
-                    "position": {
-                        "zh": "下三分之一",
-                        "en": "bottom third"
-                    },
-                    "description": {
-                        "zh": "即时效果，带闪电图标。安装研究牌时触发，必须结算；若不可执行则作废。部分研究牌无此效果。",
-                        "en": "Instant effect with a lightning icon. Triggered when the research card is installed; must be resolved, forfeited if cannot be executed. Some research cards lack this effect."
+                        "zh": "安装完成后结算的效果。上部为持续能力（安装后露出，持续可用），下部为即时奖励（安装时一次性触发，带闪电图标，必须结算否则作废）。",
+                        "en": "Effects resolved after installation. Top: continuous ability (visible after install, persistently available). Bottom: instant bonus (triggers once on install, lightning icon, must resolve or forfeit)."
                     }
                 }
             ],
@@ -605,9 +589,22 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "可安装到 <console> 的白色芯片，提供收入阶段可执行的持续效果。每张收入芯片有两个可选效果，执行时二选一。收入芯片可安装在任意列。",
-                "en": "A white chip that can be installed in a <console>, providing an effect usable in Income phases. Each income chip has two optional effects; when executing, choose one. Income chips can be installed in any column."
+                "zh": "可安装到 <console> 的白色芯片。安装时效果不触发——仅在收入阶段、天气轨温暖格或进程轨奖励中通过 <activate_income_chip> 选中时结算。收入芯片可安装在任意列。",
+                "en": "A white chip that can be installed in a <console>. Its effect does not trigger on install — it only resolves when selected by <activate_income_chip> during the Income phase, weather gauge Warm slot, or track bonuses. Income chips can be installed in any column."
             },
+            "parts": [
+                {
+                    "type": "<ontology::effect>",
+                    "position": {
+                        "zh": "芯片正面",
+                        "en": "face of the chip"
+                    },
+                    "description": {
+                        "zh": "被 <activate_income_chip> 选中时结算的效果。具体结构在实例中定义。",
+                        "en": "Effect resolved when selected by <activate_income_chip>. Specific structure defined per instance."
+                    }
+                }
+            ],
             "media": {
                 "component": [
                     "assets/components/page-04/income_chip.png"
@@ -676,9 +673,32 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "黄色的芯片，玩家在自己的回合任何时候满足条件即可拿取并安装。安装后提供持续效果。",
-                "en": "A yellow chip that a player may take and install at any time during their turn if they meet its requirement. Provides a continuous effect after installation."
+                "zh": "黄色的芯片。左侧为安装 cost，右侧为条件 effect。中间属性图标仅视觉提示，不被规则引用。",
+                "en": "A yellow chip. Left: install cost. Right: conditional effect. The attribute icon in the middle is visual only, not referenced by rules."
             },
+            "parts": [
+                {
+                    "type": "chip_name",
+                    "position": {
+                        "zh": "芯片上部",
+                        "en": "top of the chip"
+                    }
+                },
+                {
+                    "type": "<ontology::cost>",
+                    "position": {
+                        "zh": "芯片左侧",
+                        "en": "left side of the chip"
+                    }
+                },
+                {
+                    "type": "<ontology::effect>",
+                    "position": {
+                        "zh": "芯片右侧",
+                        "en": "right side of the chip"
+                    }
+                }
+            ],
             "media": {
                 "component": [
                     "assets/components/page-04/attribute_chip.png"
@@ -712,9 +732,42 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "标识<console>阶段 4 和阶段 5 是否激活的 <ontology::tile>。未激活面朝上时，该阶段的卡牌/芯片终局不计分；激活后翻面，才计分。",
-                "en": "A <ontology::tile> indicating whether stage 4 or stage 5 of a <console> is active. When the inactive side is up, cards/chips in that stage score nothing at final scoring; flip to active to enable scoring."
+                "zh": "标识层级 4 或层级 5 是否激活的双面 <ontology::tile>。未激活面朝上时该层级终局不计分；激活面朝上时开放计分。正面为激活面——effect 在终局计分时使该层级计分生效；aid 提示该层级安装研究牌需满足的费用格数量。",
+                "en": "A double-sided <ontology::tile> indicating whether stage 4 or stage 5 is active. Inactive side up: no scoring. Active side up: scoring enabled. The active face contains an effect enabling scoring during final scoring, and an aid showing cost slot requirements."
             },
+            "parts": [
+                {
+                    "type": "<ontology::effect>",
+                    "position": {
+                        "zh": "激活面",
+                        "en": "active face"
+                    },
+                    "<ontology::continuous_effect>": {
+                        "<ontology::condition>": {
+                            "zh": "终局计分阶段，且此板块激活面朝上",
+                            "en": "Final scoring phase, and this tile is active face up"
+                        },
+                        "<ontology::cost>": null,
+                        "<ontology::content>": {
+                            "<ontology::instant_content>": {
+                                "zh": "对应层级每安装一张研究牌或一枚芯片，获得该层级标示的分数。",
+                                "en": "Score the indicated points for each research card or chip installed in the corresponding stage."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "<ontology::aid>",
+                    "position": {
+                        "zh": "激活面",
+                        "en": "active face"
+                    },
+                    "description": {
+                        "zh": "提示在对应层级安装研究牌需满足的费用格数量。",
+                        "en": "Indicates how many cost slots must be satisfied to install a research card at the corresponding tier."
+                    }
+                }
+            ],
             "media": {
                 "component": [
                     "assets/components/page-04/stage_tile.png"
@@ -1747,11 +1800,15 @@
                         "en": "Hot"
                     },
                     "<ontology::effect>": {
-                        "options": [
-                            "<lose_food>",
-                            "<remove_tribe>"
-                        ],
-                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                        "<ontology::content>": {
+                            "<ontology::instant_content>": {
+                                "options": [
+                                    { "<ontology::transfer>": "<lose_food>" },
+                                    { "<ontology::transfer>": "<remove_tribe>" }
+                                ],
+                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                            }
+                        }
                     }
                 },
                 {
@@ -1787,11 +1844,15 @@
                         "en": "Cold"
                     },
                     "<ontology::effect>": {
-                        "options": [
-                            "<lose_food>",
-                            "<remove_tribe>"
-                        ],
-                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                        "<ontology::content>": {
+                            "<ontology::instant_content>": {
+                                "options": [
+                                    { "<ontology::transfer>": "<lose_food>" },
+                                    { "<ontology::transfer>": "<remove_tribe>" }
+                                ],
+                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                            }
+                        }
                     }
                 }
             ],
@@ -1971,140 +2032,48 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "每位玩家的<console>，包含模组区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。<console> 自身携带一个基础活动图标——玩家无需安装任何研究牌即可使用此能力。",
-                "en": "Each player's <console> containing the module area, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area. The <console> itself carries a basic activity icon — usable without any installed research cards."
+                "zh": "每位玩家的<console>，包含模组区、目标列、属性列、收入区、仓库、特征格、创意格、骰子区等。",
+                "en": "Each player's <console> containing the module area, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area."
             },
-            "content": [
-                {
-                    "id": "innate_activity",
-                    "<ontology::effect>": "<activity_01>",
-                    "description": {
-                        "zh": "<console> 右上角的基础活动图标。效果见 <activity_01>。无需安装任何研究牌即可在行动阶段使用。",
-                        "en": "The basic activity icon at the top-right of the <console>. See <activity_01> for its effect. Usable during the Action phase without any installed research cards."
-                    }
-                },
-                {
-                    "id": "effect_migration_lv3_on_console",
-                    "effect_ref": "<effect_migration_lv3>",
-                    "description": {
-                        "zh": "迁徙模组等级三效果，印于<console>模组槽底部。初始不可用——对应模组升至 L3 时由<console> <ontology::gain>。",
-                        "en": "Level 3 effect of the Migration module, printed at the bottom of the <console> module slot. Initially unavailable — gained by the <console> via <ontology::gain> when the module reaches L3."
-                    }
-                },
-                {
-                    "id": "effect_procreation_lv3_on_console",
-                    "effect_ref": "<effect_procreation_lv3>",
-                    "description": {
-                        "zh": "繁育模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Procreation module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_production_lv3_on_console",
-                    "effect_ref": "<effect_production_lv3>",
-                    "description": {
-                        "zh": "生产模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Production module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_transport_lv3_on_console",
-                    "effect_ref": "<effect_transport_lv3>",
-                    "description": {
-                        "zh": "运输模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Transport module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_sustenance_lv3_on_console",
-                    "effect_ref": "<effect_sustenance_lv3>",
-                    "description": {
-                        "zh": "给养模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Sustenance module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_exploration_lv3_on_console",
-                    "effect_ref": "<effect_exploration_lv3>",
-                    "description": {
-                        "zh": "探索模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Exploration module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_building_lv3_on_console",
-                    "effect_ref": "<effect_building_lv3>",
-                    "description": {
-                        "zh": "建造模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Building module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_planning_lv3_on_console",
-                    "effect_ref": "<effect_planning_lv3>",
-                    "description": {
-                        "zh": "计划模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Planning module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_research_lv3_on_console",
-                    "effect_ref": "<effect_research_lv3>",
-                    "description": {
-                        "zh": "研究模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Research module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_achievement_lv3_on_console",
-                    "effect_ref": "<effect_achievement_lv3>",
-                    "description": {
-                        "zh": "成就模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Achievement module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_insight_lv3_on_console",
-                    "effect_ref": "<effect_insight_lv3>",
-                    "description": {
-                        "zh": "洞悉模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Insight module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_mutation_lv3_on_console",
-                    "effect_ref": "<effect_mutation_lv3>",
-                    "description": {
-                        "zh": "突变模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Mutation module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_invention_lv3_on_console",
-                    "effect_ref": "<effect_invention_lv3>",
-                    "description": {
-                        "zh": "发明模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Invention module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_trade_lv3_on_console",
-                    "effect_ref": "<effect_trade_lv3>",
-                    "description": {
-                        "zh": "交易模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Trade module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                },
-                {
-                    "id": "effect_activity_lv3_on_console",
-                    "effect_ref": "<effect_activity_lv3>",
-                    "description": {
-                        "zh": "活动模组等级三效果，印于<console>模组槽底部。初始不可用。",
-                        "en": "Level 3 effect of the Activity module, printed at the bottom of the <console> module slot. Initially unavailable."
-                    }
-                }
-            ],
             "parts": [
+                {
+                    "id": "activity_01",
+                    "type": "<ontology::effect>",
+                    "position": {
+                        "zh": "面板右上角",
+                        "en": "top-right of the <console>"
+                    }
+                },
+                {
+                    "id": "lv3_effects",
+                    "type": "<ontology::effect>",
+                    "position": {
+                        "zh": "面板模组槽底部",
+                        "en": "bottom of module slots on the <console>"
+                    },
+                    "description": {
+                        "zh": "15 个主模组的等级三效果，印于模组槽底部。初始均不可用，模组升至 L3 时激活。",
+                        "en": "Level 3 effects of 15 main modules, printed at the bottom of module slots. Initially unavailable; activated when module reaches L3."
+                    },
+                    "options": [
+                        "<effect_migration_lv3>",
+                        "<effect_procreation_lv3>",
+                        "<effect_production_lv3>",
+                        "<effect_transport_lv3>",
+                        "<effect_sustenance_lv3>",
+                        "<effect_exploration_lv3>",
+                        "<effect_building_lv3>",
+                        "<effect_planning_lv3>",
+                        "<effect_research_lv3>",
+                        "<effect_achievement_lv3>",
+                        "<effect_insight_lv3>",
+                        "<effect_mutation_lv3>",
+                        "<effect_invention_lv3>",
+                        "<effect_trade_lv3>",
+                        "<effect_activity_lv3>"
+                    ]
+                },
+                {
                 {
                     "type": "<module_area>",
                     "position": {
@@ -2187,6 +2156,37 @@
                     "position": {
                         "zh": "面板底部边缘",
                         "en": "bottom edge of the <console>"
+                    }
+                },
+                {
+                    "type": "<ontology::effect>",
+                    "position": {
+                        "zh": "层级 1/2/3 左侧上方",
+                        "en": "upper left of stages 1/2/3"
+                    },
+                    "<ontology::continuous_effect>": {
+                        "<ontology::condition>": {
+                            "zh": "终局计分阶段",
+                            "en": "Final scoring phase"
+                        },
+                        "<ontology::cost>": null,
+                        "<ontology::content>": {
+                            "<ontology::instant_content>": {
+                                "zh": "此层级每安装一张研究牌或一枚芯片，获得该层级标示的分数。一层的 <goal_chip> 左右各可装一枚，每枚单独计分。",
+                                "en": "Score the indicated points for each research card or chip installed in its stage. A tier fits up to two <goal_chip>s (left and right); each scores individually."
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "<ontology::aid>",
+                    "position": {
+                        "zh": "层级 1/2/3 左侧下方",
+                        "en": "lower left of stages 1/2/3"
+                    },
+                    "description": {
+                        "zh": "提示在此层级安装研究牌需满足的费用格数量。",
+                        "en": "Indicates how many cost slots must be satisfied to install a research card at this tier."
                     }
                 },
                 {
@@ -2317,13 +2317,22 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "<console> 左上方用于存放 <goal_chip> 的 <ontology::player_holding>。共 3 格，每格可堆叠任意数量的 <goal_chip>。当某格最后一枚 <goal_chip> 被取出安装时，触发 <goal_slot_emptied>。",
-                "en": "A <ontology::player_holding> on the top-left of the <console> for holding <goal_chip>s. 3 slots, each holding an unlimited stack. When the last <goal_chip> in any slot is removed for installation, <goal_slot_emptied> triggers."
+                "zh": "<console> 左上方用于存放 <goal_chip> 的 <ontology::player_holding>。共 3 格，每格可堆叠任意数量。",
+                "en": "A <ontology::player_holding> on the top-left of the <console> for holding <goal_chip>s. 3 slots, each holding an unlimited stack."
             },
             "specifies": "<ontology::player_holding>",
             "slot_count": 3,
             "contains": "<goal_chip>",
-            "<ontology::trigger>": "<goal_slot_emptied>"
+            "<ontology::effect>": {
+                "<ontology::continuous_effect>": {
+                    "<ontology::condition>": {
+                        "zh": "此格最后一枚 <goal_chip> 被安装后",
+                        "en": "After the last <goal_chip> in this slot is installed"
+                    },
+                    "<ontology::cost>": null,
+                    "<ontology::content>": "<upgrade_main_module>"
+                }
+            }
         },
         {
             "id": "goal_column",
@@ -2713,138 +2722,40 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "将手牌中的一张 <research_card> 安装到层级分区的 <ontology::effect>。",
-                "en": "An <ontology::effect> that installs a <research_card> from hand into the stage partition."
+                "zh": "将手牌中的一张 <research_card> 安装到层级分区。",
+                "en": "Install a <research_card> from hand into the stage partition."
             },
             "card_type": {
                 "type": "enum",
                 "enum": [
-                    {
-                        "id": "ACHIEVEMENT_CARD_TYPE",
-                        "name": {
-                            "zh": "成就",
-                            "en": "Achievement"
-                        },
-                        "definition": {
-                            "zh": "研究牌类型：成就（紫色）。",
-                            "en": "Research card type: Achievement (purple)."
-                        }
-                    },
-                    {
-                        "id": "BUILDING_CARD_TYPE",
-                        "name": {
-                            "zh": "建造",
-                            "en": "Building"
-                        },
-                        "definition": {
-                            "zh": "研究牌类型：建造（蓝色）。",
-                            "en": "Research card type: Building (blue)."
-                        }
-                    },
-                    {
-                        "id": "INSIGHT_CARD_TYPE",
-                        "name": {
-                            "zh": "洞悉",
-                            "en": "Insight"
-                        },
-                        "definition": {
-                            "zh": "研究牌类型：洞悉（黄色）。",
-                            "en": "Research card type: Insight (yellow)."
-                        }
-                    },
-                    {
-                        "id": "MUTATION_CARD_TYPE",
-                        "name": {
-                            "zh": "突变",
-                            "en": "Mutation"
-                        },
-                        "definition": {
-                            "zh": "研究牌类型：突变（绿色）。",
-                            "en": "Research card type: Mutation (green)."
-                        }
-                    },
-                    {
-                        "id": "INVENTION_CARD_TYPE",
-                        "name": {
-                            "zh": "发明",
-                            "en": "Invention"
-                        },
-                        "definition": {
-                            "zh": "研究牌类型：发明（棕色）。",
-                            "en": "Research card type: Invention (brown)."
-                        }
-                    }
+                    { "id": "ACHIEVEMENT_CARD_TYPE", "name": { "zh": "成就", "en": "Achievement" }, "definition": { "zh": "研究牌类型：成就（紫色）。", "en": "Research card type: Achievement (purple)." } },
+                    { "id": "BUILDING_CARD_TYPE", "name": { "zh": "建造", "en": "Building" }, "definition": { "zh": "研究牌类型：建造（蓝色）。", "en": "Research card type: Building (blue)." } },
+                    { "id": "INSIGHT_CARD_TYPE", "name": { "zh": "洞悉", "en": "Insight" }, "definition": { "zh": "研究牌类型：洞悉（黄色）。", "en": "Research card type: Insight (yellow)." } },
+                    { "id": "MUTATION_CARD_TYPE", "name": { "zh": "突变", "en": "Mutation" }, "definition": { "zh": "研究牌类型：突变（绿色）。", "en": "Research card type: Mutation (green)." } },
+                    { "id": "INVENTION_CARD_TYPE", "name": { "zh": "发明", "en": "Invention" }, "definition": { "zh": "研究牌类型：发明（棕色）。", "en": "Research card type: Invention (brown)." } }
                 ],
-                "description": {
-                    "zh": "要安装的研究牌类型。每种类型在层级分区中独占一列。",
-                    "en": "The type of research card to install. Each type occupies one dedicated column in the stage partition."
+                "description": { "zh": "要安装的研究牌类型。每种类型在层级分区中独占一列。", "en": "The type of research card to install. Each type occupies one dedicated column in the stage partition." }
+            },
+            "specifies": "<ontology::play>",
+            "<piece>": "<research_card>",
+            "source": "<ontology::hand>",
+            "destination": "<stage_partition>",
+            "options": {
+                "determine_position": {
+                    "description": {
+                        "zh": "确定安装位置。若尚无同类型的 <research_card>，任选一个空 <column> 或仅含 <income_chip> 的 <column>，将该 <column> 的起始 <tier> 作为安装位置。若已有同类型，则将对应 <column> 最下面的空 <tier> 作为安装位置。",
+                        "en": "Determine install position. If no <research_card> of the same type exists, choose any empty <column> or one with only <income_chip>s, using its starting <tier>. If the type already has a <column>, use the lowest empty <tier> in that <column>."
+                    }
+                },
+                "determine_cost_range": {
+                    "description": {
+                        "zh": "确定费用范围。需满足的费用格数量下限 N = 安装层级在列中的序号。玩家可选择满足更多至 M（M ≥ N，M ≤ 5），必须前缀连续覆盖。",
+                        "en": "Determine cost range. Minimum cost slots N = tier index in column. Player may choose to satisfy more up to M (M ≥ N, M ≤ 5), must be a contiguous prefix."
+                    },
+                    "do_after": ["determine_position"]
                 }
             },
-            "specifies": "<ontology::effect>",
-            "<ontology::condition>": null,
-            "<ontology::cost>": {
-                "<ontology::instant_cost>": {
-                    "options": {
-                        "determine_position": {
-                            "description": {
-                                "zh": "确定安装位置。若层级分区中尚无同类型的 <research_card>，玩家可任选一个空 <column> 或仅含 <income_chip> 的 <column>，将该 <column> 的起始 <tier> 作为安装位置。若已有同类型的 <research_card>，则将对应 <column> 最下面的空 <tier> 作为安装位置。注意：不同 <column> 的起始 <tier> 不同——某些 <column> 缺少 <tier> 1 甚至 <tier> 2，因此起始 <tier> 并不总是 <tier> 1。",
-                                "en": "Determine install position. If no <research_card> of the same type exists in the stage partition, the player may choose any empty <column> or one with only <income_chip>s, and use that <column>'s starting <tier> as the install position. If the type already has a <column>, use the lowest empty <tier> in that <column> as the install position. Note: different <column>s have different starting <tier>s — some <column>s lack <tier> 1 or even <tier> 2, so the starting <tier> is not necessarily <tier> 1."
-                            }
-                        },
-                        "determine_cost_range": {
-                            "description": {
-                                "zh": "确定费用范围。费用格为研究牌的 part，共 5 个，从左到右编号 1~5（空费用格也占编号）。根据 determine_position 确定的安装层级，需满足的费用格数量下限 N = 该层级在列中的序号（即若该列已有 k−1 张牌，新牌安装在第 k 层，则 N = k；N ≥ 5 时需满足全部 5 格）。玩家可选择满足更多——将满足范围扩大至前 M 格（M ≥ N，M ≤ 5）——但必须以前缀形式连续覆盖，不可跳过中间任意格。",
-                                "en": "Determine cost range. Cost slots are a part of the research card, 5 slots numbered 1-5 left to right (empty slots count toward numbering). Based on the install tier from determine_position, the minimum number of cost slots to satisfy N = that tier's ordinal position in the column (i.e., if the column already has k−1 cards and the new card occupies the k‑th tier, then N = k; if N ≥ 5, all 5 slots must be satisfied). The player may choose to satisfy more — expanding the range to the first M slots (M ≥ N, M ≤ 5) — but must cover them as a contiguous prefix; skipping intermediate slots is not allowed."
-                            },
-                            "do_after": ["determine_position"]
-                        },
-                        "satisfy_cost_slots": {
-                            "description": {
-                                "zh": "满足费用格。按从左到右顺序逐一检查前 M 个费用格。支付型：从仓库返还指定类型和数量的储存材料或标记至供应堆。持有型：已持有不少于指定类型和数量的特征标记，或已建造不少于指定数量的聚落。单个费用格内若有两种可选条件，满足其一即可。空费用格自动视为已满足。若两相邻费用格间有包含图标，满足前者时后者自动视为已满足。任一非空费用格无法被满足则不可安装此牌。",
-                                "en": "Satisfy cost slots. Check the first M cost slots left to right. Payment type: return specified stored materials or markers from storage to supply. Possession type: possess at least the specified number of feature markers, or have built at least the specified number of settlements. A slot with two conditions needs only one satisfied. Empty slots are auto-satisfied. Inclusion icon between adjacent slots: satisfying the former auto-satisfies the latter. If any non-empty slot cannot be satisfied, the card cannot be installed."
-                            },
-                            "do_after": ["determine_cost_range"]
-                        }
-                    },
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-                }
-            },
-            "<ontology::content>": {
-                "<ontology::instant_content>": {
-                    "options": {
-                        "gain_slot_scores": {
-                            "description": {
-                                "zh": "获得费用格分数。前 M 个费用格下方若印有分数值，玩家获得对应分数之和。若全部已满足的费用格下方均无分数，此步骤跳过。",
-                                "en": "Gain cost slot scores. If any of the first M cost slots have a score printed below them, the player gains the sum of those scores. If none of the satisfied slots have scores below, skip this step."
-                            }
-                        },
-                        "resolve_instant_bonus": {
-                            "description": {
-                                "zh": "结算即时奖励。若研究牌的 parts 中包含 <ontology::instant_content>（闪电图标，位于牌下三分之一），此步骤开始时触发该效果。玩家必须结算；若效果不可执行则作废。若该牌无此 part，此步骤跳过。",
-                                "en": "Resolve instant bonus. If the research card's parts include an <ontology::instant_content> (lightning icon, in the bottom third of the card), that effect is triggered at the start of this step. The player must resolve it; if it cannot be executed, it is forfeited. If the card has no such part, skip this step."
-                            },
-                            "do_after": [
-                                "gain_slot_scores"
-                            ]
-                        },
-                        "install_card": {
-                            "description": {
-                                "zh": "安装卡牌。将研究牌的下三分之二塞入该列已有牌（或控制台面板）下方，仅上三分之一露出。牌自此进入层级分区，上部效果在此后可用。",
-                                "en": "Install the card. Tuck the bottom two-thirds of the research card under the existing cards (or the console) in that column, leaving only the top one-third visible. The card enters the stage partition and its top-section effect becomes available."
-                            },
-                            "<ontology::play>": {
-                                "<ontology::piece>": "<research_card>",
-                                "source": "<ontology::hand>",
-                                "destination": "<stage_partition>"
-                            },
-                            "do_after": [
-                                "resolve_instant_bonus"
-                            ]
-                        }
-                    },
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-                }
-            }
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         {
             "id": "install_achievement_card",
@@ -2918,91 +2829,104 @@
         },
         {
             "id": "install_goal_chip",
-            "name": {
-                "zh": "安装目标芯片",
-                "en": "Install Goal Chip"
-            },
+            "name": { "zh": "打出目标芯片", "en": "Play Goal Chip" },
             "abstract": false,
             "definition": {
-                "zh": "将一张 <goal_chip> 从目标区安装到层级分区。安装条件引用芯片自身的 <continuous_cost>。",
-                "en": "Install a <goal_chip> from the goal area into the stage partition. The install condition references the chip's own <continuous_cost>."
+                "zh": "将一张 <goal_chip> 从目标区安装到层级分区。",
+                "en": "Install a <goal_chip> from the goal area into the stage partition."
             },
-            "specifies": "<ontology::effect>",
-            "<ontology::cost>": "<goal_chip>.<ontology::cost>",
-            "<ontology::content>": {
-                "<ontology::instant_content>": {
-                    "options": {
-                        "determine_column": {
-                            "description": {
-                                "zh": "确定安装列。若 <stage_partition> 中尚无 <goal_chip>，任选一个空 <column> 或仅含 <income_chip> 的 <column>。若已有，安装至同一 <column>。",
-                                "en": "Determine install column. If no <goal_chip> exists in the <stage_partition>, choose any empty <column> or one with only <income_chip>s. Otherwise, install in the same <column>."
-                            }
-                        },
-                        "flip_and_install": {
-                            "description": {
-                                "zh": "将 <goal_chip> 翻至背面朝上，选择安装列的左半侧或右半侧，将其安装在选择侧最低的空位中。",
-                                "en": "Flip the <goal_chip> to back side up, choose the left or right half of the install column, and place it at the lowest empty position on the chosen side."
-                            },
-                            "do_after": ["determine_column"],
-                            "<ontology::transfer>": {
-                                "<ontology::object>": "<goal_chip>",
-                                "source": "<goal_area>",
-                                "destination": "<goal_column>",
-                                "back_side_up": true
-                            }
-                        }
+            "specifies": "<ontology::play>",
+            "<piece>": "<goal_chip>",
+            "source": "<goal_area>",
+            "destination": "<goal_column>",
+            "options": {
+                "determine_column": {
+                    "description": {
+                        "zh": "若 <stage_partition> 中尚无 <goal_chip>，任选一个空 <column> 或仅含 <income_chip> 的 <column>。若已有，安装至同一 <column>。",
+                        "en": "If no <goal_chip> exists, choose any empty <column> or one with only <income_chip>s. Otherwise, install in the same <column>."
+                    }
+                },
+                "flip": {
+                    "description": {
+                        "zh": "翻至背面朝上，选择左半侧或右半侧，安装至选择侧最低空位。",
+                        "en": "Flip to back side up, choose left or right half, place at the lowest empty position on the chosen side."
                     },
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    "do_after": ["determine_column", "transfer_piece"]
                 }
-            }
+            },
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        {
+            "id": "install_income_chip",
+            "name": { "zh": "打出收入芯片", "en": "Play Income Chip" },
+            "abstract": false,
+            "definition": {
+                "zh": "将一枚 <income_chip> 安装到 <stage_partition>。",
+                "en": "Install an <income_chip> into the <stage_partition>."
+            },
+            "specifies": "<ontology::play>",
+            "<piece>": "<income_chip>",
+            "source": "<income_chip_display>",
+            "destination": "<stage_partition>",
+            "options": {
+                "determine_position": {
+                    "description": {
+                        "zh": "任选一列，安装至该列最低空闲 <tier>。若选目标列，下方 <tier> 必须已装满两枚 <goal_chip>。",
+                        "en": "Choose any column; install at its lowest empty <tier>. If the goal column is chosen, the <tier> below must have both <goal_chip> slots filled."
+                    }
+                }
+            },
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        {
+            "id": "install_attribute_chip",
+            "name": { "zh": "打出属性芯片", "en": "Play Attribute Chip" },
+            "abstract": false,
+            "definition": {
+                "zh": "将一枚 <attribute_chip> 安装到 <stage_partition>。",
+                "en": "Install an <attribute_chip> into the <stage_partition>."
+            },
+            "specifies": "<ontology::play>",
+            "<piece>": "<attribute_chip>",
+            "source": "<attribute_chip_display>",
+            "destination": "<stage_partition>",
+            "options": {
+                "determine_column": {
+                    "description": {
+                        "zh": "若尚无 <attribute_chip>，任选一个空 <column> 或仅含 <income_chip> 的 <column>。若已有，安装至同一 <column> 的最低空闲 <tier>。",
+                        "en": "If no <attribute_chip> exists, choose any empty <column> or one with only <income_chip>s. Otherwise, install at the lowest empty <tier> in the same <column>."
+                    }
+                }
+            },
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         {
             "id": "lose_food",
-            "name": {
-                "zh": "失去食物",
-                "en": "Lose Food"
-            },
+            "name": { "zh": "失去食物", "en": "Lose Food" },
             "abstract": false,
             "definition": {
-                "zh": "失去 1 个食物标记的负面效果。",
-                "en": "Negative effect of losing 1 food marker."
+                "zh": "将 1 个 <food> 从 <food_space> 返回供应堆。",
+                "en": "Return 1 <food> from <food_space> to the supply."
             },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-                "zh": "被 <weather_effect> 触发时",
-                "en": "When triggered by <weather_effect>"
-            },
-            "<ontology::cost>": null,
-            "<ontology::content>": {
-                "<ontology::instant_content>": {
-                    "zh": "将该玩家仓库中的 1 个 <food> 标记返回供应堆。",
-                    "en": "Return 1 <food> marker from the player's storage to the supply."
-                }
-            }
+            "specifies": "<ontology::transfer>",
+            "source": "<food_space>",
+            "destination": "<ontology::supply>",
+            "<ontology::object>": "<food>",
+            "count": 1
         },
         {
             "id": "remove_tribe",
-            "name": {
-                "zh": "移除部落",
-                "en": "Remove Tribe"
-            },
+            "name": { "zh": "移除部落", "en": "Remove Tribe" },
             "abstract": false,
             "definition": {
-                "zh": "从大陆移除 1 个部落的负面效果。",
-                "en": "Negative effect of removing 1 tribe from the continent."
+                "zh": "将 1 个 <tribe> 从 <continent> 返回个人供应区。",
+                "en": "Return 1 <tribe> from the <continent> to the player's supply."
             },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-                "zh": "被 <weather_effect> 触发时",
-                "en": "When triggered by <weather_effect>"
-            },
-            "<ontology::cost>": null,
-            "<ontology::content>": {
-                "<ontology::instant_content>": {
-                    "zh": "选择玩家的 1 个位于大陆任意区域的 <tribe>，将其返回个人供应区。",
-                    "en": "Choose 1 <tribe> located anywhere on the continent and return it to the player's supply."
-                }
-            }
+            "specifies": "<ontology::transfer>",
+            "source": "<continent>",
+            "destination": "<ontology::supply>",
+            "<ontology::object>": "<tribe>",
+            "count": 1
         },
         {
             "id": "push_any_progress_track",
@@ -3052,27 +2976,6 @@
             "specifies": "<ontology::trigger>"
         },
         {
-            "id": "goal_slot_emptied",
-            "name": {
-                "zh": "目标格清空",
-                "en": "Goal Slot Emptied"
-            },
-            "abstract": false,
-            "definition": {
-                "zh": "目标区某格最后一枚 <goal_chip> 被取出安装时触发。",
-                "en": "Triggers when the last <goal_chip> in a goal area slot is removed for installation."
-            },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-                "zh": "此格失去最后一枚 <goal_chip> 时",
-                "en": "When this slot loses its last <goal_chip>"
-            },
-            "<ontology::cost>": null,
-            "<ontology::content>": {
-                "<ontology::effect>": "<upgrade_main_module>"
-            }
-        },
-        {
             "id": "upgrade_main_module",
             "name": {
                 "zh": "升级主模组",
@@ -3080,10 +2983,33 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "选择一个主模组，升级至下一等级。等级一二由 tile 正面/反面承载，等级三由 <console> 承载。",
-                "en": "Choose a main module and upgrade it to the next level. Levels 1 and 2 are carried by the tile front/back; level 3 is carried by the <console>."
+                "zh": "选择一个未达最高等级的主模组，将其等级提升 1 级。等级一 → 等级二：将模组板块翻面。等级二 → 等级三：将模组板块放回游戏盒，<console> 上对应 L3 效果自此可用。",
+                "en": "Choose a main module not at max level and increase its level by 1. Level 1 → 2: flip the module tile. Level 2 → 3: return the tile to the game box; the corresponding L3 effect on the <console> becomes available."
             },
-            "specifies": "<ontology::upgrade>"
+            "specifies": "<ontology::upgrade>",
+            "options": {
+                "choose_module": {
+                    "description": {
+                        "zh": "选择一个未达等级三的主模组。",
+                        "en": "Choose a main module not yet at level 3."
+                    }
+                },
+                "upgrade_l1_to_l2": {
+                    "description": {
+                        "zh": "若为等级一，将模组板块翻至等级二面。",
+                        "en": "If level 1, flip the module tile to level 2."
+                    },
+                    "do_after": ["choose_module"]
+                },
+                "upgrade_l2_to_l3": {
+                    "description": {
+                        "zh": "若为等级二，将模组板块放回 <ontology::game_box>。",
+                        "en": "If level 2, return the module tile to the <ontology::game_box>."
+                    },
+                    "do_after": ["choose_module"]
+                }
+            },
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
     ],
     "top_level_refs": {

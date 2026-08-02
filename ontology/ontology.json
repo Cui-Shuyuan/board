@@ -814,24 +814,24 @@
       "extends": "<property>",
       "abstract": false,
       "definition": {
-        "zh": "效果结算时发生的事情。三个独立字段分别承载不同性质的内容，可任意组合。<content> 继承自 <property>。与 <cost> 互补：cost 先支付，content 后发生。",
-        "en": "What happens when an effect resolves. Three independent fields carry different kinds of content, freely combinable. <content> extends <property>. Complementary to <cost>: cost is paid first, then content occurs."
-      },
-      "<effect>": {
-        "default": null,
-        "description": { "zh": "递归的效果——触发后进入下一层 cost → content。", "en": "A recursive effect — upon firing, enters the next cost → content layer." }
+        "zh": "<resolve> 结算时发生的事。三个独立字段可任意组合。<instant_content>：无条件，一次性执行。<continuous_content>：无条件，电平维持。<effect>：条件触发，分 instant（一次机会）和 continuous（持续武装）两种。",
+        "en": "What happens when <resolve> resolves. Three independent fields, freely combinable. <instant_content>: unconditional, one-shot. <continuous_content>: unconditional, level-maintained. <effect>: conditional, with instant (one chance) and continuous (persistent arming) forms."
       },
       "<instant_content>": {
         "default": null,
-        "description": { "zh": "一次性执行完毕的内容。", "en": "Content that executes once and is done." }
+        "description": { "zh": "无条件，一次性执行完毕。", "en": "Unconditional, executes once and is done." }
       },
       "<continuous_content>": {
         "default": null,
-        "description": { "zh": "激活后电平维持的内容。", "en": "Content that is level-maintained after activation." }
+        "description": { "zh": "无条件，激活后电平维持。", "en": "Unconditional, level-maintained after activation." }
+      },
+      "<effect>": {
+        "default": null,
+        "description": { "zh": "条件触发。含 <instant_effect> 和 <continuous_effect> 两个独立字段，可任意组合。", "en": "Conditional trigger. Contains two independent fields <instant_effect> and <continuous_effect>, freely combinable." }
       },
       "constraints": {
         "required": [],
-        "optional": ["<effect>", "<instant_content>", "<continuous_content>"]
+        "optional": ["<instant_content>", "<continuous_content>", "<effect>"]
       }
     },
     {
@@ -840,25 +840,36 @@
       "extends": "<trigger>",
       "abstract": false,
       "definition": {
-        "zh": "玩家或 <piece> 视角下的 <trigger>——由外部主动调用或效果链递归触发，通常不携带 condition。可作为 <content> 的递归节点：一个 effect 的 content 触发下一个 effect。与 trigger 结构相同，语义区分：effect 是主动/递归的，trigger 是游戏自动的。",
-        "en": "A player- or <piece>-facing <trigger> — externally invoked or recursively chained from another effect's content, typically carrying no condition. Serves as the recursive node in <content>: one effect's content fires the next effect. Structurally identical to trigger; semantic distinction: effect is active/recursive, trigger is game-automatic."
+        "zh": "条件触发型 <trigger>。含 <instant_effect>（一次机会）和 <continuous_effect>（持续武装）两个独立字段，可任意组合。",
+        "en": "A conditional <trigger>. Contains two independent fields: <instant_effect> (one chance) and <continuous_effect> (persistent arming), freely combinable."
+      },
+      "<instant_effect>": {
+        "default": null,
+        "description": {
+          "zh": "一次机会。condition 满足即执行 cost→content，失败则永远消失。",
+          "en": "One chance. If condition is met, executes cost→content; if it fails, gone forever."
+        }
+      },
+      "<continuous_effect>": {
+        "default": null,
+        "description": {
+          "zh": "持续武装。每次 condition 满足都执行 cost→content，直到 end_condition 成立、来源离场或被外部移除。end_condition 缺省 = 永不自动终结。",
+          "en": "Persistent arming. Fires cost→content each time condition is met, until end_condition holds, source leaves play, or externally removed. Absent end_condition = never auto-terminates."
+        }
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": ["<instant_effect>", "<continuous_effect>"]
       }
     },
     {
       "id": "instant_content",
-      "name": {
-        "zh": "即时内容",
-        "en": "Instant Content"
-      },
+      "name": { "zh": "即时内容", "en": "Instant Content" },
       "extends": "<content>",
       "abstract": false,
       "definition": {
-        "zh": "一种在结算后立即执行完毕、不产生持续影响的<content>。<instant_content>继承自<content>——它是「效果内容」的一种形态，也是<trigger>递归链条的两种终结形态之一（另一种是<continuous_content>）。是最常见的效果内容——「获得 2 金币」「抽一张牌」「造成 3 点伤害」均为<instant_content>。生命周期：所属<trigger>的<condition>边沿跳变（由假变真）时激活，<cost>（若有）支付后，<instant_content>经<resolve>一次性执行其<params>所描述的<event>到<target>，随后终结。注意：<instant_content>自身不是<event>——它是对即将发生的<event>的描述，<event>是它在<resolve>时实例化出的运行时发生。与<continuous_content>的对偶：<instant_content>是一次性的（fire and forget），<continuous_content>是条件维持的（maintained while condition holds）。同一效应的持续「武装」与内容的性质无关——「在场期间每次 X 发生时……」仍是<instant_content>：武装由<trigger>的<condition>中的电平合取项表达，每次边沿跳变触发一次，已执行的<event>作为历史留在<state>中，不因来源离场回滚。",
-        "en": "A <content> that executes once upon resolution and produces no ongoing effect. <instant_content> extends <content> — it is a form of 'effect content' and one of the two terminal forms of a <trigger> recursion chain (the other being <continuous_content>). The most common content form — 'gain 2 gold', 'draw a card', 'deal 3 damage' are all <instant_content>s. Lifecycle: activated when the containing <trigger>'s <condition> crosses its edge (false→true); after the <cost> (if any) is paid, the <instant_content> is <resolve>d — its <params>-described <event> executes once against its <target>, then the chain terminates. Note: an <instant_content> is not itself an <event> — it describes an <event> about to happen; the <event> is the runtime occurrence it instantiates into at <resolve>. Counterpart to <continuous_content>: <instant_content> is fire-and-forget, <continuous_content> is maintained-while-condition-holds. An effect's persistent 'arming' is orthogonal to the nature of its content — 'while in play, whenever X happens...' is still an <instant_content>: the arming is expressed by a level conjunct inside the <trigger>'s <condition>; each edge crossing fires it once, and executed <event>s remain in <state> as history, never rolled back when the source leaves."
+        "zh": "无条件，一次性执行完毕。<resolve> 执行一次，终结。",
+        "en": "Unconditional, one-shot. <resolve> executes once, done."
       },
       "constraints": {
         "required": [],
@@ -867,22 +878,19 @@
     },
     {
       "id": "continuous_content",
-      "name": {
-        "zh": "永续内容",
-        "en": "Continuous Content"
-      },
+      "name": { "zh": "永续内容", "en": "Continuous Content" },
       "extends": "<content>",
       "abstract": false,
       "definition": {
-        "zh": "一种被激活后按条件持续生效、持续修改游戏规则或派生值的<content>。<continuous_content>继承自<content>——它是「效果内容」的一种形态，也是<trigger>递归链条的两种终结形态之一（另一种是<instant_content>）。与<instant_content>的核心区别：<instant_content>结算一次后终结，<continuous_content>被激活后进入「生效池」，按其生效条件（active_condition）电平维持——条件成立即适用，不成立即停止适用，再次成立再次适用。典型例子：「只要此牌在你的<development_area>中，手牌上限+1」「你的所有生物获得+1力量」「蓝牌费用-1」均为<continuous_content>。生效方式：<continuous_content>不修改存储的状态值，而是作为修饰参与派生值的查询时计算——派生值 = 基础值 + Σ 当前生效池中命中的修饰。因此来源离场时无需任何「反向触发」：条件变假，修饰自动消失。对应的<effect>的<cost>通常为 null（被动生效，无需支付代价；若有 cost，在激活时支付一次）。<continuous_content>从<content>继承了<target>和<params>——<target>指明效果持续作用于谁，<params>描述持续修改的内容。分类判据：「每次 X 发生时……」类效应不是<continuous_content>——「每次」说明其内容是离散事件，应建模为<instant_content> + 含电平合取项的<trigger> <condition>（如「此牌在场 ∧ 其他玩家刚打出一张牌」，武装门电平 + 开火边沿，已发生的<transfer>作为历史留在<state>中，不因来源离场回滚）。判据：内容写历史（不可撤销的状态变更）→ <instant_content>；参与计算（派生值修饰）→ <continuous_content>。真正的<continuous_content>没有「每次」，只有「只要」。",
-        "en": "A <content> that, once activated, persists according to a condition, continuously modifying game rules or derived values. <continuous_content> extends <content> — it is a form of 'effect content' and one of the two terminal forms of a <trigger> recursion chain (the other being <instant_content>). Core difference from <instant_content>: an <instant_content> resolves once and terminates, whereas a <continuous_content> enters an 'active pool' upon activation and is maintained on the level of its active_condition — it applies while the condition holds, stops when it ceases, and applies again if it holds again. Typical examples: 'as long as this card is in your <development_area>, your hand limit is +1', 'all your creatures get +1 power', 'blue cards cost 1 less'. How it applies: a <continuous_content> does not mutate stored state values; it participates as a modifier in the query-time computation of derived values — derived value = base value + Σ modifiers currently in the active pool. Hence no 'reverse trigger' is ever needed when the source leaves: the condition turns false and the modifier disappears automatically. The containing <effect>'s <cost> is usually null (passive, nothing to pay; if a cost exists, it is paid once upon activation). <continuous_content> inherits <target> and <params> from <content> — <target> specifies who the effect continuously applies to, <params> describes the ongoing modification. Classification criterion: 'whenever X happens...' effects are NOT <continuous_content> — 'whenever' reveals the content to be a discrete event; model it as <instant_content> plus a <trigger> <condition> containing a level conjunct (e.g., 'this card is in play ∧ another player has just played a card' — the arming gate is level, the firing predicate is edge; completed <transfer>s remain in <state> as history and are never rolled back when the source leaves). The criterion: content that writes history (irreversible state change) → <instant_content>; content that participates in computation (derived-value modifier) → <continuous_content>. A true <continuous_content> has no 'whenever', only 'as long as'."
+        "zh": "无条件，激活后电平维持。<resolve> 将其加入生效池，按 <active_condition> 判定适用与否。条件变假自动失效，条件再成立自动恢复。派生值 = 基础值 + Σ 生效池修饰。",
+        "en": "Unconditional, level-maintained after activation. <resolve> adds it to the active pool; applies or lapses based on <active_condition>. Derived value = base + Σ active modifiers. Auto-lapses when condition becomes false; auto-restores when true again."
       },
       "active_condition": {
-        "type": "<condition> | null",
+        "type": "<condition>",
         "default": null,
         "description": {
-          "zh": "生效条件——此 <continuous_content> 按电平维持时所用的谓词。null = 沿用所属 <trigger> 的 <condition>（标准光环情形：「此牌在你的 <development_area> 中」既是触发谓词也是维持谓词，触发边沿即「进入」，条件本身即「在场」）。非 null 时覆盖之——典型如「打出后本局永久生效」：所属 <trigger> 的 <condition> 为「此牌被打出」（瞬间谓词），active_condition 为「永远」。",
-          "en": "The active condition — the predicate by which this <continuous_content> is level-maintained. null = inherit the containing <trigger>'s <condition> (the standard aura case: 'this card is in your <development_area>' serves as both the firing predicate and the maintenance predicate; the firing edge is 'entering', the predicate itself is 'being present'). When non-null, it overrides — e.g. 'permanently active after being played': the containing <trigger>'s <condition> is 'this card is played' (an instantaneous predicate) and active_condition is 'always'."
+          "zh": "电平维持谓词。缺省沿用所属 effect 的 condition。",
+          "en": "Level-maintenance predicate. Absent = inherit the owning effect's condition."
         }
       },
       "constraints": {
@@ -1327,15 +1335,12 @@
     },
     {
       "id": "resolve",
-      "name": {
-        "zh": "结算",
-        "en": "Resolve"
-      },
+      "name": { "zh": "结算", "en": "Resolve" },
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "将一个已被激活的 <effect> 的 <content> 实际应用到游戏 <state> 的 <event>。<resolve> 继承自 <event>。它是 <effect> 生命周期的最后一步：<trigger> 激活 <effect>（进入 pending 状态后），<resolve> 将 <content> 中描述的事件描述实例化为真实的 <event>（如 <transfer>、<state> 变更等）并执行。结算完毕后，该 <effect> 回归静默（dormant）或从游戏中移除。<resolve> 本身是规则自动执行的——actor 为 null。",
-        "en": "An <event> that actually applies the <content> of an activated <effect> to the game <state>. <resolve> extends <event>. It is the final step of the <effect> lifecycle: after a <trigger> activates the <effect> (placing it in pending state), <resolve> instantiates the event descriptions in <content> as real <event>s (e.g., <transfer>s, <state> changes, etc.) and executes them. After resolution, the <effect> returns to dormant state or is removed from the game. <resolve> is automatically executed by the rules — its actor is null."
+        "zh": "将 <content> 应用到游戏 <state> 的 <event>。<resolve> 只接触 content 的三种形态：<instant_content>——执行一次，终结；<continuous_content>——进入生效池，电平维持；<effect>——<instant_effect> 武装一次（condition 满足即 cost→content，失败永远消失），<continuous_effect> 持续武装（每次 condition 满足都 cost→content，直到 end_condition 或来源离场）。",
+        "en": "An <event> that applies <content> to the game <state>. <resolve> only touches content's three forms: <instant_content> — execute once, done; <continuous_content> — enter active pool, level-maintained; <effect> — <instant_effect> arms once (condition met → cost→content, fail → gone forever), <continuous_effect> arms persistently (fires on each condition met, until end_condition or source removed)."
       },
       "constraints": {
         "required": [
@@ -2028,26 +2033,40 @@
     },
     {
       "id": "play",
-      "name": {
-        "zh": "打出",
-        "en": "Play"
-      },
+      "name": { "zh": "打出", "en": "Play" },
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "将一个 <piece>（通常为 <card>）从其当前 <zone>（如 <player_holding>、<market>）转移至公开 <zone>（通常为 <development_area> 或 <discard_pile>）并使其生效的 <event>。<play> 继承自 <event>。它是桌游中最核心的入场操作——一张 <piece> 脱离原有区域、进入公开/已使用状态，其 <effect> 自此生效。<play> 不一定由 <player> 主动发起：它可以是玩家 <action> 的直接内容（玩家主动打出一张牌），也可以是 <trigger> 的 <event> 列表中的一员（如「购买」规则中，支付 <cost> 后由规则自动将卡牌打出入场）——并非所有打出都是玩家主动想做的。<play> 在物理层面必然包含物件位移，但在逻辑层面独立于 <transfer>——<play> 侧重入场合法性（<cost> 是否已支付、时机是否正确）及后续 <effect> 的生效，而非单纯的位移。",
-        "en": "An <event> that moves a <piece> (typically a <card>) from its current <zone> (e.g., a <player_holding>, a <market>) to a public <zone> (typically a <development_area> or <discard_pile>) and puts it into effect. <play> extends <event>. It is the most central enter-play operation in board games — a <piece> leaves its original zone, enters a public/used state, and its <effect> takes effect from then on. <play> is not necessarily initiated by a <player>: it can be the direct content of a player <action> (a player actively playing a card), or a member of a <trigger>'s <event> list (e.g., in a 'purchase' rule, after the <cost> is paid, the rules automatically play the card into play) — not every play is something a player actively chooses to do. <play> necessarily involves physical displacement, but is logically distinct from <transfer> — <play> focuses on enter-play legality (has the <cost> been paid, is the timing correct) and subsequent <effect>s taking effect, rather than mere displacement."
+        "zh": "将一个 <piece> 投入使用的 <event>。依次：支付 <piece>.<effect>.<cost>、将 <piece> <transfer> 到目标 <zone>、<resolve> <piece>.<effect>.<content>。",
+        "en": "An <event> that puts a <piece> into use. Sequentially: pay <piece>.<effect>.<cost>, <transfer> the <piece> to the destination <zone>, <resolve> <piece>.<effect>.<content>."
       },
+      "<piece>": {
+        "description": { "zh": "被打出的 <piece>。", "en": "The <piece> being played." }
+      },
+      "source": {
+        "type": "<zone>",
+        "description": { "zh": "<piece> 的来源 <zone>。", "en": "The source <zone> of the <piece>." }
+      },
+      "destination": {
+        "type": "<zone>",
+        "description": { "zh": "<piece> 移入的目标 <zone>。", "en": "The destination <zone> for the <piece>." }
+      },
+      "options": {
+        "pay_cost": {
+            "description": { "zh": "支付 <piece>.<effect>.<cost>。", "en": "Pay <piece>.<effect>.<cost>." }
+        },
+        "transfer_piece": {
+            "description": { "zh": "将 <piece> 从 source 转移至 destination。", "en": "Transfer the <piece> from source to destination." },
+            "do_after": ["pay_cost"]
+        },
+        "resolve": {
+            "description": { "zh": "<resolve> <piece>.<effect>.<content>。", "en": "<resolve> <piece>.<effect>.<content>." },
+            "do_after": ["transfer_piece"]
+        }
+      },
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
       "constraints": {
-        "required": [
-          {
-            "id": "<piece>",
-            "description": {
-              "zh": "被打出的 <piece>。<play> 的本质是玩家选择一张 <piece> 并将其投入使用——没有 <piece>，打出操作无事可做。此约束要求子类指明打出的是哪张 <piece>。",
-              "en": "The <piece> being played. The essence of <play> is a player selecting a <piece> and putting it into use — without a <piece>, play has nothing to do. This constraint requires subclasses to specify which <piece> is being played."
-            }
-          }
-        ],
+        "required": ["<piece>", "source", "destination"],
         "optional": []
       }
     },

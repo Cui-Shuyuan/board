@@ -77,6 +77,24 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-01~02（cost/content 模型重构 + 控制台 review + 芯片安装体系）**:
+    - **cost 二分**：`instant_cost`（一次性支付）+ `continuous_cost`（状态检查），替代旧 `condition` + `event`
+    - **content 三字段**：`<instant_content>`（无条件一次执行）、`<continuous_content>`（无条件电平维持）、`<effect>`（条件触发，含 `instant_effect` 一次机会 + `continuous_effect` 持续武装）
+    - **effect extends trigger**：不再携带顶层 condition，由调用方决定时机。`instant_effect`（condition 失败永远消失）和 `continuous_effect`（持续监听，end_condition = null 永不自动终结）
+    - **play 重构**：三步 `pay_cost` → `transfer_piece` → `resolve`，替代旧 effect 模式的安装操作。`install_xxx_chip` 和 `install_research_card` 底层均改为 `<ontology::play>`
+    - **resolve 语义**：只接触 content 三种形态——instant 执行一次、continuous 进入生效池、effect 分 instant/continuous 武装
+    - **三种芯片 parts 定义完成**：`goal_chip`（chip_name / cost / chip_number）、`income_chip`（effect）、`attribute_chip`（chip_name / cost / effect）
+    - **install_goal_chip / install_income_chip / install_attribute_chip**：均改为 play，各自有列选择规则
+    - **goal_area**：3 格 player_holding，每格 `continuous_effect`（condition="格空后"→content=`upgrade_main_module`）
+    - **upgrade_main_module**：结构化升级——选模组→L1→L2 翻面 / L2→L3 放回游戏盒
+    - **lose_food / remove_tribe → transfer**：不再是 effect/trigger，就是纯粹的转移操作
+    - **控制台 content 数组移除**：`activity_01` 和 15 个 L3 效果改为 parts
+    - **stage_tile 重构**：双面——激活面含 effect（终局计分）+ aid（费用格提示）
+    - **控制台 stage 1-3 计分**：一组匿名 effect+aid（始终激活）
+    - **所有 parts 迁至 `type` 字段格式**：console、research_card、event_card 等
+    - **Splendor**：discount 删 target/params
+    - **后端兼容**：`GameRulesService` 同步更新
+
 - **2026-07-30（trigger/effect 模型重构 + activity_01 形式化）**:
     - **ontology 重构**：trigger 从 "timing + condition → events" 改为 "condition + cost + content" 递归模型。effect extends trigger，仅额外增加 options。删除 `<passive_effect>`。新增 `<push_track>` event。
     - **activity 概念**：新增 `<activity>`（specifies `<ontology::effect>`），预填 condition="<perform_activity>"。

@@ -1,6 +1,6 @@
 ---
 name: ontology-design
-description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-07-26，66 个概念）
+description: 桌游本体 JSON 的设计约定、关键决策和当前进度（截至 2026-08-02，67 个概念）
 metadata:
   node_type: memory
   type: project
