@@ -1,6 +1,8 @@
+using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
 using BoardAI.Api.Services;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api;
@@ -29,6 +31,9 @@ public class Program
         builder.Services.Configure<RulesOptions>(
             builder.Configuration.GetSection("Rules"));
 
+        // 自定义 Console Formatter：每行日志带请求 ID
+        builder.Logging.AddConsoleFormatter<RequestIdConsoleFormatter, SimpleConsoleFormatterOptions>();
+
         var modelDir = builder.Configuration.GetValue<string>("Embedding:ModelDir")
             ?? Path.Combine(builder.Environment.ContentRootPath, "ml_models", "bge-small-zh");
         var embedder = new EmbeddingService(modelDir);
@@ -47,6 +52,8 @@ public class Program
         builder.Services.AddControllers();
 
         var app = builder.Build();
+
+        app.UseMiddleware<RequestIdMiddleware>();
 
         app.UseHttpsRedirection();
         app.UseAuthorization();

@@ -282,6 +282,90 @@
           ]
         }
       ]
+    },
+    {
+      "id": "purchase_development_card",
+      "type": "<ontology::action>",
+      "description": {
+        "zh": "购买 1 张发展卡。玩家选择 1 张 <development_card>，支付费用，打出至 <development_area>，若从 <card_market> 购买则补牌。",
+        "en": "Purchase 1 development card. Player selects 1 <development_card>, pays its cost, plays it into <development_area>, and refills from deck if bought from <card_market>."
+      },
+      "events": [
+        {
+          "id": "pay_cost",
+          "type": "<ontology::transfer>",
+          "description": {
+            "zh": "支付费用：将各色 <gem> 从 <player_holding> 返回供应堆，数量 = card <cost> 减 <discount>，<gold> 百搭。",
+            "en": "Pay cost: return <gem>s from <player_holding> to supply. Quantity = card <cost> minus <discount>s, <gold> substitutes any color."
+          },
+          "source": "<ontology::player_holding>",
+          "destination": "<gem_supply>",
+          "<object>": "<gem>"
+        },
+        {
+          "id": "play_card",
+          "type": "<ontology::play>",
+          "description": {
+            "zh": "打出卡牌：将目标 <development_card> 从 <card_market> 或 <hand> 移至 <development_area>。",
+            "en": "Play card: move the target <development_card> from <card_market> or <hand> to <development_area>."
+          },
+          "source": "<card_market>",
+          "destination": "<ontology::development_area>",
+          "<object>": "<development_card>",
+          "do_after": [
+            "pay_cost"
+          ]
+        },
+        {
+          "id": "refill_market",
+          "type": "<ontology::transfer>",
+          "description": {
+            "zh": "补牌：若目标卡来自 <card_market>，从对应 <development_deck> 顶部翻 1 张补入。来自 <hand> 则跳过。",
+            "en": "Refill: if target was from <card_market>, draw 1 from the corresponding <development_deck> top. Skip if from <hand>."
+          },
+          "source": "<development_deck>",
+          "destination": "<card_market>",
+          "<object>": "<development_card>",
+          "quantity": 1,
+          "do_after": [
+            "play_card"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reserve_development_card",
+      "type": "<ontology::action>",
+      "description": {
+        "zh": "保留 1 张发展卡。玩家将 1 张 <development_card> 移入 <hand>，同时从 <gold_supply> 拿取 1 个 <gold>（若有库存）。",
+        "en": "Reserve 1 development card. Player moves 1 <development_card> into <hand> and takes 1 <gold> from <gold_supply> (if available)."
+      },
+      "events": [
+        {
+          "id": "reserve_card",
+          "type": "<ontology::transfer>",
+          "description": {
+            "zh": "保留卡牌：将 1 张 <development_card> 从 <card_market>（明面）或 <development_deck>（暗面）移入 <hand>。",
+            "en": "Reserve card: move 1 <development_card> from <card_market> (open) or <development_deck> (blind) into <hand>."
+          },
+          "source": "<card_market>",
+          "destination": "<ontology::hand>",
+          "<object>": "<development_card>",
+          "quantity": 1
+        },
+        {
+          "id": "take_gold",
+          "type": "<ontology::transfer>",
+          "description": {
+            "zh": "拿取金币：从 <gold_supply> 拿 1 个 <gold> 至 <player_holding>。若 <gold_supply> 为空则跳过。",
+            "en": "Take gold: take 1 <gold> from <gold_supply> to <player_holding>. Skip if <gold_supply> is empty."
+          },
+          "source": "<gold_supply>",
+          "destination": "<ontology::player_holding>",
+          "<object>": "<gold>",
+          "quantity": 1
+        }
+      ]
     }
   ]
 }

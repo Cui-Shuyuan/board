@@ -640,7 +640,7 @@
     },
     {
       "id": "gain_income_chip",
-      "type": "<ontology::phase>",
+      "type": "<ontology::action>",
       "description": {
         "zh": "获得 1 个收入芯片并触发其效果。此流程在多个位置被引用：第 1 层填满奖励、进程轨奖励、天气轨 <warm> 格。",
         "en": "Gain 1 income chip and trigger its effect. This flow is referenced from multiple locations: tier-1 completion reward, track bonuses, weather gauge <warm> slot."
@@ -669,7 +669,9 @@
           "destination": "<income_chip_display>",
           "<object>": "<income_chip>",
           "quantity": 1,
-          "do_after": ["take_from_display"]
+          "do_after": [
+            "take_from_display"
+          ]
         },
         {
           "id": "install",
@@ -678,7 +680,9 @@
             "zh": "将第 1 步拿取的 <income_chip> 安装到 <stage_partition>。",
             "en": "Install the <income_chip> taken in step 1 into the <stage_partition>."
           },
-          "do_after": ["refill_display"]
+          "do_after": [
+            "refill_display"
+          ]
         },
         {
           "id": "trigger_effect",
@@ -687,7 +691,9 @@
             "zh": "触发 1 次刚安装的 <income_chip> 的 <ontology::effect>。",
             "en": "Trigger the <ontology::effect> of the newly installed <income_chip> once."
           },
-          "do_after": ["install"]
+          "do_after": [
+            "install"
+          ]
         }
       ]
     }
