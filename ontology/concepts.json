@@ -674,13 +674,6 @@
           "en": "The target this event acts upon. Can be any <object> subclass instance (<player>, <zone>, <piece>, etc.). If the event has no specific target (e.g. 'turn begins'), target is null."
         }
       },
-      "precondition": {
-        "type": "<condition>[]",
-        "description": {
-          "zh": "此事件发生前必须满足的 <condition> 列表。用于在事件执行前进行合法性校验——若任一 <condition> 不满足，事件不可发生。空数组或省略表示无条件。",
-          "en": "A list of <condition>s that must be met before this event can occur. Used for legality validation before execution — if any <condition> is unmet, the event cannot occur. Empty array or omission means unconditional."
-        }
-      },
       "rules": {
         "type": "map<string, string>",
         "description": {
@@ -701,7 +694,6 @@
         "optional": [
           "actor",
           "target",
-          "precondition",
           "rules"
         ]
       }
@@ -1206,8 +1198,8 @@
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "由 <player> 主动发起的 <event>，它是对游戏规则说「我选择做这件事」的声明。<action> 继承自 <event>，由两个互补部分组成——<declaration> 定义玩家选择什么，<trigger> 定义规则如何响应。二者绑定关系是结构性的：每个 <action> 必定绑定一个 <trigger>。<action> 本身不直接改变游戏状态——玩家做出选择后，规则通过 <trigger> 启动后续 <event>（<transfer>、<state> 变更等）。<action> 的合法性由当前 <phase> 的规则上下文决定。",
-        "en": "An <event> actively initiated by a <player>. It is a declaration to the game rules: 'I choose to do this'. <action> extends <event> and consists of two complementary parts — <declaration> defines what the player chooses, <trigger> defines how the rules respond. Their binding is structural: every <action> is necessarily bound to a <trigger>. An <action> does not directly change game state — after the player makes a choice, the rules launch follow-up <event>s (<transfer>, <state> changes, etc.) through the <trigger>. The legality of an <action> is determined by the current <phase>'s rule context."
+        "zh": "流程要求 <player> 做出选择时发生的 <event>。<action> 的核心是 <declaration>——<player> 向规则宣告「我选择这样做」。与 <trigger> 的本质区别不在于「谁决定时机」——流程同样要求 <trigger> 在条件满足时触发——而在于「谁决定内容」：<trigger> 的 condition → cost → content 全部由规则预设、自动执行；<action> 在规则给定的候选空间中，由 <player> 决定具体选择。流程决定「何时需要做选择」，<player> 决定「选什么」。<action> 继承自 <event>，由两个互补部分组成——<declaration> 定义玩家选择什么，<trigger> 定义规则如何响应。二者绑定关系是结构性的：每个 <action> 必定绑定一个 <trigger>。<action> 本身不直接改变游戏状态——玩家做出选择后，规则通过 <trigger> 启动后续 <event>（<transfer>、<state> 变更等）。<action> 的合法性由当前 <phase> 的规则上下文决定。",
+        "en": "An <event> that occurs when the flow requires a <player> to make a choice. The core of <action> is <declaration> — the <player> tells the rules 'I choose this'. The essential difference from <trigger> is not 'who decides the timing' — the flow also requires <trigger>s to fire when conditions are met — but 'who decides the content': a <trigger>'s condition → cost → content is fully predetermined by the rules and executes automatically; an <action> lets the <player> decide the specifics within the candidate space defined by the rules. The flow decides 'when a choice is needed'; the <player> decides 'what to choose'. <action> extends <event> and consists of two complementary parts — <declaration> defines what the player chooses, <trigger> defines how the rules respond. Their binding is structural: every <action> is necessarily bound to a <trigger>. An <action> does not directly change game state — after the player makes a choice, the rules launch follow-up <event>s (<transfer>, <state> changes, etc.) through the <trigger>. The legality of an <action> is determined by the current <phase>'s rule context."
       },
       "actor": {
         "type": "<player>",
@@ -1309,8 +1301,16 @@
       "extends": "<event>",
       "abstract": false,
       "definition": {
-        "zh": "condition → cost → content 递归结构。携带 <condition> 监听状态变化，边沿激活后经 <cost> 支付进入 <content>。与 <effect> 互为对偶：effect 不携带 condition，由外部主动调用；trigger 携带 condition，自动响应状态变化。",
-        "en": "A recursive condition → cost → content structure. Carries a <condition> to listen for state changes; upon edge activation, pays <cost> and enters <content>. Isomorphic counterpart to <effect>: an effect carries no condition and is externally invoked; a trigger carries a condition and auto-responds to state changes."
+        "zh": "携带 <condition> 监听状态变化，边沿激活后按 pipeline（见 ontology/flow.json）依次支付 <cost>、选定 target、结算 <content>。与 <effect> 互为对偶：effect 不携带 <condition>，由外部主动调用；trigger 携带 <condition>，自动响应状态变化。",
+        "en": "Carries a <condition> to monitor state changes; upon edge activation, follows the pipeline (see ontology/flow.json) to pay <cost>, select target, and settle <content>. Isomorphic counterpart to <effect>: effect carries no <condition> and is externally invoked; trigger carries a <condition> and auto-responds to state changes."
+      },
+      "pipeline": {
+        "type": "string",
+        "default": "trigger_pipeline",
+        "description": {
+          "zh": "本 trigger 被激活后执行的流程，对应 ontology/flow.json 中的 pipeline id。<effect> 继承此字段——所有 trigger 和 effect 共享同一执行流程。",
+          "en": "The pipeline executed when this trigger is activated, referencing a pipeline id in ontology/flow.json. <effect> inherits this field — all triggers and effects share the same execution pipeline."
+        }
       },
       "<condition>": {
         "default": null,
@@ -1318,11 +1318,11 @@
       },
       "<cost>": {
         "default": null,
-        "description": { "zh": "满足 condition 后可支付的代价。", "en": "The cost that may be paid after meeting the condition." }
+        "description": { "zh": "满足 condition 后足额支付的代价。缺省为免费。", "en": "The cost paid in full after condition is met. Absent = free." }
       },
       "<content>": {
         "default": null,
-        "description": { "zh": "代价支付后触发的内容。三个独立字段，可任意组合。", "en": "The content triggered after cost payment. Three independent fields, freely combinable." }
+        "description": { "zh": "代价支付后由 <resolve> 结算的内容。含 <instant_content>、<continuous_content>、<effect> 三个独立字段。", "en": "The content settled by <resolve> after cost payment. Contains three independent fields: <instant_content>, <continuous_content>, <effect>." }
       },
       "target": {
         "default": null,
@@ -1799,16 +1799,16 @@
       "extends": "<action>",
       "abstract": false,
       "definition": {
-        "zh": "使某个 <effect> 从静默（dormant）进入待结算（pending）状态的 <action>。<activation> 继承自 <action>。它是 <player> 对游戏规则说「我要使用这个效果」的声明——<player> 选择一张 <piece> 上的一个 <effect> 并将其激活，该 <effect> 随即进入 pending 状态，等待后续的 <resolve> 将其 <content> 应用到游戏 <state>。<activation> 不等同于 <resolve>——激活后效果可能排队等待，多个同时激活的 <effect> 需要通过优先级决定结算顺序。",
-        "en": "An <action> that transitions an <effect> from dormant to pending state. <activation> extends <action>. It is the <player>'s declaration to the game rules: 'I want to use this effect' — the <player> selects an <effect> on a <piece> and activates it, placing it in pending state to await subsequent <resolve> which applies its <content> to the game <state>. <activation> is not the same as <resolve> — after activation, effects may queue; multiple simultaneously activated <effect>s require priority ordering for resolution."
+        "zh": "一种特化的 <action>：<player> 的选择内容是从可用的 <effect> 池中激活某一个。<activation> 继承 <action> 的全部结构（<declaration> + <trigger>），并将 <declaration> 窄化为「选哪个 <effect>」——<player> 选择一个可用的 <effect> 并将其激活，该 <effect> 随即从静默（dormant）进入待结算（pending）状态，等待后续的 <resolve> 将其 <content> 应用到游戏 <state>。<activation> 不等同于 <resolve>——激活后效果可能排队等待，多个同时激活的 <effect> 需要通过优先级决定结算顺序。候选 <effect> 可能来自 <piece>（如研究牌上的活动能力）、<board>（如控制台自带的基础活动）、或其他游戏组件。",
+        "en": "A specialized <action>: the <player>'s choice is to activate one <effect> from a pool of available effects. <activation> inherits <action>'s full structure (<declaration> + <trigger>) and narrows <declaration> to 'which <effect>' — the <player> selects an available <effect> and activates it, transitioning it from dormant to pending state to await subsequent <resolve> which applies its <content> to the game <state>. <activation> is not the same as <resolve> — after activation, effects may queue; multiple simultaneously activated <effect>s require priority ordering for resolution. Candidate <effect>s may come from <piece>s (e.g., activity abilities on research cards), <board>s (e.g., the innate activity on a console), or other game components."
       },
       "constraints": {
         "required": [
           {
             "id": "<effect>",
             "description": {
-              "zh": "被激活的 <effect>。<activation> 的本质是使一个 <effect> 从静默转入待结算——没有 <effect>，激活无事可做。此约束要求子类指明激活的是哪个 <effect>。",
-              "en": "The <effect> being activated. The essence of <activation> is transitioning an <effect> from dormant to pending — without an <effect>, activation has nothing to do. This constraint requires subclasses to specify which <effect> is being activated."
+              "zh": "被激活的 <effect>。<activation> 的本质是使一个 <effect> 从静默转入待结算——没有 <effect>，激活无事可做。此约束要求子类指明从可用 <effect> 池中选择了哪一个。",
+              "en": "The <effect> being activated. The essence of <activation> is transitioning an <effect> from dormant to pending — without an <effect>, activation has nothing to do. This constraint requires subclasses to specify which <effect> was chosen from the available pool."
             }
           }
         ],

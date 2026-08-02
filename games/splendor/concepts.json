@@ -682,9 +682,6 @@
                 "zh": "璀璨宝石中的「拿取不同色宝石」<ontology::action>。玩家从<gem_supply>中选择颜色各不相同的<gem>各取 1 颗，数量由供应情况决定——≥3 种颜色时取 3 颗，仅有 1~2 种时取走全部可用颜色。规则响应为一次<ontology::transfer>。这是每回合可选的两种拿取宝石方式之一。",
                 "en": "The 'take different-colored gems' <ontology::action> in Splendor. The player takes 1 <gem> of each chosen color from <gem_supply>, quantity determined by availability — 3 when ≥3 colors are in stock, or all available colors when only 1-2 remain. The rules respond with a <ontology::transfer>. One of two gem-taking options per turn."
             },
-            "precondition": [
-                "<gems_available_any>"
-            ],
             "<declaration>": {
                 "params": {
                     "type": "map<string, any>",
@@ -739,7 +736,7 @@
                         }
                     }
                 ],
-                "<ontology::condition>": "<action_declaration_legal>",
+                "<ontology::condition>": "<gems_available_any>",
                 "<ontology::cost>": null
             },
             "specifies": "<ontology::action>"
@@ -755,9 +752,6 @@
                 "zh": "璀璨宝石中的「拿取同色宝石」<ontology::action>。玩家从<gem_supply>中选择一种颜色，取走该颜色的 2 颗<gem>。仅当所选颜色在<gem_supply>中有 ≥4 颗存量时才允许执行——拿取后该颜色至少剩余 2 颗，保证供应不会因单次拿取而枯竭。规则响应为一次<ontology::transfer>。这是每回合可选的两种拿取宝石方式之一。",
                 "en": "The 'take same-colored gems' <ontology::action> in Splendor. The player chooses one color and takes 2 <gem>s of that color from <gem_supply>. Only allowed when the chosen color has ≥4 in <gem_supply> — at least 2 remain after taking, so a single take cannot drain the stack. The rules respond with a <ontology::transfer>. One of two gem-taking options per turn."
             },
-            "precondition": [
-                "<gems_available_same_color>"
-            ],
             "<declaration>": {
                 "params": {
                     "type": "map<string, any>",
@@ -813,7 +807,7 @@
                         }
                     }
                 ],
-                "<ontology::condition>": "<action_declaration_legal>",
+                "<ontology::condition>": "<gems_available_same_color>",
                 "<ontology::cost>": null
             },
             "specifies": "<ontology::action>"
@@ -829,9 +823,6 @@
                 "zh": "璀璨宝石中的「购买发展卡」<ontology::action>。玩家将一定种类和数量的<gem>从自己的<ontology::player_holding>返回供应堆——数量为发展卡的<ontology::cost>逐色减去<ontology::development_area>中已有<discount>（每色最低为 0），<gold>可替代任意颜色——并将该<development_card>从<card_market>（当面购买）或自己的<ontology::hand>（购买已保留的卡牌）打出至自己的<ontology::development_area>。返回的<gem>和<gold>分别回到<gem_supply>和<gold_supply>。若从<card_market>购买，立即从对应等级<development_deck>顶部翻一张新卡补入空位。购买后该卡永久提供<prestige_point>和<discount>。",
                 "en": "The 'purchase development card' <ontology::action> in Splendor. The player returns a set of <gem>s from their <ontology::player_holding> to the supply — the quantity per color being the development card's <ontology::cost> reduced by <discount>s already in <ontology::development_area> (minimum 0 per color), with <gold> substituting for any color — and plays that <development_card> from <card_market> (face-up purchase) or their own <ontology::hand> (buying a reserved card) into their <ontology::development_area>. Returned <gem>s and <gold> go back to <gem_supply> and <gold_supply> respectively. If bought from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot. The purchased card permanently provides <prestige_point>s and a <discount>."
             },
-            "precondition": [
-                "<card_purchasable>"
-            ],
             "<declaration>": {
                 "params": {
                     "type": "map<string, any>",
@@ -915,7 +906,7 @@
                         }
                     }
                 ],
-                "<ontology::condition>": "<action_declaration_legal>",
+                "<ontology::condition>": "<card_purchasable>",
                 "<ontology::cost>": null
             },
             "specifies": "<ontology::action>"
@@ -931,9 +922,6 @@
                 "zh": "璀璨宝石中的「保留发展卡」<ontology::action>。玩家将一张<development_card>移入自己的<ontology::hand>——可以明面保留（从<card_market>任选一张）或暗面保留（从某一等级<development_deck>顶部取一张，事先不知道是哪张），同时从<gold_supply>拿取 1 个<gold>（若有库存）。<ontology::hand>上限为 3 张，满员时不可保留。保留的卡牌此后只能通过「购买发展卡」<ontology::action>打出至<ontology::development_area>。",
                 "en": "The 'reserve development card' <ontology::action> in Splendor. The player moves one <development_card> into their <ontology::hand> — either openly (choosing any card from <card_market>) or blindly (taking the top card of one level's <development_deck>, sight unseen) — and takes 1 <gold> from <gold_supply> (if in stock). The <ontology::hand> holds at most 3 cards; reserving is unavailable when full. A reserved card can later only be played into the <ontology::development_area> via the 'purchase development card' <ontology::action>."
             },
-            "precondition": [
-                "<card_reservable>"
-            ],
             "<declaration>": {
                 "params": {
                     "type": "map<string, any>",
@@ -998,9 +986,6 @@
                                 "zh": "将 1 个<gold>从<gold_supply>移入 actor 的<ontology::player_holding>。这是保留卡牌的附带收益——<gold>是百搭<gem>，可在购买时替代任意颜色。",
                                 "en": "Moves 1 <gold> from <gold_supply> into the actor's <ontology::player_holding>. This is the bonus for reserving — <gold> is a wild <gem> that substitutes for any color when purchasing."
                             },
-                            "precondition": [
-                                "<gold_available>"
-                            ],
                             "source": {
                                 "type": "<gold_supply>",
                                 "description": {
@@ -1033,7 +1018,7 @@
                         }
                     }
                 ],
-                "<ontology::condition>": "<action_declaration_legal>",
+                "<ontology::condition>": "<card_reservable>",
                 "<ontology::cost>": null
             },
             "specifies": "<ontology::action>"
@@ -1295,19 +1280,6 @@
             "definition": {
                 "zh": "<noble_market>中至少有一枚<noble>的 requirement 被刚结束回合的<ontology::player>的<ontology::development_area>满足——<ontology::development_area>中各色<development_card>的数量 ≥ 该<noble> requirement 中对应颜色的数量。",
                 "en": "At least one <noble> in <noble_market> has its requirement met by the <ontology::development_area> of the <ontology::player> whose turn just ended — the number of <development_card>s of each color in the <ontology::development_area> is ≥ the corresponding color count in that <noble>'s requirement."
-            },
-            "specifies": "<ontology::condition>"
-        },
-        {
-            "id": "action_declaration_legal",
-            "name": {
-                "zh": "行动合法",
-                "en": "Action Declaration Legal"
-            },
-            "abstract": false,
-            "definition": {
-                "zh": "此<ontology::action>的 precondition 满足且其<ontology::declaration>合法。这是所有<ontology::action>内嵌<ontology::trigger>共用的通用条件——内嵌<ontology::trigger>绑定此<ontology::action>的<ontology::declaration>，二者合起来构成完整的<ontology::action>。",
-                "en": "This <ontology::action>'s precondition is met and its <ontology::declaration> is legal. A generic condition shared by all <ontology::action>-embedded <ontology::trigger>s — an embedded <ontology::trigger> is bound to this <ontology::action>'s <ontology::declaration>, and together they form the complete <ontology::action>."
             },
             "specifies": "<ontology::condition>"
         },

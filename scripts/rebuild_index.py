@@ -181,9 +181,15 @@ def extract_flow(file_path: Path) -> list[dict[str, Any]]:
             walk(child)
         for evt in node.get("events", []):
             walk(evt)
+        for opt in node.get("options", []):
+            walk(opt)
 
     for proc in data.get("procedures", []):
         walk(proc)
+
+    pipeline = data.get("pipeline", {})
+    for opt in pipeline.get("options", []):
+        walk(opt)
 
     return results
 
@@ -206,9 +212,13 @@ def qdrant_delete(path: str):
 def rebuild_game(game_id: str):
     items = []
 
-    ontology_path = BOARD_ROOT / "ontology" / "ontology.json"
+    ontology_path = BOARD_ROOT / "ontology" / "concepts.json"
     if ontology_path.exists():
         items.extend(extract_concepts(ontology_path))
+
+    ontology_flow_path = BOARD_ROOT / "ontology" / "flow.json"
+    if ontology_flow_path.exists():
+        items.extend(extract_flow(ontology_flow_path))
 
     concepts_path = BOARD_ROOT / "games" / game_id / "concepts.json"
     if concepts_path.exists():

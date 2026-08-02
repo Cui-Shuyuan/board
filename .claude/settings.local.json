@@ -105,7 +105,9 @@
       "PowerShell(D:\\\\Python\\\\Python312\\\\python.exe scripts\\\\link_media_to_concepts.py --game civolution)",
       "PowerShell(Get-Process *)",
       "Bash(D:/qdrant/qdrant.exe *)",
-      "PowerShell(Test-NetConnection *)"
+      "PowerShell(Test-NetConnection *)",
+      "Bash(git rev-list *)",
+      "Bash(git *)"
     ]
   }
 }

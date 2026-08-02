@@ -177,7 +177,7 @@ metadata:
 - 2026-07-22: 完成对象清单层细节修正：`private_board` → `player_board` 重命名；supply 的 public/player 区系统一用 `<ownership>` 表达，不再拆分子类；Civolution 中的「进程版图/流程版图」改为 `<progress_board>` / `<sequence_board>` 概念引用
 - 2026-07-22: 新增 `<favor_of_ager_track>` 概念并替换所有「阿格拉恩惠轨」文本；新增 `<ontology::setting>` 概念承载世界观/背景，删除冗余的 `<civolution_setting>`
 - 2026-07-22: 明确设计约定：ontology 已有概念直接引用，不在游戏层再包一层
-- 2026-07-21: 扩展 `ontology/ontology.json`，新增 11 个 Civolution 所需概念；完成 `concepts.json` objects 层骨架和 `flow.json` 流程骨架
+- 2026-07-21: 扩展 `ontology/concepts.json`，新增 11 个 Civolution 所需概念；完成 `concepts.json` objects 层骨架和 `flow.json` 流程骨架
 - 2026-07-21: 完成 namespace 替换并同步后端查询支持
 - **2026-07-26（概念修正 + 前端图片渲染）**:
   - **删除 `<territory_token>`**：概念本质即 `<hunting_token>`（狩猎指示物），双面标记（正面狩猎/背面阻挡）。删除后全局无残留引用。

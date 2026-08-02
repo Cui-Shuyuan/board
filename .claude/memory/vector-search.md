@@ -50,7 +50,8 @@ metadata:
 ## 索引内容
 
 每款游戏的索引覆盖：
-- `ontology/ontology.json` → concepts 数组
+- `ontology/concepts.json` → concepts 数组
+- `ontology/flow.json` → trigger_pipeline 执行流程
 - `games/{game}/concepts.json` → objects / actions / triggers / conditions / top_level_refs
 - `games/{game}/flow.json` → procedures 树（递归展开，含嵌套 children 和 events）
 

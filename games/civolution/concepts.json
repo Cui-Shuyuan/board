@@ -2681,8 +2681,8 @@
             },
             "abstract": false,
             "definition": {
-                "zh": "执行你的 1 个收入芯片的行动。从控制台层级分区中选择 1 个收入芯片，激活其 <ontology::effect> 一次。此行动出现在天气轨 <warm> 格、进程轨奖励等多个位置。",
-                "en": "Perform the action of 1 of your income chips. Choose 1 income chip from the stage partition of your console and activate its <ontology::effect> once. This action appears in the weather gauge <warm> slot, track bonuses, and other locations."
+                "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。此行动出现在天气轨 <warm> 格、进程轨奖励、第 1 层填满奖励等多个位置。",
+                "en": "Choose 1 installed <income_chip> from the stage partition of your console and activate its <ontology::effect>. This action appears at the weather gauge <warm> slot, track bonuses, the tier-1 completion reward, and other locations."
             },
             "specifies": "<ontology::activation>"
         },

@@ -43,7 +43,7 @@ metadata:
 ## 关键实现现状
 
 - **后端服务**：`backend/BoardAI.Api/`，.NET 9，监听 `http://localhost:5000`
-- **规则查询**：`Controllers/RulesController.cs` + `Services/GameRulesService.cs`，按游戏目录读取 `ontology/ontology.json`、`games/{game}/concepts.json`、`games/{game}/flow.json`
+- **规则查询**：`Controllers/RulesController.cs` + `Services/GameRulesService.cs`，按游戏目录读取 `ontology/concepts.json`、`games/{game}/concepts.json`、`games/{game}/flow.json`
 - **对话接口**：`Controllers/ChatController.cs` + `Services/ChatOrchestratorService.cs`，无状态设计，请求带 `game_id` + `messages` 历史，返回 `{ "reply": "..." }`
 - **工具调用**：LLM 可调 4 个工具——`search_concepts`（语义搜索，返回带元数据的 Top-K 结果）、`get_concept`、`get_action_conditions`、`list_concept_ids`（穷举全量 ID+名称，极轻量）。`search_concepts` 已升级为**向量语义搜索**（BGE-small-zh ONNX + Qdrant），向量优先、关键词降级
 - **向量检索**：Qdrant（独立进程，按游戏分 collection）+ `EmbeddingService`（ONNX 推理）+ `scripts/rebuild_index.py`（Python 离线重建脚本）。索引涵盖 ontology、concepts.json、flow.json。详见 [[vector-search]]

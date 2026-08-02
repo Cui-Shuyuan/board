@@ -179,20 +179,6 @@ public class GameRulesService
 
         var result = new List<JsonElement>();
 
-        if (action.Value.TryGetProperty("precondition", out var precondition))
-        {
-            foreach (var item in precondition.EnumerateArray())
-            {
-                var conditionId = item.GetString()?.Trim('<', '>');
-                if (!string.IsNullOrEmpty(conditionId))
-                {
-                    var condition = GetConcept(game, conditionId);
-                    if (condition.HasValue)
-                        result.Add(condition.Value);
-                }
-            }
-        }
-
         if (action.Value.TryGetProperty("<trigger>", out var triggerRef))
         {
             JsonElement triggerElement;
@@ -484,6 +470,13 @@ public class GameRulesService
             });
         }
 
+        // ontology/flow.json
+        var ontologyFlow = LoadOntologyFlow();
+        if (ontologyFlow != null)
+        {
+            ExtractFlowItems(ontologyFlow.RootElement, result);
+        }
+
         // flow.json 流程
         var flow = LoadGameFlow(game);
         if (flow != null)
@@ -496,11 +489,23 @@ public class GameRulesService
 
     private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result)
     {
-        if (!root.TryGetProperty("procedures", out var procedures)) return;
-
-        foreach (var proc in procedures.EnumerateArray())
+        // 游戏 flow.json：procedures 树
+        if (root.TryGetProperty("procedures", out var procedures))
         {
-            WalkFlowNode(proc, result);
+            foreach (var proc in procedures.EnumerateArray())
+            {
+                WalkFlowNode(proc, result);
+            }
+        }
+
+        // ontology flow.json：pipeline.options 数组
+        if (root.TryGetProperty("pipeline", out var pipeline) &&
+            pipeline.TryGetProperty("options", out var options))
+        {
+            foreach (var opt in options.EnumerateArray())
+            {
+                WalkFlowNode(opt, result);
+            }
         }
     }
 
@@ -545,6 +550,15 @@ public class GameRulesService
             foreach (var evt in events.EnumerateArray())
             {
                 WalkFlowNode(evt, result);
+            }
+        }
+
+        // options（pipeline 选项）
+        if (node.TryGetProperty("options", out var opts))
+        {
+            foreach (var opt in opts.EnumerateArray())
+            {
+                WalkFlowNode(opt, result);
             }
         }
     }
@@ -594,13 +608,20 @@ public class GameRulesService
 
     private JsonDocument LoadOntology()
     {
-        var path = Path.Combine(_basePath, "ontology", "ontology.json");
+        var path = Path.Combine(_basePath, "ontology", "concepts.json");
         return LoadJson(path);
     }
 
     private JsonDocument? LoadGameConcepts(string game)
     {
         var path = Path.Combine(_basePath, "games", game, "concepts.json");
+        if (!File.Exists(path)) return null;
+        return LoadJson(path);
+    }
+
+    private JsonDocument? LoadOntologyFlow()
+    {
+        var path = Path.Combine(_basePath, "ontology", "flow.json");
         if (!File.Exists(path)) return null;
         return LoadJson(path);
     }

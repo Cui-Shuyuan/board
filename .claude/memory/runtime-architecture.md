@@ -17,7 +17,7 @@ metadata:
 | `Controllers/ChatController.cs` | `POST /api/chat` 入口 |
 | `Controllers/RulesController.cs` | 规则查询 HTTP 入口 |
 | `Services/ChatOrchestratorService.cs` | ReAct 式工具循环，对接 LLM 与规则服务 |
-| `Services/GameRulesService.cs` | 读取 `ontology/ontology.json`、`games/{game}/concepts.json`、`games/{game}/flow.json`、`games/{game}/instances.json` |
+| `Services/GameRulesService.cs` | 读取 `ontology/concepts.json`、`games/{game}/concepts.json`、`games/{game}/flow.json`、`games/{game}/instances.json` |
 | `Services/ILLMService.cs` / `DeepSeekLLMService.cs` | LLM 抽象与 DeepSeek v4 Pro 实现 |
 | `Models/ChatMessages.cs` | OpenAI 兼容的消息/工具/响应模型 |
 
