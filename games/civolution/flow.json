@@ -637,6 +637,59 @@
           ]
         }
       ]
+    },
+    {
+      "id": "gain_income_chip",
+      "type": "<ontology::phase>",
+      "description": {
+        "zh": "获得 1 个收入芯片并触发其效果。此流程在多个位置被引用：第 1 层填满奖励、进程轨奖励、天气轨 <warm> 格。",
+        "en": "Gain 1 income chip and trigger its effect. This flow is referenced from multiple locations: tier-1 completion reward, track bonuses, weather gauge <warm> slot."
+      },
+      "events": [
+        {
+          "id": "take_from_display",
+          "type": "<ontology::transfer>",
+          "description": {
+            "zh": "玩家从 <income_chip_display> 中选择 1 个 <income_chip>，拿取至手中。",
+            "en": "Player selects 1 <income_chip> from <income_chip_display> and takes it into hand."
+          },
+          "source": "<income_chip_display>",
+          "destination": "<ontology::player_holding>",
+          "<object>": "<income_chip>",
+          "quantity": 1
+        },
+        {
+          "id": "refill_display",
+          "type": "<ontology::transfer>",
+          "description": {
+            "zh": "从 <income_chip> 储备中抽 1 个新的 <income_chip>，放入 <income_chip_display> 补回空位。",
+            "en": "Draw 1 new <income_chip> from the reserve and place it in <income_chip_display> to refill the empty slot."
+          },
+          "source": "<income_chip_bag>",
+          "destination": "<income_chip_display>",
+          "<object>": "<income_chip>",
+          "quantity": 1,
+          "do_after": ["take_from_display"]
+        },
+        {
+          "id": "install",
+          "type": "<install_income_chip>",
+          "description": {
+            "zh": "将第 1 步拿取的 <income_chip> 安装到 <stage_partition>。",
+            "en": "Install the <income_chip> taken in step 1 into the <stage_partition>."
+          },
+          "do_after": ["refill_display"]
+        },
+        {
+          "id": "trigger_effect",
+          "type": "<activate_income_chip>",
+          "description": {
+            "zh": "触发 1 次刚安装的 <income_chip> 的 <ontology::effect>。",
+            "en": "Trigger the <ontology::effect> of the newly installed <income_chip> once."
+          },
+          "do_after": ["install"]
+        }
+      ]
     }
   ]
 }
