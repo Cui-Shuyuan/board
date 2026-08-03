@@ -77,6 +77,23 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-04（控制台 review 继续 + trigger 迁入 flow + pipeline + 材料体系 + 建造行动）**:
+    - **ontology**：`multiple_choice_enum` 新增 `CHOOSE_ANY`（任意数量执行）；`trigger_pipeline` 定义标准执行流程
+    - **flow.json `triggers` 数组**：新建，容纳 action/activation/event/transfer/upgrade/play 类概念。`gain_income_chip` 从 procedures 迁入
+    - **events[] 弃用 → pipeline**：全文件 `events` 数组改为 `pipeline: { options, type }` 格式，与 ontology `trigger_pipeline` 对齐
+    - **type → specifies 统一**：全文件 `"type"` 改 `"specifies"`，仅 `multiple_choice_enum` 保留 `"type"`
+    - **console parts**：`lv3_effects` → `lv3_effect_zone`（zone 参照 goal_area）；匿名 stage effect+aid → `stage_indicator`（specifies effect + aid part）；删除 `dead_tribe_area`；food_space/money_space 位置修正为面板左半边 + 交易规则 aid
+    - **settlement_zone**：4 格 player_holding + continuous_effect（Prosperity 钻石计分）+ 材料清单 aid
+    - **farm_supply + boat_supply**：3 格/2 格 player_holding，不补充
+    - **领地类型 6 个**：forest/grassland/hill/swamp/mountain/desert（specifies territory）
+    - **stored_material 重写**：abstract，新增 territory_type/sell_price/lucky_harvest_die 属性
+    - **18 种材料**：3 行（基础/稀有/珍贵）× 6 列（领地），各有 sell_price 1/2/3 和 lucky_harvest_die 范围
+    - **storage_area 重写**：3×6 网格 + 行间钻石 aid（上下非空则激活）
+    - **以下概念从 concepts.json 迁入 flow.json triggers**：trade、favor_test、activate_income_chip、perform_activity、install_research_card（合并 5 变体，card_type enum 区分）、install_goal_chip、install_income_chip、install_attribute_chip、lose_food、remove_tribe、push_any_progress_track、weather_effect、upgrade_main_module
+    - **flow.json 新增 actions**：`lucky_find`（幸运收获）、`build_settlement`（建造聚落，4 格费用全写清）
+    - **concepts.json 保留**：`activity`（effect-identity，定义"是什么"）
+    - **待办**：建造聚落/农场/船/雕像 aid、feature_space（焦点格）、idea_space（创意格）
+
 - **2026-08-01~02（cost/content 模型重构 + 控制台 review + 芯片安装体系）**:
     - **cost 二分**：`instant_cost`（一次性支付）+ `continuous_cost`（状态检查），替代旧 `condition` + `event`
     - **content 三字段**：`<instant_content>`（无条件一次执行）、`<continuous_content>`（无条件电平维持）、`<effect>`（条件触发，含 `instant_effect` 一次机会 + `continuous_effect` 持续武装）

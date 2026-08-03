@@ -14,11 +14,11 @@
   "procedures": [
     {
       "id": "game",
-      "type": "<ontology::round>",
+      "specifies": "<ontology::round>",
       "children": [
         {
           "id": "setup",
-          "type": "<ontology::phase>",
+          "specifies": "<ontology::phase>",
           "description": {
             "zh": "游戏设置阶段，分为公共设置和个人设置。",
             "en": "Game setup phase, divided into public setup and player setup."
@@ -26,7 +26,7 @@
           "events": [
             {
               "id": "assemble_public_board",
-              "type": "<ontology::event>",
+              "specifies": "<ontology::event>",
               "description": {
                 "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
                 "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly arrange the 8 continent tiles to fill the 5×3 grid inside the score track frame, forming the continent."
@@ -34,7 +34,7 @@
             },
             {
               "id": "place_sites",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
                 "en": "Place the 24 site tiles face down on the site spaces of the continent."
@@ -47,7 +47,7 @@
             },
             {
               "id": "place_progress_and_sequence_boards",
-              "type": "<ontology::event>",
+              "specifies": "<ontology::event>",
               "description": {
                 "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
                 "en": "Place the progress board and sequence board on either side of the public board."
@@ -55,7 +55,7 @@
             },
             {
               "id": "prepare_phase_indicator",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将阶段标记放到流程版图阶段序列的阶段一位置。",
                 "en": "Place the phase indicator on phase 1 of the sequence board's phase sequence."
@@ -67,7 +67,7 @@
             },
             {
               "id": "prepare_weather_indicator",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将天气标记放到流程版图天气轨的适中位置。",
                 "en": "Place the weather indicator on a moderate space of the weather gauge."
@@ -79,7 +79,7 @@
             },
             {
               "id": "prepare_event_cards",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
                 "en": "Shuffle event cards, draw 4, and place them face down on the event card spaces; return the rest to the box."
@@ -92,7 +92,7 @@
             },
             {
               "id": "prepare_research_decks",
-              "type": "<ontology::shuffle>",
+              "specifies": "<ontology::shuffle>",
               "target": "<research_deck>",
               "description": {
                 "zh": "将五种研究牌分别洗混后形成供应堆。",
@@ -101,7 +101,7 @@
             },
             {
               "id": "prepare_starting_decks",
-              "type": "<ontology::shuffle>",
+              "specifies": "<ontology::shuffle>",
               "target": "<starting_marker_deck>",
               "description": {
                 "zh": "洗混初始标记牌和初始芯片牌备用。",
@@ -110,7 +110,7 @@
             },
             {
               "id": "prepare_era_scoring_tiles",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区。",
                 "en": "Draw 4 scoring tiles and place them face up in the era scoring area."
@@ -122,7 +122,7 @@
             },
             {
               "id": "prepare_final_scoring_tiles",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取 3 张计分板块按图标背面朝上覆盖终局计分区。",
                 "en": "Draw 3 scoring tiles and place them point-side up over the final scoring area."
@@ -135,7 +135,7 @@
             },
             {
               "id": "prepare_hundred_point_tokens",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将若干一百分指示物翻面作为阻挡标记覆盖不可用区域，剩余作为供应堆。",
                 "en": "Flip some 100-point tokens as blocking tokens to cover unavailable areas; the rest form the supply."
@@ -148,7 +148,7 @@
             },
             {
               "id": "prepare_hunting_tokens",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将若干狩猎指示物翻面作为阻挡标记覆盖不可用营地，剩余作为供应堆。",
                 "en": "Flip some hunting tokens as blocking tokens to cover unavailable campsites; the rest form the supply."
@@ -161,7 +161,7 @@
             },
             {
               "id": "prepare_dice_pool",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
                 "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
@@ -174,7 +174,7 @@
             },
             {
               "id": "prepare_goal_chip_display",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取若干目标芯片正面朝上放到目标芯片展示区，剩余放回袋子。",
                 "en": "Draw goal chips and place them face up in the goal chip display; return the rest to the bag."
@@ -188,7 +188,7 @@
             },
             {
               "id": "prepare_income_chip_display",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取若干收入芯片正面朝上放到收入芯片展示区，剩余放回袋子。",
                 "en": "Draw income chips and place them face up in the income chip display; return the rest to the bag."
@@ -202,7 +202,7 @@
             },
             {
               "id": "prepare_attribute_chip_display",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取若干属性芯片正面朝上放到属性芯片展示区，剩余放回袋子。",
                 "en": "Draw attribute chips and place them face up in the attribute chip display; return the rest to the bag."
@@ -216,7 +216,7 @@
             },
             {
               "id": "place_material_tiles",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
                 "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
@@ -228,7 +228,7 @@
             },
             {
               "id": "player_setup_modules",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入控制台模组区。",
                 "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
@@ -241,7 +241,7 @@
             },
             {
               "id": "player_setup_dice",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家从游戏盒中拿取 6 个白骰子，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到控制台骰子区对应点数格上。",
                 "en": "Each player takes 6 activation dice from the game box, sets them to show each value 1-6, and places each on the corresponding dice space of their console."
@@ -254,7 +254,7 @@
             },
             {
               "id": "player_setup_fate_die",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家从游戏盒中拿取 1 个粉骰子放在控制台旁边备用。",
                 "en": "Each player takes 1 fate die from the game box and places it beside their console."
@@ -267,7 +267,7 @@
             },
             {
               "id": "player_setup_stage_tiles",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到控制台对应位置。",
                 "en": "Each player takes stage-4 and stage-5 tiles, inactive side up, and places them on the console."
@@ -280,7 +280,7 @@
             },
             {
               "id": "player_setup_buildings",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取所有聚落、农场、船、圆片和部落放到控制台对应位置，并在船上放两个标记。",
                 "en": "Each player takes all settlements, farms, boats, discs, and tribes to their console; place two markers on boats."
@@ -293,7 +293,7 @@
             },
             {
               "id": "player_setup_score_and_track_tokens",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个分数标记放到计分轨 0 分位置。",
                 "en": "Each player takes 1 score marker and places it on the score track at 0."
@@ -306,7 +306,7 @@
             },
             {
               "id": "player_setup_favor_marker",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个恩惠标记放到 <favor_of_ager_track> 起始位置。",
                 "en": "Each player takes 1 favor marker and places it on the <favor_of_ager_track> start."
@@ -319,7 +319,7 @@
             },
             {
               "id": "player_setup_technology_marker",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到科技轨 0 格。",
                 "en": "Each player takes 1 progress marker and places it on the technology track at 0."
@@ -332,7 +332,7 @@
             },
             {
               "id": "player_setup_prestige_marker",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到声望轨 0 格。",
                 "en": "Each player takes 1 progress marker and places it on the prestige track at 0."
@@ -345,7 +345,7 @@
             },
             {
               "id": "player_setup_knowledge_marker",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到知识轨 0 格。",
                 "en": "Each player takes 1 progress marker and places it on the knowledge track at 0."
@@ -358,7 +358,7 @@
             },
             {
               "id": "player_setup_construction_marker",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到建设轨 0 格。",
                 "en": "Each player takes 1 progress marker and places it on the construction track at 0."
@@ -371,7 +371,7 @@
             },
             {
               "id": "player_setup_culture_marker",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到文化轨 0 格。",
                 "en": "Each player takes 1 progress marker and places it on the culture track at 0."
@@ -384,7 +384,7 @@
             },
             {
               "id": "player_place_initial_tribes",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
                 "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
@@ -397,7 +397,7 @@
             },
             {
               "id": "player_place_initial_markers",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到控制台重置列顶部。",
                 "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
@@ -410,7 +410,7 @@
             },
             {
               "id": "choose_starting_player",
-              "type": "<ontology::event>",
+              "specifies": "<ontology::event>",
               "description": {
                 "zh": "决定起始玩家，获得起始纪念碑。",
                 "en": "Determine the starting player, who receives the starting monolith."
@@ -418,7 +418,7 @@
             },
             {
               "id": "draft_starting_marker_cards",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得上面标记，其余放回盒子。",
                 "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers, returns the rest to the box."
@@ -432,7 +432,7 @@
             },
             {
               "id": "draft_starting_chip_cards",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "翻开玩家数量 +1 张初始芯片牌，每张贴一张目标芯片；从起始玩家右手边玩家开始逆时针选一张，将目标芯片放入目标区，模组翻面至等级二，牌塞入收入区成为首个收入芯片。",
                 "en": "Reveal player_count + 1 starting chip cards, each with a goal chip; draft them counter-clockwise, place goal chip, upgrade module, and slide card under console as first income chip."
@@ -446,7 +446,7 @@
             },
             {
               "id": "draft_starting_research_cards",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家从五个研究牌堆各抽两张，每种选一张保留，另一张放回牌堆底。",
                 "en": "Each player draws 2 cards from each of the 5 research decks, keeps 1 of each type, returns the other to the bottom of its deck."
@@ -461,7 +461,7 @@
         },
         {
           "id": "era_loop",
-          "type": "<ontology::round>",
+          "specifies": "<ontology::round>",
           "loop": {
             "for": 4,
             "counter": "era_number"
@@ -473,7 +473,7 @@
           "children": [
             {
               "id": "phase_1_new_cards",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段一：新的卡牌。翻开事件牌堆顶部一张（覆盖上时代的事件牌），显示本时代天气变化方向和事件效果。然后翻开 5 个背面朝下研究牌堆各顶部一张，放到对应的正面朝上研究牌堆上（第一时代新建堆，后续覆盖上时代卡牌）。",
                 "en": "Phase 1: New Cards. Reveal the top card of the face-down event stack (covering the previous era's event card), showing this era's weather change direction and event effect. Then reveal the top card from each of the 5 face-down research stacks onto the corresponding face-up research stack (forming new stacks in era 1, covering the previous card thereafter)."
@@ -481,7 +481,7 @@
             },
             {
               "id": "phase_2_new_goals",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段二：新的目标。从起始玩家开始顺时针，每位玩家可选择从展示区拿取一枚目标芯片安装到目标列，或跳过。随后补满展示区空位。",
                 "en": "Phase 2: New Goals. Starting with the start player and going clockwise, each player may take a goal chip from the display and install it in the goal column, or pass. Then refill empty display spaces."
@@ -489,7 +489,7 @@
             },
             {
               "id": "phase_3_extra_find",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段三：额外收获。从起始玩家开始顺时针，每位玩家选择一个有自己部落的区域，从该区域可产出的三种材料中选择一种获得一个，放入对应仓库。",
                 "en": "Phase 3: Extra Harvest. Starting with the start player and going clockwise, each player chooses a territory containing their tribe, selects one of the three materials it produces, and gains one into the corresponding storage."
@@ -497,7 +497,7 @@
             },
             {
               "id": "phase_4_action",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段四：行动阶段。阶段标记从第一个黄色 reset space 开始。从起始玩家顺时针轮流转，每回合必须二选一：激活一个模组（支付恰好 2 个对应点数的白骰子或计划/焦点标记）或执行 Reset（前提：当前骰子区白骰子不超过 3 个）。Reset 分三步——A: 沿黄色箭头推动阶段标记到下一个 reset space（若到达红色 reset end space 则触发行动阶段结束）；B: 回收已使用的骰子并全部重掷；C: 将最左侧重置标记移入 idea space 或 food space。阶段标记到达红色格后，先补完当前轮，所有玩家再执行最后一轮完整回合，由起始玩家右手边的玩家结束行动阶段。",
                 "en": "Phase 4: Action Phase. The phase indicator starts on the first yellow reset space. Players take turns clockwise; each turn must either activate a module (pay exactly 2 activation dice of matching values, or planning/focus markers) or perform a Reset (only if the player has ≤3 activation dice on dice spaces). Reset has three steps — A: Advance the phase indicator along the yellow arrow to the next reset space (if it reaches the red reset-end space, the Action Phase end is triggered); B: Retrieve all used dice and re-roll them; C: Move the leftmost reset marker to the idea space or food space. When the phase indicator reaches the red space, complete the current round, then all players take one final full round, ending with the player right of the starting player."
@@ -505,14 +505,14 @@
               "children": [
                 {
                   "id": "action_turn_cycle",
-                  "type": "<ontology::round>",
+                  "specifies": "<ontology::round>",
                   "loop": {
                     "until": "<action_phase_end>"
                   },
                   "children": [
                     {
                       "id": "player_action_turn",
-                      "type": "<ontology::turn>",
+                      "specifies": "<ontology::turn>",
                       "actor": "next_player_in_turn_order",
                       "actions": [
                         "<activate_module>",
@@ -525,7 +525,7 @@
             },
             {
               "id": "phase_5_site",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段五：地点阶段。结算与三种地点相关的效果（如已翻开）。",
                 "en": "Phase 5: Site Phase. Resolve effects related to three specific site types (if revealed)."
@@ -533,7 +533,7 @@
             },
             {
               "id": "phase_6_feeding",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段六：喂养阶段。按规则喂饱或饿死部落。营地/船上的部落需 1 食物，野外部落需 2 食物。",
                 "en": "Phase 6: Feeding Phase. Feed or starve tribes according to the rules: 1 food for tribes on campsites/boats, 2 food for tribes in the wilderness."
@@ -541,7 +541,7 @@
             },
             {
               "id": "phase_7_event",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段七：事件阶段。依次执行：1) 结算天气效果；2) 结算事件牌效果；3) 时代计分；4) 确定新的起始玩家（本阶段得分最高者）。",
                 "en": "Phase 7: Event Phase. Execute in order: 1) resolve weather effect; 2) resolve event card effect; 3) era scoring; 4) determine new starting player (highest scorer this phase)."
@@ -549,7 +549,7 @@
               "children": [
                 {
                   "id": "event_weather",
-                  "type": "<ontology::phase>",
+                  "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "结算天气效果",
                     "en": "Resolve weather effect"
@@ -557,7 +557,7 @@
                 },
                 {
                   "id": "event_card_resolution",
-                  "type": "<ontology::phase>",
+                  "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "结算事件牌效果",
                     "en": "Resolve event card effect"
@@ -565,7 +565,7 @@
                 },
                 {
                   "id": "event_era_scoring",
-                  "type": "<ontology::phase>",
+                  "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "时代计分",
                     "en": "Era scoring"
@@ -573,7 +573,7 @@
                 },
                 {
                   "id": "event_new_starting_player",
-                  "type": "<ontology::phase>",
+                  "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "确定新的起始玩家",
                     "en": "Determine new starting player"
@@ -583,7 +583,7 @@
             },
             {
               "id": "phase_8_income",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段八：收入阶段。依次执行：A) 执行收入芯片（从上到下、从左到右）；B) 结算雕像收入（每座雕像按阿格拉恩惠轨当前位置计分）；C) 回收大陆上所有狩猎指示物至展示区；D) 每位玩家从供应堆补满空的重置列。完成后将阶段标记移回阶段一，开始新时代（或进入终局计分）。",
                 "en": "Phase 8: Income Phase. Execute in order: A) Execute income chips top-to-bottom, left-to-right; B) Score statues (each statue scores points based on the Favor of Agera track position); C) Return all hunting tokens from the continent to the display; D) Each player refills empty reset columns with markers from supply. Then return the phase indicator to Phase 1 for the next era (or proceed to final scoring)."
@@ -593,7 +593,7 @@
         },
         {
           "id": "final_scoring",
-          "type": "<ontology::phase>",
+          "specifies": "<ontology::phase>",
           "description": {
             "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点。分三轮计分：第一轮沿终局计分轨逐格结算 9 个计分项（技术/声望/知识/建设/文化/进化/繁荣/人口/扩张），每项用该格下方印的每单位分值计算；第二轮结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4 和阶段 5 仅在对应 stage tile 已激活时才计分）；第三轮结算 point bonus 卡——每张带分数加成图标的卡牌为其所在列的所有卡牌和收入芯片额外加分。总分最高者获胜。",
             "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the final scoring track start. Score in three rounds: Round 1 — advance along the final scoring track, scoring each of the 9 categories (Technology/Prestige/Knowledge/Construction/Culture/Evolution/Prosperity/Population/Expansion) using the point value printed below each space. Round 2 — score the stage partition: each chip and card scores the points left of its stage (stages 4 and 5 only score if the corresponding stage tile is active). Round 3 — score point bonus cards: each card with the bonus icon grants extra points for all cards and income chips in its column. Highest total score wins."
@@ -601,7 +601,7 @@
           "children": [
             {
               "id": "final_scoring_categories",
-              "type": "<ontology::round>",
+              "specifies": "<ontology::round>",
               "loop": {
                 "until": "<final_scoring_track_end>"
               },
@@ -612,7 +612,7 @@
             },
             {
               "id": "final_scoring_stage_partition",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "第二轮：控制台阶段分区计分。逐一检查阶段 1-5 中安装的每张卡牌和芯片，按阶段左侧分数计分。阶段 4/5 需对应的 stage tile 已激活才计分。",
                 "en": "Round 2: Score the stage partition. Check each card and chip in stages 1-5, scoring the points left of its stage. Stages 4/5 only score if the corresponding stage tile is active."
@@ -620,7 +620,7 @@
             },
             {
               "id": "final_scoring_point_bonus_cards",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "description": {
                 "zh": "第三轮：point bonus 卡计分。每张带加成图标的卡牌为其所在列所有卡牌和收入芯片（含自身）提供额外分数。",
                 "en": "Round 3: Score point bonus cards. Each card with the bonus icon grants extra points for all cards and income chips in its column (including itself)."
@@ -628,7 +628,7 @@
             },
             {
               "id": "determine_winner",
-              "type": "<ontology::event>",
+              "specifies": "<ontology::event>",
               "description": {
                 "zh": "比较所有玩家的成功点数，最高者获胜。平局时，已执行更多模组升级的玩家胜出；仍平局则按座位顺序（从起始玩家顺时针）先到者胜。",
                 "en": "Compare all players' success points; the highest wins. Tiebreaker: the tied player with more module upgrades wins; if still tied, the tied player earliest in seating order (clockwise from starting player) wins."
@@ -642,7 +642,7 @@
   "triggers": [
     {
       "id": "favor_test",
-      "type": "<ontology::event>",
+      "specifies": "<ontology::event>",
       "description": {
         "zh": "投掷玩家持有的全部 <fate_die>，并根据 <favor_of_ager_track> 当前位置判定是否通过。只要有一颗骰子的点数落在轨道允许的范围内，即视为通过。常用于模组升级后的额外行动。",
         "en": "Roll all <fate_die> and check whether any result falls within the allowed range per <favor_of_ager_track> position. Passing requires at least one die to show an allowed value. Commonly used for bonus actions after upgrading modules."
@@ -650,7 +650,7 @@
     },
     {
       "id": "activate_income_chip",
-      "type": "<ontology::activation>",
+      "specifies": "<ontology::activation>",
       "description": {
         "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。",
         "en": "Choose 1 installed <income_chip> from the console stage partition and activate its <ontology::effect>."
@@ -658,7 +658,7 @@
     },
     {
       "id": "perform_activity",
-      "type": "<ontology::activation>",
+      "specifies": "<ontology::activation>",
       "description": {
         "zh": "选择 1 个可用的 <activity> 并激活。",
         "en": "Choose 1 available <activity> and activate it."
@@ -666,13 +666,13 @@
     },
     {
       "id": "install_research_card",
-      "type": "<ontology::play>",
+      "specifies": "<ontology::play>",
       "description": {
         "zh": "将手牌中的一张 <research_card> 安装到层级分区。需确定安装列与位置、满足费用格条件。",
         "en": "Install a <research_card> from hand into the stage partition. Must determine column and position, and satisfy cost slot conditions."
       },
       "card_type": {
-        "type": "enum",
+        "specifies": "enum",
         "enum": [
           { "id": "ACHIEVEMENT_CARD_TYPE", "name": { "zh": "成就", "en": "Achievement" } },
           { "id": "BUILDING_CARD_TYPE", "name": { "zh": "建造", "en": "Building" } },
@@ -705,7 +705,7 @@
     },
     {
       "id": "install_goal_chip",
-      "type": "<ontology::play>",
+      "specifies": "<ontology::play>",
       "description": {
         "zh": "将一枚 <goal_chip> 从目标区安装到层级分区。翻至背面，选左/右半侧，安装至最低空位。",
         "en": "Install a <goal_chip> from the goal area into the stage partition. Flip to back, choose left/right half, place at lowest empty position."
@@ -716,7 +716,7 @@
     },
     {
       "id": "install_income_chip",
-      "type": "<ontology::play>",
+      "specifies": "<ontology::play>",
       "description": {
         "zh": "将一枚 <income_chip> 安装到 <stage_partition>。任选一列，安装至最低空闲 <tier>。",
         "en": "Install an <income_chip> into the <stage_partition>. Choose any column, install at lowest empty <tier>."
@@ -727,7 +727,7 @@
     },
     {
       "id": "install_attribute_chip",
-      "type": "<ontology::play>",
+      "specifies": "<ontology::play>",
       "description": {
         "zh": "将一枚 <attribute_chip> 安装到 <stage_partition>。若已有同列则继续该列，否则任选空列。",
         "en": "Install an <attribute_chip> into the <stage_partition>. Continue existing column or choose any empty one."
@@ -738,7 +738,7 @@
     },
     {
       "id": "lose_food",
-      "type": "<ontology::transfer>",
+      "specifies": "<ontology::transfer>",
       "description": {
         "zh": "将 1 个 <food> 从 <food_space> 返回供应堆。",
         "en": "Return 1 <food> from <food_space> to the supply."
@@ -750,7 +750,7 @@
     },
     {
       "id": "remove_tribe",
-      "type": "<ontology::transfer>",
+      "specifies": "<ontology::transfer>",
       "description": {
         "zh": "将 1 个 <tribe> 从 <continent> 返回玩家供应堆。",
         "en": "Return 1 <tribe> from the <continent> to the player's supply."
@@ -762,7 +762,7 @@
     },
     {
       "id": "push_any_progress_track",
-      "type": "<ontology::push_track>",
+      "specifies": "<ontology::push_track>",
       "description": {
         "zh": "从 5 条进程轨中任选 1 条推进。",
         "en": "Choose any 1 of the 5 progress tracks and advance on it."
@@ -780,7 +780,7 @@
     },
     {
       "id": "weather_effect",
-      "type": "<ontology::trigger>",
+      "specifies": "<ontology::trigger>",
       "description": {
         "zh": "事件阶段天气标记移动完成后，所有玩家按座次顺位逐一结算当前天气格的效果。正面效果可放弃，负面效果必须执行。",
         "en": "After weather indicator moves in Event phase, all players in seating order resolve the current weather slot effect. Positive effects may be forgone; negative effects are mandatory."
@@ -799,7 +799,7 @@
     },
     {
       "id": "upgrade_main_module",
-      "type": "<ontology::upgrade>",
+      "specifies": "<ontology::upgrade>",
       "description": {
         "zh": "选择一个未达最高等级的主模组提升 1 级。L1→L2 翻面，L2→L3 板块放回游戏盒、console 上 L3 效果激活。",
         "en": "Choose a main module not at max level, increase by 1. L1→L2 flip tile; L2→L3 return tile to game box, console L3 effect becomes available."
@@ -832,7 +832,7 @@
     },
     {
       "id": "gain_income_chip",
-      "type": "<ontology::action>",
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "获得 1 个收入芯片并触发其效果。",
         "en": "Gain 1 income chip and trigger its effect."
@@ -840,14 +840,14 @@
       "pipeline": {
         "options": {
           "take_from_display": {
-            "type": "<ontology::transfer>",
+            "specifies": "<ontology::transfer>",
             "source": "<income_chip_display>",
             "destination": "<ontology::player_holding>",
             "<object>": "<income_chip>",
             "quantity": 1
           },
           "refill_display": {
-            "type": "<ontology::transfer>",
+            "specifies": "<ontology::transfer>",
             "source": "<income_chip_bag>",
             "destination": "<income_chip_display>",
             "<object>": "<income_chip>",
@@ -855,11 +855,11 @@
             "do_after": ["take_from_display"]
           },
           "install": {
-            "type": "<install_income_chip>",
+            "specifies": "<install_income_chip>",
             "do_after": ["refill_display"]
           },
           "trigger_effect": {
-            "type": "<activate_income_chip>",
+            "specifies": "<activate_income_chip>",
             "do_after": ["install"]
           }
         },
@@ -868,7 +868,7 @@
     },
     {
       "id": "trade",
-      "type": "<ontology::action>",
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。可从以下选项中任选组合执行（顺序任意）：",
         "en": "The Trade action. Sell stored materials for money or points, or purchase new materials with money. Choose any combination (any order):"
@@ -877,7 +877,7 @@
         "options": [
           {
             "id": "sale",
-            "type": "<ontology::action>",
+            "specifies": "<ontology::action>",
             "description": {
               "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
               "en": "Sale: Sell up to 2 materials. One may be for money, one for 2 points. Cannot double up."
@@ -886,7 +886,7 @@
               "options": [
                 {
                   "id": "sale_for_money",
-                  "type": "<ontology::action>",
+                  "specifies": "<ontology::action>",
                   "description": {
                     "zh": "换钱币：售出一个材料换取钱币。",
                     "en": "For money: Sell one material for money."
@@ -894,14 +894,14 @@
                   "pipeline": {
                     "options": {
                       "return_material_sm": {
-                        "type": "<ontology::transfer>",
+                        "specifies": "<ontology::transfer>",
                         "source": "<storage_area>",
                         "destination": "<ontology::supply>",
                         "<object>": "<stored_material>",
                         "quantity": 1
                       },
                       "gain_money": {
-                        "type": "<ontology::transfer>",
+                        "specifies": "<ontology::transfer>",
                         "source": "<ontology::supply>",
                         "destination": "<money_space>",
                         "<object>": "<money>",
@@ -917,7 +917,7 @@
                 },
                 {
                   "id": "sale_for_points",
-                  "type": "<ontology::action>",
+                  "specifies": "<ontology::action>",
                   "description": {
                     "zh": "换分数：售出一个材料换取 2 分。",
                     "en": "For points: Sell one material for 2 points."
@@ -925,14 +925,14 @@
                   "pipeline": {
                     "options": {
                       "return_material_sp": {
-                        "type": "<ontology::transfer>",
+                        "specifies": "<ontology::transfer>",
                         "source": "<storage_area>",
                         "destination": "<ontology::supply>",
                         "<object>": "<stored_material>",
                         "quantity": 1
                       },
                       "gain_points": {
-                        "type": "<ontology::event>",
+                        "specifies": "<ontology::event>",
                         "description": {
                           "zh": "获得 2 分",
                           "en": "Gain 2 success points"
@@ -949,7 +949,7 @@
           },
           {
             "id": "purchase",
-            "type": "<ontology::action>",
+            "specifies": "<ontology::action>",
             "description": {
               "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
               "en": "Purchase: Pay money, then take one material marker from supply into storage."
@@ -957,7 +957,7 @@
             "pipeline": {
               "options": {
                 "pay_money": {
-                  "type": "<ontology::transfer>",
+                  "specifies": "<ontology::transfer>",
                   "source": "<money_space>",
                   "destination": "<ontology::supply>",
                   "<object>": "<money>",
@@ -967,7 +967,7 @@
                   }
                 },
                 "gain_material": {
-                  "type": "<ontology::transfer>",
+                  "specifies": "<ontology::transfer>",
                   "source": "<ontology::supply>",
                   "destination": "<storage_area>",
                   "<object>": "<stored_material>",
@@ -984,7 +984,7 @@
     },
     {
       "id": "lucky_find",
-      "type": "<ontology::action>",
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部粉色命运骰，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
         "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
@@ -998,7 +998,7 @@
             }
           },
           "roll_fate_dice": {
-            "type": "<favor_test>",
+            "specifies": "<favor_test>",
             "description": {
               "zh": "投掷全部粉色命运骰。",
               "en": "Roll all pink fate dice."
@@ -1013,7 +1013,7 @@
             "do_after": ["roll_fate_dice"]
           },
           "gain_material": {
-            "type": "<ontology::transfer>",
+            "specifies": "<ontology::transfer>",
             "source": "<ontology::supply>",
             "destination": "<storage_area>",
             "<object>": "<stored_material>",
@@ -1026,7 +1026,7 @@
     },
     {
       "id": "build_settlement",
-      "type": "<ontology::action>",
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "建造聚落：选一个建造点，从控制台聚落区选一个未建造的聚落，支付其材料费用，将聚落放至建造点。立即获得 1 个收入芯片。建造第 4 个聚落时可翻面一个未激活的层级板块。",
         "en": "Build a settlement: Choose a Building ground, choose an unbuilt settlement from the console settlement zone, pay its material cost, and place it on the Building ground. Immediately gain 1 income chip. When building the 4th, may flip an inactive stage tile."
@@ -1047,7 +1047,7 @@
             "do_after": ["choose_building_ground"]
           },
           "pay_cost": {
-            "type": "<ontology::transfer>",
+            "specifies": "<ontology::transfer>",
             "source": "<storage_area>",
             "destination": "<ontology::supply>",
             "<object>": "<stored_material>",
@@ -1055,7 +1055,7 @@
             "do_after": ["choose_settlement_slot"]
           },
           "transfer_settlement": {
-            "type": "<ontology::transfer>",
+            "specifies": "<ontology::transfer>",
             "source": "<settlement_zone>",
             "destination": "<continent>",
             "<object>": "<settlement>",
@@ -1063,7 +1063,7 @@
             "do_after": ["pay_cost"]
           },
           "gain_income_chip_reward": {
-            "type": "<gain_income_chip>",
+            "specifies": "<gain_income_chip>",
             "do_after": ["transfer_settlement"]
           }
         },

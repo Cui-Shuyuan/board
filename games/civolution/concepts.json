@@ -2459,8 +2459,8 @@
         {
           "type": "<storage_area>",
           "position": {
-            "zh": "面板底部",
-            "en": "bottom of the <console>"
+            "zh": "面板左半边下半部分",
+            "en": "lower half of the left half of the <console>"
           }
         },
         {
@@ -2491,8 +2491,22 @@
         {
           "type": "<settlement_zone>",
           "position": {
-            "zh": "面板左半边",
-            "en": "left half of the <console>"
+            "zh": "面板左半边，仓库上方，钱币格下方",
+            "en": "left half of the <console>, above storage, below money space"
+          }
+        },
+        {
+          "type": "<farm_supply>",
+          "position": {
+            "zh": "面板左半边，仓库左边，船供应堆上方",
+            "en": "left half of the <console>, left of storage, above boat supply"
+          }
+        },
+        {
+          "type": "<boat_supply>",
+          "position": {
+            "zh": "面板左半边，仓库左边，农场供应堆下方",
+            "en": "left half of the <console>, left of storage, below farm supply"
           }
         },
         {
@@ -2698,6 +2712,36 @@
           }
         }
       }
+    },
+    {
+      "id": "farm_supply",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "农场供应堆",
+        "en": "Farm Supply"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "<console> 上放置<farm>的<ontology::player_holding>，共 3 格，每格初始放置 1 个<farm>。建造时拿取，不补充。",
+        "en": "A <ontology::player_holding> on the <console> for <farm>s, with 3 slots, each initially holding 1 <farm>. Taken when building; not replenished."
+      },
+      "slot_count": 3,
+      "contains": "<farm>"
+    },
+    {
+      "id": "boat_supply",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "船供应堆",
+        "en": "Boat Supply"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "<console> 上放置<boat>的<ontology::player_holding>，共 2 格，每格初始放置 1 个<boat>。建造时拿取，不补充。",
+        "en": "A <ontology::player_holding> on the <console> for <boat>s, with 2 slots, each initially holding 1 <boat>. Taken when building; not replenished."
+      },
+      "slot_count": 2,
+      "contains": "<boat>"
     },
     {
       "id": "settlement_zone",
