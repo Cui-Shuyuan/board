@@ -2143,6 +2143,10 @@
           "CHOOSE_AT_LEAST_ONE": {
             "zh": "选择至少 1 个执行",
             "en": "Choose At Least One"
+          },
+          "CHOOSE_ANY": {
+            "zh": "任意数量执行（0 到全部），每项最多 1 次",
+            "en": "Choose Any (0 to all, each at most once)"
           }
         }
       }
