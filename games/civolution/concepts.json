@@ -62,35 +62,219 @@
         "zh": "仓库材料",
         "en": "Stored Material"
       },
-      "abstract": false,
+      "abstract": true,
       "definition": {
-        "zh": "已运输到<console>仓库中的原材料。是建造聚落/雕像、支付研究牌费用、出售换钱的资源。同类型材料完全等价。",
-        "en": "Raw materials that have been transported to the storage spaces on a <console>. Used to build settlements/statues, pay research card costs, or sell for money. Same-type materials are equivalent."
+        "zh": "已运输到<console>仓库中的原材料。是建造聚落/雕像、支付研究牌费用、出售换钱的资源。同类型材料完全等价。共 18 种，按产出领地分 6 列、按稀有度分 3 行。",
+        "en": "Raw materials that have been transported to the storage spaces on a <console>. Used to build settlements/statues, pay research card costs, or sell for money. Same-type materials are equivalent. 18 types total, arranged in 6 columns (by territory) × 3 rows (by rarity)."
       },
-      "material_type": {
-        "type": "enum",
-        "enum": [
-          "wood",
-          "papyrus",
-          "oil",
-          "stone",
-          "copper",
-          "gold_jade"
-        ],
+      "territory_type": {
+        "type": "<territory>",
         "description": {
-          "zh": "仓库材料的类型：木头、纸莎草、油、石头、铜、金/玉。",
-          "en": "Type of stored material: Wood, Papyrus, Oil, Stone, Copper, Gold/Jade."
+          "zh": "产出此材料的领地类型。只能从对应领地的生产行动中获得。",
+          "en": "The territory type that produces this material. Only obtainable from the corresponding territory via the Production action."
+        }
+      },
+      "sell_price": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 3,
+        "description": {
+          "zh": "出售时 1 个材料能换多少个钱币。",
+          "en": "How many money markers 1 material yields when sold."
+        }
+      },
+      "lucky_harvest_die": {
+        "type": "string",
+        "description": {
+          "zh": "幸运收获时，命运骰需掷出的点数范围。",
+          "en": "The fate die result range needed for Lucky Harvest."
         }
       },
       "unit": {
         "type": "string",
-        "default": "个",
-        "description": {
-          "zh": "仓库材料的计量单位为「个」。",
-          "en": "Unit of measurement for stored materials: 'marker'."
-        }
+        "default": "个"
       },
       "token": "<octagonal_pillar>"
+    },
+    {
+      "id": "wood",
+      "specifies": "<stored_material>",
+      "name": { "zh": "木头", "en": "Wood" },
+      "abstract": false,
+      "definition": { "zh": "森林产出的基础材料。", "en": "Basic material from forests." },
+      "territory_type": "<forest_territory>",
+      "sell_price": 1,
+      "lucky_harvest_die": { "zh": "1 或 2", "en": "1 or 2" }
+    },
+    {
+      "id": "papyrus",
+      "specifies": "<stored_material>",
+      "name": { "zh": "纸莎草", "en": "Papyrus" },
+      "abstract": false,
+      "definition": { "zh": "草原产出的基础材料。", "en": "Basic material from grasslands." },
+      "territory_type": "<grassland_territory>",
+      "sell_price": 1,
+      "lucky_harvest_die": { "zh": "1 或 2", "en": "1 or 2" }
+    },
+    {
+      "id": "cotton",
+      "specifies": "<stored_material>",
+      "name": { "zh": "棉花", "en": "Cotton" },
+      "abstract": false,
+      "definition": { "zh": "丘陵产出的基础材料。", "en": "Basic material from hills." },
+      "territory_type": "<hill_territory>",
+      "sell_price": 1,
+      "lucky_harvest_die": { "zh": "1 或 2", "en": "1 or 2" }
+    },
+    {
+      "id": "coal",
+      "specifies": "<stored_material>",
+      "name": { "zh": "煤", "en": "Coal" },
+      "abstract": false,
+      "definition": { "zh": "沼泽产出的基础材料。", "en": "Basic material from swamps." },
+      "territory_type": "<swamp_territory>",
+      "sell_price": 1,
+      "lucky_harvest_die": { "zh": "1 或 2", "en": "1 or 2" }
+    },
+    {
+      "id": "stone",
+      "specifies": "<stored_material>",
+      "name": { "zh": "石头", "en": "Stone" },
+      "abstract": false,
+      "definition": { "zh": "山脉产出的基础材料。", "en": "Basic material from mountains." },
+      "territory_type": "<mountain_territory>",
+      "sell_price": 1,
+      "lucky_harvest_die": { "zh": "1 或 2", "en": "1 or 2" }
+    },
+    {
+      "id": "sand",
+      "specifies": "<stored_material>",
+      "name": { "zh": "沙子", "en": "Sand" },
+      "abstract": false,
+      "definition": { "zh": "沙漠产出的基础材料。", "en": "Basic material from deserts." },
+      "territory_type": "<desert_territory>",
+      "sell_price": 1,
+      "lucky_harvest_die": { "zh": "1 或 2", "en": "1 or 2" }
+    },
+    {
+      "id": "beeswax",
+      "specifies": "<stored_material>",
+      "name": { "zh": "蜂蜡", "en": "Beeswax" },
+      "abstract": false,
+      "definition": { "zh": "森林产出的稀有材料。", "en": "Rare material from forests." },
+      "territory_type": "<forest_territory>",
+      "sell_price": 2,
+      "lucky_harvest_die": { "zh": "3 或 4", "en": "3 or 4" }
+    },
+    {
+      "id": "herb",
+      "specifies": "<stored_material>",
+      "name": { "zh": "药草", "en": "Herb" },
+      "abstract": false,
+      "definition": { "zh": "草原产出的稀有材料。", "en": "Rare material from grasslands." },
+      "territory_type": "<grassland_territory>",
+      "sell_price": 2,
+      "lucky_harvest_die": { "zh": "3 或 4", "en": "3 or 4" }
+    },
+    {
+      "id": "clay",
+      "specifies": "<stored_material>",
+      "name": { "zh": "黏土", "en": "Clay" },
+      "abstract": false,
+      "definition": { "zh": "丘陵产出的稀有材料。", "en": "Rare material from hills." },
+      "territory_type": "<hill_territory>",
+      "sell_price": 2,
+      "lucky_harvest_die": { "zh": "3 或 4", "en": "3 or 4" }
+    },
+    {
+      "id": "peat",
+      "specifies": "<stored_material>",
+      "name": { "zh": "泥炭", "en": "Peat" },
+      "abstract": false,
+      "definition": { "zh": "沼泽产出的稀有材料。", "en": "Rare material from swamps." },
+      "territory_type": "<swamp_territory>",
+      "sell_price": 2,
+      "lucky_harvest_die": { "zh": "3 或 4", "en": "3 or 4" }
+    },
+    {
+      "id": "iron",
+      "specifies": "<stored_material>",
+      "name": { "zh": "铁矿", "en": "Iron" },
+      "abstract": false,
+      "definition": { "zh": "山脉产出的稀有材料。", "en": "Rare material from mountains." },
+      "territory_type": "<mountain_territory>",
+      "sell_price": 2,
+      "lucky_harvest_die": { "zh": "3 或 4", "en": "3 or 4" }
+    },
+    {
+      "id": "salt",
+      "specifies": "<stored_material>",
+      "name": { "zh": "盐", "en": "Salt" },
+      "abstract": false,
+      "definition": { "zh": "沙漠产出的稀有材料。", "en": "Rare material from deserts." },
+      "territory_type": "<desert_territory>",
+      "sell_price": 2,
+      "lucky_harvest_die": { "zh": "3 或 4", "en": "3 or 4" }
+    },
+    {
+      "id": "oil",
+      "specifies": "<stored_material>",
+      "name": { "zh": "油", "en": "Oil" },
+      "abstract": false,
+      "definition": { "zh": "森林产出的珍贵材料。", "en": "Precious material from forests." },
+      "territory_type": "<forest_territory>",
+      "sell_price": 3,
+      "lucky_harvest_die": { "zh": "5 或 6", "en": "5 or 6" }
+    },
+    {
+      "id": "gold",
+      "specifies": "<stored_material>",
+      "name": { "zh": "黄金", "en": "Gold" },
+      "abstract": false,
+      "definition": { "zh": "草原产出的珍贵材料。", "en": "Precious material from grasslands." },
+      "territory_type": "<grassland_territory>",
+      "sell_price": 3,
+      "lucky_harvest_die": { "zh": "5 或 6", "en": "5 or 6" }
+    },
+    {
+      "id": "sulfur",
+      "specifies": "<stored_material>",
+      "name": { "zh": "硫磺", "en": "Sulfur" },
+      "abstract": false,
+      "definition": { "zh": "丘陵产出的珍贵材料。", "en": "Precious material from hills." },
+      "territory_type": "<hill_territory>",
+      "sell_price": 3,
+      "lucky_harvest_die": { "zh": "5 或 6", "en": "5 or 6" }
+    },
+    {
+      "id": "tar",
+      "specifies": "<stored_material>",
+      "name": { "zh": "焦油", "en": "Tar" },
+      "abstract": false,
+      "definition": { "zh": "沼泽产出的珍贵材料。", "en": "Precious material from swamps." },
+      "territory_type": "<swamp_territory>",
+      "sell_price": 3,
+      "lucky_harvest_die": { "zh": "5 或 6", "en": "5 or 6" }
+    },
+    {
+      "id": "jade",
+      "specifies": "<stored_material>",
+      "name": { "zh": "翡翠", "en": "Jade" },
+      "abstract": false,
+      "definition": { "zh": "山脉产出的珍贵材料。", "en": "Precious material from mountains." },
+      "territory_type": "<mountain_territory>",
+      "sell_price": 3,
+      "lucky_harvest_die": { "zh": "5 或 6", "en": "5 or 6" }
+    },
+    {
+      "id": "copper",
+      "specifies": "<stored_material>",
+      "name": { "zh": "铜", "en": "Copper" },
+      "abstract": false,
+      "definition": { "zh": "沙漠产出的珍贵材料。", "en": "Precious material from deserts." },
+      "territory_type": "<desert_territory>",
+      "sell_price": 3,
+      "lucky_harvest_die": { "zh": "5 或 6", "en": "5 or 6" }
     },
     {
       "id": "octagonal_pillar",
@@ -1267,6 +1451,66 @@
       }
     },
     {
+      "id": "forest_territory",
+      "specifies": "<territory>",
+      "name": { "zh": "森林", "en": "Forest" },
+      "abstract": false,
+      "definition": {
+        "zh": "森林地形领地。产出木头、蜂蜡、油。",
+        "en": "Forest territory. Produces Wood, Beeswax, Oil."
+      }
+    },
+    {
+      "id": "grassland_territory",
+      "specifies": "<territory>",
+      "name": { "zh": "草原", "en": "Grassland" },
+      "abstract": false,
+      "definition": {
+        "zh": "草原地形领地。产出纸莎草、药草、黄金。",
+        "en": "Grassland territory. Produces Papyrus, Herb, Gold."
+      }
+    },
+    {
+      "id": "hill_territory",
+      "specifies": "<territory>",
+      "name": { "zh": "丘陵", "en": "Hill" },
+      "abstract": false,
+      "definition": {
+        "zh": "丘陵地形领地。产出棉花、黏土、硫磺。",
+        "en": "Hill territory. Produces Cotton, Clay, Sulfur."
+      }
+    },
+    {
+      "id": "swamp_territory",
+      "specifies": "<territory>",
+      "name": { "zh": "沼泽", "en": "Swamp" },
+      "abstract": false,
+      "definition": {
+        "zh": "沼泽地形领地。产出煤、泥炭、焦油。",
+        "en": "Swamp territory. Produces Coal, Peat, Tar."
+      }
+    },
+    {
+      "id": "mountain_territory",
+      "specifies": "<territory>",
+      "name": { "zh": "山脉", "en": "Mountain" },
+      "abstract": false,
+      "definition": {
+        "zh": "山脉地形领地。产出石头、铁矿、翡翠。",
+        "en": "Mountain territory. Produces Stone, Iron, Jade."
+      }
+    },
+    {
+      "id": "desert_territory",
+      "specifies": "<territory>",
+      "name": { "zh": "沙漠", "en": "Desert" },
+      "abstract": false,
+      "definition": {
+        "zh": "沙漠地形领地。产出沙子、盐、铜。",
+        "en": "Desert territory. Produces Sand, Salt, Copper."
+      }
+    },
+    {
       "id": "encampment",
       "specifies": "<ontology::object>",
       "name": {
@@ -2245,10 +2489,17 @@
           }
         },
         {
+          "type": "<settlement_zone>",
+          "position": {
+            "zh": "面板左半边",
+            "en": "left half of the <console>"
+          }
+        },
+        {
           "type": "<feature_space>",
           "position": {
-            "zh": "面板左下角",
-            "en": "bottom-left corner of the <console>"
+            "zh": "面板左半边底部",
+            "en": "bottom of the left half of the <console>"
           }
         },
         {
@@ -2380,9 +2631,20 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "<console> 上存放 <stored_material> 的区域。已运输到仓库中的材料已经属于该玩家，只是尚未被消耗或使用；同类型材料堆叠放置，可通过交易模组出售换钱。注意：它不是 <ontology::supply> 或 <ontology::supply>，因为其中的材料已归玩家所有。",
-        "en": "The area on the <console> for storing <stored_material>s. Materials transported here already belong to the player but have not yet been consumed or used; same-type materials are stacked and can be sold via the Trade module. Note: it is not a <ontology::supply> or <ontology::supply>, because its contents are already owned by the player."
-      }
+        "zh": "<console> 上存放<stored_material>的<ontology::player_holding>。按 3 行 × 6 列排列，共 18 格，每列对应一种领地类型，每行对应稀有度（行 1 基础、行 2 稀有、行 3 珍贵）。同一格同类材料堆叠放置。行 1 与行 2 之间每列印有 1 颗钻石，行 2 与行 3 之间每列印有 2 颗钻石——Prosperity 计分时，上下两格均非空则该列对应钻石计为活跃。",
+        "en": "A <ontology::player_holding> on the <console> for <stored_material>s. Arranged in 3 rows × 6 columns = 18 spaces; each column maps to one territory type, each row to a rarity tier (row 1 basic, row 2 rare, row 3 precious). Same-type materials stack in one space. 1 diamond is printed between rows 1-2 per column, 2 diamonds between rows 2-3 per column — during Prosperity scoring, a column's diamonds count as active if both adjacent spaces are non-empty."
+      },
+      "rows": 3,
+      "columns": 6,
+      "parts": [
+        {
+          "type": "<ontology::aid>",
+          "description": {
+            "zh": "行 1 与行 2 之间：每列 1 颗钻石。行 2 与行 3 之间：每列 2 颗钻石。上下相邻两格均非空时该列钻石激活。",
+            "en": "Between rows 1-2: 1 diamond per column. Between rows 2-3: 2 diamonds per column. A column's diamonds activate when both adjacent spaces are non-empty."
+          }
+        }
+      ]
     },
     {
       "id": "goal_area",
@@ -2433,6 +2695,43 @@
           "<ontology::content>": {
             "zh": "激活该模组的 L3 效果",
             "en": "Activate the module's L3 effect"
+          }
+        }
+      }
+    },
+    {
+      "id": "settlement_zone",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "聚落区",
+        "en": "Settlement Zone"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "<console> 上放置<settlement>的<ontology::player_holding>，共 4 格，每格初始放置 1 个<settlement>。建造时拿取对应格的<settlement>放至<continent>的建造点，不补充。每格下方印有钻石——<settlement>被移走后露出，数量因格而异（1、2 或 3 颗）。",
+        "en": "A <ontology::player_holding> on the <console> for <settlement>s, with 4 slots, each initially holding 1 <settlement>. When building, take the <settlement> from its slot and place it on a Building ground on the <continent>; not replenished. Diamonds are printed under each slot — revealed when the <settlement> is removed, in varying numbers per slot (1, 2, or 3)."
+      },
+      "slot_count": 4,
+      "contains": "<settlement>",
+      "parts": [
+        {
+          "type": "<ontology::aid>",
+          "description": {
+            "zh": "每格左侧印有建造该聚落需支付的材料清单，因格而异。",
+            "en": "The material list required to build each settlement is printed to the left of its slot; varies by slot."
+          }
+        }
+      ],
+      "<ontology::effect>": {
+        "<ontology::continuous_effect>": {
+          "<ontology::condition>": {
+            "zh": "事件阶段 Prosperity（繁荣）计分时",
+            "en": "During Prosperity scoring in the Event phase"
+          },
+          "<ontology::cost>": null,
+          "<ontology::content>": {
+            "zh": "露出的钻石计入活跃钻石总数，乘以 Prosperity 分类倍率获得分数。",
+            "en": "Visible diamonds count toward active diamond total; multiplied by Prosperity category multiplier for points."
           }
         }
       }

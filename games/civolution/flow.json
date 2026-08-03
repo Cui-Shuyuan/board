@@ -681,26 +681,27 @@
           { "id": "INVENTION_CARD_TYPE", "name": { "zh": "发明", "en": "Invention" } }
         ]
       },
-      "<piece>": "<research_card>",
+      "<ontology::piece>": "<research_card>",
       "source": "<ontology::hand>",
       "destination": "<stage_partition>",
-      "events": [
-        {
-          "id": "determine_position",
-          "description": {
-            "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
-            "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
+      "pipeline": {
+        "options": {
+          "determine_position": {
+            "description": {
+              "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
+              "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
+            }
+          },
+          "determine_cost_range": {
+            "description": {
+              "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
+              "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
+            },
+            "do_after": ["determine_position"]
           }
         },
-        {
-          "id": "determine_cost_range",
-          "description": {
-            "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
-            "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
-          },
-          "do_after": ["determine_position"]
-        }
-      ]
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
     },
     {
       "id": "install_goal_chip",
@@ -803,31 +804,31 @@
         "zh": "选择一个未达最高等级的主模组提升 1 级。L1→L2 翻面，L2→L3 板块放回游戏盒、console 上 L3 效果激活。",
         "en": "Choose a main module not at max level, increase by 1. L1→L2 flip tile; L2→L3 return tile to game box, console L3 effect becomes available."
       },
-      "events": [
-        {
-          "id": "choose_module",
-          "description": {
-            "zh": "选择一个未达等级三的主模组。",
-            "en": "Choose a main module not yet at level 3."
+      "pipeline": {
+        "options": {
+          "choose_module": {
+            "description": {
+              "zh": "选择一个未达等级三的主模组。",
+              "en": "Choose a main module not yet at level 3."
+            }
+          },
+          "upgrade_l1_to_l2": {
+            "description": {
+              "zh": "若为等级一，将模组板块翻至等级二面。",
+              "en": "If level 1, flip module tile to level 2 side."
+            },
+            "do_after": ["choose_module"]
+          },
+          "upgrade_l2_to_l3": {
+            "description": {
+              "zh": "若为等级二，将模组板块放回 <ontology::game_box>。",
+              "en": "If level 2, return module tile to <ontology::game_box>."
+            },
+            "do_after": ["choose_module"]
           }
         },
-        {
-          "id": "upgrade_l1_to_l2",
-          "description": {
-            "zh": "若为等级一，将模组板块翻至等级二面。",
-            "en": "If level 1, flip module tile to level 2 side."
-          },
-          "do_after": ["choose_module"]
-        },
-        {
-          "id": "upgrade_l2_to_l3",
-          "description": {
-            "zh": "若为等级二，将模组板块放回 <ontology::game_box>。",
-            "en": "If level 2, return module tile to <ontology::game_box>."
-          },
-          "do_after": ["choose_module"]
-        }
-      ]
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
     },
     {
       "id": "gain_income_chip",
@@ -836,41 +837,34 @@
         "zh": "获得 1 个收入芯片并触发其效果。",
         "en": "Gain 1 income chip and trigger its effect."
       },
-      "events": [
-        {
-          "id": "take_from_display",
-          "type": "<ontology::transfer>",
-          "source": "<income_chip_display>",
-          "destination": "<ontology::player_holding>",
-          "<object>": "<income_chip>",
-          "quantity": 1
+      "pipeline": {
+        "options": {
+          "take_from_display": {
+            "type": "<ontology::transfer>",
+            "source": "<income_chip_display>",
+            "destination": "<ontology::player_holding>",
+            "<object>": "<income_chip>",
+            "quantity": 1
+          },
+          "refill_display": {
+            "type": "<ontology::transfer>",
+            "source": "<income_chip_bag>",
+            "destination": "<income_chip_display>",
+            "<object>": "<income_chip>",
+            "quantity": 1,
+            "do_after": ["take_from_display"]
+          },
+          "install": {
+            "type": "<install_income_chip>",
+            "do_after": ["refill_display"]
+          },
+          "trigger_effect": {
+            "type": "<activate_income_chip>",
+            "do_after": ["install"]
+          }
         },
-        {
-          "id": "refill_display",
-          "type": "<ontology::transfer>",
-          "source": "<income_chip_bag>",
-          "destination": "<income_chip_display>",
-          "<object>": "<income_chip>",
-          "quantity": 1,
-          "do_after": [
-            "take_from_display"
-          ]
-        },
-        {
-          "id": "install",
-          "type": "<install_income_chip>",
-          "do_after": [
-            "refill_display"
-          ]
-        },
-        {
-          "id": "trigger_effect",
-          "type": "<activate_income_chip>",
-          "do_after": [
-            "install"
-          ]
-        }
-      ]
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
     },
     {
       "id": "trade",
@@ -879,105 +873,202 @@
         "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。可从以下选项中任选组合执行（顺序任意）：",
         "en": "The Trade action. Sell stored materials for money or points, or purchase new materials with money. Choose any combination (any order):"
       },
-      "events": [
-        {
-          "id": "sale",
-          "type": "<ontology::action>",
-          "description": {
-            "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
-            "en": "Sale: Sell up to 2 materials. One may be for money, one for 2 points. Cannot double up."
-          },
-          "events": [
-            {
-              "id": "sale_for_money",
-              "type": "<ontology::action>",
-              "description": {
-                "zh": "换钱币：售出一个材料换取钱币。",
-                "en": "For money: Sell one material for money."
-              },
-              "events": [
+      "pipeline": {
+        "options": [
+          {
+            "id": "sale",
+            "type": "<ontology::action>",
+            "description": {
+              "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
+              "en": "Sale: Sell up to 2 materials. One may be for money, one for 2 points. Cannot double up."
+            },
+            "pipeline": {
+              "options": [
                 {
-                  "id": "return_material_sm",
-                  "type": "<ontology::transfer>",
-                  "source": "<storage_area>",
-                  "destination": "<ontology::supply>",
-                  "<object>": "<stored_material>",
-                  "quantity": 1
+                  "id": "sale_for_money",
+                  "type": "<ontology::action>",
+                  "description": {
+                    "zh": "换钱币：售出一个材料换取钱币。",
+                    "en": "For money: Sell one material for money."
+                  },
+                  "pipeline": {
+                    "options": {
+                      "return_material_sm": {
+                        "type": "<ontology::transfer>",
+                        "source": "<storage_area>",
+                        "destination": "<ontology::supply>",
+                        "<object>": "<stored_material>",
+                        "quantity": 1
+                      },
+                      "gain_money": {
+                        "type": "<ontology::transfer>",
+                        "source": "<ontology::supply>",
+                        "destination": "<money_space>",
+                        "<object>": "<money>",
+                        "quantity": {
+                          "zh": "由材料行决定：第一行 1、第二行 2、第三行 3",
+                          "en": "Determined by material row: row 1 = 1, row 2 = 2, row 3 = 3"
+                        },
+                        "do_after": ["return_material_sm"]
+                      }
+                    },
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
                 },
                 {
-                  "id": "gain_money",
+                  "id": "sale_for_points",
+                  "type": "<ontology::action>",
+                  "description": {
+                    "zh": "换分数：售出一个材料换取 2 分。",
+                    "en": "For points: Sell one material for 2 points."
+                  },
+                  "pipeline": {
+                    "options": {
+                      "return_material_sp": {
+                        "type": "<ontology::transfer>",
+                        "source": "<storage_area>",
+                        "destination": "<ontology::supply>",
+                        "<object>": "<stored_material>",
+                        "quantity": 1
+                      },
+                      "gain_points": {
+                        "type": "<ontology::event>",
+                        "description": {
+                          "zh": "获得 2 分",
+                          "en": "Gain 2 success points"
+                        },
+                        "do_after": ["return_material_sp"]
+                      }
+                    },
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
+            }
+          },
+          {
+            "id": "purchase",
+            "type": "<ontology::action>",
+            "description": {
+              "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
+              "en": "Purchase: Pay money, then take one material marker from supply into storage."
+            },
+            "pipeline": {
+              "options": {
+                "pay_money": {
                   "type": "<ontology::transfer>",
-                  "source": "<ontology::supply>",
-                  "destination": "<money_space>",
+                  "source": "<money_space>",
+                  "destination": "<ontology::supply>",
                   "<object>": "<money>",
                   "quantity": {
-                    "zh": "由材料行决定：第一行 1、第二行 2、第三行 3",
-                    "en": "Determined by material row: row 1 = 1, row 2 = 2, row 3 = 3"
-                  },
-                  "do_after": ["return_material_sm"]
-                }
-              ]
-            },
-            {
-              "id": "sale_for_points",
-              "type": "<ontology::action>",
-              "description": {
-                "zh": "换分数：售出一个材料换取 2 分。",
-                "en": "For points: Sell one material for 2 points."
-              },
-              "events": [
-                {
-                  "id": "return_material_sp",
-                  "type": "<ontology::transfer>",
-                  "source": "<storage_area>",
-                  "destination": "<ontology::supply>",
-                  "<object>": "<stored_material>",
-                  "quantity": 1
+                    "zh": "<material_tile> 已翻面为 2，未翻面为 4",
+                    "en": "2 if <material_tile> face-up, 4 if not"
+                  }
                 },
-                {
-                  "id": "gain_points",
-                  "type": "<ontology::event>",
-                  "description": {
-                    "zh": "获得 2 分",
-                    "en": "Gain 2 success points"
-                  },
-                  "do_after": ["return_material_sp"]
+                "gain_material": {
+                  "type": "<ontology::transfer>",
+                  "source": "<ontology::supply>",
+                  "destination": "<storage_area>",
+                  "<object>": "<stored_material>",
+                  "quantity": 1,
+                  "do_after": ["pay_money"]
                 }
-              ]
+              },
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
             }
-          ]
-        },
-        {
-          "id": "purchase",
-          "type": "<ontology::action>",
-          "description": {
-            "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
-            "en": "Purchase: Pay money, then take one material marker from supply into storage."
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
+      }
+    },
+    {
+      "id": "lucky_find",
+      "type": "<ontology::action>",
+      "description": {
+        "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部粉色命运骰，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
+        "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
+      },
+      "pipeline": {
+        "options": {
+          "choose_territory": {
+            "description": {
+              "zh": "选择一种至少有一个自己部落的领地类型。",
+              "en": "Choose a territory type where you have at least one tribe."
+            }
           },
-          "events": [
-            {
-              "id": "pay_money",
-              "type": "<ontology::transfer>",
-              "source": "<money_space>",
-              "destination": "<ontology::supply>",
-              "<object>": "<money>",
-              "quantity": {
-                "zh": "<material_tile> 已翻面为 2，未翻面为 4",
-                "en": "2 if <material_tile> face-up, 4 if not"
-              }
+          "roll_fate_dice": {
+            "type": "<favor_test>",
+            "description": {
+              "zh": "投掷全部粉色命运骰。",
+              "en": "Roll all pink fate dice."
             },
-            {
-              "id": "gain_material",
-              "type": "<ontology::transfer>",
-              "source": "<ontology::supply>",
-              "destination": "<storage_area>",
-              "<object>": "<stored_material>",
-              "quantity": 1,
-              "do_after": ["pay_money"]
+            "do_after": ["choose_territory"]
+          },
+          "choose_die_result": {
+            "description": {
+              "zh": "选一颗骰子的点数。可消耗创意标记修改点数。",
+              "en": "Choose one die result. May spend idea markers to change it."
+            },
+            "do_after": ["roll_fate_dice"]
+          },
+          "gain_material": {
+            "type": "<ontology::transfer>",
+            "source": "<ontology::supply>",
+            "destination": "<storage_area>",
+            "<object>": "<stored_material>",
+            "quantity": 1,
+            "do_after": ["choose_die_result"]
+          }
+        },
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    },
+    {
+      "id": "build_settlement",
+      "type": "<ontology::action>",
+      "description": {
+        "zh": "建造聚落：选一个建造点，从控制台聚落区选一个未建造的聚落，支付其材料费用，将聚落放至建造点。立即获得 1 个收入芯片。建造第 4 个聚落时可翻面一个未激活的层级板块。",
+        "en": "Build a settlement: Choose a Building ground, choose an unbuilt settlement from the console settlement zone, pay its material cost, and place it on the Building ground. Immediately gain 1 income chip. When building the 4th, may flip an inactive stage tile."
+      },
+      "pipeline": {
+        "options": {
+          "choose_building_ground": {
+            "description": {
+              "zh": "选择一个符合建造条件的建造点。",
+              "en": "Choose a Building ground meeting the building requirements."
             }
-          ]
-        }
-      ]
+          },
+          "choose_settlement_slot": {
+            "description": {
+              "zh": "从控制台聚落区选一个未建造的聚落，共 4 个可选：格 1 需 1 木头 + 1 纸莎草，格 2 需 1 纸莎草 + 1 石头，格 3 需 1 木头 + 1 石头 + 1 黏土，格 4 需 1 沙子 + 1 铁矿 + 1 黏土。",
+              "en": "Choose an unbuilt settlement from the console settlement zone. 4 options: slot 1 costs 1 Wood + 1 Papyrus, slot 2 costs 1 Papyrus + 1 Stone, slot 3 costs 1 Wood + 1 Stone + 1 Clay, slot 4 costs 1 Sand + 1 Iron + 1 Clay."
+            },
+            "do_after": ["choose_building_ground"]
+          },
+          "pay_cost": {
+            "type": "<ontology::transfer>",
+            "source": "<storage_area>",
+            "destination": "<ontology::supply>",
+            "<object>": "<stored_material>",
+            "quantity": { "zh": "2 或 3，因格而异", "en": "2 or 3, varies by slot" },
+            "do_after": ["choose_settlement_slot"]
+          },
+          "transfer_settlement": {
+            "type": "<ontology::transfer>",
+            "source": "<settlement_zone>",
+            "destination": "<continent>",
+            "<object>": "<settlement>",
+            "quantity": 1,
+            "do_after": ["pay_cost"]
+          },
+          "gain_income_chip_reward": {
+            "type": "<gain_income_chip>",
+            "do_after": ["transfer_settlement"]
+          }
+        },
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
     }
   ]
 }
