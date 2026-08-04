@@ -32,7 +32,7 @@
           "en": "Unit of measurement for food: 'marker'."
         }
       },
-      "token": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "money",
@@ -94,7 +94,7 @@
         "type": "string",
         "default": "个"
       },
-      "token": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "wood",
@@ -440,7 +440,7 @@
     },
     {
       "id": "octagonal_pillar",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::component>",
       "name": {
         "zh": "八角柱",
         "en": "Octagonal Pillar"
@@ -460,7 +460,7 @@
     },
     {
       "id": "stackable_disc",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::component>",
       "name": {
         "zh": "可叠放圆片",
         "en": "Stackable Disc"
@@ -480,7 +480,7 @@
     },
     {
       "id": "raw_material",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::resource>",
       "name": {
         "zh": "原材料",
         "en": "Raw Material"
@@ -497,7 +497,7 @@
           "en": "Which <stored_material> this marker will become when transported, determined by the material tile of its region."
         }
       },
-      "token": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "feature_marker",
@@ -526,11 +526,11 @@
           "en": "Feature type: Intelligence, Expression, Dexterity, Stamina, Calm, Perception. Some names pending final confirmation."
         }
       },
-      "token": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "tribe",
-      "specifies": "<ontology::piece>",
+      "specifies": "<ontology::token>",
       "name": {
         "zh": "部落",
         "en": "Tribe"
@@ -555,7 +555,7 @@
     },
     {
       "id": "settlement",
-      "specifies": "<ontology::piece>",
+      "specifies": "<ontology::token>",
       "name": {
         "zh": "聚落",
         "en": "Settlement"
@@ -580,7 +580,7 @@
     },
     {
       "id": "farm",
-      "specifies": "<ontology::piece>",
+      "specifies": "<ontology::token>",
       "name": {
         "zh": "农场",
         "en": "Farm"
@@ -616,7 +616,7 @@
     },
     {
       "id": "boat",
-      "specifies": "<ontology::piece>",
+      "specifies": "<ontology::token>",
       "name": {
         "zh": "船",
         "en": "Boat"
@@ -761,7 +761,8 @@
       "definition": {
         "zh": "放置在<console>创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意骰子点数加减 1（1 和 6 相连）。",
         "en": "A marker placed on a player's idea space, used to modify die values. Spending 1 idea marker increases or decreases a die value by 1 (1 and 6 are adjacent)."
-      }
+      },
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "planning_marker",
@@ -774,7 +775,8 @@
       "definition": {
         "zh": "放置在骰子格上的标记，可替代对应点数的白骰子用于激活模组。只能替代白骰子，不能替代粉骰子。",
         "en": "A marker placed on a dice space, usable in place of an activation die of the matching value. Can only replace activation dice, not fate dice."
-      }
+      },
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "focus_marker",
@@ -787,7 +789,8 @@
       "definition": {
         "zh": "特殊的计划标记，可当作任意一个骰子格中的计划标记使用。一个焦点标记相当于一个任意点数的白骰子。",
         "en": "A special planning marker that can be used as a planning marker of any value. One focus marker is equivalent to an activation die of any value."
-      }
+      },
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "card_name",
@@ -1482,7 +1485,7 @@
     },
     {
       "id": "hundred_point_token",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::component>",
       "name": {
         "zh": "100分指示物",
         "en": "100-Point Token"
@@ -1500,7 +1503,7 @@
     },
     {
       "id": "hunting_token",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::component>",
       "name": {
         "zh": "狩猎指示物",
         "en": "Hunting Token"
@@ -1796,7 +1799,7 @@
         "zh": "放置在 <score_track> 上指示玩家当前分数的标记。每位玩家有 1 个。",
         "en": "A marker placed on the <score_track> to indicate a player's current score. Each player has 1."
       },
-      "token": "<stackable_disc>"
+      "component": "<stackable_disc>"
     },
     {
       "id": "sequence_board",
@@ -2026,7 +2029,7 @@
         "zh": "放置在进程轨上指示玩家当前进程等级的 <marker>。每位玩家有 5 个，分别放在 5 条进程轨上。",
         "en": "A <marker> placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. "
       },
-      "token": "<stackable_disc>"
+      "component": "<stackable_disc>"
     },
     {
       "id": "technology_track",
@@ -3173,7 +3176,7 @@
         "zh": "放置在 <reset_column> 中的标记。每位玩家初始有 4 个，Setup 时放在 4 个重置列顶部。执行 Reset 时沿列步进，完成 C 步后移入 idea space 或 food space。收入阶段结束时，所有空的重置列重新从供应堆补满。注意：重置标记不能从<console>召回以补充供应堆上限（与其他标记不同）。",
         "en": "A marker placed in a <reset_column>. Each player starts with 4, placed at the top of the 4 reset columns during Setup. Steps down the column during a Reset; after step C, moves to the idea space or food space. At the end of the Income phase, all empty reset columns are refilled from supply. Note: reset markers cannot be recalled from the <console> to replenish the supply limit (unlike other markers)."
       },
-      "token": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>"
     },
     {
       "id": "research_display",
