@@ -9,3 +9,4 @@
 - [文明演化规则学习笔记](civolution-rules-notes.md) — 规则学习收获与 piece 表设计草案
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式
 - [Pipeline 多选项处理模型](pipeline-model.md) — options/null/type/do_after 用法与五个典型场景模版
+- [JSON 编写约定](json-writing-conventions.md) — flow.json/concepts.json 编写时必须遵守的格式规则
