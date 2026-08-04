@@ -251,6 +251,7 @@ public class GameRulesService
         var results = merged.Values
             .Select(x => { x.Summary.Score = x.Score / divisor; return x.Summary; })
             .OrderByDescending(x => x.Score)
+            .Take(15)
             .ToList();
 
         // 向量搜索结果没有 description，从概念数据中补上
