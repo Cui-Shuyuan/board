@@ -144,33 +144,25 @@
         "zh": "一种游戏零件，携带 <effect> 并可改变游戏状态。<piece> 继承自 <object>。并非所有 piece 都由玩家持有——归游戏系统所有（<ownership> 为 null）的 piece 不可被玩家 <play>，而是作为游戏环境的一部分存在（如地图板块、遭遇牌库）。只有 <ownership> 归属于 <player> 的 piece 才可被该玩家 <play>——打出它、建造它、激活它，游戏状态会因此改变。<piece> 与 <token> 的本质区别：<piece> 携带 <effect>；<token> 没有 <effect>，只负责标记事实。<effect> 的静态形态是 <property>——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 <effect> 的规格说明。某些 <piece>（如 <card>、<tile>）可以承载 <zone>——zone 的生命周期绑定在宿主 piece 上，宿主被移除时 zone 随之消失。一块物理 piece 可能印有多重逻辑身份——通过 <parts> 字段声明，如大陆板块上印有地形区域和建造点、发展卡上印有费用和折扣和声望分；各 part 拥有独立的 concept parent 和属性，规则引擎按各自身份分别查询。",
         "en": "A game component that carries <effect>s and can change game state. <piece> extends <object>. Not all pieces are owned by players — pieces owned by the game system (<ownership> is null) cannot be <play>ed by players; they exist as part of the game environment (e.g., map tiles, encounter decks). Only pieces whose <ownership> belongs to a <player> can be <play>ed by that player — playing, building, or activating it causes game state changes. The essential difference between <piece> and <token>: a <piece> carries <effect>s; a <token> has no <effect>s and only marks facts. <effect>s in static form are <property>s — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all <effect> specifications. Some <piece>s (e.g., <card>, <tile>) can host <zone>s — the zone's lifecycle is bound to the host piece and disappears when the host is removed."
       },
-      "appearance": {
-        "type": "string",
-        "description": {
-          "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
-          "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
-        }
-      },
-      "parts": {
-        "type": "any[]",
-        "default": null,
-        "description": {
-          "zh": "此 piece 物理载体上印有的逻辑组件列表。一块实体板/卡上可能印有多种身份独立的组件——如大陆板块上印有地形区域、营地、材料格、建造点，或发展卡上印有费用、折扣、声望点数。每个元素拥有独立的 concept parent 和自身属性（zone、effect、property 等），规则引擎按各自身份分别查询。用「拿刀裁开即独立 piece」来理解——物理合一、逻辑分立。",
-          "en": "A list of logical components printed on this physical piece. One physical board/card may carry multiple independently identifiable components — e.g., a continent tile printed with terrain zones, encampments, material slots, and a building ground site; or a development card printed with cost, discount, and prestige points. Each element has its own concept parent and properties (zones, effects, etc.), queried independently by the rule engine. Think of it as 'cut them apart with a knife and each is an independent piece' — physically united, logically separate."
-        }
-      },
       "constraints": {
         "required": [
           {
             "id": "appearance",
             "description": {
-              "zh": "物件外观描述，必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注位置、图案和颜色。AI 回答「怎么看」类问题时主要依赖此字段。",
-              "en": "Visual description of this piece. Must include key visual information for AI to explain rules — where information is printed, patterns and colors. AI relies on this field for 'how do I see...' questions."
+              "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
+              "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
             }
           }
         ],
         "optional": [
-          "parts"
+          {
+            "id": "parts",
+            "default": null,
+            "description": {
+              "zh": "此 piece 物理载体上印有的逻辑组件列表。一块实体板/卡上可能印有多种身份独立的组件——如大陆板块上印有地形区域、营地、材料格、建造点，或发展卡上印有费用、折扣、声望点数。每个元素拥有独立的 concept parent 和自身属性（zone、effect、property 等），规则引擎按各自身份分别查询。用「拿刀裁开即独立 piece」来理解——物理合一、逻辑分立。",
+              "en": "A list of logical components printed on this physical piece. One physical board/card may carry multiple independently identifiable components — e.g., a continent tile printed with terrain zones, encampments, material slots, and a building ground site; or a development card printed with cost, discount, and prestige points. Each element has its own concept parent and properties (zones, effects, etc.), queried independently by the rule engine. Think of it as 'cut them apart with a knife and each is an independent piece' — physically united, logically separate."
+            }
+          }
         ]
       }
     },
