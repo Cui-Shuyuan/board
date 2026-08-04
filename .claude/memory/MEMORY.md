@@ -8,3 +8,4 @@
 - [文明演化规则进度](civolution-progress.md) — 第二款游戏 Phase A 进行中，模块已重构为 Lose + Gain 模型
 - [文明演化规则学习笔记](civolution-rules-notes.md) — 规则学习收获与 piece 表设计草案
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式
+- [Pipeline 多选项处理模型](pipeline-model.md) — options/null/type/do_after 用法与五个典型场景模版

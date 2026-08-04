@@ -989,8 +989,15 @@
         "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
       },
       "<ontology::condition>": {
-        "zh": "至少有一种领地类型拥有至少一个自己的部落。",
-        "en": "At least one territory type has at least one of your tribes."
+        "options": [
+          {
+            "description": {
+              "zh": "至少有一种领地类型拥有至少一个自己的<tribe>。",
+              "en": "At least one territory type has at least one of your <tribe>s."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
       "<ontology::cost>": null,
       "target": "一种至少有一个自己<tribe>的领地类型",
@@ -1033,8 +1040,21 @@
         "en": "Build a farm: Choose a land territory where you have at least one tribe, no farm exists (any player), and not adjacent to a face-up Volcano. Take a farm from the console farm supply and place it on the territory. No material cost. Immediately gain 1 idea marker. Max 3 per player; cannot be voluntarily demolished."
       },
       "<ontology::condition>": {
-        "zh": "存在至少一个陆地区域：有至少一个自己的部落、无农场（任何玩家）、不与已翻开的火山相邻；且控制台农场供应堆有可用农场（最多已建造数 < 3）。",
-        "en": "There exists at least one land territory: has at least one of your tribes, no farm (any player), not adjacent to a face-up Volcano; and console farm supply is not empty (built < 3)."
+        "options": [
+          {
+            "description": {
+              "zh": "存在一片陆地区域（非水域）：有至少一个自己的<tribe>、没有任何<farm>（任何玩家）、不与已翻开的<volcano>相邻。",
+              "en": "There exists a land territory (not Water): has at least one of your <tribe>s, no <farm> (any player), not adjacent to a face-up <volcano>."
+            }
+          },
+          {
+            "description": {
+              "zh": "控制台<farm_supply>中还有未建造的<farm>（已建造 < 3）。",
+              "en": "<farm_supply> on the console still has an unbuilt <farm> (built < 3)."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
       "<ontology::cost>": null,
       "target": "有自己的<tribe>且没有任何<farm>的一片陆地区域，且不与已翻开的<volcano>相邻",
@@ -1045,7 +1065,7 @@
               "id": "place_farm",
               "<ontology::transfer>": {
                 "source": "<farm_supply>",
-                "destination": "<continent>",
+                "destination": "this.target",
                 "<object>": "<farm>",
                 "quantity": 1
               }
@@ -1073,8 +1093,21 @@
         "en": "Build a settlement: Choose a Building ground, choose an unbuilt settlement from the console settlement zone, pay its material cost, and place it on the Building ground. Immediately gain 1 income chip and trigger its effect. When building the 4th, may flip an inactive stage tile."
       },
       "<ontology::condition>": {
-        "zh": "存在一个建造点：与有自己部落的区域相邻、且该建造点上尚未建造自己的聚落；控制台聚落区有未建造的聚落（最多已建造 < 4）。",
-        "en": "There exists a Building ground adjacent to a territory with your tribe and without your settlement on it; console settlement zone has an unbuilt settlement (built < 4)."
+        "options": [
+          {
+            "description": {
+              "zh": "存在一个<building_slot>：与有自己<tribe>的区域相邻、且上面尚未建造自己的<settlement>。",
+              "en": "There exists a <building_slot> adjacent to a territory with your <tribe> and without your own <settlement> on it."
+            }
+          },
+          {
+            "description": {
+              "zh": "控制台<settlement_zone>中还有未建造的<settlement>（已建造 < 4）。",
+              "en": "<settlement_zone> on the console still has an unbuilt <settlement> (built < 4)."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1097,7 +1130,7 @@
               "id": "place",
               "<ontology::transfer>": {
                 "source": "<settlement_zone>",
-                "destination": "<continent>",
+                "destination": "this.target",
                 "<object>": "<settlement>",
                 "quantity": 1
               }
@@ -1125,8 +1158,21 @@
         "en": "Build a boat: Choose a Water territory adjacent to a territory where you have at least one tribe and where you have no boat. Take a boat from the console boat supply (with its markers) and place it on the Water territory. No material cost. Immediately move one standing tribe from an adjacent territory onto the boat. Max 2 per player; cannot be voluntarily demolished."
       },
       "<ontology::condition>": {
-        "zh": "存在一个水域：与有自己部落的区域相邻、且该水域中尚无自己的船；控制台船供应堆有可用船（最多已建造 < 2）。",
-        "en": "There exists a Water territory adjacent to a territory with your tribe and without your boat on it; console boat supply is not empty (built < 2)."
+        "options": [
+          {
+            "description": {
+              "zh": "存在一片水域：与有自己<tribe>的区域相邻、且该水域中没有自己的<boat>。",
+              "en": "There exists a Water territory adjacent to a territory with your <tribe> and without your own <boat> on it."
+            }
+          },
+          {
+            "description": {
+              "zh": "控制台<boat_supply>中还有未建造的<boat>（已建造 < 2）。",
+              "en": "<boat_supply> on the console still has an unbuilt <boat> (built < 2)."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
       "<ontology::cost>": null,
       "target": "一个与有自己的<tribe>区域相邻的<terrain_water>，且上面没有自己的<boat>",
@@ -1137,7 +1183,7 @@
               "id": "place_boat",
               "<ontology::transfer>": {
                 "source": "<boat_supply>",
-                "destination": "<continent>",
+                "destination": "this.target",
                 "<object>": "<boat>",
                 "quantity": 1
               }
@@ -1145,21 +1191,119 @@
             {
               "id": "board_tribe",
               "do_after": ["place_boat"],
-              "<ontology::transfer>": {
-                "source": "<territory>",
-                "destination": "<boat>",
-                "<object>": "<tribe>",
-                "quantity": 1,
-                "description": {
-                  "zh": "从相邻区域中选一个站立<tribe>，迁徙到刚放置的<boat>上。只有站立部落才能登船。",
-                  "en": "Choose a standing <tribe> from an adjacent territory and migrate it onto the newly placed <boat>. Only standing tribes may board."
+              "options": [
+                null,
+                {
+                  "<ontology::transfer>": {
+                    "source": "<territory>",
+                    "destination": "<boat>",
+                    "<object>": "<tribe>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从相邻区域中选一个站立<tribe>，迁徙到刚放置的<boat>上。只有站立部落才能登船。",
+                      "en": "Choose a standing <tribe> from an adjacent territory and migrate it onto the newly placed <boat>. Only standing tribes may board."
+                    }
+                  }
                 }
-              }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       }
+    },
+    {
+      "id": "build_statue",
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "建造雕像：选一个建造点（满足建造要求、未超建筑上限），从建造点上列出的 2~3 种材料中选一种，从仓库取出一个对应标记作为雕像放至建造点。可立即推进任意进程轨 1 格。每个建造点最多 2 个建筑（至多 1 个聚落），雕像在后续收入阶段按阿格拉恩惠轨计分。",
+        "en": "Build a statue: Choose a Building ground (meeting building requirements, within build limit). Choose one of the 2-3 materials listed on it, take a marker of that type from storage, and place it as a statue on the Building ground. May immediately advance on any progress track by 1 step. Max 2 buildings per Building ground (max 1 settlement); each statue scores in subsequent Income phases based on the Favor of Agera track."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "建造点与有自己<tribe>的区域相邻（若为水域建造点，则需该水域有自己的<boat>且船上有<tribe>）。",
+              "en": "The Building ground is adjacent to a territory with your <tribe> (for Water Building ground, requires your <boat> with a <tribe> on it in that Water territory)."
+            }
+          },
+          {
+            "description": {
+              "zh": "该建造点上自己的建筑少于 2 个。",
+              "en": "You have fewer than 2 of your own buildings on this Building ground."
+            }
+          },
+          {
+            "description": {
+              "zh": "仓库中有该建造点上列出的至少一种<stored_material>。",
+              "en": "At least one of the <stored_material> types listed on this Building ground is in your storage."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<storage_area>",
+            "destination": "<ontology::supply>",
+            "<object>": "<stored_material>",
+            "quantity": 1,
+            "description": {
+              "zh": "从建造点上列出的 2~3 种材料中选一种，将对应<stored_material>从仓库返还供应堆。",
+              "en": "Choose one of the 2-3 materials listed on the Building ground, and return the corresponding <stored_material> from storage to the supply."
+            }
+          }
+        }
+      },
+      "target": "一个满足建造要求的<building_slot>，且其上列出的材料中至少有一种在仓库中",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_statue",
+              "<ontology::transfer>": {
+                "source": "<ontology::supply>",
+                "destination": "this.target",
+                "<object>": "<statue>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从供应堆取 1 个通用标记（<octagonal_pillar>）放至建造点，成为<statue>。",
+                  "en": "Take 1 generic marker (<octagonal_pillar>) from the supply and place it on the Building ground as a <statue>."
+                }
+              }
+            },
+            {
+              "id": "push_track",
+              "do_after": ["place_statue"],
+              "options": [
+                null,
+                {
+                  "<push_track>": {
+                    "description": {
+                      "zh": "任选一条进程轨推进 1 格。",
+                      "en": "Advance on any progress track by 1 step."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "complete_building_project",
+      "specifies": "<ontology::pipeline>",
+      "description": {
+        "zh": "完成一个建造项目：从四种建造中选一种执行——建造农场、建造船、建造雕像、或建造聚落。",
+        "en": "Complete a building project: Choose one of four building types to execute — build a farm, build a boat, build a statue, or build a settlement."
+      },
+      "options": ["<build_farm>", "<build_boat>", "<build_statue>", "<build_settlement>"],
+      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
     }
   ]
 }
