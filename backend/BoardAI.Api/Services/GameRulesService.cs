@@ -586,7 +586,7 @@ public class GameRulesService
                 if (name.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString()!);
                 if (name.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
             }
-            if (detailEl.TryGetProperty("definition", out var def))
+            if (detailEl.TryGetProperty("description", out var def))
             {
                 if (def.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString()!);
                 if (def.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
@@ -746,15 +746,55 @@ public class GameRulesService
     private static bool TryFindFlowProcedure(JsonElement root, string id, out JsonElement found)
     {
         found = default;
-        if (!root.TryGetProperty("procedures", out var procedures)) return false;
-        foreach (var item in procedures.EnumerateArray())
+
+        // search both procedures and triggers at top level, then recurse
+        foreach (var arrayKey in new[] { "procedures", "triggers" })
         {
-            if (item.TryGetProperty("id", out var idProp) && idProp.GetString() == id)
+            if (!root.TryGetProperty(arrayKey, out var arr)) continue;
+            foreach (var item in arr.EnumerateArray())
             {
-                found = item;
-                return true;
+                if (TryFindFlowNodeRecursive(item, id, out found))
+                    return true;
             }
         }
+
+        return false;
+    }
+
+    private static bool TryFindFlowNodeRecursive(JsonElement node, string id, out JsonElement found)
+    {
+        found = default;
+        if (node.TryGetProperty("id", out var idProp) && idProp.GetString() == id)
+        {
+            found = node;
+            return true;
+        }
+
+        // recurse into children, events, options, and content containers
+        foreach (var arrayKey in new[] { "children", "events", "options" })
+        {
+            if (!node.TryGetProperty(arrayKey, out var arr) || arr.ValueKind != JsonValueKind.Array) continue;
+            foreach (var item in arr.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                if (TryFindFlowNodeRecursive(item, id, out found))
+                    return true;
+            }
+        }
+
+        // recurse into container fields: content, cost, condition, effect
+        foreach (var containerKey in new[] {
+            "<ontology::content>", "<ontology::cost>", "<ontology::condition>",
+            "<ontology::instant_content>", "<ontology::instant_cost>",
+            "<ontology::continuous_effect>", "<ontology::effect>" })
+        {
+            if (node.TryGetProperty(containerKey, out var container) && container.ValueKind == JsonValueKind.Object)
+            {
+                if (TryFindFlowNodeRecursive(container, id, out found))
+                    return true;
+            }
+        }
+
         return false;
     }
 
@@ -774,8 +814,8 @@ public class GameRulesService
 
     private static string? ExtractDescriptionZh(JsonElement element)
     {
-        if (element.TryGetProperty("definition", out var def) &&
-            def.TryGetProperty("zh", out var zh))
+        if (element.TryGetProperty("description", out var desc) &&
+            desc.TryGetProperty("zh", out var zh))
         {
             return zh.GetString();
         }

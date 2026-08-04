@@ -82,10 +82,10 @@ def build_search_text(concept: dict) -> str:
     if isinstance(name, dict):
         parts.append(name.get("zh", ""))
         parts.append(name.get("en", ""))
-    definition = concept.get("definition", {})
-    if isinstance(definition, dict):
-        parts.append(definition.get("zh", ""))
-        parts.append(definition.get("en", ""))
+    description = concept.get("description", {})
+    if isinstance(description, dict):
+        parts.append(description.get("zh", ""))
+        parts.append(description.get("en", ""))
     return " ".join(p for p in parts if p)
 
 
@@ -156,6 +156,13 @@ def extract_flow(file_path: Path) -> list[dict[str, Any]]:
     def walk(node: dict):
         node_id = node.get("id", "")
         if not node_id:
+            # for nodes without explicit id, try to find a concept key (e.g. "<ontology::transfer>")
+            for k in node:
+                if k.startswith("<") and k.endswith(">") and isinstance(node[k], dict):
+                    node_id = k
+                    node = node[k]
+                    break
+        if not node_id:
             return
 
         parts = [node_id]
@@ -182,14 +189,21 @@ def extract_flow(file_path: Path) -> list[dict[str, Any]]:
         for evt in node.get("events", []):
             walk(evt)
         for opt in node.get("options", []):
-            walk(opt)
+            if isinstance(opt, dict):
+                walk(opt)
+        # recurse into container fields that can hold nested pipelines
+        for container_key in ("<ontology::content>", "<ontology::cost>", "<ontology::condition>",
+                              "<ontology::instant_content>", "<ontology::instant_cost>",
+                              "<ontology::continuous_effect>", "<ontology::effect>"):
+            container = node.get(container_key)
+            if isinstance(container, dict):
+                walk(container)
 
     for proc in data.get("procedures", []):
         walk(proc)
 
-    pipeline = data.get("pipeline", {})
-    for opt in pipeline.get("options", []):
-        walk(opt)
+    for trigger in data.get("triggers", []):
+        walk(trigger)
 
     return results
 
