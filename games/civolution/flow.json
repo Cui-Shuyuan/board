@@ -1116,6 +1116,50 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       }
+    },
+    {
+      "id": "build_boat",
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "建造船：选一个与有自己部落区域相邻的水域（不能已有自己的船），将控制台船供应堆的一艘船连带着船上的标记放至该水域。无需材料费用。立即将相邻区域中的一个站立部落迁徙到船上。最多 2 艘，不可主动拆除。",
+        "en": "Build a boat: Choose a Water territory adjacent to a territory where you have at least one tribe and where you have no boat. Take a boat from the console boat supply (with its markers) and place it on the Water territory. No material cost. Immediately move one standing tribe from an adjacent territory onto the boat. Max 2 per player; cannot be voluntarily demolished."
+      },
+      "<ontology::condition>": {
+        "zh": "存在一个水域：与有自己部落的区域相邻、且该水域中尚无自己的船；控制台船供应堆有可用船（最多已建造 < 2）。",
+        "en": "There exists a Water territory adjacent to a territory with your tribe and without your boat on it; console boat supply is not empty (built < 2)."
+      },
+      "<ontology::cost>": null,
+      "target": "一个与有自己的<tribe>区域相邻的<terrain_water>，且上面没有自己的<boat>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_boat",
+              "<ontology::transfer>": {
+                "source": "<boat_supply>",
+                "destination": "<continent>",
+                "<object>": "<boat>",
+                "quantity": 1
+              }
+            },
+            {
+              "id": "board_tribe",
+              "do_after": ["place_boat"],
+              "<ontology::transfer>": {
+                "source": "<territory>",
+                "destination": "<boat>",
+                "<object>": "<tribe>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从相邻区域中选一个站立<tribe>，迁徙到刚放置的<boat>上。只有站立部落才能登船。",
+                  "en": "Choose a standing <tribe> from an adjacent territory and migrate it onto the newly placed <boat>. Only standing tribes may board."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
     }
   ]
 }
