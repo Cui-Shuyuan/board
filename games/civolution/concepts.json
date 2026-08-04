@@ -428,6 +428,17 @@
         "zh": "玩家建造在陆地区域的农业建筑 <ontology::piece>。每位玩家最多建造 3 个农场。农场可减少同区域部落在喂养阶段的食物消耗，且建造后获得一个创意标记。",
         "en": "An agricultural building <ontology::piece> built by a player on a land territory. Each player can build at most 3 farms. A farm reduces the food cost for tribes in the same territory during the Feeding phase, and building one grants 1 idea marker."
       },
+      "<ontology::continuous_effect>": {
+        "<ontology::condition>": {
+          "zh": "喂养阶段计算食物需求时",
+          "en": "When calculating food requirements during the Feeding phase"
+        },
+        "<ontology::cost>": null,
+        "<ontology::content>": {
+          "zh": "与此农场同一区域内的营地部落自动视为已喂饱（消耗 0 食物），野外部落仅需 1 食物（无农场时需 2 食物）。每个陆地区域最多一个农场，效果不叠加。",
+          "en": "Tribes on encampments in the same territory as this farm are auto-fed (0 food); tribes in the wilderness of that territory require only 1 food (instead of 2 without a farm). Each land territory can have at most one farm; effects do not stack."
+        }
+      },
       "appearance": {
         "type": "string",
         "description": {

@@ -2119,6 +2119,67 @@
       }
     },
     {
+      "id": "pipeline",
+      "name": {
+        "zh": "流水线",
+        "en": "Pipeline"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "结构化的多步流程。将复杂 action/trigger 的 <ontology::content> 拆为若干有序步骤，按 <multiple_choice_enum> 策略执行。步骤间通过 <do_after> 声明依赖——无 <do_after> 的步骤互相独立、可任意顺序或并行。当一个流程涉及多个不同类型的子操作、难以用单个 extends/specifies 归类时使用。",
+        "en": "A structured multi-step procedure. Decomposes the <ontology::content> of a complex action/trigger into ordered steps, executed according to a <multiple_choice_enum> strategy. Dependencies between steps are declared via do_after — steps without do_after are independent and can run in any order or in parallel. Use when a procedure involves multiple sub-operations of different types that are hard to classify under a single extends/specifies."
+      },
+      "options": {
+        "type": "any[]",
+        "description": {
+          "zh": "步骤数组。每个步骤是一个对象，含 id（步骤标识）、可选的 specifies（步骤类型引用，如 <ontology::transfer>、<ontology::event> 等）、可选的 do_after（前置步骤 id 数组）。",
+          "en": "Array of steps. Each step is an object with id, optional specifies (step type reference, e.g. <ontology::transfer>, <ontology::event>), and optional do_after (array of prerequisite step ids)."
+        }
+      },
+      "type": {
+        "type": "<multiple_choice_enum>",
+        "description": {
+          "zh": "执行策略——EXECUTE_ALL：全部按依赖顺序执行；CHOOSE_ONE：选一个；CHOOSE_AT_LEAST_ONE：选至少一个；CHOOSE_ANY：任意组合（每项最多一次）。",
+          "en": "Execution strategy — EXECUTE_ALL: all steps in dependency order; CHOOSE_ONE: pick one; CHOOSE_AT_LEAST_ONE: pick at least one; CHOOSE_ANY: any subset, each at most once."
+        }
+      },
+      "do_after": {
+        "type": "string[]",
+        "optional": true,
+        "description": {
+          "zh": "依赖的前置步骤 id 数组。引擎按拓扑序执行——仅当所有 do_after 中的步骤完成后才执行本步骤。无此字段的步骤互相独立。",
+          "en": "Array of prerequisite step ids. The engine executes in topological order — this step runs only after all steps in do_after are complete. Steps without this field are independent of each other."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "options",
+            "description": {
+              "zh": "步骤数组。",
+              "en": "Step array."
+            }
+          },
+          {
+            "id": "type",
+            "description": {
+              "zh": "执行策略，引用 <multiple_choice_enum>",
+              "en": "Execution strategy, referencing <multiple_choice_enum>"
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "do_after",
+            "description": {
+              "zh": "步骤级别的前置依赖。注意：options 数组内每个步骤也可有自己的 do_after。",
+              "en": "Step-level prerequisite dependencies. Note: each step within the options array may also have its own do_after."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "multiple_choice_enum",
       "name": {
         "zh": "多选方式",
