@@ -214,10 +214,12 @@ public class GameRulesService
         return result;
     }
 
-    public async Task<SearchConceptsResult> SearchConceptsAsync(string game, string query)
+    public async Task<SearchConceptsResult> SearchConceptsAsync(string game, string query, string searchMode = "full")
     {
         if (string.IsNullOrWhiteSpace(query))
             return new SearchConceptsResult { Results = new List<ConceptSummary>(), Query = query };
+
+        var useNameOnly = searchMode == "name";
 
         // 把 query 拆成子查询，加上原句一起并行搜
         var subQueries = SplitQuery(query);
@@ -228,7 +230,7 @@ public class GameRulesService
         foreach (var q in allQueries)
         {
             if (_vectorSearch != null)
-                tasks.Add(VectorSearchAsync(game, q, topK: 5));
+                tasks.Add(VectorSearchAsync(game, q, topK: 5, searchMode: searchMode));
             tasks.Add(KeywordSearchWithScoreAsync(game, q));
         }
 
@@ -300,11 +302,11 @@ public class GameRulesService
     }
 
     private async Task<List<(ConceptSummary Summary, float Score)>> VectorSearchAsync(
-        string game, string query, int topK)
+        string game, string query, int topK, string searchMode = "full")
     {
         try
         {
-            var results = await _vectorSearch!.SearchAsync(game, query, topK: topK);
+            var results = await _vectorSearch!.SearchAsync(game, query, topK: topK, searchMode: searchMode);
             return results.Select(r => (
                 new ConceptSummary { Id = r.ConceptId, Name = r.NameZh, Type = r.Type },
                 r.Score

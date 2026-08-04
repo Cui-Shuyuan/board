@@ -11,13 +11,19 @@ def embed(text):
     vec = hidden[0, :int(mask.sum()), :].mean(axis=0)
     return (vec / np.linalg.norm(vec)).tolist()
 
-targets = ["build_boat", "place_boat", "board_tribe", "build_farm", "place_farm", "build_statue", "place_statue", "build_settlement"]
-vec = embed("造船")
-r = requests.post("http://localhost:6333/collections/board_civolution/points/search",
-                  json={"vector": vec, "limit": 50, "with_payload": True})
-print("Query: 造船 -> build_boat rank")
-for i, res in enumerate(r.json()["result"]):
-    pid = res["payload"].get("concept_id", "?")
-    if pid in targets:
+targets = ["build_boat", "place_boat", "board_tribe", "build_farm", "build_statue", "build_settlement"]
+
+for mode, collection in [("name", "board_civolution_name"), ("full", "board_civolution")]:
+    vec = embed("造船")
+    r = requests.post(f"http://localhost:6333/collections/{collection}/points/search",
+                      json={"vector": vec, "limit": 20, "with_payload": True})
+    print(f"=== search_mode={mode}, query=造船 ===")
+    print(f"{'#':>3} {'score':>7} {'id':40s} name")
+    print("-" * 80)
+    for i, res in enumerate(r.json()["result"]):
+        pid = res["payload"].get("concept_id", "?")
         name = res["payload"].get("name_zh", "")
-        print(f"  #{i+1:2d} {pid:35s} {name:20s} score={res['score']:.4f}")
+        score = res["score"]
+        marker = " <<<" if pid in targets else ""
+        print(f"{i+1:3d} {score:.4f}   {pid:40s} {name}{marker}")
+    print()

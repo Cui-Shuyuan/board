@@ -88,6 +88,16 @@ def build_search_text(concept: dict) -> str:
         parts.append(description.get("en", ""))
     return " ".join(p for p in parts if p)
 
+def build_name_text(concept: dict) -> str:
+    """只用 id + name，不加 description——用于 LLM 做精确 action/概念查找"""
+    parts = [concept.get("id", "")]
+    name = concept.get("name", {})
+    if isinstance(name, dict):
+        parts.append(name.get("zh", ""))
+        parts.append(name.get("en", ""))
+    return " ".join(p for p in parts if p)
+    return " ".join(p for p in parts if p)
+
 
 def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
     data = load_json(file_path)
@@ -252,40 +262,62 @@ def rebuild_game(game_id: str):
 
     print(f"  {len(items)} concepts found, generating embeddings...")
 
-    name = collection_name(game_id)
+    # build name-only search text for each item
+    for c in items:
+        c["name_text"] = f"{c['concept_id']} {c['name_zh']} {c['name_en']}".strip()
+
+    # ---- full-text collection (id + name + description) ----
+    name_full = collection_name(game_id)
     try:
-        qdrant_delete(f"/collections/{name}")
+        qdrant_delete(f"/collections/{name_full}")
     except requests.HTTPError:
         pass
+    qdrant_put(f"/collections/{name_full}", {
+        "vectors": {"size": dimension, "distance": "Cosine"}
+    })
 
-    qdrant_put(f"/collections/{name}", {
+    # ---- name-only collection ----
+    name_name = f"{collection_name(game_id)}_name"
+    try:
+        qdrant_delete(f"/collections/{name_name}")
+    except requests.HTTPError:
+        pass
+    qdrant_put(f"/collections/{name_name}", {
         "vectors": {"size": dimension, "distance": "Cosine"}
     })
 
     for i in range(0, len(items), BATCH_SIZE):
         batch = items[i:i + BATCH_SIZE]
-        texts = [c["search_text"] for c in batch]
-        vectors = [embed(t) for t in texts]
+        full_vectors = [embed(c["search_text"]).tolist() for c in batch]
+        name_vectors = [embed(c["name_text"]).tolist() for c in batch]
 
-        points = []
+        full_points = []
+        name_points = []
         for j, c in enumerate(batch):
-            points.append({
+            payload = {
+                "concept_id": c["concept_id"],
+                "type": c["type"],
+                "name_zh": c["name_zh"],
+                "name_en": c["name_en"],
+            }
+            full_points.append({
                 "id": make_uuid(f"{game_id}::{c['concept_id']}"),
-                "vector": vectors[j].tolist(),
-                "payload": {
-                    "concept_id": c["concept_id"],
-                    "type": c["type"],
-                    "name_zh": c["name_zh"],
-                    "name_en": c["name_en"],
-                },
+                "vector": full_vectors[j],
+                "payload": payload,
+            })
+            name_points.append({
+                "id": make_uuid(f"{game_id}::{c['concept_id']}_name"),
+                "vector": name_vectors[j],
+                "payload": payload,
             })
 
-        qdrant_put(f"/collections/{name}/points", {"points": points})
+        qdrant_put(f"/collections/{name_full}/points", {"points": full_points})
+        qdrant_put(f"/collections/{name_name}/points", {"points": name_points})
         batch_num = i // BATCH_SIZE + 1
         total_batches = (len(items) + BATCH_SIZE - 1) // BATCH_SIZE
         print(f"  [{batch_num}/{total_batches}] {len(batch)} concepts")
 
-    print(f"  OK {game_id}: {len(items)} concepts in '{name}'")
+    print(f"  OK {game_id}: {len(items)} concepts in '{name_full}' + '{name_name}'")
 
 
 # ---- CLI ----

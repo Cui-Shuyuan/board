@@ -135,14 +135,19 @@ public class ChatOrchestratorService
                 Function = new FunctionDefinition
                 {
                     Name = "search_concepts",
-                    Description = $"通过关键词搜索当前游戏《{gameId}》中的概念、行动、条件、触发器等。支持 ontology 命名空间查询，例如 'ontology::resource' 只搜索 ontology 中的 resource 概念；不带命名空间时同时搜索当前游戏和 ontology。",
+                    Description = $"通过关键词搜索当前游戏《{gameId}》中的概念、行动、条件、触发器等。支持 ontology 命名空间查询，例如 'ontology::resource' 只搜索 ontology 中的 resource 概念；不带命名空间时同时搜索当前游戏和 ontology。search_mode=name 时只用概念名称匹配（适合精确查找 action/概念），search_mode=full 时用全文匹配（适合模糊搜索规则细节）。默认 full。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
                       "properties": {
                         "query": {
                           "type": "string",
-                          "description": "搜索关键词，可以是中文或英文；支持 'ontology::concept_id' 格式限定只查 ontology"
+                          "description": "搜索关键词，可以是中文或英文；支持 'ontology::concept_id' 格式限定只查 ontology。查找具体 action/概念时用简洁短语（如 '造船'），查找规则细节时用完整描述。"
+                        },
+                        "search_mode": {
+                          "type": "string",
+                          "enum": ["name", "full"],
+                          "description": "搜索模式：name=只用概念名称匹配（精确查找 action/概念名），full=全文本匹配（适合模糊搜索规则描述）。默认 full。"
                         }
                       },
                       "required": ["query"]
@@ -219,7 +224,10 @@ public class ChatOrchestratorService
                 case "search_concepts":
                     {
                         var query = args.RootElement.GetProperty("query").GetString() ?? string.Empty;
-                        var results = await _rulesService.SearchConceptsAsync(gameId, query);
+                        var searchMode = "full";
+                        if (args.RootElement.TryGetProperty("search_mode", out var modeProp))
+                            searchMode = modeProp.GetString() ?? "full";
+                        var results = await _rulesService.SearchConceptsAsync(gameId, query, searchMode);
                         return JsonSerializer.Serialize(results);
                     }
 

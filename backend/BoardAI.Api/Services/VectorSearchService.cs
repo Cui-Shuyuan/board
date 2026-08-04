@@ -105,15 +105,17 @@ public class VectorSearchService : IDisposable
     /// 每个游戏独享 collection，无需 game_id 过滤。
     /// </summary>
     public async Task<IReadOnlyList<SearchResult>> SearchAsync(
-        string gameId, string query, int topK = 10, float threshold = 0.55f)
+        string gameId, string query, int topK = 10, float threshold = 0.55f, string searchMode = "full")
     {
-        var name = CollectionName(gameId);
+        var collection = searchMode == "name"
+            ? CollectionName(gameId) + "_name"
+            : CollectionName(gameId);
         var queryVec = _embedder.Embed(query);
 
         try
         {
             var results = await _client.SearchAsync(
-                name,
+                collection,
                 queryVec.ToArray(),
                 limit: (ulong)topK,
                 scoreThreshold: threshold);

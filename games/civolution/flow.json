@@ -1624,7 +1624,13 @@
                 "place_boat"
               ],
               "options": [
-                null,
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不做（跳过此项）",
+                    "en": "Skip this option"
+                  }
+                },
                 {
                   "<ontology::transfer>": {
                     "source": "<territory>",
@@ -1736,7 +1742,13 @@
                 "place_statue"
               ],
               "options": [
-                null,
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不做（跳过此项）",
+                    "en": "Skip this option"
+                  }
+                },
                 {
                   "<push_track>": {
                     "description": {
