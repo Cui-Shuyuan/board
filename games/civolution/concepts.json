@@ -501,7 +501,7 @@
     },
     {
       "id": "feature_marker",
-      "extends": "<ontology::token>",
+      "extends": "<ontology::marker>",
       "name": {
         "zh": "特征标记",
         "en": "Feature Marker"
@@ -752,7 +752,7 @@
     },
     {
       "id": "idea_marker",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::resource>",
       "name": {
         "zh": "创意标记",
         "en": "Idea Marker"
@@ -765,7 +765,7 @@
     },
     {
       "id": "planning_marker",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::resource>",
       "name": {
         "zh": "计划标记",
         "en": "Planning Marker"
@@ -778,7 +778,7 @@
     },
     {
       "id": "focus_marker",
-      "specifies": "<ontology::token>",
+      "specifies": "<ontology::resource>",
       "name": {
         "zh": "焦点标记",
         "en": "Focus Marker"
@@ -2767,18 +2767,38 @@
           }
         },
         {
-          "<feature_space>": {
+          "<ontology::aid>": {
             "position": {
-              "zh": "面板左半边底部",
-              "en": "bottom of the left half of the <console>"
+              "zh": "面板左半边，目标区下方，仓库左侧，农场和船供应堆周围",
+              "en": "left half of the <console>, below goal area, left of storage, around farm and boat supplies"
+            },
+            "description": {
+              "zh": "建造项目提示。列出四种可建造项目及其概况：<farm>（无费用，得创意标记，最多 3 个）、<boat>（无费用，登船奖励，最多 2 艘）、<statue>（付一种材料，可选推进程轨，收入阶段计分）、<settlement>（付材料，得收入芯片，最多 4 个）。详见 <complete_building_project>。",
+              "en": "Building project reference. Lists the four buildable projects: <farm> (no cost, gain idea marker, max 3), <boat> (no cost, boarding reward, max 2), <statue> (pay one material, may push progress track, scores in Income phase), <settlement> (pay materials, gain income chip, max 4). See <complete_building_project>."
+            }
+          }
+        },
+        {
+          "<focus_space>": {
+            "position": {
+              "zh": "面板左半边，仓库右边，<idea_space>上方",
+              "en": "left half of the <console>, right of storage, above <idea_space>"
             }
           }
         },
         {
           "<idea_space>": {
             "position": {
-              "zh": "面板左下角，特征格旁",
-              "en": "bottom-left of the <console>, next to feature spaces"
+              "zh": "面板左半边，仓库右边，<focus_space>下方",
+              "en": "left half of the <console>, right of storage, below <focus_space>"
+            }
+          }
+        },
+        {
+          "<feature_space>": {
+            "position": {
+              "zh": "面板右半边底部",
+              "en": "bottom of the right half of the <console>"
             }
           }
         },
@@ -2845,9 +2865,24 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "<console> 上放置 <idea_marker> 的格子。上限 12 个，超过不丢弃但无法继续获得。",
-        "en": "A space on the <console> for holding <idea_marker>s. Capacity is 12; excess markers cannot be gained but are not discarded."
-      }
+        "zh": "<console> 左半边放置 <idea_marker> 的格子。上限 12 个，超过不丢弃但无法继续获得。",
+        "en": "A space on the left half of the <console> for holding <idea_marker>s. Capacity is 12; excess markers cannot be gained but are not discarded."
+      },
+      "capacity": 12
+    },
+    {
+      "id": "focus_space",
+      "specifies": "<ontology::player_zone>",
+      "name": {
+        "zh": "焦点格",
+        "en": "Focus Space"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "<console> 左半边、<idea_space> 上方的格子，用于放置 <focus_marker>。容量 1 个。",
+        "en": "A space on the left half of the <console>, above <idea_space>, for holding a <focus_marker>. Capacity is 1."
+      },
+      "capacity": 1
     },
     {
       "id": "feature_space",
@@ -2858,9 +2893,10 @@
       },
       "abstract": false,
       "definition": {
-        "zh": "<console> 上放置 <feature_marker> 的格子，共 6 种。某些效果可覆盖特征标记的获取上限。",
-        "en": "A space on the <console> for holding <feature_marker>s, one for each of the 6 features. Some effects may bypass the normal feature-marker cap."
-      }
+        "zh": "<console> 右半边放置 <feature_marker> 的格子，共 6 格，分别对应智慧、表达、敏捷、耐力、镇定、感知六种特征。特征标记通过模组和效果获得，用于满足研究牌费用、获取属性芯片、时代计分。部分效果可绕过正常获取上限。",
+        "en": "A space on the right half of the <console> for holding <feature_marker>s, with 6 slots — one each for Intelligence, Expression, Dexterity, Stamina, Calm, and Perception. Feature markers are gained via modules and effects, and are used to satisfy research card costs, acquire attribute chips, and score in era scoring. Some effects may bypass the normal acquisition limit."
+      },
+      "capacity": 6
     },
     {
       "id": "stage_partition",
