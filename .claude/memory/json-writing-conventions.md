@@ -70,9 +70,9 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 - **options**：数组格式，不是对象。每项可以是 step 对象、字符串引用（`"<build_farm>"`）、或 `null`（跳过）
 - **type**：必须是完整引用 `"<ontology::multiple_choice_enum.XXX>"`
 - **do_after**：数组格式 `["step_a", "step_b"]`。无 do_after = 独立可并行
-- **null**：表示"不做也是一种合法选择"。被选中时跳过执行，do_after 链上视为已完成
-- 必选步骤直接写，可选步骤包 `"options": [null, step], "type": "CHOOSE_ONE"`
-- "不干B就不能干C"：B和C捆成子 pipeline，外包 `CHOOSE_ONE(null, B→C)`
+- **_skip**（不用 null）：表示"不做也是一种合法选择"。必须写成 `{ "id": "_skip", "description": { "zh": "不做（跳过此项）", "en": "Skip this option" } }`。被选中时跳过执行，do_after 链上视为已完成
+- 必选步骤直接写，可选步骤包 `"options": [_skip, step], "type": "CHOOSE_ONE"`
+- "不干B就不能干C"：B和C捆成子 pipeline，外包 `CHOOSE_ONE(_skip, B→C)`
 
 ---
 
