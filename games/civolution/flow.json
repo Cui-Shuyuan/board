@@ -319,7 +319,7 @@
                 "en": "Each player takes 6 activation dice from the game box, sets them to show each value 1-6, and places each on the corresponding dice space of their console."
               },
               "source": "<ontology::game_box>",
-              "destination": "<dice_area>",
+              "destination": "<activation_dice_area>",
               "<object>": "<activation_die>",
               "quantity": 6,
               "per_player": true,
@@ -336,7 +336,7 @@
                 "en": "Each player takes 1 fate die from the game box and places it beside their console."
               },
               "source": "<ontology::game_box>",
-              "destination": "<console>",
+              "destination": "<fate_dice_area>",
               "<object>": "<fate_die>",
               "quantity": 1,
               "per_player": true,
@@ -1065,7 +1065,6 @@
         "zh": "事件阶段（Phase 7）天气标记移动完成后",
         "en": "After weather indicator movement in Event phase (Phase 7)"
       },
-      "<ontology::cost>": null,
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "zh": "所有玩家按座次顺位逐一结算当前天气格效果。",
@@ -1375,7 +1374,6 @@
         ],
         "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
-      "<ontology::cost>": null,
       "target": "一种至少有一个自己<tribe>的领地类型",
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -1446,7 +1444,6 @@
         ],
         "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
-      "<ontology::cost>": null,
       "target": "有自己的<tribe>且没有任何<farm>的一片陆地区域，且不与已翻开的<volcano>相邻",
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -1600,7 +1597,6 @@
         ],
         "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
-      "<ontology::cost>": null,
       "target": "一个与有自己的<tribe>区域相邻的<terrain_water>，且上面没有自己的<boat>",
       "<ontology::content>": {
         "<ontology::instant_content>": {

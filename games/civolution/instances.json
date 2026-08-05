@@ -806,11 +806,7 @@
         "zh": "<console> 右上角自带的基础活动。支付 1 个 <money>，从 5 条进程轨中任选 1 条，将该轨上自己的 <progress_marker> 推进 1 格。",
         "en": "Innate activity at the top-right of the <console>. Pay 1 <money>, choose any 1 of the 5 progress tracks, and advance your <progress_marker> on that track by 1 step."
       },
-      "<ontology::effect>": {
-        "description": {
-          "zh": "支付 1 个钱币，任选 1 条进程轨推进 1 格。",
-          "en": "Pay 1 money, choose any progress track and advance it by 1 step."
-        },
+      "<ontology::instant_effect>": {
         "<ontology::cost>": {
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {

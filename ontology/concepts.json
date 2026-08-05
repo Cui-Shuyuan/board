@@ -673,6 +673,40 @@
       }
     },
     {
+      "id": "instant_cost",
+      "extends": "<cost>",
+      "name": {
+        "zh": "即时费用",
+        "en": "Instant Cost"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一次性支付的代价，伴随实际的 <event>（通常为 <transfer>）。支付完毕即完成，不留持续约束。",
+        "en": "A one-time cost involving an actual <event> (usually a <transfer>). Paid once and done; no ongoing constraint remains."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "continuous_cost",
+      "extends": "<cost>",
+      "name": {
+        "zh": "永续费用",
+        "en": "Continuous Cost"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "纯粹的状态条件，不消耗任何资源。在 effect 激活期间持续检查——条件成立方可执行后续 content，条件不成立则阻塞。",
+        "en": "A pure state condition that consumes nothing. Checked continuously while the effect is active — content only executes while the condition holds; blocks otherwise."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "content",
       "extends": "<property>",
       "name": {
@@ -747,6 +781,49 @@
         ]
       },
       "specifies": "<trigger>"
+    },
+    {
+      "id": "instant_effect",
+      "extends": "<effect>",
+      "name": {
+        "zh": "即时效果",
+        "en": "Instant Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一次机会。condition 满足即执行 cost→content，无论成败此 effect 永远消失。用于「打出时」「翻开时」等一次性触发场景。",
+        "en": "One chance. If condition is met, executes cost→content; whether it succeeds or fails, this effect is gone forever. Used for one-shot triggers like 'when played' or 'when revealed'."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "continuous_effect",
+      "extends": "<effect>",
+      "name": {
+        "zh": "永续效果",
+        "en": "Continuous Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "持续武装。每次 condition 满足都执行 cost→content，直到 end_condition 成立、来源离场或被外部移除。end_condition 缺省 = 永不自动终结。用于光环、被动能力等持续监听场景。",
+        "en": "Persistent arming. Fires cost→content each time condition is met, until end_condition holds, source leaves play, or externally removed. Absent end_condition = never auto-terminates. Used for auras, passive abilities, and other persistent listening scenarios."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "end_condition",
+            "default": null,
+            "description": {
+              "zh": "终结条件——成立时此 effect 永久失效。缺省 = 永不自动终结。",
+              "en": "Termination condition — when met, this effect permanently deactivates. Absent = never auto-terminates."
+            }
+          }
+        ]
+      }
     },
     {
       "id": "instant_content",

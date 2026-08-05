@@ -514,16 +514,16 @@
       "feature_type": {
         "type": "enum",
         "enum": [
-          "intelligence",
-          "expression",
-          "dexterity",
           "stamina",
+          "intelligence",
           "calm",
+          "dexterity",
+          "expression",
           "perception"
         ],
         "description": {
-          "zh": "特征类型：智慧、表达、敏捷、耐力、镇定、感知。部分中文名称待最终确认。",
-          "en": "Feature type: Intelligence, Expression, Dexterity, Stamina, Calm, Perception. Some names pending final confirmation."
+          "zh": "特征类型：耐力、智慧、镇定、灵巧、表达、观察。",
+          "en": "Feature types: Stamina, Intelligence, Calm, Dexterity, Expression, Perception."
         }
       },
       "component": "<octagonal_pillar>"
@@ -595,10 +595,11 @@
           "zh": "喂养阶段计算食物需求时",
           "en": "When calculating food requirements during the Feeding phase"
         },
-        "<ontology::cost>": null,
-        "<ontology::content>": {
-          "zh": "与此农场同一区域内的营地部落自动视为已喂饱（消耗 0 食物），野外部落仅需 1 食物（无农场时需 2 食物）。每个陆地区域最多一个农场，效果不叠加。",
-          "en": "Tribes on encampments in the same territory as this farm are auto-fed (0 food); tribes in the wilderness of that territory require only 1 food (instead of 2 without a farm). Each land territory can have at most one farm; effects do not stack."
+                "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "zh": "与此农场同一区域内的营地部落自动视为已喂饱（消耗 0 食物），野外部落仅需 1 食物（无农场时需 2 食物）。每个陆地区域最多一个农场，效果不叠加。",
+            "en": "Tribes on encampments in the same territory as this farm are auto-fed (0 food); tribes in the wilderness of that territory require only 1 food (instead of 2 without a farm). Each land territory can have at most one farm; effects do not stack."
+          }
         }
       },
       "appearance": {
@@ -1138,8 +1139,7 @@
                 "zh": "终局计分阶段，且此板块激活面朝上",
                 "en": "Final scoring phase, and this tile is active face up"
               },
-              "<ontology::cost>": null,
-              "<ontology::content>": {
+                "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "zh": "对应层级每安装一张研究牌或一枚芯片，获得该层级标示的分数。",
                   "en": "Score the indicated points for each research card or chip installed in the corresponding stage."
@@ -1193,8 +1193,7 @@
           "zh": "终局计分阶段",
           "en": "Final scoring phase"
         },
-        "<ontology::cost>": null,
-        "<ontology::content>": {
+                "<ontology::content>": {
           "<ontology::instant_content>": {
             "zh": "此层级每安装一张研究牌或一枚芯片，获得该层级标示的分数。一层的<goal_chip>左右各可装一枚，每枚单独计分。",
             "en": "Score the indicated points for each research card or chip installed in its stage. A tier fits up to two <goal_chip>s (left and right); each scores individually."
@@ -2400,17 +2399,19 @@
             "en": "Hot"
           },
           "<ontology::effect>": {
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "<ontology::transfer>": "<lose_food>"
-                  },
-                  {
-                    "<ontology::transfer>": "<remove_tribe>"
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "<ontology::transfer>": "<lose_food>"
+                    },
+                    {
+                      "<ontology::transfer>": "<remove_tribe>"
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                }
               }
             }
           }
@@ -2420,7 +2421,13 @@
             "zh": "温暖",
             "en": "Warm"
           },
-          "<ontology::effect>": "<activate_income_chip>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<activate_income_chip>"
+              }
+            }
+          }
         },
         {
           "name": {
@@ -2428,11 +2435,17 @@
             "en": "Mild"
           },
           "<ontology::effect>": {
-            "options": [
-              "<activate_income_chip>",
-              "<perform_activity>"
-            ],
-            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    "<activate_income_chip>",
+                    "<perform_activity>"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                }
+              }
+            }
           }
         },
         {
@@ -2440,7 +2453,13 @@
             "zh": "雨水",
             "en": "Rain"
           },
-          "<ontology::effect>": "<perform_activity>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<perform_activity>"
+              }
+            }
+          }
         },
         {
           "name": {
@@ -2448,17 +2467,19 @@
             "en": "Cold"
           },
           "<ontology::effect>": {
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "<ontology::transfer>": "<lose_food>"
-                  },
-                  {
-                    "<ontology::transfer>": "<remove_tribe>"
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "<ontology::transfer>": "<lose_food>"
+                    },
+                    {
+                      "<ontology::transfer>": "<remove_tribe>"
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                }
               }
             }
           }
@@ -2492,56 +2513,104 @@
             "zh": "第一阶段",
             "en": "Phase 1"
           },
-          "<ontology::effect>": "<phase_1_new_cards>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_1_new_cards>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第二阶段",
             "en": "Phase 2"
           },
-          "<ontology::effect>": "<phase_2_new_goals>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_2_new_goals>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第三阶段",
             "en": "Phase 3"
           },
-          "<ontology::effect>": "<phase_3_extra_find>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_3_extra_find>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第四阶段",
             "en": "Phase 4"
           },
-          "<ontology::effect>": "<phase_4_action>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_4_action>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第五阶段",
             "en": "Phase 5"
           },
-          "<ontology::effect>": "<phase_5_site>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_5_site>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第六阶段",
             "en": "Phase 6"
           },
-          "<ontology::effect>": "<phase_6_feeding>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_6_feeding>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第七阶段",
             "en": "Phase 7"
           },
-          "<ontology::effect>": "<phase_7_event>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_7_event>"
+              }
+            }
+          }
         },
         {
           "name": {
             "zh": "第八阶段",
             "en": "Phase 8"
           },
-          "<ontology::effect>": "<phase_8_income>"
+          "<ontology::effect>": {
+            "<ontology::instant_effect>": {
+"<ontology::content>": {
+                "<ontology::instant_content>": "<phase_8_income>"
+              }
+            }
+          }
         }
       ]
     },
@@ -2670,10 +2739,10 @@
           }
         },
         {
-          "<dice_area>": {
+          "<activation_dice_area>": {
             "position": {
-              "zh": "面板顶部",
-              "en": "top of the <console>"
+              "zh": "面板右半边，模组区下方，特征格上方",
+              "en": "right half of the <console>, below <module_area>, above <feature_space>"
             }
           }
         },
@@ -2800,8 +2869,8 @@
         {
           "<feature_space>": {
             "position": {
-              "zh": "面板右半边底部",
-              "en": "bottom of the right half of the <console>"
+              "zh": "面板右半边，模组区下方，激活骰子区下方",
+              "en": "right half of the <console>, below <module_area>, below <activation_dice_area>"
             }
           }
         },
@@ -2815,6 +2884,22 @@
             "position": {
               "zh": "层级 1/2/3 左侧",
               "en": "left of stages 1/2/3"
+            }
+          }
+        },
+        {
+          "<tier_1_completion_reward>": {
+            "position": {
+              "zh": "层级 1 右侧",
+              "en": "right of tier 1"
+            }
+          }
+        },
+        {
+          "<tier_2_completion_reward>": {
+            "position": {
+              "zh": "层级 2 右侧",
+              "en": "right of tier 2"
             }
           }
         },
@@ -2847,16 +2932,29 @@
       }
     },
     {
-      "id": "dice_area",
+      "id": "activation_dice_area",
       "specifies": "<ontology::player_zone>",
       "name": {
-        "zh": "骰子区",
-        "en": "Dice Area"
+        "zh": "激活骰子区",
+        "en": "Activation Dice Area"
       },
       "abstract": false,
       "description": {
-        "zh": "<console> 上放置 <activation_die>、<fate_die>、<planning_marker> 的区域。骰子掷出后放在对应点数格上。",
-        "en": "The area on the <console> for <activation_die>s, <fate_die>s, and <planning_marker>s. Rolled dice are placed on the matching value spaces."
+        "zh": "<console> 右半边放置 <activation_die> 的区域，位于 <module_area> 下方、<feature_space> 上方。分为 6 格，分别对应骰子点数 1 至 6——每颗激活骰子掷出后放在与点数匹配的格上。激活模组时从此区取用骰子；Reset 的 B 步回收所有已使用的激活骰子重掷并放回。控制台外另有 <fate_dice_area> 和 <planning_marker> 的放置位。",
+        "en": "The area on the right half of the <console> for <activation_die>s, located below the <module_area> and above the <feature_space>. Divided into 6 spaces, one per die value 1 through 6 — each rolled activation die is placed on the matching space. Dice are taken from this area to activate modules; Reset step B retrieves all used activation dice, re-rolls them, and returns them here. Outside the console, there are separate spots for the <fate_dice_area> and <planning_marker>."
+      }
+    },
+    {
+      "id": "fate_dice_area",
+      "specifies": "<ontology::player_zone>",
+      "name": {
+        "zh": "命运骰子区",
+        "en": "Fate Die Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "位于 <console> 旁边（不在面板上），放置玩家的 <fate_die>。设置阶段从游戏盒中拿取 1 个粉骰子放在此处。恩惠检定时投掷此骰子，根据 <favor_of_ager_track> 当前位置判定是否通过。",
+        "en": "Located beside the <console> (not on the board), holding the player's <fate_die>. During setup, take 1 fate die from the game box and place it here. Roll this die for favor tests; the result is checked against the current position on the <favor_of_ager_track>."
       }
     },
     {
@@ -2896,10 +2994,66 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<console> 右半边放置 <feature_marker> 的格子，共 6 格，分别对应智慧、表达、敏捷、耐力、镇定、感知六种特征。特征标记通过模组和效果获得，用于满足研究牌费用、获取属性芯片、时代计分。部分效果可绕过正常获取上限。",
-        "en": "A space on the right half of the <console> for holding <feature_marker>s, with 6 slots — one each for Intelligence, Expression, Dexterity, Stamina, Calm, and Perception. Feature markers are gained via modules and effects, and are used to satisfy research card costs, acquire attribute chips, and score in era scoring. Some effects may bypass the normal acquisition limit."
+        "zh": "<console> 右半边放置 <feature_marker> 的区域，位于 <module_area> 下方、<activation_dice_area> 下方。共 6 格，从左到右分别对应耐力（Stamina）、智慧（Intelligence）、镇定（Calm）、灵巧（Dexterity）、表达（Expression）、观察（Perception）六种特征。",
+        "en": "The area on the right half of the <console> for <feature_marker>s, located below the <module_area> and below the <activation_dice_area>. 6 slots, left to right: Stamina, Intelligence, Calm, Dexterity, Expression, Perception."
       },
       "capacity": 6
+    },
+    {
+      "id": "tier_1_completion_reward",
+      "specifies": "<ontology::effect>",
+      "name": {
+        "zh": "层级1完成奖励",
+        "en": "Tier 1 Completion Reward"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "印于<console>层级 1 右侧。当层级 1 所有安装位被填满时触发：执行一次<gain_income_chip>。",
+        "en": "Printed to the right of tier 1 on the <console>. Triggers when all installation slots in tier 1 are filled: perform <gain_income_chip> once."
+      },
+      "<ontology::continuous_effect>": {
+        "<ontology::condition>": {
+          "zh": "层级 1 所有安装位被填满",
+          "en": "All installation slots in tier 1 are filled"
+        },
+                "<ontology::content>": {
+          "<ontology::instant_content>": "<gain_income_chip>"
+        }
+      }
+    },
+    {
+      "id": "tier_2_completion_reward",
+      "specifies": "<ontology::effect>",
+      "name": {
+        "zh": "层级2完成奖励",
+        "en": "Tier 2 Completion Reward"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "印于<console>层级 2 右侧。当层级 2 所有安装位被填满时触发：选择一个未激活的<stage_tile>翻至激活面。",
+        "en": "Printed to the right of tier 2 on the <console>. Triggers when all installation slots in tier 2 are filled: choose an inactive <stage_tile> and flip it to its active face."
+      },
+      "<ontology::continuous_effect>": {
+        "<ontology::condition>": {
+          "zh": "层级 2 所有安装位被填满",
+          "en": "All installation slots in tier 2 are filled"
+        },
+                "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "options": [
+              {
+                "zh": "将<stage_tile>（层级 4）翻至激活面",
+                "en": "Flip <stage_tile> (stage 4) to its active face"
+              },
+              {
+                "zh": "将<stage_tile>（层级 5）翻至激活面",
+                "en": "Flip <stage_tile> (stage 5) to its active face"
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          }
+        }
+      }
     },
     {
       "id": "stage_partition",
@@ -2985,8 +3139,9 @@
             "zh": "此格最后一枚 <goal_chip> 被安装后",
             "en": "After the last <goal_chip> in this slot is installed"
           },
-          "<ontology::cost>": null,
-          "<ontology::content>": "<upgrade_main_module>"
+                    "<ontology::content>": {
+            "<ontology::instant_content>": "<upgrade_main_module>"
+          }
         }
       }
     },
@@ -3010,10 +3165,11 @@
             "zh": "对应模组升至 3 级",
             "en": "Corresponding module reaches level 3"
           },
-          "<ontology::cost>": null,
-          "<ontology::content>": {
-            "zh": "激活该模组的 L3 效果",
-            "en": "Activate the module's L3 effect"
+                    "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "zh": "激活该模组的 L3 效果",
+              "en": "Activate the module's L3 effect"
+            }
           }
         }
       }
@@ -3078,10 +3234,11 @@
             "zh": "事件阶段 Prosperity（繁荣）计分时",
             "en": "During Prosperity scoring in the Event phase"
           },
-          "<ontology::cost>": null,
-          "<ontology::content>": {
-            "zh": "露出的钻石计入活跃钻石总数，乘以 Prosperity 分类倍率获得分数。",
-            "en": "Visible diamonds count toward active diamond total; multiplied by Prosperity category multiplier for points."
+                    "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "zh": "露出的钻石计入活跃钻石总数，乘以 Prosperity 分类倍率获得分数。",
+              "en": "Visible diamonds count toward active diamond total; multiplied by Prosperity category multiplier for points."
+            }
           }
         }
       }
@@ -3411,8 +3568,7 @@
         "zh": "一种 <ontology::effect>。",
         "en": "A type of <ontology::effect>."
       },
-      "<ontology::cost>": null,
-      "<ontology::content>": null
+      "<ontology::instant_effect>": {}
     }
   ],
   "top_level_refs": {
