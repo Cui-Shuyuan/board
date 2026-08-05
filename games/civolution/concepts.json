@@ -2906,8 +2906,8 @@
         {
           "<reset_column>": {
             "position": {
-              "zh": "面板右侧边缘",
-              "en": "right edge of the <console>"
+              "zh": "面板右半边，焦点格右侧",
+              "en": "right half of the <console>, right of <focus_space>"
             }
           }
         }
@@ -3039,19 +3039,7 @@
           "en": "All installation slots in tier 2 are filled"
         },
                 "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "options": [
-              {
-                "zh": "将<stage_tile>（层级 4）翻至激活面",
-                "en": "Flip <stage_tile> (stage 4) to its active face"
-              },
-              {
-                "zh": "将<stage_tile>（层级 5）翻至激活面",
-                "en": "Flip <stage_tile> (stage 5) to its active face"
-              }
-            ],
-            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-          }
+          "<ontology::instant_content>": "<activate_stage_tile>"
         }
       }
     },
@@ -3317,8 +3305,18 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<console> 上的 4 列重置轨道，每列有一个 <reset_marker>。执行 Reset 时，将最左侧的重置标记沿列逐步下移：A 步（移动阶段标记至下一个 reset space）、B 步（回收并重掷所有已使用的激活骰子）、C 步（将重置标记移至 idea space 或 food space）。重置列也为空时标志着阶段标记已被推动的次数。",
-        "en": "The 4 reset columns on the <console>, each holding a <reset_marker>. When performing a Reset, move the leftmost reset marker step by step down its column: step A (move the phase indicator to the next reset space), step B (retrieve and re-roll all used activation dice), step C (place the reset marker onto the idea or food space). The number of empty reset columns tracks how many times the phase indicator has been moved."
+        "zh": "<console> 右半边的 4 列重置轨道，位于 <focus_space> 右侧。每列顶部初始放置 1 个 <reset_marker>。执行 <reset> 时，将最靠左的标记沿列逐步下推——A→B→C 三步，C 步完成后标记离开重置列进入 <idea_space> 或 <food_space>。重置列为空的数量标志着<phase_indicator>已被推进的次数。收入阶段结束时，空列从供应堆重新补满 <reset_marker>。",
+        "en": "4 reset columns on the right half of the <console>, to the right of <focus_space>. Each column starts with 1 <reset_marker> at the top. When performing <reset>, the leftmost marker is pushed down its column step by step — A→B→C, after which the marker leaves the column for <idea_space> or <food_space>. The number of empty columns tracks how many times the <phase_indicator> has been advanced. At the end of the Income phase, empty columns are refilled with <reset_marker>s from supply."
+      },
+      "<ontology::aid>": {
+        "position": {
+          "zh": "重置列左侧",
+          "en": "left of reset columns"
+        },
+        "description": {
+          "zh": "A: 推动阶段标记至下一个 reset space（到达红色格触发行动阶段结束）。B: 回收所有已使用的激活骰子重掷并放回。C: 重置标记移至创意格或食物格。",
+          "en": "A: Advance phase indicator to next reset space (red space triggers Action Phase end). B: Retrieve all used activation dice, re-roll and return. C: Move reset marker to idea space or food space."
+        }
       }
     },
     {

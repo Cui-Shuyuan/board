@@ -1774,6 +1774,127 @@
       }
     },
     {
+      "id": "activate_stage_tile",
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "激活一个层级板块：选择一个尚未激活的<stage_tile>（层级 4 或层级 5），将其翻至激活面。激活后该层级在终局计分时生效。",
+        "en": "Activate a stage tile: Choose an inactive <stage_tile> (stage 4 or stage 5) and flip it to its active face. Once activated, the stage scores during final scoring."
+      },
+      "target": "一个未激活的<stage_tile>（层级 4 或层级 5）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "zh": "将<stage_tile>（层级 4）翻至激活面",
+              "en": "Flip <stage_tile> (stage 4) to its active face"
+            },
+            {
+              "zh": "将<stage_tile>（层级 5）翻至激活面",
+              "en": "Flip <stage_tile> (stage 5) to its active face"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      },
+      "name": {
+        "zh": "激活层级板块",
+        "en": "Activate Stage Tile"
+      }
+    },
+    {
+      "id": "reset",
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "执行重置。前提：<activation_dice_area> 中剩余 ≤3 个 <activation_die>。将<reset_column>中最靠左的<reset_marker>沿列向下推进三步——A: 推动<phase_indicator>至下一个 reset space（到达红色格触发行动阶段结束）；B: 回收所有已使用的<activation_die>重掷并放回点数格；C: 将该标记移入<idea_space>或<food_space>。所有重置列均为空时仍可执行重置，但 C 步改为从供应堆拿取一个通用标记放置。",
+        "en": "Perform a Reset. Precondition: ≤3 <activation_die> remaining in <activation_dice_area>. Push the leftmost <reset_marker> in the <reset_column>s down three steps — A: Advance the <phase_indicator> to the next reset space (red space triggers Action Phase end); B: Retrieve all used <activation_die>s, re-roll, and place on matching value spaces; C: Move the marker to <idea_space> or <food_space>. If all reset columns are empty, Reset can still be performed, but step C changes to taking a generic marker from supply instead."
+      },
+      "<ontology::condition>": {
+        "zh": "<activation_dice_area> 中剩余 ≤3 个 <activation_die>。",
+        "en": "≤3 <activation_die>s remaining in <activation_dice_area>."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "step_a",
+              "description": {
+                "zh": "将最靠左的<reset_marker>沿列下推一格（A 位）。沿黄色箭头推动<phase_indicator>至<phase_sequence>的下一个 reset space。若到达红色 reset end space，触发行动阶段结束。",
+                "en": "Push the leftmost <reset_marker> one step down its column (position A). Advance the <phase_indicator> along the yellow arrow to the next reset space on the <phase_sequence>. If it reaches the red reset-end space, trigger Action Phase end."
+              },
+              "name": {
+                "zh": "A步：推进阶段标记",
+                "en": "Step A: Advance Phase Indicator"
+              }
+            },
+            {
+              "id": "step_b",
+              "do_after": [
+                "step_a"
+              ],
+              "description": {
+                "zh": "将同一<reset_marker>沿列再下推一格（B 位）。回收<activation_dice_area>中所有已使用的<activation_die>，全部重掷，将每颗骰子放回与点数匹配的格上。",
+                "en": "Push the same <reset_marker> another step down its column (position B). Retrieve all used <activation_die>s from <activation_dice_area>, re-roll all of them, and place each on its matching value space."
+              },
+              "name": {
+                "zh": "B步：回收并重掷骰子",
+                "en": "Step B: Retrieve and Re-roll Dice"
+              }
+            },
+            {
+              "id": "step_c",
+              "do_after": [
+                "step_b"
+              ],
+              "options": [
+                {
+                  "id": "to_idea",
+                  "<ontology::transfer>": {
+                    "source": {
+                      "zh": "如果<reset_column>中有<reset_marker>，则为<reset_column>；否则为<ontology::supply>",
+                      "en": "If <reset_marker> exists in <reset_column>, then <reset_column>; otherwise <ontology::supply>"
+                    },
+                    "destination": "<idea_space>",
+                    "<object>": "<reset_marker>",
+                    "quantity": 1
+                  },
+                  "name": {
+                    "zh": "移至创意格",
+                    "en": "To Idea Space"
+                  }
+                },
+                {
+                  "id": "to_food",
+                  "<ontology::transfer>": {
+                    "source": {
+                      "zh": "如果<reset_column>中有<reset_marker>，则为<reset_column>；否则为<ontology::supply>",
+                      "en": "If <reset_marker> exists in <reset_column>, then <reset_column>; otherwise <ontology::supply>"
+                    },
+                    "destination": "<food_space>",
+                    "<object>": "<reset_marker>",
+                    "quantity": 1
+                  },
+                  "name": {
+                    "zh": "移至食物格",
+                    "en": "To Food Space"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
+              "name": {
+                "zh": "C步：放置标记",
+                "en": "Step C: Place Marker"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      },
+      "name": {
+        "zh": "重置",
+        "en": "Reset"
+      }
+    },
+    {
       "id": "complete_building_project",
       "specifies": "<ontology::pipeline>",
       "description": {
