@@ -33,8 +33,8 @@ Action 必须遵循 `condition → cost → target → content` 结构：
   "name": { "zh": "建造农场", "en": "Build Farm" },
   "description": { "zh": "...", "en": "..." },
   "<ontology::condition>": {
-    "options": [ { "description": { "zh": "谓词 1" } }, { "description": { "zh": "谓词 2" } } ],
-    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+    "zh": "谓词（单条时直接写 zh/en，不用 options 结构）",
+    "en": "Predicate (single condition: write zh/en directly, no options)"
   },
   "target": "用自然语言描述，嵌 <concept_id> 引用",
   "<ontology::content>": {
@@ -46,7 +46,7 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 }
 ```
 
-- **condition**：`options`/`type`/`EXECUTE_ALL` 结构。每条谓词用自然语言描述
+- **condition**：**单条谓词直接写 `{ "zh": "...", "en": "..." }`**，不用 options 结构；仅当有多条谓词（需并列/组合）时才用 `options`/`type`/`EXECUTE_ALL` 结构，每条谓词用自然语言描述
 - **cost**：`"<ontology::instant_cost>": { ... }`（`<ontology::continuous_cost>` 用于状态条件）。**无需支付时省略 cost 字段，不写 null**
 - **target**：**纯字符串**（不是对象）。用自然语言描述，嵌入 `<concept_id>` 交叉引用。target 是 trigger 的字段，不是 ontology 概念，不加 `<>` 包在字段名上
 - **content**：`<ontology::instant_content>` 或 `<ontology::continuous_content>`，内部用 `options`/`type`/`do_after` 描述步骤
@@ -101,6 +101,14 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 // 纯标签（无 <>）→ 用 id
 { "id": "chip_name", "position": {...} }
 ```
+
+---
+
+## 支付 destination 的语义区分
+
+- **激活骰支付**（模块激活费用）：`source: <activation_dice_area>` → `destination: <player_holding>`——激活骰属于玩家，支付后放回玩家保留区（重置时拿回），**不写 `<ontology::supply>`**（那是公共版图供应堆，会造成误解）
+- **计划标记支付**：放回 `<ontology::supply>`（planning_marker 定义中已注明）
+- **通用标记发放**：从供应堆拿的是 `<octagonal_pillar>`（通用标记），进入食物格/创意格/钱币格/骰子格才「成为」`<food>`/`<idea_marker>`/`<money>`/`<planning_marker>`——transfer 的 object 写八角柱，具名在 description 里说明
 
 ---
 
@@ -167,7 +175,7 @@ id + name.zh + name.en + description.zh + description.en
 
 写一个新 action/trigger 时确认：
 - [ ] 有 `name: { zh, en }`（紧跟 id 之后）
-- [ ] condition 用了 options/type/EXECUTE_ALL 结构
+- [ ] condition 单条写 zh/en，多条才用 options/type/EXECUTE_ALL
 - [ ] cost 是 instant_cost/continuous_cost；无需支付则省略字段（不写 null）
 - [ ] target 是字符串，不是对象
 - [ ] content 是 `<ontology::instant_content>` 或 `<ontology::continuous_content>`

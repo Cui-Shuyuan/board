@@ -543,7 +543,10 @@
       "<ontology::state>": {
         "posture": {
           "type": "enum",
-          "enum": ["<upright>", "<lying>"],
+          "enum": [
+            "<upright>",
+            "<lying>"
+          ],
           "default": "<upright>",
           "description": {
             "zh": "部落的姿态。upright = 站立（健康），lying = 躺倒（虚弱）。",
@@ -816,8 +819,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "放置在<console>创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意骰子点数加减 1（1 和 6 相连）。",
-        "en": "A marker placed on a player's idea space, used to modify die values. Spending 1 idea marker increases or decreases a die value by 1 (1 and 6 are adjacent)."
+        "zh": "放置在<console>创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意一颗<activation_die>或<fate_die>的点数加减 1（1 和 6 相连）。",
+        "en": "A marker placed on a player's idea space, used to modify die values. Spending 1 idea marker increases or decreases the value of any <activation_die> or <fate_die> by 1 (1 and 6 are adjacent)."
       },
       "component": "<octagonal_pillar>"
     },
@@ -830,8 +833,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "放置在骰子格上的标记，可替代对应点数的白骰子用于激活模组。只能替代白骰子，不能替代粉骰子。",
-        "en": "A marker placed on a dice space, usable in place of an activation die of the matching value. Can only replace activation dice, not fate dice."
+        "zh": "放置在骰子格上的标记，可替代对应点数的激活骰用于激活模组。只能替代<activation_die>，不能替代<fate_die>。用作支付时放回供应堆（<ontology::supply>），不进入玩家保留区。",
+        "en": "A marker placed on a dice space, usable in place of an activation die of the matching value when activating a module. Can only replace <activation_die>s, not <fate_die>s. When used as payment, the marker is returned to the supply (<ontology::supply>), not to a player holding."
       },
       "component": "<octagonal_pillar>"
     },

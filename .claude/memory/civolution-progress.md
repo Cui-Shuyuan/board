@@ -77,12 +77,19 @@ metadata:
 
 ## 最近进展
 
-- **2026-08-07（15 个主模组全部实例化 + 对话实测）**:
-    - **15 个主模组全部完成**（instances.json）：research 1+2、migration 1+3、activity 2+3、exploration 1+4、其余 11 个骰子点数待确认（TBD 标注）：procreation/production/transport/sustenance/building/planning/achievement/insight/mutation/invention/trade
-    - **新增 10 个基础 action**（flow.json，39 triggers）：procreate、hunt、strengthen_tribe、produce_material、transport_material、gain_activation_die、gain_fate_die、gain_goal_chip、place_planning_markers、move_feature_marker
-    - **cost 可读性修复**：15 个模组 cost 增加 description 明确「两项骰子都要支付，非二选一」——实测中发现 LLM 将 EXECUTE_ALL 双骰误读为「或」（Q5「地点怎么翻开」回答成「一颗点数为一或四」）
-    - **对话实测结论**：10 题全部准确（含终局计分、喂养、目标芯片等复杂题）；耗时 4.4~21.5s 平均约 8s；状态依赖问题正确反问（「你现在的部落都分布在哪里？」）；工具链 2-6 轮，偶有重复搜索
-    - **索引重建**：civolution 434 概念、splendor 160 概念，索引脚本与 instances.json modules 结构兼容
+- **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
+    - **15 个主模组全部完成**（instances.json）。已确认骰子点数 7 个：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5；剩余 8 个 TBD：procreation/production/building/achievement/insight/mutation/invention/trade
+    - **新增 10 个基础 action**（flow.json，41 triggers）：procreate、hunt、strengthen_tribe、produce_material、transport_material（复合）、gain_activation_die、gain_fate_die、gain_goal_chip、place_planning_markers、move_feature_marker
+    - **运输拆分（用户 review 修正）**：transport_material 拆为 transport_land_material（陆地按区域类型）+ transport_boat_material（船载，constraints 定义 storage_space 入参：缺省=相邻已开发区域类型、'any'=任意格，L3 使用）+ 复合 CHOOSE_ONE。参照 migrate = move_tribe + resolve_migration_triggers 模式——需要「实例化时区分入参」的底层 action 用 constraints 定义参数
+    - **hunt 修正（用户 review）**：掷骰用 `<ontology::die_roll>`（fate_die[] count all）；食物数量改查表描述（quantity 0 占位删除）
+    - **激活骰支付 destination 统一 `<player_holding>`**（36 处：15 主模块 + 6 feature 模块）：激活骰属于玩家，支付后放回玩家保留区（重置时拿回），非公共 supply
+    - **标记物理形态统一**：供应堆里是通用 `<octagonal_pillar>`，进入食物格/创意格/钱币格/骰子格才「成为」food/idea_marker/money/planning_marker（6 处修正 + planning_marker/idea_marker 定义 component 印证）
+    - **planning_marker 描述补充**：用作支付时放回 `<ontology::supply>`（不进入玩家保留区），只能替代 `<activation_die>` 不能替代 `<fate_die>`；idea_marker 显式「可修改 activation_die 或 fate_die 点数」
+    - **单选项 condition 修正**：单条谓词直接写 zh/en，不再用 options/type 结构（7 处）；多条才用 options
+    - **cost 可读性修复**：15 个模组 cost 增加 description 明确「两项骰子都要支付，非二选一」——实测中发现 LLM 将 EXECUTE_ALL 双骰误读为「或」（Q5 回答成「一颗点数为一或四」）
+    - **对话实测结论**：10 题全部准确（含终局计分、喂养、目标芯片等复杂题）；耗时 4.4~21.5s 平均约 8s；状态依赖问题正确反问；工具链 2-6 轮偶有重复搜索
+    - **索引重建**：civolution 434 概念、splendor 160 概念，索引脚本兼容
+    - **工作方式反馈**：用户偏好 Edit 工具逐处修改（可审查 old→new），脚本只用于真正的机械批量且需先展示脚本内容
 
 - **2026-08-06（ontology 体系化 + 控制台右半边 + 迁徙 pipeline 重构 + evaluate/check/state）**:
     - **ontology 新增**：`instant_cost`/`continuous_cost`/`instant_effect`/`continuous_effect`、`evaluate`（extends trigger，产出 result）、`check`（specifies evaluate，pass/fail）、`flip`（specifies state_change，face）、`temporary_zone`（瞬时中间态）、`state_change`（subject+to+optional attribute/from）
@@ -230,4 +237,4 @@ metadata:
 - [[runtime-architecture]] — 后端接口与验证方式
 
 **Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
-**How to apply:** 当前节点为 Phase A 进行中——模块升级模型已重构（Lose + Gain），对象清单扩展至 169。剩余组件 review 完成后进入 Phase B 核心机制。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。
+**How to apply:** 15 个主模组已全部实例化，其中 7 个点数已确认、8 个 TBD 待用户补充。逐模组 review 进行中（sustenance/planning/transport 已过），**下一个：繁育（procreation）**——前置 action procreate 已定义，待用户确认骰子点数。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。

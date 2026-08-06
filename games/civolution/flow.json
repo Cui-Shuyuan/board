@@ -1749,15 +1749,8 @@
         "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "至少有一种领地类型拥有至少一个自己的<tribe>。",
-              "en": "At least one territory type has at least one of your <tribe>s."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "至少有一种领地类型拥有至少一个自己的<tribe>。",
+        "en": "At least one territory type has at least one of your <tribe>s."
       },
       "target": "一种至少有一个自己<tribe>的领地类型",
       "<ontology::content>": {
@@ -1813,15 +1806,8 @@
         "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. The site stays face up and affects adjacent territories for the rest of the game."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "存在至少 1 个 face == face_down 的 <site>。",
-              "en": "At least one <site> with face == face_down exists."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "存在至少 1 个 face == face_down 的 <site>。",
+        "en": "At least one <site> with face == face_down exists."
       },
       "target": "1 个 face == face_down 的 <site>",
       "<ontology::content>": {
@@ -1882,15 +1868,8 @@
         "en": "Choose 1 territory where you have at least one <tribe>; every <site> with face == face_down adjacent to it becomes a target, and <explore_site> is performed on each."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "存在至少一个区域：有至少一个自己的<tribe>，且相邻至少一个 face == face_down 的 <site>。",
-              "en": "There exists a territory with at least one of your <tribe>s and at least one adjacent <site> with face == face_down."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "存在至少一个区域：有至少一个自己的<tribe>，且相邻至少一个 face == face_down 的 <site>。",
+        "en": "There exists a territory with at least one of your <tribe>s and at least one adjacent <site> with face == face_down."
       },
       "target": "1 个有至少一个自己<tribe>的区域，且其相邻存在 face == face_down 的 <site>",
       "<ontology::content>": {
@@ -1914,15 +1893,8 @@
         "en": "Choose a territory with at least one of your <tribe>s. Take a new <tribe> from your supply and place it onto an encampment in that territory: upright on a free encampment; displace the occupant into the wilderness and lay the new tribe down weakened if occupied; fire encampments score as usual; procreation on a boat is allowed if it has a free seat. If you have no tribes on the continent, choose any territory. Cannot procreate if all 20 tribes are on the continent."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "场上自己的<tribe>少于 20 个。",
-              "en": "Fewer than 20 of your <tribe>s are on the continent."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "场上自己的<tribe>少于 20 个。",
+        "en": "Fewer than 20 of your <tribe>s are on the continent."
       },
       "target": "1 个有至少一个自己<tribe>的区域（大陆无部落时可任选区域；船繁育需船上恰有 1 个部落且另一座空着）",
       "<ontology::content>": {
@@ -1969,35 +1941,31 @@
         "en": "Choose a territory with at least one of your <tribe>s and no <hunting_token>. Roll all pink fate dice, pick one result, and look up the hunting table (territory type × die value) for the food amount. Take that many <food> from supply onto your food space (idea markers may change the die value). Finally place a <hunting_token> from the display onto that territory — no one may hunt there for the rest of the era."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "存在至少一个区域：有至少一个自己的<tribe>，且无<hunting_token>。",
-              "en": "There exists a territory with at least one of your <tribe>s and no <hunting_token>."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "存在至少一个区域：有至少一个自己的<tribe>，且无<hunting_token>。",
+        "en": "There exists a territory with at least one of your <tribe>s and no <hunting_token>."
       },
       "target": "1 个有至少一个自己<tribe>且无<hunting_token>的区域",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "options": [
             {
-              "description": {
-                "zh": "掷全部粉骰，选 1 个点数（可用创意标记修改，1 和 6 相连）。",
-                "en": "Roll all pink fate dice and choose one result (idea markers may change it; 1 and 6 are adjacent)."
+              "<ontology::die_roll>": {
+                "<dice>": "<fate_die>[]",
+                "count": "all",
+                "description": {
+                  "zh": "掷玩家持有的全部<fate_die>，选 1 个骰子的点数（可用创意标记修改，1 和 6 相连）。",
+                  "en": "Roll all <fate_die>s held by the player and choose one result (idea markers may change it; 1 and 6 are adjacent)."
+                }
               }
             },
             {
               "<ontology::transfer>": {
                 "source": "<ontology::supply>",
                 "destination": "<food_space>",
-                "<ontology::object>": "<food>",
-                "quantity": 0,
+                "<ontology::object>": "<octagonal_pillar>",
                 "description": {
-                  "zh": "按狩猎表（区域类型 × 骰子点数）拿取对应数量<food>到食物格。",
-                  "en": "Take <food> markers per the hunting table (territory type × die value) onto the food space."
+                  "zh": "按狩猎表（区域类型 × 骰子点数）查表确定食物数量，从供应堆拿取对应数量的<octagonal_pillar>放到食物格，成为<food>。",
+                  "en": "Look up the hunting table (territory type × die value) for the food amount and take that many <octagonal_pillar>s from supply onto the food space, becoming <food>."
                 }
               }
             },
@@ -2056,15 +2024,8 @@
         "en": "Choose a territory with at least one of your <tribe>s and place a marker from supply into it, representing a raw material of the type shown on the territory's material tile. Production on a boat is possible with at least one tribe aboard and the central notch free (type determined at transport time)."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "存在区域（或有自己的船）：有至少一个自己的<tribe>；船上生产需中央凹槽未被占用。",
-              "en": "There exists a territory (or one of your boats) with at least one of your <tribe>s; boat production requires a free central notch."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "存在区域（或有自己的船）：有至少一个自己的<tribe>；船上生产需中央凹槽未被占用。",
+        "en": "There exists a territory (or one of your boats) with at least one of your <tribe>s; boat production requires a free central notch."
       },
       "target": "1 个有至少一个自己<tribe>的区域（或自己的船）",
       "<ontology::content>": {
@@ -2083,17 +2044,17 @@
       }
     },
     {
-      "id": "transport_material",
+      "id": "transport_land_material",
       "name": {
-        "zh": "运输原材料",
-        "en": "Transport Raw Material"
+        "zh": "运输陆地原材料",
+        "en": "Transport Land Raw Material"
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择大陆上任意 1 个自己的原材料标记（无需该区域有部落），将其放到控制台对应材料类型的仓库格，成为已储存材料。船上的原材料按船所在水流区域相邻的已开发区域的材料类型运输。",
-        "en": "Choose any 1 of your raw material markers on the continent (no tribe required in that territory) and move it to the storage space of the corresponding material type on your console, making it a stored material. Raw materials on boats are transported per the material type of a developed territory adjacent to the boat's Water territory."
+        "zh": "选择大陆上任意 1 个自己的陆地原材料标记（无需该区域有部落），按所在区域<material_tile>的材料类型，将标记放到对应材料类型的仓库格，成为<stored_material>。",
+        "en": "Choose any 1 of your raw material markers on the continent (no tribe required in that territory). Move the marker to the storage space matching its territory's <material_tile> material type, becoming a <stored_material>."
       },
-      "target": "大陆上任意 1 个自己的原材料标记（<octagonal_pillar>）",
+      "target": "大陆上任意 1 个自己的陆地原材料标记（<octagonal_pillar>）",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
@@ -2102,12 +2063,68 @@
             "<ontology::object>": "<stored_material>",
             "quantity": 1,
             "description": {
-              "zh": "将 1 个原材料标记移至对应材料类型的仓库格。",
-              "en": "Move 1 raw material marker to its storage space."
+              "zh": "按该区域<material_tile>的材料类型，将标记放到对应仓库格。",
+              "en": "Move the marker to the storage space matching the territory's <material_tile> type."
             }
           }
         }
       }
+    },
+    {
+      "id": "transport_boat_material",
+      "name": {
+        "zh": "运输船载原材料",
+        "en": "Transport Boat Raw Material"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个自己的船载原材料标记，运输到仓库格。默认按船所在水流区域相邻的已开发区域（任选其一）的材料类型确定仓库格；调用方可传 storage_space = 'any' 放宽为任意仓库格（运输模组 L3）。",
+        "en": "Choose 1 of your raw material markers on a boat and transport it to a storage space. By default the storage space matches the material type of a developed territory adjacent to the boat's Water territory (choose one); the caller may pass storage_space = 'any' to allow any storage space (Transport module L3)."
+      },
+      "target": "1 个自己的船载原材料标记（<octagonal_pillar>）",
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "storage_space",
+            "description": {
+              "zh": "仓库格选择规则。缺省 = 按船所在水流区域相邻的已开发区域（任选其一）的材料类型；'any' = 任意仓库格（运输模组 L3 放宽）。",
+              "en": "Storage space selection rule. Default = material type of a developed territory adjacent to the boat's Water territory (choose one); 'any' = any storage space (Transport module L3 relaxation)."
+            }
+          }
+        ]
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target 所在船",
+            "destination": "<storage_area>",
+            "<ontology::object>": "<stored_material>",
+            "quantity": 1,
+            "description": {
+              "zh": "将标记从船移到仓库格。默认按相邻已开发区域的类型确定格位；storage_space = 'any' 时可放入任意仓库格。",
+              "en": "Move the marker from the boat to a storage space. By default the space matches an adjacent developed territory's type; with storage_space = 'any' any space is allowed."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "transport_material",
+      "name": {
+        "zh": "运输原材料",
+        "en": "Transport Raw Material"
+      },
+      "specifies": "<ontology::pipeline>",
+      "description": {
+        "zh": "运输 1 个原材料到仓库：陆地原材料按所在区域类型（<transport_land_material>）；船载原材料按相邻已开发区域类型或调用方指定规则（<transport_boat_material>）。",
+        "en": "Transport 1 raw material to storage: land raw material by its territory's type (<transport_land_material>); boat raw material by an adjacent developed territory's type or a caller-specified rule (<transport_boat_material>)."
+      },
+      "options": [
+        "<transport_land_material>",
+        "<transport_boat_material>"
+      ],
+      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
     },
     {
       "id": "gain_activation_die",
@@ -2175,15 +2192,8 @@
         "en": "Choose 1 <goal_chip> from the goal chip display on the progress board and place it face up in your goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it. Then refill the empty display space with a goal chip randomly drawn from the dark blue bag."
       },
       "<ontology::condition>": {
-        "options": [
-          {
-            "description": {
-              "zh": "目标芯片展示区非空。",
-              "en": "The goal chip display is not empty."
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "zh": "目标芯片展示区非空。",
+        "en": "The goal chip display is not empty."
       },
       "target": "目标芯片展示区的 1 枚<goal_chip>",
       "<ontology::content>": {
@@ -2229,11 +2239,11 @@
           "<ontology::transfer>": {
             "source": "<ontology::supply>",
             "destination": "this.target",
-            "<ontology::object>": "<planning_marker>",
+            "<ontology::object>": "<octagonal_pillar>",
             "quantity": 0,
             "description": {
-              "zh": "从供应堆取 N 个标记放到同一骰子格，成为计划标记。",
-              "en": "Place N markers from supply onto the same dice space as planning markers."
+              "zh": "从供应堆取 N 个标记放到同一骰子格，成为计划标记。（标记放上骰子格后才成为<planning_marker>）",
+              "en": "Place N markers from supply onto the same dice space as planning markers.(the marker becomes a <planning_marker> once on the dice space)"
             }
           }
         }
@@ -2317,8 +2327,12 @@
               "<ontology::transfer>": {
                 "source": "<ontology::supply>",
                 "destination": "<idea_space>",
-                "<ontology::object>": "<idea_marker>",
-                "quantity": 1
+                "<ontology::object>": "<octagonal_pillar>",
+                "quantity": 1,
+                "description": {
+                  "zh": "（标记放上创意格后才成为<idea_marker>）",
+                  "en": "(the marker becomes an <idea_marker> once on the idea space)"
+                }
               }
             }
           ],
