@@ -77,6 +77,13 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-07（15 个主模组全部实例化 + 对话实测）**:
+    - **15 个主模组全部完成**（instances.json）：research 1+2、migration 1+3、activity 2+3、exploration 1+4、其余 11 个骰子点数待确认（TBD 标注）：procreation/production/transport/sustenance/building/planning/achievement/insight/mutation/invention/trade
+    - **新增 10 个基础 action**（flow.json，39 triggers）：procreate、hunt、strengthen_tribe、produce_material、transport_material、gain_activation_die、gain_fate_die、gain_goal_chip、place_planning_markers、move_feature_marker
+    - **cost 可读性修复**：15 个模组 cost 增加 description 明确「两项骰子都要支付，非二选一」——实测中发现 LLM 将 EXECUTE_ALL 双骰误读为「或」（Q5「地点怎么翻开」回答成「一颗点数为一或四」）
+    - **对话实测结论**：10 题全部准确（含终局计分、喂养、目标芯片等复杂题）；耗时 4.4~21.5s 平均约 8s；状态依赖问题正确反问（「你现在的部落都分布在哪里？」）；工具链 2-6 轮，偶有重复搜索
+    - **索引重建**：civolution 434 概念、splendor 160 概念，索引脚本与 instances.json modules 结构兼容
+
 - **2026-08-06（ontology 体系化 + 控制台右半边 + 迁徙 pipeline 重构 + evaluate/check/state）**:
     - **ontology 新增**：`instant_cost`/`continuous_cost`/`instant_effect`/`continuous_effect`、`evaluate`（extends trigger，产出 result）、`check`（specifies evaluate，pass/fail）、`flip`（specifies state_change，face）、`temporary_zone`（瞬时中间态）、`state_change`（subject+to+optional attribute/from）
     - **state 实例化**：tribe posture upright/lying；card/tile face face_up/face_down
