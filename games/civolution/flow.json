@@ -14,10 +14,18 @@
   "procedures": [
     {
       "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
       "specifies": "<ontology::round>",
       "children": [
         {
           "id": "setup",
+          "name": {
+            "zh": "设置",
+            "en": "Setup"
+          },
           "specifies": "<ontology::phase>",
           "description": {
             "zh": "游戏设置阶段，分为公共设置和个人设置。",
@@ -26,18 +34,22 @@
           "events": [
             {
               "id": "assemble_public_board",
+              "name": {
+                "zh": "组装公共版图",
+                "en": "Assemble Public Board"
+              },
               "specifies": "<ontology::event>",
               "description": {
                 "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
                 "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly arrange the 8 continent tiles to fill the 5×3 grid inside the score track frame, forming the continent."
-              },
-              "name": {
-                "zh": "组装公共版图",
-                "en": "Assemble Public Board"
               }
             },
             {
               "id": "place_sites",
+              "name": {
+                "zh": "放置地点",
+                "en": "Place Sites"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
@@ -47,26 +59,26 @@
               "destination": "<continent>",
               "<ontology::object>": "<site>",
               "quantity": 24,
-              "face_down": true,
-              "name": {
-                "zh": "放置地点",
-                "en": "Place Sites"
-              }
+              "face_down": true
             },
             {
               "id": "place_progress_and_sequence_boards",
+              "name": {
+                "zh": "放置进程流程版图",
+                "en": "Place Progress & Sequence Boards"
+              },
               "specifies": "<ontology::event>",
               "description": {
                 "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
                 "en": "Place the progress board and sequence board on either side of the public board."
-              },
-              "name": {
-                "zh": "放置进程流程版图",
-                "en": "Place Progress & Sequence Boards"
               }
             },
             {
               "id": "prepare_phase_indicator",
+              "name": {
+                "zh": "准备阶段标记",
+                "en": "Prepare Phase Indicator"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将阶段标记放到流程版图阶段序列的阶段一位置。",
@@ -75,14 +87,14 @@
               "source": "<ontology::game_box>",
               "destination": "<phase_sequence>",
               "<ontology::object>": "<phase_indicator>",
-              "quantity": 1,
-              "name": {
-                "zh": "准备阶段标记",
-                "en": "Prepare Phase Indicator"
-              }
+              "quantity": 1
             },
             {
               "id": "prepare_weather_indicator",
+              "name": {
+                "zh": "准备天气标记",
+                "en": "Prepare Weather Indicator"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将天气标记放到流程版图天气轨的适中位置。",
@@ -91,14 +103,14 @@
               "source": "<ontology::game_box>",
               "destination": "<weather_gauge>",
               "<ontology::object>": "<weather_indicator>",
-              "quantity": 1,
-              "name": {
-                "zh": "准备天气标记",
-                "en": "Prepare Weather Indicator"
-              }
+              "quantity": 1
             },
             {
               "id": "prepare_event_cards",
+              "name": {
+                "zh": "准备事件牌",
+                "en": "Prepare Event Cards"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
@@ -108,40 +120,40 @@
               "destination": "<event_card_space>",
               "<ontology::object>": "<event_card>",
               "quantity": 4,
-              "face_down": true,
-              "name": {
-                "zh": "准备事件牌",
-                "en": "Prepare Event Cards"
-              }
+              "face_down": true
             },
             {
               "id": "prepare_research_decks",
+              "name": {
+                "zh": "准备研究牌堆",
+                "en": "Prepare Research Decks"
+              },
               "specifies": "<ontology::shuffle>",
               "target": "<research_deck>",
               "description": {
                 "zh": "将五种研究牌分别洗混后形成供应堆。",
                 "en": "Shuffle the five types of research cards into separate supply decks."
-              },
-              "name": {
-                "zh": "准备研究牌堆",
-                "en": "Prepare Research Decks"
               }
             },
             {
               "id": "prepare_starting_decks",
+              "name": {
+                "zh": "准备初始牌堆",
+                "en": "Prepare Starting Decks"
+              },
               "specifies": "<ontology::shuffle>",
               "target": "<starting_marker_deck>",
               "description": {
                 "zh": "洗混初始标记牌和初始芯片牌备用。",
                 "en": "Shuffle the starting marker deck and starting chip deck."
-              },
-              "name": {
-                "zh": "准备初始牌堆",
-                "en": "Prepare Starting Decks"
               }
             },
             {
               "id": "prepare_era_scoring_tiles",
+              "name": {
+                "zh": "准备时代计分板块",
+                "en": "Prepare Era Scoring Tiles"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区。",
@@ -150,14 +162,14 @@
               "source": "<ontology::game_box>",
               "destination": "<era_scoring_area>",
               "<ontology::object>": "<scoring_tile>",
-              "quantity": 4,
-              "name": {
-                "zh": "准备时代计分板块",
-                "en": "Prepare Era Scoring Tiles"
-              }
+              "quantity": 4
             },
             {
               "id": "prepare_final_scoring_tiles",
+              "name": {
+                "zh": "准备终局计分板块",
+                "en": "Prepare Final Scoring Tiles"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取 3 张计分板块按图标背面朝上覆盖终局计分区。",
@@ -167,14 +179,14 @@
               "destination": "<final_scoring_area>",
               "<ontology::object>": "<scoring_tile>",
               "quantity": 3,
-              "face_down": true,
-              "name": {
-                "zh": "准备终局计分板块",
-                "en": "Prepare Final Scoring Tiles"
-              }
+              "face_down": true
             },
             {
               "id": "prepare_hundred_point_tokens",
+              "name": {
+                "zh": "准备百分指示物",
+                "en": "Prepare 100-Point Tokens"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将若干一百分指示物翻面作为阻挡标记覆盖不可用区域，剩余作为供应堆。",
@@ -184,14 +196,14 @@
               "destination": "<hundred_point_token_display>",
               "quantity": {
                 "expr": "per_player_count_setup"
-              },
-              "name": {
-                "zh": "准备百分指示物",
-                "en": "Prepare 100-Point Tokens"
               }
             },
             {
               "id": "prepare_hunting_tokens",
+              "name": {
+                "zh": "准备狩猎指示物",
+                "en": "Prepare Hunting Tokens"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将若干狩猎指示物翻面作为阻挡标记覆盖不可用营地，剩余作为供应堆。",
@@ -201,14 +213,14 @@
               "destination": "<hunting_token_display>",
               "quantity": {
                 "expr": "per_player_count_setup"
-              },
-              "name": {
-                "zh": "准备狩猎指示物",
-                "en": "Prepare Hunting Tokens"
               }
             },
             {
               "id": "prepare_dice_pool",
+              "name": {
+                "zh": "准备骰子池",
+                "en": "Prepare Dice Pool"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
@@ -218,14 +230,14 @@
               "destination": "<dice_display>",
               "quantity": {
                 "expr": "player_count + 1"
-              },
-              "name": {
-                "zh": "准备骰子池",
-                "en": "Prepare Dice Pool"
               }
             },
             {
               "id": "prepare_goal_chip_display",
+              "name": {
+                "zh": "准备目标芯片展示",
+                "en": "Prepare Goal Chip Display"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取若干目标芯片正面朝上放到目标芯片展示区，剩余放回袋子。",
@@ -236,14 +248,14 @@
               "<ontology::object>": "<goal_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
-              },
-              "name": {
-                "zh": "准备目标芯片展示",
-                "en": "Prepare Goal Chip Display"
               }
             },
             {
               "id": "prepare_income_chip_display",
+              "name": {
+                "zh": "准备收入芯片展示",
+                "en": "Prepare Income Chip Display"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取若干收入芯片正面朝上放到收入芯片展示区，剩余放回袋子。",
@@ -254,14 +266,14 @@
               "<ontology::object>": "<income_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
-              },
-              "name": {
-                "zh": "准备收入芯片展示",
-                "en": "Prepare Income Chip Display"
               }
             },
             {
               "id": "prepare_attribute_chip_display",
+              "name": {
+                "zh": "准备属性芯片展示",
+                "en": "Prepare Attribute Chip Display"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "随机抽取若干属性芯片正面朝上放到属性芯片展示区，剩余放回袋子。",
@@ -272,14 +284,14 @@
               "<ontology::object>": "<attribute_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
-              },
-              "name": {
-                "zh": "准备属性芯片展示",
-                "en": "Prepare Attribute Chip Display"
               }
             },
             {
               "id": "place_material_tiles",
+              "name": {
+                "zh": "放置材料板块",
+                "en": "Place Material Tiles"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
@@ -288,14 +300,14 @@
               "source": "<ontology::game_box>",
               "destination": "<continent>",
               "<ontology::object>": "<material_tile>",
-              "quantity": "all",
-              "name": {
-                "zh": "放置材料板块",
-                "en": "Place Material Tiles"
-              }
+              "quantity": "all"
             },
             {
               "id": "player_setup_modules",
+              "name": {
+                "zh": "玩家设置模组",
+                "en": "Player Setup Modules"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入控制台模组区。",
@@ -305,14 +317,14 @@
               "destination": "<module_area>",
               "<ontology::object>": "<main_module>",
               "quantity": 15,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置模组",
-                "en": "Player Setup Modules"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_dice",
+              "name": {
+                "zh": "玩家设置骰子",
+                "en": "Player Setup Dice"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家从游戏盒中拿取 6 个白骰子，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到控制台骰子区对应点数格上。",
@@ -322,14 +334,14 @@
               "destination": "<activation_dice_area>",
               "<ontology::object>": "<activation_die>",
               "quantity": 6,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置骰子",
-                "en": "Player Setup Dice"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_fate_die",
+              "name": {
+                "zh": "玩家设置命运骰",
+                "en": "Player Setup Fate Die"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家从游戏盒中拿取 1 个粉骰子放在控制台旁边备用。",
@@ -339,14 +351,14 @@
               "destination": "<fate_dice_area>",
               "<ontology::object>": "<fate_die>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置命运骰",
-                "en": "Player Setup Fate Die"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_stage_tiles",
+              "name": {
+                "zh": "玩家设置层级板块",
+                "en": "Player Setup Stage Tiles"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到控制台对应位置。",
@@ -356,14 +368,14 @@
               "destination": "<console>",
               "<ontology::object>": "<stage_tile>",
               "quantity": 2,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置层级板块",
-                "en": "Player Setup Stage Tiles"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_buildings",
+              "name": {
+                "zh": "玩家设置建筑",
+                "en": "Player Setup Buildings"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取所有聚落、农场、船、圆片和部落放到控制台对应位置，并在船上放两个标记。",
@@ -373,14 +385,14 @@
               "destination": "<console>",
               "<ontology::object>": "<settlement> | <farm> | <boat> | <tribe>",
               "quantity": "all",
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置建筑",
-                "en": "Player Setup Buildings"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_score_and_track_tokens",
+              "name": {
+                "zh": "玩家设置分数轨标记",
+                "en": "Player Setup Score & Track Tokens"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个分数标记放到计分轨 0 分位置。",
@@ -390,14 +402,14 @@
               "destination": "<score_track>",
               "<ontology::object>": "<score_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置分数轨标记",
-                "en": "Player Setup Score & Track Tokens"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_favor_marker",
+              "name": {
+                "zh": "玩家设置恩惠标记",
+                "en": "Player Setup Favor Marker"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个恩惠标记放到 <favor_of_ager_track> 起始位置。",
@@ -407,14 +419,14 @@
               "destination": "<favor_of_ager_track>",
               "<ontology::object>": "<favor_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置恩惠标记",
-                "en": "Player Setup Favor Marker"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_technology_marker",
+              "name": {
+                "zh": "玩家设置科技标记",
+                "en": "Player Setup Technology Marker"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到科技轨 0 格。",
@@ -424,14 +436,14 @@
               "destination": "<technology_track>",
               "<ontology::object>": "<progress_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置科技标记",
-                "en": "Player Setup Technology Marker"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_prestige_marker",
+              "name": {
+                "zh": "玩家设置声望标记",
+                "en": "Player Setup Prestige Marker"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到声望轨 0 格。",
@@ -441,14 +453,14 @@
               "destination": "<prestige_track>",
               "<ontology::object>": "<progress_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置声望标记",
-                "en": "Player Setup Prestige Marker"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_knowledge_marker",
+              "name": {
+                "zh": "玩家设置知识标记",
+                "en": "Player Setup Knowledge Marker"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到知识轨 0 格。",
@@ -458,14 +470,14 @@
               "destination": "<knowledge_track>",
               "<ontology::object>": "<progress_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置知识标记",
-                "en": "Player Setup Knowledge Marker"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_construction_marker",
+              "name": {
+                "zh": "玩家设置建设标记",
+                "en": "Player Setup Construction Marker"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到建设轨 0 格。",
@@ -475,14 +487,14 @@
               "destination": "<construction_track>",
               "<ontology::object>": "<progress_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置建设标记",
-                "en": "Player Setup Construction Marker"
-              }
+              "per_player": true
             },
             {
               "id": "player_setup_culture_marker",
+              "name": {
+                "zh": "玩家设置文化标记",
+                "en": "Player Setup Culture Marker"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿取 1 个进程标记放到文化轨 0 格。",
@@ -492,14 +504,14 @@
               "destination": "<culture_track>",
               "<ontology::object>": "<progress_marker>",
               "quantity": 1,
-              "per_player": true,
-              "name": {
-                "zh": "玩家设置文化标记",
-                "en": "Player Setup Culture Marker"
-              }
+              "per_player": true
             },
             {
               "id": "player_place_initial_tribes",
+              "name": {
+                "zh": "玩家放置初始部落",
+                "en": "Player Place Initial Tribes"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
@@ -509,14 +521,14 @@
               "destination": "<continent>",
               "<ontology::object>": "<tribe>",
               "quantity": 2,
-              "per_player": true,
-              "name": {
-                "zh": "玩家放置初始部落",
-                "en": "Player Place Initial Tribes"
-              }
+              "per_player": true
             },
             {
               "id": "player_place_initial_markers",
+              "name": {
+                "zh": "玩家放置初始标记",
+                "en": "Player Place Initial Markers"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到控制台重置列顶部。",
@@ -526,26 +538,26 @@
               "destination": "<continent> | <console>",
               "<ontology::object>": "<marker>",
               "quantity": 6,
-              "per_player": true,
-              "name": {
-                "zh": "玩家放置初始标记",
-                "en": "Player Place Initial Markers"
-              }
+              "per_player": true
             },
             {
               "id": "choose_starting_player",
+              "name": {
+                "zh": "选择起始玩家",
+                "en": "Choose Starting Player"
+              },
               "specifies": "<ontology::event>",
               "description": {
                 "zh": "决定起始玩家，获得起始纪念碑。",
                 "en": "Determine the starting player, who receives the starting monolith."
-              },
-              "name": {
-                "zh": "选择起始玩家",
-                "en": "Choose Starting Player"
               }
             },
             {
               "id": "draft_starting_marker_cards",
+              "name": {
+                "zh": "轮抽初始标记牌",
+                "en": "Draft Starting Marker Cards"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得上面标记，其余放回盒子。",
@@ -556,14 +568,14 @@
               "<ontology::object>": "<starting_marker_card>",
               "quantity": {
                 "expr": "player_count * 2"
-              },
-              "name": {
-                "zh": "轮抽初始标记牌",
-                "en": "Draft Starting Marker Cards"
               }
             },
             {
               "id": "draft_starting_chip_cards",
+              "name": {
+                "zh": "轮抽初始芯片牌",
+                "en": "Draft Starting Chip Cards"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "翻开玩家数量 +1 张初始芯片牌，每张贴一张目标芯片；从起始玩家右手边玩家开始逆时针选一张，将目标芯片放入目标区，模组翻面至等级二，牌塞入收入区成为首个收入芯片。",
@@ -574,14 +586,14 @@
               "<ontology::object>": "<starting_chip_card>",
               "quantity": {
                 "expr": "player_count"
-              },
-              "name": {
-                "zh": "轮抽初始芯片牌",
-                "en": "Draft Starting Chip Cards"
               }
             },
             {
               "id": "draft_starting_research_cards",
+              "name": {
+                "zh": "轮抽初始研究牌",
+                "en": "Draft Starting Research Cards"
+              },
               "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "每位玩家从五个研究牌堆各抽两张，每种选一张保留，另一张放回牌堆底。",
@@ -591,20 +603,16 @@
               "destination": "<ontology::player_holding>",
               "<ontology::object>": "<research_card>",
               "quantity": 5,
-              "per_player": true,
-              "name": {
-                "zh": "轮抽初始研究牌",
-                "en": "Draft Starting Research Cards"
-              }
+              "per_player": true
             }
-          ],
-          "name": {
-            "zh": "设置",
-            "en": "Setup"
-          }
+          ]
         },
         {
           "id": "era_loop",
+          "name": {
+            "zh": "时代循环",
+            "en": "Era Loop"
+          },
           "specifies": "<ontology::round>",
           "loop": {
             "for": 4,
@@ -649,6 +657,10 @@
               "children": [
                 {
                   "id": "action_turn_cycle",
+                  "name": {
+                    "zh": "行动轮循环",
+                    "en": "Action Turn Cycle"
+                  },
                   "specifies": "<ontology::round>",
                   "loop": {
                     "until": "<action_phase_end>"
@@ -656,22 +668,18 @@
                   "children": [
                     {
                       "id": "player_action_turn",
+                      "name": {
+                        "zh": "玩家行动回合",
+                        "en": "Player Action Turn"
+                      },
                       "specifies": "<ontology::turn>",
                       "actor": "next_player_in_turn_order",
                       "actions": [
                         "<activate_module>",
                         "<reset>"
-                      ],
-                      "name": {
-                        "zh": "玩家行动回合",
-                        "en": "Player Action Turn"
-                      }
+                      ]
                     }
-                  ],
-                  "name": {
-                    "zh": "行动轮循环",
-                    "en": "Action Turn Cycle"
-                  }
+                  ]
                 }
               ]
             },
@@ -701,50 +709,50 @@
               "children": [
                 {
                   "id": "event_weather",
+                  "name": {
+                    "zh": "天气结算",
+                    "en": "Weather Resolution"
+                  },
                   "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "结算天气效果",
                     "en": "Resolve weather effect"
-                  },
-                  "name": {
-                    "zh": "天气结算",
-                    "en": "Weather Resolution"
                   }
                 },
                 {
                   "id": "event_card_resolution",
+                  "name": {
+                    "zh": "事件牌结算",
+                    "en": "Event Card Resolution"
+                  },
                   "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "结算事件牌效果",
                     "en": "Resolve event card effect"
-                  },
-                  "name": {
-                    "zh": "事件牌结算",
-                    "en": "Event Card Resolution"
                   }
                 },
                 {
                   "id": "event_era_scoring",
+                  "name": {
+                    "zh": "时代计分",
+                    "en": "Era Scoring"
+                  },
                   "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "时代计分",
                     "en": "Era scoring"
-                  },
-                  "name": {
-                    "zh": "时代计分",
-                    "en": "Era Scoring"
                   }
                 },
                 {
                   "id": "event_new_starting_player",
+                  "name": {
+                    "zh": "新起始玩家",
+                    "en": "New Starting Player"
+                  },
                   "specifies": "<ontology::phase>",
                   "description": {
                     "zh": "确定新的起始玩家",
                     "en": "Determine new starting player"
-                  },
-                  "name": {
-                    "zh": "新起始玩家",
-                    "en": "New Starting Player"
                   }
                 }
               ]
@@ -757,14 +765,14 @@
                 "en": "Phase 8: Income Phase. Execute in order: A) Execute income chips top-to-bottom, left-to-right; B) Score statues (each statue scores points based on the Favor of Agera track position); C) Return all hunting tokens from the continent to the display; D) Each player refills empty reset columns with markers from supply. Then return the phase indicator to Phase 1 for the next era (or proceed to final scoring)."
               }
             }
-          ],
-          "name": {
-            "zh": "时代循环",
-            "en": "Era Loop"
-          }
+          ]
         },
         {
           "id": "final_scoring",
+          "name": {
+            "zh": "终局计分",
+            "en": "Final Scoring"
+          },
           "specifies": "<ontology::phase>",
           "description": {
             "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点。分三轮计分：第一轮沿终局计分轨逐格结算 9 个计分项（技术/声望/知识/建设/文化/进化/繁荣/人口/扩张），每项用该格下方印的每单位分值计算；第二轮结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4 和阶段 5 仅在对应 stage tile 已激活时才计分）；第三轮结算 point bonus 卡——每张带分数加成图标的卡牌为其所在列的所有卡牌和收入芯片额外加分。总分最高者获胜。",
@@ -773,6 +781,10 @@
           "children": [
             {
               "id": "final_scoring_categories",
+              "name": {
+                "zh": "终局计分项",
+                "en": "Final Scoring Categories"
+              },
               "specifies": "<ontology::round>",
               "loop": {
                 "until": "<final_scoring_track_end>"
@@ -780,69 +792,57 @@
               "description": {
                 "zh": "第一轮：沿终局计分轨逐项结算 9 个计分项。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
                 "en": "Round 1: Score each of the 9 scoring categories along the final scoring track. Points per unit for each category are determined by the printed value below the space (or the scoring tile covering it)."
-              },
-              "name": {
-                "zh": "终局计分项",
-                "en": "Final Scoring Categories"
               }
             },
             {
               "id": "final_scoring_stage_partition",
+              "name": {
+                "zh": "阶段分区计分",
+                "en": "Stage Partition Scoring"
+              },
               "specifies": "<ontology::phase>",
               "description": {
                 "zh": "第二轮：控制台阶段分区计分。逐一检查阶段 1-5 中安装的每张卡牌和芯片，按阶段左侧分数计分。阶段 4/5 需对应的 stage tile 已激活才计分。",
                 "en": "Round 2: Score the stage partition. Check each card and chip in stages 1-5, scoring the points left of its stage. Stages 4/5 only score if the corresponding stage tile is active."
-              },
-              "name": {
-                "zh": "阶段分区计分",
-                "en": "Stage Partition Scoring"
               }
             },
             {
               "id": "final_scoring_point_bonus_cards",
+              "name": {
+                "zh": "分数加成牌计分",
+                "en": "Point Bonus Card Scoring"
+              },
               "specifies": "<ontology::phase>",
               "description": {
                 "zh": "第三轮：point bonus 卡计分。每张带加成图标的卡牌为其所在列所有卡牌和收入芯片（含自身）提供额外分数。",
                 "en": "Round 3: Score point bonus cards. Each card with the bonus icon grants extra points for all cards and income chips in its column (including itself)."
-              },
-              "name": {
-                "zh": "分数加成牌计分",
-                "en": "Point Bonus Card Scoring"
               }
             },
             {
               "id": "determine_winner",
+              "name": {
+                "zh": "判定胜者",
+                "en": "Determine Winner"
+              },
               "specifies": "<ontology::event>",
               "description": {
                 "zh": "比较所有玩家的成功点数，最高者获胜。平局时，已执行更多模组升级的玩家胜出；仍平局则按座位顺序（从起始玩家顺时针）先到者胜。",
                 "en": "Compare all players' success points; the highest wins. Tiebreaker: the tied player with more module upgrades wins; if still tied, the tied player earliest in seating order (clockwise from starting player) wins."
-              },
-              "name": {
-                "zh": "判定胜者",
-                "en": "Determine Winner"
               }
             }
-          ],
-          "name": {
-            "zh": "终局计分",
-            "en": "Final Scoring"
-          }
+          ]
         }
-      ],
-      "name": {
-        "zh": "游戏",
-        "en": "Game"
-      }
+      ]
     }
   ],
   "triggers": [
     {
       "id": "favor_test",
-      "specifies": "<ontology::check>",
       "name": {
         "zh": "恩惠检定",
         "en": "Favor Test"
       },
+      "specifies": "<ontology::check>",
       "description": {
         "zh": "投掷全部 <fate_die>，只要有一颗点数落在 [1, <favor_of_ager_track>.position] 闭区间内即为通过。",
         "en": "Roll all <fate_die>s. Pass if any die value falls within the closed interval [1, <favor_of_ager_track>.position]."
@@ -864,30 +864,34 @@
     },
     {
       "id": "activate_income_chip",
+      "name": {
+        "zh": "激活收入芯片",
+        "en": "Activate Income Chip"
+      },
       "specifies": "<ontology::activation>",
       "description": {
         "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。",
         "en": "Choose 1 installed <income_chip> from the console stage partition and activate its <ontology::effect>."
-      },
-      "name": {
-        "zh": "激活收入芯片",
-        "en": "Activate Income Chip"
       }
     },
     {
       "id": "perform_activity",
+      "name": {
+        "zh": "执行活动",
+        "en": "Perform Activity"
+      },
       "specifies": "<ontology::activation>",
       "description": {
         "zh": "选择 1 个可用的 <activity> 并激活。",
         "en": "Choose 1 available <activity> and activate it."
-      },
-      "name": {
-        "zh": "执行活动",
-        "en": "Perform Activity"
       }
     },
     {
       "id": "install_research_card",
+      "name": {
+        "zh": "安装研究牌",
+        "en": "Install Research Card"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "将手牌中的一张 <research_card> 安装到层级分区。需确定安装列与位置、满足费用格条件。",
@@ -939,38 +943,38 @@
       "options": [
         {
           "id": "determine_position",
-          "description": {
-            "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
-            "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
-          },
           "name": {
             "zh": "确定安装位置",
             "en": "Determine Position"
+          },
+          "description": {
+            "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
+            "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
           }
         },
         {
           "id": "determine_cost_range",
+          "name": {
+            "zh": "确定费用范围",
+            "en": "Determine Cost Range"
+          },
           "description": {
             "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
             "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
           },
           "do_after": [
             "determine_position"
-          ],
-          "name": {
-            "zh": "确定费用范围",
-            "en": "Determine Cost Range"
-          }
+          ]
         }
       ],
-      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-      "name": {
-        "zh": "安装研究牌",
-        "en": "Install Research Card"
-      }
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
     },
     {
       "id": "install_goal_chip",
+      "name": {
+        "zh": "安装目标芯片",
+        "en": "Install Goal Chip"
+      },
       "specifies": "<ontology::play>",
       "description": {
         "zh": "将一枚 <goal_chip> 从目标区安装到层级分区。翻至背面，选左/右半侧，安装至最低空位。",
@@ -978,14 +982,14 @@
       },
       "<piece>": "<goal_chip>",
       "source": "<goal_area>",
-      "destination": "<goal_column>",
-      "name": {
-        "zh": "安装目标芯片",
-        "en": "Install Goal Chip"
-      }
+      "destination": "<goal_column>"
     },
     {
       "id": "install_income_chip",
+      "name": {
+        "zh": "安装收入芯片",
+        "en": "Install Income Chip"
+      },
       "specifies": "<ontology::play>",
       "description": {
         "zh": "将一枚 <income_chip> 安装到 <stage_partition>。任选一列，安装至最低空闲 <tier>。",
@@ -993,14 +997,14 @@
       },
       "<piece>": "<income_chip>",
       "source": "<income_chip_display>",
-      "destination": "<stage_partition>",
-      "name": {
-        "zh": "安装收入芯片",
-        "en": "Install Income Chip"
-      }
+      "destination": "<stage_partition>"
     },
     {
       "id": "install_attribute_chip",
+      "name": {
+        "zh": "安装属性芯片",
+        "en": "Install Attribute Chip"
+      },
       "specifies": "<ontology::play>",
       "description": {
         "zh": "将一枚 <attribute_chip> 安装到 <stage_partition>。若已有同列则继续该列，否则任选空列。",
@@ -1008,14 +1012,14 @@
       },
       "<piece>": "<attribute_chip>",
       "source": "<attribute_chip_display>",
-      "destination": "<stage_partition>",
-      "name": {
-        "zh": "安装属性芯片",
-        "en": "Install Attribute Chip"
-      }
+      "destination": "<stage_partition>"
     },
     {
       "id": "lose_food",
+      "name": {
+        "zh": "失去食物",
+        "en": "Lose Food"
+      },
       "specifies": "<ontology::transfer>",
       "description": {
         "zh": "将 1 个 <food> 从 <food_space> 返回供应堆。",
@@ -1024,14 +1028,14 @@
       "source": "<food_space>",
       "destination": "<ontology::supply>",
       "<ontology::object>": "<food>",
-      "count": 1,
-      "name": {
-        "zh": "失去食物",
-        "en": "Lose Food"
-      }
+      "count": 1
     },
     {
       "id": "remove_tribe",
+      "name": {
+        "zh": "移除部落",
+        "en": "Remove Tribe"
+      },
       "specifies": "<ontology::transfer>",
       "description": {
         "zh": "将 1 个 <tribe> 从 <continent> 返回玩家供应堆。",
@@ -1040,14 +1044,14 @@
       "source": "<continent>",
       "destination": "<ontology::supply>",
       "<ontology::object>": "<tribe>",
-      "count": 1,
-      "name": {
-        "zh": "移除部落",
-        "en": "Remove Tribe"
-      }
+      "count": 1
     },
     {
       "id": "push_any_progress_track",
+      "name": {
+        "zh": "推进进程轨",
+        "en": "Push Progress Track"
+      },
       "specifies": "<ontology::push_track>",
       "description": {
         "zh": "从 5 条进程轨中任选 1 条推进。",
@@ -1062,14 +1066,14 @@
           "<culture_track>"
         ],
         "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-      },
-      "name": {
-        "zh": "推进进程轨",
-        "en": "Push Progress Track"
       }
     },
     {
       "id": "weather_effect",
+      "name": {
+        "zh": "天气效果",
+        "en": "Weather Effect"
+      },
       "specifies": "<ontology::trigger>",
       "description": {
         "zh": "事件阶段天气标记移动完成后，所有玩家按座次顺位逐一结算当前天气格的效果。正面效果可放弃，负面效果必须执行。",
@@ -1084,14 +1088,14 @@
           "zh": "所有玩家按座次顺位逐一结算当前天气格效果。",
           "en": "All players in seating order resolve the current weather slot effect one by one."
         }
-      },
-      "name": {
-        "zh": "天气效果",
-        "en": "Weather Effect"
       }
     },
     {
       "id": "upgrade_main_module",
+      "name": {
+        "zh": "升级主模组",
+        "en": "Upgrade Main Module"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "选择一个未达最高等级的主模组提升 1 级。L1→L2 翻面，L2→L3 板块放回游戏盒、console 上 L3 效果激活。",
@@ -1100,52 +1104,52 @@
       "options": [
         {
           "id": "choose_module",
-          "description": {
-            "zh": "选择一个未达等级三的主模组。",
-            "en": "Choose a main module not yet at level 3."
-          },
           "name": {
             "zh": "选择模组",
             "en": "Choose Module"
+          },
+          "description": {
+            "zh": "选择一个未达等级三的主模组。",
+            "en": "Choose a main module not yet at level 3."
           }
         },
         {
           "id": "upgrade_l1_to_l2",
+          "name": {
+            "zh": "升级L1到L2",
+            "en": "Upgrade L1 to L2"
+          },
           "description": {
             "zh": "若为等级一，将模组板块翻至等级二面。",
             "en": "If level 1, flip module tile to level 2 side."
           },
           "do_after": [
             "choose_module"
-          ],
-          "name": {
-            "zh": "升级L1到L2",
-            "en": "Upgrade L1 to L2"
-          }
+          ]
         },
         {
           "id": "upgrade_l2_to_l3",
+          "name": {
+            "zh": "升级L2到L3",
+            "en": "Upgrade L2 to L3"
+          },
           "description": {
             "zh": "若为等级二，将模组板块放回 <ontology::game_box>。",
             "en": "If level 2, return module tile to <ontology::game_box>."
           },
           "do_after": [
             "choose_module"
-          ],
-          "name": {
-            "zh": "升级L2到L3",
-            "en": "Upgrade L2 to L3"
-          }
+          ]
         }
       ],
-      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-      "name": {
-        "zh": "升级主模组",
-        "en": "Upgrade Main Module"
-      }
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
     },
     {
       "id": "gain_income_chip",
+      "name": {
+        "zh": "获得收入芯片",
+        "en": "Gain Income Chip"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "获得 1 个收入芯片并触发其效果。",
@@ -1154,18 +1158,22 @@
       "options": [
         {
           "id": "take_from_display",
+          "name": {
+            "zh": "从展示区拿取",
+            "en": "Take From Display"
+          },
           "specifies": "<ontology::transfer>",
           "source": "<income_chip_display>",
           "destination": "<ontology::player_holding>",
           "<ontology::object>": "<income_chip>",
-          "quantity": 1,
-          "name": {
-            "zh": "从展示区拿取",
-            "en": "Take From Display"
-          }
+          "quantity": 1
         },
         {
           "id": "refill_display",
+          "name": {
+            "zh": "补满展示区",
+            "en": "Refill Display"
+          },
           "specifies": "<ontology::transfer>",
           "source": "<income_chip_bag>",
           "destination": "<income_chip_display>",
@@ -1173,48 +1181,40 @@
           "quantity": 1,
           "do_after": [
             "take_from_display"
-          ],
-          "name": {
-            "zh": "补满展示区",
-            "en": "Refill Display"
-          }
+          ]
         },
         {
           "id": "install",
-          "specifies": "<install_income_chip>",
-          "do_after": [
-            "refill_display"
-          ],
           "name": {
             "zh": "安装",
             "en": "Install"
-          }
+          },
+          "specifies": "<install_income_chip>",
+          "do_after": [
+            "refill_display"
+          ]
         },
         {
           "id": "trigger_effect",
-          "specifies": "<activate_income_chip>",
-          "do_after": [
-            "install"
-          ],
           "name": {
             "zh": "触发效果",
             "en": "Trigger Effect"
-          }
+          },
+          "specifies": "<activate_income_chip>",
+          "do_after": [
+            "install"
+          ]
         }
       ],
-      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-      "name": {
-        "zh": "获得收入芯片",
-        "en": "Gain Income Chip"
-      }
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
     },
     {
       "id": "move_tribe",
-      "specifies": "<ontology::action>",
       "name": {
         "zh": "移动部落",
         "en": "Move Tribe"
       },
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "将 1 个健康的部落从一个区域移动至相邻区域。同一领地内不能移动；不能进入<site>。分属两块大陆板块的同一地形类型区域（即使地形一样）视为两个不同区域——只要彼此接壤即可。山脉区域规则上与其他区域完全一样。",
         "en": "Move 1 healthy tribe from one territory to an adjacent territory. Cannot move within the same territory; cannot enter <site>s. Territories of the same terrain type on different continent tiles (even if the terrain is identical) are separate territories — valid as long as their borders touch. Mountain territories function identically to all other types."
@@ -1236,11 +1236,11 @@
     },
     {
       "id": "resolve_migration_triggers",
-      "specifies": "<ontology::pipeline>",
       "name": {
         "zh": "结算迁徙触发",
         "en": "Resolve Migration Triggers"
       },
+      "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "迁徙后的自动触发结算。各 trigger 按自身 condition 独立判定，满足即执行。",
         "en": "Automatic trigger resolution after migration. Each trigger independently checks its condition and fires if met."
@@ -1266,11 +1266,11 @@
       "options": [
         {
           "id": "displace_occupant",
-          "specifies": "<ontology::trigger>",
           "name": {
             "zh": "驱赶到荒野",
             "en": "Displace to Wilderness"
           },
+          "specifies": "<ontology::trigger>",
           "<ontology::condition>": {
             "zh": "目的地为陆地营地，且该营地已被其他<tribe>占据（无论自己或他人）。",
             "en": "Destination is a land encampment occupied by another <tribe> (own or opponent's)."
@@ -1292,11 +1292,11 @@
         },
         {
           "id": "fire_encampment_score",
-          "specifies": "<ontology::trigger>",
           "name": {
             "zh": "篝火营地得分",
             "en": "Score Fire Encampment"
           },
+          "specifies": "<ontology::trigger>",
           "<ontology::condition>": {
             "zh": "目的地营地是篝火营地（黄色边框）。",
             "en": "The destination encampment is a fire encampment (yellow border)."
@@ -1312,11 +1312,11 @@
         },
         {
           "id": "weaken",
-          "specifies": "<ontology::trigger>",
           "name": {
             "zh": "变虚弱",
             "en": "Weaken"
           },
+          "specifies": "<ontology::trigger>",
           "do_after": [
             "displace_occupant"
           ],
@@ -1336,11 +1336,11 @@
         },
         {
           "id": "develop_territory",
-          "specifies": "<ontology::trigger>",
           "name": {
             "zh": "开发领地",
             "en": "Develop Territory"
           },
+          "specifies": "<ontology::trigger>",
           "<ontology::condition>": {
             "zh": "目的地不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
             "en": "Destination is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
@@ -1376,11 +1376,11 @@
     },
     {
       "id": "migrate",
-      "specifies": "<ontology::pipeline>",
       "name": {
         "zh": "迁徙",
         "en": "Migrate"
       },
+      "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "1 次迁徙：将部落移动到相邻领地，随后玩家决定是落定还是继续旅程——落定则结算迁徙触发；继续旅程（该部落本激活内将再次迁徙）则为穿越，不结算触发、不进入营地、不获得火营地分、不开发领地。",
         "en": "1 migration: move the tribe to an adjacent territory, then the player decides whether to settle or continue the journey — settling resolves migration triggers; continuing (the same tribe will migrate again this activation) crosses through: no trigger resolution, no encampment entry, no fire encampment points, no territory development."
@@ -1414,6 +1414,10 @@
     },
     {
       "id": "gain_research_card",
+      "name": {
+        "zh": "获得研究牌",
+        "en": "Gain Research Card"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "获得 1 张研究牌：选择一种研究牌类型（建造/洞悉/突变/成就/发明），从该类型的<face_up_research_stack>顶或<research_deck>顶拿取 1 张<research_card>至手牌。拿取后若正面堆为空，自动从对应背面朝下堆翻一张补充。",
@@ -1424,6 +1428,10 @@
           "options": [
             {
               "id": "take_card",
+              "name": {
+                "zh": "拿取研究牌",
+                "en": "Take Research Card"
+              },
               "options": [
                 {
                   "<ontology::transfer>": {
@@ -1450,14 +1458,14 @@
                   }
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
-              "name": {
-                "zh": "拿取研究牌",
-                "en": "Take Research Card"
-              }
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             },
             {
               "id": "refill_if_empty",
+              "name": {
+                "zh": "补充正面堆（若空）",
+                "en": "Refill if Empty"
+              },
               "do_after": [
                 "take_card"
               ],
@@ -1484,23 +1492,19 @@
                   "zh": "补充正面堆",
                   "en": "Refill Face-Up Stack"
                 }
-              },
-              "name": {
-                "zh": "补充正面堆（若空）",
-                "en": "Refill if Empty"
               }
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "获得研究牌",
-        "en": "Gain Research Card"
       }
     },
     {
       "id": "draw_pick_return_research",
+      "name": {
+        "zh": "抽选归还研究牌",
+        "en": "Draw, Pick, Return Research Cards"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "从背面朝下的研究牌堆抽 N 张牌至<ontology::temporary_zone>，检视后选 K 张转入<player_holding>，其余放回各自来源牌堆底部。N 和 K 由调用方指定。",
@@ -1511,6 +1515,10 @@
           "options": [
             {
               "id": "draw",
+              "name": {
+                "zh": "抽牌至临时区",
+                "en": "Draw to Temporary Zone"
+              },
               "<ontology::transfer>": {
                 "source": "<research_deck>",
                 "destination": "<ontology::temporary_zone>",
@@ -1520,14 +1528,14 @@
                   "zh": "从任意<research_deck>（可同堆或不同堆）共抽 N 张<research_card>至<ontology::temporary_zone>。",
                   "en": "Draw N <research_card>s total from any <research_deck>s (same or different) to <ontology::temporary_zone>."
                 }
-              },
-              "name": {
-                "zh": "抽牌至临时区",
-                "en": "Draw to Temporary Zone"
               }
             },
             {
               "id": "pick",
+              "name": {
+                "zh": "选牌加入手牌",
+                "en": "Pick Cards to Hand"
+              },
               "do_after": [
                 "draw"
               ],
@@ -1540,14 +1548,14 @@
                   "zh": "从<ontology::temporary_zone>中选 K 张<research_card>加入手牌。",
                   "en": "Pick K <research_card>s from <ontology::temporary_zone> and add to hand."
                 }
-              },
-              "name": {
-                "zh": "选牌加入手牌",
-                "en": "Pick Cards to Hand"
               }
             },
             {
               "id": "return_rest",
+              "name": {
+                "zh": "归还剩余",
+                "en": "Return Remaining Cards"
+              },
               "do_after": [
                 "pick"
               ],
@@ -1560,23 +1568,19 @@
                   "zh": "将<ontology::temporary_zone>中剩余的<research_card>面朝下放回各自来源牌堆底部。",
                   "en": "Return remaining <research_card>s from <ontology::temporary_zone> face-down to the bottom of their respective source decks."
                 }
-              },
-              "name": {
-                "zh": "归还剩余",
-                "en": "Return Remaining Cards"
               }
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "抽选归还研究牌",
-        "en": "Draw, Pick, Return Research Cards"
       }
     },
     {
       "id": "trade",
+      "name": {
+        "zh": "交易",
+        "en": "Trade"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。可从以下选项中任选组合执行（顺序任意）：",
@@ -1585,6 +1589,10 @@
       "options": [
         {
           "id": "sale",
+          "name": {
+            "zh": "出售",
+            "en": "Sale"
+          },
           "specifies": "<ontology::pipeline>",
           "description": {
             "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
@@ -1593,6 +1601,10 @@
           "options": [
             {
               "id": "sale_for_money",
+              "name": {
+                "zh": "换钱",
+                "en": "Sale For Money"
+              },
               "specifies": "<ontology::pipeline>",
               "description": {
                 "zh": "换钱币：售出一个材料换取钱币。",
@@ -1601,18 +1613,22 @@
               "options": [
                 {
                   "id": "return_material_sm",
+                  "name": {
+                    "zh": "返还材料换钱",
+                    "en": "Return Material For Money"
+                  },
                   "specifies": "<ontology::transfer>",
                   "source": "<storage_area>",
                   "destination": "<ontology::supply>",
                   "<ontology::object>": "<stored_material>",
-                  "quantity": 1,
-                  "name": {
-                    "zh": "返还材料换钱",
-                    "en": "Return Material For Money"
-                  }
+                  "quantity": 1
                 },
                 {
                   "id": "gain_money",
+                  "name": {
+                    "zh": "获得钱币",
+                    "en": "Gain Money"
+                  },
                   "specifies": "<ontology::transfer>",
                   "source": "<ontology::supply>",
                   "destination": "<money_space>",
@@ -1623,21 +1639,17 @@
                   },
                   "do_after": [
                     "return_material_sm"
-                  ],
-                  "name": {
-                    "zh": "获得钱币",
-                    "en": "Gain Money"
-                  }
+                  ]
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-              "name": {
-                "zh": "换钱",
-                "en": "Sale For Money"
-              }
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
             },
             {
               "id": "sale_for_points",
+              "name": {
+                "zh": "换分",
+                "en": "Sale For Points"
+              },
               "specifies": "<ontology::pipeline>",
               "description": {
                 "zh": "换分数：售出一个材料换取 2 分。",
@@ -1646,18 +1658,22 @@
               "options": [
                 {
                   "id": "return_material_sp",
+                  "name": {
+                    "zh": "返还材料换分",
+                    "en": "Return Material For Points"
+                  },
                   "specifies": "<ontology::transfer>",
                   "source": "<storage_area>",
                   "destination": "<ontology::supply>",
                   "<ontology::object>": "<stored_material>",
-                  "quantity": 1,
-                  "name": {
-                    "zh": "返还材料换分",
-                    "en": "Return Material For Points"
-                  }
+                  "quantity": 1
                 },
                 {
                   "id": "gain_points",
+                  "name": {
+                    "zh": "获得分数",
+                    "en": "Gain Points"
+                  },
                   "specifies": "<ontology::event>",
                   "description": {
                     "zh": "获得 2 分",
@@ -1665,28 +1681,20 @@
                   },
                   "do_after": [
                     "return_material_sp"
-                  ],
-                  "name": {
-                    "zh": "获得分数",
-                    "en": "Gain Points"
-                  }
+                  ]
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-              "name": {
-                "zh": "换分",
-                "en": "Sale For Points"
-              }
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
             }
           ],
-          "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>",
-          "name": {
-            "zh": "出售",
-            "en": "Sale"
-          }
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
         },
         {
           "id": "purchase",
+          "name": {
+            "zh": "购买",
+            "en": "Purchase"
+          },
           "specifies": "<ontology::pipeline>",
           "description": {
             "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
@@ -1695,6 +1703,10 @@
           "options": [
             {
               "id": "pay_money",
+              "name": {
+                "zh": "支付钱币",
+                "en": "Pay Money"
+              },
               "specifies": "<ontology::transfer>",
               "source": "<money_space>",
               "destination": "<ontology::supply>",
@@ -1702,14 +1714,14 @@
               "quantity": {
                 "zh": "<material_tile> 已翻面为 2，未翻面为 4",
                 "en": "2 if <material_tile> face-up, 4 if not"
-              },
-              "name": {
-                "zh": "支付钱币",
-                "en": "Pay Money"
               }
             },
             {
               "id": "gain_material",
+              "name": {
+                "zh": "获得材料",
+                "en": "Gain Material"
+              },
               "specifies": "<ontology::transfer>",
               "source": "<ontology::supply>",
               "destination": "<storage_area>",
@@ -1717,28 +1729,20 @@
               "quantity": 1,
               "do_after": [
                 "pay_money"
-              ],
-              "name": {
-                "zh": "获得材料",
-                "en": "Gain Material"
-              }
+              ]
             }
           ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-          "name": {
-            "zh": "购买",
-            "en": "Purchase"
-          }
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       ],
-      "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>",
-      "name": {
-        "zh": "交易",
-        "en": "Trade"
-      }
+      "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
     },
     {
       "id": "lucky_find",
+      "name": {
+        "zh": "幸运收获",
+        "en": "Lucky Find"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部粉色命运骰，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
@@ -1761,19 +1765,23 @@
           "options": [
             {
               "id": "roll",
+              "name": {
+                "zh": "掷骰",
+                "en": "Roll"
+              },
               "<favor_test>": {
                 "description": {
                   "zh": "投掷全部粉色命运骰。玩家可消耗创意标记修改任意骰子点数（1 和 6 相连）。",
                   "en": "Roll all pink fate dice. Player may spend idea markers to change any die value (1 and 6 are adjacent)."
                 }
-              },
-              "name": {
-                "zh": "掷骰",
-                "en": "Roll"
               }
             },
             {
               "id": "gain",
+              "name": {
+                "zh": "获得",
+                "en": "Gain"
+              },
               "do_after": [
                 "roll"
               ],
@@ -1786,28 +1794,20 @@
                   "zh": "根据玩家选择的领地类型和骰子点数，按仓库区连线对应的材料，从供应堆取 1 个标记放入对应仓库格。",
                   "en": "Based on the player's chosen territory type and die result, take 1 marker of the material indicated by the storage area's connecting lines from supply into the matching storage space."
                 }
-              },
-              "name": {
-                "zh": "获得",
-                "en": "Gain"
               }
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "幸运收获",
-        "en": "Lucky Find"
       }
     },
     {
       "id": "explore_site",
-      "specifies": "<ontology::action>",
       "name": {
         "zh": "探索地点",
         "en": "Explore Site"
       },
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该地点的 <ontology::effect>。翻开后地点保持正面朝上，持续影响相邻领地。",
         "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. The site stays face up and affects adjacent territories for the rest of the game."
@@ -1873,6 +1873,10 @@
     },
     {
       "id": "build_farm",
+      "name": {
+        "zh": "建造农场",
+        "en": "Build Farm"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "建造农场：选一个有自己部落的陆地区域（不能已有农场，不能与已翻开的火山相邻），将控制台农场供应堆的一个农场放至该区域。无需材料费用。立即获得 1 个创意标记。最多 3 个，不可主动拆除。",
@@ -1901,19 +1905,23 @@
           "options": [
             {
               "id": "place_farm",
+              "name": {
+                "zh": "放置农场",
+                "en": "Place Farm"
+              },
               "<ontology::transfer>": {
                 "source": "<farm_supply>",
                 "destination": "this.target",
                 "<ontology::object>": "<farm>",
                 "quantity": 1
-              },
-              "name": {
-                "zh": "放置农场",
-                "en": "Place Farm"
               }
             },
             {
               "id": "gain_idea",
+              "name": {
+                "zh": "获得创意标记",
+                "en": "Gain Idea Marker"
+              },
               "do_after": [
                 "place_farm"
               ],
@@ -1922,23 +1930,19 @@
                 "destination": "<idea_space>",
                 "<ontology::object>": "<idea_marker>",
                 "quantity": 1
-              },
-              "name": {
-                "zh": "获得创意标记",
-                "en": "Gain Idea Marker"
               }
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "建造农场",
-        "en": "Build Farm"
       }
     },
     {
       "id": "build_settlement",
+      "name": {
+        "zh": "建造聚落",
+        "en": "Build Settlement"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "建造聚落：选一个建造点，从控制台聚落区选一个未建造的聚落，支付其材料费用，将聚落放至建造点。立即获得 1 个收入芯片并触发其效果。建造第 4 个聚落时可翻面一个未激活的层级板块。",
@@ -1988,19 +1992,23 @@
           "options": [
             {
               "id": "place",
+              "name": {
+                "zh": "放置",
+                "en": "Place"
+              },
               "<ontology::transfer>": {
                 "source": "<settlement_zone>",
                 "destination": "this.target",
                 "<ontology::object>": "<settlement>",
                 "quantity": 1
-              },
-              "name": {
-                "zh": "放置",
-                "en": "Place"
               }
             },
             {
               "id": "reward",
+              "name": {
+                "zh": "奖励",
+                "en": "Reward"
+              },
               "do_after": [
                 "place"
               ],
@@ -2009,23 +2017,19 @@
                   "zh": "获得 1 个收入芯片并立即触发其效果。若是第 4 个聚落，可额外将层级四或层级五板块翻至激活面。",
                   "en": "Gain 1 income chip and immediately trigger its effect. If 4th settlement, may additionally flip a stage-4 or stage-5 tile to its active face."
                 }
-              },
-              "name": {
-                "zh": "奖励",
-                "en": "Reward"
               }
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "建造聚落",
-        "en": "Build Settlement"
       }
     },
     {
       "id": "build_boat",
+      "name": {
+        "zh": "建造船",
+        "en": "Build Boat"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "建造船：选一个与有自己部落区域相邻的水域（不能已有自己的船），将控制台船供应堆的一艘船连带着船上的标记放至该水域。无需材料费用。立即将相邻区域中的一个站立部落迁徙到船上。最多 2 艘，不可主动拆除。",
@@ -2054,19 +2058,23 @@
           "options": [
             {
               "id": "place_boat",
+              "name": {
+                "zh": "放置船",
+                "en": "Place Boat"
+              },
               "<ontology::transfer>": {
                 "source": "<boat_supply>",
                 "destination": "this.target",
                 "<ontology::object>": "<boat>",
                 "quantity": 1
-              },
-              "name": {
-                "zh": "放置船",
-                "en": "Place Boat"
               }
             },
             {
               "id": "board_tribe",
+              "name": {
+                "zh": "部落登船",
+                "en": "Board Tribe"
+              },
               "do_after": [
                 "place_boat"
               ],
@@ -2095,23 +2103,19 @@
                   }
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
-              "name": {
-                "zh": "部落登船",
-                "en": "Board Tribe"
-              }
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "建造船",
-        "en": "Build Boat"
       }
     },
     {
       "id": "build_statue",
+      "name": {
+        "zh": "建造雕像",
+        "en": "Build Statue"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "建造雕像：选一个建造点（满足建造要求、未超建筑上限），从建造点上列出的 2~3 种材料中选一种，从仓库取出一个对应标记作为雕像放至建造点。可立即推进任意进程轨 1 格。每个建造点最多 2 个建筑（至多 1 个聚落），雕像在后续收入阶段按阿格拉恩惠轨计分。",
@@ -2168,6 +2172,10 @@
           "options": [
             {
               "id": "place_statue",
+              "name": {
+                "zh": "放置雕像",
+                "en": "Place Statue"
+              },
               "<ontology::transfer>": {
                 "source": "<ontology::supply>",
                 "destination": "this.target",
@@ -2177,14 +2185,14 @@
                   "zh": "从供应堆取 1 个通用标记（<octagonal_pillar>）放至建造点，成为<statue>。",
                   "en": "Take 1 generic marker (<octagonal_pillar>) from the supply and place it on the Building ground as a <statue>."
                 }
-              },
-              "name": {
-                "zh": "放置雕像",
-                "en": "Place Statue"
               }
             },
             {
               "id": "push_track",
+              "name": {
+                "zh": "推进轨道",
+                "en": "Push Track"
+              },
               "do_after": [
                 "place_statue"
               ],
@@ -2209,23 +2217,19 @@
                   }
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
-              "name": {
-                "zh": "推进轨道",
-                "en": "Push Track"
-              }
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "建造雕像",
-        "en": "Build Statue"
       }
     },
     {
       "id": "activate_stage_tile",
+      "name": {
+        "zh": "激活层级板块",
+        "en": "Activate Stage Tile"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "激活一个层级板块：选择一个尚未激活的<stage_tile>（层级 4 或层级 5），将其翻至激活面。激活后该层级在终局计分时生效。",
@@ -2246,14 +2250,14 @@
           ],
           "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
         }
-      },
-      "name": {
-        "zh": "激活层级板块",
-        "en": "Activate Stage Tile"
       }
     },
     {
       "id": "reset",
+      "name": {
+        "zh": "重置",
+        "en": "Reset"
+      },
       "specifies": "<ontology::action>",
       "description": {
         "zh": "执行重置。前提：<activation_dice_area> 中剩余 ≤3 个 <activation_die>。将<reset_column>中最靠左的<reset_marker>沿列向下推进三步——A: 推动<phase_indicator>至下一个 reset space（到达红色格触发行动阶段结束）；B: 回收所有已使用的<activation_die>重掷并放回点数格；C: 将该标记移入<idea_space>或<food_space>。所有重置列均为空时仍可执行重置，但 C 步改为从供应堆拿取一个通用标记放置。",
@@ -2268,37 +2272,45 @@
           "options": [
             {
               "id": "step_a",
-              "description": {
-                "zh": "将最靠左的<reset_marker>沿列下推一格（A 位）。沿黄色箭头推动<phase_indicator>至<phase_sequence>的下一个 reset space。若到达红色 reset end space，触发行动阶段结束。",
-                "en": "Push the leftmost <reset_marker> one step down its column (position A). Advance the <phase_indicator> along the yellow arrow to the next reset space on the <phase_sequence>. If it reaches the red reset-end space, trigger Action Phase end."
-              },
               "name": {
                 "zh": "A步：推进阶段标记",
                 "en": "Step A: Advance Phase Indicator"
+              },
+              "description": {
+                "zh": "将最靠左的<reset_marker>沿列下推一格（A 位）。沿黄色箭头推动<phase_indicator>至<phase_sequence>的下一个 reset space。若到达红色 reset end space，触发行动阶段结束。",
+                "en": "Push the leftmost <reset_marker> one step down its column (position A). Advance the <phase_indicator> along the yellow arrow to the next reset space on the <phase_sequence>. If it reaches the red reset-end space, trigger Action Phase end."
               }
             },
             {
               "id": "step_b",
+              "name": {
+                "zh": "B步：回收并重掷骰子",
+                "en": "Step B: Retrieve and Re-roll Dice"
+              },
               "do_after": [
                 "step_a"
               ],
               "description": {
                 "zh": "将同一<reset_marker>沿列再下推一格（B 位）。回收<activation_dice_area>中所有已使用的<activation_die>，全部重掷，将每颗骰子放回与点数匹配的格上。",
                 "en": "Push the same <reset_marker> another step down its column (position B). Retrieve all used <activation_die>s from <activation_dice_area>, re-roll all of them, and place each on its matching value space."
-              },
-              "name": {
-                "zh": "B步：回收并重掷骰子",
-                "en": "Step B: Retrieve and Re-roll Dice"
               }
             },
             {
               "id": "step_c",
+              "name": {
+                "zh": "C步：放置标记",
+                "en": "Step C: Place Marker"
+              },
               "do_after": [
                 "step_b"
               ],
               "options": [
                 {
                   "id": "to_idea",
+                  "name": {
+                    "zh": "移至创意格",
+                    "en": "To Idea Space"
+                  },
                   "<ontology::transfer>": {
                     "source": {
                       "zh": "如果<reset_column>中有<reset_marker>，则为<reset_column>；否则为<ontology::supply>",
@@ -2307,14 +2319,14 @@
                     "destination": "<idea_space>",
                     "<ontology::object>": "<reset_marker>",
                     "quantity": 1
-                  },
-                  "name": {
-                    "zh": "移至创意格",
-                    "en": "To Idea Space"
                   }
                 },
                 {
                   "id": "to_food",
+                  "name": {
+                    "zh": "移至食物格",
+                    "en": "To Food Space"
+                  },
                   "<ontology::transfer>": {
                     "source": {
                       "zh": "如果<reset_column>中有<reset_marker>，则为<reset_column>；否则为<ontology::supply>",
@@ -2323,30 +2335,22 @@
                     "destination": "<food_space>",
                     "<ontology::object>": "<reset_marker>",
                     "quantity": 1
-                  },
-                  "name": {
-                    "zh": "移至食物格",
-                    "en": "To Food Space"
                   }
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
-              "name": {
-                "zh": "C步：放置标记",
-                "en": "Step C: Place Marker"
-              }
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      },
-      "name": {
-        "zh": "重置",
-        "en": "Reset"
       }
     },
     {
       "id": "complete_building_project",
+      "name": {
+        "zh": "完成建造项目",
+        "en": "Complete Building Project"
+      },
       "specifies": "<ontology::pipeline>",
       "description": {
         "zh": "完成一个建造项目：从四种建造中选一种执行——建造农场、建造船、建造雕像、或建造聚落。",
@@ -2358,11 +2362,7 @@
         "<build_statue>",
         "<build_settlement>"
       ],
-      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
-      "name": {
-        "zh": "完成建造项目",
-        "en": "Complete Building Project"
-      }
+      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
     }
   ]
 }
