@@ -77,6 +77,16 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-06（ontology 体系化 + 控制台右半边 + 迁徙 pipeline 重构 + evaluate/check/state）**:
+    - **ontology 新增**：`instant_cost`/`continuous_cost`/`instant_effect`/`continuous_effect`、`evaluate`（extends trigger，产出 result）、`check`（specifies evaluate，pass/fail）、`flip`（specifies state_change，face）、`temporary_zone`（瞬时中间态）、`state_change`（subject+to+optional attribute/from）
+    - **state 实例化**：tribe posture upright/lying；card/tile face face_up/face_down
+    - **控制台右半边完成**：activation_dice_area/fate_dice_area/feature_space/tier_1_completion_reward/tier_2_completion_reward/reset_column
+    - **effect 结构规范化**：effect→instant/continuous_effect→content→instant_content，null 省略，cost 分 instant/continuous_cost
+    - **迁徙 pipeline 拆分**：move_tribe（纯 transfer）+ resolve_migration_triggers（4 trigger，入参用 constraints 形式化）+ migrate = move→triggers。模块中灵活组合序列
+    - **favor_test 重写**：specifies check，content 掷 fate_die，result = any ∈ [1, track.position]
+    - **instances.json 大清理**：删除 45 个 effect 占位符；module_tiles 精简
+    - **module 新模型**：upgradable_module extends module，模块层 cost + level_effects[].content；research（骰 1+2）、migration（骰 1+3）已完成
+
 - **2026-08-04（控制台 review 继续 + trigger 迁入 flow + pipeline + 材料体系 + 建造行动）**:
     - **ontology**：`multiple_choice_enum` 新增 `CHOOSE_ANY`（任意数量执行）；`trigger_pipeline` 定义标准执行流程
     - **flow.json `triggers` 数组**：新建，容纳 action/activation/event/transfer/upgrade/play 类概念。`gain_income_chip` 从 procedures 迁入

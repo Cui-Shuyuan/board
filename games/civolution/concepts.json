@@ -606,7 +606,7 @@
           "zh": "喂养阶段计算食物需求时",
           "en": "When calculating food requirements during the Feeding phase"
         },
-                "<ontology::content>": {
+        "<ontology::content>": {
           "<ontology::instant_content>": {
             "zh": "与此农场同一区域内的营地部落自动视为已喂饱（消耗 0 食物），野外部落仅需 1 食物（无农场时需 2 食物）。每个陆地区域最多一个农场，效果不叠加。",
             "en": "Tribes on encampments in the same territory as this farm are auto-fed (0 food); tribes in the wilderness of that territory require only 1 food (instead of 2 without a farm). Each land territory can have at most one farm; effects do not stack."
@@ -770,13 +770,13 @@
       },
       "abstract": false,
       "description": {
-        "zh": "可升级的模组效果。激活费用（<ontology::cost>）写在模组实例顶层，各等级共用；<level_effects> 中每项仅需写 <ontology::content>——即该等级模组执行的动作。若某等级的费用不同，可在该等级的 <ontology::instant_effect> 中覆盖 cost。L1 由 tile 正面承载，L2 由 tile 反面承载，L3 印于 <console> 模组槽底部。升级由 <upgrade_main_module> trigger 驱动：L1→L2 翻面，L2→L3 tile 放回游戏盒、L3 effect 激活。",
-        "en": "An upgradable module effect. Activation cost (<ontology::cost>) is defined at the module instance level and shared by all levels; each entry in <level_effects> only needs <ontology::content> — the action performed at that level. If a level has a different cost, it may override by including cost in its <ontology::instant_effect>. L1 is carried by the tile front, L2 by the tile back, and L3 is printed at the bottom of the <console> module slot. Upgrading is driven by the <upgrade_main_module> trigger: L1→L2 flips the tile, L2→L3 returns the tile to the game box and activates the L3 effect."
+        "zh": "可升级的模组效果。激活费用（<ontology::cost>）定义在模组实例顶层，与 <level_effects> 同级；<level_effects> 中每项是一个完整的 <ontology::instant_effect>——各等级费用相同时，其 cost 写 `\"this.<ontology::cost>\"` 引用顶层定义；若某等级费用不同，直接在该等级的 effect 中写具体 cost。L1 由 tile 正面承载，L2 由 tile 反面承载，L3 印于 <console> 模组槽底部。升级由 <upgrade_main_module> trigger 驱动：L1→L2 翻面，L2→L3 tile 放回游戏盒、L3 effect 激活。",
+        "en": "An upgradable module effect. Activation cost (<ontology::cost>) is defined at the module instance top level, alongside <level_effects>; each entry in <level_effects> is a complete <ontology::instant_effect> — when all levels share the same cost, its cost is written as `\"this.<ontology::cost>\"` to reference the top-level definition; if a level differs, write the concrete cost in that level's effect. L1 is carried by the tile front, L2 by the tile back, and L3 is printed at the bottom of the <console> module slot. Upgrading is driven by the <upgrade_main_module> trigger: L1→L2 flips the tile, L2→L3 returns the tile to the game box and activates the L3 effect."
       },
       "level_effects": {
         "description": {
-          "zh": "各等级效果列表，按等级升序排列。每项必须包含 `level`（整数）和 `<ontology::instant_effect>`——通常只写 <ontology::content>，cost 缺省时继承模块顶层 cost。",
-          "en": "List of effects per level, ordered by level ascending. Each entry must have `level` (integer) and `<ontology::instant_effect>` — normally only <ontology::content> is specified; cost defaults to the module-level cost when absent."
+          "zh": "各等级效果列表，按等级升序排列。每项必须包含 `level`（整数）和 `<ontology::instant_effect>`——即该等级完整的激活 effect（cost + content）。费用与顶层相同时写 `\"<ontology::cost>\": \"this.<ontology::cost>\"`；不同则直接写具体 cost。",
+          "en": "List of effects per level, ordered by level ascending. Each entry must have `level` (integer) and `<ontology::instant_effect>` — the complete activation effect for that level (cost + content). When the cost matches the top-level one, write `\"<ontology::cost>\": \"this.<ontology::cost>\"`; otherwise write the concrete cost."
         },
         "constraints": {
           "required": [
@@ -790,12 +790,20 @@
             {
               "id": "<ontology::instant_effect>",
               "description": {
-                "zh": "该等级模组的激活效果。通常只需写 <ontology::content>；cost 缺省时继承模块顶层 cost。",
-                "en": "The activation effect for this level. Normally only <ontology::content> is needed; cost inherits from module-level cost when absent."
+                "zh": "该等级模组的完整激活 effect（cost + content）。cost 与顶层相同时写 `\"<ontology::cost>\": \"this.<ontology::cost>\"` 引用；不同则直接写具体 cost。",
+                "en": "The complete activation effect for this level (cost + content). When cost matches the top-level one, write `\"<ontology::cost>\": \"this.<ontology::cost>\"`; otherwise write the concrete cost."
               }
             }
           ],
-          "optional": []
+          "optional": [
+            {
+              "id": "description",
+              "description": {
+                "zh": "该等级效果的自然语言描述，供 LLM 推理时理解语义，与形式化表达并行不悖。",
+                "en": "Natural-language description of this level's effect, for LLM reasoning; complements the formal structure rather than replacing it."
+              }
+            }
+          ]
         }
       }
     },
@@ -1187,7 +1195,7 @@
                 "zh": "终局计分阶段，且此板块激活面朝上",
                 "en": "Final scoring phase, and this tile is active face up"
               },
-                "<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "zh": "对应层级每安装一张研究牌或一枚芯片，获得该层级标示的分数。",
                   "en": "Score the indicated points for each research card or chip installed in the corresponding stage."
@@ -1241,7 +1249,7 @@
           "zh": "终局计分阶段",
           "en": "Final scoring phase"
         },
-                "<ontology::content>": {
+        "<ontology::content>": {
           "<ontology::instant_content>": {
             "zh": "此层级每安装一张研究牌或一枚芯片，获得该层级标示的分数。一层的<goal_chip>左右各可装一枚，每枚单独计分。",
             "en": "Score the indicated points for each research card or chip installed in its stage. A tier fits up to two <goal_chip>s (left and right); each scores individually."
@@ -1270,6 +1278,14 @@
       "description": {
         "zh": "放置在 <continent> 上的特殊 <ontology::tile>，外观为正八边形板块，其中一角为方便手指拿取的弧形角。翻开前背面朝上，通过特定条件翻开后持续生效。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。建造点带有 <building_slot> 可建造 <settlement> 或 <statue>；其他地点仅有 effect 不带 zone。",
         "en": "A special <ontology::tile> placed on the <continent>, shaped as a regular octagon with one rounded corner for easy finger pickup. Face down until revealed by a specific condition, then taking lasting effect. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Building ground carries a <building_slot> for <settlement> or <statue>; other sites have only an effect without a zone."
+      },
+      "score": {
+        "type": "integer",
+        "default": null,
+        "description": {
+          "zh": "翻开此地点时立即获得的分数（标记在正面左上角）。",
+          "en": "Success points gained immediately when this site is revealed (marked in the top-left corner of its front side)."
+        }
       },
       "parts": [
         "<ontology::effect>",
@@ -2448,7 +2464,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "options": [
                     {
@@ -2471,7 +2487,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<activate_income_chip>"
               }
             }
@@ -2484,7 +2500,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "options": [
                     "<activate_income_chip>",
@@ -2503,7 +2519,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<perform_activity>"
               }
             }
@@ -2516,7 +2532,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "options": [
                     {
@@ -2563,7 +2579,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_1_new_cards>"
               }
             }
@@ -2576,7 +2592,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_2_new_goals>"
               }
             }
@@ -2589,7 +2605,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_3_extra_find>"
               }
             }
@@ -2602,7 +2618,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_4_action>"
               }
             }
@@ -2615,7 +2631,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_5_site>"
               }
             }
@@ -2628,7 +2644,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_6_feeding>"
               }
             }
@@ -2641,7 +2657,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_7_event>"
               }
             }
@@ -2654,7 +2670,7 @@
           },
           "<ontology::effect>": {
             "<ontology::instant_effect>": {
-"<ontology::content>": {
+              "<ontology::content>": {
                 "<ontology::instant_content>": "<phase_8_income>"
               }
             }
@@ -3064,7 +3080,7 @@
           "zh": "层级 1 所有安装位被填满",
           "en": "All installation slots in tier 1 are filled"
         },
-                "<ontology::content>": {
+        "<ontology::content>": {
           "<ontology::instant_content>": "<gain_income_chip>"
         }
       }
@@ -3086,7 +3102,7 @@
           "zh": "层级 2 所有安装位被填满",
           "en": "All installation slots in tier 2 are filled"
         },
-                "<ontology::content>": {
+        "<ontology::content>": {
           "<ontology::instant_content>": "<activate_stage_tile>"
         }
       }
@@ -3175,7 +3191,7 @@
             "zh": "此格最后一枚 <goal_chip> 被安装后",
             "en": "After the last <goal_chip> in this slot is installed"
           },
-                    "<ontology::content>": {
+          "<ontology::content>": {
             "<ontology::instant_content>": "<upgrade_main_module>"
           }
         }
@@ -3201,7 +3217,7 @@
             "zh": "对应模组升至 3 级",
             "en": "Corresponding module reaches level 3"
           },
-                    "<ontology::content>": {
+          "<ontology::content>": {
             "<ontology::instant_content>": {
               "zh": "激活该模组的 L3 效果",
               "en": "Activate the module's L3 effect"
@@ -3270,7 +3286,7 @@
             "zh": "事件阶段 Prosperity（繁荣）计分时",
             "en": "During Prosperity scoring in the Event phase"
           },
-                    "<ontology::content>": {
+          "<ontology::content>": {
             "<ontology::instant_content>": {
               "zh": "露出的钻石计入活跃钻石总数，乘以 Prosperity 分类倍率获得分数。",
               "en": "Visible diamonds count toward active diamond total; multiplied by Prosperity category multiplier for points."

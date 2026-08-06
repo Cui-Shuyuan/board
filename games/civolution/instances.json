@@ -171,41 +171,44 @@
       "abstract": false,
       "module_type": "main",
       "tile": "<tile_migration>",
-      "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "options": [
-              {
-                "<ontology::transfer>": {
-                  "source": "<activation_dice_area>",
-                  "destination": "<activation_dice_area>",
-                  "<object>": { "<activation_die>": { "value": 1 } },
-                  "description": {
-                    "zh": "支付 1 个点数 1 的<activation_die>。",
-                    "en": "Pay 1 <activation_die> showing value 1."
-                  }
-                }
-              },
-              {
-                "<ontology::transfer>": {
-                  "source": "<activation_dice_area>",
-                  "destination": "<activation_dice_area>",
-                  "<object>": { "<activation_die>": { "value": 3 } },
-                  "description": {
-                    "zh": "支付 1 个点数 3 的<activation_die>。",
-                    "en": "Pay 1 <activation_die> showing value 3."
-                  }
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 1 } },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
                 }
               }
-            ],
-            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-          }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 3 } },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       },
       "level_effects": [
         {
           "level": 1,
+          "description": {
+            "zh": "执行 1 次迁徙。",
+            "en": "Perform 1 migration."
+          },
           "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": "<migrate>"
             }
@@ -213,18 +216,16 @@
         },
         {
           "level": 2,
+          "description": {
+            "zh": "先过 1 次恩惠检定：通过则最多迁徙 2 次，未通过则迁徙 1 次。",
+            "en": "Take a favor test first: if it passes, perform up to 2 migrations; if not, perform 1 migration."
+          },
           "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "options": [
-                  "<migrate>",
-                  {
-                    "<favor_test>": {
-                      "do_after": [
-                        "<migrate>"
-                      ]
-                    }
-                  },
+                  "<favor_test>",
                   {
                     "<ontology::action>": {
                       "do_after": [
@@ -233,6 +234,24 @@
                       "<ontology::condition>": {
                         "zh": "<favor_test>.result == pass",
                         "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<migrate>": {
+                            "quantity": "<=2"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == fail",
+                        "en": "<favor_test>.result == fail"
                       },
                       "<ontology::content>": {
                         "<ontology::instant_content>": "<migrate>"
@@ -247,31 +266,16 @@
         },
         {
           "level": 3,
+          "description": {
+            "zh": "先过 1 次恩惠检定：通过则最多迁徙 3 次，未通过则最多迁徙 2 次。同一部落多次迁徙时，仅最终落定的领地生效，其余领地只是穿越（不进入营地、不获得火营地分、不开发领地）。",
+            "en": "Take a favor test first: if it passes, perform up to 3 migrations; if not, up to 2 migrations. When the same tribe migrates multiple times, only the final territory is settled; the others are merely crossed through (no encampment entry, no fire encampment points, no territory development)."
+          },
           "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "options": [
-                  {
-                    "<move_tribe>": {
-                      "quantity": 2
-                    }
-                  },
-                  {
-                    "<resolve_migration_triggers>": {
-                      "migrating_tribe": "this.target.tribe",
-                      "destination": "this.target.destination"
-                    },
-                    "do_after": [
-                      "<move_tribe>"
-                    ]
-                  },
-                  {
-                    "<favor_test>": {
-                      "do_after": [
-                        "<resolve_migration_triggers>"
-                      ]
-                    }
-                  },
+                  "<favor_test>",
                   {
                     "<ontology::action>": {
                       "do_after": [
@@ -282,7 +286,29 @@
                         "en": "<favor_test>.result == pass"
                       },
                       "<ontology::content>": {
-                        "<ontology::instant_content>": "<migrate>"
+                        "<ontology::instant_content>": {
+                          "<migrate>": {
+                            "quantity": "<=3"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == fail",
+                        "en": "<favor_test>.result == fail"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<migrate>": {
+                            "quantity": "<=2"
+                          }
+                        }
                       }
                     }
                   }
@@ -300,7 +326,7 @@
       "name": { "zh": "繁育", "en": "Procreation" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_procreation>",
+      "tile": "<tile_procreation>"
     },
     {
       "id": "module_production",
@@ -308,7 +334,7 @@
       "name": { "zh": "生产", "en": "Production" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_production>",
+      "tile": "<tile_production>"
     },
     {
       "id": "module_transport",
@@ -316,7 +342,7 @@
       "name": { "zh": "运输", "en": "Transport" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_transport>",
+      "tile": "<tile_transport>"
     },
     {
       "id": "module_sustenance",
@@ -324,7 +350,7 @@
       "name": { "zh": "给养", "en": "Sustenance" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_sustenance>",
+      "tile": "<tile_sustenance>"
     },
     {
       "id": "module_exploration",
@@ -332,7 +358,7 @@
       "name": { "zh": "探索", "en": "Exploration" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_exploration>",
+      "tile": "<tile_exploration>"
     },
     {
       "id": "module_building",
@@ -340,7 +366,7 @@
       "name": { "zh": "建造", "en": "Building" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_building>",
+      "tile": "<tile_building>"
     },
     {
       "id": "module_planning",
@@ -348,7 +374,7 @@
       "name": { "zh": "计划", "en": "Planning" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_planning>",
+      "tile": "<tile_planning>"
     },
     {
       "id": "module_research",
@@ -357,41 +383,44 @@
       "abstract": false,
       "module_type": "main",
       "tile": "<tile_research>",
-      "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "options": [
-              {
-                "<ontology::transfer>": {
-                  "source": "<activation_dice_area>",
-                  "destination": "<activation_dice_area>",
-                  "<object>": { "<activation_die>": { "value": 1 } },
-                  "description": {
-                    "zh": "支付 1 个点数 1 的<activation_die>。",
-                    "en": "Pay 1 <activation_die> showing value 1."
-                  }
-                }
-              },
-              {
-                "<ontology::transfer>": {
-                  "source": "<activation_dice_area>",
-                  "destination": "<activation_dice_area>",
-                  "<object>": { "<activation_die>": { "value": 2 } },
-                  "description": {
-                    "zh": "支付 1 个点数 2 的<activation_die>。",
-                    "en": "Pay 1 <activation_die> showing value 2."
-                  }
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 1 } },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
                 }
               }
-            ],
-            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-          }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 2 } },
+                "description": {
+                  "zh": "支付 1 个点数 2 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 2."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       },
       "level_effects": [
         {
           "level": 1,
+          "description": {
+            "zh": "从明面研究牌堆拿 1 张研究牌，或抽 2 张选 1 张。",
+            "en": "Take 1 research card from the face-up stacks, or draw 2 and keep 1."
+          },
           "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "options": [
@@ -410,7 +439,12 @@
         },
         {
           "level": 2,
+          "description": {
+            "zh": "从明面研究牌堆拿 1 张研究牌，或抽 4 张选 1 张。",
+            "en": "Take 1 research card from the face-up stacks, or draw 4 and keep 1."
+          },
           "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "options": [
@@ -429,7 +463,12 @@
         },
         {
           "level": 3,
+          "description": {
+            "zh": "执行 2 次拿研究牌，或抽 4 张选 2 张。",
+            "en": "Take research cards twice, or draw 4 and keep 2."
+          },
           "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "options": [
@@ -452,13 +491,14 @@
           }
         }
       ]
+    },
     {
       "id": "module_achievement",
       "instance_of": "<module>",
       "name": { "zh": "成就", "en": "Achievement" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_achievement>",
+      "tile": "<tile_achievement>"
     },
     {
       "id": "module_insight",
@@ -466,7 +506,7 @@
       "name": { "zh": "洞悉", "en": "Insight" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_insight>",
+      "tile": "<tile_insight>"
     },
     {
       "id": "module_mutation",
@@ -474,7 +514,7 @@
       "name": { "zh": "突变", "en": "Mutation" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_mutation>",
+      "tile": "<tile_mutation>"
     },
     {
       "id": "module_invention",
@@ -482,7 +522,7 @@
       "name": { "zh": "发明", "en": "Invention" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_invention>",
+      "tile": "<tile_invention>"
     },
     {
       "id": "module_trade",
@@ -490,15 +530,105 @@
       "name": { "zh": "交易", "en": "Trade" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_trade>",
+      "tile": "<tile_trade>"
     },
     {
       "id": "module_activity",
-      "instance_of": "<module>",
+      "instance_of": "<upgradable_module>",
       "name": { "zh": "活动", "en": "Activity" },
       "abstract": false,
       "module_type": "main",
       "tile": "<tile_activity>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 2 } },
+                "description": {
+                  "zh": "支付 1 个点数 2 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 2."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 3 } },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "执行 1 个活动。",
+            "en": "Perform 1 activity."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": "<perform_activity>"
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "执行 1~2 个活动，第二次执行的活动必须与第一次不同（不可重复执行同一活动）。",
+            "en": "Perform 1 or 2 activities; the second activity must differ from the first (the same activity may not be performed twice)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<perform_activity>",
+                  {
+                    "<perform_activity>": {
+                      "do_after": [
+                        "<perform_activity>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "第二次选择的活动与第一次不同（同一活动在一次激活中不可重复执行）。",
+                        "en": "The activity chosen the second time must differ from the first (the same activity may not be performed twice in one activation)."
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "执行最多 2 个活动，可以是两个不同的活动，也可以是同一个活动执行两次。",
+            "en": "Perform up to 2 activities; they may be two different activities or the same activity twice."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<perform_activity>": {
+                  "quantity": "<=2"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "module_feature_stamina",
@@ -512,7 +642,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": {
                 "<activation_die>": {
                   "value": 1
@@ -554,7 +684,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": {
                 "<activation_die>": {
                   "value": 2
@@ -596,7 +726,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": {
                 "<activation_die>": {
                   "value": 3
@@ -638,7 +768,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": {
                 "<activation_die>": {
                   "value": 4
@@ -680,7 +810,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": {
                 "<activation_die>": {
                   "value": 5
@@ -722,7 +852,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": {
                 "<activation_die>": {
                   "value": 6
@@ -763,7 +893,7 @@
           "<ontology::instant_cost>": {
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
-              "destination": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
               "<object>": "<activation_die>",
               "quantity": 2,
               "description": {

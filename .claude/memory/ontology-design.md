@@ -113,7 +113,7 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **67 个概念**。
+本体已从最初的 51 个概念扩展到 **73 个概念**（2026-08-06：+4 field-level + evaluate/check/flip/state_change/temporary_zone，Declaration 弃用可忽略）。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
@@ -140,6 +140,18 @@ Ownership、Starting Player
 
 ### 属性概念（4 个）★ Declaration 已弃用
 Cost、Content、Effect、Information Visibility
+
+### Field-level 概念（6 个）★ 2026-08-06 补全
+Instant Cost（extends Cost）、Continuous Cost（extends Cost）、Instant Effect（extends Effect）、Continuous Effect（extends Effect，含 end_condition）、Instant Content（extends Content）、Continuous Content（extends Content，含 active_condition）
+
+### 求值与检定（2 个）★ 2026-08-06 新增
+Evaluate（extends Trigger，产出 result）、Check（specifies Evaluate，result 特化 pass/fail）
+
+### 状态变更（2 个）★ 2026-08-06 新增
+State Change（extends Event，subject + to + optional attribute/from）、Flip（specifies State Change，attribute 固定 face）
+
+### 区域（1 个）★ 2026-08-06 新增
+Temporary Zone（extends Zone，多步骤瞬时中间态，操作完成后必须清空）
 
 ### 区域概念（3 个）
 Reserve（abstract）、Discard Pile、Player Zone（abstract）

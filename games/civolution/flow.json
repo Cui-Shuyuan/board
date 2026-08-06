@@ -1382,20 +1382,32 @@
         "en": "Migrate"
       },
       "description": {
-        "zh": "1 次移动 + 结算迁徙触发。",
-        "en": "1 move + resolve migration triggers."
+        "zh": "1 次迁徙：将部落移动到相邻领地，随后玩家决定是落定还是继续旅程——落定则结算迁徙触发；继续旅程（该部落本激活内将再次迁徙）则为穿越，不结算触发、不进入营地、不获得火营地分、不开发领地。",
+        "en": "1 migration: move the tribe to an adjacent territory, then the player decides whether to settle or continue the journey — settling resolves migration triggers; continuing (the same tribe will migrate again this activation) crosses through: no trigger resolution, no encampment entry, no fire encampment points, no territory development."
       },
       "target": "this.target",
       "options": [
         "<move_tribe>",
         {
-          "<resolve_migration_triggers>": {
-            "migrating_tribe": "this.target.tribe",
-            "destination": "this.target.destination"
-          },
           "do_after": [
             "<move_tribe>"
-          ]
+          ],
+          "options": [
+            {
+              "id": "_skip",
+              "description": {
+                "zh": "继续旅程（穿越）：该部落本激活内将再次迁徙，本次不结算迁徙触发。",
+                "en": "Continue the journey (cross through): this tribe will migrate again this activation; skip trigger resolution."
+              }
+            },
+            {
+              "<resolve_migration_triggers>": {
+                "migrating_tribe": "this.target.tribe",
+                "destination": "this.target.destination"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
         }
       ],
       "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -1787,6 +1799,76 @@
       "name": {
         "zh": "幸运收获",
         "en": "Lucky Find"
+      }
+    },
+    {
+      "id": "explore_site",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "探索地点",
+        "en": "Explore Site"
+      },
+      "description": {
+        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该地点的 <ontology::effect>。翻开后地点保持正面朝上，持续影响相邻领地。",
+        "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. The site stays face up and affects adjacent territories for the rest of the game."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "存在至少 1 个 face == face_down 的 <site>。",
+              "en": "At least one <site> with face == face_down exists."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "<ontology::cost>": null,
+      "target": "1 个 face == face_down 的 <site>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "flip_site",
+              "name": {
+                "zh": "翻转地点",
+                "en": "Flip Site"
+              },
+              "<ontology::flip>": {
+                "subject": "this.target",
+                "to": "face_up"
+              }
+            },
+            {
+              "id": "gain_points",
+              "name": {
+                "zh": "获得分数",
+                "en": "Gain Points"
+              },
+              "do_after": [
+                "flip_site"
+              ],
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": "this.target.score"
+              }
+            },
+            {
+              "id": "resolve_effect",
+              "name": {
+                "zh": "触发地点效果",
+                "en": "Resolve Site Effect"
+              },
+              "do_after": [
+                "gain_points"
+              ],
+              "<ontology::resolve>": {
+                "<ontology::content>": "this.target.<ontology::effect>"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
