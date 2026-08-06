@@ -1903,6 +1903,364 @@
       }
     },
     {
+      "id": "procreate",
+      "name": {
+        "zh": "繁育",
+        "en": "Procreate"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个新<tribe>放到该区域的营地：空营地直立放置；营地被其他部落占据则先将该部落驱逐至荒野、新部落虚弱放下；火营地照常获得其分数；船上有空座时也可在船上繁育。若大陆上没有任何自己的部落，可任选区域放置。若 20 个部落全部在场则不能繁育。",
+        "en": "Choose a territory with at least one of your <tribe>s. Take a new <tribe> from your supply and place it onto an encampment in that territory: upright on a free encampment; displace the occupant into the wilderness and lay the new tribe down weakened if occupied; fire encampments score as usual; procreation on a boat is allowed if it has a free seat. If you have no tribes on the continent, choose any territory. Cannot procreate if all 20 tribes are on the continent."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "场上自己的<tribe>少于 20 个。",
+              "en": "Fewer than 20 of your <tribe>s are on the continent."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "target": "1 个有至少一个自己<tribe>的区域（大陆无部落时可任选区域；船繁育需船上恰有 1 个部落且另一座空着）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<ontology::supply>",
+                "destination": "this.target 的营地",
+                "<ontology::object>": "<tribe>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从供应堆取 1 个新<tribe>放到目标区域的营地。",
+                  "en": "Take 1 new <tribe> from supply and place it on an encampment in the target territory."
+                }
+              }
+            },
+            {
+              "description": {
+                "zh": "若营地被占据：先驱逐原部落至该区域荒野（保持其原有状态），新部落虚弱放下。若营地空置：新部落直立放置。",
+                "en": "If the encampment is occupied: displace the occupant into the wilderness of the same territory (its state is retained), then place the new tribe weakened. If free: place the new tribe upright."
+              }
+            },
+            {
+              "description": {
+                "zh": "若目标营地为火营地，照常获得其分数（推进<score_track>）。",
+                "en": "If the encampment is a fire encampment, gain its success points as usual (advance <score_track>)."
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "hunt",
+      "name": {
+        "zh": "狩猎",
+        "en": "Hunt"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个有至少一个自己<tribe>且无<hunting_token>的区域，掷全部粉骰，选 1 个骰子的点数，按狩猎表（区域类型 × 点数）确定食物数量，从供应堆拿对应数量<food>放到控制台食物格（可用创意标记修改骰子点数），最后从狩猎标记展示区取 1 个<hunting_token>放到该区域——本时代内任何玩家都不能再在此区域狩猎。",
+        "en": "Choose a territory with at least one of your <tribe>s and no <hunting_token>. Roll all pink fate dice, pick one result, and look up the hunting table (territory type × die value) for the food amount. Take that many <food> from supply onto your food space (idea markers may change the die value). Finally place a <hunting_token> from the display onto that territory — no one may hunt there for the rest of the era."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "存在至少一个区域：有至少一个自己的<tribe>，且无<hunting_token>。",
+              "en": "There exists a territory with at least one of your <tribe>s and no <hunting_token>."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "target": "1 个有至少一个自己<tribe>且无<hunting_token>的区域",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "description": {
+                "zh": "掷全部粉骰，选 1 个点数（可用创意标记修改，1 和 6 相连）。",
+                "en": "Roll all pink fate dice and choose one result (idea markers may change it; 1 and 6 are adjacent)."
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<ontology::supply>",
+                "destination": "<food_space>",
+                "<ontology::object>": "<food>",
+                "quantity": 0,
+                "description": {
+                  "zh": "按狩猎表（区域类型 × 骰子点数）拿取对应数量<food>到食物格。",
+                  "en": "Take <food> markers per the hunting table (territory type × die value) onto the food space."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<hunting_token_display>",
+                "destination": "this.target",
+                "<ontology::object>": "<hunting_token>",
+                "quantity": 1,
+                "description": {
+                  "zh": "放 1 个<hunting_token>到该区域：本时代内不能再在此狩猎。",
+                  "en": "Place 1 <hunting_token> on the territory: it cannot be hunted for the rest of the era."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "strengthen_tribe",
+      "name": {
+        "zh": "强化部落",
+        "en": "Strengthen Tribe"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "将任意 1 个虚弱（posture == <lying>）的<tribe>扶起为直立（<upright>）。",
+        "en": "Stand any 1 weak (<lying>) <tribe> up to <upright>."
+      },
+      "target": "1 个 posture == <lying> 的<tribe>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::state_change>": {
+            "subject": "this.target",
+            "attribute": "posture",
+            "to": "<upright>",
+            "description": {
+              "zh": "虚弱部落直立。",
+              "en": "The weak tribe stands up."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "produce_material",
+      "name": {
+        "zh": "生产原材料",
+        "en": "Produce Raw Material"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个标记放入该区域，成为该区域材料板块所示类型的原材料。船上有至少一个部落且中央凹槽未被占用时也可在船上生产（材料类型到运输时才确定）。",
+        "en": "Choose a territory with at least one of your <tribe>s and place a marker from supply into it, representing a raw material of the type shown on the territory's material tile. Production on a boat is possible with at least one tribe aboard and the central notch free (type determined at transport time)."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "存在区域（或有自己的船）：有至少一个自己的<tribe>；船上生产需中央凹槽未被占用。",
+              "en": "There exists a territory (or one of your boats) with at least one of your <tribe>s; boat production requires a free central notch."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "target": "1 个有至少一个自己<tribe>的区域（或自己的船）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<ontology::supply>",
+            "destination": "this.target",
+            "<ontology::object>": "<octagonal_pillar>",
+            "quantity": 1,
+            "description": {
+              "zh": "从供应堆取 1 个标记放入目标区域，成为原材料。",
+              "en": "Place 1 marker from supply into the target territory as a raw material."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "transport_material",
+      "name": {
+        "zh": "运输原材料",
+        "en": "Transport Raw Material"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择大陆上任意 1 个自己的原材料标记（无需该区域有部落），将其放到控制台对应材料类型的仓库格，成为已储存材料。船上的原材料按船所在水流区域相邻的已开发区域的材料类型运输。",
+        "en": "Choose any 1 of your raw material markers on the continent (no tribe required in that territory) and move it to the storage space of the corresponding material type on your console, making it a stored material. Raw materials on boats are transported per the material type of a developed territory adjacent to the boat's Water territory."
+      },
+      "target": "大陆上任意 1 个自己的原材料标记（<octagonal_pillar>）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target 所在区域",
+            "destination": "<storage_area>",
+            "<ontology::object>": "<stored_material>",
+            "quantity": 1,
+            "description": {
+              "zh": "将 1 个原材料标记移至对应材料类型的仓库格。",
+              "en": "Move 1 raw material marker to its storage space."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gain_activation_die",
+      "name": {
+        "zh": "获得激活骰",
+        "en": "Gain Activation Die"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "从骰子展示区拿取 1 个<activation_die>，立即投掷一次，按点数放到控制台对应点数骰子格。若展示区已无激活骰，改为从拥有激活骰最多的玩家处拿取 1 个（不能从自己拿）。",
+        "en": "Take 1 <activation_die> from the dice display, roll it immediately, and place it on the corresponding dice space of your console. If no activation dice remain in the display, take one from the civilization with the most instead (never from yourself)."
+      },
+      "target": "骰子展示区的 1 个<activation_die>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<dice_display>",
+            "destination": "<activation_dice_area>",
+            "<ontology::object>": "<activation_die>",
+            "quantity": 1,
+            "description": {
+              "zh": "拿取 1 个激活骰，投掷后按点数放入对应骰子格。",
+              "en": "Take 1 activation die, roll it, and place it on the matching dice space."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gain_fate_die",
+      "name": {
+        "zh": "获得命运骰",
+        "en": "Gain Fate Die"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "从骰子展示区拿取 1 个<fate_die>，加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。若展示区已无命运骰，改为从拥有命运骰最多的玩家处拿取（不能从自己拿）。",
+        "en": "Take 1 <fate_die> from the dice display and add it to your fate dice (rolled together for favor tests, hunts, and lucky finds). If none remain, take one from the civilization with the most (never from yourself)."
+      },
+      "target": "骰子展示区的 1 个<fate_die>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<dice_display>",
+            "destination": "玩家持有的粉骰区域",
+            "<ontology::object>": "<fate_die>",
+            "quantity": 1,
+            "description": {
+              "zh": "拿取 1 个命运骰加入自己的粉骰。",
+              "en": "Take 1 fate die and add it to your fate dice."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gain_goal_chip",
+      "name": {
+        "zh": "获得目标芯片",
+        "en": "Gain Goal Chip"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "从进程版图的目标芯片展示区选择 1 枚<goal_chip>，正面朝上放入目标区；目标区已满时叠放在任意 1 枚已有目标芯片上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。随后从深蓝袋随机抽 1 枚补满展示区空位。",
+        "en": "Choose 1 <goal_chip> from the goal chip display on the progress board and place it face up in your goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it. Then refill the empty display space with a goal chip randomly drawn from the dark blue bag."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "目标芯片展示区非空。",
+              "en": "The goal chip display is not empty."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "target": "目标芯片展示区的 1 枚<goal_chip>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<goal_chip_display>",
+                "destination": "<goal_area>",
+                "<ontology::object>": "<goal_chip>",
+                "quantity": 1,
+                "description": {
+                  "zh": "拿取 1 枚目标芯片正面朝上放入目标区（满时叠放覆盖）。",
+                  "en": "Take 1 goal chip face up into the goal area (stacked on top if full)."
+                }
+              }
+            },
+            {
+              "description": {
+                "zh": "从深蓝袋随机抽 1 枚目标芯片补满展示区空位。",
+                "en": "Refill the display space with a goal chip drawn randomly from the dark blue bag."
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "place_planning_markers",
+      "name": {
+        "zh": "放置计划标记",
+        "en": "Place Planning Markers"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "从供应堆取 N 个标记作为<planning_marker>，全部放到控制台任意 1 个骰子格上（必须同一格，不能分散）。计划标记可在激活模组时替代对应点数的白骰子支付费用。",
+        "en": "Take N markers from supply as <planning_marker>s and place all of them onto any 1 dice space of your console (all on the same space). Planning markers may replace a white activation die of the corresponding value when activating a module."
+      },
+      "target": "控制台任意 1 个骰子格",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<ontology::supply>",
+            "destination": "this.target",
+            "<ontology::object>": "<planning_marker>",
+            "quantity": 0,
+            "description": {
+              "zh": "从供应堆取 N 个标记放到同一骰子格，成为计划标记。",
+              "en": "Place N markers from supply onto the same dice space as planning markers."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "move_feature_marker",
+      "name": {
+        "zh": "移动特征标记",
+        "en": "Move Feature Marker"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "将 1 个<feature_marker>从当前特征格移动到自己的任意其他特征格。",
+        "en": "Move 1 <feature_marker> from its current feature space to any other feature space of yours."
+      },
+      "target": "1 个自己的<feature_marker> + 1 个自己的目标特征格",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "将该特征标记移至目标特征格。",
+            "en": "Move the feature marker to the target feature space."
+          }
+        }
+      }
+    },
+    {
       "id": "build_farm",
       "name": {
         "zh": "建造农场",
