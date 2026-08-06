@@ -36,7 +36,6 @@ Action 必须遵循 `condition → cost → target → content` 结构：
     "options": [ { "description": { "zh": "谓词 1" } }, { "description": { "zh": "谓词 2" } } ],
     "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
   },
-  "<ontology::cost>": null,
   "target": "用自然语言描述，嵌 <concept_id> 引用",
   "<ontology::content>": {
     "<ontology::instant_content>": {
@@ -48,7 +47,7 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 ```
 
 - **condition**：`options`/`type`/`EXECUTE_ALL` 结构。每条谓词用自然语言描述
-- **cost**：`null` 或 `"<ontology::instant_cost>": { ... }`（`<ontology::continuous_cost>` 用于状态条件）
+- **cost**：`"<ontology::instant_cost>": { ... }`（`<ontology::continuous_cost>` 用于状态条件）。**无需支付时省略 cost 字段，不写 null**
 - **target**：**纯字符串**（不是对象）。用自然语言描述，嵌入 `<concept_id>` 交叉引用。target 是 trigger 的字段，不是 ontology 概念，不加 `<>` 包在字段名上
 - **content**：`<ontology::instant_content>` 或 `<ontology::continuous_content>`，内部用 `options`/`type`/`do_after` 描述步骤
 
@@ -148,8 +147,7 @@ transfer 的 destination 应该引用 action 自己的 target，不要写死 zon
   }
 }
 
-// 无需支付
-"<ontology::cost>": null
+// 无需支付：省略 cost 字段，不写 "<ontology::cost>": null
 ```
 
 ---
@@ -168,9 +166,9 @@ id + name.zh + name.en + description.zh + description.en
 ## 检查清单
 
 写一个新 action/trigger 时确认：
-- [ ] 有 `name: { zh, en }`
+- [ ] 有 `name: { zh, en }`（紧跟 id 之后）
 - [ ] condition 用了 options/type/EXECUTE_ALL 结构
-- [ ] cost 是 null 或 instant_cost/continuous_cost
+- [ ] cost 是 instant_cost/continuous_cost；无需支付则省略字段（不写 null）
 - [ ] target 是字符串，不是对象
 - [ ] content 是 `<ontology::instant_content>` 或 `<ontology::continuous_content>`
 - [ ] 所有 type 引用是完整路径 `"<ontology::multiple_choice_enum.XXX>"`

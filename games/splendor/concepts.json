@@ -684,7 +684,6 @@
         "en": "The 'take different-colored gems' <ontology::action> in Splendor. The player takes 1 <gem> of each chosen color from <gem_supply>, quantity determined by availability — 3 when ≥3 colors are in stock, or all available colors when only 1-2 remain. The rules respond with a <ontology::transfer>. One of two gem-taking options per turn."
       },
       "<ontology::condition>": "<gems_available_any>",
-      "<ontology::cost>": null,
       "<ontology::content>": [
         {
           "type": "<ontology::instant_content>",
@@ -739,7 +738,6 @@
         "en": "The 'take same-colored gems' <ontology::action> in Splendor. The player chooses one color and takes 2 <gem>s of that color from <gem_supply>. Only allowed when the chosen color has ≥4 in <gem_supply> — at least 2 remain after taking, so a single take cannot drain the stack. The rules respond with a <ontology::transfer>. One of two gem-taking options per turn."
       },
       "<ontology::condition>": "<gems_available_same_color>",
-      "<ontology::cost>": null,
       "<ontology::content>": [
         {
           "type": "<ontology::instant_content>",
@@ -862,8 +860,7 @@
           }
         }
       ],
-      "<ontology::condition>": "<exceed_gem_limit>",
-      "<ontology::cost>": null
+      "<ontology::condition>": "<exceed_gem_limit>"
     },
     {
       "id": "attract_noble",
@@ -918,8 +915,7 @@
           }
         }
       ],
-      "<ontology::condition>": "<noble_satisfied>",
-      "<ontology::cost>": null
+      "<ontology::condition>": "<noble_satisfied>"
     },
     {
       "id": "enter_endgame",
@@ -945,8 +941,7 @@
           }
         }
       ],
-      "<ontology::condition>": "<reach_15_prestige>",
-      "<ontology::cost>": null
+      "<ontology::condition>": "<reach_15_prestige>"
     },
     {
       "id": "skip_turn",
@@ -972,8 +967,7 @@
           }
         }
       ],
-      "<ontology::condition>": "<no_action_available>",
-      "<ontology::cost>": null
+      "<ontology::condition>": "<no_action_available>"
     }
   ],
   "conditions": [

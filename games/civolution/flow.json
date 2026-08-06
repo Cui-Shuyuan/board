@@ -1823,7 +1823,6 @@
         ],
         "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
-      "<ontology::cost>": null,
       "target": "1 个 face == face_down 的 <site>",
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -1868,6 +1867,38 @@
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "explore_adjacent_sites",
+      "name": {
+        "zh": "探索相邻地点",
+        "en": "Explore Adjacent Sites"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个有你至少一个<tribe>的区域，将与这个区域相邻的所有 face == face_down 的 <site> 作为目标，逐一执行<explore_site>。",
+        "en": "Choose 1 territory where you have at least one <tribe>; every <site> with face == face_down adjacent to it becomes a target, and <explore_site> is performed on each."
+      },
+      "<ontology::condition>": {
+        "options": [
+          {
+            "description": {
+              "zh": "存在至少一个区域：有至少一个自己的<tribe>，且相邻至少一个 face == face_down 的 <site>。",
+              "en": "There exists a territory with at least one of your <tribe>s and at least one adjacent <site> with face == face_down."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      },
+      "target": "1 个有至少一个自己<tribe>的区域，且其相邻存在 face == face_down 的 <site>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<explore_site>": {
+            "target": "this.target 相邻的所有 face == face_down 的 <site>",
+            "quantity": "all"
+          }
         }
       }
     },

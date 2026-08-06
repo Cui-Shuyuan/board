@@ -354,11 +354,183 @@
     },
     {
       "id": "module_exploration",
-      "instance_of": "<module>",
+      "instance_of": "<upgradable_module>",
       "name": { "zh": "探索", "en": "Exploration" },
       "abstract": false,
       "module_type": "main",
-      "tile": "<tile_exploration>"
+      "tile": "<tile_exploration>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 1 } },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<ontology::supply>",
+                "<object>": { "<activation_die>": { "value": 4 } },
+                "description": {
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "选择 1 个有你部落的区域，探索其相邻的所有背面朝上地点；或进行 1 次幸运收获。",
+            "en": "Choose a territory with at least one of your tribes and explore all face-down sites adjacent to it; or make 1 lucky find."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<explore_adjacent_sites>",
+                  "<lucky_find>"
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "先探索选定的有部落区域相邻的所有背面朝上地点，随后可任选大陆上 1 枚背面朝上地点进行探索（可不做），最后获得 2 分；或进行 1 次幸运收获。",
+            "en": "Explore all face-down sites adjacent to a territory with your tribe, then optionally explore 1 more face-down site anywhere on the continent, and finally gain 2 success points; or make 1 lucky find."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<explore_adjacent_sites>",
+                      {
+                        "id": "optional_explore",
+                        "name": {
+                          "zh": "任选地点探索（可选）",
+                          "en": "Explore Any Site (Optional)"
+                        },
+                        "do_after": [
+                          "<explore_adjacent_sites>"
+                        ],
+                        "options": [
+                          {
+                            "id": "_skip",
+                            "description": {
+                              "zh": "不做（跳过此项）",
+                              "en": "Skip this option"
+                            }
+                          },
+                          "<explore_site>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      },
+                      {
+                        "id": "gain_2_points",
+                        "name": {
+                          "zh": "获得 2 分",
+                          "en": "Gain 2 Points"
+                        },
+                        "do_after": [
+                          "optional_explore"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<score_track>",
+                          "step": 2
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  },
+                  "<lucky_find>"
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "先探索选定的有部落区域相邻的所有背面朝上地点，随后可任选大陆上 1 枚背面朝上地点进行探索（可不做），最后额外获得 4 分；或连续进行 2 次幸运收获（可在相同或不同的领地类型）。",
+            "en": "Explore all face-down sites adjacent to a territory with your tribe, then optionally explore 1 more face-down site anywhere on the continent, and finally gain 4 additional success points; or make 2 consecutive lucky finds (in the same or in different territory types)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<explore_adjacent_sites>",
+                      {
+                        "id": "optional_explore",
+                        "name": {
+                          "zh": "任选地点探索（可选）",
+                          "en": "Explore Any Site (Optional)"
+                        },
+                        "do_after": [
+                          "<explore_adjacent_sites>"
+                        ],
+                        "options": [
+                          {
+                            "id": "_skip",
+                            "description": {
+                              "zh": "不做（跳过此项）",
+                              "en": "Skip this option"
+                            }
+                          },
+                          "<explore_site>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      },
+                      {
+                        "id": "gain_4_points",
+                        "name": {
+                          "zh": "额外获得 4 分",
+                          "en": "Gain 4 Additional Points"
+                        },
+                        "do_after": [
+                          "optional_explore"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<score_track>",
+                          "step": 4
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  },
+                  {
+                    "<lucky_find>": {
+                      "quantity": 2
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "id": "module_building",
