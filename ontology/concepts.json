@@ -1164,6 +1164,56 @@
       }
     },
     {
+      "id": "evaluate",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "求值",
+        "en": "Evaluate"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 <trigger>——按 condition → cost → content 执行后，产出 <result>（任意类型）。与通常 trigger 不同，<evaluate> 的 <content> 执行完毕后必须返回一个值，供后续 step 的 condition 引用。",
+        "en": "A <trigger> that produces a <result> (any type) after executing condition → cost → content. Unlike a regular trigger, <evaluate>'s <content> must return a value after execution, which can be referenced by subsequent steps' conditions."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "result",
+            "description": {
+              "zh": "求值完成后产出的返回值。类型取决于具体子类——<check> 为 boolean，通用的 <evaluate> 可为任意类型。",
+              "en": "The return value after evaluation completes. The type depends on the subclass — <check> is boolean; generic <evaluate> can be any type."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "check",
+      "specifies": "<evaluate>",
+      "name": {
+        "zh": "检定",
+        "en": "Check"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "产出 pass/fail 结果的 <evaluate>。<result> 的类型特化为 boolean——true 表示通过，false 表示未通过。用于恩惠检定、属性检定、狩猎判定等场景。",
+        "en": "An <evaluate> that produces a pass/fail result. <result> is specialized to boolean — true = passed, false = failed. Used for favor checks, attribute checks, hunting checks, etc."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "result",
+            "description": {
+              "zh": "pass 或 fail。",
+              "en": "pass or fail."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
       "id": "resolve",
       "extends": "<event>",
       "name": {
@@ -1270,7 +1320,18 @@
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          {
+            "id": "face",
+            "type": "enum",
+            "enum": ["face_up", "face_down"],
+            "default": null,
+            "description": {
+              "zh": "卡牌的朝向。face_up = 正面朝上（内容可见）；face_down = 背面朝上（内容隐藏）。null 表示不区分正反。",
+              "en": "Which side of the card is showing. face_up = front visible; face_down = back visible. null means the card does not distinguish sides."
+            }
+          }
+        ]
       }
     },
     {
@@ -1287,7 +1348,18 @@
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          {
+            "id": "face",
+            "type": "enum",
+            "enum": ["face_up", "face_down"],
+            "default": null,
+            "description": {
+              "zh": "板块的朝向。face_up = 正面朝上（内容可见）；face_down = 背面朝上（内容隐藏）。null 表示不区分正反。",
+              "en": "Which side of the tile is showing. face_up = front visible; face_down = back visible. null means the tile does not distinguish sides."
+            }
+          }
+        ]
       }
     },
     {
@@ -1424,6 +1496,31 @@
       "constraints": {
         "required": [],
         "optional": []
+      }
+    },
+    {
+      "id": "temporary_zone",
+      "extends": "<zone>",
+      "name": {
+        "zh": "临时区",
+        "en": "Temporary Zone"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "多步骤操作中的中间态 <zone>，不在任何玩家的常规区域中，也不在规则书中被命名。任何 <object> 均可短暂进入临时区——抽牌检视、暂存待分配的资源、中间计算结果等。临时区中的 <object> 在操作完成前不参与任何游戏判定。操作完成后临时区必须清空——所有 <object> 要么进入目标 zone，要么返回来源 zone。",
+        "en": "An intermediate <zone> used during multi-step operations, not belonging to any player's regular area and not named in the rulebook. Any <object> can briefly enter the temporary zone — cards drawn for inspection, resources awaiting distribution, intermediate computation results, etc. <object>s in the temporary zone do not participate in any game decisions until the operation completes. The temporary zone MUST be empty after the operation — all <object>s either enter their target zone or return to their source zone."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "capacity",
+            "description": {
+              "zh": "临时区可容纳的最大 object 数量。由于临时区是瞬时使用的，通常无需设上限——null 表示无上限。",
+              "en": "Maximum number of objects the temporary zone can hold. Since the zone is used transiently, typically uncapped — null means unlimited."
+            }
+          }
+        ]
       }
     },
     {
@@ -1624,6 +1721,13 @@
               "zh": "骰子的面数。如六面骰为 6。",
               "en": "Number of faces on the die. E.g., 6 for a six-sided die."
             }
+          },
+          {
+            "id": "value",
+            "description": {
+              "zh": "骰子当前朝上的面所显示的点数。用于结构化表达对骰子点数的要求——如 cost 中要求的特定点数、或 content 中产生的随机结果。null 表示尚未掷出或无需指定。",
+              "en": "The value shown on the currently upward face of the die. Used to structurally express die value requirements — e.g., a specific value required in a cost, or a random result produced in content. null means not yet rolled or not specified."
+            }
           }
         ]
       }
@@ -1756,6 +1860,70 @@
             }
           }
         ],
+        "optional": []
+      }
+    },
+    {
+      "id": "state_change",
+      "extends": "<event>",
+      "name": {
+        "zh": "状态变更",
+        "en": "State Change"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一个 <object> 的某个属性的值从 A 变为 B。与 <lose>/<gain> 不同——后者操作的是 <property> 的 domain 归属；<state_change> 操作的是 <state> 的属性值（如部落的站立→躺倒、卡牌的横置→竖置、token 的正面→反面）。",
+        "en": "The value of an <object>'s attribute changes from A to B. Distinct from <lose>/<gain> — those operate on <property> domain ownership; <state_change> operates on <state> attribute values (e.g., tribe standing→lying, card tapped→untapped, token face-up→face-down)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "subject",
+            "description": {
+              "zh": "状态发生变更的 <object>。",
+              "en": "The <object> whose state is changing."
+            }
+          },
+          {
+            "id": "to",
+            "description": {
+              "zh": "变更后的目标状态值，用点号路径表达。",
+              "en": "The target state value after the change, expressed as a dot-path."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "attribute",
+            "description": {
+              "zh": "变更的属性名。多数情况下状态自身即语义——如 <strong> 不需要套在 'posture' 下。仅当同一个 object 有多个正交状态维度时才需要（如一张卡同时有 'orientation' 和 'face' 两个状态）。",
+              "en": "The attribute name being changed. Usually unnecessary — states carry their own semantics (e.g., <strong> doesn't need a 'posture' wrapper). Only needed when an object has multiple orthogonal state dimensions (e.g., a card with both 'orientation' and 'face' states)."
+            }
+          },
+          {
+            "id": "from",
+            "description": {
+              "zh": "变更前的旧 <state>。可不写——表示无论当前是什么状态，强制设为目标状态。",
+              "en": "The old <state> before the change. Optional — if absent, unconditionally set to the target state."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "flip",
+      "specifies": "<state_change>",
+      "name": {
+        "zh": "翻面",
+        "en": "Flip"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "将 <card> 或 <tile> 翻至另一面。attribute 固定为 face，to 为 face_up 或 face_down。",
+        "en": "Flip a <card> or <tile> to its other side. Attribute is fixed to face; to is face_up or face_down."
+      },
+      "constraints": {
+        "required": [],
         "optional": []
       }
     },

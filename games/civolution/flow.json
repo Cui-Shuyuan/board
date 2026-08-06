@@ -45,7 +45,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<continent>",
-              "<object>": "<site>",
+              "<ontology::object>": "<site>",
               "quantity": 24,
               "face_down": true,
               "name": {
@@ -74,7 +74,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<phase_sequence>",
-              "<object>": "<phase_indicator>",
+              "<ontology::object>": "<phase_indicator>",
               "quantity": 1,
               "name": {
                 "zh": "准备阶段标记",
@@ -90,7 +90,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<weather_gauge>",
-              "<object>": "<weather_indicator>",
+              "<ontology::object>": "<weather_indicator>",
               "quantity": 1,
               "name": {
                 "zh": "准备天气标记",
@@ -106,7 +106,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<event_card_space>",
-              "<object>": "<event_card>",
+              "<ontology::object>": "<event_card>",
               "quantity": 4,
               "face_down": true,
               "name": {
@@ -149,7 +149,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<era_scoring_area>",
-              "<object>": "<scoring_tile>",
+              "<ontology::object>": "<scoring_tile>",
               "quantity": 4,
               "name": {
                 "zh": "准备时代计分板块",
@@ -165,7 +165,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<final_scoring_area>",
-              "<object>": "<scoring_tile>",
+              "<ontology::object>": "<scoring_tile>",
               "quantity": 3,
               "face_down": true,
               "name": {
@@ -233,7 +233,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<goal_chip_display>",
-              "<object>": "<goal_chip>",
+              "<ontology::object>": "<goal_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
               },
@@ -251,7 +251,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<income_chip_display>",
-              "<object>": "<income_chip>",
+              "<ontology::object>": "<income_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
               },
@@ -269,7 +269,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<attribute_chip_display>",
-              "<object>": "<attribute_chip>",
+              "<ontology::object>": "<attribute_chip>",
               "quantity": {
                 "expr": "per_player_count_setup"
               },
@@ -287,7 +287,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<continent>",
-              "<object>": "<material_tile>",
+              "<ontology::object>": "<material_tile>",
               "quantity": "all",
               "name": {
                 "zh": "放置材料板块",
@@ -303,7 +303,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<module_area>",
-              "<object>": "<main_module>",
+              "<ontology::object>": "<main_module>",
               "quantity": 15,
               "per_player": true,
               "name": {
@@ -320,7 +320,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<activation_dice_area>",
-              "<object>": "<activation_die>",
+              "<ontology::object>": "<activation_die>",
               "quantity": 6,
               "per_player": true,
               "name": {
@@ -337,7 +337,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<fate_dice_area>",
-              "<object>": "<fate_die>",
+              "<ontology::object>": "<fate_die>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -354,7 +354,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<console>",
-              "<object>": "<stage_tile>",
+              "<ontology::object>": "<stage_tile>",
               "quantity": 2,
               "per_player": true,
               "name": {
@@ -371,7 +371,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<console>",
-              "<object>": "<settlement> | <farm> | <boat> | <tribe>",
+              "<ontology::object>": "<settlement> | <farm> | <boat> | <tribe>",
               "quantity": "all",
               "per_player": true,
               "name": {
@@ -388,7 +388,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<score_track>",
-              "<object>": "<score_marker>",
+              "<ontology::object>": "<score_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -405,7 +405,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<favor_of_ager_track>",
-              "<object>": "<favor_marker>",
+              "<ontology::object>": "<favor_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -422,7 +422,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<technology_track>",
-              "<object>": "<progress_marker>",
+              "<ontology::object>": "<progress_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -439,7 +439,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<prestige_track>",
-              "<object>": "<progress_marker>",
+              "<ontology::object>": "<progress_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -456,7 +456,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<knowledge_track>",
-              "<object>": "<progress_marker>",
+              "<ontology::object>": "<progress_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -473,7 +473,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<construction_track>",
-              "<object>": "<progress_marker>",
+              "<ontology::object>": "<progress_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -490,7 +490,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<culture_track>",
-              "<object>": "<progress_marker>",
+              "<ontology::object>": "<progress_marker>",
               "quantity": 1,
               "per_player": true,
               "name": {
@@ -507,7 +507,7 @@
               },
               "source": "<console>",
               "destination": "<continent>",
-              "<object>": "<tribe>",
+              "<ontology::object>": "<tribe>",
               "quantity": 2,
               "per_player": true,
               "name": {
@@ -524,7 +524,7 @@
               },
               "source": "<ontology::game_box>",
               "destination": "<continent> | <console>",
-              "<object>": "<marker>",
+              "<ontology::object>": "<marker>",
               "quantity": 6,
               "per_player": true,
               "name": {
@@ -553,7 +553,7 @@
               },
               "source": "<starting_marker_deck>",
               "destination": "<ontology::game_box>",
-              "<object>": "<starting_marker_card>",
+              "<ontology::object>": "<starting_marker_card>",
               "quantity": {
                 "expr": "player_count * 2"
               },
@@ -571,7 +571,7 @@
               },
               "source": "<starting_chip_deck>",
               "destination": "<income_area>",
-              "<object>": "<starting_chip_card>",
+              "<ontology::object>": "<starting_chip_card>",
               "quantity": {
                 "expr": "player_count"
               },
@@ -589,7 +589,7 @@
               },
               "source": "<research_deck>",
               "destination": "<ontology::player_holding>",
-              "<object>": "<research_card>",
+              "<ontology::object>": "<research_card>",
               "quantity": 5,
               "per_player": true,
               "name": {
@@ -838,14 +838,28 @@
   "triggers": [
     {
       "id": "favor_test",
-      "specifies": "<ontology::event>",
-      "description": {
-        "zh": "投掷玩家持有的全部 <fate_die>，并根据 <favor_of_ager_track> 当前位置判定是否通过。只要有一颗骰子的点数落在轨道允许的范围内，即视为通过。常用于模组升级后的额外行动。",
-        "en": "Roll all <fate_die> and check whether any result falls within the allowed range per <favor_of_ager_track> position. Passing requires at least one die to show an allowed value. Commonly used for bonus actions after upgrading modules."
-      },
+      "specifies": "<ontology::check>",
       "name": {
         "zh": "恩惠检定",
         "en": "Favor Test"
+      },
+      "description": {
+        "zh": "投掷全部 <fate_die>，只要有一颗点数落在 [1, <favor_of_ager_track>.position] 闭区间内即为通过。",
+        "en": "Roll all <fate_die>s. Pass if any die value falls within the closed interval [1, <favor_of_ager_track>.position]."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "投掷玩家持有的全部 <fate_die>。",
+            "en": "Roll all <fate_die> held by the player."
+          }
+        }
+      },
+      "result": {
+        "expression": {
+          "zh": "任意 <fate_die>.value ∈ [1, <favor_of_ager_track>.position]",
+          "en": "any <fate_die>.value ∈ [1, <favor_of_ager_track>.position]"
+        }
       }
     },
     {
@@ -1009,7 +1023,7 @@
       },
       "source": "<food_space>",
       "destination": "<ontology::supply>",
-      "<object>": "<food>",
+      "<ontology::object>": "<food>",
       "count": 1,
       "name": {
         "zh": "失去食物",
@@ -1025,7 +1039,7 @@
       },
       "source": "<continent>",
       "destination": "<ontology::supply>",
-      "<object>": "<tribe>",
+      "<ontology::object>": "<tribe>",
       "count": 1,
       "name": {
         "zh": "移除部落",
@@ -1143,7 +1157,7 @@
           "specifies": "<ontology::transfer>",
           "source": "<income_chip_display>",
           "destination": "<ontology::player_holding>",
-          "<object>": "<income_chip>",
+          "<ontology::object>": "<income_chip>",
           "quantity": 1,
           "name": {
             "zh": "从展示区拿取",
@@ -1155,7 +1169,7 @@
           "specifies": "<ontology::transfer>",
           "source": "<income_chip_bag>",
           "destination": "<income_chip_display>",
-          "<object>": "<income_chip>",
+          "<ontology::object>": "<income_chip>",
           "quantity": 1,
           "do_after": [
             "take_from_display"
@@ -1195,6 +1209,361 @@
       }
     },
     {
+      "id": "move_tribe",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "移动部落",
+        "en": "Move Tribe"
+      },
+      "description": {
+        "zh": "将 1 个健康的部落从一个区域移动至相邻区域。同一领地内不能移动；不能进入<site>。分属两块大陆板块的同一地形类型区域（即使地形一样）视为两个不同区域——只要彼此接壤即可。山脉区域规则上与其他区域完全一样。",
+        "en": "Move 1 healthy tribe from one territory to an adjacent territory. Cannot move within the same territory; cannot enter <site>s. Territories of the same terrain type on different continent tiles (even if the terrain is identical) are separate territories — valid as long as their borders touch. Mountain territories function identically to all other types."
+      },
+      "target": {
+        "zh": "1 个 posture == <upright> 的 <tribe> + 1 个相邻领地的营地（陆地），或 1 个自己的位于相邻水流区域且有空位的 <boat>。",
+        "en": "1 <tribe> with posture == <upright> + 1 encampment in an adjacent territory (land), or 1 of your <boat>s on an adjacent Water territory with a free seat."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target.tribe.location",
+            "destination": "this.target.destination",
+            "<ontology::object>": "<tribe>",
+            "quantity": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "resolve_migration_triggers",
+      "specifies": "<ontology::pipeline>",
+      "name": {
+        "zh": "结算迁徙触发",
+        "en": "Resolve Migration Triggers"
+      },
+      "description": {
+        "zh": "迁徙后的自动触发结算。各 trigger 按自身 condition 独立判定，满足即执行。",
+        "en": "Automatic trigger resolution after migration. Each trigger independently checks its condition and fires if met."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "migrating_tribe",
+            "description": {
+              "zh": "执行迁徙的 <tribe>。",
+              "en": "The <tribe> that performed the migration."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "部落移动到的目标领地。",
+              "en": "The destination territory the tribe moved to."
+            }
+          }
+        ]
+      },
+      "options": [
+        {
+          "id": "displace_occupant",
+          "specifies": "<ontology::trigger>",
+          "name": {
+            "zh": "驱赶到荒野",
+            "en": "Displace to Wilderness"
+          },
+          "<ontology::condition>": {
+            "zh": "目的地为陆地营地，且该营地已被其他<tribe>占据（无论自己或他人）。",
+            "en": "Destination is a land encampment occupied by another <tribe> (own or opponent's)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::transfer>": {
+                "source": "this.destination.encampment",
+                "destination": "this.destination.wilderness",
+                "<ontology::object>": "<tribe>",
+                "quantity": 1,
+                "description": {
+                  "zh": "将占据营地的部落移至同一区域的野外（保留其站立/躺倒状态）。",
+                  "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "fire_encampment_score",
+          "specifies": "<ontology::trigger>",
+          "name": {
+            "zh": "篝火营地得分",
+            "en": "Score Fire Encampment"
+          },
+          "<ontology::condition>": {
+            "zh": "目的地营地是篝火营地（黄色边框）。",
+            "en": "The destination encampment is a fire encampment (yellow border)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "description": {
+                "zh": "获得营地所示分数，推进<score_track>。",
+                "en": "Gain the points depicted on the encampment; advance <score_track>."
+              }
+            }
+          }
+        },
+        {
+          "id": "weaken",
+          "specifies": "<ontology::trigger>",
+          "name": {
+            "zh": "变虚弱",
+            "en": "Weaken"
+          },
+          "do_after": [
+            "displace_occupant"
+          ],
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::state_change>": {
+                "subject": "this.migrating_tribe",
+                "attribute": "posture",
+                "to": "<lying>",
+                "description": {
+                  "zh": "驱赶其他部落后，迁徙部落变虚弱。",
+                  "en": "Migrating tribe becomes weak after displacing another tribe."
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "develop_territory",
+          "specifies": "<ontology::trigger>",
+          "name": {
+            "zh": "开发领地",
+            "en": "Develop Territory"
+          },
+          "<ontology::condition>": {
+            "zh": "目的地不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
+            "en": "Destination is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "options": [
+                {
+                  "<ontology::flip>": {
+                    "subject": "this.destination.<material_tile>",
+                    "to": "face_up"
+                  }
+                },
+                {
+                  "<ontology::transfer>": {
+                    "source": "<ontology::supply>",
+                    "destination": "this.destination",
+                    "<ontology::object>": "<octagonal_pillar>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从供应堆取 1 个八角柱放至目标区域作为原材料标记。",
+                      "en": "Place 1 octagonal pillar from supply onto the destination territory as a raw material marker."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        }
+      ],
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+    },
+    {
+      "id": "migrate",
+      "specifies": "<ontology::pipeline>",
+      "name": {
+        "zh": "迁徙",
+        "en": "Migrate"
+      },
+      "description": {
+        "zh": "1 次移动 + 结算迁徙触发。",
+        "en": "1 move + resolve migration triggers."
+      },
+      "target": "this.target",
+      "options": [
+        "<move_tribe>",
+        {
+          "<resolve_migration_triggers>": {
+            "migrating_tribe": "this.target.tribe",
+            "destination": "this.target.destination"
+          },
+          "do_after": [
+            "<move_tribe>"
+          ]
+        }
+      ],
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+    },
+    {
+      "id": "gain_research_card",
+      "specifies": "<ontology::pipeline>",
+      "description": {
+        "zh": "获得 1 张研究牌：选择一种研究牌类型（建造/洞悉/突变/成就/发明），从该类型的<face_up_research_stack>顶或<research_deck>顶拿取 1 张<research_card>至手牌。拿取后若正面堆为空，自动从对应背面朝下堆翻一张补充。",
+        "en": "Gain 1 research card: Choose a card type (Building/Insight/Mutation/Achievement/Invention), take the top <research_card> from that type's <face_up_research_stack> or <research_deck> to hand. If the face-up stack becomes empty, auto-refill from the corresponding face-down deck."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_card",
+              "options": [
+                {
+                  "<ontology::transfer>": {
+                    "source": "<face_up_research_stack>",
+                    "destination": "<player_holding>",
+                    "<ontology::object>": "<research_card>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从选定类型的正面朝上堆顶拿取 1 张<research_card>。",
+                      "en": "Take the top <research_card> from the chosen type's face-up stack."
+                    }
+                  }
+                },
+                {
+                  "<ontology::transfer>": {
+                    "source": "<research_deck>",
+                    "destination": "<player_holding>",
+                    "<ontology::object>": "<research_card>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从选定类型的背面朝下堆顶拿取 1 张<research_card>。",
+                      "en": "Take the top <research_card> from the chosen type's face-down deck."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>",
+              "name": {
+                "zh": "拿取研究牌",
+                "en": "Take Research Card"
+              }
+            },
+            {
+              "id": "refill_if_empty",
+              "do_after": [
+                "take_card"
+              ],
+              "<ontology::trigger>": {
+                "<ontology::condition>": {
+                  "zh": "任意<face_up_research_stack>为空",
+                  "en": "Any <face_up_research_stack> is empty"
+                },
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "<ontology::transfer>": {
+                      "source": "<research_deck>",
+                      "destination": "<face_up_research_stack>",
+                      "<ontology::object>": "<research_card>",
+                      "quantity": 1,
+                      "description": {
+                        "zh": "从对应背面朝下堆翻一张补充到正面朝上堆。",
+                        "en": "Refill the face-up stack from the corresponding face-down deck."
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "zh": "补充正面堆",
+                  "en": "Refill Face-Up Stack"
+                }
+              },
+              "name": {
+                "zh": "补充正面堆（若空）",
+                "en": "Refill if Empty"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      },
+      "name": {
+        "zh": "获得研究牌",
+        "en": "Gain Research Card"
+      }
+    },
+    {
+      "id": "draw_pick_return_research",
+      "specifies": "<ontology::pipeline>",
+      "description": {
+        "zh": "从背面朝下的研究牌堆抽 N 张牌至<ontology::temporary_zone>，检视后选 K 张转入<player_holding>，其余放回各自来源牌堆底部。N 和 K 由调用方指定。",
+        "en": "Draw N cards from face-down research decks to <ontology::temporary_zone>, inspect them, pick K to transfer to <player_holding>, and return the rest face-down to the bottom of their respective source decks. N and K are specified by the caller."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "draw",
+              "<ontology::transfer>": {
+                "source": "<research_deck>",
+                "destination": "<ontology::temporary_zone>",
+                "<ontology::object>": "<research_card>",
+                "quantity": "N",
+                "description": {
+                  "zh": "从任意<research_deck>（可同堆或不同堆）共抽 N 张<research_card>至<ontology::temporary_zone>。",
+                  "en": "Draw N <research_card>s total from any <research_deck>s (same or different) to <ontology::temporary_zone>."
+                }
+              },
+              "name": {
+                "zh": "抽牌至临时区",
+                "en": "Draw to Temporary Zone"
+              }
+            },
+            {
+              "id": "pick",
+              "do_after": [
+                "draw"
+              ],
+              "<ontology::transfer>": {
+                "source": "<ontology::temporary_zone>",
+                "destination": "<player_holding>",
+                "<ontology::object>": "<research_card>",
+                "quantity": "K",
+                "description": {
+                  "zh": "从<ontology::temporary_zone>中选 K 张<research_card>加入手牌。",
+                  "en": "Pick K <research_card>s from <ontology::temporary_zone> and add to hand."
+                }
+              },
+              "name": {
+                "zh": "选牌加入手牌",
+                "en": "Pick Cards to Hand"
+              }
+            },
+            {
+              "id": "return_rest",
+              "do_after": [
+                "pick"
+              ],
+              "<ontology::transfer>": {
+                "source": "<ontology::temporary_zone>",
+                "destination": "<research_deck>",
+                "<ontology::object>": "<research_card>",
+                "quantity": "N - K",
+                "description": {
+                  "zh": "将<ontology::temporary_zone>中剩余的<research_card>面朝下放回各自来源牌堆底部。",
+                  "en": "Return remaining <research_card>s from <ontology::temporary_zone> face-down to the bottom of their respective source decks."
+                }
+              },
+              "name": {
+                "zh": "归还剩余",
+                "en": "Return Remaining Cards"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      },
+      "name": {
+        "zh": "抽选归还研究牌",
+        "en": "Draw, Pick, Return Research Cards"
+      }
+    },
+    {
       "id": "trade",
       "specifies": "<ontology::pipeline>",
       "description": {
@@ -1223,7 +1592,7 @@
                   "specifies": "<ontology::transfer>",
                   "source": "<storage_area>",
                   "destination": "<ontology::supply>",
-                  "<object>": "<stored_material>",
+                  "<ontology::object>": "<stored_material>",
                   "quantity": 1,
                   "name": {
                     "zh": "返还材料换钱",
@@ -1235,7 +1604,7 @@
                   "specifies": "<ontology::transfer>",
                   "source": "<ontology::supply>",
                   "destination": "<money_space>",
-                  "<object>": "<money>",
+                  "<ontology::object>": "<money>",
                   "quantity": {
                     "zh": "由材料行决定：第一行 1、第二行 2、第三行 3",
                     "en": "Determined by material row: row 1 = 1, row 2 = 2, row 3 = 3"
@@ -1268,7 +1637,7 @@
                   "specifies": "<ontology::transfer>",
                   "source": "<storage_area>",
                   "destination": "<ontology::supply>",
-                  "<object>": "<stored_material>",
+                  "<ontology::object>": "<stored_material>",
                   "quantity": 1,
                   "name": {
                     "zh": "返还材料换分",
@@ -1317,7 +1686,7 @@
               "specifies": "<ontology::transfer>",
               "source": "<money_space>",
               "destination": "<ontology::supply>",
-              "<object>": "<money>",
+              "<ontology::object>": "<money>",
               "quantity": {
                 "zh": "<material_tile> 已翻面为 2，未翻面为 4",
                 "en": "2 if <material_tile> face-up, 4 if not"
@@ -1332,7 +1701,7 @@
               "specifies": "<ontology::transfer>",
               "source": "<ontology::supply>",
               "destination": "<storage_area>",
-              "<object>": "<stored_material>",
+              "<ontology::object>": "<stored_material>",
               "quantity": 1,
               "do_after": [
                 "pay_money"
@@ -1399,7 +1768,7 @@
               "<ontology::transfer>": {
                 "source": "<ontology::supply>",
                 "destination": "<storage_area>",
-                "<object>": "<stored_material>",
+                "<ontology::object>": "<stored_material>",
                 "quantity": 1,
                 "description": {
                   "zh": "根据玩家选择的领地类型和骰子点数，按仓库区连线对应的材料，从供应堆取 1 个标记放入对应仓库格。",
@@ -1453,7 +1822,7 @@
               "<ontology::transfer>": {
                 "source": "<farm_supply>",
                 "destination": "this.target",
-                "<object>": "<farm>",
+                "<ontology::object>": "<farm>",
                 "quantity": 1
               },
               "name": {
@@ -1469,7 +1838,7 @@
               "<ontology::transfer>": {
                 "source": "<ontology::supply>",
                 "destination": "<idea_space>",
-                "<object>": "<idea_marker>",
+                "<ontology::object>": "<idea_marker>",
                 "quantity": 1
               },
               "name": {
@@ -1515,7 +1884,7 @@
           "<ontology::transfer>": {
             "source": "<storage_area>",
             "destination": "<ontology::supply>",
-            "<object>": "<stored_material>",
+            "<ontology::object>": "<stored_material>",
             "quantity": {
               "zh": "2 或 3，因所选聚落格而异：格 1 需 1 木头+1 纸莎草（2 个），格 2 需 1 纸莎草+1 石头（2 个），格 3 需 1 木头+1 石头+1 黏土（3 个），格 4 需 1 沙子+1 铁矿+1 黏土（3 个）。",
               "en": "2 or 3, varies by settlement slot: slot 1 costs 1 Wood+1 Papyrus (2), slot 2 costs 1 Papyrus+1 Stone (2), slot 3 costs 1 Wood+1 Stone+1 Clay (3), slot 4 costs 1 Sand+1 Iron+1 Clay (3)."
@@ -1540,7 +1909,7 @@
               "<ontology::transfer>": {
                 "source": "<settlement_zone>",
                 "destination": "this.target",
-                "<object>": "<settlement>",
+                "<ontology::object>": "<settlement>",
                 "quantity": 1
               },
               "name": {
@@ -1606,7 +1975,7 @@
               "<ontology::transfer>": {
                 "source": "<boat_supply>",
                 "destination": "this.target",
-                "<object>": "<boat>",
+                "<ontology::object>": "<boat>",
                 "quantity": 1
               },
               "name": {
@@ -1631,7 +2000,7 @@
                   "<ontology::transfer>": {
                     "source": "<territory>",
                     "destination": "<boat>",
-                    "<object>": "<tribe>",
+                    "<ontology::object>": "<tribe>",
                     "quantity": 1,
                     "description": {
                       "zh": "从相邻区域中选一个站立<tribe>，迁徙到刚放置的<boat>上。只有站立部落才能登船。",
@@ -1694,7 +2063,7 @@
           "<ontology::transfer>": {
             "source": "<storage_area>",
             "destination": "<ontology::supply>",
-            "<object>": "<stored_material>",
+            "<ontology::object>": "<stored_material>",
             "quantity": 1,
             "description": {
               "zh": "从建造点上列出的 2~3 种材料中选一种，将对应<stored_material>从仓库返还供应堆。",
@@ -1720,7 +2089,7 @@
               "<ontology::transfer>": {
                 "source": "<ontology::supply>",
                 "destination": "this.target",
-                "<object>": "<statue>",
+                "<ontology::object>": "<statue>",
                 "quantity": 1,
                 "description": {
                   "zh": "从供应堆取 1 个通用标记（<octagonal_pillar>）放至建造点，成为<statue>。",
@@ -1854,7 +2223,7 @@
                       "en": "If <reset_marker> exists in <reset_column>, then <reset_column>; otherwise <ontology::supply>"
                     },
                     "destination": "<idea_space>",
-                    "<object>": "<reset_marker>",
+                    "<ontology::object>": "<reset_marker>",
                     "quantity": 1
                   },
                   "name": {
@@ -1870,7 +2239,7 @@
                       "en": "If <reset_marker> exists in <reset_column>, then <reset_column>; otherwise <ontology::supply>"
                     },
                     "destination": "<food_space>",
-                    "<object>": "<reset_marker>",
+                    "<ontology::object>": "<reset_marker>",
                     "quantity": 1
                   },
                   "name": {

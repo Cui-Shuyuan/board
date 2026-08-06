@@ -11,787 +11,791 @@
       "en": "Instance catalog for Civolution. Stores detailed data for effects, module tiles, cards, continent tiles, sites, chips, and other concrete instances."
     }
   },
-  "effects": [
-    {
-      "id": "effect_migration_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "迁徙（等级一）",
-        "en": "Migration (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "迁徙模组的等级一效果。domain 为 <tile_migration> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Migration module. Domain is <tile_migration> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_migration_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "迁徙（等级二）",
-        "en": "Migration (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "迁徙模组的等级二效果。domain 为 <tile_migration> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Migration module. Domain is <tile_migration> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_migration_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "迁徙（等级三）",
-        "en": "Migration (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "迁徙模组的等级三效果。domain 初始为 null——升至 L3 时由 <console> gain。印于控制台模组槽底部。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Migration module. Domain initially null — gained by <console> on reaching L3. Printed at the bottom of the console module slot. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_procreation_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "繁育（等级一）",
-        "en": "Procreation (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "繁育模组的等级一效果。domain 为 <tile_procreation> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Procreation module. Domain is <tile_procreation> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_procreation_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "繁育（等级二）",
-        "en": "Procreation (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "繁育模组的等级二效果。domain 为 <tile_procreation> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Procreation module. Domain is <tile_procreation> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_procreation_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "繁育（等级三）",
-        "en": "Procreation (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "繁育模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Procreation module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_production_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "生产（等级一）",
-        "en": "Production (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "生产模组的等级一效果。domain 为 <tile_production> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Production module. Domain is <tile_production> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_production_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "生产（等级二）",
-        "en": "Production (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "生产模组的等级二效果。domain 为 <tile_production> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Production module. Domain is <tile_production> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_production_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "生产（等级三）",
-        "en": "Production (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "生产模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Production module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_transport_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "运输（等级一）",
-        "en": "Transport (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "运输模组的等级一效果。domain 为 <tile_transport> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Transport module. Domain is <tile_transport> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_transport_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "运输（等级二）",
-        "en": "Transport (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "运输模组的等级二效果。domain 为 <tile_transport> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Transport module. Domain is <tile_transport> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_transport_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "运输（等级三）",
-        "en": "Transport (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "运输模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Transport module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_sustenance_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "给养（等级一）",
-        "en": "Sustenance (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "给养模组的等级一效果。domain 为 <tile_sustenance> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Sustenance module. Domain is <tile_sustenance> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_sustenance_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "给养（等级二）",
-        "en": "Sustenance (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "给养模组的等级二效果。domain 为 <tile_sustenance> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Sustenance module. Domain is <tile_sustenance> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_sustenance_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "给养（等级三）",
-        "en": "Sustenance (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "给养模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Sustenance module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_exploration_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "探索（等级一）",
-        "en": "Exploration (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "探索模组的等级一效果。domain 为 <tile_exploration> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Exploration module. Domain is <tile_exploration> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_exploration_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "探索（等级二）",
-        "en": "Exploration (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "探索模组的等级二效果。domain 为 <tile_exploration> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Exploration module. Domain is <tile_exploration> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_exploration_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "探索（等级三）",
-        "en": "Exploration (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "探索模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Exploration module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_building_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "建造（等级一）",
-        "en": "Building (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "建造模组的等级一效果。domain 为 <tile_building> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Building module. Domain is <tile_building> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_building_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "建造（等级二）",
-        "en": "Building (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "建造模组的等级二效果。domain 为 <tile_building> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Building module. Domain is <tile_building> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_building_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "建造（等级三）",
-        "en": "Building (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "建造模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Building module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_planning_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "计划（等级一）",
-        "en": "Planning (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "计划模组的等级一效果。domain 为 <tile_planning> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Planning module. Domain is <tile_planning> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_planning_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "计划（等级二）",
-        "en": "Planning (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "计划模组的等级二效果。domain 为 <tile_planning> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Planning module. Domain is <tile_planning> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_planning_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "计划（等级三）",
-        "en": "Planning (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "计划模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Planning module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_research_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "研究（等级一）",
-        "en": "Research (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "研究模组的等级一效果。domain 为 <tile_research> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Research module. Domain is <tile_research> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_research_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "研究（等级二）",
-        "en": "Research (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "研究模组的等级二效果。domain 为 <tile_research> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Research module. Domain is <tile_research> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_research_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "研究（等级三）",
-        "en": "Research (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "研究模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Research module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_achievement_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "成就（等级一）",
-        "en": "Achievement (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "成就模组的等级一效果。domain 为 <tile_achievement> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Achievement module. Domain is <tile_achievement> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_achievement_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "成就（等级二）",
-        "en": "Achievement (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "成就模组的等级二效果。domain 为 <tile_achievement> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Achievement module. Domain is <tile_achievement> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_achievement_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "成就（等级三）",
-        "en": "Achievement (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "成就模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Achievement module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_insight_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "洞悉（等级一）",
-        "en": "Insight (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "洞悉模组的等级一效果。domain 为 <tile_insight> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Insight module. Domain is <tile_insight> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_insight_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "洞悉（等级二）",
-        "en": "Insight (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "洞悉模组的等级二效果。domain 为 <tile_insight> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Insight module. Domain is <tile_insight> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_insight_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "洞悉（等级三）",
-        "en": "Insight (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "洞悉模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Insight module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_mutation_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "突变（等级一）",
-        "en": "Mutation (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "突变模组的等级一效果。domain 为 <tile_mutation> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Mutation module. Domain is <tile_mutation> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_mutation_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "突变（等级二）",
-        "en": "Mutation (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "突变模组的等级二效果。domain 为 <tile_mutation> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Mutation module. Domain is <tile_mutation> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_mutation_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "突变（等级三）",
-        "en": "Mutation (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "突变模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Mutation module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_invention_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "发明（等级一）",
-        "en": "Invention (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "发明模组的等级一效果。domain 为 <tile_invention> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Invention module. Domain is <tile_invention> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_invention_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "发明（等级二）",
-        "en": "Invention (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "发明模组的等级二效果。domain 为 <tile_invention> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Invention module. Domain is <tile_invention> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_invention_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "发明（等级三）",
-        "en": "Invention (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "发明模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Invention module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_trade_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "交易（等级一）",
-        "en": "Trade (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "交易模组的等级一效果。domain 为 <tile_trade> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Trade module. Domain is <tile_trade> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_trade_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "交易（等级二）",
-        "en": "Trade (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "交易模组的等级二效果。domain 为 <tile_trade> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Trade module. Domain is <tile_trade> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_trade_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "交易（等级三）",
-        "en": "Trade (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "交易模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Trade module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_activity_lv1",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "活动（等级一）",
-        "en": "Activity (Level 1)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "活动模组的等级一效果。domain 为 <tile_activity> 正面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 1 effect of the Activity module. Domain is <tile_activity> front. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_activity_lv2",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "活动（等级二）",
-        "en": "Activity (Level 2)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "活动模组的等级二效果。domain 为 <tile_activity> 反面。cost 和 content 待 Phase B 填充。",
-        "en": "Level 2 effect of the Activity module. Domain is <tile_activity> back. Cost and content TBD in Phase B."
-      }
-    },
-    {
-      "id": "effect_activity_lv3",
-      "instance_of": "<ontology::effect>",
-      "name": {
-        "zh": "活动（等级三）",
-        "en": "Activity (Level 3)"
-      },
-      "abstract": false,
-      "definition": {
-        "zh": "活动模组的等级三效果。domain 初始为 null。cost 和 content 待 Phase B 填充。",
-        "en": "Level 3 effect of the Activity module. Domain initially null. Cost and content TBD in Phase B."
-      }
-    }
-  ],
-  "modules": [
+  "module_tiles": [
     {
       "id": "tile_migration",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "迁徙板块",
-        "en": "Migration Tile"
-      },
+      "name": { "zh": "迁徙板块", "en": "Migration Tile" },
       "abstract": false,
       "definition": {
-        "zh": "迁徙模组的物理板块。正面承载 <effect_migration_lv1>，反面承载 <effect_migration_lv2>。L1→L2 翻面，L2→L3 移除。",
-        "en": "Physical tile for the Migration module. Front carries <effect_migration_lv1>, back carries <effect_migration_lv2>. Flipped for L1→L2, removed for L2→L3."
+        "zh": "迁徙模组的物理板块。L1→L2 翻面，L2→L3 移除。",
+        "en": "Physical tile for the Migration module. Flipped for L1→L2, removed for L2→L3."
       }
     },
     {
       "id": "tile_procreation",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "繁育板块",
-        "en": "Procreation Tile"
-      },
+      "name": { "zh": "繁育板块", "en": "Procreation Tile" },
       "abstract": false,
       "definition": {
-        "zh": "繁育模组的物理板块。正面承载 <effect_procreation_lv1>，反面承载 <effect_procreation_lv2>。",
-        "en": "Physical tile for the Procreation module. Front carries <effect_procreation_lv1>, back carries <effect_procreation_lv2>."
+        "zh": "繁育模组的物理板块。",
+        "en": "Physical tile for the Procreation module."
       }
     },
     {
       "id": "tile_production",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "生产板块",
-        "en": "Production Tile"
-      },
+      "name": { "zh": "生产板块", "en": "Production Tile" },
       "abstract": false,
       "definition": {
-        "zh": "生产模组的物理板块。正面承载 <effect_production_lv1>，反面承载 <effect_production_lv2>。",
-        "en": "Physical tile for the Production module. Front carries <effect_production_lv1>, back carries <effect_production_lv2>."
+        "zh": "生产模组的物理板块。",
+        "en": "Physical tile for the Production module."
       }
     },
     {
       "id": "tile_transport",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "运输板块",
-        "en": "Transport Tile"
-      },
+      "name": { "zh": "运输板块", "en": "Transport Tile" },
       "abstract": false,
       "definition": {
-        "zh": "运输模组的物理板块。正面承载 <effect_transport_lv1>，反面承载 <effect_transport_lv2>。",
-        "en": "Physical tile for the Transport module. Front carries <effect_transport_lv1>, back carries <effect_transport_lv2>."
+        "zh": "运输模组的物理板块。",
+        "en": "Physical tile for the Transport module."
       }
     },
     {
       "id": "tile_sustenance",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "给养板块",
-        "en": "Sustenance Tile"
-      },
+      "name": { "zh": "给养板块", "en": "Sustenance Tile" },
       "abstract": false,
       "definition": {
-        "zh": "给养模组的物理板块。正面承载 <effect_sustenance_lv1>，反面承载 <effect_sustenance_lv2>。",
-        "en": "Physical tile for the Sustenance module. Front carries <effect_sustenance_lv1>, back carries <effect_sustenance_lv2>."
+        "zh": "给养模组的物理板块。",
+        "en": "Physical tile for the Sustenance module."
       }
     },
     {
       "id": "tile_exploration",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "探索板块",
-        "en": "Exploration Tile"
-      },
+      "name": { "zh": "探索板块", "en": "Exploration Tile" },
       "abstract": false,
       "definition": {
-        "zh": "探索模组的物理板块。正面承载 <effect_exploration_lv1>，反面承载 <effect_exploration_lv2>。",
-        "en": "Physical tile for the Exploration module. Front carries <effect_exploration_lv1>, back carries <effect_exploration_lv2>."
+        "zh": "探索模组的物理板块。",
+        "en": "Physical tile for the Exploration module."
       }
     },
     {
       "id": "tile_building",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "建造板块",
-        "en": "Building Tile"
-      },
+      "name": { "zh": "建造板块", "en": "Building Tile" },
       "abstract": false,
       "definition": {
-        "zh": "建造模组的物理板块。正面承载 <effect_building_lv1>，反面承载 <effect_building_lv2>。",
-        "en": "Physical tile for the Building module. Front carries <effect_building_lv1>, back carries <effect_building_lv2>."
+        "zh": "建造模组的物理板块。",
+        "en": "Physical tile for the Building module."
       }
     },
     {
       "id": "tile_planning",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "计划板块",
-        "en": "Planning Tile"
-      },
+      "name": { "zh": "计划板块", "en": "Planning Tile" },
       "abstract": false,
       "definition": {
-        "zh": "计划模组的物理板块。正面承载 <effect_planning_lv1>，反面承载 <effect_planning_lv2>。",
-        "en": "Physical tile for the Planning module. Front carries <effect_planning_lv1>, back carries <effect_planning_lv2>."
+        "zh": "计划模组的物理板块。",
+        "en": "Physical tile for the Planning module."
       }
     },
     {
       "id": "tile_research",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "研究板块",
-        "en": "Research Tile"
-      },
+      "name": { "zh": "研究板块", "en": "Research Tile" },
       "abstract": false,
       "definition": {
-        "zh": "研究模组的物理板块。正面承载 <effect_research_lv1>，反面承载 <effect_research_lv2>。",
-        "en": "Physical tile for the Research module. Front carries <effect_research_lv1>, back carries <effect_research_lv2>."
+        "zh": "研究模组的物理板块。",
+        "en": "Physical tile for the Research module."
       }
     },
     {
       "id": "tile_achievement",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "成就板块",
-        "en": "Achievement Tile"
-      },
+      "name": { "zh": "成就板块", "en": "Achievement Tile" },
       "abstract": false,
       "definition": {
-        "zh": "成就模组的物理板块。正面承载 <effect_achievement_lv1>，反面承载 <effect_achievement_lv2>。",
-        "en": "Physical tile for the Achievement module. Front carries <effect_achievement_lv1>, back carries <effect_achievement_lv2>."
+        "zh": "成就模组的物理板块。",
+        "en": "Physical tile for the Achievement module."
       }
     },
     {
       "id": "tile_insight",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "洞悉板块",
-        "en": "Insight Tile"
-      },
+      "name": { "zh": "洞悉板块", "en": "Insight Tile" },
       "abstract": false,
       "definition": {
-        "zh": "洞悉模组的物理板块。正面承载 <effect_insight_lv1>，反面承载 <effect_insight_lv2>。",
-        "en": "Physical tile for the Insight module. Front carries <effect_insight_lv1>, back carries <effect_insight_lv2>."
+        "zh": "洞悉模组的物理板块。",
+        "en": "Physical tile for the Insight module."
       }
     },
     {
       "id": "tile_mutation",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "突变板块",
-        "en": "Mutation Tile"
-      },
+      "name": { "zh": "突变板块", "en": "Mutation Tile" },
       "abstract": false,
       "definition": {
-        "zh": "突变模组的物理板块。正面承载 <effect_mutation_lv1>，反面承载 <effect_mutation_lv2>。",
-        "en": "Physical tile for the Mutation module. Front carries <effect_mutation_lv1>, back carries <effect_mutation_lv2>."
+        "zh": "突变模组的物理板块。",
+        "en": "Physical tile for the Mutation module."
       }
     },
     {
       "id": "tile_invention",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "发明板块",
-        "en": "Invention Tile"
-      },
+      "name": { "zh": "发明板块", "en": "Invention Tile" },
       "abstract": false,
       "definition": {
-        "zh": "发明模组的物理板块。正面承载 <effect_invention_lv1>，反面承载 <effect_invention_lv2>。",
-        "en": "Physical tile for the Invention module. Front carries <effect_invention_lv1>, back carries <effect_invention_lv2>."
+        "zh": "发明模组的物理板块。",
+        "en": "Physical tile for the Invention module."
       }
     },
     {
       "id": "tile_trade",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "交易板块",
-        "en": "Trade Tile"
-      },
+      "name": { "zh": "交易板块", "en": "Trade Tile" },
       "abstract": false,
       "definition": {
-        "zh": "交易模组的物理板块。正面承载 <effect_trade_lv1>，反面承载 <effect_trade_lv2>。",
-        "en": "Physical tile for the Trade module. Front carries <effect_trade_lv1>, back carries <effect_trade_lv2>."
+        "zh": "交易模组的物理板块。",
+        "en": "Physical tile for the Trade module."
       }
     },
     {
       "id": "tile_activity",
       "instance_of": "<ontology::tile>",
-      "name": {
-        "zh": "活动板块",
-        "en": "Activity Tile"
-      },
+      "name": { "zh": "活动板块", "en": "Activity Tile" },
       "abstract": false,
       "definition": {
-        "zh": "活动模组的物理板块。正面承载 <effect_activity_lv1>，反面承载 <effect_activity_lv2>。",
-        "en": "Physical tile for the Activity module. Front carries <effect_activity_lv1>, back carries <effect_activity_lv2>."
+        "zh": "活动模组的物理板块。",
+        "en": "Physical tile for the Activity module."
+      }
+    }
+  ],
+  "modules": [
+    {
+      "id": "module_migration",
+      "instance_of": "<upgradable_module>",
+      "name": { "zh": "迁徙", "en": "Migration" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_migration>",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "options": [
+              {
+                "<ontology::transfer>": {
+                  "source": "<activation_dice_area>",
+                  "destination": "<activation_dice_area>",
+                  "<object>": { "<activation_die>": { "value": 1 } },
+                  "description": {
+                    "zh": "支付 1 个点数 1 的<activation_die>。",
+                    "en": "Pay 1 <activation_die> showing value 1."
+                  }
+                }
+              },
+              {
+                "<ontology::transfer>": {
+                  "source": "<activation_dice_area>",
+                  "destination": "<activation_dice_area>",
+                  "<object>": { "<activation_die>": { "value": 3 } },
+                  "description": {
+                    "zh": "支付 1 个点数 3 的<activation_die>。",
+                    "en": "Pay 1 <activation_die> showing value 3."
+                  }
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "<ontology::instant_effect>": {
+            "<ontology::content>": {
+              "<ontology::instant_content>": "<migrate>"
+            }
+          }
+        },
+        {
+          "level": 2,
+          "<ontology::instant_effect>": {
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<migrate>",
+                  {
+                    "<favor_test>": {
+                      "do_after": [
+                        "<migrate>"
+                      ]
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": "<migrate>"
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "<ontology::instant_effect>": {
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<move_tribe>": {
+                      "quantity": 2
+                    }
+                  },
+                  {
+                    "<resolve_migration_triggers>": {
+                      "migrating_tribe": "this.target.tribe",
+                      "destination": "this.target.destination"
+                    },
+                    "do_after": [
+                      "<move_tribe>"
+                    ]
+                  },
+                  {
+                    "<favor_test>": {
+                      "do_after": [
+                        "<resolve_migration_triggers>"
+                      ]
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": "<migrate>"
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_procreation",
+      "instance_of": "<module>",
+      "name": { "zh": "繁育", "en": "Procreation" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_procreation>",
+    },
+    {
+      "id": "module_production",
+      "instance_of": "<module>",
+      "name": { "zh": "生产", "en": "Production" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_production>",
+    },
+    {
+      "id": "module_transport",
+      "instance_of": "<module>",
+      "name": { "zh": "运输", "en": "Transport" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_transport>",
+    },
+    {
+      "id": "module_sustenance",
+      "instance_of": "<module>",
+      "name": { "zh": "给养", "en": "Sustenance" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_sustenance>",
+    },
+    {
+      "id": "module_exploration",
+      "instance_of": "<module>",
+      "name": { "zh": "探索", "en": "Exploration" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_exploration>",
+    },
+    {
+      "id": "module_building",
+      "instance_of": "<module>",
+      "name": { "zh": "建造", "en": "Building" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_building>",
+    },
+    {
+      "id": "module_planning",
+      "instance_of": "<module>",
+      "name": { "zh": "计划", "en": "Planning" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_planning>",
+    },
+    {
+      "id": "module_research",
+      "instance_of": "<upgradable_module>",
+      "name": { "zh": "研究", "en": "Research" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_research>",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "options": [
+              {
+                "<ontology::transfer>": {
+                  "source": "<activation_dice_area>",
+                  "destination": "<activation_dice_area>",
+                  "<object>": { "<activation_die>": { "value": 1 } },
+                  "description": {
+                    "zh": "支付 1 个点数 1 的<activation_die>。",
+                    "en": "Pay 1 <activation_die> showing value 1."
+                  }
+                }
+              },
+              {
+                "<ontology::transfer>": {
+                  "source": "<activation_dice_area>",
+                  "destination": "<activation_dice_area>",
+                  "<object>": { "<activation_die>": { "value": 2 } },
+                  "description": {
+                    "zh": "支付 1 个点数 2 的<activation_die>。",
+                    "en": "Pay 1 <activation_die> showing value 2."
+                  }
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "<ontology::instant_effect>": {
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<gain_research_card>",
+                  {
+                    "description": {
+                      "zh": "抽 2 张<research_card>，选 1 张加入手牌，另 1 张放回牌堆底。详见<draw_pick_return_research>（N=2, K=1）。",
+                      "en": "Draw 2 <research_card>s, keep 1, return 1 to bottom. See <draw_pick_return_research> (N=2, K=1)."
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "<ontology::instant_effect>": {
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<gain_research_card>",
+                  {
+                    "description": {
+                      "zh": "抽 4 张<research_card>，选 1 张加入手牌，另 3 张放回牌堆底。详见<draw_pick_return_research>（N=4, K=1）。",
+                      "en": "Draw 4 <research_card>s, keep 1, return 3 to bottom. See <draw_pick_return_research> (N=4, K=1)."
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "<ontology::instant_effect>": {
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "description": {
+                      "zh": "执行 2 次<gain_research_card>。",
+                      "en": "Perform <gain_research_card> twice."
+                    }
+                  },
+                  {
+                    "description": {
+                      "zh": "抽 4 张<research_card>，选 2 张加入手牌，另 2 张放回牌堆底。详见<draw_pick_return_research>（N=4, K=2）。",
+                      "en": "Draw 4 <research_card>s, keep 2, return 2 to bottom. See <draw_pick_return_research> (N=4, K=2)."
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    {
+      "id": "module_achievement",
+      "instance_of": "<module>",
+      "name": { "zh": "成就", "en": "Achievement" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_achievement>",
+    },
+    {
+      "id": "module_insight",
+      "instance_of": "<module>",
+      "name": { "zh": "洞悉", "en": "Insight" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_insight>",
+    },
+    {
+      "id": "module_mutation",
+      "instance_of": "<module>",
+      "name": { "zh": "突变", "en": "Mutation" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_mutation>",
+    },
+    {
+      "id": "module_invention",
+      "instance_of": "<module>",
+      "name": { "zh": "发明", "en": "Invention" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_invention>",
+    },
+    {
+      "id": "module_trade",
+      "instance_of": "<module>",
+      "name": { "zh": "交易", "en": "Trade" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_trade>",
+    },
+    {
+      "id": "module_activity",
+      "instance_of": "<module>",
+      "name": { "zh": "活动", "en": "Activity" },
+      "abstract": false,
+      "module_type": "main",
+      "tile": "<tile_activity>",
+    },
+    {
+      "id": "module_feature_stamina",
+      "instance_of": "<module>",
+      "name": { "zh": "耐力", "en": "Stamina" },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "stamina",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": {
+                "<activation_die>": {
+                  "value": 1
+                }
+              },
+              "quantity": 2,
+              "description": {
+                "zh": "支付 2 个点数均为 1 的<activation_die>。",
+                "en": "Pay 2 <activation_die>s both showing value 1."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::transfer>": {
+              "source": "<ontology::supply>",
+              "destination": "<feature_space>",
+              "<object>": "<feature_marker>",
+              "quantity": 1,
+              "description": {
+                "zh": "获得 1 个耐力<feature_marker>。",
+                "en": "Gain 1 Stamina <feature_marker>."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "module_feature_intelligence",
+      "instance_of": "<module>",
+      "name": { "zh": "智慧", "en": "Intelligence" },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "intelligence",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": {
+                "<activation_die>": {
+                  "value": 2
+                }
+              },
+              "quantity": 2,
+              "description": {
+                "zh": "支付 2 个点数均为 2 的<activation_die>。",
+                "en": "Pay 2 <activation_die>s both showing value 2."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::transfer>": {
+              "source": "<ontology::supply>",
+              "destination": "<feature_space>",
+              "<object>": "<feature_marker>",
+              "quantity": 1,
+              "description": {
+                "zh": "获得 1 个智慧<feature_marker>。",
+                "en": "Gain 1 Intelligence <feature_marker>."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "module_feature_calm",
+      "instance_of": "<module>",
+      "name": { "zh": "镇定", "en": "Calm" },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "calm",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": {
+                "<activation_die>": {
+                  "value": 3
+                }
+              },
+              "quantity": 2,
+              "description": {
+                "zh": "支付 2 个点数均为 3 的<activation_die>。",
+                "en": "Pay 2 <activation_die>s both showing value 3."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::transfer>": {
+              "source": "<ontology::supply>",
+              "destination": "<feature_space>",
+              "<object>": "<feature_marker>",
+              "quantity": 1,
+              "description": {
+                "zh": "获得 1 个镇定<feature_marker>。",
+                "en": "Gain 1 Calm <feature_marker>."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "module_feature_dexterity",
+      "instance_of": "<module>",
+      "name": { "zh": "灵巧", "en": "Dexterity" },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "dexterity",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": {
+                "<activation_die>": {
+                  "value": 4
+                }
+              },
+              "quantity": 2,
+              "description": {
+                "zh": "支付 2 个点数均为 4 的<activation_die>。",
+                "en": "Pay 2 <activation_die>s both showing value 4."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::transfer>": {
+              "source": "<ontology::supply>",
+              "destination": "<feature_space>",
+              "<object>": "<feature_marker>",
+              "quantity": 1,
+              "description": {
+                "zh": "获得 1 个灵巧<feature_marker>。",
+                "en": "Gain 1 Dexterity <feature_marker>."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "module_feature_expression",
+      "instance_of": "<module>",
+      "name": { "zh": "表达", "en": "Expression" },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "expression",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": {
+                "<activation_die>": {
+                  "value": 5
+                }
+              },
+              "quantity": 2,
+              "description": {
+                "zh": "支付 2 个点数均为 5 的<activation_die>。",
+                "en": "Pay 2 <activation_die>s both showing value 5."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::transfer>": {
+              "source": "<ontology::supply>",
+              "destination": "<feature_space>",
+              "<object>": "<feature_marker>",
+              "quantity": 1,
+              "description": {
+                "zh": "获得 1 个表达<feature_marker>。",
+                "en": "Gain 1 Expression <feature_marker>."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "module_feature_perception",
+      "instance_of": "<module>",
+      "name": { "zh": "观察", "en": "Perception" },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "perception",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": {
+                "<activation_die>": {
+                  "value": 6
+                }
+              },
+              "quantity": 2,
+              "description": {
+                "zh": "支付 2 个点数均为 6 的<activation_die>。",
+                "en": "Pay 2 <activation_die>s both showing value 6."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::transfer>": {
+              "source": "<ontology::supply>",
+              "destination": "<feature_space>",
+              "<object>": "<feature_marker>",
+              "quantity": 1,
+              "description": {
+                "zh": "获得 1 个观察<feature_marker>。",
+                "en": "Gain 1 Perception <feature_marker>."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "module_sleep",
+      "instance_of": "<module>",
+      "name": { "zh": "睡眠", "en": "Sleep" },
+      "abstract": false,
+      "module_type": "sleep",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<activation_dice_area>",
+              "<object>": "<activation_die>",
+              "quantity": 2,
+              "description": {
+                "zh": "支付任意 2 个<activation_die>，点数不限。",
+                "en": "Pay any 2 <activation_die>s, any values."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "options": [
+              {
+                "<ontology::transfer>": {
+                  "source": "<ontology::supply>",
+                  "destination": "<focus_space>",
+                  "<object>": "<focus_marker>",
+                  "quantity": 1
+                }
+              },
+              {
+                "<ontology::transfer>": {
+                  "source": "<ontology::supply>",
+                  "destination": "<idea_space>",
+                  "<object>": "<idea_marker>",
+                  "quantity": 2
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          }
+        }
       }
     }
   ],
@@ -799,6 +803,42 @@
   "continent_tiles": [],
   "sites": [],
   "chips": [],
+  "states": [
+    {
+      "id": "upright",
+      "instance_of": "<ontology::state>",
+      "name": {
+        "zh": "站立",
+        "en": "Upright"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "健康状态。部落可以迁徙和繁育。",
+        "en": "Healthy state. Tribe can migrate and procreate."
+      },
+      "posture": {
+        "zh": "直立放置。",
+        "en": "Stands upright."
+      }
+    },
+    {
+      "id": "lying",
+      "instance_of": "<ontology::state>",
+      "name": {
+        "zh": "躺倒",
+        "en": "Lying"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "虚弱状态。部落不能迁徙，喂养阶段若未被喂饱会死亡。",
+        "en": "Weakened state. Tribe cannot migrate; dies in Feeding phase if not fed."
+      },
+      "posture": {
+        "zh": "躺倒放置。",
+        "en": "Lies flat."
+      }
+    }
+  ],
   "<activity>s": [
     {
       "id": "activity_01",

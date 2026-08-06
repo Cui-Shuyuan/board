@@ -540,6 +540,17 @@
         "zh": "代表玩家文明在 <continent> 上存在的核心 <ontology::piece>。每个部落有两种状态：站立（strong）和躺倒（weak）。只有站立部落可以迁徙；躺倒部落在喂养阶段若未被喂饱会死亡。",
         "en": "The core <ontology::piece> representing a player's civilization on the <continent>. Each tribe has two states: strong (upright) and weak (lying). Only strong tribes can migrate; weak tribes die in the Feeding phase if not fed."
       },
+      "<ontology::state>": {
+        "posture": {
+          "type": "enum",
+          "enum": ["<upright>", "<lying>"],
+          "default": "<upright>",
+          "description": {
+            "zh": "部落的姿态。upright = 站立（健康），lying = 躺倒（虚弱）。",
+            "en": "The tribe's posture. upright = standing (healthy), lying = lying down (weak)."
+          }
+        }
+      },
       "appearance": {
         "type": "string",
         "description": {
@@ -684,8 +695,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "玩家可激活的 <ontology::effect>。模组的本质是一个效果——激活模组是 <ontology::action>（玩家宣告选择），支付两颗对应点数的白骰子是 <ontology::cost>，模组做的事是 <ontology::content>。共有 22 个模组：15 个主模组（可升级）、6 个特征模组和 1 个睡眠模组。每个等级的模组效果是独立的 <ontology::effect> 实例——各等级的 effect 分别由对应物理载体持有，通过 id 前缀关联。等级一时 tile 正面持有 effect_lv1，等级二时 tile 反面持有 effect_lv2，等级三时 effect_lv3 由 <console> 持有。升级由 <ontology::upgrade> trigger 驱动——level 提升可能伴随载体切换：同一载体（tile 翻面）仅为 level 变化；载体切换（tile→board）时旧载体 <ontology::lose> 旧 effect、新载体 <ontology::gain> 新 effect。",
-        "en": "An activatable <ontology::effect>. A module is fundamentally an effect — activating a module is an <ontology::action> (the player declares their choice), paying two activation dice of matching values is the <ontology::cost>, and what the module does is the <ontology::content>. There are 22 modules in total: 15 main modules (upgradable), 6 feature modules, and 1 Sleep module. Each level's module effect is an independent <ontology::effect> instance — each level's effect is held by the corresponding physical carrier, linked by id prefix. At level 1 the tile front holds effect_lv1; at level 2 the tile back holds effect_lv2; at level 3 effect_lv3 is held by the <console>. Upgrading is driven by an <ontology::upgrade> trigger — level increase may involve carrier switch: same carrier (tile flip) is purely a level change; carrier switch (tile→board) means the old carrier <ontology::lose>s the old effect and the new carrier <ontology::gain>s the new effect."
+        "zh": "玩家可激活的模组。本质是一个 <ontology::effect>——激活是 payer action，支付两颗白骰子是 cost，模组做的事是 content。22 个模组：15 个<upgradable_module>（可升级，3 等级效果内联在实例中）、6 个特征模组、1 个睡眠模组。升级由 <upgrade_main_module> trigger 驱动：L1→L2 tile 翻面，L2→L3 tile 放回游戏盒、L3 effect 激活。",
+        "en": "An activatable module. Fundamentally an <ontology::effect> — activation is a player action, paying 2 activation dice is the cost, and what the module does is the content. 22 modules: 15 <upgradable_module>s (upgradable, 3 level effects inlined in the instance), 6 feature modules, 1 sleep module. Upgrading is driven by the <upgrade_main_module> trigger: L1→L2 flips the tile, L2→L3 returns the tile to the game box and activates the L3 effect."
       },
       "appearance": {
         "type": "string",
@@ -710,45 +721,82 @@
         "component": [
           "assets/components/page-05/module_tile.png"
         ]
-      }
+      },
+      "parts": [
+        {
+          "<ontology::cost>": {
+            "position": {
+              "zh": "左下角",
+              "en": "bottom-left corner"
+            },
+            "description": {
+              "zh": "激活此模组所需的第一个<activation_die>点数。",
+              "en": "The first <activation_die> value required to activate this module."
+            }
+          }
+        },
+        {
+          "<ontology::cost>": {
+            "position": {
+              "zh": "右下角",
+              "en": "bottom-right corner"
+            },
+            "description": {
+              "zh": "激活此模组所需的第二个<activation_die>点数。",
+              "en": "The second <activation_die> value required to activate this module."
+            }
+          }
+        },
+        {
+          "<ontology::content>": {
+            "position": {
+              "zh": "中间",
+              "en": "center"
+            },
+            "description": {
+              "zh": "模组激活后执行的效果。",
+              "en": "The effect executed when this module is activated."
+            }
+          }
+        }
+      ]
     },
     {
-      "id": "main_module",
-      "specifies": "<module>",
+      "id": "upgradable_module",
+      "extends": "<module>",
       "name": {
-        "zh": "主模组",
-        "en": "Main Module"
+        "zh": "可升级模组",
+        "en": "Upgradable Module"
       },
       "abstract": false,
       "description": {
-        "zh": "可升级的行动模组 effect，共有 15 种：迁徙、繁育、生产、运输、给养、探索、建造、计划、研究、成就、洞悉、突变、发明、交易、活动。每个主模组对应 3 个独立的 <ontology::effect> 实例——effect_xxx_lv1（domain = tile 正面）、effect_xxx_lv2（domain = tile 反面）、effect_xxx_lv3（domain = <console>）。升级由 <ontology::upgrade> trigger 驱动——L1→L2 时同一 tile 翻面，L2→L3 时旧载体 <ontology::lose> lv2 effect、新载体 <ontology::gain> lv3 effect。各等级的 cost 和 content 待 Phase B 填充。",
-        "en": "Upgradable action module effects. There are 15 types: Migration, Procreation, Production, Transport, Sustenance, Exploration, Building, Planning, Research, Achievement, Insight, Mutation, Invention, Trade, Activity. Each main module maps to 3 independent <ontology::effect> instances — effect_xxx_lv1 (domain = tile front), effect_xxx_lv2 (domain = tile back), effect_xxx_lv3 (domain = <console>). Upgrading is driven by an <ontology::upgrade> trigger — L1→L2 is a tile flip on the same carrier, L2→L3 means the old carrier <ontology::lose>s the lv2 effect and the new carrier <ontology::gain>s the lv3 effect. Cost and content for each level are TBD in Phase B."
-      }
-    },
-    {
-      "id": "feature_module",
-      "specifies": "<module>",
-      "name": {
-        "zh": "特征模组",
-        "en": "Feature Module"
+        "zh": "可升级的模组效果。激活费用（<ontology::cost>）写在模组实例顶层，各等级共用；<level_effects> 中每项仅需写 <ontology::content>——即该等级模组执行的动作。若某等级的费用不同，可在该等级的 <ontology::instant_effect> 中覆盖 cost。L1 由 tile 正面承载，L2 由 tile 反面承载，L3 印于 <console> 模组槽底部。升级由 <upgrade_main_module> trigger 驱动：L1→L2 翻面，L2→L3 tile 放回游戏盒、L3 effect 激活。",
+        "en": "An upgradable module effect. Activation cost (<ontology::cost>) is defined at the module instance level and shared by all levels; each entry in <level_effects> only needs <ontology::content> — the action performed at that level. If a level has a different cost, it may override by including cost in its <ontology::instant_effect>. L1 is carried by the tile front, L2 by the tile back, and L3 is printed at the bottom of the <console> module slot. Upgrading is driven by the <upgrade_main_module> trigger: L1→L2 flips the tile, L2→L3 returns the tile to the game box and activates the L3 effect."
       },
-      "abstract": false,
-      "description": {
-        "zh": "不可升级的模组 effect，共 6 个，分别对应 6 种特征。激活需要两个相同点数的白骰子。",
-        "en": "Non-upgradable module effects. There are 6, each corresponding to one of the 6 features. Activation requires 2 activation dice showing the same value."
-      }
-    },
-    {
-      "id": "sleep_module",
-      "specifies": "<module>",
-      "name": {
-        "zh": "睡眠模组",
-        "en": "Sleep Module"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "不可升级的填充用模组 effect，可用任意两个白骰子激活。效果是获得 2 个创意标记或 1 个焦点标记。",
-        "en": "A non-upgradable filler module effect that can be activated with any two activation dice. Its effect is to gain 2 idea markers or 1 focus marker."
+      "level_effects": {
+        "description": {
+          "zh": "各等级效果列表，按等级升序排列。每项必须包含 `level`（整数）和 `<ontology::instant_effect>`——通常只写 <ontology::content>，cost 缺省时继承模块顶层 cost。",
+          "en": "List of effects per level, ordered by level ascending. Each entry must have `level` (integer) and `<ontology::instant_effect>` — normally only <ontology::content> is specified; cost defaults to the module-level cost when absent."
+        },
+        "constraints": {
+          "required": [
+            {
+              "id": "level",
+              "description": {
+                "zh": "等级编号，从 1 开始递增。",
+                "en": "Level number, incrementing from 1."
+              }
+            },
+            {
+              "id": "<ontology::instant_effect>",
+              "description": {
+                "zh": "该等级模组的激活效果。通常只需写 <ontology::content>；cost 缺省时继承模块顶层 cost。",
+                "en": "The activation effect for this level. Normally only <ontology::content> is needed; cost inherits from module-level cost when absent."
+              }
+            }
+          ],
+          "optional": []
+        }
       }
     },
     {
