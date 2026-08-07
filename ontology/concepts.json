@@ -1929,15 +1929,15 @@
     },
     {
       "id": "upgrade",
-      "extends": "<trigger>",
+      "specifies": "<state_change>",
       "name": {
         "zh": "升级",
         "en": "Upgrade"
       },
       "abstract": false,
       "description": {
-        "zh": "一个 <trigger>：effect 的 level 提升。level 提升可能伴随载体切换——当新旧 level 由不同实体承载时，旧载体 <lose> 旧 effect、新载体 <gain> 新 effect；当同一载体承载（如 tile 翻面）时，仅为 level 变化，无 lose/gain。物理操作（翻面、移除板块）是 level 变化的物理后果。<upgrade> 继承 trigger 的 <timing>、<condition>、<event>[]——具体 event 链由游戏定义。",
-        "en": "A <trigger>: an effect's level increases. Level increase may involve carrier switch — when old and new levels are carried by different entities, the old carrier <lose>s the old effect and the new carrier <gain>s the new effect; when carried by the same entity (e.g., tile flip), it is purely a level change with no lose/gain. Physical operations (flip, remove tile) are consequences of the level change. <upgrade> inherits <trigger>'s <timing>, <condition>, <event>[] — the specific event chain is defined by the game."
+        "zh": "一个 <state_change>：object 的 level 属性从 A 变为 B。subject 为被升级的 object，attribute 固定为 level，to 为目标等级。level 提升可能伴随载体切换——当新旧 level 由不同实体承载时，旧载体 <lose> 旧 effect、新载体 <gain> 新 effect；当同一载体承载（如 tile 翻面）时，仅为 level 变化，无 lose/gain。物理操作（翻面、移除板块）是 level 变化的物理后果，由游戏层表达。",
+        "en": "A <state_change>: an object's level attribute changes from A to B. subject is the object being upgraded, attribute is fixed to level, to is the target level. Level increase may involve carrier switch — when old and new levels are carried by different entities, the old carrier <lose>s the old effect and the new carrier <gain>s the new effect; when carried by the same entity (e.g., tile flip), it is purely a level change with no lose/gain. Physical operations (flip, remove tile) are consequences of the level change, expressed at the game layer."
       },
       "constraints": {
         "required": [],

@@ -1096,10 +1096,10 @@
         "zh": "升级主模组",
         "en": "Upgrade Main Module"
       },
-      "specifies": "<ontology::pipeline>",
+      "specifies": "<ontology::upgrade>",
       "description": {
-        "zh": "选择一个未达最高等级的主模组提升 1 级。L1→L2 翻面，L2→L3 板块放回游戏盒、console 上 L3 效果激活。",
-        "en": "Choose a main module not at max level, increase by 1. L1→L2 flip tile; L2→L3 return tile to game box, console L3 effect becomes available."
+        "zh": "对 1 个未达最高等级的主模组执行 1 次<ontology::upgrade>（<ontology::state_change>：level 属性提升 1 级）。物理后果：L1→L2 模组板块翻面，L2→L3 板块放回<ontology::game_box>、console 上 L3 效果激活。",
+        "en": "Perform 1 <ontology::upgrade> on a main module not at max level (<ontology::state_change>: level attribute increases by 1). Physical consequences: L1→L2 flips the module tile; L2→L3 returns the tile to the <ontology::game_box> and activates the console L3 effect."
       },
       "options": [
         {

@@ -71,11 +71,12 @@ metadata:
 
 ## 最近进展
 
-- **2026-08-08（15 主模组全量程序化验证 + 占位 action 盘点）**:
+- **2026-08-08（15 主模组全量程序化验证 + 占位 action 盘点 + 升级重构）**:
     - **15 个主模组 level_effects 全部结构化（程序验证 15/15）**：每个模组 3 个等级均为 `<ontology::instant_effect>`（cost 引用 `this.<ontology::cost>` + 结构化 content），无 description 化残留
     - **双骰 cost 复验 15/15**：EXECUTE_ALL 双骰支付全部就位，点数与 2026-08-07 确认一致
     - **占位 action 补全确认**：`<activate_module>`（flow.json:3028，选择模组触发 `this.target 的 effect`）、`<reset>`（flow.json:3046，condition=激活骰 ≤3 + A/B/C 三步 pipeline，含全空列边界分支）、`<complete_building_project>`（建造四选一 pipeline）均已完整定义并被 action_phase 引用（flow.json:678-679）
     - **发现唯一剩余悬空引用**：`<action_phase_end>`（flow.json:666 `until`）在 conditions 组未定义，待补
+    - **升级重构为 state_change（用户提出）**：ontology `<upgrade>` 从 extends `<trigger>` 改为 specifies `<state_change>`（attribute 固定 level，subject=模组，to=目标等级——与 `<flip>` 同类：翻转是 face 变更、升级是 level 变更）。游戏层 `upgrade_main_module` 同步从 specifies `<ontology::pipeline>` 改为 specifies `<ontology::upgrade>`，物理后果（L1→L2 翻面 / L2→L3 放回游戏盒）保留在 options 中作为升级的物理后果步骤。module/upgradable_module 定义中「trigger 驱动」措辞同步修正
 
 - **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
     - **15 个主模组骰子点数全部确认（15/15）**：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5、production 3+5、trade 4+5、invention 1+6、mutation 3+6、insight 3+6、building 4+6、achievement 5+6

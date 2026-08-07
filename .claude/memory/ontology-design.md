@@ -192,8 +192,8 @@ Activation
 ### Event 扩展（1 + 2 新增）
 Play、**Lose（新增）**、**Gain（新增）**
 
-### Trigger 扩展（1 个，由 Event 迁移）
-**Upgrade（父类从 `<event>` 改为 `<trigger>`）**
+### State Change 扩展（1 个）
+**Upgrade（specifies `<state_change>`，attribute 固定为 level）**
 
 ### Content 扩展（2 个）★ 改名
 Instant Content（由 Instant Effect 改名）、Continuous Content（新增 active_condition 可选字段）
@@ -216,7 +216,7 @@ Hand
 - **Zone 可由实体承载 ★**：zone 的来源不再仅限于规则——card 和 board 都可以承载 zone。例如 Arkham Horror 地点牌上的线索区、Civolution 初始芯片牌上的目标芯片区（card 承载 zone）、控制台左上角的收入芯片区（board 承载 zone）。实体承载的 zone 生命周期绑定在宿主上——宿主被移除时 zone 随之消失。这只是承认了桌游中已有的物理事实，zone 的独立逻辑定义不受影响。
 - **Board 的 zones 字段替代 maps_to**：原 `<aid>` 的 `maps_to` 表达的是"视觉上画出了这些 zone"（单向弱关联）。Board 的 `zones` 表达的是"这些 zone 在我身上"（物理宿主关系），每个 zone 附带 `position` 和 `description`，供系统回答客人"放哪"类问题。
 - **Module 是 effect，各等级为独立实例 ★**：模组的本质是 `<effect>`。2026-07-24 重构：每个等级的模组效果改为独立的 `<effect>` 实例——`effect_xxx_lv1`、`effect_xxx_lv2`、`effect_xxx_lv3`，各自由对应物理载体持有（L1/L2 由 tile 正反面持有，L3 由 board 持有）。升级通过 id 前缀（`effect_xxx`）保持模块 identity。
-- **升级是 trigger，lose/gain 是 event ★**：`<upgrade>` 的 extends 从 `<event>` 改为 `<trigger>`——核心语义是 level 提升，继承 trigger 的 timing + condition → events[]。是否涉及 `<lose>`/`<gain>` 由游戏层决定：同一载体翻面（L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。
+- **升级是 state_change ★**（2026-08-08 修正）：`<upgrade>` specifies `<state_change>`——核心语义是 object 的 level 属性从 A 变为 B（subject=被升级对象，attribute 固定为 level，to=目标等级）。曾两次调整父类：最初 extends `<event>`，2026-07-24 因「level 提升由规则自动触发」改为 extends `<trigger>`；引入 `<state_change>` 后确认升级本质是属性值变更（与 `<flip>` 同类——翻转是 face 变更、升级是 level 变更），最终改为 specifies `<state_change>`。是否涉及 `<lose>`/`<gain>` 由游戏层决定：同一载体翻面（L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。物理操作（翻面、放回游戏盒）是 level 变化的物理后果，由游戏层表达（游戏层 `upgrade_main_module` 已改为 specifies `<ontology::upgrade>`）。
 - **Lose / Gain 新增为 Event 子类 ★**：`<lose>`——`<object>` 失去一个 `<property>`（domain → null）；`<gain>`——`<object>` 获得一个 `<property>`（domain → 新实体）。用于 effect 载体切换等场景。Event 子类列表从 6 个扩充为 8 个。
 - **安装是 transfer ★**：将卡牌/芯片安装到控制台 = 从 source zone transfer 到控制台上某个逻辑坐标的 zone。zone 是纯概念，不绑定物理尺寸——所以卡牌可以互相叠压而逻辑上各属各的 zone。控制台每个行列坐标就是一个 zone，有独立的 capacity。
 - **实体承载的 zone 不会销毁 ★**：初始芯片牌在 setup 后仍然保有它承载的 zone——只是不再有任何规则引用它。zone 不需要 availability 概念——zone 一直在，只是规则是否引用它的区别。
