@@ -2295,8 +2295,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <goal_chip>。",
-        "en": "A <ontology::market> on the <progress_board> displaying available <goal_chip>s face up. A number of goal chips are randomly drawn and placed here during setup."
+        "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <goal_chip>。共 6 格：4 人局 6 格全部放置，3 人局 1 格被阻挡标记覆盖（放置 5 张），2 人局 2 格被覆盖（放置 4 张）。",
+        "en": "A <ontology::market> on the <progress_board> displaying available <goal_chip>s face up. 6 spaces total: all 6 are filled in a 4-player game, 1 space is covered by a blocking token in 3-player (5 chips placed), and 2 spaces covered in 2-player (4 chips placed)."
       },
       "contains": {
         "type": "<goal_chip>",
@@ -2318,8 +2318,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <income_chip>。设置时随机抽取若干收入芯片放入此处。展示数量上限取决于玩家人数：2 人局最多 4 个、3 人局 5 个、4 人局 6 个。",
-        "en": "A <ontology::market> on the <progress_board> displaying available <income_chip>s face up. A number of income chips are randomly drawn and placed here during setup. Display capacity depends on player count: 4 for 2p, 5 for 3p, 6 for 4p."
+        "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <income_chip>。设置时从白色袋子随机抽取 1 张放到每个格。固定 3 格，与玩家人数无关。",
+        "en": "A <ontology::market> on the <progress_board> displaying available <income_chip>s face up. During setup, 1 chip is randomly drawn from the white bag onto each space. Fixed at 3 spaces regardless of player count."
       },
       "contains": {
         "type": "<income_chip>[]",
@@ -2328,13 +2328,7 @@
           "en": "This zone holds face-up displayed <income_chip>s."
         }
       },
-      "capacity": {
-        "type": "integer",
-        "description": {
-          "zh": "玩家人数 + 2。",
-          "en": "Player count + 2."
-        }
-      },
+      "capacity": 3,
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public"
     },

@@ -985,6 +985,14 @@
         "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。<phase> 继承自 <procedure>。是唯一承载「规则上下文」的 <procedure>——当前 <phase> 决定了哪些 <action> 合法、哪些 <effect> 生效。不强制绑定 <player>，允许完全的自动机阶段（无人阶段，仅有 <trigger> 驱动）。<phase> 的 children 可以是 <round>、<turn> 或另一个 <phase>，也可以是叶子节点（直接包含 <action> 列表）。",
         "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. <phase> extends <procedure>. It is the only <procedure> that carries 'rule context' — the current <phase> determines which <action>s are legal and which <effect>s are active. Not required to bind to a <player>, allowing fully automated phases (player-less, driven only by <trigger>s). A <phase>'s children can be <round>s, <turn>s, other <phase>s, or it can be a leaf node containing an <action> list directly."
       },
+      "<pipeline>": {
+        "type": "<pipeline> | null",
+        "default": null,
+        "description": {
+          "zh": "本 <phase> 执行时自动运行的处理流程（options / type / do_after 结构）。用于表达设置、结算等程序化步骤序列——与 <action> 的 content 同构，但由流程自动触发而非玩家决策。与 <action> 不同，<phase> 的 pipeline 步骤通常是程序化操作（transfer、shuffle、event），不涉及玩家选择。",
+          "en": "The processing pipeline this <phase> automatically runs when it executes (options / type / do_after structure). Used for programmatic step sequences such as setup and resolution — isomorphic to an <action>'s content, but auto-triggered by the flow rather than chosen by a player. Unlike an <action>'s content, a <phase>'s pipeline steps are usually programmatic operations (transfer, shuffle, event) without player choices."
+        }
+      },
       "constraints": {
         "required": [],
         "optional": [
@@ -993,6 +1001,13 @@
             "description": {
               "zh": "此阶段内玩家可执行的 <action> 列表。仅当 children 为空（叶子 <phase>）时此字段有意义——它定义了当前规则上下文中的合法行动。非叶子 <phase> 的合法 <action> 由其子流程决定。",
               "en": "The list of Actions a player can execute during this phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context. Non-leaf Phases derive their legal actions from their children."
+            }
+          },
+          {
+            "id": "<pipeline>",
+            "description": {
+              "zh": "本阶段执行时自动运行的处理流程（可选）。与 children 互斥：持有 pipeline 的 <phase> 是程序化阶段，不包含子流程。",
+              "en": "Optional processing pipeline automatically run when this phase executes. Mutually exclusive with children: a <phase> holding a pipeline is a programmatic phase without child procedures."
             }
           }
         ]

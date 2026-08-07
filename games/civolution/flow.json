@@ -31,581 +31,615 @@
             "zh": "游戏设置阶段，分为公共设置和个人设置。",
             "en": "Game setup phase, divided into public setup and player setup."
           },
-          "events": [
-            {
-              "id": "assemble_public_board",
-              "name": {
-                "zh": "组装公共版图",
-                "en": "Assemble Public Board"
+          "<pipeline>": {
+            "options": [
+
+              {
+                "id": "assemble_public_board",
+                "name": {
+                  "zh": "组装公共版图",
+                  "en": "Assemble Public Board"
+                },
+                "specifies": "<ontology::event>",
+                "description": {
+                  "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
+                  "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly arrange the 8 continent tiles to fill the 5×3 grid inside the score track frame, forming the continent."
+                }
               },
-              "specifies": "<ontology::event>",
-              "description": {
-                "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
-                "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly arrange the 8 continent tiles to fill the 5×3 grid inside the score track frame, forming the continent."
+              {
+                "id": "place_sites",
+                "name": {
+                  "zh": "放置地点",
+                  "en": "Place Sites"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
+                  "en": "Place the 24 site tiles face down on the site spaces of the continent."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<continent>",
+                "<ontology::object>": "<site>",
+                "quantity": 24,
+                "face_down": true,
+                "do_after": [
+                  "assemble_public_board"
+                ]
+              },
+              {
+                "id": "place_progress_and_sequence_boards",
+                "name": {
+                  "zh": "放置进程流程版图",
+                  "en": "Place Progress & Sequence Boards"
+                },
+                "specifies": "<ontology::event>",
+                "description": {
+                  "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
+                  "en": "Place the progress board and sequence board on either side of the public board."
+                },
+                "do_after": [
+                  "assemble_public_board"
+                ]
+              },
+              {
+                "id": "prepare_phase_indicator",
+                "name": {
+                  "zh": "准备阶段标记",
+                  "en": "Prepare Phase Indicator"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将阶段标记放到流程版图阶段序列的阶段一位置。",
+                  "en": "Place the phase indicator on phase 1 of the sequence board's phase sequence."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<phase_sequence>",
+                "<ontology::object>": "<phase_indicator>",
+                "quantity": 1,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
+              },
+              {
+                "id": "prepare_weather_indicator",
+                "name": {
+                  "zh": "准备天气标记",
+                  "en": "Prepare Weather Indicator"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将天气标记放到流程版图天气轨的适中位置。",
+                  "en": "Place the weather indicator on a moderate space of the weather gauge."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<weather_gauge>",
+                "<ontology::object>": "<weather_indicator>",
+                "quantity": 1,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
+              },
+              {
+                "id": "prepare_event_cards",
+                "name": {
+                  "zh": "准备事件牌",
+                  "en": "Prepare Event Cards"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
+                  "en": "Shuffle event cards, draw 4, and place them face down on the event card spaces; return the rest to the box."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<event_card_space>",
+                "<ontology::object>": "<event_card>",
+                "quantity": 4,
+                "face_down": true
+              },
+              {
+                "id": "prepare_research_decks",
+                "name": {
+                  "zh": "准备研究牌堆",
+                  "en": "Prepare Research Decks"
+                },
+                "specifies": "<ontology::shuffle>",
+                "target": "<research_deck>",
+                "description": {
+                  "zh": "将五种研究牌分别洗混后形成供应堆。",
+                  "en": "Shuffle the five types of research cards into separate supply decks."
+                }
+              },
+              {
+                "id": "prepare_starting_decks",
+                "name": {
+                  "zh": "准备初始牌堆",
+                  "en": "Prepare Starting Decks"
+                },
+                "specifies": "<ontology::shuffle>",
+                "target": "<starting_marker_deck>",
+                "description": {
+                  "zh": "洗混初始标记牌和初始芯片牌备用。",
+                  "en": "Shuffle the starting marker deck and starting chip deck."
+                }
+              },
+              {
+                "id": "prepare_era_scoring_tiles",
+                "name": {
+                  "zh": "准备时代计分板块",
+                  "en": "Prepare Era Scoring Tiles"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区。",
+                  "en": "Draw 4 scoring tiles and place them face up in the era scoring area."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<era_scoring_area>",
+                "<ontology::object>": "<scoring_tile>",
+                "quantity": 4
+              },
+              {
+                "id": "prepare_final_scoring_tiles",
+                "name": {
+                  "zh": "准备终局计分板块",
+                  "en": "Prepare Final Scoring Tiles"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "从同一洗好的计分板块堆再随机抽 3 张，先按图标面朝上放到终局计分区中对应图标下方，最后翻至分数面朝上（游戏终局时该分数生效）。",
+                  "en": "Draw 3 more scoring tiles from the same shuffled stack, place each icon side up below its matching icon in the final scoring area, then flip them point side up (that value applies at final scoring)."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<final_scoring_area>",
+                "<ontology::object>": "<scoring_tile>",
+                "quantity": 3,
+                "do_after": [
+                  "prepare_era_scoring_tiles"
+                ]
+              },
+              {
+                "id": "prepare_hundred_point_tokens",
+                "name": {
+                  "zh": "准备百分指示物",
+                  "en": "Prepare 100-Point Tokens"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将一百分指示物作为供应堆放到百分指示物展示区。2 人局将部分指示物翻至阻挡面，覆盖目标芯片展示区 2 个格和流程版图 4 个黄色 reset space；3 人局覆盖目标芯片展示区 1 个格和 2 个黄色 reset space；4 人局不覆盖。",
+                  "en": "Place the 100-point tokens as a supply on the 100-point token display. In a 2-player game, flip some blocking side up to cover 2 goal chip display spaces and 4 yellow reset spaces of the phase sequence; in 3-player, cover 1 goal chip display space and 2 yellow reset spaces; in 4-player, cover none."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<hundred_point_token_display>",
+                "quantity": {
+                  "expr": "per_player_count_setup"
+                }
+              },
+              {
+                "id": "prepare_hunting_tokens",
+                "name": {
+                  "zh": "准备狩猎指示物",
+                  "en": "Prepare Hunting Tokens"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "2 人局取 10 个狩猎指示物翻至阻挡面，覆盖大陆上带特殊图标的营地；3 人局覆盖 4 个带对应图标的营地；4 人局不覆盖。其余狩猎指示物翻至正面，作为通用狩猎指示物供应堆放到狩猎指示物展示区。",
+                  "en": "In a 2-player game, flip 10 territory tokens blocking side up to cover the encampments marked with the special icons; in 3-player, cover the 4 encampments with the marked icon; in 4-player, cover none. Flip the remaining tokens front side up as the general hunting token supply in the hunting token display."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<hunting_token_display>",
+                "quantity": {
+                  "expr": "per_player_count_setup"
+                }
+              },
+              {
+                "id": "prepare_dice_pool",
+                "name": {
+                  "zh": "准备骰子池",
+                  "en": "Prepare Dice Pool"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
+                  "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<dice_display>",
+                "quantity": {
+                  "expr": "player_count + 1"
+                }
+              },
+              {
+                "id": "prepare_goal_chip_display",
+                "name": {
+                  "zh": "准备目标芯片展示",
+                  "en": "Prepare Goal Chip Display"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将深蓝袋子中的目标芯片充分混合，随机抽 1 张正面朝上放到目标芯片展示区的每个空格：4 人局 6 张、3 人局 5 张、2 人局 4 张（2/3 人局部分格已被百分指示物阻挡标记覆盖）。",
+                  "en": "Mix the 65 goal chips in the dark blue bag thoroughly; draw 1 randomly and place it face up on each empty space of the goal chip display: 6 for 4p, 5 for 3p, 4 for 2p (some spaces are covered by blocking tokens in 2/3-player games)."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<goal_chip_display>",
+                "<ontology::object>": "<goal_chip>",
+                "quantity": {
+                  "expr": "per_player_count_setup"
+                }
+              },
+              {
+                "id": "prepare_income_chip_display",
+                "name": {
+                  "zh": "准备收入芯片展示",
+                  "en": "Prepare Income Chip Display"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将白色袋子中的收入芯片充分混合，随机抽 1 张正面朝上放到收入芯片展示区的每个空格（共 3 格）。",
+                  "en": "Mix the 25 income chips in the white bag thoroughly; draw 1 randomly and place it face up on each of the 3 spaces of the income chip display."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<income_chip_display>",
+                "<ontology::object>": "<income_chip>",
+                "quantity": 3
+              },
+              {
+                "id": "prepare_attribute_chip_display",
+                "name": {
+                  "zh": "准备属性芯片展示",
+                  "en": "Prepare Attribute Chip Display"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将黄色袋子中的属性芯片充分混合，随机抽 1 张正面朝上放到属性芯片展示区的每个空格（共 3 格）。",
+                  "en": "Mix the 12 attribute chips in the yellow bag thoroughly; draw 1 randomly and place it face up on each of the 3 spaces of the attribute chip display."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<attribute_chip_display>",
+                "<ontology::object>": "<attribute_chip>",
+                "quantity": 3
+              },
+              {
+                "id": "place_material_tiles",
+                "name": {
+                  "zh": "放置材料板块",
+                  "en": "Place Material Tiles"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
+                  "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<continent>",
+                "<ontology::object>": "<material_tile>",
+                "quantity": "all",
+                "do_after": [
+                  "assemble_public_board"
+                ]
+              },
+              {
+                "id": "player_setup_modules",
+                "name": {
+                  "zh": "玩家设置模组",
+                  "en": "Player Setup Modules"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入控制台模组区。",
+                  "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<module_area>",
+                "<ontology::object>": "<main_module>",
+                "quantity": 15,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_dice",
+                "name": {
+                  "zh": "玩家设置骰子",
+                  "en": "Player Setup Dice"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家从游戏盒中拿取 6 个白骰子，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到控制台骰子区对应点数格上。",
+                  "en": "Each player takes 6 activation dice from the game box, sets them to show each value 1-6, and places each on the corresponding dice space of their console."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<activation_dice_area>",
+                "<ontology::object>": "<activation_die>",
+                "quantity": 6,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_fate_die",
+                "name": {
+                  "zh": "玩家设置命运骰",
+                  "en": "Player Setup Fate Die"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家从游戏盒中拿取 1 个粉骰子放在控制台旁边备用。",
+                  "en": "Each player takes 1 fate die from the game box and places it beside their console."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<fate_dice_area>",
+                "<ontology::object>": "<fate_die>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_stage_tiles",
+                "name": {
+                  "zh": "玩家设置层级板块",
+                  "en": "Player Setup Stage Tiles"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到控制台对应位置。",
+                  "en": "Each player takes stage-4 and stage-5 tiles, inactive side up, and places them on the console."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<console>",
+                "<ontology::object>": "<stage_tile>",
+                "quantity": 2,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_buildings",
+                "name": {
+                  "zh": "玩家设置建筑",
+                  "en": "Player Setup Buildings"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家将 4 个聚落、3 个农场和 2 艘船放入控制台左侧对应凹槽，并在每艘船的凹槽中各放 1 个标记。",
+                  "en": "Each player places their 4 settlements, 3 farms, and 2 boats into the recesses on the left side of the console, and places 1 marker in the notch of each boat."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<console>",
+                "<ontology::object>": "<settlement> | <farm> | <boat>",
+                "quantity": "all",
+                "per_player": true
+              },
+              {
+                "id": "player_setup_score_and_track_tokens",
+                "name": {
+                  "zh": "玩家设置分数轨标记",
+                  "en": "Player Setup Score & Track Tokens"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个分数标记放到计分轨 0 分位置。",
+                  "en": "Each player takes 1 score marker and places it on the score track at 0."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<score_track>",
+                "<ontology::object>": "<score_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_favor_marker",
+                "name": {
+                  "zh": "玩家设置恩惠标记",
+                  "en": "Player Setup Favor Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个恩惠标记放到 <favor_of_ager_track> 起始位置。",
+                  "en": "Each player takes 1 favor marker and places it on the <favor_of_ager_track> start."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<favor_of_ager_track>",
+                "<ontology::object>": "<favor_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_technology_marker",
+                "name": {
+                  "zh": "玩家设置科技标记",
+                  "en": "Player Setup Technology Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个进程标记放到科技轨 0 格。",
+                  "en": "Each player takes 1 progress marker and places it on the technology track at 0."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<technology_track>",
+                "<ontology::object>": "<progress_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_prestige_marker",
+                "name": {
+                  "zh": "玩家设置声望标记",
+                  "en": "Player Setup Prestige Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个进程标记放到声望轨 0 格。",
+                  "en": "Each player takes 1 progress marker and places it on the prestige track at 0."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<prestige_track>",
+                "<ontology::object>": "<progress_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_knowledge_marker",
+                "name": {
+                  "zh": "玩家设置知识标记",
+                  "en": "Player Setup Knowledge Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个进程标记放到知识轨 0 格。",
+                  "en": "Each player takes 1 progress marker and places it on the knowledge track at 0."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<knowledge_track>",
+                "<ontology::object>": "<progress_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_construction_marker",
+                "name": {
+                  "zh": "玩家设置建设标记",
+                  "en": "Player Setup Construction Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个进程标记放到建设轨 0 格。",
+                  "en": "Each player takes 1 progress marker and places it on the construction track at 0."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<construction_track>",
+                "<ontology::object>": "<progress_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_setup_culture_marker",
+                "name": {
+                  "zh": "玩家设置文化标记",
+                  "en": "Player Setup Culture Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿取 1 个进程标记放到文化轨 0 格。",
+                  "en": "Each player takes 1 progress marker and places it on the culture track at 0."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<culture_track>",
+                "<ontology::object>": "<progress_marker>",
+                "quantity": 1,
+                "per_player": true
+              },
+              {
+                "id": "player_place_initial_tribes",
+                "name": {
+                  "zh": "玩家放置初始部落",
+                  "en": "Player Place Initial Tribes"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
+                  "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
+                },
+                "source": "<console>",
+                "destination": "<continent>",
+                "<ontology::object>": "<tribe>",
+                "quantity": 2,
+                "per_player": true,
+                "do_after": [
+                  "assemble_public_board"
+                ]
+              },
+              {
+                "id": "player_place_initial_markers",
+                "name": {
+                  "zh": "玩家放置初始标记",
+                  "en": "Player Place Initial Markers"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到控制台重置列顶部。",
+                  "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<continent> | <console>",
+                "<ontology::object>": "<marker>",
+                "quantity": 6,
+                "per_player": true,
+                "do_after": [
+                  "assemble_public_board"
+                ]
+              },
+              {
+                "id": "choose_starting_player",
+                "name": {
+                  "zh": "选择起始玩家",
+                  "en": "Choose Starting Player"
+                },
+                "specifies": "<ontology::event>",
+                "description": {
+                  "zh": "决定起始玩家，获得起始纪念碑。",
+                  "en": "Determine the starting player, who receives the starting monolith."
+                }
+              },
+              {
+                "id": "draft_starting_marker_cards",
+                "name": {
+                  "zh": "轮抽初始标记牌",
+                  "en": "Draft Starting Marker Cards"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得上面标记，其余放回盒子。",
+                  "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers, returns the rest to the box."
+                },
+                "source": "<starting_marker_deck>",
+                "destination": "<ontology::game_box>",
+                "<ontology::object>": "<starting_marker_card>",
+                "quantity": {
+                  "expr": "player_count * 2"
+                },
+                "do_after": [
+                  "prepare_starting_decks"
+                ]
+              },
+              {
+                "id": "draft_starting_chip_cards",
+                "name": {
+                  "zh": "轮抽初始芯片牌",
+                  "en": "Draft Starting Chip Cards"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "翻开玩家数量 +1 张初始芯片牌，每张贴一张目标芯片；从起始玩家右手边玩家开始逆时针选一张，将目标芯片放入目标区，模组翻面至等级二，牌塞入收入区成为首个收入芯片。",
+                  "en": "Reveal player_count + 1 starting chip cards, each with a goal chip; draft them counter-clockwise, place goal chip, upgrade module, and slide card under console as first income chip."
+                },
+                "source": "<starting_chip_deck>",
+                "destination": "<income_area>",
+                "<ontology::object>": "<starting_chip_card>",
+                "quantity": {
+                  "expr": "player_count"
+                },
+                "do_after": [
+                  "prepare_starting_decks",
+                  "choose_starting_player"
+                ]
+              },
+              {
+                "id": "draft_starting_research_cards",
+                "name": {
+                  "zh": "轮抽初始研究牌",
+                  "en": "Draft Starting Research Cards"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家从五个研究牌堆各抽两张，每种选一张保留，另一张放回牌堆底。",
+                  "en": "Each player draws 2 cards from each of the 5 research decks, keeps 1 of each type, returns the other to the bottom of its deck."
+                },
+                "source": "<research_deck>",
+                "destination": "<ontology::player_holding>",
+                "<ontology::object>": "<research_card>",
+                "quantity": 5,
+                "per_player": true,
+                "do_after": [
+                  "prepare_research_decks"
+                ]
               }
-            },
-            {
-              "id": "place_sites",
-              "name": {
-                "zh": "放置地点",
-                "en": "Place Sites"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
-                "en": "Place the 24 site tiles face down on the site spaces of the continent."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<continent>",
-              "<ontology::object>": "<site>",
-              "quantity": 24,
-              "face_down": true
-            },
-            {
-              "id": "place_progress_and_sequence_boards",
-              "name": {
-                "zh": "放置进程流程版图",
-                "en": "Place Progress & Sequence Boards"
-              },
-              "specifies": "<ontology::event>",
-              "description": {
-                "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
-                "en": "Place the progress board and sequence board on either side of the public board."
-              }
-            },
-            {
-              "id": "prepare_phase_indicator",
-              "name": {
-                "zh": "准备阶段标记",
-                "en": "Prepare Phase Indicator"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将阶段标记放到流程版图阶段序列的阶段一位置。",
-                "en": "Place the phase indicator on phase 1 of the sequence board's phase sequence."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<phase_sequence>",
-              "<ontology::object>": "<phase_indicator>",
-              "quantity": 1
-            },
-            {
-              "id": "prepare_weather_indicator",
-              "name": {
-                "zh": "准备天气标记",
-                "en": "Prepare Weather Indicator"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将天气标记放到流程版图天气轨的适中位置。",
-                "en": "Place the weather indicator on a moderate space of the weather gauge."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<weather_gauge>",
-              "<ontology::object>": "<weather_indicator>",
-              "quantity": 1
-            },
-            {
-              "id": "prepare_event_cards",
-              "name": {
-                "zh": "准备事件牌",
-                "en": "Prepare Event Cards"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
-                "en": "Shuffle event cards, draw 4, and place them face down on the event card spaces; return the rest to the box."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<event_card_space>",
-              "<ontology::object>": "<event_card>",
-              "quantity": 4,
-              "face_down": true
-            },
-            {
-              "id": "prepare_research_decks",
-              "name": {
-                "zh": "准备研究牌堆",
-                "en": "Prepare Research Decks"
-              },
-              "specifies": "<ontology::shuffle>",
-              "target": "<research_deck>",
-              "description": {
-                "zh": "将五种研究牌分别洗混后形成供应堆。",
-                "en": "Shuffle the five types of research cards into separate supply decks."
-              }
-            },
-            {
-              "id": "prepare_starting_decks",
-              "name": {
-                "zh": "准备初始牌堆",
-                "en": "Prepare Starting Decks"
-              },
-              "specifies": "<ontology::shuffle>",
-              "target": "<starting_marker_deck>",
-              "description": {
-                "zh": "洗混初始标记牌和初始芯片牌备用。",
-                "en": "Shuffle the starting marker deck and starting chip deck."
-              }
-            },
-            {
-              "id": "prepare_era_scoring_tiles",
-              "name": {
-                "zh": "准备时代计分板块",
-                "en": "Prepare Era Scoring Tiles"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "随机抽取 4 张计分板块正面朝上放入时代计分区。",
-                "en": "Draw 4 scoring tiles and place them face up in the era scoring area."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<era_scoring_area>",
-              "<ontology::object>": "<scoring_tile>",
-              "quantity": 4
-            },
-            {
-              "id": "prepare_final_scoring_tiles",
-              "name": {
-                "zh": "准备终局计分板块",
-                "en": "Prepare Final Scoring Tiles"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "随机抽取 3 张计分板块按图标背面朝上覆盖终局计分区。",
-                "en": "Draw 3 scoring tiles and place them point-side up over the final scoring area."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<final_scoring_area>",
-              "<ontology::object>": "<scoring_tile>",
-              "quantity": 3,
-              "face_down": true
-            },
-            {
-              "id": "prepare_hundred_point_tokens",
-              "name": {
-                "zh": "准备百分指示物",
-                "en": "Prepare 100-Point Tokens"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将若干一百分指示物翻面作为阻挡标记覆盖不可用区域，剩余作为供应堆。",
-                "en": "Flip some 100-point tokens as blocking tokens to cover unavailable areas; the rest form the supply."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<hundred_point_token_display>",
-              "quantity": {
-                "expr": "per_player_count_setup"
-              }
-            },
-            {
-              "id": "prepare_hunting_tokens",
-              "name": {
-                "zh": "准备狩猎指示物",
-                "en": "Prepare Hunting Tokens"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将若干狩猎指示物翻面作为阻挡标记覆盖不可用营地，剩余作为供应堆。",
-                "en": "Flip some hunting tokens as blocking tokens to cover unavailable campsites; the rest form the supply."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<hunting_token_display>",
-              "quantity": {
-                "expr": "per_player_count_setup"
-              }
-            },
-            {
-              "id": "prepare_dice_pool",
-              "name": {
-                "zh": "准备骰子池",
-                "en": "Prepare Dice Pool"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
-                "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<dice_display>",
-              "quantity": {
-                "expr": "player_count + 1"
-              }
-            },
-            {
-              "id": "prepare_goal_chip_display",
-              "name": {
-                "zh": "准备目标芯片展示",
-                "en": "Prepare Goal Chip Display"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "随机抽取若干目标芯片正面朝上放到目标芯片展示区，剩余放回袋子。",
-                "en": "Draw goal chips and place them face up in the goal chip display; return the rest to the bag."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<goal_chip_display>",
-              "<ontology::object>": "<goal_chip>",
-              "quantity": {
-                "expr": "per_player_count_setup"
-              }
-            },
-            {
-              "id": "prepare_income_chip_display",
-              "name": {
-                "zh": "准备收入芯片展示",
-                "en": "Prepare Income Chip Display"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "随机抽取若干收入芯片正面朝上放到收入芯片展示区，剩余放回袋子。",
-                "en": "Draw income chips and place them face up in the income chip display; return the rest to the bag."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<income_chip_display>",
-              "<ontology::object>": "<income_chip>",
-              "quantity": {
-                "expr": "per_player_count_setup"
-              }
-            },
-            {
-              "id": "prepare_attribute_chip_display",
-              "name": {
-                "zh": "准备属性芯片展示",
-                "en": "Prepare Attribute Chip Display"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "随机抽取若干属性芯片正面朝上放到属性芯片展示区，剩余放回袋子。",
-                "en": "Draw attribute chips and place them face up in the attribute chip display; return the rest to the bag."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<attribute_chip_display>",
-              "<ontology::object>": "<attribute_chip>",
-              "quantity": {
-                "expr": "per_player_count_setup"
-              }
-            },
-            {
-              "id": "place_material_tiles",
-              "name": {
-                "zh": "放置材料板块",
-                "en": "Place Material Tiles"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
-                "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<continent>",
-              "<ontology::object>": "<material_tile>",
-              "quantity": "all"
-            },
-            {
-              "id": "player_setup_modules",
-              "name": {
-                "zh": "玩家设置模组",
-                "en": "Player Setup Modules"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入控制台模组区。",
-                "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<module_area>",
-              "<ontology::object>": "<main_module>",
-              "quantity": 15,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_dice",
-              "name": {
-                "zh": "玩家设置骰子",
-                "en": "Player Setup Dice"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家从游戏盒中拿取 6 个白骰子，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到控制台骰子区对应点数格上。",
-                "en": "Each player takes 6 activation dice from the game box, sets them to show each value 1-6, and places each on the corresponding dice space of their console."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<activation_dice_area>",
-              "<ontology::object>": "<activation_die>",
-              "quantity": 6,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_fate_die",
-              "name": {
-                "zh": "玩家设置命运骰",
-                "en": "Player Setup Fate Die"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家从游戏盒中拿取 1 个粉骰子放在控制台旁边备用。",
-                "en": "Each player takes 1 fate die from the game box and places it beside their console."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<fate_dice_area>",
-              "<ontology::object>": "<fate_die>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_stage_tiles",
-              "name": {
-                "zh": "玩家设置层级板块",
-                "en": "Player Setup Stage Tiles"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到控制台对应位置。",
-                "en": "Each player takes stage-4 and stage-5 tiles, inactive side up, and places them on the console."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<console>",
-              "<ontology::object>": "<stage_tile>",
-              "quantity": 2,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_buildings",
-              "name": {
-                "zh": "玩家设置建筑",
-                "en": "Player Setup Buildings"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取所有聚落、农场、船、圆片和部落放到控制台对应位置，并在船上放两个标记。",
-                "en": "Each player takes all settlements, farms, boats, discs, and tribes to their console; place two markers on boats."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<console>",
-              "<ontology::object>": "<settlement> | <farm> | <boat> | <tribe>",
-              "quantity": "all",
-              "per_player": true
-            },
-            {
-              "id": "player_setup_score_and_track_tokens",
-              "name": {
-                "zh": "玩家设置分数轨标记",
-                "en": "Player Setup Score & Track Tokens"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个分数标记放到计分轨 0 分位置。",
-                "en": "Each player takes 1 score marker and places it on the score track at 0."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<score_track>",
-              "<ontology::object>": "<score_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_favor_marker",
-              "name": {
-                "zh": "玩家设置恩惠标记",
-                "en": "Player Setup Favor Marker"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个恩惠标记放到 <favor_of_ager_track> 起始位置。",
-                "en": "Each player takes 1 favor marker and places it on the <favor_of_ager_track> start."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<favor_of_ager_track>",
-              "<ontology::object>": "<favor_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_technology_marker",
-              "name": {
-                "zh": "玩家设置科技标记",
-                "en": "Player Setup Technology Marker"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个进程标记放到科技轨 0 格。",
-                "en": "Each player takes 1 progress marker and places it on the technology track at 0."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<technology_track>",
-              "<ontology::object>": "<progress_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_prestige_marker",
-              "name": {
-                "zh": "玩家设置声望标记",
-                "en": "Player Setup Prestige Marker"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个进程标记放到声望轨 0 格。",
-                "en": "Each player takes 1 progress marker and places it on the prestige track at 0."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<prestige_track>",
-              "<ontology::object>": "<progress_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_knowledge_marker",
-              "name": {
-                "zh": "玩家设置知识标记",
-                "en": "Player Setup Knowledge Marker"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个进程标记放到知识轨 0 格。",
-                "en": "Each player takes 1 progress marker and places it on the knowledge track at 0."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<knowledge_track>",
-              "<ontology::object>": "<progress_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_construction_marker",
-              "name": {
-                "zh": "玩家设置建设标记",
-                "en": "Player Setup Construction Marker"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个进程标记放到建设轨 0 格。",
-                "en": "Each player takes 1 progress marker and places it on the construction track at 0."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<construction_track>",
-              "<ontology::object>": "<progress_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_setup_culture_marker",
-              "name": {
-                "zh": "玩家设置文化标记",
-                "en": "Player Setup Culture Marker"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿取 1 个进程标记放到文化轨 0 格。",
-                "en": "Each player takes 1 progress marker and places it on the culture track at 0."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<culture_track>",
-              "<ontology::object>": "<progress_marker>",
-              "quantity": 1,
-              "per_player": true
-            },
-            {
-              "id": "player_place_initial_tribes",
-              "name": {
-                "zh": "玩家放置初始部落",
-                "en": "Player Place Initial Tribes"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
-                "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
-              },
-              "source": "<console>",
-              "destination": "<continent>",
-              "<ontology::object>": "<tribe>",
-              "quantity": 2,
-              "per_player": true
-            },
-            {
-              "id": "player_place_initial_markers",
-              "name": {
-                "zh": "玩家放置初始标记",
-                "en": "Player Place Initial Markers"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到控制台重置列顶部。",
-                "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<continent> | <console>",
-              "<ontology::object>": "<marker>",
-              "quantity": 6,
-              "per_player": true
-            },
-            {
-              "id": "choose_starting_player",
-              "name": {
-                "zh": "选择起始玩家",
-                "en": "Choose Starting Player"
-              },
-              "specifies": "<ontology::event>",
-              "description": {
-                "zh": "决定起始玩家，获得起始纪念碑。",
-                "en": "Determine the starting player, who receives the starting monolith."
-              }
-            },
-            {
-              "id": "draft_starting_marker_cards",
-              "name": {
-                "zh": "轮抽初始标记牌",
-                "en": "Draft Starting Marker Cards"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得上面标记，其余放回盒子。",
-                "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers, returns the rest to the box."
-              },
-              "source": "<starting_marker_deck>",
-              "destination": "<ontology::game_box>",
-              "<ontology::object>": "<starting_marker_card>",
-              "quantity": {
-                "expr": "player_count * 2"
-              }
-            },
-            {
-              "id": "draft_starting_chip_cards",
-              "name": {
-                "zh": "轮抽初始芯片牌",
-                "en": "Draft Starting Chip Cards"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "翻开玩家数量 +1 张初始芯片牌，每张贴一张目标芯片；从起始玩家右手边玩家开始逆时针选一张，将目标芯片放入目标区，模组翻面至等级二，牌塞入收入区成为首个收入芯片。",
-                "en": "Reveal player_count + 1 starting chip cards, each with a goal chip; draft them counter-clockwise, place goal chip, upgrade module, and slide card under console as first income chip."
-              },
-              "source": "<starting_chip_deck>",
-              "destination": "<income_area>",
-              "<ontology::object>": "<starting_chip_card>",
-              "quantity": {
-                "expr": "player_count"
-              }
-            },
-            {
-              "id": "draft_starting_research_cards",
-              "name": {
-                "zh": "轮抽初始研究牌",
-                "en": "Draft Starting Research Cards"
-              },
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "每位玩家从五个研究牌堆各抽两张，每种选一张保留，另一张放回牌堆底。",
-                "en": "Each player draws 2 cards from each of the 5 research decks, keeps 1 of each type, returns the other to the bottom of its deck."
-              },
-              "source": "<research_deck>",
-              "destination": "<ontology::player_holding>",
-              "<ontology::object>": "<research_card>",
-              "quantity": 5,
-              "per_player": true
-            }
-          ]
+          
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
         },
         {
           "id": "era_loop",
