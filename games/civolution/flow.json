@@ -1882,52 +1882,168 @@
       }
     },
     {
-      "id": "procreate",
+      "id": "place_new_tribe",
       "name": {
-        "zh": "繁育",
-        "en": "Procreate"
+        "zh": "放置新部落",
+        "en": "Place New Tribe"
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个新<tribe>放到该区域的营地：空营地直立放置；营地被其他部落占据则先将该部落驱逐至荒野、新部落虚弱放下；火营地照常获得其分数；船上有空座时也可在船上繁育。若大陆上没有任何自己的部落，可任选区域放置。若 20 个部落全部在场则不能繁育。",
-        "en": "Choose a territory with at least one of your <tribe>s. Take a new <tribe> from your supply and place it onto an encampment in that territory: upright on a free encampment; displace the occupant into the wilderness and lay the new tribe down weakened if occupied; fire encampments score as usual; procreation on a boat is allowed if it has a free seat. If you have no tribes on the continent, choose any territory. Cannot procreate if all 20 tribes are on the continent."
+        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个新<tribe>放到该区域的营地；大陆上没有任何自己的部落时可任选区域；船上有空座时也可在船上繁育。若 20 个部落全部在场则不能繁育。",
+        "en": "Choose a territory with at least one of your <tribe>s. Take a new <tribe> from supply and place it onto an encampment in that territory; any territory is allowed if you have no tribes on the continent; procreation on a boat is allowed if it has a free seat. Cannot procreate if all 20 tribes are on the continent."
       },
       "<ontology::condition>": {
         "zh": "场上自己的<tribe>少于 20 个。",
         "en": "Fewer than 20 of your <tribe>s are on the continent."
       },
-      "target": "1 个有至少一个自己<tribe>的区域（大陆无部落时可任选区域；船繁育需船上恰有 1 个部落且另一座空着）",
+      "target": "1 个有至少一个自己<tribe>的区域（大陆无部落时可任选区域；船繁育需船上恰有 1 个部落且另一座空着）及其中的放置营地",
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "options": [
-            {
+          "<ontology::transfer>": {
+            "source": "<ontology::supply>",
+            "destination": "this.target",
+            "<ontology::object>": "<tribe>",
+            "quantity": 1,
+            "description": {
+              "zh": "从供应堆取 1 个新<tribe>放到目标区域的营地（或船空座）。",
+              "en": "Take 1 new <tribe> from supply and place it on an encampment (or free boat seat) in the target territory."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "procreate",
+      "name": {
+        "zh": "繁育",
+        "en": "Procreate"
+      },
+      "specifies": "<ontology::pipeline>",
+      "description": {
+        "zh": "1 次繁育：从供应堆取新<tribe>放到目标区域的营地（<place_new_tribe>），随后按各自 condition 结算繁育触发——营地被占则驱逐原部落（新部落随之虚弱放下）；篝火营地照常得分；未开发区域立即开发。",
+        "en": "1 procreation: take a new <tribe> from supply onto an encampment in the target territory (<place_new_tribe>), then resolve triggers by their own conditions — displace the occupant if the encampment is occupied (the new tribe is then laid down weakened); fire encampments score as usual; undeveloped territories are developed immediately."
+      },
+      "target": "this.target",
+      "options": [
+        "<place_new_tribe>",
+        {
+          "id": "procreation_displace_occupant",
+          "name": {
+            "zh": "驱逐原部落",
+            "en": "Displace Occupant"
+          },
+          "specifies": "<ontology::trigger>",
+          "do_after": [
+            "<place_new_tribe>"
+          ],
+          "<ontology::condition>": {
+            "zh": "放置营地为陆地营地，且已被任意<tribe>占据（无论自己或他人）。",
+            "en": "The encampment is a land encampment occupied by any <tribe> (own or opponent's)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
               "<ontology::transfer>": {
-                "source": "<ontology::supply>",
-                "destination": "this.target 的营地",
+                "source": "this.target.encampment",
+                "destination": "this.target.wilderness",
                 "<ontology::object>": "<tribe>",
                 "quantity": 1,
                 "description": {
-                  "zh": "从供应堆取 1 个新<tribe>放到目标区域的营地。",
-                  "en": "Take 1 new <tribe> from supply and place it on an encampment in the target territory."
+                  "zh": "将占据营地的部落移至同一区域的荒野（保留其站立/躺倒状态）。",
+                  "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
                 }
               }
-            },
-            {
-              "description": {
-                "zh": "若营地被占据：先驱逐原部落至该区域荒野（保持其原有状态），新部落虚弱放下。若营地空置：新部落直立放置。",
-                "en": "If the encampment is occupied: displace the occupant into the wilderness of the same territory (its state is retained), then place the new tribe weakened. If free: place the new tribe upright."
-              }
-            },
-            {
-              "description": {
-                "zh": "若目标营地为火营地，照常获得其分数（推进<score_track>）。",
-                "en": "If the encampment is a fire encampment, gain its success points as usual (advance <score_track>)."
+            }
+          }
+        },
+        {
+          "id": "procreation_weaken_new_tribe",
+          "name": {
+            "zh": "新部落虚弱",
+            "en": "Weaken New Tribe"
+          },
+          "specifies": "<ontology::trigger>",
+          "do_after": [
+            "procreation_displace_occupant"
+          ],
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::state_change>": {
+                "subject": "this.target 营地上放置的新 <tribe>",
+                "attribute": "posture",
+                "to": "<lying>",
+                "description": {
+                  "zh": "驱逐原部落后，新部落虚弱放下。",
+                  "en": "The new tribe is laid down weakened after displacing the occupant."
+                }
               }
             }
+          }
+        },
+        {
+          "id": "procreation_fire_encampment_score",
+          "name": {
+            "zh": "篝火营地得分",
+            "en": "Score Fire Encampment"
+          },
+          "specifies": "<ontology::trigger>",
+          "do_after": [
+            "<place_new_tribe>"
           ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          "<ontology::condition>": {
+            "zh": "放置营地是篝火营地（黄色边框）。",
+            "en": "The encampment is a fire encampment (yellow border)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "description": {
+                "zh": "获得营地所示分数，推进<score_track>。",
+                "en": "Gain the points depicted on the encampment; advance <score_track>."
+              }
+            }
+          }
+        },
+        {
+          "id": "procreation_develop_territory",
+          "name": {
+            "zh": "开发领地",
+            "en": "Develop Territory"
+          },
+          "specifies": "<ontology::trigger>",
+          "do_after": [
+            "<place_new_tribe>"
+          ],
+          "<ontology::condition>": {
+            "zh": "目标区域不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
+            "en": "The territory is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "options": [
+                {
+                  "<ontology::flip>": {
+                    "subject": "this.target.<material_tile>",
+                    "to": "face_up"
+                  }
+                },
+                {
+                  "<ontology::transfer>": {
+                    "source": "<ontology::supply>",
+                    "destination": "this.target",
+                    "<ontology::object>": "<octagonal_pillar>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从供应堆取 1 个八角柱放至目标区域作为原材料标记。",
+                      "en": "Place 1 octagonal pillar from supply onto the target territory as a raw material marker."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
         }
-      }
+      ],
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
     },
     {
       "id": "hunt",

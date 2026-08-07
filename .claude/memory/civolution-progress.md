@@ -78,7 +78,8 @@ metadata:
 ## 最近进展
 
 - **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
-    - **15 个主模组全部完成**（instances.json）。已确认骰子点数 7 个：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5；剩余 8 个 TBD：procreation/production/building/achievement/insight/mutation/invention/trade
+    - **15 个主模组全部完成**（instances.json）。已确认骰子点数 8 个：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5；剩余 7 个 TBD：production/building/achievement/insight/mutation/invention/trade
+    - **procreate 拆分为 pipeline（用户 review）**：繁育 = `place_new_tribe`（action：选区域+transfer）+ 4 个平铺 trigger（驱逐原部落/虚弱/篝火营地得分/开发领地），均 do_after 放置 action；虚弱 do_after 驱逐（规则书 "before"，驱逐不发生则不虚弱）；补「未开发区域立即开发」缺口（原定义缺失）。L3 恩惠检定与繁育顺序可互换（规则书原文 "either before or after"，无 do_after）
     - **新增 10 个基础 action**（flow.json，41 triggers）：procreate、hunt、strengthen_tribe、produce_material、transport_material（复合）、gain_activation_die、gain_fate_die、gain_goal_chip、place_planning_markers、move_feature_marker
     - **运输拆分（用户 review 修正）**：transport_material 拆为 transport_land_material（陆地按区域类型）+ transport_boat_material（船载，constraints 定义 storage_space 入参：缺省=相邻已开发区域类型、'any'=任意格，L3 使用）+ 复合 CHOOSE_ONE。参照 migrate = move_tribe + resolve_migration_triggers 模式——需要「实例化时区分入参」的底层 action 用 constraints 定义参数
     - **hunt 修正（用户 review）**：掷骰用 `<ontology::die_roll>`（fate_die[] count all）；食物数量改查表描述（quantity 0 占位删除）
@@ -237,4 +238,4 @@ metadata:
 - [[runtime-architecture]] — 后端接口与验证方式
 
 **Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
-**How to apply:** 15 个主模组已全部实例化，其中 7 个点数已确认、8 个 TBD 待用户补充。逐模组 review 进行中（sustenance/planning/transport 已过），**下一个：繁育（procreation）**——前置 action procreate 已定义，待用户确认骰子点数。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。
+**How to apply:** 15 个主模组已全部实例化，其中 8 个点数已确认、7 个 TBD 待用户补充（production/building/achievement/insight/mutation/invention/trade）。逐模组 review 进行中（sustenance/planning/transport/procreation 已过）。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。
