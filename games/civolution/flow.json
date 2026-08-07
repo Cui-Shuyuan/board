@@ -1507,8 +1507,26 @@
       },
       "specifies": "<ontology::pipeline>",
       "description": {
-        "zh": "从背面朝下的研究牌堆抽 N 张牌至<ontology::temporary_zone>，检视后选 K 张转入<player_holding>，其余放回各自来源牌堆底部。N 和 K 由调用方指定。",
-        "en": "Draw N cards from face-down research decks to <ontology::temporary_zone>, inspect them, pick K to transfer to <player_holding>, and return the rest face-down to the bottom of their respective source decks. N and K are specified by the caller."
+        "zh": "从背面朝下的研究牌堆抽 N 张牌检视，选 K 张转入<player_holding>，其余放回各自来源牌堆底部。N 和 K 由调用方指定。",
+        "en": "Draw N cards from face-down research decks, inspect them, pick K to transfer to <player_holding>, and return the rest face-down to the bottom of their respective source decks. N and K are specified by the caller."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "draw_count",
+            "description": {
+              "zh": "抽取的研究牌数量（N）。",
+              "en": "Number of research cards drawn (N)."
+            }
+          },
+          {
+            "id": "pick_count",
+            "description": {
+              "zh": "选入<player_holding>的研究牌数量（K）。",
+              "en": "Number of research cards picked to <player_holding> (K)."
+            }
+          }
+        ]
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -1516,17 +1534,16 @@
             {
               "id": "draw",
               "name": {
-                "zh": "抽牌至临时区",
-                "en": "Draw to Temporary Zone"
+                "zh": "抽牌检视",
+                "en": "Draw and Inspect"
               },
               "<ontology::transfer>": {
                 "source": "<research_deck>",
-                "destination": "<ontology::temporary_zone>",
                 "<ontology::object>": "<research_card>",
                 "quantity": "N",
                 "description": {
-                  "zh": "从任意<research_deck>（可同堆或不同堆）共抽 N 张<research_card>至<ontology::temporary_zone>。",
-                  "en": "Draw N <research_card>s total from any <research_deck>s (same or different) to <ontology::temporary_zone>."
+                  "zh": "从任意<research_deck>（可同堆或不同堆）共抽 N 张<research_card>检视。",
+                  "en": "Draw N <research_card>s total from any <research_deck>s (same or different) and inspect them."
                 }
               }
             },
@@ -1540,13 +1557,13 @@
                 "draw"
               ],
               "<ontology::transfer>": {
-                "source": "<ontology::temporary_zone>",
+                "source": "刚抽出的<research_card>中",
                 "destination": "<player_holding>",
                 "<ontology::object>": "<research_card>",
                 "quantity": "K",
                 "description": {
-                  "zh": "从<ontology::temporary_zone>中选 K 张<research_card>加入手牌。",
-                  "en": "Pick K <research_card>s from <ontology::temporary_zone> and add to hand."
+                  "zh": "从抽出的 N 张中选 K 张<research_card>加入手牌。",
+                  "en": "Pick K <research_card>s from the drawn cards and add to hand."
                 }
               }
             },
@@ -1560,13 +1577,13 @@
                 "pick"
               ],
               "<ontology::transfer>": {
-                "source": "<ontology::temporary_zone>",
+                "source": "未选中的<research_card>",
                 "destination": "<research_deck>",
                 "<ontology::object>": "<research_card>",
                 "quantity": "N - K",
                 "description": {
-                  "zh": "将<ontology::temporary_zone>中剩余的<research_card>面朝下放回各自来源牌堆底部。",
-                  "en": "Return remaining <research_card>s from <ontology::temporary_zone> face-down to the bottom of their respective source decks."
+                  "zh": "将未选中的<research_card>面朝下放回各自来源牌堆底部。",
+                  "en": "Return the unpicked <research_card>s face-down to the bottom of their respective source decks."
                 }
               }
             }
@@ -1583,8 +1600,8 @@
       },
       "specifies": "<ontology::pipeline>",
       "description": {
-        "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。可从以下选项中任选组合执行（顺序任意）：",
-        "en": "The Trade action. Sell stored materials for money or points, or purchase new materials with money. Choose any combination (any order):"
+        "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。必须从出售与购买中至少选择一项执行（可只卖、只买，顺序任意）：",
+        "en": "The Trade action. Sell stored materials for money or points, or purchase new materials with money. At least one of Sale or Purchase must be performed (may sell only or buy only, in any order):"
       },
       "options": [
         {
@@ -1735,7 +1752,7 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       ],
-      "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
+      "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
     },
     {
       "id": "lucky_find",
@@ -2136,8 +2153,8 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个标记放入该区域，成为该区域材料板块所示类型的原材料。船上有至少一个部落且中央凹槽未被占用时也可在船上生产（材料类型到运输时才确定）。",
-        "en": "Choose a territory with at least one of your <tribe>s and place a marker from supply into it, representing a raw material of the type shown on the territory's material tile. Production on a boat is possible with at least one tribe aboard and the central notch free (type determined at transport time)."
+        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个标记放入该区域，成为该区域材料板块所示类型的原材料。船上有至少一个部落且中央凹槽未被占用时也可在船上生产（材料类型到运输时才确定）。原材料本身没有价值也不能使用，只有运输到仓库后才成为可用的<stored_material>（可用于建造或支付卡牌费用）。",
+        "en": "Choose a territory with at least one of your <tribe>s and place a marker from supply into it, representing a raw material of the type shown on the territory's material tile. Production on a boat is possible with at least one tribe aboard and the central notch free (type determined at transport time). Raw materials have no value by themselves and cannot be used; only after being transported to storage do they become usable <stored_material>s (e.g., for building or paying card costs)."
       },
       "<ontology::condition>": {
         "zh": "存在区域（或有自己的船）：有至少一个自己的<tribe>；船上生产需中央凹槽未被占用。",
@@ -2248,26 +2265,162 @@
         "zh": "获得激活骰",
         "en": "Gain Activation Die"
       },
-      "specifies": "<ontology::action>",
+      "specifies": "<ontology::pipeline>",
       "description": {
-        "zh": "从骰子展示区拿取 1 个<activation_die>，立即投掷一次，按点数放到控制台对应点数骰子格。若展示区已无激活骰，改为从拥有激活骰最多的玩家处拿取 1 个（不能从自己拿）。",
-        "en": "Take 1 <activation_die> from the dice display, roll it immediately, and place it on the corresponding dice space of your console. If no activation dice remain in the display, take one from the civilization with the most instead (never from yourself)."
+        "zh": "获得 1 个<activation_die>：优先从骰子展示区拿取；展示区无骰子时从拥有激活骰最多的玩家处拿取。拿到后立即投掷一次，按点数放到控制台对应点数骰子格。",
+        "en": "Gain 1 <activation_die>: take it from the dice display if available; otherwise take it from a civilization with the most activation dice. Roll it immediately and place it on the matching dice space of your console."
       },
-      "target": "骰子展示区的 1 个<activation_die>",
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "<ontology::transfer>": {
-            "source": "<dice_display>",
-            "destination": "<activation_dice_area>",
-            "<ontology::object>": "<activation_die>",
-            "quantity": 1,
-            "description": {
-              "zh": "拿取 1 个激活骰，投掷后按点数放入对应骰子格。",
-              "en": "Take 1 activation die, roll it, and place it on the matching dice space."
+      "options": [
+        {
+          "id": "take_from_display",
+          "name": {
+            "zh": "从展示区拿取",
+            "en": "Take from Display"
+          },
+          "specifies": "<ontology::trigger>",
+          "<ontology::condition>": {
+            "zh": "骰子展示区有<activation_die>。",
+            "en": "The dice display has an <activation_die>."
+          },
+          "target": "骰子展示区（<dice_display>）",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "options": [
+                {
+                  "id": "take_activation_die",
+                  "name": {
+                    "zh": "拿取激活骰",
+                    "en": "Take Activation Die"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "this.target.contains.<activation_die>",
+                    "<ontology::object>": "<activation_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从展示区拿取 1 枚激活骰。",
+                      "en": "Take 1 activation die from the display."
+                    }
+                  }
+                },
+                {
+                  "id": "roll_die",
+                  "name": {
+                    "zh": "投掷骰子",
+                    "en": "Roll the Die"
+                  },
+                  "do_after": [
+                    "take_activation_die"
+                  ],
+                  "<ontology::die_roll>": {
+                    "<dice>": "<activation_die>[]",
+                    "count": 1,
+                    "description": {
+                      "zh": "投掷该激活骰一次，确定点数。",
+                      "en": "Roll the activation die once to determine its value."
+                    }
+                  }
+                },
+                {
+                  "id": "transfer_to_dice_space",
+                  "name": {
+                    "zh": "放入骰子格",
+                    "en": "Place on Dice Space"
+                  },
+                  "do_after": [
+                    "roll_die"
+                  ],
+                  "<ontology::transfer>": {
+                    "source": "刚拿取的<activation_die>",
+                    "destination": "<activation_dice_area>",
+                    "<ontology::object>": "<activation_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
+                      "en": "Place the activation die on the dice space of the console matching the rolled value."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        },
+        {
+          "id": "take_from_most_holder",
+          "name": {
+            "zh": "从持有最多者处拿取",
+            "en": "Take from the Most Holder"
+          },
+          "specifies": "<ontology::trigger>",
+          "<ontology::condition>": {
+            "zh": "骰子展示区没有<activation_die>，且自己不是唯一拥有激活骰数量最多的玩家。",
+            "en": "The dice display has no <activation_die>, and you are not the only player with the most activation dice."
+          },
+          "target": "除自己之外的 1 个 <ontology::player>（拥有激活骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "options": [
+                {
+                  "id": "take_activation_die",
+                  "name": {
+                    "zh": "拿取激活骰",
+                    "en": "Take Activation Die"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "this.target.<ontology::supply>.contains.<activation_die>",
+                    "<ontology::object>": "<activation_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从拥有激活骰最多的玩家处拿取 1 枚激活骰。",
+                      "en": "Take 1 activation die from the civilization with the most."
+                    }
+                  }
+                },
+                {
+                  "id": "roll_die",
+                  "name": {
+                    "zh": "投掷骰子",
+                    "en": "Roll the Die"
+                  },
+                  "do_after": [
+                    "take_activation_die"
+                  ],
+                  "<ontology::die_roll>": {
+                    "<dice>": "<activation_die>[]",
+                    "count": 1,
+                    "description": {
+                      "zh": "投掷该激活骰一次，确定点数。",
+                      "en": "Roll the activation die once to determine its value."
+                    }
+                  }
+                },
+                {
+                  "id": "transfer_to_dice_space",
+                  "name": {
+                    "zh": "放入骰子格",
+                    "en": "Place on Dice Space"
+                  },
+                  "do_after": [
+                    "roll_die"
+                  ],
+                  "<ontology::transfer>": {
+                    "source": "刚拿取的<activation_die>",
+                    "destination": "<activation_dice_area>",
+                    "<ontology::object>": "<activation_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
+                      "en": "Place the activation die on the dice space of the console matching the rolled value."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
             }
           }
         }
-      }
+      ],
+      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
     },
     {
       "id": "gain_fate_die",
@@ -2275,26 +2428,126 @@
         "zh": "获得命运骰",
         "en": "Gain Fate Die"
       },
-      "specifies": "<ontology::action>",
+      "specifies": "<ontology::pipeline>",
       "description": {
-        "zh": "从骰子展示区拿取 1 个<fate_die>，加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。若展示区已无命运骰，改为从拥有命运骰最多的玩家处拿取（不能从自己拿）。",
-        "en": "Take 1 <fate_die> from the dice display and add it to your fate dice (rolled together for favor tests, hunts, and lucky finds). If none remain, take one from the civilization with the most (never from yourself)."
+        "zh": "获得 1 个<fate_die>：优先从骰子展示区拿取；展示区无骰子时从拥有命运骰最多的玩家处拿取。加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+        "en": "Gain 1 <fate_die>: take it from the dice display if available; otherwise take it from a civilization with the most fate dice. Add it to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
       },
-      "target": "骰子展示区的 1 个<fate_die>",
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "<ontology::transfer>": {
-            "source": "<dice_display>",
-            "destination": "玩家持有的粉骰区域",
-            "<ontology::object>": "<fate_die>",
-            "quantity": 1,
-            "description": {
-              "zh": "拿取 1 个命运骰加入自己的粉骰。",
-              "en": "Take 1 fate die and add it to your fate dice."
+      "options": [
+        {
+          "id": "take_from_display",
+          "name": {
+            "zh": "从展示区拿取",
+            "en": "Take from Display"
+          },
+          "specifies": "<ontology::trigger>",
+          "<ontology::condition>": {
+            "zh": "骰子展示区有<fate_die>。",
+            "en": "The dice display has a <fate_die>."
+          },
+          "target": "骰子展示区（<dice_display>）",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "options": [
+                {
+                  "id": "take_fate_die",
+                  "name": {
+                    "zh": "拿取命运骰",
+                    "en": "Take Fate Die"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "this.target.contains.<fate_die>",
+                    "<ontology::object>": "<fate_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从展示区拿取 1 枚命运骰。",
+                      "en": "Take 1 fate die from the display."
+                    }
+                  }
+                },
+                {
+                  "id": "transfer_to_fate_dice",
+                  "name": {
+                    "zh": "加入粉骰",
+                    "en": "Add to Fate Dice"
+                  },
+                  "do_after": [
+                    "take_fate_die"
+                  ],
+                  "<ontology::transfer>": {
+                    "source": "刚拿取的<fate_die>",
+                    "destination": "玩家持有的粉骰区域",
+                    "<ontology::object>": "<fate_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+                      "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        },
+        {
+          "id": "take_from_most_holder",
+          "name": {
+            "zh": "从持有最多者处拿取",
+            "en": "Take from the Most Holder"
+          },
+          "specifies": "<ontology::trigger>",
+          "<ontology::condition>": {
+            "zh": "骰子展示区没有<fate_die>，且自己不是唯一拥有命运骰数量最多的玩家。",
+            "en": "The dice display has no <fate_die>, and you are not the only player with the most fate dice."
+          },
+          "target": "除自己之外的 1 个 <ontology::player>（拥有命运骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "options": [
+                {
+                  "id": "take_fate_die",
+                  "name": {
+                    "zh": "拿取命运骰",
+                    "en": "Take Fate Die"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "this.target.<ontology::supply>.contains.<fate_die>",
+                    "<ontology::object>": "<fate_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从拥有命运骰最多的玩家处拿取 1 枚命运骰。",
+                      "en": "Take 1 fate die from the civilization with the most."
+                    }
+                  }
+                },
+                {
+                  "id": "transfer_to_fate_dice",
+                  "name": {
+                    "zh": "加入粉骰",
+                    "en": "Add to Fate Dice"
+                  },
+                  "do_after": [
+                    "take_fate_die"
+                  ],
+                  "<ontology::transfer>": {
+                    "source": "刚拿取的<fate_die>",
+                    "destination": "玩家持有的粉骰区域",
+                    "<ontology::object>": "<fate_die>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+                      "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
             }
           }
         }
-      }
+      ],
+      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
     },
     {
       "id": "gain_goal_chip",

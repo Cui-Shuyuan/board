@@ -556,11 +556,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 3
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
                 }
               }
             },
@@ -569,11 +571,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 5
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
                 }
               }
             }
@@ -581,24 +585,48 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 5 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 5 (both required, not either-or)."
         }
       },
       "level_effects": [
         {
           "level": 1,
           "description": {
-            "zh": "生产 2 个原材料（可在相同或不同区域）。",
-            "en": "Produce 2 raw materials (in the same or different territories)."
+            "zh": "生产 2 个原材料（可在相同或不同区域），随后过 1 次恩惠检定：通过则可运输 1 次原材料（可不做）。两步骤顺序可互换。",
+            "en": "Produce 2 raw materials (in the same or different territories), then take a favor test: if it passes, you may transport 1 raw material. The two steps may be performed in either order."
           },
           "<ontology::instant_effect>": {
             "<ontology::cost>": "this.<ontology::cost>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
-                "<produce_material>": {
-                  "quantity": 2
-                }
+                "options": [
+                  {
+                    "<produce_material>": {
+                      "quantity": 2
+                    }
+                  },
+                  "<favor_test>",
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<transport_material>": {
+                            "quantity": "<=1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
               }
             }
           }
@@ -1111,11 +1139,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 4
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
                 }
               }
             },
@@ -1124,11 +1154,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 6
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
                 }
               }
             }
@@ -1136,8 +1168,8 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 4 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 4 AND 1 showing value 6 (both required, not either-or)."
         }
       },
       "level_effects": [
@@ -1467,9 +1499,9 @@
                 "options": [
                   "<gain_research_card>",
                   {
-                    "description": {
-                      "zh": "抽 2 张<research_card>，选 1 张加入手牌，另 1 张放回牌堆底。详见<draw_pick_return_research>（N=2, K=1）。",
-                      "en": "Draw 2 <research_card>s, keep 1, return 1 to bottom. See <draw_pick_return_research> (N=2, K=1)."
+                    "<draw_pick_return_research>": {
+                      "draw_count": 2,
+                      "pick_count": 1
                     }
                   }
                 ],
@@ -1491,9 +1523,9 @@
                 "options": [
                   "<gain_research_card>",
                   {
-                    "description": {
-                      "zh": "抽 4 张<research_card>，选 1 张加入手牌，另 3 张放回牌堆底。详见<draw_pick_return_research>（N=4, K=1）。",
-                      "en": "Draw 4 <research_card>s, keep 1, return 3 to bottom. See <draw_pick_return_research> (N=4, K=1)."
+                    "<draw_pick_return_research>": {
+                      "draw_count": 4,
+                      "pick_count": 1
                     }
                   }
                 ],
@@ -1514,15 +1546,14 @@
               "<ontology::instant_content>": {
                 "options": [
                   {
-                    "description": {
-                      "zh": "执行 2 次<gain_research_card>。",
-                      "en": "Perform <gain_research_card> twice."
+                    "<gain_research_card>": {
+                      "quantity": 2
                     }
                   },
                   {
-                    "description": {
-                      "zh": "抽 4 张<research_card>，选 2 张加入手牌，另 2 张放回牌堆底。详见<draw_pick_return_research>（N=4, K=2）。",
-                      "en": "Draw 4 <research_card>s, keep 2, return 2 to bottom. See <draw_pick_return_research> (N=4, K=2)."
+                    "<draw_pick_return_research>": {
+                      "draw_count": 4,
+                      "pick_count": 2
                     }
                   }
                 ],
@@ -1551,11 +1582,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 5
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
                 }
               }
             },
@@ -1564,11 +1597,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 6
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
                 }
               }
             }
@@ -1576,8 +1611,8 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 5 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 5 AND 1 showing value 6 (both required, not either-or)."
         }
       },
       "level_effects": [
@@ -1741,11 +1776,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 3
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
                 }
               }
             },
@@ -1754,11 +1791,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 6
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
                 }
               }
             }
@@ -1766,8 +1805,8 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 6 (both required, not either-or)."
         }
       },
       "level_effects": [
@@ -1946,11 +1985,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 3
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
                 }
               }
             },
@@ -1959,11 +2000,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 6
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
                 }
               }
             }
@@ -1971,8 +2014,8 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 6 (both required, not either-or)."
         }
       },
       "level_effects": [
@@ -2126,11 +2169,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 1
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
                 }
               }
             },
@@ -2139,11 +2184,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 6
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
                 }
               }
             }
@@ -2151,8 +2198,8 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 1 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 1 AND 1 showing value 6 (both required, not either-or)."
         }
       },
       "level_effects": [
@@ -2306,11 +2353,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 4
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
                 }
               }
             },
@@ -2319,11 +2368,13 @@
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
                 "<object>": {
-                  "<activation_die>": {}
+                  "<activation_die>": {
+                    "value": 5
+                  }
                 },
                 "description": {
-                  "zh": "支付 1 个<activation_die>（骰子点数待确认）。",
-                  "en": "Pay 1 <activation_die> (dice value TBD)."
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
                 }
               }
             }
@@ -2331,8 +2382,8 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "description": {
-          "zh": "支付两颗<activation_die>（两项都要支付，不是二选一；骰子点数待确认）。",
-          "en": "Pay BOTH activation dice (both required, not either-or; dice values TBD)."
+          "zh": "同时支付 1 个点数 4 的<activation_die>和 1 个点数 5 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 4 AND 1 showing value 5 (both required, not either-or)."
         }
       },
       "level_effects": [
@@ -2378,18 +2429,26 @@
               "<ontology::instant_content>": {
                 "options": [
                   {
+                    "id": "gain_money_l3",
+                    "name": {
+                      "zh": "获得钱币",
+                      "en": "Gain Money"
+                    },
                     "<ontology::transfer>": {
                       "source": "<ontology::supply>",
                       "destination": "<money_space>",
                       "<ontology::object>": "<octagonal_pillar>",
                       "quantity": 2,
                       "description": {
-                        "zh": "（标记放入钱币格后才成为<money>）",
-                        "en": "(the marker becomes <money> once on the money space)"
+                        "zh": "从供应堆取 2 个八角柱放到钱币格（放入后才成为<money>）。",
+                        "en": "Take 2 octagonal pillars from supply onto the money space (they become <money> once there)."
                       }
                     }
                   },
                   {
+                    "do_after": [
+                      "gain_money_l3"
+                    ],
                     "<trade>": {
                       "quantity": "<=2"
                     }

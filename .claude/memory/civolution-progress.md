@@ -78,8 +78,13 @@ metadata:
 ## 最近进展
 
 - **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
-    - **15 个主模组全部完成**（instances.json）。已确认骰子点数 8 个：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5；剩余 7 个 TBD：production/building/achievement/insight/mutation/invention/trade
+    - **15 个主模组骰子点数全部确认（15/15）**：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5、production 3+5、trade 4+5、invention 1+6、mutation 3+6、insight 3+6、building 4+6、achievement 5+6
     - **procreate 拆分为 pipeline（用户 review）**：繁育 = `place_new_tribe`（action：选区域+transfer）+ 4 个平铺 trigger（驱逐原部落/虚弱/篝火营地得分/开发领地），均 do_after 放置 action；虚弱 do_after 驱逐（规则书 "before"，驱逐不发生则不虚弱）；补「未开发区域立即开发」缺口（原定义缺失）。L3 恩惠检定与繁育顺序可互换（规则书原文 "either before or after"，无 do_after）
+    - **production 模组 L1 补全**：补 favor_test + pass 分支运输（quantity <=1 = 可做可不做，规则书 "may transport"）
+    - **trade 模组**：骰子 4+5；L3 gain_money do_after（规则书 "Then"）；**顶层 CHOOSE_ANY → CHOOSE_AT_LEAST_ONE**（激活交易后必须至少卖或买一次，可只卖/只买）——sale 内部保持 CHOOSE_ANY
+    - **骰子获得 action 结构化重构（用户 review）**：`gain_activation_die` / `gain_fate_die` 从单 action + description 改为 pipeline——2 个 condition 分支（展示区有骰子 / 展示区空且自己不是唯一最多者）CHOOSE_ONE；target 分 zone（`<dice_display>`，source=`this.target.contains.<die>`）与 `<ontology::player>`（source=`this.target.<ontology::supply>.contains.<die>`）；激活骰三步（拿取无 destination → die_roll → 放入骰子格），命运骰两步（拿取 → 加入粉骰）
+    - **`<temporary_zone>` 从 DSL 全量清除**：拿取/抽牌的中间态不再暴露（LLM 可能把引擎概念教给客人）；`draw_pick_return_research` 用「刚拿取的/未选中的」自然语言指代中间态，补 constraints（draw_count/pick_count 必传），research 模组 L1/L2/L3 从 description 化重写为结构化引用
+    - **全量扫描结论**：15 个主模组 level_effects 全部结构化（favor_test 分支/quantity/install_with_bonus），无 description 化残留；唯一 desc-only 是 L3 特殊奖励的 `ignore_cost_space`（豁免类操作，无物理对象可结构化）与 `_skip` 哨兵（pipeline 模型标准写法）
     - **新增 10 个基础 action**（flow.json，41 triggers）：procreate、hunt、strengthen_tribe、produce_material、transport_material（复合）、gain_activation_die、gain_fate_die、gain_goal_chip、place_planning_markers、move_feature_marker
     - **运输拆分（用户 review 修正）**：transport_material 拆为 transport_land_material（陆地按区域类型）+ transport_boat_material（船载，constraints 定义 storage_space 入参：缺省=相邻已开发区域类型、'any'=任意格，L3 使用）+ 复合 CHOOSE_ONE。参照 migrate = move_tribe + resolve_migration_triggers 模式——需要「实例化时区分入参」的底层 action 用 constraints 定义参数
     - **hunt 修正（用户 review）**：掷骰用 `<ontology::die_roll>`（fate_die[] count all）；食物数量改查表描述（quantity 0 占位删除）
@@ -238,4 +243,4 @@ metadata:
 - [[runtime-architecture]] — 后端接口与验证方式
 
 **Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
-**How to apply:** 15 个主模组已全部实例化，其中 8 个点数已确认、7 个 TBD 待用户补充（production/building/achievement/insight/mutation/invention/trade）。逐模组 review 进行中（sustenance/planning/transport/procreation 已过）。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。
+**How to apply:** 15 个主模组已全部实例化且骰子点数 15/15 确认。action 层已定稿：procreate（pipeline）、produce_material、transport_material（拆分）、gain_activation_die/gain_fate_die（condition 分支 + target/source 链）、draw_pick_return_research（N/K 参数化）、gain_research_card、install_research_card 等。写新 action 遵循：可执行分支用 condition 区分 + target 声明 + source 引用链，中间态不暴露（无 temporary_zone），豁免/哨兵类才用 description。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。
