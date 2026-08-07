@@ -69,12 +69,6 @@ metadata:
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
 - Phase B~D 依赖对象层定稿，避免后续大量返工
 
-### 2026-07-24 新增待办
-
-- **[timing]** upgrade trigger 的 `<timing>` 暂留空——需等 Phase B 效果独立定义完成后，确定触发 upgrade 的具体 effect 再填充
-- **[effect 独立定义]** 效果（effect）需独立定义为 concept 实例，模组只引用。当前 45 个 effect 实例为容器（无 cost/content），具体内容待 Phase B 填充。一个模组有两个骰子槽位（左下/右下），可能引用不同 effect；不同模组可共享同一 effect
-- **[tile 多 effect 组合]** tile 可承载多个 effect（对应多个骰子槽位），关系为 AND（并）或 OR（或）。需考虑 composite effect 或在 tile 上表达 effect 组合关系
-
 ## 最近进展
 
 - **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
@@ -243,4 +237,4 @@ metadata:
 - [[runtime-architecture]] — 后端接口与验证方式
 
 **Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
-**How to apply:** 15 个主模组已全部实例化且骰子点数 15/15 确认。action 层已定稿：procreate（pipeline）、produce_material、transport_material（拆分）、gain_activation_die/gain_fate_die（condition 分支 + target/source 链）、draw_pick_return_research（N/K 参数化）、gain_research_card、install_research_card 等。写新 action 遵循：可执行分支用 condition 区分 + target 声明 + source 引用链，中间态不暴露（无 temporary_zone），豁免/哨兵类才用 description。待办：upgrade trigger timing、effect 独立定义、tile 多 effect AND/OR 组合。
+**How to apply:** 15 个主模组已全部实例化且骰子点数 15/15 确认。action 层已定稿：procreate（pipeline）、produce_material、transport_material（拆分）、gain_activation_die/gain_fate_die（condition 分支 + target/source 链）、draw_pick_return_research（N/K 参数化）、gain_research_card、install_research_card 等。写新 action 遵循：可执行分支用 condition 区分 + target 声明 + source 引用链，中间态不暴露（无 temporary_zone），豁免/哨兵类才用 description。

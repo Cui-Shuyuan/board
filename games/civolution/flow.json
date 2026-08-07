@@ -3025,6 +3025,24 @@
       }
     },
     {
+      "id": "activate_module",
+      "name": {
+        "zh": "激活模组",
+        "en": "Activate Module"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个自己的模组（<upgradable_module> 主模组或 <feature_module> 特征模组），触发其 effect：支付该模组声明的费用（恰好 2 个对应点数的<activation_die>，可用<planning_marker>或<focus_marker>替代），执行其当前等级的效果。",
+        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module) and trigger its effect: pay the module's declared cost (exactly 2 <activation_die>s of matching values, or <planning_marker>s / <focus_marker>s instead), then execute its current-level effect."
+      },
+      "target": "1 个自己的模组（<upgradable_module> 或 <feature_module>）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::effect>": "this.target 的 effect（其声明的 cost + 当前等级效果）"
+        }
+      }
+    },
+    {
       "id": "reset",
       "name": {
         "zh": "重置",
