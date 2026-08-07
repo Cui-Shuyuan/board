@@ -14,15 +14,15 @@
   "procedures": [
     {
       "id": "game",
-      "type": "<ontology::round>",
+      "specifies": "<ontology::round>",
       "children": [
         {
           "id": "setup",
-          "type": "<ontology::phase>",
+          "specifies": "<ontology::phase>",
           "events": [
             {
               "id": "prepare_level_1_deck",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将游戏盒中所有一级发展卡移至一级发展卡牌堆，使其成为一个<ontology::deck>。",
                 "en": "Move all level I development cards from the game box into the level I development deck, forming it into a <ontology::deck>."
@@ -34,7 +34,7 @@
             },
             {
               "id": "prepare_level_2_deck",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将游戏盒中所有二级发展卡移至二级发展卡牌堆，使其成为一个<ontology::deck>。",
                 "en": "Move all level II development cards from the game box into the level II development deck, forming it into a <ontology::deck>."
@@ -46,7 +46,7 @@
             },
             {
               "id": "prepare_level_3_deck",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "将游戏盒中所有三级发展卡移至三级发展卡牌堆，使其成为一个<ontology::deck>。",
                 "en": "Move all level III development cards from the game box into the level III development deck, forming it into a <ontology::deck>."
@@ -58,7 +58,7 @@
             },
             {
               "id": "shuffle_level_1_deck",
-              "type": "<ontology::shuffle>",
+              "specifies": "<ontology::shuffle>",
               "target": "<development_deck_level_1>",
               "do_after": [
                 "prepare_level_1_deck"
@@ -66,7 +66,7 @@
             },
             {
               "id": "shuffle_level_2_deck",
-              "type": "<ontology::shuffle>",
+              "specifies": "<ontology::shuffle>",
               "target": "<development_deck_level_2>",
               "do_after": [
                 "prepare_level_2_deck"
@@ -74,7 +74,7 @@
             },
             {
               "id": "shuffle_level_3_deck",
-              "type": "<ontology::shuffle>",
+              "specifies": "<ontology::shuffle>",
               "target": "<development_deck_level_3>",
               "do_after": [
                 "prepare_level_3_deck"
@@ -82,7 +82,7 @@
             },
             {
               "id": "deal_card_market_level_1",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "source": "<development_deck_level_1>",
               "destination": "<card_market>",
               "<object>": "<development_card_level_1>",
@@ -94,7 +94,7 @@
             },
             {
               "id": "deal_card_market_level_2",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "source": "<development_deck_level_2>",
               "destination": "<card_market>",
               "<object>": "<development_card_level_2>",
@@ -106,7 +106,7 @@
             },
             {
               "id": "deal_card_market_level_3",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "source": "<development_deck_level_3>",
               "destination": "<card_market>",
               "<object>": "<development_card_level_3>",
@@ -118,7 +118,7 @@
             },
             {
               "id": "deal_nobles",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "description": {
                 "zh": "从游戏盒中随机取出 player_count + 1 枚贵族板块，放入贵族市场。",
                 "en": "Randomly take player_count + 1 noble tiles from the game box and place them into the noble market."
@@ -133,7 +133,7 @@
             },
             {
               "id": "distribute_gems",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "source": "<ontology::game_box>",
               "destination": "<gem_supply>",
               "<object>": "<gem>",
@@ -163,7 +163,7 @@
             },
             {
               "id": "distribute_gold",
-              "type": "<ontology::transfer>",
+              "specifies": "<ontology::transfer>",
               "source": "<ontology::game_box>",
               "destination": "<gold_supply>",
               "<object>": "<gold>",
@@ -171,7 +171,7 @@
             },
             {
               "id": "choose_starting_player",
-              "type": "<ontology::event>",
+              "specifies": "<ontology::event>",
               "rules": {
                 "zh": "随机选择一名玩家持有<ontology::starting_player_marker>，并将<ontology::starting_player>状态设为该玩家。",
                 "en": "Randomly choose one player to hold the <ontology::starting_player_marker> and set <ontology::starting_player> to that player."
@@ -181,7 +181,7 @@
         },
         {
           "id": "main_gameplay",
-          "type": "<ontology::phase>",
+          "specifies": "<ontology::phase>",
           "do_after": [
             "setup"
           ],
@@ -191,23 +191,23 @@
           "children": [
             {
               "id": "turn_cycle",
-              "type": "<ontology::round>",
+              "specifies": "<ontology::round>",
               "children": [
                 {
                   "id": "player_turns",
-                  "type": "<ontology::phase>",
+                  "specifies": "<ontology::phase>",
                   "loop": {
                     "until": "<all_players_acted_this_round>"
                   },
                   "children": [
                     {
                       "id": "player_turn",
-                      "type": "<ontology::turn>",
+                      "specifies": "<ontology::turn>",
                       "actor": "next_player_in_turn_order",
                       "children": [
                         {
                           "id": "action_phase",
-                          "type": "<ontology::phase>",
+                          "specifies": "<ontology::phase>",
                           "actions": [
                             "<take_gems_different>",
                             "<take_gems_same>",
@@ -225,30 +225,30 @@
         },
         {
           "id": "endgame",
-          "type": "<ontology::phase>",
+          "specifies": "<ontology::phase>",
           "do_after": [
             "main_gameplay"
           ],
           "children": [
             {
               "id": "final_turn_cycle",
-              "type": "<ontology::round>",
+              "specifies": "<ontology::round>",
               "children": [
                 {
                   "id": "final_turns",
-                  "type": "<ontology::phase>",
+                  "specifies": "<ontology::phase>",
                   "loop": {
                     "until": "<no_remaining_players>"
                   },
                   "children": [
                     {
                       "id": "final_player_turn",
-                      "type": "<ontology::turn>",
+                      "specifies": "<ontology::turn>",
                       "actor": "next_remaining_player",
                       "children": [
                         {
                           "id": "endgame_action_phase",
-                          "type": "<ontology::phase>",
+                          "specifies": "<ontology::phase>",
                           "actions": [
                             "<take_gems_different>",
                             "<take_gems_same>",
@@ -264,14 +264,14 @@
             },
             {
               "id": "scoring",
-              "type": "<ontology::phase>",
+              "specifies": "<ontology::phase>",
               "do_after": [
                 "final_turn_cycle"
               ],
               "events": [
                 {
                   "id": "adjudicate_victory",
-                  "type": "<ontology::event>",
+                  "specifies": "<ontology::event>",
                   "rules": {
                     "zh": "按<highest_prestige_wins>判定胜者：先比较<prestige_point>总数，并列者再比较<ontology::development_area>中<development_card>数量。",
                     "en": "Adjudicate by <highest_prestige_wins>: highest total <prestige_point>s, then fewest <development_card>s in <ontology::development_area>."
@@ -285,87 +285,202 @@
     },
     {
       "id": "purchase_development_card",
-      "type": "<ontology::action>",
+      "name": {
+        "zh": "购买发展卡",
+        "en": "Purchase Development Card"
+      },
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "购买 1 张发展卡。玩家选择 1 张 <development_card>，支付费用，打出至 <development_area>，若从 <card_market> 购买则补牌。",
         "en": "Purchase 1 development card. Player selects 1 <development_card>, pays its cost, plays it into <development_area>, and refills from deck if bought from <card_market>."
       },
-      "events": [
-        {
-          "id": "pay_cost",
-          "type": "<ontology::transfer>",
-          "description": {
-            "zh": "支付费用：将各色 <gem> 从 <player_holding> 返回供应堆，数量 = card <cost> 减 <discount>，<gold> 百搭。",
-            "en": "Pay cost: return <gem>s from <player_holding> to supply. Quantity = card <cost> minus <discount>s, <gold> substitutes any color."
-          },
-          "source": "<ontology::player_holding>",
-          "destination": "<gem_supply>",
-          "<object>": "<gem>"
-        },
-        {
-          "id": "play_card",
-          "type": "<ontology::play>",
-          "description": {
-            "zh": "打出卡牌：将目标 <development_card> 从 <card_market> 或 <hand> 移至 <development_area>。",
-            "en": "Play card: move the target <development_card> from <card_market> or <hand> to <development_area>."
-          },
-          "source": "<card_market>",
-          "destination": "<ontology::development_area>",
-          "<object>": "<development_card>",
-          "do_after": [
-            "pay_cost"
-          ]
-        },
-        {
-          "id": "refill_market",
-          "type": "<ontology::transfer>",
-          "description": {
-            "zh": "补牌：若目标卡来自 <card_market>，从对应 <development_deck> 顶部翻 1 张补入。来自 <hand> 则跳过。",
-            "en": "Refill: if target was from <card_market>, draw 1 from the corresponding <development_deck> top. Skip if from <hand>."
-          },
-          "source": "<development_deck>",
-          "destination": "<card_market>",
-          "<object>": "<development_card>",
-          "quantity": 1,
-          "do_after": [
-            "play_card"
-          ]
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "pay_cost",
+              "name": {
+                "zh": "支付费用",
+                "en": "Pay Cost"
+              },
+              "<ontology::transfer>": {
+                "description": {
+                  "zh": "支付费用：将各色 <gem> 从 <player_holding> 返回供应堆，数量 = card <cost> 减 <discount>，<gold> 百搭。",
+                  "en": "Pay cost: return <gem>s from <player_holding> to supply. Quantity = card <cost> minus <discount>s, <gold> substitutes any color."
+                },
+                "source": "<ontology::player_holding>",
+                "destination": "<gem_supply>",
+                "<ontology::object>": "<gem>"
+              }
+            },
+            {
+              "id": "play_card",
+              "name": {
+                "zh": "打出卡牌",
+                "en": "Play Card"
+              },
+              "do_after": [
+                "pay_cost"
+              ],
+              "<ontology::play>": {
+                "description": {
+                  "zh": "打出卡牌：将目标 <development_card> 从 <card_market> 或 <hand> 移至 <development_area>。",
+                  "en": "Play card: move the target <development_card> from <card_market> or <hand> to <development_area>."
+                },
+                "source": "<card_market>",
+                "destination": "<ontology::development_area>",
+                "<ontology::object>": "<development_card>"
+              }
+            },
+            {
+              "do_after": [
+                "play_card"
+              ],
+              "<refill_market>": {
+                "description": {
+                  "zh": "若购买自 <card_market>，从对应 <development_deck> 顶部翻 1 张补入空位。来自 <hand> 则跳过。",
+                  "en": "If purchased from <card_market>, reveal 1 card from the corresponding <development_deck> top into the empty slot. Skip if from <hand>."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      ]
+      }
     },
     {
       "id": "reserve_development_card",
-      "type": "<ontology::action>",
+      "name": {
+        "zh": "保留发展卡",
+        "en": "Reserve Development Card"
+      },
+      "specifies": "<ontology::action>",
       "description": {
         "zh": "保留 1 张发展卡。玩家将 1 张 <development_card> 移入 <hand>，同时从 <gold_supply> 拿取 1 个 <gold>（若有库存）。",
         "en": "Reserve 1 development card. Player moves 1 <development_card> into <hand> and takes 1 <gold> from <gold_supply> (if available)."
       },
-      "events": [
-        {
-          "id": "reserve_card",
-          "type": "<ontology::transfer>",
-          "description": {
-            "zh": "保留卡牌：将 1 张 <development_card> 从 <card_market>（明面）或 <development_deck>（暗面）移入 <hand>。",
-            "en": "Reserve card: move 1 <development_card> from <card_market> (open) or <development_deck> (blind) into <hand>."
-          },
-          "source": "<card_market>",
-          "destination": "<ontology::hand>",
-          "<object>": "<development_card>",
-          "quantity": 1
-        },
-        {
-          "id": "take_gold",
-          "type": "<ontology::transfer>",
-          "description": {
-            "zh": "拿取金币：从 <gold_supply> 拿 1 个 <gold> 至 <player_holding>。若 <gold_supply> 为空则跳过。",
-            "en": "Take gold: take 1 <gold> from <gold_supply> to <player_holding>. Skip if <gold_supply> is empty."
-          },
-          "source": "<gold_supply>",
-          "destination": "<ontology::player_holding>",
-          "<object>": "<gold>",
-          "quantity": 1
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "reserve_card",
+              "name": {
+                "zh": "保留卡牌",
+                "en": "Reserve Card"
+              },
+              "options": [
+                {
+                  "id": "reserve_from_market",
+                  "name": {
+                    "zh": "明面保留",
+                    "en": "Reserve Openly"
+                  },
+                  "<ontology::transfer>": {
+                    "description": {
+                      "zh": "明面保留：从 <card_market> 任选 1 张 <development_card> 移入 <hand>。",
+                      "en": "Reserve openly: choose any 1 <development_card> from <card_market> and move it into <hand>."
+                    },
+                    "source": "<card_market>",
+                    "destination": "<ontology::hand>",
+                    "<ontology::object>": "<development_card>",
+                    "quantity": 1
+                  }
+                },
+                {
+                  "id": "reserve_from_deck",
+                  "name": {
+                    "zh": "暗面保留",
+                    "en": "Reserve Blindly"
+                  },
+                  "<ontology::transfer>": {
+                    "description": {
+                      "zh": "暗面保留：从某一等级 <development_deck> 的顶部拿取最上面 1 张 <development_card>（事先不知道是哪张）移入 <hand>。",
+                      "en": "Reserve blindly: take the top 1 <development_card> of a level's <development_deck> (sight unseen) and move it into <hand>."
+                    },
+                    "source": "<development_deck>",
+                    "destination": "<ontology::hand>",
+                    "<ontology::object>": "<development_card>",
+                    "quantity": 1
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "take_gold",
+              "name": {
+                "zh": "拿取金币",
+                "en": "Take Gold"
+              },
+              "do_after": [
+                "reserve_card"
+              ],
+              "<ontology::trigger>": {
+                "<ontology::condition>": {
+                  "zh": "<gold_supply> 中还有 <gold>（非空）。",
+                  "en": "<gold_supply> still has <gold> (not empty)."
+                },
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "<ontology::transfer>": {
+                      "description": {
+                        "zh": "拿取金币：从 <gold_supply> 拿 1 个 <gold> 至 <player_holding>。",
+                        "en": "Take gold: take 1 <gold> from <gold_supply> to <player_holding>."
+                      },
+                      "source": "<gold_supply>",
+                      "destination": "<ontology::player_holding>",
+                      "<ontology::object>": "<gold>",
+                      "quantity": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "do_after": [
+                "reserve_card"
+              ],
+              "<refill_market>": {
+                "description": {
+                  "zh": "若为明面保留（来源 <card_market>），从对应 <development_deck> 顶部翻 1 张补入空位。",
+                  "en": "If reserved openly (from <card_market>), reveal 1 card from the corresponding <development_deck> top into the empty slot."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
-      ]
+      }
+    },
+    {
+      "id": "refill_market",
+      "name": {
+        "zh": "补牌",
+        "en": "Refill Market"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "补牌 trigger：当一张 <development_card> 从 <card_market> 被移走（购买或明面保留）后，从对应等级的 <development_deck> 顶部翻 1 张补入 <card_market> 空位。",
+        "en": "Refill trigger: after a <development_card> is removed from <card_market> (purchased or reserved openly), reveal 1 card from the top of the corresponding level's <development_deck> into the empty <card_market> slot."
+      },
+      "<ontology::condition>": {
+        "zh": "被购买或保留的 <development_card> 来自 <card_market>（明面获得）。",
+        "en": "The purchased or reserved <development_card> came from <card_market> (obtained openly)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "从对应等级 <development_deck> 顶部翻 1 张补入 <card_market> 空位。",
+              "en": "Reveal 1 card from the top of the corresponding level's <development_deck> into the empty <card_market> slot."
+            },
+            "source": "<development_deck>",
+            "destination": "<card_market>",
+            "<ontology::object>": "<development_card>",
+            "quantity": 1
+          }
+        }
+      }
     }
   ]
 }
