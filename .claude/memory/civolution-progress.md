@@ -77,6 +77,7 @@ metadata:
     - **占位 action 补全确认**：`<activate_module>`（flow.json:3028，选择模组触发 `this.target 的 effect`）、`<reset>`（flow.json:3046，condition=激活骰 ≤3 + A/B/C 三步 pipeline，含全空列边界分支）、`<complete_building_project>`（建造四选一 pipeline）均已完整定义并被 action_phase 引用（flow.json:678-679）
     - **发现唯一剩余悬空引用**：`<action_phase_end>`（flow.json:666 `until`）在 conditions 组未定义，待补
     - **升级重构为 state_change（用户提出）**：ontology `<upgrade>` 从 extends `<trigger>` 改为 specifies `<state_change>`（attribute 固定 level，subject=模组，to=目标等级——与 `<flip>` 同类：翻转是 face 变更、升级是 level 变更）。游戏层 `upgrade_main_module` 同步从 specifies `<ontology::pipeline>` 改为 specifies `<ontology::upgrade>`，物理后果（L1→L2 翻面 / L2→L3 放回游戏盒）保留在 options 中作为升级的物理后果步骤。module/upgradable_module 定义中「trigger 驱动」措辞同步修正
+    - **`<upgradable_module>` 新增 `level` state 字段（用户指出缺口）**：升级是 state_change 后，subject 必须要有可变的 level 属性——此前 `module.level` 已删除（2026-07-24 改由 effect 实例 id 前缀表达），模组自身无 level 状态。补上：`"level": { "type": "enum", "enum": [1,2,3], "default": 1 }`（field-level 状态，参照 card.face 模式），15 个主模组实例各加 `"level": 1` 初始值（特征/睡眠模组无 level——仅可升级模组有此状态）。`upgrade_main_module` 的两个升级路径（upgrade_l1_to_l2 / upgrade_l2_to_l3）改为显式 `<ontology::state_change>`（subject=this.target，attribute=level，from=1/2，to=2/3），物理后果保留在 description
 
 - **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
     - **15 个主模组骰子点数全部确认（15/15）**：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5、production 3+5、trade 4+5、invention 1+6、mutation 3+6、insight 3+6、building 4+6、achievement 5+6

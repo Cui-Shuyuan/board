@@ -218,6 +218,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_migration>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -389,6 +390,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_procreation>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -547,6 +549,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_production>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -696,6 +699,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_transport>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -812,6 +816,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_sustenance>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -935,6 +940,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_exploration>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1130,6 +1136,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_building>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1314,6 +1321,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_planning>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1443,6 +1451,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_research>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1573,6 +1582,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_achievement>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1767,6 +1777,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_insight>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -1976,6 +1987,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_mutation>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -2160,6 +2172,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_invention>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -2344,6 +2357,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_trade>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -2470,6 +2484,7 @@
       },
       "abstract": false,
       "module_type": "main",
+      "level": 1,
       "tile": "<tile_activity>",
       "<ontology::cost>": {
         "<ontology::instant_cost>": {

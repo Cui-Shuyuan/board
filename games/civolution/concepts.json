@@ -776,6 +776,19 @@
         "zh": "可升级的模组效果。激活费用（<ontology::cost>）定义在模组实例顶层，与 <level_effects> 同级；<level_effects> 中每项是一个完整的 <ontology::instant_effect>——各等级费用相同时，其 cost 写 `\"this.<ontology::cost>\"` 引用顶层定义；若某等级费用不同，直接在该等级的 effect 中写具体 cost。L1 由 tile 正面承载，L2 由 tile 反面承载，L3 印于 <console> 模组槽底部。升级由 <upgrade_main_module>（specifies <ontology::upgrade>，level 状态变更）驱动：L1→L2 翻面，L2→L3 tile 放回游戏盒、L3 effect 激活。",
         "en": "An upgradable module effect. Activation cost (<ontology::cost>) is defined at the module instance top level, alongside <level_effects>; each entry in <level_effects> is a complete <ontology::instant_effect> — when all levels share the same cost, its cost is written as `\"this.<ontology::cost>\"` to reference the top-level definition; if a level differs, write the concrete cost in that level's effect. L1 is carried by the tile front, L2 by the tile back, and L3 is printed at the bottom of the <console> module slot. Upgrading is driven by <upgrade_main_module> (specifies <ontology::upgrade>, a level state change): L1→L2 flips the tile, L2→L3 returns the tile to the game box and activates the L3 effect."
       },
+      "level": {
+        "type": "enum",
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "default": 1,
+        "description": {
+          "zh": "模组当前等级，初始为 1。升级 = 此属性从 A 变为 B 的 <ontology::state_change>（specifies <ontology::upgrade>）：subject=本模组，attribute=level，from=当前等级，to=下一等级。物理后果（tile 翻面 / 放回游戏盒）由 <upgrade_main_module> 表达。",
+          "en": "The module's current level, starting at 1. Upgrading is a <ontology::state_change> of this attribute from A to B (specifies <ontology::upgrade>): subject=this module, attribute=level, from=current level, to=next level. Physical consequences (tile flip / return to game box) are expressed by <upgrade_main_module>."
+        }
+      },
       "level_effects": {
         "description": {
           "zh": "各等级效果列表，按等级升序排列。每项必须包含 `level`（整数）和 `<ontology::instant_effect>`——即该等级完整的激活 effect（cost + content）。费用与顶层相同时写 `\"<ontology::cost>\": \"this.<ontology::cost>\"`；不同则直接写具体 cost。",

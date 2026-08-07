@@ -1120,8 +1120,14 @@
             "en": "Upgrade L1 to L2"
           },
           "description": {
-            "zh": "若为等级一，将模组板块翻至等级二面。",
-            "en": "If level 1, flip module tile to level 2 side."
+            "zh": "模组 level 属性从 1 变为 2。物理后果：将模组板块翻至等级二面（该等级 effect 由 tile 反面承载）。",
+            "en": "Module level attribute changes from 1 to 2. Physical consequence: flip the module tile to its level-2 side (that level's effect is carried by the tile back)."
+          },
+          "<ontology::state_change>": {
+            "subject": "this.target 选中的模组",
+            "attribute": "level",
+            "from": 1,
+            "to": 2
           },
           "do_after": [
             "choose_module"
@@ -1134,8 +1140,14 @@
             "en": "Upgrade L2 to L3"
           },
           "description": {
-            "zh": "若为等级二，将模组板块放回 <ontology::game_box>。",
-            "en": "If level 2, return module tile to <ontology::game_box>."
+            "zh": "模组 level 属性从 2 变为 3。物理后果：将模组板块放回 <ontology::game_box>，console 模组槽底部的 L3 effect 激活。",
+            "en": "Module level attribute changes from 2 to 3. Physical consequence: return the module tile to <ontology::game_box>; the L3 effect printed at the console module slot becomes active."
+          },
+          "<ontology::state_change>": {
+            "subject": "this.target 选中的模组",
+            "attribute": "level",
+            "from": 2,
+            "to": 3
           },
           "do_after": [
             "choose_module"
