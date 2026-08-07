@@ -19,165 +19,222 @@
         {
           "id": "setup",
           "specifies": "<ontology::phase>",
-          "events": [
-            {
-              "id": "prepare_level_1_deck",
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将游戏盒中所有一级发展卡移至一级发展卡牌堆，使其成为一个<ontology::deck>。",
-                "en": "Move all level I development cards from the game box into the level I development deck, forming it into a <ontology::deck>."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<development_deck_level_1>",
-              "<object>": "<development_card_level_1>",
-              "quantity": "all"
-            },
-            {
-              "id": "prepare_level_2_deck",
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将游戏盒中所有二级发展卡移至二级发展卡牌堆，使其成为一个<ontology::deck>。",
-                "en": "Move all level II development cards from the game box into the level II development deck, forming it into a <ontology::deck>."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<development_deck_level_2>",
-              "<object>": "<development_card_level_2>",
-              "quantity": "all"
-            },
-            {
-              "id": "prepare_level_3_deck",
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "将游戏盒中所有三级发展卡移至三级发展卡牌堆，使其成为一个<ontology::deck>。",
-                "en": "Move all level III development cards from the game box into the level III development deck, forming it into a <ontology::deck>."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<development_deck_level_3>",
-              "<object>": "<development_card_level_3>",
-              "quantity": "all"
-            },
-            {
-              "id": "shuffle_level_1_deck",
-              "specifies": "<ontology::shuffle>",
-              "target": "<development_deck_level_1>",
-              "do_after": [
-                "prepare_level_1_deck"
-              ]
-            },
-            {
-              "id": "shuffle_level_2_deck",
-              "specifies": "<ontology::shuffle>",
-              "target": "<development_deck_level_2>",
-              "do_after": [
-                "prepare_level_2_deck"
-              ]
-            },
-            {
-              "id": "shuffle_level_3_deck",
-              "specifies": "<ontology::shuffle>",
-              "target": "<development_deck_level_3>",
-              "do_after": [
-                "prepare_level_3_deck"
-              ]
-            },
-            {
-              "id": "deal_card_market_level_1",
-              "specifies": "<ontology::transfer>",
-              "source": "<development_deck_level_1>",
-              "destination": "<card_market>",
-              "<object>": "<development_card_level_1>",
-              "quantity": 4,
-              "slot": "level_1",
-              "do_after": [
-                "shuffle_level_1_deck"
-              ]
-            },
-            {
-              "id": "deal_card_market_level_2",
-              "specifies": "<ontology::transfer>",
-              "source": "<development_deck_level_2>",
-              "destination": "<card_market>",
-              "<object>": "<development_card_level_2>",
-              "quantity": 4,
-              "slot": "level_2",
-              "do_after": [
-                "shuffle_level_2_deck"
-              ]
-            },
-            {
-              "id": "deal_card_market_level_3",
-              "specifies": "<ontology::transfer>",
-              "source": "<development_deck_level_3>",
-              "destination": "<card_market>",
-              "<object>": "<development_card_level_3>",
-              "quantity": 4,
-              "slot": "level_3",
-              "do_after": [
-                "shuffle_level_3_deck"
-              ]
-            },
-            {
-              "id": "deal_nobles",
-              "specifies": "<ontology::transfer>",
-              "description": {
-                "zh": "从游戏盒中随机取出 player_count + 1 枚贵族板块，放入贵族市场。",
-                "en": "Randomly take player_count + 1 noble tiles from the game box and place them into the noble market."
-              },
-              "source": "<ontology::game_box>",
-              "destination": "<noble_market>",
-              "<object>": "<noble>",
-              "quantity": {
-                "expr": "player_count + 1"
-              },
-              "random": true
-            },
-            {
-              "id": "distribute_gems",
-              "specifies": "<ontology::transfer>",
-              "source": "<ontology::game_box>",
-              "destination": "<gem_supply>",
-              "<object>": "<gem>",
-              "quantity_per_color": {
-                "2": {
-                  "diamond": 4,
-                  "sapphire": 4,
-                  "emerald": 4,
-                  "ruby": 4,
-                  "onyx": 4
+          "<pipeline>": {
+            "options": [
+
+              {
+                "id": "prepare_level_1_deck",
+                "name": {
+                  "zh": "准备一级发展卡牌堆",
+                  "en": "Prepare Level 1 Deck"
                 },
-                "3": {
-                  "diamond": 5,
-                  "sapphire": 5,
-                  "emerald": 5,
-                  "ruby": 5,
-                  "onyx": 5
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将游戏盒中所有一级发展卡移至一级发展卡牌堆，使其成为一个<ontology::deck>。",
+                  "en": "Move all level I development cards from the game box into the level I development deck, forming it into a <ontology::deck>."
                 },
-                "4": {
-                  "diamond": 7,
-                  "sapphire": 7,
-                  "emerald": 7,
-                  "ruby": 7,
-                  "onyx": 7
+                "source": "<ontology::game_box>",
+                "destination": "<development_deck_level_1>",
+                "<object>": "<development_card_level_1>",
+                "quantity": "all"
+              },
+              {
+                "id": "prepare_level_2_deck",
+                "name": {
+                  "zh": "准备二级发展卡牌堆",
+                  "en": "Prepare Level 2 Deck"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将游戏盒中所有二级发展卡移至二级发展卡牌堆，使其成为一个<ontology::deck>。",
+                  "en": "Move all level II development cards from the game box into the level II development deck, forming it into a <ontology::deck>."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<development_deck_level_2>",
+                "<object>": "<development_card_level_2>",
+                "quantity": "all"
+              },
+              {
+                "id": "prepare_level_3_deck",
+                "name": {
+                  "zh": "准备三级发展卡牌堆",
+                  "en": "Prepare Level 3 Deck"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "将游戏盒中所有三级发展卡移至三级发展卡牌堆，使其成为一个<ontology::deck>。",
+                  "en": "Move all level III development cards from the game box into the level III development deck, forming it into a <ontology::deck>."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<development_deck_level_3>",
+                "<object>": "<development_card_level_3>",
+                "quantity": "all"
+              },
+              {
+                "id": "shuffle_level_1_deck",
+                "name": {
+                  "zh": "洗一级发展卡牌堆",
+                  "en": "Shuffle Level 1 Deck"
+                },
+                "specifies": "<ontology::shuffle>",
+                "target": "<development_deck_level_1>",
+                "do_after": [
+                  "prepare_level_1_deck"
+                ]
+              },
+              {
+                "id": "shuffle_level_2_deck",
+                "name": {
+                  "zh": "洗二级发展卡牌堆",
+                  "en": "Shuffle Level 2 Deck"
+                },
+                "specifies": "<ontology::shuffle>",
+                "target": "<development_deck_level_2>",
+                "do_after": [
+                  "prepare_level_2_deck"
+                ]
+              },
+              {
+                "id": "shuffle_level_3_deck",
+                "name": {
+                  "zh": "洗三级发展卡牌堆",
+                  "en": "Shuffle Level 3 Deck"
+                },
+                "specifies": "<ontology::shuffle>",
+                "target": "<development_deck_level_3>",
+                "do_after": [
+                  "prepare_level_3_deck"
+                ]
+              },
+              {
+                "id": "deal_card_market_level_1",
+                "name": {
+                  "zh": "发一级发展卡市场",
+                  "en": "Deal Level 1 Market"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<development_deck_level_1>",
+                "destination": "<card_market>",
+                "<object>": "<development_card_level_1>",
+                "quantity": 4,
+                "slot": "level_1",
+                "do_after": [
+                  "shuffle_level_1_deck"
+                ]
+              },
+              {
+                "id": "deal_card_market_level_2",
+                "name": {
+                  "zh": "发二级发展卡市场",
+                  "en": "Deal Level 2 Market"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<development_deck_level_2>",
+                "destination": "<card_market>",
+                "<object>": "<development_card_level_2>",
+                "quantity": 4,
+                "slot": "level_2",
+                "do_after": [
+                  "shuffle_level_2_deck"
+                ]
+              },
+              {
+                "id": "deal_card_market_level_3",
+                "name": {
+                  "zh": "发三级发展卡市场",
+                  "en": "Deal Level 3 Market"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<development_deck_level_3>",
+                "destination": "<card_market>",
+                "<object>": "<development_card_level_3>",
+                "quantity": 4,
+                "slot": "level_3",
+                "do_after": [
+                  "shuffle_level_3_deck"
+                ]
+              },
+              {
+                "id": "deal_nobles",
+                "name": {
+                  "zh": "发放贵族板块",
+                  "en": "Deal Nobles"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "从游戏盒中随机取出 player_count + 1 枚贵族板块，放入贵族市场。",
+                  "en": "Randomly take player_count + 1 noble tiles from the game box and place them into the noble market."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<noble_market>",
+                "<object>": "<noble>",
+                "quantity": {
+                  "expr": "player_count + 1"
+                },
+                "random": true
+              },
+              {
+                "id": "distribute_gems",
+                "name": {
+                  "zh": "分发宝石",
+                  "en": "Distribute Gems"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<ontology::game_box>",
+                "destination": "<gem_supply>",
+                "<object>": "<gem>",
+                "quantity_per_color": {
+                  "2": {
+                    "diamond": 4,
+                    "sapphire": 4,
+                    "emerald": 4,
+                    "ruby": 4,
+                    "onyx": 4
+                  },
+                  "3": {
+                    "diamond": 5,
+                    "sapphire": 5,
+                    "emerald": 5,
+                    "ruby": 5,
+                    "onyx": 5
+                  },
+                  "4": {
+                    "diamond": 7,
+                    "sapphire": 7,
+                    "emerald": 7,
+                    "ruby": 7,
+                    "onyx": 7
+                  }
+                }
+              },
+              {
+                "id": "distribute_gold",
+                "name": {
+                  "zh": "分发黄金",
+                  "en": "Distribute Gold"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<ontology::game_box>",
+                "destination": "<gold_supply>",
+                "<object>": "<gold>",
+                "quantity": 5
+              },
+              {
+                "id": "choose_starting_player",
+                "name": {
+                  "zh": "选择起始玩家",
+                  "en": "Choose Starting Player"
+                },
+                "specifies": "<ontology::event>",
+                "rules": {
+                  "zh": "随机选择一名玩家持有<ontology::starting_player_marker>，并将<ontology::starting_player>状态设为该玩家。",
+                  "en": "Randomly choose one player to hold the <ontology::starting_player_marker> and set <ontology::starting_player> to that player."
                 }
               }
-            },
-            {
-              "id": "distribute_gold",
-              "specifies": "<ontology::transfer>",
-              "source": "<ontology::game_box>",
-              "destination": "<gold_supply>",
-              "<object>": "<gold>",
-              "quantity": 5
-            },
-            {
-              "id": "choose_starting_player",
-              "specifies": "<ontology::event>",
-              "rules": {
-                "zh": "随机选择一名玩家持有<ontology::starting_player_marker>，并将<ontology::starting_player>状态设为该玩家。",
-                "en": "Randomly choose one player to hold the <ontology::starting_player_marker> and set <ontology::starting_player> to that player."
-              }
-            }
-          ]
+          
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
         },
         {
           "id": "main_gameplay",
