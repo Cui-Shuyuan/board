@@ -64,7 +64,7 @@ metadata:
 ## 阻塞项
 
 - 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
-- **flow.json 仅剩 1 个悬空引用**：`<action_phase_end>`（flow.json:666 的 `until`）在 conditions 组中未定义，需补一个对应 condition（行动阶段结束条件，由 reset 的红色 reset-end space 触发）。其余占位引用（`<activate_module>`、`<reset>`、`<action_phase_end>` 以外的）已全部补全
+- **flow.json 仅剩 1 个悬空引用**：`<action_phase_end>`（flow.json:666 的 `until`）在 conditions 组中未定义，需补一个对应 condition（行动阶段结束条件，由 reset 的红色 reset-end space 触发）。其余占位引用（`<activate_module>`、`<reset>`、`<action_phase_end>` 以外的）已全部补全。**待办：新会话开始时把 civolution 游戏整体流程（flow.json 全流程树）完整过一遍，顺带补上此 condition**
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
 - Phase B~D 依赖对象层定稿，避免后续大量返工
