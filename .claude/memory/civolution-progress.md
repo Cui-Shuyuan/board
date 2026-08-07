@@ -55,7 +55,7 @@ metadata:
   - 已扩展 ontology：新增 `dice`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`upgrade`、`setting` 共 7 个概念。注：`terrain`、`region` 最初加入但于 2026-07-25 移回游戏层——地形类型本质是 zone 子类（`forest extends zone`），无需 ontology 概念；`encampment`、`site`、`favor_test` 也已移回游戏层
   - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（169 个对象，含 45 个 effect 实例 + 15 个 module tile）
   - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
-  - 剩余：对象层 review、修正 extends/specifies/引用、补全 flow 中的占位 action（如 `<activate_module>`、`<reset>`）
+  - 剩余：对象层 review、修正 extends/specifies/引用。占位 action 已补全（`<activate_module>`、`<reset>`、`<complete_building_project>` 均已完整定义）
 - **Phase B**: 核心机制（区域/相邻/迁徙/生产/运输/建造/安装研究牌/收入芯片）
 - **Phase C**: 22 个模组（1~3 等级拆分为 actions）
 - **Phase D**: 流程层（4 时代 × 8 阶段 + 终局计分）
@@ -64,12 +64,18 @@ metadata:
 ## 阻塞项
 
 - 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
-- flow.json 中存在占位引用（如 `<activate_module>`、`<reset>`、`<action_phase_end>`），需要在 concepts.json 的 actions/conditions 层补全
+- **flow.json 仅剩 1 个悬空引用**：`<action_phase_end>`（flow.json:666 的 `until`）在 conditions 组中未定义，需补一个对应 condition（行动阶段结束条件，由 reset 的红色 reset-end space 触发）。其余占位引用（`<activate_module>`、`<reset>`、`<action_phase_end>` 以外的）已全部补全
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
 - Phase B~D 依赖对象层定稿，避免后续大量返工
 
 ## 最近进展
+
+- **2026-08-08（15 主模组全量程序化验证 + 占位 action 盘点）**:
+    - **15 个主模组 level_effects 全部结构化（程序验证 15/15）**：每个模组 3 个等级均为 `<ontology::instant_effect>`（cost 引用 `this.<ontology::cost>` + 结构化 content），无 description 化残留
+    - **双骰 cost 复验 15/15**：EXECUTE_ALL 双骰支付全部就位，点数与 2026-08-07 确认一致
+    - **占位 action 补全确认**：`<activate_module>`（flow.json:3028，选择模组触发 `this.target 的 effect`）、`<reset>`（flow.json:3046，condition=激活骰 ≤3 + A/B/C 三步 pipeline，含全空列边界分支）、`<complete_building_project>`（建造四选一 pipeline）均已完整定义并被 action_phase 引用（flow.json:678-679）
+    - **发现唯一剩余悬空引用**：`<action_phase_end>`（flow.json:666 `until`）在 conditions 组未定义，待补
 
 - **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
     - **15 个主模组骰子点数全部确认（15/15）**：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5、production 3+5、trade 4+5、invention 1+6、mutation 3+6、insight 3+6、building 4+6、achievement 5+6

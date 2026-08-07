@@ -63,7 +63,7 @@ metadata:
 - **`<piece>.parts` 统一机制**：物理载体与逻辑身份解耦，替代 `<ontology::zone>[]` 和分散的 piece 字段。Civolution 8 概念 + Splendor 2 概念已迁移完成
 - **图片提取已完成**：用 PyMuPDF + OpenCV 投影分析法从 PDF 规则书第 4-5 页（组件目录）成功提取 126 个组件裁切。脚本：`scripts/extract_components_cv.py`。结果在 `games/civolution/media/`，标注图在 `games/civolution/page-*_600dpi_annotated.jpg` 供人工审核
 
-**当前阻塞**：剩余 supply、deck、piece/token、骰子、研究牌、芯片等组件待 review；flow.json 中占位 action 待补全。详见 [[civolution-progress]]。
+**当前阻塞**：剩余 supply、deck、piece/token、骰子、研究牌、芯片等组件待 review；flow.json 占位 action（`<activate_module>`、`<reset>` 等）已补全，仅剩 `<action_phase_end>` 一个悬空引用（until 条件未定义）。详见 [[civolution-progress]]。
 
 短期仍需为每款游戏补 `manifest.json` 供前端选游戏。
 
