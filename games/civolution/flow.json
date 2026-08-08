@@ -930,10 +930,56 @@
           "children": [
             {
               "id": "phase_1_new_cards",
+              "name": {
+                "zh": "阶段一：新的卡牌",
+                "en": "Phase 1: New Cards"
+              },
               "specifies": "<ontology::phase>",
               "description": {
                 "zh": "阶段一：新的卡牌。翻开事件牌堆顶部一张（覆盖上时代的事件牌），显示本时代天气变化方向和事件效果。然后翻开 5 个背面朝下研究牌堆各顶部一张，放到对应的正面朝上研究牌堆上（第一时代新建堆，后续覆盖上时代卡牌）。",
                 "en": "Phase 1: New Cards. Reveal the top card of the face-down event stack (covering the previous era's event card), showing this era's weather change direction and event effect. Then reveal the top card from each of the 5 face-down research stacks onto the corresponding face-up research stack (forming new stacks in era 1, covering the previous card thereafter)."
+              },
+              "<ontology::pipeline>": {
+                "options": [
+                  {
+                    "id": "reveal_event_card",
+                    "name": {
+                      "zh": "翻开事件牌",
+                      "en": "Reveal Event Card"
+                    },
+                    "<ontology::top_draw>": {
+                      "source": "<event_card_space> 的背面朝上事件牌堆（右格）",
+                      "destination": "<event_card_space> 的正面朝上展示堆（左格，第一时代直接放置，后续覆盖上一时代事件牌）",
+                      "<ontology::object>": "<event_card>",
+                      "quantity": 1,
+                      "description": {
+                        "zh": "翻开背面朝上事件牌堆顶部一张，正面朝上放到左边事件牌格。右上角显示本时代天气变化方向（向 Hot 或 Cold 移动一步或两步）与事件效果——事件在阶段 7 结算。",
+                        "en": "Reveal the top card of the face-down event stack and place it face up on the left event card space. Its top-right corner shows this era's weather change direction (one or two steps toward Hot or Cold) and the event effect — resolved in phase 7."
+                      }
+                    }
+                  },
+                  {
+                    "id": "reveal_research_cards",
+                    "name": {
+                      "zh": "翻开研究牌",
+                      "en": "Reveal Research Cards"
+                    },
+                    "<ontology::top_draw>": {
+                      "source": "<research_deck>",
+                      "destination": "<face_up_research_stack>",
+                      "<ontology::object>": "<research_card>",
+                      "quantity": {
+                        "zh": "每个研究牌堆各 1 张（共 5 张）。",
+                        "en": "1 from each of the 5 research decks (5 total)."
+                      },
+                      "description": {
+                        "zh": "翻开 5 个背面朝下研究牌堆各顶部一张：第一时代放到对应背面堆旁形成正面朝上堆，后续时代放到对应正面朝上堆顶部覆盖上一张。",
+                        "en": "Reveal the top card of each of the 5 face-down research decks: in era 1, placed next to its deck to form the face-up stack; in later eras, placed on top of the corresponding face-up stack, covering the previous card."
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
               }
             },
             {
