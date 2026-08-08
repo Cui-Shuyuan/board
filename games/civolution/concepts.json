@@ -1826,8 +1826,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于大陆地形区域内的圆形标记位置，用于放置 <tribe>。",
-        "en": "A circular marker position within a <territory> used to hold <tribe>s."
+        "zh": "位于大陆地形区域内的圆形标记位置，用于放置 <tribe>。部分营地带人数标记：带 3 人标记的营地在玩家人数 ≥3 时使用，带 4 人标记的营地仅在 4 人局使用——设置时按玩家人数用阻挡标记覆盖不可用营地（2 人局覆盖 10 个、3 人局覆盖 4 个）。",
+        "en": "A circular marker position within a <territory> used to hold <tribe>s. Some encampments bear player-count marks: encampments marked with a 3 are used in games of 3+ players, those marked with a 4 only in 4-player games — during setup, unusable encampments are covered with blocking tokens per player count (10 in 2p, 4 in 3p)."
       }
     },
     {
@@ -2234,8 +2234,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<progress_board> 上的公共 <ontology::supply>，存放 <activation_die> 和 <fate_die>。设置时每种骰子各放入「玩家人数 + 1」个（如 2 人局各 3 个、4 人局各 5 个）；游戏中玩家激活模组或结算效果时从此处拿取。",
-        "en": "A public <ontology::supply> on the <progress_board> holding <activation_die>s and <fate_die>s. During setup, place (player count + 1) of each die type here (e.g., 3 each for 2p, 5 each for 4p); during play, players take dice from here when activating modules or resolving effects."
+        "zh": "<progress_board> 上的公共 <ontology::supply>，存放 <activation_die> 和 <fate_die>。设置时每种骰子各放入「玩家人数 + 1」个（如 2 人局各 3 个、3 人局各 4 个、4 人局各 5 个）。部分骰子格带人数标记：带 3 人标记的格在玩家人数 ≥3 时使用，带 4 人标记的格仅在 4 人局使用——2/3 人局中带标记的骰子格不放骰子。游戏中玩家激活模组或结算效果时从此处拿取。",
+        "en": "A public <ontology::supply> on the <progress_board> holding <activation_die>s and <fate_die>s. During setup, place (player count + 1) of each die type here (e.g., 3 each for 2p, 4 each for 3p, 5 each for 4p). Some dice spaces bear player-count marks: spaces marked with a 3 are used in games of 3+ players, those marked with a 4 only in 4-player games — marked spaces hold no dice in 2/3-player games. During play, players take dice from here when activating modules or resolving effects."
       },
       "capacity": {
         "type": "integer",
@@ -2295,8 +2295,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <goal_chip>。共 6 格：4 人局 6 格全部放置，3 人局 1 格被阻挡标记覆盖（放置 5 张），2 人局 2 格被覆盖（放置 4 张）。",
-        "en": "A <ontology::market> on the <progress_board> displaying available <goal_chip>s face up. 6 spaces total: all 6 are filled in a 4-player game, 1 space is covered by a blocking token in 3-player (5 chips placed), and 2 spaces covered in 2-player (4 chips placed)."
+        "zh": "<progress_board> 上的 <ontology::market>，正面朝上展示可拿取的 <goal_chip>。共 6 格，其中部分格带人数标记：1 格带 3 人标记（玩家人数 ≥3 时使用）、1 格带 4 人标记（仅 4 人局使用），其余 4 格无标记。设置时按玩家人数覆盖不可用格并各放 1 张：4 人局 6 张、3 人局 5 张、2 人局 4 张。",
+        "en": "A <ontology::market> on the <progress_board> displaying available <goal_chip>s face up. 6 spaces total, some bearing player-count marks: 1 space marked with a 3 (used in games of 3+ players) and 1 marked with a 4 (4-player games only); the other 4 spaces are unmarked. During setup, unusable spaces are covered per player count and 1 chip is placed on each used space: 6 for 4p, 5 for 3p, 4 for 2p."
       },
       "contains": {
         "type": "<goal_chip>",
@@ -2569,8 +2569,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <sequence_board> 上的轨，记录当前阶段。阶段标记沿黄色箭头移动，指示 8 个阶段中的当前阶段。",
-        "en": "A track on the <sequence_board> recording the current phase. The phase indicator moves along the yellow arrow to show the current of the 8 phases."
+        "zh": "位于 <sequence_board> 上的轨，记录当前阶段。阶段标记沿黄色箭头移动，指示 8 个阶段中的当前阶段。行动阶段中阶段标记推进的 reset space 部分带人数标记：带 3 人标记的 reset space 在玩家人数 ≥3 时使用，带 4 人标记的仅在 4 人局使用——2/3 人局中带标记的 reset space 在设置时被阻挡标记覆盖。",
+        "en": "A track on the <sequence_board> recording the current phase. The phase indicator moves along the yellow arrow to show the current of the 8 phases. Some reset spaces the phase indicator advances through during the Action phase bear player-count marks: reset spaces marked with a 3 are used in games of 3+ players, those marked with a 4 only in 4-player games — marked reset spaces are covered with blocking tokens in 2/3-player games."
       },
       "contains": {
         "type": "<phase_indicator>",
