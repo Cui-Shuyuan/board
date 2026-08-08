@@ -104,6 +104,15 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 
 ---
 
+## per_player vs round+turn ★（2026-08-09）
+
+「每位玩家」的两种表达（定义见 ontology `<per_player>` 概念）：
+
+- **`"<ontology::per_player>": true`**（挂在 event 上）：**程序化分发**——每位玩家各获得 N 个，不重视排他性和行动顺序。用于 setup 个人准备（player_setup_*、轮抽的抽牌步骤——规则书是「分发/秘密选择」无座次轮次）
+- **`round` + `turn`**（流程树，`actor: next_player_in_turn_order`）：**顺序轮转**——强调「轮到谁」。**「从起始玩家开始，每位玩家…」「按座次依次…」一律 round+turn**（phase 2/3 选择轮、轮抽、行动阶段）
+
+---
+
 ## Transfer 的 `<ontology::object>` 两种形式 ★（2026-08-08）
 
 1. **纯引用字符串**：`"<ontology::object>": "<event_card>"`

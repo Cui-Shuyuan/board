@@ -5,7 +5,7 @@
 - [交互模型与 Runtime 目标](interaction-model.md) — LLM 与程序分工、无状态/无 CV 的阶段目标
 - [Runtime 架构](runtime-architecture.md) — BoardAI.Api 后端接口、工具设计与实现决策
 - [向量语义检索](vector-search.md) — Qdrant + BGE-small-zh ONNX 部署、索引重建、搜索路由
-- [文明演化规则进度](civolution-progress.md) — 第二款游戏 Phase A 进行中，模块已重构为 Lose + Gain 模型
+- [文明演化规则进度](civolution-progress.md) — setup 完整化 + phase 1-3 完成，pipeline/per_player/draw 模型定稿
 - [文明演化规则学习笔记](civolution-rules-notes.md) — 规则学习收获与 piece 表设计草案
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式
 - [Pipeline 多选项处理模型](pipeline-model.md) — 定稿：pipeline 在 content.instant_content 内、步骤四形态、do_after 语义、场景模版

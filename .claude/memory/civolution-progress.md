@@ -71,6 +71,19 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-09（setup 完整化 + phase 1-3 pipeline + 模型统一）**:
+    - **pipeline 模型定稿**：pipeline 收编进 trigger 的 content.instant_content（详见 [[pipeline-model]]）；`specifies <ontology::pipeline>` 与 trigger 顶层 `<pipeline>` 字段均废弃；action/effect 是 trigger（condition → cost → target → content），多步骤在 content.instant_content.options 表达。22 个 action 全部统一
+    - **phase 持有 `<ontology::pipeline>`**：ontology `<phase>` 新增 `<pipeline>` 可选字段（程序化阶段，如 setup）——与 trigger 的 content 内 pipeline 区分
+    - **`<draw>` 抽象化**：ontology 新增 draw（abstract）+ `<top_draw>`（抽顶：deck 顶部，位置确定顶牌未知）+ `<random_draw>`（随机抽：pool 袋盲抽）。覆盖：setup 三芯片展示、计分板块（random）、事件牌/研究牌翻牌（top）、游戏内补展示区等。Splendor 的 deal_nobles（原 transfer+random 游离字段）、reserve_from_deck、refill_market 同步迁移
+    - **`<per_player>` 概念化**：抽为独立 property（可挂任何 event）。分工原则：**无顺序的程序化分发用 per_player**（setup 个人准备、发牌）；**有顺序的轮转用 round+turn**（「从起始玩家开始，每位玩家…」一律 round+turn）。draft_round（轮抽）已从 per_player 改 round+turn
+    - **transfer 的 `<ontology::object>` 支持属性设定**：`{ "<event_card>": { "face": "face_down" } }`（对象以指定状态进入 destination，与 piece.parts 同款）；游离 face_down 字段清除。destination 也支持 options/type 结构（5 条进程轨各放 1 个）
+    - **setup 完整化**：35 步 pipeline（EXECUTE_ALL + do_after 链 27 处依赖）；按规则书修正收入/属性芯片 3 格、目标芯片 6 格（1 格标 3+、1 格标 4）人数标记描述（营地/骰子区/阶段流程同）；百分/狩猎指示物 2/3/4 人覆盖细节；event 抽象基类游戏层零使用（组装/放置→transfer、起始玩家→state_change+transfer、判胜→evaluate、得分→push_track）
+    - **轮抽三件套 pipeline 化**：draft_starting_marker_cards（抽 3 → 按牌指示获得标记 → 3 张全回盒，quantity=player_count*3）、draft_starting_chip_cards（翻 N+1 → 每张放目标芯片 → 轮抽 round+turn：选 → 芯片入目标区 → 模组升 L2 → install_starting_chip_card）、draft_starting_research_cards（每堆抽 2 → 选 1 → 未选放回牌堆底）
+    - **初始标记牌/芯片牌建模修正（重要）**：安装的是**初始芯片牌**不是标记牌！`<starting_marker_card>` 只指示标记、不安装、回盒；`<starting_chip_card>` 上三分之一是 `<income_chip>`（parts 声明），塞入收入区成为首个收入芯片（激活收入芯片时可选）。新增 `<install_starting_chip_card>`（无费用格，区别于 install_research_card——复用其 pipeline 会逼出空费用格描述，故独立）
+    - **规则书二选一约定**：选项 A 初始 / 选项 B 进阶一律选 B（起始手牌/芯片牌轮抽已按 B）
+    - **阶段 pipeline**：phase_1_new_cards（翻事件牌 + 翻 5 研究牌）、phase_2_new_goals（round+turn 选择轮 + 统一补满）、phase_3_extra_find（round+turn，修正「只按地形类型匹配存储格」）——phase 4 行动阶段待写（含「补完当前轮 + 最终轮」结构缺口）
+    - **待办**：era_loop 8 阶段 do_after 链；`<action_phase_end>` / `<final_scoring_track_end>` 两个悬空 condition；行动阶段最终轮结构
+
 - **2026-08-08（15 主模组全量程序化验证 + 占位 action 盘点 + 升级重构）**:
     - **15 个主模组 level_effects 全部结构化（程序验证 15/15）**：每个模组 3 个等级均为 `<ontology::instant_effect>`（cost 引用 `this.<ontology::cost>` + 结构化 content），无 description 化残留
     - **双骰 cost 复验 15/15**：EXECUTE_ALL 双骰支付全部就位，点数与 2026-08-07 确认一致
