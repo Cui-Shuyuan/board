@@ -999,12 +999,9 @@
       },
       "abstract": false,
       "description": {
-        "zh": "设置阶段使用的 <ontology::card>。上三分之一是一块 <income_chip>——安装后露出，激活收入芯片时可以选择它；牌面指示玩家初始获得的标记（按指示放置标记）。安装方式与研究牌相同，但位置固定：只能安装到 <stage_partition> 的层级 3、第 9 列。",
-        "en": "A <ontology::card> used during setup. Its top third is an <income_chip> — revealed after installation, selectable when activating income chips; the card indicates which markers a player starts with (placed per the indication). Installed like a research card, but at a fixed position: tier 3, column 9 of the <stage_partition>."
+        "zh": "设置阶段使用的 <ontology::card>，指示玩家初始可获得的标记（按牌上指示从供应堆取标记放置）。设置完成后放回盒子，不安装。",
+        "en": "A <ontology::card> used during setup indicating which markers a player starts with (markers are taken from supply and placed per the card's indication). Returned to the game box after setup; never installed."
       },
-      "parts": [
-        "<income_chip>"
-      ],
       "media": {
         "component": [
           "assets/components/page-04/starting_marker_card.png"
@@ -1020,10 +1017,11 @@
       },
       "abstract": false,
       "description": {
-        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入<console>成为第一个收入芯片，其承载的 zone 随之消失。",
-        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the <console> as the first income chip, and its hosted zone disappears."
+        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。上三分之一是一块 <income_chip>。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入<console>的收入区成为第一个收入芯片（上三分之一露出，激活收入芯片时可以选择它），其承载的 zone 随之消失。",
+        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. Its top third is an <income_chip>. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the <console> into the income area as the first income chip (the top third is revealed and selectable when activating income chips), and its hosted zone disappears."
       },
       "parts": [
+        "<income_chip>",
         {
           "<starting_chip_zone>": {
             "position": {

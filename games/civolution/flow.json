@@ -619,8 +619,8 @@
                   "en": "Draft Starting Marker Cards"
                 },
                 "description": {
-                  "zh": "每位玩家抽 3 张初始标记牌，秘密检视后选 1 张，将其安装到控制台层级分区的固定位置（层级 3、第 9 列）——安装方式与研究牌相同（满足费用格、结算即时奖励：按牌指示获得标记）；未选中的 2 张放回盒子。",
-                  "en": "Each player draws 3 starting marker cards, secretly inspects them, chooses 1, and installs it at the fixed position of the stage partition (tier 3, column 9) — installed like a research card (satisfy cost slots, resolve the instant reward: gain markers per the card); the 2 unchosen cards return to the game box."
+                  "zh": "每位玩家抽 3 张初始标记牌，秘密检视后选 1 张，按所选牌的指示从供应堆取标记放置（获得标记），随后 3 张初始标记牌全部放回盒子。",
+                  "en": "Each player draws 3 starting marker cards, secretly inspects them, chooses 1, gains the indicated markers (taken from supply and placed per the card), then returns all 3 starting marker cards to the game box."
                 },
                 "options": [
                   {
@@ -642,68 +642,25 @@
                     }
                   },
                   {
-                    "id": "install_card",
+                    "id": "gain_markers",
                     "name": {
-                      "zh": "安装初始标记牌",
-                      "en": "Install Starting Marker Card"
+                      "zh": "获得标记",
+                      "en": "Gain Markers"
                     },
                     "do_after": [
                       "draw_cards"
                     ],
-                    "options": [
-                      {
-                        "id": "pay_cost_slots",
-                        "name": {
-                          "zh": "满足费用格",
-                          "en": "Satisfy Cost Slots"
-                        },
-                        "description": {
-                          "zh": "满足所选初始标记牌的费用格条件（与研究牌相同的费用格机制：支付/持有/替代条件）。",
-                          "en": "Satisfy the cost slots of the chosen starting marker card (same cost-slot mechanism as research cards: pay/hold/alternative conditions)."
-                        }
-                      },
-                      {
-                        "id": "place_card",
-                        "name": {
-                          "zh": "安装牌",
-                          "en": "Place Card"
-                        },
-                        "do_after": [
-                          "pay_cost_slots"
-                        ],
-                        "<ontology::play>": {
-                          "source": "刚抽出的 3 张<starting_marker_card>中选中的 1 张",
-                          "destination": "<stage_partition>",
-                          "<ontology::piece>": "<starting_marker_card>",
-                          "description": {
-                            "zh": "将选中的初始标记牌安装到层级 3、第 9 列（固定位置，与研究牌同款安装方式；安装后上三分之一露出——即其 <income_chip> 部分）。",
-                            "en": "Install the chosen starting marker card at tier 3, column 9 (fixed position, same installation as research cards; the top third — its <income_chip> part — is revealed after installation)."
-                          }
-                        }
-                      },
-                      {
-                        "id": "gain_markers",
-                        "name": {
-                          "zh": "获得标记",
-                          "en": "Gain Markers"
-                        },
-                        "do_after": [
-                          "place_card"
-                        ],
-                        "<ontology::transfer>": {
-                          "source": "<ontology::supply>",
-                          "destination": "<console>",
-                          "<ontology::object>": "<marker>",
-                          "quantity": "按所选标记牌指示的数量与位置",
-                          "per_player": true,
-                          "description": {
-                            "zh": "按所选初始标记牌的指示（即时奖励），从供应堆取对应数量的标记放到控制台对应空格。",
-                            "en": "Per the chosen starting marker card's indication (instant reward), take the indicated number of markers from supply and place them on the corresponding console spaces."
-                          }
-                        }
+                    "<ontology::transfer>": {
+                      "source": "<ontology::supply>",
+                      "destination": "<console>",
+                      "<ontology::object>": "<marker>",
+                      "quantity": "按所选标记牌指示的数量与位置",
+                      "per_player": true,
+                      "description": {
+                        "zh": "按所选初始标记牌的指示，从供应堆取对应数量的标记放到控制台对应空格。",
+                        "en": "Take the number of markers indicated by the chosen starting marker card from supply and place them on the corresponding console spaces."
                       }
-                    ],
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    }
                   },
                   {
                     "id": "return_cards",
@@ -712,19 +669,19 @@
                       "en": "Return Cards to Box"
                     },
                     "do_after": [
-                      "install_card"
+                      "gain_markers"
                     ],
                     "<ontology::transfer>": {
-                      "source": "未选中的 2 张<starting_marker_card>",
+                      "source": "刚抽出的 3 张<starting_marker_card>",
                       "destination": "<ontology::game_box>",
                       "<ontology::object>": "<starting_marker_card>",
                       "quantity": {
-                        "expr": "player_count * 2"
+                        "expr": "player_count * 3"
                       },
                       "per_player": true,
                       "description": {
-                        "zh": "未选中的 2 张初始标记牌放回盒子（选中的 1 张已安装到控制台，不回收）。",
-                        "en": "Return the 2 unchosen starting marker cards to the game box (the chosen one is installed on the console and stays)."
+                        "zh": "3 张初始标记牌全部放回盒子。",
+                        "en": "Return all 3 starting marker cards to the game box."
                       }
                     }
                   }
@@ -1048,8 +1005,8 @@
       },
       "specifies": "<ontology::activation>",
       "description": {
-        "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。初始标记牌上三分之一的那块收入芯片也可被选择（初始标记牌安装后视为收入芯片）。",
-        "en": "Choose 1 installed <income_chip> from the console stage partition and activate its <ontology::effect>. The <income_chip> on the top third of an installed starting marker card may also be chosen (an installed starting marker card counts as an income chip)."
+        "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。初始芯片牌塞入收入区后（其上三分之一的 <income_chip> 露出）也可被选择。",
+        "en": "Choose 1 installed <income_chip> from the console stage partition and activate its <ontology::effect>. A starting chip card slid into the income area (its top-third <income_chip> revealed) may also be chosen."
       }
     },
     {
