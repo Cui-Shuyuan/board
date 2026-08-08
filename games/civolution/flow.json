@@ -433,14 +433,34 @@
                 },
                 "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "每位玩家将 4 个聚落、3 个农场和 2 艘船放入控制台左侧对应凹槽，并在每艘船的凹槽中各放 1 个标记。",
-                  "en": "Each player places their 4 settlements, 3 farms, and 2 boats into the recesses on the left side of the console, and places 1 marker in the notch of each boat."
+                  "zh": "每位玩家将 4 个聚落、3 个农场和 2 艘船放入控制台左侧对应凹槽。",
+                  "en": "Each player places their 4 settlements, 3 farms, and 2 boats into the recesses on the left side of the console."
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<console>",
                 "<ontology::object>": "<settlement> | <farm> | <boat>",
                 "quantity": "all",
                 "per_player": true
+              },
+              {
+                "id": "player_setup_boat_markers",
+                "name": {
+                  "zh": "玩家设置船标记",
+                  "en": "Player Setup Boat Markers"
+                },
+                "specifies": "<ontology::transfer>",
+                "description": {
+                  "zh": "每位玩家在每艘船的凹槽中各放 1 个标记（共 2 个），船上标记用于游戏中的登船计数。",
+                  "en": "Each player places 1 marker in the notch of each of their 2 boats (2 markers total); the markers on boats track boarding during play."
+                },
+                "source": "<ontology::game_box>",
+                "destination": "<boat>",
+                "<ontology::object>": "<marker>",
+                "quantity": 2,
+                "per_player": true,
+                "do_after": [
+                  "player_setup_buildings"
+                ]
               },
               {
                 "id": "player_setup_score_and_track_tokens",
