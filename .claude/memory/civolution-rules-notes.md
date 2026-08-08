@@ -12,6 +12,10 @@ metadata:
 - 卡牌图片：`games/civolution/card/神权制.jpg`
 - 英文规则书：`games/civolution/Civolution_Rules_US_web_v1_0.pdf`（来自 BGG，被视为权威来源；已由 `pdftotext` 提取为同目录 `.txt` 文件）
 
+## 规则书二选一约定 ★（2026-08-08）
+
+规则书中「选项 A 初始（newcomers）/ 选项 B 进阶（advanced）」二选一的场景（起始手牌第 13 步、起始芯片牌第 16 步），**一律采用选项 B（进阶）**——flow.json 的轮抽事件已全部按 B 实现，后续遇到同类二选一同样选 B。
+
 ## 核心机制（已确认）
 
 ### 游戏结构
