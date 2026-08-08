@@ -13,12 +13,13 @@ metadata:
 
 ## Pipeline 的位置 ★（2026-08-08 定稿）
 
-**pipeline 是 `<content>` 的内部结构，不单独持有**：
+**`<pipeline>` 是通用可挂载结构——任何概念都可以选择持有它**（和 options/type 一样的通用模式，不在各概念设计专属字段，由使用方按需书写）：
 
 - **`<trigger>`（action/effect 均 specifies trigger）**：结构为
   `condition（门槛）→ cost（代价）→ target（this.target 供步骤引用）→ <ontology::content>.<ontology::instant_content>.{ options, type }`
-  ——pipeline 的 options/type/do_after 放在 `<instant_content>` 内部
+  ——pipeline 的 options/type/do_after 放在 `<instant_content>` 内部（现状）
 - **`<phase>`**：持有 `<pipeline>` 顶层字段（程序化阶段，如 setup）——phase 不是 trigger，无 condition/cost/content
+- **`<cost>` 等其他概念**：需要时也可持有（如多步支付的复杂代价）
 
 ```json
 {
@@ -35,7 +36,7 @@ metadata:
 }
 ```
 
-历史沿革（避免重蹈覆辙）：最初 action 用 `"type": "<ontology::event>"` + events[] 数组；后改为 `specifies <ontology::pipeline>` + 顶层 options；2026-08-08 一度给 trigger 加 `<pipeline>` 顶层字段，最终定稿为 **pipeline 收进 content.instant_content**——action/effect 是 trigger，执行内容必须在 content 槽位里。
+历史沿革（避免重蹈覆辙）：最初 action 用 `"type": "<ontology::event>"` + events[] 数组；后改为 `specifies <ontology::pipeline>` + 顶层 options；2026-08-08 一度给 trigger 加 `<pipeline>` 顶层字段，又改为收进 content.instant_content；最终定稿为**通用可挂载**——谁需要谁持有，定义在 pipeline 概念中说明。
 
 ## 步骤的四种形态 ★
 
