@@ -471,142 +471,71 @@
                 "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
               },
               {
-                "id": "player_setup_score_and_track_tokens",
+                "id": "player_setup_markers",
                 "name": {
-                  "zh": "玩家设置分数轨标记",
-                  "en": "Player Setup Score & Track Tokens"
+                  "zh": "玩家设置标记",
+                  "en": "Player Setup Markers"
                 },
-                "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "每位玩家拿取 1 个分数标记放到计分轨 0 分位置。",
-                  "en": "Each player takes 1 score marker and places it on the score track at 0."
+                  "zh": "每位玩家将 7 个圆片放到游戏版图上：1 个分数标记放到计分轨 0 分位置、1 个恩惠标记放到<favor_of_ager_track>起始位置、5 个进程标记分别放到 5 条进程轨的 0 格。",
+                  "en": "Each player places their 7 discs on the game boards: 1 score marker on the score track at 0, 1 favor marker on the <favor_of_ager_track> start, and 5 progress markers on the 5 progress tracks at 0."
                 },
-                "source": "<ontology::game_box>",
-                "destination": "<score_track>",
-                "<ontology::object>": "<score_marker>",
-                "quantity": 1,
-                "per_player": true,
+                "options": [
+                  {
+                    "id": "place_score_marker",
+                    "name": {
+                      "zh": "放置分数标记",
+                      "en": "Place Score Marker"
+                    },
+                    "<ontology::transfer>": {
+                      "source": "<ontology::game_box>",
+                      "destination": "<score_track>",
+                      "<ontology::object>": "<score_marker>",
+                      "quantity": 1,
+                      "per_player": true
+                    }
+                  },
+                  {
+                    "id": "place_favor_marker",
+                    "name": {
+                      "zh": "放置恩惠标记",
+                      "en": "Place Favor Marker"
+                    },
+                    "<ontology::transfer>": {
+                      "source": "<ontology::game_box>",
+                      "destination": "<favor_of_ager_track>",
+                      "<ontology::object>": "<favor_marker>",
+                      "quantity": 1,
+                      "per_player": true
+                    }
+                  },
+                  {
+                    "id": "place_progress_markers",
+                    "name": {
+                      "zh": "放置进程标记",
+                      "en": "Place Progress Markers"
+                    },
+                    "<ontology::transfer>": {
+                      "source": "<ontology::game_box>",
+                      "destination": {
+                        "options": [
+                          "<technology_track>",
+                          "<prestige_track>",
+                          "<knowledge_track>",
+                          "<construction_track>",
+                          "<culture_track>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                      },
+                      "<ontology::object>": "<progress_marker>",
+                      "quantity": 1,
+                      "per_player": true
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
                 "do_after": [
-                  "assemble_public_board"
-                ]
-              },
-              {
-                "id": "player_setup_favor_marker",
-                "name": {
-                  "zh": "玩家设置恩惠标记",
-                  "en": "Player Setup Favor Marker"
-                },
-                "specifies": "<ontology::transfer>",
-                "description": {
-                  "zh": "每位玩家拿取 1 个恩惠标记放到 <favor_of_ager_track> 起始位置。",
-                  "en": "Each player takes 1 favor marker and places it on the <favor_of_ager_track> start."
-                },
-                "source": "<ontology::game_box>",
-                "destination": "<favor_of_ager_track>",
-                "<ontology::object>": "<favor_marker>",
-                "quantity": 1,
-                "per_player": true,
-                "do_after": [
-                  "place_progress_and_sequence_boards"
-                ]
-              },
-              {
-                "id": "player_setup_technology_marker",
-                "name": {
-                  "zh": "玩家设置科技标记",
-                  "en": "Player Setup Technology Marker"
-                },
-                "specifies": "<ontology::transfer>",
-                "description": {
-                  "zh": "每位玩家拿取 1 个进程标记放到科技轨 0 格。",
-                  "en": "Each player takes 1 progress marker and places it on the technology track at 0."
-                },
-                "source": "<ontology::game_box>",
-                "destination": "<technology_track>",
-                "<ontology::object>": "<progress_marker>",
-                "quantity": 1,
-                "per_player": true,
-                "do_after": [
-                  "place_progress_and_sequence_boards"
-                ]
-              },
-              {
-                "id": "player_setup_prestige_marker",
-                "name": {
-                  "zh": "玩家设置声望标记",
-                  "en": "Player Setup Prestige Marker"
-                },
-                "specifies": "<ontology::transfer>",
-                "description": {
-                  "zh": "每位玩家拿取 1 个进程标记放到声望轨 0 格。",
-                  "en": "Each player takes 1 progress marker and places it on the prestige track at 0."
-                },
-                "source": "<ontology::game_box>",
-                "destination": "<prestige_track>",
-                "<ontology::object>": "<progress_marker>",
-                "quantity": 1,
-                "per_player": true,
-                "do_after": [
-                  "place_progress_and_sequence_boards"
-                ]
-              },
-              {
-                "id": "player_setup_knowledge_marker",
-                "name": {
-                  "zh": "玩家设置知识标记",
-                  "en": "Player Setup Knowledge Marker"
-                },
-                "specifies": "<ontology::transfer>",
-                "description": {
-                  "zh": "每位玩家拿取 1 个进程标记放到知识轨 0 格。",
-                  "en": "Each player takes 1 progress marker and places it on the knowledge track at 0."
-                },
-                "source": "<ontology::game_box>",
-                "destination": "<knowledge_track>",
-                "<ontology::object>": "<progress_marker>",
-                "quantity": 1,
-                "per_player": true,
-                "do_after": [
-                  "place_progress_and_sequence_boards"
-                ]
-              },
-              {
-                "id": "player_setup_construction_marker",
-                "name": {
-                  "zh": "玩家设置建设标记",
-                  "en": "Player Setup Construction Marker"
-                },
-                "specifies": "<ontology::transfer>",
-                "description": {
-                  "zh": "每位玩家拿取 1 个进程标记放到建设轨 0 格。",
-                  "en": "Each player takes 1 progress marker and places it on the construction track at 0."
-                },
-                "source": "<ontology::game_box>",
-                "destination": "<construction_track>",
-                "<ontology::object>": "<progress_marker>",
-                "quantity": 1,
-                "per_player": true,
-                "do_after": [
-                  "place_progress_and_sequence_boards"
-                ]
-              },
-              {
-                "id": "player_setup_culture_marker",
-                "name": {
-                  "zh": "玩家设置文化标记",
-                  "en": "Player Setup Culture Marker"
-                },
-                "specifies": "<ontology::transfer>",
-                "description": {
-                  "zh": "每位玩家拿取 1 个进程标记放到文化轨 0 格。",
-                  "en": "Each player takes 1 progress marker and places it on the culture track at 0."
-                },
-                "source": "<ontology::game_box>",
-                "destination": "<culture_track>",
-                "<ontology::object>": "<progress_marker>",
-                "quantity": 1,
-                "per_player": true,
-                "do_after": [
+                  "assemble_public_board",
                   "place_progress_and_sequence_boards"
                 ]
               },

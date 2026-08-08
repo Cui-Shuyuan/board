@@ -1037,8 +1037,8 @@
           {
             "id": "destination",
             "description": {
-              "zh": "<object> 移入的目标 <zone>。可以是另一个 <zone>，也可以与 source 相同（如区域内重排序）。",
-              "en": "The destination <zone> the <object> moves to. May differ from source or be the same (e.g., reordering within a <zone>)."
+              "zh": "<object> 移入的目标 <zone>。可以是另一个 <zone>，也可以与 source 相同（如区域内重排序）。也可以是 options/type 结构——从多个候选 <zone> 中选择/全部执行（如 5 条进程轨各放 1 个标记：{\"options\": [轨...], \"type\": \"<ontology::multiple_choice_enum.EXECUTE_ALL>\"}）。",
+              "en": "The destination <zone> the <object> moves to. May differ from source or be the same (e.g., reordering within a <zone>). May also be an options/type structure — choose from or execute across multiple candidate <zone>s (e.g., placing 1 marker on each of 5 progress tracks: {\"options\": [tracks...], \"type\": \"<ontology::multiple_choice_enum.EXECUTE_ALL>\"})."
             }
           },
           {
