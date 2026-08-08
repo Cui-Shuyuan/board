@@ -843,16 +843,69 @@
                   "zh": "轮抽初始研究牌",
                   "en": "Draft Starting Research Cards"
                 },
-                "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "每位玩家从五个研究牌堆各抽两张，每种选一张保留，另一张放回牌堆底。",
-                  "en": "Each player draws 2 cards from each of the 5 research decks, keeps 1 of each type, returns the other to the bottom of its deck."
+                  "zh": "每位玩家从五个研究牌堆各抽 2 张（共 10 张），每种类型选 1 张保留入手牌，未选的 5 张放回各自来源牌堆底部。",
+                  "en": "Each player draws 2 cards from each of the 5 research decks (10 total), keeps 1 of each type in hand, and returns the 5 unchosen cards to the bottoms of their respective source decks."
                 },
-                "source": "<research_deck>",
-                "destination": "<ontology::player_holding>",
-                "<ontology::object>": "<research_card>",
-                "quantity": 5,
-                "per_player": true,
+                "options": [
+                  {
+                    "id": "draw_cards",
+                    "name": {
+                      "zh": "抽牌",
+                      "en": "Draw Cards"
+                    },
+                    "<ontology::top_draw>": {
+                      "source": "<research_deck>",
+                      "destination": "<ontology::player_holding>",
+                      "<ontology::object>": "<research_card>",
+                      "quantity": {
+                        "zh": "每个研究牌堆各抽 2 张（5 堆共 10 张）。",
+                        "en": "2 from each of the 5 research decks (10 total)."
+                      },
+                      "per_player": true,
+                      "description": {
+                        "zh": "每位玩家从每个研究牌堆的顶部各抽 2 张。",
+                        "en": "Each player draws 2 cards from the top of each of the 5 research decks."
+                      }
+                    }
+                  },
+                  {
+                    "id": "keep_cards",
+                    "name": {
+                      "zh": "保留选中的牌",
+                      "en": "Keep Chosen Cards"
+                    },
+                    "do_after": [
+                      "draw_cards"
+                    ],
+                    "description": {
+                      "zh": "每种类型（建造/洞悉/突变/成就/发明）从抽到的 2 张中选 1 张保留入手牌。",
+                      "en": "For each type (Building/Insight/Mutation/Achievement/Invention), choose 1 of the 2 drawn cards to keep in hand."
+                    }
+                  },
+                  {
+                    "id": "return_cards",
+                    "name": {
+                      "zh": "放回牌堆底",
+                      "en": "Return to Deck Bottom"
+                    },
+                    "do_after": [
+                      "keep_cards"
+                    ],
+                    "<ontology::transfer>": {
+                      "source": "每种类型未选中的 1 张<research_card>",
+                      "destination": "<research_deck>",
+                      "<ontology::object>": "<research_card>",
+                      "quantity": 5,
+                      "per_player": true,
+                      "description": {
+                        "zh": "将未选中的 5 张研究牌（每种 1 张）面朝下放回各自来源牌堆底部。",
+                        "en": "Return the 5 unchosen research cards (1 per type) face down to the bottoms of their respective source decks."
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
                 "do_after": [
                   "prepare_research_decks"
                 ]
