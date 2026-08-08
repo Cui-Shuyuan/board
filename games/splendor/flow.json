@@ -225,13 +225,30 @@
                   "zh": "选择起始玩家",
                   "en": "Choose Starting Player"
                 },
-                "specifies": "<ontology::event>",
+                "specifies": "<ontology::state_change>",
+                "subject": "<ontology::starting_player>",
+                "to": "随机选中的玩家",
                 "rules": {
-                  "zh": "随机选择一名玩家持有<ontology::starting_player_marker>，并将<ontology::starting_player>状态设为该玩家。",
-                  "en": "Randomly choose one player to hold the <ontology::starting_player_marker> and set <ontology::starting_player> to that player."
+                  "zh": "随机选择一名玩家，将<ontology::starting_player>状态设为该玩家。",
+                  "en": "Randomly choose one player and set <ontology::starting_player> to that player."
                 }
+              },
+              {
+                "id": "give_starting_player_marker",
+                "name": {
+                  "zh": "给予起始玩家标记",
+                  "en": "Give Starting Player Marker"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<ontology::game_box>",
+                "destination": "起始玩家",
+                "<ontology::object>": "<ontology::starting_player_marker>",
+                "quantity": 1,
+                "do_after": [
+                  "choose_starting_player"
+                ]
               }
-          
+
             ],
             "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
           }
@@ -328,7 +345,11 @@
               "events": [
                 {
                   "id": "adjudicate_victory",
-                  "specifies": "<ontology::event>",
+                  "specifies": "<ontology::evaluate>",
+                  "result": {
+                    "zh": "胜者玩家。",
+                    "en": "The winning player."
+                  },
                   "rules": {
                     "zh": "按<highest_prestige_wins>判定胜者：先比较<prestige_point>总数，并列者再比较<ontology::development_area>中<development_card>数量。",
                     "en": "Adjudicate by <highest_prestige_wins>: highest total <prestige_point>s, then fewest <development_card>s in <ontology::development_area>."

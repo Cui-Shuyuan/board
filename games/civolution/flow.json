@@ -40,10 +40,14 @@
                   "zh": "组装公共版图",
                   "en": "Assemble Public Board"
                 },
-                "specifies": "<ontology::event>",
+                "specifies": "<ontology::transfer>",
+                "source": "<ontology::game_box>",
+                "destination": "<score_track>",
+                "<ontology::object>": "<continent_tile>",
+                "quantity": "all",
                 "description": {
-                  "zh": "拼接分轨形成外框，摆放进程版图和流程版图，组成公共版图；将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
-                  "en": "Assemble the score-track frame and place the progress and sequence boards to form the public board; randomly arrange the 8 continent tiles to fill the 5×3 grid inside the score track frame, forming the continent."
+                  "zh": "将分轨外框与大陆板块移至计分轨区域：拼接 4 片分轨外框形成计分轨，将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
+                  "en": "Move the score track frame pieces and continent tiles into the score track area: assemble the 4 frame pieces into the score track, randomly arrange the 8 continent tiles to fill the 5×3 grid inside it, forming the continent."
                 }
               },
               {
@@ -72,7 +76,11 @@
                   "zh": "放置进程流程版图",
                   "en": "Place Progress & Sequence Boards"
                 },
-                "specifies": "<ontology::event>",
+                "specifies": "<ontology::transfer>",
+                "source": "<ontology::game_box>",
+                "destination": "<public_board>",
+                "<ontology::object>": "<progress_board> | <sequence_board>",
+                "quantity": "all",
                 "description": {
                   "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
                   "en": "Place the progress board and sequence board on either side of the public board."
@@ -567,11 +575,32 @@
                   "zh": "选择起始玩家",
                   "en": "Choose Starting Player"
                 },
-                "specifies": "<ontology::event>",
+                "specifies": "<ontology::state_change>",
+                "subject": "<ontology::starting_player>",
+                "to": "随机选中的玩家",
                 "description": {
-                  "zh": "决定起始玩家，获得起始纪念碑。",
-                  "en": "Determine the starting player, who receives the starting monolith."
+                  "zh": "随机选择一名玩家，将<ontology::starting_player>状态设为该玩家。",
+                  "en": "Randomly choose one player and set <ontology::starting_player> to that player."
                 }
+              },
+              {
+                "id": "give_starting_monolith",
+                "name": {
+                  "zh": "给予起始纪念碑",
+                  "en": "Give Starting Monolith"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<ontology::game_box>",
+                "destination": "起始玩家",
+                "<ontology::object>": "<starting_monolith>",
+                "quantity": 1,
+                "description": {
+                  "zh": "起始玩家获得起始纪念碑。",
+                  "en": "The starting player receives the starting monolith."
+                },
+                "do_after": [
+                  "choose_starting_player"
+                ]
               },
               {
                 "id": "draft_starting_marker_cards",
@@ -858,7 +887,11 @@
                 "zh": "判定胜者",
                 "en": "Determine Winner"
               },
-              "specifies": "<ontology::event>",
+              "specifies": "<ontology::evaluate>",
+              "result": {
+                "zh": "成功点数最高的玩家。",
+                "en": "The player with the highest success points."
+              },
               "description": {
                 "zh": "比较所有玩家的成功点数，最高者获胜。平局时，已执行更多模组升级的玩家胜出；仍平局则按座位顺序（从起始玩家顺时针）先到者胜。",
                 "en": "Compare all players' success points; the highest wins. Tiebreaker: the tied player with more module upgrades wins; if still tied, the tied player earliest in seating order (clockwise from starting player) wins."
@@ -1742,11 +1775,9 @@
                         "zh": "获得分数",
                         "en": "Gain Points"
                       },
-                      "specifies": "<ontology::event>",
-                      "description": {
-                        "zh": "获得 2 分",
-                        "en": "Gain 2 success points"
-                      },
+                      "specifies": "<ontology::push_track>",
+                      "<ontology::track>": "<score_track>",
+                      "step": 2,
                       "do_after": [
                         "return_material_sp"
                       ]
