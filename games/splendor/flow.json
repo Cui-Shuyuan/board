@@ -160,18 +160,17 @@
                   "zh": "发放贵族板块",
                   "en": "Deal Nobles"
                 },
-                "specifies": "<ontology::transfer>",
+                "specifies": "<ontology::draw_from_pool>",
                 "description": {
-                  "zh": "从游戏盒中随机取出 player_count + 1 枚贵族板块，放入贵族市场。",
-                  "en": "Randomly take player_count + 1 noble tiles from the game box and place them into the noble market."
+                  "zh": "从游戏盒中随机盲抽 player_count + 1 枚贵族板块，放入贵族市场。",
+                  "en": "Blindly draw player_count + 1 noble tiles from the game box and place them into the noble market."
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<noble_market>",
                 "<object>": "<noble>",
                 "quantity": {
                   "expr": "player_count + 1"
-                },
-                "random": true
+                }
               },
               {
                 "id": "distribute_gems",
@@ -470,10 +469,10 @@
                     "zh": "暗面保留",
                     "en": "Reserve Blindly"
                   },
-                  "<ontology::transfer>": {
+                  "<ontology::draw_from_deck>": {
                     "description": {
-                      "zh": "暗面保留：从某一等级 <development_deck> 的顶部拿取最上面 1 张 <development_card>（事先不知道是哪张）移入 <hand>。",
-                      "en": "Reserve blindly: take the top 1 <development_card> of a level's <development_deck> (sight unseen) and move it into <hand>."
+                      "zh": "暗面保留：从某一等级 <development_deck> 的顶部盲抽最上面 1 张 <development_card>（事先不知道是哪张）移入 <hand>。",
+                      "en": "Reserve blindly: draw the top 1 <development_card> of a level's <development_deck> (sight unseen) and move it into <hand>."
                     },
                     "source": "<development_deck>",
                     "destination": "<ontology::hand>",
@@ -547,10 +546,10 @@
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "<ontology::transfer>": {
+          "<ontology::draw_from_deck>": {
             "description": {
-              "zh": "从对应等级 <development_deck> 顶部翻 1 张补入 <card_market> 空位。",
-              "en": "Reveal 1 card from the top of the corresponding level's <development_deck> into the empty <card_market> slot."
+              "zh": "从对应等级 <development_deck> 顶部盲抽 1 张补入 <card_market> 空位。",
+              "en": "Draw 1 card blindly from the top of the corresponding level's <development_deck> into the empty <card_market> slot."
             },
             "source": "<development_deck>",
             "destination": "<card_market>",

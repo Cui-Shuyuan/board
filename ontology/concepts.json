@@ -1076,18 +1076,18 @@
         "zh": "抽取",
         "en": "Draw"
       },
-      "abstract": false,
+      "abstract": true,
       "description": {
-        "zh": "从隐藏集合（<pool> 袋、<deck> 牌堆）中随机盲抽 <object>——抽取前对象不可见，随机性由规则保证。与 <transfer> 的区别：transfer 移动已知对象（可指定具体对象），draw 的结果在抽取前未知。用于抽袋（芯片）、暗面抽牌（牌堆顶部）、补牌/补展示区等场景。",
-        "en": "Randomly draw an <object> from a hidden collection (<pool> bag, <deck> stack) — the object is unseen before drawing and randomness is guaranteed by the rules. Unlike <transfer>, which moves a known object (specific objects may be named), the result of a draw is unknown beforehand. Used for bag draws (chips), blind draws (top of deck), refilling decks/displays, etc."
+        "zh": "从隐藏集合中抽取 <object> 的抽象概念——抽取前对象不可见，与 <transfer>（移动已知对象）相对。具体抽取规则由子类决定：<draw_from_deck> 从 <deck> 顶部抽取（位置规则确定，顶牌未知）；<draw_from_pool> 从 <pool>（袋）中随机盲抽。游戏层不直接使用本概念。",
+        "en": "The abstract concept of drawing an <object> from a hidden collection — the object is unseen before drawing, as opposed to <transfer> (moving a known object). The concrete drawing rule is determined by the subclass: <draw_from_deck> draws from the top of a <deck> (deterministic position, unseen card); <draw_from_pool> blindly draws at random from a <pool> (bag). Game files do not use this concept directly."
       },
       "constraints": {
         "required": [
           {
             "id": "source",
             "description": {
-              "zh": "抽取的源 <zone>。必须是隐藏集合——<pool>（袋子）或 <deck>（牌堆）。",
-              "en": "The source <zone> the <object> is drawn from. Must be a hidden collection — a <pool> (bag) or a <deck> (stack)."
+              "zh": "抽取的源 <zone>。必须是隐藏集合——<deck>（牌堆）或 <pool>（袋子）。",
+              "en": "The source <zone> the <object> is drawn from. Must be a hidden collection — a <deck> (stack) or a <pool> (bag)."
             }
           },
           {
@@ -1115,6 +1115,40 @@
             }
           }
         ]
+      }
+    },
+    {
+      "id": "draw_from_deck",
+      "extends": "<draw>",
+      "name": {
+        "zh": "牌堆抽取",
+        "en": "Draw from Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从 <deck> 的顶部抽取最上面 1 张（或指定数量）——抽取位置规则确定（顶部），但顶牌在抽取前未知。用于翻牌、发牌、暗面抽牌等场景。",
+        "en": "Draw the top 1 card (or a given quantity) from a <deck> — the draw position is deterministic (the top), but the top card is unseen until drawn. Used for revealing cards, dealing, blind draws, etc."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "draw_from_pool",
+      "extends": "<draw>",
+      "name": {
+        "zh": "盲抽",
+        "en": "Blind Draw from Pool"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从 <pool>（袋子等）中随机盲抽 <object>——完全随机，抽取前对象不可见。用于抽袋（芯片、指示物）等场景。",
+        "en": "Blindly draw an <object> at random from a <pool> (bag, etc.) — completely random, the object is unseen before drawing. Used for bag draws (chips, tokens), etc."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
       }
     },
     {

@@ -268,7 +268,7 @@
                   "zh": "准备目标芯片展示",
                   "en": "Prepare Goal Chip Display"
                 },
-                "specifies": "<ontology::draw>",
+                "specifies": "<ontology::draw_from_pool>",
                 "description": {
                   "zh": "从深蓝袋子中随机盲抽目标芯片，正面朝上放到目标芯片展示区的每个可用格：4 人局 6 张、3 人局 5 张、2 人局 4 张（2/3 人局中带人数标记的格——3 人标记格仅 ≥3 人局使用、4 人标记格仅 4 人局使用——已被百分指示物阻挡标记覆盖）。",
                   "en": "Blindly draw goal chips from the dark blue bag and place them face up on each usable space of the goal chip display: 6 for 4p, 5 for 3p, 4 for 2p (in 2/3-player games, spaces with player-count marks — the 3-marked space is used only in 3+ player games and the 4-marked space only in 4-player games — are covered by blocking tokens)."
@@ -286,7 +286,7 @@
                   "zh": "准备收入芯片展示",
                   "en": "Prepare Income Chip Display"
                 },
-                "specifies": "<ontology::draw>",
+                "specifies": "<ontology::draw_from_pool>",
                 "description": {
                   "zh": "从白色袋子中随机盲抽收入芯片，正面朝上放到收入芯片展示区的每个格（共 3 格）。",
                   "en": "Blindly draw income chips from the white bag and place them face up on each of the 3 spaces of the income chip display."
@@ -302,7 +302,7 @@
                   "zh": "准备属性芯片展示",
                   "en": "Prepare Attribute Chip Display"
                 },
-                "specifies": "<ontology::draw>",
+                "specifies": "<ontology::draw_from_pool>",
                 "description": {
                   "zh": "从黄色袋子中随机盲抽属性芯片，正面朝上放到属性芯片展示区的每个格（共 3 格）。",
                   "en": "Blindly draw attribute chips from the yellow bag and place them face up on each of the 3 spaces of the attribute chip display."
@@ -1265,7 +1265,7 @@
                 "zh": "补满展示区",
                 "en": "Refill Display"
               },
-              "specifies": "<ontology::draw>",
+              "specifies": "<ontology::draw_from_pool>",
               "source": "<income_chip_bag>",
               "destination": "<income_chip_display>",
               "<ontology::object>": "<income_chip>",
@@ -1537,14 +1537,14 @@
                   }
                 },
                 {
-                  "<ontology::transfer>": {
+                  "<ontology::draw_from_deck>": {
                     "source": "<research_deck>",
                     "destination": "<player_holding>",
                     "<ontology::object>": "<research_card>",
                     "quantity": 1,
                     "description": {
-                      "zh": "从选定类型的背面朝下堆顶拿取 1 张<research_card>。",
-                      "en": "Take the top <research_card> from the chosen type's face-down deck."
+                      "zh": "从选定类型的背面朝下堆顶盲抽 1 张<research_card>（顶牌未知）。",
+                      "en": "Blindly draw the top <research_card> from the chosen type's face-down deck (the top card is unseen)."
                     }
                   }
                 }
@@ -2686,10 +2686,16 @@
               }
             },
             {
-              "description": {
-                "zh": "从深蓝袋随机抽 1 枚目标芯片补满展示区空位。",
-                "en": "Refill the display space with a goal chip drawn randomly from the dark blue bag."
-              }
+              "id": "refill_display",
+              "name": {
+                "zh": "补满展示区",
+                "en": "Refill Display"
+              },
+              "specifies": "<ontology::draw_from_pool>",
+              "source": "<goal_chip_bag>",
+              "destination": "<goal_chip_display>",
+              "<ontology::object>": "<goal_chip>",
+              "quantity": 1
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
