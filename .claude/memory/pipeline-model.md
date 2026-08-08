@@ -1,15 +1,60 @@
 ---
 name: pipeline-model
-description: pipeline 多选项处理模型——options/_skip/type/do_after 的用法、五个典型场景的写法模版
+description: pipeline 模型定稿——pipeline 位于 trigger 的 content.instant_content 内，步骤四种形态、do_after 语义、五个典型场景模版
 metadata:
   type: project
 ---
 
-# Pipeline 多选项处理模型
+# Pipeline 多选项处理模型（2026-08-08 定稿）
 
 ## 核心概念
 
 `<pipeline>` 是多选项处理模型。从几个 token 中选一个拿走，从几个 action 中选一个执行，一个流程有好几个步骤按什么顺序进行——这些都是同一问题。
+
+## Pipeline 的位置 ★（2026-08-08 定稿）
+
+**pipeline 是 `<content>` 的内部结构，不单独持有**：
+
+- **`<trigger>`（action/effect 均 specifies trigger）**：结构为
+  `condition（门槛）→ cost（代价）→ target（this.target 供步骤引用）→ <ontology::content>.<ontology::instant_content>.{ options, type }`
+  ——pipeline 的 options/type/do_after 放在 `<instant_content>` 内部
+- **`<phase>`**：持有 `<pipeline>` 顶层字段（程序化阶段，如 setup）——phase 不是 trigger，无 condition/cost/content
+
+```json
+{
+  "id": "resolve_migration_triggers",
+  "specifies": "<ontology::action>",
+  "name": { "zh": "...", "en": "..." },
+  "description": { "zh": "...", "en": "..." },
+  "<ontology::content>": {
+    "<ontology::instant_content>": {
+      "options": [ ... ],
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+    }
+  }
+}
+```
+
+历史沿革（避免重蹈覆辙）：最初 action 用 `"type": "<ontology::event>"` + events[] 数组；后改为 `specifies <ontology::pipeline>` + 顶层 options；2026-08-08 一度给 trigger 加 `<pipeline>` 顶层字段，最终定稿为 **pipeline 收进 content.instant_content**——action/effect 是 trigger，执行内容必须在 content 槽位里。
+
+## 步骤的四种形态 ★
+
+options 的元素可以是：
+
+| 形态 | 写法 | 用途 |
+|---|---|---|
+| 操作步骤 | `{ "id", "name", "specifies": "<ontology::transfer/state_change/push_track/flip/play>", 字段... }` | 单事件直接执行；可带 `<ontology::condition>`（不成立则跳过） |
+| 条件步骤 | `{ "id", "name", "specifies": "<ontology::trigger>", "<ontology::condition>": {...}, "<ontology::content>": {...} }` | 需要判定 + 多个子步骤的复合步骤 |
+| 字符串引用 | `"<move_tribe>"` | 无参调用其他概念（action/trigger），do_after 引用时用 `"<move_tribe>"` 全形式 |
+| 子 pipeline | `{ "id", "name", "options": [...], "type": "..." }` | 内嵌步骤序列 |
+
+## do_after 语义 ★（2026-08-08 明确）
+
+**do_after 的前置项必须实际结算完毕**——前置步骤因 condition 不成立被跳过 = 未结算，依赖它的步骤不执行。
+
+- 因此「驱逐发生才虚弱」只需 `"do_after": ["displace_occupant"]`，**不要**再加「驱逐实际发生」类 condition——所有 pipeline 都这样写就没完没了
+- `_skip`（玩家显式选择不做）例外：选中时 do_after 链视为已完成，后续照常执行
+- 条件不成立 = 步骤自动跳过，等同「未结算」
 
 ## 三个原子
 
