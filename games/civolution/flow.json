@@ -372,7 +372,7 @@
                 "destination": "<module_area>",
                 "<ontology::object>": "<main_module>",
                 "quantity": 15,
-                "per_player": true
+                "<ontology::per_player>": true
               },
               {
                 "id": "player_setup_dice",
@@ -389,7 +389,7 @@
                 "destination": "<activation_dice_area>",
                 "<ontology::object>": "<activation_die>",
                 "quantity": 6,
-                "per_player": true
+                "<ontology::per_player>": true
               },
               {
                 "id": "player_setup_fate_die",
@@ -406,7 +406,7 @@
                 "destination": "<fate_dice_area>",
                 "<ontology::object>": "<fate_die>",
                 "quantity": 1,
-                "per_player": true
+                "<ontology::per_player>": true
               },
               {
                 "id": "player_setup_stage_tiles",
@@ -423,7 +423,7 @@
                 "destination": "<console>",
                 "<ontology::object>": "<stage_tile>",
                 "quantity": 2,
-                "per_player": true
+                "<ontology::per_player>": true
               },
               {
                 "id": "player_setup_buildings",
@@ -447,7 +447,7 @@
                       "destination": "<console>",
                       "<ontology::object>": "<settlement> | <farm> | <boat>",
                       "quantity": "all",
-                      "per_player": true
+                      "<ontology::per_player>": true
                     }
                   },
                   {
@@ -464,7 +464,7 @@
                       "destination": "<boat>",
                       "<ontology::object>": "<marker>",
                       "quantity": 2,
-                      "per_player": true
+                      "<ontology::per_player>": true
                     }
                   }
                 ],
@@ -492,7 +492,7 @@
                       "destination": "<score_track>",
                       "<ontology::object>": "<score_marker>",
                       "quantity": 1,
-                      "per_player": true
+                      "<ontology::per_player>": true
                     }
                   },
                   {
@@ -506,7 +506,7 @@
                       "destination": "<favor_of_ager_track>",
                       "<ontology::object>": "<favor_marker>",
                       "quantity": 1,
-                      "per_player": true
+                      "<ontology::per_player>": true
                     }
                   },
                   {
@@ -529,7 +529,7 @@
                       },
                       "<ontology::object>": "<progress_marker>",
                       "quantity": 1,
-                      "per_player": true
+                      "<ontology::per_player>": true
                     }
                   }
                 ],
@@ -554,7 +554,7 @@
                 "destination": "<continent>",
                 "<ontology::object>": "<tribe>",
                 "quantity": 2,
-                "per_player": true,
+                "<ontology::per_player>": true,
                 "do_after": [
                   "assemble_public_board"
                 ]
@@ -574,7 +574,7 @@
                 "destination": "<continent> | <console>",
                 "<ontology::object>": "<marker>",
                 "quantity": 6,
-                "per_player": true,
+                "<ontology::per_player>": true,
                 "do_after": [
                   "assemble_public_board"
                 ]
@@ -634,7 +634,7 @@
                       "destination": "<ontology::player_holding>",
                       "<ontology::object>": "<starting_marker_card>",
                       "quantity": 3,
-                      "per_player": true,
+                      "<ontology::per_player>": true,
                       "description": {
                         "zh": "每位玩家从洗好的初始标记牌堆顶部抽 3 张，秘密检视后选 1 张。",
                         "en": "Each player draws 3 starting marker cards from the top of the shuffled deck, inspects them secretly, and chooses 1."
@@ -655,7 +655,7 @@
                       "destination": "<console>",
                       "<ontology::object>": "<marker>",
                       "quantity": "按所选标记牌指示的数量与位置",
-                      "per_player": true,
+                      "<ontology::per_player>": true,
                       "description": {
                         "zh": "按所选初始标记牌的指示，从供应堆取对应数量的标记放到控制台对应空格。",
                         "en": "Take the number of markers indicated by the chosen starting marker card from supply and place them on the corresponding console spaces."
@@ -678,7 +678,7 @@
                       "quantity": {
                         "expr": "player_count * 3"
                       },
-                      "per_player": true,
+                      "<ontology::per_player>": true,
                       "description": {
                         "zh": "3 张初始标记牌全部放回盒子。",
                         "en": "Return all 3 starting marker cards to the game box."
@@ -752,7 +752,7 @@
                     "do_after": [
                       "attach_goal_chips"
                     ],
-                    "per_player": true,
+                    "<ontology::per_player>": true,
                     "description": {
                       "zh": "从起始玩家右手边玩家开始逆时针，每位玩家轮着选择一张展示的初始芯片牌（牌连同其上的目标芯片一起选走）。",
                       "en": "Starting with the player right of the starting player and going counter-clockwise, each player in turn drafts one revealed starting chip card (card and its goal chip taken together)."
@@ -859,7 +859,7 @@
                         "zh": "每个研究牌堆各抽 2 张（5 堆共 10 张）。",
                         "en": "2 from each of the 5 research decks (10 total)."
                       },
-                      "per_player": true,
+                      "<ontology::per_player>": true,
                       "description": {
                         "zh": "每位玩家从每个研究牌堆的顶部各抽 2 张。",
                         "en": "Each player draws 2 cards from the top of each of the 5 research decks."
@@ -894,7 +894,7 @@
                       "destination": "<research_deck>",
                       "<ontology::object>": "<research_card>",
                       "quantity": 5,
-                      "per_player": true,
+                      "<ontology::per_player>": true,
                       "description": {
                         "zh": "将未选中的 5 张研究牌（每种 1 张）面朝下放回各自来源牌堆底部。",
                         "en": "Return the 5 unchosen research cards (1 per type) face down to the bottoms of their respective source decks."

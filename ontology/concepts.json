@@ -479,6 +479,23 @@
       }
     },
     {
+      "id": "per_player",
+      "extends": "<property>",
+      "name": {
+        "zh": "按玩家执行",
+        "en": "Per Player"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "标识一个 <event> 是否为每位 <ontology::player> 各执行一次——程序化分发，不重视排他性和行动顺序（如 setup 中每位玩家各获得自己的组件）。domain 为事件类概念（<transfer>、<play>、<state_change> 等），任何事件都可挂载。若场景强调行动顺序（必须按座次依次操作、一次只能一人操作），应改用流程树的 <round> + <turn> 结构而非此属性。",
+        "en": "Marks an <event> as executing once for each <ontology::player> — programmatic distribution, without emphasis on exclusivity or turn order (e.g., each player receiving their own components during setup). Domain is event concepts (<transfer>, <play>, <state_change>, etc.); any event may carry it. If strict turn order is required (players act one at a time in seating order), use the <round> + <turn> structure of the flow tree instead of this property."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
       "id": "ownership",
       "extends": "<state>",
       "name": {
