@@ -1078,8 +1078,8 @@
       },
       "abstract": true,
       "description": {
-        "zh": "从隐藏集合中抽取 <object> 的抽象概念——抽取前对象不可见，与 <transfer>（移动已知对象）相对。具体抽取规则由子类决定：<draw_from_deck> 从 <deck> 顶部抽取（位置规则确定，顶牌未知）；<draw_from_pool> 从 <pool>（袋）中随机盲抽。游戏层不直接使用本概念。",
-        "en": "The abstract concept of drawing an <object> from a hidden collection — the object is unseen before drawing, as opposed to <transfer> (moving a known object). The concrete drawing rule is determined by the subclass: <draw_from_deck> draws from the top of a <deck> (deterministic position, unseen card); <draw_from_pool> blindly draws at random from a <pool> (bag). Game files do not use this concept directly."
+        "zh": "从隐藏集合中抽取 <object> 的抽象概念——抽取前对象不可见，与 <transfer>（移动已知对象）相对。具体抽取规则由子类决定：<top_draw> 从 <deck> 顶部抽（位置规则确定，顶牌未知）；<random_draw> 从 <pool>（袋）中随机抽。游戏层不直接使用本概念。",
+        "en": "The abstract concept of drawing an <object> from a hidden collection — the object is unseen before drawing, as opposed to <transfer> (moving a known object). The concrete drawing rule is determined by the subclass: <top_draw> draws from the top of a <deck> (deterministic position, unseen card); <random_draw> draws blindly at random from a <pool> (bag). Game files do not use this concept directly."
       },
       "constraints": {
         "required": [
@@ -1118,15 +1118,15 @@
       }
     },
     {
-      "id": "draw_from_deck",
+      "id": "top_draw",
       "extends": "<draw>",
       "name": {
-        "zh": "牌堆抽取",
-        "en": "Draw from Deck"
+        "zh": "抽顶",
+        "en": "Top Draw"
       },
       "abstract": false,
       "description": {
-        "zh": "从 <deck> 的顶部抽取最上面 1 张（或指定数量）——抽取位置规则确定（顶部），但顶牌在抽取前未知。用于翻牌、发牌、暗面抽牌等场景。",
+        "zh": "从 <deck> 的顶部抽最上面 1 张（或指定数量）——抽取位置规则确定（顶部），但顶牌在抽取前未知。用于翻牌、发牌、暗面抽牌等场景。",
         "en": "Draw the top 1 card (or a given quantity) from a <deck> — the draw position is deterministic (the top), but the top card is unseen until drawn. Used for revealing cards, dealing, blind draws, etc."
       },
       "constraints": {
@@ -1135,16 +1135,16 @@
       }
     },
     {
-      "id": "draw_from_pool",
+      "id": "random_draw",
       "extends": "<draw>",
       "name": {
-        "zh": "盲抽",
-        "en": "Blind Draw from Pool"
+        "zh": "随机抽",
+        "en": "Random Draw"
       },
       "abstract": false,
       "description": {
-        "zh": "从 <pool>（袋子等）中随机盲抽 <object>——完全随机，抽取前对象不可见。用于抽袋（芯片、指示物）等场景。",
-        "en": "Blindly draw an <object> at random from a <pool> (bag, etc.) — completely random, the object is unseen before drawing. Used for bag draws (chips, tokens), etc."
+        "zh": "从 <pool>（袋子等）中随机抽 <object>——完全随机，抽取前对象不可见。用于抽袋（芯片、指示物）等场景。",
+        "en": "Draw an <object> at random from a <pool> (bag, etc.) — completely random, the object is unseen before drawing. Used for bag draws (chips, tokens), etc."
       },
       "constraints": {
         "required": [],

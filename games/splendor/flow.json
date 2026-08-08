@@ -160,7 +160,7 @@
                   "zh": "发放贵族板块",
                   "en": "Deal Nobles"
                 },
-                "specifies": "<ontology::draw_from_pool>",
+                "specifies": "<ontology::random_draw>",
                 "description": {
                   "zh": "从游戏盒中随机盲抽 player_count + 1 枚贵族板块，放入贵族市场。",
                   "en": "Blindly draw player_count + 1 noble tiles from the game box and place them into the noble market."
@@ -469,7 +469,7 @@
                     "zh": "暗面保留",
                     "en": "Reserve Blindly"
                   },
-                  "<ontology::draw_from_deck>": {
+                  "<ontology::top_draw>": {
                     "description": {
                       "zh": "暗面保留：从某一等级 <development_deck> 的顶部盲抽最上面 1 张 <development_card>（事先不知道是哪张）移入 <hand>。",
                       "en": "Reserve blindly: draw the top 1 <development_card> of a level's <development_deck> (sight unseen) and move it into <hand>."
@@ -546,7 +546,7 @@
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "<ontology::draw_from_deck>": {
+          "<ontology::top_draw>": {
             "description": {
               "zh": "从对应等级 <development_deck> 顶部盲抽 1 张补入 <card_market> 空位。",
               "en": "Draw 1 card blindly from the top of the corresponding level's <development_deck> into the empty <card_market> slot."
