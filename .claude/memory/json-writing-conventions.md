@@ -104,6 +104,24 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 
 ---
 
+## Transfer 的 `<ontology::object>` 两种形式 ★（2026-08-08）
+
+1. **纯引用字符串**：`"<ontology::object>": "<event_card>"`
+2. **带属性设定的对象**（概念 ID 做 key + 属性值）：对象以该属性状态进入 destination，与 `parts` 的写法一致：
+
+```json
+// 正确：以背面朝上状态放置
+"<ontology::object>": { "<event_card>": { "face": "face_down" } }
+
+// 错误：游离的 face_down 字段（transfer 概念无此字段）
+"<ontology::object>": "<event_card>",
+"face_down": true
+```
+
+对象属性（face、level 等 piece 状态）统一挂在对象引用上，不新增游离字段。
+
+---
+
 ## 支付 destination 的语义区分
 
 - **激活骰支付**（模块激活费用）：`source: <activation_dice_area>` → `destination: <player_holding>`——激活骰属于玩家，支付后放回玩家保留区（重置时拿回），**不写 `<ontology::supply>`**（那是公共版图供应堆，会造成误解）

@@ -63,9 +63,12 @@
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<continent>",
-                "<ontology::object>": "<site>",
+                "<ontology::object>": {
+                  "<site>": {
+                    "face": "face_down"
+                  }
+                },
                 "quantity": 24,
-                "face_down": true,
                 "do_after": [
                   "assemble_public_board"
                 ]
@@ -140,9 +143,12 @@
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<event_card_space>",
-                "<ontology::object>": "<event_card>",
-                "quantity": 4,
-                "face_down": true
+                "<ontology::object>": {
+                  "<event_card>": {
+                    "face": "face_down"
+                  }
+                },
+                "quantity": 4
               },
               {
                 "id": "prepare_research_decks",

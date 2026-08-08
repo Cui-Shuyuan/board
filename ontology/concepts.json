@@ -1044,8 +1044,8 @@
           {
             "id": "<object>",
             "description": {
-              "zh": "被移动的 <object>。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。",
-              "en": "The <object> being moved. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon."
+              "zh": "被移动的 <object>。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。两种形式：① 纯引用字符串（如 \"<event_card>\"）；② 带属性设定的对象——概念 ID 做 key、值为属性设定，转移后对象以该属性状态进入 destination（如 { \"<event_card>\": { \"face\": \"face_down\" } } 表示以背面朝上状态放置）。与 <piece>.parts 的属性写法一致。",
+              "en": "The <object> being moved. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon. Two forms: ① a plain reference string (e.g. \"<event_card>\"); ② an object with attribute settings — the concept id as key and the attribute values as its value; the object enters the destination in that attribute state (e.g. { \"<event_card>\": { \"face\": \"face_down\" } } means placed face down). Same attribute syntax as <piece>.parts."
             }
           }
         ],
