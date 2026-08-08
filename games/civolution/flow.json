@@ -697,17 +697,141 @@
                   "zh": "轮抽初始芯片牌",
                   "en": "Draft Starting Chip Cards"
                 },
-                "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "翻开玩家数量 +1 张初始芯片牌，每张贴一张目标芯片；从起始玩家右手边玩家开始逆时针选一张，将目标芯片放入目标区，模组翻面至等级二，牌塞入收入区成为首个收入芯片。",
-                  "en": "Reveal player_count + 1 starting chip cards, each with a goal chip; draft them counter-clockwise, place goal chip, upgrade module, and slide card under console as first income chip."
+                  "zh": "翻开玩家数量 +1 张初始芯片牌，每张牌上放置一枚目标芯片（牌与芯片绑定，必须一起选走）；从起始玩家右手边玩家开始逆时针轮抽，每位玩家选一张牌：将其上的目标芯片放入目标区、将牌中三分之一记录的模组升级至等级二、最后将牌塞入收入区成为首个收入芯片。",
+                  "en": "Reveal player_count + 1 starting chip cards and place a goal chip on each (card and chip are bound — drafted together); starting with the player right of the starting player and going counter-clockwise, each player drafts 1 card: place its goal chip into the goal area, upgrade the module shown on the card's middle third to level 2, and finally slide the card into the income area as the first income chip."
                 },
-                "source": "<starting_chip_deck>",
-                "destination": "<income_area>",
-                "<ontology::object>": "<starting_chip_card>",
-                "quantity": {
-                  "expr": "player_count"
-                },
+                "options": [
+                  {
+                    "id": "reveal_cards",
+                    "name": {
+                      "zh": "翻牌",
+                      "en": "Reveal Cards"
+                    },
+                    "<ontology::top_draw>": {
+                      "source": "<starting_chip_deck>",
+                      "destination": "桌面展示区（轮抽区）",
+                      "<ontology::object>": "<starting_chip_card>",
+                      "quantity": {
+                        "expr": "player_count + 1"
+                      },
+                      "description": {
+                        "zh": "从洗好的初始芯片牌堆顶部翻开玩家数量 +1 张，正面朝上展示。",
+                        "en": "Reveal player_count + 1 starting chip cards from the top of the shuffled deck, face up."
+                      }
+                    }
+                  },
+                  {
+                    "id": "attach_goal_chips",
+                    "name": {
+                      "zh": "放置目标芯片",
+                      "en": "Attach Goal Chips"
+                    },
+                    "do_after": [
+                      "reveal_cards"
+                    ],
+                    "<ontology::random_draw>": {
+                      "source": "<goal_chip_bag>",
+                      "destination": "每张翻开的<starting_chip_card>上（其<starting_chip_zone>）",
+                      "<ontology::object>": "<goal_chip>",
+                      "quantity": {
+                        "expr": "player_count + 1"
+                      },
+                      "description": {
+                        "zh": "从深蓝袋盲抽目标芯片，在每张翻开的初始芯片牌上各放一枚。所有牌都放好芯片后才开始轮抽。",
+                        "en": "Blindly draw goal chips from the dark blue bag and place one on each revealed starting chip card. Drafting starts only after every card has its chip."
+                      }
+                    }
+                  },
+                  {
+                    "id": "draft_round",
+                    "name": {
+                      "zh": "轮抽",
+                      "en": "Draft Round"
+                    },
+                    "do_after": [
+                      "attach_goal_chips"
+                    ],
+                    "per_player": true,
+                    "description": {
+                      "zh": "从起始玩家右手边玩家开始逆时针，每位玩家轮着选择一张展示的初始芯片牌（牌连同其上的目标芯片一起选走）。",
+                      "en": "Starting with the player right of the starting player and going counter-clockwise, each player in turn drafts one revealed starting chip card (card and its goal chip taken together)."
+                    },
+                    "options": [
+                      {
+                        "id": "choose_card",
+                        "name": {
+                          "zh": "选择牌",
+                          "en": "Choose Card"
+                        },
+                        "description": {
+                          "zh": "从展示的初始芯片牌中选一张（连同其上的目标芯片）。",
+                          "en": "Choose one revealed starting chip card (with its goal chip)."
+                        }
+                      },
+                      {
+                        "id": "place_goal_chip",
+                        "name": {
+                          "zh": "目标芯片入目标区",
+                          "en": "Place Goal Chip"
+                        },
+                        "do_after": [
+                          "choose_card"
+                        ],
+                        "<ontology::transfer>": {
+                          "source": "选中的<starting_chip_card>上的<goal_chip>",
+                          "destination": "<goal_area>",
+                          "<ontology::object>": "<goal_chip>",
+                          "quantity": 1,
+                          "description": {
+                            "zh": "将选中的牌上的目标芯片正面朝上放入目标区。",
+                            "en": "Place the goal chip from the chosen card face up into the goal area."
+                          }
+                        }
+                      },
+                      {
+                        "id": "upgrade_module",
+                        "name": {
+                          "zh": "升级模组",
+                          "en": "Upgrade Module"
+                        },
+                        "do_after": [
+                          "place_goal_chip"
+                        ],
+                        "<ontology::state_change>": {
+                          "subject": "选中的<starting_chip_card>中三分之一记录的模组",
+                          "attribute": "level",
+                          "to": 2,
+                          "description": {
+                            "zh": "将牌中三分之一记录的模组升级至等级二（翻面）——玩家的首个升级模组。",
+                            "en": "Upgrade the module shown on the card's middle third to level 2 (flip it) — the player's first upgraded module."
+                          }
+                        }
+                      },
+                      {
+                        "id": "install_card",
+                        "name": {
+                          "zh": "安装牌",
+                          "en": "Install Card"
+                        },
+                        "do_after": [
+                          "upgrade_module"
+                        ],
+                        "<ontology::play>": {
+                          "source": "选中的<starting_chip_card>",
+                          "destination": "<income_area>",
+                          "<ontology::piece>": "<starting_chip_card>",
+                          "description": {
+                            "zh": "将牌塞入收入区成为首个收入芯片（上三分之一露出，即其 <income_chip> 部分，激活收入芯片时可选）。",
+                            "en": "Slide the card into the income area as the first income chip (the top third — its <income_chip> part — is revealed and selectable when activating income chips)."
+                          }
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
                 "do_after": [
                   "prepare_starting_decks",
                   "choose_starting_player"
