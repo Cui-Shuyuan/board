@@ -996,43 +996,56 @@
               "<ontology::pipeline>": {
                 "options": [
                   {
-                    "id": "choose_goal_chip",
+                    "id": "goal_choice_round",
                     "name": {
-                      "zh": "选择目标芯片",
-                      "en": "Choose Goal Chip"
+                      "zh": "目标芯片选择轮",
+                      "en": "Goal Chip Choice Round"
                     },
-                    "per_player": true,
+                    "specifies": "<ontology::round>",
                     "description": {
-                      "zh": "从起始玩家开始顺时针，每位玩家可选择从展示区拿取一枚目标芯片（可放弃）。",
-                      "en": "In seating order starting with the starting player and going clockwise, each player may take one goal chip from the display (or decline)."
+                      "zh": "一轮选择：每位玩家一个 turn，从起始玩家开始顺时针轮流。",
+                      "en": "One choice round: one turn per player, starting with the starting player and going clockwise."
                     },
-                    "options": [
+                    "children": [
                       {
-                        "id": "_skip",
-                        "description": {
-                          "zh": "放弃（跳过此项）",
-                          "en": "Decline (skip)"
-                        }
-                      },
-                      {
-                        "id": "take_goal_chip",
+                        "id": "player_goal_turn",
                         "name": {
-                          "zh": "拿取目标芯片",
-                          "en": "Take Goal Chip"
+                          "zh": "玩家选择回合",
+                          "en": "Player Goal Turn"
                         },
-                        "<ontology::transfer>": {
-                          "source": "<goal_chip_display>",
-                          "destination": "<goal_area>",
-                          "<ontology::object>": "<goal_chip>",
-                          "quantity": 1,
-                          "description": {
-                            "zh": "从展示区拿 1 枚目标芯片正面朝上放入目标区；目标区 3 格已满时叠放在任意 1 枚已有目标芯片上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。",
-                            "en": "Take 1 goal chip from the display and place it face up in the goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it (the covered chip is unusable until the chip on top is installed)."
-                          }
+                        "specifies": "<ontology::turn>",
+                        "actor": "next_player_in_turn_order",
+                        "<ontology::pipeline>": {
+                          "options": [
+                            {
+                              "id": "_skip",
+                              "description": {
+                                "zh": "放弃（跳过此项）",
+                                "en": "Decline (skip)"
+                              }
+                            },
+                            {
+                              "id": "take_goal_chip",
+                              "name": {
+                                "zh": "拿取目标芯片",
+                                "en": "Take Goal Chip"
+                              },
+                              "<ontology::transfer>": {
+                                "source": "<goal_chip_display>",
+                                "destination": "<goal_area>",
+                                "<ontology::object>": "<goal_chip>",
+                                "quantity": 1,
+                                "description": {
+                                  "zh": "从展示区拿 1 枚目标芯片正面朝上放入目标区；目标区 3 格已满时叠放在任意 1 枚已有目标芯片上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。",
+                                  "en": "Take 1 goal chip from the display and place it face up in the goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it (the covered chip is unusable until the chip on top is installed)."
+                                }
+                              }
+                            }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
                         }
                       }
-                    ],
-                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                    ]
                   },
                   {
                     "id": "refill_goal_display",
@@ -1041,7 +1054,7 @@
                       "en": "Refill Display"
                     },
                     "do_after": [
-                      "choose_goal_chip"
+                      "goal_choice_round"
                     ],
                     "<ontology::random_draw>": {
                       "source": "<goal_chip_bag>",
