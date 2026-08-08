@@ -749,83 +749,96 @@
                       "zh": "轮抽",
                       "en": "Draft Round"
                     },
+                    "specifies": "<ontology::round>",
                     "do_after": [
                       "attach_goal_chips"
                     ],
-                    "<ontology::per_player>": true,
                     "description": {
-                      "zh": "从起始玩家右手边玩家开始逆时针，每位玩家轮着选择一张展示的初始芯片牌（牌连同其上的目标芯片一起选走）。",
-                      "en": "Starting with the player right of the starting player and going counter-clockwise, each player in turn drafts one revealed starting chip card (card and its goal chip taken together)."
+                      "zh": "一轮轮抽：每位玩家一个 turn，从起始玩家右手边玩家开始逆时针依次选择一张展示的初始芯片牌（牌连同其上的目标芯片一起选走）。",
+                      "en": "One draft round: one turn per player, starting with the player right of the starting player and going counter-clockwise; each player drafts one revealed starting chip card (card and its goal chip taken together)."
                     },
-                    "options": [
+                    "children": [
                       {
-                        "id": "choose_card",
+                        "id": "player_draft_turn",
                         "name": {
-                          "zh": "选择牌",
-                          "en": "Choose Card"
+                          "zh": "玩家轮抽回合",
+                          "en": "Player Draft Turn"
                         },
-                        "description": {
-                          "zh": "从展示的初始芯片牌中选一张（连同其上的目标芯片）。",
-                          "en": "Choose one revealed starting chip card (with its goal chip)."
-                        }
-                      },
-                      {
-                        "id": "place_goal_chip",
-                        "name": {
-                          "zh": "目标芯片入目标区",
-                          "en": "Place Goal Chip"
-                        },
-                        "do_after": [
-                          "choose_card"
-                        ],
-                        "<ontology::transfer>": {
-                          "source": "选中的<starting_chip_card>上的<goal_chip>",
-                          "destination": "<goal_area>",
-                          "<ontology::object>": "<goal_chip>",
-                          "quantity": 1,
-                          "description": {
-                            "zh": "将选中的牌上的目标芯片正面朝上放入目标区。",
-                            "en": "Place the goal chip from the chosen card face up into the goal area."
-                          }
-                        }
-                      },
-                      {
-                        "id": "upgrade_module",
-                        "name": {
-                          "zh": "升级模组",
-                          "en": "Upgrade Module"
-                        },
-                        "do_after": [
-                          "place_goal_chip"
-                        ],
-                        "<ontology::state_change>": {
-                          "subject": "选中的<starting_chip_card>中三分之一记录的模组",
-                          "attribute": "level",
-                          "to": 2,
-                          "description": {
-                            "zh": "将牌中三分之一记录的模组升级至等级二（翻面）——玩家的首个升级模组。",
-                            "en": "Upgrade the module shown on the card's middle third to level 2 (flip it) — the player's first upgraded module."
-                          }
-                        }
-                      },
-                      {
-                        "id": "install_card",
-                        "name": {
-                          "zh": "安装牌",
-                          "en": "Install Card"
-                        },
-                        "do_after": [
-                          "upgrade_module"
-                        ],
-                        "<install_starting_chip_card>": {
-                          "description": {
-                            "zh": "将选中的初始芯片牌塞入收入区成为首个收入芯片。",
-                            "en": "Slide the chosen starting chip card into the income area as the first income chip."
-                          }
+                        "specifies": "<ontology::turn>",
+                        "actor": "next_player_in_turn_order",
+                        "<ontology::pipeline>": {
+                          "options": [
+                            {
+                              "id": "choose_card",
+                              "name": {
+                                "zh": "选择牌",
+                                "en": "Choose Card"
+                              },
+                              "description": {
+                                "zh": "从展示的初始芯片牌中选一张（连同其上的目标芯片）。",
+                                "en": "Choose one revealed starting chip card (with its goal chip)."
+                              }
+                            },
+                            {
+                              "id": "place_goal_chip",
+                              "name": {
+                                "zh": "目标芯片入目标区",
+                                "en": "Place Goal Chip"
+                              },
+                              "do_after": [
+                                "choose_card"
+                              ],
+                              "<ontology::transfer>": {
+                                "source": "选中的<starting_chip_card>上的<goal_chip>",
+                                "destination": "<goal_area>",
+                                "<ontology::object>": "<goal_chip>",
+                                "quantity": 1,
+                                "description": {
+                                  "zh": "将选中的牌上的目标芯片正面朝上放入目标区。",
+                                  "en": "Place the goal chip from the chosen card face up into the goal area."
+                                }
+                              }
+                            },
+                            {
+                              "id": "upgrade_module",
+                              "name": {
+                                "zh": "升级模组",
+                                "en": "Upgrade Module"
+                              },
+                              "do_after": [
+                                "place_goal_chip"
+                              ],
+                              "<ontology::state_change>": {
+                                "subject": "选中的<starting_chip_card>中三分之一记录的模组",
+                                "attribute": "level",
+                                "to": 2,
+                                "description": {
+                                  "zh": "将牌中三分之一记录的模组升级至等级二（翻面）——玩家的首个升级模组。",
+                                  "en": "Upgrade the module shown on the card's middle third to level 2 (flip it) — the player's first upgraded module."
+                                }
+                              }
+                            },
+                            {
+                              "id": "install_card",
+                              "name": {
+                                "zh": "安装牌",
+                                "en": "Install Card"
+                              },
+                              "do_after": [
+                                "upgrade_module"
+                              ],
+                              "<install_starting_chip_card>": {
+                                "description": {
+                                  "zh": "将选中的初始芯片牌塞入收入区成为首个收入芯片。",
+                                  "en": "Slide the chosen starting chip card into the income area as the first income chip."
+                                }
+                              }
+                            }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                         }
                       }
-                    ],
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    ]
                   }
                 ],
                 "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
