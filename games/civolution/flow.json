@@ -620,14 +620,14 @@
                 },
                 "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得上面标记，其余放回盒子。",
-                  "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers, returns the rest to the box."
+                  "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得其上的标记（按标记牌指示放置标记），随后 3 张初始标记牌全部放回盒子。",
+                  "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers (placing markers as the card indicates), then returns all 3 starting marker cards to the game box."
                 },
                 "source": "<starting_marker_deck>",
                 "destination": "<ontology::game_box>",
                 "<ontology::object>": "<starting_marker_card>",
                 "quantity": {
-                  "expr": "player_count * 2"
+                  "expr": "player_count * 3"
                 },
                 "do_after": [
                   "prepare_starting_decks"
