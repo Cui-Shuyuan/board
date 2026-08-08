@@ -1076,10 +1076,78 @@
             },
             {
               "id": "phase_3_extra_find",
+              "name": {
+                "zh": "阶段三：额外收获",
+                "en": "Phase 3: Extra Find"
+              },
               "specifies": "<ontology::phase>",
               "description": {
-                "zh": "阶段三：额外收获。从起始玩家开始顺时针，每位玩家选择一个有自己部落的区域，从该区域可产出的三种材料中选择一种获得一个，放入对应仓库。",
-                "en": "Phase 3: Extra Harvest. Starting with the start player and going clockwise, each player chooses a territory containing their tribe, selects one of the three materials it produces, and gains one into the corresponding storage."
+                "zh": "阶段三：额外收获。按座次（起始玩家开始顺时针），每位玩家选择 1 个有至少一个自己 <tribe> 的陆地区域，从供应堆取 1 个标记作为 <stored_material> 放到仓库中与所选区域地形类型对应的存储格。只按区域地形类型匹配，与材料板块印的具体材料无关。",
+                "en": "Phase 3: Extra Find. In seating order (starting player then clockwise), each player chooses 1 land territory where they have at least one <tribe>, takes 1 marker from supply as a <stored_material>, and places it on a storage space matching the chosen territory's terrain type. Only the territory type matters, not the material depicted on the material tile."
+              },
+              "<ontology::pipeline>": {
+                "options": [
+                  {
+                    "id": "extra_find_round",
+                    "name": {
+                      "zh": "额外收获轮",
+                      "en": "Extra Find Round"
+                    },
+                    "specifies": "<ontology::round>",
+                    "description": {
+                      "zh": "一轮额外收获：每位玩家一个 turn，从起始玩家开始顺时针（按座次）。",
+                      "en": "One extra-find round: one turn per player, starting with the starting player and going clockwise (seating order)."
+                    },
+                    "children": [
+                      {
+                        "id": "player_extra_find_turn",
+                        "name": {
+                          "zh": "玩家收获回合",
+                          "en": "Player Extra Find Turn"
+                        },
+                        "specifies": "<ontology::turn>",
+                        "actor": "next_player_in_turn_order",
+                        "<ontology::pipeline>": {
+                          "options": [
+                            {
+                              "id": "choose_territory",
+                              "name": {
+                                "zh": "选择区域",
+                                "en": "Choose Territory"
+                              },
+                              "description": {
+                                "zh": "选择一个有至少一个自己 <tribe> 的陆地区域。",
+                                "en": "Choose a land territory where you have at least one <tribe>."
+                              }
+                            },
+                            {
+                              "id": "gain_material",
+                              "name": {
+                                "zh": "获得材料",
+                                "en": "Gain Material"
+                              },
+                              "do_after": [
+                                "choose_territory"
+                              ],
+                              "<ontology::transfer>": {
+                                "source": "<ontology::supply>",
+                                "destination": "<storage_area>",
+                                "<ontology::object>": "<octagonal_pillar>",
+                                "quantity": 1,
+                                "description": {
+                                  "zh": "从供应堆取 1 个标记作为 <stored_material>，放到仓库中与所选区域地形类型对应的存储格（该类型的 3 个存储格任选其一）——只按区域地形类型匹配，与材料板块印的具体材料无关。",
+                                  "en": "Take 1 marker from supply as a <stored_material> and place it on a storage space matching the chosen territory's terrain type (any of that type's 3 storage spaces) — only the territory type matters, not the material depicted on the material tile."
+                                }
+                              }
+                            }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
               }
             },
             {
