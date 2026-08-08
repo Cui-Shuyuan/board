@@ -999,9 +999,12 @@
       },
       "abstract": false,
       "description": {
-        "zh": "设置阶段使用的 <ontology::card>，记录玩家初始可获得的标记。设置完成后放回盒子。",
-        "en": "A <ontology::card> used during setup indicating which markers a player starts with. Returned to the box after setup."
+        "zh": "设置阶段使用的 <ontology::card>。上三分之一是一块 <income_chip>——安装后露出，激活收入芯片时可以选择它；牌面指示玩家初始获得的标记（按指示放置标记）。安装方式与研究牌相同，但位置固定：只能安装到 <stage_partition> 的层级 3、第 9 列。",
+        "en": "A <ontology::card> used during setup. Its top third is an <income_chip> — revealed after installation, selectable when activating income chips; the card indicates which markers a player starts with (placed per the indication). Installed like a research card, but at a fixed position: tier 3, column 9 of the <stage_partition>."
       },
+      "parts": [
+        "<income_chip>"
+      ],
       "media": {
         "component": [
           "assets/components/page-04/starting_marker_card.png"
