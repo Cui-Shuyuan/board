@@ -1144,19 +1144,11 @@
         "required": [],
         "optional": [
           {
-            "id": "<pipeline>",
-            "default": null,
-            "description": {
-              "zh": "本 trigger 被激活后执行的步骤序列（options / type / do_after 结构）。<action> 和 <effect> 均 specifies trigger——三者共享同一执行结构：condition → cost → target → (<content> | <pipeline>)。一个 trigger 需要触发多个事件（如先转移再得分、或分支选择）时用 <pipeline> 表达；<content> 表达单个效果（<instant_content> 一次执行 / <continuous_content> 电平维持）。",
-              "en": "The step sequence executed when this trigger is activated (options / type / do_after structure). <action> and <effect> both specify trigger — all three share the same execution structure: condition → cost → target → (<content> | <pipeline>). Use <pipeline> when one trigger causes multiple events (e.g. transfer then scoring, or branching); <content> expresses a single effect (<instant_content> one-shot / <continuous_content> level-hold)."
-            }
-          },
-          {
             "id": "<condition>",
             "default": null,
             "description": {
-              "zh": "触发门槛——对 <state> 的谓词，按边沿评估。",
-              "en": "The firing gate — a predicate over <state>, evaluated on the edge."
+              "zh": "触发门槛——对 <state> 的谓词，按边沿评估。也是本 trigger 的 <content>（含 pipeline）能被执行的总体条件。",
+              "en": "The firing gate — a predicate over <state>, evaluated on the edge. It is also the overall precondition for the trigger's <content> (including its pipeline) to execute."
             }
           },
           {
@@ -1171,8 +1163,8 @@
             "id": "<content>",
             "default": null,
             "description": {
-              "zh": "代价支付后由 <resolve> 结算的内容。含 <instant_content>、<continuous_content>、<effect> 三个独立字段。",
-              "en": "The content settled by <resolve> after cost payment. Contains three independent fields: <instant_content>, <continuous_content>, <effect>."
+              "zh": "代价支付后由 <resolve> 结算的内容。含 <instant_content>（一次执行）、<continuous_content>（电平维持）两个终结形态。<instant_content> 内部可以是 <pipeline>（options / type / do_after 步骤序列）——一个 trigger 触发多个事件（先转移再得分、分支选择等）时用 pipeline 表达，步骤可以是任意操作（<transfer>、<state_change>、<push_track> 等）或对其他概念的引用；<continuous_content> 表达光环类电平效果。",
+              "en": "The content settled by <resolve> after cost payment. Two terminal forms: <instant_content> (one-shot) and <continuous_content> (level-hold). <instant_content> may contain a <pipeline> (options / type / do_after step sequence) — used when one trigger causes multiple events (transfer then scoring, branching, etc.); steps can be any operation (<transfer>, <state_change>, <push_track>, etc.) or references to other concepts; <continuous_content> expresses aura-style level effects."
             }
           }
         ]

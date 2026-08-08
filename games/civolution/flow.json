@@ -974,35 +974,37 @@
       "<ontology::piece>": "<research_card>",
       "source": "<ontology::hand>",
       "destination": "<stage_partition>",
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "determine_position",
-            "name": {
-              "zh": "确定安装位置",
-              "en": "Determine Position"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "determine_position",
+              "name": {
+                "zh": "确定安装位置",
+                "en": "Determine Position"
+              },
+              "description": {
+                "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
+                "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
+              }
             },
-            "description": {
-              "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
-              "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
+            {
+              "id": "determine_cost_range",
+              "name": {
+                "zh": "确定费用范围",
+                "en": "Determine Cost Range"
+              },
+              "description": {
+                "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
+                "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
+              },
+              "do_after": [
+                "determine_position"
+              ]
             }
-          },
-          {
-            "id": "determine_cost_range",
-            "name": {
-              "zh": "确定费用范围",
-              "en": "Determine Cost Range"
-            },
-            "description": {
-              "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
-              "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
-            },
-            "do_after": [
-              "determine_position"
-            ]
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -1203,59 +1205,61 @@
         "zh": "获得 1 个收入芯片并触发其效果。",
         "en": "Gain 1 income chip and trigger its effect."
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "take_from_display",
-            "name": {
-              "zh": "从展示区拿取",
-              "en": "Take From Display"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_from_display",
+              "name": {
+                "zh": "从展示区拿取",
+                "en": "Take From Display"
+              },
+              "specifies": "<ontology::transfer>",
+              "source": "<income_chip_display>",
+              "destination": "<ontology::player_holding>",
+              "<ontology::object>": "<income_chip>",
+              "quantity": 1
             },
-            "specifies": "<ontology::transfer>",
-            "source": "<income_chip_display>",
-            "destination": "<ontology::player_holding>",
-            "<ontology::object>": "<income_chip>",
-            "quantity": 1
-          },
-          {
-            "id": "refill_display",
-            "name": {
-              "zh": "补满展示区",
-              "en": "Refill Display"
+            {
+              "id": "refill_display",
+              "name": {
+                "zh": "补满展示区",
+                "en": "Refill Display"
+              },
+              "specifies": "<ontology::transfer>",
+              "source": "<income_chip_bag>",
+              "destination": "<income_chip_display>",
+              "<ontology::object>": "<income_chip>",
+              "quantity": 1,
+              "do_after": [
+                "take_from_display"
+              ]
             },
-            "specifies": "<ontology::transfer>",
-            "source": "<income_chip_bag>",
-            "destination": "<income_chip_display>",
-            "<ontology::object>": "<income_chip>",
-            "quantity": 1,
-            "do_after": [
-              "take_from_display"
-            ]
-          },
-          {
-            "id": "install",
-            "name": {
-              "zh": "安装",
-              "en": "Install"
+            {
+              "id": "install",
+              "name": {
+                "zh": "安装",
+                "en": "Install"
+              },
+              "specifies": "<install_income_chip>",
+              "do_after": [
+                "refill_display"
+              ]
             },
-            "specifies": "<install_income_chip>",
-            "do_after": [
-              "refill_display"
-            ]
-          },
-          {
-            "id": "trigger_effect",
-            "name": {
-              "zh": "触发效果",
-              "en": "Trigger Effect"
-            },
-            "specifies": "<activate_income_chip>",
-            "do_after": [
-              "install"
-            ]
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            {
+              "id": "trigger_effect",
+              "name": {
+                "zh": "触发效果",
+                "en": "Trigger Effect"
+              },
+              "specifies": "<activate_income_chip>",
+              "do_after": [
+                "install"
+              ]
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -1313,100 +1317,92 @@
           }
         ]
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "displace_occupant",
-            "name": {
-              "zh": "驱赶到荒野",
-              "en": "Displace to Wilderness"
-            },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "目的地为陆地营地，且该营地已被其他<tribe>占据（无论自己或他人）。",
-              "en": "Destination is a land encampment occupied by another <tribe> (own or opponent's)."
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::transfer>": {
-                  "source": "this.destination.encampment",
-                  "destination": "this.destination.wilderness",
-                  "<ontology::object>": "<tribe>",
-                  "quantity": 1,
-                  "description": {
-                    "zh": "将占据营地的部落移至同一区域的野外（保留其站立/躺倒状态）。",
-                    "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
-                  }
-                }
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "displace_occupant",
+              "name": {
+                "zh": "驱赶到荒野",
+                "en": "Displace to Wilderness"
+              },
+              "specifies": "<ontology::transfer>",
+              "<ontology::condition>": {
+                "zh": "目的地为陆地营地，且该营地已被其他<tribe>占据（无论自己或他人）。",
+                "en": "Destination is a land encampment occupied by another <tribe> (own or opponent's)."
+              },
+              "source": "this.destination.encampment",
+              "destination": "this.destination.wilderness",
+              "<ontology::object>": "<tribe>",
+              "quantity": 1,
+              "description": {
+                "zh": "将占据营地的部落移至同一区域的野外（保留其站立/躺倒状态）。",
+                "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
               }
-            }
-          },
-          {
-            "id": "fire_encampment_score",
-            "name": {
-              "zh": "篝火营地得分",
-              "en": "Score Fire Encampment"
             },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "目的地营地是篝火营地（黄色边框）。",
-              "en": "The destination encampment is a fire encampment (yellow border)."
+            {
+              "id": "fire_encampment_score",
+              "name": {
+                "zh": "篝火营地得分",
+                "en": "Score Fire Encampment"
+              },
+              "specifies": "<ontology::push_track>",
+              "<ontology::condition>": {
+                "zh": "目的地营地是篝火营地（黄色边框）。",
+                "en": "The destination encampment is a fire encampment (yellow border)."
+              },
+              "<ontology::track>": "<score_track>",
+              "step": "营地所示分数"
             },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "description": {
-                  "zh": "获得营地所示分数，推进<score_track>。",
-                  "en": "Gain the points depicted on the encampment; advance <score_track>."
-                }
+            {
+              "id": "weaken",
+              "name": {
+                "zh": "变虚弱",
+                "en": "Weaken"
+              },
+              "specifies": "<ontology::state_change>",
+              "do_after": [
+                "displace_occupant"
+              ],
+              "subject": "this.migrating_tribe",
+              "attribute": "posture",
+              "to": "<lying>",
+              "description": {
+                "zh": "驱赶其他部落后，迁徙部落变虚弱。",
+                "en": "Migrating tribe becomes weak after displacing another tribe."
               }
-            }
-          },
-          {
-            "id": "weaken",
-            "name": {
-              "zh": "变虚弱",
-              "en": "Weaken"
             },
-            "specifies": "<ontology::trigger>",
-            "do_after": [
-              "displace_occupant"
-            ],
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::state_change>": {
-                  "subject": "this.migrating_tribe",
-                  "attribute": "posture",
-                  "to": "<lying>",
-                  "description": {
-                    "zh": "驱赶其他部落后，迁徙部落变虚弱。",
-                    "en": "Migrating tribe becomes weak after displacing another tribe."
-                  }
-                }
-              }
-            }
-          },
-          {
-            "id": "develop_territory",
-            "name": {
-              "zh": "开发领地",
-              "en": "Develop Territory"
-            },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "目的地不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
-              "en": "Destination is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "<ontology::flip>": {
+            {
+              "id": "develop_territory",
+              "name": {
+                "zh": "开发领地",
+                "en": "Develop Territory"
+              },
+              "specifies": "<ontology::trigger>",
+              "<ontology::condition>": {
+                "zh": "目的地不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
+                "en": "Destination is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
+              },
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "flip_material_tile",
+                      "name": {
+                        "zh": "翻开材料板块",
+                        "en": "Flip Material Tile"
+                      },
+                      "specifies": "<ontology::flip>",
                       "subject": "this.destination.<material_tile>",
                       "to": "face_up"
-                    }
-                  },
-                  {
-                    "<ontology::transfer>": {
+                    },
+                    {
+                      "id": "place_raw_material",
+                      "name": {
+                        "zh": "放置原材料标记",
+                        "en": "Place Raw Material Marker"
+                      },
+                      "specifies": "<ontology::transfer>",
                       "source": "<ontology::supply>",
                       "destination": "this.destination",
                       "<ontology::object>": "<octagonal_pillar>",
@@ -1416,14 +1412,14 @@
                         "en": "Place 1 octagonal pillar from supply onto the destination territory as a raw material marker."
                       }
                     }
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
               }
             }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -1438,32 +1434,34 @@
         "en": "1 migration: move the tribe to an adjacent territory, then the player decides whether to settle or continue the journey — settling resolves migration triggers; continuing (the same tribe will migrate again this activation) crosses through: no trigger resolution, no encampment entry, no fire encampment points, no territory development."
       },
       "target": "this.target",
-      "<pipeline>": {
-        "options": [
-          "<move_tribe>",
-          {
-            "do_after": [
-              "<move_tribe>"
-            ],
-            "options": [
-              {
-                "id": "_skip",
-                "description": {
-                  "zh": "继续旅程（穿越）：该部落本激活内将再次迁徙，本次不结算迁徙触发。",
-                  "en": "Continue the journey (cross through): this tribe will migrate again this activation; skip trigger resolution."
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<move_tribe>",
+            {
+              "do_after": [
+                "<move_tribe>"
+              ],
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "继续旅程（穿越）：该部落本激活内将再次迁徙，本次不结算迁徙触发。",
+                    "en": "Continue the journey (cross through): this tribe will migrate again this activation; skip trigger resolution."
+                  }
+                },
+                {
+                  "<resolve_migration_triggers>": {
+                    "migrating_tribe": "this.target.tribe",
+                    "destination": "this.target.destination"
+                  }
                 }
-              },
-              {
-                "<resolve_migration_triggers>": {
-                  "migrating_tribe": "this.target.tribe",
-                  "destination": "this.target.destination"
-                }
-              }
-            ],
-            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -1477,78 +1475,80 @@
         "zh": "获得 1 张研究牌：选择一种研究牌类型（建造/洞悉/突变/成就/发明），从该类型的<face_up_research_stack>顶或<research_deck>顶拿取 1 张<research_card>至手牌。拿取后若正面堆为空，自动从对应背面朝下堆翻一张补充。",
         "en": "Gain 1 research card: Choose a card type (Building/Insight/Mutation/Achievement/Invention), take the top <research_card> from that type's <face_up_research_stack> or <research_deck> to hand. If the face-up stack becomes empty, auto-refill from the corresponding face-down deck."
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "take_card",
-            "name": {
-              "zh": "拿取研究牌",
-              "en": "Take Research Card"
-            },
-            "options": [
-              {
-                "<ontology::transfer>": {
-                  "source": "<face_up_research_stack>",
-                  "destination": "<player_holding>",
-                  "<ontology::object>": "<research_card>",
-                  "quantity": 1,
-                  "description": {
-                    "zh": "从选定类型的正面朝上堆顶拿取 1 张<research_card>。",
-                    "en": "Take the top <research_card> from the chosen type's face-up stack."
-                  }
-                }
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_card",
+              "name": {
+                "zh": "拿取研究牌",
+                "en": "Take Research Card"
               },
-              {
-                "<ontology::transfer>": {
-                  "source": "<research_deck>",
-                  "destination": "<player_holding>",
-                  "<ontology::object>": "<research_card>",
-                  "quantity": 1,
-                  "description": {
-                    "zh": "从选定类型的背面朝下堆顶拿取 1 张<research_card>。",
-                    "en": "Take the top <research_card> from the chosen type's face-down deck."
-                  }
-                }
-              }
-            ],
-            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-          },
-          {
-            "id": "refill_if_empty",
-            "name": {
-              "zh": "补充正面堆（若空）",
-              "en": "Refill if Empty"
-            },
-            "do_after": [
-              "take_card"
-            ],
-            "<ontology::trigger>": {
-              "<ontology::condition>": {
-                "zh": "任意<face_up_research_stack>为空",
-                "en": "Any <face_up_research_stack> is empty"
-              },
-              "<ontology::content>": {
-                "<ontology::instant_content>": {
+              "options": [
+                {
                   "<ontology::transfer>": {
-                    "source": "<research_deck>",
-                    "destination": "<face_up_research_stack>",
+                    "source": "<face_up_research_stack>",
+                    "destination": "<player_holding>",
                     "<ontology::object>": "<research_card>",
                     "quantity": 1,
                     "description": {
-                      "zh": "从对应背面朝下堆翻一张补充到正面朝上堆。",
-                      "en": "Refill the face-up stack from the corresponding face-down deck."
+                      "zh": "从选定类型的正面朝上堆顶拿取 1 张<research_card>。",
+                      "en": "Take the top <research_card> from the chosen type's face-up stack."
+                    }
+                  }
+                },
+                {
+                  "<ontology::transfer>": {
+                    "source": "<research_deck>",
+                    "destination": "<player_holding>",
+                    "<ontology::object>": "<research_card>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从选定类型的背面朝下堆顶拿取 1 张<research_card>。",
+                      "en": "Take the top <research_card> from the chosen type's face-down deck."
                     }
                   }
                 }
-              },
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "refill_if_empty",
               "name": {
-                "zh": "补充正面堆",
-                "en": "Refill Face-Up Stack"
+                "zh": "补充正面堆（若空）",
+                "en": "Refill if Empty"
+              },
+              "do_after": [
+                "take_card"
+              ],
+              "<ontology::trigger>": {
+                "<ontology::condition>": {
+                  "zh": "任意<face_up_research_stack>为空",
+                  "en": "Any <face_up_research_stack> is empty"
+                },
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "<ontology::transfer>": {
+                      "source": "<research_deck>",
+                      "destination": "<face_up_research_stack>",
+                      "<ontology::object>": "<research_card>",
+                      "quantity": 1,
+                      "description": {
+                        "zh": "从对应背面朝下堆翻一张补充到正面朝上堆。",
+                        "en": "Refill the face-up stack from the corresponding face-down deck."
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "zh": "补充正面堆",
+                  "en": "Refill Face-Up Stack"
+                }
               }
             }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -1580,66 +1580,68 @@
           }
         ]
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "draw",
-            "name": {
-              "zh": "抽牌检视",
-              "en": "Draw and Inspect"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "draw",
+              "name": {
+                "zh": "抽牌检视",
+                "en": "Draw and Inspect"
+              },
+              "<ontology::transfer>": {
+                "source": "<research_deck>",
+                "<ontology::object>": "<research_card>",
+                "quantity": "N",
+                "description": {
+                  "zh": "从任意<research_deck>（可同堆或不同堆）共抽 N 张<research_card>检视。",
+                  "en": "Draw N <research_card>s total from any <research_deck>s (same or different) and inspect them."
+                }
+              }
             },
-            "<ontology::transfer>": {
-              "source": "<research_deck>",
-              "<ontology::object>": "<research_card>",
-              "quantity": "N",
-              "description": {
-                "zh": "从任意<research_deck>（可同堆或不同堆）共抽 N 张<research_card>检视。",
-                "en": "Draw N <research_card>s total from any <research_deck>s (same or different) and inspect them."
+            {
+              "id": "pick",
+              "name": {
+                "zh": "选牌加入手牌",
+                "en": "Pick Cards to Hand"
+              },
+              "do_after": [
+                "draw"
+              ],
+              "<ontology::transfer>": {
+                "source": "刚抽出的<research_card>中",
+                "destination": "<player_holding>",
+                "<ontology::object>": "<research_card>",
+                "quantity": "K",
+                "description": {
+                  "zh": "从抽出的 N 张中选 K 张<research_card>加入手牌。",
+                  "en": "Pick K <research_card>s from the drawn cards and add to hand."
+                }
+              }
+            },
+            {
+              "id": "return_rest",
+              "name": {
+                "zh": "归还剩余",
+                "en": "Return Remaining Cards"
+              },
+              "do_after": [
+                "pick"
+              ],
+              "<ontology::transfer>": {
+                "source": "未选中的<research_card>",
+                "destination": "<research_deck>",
+                "<ontology::object>": "<research_card>",
+                "quantity": "N - K",
+                "description": {
+                  "zh": "将未选中的<research_card>面朝下放回各自来源牌堆底部。",
+                  "en": "Return the unpicked <research_card>s face-down to the bottom of their respective source decks."
+                }
               }
             }
-          },
-          {
-            "id": "pick",
-            "name": {
-              "zh": "选牌加入手牌",
-              "en": "Pick Cards to Hand"
-            },
-            "do_after": [
-              "draw"
-            ],
-            "<ontology::transfer>": {
-              "source": "刚抽出的<research_card>中",
-              "destination": "<player_holding>",
-              "<ontology::object>": "<research_card>",
-              "quantity": "K",
-              "description": {
-                "zh": "从抽出的 N 张中选 K 张<research_card>加入手牌。",
-                "en": "Pick K <research_card>s from the drawn cards and add to hand."
-              }
-            }
-          },
-          {
-            "id": "return_rest",
-            "name": {
-              "zh": "归还剩余",
-              "en": "Return Remaining Cards"
-            },
-            "do_after": [
-              "pick"
-            ],
-            "<ontology::transfer>": {
-              "source": "未选中的<research_card>",
-              "destination": "<research_deck>",
-              "<ontology::object>": "<research_card>",
-              "quantity": "N - K",
-              "description": {
-                "zh": "将未选中的<research_card>面朝下放回各自来源牌堆底部。",
-                "en": "Return the unpicked <research_card>s face-down to the bottom of their respective source decks."
-              }
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -1653,153 +1655,155 @@
         "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。必须从出售与购买中至少选择一项执行（可只卖、只买，顺序任意）：",
         "en": "The Trade action. Sell stored materials for money or points, or purchase new materials with money. At least one of Sale or Purchase must be performed (may sell only or buy only, in any order):"
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "sale",
-            "name": {
-              "zh": "出售",
-              "en": "Sale"
-            },
-            "description": {
-              "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
-              "en": "Sale: Sell up to 2 materials. One may be for money, one for 2 points. Cannot double up."
-            },
-            "options": [
-              {
-                "id": "sale_for_money",
-                "name": {
-                  "zh": "换钱",
-                  "en": "Sale For Money"
-                },
-                "description": {
-                  "zh": "换钱币：售出一个材料换取钱币。",
-                  "en": "For money: Sell one material for money."
-                },
-                "options": [
-                  {
-                    "id": "return_material_sm",
-                    "name": {
-                      "zh": "返还材料换钱",
-                      "en": "Return Material For Money"
-                    },
-                    "specifies": "<ontology::transfer>",
-                    "source": "<storage_area>",
-                    "destination": "<ontology::supply>",
-                    "<ontology::object>": "<stored_material>",
-                    "quantity": 1
-                  },
-                  {
-                    "id": "gain_money",
-                    "name": {
-                      "zh": "获得钱币",
-                      "en": "Gain Money"
-                    },
-                    "specifies": "<ontology::transfer>",
-                    "source": "<ontology::supply>",
-                    "destination": "<money_space>",
-                    "<ontology::object>": "<money>",
-                    "quantity": {
-                      "zh": "由材料行决定：第一行 1、第二行 2、第三行 3",
-                      "en": "Determined by material row: row 1 = 1, row 2 = 2, row 3 = 3"
-                    },
-                    "do_after": [
-                      "return_material_sm"
-                    ]
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "sale",
+              "name": {
+                "zh": "出售",
+                "en": "Sale"
               },
-              {
-                "id": "sale_for_points",
-                "name": {
-                  "zh": "换分",
-                  "en": "Sale For Points"
-                },
-                "description": {
-                  "zh": "换分数：售出一个材料换取 2 分。",
-                  "en": "For points: Sell one material for 2 points."
-                },
-                "options": [
-                  {
-                    "id": "return_material_sp",
-                    "name": {
-                      "zh": "返还材料换分",
-                      "en": "Return Material For Points"
-                    },
-                    "specifies": "<ontology::transfer>",
-                    "source": "<storage_area>",
-                    "destination": "<ontology::supply>",
-                    "<ontology::object>": "<stored_material>",
-                    "quantity": 1
+              "description": {
+                "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
+                "en": "Sale: Sell up to 2 materials. One may be for money, one for 2 points. Cannot double up."
+              },
+              "options": [
+                {
+                  "id": "sale_for_money",
+                  "name": {
+                    "zh": "换钱",
+                    "en": "Sale For Money"
                   },
-                  {
-                    "id": "gain_points",
-                    "name": {
-                      "zh": "获得分数",
-                      "en": "Gain Points"
+                  "description": {
+                    "zh": "换钱币：售出一个材料换取钱币。",
+                    "en": "For money: Sell one material for money."
+                  },
+                  "options": [
+                    {
+                      "id": "return_material_sm",
+                      "name": {
+                        "zh": "返还材料换钱",
+                        "en": "Return Material For Money"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "source": "<storage_area>",
+                      "destination": "<ontology::supply>",
+                      "<ontology::object>": "<stored_material>",
+                      "quantity": 1
                     },
-                    "specifies": "<ontology::event>",
-                    "description": {
-                      "zh": "获得 2 分",
-                      "en": "Gain 2 success points"
-                    },
-                    "do_after": [
-                      "return_material_sp"
-                    ]
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-              }
-            ],
-            "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
-          },
-          {
-            "id": "purchase",
-            "name": {
-              "zh": "购买",
-              "en": "Purchase"
-            },
-            "description": {
-              "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
-              "en": "Purchase: Pay money, then take one material marker from supply into storage."
-            },
-            "options": [
-              {
-                "id": "pay_money",
-                "name": {
-                  "zh": "支付钱币",
-                  "en": "Pay Money"
+                    {
+                      "id": "gain_money",
+                      "name": {
+                        "zh": "获得钱币",
+                        "en": "Gain Money"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "source": "<ontology::supply>",
+                      "destination": "<money_space>",
+                      "<ontology::object>": "<money>",
+                      "quantity": {
+                        "zh": "由材料行决定：第一行 1、第二行 2、第三行 3",
+                        "en": "Determined by material row: row 1 = 1, row 2 = 2, row 3 = 3"
+                      },
+                      "do_after": [
+                        "return_material_sm"
+                      ]
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                 },
-                "specifies": "<ontology::transfer>",
-                "source": "<money_space>",
-                "destination": "<ontology::supply>",
-                "<ontology::object>": "<money>",
-                "quantity": {
-                  "zh": "<material_tile> 已翻面为 2，未翻面为 4",
-                  "en": "2 if <material_tile> face-up, 4 if not"
+                {
+                  "id": "sale_for_points",
+                  "name": {
+                    "zh": "换分",
+                    "en": "Sale For Points"
+                  },
+                  "description": {
+                    "zh": "换分数：售出一个材料换取 2 分。",
+                    "en": "For points: Sell one material for 2 points."
+                  },
+                  "options": [
+                    {
+                      "id": "return_material_sp",
+                      "name": {
+                        "zh": "返还材料换分",
+                        "en": "Return Material For Points"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "source": "<storage_area>",
+                      "destination": "<ontology::supply>",
+                      "<ontology::object>": "<stored_material>",
+                      "quantity": 1
+                    },
+                    {
+                      "id": "gain_points",
+                      "name": {
+                        "zh": "获得分数",
+                        "en": "Gain Points"
+                      },
+                      "specifies": "<ontology::event>",
+                      "description": {
+                        "zh": "获得 2 分",
+                        "en": "Gain 2 success points"
+                      },
+                      "do_after": [
+                        "return_material_sp"
+                      ]
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                 }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
+            },
+            {
+              "id": "purchase",
+              "name": {
+                "zh": "购买",
+                "en": "Purchase"
               },
-              {
-                "id": "gain_material",
-                "name": {
-                  "zh": "获得材料",
-                  "en": "Gain Material"
+              "description": {
+                "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
+                "en": "Purchase: Pay money, then take one material marker from supply into storage."
+              },
+              "options": [
+                {
+                  "id": "pay_money",
+                  "name": {
+                    "zh": "支付钱币",
+                    "en": "Pay Money"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "source": "<money_space>",
+                  "destination": "<ontology::supply>",
+                  "<ontology::object>": "<money>",
+                  "quantity": {
+                    "zh": "<material_tile> 已翻面为 2，未翻面为 4",
+                    "en": "2 if <material_tile> face-up, 4 if not"
+                  }
                 },
-                "specifies": "<ontology::transfer>",
-                "source": "<ontology::supply>",
-                "destination": "<storage_area>",
-                "<ontology::object>": "<stored_material>",
-                "quantity": 1,
-                "do_after": [
-                  "pay_money"
-                ]
-              }
-            ],
-            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+                {
+                  "id": "gain_material",
+                  "name": {
+                    "zh": "获得材料",
+                    "en": "Gain Material"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "source": "<ontology::supply>",
+                  "destination": "<storage_area>",
+                  "<ontology::object>": "<stored_material>",
+                  "quantity": 1,
+                  "do_after": [
+                    "pay_money"
+                  ]
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+        }
       }
     },
     {
@@ -1989,127 +1993,129 @@
         "en": "1 procreation: take a new <tribe> from supply onto an encampment in the target territory (<place_new_tribe>), then resolve triggers by their own conditions — displace the occupant if the encampment is occupied (the new tribe is then laid down weakened); fire encampments score as usual; undeveloped territories are developed immediately."
       },
       "target": "this.target",
-      "<pipeline>": {
-        "options": [
-          "<place_new_tribe>",
-          {
-            "id": "procreation_displace_occupant",
-            "name": {
-              "zh": "驱逐原部落",
-              "en": "Displace Occupant"
-            },
-            "specifies": "<ontology::trigger>",
-            "do_after": [
-              "<place_new_tribe>"
-            ],
-            "<ontology::condition>": {
-              "zh": "放置营地为陆地营地，且已被任意<tribe>占据（无论自己或他人）。",
-              "en": "The encampment is a land encampment occupied by any <tribe> (own or opponent's)."
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::transfer>": {
-                  "source": "this.target.encampment",
-                  "destination": "this.target.wilderness",
-                  "<ontology::object>": "<tribe>",
-                  "quantity": 1,
-                  "description": {
-                    "zh": "将占据营地的部落移至同一区域的荒野（保留其站立/躺倒状态）。",
-                    "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
-                  }
-                }
-              }
-            }
-          },
-          {
-            "id": "procreation_weaken_new_tribe",
-            "name": {
-              "zh": "新部落虚弱",
-              "en": "Weaken New Tribe"
-            },
-            "specifies": "<ontology::trigger>",
-            "do_after": [
-              "procreation_displace_occupant"
-            ],
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::state_change>": {
-                  "subject": "this.target 营地上放置的新 <tribe>",
-                  "attribute": "posture",
-                  "to": "<lying>",
-                  "description": {
-                    "zh": "驱逐原部落后，新部落虚弱放下。",
-                    "en": "The new tribe is laid down weakened after displacing the occupant."
-                  }
-                }
-              }
-            }
-          },
-          {
-            "id": "procreation_fire_encampment_score",
-            "name": {
-              "zh": "篝火营地得分",
-              "en": "Score Fire Encampment"
-            },
-            "specifies": "<ontology::trigger>",
-            "do_after": [
-              "<place_new_tribe>"
-            ],
-            "<ontology::condition>": {
-              "zh": "放置营地是篝火营地（黄色边框）。",
-              "en": "The encampment is a fire encampment (yellow border)."
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "description": {
-                  "zh": "获得营地所示分数，推进<score_track>。",
-                  "en": "Gain the points depicted on the encampment; advance <score_track>."
-                }
-              }
-            }
-          },
-          {
-            "id": "procreation_develop_territory",
-            "name": {
-              "zh": "开发领地",
-              "en": "Develop Territory"
-            },
-            "specifies": "<ontology::trigger>",
-            "do_after": [
-              "<place_new_tribe>"
-            ],
-            "<ontology::condition>": {
-              "zh": "目标区域不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
-              "en": "The territory is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "<ontology::flip>": {
-                      "subject": "this.target.<material_tile>",
-                      "to": "face_up"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<place_new_tribe>",
+            {
+              "id": "procreation_displace_occupant",
+              "name": {
+                "zh": "驱逐原部落",
+                "en": "Displace Occupant"
+              },
+              "specifies": "<ontology::trigger>",
+              "do_after": [
+                "<place_new_tribe>"
+              ],
+              "<ontology::condition>": {
+                "zh": "放置营地为陆地营地，且已被任意<tribe>占据（无论自己或他人）。",
+                "en": "The encampment is a land encampment occupied by any <tribe> (own or opponent's)."
+              },
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "<ontology::transfer>": {
+                    "source": "this.target.encampment",
+                    "destination": "this.target.wilderness",
+                    "<ontology::object>": "<tribe>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "将占据营地的部落移至同一区域的荒野（保留其站立/躺倒状态）。",
+                      "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
                     }
-                  },
-                  {
-                    "<ontology::transfer>": {
-                      "source": "<ontology::supply>",
-                      "destination": "this.target",
-                      "<ontology::object>": "<octagonal_pillar>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "从供应堆取 1 个八角柱放至目标区域作为原材料标记。",
-                        "en": "Place 1 octagonal pillar from supply onto the target territory as a raw material marker."
+                  }
+                }
+              }
+            },
+            {
+              "id": "procreation_weaken_new_tribe",
+              "name": {
+                "zh": "新部落虚弱",
+                "en": "Weaken New Tribe"
+              },
+              "specifies": "<ontology::trigger>",
+              "do_after": [
+                "procreation_displace_occupant"
+              ],
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "<ontology::state_change>": {
+                    "subject": "this.target 营地上放置的新 <tribe>",
+                    "attribute": "posture",
+                    "to": "<lying>",
+                    "description": {
+                      "zh": "驱逐原部落后，新部落虚弱放下。",
+                      "en": "The new tribe is laid down weakened after displacing the occupant."
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "procreation_fire_encampment_score",
+              "name": {
+                "zh": "篝火营地得分",
+                "en": "Score Fire Encampment"
+              },
+              "specifies": "<ontology::trigger>",
+              "do_after": [
+                "<place_new_tribe>"
+              ],
+              "<ontology::condition>": {
+                "zh": "放置营地是篝火营地（黄色边框）。",
+                "en": "The encampment is a fire encampment (yellow border)."
+              },
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "description": {
+                    "zh": "获得营地所示分数，推进<score_track>。",
+                    "en": "Gain the points depicted on the encampment; advance <score_track>."
+                  }
+                }
+              }
+            },
+            {
+              "id": "procreation_develop_territory",
+              "name": {
+                "zh": "开发领地",
+                "en": "Develop Territory"
+              },
+              "specifies": "<ontology::trigger>",
+              "do_after": [
+                "<place_new_tribe>"
+              ],
+              "<ontology::condition>": {
+                "zh": "目标区域不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
+                "en": "The territory is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
+              },
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "<ontology::flip>": {
+                        "subject": "this.target.<material_tile>",
+                        "to": "face_up"
+                      }
+                    },
+                    {
+                      "<ontology::transfer>": {
+                        "source": "<ontology::supply>",
+                        "destination": "this.target",
+                        "<ontology::object>": "<octagonal_pillar>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "从供应堆取 1 个八角柱放至目标区域作为原材料标记。",
+                          "en": "Place 1 octagonal pillar from supply onto the target territory as a raw material marker."
+                        }
                       }
                     }
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
               }
             }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
       }
     },
     {
@@ -2303,12 +2309,14 @@
         "zh": "运输 1 个原材料到仓库：陆地原材料按所在区域类型（<transport_land_material>）；船载原材料按相邻已开发区域类型或调用方指定规则（<transport_boat_material>）。",
         "en": "Transport 1 raw material to storage: land raw material by its territory's type (<transport_land_material>); boat raw material by an adjacent developed territory's type or a caller-specified rule (<transport_boat_material>)."
       },
-      "<pipeline>": {
-        "options": [
-          "<transport_land_material>",
-          "<transport_boat_material>"
-        ],
-        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<transport_land_material>",
+            "<transport_boat_material>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
       }
     },
     {
@@ -2322,158 +2330,160 @@
         "zh": "获得 1 个<activation_die>：优先从骰子展示区拿取；展示区无骰子时从拥有激活骰最多的玩家处拿取。拿到后立即投掷一次，按点数放到控制台对应点数骰子格。",
         "en": "Gain 1 <activation_die>: take it from the dice display if available; otherwise take it from a civilization with the most activation dice. Roll it immediately and place it on the matching dice space of your console."
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "take_from_display",
-            "name": {
-              "zh": "从展示区拿取",
-              "en": "Take from Display"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_from_display",
+              "name": {
+                "zh": "从展示区拿取",
+                "en": "Take from Display"
+              },
+              "specifies": "<ontology::trigger>",
+              "<ontology::condition>": {
+                "zh": "骰子展示区有<activation_die>。",
+                "en": "The dice display has an <activation_die>."
+              },
+              "target": "骰子展示区（<dice_display>）",
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "take_activation_die",
+                      "name": {
+                        "zh": "拿取激活骰",
+                        "en": "Take Activation Die"
+                      },
+                      "<ontology::transfer>": {
+                        "source": "this.target.contains.<activation_die>",
+                        "<ontology::object>": "<activation_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "从展示区拿取 1 枚激活骰。",
+                          "en": "Take 1 activation die from the display."
+                        }
+                      }
+                    },
+                    {
+                      "id": "roll_die",
+                      "name": {
+                        "zh": "投掷骰子",
+                        "en": "Roll the Die"
+                      },
+                      "do_after": [
+                        "take_activation_die"
+                      ],
+                      "<ontology::die_roll>": {
+                        "<dice>": "<activation_die>[]",
+                        "count": 1,
+                        "description": {
+                          "zh": "投掷该激活骰一次，确定点数。",
+                          "en": "Roll the activation die once to determine its value."
+                        }
+                      }
+                    },
+                    {
+                      "id": "transfer_to_dice_space",
+                      "name": {
+                        "zh": "放入骰子格",
+                        "en": "Place on Dice Space"
+                      },
+                      "do_after": [
+                        "roll_die"
+                      ],
+                      "<ontology::transfer>": {
+                        "source": "刚拿取的<activation_die>",
+                        "destination": "<activation_dice_area>",
+                        "<ontology::object>": "<activation_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
+                          "en": "Place the activation die on the dice space of the console matching the rolled value."
+                        }
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              }
             },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "骰子展示区有<activation_die>。",
-              "en": "The dice display has an <activation_die>."
-            },
-            "target": "骰子展示区（<dice_display>）",
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "id": "take_activation_die",
-                    "name": {
-                      "zh": "拿取激活骰",
-                      "en": "Take Activation Die"
+            {
+              "id": "take_from_most_holder",
+              "name": {
+                "zh": "从持有最多者处拿取",
+                "en": "Take from the Most Holder"
+              },
+              "specifies": "<ontology::trigger>",
+              "<ontology::condition>": {
+                "zh": "骰子展示区没有<activation_die>，且自己不是唯一拥有激活骰数量最多的玩家。",
+                "en": "The dice display has no <activation_die>, and you are not the only player with the most activation dice."
+              },
+              "target": "除自己之外的 1 个 <ontology::player>（拥有激活骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "take_activation_die",
+                      "name": {
+                        "zh": "拿取激活骰",
+                        "en": "Take Activation Die"
+                      },
+                      "<ontology::transfer>": {
+                        "source": "this.target.<ontology::supply>.contains.<activation_die>",
+                        "<ontology::object>": "<activation_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "从拥有激活骰最多的玩家处拿取 1 枚激活骰。",
+                          "en": "Take 1 activation die from the civilization with the most."
+                        }
+                      }
                     },
-                    "<ontology::transfer>": {
-                      "source": "this.target.contains.<activation_die>",
-                      "<ontology::object>": "<activation_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "从展示区拿取 1 枚激活骰。",
-                        "en": "Take 1 activation die from the display."
+                    {
+                      "id": "roll_die",
+                      "name": {
+                        "zh": "投掷骰子",
+                        "en": "Roll the Die"
+                      },
+                      "do_after": [
+                        "take_activation_die"
+                      ],
+                      "<ontology::die_roll>": {
+                        "<dice>": "<activation_die>[]",
+                        "count": 1,
+                        "description": {
+                          "zh": "投掷该激活骰一次，确定点数。",
+                          "en": "Roll the activation die once to determine its value."
+                        }
+                      }
+                    },
+                    {
+                      "id": "transfer_to_dice_space",
+                      "name": {
+                        "zh": "放入骰子格",
+                        "en": "Place on Dice Space"
+                      },
+                      "do_after": [
+                        "roll_die"
+                      ],
+                      "<ontology::transfer>": {
+                        "source": "刚拿取的<activation_die>",
+                        "destination": "<activation_dice_area>",
+                        "<ontology::object>": "<activation_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
+                          "en": "Place the activation die on the dice space of the console matching the rolled value."
+                        }
                       }
                     }
-                  },
-                  {
-                    "id": "roll_die",
-                    "name": {
-                      "zh": "投掷骰子",
-                      "en": "Roll the Die"
-                    },
-                    "do_after": [
-                      "take_activation_die"
-                    ],
-                    "<ontology::die_roll>": {
-                      "<dice>": "<activation_die>[]",
-                      "count": 1,
-                      "description": {
-                        "zh": "投掷该激活骰一次，确定点数。",
-                        "en": "Roll the activation die once to determine its value."
-                      }
-                    }
-                  },
-                  {
-                    "id": "transfer_to_dice_space",
-                    "name": {
-                      "zh": "放入骰子格",
-                      "en": "Place on Dice Space"
-                    },
-                    "do_after": [
-                      "roll_die"
-                    ],
-                    "<ontology::transfer>": {
-                      "source": "刚拿取的<activation_die>",
-                      "destination": "<activation_dice_area>",
-                      "<ontology::object>": "<activation_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
-                        "en": "Place the activation die on the dice space of the console matching the rolled value."
-                      }
-                    }
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
               }
             }
-          },
-          {
-            "id": "take_from_most_holder",
-            "name": {
-              "zh": "从持有最多者处拿取",
-              "en": "Take from the Most Holder"
-            },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "骰子展示区没有<activation_die>，且自己不是唯一拥有激活骰数量最多的玩家。",
-              "en": "The dice display has no <activation_die>, and you are not the only player with the most activation dice."
-            },
-            "target": "除自己之外的 1 个 <ontology::player>（拥有激活骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "id": "take_activation_die",
-                    "name": {
-                      "zh": "拿取激活骰",
-                      "en": "Take Activation Die"
-                    },
-                    "<ontology::transfer>": {
-                      "source": "this.target.<ontology::supply>.contains.<activation_die>",
-                      "<ontology::object>": "<activation_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "从拥有激活骰最多的玩家处拿取 1 枚激活骰。",
-                        "en": "Take 1 activation die from the civilization with the most."
-                      }
-                    }
-                  },
-                  {
-                    "id": "roll_die",
-                    "name": {
-                      "zh": "投掷骰子",
-                      "en": "Roll the Die"
-                    },
-                    "do_after": [
-                      "take_activation_die"
-                    ],
-                    "<ontology::die_roll>": {
-                      "<dice>": "<activation_die>[]",
-                      "count": 1,
-                      "description": {
-                        "zh": "投掷该激活骰一次，确定点数。",
-                        "en": "Roll the activation die once to determine its value."
-                      }
-                    }
-                  },
-                  {
-                    "id": "transfer_to_dice_space",
-                    "name": {
-                      "zh": "放入骰子格",
-                      "en": "Place on Dice Space"
-                    },
-                    "do_after": [
-                      "roll_die"
-                    ],
-                    "<ontology::transfer>": {
-                      "source": "刚拿取的<activation_die>",
-                      "destination": "<activation_dice_area>",
-                      "<ontology::object>": "<activation_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
-                        "en": "Place the activation die on the dice space of the console matching the rolled value."
-                      }
-                    }
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-              }
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
       }
     },
     {
@@ -2487,122 +2497,124 @@
         "zh": "获得 1 个<fate_die>：优先从骰子展示区拿取；展示区无骰子时从拥有命运骰最多的玩家处拿取。加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
         "en": "Gain 1 <fate_die>: take it from the dice display if available; otherwise take it from a civilization with the most fate dice. Add it to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
       },
-      "<pipeline>": {
-        "options": [
-          {
-            "id": "take_from_display",
-            "name": {
-              "zh": "从展示区拿取",
-              "en": "Take from Display"
-            },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "骰子展示区有<fate_die>。",
-              "en": "The dice display has a <fate_die>."
-            },
-            "target": "骰子展示区（<dice_display>）",
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "id": "take_fate_die",
-                    "name": {
-                      "zh": "拿取命运骰",
-                      "en": "Take Fate Die"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_from_display",
+              "name": {
+                "zh": "从展示区拿取",
+                "en": "Take from Display"
+              },
+              "specifies": "<ontology::trigger>",
+              "<ontology::condition>": {
+                "zh": "骰子展示区有<fate_die>。",
+                "en": "The dice display has a <fate_die>."
+              },
+              "target": "骰子展示区（<dice_display>）",
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "take_fate_die",
+                      "name": {
+                        "zh": "拿取命运骰",
+                        "en": "Take Fate Die"
+                      },
+                      "<ontology::transfer>": {
+                        "source": "this.target.contains.<fate_die>",
+                        "<ontology::object>": "<fate_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "从展示区拿取 1 枚命运骰。",
+                          "en": "Take 1 fate die from the display."
+                        }
+                      }
                     },
-                    "<ontology::transfer>": {
-                      "source": "this.target.contains.<fate_die>",
-                      "<ontology::object>": "<fate_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "从展示区拿取 1 枚命运骰。",
-                        "en": "Take 1 fate die from the display."
+                    {
+                      "id": "transfer_to_fate_dice",
+                      "name": {
+                        "zh": "加入粉骰",
+                        "en": "Add to Fate Dice"
+                      },
+                      "do_after": [
+                        "take_fate_die"
+                      ],
+                      "<ontology::transfer>": {
+                        "source": "刚拿取的<fate_die>",
+                        "destination": "玩家持有的粉骰区域",
+                        "<ontology::object>": "<fate_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+                          "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
+                        }
                       }
                     }
-                  },
-                  {
-                    "id": "transfer_to_fate_dice",
-                    "name": {
-                      "zh": "加入粉骰",
-                      "en": "Add to Fate Dice"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              }
+            },
+            {
+              "id": "take_from_most_holder",
+              "name": {
+                "zh": "从持有最多者处拿取",
+                "en": "Take from the Most Holder"
+              },
+              "specifies": "<ontology::trigger>",
+              "<ontology::condition>": {
+                "zh": "骰子展示区没有<fate_die>，且自己不是唯一拥有命运骰数量最多的玩家。",
+                "en": "The dice display has no <fate_die>, and you are not the only player with the most fate dice."
+              },
+              "target": "除自己之外的 1 个 <ontology::player>（拥有命运骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "take_fate_die",
+                      "name": {
+                        "zh": "拿取命运骰",
+                        "en": "Take Fate Die"
+                      },
+                      "<ontology::transfer>": {
+                        "source": "this.target.<ontology::supply>.contains.<fate_die>",
+                        "<ontology::object>": "<fate_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "从拥有命运骰最多的玩家处拿取 1 枚命运骰。",
+                          "en": "Take 1 fate die from the civilization with the most."
+                        }
+                      }
                     },
-                    "do_after": [
-                      "take_fate_die"
-                    ],
-                    "<ontology::transfer>": {
-                      "source": "刚拿取的<fate_die>",
-                      "destination": "玩家持有的粉骰区域",
-                      "<ontology::object>": "<fate_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
-                        "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
+                    {
+                      "id": "transfer_to_fate_dice",
+                      "name": {
+                        "zh": "加入粉骰",
+                        "en": "Add to Fate Dice"
+                      },
+                      "do_after": [
+                        "take_fate_die"
+                      ],
+                      "<ontology::transfer>": {
+                        "source": "刚拿取的<fate_die>",
+                        "destination": "玩家持有的粉骰区域",
+                        "<ontology::object>": "<fate_die>",
+                        "quantity": 1,
+                        "description": {
+                          "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+                          "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
+                        }
                       }
                     }
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
               }
             }
-          },
-          {
-            "id": "take_from_most_holder",
-            "name": {
-              "zh": "从持有最多者处拿取",
-              "en": "Take from the Most Holder"
-            },
-            "specifies": "<ontology::trigger>",
-            "<ontology::condition>": {
-              "zh": "骰子展示区没有<fate_die>，且自己不是唯一拥有命运骰数量最多的玩家。",
-              "en": "The dice display has no <fate_die>, and you are not the only player with the most fate dice."
-            },
-            "target": "除自己之外的 1 个 <ontology::player>（拥有命运骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "options": [
-                  {
-                    "id": "take_fate_die",
-                    "name": {
-                      "zh": "拿取命运骰",
-                      "en": "Take Fate Die"
-                    },
-                    "<ontology::transfer>": {
-                      "source": "this.target.<ontology::supply>.contains.<fate_die>",
-                      "<ontology::object>": "<fate_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "从拥有命运骰最多的玩家处拿取 1 枚命运骰。",
-                        "en": "Take 1 fate die from the civilization with the most."
-                      }
-                    }
-                  },
-                  {
-                    "id": "transfer_to_fate_dice",
-                    "name": {
-                      "zh": "加入粉骰",
-                      "en": "Add to Fate Dice"
-                    },
-                    "do_after": [
-                      "take_fate_die"
-                    ],
-                    "<ontology::transfer>": {
-                      "source": "刚拿取的<fate_die>",
-                      "destination": "玩家持有的粉骰区域",
-                      "<ontology::object>": "<fate_die>",
-                      "quantity": 1,
-                      "description": {
-                        "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
-                        "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
-                      }
-                    }
-                  }
-                ],
-                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-              }
-            }
-          }
-        ],
-        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
       }
     },
     {
@@ -3202,14 +3214,16 @@
         "zh": "完成一个建造项目：从四种建造中选一种执行——建造农场、建造船、建造雕像、或建造聚落。",
         "en": "Complete a building project: Choose one of four building types to execute — build a farm, build a boat, build a statue, or build a settlement."
       },
-      "<pipeline>": {
-        "options": [
-          "<build_farm>",
-          "<build_boat>",
-          "<build_statue>",
-          "<build_settlement>"
-        ],
-        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<build_farm>",
+            "<build_boat>",
+            "<build_statue>",
+            "<build_settlement>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
       }
     }
   ]
