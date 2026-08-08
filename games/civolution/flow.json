@@ -817,13 +817,10 @@
                         "do_after": [
                           "upgrade_module"
                         ],
-                        "<ontology::play>": {
-                          "source": "选中的<starting_chip_card>",
-                          "destination": "<income_area>",
-                          "<ontology::piece>": "<starting_chip_card>",
+                        "<install_starting_chip_card>": {
                           "description": {
-                            "zh": "将牌塞入收入区成为首个收入芯片（上三分之一露出，即其 <income_chip> 部分，激活收入芯片时可选）。",
-                            "en": "Slide the card into the income area as the first income chip (the top third — its <income_chip> part — is revealed and selectable when activating income chips)."
+                            "zh": "将选中的初始芯片牌塞入收入区成为首个收入芯片。",
+                            "en": "Slide the chosen starting chip card into the income area as the first income chip."
                           }
                         }
                       }
@@ -1282,6 +1279,31 @@
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "install_starting_chip_card",
+      "name": {
+        "zh": "安装初始芯片牌",
+        "en": "Install Starting Chip Card"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "将选中的 <starting_chip_card> 塞入 <console> 的收入区，成为玩家的首个收入芯片（其 <income_chip> 部分激活收入芯片时可选）。无费用格（区别于安装研究牌）。",
+        "en": "Slide the chosen <starting_chip_card> into the <console>'s income area as the player's first income chip (its <income_chip> part is selectable when activating income chips). No cost slots (unlike installing research cards)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::play>": {
+            "source": "选中的<starting_chip_card>",
+            "destination": "<income_area>",
+            "<ontology::piece>": "<starting_chip_card>",
+            "description": {
+              "zh": "将牌塞入收入区成为首个收入芯片。",
+              "en": "Slide the card into the income area as the first income chip."
+            }
+          }
         }
       }
     },
