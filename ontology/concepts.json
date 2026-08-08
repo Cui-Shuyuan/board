@@ -1070,6 +1070,54 @@
       }
     },
     {
+      "id": "draw",
+      "extends": "<event>",
+      "name": {
+        "zh": "抽取",
+        "en": "Draw"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从隐藏集合（<pool> 袋、<deck> 牌堆）中随机盲抽 <object>——抽取前对象不可见，随机性由规则保证。与 <transfer> 的区别：transfer 移动已知对象（可指定具体对象），draw 的结果在抽取前未知。用于抽袋（芯片）、暗面抽牌（牌堆顶部）、补牌/补展示区等场景。",
+        "en": "Randomly draw an <object> from a hidden collection (<pool> bag, <deck> stack) — the object is unseen before drawing and randomness is guaranteed by the rules. Unlike <transfer>, which moves a known object (specific objects may be named), the result of a draw is unknown beforehand. Used for bag draws (chips), blind draws (top of deck), refilling decks/displays, etc."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "抽取的源 <zone>。必须是隐藏集合——<pool>（袋子）或 <deck>（牌堆）。",
+              "en": "The source <zone> the <object> is drawn from. Must be a hidden collection — a <pool> (bag) or a <deck> (stack)."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "抽取出的 <object> 移入的目标 <zone>。",
+              "en": "The destination <zone> the drawn <object> moves to."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被抽取的 <object> 类型。抽取前具体是哪个对象未知。",
+              "en": "The type of <object> being drawn. Which specific object is drawn is unknown beforehand."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "quantity",
+            "default": 1,
+            "description": {
+              "zh": "抽取的 <object> 数量。",
+              "en": "Quantity of <object>s drawn."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "action",
       "name": {
         "zh": "行动",
