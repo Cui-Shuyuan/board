@@ -618,17 +618,73 @@
                   "zh": "轮抽初始标记牌",
                   "en": "Draft Starting Marker Cards"
                 },
-                "specifies": "<ontology::transfer>",
                 "description": {
                   "zh": "每位玩家抽 3 张初始标记牌，选 1 张获得其上的标记（按标记牌指示放置标记），随后 3 张初始标记牌全部放回盒子。",
                   "en": "Each player draws 3 starting marker cards, chooses 1 to gain its markers (placing markers as the card indicates), then returns all 3 starting marker cards to the game box."
                 },
-                "source": "<starting_marker_deck>",
-                "destination": "<ontology::game_box>",
-                "<ontology::object>": "<starting_marker_card>",
-                "quantity": {
-                  "expr": "player_count * 3"
-                },
+                "options": [
+                  {
+                    "id": "draw_cards",
+                    "name": {
+                      "zh": "抽牌",
+                      "en": "Draw Cards"
+                    },
+                    "<ontology::top_draw>": {
+                      "source": "<starting_marker_deck>",
+                      "destination": "<ontology::player_holding>",
+                      "<ontology::object>": "<starting_marker_card>",
+                      "quantity": 3,
+                      "per_player": true,
+                      "description": {
+                        "zh": "每位玩家从洗好的初始标记牌堆顶部抽 3 张，秘密检视后选 1 张。",
+                        "en": "Each player draws 3 starting marker cards from the top of the shuffled deck, inspects them secretly, and chooses 1."
+                      }
+                    }
+                  },
+                  {
+                    "id": "gain_markers",
+                    "name": {
+                      "zh": "获得标记",
+                      "en": "Gain Markers"
+                    },
+                    "do_after": [
+                      "draw_cards"
+                    ],
+                    "<ontology::transfer>": {
+                      "source": "<ontology::supply>",
+                      "destination": "<console>",
+                      "<ontology::object>": "<marker>",
+                      "quantity": "按所选标记牌指示的数量与位置",
+                      "per_player": true,
+                      "description": {
+                        "zh": "按所选起始标记牌的指示，从供应堆取对应数量的标记放到控制台对应空格。",
+                        "en": "Take the number of markers indicated by the chosen starting marker card from supply and place them on the corresponding console spaces."
+                      }
+                    }
+                  },
+                  {
+                    "id": "return_cards",
+                    "name": {
+                      "zh": "放回盒子",
+                      "en": "Return Cards to Box"
+                    },
+                    "do_after": [
+                      "gain_markers"
+                    ],
+                    "<ontology::transfer>": {
+                      "source": "刚抽出的 3 张<starting_marker_card>",
+                      "destination": "<ontology::game_box>",
+                      "<ontology::object>": "<starting_marker_card>",
+                      "quantity": 3,
+                      "per_player": true,
+                      "description": {
+                        "zh": "3 张初始标记牌全部放回盒子。",
+                        "en": "Return all 3 starting marker cards to the game box."
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
                 "do_after": [
                   "prepare_starting_decks"
                 ]
