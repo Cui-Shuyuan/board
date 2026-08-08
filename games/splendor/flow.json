@@ -19,7 +19,7 @@
         {
           "id": "setup",
           "specifies": "<ontology::phase>",
-          "<pipeline>": {
+          "<ontology::pipeline>": {
             "options": [
 
               {

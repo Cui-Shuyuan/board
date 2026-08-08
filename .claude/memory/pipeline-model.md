@@ -18,8 +18,10 @@ metadata:
 - **`<trigger>`（action/effect 均 specifies trigger）**：结构为
   `condition（门槛）→ cost（代价）→ target（this.target 供步骤引用）→ <ontology::content>.<ontology::instant_content>.{ options, type }`
   ——pipeline 的 options/type/do_after 放在 `<instant_content>` 内部（现状）
-- **`<phase>`**：持有 `<pipeline>` 顶层字段（程序化阶段，如 setup）——phase 不是 trigger，无 condition/cost/content
+- **`<phase>`**：持有 `<ontology::pipeline>` 顶层字段（程序化阶段，如 setup）——phase 不是 trigger，无 condition/cost/content
 - **`<cost>` 等其他概念**：需要时也可持有（如多步支付的复杂代价）
+
+**游戏层引用必须写 `<ontology::pipeline>`**（与 `<ontology::content>` 等一致）；ontology 内部字段名不带 namespace（trigger 的 `<condition>`、`<content>` 同款惯例）。
 
 ```json
 {
