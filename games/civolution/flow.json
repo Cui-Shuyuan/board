@@ -346,8 +346,8 @@
                 },
                 "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；标有初始字样的翻至正面朝上。",
-                  "en": "Place all material tiles face down on the continent's material spaces by color randomly; flip those marked 'initial' face up."
+                  "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；放到标有「Start」（初始）字样的材料格上的板块翻至正面朝上。",
+                  "en": "Place all material tiles face down on the continent's material spaces by color randomly; tiles placed on spaces marked 'Start' are flipped face up."
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<continent>",
