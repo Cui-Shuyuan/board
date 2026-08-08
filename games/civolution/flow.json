@@ -148,7 +148,10 @@
                     "face": "face_down"
                   }
                 },
-                "quantity": 4
+                "quantity": 4,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_research_decks",
@@ -190,7 +193,10 @@
                 "source": "<ontology::game_box>",
                 "destination": "<era_scoring_area>",
                 "<ontology::object>": "<scoring_tile>",
-                "quantity": 4
+                "quantity": 4,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_final_scoring_tiles",
@@ -208,7 +214,8 @@
                 "<ontology::object>": "<scoring_tile>",
                 "quantity": 3,
                 "do_after": [
-                  "prepare_era_scoring_tiles"
+                  "prepare_era_scoring_tiles",
+                  "place_progress_and_sequence_boards"
                 ]
               },
               {
@@ -226,7 +233,10 @@
                 "destination": "<hundred_point_token_display>",
                 "quantity": {
                   "expr": "per_player_count_setup"
-                }
+                },
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_hunting_tokens",
@@ -243,7 +253,11 @@
                 "destination": "<hunting_token_display>",
                 "quantity": {
                   "expr": "per_player_count_setup"
-                }
+                },
+                "do_after": [
+                  "assemble_public_board",
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_dice_pool",
@@ -260,7 +274,10 @@
                 "destination": "<dice_display>",
                 "quantity": {
                   "expr": "player_count + 1"
-                }
+                },
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_goal_chip_display",
@@ -278,7 +295,10 @@
                 "<ontology::object>": "<goal_chip>",
                 "quantity": {
                   "expr": "per_player_count_setup"
-                }
+                },
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_income_chip_display",
@@ -294,7 +314,10 @@
                 "source": "<income_chip_bag>",
                 "destination": "<income_chip_display>",
                 "<ontology::object>": "<income_chip>",
-                "quantity": 3
+                "quantity": 3,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "prepare_attribute_chip_display",
@@ -310,7 +333,10 @@
                 "source": "<attribute_chip_bag>",
                 "destination": "<attribute_chip_display>",
                 "<ontology::object>": "<attribute_chip>",
-                "quantity": 3
+                "quantity": 3,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "place_material_tiles",
@@ -431,7 +457,10 @@
                 "destination": "<score_track>",
                 "<ontology::object>": "<score_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "assemble_public_board"
+                ]
               },
               {
                 "id": "player_setup_favor_marker",
@@ -448,7 +477,10 @@
                 "destination": "<favor_of_ager_track>",
                 "<ontology::object>": "<favor_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "player_setup_technology_marker",
@@ -465,7 +497,10 @@
                 "destination": "<technology_track>",
                 "<ontology::object>": "<progress_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "player_setup_prestige_marker",
@@ -482,7 +517,10 @@
                 "destination": "<prestige_track>",
                 "<ontology::object>": "<progress_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "player_setup_knowledge_marker",
@@ -499,7 +537,10 @@
                 "destination": "<knowledge_track>",
                 "<ontology::object>": "<progress_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "player_setup_construction_marker",
@@ -516,7 +557,10 @@
                 "destination": "<construction_track>",
                 "<ontology::object>": "<progress_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "player_setup_culture_marker",
@@ -533,7 +577,10 @@
                 "destination": "<culture_track>",
                 "<ontology::object>": "<progress_marker>",
                 "quantity": 1,
-                "per_player": true
+                "per_player": true,
+                "do_after": [
+                  "place_progress_and_sequence_boards"
+                ]
               },
               {
                 "id": "player_place_initial_tribes",
