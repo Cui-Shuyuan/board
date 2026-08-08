@@ -136,10 +136,10 @@
                   "zh": "准备事件牌",
                   "en": "Prepare Event Cards"
                 },
-                "specifies": "<ontology::transfer>",
+                "specifies": "<ontology::top_draw>",
                 "description": {
-                  "zh": "洗混事件牌后抽出 4 张，背面朝上放在流程版图事件牌格上，其余放回盒子。",
-                  "en": "Shuffle event cards, draw 4, and place them face down on the event card spaces; return the rest to the box."
+                  "zh": "洗混 20 张事件牌成堆，从堆顶抽 4 张背面朝上放在流程版图事件牌格上，其余放回盒子。",
+                  "en": "Shuffle the 20 event cards into a stack, draw 4 from the top, and place them face down on the event card spaces; return the rest to the box."
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<event_card_space>",
@@ -182,10 +182,10 @@
                   "zh": "准备时代计分板块",
                   "en": "Prepare Era Scoring Tiles"
                 },
-                "specifies": "<ontology::top_draw>",
+                "specifies": "<ontology::random_draw>",
                 "description": {
-                  "zh": "洗混 9 张计分板块成堆，从堆顶抽 4 张正面朝上放入时代计分区。",
-                  "en": "Shuffle the 9 scoring tiles into a stack, draw 4 from the top, and place them face up in the era scoring area."
+                  "zh": "从游戏盒中的计分板块中随机盲抽 4 张，正面朝上放入时代计分区（计分板块不成堆，随机抽取）。",
+                  "en": "Blindly draw 4 scoring tiles at random from the game box and place them face up in the era scoring area (scoring tiles are not a stack; drawn at random)."
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<era_scoring_area>",
@@ -198,10 +198,10 @@
                   "zh": "准备终局计分板块",
                   "en": "Prepare Final Scoring Tiles"
                 },
-                "specifies": "<ontology::top_draw>",
+                "specifies": "<ontology::random_draw>",
                 "description": {
-                  "zh": "从同一洗好的计分板块堆顶部再抽 3 张，先按图标面朝上放到终局计分区中对应图标下方，最后翻至分数面朝上（游戏终局时该分数生效）。",
-                  "en": "Draw 3 more tiles from the top of the same shuffled stack, place each icon side up below its matching icon in the final scoring area, then flip them point side up (that value applies at final scoring)."
+                  "zh": "再从剩余计分板块中随机盲抽 3 张，先按图标面朝上放到终局计分区中对应图标下方，最后翻至分数面朝上（游戏终局时该分数生效）。",
+                  "en": "Blindly draw 3 more scoring tiles at random from the remaining ones, place each icon side up below its matching icon in the final scoring area, then flip them point side up (that value applies at final scoring)."
                 },
                 "source": "<ontology::game_box>",
                 "destination": "<final_scoring_area>",
