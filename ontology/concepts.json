@@ -1792,8 +1792,8 @@
           {
             "id": "slots",
             "description": {
-              "zh": "此轨的槽位定义，必填。若为数值轨（各位置含义相同），写取值范围字符串如「0–12」「0–100+」。若为槽位轨（各位置内容不同），写 slot_spec 对象数组，每个对象含 id（可选——槽位标识，供条件/效果以路径方式引用，如 \"<phase_sequence>.<reset_end_space>\"）、name（中英双语）和 description（中英双语），按轨上物理顺序排列。marker 的当前位置即其所在 slot——以「<marker> 位于 <track>.<slot_id>」表达。",
-              "en": "Slot definitions for this track, required. For numeric tracks (all positions share the same meaning), use a range string like '0–12' or '0–100+'. For slot-based tracks (each position has distinct content), use an array of slot_spec objects, each with id (optional — the slot's identifier, referenceable by conditions/effects via path, e.g. \"<phase_sequence>.<reset_end_space>\"), name (bilingual), and description (bilingual), in physical order along the track. A marker's current position is its containing slot — expressed as \"<marker> is on <track>.<slot_id>\"."
+              "zh": "此轨的槽位定义，必填。**parts 形式**（与 <piece>.parts 同款）：数组元素声明「格段」——每个元素是一个 part，概念 ID 做 key，值为属性对象（或纯概念引用字符串 = 1 格）：`{ \"<reset_space>\": { \"count\": 9 } }`。属性：count（格数，默认 1）、scope（可选——数值轨的数值范围，如 \"1–100\"）、parts（可选——本 part 内部再分多个子 part，如行动阶段段 = [黄格 part（重置推格）, 红格 part（重置不推，触发轮+下一轮结束自动推）]）、description（可选）。数字轨写一个 part + count（格数）与 scope（数值范围）；槽位轨每类格一个 part（语义相同的多格共用一个 part + count）。**引用格式**：`<track>.<part_id>[n]`——n 为 part 内 0 基偏移（如 \"<phase_sequence>.<phase_4_action>[0]\" = 行动阶段段第 1 格；description 中用「第 n+1 个」对照表述，避免偏移误导）。marker 的当前位置即其所在格——以「<marker> 位于 <track>.<part_id>[n]」表达。",
+              "en": "Slot definitions for this track, required. **Parts form** (same style as <piece>.parts): array elements declare 'space segments' — each element is a part whose key is a concept id with an attribute object as value (or a plain concept-reference string = 1 space): `{ \"<reset_space>\": { \"count\": 9 } }`. Attributes: count (number of spaces, default 1), scope (optional — the numeric range of a numeric track, e.g. \"1–100\"), parts (optional — sub-parts within this part, e.g. an action-phase segment = [yellow-space part (Reset advances), red-space part (Reset does not advance; auto-advances after the triggering round + next round)]), description (optional). Numeric tracks use one part with count (spaces) and scope (range); slot-based tracks use one part per class of space (semantically identical multiple spaces share one part + count). **Reference format**: `<track>.<part_id>[n]` — n is the 0-based offset within the part (e.g. \"<phase_sequence>.<phase_4_action>[0]\" = the 1st space of the action-phase segment; descriptions phrase it as 'the n+1-th space' to avoid offset confusion). A marker's current position is its containing space — expressed as \"<marker> is on <track>.<part_id>[n]\"."
             }
           }
         ],
@@ -2165,18 +2165,11 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将一条 <track> 上的标记向前推进若干格。桌游中最通用的位移 <event> 之一——计分、进程、天气等所有轨道共享此语义。",
-        "en": "Advance a marker on a <track> by a number of steps. One of the most universal displacement <event>s in board games — shared semantics across score tracks, progress tracks, weather gauges, etc."
+        "zh": "将一条 <track> 上的标记向前推进。桌游中最通用的位移 <event> 之一——计分、进程、天气等所有轨道共享此语义。两种形态：(1) `step`——推进几格；(2) `to`——推进到目标格（槽位轨的 slot 引用，如 \"<phase_sequence>.phase_5\"，需要轨的 slots 定义了每格 id）。",
+        "en": "Advance a marker on a <track>. One of the most universal displacement <event>s in board games — shared semantics across score tracks, progress tracks, weather gauges, etc. Two forms: (1) `step` — advance by a number of spaces; (2) `to` — advance to a target space (a slot reference on a slot-based track, e.g. \"<phase_sequence>.phase_5\"; requires the track's slots to define per-space ids)."
       },
       "constraints": {
         "required": [
-          {
-            "id": "step",
-            "description": {
-              "zh": "往前推进几个格。",
-              "en": "Number of steps to advance."
-            }
-          },
           {
             "id": "<track>",
             "description": {
@@ -2185,7 +2178,22 @@
             }
           }
         ],
-        "optional": []
+        "optional": [
+          {
+            "id": "step",
+            "description": {
+              "zh": "往前推进几个格。与 to 二选一。",
+              "en": "Number of steps to advance. Mutually exclusive with to."
+            }
+          },
+          {
+            "id": "to",
+            "description": {
+              "zh": "推进到的目标格——槽位轨 slot 的路径引用（\"<track>.<slot_id>\"，如 \"<phase_sequence>.phase_5\"）。与 step 二选一。",
+              "en": "The target space to advance to — a path reference to a slot on a slot-based track (\"<track>.<slot_id>\", e.g. \"<phase_sequence>.phase_5\"). Mutually exclusive with step."
+            }
+          }
+        ]
       }
     },
     {

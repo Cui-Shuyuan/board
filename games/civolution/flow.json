@@ -1157,8 +1157,12 @@
                           "action_turn_cycle"
                         ],
                         "description": {
-                          "zh": "行动阶段结束后（触发轮与最终行动轮均已完成，起始玩家右手边的玩家完成最后一回合），将<phase_indicator>从<reset_end_space>推到阶段五（地点阶段）的位置。",
-                          "en": "After the Action phase ends (both the triggering round and the final action round completed, with the player right of the starting player finishing their last turn), advance the <phase_indicator> from the <reset_end_space> to Phase 5 (Site phase)."
+                          "zh": "行动阶段结束后（触发轮与最终行动轮均已完成，起始玩家右手边的玩家完成最后一回合），将<phase_indicator>从<phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>）推进到<phase_sequence>.<phase_5_site>[0]（第 1 格，地点阶段）。",
+                          "en": "After the Action phase ends (both the triggering round and the final action round completed, with the player right of the starting player finishing their last turn), advance the <phase_indicator> from <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>) to <phase_sequence>.<phase_5_site>[0] (the 1st space, Site phase)."
+                        },
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_5_site>[0]"
                         }
                       }
                     ],
@@ -3918,8 +3922,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<phase_indicator> 位于 <phase_sequence> 的 <reset_end_space>（由 Reset 的 A 步推入），**且自到达以来每位 <player> 又各完成了一个 <turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
-        "en": "The <phase_indicator> is on the <reset_end_space> of <phase_sequence> (pushed there by Reset step A), **and since it arrived every <player> has completed one more <turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
+        "zh": "<phase_indicator> 位于 <phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>，由 Reset 的 A 步推入），**且自到达以来每位 <player> 又各完成了一个 <turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
+        "en": "The <phase_indicator> is on <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>, pushed there by Reset step A), **and since it arrived every <player> has completed one more <turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
       }
     }
   ]

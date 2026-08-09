@@ -2148,7 +2148,14 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": "0–12"
+      "slots": [
+        {
+          "technology_space": {
+            "count": 13,
+            "scope": "0–12"
+          }
+        }
+      ]
     },
     {
       "id": "prestige_track",
@@ -2171,7 +2178,14 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": "0–12"
+      "slots": [
+        {
+          "prestige_space": {
+            "count": 13,
+            "scope": "0–12"
+          }
+        }
+      ]
     },
     {
       "id": "knowledge_track",
@@ -2194,7 +2208,14 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": "0–12"
+      "slots": [
+        {
+          "knowledge_space": {
+            "count": 13,
+            "scope": "0–12"
+          }
+        }
+      ]
     },
     {
       "id": "construction_track",
@@ -2217,7 +2238,14 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": "0–12"
+      "slots": [
+        {
+          "construction_space": {
+            "count": 13,
+            "scope": "0–12"
+          }
+        }
+      ]
     },
     {
       "id": "culture_track",
@@ -2240,7 +2268,14 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": "0–12"
+      "slots": [
+        {
+          "culture_space": {
+            "count": 13,
+            "scope": "0–12"
+          }
+        }
+      ]
     },
     {
       "id": "dice_display",
@@ -2459,7 +2494,14 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": "0–?"
+      "slots": [
+        {
+          "favor_of_ager_space": {
+            "count": null,
+            "scope": "0–?"
+          }
+        }
+      ]
     },
     {
       "id": "weather_gauge",
@@ -2485,91 +2527,86 @@
       "<ontology::trigger>": "<weather_effect>",
       "slots": [
         {
-          "name": {
-            "zh": "炎热",
-            "en": "Hot"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": {
-                  "options": [
-                    {
-                      "<ontology::transfer>": "<lose_food>"
-                    },
-                    {
-                      "<ontology::transfer>": "<remove_tribe>"
-                    }
-                  ],
-                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          "hot": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "options": [
+                      {
+                        "<ontology::transfer>": "<lose_food>"
+                      },
+                      {
+                        "<ontology::transfer>": "<remove_tribe>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  }
                 }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "温暖",
-            "en": "Warm"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<activate_income_chip>"
-              }
-            }
-          }
-        },
-        {
-          "name": {
-            "zh": "适中",
-            "en": "Mild"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": {
-                  "options": [
-                    "<activate_income_chip>",
-                    "<perform_activity>"
-                  ],
-                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          "warm": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<activate_income_chip>"
                 }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "雨水",
-            "en": "Rain"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<perform_activity>"
+          "mild": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "options": [
+                      "<activate_income_chip>",
+                      "<perform_activity>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  }
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "寒冷",
-            "en": "Cold"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": {
-                  "options": [
-                    {
-                      "<ontology::transfer>": "<lose_food>"
-                    },
-                    {
-                      "<ontology::transfer>": "<remove_tribe>"
-                    }
-                  ],
-                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          "rain": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<perform_activity>"
+                }
+              }
+            }
+          }
+        },
+        {
+          "cold": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "options": [
+                      {
+                        "<ontology::transfer>": "<lose_food>"
+                      },
+                      {
+                        "<ontology::transfer>": "<remove_tribe>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  }
                 }
               }
             }
@@ -2600,127 +2637,117 @@
       "<ontology::information_visibility>": "public",
       "slots": [
         {
-          "name": {
-            "zh": "第一阶段",
-            "en": "Phase 1"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_1_new_cards>"
+          "<phase_1_new_cards>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_1_new_cards>"
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "第二阶段",
-            "en": "Phase 2"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_2_new_goals>"
+          "<phase_2_new_goals>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_2_new_goals>"
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "第三阶段",
-            "en": "Phase 3"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_3_extra_find>"
+          "<phase_3_extra_find>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_3_extra_find>"
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "第四阶段",
-            "en": "Phase 4"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_4_action>"
+          "<phase_4_action>": {
+            "count": 10,
+            "parts": [
+              {
+                "<reset_space>": {
+                  "count": 9,
+                  "description": {
+                    "zh": "黄色重置格——重置 A 步每次将<phase_indicator>推 1 格；有效格数随人数变化（2/3/4 人局 5/7/9 格），带人数标记的格在低人数局被阻挡标记覆盖（见<reset_space>定义）。",
+                    "en": "Yellow reset spaces — Reset step A advances the <phase_indicator> one space each time; the number in use varies by player count (5/7/9 for 2/3/4 players), with player-count-marked spaces covered by blocking tokens in lower-count games (see the <reset_space> definition)."
+                  }
+                }
+              },
+              {
+                "<reset_end_space>": {
+                  "count": 1,
+                  "description": {
+                    "zh": "红色重置结束格——重置不再推它；<action_phase_end> 触发（触发轮与下一轮结束后）自动推入阶段五。",
+                    "en": "The red reset end space — Reset no longer advances it; after <action_phase_end> holds (the triggering round and the following round complete), it is auto-advanced into Phase 5."
+                  }
+                }
+              }
+            ],
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_4_action>"
+                }
               }
             }
           }
         },
         {
-          "id": "<reset_space>",
-          "name": {
-            "zh": "重置格",
-            "en": "Reset Space"
-          },
-          "description": {
-            "zh": "行动阶段轨段的<reset_space>（黄色格）。实际格数随人数变化（2 人 5 格、3 人 7 格、4 人 9 格），带人数标记的格在低人数局被阻挡标记覆盖（详见<reset_space>定义）。",
-            "en": "The <reset_space> of the Action phase track segment (yellow). The actual number of spaces varies by player count (5 for 2 players, 7 for 3, 9 for 4); player-count-marked spaces are covered by blocking tokens in lower-count games (see the <reset_space> definition)."
-          }
-        },
-        {
-          "id": "<reset_end_space>",
-          "name": {
-            "zh": "重置结束格",
-            "en": "Reset End Space"
-          },
-          "description": {
-            "zh": "行动阶段轨段末端的<reset_end_space>（唯一的红色格，所有人数使用）。阶段标记被推至此格触发<action_phase_end>。",
-            "en": "The <reset_end_space> at the end of the Action phase track segment (the single red space, used at all player counts). Pushing the phase indicator here triggers <action_phase_end>."
-          }
-        },
-        {
-          "name": {
-            "zh": "第五阶段",
-            "en": "Phase 5"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_5_site>"
+          "<phase_5_site>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_5_site>"
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "第六阶段",
-            "en": "Phase 6"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_6_feeding>"
+          "<phase_6_feeding>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_6_feeding>"
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "第七阶段",
-            "en": "Phase 7"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_7_event>"
+          "<phase_7_event>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_7_event>"
+                }
               }
             }
           }
         },
         {
-          "name": {
-            "zh": "第八阶段",
-            "en": "Phase 8"
-          },
-          "<ontology::effect>": {
-            "<ontology::instant_effect>": {
-              "<ontology::content>": {
-                "<ontology::instant_content>": "<phase_8_income>"
+          "<phase_8_income>": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": "<phase_8_income>"
+                }
               }
             }
           }
@@ -2818,7 +2845,107 @@
       },
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
-      "slots": null
+      "slots": [
+        {
+          "technology": {
+            "count": 1,
+            "description": {
+              "zh": "技术计分格。",
+              "en": "技术计分格。"
+            }
+          }
+        },
+        {
+          "prestige": {
+            "count": 1,
+            "description": {
+              "zh": "声望计分格。",
+              "en": "声望计分格。"
+            }
+          }
+        },
+        {
+          "knowledge": {
+            "count": 1,
+            "description": {
+              "zh": "知识计分格。",
+              "en": "知识计分格。"
+            }
+          }
+        },
+        {
+          "construction": {
+            "count": 1,
+            "description": {
+              "zh": "建设计分格。",
+              "en": "建设计分格。"
+            }
+          }
+        },
+        {
+          "culture": {
+            "count": 1,
+            "description": {
+              "zh": "文化计分格。",
+              "en": "文化计分格。"
+            }
+          }
+        },
+        {
+          "evolution": {
+            "count": 1,
+            "description": {
+              "zh": "进化计分格。",
+              "en": "进化计分格。"
+            }
+          }
+        },
+        {
+          "prosperity": {
+            "count": 1,
+            "description": {
+              "zh": "繁荣计分格。",
+              "en": "繁荣计分格。"
+            }
+          }
+        },
+        {
+          "population": {
+            "count": 1,
+            "description": {
+              "zh": "人口计分格。",
+              "en": "人口计分格。"
+            }
+          }
+        },
+        {
+          "expansion": {
+            "count": 1,
+            "description": {
+              "zh": "扩张计分格。",
+              "en": "扩张计分格。"
+            }
+          }
+        },
+        {
+          "stage_partition": {
+            "count": 1,
+            "description": {
+              "zh": "格 A：结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4/5 需对应 stage tile 激活）。",
+              "en": "Space A: score the console stage partition — each chip and card scores the points left of its stage (stages 4/5 only if the stage tile is active)."
+            }
+          }
+        },
+        {
+          "point_bonus": {
+            "count": 1,
+            "description": {
+              "zh": "格 B：结算 point bonus 卡——每张带加成图标的卡牌为其所在列的所有卡牌和收入芯片（含自身）额外加分。",
+              "en": "Space B: score point bonus cards — each card with the bonus icon grants extra points for all cards and income chips in its column (itself included)."
+            }
+          }
+        }
+      ]
     },
     {
       "id": "final_scoring_area",
