@@ -1305,17 +1305,98 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段六：喂养阶段。按规则喂饱或饿死部落。营地/船上的部落需 1 食物，野外部落需 2 食物。",
-                    "en": "Phase 6: Feeding Phase. Feed or starve tribes according to the rules: 1 food for tribes on campsites/boats, 2 food for tribes in the wilderness."
+                    "zh": "阶段六：喂养阶段。两步：A) 喂部落——大陆上所有部落必须喂食（可同时进行）；B) 强壮部落得分。",
+                    "en": "Phase 6: Feeding Phase. Two steps: A) Feed tribes — all tribes on the continent must be fed (may be done simultaneously); B) Score strong tribes."
                   },
                   "<ontology::pipeline>": {
                     "options": [
+                      {
+                        "id": "feed_tribes",
+                        "name": {
+                          "zh": "喂部落",
+                          "en": "Feed Tribes"
+                        },
+                        "<ontology::per_player>": true,
+                        "description": {
+                          "zh": "对本玩家的每个部落确定喂食成本并决定是否支付：营地（<encampment>）上或船（<boat>）上的部落 1 食物，野外（营地外）部落 2 食物；自己<farm>所在领地的营地部落自动视为已喂饱、野外部落只需 1 食物；研究牌能力可进一步减免。支付 = 从<food_space>返还对应数量<food>至供应堆。未喂饱的部落：强壮（posture == <upright>）部落躺倒（<lying>），已弱（<lying>）部落死亡——触发<tribe_death>（此时可用<deus_ex_machina>拯救）。",
+                          "en": "For each of this player's tribes, determine the feeding cost and decide whether to pay: 1 food per tribe on an <encampment> or <boat>, 2 food per tribe in the wilderness (outside encampments); tribes on encampments in a territory with your own <farm> are automatically fed, wilderness tribes there cost 1 food; research card abilities may reduce costs further. Paying = returning that many <food> from <food_space> to the supply. Unfed tribes: strong (<upright>) tribes are laid down (<lying>); already weak (<lying>) tribes die — triggering <tribe_death> (<deus_ex_machina> may save them then)."
+                        },
+                        "<ontology::pipeline>": {
+                          "options": [
+                            {
+                              "id": "pay_feeding",
+                              "name": {
+                                "zh": "支付喂食",
+                                "en": "Pay Feeding Costs"
+                              },
+                              "<ontology::transfer>": {
+                                "description": {
+                                  "zh": "对每个决定喂饱的部落，按成本从<food_space>返还<food>至供应堆（营地/船 1、野外 2、农场与研究牌减免）。",
+                                  "en": "For each tribe you choose to feed, return <food> from <food_space> to the supply at its cost (1 for encampment/boat, 2 for wilderness, reduced by farms and research cards)."
+                                },
+                                "source": "<food_space>",
+                                "destination": "<ontology::supply>",
+                                "<ontology::object>": "<food>",
+                                "quantity": "按各部落成本之和（营地/船 1、野外 2、农场/研究牌减免）"
+                              }
+                            },
+                            {
+                              "id": "resolve_unfed",
+                              "name": {
+                                "zh": "处理未喂饱的部落",
+                                "en": "Resolve Unfed Tribes"
+                              },
+                              "<ontology::pipeline>": {
+                                "options": [
+                                  {
+                                    "id": "weaken_strong",
+                                    "name": {
+                                      "zh": "虚弱强壮部落",
+                                      "en": "Weaken Strong Tribes"
+                                    },
+                                    "<ontology::state_change>": {
+                                      "subject": "未喂饱的 posture == <upright> 的<tribe>",
+                                      "attribute": "posture",
+                                      "to": "<lying>"
+                                    }
+                                  },
+                                  "<tribe_death>"
+                                ],
+                                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                              }
+                            }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                        }
+                      },
+                      {
+                        "id": "score_strong_tribes",
+                        "name": {
+                          "zh": "强壮部落得分",
+                          "en": "Score Strong Tribes"
+                        },
+                        "do_after": [
+                          "feed_tribes"
+                        ],
+                        "<ontology::per_player>": true,
+                        "description": {
+                          "zh": "所有玩家完成喂部落（A 步）后，每位玩家为自己的每个强壮（posture == <upright>）部落获得 1 分。",
+                          "en": "After every player has finished feeding (step A), each player gains 1 success point for each of their strong (<upright>) tribes."
+                        },
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<score_track>",
+                          "step": "强壮部落数量（每个 1 分）"
+                        }
+                      },
                       {
                         "id": "advance_to_phase_7",
                         "name": {
                           "zh": "推进到事件阶段",
                           "en": "Advance to Event Phase"
                         },
+                        "do_after": [
+                          "score_strong_tribes"
+                        ],
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_7_event>"
