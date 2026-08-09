@@ -2652,6 +2652,28 @@
           }
         },
         {
+          "id": "<reset_space>",
+          "name": {
+            "zh": "重置格",
+            "en": "Reset Space"
+          },
+          "description": {
+            "zh": "行动阶段轨段的<reset_space>（黄色格）。实际格数随人数变化（2 人 5 格、3 人 7 格、4 人 9 格），带人数标记的格在低人数局被阻挡标记覆盖（详见<reset_space>定义）。",
+            "en": "The <reset_space> of the Action phase track segment (yellow). The actual number of spaces varies by player count (5 for 2 players, 7 for 3, 9 for 4); player-count-marked spaces are covered by blocking tokens in lower-count games (see the <reset_space> definition)."
+          }
+        },
+        {
+          "id": "<reset_end_space>",
+          "name": {
+            "zh": "重置结束格",
+            "en": "Reset End Space"
+          },
+          "description": {
+            "zh": "行动阶段轨段末端的<reset_end_space>（唯一的红色格，所有人数使用）。阶段标记被推至此格触发<action_phase_end>。",
+            "en": "The <reset_end_space> at the end of the Action phase track segment (the single red space, used at all player counts). Pushing the phase indicator here triggers <action_phase_end>."
+          }
+        },
+        {
           "name": {
             "zh": "第五阶段",
             "en": "Phase 5"
@@ -2704,6 +2726,32 @@
           }
         }
       ]
+    },
+    {
+      "id": "reset_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "重置格",
+        "en": "Reset Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<phase_sequence> 上第四阶段与第五阶段之间的行动阶段轨段中的黄色格。阶段标记被 Reset 的 A 步沿黄色箭头逐格推进。轨段长度随人数变化（2 人 5 格、3 人 7 格、4 人 9 格）——部分格带人数标记：带 3 标记的格在 3 人及以上局使用，带 4 标记的格仅在 4 人局使用，其余在 setup 时被一百分指示物背面（阻挡标记）覆盖。",
+        "en": "A yellow space in the Action phase track segment of <phase_sequence>, between Phase 4 and Phase 5. The phase indicator advances along the yellow arrow one space per Reset step A. The segment length varies by player count (5 spaces for 2 players, 7 for 3, 9 for 4) — some spaces bear player-count marks: spaces marked 3 are used in games of 3+ players, spaces marked 4 only in 4-player games; the rest are covered with blocking tokens (backs of 100-point tokens) during setup."
+      }
+    },
+    {
+      "id": "reset_end_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "重置结束格",
+        "en": "Reset End Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<phase_sequence> 行动阶段轨段末端唯一的红色格。阶段标记被 Reset 的 A 步推至此格时，<action_phase_end> 条件成立，触发行动阶段结束（先完成当前行动轮，再进行最终行动轮，之后推入阶段五）。",
+        "en": "The single red space at the end of the Action phase track segment of <phase_sequence>. When the phase indicator is pushed here by Reset step A, the <action_phase_end> condition holds and the Action phase ends (complete the current round, play the final action round, then advance to Phase 5)."
+      }
     },
     {
       "id": "era_scoring_area",

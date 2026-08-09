@@ -325,90 +325,31 @@
             },
             "specifies": "<ontology::phase>",
             "description": {
-              "zh": "终局阶段：触发终局后游戏不中断，按原座次顺序继续——本轮尚未行动的玩家各自完成自己的回合，然后按最高声望判定胜者。",
-              "en": "Endgame phase: once the endgame is triggered the game does not stop — the current round continues in seating order, with players who have not yet acted finishing their own turns, then the winner is determined by highest prestige."
+              "zh": "终局阶段：15 分触发的当前轮已在<main_gameplay>内完整跑完（loop 在轮末检查——触发后剩余玩家照常行动）。本阶段直接判定胜者。",
+              "en": "Endgame phase: the round in which 15 points was reached has already completed in full within <main_gameplay> (the loop checks at the end of each round — after the trigger, the remaining players keep acting normally). This phase directly adjudicates the winner."
             },
             "do_after": [
               "main_gameplay"
             ],
-            "<ontology::pipeline>": {
-              "options": [
-                {
-                  "id": "final_turn_cycle",
-                  "name": {
-                    "zh": "终局回合轮",
-                    "en": "Final Turn Cycle"
-                  },
-                  "specifies": "<ontology::round>",
-                  "description": {
-                    "zh": "当前轮的继续（不是新开一轮）：进入终局阶段后，按原座次顺序为尚未行动的玩家完成本轮各自的回合（已行动玩家自动跳过）。",
-                    "en": "Continuation of the current round (not a new round): once the endgame phase begins, players who have not yet acted complete their turns of this round in the original seating order (players who already acted are skipped)."
-                  },
-                  "<ontology::turn>": {
-                    "id": "final_player_turn",
-                    "name": {
-                      "zh": "终局玩家回合",
-                      "en": "Final Player Turn"
-                    },
-                    "description": {
-                      "zh": "触发终局后，本轮尚未行动的玩家按原座次顺序继续执行一个回合：从四个合法行动中选择一个执行。",
-                      "en": "After the endgame is triggered, a player who has not yet acted this round continues with their turn in the original seating order, choosing one of four legal actions."
-                    },
-                    "<ontology::condition>": {
-                      "zh": "该玩家本轮尚未行动。",
-                      "en": "This player has not yet acted this round."
-                    },
-                    "<ontology::action>": {
-                      "options": [
-                        "<take_gems_different>",
-                        "<take_gems_same>",
-                        "<purchase_development_card>",
-                        "<reserve_development_card>",
-                        "<skip_turn>"
-                      ],
-                      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-                    }
-                  }
-                },
-                {
-                  "id": "scoring",
-                  "name": {
-                    "zh": "计分",
-                    "en": "Scoring"
-                  },
-                  "specifies": "<ontology::phase>",
-                  "description": {
-                    "zh": "比较所有玩家的声望点数，最高者获胜。",
-                    "en": "Compare all players' prestige points; the highest wins."
-                  },
-                  "do_after": [
-                    "final_turn_cycle"
-                  ],
-                  "events": [
-                    {
-                      "id": "adjudicate_victory",
-                      "name": {
-                        "zh": "判定胜者",
-                        "en": "Adjudicate Victory"
-                      },
-                      "specifies": "<ontology::evaluate>",
-                      "description": {
-                        "zh": "判定胜者：声望最高者获胜；平局时比较发展卡数量，更少者胜。",
-                        "en": "Adjudicate the winner: highest prestige wins; ties are broken by fewer development cards."
-                      },
-                      "result": {
-                        "zh": "胜者玩家。",
-                        "en": "The winning player."
-                      },
-                      "rules": {
-                        "zh": "按<highest_prestige_wins>判定胜者：先比较<prestige_point>总数，并列者再比较<ontology::development_area>中<development_card>数量。",
-                        "en": "Adjudicate by <highest_prestige_wins>: highest total <prestige_point>s, then fewest <development_card>s in <ontology::development_area>."
-                      }
-                    }
-                  ]
-                }
-              ],
-              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            "<ontology::evaluate>": {
+              "id": "adjudicate_victory",
+              "name": {
+                "zh": "判定胜者",
+                "en": "Adjudicate Victory"
+              },
+              "specifies": "<ontology::evaluate>",
+              "description": {
+                "zh": "判定胜者：声望最高者获胜；平局时比较发展卡数量，更少者胜。",
+                "en": "Adjudicate the winner: highest prestige wins; ties are broken by fewer development cards."
+              },
+              "result": {
+                "zh": "胜者玩家。",
+                "en": "The winning player."
+              },
+              "rules": {
+                "zh": "按<highest_prestige_wins>判定胜者：先比较<prestige_point>总数，并列者再比较<ontology::development_area>中<development_card>数量。",
+                "en": "Adjudicate by <highest_prestige_wins>: highest total <prestige_point>s, then fewest <development_card>s in <ontology::development_area>."
+              }
             }
           }
         ],

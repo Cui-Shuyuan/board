@@ -64,7 +64,10 @@ metadata:
 ## 阻塞项
 
 - 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
-- **flow.json 仅剩 1 个悬空引用**：`<action_phase_end>`（flow.json:666 的 `until`）在 conditions 组中未定义，需补一个对应 condition（行动阶段结束条件，由 reset 的红色 reset-end space 触发）。其余占位引用（`<activate_module>`、`<reset>`、`<action_phase_end>` 以外的）已全部补全。**待办：新会话开始时把 civolution 游戏整体流程（flow.json 全流程树）完整过一遍，顺带补上此 condition**
+- **`<action_phase_end>` 已补（2026-08-09）**：具名 condition（specifies `<ontology::condition>`，triggers 组末尾）——结构化谓词「`<phase_indicator>` 位于 `<phase_sequence>` 的 `<reset_end_space>`（由 Reset A 步推入）」
+- **重置格概念化（2026-08-09）**：ontology `<track>` 的 slot_spec 新增可选 `id`（格可被路径引用，如 `"<phase_sequence>.<reset_end_space>"`；marker 位置 = 「`<marker>` 位于 `<track>.<slot_id>`」）；civolution 新增 `<reset_space>`（黄格，2/3/4 人 5/7/9 格、人数标记覆盖）与 `<reset_end_space>`（末端唯一红格）概念；phase_sequence 的 slots 在第四/第五阶段间插入行动段——**1 个 `<reset_space>` 槽位 + 1 个 `<reset_end_space>` 槽位**（不展开成 9 个黄格——数量归概念定义）；Reset A 步/setup/advance 描述引用全部对齐
+- **行动阶段结束条件定稿 ★（2026-08-09 用户最终方案）**：**不拆 phase**——`phase_4_action` 单 phase，pipeline [action_turn_cycle（round，loop.until <action_phase_end>）→ advance_to_phase_5]；`action_phase_end` 条件 = **「<phase_indicator> 位于 <reset_end_space>，且自到达以来每位玩家又各完成了一个 turn」**——即「红格被推的那一轮 + 下一轮（最终行动轮）都完成」——循环自然包含触发轮（轮末检查：红格到但触发者及其前玩家在红格前行动，条件不成立继续）与最终轮（条件成立停）。曾试过：拆两个子 phase（太绕）、触发即停+补完（太复杂）——均废弃
+- **Splendor endgame 简化（2026-08-09 同思路）**：`main_gameplay` loop 轮末检查已保证 15 分触发轮完整——删除 `final_turn_cycle`（补完结构冗余）+ `scoring` 包装（含 events 旧结构残留）；`endgame` 直接持有 `<ontology::evaluate>`（adjudicate_victory 判胜）。**仍悬空**：`<final_scoring_track_end>`（final_scoring_categories 的 loop.until）
 - 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
 - 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
 - Phase B~D 依赖对象层定稿，避免后续大量返工

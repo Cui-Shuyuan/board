@@ -226,8 +226,8 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将一百分指示物作为供应堆放到百分指示物展示区。2 人局将部分指示物翻至阻挡面，覆盖目标芯片展示区 2 个格和流程版图 4 个黄色 reset space；3 人局覆盖目标芯片展示区 1 个格和 2 个黄色 reset space；4 人局不覆盖。",
-                    "en": "Place the 100-point tokens as a supply on the 100-point token display. In a 2-player game, flip some blocking side up to cover 2 goal chip display spaces and 4 yellow reset spaces of the phase sequence; in 3-player, cover 1 goal chip display space and 2 yellow reset spaces; in 4-player, cover none."
+                    "zh": "将一百分指示物作为供应堆放到百分指示物展示区。2 人局将部分指示物翻至阻挡面，覆盖目标芯片展示区 2 个格和<phase_sequence>的 4 个带人数标记<reset_space>；3 人局覆盖目标芯片展示区 1 个格和 2 个带 4 人标记的<reset_space>；4 人局不覆盖。",
+                    "en": "Place the 100-point tokens as a supply on the 100-point token display. In a 2-player game, flip some blocking side up to cover 2 goal chip display spaces and the 4 player-count-marked <reset_space>s of <phase_sequence>; in 3-player, cover 1 goal chip display space and the 2 spaces marked 4; in 4-player, cover none."
                   },
                   "source": "<ontology::game_box>",
                   "destination": "<hundred_point_token_display>",
@@ -1117,32 +1117,52 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段四：行动阶段。阶段标记从第一个黄色 reset space 开始。从起始玩家顺时针轮流转，每回合必须二选一：激活一个模组（支付恰好 2 个对应点数的白骰子或计划/焦点标记）或执行 Reset（前提：当前骰子区白骰子不超过 3 个）。Reset 分三步——A: 沿黄色箭头推动阶段标记到下一个 reset space（若到达红色 reset end space 则触发行动阶段结束）；B: 回收已使用的骰子并全部重掷；C: 将最左侧重置标记移入 idea space 或 food space。阶段标记到达红色格后，先补完当前轮，所有玩家再执行最后一轮完整回合，由起始玩家右手边的玩家结束行动阶段。",
-                    "en": "Phase 4: Action Phase. The phase indicator starts on the first yellow reset space. Players take turns clockwise; each turn must either activate a module (pay exactly 2 activation dice of matching values, or planning/focus markers) or perform a Reset (only if the player has ≤3 activation dice on dice spaces). Reset has three steps — A: Advance the phase indicator along the yellow arrow to the next reset space (if it reaches the red reset-end space, the Action Phase end is triggered); B: Retrieve all used dice and re-roll them; C: Move the leftmost reset marker to the idea space or food space. When the phase indicator reaches the red space, complete the current round, then all players take one final full round, ending with the player right of the starting player."
+                    "zh": "阶段四：行动阶段。阶段标记从第一个黄色<reset_space>开始。从起始玩家顺时针轮流转，每回合必须二选一：激活一个模组（支付恰好 2 个对应点数的白骰子或计划/焦点标记）或执行 Reset（前提：当前骰子区白骰子不超过 3 个）。Reset 分三步——A: 沿黄色箭头推动阶段标记到下一个<reset_space>（若到达<reset_end_space>则触发行动阶段结束流程）；B: 回收已使用的骰子并全部重掷；C: 将最左侧重置标记移入 idea space 或 food space。行动阶段在「标记被推至<reset_end_space>的那一轮 + 下一轮」都结束后才结束（见<action_phase_end>）；结束后将<phase_indicator>推到阶段五。",
+                    "en": "Phase 4: Action Phase. The phase indicator starts on the first yellow <reset_space>. Players take turns clockwise; each turn must either activate a module (pay exactly 2 activation dice of matching values, or planning/focus markers) or perform a Reset (only if the player has ≤3 activation dice on dice spaces). Reset has three steps — A: Advance the phase indicator along the yellow arrow to the next <reset_space> (if it reaches the <reset_end_space>, the Action Phase end sequence is triggered); B: Retrieve all used dice and re-roll them; C: Move the leftmost reset marker to the idea space or food space. The Action phase ends only after both the round in which the phase indicator was pushed onto the <reset_end_space> AND the following round have completed (see <action_phase_end>); afterwards the <phase_indicator> is advanced to Phase 5."
                   },
-                  "<ontology::round>": {
-                    "id": "action_turn_cycle",
-                    "name": {
-                      "zh": "行动轮循环",
-                      "en": "Action Turn Cycle"
-                    },
-                    "loop": {
-                      "until": "<action_phase_end>"
-                    },
-                    "<ontology::turn>": {
-                      "id": "player_action_turn",
-                      "name": {
-                        "zh": "玩家行动回合",
-                        "en": "Player Action Turn"
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "action_turn_cycle",
+                        "name": {
+                          "zh": "行动轮循环",
+                          "en": "Action Turn Cycle"
+                        },
+                        "specifies": "<ontology::round>",
+                        "loop": {
+                          "until": "<action_phase_end>"
+                        },
+                        "<ontology::turn>": {
+                          "id": "player_action_turn",
+                          "name": {
+                            "zh": "玩家行动回合",
+                            "en": "Player Action Turn"
+                          },
+                          "<ontology::action>": {
+                            "options": [
+                              "<activate_module>",
+                              "<reset>"
+                            ],
+                            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                          }
+                        }
                       },
-                      "<ontology::action>":  {
-                        "options": [
-                          "<activate_module>",
-                          "<reset>"
+                      {
+                        "id": "advance_to_phase_5",
+                        "name": {
+                          "zh": "推进到阶段五",
+                          "en": "Advance to Phase 5"
+                        },
+                        "do_after": [
+                          "action_turn_cycle"
                         ],
-                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                        "description": {
+                          "zh": "行动阶段结束后（触发轮与最终行动轮均已完成，起始玩家右手边的玩家完成最后一回合），将<phase_indicator>从<reset_end_space>推到阶段五（地点阶段）的位置。",
+                          "en": "After the Action phase ends (both the triggering round and the final action round completed, with the player right of the starting player finishing their last turn), advance the <phase_indicator> from the <reset_end_space> to Phase 5 (Site phase)."
+                        }
                       }
-                    }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                   }
                 },
                 {
@@ -3798,8 +3818,8 @@
                 "en": "Step A: Advance Phase Indicator"
               },
               "description": {
-                "zh": "将最靠左的<reset_marker>沿列下推一格（A 位）。沿黄色箭头推动<phase_indicator>至<phase_sequence>的下一个 reset space。若到达红色 reset end space，触发行动阶段结束。",
-                "en": "Push the leftmost <reset_marker> one step down its column (position A). Advance the <phase_indicator> along the yellow arrow to the next reset space on the <phase_sequence>. If it reaches the red reset-end space, trigger Action Phase end."
+                "zh": "将最靠左的<reset_marker>沿列下推一格（A 位）。沿黄色箭头推动<phase_indicator>至<phase_sequence>的下一个<reset_space>。若到达<reset_end_space>，触发<action_phase_end>。",
+                "en": "Push the leftmost <reset_marker> one step down its column (position A). Advance the <phase_indicator> along the yellow arrow to the next <reset_space> on the <phase_sequence>. If it reaches the <reset_end_space>, trigger <action_phase_end>."
               }
             },
             {
@@ -3887,6 +3907,19 @@
           ],
           "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
         }
+      }
+    },
+    {
+      "id": "action_phase_end",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "行动阶段结束",
+        "en": "Action Phase End"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<phase_indicator> 位于 <phase_sequence> 的 <reset_end_space>（由 Reset 的 A 步推入），**且自到达以来每位 <player> 又各完成了一个 <turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
+        "en": "The <phase_indicator> is on the <reset_end_space> of <phase_sequence> (pushed there by Reset step A), **and since it arrived every <player> has completed one more <turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
       }
     }
   ]
