@@ -13,20 +13,21 @@ metadata:
 
 ## Pipeline 是唯一的结构原语 ★（2026-08-09 定稿）
 
-**`<round>`、`<turn>`、`<phase>` 的流程一律用 `<ontology::pipeline>` 定义。children 数组、actor、start/end 字段全部废弃**：
+**`<round>`、`<turn>`、`<phase>` 的多步骤执行用 `<ontology::pipeline>` 定义；仅干一件事时直接持有对应概念（如 `<ontology::action>`），不套 pipeline**（2026-08-09 修正：pipeline 是描述多 trigger/多步骤的工具，不是必包层；phase 同样不是必包层——只有 1 个 phase 时省略不写）。children 数组、actor、start/end 字段全部废弃：
 
 - 步骤顺序与先后依赖 → options + do_after
-- 循环边界 → loop（`for N` 定次 / `until` 条件）
+- **round 执行次数（口语「进行几轮」）→ round 的 `count` 字段**（缺省 1 次 = 每位玩家按座次各行动一轮；「进行 4 轮」= `"count": 4`。字段名不叫 rounds——「进行 4 轮」的「4」是次数）
+- **次数未知、直到条件才结束 → pipeline `loop.until`**（如 Splendor main_gameplay「一直进行到有人 15 分」）；loop.for 保留给内容层定次循环
 - 「谁能做某操作」→ 步骤/候选的 `<condition>`（不成立则阻断或排除）
 - 行动权轮转 → `<turn>` 的内建语义（按座次推进，无需字段声明）
 
 ```json
-// round：loop 在 pipeline 内
+// round：执行次数用 count 字段，不写 loop
 {
   "id": "era_loop",
   "specifies": "<ontology::round>",
+  "count": 4,
   "<ontology::pipeline>": {
-    "loop": { "for": 4, "counter": "era_number" },
     "options": [ phase_1, ..., phase_8 ],
     "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
   }
@@ -42,12 +43,12 @@ metadata:
   }
 }
 
-// 「每位玩家一个 turn 按座次轮转」：loop until 所有玩家已行动 + turn 内建轮转
+// 「每位玩家一个 turn 按座次轮转」：round 缺省 1 次即是每人一轮，turn 内建轮转
+// ★ 2026-08-09 定稿：次数确定用 count（缺省 1）；直到条件结束才用 loop.until
 {
   "id": "goal_choice_round",
   "specifies": "<ontology::round>",
   "<ontology::pipeline>": {
-    "loop": { "until": { "zh": "所有玩家都已完成本轮的一个回合（做过选择或跳过）。", "en": "..." } },
     "options": [ { "id": "player_goal_turn", "specifies": "<ontology::turn>", ... } ],
     "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
   }
@@ -85,7 +86,7 @@ options 的元素可以是：
 | options | 候选项数组。里面装什么由具体场景决定——card、resource、transfer、action、子 pipeline、player、zone、甚至 _skip |
 | type | 处理策略，引用 `multiple_choice_enum`：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / CHOOSE_ANY |
 | do_after | 前置依赖。仅当 do_after 中所有项完成（或跳过）后才可执行 |
-| loop | 循环边界。`{ "for": N, "counter": "<名>" }` 定次循环（counter 供步骤引用迭代号）；`{ "until": <condition> }` 条件循环（until 为字符串引用或内联谓词 { zh, en }）。每次迭代重新求值 type 与 do_after |
+| loop | 循环边界（**round 场景用 count 字段，不用 loop**）。`{ "for": N, "counter": "<名>" }` 定次循环（counter 供步骤引用迭代号，保留给内容层）；`{ "until": <condition> }` 条件循环（until 为字符串引用或内联谓词 { zh, en }）——用于次数未知的规则（如「一直进行到有人 15 分」）。每次迭代重新求值 type 与 do_after |
 
 ## 阻断语义（do_after 链）
 

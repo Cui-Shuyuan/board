@@ -72,7 +72,9 @@ metadata:
 ## 最近进展
 
 - **2026-08-09 晚（结构统一大重构：children/actor/start/end 全废弃）**:
-    - **pipeline 是唯一结构原语**：`<procedure>`（round/turn/phase）一律持有 `<ontology::pipeline>` 定义实际流程（详见 [[pipeline-model]]）。`children` 数组、`actor`、`start`/`end` 字段全部废弃
+    - **pipeline 是唯一结构原语**：`<procedure>`（round/turn/phase）多步骤时持有 `<ontology::pipeline>` 定义实际流程，单内容时直接持有概念（如 `<ontology::action>`，player_extra_find_turn 已按此改）（详见 [[pipeline-model]]）。`children` 数组、`actor`、`start`/`end` 字段全部废弃
+    - **round.count 字段（2026-08-09 追加）**：round 执行次数（口语「进行几轮」，字段名不叫 rounds——「4」是次数）用 `count`（缺省 1 次 = 每位玩家按座次各行动一轮）。**迁移完成**：draft_round/goal_choice_round/extra_find_round 删「所有玩家已行动」until loop（round 缺省 1 次即每人一轮）；era_loop `count: 4`（原 for 4）；action_turn_cycle（until action_phase_end）与终局计分循环保留（未知次数）。Splendor 同步：turn_cycle 删 player_turns phase 包装、player_turn 删 action_phase 包装（phase 不是必包层，只有 1 个 phase 省略不写）、final_turn_cycle 改「round 缺省 1 次 + turn 带『本轮尚未行动』condition」；main_gameplay 的 `until <reach_15_prestige>` 保留；孤儿条件 all_players_acted_this_round / no_remaining_players 已删
+    - **单内容直接持有（2026-08-09 收尾）**：扫描全库确认——**单元素 pipeline 一律去包装**：phase→round、round→turn、turn→action 直接持有下一层（phase_3_extra_find 内联为 phase→round→turn→action 四层无 pipeline；goal_choice_round/extra_find_round 直接持有 turn；phase_4_action 直接持有 round；splendor turn_cycle/final_turn_cycle 直接持有 turn）。**仅剩 2 处单元素 pipeline 为 loop.until 宿主**（未知次数循环，pipeline 必要）：civolution action_turn_cycle、splendor main_gameplay
     - **pipeline 新增 `loop` 原语**：`{ "for": N, "counter": "<名>" }` 定次循环（era_loop 用 for 4）+ `{ "until": <condition> }` 条件循环（until 字符串引用或内联谓词）。内容层循环同款（「随机伤害直到有人被击败」）
     - **轮转模型**：round 的 pipeline `loop.until` = 「所有玩家已行动」（内联谓词），options 一个 turn 节点；turn 执行者由内建轮转语义推进；轮抽「从右手边逆时针」等顺序写 description
     - **步骤级 vs 候选级 condition 语义**：步骤级不成立 = 阻断（do_after 链停止）；候选级不成立 = 排除（不影响其他候选）。「能 A 必须 A，否则跳过」= 跳过作为带「全部行动条件取反」condition 的候选（Splendor `skip_turn` 从 trigger 改为 action 并加入 action_phase 的 CHOOSE_ONE）

@@ -980,14 +980,14 @@
       },
       "abstract": true,
       "description": {
-        "zh": "游戏流程的执行单元——它定义了「游戏现在处于什么阶段」「接下来该做什么」。<procedure> 的子类（<round>、<turn>、<phase>）语义各异但结构相同：**实际流程一律通过 <ontology::pipeline> 定义**（options 序列 + do_after 依赖 + loop 循环），<procedure> 自身不再有 children / start / end 字段——步骤顺序与先后依赖由 pipeline 的 do_after 表达，循环边界由 pipeline 的 loop.until 表达，「谁能做某操作」由步骤的 <condition> 表达。嵌套仍是自由形式的：options 里的候选项可以是 <round>、<turn>、<phase> 或普通步骤，一整局游戏本身也可以是一个最外层的 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。",
-        "en": "An execution unit of game flow — it defines 'what stage the game is in' and 'what happens next'. The <procedure> subclasses (<round>, <turn>, <phase>) differ in semantics but share the same structure: **actual flow is always defined via an <ontology::pipeline>** (options sequence + do_after dependencies + loop). <procedure> itself no longer has children / start / end fields — step order and prerequisites come from the pipeline's do_after, loop boundaries from the pipeline's loop.until, and 'who may perform an operation' from a step's <condition>. Nesting remains free-form: candidates in options can be <round>s, <turn>s, <phase>s, or plain steps, and an entire game can itself be an outermost <round>. There is no fixed hierarchy — the nesting is determined by each game's rules."
+        "zh": "游戏流程的执行单元——它定义了「游戏现在处于什么阶段」「接下来该做什么」。<procedure> 的子类（<round>、<turn>、<phase>）语义各异但结构相同：**执行内容优先用 <ontology::pipeline> 定义**（options 序列 + do_after 依赖 + loop 循环），**仅干一件事时可直接持有对应概念（如 <ontology::action>），无需 pipeline 包装**——pipeline 是描述多 trigger/多步骤的工具，不是必包层。<procedure> 自身不再有 children / start / end 字段——步骤顺序与先后依赖由 pipeline 的 do_after 表达，循环边界由 pipeline 的 loop.until 表达，「谁能做某操作」由步骤的 <condition> 表达。嵌套仍是自由形式的：options 里的候选项可以是 <round>、<turn>、<phase> 或普通步骤，一整局游戏本身也可以是一个最外层的 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。",
+        "en": "An execution unit of game flow — it defines 'what stage the game is in' and 'what happens next'. The <procedure> subclasses (<round>, <turn>, <phase>) differ in semantics but share the same structure: **execution content is preferably defined via an <ontology::pipeline>** (options sequence + do_after dependencies + loop), **but a procedure doing a single thing may directly hold the concept itself (e.g. an <ontology::action>) without pipeline wrapping** — a pipeline is a tool for composing multiple triggers/steps, not a mandatory wrapper. <procedure> itself no longer has children / start / end fields — step order and prerequisites come from the pipeline's do_after, loop boundaries from the pipeline's loop.until, and 'who may perform an operation' from a step's <condition>. Nesting remains free-form: candidates in options can be <round>s, <turn>s, <phase>s, or plain steps, and an entire game can itself be an outermost <round>. There is no fixed hierarchy — the nesting is determined by each game's rules."
       },
       "<pipeline>": {
         "default": null,
         "description": {
-          "zh": "本 <procedure> 的实际流程定义（options / type / do_after / loop 结构）。子类 <round>、<turn>、<phase> 均通过它描述自己的执行内容：<round> 用 loop 表达每轮重跑、<turn> 用 CHOOSE_ONE 表达行动选择（执行者轮转是 <turn> 的内建语义）、<phase> 用 options 承载子流程或程序化步骤（setup、结算等）。",
-          "en": "The actual flow definition of this <procedure> (options / type / do_after / loop structure). The subclasses <round>, <turn>, and <phase> all describe their execution content through it: <round> uses loop for per-cycle repetition, <turn> uses CHOOSE_ONE for action selection (turn order is <turn>'s built-in semantics), and <phase> holds child procedures or programmatic steps (setup, resolution, etc.) in its options."
+          "zh": "本 <procedure> 的执行内容（options / type / do_after / loop 结构），仅当执行内容多于一个步骤/行动时使用；单内容时直接持有对应概念（如 <ontology::action>）。子类 <round>、<turn>、<phase> 通过它描述多步骤执行：<round> 用 loop 表达每轮重跑、<turn> 用 CHOOSE_ONE 表达多行动选择（执行者轮转是 <turn> 的内建语义）、<phase> 用 options 承载子流程或程序化步骤（setup、结算等）。",
+          "en": "The execution content of this <procedure> (options / type / do_after / loop structure), used only when the execution content has more than one step/action; a single-content procedure directly holds the concept itself (e.g. an <ontology::action>). The subclasses <round>, <turn>, and <phase> describe multi-step execution through it: <round> uses loop for per-cycle repetition, <turn> uses CHOOSE_ONE for multi-action selection (turn order is <turn>'s built-in semantics), and <phase> holds child procedures or programmatic steps (setup, resolution, etc.) in its options."
         }
       },
       "constraints": {
@@ -1004,8 +1004,8 @@
           {
             "id": "<pipeline>",
             "description": {
-              "zh": "本 <procedure> 的实际流程定义，见顶层字段声明。所有 <procedure> 子类都应持有它。",
-              "en": "The actual flow definition of this <procedure>; see the top-level field declaration. Every <procedure> subclass should hold one."
+              "zh": "本 <procedure> 的执行内容定义，见顶层字段声明。多步骤/多行动时持有；单内容时直接持有对应概念（如 <ontology::action>）。",
+              "en": "The execution content of this <procedure>; see the top-level field declaration. Held when there are multiple steps/actions; a single-content procedure directly holds the concept itself (e.g. an <ontology::action>)."
             }
           }
         ]
@@ -1020,12 +1020,28 @@
       },
       "abstract": false,
       "description": {
-        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。一轮内部结构固定——每次循环执行相同的 <ontology::pipeline> options 序列，循环边界由该 pipeline 的 loop.until 表达（无 loop 时即单次执行的流程单元）。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 options 可直接承载 <phase>、<turn> 或普通步骤，无需中间的包装层。「每位玩家一个 turn 按座次轮转」通过「loop until 所有玩家都已行动」+ <turn> 内建轮转语义表达。",
-        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. Its internal structure is fixed — each cycle executes the same <ontology::pipeline> options sequence, with the loop boundary expressed by that pipeline's loop.until (without loop it is a single-pass flow unit). An entire game is itself an outermost <round>. A <round>'s options may directly carry <phase>s, <turn>s, or plain steps without an intermediate wrapper layer. 'One turn per player in seating order' is expressed by 'loop until every player has acted' plus <turn>'s built-in turn-order semantics."
+        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。**<round> 的内建语义：一次 = 每位 <player> 按座次各行动一轮**（options 中的 <turn> 按座次轮转推进，从起始玩家开始到末位玩家结束）。**执行次数由 count 字段声明**（缺省 1 次 = 每位玩家恰好一个 turn，口语「进行 4 轮」= count 4）；**次数未知、直到条件才结束的用 pipeline 的 loop.until**（如「一直进行到有人达到 15 分」）。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 options 可直接承载 <phase>、<turn> 或普通步骤，无需中间的包装层——只有 1 个 <phase> 时省略不写。",
+        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. **A round's built-in semantics: one pass = every <player> acts once in seating order** (<turn>s in options advance by seating order, from the starting player to the last). **The number of passes is declared by the count field** (default 1 pass = exactly one turn per player; '4 rounds' in colloquial terms = count 4); **when the pass count is unknown and the flow continues until a condition, use the pipeline's loop.until** (e.g. 'keep going until someone reaches 15 points'). An entire game is itself an outermost <round>. A <round>'s options may directly carry <phase>s, <turn>s, or plain steps without an intermediate wrapper layer — a single <phase> may be omitted."
+      },
+      "count": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "本 <round> 的执行次数——口语「进行几轮」。一次 = options 执行一遍（每位 <player> 各行动一轮，按座次轮转）。缺省 1 次。次数未知、直到条件结束的场景不用此字段，改用 pipeline 的 loop.until。",
+          "en": "How many times this <round> runs — 'how many rounds' in colloquial terms. One pass = options execute once (every <player> acts once, in seating order). Default 1. For unknown pass counts that continue until a condition, use the pipeline's loop.until instead."
+        }
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          {
+            "id": "count",
+            "description": {
+              "zh": "执行次数（进行几轮），见顶层字段声明。缺省 1 次。",
+              "en": "Execution count (how many rounds); see the top-level field declaration. Defaults to 1."
+            }
+          }
+        ]
       }
     },
     {
@@ -1037,8 +1053,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。行动选择由 <ontology::pipeline> 表达——options 为可行动作（<action> 引用或条件步骤），type 为 CHOOSE_ONE（选一个执行）。执行者（当前玩家）由流程推进按座次顺序轮转决定——轮转是 <turn> 的内建语义，无需字段声明；「谁能做某操作」由步骤的 <condition> 表达，条件不成立的玩家自动跳过。",
-        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. Action selection is expressed by an <ontology::pipeline> — its options are the available actions (<action> references or conditional steps), with type CHOOSE_ONE (pick one to perform). The actor (current player) is decided by flow progression in seating order — turn order is <turn>'s built-in semantics and needs no field declaration; 'who may perform an operation' is expressed by a step's <condition>, and players failing it are skipped automatically."
+        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。行动内容：**仅有一个可行动作时直接持有 <ontology::action>**；多于一个时用 <ontology::pipeline> 表达选择——options 为可行动作（<action> 引用或条件步骤），type 为 CHOOSE_ONE（选一个执行）。执行者（当前玩家）由流程推进按座次顺序轮转决定——轮转是 <turn> 的内建语义，无需字段声明；「谁能做某操作」由步骤的 <condition> 表达，条件不成立的玩家自动跳过。",
+        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. Action content: **a turn with a single action directly holds the <ontology::action>**; with multiple actions, an <ontology::pipeline> expresses the choice — its options are the available actions (<action> references or conditional steps), with type CHOOSE_ONE (pick one to perform). The actor (current player) is decided by flow progression in seating order — turn order is <turn>'s built-in semantics and needs no field declaration; 'who may perform an operation' is expressed by a step's <condition>, and players failing it are skipped automatically."
       },
       "constraints": {
         "required": [],

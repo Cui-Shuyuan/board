@@ -79,21 +79,21 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 
 ## Procedure 结构统一 ★（2026-08-09）
 
-**round/turn/phase 一律持有 `<ontology::pipeline>` 定义实际流程。children 数组、actor、start/end 字段全部废弃**：
+**round/turn/phase 用 `<ontology::pipeline>` 定义多步骤执行；仅干一件事时直接持有对应概念（如 `<ontology::action>`），不套 pipeline**。children 数组、actor、start/end 字段全部废弃：
 
 ```json
-// round：loop 在 pipeline 内
+// round：执行次数（进行几轮）用 count 字段，不写 loop
 {
   "id": "era_loop",
   "specifies": "<ontology::round>",
+  "count": 4,
   "<ontology::pipeline>": {
-    "loop": { "for": 4, "counter": "era_number" },
     "options": [ phase_1, ..., phase_8 ],
     "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
   }
 }
 
-// turn：行动选择即 CHOOSE_ONE，无 actor
+// turn：多行动选择即 CHOOSE_ONE，无 actor
 {
   "id": "player_action_turn",
   "specifies": "<ontology::turn>",
@@ -102,11 +102,19 @@ Action 必须遵循 `condition → cost → target → content` 结构：
     "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
   }
 }
+
+// turn：单行动直接持有 action，不包 pipeline
+{
+  "id": "player_extra_find_turn",
+  "specifies": "<ontology::turn>",
+  "<ontology::action>": "<extra_find>"
+}
 ```
 
-- **loop 两种形态**：`{ "for": N, "counter": "<名>" }` 定次循环；`{ "until": <condition> }` 条件循环（until 为字符串引用或内联谓词 `{ zh, en }`）
-- **轮转**：round 的 pipeline `loop.until` = 「所有玩家已行动」（内联谓词或 condition 引用），options 里一个 turn 节点；turn 执行者由内建轮转语义推进
-- **「谁能做」写 condition**：步骤级 condition 不成立 = **阻断**（该步骤及 do_after 依赖项停止）；候选级 condition 不成立 = **排除**（不影响其他候选）
+- **round.count ★（2026-08-09）**：round 的内建语义 = 一次 = 每位玩家按座次各行动一轮（options 中的 turn 轮转）。**执行次数（口语「进行几轮」）用 count 字段**（integer，缺省 1 次 = 每位玩家恰好一个 turn；「进行 4 轮」= `"count": 4`）。字段名不叫 rounds——「进行 4 轮」的「4」是次数，round 的属性不该是「轮」
+- **loop 判据 ★**：**次数确定的 round 用 count**；**次数未知、直到条件才结束的用 pipeline `loop.until`**——如 Splendor `main_gameplay` 的 `until <reach_15_prestige>`（一直进行到有人 15 分）、行动阶段 `until <action_phase_end>`。loop.until 用于「不知道进行几轮」的规则，loop.for 保留给内容层定次循环
+- **单内容直接持有 ★**：pipeline 是描述多 trigger/多步骤的工具，**单内容一律直接持有下一层概念，不包 pipeline**——phase 只有 1 个 round → 持有 `<ontology::round>`；round 只有 1 个 turn → 持有 `<ontology::turn>`；turn 只有 1 个 action → 持有 `<ontology::action>`（civolution 的 phase_3_extra_find 已内联为 phase→round→turn→action 四层无 pipeline；Splendor 的 player_turns/action_phase 包装层已删）。**唯一例外：pipeline 作为 loop.until 的宿主**（未知次数循环）——如 civolution action_turn_cycle、Splendor main_gameplay
+- **「谁能做」写 condition**：步骤级 condition 不成立 = **阻断**（该步骤及 do_after 依赖项停止）；候选级 condition 不成立 = **排除**（不影响其他候选）。「终局补完回合」= round 缺省 1 次 + turn 带「本轮尚未行动」condition（已行动玩家阻断跳过）
 - **「能 A 必须 A，否则跳过」**：把「跳过」做成带「A 不可用」condition 的候选（如 Splendor `skip_turn`，condition = 全部行动条件取反），候选 condition 互补覆盖，CHOOSE_ONE 从可用候选中必选其一
 
 ## Key-as-type（不用 `"type"` 字段）
@@ -260,9 +268,9 @@ id + name.zh + name.en + description.zh + description.en
 
 写一个新 action/trigger/procedure 时确认：
 - [ ] 有 `name: { zh, en }`（紧跟 id 之后）
-- [ ] procedure（round/turn/phase）持有 `<ontology::pipeline>`，不用 children/actions/actor/start/end
-- [ ] round 的循环在 pipeline 的 `loop`（for N + counter 或 until condition）
-- [ ] 轮转 = round 的 loop.until「所有玩家已行动」+ turn 内建轮转，顺序差异写 description
+- [ ] procedure（round/turn/phase）多步骤时持有 `<ontology::pipeline>`，单内容时直接持有概念（如 `<ontology::action>`），不用 children/actions/actor/start/end
+- [ ] **round 执行次数用 `count`（缺省 1 次 = 每人一轮）；次数未知才用 pipeline `loop.until`**；turn 内建轮转，顺序差异写 description
+- [ ] phase 不是必包层：只有 1 个 phase 时省略不写
 - [ ] 步骤级 condition 不成立 = 阻断；候选级 condition 不成立 = 排除（二者语义不同）
 - [ ] 无行动可选的兜底：把「跳过」做成带「全部行动条件取反」condition 的候选
 - [ ] condition 单条写 zh/en，多条才用 options/type/EXECUTE_ALL

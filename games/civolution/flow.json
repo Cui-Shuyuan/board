@@ -757,16 +757,13 @@
                       "do_after": [
                         "attach_goal_chips"
                       ],
-                      "<ontology::pipeline>": {
-                        "options": [
-                          {
-                            "id": "player_draft_turn",
-                            "name": {
-                              "zh": "玩家轮抽回合",
-                              "en": "Player Draft Turn"
-                            },
-                            "specifies": "<ontology::turn>",
-                            "<ontology::pipeline>": {
+                      "<ontology::turn>": {
+                        "id": "player_draft_turn",
+                        "name": {
+                          "zh": "玩家轮抽回合",
+                          "en": "Player Draft Turn"
+                        },
+                        "<ontology::pipeline>": {
                               "options": [
                                 {
                                   "id": "choose_card",
@@ -837,16 +834,7 @@
                               ],
                               "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                             }
-                          }
-                        ],
-                        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                        "loop": {
-                          "until": {
-                            "zh": "所有玩家都已完成本轮的一个回合（做过选择或跳过）。",
-                            "en": "Every player has completed one turn this round (chosen or declined)."
-                          }
                         }
-                      }
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
@@ -939,9 +927,10 @@
               "en": "Era Loop"
             },
             "specifies": "<ontology::round>",
+            "count": 4,
             "description": {
-              "zh": "游戏共进行 4 个时代，每个时代包含 8 个阶段。",
-              "en": "The game consists of 4 eras, each with 8 phases."
+              "zh": "游戏共进行 4 个时代（count 4），每个时代包含 8 个阶段。",
+              "en": "The game consists of 4 eras (count 4), each with 8 phases."
             },
             "<ontology::pipeline>": {
               "options": [
@@ -1023,16 +1012,13 @@
                           "zh": "一轮选择：每位玩家一个 turn，从起始玩家开始顺时针轮流。",
                           "en": "One choice round: one turn per player, starting with the starting player and going clockwise."
                         },
-                        "<ontology::pipeline>": {
-                          "options": [
-                            {
-                              "id": "player_goal_turn",
-                              "name": {
-                                "zh": "玩家选择回合",
-                                "en": "Player Goal Turn"
-                              },
-                              "specifies": "<ontology::turn>",
-                              "<ontology::pipeline>": {
+                        "<ontology::turn>": {
+                          "id": "player_goal_turn",
+                          "name": {
+                            "zh": "玩家选择回合",
+                            "en": "Player Goal Turn"
+                          },
+                          "<ontology::pipeline>": {
                                 "options": [
                                   {
                                     "id": "_skip",
@@ -1061,15 +1047,6 @@
                                 ],
                                 "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
                               }
-                            }
-                          ],
-                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                          "loop": {
-                            "until": {
-                              "zh": "所有玩家都已完成本轮的一个回合（做过选择或跳过）。",
-                              "en": "Every player has completed one turn this round (chosen or declined)."
-                            }
-                          }
                         }
                       },
                       {
@@ -1110,47 +1087,24 @@
                     "zh": "阶段三：额外收获。按座次（起始玩家开始顺时针），每位玩家选择 1 个有至少一个自己 <tribe> 的陆地区域，从供应堆取 1 个标记作为 <stored_material> 放到仓库中与所选区域地形类型对应的存储格。只按区域地形类型匹配，与材料板块印的具体材料无关。",
                     "en": "Phase 3: Extra Find. In seating order (starting player then clockwise), each player chooses 1 land territory where they have at least one <tribe>, takes 1 marker from supply as a <stored_material>, and places it on a storage space matching the chosen territory's terrain type. Only the territory type matters, not the material depicted on the material tile."
                   },
-                  "<ontology::pipeline>": {
-                    "options": [
-                      {
-                        "id": "extra_find_round",
-                        "name": {
-                          "zh": "额外收获轮",
-                          "en": "Extra Find Round"
-                        },
-                        "specifies": "<ontology::round>",
-                        "description": {
-                          "zh": "一轮额外收获：每位玩家一个 turn，从起始玩家开始顺时针（按座次）。",
-                          "en": "One extra-find round: one turn per player, starting with the starting player and going clockwise (seating order)."
-                        },
-                        "<ontology::pipeline>": {
-                          "options": [
-                            {
-                              "id": "player_extra_find_turn",
-                              "name": {
-                                "zh": "玩家收获回合",
-                                "en": "Player Extra Find Turn"
-                              },
-                              "specifies": "<ontology::turn>",
-                              "<ontology::pipeline>": {
-                                "options": [
-                                  "<extra_find>"
-                                ],
-                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-                              }
-                            }
-                          ],
-                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                          "loop": {
-                            "until": {
-                              "zh": "所有玩家都已完成本轮的一个回合（做过选择或跳过）。",
-                              "en": "Every player has completed one turn this round (chosen or declined)."
-                            }
-                          }
-                        }
-                      }
-                    ],
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  "<ontology::round>": {
+                    "id": "extra_find_round",
+                    "name": {
+                      "zh": "额外收获轮",
+                      "en": "Extra Find Round"
+                    },
+                    "description": {
+                      "zh": "一轮额外收获：每位玩家一个 turn，从起始玩家开始顺时针（按座次）。",
+                      "en": "One extra-find round: one turn per player, starting with the starting player and going clockwise (seating order)."
+                    },
+                    "<ontology::turn>": {
+                      "id": "player_extra_find_turn",
+                      "name": {
+                        "zh": "玩家收获回合",
+                        "en": "Player Extra Find Turn"
+                      },
+                      "<ontology::action>": "<extra_find>"
+                    }
                   }
                 },
                 {
@@ -1164,41 +1118,35 @@
                     "zh": "阶段四：行动阶段。阶段标记从第一个黄色 reset space 开始。从起始玩家顺时针轮流转，每回合必须二选一：激活一个模组（支付恰好 2 个对应点数的白骰子或计划/焦点标记）或执行 Reset（前提：当前骰子区白骰子不超过 3 个）。Reset 分三步——A: 沿黄色箭头推动阶段标记到下一个 reset space（若到达红色 reset end space 则触发行动阶段结束）；B: 回收已使用的骰子并全部重掷；C: 将最左侧重置标记移入 idea space 或 food space。阶段标记到达红色格后，先补完当前轮，所有玩家再执行最后一轮完整回合，由起始玩家右手边的玩家结束行动阶段。",
                     "en": "Phase 4: Action Phase. The phase indicator starts on the first yellow reset space. Players take turns clockwise; each turn must either activate a module (pay exactly 2 activation dice of matching values, or planning/focus markers) or perform a Reset (only if the player has ≤3 activation dice on dice spaces). Reset has three steps — A: Advance the phase indicator along the yellow arrow to the next reset space (if it reaches the red reset-end space, the Action Phase end is triggered); B: Retrieve all used dice and re-roll them; C: Move the leftmost reset marker to the idea space or food space. When the phase indicator reaches the red space, complete the current round, then all players take one final full round, ending with the player right of the starting player."
                   },
-                  "<ontology::pipeline>": {
-                    "options": [
-                      {
-                        "id": "action_turn_cycle",
-                        "name": {
-                          "zh": "行动轮循环",
-                          "en": "Action Turn Cycle"
-                        },
-                        "specifies": "<ontology::round>",
-                        "<ontology::pipeline>": {
-                          "options": [
-                            {
-                              "id": "player_action_turn",
-                              "name": {
-                                "zh": "玩家行动回合",
-                                "en": "Player Action Turn"
-                              },
-                              "specifies": "<ontology::turn>",
-                              "<ontology::pipeline>": {
-                                "options": [
-                                  "<activate_module>",
-                                  "<reset>"
-                                ],
-                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-                              }
-                            }
-                          ],
-                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                          "loop": {
-                            "until": "<action_phase_end>"
+                  "<ontology::round>": {
+                    "id": "action_turn_cycle",
+                    "name": {
+                      "zh": "行动轮循环",
+                      "en": "Action Turn Cycle"
+                    },
+                    "<ontology::pipeline>": {
+                      "options": [
+                        {
+                          "id": "player_action_turn",
+                          "name": {
+                            "zh": "玩家行动回合",
+                            "en": "Player Action Turn"
+                          },
+                          "specifies": "<ontology::turn>",
+                          "<ontology::pipeline>": {
+                            "options": [
+                              "<activate_module>",
+                              "<reset>"
+                            ],
+                            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
                           }
                         }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
+                      "loop": {
+                        "until": "<action_phase_end>"
                       }
-                    ],
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    }
                   }
                 },
                 {
@@ -1303,11 +1251,7 @@
                   }
                 }
               ],
-              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-              "loop": {
-                "for": 4,
-                "counter": "era_number"
-              }
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
             }
           },
           {

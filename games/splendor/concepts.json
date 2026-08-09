@@ -1023,32 +1023,6 @@
         "zh": "该<ontology::player>的<prestige_point>总数为全场最高。允许并列——并列最高者同时满足。用于<highest_prestige_wins>的第 1 条判定。",
         "en": "The <ontology::player>'s total <prestige_point>s are the highest in the game. Ties allowed — all players tied for highest satisfy it simultaneously. Used as the 1st criterion of <highest_prestige_wins>."
       }
-    },
-    {
-      "id": "all_players_acted_this_round",
-      "specifies": "<ontology::condition>",
-      "name": {
-        "zh": "本轮所有玩家已行动",
-        "en": "All Players Acted This Round"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "当前<ontology::round>中，每个<ontology::player>都至少完成过一个<ontology::turn>（包括因<skip_turn>而跳过的空<ontology::turn>）。用于控制<player_turns> phase 的循环边界。",
-        "en": "In the current <ontology::round>, every <ontology::player> has completed at least one <ontology::turn> (including empty <ontology::turn>s skipped by <skip_turn>). Used to control the loop boundary of the <player_turns> phase."
-      }
-    },
-    {
-      "id": "no_remaining_players",
-      "specifies": "<ontology::condition>",
-      "name": {
-        "zh": "无未行动玩家",
-        "en": "No Remaining Players"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "触发<enter_endgame>的<ontology::round>中，所有尚未行动的<ontology::player>都已在本<ontology::phase>中补完了各自的<ontology::turn>。用于控制终局<final_turns> phase 的循环边界。",
-        "en": "In the <ontology::round> that triggered <enter_endgame>, all <ontology::player>s who had not yet acted have now completed their <ontology::turn> in this <ontology::phase>. Used to control the loop boundary of the endgame <final_turns> phase."
-      }
     }
   ],
   "<player_holding>": {
