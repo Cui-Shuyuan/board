@@ -985,6 +985,21 @@
                             "en": "1 from each of the 5 research decks (5 total)."
                           }
                         }
+                      },
+                      {
+                        "id": "advance_to_phase_2",
+                        "name": {
+                          "zh": "推进到新的目标",
+                          "en": "Advance to New Goals"
+                        },
+                        "do_after": [
+                          "reveal_event_card",
+                          "reveal_research_cards"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_2_new_goals>"
+                        }
                       }
                     ],
                     "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -1073,6 +1088,20 @@
                             "en": "1 per empty space."
                           }
                         }
+                      },
+                      {
+                        "id": "advance_to_phase_3",
+                        "name": {
+                          "zh": "推进到额外收获",
+                          "en": "Advance to Extra Find"
+                        },
+                        "do_after": [
+                          "refill_goal_display"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_3_extra_find>"
+                        }
                       }
                     ],
                     "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -1089,24 +1118,44 @@
                     "zh": "阶段三：额外收获。按座次（起始玩家开始顺时针），每位玩家选择 1 个有至少一个自己 <tribe> 的陆地区域，从供应堆取 1 个标记作为 <stored_material> 放到仓库中与所选区域地形类型对应的存储格。只按区域地形类型匹配，与材料板块印的具体材料无关。",
                     "en": "Phase 3: Extra Find. In seating order (starting player then clockwise), each player chooses 1 land territory where they have at least one <tribe>, takes 1 marker from supply as a <stored_material>, and places it on a storage space matching the chosen territory's terrain type. Only the territory type matters, not the material depicted on the material tile."
                   },
-                  "<ontology::round>": {
-                    "id": "extra_find_round",
-                    "name": {
-                      "zh": "额外收获轮",
-                      "en": "Extra Find Round"
-                    },
-                    "description": {
-                      "zh": "一轮额外收获：每位玩家一个 turn，从起始玩家开始顺时针（按座次）。",
-                      "en": "One extra-find round: one turn per player, starting with the starting player and going clockwise (seating order)."
-                    },
-                    "<ontology::turn>": {
-                      "id": "player_extra_find_turn",
-                      "name": {
-                        "zh": "玩家收获回合",
-                        "en": "Player Extra Find Turn"
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "extra_find_round",
+                        "name": {
+                          "zh": "额外收获轮",
+                          "en": "Extra Find Round"
+                        },
+                        "specifies": "<ontology::round>",
+                        "description": {
+                          "zh": "一轮额外收获：每位玩家一个 turn，从起始玩家开始顺时针（按座次）。",
+                          "en": "One extra-find round: one turn per player, starting with the starting player and going clockwise (seating order)."
+                        },
+                        "<ontology::turn>": {
+                          "id": "player_extra_find_turn",
+                          "name": {
+                            "zh": "玩家收获回合",
+                            "en": "Player Extra Find Turn"
+                          },
+                          "<ontology::action>": "<extra_find>"
+                        }
                       },
-                      "<ontology::action>": "<extra_find>"
-                    }
+                      {
+                        "id": "advance_to_phase_4",
+                        "name": {
+                          "zh": "推进到行动阶段",
+                          "en": "Advance to Action Phase"
+                        },
+                        "do_after": [
+                          "extra_find_round"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_4_action>[0]"
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                   }
                 },
                 {
@@ -1162,7 +1211,7 @@
                         },
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
-                          "to": "<phase_sequence>.<phase_5_site>[0]"
+                          "to": "<phase_sequence>.<phase_5_site>"
                         }
                       }
                     ],
@@ -1177,8 +1226,75 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段五：地点阶段。结算与三种地点相关的效果（如已翻开）。",
-                    "en": "Phase 5: Site Phase. Resolve effects related to three specific site types (if revealed)."
+                    "zh": "阶段五：地点阶段。依次结算三种已翻开地点的 continuous_effect——A) 狼谷（<gorge_of_grimwolves>）；B) 冰川（<glacier>）；C) 神秘橡树（<mystic_oak>）。未翻开的地点跳过。",
+                    "en": "Phase 5: Site Phase. Resolve the continuous_effects of the three revealed site types in order — A) Gorge of the Grimwolves (<gorge_of_grimwolves>); B) Glacier (<glacier>); C) Mystic oak (<mystic_oak>). Sites not revealed are skipped."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "resolve_gorge",
+                        "name": {
+                          "zh": "结算狼谷",
+                          "en": "Resolve Gorge of the Grimwolves"
+                        },
+                        "description": {
+                          "zh": "结算所有已翻开<gorge_of_grimwolves>的 continuous_effect：与狼谷相邻的领地中有自己部落且食物格有食物的玩家，各失去 1 个食物（无食物豁免）。",
+                          "en": "Resolve the continuous_effect of every revealed <gorge_of_grimwolves>: each player who has a tribe in an adjacent territory and food on the food space loses 1 food (exempt if without food)."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "至少 1 块<gorge_of_grimwolves>已翻开（face == <face_up>）。",
+                          "en": "At least 1 <gorge_of_grimwolves> is revealed (face == <face_up>)."
+                        },
+                        "<ontology::effect>": "<gorge_of_grimwolves>.parts.<ontology::continuous_effect>"
+                      },
+                      {
+                        "id": "resolve_glacier",
+                        "name": {
+                          "zh": "结算冰川",
+                          "en": "Resolve Glacier"
+                        },
+                        "description": {
+                          "zh": "结算所有已翻开<glacier>的 continuous_effect：相邻领地中有强壮部落的玩家，虚弱（躺倒）其中一个强壮部落（弱部落不受影响，无强壮部落豁免）。",
+                          "en": "Resolve the continuous_effect of every revealed <glacier>: each player who has a strong tribe in an adjacent territory weakens (lays down) one of those strong tribes (weak tribes are never affected; players without strong adjacent tribes are exempt)."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "至少 1 块<glacier>已翻开（face == <face_up>）。",
+                          "en": "At least 1 <glacier> is revealed (face == <face_up>)."
+                        },
+                        "<ontology::effect>": "<glacier>.parts.<ontology::continuous_effect>"
+                      },
+                      {
+                        "id": "resolve_mystic_oak",
+                        "name": {
+                          "zh": "结算神秘橡树",
+                          "en": "Resolve Mystic Oak"
+                        },
+                        "description": {
+                          "zh": "结算所有已翻开<mystic_oak>的 continuous_effect：对每块橡树，每位玩家按相邻且有自己部落的区域计分——水/沼泽/沙漠区域各 2 分，森林/草原/丘陵/山脉区域各 1 分。",
+                          "en": "Resolve the continuous_effect of every revealed <mystic_oak>: for each oak, each player scores 2 points per adjacent Water/Swamp/Desert area and 1 point per adjacent Forest/Grassland/Hill/Mountain area holding one of their tribes."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "至少 1 块<mystic_oak>已翻开（face == <face_up>）。",
+                          "en": "At least 1 <mystic_oak> is revealed (face == <face_up>)."
+                        },
+                        "<ontology::effect>": "<mystic_oak>.parts.<ontology::continuous_effect>"
+                      },
+                      {
+                        "id": "advance_to_phase_6",
+                        "name": {
+                          "zh": "推进到喂养阶段",
+                          "en": "Advance to Feeding Phase"
+                        },
+                        "do_after": [
+                          "resolve_mystic_oak"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_6_feeding>"
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                   }
                 },
                 {
@@ -1191,6 +1307,22 @@
                   "description": {
                     "zh": "阶段六：喂养阶段。按规则喂饱或饿死部落。营地/船上的部落需 1 食物，野外部落需 2 食物。",
                     "en": "Phase 6: Feeding Phase. Feed or starve tribes according to the rules: 1 food for tribes on campsites/boats, 2 food for tribes in the wilderness."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "advance_to_phase_7",
+                        "name": {
+                          "zh": "推进到事件阶段",
+                          "en": "Advance to Event Phase"
+                        },
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_7_event>"
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                   }
                 },
                 {
@@ -1252,6 +1384,20 @@
                         "description": {
                           "zh": "确定新的起始玩家",
                           "en": "Determine new starting player"
+                        }
+                      },
+                      {
+                        "id": "advance_to_phase_8",
+                        "name": {
+                          "zh": "推进到收入阶段",
+                          "en": "Advance to Income Phase"
+                        },
+                        "do_after": [
+                          "event_new_starting_player"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<phase_sequence>",
+                          "to": "<phase_sequence>.<phase_8_income>"
                         }
                       }
                     ],
@@ -3924,6 +4070,54 @@
       "description": {
         "zh": "<phase_indicator> 位于 <phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>，由 Reset 的 A 步推入），**且自到达以来每位 <player> 又各完成了一个 <turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
         "en": "The <phase_indicator> is on <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>, pushed there by Reset step A), **and since it arrived every <player> has completed one more <turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
+      }
+    },
+    {
+      "id": "tribe_death",
+      "name": {
+        "zh": "部落死亡",
+        "en": "Tribe Death"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "部落死亡结算：喂养阶段未喂饱的弱部落（posture == <lying> 且未获得食物）死亡、事件阶段负面效果指定移除的部落——统一结算为将 1 个<tribe>从大陆返回供应堆（<remove_tribe>）。",
+        "en": "Tribe death resolution: unfed weak tribes in the Feeding phase (posture == <lying> without food) and tribes targeted by negative event effects die — uniformly resolved as returning 1 <tribe> from the continent to the supply (<remove_tribe>)."
+      },
+      "<ontology::condition>": {
+        "zh": "本玩家的 1 个<tribe>死亡：喂养阶段未喂饱的弱部落，或事件阶段负面效果指定移除的部落。",
+        "en": "One of this player's <tribe>s dies: an unfed weak tribe in the Feeding phase, or a tribe targeted by a negative event effect."
+      },
+      "target": "1 个死亡的<tribe>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": "<remove_tribe>"
+        }
+      }
+    },
+    {
+      "id": "deus_ex_machina",
+      "name": {
+        "zh": "机械降神",
+        "en": "Deus Ex Machina"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "当本玩家的 1 个<tribe>即将死亡（<tribe_death> 的 content 即将结算）时，可改用本行动改写该结算：<remove_tribe> 不再执行，改为将本玩家在<favor_of_ager_track>上的标记向后移 1 步。若标记已在轨最左格则不能使用。",
+        "en": "Whenever one of your <tribe>s is about to die (<tribe_death>'s content is about to resolve), you may instead use this action to rewrite that resolution: <remove_tribe> no longer executes; your marker on the <favor_of_ager_track> is moved one step backwards instead. Not possible if your marker is already on the leftmost space of the track."
+      },
+      "<ontology::condition>": {
+        "zh": "<tribe_death>.content.<ontology::instant_content> 即将开始结算（本玩家的<tribe>即将死亡），且本玩家在<favor_of_ager_track>上的标记不在最左格。",
+        "en": "<tribe_death>.content.<ontology::instant_content> is about to resolve (one of this player's <tribe>s is about to die), and this player's marker on the <favor_of_ager_track> is not on the leftmost space."
+      },
+      "target": "1 个即将死亡的<tribe>",
+      "<ontology::replaces>": {
+        "target": "<tribe_death>.content.<ontology::instant_content>",
+        "with": {
+          "<ontology::push_track>": {
+            "<ontology::track>": "<favor_of_ager_track>",
+            "step": -1
+          }
+        }
       }
     }
   ]
