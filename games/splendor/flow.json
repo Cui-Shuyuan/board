@@ -281,45 +281,39 @@
             "do_after": [
               "setup"
             ],
-            "<ontology::pipeline>": {
-              "options": [
-                {
-                  "id": "turn_cycle",
-                  "name": {
-                    "zh": "回合轮",
-                    "en": "Turn Cycle"
-                  },
-                  "specifies": "<ontology::round>",
-                  "description": {
-                    "zh": "一轮玩家回合：每位玩家一个回合。",
-                    "en": "One cycle of player turns: one turn per player."
-                  },
-                  "<ontology::turn>": {
-                    "id": "player_turn",
-                    "name": {
-                      "zh": "玩家回合",
-                      "en": "Player Turn"
-                    },
-                    "description": {
-                      "zh": "一位玩家的回合：选择并执行一个合法行动（取不同宝石、取同色宝石、购买发展卡或保留发展卡）。",
-                      "en": "One player's turn: choose and execute one legal action (take different gems, take two gems of the same color, purchase a development card, or reserve a development card)."
-                    },
-                    "<ontology::pipeline>": {
-                      "options": [
-                        "<take_gems_different>",
-                        "<take_gems_same>",
-                        "<purchase_development_card>",
-                        "<reserve_development_card>",
-                        "<skip_turn>"
-                      ],
-                      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-                    }
-                  }
+            "loop": {
+              "until": "<reach_15_prestige>"
+            },
+            "<ontology::round>": {
+              "id": "turn_cycle",
+              "name": {
+                "zh": "回合轮",
+                "en": "Turn Cycle"
+              },
+              "description": {
+                "zh": "一轮玩家回合：每位玩家一个回合。",
+                "en": "One cycle of player turns: one turn per player."
+              },
+              "<ontology::turn>": {
+                "id": "player_turn",
+                "name": {
+                  "zh": "玩家回合",
+                  "en": "Player Turn"
+                },
+                "description": {
+                  "zh": "一位玩家的回合：选择并执行一个合法行动（取不同宝石、取同色宝石、购买发展卡或保留发展卡）。",
+                  "en": "One player's turn: choose and execute one legal action (take different gems, take two gems of the same color, purchase a development card, or reserve a development card)."
+                },
+                "<ontology::action>": {
+                  "options": [
+                    "<take_gems_different>",
+                    "<take_gems_same>",
+                    "<purchase_development_card>",
+                    "<reserve_development_card>",
+                    "<skip_turn>"
+                  ],
+                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
                 }
-              ],
-              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-              "loop": {
-                "until": "<reach_15_prestige>"
               }
             }
           },
@@ -331,8 +325,8 @@
             },
             "specifies": "<ontology::phase>",
             "description": {
-              "zh": "终局：为触发终局时尚未行动的玩家补完回合，然后按最高声望判定胜者。",
-              "en": "Endgame: complete turns for players who have not yet acted this round, then determine the winner by highest prestige."
+              "zh": "终局阶段：触发终局后游戏不中断，按原座次顺序继续——本轮尚未行动的玩家各自完成自己的回合，然后按最高声望判定胜者。",
+              "en": "Endgame phase: once the endgame is triggered the game does not stop — the current round continues in seating order, with players who have not yet acted finishing their own turns, then the winner is determined by highest prestige."
             },
             "do_after": [
               "main_gameplay"
@@ -347,8 +341,8 @@
                   },
                   "specifies": "<ontology::round>",
                   "description": {
-                    "zh": "一轮补完回合：为终局时尚未行动的玩家各补一个回合（已行动玩家自动跳过）。",
-                    "en": "One cycle of catch-up turns: one extra turn for each player who has not yet acted (players who already acted are skipped)."
+                    "zh": "当前轮的继续（不是新开一轮）：进入终局阶段后，按原座次顺序为尚未行动的玩家完成本轮各自的回合（已行动玩家自动跳过）。",
+                    "en": "Continuation of the current round (not a new round): once the endgame phase begins, players who have not yet acted complete their turns of this round in the original seating order (players who already acted are skipped)."
                   },
                   "<ontology::turn>": {
                     "id": "final_player_turn",
@@ -357,14 +351,14 @@
                       "en": "Final Player Turn"
                     },
                     "description": {
-                      "zh": "触发终局后尚未行动的玩家补执行一个回合：从四个合法行动中选择一个执行。",
-                      "en": "A player who has not yet acted since the endgame was triggered performs one catch-up turn, choosing one of four legal actions."
+                      "zh": "触发终局后，本轮尚未行动的玩家按原座次顺序继续执行一个回合：从四个合法行动中选择一个执行。",
+                      "en": "After the endgame is triggered, a player who has not yet acted this round continues with their turn in the original seating order, choosing one of four legal actions."
                     },
                     "<ontology::condition>": {
                       "zh": "该玩家本轮尚未行动。",
                       "en": "This player has not yet acted this round."
                     },
-                    "<ontology::pipeline>": {
+                    "<ontology::action>": {
                       "options": [
                         "<take_gems_different>",
                         "<take_gems_same>",

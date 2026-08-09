@@ -111,9 +111,9 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 }
 ```
 
-- **round.count ★（2026-08-09）**：round 的内建语义 = 一次 = 每位玩家按座次各行动一轮（options 中的 turn 轮转）。**执行次数（口语「进行几轮」）用 count 字段**（integer，缺省 1 次 = 每位玩家恰好一个 turn；「进行 4 轮」= `"count": 4`）。字段名不叫 rounds——「进行 4 轮」的「4」是次数，round 的属性不该是「轮」
-- **loop 判据 ★**：**次数确定的 round 用 count**；**次数未知、直到条件才结束的用 pipeline `loop.until`**——如 Splendor `main_gameplay` 的 `until <reach_15_prestige>`（一直进行到有人 15 分）、行动阶段 `until <action_phase_end>`。loop.until 用于「不知道进行几轮」的规则，loop.for 保留给内容层定次循环
-- **单内容直接持有 ★**：pipeline 是描述多 trigger/多步骤的工具，**单内容一律直接持有下一层概念，不包 pipeline**——phase 只有 1 个 round → 持有 `<ontology::round>`；round 只有 1 个 turn → 持有 `<ontology::turn>`；turn 只有 1 个 action → 持有 `<ontology::action>`（civolution 的 phase_3_extra_find 已内联为 phase→round→turn→action 四层无 pipeline；Splendor 的 player_turns/action_phase 包装层已删）。**唯一例外：pipeline 作为 loop.until 的宿主**（未知次数循环）——如 civolution action_turn_cycle、Splendor main_gameplay
+- **loop 是 procedure 顶层字段 ★（2026-08-09 定稿）**：`loop` 挂在 `<round>`/`<phase>` 顶层（**不在 pipeline 内**——曾因 loop 挂 pipeline 而被迫为单内容 round 包 pipeline 层，已修正）。两种形态对称：`"loop": { "count": N }` 定次（「进行 4 轮」= count 4，N 可为数字或引用；缺省无 loop = 1 次 = 每位玩家恰好一个 turn）、`"loop": { "until": <condition> }` 条件（直到条件才结束——如 Splendor `main_gameplay` 的 `until <reach_15_prestige>`、行动阶段 `until <action_phase_end>`）。字段名不叫 rounds——「进行 4 轮」的「4」是次数，round 的属性不该是「轮」
+- **单内容直接持有 ★（2026-08-09 定稿）**：pipeline 是描述多 trigger/多步骤的工具，**单内容一律直接持有下一层概念，不包 pipeline**——phase 只有 1 个 round → 持有 `<ontology::round>`；round 只有 1 个 turn → 持有 `<ontology::turn>`；turn 持有 `<ontology::action>`（civolution 的 phase_3_extra_find 已内联为 phase→round→turn→action 四层无 pipeline；Splendor 的 player_turns/action_phase 包装层已删）
+- **options/type 是通用选择结构 ★（2026-08-09 用户定稿）**：options/type **只是 pipeline 的一块构件**（multiple_choice_enum 本就是「适用于任何需要多选项场景」的通用字段）——一个动作（即使是多候选二选一）不配叫 pipeline，直接把 options/type 挂在概念上：`"<ontology::action>": { "options": ["<a>", "<b>"], "type": "CHOOSE_ONE" }`（单候选直接字符串引用 `"<ontology::action>": "<extra_find>"`）。候选自带 condition（候选级排除），_skip 哨兵同样可用
 - **「谁能做」写 condition**：步骤级 condition 不成立 = **阻断**（该步骤及 do_after 依赖项停止）；候选级 condition 不成立 = **排除**（不影响其他候选）。「终局补完回合」= round 缺省 1 次 + turn 带「本轮尚未行动」condition（已行动玩家阻断跳过）
 - **「能 A 必须 A，否则跳过」**：把「跳过」做成带「A 不可用」condition 的候选（如 Splendor `skip_turn`，condition = 全部行动条件取反），候选 condition 互补覆盖，CHOOSE_ONE 从可用候选中必选其一
 
@@ -269,7 +269,8 @@ id + name.zh + name.en + description.zh + description.en
 写一个新 action/trigger/procedure 时确认：
 - [ ] 有 `name: { zh, en }`（紧跟 id 之后）
 - [ ] procedure（round/turn/phase）多步骤时持有 `<ontology::pipeline>`，单内容时直接持有概念（如 `<ontology::action>`），不用 children/actions/actor/start/end
-- [ ] **round 执行次数用 `count`（缺省 1 次 = 每人一轮）；次数未知才用 pipeline `loop.until`**；turn 内建轮转，顺序差异写 description
+- [ ] **1 个动作不叫 pipeline**：多候选动作直接用 `"<ontology::action>": { "options": [...], "type": "CHOOSE_ONE" }`（options/type 是通用选择结构，挂在概念上即可）
+- [ ] **round/phase 执行次数用顶层 `loop`（count 定次 / until 条件），不在 pipeline 内**；缺省无 loop = 1 次 = 每人一轮；turn 内建轮转，顺序差异写 description
 - [ ] phase 不是必包层：只有 1 个 phase 时省略不写
 - [ ] 步骤级 condition 不成立 = 阻断；候选级 condition 不成立 = 排除（二者语义不同）
 - [ ] 无行动可选的兜底：把「跳过」做成带「全部行动条件取反」condition 的候选

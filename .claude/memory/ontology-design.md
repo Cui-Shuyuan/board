@@ -111,7 +111,7 @@ Zone (abstract)
 
 ### Procedure 结构统一 ★（2026-08-09）
 Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure（**不是必包层——只有 1 个 phase 时省略不写**）。**三个子类结构相同：多步骤执行用 `<ontology::pipeline>` 定义，仅干一件事时直接持有对应概念（如 `<ontology::action>`），不套 pipeline**（2026-08-09 修正：pipeline 是描述多 trigger/多步骤的工具，不是必包层；详见 [[pipeline-model]]）——`children` 数组、`actor`、`start`/`end` 字段全部废弃：顺序与依赖用 options + do_after，「谁能做」用 condition（步骤级不成立 = 阻断，候选级不成立 = 排除），行动权轮转是 turn 的内建语义。
-**round 执行次数用 `count` 字段**（2026-08-09 新增：integer，缺省 1 次 = 每位玩家按座次各行动一轮；「进行 4 轮」= `"count": 4`。字段名不叫 rounds——「进行 4 轮」的「4」是次数）。**次数未知、直到条件才结束的用 pipeline `loop.until`**（如 Splendor main_gameplay「一直进行到有人 15 分」）——loop 从 round 场景退役，保留为内容层工具（`for N` 定次 / `until` 条件）。
+**round 执行次数用 pipeline 的 `loop.count`**（2026-08-09 定稿：与 `loop.until` 对称，均挂在 pipeline 上；缺省无 loop = 1 次 = 每位玩家按座次各行动一轮；「进行 4 轮」= `"loop": { "count": 4 }`。字段名不叫 rounds——「进行 4 轮」的「4」是次数；「进行几轮」不是 round 的属性字段，是 loop 的定次形态）。**次数未知、直到条件才结束的用 `loop.until`**（如 Splendor main_gameplay「一直进行到有人 15 分」）。
 
 ## 当前进度（核心概念持续扩展中）
 

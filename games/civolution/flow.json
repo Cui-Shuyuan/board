@@ -927,10 +927,12 @@
               "en": "Era Loop"
             },
             "specifies": "<ontology::round>",
-            "count": 4,
+            "loop": {
+              "count": 4
+            },
             "description": {
-              "zh": "游戏共进行 4 个时代（count 4），每个时代包含 8 个阶段。",
-              "en": "The game consists of 4 eras (count 4), each with 8 phases."
+              "zh": "游戏共进行 4 个时代（loop.count 4），每个时代包含 8 个阶段。",
+              "en": "The game consists of 4 eras (loop.count 4), each with 8 phases."
             },
             "<ontology::pipeline>": {
               "options": [
@@ -1018,35 +1020,35 @@
                             "zh": "玩家选择回合",
                             "en": "Player Goal Turn"
                           },
-                          "<ontology::pipeline>": {
-                                "options": [
-                                  {
-                                    "id": "_skip",
-                                    "description": {
-                                      "zh": "放弃（跳过此项）",
-                                      "en": "Decline (skip)"
-                                    }
+                          "<ontology::action>": {
+                            "options": [
+                              {
+                                "id": "_skip",
+                                "description": {
+                                  "zh": "放弃（跳过此项）",
+                                  "en": "Decline (skip)"
+                                }
+                              },
+                              {
+                                "id": "take_goal_chip",
+                                "name": {
+                                  "zh": "拿取目标芯片",
+                                  "en": "Take Goal Chip"
+                                },
+                                "<ontology::transfer>": {
+                                  "description": {
+                                    "zh": "从展示区拿 1 枚目标芯片正面朝上放入目标区；目标区 3 格已满时叠放在任意 1 枚已有目标芯片上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。",
+                                    "en": "Take 1 goal chip from the display and place it face up in the goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it (the covered chip is unusable until the chip on top is installed)."
                                   },
-                                  {
-                                    "id": "take_goal_chip",
-                                    "name": {
-                                      "zh": "拿取目标芯片",
-                                      "en": "Take Goal Chip"
-                                    },
-                                    "<ontology::transfer>": {
-                                      "description": {
-                                        "zh": "从展示区拿 1 枚目标芯片正面朝上放入目标区；目标区 3 格已满时叠放在任意 1 枚已有目标芯片上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。",
-                                        "en": "Take 1 goal chip from the display and place it face up in the goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it (the covered chip is unusable until the chip on top is installed)."
-                                      },
-                                      "source": "<goal_chip_display>",
-                                      "destination": "<goal_area>",
-                                      "<ontology::object>": "<goal_chip>",
-                                      "quantity": 1
-                                    }
-                                  }
-                                ],
-                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                                  "source": "<goal_chip_display>",
+                                  "destination": "<goal_area>",
+                                  "<ontology::object>": "<goal_chip>",
+                                  "quantity": 1
+                                }
                               }
+                            ],
+                            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                          }
                         }
                       },
                       {
@@ -1124,27 +1126,21 @@
                       "zh": "行动轮循环",
                       "en": "Action Turn Cycle"
                     },
-                    "<ontology::pipeline>": {
-                      "options": [
-                        {
-                          "id": "player_action_turn",
-                          "name": {
-                            "zh": "玩家行动回合",
-                            "en": "Player Action Turn"
-                          },
-                          "specifies": "<ontology::turn>",
-                          "<ontology::pipeline>": {
-                            "options": [
-                              "<activate_module>",
-                              "<reset>"
-                            ],
-                            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-                          }
-                        }
-                      ],
-                      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                      "loop": {
-                        "until": "<action_phase_end>"
+                    "loop": {
+                      "until": "<action_phase_end>"
+                    },
+                    "<ontology::turn>": {
+                      "id": "player_action_turn",
+                      "name": {
+                        "zh": "玩家行动回合",
+                        "en": "Player Action Turn"
+                      },
+                      "<ontology::action>":  {
+                        "options": [
+                          "<activate_module>",
+                          "<reset>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
                       }
                     }
                   }
@@ -1281,20 +1277,20 @@
                   "loop": {
                     "until": "<final_scoring_track_end>"
                   },
-                  "<ontology::pipeline>": {
-                    "options": [
-                      {
-                        "id": "score_next_category",
-                        "name": {
-                          "zh": "结算下一计分项",
-                          "en": "Score Next Category"
-                        },
-                        "description": {
-                          "zh": "沿终局计分轨推进到下一个计分项并结算该计分项。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
-                          "en": "Advance along the final scoring track to the next category and score it. Points per unit are determined by the printed value below the space (or the scoring tile covering it)."
-                        }
-                      }
-                    ]
+                  "<ontology::evaluate>": {
+                    "id": "score_next_category",
+                    "name": {
+                      "zh": "结算下一计分项",
+                      "en": "Score Next Category"
+                    },
+                    "description": {
+                      "zh": "沿终局计分轨推进到下一个计分项并结算该计分项。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
+                      "en": "Advance along the final scoring track to the next category and score it. Points per unit are determined by the printed value below the space (or the scoring tile covering it)."
+                    },
+                    "result": {
+                      "zh": "当前计分项的总得分。",
+                      "en": "The total score of the current category."
+                    }
                   }
                 },
                 {
