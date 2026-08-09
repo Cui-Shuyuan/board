@@ -1120,42 +1120,9 @@
                         },
                         "specifies": "<ontology::turn>",
                         "actor": "next_player_in_turn_order",
-                        "<ontology::pipeline>": {
-                          "options": [
-                            {
-                              "id": "choose_territory",
-                              "name": {
-                                "zh": "选择区域",
-                                "en": "Choose Territory"
-                              },
-                              "description": {
-                                "zh": "选择一个有至少一个自己 <tribe> 的陆地区域。",
-                                "en": "Choose a land territory where you have at least one <tribe>."
-                              }
-                            },
-                            {
-                              "id": "gain_material",
-                              "name": {
-                                "zh": "获得材料",
-                                "en": "Gain Material"
-                              },
-                              "do_after": [
-                                "choose_territory"
-                              ],
-                              "<ontology::transfer>": {
-                                "source": "<ontology::supply>",
-                                "destination": "<storage_area>",
-                                "<ontology::object>": "<octagonal_pillar>",
-                                "quantity": 1,
-                                "description": {
-                                  "zh": "从供应堆取 1 个标记作为 <stored_material>，放到仓库中与所选区域地形类型对应的存储格（该类型的 3 个存储格任选其一）——只按区域地形类型匹配，与材料板块印的具体材料无关。",
-                                  "en": "Take 1 marker from supply as a <stored_material> and place it on a storage space matching the chosen territory's terrain type (any of that type's 3 storage spaces) — only the territory type matters, not the material depicted on the material tile."
-                                }
-                              }
-                            }
-                          ],
-                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-                        }
+                        "actions": [
+                          "<extra_find>"
+                        ]
                       }
                     ]
                   }
@@ -3604,6 +3571,33 @@
             }
           ],
           "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
+    {
+      "id": "extra_find",
+      "name": {
+        "zh": "额外收获",
+        "en": "Extra Find"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 个有至少一个自己 <tribe> 的陆地区域，从供应堆取 1 个标记作为 <stored_material> 放到仓库中与所选区域地形类型对应的存储格。只按区域地形类型匹配，与材料板块印的具体材料无关。",
+        "en": "Choose 1 land territory where you have at least one <tribe>, take 1 marker from supply as a <stored_material>, and place it on a storage space matching the chosen territory's terrain type. Only the territory type matters, not the material depicted on the material tile."
+      },
+      "target": "1 个有至少一个自己 <tribe> 的陆地区域",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<ontology::supply>",
+            "destination": "<storage_area>",
+            "<ontology::object>": "<octagonal_pillar>",
+            "quantity": 1,
+            "description": {
+              "zh": "从供应堆取 1 个标记作为 <stored_material>，放到仓库中与所选区域地形类型对应的存储格（该类型的 3 个存储格任选其一）——只按区域地形类型匹配，与材料板块印的具体材料无关。",
+              "en": "Take 1 marker from supply as a <stored_material> and place it on a storage space matching the chosen territory's terrain type (any of that type's 3 storage spaces) — only the territory type matters, not the material depicted on the material tile."
+            }
+          }
         }
       }
     },

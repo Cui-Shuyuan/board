@@ -965,8 +965,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。一轮内部结构固定——每次循环执行相同的 <phase> 序列。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 children 只能是 <phase>：<round> 不直接包含 <turn> 或另一个 <round>，它通过 <phase> 间接组织下级流程。",
-        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. Its internal structure is fixed — each cycle executes the same sequence of <phase>s. An entire game is itself an outermost <round>. A <round>'s children can only be <phase>s: a <round> does not directly contain <turn>s or other <round>s; it organizes lower-level flow indirectly through <phase>s."
+        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。一轮内部结构固定——每次循环执行相同的子流程序列。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 children 通常是 <phase>；当一轮只含一个下级流程时，可省略中间的 <phase> 包装，直接包含 <turn> 或另一个 <round>；含多个子流程时仍通过 <phase> 组织。",
+        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. Its internal structure is fixed — each cycle executes the same sequence of sub-procedures. An entire game is itself an outermost <round>. A <round>'s children are usually <phase>s; when a round contains only a single lower-level procedure, the intermediate <phase> wrapper may be omitted and the <round> may directly contain a <turn> or another <round>. With multiple sub-procedures, <phase>s are still required."
       },
       "constraints": {
         "required": [],
@@ -982,8 +982,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。<turn> 的 children 只能是 <phase>——即使是「玩家选择一个行动」这种简单场景，也隐含了一个「选择行动阶段」。<turn> 不直接包含 <action>，它通过 <phase> 定义玩家在此回合内可以做什么。",
-        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. A <turn>'s children can only be <phase>s — even a simple 'player chooses an action' scenario implicitly contains a 'choose action phase'. A <turn> does not directly contain <action>s; it defines what a player can do during this turn through its <phase>s."
+        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。<turn> 的 children 通常是 <phase>；当玩家行动直接以 actions 数组或 <ontology::pipeline> 字段挂载时，可省略中间的 <phase> 包装（该数组/字段本身即「选择行动」的内容表达）。",
+        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. A <turn>'s children are usually <phase>s; when the player's actions are attached directly via an actions array or an <ontology::pipeline> field, the intermediate <phase> wrapper may be omitted (that array/field itself expresses the 'choose an action' content)."
       },
       "constraints": {
         "required": [],
