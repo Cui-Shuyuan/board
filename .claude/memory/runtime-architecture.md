@@ -131,10 +131,26 @@ System prompt 中不再重复列出可用工具（工具 schema 已通过 `tools
 - System prompt 中明确工具选择决策：search_concepts 找入口 → get_concept 跟引用 → list_concept_ids 仅兜底穷举
 
 ### 10. 搜索合并策略升级：MAX → SUM + 归一化（2026-07-27）
+
 修复多词查询时单通道高分概念挤掉全通道匹配概念的问题：
 - **旧逻辑（MAX）**：同一概念取所有通道最高分 → OR 语义，匹配一个词就能排前面
 - **新逻辑（SUM + 归一化）**：同一概念累加所有通道分数，再除以子词数量 → AND 语义，匹配词越多得分越高
 - 效果：查询「黄色 六角形 小」时，`phase_indicator`（三词全中）归一化分远高于 `attribute_chip`（只中两词）
+
+### 11. 概念引用注解：`<id>(中文名)` ★（2026-08-10）
+
+**问题**：LLM 拿到含 `<concept_id>` 引用的工具返回后不跟引用查中文名，自行翻译英文 id 产生错误译名（`idea_marker`→「灵感/想法标记」、`focus_marker`→「专注标记」、`hill_territory`→「寒冷」）。温度不可调，改 prompt 像抽奖——改为**数据层解决**：程序把引用注解为 `<id>(中文名)`，LLM 无需翻译。
+
+**实现**：
+- `GameRulesService.AnnotateReferences(text, game)`：正则 `<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>` 替换为 `<raw>(name)`；查不到映射（枚举值、未知 id）保持原样
+- `GetNameMap(game)`：id → name.zh 映射，覆盖全部概念（ontology + 游戏层 + top_level_refs + instances + **flow 递归节点**），缓存于 `_nameMaps`
+- `ChatOrchestratorService.ExecuteToolAsync`：4 个工具返回统一过 `AnnotateReferences`
+- **关键坑 ★**：`JsonSerializer.Serialize` 默认把 `<` `>` 转义为 `<` `>`——正则永远匹配不到！工具返回必须用 `ToolResultOptions`（`JavaScriptEncoder.UnsafeRelaxedJsonEscaping`）序列化
+- 效果：317 个注解/题组，4 题回归全对（睡眠模组/神秘橡树/激活模组/恩惠检定）
+
+### 12. flow 关键词搜索补 triggers ★（2026-08-10）
+
+`ExtractFlowConcepts` / `ExtractFlowItems` 原来只遍历 flow.json 的 `procedures` 顶层——**triggers 组概念（favor_test 等）完全不在关键词搜索范围**（向量搜索又因 BGE 对中英混合长文本质量差不可靠——「恩惠检定」Top 10 全是 0.78-0.83 噪音）。已改为递归遍历 procedures + triggers + 嵌套 options/events/容器字段。**注意：C# 与 Python 索引路径必须保持一致**（Python rebuild_index.py 一直处理 triggers；C# 补上了）。
 
 ## LLM 调用次数
 `MaxToolRounds` 设为 `int.MaxValue`，不再限制 LLM 为一题调几次工具，方便观察复杂问题上的真实查询深度。实际生产时可根据成本和延迟再收紧。

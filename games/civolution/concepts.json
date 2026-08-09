@@ -1992,8 +1992,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种特殊的 <encampment>，上面印有篝火图标。站在这类营地上的 <tribe> 在喂养阶段结算后可获得额外分数。黄色火边标记表示此营地可得分。",
-        "en": "A special <encampment> marked with a campfire icon. <tribe>s standing on this encampment earn bonus points after the Feeding phase. The yellow fire symbol indicates this encampment grants points."
+        "zh": "一种特殊的 <encampment>，上面印有篝火图标。当你的 <tribe> 定居（settle）在此营地上时，立即获得其上印的分数（推进计分轨）。黄色火边标记表示此营地可得分。",
+        "en": "A special <encampment> marked with a campfire icon. When one of your <tribe>s settles on this encampment, you immediately receive the success points depicted on it (advancing your marker on the score track). The yellow fire symbol indicates this encampment grants points."
       }
     },
     {

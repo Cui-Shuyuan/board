@@ -20,6 +20,13 @@ public class ChatOrchestratorService
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
+    // 工具返回序列化：不转义 < > 等字符，保证概念引用 <concept_id> 以字面形式保留，
+    // 供 AnnotateReferences 注解为 <id>(中文名)
+    private static readonly JsonSerializerOptions ToolResultOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+
     public ChatOrchestratorService(
         ILLMService llmService,
         GameRulesService rulesService,
@@ -228,7 +235,7 @@ public class ChatOrchestratorService
                         if (args.RootElement.TryGetProperty("search_mode", out var modeProp))
                             searchMode = modeProp.GetString() ?? "full";
                         var results = await _rulesService.SearchConceptsAsync(gameId, query, searchMode);
-                        return JsonSerializer.Serialize(results);
+                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(results, ToolResultOptions), gameId);
                     }
 
                 case "get_concept":
@@ -236,7 +243,7 @@ public class ChatOrchestratorService
                         var conceptId = args.RootElement.GetProperty("concept_id").GetString() ?? string.Empty;
                         var concepts = _rulesService.GetConcepts(gameId, conceptId);
                         return concepts.Count > 0
-                            ? JsonSerializer.Serialize(concepts)
+                            ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(concepts, ToolResultOptions), gameId)
                             : $"{{\"error\": \"Concept '{conceptId}' not found\"}}";
                     }
 
@@ -244,13 +251,13 @@ public class ChatOrchestratorService
                     {
                         var actionId = args.RootElement.GetProperty("action_id").GetString() ?? string.Empty;
                         var conditions = _rulesService.GetActionConditions(gameId, actionId);
-                        return JsonSerializer.Serialize(conditions);
+                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(conditions, ToolResultOptions), gameId);
                     }
 
                 case "list_concept_ids":
                     {
                         var result = _rulesService.ListAllConceptIds(gameId);
-                        return JsonSerializer.Serialize(result);
+                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId);
                     }
 
                 default:

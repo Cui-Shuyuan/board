@@ -214,6 +214,80 @@ public class GameRulesService
         return result;
     }
 
+    private readonly Dictionary<string, Dictionary<string, string>> _nameMaps = new();
+
+    /// <summary>
+    /// 把文本中的概念引用 <concept_id> / <ontology::concept_id> 注解为 <id>(中文名)，
+    /// 让 LLM 无需自行翻译英文 id（如 <idea_marker>(创意标记)）。
+    /// 查不到映射的引用（枚举值、未知 id）保持原样。
+    /// </summary>
+    public string AnnotateReferences(string text, string game)
+    {
+        var map = GetNameMap(game);
+        if (map.Count == 0) return text;
+        return System.Text.RegularExpressions.Regex.Replace(
+            text,
+            @"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>",
+            m =>
+            {
+                var raw = m.Groups[1].Value;
+                var localId = raw.Contains("::") ? raw[(raw.IndexOf("::", StringComparison.Ordinal) + 2)..] : raw;
+                if (map.TryGetValue(localId, out var name) && !string.IsNullOrEmpty(name))
+                    return $"<{raw}>({name})";
+                return m.Value;
+            });
+    }
+
+    private Dictionary<string, string> GetNameMap(string game)
+    {
+        if (_nameMaps.TryGetValue(game, out var cached)) return cached;
+        var map = new Dictionary<string, string>();
+
+        foreach (var type in GetConceptTypes(game))
+        {
+            foreach (var summary in ListConcepts(game, type))
+            {
+                if (!string.IsNullOrEmpty(summary.Id) && !string.IsNullOrEmpty(summary.Name) && summary.Id != summary.Name)
+                    map[summary.Id] = summary.Name;
+            }
+        }
+
+        // flow.json 递归节点（procedures/triggers 内嵌的 id + name.zh）
+        var flow = LoadGameFlow(game);
+        if (flow != null) WalkFlowForNames(flow.RootElement, map);
+        var ontologyFlow = LoadOntologyFlow();
+        if (ontologyFlow != null) WalkFlowForNames(ontologyFlow.RootElement, map);
+
+        _nameMaps[game] = map;
+        return map;
+    }
+
+    private static void WalkFlowForNames(JsonElement node, Dictionary<string, string> map)
+    {
+        if (node.ValueKind == JsonValueKind.Object)
+        {
+            if (node.TryGetProperty("id", out var idProp))
+            {
+                var id = idProp.GetString() ?? "";
+                if (!string.IsNullOrEmpty(id)
+                    && node.TryGetProperty("name", out var name)
+                    && name.TryGetProperty("zh", out var zh))
+                {
+                    var zhName = zh.GetString() ?? "";
+                    if (!string.IsNullOrEmpty(zhName) && !map.ContainsKey(id))
+                        map[id] = zhName;
+                }
+            }
+            foreach (var prop in node.EnumerateObject())
+                WalkFlowForNames(prop.Value, map);
+        }
+        else if (node.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in node.EnumerateArray())
+                WalkFlowForNames(item, map);
+        }
+    }
+
     public async Task<SearchConceptsResult> SearchConceptsAsync(string game, string query, string searchMode = "full")
     {
         if (string.IsNullOrWhiteSpace(query))
@@ -492,12 +566,13 @@ public class GameRulesService
 
     private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result)
     {
-        // 游戏 flow.json：procedures 树
-        if (root.TryGetProperty("procedures", out var procedures))
+        // 游戏 flow.json：procedures 树 + triggers 组
+        foreach (var arrayKey in new[] { "procedures", "triggers" })
         {
-            foreach (var proc in procedures.EnumerateArray())
+            if (!root.TryGetProperty(arrayKey, out var arr)) continue;
+            foreach (var item in arr.EnumerateArray())
             {
-                WalkFlowNode(proc, result);
+                WalkFlowNode(item, result);
             }
         }
 
@@ -708,18 +783,49 @@ public class GameRulesService
     private static IReadOnlyList<ConceptSummary> ExtractFlowConcepts(JsonDocument flow)
     {
         var results = new List<ConceptSummary>();
-        if (!flow.RootElement.TryGetProperty("procedures", out var procedures)) return results;
-        foreach (var item in procedures.EnumerateArray())
+        var seen = new HashSet<string>();
+        foreach (var arrayKey in new[] { "procedures", "triggers" })
         {
-            var id = item.GetProperty("id").GetString() ?? string.Empty;
-            results.Add(new ConceptSummary
+            if (!flow.RootElement.TryGetProperty(arrayKey, out var arr)) continue;
+            foreach (var item in arr.EnumerateArray())
             {
-                Id = id,
-                Name = id,
-                Type = "flow"
-            });
+                WalkFlowForSummaries(item, results, seen);
+            }
         }
         return results;
+    }
+
+    private static void WalkFlowForSummaries(JsonElement node, List<ConceptSummary> results, HashSet<string> seen)
+    {
+        if (!node.TryGetProperty("id", out var idProp)) return;
+        var id = idProp.GetString() ?? string.Empty;
+        if (string.IsNullOrEmpty(id) || !seen.Add(id)) return;
+
+        results.Add(new ConceptSummary
+        {
+            Id = id,
+            Name = ExtractName(node),
+            Type = "flow"
+        });
+
+        // 递归：events、options、content 容器
+        foreach (var arrayKey in new[] { "events", "options" })
+        {
+            if (!node.TryGetProperty(arrayKey, out var arr) || arr.ValueKind != JsonValueKind.Array) continue;
+            foreach (var item in arr.EnumerateArray())
+            {
+                if (item.ValueKind == JsonValueKind.Object)
+                    WalkFlowForSummaries(item, results, seen);
+            }
+        }
+        foreach (var containerKey in new[] {
+            "<ontology::content>", "<ontology::cost>", "<ontology::condition>",
+            "<ontology::instant_content>", "<ontology::instant_cost>",
+            "<ontology::continuous_effect>", "<ontology::effect>" })
+        {
+            if (node.TryGetProperty(containerKey, out var container) && container.ValueKind == JsonValueKind.Object)
+                WalkFlowForSummaries(container, results, seen);
+        }
     }
 
     private static bool TryFindInArray(JsonElement root, string arrayProperty, string id, out JsonElement found)

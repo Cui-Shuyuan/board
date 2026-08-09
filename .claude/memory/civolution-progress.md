@@ -273,6 +273,14 @@ metadata:
     - **adjust_die_value 已完成并挂载**（2026-08-09 稍后）：独立 action——cost = 任意数量 `<idea_marker>`（idea_space → supply，每 1 个 ±1），target = 1 颗自己持有的 activation_die/fate_die，content = state_change（attribute=value，to=±N，1 和 6 相连）。**已挂载 3 个场景**，统一模式：掷骰后/支付前的 `CHOOSE_ONE(_skip, <adjust_die_value>)` 行动窗口（adjust 自带 condition「idea_space 有标记」，候选级不成立自动排除，只剩 _skip 即无标记自动跳过）——hunt（roll_dice → 窗口 → 查表取食物，食物 do_after 窗口）、favor_test（roll_fate_dice → 窗口，掷骰从 description 结构化为 die_roll）、activate_module（窗口 → effect，effect 内部经 trigger_pipeline 的 pay_cost 支付，调整先于支付）
     - **用户已纠正**：trigger 底层流程（evaluate_condition → pay_cost → select_target → resolve_content）由 ontology trigger_pipeline 统一定义，action 具体实现只写参数值（condition/cost/target/content），不显式声明流程步骤；activate_module 的 content 是「调整窗口 + effect 引用」的 EXECUTE_ALL（这是 content 内业务步骤，非标准流程步骤），scope 路径 `<activate_module>.<ontology::pipeline>.pay_cost` 经 trigger 概念 `<pipeline>` 字段（default trigger_pipeline）寻址
 
+- **2026-08-10（QA 实测 52 题 + 修复）**:
+    - **50 题客人口吻实测**（`scripts/_qa_test.py` 可复用）：平均 10.1s（最快 2.7s / 最慢 40.1s），总体质量高（准确、口语化、TTS 友好）；亮点：正确识别不存在的概念并反问澄清
+    - **数据错误修复**：`fire_encampment` 定义「喂养阶段结算后得分」错误——规则书 p826-830 是**部落定居（settle）时立即获得印的分数**（flow.json 的 `fire_encampment_score` trigger 本来就正确，只有概念定义错）
+    - **LLM 译名幻觉根因与修复**（详见 [[runtime-architecture]] §11）：LLM 不跟 `<concept_id>` 引用查中文名、自译英文 id（idea→灵感/想法、focus→专注、hill→寒冷）——**注解机制**：程序把工具返回的 `<id>` 注解为 `<id>(中文名)`；关键坑是 JsonSerializer 默认转义尖括号，需 UnsafeRelaxedJsonEscaping
+    - **flow 关键词搜索补 triggers**（[[runtime-architecture]] §12）：favor_test 等 triggers 组概念原来不在 C# 关键词搜索范围；向量搜索对中英混合长文本不可靠（「恩惠检定」Top10 全噪音）
+    - **修复后 4 题回归全对**（睡眠模组/神秘橡树/激活模组/恩惠检定）
+    - **待办**：明天过**事件阶段（phase_7）**——天气效果（weather_gauge 5 格 effect 已有引用）、事件牌效果、时代计分、新起始玩家（4 个子 phase 目前是占位 description）；phase_8 收入阶段（marker 处理分情况：新时代回阶段一 / 终局计分）
+
 ## 相关记忆
 
 - [[project-overview]] — 项目阶段与当前重点
