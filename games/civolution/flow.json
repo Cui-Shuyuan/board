@@ -1411,21 +1411,96 @@
       },
       "specifies": "<ontology::check>",
       "description": {
-        "zh": "投掷全部 <fate_die>，只要有一颗点数落在 [1, <favor_of_ager_track>.position] 闭区间内即为通过。",
-        "en": "Roll all <fate_die>s. Pass if any die value falls within the closed interval [1, <favor_of_ager_track>.position]."
+        "zh": "投掷全部 <fate_die>，可消耗<idea_marker>调整骰子点数（1 和 6 相连），只要有一颗点数落在 [1, <favor_of_ager_track>.position] 闭区间内即为通过。",
+        "en": "Roll all <fate_die>s; <idea_marker>s may adjust the values (1 and 6 are adjacent). Pass if any die value falls within the closed interval [1, <favor_of_ager_track>.position]."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "description": {
-            "zh": "投掷玩家持有的全部 <fate_die>。",
-            "en": "Roll all <fate_die> held by the player."
-          }
+          "options": [
+            {
+              "id": "roll_fate_dice",
+              "<ontology::die_roll>": {
+                "description": {
+                  "zh": "投掷玩家持有的全部 <fate_die>。",
+                  "en": "Roll all <fate_die> held by the player."
+                },
+                "<dice>": "<fate_die>[]",
+                "count": "all"
+              }
+            },
+            {
+              "id": "adjust_dice",
+              "name": {
+                "zh": "调整骰子点数（可选）",
+                "en": "Adjust Die Value (Optional)"
+              },
+              "description": {
+                "zh": "可选：询问是否消耗<idea_marker>修改任意一颗<fate_die>的点数（每 1 个 = ±1，1 和 6 相连）。",
+                "en": "Optional: ask whether to spend <idea_marker>s to modify any <fate_die>'s value (each = ±1, 1 and 6 are adjacent)."
+              },
+              "do_after": [
+                "roll_fate_dice"
+              ],
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不调整（跳过）",
+                    "en": "Skip (do not adjust)"
+                  }
+                },
+                "<adjust_die_value>"
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       },
       "result": {
         "expression": {
           "zh": "任意 <fate_die>.value ∈ [1, <favor_of_ager_track>.position]",
           "en": "any <fate_die>.value ∈ [1, <favor_of_ager_track>.position]"
+        }
+      }
+    },
+    {
+      "id": "adjust_die_value",
+      "name": {
+        "zh": "调整骰子点数",
+        "en": "Adjust Die Value"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "支付任意数量（N）的<idea_marker>（从<idea_space>返还<ontology::supply>，每 1 个 = ±1 点），将 1 颗自己持有的<activation_die>或<fate_die>的点数加/减 N（1 和 6 相连——一个标记即可在 1 与 6 之间互改）。只能调整骰子，不能调整<planning_marker>。",
+        "en": "Spend any number (N) of <idea_marker>s (returned from <idea_space> to <ontology::supply>, each worth ±1) to increase or decrease the value of 1 <activation_die> or <fate_die> you hold by N (1 and 6 are adjacent — one marker converts a 1 to a 6 or vice versa). Only dice can be adjusted, not <planning_marker>s."
+      },
+      "<ontology::condition>": {
+        "zh": "<idea_space> 中至少有 1 个 <idea_marker>。",
+        "en": "At least 1 <idea_marker> in <idea_space>."
+      },
+      "target": "1 颗自己持有的<activation_die>或<fate_die>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<idea_space>",
+            "destination": "<ontology::supply>",
+            "<ontology::object>": "<idea_marker>",
+            "quantity": "任意（1+，玩家决定）"
+          },
+          "description": {
+            "zh": "每支付 1 个创意标记，骰子点数 ±1；支付 N 个则 ±N。",
+            "en": "Each idea marker spent changes the die value by ±1; spending N changes it by ±N."
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::state_change>": {
+            "subject": "this.target",
+            "attribute": "value",
+            "to": "±N（1 和 6 相连）"
+          }
         }
       }
     },
@@ -2694,14 +2769,40 @@
         "<ontology::instant_content>": {
           "options": [
             {
+              "id": "roll_dice",
               "<ontology::die_roll>": {
                 "description": {
-                  "zh": "掷玩家持有的全部<fate_die>，选 1 个骰子的点数（可用创意标记修改，1 和 6 相连）。",
-                  "en": "Roll all <fate_die>s held by the player and choose one result (idea markers may change it; 1 and 6 are adjacent)."
+                  "zh": "掷玩家持有的全部<fate_die>，选 1 个骰子的点数（1 和 6 相连）。",
+                  "en": "Roll all <fate_die>s held by the player and choose one result (1 and 6 are adjacent)."
                 },
                 "<dice>": "<fate_die>[]",
                 "count": "all"
               }
+            },
+            {
+              "id": "adjust_dice",
+              "name": {
+                "zh": "调整骰子点数（可选）",
+                "en": "Adjust Die Value (Optional)"
+              },
+              "description": {
+                "zh": "可选：询问是否消耗<idea_marker>修改所选骰子的点数（每 1 个 = ±1，1 和 6 相连）。",
+                "en": "Optional: ask whether to spend <idea_marker>s to modify the chosen die's value (each = ±1, 1 and 6 are adjacent)."
+              },
+              "do_after": [
+                "roll_dice"
+              ],
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不调整（跳过）",
+                    "en": "Skip (do not adjust)"
+                  }
+                },
+                "<adjust_die_value>"
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             },
             {
               "<ontology::transfer>": {
@@ -2712,7 +2813,10 @@
                 "source": "<ontology::supply>",
                 "destination": "<food_space>",
                 "<ontology::object>": "<octagonal_pillar>"
-              }
+              },
+              "do_after": [
+                "adjust_dice"
+              ]
             },
             {
               "<ontology::transfer>": {
@@ -3689,13 +3793,43 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个自己的模组（<upgradable_module> 主模组或 <feature_module> 特征模组），触发其 effect：支付该模组声明的费用（恰好 2 个对应点数的<activation_die>，可用<planning_marker>或<focus_marker>替代），执行其当前等级的效果。",
-        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module) and trigger its effect: pay the module's declared cost (exactly 2 <activation_die>s of matching values, or <planning_marker>s / <focus_marker>s instead), then execute its current-level effect."
+        "zh": "选择 1 个自己的模组（<upgradable_module> 主模组或 <feature_module> 特征模组），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），执行其当前等级的效果。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<pipeline> 的 pay_cost 步骤）。",
+        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module): pay the module's declared cost (exactly 2 <activation_die>s of matching values), then execute its current-level effect. <planning_marker> / <focus_marker> substitutions apply during payment (see each marker's <ontology::substitution>; effective point: the pay_cost step of <pipeline>)."
       },
       "target": "1 个自己的模组（<upgradable_module> 或 <feature_module>）",
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "<ontology::effect>": "this.target 的 effect（其声明的 cost + 当前等级效果）"
+          "options": [
+            {
+              "id": "adjust_dice",
+              "name": {
+                "zh": "调整骰子点数（可选）",
+                "en": "Adjust Die Value (Optional)"
+              },
+              "description": {
+                "zh": "可选：支付费用前，询问是否消耗<idea_marker>修改骰子格上<activation_die>的点数（每 1 个 = ±1，1 和 6 相连），使点数满足模组费用要求。",
+                "en": "Optional: before paying the cost, ask whether to spend <idea_marker>s to modify <activation_die> values on dice spaces (each = ±1, 1 and 6 are adjacent) to meet the module's cost requirement."
+              },
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不调整（跳过）",
+                    "en": "Skip (do not adjust)"
+                  }
+                },
+                "<adjust_die_value>"
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "do_after": [
+                "adjust_dice"
+              ],
+              "<ontology::effect>": "this.target 的 effect（其声明的 cost + 当前等级效果）"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         }
       }
     },

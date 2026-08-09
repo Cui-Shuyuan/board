@@ -3,7 +3,7 @@
     "document": "board-game-ontology",
     "version": "0.1.1",
     "description": "桌游本体 — 统一定义游戏中的静态结构概念与流程时序概念。不定义具体游戏规则。",
-    "convention": "每个概念的 constraints.required 表示：若另一个概念继承或引用此概念，则必须提供这些字段的值。程序递归收集父链上的所有 required 约束和顶层字段。\n\n类型约定（type field convention）：字段的 type 值分为三类——(1) 概念引用：type 为已有概念的 id（如 player、zone、object、cost、content、information_visibility），表示该字段的值是对该概念实例的引用。带有 | null 后缀表示可空；(2) 泛引用：type 为 concept_ref，表示引用目标不限于单一概念，程序或 LLM 需根据上下文确定具体目标类型；(3) 原始类型：直接使用类型名——string、integer、boolean、any、map<string, any>、enum。enum 类型附带内联的 enum 数组枚举合法值。\n\n交叉引用约定（cross-reference convention）：所有 definition 和 field description 文本中，引用其他概念时使用 <concept_id> 占位符包裹概念 id。例如「指向游戏中一个具体的 <object> 实例（<player>、<zone>、<piece> 等，均为 <object> 的子类）」。LLM 读取时可据此识别交叉引用并沿 <concept_id> 查找对应概念的定义。"
+    "convention": "每个概念的 constraints.required 表示：若另一个概念继承或引用此概念，则必须提供这些字段的值。程序递归收集父链上的所有 required 约束和顶层字段。\n\n类型约定（type field convention）：字段的 type 值分为三类——(1) 概念引用：type 为已有概念的 id（如 player、zone、object、cost、content、information_visibility），表示该字段的值是对该概念实例的引用；(2) 泛引用：type 为 concept_ref，表示引用目标不限于单一概念，程序或 LLM 需根据上下文确定具体目标类型；(3) 原始类型：直接使用类型名——string、integer、boolean、any、map<string, any>、enum。enum 类型附带内联的 enum 数组枚举合法值。字段可空性由约束语境表达（constraints.optional 或 default: null），type 中不写「| null」后缀；字段 key 本身为 <concept_id> 格式时不再声明 type（key 即类型）。\n\n交叉引用约定（cross-reference convention）：所有 definition 和 field description 文本中，引用其他概念时使用 <concept_id> 占位符包裹概念 id。例如「指向游戏中一个具体的 <object> 实例（<player>、<zone>、<piece> 等，均为 <object> 的子类）」。LLM 读取时可据此识别交叉引用并沿 <concept_id> 查找对应概念的定义。"
   },
   "concepts": [
     {
@@ -496,6 +496,68 @@
       }
     },
     {
+      "id": "substitution",
+      "specifies": "<property>",
+      "name": {
+        "zh": "替代（视为）",
+        "en": "Substitution"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "声明对象 X 在特定语境中充当对象 Y：X 的物理身份不变，在 scope 内、满足 condition 时其行为等同于 Y（如 <planning_marker> 在支付激活模组费用时视为 <activation_die>），离开语境恢复自身身份。与 <piece>.parts 的静态身份声明互补——parts 表达「载体上印着什么身份」，<substitution> 表达「使用时的身份借用」。domain 为资源、标记等对象概念。",
+        "en": "Declares that object X acts as object Y within a specific context: X's physical identity is unchanged; inside scope, when the condition holds, its behavior equals Y's (e.g. a <planning_marker> counts as an <activation_die> when paying a module's activation cost); outside, it reverts to itself. Complements the static identity declaration of <piece>.parts — parts states which identities are printed on a carrier, <substitution> states an identity borrowed at use time. Domain is object concepts such as resources and markers."
+      },
+      "target": {
+        "type": "<object>",
+        "description": {
+          "zh": "充当的对象——X 被视为什么（如 <activation_die>）。",
+          "en": "The object X is treated as (e.g. <activation_die>)."
+        }
+      },
+      "scope": {
+        "type": "string",
+        "default": null,
+        "description": {
+          "zh": "生效范围的路径式定位——概念.字段.步骤，如 \"<activate_module>.<ontology::pipeline>.pay_cost\" 表示「activate_module 的 pipeline 中的 pay_cost 步骤」。null = 全场合。",
+          "en": "Path-style scope — concept.field.step, e.g. \"<activate_module>.<ontology::pipeline>.pay_cost\" = the pay_cost step of activate_module's pipeline. null = everywhere."
+        }
+      },
+      "<condition>": {
+        "default": null,
+        "description": {
+          "zh": "适用条件（如「点数与所需一致」）。null = 无条件。",
+          "en": "Applicability condition (e.g. 'value matches the requirement'). null = unconditional."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "target",
+            "description": {
+              "zh": "必须声明充当的对象——X 被视为什么。",
+              "en": "The object being substituted for must be declared."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "scope",
+            "description": {
+              "zh": "生效范围。缺省为全场合。",
+              "en": "Scope of effect. Defaults to everywhere."
+            }
+          },
+          {
+            "id": "<condition>",
+            "description": {
+              "zh": "适用条件。缺省为无条件。",
+              "en": "Applicability condition. Defaults to unconditional."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "ownership",
       "extends": "<state>",
       "name": {
@@ -922,7 +984,6 @@
         "en": "An execution unit of game flow — it defines 'what stage the game is in' and 'what happens next'. The <procedure> subclasses (<round>, <turn>, <phase>) differ in semantics but share the same structure: **actual flow is always defined via an <ontology::pipeline>** (options sequence + do_after dependencies + loop). <procedure> itself no longer has children / start / end fields — step order and prerequisites come from the pipeline's do_after, loop boundaries from the pipeline's loop.until, and 'who may perform an operation' from a step's <condition>. Nesting remains free-form: candidates in options can be <round>s, <turn>s, <phase>s, or plain steps, and an entire game can itself be an outermost <round>. There is no fixed hierarchy — the nesting is determined by each game's rules."
       },
       "<pipeline>": {
-        "type": "<pipeline> | null",
         "default": null,
         "description": {
           "zh": "本 <procedure> 的实际流程定义（options / type / do_after / loop 结构）。子类 <round>、<turn>、<phase> 均通过它描述自己的执行内容：<round> 用 loop 表达每轮重跑、<turn> 用 CHOOSE_ONE 表达行动选择（执行者轮转是 <turn> 的内建语义）、<phase> 用 options 承载子流程或程序化步骤（setup、结算等）。",
@@ -1209,6 +1270,13 @@
       "description": {
         "zh": "可执行规格的最小完整单元：<condition> → <cost> → <target> → <content>，按 pipeline（见 ontology/flow.json）依次结算。<trigger> 是体系的核心机器——所有游戏效果都跑在这同一台机器上。按点火源分为三种角色：(1) 纯 trigger——<condition> 边沿激活，规则自动执行，actor 为 null；(2) <effect>——specifies trigger，绑定在 <piece> 上、由 <condition> 边沿激活；(3) <action>——specifies trigger，不依赖 <piece>、由 <player> 决策点燃。三者共享完全相同的结构（condition/cost/target/content），区别仅在于点火源和称呼习惯。",
         "en": "The smallest complete unit of executable specification: <condition> → <cost> → <target> → <content>, settled sequentially per the pipeline (see ontology/flow.json). <trigger> is the core machine of the system — all game effects run on this same machine. Three roles by ignition source: (1) pure trigger — <condition> edge-activates, rules auto-execute, actor is null; (2) <effect> — specifies trigger, bound to a <piece>, edge-activated by <condition>; (3) <action> — specifies trigger, independent of any <piece>, ignited by a <player> decision. All three share the exact same structure (condition/cost/target/content), differing only in ignition source and naming convention."
+      },
+      "<pipeline>": {
+        "default": "trigger_pipeline",
+        "description": {
+          "zh": "本 trigger 的标准执行流程。缺省引用 ontology/flow.json 的 <trigger_pipeline>：evaluate_condition（不成立终止）→ pay_cost（足额支付，无法足额终止）→ select_target → resolve_content。步骤 id 全局可寻址——其他声明可用路径引用具体步骤（如 substitution 的 scope 写 \"<activate_module>.<ontology::pipeline>.pay_cost\" 表示「支付费用那一步」）。",
+          "en": "The standard execution flow of this trigger. Defaults to <trigger_pipeline> in ontology/flow.json: evaluate_condition (terminate if false) → pay_cost (pay in full; terminate if impossible) → select_target → resolve_content. Step ids are globally addressable — other declarations may reference a specific step via path (e.g. substitution scope \"<activate_module>.<ontology::pipeline>.pay_cost\" = the cost-payment step)."
+        }
       },
       "constraints": {
         "required": [],

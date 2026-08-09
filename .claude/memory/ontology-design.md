@@ -32,7 +32,8 @@ D:\workspace\board\ontology\concepts.json（统一本体，67 个概念）
 ## 类型与引用约定
 - **type 值三类**：(1) 概念引用 — 使用 `<concept_id>` 格式包裹，可带 `| null`；(2) 泛引用 — `concept_ref`（已弃用）；(3) 原始类型 — string、integer、boolean、any、map<string, any>、enum
 - **`<concept_id>` 交叉引用**：所有 definition 和 description 中用 `<concept_id>` 包裹概念引用
-- **字段 key 即类型**：当字段 key 本身是 `<concept_id>` 格式时（如 `"<ownership>"`、`"<declaration>"`），不再重复声明 `type` 字段——key 自身即表达了类型。**数组标记直接写在 key 里**（`"<event>[]"`、`"<condition>[]"`），不用 `"<event>": {"type": "<event>[]"}` 这种重复声明。仅当 key 是语义化命名（如 `current_player`）、需要窄化类型（如 `"<ownership>": {"type": "<player>"}`）或允许空值（如 `"<cost>": {"type": "<cost> | null"}`）时才保留 `type`
+- **字段 key 即类型**：当字段 key 本身是 `<concept_id>` 格式时（如 `"<ownership>"`、`"<declaration>"`），不再重复声明 `type` 字段——key 自身即表达了类型。**数组标记直接写在 key 里**（`"<event>[]"`、`"<condition>[]"`），不用 `"<event>": {"type": "<event>[]"}` 这种重复声明。仅当 key 是语义化命名（如 `current_player`）、需要窄化类型（如 `"<ownership>": {"type": "<player>"}`）时才保留 `type`
+- **不写 `| null` 后缀（2026-08-09 修正）**：字段可空性由约束语境表达——`constraints.optional` 或 `default: null` 本身就代表可空，`type` 中不写「`| null`」。此前的旧约定「允许空值（如 `"<cost>": {"type": "<cost> | null"}`）时才保留 type」已废弃
 - **`concept_ref` / `concept_ref[]`** 已弃用，统一改用 `<concept_id>` 格式
 
 ## 关键设计决策
@@ -113,7 +114,7 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **73 个概念**（2026-08-06：+4 field-level + evaluate/check/flip/state_change/temporary_zone，Declaration 弃用可忽略）。
+本体已从最初的 51 个概念扩展到 **74 个概念**（2026-08-06：+4 field-level + evaluate/check/flip/state_change/temporary_zone，Declaration 弃用可忽略；2026-08-09：+substitution）。
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure
@@ -138,8 +139,8 @@ Round、Turn、Phase、Transfer
 ### 状态概念（2 个）
 Ownership、Starting Player
 
-### 属性概念（4 个）★ Declaration 已弃用
-Cost、Content、Effect、Information Visibility
+### 属性概念（5 个）★ Declaration 已弃用
+Cost、Content、Effect、Information Visibility、**Substitution（新增）**
 
 ### Field-level 概念（6 个）★ 2026-08-06 补全
 Instant Cost（extends Cost）、Continuous Cost（extends Cost）、Instant Effect（extends Effect）、Continuous Effect（extends Effect，含 end_condition）、Instant Content（extends Content）、Continuous Content（extends Content，含 active_condition）
@@ -230,6 +231,20 @@ Hand
 - **Effect/Cost/Content 新增 options 字段 ★**（2026-07-26）：`<effect>`、`<cost>`、`<content>` 各新增 `options` 可选字段（`map | null`，default null）。非空时必含 `type`（引用 `<multiple_choice_enum>`）和 `items` 数组。将多选逻辑从使用处的 ad-hoc 结构提升为可复用的字段约定。
 - **Multiple Choice Enum ★**（2026-07-26）：新增 `<multiple_choice_enum>` 概念（67 个概念），三个枚举值——`EXECUTE_ALL`（全部执行）、`CHOOSE_ONE`（选择 1 个）、`CHOOSE_AT_LEAST_ONE`（选择至少 1 个）。适用于任何需要多选项的场景，不限于 effect。
 - **Parts 格式升级：`as` → 概念 ID 直接做 key ★**（2026-07-27）：`parts` 中带额外属性的条目从 `{ "as": "<concept>", "position": ..., "description": ... }` 改为 `{ "<concept>": { "position": ..., "description": ... } }`——概念 ID 直接做 key，去掉 `as` 间接层。纯概念引用仍用字符串 `"<concept>"`。Civolution 7 个概念 + Splendor 2 个概念共 ~37 个 part 已全部迁移。
+
+### Substitution — 替代/视为语义 ★（2026-08-09 新增）
+
+`<substitution>` specifies `<property>`——声明对象 X 在特定语境中充当对象 Y：物理身份不变、scope 内且满足 condition 时行为等同于 Y、离开语境恢复自身。**与 `<piece>.parts` 互补**：parts = 静态身份声明（载体上印着什么身份），substitution = 使用时的身份借用（动态替代）。
+
+- 结构三要素：`target`（充当的对象）、`scope`（生效范围）、`<condition>`（适用条件，复用已有概念）。target/scope 是 substitution 的内部字段（不做顶层概念）
+- **scope 用路径式定位**：`"<activate_module>.<ontology::pipeline>.pay_cost"`（概念.字段.步骤，路径中 ontology 概念必须带 namespace）——步骤 id 全局可寻址，指向 trigger 执行流程（ontology/flow.json 的 `<trigger_pipeline>`）或游戏层 pipeline 中的具体步骤。null = 全场合
+- **挂载位置在对象定义处，不在使用处**：如 civolution 的 `planning_marker`/`focus_marker` 各自声明「支付激活模组费用时可视为 `<activation_die>`」；使用处（activate_module 的 pay_cost 步骤）只引用模组 cost，替代由 substitution 提供。一条规则一处定义，不在每处重复
+- **游戏层差异按需组装**：替代候选是游戏层声明，不进使用处——其他游戏没有替代物就不写
+- `<trigger>` 概念新增顶层 `<pipeline>` 字段（default 引用 trigger_pipeline），标准执行流程四步：evaluate_condition → pay_cost → select_target → resolve_content。此前 trigger 只在 description 文字提到「按 pipeline 依次结算」，未结构化引用——已补
+- 触发词识别：描述「视为」「相当于」「可替代」「当作」的规则都是 substitution 的候选场景（如 Splendor gold 的百搭语义）
+
+**Why:** 替代/视为是跨游戏通用机制（wild/百搭/替代物），不进 ontology 就会在每款游戏里以自然语言散落（description 化残留），LLM 无法结构化理解。
+**How to apply:** 写替代类规则时：声明在对象定义处（`<ontology::substitution>` 字段），scope 写路径式定位指向具体步骤，condition 写适用限制。不在使用处重复。
 
 ## 为《文明演化》扩展本体的计划
 

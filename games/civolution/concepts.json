@@ -846,10 +846,18 @@
       },
       "abstract": false,
       "description": {
-        "zh": "放置在骰子格上的标记，可替代对应点数的激活骰用于激活模组。只能替代<activation_die>，不能替代<fate_die>。用作支付时放回供应堆（<ontology::supply>），不进入玩家保留区。",
-        "en": "A marker placed on a dice space, usable in place of an activation die of the matching value when activating a module. Can only replace <activation_die>s, not <fate_die>s. When used as payment, the marker is returned to the supply (<ontology::supply>), not to a player holding."
+        "zh": "放置在骰子格上的标记，可替代对应点数的激活骰用于激活模组（见 <ontology::substitution>）。只能替代<activation_die>，不能替代<fate_die>。用作支付时放回供应堆（<ontology::supply>），不进入玩家保留区。",
+        "en": "A marker placed on a dice space, usable in place of an activation die of the matching value when activating a module (see <ontology::substitution>). Can only replace <activation_die>s, not <fate_die>s. When used as payment, the marker is returned to the supply (<ontology::supply>), not to a player holding."
       },
-      "component": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>",
+      "<ontology::substitution>": {
+        "target": "<activation_die>",
+        "<ontology::condition>": {
+          "zh": "点数与所需一致（取自对应点数骰格）",
+          "en": "value matches the required die (taken from the dice space of that value)"
+        },
+        "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
+      }
     },
     {
       "id": "focus_marker",
@@ -860,10 +868,18 @@
       },
       "abstract": false,
       "description": {
-        "zh": "特殊的计划标记，可当作任意一个骰子格中的计划标记使用。一个焦点标记相当于一个任意点数的白骰子。",
-        "en": "A special planning marker that can be used as a planning marker of any value. One focus marker is equivalent to an activation die of any value."
+        "zh": "特殊的计划标记，可当作任意点数的计划标记使用：需要任意点数的激活骰时，可从焦点格放回供应堆替代之（见 <ontology::substitution>）。",
+        "en": "A special planning marker usable as a planning marker of any value: when an activation die of a specific value is needed, one focus marker can be returned from the focus space to the supply in its place (see <ontology::substitution>)."
       },
-      "component": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>",
+      "<ontology::substitution>": {
+        "target": "<activation_die>",
+        "<ontology::condition>": {
+          "zh": "任意点数",
+          "en": "any value"
+        },
+        "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
+      }
     },
     {
       "id": "card_name",

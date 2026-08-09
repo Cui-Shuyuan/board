@@ -24,6 +24,8 @@ flow.json 中每一个有 `id` 的节点（procedure、trigger、pipeline step�
 
 ## Action 格式：trigger 模型
 
+**trigger 的底层执行流程不显式声明（2026-08-09）**：标准四步（evaluate_condition → pay_cost → select_target → resolve_content）由 ontology/flow.json 的 `trigger_pipeline` 统一定义，action/effect 的 `<pipeline>` 字段缺省引用它。具体实现**只写参数值**——condition / cost / target / content——不把流程步骤重新声明一遍（如不写 "pay_cost" / "resolve_effect" 步骤）。步骤名是全局可寻址的：scope 路径（如 substitution 的 `"<activate_module>.<ontology::pipeline>.pay_cost"`）经 trigger 概念上的 `<pipeline>` 字段（default 指向 trigger_pipeline）解析。
+
 Action 必须遵循 `condition → cost → target → content` 结构：
 
 ```json
@@ -133,6 +135,30 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 // 纯标签（无 <>）→ 用 id
 { "id": "chip_name", "position": {...} }
 ```
+
+**不写 `| null` 后缀（2026-08-09）**：字段可空性由 `constraints.optional` 或 `default: null` 表达，`type` 中不写「`| null`」（如 `"type": "<pipeline> | null"` 是过时写法）。key 已为 `<concept_id>` 格式的字段也不再写 type。
+
+---
+
+## Substitution 挂载格式（2026-08-09）
+
+替代/视为规则声明在**对象定义处**，不在使用处：
+
+```json
+{
+  "id": "planning_marker",
+  "specifies": "<ontology::resource>",
+  "<ontology::substitution>": {
+    "target": "<activation_die>",
+    "<ontology::condition>": { "zh": "点数与所需一致", "en": "value matches" },
+    "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
+  }
+}
+```
+
+- `target` / `scope` 是 substitution 内部字段（不带 namespace）；`<ontology::condition>` 复用 ontology 概念（key-as-type）
+- **scope 是路径式定位**（概念.字段.步骤）：`"<activate_module>.<ontology::pipeline>.pay_cost"` 指向 activate_module 的 pipeline 中 id 为 pay_cost 的步骤。**路径中的概念引用遵循 namespace 约定**——游戏层上下文里 ontology 概念必须写全 `<ontology::pipeline>`。步骤 id 要与 ontology/flow.json `trigger_pipeline` 的标准步骤名一致（evaluate_condition / pay_cost / select_target / resolve_content）
+- 使用处（如 activate_module 的 pay_cost 步骤）不重复声明替代，只引用 cost
 
 ---
 
@@ -245,6 +271,8 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] content 是 `<ontology::instant_content>` 或 `<ontology::continuous_content>`
 - [ ] 所有 type 引用是完整路径 `"<ontology::multiple_choice_enum.XXX>"`
 - [ ] 没有 `"type": "<ontology::xxx>"` 这种写法（用 key-as-type）
+- [ ] type 中不写 `| null`（可空由 optional/default 表达）
+- [ ] key 已为 `<concept_id>` 格式时不写 type
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)

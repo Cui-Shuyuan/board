@@ -258,6 +258,15 @@ metadata:
 
 - **2026-07-26（组件图片按边框裁切）**: 用 OpenCV CCOMP 轮廓层级法从 PDF 规则书检测黑色矩形边框裁切组件，产出一批裁切图到 `media/by_border/`。
 
+- **2026-08-09（替代/视为语义落地）**:
+    - **ontology 新增 `<substitution>` 概念**（specifies `<property>`）：X 在 scope 内、满足 condition 时充当 Y（动态身份借用，与 parts 的静态身份互补）。三要素：target（充当对象）、scope（路径式定位）、condition（复用 `<condition>`）
+    - **scope 路径式寻址**：`"<activate_module>.<ontology::pipeline>.pay_cost"`（概念.字段.步骤，ontology 概念带 namespace）。`<trigger>` 概念新增顶层 `<pipeline>` 字段（default 引用 trigger_pipeline），标准执行流程四步 evaluate_condition → pay_cost → select_target → resolve_content，步骤 id 全局可寻址
+    - **activate_module 重构**：content 改为 EXECUTE_ALL pipeline——pay_cost（引用 this.target 声明的 cost，替代生效点）+ resolve_effect（do_after pay_cost）。模组 effect 的 cost 引用**零改动**（cost 完整保留在 effect 内）
+    - **planning_marker / focus_marker 各挂 substitution**（target=`<activation_die>`，condition 点数匹配/任意点数，scope=pay_cost）。description 中「可替代」「相当于」措辞保留简版 + substitution 做权威结构
+    - **类型约定修正**：`| null` 后缀写法废弃（optional/default 即可空），key-as-type 不写 type。ontology 中 procedure 的 `<pipeline>` 字段与 meta.convention 同步修正
+    - **adjust_die_value 已完成并挂载**（2026-08-09 稍后）：独立 action——cost = 任意数量 `<idea_marker>`（idea_space → supply，每 1 个 ±1），target = 1 颗自己持有的 activation_die/fate_die，content = state_change（attribute=value，to=±N，1 和 6 相连）。**已挂载 3 个场景**，统一模式：掷骰后/支付前的 `CHOOSE_ONE(_skip, <adjust_die_value>)` 行动窗口（adjust 自带 condition「idea_space 有标记」，候选级不成立自动排除，只剩 _skip 即无标记自动跳过）——hunt（roll_dice → 窗口 → 查表取食物，食物 do_after 窗口）、favor_test（roll_fate_dice → 窗口，掷骰从 description 结构化为 die_roll）、activate_module（窗口 → effect，effect 内部经 trigger_pipeline 的 pay_cost 支付，调整先于支付）
+    - **用户已纠正**：trigger 底层流程（evaluate_condition → pay_cost → select_target → resolve_content）由 ontology trigger_pipeline 统一定义，action 具体实现只写参数值（condition/cost/target/content），不显式声明流程步骤；activate_module 的 content 是「调整窗口 + effect 引用」的 EXECUTE_ALL（这是 content 内业务步骤，非标准流程步骤），scope 路径 `<activate_module>.<ontology::pipeline>.pay_cost` 经 trigger 概念 `<pipeline>` 字段（default trigger_pipeline）寻址
+
 ## 相关记忆
 
 - [[project-overview]] — 项目阶段与当前重点
