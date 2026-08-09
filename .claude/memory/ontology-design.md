@@ -108,8 +108,8 @@ Zone (abstract)
 └── Track → Score Track
 ```
 
-### Procedure 嵌套模型
-Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure。
+### Procedure 结构统一 ★（2026-08-09）
+Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「规则上下文」的 Procedure。**三个子类结构相同：一律持有 `<ontology::pipeline>` 定义实际流程**（详见 [[pipeline-model]]）——`children` 数组、`actor`、`start`/`end` 字段全部废弃：顺序与依赖用 options + do_after，循环用 pipeline 的 `loop`（`for N + counter` 定次 / `until` 条件），「谁能做」用 condition（步骤级不成立 = 阻断，候选级不成立 = 排除），行动权轮转是 turn 的内建语义。
 
 ## 当前进度（核心概念持续扩展中）
 
@@ -206,6 +206,7 @@ Hand
 
 ## 关键设计决策更新
 
+- **pipeline 是唯一结构原语 ★（2026-08-09）**：`<procedure>`（round/turn/phase）统一持有 `<ontology::pipeline>` 定义流程；`children`/`actor`/`start`/`end` 废弃。`<pipeline>` 新增 `loop` 字段（`for N + counter` 定次 / `until` 条件，until 可字符串引用或内联谓词）。**步骤级 vs 候选级 condition 语义**：步骤级不成立 = 阻断（do_after 链停止）；候选级不成立 = 排除（不影响其他候选）。「能 A 必须 A，否则跳过」= 跳过作为带「A 不可用」condition 的候选。详见 [[pipeline-model]]。
 - **Token 作为 Resource 与 Marker 的物理基类**：`<token>` 是桌游中最常见的小型计数/标记物；`<resource>` 继承 `<token>`（作为可被消耗的价值物），`<marker>` 继承 `<token>`（作为状态/位置指示物）。
 - **Track 是 Zone 的子类**：轨道不再属于 `<aid>`，而是一种「有序 zone」，其中 marker 只做内部位置移动，不发生 zone 间 transfer。
 - **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。

@@ -194,8 +194,6 @@ def extract_flow(file_path: Path) -> list[dict[str, Any]]:
             "search_text": " ".join(p for p in parts if p),
         })
 
-        for child in node.get("children", []):
-            walk(child)
         for evt in node.get("events", []):
             walk(evt)
         for opt in node.get("options", []):

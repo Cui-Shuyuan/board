@@ -918,8 +918,16 @@
       },
       "abstract": true,
       "description": {
-        "zh": "具有明确开始与结束边界的执行单元。<procedure> 是游戏流程的骨架——它定义了「游戏现在处于什么阶段」「接下来该做什么」。嵌套是自由形式的：<round> 里可以有 <phase>，<phase> 里可以有 <round>，<turn> 里可以有 <phase>，一整局游戏本身也可以视为一个 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。所有 <procedure> 子类（<round>、<turn>、<phase> 等）共享同一套字段，区别仅在于语义，不在结构。",
-        "en": "An execution unit with clear start and end boundaries. <procedure> is the skeleton of game flow. Nesting is free-form: a <round> can contain <phase>s, a <phase> can contain <round>s, a <turn> can contain <phase>s, and an entire game can itself be a <round>. There is no fixed hierarchy — the nesting is determined by each game's rules. All <procedure> subclasses (<round>, <turn>, <phase>, etc.) share the same fields; they differ only in semantics, not structure."
+        "zh": "游戏流程的执行单元——它定义了「游戏现在处于什么阶段」「接下来该做什么」。<procedure> 的子类（<round>、<turn>、<phase>）语义各异但结构相同：**实际流程一律通过 <ontology::pipeline> 定义**（options 序列 + do_after 依赖 + loop 循环），<procedure> 自身不再有 children / start / end 字段——步骤顺序与先后依赖由 pipeline 的 do_after 表达，循环边界由 pipeline 的 loop.until 表达，「谁能做某操作」由步骤的 <condition> 表达。嵌套仍是自由形式的：options 里的候选项可以是 <round>、<turn>、<phase> 或普通步骤，一整局游戏本身也可以是一个最外层的 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。",
+        "en": "An execution unit of game flow — it defines 'what stage the game is in' and 'what happens next'. The <procedure> subclasses (<round>, <turn>, <phase>) differ in semantics but share the same structure: **actual flow is always defined via an <ontology::pipeline>** (options sequence + do_after dependencies + loop). <procedure> itself no longer has children / start / end fields — step order and prerequisites come from the pipeline's do_after, loop boundaries from the pipeline's loop.until, and 'who may perform an operation' from a step's <condition>. Nesting remains free-form: candidates in options can be <round>s, <turn>s, <phase>s, or plain steps, and an entire game can itself be an outermost <round>. There is no fixed hierarchy — the nesting is determined by each game's rules."
+      },
+      "<pipeline>": {
+        "type": "<pipeline> | null",
+        "default": null,
+        "description": {
+          "zh": "本 <procedure> 的实际流程定义（options / type / do_after / loop 结构）。子类 <round>、<turn>、<phase> 均通过它描述自己的执行内容：<round> 用 loop 表达每轮重跑、<turn> 用 CHOOSE_ONE 表达行动选择（执行者轮转是 <turn> 的内建语义）、<phase> 用 options 承载子流程或程序化步骤（setup、结算等）。",
+          "en": "The actual flow definition of this <procedure> (options / type / do_after / loop structure). The subclasses <round>, <turn>, and <phase> all describe their execution content through it: <round> uses loop for per-cycle repetition, <turn> uses CHOOSE_ONE for action selection (turn order is <turn>'s built-in semantics), and <phase> holds child procedures or programmatic steps (setup, resolution, etc.) in its options."
+        }
       },
       "constraints": {
         "required": [
@@ -929,28 +937,14 @@
               "zh": "Procedure 的唯一标识符。用于在规则中精确引用特定流程实例，管理流程间的嵌套和跳转关系。",
               "en": "Unique identifier of the Procedure. Used to precisely reference a specific procedure instance and manage nesting and transitions."
             }
-          },
-          {
-            "id": "start",
-            "description": {
-              "zh": "此 Procedure 的进入条件——什么情况发生时此流程被激活。可以是 <condition> 或 Trigger。定义「什么时候开始」。",
-              "en": "Entry condition for this Procedure — when does it become active. Can be a <condition> or Trigger. Defines 'when to start'."
-            }
-          },
-          {
-            "id": "end",
-            "description": {
-              "zh": "此 Procedure 的退出条件——什么情况发生时此流程终止。循环型 Procedure 的 end 可能回到自身的 start，形成循环。定义「什么时候结束」。",
-              "en": "Exit condition for this Procedure — when does it terminate. For cyclical Procedures, the end may loop back to start. Defines 'when to end'."
-            }
           }
         ],
         "optional": [
           {
-            "id": "children",
+            "id": "<pipeline>",
             "description": {
-              "zh": "嵌套在此流程内部的子流程。子流程在当前 <procedure> 激活后按游戏规则定义的顺序执行。<round>、<turn>、<phase> 可以任意嵌套——一个 <phase> 里可能包含多个 <round>，一个 <turn> 里可能有多个 <phase>。若为空，表示此 <procedure> 是叶子节点，直接包含 <action> 而非子流程。",
-              "en": "Child procedures nested within this procedure. Executed in the order defined by game rules while the parent is active. <round>, <turn>, and <phase> can nest in any arrangement — a <phase> may contain multiple <round>s, a <turn> may contain multiple <phase>s. If empty, this is a leaf <procedure> that contains Actions directly."
+              "zh": "本 <procedure> 的实际流程定义，见顶层字段声明。所有 <procedure> 子类都应持有它。",
+              "en": "The actual flow definition of this <procedure>; see the top-level field declaration. Every <procedure> subclass should hold one."
             }
           }
         ]
@@ -965,8 +959,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。一轮内部结构固定——每次循环执行相同的子流程序列。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 children 通常是 <phase>；当一轮只含一个下级流程时，可省略中间的 <phase> 包装，直接包含 <turn> 或另一个 <round>；含多个子流程时仍通过 <phase> 组织。",
-        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. Its internal structure is fixed — each cycle executes the same sequence of sub-procedures. An entire game is itself an outermost <round>. A <round>'s children are usually <phase>s; when a round contains only a single lower-level procedure, the intermediate <phase> wrapper may be omitted and the <round> may directly contain a <turn> or another <round>. With multiple sub-procedures, <phase>s are still required."
+        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。一轮内部结构固定——每次循环执行相同的 <ontology::pipeline> options 序列，循环边界由该 pipeline 的 loop.until 表达（无 loop 时即单次执行的流程单元）。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 的 options 可直接承载 <phase>、<turn> 或普通步骤，无需中间的包装层。「每位玩家一个 turn 按座次轮转」通过「loop until 所有玩家都已行动」+ <turn> 内建轮转语义表达。",
+        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. Its internal structure is fixed — each cycle executes the same <ontology::pipeline> options sequence, with the loop boundary expressed by that pipeline's loop.until (without loop it is a single-pass flow unit). An entire game is itself an outermost <round>. A <round>'s options may directly carry <phase>s, <turn>s, or plain steps without an intermediate wrapper layer. 'One turn per player in seating order' is expressed by 'loop until every player has acted' plus <turn>'s built-in turn-order semantics."
       },
       "constraints": {
         "required": [],
@@ -982,8 +976,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。<turn> 的 children 通常是 <phase>；当玩家行动直接以 actions 数组或 <ontology::pipeline> 字段挂载时，可省略中间的 <phase> 包装（该数组/字段本身即「选择行动」的内容表达）。",
-        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. A <turn>'s children are usually <phase>s; when the player's actions are attached directly via an actions array or an <ontology::pipeline> field, the intermediate <phase> wrapper may be omitted (that array/field itself expresses the 'choose an action' content)."
+        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。行动选择由 <ontology::pipeline> 表达——options 为可行动作（<action> 引用或条件步骤），type 为 CHOOSE_ONE（选一个执行）。执行者（当前玩家）由流程推进按座次顺序轮转决定——轮转是 <turn> 的内建语义，无需字段声明；「谁能做某操作」由步骤的 <condition> 表达，条件不成立的玩家自动跳过。",
+        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. Action selection is expressed by an <ontology::pipeline> — its options are the available actions (<action> references or conditional steps), with type CHOOSE_ONE (pick one to perform). The actor (current player) is decided by flow progression in seating order — turn order is <turn>'s built-in semantics and needs no field declaration; 'who may perform an operation' is expressed by a step's <condition>, and players failing it are skipped automatically."
       },
       "constraints": {
         "required": [],
@@ -999,35 +993,12 @@
       },
       "abstract": false,
       "description": {
-        "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。<phase> 继承自 <procedure>。是唯一承载「规则上下文」的 <procedure>——当前 <phase> 决定了哪些 <action> 合法、哪些 <effect> 生效。不强制绑定 <player>，允许完全的自动机阶段（无人阶段，仅有 <trigger> 驱动）。<phase> 的 children 可以是 <round>、<turn> 或另一个 <phase>，也可以是叶子节点（直接包含 <action> 列表）。",
-        "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. <phase> extends <procedure>. It is the only <procedure> that carries 'rule context' — the current <phase> determines which <action>s are legal and which <effect>s are active. Not required to bind to a <player>, allowing fully automated phases (player-less, driven only by <trigger>s). A <phase>'s children can be <round>s, <turn>s, other <phase>s, or it can be a leaf node containing an <action> list directly."
-      },
-      "<pipeline>": {
-        "type": "<pipeline> | null",
-        "default": null,
-        "description": {
-          "zh": "本 <phase> 执行时自动运行的处理流程（options / type / do_after 结构）。用于表达设置、结算等程序化步骤序列——与 <action> 的 content 同构，但由流程自动触发而非玩家决策。与 <action> 不同，<phase> 的 pipeline 步骤通常是程序化操作（transfer、shuffle、event），不涉及玩家选择。",
-          "en": "The processing pipeline this <phase> automatically runs when it executes (options / type / do_after structure). Used for programmatic step sequences such as setup and resolution — isomorphic to an <action>'s content, but auto-triggered by the flow rather than chosen by a player. Unlike an <action>'s content, a <phase>'s pipeline steps are usually programmatic operations (transfer, shuffle, event) without player choices."
-        }
+        "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。<phase> 继承自 <procedure>。是唯一承载「规则上下文」的 <procedure>——当前 <phase> 决定了哪些 <action> 合法、哪些 <effect> 生效。不强制绑定 <player>，允许完全的自动机阶段（无人阶段，仅有 <trigger> 驱动）。<phase> 的 <ontology::pipeline> options 可以承载 <round>、<turn>、另一个 <phase> 或程序化步骤（setup、结算等）——后者的 pipeline 由流程自动执行而非玩家决策。",
+        "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. <phase> extends <procedure>. It is the only <procedure> that carries 'rule context' — the current <phase> determines which <action>s are legal and which <effect>s are active. Not required to bind to a <player>, allowing fully automated phases (player-less, driven only by <trigger>s). A <phase>'s <ontology::pipeline> options can carry <round>s, <turn>s, other <phase>s, or programmatic steps (setup, resolution, etc.) — the latter pipelines are auto-executed by the flow rather than player-chosen."
       },
       "constraints": {
         "required": [],
-        "optional": [
-          {
-            "id": "actions",
-            "description": {
-              "zh": "此阶段内玩家可执行的 <action> 列表。仅当 children 为空（叶子 <phase>）时此字段有意义——它定义了当前规则上下文中的合法行动。非叶子 <phase> 的合法 <action> 由其子流程决定。",
-              "en": "The list of Actions a player can execute during this phase. Only meaningful when children is empty (leaf Phase) — it defines the legal actions in the current rule context. Non-leaf Phases derive their legal actions from their children."
-            }
-          },
-          {
-            "id": "<pipeline>",
-            "description": {
-              "zh": "本阶段执行时自动运行的处理流程（可选）。与 children 互斥：持有 pipeline 的 <phase> 是程序化阶段，不包含子流程。",
-              "en": "Optional processing pipeline automatically run when this phase executes. Mutually exclusive with children: a <phase> holding a pipeline is a programmatic phase without child procedures."
-            }
-          }
-        ]
+        "optional": []
       }
     },
     {
@@ -2143,16 +2114,16 @@
       },
       "abstract": false,
       "description": {
-        "zh": "多选项的处理模型。从几个 token 中选一个拿走，从几个 action 中选一个执行，一个流程有好几个步骤按什么顺序进行——这些都是「从多个候选中做出选择并执行」的问题。<pipeline> 用 <options> 数组承载候选项，用 <type> 引用 <multiple_choice_enum> 决定处理策略，用 <do_after> 表达依赖。候选项可以是任何东西——<ontology::transfer>、<ontology::action>、另一个 <pipeline>、甚至是 <null>（表示「什么都不做」也是一种合法选择）。当一个流程涉及多种不同类型的子操作、难以用单个 extends/specifies 归类时使用。\n\n**<pipeline> 是通用可挂载结构——任何概念都可以选择持有它**：<phase> 在顶层写 <pipeline> 字段（程序化步骤序列，如 setup）；<trigger>（<action>/<effect>）把它作为多事件执行内容放在 <content>.<instant_content> 内（或直接持有）；<cost> 可用于多步支付的复杂代价；<content> 可用于多步骤的效果结算。持有是可选的、由使用方按需书写，不为此给每个概念设计专属字段——和 <options> 字段一样的通用模式。",
-        "en": "A model for handling multiple options. Picking one token from several, choosing one action to perform, deciding the order of steps in a procedure — these are all the same problem: selecting and executing among multiple candidates. A <pipeline> uses the <options> array for candidates, <type> to reference <multiple_choice_enum> for the selection strategy, and <do_after> for dependencies. Candidates can be anything — a <ontology::transfer>, an <ontology::action>, another <pipeline>, or even <null> (doing nothing is a valid choice). Use when a procedure involves sub-operations of different types that are hard to classify under a single extends/specifies.\n\n**<pipeline> is a universal mountable structure — any concept may choose to hold it**: <phase> holds a top-level <pipeline> field (programmatic step sequences such as setup); <trigger> (<action>/<effect>) places it inside <content>.<instant_content> (or holds it directly) as multi-event execution content; <cost> may use it for complex multi-step payments; <content> may use it for multi-step resolution. Holding is optional and written by the user as needed — no per-concept dedicated fields are designed, following the same universal pattern as the <options> field."
+        "zh": "多选项的处理模型。从几个 token 中选一个拿走，从几个 action 中选一个执行，一个流程有好几个步骤按什么顺序进行——这些都是「从多个候选中做出选择并执行」的问题。<pipeline> 用 <options> 数组承载候选项，用 <type> 引用 <multiple_choice_enum> 决定处理策略，用 <do_after> 表达依赖，用 <loop> 表达重复执行。候选项可以是任何东西——<ontology::transfer>、<ontology::action>、另一个 <pipeline>、甚至是 <null>（表示「什么都不做」也是一种合法选择）。当一个流程涉及多种不同类型的子操作、难以用单个 extends/specifies 归类时使用。\n\n**<pipeline> 是唯一的结构原语——<round>、<turn>、<phase> 用 <pipeline> 定义实际流程**（children 数组、actor、start/end 字段均已废弃：流程顺序由 options + do_after 表达，循环由 loop 表达，「谁能做」由步骤的 <condition> 表达，行动权轮转是 <turn> 的内建语义）。<pipeline> 也是通用可挂载结构——任何概念都可以选择持有它：<phase>/<round>/<turn> 在顶层写 <pipeline> 字段；<trigger>（<action>/<effect>）把它作为多事件执行内容放在 <content>.<instant_content> 内（或直接持有）；<cost> 可用于多步支付的复杂代价；<content> 可用于多步骤的效果结算。持有是可选的、由使用方按需书写，不为此给每个概念设计专属字段——和 <options> 字段一样的通用模式。",
+        "en": "A model for handling multiple options. Picking one token from several, choosing one action to perform, deciding the order of steps in a procedure — these are all the same problem: selecting and executing among multiple candidates. A <pipeline> uses the <options> array for candidates, <type> to reference <multiple_choice_enum> for the selection strategy, <do_after> for dependencies, and <loop> for repetition. Candidates can be anything — a <ontology::transfer>, an <ontology::action>, another <pipeline>, or even <null> (doing nothing is a valid choice). Use when a procedure involves sub-operations of different types that are hard to classify under a single extends/specifies.\n\n**<pipeline> is the single structural primitive — <round>, <turn>, and <phase> define their actual flow with a <pipeline>** (the children array, actor, and start/end fields are all deprecated: ordering comes from options + do_after, repetition from loop, 'who may act' from a step's <condition>, and turn order is <turn>'s built-in semantics). <pipeline> is also a universal mountable structure — any concept may choose to hold it: <phase>/<round>/<turn> hold a top-level <pipeline> field; <trigger> (<action>/<effect>) places it inside <content>.<instant_content> (or holds it directly) as multi-event execution content; <cost> may use it for complex multi-step payments; <content> may use it for multi-step resolution. Holding is optional and written by the user as needed — no per-concept dedicated fields are designed, following the same universal pattern as the <options> field."
       },
       "constraints": {
         "required": [
           {
             "id": "options",
             "description": {
-              "zh": "候选项数组。里面装什么由具体场景决定——可以是 <ontology::card>、<ontology::tile>、<ontology::resource>（从几个组件中选一个拿走），也可以是 <ontology::transfer>、<ontology::action>、子 pipeline（从几个操作中选一个执行），也可以是 <ontology::player>、<ontology::zone>（从几个目标中选一个作用）。null 表示「什么都不做」——被选中时跳过执行，但在 do_after 链上视为已完成。",
-              "en": "Array of candidates. What goes inside is determined by the specific scenario — it could be <ontology::card>s, <ontology::tile>s, <ontology::resource>s (picking a component to take), <ontology::transfer>s, <ontology::action>s, sub-pipelines (choosing an operation to perform), or <ontology::player>s, <ontology::zone>s (picking a target to affect). null means 'do nothing' — when selected, execution is skipped but the do_after chain treats it as completed."
+              "zh": "候选项数组。里面装什么由具体场景决定——可以是 <ontology::card>、<ontology::tile>、<ontology::resource>（从几个组件中选一个拿走），也可以是 <ontology::transfer>、<ontology::action>、子 pipeline（从几个操作中选一个执行），也可以是 <ontology::player>、<ontology::zone>（从几个目标中选一个作用）。null 表示「什么都不做」——被选中时跳过执行，但在 do_after 链上视为已完成。**候选级 condition 语义**：候选项携带的 <condition> 决定其可用性——condition 不成立 = 该候选项不可选（从选择池排除），不影响其他候选；与步骤级阻断（options 顶层项的 condition 不成立 = 该步骤及其 do_after 依赖项全部停止）相区分。「如果 A 可用则必须 A，否则 B」的表达：B 作为带「A 不可用」condition 的候选（如「跳过」的 condition 是全部行动条件取反），使候选 condition 互补覆盖所有情况，CHOOSE_ONE 从可用候选中必选其一。",
+              "en": "Array of candidates. What goes inside is determined by the specific scenario — it could be <ontology::card>s, <ontology::tile>s, <ontology::resource>s (picking a component to take), <ontology::transfer>s, <ontology::action>s, sub-pipelines (choosing an operation to perform), or <ontology::player>s, <ontology::zone>s (picking a target to affect). null means 'do nothing' — when selected, execution is skipped but the do_after chain treats it as completed. **Candidate-level condition semantics**: a candidate's <condition> decides its availability — a failing condition excludes that candidate from the pool without affecting the others; this differs from step-level blocking (a top-level option whose condition fails stops that step and everything depending on it via do_after). To express 'if A is available you must do A, otherwise B', give B a candidate condition that is the negation of A's availability (e.g. a 'skip' candidate whose condition is the AND of all action conditions being false), so candidate conditions cover all cases complementarily and CHOOSE_ONE picks exactly one from the available candidates."
             }
           },
           {
@@ -2169,6 +2140,13 @@
             "description": {
               "zh": "前置依赖。仅当 do_after 中的所有项都完成（或跳过）后才可执行本项。每个候选项内部也可有自己的 do_after。",
               "en": "Prerequisite dependencies. This item only becomes executable after all entries in do_after are completed (or skipped). Each candidate may also have its own do_after."
+            }
+          },
+          {
+            "id": "loop",
+            "description": {
+              "zh": "循环边界。两种形态：(1) 定次循环 `{ \"for\": N, \"counter\": \"<名称>\" }`——执行 options 恰好 N 次，counter 是循环计数变量（如 era_number，供步骤引用当前迭代号）；(2) 条件循环 `{ \"until\": <condition> }`——重复执行 options 直到条件成立，每次迭代重新求值 type 策略与 do_after。until 可以是 <condition> 的字符串引用，或内联谓词对象（{ zh, en }，与 trigger 的 condition 同款）。覆盖两类循环：流程层（<round> 的每轮重跑，如「重复 8 阶段直到时代结束」「共进行 4 个时代」）与内容层（效果的重复结算，如「随机对 1 位玩家造成 1 点伤害，重复直到有人因此被击败」）。",
+              "en": "Loop boundary. Two forms: (1) fixed-count loop `{ \"for\": N, \"counter\": \"<name>\" }` — execute options exactly N times, with counter being the loop-count variable (e.g. era_number, referenced by steps for the current iteration); (2) conditional loop `{ \"until\": <condition> }` — repeat options until the condition holds, re-evaluating the type strategy and do_after each iteration. until may be a string reference to a <condition> or an inline predicate object ({ zh, en }, same style as a trigger's condition). Covers two kinds of loops: procedure-level (<round> re-running its sequence each cycle, e.g. 'repeat the 8 phases until the era ends' or '4 eras in total') and content-level (repeated effect resolution, e.g. 'deal 1 damage to a random player, repeating until someone is defeated by it')."
             }
           }
         ]

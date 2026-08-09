@@ -538,15 +538,6 @@ public class GameRulesService
             SearchText = string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))),
         });
 
-        // 递归 children
-        if (node.TryGetProperty("children", out var children))
-        {
-            foreach (var child in children.EnumerateArray())
-            {
-                WalkFlowNode(child, result);
-            }
-        }
-
         // events（嵌入的 event 节点也索引入）
         if (node.TryGetProperty("events", out var events))
         {
@@ -773,8 +764,8 @@ public class GameRulesService
             return true;
         }
 
-        // recurse into children, events, options, and content containers
-        foreach (var arrayKey in new[] { "children", "events", "options" })
+        // recurse into events, options, and content containers
+        foreach (var arrayKey in new[] { "events", "options" })
         {
             if (!node.TryGetProperty(arrayKey, out var arr) || arr.ValueKind != JsonValueKind.Array) continue;
             foreach (var item in arr.EnumerateArray())

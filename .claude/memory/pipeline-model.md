@@ -1,75 +1,103 @@
 ---
 name: pipeline-model
-description: pipeline 模型定稿——pipeline 位于 trigger 的 content.instant_content 内，步骤四种形态、do_after 语义、五个典型场景模版
+description: pipeline 模型定稿——pipeline 是唯一结构原语（procedure 也用它）、四原子（options/type/do_after/loop）、候选级 vs 步骤级 condition 语义、skip 模式
 metadata:
   type: project
 ---
 
-# Pipeline 多选项处理模型（2026-08-08 定稿）
+# Pipeline 模型（2026-08-08 定稿，2026-08-09 结构统一更新）
 
 ## 核心概念
 
 `<pipeline>` 是多选项处理模型。从几个 token 中选一个拿走，从几个 action 中选一个执行，一个流程有好几个步骤按什么顺序进行——这些都是同一问题。
 
-## Pipeline 的位置 ★（2026-08-08 定稿）
+## Pipeline 是唯一的结构原语 ★（2026-08-09 定稿）
 
-**`<pipeline>` 是通用可挂载结构——任何概念都可以选择持有它**（和 options/type 一样的通用模式，不在各概念设计专属字段，由使用方按需书写）：
+**`<round>`、`<turn>`、`<phase>` 的流程一律用 `<ontology::pipeline>` 定义。children 数组、actor、start/end 字段全部废弃**：
 
-- **`<trigger>`（action/effect 均 specifies trigger）**：结构为
-  `condition（门槛）→ cost（代价）→ target（this.target 供步骤引用）→ <ontology::content>.<ontology::instant_content>.{ options, type }`
-  ——pipeline 的 options/type/do_after 放在 `<instant_content>` 内部（现状）
-- **`<phase>`**：持有 `<ontology::pipeline>` 顶层字段（程序化阶段，如 setup）——phase 不是 trigger，无 condition/cost/content
-- **`<cost>` 等其他概念**：需要时也可持有（如多步支付的复杂代价）
-
-**游戏层引用必须写 `<ontology::pipeline>`**（与 `<ontology::content>` 等一致）；ontology 内部字段名不带 namespace（trigger 的 `<condition>`、`<content>` 同款惯例）。
+- 步骤顺序与先后依赖 → options + do_after
+- 循环边界 → loop（`for N` 定次 / `until` 条件）
+- 「谁能做某操作」→ 步骤/候选的 `<condition>`（不成立则阻断或排除）
+- 行动权轮转 → `<turn>` 的内建语义（按座次推进，无需字段声明）
 
 ```json
+// round：loop 在 pipeline 内
 {
-  "id": "resolve_migration_triggers",
-  "specifies": "<ontology::action>",
-  "name": { "zh": "...", "en": "..." },
-  "description": { "zh": "...", "en": "..." },
-  "<ontology::content>": {
-    "<ontology::instant_content>": {
-      "options": [ ... ],
-      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
-    }
+  "id": "era_loop",
+  "specifies": "<ontology::round>",
+  "<ontology::pipeline>": {
+    "loop": { "for": 4, "counter": "era_number" },
+    "options": [ phase_1, ..., phase_8 ],
+    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+  }
+}
+
+// turn：行动选择即 CHOOSE_ONE pipeline，无 actor
+{
+  "id": "player_action_turn",
+  "specifies": "<ontology::turn>",
+  "<ontology::pipeline>": {
+    "options": ["<activate_module>", "<reset>"],
+    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+  }
+}
+
+// 「每位玩家一个 turn 按座次轮转」：loop until 所有玩家已行动 + turn 内建轮转
+{
+  "id": "goal_choice_round",
+  "specifies": "<ontology::round>",
+  "<ontology::pipeline>": {
+    "loop": { "until": { "zh": "所有玩家都已完成本轮的一个回合（做过选择或跳过）。", "en": "..." } },
+    "options": [ { "id": "player_goal_turn", "specifies": "<ontology::turn>", ... } ],
+    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
   }
 }
 ```
 
-历史沿革（避免重蹈覆辙）：最初 action 用 `"type": "<ontology::event>"` + events[] 数组；后改为 `specifies <ontology::pipeline>` + 顶层 options；2026-08-08 一度给 trigger 加 `<pipeline>` 顶层字段，又改为收进 content.instant_content；最终定稿为**通用可挂载**——谁需要谁持有，定义在 pipeline 概念中说明。
+**pipeline 也是通用可挂载结构**——任何概念都可以选择持有它：`<trigger>`（action/effect）放在 `<content>.<instant_content>` 内（或直接持有）；`<cost>` 用于多步支付；`<content>` 用于多步骤结算。游戏层引用写 `<ontology::pipeline>`；ontology 内部字段名不带 namespace。
 
-## 步骤的四种形态 ★
+## 步骤级 vs 候选级 condition 语义 ★★（2026-08-09 定稿）
+
+| 层级 | condition 不成立时 |
+|---|---|
+| **步骤级**（pipeline options 顶层项） | **阻断**——该步骤及 do_after 依赖它的后续步骤全部停止执行 |
+| **候选级**（CHOOSE_ONE/CHOOSE_ANY 等的 options 项） | **排除**——该项不可选，不影响其他候选的选择 |
+
+- 候选可用 = 该候选携带的 `<condition>` 成立；无 condition 的候选恒可用
+- `_skip` 是唯一「显式选择跳过且视为完成」的哨兵（解决步骤级「可选」问题）
+- 「如果能 A 就必须 A，否则 B」：**B 作为带「A 不可用」condition 的候选**（如「跳过」的 condition = 全部行动条件取反），候选 condition 互补覆盖所有情况，CHOOSE_ONE 从可用候选中必选其一
+
+## 步骤的四种形态
 
 options 的元素可以是：
 
 | 形态 | 写法 | 用途 |
 |---|---|---|
-| 操作步骤 | `{ "id", "name", "specifies": "<ontology::transfer/state_change/push_track/flip/play>", 字段... }` | 单事件直接执行；可带 `<ontology::condition>`（不成立则跳过） |
+| 操作步骤 | `{ "id", "name", "specifies": "<ontology::transfer/state_change/push_track/flip/play>", 字段... }` | 单事件直接执行；可带 `<ontology::condition>`（不成立则阻断） |
 | 条件步骤 | `{ "id", "name", "specifies": "<ontology::trigger>", "<ontology::condition>": {...}, "<ontology::content>": {...} }` | 需要判定 + 多个子步骤的复合步骤 |
-| 字符串引用 | `"<move_tribe>"` | 无参调用其他概念（action/trigger），do_after 引用时用 `"<move_tribe>"` 全形式 |
+| 字符串引用 | `"<move_tribe>"` | 无参调用其他概念（action/trigger），候选级引用时用 `"<move_tribe>"` 全形式 |
 | 子 pipeline | `{ "id", "name", "options": [...], "type": "..." }` | 内嵌步骤序列 |
 
-## do_after 语义 ★（2026-08-08 明确）
-
-**do_after 的前置项必须实际结算完毕**——前置步骤因 condition 不成立被跳过 = 未结算，依赖它的步骤不执行。
-
-- 因此「驱逐发生才虚弱」只需 `"do_after": ["displace_occupant"]`，**不要**再加「驱逐实际发生」类 condition——所有 pipeline 都这样写就没完没了
-- `_skip`（玩家显式选择不做）例外：选中时 do_after 链视为已完成，后续照常执行
-- 条件不成立 = 步骤自动跳过，等同「未结算」
-
-## 三个原子
+## 四个原子
 
 | 原子 | 写法 |
 |---|---|
 | options | 候选项数组。里面装什么由具体场景决定——card、resource、transfer、action、子 pipeline、player、zone、甚至 _skip |
 | type | 处理策略，引用 `multiple_choice_enum`：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / CHOOSE_ANY |
 | do_after | 前置依赖。仅当 do_after 中所有项完成（或跳过）后才可执行 |
+| loop | 循环边界。`{ "for": N, "counter": "<名>" }` 定次循环（counter 供步骤引用迭代号）；`{ "until": <condition> }` 条件循环（until 为字符串引用或内联谓词 { zh, en }）。每次迭代重新求值 type 与 do_after |
+
+## 阻断语义（do_after 链）
+
+**do_after 的前置项必须实际结算完毕**——前置步骤因 condition 不成立被阻断 = 未结算，依赖它的步骤**不执行（链条停止）**。
+
+- 因此「驱逐发生才虚弱」只需 `"do_after": ["displace_occupant"]`，**不要**再加「驱逐实际发生」类 condition——所有 pipeline 都这样写就没完没了
+- `_skip`（玩家显式选择不做）例外：选中时 do_after 链视为已完成，后续照常执行
+- 候选级 condition 不成立 = 排除，**不阻断**（见上）
 
 ## _skip = 跳过
 
-`_skip` 表示「什么都不做」（自描述哨兵）。被选中时跳过执行，但在 `do_after` 链上视为已完成。等价于 `CHOOSE_ONE(做, 不做)`。
+`_skip` 表示「什么都不做」（自描述哨兵）。被选中时跳过执行，但在 `do_after` 链上视为已完成。等价于 `CHOOSE_ONE(做, 不做)`。用于「可选步骤」：必做直接写，may 就包 `CHOOSE_ONE(_skip, step)`。
 
 JSON 写法：
 ```json
@@ -77,6 +105,25 @@ JSON 写法：
 ```
 
 **不用 `null`**——LLM 读不懂 `null` 的语义，必须用带 `id` 和 `description` 的对象。
+
+## 「能 A 必须 A，否则跳过」模式 ★（2026-08-09）
+
+「跳过」作为带 condition 的候选（如 Splendor `skip_turn`：condition = `no_action_available`，即四个行动条件取反求与），使所有候选 condition 互补覆盖：
+
+```json
+"<ontology::pipeline>": {
+  "options": [
+    "<take_gems_different>",       // condition: gems_available_any
+    "<take_gems_same>",            // condition: gems_available_same_color
+    "<purchase_development_card>", // condition: card_purchasable
+    "<reserve_development_card>",  // condition: card_reservable
+    "<skip_turn>"                  // condition: no_action_available（四条件取反求与）
+  ],
+  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+}
+```
+
+任意行动可用 → skip 被排除，必选其一；全不可用 → skip 是唯一可用候选。不引入 else/_fallback 等新字段。
 
 ## 五个典型场景
 
@@ -189,43 +236,14 @@ B 和 C 互斥，且不能都不干。
 ]
 ```
 
-## 实际使用示例
-
-### 可选步骤（build_boat 的登船奖励）
-
-规则书 "you **may** immediately move one of your strong tribes onto the boat"。
-
-```json
-{
-  "id": "board_tribe",
-  "do_after": ["place_boat"],
-  "options": [
-    { "id": "_skip", "description": { "zh": "不做（跳过此项）", "en": "Skip this option" } },
-    { "<ontology::transfer>": { "source": "<territory>", "destination": "<boat>", "<object>": "<tribe>", "quantity": 1 } }
-  ],
-  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-}
-```
-
-### 必选步骤（build_farm 的创意标记奖励）
-
-规则书 "**immediately gain** an idea marker"——没有 may，必做，直接写 step 无需 _skip 包装。
-
-```json
-{
-  "id": "gain_idea",
-  "do_after": ["place_farm"],
-  "<ontology::transfer>": { "source": "<ontology::supply>", "destination": "<idea_space>", "<object>": "<idea_marker>", "quantity": 1 }
-}
-```
-
 ## 设计约定
 
-- 不加新字段（不引入 `optional`、`required` 等）。只用 `options` / `type` / `do_after` + `_skip` 哨兵。
+- 不加新字段（不引入 `optional`、`required`、`else`、`fallback` 等）。只用 `options` / `type` / `do_after` / `loop` + `_skip` 哨兵。
 - `_skip` 表示跳过，语义为「不做也是一种合法选择」。JSON 中必须写成带 `id` 和 `description` 的对象，不用 `null`。
 - 必选步骤直接写，可选步骤包 `CHOOSE_ONE(_skip, step)`。
+- 「能 A 必须 A，否则跳过」：把「跳过」做成带「A 不可用」condition 的候选（候选级排除 + 互补覆盖）。
 - 跳过即完成：`_skip` 被选中时 `do_after` 链不阻断。
 - `options` 不限定类型——由具体场景决定里面装什么。
 
 **Why:** 这是 pipeline 的唯一正确写法模版。新会话写流程时直接参考，不用重新讨论。
-**How to apply:** 写任何多步 action/trigger 的 content 时，先判断每步是 must 还是 may，may 就包 CHOOSE_ONE(_skip, ...)。互斥选用 CHOOSE_ONE，任意组合用 CHOOSE_ANY，全做用 EXECUTE_ALL。
+**How to apply:** 写任何多步 action/trigger/procedure 的流程时，先判断每步是 must 还是 may，may 就包 CHOOSE_ONE(_skip, ...)。互斥选用 CHOOSE_ONE，任意组合用 CHOOSE_ANY，全做用 EXECUTE_ALL，循环用 loop。

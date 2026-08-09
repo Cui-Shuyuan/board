@@ -755,6 +755,28 @@
         "zh": "璀璨宝石中的「保留发展卡」<ontology::action>。玩家将一张<development_card>移入自己的<ontology::hand>——可以明面保留（从<card_market>任选一张）或暗面保留（从某一等级<development_deck>顶部取一张，事先不知道是哪张），同时从<gold_supply>拿取 1 个<gold>（若有库存）。<ontology::hand>上限为 3 张，满员时不可保留。保留的卡牌此后只能通过「购买发展卡」<ontology::action>打出至<ontology::development_area>。",
         "en": "The 'reserve development card' <ontology::action> in Splendor. The player moves one <development_card> into their <ontology::hand> — either openly (choosing any card from <card_market>) or blindly (taking the top card of one level's <development_deck>, sight unseen) — and takes 1 <gold> from <gold_supply> (if in stock). The <ontology::hand> holds at most 3 cards; reserving is unavailable when full. A reserved card can later only be played into the <ontology::development_area> via the 'purchase development card' <ontology::action>."
       }
+    },
+    {
+      "id": "skip_turn",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "跳过回合",
+        "en": "Skip Turn"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「跳过回合」<ontology::action>。若当前<ontology::player>没有任何可合法执行的<ontology::action>，其回合直接结束——不执行任何<ontology::action>，流程进入下一<ontology::player>的<ontology::turn>。这保证了极端局面（供应耗尽、无卡可买可留）下游戏仍能继续，不会因无行动可选而卡死。",
+        "en": "The 'skip turn' <ontology::action> in Splendor. If the current <ontology::player> has no legally executable <ontology::action>, their turn ends immediately — no <ontology::action> is performed, and play passes to the next <ontology::player>'s <ontology::turn>. This ensures the game continues even in extreme situations (exhausted supplies, nothing to buy or reserve) instead of deadlocking."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "当前<ontology::player>的<ontology::turn>直接结束——不执行任何<ontology::action>，不触发任何与<ontology::action>绑定的<ontology::trigger>，流程进入下一<ontology::player>的<ontology::turn>。回合结束时的<ontology::trigger>（<attract_noble>、<enter_endgame>）照常检查。",
+            "en": "The current <ontology::player>'s <ontology::turn> ends immediately — no <ontology::action> is performed and no <ontology::action>-bound <ontology::trigger> fires; play passes to the next <ontology::player>'s <ontology::turn>. End-of-turn <ontology::trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."
+          }
+        }
+      },
+      "<ontology::condition>": "<no_action_available>"
     }
   ],
   "triggers": [
@@ -838,28 +860,6 @@
         }
       },
       "<ontology::condition>": "<reach_15_prestige>"
-    },
-    {
-      "id": "skip_turn",
-      "specifies": "<ontology::trigger>",
-      "name": {
-        "zh": "跳过回合",
-        "en": "Skip Turn"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "璀璨宝石中的「跳过回合」<ontology::trigger>。若当前<ontology::player>没有任何可合法执行的<ontology::action>，其回合直接结束——不执行任何<ontology::action>，流程进入下一<ontology::player>的<ontology::turn>。这保证了极端局面（供应耗尽、无卡可买可留）下游戏仍能继续，不会因无行动可选而卡死。",
-        "en": "The 'skip turn' <ontology::trigger> in Splendor. If the current <ontology::player> has no legally executable <ontology::action>, their turn ends immediately — no <ontology::action> is performed, and play passes to the next <ontology::player>'s <ontology::turn>. This ensures the game continues even in extreme situations (exhausted supplies, nothing to buy or reserve) instead of deadlocking."
-      },
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "description": {
-            "zh": "当前<ontology::player>的<ontology::turn>直接结束——不执行任何<ontology::action>，不触发任何与<ontology::action>绑定的<ontology::trigger>，流程进入下一<ontology::player>的<ontology::turn>。回合结束时的<ontology::trigger>（<attract_noble>、<enter_endgame>）照常检查。",
-            "en": "The current <ontology::player>'s <ontology::turn> ends immediately — no <ontology::action> is performed and no <ontology::action>-bound <ontology::trigger> fires; play passes to the next <ontology::player>'s <ontology::turn>. End-of-turn <ontology::trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."
-          }
-        }
-      },
-      "<ontology::condition>": "<no_action_available>"
     }
   ],
   "conditions": [

@@ -75,6 +75,38 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 
 ---
 
+## Procedure 结构统一 ★（2026-08-09）
+
+**round/turn/phase 一律持有 `<ontology::pipeline>` 定义实际流程。children 数组、actor、start/end 字段全部废弃**：
+
+```json
+// round：loop 在 pipeline 内
+{
+  "id": "era_loop",
+  "specifies": "<ontology::round>",
+  "<ontology::pipeline>": {
+    "loop": { "for": 4, "counter": "era_number" },
+    "options": [ phase_1, ..., phase_8 ],
+    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+  }
+}
+
+// turn：行动选择即 CHOOSE_ONE，无 actor
+{
+  "id": "player_action_turn",
+  "specifies": "<ontology::turn>",
+  "<ontology::pipeline>": {
+    "options": ["<activate_module>", "<reset>"],
+    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+  }
+}
+```
+
+- **loop 两种形态**：`{ "for": N, "counter": "<名>" }` 定次循环；`{ "until": <condition> }` 条件循环（until 为字符串引用或内联谓词 `{ zh, en }`）
+- **轮转**：round 的 pipeline `loop.until` = 「所有玩家已行动」（内联谓词或 condition 引用），options 里一个 turn 节点；turn 执行者由内建轮转语义推进
+- **「谁能做」写 condition**：步骤级 condition 不成立 = **阻断**（该步骤及 do_after 依赖项停止）；候选级 condition 不成立 = **排除**（不影响其他候选）
+- **「能 A 必须 A，否则跳过」**：把「跳过」做成带「A 不可用」condition 的候选（如 Splendor `skip_turn`，condition = 全部行动条件取反），候选 condition 互补覆盖，CHOOSE_ONE 从可用候选中必选其一
+
 ## Key-as-type（不用 `"type"` 字段）
 
 表达"这是什么类型的 content/event/transfer"时，用概念 ID 直接做 key：
@@ -109,7 +141,7 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 「每位玩家」的两种表达（定义见 ontology `<per_player>` 概念）：
 
 - **`"<ontology::per_player>": true`**（挂在 event 上）：**程序化分发**——每位玩家各获得 N 个，不重视排他性和行动顺序。用于 setup 个人准备（player_setup_*、轮抽的抽牌步骤——规则书是「分发/秘密选择」无座次轮次）
-- **`round` + `turn`**（流程树，`actor: next_player_in_turn_order`）：**顺序轮转**——强调「轮到谁」。**「从起始玩家开始，每位玩家…」「按座次依次…」一律 round+turn**（phase 2/3 选择轮、轮抽、行动阶段）
+- **`round` + `turn`**：**顺序轮转**——强调「轮到谁」。**「从起始玩家开始，每位玩家…」「按座次依次…」一律 round+turn**：round 的 pipeline 写 `loop: { until: <所有玩家已行动> }`，options 里一个 `<turn>` 节点，轮转由 turn 的内建语义推进（无 actor 字段）；轮抽的「从右手边开始逆时针」等顺序差异写在 round 的 description 里
 
 ---
 
@@ -200,8 +232,13 @@ id + name.zh + name.en + description.zh + description.en
 
 ## 检查清单
 
-写一个新 action/trigger 时确认：
+写一个新 action/trigger/procedure 时确认：
 - [ ] 有 `name: { zh, en }`（紧跟 id 之后）
+- [ ] procedure（round/turn/phase）持有 `<ontology::pipeline>`，不用 children/actions/actor/start/end
+- [ ] round 的循环在 pipeline 的 `loop`（for N + counter 或 until condition）
+- [ ] 轮转 = round 的 loop.until「所有玩家已行动」+ turn 内建轮转，顺序差异写 description
+- [ ] 步骤级 condition 不成立 = 阻断；候选级 condition 不成立 = 排除（二者语义不同）
+- [ ] 无行动可选的兜底：把「跳过」做成带「全部行动条件取反」condition 的候选
 - [ ] condition 单条写 zh/en，多条才用 options/type/EXECUTE_ALL
 - [ ] cost 是 instant_cost/continuous_cost；无需支付则省略字段（不写 null）
 - [ ] target 是字符串，不是对象
@@ -210,7 +247,7 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] 没有 `"type": "<ontology::xxx>"` 这种写法（用 key-as-type）
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
-- [ ] 必选/可选：may 就包 CHOOSE_ONE(null, step)
+- [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)
 
 **Why:** 后端索引、查询、语义匹配全部依赖这些约定。违反任何一条都会导致 LLM 搜不到或理解错误。
 **How to apply:** 写任何新概念/action/trigger 时逐项对照检查清单。

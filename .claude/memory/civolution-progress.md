@@ -71,6 +71,14 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-09 晚（结构统一大重构：children/actor/start/end 全废弃）**:
+    - **pipeline 是唯一结构原语**：`<procedure>`（round/turn/phase）一律持有 `<ontology::pipeline>` 定义实际流程（详见 [[pipeline-model]]）。`children` 数组、`actor`、`start`/`end` 字段全部废弃
+    - **pipeline 新增 `loop` 原语**：`{ "for": N, "counter": "<名>" }` 定次循环（era_loop 用 for 4）+ `{ "until": <condition> }` 条件循环（until 字符串引用或内联谓词）。内容层循环同款（「随机伤害直到有人被击败」）
+    - **轮转模型**：round 的 pipeline `loop.until` = 「所有玩家已行动」（内联谓词），options 一个 turn 节点；turn 执行者由内建轮转语义推进；轮抽「从右手边逆时针」等顺序写 description
+    - **步骤级 vs 候选级 condition 语义**：步骤级不成立 = 阻断（do_after 链停止）；候选级不成立 = 排除（不影响其他候选）。「能 A 必须 A，否则跳过」= 跳过作为带「全部行动条件取反」condition 的候选（Splendor `skip_turn` 从 trigger 改为 action 并加入 action_phase 的 CHOOSE_ONE）
+    - **迁移执行**：civolution flow.json（7 个 round + phase children + turn 的 actions/actor）+ splendor flow.json（全部 children）已迁移；final_scoring_categories 补了「结算下一计分项」步骤；splendor 12 个缺 name 节点 + civolution 5 个 phase 补 name/description；GameRulesService.cs 与 rebuild_index.py 删除 children 遍历（后端 build 通过）
+    - **遗留**：`<action_phase_end>`、`<final_scoring_track_end>` 两个悬空 condition 仍在；activate_module 缺「存在可激活模组」condition（行动阶段正式编写时补）；skip_turn 的 no_action_available 在 civolution 尚无对应物（其行动阶段兜底待查规则书）
+
 - **2026-08-09（setup 完整化 + phase 1-3 pipeline + 模型统一）**:
     - **pipeline 模型定稿**：pipeline 收编进 trigger 的 content.instant_content（详见 [[pipeline-model]]）；`specifies <ontology::pipeline>` 与 trigger 顶层 `<pipeline>` 字段均废弃；action/effect 是 trigger（condition → cost → target → content），多步骤在 content.instant_content.options 表达。22 个 action 全部统一
     - **phase 持有 `<ontology::pipeline>`**：ontology `<phase>` 新增 `<pipeline>` 可选字段（程序化阶段，如 setup）——与 trigger 的 content 内 pipeline 区分
