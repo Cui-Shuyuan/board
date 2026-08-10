@@ -1087,8 +1087,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。上三分之一是一块 <income_chip>。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌塞入<console>的收入区成为第一个收入芯片（上三分之一露出，激活收入芯片时可以选择它），其承载的 zone 随之消失。",
-        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. Its top third is an <income_chip>. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is slid under the <console> into the income area as the first income chip (the top third is revealed and selectable when activating income chips), and its hosted zone disappears."
+        "zh": "设置阶段使用的 <ontology::card>，记录玩家首个升级的模组和首个收入芯片。上三分之一是一块 <income_chip>。设置过程中，此牌翻开后提供一个临时 zone 用于容纳目标芯片——玩家从目标芯片展示区选取芯片放在此牌上。设置完成后，此牌安装到 <console> 层级分区（<stage_partition>）第 9 列的第 4 层级，成为第一个收入芯片（上三分之一露出，激活收入芯片时可以选择它），其承载的 zone 随之消失。",
+        "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. Its top third is an <income_chip>. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is installed into column 9, tier 4 of the <console> stage partition (<stage_partition>) as the first income chip (the top third is revealed and selectable when activating income chips), and its hosted zone disappears."
       },
       "parts": [
         "<income_chip>",
@@ -3326,13 +3326,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<stage_partition>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<stage_partition>)."
+                  "description": {
+                    "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<stage_partition>）。",
+                    "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<stage_partition>)."
+                  }
                 },
+                "target": "所有已激活层级中的安装物——层级 1/2/3 默认激活（各层分数印于 <console> 左半边每层旁的 <stage_indicator>）；层级 4/5 需对应 <stage_tile> 翻至激活面才计分；层级 6 及以上不激活",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算控制台阶段分区：每位玩家对阶段 1-5 中每张安装的卡牌与每枚芯片，获得该阶段左侧印的分数（阶段 4/5 仅在对应 stage tile 激活时计分）。",
-                    "en": "Score the console stage partition: each player gains the points printed left of its stage for each card and chip installed in stages 1-5 (stages 4/5 only score when the corresponding stage tile is active)."
+                    "description": {
+                      "zh": "对 target 中的每个已激活层级：该层每安装一张 <research_card>、一张 <starting_chip_card>（初始芯片牌，位于第 9 列第 4 层级）或一枚芯片（<income_chip>/<goal_chip>/<attribute_chip>），获得该层级标示的分数（见 <stage_indicator>）——各层分数之和计入 <score_track>。",
+                      "en": "For each active stage in the target: gain the points indicated by that stage (see <stage_indicator>) for each <research_card>, <starting_chip_card> (installed at column 9, tier 4), or chip (<income_chip>/<goal_chip>/<attribute_chip>) installed there — the sum across stages is gained on the <score_track>."
+                    },
+                    "<ontology::push_track>": {
+                      "<ontology::track>": "<score_track>",
+                      "step": "Σ（每个已激活层级的标示分数 × 该层安装的研究牌与芯片数）"
+                    }
                   }
                 }
               }
@@ -3944,8 +3953,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<console> 上用于安装 <income_chip> 的区域。收入阶段从上到下、从左到右依次执行。",
-        "en": "The area on the <console> for installing <income_chip>s. Income chips execute top-to-bottom, left-to-right during the Income phase."
+        "zh": "<console> 上用于安装 <income_chip> 的区域。收入阶段时玩家对每个已安装 <income_chip> 各激活一次，激活顺序由玩家自定。",
+        "en": "The area on the <console> for installing <income_chip>s. During the Income phase, each installed <income_chip> is activated once, in an order of the player's choice."
       }
     },
     {
