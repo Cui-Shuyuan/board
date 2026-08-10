@@ -3163,6 +3163,10 @@
           "technology": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<technology>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<technology>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算科技类别计分：每有 1 个 <technology_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3177,6 +3181,10 @@
           "prestige": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<prestige>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<prestige>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算声望类别计分：每有 1 个 <prestige_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3191,6 +3199,10 @@
           "knowledge": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<knowledge>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<knowledge>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算知识类别计分：每有 1 个 <knowledge_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3205,6 +3217,10 @@
           "construction": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<construction>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<construction>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算建设类别计分：每有 1 个 <construction_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3219,6 +3235,10 @@
           "culture": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<culture>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<culture>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算文化类别计分：每有 1 个 <culture_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3233,6 +3253,10 @@
           "evolution": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<evolution>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<evolution>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算进化类别计分：每有 1 个特征格上的 <feature_marker>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3247,6 +3271,10 @@
           "prosperity": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<prosperity>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<prosperity>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算繁荣类别计分：每有 1 个活跃钻石（<console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3261,6 +3289,10 @@
           "population": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<population>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<population>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算人口类别计分：每有 1 个在 <continent> 上的 <tribe>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3275,6 +3307,10 @@
           "expansion": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<expansion>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<expansion>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算扩张类别计分：每有 1 个有至少 1 个 <tribe> 的区域，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
@@ -3289,6 +3325,10 @@
           "stage_partition": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<stage_partition>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<stage_partition>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算控制台阶段分区：每位玩家对阶段 1-5 中每张安装的卡牌与每枚芯片，获得该阶段左侧印的分数（阶段 4/5 仅在对应 stage tile 激活时计分）。",
@@ -3303,6 +3343,10 @@
           "point_bonus": {
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
+                "<ontology::condition>": {
+                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<point_bonus>）。",
+                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<point_bonus>)."
+                },
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "zh": "结算 point bonus 卡：每位玩家对每张带分数加成图标的卡牌，为其所在列的所有卡牌和收入芯片（含该卡牌自身）提供额外分数。",
