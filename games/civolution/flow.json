@@ -1872,21 +1872,21 @@
             "specifies": "<ontology::phase>",
             "do_after": "era_loop",
             "description": {
-              "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点（科技格），沿轨逐格推进结算：前 9 格各结算对应计分类别（技术/声望/知识/建设/文化/进化/繁荣/人口/扩张，每项用该格下方印的每单位分值计算，被计分板块覆盖的格取板块分数）；推进到控制台 A 格结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4 和阶段 5 仅在对应 stage tile 已激活时才计分）；推进到控制台 B 格结算 point bonus 卡——每张带分数加成图标的卡牌为其所在列的所有卡牌和收入芯片额外加分。总分最高者获胜。",
-              "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the start of the final scoring track (the Technology cell) and advance cell by cell: the first 9 cells each score their category (Technology/Prestige/Knowledge/Construction/Culture/Evolution/Prosperity/Population/Expansion) using the point value printed below each space (covered spaces use the scoring tile's points); advancing to the Console A cell scores the stage partition — each chip and card scores the points left of its stage (stages 4 and 5 only score if the corresponding stage tile is active); advancing to the Console B cell scores point bonus cards — each card with the bonus icon grants extra points for all cards and income chips in its column. Highest total score wins."
+              "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点（科技格），沿轨逐格推进——每格自带效果（见 <final_scoring_area_hex> slots），推进到哪格即结算哪格：9 个类别格各结算对应计分类别、控制台 A 格结算阶段分区、控制台 B 格结算 point bonus 卡。走完全轨后比较总分，最高者获胜。",
+              "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the start of the final scoring track (the Technology cell) and advance cell by cell — each cell carries its own effect (see the <final_scoring_area_hex> slots): the 9 category cells score their categories, the Console A cell scores the stage partition, the Console B cell scores point bonus cards. After the whole track, compare totals; the highest wins."
             },
             "<ontology::pipeline>": {
               "options": [
                 {
                   "id": "final_scoring_categories",
                   "name": {
-                    "zh": "终局计分项",
-                    "en": "Final Scoring Categories"
+                    "zh": "推进终局计分轨",
+                    "en": "Advance Final Scoring Track"
                   },
                   "specifies": "<ontology::round>",
                   "description": {
-                    "zh": "沿终局计分轨逐格推进，结算 9 个计分类别（科技→声望→知识→建设→文化→进化→繁荣→人口→扩张）。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
-                    "en": "Advance cell by cell along the final scoring track, scoring the 9 categories (Technology→Prestige→Knowledge→Construction→Culture→Evolution→Prosperity→Population→Expansion). Points per unit for each category are determined by the printed value below the space (or the scoring tile covering it)."
+                    "zh": "沿 <final_scoring_area_hex> 逐格推进 <phase_indicator>（科技→声望→知识→建设→文化→进化→繁荣→人口→扩张→控制台 A→控制台 B，共 11 格），每推进一格即结算该格的 slot 效果。",
+                    "en": "Advance the <phase_indicator> cell by cell along the <final_scoring_area_hex> (Technology→Prestige→Knowledge→Construction→Culture→Evolution→Prosperity→Population→Expansion→Console A→Console B, 11 cells); each cell's slot effect resolves as it is reached."
                   },
                   "loop": {
                     "until": "<final_scoring_track_end>"
@@ -1894,60 +1894,16 @@
                   "<ontology::evaluate>": {
                     "id": "score_next_category",
                     "name": {
-                      "zh": "结算下一计分项",
-                      "en": "Score Next Category"
+                      "zh": "推进到下一格并结算",
+                      "en": "Advance and Score Next Cell"
                     },
                     "description": {
-                      "zh": "沿终局计分轨推进到下一个计分项并结算该计分项。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
-                      "en": "Advance along the final scoring track to the next category and score it. Points per unit are determined by the printed value below the space (or the scoring tile covering it)."
+                      "zh": "将 <phase_indicator> 沿 <final_scoring_area_hex> 推进到下一格——该格 slot 的效果自动结算（类别格按该格下方印的分值/被 <scoring_tile> 覆盖时的板块分数计分）。",
+                      "en": "Advance the <phase_indicator> to the next cell of the <final_scoring_area_hex> — that cell's slot effect resolves automatically (category cells score by the printed value below the cell, or the covering <scoring_tile>'s points)."
                     },
                     "result": {
-                      "zh": "当前计分项的总得分。",
-                      "en": "The total score of the current category."
-                    }
-                  }
-                },
-                {
-                  "id": "final_scoring_stage_partition",
-                  "name": {
-                    "zh": "阶段分区计分",
-                    "en": "Stage Partition Scoring"
-                  },
-                  "specifies": "<ontology::trigger>",
-                  "description": {
-                    "zh": "控制台 A 格：控制台阶段分区计分。逐一检查阶段 1-5 中安装的每张卡牌和芯片，按阶段左侧分数计分。阶段 4/5 需对应的 stage tile 已激活才计分。",
-                    "en": "Console A cell: score the console stage partition. Check each card and chip in stages 1-5, scoring the points left of its stage. Stages 4/5 only score if the corresponding stage tile is active."
-                  },
-                  "<ontology::condition>": {
-                    "zh": "<phase_indicator> 推进到 <final_scoring_area_hex>.<stage_partition>（控制台 A 格）时。",
-                    "en": "The <phase_indicator> has advanced onto <final_scoring_area_hex>.<stage_partition> (the Console A cell)."
-                  },
-                  "<ontology::content>": {
-                    "<ontology::instant_content>": {
-                      "zh": "每位玩家（<ontology::per_player>）对控制台阶段分区计分：对阶段 1-5 中每张安装的卡牌与每枚芯片，获得该阶段左侧印的分数（阶段 4/5 仅在对应 stage tile 激活时计分）。",
-                      "en": "Each player (<ontology::per_player>) scores their console stage partition: for each card and chip installed in stages 1-5, gain the points printed left of that stage (stages 4/5 only score when the corresponding stage tile is active)."
-                    }
-                  }
-                },
-                {
-                  "id": "final_scoring_point_bonus_cards",
-                  "name": {
-                    "zh": "分数加成牌计分",
-                    "en": "Point Bonus Card Scoring"
-                  },
-                  "specifies": "<ontology::trigger>",
-                  "description": {
-                    "zh": "控制台 B 格：point bonus 卡计分。每张带加成图标的卡牌为其所在列所有卡牌和收入芯片（含自身）提供额外分数。",
-                    "en": "Console B cell: score point bonus cards. Each card with the bonus icon grants extra points for all cards and income chips in its column (including itself)."
-                  },
-                  "<ontology::condition>": {
-                    "zh": "<phase_indicator> 推进到 <final_scoring_area_hex>.<point_bonus>（控制台 B 格）时。",
-                    "en": "The <phase_indicator> has advanced onto <final_scoring_area_hex>.<point_bonus> (the Console B cell)."
-                  },
-                  "<ontology::content>": {
-                    "<ontology::instant_content>": {
-                      "zh": "每位玩家（<ontology::per_player>）对每张带分数加成图标的卡牌结算：该卡牌所在列的所有卡牌和收入芯片（含该卡牌自身）各获得加成分数。",
-                      "en": "Each player (<ontology::per_player>) resolves every card bearing the bonus icon: all cards and income chips in that card's column (including the card itself) gain the bonus points."
+                      "zh": "当前格结算的得分。",
+                      "en": "The score resolved at the current cell."
                     }
                   }
                 },
@@ -4474,12 +4430,12 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<expansion>（第 9 格，最后一个计分类别格）——9 个计分类别全部结算完毕。",
-        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<expansion> (the 9th cell, the last scoring category) — all 9 categories have been scored."
+        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<point_bonus>（第 11 格，最后一格）——全部 11 格（9 类别 + 控制台 A/B）结算完毕。",
+        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<point_bonus> (the 11th and last cell) — all 11 cells (9 categories + Console A/B) have been scored."
       },
       "<ontology::condition>": {
-        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<expansion>",
-        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<expansion>"
+        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<point_bonus>",
+        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<point_bonus>"
       }
     },
     {

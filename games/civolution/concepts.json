@@ -3146,8 +3146,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "终局计分区中的六角格 <ontology::track>，共 11 格，从左至右：科技、声望、知识、建设、文化、演化、繁荣、人口、扩张（9 个计分类别，各对应 <final_scoring_area_icons> 中的一个图标格）、控制台 A（阶段分区计分）、控制台 B（point bonus 卡）。游戏结束时，将阶段标记从阶段流程移至此轨最左格，一格一格向右推进——每推进一格，结算该格对应的计分项：9 个类别格按对应图标上的 <scoring_tile> 类别结算分数（被板块覆盖的格取板块分数），控制台 A/B 格分别结算阶段分区与 point bonus 卡。",
-        "en": "A hexagonal-cell <ontology::track> within the final scoring area, 11 cells from left to right: Technology, Prestige, Knowledge, Construction, Culture, Evolution, Prosperity, Population, Expansion (9 scoring categories, each corresponding to an icon slot of the <final_scoring_area_icons>), Console A (stage partition scoring), Console B (point bonus cards). At game end, the phase indicator is moved from the phase sequence onto the leftmost cell, advancing cell by cell to the right — each cell resolves its scoring item: the 9 category cells score per the <scoring_tile> category on the corresponding icon (covered spaces use the tile's points), Console A/B cells score the stage partition and point bonus cards."
+        "zh": "终局计分区中的六角格 <ontology::track>，共 11 格，从左至右：科技、声望、知识、建设、文化、演化、繁荣、人口、扩张（9 个计分类别，各对应 <final_scoring_area_icons> 中的一个图标格）、控制台 A（阶段分区计分）、控制台 B（point bonus 卡）。**<phase_indicator> 一旦推进到某格，该格的 <ontology::effect> 立即触发结算——marker 到达 slot 即触发该格的计分 trigger（同 <phase_sequence> 的模式）**。游戏结束时，将阶段标记从阶段流程移至此轨最左格，一格一格向右推进——每推进一格，结算该格对应的计分项：9 个类别格按对应图标上的 <scoring_tile> 类别结算分数（被板块覆盖的格取板块分数），控制台 A/B 格分别结算阶段分区与 point bonus 卡。",
+        "en": "A hexagonal-cell <ontology::track> within the final scoring area, 11 cells from left to right: Technology, Prestige, Knowledge, Construction, Culture, Evolution, Prosperity, Population, Expansion (9 scoring categories, each corresponding to an icon slot of the <final_scoring_area_icons>), Console A (stage partition scoring), Console B (point bonus cards). **As soon as the <phase_indicator> advances onto a cell, that cell's <ontology::effect> triggers immediately — a marker arriving on a slot fires that slot's scoring trigger (the same pattern as <phase_sequence>)**. At game end, the phase indicator is moved from the phase sequence onto the leftmost cell, advancing cell by cell to the right — each cell resolves its scoring item: the 9 category cells score per the <scoring_tile> category on the corresponding icon (covered spaces use the tile's points), Console A/B cells score the stage partition and point bonus cards."
       },
       "contains": {
         "type": "<ontology::marker>",
@@ -3161,100 +3161,155 @@
       "slots": [
         {
           "technology": {
-            "count": 1,
-            "description": {
-              "zh": "科技计分格。",
-              "en": "Technology scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算科技类别计分：每有 1 个 <technology_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Technology: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <technology_track>), on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "prestige": {
-            "count": 1,
-            "description": {
-              "zh": "声望计分格。",
-              "en": "Prestige scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算声望类别计分：每有 1 个 <prestige_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Prestige: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <prestige_track>), on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "knowledge": {
-            "count": 1,
-            "description": {
-              "zh": "知识计分格。",
-              "en": "Knowledge scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算知识类别计分：每有 1 个 <knowledge_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Knowledge: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <knowledge_track>), on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "construction": {
-            "count": 1,
-            "description": {
-              "zh": "建设计分格。",
-              "en": "Construction scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算建设类别计分：每有 1 个 <construction_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Construction: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <construction_track>), on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "culture": {
-            "count": 1,
-            "description": {
-              "zh": "文化计分格。",
-              "en": "Culture scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算文化类别计分：每有 1 个 <culture_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Culture: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <culture_track>), on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "evolution": {
-            "count": 1,
-            "description": {
-              "zh": "演化计分格。",
-              "en": "Evolution scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算进化类别计分：每有 1 个特征格上的 <feature_marker>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Evolution: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each <feature_marker> on your feature spaces, on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "prosperity": {
-            "count": 1,
-            "description": {
-              "zh": "繁荣计分格。",
-              "en": "Prosperity scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算繁荣类别计分：每有 1 个活跃钻石（<console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Prosperity: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each active diamond (<food_space>: 1 per 3 markers; <money_space>: 1 per 2 markers; visible recess diamonds of built <settlement>s; <storage_area> diamonds with material on both flanking spaces), on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "population": {
-            "count": 1,
-            "description": {
-              "zh": "人口计分格。",
-              "en": "Population scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算人口类别计分：每有 1 个在 <continent> 上的 <tribe>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Population: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each of your <tribe>s on the <continent>, on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "expansion": {
-            "count": 1,
-            "description": {
-              "zh": "扩张计分格。",
-              "en": "Expansion scoring space."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算扩张类别计分：每有 1 个有至少 1 个 <tribe> 的区域，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                    "en": "Score Expansion: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each territory holding at least 1 of your <tribe>s, on the <score_track>."
+                  }
+                }
+              }
             }
           }
         },
         {
           "stage_partition": {
-            "count": 1,
-            "description": {
-              "zh": "格 A：结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4/5 需对应 stage tile 激活）。",
-              "en": "Space A: score the console stage partition — each chip and card scores the points left of its stage (stages 4/5 only if the stage tile is active)."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算控制台阶段分区：每位玩家对阶段 1-5 中每张安装的卡牌与每枚芯片，获得该阶段左侧印的分数（阶段 4/5 仅在对应 stage tile 激活时计分）。",
+                    "en": "Score the console stage partition: each player gains the points printed left of its stage for each card and chip installed in stages 1-5 (stages 4/5 only score when the corresponding stage tile is active)."
+                  }
+                }
+              }
             }
           }
         },
         {
           "point_bonus": {
-            "count": 1,
-            "description": {
-              "zh": "格 B：结算 point bonus 卡——每张带加成图标的卡牌为其所在列的所有卡牌和收入芯片（含自身）额外加分。",
-              "en": "Space B: score point bonus cards — each card with the bonus icon grants extra points for all cards and income chips in its column (itself included)."
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "zh": "结算 point bonus 卡：每位玩家对每张带分数加成图标的卡牌，为其所在列的所有卡牌和收入芯片（含该卡牌自身）提供额外分数。",
+                    "en": "Score point bonus cards: for each card bearing the bonus icon, all cards and income chips in its column (including itself) gain the bonus points."
+                  }
+                }
+              }
             }
           }
         }
