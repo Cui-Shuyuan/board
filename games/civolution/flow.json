@@ -1768,8 +1768,160 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段八：收入阶段。依次执行：A) 执行收入芯片（从上到下、从左到右）；B) 结算雕像收入（每座雕像按阿格拉恩惠轨当前位置计分）；C) 回收大陆上所有狩猎指示物至展示区；D) 每位玩家从供应堆补满空的重置列。完成后将阶段标记移回阶段一，开始新时代（或进入终局计分）。",
-                    "en": "Phase 8: Income Phase. Execute in order: A) Execute income chips top-to-bottom, left-to-right; B) Score statues (each statue scores points based on the Favor of Agera track position); C) Return all hunting tokens from the continent to the display; D) Each player refills empty reset columns with markers from supply. Then return the phase indicator to Phase 1 for the next era (or proceed to final scoring)."
+                    "zh": "阶段八：收入阶段。依次执行：A) 获得收入（每位玩家执行每个 <income_chip> 一次，顺序自选）；B) 雕像计分（每座 <statue> 按 <favor_of_ager_track> 圆盘上方印的分数得分）；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家从供应堆补满空的 <reset_column>。收尾（MATCH）：前三时代（时代计分区还有板块）将 <phase_indicator> 移回阶段一开启新时代；第四时代（时代计分区全空）跳过 C/D，将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入终局计分。",
+                    "en": "Phase 8: Income Phase. Execute in order: A) Gain income (each player performs each <income_chip> once, order of choice); B) Score statues (each <statue> scores the points printed above your disc on the <favor_of_ager_track>); C) Return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) Each player refills empty <reset_column>s from supply. Ending (MATCH): in eras 1-3 (era scoring area still holds tiles) move the <phase_indicator> back to Phase 1 for the next era; in the 4th era (era scoring area empty) skip C/D and place the <phase_indicator> on the leftmost hexagon of the <final_scoring_area_hex>, entering final scoring."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "gain_income",
+                        "name": {
+                          "zh": "获得收入",
+                          "en": "Gain Income"
+                        },
+                        "specifies": "<ontology::round>",
+                        "description": {
+                          "zh": "按座次顺位（从起始玩家开始顺时针）逐一进行收入轮——每位玩家在自己的回合获得收入：对 target（本玩家的全部已安装收入芯片）各执行一次 <activate_income_chip>，对各芯片的执行顺序自选。",
+                          "en": "In seating order (starting player, then clockwise), each player takes an income turn — on their turn they gain income: perform <activate_income_chip> once for each chip of the target (all of the player's installed income chips), across chips in an order of their choice."
+                        },
+                        "<ontology::turn>": {
+                          "id": "player_income_turn",
+                          "name": {
+                            "zh": "玩家收入回合",
+                            "en": "Player Income Turn"
+                          },
+                          "<ontology::activation>": {
+                            "<activate_income_chip>": {
+                              "target": "本玩家的全部已安装 <income_chip>（含塞入收入区的初始芯片牌）"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "id": "score_statues",
+                        "name": {
+                          "zh": "雕像计分",
+                          "en": "Score Statues"
+                        },
+                        "<ontology::per_player>": true,
+                        "description": {
+                          "zh": "本玩家每有 1 座在 <continent> 上的 <statue>，得 <favor_of_ager_track> 上自己圆盘上方印的分数，计入 <score_track>。",
+                          "en": "For each of your <statue>s on the <continent>, gain the points printed above your disc on the <favor_of_ager_track>, on the <score_track>."
+                        },
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<score_track>",
+                          "step": "本玩家雕像数 × 恩惠轨自己圆盘上方印的分数"
+                        }
+                      },
+                      {
+                        "id": "remove_hunting_tokens",
+                        "name": {
+                          "zh": "回收狩猎标记",
+                          "en": "Remove Hunting Tokens"
+                        },
+                        "specifies": "<ontology::trigger>",
+                        "description": {
+                          "zh": "将 <continent> 上所有 <hunting_token> 移回 <hunting_token_display>（不要移走营地上的阻挡标记）。第四时代跳过本步。",
+                          "en": "Remove all <hunting_token>s from the <continent> and return them to the <hunting_token_display> (do not remove blocking tokens from encampments). Skipped in the 4th era."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "<era_scoring_area> 还有计分板块（非第四时代）。",
+                          "en": "The <era_scoring_area> still has scoring tiles (not the 4th era)."
+                        },
+                        "<ontology::content>": {
+                          "<ontology::instant_content>": {
+                            "<ontology::transfer>": {
+                              "source": "<continent>",
+                              "destination": "<hunting_token_display>",
+                              "<ontology::object>": "<hunting_token>",
+                              "quantity": "全部（营地阻挡标记除外）"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "id": "equip_reset_columns",
+                        "name": {
+                          "zh": "补满重置列",
+                          "en": "Equip Reset Columns"
+                        },
+                        "specifies": "<ontology::trigger>",
+                        "description": {
+                          "zh": "每位玩家从自己的供应堆为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。",
+                          "en": "Each player refills each empty <reset_column> with 1 <reset_marker> from their supply. Skipped in the 4th era."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "<era_scoring_area> 还有计分板块（非第四时代）。",
+                          "en": "The <era_scoring_area> still has scoring tiles (not the 4th era)."
+                        },
+                        "<ontology::content>": {
+                          "<ontology::instant_content>": {
+                            "<ontology::transfer>": {
+                              "description": {
+                                "zh": "每个空的 <reset_column> 从玩家供应堆补 1 个 <reset_marker>。",
+                                "en": "Refill each empty <reset_column> with 1 <reset_marker> from the player's supply."
+                              },
+                              "source": "<ontology::supply>",
+                              "destination": "<reset_column>",
+                              "<ontology::object>": "<reset_marker>",
+                              "quantity": "每个空列 1 个",
+                              "<ontology::per_player>": true
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "id": "era_end_advance",
+                        "name": {
+                          "zh": "时代收尾",
+                          "en": "Era End Advance"
+                        },
+                        "do_after": [
+                          "gain_income",
+                          "score_statues"
+                        ],
+                        "description": {
+                          "zh": "时代收尾：前三时代将 <phase_indicator> 移回阶段一开启新时代；第四时代将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入终局计分。",
+                          "en": "Era ending: in eras 1-3 return the <phase_indicator> to Phase 1 to start the next era; in the 4th era place the <phase_indicator> on the leftmost hexagon of the <final_scoring_area_hex> to enter final scoring."
+                        },
+                        "options": [
+                          {
+                            "id": "return_to_phase_1",
+                            "name": {
+                              "zh": "回阶段一",
+                              "en": "Return to Phase 1"
+                            },
+                            "specifies": "<ontology::push_track>",
+                            "description": {
+                              "zh": "时代结束，将 <phase_indicator> 移回 <phase_sequence> 的阶段一（<phase_1_new_cards>），开始新时代。",
+                              "en": "The era ends: move the <phase_indicator> back to Phase 1 (<phase_1_new_cards>) of the <phase_sequence> to start the next era."
+                            },
+                            "<ontology::track>": "<phase_sequence>",
+                            "to": "<phase_sequence>.<phase_1_new_cards>"
+                          },
+                          {
+                            "id": "start_final_scoring",
+                            "name": {
+                              "zh": "进入终局计分",
+                              "en": "Start Final Scoring"
+                            },
+                            "specifies": "<ontology::push_track>",
+                            "description": {
+                              "zh": "第四时代结束：将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，随后进行终局计分。",
+                              "en": "The 4th era ends: place the <phase_indicator> on the leftmost hexagon space of the <final_scoring_area_hex>; final scoring follows."
+                            },
+                            "<ontology::track>": "<final_scoring_area_hex>",
+                            "to": "<final_scoring_area_hex> 最左六角格"
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.MATCH>",
+                        "<ontology::condition>": {
+                          "zh": "匹配依据：<era_scoring_area> 是否还有计分板块——还有板块 = 前三时代（回阶段一）；全空 = 第四时代（进入终局计分）。",
+                          "en": "Matching basis: whether the <era_scoring_area> still has scoring tiles — tiles remain = eras 1-3 (return to Phase 1); empty = 4th era (enter final scoring)."
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                   }
                 }
               ],

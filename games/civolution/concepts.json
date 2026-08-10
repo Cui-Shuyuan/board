@@ -4129,8 +4129,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "每个时代的第八个 <ontology::phase>。依次执行：A) 执行 <income_chip>（从上到下、从左到右）；B) 结算 <statue> 收入（按 <favor_of_ager_track> 位置计分）；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家补满空 <reset_column>。完成后将 <phase_indicator> 移回阶段一。第四时代执行完 A、B 后进入终局计分。",
-        "en": "The eighth <ontology::phase> of each era. Execute in order: A) resolve <income_chip>s top-to-bottom, left-to-right; B) score <statue>s (points based on <favor_of_ager_track> position); C) return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) refill empty <reset_column>s. Then return <phase_indicator> to Phase 1. After the 4th era, skip C/D after A/B and proceed to final scoring."
+        "zh": "每个时代的第八个 <ontology::phase>。依次执行：A) 获得收入——每位玩家对每个已安装 <income_chip> 各执行一次 <activate_income_chip>（顺序自选，可同时进行，少数按座次）；B) 结算 <statue> 收入——每座雕像得 <favor_of_ager_track> 圆盘上方印的分数；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家从供应堆补满空 <reset_column>。收尾：前三时代将 <phase_indicator> 移回阶段一；第四时代（<era_scoring_area> 全空）跳过 C/D，将 <phase_indicator> 放到终局计分轨最左格进入终局计分。",
+        "en": "The eighth <ontology::phase> of each era. Execute in order: A) gain income — each player performs <activate_income_chip> once per installed <income_chip> (order of choice, may be simultaneous, a few cases in seating order); B) score <statue>s — each statue gains the points printed above your disc on the <favor_of_ager_track>; C) return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) each player refills empty <reset_column>s from supply. Ending: eras 1-3 return the <phase_indicator> to Phase 1; the 4th era (era scoring area empty) skips C/D and places the <phase_indicator> on the leftmost final-scoring hexagon, entering final scoring."
       }
     },
     {
