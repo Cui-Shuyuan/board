@@ -70,7 +70,7 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 
 - **options**：数组格式，不是对象。每项可以是 step 对象、字符串引用（`"<build_farm>"`）、或 `null`（跳过）
 - **type**：必须是完整引用 `"<ontology::multiple_choice_enum.XXX>"`
-- **do_after**：数组格式 `["step_a", "step_b"]`。无 do_after = 独立可并行
+- **do_after**（2026-08-10 格式定稿）：**单元素直接字符串 `"do_after": "step_a"`（去 []）；多元素用 options/type 格式 `"do_after": { "options": ["a", "b"], "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>" }`**（语义=全部完成才执行，即 EXECUTE_ALL）。无 do_after = 独立可并行。已全量迁移：civolution 87 处 + splendor 13 处（脚本批量，注意原数组闭合行 `],` 的逗号要保留）
 - **_skip**（不用 null）：表示"不做也是一种合法选择"。必须写成 `{ "id": "_skip", "description": { "zh": "不做（跳过此项）", "en": "Skip this option" } }`。被选中时跳过执行，do_after 链上视为已完成
 - 必选步骤直接写，可选步骤包 `"options": [_skip, step], "type": "CHOOSE_ONE"`
 - "不干B就不能干C"：B和C捆成子 pipeline，外包 `CHOOSE_ONE(_skip, B→C)`

@@ -94,9 +94,7 @@
                   },
                   "specifies": "<ontology::shuffle>",
                   "target": "<development_deck_level_1>",
-                  "do_after": [
-                    "prepare_level_1_deck"
-                  ]
+                  "do_after": "prepare_level_1_deck"
                 },
                 {
                   "id": "shuffle_level_2_deck",
@@ -106,9 +104,7 @@
                   },
                   "specifies": "<ontology::shuffle>",
                   "target": "<development_deck_level_2>",
-                  "do_after": [
-                    "prepare_level_2_deck"
-                  ]
+                  "do_after": "prepare_level_2_deck"
                 },
                 {
                   "id": "shuffle_level_3_deck",
@@ -118,9 +114,7 @@
                   },
                   "specifies": "<ontology::shuffle>",
                   "target": "<development_deck_level_3>",
-                  "do_after": [
-                    "prepare_level_3_deck"
-                  ]
+                  "do_after": "prepare_level_3_deck"
                 },
                 {
                   "id": "deal_card_market_level_1",
@@ -134,9 +128,7 @@
                   "<object>": "<development_card_level_1>",
                   "quantity": 4,
                   "slot": "level_1",
-                  "do_after": [
-                    "shuffle_level_1_deck"
-                  ]
+                  "do_after": "shuffle_level_1_deck"
                 },
                 {
                   "id": "deal_card_market_level_2",
@@ -150,9 +142,7 @@
                   "<object>": "<development_card_level_2>",
                   "quantity": 4,
                   "slot": "level_2",
-                  "do_after": [
-                    "shuffle_level_2_deck"
-                  ]
+                  "do_after": "shuffle_level_2_deck"
                 },
                 {
                   "id": "deal_card_market_level_3",
@@ -166,9 +156,7 @@
                   "<object>": "<development_card_level_3>",
                   "quantity": 4,
                   "slot": "level_3",
-                  "do_after": [
-                    "shuffle_level_3_deck"
-                  ]
+                  "do_after": "shuffle_level_3_deck"
                 },
                 {
                   "id": "deal_nobles",
@@ -259,9 +247,7 @@
                   "destination": "起始玩家",
                   "<ontology::object>": "<ontology::starting_player_marker>",
                   "quantity": 1,
-                  "do_after": [
-                    "choose_starting_player"
-                  ]
+                  "do_after": "choose_starting_player"
                 }
               ],
               "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -278,9 +264,7 @@
               "zh": "主游戏流程：重复轮换回合，每位玩家依次行动（取宝石、购买或保留发展卡），直到任意玩家声望达到 15 分触发终局。",
               "en": "Main gameplay: rounds of turns repeat, each player acting in order (taking gems, purchasing, or reserving a development card), until any player reaches 15 prestige points and triggers the endgame."
             },
-            "do_after": [
-              "setup"
-            ],
+            "do_after": "setup",
             "loop": {
               "until": "<reach_15_prestige>"
             },
@@ -328,9 +312,7 @@
               "zh": "终局阶段：15 分触发的当前轮已在<main_gameplay>内完整跑完（loop 在轮末检查——触发后剩余玩家照常行动）。本阶段直接判定胜者。",
               "en": "Endgame phase: the round in which 15 points was reached has already completed in full within <main_gameplay> (the loop checks at the end of each round — after the trigger, the remaining players keep acting normally). This phase directly adjudicates the winner."
             },
-            "do_after": [
-              "main_gameplay"
-            ],
+            "do_after": "main_gameplay",
             "<ontology::evaluate>": {
               "id": "adjudicate_victory",
               "name": {
@@ -392,9 +374,7 @@
                 "zh": "打出卡牌",
                 "en": "Play Card"
               },
-              "do_after": [
-                "pay_cost"
-              ],
+              "do_after": "pay_cost",
               "<ontology::play>": {
                 "description": {
                   "zh": "打出卡牌：将目标 <development_card> 从 <card_market> 或 <hand> 移至 <development_area>。",
@@ -406,9 +386,7 @@
               }
             },
             {
-              "do_after": [
-                "play_card"
-              ],
+              "do_after": "play_card",
               "<refill_market>": {
                 "description": {
                   "zh": "若购买自 <card_market>，从对应 <development_deck> 顶部翻 1 张补入空位。来自 <hand> 则跳过。",
@@ -485,9 +463,7 @@
                 "zh": "拿取金币",
                 "en": "Take Gold"
               },
-              "do_after": [
-                "reserve_card"
-              ],
+              "do_after": "reserve_card",
               "<ontology::trigger>": {
                 "<ontology::condition>": {
                   "zh": "<gold_supply> 中还有 <gold>（非空）。",
@@ -510,9 +486,7 @@
               }
             },
             {
-              "do_after": [
-                "reserve_card"
-              ],
+              "do_after": "reserve_card",
               "<refill_market>": {
                 "description": {
                   "zh": "若为明面保留（来源 <card_market>），从对应 <development_deck> 顶部翻 1 张补入空位。",

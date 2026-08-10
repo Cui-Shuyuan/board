@@ -3146,8 +3146,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "终局计分区中的六角格 <ontology::track>，每格对应终局计分区（图标）中的一个图标格。游戏结束时，将阶段标记从阶段流程移至此轨，一格一格向右推进——每推进一格，按该格对应图标上的 <scoring_tile> 类别结算分数。",
-        "en": "A hexagonal-cell <ontology::track> within the final scoring area. Each cell corresponds to one icon slot in the Final Scoring Area (Icons). At game end, the phase indicator is moved from the phase sequence onto this track, advancing cell by cell to the right — each cell triggers scoring based on the category of the <scoring_tile> on the corresponding icon."
+        "zh": "终局计分区中的六角格 <ontology::track>，共 11 格，从左至右：科技、声望、知识、建设、文化、演化、繁荣、人口、扩张（9 个计分类别，各对应 <final_scoring_area_icons> 中的一个图标格）、控制台 A（阶段分区计分）、控制台 B（point bonus 卡）。游戏结束时，将阶段标记从阶段流程移至此轨最左格，一格一格向右推进——每推进一格，结算该格对应的计分项：9 个类别格按对应图标上的 <scoring_tile> 类别结算分数（被板块覆盖的格取板块分数），控制台 A/B 格分别结算阶段分区与 point bonus 卡。",
+        "en": "A hexagonal-cell <ontology::track> within the final scoring area, 11 cells from left to right: Technology, Prestige, Knowledge, Construction, Culture, Evolution, Prosperity, Population, Expansion (9 scoring categories, each corresponding to an icon slot of the <final_scoring_area_icons>), Console A (stage partition scoring), Console B (point bonus cards). At game end, the phase indicator is moved from the phase sequence onto the leftmost cell, advancing cell by cell to the right — each cell resolves its scoring item: the 9 category cells score per the <scoring_tile> category on the corresponding icon (covered spaces use the tile's points), Console A/B cells score the stage partition and point bonus cards."
       },
       "contains": {
         "type": "<ontology::marker>",
@@ -3163,8 +3163,8 @@
           "technology": {
             "count": 1,
             "description": {
-              "zh": "技术计分格。",
-              "en": "技术计分格。"
+              "zh": "科技计分格。",
+              "en": "Technology scoring space."
             }
           }
         },
@@ -3173,7 +3173,7 @@
             "count": 1,
             "description": {
               "zh": "声望计分格。",
-              "en": "声望计分格。"
+              "en": "Prestige scoring space."
             }
           }
         },
@@ -3182,7 +3182,7 @@
             "count": 1,
             "description": {
               "zh": "知识计分格。",
-              "en": "知识计分格。"
+              "en": "Knowledge scoring space."
             }
           }
         },
@@ -3191,7 +3191,7 @@
             "count": 1,
             "description": {
               "zh": "建设计分格。",
-              "en": "建设计分格。"
+              "en": "Construction scoring space."
             }
           }
         },
@@ -3200,7 +3200,7 @@
             "count": 1,
             "description": {
               "zh": "文化计分格。",
-              "en": "文化计分格。"
+              "en": "Culture scoring space."
             }
           }
         },
@@ -3208,8 +3208,8 @@
           "evolution": {
             "count": 1,
             "description": {
-              "zh": "进化计分格。",
-              "en": "进化计分格。"
+              "zh": "演化计分格。",
+              "en": "Evolution scoring space."
             }
           }
         },
@@ -3218,7 +3218,7 @@
             "count": 1,
             "description": {
               "zh": "繁荣计分格。",
-              "en": "繁荣计分格。"
+              "en": "Prosperity scoring space."
             }
           }
         },
@@ -3227,7 +3227,7 @@
             "count": 1,
             "description": {
               "zh": "人口计分格。",
-              "en": "人口计分格。"
+              "en": "Population scoring space."
             }
           }
         },
@@ -3236,7 +3236,7 @@
             "count": 1,
             "description": {
               "zh": "扩张计分格。",
-              "en": "扩张计分格。"
+              "en": "Expansion scoring space."
             }
           }
         },

@@ -69,9 +69,7 @@
                     }
                   },
                   "quantity": 24,
-                  "do_after": [
-                    "assemble_public_board"
-                  ]
+                  "do_after": "assemble_public_board"
                 },
                 {
                   "id": "place_progress_and_sequence_boards",
@@ -88,9 +86,7 @@
                   "destination": "<public_board>",
                   "<ontology::object>": "<progress_board> | <sequence_board>",
                   "quantity": "all",
-                  "do_after": [
-                    "assemble_public_board"
-                  ]
+                  "do_after": "assemble_public_board"
                 },
                 {
                   "id": "prepare_phase_indicator",
@@ -107,9 +103,7 @@
                   "destination": "<phase_sequence>",
                   "<ontology::object>": "<phase_indicator>",
                   "quantity": 1,
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_weather_indicator",
@@ -126,9 +120,7 @@
                   "destination": "<weather_gauge>",
                   "<ontology::object>": "<weather_indicator>",
                   "quantity": 1,
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_event_cards",
@@ -149,9 +141,7 @@
                     }
                   },
                   "quantity": 4,
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_research_decks",
@@ -194,9 +184,7 @@
                   "destination": "<era_scoring_area>",
                   "<ontology::object>": "<scoring_tile>",
                   "quantity": 4,
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_final_scoring_tiles",
@@ -231,9 +219,7 @@
                         "zh": "放置到终局计分区",
                         "en": "Place on Final Scoring Area"
                       },
-                      "do_after": [
-                        "draw_final_scoring_tiles"
-                      ],
+                      "do_after": "draw_final_scoring_tiles",
                       "description": {
                         "zh": "将刚抽出的计分板块按图标面匹配，放到 <final_scoring_area_icons> 对应图标格下方——覆盖该格印的默认分值，以分数面朝上放置（终局计分时该类别的分值取板块上的分数）。",
                         "en": "Place the drawn scoring tiles below their matching icon slots in the <final_scoring_area_icons>, covering the printed default value of each space, point side up (the tile's points apply at final scoring)."
@@ -249,10 +235,13 @@
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                  "do_after": [
-                    "prepare_era_scoring_tiles",
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": {
+                    "options": [
+                      "prepare_era_scoring_tiles",
+                      "place_progress_and_sequence_boards"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
                 },
                 {
                   "id": "prepare_hundred_point_tokens",
@@ -270,9 +259,7 @@
                   "quantity": {
                     "expr": "per_player_count_setup"
                   },
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_hunting_tokens",
@@ -290,10 +277,13 @@
                   "quantity": {
                     "expr": "per_player_count_setup"
                   },
-                  "do_after": [
-                    "assemble_public_board",
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": {
+                    "options": [
+                      "assemble_public_board",
+                      "place_progress_and_sequence_boards"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
                 },
                 {
                   "id": "prepare_dice_pool",
@@ -311,9 +301,7 @@
                   "quantity": {
                     "expr": "player_count + 1"
                   },
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_goal_chip_display",
@@ -332,9 +320,7 @@
                   "quantity": {
                     "expr": "per_player_count_setup"
                   },
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_income_chip_display",
@@ -351,9 +337,7 @@
                   "destination": "<income_chip_display>",
                   "<ontology::object>": "<income_chip>",
                   "quantity": 3,
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "prepare_attribute_chip_display",
@@ -370,9 +354,7 @@
                   "destination": "<attribute_chip_display>",
                   "<ontology::object>": "<attribute_chip>",
                   "quantity": 3,
-                  "do_after": [
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": "place_progress_and_sequence_boards"
                 },
                 {
                   "id": "place_material_tiles",
@@ -389,9 +371,7 @@
                   "destination": "<continent>",
                   "<ontology::object>": "<material_tile>",
                   "quantity": "all",
-                  "do_after": [
-                    "assemble_public_board"
-                  ]
+                  "do_after": "assemble_public_board"
                 },
                 {
                   "id": "player_setup_modules",
@@ -492,9 +472,7 @@
                         "zh": "放置船标记",
                         "en": "Place Boat Markers"
                       },
-                      "do_after": [
-                        "place_buildings"
-                      ],
+                      "do_after": "place_buildings",
                       "<ontology::transfer>": {
                         "source": "<ontology::game_box>",
                         "destination": "<boat>",
@@ -570,10 +548,13 @@
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                  "do_after": [
-                    "assemble_public_board",
-                    "place_progress_and_sequence_boards"
-                  ]
+                  "do_after": {
+                    "options": [
+                      "assemble_public_board",
+                      "place_progress_and_sequence_boards"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
                 },
                 {
                   "id": "player_place_initial_tribes",
@@ -591,9 +572,7 @@
                   "<ontology::object>": "<tribe>",
                   "quantity": 2,
                   "<ontology::per_player>": true,
-                  "do_after": [
-                    "assemble_public_board"
-                  ]
+                  "do_after": "assemble_public_board"
                 },
                 {
                   "id": "player_place_initial_markers",
@@ -611,9 +590,7 @@
                   "<ontology::object>": "<marker>",
                   "quantity": 6,
                   "<ontology::per_player>": true,
-                  "do_after": [
-                    "assemble_public_board"
-                  ]
+                  "do_after": "assemble_public_board"
                 },
                 {
                   "id": "choose_starting_player",
@@ -644,9 +621,7 @@
                   "destination": "起始玩家",
                   "<ontology::object>": "<starting_monolith>",
                   "quantity": 1,
-                  "do_after": [
-                    "choose_starting_player"
-                  ]
+                  "do_after": "choose_starting_player"
                 },
                 {
                   "id": "draft_starting_marker_cards",
@@ -683,9 +658,7 @@
                         "zh": "获得标记",
                         "en": "Gain Markers"
                       },
-                      "do_after": [
-                        "draw_cards"
-                      ],
+                      "do_after": "draw_cards",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "按所选初始标记牌的指示，从供应堆取对应数量的标记放到控制台对应空格。",
@@ -704,9 +677,7 @@
                         "zh": "放回盒子",
                         "en": "Return Cards to Box"
                       },
-                      "do_after": [
-                        "gain_markers"
-                      ],
+                      "do_after": "gain_markers",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "3 张初始标记牌全部放回盒子。",
@@ -723,9 +694,7 @@
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                  "do_after": [
-                    "prepare_starting_decks"
-                  ]
+                  "do_after": "prepare_starting_decks"
                 },
                 {
                   "id": "draft_starting_chip_cards",
@@ -763,9 +732,7 @@
                         "zh": "放置目标芯片",
                         "en": "Attach Goal Chips"
                       },
-                      "do_after": [
-                        "reveal_cards"
-                      ],
+                      "do_after": "reveal_cards",
                       "<ontology::random_draw>": {
                         "description": {
                           "zh": "从深蓝袋盲抽目标芯片，在每张翻开的初始芯片牌上各放一枚。所有牌都放好芯片后才开始轮抽。",
@@ -790,9 +757,7 @@
                         "zh": "一轮轮抽：每位玩家一个 turn，从起始玩家右手边玩家开始逆时针依次选择一张展示的初始芯片牌（牌连同其上的目标芯片一起选走）。",
                         "en": "One draft round: one turn per player, starting with the player right of the starting player and going counter-clockwise; each player drafts one revealed starting chip card (card and its goal chip taken together)."
                       },
-                      "do_after": [
-                        "attach_goal_chips"
-                      ],
+                      "do_after": "attach_goal_chips",
                       "<ontology::turn>": {
                         "id": "player_draft_turn",
                         "name": {
@@ -818,9 +783,7 @@
                                     "zh": "目标芯片入目标区",
                                     "en": "Place Goal Chip"
                                   },
-                                  "do_after": [
-                                    "choose_card"
-                                  ],
+                                  "do_after": "choose_card",
                                   "<ontology::transfer>": {
                                     "description": {
                                       "zh": "将选中的牌上的目标芯片正面朝上放入目标区。",
@@ -838,9 +801,7 @@
                                     "zh": "升级模组",
                                     "en": "Upgrade Module"
                                   },
-                                  "do_after": [
-                                    "place_goal_chip"
-                                  ],
+                                  "do_after": "place_goal_chip",
                                   "<ontology::state_change>": {
                                     "description": {
                                       "zh": "将牌中三分之一记录的模组升级至等级二（翻面）——玩家的首个升级模组。",
@@ -857,9 +818,7 @@
                                     "zh": "安装牌",
                                     "en": "Install Card"
                                   },
-                                  "do_after": [
-                                    "upgrade_module"
-                                  ],
+                                  "do_after": "upgrade_module",
                                   "<install_starting_chip_card>": {
                                     "description": {
                                       "zh": "将选中的初始芯片牌塞入收入区成为首个收入芯片。",
@@ -874,10 +833,13 @@
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                  "do_after": [
-                    "prepare_starting_decks",
-                    "choose_starting_player"
-                  ]
+                  "do_after": {
+                    "options": [
+                      "prepare_starting_decks",
+                      "choose_starting_player"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
                 },
                 {
                   "id": "draft_starting_research_cards",
@@ -921,9 +883,7 @@
                         "zh": "每种类型（建造/洞悉/突变/成就/发明）从抽到的 2 张中选 1 张保留入手牌。",
                         "en": "For each type (Building/Insight/Mutation/Achievement/Invention), choose 1 of the 2 drawn cards to keep in hand."
                       },
-                      "do_after": [
-                        "draw_cards"
-                      ]
+                      "do_after": "draw_cards"
                     },
                     {
                       "id": "return_cards",
@@ -931,9 +891,7 @@
                         "zh": "放回牌堆底",
                         "en": "Return to Deck Bottom"
                       },
-                      "do_after": [
-                        "keep_cards"
-                      ],
+                      "do_after": "keep_cards",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "将未选中的 5 张研究牌（每种 1 张）面朝下放回各自来源牌堆底部。",
@@ -948,9 +906,7 @@
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
-                  "do_after": [
-                    "prepare_research_decks"
-                  ]
+                  "do_after": "prepare_research_decks"
                 }
               ],
               "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -966,6 +922,7 @@
             "loop": {
               "count": 4
             },
+            "do_after": "setup",
             "description": {
               "zh": "游戏共进行 4 个时代（loop.count 4），每个时代包含 8 个阶段。",
               "en": "The game consists of 4 eras (loop.count 4), each with 8 phases."
@@ -1028,10 +985,13 @@
                           "zh": "推进到新的目标",
                           "en": "Advance to New Goals"
                         },
-                        "do_after": [
-                          "reveal_event_card",
-                          "reveal_research_cards"
-                        ],
+                        "do_after": {
+                          "options": [
+                            "reveal_event_card",
+                            "reveal_research_cards"
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                        },
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_2_new_goals>"
@@ -1108,9 +1068,7 @@
                           "zh": "补满展示区",
                           "en": "Refill Display"
                         },
-                        "do_after": [
-                          "goal_choice_round"
-                        ],
+                        "do_after": "goal_choice_round",
                         "<ontology::random_draw>": {
                           "description": {
                             "zh": "所有玩家都做出选择后，从深蓝袋盲抽目标芯片补满展示区的空位。",
@@ -1131,9 +1089,7 @@
                           "zh": "推进到额外收获",
                           "en": "Advance to Extra Find"
                         },
-                        "do_after": [
-                          "refill_goal_display"
-                        ],
+                        "do_after": "refill_goal_display",
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_3_extra_find>"
@@ -1182,9 +1138,7 @@
                           "zh": "推进到行动阶段",
                           "en": "Advance to Action Phase"
                         },
-                        "do_after": [
-                          "extra_find_round"
-                        ],
+                        "do_after": "extra_find_round",
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_4_action>[0]"
@@ -1238,9 +1192,7 @@
                           "zh": "推进到阶段五",
                           "en": "Advance to Phase 5"
                         },
-                        "do_after": [
-                          "action_turn_cycle"
-                        ],
+                        "do_after": "action_turn_cycle",
                         "description": {
                           "zh": "行动阶段结束后（触发轮与最终行动轮均已完成，起始玩家右手边的玩家完成最后一回合），将<phase_indicator>从<phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>）推进到<phase_sequence>.<phase_5_site>[0]（第 1 格，地点阶段）。",
                           "en": "After the Action phase ends (both the triggering round and the final action round completed, with the player right of the starting player finishing their last turn), advance the <phase_indicator> from <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>) to <phase_sequence>.<phase_5_site>[0] (the 1st space, Site phase)."
@@ -1309,9 +1261,7 @@
                           "zh": "推进到喂养阶段",
                           "en": "Advance to Feeding Phase"
                         },
-                        "do_after": [
-                          "resolve_mystic_oak"
-                        ],
+                        "do_after": "resolve_mystic_oak",
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_6_feeding>"
@@ -1403,9 +1353,7 @@
                           "zh": "强壮部落得分",
                           "en": "Score Strong Tribes"
                         },
-                        "do_after": [
-                          "feed_tribes"
-                        ],
+                        "do_after": "feed_tribes",
                         "<ontology::per_player>": true,
                         "description": {
                           "zh": "所有玩家完成喂部落（A 步）后，每位玩家为自己的每个强壮（posture == <upright>）部落获得 1 分。",
@@ -1422,9 +1370,7 @@
                           "zh": "推进到事件阶段",
                           "en": "Advance to Event Phase"
                         },
-                        "do_after": [
-                          "score_strong_tribes"
-                        ],
+                        "do_after": "score_strong_tribes",
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_7_event>"
@@ -1476,9 +1422,7 @@
                               "zh": "结算天气效果",
                               "en": "Resolve Weather Effect"
                             },
-                            "do_after": [
-                              "adjust_weather_indicator"
-                            ],
+                            "do_after": "adjust_weather_indicator",
                             "<ontology::trigger>": "<weather_effect>"
                           }
                         ],
@@ -1490,9 +1434,7 @@
                           "zh": "事件牌结算",
                           "en": "Event Card Resolution"
                         },
-                        "do_after": [
-                          "event_weather"
-                        ],
+                        "do_after": "event_weather",
                         "description": {
                           "zh": "B 步：结算本时代正面朝上的 <event_card> 的事件效果（<event_card>.parts.<event_effect>，其 effect 自带 <ontology::condition> 与 <ontology::content>）：condition 成立时结算 content，给予一个或多个文明奖励——奖励适用于多个文明时，各文明按座次顺位逐一获得；奖励只指向一个特定文明时，仅在该文明可明确识别时授予；无文明满足条件则作废。少数事件的 condition 包含移除 <farm> 或 <boat>。",
                           "en": "Step B: resolve the event effect of this era's face-up <event_card> (<event_card>.parts.<event_effect>, whose effect carries its own <ontology::condition> and <ontology::content>): when the condition holds, the content is resolved, granting a bonus to one or more civilizations — when the bonus applies to multiple civilizations, each gains it in seating order; a bonus rewarding one specific civilization is awarded only if that civilization is unambiguously identifiable; if no civilization meets the condition, the bonus is forfeited. A few events' conditions require removing <farm>s or <boat>s."
@@ -1506,9 +1448,7 @@
                           "en": "Era Scoring"
                         },
                         "specifies": "<ontology::trigger>",
-                        "do_after": [
-                          "event_card_resolution"
-                        ],
+                        "do_after": "event_card_resolution",
                         "description": {
                           "zh": "C 步：按当前时代的计分类别计分，计分完成后移除该计分板块。",
                           "en": "Step C: score the current era's category, then remove that scoring tile."
@@ -1673,9 +1613,7 @@
                                   "zh": "移除计分板块",
                                   "en": "Remove Scoring Tile"
                                 },
-                                "do_after": [
-                                  "score_era_category"
-                                ],
+                                "do_after": "score_era_category",
                                 "specifies": "<ontology::transfer>",
                                 "description": {
                                   "zh": "所有玩家计分完成后，将当前时代的 <scoring_tile> 从 <era_scoring_area> 的计分格移除并放回 <ontology::game_box>。",
@@ -1697,9 +1635,7 @@
                           "zh": "新起始玩家",
                           "en": "New Starting Player"
                         },
-                        "do_after": [
-                          "event_era_scoring"
-                        ],
+                        "do_after": "event_era_scoring",
                         "description": {
                           "zh": "D 步：确定新的起始玩家——<starting_monolith> 交给刚在时代计分类别中得分最高的玩家。",
                           "en": "Step D: determine the new starting player — the <starting_monolith> goes to the player who just scored the most in that era category."
@@ -1726,9 +1662,7 @@
                               "zh": "移交起始纪念碑",
                               "en": "Pass Starting Monolith"
                             },
-                            "do_after": [
-                              "set_new_starting_player"
-                            ],
+                            "do_after": "set_new_starting_player",
                             "specifies": "<ontology::transfer>",
                             "description": {
                               "zh": "新起始玩家获得 <starting_monolith>。",
@@ -1748,9 +1682,7 @@
                           "zh": "推进到收入阶段",
                           "en": "Advance to Income Phase"
                         },
-                        "do_after": [
-                          "event_new_starting_player"
-                        ],
+                        "do_after": "event_new_starting_player",
                         "<ontology::push_track>": {
                           "<ontology::track>": "<phase_sequence>",
                           "to": "<phase_sequence>.<phase_8_income>"
@@ -1876,10 +1808,13 @@
                           "zh": "时代收尾",
                           "en": "Era End Advance"
                         },
-                        "do_after": [
-                          "gain_income",
-                          "score_statues"
-                        ],
+                        "do_after": {
+                          "options": [
+                            "gain_income",
+                            "score_statues"
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                        },
                         "description": {
                           "zh": "时代收尾：前三时代将 <phase_indicator> 移回阶段一开启新时代；第四时代将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入终局计分。",
                           "en": "Era ending: in eras 1-3 return the <phase_indicator> to Phase 1 to start the next era; in the 4th era place the <phase_indicator> on the leftmost hexagon of the <final_scoring_area_hex> to enter final scoring."
@@ -1907,11 +1842,11 @@
                             },
                             "specifies": "<ontology::push_track>",
                             "description": {
-                              "zh": "第四时代结束：将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，随后进行终局计分。",
-                              "en": "The 4th era ends: place the <phase_indicator> on the leftmost hexagon space of the <final_scoring_area_hex>; final scoring follows."
+                              "zh": "第四时代结束：将 <phase_indicator> 放到 <final_scoring_area_hex> 的科技格（<technology>，最左格），随后进行终局计分。",
+                              "en": "The 4th era ends: place the <phase_indicator> on the Technology cell (<technology>, the leftmost cell) of the <final_scoring_area_hex>; final scoring follows."
                             },
                             "<ontology::track>": "<final_scoring_area_hex>",
-                            "to": "<final_scoring_area_hex> 最左六角格"
+                            "to": "<final_scoring_area_hex>.<technology>"
                           }
                         ],
                         "type": "<ontology::multiple_choice_enum.MATCH>",
@@ -1935,9 +1870,10 @@
               "en": "Final Scoring"
             },
             "specifies": "<ontology::phase>",
+            "do_after": "era_loop",
             "description": {
-              "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点。分三轮计分：第一轮沿终局计分轨逐格结算 9 个计分项（技术/声望/知识/建设/文化/进化/繁荣/人口/扩张），每项用该格下方印的每单位分值计算；第二轮结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4 和阶段 5 仅在对应 stage tile 已激活时才计分）；第三轮结算 point bonus 卡——每张带分数加成图标的卡牌为其所在列的所有卡牌和收入芯片额外加分。总分最高者获胜。",
-              "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the final scoring track start. Score in three rounds: Round 1 — advance along the final scoring track, scoring each of the 9 categories (Technology/Prestige/Knowledge/Construction/Culture/Evolution/Prosperity/Population/Expansion) using the point value printed below each space. Round 2 — score the stage partition: each chip and card scores the points left of its stage (stages 4 and 5 only score if the corresponding stage tile is active). Round 3 — score point bonus cards: each card with the bonus icon grants extra points for all cards and income chips in its column. Highest total score wins."
+              "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点（科技格），沿轨逐格推进结算：前 9 格各结算对应计分类别（技术/声望/知识/建设/文化/进化/繁荣/人口/扩张，每项用该格下方印的每单位分值计算，被计分板块覆盖的格取板块分数）；推进到控制台 A 格结算控制台阶段分区——每个阶段中的卡牌和芯片按该阶段左侧印的分数计分（阶段 4 和阶段 5 仅在对应 stage tile 已激活时才计分）；推进到控制台 B 格结算 point bonus 卡——每张带分数加成图标的卡牌为其所在列的所有卡牌和收入芯片额外加分。总分最高者获胜。",
+              "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the start of the final scoring track (the Technology cell) and advance cell by cell: the first 9 cells each score their category (Technology/Prestige/Knowledge/Construction/Culture/Evolution/Prosperity/Population/Expansion) using the point value printed below each space (covered spaces use the scoring tile's points); advancing to the Console A cell scores the stage partition — each chip and card scores the points left of its stage (stages 4 and 5 only score if the corresponding stage tile is active); advancing to the Console B cell scores point bonus cards — each card with the bonus icon grants extra points for all cards and income chips in its column. Highest total score wins."
             },
             "<ontology::pipeline>": {
               "options": [
@@ -1949,8 +1885,8 @@
                   },
                   "specifies": "<ontology::round>",
                   "description": {
-                    "zh": "第一轮：沿终局计分轨逐项结算 9 个计分项。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
-                    "en": "Round 1: Score each of the 9 scoring categories along the final scoring track. Points per unit for each category are determined by the printed value below the space (or the scoring tile covering it)."
+                    "zh": "沿终局计分轨逐格推进，结算 9 个计分类别（科技→声望→知识→建设→文化→进化→繁荣→人口→扩张）。每项的每单位分值由轨上该格下方印的数字（或被计分板块覆盖时的板块面值）决定。",
+                    "en": "Advance cell by cell along the final scoring track, scoring the 9 categories (Technology→Prestige→Knowledge→Construction→Culture→Evolution→Prosperity→Population→Expansion). Points per unit for each category are determined by the printed value below the space (or the scoring tile covering it)."
                   },
                   "loop": {
                     "until": "<final_scoring_track_end>"
@@ -1977,10 +1913,20 @@
                     "zh": "阶段分区计分",
                     "en": "Stage Partition Scoring"
                   },
-                  "specifies": "<ontology::phase>",
+                  "specifies": "<ontology::trigger>",
                   "description": {
-                    "zh": "第二轮：控制台阶段分区计分。逐一检查阶段 1-5 中安装的每张卡牌和芯片，按阶段左侧分数计分。阶段 4/5 需对应的 stage tile 已激活才计分。",
-                    "en": "Round 2: Score the stage partition. Check each card and chip in stages 1-5, scoring the points left of its stage. Stages 4/5 only score if the corresponding stage tile is active."
+                    "zh": "控制台 A 格：控制台阶段分区计分。逐一检查阶段 1-5 中安装的每张卡牌和芯片，按阶段左侧分数计分。阶段 4/5 需对应的 stage tile 已激活才计分。",
+                    "en": "Console A cell: score the console stage partition. Check each card and chip in stages 1-5, scoring the points left of its stage. Stages 4/5 only score if the corresponding stage tile is active."
+                  },
+                  "<ontology::condition>": {
+                    "zh": "<phase_indicator> 推进到 <final_scoring_area_hex>.<stage_partition>（控制台 A 格）时。",
+                    "en": "The <phase_indicator> has advanced onto <final_scoring_area_hex>.<stage_partition> (the Console A cell)."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "zh": "每位玩家（<ontology::per_player>）对控制台阶段分区计分：对阶段 1-5 中每张安装的卡牌与每枚芯片，获得该阶段左侧印的分数（阶段 4/5 仅在对应 stage tile 激活时计分）。",
+                      "en": "Each player (<ontology::per_player>) scores their console stage partition: for each card and chip installed in stages 1-5, gain the points printed left of that stage (stages 4/5 only score when the corresponding stage tile is active)."
+                    }
                   }
                 },
                 {
@@ -1989,10 +1935,20 @@
                     "zh": "分数加成牌计分",
                     "en": "Point Bonus Card Scoring"
                   },
-                  "specifies": "<ontology::phase>",
+                  "specifies": "<ontology::trigger>",
                   "description": {
-                    "zh": "第三轮：point bonus 卡计分。每张带加成图标的卡牌为其所在列所有卡牌和收入芯片（含自身）提供额外分数。",
-                    "en": "Round 3: Score point bonus cards. Each card with the bonus icon grants extra points for all cards and income chips in its column (including itself)."
+                    "zh": "控制台 B 格：point bonus 卡计分。每张带加成图标的卡牌为其所在列所有卡牌和收入芯片（含自身）提供额外分数。",
+                    "en": "Console B cell: score point bonus cards. Each card with the bonus icon grants extra points for all cards and income chips in its column (including itself)."
+                  },
+                  "<ontology::condition>": {
+                    "zh": "<phase_indicator> 推进到 <final_scoring_area_hex>.<point_bonus>（控制台 B 格）时。",
+                    "en": "The <phase_indicator> has advanced onto <final_scoring_area_hex>.<point_bonus> (the Console B cell)."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "zh": "每位玩家（<ontology::per_player>）对每张带分数加成图标的卡牌结算：该卡牌所在列的所有卡牌和收入芯片（含该卡牌自身）各获得加成分数。",
+                      "en": "Each player (<ontology::per_player>) resolves every card bearing the bonus icon: all cards and income chips in that card's column (including the card itself) gain the bonus points."
+                    }
                   }
                 },
                 {
@@ -2056,9 +2012,7 @@
                 "zh": "可选：询问是否消耗<idea_marker>修改任意一颗<fate_die>的点数（每 1 个 = ±1，1 和 6 相连）。",
                 "en": "Optional: ask whether to spend <idea_marker>s to modify any <fate_die>'s value (each = ±1, 1 and 6 are adjacent)."
               },
-              "do_after": [
-                "roll_fate_dice"
-              ],
+              "do_after": "roll_fate_dice",
               "options": [
                 {
                   "id": "_skip",
@@ -2224,9 +2178,7 @@
                 "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
                 "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
               },
-              "do_after": [
-                "determine_position"
-              ]
+              "do_after": "determine_position"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -2418,9 +2370,7 @@
             "from": 1,
             "to": 2
           },
-          "do_after": [
-            "choose_module"
-          ]
+          "do_after": "choose_module"
         },
         {
           "id": "upgrade_l2_to_l3",
@@ -2438,9 +2388,7 @@
             "from": 2,
             "to": 3
           },
-          "do_after": [
-            "choose_module"
-          ]
+          "do_after": "choose_module"
         }
       ],
       "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -2482,9 +2430,7 @@
               "destination": "<income_chip_display>",
               "<ontology::object>": "<income_chip>",
               "quantity": 1,
-              "do_after": [
-                "take_from_display"
-              ]
+              "do_after": "take_from_display"
             },
             {
               "id": "install",
@@ -2493,9 +2439,7 @@
                 "en": "Install"
               },
               "specifies": "<install_income_chip>",
-              "do_after": [
-                "refill_display"
-              ]
+              "do_after": "refill_display"
             },
             {
               "id": "trigger_effect",
@@ -2504,9 +2448,7 @@
                 "en": "Trigger Effect"
               },
               "specifies": "<activate_income_chip>",
-              "do_after": [
-                "install"
-              ]
+              "do_after": "install"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -2632,9 +2574,7 @@
                 "zh": "驱赶其他部落后，迁徙部落变虚弱。",
                 "en": "Migrating tribe becomes weak after displacing another tribe."
               },
-              "do_after": [
-                "displace_occupant"
-              ],
+              "do_after": "displace_occupant",
               "subject": "this.migrating_tribe",
               "attribute": "posture",
               "to": "<lying>"
@@ -2706,9 +2646,7 @@
           "options": [
             "<move_tribe>",
             {
-              "do_after": [
-                "<move_tribe>"
-              ],
+              "do_after": "<move_tribe>",
               "options": [
                 {
                   "id": "_skip",
@@ -2785,9 +2723,7 @@
                 "zh": "补充正面堆（若空）",
                 "en": "Refill if Empty"
               },
-              "do_after": [
-                "take_card"
-              ],
+              "do_after": "take_card",
               "<ontology::trigger>": {
                 "name": {
                   "zh": "补充正面堆",
@@ -2872,9 +2808,7 @@
                 "zh": "选牌加入手牌",
                 "en": "Pick Cards to Hand"
               },
-              "do_after": [
-                "draw"
-              ],
+              "do_after": "draw",
               "<ontology::transfer>": {
                 "description": {
                   "zh": "从抽出的 N 张中选 K 张<research_card>加入手牌。",
@@ -2892,9 +2826,7 @@
                 "zh": "归还剩余",
                 "en": "Return Remaining Cards"
               },
-              "do_after": [
-                "pick"
-              ],
+              "do_after": "pick",
               "<ontology::transfer>": {
                 "description": {
                   "zh": "将未选中的<research_card>面朝下放回各自来源牌堆底部。",
@@ -2973,9 +2905,7 @@
                         "zh": "由材料行决定：第一行 1、第二行 2、第三行 3",
                         "en": "Determined by material row: row 1 = 1, row 2 = 2, row 3 = 3"
                       },
-                      "do_after": [
-                        "return_material_sm"
-                      ]
+                      "do_after": "return_material_sm"
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -3012,9 +2942,7 @@
                       "specifies": "<ontology::push_track>",
                       "<ontology::track>": "<score_track>",
                       "step": 2,
-                      "do_after": [
-                        "return_material_sp"
-                      ]
+                      "do_after": "return_material_sp"
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -3059,9 +2987,7 @@
                   "destination": "<storage_area>",
                   "<ontology::object>": "<stored_material>",
                   "quantity": 1,
-                  "do_after": [
-                    "pay_money"
-                  ]
+                  "do_after": "pay_money"
                 }
               ],
               "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -3109,9 +3035,7 @@
                 "zh": "获得",
                 "en": "Gain"
               },
-              "do_after": [
-                "roll"
-              ],
+              "do_after": "roll",
               "<ontology::transfer>": {
                 "description": {
                   "zh": "根据玩家选择的领地类型和骰子点数，按仓库区连线对应的材料，从供应堆取 1 个标记放入对应仓库格。",
@@ -3164,9 +3088,7 @@
                 "zh": "获得分数",
                 "en": "Gain Points"
               },
-              "do_after": [
-                "flip_site"
-              ],
+              "do_after": "flip_site",
               "<ontology::push_track>": {
                 "<ontology::track>": "<score_track>",
                 "step": "this.target.score"
@@ -3178,9 +3100,7 @@
                 "zh": "触发地点效果",
                 "en": "Resolve Site Effect"
               },
-              "do_after": [
-                "gain_points"
-              ],
+              "do_after": "gain_points",
               "<ontology::resolve>": {
                 "<ontology::content>": "this.target.<ontology::effect>"
               }
@@ -3269,9 +3189,7 @@
                 "en": "Displace Occupant"
               },
               "specifies": "<ontology::trigger>",
-              "do_after": [
-                "<place_new_tribe>"
-              ],
+              "do_after": "<place_new_tribe>",
               "<ontology::condition>": {
                 "zh": "放置营地为陆地营地，且已被任意<tribe>占据（无论自己或他人）。",
                 "en": "The encampment is a land encampment occupied by any <tribe> (own or opponent's)."
@@ -3298,9 +3216,7 @@
                 "en": "Weaken New Tribe"
               },
               "specifies": "<ontology::trigger>",
-              "do_after": [
-                "procreation_displace_occupant"
-              ],
+              "do_after": "procreation_displace_occupant",
               "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "<ontology::state_change>": {
@@ -3322,9 +3238,7 @@
                 "en": "Score Fire Encampment"
               },
               "specifies": "<ontology::trigger>",
-              "do_after": [
-                "<place_new_tribe>"
-              ],
+              "do_after": "<place_new_tribe>",
               "<ontology::condition>": {
                 "zh": "放置营地是篝火营地（黄色边框）。",
                 "en": "The encampment is a fire encampment (yellow border)."
@@ -3345,9 +3259,7 @@
                 "en": "Develop Territory"
               },
               "specifies": "<ontology::trigger>",
-              "do_after": [
-                "<place_new_tribe>"
-              ],
+              "do_after": "<place_new_tribe>",
               "<ontology::condition>": {
                 "zh": "目标区域不是水流区域，且该区域<material_tile>背面朝上（此前无部落驻足）。",
                 "en": "The territory is not a Water territory, and its <material_tile> is face-down (no tribe has ever settled here)."
@@ -3423,9 +3335,7 @@
                 "zh": "可选：询问是否消耗<idea_marker>修改所选骰子的点数（每 1 个 = ±1，1 和 6 相连）。",
                 "en": "Optional: ask whether to spend <idea_marker>s to modify the chosen die's value (each = ±1, 1 and 6 are adjacent)."
               },
-              "do_after": [
-                "roll_dice"
-              ],
+              "do_after": "roll_dice",
               "options": [
                 {
                   "id": "_skip",
@@ -3448,9 +3358,7 @@
                 "destination": "<food_space>",
                 "<ontology::object>": "<octagonal_pillar>"
               },
-              "do_after": [
-                "adjust_dice"
-              ]
+              "do_after": "adjust_dice"
             },
             {
               "<ontology::transfer>": {
@@ -3664,9 +3572,7 @@
                         "zh": "投掷骰子",
                         "en": "Roll the Die"
                       },
-                      "do_after": [
-                        "take_activation_die"
-                      ],
+                      "do_after": "take_activation_die",
                       "<ontology::die_roll>": {
                         "description": {
                           "zh": "投掷该激活骰一次，确定点数。",
@@ -3682,9 +3588,7 @@
                         "zh": "放入骰子格",
                         "en": "Place on Dice Space"
                       },
-                      "do_after": [
-                        "roll_die"
-                      ],
+                      "do_after": "roll_die",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
@@ -3738,9 +3642,7 @@
                         "zh": "投掷骰子",
                         "en": "Roll the Die"
                       },
-                      "do_after": [
-                        "take_activation_die"
-                      ],
+                      "do_after": "take_activation_die",
                       "<ontology::die_roll>": {
                         "description": {
                           "zh": "投掷该激活骰一次，确定点数。",
@@ -3756,9 +3658,7 @@
                         "zh": "放入骰子格",
                         "en": "Place on Dice Space"
                       },
-                      "do_after": [
-                        "roll_die"
-                      ],
+                      "do_after": "roll_die",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
@@ -3831,9 +3731,7 @@
                         "zh": "加入粉骰",
                         "en": "Add to Fate Dice"
                       },
-                      "do_after": [
-                        "take_fate_die"
-                      ],
+                      "do_after": "take_fate_die",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
@@ -3887,9 +3785,7 @@
                         "zh": "加入粉骰",
                         "en": "Add to Fate Dice"
                       },
-                      "do_after": [
-                        "take_fate_die"
-                      ],
+                      "do_after": "take_fate_die",
                       "<ontology::transfer>": {
                         "description": {
                           "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
@@ -4058,9 +3954,7 @@
                 "zh": "获得创意标记",
                 "en": "Gain Idea Marker"
               },
-              "do_after": [
-                "place_farm"
-              ],
+              "do_after": "place_farm",
               "<ontology::transfer>": {
                 "description": {
                   "zh": "（标记放上创意格后才成为<idea_marker>）",
@@ -4149,9 +4043,7 @@
                 "zh": "奖励",
                 "en": "Reward"
               },
-              "do_after": [
-                "place"
-              ],
+              "do_after": "place",
               "<gain_income_chip>": {
                 "description": {
                   "zh": "获得 1 个收入芯片并立即触发其效果。若是第 4 个聚落，可额外将层级四或层级五板块翻至激活面。",
@@ -4215,9 +4107,7 @@
                 "zh": "部落登船",
                 "en": "Board Tribe"
               },
-              "do_after": [
-                "place_boat"
-              ],
+              "do_after": "place_boat",
               "options": [
                 {
                   "id": "_skip",
@@ -4333,9 +4223,7 @@
                 "zh": "推进轨道",
                 "en": "Push Track"
               },
-              "do_after": [
-                "place_statue"
-              ],
+              "do_after": "place_statue",
               "options": [
                 {
                   "id": "_skip",
@@ -4457,9 +4345,7 @@
               "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             },
             {
-              "do_after": [
-                "adjust_dice"
-              ],
+              "do_after": "adjust_dice",
               "<ontology::effect>": "this.target 的 effect（其声明的 cost + 当前等级效果）"
             }
           ],
@@ -4506,9 +4392,7 @@
                 "zh": "将同一<reset_marker>沿列再下推一格（B 位）。回收<activation_dice_area>中所有已使用的<activation_die>，全部重掷，将每颗骰子放回与点数匹配的格上。",
                 "en": "Push the same <reset_marker> another step down its column (position B). Retrieve all used <activation_die>s from <activation_dice_area>, re-roll all of them, and place each on its matching value space."
               },
-              "do_after": [
-                "step_a"
-              ]
+              "do_after": "step_a"
             },
             {
               "id": "step_c",
@@ -4516,9 +4400,7 @@
                 "zh": "C步：放置标记",
                 "en": "Step C: Place Marker"
               },
-              "do_after": [
-                "step_b"
-              ],
+              "do_after": "step_b",
               "options": [
                 {
                   "id": "to_idea",
@@ -4581,6 +4463,23 @@
           ],
           "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
         }
+      }
+    },
+    {
+      "id": "final_scoring_track_end",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "终局计分轨类别走完",
+        "en": "Final Scoring Categories Done"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<expansion>（第 9 格，最后一个计分类别格）——9 个计分类别全部结算完毕。",
+        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<expansion> (the 9th cell, the last scoring category) — all 9 categories have been scored."
+      },
+      "<ontology::condition>": {
+        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<expansion>",
+        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<expansion>"
       }
     },
     {
