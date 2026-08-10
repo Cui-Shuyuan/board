@@ -3439,16 +3439,16 @@
                       "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<point_bonus>)."
                     }
                   },
-                "target": "所有带分数加成图标的卡牌及其所在列的全部卡牌与收入芯片",
+                "target": "所有已安装的包含分数奖励的研究牌（<research_card>）",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                       "description": {
-                        "zh": "结算 point bonus 卡：每位玩家对每张带分数加成图标的卡牌，为其所在列的所有卡牌和收入芯片（含该卡牌自身）提供额外分数。",
-                        "en": "Score point bonus cards: for each card bearing the bonus icon, all cards and income chips in its column (including itself) gain the bonus points."
+                        "zh": "加总 target 中每张研究牌标示的分数奖励，计入 <score_track>。",
+                        "en": "Sum the indicated score bonuses of every research card in the target, gained on the <score_track>."
                       },
                       "<ontology::push_track>": {
                         "<ontology::track>": "<score_track>",
-                        "step": "Σ（每张带分数加成图标的卡牌所在列的卡牌与收入芯片数 × 该卡牌标示的加成分数）"
+                        "step": "Σ（所有已安装的含分数奖励 <research_card> 的标示分数之和）"
                       }
                   }
                 }
@@ -4225,110 +4225,6 @@
       "description": {
         "zh": "帮助玩家理解阶段顺序和图标含义的辅助卡。",
         "en": "A card helping players understand phase order and icon meanings. "
-      }
-    },
-    {
-      "id": "phase_1_new_cards",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "新的卡牌",
-        "en": "New Cards"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第一个 <ontology::phase>。翻开事件牌堆顶一张（覆盖上时代事件牌），显示本时代天气变化方向和事件效果；然后翻开 5 个背面朝下研究牌堆各顶部一张，放到对应的正面朝上研究牌堆上。",
-        "en": "The first <ontology::phase> of each era. Reveal the top event card (covering the previous era's), showing this era's weather change and event effect; then reveal the top card from each of the 5 face-down research decks onto the corresponding face-up stacks."
-      }
-    },
-    {
-      "id": "phase_2_new_goals",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "新的目标",
-        "en": "New Goals"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第二个 <ontology::phase>。从起始玩家开始顺时针，每位玩家可选择从 <goal_chip_display> 拿取一枚 <goal_chip> 安装到 <goal_column>，或跳过；随后补满展示区空位。",
-        "en": "The second <ontology::phase> of each era. Starting with the start player clockwise, each player may take a <goal_chip> from the <goal_chip_display> into their <goal_column>, or pass; then refill empty display spaces."
-      }
-    },
-    {
-      "id": "phase_3_extra_find",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "额外收获",
-        "en": "Extra Find"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第三个 <ontology::phase>。从起始玩家开始顺时针，每位玩家选择一个有自己 <tribe> 的大陆区域，从该区域可产出的材料中选一种获得一个 <raw_material>，放置到对应位置。",
-        "en": "The third <ontology::phase> of each era. Starting with the start player clockwise, each player chooses a <territory> containing their <tribe>, selects one of the materials it produces, and gains a <raw_material>."
-      }
-    },
-    {
-      "id": "phase_4_action",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "行动阶段",
-        "en": "Action Phase"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的主要 <ontology::phase>。玩家顺时针轮流行动，每回合必须二选一：激活一个 <module>（支付恰好 2 个对应点数的 <activation_die>，或用 <planning_marker>/<focus_marker> 替代）或执行 Reset（前提：骰子区剩余 ≤3 个 <activation_die>）。阶段标记沿 <phase_sequence> 的黄色箭头逐步推进，到达红色格后触发行动阶段结束。",
-        "en": "The main <ontology::phase> of each era. Players take turns clockwise; each turn must either activate a <module> (pay exactly 2 <activation_die>s of matching values, or use <planning_marker>/<focus_marker>) or perform a Reset (only if ≤3 <activation_die>s remain on dice spaces). The phase indicator advances along the <phase_sequence>'s yellow arrow; reaching the red space triggers the end of the Action phase."
-      }
-    },
-    {
-      "id": "phase_5_site",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "地点阶段",
-        "en": "Site Phase"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第五个 <ontology::phase>。结算 <continent> 上已翻开的 <site> 效果。",
-        "en": "The fifth <ontology::phase> of each era. Resolve effects of revealed <site>s on the <continent>."
-      }
-    },
-    {
-      "id": "phase_6_feeding",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "喂养阶段",
-        "en": "Feeding Phase"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第六个 <ontology::phase>。玩家从 <food_space> 支付 <food> 喂养 <tribe>：营地/船上的部落各需 1 个，野外部落各需 2 个。未喂饱的部落死亡，放回供应堆。之后所有站立部落得 1 分。",
-        "en": "The sixth <ontology::phase> of each era. Players pay <food> from their <food_space> to feed <tribe>s: 1 each for tribes on encampments/boats, 2 each for tribes in the wilderness. Unfed tribes die and return to supply. Then each standing tribe scores 1 point."
-      }
-    },
-    {
-      "id": "phase_7_event",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "事件阶段",
-        "en": "Event Phase"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第七个 <ontology::phase>。依次执行：结算天气效果、结算 <event_card> 效果、时代计分（按 <era_scoring_area> 中 <scoring_tile> 类别）、确定新的起始玩家（刚在该计分类别中得分最高者）。",
-        "en": "The seventh <ontology::phase> of each era. Execute in order: resolve weather effect, resolve <event_card> effect, era scoring (by <scoring_tile>s in the <era_scoring_area>), determine new starting player (highest scorer of that category)."
-      }
-    },
-    {
-      "id": "phase_8_income",
-      "specifies": "<ontology::phase>",
-      "name": {
-        "zh": "收入阶段",
-        "en": "Income Phase"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "每个时代的第八个 <ontology::phase>。依次执行：A) 获得收入——每位玩家对每个已安装 <income_chip> 各执行一次 <activate_income_chip>（顺序自选，可同时进行，少数按座次）；B) 结算 <statue> 收入——每座雕像得 <favor_of_ager_track> 圆盘上方印的分数；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家从供应堆补满空 <reset_column>。收尾：前三时代将 <phase_indicator> 移回阶段一；第四时代（<era_scoring_area> 全空）跳过 C/D，将 <phase_indicator> 放到终局计分轨最左格进入终局计分。",
-        "en": "The eighth <ontology::phase> of each era. Execute in order: A) gain income — each player performs <activate_income_chip> once per installed <income_chip> (order of choice, may be simultaneous, a few cases in seating order); B) score <statue>s — each statue gains the points printed above your disc on the <favor_of_ager_track>; C) return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) each player refills empty <reset_column>s from supply. Ending: eras 1-3 return the <phase_indicator> to Phase 1; the 4th era (era scoring area empty) skips C/D and places the <phase_indicator> on the leftmost final-scoring hexagon, entering final scoring."
       }
     },
     {
