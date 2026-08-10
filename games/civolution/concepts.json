@@ -3335,8 +3335,8 @@
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                       "description": {
-                        "zh": "结算繁荣类别计分：每有 1 个活跃钻石（<console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                        "en": "Score Prosperity: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each active diamond (<food_space>: 1 per 3 markers; <money_space>: 1 per 2 markers; visible recess diamonds of built <settlement>s; <storage_area> diamonds with material on both flanking spaces), on the <score_track>."
+                        "zh": "结算繁荣类别计分：每有 1 个活跃钻石（<console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石（食物与钱币合计最多 5 个）、已建 <settlement> 可见的空凹槽钻石、<storage_area> 钻石（每列行 1-2 间最多 1 个、行 2-3 间最多 2 个，上下两格均存放材料时激活）），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Prosperity: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each active diamond (<food_space>: 1 per 3 markers; <money_space>: 1 per 2 markers (food and money combined at most 5); visible recess diamonds of built <settlement>s; <storage_area> diamonds (per column at most 1 between rows 1-2 and at most 2 between rows 2-3, active when both flanking spaces hold material)), on the <score_track>."
                       },
                       "<ontology::push_track>": {
                         "<ontology::track>": "<score_track>",

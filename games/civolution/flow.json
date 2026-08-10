@@ -1565,8 +1565,8 @@
                                       },
                                       "specifies": "<ontology::push_track>",
                                       "description": {
-                                        "zh": "每有 1 个活跃钻石，得当前时代计分板块显示的分数（每个分值），计入 <score_track>。活跃钻石 = <console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石。",
-                                        "en": "Gain the value shown on the current era's scoring tile for each active diamond, on the <score_track>. Active diamonds are on the left half of your <console> — <food_space>: 1 diamond per 3 markers, <money_space>: 1 diamond per 2 markers, visible recess diamonds of built <settlement>s, <storage_area> diamonds with material on both flanking spaces."
+                                        "zh": "每有 1 个活跃钻石，得当前时代计分板块显示的分数（每个分值），计入 <score_track>。活跃钻石 = <console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石（食物与钱币合计最多 5 个）、已建 <settlement> 可见的空凹槽钻石、<storage_area> 钻石（每列行 1-2 间最多 1 个、行 2-3 间最多 2 个，上下两格均存放材料时激活）。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each active diamond, on the <score_track>. Active diamonds are on the left half of your <console> — <food_space>: 1 diamond per 3 markers, <money_space>: 1 diamond per 2 markers (food and money combined at most 5), visible recess diamonds of built <settlement>s, <storage_area> diamonds (per column at most 1 between rows 1-2 and at most 2 between rows 2-3, active when both flanking spaces hold material)."
                                       },
                                       "<ontology::track>": "<score_track>",
                                       "step": "本玩家活跃钻石数 × 当前时代计分板块显示的每个分值"
@@ -1915,12 +1915,85 @@
                   },
                   "specifies": "<ontology::evaluate>",
                   "description": {
-                    "zh": "比较所有玩家的成功点数，最高者获胜。平局时，已执行更多模组升级的玩家胜出；仍平局则按座位顺序（从起始玩家顺时针）先到者胜。",
-                    "en": "Compare all players' success points; the highest wins. Tiebreaker: the tied player with more module upgrades wins; if still tied, the tied player earliest in seating order (clockwise from starting player) wins."
+                    "zh": "逐级比较判定胜者：先比成功点数，并列者再比模组升级数，仍并列者比座次顺序——每一级若分出唯一胜者即结束，否则进入下一级。",
+                    "en": "Adjudicate the winner level by level: compare success points first; tied players compare module upgrades; still tied players compare seating order — each level ends the adjudication if it yields a unique winner, otherwise the next level applies."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "compare_success_points",
+                          "name": {
+                            "zh": "比较成功点数",
+                            "en": "Compare Success Points"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "比较所有玩家的成功点数，最高者获胜（唯一时判定结束）。",
+                            "en": "Compare all players' success points; the highest wins (adjudication ends if unique)."
+                          },
+                          "result": {
+                            "zh": "成功点数最高的玩家；若并列则并列者进入下一级。",
+                            "en": "The player(s) with the highest success points; ties advance to the next level."
+                          }
+                        },
+                        {
+                          "id": "compare_module_upgrades",
+                          "name": {
+                            "zh": "比较模组升级数",
+                            "en": "Compare Module Upgrades"
+                          },
+                          "do_after": [
+                            "compare_success_points"
+                          ],
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "成功点数并列的玩家中，已执行更多模组升级者获胜（唯一时判定结束）。",
+                            "en": "Among the tied players, the one with more module upgrades wins (adjudication ends if unique)."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "成功点数最高的玩家不唯一（存在并列）。",
+                              "en": "The player(s) with the highest success points are not unique (a tie exists)."
+                            }
+                          },
+                          "result": {
+                            "zh": "升级数最多的平局玩家；仍并列则进入下一级。",
+                            "en": "The tied player(s) with the most module upgrades; further ties advance to the next level."
+                          }
+                        },
+                        {
+                          "id": "compare_seating_order",
+                          "name": {
+                            "zh": "比较座次顺序",
+                            "en": "Compare Seating Order"
+                          },
+                          "do_after": [
+                            "compare_module_upgrades"
+                          ],
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "仍并列的玩家按座次顺序（从起始玩家顺时针）先到者获胜。",
+                            "en": "Among the still-tied players, the one earliest in seating order (clockwise from the starting player) wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "模组升级数最多的平局玩家不唯一（仍存在并列）。",
+                              "en": "The tied player(s) with the most module upgrades are not unique (still tied)."
+                            }
+                          },
+                          "result": {
+                            "zh": "座次最前的平局玩家（必为唯一胜者）。",
+                            "en": "The tied player earliest in seating order (always a unique winner)."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    }
                   },
                   "result": {
-                    "zh": "成功点数最高的玩家。",
-                    "en": "The player with the highest success points."
+                    "zh": "胜者玩家。",
+                    "en": "The winning player."
                   }
                 }
               ],
@@ -1933,6 +2006,87 @@
     }
   ],
   "triggers": [
+    {
+      "id": "score_lap",
+      "name": {
+        "zh": "完成计分圈",
+        "en": "Complete Score Lap"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上完成一圈（推过 100——移动到或越过 0 格）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
+        "en": "Whenever a player's <score_marker> completes a lap on the <score_track> (past 100 — moved onto or past space 0), that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
+      },
+      "<ontology::condition>": {
+        "description": {
+          "zh": "某玩家的 <score_marker> 在 <score_track> 上移动到或越过 0 格（每满 100 分完成一圈）。",
+          "en": "A player's <score_marker> has moved onto or past space 0 of the <score_track> (a full lap of 100 points)."
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放到该玩家控制台旁。",
+              "en": "Take 1 <hundred_point_token> from the <hundred_point_token_display> and place it next to that player's console."
+            },
+            "source": "<hundred_point_token_display>",
+            "destination": "该玩家控制台旁",
+            "<ontology::object>": "<hundred_point_token>",
+            "quantity": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "replenish_marker_supply",
+      "name": {
+        "zh": "补充标记供应堆",
+        "en": "Replenish Marker Supply"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "每位玩家的标记供应堆上限 50 个 <octagonal_pillar>。当玩家需要从自己的供应堆拿取标记但供应堆已空时，可立即回收 <console> 或 <continent> 上的任意数量标记退回供应堆以补充——雕像 <statue>、重置标记 <reset_marker> 和船（<boat>）上的标记除外。",
+        "en": "Each player's marker supply holds up to 50 <octagonal_pillar>s. When a player needs to take markers from their supply but it is empty, they may immediately return any number of markers from the <console> or <continent> to replenish it — except <statue>s, <reset_marker>s, and markers on <boat>s."
+      },
+      "<ontology::condition>": {
+        "description": {
+          "zh": "某玩家需要从自己的标记供应堆拿取标记，但供应堆已空。",
+          "en": "A player needs to take markers from their supply, but the supply is empty."
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "_skip",
+              "description": {
+                "zh": "不回收（跳过）",
+                "en": "Skip (do not replenish)"
+              }
+            },
+            {
+              "id": "recycle_markers",
+              "name": {
+                "zh": "回收标记",
+                "en": "Recycle Markers"
+              },
+              "<ontology::transfer>": {
+                "description": {
+                  "zh": "从 <console> 或 <continent> 上回收任意数量的标记退回该玩家的供应堆（雕像、重置标记与船上的标记除外）。",
+                  "en": "Return any number of markers from the <console> or <continent> to the player's supply (except <statue>s, <reset_marker>s, and markers on <boat>s)."
+                },
+                "source": "<console> 上除 <reset_marker> 以外的 <octagonal_pillar>，或 <continent> 上的 <octagonal_pillar>",
+                "destination": "该玩家的供应堆",
+                "<ontology::object>": "<octagonal_pillar>",
+                "quantity": "任意数量（雕像、重置标记、船上的标记除外）"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
     {
       "id": "favor_test",
       "name": {
