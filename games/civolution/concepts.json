@@ -3164,13 +3164,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<technology>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<technology>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<technology>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<technology>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算科技类别计分：每有 1 个 <technology_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Technology: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <technology_track>), on the <score_track>."
+                      "description": {
+                        "zh": "结算科技类别计分：每有 1 个 <technology_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Technology: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <technology_track>), on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家圆盘在 <technology_track> 所在格数字 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3182,13 +3191,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<prestige>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<prestige>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<prestige>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<prestige>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算声望类别计分：每有 1 个 <prestige_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Prestige: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <prestige_track>), on the <score_track>."
+                      "description": {
+                        "zh": "结算声望类别计分：每有 1 个 <prestige_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Prestige: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <prestige_track>), on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家圆盘在 <prestige_track> 所在格数字 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3200,13 +3218,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<knowledge>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<knowledge>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<knowledge>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<knowledge>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算知识类别计分：每有 1 个 <knowledge_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Knowledge: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <knowledge_track>), on the <score_track>."
+                      "description": {
+                        "zh": "结算知识类别计分：每有 1 个 <knowledge_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Knowledge: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <knowledge_track>), on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家圆盘在 <knowledge_track> 所在格数字 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3218,13 +3245,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<construction>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<construction>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<construction>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<construction>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算建设类别计分：每有 1 个 <construction_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Construction: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <construction_track>), on the <score_track>."
+                      "description": {
+                        "zh": "结算建设类别计分：每有 1 个 <construction_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Construction: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <construction_track>), on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家圆盘在 <construction_track> 所在格数字 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3236,13 +3272,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<culture>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<culture>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<culture>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<culture>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算文化类别计分：每有 1 个 <culture_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Culture: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <culture_track>), on the <score_track>."
+                      "description": {
+                        "zh": "结算文化类别计分：每有 1 个 <culture_track> 轨道步数（圆盘所在格的数字），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Culture: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each progress-track step of your disc (the digit printed on its space on the <culture_track>), on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家圆盘在 <culture_track> 所在格数字 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3254,13 +3299,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<evolution>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<evolution>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<evolution>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<evolution>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算进化类别计分：每有 1 个特征格上的 <feature_marker>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Evolution: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each <feature_marker> on your feature spaces, on the <score_track>."
+                      "description": {
+                        "zh": "结算进化类别计分：每有 1 个特征格上的 <feature_marker>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Evolution: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each <feature_marker> on your feature spaces, on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家 <feature_marker> 总数 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3272,13 +3326,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<prosperity>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<prosperity>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<prosperity>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<prosperity>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算繁荣类别计分：每有 1 个活跃钻石（<console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Prosperity: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each active diamond (<food_space>: 1 per 3 markers; <money_space>: 1 per 2 markers; visible recess diamonds of built <settlement>s; <storage_area> diamonds with material on both flanking spaces), on the <score_track>."
+                      "description": {
+                        "zh": "结算繁荣类别计分：每有 1 个活跃钻石（<console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石），得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Prosperity: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each active diamond (<food_space>: 1 per 3 markers; <money_space>: 1 per 2 markers; visible recess diamonds of built <settlement>s; <storage_area> diamonds with material on both flanking spaces), on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家活跃钻石数 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3290,13 +3353,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<population>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<population>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<population>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<population>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算人口类别计分：每有 1 个在 <continent> 上的 <tribe>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Population: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each of your <tribe>s on the <continent>, on the <score_track>."
+                      "description": {
+                        "zh": "结算人口类别计分：每有 1 个在 <continent> 上的 <tribe>，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Population: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each of your <tribe>s on the <continent>, on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家 <tribe> 总数 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3308,13 +3380,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<expansion>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<expansion>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<expansion>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<expansion>)."
+                    }
+                  },
+                "target": "每位玩家",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算扩张类别计分：每有 1 个有至少 1 个 <tribe> 的区域，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
-                    "en": "Score Expansion: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each territory holding at least 1 of your <tribe>s, on the <score_track>."
+                      "description": {
+                        "zh": "结算扩张类别计分：每有 1 个有至少 1 个 <tribe> 的区域，得本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数），计入 <score_track>。",
+                        "en": "Score Expansion: gain the value printed below this cell (or the covering <scoring_tile>'s points) for each territory holding at least 1 of your <tribe>s, on the <score_track>."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "本玩家有部落的区域数 × 本格下方印的分值（被 <scoring_tile> 覆盖时取板块分数）"
+                      }
                   }
                 }
               }
@@ -3353,13 +3434,22 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::condition>": {
-                  "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<point_bonus>）。",
-                  "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<point_bonus>)."
-                },
+                    "description": {
+                      "zh": "<phase_indicator> 位于本格（<final_scoring_area_hex>.<point_bonus>）。",
+                      "en": "The <phase_indicator> is on this cell (<final_scoring_area_hex>.<point_bonus>)."
+                    }
+                  },
+                "target": "所有带分数加成图标的卡牌及其所在列的全部卡牌与收入芯片",
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
-                    "zh": "结算 point bonus 卡：每位玩家对每张带分数加成图标的卡牌，为其所在列的所有卡牌和收入芯片（含该卡牌自身）提供额外分数。",
-                    "en": "Score point bonus cards: for each card bearing the bonus icon, all cards and income chips in its column (including itself) gain the bonus points."
+                      "description": {
+                        "zh": "结算 point bonus 卡：每位玩家对每张带分数加成图标的卡牌，为其所在列的所有卡牌和收入芯片（含该卡牌自身）提供额外分数。",
+                        "en": "Score point bonus cards: for each card bearing the bonus icon, all cards and income chips in its column (including itself) gain the bonus points."
+                      },
+                      "<ontology::push_track>": {
+                        "<ontology::track>": "<score_track>",
+                        "step": "Σ（每张带分数加成图标的卡牌所在列的卡牌与收入芯片数 × 该卡牌标示的加成分数）"
+                      }
                   }
                 }
               }
