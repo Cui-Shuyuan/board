@@ -97,7 +97,7 @@ options 的元素可以是：
 | 原子 | 写法 |
 |---|---|
 | options | 候选项数组。里面装什么由具体场景决定——card、resource、transfer、action、子 pipeline、player、zone、甚至 _skip |
-| type | 处理策略，引用 `multiple_choice_enum`：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / CHOOSE_ANY |
+| type | 处理策略，引用 `multiple_choice_enum`：EXECUTE_ALL / CHOOSE_ONE / CHOOSE_AT_LEAST_ONE / CHOOSE_ANY / **MATCH**（2026-08-10 新增：规则匹配执行——由规则/局面事实决定哪个/哪些执行。**结构与 type 同级持有单个 `<ontology::condition>` 描述匹配依据**（不管多少个 options 只写一个 condition，不挂 option 级），规则按该依据从候选中选定执行者，命中数量由局面决定。区别于 CHOOSE_ONE 的玩家决策、EXECUTE_ALL 的全执行。典型场景：板块类别决定计分哪类） |
 | do_after | 前置依赖。仅当 do_after 中所有项完成（或跳过）后才可执行 |
 | loop | 循环边界（**procedure 顶层字段，不在 pipeline 内**），两种形态对称：`{ "count": N, "counter": "<名>" }` 定次循环（N 为数字或引用；counter 可选，供步骤引用迭代号——「进行 4 轮」= count 4）；`{ "until": <condition> }` 条件循环（until 为字符串引用或内联谓词 { zh, en }）——用于次数未知的规则（如「一直进行到有人 15 分」）。每次迭代重新求值 type 与 do_after |
 

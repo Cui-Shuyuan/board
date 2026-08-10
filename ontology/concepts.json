@@ -2297,8 +2297,8 @@
           {
             "id": "values",
             "description": {
-              "zh": "枚举值：EXECUTE_ALL = 全部执行，CHOOSE_ONE = 选择 1 个执行，CHOOSE_AT_LEAST_ONE = 选择至少 1 个执行，CHOOSE_ANY = 任意数量执行（0 到全部，每项最多 1 次）。",
-              "en": "Enum values: EXECUTE_ALL = execute all, CHOOSE_ONE = choose one, CHOOSE_AT_LEAST_ONE = choose at least one, CHOOSE_ANY = choose any (0 to all, each at most once)."
+              "zh": "枚举值：EXECUTE_ALL = 全部执行，CHOOSE_ONE = 玩家选择 1 个执行，CHOOSE_AT_LEAST_ONE = 玩家选择至少 1 个执行，CHOOSE_ANY = 玩家选择任意数量执行（0 到全部，每项最多 1 次），MATCH = 规则匹配执行——由规则/局面事实决定哪个或哪些执行：选择结构（options/type）持有单个 <ontology::condition> 与 type 同级，描述匹配依据（如「按板块显示的类别匹配」），规则按该依据从候选中选定执行者，命中数量由局面决定。命中候选按 options 顺序执行；未命中的候选视为跳过，在 do_after 链上视为已完成（不阻断后续步骤，与 _skip 一致）。",
+              "en": "Enum values: EXECUTE_ALL = execute all, CHOOSE_ONE = a player chooses one, CHOOSE_AT_LEAST_ONE = a player chooses at least one, CHOOSE_ANY = a player chooses any (0 to all, each at most once), MATCH = rule-matched execution — the rules/board state determine which candidate(s) execute: the selection structure (options/type) holds a single <ontology::condition> at the same level as type, describing the matching basis (e.g. \"matched by the category shown on the tile\"); the rules select the executing candidate(s) per that basis; how many match depends on the state. Matched candidates execute in options order; unmatched candidates count as skipped and are treated as completed on the do_after chain (they do not block later steps, consistent with _skip)."
             }
           }
         ],

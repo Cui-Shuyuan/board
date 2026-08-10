@@ -957,8 +957,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "每时代翻开一张的 <ontology::card>，决定本时代天气变化和事件奖励。右上角指示天气标记移动方向和步数，下方为事件效果。",
-        "en": "A <ontology::card> revealed once per era, determining the era's weather change and event bonus. The top-right indicates weather movement direction and steps; the lower part shows the event effect."
+        "zh": "每时代翻开一张的 <ontology::card>，决定本时代天气变化和事件奖励。它携带两个效果（<weather_trend> 与 <event_effect> 两个 part），分两个环节结算：右上角 <weather_trend>（天气效果——事件阶段 A 步据此移动 <weather_indicator>）；下半部分 <event_effect>（事件效果——事件阶段 B 步结算奖励）。",
+        "en": "A <ontology::card> revealed once per era, determining the era's weather change and event effect. It carries two effects (the <weather_trend> and <event_effect> parts), resolved in two steps: the <weather_trend> in the top-right corner (weather effect — moves the <weather_indicator> in step A of the Event phase); the <event_effect> on the lower part (event effect — resolved in step B of the Event phase)."
       },
       "parts": [
         {
@@ -980,12 +980,23 @@
               "en": "top-right corner of the event card"
             },
             "description": {
-              "zh": "本时代天气标记沿 <weather_gauge> 移动的方向和步数",
-              "en": "the direction and number of steps the weather marker moves along the <weather_gauge> this era"
+              "zh": "天气效果（事件阶段 A 步结算）——本时代天气标记沿 <weather_gauge> 移动的方向和步数，效果定义见 <weather_trend>",
+              "en": "The weather effect (resolved in step A of the Event phase) — the direction and number of steps the weather marker moves along the <weather_gauge> this era; its effect is defined on <weather_trend>"
             }
           }
         },
-        "<ontology::instant_content>"
+        {
+          "<event_effect>": {
+            "position": {
+              "zh": "事件牌下半部分",
+              "en": "lower part of the event card"
+            },
+            "description": {
+              "zh": "事件效果（事件阶段 B 步结算）——其 <ontology::condition> 成立时结算 <ontology::content>，效果定义见 <event_effect>",
+              "en": "The event effect (resolved in step B of the Event phase) — when its <ontology::condition> holds, its <ontology::content> is resolved; its effect is defined on <event_effect>"
+            }
+          }
+        }
       ],
       "media": {
         "component": [
@@ -1002,8 +1013,51 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<event_card>右上角的天气变化指示器，显示本时代天气标记沿<weather_gauge>移动的方向（向热端或向冷端）和步数。事件阶段结算时据此移动天气标记。",
-        "en": "A weather change indicator at the top-right corner of an <event_card>, showing the direction (toward the hot or cold end) and number of steps the weather marker moves along the <weather_gauge> this era. The weather marker is moved accordingly during the Event phase."
+        "zh": "<event_card>右上角的天气变化指示器，显示本时代天气标记沿<weather_gauge>移动的方向（向热端或向冷端）和步数。它是事件牌的两个效果之一（天气效果）：事件阶段 A 步结算此效果，据此移动天气标记；事件牌的另一效果（事件奖励）见其 <event_effect> part。",
+        "en": "A weather change indicator at the top-right corner of an <event_card>, showing the direction (toward the hot or cold end) and number of steps the weather marker moves along the <weather_gauge> this era. It is one of the event card's two effects (the weather effect): resolved in step A of the Event phase to move the weather marker; the card's other effect (the event effect) is its <event_effect> part."
+      },
+      "<ontology::effect>": {
+        "<ontology::instant_effect>": {
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::push_track>": {
+                "<ontology::track>": "<weather_gauge>",
+                "step": "本牌指示的 1 或 2 步（向热端或向冷端）"
+              },
+              "description": {
+                "zh": "将 <weather_indicator> 沿 <weather_gauge> 按本牌 <weather_trend> 指示移动 1 或 2 步（变热向热端、变冷向冷端）。白线位于 <hot_beyond> 与 <hot> 之间、<cold_beyond> 与 <cold> 之间：若移动使标记越出白线（目标位置在 <hot> 外侧或 <cold> 外侧），标记停在白线外的越线格（<hot_beyond> 或 <cold_beyond>，越出 2 步也停在该格不继续外移）。",
+                "en": "Move the <weather_indicator> along the <weather_gauge> by the 1 or 2 steps shown by this card's <weather_trend> (toward Hot when warming, toward Cold when cooling). The white lines lie between <hot_beyond> and <hot>, and between <cold_beyond> and <cold>: if the movement takes the indicator over a white line (target position outside <hot> or outside <cold>), it stops on the over-line space (<hot_beyond> or <cold_beyond>; a 2-step overrun still stops there, never beyond)."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "event_effect",
+      "specifies": "<ontology::object>",
+      "name": {
+        "zh": "事件效果",
+        "en": "Event Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<event_card>下半部分的效果，事件牌的两个效果之一（事件效果）：事件阶段 B 步结算此效果——<ontology::condition> 成立时结算 <ontology::content>。每张牌的条件与内容不同（见实例）。事件牌的另一效果（天气效果）见其 <weather_trend> part。",
+        "en": "The effect on the lower part of an <event_card>, one of the event card's two effects (the event effect): resolved in step B of the Event phase — when its <ontology::condition> holds, its <ontology::content> is resolved. The condition and content vary per card (see the instance). The card's other effect (the weather effect) is its <weather_trend> part."
+      },
+      "<ontology::effect>": {
+        "<ontology::instant_effect>": {
+          "<ontology::condition>": {
+            "zh": "本事件牌效果的触发条件（每张牌不同，见实例）。",
+            "en": "This event card's effect condition (varies per card, see the instance)."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "zh": "本事件牌的效果内容（每张牌不同，见实例）。",
+              "en": "This event card's effect content (varies per card, see the instance)."
+            }
+          }
+        }
       }
     },
     {
@@ -2648,8 +2702,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <sequence_board> 上的轨，记录当前天气。共 5 格，从热端到冷端依次为：炎热、温暖、适中（起始位）、雨水、寒冷。炎热和寒冷为白线极端格。由 <weather_effect> 触发结算。",
-        "en": "A track on the <sequence_board> recording the current weather. 5 slots from hot to cold: Hot, Warm, Mild (starting space), Rain, Cold. Hot and Cold are white-line extreme spaces. Resolution is triggered by <weather_effect>."
+        "zh": "位于 <sequence_board> 上的轨，记录当前天气。共 7 格，从热端到冷端依次为：白线外热端（<hot_beyond>）、炎热、温暖、适中（起始位）、雨水、寒冷、白线外冷端（<cold_beyond>）。白线位于 <hot_beyond> 与 <hot> 之间、<cold_beyond> 与 <cold> 之间——白线内 5 格为正常天气格，白线外两端各 1 格为越线格。当 <weather_indicator> 移动越出白线（落在 <hot_beyond> 或 <cold_beyond>），结算该越线格的效果——移除 1 个 <tribe>，随后将标记推回白线内的极端格（<hot> 或 <cold>）。由 <weather_effect> 触发结算。",
+        "en": "A track on the <sequence_board> recording the current weather. 7 slots from hot to cold: <hot_beyond> (beyond the hot white line), Hot, Warm, Mild (starting space), Rain, Cold, <cold_beyond> (beyond the cold white line). The white lines lie between <hot_beyond> and <hot>, and between <cold_beyond> and <cold> — the 5 inner slots are the normal weather spaces, the 2 outer slots are over-line spaces. When the <weather_indicator> moves over a white line (landing on <hot_beyond> or <cold_beyond>), the over-line slot's effect is resolved — remove 1 <tribe> — and the indicator is then pushed back onto the extreme space inside the line (<hot> or <cold>). Resolution is triggered by <weather_effect>."
       },
       "contains": {
         "type": "<weather_indicator>",
@@ -2662,6 +2716,52 @@
       "<ontology::information_visibility>": "public",
       "<ontology::trigger>": "<weather_effect>",
       "slots": [
+        {
+          "hot_beyond": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "options": [
+                      {
+                        "id": "over_line_remove_tribe",
+                        "name": {
+                          "zh": "移除部落",
+                          "en": "Remove Tribe"
+                        },
+                        "description": {
+                          "zh": "移除 1 个 <tribe>（白线外描绘的效果，无选择，不可改以返还 <food> 代替）。",
+                          "en": "Remove 1 <tribe> (the effect depicted beyond the white line; no choice, cannot be substituted with returning <food>)."
+                        },
+                        "<ontology::transfer>": "<remove_tribe>"
+                      },
+                      {
+                        "id": "push_back_to_hot",
+                        "name": {
+                          "zh": "推回炎热格",
+                          "en": "Push Back to Hot"
+                        },
+                        "do_after": [
+                          "over_line_remove_tribe"
+                        ],
+                        "description": {
+                          "zh": "将 <weather_indicator> 推回白线内的 <hot> 格停住。",
+                          "en": "Push the <weather_indicator> back onto the <hot> space inside the white line."
+                        },
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<weather_gauge>",
+                          "to": "<weather_gauge>.<hot>"
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              }
+            }
+          }
+        },
         {
           "hot": {
             "count": 1,
@@ -2690,7 +2790,19 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::content>": {
-                  "<ontology::instant_content>": "<activate_income_chip>"
+                  "<ontology::instant_content>": {
+                    "options": [
+                      {
+                        "id": "_skip",
+                        "description": {
+                          "zh": "不做（跳过此项）",
+                          "en": "Skip this option"
+                        }
+                      },
+                      "<activate_income_chip>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  }
                 }
               }
             }
@@ -2704,6 +2816,13 @@
                 "<ontology::content>": {
                   "<ontology::instant_content>": {
                     "options": [
+                      {
+                        "id": "_skip",
+                        "description": {
+                          "zh": "不做（跳过此项）",
+                          "en": "Skip this option"
+                        }
+                      },
                       "<activate_income_chip>",
                       "<perform_activity>"
                     ],
@@ -2720,7 +2839,19 @@
             "<ontology::effect>": {
               "<ontology::instant_effect>": {
                 "<ontology::content>": {
-                  "<ontology::instant_content>": "<perform_activity>"
+                  "<ontology::instant_content>": {
+                    "options": [
+                      {
+                        "id": "_skip",
+                        "description": {
+                          "zh": "不做（跳过此项）",
+                          "en": "Skip this option"
+                        }
+                      },
+                      "<perform_activity>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  }
                 }
               }
             }
@@ -2742,6 +2873,52 @@
                       }
                     ],
                     "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "cold_beyond": {
+            "count": 1,
+            "<ontology::effect>": {
+              "<ontology::instant_effect>": {
+                "<ontology::content>": {
+                  "<ontology::instant_content>": {
+                    "options": [
+                      {
+                        "id": "over_line_remove_tribe",
+                        "name": {
+                          "zh": "移除部落",
+                          "en": "Remove Tribe"
+                        },
+                        "description": {
+                          "zh": "移除 1 个 <tribe>（白线外描绘的效果，无选择，不可改以返还 <food> 代替）。",
+                          "en": "Remove 1 <tribe> (the effect depicted beyond the white line; no choice, cannot be substituted with returning <food>)."
+                        },
+                        "<ontology::transfer>": "<remove_tribe>"
+                      },
+                      {
+                        "id": "push_back_to_cold",
+                        "name": {
+                          "zh": "推回寒冷格",
+                          "en": "Push Back to Cold"
+                        },
+                        "do_after": [
+                          "over_line_remove_tribe"
+                        ],
+                        "description": {
+                          "zh": "将 <weather_indicator> 推回白线内的 <cold> 格停住。",
+                          "en": "Push the <weather_indicator> back onto the <cold> space inside the white line."
+                        },
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<weather_gauge>",
+                          "to": "<weather_gauge>.<cold>"
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                   }
                 }
               }
@@ -2947,8 +3124,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "终局计分区中的图标格位 <ontology::zone>，每格印有一种计分类别图标。设置时随机抽取 <scoring_tile> 分数面朝上放置在对应图标格上——图标面匹配。",
-        "en": "Icon slots within the final scoring area — a <ontology::zone>, each slot printed with a scoring category icon. During setup, randomly drawn <scoring_tile>s are placed point-side up on the matching icon slots."
+        "zh": "终局计分区中的图标格位 <ontology::zone>，每格印有一种计分类别图标，格下方印有该类别默认分值。设置时随机抽取 3 张 <scoring_tile>，按图标匹配放到对应格下方——<ontology::replaces> 该格印的默认分值（终局计分时取板块上的分数）；未被覆盖的格用印的分值。",
+        "en": "Icon slots within the final scoring area — a <ontology::zone>, each slot printed with a scoring category icon and a default point value below it. During setup, 3 randomly drawn <scoring_tile>s are placed below their matching icon slots — <ontology::replaces> the printed default value of that space (the tile's points apply at final scoring); spaces not covered keep their printed value."
       },
       "contains": {
         "type": "<scoring_tile>[]",
@@ -3939,8 +4116,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "每个时代的第七个 <ontology::phase>。依次执行：结算天气效果、结算 <event_card> 效果、时代计分（按 <era_scoring_area> 中 <scoring_tile> 类别）、确定新的起始玩家（本阶段得分最高者）。",
-        "en": "The seventh <ontology::phase> of each era. Execute in order: resolve weather effect, resolve <event_card> effect, era scoring (by <scoring_tile>s in the <era_scoring_area>), determine new starting player (highest scorer this phase)."
+        "zh": "每个时代的第七个 <ontology::phase>。依次执行：结算天气效果、结算 <event_card> 效果、时代计分（按 <era_scoring_area> 中 <scoring_tile> 类别）、确定新的起始玩家（刚在该计分类别中得分最高者）。",
+        "en": "The seventh <ontology::phase> of each era. Execute in order: resolve weather effect, resolve <event_card> effect, era scoring (by <scoring_tile>s in the <era_scoring_area>), determine new starting player (highest scorer of that category)."
       }
     },
     {

@@ -204,15 +204,51 @@
                     "zh": "准备终局计分板块",
                     "en": "Prepare Final Scoring Tiles"
                   },
-                  "specifies": "<ontology::random_draw>",
                   "description": {
-                    "zh": "再从剩余计分板块中随机盲抽 3 张，先按图标面朝上放到终局计分区中对应图标下方，最后翻至分数面朝上（游戏终局时该分数生效）。",
-                    "en": "Blindly draw 3 more scoring tiles at random from the remaining ones, place each icon side up below its matching icon in the final scoring area, then flip them point side up (that value applies at final scoring)."
+                    "zh": "从剩余计分板块中随机盲抽 3 张，检视图标面，按图标匹配放到终局计分区对应格下方（覆盖该格印的默认分值），翻至分数面朝上——终局计分时该类别的分值取板块上的分数（被覆盖的格不再用印的分值）。",
+                    "en": "Blindly draw 3 scoring tiles at random from the remaining ones, inspect their icon sides, place each below its matching icon slot in the final scoring area (covering the printed default value of that space), and flip them point side up — the tile's points apply at final scoring (the covered space's printed value no longer counts)."
                   },
-                  "source": "<ontology::game_box>",
-                  "destination": "<final_scoring_area>",
-                  "<ontology::object>": "<scoring_tile>",
-                  "quantity": 3,
+                  "options": [
+                    {
+                      "id": "draw_final_scoring_tiles",
+                      "name": {
+                        "zh": "抽取计分板块",
+                        "en": "Draw Scoring Tiles"
+                      },
+                      "<ontology::random_draw>": {
+                        "description": {
+                          "zh": "从游戏盒中的剩余计分板块随机盲抽 3 张，检视图标面（暂不放置）。",
+                          "en": "Blindly draw 3 scoring tiles at random from the remaining ones in the game box and inspect their icon sides (not placed yet)."
+                        },
+                        "source": "<ontology::game_box>",
+                        "<ontology::object>": "<scoring_tile>",
+                        "quantity": 3
+                      }
+                    },
+                    {
+                      "id": "place_final_scoring_tiles",
+                      "name": {
+                        "zh": "放置到终局计分区",
+                        "en": "Place on Final Scoring Area"
+                      },
+                      "do_after": [
+                        "draw_final_scoring_tiles"
+                      ],
+                      "description": {
+                        "zh": "将刚抽出的计分板块按图标面匹配，放到 <final_scoring_area_icons> 对应图标格下方——覆盖该格印的默认分值，以分数面朝上放置（终局计分时该类别的分值取板块上的分数）。",
+                        "en": "Place the drawn scoring tiles below their matching icon slots in the <final_scoring_area_icons>, covering the printed default value of each space, point side up (the tile's points apply at final scoring)."
+                      },
+                      "<ontology::replaces>": {
+                        "target": "<final_scoring_area_icons> 各图标格下方印的默认分值空间（point space，图标匹配者）",
+                        "with": {
+                          "<scoring_tile>": {
+                            "face": "face_up"
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
                   "do_after": [
                     "prepare_era_scoring_tiles",
                     "place_progress_and_sequence_boards"
@@ -1241,10 +1277,6 @@
                           "zh": "结算所有已翻开<gorge_of_grimwolves>的 continuous_effect：与狼谷相邻的领地中有自己部落且食物格有食物的玩家，各失去 1 个食物（无食物豁免）。",
                           "en": "Resolve the continuous_effect of every revealed <gorge_of_grimwolves>: each player who has a tribe in an adjacent territory and food on the food space loses 1 food (exempt if without food)."
                         },
-                        "<ontology::condition>": {
-                          "zh": "至少 1 块<gorge_of_grimwolves>已翻开（face == <face_up>）。",
-                          "en": "At least 1 <gorge_of_grimwolves> is revealed (face == <face_up>)."
-                        },
                         "<ontology::effect>": "<gorge_of_grimwolves>.parts.<ontology::continuous_effect>"
                       },
                       {
@@ -1257,10 +1289,6 @@
                           "zh": "结算所有已翻开<glacier>的 continuous_effect：相邻领地中有强壮部落的玩家，虚弱（躺倒）其中一个强壮部落（弱部落不受影响，无强壮部落豁免）。",
                           "en": "Resolve the continuous_effect of every revealed <glacier>: each player who has a strong tribe in an adjacent territory weakens (lays down) one of those strong tribes (weak tribes are never affected; players without strong adjacent tribes are exempt)."
                         },
-                        "<ontology::condition>": {
-                          "zh": "至少 1 块<glacier>已翻开（face == <face_up>）。",
-                          "en": "At least 1 <glacier> is revealed (face == <face_up>)."
-                        },
                         "<ontology::effect>": "<glacier>.parts.<ontology::continuous_effect>"
                       },
                       {
@@ -1272,10 +1300,6 @@
                         "description": {
                           "zh": "结算所有已翻开<mystic_oak>的 continuous_effect：对每块橡树，每位玩家按相邻且有自己部落的区域计分——水/沼泽/沙漠区域各 2 分，森林/草原/丘陵/山脉区域各 1 分。",
                           "en": "Resolve the continuous_effect of every revealed <mystic_oak>: for each oak, each player scores 2 points per adjacent Water/Swamp/Desert area and 1 point per adjacent Forest/Grassland/Hill/Mountain area holding one of their tribes."
-                        },
-                        "<ontology::condition>": {
-                          "zh": "至少 1 块<mystic_oak>已翻开（face == <face_up>）。",
-                          "en": "At least 1 <mystic_oak> is revealed (face == <face_up>)."
                         },
                         "<ontology::effect>": "<mystic_oak>.parts.<ontology::continuous_effect>"
                       },
@@ -1294,7 +1318,11 @@
                         }
                       }
                     ],
-                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    "type": "<ontology::multiple_choice_enum.MATCH>",
+                    "<ontology::condition>": {
+                      "zh": "匹配依据：各地点类型是否已翻开（face == <face_up>）——翻开的地点类型结算其效果，未翻开的不结算（命中候选按 options 顺序依次结算）。",
+                      "en": "Matching basis: whether each site type is revealed (face == <face_up>) — revealed site types resolve their effects, unrevealed ones do not (matched candidates resolve in options order)."
+                    }
                   }
                 },
                 {
@@ -1414,8 +1442,8 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段七：事件阶段。依次执行：1) 结算天气效果；2) 结算事件牌效果；3) 时代计分；4) 确定新的起始玩家（本阶段得分最高者）。",
-                    "en": "Phase 7: Event Phase. Execute in order: 1) resolve weather effect; 2) resolve event card effect; 3) era scoring; 4) determine new starting player (highest scorer this phase)."
+                    "zh": "阶段七：事件阶段。依次执行：A) 调整天气并结算其效果；B) 结算事件牌效果；C) 按当前时代计分板块的类别计分；D) 确定新的起始玩家（刚在该类别得分最高者）。",
+                    "en": "Phase 7: Event Phase. Execute in order: A) adjust the weather and resolve its effect; B) resolve the event card effect; C) score the current era's scoring category; D) determine the new starting player (highest scorer of that category)."
                   },
                   "<ontology::pipeline>": {
                     "options": [
@@ -1425,11 +1453,36 @@
                           "zh": "天气结算",
                           "en": "Weather Resolution"
                         },
-                        "specifies": "<ontology::phase>",
                         "description": {
-                          "zh": "结算天气效果",
-                          "en": "Resolve weather effect"
-                        }
+                          "zh": "A 步：调整天气并结算其效果——先按本时代事件牌右上角的 <weather_trend> 移动 <weather_indicator>，再按座次顺位逐一结算 <weather_gauge> 当前格的效果。",
+                          "en": "Step A: adjust the weather and resolve its effect — first move the <weather_indicator> per the <weather_trend> on this era's event card, then resolve the current <weather_gauge> space effect in seating order."
+                        },
+                        "options": [
+                          {
+                            "id": "adjust_weather_indicator",
+                            "name": {
+                              "zh": "结算事件牌天气效果",
+                              "en": "Resolve Event Card Weather Effect"
+                            },
+                            "description": {
+                              "zh": "结算本时代正面朝上 <event_card> 的天气效果（右上角 <weather_trend> part）：将 <weather_indicator> 沿 <weather_gauge> 按牌面指示移动 1 或 2 步（变热向热端、变冷向冷端）。白线规则（越线停靠 <hot_beyond>/<cold_beyond>）见 <weather_trend> 定义。本步骤执行完毕后，由 <weather_effect> 按标记所在格结算天气效果（越线格效果含推回极端格）。",
+                              "en": "Resolve the weather effect of this era's face-up <event_card> (its <weather_trend> part): move the <weather_indicator> along the <weather_gauge> by the 1 or 2 steps shown on the card (toward Hot when warming, toward Cold when cooling). The white-line rule (over-line stop on <hot_beyond>/<cold_beyond>) is defined on <weather_trend>. After this step completes, <weather_effect> resolves the weather effect of the slot the indicator is on (the over-line slot's effect includes pushing back to the extreme space)."
+                            },
+                            "<ontology::effect>": "<event_card>.parts.<weather_trend>"
+                          },
+                          {
+                            "id": "resolve_weather_effect",
+                            "name": {
+                              "zh": "结算天气效果",
+                              "en": "Resolve Weather Effect"
+                            },
+                            "do_after": [
+                              "adjust_weather_indicator"
+                            ],
+                            "<ontology::trigger>": "<weather_effect>"
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                       },
                       {
                         "id": "event_card_resolution",
@@ -1437,11 +1490,14 @@
                           "zh": "事件牌结算",
                           "en": "Event Card Resolution"
                         },
-                        "specifies": "<ontology::phase>",
+                        "do_after": [
+                          "event_weather"
+                        ],
                         "description": {
-                          "zh": "结算事件牌效果",
-                          "en": "Resolve event card effect"
-                        }
+                          "zh": "B 步：结算本时代正面朝上的 <event_card> 的事件效果（<event_card>.parts.<event_effect>，其 effect 自带 <ontology::condition> 与 <ontology::content>）：condition 成立时结算 content，给予一个或多个文明奖励——奖励适用于多个文明时，各文明按座次顺位逐一获得；奖励只指向一个特定文明时，仅在该文明可明确识别时授予；无文明满足条件则作废。少数事件的 condition 包含移除 <farm> 或 <boat>。",
+                          "en": "Step B: resolve the event effect of this era's face-up <event_card> (<event_card>.parts.<event_effect>, whose effect carries its own <ontology::condition> and <ontology::content>): when the condition holds, the content is resolved, granting a bonus to one or more civilizations — when the bonus applies to multiple civilizations, each gains it in seating order; a bonus rewarding one specific civilization is awarded only if that civilization is unambiguously identifiable; if no civilization meets the condition, the bonus is forfeited. A few events' conditions require removing <farm>s or <boat>s."
+                        },
+                        "<ontology::effect>": "<event_card>.parts.<event_effect>"
                       },
                       {
                         "id": "event_era_scoring",
@@ -1449,10 +1505,190 @@
                           "zh": "时代计分",
                           "en": "Era Scoring"
                         },
-                        "specifies": "<ontology::phase>",
+                        "specifies": "<ontology::trigger>",
+                        "do_after": [
+                          "event_card_resolution"
+                        ],
                         "description": {
-                          "zh": "时代计分",
-                          "en": "Era scoring"
+                          "zh": "C 步：按当前时代的计分类别计分，计分完成后移除该计分板块。",
+                          "en": "Step C: score the current era's category, then remove that scoring tile."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "事件阶段进行到 C 步（时代计分环节）时。",
+                          "en": "The Event phase has reached step C (era scoring)."
+                        },
+                        "<ontology::content>": {
+                          "<ontology::instant_content>": {
+                            "options": [
+                              {
+                                "id": "score_era_category",
+                                "name": {
+                                  "zh": "时代类别计分",
+                                  "en": "Score Era Category"
+                                },
+                                "<ontology::per_player>": true,
+                                "description": {
+                                  "zh": "每位玩家按当前时代计分板块（<era_scoring_area> 最左非空格的 <scoring_tile>）显示的类别结算计分：9 个类别候选由规则按板块类别匹配，命中的类别执行——板块类别为当前局面状态，需向客人确认；按该类别「每有 X 个 Y 得 Z 分」规则得分（Z = 板块显示的每个分值），计入 <score_track>。",
+                                  "en": "Each player scores per the category shown on the current era's scoring tile (the leftmost non-empty space of the <era_scoring_area>): the rules match the tile's category against the 9 category candidates, and the matched candidate executes — the tile's category is current board state and must be confirmed with the players; score per that category's \"gain Z points per X of Y\" rule (Z = the per-item value on the tile), gained on the <score_track>."
+                                },
+                                "<ontology::pipeline>": {
+                                  "options": [
+                                    {
+                                      "id": "score_technology_track",
+                                      "name": {
+                                        "zh": "计分·技术进程轨",
+                                        "en": "Score Technology Track"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个 <technology_track> 轨道步数（圆盘所在格的数字），得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each progress-track step (the digit printed on your disc's space on the <technology_track>), on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家圆盘在 <technology_track> 所在格数字 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_prestige_track",
+                                      "name": {
+                                        "zh": "计分·声望进程轨",
+                                        "en": "Score Prestige Track"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个 <prestige_track> 轨道步数（圆盘所在格的数字），得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each progress-track step (the digit printed on your disc's space on the <prestige_track>), on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家圆盘在 <prestige_track> 所在格数字 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_knowledge_track",
+                                      "name": {
+                                        "zh": "计分·知识进程轨",
+                                        "en": "Score Knowledge Track"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个 <knowledge_track> 轨道步数（圆盘所在格的数字），得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each progress-track step (the digit printed on your disc's space on the <knowledge_track>), on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家圆盘在 <knowledge_track> 所在格数字 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_construction_track",
+                                      "name": {
+                                        "zh": "计分·建造进程轨",
+                                        "en": "Score Construction Track"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个 <construction_track> 轨道步数（圆盘所在格的数字），得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each progress-track step (the digit printed on your disc's space on the <construction_track>), on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家圆盘在 <construction_track> 所在格数字 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_culture_track",
+                                      "name": {
+                                        "zh": "计分·文化进程轨",
+                                        "en": "Score Culture Track"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个 <culture_track> 轨道步数（圆盘所在格的数字），得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each progress-track step (the digit printed on your disc's space on the <culture_track>), on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家圆盘在 <culture_track> 所在格数字 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_evolution",
+                                      "name": {
+                                        "zh": "计分·进化",
+                                        "en": "Score Evolution"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个特征格上的 <feature_marker>，得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each <feature_marker> on your feature spaces, on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家 <feature_marker> 总数 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_prosperity",
+                                      "name": {
+                                        "zh": "计分·繁荣",
+                                        "en": "Score Prosperity"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个活跃钻石，得当前时代计分板块显示的分数（每个分值），计入 <score_track>。活跃钻石 = <console> 左半——<food_space> 每 3 枚 <food> 1 钻石、<money_space> 每 2 枚 1 钻石、已建 <settlement> 可见的空凹槽钻石、<storage_area> 上下格均存放材料的钻石。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each active diamond, on the <score_track>. Active diamonds are on the left half of your <console> — <food_space>: 1 diamond per 3 markers, <money_space>: 1 diamond per 2 markers, visible recess diamonds of built <settlement>s, <storage_area> diamonds with material on both flanking spaces."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家活跃钻石数 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_population",
+                                      "name": {
+                                        "zh": "计分·人口",
+                                        "en": "Score Population"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个在 <continent> 上的 <tribe>，得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each of your <tribe>s on the <continent>, on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家 <tribe> 总数 × 当前时代计分板块显示的每个分值"
+                                    },
+                                    {
+                                      "id": "score_expansion",
+                                      "name": {
+                                        "zh": "计分·扩张",
+                                        "en": "Score Expansion"
+                                      },
+                                      "specifies": "<ontology::push_track>",
+                                      "description": {
+                                        "zh": "每有 1 个有至少 1 个 <tribe> 的区域，得当前时代计分板块显示的分数（每个分值），计入 <score_track>。",
+                                        "en": "Gain the value shown on the current era's scoring tile for each territory holding at least 1 of your <tribe>s, on the <score_track>."
+                                      },
+                                      "<ontology::track>": "<score_track>",
+                                      "step": "本玩家有部落的区域数 × 当前时代计分板块显示的每个分值"
+                                    }
+                                  ],
+                                  "type": "<ontology::multiple_choice_enum.MATCH>",
+                                  "<ontology::condition>": {
+                                    "zh": "匹配依据：当前时代计分板块（<era_scoring_area> 最左非空格 <scoring_tile>）显示的类别——板块类别与哪个候选的计分类别一致，就执行该候选（9 个候选分别对应技术/声望/知识/建造/文化进程轨、进化、繁荣、人口、扩张）。",
+                                    "en": "Matching basis: the category shown on the current era's scoring tile (the leftmost non-empty space of <era_scoring_area>) — the candidate whose scoring category matches the tile's category executes (the 9 candidates are Technology/Prestige/Knowledge/Construction/Culture tracks, Evolution, Prosperity, Population, Expansion)."
+                                  }
+                                }
+                              },
+                              {
+                                "id": "remove_scoring_tile",
+                                "name": {
+                                  "zh": "移除计分板块",
+                                  "en": "Remove Scoring Tile"
+                                },
+                                "do_after": [
+                                  "score_era_category"
+                                ],
+                                "specifies": "<ontology::transfer>",
+                                "description": {
+                                  "zh": "所有玩家计分完成后，将当前时代的 <scoring_tile> 从 <era_scoring_area> 的计分格移除并放回 <ontology::game_box>。",
+                                  "en": "After all players have scored, remove the current era's <scoring_tile> from its space in the <era_scoring_area> and return it to the <ontology::game_box>."
+                                },
+                                "source": "<era_scoring_area>",
+                                "destination": "<ontology::game_box>",
+                                "<ontology::object>": "<scoring_tile>",
+                                "quantity": 1
+                              }
+                            ],
+                            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                          }
                         }
                       },
                       {
@@ -1461,11 +1697,50 @@
                           "zh": "新起始玩家",
                           "en": "New Starting Player"
                         },
-                        "specifies": "<ontology::phase>",
+                        "do_after": [
+                          "event_era_scoring"
+                        ],
                         "description": {
-                          "zh": "确定新的起始玩家",
-                          "en": "Determine new starting player"
-                        }
+                          "zh": "D 步：确定新的起始玩家——<starting_monolith> 交给刚在时代计分类别中得分最高的玩家。",
+                          "en": "Step D: determine the new starting player — the <starting_monolith> goes to the player who just scored the most in that era category."
+                        },
+                        "options": [
+                          {
+                            "id": "set_new_starting_player",
+                            "name": {
+                              "zh": "设定新起始玩家",
+                              "en": "Set New Starting Player"
+                            },
+                            "description": {
+                              "zh": "将 <ontology::starting_player> 设为刚在该类别计分中得分最高的玩家。平局（即使均为 0 分）时，起始玩家资格从现任起始玩家起按座次顺序传给下一个达到最高分的平局玩家。",
+                              "en": "Set <ontology::starting_player> to the player who just scored the most points in that category. On a tie (even at 0), the starting player status passes from the outgoing starting player, in seating order, to the next tied player who also scored the most."
+                            },
+                            "<ontology::state_change>": {
+                              "subject": "<ontology::starting_player>",
+                              "to": "刚在该类别计分中得分最高的玩家（平局：从现任起始玩家起座次顺序中下一个平局者）"
+                            }
+                          },
+                          {
+                            "id": "give_starting_monolith",
+                            "name": {
+                              "zh": "移交起始纪念碑",
+                              "en": "Pass Starting Monolith"
+                            },
+                            "do_after": [
+                              "set_new_starting_player"
+                            ],
+                            "specifies": "<ontology::transfer>",
+                            "description": {
+                              "zh": "新起始玩家获得 <starting_monolith>。",
+                              "en": "The new starting player receives the <starting_monolith>."
+                            },
+                            "source": "现任起始玩家",
+                            "destination": "新起始玩家",
+                            "<ontology::object>": "<starting_monolith>",
+                            "quantity": 1
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                       },
                       {
                         "id": "advance_to_phase_8",
@@ -1938,17 +2213,17 @@
       },
       "specifies": "<ontology::trigger>",
       "description": {
-        "zh": "事件阶段天气标记移动完成后，所有玩家按座次顺位逐一结算当前天气格的效果。正面效果可放弃，负面效果必须执行。",
-        "en": "After weather indicator moves in Event phase, all players in seating order resolve the current weather slot effect. Positive effects may be forgone; negative effects are mandatory."
+        "zh": "事件阶段 A 步（<adjust_weather_indicator>）执行完毕后，按 <weather_indicator> 所在格结算天气效果，所有玩家按座次顺位逐一结算。正面效果可放弃，负面效果必须执行。",
+        "en": "After step A of the Event phase (<adjust_weather_indicator>) completes, the weather effect of the slot the <weather_indicator> is on is resolved by all players in seating order. Positive effects may be forgone; negative effects are mandatory."
       },
       "<ontology::condition>": {
-        "zh": "事件阶段（Phase 7）天气标记移动完成后",
-        "en": "After weather indicator movement in Event phase (Phase 7)"
+        "zh": "事件阶段（Phase 7）A 步——<adjust_weather_indicator> 移动 <weather_indicator> 的步骤——执行完毕（触发点仅此一次：本 trigger 由该步骤完成激活，结算标记所在格的效果；越线格效果内的推回极端格移动不构成触发）",
+        "en": "Step A of the Event phase (Phase 7) — the <adjust_weather_indicator> step that moves the <weather_indicator> — has completed (fired exactly once: this trigger activates at that step's completion and resolves the effect of the slot the indicator is on; the push-back movement inside an over-line slot's effect does not trigger it)"
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "zh": "所有玩家按座次顺位逐一结算当前天气格效果。",
-          "en": "All players in seating order resolve the current weather slot effect one by one."
+          "zh": "按座次顺位，每位玩家逐一结算 <weather_indicator> 所在 <weather_gauge> 格的效果（见其 slots 定义）：正面效果可选择放弃，负面效果必须执行；既无 <food> 也无 <tribe> 的玩家不受影响。越线格（<hot_beyond>/<cold_beyond>）效果内的推回极端格步骤属该格效果的一部分，不再次触发本结算。",
+          "en": "In seating order, each player resolves the effect of the <weather_gauge> slot the <weather_indicator> is on (see its slots): positive effects may be forgone; negative effects are mandatory; a player with neither <food> nor <tribe> is unaffected. The push-back-to-extreme-space step inside an over-line slot's (<hot_beyond>/<cold_beyond>) effect is part of that effect and does not re-trigger this resolution."
         }
       }
     },
@@ -2118,7 +2393,7 @@
         "zh": "结算迁徙触发",
         "en": "Resolve Migration Triggers"
       },
-      "specifies": "<ontology::action>",
+      "specifies": "<ontology::trigger>",
       "description": {
         "zh": "迁徙后的自动触发结算。各 trigger 按自身 condition 独立判定，满足即执行。",
         "en": "Automatic trigger resolution after migration. Each trigger independently checks its condition and fires if met."
@@ -2150,7 +2425,7 @@
                 "zh": "驱赶到荒野",
                 "en": "Displace to Wilderness"
               },
-              "specifies": "<ontology::transfer>",
+              "specifies": "<ontology::trigger>",
               "description": {
                 "zh": "将占据营地的部落移至同一区域的野外（保留其站立/躺倒状态）。",
                 "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
@@ -2159,10 +2434,16 @@
                 "zh": "目的地为陆地营地，且该营地已被其他<tribe>占据（无论自己或他人）。",
                 "en": "Destination is a land encampment occupied by another <tribe> (own or opponent's)."
               },
-              "source": "this.destination.encampment",
-              "destination": "this.destination.wilderness",
-              "<ontology::object>": "<tribe>",
-              "quantity": 1
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "<ontology::transfer>": {
+                    "source": "this.destination.encampment",
+                    "destination": "this.destination.wilderness",
+                    "<ontology::object>": "<tribe>",
+                    "quantity": 1
+                  }
+                }
+              }
             },
             {
               "id": "fire_encampment_score",
@@ -2170,13 +2451,23 @@
                 "zh": "篝火营地得分",
                 "en": "Score Fire Encampment"
               },
-              "specifies": "<ontology::push_track>",
+              "specifies": "<ontology::trigger>",
+              "description": {
+                "zh": "迁徙部落落定于篝火营地时立即获得营地所示分数。",
+                "en": "Gain the points shown on the fire encampment immediately when the migrating tribe settles there."
+              },
               "<ontology::condition>": {
                 "zh": "目的地营地是篝火营地（黄色边框）。",
                 "en": "The destination encampment is a fire encampment (yellow border)."
               },
-              "<ontology::track>": "<score_track>",
-              "step": "营地所示分数"
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "<ontology::push_track>": {
+                    "<ontology::track>": "<score_track>",
+                    "step": "营地所示分数"
+                  }
+                }
+              }
             },
             {
               "id": "weaken",
