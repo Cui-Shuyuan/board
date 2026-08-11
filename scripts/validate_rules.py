@@ -76,16 +76,29 @@ class Validator:
         self.placeholder_refs = {"concept", "field", "subfield", "event_id", "zone_id",
                                  "part_id", "slot_id", "null", "a", "b", "x", "y"}
         self.enum_ids: set[str] = set()  # 枚举值 (如 upright/lying/face_up, <枚举值> 引用不报悬空)
+        # W04/E11 继承链分析: 概念 id → 字段集 / 父概念引用 (setdefault 防 game 层重名覆盖)
+        self.concept_fields: dict[str, set[str]] = {}
+        self.concept_parent: dict[str, str] = {}
+        self.definition_ids: set[str] = set()  # 概念定义型节点 (W05 孤立检查范围)
+        self.referenced: set[str] = set()      # 被引用过的概念 (W05)
 
     # ── 工具 ──────────────────────────────────────────────
     def err(self, loc: str, msg: str): self.issues.append(("ERROR", loc, msg))
     def warn(self, loc: str, msg: str): self.issues.append(("WARN", loc, msg))
 
+    @staticmethod
+    def norm_field(k: str) -> str:
+        """字段 key 归一化: 去 [] 后缀 + 去 namespace (<ontology::ownership> → <ownership>)"""
+        k = k.strip("[]")
+        if "::" in k:
+            k = "<" + k.split("::")[-1]
+        return k
+
     def is_defined(self, ref: str) -> bool:
         return ref in self.game_ids or ref in self.ontology_ids
 
     def check_ref(self, ref: str, loc: str):
-        """检查一个引用是否可解析"""
+        """检查一个引用是否可解析; 同时记录被引用概念 (W05)"""
         # <ontology::multiple_choice_enum.XXX> 特判
         if ref.startswith("ontology::multiple_choice_enum."):
             val = ref.split(".")[-1]
@@ -94,32 +107,87 @@ class Validator:
             return
         if "::" in ref:
             head = ref.split("::", 1)[1].split(".")[0]  # <ontology::a.b> 取 a
-            if head not in self.ontology_ids:
+            if head in self.ontology_ids:
+                self.referenced.add(head)
+            elif head not in self.placeholder_refs:
                 self.err(loc, f"E02 悬空引用 <{ref}> — ontology 无此概念")
         else:
             head = ref.split(".")[0]  # 路径引用取第一段 (如 <phase_sequence>.<reset_end_space>)
+            if head in ("this", "self", "_skip"):
+                return
+            # 概念优先: 既是概念又是字段名时按概念处理
+            if self.is_defined(head):
+                self.referenced.add(head)
+                return
             # 字段名引用 (<parts> 指向 piece 的 parts 字段)、枚举值、文档占位符不算悬空
             if (head in self.placeholder_refs or head in self.field_ids
-                    or f"<{head}>" in self.field_ids or head in self.enum_ids
-                    or head in ("this", "self", "_skip")):
+                    or f"<{head}>" in self.field_ids or head in self.enum_ids):
                 return
-            if not self.is_defined(head):
-                self.err(loc, f"E02 悬空引用 <{ref}> — 游戏层与 ontology 均无定义")
+            self.err(loc, f"E02 悬空引用 <{ref}> — 游戏层与 ontology 均无定义")
 
     # ── 阶段一: 全量收集定义 (不检查, 保证顺序无关) ──────
     def collect_ids(self, data: object, source: str, is_ontology: bool):
-        def walk(obj, path):
+        def walk(obj, path, depth):
             if isinstance(obj, dict):
                 if in_constraints(path):
                     # constraints 条目: 字段 ID 进 field_ids (description 可能引用 <字段>), 不收集为节点
                     cid = obj.get("id")
                     if isinstance(cid, str):
                         self.field_ids.add(cid.strip("[]"))
+                    # 但枚举值仍要收集 (如 face: enum [face_up, face_down])
+                    if isinstance(obj.get("enum"), list):
+                        for e in obj["enum"]:
+                            if isinstance(e, str):
+                                self.enum_ids.add(e)
                     return
                 oid = obj.get("id")
                 if isinstance(oid, str) and oid:
                     self.node_ids.add(oid)
                     (self.ontology_ids if is_ontology else self.game_ids).add(oid)
+                    # 概念字段与继承链: ontology 先收集, game 层重名不覆盖 (setdefault)
+                    top = {self.norm_field(k) for k in obj.keys()
+                           if k not in ("id", "name", "abstract", "description", "definition",
+                                        "constraints", "extends", "specifies", "instance_of",
+                                        "level", "meta")}
+                    # 递归合并: key-as-type 值对象 + options 元素的字段也算实现
+                    #   (如 {"<ontology::transfer>": {"source": ...}}、
+                    #    options 内联的 {"<ontology::state_change>": {"subject": ..., "to": ...}})
+                    def merge_impl(d: dict, out: set[str]):
+                        for k, v in d.items():
+                            if k.startswith("<") and isinstance(v, dict):
+                                out.update(self.norm_field(sk) for sk in v.keys())
+                                merge_impl(v, out)
+                            elif k == "options" and isinstance(v, list):
+                                for item in v:
+                                    if isinstance(item, dict):
+                                        out.update(self.norm_field(sk) for sk in item.keys())
+                                        merge_impl(item, out)
+                    merge_impl(obj, top)
+                    for slot in ("required", "optional"):
+                        for item in obj.get("constraints", {}).get(slot, []):
+                            fid = item if isinstance(item, str) else item.get("id")
+                            if isinstance(fid, str):
+                                top.add(fid.strip("[]"))
+                    self.concept_fields.setdefault(oid, top)
+                    for rel in ("extends", "specifies", "instance_of"):
+                        pv = obj.get(rel)
+                        if isinstance(pv, str) and pv.startswith("<"):
+                            self.concept_parent.setdefault(
+                                oid, pv.strip("<>").split("::")[-1].split(".")[0])
+                    # W05 定义型节点: ontology 全部 + 游戏顶层概念 (depth==2, 排除流程/enum/_skip)
+                    #   concepts/instances 组数组元素 (objects[i] 等) + flow triggers 组元素
+                    is_top_concept = (
+                        (is_ontology and depth == 2 and "concepts.json" in source)
+                        or (depth == 2 and "concepts.json" in source and ".procedures[" not in path)
+                        or (depth == 2 and "instances.json" in source)
+                        or (".triggers[" in path and depth == 2)
+                    )
+                    if (is_top_concept and oid != "_skip" and ".enum[" not in path
+                            and ".parts[" not in path):
+                        self.definition_ids.add(oid)
+                    # parts 条目: value dict 的 id 是实例引用 (如 {"<ontology::effect>": {"id": "activity_01"}})
+                    if ".parts[" in path and isinstance(oid, str):
+                        self.referenced.add(oid)
                 # 枚举值收集 (如 posture: enum [upright, lying])
                 for v in obj.values():
                     if isinstance(v, dict) and isinstance(v.get("enum"), list):
@@ -128,12 +196,12 @@ class Validator:
                                 self.enum_ids.add(e)
                 for k, v in obj.items():
                     self.field_ids.add(k.strip("[]"))
-                    walk(v, f"{path}.{k}")
+                    walk(v, f"{path}.{k}", depth + 1)
             elif isinstance(obj, list):
                 for i, v in enumerate(obj):
-                    walk(v, f"{path}[{i}]")
+                    walk(v, f"{path}[{i}]", depth + 1)
 
-        walk(data, "$")
+        walk(data, "$", 0)
 
     # ── 阶段二: 逐文件检查 ────────────────────────────────
     def check_file(self, file_path: Path, source: str, is_ontology: bool):
@@ -212,8 +280,8 @@ class Validator:
                 if isinstance(tval, str) and "| null" in tval:
                     self.err(f"{source} › {path} › type",
                              "E08 type 含 '| null' — 可空由 optional/default 表达")
-                # E09: definition vs description (游戏层)
-                if not is_ontology and "definition" in obj:
+                # E09: definition vs description (游戏层; instances.json 的实例定义用 definition 是惯例)
+                if not is_ontology and "definition" in obj and not source.endswith("instances.json"):
                     self.err(f"{source} › {path} › definition",
                              "E09 游戏层应使用 description 键, 不用 definition")
                 # W03: condition 形态 (description 包装 / 直接 zh-en / options+type 三种合法)
@@ -231,6 +299,9 @@ class Validator:
                     self.warn(f"{source} › {path} › target",
                               "W01 target 是对象 — 约定纯字符串")
                 for k, v in obj.items():
+                    # key-as-type 键也是引用 (如 {"<event_card>": {...}})
+                    for ref in REF_RE.findall(k):
+                        self.check_ref(ref, f"{source} › {path} › {k}")
                     walk(v, f"{path}.{k}")
             elif isinstance(obj, list):
                 for i, v in enumerate(obj):
@@ -248,17 +319,81 @@ class Validator:
         elif ref not in self.node_ids:
             self.err(loc, f"E06 do_after 引用不存在的步骤 id: {ref}")
 
-    # ── constraints 顶层字段校验 (ontology 概念) ─────────
+    # ── constraints 顶层字段校验 (ontology 概念, 含继承链) ─
     def check_constraints(self, data: list[dict], text: str):
+        def all_fields(cid: str, memo: dict) -> set[str]:
+            """本概念 + extends/specifies 链上所有祖先的顶层字段"""
+            if cid in memo:
+                return memo[cid]
+            fields = set(self.concept_fields.get(cid, set()))
+            parent = self.concept_parent.get(cid)
+            if parent:
+                fields |= all_fields(parent, memo)
+            memo[cid] = fields
+            return fields
+
+        memo: dict = {}
         for c in data:
             cid = c.get("id")
-            top_fields = {k.strip("[]") for k in c.keys()}
+            if not cid:
+                continue
             for slot in ("required", "optional"):
                 for item in c.get("constraints", {}).get(slot, []):
                     fid = item if isinstance(item, str) else item.get("id")
-                    if isinstance(fid, str) and fid not in top_fields and not fid.startswith("<"):
+                    if (isinstance(fid, str) and not fid.startswith("<")
+                            and fid not in all_fields(cid, memo)):
                         self.warn(f"ontology › {cid} › constraints.{slot}",
-                                  f"W04 字段 {fid} 无顶层声明 (可能为继承字段)")
+                                  f"W04 字段 {fid} 既不在本概念也不在任何父概念顶层声明")
+
+    # ── E11: 父类 required 必须每条继承链都闭合 ───────────
+    #      每条 extends/specifies/instance_of 链上至少一个节点实现该字段;
+    #      实现节点覆盖其下所有后代链 (继承语义)
+    # ── W05: 孤立概念 (有定义无引用, 非触发型) ────────────
+    def check_e11_w05(self, ontology_concepts: list[dict]):
+        def subtree_closed(cid: str, field: str) -> bool:
+            """该节点子树是否闭合: 自身实现 field 或某后代实现"""
+            if field in self.concept_fields.get(cid, set()):
+                return True
+            return any(subtree_closed(c, field)
+                       for c, p in self.concept_parent.items() if p == cid)
+
+        def uncovered_chains(parent: str, field: str) -> list[str]:
+            """返回完全未闭合的直接子链 (子节点自身未实现且其子树也无实现)"""
+            return [c for c, p in self.concept_parent.items()
+                    if p == parent and not subtree_closed(c, field)]
+
+        for c in ontology_concepts:
+            cid = c.get("id")
+            if not cid:
+                continue
+            if not any(p == cid for p in self.concept_parent.values()):
+                continue  # 无子类不适用
+            for item in c.get("constraints", {}).get("required", []):
+                fid = item if isinstance(item, str) else item.get("id")
+                if not isinstance(fid, str):
+                    continue
+                key = self.norm_field(fid)
+                if key in ("id", "<field_id>"):
+                    continue  # id 隐式拥有; <field_id> 是 Object 的占位符
+                bad = uncovered_chains(cid, key)
+                if bad:
+                    self.err(f"ontology › {cid} › constraints.required",
+                             f"E11 字段 {fid} 的继承链未闭合: {', '.join(bad)} (这些链上无节点实现该字段)")
+
+        # W05: 触发型 = 沿父链可达 trigger (action/effect/activation 等由点燃机制引用)
+        def is_trigger_type(cid: str) -> bool:
+            cur, seen = cid, set()
+            while cur and cur not in seen:
+                if cur == "trigger":
+                    return True
+                seen.add(cur)
+                cur = self.concept_parent.get(cur)
+            return False
+
+        for cid in sorted(self.definition_ids):
+            if cid in self.referenced or is_trigger_type(cid):
+                continue
+            self.warn("", f"W05 孤立概念 <{cid}> — 有定义但无任何引用")
 
     # ── 总入口 ────────────────────────────────────────────
     def run(self) -> int:
@@ -297,13 +432,14 @@ class Validator:
         for p, src, is_onto in targets:
             self.check_file(p, src, is_onto)
 
-        # ontology constraints 顶层字段引用
+        # ontology constraints 顶层字段引用 + E11/W05
         if self.include_ontology:
             p = ONTOLOGY_DIR / "concepts.json"
             try:
                 text = p.read_text(encoding="utf-8")
                 data = json.loads(text)
                 self.check_constraints(data.get("concepts", []), text)
+                self.check_e11_w05(data.get("concepts", []))
             except Exception:
                 pass
         return 0
