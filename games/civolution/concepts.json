@@ -2541,8 +2541,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的科技等级。推进可解锁奖励，推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's technology level. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
+        "zh": "位于 <progress_board> 上的进程轨，记录玩家的科技等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
+        "en": "A progress track on the <progress_board> recording a player's technology level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
       },
       "contains": {
         "type": "<progress_marker>[]",
@@ -2571,8 +2571,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的声望等级。推进可解锁奖励，推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's prestige level. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
+        "zh": "位于 <progress_board> 上的进程轨，记录玩家的声望等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
+        "en": "A progress track on the <progress_board> recording a player's prestige level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
       },
       "contains": {
         "type": "<progress_marker>[]",
@@ -2601,8 +2601,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的知识等级。推进可解锁奖励，推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's knowledge level. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
+        "zh": "位于 <progress_board> 上的进程轨，记录玩家的知识等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
+        "en": "A progress track on the <progress_board> recording a player's knowledge level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
       },
       "contains": {
         "type": "<progress_marker>[]",
@@ -2631,8 +2631,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的建设等级。推进可解锁奖励，推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's construction level. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
+        "zh": "位于 <progress_board> 上的进程轨，记录玩家的建设等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
+        "en": "A progress track on the <progress_board> recording a player's construction level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
       },
       "contains": {
         "type": "<progress_marker>[]",
@@ -2661,8 +2661,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的文化等级。推进可解锁奖励，推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's culture level. Advancing unlocks bonuses; exceeding the end grants 2 points per step."
+        "zh": "位于 <progress_board> 上的进程轨，记录玩家的文化等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
+        "en": "A progress track on the <progress_board> recording a player's culture level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
       },
       "contains": {
         "type": "<progress_marker>[]",

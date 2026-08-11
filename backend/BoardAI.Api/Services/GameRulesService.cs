@@ -105,6 +105,40 @@ public class GameRulesService
             return instances == null ? Array.Empty<ConceptSummary>() : ExtractArrayConcepts(instances, type);
         }
 
+        if (type == "slots")
+        {
+            var results = new List<ConceptSummary>();
+            void CollectSlots(JsonElement node)
+            {
+                if (node.ValueKind == JsonValueKind.Object)
+                {
+                    if (node.TryGetProperty("slots", out var slots) && slots.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var slot in slots.EnumerateArray())
+                        {
+                            if (slot.ValueKind != JsonValueKind.Object) continue;
+                            foreach (var prop in slot.EnumerateObject())
+                            {
+                                if (prop.Name.StartsWith("<")) continue;
+                                results.Add(new ConceptSummary { Id = prop.Name, Name = "", Type = "slot" });
+                            }
+                        }
+                    }
+                    foreach (var prop in node.EnumerateObject())
+                        CollectSlots(prop.Value);
+                }
+                else if (node.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in node.EnumerateArray())
+                        CollectSlots(item);
+                }
+            }
+            CollectSlots(concepts.RootElement);
+            var inst = LoadGameInstances(game);
+            if (inst != null) CollectSlots(inst.RootElement);
+            return results;
+        }
+
         return Array.Empty<ConceptSummary>();
     }
 
@@ -161,9 +195,51 @@ public class GameRulesService
                         results.Add(instance);
                 }
             }
+
+            // Search slots (bare-key slot names within concepts, e.g. population/expansion)
+            if (concepts != null)
+            {
+                var slot = FindSlot(concepts.RootElement, localId);
+                if (slot.HasValue)
+                    results.Add(slot.Value);
+            }
         }
 
         return results;
+    }
+
+    /// <summary>递归在 slots 数组中查找裸键槽位 (与 Python rebuild_index 的 slot 提取一致)</summary>
+    private static JsonElement? FindSlot(JsonElement node, string slotId)
+    {
+        if (node.ValueKind == JsonValueKind.Object)
+        {
+            if (node.TryGetProperty("slots", out var slots) && slots.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var slot in slots.EnumerateArray())
+                {
+                    if (slot.ValueKind != JsonValueKind.Object) continue;
+                    foreach (var prop in slot.EnumerateObject())
+                    {
+                        if (prop.Name == slotId)
+                            return prop.Value;
+                    }
+                }
+            }
+            foreach (var prop in node.EnumerateObject())
+            {
+                var found = FindSlot(prop.Value, slotId);
+                if (found.HasValue) return found;
+            }
+        }
+        else if (node.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in node.EnumerateArray())
+            {
+                var found = FindSlot(item, slotId);
+                if (found.HasValue) return found;
+            }
+        }
+        return null;
     }
 
     public JsonElement? GetConcept(string game, string id)
@@ -457,6 +533,7 @@ public class GameRulesService
             all.AddRange(ListConcepts(game, "continent_tiles"));
             all.AddRange(ListConcepts(game, "sites"));
             all.AddRange(ListConcepts(game, "chips"));
+            all.AddRange(ListConcepts(game, "slots"));
         }
 
         var activeTerms = localTerms.Count > 0 ? localTerms : terms;
@@ -498,6 +575,7 @@ public class GameRulesService
                 NameEn = ExtractEnName(detail),
                 SearchText = BuildSearchText(c, detail),
             });
+            if (detail.HasValue) ExtractSlots(detail.Value, result);
         }
 
         foreach (var type in ConceptArrayTypes)
@@ -513,6 +591,7 @@ public class GameRulesService
                     NameEn = ExtractEnName(detail),
                     SearchText = BuildSearchText(c, detail),
                 });
+                if (detail.HasValue) ExtractSlots(detail.Value, result);
             }
         }
 
@@ -530,6 +609,7 @@ public class GameRulesService
                     NameEn = ExtractEnName(detail),
                     SearchText = BuildSearchText(c, detail),
                 });
+                if (detail.HasValue) ExtractSlots(detail.Value, result);
             }
         }
 
@@ -545,6 +625,7 @@ public class GameRulesService
                 NameEn = ExtractEnName(detail),
                 SearchText = BuildSearchText(c, detail),
             });
+            if (detail.HasValue) ExtractSlots(detail.Value, result);
         }
 
         // ontology/flow.json
@@ -562,6 +643,75 @@ public class GameRulesService
         }
 
         return result;
+    }
+
+    /// <summary>递归提取 slots 元素 (裸键槽名如 population/expansion 作为概念, 与 Python rebuild_index 一致)</summary>
+    private static void ExtractSlots(JsonElement node, List<ConceptIndexItem> result)
+    {
+        if (node.ValueKind == JsonValueKind.Object)
+        {
+            if (node.TryGetProperty("slots", out var slots) && slots.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var slot in slots.EnumerateArray())
+                {
+                    if (slot.ValueKind != JsonValueKind.Object) continue;
+                    foreach (var prop in slot.EnumerateObject())
+                    {
+                        // 裸键 = 槽位名 (可索引); <概念> 键 = 已有定义的概念引用, 跳过
+                        if (prop.Name.StartsWith("<") || prop.Value.ValueKind != JsonValueKind.Object) continue;
+                        var parts = new List<string>();
+                        CollectIndexText(prop.Value, parts);
+                        result.Add(new ConceptIndexItem
+                        {
+                            ConceptId = prop.Name,
+                            Type = "slot",
+                            NameZh = "",
+                            NameEn = "",
+                            SearchText = string.Join(" ", parts),
+                        });
+                    }
+                }
+            }
+            foreach (var prop in node.EnumerateObject())
+                ExtractSlots(prop.Value, result);
+        }
+        else if (node.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in node.EnumerateArray())
+                ExtractSlots(item, result);
+        }
+    }
+
+    /// <summary>递归收集 id/name/description 文本 (slots 深层效果描述)</summary>
+    private static void CollectIndexText(JsonElement node, List<string> parts)
+    {
+        if (node.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var prop in node.EnumerateObject())
+            {
+                if (prop.Name == "id")
+                    parts.Add(prop.Value.GetString() ?? "");
+                else if (prop.Name == "name" && prop.Value.ValueKind == JsonValueKind.Object)
+                {
+                    if (prop.Value.TryGetProperty("zh", out var z)) parts.Add(z.GetString() ?? "");
+                    if (prop.Value.TryGetProperty("en", out var e)) parts.Add(e.GetString() ?? "");
+                }
+                else if (prop.Name == "description" && prop.Value.ValueKind == JsonValueKind.Object)
+                {
+                    if (prop.Value.TryGetProperty("zh", out var z)) parts.Add(z.GetString() ?? "");
+                    if (prop.Value.TryGetProperty("en", out var e)) parts.Add(e.GetString() ?? "");
+                }
+                else
+                {
+                    CollectIndexText(prop.Value, parts);
+                }
+            }
+        }
+        else if (node.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in node.EnumerateArray())
+                CollectIndexText(item, parts);
+        }
     }
 
     private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result)

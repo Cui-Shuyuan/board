@@ -99,6 +99,50 @@ def build_name_text(concept: dict) -> str:
     return " ".join(p for p in parts if p)
 
 
+def _collect_text(node, parts):
+    """递归收集 id/name/description 文本 (slots 深层效果描述)"""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if k == "id":
+                parts.append(str(v))
+            elif k == "name" and isinstance(v, dict):
+                parts.extend([v.get("zh", ""), v.get("en", "")])
+            elif k == "description" and isinstance(v, dict):
+                parts.extend([v.get("zh", ""), v.get("en", "")])
+            else:
+                _collect_text(v, parts)
+    elif isinstance(node, list):
+        for v in node:
+            _collect_text(v, parts)
+
+
+def _extract_slots(node, results):
+    """递归提取 slots 元素 (裸键槽名如 population/expansion 作为概念)"""
+    if isinstance(node, dict):
+        slots = node.get("slots")
+        if isinstance(slots, list):
+            for slot in slots:
+                if not isinstance(slot, dict):
+                    continue
+                for sk, sv in slot.items():
+                    # 裸键 = 槽位名 (可索引概念); <概念> 键 = 已有定义的概念引用, 跳过
+                    if not sk.startswith("<") and isinstance(sv, dict):
+                        parts = []
+                        _collect_text(sv, parts)
+                        results.append({
+                            "concept_id": sk,
+                            "type": "slot",
+                            "name_zh": "",
+                            "name_en": "",
+                            "search_text": " ".join(p for p in parts if p),
+                        })
+        for v in node.values():
+            _extract_slots(v, results)
+    elif isinstance(node, list):
+        for v in node:
+            _extract_slots(v, results)
+
+
 def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
     data = load_json(file_path)
     results = []
@@ -112,6 +156,7 @@ def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
                 "name_en": c.get("name", {}).get("en", ""),
                 "search_text": build_search_text(c),
             })
+            _extract_slots(c, results)
 
     array_types = ["objects", "actions", "triggers", "conditions"]
     for arr_type in array_types:
@@ -123,6 +168,7 @@ def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
                 "name_en": c.get("name", {}).get("en", ""),
                 "search_text": build_search_text(c),
             })
+            _extract_slots(c, results)
 
     for key, value in data.items():
         if key in array_types or key == "concepts":
@@ -135,6 +181,7 @@ def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
                 "name_en": value.get("name", {}).get("en", ""),
                 "search_text": build_search_text(value),
             })
+            _extract_slots(value, results)
 
     return results
 

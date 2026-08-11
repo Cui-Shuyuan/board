@@ -2045,6 +2045,135 @@
       }
     },
     {
+      "id": "track_bonus",
+      "name": {
+        "zh": "进程轨奖励",
+        "en": "Track Bonus"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "玩家在进程轨上推进、越过奖励阈值时结算的奖励（阈值印在轨上，每个阈值旁印着奖励类型）。共 4 种类型：升级主模组（模组上有一个费用值颜色匹配本轨颜色）、恩惠轨推进 1 格或执行 1 个收入芯片效果、翻 1 个 stage tile 到激活面或得 3 分、得 3 分。",
+        "en": "Bonus granted when a player advances a progress track across a bonus threshold (printed on the track, each threshold showing its bonus type). Four types: upgrade 1 main module (one cost value on the module must match this track's color), advance the Favor of Agera track 1 step OR perform 1 income chip action, flip 1 stage tile to active OR gain 3 success points, gain 3 success points."
+      },
+      "<ontology::condition>": {
+        "zh": "本玩家的 <progress_marker> 在进程轨上越过一个奖励阈值。",
+        "en": "A player's <progress_marker> crosses a bonus threshold on a progress track."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "upgrade_module_bonus",
+              "name": {
+                "zh": "升级模组奖励",
+                "en": "Upgrade Module Bonus"
+              },
+              "<ontology::condition>": {
+                "zh": "该阈值印的是升级模组奖励。",
+                "en": "This threshold shows the upgrade-module bonus."
+              },
+              "<upgrade_main_module>": {
+                "description": {
+                  "zh": "从 5 个可升级主模组中升级 1 个（模组上有一个费用值颜色匹配本轨颜色，阈值旁印着该值）。",
+                  "en": "Upgrade 1 of the 5 possible main modules (one cost value on the module must match this track's color; the threshold shows that value)."
+                }
+              }
+            },
+            {
+              "id": "favor_or_income_bonus",
+              "name": {
+                "zh": "恩惠或收入芯片奖励",
+                "en": "Favor or Income Chip Bonus"
+              },
+              "<ontology::condition>": {
+                "zh": "该阈值印的是恩惠轨/收入芯片奖励。",
+                "en": "This threshold shows the favor-track-or-income-chip bonus."
+              },
+              "options": [
+                {
+                  "id": "favor_step",
+                  "name": {
+                    "zh": "恩惠轨推进 1 格",
+                    "en": "Advance Favor Track 1 Step"
+                  },
+                  "<ontology::push_track>": {
+                    "<ontology::track>": "<favor_of_ager_track>",
+                    "step": 1
+                  }
+                },
+                {
+                  "id": "income_action",
+                  "name": {
+                    "zh": "执行 1 个收入芯片效果",
+                    "en": "Perform 1 Income Chip Action"
+                  },
+                  "<activate_income_chip>": {
+                    "description": {
+                      "zh": "执行 1 个已安装收入芯片的效果。",
+                      "en": "Perform the action of 1 installed income chip."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "flip_or_points_bonus",
+              "name": {
+                "zh": "翻板块或得分奖励",
+                "en": "Flip Tile or Points Bonus"
+              },
+              "<ontology::condition>": {
+                "zh": "该阈值印的是翻 stage tile/3 分奖励。",
+                "en": "This threshold shows the flip-stage-tile-or-3-points bonus."
+              },
+              "options": [
+                {
+                  "id": "flip_tile",
+                  "name": {
+                    "zh": "翻 1 个 stage tile 到激活面",
+                    "en": "Flip 1 Stage Tile to Active"
+                  },
+                  "<ontology::flip>": {
+                    "subject": "1 个未激活的 <stage_tile>",
+                    "to": "face_up"
+                  }
+                },
+                {
+                  "id": "gain_points",
+                  "name": {
+                    "zh": "得 3 分",
+                    "en": "Gain 3 Success Points"
+                  },
+                  "<ontology::push_track>": {
+                    "<ontology::track>": "<score_track>",
+                    "step": 3
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "points_bonus",
+              "name": {
+                "zh": "得分奖励",
+                "en": "Points Bonus"
+              },
+              "<ontology::condition>": {
+                "zh": "该阈值印的是 3 分奖励。",
+                "en": "This threshold shows the 3-points bonus."
+              },
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": 3
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
       "id": "replenish_marker_supply",
       "name": {
         "zh": "补充标记供应堆",
