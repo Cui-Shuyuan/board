@@ -1023,6 +1023,19 @@
         "zh": "该<ontology::player>的<prestige_point>总数为全场最高。允许并列——并列最高者同时满足。用于<highest_prestige_wins>的第 1 条判定。",
         "en": "The <ontology::player>'s total <prestige_point>s are the highest in the game. Ties allowed — all players tied for highest satisfy it simultaneously. Used as the 1st criterion of <highest_prestige_wins>."
       }
+    },
+    {
+      "id": "fewest_development_cards",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "发展卡最少",
+        "en": "Fewest Development Cards"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该<ontology::player>的<ontology::development_area>中<development_card>数量为全场最少。允许并列——并列最少者同时满足。用于<highest_prestige_wins>的第 2 条判定（声望并列时）。",
+        "en": "The <ontology::player>'s <development_card> count in their <ontology::development_area> is the lowest in the game. Ties allowed — all players tied for lowest satisfy it simultaneously. Used as the 2nd criterion of <highest_prestige_wins> (when prestige is tied)."
+      }
     }
   ],
   "<player_holding>": {

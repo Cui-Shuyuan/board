@@ -1393,14 +1393,14 @@
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<exploration>翻开）的玩家立即获得 5 分（<score>）。地点阶段结算（共 2 块狼谷，各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
-        "en": "The player who reveals this site (via <exploration>) gains 5 success points immediately (<score>). Site phase resolution (2 Gorges exist; each resolves independently): each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
+        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 5 分（<score>）。地点阶段结算（共 2 块狼谷，各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
+        "en": "The player who reveals this site (via <module_exploration>) gains 5 success points immediately (<score>). Site phase resolution (2 Gorges exist; each resolves independently): each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
       },
       "score": 5,
       "parts": [
         {
           "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<exploration>翻开）的<player>",
+            "target": "翻开本地点（经由<module_exploration>翻开）的<player>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "<ontology::push_track>": {
@@ -1436,14 +1436,14 @@
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<exploration>翻开）的玩家立即获得 4 分（<score>）。地点阶段结算（共 2 块冰川，各自独立结算）：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮部落（<state_change> posture → <lying>）；弱部落不受影响，无强壮部落则豁免。",
-        "en": "The player who reveals this site (via <exploration>) gains 4 success points immediately (<score>). Site phase resolution (2 Glaciers exist; each resolves independently): each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
+        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 4 分（<score>）。地点阶段结算（共 2 块冰川，各自独立结算）：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮部落（<state_change> posture → <lying>）；弱部落不受影响，无强壮部落则豁免。",
+        "en": "The player who reveals this site (via <module_exploration>) gains 4 success points immediately (<score>). Site phase resolution (2 Glaciers exist; each resolves independently): each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
       },
       "score": 4,
       "parts": [
         {
           "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<exploration>翻开）的<player>",
+            "target": "翻开本地点（经由<module_exploration>翻开）的<player>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "<ontology::push_track>": {
@@ -1483,14 +1483,14 @@
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<exploration>翻开）的玩家立即获得 1 分（<score>）。地点阶段结算（共 3 块神秘橡树，各自独立结算）：对每块橡树，本玩家检查相邻且有自己的<tribe>的区域——每个<terrain_water>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
-        "en": "The player who reveals this site (via <exploration>) gains 1 success point immediately (<score>). Site phase resolution (3 Mystic oaks exist; each resolves independently): for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <terrain_water>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
+        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 1 分（<score>）。地点阶段结算（共 3 块神秘橡树，各自独立结算）：对每块橡树，本玩家检查相邻且有自己的<tribe>的区域——每个<terrain_water>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
+        "en": "The player who reveals this site (via <module_exploration>) gains 1 success point immediately (<score>). Site phase resolution (3 Mystic oaks exist; each resolves independently): for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <terrain_water>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
       },
       "score": 1,
       "parts": [
         {
           "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<exploration>翻开）的<player>",
+            "target": "翻开本地点（经由<module_exploration>翻开）的<player>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "<ontology::push_track>": {

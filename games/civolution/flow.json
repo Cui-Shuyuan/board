@@ -386,7 +386,7 @@
                   },
                   "source": "<ontology::game_box>",
                   "destination": "<module_area>",
-                  "<ontology::object>": "<main_module>",
+                  "<ontology::object>": "<upgradable_module>",
                   "quantity": 15,
                   "<ontology::per_player>": true
                 },
@@ -2103,6 +2103,10 @@
           "options": [
             {
               "id": "roll_fate_dice",
+              "name": {
+                "zh": "投掷命运骰",
+                "en": "Roll Fate Dice"
+              },
               "<ontology::die_roll>": {
                 "description": {
                   "zh": "投掷玩家持有的全部 <fate_die>。",
@@ -2222,7 +2226,7 @@
         "en": "Install a <research_card> from hand into the stage partition. Must determine column and position, and satisfy cost slot conditions."
       },
       "card_type": {
-        "specifies": "enum",
+        "type": "enum",
         "enum": [
           {
             "id": "ACHIEVEMENT_CARD_TYPE",
@@ -2576,10 +2580,7 @@
         "zh": "将 1 个健康的部落从一个区域移动至相邻区域。同一领地内不能移动；不能进入<site>。分属两块大陆板块的同一地形类型区域（即使地形一样）视为两个不同区域——只要彼此接壤即可。山脉区域规则上与其他区域完全一样。",
         "en": "Move 1 healthy tribe from one territory to an adjacent territory. Cannot move within the same territory; cannot enter <site>s. Territories of the same terrain type on different continent tiles (even if the terrain is identical) are separate territories — valid as long as their borders touch. Mountain territories function identically to all other types."
       },
-      "target": {
-        "zh": "1 个 posture == <upright> 的 <tribe> + 1 个相邻领地的营地（陆地），或 1 个自己的位于相邻水流区域且有空位的 <boat>。",
-        "en": "1 <tribe> with posture == <upright> + 1 encampment in an adjacent territory (land), or 1 of your <boat>s on an adjacent Water territory with a free seat."
-      },
+      "target": "1 个 posture == <upright> 的 <tribe> + 1 个相邻领地的营地（陆地），或 1 个自己的位于相邻水流区域且有空位的 <boat>。",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
@@ -3426,6 +3427,10 @@
           "options": [
             {
               "id": "roll_dice",
+              "name": {
+                "zh": "掷骰",
+                "en": "Roll Dice"
+              },
               "<ontology::die_roll>": {
                 "description": {
                   "zh": "掷玩家持有的全部<fate_die>，选 1 个骰子的点数（1 和 6 相连）。",

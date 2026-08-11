@@ -2101,8 +2101,8 @@
           {
             "id": "attribute",
             "description": {
-              "zh": "变更的属性名。多数情况下状态自身即语义——如 <strong> 不需要套在 'posture' 下。仅当同一个 object 有多个正交状态维度时才需要（如一张卡同时有 'orientation' 和 'face' 两个状态）。",
-              "en": "The attribute name being changed. Usually unnecessary — states carry their own semantics (e.g., <strong> doesn't need a 'posture' wrapper). Only needed when an object has multiple orthogonal state dimensions (e.g., a card with both 'orientation' and 'face' states)."
+              "zh": "变更的属性名。多数情况下状态自身即语义——如 <upright> 不需要套在 'posture' 下。仅当同一个 object 有多个正交状态维度时才需要（如一张卡同时有 'orientation' 和 'face' 两个状态）。",
+              "en": "The attribute name being changed. Usually unnecessary — states carry their own semantics (e.g., <upright> doesn't need a 'posture' wrapper). Only needed when an object has multiple orthogonal state dimensions (e.g., a card with both 'orientation' and 'face' states)."
             }
           },
           {
