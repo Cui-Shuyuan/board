@@ -2241,8 +2241,8 @@
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
           "description": {
-            "zh": "确定费用范围：N 为安装层级，至少满足前 N 格中所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage），最多满足至第 M 格（N ≤ M ≤ 5），前缀连续覆盖——每多满足一格，获得该格下方印的 <success_point>。费用格数据见所选 <research_card> 的 parts.<cost_space>。",
-            "en": "Determine the cost range: N is the install tier — fulfill at least all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (N ≤ M ≤ 5) as a contiguous prefix — each extra fulfilled space grants the <success_point> printed below it. Cost space data lives in the chosen <research_card>'s parts.<cost_space>."
+            "zh": "确定费用范围：所选 <research_card> 的 parts.<cost_space> 共 5 格费用格。N 为安装层级，至少满足前 N 格中所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage），最多满足至第 M 格（N ≤ M ≤ 5），前缀连续覆盖——每多满足一格，获得该格下方印的 <success_point>。",
+            "en": "Determine the cost range: the chosen <research_card>'s parts.<cost_space> provides 5 cost spaces. N is the install tier — fulfill at least all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (N ≤ M ≤ 5) as a contiguous prefix — each extra fulfilled space grants the <success_point> printed below it."
           }
         }
       },
