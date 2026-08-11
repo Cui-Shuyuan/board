@@ -4228,7 +4228,7 @@
                     "zh": "翻面",
                     "en": "Flip"
                   },
-                  "<flip>": {
+                  "<ontology::flip>": {
                     "subject": "1 个未激活的层级四或层级五板块（<stage_tile>）",
                     "to": "face_up"
                   }
