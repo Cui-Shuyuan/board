@@ -365,8 +365,9 @@ class Validator:
                     ("<ontology::continuous_content>", "<ontology::content>"),
                 ):
                     # 键出现在外层对象内部 = 父路径以 .<outer> 结尾 (如 $.a.<ontology::cost>);
-                    # 字符串值 = 引用形态 (如 "<ontology::instant_content>": "<success_point>") 豁免
-                    if k in obj and not path.endswith(f".{outer}") and not isinstance(obj[k], str):
+                    # 豁免: parts 内 (实例声明区) + 字符串值 (引用形态, 如 "<ontology::instant_content>": "<success_point>")
+                    if (k in obj and not path.endswith(f".{outer}")
+                            and not isinstance(obj[k], str) and not in_parts):
                         self.err(f"{source} › {path} › {k}",
                                  f"E13 {k} 不允许独立存在 — 必须挂在 {outer} 内")
                 # E09: definition vs description (游戏层; instances.json 的实例定义用 definition 是惯例)

@@ -2747,121 +2747,121 @@
       "card_type": "insight",
       "abstract": false,
       "description": {
-        "zh": "洞悉型研究牌。活动能力：支付1食物，在1个你的区域中最多2个空置营地上各放1个虚弱部落。安装费用：返还1智慧+持有2表达+持有1镇定。即时奖励：文化轨+1。",
-        "en": "Insight research card. Activity: Pay 1 food, place 1 weak tribe on up to 2 vacant encampments in 1 of your territories. Install cost: return 1 Intelligence + possess 2 Expression + possess 1 Calm. Instant bonus: Culture track +1."
-      },
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "count": 5,
-          "description": {
-            "zh": "安装费用格，位于卡牌中三分之一。五个格从左到右编号 1~5，安装到第 N 层时需满足前 N 格中所有非空格，可选继续满足至第 M 格（M ≥ N，M ≤ 5）以获得各格下方印的分数。",
-            "en": "Install cost slots, in the middle third of the card. Five slots numbered 1-5 left to right; when installing at tier N, satisfy all non-empty slots in the first N, may optionally satisfy up to slot M (M ≥ N, M ≤ 5) for the printed score under each slot."
-          },
-          "slots": [
-            {
-              "id": "slot_1",
-              "name": {
-                "zh": "费用格 1",
-                "en": "Cost Slot 1"
-              },
-              "type": "payment",
-              "<ontology::object>": "<feature_marker>",
-              "feature_type": "intelligence",
-              "amount": 1,
-              "description": {
-                "zh": "返还1个智慧特征标记到供应堆。",
-                "en": "Return 1 Intelligence feature marker to supply."
-              }
-            },
-            {
-              "id": "slot_2",
-              "name": {
-                "zh": "费用格 2",
-                "en": "Cost Slot 2"
-              },
-              "type": "possession",
-              "<ontology::object>": "<feature_marker>",
-              "feature_type": "expression",
-              "amount": 2,
-              "description": {
-                "zh": "持有至少2个表达特征标记。",
-                "en": "Possess at least 2 Expression feature markers."
-              }
-            },
-            {
-              "id": "slot_3",
-              "name": {
-                "zh": "费用格 3",
-                "en": "Cost Slot 3"
-              },
-              "type": "possession",
-              "<ontology::object>": "<feature_marker>",
-              "feature_type": "calm",
-              "amount": 1,
-              "description": {
-                "zh": "持有至少1个镇定特征标记。",
-                "en": "Possess at least 1 Calm feature marker."
-              }
-            },
-            {
-              "id": "slot_4",
-              "name": {
-                "zh": "费用格 4",
-                "en": "Cost Slot 4"
-              },
-              "type": "empty",
-              "description": {
-                "zh": "空格，自动视为已满足。",
-                "en": "Empty slot, auto-satisfied."
-              }
-            },
-            {
-              "id": "slot_5",
-              "name": {
-                "zh": "费用格 5",
-                "en": "Cost Slot 5"
-              },
-              "type": "empty",
-              "description": {
-                "zh": "空格，自动视为已满足。",
-                "en": "Empty slot, auto-satisfied."
-              }
-            }
-          ]
-        }
+        "zh": "洞悉型研究牌，编号 C16。",
+        "en": "Insight research card, number C16."
       },
       "parts": [
         "<card_name>",
         {
-          "<ontology::effect>": {
+          "<research_ability>": {
             "position": {
-              "zh": "上三分之一（活动能力）",
-              "en": "top third (activity ability)"
+              "zh": "上三分之一（能力区）",
+              "en": "top third (ability)"
             },
-            "activity_ability": {
-              "cost": {
-                "<food>": 1
-              },
-              "target": "你拥有的1个区域（<territory>）",
-              "content": {
-                "zh": "在该区域中最多2个空置营地上各放置1个虚弱部落。",
-                "en": "Place 1 weak tribe on up to 2 vacant encampments within that territory."
+            "<ontology::cost>": {
+              "<ontology::instant_cost>": {
+                "<ontology::transfer>": {
+                  "source": "<food_space>",
+                  "destination": "<ontology::supply>",
+                  "<ontology::object>": "<food>",
+                  "quantity": 1,
+                  "description": {
+                    "zh": "支付 1 个食物。",
+                    "en": "Pay 1 food."
+                  }
+                }
+              }
+            },
+            "target": "你拥有的 1 个区域（<territory>）",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<ontology::supply>",
+                  "destination": "该区域内最多 2 个空置营地（<encampment>）",
+                  "<ontology::object>": {
+                    "<tribe>": {
+                      "posture": "lying"
+                    }
+                  },
+                  "quantity": "每营地 1，最多 2",
+                  "description": {
+                    "zh": "在该区域中最多 2 个空置营地上各放置 1 个虚弱部落。",
+                    "en": "Place 1 weak tribe on up to 2 vacant encampments within that territory."
+                  }
+                }
               }
             }
           }
         },
         {
-          "<ontology::effect>": {
+          "<cost_space>": {
+            "slots": [
+              {
+                "<cost_space>": {
+                  "type": "payment",
+                  "<ontology::object>": "<feature_marker>",
+                  "feature_type": "intelligence",
+                  "amount": 1,
+                  "success_points": 0
+                }
+              },
+              {
+                "<cost_space>": {
+                  "type": "possession",
+                  "<ontology::object>": "<feature_marker>",
+                  "feature_type": "expression",
+                  "amount": 2,
+                  "success_points": 0
+                }
+              },
+              {
+                "<cost_space>": {
+                  "type": "possession",
+                  "<ontology::object>": "<feature_marker>",
+                  "feature_type": "calm",
+                  "amount": 1,
+                  "success_points": 0
+                }
+              },
+              {
+                "<cost_space>": {
+                  "type": "empty",
+                  "success_points": 0
+                }
+              },
+              {
+                "<cost_space>": {
+                  "type": "empty",
+                  "success_points": 0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "<success_point>": {
             "position": {
-              "zh": "下三分之一（即时奖励）",
+              "zh": "各费用格下沿",
+              "en": "below each cost space"
+            }
+          }
+        },
+        {
+          "<instant_bonus>": {
+            "position": {
+              "zh": "下三分之一（即时奖励区）",
               "en": "bottom third (instant bonus)"
             },
-            "instant_bonus": {
-              "track": "<culture_track>",
-              "amount": 1,
-              "description": {
-                "zh": "文化进程轨推进1格。",
-                "en": "Advance the Culture track by 1 step."
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::push_track>": {
+                  "<ontology::track>": "<culture_track>",
+                  "step": 1,
+                  "description": {
+                    "zh": "文化进程轨推进 1 格。",
+                    "en": "Advance the Culture track by 1 step."
+                  }
+                }
               }
             }
           }
