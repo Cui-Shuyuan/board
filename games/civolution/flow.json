@@ -2241,34 +2241,72 @@
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
           "description": {
-            "zh": "满足所选 <research_card> 的 <cost_space> parts（费用格，见 <research_card>.parts）：N = 安装层级序号，满足前 N 格中所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage）满足至第 M 格（M ≥ N，M ≤ 5，前缀连续覆盖）。支付型（payment）从仓库返还对应对象至供应堆；持有型（possession）仅检查持有数量；空格自动视为已满足。",
-            "en": "Fulfill the chosen <research_card>'s <cost_space> parts (see <research_card>.parts): N = tier index, fulfill all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (M ≥ N, M ≤ 5, contiguous prefix). Payment spaces return the specified objects from storage to supply; possession spaces merely check held amounts; empty spaces are auto-satisfied."
+            "zh": "满足所选 <research_card> 的 <cost_space> parts（费用格，见 <research_card>.parts）。先确定费用范围：N = 安装层级序号，至少满足前 N 格所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage）满足至第 M 格（M ≥ N，M ≤ 5，前缀连续覆盖），以获得更多 <success_point>。支付型（payment）从仓库返还对应对象至供应堆；持有型（possession）仅检查持有数量；空格自动视为已满足。",
+            "en": "Fulfill the chosen <research_card>'s <cost_space> parts (see <research_card>.parts). First determine the cost range: N = tier index, fulfill all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (M ≥ N, M ≤ 5, contiguous prefix), to gain more <success_point>. Payment spaces return the specified objects from storage to supply; possession spaces merely check held amounts; empty spaces are auto-satisfied."
           }
         }
       },
       "options": [
         {
-          "id": "determine_position",
+          "id": "select_install_position",
           "name": {
-            "zh": "确定安装位置",
-            "en": "Determine Position"
+            "zh": "选择安装位置",
+            "en": "Select Install Position"
           },
-          "description": {
-            "zh": "确定安装列与层级。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。层级序号即费用格的 N。",
-            "en": "Determine the column and tier. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column. The tier index is the cost spaces' N."
-          }
-        },
-        {
-          "id": "determine_cost_range",
-          "name": {
-            "zh": "确定费用范围",
-            "en": "Determine Cost Range"
-          },
-          "description": {
-            "zh": "确定费用范围：至少满足前 N 格；可自愿承担更高层至第 M 格（M ≥ N，M ≤ 5），前缀连续覆盖，以获得更多 <success_point>。",
-            "en": "Determine the cost range: fulfill at least the first N spaces; may voluntarily assume a higher stage up to space M (M ≥ N, M ≤ 5), contiguous prefix, to gain more <success_point>."
-          },
-          "do_after": "determine_position"
+          "options": [
+            {
+              "id": "same_type_column",
+              "name": {
+                "zh": "同类型列",
+                "en": "Same-Type Column"
+              },
+              "<ontology::condition>": {
+                "zh": "已有同类型研究牌。",
+                "en": "A same-type research card is already installed."
+              },
+              "description": {
+                "zh": "选该列最低空位（层级序号即费用格 N）。",
+                "en": "Use the lowest empty slot of that column (tier index = the cost spaces' N)."
+              }
+            },
+            {
+              "id": "no_same_type",
+              "name": {
+                "zh": "无同类型",
+                "en": "No Same Type"
+              },
+              "<ontology::condition>": {
+                "zh": "尚无同类型研究牌。",
+                "en": "No same-type research card is installed yet."
+              },
+              "options": [
+                {
+                  "id": "empty_column",
+                  "name": {
+                    "zh": "空列",
+                    "en": "Empty Column"
+                  },
+                  "description": {
+                    "zh": "任选一个空列。",
+                    "en": "Choose any empty column."
+                  }
+                },
+                {
+                  "id": "income_only_column",
+                  "name": {
+                    "zh": "仅含收入芯片的列",
+                    "en": "Income-Chip-Only Column"
+                  },
+                  "description": {
+                    "zh": "选一个仅含 <income_chip> 的列。",
+                    "en": "Choose a column containing only <income_chip>s."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         {
           "id": "resolve_success_points",
@@ -2276,7 +2314,7 @@
             "zh": "结算成功点数",
             "en": "Resolve Success Points"
           },
-          "do_after": "determine_cost_range",
+          "do_after": "select_install_position",
           "<ontology::instant_content>": "<success_point>"
         },
         {
