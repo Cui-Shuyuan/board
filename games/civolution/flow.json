@@ -2230,50 +2230,10 @@
         "zh": "安装研究牌",
         "en": "Install Research Card"
       },
-      "specifies": "<ontology::action>",
+      "specifies": "<ontology::play>",
       "description": {
-        "zh": "将手牌中的一张 <research_card> 安装到层级分区：确定列与层级 → 满足 <cost_space> 费用格（可 assume a higher stage 多满足至更高层）→ 结算 <success_point>（已满足费用格下方印的分之和）→ 结算 <instant_bonus>（可放弃）→ 插入（仅上三分之一露出，<research_ability> 激活持续可用）。",
-        "en": "Install a <research_card> from hand into the stage partition: determine column and tier → fulfill the <cost_space>s (may assume a higher stage) → resolve <success_point> (sum of the fulfilled cost spaces' printed scores) → resolve <instant_bonus> (may forgo) → insert (only the top third remains visible; the <research_ability> activates and stays usable)."
-      },
-      "card_type": {
-        "type": "enum",
-        "enum": [
-          {
-            "id": "ACHIEVEMENT_CARD_TYPE",
-            "name": {
-              "zh": "成就",
-              "en": "Achievement"
-            }
-          },
-          {
-            "id": "BUILDING_CARD_TYPE",
-            "name": {
-              "zh": "建造",
-              "en": "Building"
-            }
-          },
-          {
-            "id": "INSIGHT_CARD_TYPE",
-            "name": {
-              "zh": "洞悉",
-              "en": "Insight"
-            }
-          },
-          {
-            "id": "MUTATION_CARD_TYPE",
-            "name": {
-              "zh": "突变",
-              "en": "Mutation"
-            }
-          },
-          {
-            "id": "INVENTION_CARD_TYPE",
-            "name": {
-              "zh": "发明",
-              "en": "Invention"
-            }
-          }
-        ]
+        "zh": "将手牌中的一张 <research_card> 投入使用：确定列与层级 → 满足 <cost_space> 费用格（可 assume a higher stage 多满足至更高层）→ 结算 <success_point>（已满足费用格下方印的分之和）→ 结算 <instant_bonus>（可放弃）→ 插入（仅上三分之一露出，<research_ability> 激活持续可用）。",
+        "en": "Put a <research_card> from hand into use: determine column and tier → fulfill the <cost_space>s (may assume a higher stage) → resolve <success_point> (sum of the fulfilled cost spaces' printed scores) → resolve <instant_bonus> (may forgo) → insert (only the top third remains visible; the <research_ability> activates and stays usable)."
       },
       "<ontology::piece>": "<research_card>",
       "source": "<ontology::hand>",
@@ -2286,83 +2246,79 @@
           }
         }
       },
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
+      "options": [
+        {
+          "id": "determine_position",
+          "name": {
+            "zh": "确定安装位置",
+            "en": "Determine Position"
+          },
+          "description": {
+            "zh": "确定安装列与层级。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。层级序号即费用格的 N。",
+            "en": "Determine the column and tier. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column. The tier index is the cost spaces' N."
+          }
+        },
+        {
+          "id": "determine_cost_range",
+          "name": {
+            "zh": "确定费用范围",
+            "en": "Determine Cost Range"
+          },
+          "description": {
+            "zh": "确定费用范围：至少满足前 N 格；可自愿承担更高层至第 M 格（M ≥ N，M ≤ 5），前缀连续覆盖，以获得更多 <success_point>。",
+            "en": "Determine the cost range: fulfill at least the first N spaces; may voluntarily assume a higher stage up to space M (M ≥ N, M ≤ 5), contiguous prefix, to gain more <success_point>."
+          },
+          "do_after": "determine_position"
+        },
+        {
+          "id": "resolve_success_points",
+          "name": {
+            "zh": "结算成功点数",
+            "en": "Resolve Success Points"
+          },
+          "do_after": "determine_cost_range",
+          "<ontology::instant_content>": "<success_point>"
+        },
+        {
+          "id": "resolve_instant_bonus",
+          "name": {
+            "zh": "结算即时奖励",
+            "en": "Resolve Instant Bonus"
+          },
+          "do_after": "resolve_success_points",
           "options": [
             {
-              "id": "determine_position",
-              "name": {
-                "zh": "确定安装位置",
-                "en": "Determine Position"
-              },
+              "id": "_skip",
               "description": {
-                "zh": "确定安装列与层级。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。层级序号即费用格的 N。",
-                "en": "Determine the column and tier. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column. The tier index is the cost spaces' N."
+                "zh": "放弃（不能或不想执行则作废）",
+                "en": "Forgo (forfeit if unable or unwilling)"
               }
             },
             {
-              "id": "determine_cost_range",
-              "name": {
-                "zh": "确定费用范围",
-                "en": "Determine Cost Range"
-              },
-              "description": {
-                "zh": "确定费用范围：至少满足前 N 格；可自愿承担更高层至第 M 格（M ≥ N，M ≤ 5），前缀连续覆盖，以获得更多 <success_point>。",
-                "en": "Determine the cost range: fulfill at least the first N spaces; may voluntarily assume a higher stage up to space M (M ≥ N, M ≤ 5), contiguous prefix, to gain more <success_point>."
-              },
-              "do_after": "determine_position"
-            },
-            {
-              "id": "resolve_success_points",
-              "name": {
-                "zh": "结算成功点数",
-                "en": "Resolve Success Points"
-              },
-              "do_after": "determine_cost_range",
-              "<ontology::instant_content>": "<success_point>"
-            },
-            {
-              "id": "resolve_instant_bonus",
-              "name": {
-                "zh": "结算即时奖励",
-                "en": "Resolve Instant Bonus"
-              },
-              "do_after": "resolve_success_points",
-              "options": [
-                {
-                  "id": "_skip",
-                  "description": {
-                    "zh": "放弃（不能或不想执行则作废）",
-                    "en": "Forgo (forfeit if unable or unwilling)"
-                  }
-                },
-                {
-                  "<ontology::instant_effect>": "本卡 parts 中的 <instant_bonus>（<research_card>.parts，内容见实例）"
-                }
-              ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-            },
-            {
-              "id": "insert",
-              "name": {
-                "zh": "插入层级分区",
-                "en": "Insert into Stage Partition"
-              },
-              "do_after": "resolve_instant_bonus",
-              "<ontology::transfer>": {
-                "source": "<ontology::hand>",
-                "destination": "<stage_partition>",
-                "<ontology::object>": "<research_card>",
-                "description": {
-                  "zh": "将 <research_card> 插入层级分区确定的位置，仅上三分之一露出；<research_ability> 自此激活、持续可用。",
-                  "en": "Insert the <research_card> into the determined position of the stage partition; only the top third remains visible and the <research_ability> is active from then on."
-                }
-              }
+              "<ontology::instant_effect>": "本卡 parts 中的 <instant_bonus>（<research_card>.parts，内容见实例）"
             }
           ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        },
+        {
+          "id": "insert",
+          "name": {
+            "zh": "插入层级分区",
+            "en": "Insert into Stage Partition"
+          },
+          "do_after": "resolve_instant_bonus",
+          "<ontology::transfer>": {
+            "source": "<ontology::hand>",
+            "destination": "<stage_partition>",
+            "<ontology::object>": "<research_card>",
+            "description": {
+              "zh": "将 <research_card> 插入层级分区确定的位置，仅上三分之一露出；<research_ability> 自此激活、持续可用。",
+              "en": "Insert the <research_card> into the determined position of the stage partition; only the top third remains visible and the <research_ability> is active from then on."
+            }
+          }
         }
-      }
+      ],
+      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
     },
     {
       "id": "install_starting_chip_card",
@@ -2370,24 +2326,14 @@
         "zh": "安装初始芯片牌",
         "en": "Install Starting Chip Card"
       },
-      "specifies": "<ontology::action>",
+      "specifies": "<ontology::play>",
       "description": {
         "zh": "将选中的 <starting_chip_card> 塞入 <console> 的收入区，成为玩家的首个收入芯片（其 <income_chip> 部分激活收入芯片时可选）。无费用格（区别于安装研究牌）。",
         "en": "Slide the chosen <starting_chip_card> into the <console>'s income area as the player's first income chip (its <income_chip> part is selectable when activating income chips). No cost slots (unlike installing research cards)."
       },
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "<ontology::play>": {
-            "description": {
-              "zh": "将牌塞入收入区成为首个收入芯片。",
-              "en": "Slide the card into the income area as the first income chip."
-            },
-            "source": "选中的<starting_chip_card>",
-            "destination": "<income_area>",
-            "<ontology::piece>": "<starting_chip_card>"
-          }
-        }
-      }
+      "<ontology::piece>": "<starting_chip_card>",
+      "source": "选中的<starting_chip_card>",
+      "destination": "<income_area>"
     },
     {
       "id": "install_goal_chip",

@@ -2129,8 +2129,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将一个 <piece> 投入使用的 <event>。依次：支付 <piece>.<effect>.<cost>、将 <piece> <transfer> 到目标 <zone>、<resolve> <piece>.<effect>.<content>。",
-        "en": "An <event> that puts a <piece> into use. Sequentially: pay <piece>.<effect>.<cost>, <transfer> the <piece> to the destination <zone>, <resolve> <piece>.<effect>.<content>."
+        "zh": "将一个 <piece> 投入使用的 <event>。核心语义三环节：支付费用（cost，可在实现节点自身声明，或引用 <piece> 的 effect）、将 <piece> <transfer> 到目标 <zone>、结算内容（content/resolve）。三个环节的步骤顺序与扩展由实现节点的 options + do_after 自由配置——pay_cost → transfer_piece → resolve 只是典型顺序而非强制（如研究牌安装是「结算成功点数 → 结算即时奖励 → 插入」）。纯转移的 play（无费用无结算）只需声明 <piece>/source/destination。",
+        "en": "An <event> that puts a <piece> into use. Three core steps: pay the cost (declared on the implementing node itself, or referenced from the <piece>'s effect), <transfer> the <piece> to the destination <zone>, and resolve the content. The order of and any extensions to these steps are freely configured by the implementing node's options + do_after — pay_cost → transfer_piece → resolve is only the typical order, not mandatory (e.g., installing a research card resolves success points and the instant bonus before the insertion). A play with neither cost nor content simply declares <piece>/source/destination."
       },
       "constraints": {
         "required": [
@@ -2154,23 +2154,24 @@
               "zh": "<piece> 移入的目标 <zone>。",
               "en": "The destination <zone> for the <piece>."
             }
-          },
+          }
+        ],
+        "optional": [
           {
             "id": "options",
             "description": {
-              "zh": "打出流程的执行步骤配置。包含 pay_cost（支付费用）、transfer_piece（转移 piece）、resolve（结算内容）三个步骤，按 do_after 声明依赖顺序依次执行。",
-              "en": "Execution step configuration for the play procedure. Contains three steps — pay_cost, transfer_piece, resolve — executed in dependency order declared by do_after."
+              "zh": "打出流程的业务步骤配置（可选——纯转移的 play 无需配置）。步骤顺序与扩展自由，按 do_after 声明依赖。",
+              "en": "Business step configuration for the play procedure (optional — a plain-transfer play needs none). Step order and extensions are free, declared via do_after."
             }
           },
           {
             "id": "type",
             "description": {
-              "zh": "执行策略，固定为 EXECUTE_ALL——全部步骤按依赖顺序执行。",
-              "en": "Execution strategy, fixed to EXECUTE_ALL — all steps execute in dependency order."
+              "zh": "步骤执行策略（配置 options 时通常为 EXECUTE_ALL）。",
+              "en": "Execution strategy for the steps (EXECUTE_ALL when options are configured)."
             }
           }
-        ],
-        "optional": []
+        ]
       }
     },
     {
