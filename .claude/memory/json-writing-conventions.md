@@ -263,6 +263,12 @@ transfer 的 destination 应该引用 action 自己的 target，不要写死 zon
 }
 ```
 
+## concept 说「是什么」，flow 说「怎么做」★（2026-08-12 用户定稿）
+
+- **概念层（concepts.json）**：只负责「是什么」——如 cost_space 说「这是费用格，分支付型/持有型/空格」。
+- **流程层（flow.json）**：负责「怎么做」——如安装研究牌的 cost 描述只说「如何选择费用」（N~M 范围、assume a higher stage 决策），不重复概念层的类型语义，也不写「满足所选卡的 cost_space parts（见 xxx.parts）」这类「是什么」的赘述。
+- 流程中需要引用概念语义时用简短指向（如「各费用格类型的支付/持有语义见 <cost_space>」），不整段复述。
+
 ---
 
 ## Cost 有内容时用 `instant_cost`
@@ -295,16 +301,19 @@ id + name.zh + name.en + description.zh + description.en
 
 写一个新 action/trigger/procedure 时确认：
 - [ ] 有 `name: { zh, en }`（紧跟 id 之后）
+- [ ] **trigger 结构优先 ★（2026-08-12 定稿）**：action/play 是 trigger，推荐顶层写 `condition/cost/target/content`（非强制——trigger 完全可以包含多步骤，写作范式无法脚本检查，靠清单自检）——多事件写入 `content.instant_content` 的 pipeline；选择结构写入 `target`/`cost`
+- [ ] **transfer 等执行环节不重复**：play 的转移（piece/source/destination）由 play 内建，content 不重复写 transfer 步骤；content 并列终结形态——`instant_content`（一次性结算）+ `continuous_content`（持续激活/生效）
 - [ ] procedure（round/turn/phase）多步骤时持有 `<ontology::pipeline>`，单内容时直接持有概念（如 `<ontology::action>`），不用 children/actions/actor/start/end
 - [ ] **1 个动作不叫 pipeline**：多候选动作直接用 `"<ontology::action>": { "options": [...], "type": "CHOOSE_ONE" }`（options/type 是通用选择结构，挂在概念上即可）
 - [ ] **round/phase 执行次数用顶层 `loop`（count 定次 / until 条件），不在 pipeline 内**；缺省无 loop = 1 次 = 每人一轮；turn 内建轮转，顺序差异写 description
 - [ ] phase 不是必包层：只有 1 个 phase 时省略不写
 - [ ] 步骤级 condition 不成立 = 阻断；候选级 condition 不成立 = 排除（二者语义不同）
+- [ ] **「A 则 B 否则 C」= 步骤级 condition 互补**（EXECUTE_ALL 下互斥步骤各带互补 condition）；分支内玩家决策用 CHOOSE_ONE；MATCH 无法表达「否则」（单 condition 匹配依据），不用
 - [ ] 无行动可选的兜底：把「跳过」做成带「全部行动条件取反」condition 的候选
 - [ ] condition 单条写 zh/en，多条才用 options/type/EXECUTE_ALL
 - [ ] cost 是 instant_cost/continuous_cost；无需支付则省略字段（不写 null）
 - [ ] `<ontology::cost>` 下必须再来一层 `<ontology::instant_cost>` 或 `<ontology::continuous_cost>`，不直接挂数据/transfer；content 同理；instant/continuous 不允许独立存在（E13）
-- [ ] target 是字符串，不是对象
+- [ ] **target 是字符串或选择结构**（含 `options`/`type` 的选择结构合法，W01 豁免 type 键对象）；选择语义归 target/cost——规则自动分支用 condition 互补，玩家决策用 CHOOSE_ONE
 - [ ] content 是 `<ontology::instant_content>` 或 `<ontology::continuous_content>`
 - [ ] 所有 type 引用是完整路径 `"<ontology::multiple_choice_enum.XXX>"`
 - [ ] 没有 `"type": "<ontology::xxx>"` 这种写法（用 key-as-type）
@@ -313,6 +322,12 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)
+
+## 概念层 vs 流程层职责 ★（2026-08-12 定稿）
+
+- **概念层（concepts.json）只说「是什么」**：类型、字段、约束。概念不自带 effect 协议——specifies（如 `<ontology::continuous_effect>`）已覆盖标准字段（condition/cost/target/content），不重复声明字段；parts 条目只留 `position`（不复述概念定义）
+- **流程层（flow.json）只说「怎么做」**：触发、结算、选择决策。不重复概念层的「是什么」语义
+- **引用链 vs 复述**：flow 引用概念数据用路径（如 `parts.<cost_space>` 或 `this.target`），「数据在哪」必须可导航；「是什么」语义不整段复述。概念说「这是费用格」，flow 说「如何选择费用」
 
 **Why:** 后端索引、查询、语义匹配全部依赖这些约定。违反任何一条都会导致 LLM 搜不到或理解错误。
 **How to apply:** 写任何新概念/action/trigger 时逐项对照检查清单。

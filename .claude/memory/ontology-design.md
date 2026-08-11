@@ -21,10 +21,12 @@ D:\workspace\board\ontology\concepts.json（统一本体，67 个概念）
 - `Board Game Procedure Ontology v0.md` — 流程时序概念
 
 ## 基础约定
+- **ontology 纯净原则 ★（2026-08-11 用户定稿）**：ontology 是几十上百款游戏的通用基础，定义中不得出现具体游戏的例子或专名（游戏名、游戏专属概念、具体路径如 `<phase_sequence>.<slot>`）。需要举例时用占位符（`<concept>`、`<track>.<part_id>` 等——占位符须在校验脚本 placeholder_refs 内）或纯抽象表述；游戏具体内容一律放游戏层。
 - 每个概念都有 `id`、`name`（中英双语）、`abstract`、`definition`、`constraints`
 - **字段声明在概念顶层**（不再嵌套在 `fields` 内） 如 `"owner": { "type": "player | null", "default": null, ... }`。字段名即 JSON key，声明内容包括 `type`、`description`、可选的 `default`
 - **`constraints.required`** = 子类必须实现的字段 ID 列表。格式为 `[{ "id": "<field_id>", "description": { "zh": "...", "en": "..." } }]`
 - **`constraints.optional`** = 子类可选实现的字段 ID 列表，格式同上
+- **引用条目 description 非强制 ★（2026-08-11 定稿）**：只要是引用（CONCEPT_REF 或 `<concept_id>` 格式），description 就不是强制性的——同一概念被不同概念引用会变成不同的东西，此时 description 有必要（说明该引用语境下的含义）；同义引用（如 research_card 的 required 列出 `<research_ability>`/`<cost_space>` 等 part）直接写纯引用字符串即可。LOCAL 字段仍用字符串格式（描述在字段定义处）
 - **`id` 字段特殊处理**：由 Object 定义，所有实例隐式拥有。因与概念自身的 `"id"` 元数据冲突，不在顶层声明，仅保留在 Object 的 constraints 中
 - **`extends` / `specifies` / `instance_of`** 三种层级关系：`extends`=结构扩展（加新字段）、`specifies`=参数绑定（填已有字段）、`instance_of`=具体个体（字段全满）。三者均可链化——extends 和 specifies 可任意深度交替，instance_of 是唯一终端。基础概念无 `extends`
 - `abstract: true` = 基类，不可直接实例化
@@ -224,7 +226,7 @@ Hand
 - **Track 是 Zone 的子类**：轨道不再属于 `<aid>`，而是一种「有序 zone」，其中 marker 只做内部位置移动，不发生 zone 间 transfer。
 - **Score Zone 已移除**：`<score_track>` 自己就是 zone，不再需要单独的 `<score_zone>`。
 - **Reserve 的 public/player 区分由 ownership 表达**：`<supply>`、`<market>`、`<deck>`、`<pool>` 都通过 `<ownership>`（null = 公共，`<player>` = 玩家专属）区分公共区与个人区，不再为 public/player 单独建子类。仓库等已属于玩家的存储区仍应归类为 `<player_holding>`。
-- **新增背景设定概念 `<setting>`**：用于描述游戏世界观、时代背景与关键角色，解释风味命名（如 `<favor_of_ager_track>` 中的「阿格拉」），不直接参与规则判定。
+- **新增背景设定概念 `<setting>`**：用于描述游戏世界观、时代背景与关键角色，解释风味命名，不直接参与规则判定。**ontology 只留抽象定义，游戏背景放游戏层实例**（2026-08-11 修正——ontology 是通用基础，不得出现具体游戏的例子/专名；civolution 背景在 `<civolution_setting>` 实例）。
 - **ontology 概念直接引用，不在游戏层重复封装**：游戏文件里已有通用概念就直接用 `<ontology::concept_id>` 或声明其实例，不新建 `<game_xxx>` 包装。
 - **Board 概念拆分 ★**：`<board>` 是从 `<aid>` 中拆出的新基础概念（与 `<aid>`、`<piece>` 同级，均为 `<object>` 的子类）。核心判据：**是否承载游戏状态**。Board 承载状态——上面可以放置 piece 和 token、可以 host zone（zone 由规则定义，board 是物理宿主）、可以携带自身 content（如玩家面板上的活动图标）；Aid 不承载状态——纯被动参考物，收起来也不影响游戏。Board 不可被 transfer（区别于 piece），不可携带 effect 后被 play（同样区别于 piece）。`<public_board>` 和 `<player_board>` 的 extends 已从 `<aid>` 改为 `<board>`。
 - **Zone 可由实体承载 ★**：zone 的来源不再仅限于规则——card 和 board 都可以承载 zone。例如 Arkham Horror 地点牌上的线索区、Civolution 初始芯片牌上的目标芯片区（card 承载 zone）、控制台左上角的收入芯片区（board 承载 zone）。实体承载的 zone 生命周期绑定在宿主上——宿主被移除时 zone 随之消失。这只是承认了桌游中已有的物理事实，zone 的独立逻辑定义不受影响。

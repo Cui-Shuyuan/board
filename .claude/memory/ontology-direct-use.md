@@ -11,7 +11,7 @@ metadata:
 
 典型案例：
 - 错误：为《文明演化》单建 `<civolution_setting>`，而 ontology 已有 `<setting>`。
-- 正确：把《文明演化》背景故事直接写入 `<ontology::setting>` 的定义，游戏中直接引用。
+- 正确（2026-08-11 修正）：ontology 的 `<setting>` 只留抽象定义（「每款游戏的具体背景设定见游戏层的 setting 实例」），游戏背景故事放游戏层实例——`<civolution_setting>`（specifies `<ontology::setting>`）承载文明演化世界观。
 
 **Why:** 重复封装会让同一语义出现两层定义，增加维护成本，也容易写错。
 **How to apply:**

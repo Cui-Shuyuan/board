@@ -11,6 +11,29 @@ metadata:
 
 `<pipeline>` 是多选项处理模型。从几个 token 中选一个拿走，从几个 action 中选一个执行，一个流程有好几个步骤按什么顺序进行——这些都是同一问题。
 
+## trigger 结构优先 ★（2026-08-12 定稿）
+
+**action/play 是 trigger，推荐顶层写 condition/cost/target/content**（非强制——trigger 完全可以包含多步骤，由实现节点自定）。pipeline/options 通常出现在两个位置：
+
+1. **content.instant_content 内部**——多事件结算（一个 trigger 触发多个事件时）
+2. **target/cost 字段内**——选择结构（目标选择规则、费用决策）
+
+「选择一张牌、选择打到哪、把它从手牌里拿出来」这类 play 内建语义（select_target/transfer_piece/pay_cost）由 trigger_pipeline 完成，不写成步骤。转移（transfer）由 play 的 piece/source/destination 声明，content 不重复写 transfer 步骤；content 并列终结形态——instant_content（一次性结算）+ continuous_content（持续激活）。
+
+## 「A 则 B 否则 C」★（2026-08-12 定稿）
+
+= **步骤级 condition 互补**（EXECUTE_ALL 下互斥步骤各带互补 condition）：
+
+```json
+"options": [
+  { "id": "b", "<ontology::condition>": "A", ...B 的内容 },
+  { "id": "c", "<ontology::condition>": "A 不成立", ...C 的内容 }
+],
+"type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+```
+
+A 成立 → B 执行、C 阻断；否则反之。分支内部若含玩家决策用 CHOOSE_ONE 嵌套。**MATCH 无法表达「否则」**——它是单 condition 匹配依据的选择，未命中视为跳过，不是互斥二分。
+
 ## Pipeline 是唯一的结构原语 ★（2026-08-09 定稿）
 
 **`<round>`、`<turn>`、`<phase>` 的多步骤执行用 `<ontology::pipeline>` 定义；仅干一件事时直接持有对应概念（如 `<ontology::action>`），不套 pipeline**（2026-08-09 修正：pipeline 是描述多 trigger/多步骤的工具，不是必包层；phase 同样不是必包层——只有 1 个 phase 时省略不写）。children 数组、actor、start/end 字段全部废弃：
