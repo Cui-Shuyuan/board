@@ -2278,6 +2278,14 @@
       "<ontology::piece>": "<research_card>",
       "source": "<ontology::hand>",
       "destination": "<stage_partition>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "满足所选 <research_card> 声明的费用格（该卡 <ontology::cost> 的 slots，位于卡牌中三分之一）：N = 安装层级序号，可选满足至 M（M ≥ N，M ≤5），前缀连续覆盖。支付型格从仓库返还对应标记至供应堆；持有型格检查特征标记持有数量；空格自动视为已满足。",
+            "en": "Satisfy the chosen <research_card>'s declared cost slots (the card's <ontology::cost>.slots, in the middle third of the card): N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix. Payment slots return markers from storage to supply; possession slots check feature marker holdings; empty slots are auto-satisfied."
+          }
+        }
+      },
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "options": [
