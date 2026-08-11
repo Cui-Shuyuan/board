@@ -23,6 +23,7 @@ Board AI 规则文件语法校验脚本。
   E10  _skip 缺 id 或缺 description
   E13  <ontology::cost>/<ontology::content> 缺 instant/continuous 子层、
        直接挂执行概念 (transfer 等)、或 instant/continuous 独立存在
+  E15  游戏层引用 ontology 概念缺 namespace (当前游戏无此概念 + ontology 有)
   W01  target 是对象 (约定纯字符串; 含 type 的选择结构豁免)
   W02  do_after 引用了 <概念> (应引用步骤 id)
   W03  condition 形态未知 (应为 字符串引用 | {zh,en} | {options,type})
@@ -85,6 +86,7 @@ class Validator:
         self.referenced: set[str] = set()      # 被引用过的概念 (W05)
         self.this_params: dict[str, set[str]] = {}  # source → this.xxx 模板参数引用 (E12 按文件判定)
         self.field_appearances: dict[str, set[str]] = {}  # 字段名 → 声明它的概念集合 (专属参数判定)
+        self.game_defs: dict[str, set[str]] = {}  # 游戏名 → 该游戏定义的全部 id (E15 namespace 判定)
 
     # ── 工具 ──────────────────────────────────────────────
     def err(self, loc: str, msg: str): self.issues.append(("ERROR", loc, msg))
@@ -122,6 +124,12 @@ class Validator:
             # 概念优先: 既是概念又是字段名时按概念处理
             if self.is_defined(head):
                 self.referenced.add(head)
+                # E15: 游戏层引用 ontology 概念必须带 namespace (2026-08-12 用户定稿)
+                #      判据: 当前游戏无此概念定义 + ontology 有 = 忘加 <ontology::>
+                if ("::" not in ref and self.current_source.startswith("games/")
+                        and head in self.ontology_ids
+                        and head not in self.game_defs.get(self.current_source.split("/")[1], set())):
+                    self.err(loc, f"E15 游戏层引用 ontology 概念 <{head}> 缺 namespace — 应写 <ontology::{head}>")
                 return
             # E12: <xxx> 只允许引用真实概念 (2026-08-11 用户定稿)
             #      字段名/参数/枚举值/槽位名都不是概念:
@@ -185,6 +193,8 @@ class Validator:
                 if isinstance(oid, str) and oid:
                     self.node_ids.add(oid)
                     (self.ontology_ids if is_ontology else self.game_ids).add(oid)
+                    if not is_ontology and source.startswith("games/"):
+                        self.game_defs.setdefault(source.split("/")[1], set()).add(oid)
                     # 概念字段与继承链: ontology 先收集, game 层重名不覆盖 (setdefault)
                     top = {self.norm_field(k) for k in obj.keys()
                            if k not in ("id", "name", "abstract", "description", "definition",
@@ -242,6 +252,12 @@ class Validator:
                                 self.enum_ids.add(e)
                 for k, v in obj.items():
                     self.field_ids.add(k.strip("[]"))
+                    # 游戏层概念声明 (E15 判定): top_level_refs 键 或 文件顶层 <概念> 键
+                    # (splendor 顶层引用无包装, 直接平铺在文件顶层)
+                    if (k.startswith("<") and not is_ontology
+                            and (".top_level_refs" in path or path == "$")):
+                        self.game_defs.setdefault(source.split("/")[1], set()).add(
+                            k.strip("<>").split("::")[-1].split(".")[0])
                     walk(v, f"{path}.{k}", depth + 1)
             elif isinstance(obj, list):
                 for i, v in enumerate(obj):

@@ -366,8 +366,8 @@
           "en": "The <ontology::object> types this <ontology::supply> holds: <gem> (five colors)."
         }
       },
-      "<ownership>": null,
-      "<information_visibility>": "public"
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
     },
     {
       "id": "gold_supply",
@@ -388,8 +388,8 @@
           "en": "The <ontology::object> type this <ontology::supply> holds: <gold> only."
         }
       },
-      "<ownership>": null,
-      "<information_visibility>": "public"
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
     },
     {
       "id": "development_deck",
@@ -422,8 +422,8 @@
           "en": "The level of this <ontology::deck>. Determines which level of <development_card> it holds."
         }
       },
-      "<ownership>": null,
-      "<information_visibility>": "hidden"
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "hidden"
     },
     {
       "id": "development_deck_level_1",
@@ -527,8 +527,8 @@
           "en": "Replenishment rule — maps each level to its corresponding <ontology::deck>: { \"I\": \"<development_deck_level_1>\", \"II\": \"<development_deck_level_2>\", \"III\": \"<development_deck_level_3>\" }. When a <development_card> is taken from a slot, immediately draw a new card from the top of the corresponding <development_deck> to fill it. If the corresponding <ontology::deck> is empty, the slot is not refilled. Replenishment occurs after each purchase or reserve operation."
         }
       },
-      "<ownership>": null,
-      "<information_visibility>": "public"
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
     },
     {
       "id": "noble_market",
@@ -549,8 +549,8 @@
           "en": "The <ontology::object> type this <ontology::market> displays: <noble>."
         }
       },
-      "<ownership>": null,
-      "<information_visibility>": "public"
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
     },
     {
       "id": "noble",
@@ -688,8 +688,8 @@
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
             "description": {
-              "zh": "将玩家在 <action> 的 target 中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。ownership_change隐式发生。",
-              "en": "Moves the <gem>s specified in the <action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. ownership_change occurs implicitly."
+              "zh": "将玩家在 <ontology::action> 的 target 中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。ownership_change隐式发生。",
+              "en": "Moves the <gem>s specified in the <ontology::action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. ownership_change occurs implicitly."
             },
             "source": "<gem_supply>",
             "destination": "<ontology::player_holding>",
@@ -719,8 +719,8 @@
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
             "description": {
-              "zh": "将玩家在 <action> 的 target 中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。ownership_change隐式发生。",
-              "en": "Moves 2 <gem>s of the color specified in the <action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. ownership_change occurs implicitly."
+              "zh": "将玩家在 <ontology::action> 的 target 中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。ownership_change隐式发生。",
+              "en": "Moves 2 <gem>s of the color specified in the <ontology::action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. ownership_change occurs implicitly."
             },
             "source": "<gem_supply>",
             "destination": "<ontology::player_holding>",
@@ -993,7 +993,7 @@
         "zh": "璀璨宝石的胜利条件：终局流程完成后，按顺序满足以下条件的<ontology::player>（们）是胜者——1. <prestige_point>总数最高；2. <ontology::development_area>中<development_card>数量最少（用更少卡牌达到同样分数，效率更高）。允许多人平局。",
         "en": "Splendor's victory condition: after the endgame process completes, the <ontology::player>(s) satisfying the following criteria in order win — 1. highest total <prestige_point>s; 2. fewest <development_card>s in the <ontology::development_area> (reaching the same score with fewer cards means higher efficiency). Ties among multiple players are allowed."
       },
-      "<condition>[]": [
+      "<ontology::condition>[]": [
         "<prestige_highest>",
         "<fewest_development_cards>"
       ]
@@ -1041,14 +1041,14 @@
         "en": "Gem holding limit, fixed at 10. When a <ontology::player>'s total <gem> and <gold> count reaches 10, they cannot perform the 'take gems' <ontology::action> at the start of their turn and must first spend down below 10 by purchasing a <development_card>."
       }
     },
-    "<ownership>": {
+    "<ontology::ownership>": {
       "type": "<ontology::player>",
       "description": {
         "zh": "从<ontology::player_zone>继承，<ontology::player_holding>始终归属于一个<ontology::player>。",
         "en": "Inherited from <ontology::player_zone>, <ontology::player_holding> always belongs to a <ontology::player>."
       }
     },
-    "<information_visibility>": "public"
+    "<ontology::information_visibility>": "public"
   },
   "<development_area>": {
     "contains": {
@@ -1058,14 +1058,14 @@
         "en": "The <ontology::object> types this <ontology::development_area> holds: <development_card> and <noble>. After purchasing a <development_card> or gaining a <noble>, the <ontology::player> moves it here. <development_card>s here permanently provide <prestige_point>s and <discount>; <noble>s provide <prestige_point>s."
       }
     },
-    "<ownership>": {
+    "<ontology::ownership>": {
       "type": "<ontology::player>",
       "description": {
         "zh": "从<ontology::player_zone>继承，<ontology::development_area>始终归属于一个<ontology::player>。",
         "en": "Inherited from <ontology::player_zone>, <ontology::development_area> always belongs to a <ontology::player>."
       }
     },
-    "<information_visibility>": "public"
+    "<ontology::information_visibility>": "public"
   },
   "<hand>": {
     "contains": {
@@ -1083,14 +1083,14 @@
         "en": "Hand capacity, fixed at 3. The 'reserve card' <ontology::action> is unavailable when full."
       }
     },
-    "<ownership>": {
+    "<ontology::ownership>": {
       "type": "<ontology::player>",
       "description": {
         "zh": "从<ontology::player_zone>继承，<ontology::hand>始终归属于一个<ontology::player>。",
         "en": "Inherited from <ontology::player_zone>, <ontology::hand> always belongs to a <ontology::player>."
       }
     },
-    "<information_visibility>": "private"
+    "<ontology::information_visibility>": "private"
   },
   "<starting_player_marker>": {
     "appearance": {

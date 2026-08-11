@@ -482,7 +482,7 @@
                       "<ontology::transfer>": {
                         "source": "<ontology::game_box>",
                         "destination": "<boat>",
-                        "<ontology::object>": "<marker>",
+                        "<ontology::object>": "<ontology::marker>",
                         "quantity": 2,
                         "<ontology::per_player>": true
                       }
@@ -593,7 +593,7 @@
                   },
                   "source": "<ontology::game_box>",
                   "destination": "<continent> | <console>",
-                  "<ontology::object>": "<marker>",
+                  "<ontology::object>": "<ontology::marker>",
                   "quantity": 6,
                   "<ontology::per_player>": true,
                   "do_after": "assemble_public_board"
@@ -672,7 +672,7 @@
                         },
                         "source": "<ontology::supply>",
                         "destination": "<console>",
-                        "<ontology::object>": "<marker>",
+                        "<ontology::object>": "<ontology::marker>",
                         "quantity": "按所选标记牌指示的数量与位置",
                         "<ontology::per_player>": true
                       }
@@ -2118,7 +2118,7 @@
                   "zh": "投掷玩家持有的全部 <fate_die>。",
                   "en": "Roll all <fate_die> held by the player."
                 },
-                "<dice>": "<fate_die>[]",
+                "<ontology::dice>": "<fate_die>[]",
                 "count": "all"
               }
             },
@@ -2372,7 +2372,7 @@
         "zh": "将一枚 <goal_chip> 从目标区安装到层级分区。翻至背面，选左/右半侧，安装至最低空位。",
         "en": "Install a <goal_chip> from the goal area into the stage partition. Flip to back, choose left/right half, place at lowest empty position."
       },
-      "<piece>": "<goal_chip>",
+      "<ontology::piece>": "<goal_chip>",
       "source": "<goal_area>",
       "destination": "<goal_column>"
     },
@@ -2387,7 +2387,7 @@
         "zh": "将一枚 <income_chip> 安装到 <stage_partition>。任选一列，安装至最低空闲 <tier>。",
         "en": "Install an <income_chip> into the <stage_partition>. Choose any column, install at lowest empty <tier>."
       },
-      "<piece>": "<income_chip>",
+      "<ontology::piece>": "<income_chip>",
       "source": "<income_chip_display>",
       "destination": "<stage_partition>"
     },
@@ -2402,7 +2402,7 @@
         "zh": "将一枚 <attribute_chip> 安装到 <stage_partition>。若已有同列则继续该列，否则任选空列。",
         "en": "Install an <attribute_chip> into the <stage_partition>. Continue existing column or choose any empty one."
       },
-      "<piece>": "<attribute_chip>",
+      "<ontology::piece>": "<attribute_chip>",
       "source": "<attribute_chip_display>",
       "destination": "<stage_partition>"
     },
@@ -2449,7 +2449,7 @@
         "zh": "从 5 条进程轨中任选 1 条推进。",
         "en": "Choose any 1 of the 5 progress tracks and advance on it."
       },
-      "<track>": {
+      "<ontology::track>": {
         "options": [
           "<technology_track>",
           "<prestige_track>",
@@ -3473,7 +3473,7 @@
                   "zh": "掷玩家持有的全部<fate_die>，选 1 个骰子的点数（1 和 6 相连）。",
                   "en": "Roll all <fate_die>s held by the player and choose one result (1 and 6 are adjacent)."
                 },
-                "<dice>": "<fate_die>[]",
+                "<ontology::dice>": "<fate_die>[]",
                 "count": "all"
               }
             },
@@ -3730,7 +3730,7 @@
                           "zh": "投掷该激活骰一次，确定点数。",
                           "en": "Roll the activation die once to determine its value."
                         },
-                        "<dice>": "<activation_die>[]",
+                        "<ontology::dice>": "<activation_die>[]",
                         "count": 1
                       }
                     },
@@ -3800,7 +3800,7 @@
                           "zh": "投掷该激活骰一次，确定点数。",
                           "en": "Roll the activation die once to determine its value."
                         },
-                        "<dice>": "<activation_die>[]",
+                        "<ontology::dice>": "<activation_die>[]",
                         "count": 1
                       }
                     },
@@ -4500,8 +4500,8 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个自己的模组（<upgradable_module> 主模组或 <feature_module> 特征模组），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），执行其当前等级的效果。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<pipeline> 的 pay_cost 步骤）。",
-        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module): pay the module's declared cost (exactly 2 <activation_die>s of matching values), then execute its current-level effect. <planning_marker> / <focus_marker> substitutions apply during payment (see each marker's <ontology::substitution>; effective point: the pay_cost step of <pipeline>)."
+        "zh": "选择 1 个自己的模组（<upgradable_module> 主模组或 <feature_module> 特征模组），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），执行其当前等级的效果。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<ontology::pipeline> 的 pay_cost 步骤）。",
+        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module): pay the module's declared cost (exactly 2 <activation_die>s of matching values), then execute its current-level effect. <planning_marker> / <focus_marker> substitutions apply during payment (see each marker's <ontology::substitution>; effective point: the pay_cost step of <ontology::pipeline>)."
       },
       "target": "1 个自己的模组（<upgradable_module> 或 <feature_module>）",
       "<ontology::content>": {
@@ -4676,8 +4676,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<phase_indicator> 位于 <phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>，由 Reset 的 A 步推入），**且自到达以来每位 <player> 又各完成了一个 <turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
-        "en": "The <phase_indicator> is on <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>, pushed there by Reset step A), **and since it arrived every <player> has completed one more <turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
+        "zh": "<phase_indicator> 位于 <phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>，由 Reset 的 A 步推入），**且自到达以来每位 <ontology::player> 又各完成了一个 <ontology::turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
+        "en": "The <phase_indicator> is on <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>, pushed there by Reset step A), **and since it arrived every <ontology::player> has completed one more <ontology::turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
       }
     },
     {

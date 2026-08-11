@@ -227,7 +227,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 1
                   }
@@ -242,7 +242,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 3
                   }
@@ -399,7 +399,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 2
                   }
@@ -414,7 +414,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 5
                   }
@@ -558,7 +558,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 3
                   }
@@ -573,7 +573,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 5
                   }
@@ -708,7 +708,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 1
                   }
@@ -723,7 +723,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 5
                   }
@@ -825,7 +825,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 2
                   }
@@ -840,7 +840,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 4
                   }
@@ -949,7 +949,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 1
                   }
@@ -964,7 +964,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 4
                   }
@@ -1145,7 +1145,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 4
                   }
@@ -1160,7 +1160,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 6
                   }
@@ -1330,7 +1330,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 3
                   }
@@ -1345,7 +1345,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 4
                   }
@@ -1460,7 +1460,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 1
                   }
@@ -1475,7 +1475,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 2
                   }
@@ -1591,7 +1591,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 5
                   }
@@ -1606,7 +1606,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 6
                   }
@@ -1786,7 +1786,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 3
                   }
@@ -1801,7 +1801,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 6
                   }
@@ -1996,7 +1996,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 3
                   }
@@ -2011,7 +2011,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 6
                   }
@@ -2181,7 +2181,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 1
                   }
@@ -2196,7 +2196,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 6
                   }
@@ -2366,7 +2366,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 4
                   }
@@ -2381,7 +2381,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 5
                   }
@@ -2493,7 +2493,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 2
                   }
@@ -2508,7 +2508,7 @@
               "<ontology::transfer>": {
                 "source": "<activation_dice_area>",
                 "destination": "<player_holding>",
-                "<object>": {
+                "<ontology::object>": {
                   "<activation_die>": {
                     "value": 3
                   }
@@ -2700,7 +2700,7 @@
             "<ontology::transfer>": {
               "source": "<activation_dice_area>",
               "destination": "<ontology::supply>",
-              "<object>": "<activation_die>",
+              "<ontology::object>": "<activation_die>",
               "quantity": 2,
               "description": {
                 "zh": "支付任意 2 个<activation_die>，点数不限。",
@@ -2716,7 +2716,7 @@
                 "<ontology::transfer>": {
                   "source": "<ontology::supply>",
                   "destination": "<focus_space>",
-                  "<object>": "<focus_marker>",
+                  "<ontology::object>": "<focus_marker>",
                   "quantity": 1
                 }
               },
@@ -2724,7 +2724,7 @@
                 "<ontology::transfer>": {
                   "source": "<ontology::supply>",
                   "destination": "<idea_space>",
-                  "<object>": "<idea_marker>",
+                  "<ontology::object>": "<idea_marker>",
                   "quantity": 2
                 }
               }

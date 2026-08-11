@@ -840,7 +840,7 @@
           "<ontology::transfer>": {
             "source": "<activation_dice_area>",
             "destination": "<player_holding>",
-            "<object>": {
+            "<ontology::object>": {
               "<activation_die>": {
                 "value": "this.dice_value"
               }
@@ -858,7 +858,7 @@
           "<ontology::transfer>": {
             "source": "<ontology::supply>",
             "destination": "<feature_space>",
-            "<object>": "<feature_marker>",
+            "<ontology::object>": "<feature_marker>",
             "quantity": 1,
             "description": {
               "zh": "获得 1 个对应 this.feature 的<feature_marker>。",
@@ -1389,8 +1389,8 @@
               "en": "middle of the chip"
             },
             "description": {
-              "zh": "安装此芯片必须满足的条件。部分芯片需支付费用（<instant_cost>），部分仅需满足状态条件（<continuous_cost>）。",
-              "en": "The cost that must be fulfilled to install this chip. Some chips require payment (<instant_cost>), others only a state condition (<continuous_cost>)."
+              "zh": "安装此芯片必须满足的条件。部分芯片需支付费用（<ontology::instant_cost>），部分仅需满足状态条件（<ontology::continuous_cost>）。",
+              "en": "The cost that must be fulfilled to install this chip. Some chips require payment (<ontology::instant_cost>), others only a state condition (<ontology::continuous_cost>)."
             }
           }
         },
@@ -1608,14 +1608,14 @@
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 5 分（<score>）。地点阶段结算（共 2 块狼谷，各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
-        "en": "The player who reveals this site (via <module_exploration>) gains 5 success points immediately (<score>). Site phase resolution (2 Gorges exist; each resolves independently): each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
+        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 5 分（<ontology::score>）。地点阶段结算（共 2 块狼谷，各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
+        "en": "The player who reveals this site (via <module_exploration>) gains 5 success points immediately (<ontology::score>). Site phase resolution (2 Gorges exist; each resolves independently): each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
       },
       "score": 5,
       "parts": [
         {
           "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<module_exploration>翻开）的<player>",
+            "target": "翻开本地点（经由<module_exploration>翻开）的<ontology::player>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "<ontology::push_track>": {
@@ -1651,14 +1651,14 @@
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 4 分（<score>）。地点阶段结算（共 2 块冰川，各自独立结算）：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮部落（<state_change> posture → <lying>）；弱部落不受影响，无强壮部落则豁免。",
-        "en": "The player who reveals this site (via <module_exploration>) gains 4 success points immediately (<score>). Site phase resolution (2 Glaciers exist; each resolves independently): each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
+        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 4 分（<ontology::score>）。地点阶段结算（共 2 块冰川，各自独立结算）：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮部落（<ontology::state_change> posture → <lying>）；弱部落不受影响，无强壮部落则豁免。",
+        "en": "The player who reveals this site (via <module_exploration>) gains 4 success points immediately (<ontology::score>). Site phase resolution (2 Glaciers exist; each resolves independently): each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<ontology::state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
       },
       "score": 4,
       "parts": [
         {
           "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<module_exploration>翻开）的<player>",
+            "target": "翻开本地点（经由<module_exploration>翻开）的<ontology::player>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "<ontology::push_track>": {
@@ -1698,14 +1698,14 @@
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 1 分（<score>）。地点阶段结算（共 3 块神秘橡树，各自独立结算）：对每块橡树，本玩家检查相邻且有自己的<tribe>的区域——每个<terrain_water>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
-        "en": "The player who reveals this site (via <module_exploration>) gains 1 success point immediately (<score>). Site phase resolution (3 Mystic oaks exist; each resolves independently): for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <terrain_water>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
+        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 1 分（<ontology::score>）。地点阶段结算（共 3 块神秘橡树，各自独立结算）：对每块橡树，本玩家检查相邻且有自己的<tribe>的区域——每个<terrain_water>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
+        "en": "The player who reveals this site (via <module_exploration>) gains 1 success point immediately (<ontology::score>). Site phase resolution (3 Mystic oaks exist; each resolves independently): for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <terrain_water>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
       },
       "score": 1,
       "parts": [
         {
           "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<module_exploration>翻开）的<player>",
+            "target": "翻开本地点（经由<module_exploration>翻开）的<ontology::player>",
             "<ontology::content>": {
               "<ontology::instant_content>": {
                 "<ontology::push_track>": {
@@ -2042,8 +2042,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "白色的圆柱形 <marker>，放置在 <sequence_board> 天气轨上指示当前天气。",
-        "en": "A cylindrical white <marker> placed on the weather gauge of the sequence board to indicate the current weather."
+        "zh": "白色的圆柱形 <ontology::marker>，放置在 <sequence_board> 天气轨上指示当前天气。",
+        "en": "A cylindrical white <ontology::marker> placed on the weather gauge of the sequence board to indicate the current weather."
       },
       "media": {
         "component": [
@@ -2060,8 +2060,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "放置在 <favor_of_ager_track> 上指示当前恩惠等级的 <marker>。影响恩惠检定、雕像收入和终局计分。",
-        "en": "A <marker> placed on the <favor_of_ager_track> to indicate the current favor level. Affects favor tests, statue income, and final scoring."
+        "zh": "放置在 <favor_of_ager_track> 上指示当前恩惠等级的 <ontology::marker>。影响恩惠检定、雕像收入和终局计分。",
+        "en": "A <ontology::marker> placed on the <favor_of_ager_track> to indicate the current favor level. Affects favor tests, statue income, and final scoring."
       }
     },
     {
@@ -2527,8 +2527,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "放置在进程轨上指示玩家当前进程等级的 <marker>。每位玩家有 5 个，分别放在 5 条进程轨上。",
-        "en": "A <marker> placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. "
+        "zh": "放置在进程轨上指示玩家当前进程等级的 <ontology::marker>。每位玩家有 5 个，分别放在 5 条进程轨上。",
+        "en": "A <ontology::marker> placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. "
       },
       "component": "<stackable_disc>"
     },
