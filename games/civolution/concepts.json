@@ -966,29 +966,63 @@
       },
       "abstract": false,
       "description": {
-        "zh": "可安装到层级分区的 <ontology::card>。纵向分为三部分：上部能力区（安装后唯一露出）、中部五个费用格、下部即时奖励。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。",
-        "en": "A <ontology::card> that can be installed into the stage partition. Vertically divided into three sections: top ability area (the only visible part after installation), middle five cost slots, and bottom instant bonus. Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition."
+        "zh": "可安装到层级分区的 <ontology::card>。纵向三段：上部「能力」区（<research_ability>，安装后唯一露出、持续可用）、中部五个「费用格」（<cost_space>，格下方可能印有 <success_point>）、下部「即时奖励」（<instant_bonus>）。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。效果的触发与结算过程见 <install_research_card>。",
+        "en": "A <ontology::card> that can be installed into the stage partition. Three vertical sections: the top-third \"ability\" (<research_ability>, the only visible part after installation and persistently usable), the middle five \"cost spaces\" (<cost_space>; each may have <success_point> printed below), and the bottom \"instant bonus\" (<instant_bonus>). Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition. How these effects trigger and resolve is described in <install_research_card>."
       },
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "count": 5,
-          "description": {
-            "zh": "安装费用。五个费用格，从左到右编号 1~5（空格也占编号）。分两类：支付型——从仓库返还指定类型和数量的储存材料或标记至供应堆；持有型——需持有不少于指定类型和数量的特征标记，或已建造不少于指定数量的聚落。单个费用格内可能有两种可选条件，满足其一即可。空格自动视为已满足。相邻费用格之间可能有包含图标——满足前者时后者自动视为已满足。",
-            "en": "Install cost. Five cost slots, numbered 1-5 left to right (empty slots count). Two types: payment — return specified stored materials or markers from storage to supply; possession — possess at least the specified number of feature markers or have built at least the specified number of settlements. A single slot may contain two alternative conditions. Empty slots are auto-satisfied. Adjacent slots may have an inclusion icon."
-          }
+      "card_no": {
+        "type": "string",
+        "description": {
+          "zh": "研究牌编号（如 C16），见实例。",
+          "en": "Research card number (e.g., C16), see the instance."
         }
       },
       "parts": [
         "<card_name>",
         {
-          "<ontology::effect>": {
+          "<research_ability>": {
             "position": {
-              "zh": "上三分之一与下三分之一",
-              "en": "top third and bottom third"
+              "zh": "上三分之一（能力区，安装后唯一露出）",
+              "en": "top third (ability, the only visible part after install)"
             },
             "description": {
-              "zh": "安装完成后结算的效果。上部为持续能力（安装后露出，持续可用），下部为即时奖励（安装时一次性触发，带闪电图标，必须结算否则作废）。",
-              "en": "Effects resolved after installation. Top: continuous ability (visible after install, persistently available). Bottom: instant bonus (triggers once on install, lightning icon, must resolve or forfeit)."
+              "zh": "活动能力：安装后持续可用，玩家执行 <perform_activity> 时作为可选活动之一。cost/target/content 每张牌不同（见实例）。",
+              "en": "Activity ability: usable throughout the game after installation, one of the selectable activities when the player performs <perform_activity>. Cost/target/content vary per card (see instances)."
+            }
+          }
+        },
+        {
+          "<cost_space>": {
+            "position": {
+              "zh": "中三分之一（费用格区）",
+              "en": "middle third (cost spaces)"
+            },
+            "description": {
+              "zh": "五个安装费用格，安装代价的条目；每格下方可能印有 <success_point>。",
+              "en": "The five install cost spaces, entries of the install cost; each may have <success_point> printed below."
+            }
+          }
+        },
+        {
+          "<success_point>": {
+            "position": {
+              "zh": "各费用格下沿（每格下方印的分）",
+              "en": "below each cost space (the printed score)"
+            },
+            "description": {
+              "zh": "已满足费用格下方印的成功点数，安装时结算（规则书第 4 步）。",
+              "en": "The success points printed under the fulfilled cost spaces, resolved on install (rulebook step 4)."
+            }
+          }
+        },
+        {
+          "<instant_bonus>": {
+            "position": {
+              "zh": "下三分之一（即时奖励区，闪电图标）",
+              "en": "bottom third (instant bonus, lightning icon)"
+            },
+            "description": {
+              "zh": "即时奖励：安装成功时立即结算；不能或不想执行则放弃（forgo）。内容每张牌不同（见实例）。",
+              "en": "Instant bonus: resolved immediately upon successful installation; forgo any actions you cannot or do not want to perform. Content varies per card (see instances)."
             }
           }
         }
@@ -1007,10 +1041,129 @@
           "en": "Research card type: Building, Insight, Mutation, Achievement, Invention."
         }
       },
+      "constraints": {
+        "required": [
+          "card_no",
+          "card_type",
+          "<research_ability>",
+          "<cost_space>",
+          "<success_point>",
+          "<instant_bonus>"
+        ],
+        "optional": []
+      },
       "media": {
         "component": [
           "media/components/research_card.png"
         ]
+      }
+    },
+    {
+      "id": "cost_space",
+      "specifies": "<ontology::cost>",
+      "name": {
+        "zh": "费用格",
+        "en": "Cost Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "研究牌中部的费用格（规则书 cost space），安装研究牌的代价条目。分两类：支付型（payment）——从仓库返还指定对象至供应堆，语义同 <ontology::instant_cost>（一次性支付）；持有型（possession）——需持有不少于指定数量的对象、不消耗，语义同 <ontology::continuous_cost>（状态检查）。空格（empty）自动视为已满足。单个费用格内可能有两种可选条件，满足其一即可；相邻费用格间可能有包含图标——满足前者时后者自动视为已满足。",
+        "en": "A cost space in the middle of a research card (rulebook: cost space), an entry of the install cost. Two types: payment — return the specified objects from storage to supply, semantically <ontology::instant_cost> (one-time payment); possession — merely possess at least the specified amount without consuming, semantically <ontology::continuous_cost> (state check). Empty spaces are auto-satisfied. A single space may contain two alternative conditions (satisfy either one); adjacent spaces may have an inclusion icon — satisfying the first auto-satisfies the next."
+      },
+      "type": {
+        "type": "enum",
+        "enum": [
+          "payment",
+          "possession",
+          "empty"
+        ],
+        "description": {
+          "zh": "费用格类型：payment（支付型，返还对象至供应堆，即 <ontology::instant_cost> 语义）/ possession（持有型，仅检查持有数量，即 <ontology::continuous_cost> 语义）/ empty（空格，自动视为已满足）。",
+          "en": "Cost space type: payment (return objects to supply, the <ontology::instant_cost> semantics) / possession (merely check held amount, the <ontology::continuous_cost> semantics) / empty (auto-satisfied)."
+        }
+      },
+      "<ontology::object>": {
+        "description": {
+          "zh": "本格支付或持有的对象：<feature_marker>（此时另填 feature_type）或 <stored_material> 等。",
+          "en": "The object paid or held by this space: <feature_marker> (then also set feature_type) or <stored_material> etc."
+        }
+      },
+      "feature_type": {
+        "type": "enum",
+        "enum": [
+          "stamina",
+          "intelligence",
+          "calm",
+          "dexterity",
+          "expression",
+          "perception"
+        ],
+        "description": {
+          "zh": "对象为 <feature_marker> 时的特征类型。",
+          "en": "Feature type when the object is a <feature_marker>."
+        }
+      },
+      "amount": {
+        "type": "integer",
+        "description": {
+          "zh": "支付或持有的数量。",
+          "en": "The amount to pay or to hold."
+        }
+      },
+      "success_points": {
+        "type": "integer",
+        "default": 0,
+        "description": {
+          "zh": "本格下方印的成功点数（<success_point>），满足本格时获得；0 表示无。",
+          "en": "The success points printed below this space, gained when the space is fulfilled; 0 means none."
+        }
+      }
+    },
+    {
+      "id": "research_ability",
+      "specifies": "<ontology::continuous_effect>",
+      "name": {
+        "zh": "能力",
+        "en": "Ability"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "研究牌上部的活动能力（规则书 ability），本质是 <ontology::continuous_effect>。安装后该区唯一露出、持续可用：玩家执行 <perform_activity> 时作为可选活动之一。其 <ontology::condition>/<ontology::cost>/target/<ontology::content> 为 trigger 结构标准字段（见 <ontology::continuous_effect>），具体值每张牌不同（见实例）。",
+        "en": "The activity ability in the top third of a research card (rulebook: ability), fundamentally a <ontology::continuous_effect>. After installation this section is the only visible part and stays usable: it is one of the selectable activities when the player performs <perform_activity>. Its <ontology::condition>/<ontology::cost>/target/<ontology::content> are the standard trigger fields (see <ontology::continuous_effect>); the concrete values vary per card (see instances)."
+      }
+    },
+    {
+      "id": "instant_bonus",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "即时奖励",
+        "en": "Instant Bonus"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "研究牌下部的即时奖励（规则书 instant bonus，闪电图标），本质是 <ontology::instant_effect>。安装成功时立即结算：执行所列动作；不能或不想执行则放弃（forgo）。其 <ontology::condition>/<ontology::content> 为 trigger 结构标准字段（见 <ontology::instant_effect>），具体值每张牌不同（见实例）。",
+        "en": "The instant bonus in the bottom third of a research card (rulebook: instant bonus, lightning icon), fundamentally an <ontology::instant_effect>. Resolved immediately upon successful installation: perform the listed actions; forgo any you cannot or do not want to. Its <ontology::condition>/<ontology::content> are the standard trigger fields (see <ontology::instant_effect>); the concrete values vary per card (see instances)."
+      }
+    },
+    {
+      "id": "success_point",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "成功点数",
+        "en": "Success Point"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "研究牌安装时结算的机制（规则书第 4 步：gain the success points of the active cost spaces）：获得已满足费用格下部印的成功点数之和，推入 <score_track>。每张牌的数据在各 <cost_space> 的 success_points 字段。",
+        "en": "Mechanism resolved when installing a research card (rulebook step 4: gain the success points of the active cost spaces): gain the sum of the success points printed under the fulfilled cost spaces and push the <score_track>. Per-card data lives in each <cost_space>'s success_points field."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "<ontology::track>": "<score_track>",
+            "step": "Σ 已满足费用格的 success_points（各格下方印的分之和）"
+          }
+        }
       }
     },
     {

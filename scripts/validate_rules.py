@@ -372,10 +372,11 @@ class Validator:
                 if not is_ontology and "definition" in obj and not source.endswith("instances.json"):
                     self.err(f"{source} › {path} › definition",
                              "E09 游戏层应使用 description 键, 不用 definition")
-                # W03: condition 形态 (description 包装 / 直接 zh-en / options+type 三种合法)
+                # W03: condition 形态 (description 包装 / 直接 zh-en / options+type 三种合法;
+                #      含 type 键的字段声明形态豁免, 同 E13)
                 for ckey in ("<ontology::condition>", "condition"):
                     cval = obj.get(ckey)
-                    if isinstance(cval, dict):
+                    if isinstance(cval, dict) and "type" not in cval:
                         keys = set(cval.keys())
                         if not (keys <= {"zh", "en", "description"} or {"options", "type"} <= keys):
                             self.warn(f"{source} › {path} › {ckey}",
