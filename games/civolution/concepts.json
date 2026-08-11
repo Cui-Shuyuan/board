@@ -2469,7 +2469,7 @@
     },
     {
       "id": "dice_display",
-      "specifies": "<ontology::supply>",
+      "specifies": "<ontology::public_supply>",
       "name": {
         "zh": "骰子展示区",
         "en": "Dice Display"
@@ -2498,7 +2498,7 @@
     },
     {
       "id": "hunting_token_display",
-      "specifies": "<ontology::supply>",
+      "specifies": "<ontology::public_supply>",
       "name": {
         "zh": "狩猎标记展示区",
         "en": "Hunting Token Display"
@@ -2514,7 +2514,7 @@
     },
     {
       "id": "hundred_point_token_display",
-      "specifies": "<ontology::supply>",
+      "specifies": "<ontology::public_supply>",
       "name": {
         "zh": "100分指示物展示区",
         "en": "100-Point Token Display"

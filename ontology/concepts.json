@@ -140,15 +140,7 @@
         "en": "A game component that carries <effect>s and can change game state. <piece> extends <object>. Not all pieces are owned by players — pieces owned by the game system (<ownership> is null) cannot be <play>ed by players; they exist as part of the game environment (e.g., map tiles, encounter decks). Only pieces whose <ownership> belongs to a <player> can be <play>ed by that player — playing, building, or activating it causes game state changes. The essential difference between <piece> and <component>: a <piece> carries <effect>s; a <component> has no <effect>s and only marks facts. <effect>s in static form are <property>s — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all <effect> specifications. Some <piece>s (e.g., <card>, <tile>) can host <zone>s — the zone's lifecycle is bound to the host piece and disappears when the host is removed."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "appearance",
-            "description": {
-              "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
-              "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
-            }
-          }
-        ],
+        "required": [],
         "optional": [
           {
             "id": "parts",
@@ -156,6 +148,13 @@
             "description": {
               "zh": "此 piece 物理载体上印有的逻辑组件列表。一块实体板/卡上可能印有多种身份独立的组件——如大陆板块上印有地形区域、营地、材料格、建造点，或发展卡上印有费用、折扣、声望点数。每个元素拥有独立的 concept parent 和自身属性（zone、effect、property 等），规则引擎按各自身份分别查询。用「拿刀裁开即独立 piece」来理解——物理合一、逻辑分立。",
               "en": "A list of logical components printed on this physical piece. One physical board/card may carry multiple independently identifiable components — e.g., a continent tile printed with terrain zones, encampments, material slots, and a building ground site; or a development card printed with cost, discount, and prestige points. Each element has its own concept parent and properties (zones, effects, etc.), queried independently by the rule engine. Think of it as 'cut them apart with a knife and each is an independent piece' — physically united, logically separate."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
+              "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
             }
           }
         ]
@@ -174,15 +173,7 @@
         "en": "A physical component that carries game state. <board> extends <object>. The essential difference from <aid>: an <aid> is a purely passive reference — the information on it is merely printed, and putting it away does not affect the game; a <board> carries game state — <piece>s and <component>s are placed on it, it can host <zone>s (zones are defined by rules, but the board is their physical host), and it can carry its own <content> (e.g., the activity icon ability printed on a player console, usable without any external <piece>). The essential difference from <piece>: a <piece> can be <transfer>red — played, exchanged, discarded, moved; a <board> cannot be transferred — it is fixed to a <player> or the public area and never changes hands during the game. Subclasses include <public_board> and <player_board>."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "appearance",
-            "description": {
-              "zh": "版图外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局时的核心信息来源。",
-              "en": "Visual description of this board — shape, material, size, and what is printed on it. Core information source when AI introduces board layout to players."
-            }
-          }
-        ],
+        "required": [],
         "optional": [
           {
             "id": "<ontology::zone>[]",
@@ -196,6 +187,13 @@
             "description": {
               "zh": "此版图自身携带的效果或能力。不需要打出任何 <piece> 即可使用——这些能力直接印在版图上，由版图自身赋予玩家。例如 Civolution 玩家面板上的基础活动图标。数组中的每项描述一个独立的能力或效果。这些内容在版图进入游戏时自动生效，不依赖任何外部 <piece>。",
               "en": "Effects or abilities carried by this board itself. Usable without playing any <piece> — these abilities are directly printed on the board and granted to the player by the board itself. E.g., the basic activity icon on a Civolution player console. Each entry in the array describes one independent ability or effect. These contents take effect automatically when the board enters the game, independent of any external <piece>."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "版图外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局时的核心信息来源。",
+              "en": "Visual description of this board — shape, material, size, and what is printed on it. Core information source when AI introduces board layout to players."
             }
           }
         ]
@@ -214,21 +212,20 @@
         "en": "A game entity used to present reference information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it 'carries no game state' — the information on it is merely printed and does not change with gameplay; no <piece>s or <component>s are placed on it, and it hosts no <zone>s. An <aid> is a pure reference: close the rulebook, put away the player aid, and the game rules still exist and apply. A skilled player who has memorized all rules can play entirely without <aid>s. Note: if a board has pieces placed on it, needs to be flipped, or receives markers — it carries game state — then it is not an <aid> and should be categorized as a <board>."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "appearance",
-            "description": {
-              "zh": "辅助物外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局和辅助工具时的核心信息来源。",
-              "en": "Visual description of this aid — shape, material, size, and what is printed on it. Core information source when AI introduces board layout and helper tools to players."
-            }
-          }
-        ],
+        "required": [],
         "optional": [
           {
             "id": "maps_to",
             "description": {
               "zh": "此辅助物在视觉上对应哪些 <zone>。注意：Aid 不「包含」这些 zone，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
               "en": "Which <zone>s this Aid visually corresponds to. Note: the Aid does not 'contain' these zones; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "辅助物外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局和辅助工具时的核心信息来源。",
+              "en": "Visual description of this aid — shape, material, size, and what is printed on it. Core information source when AI introduces board layout and helper tools to players."
             }
           }
         ]
@@ -247,21 +244,20 @@
         "en": "The most common small physical piece in board games. <component> extends <object>. It represents those tangible, highly abstract little parts in the box — octagonal pillars, discs, cubes, meeples, etc. A <component> itself does not determine what it represents; its association with game concepts is external and mutable. A <component> itself carries no <effect> and cannot be <play>ed — placing or moving it does not change game state by itself; the rules <event> does."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "appearance",
-            "description": {
-              "zh": "零件外观描述——形状、尺寸、颜色、材质。AI 向玩家解释实物识别时的核心信息。",
-              "en": "Visual description of this component — shape, size, color, material. Core information for AI to help players identify physical pieces."
-            }
-          }
-        ],
+        "required": [],
         "optional": [
           {
             "id": "represents",
             "description": {
               "zh": "此零件代表什么逻辑概念。若一个零件是多用途的（红色方块既能计分又能标归属），此字段为空，含义由它当前所在的 <zone> 或使用上下文决定。",
               "en": "What logical concept this component represents. For multi-purpose components, leave empty — the meaning is determined by its current <zone> or usage context."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "零件外观描述——形状、尺寸、颜色、材质。AI 向玩家解释实物识别时的核心信息。",
+              "en": "Visual description of this component — shape, size, color, material. Core information for AI to help players identify physical pieces."
             }
           }
         ]
@@ -280,15 +276,7 @@
         "en": "A concept used to indicate a <state> or position. <marker> extends <object>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules. Typical examples include phase indicators, weather indicators, progress track markers, score markers, and starting player markers."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "appearance",
-            "description": {
-              "zh": "标记物外观描述——形状、尺寸、颜色、材质。",
-              "en": "Visual description of this marker — shape, size, color, material."
-            }
-          }
-        ],
+        "required": [],
         "optional": [
           {
             "id": "represents",
@@ -303,6 +291,13 @@
             "description": {
               "zh": "用于表示此标记物的那个看得见摸得着的小零件。如蓝色圆片代表分轨标记。若为 null，说明此标记物本身外观特征明显、玩家一看就知道是什么。",
               "en": "The tangible small piece used to represent this marker. E.g., a blue disc represents a score track marker. If null, the marker is self-evidently identifiable."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "标记物外观描述——形状、尺寸、颜色、材质。",
+              "en": "Visual description of this marker — shape, size, color, material."
             }
           }
         ]
@@ -344,6 +339,15 @@
               "zh": "Zone 的唯一标识符。继承自 <object>，用于在游戏规则中精确引用特定 Zone 实例。",
               "en": "Unique identifier of the Zone. Inherited from <object>, used to precisely reference a specific Zone instance in game rules."
             }
+          }
+        ],
+        "optional": [
+          {
+            "id": "capacity",
+            "description": {
+              "zh": "可容纳的对象数量上限。null 表示无上限。达到上限后，以此区域为目标的 Transfer 将被拒绝。",
+              "en": "Maximum number of objects this zone can hold. null means unlimited. When full, Transfers targeting this zone are rejected."
+            }
           },
           {
             "id": "contains",
@@ -353,26 +357,10 @@
             }
           },
           {
-            "id": "<ownership>",
-            "description": {
-              "zh": "此 Zone 的所有权归属。决定该 Zone 及其中的 <object> 属于哪个 <player>。null 表示公共区域，所有玩家均可访问。",
-              "en": "Ownership of this Zone. Determines which <player> owns this Zone and its contents. null means public — all players can access."
-            }
-          },
-          {
             "id": "<information_visibility>",
             "description": {
               "zh": "此 Zone 的信息可见性级别。决定 Zone 中的内容可被哪些 <player> 观察——公开区全员可见，手牌区仅拥有者可见，牌堆区仅顶部部分可见等。",
               "en": "Information visibility level of this Zone. Determines which <player>s can observe its contents — public zones are visible to all, hand zones are owner-only, deck zones may be partially visible at the top, etc."
-            }
-          }
-        ],
-        "optional": [
-          {
-            "id": "capacity",
-            "description": {
-              "zh": "可容纳的对象数量上限。null 表示无上限。达到上限后，以此区域为目标的 Transfer 将被拒绝。",
-              "en": "Maximum number of objects this zone can hold. null means unlimited. When full, Transfers targeting this zone are rejected."
             }
           }
         ]
@@ -397,13 +385,6 @@
               "zh": "State 的唯一标识符。用于在规则中精确引用特定状态实例（如「Player A 的分数」「Card X 的横置状态」）。",
               "en": "Unique identifier of the State. Used to precisely reference a specific state instance in rules."
             }
-          },
-          {
-            "id": "subject",
-            "description": {
-              "zh": "此 State 描述的实体——回答「谁此刻怎样」中的「谁」。指向一个具体的 <object> 实例（<player>、<zone>、<piece> 等）。",
-              "en": "The entity this State describes — the 'who' in 'who is currently in what state'. Points to a concrete <object> instance."
-            }
           }
         ],
         "optional": [
@@ -419,6 +400,13 @@
             "description": {
               "zh": "游戏开始时的初始值。用于 setup 和 reset。",
               "en": "Initial value when the game starts. Used for setup and reset."
+            }
+          },
+          {
+            "id": "subject",
+            "description": {
+              "zh": "此 State 描述的实体——回答「谁此刻怎样」中的「谁」。指向一个具体的 <object> 实例（<player>、<zone>、<piece> 等）。",
+              "en": "The entity this State describes — the 'who' in 'who is currently in what state'. Points to a concrete <object> instance."
             }
           }
         ]
@@ -443,13 +431,6 @@
               "zh": "Property 的唯一标识符。用于在规则中精确引用特定属性（如「Card X 的费用」「Zone Y 的可见性」）。",
               "en": "Unique identifier of the Property. Used to precisely reference a specific property in rules."
             }
-          },
-          {
-            "id": "domain",
-            "description": {
-              "zh": "此 Property 附着于什么概念或实体——回答「谁拥有这个特征」。可指向本体概念（如 \"card\"，表示所有卡牌）或具体实例。",
-              "en": "What concept or entity this Property attaches to — answers 'who has this characteristic'. Can point to an ontology concept or a specific instance."
-            }
           }
         ],
         "optional": [
@@ -473,6 +454,13 @@
             "description": {
               "zh": "对象被创建或进入游戏时的默认值。",
               "en": "Default value when the object is created or enters the game."
+            }
+          },
+          {
+            "id": "domain",
+            "description": {
+              "zh": "此 Property 附着于什么概念或实体——回答「谁拥有这个特征」。可指向本体概念（如 \"card\"，表示所有卡牌）或具体实例。",
+              "en": "What concept or entity this Property attaches to — answers 'who has this characteristic'. Can point to an ontology concept or a specific instance."
             }
           }
         ]
@@ -1239,7 +1227,29 @@
         "en": "Draw the top 1 card (or a given quantity) from a <deck> — the draw position is deterministic (the top), but the top card is unseen until drawn. Used for revealing cards, dealing, blind draws, etc."
       },
       "constraints": {
-        "required": [],
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "抽牌的来源 <deck>。",
+              "en": "The source <deck> to draw from."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "抽出的 <object> 进入的目标区。",
+              "en": "Where drawn <object>s go."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被抽取的对象类型。",
+              "en": "The type of object being drawn."
+            }
+          }
+        ],
         "optional": []
       }
     },
@@ -1256,7 +1266,29 @@
         "en": "Draw an <object> at random from a <pool> (bag, etc.) — completely random, the object is unseen before drawing. Used for bag draws (chips, tokens), etc."
       },
       "constraints": {
-        "required": [],
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "抽牌的来源 <pool>（袋子等）。",
+              "en": "The source <pool> (bag etc.) to draw from."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "抽出的 <object> 进入的目标区。",
+              "en": "Where drawn <object>s go."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被抽取的对象类型。",
+              "en": "The type of object being drawn."
+            }
+          }
+        ],
         "optional": []
       }
     },
@@ -1529,7 +1561,10 @@
           {
             "id": "face",
             "type": "enum",
-            "enum": ["face_up", "face_down"],
+            "enum": [
+              "face_up",
+              "face_down"
+            ],
             "default": null,
             "description": {
               "zh": "卡牌的朝向。face_up = 正面朝上（内容可见）；face_down = 背面朝上（内容隐藏）。null 表示不区分正反。",
@@ -1557,7 +1592,10 @@
           {
             "id": "face",
             "type": "enum",
-            "enum": ["face_up", "face_down"],
+            "enum": [
+              "face_up",
+              "face_down"
+            ],
             "default": null,
             "description": {
               "zh": "板块的朝向。face_up = 正面朝上（内容可见）；face_down = 背面朝上（内容隐藏）。null 表示不区分正反。",
@@ -1859,7 +1897,15 @@
         "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <marker> on this track to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is the visual carrier of this <state>."
       },
       "constraints": {
-        "required": [],
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "轨道槽位定义——取值范围字符串（如「0–12」）或槽位对象数组（每个含 name + <ontology::effect>）。终局计分轨、进程轨等使用槽位数组，纯数值轨使用范围字符串。",
+              "en": "Track slot definition — a value range string (e.g. '0–12') or an array of slot objects (each with name + <ontology::effect>). Scoring and progress tracks use slot arrays; pure numeric tracks use a range string."
+            }
+          }
+        ],
         "optional": []
       }
     },
@@ -2304,6 +2350,40 @@
         ],
         "optional": []
       }
+    },
+    {
+      "id": "player_supply",
+      "extends": "<supply>",
+      "name": {
+        "zh": "玩家供应堆",
+        "en": "Player Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "归属于某位玩家的供应堆——其中存放的 <object> 属于该玩家，其他玩家不可取用。公共供应堆的 <ownership> 为 null；玩家专属供应堆固定归属其玩家。",
+        "en": "A supply belonging to a specific player — the <object>s in it belong to that player, no other player may take them. Public supplies have <ownership> null; player supplies are owned by their player."
+      },
+      "<ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "该供应堆的归属玩家。",
+          "en": "The player who owns this supply."
+        }
+      }
+    },
+    {
+      "id": "public_supply",
+      "extends": "<supply>",
+      "name": {
+        "zh": "公共供应堆",
+        "en": "Public Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "不归属任何玩家的供应堆——所有玩家均可取用其中的 <object>。<ownership> 固定为 null。",
+        "en": "A supply owned by no one — every player may take <object>s from it. <ownership> is fixed to null."
+      },
+      "<ownership>": null
     }
   ]
 }

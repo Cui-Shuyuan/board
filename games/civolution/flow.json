@@ -254,6 +254,7 @@
                     "zh": "将一百分指示物作为供应堆放到百分指示物展示区。2 人局将部分指示物翻至阻挡面，覆盖目标芯片展示区 2 个格和<phase_sequence>的 4 个带人数标记<reset_space>；3 人局覆盖目标芯片展示区 1 个格和 2 个带 4 人标记的<reset_space>；4 人局不覆盖。",
                     "en": "Place the 100-point tokens as a supply on the 100-point token display. In a 2-player game, flip some blocking side up to cover 2 goal chip display spaces and the 4 player-count-marked <reset_space>s of <phase_sequence>; in 3-player, cover 1 goal chip display space and the 2 spaces marked 4; in 4-player, cover none."
                   },
+                  "<ontology::object>": "<hundred_point_token>",
                   "source": "<ontology::game_box>",
                   "destination": "<hundred_point_token_display>",
                   "quantity": {
@@ -272,6 +273,7 @@
                     "zh": "2 人局取 10 个狩猎指示物翻至阻挡面，覆盖大陆上带特殊图标的营地；3 人局覆盖 4 个带对应图标的营地；4 人局不覆盖。其余狩猎指示物翻至正面，作为通用狩猎指示物供应堆放到狩猎指示物展示区。",
                     "en": "In a 2-player game, flip 10 territory tokens blocking side up to cover the encampments marked with the special icons; in 3-player, cover the 4 encampments with the marked icon; in 4-player, cover none. Flip the remaining tokens front side up as the general hunting token supply in the hunting token display."
                   },
+                  "<ontology::object>": "<hunting_token>",
                   "source": "<ontology::game_box>",
                   "destination": "<hunting_token_display>",
                   "quantity": {
@@ -295,6 +297,10 @@
                   "description": {
                     "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
                     "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
+                  },
+                  "<ontology::object>": {
+                    "<activation_die>": {},
+                    "<fate_die>": {}
                   },
                   "source": "<ontology::game_box>",
                   "destination": "<dice_display>",
@@ -2200,7 +2206,9 @@
       "description": {
         "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。初始芯片牌塞入收入区后（其上三分之一的 <income_chip> 露出）也可被选择。",
         "en": "Choose 1 installed <income_chip> from the console stage partition and activate its <ontology::effect>. A starting chip card slid into the income area (its top-third <income_chip> revealed) may also be chosen."
-      }
+      },
+      "target": "1 个已安装的 <income_chip>",
+      "<ontology::effect>": "this.target.<ontology::effect>"
     },
     {
       "id": "perform_activity",
@@ -2212,7 +2220,9 @@
       "description": {
         "zh": "选择 1 个可用的 <activity> 并激活。",
         "en": "Choose 1 available <activity> and activate it."
-      }
+      },
+      "target": "1 个可用的 <activity>",
+      "<ontology::effect>": "this.target"
     },
     {
       "id": "install_research_card",

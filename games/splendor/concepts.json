@@ -349,7 +349,7 @@
     },
     {
       "id": "gem_supply",
-      "specifies": "<ontology::supply>",
+      "specifies": "<ontology::public_supply>",
       "name": {
         "zh": "宝石供应堆",
         "en": "Gem Supply"
@@ -371,7 +371,7 @@
     },
     {
       "id": "gold_supply",
-      "specifies": "<ontology::supply>",
+      "specifies": "<ontology::public_supply>",
       "name": {
         "zh": "黄金供应堆",
         "en": "Gold Supply"
