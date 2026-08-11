@@ -2074,8 +2074,8 @@
               },
               "<upgrade_main_module>": {
                 "description": {
-                  "zh": "根据推进的轨道选择 1 个主模组升级：每条轨道对应一个激活骰点数——科技轨=1、声望轨=2、知识轨=3、建设轨=4、文化轨=5。该模组的两个激活骰费用点数之一与本轨点数一致即可选择（如科技轨=1 可选 research/migration/exploration/transport/invention）。",
-                  "en": "Choose 1 main module to upgrade based on the advanced track: each track corresponds to an activation die value — Technology=1, Prestige=2, Knowledge=3, Construction=4, Culture=5. A module is selectable if one of its two activation die cost values matches this track's value (e.g., Technology=1 allows research/migration/exploration/transport/invention)."
+                  "zh": "根据推进的轨道选择 1 个主模组升级：该模组的两个激活骰费用点数之一与本轨的 bonus_die_value 一致即可选择（各轨数值见 <technology_track> 等定义的 bonus_die_value 字段）。",
+                  "en": "Choose 1 main module to upgrade based on the advanced track: a module is selectable if one of its two activation die cost values matches this track's bonus_die_value (see the bonus_die_value field on <technology_track> etc.)."
                 }
               }
             },
