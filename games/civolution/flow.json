@@ -2255,7 +2255,7 @@
               "en": "Same-Type Column"
             },
             "<ontology::condition>": {
-              "zh": "已有同类型研究牌。",
+              "zh": "已安装同类型研究牌。",
               "en": "A same-type research card is already installed."
             },
             "description": {
@@ -2270,7 +2270,7 @@
               "en": "No Same Type"
             },
             "<ontology::condition>": {
-              "zh": "尚无同类型研究牌。",
+              "zh": "尚未安装同类型研究牌。",
               "en": "No same-type research card is installed yet."
             },
             "options": [
@@ -2281,8 +2281,8 @@
                   "en": "Empty Column"
                 },
                 "description": {
-                  "zh": "任选一个空列。",
-                  "en": "Choose any empty column."
+                  "zh": "任选一个空列，安装在该列最低空位（层级序号即费用格 N）。",
+                  "en": "Choose any empty column, install at the lowest empty slot of that column (tier index = the cost spaces' N)."
                 }
               },
               {
@@ -2292,8 +2292,8 @@
                   "en": "Income-Chip-Only Column"
                 },
                 "description": {
-                  "zh": "选一个仅含 <income_chip> 的列。",
-                  "en": "Choose a column containing only <income_chip>s."
+                  "zh": "选一个仅含 <income_chip> 的列，安装在该列最低空位。",
+                  "en": "Choose a column containing only <income_chip>s, install at the lowest empty slot of that column."
                 }
               }
             ],
