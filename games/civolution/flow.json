@@ -4166,8 +4166,8 @@
             "destination": "<ontology::supply>",
             "<ontology::object>": "<stored_material>",
             "quantity": {
-              "zh": "2 或 3，因所选聚落格而异：格 1 需 1 木头+1 纸莎草（2 个），格 2 需 1 纸莎草+1 石头（2 个），格 3 需 1 木头+1 石头+1 黏土（3 个），格 4 需 1 沙子+1 铁矿+1 黏土（3 个）。",
-              "en": "2 or 3, varies by settlement slot: slot 1 costs 1 Wood+1 Papyrus (2), slot 2 costs 1 Papyrus+1 Stone (2), slot 3 costs 1 Wood+1 Stone+1 Clay (3), slot 4 costs 1 Sand+1 Iron+1 Clay (3)."
+              "zh": "因所选聚落格而异——各格材料清单见 <settlement_zone> 的 slots。",
+              "en": "Varies by the chosen settlement slot — see each slot's material in <settlement_zone>.slots."
             }
           }
         }
@@ -4196,12 +4196,40 @@
                 "en": "Reward"
               },
               "do_after": "place",
-              "<gain_income_chip>": {
-                "description": {
-                  "zh": "获得 1 个收入芯片并立即触发其效果。若是第 4 个聚落，可额外将层级四或层级五板块翻至激活面。",
-                  "en": "Gain 1 income chip and immediately trigger its effect. If 4th settlement, may additionally flip a stage-4 or stage-5 tile to its active face."
+              "<gain_income_chip>": "获得 1 个收入芯片并立即触发其效果。"
+            },
+            {
+              "id": "flip_stage_tile",
+              "name": {
+                "zh": "翻面层级板块（第 4 个聚落时可选）",
+                "en": "Flip Stage Tile (optional when building the 4th)"
+              },
+              "do_after": "reward",
+              "<ontology::condition>": {
+                "zh": "这是玩家建造的第 4 个聚落。",
+                "en": "This is the player's 4th built settlement."
+              },
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不翻面（跳过）",
+                    "en": "Do not flip (skip)"
+                  }
+                },
+                {
+                  "id": "flip",
+                  "name": {
+                    "zh": "翻面",
+                    "en": "Flip"
+                  },
+                  "description": {
+                    "zh": "将 1 个未激活的层级四或层级五板块翻至激活面。",
+                    "en": "Flip 1 inactive stage-4 or stage-5 tile to its active side."
+                  }
                 }
-              }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"

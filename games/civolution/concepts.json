@@ -4211,13 +4211,49 @@
       },
       "slot_count": 4,
       "contains": "<settlement>",
-      "parts": [
+      "slots": [
         {
-          "<ontology::aid>": {
-            "description": {
-              "zh": "每格左侧印有建造该聚落需支付的材料清单，因格而异。",
-              "en": "The material list required to build each settlement is printed to the left of its slot; varies by slot."
-            }
+          "id": "settlement_slot_1",
+          "name": {
+            "zh": "聚落格 1",
+            "en": "Settlement Slot 1"
+          },
+          "material": {
+            "zh": "1 木头 + 1 纸莎草",
+            "en": "1 Wood + 1 Papyrus"
+          }
+        },
+        {
+          "id": "settlement_slot_2",
+          "name": {
+            "zh": "聚落格 2",
+            "en": "Settlement Slot 2"
+          },
+          "material": {
+            "zh": "1 纸莎草 + 1 石头",
+            "en": "1 Papyrus + 1 Stone"
+          }
+        },
+        {
+          "id": "settlement_slot_3",
+          "name": {
+            "zh": "聚落格 3",
+            "en": "Settlement Slot 3"
+          },
+          "material": {
+            "zh": "1 木头 + 1 石头 + 1 黏土",
+            "en": "1 Wood + 1 Stone + 1 Clay"
+          }
+        },
+        {
+          "id": "settlement_slot_4",
+          "name": {
+            "zh": "聚落格 4",
+            "en": "Settlement Slot 4"
+          },
+          "material": {
+            "zh": "1 沙子 + 1 铁矿 + 1 黏土",
+            "en": "1 Sand + 1 Iron + 1 Clay"
           }
         }
       ],
