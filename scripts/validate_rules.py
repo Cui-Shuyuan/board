@@ -23,8 +23,6 @@ Board AI 规则文件语法校验脚本。
   E10  _skip 缺 id 或缺 description
   E13  <ontology::cost>/<ontology::content> 缺 instant/continuous 子层、
        直接挂执行概念 (transfer 等)、或 instant/continuous 独立存在
-  E14  trigger 类完整节点 (specifies action/trigger/play/effect) 顶层带 options
-       (应写入 content.instant_content 或 target/cost)
   W01  target 是对象 (约定纯字符串; 含 type 的选择结构豁免)
   W02  do_after 引用了 <概念> (应引用步骤 id)
   W03  condition 形态未知 (应为 字符串引用 | {zh,en} | {options,type})
@@ -311,18 +309,6 @@ class Validator:
                         else:
                             for ref in REF_RE.findall(val):
                                 self.check_ref(ref, f"{source} › {path} › {rel}")
-                # E14: trigger 类完整节点 (id + specifies action/trigger/play/effect/activation)
-                #      顶层禁止 options (2026-08-12 用户定稿)
-                #      — trigger 结构 = condition/cost/target/content; 多事件写入
-                #        content.instant_content 的 pipeline; 选择结构写入 target/cost;
-                #        值对象形态 ("<ontology::action>": { "options": ... }) 不受限
-                if "options" in obj:
-                    spec_val = obj.get("specifies")
-                    if (isinstance(spec_val, str) and isinstance(obj.get("id"), str)):
-                        spec_head = spec_val.strip("<>").split("::")[-1].split(".")[0]
-                        if spec_head in ("action", "trigger", "play", "effect", "activation"):
-                            self.err(f"{source} › {path} › options",
-                                     f"E14 trigger 类节点 (specifies {spec_head}) 顶层不允许 options — 多事件写入 content.instant_content, 选择结构写入 target/cost")
                 # E05: 选择结构 (有 options) 的 type 必须是完整引用
                 #      ontology 字段声明的 type (string/enum/<object>) 不检查
                 tval = obj.get("type")
