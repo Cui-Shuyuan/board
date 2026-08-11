@@ -4196,7 +4196,12 @@
                 "en": "Reward"
               },
               "do_after": "place",
-              "<gain_income_chip>": "获得 1 个收入芯片并立即触发其效果。"
+              "<gain_income_chip>": {
+                "description": {
+                  "zh": "获得 1 个收入芯片并立即触发其效果。",
+                  "en": "Gain 1 income chip and immediately trigger its effect."
+                }
+              }
             },
             {
               "id": "flip_stage_tile",
