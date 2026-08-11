@@ -1112,8 +1112,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "研究牌上部的活动能力（规则书 ability），本质是 <ontology::continuous_effect>。安装后该区唯一露出、持续可用：玩家执行 <perform_activity> 时作为可选活动之一。其 <ontology::condition>/<ontology::cost>/target/<ontology::content> 为 trigger 结构标准字段（见 <ontology::continuous_effect>），具体值每张牌不同（见实例）。",
-        "en": "The activity ability in the top third of a research card (rulebook: ability), fundamentally a <ontology::continuous_effect>. After installation this section is the only visible part and stays usable: it is one of the selectable activities when the player performs <perform_activity>. Its <ontology::condition>/<ontology::cost>/target/<ontology::content> are the standard trigger fields (see <ontology::continuous_effect>); the concrete values vary per card (see instances)."
+        "zh": "研究牌上部的效果区（规则书 ability，安装后唯一露出、持续生效的部分），本质是 <ontology::continuous_effect>。不全是活动能力，可能有三种形态：活动能力（浅色背景——玩家执行 <perform_activity> 时作为可选活动之一）、永续被动效果（自动持续生效）、触发类效果（条件满足时触发）。具体形态与 <ontology::condition>/<ontology::cost>/target/<ontology::content> 的值每张牌不同（见实例）。",
+        "en": "The effect section in the top third of a research card (rulebook: ability; the only visible and persistently active part after installation), fundamentally a <ontology::continuous_effect>. Not every one of them is an activity — three forms exist: an activity ability (light background — one of the selectable activities when the player performs <perform_activity>), a persistent passive effect (automatically in effect), or a triggered effect (fires when its condition holds). The concrete form and the values of <ontology::condition>/<ontology::cost>/target/<ontology::content> vary per card (see instances)."
       }
     },
     {

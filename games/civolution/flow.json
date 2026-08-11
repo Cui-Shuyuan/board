@@ -2337,9 +2337,11 @@
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
         },
         "<ontology::continuous_content>": {
-          "description": {
-            "zh": "本卡 <research_ability> 自此激活、持续可用：玩家执行 <perform_activity> 时作为可选活动之一（插入层级分区后仅上三分之一露出）。",
-            "en": "The card's <research_ability> is active from now on: one of the selectable activities when the player performs <perform_activity> (only the top third remains visible after insertion)."
+          "<research_ability>": {
+            "description": {
+              "zh": "本卡 <research_ability> 自此激活、持续可用。",
+              "en": "The card's <research_ability> is active from now on."
+            }
           }
         }
       }
