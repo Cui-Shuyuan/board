@@ -2600,38 +2600,8 @@
       "module_type": "feature",
       "feature": "stamina",
       "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "<ontology::transfer>": {
-              "source": "<activation_dice_area>",
-              "destination": "<player_holding>",
-              "<object>": {
-                "<activation_die>": {
-                  "value": 1
-                }
-              },
-              "quantity": 2,
-              "description": {
-                "zh": "支付 2 个点数均为 1 的<activation_die>。",
-                "en": "Pay 2 <activation_die>s both showing value 1."
-              }
-            }
-          }
-        },
-        "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "<ontology::transfer>": {
-              "source": "<ontology::supply>",
-              "destination": "<feature_space>",
-              "<object>": "<feature_marker>",
-              "quantity": 1,
-              "description": {
-                "zh": "获得 1 个耐力<feature_marker>。",
-                "en": "Gain 1 Stamina <feature_marker>."
-              }
-            }
-          }
-        }
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
       },
       "dice_value": 1
     },
@@ -2646,38 +2616,8 @@
       "module_type": "feature",
       "feature": "intelligence",
       "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "<ontology::transfer>": {
-              "source": "<activation_dice_area>",
-              "destination": "<player_holding>",
-              "<object>": {
-                "<activation_die>": {
-                  "value": 2
-                }
-              },
-              "quantity": 2,
-              "description": {
-                "zh": "支付 2 个点数均为 2 的<activation_die>。",
-                "en": "Pay 2 <activation_die>s both showing value 2."
-              }
-            }
-          }
-        },
-        "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "<ontology::transfer>": {
-              "source": "<ontology::supply>",
-              "destination": "<feature_space>",
-              "<object>": "<feature_marker>",
-              "quantity": 1,
-              "description": {
-                "zh": "获得 1 个智慧<feature_marker>。",
-                "en": "Gain 1 Intelligence <feature_marker>."
-              }
-            }
-          }
-        }
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
       },
       "dice_value": 2
     },
@@ -2692,38 +2632,8 @@
       "module_type": "feature",
       "feature": "calm",
       "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "<ontology::transfer>": {
-              "source": "<activation_dice_area>",
-              "destination": "<player_holding>",
-              "<object>": {
-                "<activation_die>": {
-                  "value": 3
-                }
-              },
-              "quantity": 2,
-              "description": {
-                "zh": "支付 2 个点数均为 3 的<activation_die>。",
-                "en": "Pay 2 <activation_die>s both showing value 3."
-              }
-            }
-          }
-        },
-        "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "<ontology::transfer>": {
-              "source": "<ontology::supply>",
-              "destination": "<feature_space>",
-              "<object>": "<feature_marker>",
-              "quantity": 1,
-              "description": {
-                "zh": "获得 1 个镇定<feature_marker>。",
-                "en": "Gain 1 Calm <feature_marker>."
-              }
-            }
-          }
-        }
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
       },
       "dice_value": 3
     },
@@ -2738,38 +2648,8 @@
       "module_type": "feature",
       "feature": "dexterity",
       "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "<ontology::transfer>": {
-              "source": "<activation_dice_area>",
-              "destination": "<player_holding>",
-              "<object>": {
-                "<activation_die>": {
-                  "value": 4
-                }
-              },
-              "quantity": 2,
-              "description": {
-                "zh": "支付 2 个点数均为 4 的<activation_die>。",
-                "en": "Pay 2 <activation_die>s both showing value 4."
-              }
-            }
-          }
-        },
-        "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "<ontology::transfer>": {
-              "source": "<ontology::supply>",
-              "destination": "<feature_space>",
-              "<object>": "<feature_marker>",
-              "quantity": 1,
-              "description": {
-                "zh": "获得 1 个灵巧<feature_marker>。",
-                "en": "Gain 1 Dexterity <feature_marker>."
-              }
-            }
-          }
-        }
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
       },
       "dice_value": 4
     },
@@ -2784,38 +2664,8 @@
       "module_type": "feature",
       "feature": "expression",
       "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "<ontology::transfer>": {
-              "source": "<activation_dice_area>",
-              "destination": "<player_holding>",
-              "<object>": {
-                "<activation_die>": {
-                  "value": 5
-                }
-              },
-              "quantity": 2,
-              "description": {
-                "zh": "支付 2 个点数均为 5 的<activation_die>。",
-                "en": "Pay 2 <activation_die>s both showing value 5."
-              }
-            }
-          }
-        },
-        "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "<ontology::transfer>": {
-              "source": "<ontology::supply>",
-              "destination": "<feature_space>",
-              "<object>": "<feature_marker>",
-              "quantity": 1,
-              "description": {
-                "zh": "获得 1 个表达<feature_marker>。",
-                "en": "Gain 1 Expression <feature_marker>."
-              }
-            }
-          }
-        }
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
       },
       "dice_value": 5
     },
@@ -2830,38 +2680,8 @@
       "module_type": "feature",
       "feature": "perception",
       "<ontology::instant_effect>": {
-        "<ontology::cost>": {
-          "<ontology::instant_cost>": {
-            "<ontology::transfer>": {
-              "source": "<activation_dice_area>",
-              "destination": "<player_holding>",
-              "<object>": {
-                "<activation_die>": {
-                  "value": 6
-                }
-              },
-              "quantity": 2,
-              "description": {
-                "zh": "支付 2 个点数均为 6 的<activation_die>。",
-                "en": "Pay 2 <activation_die>s both showing value 6."
-              }
-            }
-          }
-        },
-        "<ontology::content>": {
-          "<ontology::instant_content>": {
-            "<ontology::transfer>": {
-              "source": "<ontology::supply>",
-              "destination": "<feature_space>",
-              "<object>": "<feature_marker>",
-              "quantity": 1,
-              "description": {
-                "zh": "获得 1 个观察<feature_marker>。",
-                "en": "Gain 1 Perception <feature_marker>."
-              }
-            }
-          }
-        }
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
       },
       "dice_value": 6
     },

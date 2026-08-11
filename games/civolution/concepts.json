@@ -832,8 +832,40 @@
       },
       "abstract": false,
       "description": {
-        "zh": "不可升级的模组效果：激活后获得对应的特征标记。cost = 2 个点数均为 <dice_value> 的 <activation_die>（支付到 <player_holding>），content = 获得 <feature> 对应的 <feature_marker> 到 <feature_space>。6 个特征模组实例各自声明 <feature> 与 <dice_value>。区别于 <upgradable_module>：特征模组没有 <level> 状态，不可升级。",
-        "en": "A non-upgradable module effect: activating it grants the corresponding feature marker. Cost = 2 <activation_die>s both showing <dice_value> (paid to <player_holding>); content = gain the <feature_marker> corresponding to <feature> into <feature_space>. The 6 feature module instances each declare their own <feature> and <dice_value>. Unlike <upgradable_module>, feature modules have no <level> state and cannot be upgraded."
+        "zh": "不可升级的模组效果：激活后获得对应的特征标记。效果模板（cost + content）统一定义在此：cost = 2 个点数均为 <dice_value> 的 <activation_die>（支付到 <player_holding>），content = 获得 <feature> 对应的 <feature_marker> 到 <feature_space>。实例只需声明 <feature> 与 <dice_value> 两个参数，cost/content 以 `<feature_module>.<ontology::cost>` / `<feature_module>.<ontology::content>` 路径引用。区别于 <upgradable_module>：特征模组没有 <level> 状态，不可升级。",
+        "en": "A non-upgradable module effect: activating it grants the corresponding feature marker. The effect template (cost + content) is defined here once: cost = 2 <activation_die>s both showing <dice_value> (paid to <player_holding>); content = gain the <feature_marker> corresponding to <feature> into <feature_space>. Instances only declare the two parameters <feature> and <dice_value>, referencing cost/content via `<feature_module>.<ontology::cost>` / `<feature_module>.<ontology::content>`. Unlike <upgradable_module>, feature modules have no <level> state and cannot be upgraded."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<activation_dice_area>",
+            "destination": "<player_holding>",
+            "<object>": {
+              "<activation_die>": {
+                "value": "this.dice_value"
+              }
+            },
+            "quantity": 2,
+            "description": {
+              "zh": "支付 2 个点数均为 <dice_value> 的<activation_die>。",
+              "en": "Pay 2 <activation_die>s both showing <dice_value>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<ontology::supply>",
+            "destination": "<feature_space>",
+            "<object>": "<feature_marker>",
+            "quantity": 1,
+            "description": {
+              "zh": "获得 1 个对应 <feature> 的<feature_marker>。",
+              "en": "Gain 1 <feature_marker> corresponding to <feature>."
+            }
+          }
+        }
       },
       "constraints": {
         "required": [

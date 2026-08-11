@@ -115,7 +115,18 @@ Round、Turn、Phase 自由嵌套，无固定层级。Phase 是唯一承载「�
 
 ## 当前进度（核心概念持续扩展中）
 
-本体已从最初的 51 个概念扩展到 **74 个概念**（2026-08-06：+4 field-level + evaluate/check/flip/state_change/temporary_zone，Declaration 弃用可忽略；2026-08-09：+substitution）。
+本体已从最初的 51 个概念扩展到 **82 个概念**（2026-08-11：+player_supply/public_supply；删 alternative_cost/choice/temporary_zone——零引用弃用）。
+
+### E11 驱动的 required 归属调整 ★（2026-08-11）
+
+`validate_rules.py` 的 E11 检查（每条继承链至少一个节点实现 required 字段）驱动了 ontology 大调整：
+
+- **zone 回归纯粹**：required `[id, contains, <ownership>, <information_visibility>]` → `[id]`。`<ownership>` 完全移除；contains / `<information_visibility>` 降 optional（有默认语义）
+- **新增 `<player_supply>` / `<public_supply>`**（extends `<supply>`）：各声明 `<ownership>` 一次，具体供应堆 specifies 它们——ownership 实现收敛（civolution dice_display/hunting_token_display/hundred_point_token_display + splendor gem_supply/gold_supply 已迁移到 public_supply）
+- **appearance**（piece/board/aid/marker/component 的 required）→ optional（外观是描述性信息，全链从未实现）
+- **subject**（state）→ optional（ownership 用 owner 表达同一语义）；**domain**（property）→ optional（已被 parts/绑定替代）
+- **score_track 补 slots**、**top_draw/random_draw 补 source/destination/`<object>`**（实现父类 required）
+- 删除弃用概念：alternative_cost、choice、temporary_zone（ontology）；gold_available（splendor）
 
 ### 基础概念（8 个）
 Object、Zone、State、Property、Event、Condition、Timing、Procedure

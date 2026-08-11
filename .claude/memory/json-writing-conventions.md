@@ -7,6 +7,19 @@ metadata:
 
 # JSON 编写约定
 
+## 语法校验脚本（2026-08-11 新增）
+
+`scripts/validate_rules.py` 自动校验全部规则文件（E01-E11 + W01-W05），写完概念/流程后必跑：
+
+```
+D:/Python/Python312/python.exe scripts/validate_rules.py            # 全部
+D:/Python/Python312/python.exe scripts/validate_rules.py --game civolution
+```
+
+核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、W05 孤立概念（有定义无引用且非触发型）。
+
+**E11 决策约定（2026-08-11 用户定稿）**：required 就是必须有——不能实现就降级（逐个概念论证，不一刀切）或用中间概念收敛（如 zone 移除 `<ownership>`，新增 `player_supply`/`public_supply` 各声明一次，具体供应堆 specifies 它们）。老概念大胆删（零引用确认后）。
+
 ## 所有节点必须有 `name`
 
 flow.json 中每一个有 `id` 的节点（procedure、trigger、pipeline step）都**必须**有 `name` 字段：
@@ -71,6 +84,7 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 - **options**：数组格式，不是对象。每项可以是 step 对象、字符串引用（`"<build_farm>"`）、或 `null`（跳过）
 - **type**：必须是完整引用 `"<ontology::multiple_choice_enum.XXX>"`
 - **do_after**（2026-08-10 格式定稿）：**单元素直接字符串 `"do_after": "step_a"`（去 []）；多元素用 options/type 格式 `"do_after": { "options": ["a", "b"], "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>" }`**（语义=全部完成才执行，即 EXECUTE_ALL）。无 do_after = 独立可并行。已全量迁移：civolution 87 处 + splendor 13 处（脚本批量，注意原数组闭合行 `],` 的逗号要保留）
+- **do_after 可引用 `<概念>`（2026-08-11 用户确认合法）**：多处复用同一个动作时抽成公共概念、do_after 写 `"<move_tribe>"` 全形式是合理形态（如 triggers 的 content options 引用概念、do_after 依赖它）。校验脚本只查引用存在性，不再警告
 - **_skip**（不用 null）：表示"不做也是一种合法选择"。必须写成 `{ "id": "_skip", "description": { "zh": "不做（跳过此项）", "en": "Skip this option" } }`。被选中时跳过执行，do_after 链上视为已完成
 - 必选步骤直接写，可选步骤包 `"options": [_skip, step], "type": "CHOOSE_ONE"`
 - "不干B就不能干C"：B和C捆成子 pipeline，外包 `CHOOSE_ONE(_skip, B→C)`
