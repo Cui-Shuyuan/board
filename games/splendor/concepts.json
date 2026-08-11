@@ -916,19 +916,6 @@
       }
     },
     {
-      "id": "gold_available",
-      "specifies": "<ontology::condition>",
-      "name": {
-        "zh": "黄金供应非空",
-        "en": "Gold Available"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "<gold_supply>中至少还有 1 个<gold>。不满足时，获得<gold>的<ontology::event>跳过——保留卡牌仍然成立，只是不获得<gold>。",
-        "en": "At least 1 <gold> remains in <gold_supply>. When not satisfied, the gold-gaining <ontology::event> is skipped — the reserve still stands, just without gaining <gold>."
-      }
-    },
-    {
       "id": "exceed_gem_limit",
       "specifies": "<ontology::condition>",
       "name": {

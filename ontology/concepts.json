@@ -1742,31 +1742,6 @@
       }
     },
     {
-      "id": "temporary_zone",
-      "extends": "<zone>",
-      "name": {
-        "zh": "临时区",
-        "en": "Temporary Zone"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "多步骤操作中的中间态 <zone>，不在任何玩家的常规区域中，也不在规则书中被命名。任何 <object> 均可短暂进入临时区——抽牌检视、暂存待分配的资源、中间计算结果等。临时区中的 <object> 在操作完成前不参与任何游戏判定。操作完成后临时区必须清空——所有 <object> 要么进入目标 zone，要么返回来源 zone。",
-        "en": "An intermediate <zone> used during multi-step operations, not belonging to any player's regular area and not named in the rulebook. Any <object> can briefly enter the temporary zone — cards drawn for inspection, resources awaiting distribution, intermediate computation results, etc. <object>s in the temporary zone do not participate in any game decisions until the operation completes. The temporary zone MUST be empty after the operation — all <object>s either enter their target zone or return to their source zone."
-      },
-      "constraints": {
-        "required": [],
-        "optional": [
-          {
-            "id": "capacity",
-            "description": {
-              "zh": "临时区可容纳的最大 object 数量。由于临时区是瞬时使用的，通常无需设上限——null 表示无上限。",
-              "en": "Maximum number of objects the temporary zone can hold. Since the zone is used transiently, typically uncapped — null means unlimited."
-            }
-          }
-        ]
-      }
-    },
-    {
       "id": "public_board",
       "extends": "<board>",
       "name": {
@@ -1981,56 +1956,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "id": "alternative_cost",
-      "extends": "<property>",
-      "name": {
-        "zh": "替代费用",
-        "en": "Alternative Cost"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "满足其中任意一个即可的费用形式。多个替代条件之间是 OR 关系。",
-        "en": "A cost form where satisfying any one of the listed conditions is sufficient. Multiple alternatives are OR-related."
-      },
-      "constraints": {
-        "required": [
-          {
-            "id": "options",
-            "description": {
-              "zh": "替代费用选项列表。",
-              "en": "List of alternative cost options."
-            }
-          }
-        ],
-        "optional": []
-      }
-    },
-    {
-      "id": "choice",
-      "extends": "<property>",
-      "name": {
-        "zh": "选择",
-        "en": "Choice"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "玩家在执行 <action> 或 <effect> 时必须做出的多选决策。",
-        "en": "A multi-option decision a player must make when executing an <action> or <effect>."
-      },
-      "constraints": {
-        "required": [
-          {
-            "id": "options",
-            "description": {
-              "zh": "可选项列表。",
-              "en": "List of available options."
-            }
-          }
-        ],
-        "optional": []
       }
     },
     {
