@@ -983,10 +983,6 @@
             "position": {
               "zh": "上三分之一（能力区，安装后唯一露出）",
               "en": "top third (ability, the only visible part after install)"
-            },
-            "description": {
-              "zh": "活动能力：安装后持续可用，玩家执行 <perform_activity> 时作为可选活动之一。cost/target/content 每张牌不同（见实例）。",
-              "en": "Activity ability: usable throughout the game after installation, one of the selectable activities when the player performs <perform_activity>. Cost/target/content vary per card (see instances)."
             }
           }
         },
@@ -995,10 +991,6 @@
             "position": {
               "zh": "中三分之一（费用格区）",
               "en": "middle third (cost spaces)"
-            },
-            "description": {
-              "zh": "五个安装费用格，安装代价的条目；每格下方可能印有 <success_point>。",
-              "en": "The five install cost spaces, entries of the install cost; each may have <success_point> printed below."
             }
           }
         },
@@ -1007,10 +999,6 @@
             "position": {
               "zh": "各费用格下沿（每格下方印的分）",
               "en": "below each cost space (the printed score)"
-            },
-            "description": {
-              "zh": "已满足费用格下方印的成功点数，安装时结算（规则书第 4 步）。",
-              "en": "The success points printed under the fulfilled cost spaces, resolved on install (rulebook step 4)."
             }
           }
         },
@@ -1019,10 +1007,6 @@
             "position": {
               "zh": "下三分之一（即时奖励区，闪电图标）",
               "en": "bottom third (instant bonus, lightning icon)"
-            },
-            "description": {
-              "zh": "即时奖励：安装成功时立即结算；不能或不想执行则放弃（forgo）。内容每张牌不同（见实例）。",
-              "en": "Instant bonus: resolved immediately upon successful installation; forgo any actions you cannot or do not want to perform. Content varies per card (see instances)."
             }
           }
         }

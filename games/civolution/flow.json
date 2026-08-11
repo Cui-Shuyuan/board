@@ -2232,8 +2232,8 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "将手牌中的一张 <research_card> 安装到层级分区。需确定安装列与位置、满足费用格条件。",
-        "en": "Install a <research_card> from hand into the stage partition. Must determine column and position, and satisfy cost slot conditions."
+        "zh": "将手牌中的一张 <research_card> 安装到层级分区：确定列与层级 → 满足 <cost_space> 费用格（可 assume a higher stage 多满足至更高层）→ 结算 <success_point>（已满足费用格下方印的分之和）→ 结算 <instant_bonus>（可放弃）→ 插入（仅上三分之一露出，<research_ability> 激活持续可用）。",
+        "en": "Install a <research_card> from hand into the stage partition: determine column and tier → fulfill the <cost_space>s (may assume a higher stage) → resolve <success_point> (sum of the fulfilled cost spaces' printed scores) → resolve <instant_bonus> (may forgo) → insert (only the top third remains visible; the <research_ability> activates and stays usable)."
       },
       "card_type": {
         "type": "enum",
@@ -2281,8 +2281,8 @@
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
           "description": {
-            "zh": "满足所选 <research_card> 声明的费用格（该卡 <ontology::cost> 的 slots，位于卡牌中三分之一）：N = 安装层级序号，可选满足至 M（M ≥ N，M ≤5），前缀连续覆盖。支付型格从仓库返还对应标记至供应堆；持有型格检查特征标记持有数量；空格自动视为已满足。",
-            "en": "Satisfy the chosen <research_card>'s declared cost slots (the card's <ontology::cost>.slots, in the middle third of the card): N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix. Payment slots return markers from storage to supply; possession slots check feature marker holdings; empty slots are auto-satisfied."
+            "zh": "满足所选 <research_card> 的 <cost_space> parts（费用格，见 <research_card>.parts）：N = 安装层级序号，满足前 N 格中所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage）满足至第 M 格（M ≥ N，M ≤ 5，前缀连续覆盖）。支付型（payment）从仓库返还对应对象至供应堆；持有型（possession）仅检查持有数量；空格自动视为已满足。",
+            "en": "Fulfill the chosen <research_card>'s <cost_space> parts (see <research_card>.parts): N = tier index, fulfill all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (M ≥ N, M ≤ 5, contiguous prefix). Payment spaces return the specified objects from storage to supply; possession spaces merely check held amounts; empty spaces are auto-satisfied."
           }
         }
       },
@@ -2296,8 +2296,8 @@
                 "en": "Determine Position"
               },
               "description": {
-                "zh": "确定安装位置。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。",
-                "en": "Determine install position. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column."
+                "zh": "确定安装列与层级。若尚无同类型，任选空列或仅含 <income_chip> 的列；若已有同类型，选该列最低空位。层级序号即费用格的 N。",
+                "en": "Determine the column and tier. If no card of same type, choose an empty column or one with only <income_chip>s; otherwise use the lowest empty slot in that column. The tier index is the cost spaces' N."
               }
             },
             {
@@ -2307,10 +2307,57 @@
                 "en": "Determine Cost Range"
               },
               "description": {
-                "zh": "确定费用范围。N = 安装层级序号，可选更多至 M（M ≥ N，M ≤ 5），前缀连续覆盖。",
-                "en": "Determine cost range. N = tier index, may satisfy up to M (M ≥ N, M ≤ 5), contiguous prefix."
+                "zh": "确定费用范围：至少满足前 N 格；可自愿承担更高层至第 M 格（M ≥ N，M ≤ 5），前缀连续覆盖，以获得更多 <success_point>。",
+                "en": "Determine the cost range: fulfill at least the first N spaces; may voluntarily assume a higher stage up to space M (M ≥ N, M ≤ 5), contiguous prefix, to gain more <success_point>."
               },
               "do_after": "determine_position"
+            },
+            {
+              "id": "resolve_success_points",
+              "name": {
+                "zh": "结算成功点数",
+                "en": "Resolve Success Points"
+              },
+              "do_after": "determine_cost_range",
+              "<ontology::instant_content>": "<success_point>"
+            },
+            {
+              "id": "resolve_instant_bonus",
+              "name": {
+                "zh": "结算即时奖励",
+                "en": "Resolve Instant Bonus"
+              },
+              "do_after": "resolve_success_points",
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "放弃（不能或不想执行则作废）",
+                    "en": "Forgo (forfeit if unable or unwilling)"
+                  }
+                },
+                {
+                  "<ontology::instant_effect>": "本卡 parts 中的 <instant_bonus>（<research_card>.parts，内容见实例）"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "insert",
+              "name": {
+                "zh": "插入层级分区",
+                "en": "Insert into Stage Partition"
+              },
+              "do_after": "resolve_instant_bonus",
+              "<ontology::transfer>": {
+                "source": "<ontology::hand>",
+                "destination": "<stage_partition>",
+                "<ontology::object>": "<research_card>",
+                "description": {
+                  "zh": "将 <research_card> 插入层级分区确定的位置，仅上三分之一露出；<research_ability> 自此激活、持续可用。",
+                  "en": "Insert the <research_card> into the determined position of the stage partition; only the top third remains visible and the <research_ability> is active from then on."
+                }
+              }
             }
           ],
           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
