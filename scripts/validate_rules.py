@@ -138,6 +138,32 @@ class Validator:
                     hint = " — 该名是枚举值, 应裸写"
                 self.err(loc, f"E12 引用了不存在的概念 <{ref}>{hint}")
 
+    def check_structure(self, source: str, data: object):
+        """E01b: 各文件的顶层结构约定"""
+        if not isinstance(data, dict):
+            self.err(source, "E01 文件顶层必须是对象 (meta + 内容组)")
+            return
+        if "meta" in data and not isinstance(data["meta"], dict):
+            self.err(f"{source} › meta", "E01 meta 必须是对象")
+        fname = source.split("/")[-1]
+        if fname == "concepts.json":
+            if source.startswith("ontology/"):
+                if not isinstance(data.get("concepts"), list):
+                    self.err(f"{source} › concepts", "E01 缺顶层键 concepts (list)")
+            else:
+                if not isinstance(data.get("objects"), list):
+                    self.err(f"{source} › objects", "E01 缺顶层键 objects (list)")
+        elif fname == "flow.json":
+            if source.startswith("ontology/"):
+                if data.get("id") != "trigger_pipeline" or not isinstance(data.get("pipeline"), dict):
+                    self.err(f"{source}", "E01 ontology flow 应为 trigger_pipeline 节点 (id + pipeline)")
+            else:
+                if not isinstance(data.get("procedures"), list):
+                    self.err(f"{source} › procedures", "E01 缺顶层键 procedures (list)")
+        elif fname == "instances.json":
+            if not any(isinstance(v, list) for v in data.values()):
+                self.err(f"{source}", "E01 instances.json 应至少含一个数组组 (module_tiles/modules/cards/...)")
+
     # ── 阶段一: 全量收集定义 (不检查, 保证顺序无关) ──────
     def collect_ids(self, data: object, source: str, is_ontology: bool):
         def walk(obj, path, depth):
@@ -233,8 +259,11 @@ class Validator:
         try:
             data = json.loads(text)
         except json.JSONDecodeError as e:
-            self.err(source, f"E01 JSON 语法错误: {e}")
+            self.err(f"{source}:{e.lineno}:{e.colno}",
+                     f"E01 JSON 语法错误: {e.msg} (该行附近)")
             return
+        # E01b: 文件结构约定 (顶层键)
+        self.check_structure(source, data)
 
         def walk(obj, path):
             if isinstance(obj, dict):
@@ -478,6 +507,8 @@ def main():
     ap = argparse.ArgumentParser(description="Board AI 规则文件语法校验")
     ap.add_argument("--game", default=None, help="只校验指定游戏 (目录名)")
     ap.add_argument("--no-ontology", action="store_true", help="不校验 ontology")
+    ap.add_argument("--errors-only", action="store_true",
+                    help="只输出 ERROR (供 pre-commit hook 使用)")
     args = ap.parse_args()
 
     v = Validator(args.game, not args.no_ontology)
@@ -488,6 +519,11 @@ def main():
         return 0
     errors = [i for i in v.issues if i[0] == "ERROR"]
     warns = [i for i in v.issues if i[0] == "WARN"]
+    if args.errors_only:
+        for level, loc, msg in errors:
+            print(f"[{level}] {loc}\n    {msg}")
+        print(f"\n共 {len(errors)} 个错误, {len(warns)} 个警告")
+        return 0
     for level, loc, msg in v.issues:
         print(f"[{level}] {loc}\n    {msg}")
     print(f"\n共 {len(errors)} 个错误, {len(warns)} 个警告")
