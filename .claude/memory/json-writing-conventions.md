@@ -9,12 +9,15 @@ metadata:
 
 ## 语法校验脚本（2026-08-11 新增）
 
-`scripts/validate_rules.py` 自动校验全部规则文件（E01-E11 + W01-W05），写完概念/流程后必跑：
+`scripts/validate_rules.py` 自动校验全部规则文件（E01-E12 + W01-W05），写完概念/流程后必跑：
 
 ```
 D:/Python/Python312/python.exe scripts/validate_rules.py            # 全部
 D:/Python/Python312/python.exe scripts/validate_rules.py --game civolution
+D:/Python/Python312/python.exe scripts/validate_rules.py --errors-only   # 只输出 ERROR (hook 用)
 ```
+
+**pre-commit hook 已安装（2026-08-11）**：`.git/hooks/pre-commit` 每次 `git commit` 自动跑 `--errors-only` 并输出结果，**只报告不阻止提交**（用户定稿：git 是防误改的安全网，允许提交后靠 checkout 恢复——不允许 commit 会堵死第二次改错的退路）。E01 已升级为完整结构检查：JSON 语法错误带行号/列号定位 + 文件顶层结构约定（concepts.json 需 meta+objects/concepts、game flow.json 需 meta+procedures、ontology flow 需 trigger_pipeline 节点、instances.json 至少一组）。
 
 核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、W05 孤立概念（有定义无引用且非触发型）。
 
