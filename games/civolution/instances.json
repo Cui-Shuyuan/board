@@ -2751,82 +2751,84 @@
         "en": "Insight research card. Activity: Pay 1 food, place 1 weak tribe on up to 2 vacant encampments in 1 of your territories. Install cost: return 1 Intelligence + possess 2 Expression + possess 1 Calm. Instant bonus: Culture track +1."
       },
       "<ontology::cost>": {
-        "count": 5,
-        "description": {
-          "zh": "安装费用格，位于卡牌中三分之一。五个格从左到右编号 1~5，安装到第 N 层时需满足前 N 格中所有非空格，可选继续满足至第 M 格（M ≥ N，M ≤ 5）以获得各格下方印的分数。",
-          "en": "Install cost slots, in the middle third of the card. Five slots numbered 1-5 left to right; when installing at tier N, satisfy all non-empty slots in the first N, may optionally satisfy up to slot M (M ≥ N, M ≤ 5) for the printed score under each slot."
-        },
-        "slots": [
-          {
-            "id": "slot_1",
-            "name": {
-              "zh": "费用格 1",
-              "en": "Cost Slot 1"
-            },
-            "type": "payment",
-            "<ontology::object>": "<feature_marker>",
-            "feature_type": "intelligence",
-            "amount": 1,
-            "description": {
-              "zh": "返还1个智慧特征标记到供应堆。",
-              "en": "Return 1 Intelligence feature marker to supply."
-            }
+        "<ontology::instant_cost>": {
+          "count": 5,
+          "description": {
+            "zh": "安装费用格，位于卡牌中三分之一。五个格从左到右编号 1~5，安装到第 N 层时需满足前 N 格中所有非空格，可选继续满足至第 M 格（M ≥ N，M ≤ 5）以获得各格下方印的分数。",
+            "en": "Install cost slots, in the middle third of the card. Five slots numbered 1-5 left to right; when installing at tier N, satisfy all non-empty slots in the first N, may optionally satisfy up to slot M (M ≥ N, M ≤ 5) for the printed score under each slot."
           },
-          {
-            "id": "slot_2",
-            "name": {
-              "zh": "费用格 2",
-              "en": "Cost Slot 2"
+          "slots": [
+            {
+              "id": "slot_1",
+              "name": {
+                "zh": "费用格 1",
+                "en": "Cost Slot 1"
+              },
+              "type": "payment",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "intelligence",
+              "amount": 1,
+              "description": {
+                "zh": "返还1个智慧特征标记到供应堆。",
+                "en": "Return 1 Intelligence feature marker to supply."
+              }
             },
-            "type": "possession",
-            "<ontology::object>": "<feature_marker>",
-            "feature_type": "expression",
-            "amount": 2,
-            "description": {
-              "zh": "持有至少2个表达特征标记。",
-              "en": "Possess at least 2 Expression feature markers."
-            }
-          },
-          {
-            "id": "slot_3",
-            "name": {
-              "zh": "费用格 3",
-              "en": "Cost Slot 3"
+            {
+              "id": "slot_2",
+              "name": {
+                "zh": "费用格 2",
+                "en": "Cost Slot 2"
+              },
+              "type": "possession",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "expression",
+              "amount": 2,
+              "description": {
+                "zh": "持有至少2个表达特征标记。",
+                "en": "Possess at least 2 Expression feature markers."
+              }
             },
-            "type": "possession",
-            "<ontology::object>": "<feature_marker>",
-            "feature_type": "calm",
-            "amount": 1,
-            "description": {
-              "zh": "持有至少1个镇定特征标记。",
-              "en": "Possess at least 1 Calm feature marker."
-            }
-          },
-          {
-            "id": "slot_4",
-            "name": {
-              "zh": "费用格 4",
-              "en": "Cost Slot 4"
+            {
+              "id": "slot_3",
+              "name": {
+                "zh": "费用格 3",
+                "en": "Cost Slot 3"
+              },
+              "type": "possession",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "calm",
+              "amount": 1,
+              "description": {
+                "zh": "持有至少1个镇定特征标记。",
+                "en": "Possess at least 1 Calm feature marker."
+              }
             },
-            "type": "empty",
-            "description": {
-              "zh": "空格，自动视为已满足。",
-              "en": "Empty slot, auto-satisfied."
-            }
-          },
-          {
-            "id": "slot_5",
-            "name": {
-              "zh": "费用格 5",
-              "en": "Cost Slot 5"
+            {
+              "id": "slot_4",
+              "name": {
+                "zh": "费用格 4",
+                "en": "Cost Slot 4"
+              },
+              "type": "empty",
+              "description": {
+                "zh": "空格，自动视为已满足。",
+                "en": "Empty slot, auto-satisfied."
+              }
             },
-            "type": "empty",
-            "description": {
-              "zh": "空格，自动视为已满足。",
-              "en": "Empty slot, auto-satisfied."
+            {
+              "id": "slot_5",
+              "name": {
+                "zh": "费用格 5",
+                "en": "Cost Slot 5"
+              },
+              "type": "empty",
+              "description": {
+                "zh": "空格，自动视为已满足。",
+                "en": "Empty slot, auto-satisfied."
+              }
             }
-          }
-        ]
+          ]
+        }
       },
       "parts": [
         "<card_name>",

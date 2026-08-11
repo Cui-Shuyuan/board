@@ -970,10 +970,12 @@
         "en": "A <ontology::card> that can be installed into the stage partition. Vertically divided into three sections: top ability area (the only visible part after installation), middle five cost slots, and bottom instant bonus. Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition."
       },
       "<ontology::cost>": {
-        "count": 5,
-        "description": {
-          "zh": "安装费用。五个费用格，从左到右编号 1~5（空格也占编号）。分两类：支付型——从仓库返还指定类型和数量的储存材料或标记至供应堆；持有型——需持有不少于指定类型和数量的特征标记，或已建造不少于指定数量的聚落。单个费用格内可能有两种可选条件，满足其一即可。空格自动视为已满足。相邻费用格之间可能有包含图标——满足前者时后者自动视为已满足。",
-          "en": "Install cost. Five cost slots, numbered 1-5 left to right (empty slots count). Two types: payment — return specified stored materials or markers from storage to supply; possession — possess at least the specified number of feature markers or have built at least the specified number of settlements. A single slot may contain two alternative conditions. Empty slots are auto-satisfied. Adjacent slots may have an inclusion icon."
+        "<ontology::instant_cost>": {
+          "count": 5,
+          "description": {
+            "zh": "安装费用。五个费用格，从左到右编号 1~5（空格也占编号）。分两类：支付型——从仓库返还指定类型和数量的储存材料或标记至供应堆；持有型——需持有不少于指定类型和数量的特征标记，或已建造不少于指定数量的聚落。单个费用格内可能有两种可选条件，满足其一即可。空格自动视为已满足。相邻费用格之间可能有包含图标——满足前者时后者自动视为已满足。",
+            "en": "Install cost. Five cost slots, numbered 1-5 left to right (empty slots count). Two types: payment — return specified stored materials or markers from storage to supply; possession — possess at least the specified number of feature markers or have built at least the specified number of settlements. A single slot may contain two alternative conditions. Empty slots are auto-satisfied. Adjacent slots may have an inclusion icon."
+          }
         }
       },
       "parts": [

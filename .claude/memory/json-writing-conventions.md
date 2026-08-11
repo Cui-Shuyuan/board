@@ -19,7 +19,17 @@ D:/Python/Python312/python.exe scripts/validate_rules.py --errors-only   # 只�
 
 **pre-commit hook 已安装（2026-08-11）**：`.git/hooks/pre-commit` 每次 `git commit` 自动跑 `--errors-only` 并输出结果，**只报告不阻止提交**（用户定稿：git 是防误改的安全网，允许提交后靠 checkout 恢复——不允许 commit 会堵死第二次改错的退路）。E01 已升级为完整结构检查：JSON 语法错误带行号/列号定位 + 文件顶层结构约定（concepts.json 需 meta+objects/concepts、game flow.json 需 meta+procedures、ontology flow 需 trigger_pipeline 节点、instances.json 至少一组）。
 
-核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、W05 孤立概念（有定义无引用且非触发型）。
+核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、**E13 cost/content 层级约束**（见下）、W05 孤立概念（有定义无引用且非触发型）。
+
+## E13 cost/content 层级约束 ★（2026-08-11 用户定稿）
+
+- **`<ontology::cost>` 下面必须再来一层 `<ontology::instant_cost>` 或 `<ontology::continuous_cost>`**——cost 不允许直接挂数据（count/slots）或执行概念（`<ontology::transfer>` 等）
+- **`<ontology::content>` 下面必须再来一层 `<ontology::instant_content>` 或 `<ontology::continuous_content>`**——content 同理
+- cost/content 的直接子键仅限 `instant/continuous` 层 + `name`/`description`/`id`
+- **`<ontology::instant_cost>` / `<ontology::continuous_cost>` / `<ontology::instant_content>` / `<ontology::continuous_content>` 不允许独立存在**——必须挂在对应外层内
+- 豁免：字符串引用（`"<ontology::cost>": "this.<ontology::cost>"` 引用形态）、`.parts[` 内身份声明（仅 position/description）、含 `type` 键的字段声明形态（如 `{"type": "<ontology::cost>", "description": ...}`）
+
+反例（历史教训）：theocracy 卡牌费用格最初把 `count`/`slots`/`description` 直接挂 `<ontology::cost>`——违规，已修。正确形态见 `games/civolution/instances.json` cards 的 theocracy 实例。
 
 **E11 决策约定（2026-08-11 用户定稿）**：required 就是必须有——不能实现就降级（逐个概念论证，不一刀切）或用中间概念收敛（如 zone 移除 `<ownership>`，新增 `player_supply`/`public_supply` 各声明一次，具体供应堆 specifies 它们）。老概念大胆删（零引用确认后）。
 
@@ -293,6 +303,7 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] 无行动可选的兜底：把「跳过」做成带「全部行动条件取反」condition 的候选
 - [ ] condition 单条写 zh/en，多条才用 options/type/EXECUTE_ALL
 - [ ] cost 是 instant_cost/continuous_cost；无需支付则省略字段（不写 null）
+- [ ] `<ontology::cost>` 下必须再来一层 `<ontology::instant_cost>` 或 `<ontology::continuous_cost>`，不直接挂数据/transfer；content 同理；instant/continuous 不允许独立存在（E13）
 - [ ] target 是字符串，不是对象
 - [ ] content 是 `<ontology::instant_content>` 或 `<ontology::continuous_content>`
 - [ ] 所有 type 引用是完整路径 `"<ontology::multiple_choice_enum.XXX>"`

@@ -21,6 +21,8 @@ Board AI 规则文件语法校验脚本。
   E08  type 值含 " | null" (旧写法)
   E09  游戏层用 definition 键 (应 description)
   E10  _skip 缺 id 或缺 description
+  E13  <ontology::cost>/<ontology::content> 缺 instant/continuous 子层、
+       直接挂执行概念 (transfer 等)、或 instant/continuous 独立存在
   W01  target 是对象 (约定纯字符串)
   W02  do_after 引用了 <概念> (应引用步骤 id)
   W03  condition 形态未知 (应为 字符串引用 | {zh,en} | {options,type})
@@ -333,6 +335,39 @@ class Validator:
                 if isinstance(tval, str) and "| null" in tval:
                     self.err(f"{source} › {path} › type",
                              "E08 type 含 '| null' — 可空由 optional/default 表达")
+                # E13: cost/content 层级约束 (2026-08-11 用户定稿)
+                #   <ontology::cost> 对象必须含 <ontology::instant_cost> 或 <ontology::continuous_cost> 子层;
+                #   <ontology::content> 对象必须含 <ontology::instant_content> 或 <ontology::continuous_content>;
+                #   两者不允许直接挂 transfer 等执行概念 (子键限 name/description/id);
+                #   instant/continuous 子层不允许独立存在 (必须挂在对应外层内)。
+                #   豁免: 字符串引用 (引用形态) / .parts[ 内身份声明 / 含 type 键的字段声明形态
+                in_parts = ".parts[" in path
+                for outer, inner_set, label in (
+                    ("<ontology::cost>",
+                     ("<ontology::instant_cost>", "<ontology::continuous_cost>"), "cost"),
+                    ("<ontology::content>",
+                     ("<ontology::instant_content>", "<ontology::continuous_content>"), "content"),
+                ):
+                    ov = obj.get(outer)
+                    if isinstance(ov, dict) and "type" not in ov and not in_parts:
+                        keys = set(ov.keys())
+                        if not (set(inner_set) & keys):
+                            self.err(f"{source} › {path} › {outer}",
+                                     f"E13 <ontology::{label}> 必须包含 {inner_set[0]} 或 {inner_set[1]} 子层")
+                        bad = sorted(keys - (set(inner_set) | {"name", "description", "id"}))
+                        if bad:
+                            self.err(f"{source} › {path} › {outer}",
+                                     f"E13 <ontology::{label}> 不允许直接包含 {bad} — 应放入 instant/continuous 子层内")
+                for k, outer in (
+                    ("<ontology::instant_cost>", "<ontology::cost>"),
+                    ("<ontology::continuous_cost>", "<ontology::cost>"),
+                    ("<ontology::instant_content>", "<ontology::content>"),
+                    ("<ontology::continuous_content>", "<ontology::content>"),
+                ):
+                    # 键出现在外层对象内部 = 父路径以 .<outer> 结尾 (如 $.a.<ontology::cost>)
+                    if k in obj and not path.endswith(f".{outer}"):
+                        self.err(f"{source} › {path} › {k}",
+                                 f"E13 {k} 不允许独立存在 — 必须挂在 {outer} 内")
                 # E09: definition vs description (游戏层; instances.json 的实例定义用 definition 是惯例)
                 if not is_ontology and "definition" in obj and not source.endswith("instances.json"):
                     self.err(f"{source} › {path} › definition",
