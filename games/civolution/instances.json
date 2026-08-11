@@ -2591,7 +2591,7 @@
     },
     {
       "id": "module_feature_stamina",
-      "instance_of": "<module>",
+      "instance_of": "<feature_module>",
       "name": {
         "zh": "耐力",
         "en": "Stamina"
@@ -2632,11 +2632,12 @@
             }
           }
         }
-      }
+      },
+      "dice_value": 1
     },
     {
       "id": "module_feature_intelligence",
-      "instance_of": "<module>",
+      "instance_of": "<feature_module>",
       "name": {
         "zh": "智慧",
         "en": "Intelligence"
@@ -2677,11 +2678,12 @@
             }
           }
         }
-      }
+      },
+      "dice_value": 2
     },
     {
       "id": "module_feature_calm",
-      "instance_of": "<module>",
+      "instance_of": "<feature_module>",
       "name": {
         "zh": "镇定",
         "en": "Calm"
@@ -2722,11 +2724,12 @@
             }
           }
         }
-      }
+      },
+      "dice_value": 3
     },
     {
       "id": "module_feature_dexterity",
-      "instance_of": "<module>",
+      "instance_of": "<feature_module>",
       "name": {
         "zh": "灵巧",
         "en": "Dexterity"
@@ -2767,11 +2770,12 @@
             }
           }
         }
-      }
+      },
+      "dice_value": 4
     },
     {
       "id": "module_feature_expression",
-      "instance_of": "<module>",
+      "instance_of": "<feature_module>",
       "name": {
         "zh": "表达",
         "en": "Expression"
@@ -2812,11 +2816,12 @@
             }
           }
         }
-      }
+      },
+      "dice_value": 5
     },
     {
       "id": "module_feature_perception",
-      "instance_of": "<module>",
+      "instance_of": "<feature_module>",
       "name": {
         "zh": "观察",
         "en": "Perception"
@@ -2857,7 +2862,8 @@
             }
           }
         }
-      }
+      },
+      "dice_value": 6
     },
     {
       "id": "module_sleep",

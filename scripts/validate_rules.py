@@ -262,14 +262,14 @@ class Validator:
                     if not m:
                         self.err(f"{source} › {path} › type",
                                  f"E05 type 不是 <ontology::multiple_choice_enum.XXX> 完整引用: {tval}")
-                # E06/W02: do_after 引用
+                # E06: do_after 引用 (可引用步骤 id 或 <概念>——复用动作抽公共概念是合法形态)
                 da = obj.get("do_after")
                 if isinstance(da, str):
-                    self.check_do_after(da, f"{source} › {path} › do_after", text)
+                    self.check_do_after(da, f"{source} › {path} › do_after")
                 elif isinstance(da, dict):
                     for item in da.get("options", []):
                         if isinstance(item, str):
-                            self.check_do_after(item, f"{source} › {path} › do_after", text)
+                            self.check_do_after(item, f"{source} › {path} › do_after")
                 # E07: cost null (键存在且值为 null 才报; 键不存在 = 正常省略)
                 for key in ("<ontology::cost>", "<ontology::instant_cost>",
                             "<ontology::continuous_cost>"):
@@ -313,11 +313,11 @@ class Validator:
 
         walk(data, "$")
 
-    def check_do_after(self, ref: str, loc: str, text: str):
-        if ref.startswith("<"):
-            self.warn(loc, f"W02 do_after 引用了 <{ref}> — 应引用步骤 id 而非概念")
-        elif ref not in self.node_ids:
-            self.err(loc, f"E06 do_after 引用不存在的步骤 id: {ref}")
+    def check_do_after(self, ref: str, loc: str):
+        # <概念> 是合法形态 (复用动作); 裸 id 必须是已定义步骤/概念
+        head = ref.strip("<>").split("::")[-1]
+        if head not in self.node_ids:
+            self.err(loc, f"E06 do_after 引用不存在的步骤/概念 id: {ref}")
 
     # ── constraints 顶层字段校验 (ontology 概念, 含继承链) ─
     def check_constraints(self, data: list[dict], text: str):

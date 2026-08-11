@@ -824,6 +824,37 @@
       }
     },
     {
+      "id": "feature_module",
+      "specifies": "<module>",
+      "name": {
+        "zh": "特征模组",
+        "en": "Feature Module"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "不可升级的模组效果：激活后获得对应的特征标记。cost = 2 个点数均为 <dice_value> 的 <activation_die>（支付到 <player_holding>），content = 获得 <feature> 对应的 <feature_marker> 到 <feature_space>。6 个特征模组实例各自声明 <feature> 与 <dice_value>。区别于 <upgradable_module>：特征模组没有 <level> 状态，不可升级。",
+        "en": "A non-upgradable module effect: activating it grants the corresponding feature marker. Cost = 2 <activation_die>s both showing <dice_value> (paid to <player_holding>); content = gain the <feature_marker> corresponding to <feature> into <feature_space>. The 6 feature module instances each declare their own <feature> and <dice_value>. Unlike <upgradable_module>, feature modules have no <level> state and cannot be upgraded."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "feature",
+            "description": {
+              "zh": "该模组对应的特征（stamina / intelligence / calm / dexterity / expression / perception）。",
+              "en": "The feature this module grants (stamina / intelligence / calm / dexterity / expression / perception)."
+            }
+          },
+          {
+            "id": "dice_value",
+            "description": {
+              "zh": "激活费用要求的骰子点数——2 个点数均为此值的 <activation_die>。",
+              "en": "The die value required by the activation cost — 2 <activation_die>s both showing this value."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "idea_marker",
       "specifies": "<ontology::resource>",
       "name": {
