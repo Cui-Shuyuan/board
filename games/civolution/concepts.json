@@ -2909,6 +2909,19 @@
       ]
     },
     {
+      "id": "civolution_setting",
+      "specifies": "<ontology::setting>",
+      "name": {
+        "zh": "文明演化背景设定",
+        "en": "Civolution Setting"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "《文明演化》的世界观：玩家是创世技术学院的学生，正在参加名为「文明演化」的考试；考试场地是一片僻静的大陆，每位考生都必须成为当地的一名神祇，发展并引领自己的文明，在与其他文明的竞争中取得成功，胜者将晋升为创世技术学院的正式成员。阿格拉（Agera）是这场考试的主考官，因此代表考生获得其青睐程度的轨被称为 <favor_of_ager_track>（阿格拉恩惠轨）。",
+        "en": "The world of Civolution: players are students of the Genesis Tech Academy taking an exam called 'Civilization Evolution'. The exam takes place on a remote continent; each candidate must become a local deity, develop and lead their own civilization, and outcompete the others. The winner becomes a full member of the Genesis Tech Academy. Agera is the examiner of this exam, so the track that records how much favor each candidate has earned is called the <favor_of_ager_track> (Favor of Agera track)."
+      }
+    },
+    {
       "id": "weather_gauge",
       "specifies": "<ontology::track>",
       "name": {

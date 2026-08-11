@@ -119,8 +119,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种特殊的 <resource>，代表玩家在游戏中获得的分数或胜利点数（victory points）。<score> 继承自 <resource>，核心特征是可被计数和增减，通常不用于支付费用或转移给其他玩家，而是用于胜负判定。典型例子包括璀璨宝石中的声望点数、文明演化中的分数。",
-        "en": "A special <resource> representing a player's points or victory points. <score> extends <resource>. Its defining feature is that it is countable and can be increased or decreased; it is typically not spent as a cost or transferred to other players, but is used for victory determination. Typical examples include prestige points in Splendor and score points in Civolution."
+        "zh": "一种特殊的 <resource>，代表玩家在游戏中获得的分数或胜利点数（victory points）。<score> 继承自 <resource>，核心特征是可被计数和增减，通常不用于支付费用或转移给其他玩家，而是用于胜负判定。",
+        "en": "A special <resource> representing a player's points or victory points. <score> extends <resource>. Its defining feature is that it is countable and can be increased or decreased; it is typically not spent as a cost or transferred to other players, but is used for victory determination."
       },
       "constraints": {
         "required": [],
@@ -185,8 +185,8 @@
           {
             "id": "content",
             "description": {
-              "zh": "此版图自身携带的效果或能力。不需要打出任何 <piece> 即可使用——这些能力直接印在版图上，由版图自身赋予玩家。例如 Civolution 玩家面板上的基础活动图标。数组中的每项描述一个独立的能力或效果。这些内容在版图进入游戏时自动生效，不依赖任何外部 <piece>。",
-              "en": "Effects or abilities carried by this board itself. Usable without playing any <piece> — these abilities are directly printed on the board and granted to the player by the board itself. E.g., the basic activity icon on a Civolution player console. Each entry in the array describes one independent ability or effect. These contents take effect automatically when the board enters the game, independent of any external <piece>."
+              "zh": "此版图自身携带的效果或能力。不需要打出任何 <piece> 即可使用——这些能力直接印在版图上，由版图自身赋予玩家。数组中的每项描述一个独立的能力或效果。这些内容在版图进入游戏时自动生效，不依赖任何外部 <piece>。",
+              "en": "Effects or abilities carried by this board itself. Usable without playing any <piece> — these abilities are directly printed on the board and granted to the player by the board itself. Each entry in the array describes one independent ability or effect. These contents take effect automatically when the board enters the game, independent of any external <piece>."
             }
           },
           {
@@ -272,8 +272,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "用于指示某个 <state> 或位置的概念。<marker> 继承自 <object>。它不被当作资源消耗，而是被放置、移动或移除来反映游戏规则中的状态变化。典型例子包括：阶段标记、天气标记、进程轨标记、计分标记、起始玩家标记等。",
-        "en": "A concept used to indicate a <state> or position. <marker> extends <object>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules. Typical examples include phase indicators, weather indicators, progress track markers, score markers, and starting player markers."
+        "zh": "用于指示某个 <state> 或位置的概念。<marker> 继承自 <object>。它不被当作资源消耗，而是被放置、移动或移除来反映游戏规则中的状态变化。",
+        "en": "A concept used to indicate a <state> or position. <marker> extends <object>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules."
       },
       "constraints": {
         "required": [],
@@ -538,22 +538,22 @@
       },
       "abstract": false,
       "description": {
-        "zh": "声明对象 X 在特定语境中充当对象 Y：X 的物理身份不变，在 scope 内、满足 condition 时其行为等同于 Y（如 <planning_marker> 在支付激活模组费用时视为 <activation_die>），离开语境恢复自身身份。与 <piece>.parts 的静态身份声明互补——parts 表达「载体上印着什么身份」，<substitution> 表达「使用时的身份借用」。domain 为资源、标记等对象概念。",
-        "en": "Declares that object X acts as object Y within a specific context: X's physical identity is unchanged; inside scope, when the condition holds, its behavior equals Y's (e.g. a <planning_marker> counts as an <activation_die> when paying a module's activation cost); outside, it reverts to itself. Complements the static identity declaration of <piece>.parts — parts states which identities are printed on a carrier, <substitution> states an identity borrowed at use time. Domain is object concepts such as resources and markers."
+        "zh": "声明对象 X 在特定语境中充当对象 Y：X 的物理身份不变，在 scope 内、满足 condition 时其行为等同于 Y，离开语境恢复自身身份。与 <piece>.parts 的静态身份声明互补——parts 表达「载体上印着什么身份」，<substitution> 表达「使用时的身份借用」。domain 为资源、标记等对象概念。",
+        "en": "Declares that object X acts as object Y within a specific context: X's physical identity is unchanged; inside scope, when the condition holds, its behavior equals Y's; outside, it reverts to itself. Complements the static identity declaration of <piece>.parts — parts states which identities are printed on a carrier, <substitution> states an identity borrowed at use time. Domain is object concepts such as resources and markers."
       },
       "target": {
         "type": "<object>",
         "description": {
-          "zh": "充当的对象——X 被视为什么（如 <activation_die>）。",
-          "en": "The object X is treated as (e.g. <activation_die>)."
+          "zh": "充当的对象——X 被视为什么。",
+          "en": "The object X is treated as."
         }
       },
       "scope": {
         "type": "string",
         "default": null,
         "description": {
-          "zh": "生效范围的路径式定位——概念.字段.步骤，如 \"<activate_module>.<ontology::pipeline>.pay_cost\" 表示「activate_module 的 pipeline 中的 pay_cost 步骤」。null = 全场合。",
-          "en": "Path-style scope — concept.field.step, e.g. \"<activate_module>.<ontology::pipeline>.pay_cost\" = the pay_cost step of activate_module's pipeline. null = everywhere."
+          "zh": "生效范围的路径式定位——概念.字段.步骤，如 \"<concept>.<ontology::pipeline>.pay_cost\" 表示「某动作的 pipeline 中的 pay_cost 步骤」。null = 全场合。",
+          "en": "Path-style scope — concept.field.step, e.g. \"<concept>.<ontology::pipeline>.pay_cost\" = the pay_cost step of some action's pipeline. null = everywhere."
         }
       },
       "<condition>": {
@@ -1085,8 +1085,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。行动内容：**持有 <ontology::action>——单候选时直接写概念引用（\"<activate_module>\"），多候选时该 action 携带 options/type 选择结构（如 {\"options\": [\"<a>\", \"<b>\"], \"type\": \"<ontology::multiple_choice_enum.CHOOSE_ONE>\"}）**——「从候选中选一个」是 action 自身的选项字段，不需要 pipeline 包装（options/type 只是 pipeline 的一块构件；整个内容只有一个动作时不叫 pipeline）。每个候选 action 自带 <condition> 决定可用性——不成立 = 该候选不可选（候选级排除），条件互补覆盖时玩家必选其一（「能 A 必须 A，否则跳过」= 跳过作为带「A 不可用」condition 的 action）。多步骤复合动作（非选择、按顺序执行的动作序列）才用 <ontology::pipeline> 承载。执行者（当前玩家）由流程推进按座次顺序轮转决定——轮转是 <turn> 的内建语义，无需字段声明。",
-        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. Action content: **holds an <ontology::action> — a single candidate is a plain concept reference (\"<activate_module>\"); multiple candidates make the action carry an options/type choice structure (e.g. {\"options\": [\"<a>\", \"<b>\"], \"type\": \"<ontology::multiple_choice_enum.CHOOSE_ONE>\"})** — 'picking one from candidates' is the action's own option field, no pipeline wrapper needed (options/type is just one building block of a pipeline; a single action does not warrant being called a pipeline). Each candidate action carries its own <condition> deciding availability — failing = that candidate is not selectable (candidate-level exclusion); with complementary conditions the player must pick one of the available candidates ('if A is possible you must do A, otherwise skip' = skip as an action whose condition is the negation of A's availability). Multi-step compound actions (non-choice sequences executed in order) are carried by an <ontology::pipeline>. The actor (current player) is decided by flow progression in seating order — turn order is <turn>'s built-in semantics and needs no field declaration."
+        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。行动内容：**持有 <ontology::action>——单候选时直接写概念引用（\"<concept>\"），多候选时该 action 携带 options/type 选择结构（如 {\"options\": [\"<a>\", \"<b>\"], \"type\": \"<ontology::multiple_choice_enum.CHOOSE_ONE>\"}）**——「从候选中选一个」是 action 自身的选项字段，不需要 pipeline 包装（options/type 只是 pipeline 的一块构件；整个内容只有一个动作时不叫 pipeline）。每个候选 action 自带 <condition> 决定可用性——不成立 = 该候选不可选（候选级排除），条件互补覆盖时玩家必选其一（「能 A 必须 A，否则跳过」= 跳过作为带「A 不可用」condition 的 action）。多步骤复合动作（非选择、按顺序执行的动作序列）才用 <ontology::pipeline> 承载。执行者（当前玩家）由流程推进按座次顺序轮转决定——轮转是 <turn> 的内建语义，无需字段声明。",
+        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. Action content: **holds an <ontology::action> — a single candidate is a plain concept reference (\"<concept>\"); multiple candidates make the action carry an options/type choice structure (e.g. {\"options\": [\"<a>\", \"<b>\"], \"type\": \"<ontology::multiple_choice_enum.CHOOSE_ONE>\"})** — 'picking one from candidates' is the action's own option field, no pipeline wrapper needed (options/type is just one building block of a pipeline; a single action does not warrant being called a pipeline). Each candidate action carries its own <condition> deciding availability — failing = that candidate is not selectable (candidate-level exclusion); with complementary conditions the player must pick one of the available candidates ('if A is possible you must do A, otherwise skip' = skip as an action whose condition is the negation of A's availability). Multi-step compound actions (non-choice sequences executed in order) are carried by an <ontology::pipeline>. The actor (current player) is decided by flow progression in seating order — turn order is <turn>'s built-in semantics and needs no field declaration."
       },
       "constraints": {
         "required": [],
@@ -1366,8 +1366,8 @@
       "<pipeline>": {
         "default": "trigger_pipeline",
         "description": {
-          "zh": "本 trigger 的标准执行流程。缺省引用 ontology/flow.json 的 <trigger_pipeline>：evaluate_condition（不成立终止）→ pay_cost（足额支付，无法足额终止）→ select_target → resolve_content。步骤 id 全局可寻址——其他声明可用路径引用具体步骤（如 substitution 的 scope 写 \"<activate_module>.<ontology::pipeline>.pay_cost\" 表示「支付费用那一步」）。",
-          "en": "The standard execution flow of this trigger. Defaults to <trigger_pipeline> in ontology/flow.json: evaluate_condition (terminate if false) → pay_cost (pay in full; terminate if impossible) → select_target → resolve_content. Step ids are globally addressable — other declarations may reference a specific step via path (e.g. substitution scope \"<activate_module>.<ontology::pipeline>.pay_cost\" = the cost-payment step)."
+          "zh": "本 trigger 的标准执行流程。缺省引用 ontology/flow.json 的 <trigger_pipeline>：evaluate_condition（不成立终止）→ pay_cost（足额支付，无法足额终止）→ select_target → resolve_content。步骤 id 全局可寻址——其他声明可用路径引用具体步骤（如 substitution 的 scope 写 \"<concept>.<ontology::pipeline>.pay_cost\" 表示「支付费用那一步」）。",
+          "en": "The standard execution flow of this trigger. Defaults to <trigger_pipeline> in ontology/flow.json: evaluate_condition (terminate if false) → pay_cost (pay in full; terminate if impossible) → select_target → resolve_content. Step ids are globally addressable — other declarations may reference a specific step via path (e.g. substitution scope \"<concept>.<ontology::pipeline>.pay_cost\" = the cost-payment step)."
         }
       },
       "constraints": {
@@ -1583,8 +1583,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种 <piece>，通常较 <card> 更小更厚，形状不定——六边形、正方形、长方形或不规则形状均有。<tile> 继承自 <piece>。典型例子包括卡坦岛的六角地形板块、卡卡颂的地图板块、Azul 的装饰砖块、多米诺骨牌式拼接板块。",
-        "en": "A type of <piece>, typically smaller and thicker than a <card>, with variable shapes — hexagonal, square, rectangular, or irregular. <tile> extends <piece>. Typical examples: Catan hexagonal terrain tiles, Carcassonne map tiles, Azul decorative tiles, domino-style placement tiles."
+        "zh": "一种 <piece>，通常较 <card> 更小更厚，形状不定——六边形、正方形、长方形或不规则形状均有。<tile> 继承自 <piece>。",
+        "en": "A type of <piece>, typically smaller and thicker than a <card>, with variable shapes — hexagonal, square, rectangular, or irregular. <tile> extends <piece>. "
       },
       "constraints": {
         "required": [],
@@ -1615,7 +1615,7 @@
       "abstract": false,
       "description": {
         "zh": "一种 3D 的 <piece>，不同于平面的 <card> 或 <tile>。<token> 继承自 <piece>。典型如工放游戏中的工人、米宝、建筑模型——玩家直接拿起来放下去，不握在手里也不拼在版图上。<token> 可以携带 <effect>、可以被 <play>、可以拥有自己的 <zone>。",
-        "en": "A 3D <piece>, distinct from flat <card>s or <tile>s. <token> extends <piece>. Typical examples include workers in worker placement games, meeples, and building models — the player picks them up and places them directly, without holding them in hand or assembling them on the board. A <token> can carry <effect>s, be <play>ed, and host its own <zone>s."
+        "en": "A 3D <piece>, distinct from flat <card>s or <tile>s. <token> extends <piece>. "
       },
       "constraints": {
         "required": [],
@@ -1631,8 +1631,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "存放无差别的、可直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>。核心语义是「备用且直接取用」——此区域中的 <object> 完全相同且可互相替代（通常为 <component> 或 <resource>），获取方式为直接取用而不需抽取或随机：玩家只决定「取多少」，不决定「取哪个」。对象数量可能有限或无限，不支持顺序操作和洗混。访问权限由 <ownership> 决定：<ownership> 为 null 时是公共供应堆，所有玩家均可取用；<ownership> 为特定 <player> 时是玩家供应堆，仅该玩家可取用。典型例子：璀璨宝石的宝石供应堆、卡坦岛的资源卡供应堆、某些游戏中每位玩家面前分出的资源池。",
-        "en": "A <reserve> that holds undifferentiated <object>s which can be directly taken. <supply> extends <reserve>. Core semantic is 'kept in storage and directly taken' — objects here are identical and interchangeable (typically <component>s or <resource>s), accessed by direct taking without drawing or randomness: the player only decides 'how many', not 'which one'. Quantity may be limited or unlimited; no ordering or shuffling. Access rights are determined by <ownership>: when <ownership> is null it is a public supply open to all players; when <ownership> is a specific <player> it is a player supply accessible only to that player. Typical examples: Splendor's gem supply, Catan's resource card supply, per-player resource pools dealt from a common supply in some games."
+        "zh": "存放无差别的、可直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>。核心语义是「备用且直接取用」——此区域中的 <object> 完全相同且可互相替代（通常为 <component> 或 <resource>），获取方式为直接取用而不需抽取或随机：玩家只决定「取多少」，不决定「取哪个」。对象数量可能有限或无限，不支持顺序操作和洗混。访问权限由 <ownership> 决定：<ownership> 为 null 时是公共供应堆，所有玩家均可取用；<ownership> 为特定 <player> 时是玩家供应堆，仅该玩家可取用。",
+        "en": "A <reserve> that holds undifferentiated <object>s which can be directly taken. <supply> extends <reserve>. Core semantic is 'kept in storage and directly taken' — objects here are identical and interchangeable (typically <component>s or <resource>s), accessed by direct taking without drawing or randomness: the player only decides 'how many', not 'which one'. Quantity may be limited or unlimited; no ordering or shuffling. Access rights are determined by <ownership>: when <ownership> is null it is a public supply open to all players; when <ownership> is a specific <player> it is a player supply accessible only to that player. "
       },
       "constraints": {
         "required": [],
@@ -1648,8 +1648,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "存放可见的、各不相同的 <object>，供 <player> 主动选择获取的 <reserve>。<market> 继承自 <reserve>。与 <supply> 的对偶概念——<supply> 存放无差别物件（<player> 只管「取多少」），<market> 存放各不相同物件（<player> 需要决定「取哪个」）。核心特征：(1) 物件各不相同——通常为 <piece>（如 <card>、<tile>），每件有独立的身份和 <property>；(2) 完全可见——所有物件面朝上陈列，成为所有 <player> 的公共信息；(3) 主动选择——<player> 从陈列的物件中指定具体哪一件来获取，而非无差别取用；(4) 获取通常伴随 <cost>——玩家支付对应费用后获得所选物件。典型例子：璀璨宝石的中央卡牌陈列区、四季物语的公共骰子区、 dominion 的王国卡牌供应区。",
-        "en": "A <reserve> that holds visible, distinct <object>s from which <player>s can actively choose and acquire. <market> extends <reserve>. The counterpart to <supply> — while <supply> holds undifferentiated items (player only decides 'how many'), <market> holds distinct items (player must decide 'which one'). Core traits: (1) items are distinct — typically <piece>s (e.g., <card>, <tile>), each with its own identity and <property>; (2) fully visible — all items are displayed face-up as public information for all <player>s; (3) active choice — <player>s designate a specific item to acquire rather than taking undifferentiated units; (4) acquisition usually involves a <cost> — the player pays the associated cost to obtain the chosen item. Typical examples: Splendor's central card display, Seasons' public dice pool, Dominion's Kingdom card supply."
+        "zh": "存放可见的、各不相同的 <object>，供 <player> 主动选择获取的 <reserve>。<market> 继承自 <reserve>。与 <supply> 的对偶概念——<supply> 存放无差别物件（<player> 只管「取多少」），<market> 存放各不相同物件（<player> 需要决定「取哪个」）。核心特征：(1) 物件各不相同——通常为 <piece>（如 <card>、<tile>），每件有独立的身份和 <property>；(2) 完全可见——所有物件面朝上陈列，成为所有 <player> 的公共信息；(3) 主动选择——<player> 从陈列的物件中指定具体哪一件来获取，而非无差别取用；(4) 获取通常伴随 <cost>——玩家支付对应费用后获得所选物件。",
+        "en": "A <reserve> that holds visible, distinct <object>s from which <player>s can actively choose and acquire. <market> extends <reserve>. The counterpart to <supply> — while <supply> holds undifferentiated items (player only decides 'how many'), <market> holds distinct items (player must decide 'which one'). Core traits: (1) items are distinct — typically <piece>s (e.g., <card>, <tile>), each with its own identity and <property>; (2) fully visible — all items are displayed face-up as public information for all <player>s; (3) active choice — <player>s designate a specific item to acquire rather than taking undifferentiated units; (4) acquisition usually involves a <cost> — the player pays the associated cost to obtain the chosen item. "
       },
       "constraints": {
         "required": [],
@@ -1665,8 +1665,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "存放有序叠放的 <object> 序列、从固定位置（通常为顶部）抽取的 <reserve>。<deck> 继承自 <reserve>。与 <supply> 和 <market> 不同——<supply> 无序取用、<market> 主动挑选，<deck> 则是从固定的抽取位置按序获取，玩家无法选择取哪一张。核心特征：(1) 有序序列——<object> 之间有严格的先后顺序；(2) 固定抽取位——每次从同一位置（顶部）取走最上方的一张；(3) 支持洗混——<shuffle> 可随机重排整个 <deck> 的顺序，是 <deck> 特有的操作；(4) 默认隐藏——面朝下放置，<information_visibility> 通常为 hidden，洗混后信息状态重置为不可预测。典型例子：Uno 的抽牌堆、璀璨宝石的贵族卡牌堆、卡坦岛的发展卡牌堆。",
-        "en": "A <reserve> that holds an ordered stack of <object>s, drawn from a fixed position (typically the top). <deck> extends <reserve>. Unlike <supply> (undifferentiated taking) and <market> (active choice), a <deck> is drawn from sequentially at a fixed position — the player cannot choose which one to take. Core traits: (1) ordered sequence — <object>s have a strict sequential order; (2) fixed draw position — the topmost <object> is always taken; (3) supports <shuffle> — randomly reordering is a <deck>-specific operation; (4) hidden by default — face-down, <information_visibility> is typically hidden, reset to unpredictable after <shuffle>. Typical examples: Uno's draw pile, Splendor's noble tile deck, Catan's development card deck."
+        "zh": "存放有序叠放的 <object> 序列、从固定位置（通常为顶部）抽取的 <reserve>。<deck> 继承自 <reserve>。与 <supply> 和 <market> 不同——<supply> 无序取用、<market> 主动挑选，<deck> 则是从固定的抽取位置按序获取，玩家无法选择取哪一张。核心特征：(1) 有序序列——<object> 之间有严格的先后顺序；(2) 固定抽取位——每次从同一位置（顶部）取走最上方的一张；(3) 支持洗混——<shuffle> 可随机重排整个 <deck> 的顺序，是 <deck> 特有的操作；(4) 默认隐藏——面朝下放置，<information_visibility> 通常为 hidden，洗混后信息状态重置为不可预测。",
+        "en": "A <reserve> that holds an ordered stack of <object>s, drawn from a fixed position (typically the top). <deck> extends <reserve>. Unlike <supply> (undifferentiated taking) and <market> (active choice), a <deck> is drawn from sequentially at a fixed position — the player cannot choose which one to take. Core traits: (1) ordered sequence — <object>s have a strict sequential order; (2) fixed draw position — the topmost <object> is always taken; (3) supports <shuffle> — randomly reordering is a <deck>-specific operation; (4) hidden by default — face-down, <information_visibility> is typically hidden, reset to unpredictable after <shuffle>. "
       },
       "constraints": {
         "required": [],
@@ -1682,8 +1682,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "存放各不相同的 <object>、通过随机方式抽取的无序 <reserve>。<pool> 继承自 <reserve>。与 <deck> 的关键区别：<deck> 有固定顺序、从顶部按序抽取、支持 <shuffle>；<pool> 无序、每次抽取为独立随机事件、不支持 <shuffle>——你把手伸进袋子里摸一个，摸到什么是独立概率，不依赖之前的抽取。核心特征：(1) 无序集合——<object> 之间没有先后关系；(2) 随机抽取——每次获取哪一个由随机决定，非玩家选择（区别于 <market>），也非按序获取（区别于 <deck>）；(3) 身份后验——<object> 被抽出后其身份才公开；(4) 概率可调——向 <pool> 中添加或移除特定 <object> 可改变后续抽取的概率分布。典型例子：Scrabble 的字母袋、卡卡颂的板块抽袋、Orléans 的随从抽袋。",
-        "en": "An unordered <reserve> holding distinct <object>s, accessed by random draw. <pool> extends <reserve>. Key difference from <deck>: a <deck> has a fixed order, draws from the top sequentially, and supports <shuffle>; a <pool> is unordered, each draw is an independent random event, and <shuffle> is not supported — you reach into a bag and pull one out; what you get is an independent probability, not dependent on previous draws. Core traits: (1) unordered collection — no sequence among <object>s; (2) random draw — which one you get is determined randomly, not by player choice (unlike <market>) nor by sequence (unlike <deck>); (3) identity post-hoc — the <object>'s identity is only revealed after drawing; (4) adjustable probability — adding or removing specific <object>s changes the probability distribution of subsequent draws. Typical examples: Scrabble's letter bag, Carcassonne's tile bag, Orléans' follower bag."
+        "zh": "存放各不相同的 <object>、通过随机方式抽取的无序 <reserve>。<pool> 继承自 <reserve>。与 <deck> 的关键区别：<deck> 有固定顺序、从顶部按序抽取、支持 <shuffle>；<pool> 无序、每次抽取为独立随机事件、不支持 <shuffle>——你把手伸进袋子里摸一个，摸到什么是独立概率，不依赖之前的抽取。核心特征：(1) 无序集合——<object> 之间没有先后关系；(2) 随机抽取——每次获取哪一个由随机决定，非玩家选择（区别于 <market>），也非按序获取（区别于 <deck>）；(3) 身份后验——<object> 被抽出后其身份才公开；(4) 概率可调——向 <pool> 中添加或移除特定 <object> 可改变后续抽取的概率分布。",
+        "en": "An unordered <reserve> holding distinct <object>s, accessed by random draw. <pool> extends <reserve>. Key difference from <deck>: a <deck> has a fixed order, draws from the top sequentially, and supports <shuffle>; a <pool> is unordered, each draw is an independent random event, and <shuffle> is not supported — you reach into a bag and pull one out; what you get is an independent probability, not dependent on previous draws. Core traits: (1) unordered collection — no sequence among <object>s; (2) random draw — which one you get is determined randomly, not by player choice (unlike <market>) nor by sequence (unlike <deck>); (3) identity post-hoc — the <object>'s identity is only revealed after drawing; (4) adjustable probability — adding or removing specific <object>s changes the probability distribution of subsequent draws. "
       },
       "constraints": {
         "required": [],
@@ -1699,8 +1699,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "存放当前未进入游戏流程的 <object> 的 <reserve>。<game_box> 继承自 <reserve>。与 <supply>、<market>、<deck>、<pool> 不同——这些游戏中的 <reserve> 内容直接参与当前游戏状态和规则判定；而 <game_box> 中的 <object> 暂时游离于当前游戏流程之外，既不可被 <player> 取用，也不触发任何游戏规则。核心特征：(1) 初始容器——游戏设置前，所有组件通常先放在 <game_box> 中；(2) setup 阶段入口——游戏设置时从这里取出组件，放入合适的游戏内 <reserve>；(3) 流程外暂存——游戏过程中，某些规则可能要求将 <object> 移回 <game_box>，表示该 <object> 暂时从当前游戏流程中移除（区别于 <discard_pile> 的永久弃置）；(4) 不直接参与规则——<game_box> 中的 <object> 不计入胜负、不可被选择或操作，直到再次进入某个游戏内 <reserve>。典型例子：璀璨宝石盒中尚未分发的发展卡和贵族板块、某些游戏中被规则临时移出流程的卡牌或指示物。",
-        "en": "A <reserve> holding <object>s that are not currently part of the game flow. <game_box> extends <reserve>. Unlike <supply>, <market>, <deck>, and <pool> — in-game <reserve>s whose contents directly participate in the current game state and rules — <object>s in <game_box> are temporarily outside the current game flow: they cannot be taken by <player>s and trigger no game rules. Core traits: (1) initial container — before setup, all components usually start here; (2) setup entry point — during setup, components are taken from here and placed into appropriate in-game <reserve>s; (3) out-of-flow holding — during gameplay, certain rules may move <object>s back into <game_box>, indicating they are temporarily removed from the current game flow (distinct from permanent discarding to <discard_pile>); (4) non-participatory — <object>s in <game_box> do not count toward victory, cannot be selected or operated, until they re-enter an in-game <reserve>. Typical examples: undistributed development cards and noble tiles in the Splendor box, or cards/tokens temporarily removed from play by certain game rules."
+        "zh": "存放当前未进入游戏流程的 <object> 的 <reserve>。<game_box> 继承自 <reserve>。与 <supply>、<market>、<deck>、<pool> 不同——这些游戏中的 <reserve> 内容直接参与当前游戏状态和规则判定；而 <game_box> 中的 <object> 暂时游离于当前游戏流程之外，既不可被 <player> 取用，也不触发任何游戏规则。核心特征：(1) 初始容器——游戏设置前，所有组件通常先放在 <game_box> 中；(2) setup 阶段入口——游戏设置时从这里取出组件，放入合适的游戏内 <reserve>；(3) 流程外暂存——游戏过程中，某些规则可能要求将 <object> 移回 <game_box>，表示该 <object> 暂时从当前游戏流程中移除（区别于 <discard_pile> 的永久弃置）；(4) 不直接参与规则——<game_box> 中的 <object> 不计入胜负、不可被选择或操作，直到再次进入某个游戏内 <reserve>。",
+        "en": "A <reserve> holding <object>s that are not currently part of the game flow. <game_box> extends <reserve>. Unlike <supply>, <market>, <deck>, and <pool> — in-game <reserve>s whose contents directly participate in the current game state and rules — <object>s in <game_box> are temporarily outside the current game flow: they cannot be taken by <player>s and trigger no game rules. Core traits: (1) initial container — before setup, all components usually start here; (2) setup entry point — during setup, components are taken from here and placed into appropriate in-game <reserve>s; (3) out-of-flow holding — during gameplay, certain rules may move <object>s back into <game_box>, indicating they are temporarily removed from the current game flow (distinct from permanent discarding to <discard_pile>); (4) non-participatory — <object>s in <game_box> do not count toward victory, cannot be selected or operated, until they re-enter an in-game <reserve>. "
       },
       "constraints": {
         "required": [],
@@ -1733,8 +1733,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "归属于单个 <player> 的公开 <player_zone>，用于放置该 <player> 已打出、已购买或已建造的 <piece>。<development_area> 继承自 <player_zone>。与 <player_holding> 构成对偶——<player_holding> 是「手里攥着还没用的」，<development_area> 是「已经摆出来正在生效的」。核心特征：(1) 公开可见——<information_visibility> 通常为 public，成为所有 <player> 判断对手实力的主要依据；(2) 效果激活——此区域中的 <piece> 的 <effect> 已经或正在持续生效，直接参与公共游戏逻辑；(3) 通常不可逆——<piece> 一旦进入此区域，通常无法退回 <player_holding>，除非规则明确允许。典型例子：万智牌中的战场、璀璨宝石中已购买的卡牌列、卡卡颂中已放置的地图板块。",
-        "en": "A public <player_zone> belonging to a single <player>, holding <piece>s that the <player> has played, purchased, or built. <development_area> extends <player_zone>. The counterpart to <player_holding> — <player_holding> is 'what you're holding but haven't used yet', <development_area> is 'what you've already deployed and is now taking effect'. Core traits: (1) publicly visible — <information_visibility> is typically public, making this the main basis for opponents to assess your strength; (2) effects active — <piece>s here have their <effect>s already or continuously active, directly participating in public game logic; (3) typically irreversible — once a <piece> enters this zone, it usually cannot be returned to <player_holding> unless explicitly allowed by rules. Typical examples: the battlefield in Magic: The Gathering, the purchased card row in Splendor, placed map tiles in Carcassonne."
+        "zh": "归属于单个 <player> 的公开 <player_zone>，用于放置该 <player> 已打出、已购买或已建造的 <piece>。<development_area> 继承自 <player_zone>。与 <player_holding> 构成对偶——<player_holding> 是「手里攥着还没用的」，<development_area> 是「已经摆出来正在生效的」。核心特征：(1) 公开可见——<information_visibility> 通常为 public，成为所有 <player> 判断对手实力的主要依据；(2) 效果激活——此区域中的 <piece> 的 <effect> 已经或正在持续生效，直接参与公共游戏逻辑；(3) 通常不可逆——<piece> 一旦进入此区域，通常无法退回 <player_holding>，除非规则明确允许。",
+        "en": "A public <player_zone> belonging to a single <player>, holding <piece>s that the <player> has played, purchased, or built. <development_area> extends <player_zone>. The counterpart to <player_holding> — <player_holding> is 'what you're holding but haven't used yet', <development_area> is 'what you've already deployed and is now taking effect'. Core traits: (1) publicly visible — <information_visibility> is typically public, making this the main basis for opponents to assess your strength; (2) effects active — <piece>s here have their <effect>s already or continuously active, directly participating in public game logic; (3) typically irreversible — once a <piece> enters this zone, it usually cannot be returned to <player_holding> unless explicitly allowed by rules. "
       },
       "constraints": {
         "required": [],
@@ -1826,8 +1826,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "游戏的虚构世界观、时代背景与关键角色设定，用于解释风味名称、主题和叙事元素，不直接参与规则判定。<setting> 继承自 <object>。例如，在《文明演化》中，玩家是创世技术学院的学生，正在参加名为「文明演化」的考试；考试场地是一片僻静的大陆，每位考生都必须成为当地的一名神祇，发展并引领自己的文明，在与其他文明的竞争中取得成功，胜者将晋升为创世技术学院的正式成员。阿格拉（Agera）是这场考试的主考官，因此代表考生获得其青睐程度的轨被称为 <favor_of_ager_track>（阿格拉恩惠轨）。",
-        "en": "The fictional world view, historical backdrop, and key character setup of a game, used to explain flavor names, themes, and narrative elements without directly participating in rule adjudication. <setting> extends <object>. For example, in Civolution, players are students of the Genesis Tech Academy taking an exam called 'Civilization Evolution'. The exam takes place on a remote continent; each candidate must become a local deity, develop and lead their own civilization, and outcompete the others. The winner becomes a full member of the Genesis Tech Academy. Agera is the examiner of this exam, so the track that records how much favor each candidate has earned is called the <favor_of_ager_track> (Favor of Agera track)."
+        "zh": "游戏的虚构世界观、时代背景与关键角色设定，用于解释风味名称、主题和叙事元素，不直接参与规则判定。<setting> 继承自 <object>。每款游戏的具体背景设定见游戏层的 <setting> 实例。",
+        "en": "The fictional world view, historical backdrop, and key character setup of a game, used to explain flavor names, themes, and narrative elements without directly participating in rule adjudication. <setting> extends <object>. Each game's concrete background is defined by its <setting> instance in the game layer."
       },
       "constraints": {
         "required": [],
@@ -1843,16 +1843,16 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。典型例子包括计分轨、进程轨、天气轨、阶段序列、恩惠轨等。",
-        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. Typical examples include score tracks, progress tracks, weather gauges, phase sequences, and favor tracks."
+        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。",
+        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. "
       },
       "constraints": {
         "required": [
           {
             "id": "slots",
             "description": {
-              "zh": "此轨的槽位定义，必填。**parts 形式**（与 <piece>.parts 同款）：数组元素声明「格段」——每个元素是一个 part，概念 ID 做 key，值为属性对象（或纯概念引用字符串 = 1 格）：`{ \"<reset_space>\": { \"count\": 9 } }`。属性：count（格数，默认 1）、scope（可选——数值轨的数值范围，如 \"1–100\"）、parts（可选——本 part 内部再分多个子 part，如行动阶段段 = [黄格 part（重置推格）, 红格 part（重置不推，触发轮+下一轮结束自动推）]）、description（可选）。数字轨写一个 part + count（格数）与 scope（数值范围）；槽位轨每类格一个 part（语义相同的多格共用一个 part + count）。**引用格式**：单格 part（count 1）直接写 `<track>.<part_id>`（如 \"<phase_sequence>.<phase_2_new_goals>\"）；多格 part 写 `<track>.<part_id>[n]`——n 为 part 内 0 基偏移（如 \"<phase_sequence>.<phase_4_action>[9]\" = 行动阶段段第 10 格；description 中用「第 n+1 个」对照表述，避免偏移误导）。marker 的当前位置即其所在格——以「<marker> 位于 <track>.<part_id>」或「<marker> 位于 <track>.<part_id>[n]」表达。",
-              "en": "Slot definitions for this track, required. **Parts form** (same style as <piece>.parts): array elements declare 'space segments' — each element is a part whose key is a concept id with an attribute object as value (or a plain concept-reference string = 1 space): `{ \"<reset_space>\": { \"count\": 9 } }`. Attributes: count (number of spaces, default 1), scope (optional — the numeric range of a numeric track, e.g. \"1–100\"), parts (optional — sub-parts within this part, e.g. an action-phase segment = [yellow-space part (Reset advances), red-space part (Reset does not advance; auto-advances after the triggering round + next round)]), description (optional). Numeric tracks use one part with count (spaces) and scope (range); slot-based tracks use one part per class of space (semantically identical multiple spaces share one part + count). **Reference format**: single-space parts (count 1) are referenced directly as `<track>.<part_id>` (e.g. \"<phase_sequence>.<phase_2_new_goals>\"); multi-space parts use `<track>.<part_id>[n]` with n the 0-based offset within the part (e.g. \"<phase_sequence>.<phase_4_action>[9]\" = the 10th space of the action-phase segment; descriptions phrase it as 'the n+1-th space' to avoid offset confusion). A marker's current position is its containing space — expressed as \"<marker> is on <track>.<part_id>\" or \"<marker> is on <track>.<part_id>[n]\"."
+              "zh": "此轨的槽位定义，必填。**parts 形式**（与 <piece>.parts 同款）：数组元素声明「格段」——每个元素是一个 part，概念 ID 做 key，值为属性对象（或纯概念引用字符串 = 1 格）：`{ \"<concept>\": { \"count\": 9 } }`。属性：count（格数，默认 1）、scope（可选——数值轨的数值范围，如 \"1–100\"）、parts（可选——本 part 内部再分多个子 part，如某段 = [A 类格 part, B 类格 part]）、description（可选）。数字轨写一个 part + count（格数）与 scope（数值范围）；槽位轨每类格一个 part（语义相同的多格共用一个 part + count）。**引用格式**：单格 part（count 1）直接写 `<track>.<part_id>`；多格 part 写 `<track>.<part_id>[n]`——n 为 part 内 0 基偏移。description 中用「第 n+1 个」对照表述，避免偏移误导。marker 的当前位置即其所在格——以「<marker> 位于 <track>.<part_id>」或「<marker> 位于 <track>.<part_id>[n]」表达。",
+              "en": "Slot definitions for this track, required. **Parts form** (same style as <piece>.parts): array elements declare 'space segments' — each element is a part whose key is a concept id with an attribute object as value (or a plain concept-reference string = 1 space): `{ \"<concept>\": { \"count\": 9 } }`. Attributes: count (number of spaces, default 1), scope (optional — the numeric range of a numeric track, e.g. \"1–100\"), parts (optional — sub-parts within this part, e.g. a segment = [class-A space part, class-B space part]), description (optional). Numeric tracks use one part with count (spaces) and scope (range); slot-based tracks use one part per class of space (semantically identical multiple spaces share one part + count). **Reference format**: single-space parts (count 1) are referenced directly as `<track>.<part_id>`; multi-space parts use `<track>.<part_id>[n]` with n the 0-based offset within the part. Descriptions phrase it as 'the n+1-th space' to avoid offset confusion. A marker's current position is its containing space — expressed as \"<marker> is on <track>.<part_id>\" or \"<marker> is on <track>.<part_id>[n]\"."
             }
           }
         ],
@@ -2129,8 +2129,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将一个 <piece> 投入使用的 <event>。核心语义三环节：支付费用（cost，可在实现节点自身声明，或引用 <piece> 的 effect）、将 <piece> <transfer> 到目标 <zone>、结算内容（content/resolve）。三个环节的步骤顺序与扩展由实现节点的 options + do_after 自由配置——pay_cost → transfer_piece → resolve 只是典型顺序而非强制（如研究牌安装是「结算成功点数 → 结算即时奖励 → 插入」）。纯转移的 play（无费用无结算）只需声明 <piece>/source/destination。",
-        "en": "An <event> that puts a <piece> into use. Three core steps: pay the cost (declared on the implementing node itself, or referenced from the <piece>'s effect), <transfer> the <piece> to the destination <zone>, and resolve the content. The order of and any extensions to these steps are freely configured by the implementing node's options + do_after — pay_cost → transfer_piece → resolve is only the typical order, not mandatory (e.g., installing a research card resolves success points and the instant bonus before the insertion). A play with neither cost nor content simply declares <piece>/source/destination."
+        "zh": "将一个 <piece> 投入使用的 <event>。核心语义三环节：支付费用（cost，可在实现节点自身声明，或引用 <piece> 的 effect）、将 <piece> <transfer> 到目标 <zone>、结算内容（content/resolve）。三个环节的步骤顺序与扩展由实现节点的 options + do_after 自由配置——pay_cost → transfer_piece → resolve 只是典型顺序而非强制。纯转移的 play（无费用无结算）只需声明 <piece>/source/destination。",
+        "en": "An <event> that puts a <piece> into use. Three core steps: pay the cost (declared on the implementing node itself, or referenced from the <piece>'s effect), <transfer> the <piece> to the destination <zone>, and resolve the content. The order of and any extensions to these steps are freely configured by the implementing node's options + do_after — pay_cost → transfer_piece → resolve is only the typical order, not mandatory. A play with neither cost nor content simply declares <piece>/source/destination."
       },
       "constraints": {
         "required": [
@@ -2183,8 +2183,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将一条 <track> 上的标记向前推进。桌游中最通用的位移 <event> 之一——计分、进程、天气等所有轨道共享此语义。两种形态：(1) `step`——推进几格；(2) `to`——推进到目标格（槽位轨的 slot 引用，如 \"<phase_sequence>.phase_5\"，需要轨的 slots 定义了每格 id）。",
-        "en": "Advance a marker on a <track>. One of the most universal displacement <event>s in board games — shared semantics across score tracks, progress tracks, weather gauges, etc. Two forms: (1) `step` — advance by a number of spaces; (2) `to` — advance to a target space (a slot reference on a slot-based track, e.g. \"<phase_sequence>.phase_5\"; requires the track's slots to define per-space ids)."
+        "zh": "将一条 <track> 上的标记向前推进。桌游中最通用的位移 <event> 之一——计分、进程、天气等所有轨道共享此语义。两种形态：(1) `step`——推进几格；(2) `to`——推进到目标格（槽位轨的 slot 引用，需要轨的 slots 定义了每格 id）。",
+        "en": "Advance a marker on a <track>. One of the most universal displacement <event>s in board games — shared semantics across score tracks, progress tracks, weather gauges, etc. Two forms: (1) `step` — advance by a number of spaces; (2) `to` — advance to a target space (a slot reference on a slot-based track; requires the track's slots to define per-space ids)."
       },
       "constraints": {
         "required": [
@@ -2207,8 +2207,8 @@
           {
             "id": "to",
             "description": {
-              "zh": "推进到的目标格——槽位轨 slot 的路径引用（\"<track>.<slot_id>\"，如 \"<phase_sequence>.phase_5\"）。与 step 二选一。",
-              "en": "The target space to advance to — a path reference to a slot on a slot-based track (\"<track>.<slot_id>\", e.g. \"<phase_sequence>.phase_5\"). Mutually exclusive with step."
+              "zh": "推进到的目标格——槽位轨 slot 的路径引用（\"<track>.<slot_id>\"）。与 step 二选一。",
+              "en": "The target space to advance to — a path reference to a slot on a slot-based track (\"<track>.<slot_id>\"). Mutually exclusive with step."
             }
           }
         ]
