@@ -81,6 +81,8 @@ class Validator:
         self.concept_parent: dict[str, str] = {}
         self.definition_ids: set[str] = set()  # 概念定义型节点 (W05 孤立检查范围)
         self.referenced: set[str] = set()      # 被引用过的概念 (W05)
+        self.this_params: dict[str, set[str]] = {}  # source → this.xxx 模板参数引用 (E12 按文件判定)
+        self.field_appearances: dict[str, set[str]] = {}  # 字段名 → 声明它的概念集合 (专属参数判定)
 
     # ── 工具 ──────────────────────────────────────────────
     def err(self, loc: str, msg: str): self.issues.append(("ERROR", loc, msg))
@@ -118,6 +120,13 @@ class Validator:
             # 概念优先: 既是概念又是字段名时按概念处理
             if self.is_defined(head):
                 self.referenced.add(head)
+                return
+            # E12: 专属参数 (只在一个概念声明的字段) 用 <xxx> 概念语法引用 = 悬空引用
+            #      (参数只存在于模板内部, 外部无此概念; 应写 this.xxx)
+            #      通用字段 (target/condition 等多概念声明) 的字段引用是合法惯例, 放行
+            if (head in self.this_params.get(self.current_source, set())
+                    and len(self.field_appearances.get(head, set())) <= 1):
+                self.err(loc, f"E12 参数引用 <{ref}> 用了概念语法 — 参数 {head} 只在模板内部, 应写 this.{head}")
                 return
             # 字段名引用 (<parts> 指向 piece 的 parts 字段)、枚举值、文档占位符不算悬空
             if (head in self.placeholder_refs or head in self.field_ids
@@ -168,6 +177,11 @@ class Validator:
                             fid = item if isinstance(item, str) else item.get("id")
                             if isinstance(fid, str):
                                 top.add(fid.strip("[]"))
+                    # E12: 字段出现次数统计 (专属参数判定; 只统计概念定义文件,
+                    #      实例的字段是参数填充不算声明)
+                    if is_ontology or "concepts.json" in source:
+                        for f in top:
+                            self.field_appearances.setdefault(f, set()).add(oid)
                     self.concept_fields.setdefault(oid, top)
                     for rel in ("extends", "specifies", "instance_of"):
                         pv = obj.get(rel)
@@ -200,11 +214,17 @@ class Validator:
             elif isinstance(obj, list):
                 for i, v in enumerate(obj):
                     walk(v, f"{path}[{i}]", depth + 1)
+            elif isinstance(obj, str):
+                # W06: 按文件收集 this.xxx 模板参数引用
+                self.this_params.setdefault(source, set())
+                for p in re.findall(r"this\.([A-Za-z_][A-Za-z0-9_]*)", obj):
+                    self.this_params[source].add(p)
 
         walk(data, "$", 0)
 
     # ── 阶段二: 逐文件检查 ────────────────────────────────
     def check_file(self, file_path: Path, source: str, is_ontology: bool):
+        self.current_source = source  # E12 按文件判定 this 参数
         text = file_path.read_text(encoding="utf-8")
         try:
             data = json.loads(text)
