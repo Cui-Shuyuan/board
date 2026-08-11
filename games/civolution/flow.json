@@ -2241,8 +2241,8 @@
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
           "description": {
-            "zh": "安装到第 N 层，先确定费用范围：至少满足前 N 格所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage）满足至第 M 格（M ≥ N，M ≤ 5，前缀连续覆盖），以获得更多 <success_point>。各费用格类型的支付/持有语义见 <cost_space>。",
-            "en": "Installing at tier N, first determine the cost range: fulfill all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (M ≥ N, M ≤ 5, contiguous prefix), to gain more <success_point>. The payment/possession semantics of each cost space type are defined in <cost_space>."
+            "zh": "安装到第 N 层，先确定费用范围：至少满足前 N 格所有非空格（即 active cost spaces）；可自愿承担更高层费用（assume a higher stage）满足至第 M 格（M ≥ N，M ≤ 5，前缀连续覆盖），以获得更多 <success_point>。费用格数据见所选 <research_card> 的 parts.<cost_space>。",
+            "en": "Installing at tier N, first determine the cost range: fulfill all non-empty spaces in the first N (the active cost spaces); you may voluntarily assume a higher stage, fulfilling up to space M (M ≥ N, M ≤ 5, contiguous prefix), to gain more <success_point>. Cost space data lives in the chosen <research_card>'s parts.<cost_space>."
           }
         }
       },
