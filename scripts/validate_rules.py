@@ -121,18 +121,22 @@ class Validator:
             if self.is_defined(head):
                 self.referenced.add(head)
                 return
-            # E12: 专属参数 (只在一个概念声明的字段) 用 <xxx> 概念语法引用 = 悬空引用
-            #      (参数只存在于模板内部, 外部无此概念; 应写 this.xxx)
-            #      通用字段 (target/condition 等多概念声明) 的字段引用是合法惯例, 放行
-            if (head in self.this_params.get(self.current_source, set())
-                    and len(self.field_appearances.get(head, set())) <= 1):
-                self.err(loc, f"E12 参数引用 <{ref}> 用了概念语法 — 参数 {head} 只在模板内部, 应写 this.{head}")
-                return
-            # 字段名引用 (<parts> 指向 piece 的 parts 字段)、枚举值、文档占位符不算悬空
-            if (head in self.placeholder_refs or head in self.field_ids
-                    or f"<{head}>" in self.field_ids or head in self.enum_ids):
-                return
-            self.err(loc, f"E02 悬空引用 <{ref}> — 游戏层与 ontology 均无定义")
+            # E12: <xxx> 只允许引用真实概念 (2026-08-11 用户定稿)
+            #      字段名/参数/枚举值/槽位名都不是概念:
+            #        - 模板参数 → this.xxx
+            #        - 字段名引用 → 裸写 (如 "在 <action> 的 target 中")
+            #        - 槽位名 → 路径 <概念>.<槽位> (如 <weather_gauge>.<hot>)
+            #        - 枚举值 → 裸写 (face == face_up)
+            #      meta 文档占位符除外
+            if head not in self.placeholder_refs:
+                hint = ""
+                if head in self.this_params.get(self.current_source, set()):
+                    hint = f" — 该名是模板参数, 应写 this.{head}"
+                elif head in self.field_ids or f"<{head}>" in self.field_ids:
+                    hint = " — 该名是字段, 应裸写或写 <概念>.<字段> 路径"
+                elif head in self.enum_ids:
+                    hint = " — 该名是枚举值, 应裸写"
+                self.err(loc, f"E12 引用了不存在的概念 <{ref}>{hint}")
 
     # ── 阶段一: 全量收集定义 (不检查, 保证顺序无关) ──────
     def collect_ids(self, data: object, source: str, is_ontology: bool):
@@ -320,8 +324,10 @@ class Validator:
                               "W01 target 是对象 — 约定纯字符串")
                 for k, v in obj.items():
                     # key-as-type 键也是引用 (如 {"<event_card>": {...}})
-                    for ref in REF_RE.findall(k):
-                        self.check_ref(ref, f"{source} › {path} › {k}")
+                    # 但 slots 条目的键是槽位命名 (本地命名空间, 如 {"<hot>": {...}}), 不检查
+                    if not (k.startswith("<") and ".slots[" in path):
+                        for ref in REF_RE.findall(k):
+                            self.check_ref(ref, f"{source} › {path} › {k}")
                     walk(v, f"{path}.{k}")
             elif isinstance(obj, list):
                 for i, v in enumerate(obj):

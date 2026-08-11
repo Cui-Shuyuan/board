@@ -19,3 +19,6 @@ obj/
 
 # Qdrant runtime data
 backend/BoardAI.Api/storage/
+
+.claude
+CLAUDE.md

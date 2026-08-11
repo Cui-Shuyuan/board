@@ -771,71 +771,71 @@
                           "en": "Player Draft Turn"
                         },
                         "<ontology::pipeline>": {
-                              "options": [
-                                {
-                                  "id": "choose_card",
-                                  "name": {
-                                    "zh": "选择牌",
-                                    "en": "Choose Card"
-                                  },
-                                  "description": {
-                                    "zh": "从展示的初始芯片牌中选一张（连同其上的目标芯片）。",
-                                    "en": "Choose one revealed starting chip card (with its goal chip)."
-                                  }
+                          "options": [
+                            {
+                              "id": "choose_card",
+                              "name": {
+                                "zh": "选择牌",
+                                "en": "Choose Card"
+                              },
+                              "description": {
+                                "zh": "从展示的初始芯片牌中选一张（连同其上的目标芯片）。",
+                                "en": "Choose one revealed starting chip card (with its goal chip)."
+                              }
+                            },
+                            {
+                              "id": "place_goal_chip",
+                              "name": {
+                                "zh": "目标芯片入目标区",
+                                "en": "Place Goal Chip"
+                              },
+                              "do_after": "choose_card",
+                              "<ontology::transfer>": {
+                                "description": {
+                                  "zh": "将选中的牌上的目标芯片正面朝上放入目标区。",
+                                  "en": "Place the goal chip from the chosen card face up into the goal area."
                                 },
-                                {
-                                  "id": "place_goal_chip",
-                                  "name": {
-                                    "zh": "目标芯片入目标区",
-                                    "en": "Place Goal Chip"
-                                  },
-                                  "do_after": "choose_card",
-                                  "<ontology::transfer>": {
-                                    "description": {
-                                      "zh": "将选中的牌上的目标芯片正面朝上放入目标区。",
-                                      "en": "Place the goal chip from the chosen card face up into the goal area."
-                                    },
-                                    "source": "选中的<starting_chip_card>上的<goal_chip>",
-                                    "destination": "<goal_area>",
-                                    "<ontology::object>": "<goal_chip>",
-                                    "quantity": 1
-                                  }
+                                "source": "选中的<starting_chip_card>上的<goal_chip>",
+                                "destination": "<goal_area>",
+                                "<ontology::object>": "<goal_chip>",
+                                "quantity": 1
+                              }
+                            },
+                            {
+                              "id": "upgrade_module",
+                              "name": {
+                                "zh": "升级模组",
+                                "en": "Upgrade Module"
+                              },
+                              "do_after": "place_goal_chip",
+                              "<ontology::state_change>": {
+                                "description": {
+                                  "zh": "将牌中三分之一记录的模组升级至等级二（翻面）——玩家的首个升级模组。",
+                                  "en": "Upgrade the module shown on the card's middle third to level 2 (flip it) — the player's first upgraded module."
                                 },
-                                {
-                                  "id": "upgrade_module",
-                                  "name": {
-                                    "zh": "升级模组",
-                                    "en": "Upgrade Module"
-                                  },
-                                  "do_after": "place_goal_chip",
-                                  "<ontology::state_change>": {
-                                    "description": {
-                                      "zh": "将牌中三分之一记录的模组升级至等级二（翻面）——玩家的首个升级模组。",
-                                      "en": "Upgrade the module shown on the card's middle third to level 2 (flip it) — the player's first upgraded module."
-                                    },
-                                    "subject": "选中的<starting_chip_card>中三分之一记录的模组",
-                                    "attribute": "level",
-                                    "to": 2
-                                  }
-                                },
-                                {
-                                  "id": "install_card",
-                                  "name": {
-                                    "zh": "安装牌",
-                                    "en": "Install Card"
-                                  },
-                                  "do_after": "upgrade_module",
-                                  "<install_starting_chip_card>": {
-                                    "description": {
-                                      "zh": "将选中的初始芯片牌塞入收入区成为首个收入芯片。",
-                                      "en": "Slide the chosen starting chip card into the income area as the first income chip."
-                                    }
-                                  }
+                                "subject": "选中的<starting_chip_card>中三分之一记录的模组",
+                                "attribute": "level",
+                                "to": 2
+                              }
+                            },
+                            {
+                              "id": "install_card",
+                              "name": {
+                                "zh": "安装牌",
+                                "en": "Install Card"
+                              },
+                              "do_after": "upgrade_module",
+                              "<install_starting_chip_card>": {
+                                "description": {
+                                  "zh": "将选中的初始芯片牌塞入收入区成为首个收入芯片。",
+                                  "en": "Slide the chosen starting chip card into the income area as the first income chip."
                                 }
-                              ],
-                              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                              }
                             }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                         }
+                      }
                     }
                   ],
                   "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>",
@@ -1276,8 +1276,8 @@
                     ],
                     "type": "<ontology::multiple_choice_enum.MATCH>",
                     "<ontology::condition>": {
-                      "zh": "匹配依据：各地点类型是否已翻开（face == <face_up>）——翻开的地点类型结算其效果，未翻开的不结算（命中候选按 options 顺序依次结算）。",
-                      "en": "Matching basis: whether each site type is revealed (face == <face_up>) — revealed site types resolve their effects, unrevealed ones do not (matched candidates resolve in options order)."
+                      "zh": "匹配依据：各地点类型是否已翻开（face == face_up）——翻开的地点类型结算其效果，未翻开的不结算（命中候选按 options 顺序依次结算）。",
+                      "en": "Matching basis: whether each site type is revealed (face == face_up) — revealed site types resolve their effects, unrevealed ones do not (matched candidates resolve in options order)."
                     }
                   }
                 },
@@ -1417,8 +1417,8 @@
                               "en": "Resolve Event Card Weather Effect"
                             },
                             "description": {
-                              "zh": "结算本时代正面朝上 <event_card> 的天气效果（右上角 <weather_trend> part）：将 <weather_indicator> 沿 <weather_gauge> 按牌面指示移动 1 或 2 步（变热向热端、变冷向冷端）。白线规则（越线停靠 <hot_beyond>/<cold_beyond>）见 <weather_trend> 定义。本步骤执行完毕后，由 <weather_effect> 按标记所在格结算天气效果（越线格效果含推回极端格）。",
-                              "en": "Resolve the weather effect of this era's face-up <event_card> (its <weather_trend> part): move the <weather_indicator> along the <weather_gauge> by the 1 or 2 steps shown on the card (toward Hot when warming, toward Cold when cooling). The white-line rule (over-line stop on <hot_beyond>/<cold_beyond>) is defined on <weather_trend>. After this step completes, <weather_effect> resolves the weather effect of the slot the indicator is on (the over-line slot's effect includes pushing back to the extreme space)."
+                              "zh": "结算本时代正面朝上 <event_card> 的天气效果（右上角 <weather_trend> part）：将 <weather_indicator> 沿 <weather_gauge> 按牌面指示移动 1 或 2 步（变热向热端、变冷向冷端）。白线规则（越线停靠 <weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>）见 <weather_trend> 定义。本步骤执行完毕后，由 <weather_effect> 按标记所在格结算天气效果（越线格效果含推回极端格）。",
+                              "en": "Resolve the weather effect of this era's face-up <event_card> (its <weather_trend> part): move the <weather_indicator> along the <weather_gauge> by the 1 or 2 steps shown on the card (toward Hot when warming, toward Cold when cooling). The white-line rule (over-line stop on <weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>) is defined on <weather_trend>. After this step completes, <weather_effect> resolves the weather effect of the slot the indicator is on (the over-line slot's effect includes pushing back to the extreme space)."
                             },
                             "<ontology::effect>": "<event_card>.parts.<weather_trend>"
                           },
@@ -1848,11 +1848,11 @@
                             },
                             "specifies": "<ontology::push_track>",
                             "description": {
-                              "zh": "第四时代结束：将 <phase_indicator> 放到 <final_scoring_area_hex> 的科技格（<technology>，最左格），随后进行终局计分。",
-                              "en": "The 4th era ends: place the <phase_indicator> on the Technology cell (<technology>, the leftmost cell) of the <final_scoring_area_hex>; final scoring follows."
+                              "zh": "第四时代结束：将 <phase_indicator> 放到 <final_scoring_area_hex> 的科技格（<final_scoring_area_hex.technology>，最左格），随后进行终局计分。",
+                              "en": "The 4th era ends: place the <phase_indicator> on the Technology cell (<final_scoring_area_hex.technology>, the leftmost cell) of the <final_scoring_area_hex>; final scoring follows."
                             },
                             "<ontology::track>": "<final_scoring_area_hex>",
-                            "to": "<final_scoring_area_hex>.<technology>"
+                            "to": "<final_scoring_area_hex.<final_scoring_area_hex.technology>"
                           }
                         ],
                         "type": "<ontology::multiple_choice_enum.MATCH>",
@@ -2450,8 +2450,8 @@
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "zh": "按座次顺位，每位玩家逐一结算 <weather_indicator> 所在 <weather_gauge> 格的效果（见其 slots 定义）：正面效果可选择放弃，负面效果必须执行；既无 <food> 也无 <tribe> 的玩家不受影响。越线格（<hot_beyond>/<cold_beyond>）效果内的推回极端格步骤属该格效果的一部分，不再次触发本结算。",
-          "en": "In seating order, each player resolves the effect of the <weather_gauge> slot the <weather_indicator> is on (see its slots): positive effects may be forgone; negative effects are mandatory; a player with neither <food> nor <tribe> is unaffected. The push-back-to-extreme-space step inside an over-line slot's (<hot_beyond>/<cold_beyond>) effect is part of that effect and does not re-trigger this resolution."
+          "zh": "按座次顺位，每位玩家逐一结算 <weather_indicator> 所在 <weather_gauge> 格的效果（见其 slots 定义）：正面效果可选择放弃，负面效果必须执行；既无 <food> 也无 <tribe> 的玩家不受影响。越线格（<weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>）效果内的推回极端格步骤属该格效果的一部分，不再次触发本结算。",
+          "en": "In seating order, each player resolves the effect of the <weather_gauge> slot the <weather_indicator> is on (see its slots): positive effects may be forgone; negative effects are mandatory; a player with neither <food> nor <tribe> is unaffected. The push-back-to-extreme-space step inside an over-line slot's (<weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>) effect is part of that effect and does not re-trigger this resolution."
         }
       }
     },
@@ -4599,12 +4599,12 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<point_bonus>（第 11 格，最后一格）——全部 11 格（9 类别 + 控制台 A/B）结算完毕。",
-        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<point_bonus> (the 11th and last cell) — all 11 cells (9 categories + Console A/B) have been scored."
+        "zh": "<phase_indicator> 位于 <final_scoring_area_hex.<final_scoring_area_hex.point_bonus>（第 11 格，最后一格）——全部 11 格（9 类别 + 控制台 A/B）结算完毕。",
+        "en": "The <phase_indicator> is on <final_scoring_area_hex.<final_scoring_area_hex.point_bonus> (the 11th and last cell) — all 11 cells (9 categories + Console A/B) have been scored."
       },
       "<ontology::condition>": {
-        "zh": "<phase_indicator> 位于 <final_scoring_area_hex>.<point_bonus>",
-        "en": "The <phase_indicator> is on <final_scoring_area_hex>.<point_bonus>"
+        "zh": "<phase_indicator> 位于 <final_scoring_area_hex.<final_scoring_area_hex.point_bonus>",
+        "en": "The <phase_indicator> is on <final_scoring_area_hex.<final_scoring_area_hex.point_bonus>"
       }
     },
     {

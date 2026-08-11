@@ -262,7 +262,7 @@
           "<ontology::cost>": {
             "type": "<ontology::cost>",
             "description": {
-              "zh": "购买此卡所需支付的费用，位于卡牌正面左下角。以若干<gem>的组合体现——如 3 颗<blue> + 2 颗<white> + 1 颗<green>。玩家支付此<ontology::cost>（可用<gold>替代任意颜色，可用<discount>抵扣）后方可获得此卡。",
+              "zh": "购买此卡所需支付的费用，位于卡牌正面左下角。以若干<gem>的组合体现——如 3 颗blue + 2 颗white + 1 颗green。玩家支付此<ontology::cost>（可用<gold>替代任意颜色，可用<discount>抵扣）后方可获得此卡。",
               "en": "The cost to purchase this card, located bottom-left of the card front. Expressed as a combination of <gem>s — e.g., 3 <sapphire> + 2 <diamond> + 1 <emerald>. The player must pay this <ontology::cost> (using <gold> as wild and <discount>s to reduce) to acquire the card."
             }
           }
@@ -688,15 +688,15 @@
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
             "description": {
-              "zh": "将玩家在 <action> 的 <target> 中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。<ownership_change>隐式发生。",
-              "en": "Moves the <gem>s specified in the <action>'s <target> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. <ownership_change> occurs implicitly."
+              "zh": "将玩家在 <action> 的 target 中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。ownership_change隐式发生。",
+              "en": "Moves the <gem>s specified in the <action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. ownership_change occurs implicitly."
             },
             "source": "<gem_supply>",
             "destination": "<ontology::player_holding>",
             "<ontology::object>": "<gem>[]",
             "quantity": {
-              "zh": "≥3 种颜色可选时为 3，仅 1~2 种时等于玩家在 <target> 中选择的颜色数。",
-              "en": "3 when ≥3 colors are available; equals the number of colors chosen in <target> when only 1-2 remain."
+              "zh": "≥3 种颜色可选时为 3，仅 1~2 种时等于玩家在 target 中选择的颜色数。",
+              "en": "3 when ≥3 colors are available; equals the number of colors chosen in target when only 1-2 remain."
             }
           }
         }
@@ -719,8 +719,8 @@
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
             "description": {
-              "zh": "将玩家在 <action> 的 <target> 中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。<ownership_change>隐式发生。",
-              "en": "Moves 2 <gem>s of the color specified in the <action>'s <target> from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. <ownership_change> occurs implicitly."
+              "zh": "将玩家在 <action> 的 target 中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。ownership_change隐式发生。",
+              "en": "Moves 2 <gem>s of the color specified in the <action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. ownership_change occurs implicitly."
             },
             "source": "<gem_supply>",
             "destination": "<ontology::player_holding>",
@@ -827,8 +827,8 @@
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
             "description": {
-              "zh": "将一枚满足条件的<noble>从<noble_market>移入刚结束回合的<ontology::player>的<ontology::development_area>。<ownership_change>隐式发生，该<noble>自此提供 3 点<prestige_point>。",
-              "en": "Moves a satisfied <noble> from <noble_market> into the <ontology::development_area> of the <ontology::player> whose turn just ended. <ownership_change> occurs implicitly, and the <noble> provides 3 <prestige_point>s from now on."
+              "zh": "将一枚满足条件的<noble>从<noble_market>移入刚结束回合的<ontology::player>的<ontology::development_area>。ownership_change隐式发生，该<noble>自此提供 3 点<prestige_point>。",
+              "en": "Moves a satisfied <noble> from <noble_market> into the <ontology::development_area> of the <ontology::player> whose turn just ended. ownership_change occurs implicitly, and the <noble> provides 3 <prestige_point>s from now on."
             },
             "source": "<noble_market>",
             "destination": "<ontology::development_area>",
