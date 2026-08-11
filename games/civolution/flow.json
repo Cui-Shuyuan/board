@@ -4228,9 +4228,9 @@
                     "zh": "翻面",
                     "en": "Flip"
                   },
-                  "description": {
-                    "zh": "将 1 个未激活的层级四或层级五板块翻至激活面。",
-                    "en": "Flip 1 inactive stage-4 or stage-5 tile to its active side."
+                  "<flip>": {
+                    "subject": "1 个未激活的层级四或层级五板块（<stage_tile>）",
+                    "to": "face_up"
                   }
                 }
               ],
