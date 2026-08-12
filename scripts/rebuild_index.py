@@ -212,42 +212,39 @@ def extract_flow(file_path: Path) -> list[dict[str, Any]]:
 
     def walk(node: dict):
         node_id = node.get("id", "")
-        if not node_id:
-            # for nodes without explicit id, try to find a concept key (e.g. "<ontology::transfer>")
-            for k in node:
-                if k.startswith("<") and k.endswith(">") and isinstance(node[k], dict):
-                    node_id = k
-                    node = node[k]
-                    break
-        if not node_id:
-            return
+        if node_id:
+            # 只索引带 id 的节点（概念/流程节点）；匿名容器（pipeline 等）与
+            # 匿名操作（{"<ontology::flip>": {...}}）不提取——无 name 是中文搜索噪音，
+            # 且同 id 跨位置重复会互相覆盖（2026-08-13 修复）
+            parts = [node_id]
+            node_type = node.get("type", "")
+            if node_type:
+                parts.append(node_type)
+            name = node.get("name", {})
+            if isinstance(name, dict):
+                parts.append(name.get("zh", ""))
+            desc = node.get("description", {})
+            if isinstance(desc, dict):
+                parts.append(desc.get("zh", ""))
 
-        parts = [node_id]
-        node_type = node.get("type", "")
-        if node_type:
-            parts.append(node_type)
-        name = node.get("name", {})
-        if isinstance(name, dict):
-            parts.append(name.get("zh", ""))
-        desc = node.get("description", {})
-        if isinstance(desc, dict):
-            parts.append(desc.get("zh", ""))
+            results.append({
+                "concept_id": node_id,
+                "type": "flow",
+                "name_zh": name.get("zh", "") if isinstance(name, dict) else node_id,
+                "name_en": name.get("en", "") if isinstance(name, dict) else "",
+                "search_text": " ".join(p for p in parts if p),
+            })
 
-        results.append({
-            "concept_id": node_id,
-            "type": "flow",
-            "name_zh": name.get("zh", "") if isinstance(name, dict) else node_id,
-            "name_en": name.get("en", "") if isinstance(name, dict) else "",
-            "search_text": " ".join(p for p in parts if p),
-        })
-
+        # 递归无条件下钻——匿名容器（pipeline/options 包装）也要深入
         for evt in node.get("events", []):
             walk(evt)
         for opt in node.get("options", []):
             if isinstance(opt, dict):
                 walk(opt)
         # recurse into container fields that can hold nested pipelines
-        for container_key in ("<ontology::content>", "<ontology::cost>", "<ontology::condition>",
+        for container_key in ("<ontology::pipeline>", "<ontology::action>", "<ontology::turn>",
+                              "<ontology::round>", "<ontology::phase>", "<ontology::procedure>",
+                              "<ontology::content>", "<ontology::cost>", "<ontology::condition>",
                               "<ontology::instant_content>", "<ontology::instant_cost>",
                               "<ontology::continuous_effect>", "<ontology::effect>"):
             container = node.get(container_key)
@@ -281,25 +278,32 @@ def qdrant_delete(path: str):
 def rebuild_game(game_id: str):
     items = []
 
+    def add(extracted: list[dict], source: str):
+        """按来源标记每个条目——同名概念（如 <ontology::flip>）跨文件重复出现，
+        uuid 需含来源前缀避免 upsert 互相覆盖（2026-08-13 修复：曾导致 515 概念只写入 416）"""
+        for c in extracted:
+            c["source"] = source
+        items.extend(extracted)
+
     ontology_path = BOARD_ROOT / "ontology" / "concepts.json"
     if ontology_path.exists():
-        items.extend(extract_concepts(ontology_path))
+        add(extract_concepts(ontology_path), "ontology")
 
     ontology_flow_path = BOARD_ROOT / "ontology" / "flow.json"
     if ontology_flow_path.exists():
-        items.extend(extract_flow(ontology_flow_path))
+        add(extract_flow(ontology_flow_path), "ontology_flow")
 
     concepts_path = BOARD_ROOT / "games" / game_id / "concepts.json"
     if concepts_path.exists():
-        items.extend(extract_concepts(concepts_path))
+        add(extract_concepts(concepts_path), "game")
 
     instances_path = BOARD_ROOT / "games" / game_id / "instances.json"
     if instances_path.exists():
-        items.extend(extract_instances(instances_path))
+        add(extract_instances(instances_path), "instances")
 
     flow_path = BOARD_ROOT / "games" / game_id / "flow.json"
     if flow_path.exists():
-        items.extend(extract_flow(flow_path))
+        add(extract_flow(flow_path), "game_flow")
 
     if not items:
         print(f"  No concepts found for '{game_id}'")
@@ -346,12 +350,12 @@ def rebuild_game(game_id: str):
                 "name_en": c["name_en"],
             }
             full_points.append({
-                "id": make_uuid(f"{game_id}::{c['concept_id']}"),
+                "id": make_uuid(f"{game_id}::{c.get('source', '')}::{c['concept_id']}"),
                 "vector": full_vectors[j],
                 "payload": payload,
             })
             name_points.append({
-                "id": make_uuid(f"{game_id}::{c['concept_id']}_name"),
+                "id": make_uuid(f"{game_id}::{c.get('source', '')}::{c['concept_id']}_name"),
                 "vector": name_vectors[j],
                 "payload": payload,
             })

@@ -947,18 +947,24 @@ public class GameRulesService
 
     private static void WalkFlowForSummaries(JsonElement node, List<ConceptSummary> results, HashSet<string> seen)
     {
-        if (!node.TryGetProperty("id", out var idProp)) return;
-        var id = idProp.GetString() ?? string.Empty;
-        if (string.IsNullOrEmpty(id) || !seen.Add(id)) return;
-
-        results.Add(new ConceptSummary
+        // 只汇总带 id 的节点；匿名容器（pipeline 等）不汇总但继续下钻
+        // (2026-08-13: 无 id 直接 return 曾导致嵌套在 pipeline 中的流程节点
+        //  从 list_concept_ids 缺失——与 rebuild_index 同源修复)
+        if (node.TryGetProperty("id", out var idProp))
         {
-            Id = id,
-            Name = ExtractName(node),
-            Type = "flow"
-        });
+            var id = idProp.GetString() ?? string.Empty;
+            if (!string.IsNullOrEmpty(id) && seen.Add(id))
+            {
+                results.Add(new ConceptSummary
+                {
+                    Id = id,
+                    Name = ExtractName(node),
+                    Type = "flow"
+                });
+            }
+        }
 
-        // 递归：events、options、content 容器
+        // 递归无条件下钻：events、options、容器字段
         foreach (var arrayKey in new[] { "events", "options" })
         {
             if (!node.TryGetProperty(arrayKey, out var arr) || arr.ValueKind != JsonValueKind.Array) continue;
@@ -969,6 +975,8 @@ public class GameRulesService
             }
         }
         foreach (var containerKey in new[] {
+            "<ontology::pipeline>", "<ontology::action>", "<ontology::turn>",
+            "<ontology::round>", "<ontology::phase>", "<ontology::procedure>",
             "<ontology::content>", "<ontology::cost>", "<ontology::condition>",
             "<ontology::instant_content>", "<ontology::instant_cost>",
             "<ontology::continuous_effect>", "<ontology::effect>" })
@@ -1032,8 +1040,12 @@ public class GameRulesService
             }
         }
 
-        // recurse into container fields: content, cost, condition, effect
+        // recurse into container fields: pipelines, procedures, content, cost, condition, effect
+        // (2026-08-13: 补 <ontology::pipeline> 等 procedure 持有键——此前嵌套在 pipeline
+        //  中的流程节点（如 event_era_scoring）get_concept 查不到，导致 LLM 反复搜索)
         foreach (var containerKey in new[] {
+            "<ontology::pipeline>", "<ontology::action>", "<ontology::turn>",
+            "<ontology::round>", "<ontology::phase>", "<ontology::procedure>",
             "<ontology::content>", "<ontology::cost>", "<ontology::condition>",
             "<ontology::instant_content>", "<ontology::instant_cost>",
             "<ontology::continuous_effect>", "<ontology::effect>" })
