@@ -869,8 +869,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种 <trigger>——绑定在 <piece> 上，携带 <condition> 监听状态变化，边沿激活后按 pipeline 结算。<effect> 是 armed 态的 trigger：它被 <resolve> 武装到 <piece> 上，此后由自身的 <condition> 决定何时点火。<effect> specifies <trigger>——不是 trigger 的子类型，而是一次参数填充：effect 填入 trigger 的全部槽位并附加「绑定于 <piece>、由 <condition> 边沿激活」的语义约束。含 <instant_effect>（一次机会）和 <continuous_effect>（持续武装）两个独立字段，可任意组合。与 <action> 互为对偶：action 不依赖 <piece>、由玩家点燃；effect 依赖 <piece>、由状态边沿点燃。",
-        "en": "A <trigger> bound to a <piece>, carrying a <condition> to monitor state changes; upon edge activation, follows the pipeline to settle. <effect> is a trigger in armed form: it is armed onto a <piece> by <resolve>, after which its own <condition> determines when to fire. <effect> specifies <trigger> — not a subtype of trigger, but a parameter binding: effect fills in all of trigger's slots and adds the semantic constraint \"bound to a <piece>, edge-activated by <condition>\". Contains two independent fields <instant_effect> (one chance) and <continuous_effect> (persistent arming), freely combinable. Counterpart to <action>: action is independent of <piece> and ignited by player; effect depends on <piece> and is ignited by a state edge."
+        "zh": "一种 <trigger>——绑定在 <piece> 上，携带 <condition> 监听状态变化，边沿激活后按 pipeline 结算。<effect> 是 armed 态的 trigger：它被 <resolve> 武装到 <piece> 上，此后由自身的 <condition> 决定何时点火。<effect> specifies <trigger>——不是 trigger 的子类型，而是一次参数填充：effect 填入 trigger 的全部槽位并附加「绑定于 <piece>、由 <condition> 边沿激活」的语义约束。含 <instant_effect>（部署即触发）和 <continuous_effect>（先部署后触发）两个独立字段，可任意组合。与 <action> 互为对偶：action 不依赖 <piece>、由玩家点燃；effect 依赖 <piece>、由状态边沿点燃。**生命周期**：效果经历「部署（arm）→ 监听（monitor）→ 触发（fire）→ 结算（cost → target → content）」四阶段——<instant_effect> 与 <continuous_effect> 的区别在于部署与触发是否同一时刻：instant 部署即触发（机会一次，错过不再）；continuous 先部署（开始监听，此刻不触发）、后按 condition 触发（可多次）。",
+        "en": "A <trigger> bound to a <piece>, carrying a <condition> to monitor state changes; upon edge activation, follows the pipeline to settle. <effect> is a trigger in armed form: it is armed onto a <piece> by <resolve>, after which its own <condition> determines when to fire. <effect> specifies <trigger> — not a subtype of trigger, but a parameter binding: effect fills in all of trigger's slots and adds the semantic constraint \"bound to a <piece>, edge-activated by <condition>\". Contains two independent fields <instant_effect> (arm-and-fire) and <continuous_effect> (arm-then-fire), freely combinable. Counterpart to <action>: action is independent of <piece> and ignited by player; effect depends on <piece> and is ignited by a state edge. **Lifecycle**: an effect passes through four stages — arm → monitor → fire → settle (cost → target → content). The difference between <instant_effect> and <continuous_effect> is whether arming and firing coincide: instant arms and fires in the same moment (one chance, missed opportunities are gone); continuous arms first (begins monitoring, no firing yet), then fires on each condition satisfaction (may fire repeatedly)."
       },
       "constraints": {
         "required": [],
@@ -904,8 +904,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一次机会。condition 满足即执行 cost→content，无论成败此 effect 永远消失。用于「打出时」「翻开时」等一次性触发场景。",
-        "en": "One chance. If condition is met, executes cost→content; whether it succeeds or fails, this effect is gone forever. Used for one-shot triggers like 'when played' or 'when revealed'."
+        "zh": "部署即触发：<resolve> 武装本效果的那一刻即是触发机会——condition 满足即执行 cost→target→content，无论成败此 effect 永远消失（机会用完，条件后来满足也不触发）。content 的结算结果（如加入生效池的电平）不随 effect 消失。用于「打出时」「翻开时」等一次性激活场景。",
+        "en": "Arm-and-fire: the moment <resolve> arms this effect is itself the trigger chance — if condition is met, executes cost→target→content; whether it succeeds or fails, this effect is gone forever (the chance is spent; later condition satisfaction does not fire it). Settlement results of the content (e.g. a level entering the active pool) do not vanish with the effect. Used for one-shot activations like 'when played' or 'when revealed'."
       },
       "constraints": {
         "required": [],
@@ -921,8 +921,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "持续武装。每次 condition 满足都执行 cost→content，直到 end_condition 成立、来源离场或被外部移除。end_condition 缺省 = 永不自动终结。用于光环、被动能力等持续监听场景。",
-        "en": "Persistent arming. Fires cost→content each time condition is met, until end_condition holds, source leaves play, or externally removed. Absent end_condition = never auto-terminates. Used for auras, passive abilities, and other persistent listening scenarios."
+        "zh": "先部署后触发：<resolve> 武装本效果时开始监听（此刻不触发）；此后每次 condition 满足都触发——走完整 trigger 流程（cost → target → content，与 <instant_effect> 相同，拥有自己的 cost 与 target），直到 end_condition 成立、来源离场或被外部移除。end_condition 缺省 = 永不自动终结。用于需要持续监听、条件开火的被动能力。注意：content 若是电平（<continuous_content>），部署时即应生效（激活式），无需等待触发——监听触发只对事件型 content（<instant_content>）有意义。",
+        "en": "Arm-then-fire: when <resolve> arms this effect, it begins monitoring (no firing yet); thereafter it fires on each condition satisfaction — following the full trigger flow (cost → target → content; like <instant_effect>, it has its own cost and target) — until end_condition holds, the source leaves play, or it is externally removed. Absent end_condition = never auto-terminates. Used for passive abilities that listen persistently and fire on condition. Note: if the content is a level (<continuous_content>), it should take effect at arming time (activative style) without waiting for a fire — monitored firing only makes sense for event-type content (<instant_content>)."
       },
       "constraints": {
         "required": [],
