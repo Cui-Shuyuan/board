@@ -2020,8 +2020,8 @@
       },
       "specifies": "<ontology::lap_event>",
       "description": {
-        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上完成一圈（推过 100——移动到或越过 0 格）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
-        "en": "Whenever a player's <score_marker> completes a lap on the <score_track> (past 100 — moved onto or past space 0), that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
+        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上移动到或越过 0 时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
+        "en": "Whenever a player's <score_marker> moves onto or past space 0 on the <score_track>, that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
       },
       "<ontology::condition>": {
         "description": {
