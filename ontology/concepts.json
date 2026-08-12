@@ -1416,23 +1416,8 @@
         "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过或已越过终点）。",
         "en": "An advance of a <marker> exceeds the track's remaining length (the marker would cross or has already crossed the end)."
       },
-      "<ontology::content>": {
-        "type": "<ontology::instant_content>",
-        "description": {
-          "zh": "超出部分的结算方式（各轨实现填：停住 + 补偿 / 转圈 / 放弃 / 钳制）。",
-          "en": "How the excess is resolved (filled per track: stop + compensate / loop / forgo / clamp)."
-        }
-      },
       "constraints": {
-        "required": [
-          {
-            "id": "<ontology::content>",
-            "description": {
-              "zh": "超出部分的结算方式。",
-              "en": "How the excess is resolved."
-            }
-          }
-        ],
+        "required": [],
         "optional": []
       }
     },
