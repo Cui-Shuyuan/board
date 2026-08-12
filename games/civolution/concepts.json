@@ -2533,189 +2533,123 @@
       "component": "<stackable_disc>"
     },
     {
+      "id": "progress_track",
+      "extends": "<ontology::track>",
+      "name": {
+        "zh": "进程轨",
+        "en": "Progress Track"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "位于 <progress_board> 上的 <ontology::track>，记录玩家的进程等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。5 条进程轨（<technology_track> / <prestige_track> / <knowledge_track> / <construction_track> / <culture_track>）的区别仅在于本概念的 track_type 与 bonus_die_value 两个参数。",
+        "en": "A <ontology::track> on the <progress_board> recording a player's progress level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step. The five progress tracks (<technology_track> / <prestige_track> / <knowledge_track> / <construction_track> / <culture_track>) differ only in this concept's track_type and bonus_die_value parameters."
+      },
+      "track_type": {
+        "type": "enum",
+        "enum": ["technology", "prestige", "knowledge", "construction", "culture"],
+        "description": {
+          "zh": "本轨的类型，5 条进程轨各实现其一。",
+          "en": "This track's type; each of the five progress tracks implements one."
+        }
+      },
+      "bonus_die_value": {
+        "type": "integer",
+        "description": {
+          "zh": "本轨对应的激活骰点数，用于 <track_bonus> 升级模组奖励的匹配：费用含此点数的主模组可升级（路径式引用如 <technology_track>.bonus_die_value）。",
+          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable (referenced as paths like <technology_track>.bonus_die_value)."
+        }
+      },
+      "contains": {
+        "type": "<progress_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的进程标记。",
+          "en": "This track holds all players' progress markers."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public",
+      "slots": [
+        {
+          "progress_space": {
+            "count": 13,
+            "scope": "0–12"
+          }
+        }
+      ],
+      "constraints": {
+        "required": [
+          {
+            "id": "track_type",
+            "description": {
+              "zh": "本轨的类型（technology / prestige / knowledge / construction / culture 之一）。",
+              "en": "This track's type (one of technology / prestige / knowledge / construction / culture)."
+            }
+          },
+          {
+            "id": "bonus_die_value",
+            "description": {
+              "zh": "本轨对应的激活骰点数（规则书：奖励阈值上印的数值）。",
+              "en": "The activation die value this track corresponds to (rulebook: the value printed on the bonus threshold)."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
       "id": "technology_track",
-      "specifies": "<ontology::track>",
+      "specifies": "<progress_track>",
       "name": {
         "zh": "科技轨",
         "en": "Technology Track"
       },
       "abstract": false,
-      "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的科技等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's technology level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
-      },      "bonus_die_value": {
-        "type": "integer",
-        "description": {
-          "zh": "本轨对应的激活骰点数，用于进程轨升级模组奖励的匹配（<track_bonus>）：费用含此点数的主模组可升级。",
-          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable."
-        }
-      },
-
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此轨存放所有玩家的科技进程标记。",
-          "en": "This track holds all players' technology progress markers."
-        }
-      },
-      "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public",
-      "slots": [
-        {
-          "technology_space": {
-            "count": 13,
-            "scope": "0–12"
-          }
-        }
-      ]
+      "track_type": "technology",
+      "bonus_die_value": 1
     },
     {
       "id": "prestige_track",
-      "specifies": "<ontology::track>",
+      "specifies": "<progress_track>",
       "name": {
         "zh": "声望轨",
         "en": "Prestige Track"
       },
       "abstract": false,
-      "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的声望等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's prestige level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
-      },      "bonus_die_value": {
-        "type": "integer",
-        "description": {
-          "zh": "本轨对应的激活骰点数，用于进程轨升级模组奖励的匹配（<track_bonus>）：费用含此点数的主模组可升级。",
-          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable."
-        }
-      },
-
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此轨存放所有玩家的声望进程标记。",
-          "en": "This track holds all players' prestige progress markers."
-        }
-      },
-      "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public",
-      "slots": [
-        {
-          "prestige_space": {
-            "count": 13,
-            "scope": "0–12"
-          }
-        }
-      ]
+      "track_type": "prestige",
+      "bonus_die_value": 2
     },
     {
       "id": "knowledge_track",
-      "specifies": "<ontology::track>",
+      "specifies": "<progress_track>",
       "name": {
         "zh": "知识轨",
         "en": "Knowledge Track"
       },
       "abstract": false,
-      "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的知识等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's knowledge level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
-      },      "bonus_die_value": {
-        "type": "integer",
-        "description": {
-          "zh": "本轨对应的激活骰点数，用于进程轨升级模组奖励的匹配（<track_bonus>）：费用含此点数的主模组可升级。",
-          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable."
-        }
-      },
-
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此轨存放所有玩家的知识进程标记。",
-          "en": "This track holds all players' knowledge progress markers."
-        }
-      },
-      "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public",
-      "slots": [
-        {
-          "knowledge_space": {
-            "count": 13,
-            "scope": "0–12"
-          }
-        }
-      ]
+      "track_type": "knowledge",
+      "bonus_die_value": 3
     },
     {
       "id": "construction_track",
-      "specifies": "<ontology::track>",
+      "specifies": "<progress_track>",
       "name": {
         "zh": "建设轨",
         "en": "Construction Track"
       },
       "abstract": false,
-      "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的建设等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's construction level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
-      },      "bonus_die_value": {
-        "type": "integer",
-        "description": {
-          "zh": "本轨对应的激活骰点数，用于进程轨升级模组奖励的匹配（<track_bonus>）：费用含此点数的主模组可升级。",
-          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable."
-        }
-      },
-
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此轨存放所有玩家的建设进程标记。",
-          "en": "This track holds all players' construction progress markers."
-        }
-      },
-      "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public",
-      "slots": [
-        {
-          "construction_space": {
-            "count": 13,
-            "scope": "0–12"
-          }
-        }
-      ]
+      "track_type": "construction",
+      "bonus_die_value": 4
     },
     {
       "id": "culture_track",
-      "specifies": "<ontology::track>",
+      "specifies": "<progress_track>",
       "name": {
         "zh": "文化轨",
         "en": "Culture Track"
       },
       "abstract": false,
-      "description": {
-        "zh": "位于 <progress_board> 上的进程轨，记录玩家的文化等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。",
-        "en": "A progress track on the <progress_board> recording a player's culture level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step."
-      },      "bonus_die_value": {
-        "type": "integer",
-        "description": {
-          "zh": "本轨对应的激活骰点数，用于进程轨升级模组奖励的匹配（<track_bonus>）：费用含此点数的主模组可升级。",
-          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable."
-        }
-      },
-
-      "contains": {
-        "type": "<progress_marker>[]",
-        "description": {
-          "zh": "此轨存放所有玩家的文化进程标记。",
-          "en": "This track holds all players' culture progress markers."
-        }
-      },
-      "<ontology::ownership>": null,
-      "<ontology::information_visibility>": "public",
-      "slots": [
-        {
-          "culture_space": {
-            "count": 13,
-            "scope": "0–12"
-          }
-        }
-      ]
+      "track_type": "culture",
+      "bonus_die_value": 5
     },
     {
       "id": "dice_display",

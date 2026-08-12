@@ -2051,126 +2051,47 @@
         "en": "Track Bonus"
       },
       "specifies": "<ontology::trigger>",
+      "abstract": true,
       "description": {
-        "zh": "玩家在进程轨上推进、越过奖励阈值时结算的奖励（阈值印在轨上，每个阈值旁印着奖励类型）。共 4 种类型：升级主模组（模组上有一个费用值颜色匹配本轨颜色）、恩惠轨推进 1 格或执行 1 个收入芯片效果、翻 1 个 stage tile 到激活面或得 3 分、得 3 分。",
-        "en": "Bonus granted when a player advances a progress track across a bonus threshold (printed on the track, each threshold showing its bonus type). Four types: upgrade 1 main module (one cost value on the module must match this track's color), advance the Favor of Agera track 1 step OR perform 1 income chip action, flip 1 stage tile to active OR gain 3 success points, gain 3 success points."
+        "zh": "进程轨奖励线（印在轨上的奖励阈值）的接口概念：每条奖励线是一个 <track_bonus> 实例，声明自己的触发格（trigger_slot）与奖励效果（<ontology::content>）。共 4 种奖励类型：① 升级主模组（模组两个激活骰费用点数之一与本轨 bonus_die_value 一致即可选择，见 <technology_track>.bonus_die_value 等路径）；② 恩惠轨推进 1 格或执行 1 个收入芯片效果（二选一）；③ 翻 1 个 stage tile 到激活面或得 3 分（二选一）；④ 得 3 分。",
+        "en": "Interface concept for the progress-track bonus lines (bonus thresholds printed on the tracks): each bonus line is a <track_bonus> instance declaring its trigger space (trigger_slot) and bonus effect (<ontology::content>). Four bonus types: ① upgrade 1 main module (selectable if one of its two activation die cost values matches this track's bonus_die_value, see paths like <technology_track>.bonus_die_value); ② advance the Favor of Agera track 1 step OR perform 1 income chip action; ③ flip 1 stage tile to active OR gain 3 success points; ④ gain 3 success points."
+      },
+      "trigger_slot": {
+        "type": "string",
+        "description": {
+          "zh": "本奖励线的触发格：进程轨上的路径式格引用（如 <technology_track>.<slot_id>）。被 <ontology::condition> 引用——本玩家的 <progress_marker> 越过该格时结算本奖励。",
+          "en": "This bonus line's trigger space: a path-style space reference on a progress track (e.g. <technology_track>.<slot_id>). Referenced by <ontology::condition> — the bonus settles when the player's <progress_marker> crosses this space."
+        }
       },
       "<ontology::condition>": {
-        "zh": "本玩家的 <progress_marker> 在进程轨上越过一个奖励阈值。",
-        "en": "A player's <progress_marker> crosses a bonus threshold on a progress track."
+        "zh": "本玩家的 <progress_marker> 越过 this.trigger_slot 声明的奖励线格。",
+        "en": "A player's <progress_marker> crosses the bonus-line space declared by this.trigger_slot."
       },
       "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "options": [
-            {
-              "id": "upgrade_module_bonus",
-              "name": {
-                "zh": "升级模组奖励",
-                "en": "Upgrade Module Bonus"
-              },
-              "<ontology::condition>": {
-                "zh": "该阈值印的是升级模组奖励。",
-                "en": "This threshold shows the upgrade-module bonus."
-              },
-              "<upgrade_main_module>": {
-                "description": {
-                  "zh": "根据推进的轨道选择 1 个主模组升级：该模组的两个激活骰费用点数之一与本轨的 bonus_die_value 一致即可选择（各轨数值见 <technology_track>.bonus_die_value、<prestige_track>.bonus_die_value、<knowledge_track>.bonus_die_value、<construction_track>.bonus_die_value、<culture_track>.bonus_die_value）。",
-                  "en": "Choose 1 main module to upgrade based on the advanced track: a module is selectable if one of its two activation die cost values matches this track's bonus_die_value (see <technology_track>.bonus_die_value, <prestige_track>.bonus_die_value, <knowledge_track>.bonus_die_value, <construction_track>.bonus_die_value, <culture_track>.bonus_die_value)."
-                }
-              }
-            },
-            {
-              "id": "favor_or_income_bonus",
-              "name": {
-                "zh": "恩惠或收入芯片奖励",
-                "en": "Favor or Income Chip Bonus"
-              },
-              "<ontology::condition>": {
-                "zh": "该阈值印的是恩惠轨/收入芯片奖励。",
-                "en": "This threshold shows the favor-track-or-income-chip bonus."
-              },
-              "options": [
-                {
-                  "id": "favor_step",
-                  "name": {
-                    "zh": "恩惠轨推进 1 格",
-                    "en": "Advance Favor Track 1 Step"
-                  },
-                  "<ontology::push_track>": {
-                    "<ontology::track>": "<favor_of_ager_track>",
-                    "step": 1
-                  }
-                },
-                {
-                  "id": "income_action",
-                  "name": {
-                    "zh": "执行 1 个收入芯片效果",
-                    "en": "Perform 1 Income Chip Action"
-                  },
-                  "<activate_income_chip>": {
-                    "description": {
-                      "zh": "执行 1 个已安装收入芯片的效果。",
-                      "en": "Perform the action of 1 installed income chip."
-                    }
-                  }
-                }
-              ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-            },
-            {
-              "id": "flip_or_points_bonus",
-              "name": {
-                "zh": "翻板块或得分奖励",
-                "en": "Flip Tile or Points Bonus"
-              },
-              "<ontology::condition>": {
-                "zh": "该阈值印的是翻 stage tile/3 分奖励。",
-                "en": "This threshold shows the flip-stage-tile-or-3-points bonus."
-              },
-              "options": [
-                {
-                  "id": "flip_tile",
-                  "name": {
-                    "zh": "翻 1 个 stage tile 到激活面",
-                    "en": "Flip 1 Stage Tile to Active"
-                  },
-                  "<ontology::flip>": {
-                    "subject": "1 个未激活的 <stage_tile>",
-                    "to": "face_up"
-                  }
-                },
-                {
-                  "id": "gain_points",
-                  "name": {
-                    "zh": "得 3 分",
-                    "en": "Gain 3 Success Points"
-                  },
-                  "<ontology::push_track>": {
-                    "<ontology::track>": "<score_track>",
-                    "step": 3
-                  }
-                }
-              ],
-              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
-            },
-            {
-              "id": "points_bonus",
-              "name": {
-                "zh": "得分奖励",
-                "en": "Points Bonus"
-              },
-              "<ontology::condition>": {
-                "zh": "该阈值印的是 3 分奖励。",
-                "en": "This threshold shows the 3-points bonus."
-              },
-              "<ontology::push_track>": {
-                "<ontology::track>": "<score_track>",
-                "step": 3
-              }
-            }
-          ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        "type": "<ontology::instant_content>",
+        "description": {
+          "zh": "触发后获得的奖励效果（4 种类型之一，见 description）。",
+          "en": "The bonus effect gained on trigger (one of the 4 types, see description)."
         }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "trigger_slot",
+            "description": {
+              "zh": "本奖励线的触发格（路径式格引用，被 <ontology::condition> 引用）。",
+              "en": "This bonus line's trigger space (path-style reference, referenced by <ontology::condition>)."
+            }
+          },
+          {
+            "id": "<ontology::content>",
+            "description": {
+              "zh": "触发后获得的奖励效果。",
+              "en": "The bonus effect gained on trigger."
+            }
+          }
+        ],
+        "optional": []
       }
     },
     {
