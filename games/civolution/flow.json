@@ -2023,12 +2023,6 @@
         "zh": "每当某玩家的 <score_marker> 在 <score_track> 上越过 99 格（跨过循环边界）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
         "en": "Whenever a player's <score_marker> crosses space 99 on the <score_track> (across the loop boundary), that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
       },
-      "<ontology::condition>": {
-        "description": {
-          "zh": "某玩家的 <score_marker> 在 <score_track> 上越过 99 格（跨过循环边界）。",
-          "en": "A player's <score_marker> crosses space 99 of the <score_track> (across the loop boundary)."
-        }
-      },
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "<ontology::transfer>": {
@@ -2235,34 +2229,12 @@
       },
       "specifies": "<ontology::overflow_compensation>",
       "description": {
-        "zh": "天气标记向热端推过头（越过 <weather_gauge.hot>）：移除 1 个 <tribe>（无选择，不可改以返还 <food> 代替），随后将标记推回 <weather_gauge.hot> 格停住。",
-        "en": "When the weather indicator is pushed past the hot end (<weather_gauge.hot>): remove 1 <tribe> (no choice, cannot be substituted with returning <food>), then push the indicator back onto <weather_gauge.hot>."
+        "zh": "天气标记向热端推过头（越过 <weather_gauge.hot>）时：移除 1 个 <tribe>（无选择，不可改以返还 <food> 代替）。",
+        "en": "When the weather indicator is pushed past the hot end (<weather_gauge.hot>): remove 1 <tribe> (no choice, cannot be substituted with returning <food>)."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "options": [
-            {
-              "id": "remove_tribe_step",
-              "name": {
-                "zh": "移除部落",
-                "en": "Remove Tribe"
-              },
-              "<ontology::transfer>": "<remove_tribe>"
-            },
-            {
-              "id": "push_back_to_hot",
-              "name": {
-                "zh": "推回炎热格",
-                "en": "Push Back to Hot"
-              },
-              "do_after": "remove_tribe_step",
-              "<ontology::push_track>": {
-                "<ontology::track>": "<weather_gauge>",
-                "to": "<weather_gauge.hot>"
-              }
-            }
-          ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          "<ontology::transfer>": "<remove_tribe>"
         }
       }
     },
@@ -2274,34 +2246,12 @@
       },
       "specifies": "<ontology::underflow_compensation>",
       "description": {
-        "zh": "天气标记向冷端推过头（越过 <weather_gauge.cold>）：移除 1 个 <tribe>（无选择，不可改以返还 <food> 代替），随后将标记推回 <weather_gauge.cold> 格停住。",
-        "en": "When the weather indicator is pushed past the cold end (<weather_gauge.cold>): remove 1 <tribe> (no choice, cannot be substituted with returning <food>), then push the indicator back onto <weather_gauge.cold>."
+        "zh": "天气标记向冷端推过头（越过 <weather_gauge.cold>）时：移除 1 个 <tribe>（无选择，不可改以返还 <food> 代替）。",
+        "en": "When the weather indicator is pushed past the cold end (<weather_gauge.cold>): remove 1 <tribe> (no choice, cannot be substituted with returning <food>)."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "options": [
-            {
-              "id": "remove_tribe_step",
-              "name": {
-                "zh": "移除部落",
-                "en": "Remove Tribe"
-              },
-              "<ontology::transfer>": "<remove_tribe>"
-            },
-            {
-              "id": "push_back_to_cold",
-              "name": {
-                "zh": "推回寒冷格",
-                "en": "Push Back to Cold"
-              },
-              "do_after": "remove_tribe_step",
-              "<ontology::push_track>": {
-                "<ontology::track>": "<weather_gauge>",
-                "to": "<weather_gauge.cold>"
-              }
-            }
-          ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          "<ontology::transfer>": "<remove_tribe>"
         }
       }
     },
@@ -2315,12 +2265,6 @@
       "description": {
         "zh": "分数标记反向越过 0 格（跨过循环边界）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>）；回绕后按步数继续移动（环形轨自然语义）。",
         "en": "When the score marker crosses space 0 in reverse (across the loop boundary): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>); after wrapping, it keeps moving for the remaining steps (the circular track's natural semantics)."
-      },
-      "<ontology::condition>": {
-        "description": {
-          "zh": "某玩家的 <score_marker> 在 <score_track> 上反向越过 0 格（跨过循环边界）。",
-          "en": "A player's <score_marker> crosses space 0 of the <score_track> in reverse (across the loop boundary)."
-        }
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
