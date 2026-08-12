@@ -1409,8 +1409,8 @@
       },
       "abstract": true,
       "description": {
-        "zh": "轨的通用溢出处理：任何 <track> 都有推到头的一天——当 <marker> 已被推进到终点、一次推进的步数超过剩余长度时，本次推进按本轨声明的补偿结算。实例填 <ontology::content> 声明超出部分的处理，常见形态：封顶停住 + 每步补偿（进程轨）、循环转圈（分轨）、放弃该次推进（恩惠轨）、白线越线钳制（天气轨）。各 <track> 用其顶层 <overflow_compensation> 字段挂载本轨的补偿。",
-        "en": "Generic overflow handling for tracks: every <track> has an end — when a <marker> is already at the end and an advance's steps exceed the remaining length, the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap + per-step compensation (progress tracks), loop around (score track), forgo the advance (Favor of Agera track), white-line clamp (weather gauge). Each <track> mounts its compensation via its top-level <overflow_compensation> field."
+        "zh": "轨的通用溢出处理：任何 <track> 都有推到头的一天——当 <marker> 已被推进到终点、一次推进的步数超过剩余长度时，本次推进按本轨声明的补偿结算。实例填 <ontology::content> 声明超出部分的处理，常见形态：封顶停住 + 超出部分按步补偿、循环转圈、放弃该次推进、钳制在边界格并结算其效果。各 <track> 用其顶层 <overflow_compensation> 字段挂载本轨的补偿。",
+        "en": "Generic overflow handling for tracks: every <track> has an end — when a <marker> is already at the end and an advance's steps exceed the remaining length, the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap and compensate per excess step, loop around, forgo the advance, or clamp at a boundary space and settle its effect. Each <track> mounts its compensation via its top-level <overflow_compensation> field."
       },
       "<ontology::condition>": {
         "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过或已越过终点）。",
@@ -1885,8 +1885,8 @@
       "<overflow_compensation>": {
         "default": null,
         "description": {
-          "zh": "本轨的溢出补偿：<marker> 推到头后再次推进时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例，如 <advance_beyond_end>），或指向内嵌机制的说明（如天气轨的越线格效果、阶段轨的停住规则）。缺省 = 推到头后无法再推进（无补偿）。",
-          "en": "This track's overflow compensation: what happens when a <marker> is advanced again after reaching the end. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>, e.g. <advance_beyond_end>), or a pointer to an embedded mechanism (e.g. the weather gauge's over-line slots, the phase sequence's stop rule). Absent = cannot advance beyond the end (no compensation)."
+          "zh": "本轨的溢出补偿：<marker> 推到头后再次推进时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例），或指向内嵌机制的说明（如边界格的效果、到达终点后停住的规则）。缺省 = 推到头后无法再推进（无补偿）。",
+          "en": "This track's overflow compensation: what happens when a <marker> is advanced again after reaching the end. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>), or a pointer to an embedded mechanism (e.g. a boundary-space effect, a stop-after-the-end rule). Absent = cannot advance beyond the end (no compensation)."
         }
       },
       "constraints": {
