@@ -4291,8 +4291,8 @@
         "options": [
           {
             "description": {
-              "zh": "存在一片陆地区域（非水域）：有至少一个自己的<tribe>、没有任何<farm>（任何玩家）、不与已翻开的<volcano>相邻。",
-              "en": "There exists a land territory (not Water): has at least one of your <tribe>s, no <farm> (any player), not adjacent to a face-up <volcano>."
+              "zh": "存在一片陆地区域（非水域）：有至少一个自己的<tribe>、没有任何<farm>（任何玩家）。",
+              "en": "There exists a land territory (not Water): has at least one of your <tribe>s, no <farm> (any player)."
             }
           },
           {
@@ -4304,7 +4304,7 @@
         ],
         "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
-      "target": "有自己的<tribe>且没有任何<farm>的一片陆地区域，且不与已翻开的<volcano>相邻",
+      "target": "有自己的<tribe>且没有任何<farm>的一片陆地区域（与已翻开的<volcano>相邻的区域被其永续效果排除，见<volcano>的连续效果）",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "options": [

@@ -1776,6 +1776,22 @@
               }
             }
           }
+        },
+        {
+          "<ontology::continuous_effect>": {
+            "<ontology::condition>": {
+              "zh": "本区域与已翻开的<volcano>相邻。",
+              "en": "This territory is adjacent to a face-up <volcano>."
+            },
+            "<ontology::content>": {
+              "<ontology::continuous_content>": {
+                "description": {
+                  "zh": "本区域被排除在 <build_farm> 的 target 之外（不能在此建造 <farm>）——火山的永续效果：无人触发它，也无法被触发，只要火山翻开着，相邻区域就不能被选为 <build_farm> 的 target。",
+                  "en": "This territory is excluded from <build_farm>'s target (no <farm> may be built here) — the volcano's persistent effect: nothing triggers it and it cannot be triggered; as long as the volcano is face-up, adjacent territories cannot be chosen as <build_farm>'s target."
+                }
+              }
+            }
+          }
         }
       ]
     },
