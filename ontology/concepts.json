@@ -1141,8 +1141,8 @@
           {
             "id": "<object>",
             "description": {
-              "zh": "被移动的 <object>。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。两种形式：① 纯引用字符串（如 \"<event_card>\"）；② 带属性设定的对象——概念 ID 做 key、值为属性设定，转移后对象以该属性状态进入 destination（如 { \"<event_card>\": { \"face\": \"face_down\" } } 表示以背面朝上状态放置）。与 <piece>.parts 的属性写法一致。",
-              "en": "The <object> being moved. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon. Two forms: ① a plain reference string (e.g. \"<event_card>\"); ② an object with attribute settings — the concept id as key and the attribute values as its value; the object enters the destination in that attribute state (e.g. { \"<event_card>\": { \"face\": \"face_down\" } } means placed face down). Same attribute syntax as <piece>.parts."
+              "zh": "被移动的 <object>。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。两种形式：① 纯引用字符串；② 带属性设定的对象——概念 ID 做 key、值为属性设定，转移后对象以该属性状态进入 destination（如 { \"<card>\": { \"face\": \"face_down\" } } 表示以背面朝上状态放置）。与 <piece>.parts 的属性写法一致。",
+              "en": "The <object> being moved. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon. Two forms: ① a plain reference string; ② an object with attribute settings — the concept id as key and the attribute values as its value; the object enters the destination in that attribute state (e.g. { \"<card>\": { \"face\": \"face_down\" } } means placed face down). Same attribute syntax as <piece>.parts."
             }
           }
         ],
@@ -1409,8 +1409,8 @@
       },
       "abstract": true,
       "description": {
-        "zh": "轨的通用溢出处理：任何 <track> 都有推到头的一天——当 <marker> 已被推进到终点、一次推进的步数超过剩余长度时，本次推进按本轨声明的补偿结算。实例填 <ontology::content> 声明超出部分的处理，常见形态：封顶停住 + 超出部分按步补偿、循环转圈、放弃该次推进、钳制在边界格并结算其效果。各 <track> 用其顶层 <overflow_compensation> 字段挂载本轨的补偿。",
-        "en": "Generic overflow handling for tracks: every <track> has an end — when a <marker> is already at the end and an advance's steps exceed the remaining length, the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap and compensate per excess step, loop around, forgo the advance, or clamp at a boundary space and settle its effect. Each <track> mounts its compensation via its top-level <overflow_compensation> field."
+        "zh": "轨的通用溢出处理（双向）：任何 <track> 都有推到头的一天——沿推进方向过头（正溢出）或反向过头（负溢出）时，本次推进按本轨声明的补偿结算。实例填 <ontology::content> 声明超出部分的处理，常见形态：封顶停住 + 超出部分按步补偿、循环转圈、放弃该次推进、钳制在边界格并结算其效果。挂载字段定方向：<track> 顶层的 <overflow_compensation> 字段挂正向补偿、<underflow_compensation> 挂负向补偿；**缺省 = 没有处理**（该方向不会发生，或什么都不做）。",
+        "en": "Generic overflow handling for tracks (both directions): every <track> has an end — when a <marker> is advanced past the end along the advance direction (positive overflow) or past it in reverse (negative overflow), the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap and compensate per excess step, loop around, forgo the advance, or clamp at a boundary space and settle its effect. The mounting field fixes the direction: a <track>'s top-level <overflow_compensation> field mounts the positive compensation, <underflow_compensation> the negative one; **absent = no handling** (that direction cannot occur, or nothing happens)."
       },
       "<ontology::condition>": {
         "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过或已越过终点）。",
@@ -1434,6 +1434,19 @@
           }
         ],
         "optional": []
+      }
+    },
+    {
+      "id": "underflow_compensation",
+      "specifies": "<overflow_compensation>",
+      "name": {
+        "zh": "负向溢出补偿",
+        "en": "Underflow Compensation"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "溢出补偿的负向方向变体：<marker> 反向过头（越过起点所在的另一端点）时的处理。与 <overflow_compensation> 结构相同，仅方向不同；由 <track> 顶层的 <underflow_compensation> 字段挂载。",
+        "en": "The negative-direction variant of <overflow_compensation>: handling when a <marker> is advanced past the other end in reverse. Same structure as <overflow_compensation>, differing only in direction; mounted via a <track>'s top-level <underflow_compensation> field."
       }
     },
     {
@@ -1885,8 +1898,15 @@
       "<overflow_compensation>": {
         "default": null,
         "description": {
-          "zh": "本轨的溢出补偿：<marker> 推到头后再次推进时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例），或指向内嵌机制的说明（如边界格的效果、到达终点后停住的规则）。缺省 = 推到头后无法再推进（无补偿）。",
-          "en": "This track's overflow compensation: what happens when a <marker> is advanced again after reaching the end. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>), or a pointer to an embedded mechanism (e.g. a boundary-space effect, a stop-after-the-end rule). Absent = cannot advance beyond the end (no compensation)."
+          "zh": "本轨的正向溢出补偿：<marker> 沿推进方向推过头时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例），或指向内嵌机制的说明（如边界格的效果、到达终点后停住的规则）。缺省 = 没有处理（该方向不会发生，或什么都不做）。",
+          "en": "This track's positive overflow compensation: what happens when a <marker> is advanced past the end along the advance direction. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>), or a pointer to an embedded mechanism (e.g. a boundary-space effect, a stop-after-the-end rule). Absent = no handling (that direction cannot occur, or nothing happens)."
+        }
+      },
+      "<underflow_compensation>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的负向溢出补偿：<marker> 反向过头（越过起点/另一端点）时发生什么。值与 <overflow_compensation> 同款（trigger 引用或内嵌机制说明）。缺省 = 没有处理（该方向不会发生，或什么都不做）。",
+          "en": "This track's negative overflow compensation: what happens when a <marker> is advanced past the other end in reverse. Same value forms as <overflow_compensation> (trigger reference or embedded-mechanism pointer). Absent = no handling (that direction cannot occur, or nothing happens)."
         }
       },
       "constraints": {
@@ -1904,8 +1924,16 @@
             "id": "<overflow_compensation>",
             "default": null,
             "description": {
-              "zh": "本轨的溢出补偿（见字段声明）。",
-              "en": "This track's overflow compensation (see field declaration)."
+              "zh": "本轨的正向溢出补偿（见字段声明）。",
+              "en": "This track's positive overflow compensation (see field declaration)."
+            }
+          },
+          {
+            "id": "<underflow_compensation>",
+            "default": null,
+            "description": {
+              "zh": "本轨的负向溢出补偿（见字段声明）。",
+              "en": "This track's negative overflow compensation (see field declaration)."
             }
           }
         ]
