@@ -3452,26 +3452,25 @@
               }
             },
             {
-              "id": "gain_points",
+              "id": "reveal_score",
               "name": {
-                "zh": "获得分数",
-                "en": "Gain Points"
+                "zh": "翻开加分",
+                "en": "Reveal Scoring"
               },
               "do_after": "flip_site",
-              "<ontology::push_track>": {
-                "<ontology::track>": "<score_track>",
-                "step": "this.target.score"
+              "<ontology::resolve>": {
+                "<ontology::content>": "this.target.<ontology::effect>"
               }
             },
             {
-              "id": "resolve_effect",
+              "id": "resolve_own_effect",
               "name": {
-                "zh": "触发地点效果",
-                "en": "Resolve Site Effect"
+                "zh": "结算地点自身效果",
+                "en": "Resolve Site's Own Effect"
               },
-              "do_after": "gain_points",
+              "do_after": "reveal_score",
               "<ontology::resolve>": {
-                "<ontology::content>": "this.target.<ontology::effect>"
+                "<ontology::content>": "this.target.own_effect"
               }
             }
           ],

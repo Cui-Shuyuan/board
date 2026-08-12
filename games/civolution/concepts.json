@@ -1576,10 +1576,10 @@
         "zh": "地点",
         "en": "Site"
       },
-      "abstract": false,
+      "abstract": true,
       "description": {
-        "zh": "放置在 <continent> 上的特殊 <ontology::tile>，外观为正八边形板块，其中一角为方便手指拿取的弧形角。翻开前背面朝上，通过特定条件翻开后持续生效。共 9 种：建造点、狼谷、冰川、神秘橡树、隐蔽洞窟、圣岩、洞穴、蘑菇谷、火山。建造点带有 <building_slot> 可建造 <settlement> 或 <statue>；其他地点仅有 effect 不带 zone。",
-        "en": "A special <ontology::tile> placed on the <continent>, shaped as a regular octagon with one rounded corner for easy finger pickup. Face down until revealed by a specific condition, then taking lasting effect. Nine types: Building ground, Gorge of the Grimwolves, Glacier, Mystic oak, Hidden grotto, Holy rock, Cave, Mushroom valley, Volcano. Building ground carries a <building_slot> for <settlement> or <statue>; other sites have only an effect without a zone."
+        "zh": "放置在 <continent> 上的特殊 <ontology::tile>，外观为正八边形板块，其中一角为方便手指拿取的弧形角。翻开前背面朝上，通过<module_exploration>翻开后持续生效。**翻开加分（通用）**：每块地点翻开时，翻开者立即获得本概念 score 字段标记的分数（印在正面左上角）——由 <explore_site> 在翻转后触发本概念的 <ontology::effect> 结算。地点分两类：<effect_site>（效果地点：翻开加分后结算自身效果）与 <building_site>（建造点：翻开加分后创造 <building_slot>，无自身效果）。",
+        "en": "A special <ontology::tile> placed on the <continent>, shaped as a regular octagon with one rounded corner for easy finger pickup. Face down until revealed via <module_exploration>, then taking lasting effect. **Reveal scoring (universal)**: whenever a site is revealed, the revealer immediately gains the points marked by this concept's score field (top-left corner of the front side) — settled via this concept's <ontology::effect>, triggered by <explore_site> after the flip. Sites come in two kinds: <effect_site> (effect site: settles its own effect after reveal scoring) and <building_site> (building ground: creates a <building_slot> after reveal scoring; no own effect)."
       },
       "score": {
         "type": "integer",
@@ -1589,10 +1589,31 @@
           "en": "Success points gained immediately when this site is revealed (marked in the top-left corner of its front side)."
         }
       },
-      "parts": [
-        "<ontology::effect>",
-        "<building_slot>"
-      ],
+      "<ontology::effect>": {
+        "<ontology::instant_effect>": {
+          "target": "翻开本地点的<ontology::player>",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": "this.score"
+              }
+            }
+          }
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "score",
+            "description": {
+              "zh": "翻开此地点时翻开者获得的分数（所有地点都有分）。",
+              "en": "Points the revealer gains when this site is revealed (every site has points)."
+            }
+          }
+        ],
+        "optional": []
+      },
       "media": {
         "component": [
           "media/components/site.png"
@@ -1600,47 +1621,68 @@
       }
     },
     {
+      "id": "effect_site",
+      "extends": "<site>",
+      "name": {
+        "zh": "效果地点",
+        "en": "Effect Site"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "有自身效果的地点：翻开后先结算 <site> 的翻开加分效果，再结算本地点自己的效果——实例在 own_effect 字段实现（探索翻开后、加分之后触发）。",
+        "en": "A site with its own effect: when revealed, first settles <site>'s reveal-scoring effect, then settles this site's own effect — implemented by instances in the own_effect field (triggered after reveal and scoring)."
+      },
+      "own_effect": {
+        "type": "<ontology::effect>",
+        "description": {
+          "zh": "本地点自己的效果（翻开加分之后触发；多个效果用 options/type 组合）。",
+          "en": "This site's own effect (triggered after reveal scoring; combine multiple effects with options/type)."
+        }
+      }
+    },
+    {
+      "id": "building_site",
+      "extends": "<site>",
+      "name": {
+        "zh": "建造点",
+        "en": "Building Site"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "无自身效果的地点：翻开后先结算 <site> 的翻开加分效果，然后在本地点上创造 <building_slot> zone（用于建造 <settlement> 或 <statue>）。",
+        "en": "A site without its own effect: when revealed, first settles <site>'s reveal-scoring effect, then creates a <building_slot> zone on this site (for building <settlement> or <statue>)."
+      },
+      "parts": [
+        "<building_slot>"
+      ]
+    },
+    {
       "id": "gorge_of_grimwolves",
-      "specifies": "<site>",
+      "specifies": "<effect_site>",
       "name": {
         "zh": "狼谷",
         "en": "Gorge of the Grimwolves"
       },
       "abstract": false,
       "description": {
-        "zh": "翻开本地点（经由<module_exploration>翻开）的玩家立即获得 5 分（<ontology::score>）。地点阶段结算（共 2 块狼谷，各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
-        "en": "The player who reveals this site (via <module_exploration>) gains 5 success points immediately (<ontology::score>). Site phase resolution (2 Gorges exist; each resolves independently): each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
+        "zh": "共 2 块。地点阶段结算（各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
+        "en": "2 Gorges exist; each resolves independently during the site phase: each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
       },
       "score": 5,
-      "parts": [
-        {
-          "<ontology::instant_effect>": {
-            "target": "翻开本地点（经由<module_exploration>翻开）的<ontology::player>",
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::push_track>": {
-                  "<ontology::track>": "<score_track>",
-                  "step": 5
-                }
-              }
-            }
-          }
-        },
-        {
-          "<ontology::continuous_effect>": {
-            "<ontology::condition>": {
-              "zh": "地点阶段结算中，且本玩家在与本地点相邻的<territory>中有<tribe>，且<food_space>中有<food>。",
-              "en": "During the site phase, and this player has a <tribe> in a <territory> adjacent to this site, and has <food> on <food_space>."
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::transfer>": "<lose_food>",
-                "<ontology::per_player>": true
-              }
+      "own_effect": {
+        "<ontology::continuous_effect>": {
+          "<ontology::condition>": {
+            "zh": "地点阶段结算中，且本玩家在与本地点相邻的<territory>中有<tribe>，且<food_space>中有<food>。",
+            "en": "During the site phase, and this player has a <tribe> in a <territory> adjacent to this site, and has <food> on <food_space>."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::transfer>": "<lose_food>",
+              "<ontology::per_player>": true
             }
           }
         }
-      ]
+      }
     },
     {
       "id": "site_slot",
