@@ -2328,8 +2328,8 @@
       },
       "specifies": "<ontology::underlap_event>",
       "description": {
-        "zh": "分数标记从 0 反向回绕（负向完成一圈）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>），标记自然停在 99 格。",
-        "en": "When the score marker wraps around backward from 0 (completing a lap in reverse): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>); the marker naturally stops on space 99."
+        "zh": "分数标记反向越过循环起点（从 0 回到 99）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>），标记自然停在 99 格。",
+        "en": "When the score marker crosses the loop's start in reverse (from 0 back to 99): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>); the marker naturally stops on space 99."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
