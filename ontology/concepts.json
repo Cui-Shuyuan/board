@@ -1423,15 +1423,23 @@
     },
     {
       "id": "underflow_compensation",
-      "specifies": "<overflow_compensation>",
+      "extends": "<trigger>",
       "name": {
         "zh": "负向溢出补偿",
         "en": "Underflow Compensation"
       },
-      "abstract": false,
+      "abstract": true,
       "description": {
-        "zh": "溢出补偿的负向方向变体：<marker> 反向过头（越过起点所在的另一端点）时的处理。与 <overflow_compensation> 结构相同，仅方向不同；由 <track> 顶层的 <underflow_compensation> 字段挂载。",
-        "en": "The negative-direction variant of <overflow_compensation>: handling when a <marker> is advanced past the other end in reverse. Same structure as <overflow_compensation>, differing only in direction; mounted via a <track>'s top-level <underflow_compensation> field."
+        "zh": "溢出补偿的负向方向概念：<marker> 反向过头（越过起点所在的另一端点）时的处理。与 <overflow_compensation> 平等——两者结构相同、方向相反、condition 不同；由 <linear_track> 顶层的 <underflow_compensation> 字段挂载。",
+        "en": "The negative-direction overflow concept: handling when a <marker> is advanced past the other end in reverse. Peer of <overflow_compensation> — same structure, opposite direction, different condition; mounted via a <linear_track>'s top-level <underflow_compensation> field."
+      },
+      "<ontology::condition>": {
+        "zh": "一次反向推进使 <marker> 越过本轨起点（另一端点，反向过头）。",
+        "en": "A reverse advance takes a <marker> past the track's start (the other end; negative overflow)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
       }
     },
     {
@@ -1446,6 +1454,10 @@
         "zh": "环形轨（<circular_track>）的正向伴随事件：marker 沿推进方向越过循环起点时触发，通常用于发放圈指示物。由 <circular_track> 顶层的 <lap_event> 字段挂载。与溢出补偿的区别：环形轨无溢出——回绕是推轨的自然语义（99 前进 3 步即停在 2），圈事件只是越过起点时的附带结算。负向（反向越过起点）见 <underlap_event>。",
         "en": "A <circular_track>'s positive companion event: triggered when a <marker> crosses the loop's start along the advance direction, typically to grant a lap token. Mounted via a <circular_track>'s top-level <lap_event> field. Unlike overflow compensation: a circular track has no overflow — wrapping around is the natural semantics of advancing (99 advanced 3 steps simply stops on 2); the lap event is only the incidental settlement when crossing the start. The negative direction (crossing the start in reverse) is <underlap_event>."
       },
+      "<ontology::condition>": {
+        "zh": "<marker> 沿推进方向越过本轨循环起点。",
+        "en": "A <marker> crosses this track's loop start along the advance direction."
+      },
       "constraints": {
         "required": [],
         "optional": []
@@ -1453,15 +1465,23 @@
     },
     {
       "id": "underlap_event",
-      "specifies": "<lap_event>",
+      "extends": "<trigger>",
       "name": {
         "zh": "负向圈事件",
         "en": "Underlap Event"
       },
-      "abstract": false,
+      "abstract": true,
       "description": {
-        "zh": "圈事件的负向方向变体：marker 反向越过循环起点时的伴随事件，通常用于回收圈指示物。由 <circular_track> 顶层的 <underlap_event> 字段挂载。与 <lap_event> 结构相同，仅方向不同。",
-        "en": "The negative-direction variant of <lap_event>: the companion event when a <marker> crosses the loop's start in reverse, typically to collect a lap token. Mounted via a <circular_track>'s top-level <underlap_event> field. Same structure as <lap_event>, differing only in direction."
+        "zh": "圈事件的负向方向概念：marker 反向越过循环起点时的伴随事件，通常用于回收圈指示物。与 <lap_event> 平等——两者结构相同、方向相反、condition 不同；由 <circular_track> 顶层的 <underlap_event> 字段挂载。",
+        "en": "The negative-direction lap-event concept: the companion event when a <marker> crosses the loop's start in reverse, typically to collect a lap token. Peer of <lap_event> — same structure, opposite direction, different condition; mounted via a <circular_track>'s top-level <underlap_event> field."
+      },
+      "<ontology::condition>": {
+        "zh": "<marker> 反向越过本轨循环起点。",
+        "en": "A <marker> crosses this track's loop start in reverse."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
       }
     },
     {
