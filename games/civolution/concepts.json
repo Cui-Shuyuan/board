@@ -1657,34 +1657,6 @@
       ]
     },
     {
-      "id": "gorge_of_grimwolves",
-      "specifies": "<effect_site>",
-      "name": {
-        "zh": "狼谷",
-        "en": "Gorge of the Grimwolves"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "共 2 块。地点阶段结算（各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
-        "en": "2 Gorges exist; each resolves independently during the site phase: each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
-      },
-      "score": 5,
-      "own_effect": {
-        "<ontology::continuous_effect>": {
-          "<ontology::condition>": {
-            "zh": "地点阶段结算中，且本玩家在与本地点相邻的<territory>中有<tribe>，且<food_space>中有<food>。",
-            "en": "During the site phase, and this player has a <tribe> in a <territory> adjacent to this site, and has <food> on <food_space>."
-          },
-          "<ontology::content>": {
-            "<ontology::instant_content>": {
-              "<ontology::transfer>": "<lose_food>",
-              "<ontology::per_player>": true
-            }
-          }
-        }
-      }
-    },
-    {
       "id": "site_slot",
       "specifies": "<ontology::zone>",
       "name": {

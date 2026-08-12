@@ -4358,8 +4358,8 @@
         "options": [
           {
             "description": {
-              "zh": "存在一个<building_slot>：与有自己<tribe>的区域相邻、且上面尚未建造自己的<settlement>。",
-              "en": "There exists a <building_slot> adjacent to a territory with your <tribe> and without your own <settlement> on it."
+              "zh": "存在一个<building_ground>：其<building_slot>与有自己<tribe>的区域相邻、且上面尚未建造自己的<settlement>。",
+              "en": "There exists a <building_ground> whose <building_slot> is adjacent to a territory with your <tribe> and without your own <settlement> on it."
             }
           },
           {
@@ -4392,7 +4392,7 @@
           }
         }
       },
-      "target": "一个与有自己的<tribe>区域相邻的<building_slot>，且上面尚未建造自己的<settlement>",
+      "target": "一个与有自己的<tribe>区域相邻的<building_ground>的<building_slot>，且上面尚未建造自己的<settlement>",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "options": [
@@ -4560,20 +4560,20 @@
         "options": [
           {
             "description": {
-              "zh": "建造点与有自己<tribe>的区域相邻（若为水域建造点，则需该水域有自己的<boat>且船上有<tribe>）。",
-              "en": "The Building ground is adjacent to a territory with your <tribe> (for Water Building ground, requires your <boat> with a <tribe> on it in that Water territory)."
+              "zh": "<building_ground>与有自己<tribe>的区域相邻（若为水域建造点，则需该水域有自己的<boat>且船上有<tribe>）。",
+              "en": "The <building_ground> is adjacent to a territory with your <tribe> (for a Water building ground, requires your <boat> with a <tribe> on it in that Water territory)."
             }
           },
           {
             "description": {
-              "zh": "该建造点上自己的建筑少于 2 个。",
-              "en": "You have fewer than 2 of your own buildings on this Building ground."
+              "zh": "该<building_ground>上自己的建筑少于 2 个。",
+              "en": "You have fewer than 2 of your own buildings on this <building_ground>."
             }
           },
           {
             "description": {
-              "zh": "仓库中有该建造点上列出的至少一种<stored_material>。",
-              "en": "At least one of the <stored_material> types listed on this Building ground is in your storage."
+              "zh": "仓库中有该<building_ground>上列出的至少一种<stored_material>。",
+              "en": "At least one of the <stored_material> types listed on this <building_ground> is in your storage."
             }
           }
         ],
@@ -4601,7 +4601,7 @@
           }
         }
       },
-      "target": "一个满足建造要求的<building_slot>，且其上列出的材料中至少有一种在仓库中",
+      "target": "一个满足建造要求的<building_ground>的<building_slot>，且其上列出的材料中至少有一种在仓库中",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "options": [
