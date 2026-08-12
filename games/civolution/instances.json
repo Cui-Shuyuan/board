@@ -2750,123 +2750,100 @@
         "zh": "洞悉型研究牌，编号 C16。",
         "en": "Insight research card, number C16."
       },
-      "parts": [
-        "<card_name>",
-        {
-          "<research_ability>": {
-            "position": {
-              "zh": "上三分之一（能力区）",
-              "en": "top third (ability)"
-            },
-            "<ontology::cost>": {
-              "<ontology::instant_cost>": {
-                "<ontology::transfer>": {
-                  "source": "<food_space>",
-                  "destination": "<ontology::supply>",
-                  "<ontology::object>": "<food>",
-                  "quantity": 1,
-                  "description": {
-                    "zh": "支付 1 个食物。",
-                    "en": "Pay 1 food."
-                  }
-                }
-              }
-            },
-            "target": "你拥有的 1 个区域（<territory>）",
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::transfer>": {
-                  "source": "<ontology::supply>",
-                  "destination": "该区域内最多 2 个空置营地（<encampment>）",
-                  "<ontology::object>": {
-                    "<tribe>": {
-                      "posture": "lying"
-                    }
-                  },
-                  "quantity": "每营地 1，最多 2",
-                  "description": {
-                    "zh": "在该区域中最多 2 个空置营地上各放置 1 个虚弱部落。",
-                    "en": "Place 1 weak tribe on up to 2 vacant encampments within that territory."
-                  }
+      "<research_ability>": {
+        "<activity>": {
+          "<ontology::cost>": {
+            "<ontology::instant_cost>": {
+              "<ontology::transfer>": {
+                "source": "<food_space>",
+                "destination": "<ontology::supply>",
+                "<ontology::object>": "<food>",
+                "quantity": 1,
+                "description": {
+                  "zh": "支付 1 个食物。",
+                  "en": "Pay 1 food."
                 }
               }
             }
-          }
-        },
-        {
-          "<cost_space>": {
-            "slots": [
-              {
-                "<cost_space>": {
-                  "type": "payment",
-                  "<ontology::object>": "<feature_marker>",
-                  "feature_type": "intelligence",
-                  "amount": 1,
-                  "success_points": 0
-                }
-              },
-              {
-                "<cost_space>": {
-                  "type": "possession",
-                  "<ontology::object>": "<feature_marker>",
-                  "feature_type": "expression",
-                  "amount": 2,
-                  "success_points": 0
-                }
-              },
-              {
-                "<cost_space>": {
-                  "type": "possession",
-                  "<ontology::object>": "<feature_marker>",
-                  "feature_type": "calm",
-                  "amount": 1,
-                  "success_points": 0
-                }
-              },
-              {
-                "<cost_space>": {
-                  "type": "empty",
-                  "success_points": 0
-                }
-              },
-              {
-                "<cost_space>": {
-                  "type": "empty",
-                  "success_points": 0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "<success_point>": {
-            "position": {
-              "zh": "各费用格下沿",
-              "en": "below each cost space"
-            }
-          }
-        },
-        {
-          "<instant_bonus>": {
-            "position": {
-              "zh": "下三分之一（即时奖励区）",
-              "en": "bottom third (instant bonus)"
-            },
-            "<ontology::content>": {
-              "<ontology::instant_content>": {
-                "<ontology::push_track>": {
-                  "<ontology::track>": "<culture_track>",
-                  "step": 1,
-                  "description": {
-                    "zh": "文化进程轨推进 1 格。",
-                    "en": "Advance the Culture track by 1 step."
+          },
+          "target": "你拥有的 1 个区域（<territory>）",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::transfer>": {
+                "source": "<ontology::supply>",
+                "destination": "该区域内最多 2 个空置营地（<encampment>）",
+                "<ontology::object>": {
+                  "<tribe>": {
+                    "posture": "lying"
                   }
+                },
+                "quantity": "每营地 1，最多 2",
+                "description": {
+                  "zh": "在该区域中最多 2 个空置营地上各放置 1 个虚弱部落。",
+                  "en": "Place 1 weak tribe on up to 2 vacant encampments within that territory."
                 }
               }
             }
           }
         }
-      ]
+      },
+      "<cost_space>": {
+        "slots": [
+          {
+            "<cost_space>": {
+              "type": "payment",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "intelligence",
+              "amount": 1,
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "possession",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "expression",
+              "amount": 2,
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "possession",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "calm",
+              "amount": 1,
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "empty",
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "empty",
+              "success_points": 0
+            }
+          }
+        ]
+      },
+      "<instant_bonus>": {
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::push_track>": {
+              "<ontology::track>": "<culture_track>",
+              "step": 1,
+              "description": {
+                "zh": "文化进程轨推进 1 格。",
+                "en": "Advance the Culture track by 1 step."
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "continent_tiles": [],
