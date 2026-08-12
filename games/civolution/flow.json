@@ -2018,7 +2018,7 @@
         "zh": "完成计分圈",
         "en": "Complete Score Lap"
       },
-      "specifies": "<ontology::overflow_compensation>",
+      "specifies": "<ontology::lap_event>",
       "description": {
         "zh": "每当某玩家的 <score_marker> 在 <score_track> 上完成一圈（推过 100——移动到或越过 0 格）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
         "en": "Whenever a player's <score_marker> completes a lap on the <score_track> (past 100 — moved onto or past space 0), that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
@@ -2326,7 +2326,7 @@
         "zh": "计分轨负溢出",
         "en": "Score Track Underflow"
       },
-      "specifies": "<ontology::underflow_compensation>",
+      "specifies": "<ontology::lap_event>",
       "description": {
         "zh": "分数标记向 0 以下回退（负溢出）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>），并将标记放回 99 格。",
         "en": "When the score marker would fall below 0 (negative overflow): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>) and place the marker back on space 99."

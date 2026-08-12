@@ -2284,8 +2284,10 @@
           "en": "This track holds all players' score markers."
         }
       },
-      "<ontology::overflow_compensation>": "<score_lap>",
-      "<ontology::underflow_compensation>": "<score_underflow>",
+      "<ontology::lap_event>": [
+        "<score_lap>",
+        "<score_underflow>"
+      ],
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "slots": "0–100+"
@@ -2536,7 +2538,7 @@
     },
     {
       "id": "progress_track",
-      "extends": "<ontology::track>",
+      "extends": "<ontology::linear_track>",
       "name": {
         "zh": "进程轨",
         "en": "Progress Track"
@@ -2852,7 +2854,7 @@
     },
     {
       "id": "favor_of_ager_track",
-      "specifies": "<ontology::track>",
+      "specifies": "<ontology::linear_track>",
       "name": {
         "zh": "阿格拉恩惠轨",
         "en": "Favor of Agera Track"
@@ -2895,7 +2897,7 @@
     },
     {
       "id": "weather_gauge",
-      "specifies": "<ontology::track>",
+      "specifies": "<ontology::linear_track>",
       "name": {
         "zh": "天气轨",
         "en": "Weather Gauge"
@@ -3039,7 +3041,7 @@
     },
     {
       "id": "phase_sequence",
-      "specifies": "<ontology::track>",
+      "specifies": "<ontology::linear_track>",
       "name": {
         "zh": "阶段流程",
         "en": "Phase Sequence"

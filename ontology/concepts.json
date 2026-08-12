@@ -1413,8 +1413,8 @@
         "en": "Generic overflow handling for tracks (both directions): every <track> has an end — when a <marker> is advanced past the end along the advance direction (positive overflow) or past it in reverse (negative overflow), the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap and compensate per excess step, loop around, forgo the advance, or clamp at a boundary space and settle its effect. The mounting field fixes the direction: a <track>'s top-level <overflow_compensation> field mounts the positive compensation, <underflow_compensation> the negative one; **absent = no handling** (that direction cannot occur, or nothing happens)."
       },
       "<ontology::condition>": {
-        "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过或已越过终点）。",
-        "en": "An advance of a <marker> exceeds the track's remaining length (the marker would cross or has already crossed the end)."
+        "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过终点）。",
+        "en": "An advance of a <marker> exceeds the track's remaining length (the marker would cross the end)."
       },
       "constraints": {
         "required": [],
@@ -1432,6 +1432,23 @@
       "description": {
         "zh": "溢出补偿的负向方向变体：<marker> 反向过头（越过起点所在的另一端点）时的处理。与 <overflow_compensation> 结构相同，仅方向不同；由 <track> 顶层的 <underflow_compensation> 字段挂载。",
         "en": "The negative-direction variant of <overflow_compensation>: handling when a <marker> is advanced past the other end in reverse. Same structure as <overflow_compensation>, differing only in direction; mounted via a <track>'s top-level <underflow_compensation> field."
+      }
+    },
+    {
+      "id": "lap_event",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "圈事件",
+        "en": "Lap Event"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "环形轨（<track> 的 looping 字段为 true 的轨）的伴随事件：marker 推过终点完成一圈（越过循环起点）时触发，通常用于发放或回收圈指示物。由 <track> 顶层的 <lap_event> 字段挂载。与溢出补偿的区别：环形轨无溢出——回绕是推轨的自然语义（99 前进 3 步即停在 2），圈事件只是绕圈时的附带结算。",
+        "en": "A companion event of a looping track (a <track> whose looping field is true): triggered when a <marker> completes a lap (crossing the loop's start), typically to grant or collect lap tokens. Mounted via a <track>'s top-level <lap_event> field. Unlike overflow compensation: a looping track has no overflow — wrapping around is the natural semantics of advancing (99 advanced 3 steps simply stops on 2); the lap event is only the incidental settlement when completing a lap."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
       }
     },
     {
@@ -1877,8 +1894,33 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。任何 <track> 都有推到头的一天——推到头后再次推进发生什么，由本概念顶层的 <overflow_compensation> 字段声明（每个轨必须回答这个问题）。",
-        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. Every <track> has an end — what happens when a <marker> is advanced again after reaching it is declared by this concept's top-level <overflow_compensation> field (every track must answer this question)."
+        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。轨分两种：<linear_track>（有终点，推过头时按溢出补偿结算）与 <circular_track>（无终点，回绕是推轨的自然语义）。",
+        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. Tracks come in two kinds: <linear_track> (has an end; pushing past it settles per its overflow compensation) and <circular_track> (no end; wrapping around is the natural semantics of advancing)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "此轨的槽位定义，必填。**parts 形式**（与 <piece>.parts 同款）：数组元素声明「格段」——每个元素是一个 part，概念 ID 做 key，值为属性对象（或纯概念引用字符串 = 1 格）：`{ \"<concept>\": { \"count\": 9 } }`。属性：count（格数，默认 1）、scope（可选——数值轨的数值范围，如 \"1–100\"）、parts（可选——本 part 内部再分多个子 part，如某段 = [A 类格 part, B 类格 part]）、description（可选）。数字轨写一个 part + count（格数）与 scope（数值范围）；槽位轨每类格一个 part（语义相同的多格共用一个 part + count）。**引用格式**：单格 part（count 1）直接写 `<track>.<part_id>`；多格 part 写 `<track>.<part_id>[n]`——n 为 part 内 0 基偏移。description 中用「第 n+1 个」对照表述，避免偏移误导。marker 的当前位置即其所在格——以「<marker> 位于 <track>.<part_id>」或「<marker> 位于 <track>.<part_id>[n]」表达。",
+              "en": "Slot definitions for this track, required. **Parts form** (same style as <piece>.parts): array elements declare 'space segments' — each element is a part whose key is a concept id with an attribute object as value (or a plain concept-reference string = 1 space): `{ \"<concept>\": { \"count\": 9 } }`. Attributes: count (number of spaces, default 1), scope (optional — the numeric range of a numeric track, e.g. \"1–100\"), parts (optional — sub-parts within this part, e.g. a segment = [class-A space part, class-B space part]), description (optional). Numeric tracks use one part with count (spaces) and scope (range); slot-based tracks use one part per class of space (semantically identical multiple spaces share one part + count). **Reference format**: single-space parts (count 1) are referenced directly as `<track>.<part_id>`; multi-space parts use `<track>.<part_id>[n]` with n the 0-based offset within the part. Descriptions phrase it as 'the n+1-th space' to avoid offset confusion. A marker's current position is its containing space — expressed as \"<marker> is on <track>.<part_id>\" or \"<marker> is on <track>.<part_id>[n]\"."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "linear_track",
+      "extends": "<track>",
+      "name": {
+        "zh": "直线轨",
+        "en": "Linear Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "有终点的 <track>：<marker> 沿推进方向推过头（正溢出）或反向过头（负溢出）时，按本概念声明的溢出补偿字段结算。任何直线轨都有推到头的一天——推到头后再次推进发生什么，由 <overflow_compensation> / <underflow_compensation> 字段声明（每个直线轨必须回答这个问题）。",
+        "en": "A <track> with an end: when a <marker> is pushed past the end along the advance direction (positive overflow) or past the other end in reverse (negative overflow), the advance settles per this concept's overflow-compensation fields. Every linear track has an end — what happens when a <marker> is advanced again after reaching it is declared by the <overflow_compensation> / <underflow_compensation> fields (every linear track must answer this question)."
       },
       "<overflow_compensation>": {
         "default": null,
@@ -1899,8 +1941,8 @@
           {
             "id": "slots",
             "description": {
-              "zh": "此轨的槽位定义，必填。**parts 形式**（与 <piece>.parts 同款）：数组元素声明「格段」——每个元素是一个 part，概念 ID 做 key，值为属性对象（或纯概念引用字符串 = 1 格）：`{ \"<concept>\": { \"count\": 9 } }`。属性：count（格数，默认 1）、scope（可选——数值轨的数值范围，如 \"1–100\"）、parts（可选——本 part 内部再分多个子 part，如某段 = [A 类格 part, B 类格 part]）、description（可选）。数字轨写一个 part + count（格数）与 scope（数值范围）；槽位轨每类格一个 part（语义相同的多格共用一个 part + count）。**引用格式**：单格 part（count 1）直接写 `<track>.<part_id>`；多格 part 写 `<track>.<part_id>[n]`——n 为 part 内 0 基偏移。description 中用「第 n+1 个」对照表述，避免偏移误导。marker 的当前位置即其所在格——以「<marker> 位于 <track>.<part_id>」或「<marker> 位于 <track>.<part_id>[n]」表达。",
-              "en": "Slot definitions for this track, required. **Parts form** (same style as <piece>.parts): array elements declare 'space segments' — each element is a part whose key is a concept id with an attribute object as value (or a plain concept-reference string = 1 space): `{ \"<concept>\": { \"count\": 9 } }`. Attributes: count (number of spaces, default 1), scope (optional — the numeric range of a numeric track, e.g. \"1–100\"), parts (optional — sub-parts within this part, e.g. a segment = [class-A space part, class-B space part]), description (optional). Numeric tracks use one part with count (spaces) and scope (range); slot-based tracks use one part per class of space (semantically identical multiple spaces share one part + count). **Reference format**: single-space parts (count 1) are referenced directly as `<track>.<part_id>`; multi-space parts use `<track>.<part_id>[n]` with n the 0-based offset within the part. Descriptions phrase it as 'the n+1-th space' to avoid offset confusion. A marker's current position is its containing space — expressed as \"<marker> is on <track>.<part_id>\" or \"<marker> is on <track>.<part_id>[n]\"."
+              "zh": "此轨的槽位定义（同 <track>）。",
+              "en": "This track's slot definitions (as <track>)."
             }
           }
         ],
@@ -1925,8 +1967,49 @@
       }
     },
     {
-      "id": "score_track",
+      "id": "circular_track",
       "extends": "<track>",
+      "name": {
+        "zh": "环形轨",
+        "en": "Circular Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "无终点的 <track>：<marker> 推过循环终点时自然回绕到起点继续（如 99 前进 3 步 = 停在 2 并完成一圈）。环形轨没有溢出——回绕是推轨的自然语义，不需要溢出补偿字段；「完成一圈」的伴随事件（如每圈拿取 1 个圈指示物）由 <lap_event> 字段挂载。",
+        "en": "A <track> without an end: a <marker> pushed past the loop's end naturally wraps around to the start (e.g. 99 advanced 3 steps = stop on 2 and complete a lap). A circular track has no overflow — wrapping is the natural semantics of advancing, so no overflow-compensation fields apply; the companion event of completing a lap (e.g. taking 1 lap token per lap) is mounted via the <lap_event> field."
+      },
+      "<lap_event>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的圈事件：marker 完成一圈（越过循环起点）时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::lap_event> 的实例）；多个方向的事件用数组。",
+          "en": "This track's lap event: the companion event triggered when a <marker> completes a lap (crossing the loop's start). Value is a reference to this track's lap-event trigger (an instance specifying <ontology::lap_event>); use an array for multiple directions."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "此轨的槽位定义（同 <track>）。",
+              "en": "This track's slot definitions (as <track>)."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "<lap_event>",
+            "default": null,
+            "description": {
+              "zh": "本轨的圈事件（见字段声明）。",
+              "en": "This track's lap event (see field declaration)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "score_track",
+      "extends": "<circular_track>",
       "name": {
         "zh": "分轨",
         "en": "Score Track"
