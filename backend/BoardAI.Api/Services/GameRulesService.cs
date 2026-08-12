@@ -534,6 +534,7 @@ public class GameRulesService
             all.AddRange(ListConcepts(game, "sites"));
             all.AddRange(ListConcepts(game, "chips"));
             all.AddRange(ListConcepts(game, "slots"));
+            all.AddRange(ListConcepts(game, "flow"));
         }
 
         var activeTerms = localTerms.Count > 0 ? localTerms : terms;
@@ -740,30 +741,33 @@ public class GameRulesService
     private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result)
     {
         var id = node.TryGetProperty("id", out var idProp) ? idProp.GetString() ?? "" : "";
-        if (string.IsNullOrEmpty(id)) return;
-
-        var zhParts = new List<string> { id };
-
-        var nodeType = node.TryGetProperty("type", out var tp) ? tp.GetString() ?? "" : "";
-        if (!string.IsNullOrEmpty(nodeType))
-            zhParts.Add(nodeType);
-
-        if (node.TryGetProperty("name", out var name) && name.TryGetProperty("zh", out var nzh))
-            zhParts.Add(nzh.GetString()!);
-        if (node.TryGetProperty("description", out var desc) && desc.TryGetProperty("zh", out var dzh))
-            zhParts.Add(dzh.GetString()!);
-
-        result.Add(new ConceptIndexItem
+        if (!string.IsNullOrEmpty(id))
         {
-            ConceptId = id,
-            Type = "flow",
-            NameZh = node.TryGetProperty("name", out var nm) && nm.TryGetProperty("zh", out var nz)
-                ? nz.GetString() : id,
-            NameEn = null,
-            SearchText = string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))),
-        });
+            var zhParts = new List<string> { id };
 
-        // events（嵌入的 event 节点也索引入）
+            var nodeType = node.TryGetProperty("type", out var tp) ? tp.GetString() ?? "" : "";
+            if (!string.IsNullOrEmpty(nodeType))
+                zhParts.Add(nodeType);
+
+            if (node.TryGetProperty("name", out var name) && name.TryGetProperty("zh", out var nzh))
+                zhParts.Add(nzh.GetString()!);
+            if (node.TryGetProperty("description", out var desc) && desc.TryGetProperty("zh", out var dzh))
+                zhParts.Add(dzh.GetString()!);
+
+            result.Add(new ConceptIndexItem
+            {
+                ConceptId = id,
+                Type = "flow",
+                NameZh = node.TryGetProperty("name", out var nm) && nm.TryGetProperty("zh", out var nz)
+                    ? nz.GetString() : id,
+                NameEn = null,
+                SearchText = string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))),
+            });
+        }
+
+        // 递归无条件下钻（匿名 pipeline 容器也要深入）
+        // (2026-08-13: 无 id 直接 return 曾导致嵌套在 pipeline 中的流程节点
+        //  从索引缺失——与 rebuild_index 同源修复)
         if (node.TryGetProperty("events", out var events))
         {
             foreach (var evt in events.EnumerateArray())
@@ -772,13 +776,23 @@ public class GameRulesService
             }
         }
 
-        // options（pipeline 选项）
         if (node.TryGetProperty("options", out var opts))
         {
             foreach (var opt in opts.EnumerateArray())
             {
                 WalkFlowNode(opt, result);
             }
+        }
+
+        foreach (var containerKey in new[] {
+            "<ontology::pipeline>", "<ontology::action>", "<ontology::turn>",
+            "<ontology::round>", "<ontology::phase>", "<ontology::procedure>",
+            "<ontology::content>", "<ontology::cost>", "<ontology::condition>",
+            "<ontology::instant_content>", "<ontology::instant_cost>",
+            "<ontology::continuous_effect>", "<ontology::effect>" })
+        {
+            if (node.TryGetProperty(containerKey, out var container) && container.ValueKind == JsonValueKind.Object)
+                WalkFlowNode(container, result);
         }
     }
 
