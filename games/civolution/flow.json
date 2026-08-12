@@ -2218,27 +2218,12 @@
         "zh": "圆片无法推进超过进程轨的“12”格。如果你的圆片已经位于进程轨的“12”格，你将要在该轨道推进的每一步，都改为获得 2 分。",
         "en": "You can't advance beyond space 12 on any progress track. If your disc is already on space 12 of a track, gain 2 success points for every additional step you would gain there."
       },
-      "<ontology::condition>": {
-        "zh": "一次推进 <progress_marker> 的步数超过该进程轨的剩余长度（会越过 12 格终点）。",
-        "en": "An advance of a <progress_marker> would exceed the track's remaining length (crossing the space-12 end)."
-      },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "options": [
-            {
-              "<ontology::push_track>": {
-                "<ontology::track>": "被推进的进程轨",
-                "step": "剩余长度（圆片恰好到达 12 格终点）"
-              }
-            },
-            {
-              "<ontology::push_track>": {
-                "<ontology::track>": "<score_track>",
-                "step": "超出终点 12 的步数，每步 2 分"
-              }
-            }
-          ],
-          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          "<ontology::push_track>": {
+            "<ontology::track>": "<score_track>",
+            "step": "超出终点 12 的步数，每步 2 分"
+          }
         }
       }
     },
