@@ -1417,8 +1417,8 @@
                               "en": "Resolve Event Card Weather Effect"
                             },
                             "description": {
-                              "zh": "结算本时代正面朝上 <event_card> 的天气效果（右上角 <weather_trend> part）：将 <weather_indicator> 沿 <weather_gauge> 按牌面指示移动 1 或 2 步（变热向热端、变冷向冷端）；推过头（越过 <weather_gauge.hot> 或 <weather_gauge.cold>）时结算该端溢出补偿（见 <weather_gauge> 的溢出补偿挂载）。本步骤执行完毕后，由 <weather_effect> 按标记所在格结算天气效果。",
-                              "en": "Resolve the weather effect of this era's face-up <event_card> (its <weather_trend> part): move the <weather_indicator> along the <weather_gauge> by the 1 or 2 steps shown on the card (toward Hot when warming, toward Cold when cooling); if pushed past <weather_gauge.hot> or <weather_gauge.cold>, that end's overflow compensation is resolved (see the <weather_gauge>'s compensation mounts). After this step completes, <weather_effect> resolves the weather effect of the slot the indicator is on."
+                              "zh": "结算本时代正面朝上 <event_card> 的天气效果（右上角 <weather_trend> part）：将 <weather_indicator> 沿 <weather_gauge> 按牌面指示移动 1 或 2 步（变热向热端、变冷向冷端）。白线规则（越线停靠 <weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>）见 <weather_trend> 定义。本步骤执行完毕后，由 <weather_effect> 按标记所在格结算天气效果（越线格效果含推回极端格）。",
+                              "en": "Resolve the weather effect of this era's face-up <event_card> (its <weather_trend> part): move the <weather_indicator> along the <weather_gauge> by the 1 or 2 steps shown on the card (toward Hot when warming, toward Cold when cooling). The white-line rule (over-line stop on <weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>) is defined on <weather_trend>. After this step completes, <weather_effect> resolves the weather effect of the slot the indicator is on (the over-line slot's effect includes pushing back to the extreme space)."
                             },
                             "<ontology::effect>": "<event_card>.parts.<weather_trend>"
                           },
@@ -2222,40 +2222,6 @@
       }
     },
     {
-      "id": "weather_overflow",
-      "name": {
-        "zh": "天气轨热端溢出",
-        "en": "Weather Gauge Hot Overflow"
-      },
-      "specifies": "<ontology::overflow_compensation>",
-      "description": {
-        "zh": "天气标记向热端推过头（越过 <weather_gauge.hot>）时：移除 1 个 <tribe>（无选择，不可改以返还 <food> 代替）。",
-        "en": "When the weather indicator is pushed past the hot end (<weather_gauge.hot>): remove 1 <tribe> (no choice, cannot be substituted with returning <food>)."
-      },
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "<ontology::transfer>": "<remove_tribe>"
-        }
-      }
-    },
-    {
-      "id": "weather_underflow",
-      "name": {
-        "zh": "天气轨冷端溢出",
-        "en": "Weather Gauge Cold Overflow"
-      },
-      "specifies": "<ontology::underflow_compensation>",
-      "description": {
-        "zh": "天气标记向冷端推过头（越过 <weather_gauge.cold>）时：移除 1 个 <tribe>（无选择，不可改以返还 <food> 代替）。",
-        "en": "When the weather indicator is pushed past the cold end (<weather_gauge.cold>): remove 1 <tribe> (no choice, cannot be substituted with returning <food>)."
-      },
-      "<ontology::content>": {
-        "<ontology::instant_content>": {
-          "<ontology::transfer>": "<remove_tribe>"
-        }
-      }
-    },
-    {
       "id": "score_underlap",
       "name": {
         "zh": "计分轨负向圈事件",
@@ -2727,13 +2693,13 @@
         "en": "After step A of the Event phase (<adjust_weather_indicator>) completes, the weather effect of the slot the <weather_indicator> is on is resolved by all players in seating order. Positive effects may be forgone; negative effects are mandatory."
       },
       "<ontology::condition>": {
-        "zh": "事件阶段（Phase 7）A 步——<adjust_weather_indicator> 移动 <weather_indicator> 的步骤——执行完毕（触发点仅此一次：本 trigger 由该步骤完成激活，结算标记所在格的效果；溢出补偿效果内的推回极端格移动不构成触发）",
+        "zh": "事件阶段（Phase 7）A 步——<adjust_weather_indicator> 移动 <weather_indicator> 的步骤——执行完毕（触发点仅此一次：本 trigger 由该步骤完成激活，结算标记所在格的效果；越线格效果内的推回极端格移动不构成触发）",
         "en": "Step A of the Event phase (Phase 7) — the <adjust_weather_indicator> step that moves the <weather_indicator> — has completed (fired exactly once: this trigger activates at that step's completion and resolves the effect of the slot the indicator is on; the push-back movement inside an over-line slot's effect does not trigger it)"
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
-          "zh": "按座次顺位，每位玩家逐一结算 <weather_indicator> 所在 <weather_gauge> 格的效果（见其 slots 定义）：正面效果可选择放弃，负面效果必须执行；既无 <food> 也无 <tribe> 的玩家不受影响。溢出补偿效果内的推回极端格步骤属补偿的一部分，不再次触发本结算。",
-          "en": "In seating order, each player resolves the effect of the <weather_gauge> slot the <weather_indicator> is on (see its slots): positive effects may be forgone; negative effects are mandatory; a player with neither <food> nor <tribe> is unaffected. The push-back-to-extreme-space step inside an overflow compensation is part of that compensation and does not re-trigger this resolution."
+          "zh": "按座次顺位，每位玩家逐一结算 <weather_indicator> 所在 <weather_gauge> 格的效果（见其 slots 定义）：正面效果可选择放弃，负面效果必须执行；既无 <food> 也无 <tribe> 的玩家不受影响。越线格（<weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>）效果内的推回极端格步骤属该格效果的一部分，不再次触发本结算。",
+          "en": "In seating order, each player resolves the effect of the <weather_gauge> slot the <weather_indicator> is on (see its slots): positive effects may be forgone; negative effects are mandatory; a player with neither <food> nor <tribe> is unaffected. The push-back-to-extreme-space step inside an over-line slot's (<weather_gauge.hot_beyond>/<weather_gauge.cold_beyond>) effect is part of that effect and does not re-trigger this resolution."
         }
       }
     },
