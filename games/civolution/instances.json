@@ -2888,37 +2888,18 @@
         "<ontology::instant_effect>": {
           "<ontology::content>": {
             "<ontology::instant_content>": {
-              "options": [
-                {
-                  "id": "return_farms",
-                  "name": {
-                    "zh": "退回农场",
-                    "en": "Return Farms"
-                  },
-                  "<ontology::transfer>": {
-                    "source": "与火山相邻的<territory>",
-                    "destination": "各自控制台的<farm_supply>",
-                    "<ontology::object>": "<farm>",
-                    "quantity": "全部（翻开时立即退回）"
-                  }
-                },
-                {
-                  "id": "farm_ban",
-                  "name": {
-                    "zh": "禁止建造农场",
-                    "en": "Farm Ban"
-                  },
-                  "<ontology::content>": {
-                    "<ontology::continuous_content>": {
-                      "description": {
-                        "zh": "与本地点相邻的区域不能成为 <build_farm> 的 target（不能在此建造 <farm>）。",
-                        "en": "Territories adjacent to this site cannot be chosen as <build_farm>'s target (no <farm> may be built there)."
-                      }
-                    }
-                  }
-                }
-              ],
-              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              "<ontology::transfer>": {
+                "source": "与火山相邻的<territory>",
+                "destination": "各自控制台的<farm_supply>",
+                "<ontology::object>": "<farm>",
+                "quantity": "全部（翻开时立即退回）"
+              }
+            },
+            "<ontology::continuous_content>": {
+              "description": {
+                "zh": "与本地点相邻的区域不能成为 <build_farm> 的 target（不能在此建造 <farm>）。",
+                "en": "Territories adjacent to this site cannot be chosen as <build_farm>'s target (no <farm> may be built there)."
+              }
             }
           }
         }
