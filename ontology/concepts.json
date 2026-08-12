@@ -1401,6 +1401,42 @@
       }
     },
     {
+      "id": "overflow_compensation",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "溢出补偿",
+        "en": "Overflow Compensation"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "轨的通用溢出处理：任何 <track> 都有推到头的一天——当 <marker> 已被推进到终点、一次推进的步数超过剩余长度时，本次推进按本轨声明的补偿结算。实例填 <ontology::content> 声明超出部分的处理，常见形态：封顶停住 + 每步补偿（进程轨）、循环转圈（分轨）、放弃该次推进（恩惠轨）、白线越线钳制（天气轨）。各 <track> 用其顶层 <overflow_compensation> 字段挂载本轨的补偿。",
+        "en": "Generic overflow handling for tracks: every <track> has an end — when a <marker> is already at the end and an advance's steps exceed the remaining length, the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap + per-step compensation (progress tracks), loop around (score track), forgo the advance (Favor of Agera track), white-line clamp (weather gauge). Each <track> mounts its compensation via its top-level <overflow_compensation> field."
+      },
+      "<ontology::condition>": {
+        "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过或已越过终点）。",
+        "en": "An advance of a <marker> exceeds the track's remaining length (the marker would cross or has already crossed the end)."
+      },
+      "<ontology::content>": {
+        "type": "<ontology::instant_content>",
+        "description": {
+          "zh": "超出部分的结算方式（各轨实现填：停住 + 补偿 / 转圈 / 放弃 / 钳制）。",
+          "en": "How the excess is resolved (filled per track: stop + compensate / loop / forgo / clamp)."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<ontology::content>",
+            "description": {
+              "zh": "超出部分的结算方式。",
+              "en": "How the excess is resolved."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
       "id": "evaluate",
       "extends": "<trigger>",
       "name": {
@@ -1843,8 +1879,15 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。",
-        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. "
+        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。任何 <track> 都有推到头的一天——推到头后再次推进发生什么，由本概念顶层的 <overflow_compensation> 字段声明（每个轨必须回答这个问题）。",
+        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. Every <track> has an end — what happens when a <marker> is advanced again after reaching it is declared by this concept's top-level <overflow_compensation> field (every track must answer this question)."
+      },
+      "<overflow_compensation>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的溢出补偿：<marker> 推到头后再次推进时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例，如 <advance_beyond_end>），或指向内嵌机制的说明（如天气轨的越线格效果、阶段轨的停住规则）。缺省 = 推到头后无法再推进（无补偿）。",
+          "en": "This track's overflow compensation: what happens when a <marker> is advanced again after reaching the end. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>, e.g. <advance_beyond_end>), or a pointer to an embedded mechanism (e.g. the weather gauge's over-line slots, the phase sequence's stop rule). Absent = cannot advance beyond the end (no compensation)."
+        }
       },
       "constraints": {
         "required": [
@@ -1856,7 +1899,16 @@
             }
           }
         ],
-        "optional": []
+        "optional": [
+          {
+            "id": "<overflow_compensation>",
+            "default": null,
+            "description": {
+              "zh": "本轨的溢出补偿（见字段声明）。",
+              "en": "This track's overflow compensation (see field declaration)."
+            }
+          }
+        ]
       }
     },
     {

@@ -2284,6 +2284,7 @@
           "en": "This track holds all players' score markers."
         }
       },
+      "<ontology::overflow_compensation>": "<score_lap>",
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "slots": "0–100+"
@@ -2544,6 +2545,7 @@
         "zh": "位于 <progress_board> 上的 <ontology::track>，记录玩家的进程等级。推进越过奖励阈值时结算 <track_bonus>（4 种奖励类型见其定义），推过头后每步改为 2 分。5 条进程轨（<technology_track> / <prestige_track> / <knowledge_track> / <construction_track> / <culture_track>）的区别仅在于本概念的 track_type 与 bonus_die_value 两个参数。",
         "en": "A <ontology::track> on the <progress_board> recording a player's progress level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step. The five progress tracks (<technology_track> / <prestige_track> / <knowledge_track> / <construction_track> / <culture_track>) differ only in this concept's track_type and bonus_die_value parameters."
       },
+      "<ontology::overflow_compensation>": "<advance_beyond_end>",
       "track_type": {
         "type": "enum",
         "enum": ["technology", "prestige", "knowledge", "construction", "culture"],
@@ -2866,13 +2868,14 @@
           "en": "This track holds the Favor of Agera marker."
         }
       },
+      "<ontology::overflow_compensation>": "<favor_track_overflow>",
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "slots": [
         {
           "favor_of_ager_space": {
-            "count": null,
-            "scope": "0–?"
+            "count": 6,
+            "scope": "1–6"
           }
         }
       ]
@@ -2912,6 +2915,7 @@
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "<ontology::trigger>": "<weather_effect>",
+      "<ontology::overflow_compensation>": "越线钳制：<weather_indicator> 移动越过白线（落在 <weather_gauge.hot_beyond> 或 <weather_gauge.cold_beyond> 越线格）时，结算该越线格效果（移除 1 个 <tribe>）并推回白线内极端格——见 slots 越线格效果。",
       "slots": [
         {
           "hot_beyond": {
@@ -3143,6 +3147,7 @@
           "en": "This track holds the phase indicator."
         }
       },
+      "<ontology::overflow_compensation>": "推到头停住：阶段标记到达 <reset_end_space> 后，再次执行 Reset 时标记停住不再移动，直至行动阶段结束（见 <reset>）。",
       "<ontology::ownership>": null,
       "<ontology::information_visibility>": "public",
       "slots": [
