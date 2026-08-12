@@ -2037,7 +2037,7 @@
               "en": "Take 1 <hundred_point_token> from the <hundred_point_token_display> and place it next to that player's console."
             },
             "source": "<hundred_point_token_display>",
-            "destination": "该玩家控制台旁",
+            "destination": "<ontology::player_holding>",
             "<ontology::object>": "<hundred_point_token>",
             "quantity": 1
           }
@@ -2341,7 +2341,7 @@
                 "en": "Lose 1 Hundred-Point Token"
               },
               "<ontology::transfer>": {
-                "source": "该玩家控制台旁",
+                "source": "<ontology::player_holding>",
                 "destination": "<hundred_point_token_display>",
                 "<ontology::object>": "<hundred_point_token>",
                 "quantity": 1
