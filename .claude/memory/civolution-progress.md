@@ -82,6 +82,10 @@ metadata:
 
 ## 最近进展
 
+- **2026-08-12（进程轨与轨道奖励收敛为接口概念，用户定稿）**:
+    - **progress_track 接口概念**（concepts.json，extends `<ontology::track>`，abstract）：5 条轨差异仅 `track_type` + `bonus_die_value` 两个 required 参数——重复的 description/contains/ownership/visibility/slots（13 格 0–12，格名统一为 `progress_space`）全部上提；5 条轨（technology/prestige/knowledge/construction/culture）收敛为 `specifies <progress_track>` + 两参数。**bonus_die_value 数值用户口述（2026-08-12）：科技 1 / 声望 2 / 知识 3 / 建设 4 / 文化 5**。slots 格名从 xxx_space 改 progress_space（无 slot 级引用，安全）。
+    - **track_bonus 接口概念**（flow.json，specifies `<ontology::trigger>`，abstract）：required = `trigger_slot`（路径式格引用如 `<technology_track>.<slot_id>`，被 condition 引用——「`<progress_marker>` 越过 this.trigger_slot 声明的奖励线格」）+ `<ontology::content>`（触发后奖励效果，4 种类型说明在 description：升级模组按 bonus_die_value 点数匹配 / 恩惠 1 步或收入芯片 / 翻板块或 3 分 / 3 分）。原 MATCH 四候选结构删除（由实例取代）。
+    - **待办 ★（用户选定「先提交接口，实例后补」）**：5 条轨奖励线布局实例——每轨第几格有奖励线 + 每格奖励类型（数据在版图图上，需用户口述/截图后写 `<track_bonus>` 实例：trigger_slot + content 展开，内容写法参考旧 MATCH 候选的效果结构）。
 - **2026-08-09 晚（结构统一大重构：children/actor/start/end 全废弃）**:
     - **pipeline 是唯一结构原语**：`<procedure>`（round/turn/phase）多步骤时持有 `<ontology::pipeline>` 定义实际流程，单内容时直接持有概念（如 `<ontology::action>`，player_extra_find_turn 已按此改）（详见 [[pipeline-model]]）。`children` 数组、`actor`、`start`/`end` 字段全部废弃
     - **loop 定稿为 procedure 顶层字段（2026-08-09 追加）**：round/phase 执行次数（口语「进行几轮」，字段名不叫 rounds——「4」是次数）用**顶层 `loop`**（count 定次 / until 条件，**不在 pipeline 内**——loop 挂 pipeline 会逼单内容 round 包一层 pipeline，用户指出后修正：action_turn_cycle 改为「round.loop.until + 直接持有 turn」、main_gameplay 改为「phase.loop.until + 直接持有 turn_cycle」、era_loop 改为「round.loop.count 4 + pipeline 承载 8 phase」、final_scoring_categories 单元素 pipeline 改为直接持有 score_next_category（补 specifies evaluate + result））。

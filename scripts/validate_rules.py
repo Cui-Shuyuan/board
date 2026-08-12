@@ -24,7 +24,7 @@ Board AI 规则文件语法校验脚本。
   E13  <ontology::cost>/<ontology::content> 缺 instant/continuous 子层、
        直接挂执行概念 (transfer 等)、或 instant/continuous 独立存在
   E15  游戏层引用 ontology 概念缺 namespace (当前游戏无此概念 + ontology 有)
-  W01  target 是对象 (约定纯字符串; 含 type 的选择结构豁免)
+  W01  target 是对象 (约定纯字符串; 含 type 的选择结构 / key-as-type 概念引用豁免)
   W02  do_after 引用了 <概念> (应引用步骤 id)
   W03  condition 形态未知 (应为 字符串引用 | {zh,en} | {options,type})
   W04  constraints.required/optional 字段 id 无顶层声明
@@ -400,9 +400,10 @@ class Validator:
                             self.warn(f"{source} › {path} › {ckey}",
                                       f"W03 condition 形态未知 (期望 {{zh,en}}, {{description}} 或 {{options,type}}): {sorted(keys)}")
                 # W01: trigger/action 的 target 应是字符串;
-                #      ontology 字段声明 ({"type": ...}) 不检查
+                #      豁免: 含 type 键的选择结构 / key-as-type 概念引用形态
+                #      ({"<concept>": {...}}, 同 transfer 的 <ontology::object>)
                 tgt = obj.get("target")
-                if isinstance(tgt, dict) and "type" not in tgt:
+                if isinstance(tgt, dict) and "type" not in tgt and not any(k.startswith("<") for k in tgt):
                     self.warn(f"{source} › {path} › target",
                               "W01 target 是对象 — 约定纯字符串")
                 for k, v in obj.items():

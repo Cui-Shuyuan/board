@@ -2057,30 +2057,26 @@
         "en": "Interface concept for the progress-track bonus lines (bonus thresholds printed on the tracks): each bonus line is a <track_bonus> instance declaring its trigger space (trigger_slot) and bonus effect (<ontology::content>). Four bonus types: ① upgrade 1 main module (selectable if one of its two activation die cost values matches this track's bonus_die_value, see paths like <technology_track>.bonus_die_value); ② advance the Favor of Agera track 1 step OR perform 1 income chip action; ③ flip 1 stage tile to active OR gain 3 success points; ④ gain 3 success points."
       },
       "trigger_slot": {
-        "type": "string",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
         "description": {
-          "zh": "本奖励线的触发格：进程轨上的路径式格引用（如 <technology_track>.<slot_id>）。被 <ontology::condition> 引用——本玩家的 <progress_marker> 越过该格时结算本奖励。",
-          "en": "This bonus line's trigger space: a path-style space reference on a progress track (e.g. <technology_track>.<slot_id>). Referenced by <ontology::condition> — the bonus settles when the player's <progress_marker> crosses this space."
+          "zh": "本奖励线的触发格（可多个）：进程轨上的路径式格引用，如 <progress_track>.progress_space[1]（5 轨同布局，引用接口概念 <progress_track> 即覆盖全部 5 轨）。被 <ontology::condition> 引用——越过其中任一格即触发。",
+          "en": "This bonus line's trigger spaces (may be multiple): path-style space references on a progress track, e.g. <progress_track>.progress_space[1] (all five tracks share the layout, so referencing the interface concept <progress_track> covers all of them). Referenced by <ontology::condition> — crossing any of them triggers."
         }
       },
       "<ontology::condition>": {
-        "zh": "本玩家的 <progress_marker> 越过 this.trigger_slot 声明的奖励线格。",
-        "en": "A player's <progress_marker> crosses the bonus-line space declared by this.trigger_slot."
-      },
-      "<ontology::content>": {
-        "type": "<ontology::instant_content>",
-        "description": {
-          "zh": "触发后获得的奖励效果（4 种类型之一，见 description）。",
-          "en": "The bonus effect gained on trigger (one of the 4 types, see description)."
-        }
+        "zh": "本玩家的 <progress_marker> 越过 this.trigger_slot 声明的任一奖励线格。",
+        "en": "A player's <progress_marker> crosses any bonus-line space declared by this.trigger_slot."
       },
       "constraints": {
         "required": [
           {
             "id": "trigger_slot",
             "description": {
-              "zh": "本奖励线的触发格（路径式格引用，被 <ontology::condition> 引用）。",
-              "en": "This bonus line's trigger space (path-style reference, referenced by <ontology::condition>)."
+              "zh": "本奖励线的触发格（可多个：路径式格引用数组，被 <ontology::condition> 引用）。",
+              "en": "This bonus line's trigger spaces (may be multiple: array of path-style references, referenced by <ontology::condition>)."
             }
           },
           {
@@ -2092,6 +2088,147 @@
           }
         ],
         "optional": []
+      }
+    },
+    {
+      "id": "upgrade_module_bonus",
+      "name": {
+        "zh": "升级模组奖励",
+        "en": "Upgrade Module Bonus"
+      },
+      "specifies": "<track_bonus>",
+      "trigger_slot": [
+        "<progress_track>.progress_space[1]",
+        "<progress_track>.progress_space[5]"
+      ],
+      "description": {
+        "zh": "升级 1 个主模组：该模组的两个激活骰费用点数之一与推进的轨道对应的激活骰点数一致即可升级。",
+        "en": "Upgrade 1 main module: a module is upgradable if one of its two activation die cost values matches the advanced track's activation die value."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<upgrade_main_module>": {
+            "target": {
+              "<upgradable_module>": {
+                "description": {
+                  "zh": "1 个费用包含推进的轨道激活骰点数（bonus_die_value）的主模组，该模组两个激活骰费用点数之一与推进轨的 bonus_die_value 一致即可选择。",
+                  "en": "Upgrade 1 main module whose cost includes the advanced track's activation die value (bonus_die_value): selectable if one of the module's two activation die cost values matches the advanced track's bonus_die_value (see paths like <technology_track>.bonus_die_value)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "favor_or_income_bonus",
+      "name": {
+        "zh": "恩惠或收入芯片奖励",
+        "en": "Favor or Income Chip Bonus"
+      },
+      "specifies": "<track_bonus>",
+      "trigger_slot": [
+        "<progress_track>.progress_space[3]"
+      ],
+      "description": {
+        "zh": "将阿格拉恩惠轨推进 1 格，或选择 1 个已安装的收入芯片执行其效果（二选一）。",
+        "en": "Advance the Favor of Agera track 1 step, or choose 1 installed income chip and perform its action (choose one)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "<ontology::push_track>": {
+                "<ontology::track>": "<favor_of_ager_track>",
+                "step": 1
+              }
+            },
+            "<activate_income_chip>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
+    {
+      "id": "flip_or_points_bonus",
+      "name": {
+        "zh": "翻板块或得分奖励",
+        "en": "Flip Tile or Points Bonus"
+      },
+      "specifies": "<track_bonus>",
+      "trigger_slot": [
+        "<progress_track>.progress_space[9]"
+      ],
+      "description": {
+        "zh": "翻 1 个未激活的 stage tile 到激活面，或得 3 分（二选一）。",
+        "en": "Flip 1 inactive stage tile to its active side, or gain 3 success points (choose one)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "<ontology::flip>": {
+                "subject": "1 个未激活的 <stage_tile>",
+                "to": "face_up"
+              }
+            },
+            {
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": 3
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
+    {
+      "id": "points_bonus",
+      "name": {
+        "zh": "得分奖励",
+        "en": "Points Bonus"
+      },
+      "specifies": "<track_bonus>",
+      "trigger_slot": [
+        "<progress_track>.progress_space[7]",
+        "<progress_track>.progress_space[11]"
+      ],
+      "description": {
+        "zh": "得 3 分。",
+        "en": "Gain 3 success points."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "<ontology::track>": "<score_track>",
+            "step": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "advance_beyond_end",
+      "name": {
+        "zh": "推进越过终点",
+        "en": "Advance Beyond the Track End"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "圆片无法推进超过进程轨的“12”格。如果你的圆片已经位于进程轨的“12”格，你将要在该轨道推进的每一步，都改为获得 2 分。",
+        "en": "You can't advance beyond space 12 on any progress track. If your disc is already on space 12 of a track, gain 2 success points for every additional step you would gain there."
+      },
+      "<ontology::condition>": {
+        "zh": "本玩家的 <progress_marker> 已位于 <progress_track>.progress_space[12]（进程轨“12”格）时进行推进。",
+        "en": "A player's <progress_marker> is already on space 12 of a progress track (<progress_track>.progress_space[12]) and advances."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "<ontology::track>": "<score_track>",
+            "step": "本应推进的步数（每步 2 分）"
+          }
+        }
       }
     },
     {
