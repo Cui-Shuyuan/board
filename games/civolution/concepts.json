@@ -4377,8 +4377,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种可由玩家主动执行的动作型 <ontology::effect>：平时不激活（不是被动或持续效果），只有当玩家执行 <perform_activity>（选择 1 个可用的活动并激活）时，才作为候选被选中执行。实例填写 cost / target / content——如研究牌的活动形态能力（神权制的<research_ability>）、控制台印的固有活动。",
-        "en": "An action-type <ontology::effect> a player can actively perform: not active by itself (not a passive or persistent effect); it only executes when chosen as the candidate of <perform_activity> (choose 1 available activity and activate it). Instances fill cost / target / content — e.g. activity-form research card abilities (theocracy's <research_ability>), innate activities printed on the console."
+        "zh": "一种可由玩家主动执行的动作型 <ontology::effect>：平时不激活（不是被动或持续效果），只有当玩家执行 <perform_activity>（选择 1 个可用的活动并激活）时，才作为候选被选中执行。实例填写 cost / target / content。",
+        "en": "An action-type <ontology::effect> a player can actively perform: not active by itself (not a passive or persistent effect); it only executes when chosen as the candidate of <perform_activity> (choose 1 available activity and activate it). Instances fill cost / target / content."
       }
     }
   ],
