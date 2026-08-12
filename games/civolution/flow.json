@@ -2321,15 +2321,15 @@
       }
     },
     {
-      "id": "score_underflow",
+      "id": "score_underlap",
       "name": {
-        "zh": "计分轨负溢出",
-        "en": "Score Track Underflow"
+        "zh": "计分轨负向圈事件",
+        "en": "Score Track Underlap"
       },
-      "specifies": "<ontology::lap_event>",
+      "specifies": "<ontology::underlap_event>",
       "description": {
-        "zh": "分数标记向 0 以下回退（负溢出）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>），并将标记放回 99 格。",
-        "en": "When the score marker would fall below 0 (negative overflow): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>) and place the marker back on space 99."
+        "zh": "分数标记从 0 反向回绕（负向完成一圈）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>），标记自然停在 99 格。",
+        "en": "When the score marker wraps around backward from 0 (completing a lap in reverse): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>); the marker naturally stops on space 99."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {

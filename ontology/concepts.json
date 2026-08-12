@@ -1443,12 +1443,25 @@
       },
       "abstract": true,
       "description": {
-        "zh": "环形轨（<track> 的 looping 字段为 true 的轨）的伴随事件：marker 推过终点完成一圈（越过循环起点）时触发，通常用于发放或回收圈指示物。由 <track> 顶层的 <lap_event> 字段挂载。与溢出补偿的区别：环形轨无溢出——回绕是推轨的自然语义（99 前进 3 步即停在 2），圈事件只是绕圈时的附带结算。",
-        "en": "A companion event of a looping track (a <track> whose looping field is true): triggered when a <marker> completes a lap (crossing the loop's start), typically to grant or collect lap tokens. Mounted via a <track>'s top-level <lap_event> field. Unlike overflow compensation: a looping track has no overflow — wrapping around is the natural semantics of advancing (99 advanced 3 steps simply stops on 2); the lap event is only the incidental settlement when completing a lap."
+        "zh": "环形轨（<circular_track>）的正向伴随事件：marker 沿推进方向推过终点完成一圈（越过循环起点）时触发，通常用于发放圈指示物。由 <circular_track> 顶层的 <lap_event> 字段挂载。与溢出补偿的区别：环形轨无溢出——回绕是推轨的自然语义（99 前进 3 步即停在 2），圈事件只是绕圈时的附带结算。负向（反向绕圈）见 <underlap_event>。",
+        "en": "A <circular_track>'s positive companion event: triggered when a <marker> completes a lap along the advance direction (crossing the loop's start), typically to grant a lap token. Mounted via a <circular_track>'s top-level <lap_event> field. Unlike overflow compensation: a circular track has no overflow — wrapping around is the natural semantics of advancing (99 advanced 3 steps simply stops on 2); the lap event is only the incidental settlement when completing a lap. The negative direction (wrapping in reverse) is <underlap_event>."
       },
       "constraints": {
         "required": [],
         "optional": []
+      }
+    },
+    {
+      "id": "underlap_event",
+      "specifies": "<lap_event>",
+      "name": {
+        "zh": "负向圈事件",
+        "en": "Underlap Event"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "圈事件的负向方向变体：marker 反向完成一圈（从循环起点向回越过）时的伴随事件，通常用于回收圈指示物。由 <circular_track> 顶层的 <underlap_event> 字段挂载。与 <lap_event> 结构相同，仅方向不同。",
+        "en": "The negative-direction variant of <lap_event>: the companion event when a <marker> completes a lap in reverse (crossing the loop's start backward), typically to collect a lap token. Mounted via a <circular_track>'s top-level <underlap_event> field. Same structure as <lap_event>, differing only in direction."
       }
     },
     {
@@ -1975,14 +1988,21 @@
       },
       "abstract": false,
       "description": {
-        "zh": "无终点的 <track>：<marker> 推过循环终点时自然回绕到起点继续（如 99 前进 3 步 = 停在 2 并完成一圈）。环形轨没有溢出——回绕是推轨的自然语义，不需要溢出补偿字段；「完成一圈」的伴随事件（如每圈拿取 1 个圈指示物）由 <lap_event> 字段挂载。",
-        "en": "A <track> without an end: a <marker> pushed past the loop's end naturally wraps around to the start (e.g. 99 advanced 3 steps = stop on 2 and complete a lap). A circular track has no overflow — wrapping is the natural semantics of advancing, so no overflow-compensation fields apply; the companion event of completing a lap (e.g. taking 1 lap token per lap) is mounted via the <lap_event> field."
+        "zh": "无终点的 <track>：<marker> 推过循环终点时自然回绕到起点继续（如 99 前进 3 步 = 停在 2 并完成一圈）。环形轨没有溢出——回绕是推轨的自然语义，不需要溢出补偿字段；「完成一圈」的伴随事件（如每圈拿取 1 个圈指示物）由 <lap_event>（正向）/ <underlap_event>（负向）字段挂载。",
+        "en": "A <track> without an end: a <marker> pushed past the loop's end naturally wraps around to the start (e.g. 99 advanced 3 steps = stop on 2 and complete a lap). A circular track has no overflow — wrapping is the natural semantics of advancing, so no overflow-compensation fields apply; the companion events of completing a lap (e.g. taking 1 lap token per lap) are mounted via the <lap_event> (positive) / <underlap_event> (negative) fields."
       },
       "<lap_event>": {
         "default": null,
         "description": {
-          "zh": "本轨的圈事件：marker 完成一圈（越过循环起点）时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::lap_event> 的实例）；多个方向的事件用数组。",
-          "en": "This track's lap event: the companion event triggered when a <marker> completes a lap (crossing the loop's start). Value is a reference to this track's lap-event trigger (an instance specifying <ontology::lap_event>); use an array for multiple directions."
+          "zh": "本轨的正向圈事件：marker 沿推进方向完成一圈（越过循环起点）时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::lap_event> 的实例）。",
+          "en": "This track's positive lap event: the companion event triggered when a <marker> completes a lap along the advance direction (crossing the loop's start). Value is a reference to this track's lap-event trigger (an instance specifying <ontology::lap_event>)."
+        }
+      },
+      "<underlap_event>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的负向圈事件：marker 反向完成一圈（从循环起点向回越过）时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::underlap_event> 的实例）。",
+          "en": "This track's negative lap event: the companion event triggered when a <marker> completes a lap in reverse (crossing the loop's start backward). Value is a reference to this track's lap-event trigger (an instance specifying <ontology::underlap_event>)."
         }
       },
       "constraints": {
@@ -2000,8 +2020,16 @@
             "id": "<lap_event>",
             "default": null,
             "description": {
-              "zh": "本轨的圈事件（见字段声明）。",
-              "en": "This track's lap event (see field declaration)."
+              "zh": "本轨的正向圈事件（见字段声明）。",
+              "en": "This track's positive lap event (see field declaration)."
+            }
+          },
+          {
+            "id": "<underlap_event>",
+            "default": null,
+            "description": {
+              "zh": "本轨的负向圈事件（见字段声明）。",
+              "en": "This track's negative lap event (see field declaration)."
             }
           }
         ]
