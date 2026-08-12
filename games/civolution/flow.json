@@ -2020,13 +2020,13 @@
       },
       "specifies": "<ontology::lap_event>",
       "description": {
-        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上移动到或越过 0 时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
-        "en": "Whenever a player's <score_marker> moves onto or past space 0 on the <score_track>, that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
+        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上越过 99 格（从 99 前进跨过循环边界）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
+        "en": "Whenever a player's <score_marker> crosses space 99 on the <score_track> (advancing past 99 across the loop boundary), that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
       },
       "<ontology::condition>": {
         "description": {
-          "zh": "某玩家的 <score_marker> 在 <score_track> 上移动到或越过 0 格（每满 100 分完成一圈）。",
-          "en": "A player's <score_marker> has moved onto or past space 0 of the <score_track> (a full lap of 100 points)."
+          "zh": "某玩家的 <score_marker> 在 <score_track> 上越过 99 格（从 99 前进跨过循环边界）。",
+          "en": "A player's <score_marker> crosses space 99 of the <score_track> (advancing past 99 across the loop boundary)."
         }
       },
       "<ontology::content>": {
@@ -2328,8 +2328,14 @@
       },
       "specifies": "<ontology::underlap_event>",
       "description": {
-        "zh": "分数标记反向越过循环起点（从 0 回到 99）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>），标记自然停在 99 格。",
-        "en": "When the score marker crosses the loop's start in reverse (from 0 back to 99): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>); the marker naturally stops on space 99."
+        "zh": "分数标记反向越过 0（从 0 后退跨过循环边界，回到 99）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>）。",
+        "en": "When the score marker crosses space 0 in reverse (moving backward from 0 across the loop boundary, back to 99): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>)."
+      },
+      "<ontology::condition>": {
+        "description": {
+          "zh": "某玩家的 <score_marker> 在 <score_track> 上反向越过 0 格（从 0 后退跨过循环边界）。",
+          "en": "A player's <score_marker> crosses space 0 of the <score_track> in reverse (moving backward from 0 across the loop boundary)."
+        }
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
