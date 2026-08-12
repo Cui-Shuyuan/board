@@ -2988,20 +2988,6 @@
       }
     },
     {
-      "id": "building_ground",
-      "instance_of": "<building_site>",
-      "name": {
-        "zh": "建造点",
-        "en": "Building Ground"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "共 1 块。无自身效果：翻开后创造 <building_slot>（用于建造 <settlement> 或 <statue>）。",
-        "en": "1 exists. No own effect: when revealed, it creates a <building_slot> (for building <settlement> or <statue>)."
-      },
-      "score": 1
-    },
-    {
       "id": "gorge_of_grimwolves",
       "instance_of": "<effect_site>",
       "name": {
