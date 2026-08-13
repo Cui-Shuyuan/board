@@ -408,8 +408,6 @@ public class GameRulesService
 
     // ---- 查询计划（execute_plan）----
 
-    private Dictionary<string, List<string>>? _flowContexts;
-
     /// <summary>
     /// 执行 LLM 提交的查询计划。P0 仅支持 relation=explain：
     /// 实体解析（精确 id → 精确中文名 → 名称包含候选）→ 概念闭包（一层扩展）→ 流程位置链。
@@ -438,17 +436,35 @@ public class GameRulesService
         return result;
     }
 
+    private static readonly HashSet<string> PlanRelations = new(StringComparer.Ordinal)
+    {
+        "explain", "condition", "ordering", "boundary", "flow", "list"
+    };
+
     private PlanItemResult ExecutePlanQuery(string game, string relation, string entity)
     {
-        if (relation is not ("explain" or "condition"))
+        if (!PlanRelations.Contains(relation))
         {
             return new PlanItemResult
             {
                 Relation = relation,
                 Entity = entity,
                 Status = "unsupported",
-                Message = "该 relation 暂不支持，请改用 search_concepts/get_concept 工具。"
+                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list）。"
             };
+        }
+
+        // flow/list 不需要实体解析
+        if (relation == "flow")
+        {
+            var gameConcept = GetConcepts(game, "game");
+            return gameConcept.Count > 0
+                ? new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Matched = gameConcept.ToList() }
+                : new PlanItemResult { Relation = relation, Entity = entity, Status = "unresolved", Message = "未找到 game 流程概念。" };
+        }
+        if (relation == "list")
+        {
+            return new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Catalog = ListAllConceptIds(game) };
         }
 
         // 实体解析：精确 id → 精确中文名 → 名称包含候选
@@ -463,7 +479,7 @@ public class GameRulesService
                 Candidates = candidates,
                 Message = candidates.Count > 0
                     ? "实体未精确命中，以下是候选概念。"
-                    : "实体未命中任何概念，请用 search_concepts 搜索。"
+                    : "实体未命中任何概念，请用 relation=list 浏览概念目录。"
             };
         }
 
@@ -479,6 +495,13 @@ public class GameRulesService
             Related = expanded.Related
         };
 
+        var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
+        GetFlowPositions(game).TryGetValue(localId, out var pos);
+
+        // 流程位置链（flow 节点才有）：回答「在哪个阶段/回合」类语境
+        if (pos != null)
+            item.FlowContext = pos.Ancestors;
+
         // condition 关系：额外提取「能不能」答案所需的三要素——条件谓词、费用、目标约束
         if (relation == "condition" && expanded.Matched.Count > 0)
         {
@@ -488,10 +511,31 @@ public class GameRulesService
             item.Target = ExtractTopField(el, "target");
         }
 
-        // 流程位置链（flow 节点才有）：回答「在哪个阶段/回合」类语境
-        var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
-        if (GetFlowContexts(game).TryGetValue(localId, out var chain))
-            item.FlowContext = chain;
+        // ordering 关系：同级选项顺序 + 位置 + 循环结构（回答「之后是什么/何时结束」）
+        if (relation == "ordering" && pos != null)
+        {
+            item.Siblings = pos.Siblings;
+            item.PositionIndex = pos.Index;
+            item.Loop = pos.Loop;
+        }
+
+        // boundary 关系：溢出/下溢/圈事件等边界字段 + 缺省语义说明
+        if (relation == "boundary" && expanded.Matched.Count > 0)
+        {
+            var el = expanded.Matched[0];
+            var boundary = new Dictionary<string, JsonElement>();
+            foreach (var key in new[]
+                     {
+                         "<ontology::overflow_compensation>", "<ontology::underflow_compensation>",
+                         "<ontology::lap_event>", "capacity", "loop"
+                     })
+            {
+                var v = ExtractTopField(el, key);
+                if (v.HasValue) boundary[key] = v.Value;
+            }
+            item.Boundary = boundary.Count > 0 ? boundary : null;
+            item.Message = "未声明溢出/下溢补偿的轨道：缺省语义=该方向无事发生或该方向不会发生（见 ontology <ontology::overflow_compensation> 定义）。";
+        }
 
         return item;
     }
@@ -528,19 +572,37 @@ public class GameRulesService
         return new List<JsonElement>();
     }
 
-    /// <summary>flow 节点 id → 祖先链（zh 名，含自身父级，不含自己）。</summary>
-    private Dictionary<string, List<string>> GetFlowContexts(string game)
+    /// <summary>flow 节点 id → 流程位置（祖先链 + 同级选项顺序 + 位置 + 最近 loop）。</summary>
+    private Dictionary<string, FlowPosition>? _flowPositions;
+
+    public class FlowPosition
     {
-        if (_flowContexts != null) return _flowContexts;
-        var result = new Dictionary<string, List<string>>();
+        /// <summary>同级 options 的 id/引用列表（按序）——回答「之后是什么」。</summary>
+        public List<string> Siblings { get; set; } = new();
+        /// <summary>在同级 options 中的下标。</summary>
+        public int Index { get; set; } = -1;
+        /// <summary>祖先链 zh 名（不含自己）。</summary>
+        public List<string> Ancestors { get; set; } = new();
+        /// <summary>最近的 loop 结构（round/phase 的 count/until）——回答「何时结束」。</summary>
+        public JsonElement? Loop { get; set; }
+    }
+
+    private Dictionary<string, FlowPosition> GetFlowPositions(string game)
+    {
+        if (_flowPositions != null) return _flowPositions;
+        var result = new Dictionary<string, FlowPosition>();
         var flow = LoadGameFlow(game);
         if (flow != null)
-            WalkFlowContexts(flow.RootElement, new List<string>(), result);
-        _flowContexts = result;
+            WalkFlowPositions(flow.RootElement, new List<string>(), null, -1, null, result);
+        _flowPositions = result;
         return result;
     }
 
-    private static void WalkFlowContexts(JsonElement node, List<string> ancestors, Dictionary<string, List<string>> result)
+    private static void WalkFlowPositions(
+        JsonElement node, List<string> ancestors,
+        List<string>? siblingIds, int siblingIndex,
+        JsonElement? currentLoop,
+        Dictionary<string, FlowPosition> result)
     {
         if (node.ValueKind != JsonValueKind.Object) return;
 
@@ -554,21 +616,48 @@ public class GameRulesService
             && nm.TryGetProperty("zh", out zhp)
             && zhp.ValueKind == JsonValueKind.String;
 
+        // loop 沿树向下传递：最近的 procedure 祖先的 loop 是子树的循环边界
+        var loopHere = node.TryGetProperty("loop", out var lp) ? lp : currentLoop;
+
         if (!string.IsNullOrEmpty(id))
         {
-            result[id] = new List<string>(ancestors);
+            result[id] = new FlowPosition
+            {
+                Siblings = siblingIds != null ? new List<string>(siblingIds) : new List<string>(),
+                Index = siblingIndex,
+                Ancestors = new List<string>(ancestors),
+                Loop = loopHere
+            };
             if (hasName && !string.IsNullOrEmpty(zhp.GetString()))
                 ancestors.Add(zhp.GetString()!);
         }
 
         foreach (var prop in node.EnumerateObject())
         {
-            if (prop.Name == "id" || prop.Name == "name" || prop.Name == "description") continue;
+            if (prop.Name == "id" || prop.Name == "name" || prop.Name == "description" || prop.Name == "loop") continue;
+
+            if (prop.Name == "options" && prop.Value.ValueKind == JsonValueKind.Array)
+            {
+                // 收集同级 id 列表，然后逐个下钻（带新上下文）
+                var sibIds = new List<string>();
+                foreach (var opt in prop.Value.EnumerateArray())
+                {
+                    if (opt.ValueKind == JsonValueKind.String)
+                        sibIds.Add(opt.GetString()!);
+                    else if (opt.ValueKind == JsonValueKind.Object
+                        && opt.TryGetProperty("id", out var oid) && oid.ValueKind == JsonValueKind.String)
+                        sibIds.Add(oid.GetString()!);
+                }
+                for (var i = 0; i < prop.Value.GetArrayLength(); i++)
+                    WalkFlowPositions(prop.Value[i], ancestors, sibIds, i, loopHere, result);
+                continue;
+            }
+
             if (prop.Value.ValueKind == JsonValueKind.Object)
-                WalkFlowContexts(prop.Value, ancestors, result);
+                WalkFlowPositions(prop.Value, ancestors, siblingIds, siblingIndex, loopHere, result);
             else if (prop.Value.ValueKind == JsonValueKind.Array)
                 foreach (var item in prop.Value.EnumerateArray())
-                    WalkFlowContexts(item, ancestors, result);
+                    WalkFlowPositions(item, ancestors, siblingIds, siblingIndex, loopHere, result);
         }
 
         if (!string.IsNullOrEmpty(id) && hasName && !string.IsNullOrEmpty(zhp.GetString()))
@@ -1545,6 +1634,16 @@ public class PlanItemResult
     public JsonElement? Cost { get; set; }
     /// <summary>condition 关系专用：目标约束（target 字段）。</summary>
     public JsonElement? Target { get; set; }
+    /// <summary>ordering 关系专用：同级 options 的 id/引用列表（按序）。</summary>
+    public List<string> Siblings { get; set; } = new();
+    /// <summary>ordering 关系专用：在同级 options 中的下标。</summary>
+    public int PositionIndex { get; set; } = -1;
+    /// <summary>ordering 关系专用：最近的 loop 结构（count/until）。</summary>
+    public JsonElement? Loop { get; set; }
+    /// <summary>boundary 关系专用：溢出/下溢/圈事件/容量/循环等边界字段。</summary>
+    public Dictionary<string, JsonElement>? Boundary { get; set; }
+    /// <summary>list 关系专用：全量概念目录（id+名称，按类型分组）。</summary>
+    public ListConceptsResult? Catalog { get; set; }
 }
 
 public class ListConceptsResult

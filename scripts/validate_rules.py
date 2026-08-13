@@ -87,6 +87,10 @@ class Validator:
         self.this_params: dict[str, set[str]] = {}  # source → this.xxx 模板参数引用 (E12 按文件判定)
         self.field_appearances: dict[str, set[str]] = {}  # 字段名 → 声明它的概念集合 (专属参数判定)
         self.game_defs: dict[str, set[str]] = {}  # 游戏名 → 该游戏定义的全部 id (E15 namespace 判定)
+        # E14 独立概念 id 重复定义: (source, oid) → 出现次数 (带 extends/specifies/instance_of 的节点)
+        self.standalone_dups: dict[tuple[str, str], int] = {}
+        # W06 独立概念中文名重复: (source, name.zh) → id 集合 (实体解析按精确名匹配, 重名造成歧义)
+        self.name_dups: dict[tuple[str, str], set[str]] = {}
 
     # ── 工具 ──────────────────────────────────────────────
     def err(self, loc: str, msg: str): self.issues.append(("ERROR", loc, msg))
@@ -195,6 +199,15 @@ class Validator:
                     (self.ontology_ids if is_ontology else self.game_ids).add(oid)
                     if not is_ontology and source.startswith("games/"):
                         self.game_defs.setdefault(source.split("/")[1], set()).add(oid)
+                    # E14: 独立概念 (带层级关系字段) 重复定义检测
+                    if any(r in obj for r in ("extends", "specifies", "instance_of")):
+                        key = (source, oid)
+                        self.standalone_dups[key] = self.standalone_dups.get(key, 0) + 1
+                    # W06: 独立概念中文名重复检测 (排除 _skip)
+                    nm = obj.get("name")
+                    if isinstance(nm, dict) and isinstance(nm.get("zh"), str) and oid != "_skip":
+                        nk = (source, nm["zh"])
+                        self.name_dups.setdefault(nk, set()).add(oid)
                     # 概念字段与继承链: ontology 先收集, game 层重名不覆盖 (setdefault)
                     top = {self.norm_field(k) for k in obj.keys()
                            if k not in ("id", "name", "abstract", "description", "definition",
@@ -541,6 +554,15 @@ class Validator:
         # 阶段二: 逐文件检查
         for p, src, is_onto in targets:
             self.check_file(p, src, is_onto)
+
+        # E14: 独立概念 id 重复定义 (execute_plan 实体解析按 id 定位, 重复破坏确定性)
+        for (src, oid), count in sorted(self.standalone_dups.items()):
+            if count > 1:
+                self.err(src, f"E14 独立概念 <{oid}> 定义了 {count} 次 — 同 id 多处定义会造成查询歧义")
+        # W06: 独立概念中文名重复 (execute_plan 按精确中文名解析, 重名返回多结果)
+        for (src, zh), ids in sorted(self.name_dups.items()):
+            if len(ids) > 1:
+                self.warn(src, f"W06 中文名「{zh}」被多个概念使用: {sorted(ids)}")
 
         # ontology constraints 顶层字段引用 + E11/W05
         if self.include_ontology:

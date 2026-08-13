@@ -613,7 +613,7 @@
                   "to": "随机选中的玩家"
                 },
                 {
-                  "id": "give_starting_monolith",
+                  "id": "hand_over_starting_monolith",
                   "name": {
                     "zh": "给予起始纪念碑",
                     "en": "Give Starting Monolith"
@@ -2780,7 +2780,7 @@
         "<ontology::instant_content>": {
           "options": [
             {
-              "id": "take_from_display",
+              "id": "take_income_chip_from_display",
               "name": {
                 "zh": "从展示区拿取",
                 "en": "Take From Display"
@@ -2792,7 +2792,7 @@
               "quantity": 1
             },
             {
-              "id": "refill_display",
+              "id": "refill_income_display",
               "name": {
                 "zh": "补满展示区",
                 "en": "Refill Display"
@@ -2802,7 +2802,7 @@
               "destination": "<income_chip_display>",
               "<ontology::object>": "<income_chip>",
               "quantity": 1,
-              "do_after": "take_from_display"
+              "do_after": "take_income_chip_from_display"
             },
             {
               "id": "install",
@@ -2811,7 +2811,7 @@
                 "en": "Install"
               },
               "specifies": "<install_income_chip>",
-              "do_after": "refill_display"
+              "do_after": "refill_income_display"
             },
             {
               "id": "trigger_effect",
@@ -3908,7 +3908,7 @@
         "<ontology::instant_content>": {
           "options": [
             {
-              "id": "take_from_display",
+              "id": "take_activation_die_from_display",
               "name": {
                 "zh": "从展示区拿取",
                 "en": "Take from Display"
@@ -3978,7 +3978,7 @@
               }
             },
             {
-              "id": "take_from_most_holder",
+              "id": "take_activation_die_from_most_holder",
               "name": {
                 "zh": "从持有最多者处拿取",
                 "en": "Take from the Most Holder"
@@ -4067,7 +4067,7 @@
         "<ontology::instant_content>": {
           "options": [
             {
-              "id": "take_from_display",
+              "id": "take_fate_die_from_display",
               "name": {
                 "zh": "从展示区拿取",
                 "en": "Take from Display"
@@ -4121,7 +4121,7 @@
               }
             },
             {
-              "id": "take_from_most_holder",
+              "id": "take_fate_die_from_most_holder",
               "name": {
                 "zh": "从持有最多者处拿取",
                 "en": "Take from the Most Holder"
@@ -4211,7 +4211,7 @@
               }
             },
             {
-              "id": "refill_display",
+              "id": "refill_goal_chip_display",
               "name": {
                 "zh": "补满展示区",
                 "en": "Refill Display"

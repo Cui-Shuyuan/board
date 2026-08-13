@@ -135,94 +135,23 @@ public class ChatOrchestratorService
 
     private List<ToolDefinition> BuildTools(string gameId)
     {
+        // 架构：LLM 只提交查询计划，规则检索全部由程序执行。
+        // 其他检索接口不再对 LLM 暴露，作为程序内部能力被 ExecutePlan 使用。
         return new List<ToolDefinition>
         {
             new()
             {
                 Function = new FunctionDefinition
                 {
-                    Name = "search_concepts",
-                    Description = $"通过关键词搜索当前游戏《{gameId}》中的概念、行动、条件、触发器等。支持 ontology 命名空间查询，例如 'ontology::resource' 只搜索 ontology 中的 resource 概念；不带命名空间时同时搜索当前游戏和 ontology。search_mode=name 时只用概念名称匹配（适合精确查找 action/概念），search_mode=full 时用全文匹配（适合模糊搜索规则细节）。默认 full。结果中每个概念带 TermScores（查询被切分后每个词的双通道匹配分 vector/keyword，整句匹配分在 FullQueryScore）：某个词在多数结果上都很低，说明该说法在规则中没有对应表述，考虑换个说法再搜。",
-                    Parameters = JsonDocument.Parse("""
-                    {
-                      "type": "object",
-                      "properties": {
-                        "query": {
-                          "type": "string",
-                          "description": "搜索关键词，可以是中文或英文；支持 'ontology::concept_id' 格式限定只查 ontology。查找具体 action/概念时用简洁短语（如 '造船'），查找规则细节时用完整描述。"
-                        },
-                        "search_mode": {
-                          "type": "string",
-                          "enum": ["name", "full"],
-                          "description": "搜索模式：name=只用概念名称匹配（精确查找 action/概念名），full=全文本匹配（适合模糊搜索规则描述）。默认 full。"
-                        }
-                      },
-                      "required": ["query"]
-                    }
-                    """).RootElement
-                }
-            },
-            new()
-            {
-                Function = new FunctionDefinition
-                {
-                    Name = "get_concept",
-                    Description = $"通过概念 ID 获取当前游戏《{gameId}》中的详细信息，包括定义、条件、触发效果等。返回 matched（直接命中的概念）与 related（这些概念直接引用的概念，已自动扩展一层，其内部引用已标注中文名）。related 不会继续往下扩展，如需更深一层的详情请用 related 内概念的 ID 继续调用本工具。支持 'ontology::concept_id' 格式只查询 ontology；不带命名空间时同时查询当前游戏和 ontology。",
-                    Parameters = JsonDocument.Parse("""
-                    {
-                      "type": "object",
-                      "properties": {
-                        "concept_id": {
-                          "type": "string",
-                          "description": "概念 ID；可带 'ontology::' 前缀限定 ontology，如 'ontology::resource'"
-                        }
-                      },
-                      "required": ["concept_id"]
-                    }
-                    """).RootElement
-                }
-            },
-            new()
-            {
-                Function = new FunctionDefinition
-                {
-                    Name = "get_game_flow",
-                    Description = $"获取《{gameId}》的整体游戏流程：游戏分几个阶段/时代、按什么顺序进行、每个阶段做什么、游戏如何结束。客人问整体流程、游戏怎么走、分几个阶段这类问题时直接用它，不要用 search_concepts 搜。",
-                    Parameters = JsonDocument.Parse("""
-                    {
-                      "type": "object",
-                      "properties": {},
-                      "required": []
-                    }
-                    """).RootElement
-                }
-            },
-            new()
-            {
-                Function = new FunctionDefinition
-                {
-                    Name = "get_action_conditions",
-                    Description = "获取某个行动的所有前置条件和触发条件。",
-                    Parameters = JsonDocument.Parse("""
-                    {
-                      "type": "object",
-                      "properties": {
-                        "action_id": {
-                          "type": "string",
-                          "description": "行动 ID"
-                        }
-                      },
-                      "required": ["action_id"]
-                    }
-                    """).RootElement
-                }
-            },
-            new()
-            {
-                Function = new FunctionDefinition
-                {
                     Name = "execute_plan",
-                    Description = $"查询计划执行器：把客人的规则问题编译成结构化查询计划，一次拿到全部相关事实（概念定义 + 一层引用 + 流程位置），无需逐次搜索。relation 支持：explain（「X 是什么」「X 怎么结算」「X 有什么效果」）、condition（「能不能 X」「X 有什么前提」——返回条件谓词、费用、目标约束三要素）。entity 填概念 id 或准确中文名。实体无法精确命中时会返回候选，请用候选中的确切 id 或名字重试；plan 表达不了的问题请改用 search_concepts/get_concept。",
+                    Description = @"唯一工具：查询计划执行器。把客人的规则问题编译成结构化查询计划，程序执行后把所有事实摆在返回结果里（概念定义、一层引用、流程位置、顺序/条件/边界等）。relation 选择：
+- explain：X 是什么 / 怎么结算 / 怎么做 / 有什么效果 / 有几个（数量参数就在概念定义里）
+- condition：能不能 X / X 有什么前提 / 什么限制（返回条件谓词、费用、目标约束）
+- ordering：X 之后是什么 / 先后顺序 / 什么时候结束 / 每轮怎么轮转（返回同级选项顺序、位置、循环结构）
+- boundary：X 不会发生什么 / 满了怎么办 / 上限多少（返回溢出补偿、容量等边界字段；未声明溢出补偿的轨道默认无事发生）
+- flow：整体游戏流程（几个阶段、怎么进行、怎么结束）
+- list：浏览全部概念目录（实体解析失败需要找概念时用）
+entity 填概念 id 或准确中文名（flow/list 不需要 entity）。一个问题涉及多个概念时，一个 plan 里放多个 queries 一次拿全。实体解析失败会返回候选列表：从候选中挑确切的名字重新发起计划；没有候选用 list 浏览。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
@@ -237,14 +166,14 @@ public class ChatOrchestratorService
                                 "properties": {
                                   "relation": {
                                     "type": "string",
-                                    "enum": ["explain", "condition"]
+                                    "enum": ["explain", "condition", "ordering", "boundary", "flow", "list"]
                                   },
                                   "entity": {
                                     "type": "string",
-                                    "description": "概念 id 或准确中文名，如 activation_die 或 激活骰"
+                                    "description": "概念 id 或准确中文名（flow/list 可省略）"
                                   }
                                 },
-                                "required": ["relation", "entity"]
+                                "required": ["relation"]
                               }
                             }
                           },
@@ -252,21 +181,6 @@ public class ChatOrchestratorService
                         }
                       },
                       "required": ["plan"]
-                    }
-                    """).RootElement
-                }
-            },
-            new()
-            {
-                Function = new FunctionDefinition
-                {
-                    Name = "list_concept_ids",
-                    Description = "列出当前游戏所有概念的 ID 和名称，按类型分组。这是穷举列表——用于确认某个概念是否存在，或浏览全部概念目录。极轻量，不包含详细定义。只在 search_concepts 找不到预期概念或需要穷举浏览时使用。",
-                    Parameters = JsonDocument.Parse("""
-                    {
-                      "type": "object",
-                      "properties": {},
-                      "required": []
                     }
                     """).RootElement
                 }
