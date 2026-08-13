@@ -86,7 +86,7 @@
       "lucky_harvest_die": {
         "type": "string",
         "description": {
-          "zh": "幸运收获时，命运骰需掷出的点数范围。",
+          "zh": "幸运收获时，<fate_die>需掷出的点数范围。",
           "en": "The fate die result range needed for Lucky Harvest."
         }
       },
@@ -909,7 +909,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "放置在骰子格上的标记，可替代对应点数的激活骰用于激活模组（见 <ontology::substitution>）。只能替代<activation_die>，不能替代<fate_die>。用作支付时放回供应堆（<ontology::supply>），不进入玩家保留区。",
+        "zh": "放置在骰子格上的标记，可替代对应点数的<activation_die>用于激活模组（见 <ontology::substitution>）。只能替代<activation_die>，不能替代<fate_die>。用作支付时放回供应堆（<ontology::supply>），不进入玩家保留区。",
         "en": "A marker placed on a dice space, usable in place of an activation die of the matching value when activating a module (see <ontology::substitution>). Can only replace <activation_die>s, not <fate_die>s. When used as payment, the marker is returned to the supply (<ontology::supply>), not to a player holding."
       },
       "component": "<octagonal_pillar>",
@@ -931,7 +931,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "特殊的计划标记，可当作任意点数的计划标记使用：需要任意点数的激活骰时，可从焦点格放回供应堆替代之（见 <ontology::substitution>）。",
+        "zh": "特殊的计划标记，可当作任意点数的计划标记使用：需要任意点数的<activation_die>时，可从焦点格放回供应堆替代之（见 <ontology::substitution>）。",
         "en": "A special planning marker usable as a planning marker of any value: when an activation die of a specific value is needed, one focus marker can be returned from the focus space to the supply in its place (see <ontology::substitution>)."
       },
       "component": "<octagonal_pillar>",
@@ -2344,7 +2344,7 @@
               "en": "upper-right area of the progress board"
             },
             "description": {
-              "zh": "公共骰子供应区，存放激活骰和命运骰",
+              "zh": "公共骰子供应区，存放<activation_die>和<fate_die>",
               "en": "public dice supply holding activation dice and fate dice"
             }
           }
@@ -2463,7 +2463,7 @@
       "bonus_die_value": {
         "type": "integer",
         "description": {
-          "zh": "本轨对应的激活骰点数，用于 <track_bonus> 升级模组奖励的匹配：费用含此点数的主模组可升级（路径式引用如 <technology_track>.bonus_die_value）。",
+          "zh": "本轨对应的<activation_die>点数，用于 <track_bonus> 升级模组奖励的匹配：费用含此点数的主模组可升级（路径式引用如 <technology_track>.bonus_die_value）。",
           "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable (referenced as paths like <technology_track>.bonus_die_value)."
         }
       },
@@ -2496,7 +2496,7 @@
           {
             "id": "bonus_die_value",
             "description": {
-              "zh": "本轨对应的激活骰点数（规则书：奖励阈值上印的数值）。",
+              "zh": "本轨对应的<activation_die>点数（规则书：奖励阈值上印的数值）。",
               "en": "The activation die value this track corresponds to (rulebook: the value printed on the bonus threshold)."
             }
           }
@@ -2574,7 +2574,7 @@
       "capacity": {
         "type": "integer",
         "description": {
-          "zh": "激活骰与命运骰分别最多存放「玩家人数 + 1」个。",
+          "zh": "<activation_die>与<fate_die>分别最多存放「玩家人数 + 1」个。",
           "en": "At most (player count + 1) of each die type."
         }
       },
@@ -3751,7 +3751,7 @@
         {
           "<feature_space>": {
             "position": {
-              "zh": "面板右半边，模组区下方，激活骰子区下方",
+              "zh": "面板右半边，模组区下方，<activation_dice_area>下方",
               "en": "right half of the <console>, below <module_area>, below <activation_dice_area>"
             }
           }
@@ -3822,7 +3822,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<console> 右半边放置 <activation_die> 的区域，位于 <module_area> 下方、<feature_space> 上方。分为 6 格，分别对应骰子点数 1 至 6——每颗激活骰子掷出后放在与点数匹配的格上。激活模组时从此区取用骰子；Reset 的 B 步回收所有已使用的激活骰子重掷并放回。控制台外另有 <fate_dice_area> 和 <planning_marker> 的放置位。",
+        "zh": "<console> 右半边放置 <activation_die> 的区域，位于 <module_area> 下方、<feature_space> 上方。分为 6 格，分别对应骰子点数 1 至 6——每颗<activation_die>掷出后放在与点数匹配的格上。激活模组时从此区取用骰子；Reset 的 B 步回收所有已使用的<activation_die>重掷并放回。控制台外另有 <fate_dice_area> 和 <planning_marker> 的放置位。",
         "en": "The area on the right half of the <console> for <activation_die>s, located below the <module_area> and above the <feature_space>. Divided into 6 spaces, one per die value 1 through 6 — each rolled activation die is placed on the matching space. Dice are taken from this area to activate modules; Reset step B retrieves all used activation dice, re-rolls them, and returns them here. Outside the console, there are separate spots for the <fate_dice_area> and <planning_marker>."
       }
     },
@@ -4232,7 +4232,7 @@
           "en": "left of reset columns"
         },
         "description": {
-          "zh": "A: 推动阶段标记至下一个 reset space（到达红色格触发行动阶段结束）。B: 回收所有已使用的激活骰子重掷并放回。C: 重置标记移至创意格或食物格。",
+          "zh": "A: 推动阶段标记至下一个 reset space（到达红色格触发行动阶段结束）。B: 回收所有已使用的<activation_die>重掷并放回。C: 重置标记移至创意格或食物格。",
           "en": "A: Advance phase indicator to next reset space (red space triggers Action Phase end). B: Retrieve all used activation dice, re-roll and return. C: Move reset marker to idea space or food space."
         }
       }

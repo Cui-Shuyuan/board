@@ -186,6 +186,21 @@ public class ChatOrchestratorService
             {
                 Function = new FunctionDefinition
                 {
+                    Name = "get_game_flow",
+                    Description = $"获取《{gameId}》的整体游戏流程：游戏分几个阶段/时代、按什么顺序进行、每个阶段做什么、游戏如何结束。客人问整体流程、游戏怎么走、分几个阶段这类问题时直接用它，不要用 search_concepts 搜。",
+                    Parameters = JsonDocument.Parse("""
+                    {
+                      "type": "object",
+                      "properties": {},
+                      "required": []
+                    }
+                    """).RootElement
+                }
+            },
+            new()
+            {
+                Function = new FunctionDefinition
+                {
                     Name = "get_action_conditions",
                     Description = "获取某个行动的所有前置条件和触发条件。",
                     Parameters = JsonDocument.Parse("""
@@ -245,6 +260,14 @@ public class ChatOrchestratorService
                         return result.Matched.Count > 0
                             ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId)
                             : $"{{\"error\": \"Concept '{conceptId}' not found\"}}";
+                    }
+
+                case "get_game_flow":
+                    {
+                        var concepts = _rulesService.GetConcepts(gameId, "game");
+                        return concepts.Count > 0
+                            ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(concepts, ToolResultOptions), gameId)
+                            : $"{{\"error\": \"Game flow concept 'game' not found for '{gameId}'\"}}";
                     }
 
                 case "get_action_conditions":

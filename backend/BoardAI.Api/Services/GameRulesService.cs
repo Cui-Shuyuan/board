@@ -880,10 +880,24 @@ public class GameRulesService
         }
     }
 
+    /// <summary>
+    /// 独立概念节点判据：带层级关系字段（specifies/extends/instance_of）的节点才是
+    /// 可被搜索的概念；仅 id+name 的节点是 pipeline 局部步骤（do_after 引用名），
+    /// 不入搜索索引与目录（get_concept 按 id 仍可查到）。
+    /// </summary>
+    private static bool IsStandaloneFlowNode(JsonElement node) =>
+        node.TryGetProperty("specifies", out _)
+        || node.TryGetProperty("extends", out _)
+        || node.TryGetProperty("instance_of", out _);
+
     private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result)
     {
         var id = node.TryGetProperty("id", out var idProp) ? idProp.GetString() ?? "" : "";
-        if (!string.IsNullOrEmpty(id))
+        // 只索引独立概念节点（有 id 且有 specifies/extends/instance_of）：
+        // 局部步骤（仅 id+name，do_after 引用用）不入索引——短名短描述是向量噪音，
+        // 且同 id 跨位置重复互相覆盖；步骤信息随父概念的 get_concept 完整返回。
+        // game 等通用容器概念（各游戏共有的顶层流程宿主）也不入索引。
+        if (!string.IsNullOrEmpty(id) && id != "game" && IsStandaloneFlowNode(node))
         {
             var zhParts = new List<string> { id };
 
@@ -903,7 +917,9 @@ public class GameRulesService
                 NameZh = node.TryGetProperty("name", out var nm) && nm.TryGetProperty("zh", out var nz)
                     ? nz.GetString() : id,
                 NameEn = null,
-                SearchText = string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))),
+                // <> 引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
+                SearchText = ConceptRefRegex.Replace(
+                    string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))), ""),
             });
         }
 
@@ -967,7 +983,8 @@ public class GameRulesService
                 if (def.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
             }
         }
-        return string.Join(" ", parts.Where(p => !string.IsNullOrEmpty(p)));
+        // <> 包裹的概念引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
+        return ConceptRefRegex.Replace(string.Join(" ", parts.Where(p => !string.IsNullOrEmpty(p))), "");
     }
 
     private static string? ExtractEnName(JsonElement? element)
@@ -1103,13 +1120,14 @@ public class GameRulesService
 
     private static void WalkFlowForSummaries(JsonElement node, List<ConceptSummary> results, HashSet<string> seen)
     {
-        // 只汇总带 id 的节点；匿名容器（pipeline 等）不汇总但继续下钻
+        // 只汇总独立概念节点（有 id 且有 specifies/extends/instance_of）；
+        // 匿名容器（pipeline 等）不汇总但继续下钻
         // (2026-08-13: 无 id 直接 return 曾导致嵌套在 pipeline 中的流程节点
         //  从 list_concept_ids 缺失——与 rebuild_index 同源修复)
         if (node.TryGetProperty("id", out var idProp))
         {
             var id = idProp.GetString() ?? string.Empty;
-            if (!string.IsNullOrEmpty(id) && seen.Add(id))
+            if (!string.IsNullOrEmpty(id) && IsStandaloneFlowNode(node) && seen.Add(id))
             {
                 results.Add(new ConceptSummary
                 {

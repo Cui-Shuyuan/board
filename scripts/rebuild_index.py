@@ -14,6 +14,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import uuid
 from pathlib import Path
 from typing import Any
@@ -28,6 +29,18 @@ BOARD_ROOT = Path(__file__).resolve().parent.parent
 MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-small-zh"
 QDRANT_URL = "http://localhost:6333"
 BATCH_SIZE = 100
+
+# 概念引用正则——与后端 AnnotateReferences 同一模式
+REF_PATTERN = re.compile(r"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>")
+
+# 不参与向量相似度计算的概念（顶层聚合容器，各游戏通用，只作流程宿主）
+EXCLUDED_CONCEPT_IDS = {"game"}
+
+
+def strip_refs(text: str) -> str:
+    """<> 包裹的概念引用不参与相似度计算：引用由精确查询（get_concept 注解/扩展）导航，
+    其字面（含英文 id）不应污染概念自身语义的向量（2026-08-13 实验规则）。"""
+    return REF_PATTERN.sub("", text)
 
 
 # ---- UUID ----
@@ -212,10 +225,11 @@ def extract_flow(file_path: Path) -> list[dict[str, Any]]:
 
     def walk(node: dict):
         node_id = node.get("id", "")
-        if node_id:
-            # 只索引带 id 的节点（概念/流程节点）；匿名容器（pipeline 等）与
-            # 匿名操作（{"<ontology::flip>": {...}}）不提取——无 name 是中文搜索噪音，
-            # 且同 id 跨位置重复会互相覆盖（2026-08-13 修复）
+        # 只索引独立概念节点：有 id 且有 specifies/extends/instance_of。
+        # 局部步骤（仅 id+name，do_after 引用用）不入索引——短名+短描述是向量噪音，
+        # 且同 id 跨位置重复（roll_die ×2、_skip ×10 等）会互相覆盖；步骤信息
+        # 随父概念的 get_concept 完整返回（2026-08-13 判据收紧）
+        if node_id and any(k in node for k in ("specifies", "extends", "instance_of")):
             parts = [node_id]
             node_type = node.get("type", "")
             if node_type:
@@ -305,6 +319,9 @@ def rebuild_game(game_id: str):
     if flow_path.exists():
         add(extract_flow(flow_path), "game_flow")
 
+    # 排除通用容器概念（game 等）——只作流程宿主，不参与语义检索
+    items = [c for c in items if c["concept_id"] not in EXCLUDED_CONCEPT_IDS]
+
     if not items:
         print(f"  No concepts found for '{game_id}'")
         return
@@ -337,8 +354,9 @@ def rebuild_game(game_id: str):
 
     for i in range(0, len(items), BATCH_SIZE):
         batch = items[i:i + BATCH_SIZE]
-        full_vectors = [embed(c["search_text"]).tolist() for c in batch]
-        name_vectors = [embed(c["name_text"]).tolist() for c in batch]
+        # 嵌入前剥离 <> 引用——概念引用不参与相似度计算
+        full_vectors = [embed(strip_refs(c["search_text"])).tolist() for c in batch]
+        name_vectors = [embed(strip_refs(c["name_text"])).tolist() for c in batch]
 
         full_points = []
         name_points = []

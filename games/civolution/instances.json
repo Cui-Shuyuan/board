@@ -1629,7 +1629,7 @@
         {
           "level": 1,
           "description": {
-            "zh": "获得 1 个激活骰或 1 个命运骰；或从手牌安装 1 张成就牌。",
+            "zh": "获得 1 个<activation_die>或 1 个<fate_die>；或从手牌安装 1 张成就牌。",
             "en": "Gain either 1 activation die or 1 fate die; or install 1 achievement card from your hand."
           },
           "<ontology::instant_effect>": {
@@ -1658,7 +1658,7 @@
         {
           "level": 2,
           "description": {
-            "zh": "获得 1 个激活骰和 1 个命运骰；或从手牌安装 1 张成就牌。",
+            "zh": "获得 1 个<activation_die>和 1 个<fate_die>；或从手牌安装 1 张成就牌。",
             "en": "Gain 1 activation die and 1 fate die; or install 1 achievement card from your hand."
           },
           "<ontology::instant_effect>": {
@@ -1687,7 +1687,7 @@
         {
           "level": 3,
           "description": {
-            "zh": "获得 1 个激活骰和 1 个命运骰；或从手牌安装 1 张成就牌并选择特殊奖励（忽略 1 个非唯一费用格，或再安装 1 张同类型牌）。",
+            "zh": "获得 1 个<activation_die>和 1 个<fate_die>；或从手牌安装 1 张成就牌并选择特殊奖励（忽略 1 个非唯一费用格，或再安装 1 张同类型牌）。",
             "en": "Gain 1 activation die and 1 fate die; or install 1 achievement card from your hand with the special bonus (ignore 1 non-unique cost space, or install another card of the same type)."
           },
           "<ontology::instant_effect>": {

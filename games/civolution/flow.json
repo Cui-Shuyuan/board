@@ -382,12 +382,12 @@
                 {
                   "id": "player_setup_modules",
                   "name": {
-                    "zh": "玩家设置模组",
+                    "zh": "玩家设置<upgradable_module>",
                     "en": "Player Setup Modules"
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家拿取 15 个主模组并翻至等级一面，放入控制台模组区。",
+                    "zh": "每位玩家拿取 15 个<upgradable_module>并翻至等级一面，放入控制台<module_area>区。",
                     "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
                   },
                   "source": "<ontology::game_box>",
@@ -416,7 +416,7 @@
                 {
                   "id": "player_setup_fate_die",
                   "name": {
-                    "zh": "玩家设置命运骰",
+                    "zh": "玩家设置<fate_die>",
                     "en": "Player Setup Fate Die"
                   },
                   "specifies": "<ontology::transfer>",
@@ -2047,7 +2047,7 @@
       "specifies": "<ontology::trigger>",
       "abstract": true,
       "description": {
-        "zh": "进程轨奖励线（印在轨上的奖励阈值）的接口概念：每条奖励线是一个 <track_bonus> 实例，声明自己的触发格（trigger_slot）与奖励效果（<ontology::content>）。共 4 种奖励类型：① 升级主模组（模组两个激活骰费用点数之一与本轨 bonus_die_value 一致即可选择，见 <technology_track>.bonus_die_value 等路径）；② 恩惠轨推进 1 格或执行 1 个收入芯片效果（二选一）；③ 翻 1 个 stage tile 到激活面或得 3 分（二选一）；④ 得 3 分。",
+        "zh": "进程轨奖励线（印在轨上的奖励阈值）的接口概念：每条奖励线是一个 <track_bonus> 实例，声明自己的触发格（trigger_slot）与奖励效果（<ontology::content>）。共 4 种奖励类型：① 升级主模组（模组两个<activation_die>费用点数之一与本轨 bonus_die_value 一致即可选择，见 <technology_track>.bonus_die_value 等路径）；② 恩惠轨推进 1 格或执行 1 个收入芯片效果（二选一）；③ 翻 1 个 stage tile 到激活面或得 3 分（二选一）；④ 得 3 分。",
         "en": "Interface concept for the progress-track bonus lines (bonus thresholds printed on the tracks): each bonus line is a <track_bonus> instance declaring its trigger space (trigger_slot) and bonus effect (<ontology::content>). Four bonus types: ① upgrade 1 main module (selectable if one of its two activation die cost values matches this track's bonus_die_value, see paths like <technology_track>.bonus_die_value); ② advance the Favor of Agera track 1 step OR perform 1 income chip action; ③ flip 1 stage tile to active OR gain 3 success points; ④ gain 3 success points."
       },
       "trigger_slot": {
@@ -2096,7 +2096,7 @@
         "<progress_track>.progress_space[5]"
       ],
       "description": {
-        "zh": "升级 1 个主模组：该模组的两个激活骰费用点数之一与推进的轨道对应的激活骰点数一致即可升级。",
+        "zh": "升级 1 个主模组：该模组的两个<activation_die>费用点数之一与推进的轨道对应的<activation_die>点数一致即可升级。",
         "en": "Upgrade 1 main module: a module is upgradable if one of its two activation die cost values matches the advanced track's activation die value."
       },
       "<ontology::content>": {
@@ -2105,7 +2105,7 @@
             "target": {
               "<upgradable_module>": {
                 "description": {
-                  "zh": "1 个费用包含推进的轨道激活骰点数（bonus_die_value）的主模组，该模组两个激活骰费用点数之一与推进轨的 bonus_die_value 一致即可选择。",
+                  "zh": "1 个费用包含推进的轨道<activation_die>点数（bonus_die_value）的主模组，该模组两个<activation_die>费用点数之一与推进轨的 bonus_die_value 一致即可选择。",
                   "en": "Upgrade 1 main module whose cost includes the advanced track's activation die value (bonus_die_value): selectable if one of the module's two activation die cost values matches the advanced track's bonus_die_value (see paths like <technology_track>.bonus_die_value)."
                 }
               }
@@ -2331,7 +2331,7 @@
             {
               "id": "roll_fate_dice",
               "name": {
-                "zh": "投掷命运骰",
+                "zh": "投掷<fate_die>",
                 "en": "Roll Fate Dice"
               },
               "<ontology::die_roll>": {
@@ -3374,7 +3374,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部粉色命运骰，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
+        "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部粉色<fate_die>，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
         "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
       },
       "<ontology::condition>": {
@@ -3393,7 +3393,7 @@
               },
               "<favor_test>": {
                 "description": {
-                  "zh": "投掷全部粉色命运骰。玩家可消耗创意标记修改任意骰子点数（1 和 6 相连）。",
+                  "zh": "投掷全部粉色<fate_die>。玩家可消耗创意标记修改任意骰子点数（1 和 6 相连）。",
                   "en": "Roll all pink fate dice. Player may spend idea markers to change any die value (1 and 6 are adjacent)."
                 }
               }
@@ -3896,12 +3896,12 @@
     {
       "id": "gain_activation_die",
       "name": {
-        "zh": "获得激活骰",
+        "zh": "获得<activation_die>",
         "en": "Gain Activation Die"
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "获得 1 个<activation_die>：优先从骰子展示区拿取；展示区无骰子时从拥有激活骰最多的玩家处拿取。拿到后立即投掷一次，按点数放到控制台对应点数骰子格。",
+        "zh": "获得 1 个<activation_die>：优先从骰子展示区拿取；展示区无骰子时从拥有<activation_die>最多的玩家处拿取。拿到后立即投掷一次，按点数放到控制台对应点数骰子格。",
         "en": "Gain 1 <activation_die>: take it from the dice display if available; otherwise take it from a civilization with the most activation dice. Roll it immediately and place it on the matching dice space of your console."
       },
       "<ontology::content>": {
@@ -3925,12 +3925,12 @@
                     {
                       "id": "take_activation_die",
                       "name": {
-                        "zh": "拿取激活骰",
+                        "zh": "拿取<activation_die>",
                         "en": "Take Activation Die"
                       },
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "从展示区拿取 1 枚激活骰。",
+                          "zh": "从展示区拿取 1 枚<activation_die>。",
                           "en": "Take 1 activation die from the display."
                         },
                         "source": "this.target.contains.<activation_die>",
@@ -3947,7 +3947,7 @@
                       "do_after": "take_activation_die",
                       "<ontology::die_roll>": {
                         "description": {
-                          "zh": "投掷该激活骰一次，确定点数。",
+                          "zh": "投掷该<activation_die>一次，确定点数。",
                           "en": "Roll the activation die once to determine its value."
                         },
                         "<ontology::dice>": "<activation_die>[]",
@@ -3963,7 +3963,7 @@
                       "do_after": "roll_die",
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
+                          "zh": "按掷出的点数将该<activation_die>放入控制台对应点数的骰子格。",
                           "en": "Place the activation die on the dice space of the console matching the rolled value."
                         },
                         "source": "刚拿取的<activation_die>",
@@ -3985,22 +3985,22 @@
               },
               "specifies": "<ontology::trigger>",
               "<ontology::condition>": {
-                "zh": "骰子展示区没有<activation_die>，且自己不是唯一拥有激活骰数量最多的玩家。",
+                "zh": "骰子展示区没有<activation_die>，且自己不是唯一拥有<activation_die>数量最多的玩家。",
                 "en": "The dice display has no <activation_die>, and you are not the only player with the most activation dice."
               },
-              "target": "除自己之外的 1 个 <ontology::player>（拥有激活骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
+              "target": "除自己之外的 1 个 <ontology::player>（拥有<activation_die>数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
               "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "options": [
                     {
                       "id": "take_activation_die",
                       "name": {
-                        "zh": "拿取激活骰",
+                        "zh": "拿取<activation_die>",
                         "en": "Take Activation Die"
                       },
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "从拥有激活骰最多的玩家处拿取 1 枚激活骰。",
+                          "zh": "从拥有<activation_die>最多的玩家处拿取 1 枚<activation_die>。",
                           "en": "Take 1 activation die from the civilization with the most."
                         },
                         "source": "this.target.<ontology::supply>.contains.<activation_die>",
@@ -4017,7 +4017,7 @@
                       "do_after": "take_activation_die",
                       "<ontology::die_roll>": {
                         "description": {
-                          "zh": "投掷该激活骰一次，确定点数。",
+                          "zh": "投掷该<activation_die>一次，确定点数。",
                           "en": "Roll the activation die once to determine its value."
                         },
                         "<ontology::dice>": "<activation_die>[]",
@@ -4033,7 +4033,7 @@
                       "do_after": "roll_die",
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "按掷出的点数将该激活骰放入控制台对应点数的骰子格。",
+                          "zh": "按掷出的点数将该<activation_die>放入控制台对应点数的骰子格。",
                           "en": "Place the activation die on the dice space of the console matching the rolled value."
                         },
                         "source": "刚拿取的<activation_die>",
@@ -4055,12 +4055,12 @@
     {
       "id": "gain_fate_die",
       "name": {
-        "zh": "获得命运骰",
+        "zh": "获得<fate_die>",
         "en": "Gain Fate Die"
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "获得 1 个<fate_die>：优先从骰子展示区拿取；展示区无骰子时从拥有命运骰最多的玩家处拿取。加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+        "zh": "获得 1 个<fate_die>：优先从骰子展示区拿取；展示区无骰子时从拥有<fate_die>最多的玩家处拿取。加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
         "en": "Gain 1 <fate_die>: take it from the dice display if available; otherwise take it from a civilization with the most fate dice. Add it to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
       },
       "<ontology::content>": {
@@ -4084,12 +4084,12 @@
                     {
                       "id": "take_fate_die",
                       "name": {
-                        "zh": "拿取命运骰",
+                        "zh": "拿取<fate_die>",
                         "en": "Take Fate Die"
                       },
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "从展示区拿取 1 枚命运骰。",
+                          "zh": "从展示区拿取 1 枚<fate_die>。",
                           "en": "Take 1 fate die from the display."
                         },
                         "source": "this.target.contains.<fate_die>",
@@ -4106,7 +4106,7 @@
                       "do_after": "take_fate_die",
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+                          "zh": "将该<fate_die>加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
                           "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
                         },
                         "source": "刚拿取的<fate_die>",
@@ -4128,22 +4128,22 @@
               },
               "specifies": "<ontology::trigger>",
               "<ontology::condition>": {
-                "zh": "骰子展示区没有<fate_die>，且自己不是唯一拥有命运骰数量最多的玩家。",
+                "zh": "骰子展示区没有<fate_die>，且自己不是唯一拥有<fate_die>数量最多的玩家。",
                 "en": "The dice display has no <fate_die>, and you are not the only player with the most fate dice."
               },
-              "target": "除自己之外的 1 个 <ontology::player>（拥有命运骰数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
+              "target": "除自己之外的 1 个 <ontology::player>（拥有<fate_die>数量最多的玩家；多人并列最多时由该玩家决定给出哪颗）",
               "<ontology::content>": {
                 "<ontology::instant_content>": {
                   "options": [
                     {
                       "id": "take_fate_die",
                       "name": {
-                        "zh": "拿取命运骰",
+                        "zh": "拿取<fate_die>",
                         "en": "Take Fate Die"
                       },
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "从拥有命运骰最多的玩家处拿取 1 枚命运骰。",
+                          "zh": "从拥有<fate_die>最多的玩家处拿取 1 枚<fate_die>。",
                           "en": "Take 1 fate die from the civilization with the most."
                         },
                         "source": "this.target.<ontology::supply>.contains.<fate_die>",
@@ -4160,7 +4160,7 @@
                       "do_after": "take_fate_die",
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "将该命运骰加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+                          "zh": "将该<fate_die>加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
                           "en": "Add the fate die to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
                         },
                         "source": "刚拿取的<fate_die>",
