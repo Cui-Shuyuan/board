@@ -27,12 +27,24 @@ public class DeepSeekLLMService : ILLMService
         List<ToolDefinition>? tools = null,
         CancellationToken cancellationToken = default)
     {
-        var request = new
+        // 思考模式控制（LLM:Thinking）：disabled 关闭思考、low 调低推理强度，
+        // default 不传参数保持模型默认（DeepSeek V4 默认开启，effort high）
+        object? thinking = _options.Thinking switch
         {
-            model = _options.Model,
-            messages = messages,
-            tools = tools?.Count > 0 ? tools : null
+            "disabled" => new Dictionary<string, string> { ["type"] = "disabled" },
+            "low" => null,
+            _ => null,
         };
+        var request = new Dictionary<string, object?>
+        {
+            ["model"] = _options.Model,
+            ["messages"] = messages,
+            ["tools"] = tools?.Count > 0 ? tools : null
+        };
+        if (thinking != null)
+            request["thinking"] = thinking;
+        if (_options.Thinking == "low")
+            request["reasoning_effort"] = "low";
 
         var response = await _httpClient.PostAsJsonAsync(
             "chat/completions",

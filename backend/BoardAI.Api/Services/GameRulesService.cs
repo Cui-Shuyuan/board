@@ -406,6 +406,158 @@ public class GameRulesService
             : "";
     }
 
+    // ---- 查询计划（execute_plan）----
+
+    private Dictionary<string, List<string>>? _flowContexts;
+
+    /// <summary>
+    /// 执行 LLM 提交的查询计划。P0 仅支持 relation=explain：
+    /// 实体解析（精确 id → 精确中文名 → 名称包含候选）→ 概念闭包（一层扩展）→ 流程位置链。
+    /// </summary>
+    public PlanExecutionResult ExecutePlan(string game, JsonElement plan)
+    {
+        var result = new PlanExecutionResult();
+        if (!plan.TryGetProperty("queries", out var queries) || queries.ValueKind != JsonValueKind.Array)
+        {
+            result.Note = "plan 缺少 queries 数组。";
+            return result;
+        }
+
+        foreach (var q in queries.EnumerateArray())
+        {
+            if (q.ValueKind != JsonValueKind.Object) continue;
+            var relation = q.TryGetProperty("relation", out var rp) ? rp.GetString() ?? "" : "";
+            var entity = q.TryGetProperty("entity", out var ep) ? ep.GetString() ?? "" : "";
+            result.Results.Add(ExecutePlanQuery(game, relation, entity));
+        }
+
+        if (result.Results.Any(r => r.Status == "unresolved" || r.Status == "unsupported"))
+        {
+            result.Note = "部分查询未完成：unresolved 的 entity 请用候选中的确切 id 或名字重试；unsupported 的 relation 请改用 search_concepts/get_concept 工具。";
+        }
+        return result;
+    }
+
+    private PlanItemResult ExecutePlanQuery(string game, string relation, string entity)
+    {
+        if (relation != "explain")
+        {
+            return new PlanItemResult
+            {
+                Relation = relation,
+                Entity = entity,
+                Status = "unsupported",
+                Message = "该 relation 暂不支持，请改用 search_concepts/get_concept 工具。"
+            };
+        }
+
+        // 实体解析：精确 id → 精确中文名 → 名称包含候选
+        var matched = ResolvePlanEntity(game, entity, out var candidates);
+        if (matched.Count == 0)
+        {
+            return new PlanItemResult
+            {
+                Relation = relation,
+                Entity = entity,
+                Status = "unresolved",
+                Candidates = candidates,
+                Message = candidates.Count > 0
+                    ? "实体未精确命中，以下是候选概念。"
+                    : "实体未命中任何概念，请用 search_concepts 搜索。"
+            };
+        }
+
+        var resolvedId = GetElementId(matched[0]);
+        var expanded = GetConceptsWithExpansion(game, string.IsNullOrEmpty(resolvedId) ? entity : resolvedId);
+
+        var item = new PlanItemResult
+        {
+            Relation = relation,
+            Entity = entity,
+            Status = "ok",
+            Matched = expanded.Matched,
+            Related = expanded.Related
+        };
+
+        // 流程位置链（flow 节点才有）：回答「在哪个阶段/回合」类语境
+        var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
+        if (GetFlowContexts(game).TryGetValue(localId, out var chain))
+            item.FlowContext = chain;
+
+        return item;
+    }
+
+    private List<JsonElement> ResolvePlanEntity(string game, string entity, out List<ConceptSummary> candidates)
+    {
+        candidates = new List<ConceptSummary>();
+
+        var byId = GetConcepts(game, entity).ToList();
+        if (byId.Count > 0) return byId;
+
+        // 精确中文名匹配（覆盖 flow 节点）
+        var map = GetNameMap(game);
+        var exact = map.Where(kv => kv.Value == entity).Select(kv => kv.Key).ToList();
+        if (exact.Count > 0)
+            return exact.SelectMany(id => GetConcepts(game, id)).ToList();
+
+        // 名称包含 → 唯一则直接解析，多个则返回候选供消歧
+        var containing = map.Where(kv => kv.Value.Contains(entity, StringComparison.Ordinal)).Take(6).ToList();
+        if (containing.Count == 1)
+            return GetConcepts(game, containing[0].Key).ToList();
+
+        candidates = containing
+            .Select(kv => new ConceptSummary { Id = kv.Key, Name = kv.Value })
+            .ToList();
+        return new List<JsonElement>();
+    }
+
+    /// <summary>flow 节点 id → 祖先链（zh 名，含自身父级，不含自己）。</summary>
+    private Dictionary<string, List<string>> GetFlowContexts(string game)
+    {
+        if (_flowContexts != null) return _flowContexts;
+        var result = new Dictionary<string, List<string>>();
+        var flow = LoadGameFlow(game);
+        if (flow != null)
+            WalkFlowContexts(flow.RootElement, new List<string>(), result);
+        _flowContexts = result;
+        return result;
+    }
+
+    private static void WalkFlowContexts(JsonElement node, List<string> ancestors, Dictionary<string, List<string>> result)
+    {
+        if (node.ValueKind != JsonValueKind.Object) return;
+
+        var hasId = node.TryGetProperty("id", out var idProp)
+            && idProp.ValueKind == JsonValueKind.String
+            && !string.IsNullOrEmpty(idProp.GetString());
+        string? id = hasId ? idProp.GetString() : null;
+        JsonElement zhp = default;
+        var hasName = node.TryGetProperty("name", out var nm)
+            && nm.ValueKind == JsonValueKind.Object
+            && nm.TryGetProperty("zh", out zhp)
+            && zhp.ValueKind == JsonValueKind.String;
+
+        if (!string.IsNullOrEmpty(id))
+        {
+            result[id] = new List<string>(ancestors);
+            if (hasName && !string.IsNullOrEmpty(zhp.GetString()))
+                ancestors.Add(zhp.GetString()!);
+        }
+
+        foreach (var prop in node.EnumerateObject())
+        {
+            if (prop.Name == "id" || prop.Name == "name" || prop.Name == "description") continue;
+            if (prop.Value.ValueKind == JsonValueKind.Object)
+                WalkFlowContexts(prop.Value, ancestors, result);
+            else if (prop.Value.ValueKind == JsonValueKind.Array)
+                foreach (var item in prop.Value.EnumerateArray())
+                    WalkFlowContexts(item, ancestors, result);
+        }
+
+        if (!string.IsNullOrEmpty(id) && hasName && !string.IsNullOrEmpty(zhp.GetString()))
+            ancestors.RemoveAt(ancestors.Count - 1);
+    }
+
     private Dictionary<string, string> GetNameMap(string game)
     {
         if (_nameMaps.TryGetValue(game, out var cached)) return cached;
@@ -1350,6 +1502,26 @@ public class GetConceptResult
     public List<JsonElement> Related { get; set; } = new();
     public string Note { get; set; } =
         "related 是 matched 直接引用的概念，已自动扩展一层；related 内概念的引用已标注中文名，如需更深一层的详情请用其 ID 继续调用 get_concept。";
+}
+
+public class PlanExecutionResult
+{
+    public List<PlanItemResult> Results { get; set; } = new();
+    public string Note { get; set; } = "";
+}
+
+public class PlanItemResult
+{
+    public string Relation { get; set; } = "";
+    public string Entity { get; set; } = "";
+    /// <summary>ok | unresolved（实体未命中，看 Candidates）| unsupported（relation 未支持，走兜底工具）</summary>
+    public string Status { get; set; } = "ok";
+    public List<JsonElement> Matched { get; set; } = new();
+    public List<JsonElement> Related { get; set; } = new();
+    /// <summary>flow 节点的祖先链（zh 名）——回答「在哪个阶段/回合发生」的语境。</summary>
+    public List<string> FlowContext { get; set; } = new();
+    public List<ConceptSummary>? Candidates { get; set; }
+    public string Message { get; set; } = "";
 }
 
 public class ListConceptsResult

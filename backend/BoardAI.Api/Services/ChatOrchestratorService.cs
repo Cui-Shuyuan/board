@@ -221,6 +221,45 @@ public class ChatOrchestratorService
             {
                 Function = new FunctionDefinition
                 {
+                    Name = "execute_plan",
+                    Description = $"查询计划执行器：把客人的规则问题编译成结构化查询计划，一次拿到全部相关事实（概念定义 + 一层引用 + 流程位置），无需逐次搜索。relation 目前仅支持 explain（概念/行动/效果/流程的解释类问题，如「X 是什么」「X 怎么结算」「X 有什么效果」）。entity 填概念 id 或准确中文名。实体无法精确命中时会返回候选，请用候选中的确切 id 或名字重试；plan 表达不了的问题请改用 search_concepts/get_concept。",
+                    Parameters = JsonDocument.Parse("""
+                    {
+                      "type": "object",
+                      "properties": {
+                        "plan": {
+                          "type": "object",
+                          "properties": {
+                            "queries": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "relation": {
+                                    "type": "string",
+                                    "enum": ["explain"]
+                                  },
+                                  "entity": {
+                                    "type": "string",
+                                    "description": "概念 id 或准确中文名，如 activation_die 或 激活骰"
+                                  }
+                                },
+                                "required": ["relation", "entity"]
+                              }
+                            }
+                          },
+                          "required": ["queries"]
+                        }
+                      },
+                      "required": ["plan"]
+                    }
+                    """).RootElement
+                }
+            },
+            new()
+            {
+                Function = new FunctionDefinition
+                {
                     Name = "list_concept_ids",
                     Description = "列出当前游戏所有概念的 ID 和名称，按类型分组。这是穷举列表——用于确认某个概念是否存在，或浏览全部概念目录。极轻量，不包含详细定义。只在 search_concepts 找不到预期概念或需要穷举浏览时使用。",
                     Parameters = JsonDocument.Parse("""
@@ -260,6 +299,14 @@ public class ChatOrchestratorService
                         return result.Matched.Count > 0
                             ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId)
                             : $"{{\"error\": \"Concept '{conceptId}' not found\"}}";
+                    }
+
+                case "execute_plan":
+                    {
+                        if (!args.RootElement.TryGetProperty("plan", out var plan))
+                            return $"{{\"error\": \"plan is required\"}}";
+                        var planResult = _rulesService.ExecutePlan(gameId, plan);
+                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(planResult, ToolResultOptions), gameId);
                     }
 
                 case "get_game_flow":
