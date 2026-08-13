@@ -2376,7 +2376,13 @@
       "<ontology::overflow_compensation>": "<advance_beyond_end>",
       "track_type": {
         "type": "enum",
-        "enum": ["technology", "prestige", "knowledge", "construction", "culture"],
+        "enum": [
+          "technology",
+          "prestige",
+          "knowledge",
+          "construction",
+          "culture"
+        ],
         "description": {
           "zh": "本轨的类型，5 条进程轨各实现其一。",
           "en": "This track's type; each of the five progress tracks implements one."
@@ -4313,3 +4319,4 @@
     }
   }
 }
+

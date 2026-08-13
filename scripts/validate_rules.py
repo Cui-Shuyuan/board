@@ -296,7 +296,15 @@ class Validator:
     # ── 阶段二: 逐文件检查 ────────────────────────────────
     def check_file(self, file_path: Path, source: str, is_ontology: bool):
         self.current_source = source  # E12 按文件判定 this 参数
-        text = file_path.read_text(encoding="utf-8")
+        # E01c: 编码/格式约定 (2026-08-14 定稿: UTF-8 无 BOM、空格缩进、LF)
+        #       脚本 normalize_json.py 可一键修复
+        raw = file_path.read_bytes()
+        if raw.startswith(b"\xef\xbb\xbf"):
+            self.err(source, "E01 文件带 UTF-8 BOM — 约定无 BOM (python scripts/normalize_json.py 修复)")
+        text0 = raw.decode("utf-8-sig")
+        if "\t" in text0:
+            self.err(source, "E01 文件含制表符 — JSON 缩进约定用空格 (python scripts/normalize_json.py 修复)")
+        text = text0
         try:
             data = json.loads(text)
         except json.JSONDecodeError as e:
