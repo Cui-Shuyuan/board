@@ -2747,7 +2747,7 @@
       "card_type": "insight",
       "abstract": false,
       "description": {
-        "zh": "洞悉型研究牌，编号 C16。",
+        "zh": "洞悉型<research_card>，编号 C16。",
         "en": "Insight research card, number C16."
       },
       "<research_ability>": {
@@ -2857,7 +2857,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "共 2 块。任何玩家不能在与火山相邻的<territory>中建造<farm>；当本地点被翻开时，与它相邻的所有区域中已有的<farm>必须立即退回各自控制台的农场格（<farm_supply>）。",
+        "zh": "共 2 块。任何玩家不能在与火山相邻的<territory>中<build_farm>；当本地点被翻开时，与它相邻的所有<territory>中已有的<farm>必须立即退回各自<console>的<farm_supply>。",
         "en": "There are 2 Volcanoes. No player may build a <farm> in any <territory> adjacent to a Volcano; when this site is revealed, any <farm> already in an adjacent territory must immediately be returned to its console's farm supply (<farm_supply>)."
       },
       "score": 4,
@@ -2891,7 +2891,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "共 2 块，各自独立结算。地点阶段结算：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮部落（<ontology::state_change> posture → <lying>）；弱部落不受影响，无强壮部落则豁免。",
+        "zh": "共 2 块，各自独立结算。<phase_5_site>结算：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮<tribe>（<ontology::state_change> posture → <lying>）；弱<tribe>不受影响，无强壮<tribe>则豁免。",
         "en": "2 Glaciers exist; each resolves independently. Site phase resolution: each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<ontology::state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
       },
       "score": 4,
@@ -2923,7 +2923,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "共 3 块，各自独立结算。地点阶段结算：对每块橡树，本玩家检查相邻且有自己的<tribe>的区域——每个<terrain_water>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
+        "zh": "共 3 块，各自独立结算。<phase_5_site>结算：对每块橡树，本玩家检查相邻且有自己的<tribe>的<territory>——每个<terrain_water>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
         "en": "3 Mystic oaks exist; each resolves independently. Site phase resolution: for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <terrain_water>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
       },
       "score": 1,
@@ -2954,7 +2954,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "共 2 块。地点阶段结算（各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无食物则豁免。",
+        "zh": "共 2 块。<phase_5_site>结算（各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无<food>则豁免。",
         "en": "2 Gorges exist; each resolves independently during the site phase: each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
       },
       "score": 5,
@@ -2985,7 +2985,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "健康状态。部落可以迁徙和繁育。",
+        "zh": "健康状态。<tribe>可以<migrate>和<procreate>。",
         "en": "Healthy state. Tribe can migrate and procreate."
       },
       "posture": {
@@ -3002,7 +3002,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "虚弱状态。部落不能迁徙，喂养阶段若未被喂饱会死亡。",
+        "zh": "虚弱状态。<tribe>不能<migrate>，<phase_6_feeding>若未被喂饱会死亡。",
         "en": "Weakened state. Tribe cannot migrate; dies in Feeding phase if not fed."
       },
       "posture": {

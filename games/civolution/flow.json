@@ -42,7 +42,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将分轨外框与大陆板块移至计分轨区域：拼接 4 片分轨外框形成计分轨，将 8 块大陆板块随机排列铺满计分轨内部的 5×3 网格，形成大陆。",
+                    "zh": "拼接 4 片外框形成<score_track>，将 8 块<continent_tile>随机排列铺满<score_track>内部的 5×3 网格，形成<continent>。",
                     "en": "Move the score track frame pieces and continent tiles into the score track area: assemble the 4 frame pieces into the score track, randomly arrange the 8 continent tiles to fill the 5×3 grid inside it, forming the continent."
                   },
                   "source": "<ontology::game_box>",
@@ -58,7 +58,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将 24 块地点板块背面朝上随机放在大陆的地点格中。",
+                    "zh": "将 24 块<site>背面朝上随机放在<continent>的<site_slot>中。",
                     "en": "Place the 24 site tiles face down on the site spaces of the continent."
                   },
                   "source": "<ontology::game_box>",
@@ -79,7 +79,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将进程版图和流程版图分别放置在公共版图两侧。",
+                    "zh": "将<progress_board>和<sequence_board>分别放置在<public_board>两侧。",
                     "en": "Place the progress board and sequence board on either side of the public board."
                   },
                   "source": "<ontology::game_box>",
@@ -96,7 +96,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将阶段标记放到流程版图阶段序列的阶段一位置。",
+                    "zh": "将<phase_indicator>放到<sequence_board>的<phase_sequence>上<phase_1_new_cards>位置。",
                     "en": "Place the phase indicator on phase 1 of the sequence board's phase sequence."
                   },
                   "source": "<ontology::game_box>",
@@ -113,7 +113,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将天气标记放到流程版图天气轨的适中位置。",
+                    "zh": "将<weather_indicator>放到<sequence_board>的<weather_gauge>上<weather_gauge.mild>位置。",
                     "en": "Place the weather indicator on a moderate space of the weather gauge."
                   },
                   "source": "<ontology::game_box>",
@@ -130,7 +130,7 @@
                   },
                   "specifies": "<ontology::top_draw>",
                   "description": {
-                    "zh": "洗混 20 张事件牌成堆，从堆顶抽 4 张背面朝上放在流程版图事件牌格上，其余放回盒子。",
+                    "zh": "洗混 20 张<event_card>成堆，从堆顶抽 4 张背面朝上放在<sequence_board>的<event_card_space>上，其余放回<ontology::game_box>。",
                     "en": "Shuffle the 20 event cards into a stack, draw 4 from the top, and place them face down on the event card spaces; return the rest to the box."
                   },
                   "source": "<ontology::game_box>",
@@ -151,7 +151,7 @@
                   },
                   "specifies": "<ontology::shuffle>",
                   "description": {
-                    "zh": "将五种研究牌分别洗混后形成供应堆。",
+                    "zh": "将五种<research_card>分别洗混后形成<research_deck>。",
                     "en": "Shuffle the five types of research cards into separate supply decks."
                   },
                   "target": "<research_deck>"
@@ -164,7 +164,7 @@
                   },
                   "specifies": "<ontology::shuffle>",
                   "description": {
-                    "zh": "洗混初始标记牌和初始芯片牌备用。",
+                    "zh": "洗混<starting_marker_card>和<starting_chip_card>备用。",
                     "en": "Shuffle the starting marker deck and starting chip deck."
                   },
                   "target": "<starting_marker_deck>"
@@ -177,7 +177,7 @@
                   },
                   "specifies": "<ontology::random_draw>",
                   "description": {
-                    "zh": "从游戏盒中的计分板块中随机盲抽 4 张，正面朝上放入时代计分区（计分板块不成堆，随机抽取）。",
+                    "zh": "从<ontology::game_box>中的<scoring_tile>中随机盲抽 4 张，正面朝上放入<era_scoring_area>（<scoring_tile>不成堆，随机抽取）。",
                     "en": "Blindly draw 4 scoring tiles at random from the game box and place them face up in the era scoring area (scoring tiles are not a stack; drawn at random)."
                   },
                   "source": "<ontology::game_box>",
@@ -193,7 +193,7 @@
                     "en": "Prepare Final Scoring Tiles"
                   },
                   "description": {
-                    "zh": "从剩余计分板块中随机盲抽 3 张，检视图标面，按图标匹配放到终局计分区对应格下方（覆盖该格印的默认分值），翻至分数面朝上——终局计分时该类别的分值取板块上的分数（被覆盖的格不再用印的分值）。",
+                    "zh": "从剩余<scoring_tile>中随机盲抽 3 张，检视图标面，按图标匹配放到<final_scoring_area_icons>对应格下方（覆盖该格印的默认分值），翻至分数面朝上——<final_scoring>时该类别的分值取板块上的分数（被覆盖的格不再用印的分值）。",
                     "en": "Blindly draw 3 scoring tiles at random from the remaining ones, inspect their icon sides, place each below its matching icon slot in the final scoring area (covering the printed default value of that space), and flip them point side up — the tile's points apply at final scoring (the covered space's printed value no longer counts)."
                   },
                   "options": [
@@ -251,7 +251,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将一百分指示物作为供应堆放到百分指示物展示区。2 人局将部分指示物翻至阻挡面，覆盖目标芯片展示区 2 个格和<phase_sequence>的 4 个带人数标记<reset_space>；3 人局覆盖目标芯片展示区 1 个格和 2 个带 4 人标记的<reset_space>；4 人局不覆盖。",
+                    "zh": "将<hundred_point_token>作为<ontology::supply>放到<hundred_point_token_display>。2 人局将部分指示物翻至阻挡面，覆盖<goal_chip_display> 2 个格和<phase_sequence>的 4 个带人数标记<reset_space>；3 人局覆盖<goal_chip_display> 1 个格和 2 个带 4 人标记的<reset_space>；4 人局不覆盖。",
                     "en": "Place the 100-point tokens as a supply on the 100-point token display. In a 2-player game, flip some blocking side up to cover 2 goal chip display spaces and the 4 player-count-marked <reset_space>s of <phase_sequence>; in 3-player, cover 1 goal chip display space and the 2 spaces marked 4; in 4-player, cover none."
                   },
                   "<ontology::object>": "<hundred_point_token>",
@@ -270,7 +270,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "2 人局取 10 个狩猎指示物翻至阻挡面，覆盖大陆上带特殊图标的营地；3 人局覆盖 4 个带对应图标的营地；4 人局不覆盖。其余狩猎指示物翻至正面，作为通用狩猎指示物供应堆放到狩猎指示物展示区。",
+                    "zh": "2 人局取 10 个<hunting_token>翻至阻挡面，覆盖<continent>上带特殊图标的<encampment>；3 人局覆盖 4 个带对应图标的<encampment>；4 人局不覆盖。其余<hunting_token>翻至正面，作为通用狩猎指示物<ontology::supply>放到<hunting_token_display>。",
                     "en": "In a 2-player game, flip 10 territory tokens blocking side up to cover the encampments marked with the special icons; in 3-player, cover the 4 encampments with the marked icon; in 4-player, cover none. Flip the remaining tokens front side up as the general hunting token supply in the hunting token display."
                   },
                   "<ontology::object>": "<hunting_token>",
@@ -317,7 +317,7 @@
                   },
                   "specifies": "<ontology::random_draw>",
                   "description": {
-                    "zh": "从深蓝袋子中随机盲抽目标芯片，正面朝上放到目标芯片展示区的每个可用格：4 人局 6 张、3 人局 5 张、2 人局 4 张（2/3 人局中带人数标记的格——3 人标记格仅 ≥3 人局使用、4 人标记格仅 4 人局使用——已被百分指示物阻挡标记覆盖）。",
+                    "zh": "从<goal_chip_bag>中随机盲抽<goal_chip>，正面朝上放到<goal_chip_display>的每个可用格：4 人局 6 张、3 人局 5 张、2 人局 4 张（2/3 人局中带人数标记的格——3 人标记格仅 ≥3 人局使用、4 人标记格仅 4 人局使用——已被<hundred_point_token>阻挡标记覆盖）。",
                     "en": "Blindly draw goal chips from the dark blue bag and place them face up on each usable space of the goal chip display: 6 for 4p, 5 for 3p, 4 for 2p (in 2/3-player games, spaces with player-count marks — the 3-marked space is used only in 3+ player games and the 4-marked space only in 4-player games — are covered by blocking tokens)."
                   },
                   "source": "<goal_chip_bag>",
@@ -336,7 +336,7 @@
                   },
                   "specifies": "<ontology::random_draw>",
                   "description": {
-                    "zh": "从白色袋子中随机盲抽收入芯片，正面朝上放到收入芯片展示区的每个格（共 3 格）。",
+                    "zh": "从<income_chip_bag>中随机盲抽<income_chip>，正面朝上放到<income_chip_display>的每个格（共 3 格）。",
                     "en": "Blindly draw income chips from the white bag and place them face up on each of the 3 spaces of the income chip display."
                   },
                   "source": "<income_chip_bag>",
@@ -353,7 +353,7 @@
                   },
                   "specifies": "<ontology::random_draw>",
                   "description": {
-                    "zh": "从黄色袋子中随机盲抽属性芯片，正面朝上放到属性芯片展示区的每个格（共 3 格）。",
+                    "zh": "从<attribute_chip_bag>中随机盲抽<attribute_chip>，正面朝上放到<attribute_chip_display>的每个格（共 3 格）。",
                     "en": "Blindly draw attribute chips from the yellow bag and place them face up on each of the 3 spaces of the attribute chip display."
                   },
                   "source": "<attribute_chip_bag>",
@@ -370,7 +370,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "将所有材料板块背面朝上按颜色随机放到大陆板块材料格上；放到标有「Start」（初始）字样的材料格上的板块翻至正面朝上。",
+                    "zh": "将所有<material_tile>背面朝上按颜色随机放到<continent_tile>的<material_slot>上；放到标有「Start」（初始）字样的<material_slot>上的板块翻至正面朝上。",
                     "en": "Place all material tiles face down on the continent's material spaces by color randomly; tiles placed on spaces marked 'Start' are flipped face up."
                   },
                   "source": "<ontology::game_box>",
@@ -387,7 +387,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家拿取 15 个<upgradable_module>并翻至等级一面，放入控制台<module_area>区。",
+                    "zh": "每位玩家拿取 15 个<upgradable_module>并翻至等级一面，放入<console>的<module_area>。",
                     "en": "Each player takes 15 main modules, flips them to level I, and places them in the module area."
                   },
                   "source": "<ontology::game_box>",
@@ -421,7 +421,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家从游戏盒中拿取 1 个粉骰子放在控制台旁边备用。",
+                    "zh": "每位玩家从<ontology::game_box>中拿取 1 个<fate_die>放在<console>旁边备用。",
                     "en": "Each player takes 1 fate die from the game box and places it beside their console."
                   },
                   "source": "<ontology::game_box>",
@@ -438,7 +438,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家拿取层级四板块和层级五板块，未激活面朝上放到控制台对应位置。",
+                    "zh": "每位玩家拿取层级四和层级五的<stage_tile>，未激活面朝上放到<console>对应位置。",
                     "en": "Each player takes stage-4 and stage-5 tiles, inactive side up, and places them on the console."
                   },
                   "source": "<ontology::game_box>",
@@ -454,7 +454,7 @@
                     "en": "Player Setup Buildings"
                   },
                   "description": {
-                    "zh": "每位玩家将 4 个聚落、3 个农场和 2 艘船放入控制台左侧对应凹槽，并在每艘船的凹槽中各放 1 个标记。",
+                    "zh": "每位玩家将 4 个<settlement>、3 个<farm>和 2 艘<boat>放入<console>左侧对应凹槽，并在每艘<boat>的凹槽中各放 1 个<octagonal_pillar>。",
                     "en": "Each player places their 4 settlements, 3 farms, and 2 boats into the recesses on the left side of the console, and places 1 marker in the notch of each boat."
                   },
                   "options": [
@@ -497,7 +497,7 @@
                     "en": "Player Setup Markers"
                   },
                   "description": {
-                    "zh": "每位玩家将 7 个圆片放到游戏版图上：1 个分数标记放到计分轨 0 分位置、1 个恩惠标记放到<favor_of_ager_track>起始位置、5 个进程标记分别放到 5 条进程轨的 0 格。",
+                    "zh": "每位玩家将 7 个<stackable_disc>放到<public_board>上：1 个<score_marker>放到<score_track> 0 分位置、1 个<favor_marker>放到<favor_of_ager_track>起始位置、5 个<progress_marker>分别放到 5 条<progress_track>的 0 格。",
                     "en": "Each player places their 7 discs on the game boards: 1 score marker on the score track at 0, 1 favor marker on the <favor_of_ager_track> start, and 5 progress markers on the 5 progress tracks at 0."
                   },
                   "options": [
@@ -570,7 +570,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家将 2 个部落直立放到两个初始区域中不带篝火的空置营地。",
+                    "zh": "每位玩家将 2 个<tribe>直立放到两个初始区域中不带篝火的空置<encampment>。",
                     "en": "Each player places 2 tribes upright on empty non-campfire campsites in the two initial territories."
                   },
                   "source": "<console>",
@@ -588,7 +588,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家拿 6 个标记：2 个放到大陆两个初始区域中营地以外位置，4 个放到控制台重置列顶部。",
+                    "zh": "每位玩家拿 6 个标记：2 个<octagonal_pillar>放到<continent>两个初始区域中<encampment>以外位置，4 个<reset_marker>放到<console>的<reset_column>顶部。",
                     "en": "Each player takes 6 markers: 2 to non-campsite spaces in the two initial territories, 4 to the reset column top of the console."
                   },
                   "source": "<ontology::game_box>",
@@ -620,7 +620,7 @@
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "起始玩家获得起始纪念碑。",
+                    "zh": "起始玩家获得<starting_monolith>。",
                     "en": "The starting player receives the starting monolith."
                   },
                   "source": "<ontology::game_box>",
@@ -636,7 +636,7 @@
                     "en": "Draft Starting Marker Cards"
                   },
                   "description": {
-                    "zh": "每位玩家抽 3 张初始标记牌，秘密检视后选 1 张，按所选牌的指示从供应堆取标记放置（获得标记），随后 3 张初始标记牌全部放回盒子。",
+                    "zh": "每位玩家抽 3 张<starting_marker_card>，秘密检视后选 1 张，按所选牌的指示从<ontology::supply>取标记放置（获得标记），随后 3 张<starting_marker_card>全部放回<ontology::game_box>。",
                     "en": "Each player draws 3 starting marker cards, secretly inspects them, chooses 1, gains the indicated markers (taken from supply and placed per the card), then returns all 3 starting marker cards to the game box."
                   },
                   "options": [
@@ -709,7 +709,7 @@
                     "en": "Draft Starting Chip Cards"
                   },
                   "description": {
-                    "zh": "翻开玩家数量 +1 张初始芯片牌，每张牌上放置一枚目标芯片（牌与芯片绑定，必须一起选走）；从起始玩家右手边玩家开始逆时针轮抽，每位玩家选一张牌：将其上的目标芯片放入目标区、将牌中三分之一记录的模组升级至等级二、最后将牌塞入收入区成为首个收入芯片。",
+                    "zh": "翻开玩家数量 +1 张<starting_chip_card>，每张牌上放置一枚<goal_chip>（牌与芯片绑定，必须一起选走）；从起始玩家右手边玩家开始逆时针轮抽，每位玩家选一张牌：将其上的<goal_chip>放入<goal_area>、将牌中三分之一记录的<upgradable_module>升级至等级二、最后将牌塞入<income_area>成为首个<income_chip>。",
                     "en": "Reveal player_count + 1 starting chip cards and place a goal chip on each (card and chip are bound — drafted together); starting with the player right of the starting player and going counter-clockwise, each player drafts 1 card: place its goal chip into the goal area, upgrade the module shown on the card's middle third to level 2, and finally slide the card into the income area as the first income chip."
                   },
                   "options": [
@@ -760,7 +760,7 @@
                       },
                       "specifies": "<ontology::round>",
                       "description": {
-                        "zh": "一轮轮抽：每位玩家一个 turn，从起始玩家右手边玩家开始逆时针依次选择一张展示的初始芯片牌（牌连同其上的目标芯片一起选走）。",
+                        "zh": "一轮轮抽：每位玩家一个 turn，从起始玩家右手边玩家开始逆时针依次选择一张展示的<starting_chip_card>（牌连同其上的<goal_chip>一起选走）。",
                         "en": "One draft round: one turn per player, starting with the player right of the starting player and going counter-clockwise; each player drafts one revealed starting chip card (card and its goal chip taken together)."
                       },
                       "do_after": "attach_goal_chips",
@@ -779,7 +779,7 @@
                                 "en": "Choose Card"
                               },
                               "description": {
-                                "zh": "从展示的初始芯片牌中选一张（连同其上的目标芯片）。",
+                                "zh": "从展示的<starting_chip_card>中选一张（连同其上的<goal_chip>）。",
                                 "en": "Choose one revealed starting chip card (with its goal chip)."
                               }
                             },
@@ -854,7 +854,7 @@
                     "en": "Draft Starting Research Cards"
                   },
                   "description": {
-                    "zh": "每位玩家从五个研究牌堆各抽 2 张（共 10 张），每种类型选 1 张保留入手牌，未选的 5 张放回各自来源牌堆底部。",
+                    "zh": "每位玩家从五个<research_deck>各抽 2 张（共 10 张），每种类型选 1 张保留入手牌，未选的 5 张放回各自来源牌堆底部。",
                     "en": "Each player draws 2 cards from each of the 5 research decks (10 total), keeps 1 of each type in hand, and returns the 5 unchosen cards to the bottoms of their respective source decks."
                   },
                   "options": [
@@ -943,7 +943,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段一：新的卡牌。翻开事件牌堆顶部一张（覆盖上时代的事件牌），显示本时代天气变化方向和事件效果。然后翻开 5 个背面朝下研究牌堆各顶部一张，放到对应的正面朝上研究牌堆上（第一时代新建堆，后续覆盖上时代卡牌）。",
+                    "zh": "阶段一：新的卡牌。翻开<event_card>堆顶部一张（覆盖上时代的<event_card>），显示本时代天气变化方向和事件效果。然后翻开 5 个<research_deck>各顶部一张，放到对应的<face_up_research_stack>上（第一时代新建堆，后续覆盖上时代<research_card>）。",
                     "en": "Phase 1: New Cards. Reveal the top card of the face-down event stack (covering the previous era's event card), showing this era's weather change direction and event effect. Then reveal the top card from each of the 5 face-down research stacks onto the corresponding face-up research stack (forming new stacks in era 1, covering the previous card thereafter)."
                   },
                   "<ontology::pipeline>": {
@@ -1015,7 +1015,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段二：新的目标。从起始玩家开始顺时针，每位玩家可选择从展示区拿取一枚目标芯片放入目标区，或跳过。所有玩家选择完成后，补满展示区空位。",
+                    "zh": "阶段二：新的目标。从起始玩家开始顺时针，每位玩家可选择从<goal_chip_display>拿取一枚<goal_chip>放入<goal_area>，或跳过。所有玩家选择完成后，补满<goal_chip_display>空位。",
                     "en": "Phase 2: New Goals. Starting with the start player and going clockwise, each player may take a goal chip from the display into the goal area, or decline. After every player has chosen, refill the empty display spaces."
                   },
                   "<ontology::pipeline>": {
@@ -1113,7 +1113,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段三：额外收获。按座次（起始玩家开始顺时针），每位玩家选择 1 个有至少一个自己 <tribe> 的陆地区域，从供应堆取 1 个标记作为 <stored_material> 放到仓库中与所选区域地形类型对应的存储格。只按区域地形类型匹配，与材料板块印的具体材料无关。",
+                    "zh": "阶段三：额外收获。按座次（起始玩家开始顺时针），每位玩家选择 1 个有至少一个自己 <tribe> 的<territory>，从<ontology::supply>取 1 个标记作为 <stored_material> 放到<storage_area>中与所选<territory>地形类型对应的存储格。只按<territory>地形类型匹配，与<material_tile>印的具体材料无关。",
                     "en": "Phase 3: Extra Find. In seating order (starting player then clockwise), each player chooses 1 land territory where they have at least one <tribe>, takes 1 marker from supply as a <stored_material>, and places it on a storage space matching the chosen territory's terrain type. Only the territory type matters, not the material depicted on the material tile."
                   },
                   "<ontology::pipeline>": {
@@ -1162,7 +1162,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段四：行动阶段。阶段标记从第一个黄色<reset_space>开始。从起始玩家顺时针轮流转，每回合必须二选一：激活一个模组（支付恰好 2 个对应点数的白骰子或计划/焦点标记）或执行 Reset（前提：当前骰子区白骰子不超过 3 个）。Reset 分三步——A: 沿黄色箭头推动阶段标记到下一个<reset_space>（若到达<reset_end_space>则触发行动阶段结束流程）；B: 回收已使用的骰子并全部重掷；C: 将最左侧重置标记移入 idea space 或 food space。行动阶段在「标记被推至<reset_end_space>的那一轮 + 下一轮」都结束后才结束（见<action_phase_end>）；结束后将<phase_indicator>推到阶段五。",
+                    "zh": "阶段四：行动阶段。<phase_indicator>从第一个黄色<reset_space>开始。从起始玩家顺时针轮流转，每回合必须二选一：<activate_module>（支付恰好 2 个对应点数的<activation_die>或<planning_marker>/<focus_marker>）或执行<reset>（前提：当前<activation_dice_area>的<activation_die>不超过 3 个）。<reset>分三步——A: 沿黄色箭头推动<phase_indicator>到下一个<reset_space>（若到达<reset_end_space>则触发行动阶段结束流程）；B: 回收已使用的骰子并全部重掷；C: 将最左侧<reset_marker>移入<idea_space>或<food_space>。行动阶段在「标记被推至<reset_end_space>的那一轮 + 下一轮」都结束后才结束（见<action_phase_end>）；结束后将<phase_indicator>推到<phase_5_site>。",
                     "en": "Phase 4: Action Phase. The phase indicator starts on the first yellow <reset_space>. Players take turns clockwise; each turn must either activate a module (pay exactly 2 activation dice of matching values, or planning/focus markers) or perform a Reset (only if the player has ≤3 activation dice on dice spaces). Reset has three steps — A: Advance the phase indicator along the yellow arrow to the next <reset_space> (if it reaches the <reset_end_space>, the Action Phase end sequence is triggered); B: Retrieve all used dice and re-roll them; C: Move the leftmost reset marker to the idea space or food space. The Action phase ends only after both the round in which the phase indicator was pushed onto the <reset_end_space> AND the following round have completed (see <action_phase_end>); afterwards the <phase_indicator> is advanced to Phase 5."
                   },
                   "<ontology::pipeline>": {
@@ -1200,7 +1200,7 @@
                         },
                         "do_after": "action_turn_cycle",
                         "description": {
-                          "zh": "行动阶段结束后（触发轮与最终行动轮均已完成，起始玩家右手边的玩家完成最后一回合），将<phase_indicator>从<phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>）推进到<phase_sequence>.<phase_5_site>[0]（第 1 格，地点阶段）。",
+                          "zh": "行动阶段结束后（触发轮与最终行动轮均已完成，起始玩家右手边的玩家完成最后一回合），将<phase_indicator>从<phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>）推进到<phase_sequence>.<phase_5_site>[0]（第 1 格，<phase_5_site>）。",
                           "en": "After the Action phase ends (both the triggering round and the final action round completed, with the player right of the starting player finishing their last turn), advance the <phase_indicator> from <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>) to <phase_sequence>.<phase_5_site>[0] (the 1st space, Site phase)."
                         },
                         "<ontology::push_track>": {
@@ -1220,7 +1220,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段五：地点阶段。依次结算三种已翻开地点的 continuous_effect——A) 狼谷（<gorge_of_grimwolves>）；B) 冰川（<glacier>）；C) 神秘橡树（<mystic_oak>）。未翻开的地点跳过。",
+                    "zh": "阶段五：地点阶段。依次结算三种已翻开<site>的 continuous_effect——A) 狼谷（<gorge_of_grimwolves>）；B) 冰川（<glacier>）；C) 神秘橡树（<mystic_oak>）。未翻开的<site>跳过。",
                     "en": "Phase 5: Site Phase. Resolve the continuous_effects of the three revealed site types in order — A) Gorge of the Grimwolves (<gorge_of_grimwolves>); B) Glacier (<glacier>); C) Mystic oak (<mystic_oak>). Sites not revealed are skipped."
                   },
                   "<ontology::pipeline>": {
@@ -1232,7 +1232,7 @@
                           "en": "Resolve Gorge of the Grimwolves"
                         },
                         "description": {
-                          "zh": "结算所有已翻开<gorge_of_grimwolves>的 continuous_effect：与狼谷相邻的领地中有自己部落且食物格有食物的玩家，各失去 1 个食物（无食物豁免）。",
+                          "zh": "结算所有已翻开<gorge_of_grimwolves>的 continuous_effect：与狼谷相邻的<territory>中有自己<tribe>且<food_space>有<food>的玩家，各失去 1 个<food>（无<food>豁免）。",
                           "en": "Resolve the continuous_effect of every revealed <gorge_of_grimwolves>: each player who has a tribe in an adjacent territory and food on the food space loses 1 food (exempt if without food)."
                         },
                         "<ontology::effect>": "<gorge_of_grimwolves>.parts.<ontology::continuous_effect>"
@@ -1244,7 +1244,7 @@
                           "en": "Resolve Glacier"
                         },
                         "description": {
-                          "zh": "结算所有已翻开<glacier>的 continuous_effect：相邻领地中有强壮部落的玩家，虚弱（躺倒）其中一个强壮部落（弱部落不受影响，无强壮部落豁免）。",
+                          "zh": "结算所有已翻开<glacier>的 continuous_effect：相邻<territory>中有强壮<tribe>的玩家，虚弱（躺倒）其中一个强壮<tribe>（弱<tribe>不受影响，无强壮<tribe>豁免）。",
                           "en": "Resolve the continuous_effect of every revealed <glacier>: each player who has a strong tribe in an adjacent territory weakens (lays down) one of those strong tribes (weak tribes are never affected; players without strong adjacent tribes are exempt)."
                         },
                         "<ontology::effect>": "<glacier>.parts.<ontology::continuous_effect>"
@@ -1256,7 +1256,7 @@
                           "en": "Resolve Mystic Oak"
                         },
                         "description": {
-                          "zh": "结算所有已翻开<mystic_oak>的 continuous_effect：对每块橡树，每位玩家按相邻且有自己部落的区域计分——水/沼泽/沙漠区域各 2 分，森林/草原/丘陵/山脉区域各 1 分。",
+                          "zh": "结算所有已翻开<mystic_oak>的 continuous_effect：对每块橡树，每位玩家按相邻且有自己<tribe>的<territory>计分——水/沼泽/沙漠<territory>各 2 分，森林/草原/丘陵/山脉<territory>各 1 分。",
                           "en": "Resolve the continuous_effect of every revealed <mystic_oak>: for each oak, each player scores 2 points per adjacent Water/Swamp/Desert area and 1 point per adjacent Forest/Grassland/Hill/Mountain area holding one of their tribes."
                         },
                         "<ontology::effect>": "<mystic_oak>.parts.<ontology::continuous_effect>"
@@ -1289,7 +1289,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段六：喂养阶段。两步：A) 喂部落——大陆上所有部落必须喂食（可同时进行）；B) 强壮部落得分。",
+                    "zh": "阶段六：喂养阶段。两步：A) 喂部落——<continent>上所有<tribe>必须喂食（可同时进行）；B) 强壮<tribe>得分。",
                     "en": "Phase 6: Feeding Phase. Two steps: A) Feed tribes — all tribes on the continent must be fed (may be done simultaneously); B) Score strong tribes."
                   },
                   "<ontology::pipeline>": {
@@ -1302,7 +1302,7 @@
                         },
                         "<ontology::per_player>": true,
                         "description": {
-                          "zh": "对本玩家的每个部落确定喂食成本并决定是否支付：营地（<encampment>）上或船（<boat>）上的部落 1 食物，野外（营地外）部落 2 食物；自己<farm>所在领地的营地部落自动视为已喂饱、野外部落只需 1 食物；研究牌能力可进一步减免。支付 = 从<food_space>返还对应数量<food>至供应堆。未喂饱的部落：强壮（posture == <upright>）部落躺倒（<lying>），已弱（<lying>）部落死亡——触发<tribe_death>（此时可用<deus_ex_machina>拯救）。",
+                          "zh": "对本玩家的每个<tribe>确定喂食成本并决定是否支付：<encampment>上或<boat>上的<tribe> 1 <food>，野外（<encampment>外）<tribe> 2 <food>；自己<farm>所在<territory>的<encampment><tribe>自动视为已喂饱、野外<tribe>只需 1 <food>；<research_card>能力可进一步减免。支付 = 从<food_space>返还对应数量<food>至<ontology::supply>。未喂饱的<tribe>：强壮（posture == <upright>）<tribe>躺倒（<lying>），已弱（<lying>）<tribe>死亡——触发<tribe_death>（此时可用<deus_ex_machina>拯救）。",
                           "en": "For each of this player's tribes, determine the feeding cost and decide whether to pay: 1 food per tribe on an <encampment> or <boat>, 2 food per tribe in the wilderness (outside encampments); tribes on encampments in a territory with your own <farm> are automatically fed, wilderness tribes there cost 1 food; research card abilities may reduce costs further. Paying = returning that many <food> from <food_space> to the supply. Unfed tribes: strong (<upright>) tribes are laid down (<lying>); already weak (<lying>) tribes die — triggering <tribe_death> (<deus_ex_machina> may save them then)."
                         },
                         "<ontology::pipeline>": {
@@ -1362,7 +1362,7 @@
                         "do_after": "feed_tribes",
                         "<ontology::per_player>": true,
                         "description": {
-                          "zh": "所有玩家完成喂部落（A 步）后，每位玩家为自己的每个强壮（posture == <upright>）部落获得 1 分。",
+                          "zh": "所有玩家完成喂部落（A 步）后，每位玩家为自己的每个强壮（posture == <upright>）<tribe>获得 1 分。",
                           "en": "After every player has finished feeding (step A), each player gains 1 success point for each of their strong (<upright>) tribes."
                         },
                         "<ontology::push_track>": {
@@ -1394,7 +1394,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段七：事件阶段。依次执行：A) 调整天气并结算其效果；B) 结算事件牌效果；C) 按当前时代计分板块的类别计分；D) 确定新的起始玩家（刚在该类别得分最高者）。",
+                    "zh": "阶段七：事件阶段。依次执行：A) 调整天气并结算其效果；B) 结算<event_card>效果；C) 按当前时代<scoring_tile>的类别计分；D) 确定新的起始玩家（刚在该类别得分最高者）。",
                     "en": "Phase 7: Event Phase. Execute in order: A) adjust the weather and resolve its effect; B) resolve the event card effect; C) score the current era's scoring category; D) determine the new starting player (highest scorer of that category)."
                   },
                   "<ontology::pipeline>": {
@@ -1406,7 +1406,7 @@
                           "en": "Weather Resolution"
                         },
                         "description": {
-                          "zh": "A 步：调整天气并结算其效果——先按本时代事件牌右上角的 <weather_trend> 移动 <weather_indicator>，再按座次顺位逐一结算 <weather_gauge> 当前格的效果。",
+                          "zh": "A 步：调整天气并结算其效果——先按本时代<event_card>右上角的 <weather_trend> 移动 <weather_indicator>，再按座次顺位逐一结算 <weather_gauge> 当前格的效果。",
                           "en": "Step A: adjust the weather and resolve its effect — first move the <weather_indicator> per the <weather_trend> on this era's event card, then resolve the current <weather_gauge> space effect in seating order."
                         },
                         "options": [
@@ -1456,7 +1456,7 @@
                         "specifies": "<ontology::trigger>",
                         "do_after": "event_card_resolution",
                         "description": {
-                          "zh": "C 步：按当前时代的计分类别计分，计分完成后移除该计分板块。",
+                          "zh": "C 步：按当前时代的计分类别计分，计分完成后移除该<scoring_tile>。",
                           "en": "Step C: score the current era's category, then remove that scoring tile."
                         },
                         "<ontology::condition>": {
@@ -1643,7 +1643,7 @@
                         },
                         "do_after": "event_era_scoring",
                         "description": {
-                          "zh": "D 步：确定新的起始玩家——<starting_monolith> 交给刚在时代计分类别中得分最高的玩家。",
+                          "zh": "D 步：确定新的起始玩家——<starting_monolith> 交给刚在<event_era_scoring>类别中得分最高的玩家。",
                           "en": "Step D: determine the new starting player — the <starting_monolith> goes to the player who just scored the most in that era category."
                         },
                         "options": [
@@ -1706,7 +1706,7 @@
                   },
                   "specifies": "<ontology::phase>",
                   "description": {
-                    "zh": "阶段八：收入阶段。依次执行：A) 获得收入（每位玩家执行每个 <income_chip> 一次，顺序自选）；B) 雕像计分（每座 <statue> 按 <favor_of_ager_track> 圆盘上方印的分数得分）；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家从供应堆补满空的 <reset_column>。收尾（MATCH）：前三时代（时代计分区还有板块）将 <phase_indicator> 移回阶段一开启新时代；第四时代（时代计分区全空）跳过 C/D，将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入终局计分。",
+                    "zh": "阶段八：收入阶段。依次执行：A) 获得收入（每位玩家执行每个 <income_chip> 一次，顺序自选）；B) <score_statues>（每座 <statue> 按 <favor_of_ager_track> 上<favor_marker>上方印的分数得分）；C) 回收 <continent> 上所有 <hunting_token> 至 <hunting_token_display>；D) 每位玩家从<ontology::supply>补满空的 <reset_column>。收尾（MATCH）：前三时代（<era_scoring_area>还有板块）将 <phase_indicator> 移回<phase_1_new_cards>开启新时代；第四时代（<era_scoring_area>全空）跳过 C/D，将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入<final_scoring>。",
                     "en": "Phase 8: Income Phase. Execute in order: A) Gain income (each player performs each <income_chip> once, order of choice); B) Score statues (each <statue> scores the points printed above your disc on the <favor_of_ager_track>); C) Return all <hunting_token>s from the <continent> to the <hunting_token_display>; D) Each player refills empty <reset_column>s from supply. Ending (MATCH): in eras 1-3 (era scoring area still holds tiles) move the <phase_indicator> back to Phase 1 for the next era; in the 4th era (era scoring area empty) skip C/D and place the <phase_indicator> on the leftmost hexagon of the <final_scoring_area_hex>, entering final scoring."
                   },
                   "<ontology::pipeline>": {
@@ -1719,7 +1719,7 @@
                         },
                         "specifies": "<ontology::round>",
                         "description": {
-                          "zh": "按座次顺位（从起始玩家开始顺时针）逐一进行收入轮——每位玩家在自己的回合获得收入：对 target（本玩家的全部已安装收入芯片）各执行一次 <activate_income_chip>，对各芯片的执行顺序自选。",
+                          "zh": "按座次顺位（从起始玩家开始顺时针）逐一进行收入轮——每位玩家在自己的回合获得收入：对 target（本玩家的全部已安装<income_chip>）各执行一次 <activate_income_chip>，对各芯片的执行顺序自选。",
                           "en": "In seating order (starting player, then clockwise), each player takes an income turn — on their turn they gain income: perform <activate_income_chip> once for each chip of the target (all of the player's installed income chips), across chips in an order of their choice."
                         },
                         "<ontology::turn>": {
@@ -1743,7 +1743,7 @@
                         },
                         "<ontology::per_player>": true,
                         "description": {
-                          "zh": "本玩家每有 1 座在 <continent> 上的 <statue>，得 <favor_of_ager_track> 上自己圆盘上方印的分数，计入 <score_track>。",
+                          "zh": "本玩家每有 1 座在 <continent> 上的 <statue>，得 <favor_of_ager_track> 上自己<favor_marker>上方印的分数，计入 <score_track>。",
                           "en": "For each of your <statue>s on the <continent>, gain the points printed above your disc on the <favor_of_ager_track>, on the <score_track>."
                         },
                         "<ontology::push_track>": {
@@ -1759,7 +1759,7 @@
                         },
                         "specifies": "<ontology::trigger>",
                         "description": {
-                          "zh": "将 <continent> 上所有 <hunting_token> 移回 <hunting_token_display>（不要移走营地上的阻挡标记）。第四时代跳过本步。",
+                          "zh": "将 <continent> 上所有 <hunting_token> 移回 <hunting_token_display>（不要移走<encampment>上的阻挡标记）。第四时代跳过本步。",
                           "en": "Remove all <hunting_token>s from the <continent> and return them to the <hunting_token_display> (do not remove blocking tokens from encampments). Skipped in the 4th era."
                         },
                         "<ontology::condition>": {
@@ -1785,7 +1785,7 @@
                         },
                         "specifies": "<ontology::trigger>",
                         "description": {
-                          "zh": "每位玩家从自己的供应堆为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。",
+                          "zh": "每位玩家从自己的<ontology::supply>为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。",
                           "en": "Each player refills each empty <reset_column> with 1 <reset_marker> from their supply. Skipped in the 4th era."
                         },
                         "<ontology::condition>": {
@@ -1822,7 +1822,7 @@
                           "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
                         },
                         "description": {
-                          "zh": "时代收尾：前三时代将 <phase_indicator> 移回阶段一开启新时代；第四时代将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入终局计分。",
+                          "zh": "时代收尾：前三时代将 <phase_indicator> 移回<phase_1_new_cards>开启新时代；第四时代将 <phase_indicator> 放到 <final_scoring_area_hex> 最左六角格，进入<final_scoring>。",
                           "en": "Era ending: in eras 1-3 return the <phase_indicator> to Phase 1 to start the next era; in the 4th era place the <phase_indicator> on the leftmost hexagon of the <final_scoring_area_hex> to enter final scoring."
                         },
                         "options": [
@@ -1878,7 +1878,7 @@
             "specifies": "<ontology::phase>",
             "do_after": "era_loop",
             "description": {
-              "zh": "终局计分阶段。第四时代收入阶段执行完 A（收入）和 B（雕像计分）后，跳过 C 和 D，将阶段标记放到终局计分轨起点（科技格），沿轨逐格推进——每格自带效果（见 <final_scoring_area_hex> slots），推进到哪格即结算哪格：9 个类别格各结算对应计分类别、控制台 A 格结算阶段分区、控制台 B 格结算 point bonus 卡。走完全轨后比较总分，最高者获胜。",
+              "zh": "终局计分阶段。第四时代<phase_8_income>执行完 A（收入）和 B（<score_statues>）后，跳过 C 和 D，将<phase_indicator>放到<final_scoring_area_hex>起点（科技格），沿轨逐格推进——每格自带效果（见 <final_scoring_area_hex> slots），推进到哪格即结算哪格：9 个类别格各结算对应计分类别、控制台 A 格结算<stage_partition>、控制台 B 格结算 point bonus 卡。走完全轨后比较总分，最高者获胜。",
               "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the start of the final scoring track (the Technology cell) and advance cell by cell — each cell carries its own effect (see the <final_scoring_area_hex> slots): the 9 category cells score their categories, the Console A cell scores the stage partition, the Console B cell scores point bonus cards. After the whole track, compare totals; the highest wins."
             },
             "<ontology::pipeline>": {
@@ -1921,7 +1921,7 @@
                   },
                   "specifies": "<ontology::evaluate>",
                   "description": {
-                    "zh": "逐级比较判定胜者：先比成功点数，并列者再比模组升级数，仍并列者比座次顺序——每一级若分出唯一胜者即结束，否则进入下一级。",
+                    "zh": "逐级比较判定胜者：先比<success_point>，并列者再比<upgrade_main_module>数，仍并列者比座次顺序——每一级若分出唯一胜者即结束，否则进入下一级。",
                     "en": "Adjudicate the winner level by level: compare success points first; tied players compare module upgrades; still tied players compare seating order — each level ends the adjudication if it yields a unique winner, otherwise the next level applies."
                   },
                   "<ontology::content>": {
@@ -1935,7 +1935,7 @@
                           },
                           "specifies": "<ontology::evaluate>",
                           "description": {
-                            "zh": "比较所有玩家的成功点数，最高者获胜（唯一时判定结束）。",
+                            "zh": "比较所有玩家的<success_point>，最高者获胜（唯一时判定结束）。",
                             "en": "Compare all players' success points; the highest wins (adjudication ends if unique)."
                           },
                           "result": {
@@ -1954,7 +1954,7 @@
                           ],
                           "specifies": "<ontology::evaluate>",
                           "description": {
-                            "zh": "成功点数并列的玩家中，已执行更多模组升级者获胜（唯一时判定结束）。",
+                            "zh": "<success_point>并列的玩家中，已执行更多<upgrade_main_module>者获胜（唯一时判定结束）。",
                             "en": "Among the tied players, the one with more module upgrades wins (adjudication ends if unique)."
                           },
                           "<ontology::condition>": {
@@ -2020,7 +2020,7 @@
       },
       "specifies": "<ontology::lap_event>",
       "description": {
-        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上越过 99 格（跨过循环边界）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）。",
+        "zh": "每当某玩家的 <score_marker> 在 <score_track> 上越过 99 格（跨过循环边界）时，该玩家从 <hundred_point_token_display> 拿取 1 个 <hundred_point_token> 放在<console>旁（实际总分 = 指示物数 × 100 + <score_marker>位置）。",
         "en": "Whenever a player's <score_marker> crosses space 99 on the <score_track> (across the loop boundary), that player takes 1 <hundred_point_token> from the <hundred_point_token_display> and places it next to their console (actual total = tokens × 100 + disc position)."
       },
       "<ontology::content>": {
@@ -2047,7 +2047,7 @@
       "specifies": "<ontology::trigger>",
       "abstract": true,
       "description": {
-        "zh": "进程轨奖励线（印在轨上的奖励阈值）的接口概念：每条奖励线是一个 <track_bonus> 实例，声明自己的触发格（trigger_slot）与奖励效果（<ontology::content>）。共 4 种奖励类型：① 升级主模组（模组两个<activation_die>费用点数之一与本轨 bonus_die_value 一致即可选择，见 <technology_track>.bonus_die_value 等路径）；② 恩惠轨推进 1 格或执行 1 个收入芯片效果（二选一）；③ 翻 1 个 stage tile 到激活面或得 3 分（二选一）；④ 得 3 分。",
+        "zh": "进程轨奖励线（印在轨上的奖励阈值）的接口概念：每条奖励线是一个 <track_bonus> 实例，声明自己的触发格（trigger_slot）与奖励效果（<ontology::content>）。共 4 种奖励类型：① <upgrade_main_module>（模组两个<activation_die>费用点数之一与本轨 bonus_die_value 一致即可选择，见 <technology_track>.bonus_die_value 等路径）；② <favor_of_ager_track>推进 1 格或执行 1 个<income_chip>效果（二选一）；③ 翻 1 个<stage_tile>到激活面或得 3 分（二选一）；④ 得 3 分。",
         "en": "Interface concept for the progress-track bonus lines (bonus thresholds printed on the tracks): each bonus line is a <track_bonus> instance declaring its trigger space (trigger_slot) and bonus effect (<ontology::content>). Four bonus types: ① upgrade 1 main module (selectable if one of its two activation die cost values matches this track's bonus_die_value, see paths like <technology_track>.bonus_die_value); ② advance the Favor of Agera track 1 step OR perform 1 income chip action; ③ flip 1 stage tile to active OR gain 3 success points; ④ gain 3 success points."
       },
       "trigger_slot": {
@@ -2096,7 +2096,7 @@
         "<progress_track>.progress_space[5]"
       ],
       "description": {
-        "zh": "升级 1 个主模组：该模组的两个<activation_die>费用点数之一与推进的轨道对应的<activation_die>点数一致即可升级。",
+        "zh": "<upgrade_main_module>：该模组的两个<activation_die>费用点数之一与推进的轨道对应的<activation_die>点数一致即可升级。",
         "en": "Upgrade 1 main module: a module is upgradable if one of its two activation die cost values matches the advanced track's activation die value."
       },
       "<ontology::content>": {
@@ -2125,7 +2125,7 @@
         "<progress_track>.progress_space[3]"
       ],
       "description": {
-        "zh": "将阿格拉恩惠轨推进 1 格，或选择 1 个已安装的收入芯片执行其效果（二选一）。",
+        "zh": "将<favor_of_ager_track>推进 1 格，或选择 1 个已安装的<income_chip>执行其效果（二选一）。",
         "en": "Advance the Favor of Agera track 1 step, or choose 1 installed income chip and perform its action (choose one)."
       },
       "<ontology::content>": {
@@ -2154,7 +2154,7 @@
         "<progress_track>.progress_space[9]"
       ],
       "description": {
-        "zh": "翻 1 个未激活的 stage tile 到激活面，或得 3 分（二选一）。",
+        "zh": "翻 1 个未激活的<stage_tile>到激活面，或得 3 分（二选一）。",
         "en": "Flip 1 inactive stage tile to its active side, or gain 3 success points (choose one)."
       },
       "<ontology::content>": {
@@ -2209,7 +2209,7 @@
       },
       "specifies": "<ontology::overflow_compensation>",
       "description": {
-        "zh": "圆片无法推进超过进程轨的“12”格。如果你的圆片已经位于进程轨的“12”格，你将要在该轨道推进的每一步，都改为获得 2 分。",
+        "zh": "<progress_marker>无法推进超过<progress_track>的“12”格。如果你的<progress_marker>已经位于<progress_track>的“12”格，你将要在该轨道推进的每一步，都改为获得 2 分。",
         "en": "You can't advance beyond space 12 on any progress track. If your disc is already on space 12 of a track, gain 2 success points for every additional step you would gain there."
       },
       "<ontology::content>": {
@@ -2229,7 +2229,7 @@
       },
       "specifies": "<ontology::underlap_event>",
       "description": {
-        "zh": "分数标记反向越过 0 格（跨过循环边界）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>）；回绕后按步数继续移动（环形轨自然语义）。",
+        "zh": "<score_marker>反向越过 0 格（跨过循环边界）时：失去 1 个 <hundred_point_token>（放回 <hundred_point_token_display>）；回绕后按步数继续移动（环形轨自然语义）。",
         "en": "When the score marker crosses space 0 in reverse (across the loop boundary): lose 1 <hundred_point_token> (return it to the <hundred_point_token_display>); after wrapping, it keeps moving for the remaining steps (the circular track's natural semantics)."
       },
       "<ontology::content>": {
@@ -2273,7 +2273,7 @@
       },
       "specifies": "<ontology::trigger>",
       "description": {
-        "zh": "每位玩家的标记供应堆上限 50 个 <octagonal_pillar>。当玩家需要从自己的供应堆拿取标记但供应堆已空时，可立即回收 <console> 或 <continent> 上的任意数量标记退回供应堆以补充——雕像 <statue>、重置标记 <reset_marker> 和船（<boat>）上的标记除外。",
+        "zh": "每位玩家的标记供应堆上限 50 个 <octagonal_pillar>。当玩家需要从自己的<ontology::supply>拿取标记但供应堆已空时，可立即回收 <console> 或 <continent> 上的任意数量标记退回<ontology::supply>以补充——<statue>、<reset_marker> 和<boat>上的标记除外。",
         "en": "Each player's marker supply holds up to 50 <octagonal_pillar>s. When a player needs to take markers from their supply but it is empty, they may immediately return any number of markers from the <console> or <continent> to replenish it — except <statue>s, <reset_marker>s, and markers on <boat>s."
       },
       "<ontology::condition>": {
@@ -2425,7 +2425,7 @@
       },
       "specifies": "<ontology::activation>",
       "description": {
-        "zh": "从控制台层级分区中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。初始芯片牌塞入收入区后（其上三分之一的 <income_chip> 露出）也可被选择。",
+        "zh": "从<console>的<stage_partition>中选择 1 个已安装的 <income_chip>，激活其 <ontology::effect>。<starting_chip_card>塞入<income_area>后（其上三分之一的 <income_chip> 露出）也可被选择。",
         "en": "Choose 1 installed <income_chip> from the console stage partition and activate its <ontology::effect>. A starting chip card slid into the income area (its top-third <income_chip> revealed) may also be chosen."
       },
       "target": "1 个已安装的 <income_chip>",
@@ -2453,7 +2453,7 @@
       },
       "specifies": "<ontology::play>",
       "description": {
-        "zh": "将手牌中的一张 <research_card> 投入使用：确定列与层级 → 满足 <cost_space> 费用格（可 assume a higher stage 多满足至更高层）→ 结算 <success_point>（已满足费用格下方印的分之和）→ 结算 <instant_bonus>（可放弃）→ 插入（仅上三分之一露出，<research_ability> 激活持续可用）。",
+        "zh": "将手牌中的一张 <research_card> 投入使用：确定列与层级 → 满足 <cost_space> 费用格（可 assume a higher stage 多满足至更高层）→ 结算 <success_point>（已满足<cost_space>下方印的分之和）→ 结算 <instant_bonus>（可放弃）→ 插入（仅上三分之一露出，<research_ability> 激活持续可用）。",
         "en": "Put a <research_card> from hand into use: determine column and tier → fulfill the <cost_space>s (may assume a higher stage) → resolve <success_point> (sum of the fulfilled cost spaces' printed scores) → resolve <instant_bonus> (may forgo) → insert (only the top third remains visible; the <research_ability> activates and stays usable)."
       },
       "<ontology::piece>": "<research_card>",
@@ -2480,7 +2480,7 @@
               "en": "A same-type research card is already installed."
             },
             "description": {
-              "zh": "选该列最低空位（层级序号即费用格 N）。",
+              "zh": "选该列最低空位（层级序号即<cost_space> N）。",
               "en": "Use the lowest empty slot of that column (tier index = the cost spaces' N)."
             }
           },
@@ -2502,7 +2502,7 @@
                   "en": "Empty Column"
                 },
                 "description": {
-                  "zh": "任选一个空列，安装在该列最低空位（层级序号即费用格 N）。",
+                  "zh": "任选一个空列，安装在该列最低空位（层级序号即<cost_space> N）。",
                   "en": "Choose any empty column, install at the lowest empty slot of that column (tier index = the cost spaces' N)."
                 }
               },
@@ -2575,7 +2575,7 @@
       },
       "specifies": "<ontology::play>",
       "description": {
-        "zh": "将选中的 <starting_chip_card> 塞入 <console> 的收入区，成为玩家的首个收入芯片（其 <income_chip> 部分激活收入芯片时可选）。无费用格（区别于安装研究牌）。",
+        "zh": "将选中的 <starting_chip_card> 塞入 <console> 的<income_area>，成为玩家的首个<income_chip>（其 <income_chip> 部分在<activate_income_chip>时可选）。无<cost_space>（区别于<install_research_card>）。",
         "en": "Slide the chosen <starting_chip_card> into the <console>'s income area as the player's first income chip (its <income_chip> part is selectable when activating income chips). No cost slots (unlike installing research cards)."
       },
       "<ontology::piece>": "<starting_chip_card>",
@@ -2590,7 +2590,7 @@
       },
       "specifies": "<ontology::play>",
       "description": {
-        "zh": "将一枚 <goal_chip> 从目标区安装到层级分区。翻至背面，选左/右半侧，安装至最低空位。",
+        "zh": "将一枚 <goal_chip> 从<goal_area>安装到<stage_partition>。翻至背面，选左/右半侧，安装至最低空位。",
         "en": "Install a <goal_chip> from the goal area into the stage partition. Flip to back, choose left/right half, place at lowest empty position."
       },
       "<ontology::piece>": "<goal_chip>",
@@ -2635,7 +2635,7 @@
       },
       "specifies": "<ontology::transfer>",
       "description": {
-        "zh": "将 1 个 <food> 从 <food_space> 返回供应堆。",
+        "zh": "将 1 个 <food> 从 <food_space> 返回<ontology::supply>。",
         "en": "Return 1 <food> from <food_space> to the supply."
       },
       "source": "<food_space>",
@@ -2651,7 +2651,7 @@
       },
       "specifies": "<ontology::transfer>",
       "description": {
-        "zh": "将 1 个 <tribe> 从 <continent> 返回玩家供应堆。",
+        "zh": "将 1 个 <tribe> 从 <continent> 返回玩家<ontology::supply>。",
         "en": "Return 1 <tribe> from the <continent> to the player's supply."
       },
       "source": "<continent>",
@@ -2667,7 +2667,7 @@
       },
       "specifies": "<ontology::push_track>",
       "description": {
-        "zh": "从 5 条进程轨中任选 1 条推进。",
+        "zh": "从 5 条<progress_track>中任选 1 条推进。",
         "en": "Choose any 1 of the 5 progress tracks and advance on it."
       },
       "<ontology::track>": {
@@ -2689,7 +2689,7 @@
       },
       "specifies": "<ontology::trigger>",
       "description": {
-        "zh": "事件阶段 A 步（<adjust_weather_indicator>）执行完毕后，按 <weather_indicator> 所在格结算天气效果，所有玩家按座次顺位逐一结算。正面效果可放弃，负面效果必须执行。",
+        "zh": "<phase_7_event> A 步（<adjust_weather_indicator>）执行完毕后，按 <weather_indicator> 所在格结算天气效果，所有玩家按座次顺位逐一结算。正面效果可放弃，负面效果必须执行。",
         "en": "After step A of the Event phase (<adjust_weather_indicator>) completes, the weather effect of the slot the <weather_indicator> is on is resolved by all players in seating order. Positive effects may be forgone; negative effects are mandatory."
       },
       "<ontology::condition>": {
@@ -2711,7 +2711,7 @@
       },
       "specifies": "<ontology::upgrade>",
       "description": {
-        "zh": "对 1 个未达最高等级的主模组执行 1 次<ontology::upgrade>（<ontology::state_change>：level 属性提升 1 级）。物理后果：L1→L2 模组板块翻面，L2→L3 板块放回<ontology::game_box>、console 上 L3 效果激活。",
+        "zh": "对 1 个未达最高等级的<upgradable_module>执行 1 次<ontology::upgrade>（<ontology::state_change>：level 属性提升 1 级）。物理后果：L1→L2 <module>的<ontology::tile>翻面，L2→L3 <module>的<ontology::tile>放回<ontology::game_box>、<console>上 L3 效果激活。",
         "en": "Perform 1 <ontology::upgrade> on a main module not at max level (<ontology::state_change>: level attribute increases by 1). Physical consequences: L1→L2 flips the module tile; L2→L3 returns the tile to the <ontology::game_box> and activates the console L3 effect."
       },
       "options": [
@@ -2722,7 +2722,7 @@
             "en": "Choose Module"
           },
           "description": {
-            "zh": "选择一个未达等级三的主模组。",
+            "zh": "选择一个未达等级三的<upgradable_module>。",
             "en": "Choose a main module not yet at level 3."
           }
         },
@@ -2733,7 +2733,7 @@
             "en": "Upgrade L1 to L2"
           },
           "description": {
-            "zh": "模组 level 属性从 1 变为 2。物理后果：将模组板块翻至等级二面（该等级 effect 由 tile 反面承载）。",
+            "zh": "<module> level 属性从 1 变为 2。物理后果：将<module>的<ontology::tile>翻至等级二面（该等级 effect 由<ontology::tile>反面承载）。",
             "en": "Module level attribute changes from 1 to 2. Physical consequence: flip the module tile to its level-2 side (that level's effect is carried by the tile back)."
           },
           "<ontology::state_change>": {
@@ -2751,7 +2751,7 @@
             "en": "Upgrade L2 to L3"
           },
           "description": {
-            "zh": "模组 level 属性从 2 变为 3。物理后果：将模组板块放回 <ontology::game_box>，console 模组槽底部的 L3 effect 激活。",
+            "zh": "<module> level 属性从 2 变为 3。物理后果：将<module>的<ontology::tile>放回 <ontology::game_box>，<console>的<module_area>底部的 L3 effect 激活。",
             "en": "Module level attribute changes from 2 to 3. Physical consequence: return the module tile to <ontology::game_box>; the L3 effect printed at the console module slot becomes active."
           },
           "<ontology::state_change>": {
@@ -2773,7 +2773,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "获得 1 个收入芯片并触发其效果。",
+        "zh": "获得 1 个<income_chip>并触发其效果。",
         "en": "Gain 1 income chip and trigger its effect."
       },
       "<ontology::content>": {
@@ -2835,7 +2835,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "将 1 个健康的部落从一个区域移动至相邻区域。同一领地内不能移动；不能进入<site>。分属两块大陆板块的同一地形类型区域（即使地形一样）视为两个不同区域——只要彼此接壤即可。山脉区域规则上与其他区域完全一样。",
+        "zh": "将 1 个健康的<tribe>从一个<territory>移动至相邻<territory>。同一<territory>内不能移动；不能进入<site>。分属两块<continent_tile>的同一地形类型<territory>（即使地形一样）视为两个不同<territory>——只要彼此接壤即可。山脉<territory>规则上与其他<territory>完全一样。",
         "en": "Move 1 healthy tribe from one territory to an adjacent territory. Cannot move within the same territory; cannot enter <site>s. Territories of the same terrain type on different continent tiles (even if the terrain is identical) are separate territories — valid as long as their borders touch. Mountain territories function identically to all other types."
       },
       "target": "1 个 posture == <upright> 的 <tribe> + 1 个相邻领地的营地（陆地），或 1 个自己的位于相邻水流区域且有空位的 <boat>。",
@@ -2858,7 +2858,7 @@
       },
       "specifies": "<ontology::trigger>",
       "description": {
-        "zh": "迁徙后的自动触发结算。各 trigger 按自身 condition 独立判定，满足即执行。",
+        "zh": "<migrate>后的自动触发结算。各 trigger 按自身 condition 独立判定，满足即执行。",
         "en": "Automatic trigger resolution after migration. Each trigger independently checks its condition and fires if met."
       },
       "constraints": {
@@ -2890,7 +2890,7 @@
               },
               "specifies": "<ontology::trigger>",
               "description": {
-                "zh": "将占据营地的部落移至同一区域的野外（保留其站立/躺倒状态）。",
+                "zh": "将占据<encampment>的<tribe>移至同一<territory>的野外（保留其站立/躺倒状态）。",
                 "en": "Move the occupying tribe to the wilderness of the same territory (retaining its upright/lying state)."
               },
               "<ontology::condition>": {
@@ -2916,7 +2916,7 @@
               },
               "specifies": "<ontology::trigger>",
               "description": {
-                "zh": "迁徙部落落定于篝火营地时立即获得营地所示分数。",
+                "zh": "<tribe>落定于<fire_encampment>时立即获得营地所示分数。",
                 "en": "Gain the points shown on the fire encampment immediately when the migrating tribe settles there."
               },
               "<ontology::condition>": {
@@ -2940,7 +2940,7 @@
               },
               "specifies": "<ontology::state_change>",
               "description": {
-                "zh": "驱赶其他部落后，迁徙部落变虚弱。",
+                "zh": "驱赶其他<tribe>后，迁徙<tribe>变虚弱。",
                 "en": "Migrating tribe becomes weak after displacing another tribe."
               },
               "do_after": "displace_occupant",
@@ -2980,7 +2980,7 @@
                       },
                       "specifies": "<ontology::transfer>",
                       "description": {
-                        "zh": "从供应堆取 1 个八角柱放至目标区域作为原材料标记。",
+                        "zh": "从<ontology::supply>取 1 个<octagonal_pillar>放至目标<territory>作为<raw_material>。",
                         "en": "Place 1 octagonal pillar from supply onto the destination territory as a raw material marker."
                       },
                       "source": "<ontology::supply>",
@@ -3006,7 +3006,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "1 次迁徙：将部落移动到相邻领地，随后玩家决定是落定还是继续旅程——落定则结算迁徙触发；继续旅程（该部落本激活内将再次迁徙）则为穿越，不结算触发、不进入营地、不获得火营地分、不开发领地。",
+        "zh": "1 次迁徙：将<tribe>移动到相邻<territory>，随后玩家决定是落定还是继续旅程——落定则结算<resolve_migration_triggers>；继续旅程（该<tribe>本激活内将再次迁徙）则为穿越，不结算触发、不进入<encampment>、不获得<fire_encampment>分、不开发<territory>。",
         "en": "1 migration: move the tribe to an adjacent territory, then the player decides whether to settle or continue the journey — settling resolves migration triggers; continuing (the same tribe will migrate again this activation) crosses through: no trigger resolution, no encampment entry, no fire encampment points, no territory development."
       },
       "target": "this.target",
@@ -3046,7 +3046,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "获得 1 张研究牌：选择一种研究牌类型（建造/洞悉/突变/成就/发明），从该类型的<face_up_research_stack>顶或<research_deck>顶拿取 1 张<research_card>至手牌。拿取后若正面堆为空，自动从对应背面朝下堆翻一张补充。",
+        "zh": "获得 1 张<research_card>：选择一种<research_card>类型（建造/洞悉/突变/成就/发明），从该类型的<face_up_research_stack>顶或<research_deck>顶拿取 1 张<research_card>至手牌。拿取后若正面堆为空，自动从对应<research_deck>翻一张补充。",
         "en": "Gain 1 research card: Choose a card type (Building/Insight/Mutation/Achievement/Invention), take the top <research_card> from that type's <face_up_research_stack> or <research_deck> to hand. If the face-up stack becomes empty, auto-refill from the corresponding face-down deck."
       },
       "<ontology::content>": {
@@ -3131,7 +3131,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "从背面朝下的研究牌堆抽 N 张牌检视，选 K 张转入<player_holding>，其余放回各自来源牌堆底部。N 和 K 由调用方指定。",
+        "zh": "从<research_deck>抽 N 张牌检视，选 K 张转入<player_holding>，其余放回各自来源牌堆底部。N 和 K 由调用方指定。",
         "en": "Draw N cards from face-down research decks, inspect them, pick K to transfer to <player_holding>, and return the rest face-down to the bottom of their respective source decks. N and K are specified by the caller."
       },
       "constraints": {
@@ -3220,7 +3220,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "交易行动。出售仓库材料换取钱币或分数，或用钱币购买新材料。必须从出售与购买中至少选择一项执行（可只卖、只买，顺序任意）：",
+        "zh": "交易行动。出售<storage_area>的<stored_material>换取<money>或分数，或用<money>购买新<stored_material>。必须从出售与购买中至少选择一项执行（可只卖、只买，顺序任意）：",
         "en": "The Trade action. Sell stored materials for money or points, or purchase new materials with money. At least one of Sale or Purchase must be performed (may sell only or buy only, in any order):"
       },
       "<ontology::content>": {
@@ -3233,7 +3233,7 @@
                 "en": "Sale"
               },
               "description": {
-                "zh": "出售：从仓库选最多 2 个材料，一个可换钱币，一个可换 2 分。二者不可重复。",
+                "zh": "出售：从<storage_area>选最多 2 个<stored_material>，一个可换<money>，一个可换 2 分。二者不可重复。",
                 "en": "Sale: Sell up to 2 materials. One may be for money, one for 2 points. Cannot double up."
               },
               "options": [
@@ -3244,7 +3244,7 @@
                     "en": "Sale For Money"
                   },
                   "description": {
-                    "zh": "换钱币：售出一个材料换取钱币。",
+                    "zh": "换钱币：售出一个<stored_material>换取<money>。",
                     "en": "For money: Sell one material for money."
                   },
                   "options": [
@@ -3286,7 +3286,7 @@
                     "en": "Sale For Points"
                   },
                   "description": {
-                    "zh": "换分数：售出一个材料换取 2 分。",
+                    "zh": "换分数：售出一个<stored_material>换取 2 分。",
                     "en": "For points: Sell one material for 2 points."
                   },
                   "options": [
@@ -3326,7 +3326,7 @@
                 "en": "Purchase"
               },
               "description": {
-                "zh": "购买：支付钱币，从供应堆获取一个材料标记放入仓库。",
+                "zh": "购买：支付<money>，从<ontology::supply>获取一个<stored_material>标记放入<storage_area>。",
                 "en": "Purchase: Pay money, then take one material marker from supply into storage."
               },
               "options": [
@@ -3374,7 +3374,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部<fate_die>，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
+        "zh": "幸运收获：选择一种<territory>类型（该<territory>中至少有一个你的<tribe>），投掷全部<fate_die>，选一颗骰子的点数。根据点数和所选<territory>类型，在<storage_area>对应的连线找到获得的<stored_material>，从<ontology::supply>取一个标记放入对应仓库格。",
         "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
       },
       "<ontology::condition>": {
@@ -3429,7 +3429,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该地点的 <ontology::effect>。翻开后地点保持正面朝上，持续影响相邻领地。",
+        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该<site>的 <ontology::effect>。翻开后<site>保持正面朝上，持续影响相邻<territory>。",
         "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. The site stays face up and affects adjacent territories for the rest of the game."
       },
       "<ontology::condition>": {
@@ -3486,7 +3486,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有你至少一个<tribe>的区域，将与这个区域相邻的所有 face == face_down 的 <site> 作为目标，逐一执行<explore_site>。",
+        "zh": "选择 1 个有你至少一个<tribe>的<territory>，将与这个<territory>相邻的所有 face == face_down 的 <site> 作为目标，逐一执行<explore_site>。",
         "en": "Choose 1 territory where you have at least one <tribe>; every <site> with face == face_down adjacent to it becomes a target, and <explore_site> is performed on each."
       },
       "<ontology::condition>": {
@@ -3511,7 +3511,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个新<tribe>放到该区域的营地；大陆上没有任何自己的部落时可任选区域；船上有空座时也可在船上繁育。若 20 个部落全部在场则不能繁育。",
+        "zh": "选择 1 个有至少一个自己<tribe>的<territory>，从<ontology::supply>取 1 个新<tribe>放到该<territory>的<encampment>；<continent>上没有任何自己的<tribe>时可任选<territory>；<boat>上有空座时也可在<boat>上繁育。若 20 个<tribe>全部在场则不能繁育。",
         "en": "Choose a territory with at least one of your <tribe>s. Take a new <tribe> from supply and place it onto an encampment in that territory; any territory is allowed if you have no tribes on the continent; procreation on a boat is allowed if it has a free seat. Cannot procreate if all 20 tribes are on the continent."
       },
       "<ontology::condition>": {
@@ -3542,7 +3542,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "1 次繁育：从供应堆取新<tribe>放到目标区域的营地（<place_new_tribe>），随后按各自 condition 结算繁育触发——营地被占则驱逐原部落（新部落随之虚弱放下）；篝火营地照常得分；未开发区域立即开发。",
+        "zh": "1 次繁育：从<ontology::supply>取新<tribe>放到目标<territory>的<encampment>（<place_new_tribe>），随后按各自 condition 结算繁育触发——<encampment>被占则驱逐原<tribe>（新<tribe>随之虚弱放下）；<fire_encampment>照常得分；未开发<territory>立即开发。",
         "en": "1 procreation: take a new <tribe> from supply onto an encampment in the target territory (<place_new_tribe>), then resolve triggers by their own conditions — displace the occupant if the encampment is occupied (the new tribe is then laid down weakened); fire encampments score as usual; undeveloped territories are developed immediately."
       },
       "target": "this.target",
@@ -3644,7 +3644,7 @@
                     {
                       "<ontology::transfer>": {
                         "description": {
-                          "zh": "从供应堆取 1 个八角柱放至目标区域作为原材料标记。",
+                          "zh": "从<ontology::supply>取 1 个<octagonal_pillar>放至目标<territory>作为<raw_material>。",
                           "en": "Place 1 octagonal pillar from supply onto the target territory as a raw material marker."
                         },
                         "source": "<ontology::supply>",
@@ -3671,7 +3671,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有至少一个自己<tribe>且无<hunting_token>的区域，掷全部粉骰，选 1 个骰子的点数，按狩猎表（区域类型 × 点数）确定食物数量，从供应堆拿对应数量<food>放到控制台食物格（可用创意标记修改骰子点数），最后从狩猎标记展示区取 1 个<hunting_token>放到该区域——本时代内任何玩家都不能再在此区域狩猎。",
+        "zh": "选择 1 个有至少一个自己<tribe>且无<hunting_token>的<territory>，掷全部<fate_die>，选 1 个骰子的点数，按<hunting_table>（<territory>类型 × 点数）确定<food>数量，从<ontology::supply>拿对应数量<food>放到<console>的<food_space>（可用<idea_marker>修改骰子点数），最后从<hunting_token_display>取 1 个<hunting_token>放到该<territory>——本时代内任何玩家都不能再在此<territory><hunt>。",
         "en": "Choose a territory with at least one of your <tribe>s and no <hunting_token>. Roll all pink fate dice, pick one result, and look up the hunting table (territory type × die value) for the food amount. Take that many <food> from supply onto your food space (idea markers may change the die value). Finally place a <hunting_token> from the display onto that territory — no one may hunt there for the rest of the era."
       },
       "<ontology::condition>": {
@@ -3783,7 +3783,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有至少一个自己<tribe>的区域，从供应堆取 1 个标记放入该区域，成为该区域材料板块所示类型的原材料。船上有至少一个部落且中央凹槽未被占用时也可在船上生产（材料类型到运输时才确定）。原材料本身没有价值也不能使用，只有运输到仓库后才成为可用的<stored_material>（可用于建造或支付卡牌费用）。",
+        "zh": "选择 1 个有至少一个自己<tribe>的<territory>，从<ontology::supply>取 1 个标记放入该<territory>，成为该<territory>的<material_tile>所示类型的<raw_material>。<boat>上有至少一个<tribe>且中央凹槽未被占用时也可在<boat>上生产（材料类型到<transport_material>时才确定）。<raw_material>本身没有价值也不能使用，只有运输到<storage_area>后才成为可用的<stored_material>（可用于建造或支付卡牌费用）。",
         "en": "Choose a territory with at least one of your <tribe>s and place a marker from supply into it, representing a raw material of the type shown on the territory's material tile. Production on a boat is possible with at least one tribe aboard and the central notch free (type determined at transport time). Raw materials have no value by themselves and cannot be used; only after being transported to storage do they become usable <stored_material>s (e.g., for building or paying card costs)."
       },
       "<ontology::condition>": {
@@ -3814,7 +3814,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择大陆上任意 1 个自己的陆地原材料标记（无需该区域有部落），按所在区域<material_tile>的材料类型，将标记放到对应材料类型的仓库格，成为<stored_material>。",
+        "zh": "选择<continent>上任意 1 个自己的陆地<raw_material>标记（无需该<territory>有<tribe>），按所在<territory>的<material_tile>的材料类型，将标记放到对应材料类型的<storage_area>格，成为<stored_material>。",
         "en": "Choose any 1 of your raw material markers on the continent (no tribe required in that territory). Move the marker to the storage space matching its territory's <material_tile> material type, becoming a <stored_material>."
       },
       "target": "大陆上任意 1 个自己的陆地原材料标记（<octagonal_pillar>）",
@@ -3841,7 +3841,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个自己的船载原材料标记，运输到仓库格。默认按船所在水流区域相邻的已开发区域（任选其一）的材料类型确定仓库格；调用方可传 storage_space = 'any' 放宽为任意仓库格（运输模组 L3）。",
+        "zh": "选择 1 个自己的<boat>载<raw_material>标记，运输到<storage_area>格。默认按<boat>所在水流<territory>相邻的已开发<territory>（任选其一）的<stored_material>类型确定<storage_area>格；调用方可传 storage_space = 'any' 放宽为任意<storage_area>格（<transport_material> L3）。",
         "en": "Choose 1 of your raw material markers on a boat and transport it to a storage space. By default the storage space matches the material type of a developed territory adjacent to the boat's Water territory (choose one); the caller may pass storage_space = 'any' to allow any storage space (Transport module L3)."
       },
       "target": "1 个自己的船载原材料标记（<octagonal_pillar>）",
@@ -3880,7 +3880,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "运输 1 个原材料到仓库：陆地原材料按所在区域类型（<transport_land_material>）；船载原材料按相邻已开发区域类型或调用方指定规则（<transport_boat_material>）。",
+        "zh": "运输 1 个<raw_material>到<storage_area>：陆地<raw_material>按所在<territory>类型（<transport_land_material>）；<boat>载<raw_material>按相邻已开发<territory>类型或调用方指定规则（<transport_boat_material>）。",
         "en": "Transport 1 raw material to storage: land raw material by its territory's type (<transport_land_material>); boat raw material by an adjacent developed territory's type or a caller-specified rule (<transport_boat_material>)."
       },
       "<ontology::content>": {
@@ -3901,7 +3901,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "获得 1 个<activation_die>：优先从骰子展示区拿取；展示区无骰子时从拥有<activation_die>最多的玩家处拿取。拿到后立即投掷一次，按点数放到控制台对应点数骰子格。",
+        "zh": "获得 1 个<activation_die>：优先从<dice_display>拿取；<dice_display>无骰子时从拥有<activation_die>最多的玩家处拿取。拿到后立即投掷一次，按点数放到<console>的<activation_dice_area>对应点数格上。",
         "en": "Gain 1 <activation_die>: take it from the dice display if available; otherwise take it from a civilization with the most activation dice. Roll it immediately and place it on the matching dice space of your console."
       },
       "<ontology::content>": {
@@ -4060,7 +4060,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "获得 1 个<fate_die>：优先从骰子展示区拿取；展示区无骰子时从拥有<fate_die>最多的玩家处拿取。加入自己持有的粉骰（之后恩惠检定、狩猎、幸运收获时一起掷）。",
+        "zh": "获得 1 个<fate_die>：优先从<dice_display>拿取；<dice_display>无骰子时从拥有<fate_die>最多的玩家处拿取。加入自己持有的<fate_die>（之后<favor_test>、<hunt>、<lucky_find>时一起掷）。",
         "en": "Gain 1 <fate_die>: take it from the dice display if available; otherwise take it from a civilization with the most fate dice. Add it to your fate dice (rolled together for favor tests, hunts, and lucky finds)."
       },
       "<ontology::content>": {
@@ -4187,7 +4187,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "从进程版图的目标芯片展示区选择 1 枚<goal_chip>，正面朝上放入目标区；目标区已满时叠放在任意 1 枚已有目标芯片上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。随后从深蓝袋随机抽 1 枚补满展示区空位。",
+        "zh": "从<progress_board>的<goal_chip_display>选择 1 枚<goal_chip>，正面朝上放入<goal_area>；<goal_area>已满时叠放在任意 1 枚已有<goal_chip>上并覆盖之（被覆盖者直到其上芯片被安装前不可用）。随后从<goal_chip_bag>随机抽 1 枚补满<goal_chip_display>空位。",
         "en": "Choose 1 <goal_chip> from the goal chip display on the progress board and place it face up in your goal area; if all 3 spaces are occupied, place it on top of another face-up goal chip, covering it. Then refill the empty display space with a goal chip randomly drawn from the dark blue bag."
       },
       "<ontology::condition>": {
@@ -4235,7 +4235,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "从供应堆取 N 个标记作为<planning_marker>，全部放到控制台任意 1 个骰子格上（必须同一格，不能分散）。计划标记可在激活模组时替代对应点数的白骰子支付费用。",
+        "zh": "从<ontology::supply>取 N 个标记作为<planning_marker>，全部放到<console>任意 1 个<activation_dice_area>的格上（必须同一格，不能分散）。<planning_marker>可在<activate_module>时替代对应点数的<activation_die>支付费用。",
         "en": "Take N markers from supply as <planning_marker>s and place all of them onto any 1 dice space of your console (all on the same space). Planning markers may replace a white activation die of the corresponding value when activating a module."
       },
       "target": "控制台任意 1 个骰子格",
@@ -4262,7 +4262,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "将 1 个<feature_marker>从当前特征格移动到自己的任意其他特征格。",
+        "zh": "将 1 个<feature_marker>从当前<feature_space>移动到自己的任意其他<feature_space>。",
         "en": "Move 1 <feature_marker> from its current feature space to any other feature space of yours."
       },
       "target": "1 个自己的<feature_marker> + 1 个自己的目标特征格",
@@ -4283,7 +4283,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "建造农场：选一个有自己部落的陆地区域（不能已有农场，不能与已翻开的火山相邻），将控制台农场供应堆的一个农场放至该区域。无需材料费用。立即获得 1 个创意标记。最多 3 个，不可主动拆除。",
+        "zh": "建造农场：选一个有自己<tribe>的陆地<territory>（不能已有<farm>，不能与已翻开的<volcano>相邻），将<console>的<farm_supply>的一个<farm>放至该<territory>。无需<stored_material>费用。立即获得 1 个<idea_marker>。最多 3 个，不可主动拆除。",
         "en": "Build a farm: Choose a land territory where you have at least one tribe, no farm exists (any player), and not adjacent to a face-up Volcano. Take a farm from the console farm supply and place it on the territory. No material cost. Immediately gain 1 idea marker. Max 3 per player; cannot be voluntarily demolished."
       },
       "<ontology::condition>": {
@@ -4351,7 +4351,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "建造聚落：选一个建造点，从控制台聚落区选一个未建造的聚落，支付其材料费用，将聚落放至建造点。立即获得 1 个收入芯片并触发其效果。建造第 4 个聚落时可翻面一个未激活的层级板块。",
+        "zh": "建造聚落：选一个<building_site>，从<console>的<settlement_zone>选一个未建造的<settlement>，支付其<stored_material>费用，将<settlement>放至<building_site>。立即获得 1 个<income_chip>并触发其效果。建造第 4 个<settlement>时可翻面一个未激活的<stage_tile>。",
         "en": "Build a settlement: Choose a Building ground, choose an unbuilt settlement from the console settlement zone, pay its material cost, and place it on the Building ground. Immediately gain 1 income chip and trigger its effect. When building the 4th, may flip an inactive stage tile."
       },
       "<ontology::condition>": {
@@ -4469,7 +4469,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "建造船：选一个与有自己部落区域相邻的水域（不能已有自己的船），将控制台船供应堆的一艘船连带着船上的标记放至该水域。无需材料费用。立即将相邻区域中的一个站立部落迁徙到船上。最多 2 艘，不可主动拆除。",
+        "zh": "建造船：选一个与有自己<tribe>的<territory>相邻的水域（不能已有自己的<boat>），将<console>的<boat_supply>的一艘<boat>连带着船上的标记放至该水域。无需<stored_material>费用。立即将相邻<territory>中的一个站立<tribe><migrate>到<boat>上。最多 2 艘，不可主动拆除。",
         "en": "Build a boat: Choose a Water territory adjacent to a territory where you have at least one tribe and where you have no boat. Take a boat from the console boat supply (with its markers) and place it on the Water territory. No material cost. Immediately move one standing tribe from an adjacent territory onto the boat. Max 2 per player; cannot be voluntarily demolished."
       },
       "<ontology::condition>": {
@@ -4553,7 +4553,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "建造雕像：选一个建造点（满足建造要求、未超建筑上限），从建造点上列出的 2~3 种材料中选一种，从仓库取出一个对应标记作为雕像放至建造点。可立即推进任意进程轨 1 格。每个建造点最多 2 个建筑（至多 1 个聚落），雕像在后续收入阶段按阿格拉恩惠轨计分。",
+        "zh": "建造雕像：选一个<building_site>（满足建造要求、未超建筑上限），从<building_site>上列出的 2~3 种<stored_material>中选一种，从<storage_area>取出一个对应标记作为<statue>放至<building_site>。可立即推进任意<progress_track> 1 格。每个<building_site>最多 2 个建筑（至多 1 个<settlement>），<statue>在后续<phase_8_income>按<favor_of_ager_track>计分。",
         "en": "Build a statue: Choose a Building ground (meeting building requirements, within build limit). Choose one of the 2-3 materials listed on it, take a marker of that type from storage, and place it as a statue on the Building ground. May immediately advance on any progress track by 1 step. Max 2 buildings per Building ground (max 1 settlement); each statue scores in subsequent Income phases based on the Favor of Agera track."
       },
       "<ontology::condition>": {
@@ -4665,7 +4665,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "激活一个层级板块：选择一个尚未激活的<stage_tile>（层级 4 或层级 5），将其翻至激活面。激活后该层级在终局计分时生效。",
+        "zh": "激活一个层级板块：选择一个尚未激活的<stage_tile>（层级 4 或层级 5），将其翻至激活面。激活后该层级在<final_scoring>时生效。",
         "en": "Activate a stage tile: Choose an inactive <stage_tile> (stage 4 or stage 5) and flip it to its active face. Once activated, the stage scores during final scoring."
       },
       "target": "一个未激活的<stage_tile>（层级 4 或层级 5）",
@@ -4693,7 +4693,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个有至少一个自己 <tribe> 的陆地区域，从供应堆取 1 个标记作为 <stored_material> 放到仓库中与所选区域地形类型对应的存储格。只按区域地形类型匹配，与材料板块印的具体材料无关。",
+        "zh": "选择 1 个有至少一个自己 <tribe> 的<territory>，从<ontology::supply>取 1 个标记作为 <stored_material> 放到<storage_area>中与所选<territory>地形类型对应的存储格。只按<territory>地形类型匹配，与<material_tile>印的具体材料无关。",
         "en": "Choose 1 land territory where you have at least one <tribe>, take 1 marker from supply as a <stored_material>, and place it on a storage space matching the chosen territory's terrain type. Only the territory type matters, not the material depicted on the material tile."
       },
       "target": "1 个有至少一个自己 <tribe> 的陆地区域",
@@ -4720,7 +4720,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个自己的模组（<upgradable_module> 主模组或 <feature_module> 特征模组），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），执行其当前等级的效果。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<ontology::pipeline> 的 pay_cost 步骤）。",
+        "zh": "选择 1 个自己的模组（<upgradable_module> 或 <feature_module>），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），执行其当前等级的效果。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<ontology::pipeline> 的 pay_cost 步骤）。",
         "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module): pay the module's declared cost (exactly 2 <activation_die>s of matching values), then execute its current-level effect. <planning_marker> / <focus_marker> substitutions apply during payment (see each marker's <ontology::substitution>; effective point: the pay_cost step of <ontology::pipeline>)."
       },
       "target": "1 个自己的模组（<upgradable_module> 或 <feature_module>）",
@@ -4734,7 +4734,7 @@
                 "en": "Adjust Die Value (Optional)"
               },
               "description": {
-                "zh": "可选：支付费用前，询问是否消耗<idea_marker>修改骰子格上<activation_die>的点数（每 1 个 = ±1，1 和 6 相连），使点数满足模组费用要求。",
+                "zh": "可选：支付费用前，询问是否消耗<idea_marker>修改<activation_dice_area>上<activation_die>的点数（每 1 个 = ±1，1 和 6 相连），使点数满足<module>费用要求。",
                 "en": "Optional: before paying the cost, ask whether to spend <idea_marker>s to modify <activation_die> values on dice spaces (each = ±1, 1 and 6 are adjacent) to meet the module's cost requirement."
               },
               "options": [
@@ -4766,7 +4766,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "执行重置。前提：<activation_dice_area> 中剩余 ≤3 个 <activation_die>。将<reset_column>中最靠左的<reset_marker>沿列向下推进三步——A: 推动<phase_indicator>至下一个 reset space（到达红色格触发行动阶段结束）；B: 回收所有已使用的<activation_die>重掷并放回点数格；C: 将该标记移入<idea_space>或<food_space>。所有重置列均为空时仍可执行重置，但 C 步改为从供应堆拿取一个通用标记放置。",
+        "zh": "执行重置。前提：<activation_dice_area> 中剩余 ≤3 个 <activation_die>。将<reset_column>中最靠左的<reset_marker>沿列向下推进三步——A: 推动<phase_indicator>至下一个<reset_space>（到达红色格触发<action_phase_end>）；B: 回收所有已使用的<activation_die>重掷并放回点数格；C: 将该标记移入<idea_space>或<food_space>。所有<reset_column>均为空时仍可执行重置，但 C 步改为从<ontology::supply>拿取一个<octagonal_pillar>放置。",
         "en": "Perform a Reset. Precondition: ≤3 <activation_die> remaining in <activation_dice_area>. Push the leftmost <reset_marker> in the <reset_column>s down three steps — A: Advance the <phase_indicator> to the next reset space (red space triggers Action Phase end); B: Retrieve all used <activation_die>s, re-roll, and place on matching value spaces; C: Move the marker to <idea_space> or <food_space>. If all reset columns are empty, Reset can still be performed, but step C changes to taking a generic marker from supply instead."
       },
       "<ontology::condition>": {
@@ -4855,7 +4855,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "完成一个建造项目：从四种建造中选一种执行——建造农场、建造船、建造雕像、或建造聚落。",
+        "zh": "完成一个建造项目：从四种建造中选一种执行——<build_farm>、<build_boat>、<build_statue>、或<build_settlement>。",
         "en": "Complete a building project: Choose one of four building types to execute — build a farm, build a boat, build a statue, or build a settlement."
       },
       "<ontology::content>": {
@@ -4896,7 +4896,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<phase_indicator> 位于 <phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>，由 Reset 的 A 步推入），**且自到达以来每位 <ontology::player> 又各完成了一个 <ontology::turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
+        "zh": "<phase_indicator> 位于 <phase_sequence>.<phase_4_action>[9]（第 10 格，<reset_end_space>，由<reset>的 A 步推入），**且自到达以来每位 <ontology::player> 又各完成了一个 <ontology::turn>**——即红格被推的那一轮与下一轮（最终行动轮）均已完成。",
         "en": "The <phase_indicator> is on <phase_sequence>.<phase_4_action>[9] (the 10th space, <reset_end_space>, pushed there by Reset step A), **and since it arrived every <ontology::player> has completed one more <ontology::turn>** — i.e. both the round in which the red space was reached and the following round (the final action round) are complete."
       }
     },
@@ -4908,7 +4908,7 @@
       },
       "specifies": "<ontology::trigger>",
       "description": {
-        "zh": "部落死亡结算：喂养阶段未喂饱的弱部落（posture == <lying> 且未获得食物）死亡、事件阶段负面效果指定移除的部落——统一结算为将 1 个<tribe>从大陆返回供应堆（<remove_tribe>）。",
+        "zh": "部落死亡结算：<phase_6_feeding>未喂饱的弱<tribe>（posture == <lying> 且未获得<food>）死亡、<phase_7_event>负面效果指定移除的<tribe>——统一结算为将 1 个<tribe>从<continent>返回<ontology::supply>（<remove_tribe>）。",
         "en": "Tribe death resolution: unfed weak tribes in the Feeding phase (posture == <lying> without food) and tribes targeted by negative event effects die — uniformly resolved as returning 1 <tribe> from the continent to the supply (<remove_tribe>)."
       },
       "<ontology::condition>": {
@@ -4930,7 +4930,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "当本玩家的 1 个<tribe>即将死亡（<tribe_death> 的 content 即将结算）时，可改用本行动改写该结算：<remove_tribe> 不再执行，改为将本玩家在<favor_of_ager_track>上的标记向后移 1 步。若标记已在轨最左格则不能使用。",
+        "zh": "当本玩家的 1 个<tribe>即将死亡（<tribe_death> 的 content 即将结算）时，可改用本行动改写该结算：<remove_tribe> 不再执行，改为将本玩家在<favor_of_ager_track>上的<favor_marker>向后移 1 步。若标记已在轨最左格则不能使用。",
         "en": "Whenever one of your <tribe>s is about to die (<tribe_death>'s content is about to resolve), you may instead use this action to rewrite that resolution: <remove_tribe> no longer executes; your marker on the <favor_of_ager_track> is moved one step backwards instead. Not possible if your marker is already on the leftmost space of the track."
       },
       "<ontology::condition>": {
