@@ -468,10 +468,18 @@ public class GameRulesService
         var allQueries = new HashSet<string>(subQueries) { query };
 
         // 并行：每个子句同时跑向量搜索 + 关键词搜索（批次带子句标记，供逐词分数记账）
-        async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> VectorChannelAsync(string q)
+        async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> VectorChannelAsync(string q, string mode)
         {
-            var items = await VectorSearchAsync(game, q, topK: 5, searchMode: searchMode);
-            return (q, true, items);
+            // topK 与合并结果的 top-15 对齐——5 会把原始相似度第 6 名开外的概念
+            // 的向量分截成 0（激活骰被 favor_test 等挤出 top-5 的教训，2026-08-13）
+            var items = await VectorSearchAsync(game, q, topK: 15, searchMode: mode);
+            // 同一 concept_id 可能来自多个来源（ontology 通用概念 + 游戏层具体实现，
+            // 如 public_board），批次内去重取最高分——否则合并求和会重复计分
+            var deduped = items
+                .GroupBy(x => x.Summary.Id)
+                .Select(g => g.OrderByDescending(x => x.Score).First())
+                .ToList();
+            return (q, true, deduped);
         }
 
         async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> KeywordChannelAsync(string q)
@@ -483,8 +491,15 @@ public class GameRulesService
         var tasks = new List<Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)>>();
         foreach (var q in allQueries)
         {
+            // 路由（2026-08-13 实验）：短词（≤2 字）是词级对局——查名字集合
+            // （短文本对短文本，实测排序有意义）；长词/整句是句级对局——查全文集合。
+            // BGE 句模型配「短词 vs 全文」落在窄锥噪声带（无关文本余弦基线 0.74-0.82，
+            // 实测「白色」top-16 无一个相关概念），排序近似随机
             if (_vectorSearch != null)
-                tasks.Add(VectorChannelAsync(q));
+            {
+                var effectiveMode = searchMode == "name" || q.Length <= 2 ? "name" : "full";
+                tasks.Add(VectorChannelAsync(q, effectiveMode));
+            }
             tasks.Add(KeywordChannelAsync(q));
         }
 
@@ -1127,7 +1142,8 @@ public class GameRulesService
         if (node.TryGetProperty("id", out var idProp))
         {
             var id = idProp.GetString() ?? string.Empty;
-            if (!string.IsNullOrEmpty(id) && IsStandaloneFlowNode(node) && seen.Add(id))
+            // game 等通用容器不进关键词搜索与目录（整体流程走 get_game_flow 工具）
+            if (!string.IsNullOrEmpty(id) && id != "game" && IsStandaloneFlowNode(node) && seen.Add(id))
             {
                 results.Add(new ConceptSummary
                 {

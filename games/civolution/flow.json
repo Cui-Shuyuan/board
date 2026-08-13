@@ -290,12 +290,12 @@
                 {
                   "id": "prepare_dice_pool",
                   "name": {
-                    "zh": "准备骰子池",
-                    "en": "Prepare Dice Pool"
+                    "zh": "准备骰子供应堆",
+                    "en": "Prepare Dice Supply"
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "拿取玩家数量 +1 的白骰子和粉骰子，放到进程版图供应区。",
+                    "zh": "拿取玩家数量 +1 的<activation_die>和<fate_die>，放到<progress_board>.parts.<dice_display>。",
                     "en": "Take player_count + 1 activation dice and fate dice, place them in the progress board supply."
                   },
                   "<ontology::object>": {
@@ -399,12 +399,12 @@
                 {
                   "id": "player_setup_dice",
                   "name": {
-                    "zh": "玩家设置骰子",
+                    "zh": "玩家设置<activation_die>",
                     "en": "Player Setup Dice"
                   },
                   "specifies": "<ontology::transfer>",
                   "description": {
-                    "zh": "每位玩家从游戏盒中拿取 6 个白骰子，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到控制台骰子区对应点数格上。",
+                    "zh": "每位玩家从游戏盒中拿取 6 个<activation_die>，分别翻至 ⚀⚁⚂⚃⚄⚅ 六个面，放到<console>.parts.<activation_dice_area>对应点数格上。",
                     "en": "Each player takes 6 activation dice from the game box, sets them to show each value 1-6, and places each on the corresponding dice space of their console."
                   },
                   "source": "<ontology::game_box>",
@@ -3374,7 +3374,7 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部粉色<fate_die>，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
+        "zh": "幸运收获：选择一种领地类型（该领地中至少有一个你的部落），投掷全部<fate_die>，选一颗骰子的点数。根据点数和所选领地类型，在仓库区对应的连线找到获得的材料，从供应堆取一个标记放入对应仓库格。",
         "en": "Make a lucky find: Choose a territory type where you have at least one tribe, roll all pink fate dice, choose one result. The result combined with the territory type determines the material via connecting lines on the storage area; place a marker from supply onto that storage space."
       },
       "<ontology::condition>": {
@@ -3393,7 +3393,7 @@
               },
               "<favor_test>": {
                 "description": {
-                  "zh": "投掷全部粉色<fate_die>。玩家可消耗创意标记修改任意骰子点数（1 和 6 相连）。",
+                  "zh": "投掷全部<fate_die>。玩家可消耗创意标记修改任意骰子点数（1 和 6 相连）。",
                   "en": "Roll all pink fate dice. Player may spend idea markers to change any die value (1 and 6 are adjacent)."
                 }
               }
