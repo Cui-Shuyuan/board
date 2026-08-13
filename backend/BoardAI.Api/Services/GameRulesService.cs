@@ -409,10 +409,11 @@ public class GameRulesService
     // ---- 查询计划（execute_plan）----
 
     /// <summary>
-    /// 执行 LLM 提交的查询计划。P0 仅支持 relation=explain：
-    /// 实体解析（精确 id → 精确中文名 → 名称包含候选）→ 概念闭包（一层扩展）→ 流程位置链。
+    /// 执行 LLM 提交的查询计划。各 relation 均为确定性数据导航：
+    /// explain/condition/ordering/boundary 按实体解析（精确 id → 精确中文名 → 名称包含候选）；
+    /// identify 按外观/位置描述搜索候选（复用退役的搜索设施）；flow/list 不需要实体。
     /// </summary>
-    public PlanExecutionResult ExecutePlan(string game, JsonElement plan)
+    public async Task<PlanExecutionResult> ExecutePlanAsync(string game, JsonElement plan)
     {
         var result = new PlanExecutionResult();
         if (!plan.TryGetProperty("queries", out var queries) || queries.ValueKind != JsonValueKind.Array)
@@ -426,22 +427,22 @@ public class GameRulesService
             if (q.ValueKind != JsonValueKind.Object) continue;
             var relation = q.TryGetProperty("relation", out var rp) ? rp.GetString() ?? "" : "";
             var entity = q.TryGetProperty("entity", out var ep) ? ep.GetString() ?? "" : "";
-            result.Results.Add(ExecutePlanQuery(game, relation, entity));
+            result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity));
         }
 
         if (result.Results.Any(r => r.Status == "unresolved" || r.Status == "unsupported"))
         {
-            result.Note = "部分查询未完成：unresolved 的 entity 请用候选中的确切 id 或名字重试；unsupported 的 relation 请改用 search_concepts/get_concept 工具。";
+            result.Note = "部分查询未完成：unresolved 的 entity 请用候选中的确切 id 或名字重试；unsupported 的 relation 请改用 identify（按描述找概念）或 list 浏览。";
         }
         return result;
     }
 
     private static readonly HashSet<string> PlanRelations = new(StringComparer.Ordinal)
     {
-        "explain", "condition", "ordering", "boundary", "flow", "list"
+        "explain", "condition", "ordering", "boundary", "flow", "list", "identify"
     };
 
-    private PlanItemResult ExecutePlanQuery(string game, string relation, string entity)
+    private async Task<PlanItemResult> ExecutePlanQueryAsync(string game, string relation, string entity)
     {
         if (!PlanRelations.Contains(relation))
         {
@@ -450,7 +451,21 @@ public class GameRulesService
                 Relation = relation,
                 Entity = entity,
                 Status = "unsupported",
-                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list）。"
+                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list/identify）。"
+            };
+        }
+
+        // identify：客人用外观/位置描述某物时，按描述搜索候选概念（带定义）
+        if (relation == "identify")
+        {
+            var search = await SearchConceptsAsync(game, entity);
+            return new PlanItemResult
+            {
+                Relation = relation,
+                Entity = entity,
+                Status = "ok",
+                Candidates = search.Results,
+                Message = "按描述匹配的候选概念（含定义与匹配分数）。请挑出与客人描述最吻合的一个，用其 id 或中文名发起 explain/condition 查询；若都不吻合，请继续向客人确认细节。"
             };
         }
 

@@ -151,7 +151,8 @@ public class ChatOrchestratorService
 - boundary：X 不会发生什么 / 满了怎么办 / 上限多少（返回溢出补偿、容量等边界字段；未声明溢出补偿的轨道默认无事发生）
 - flow：整体游戏流程（几个阶段、怎么进行、怎么结束）
 - list：浏览全部概念目录（实体解析失败需要找概念时用）
-entity 填概念 id 或准确中文名（flow/list 不需要 entity）。一个问题涉及多个概念时，一个 plan 里放多个 queries 一次拿全。实体解析失败会返回候选列表：从候选中挑确切的名字重新发起计划；没有候选用 list 浏览。",
+- identify：客人用外观/位置描述某物（如""黄色的六边形标记""）但你不确定是哪个概念时，把描述原文作为 entity 传入——返回带定义的候选概念，挑最吻合的再 explain
+entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述文本）。一个问题涉及多个概念时，一个 plan 里放多个 queries 一次拿全。实体解析失败会返回候选列表：从候选中挑确切的名字重新发起计划；没有候选用 identify（按描述找）或 list 浏览。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
@@ -166,7 +167,7 @@ entity 填概念 id 或准确中文名（flow/list 不需要 entity）。一个�
                                 "properties": {
                                   "relation": {
                                     "type": "string",
-                                    "enum": ["explain", "condition", "ordering", "boundary", "flow", "list"]
+                                    "enum": ["explain", "condition", "ordering", "boundary", "flow", "list", "identify"]
                                   },
                                   "entity": {
                                     "type": "string",
@@ -219,7 +220,7 @@ entity 填概念 id 或准确中文名（flow/list 不需要 entity）。一个�
                     {
                         if (!args.RootElement.TryGetProperty("plan", out var plan))
                             return $"{{\"error\": \"plan is required\"}}";
-                        var planResult = _rulesService.ExecutePlan(gameId, plan);
+                        var planResult = await _rulesService.ExecutePlanAsync(gameId, plan);
                         return _rulesService.AnnotateReferences(JsonSerializer.Serialize(planResult, ToolResultOptions), gameId);
                     }
 
