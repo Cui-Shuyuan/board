@@ -91,6 +91,10 @@ class Validator:
         self.standalone_dups: dict[tuple[str, str], int] = {}
         # W06 独立概念中文名重复: (source, name.zh) → id 集合 (实体解析按精确名匹配, 重名造成歧义)
         self.name_dups: dict[tuple[str, str], set[str]] = {}
+        # E16/W07 appearance 规则: (source, oid) → 是否声明了 appearance 字段
+        self.appearance_nodes: dict[tuple[str, str], bool] = {}
+        # 物理基类: ontology 中声明 appearance 的概念——继承链经过它们 = 实体概念
+        self.physical_bases = {"token", "piece", "board", "aid", "component", "marker"}
 
     # ── 工具 ──────────────────────────────────────────────
     def err(self, loc: str, msg: str): self.issues.append(("ERROR", loc, msg))
@@ -208,6 +212,12 @@ class Validator:
                     if isinstance(nm, dict) and isinstance(nm.get("zh"), str) and oid != "_skip":
                         nk = (source, nm["zh"])
                         self.name_dups.setdefault(nk, set()).add(oid)
+                    # E16/W07: appearance 记录——区分「字段声明」（type+description，供子类填充）
+                    # 与「实际外观数据」（字符串或 {zh,en} 对象）
+                    av = obj.get("appearance")
+                    self.appearance_nodes[(source, oid)] = (
+                        isinstance(av, str) or (isinstance(av, dict) and "type" not in av),
+                        "appearance" in obj)
                     # 概念字段与继承链: ontology 先收集, game 层重名不覆盖 (setdefault)
                     top = {self.norm_field(k) for k in obj.keys()
                            if k not in ("id", "name", "abstract", "description", "definition",
@@ -436,6 +446,16 @@ class Validator:
 
         walk(data, "$")
 
+    def parent_chain(self, oid: str) -> list[str]:
+        """沿 extends/specifies/instance_of 链收集全部祖先 id（防环）。"""
+        chain, seen = [], set()
+        cur = self.concept_parent.get(oid)
+        while cur and cur not in seen:
+            chain.append(cur)
+            seen.add(cur)
+            cur = self.concept_parent.get(cur)
+        return chain
+
     def check_do_after(self, ref: str, loc: str):
         # <概念> 是合法形态 (复用动作); 裸 id 必须是已定义步骤/概念
         head = ref.strip("<>").split("::")[-1]
@@ -563,6 +583,18 @@ class Validator:
         for (src, zh), ids in sorted(self.name_dups.items()):
             if len(ids) > 1:
                 self.warn(src, f"W06 中文名「{zh}」被多个概念使用: {sorted(ids)}")
+
+        # E16: 抽象概念不允许填 appearance 数据 (继承链不经过任何物理基类)
+        # W07: 实体概念建议补 appearance (继承链经过物理基类但完全没有 appearance 键; 仅游戏层)
+        for (src, oid), (has_data, has_key) in sorted(self.appearance_nodes.items()):
+            if not src.startswith("games/"):
+                continue  # ontology 自身概念的 appearance 声明策略由本体设计决定
+            chain = self.parent_chain(oid)
+            physical = any(a in self.physical_bases for a in chain) or oid in self.physical_bases
+            if has_data and not physical:
+                self.err(src, f"E16 抽象概念 <{oid}> 不应填 appearance 数据 — 其继承链 {chain} 不经过物理基类 {sorted(self.physical_bases)}")
+            elif physical and not has_key:
+                self.warn(src, f"W07 实体概念 <{oid}> 缺 appearance — 建议补外观描述（形状/颜色/尺寸/图标），供客人指着实物提问时识别")
 
         # ontology constraints 顶层字段引用 + E11/W05
         if self.include_ontology:

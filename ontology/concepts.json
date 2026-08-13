@@ -72,7 +72,7 @@
     },
     {
       "id": "resource",
-      "extends": "<object>",
+      "extends": "<token>",
       "name": {
         "zh": "资源",
         "en": "Resource"
@@ -1703,7 +1703,15 @@
       },
       "constraints": {
         "required": [],
-        "optional": []
+        "optional": [
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "实物的外观描述（形状/颜色/尺寸/图标）——客人指着实物提问时据此识别，AI 回答时可复述外观确认身份。一对一实体概念（卡牌、板块、骰子等）直接声明；抽象概念（分数、流程、效果）不声明。",
+              "en": "Physical appearance (shape/color/size/icon) used to identify a piece when a guest points at it and for AI confirmation. Declared by one-to-one entity concepts (cards, tiles, dice); NOT declared by abstract concepts (score, flow, effect)."
+            }
+          }
+        ]
       }
     },
     {
