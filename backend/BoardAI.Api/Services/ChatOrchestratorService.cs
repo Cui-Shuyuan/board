@@ -222,7 +222,7 @@ public class ChatOrchestratorService
                 Function = new FunctionDefinition
                 {
                     Name = "execute_plan",
-                    Description = $"查询计划执行器：把客人的规则问题编译成结构化查询计划，一次拿到全部相关事实（概念定义 + 一层引用 + 流程位置），无需逐次搜索。relation 目前仅支持 explain（概念/行动/效果/流程的解释类问题，如「X 是什么」「X 怎么结算」「X 有什么效果」）。entity 填概念 id 或准确中文名。实体无法精确命中时会返回候选，请用候选中的确切 id 或名字重试；plan 表达不了的问题请改用 search_concepts/get_concept。",
+                    Description = $"查询计划执行器：把客人的规则问题编译成结构化查询计划，一次拿到全部相关事实（概念定义 + 一层引用 + 流程位置），无需逐次搜索。relation 支持：explain（「X 是什么」「X 怎么结算」「X 有什么效果」）、condition（「能不能 X」「X 有什么前提」——返回条件谓词、费用、目标约束三要素）。entity 填概念 id 或准确中文名。实体无法精确命中时会返回候选，请用候选中的确切 id 或名字重试；plan 表达不了的问题请改用 search_concepts/get_concept。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
@@ -237,7 +237,7 @@ public class ChatOrchestratorService
                                 "properties": {
                                   "relation": {
                                     "type": "string",
-                                    "enum": ["explain"]
+                                    "enum": ["explain", "condition"]
                                   },
                                   "entity": {
                                     "type": "string",

@@ -440,7 +440,7 @@ public class GameRulesService
 
     private PlanItemResult ExecutePlanQuery(string game, string relation, string entity)
     {
-        if (relation != "explain")
+        if (relation is not ("explain" or "condition"))
         {
             return new PlanItemResult
             {
@@ -479,12 +479,29 @@ public class GameRulesService
             Related = expanded.Related
         };
 
+        // condition 关系：额外提取「能不能」答案所需的三要素——条件谓词、费用、目标约束
+        if (relation == "condition" && expanded.Matched.Count > 0)
+        {
+            var el = expanded.Matched[0];
+            item.Condition = ExtractTopField(el, "<ontology::condition>");
+            item.Cost = ExtractTopField(el, "<ontology::cost>");
+            item.Target = ExtractTopField(el, "target");
+        }
+
         // 流程位置链（flow 节点才有）：回答「在哪个阶段/回合」类语境
         var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
         if (GetFlowContexts(game).TryGetValue(localId, out var chain))
             item.FlowContext = chain;
 
         return item;
+    }
+
+    /// <summary>提取概念顶层的指定字段（无则 null）。</summary>
+    private static JsonElement? ExtractTopField(JsonElement element, string key)
+    {
+        return element.ValueKind == JsonValueKind.Object && element.TryGetProperty(key, out var v)
+            ? v
+            : null;
     }
 
     private List<JsonElement> ResolvePlanEntity(string game, string entity, out List<ConceptSummary> candidates)
@@ -1522,6 +1539,12 @@ public class PlanItemResult
     public List<string> FlowContext { get; set; } = new();
     public List<ConceptSummary>? Candidates { get; set; }
     public string Message { get; set; } = "";
+    /// <summary>condition 关系专用：条件谓词（&lt;ontology::condition&gt; 字段）。</summary>
+    public JsonElement? Condition { get; set; }
+    /// <summary>condition 关系专用：费用结构（&lt;ontology::cost&gt; 字段）。</summary>
+    public JsonElement? Cost { get; set; }
+    /// <summary>condition 关系专用：目标约束（target 字段）。</summary>
+    public JsonElement? Target { get; set; }
 }
 
 public class ListConceptsResult
