@@ -21,6 +21,14 @@ D:/Python/Python312/python.exe scripts/validate_rules.py --errors-only   # 只�
 
 核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、**E13 cost/content 层级约束**（见下）、W05 孤立概念（有定义无引用且非触发型）。
 
+## 终结形态平级并列 ★（2026-08-13 用户定稿）
+
+**通用写法**：content 下可同时声明 `<ontology::instant_content>` 与 `<ontology::continuous_content>`（**平级并列**于 content 下，非 options/EXECUTE_ALL 步骤）——部署即触发时事件执行 + 电平进入生效池；cost 同理（`<ontology::instant_cost>` / `<ontology::continuous_cost>` 并列）、effect 同理（`<ontology::instant_effect>` / `<ontology::continuous_effect>` 并列）。
+
+**并列 vs 合并的选择标准**（用户举例：火山翻开加分是 site 共性、移走农场是 volcano 个例，且 tile 上二者位置不同——拆开声明）：
+- **不同性质**（事件 vs 电平）：必须并列（instant_content + continuous_content）
+- **同性质**（都是事件）：可合并写在一个 instant_content 里，也可分开——按归属（共性 vs 个例）与物理位置（tile 上是否同处）决定；归属不同/位置不同则分开
+
 ## E13 cost/content 层级约束 ★（2026-08-11 用户定稿）
 
 - **`<ontology::cost>` 下面必须再来一层 `<ontology::instant_cost>` 或 `<ontology::continuous_cost>`**——cost 不允许直接挂数据（count/slots）或执行概念（`<ontology::transfer>` 等）
@@ -76,7 +84,7 @@ Action 必须遵循 `condition → cost → target → content` 结构：
 
 - **condition**：**单条谓词直接写 `{ "zh": "...", "en": "..." }`**，不用 options 结构；仅当有多条谓词（需并列/组合）时才用 `options`/`type`/`EXECUTE_ALL` 结构，每条谓词用自然语言描述
 - **cost**：`"<ontology::instant_cost>": { ... }`（`<ontology::continuous_cost>` 用于状态条件）。**无需支付时省略 cost 字段，不写 null**
-- **target**：**纯字符串**（不是对象）。用自然语言描述，嵌入 `<concept_id>` 交叉引用。target 是 trigger 的字段，不是 ontology 概念，不加 `<>` 包在字段名上
+- **target**：**字符串 / 选择结构 / key-as-type 概念引用对象**（2026-08-12 定稿）。字符串如 `"1 个主模组（<upgradable_module>）"`；概念引用对象如 `{ "<upgradable_module>": { "description": {...} } }`（同 transfer 的 `<ontology::object>` 形态）；选择结构为含 `options`/`type` 的对象。用自然语言描述，嵌入 `<concept_id>` 交叉引用。target 是 trigger 的字段，不是 ontology 概念，不加 `<>` 包在字段名上
 - **content**：`<ontology::instant_content>` 或 `<ontology::continuous_content>`，内部用 `options`/`type`/`do_after` 描述步骤
 
 ---
@@ -313,7 +321,7 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] condition 单条写 zh/en，多条才用 options/type/EXECUTE_ALL
 - [ ] cost 是 instant_cost/continuous_cost；无需支付则省略字段（不写 null）
 - [ ] `<ontology::cost>` 下必须再来一层 `<ontology::instant_cost>` 或 `<ontology::continuous_cost>`，不直接挂数据/transfer；content 同理；instant/continuous 不允许独立存在（E13）
-- [ ] **target 是字符串或选择结构**（含 `options`/`type` 的选择结构合法，W01 豁免 type 键对象）；选择语义归 target/cost——规则自动分支用 condition 互补，玩家决策用 CHOOSE_ONE
+- [ ] **target 是字符串 / 选择结构 / key-as-type 概念引用对象**（含 `options`/`type` 的选择结构与 `{"<concept>": {...}}` 概念引用对象合法，W01 豁免二者）；选择语义归 target/cost——规则自动分支用 condition 互补，玩家决策用 CHOOSE_ONE
 - [ ] content 是 `<ontology::instant_content>` 或 `<ontology::continuous_content>`
 - [ ] 所有 type 引用是完整路径 `"<ontology::multiple_choice_enum.XXX>"`
 - [ ] 没有 `"type": "<ontology::xxx>"` 这种写法（用 key-as-type）
@@ -322,6 +330,8 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)
+- [ ] **终结形态平级并列 ★（2026-08-13 定稿）**：content 可并列 instant_content + continuous_content（cost/effect 同理）；不同性质必须并列，同性质按归属/位置决定合并或分开
+- [ ] **description 是给客人的参考 ★（2026-08-12 用户定稿）**：LLM 懂得全部结构化概念，但面对客人用通俗语言回答（小学生学 1+1 不必先学群论）——description 提供可讲给客人的表述，概念术语（<card>、<die> 等）正常使用；**引擎视角的叙述不入 description**（「<x> 实例」「trigger_slot 待补」这类底层形式/待办状态不暴露给客人）；结构化表达进 condition/content/step 等字段
 
 ## 概念层 vs 流程层职责 ★（2026-08-12 定稿）
 
