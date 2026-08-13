@@ -1747,94 +1747,16 @@
       }
     },
     {
-      "id": "terrain_forest",
+      "id": "water_territory",
       "specifies": "<ontology::zone>",
       "name": {
-        "zh": "森林",
-        "en": "Forest"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "深绿色的地形区域（zone）。<continent_tile>上每片森林就是一个 forest zone，可放置<tribe>、进行<hunt>与<produce_material>。",
-        "en": "A dark green terrain zone. Each forest area on a continent tile is a forest zone where tribes can be placed for hunting and production."
-      }
-    },
-    {
-      "id": "terrain_grassland",
-      "specifies": "<ontology::zone>",
-      "name": {
-        "zh": "草原",
-        "en": "Grassland"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "浅绿色的地形区域（zone）。<continent_tile>上每片草原就是一个 grassland zone。",
-        "en": "A light green terrain zone. Each grassland area on a continent tile is a grassland zone."
-      }
-    },
-    {
-      "id": "terrain_hills",
-      "specifies": "<ontology::zone>",
-      "name": {
-        "zh": "丘陵",
-        "en": "Hills"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "土黄色的地形区域（zone）。<continent_tile>上每片丘陵就是一个 hills zone。",
-        "en": "A yellowish-brown terrain zone. Each hills area on a continent tile is a hills zone."
-      }
-    },
-    {
-      "id": "terrain_swamp",
-      "specifies": "<ontology::zone>",
-      "name": {
-        "zh": "沼泽",
-        "en": "Swamp"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "紫色的地形区域（zone）。<continent_tile>上每片沼泽就是一个 swamp zone。",
-        "en": "A purple terrain zone. Each swamp area on a continent tile is a swamp zone."
-      }
-    },
-    {
-      "id": "terrain_mountains",
-      "specifies": "<ontology::zone>",
-      "name": {
-        "zh": "山脉",
-        "en": "Mountains"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "灰色的地形区域（zone），通常有立体边缘便于识别边界。<continent_tile>上每片山脉就是一个 mountains zone。",
-        "en": "A gray terrain zone, often with raised edges to identify borders. Each mountains area on a continent tile is a mountains zone."
-      }
-    },
-    {
-      "id": "terrain_desert",
-      "specifies": "<ontology::zone>",
-      "name": {
-        "zh": "沙漠",
-        "en": "Desert"
-      },
-      "abstract": false,
-      "description": {
-        "zh": "黄色的地形区域（zone）。<continent_tile>上每片沙漠就是一个 desert zone。",
-        "en": "A yellow terrain zone. Each desert area on a continent tile is a desert zone."
-      }
-    },
-    {
-      "id": "terrain_water",
-      "specifies": "<ontology::zone>",
-      "name": {
-        "zh": "海洋",
+        "zh": "水域",
         "en": "Water"
       },
       "abstract": false,
       "description": {
-        "zh": "蓝色的地形区域（zone），代表水域。<continent_tile>上每片水域就是一个 water zone，可<build_boat>、航行。",
-        "en": "A blue terrain zone representing water areas. Each water area on a continent tile is a water zone where boats can be built and sailed."
+        "zh": "水域领地。不产出材料，可<build_boat>。",
+        "en": "A water territory. It produces no materials; boats can be built here."
       }
     },
     {

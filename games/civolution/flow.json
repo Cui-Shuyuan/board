@@ -4489,7 +4489,7 @@
         ],
         "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
       },
-      "target": "一个与有自己的<tribe>区域相邻的<terrain_water>，且上面没有自己的<boat>",
+      "target": "一个与有自己的<tribe>区域相邻的<water_territory>，且上面没有自己的<boat>",
       "<ontology::content>": {
         "<ontology::instant_content>": {
           "options": [
