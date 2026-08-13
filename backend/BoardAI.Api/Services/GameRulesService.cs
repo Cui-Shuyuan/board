@@ -1,4 +1,6 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -9,6 +11,17 @@ public class GameRulesService
     private readonly string _basePath;
     private readonly VectorSearchService? _vectorSearch;
     private readonly Dictionary<string, JsonDocument> _loadedFiles = new();
+
+    /// <summary>概念引用正则——注解（AnnotateReferences）与一层扩展（GetConceptsWithExpansion）共用。</summary>
+    private static readonly Regex ConceptRefRegex = new(
+        @"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>",
+        RegexOptions.Compiled);
+
+    /// <summary>不转义 &lt;&gt; 的序列化选项——引用提取必须看到字面 &lt;concept_id&gt;（与工具返回的 ToolResultOptions 同理）。</summary>
+    private static readonly JsonSerializerOptions RelaxedJsonOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
 
     private static readonly string[] ConceptArrayTypes = { "objects", "actions", "triggers", "conditions" };
     private static readonly string[] InstanceArrayTypes = { "effects", "modules", "cards", "continent_tiles", "sites", "chips" };
@@ -301,9 +314,8 @@ public class GameRulesService
     {
         var map = GetNameMap(game);
         if (map.Count == 0) return text;
-        return System.Text.RegularExpressions.Regex.Replace(
+        return ConceptRefRegex.Replace(
             text,
-            @"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>",
             m =>
             {
                 var raw = m.Groups[1].Value;
@@ -312,6 +324,86 @@ public class GameRulesService
                     return $"<{raw}>({name})";
                 return m.Value;
             });
+    }
+
+    /// <summary>
+    /// get_concept 的一层引用扩展：matched 概念直接引用的概念一并返回为 related。
+    /// 引用提取与注解共用同一个正则；能解析（GetConcepts 查得到）的才扩展，
+    /// 排除自身与 matched 集合；related 内部的引用不再递归扩展。
+    /// 按首现顺序最多扩展 MaxRelatedConcepts 个，超出截断并在 Note 提示。
+    /// </summary>
+    private const int MaxRelatedConcepts = 10;
+
+    public GetConceptResult GetConceptsWithExpansion(string game, string id)
+    {
+        var matched = GetConcepts(game, id).ToList();
+        if (matched.Count == 0)
+            return new GetConceptResult();
+
+        var (_, localId) = ParseNamespace(id);
+
+        // 排除集合：查询概念自身 + 已命中的概念（避免 related 里出现 matched 副本）
+        var excluded = new HashSet<string>(StringComparer.Ordinal) { localId };
+        foreach (var element in matched)
+        {
+            var matchedId = GetElementId(element);
+            if (!string.IsNullOrEmpty(matchedId))
+                excluded.Add(matchedId);
+        }
+
+        var related = new List<JsonElement>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        // 已扩展概念 id——不同引用串（如 <score_track> 与 <ontology::score_track>）可能解析到同一概念，按解析结果去重
+        var appendedIds = new HashSet<string>(StringComparer.Ordinal);
+        var truncated = false;
+
+        foreach (var element in matched)
+        {
+            var text = JsonSerializer.Serialize(element, RelaxedJsonOptions);
+            foreach (Match m in ConceptRefRegex.Matches(text))
+            {
+                var raw = m.Groups[1].Value;
+                if (!seen.Add(raw)) continue;
+
+                var local = raw.Contains("::")
+                    ? raw[(raw.IndexOf("::", StringComparison.Ordinal) + 2)..]
+                    : raw;
+                if (excluded.Contains(local)) continue;
+
+                foreach (var found in GetConcepts(game, raw))
+                {
+                    var foundId = GetElementId(found);
+                    if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))
+                        continue; // 已扩展过该概念
+                    if (related.Count >= MaxRelatedConcepts)
+                    {
+                        truncated = true;
+                        break;
+                    }
+                    related.Add(found);
+                }
+                if (truncated) break;
+            }
+            if (truncated) break;
+        }
+
+        var result = new GetConceptResult { Matched = matched, Related = related };
+        if (truncated)
+        {
+            result.Note +=
+                $"本次直接引用较多，related 仅返回首现顺序的前 {MaxRelatedConcepts} 个；其余引用请用具体 ID 继续调用 get_concept。";
+        }
+        return result;
+    }
+
+    /// <summary>读取概念的 id 属性（无则空字符串）。</summary>
+    private static string GetElementId(JsonElement element)
+    {
+        return element.ValueKind == JsonValueKind.Object
+            && element.TryGetProperty("id", out var idProp)
+            && idProp.ValueKind == JsonValueKind.String
+            ? idProp.GetString() ?? ""
+            : "";
     }
 
     private Dictionary<string, string> GetNameMap(string game)
@@ -375,35 +467,75 @@ public class GameRulesService
         var subQueries = SplitQuery(query);
         var allQueries = new HashSet<string>(subQueries) { query };
 
-        // 并行：每个子句同时跑向量搜索 + 关键词搜索
-        var tasks = new List<Task<List<(ConceptSummary Summary, float Score)>>>();
+        // 并行：每个子句同时跑向量搜索 + 关键词搜索（批次带子句标记，供逐词分数记账）
+        async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> VectorChannelAsync(string q)
+        {
+            var items = await VectorSearchAsync(game, q, topK: 5, searchMode: searchMode);
+            return (q, true, items);
+        }
+
+        async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> KeywordChannelAsync(string q)
+        {
+            var items = await KeywordSearchWithScoreAsync(game, q);
+            return (q, false, items);
+        }
+
+        var tasks = new List<Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)>>();
         foreach (var q in allQueries)
         {
             if (_vectorSearch != null)
-                tasks.Add(VectorSearchAsync(game, q, topK: 5, searchMode: searchMode));
-            tasks.Add(KeywordSearchWithScoreAsync(game, q));
+                tasks.Add(VectorChannelAsync(q));
+            tasks.Add(KeywordChannelAsync(q));
         }
 
         var allBatches = await Task.WhenAll(tasks);
 
-        // 合并去重：同一概念累加各通道分数（AND 语义——匹配子词越多得分越高）
-        var merged = new Dictionary<string, (ConceptSummary Summary, float Score)>();
-        foreach (var batch in allBatches)
+        // 合并去重：同一概念累加各通道分数（AND 语义——匹配子词越多得分越高）；
+        // 同时按子词分别记账 vector/keyword 双通道分数，供 LLM 判断每个词匹配强弱
+        var merged = new Dictionary<string, AccumulatedSearch>();
+        foreach (var (subQuery, isVector, items) in allBatches)
         {
-            foreach (var (summary, score) in batch)
+            foreach (var (summary, score) in items)
             {
-                if (!merged.TryGetValue(summary.Id, out var existing))
-                    merged[summary.Id] = (summary, 0);
-                merged[summary.Id] = (summary, merged[summary.Id].Score + score);
+                if (!merged.TryGetValue(summary.Id, out var acc))
+                {
+                    acc = new AccumulatedSearch { Summary = summary };
+                    merged[summary.Id] = acc;
+                }
+                acc.Total += score;
+                var byTerm = isVector ? acc.VectorByTerm : acc.KeywordByTerm;
+                byTerm[subQuery] = byTerm.GetValueOrDefault(subQuery) + score;
             }
         }
 
-        // 按子词数量归一化：匹配词越多的概念得分越高
+        // 按子词数量归一化：匹配词越多的概念得分越高（排名算法不变）
         var divisor = Math.Max(subQueries.Length, 1);
+        var hasFullQuery = !subQueries.Contains(query);
         var results = merged.Values
-            .Select(x => { x.Summary.Score = x.Score / divisor; return x.Summary; })
-            .OrderByDescending(x => x.Score)
+            .Select(acc => new { acc, RawScore = acc.Total / divisor })
+            .OrderByDescending(x => x.RawScore)
             .Take(15)
+            .Select(x =>
+            {
+                var summary = x.acc.Summary;
+                summary.Score = MathF.Round(x.RawScore, 2);
+                summary.TermScores = subQueries.ToDictionary(
+                    t => t,
+                    t => new ChannelScores
+                    {
+                        Vector = MathF.Round(x.acc.VectorByTerm.GetValueOrDefault(t), 2),
+                        Keyword = MathF.Round(x.acc.KeywordByTerm.GetValueOrDefault(t), 2)
+                    });
+                if (hasFullQuery)
+                {
+                    summary.FullQueryScore = new ChannelScores
+                    {
+                        Vector = MathF.Round(x.acc.VectorByTerm.GetValueOrDefault(query), 2),
+                        Keyword = MathF.Round(x.acc.KeywordByTerm.GetValueOrDefault(query), 2)
+                    };
+                }
+                return summary;
+            })
             .ToList();
 
         // 向量搜索结果没有 description，从概念数据中补上
@@ -412,8 +544,18 @@ public class GameRulesService
         return new SearchConceptsResult
         {
             Results = results,
-            Query = query
+            Query = query,
+            SplitTerms = subQueries.ToList()
         };
+    }
+
+    /// <summary>搜索合并过程中的单概念累计分数（按子词分通道记账）。</summary>
+    private sealed class AccumulatedSearch
+    {
+        public ConceptSummary Summary = null!;
+        public float Total;
+        public readonly Dictionary<string, float> VectorByTerm = new();
+        public readonly Dictionary<string, float> KeywordByTerm = new();
     }
 
     private void PopulateDescriptions(string game, List<ConceptSummary> results)
@@ -1145,6 +1287,17 @@ public class ConceptSummary
     public float Score { get; set; }
     public string? Description { get; set; }
     public Dictionary<string, JsonElement>? Media { get; set; }
+    /// <summary>每个切分词的双通道匹配分（仅 search_concepts 返回时填充；单词查询时该词即整句，FullQueryScore 为 null）。</summary>
+    public Dictionary<string, ChannelScores>? TermScores { get; set; }
+    /// <summary>整句查询的双通道匹配分（多词查询时存在；整句参与总分，补上它才能与 Score 对账）。</summary>
+    public ChannelScores? FullQueryScore { get; set; }
+}
+
+/// <summary>单个查询（切分词或整句）在向量/关键词两通道上的匹配分。</summary>
+public class ChannelScores
+{
+    public float Vector { get; set; }
+    public float Keyword { get; set; }
 }
 
 public class SearchConceptsResult
@@ -1152,8 +1305,17 @@ public class SearchConceptsResult
     public List<ConceptSummary> Results { get; set; } = new();
     public int Count => Results.Count;
     public string Query { get; set; } = string.Empty;
+    public List<string> SplitTerms { get; set; } = new();
     public string Strategy { get; set; } = "hybrid_vector_keyword";
     public string Note { get; set; } = "Top results only — NOT exhaustive. If you need to see ALL concepts (e.g., to browse what exists), use list_concept_ids.";
+}
+
+public class GetConceptResult
+{
+    public List<JsonElement> Matched { get; set; } = new();
+    public List<JsonElement> Related { get; set; } = new();
+    public string Note { get; set; } =
+        "related 是 matched 直接引用的概念，已自动扩展一层；related 内概念的引用已标注中文名，如需更深一层的详情请用其 ID 继续调用 get_concept。";
 }
 
 public class ListConceptsResult

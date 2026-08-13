@@ -22,3 +22,7 @@ backend/BoardAI.Api/storage/
 
 .claude
 CLAUDE.md
+# Runtime logs & QA artifacts
+backend/api_run.log
+scripts/_qa_*.log
+scripts/_qa_results.json

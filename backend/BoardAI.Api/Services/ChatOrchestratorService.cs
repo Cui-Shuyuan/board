@@ -142,7 +142,7 @@ public class ChatOrchestratorService
                 Function = new FunctionDefinition
                 {
                     Name = "search_concepts",
-                    Description = $"通过关键词搜索当前游戏《{gameId}》中的概念、行动、条件、触发器等。支持 ontology 命名空间查询，例如 'ontology::resource' 只搜索 ontology 中的 resource 概念；不带命名空间时同时搜索当前游戏和 ontology。search_mode=name 时只用概念名称匹配（适合精确查找 action/概念），search_mode=full 时用全文匹配（适合模糊搜索规则细节）。默认 full。",
+                    Description = $"通过关键词搜索当前游戏《{gameId}》中的概念、行动、条件、触发器等。支持 ontology 命名空间查询，例如 'ontology::resource' 只搜索 ontology 中的 resource 概念；不带命名空间时同时搜索当前游戏和 ontology。search_mode=name 时只用概念名称匹配（适合精确查找 action/概念），search_mode=full 时用全文匹配（适合模糊搜索规则细节）。默认 full。结果中每个概念带 TermScores（查询被切分后每个词的双通道匹配分 vector/keyword，整句匹配分在 FullQueryScore）：某个词在多数结果上都很低，说明该说法在规则中没有对应表述，考虑换个说法再搜。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
@@ -167,7 +167,7 @@ public class ChatOrchestratorService
                 Function = new FunctionDefinition
                 {
                     Name = "get_concept",
-                    Description = $"通过概念 ID 获取当前游戏《{gameId}》中的详细信息，包括定义、条件、触发效果等。支持 'ontology::concept_id' 格式只查询 ontology；不带命名空间时同时查询当前游戏和 ontology，返回所有匹配结果。",
+                    Description = $"通过概念 ID 获取当前游戏《{gameId}》中的详细信息，包括定义、条件、触发效果等。返回 matched（直接命中的概念）与 related（这些概念直接引用的概念，已自动扩展一层，其内部引用已标注中文名）。related 不会继续往下扩展，如需更深一层的详情请用 related 内概念的 ID 继续调用本工具。支持 'ontology::concept_id' 格式只查询 ontology；不带命名空间时同时查询当前游戏和 ontology。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
@@ -241,9 +241,9 @@ public class ChatOrchestratorService
                 case "get_concept":
                     {
                         var conceptId = args.RootElement.GetProperty("concept_id").GetString() ?? string.Empty;
-                        var concepts = _rulesService.GetConcepts(gameId, conceptId);
-                        return concepts.Count > 0
-                            ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(concepts, ToolResultOptions), gameId)
+                        var result = _rulesService.GetConceptsWithExpansion(gameId, conceptId);
+                        return result.Matched.Count > 0
+                            ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId)
                             : $"{{\"error\": \"Concept '{conceptId}' not found\"}}";
                     }
 
