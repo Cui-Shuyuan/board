@@ -290,6 +290,10 @@
         "zh": "一级<development_card>。费用最低、<prestige_point>最少（通常 0~1 分），是游戏早期的核心获取目标。",
         "en": "Level I <development_card>. Lowest cost, fewest <prestige_point>s (typically 0-1), the core acquisition target in the early game."
       },
+      "appearance": {
+        "zh": "矩形卡牌。背面中央为等级标记 I（同一等级牌背图案相同）。正面左上角为声望点数（多为 0~1 分），右上角为折扣颜色图标，左下角为购买费用（宝石组合），中央为插画。",
+        "en": "Rectangular card. Back shows the level-I mark in the center (all level-I backs share the same art). Front: prestige points top-left (mostly 0-1), discount color icon top-right, purchase cost bottom-left (a combination of gems), illustration in the center."
+      },
       "level": {
         "type": "enum",
         "enum": [
@@ -313,6 +317,10 @@
         "zh": "二级<development_card>。费用和<prestige_point>居中（通常 1~3 分），是游戏中期的过渡目标。",
         "en": "Level II <development_card>. Mid-range cost and <prestige_point>s (typically 1-3), the transitional target in the mid game."
       },
+      "appearance": {
+        "zh": "矩形卡牌。背面中央为等级标记 II（同一等级牌背图案相同）。正面左上角为声望点数（多为 1~3 分），右上角为折扣颜色图标，左下角为购买费用（宝石组合），中央为插画。",
+        "en": "Rectangular card. Back shows the level-II mark in the center (all level-II backs share the same art). Front: prestige points top-left (mostly 1-3), discount color icon top-right, purchase cost bottom-left (a combination of gems), illustration in the center."
+      },
       "level": {
         "type": "enum",
         "enum": [
@@ -335,6 +343,10 @@
       "description": {
         "zh": "三级<development_card>。费用最高、<prestige_point>最多（通常 3~5 分），是游戏后期的高价值目标。",
         "en": "Level III <development_card>. Highest cost, most <prestige_point>s (typically 3-5), the high-value target in the late game."
+      },
+      "appearance": {
+        "zh": "矩形卡牌。背面中央为等级标记 III（同一等级牌背图案相同）。正面左上角为声望点数（多为 3~5 分），右上角为折扣颜色图标，左下角为购买费用（宝石组合），中央为插画。",
+        "en": "Rectangular card. Back shows the level-III mark in the center (all level-III backs share the same art). Front: prestige points top-left (mostly 3-5), discount color icon top-right, purchase cost bottom-left (a combination of gems), illustration in the center."
       },
       "level": {
         "type": "enum",
@@ -604,6 +616,10 @@
       "description": {
         "zh": "璀璨宝石中的声望点数，即胜利分数（VP）。<prestige_point>是一种<ontology::resource>——不可被消费、不可被转移，只能通过购买<ontology::card>和吸引<noble>来获得。每张<ontology::card>和每个<noble>各提供固定数量的<prestige_point>。游戏终局时，拥有最多<prestige_point>的<ontology::player>获胜。",
         "en": "Prestige points in Splendor, i.e. victory points (VP). <prestige_point> is a <ontology::resource> — it cannot be spent or transferred, only gained by purchasing <ontology::card>s and attracting <noble>s. Each <ontology::card> and <noble> provides a fixed number of <prestige_point>s. At endgame, the <ontology::player> with the most <prestige_point>s wins."
+      },
+      "appearance": {
+        "zh": "不是独立零件——印在每张发展卡左上角的白色数字（0~5，0 时不显示），也印在每枚贵族板块左上角（固定为 3）。",
+        "en": "Not a standalone component — printed as a white number in the top-left corner of each development card (0-5; hidden when 0) and on each noble tile (always 3)."
       },
       "unit": {
         "type": "string",
