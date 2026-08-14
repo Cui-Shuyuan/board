@@ -199,6 +199,8 @@ System prompt 中不再重复列出可用工具（工具 schema 已通过 `tools
 - **格式规范化（46e1a84，用户要求）**：normalize_json.py 一键规范化（UTF-8 无 BOM、LF、2 空格缩进、末尾换行、去行尾空白），8 文件处理、内容与 HEAD 逐字段比对一致；validate_rules **E01c**（BOM/制表符→ERROR）；.gitattributes（json/md/py eol=lf）。**教训**：BOM 曾致校验器 try/except 静默跳过 ontology 收集（2661 个假错误），E01c 堵住
 - **待办清单已入任务列表**：appearance 填充两批（描述提取 + 需规则书核实清单）、W06 六处重名清理、全量 QA 回归（identify 场景入常驻题）
 
+**20. appearance 批量填充完成（2026-08-14，14c0c9f）**：W07 81→1。80 个实体概念的 appearance 全部填充——civolution concepts 56 项（八角柱/圆片表示组写「由 <octagonal_pillar>/<stackable_disc> 表示 + 所在格」、18 种材料、芯片、卡牌、板块、版图、辅助物）+ instances 20 项（15 模组板块——骰子点数从 module cost 数据驱动提取、4 地点实例带分数、theocracy 三段布局）+ splendor 4 项（三级发展卡牌面布局、声望点数「非独立零件，印于卡牌左上角」）。money 顺带补 `component: <octagonal_pillar>`（与 food 等对齐）。**格式：civolution 纯中文串、splendor {zh,en}，与各文件既有风格一致**。**剩余 1 项 starting_monolith 待用户提供外观**（形状/材质无任何文本来源）；hunting_token（缺形状）、continent_tile（缺拼块形状）已填但形状待用户补充。**教训**：行级批量插入 JSON 字段时——description 是节点最后字段则闭合行 `}` 无逗号，插入后新字段逗号规则要按「插入后谁是最后字段」重算，且 extra 字段的逗号取决于原文件后续是否还有字段（money 的 unit 就是坑）
+
 **17. 思考模式实验 + 查询计划架构（2026-08-14）**：
 
 - **思考模式三轮 QA**（用户工程直觉：「桌游讲规是有限空间，LLM 应只做接入层」）：思考开启 7.3s/3 慢题；思考关闭 5.1s/0 慢题但出现套话；**thinking=low 4.8s/0 慢题/风格最干净**——定为默认。`LLM:Thinking` 配置（default/disabled/low），DeepSeek V4 `thinking.type=disabled` / `reasoning_effort=low` 透传
