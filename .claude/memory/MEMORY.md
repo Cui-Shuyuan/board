@@ -10,3 +10,4 @@
 - [用户偏好](user-preferences.md) — 设计哲学、工作方式
 - [Pipeline 多选项处理模型](pipeline-model.md) — 定稿：pipeline 在 content.instant_content 内、步骤四形态、do_after 语义、场景模版
 - [JSON 编写约定](json-writing-conventions.md) — flow.json/concepts.json 编写时必须遵守的格式规则
+- [讲规模块](tutorial-module.md) — 第五阶段技术选型定稿：Unity 原生安卓客户端 + 数据驱动程序化动画（Claude 制作）

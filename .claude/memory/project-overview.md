@@ -20,7 +20,7 @@ metadata:
 
 ## 技术选型
 - 后端：C#（状态机友好，未来可接 Unity）
-- 前端：PWA / Flutter（平板端）
+- 前端：PWA / Flutter（平板端）——**2026-08-15 更新：讲规模块客户端定为 Unity 原生安卓 App**（麦克风安全上下文是弃 H5 的关键理由），详见 [[tutorial-module]]
 - LLM 层：接口抽象 ILLM，支持 GPT/Claude/Gemini 等切换
 - STT/TTS：独立模块，可插拔
 - 部署：Windows 主机本地运行，平板走内网 HTTP/WebSocket
@@ -36,7 +36,7 @@ metadata:
 2. **第二阶段（基本完成）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor），`concepts.json` 与 `flow.json` 已完成。
 3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。**2026-07-22 升级为向量语义搜索**（Qdrant + BGE-small-zh ONNX），解决中文同义词/近义词检索问题（如"白色骰子" → "白色的六面骰"）。详见 [[vector-search]] 与 [[runtime-architecture]]。
 4. **第四阶段（当前重点）：补充更多游戏与游戏元信息** — 在 `games/` 下录入第二款桌游，验证系统在非 LLM 熟知规则上的真实表现；为每款游戏增加 `manifest.json` 供前端选游戏。
-5. **第五阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。
+5. **第五阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。**技术选型已定稿（2026-08-15）：Unity 原生安卓客户端 + 数据驱动程序化动画**，详见 [[tutorial-module]]
 6. **第六阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
 7. **第七阶段：UI** — PWA/Flutter 前端，平板作为主要交互入口。
 
