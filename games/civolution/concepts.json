@@ -24,7 +24,10 @@
         "zh": "文明演化中的食物资源，用于<phase_6_feeding>喂饱<tribe>。玩家通过<hunt>、<income_chip>、<weather_effect>等获得。每有一个在<encampment>或<boat>上的<tribe>需要 1 食物，每有一个在<encampment>之外的<tribe>需要 2 食物。",
         "en": "Food resource in Civolution, used in the Feeding phase to feed tribes. Players gain it through hunting, income chips, weather effects, etc. Each tribe on an encampment or boat requires 1 food; each tribe in the wilderness requires 2 food."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的食物格（<food_space>）上即表示食物。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的食物格（<food_space>）上即表示食物。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the food space (<food_space>) of your console, it represents food."
+      },
       "unit": {
         "type": "string",
         "default": "个",
@@ -47,7 +50,10 @@
         "zh": "文明演化中的钱币资源，主要用于<trade>购买<stored_material>。玩家通过出售<storage_area>中的<stored_material>获得。",
         "en": "Money resource in Civolution, mainly used by the Trade module to purchase materials. Players gain it by selling stored materials."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的钱币格（<money_space>）上即表示钱币，每 2 个叠成一列。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的钱币格（<money_space>）上即表示钱币，每 2 个叠成一列。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the money space (<money_space>) of your console, it represents money, stacked 2 per column."
+      },
       "component": "<octagonal_pillar>",
       "unit": {
         "type": "string",
@@ -70,7 +76,10 @@
         "zh": "已运输到<storage_area>中的<raw_material>。是<build_settlement>/<build_statue>、支付<research_card>的<cost_space>、出售换钱的资源。同类型材料完全等价。共 18 种，按产出<territory>分 6 列、按稀有度分 3 行。",
         "en": "Raw materials that have been transported to the storage spaces on a <console>. Used to build settlements/statues, pay research card costs, or sell for money. Same-type materials are equivalent. 18 types total, arranged in 6 columns (by territory) × 3 rows (by rarity)."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）对应材料格上。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）对应材料格上。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on the corresponding material space of the storage area (<storage_area>)."
+      },
       "territory_type": {
         "type": "<territory>",
         "description": {
@@ -112,7 +121,10 @@
         "zh": "<forest_territory>产出的基础材料。",
         "en": "Basic material from forests."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的木材格上即表示木材；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的木材格上即表示木材；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Wood space of the storage area (<storage_area>) it represents wood; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<forest_territory>",
       "sell_price": 1,
       "lucky_harvest_die": {
@@ -132,7 +144,10 @@
         "zh": "<grassland_territory>产出的基础材料。",
         "en": "Basic material from grasslands."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的纸莎草格上即表示纸莎草；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的纸莎草格上即表示纸莎草；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Papyrus space of the storage area (<storage_area>) it represents papyrus; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<grassland_territory>",
       "sell_price": 1,
       "lucky_harvest_die": {
@@ -152,7 +167,10 @@
         "zh": "<hill_territory>产出的基础材料。",
         "en": "Basic material from hills."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的棉花格上即表示棉花；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的棉花格上即表示棉花；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Cotton space of the storage area (<storage_area>) it represents cotton; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<hill_territory>",
       "sell_price": 1,
       "lucky_harvest_die": {
@@ -172,7 +190,10 @@
         "zh": "<swamp_territory>产出的基础材料。",
         "en": "Basic material from swamps."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的煤格上即表示煤；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的煤格上即表示煤；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Coal space of the storage area (<storage_area>) it represents coal; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<swamp_territory>",
       "sell_price": 1,
       "lucky_harvest_die": {
@@ -192,7 +213,10 @@
         "zh": "<mountain_territory>产出的基础材料。",
         "en": "Basic material from mountains."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的石头格上即表示石头；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的石头格上即表示石头；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Stone space of the storage area (<storage_area>) it represents stone; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<mountain_territory>",
       "sell_price": 1,
       "lucky_harvest_die": {
@@ -212,7 +236,10 @@
         "zh": "<desert_territory>产出的基础材料。",
         "en": "Basic material from deserts."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的沙格上即表示沙；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的沙格上即表示沙；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Sand space of the storage area (<storage_area>) it represents sand; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<desert_territory>",
       "sell_price": 1,
       "lucky_harvest_die": {
@@ -232,7 +259,10 @@
         "zh": "<forest_territory>产出的稀有材料。",
         "en": "Rare material from forests."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的蜂蜡格上即表示蜂蜡；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的蜂蜡格上即表示蜂蜡；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Beeswax space of the storage area (<storage_area>) it represents beeswax; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<forest_territory>",
       "sell_price": 2,
       "lucky_harvest_die": {
@@ -252,7 +282,10 @@
         "zh": "<grassland_territory>产出的稀有材料。",
         "en": "Rare material from grasslands."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的草药格上即表示草药；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的草药格上即表示草药；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Herb space of the storage area (<storage_area>) it represents herb; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<grassland_territory>",
       "sell_price": 2,
       "lucky_harvest_die": {
@@ -272,7 +305,10 @@
         "zh": "<hill_territory>产出的稀有材料。",
         "en": "Rare material from hills."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的黏土格上即表示黏土；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的黏土格上即表示黏土；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Clay space of the storage area (<storage_area>) it represents clay; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<hill_territory>",
       "sell_price": 2,
       "lucky_harvest_die": {
@@ -292,7 +328,10 @@
         "zh": "<swamp_territory>产出的稀有材料。",
         "en": "Rare material from swamps."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的泥炭格上即表示泥炭；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的泥炭格上即表示泥炭；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Peat space of the storage area (<storage_area>) it represents peat; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<swamp_territory>",
       "sell_price": 2,
       "lucky_harvest_die": {
@@ -312,7 +351,10 @@
         "zh": "<mountain_territory>产出的稀有材料。",
         "en": "Rare material from mountains."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的铁格上即表示铁；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的铁格上即表示铁；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Iron space of the storage area (<storage_area>) it represents iron; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<mountain_territory>",
       "sell_price": 2,
       "lucky_harvest_die": {
@@ -332,7 +374,10 @@
         "zh": "<desert_territory>产出的稀有材料。",
         "en": "Rare material from deserts."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的盐格上即表示盐；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的盐格上即表示盐；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Salt space of the storage area (<storage_area>) it represents salt; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<desert_territory>",
       "sell_price": 2,
       "lucky_harvest_die": {
@@ -352,7 +397,10 @@
         "zh": "<forest_territory>产出的珍贵材料。",
         "en": "Precious material from forests."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的石油格上即表示石油；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的石油格上即表示石油；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Oil space of the storage area (<storage_area>) it represents oil; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<forest_territory>",
       "sell_price": 3,
       "lucky_harvest_die": {
@@ -372,7 +420,10 @@
         "zh": "<grassland_territory>产出的珍贵材料。",
         "en": "Precious material from grasslands."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的黄金格上即表示黄金；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的黄金格上即表示黄金；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Gold space of the storage area (<storage_area>) it represents gold; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<grassland_territory>",
       "sell_price": 3,
       "lucky_harvest_die": {
@@ -392,7 +443,10 @@
         "zh": "<hill_territory>产出的珍贵材料。",
         "en": "Precious material from hills."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的硫磺格上即表示硫磺；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的硫磺格上即表示硫磺；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Sulfur space of the storage area (<storage_area>) it represents sulfur; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<hill_territory>",
       "sell_price": 3,
       "lucky_harvest_die": {
@@ -412,7 +466,10 @@
         "zh": "<swamp_territory>产出的珍贵材料。",
         "en": "Precious material from swamps."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的沥青格上即表示沥青；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的沥青格上即表示沥青；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Tar space of the storage area (<storage_area>) it represents tar; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<swamp_territory>",
       "sell_price": 3,
       "lucky_harvest_die": {
@@ -432,7 +489,10 @@
         "zh": "<mountain_territory>产出的珍贵材料。",
         "en": "Precious material from mountains."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的玉石格上即表示玉石；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的玉石格上即表示玉石；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Jade space of the storage area (<storage_area>) it represents jade; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<mountain_territory>",
       "sell_price": 3,
       "lucky_harvest_die": {
@@ -452,7 +512,10 @@
         "zh": "<desert_territory>产出的珍贵材料。",
         "en": "Precious material from deserts."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的铜格上即表示铜；放在大陆或船上时表示未运输的原材料。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在仓库（<storage_area>）的铜格上即表示铜；放在大陆或船上时表示未运输的原材料。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the Copper space of the storage area (<storage_area>) it represents copper; on the continent or a boat it represents an untransported raw material."
+      },
       "territory_type": "<desert_territory>",
       "sell_price": 3,
       "lucky_harvest_die": {
@@ -472,7 +535,10 @@
         "zh": "Civolution 中最核心的抽象物理零件。高度不到一厘米的八角柱形小木块，每位玩家一种颜色，每人 50 个（共 200 个）。同一个八角柱放在不同区域代表完全不同的概念——放在<food_space>上代表<food>，放在<storage_area>代表<stored_material>，放在<feature_space>上代表<feature_marker>，放在<idea_space>上代表<idea_marker>。颜色本身不决定八角柱代表什么——它所在的位置（zone）才是决定因素。注意：每位玩家的供应上限为 50 个，耗尽时可将<console>或<continent>上的标记退回<ontology::supply>（但<statue>、<reset_marker>和<boat>上的标记除外）。",
         "en": "The most central abstract physical piece in Civolution. A tiny octagonal pillar less than 1cm tall, one color per player, 50 per player (200 total). The same pillar represents entirely different concepts depending on where it is placed — on a food space it represents food, in the storage area it represents a material, on a feature space it represents a feature marker, on the idea space it represents an idea marker. The color itself does not determine what the pillar represents — its location (zone) is the deciding factor. Note: each player's supply is limited to 50. When exhausted, markers may be returned from the <console> or continent to the supply (except statues, reset markers, and markers on boats)."
       },
-      "appearance": "高度不到一厘米的小木块，截面为正八边形。每位玩家一种颜色，每人 50 个，共 200 个。",
+      "appearance": {
+        "zh": "高度不到一厘米的小木块，截面为正八边形。每位玩家一种颜色，每人 50 个，共 200 个。",
+        "en": "A small wooden block under 1 cm tall with a regular-octagon cross-section. One color per player, 50 per player, 200 in total."
+      },
       "represents": null,
       "media": {
         "component": [
@@ -492,7 +558,10 @@
         "zh": "Civolution 中用于轨道标记的物理零件。外形像纽扣电池——扁圆柱体，一面中央凸起一块，另一面中央凹陷下去。多个同色圆片可以通过凸起嵌入上一个圆片的凹洞而稳固叠放，适合在<score_track>、<progress_track>等需要堆叠标记的场景中使用。每位玩家有自己的颜色。",
         "en": "A physical piece used for track markers in Civolution. Shaped like a button cell battery — a flat cylinder with a central bump on one side and a central indentation on the other. Multiple discs of the same color stack securely by fitting each bump into the indentation of the disc above, ideal for score tracks, progress tracks, and other stacking scenarios. Each player has their own color."
       },
-      "appearance": "纽扣电池形扁圆柱体，一面中央凸起，另一面中央凹陷。多片可互相嵌合叠放。每位玩家 7 个（1 分轨 + 1 阿格拉恩惠轨 + 5 进程轨），共 28 个。",
+      "appearance": {
+        "zh": "纽扣电池形扁圆柱体，一面中央凸起，另一面中央凹陷。多片可互相嵌合叠放。每位玩家 7 个（1 分轨 + 1 阿格拉恩惠轨 + 5 进程轨），共 28 个。",
+        "en": "Shaped like a button-cell battery — a flat cylinder with a central bump on one side and a central indentation on the other. Discs stack by fitting the bump into the indentation. 7 per player (1 score track + 1 Favor of Agera + 5 progress tracks), 28 in total."
+      },
       "represents": null,
       "media": {
         "component": [
@@ -512,7 +581,10 @@
         "zh": "放置在<continent>区域或<boat>上的未运输材料标记。它代表某种材料但尚未进入玩家<storage_area>，需要通过<transport_material>才能变成<stored_material>。",
         "en": "A material marker placed on a <continent> region or boat, not yet transported to storage. It represents a material but is not yet in the player's storage; must be transported to become a <stored_material>."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在大陆（<continent>）区域或船（<boat>）上。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在大陆（<continent>）区域或船（<boat>）上。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on a <continent> territory or on a <boat>."
+      },
       "represents": {
         "type": "<stored_material>",
         "description": {
@@ -534,7 +606,10 @@
         "zh": "放置在<console>特征格上的标记，代表玩家拥有的某种特征。特征用于满足<research_card>的<cost_space>、获取<attribute_chip>、<event_era_scoring>等。",
         "en": "A marker placed on a feature space of a <console>, representing a feature the player has. Features are used to satisfy research card costs, acquire attribute chips, and score in the Evolution category."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台 6 个特征格（<feature_space>）之一上。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台 6 个特征格（<feature_space>）之一上。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on one of the 6 feature spaces (<feature_space>) of your console."
+      },
       "feature_type": {
         "type": "enum",
         "enum": [
@@ -712,7 +787,10 @@
         "zh": "用<octagonal_pillar>放置在<building_site>上的建筑标记。建造后推进任意<progress_track> 1 格，并在之后的每个<phase_8_income>按 <favor_of_ager_track> 位置计分。每位玩家在每个<building_site>可建 1 个<settlement>加 1 个雕像，或 2 个雕像。",
         "en": "A building marker placed on a Building ground using a generic marker. Building one advances any progress track by 1 step, and each statue scores in subsequent Income phases based on the Favor of Agera track position. Each player may build 1 settlement + 1 statue or 2 statues per Building ground."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）充当——放在建造点（<building_site>）上即表示雕像。"
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）充当——放在建造点（<building_site>）上即表示雕像。",
+        "en": "An octagonal marker (<octagonal_pillar>) in the player's color serves as a statue when placed on a building ground (<building_site>)."
+      }
     },
     {
       "id": "module",
@@ -923,7 +1001,10 @@
         "zh": "放置在<console>创意格上的标记，用于修改骰子点数。每消耗 1 个创意标记可将任意一颗<activation_die>或<fate_die>的点数加减 1（1 和 6 相连）。",
         "en": "A marker placed on a player's idea space, used to modify die values. Spending 1 idea marker increases or decreases the value of any <activation_die> or <fate_die> by 1 (1 and 6 are adjacent)."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的创意格（<idea_space>）上。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的创意格（<idea_space>）上。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on the idea space (<idea_space>) of your console."
+      },
       "component": "<octagonal_pillar>"
     },
     {
@@ -938,7 +1019,10 @@
         "zh": "放置在<activation_dice_area>上的标记，可替代对应点数的<activation_die>用于激活模组（见 <ontology::substitution>）。只能替代<activation_die>，不能替代<fate_die>。用作支付时放回供应堆（<ontology::supply>），不进入<ontology::player_holding>。",
         "en": "A marker placed on a dice space, usable in place of an activation die of the matching value when activating a module (see <ontology::substitution>). Can only replace <activation_die>s, not <fate_die>s. When used as payment, the marker is returned to the supply (<ontology::supply>), not to a player holding."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台激活骰子区的骰子格中。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台激活骰子区的骰子格中。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed in an activation dice slot of your console."
+      },
       "component": "<octagonal_pillar>",
       "<ontology::substitution>": {
         "target": "<activation_die>",
@@ -961,7 +1045,10 @@
         "zh": "特殊的<planning_marker>，可当作任意点数的<planning_marker>使用：需要任意点数的<activation_die>时，可从<focus_space>放回<ontology::supply>替代之（见 <ontology::substitution>）。",
         "en": "A special planning marker usable as a planning marker of any value: when an activation die of a specific value is needed, one focus marker can be returned from the focus space to the supply in its place (see <ontology::substitution>)."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的焦点格（<focus_space>）上。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的焦点格（<focus_space>）上。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on the focus space (<focus_space>) of your console."
+      },
       "component": "<octagonal_pillar>",
       "<ontology::substitution>": {
         "target": "<activation_die>",
@@ -997,7 +1084,10 @@
         "zh": "可安装到<stage_partition>的 <ontology::card>。纵向三段：上部「能力」区（<research_ability>，安装后唯一露出、持续可用）、中部五个「费用格」（<cost_space>，格下方可能印有 <success_point>）、下部「即时奖励」（<instant_bonus>）。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。效果的触发与结算过程见 <install_research_card>。",
         "en": "A <ontology::card> that can be installed into the stage partition. Three vertical sections: the top-third \"ability\" (<research_ability>, the only visible part after installation and persistently usable), the middle five \"cost spaces\" (<cost_space>; each may have <success_point> printed below), and the bottom \"instant bonus\" (<instant_bonus>). Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition. How these effects trigger and resolve is described in <install_research_card>."
       },
-      "appearance": "纸质卡牌（共 160 张，5 种类型各 32 张：建造蓝、洞悉黄、突变绿、成就紫、发明棕，左下角印有牌编号）。纵向三段：上三分之一为能力区（<research_ability>，安装后唯一露出），中部为 5 个费用格（<cost_space>，格下方印有分数），下部为即时奖励（<instant_bonus>）。",
+      "appearance": {
+        "zh": "纸质卡牌（共 160 张，5 种类型各 32 张：建造蓝、洞悉黄、突变绿、成就紫、发明棕，左下角印有牌编号）。纵向三段：上三分之一为能力区（<research_ability>，安装后唯一露出），中部为 5 个费用格（<cost_space>，格下方印有分数），下部为即时奖励（<instant_bonus>）。",
+        "en": "A paper card (160 in total, 5 types of 32 each: Building blue, Insight yellow, Mutation green, Achievement purple, Invention brown; card number printed bottom-left). Three vertical sections: ability area in the top third (<research_ability>, the only visible part after installation), 5 cost spaces in the middle (<cost_space>, score printed below each), instant bonus at the bottom (<instant_bonus>)."
+      },
       "card_no": {
         "type": "string",
         "description": {
@@ -1191,7 +1281,10 @@
         "zh": "每时代翻开一张的 <ontology::card>，决定本时代天气变化和事件奖励。它携带两个效果（<weather_trend> 与 <event_effect> 两个 part），分两个环节结算：右上角 <weather_trend>（天气效果——<phase_7_event> A 步据此移动 <weather_indicator>）；下半部分 <event_effect>（事件效果——<phase_7_event> B 步结算奖励）。",
         "en": "A <ontology::card> revealed once per era, determining the era's weather change and event effect. It carries two effects (the <weather_trend> and <event_effect> parts), resolved in two steps: the <weather_trend> in the top-right corner (weather effect — moves the <weather_indicator> in step A of the Event phase); the <event_effect> on the lower part (event effect — resolved in step B of the Event phase)."
       },
-      "appearance": "纸质卡牌（共 20 张）。左上角为牌名（<card_name>），右上角为天气趋势图标（<weather_trend>），下半部分为事件效果（<event_effect>）。",
+      "appearance": {
+        "zh": "纸质卡牌（共 20 张）。左上角为牌名（<card_name>），右上角为天气趋势图标（<weather_trend>），下半部分为事件效果（<event_effect>）。",
+        "en": "A paper card (20 in total). Card name (<card_name>) in the top-left corner, weather trend icon (<weather_trend>) in the top-right, event effect (<event_effect>) on the lower part."
+      },
       "parts": [
         {
           "<card_name>": {
@@ -1304,7 +1397,10 @@
         "zh": "<setup>使用的 <ontology::card>，指示玩家初始可获得的标记（按牌上指示从<ontology::supply>取标记放置）。设置完成后放回<ontology::game_box>，不安装。",
         "en": "A <ontology::card> used during setup indicating which markers a player starts with (markers are taken from supply and placed per the card's indication). Returned to the game box after setup; never installed."
       },
-      "appearance": "纸质卡牌（共 12 张）。牌面印有初始可获得的标记图标，左下角印有编号（1~6）。",
+      "appearance": {
+        "zh": "纸质卡牌（共 12 张）。牌面印有初始可获得的标记图标，左下角印有编号（1~6）。",
+        "en": "A paper card (12 in total) showing the icons of the markers a player starts with, with a number (1-6) printed in the bottom-left corner."
+      },
       "media": {
         "component": [
           "assets/components/page-04/starting_marker_card.png"
@@ -1323,7 +1419,10 @@
         "zh": "<setup>使用的 <ontology::card>，记录玩家首个升级的<upgradable_module>和首个<income_chip>。上三分之一是一块 <income_chip>。设置过程中，此牌翻开后提供一个临时 zone 用于容纳<goal_chip>——玩家从<goal_chip_display>选取芯片放在此牌上。设置完成后，此牌安装到 <console> 层级分区（<stage_partition>）第 9 列的第 4 层级，成为第一个<income_chip>（上三分之一露出，<activate_income_chip>时可以选择它），其承载的 zone 随之消失。",
         "en": "A <ontology::card> used during setup indicating the player's first upgraded module and first income chip. Its top third is an <income_chip>. During setup, once revealed, this card provides a temporary zone for holding goal chips — the player selects chips from the goal chip display and places them on this card. After setup, it is installed into column 9, tier 4 of the <console> stage partition (<stage_partition>) as the first income chip (the top third is revealed and selectable when activating income chips), and its hosted zone disappears."
       },
-      "appearance": "纸质卡牌（共 10 张）。上三分之一是一块收入芯片（<income_chip>），其余部分指示玩家首个升级模组和首个收入芯片。",
+      "appearance": {
+        "zh": "纸质卡牌（共 10 张）。上三分之一是一块收入芯片（<income_chip>），其余部分指示玩家首个升级模组和首个收入芯片。",
+        "en": "A paper card (10 in total). Its top third is an income chip (<income_chip>); the rest indicates the player's first upgraded module and first income chip."
+      },
       "parts": [
         "<income_chip>",
         {
@@ -1370,7 +1469,10 @@
         "zh": "可安装到 <console> 的白色芯片。安装时效果不触发——仅在<phase_8_income>、<weather_gauge.warm>或<progress_track>奖励中通过 <activate_income_chip> 选中时结算。收入芯片可安装在任意列。",
         "en": "A white chip that can be installed in a <console>. Its effect does not trigger on install — it only resolves when selected by <activate_income_chip> during the Income phase, weather gauge Warm slot, or track bonuses. Income chips can be installed in any column."
       },
-      "appearance": "白色芯片（共 25 个），正面印有效果图标。",
+      "appearance": {
+        "zh": "白色芯片（共 25 个），正面印有效果图标。",
+        "en": "A white chip (25 in total) with an effect icon printed on its face."
+      },
       "parts": [
         {
           "<ontology::effect>": {
@@ -1403,7 +1505,10 @@
         "zh": "正方形的蓝色板块，面积为 <income_chip> 或 <attribute_chip> 的一半。玩家从<goal_chip_display>拿取后安装在 <console> 的<goal_column>。安装后可能揭示升级奖励。每叠目标芯片安装完后可<upgrade_main_module>。",
         "en": "A square blue tile, half the size of an <income_chip> or <attribute_chip>. Taken from the display and installed in the goal column of a <console>. Installing one may reveal an upgrade bonus. Completing a stack of goal chips allows upgrading one main module."
       },
-      "appearance": "正方形蓝色芯片（共 65 个，面积为收入/属性芯片的一半）。上部为芯片名，中部为安装条件，底部为芯片编号。",
+      "appearance": {
+        "zh": "正方形蓝色芯片（共 65 个，面积为收入/属性芯片的一半）。上部为芯片名，中部为安装条件，底部为芯片编号。",
+        "en": "A square blue chip (65 in total, half the size of an income/attribute chip). Chip name at the top, install condition in the middle, chip number at the bottom."
+      },
       "parts": [
         {
           "position": {
@@ -1458,7 +1563,10 @@
         "zh": "黄色的芯片。左侧为安装 cost，右侧为条件 effect。中间属性图标仅视觉提示，不被规则引用。",
         "en": "A yellow chip. Left: install cost. Right: conditional effect. The attribute icon in the middle is visual only, not referenced by rules."
       },
-      "appearance": "黄色芯片（共 12 个）。左侧为安装费用，右侧为条件效果，中间印有属性图标。",
+      "appearance": {
+        "zh": "黄色芯片（共 12 个）。左侧为安装费用，右侧为条件效果，中间印有属性图标。",
+        "en": "A yellow chip (12 in total). Install cost on the left, conditional effect on the right, attribute icon in the middle."
+      },
       "parts": [
         {
           "position": {
@@ -1502,7 +1610,10 @@
         "zh": "双面 <ontology::tile>，外观为小型矩形板块，其中一角为弧形角。一面为图标面，印有计分类别图标；另一面为分数面，印有分数。",
         "en": "A double-sided <ontology::tile>, shaped as a small rectangular tile with one rounded corner. One side is the icon side, printed with a scoring category icon; the other is the point side, printed with a point value."
       },
-      "appearance": "双面小型矩形纸板板块，一角为弧形角（共 9 个）。一面印计分类别图标，另一面印分数。",
+      "appearance": {
+        "zh": "双面小型矩形纸板板块，一角为弧形角（共 9 个）。一面印计分类别图标，另一面印分数。",
+        "en": "A small double-sided rectangular cardboard tile with one rounded corner (9 in total). One side shows a scoring category icon, the other shows a point value."
+      },
       "media": {
         "component": [
           "media/components/scoring_tile.png"
@@ -1521,7 +1632,10 @@
         "zh": "标识层级 4 或层级 5 是否激活的双面 <ontology::tile>。未激活面朝上时该层级<final_scoring>不计分；激活面朝上时开放计分。正面为激活面——effect 在<final_scoring>时使该层级计分生效；aid 提示该层级安装<research_card>需满足的<cost_space>数量。",
         "en": "A double-sided <ontology::tile> indicating whether stage 4 or stage 5 is active. Inactive side up: no scoring. Active side up: scoring enabled. The active face contains an effect enabling scoring during final scoring, and an aid showing cost slot requirements."
       },
-      "appearance": "双面纸板板块（共 8 个：层级四、层级五各 4 个）。一面为未激活面，另一面为激活面（印有效果与费用格数量提示）。",
+      "appearance": {
+        "zh": "双面纸板板块（共 8 个：层级四、层级五各 4 个）。一面为未激活面，另一面为激活面（印有效果与费用格数量提示）。",
+        "en": "A double-sided cardboard tile (8 in total: 4 for stage 4, 4 for stage 5). One side is the inactive face, the other is the active face (with effect and cost-space requirement hints)."
+      },
       "parts": [
         {
           "<ontology::effect>": {
@@ -1618,7 +1732,10 @@
         "zh": "放置在 <continent> 上的特殊 <ontology::tile>，外观为正八边形板块，其中一角为方便手指拿取的弧形角。翻开前背面朝上，通过<module_exploration>翻开后持续生效。**翻开加分（通用）**：每块地点翻开时，翻开者立即获得本概念 score 字段标记的分数（印在正面左上角）——由 <explore_site> 在翻转后触发本概念的 <ontology::effect> 结算。地点分两类：<effect_site>（效果地点：翻开加分后结算自身效果）与 <building_site>（建造点：翻开加分后自身成为可建造的 zone，无自身效果）。",
         "en": "A special <ontology::tile> placed on the <continent>, shaped as a regular octagon with one rounded corner for easy finger pickup. Face down until revealed via <module_exploration>, then taking lasting effect. **Reveal scoring (universal)**: whenever a site is revealed, the revealer immediately gains the points marked by this concept's score field (top-left corner of the front side) — settled via this concept's <ontology::effect>, triggered by <explore_site> after the flip. Sites come in two kinds: <effect_site> (effect site: settles its own effect after reveal scoring) and <building_site> (building ground: becomes a buildable zone itself after reveal scoring; no own effect)."
       },
-      "appearance": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面左上角印有翻开分数，中央为地点插画。",
+      "appearance": {
+        "zh": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面左上角印有翻开分数，中央为地点插画。",
+        "en": "A regular-octagon cardboard tile with one rounded corner for easy pickup. Face down until revealed; the front has the reveal score in the top-left corner and a site illustration in the center."
+      },
       "score": {
         "type": "integer",
         "default": null,
@@ -1670,7 +1787,10 @@
         "zh": "有自身效果的地点：翻开后先结算 <site> 的翻开加分效果，再结算本地点自己的效果——实例在 own_effect 字段实现（探索翻开后、加分之后触发）。",
         "en": "A site with its own effect: when revealed, first settles <site>'s reveal-scoring effect, then settles this site's own effect — implemented by instances in the own_effect field (triggered after reveal and scoring)."
       },
-      "appearance": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面印有地点插画，左上角为翻开分数。",
+      "appearance": {
+        "zh": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面印有地点插画，左上角为翻开分数。",
+        "en": "A regular-octagon cardboard tile with one rounded corner. Face down until revealed; the front shows a site illustration with the reveal score in the top-left corner."
+      },
       "own_effect": {
         "type": "<ontology::effect>",
         "description": {
@@ -1691,7 +1811,10 @@
         "zh": "无自身效果的地点：翻开后先结算 <site> 的翻开加分效果，然后本地点自身成为可建造的 zone——可容纳 <settlement> 或 <statue>。共 7 个建造点：1 个位于大水域区域（岛屿）、6 个为<continent>地点板块；各建造点印着 2~3 种可用于<build_statue>的<stored_material>（各不相同，印在板块上，不实例化）。",
         "en": "A site without its own effect: when revealed, first settles <site>'s reveal-scoring effect, then this site itself becomes a buildable zone — it can hold a <settlement> or a <statue>. 7 Building grounds in total: 1 on the large Water territory (island), 6 among the continent sites; each lists 2-3 <stored_material> types usable for building statues (varying per ground, printed on the tile, not instantiated)."
       },
-      "appearance": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面印有 2~3 种可用于建造雕像的材料图标。",
+      "appearance": {
+        "zh": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面印有 2~3 种可用于建造雕像的材料图标。",
+        "en": "A regular-octagon cardboard tile with one rounded corner. Face down until revealed; the front shows 2-3 material icons usable for building statues."
+      },
       "contains": {
         "type": "<settlement> | <statue>",
         "description": {
@@ -1732,7 +1855,10 @@
         "zh": "拼成 <continent> 的 <ontology::tile>。正面印有不同的 <territory>、<material_slot>、<encampment>、<fire_encampment>；仅 1×1 板块通过 <ontology::tile> 的 parts 机制额外承担 <site> 逻辑身份（建造点）。",
         "en": "A <ontology::tile> forming part of the <continent>. The front is printed with different terrain zones, <material_slot>s, and encampment positions; the 1×1 tile instance additionally carries a <site> logical identity (Building Ground) via the <ontology::tile> parts mechanism."
       },
-      "appearance": "厚纸板板块（共 8 个），拼成大陆。正面印有地形区域（<territory>）、材料板块格（<material_slot>）、营地（<encampment>）与篝火营地（<fire_encampment>）；其中 3 块带可折叠粘贴到正面的山脉部件。",
+      "appearance": {
+        "zh": "厚纸板板块（共 8 个），拼成大陆。正面印有地形区域（<territory>）、材料板块格（<material_slot>）、营地（<encampment>）与篝火营地（<fire_encampment>）；其中 3 块带可折叠粘贴到正面的山脉部件。",
+        "en": "A thick cardboard tile (8 in total) forming the continent. The front shows terrain territories (<territory>), material slots (<material_slot>), encampments (<encampment>) and fire encampments (<fire_encampment>); 3 of them have a mountain part that folds and glues onto the front."
+      },
       "size": {
         "zh": "7 块为 2×1，1 块为 1×1",
         "en": "Seven 2×1 tiles and one 1×1 tile"
@@ -1761,7 +1887,10 @@
         "zh": "放置在 <material_slot> 上的 <ontology::tile>，决定其所在<territory>可产出的<stored_material>类型。正面朝上时表示该<territory>已开发，可产出对应<stored_material>。",
         "en": "A <ontology::tile> placed on a <material_slot>, determining what material the territory can produce. When face up, the territory is developed and can produce the corresponding material."
       },
-      "appearance": "双面纸板板块（共 18 个）：正面印有地形类型与可产出的材料，背面按颜色区分。",
+      "appearance": {
+        "zh": "双面纸板板块（共 18 个）：正面印有地形类型与可产出的材料，背面按颜色区分。",
+        "en": "A double-sided cardboard tile (18 in total): the front shows the terrain type and producible material, the back is color-coded."
+      },
       "media": {
         "component": [
           "media/components/material_tile.png"
@@ -1865,7 +1994,10 @@
         "zh": "双面正方形指示物，正面为 100 分，背面为阻挡标记。玩家分数每超过 100 时拿取一个；<setup>时部分需翻面作为阻挡标记覆盖不可用区域。",
         "en": "A double-sided square token with 100 points on the front and a blocking side on the back. Players take one whenever their score passes 100; some are flipped as blocking tokens during setup."
       },
-      "appearance": "双面正方形纸板指示物（共 12 个），正面印 100 分，背面为阻挡标记。",
+      "appearance": {
+        "zh": "双面正方形纸板指示物（共 12 个），正面印 100 分，背面为阻挡标记。",
+        "en": "A double-sided square cardboard token (12 in total) with 100 points on the front and a blocking marker on the back."
+      },
       "media": {
         "component": [
           "media/components/hundred_point_token.png"
@@ -1884,7 +2016,10 @@
         "zh": "放置在已狩猎<territory>上的标记，表示本时代该<territory>不能再被<hunt>。<phase_8_income>结束时全部回收。背面也用作阻挡标记覆盖<encampment>。",
         "en": "A marker placed on a hunted territory, indicating that territory cannot be hunted again this era. All are returned at the end of the Income phase. The back is also used as a blocking token for encampments."
       },
-      "appearance": "双面纸板指示物（共 16 个），正面印狩猎图标，背面为阻挡标记（部分背面印有与大陆背景一致的花纹，用于覆盖营地）。"
+      "appearance": {
+        "zh": "双面纸板指示物（共 16 个），正面印狩猎图标，背面为阻挡标记（部分背面印有与大陆背景一致的花纹，用于覆盖营地）。",
+        "en": "A double-sided cardboard token (16 in total) with a hunting icon on the front and a blocking marker on the back (some backs share the continent background pattern and are used to cover encampments)."
+      }
     },
     {
       "id": "phase_indicator",
@@ -1898,7 +2033,10 @@
         "zh": "黄色的六边形（六角形）<ontology::marker>，放置在 <sequence_board> 的<phase_sequence>上指示当前阶段。<final_scoring>时移入 <final_scoring_area_hex> 逐格推进。",
         "en": "A hexagonal yellow <ontology::marker> placed on the phase sequence of the sequence board to indicate the current phase. During final scoring, it moves into the <final_scoring_area_hex> and advances cell by cell."
       },
-      "appearance": "黄色六边形标记，放在流程版图的阶段序列（<phase_sequence>）上指示当前阶段，共 1 个。",
+      "appearance": {
+        "zh": "黄色六边形标记，放在流程版图的阶段序列（<phase_sequence>）上指示当前阶段，共 1 个。",
+        "en": "A yellow hexagonal marker placed on the phase sequence (<phase_sequence>) of the sequence board to indicate the current phase; 1 in total."
+      },
       "media": {
         "component": [
           "media/components/phase_indicator.png"
@@ -1917,7 +2055,10 @@
         "zh": "白色的圆柱形 <ontology::marker>，放置在 <sequence_board> 的<weather_gauge>上指示当前天气。",
         "en": "A cylindrical white <ontology::marker> placed on the weather gauge of the sequence board to indicate the current weather."
       },
-      "appearance": "白色圆盘形标记，放在流程版图的天气轨（<weather_gauge>）上指示当前天气，共 1 个。",
+      "appearance": {
+        "zh": "白色圆盘形标记，放在流程版图的天气轨（<weather_gauge>）上指示当前天气，共 1 个。",
+        "en": "A white disc-shaped marker placed on the weather gauge (<weather_gauge>) of the sequence board to indicate the current weather; 1 in total."
+      },
       "media": {
         "component": [
           "media/components/weather_indicator.png"
@@ -1936,7 +2077,10 @@
         "zh": "放置在 <favor_of_ager_track> 上指示当前恩惠等级的 <ontology::marker>。影响<favor_test>、<score_statues>和<final_scoring>。",
         "en": "A <ontology::marker> placed on the <favor_of_ager_track> to indicate the current favor level. Affects favor tests, statue income, and final scoring."
       },
-      "appearance": "由玩家颜色的圆片（<stackable_disc>）表示——放在阿格拉恩惠轨（<favor_of_ager_track>）上，每位玩家 1 个。"
+      "appearance": {
+        "zh": "由玩家颜色的圆片（<stackable_disc>）表示——放在阿格拉恩惠轨（<favor_of_ager_track>）上，每位玩家 1 个。",
+        "en": "Represented by a disc (<stackable_disc>) in the player's color — placed on the Favor of Agera track (<favor_of_ager_track>); 1 per player."
+      }
     },
     {
       "id": "starting_monolith",
@@ -1950,7 +2094,10 @@
         "zh": "文明演化中的 <ontology::starting_player_marker>，标记当前起始玩家。",
         "en": "The <ontology::starting_player_marker> in Civolution, marking the current starting player."
       },
-      "appearance": "由一大一小两块纸板互相垂直拼接而成，能立起来。大的那块是碑体，下宽上窄、形似纪念碑，上面印有阿格拉本人的形象；小的那块是碑座。共 1 个。",
+      "appearance": {
+        "zh": "由一大一小两块纸板互相垂直拼接而成，能立起来。大的那块是碑体，下宽上窄、形似纪念碑，上面印有阿格拉本人的形象；小的那块是碑座。共 1 个。",
+        "en": "Assembled from two cardboard pieces slotted together perpendicularly so it stands upright: a large stele piece, narrower at the top like a monument, printed with the image of Agera; and a small base piece. 1 in total."
+      },
       "media": {
         "component": [
           "assets/components/page-05/starting_monolith.png"
@@ -1969,7 +2116,10 @@
         "zh": "由 <progress_board>、<sequence_board> 与<score_track>区域共同构成的公共游戏版图。它承载公共游戏状态——<progress_track>、<weather_gauge>、展示区等；中央的游戏区域由 <continent>（公共 zone）承载，其中的 <continent_tile>、<site>、<material_tile> 等是游戏零件，不属于公共版图本身。",
         "en": "The shared game board formed by the progress board, sequence board, and score track area. It carries public game state — progress tracks, weather gauge, display areas, etc. The central play area is held by the <continent> public zone; its <continent_tile>s, <site>s, and <material_tile>s are game components, not part of the public board itself."
       },
-      "appearance": "由进程版图（<progress_board>）、流程版图（<sequence_board>）与 4 块计分轨外框共同拼成的公共版图整体，中央围出大陆区域。",
+      "appearance": {
+        "zh": "由进程版图（<progress_board>）、流程版图（<sequence_board>）与 4 块计分轨外框共同拼成的公共版图整体，中央围出大陆区域。",
+        "en": "The shared board assembled from the progress board (<progress_board>), the sequence board (<sequence_board>) and the 4 score track frame pieces, enclosing the continent area in the center."
+      },
       "components": [
         "<progress_board>",
         "<sequence_board>"
@@ -2178,7 +2328,10 @@
         "zh": "放置在 <score_track> 上指示玩家当前分数的标记。每位玩家有 1 个。",
         "en": "A marker placed on the <score_track> to indicate a player's current score. Each player has 1."
       },
-      "appearance": "由玩家颜色的圆片（<stackable_disc>）表示——放在分数轨（<score_track>）上，每位玩家 1 个。",
+      "appearance": {
+        "zh": "由玩家颜色的圆片（<stackable_disc>）表示——放在分数轨（<score_track>）上，每位玩家 1 个。",
+        "en": "Represented by a disc (<stackable_disc>) in the player's color — placed on the score track (<score_track>); 1 per player."
+      },
       "component": "<stackable_disc>"
     },
     {
@@ -2193,7 +2346,10 @@
         "zh": "记录当前时代、当前阶段、当前天气的公共 <ontology::public_board>。其上承载了<phase_sequence>、<weather_gauge>、<favor_of_ager_track>、<event_card_space>和 <era_scoring_area> ；所有玩家共用。",
         "en": "A shared <ontology::public_board> tracking the current era, current phase, and current weather. It hosts the phase sequence, weather gauge, <favor_of_ager_track>, event card spaces, and era scoring area; shared by all players."
       },
-      "appearance": "公共大版图（置于计分轨右侧）。上部为阶段序列，中部为天气轨与阿格拉恩惠轨，中下部为事件牌格，下部为时代计分区。",
+      "appearance": {
+        "zh": "公共大版图（置于计分轨右侧）。上部为阶段序列，中部为天气轨与阿格拉恩惠轨，中下部为事件牌格，下部为时代计分区。",
+        "en": "A large shared board (placed to the right of the score track). Phase sequence at the top, weather gauge and Favor of Agera track in the middle, event card spaces in the lower middle, era scoring area at the bottom."
+      },
       "parts": [
         {
           "<phase_sequence>": {
@@ -2254,7 +2410,10 @@
         "zh": "印刷<hunting_table>、5 条<progress_track>、<final_scoring_area>等参考信息的公共 <ontology::public_board>。其 components 包含作为 aid 的<hunting_table>；其 zones 承载 5 条<progress_track>、<final_scoring_area>以及展示供应区（<activation_die>和<fate_die>、<hunting_token>、<hundred_point_token>、<goal_chip>/<income_chip>/<attribute_chip>）。",
         "en": "A shared <ontology::public_board> printed with the hunting table, five progress tracks, final scoring area, and other reference information. Its components include the hunting table as an aid; its zones host the five progress tracks, final scoring area, and display/supply zones (dice, hunting tokens, 100-point tokens, goal/income/attribute chips)."
       },
-      "appearance": "公共大版图（置于计分轨左侧）。上部印狩猎表，中部为 5 条进程轨，下部为终局计分区，右侧为骰子、狩猎标记、100 分指示物供应区与三种芯片展示区。",
+      "appearance": {
+        "zh": "公共大版图（置于计分轨左侧）。上部印狩猎表，中部为 5 条进程轨，下部为终局计分区，右侧为骰子、狩猎标记、100 分指示物供应区与三种芯片展示区。",
+        "en": "A large shared board (placed to the left of the score track). Hunting table on the upper part, the 5 progress tracks in the middle, final scoring area at the bottom, and dice, hunting token and 100-point token supplies plus the three chip displays on the right."
+      },
       "components": [
         "<hunting_table>"
       ],
@@ -2398,7 +2557,10 @@
         "zh": "印刷在 <progress_board> 上的参考表，用于查询<hunt>时根据<territory>和<fate_die>点数获得的<food>数量。本身不改变游戏状态，只提供规则参考。",
         "en": "A reference table printed on the <progress_board> used to look up how much food hunting yields based on terrain and die result. it does not change game state, only provides rule reference."
       },
-      "appearance": "印刷在进程版图（<progress_board>）上的狩猎查询表，不是独立零件。"
+      "appearance": {
+        "zh": "印刷在进程版图（<progress_board>）上的狩猎查询表，不是独立零件。",
+        "en": "A reference table printed on the progress board (<progress_board>); not a standalone component."
+      }
     },
     {
       "id": "progress_marker",
@@ -2412,7 +2574,10 @@
         "zh": "放置在<progress_track>上指示玩家当前进程等级的 <ontology::marker>。每位玩家有 5 个，分别放在 5 条<progress_track>上。",
         "en": "A <ontology::marker> placed on a progress track to indicate a player's current progress level. Each player has 5, one on each of the five progress tracks. "
       },
-      "appearance": "由玩家颜色的圆片（<stackable_disc>）表示——放在 5 条进程轨（<progress_track>）上，每位玩家 5 个。",
+      "appearance": {
+        "zh": "由玩家颜色的圆片（<stackable_disc>）表示——放在 5 条进程轨（<progress_track>）上，每位玩家 5 个。",
+        "en": "Represented by a disc (<stackable_disc>) in the player's color — placed on the 5 progress tracks (<progress_track>); 5 per player."
+      },
       "component": "<stackable_disc>"
     },
     {
@@ -3576,7 +3741,10 @@
         "zh": "每位玩家的<console>，包含<module_area>、<goal_column>、<attribute_column>、<income_area>、<storage_area>、<feature_space>、<idea_space>、<activation_dice_area>等。",
         "en": "Each player's <console> containing the module area, goal column, attribute column, income area, storage, feature spaces, idea spaces, and dice area."
       },
-      "appearance": "每位玩家的个人面板，形状不规则、中间凹下一大块（安装研究牌与芯片处，共 9 列）。由上部面板与两个底部面板折叠粘贴而成。左半边：收入区、目标列（<goal_column>）、属性列（<attribute_column>）、食物格（<food_space>）与钱币格（<money_space>）、建造提示、仓库（<storage_area>）、创意格（<idea_space>）与焦点格（<focus_space>）；右半边：22 个模组槽、激活骰子区（<activation_dice_area>）、特征格（<feature_space>）、重置列（<reset_column>）。",
+      "appearance": {
+        "zh": "每位玩家的个人面板，形状不规则、中间凹下一大块（安装研究牌与芯片处，共 9 列）。由上部面板与两个底部面板折叠粘贴而成。左半边：收入区、目标列（<goal_column>）、属性列（<attribute_column>）、食物格（<food_space>）与钱币格（<money_space>）、建造提示、仓库（<storage_area>）、创意格（<idea_space>）与焦点格（<focus_space>）；右半边：22 个模组槽、激活骰子区（<activation_dice_area>）、特征格（<feature_space>）、重置列（<reset_column>）。",
+        "en": "Each player's personal board, irregularly shaped with a large recess in the middle (where research cards and chips are installed, 9 columns). Assembled by folding and gluing a top part with two bottom parts. Left half: income area, goal column (<goal_column>), attribute column (<attribute_column>), food space (<food_space>) and money space (<money_space>), building reference, storage area (<storage_area>), idea space (<idea_space>) and focus space (<focus_space>); right half: 22 module slots, activation dice area (<activation_dice_area>), feature spaces (<feature_space>), reset columns (<reset_column>)."
+      },
       "parts": [
         {
           "<activity>": {
@@ -4232,7 +4400,10 @@
         "zh": "放置在 <reset_column> 中的标记。每位玩家初始有 4 个，<setup>时放在 4 个<reset_column>顶部。执行<reset>时沿列步进，完成 C 步后移入<idea_space>或<food_space>。<phase_8_income>结束时，所有空的<reset_column>重新从<ontology::supply>补满。注意：重置标记不能从<console>召回以补充<ontology::supply>上限（与其他标记不同）。",
         "en": "A marker placed in a <reset_column>. Each player starts with 4, placed at the top of the 4 reset columns during Setup. Steps down the column during a Reset; after step C, moves to the idea space or food space. At the end of the Income phase, all empty reset columns are refilled from supply. Note: reset markers cannot be recalled from the <console> to replenish the supply limit (unlike other markers)."
       },
-      "appearance": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在重置列（<reset_column>）顶部。",
+      "appearance": {
+        "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在重置列（<reset_column>）顶部。",
+        "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed at the top of a reset column (<reset_column>)."
+      },
       "component": "<octagonal_pillar>"
     },
     {
@@ -4338,7 +4509,10 @@
         "zh": "《文明演化》纸质规则书，用于查询详细规则。",
         "en": "The printed rulebook for Civolution, used for detailed rule lookups."
       },
-      "appearance": "纸质规则手册。"
+      "appearance": {
+        "zh": "纸质规则手册。",
+        "en": "A printed rulebook."
+      }
     },
     {
       "id": "player_aid",
@@ -4352,7 +4526,10 @@
         "zh": "帮助玩家理解<phase_sequence>和图标含义的辅助卡。",
         "en": "A card helping players understand phase order and icon meanings. "
       },
-      "appearance": "每位玩家一份的小册子（共 4 份），汇总游戏图标与要素含义。"
+      "appearance": {
+        "zh": "每位玩家一份的小册子（共 4 份），汇总游戏图标与要素含义。",
+        "en": "A booklet (4 in total, one per player) summarizing game icons and elements."
+      }
     },
     {
       "id": "activity",

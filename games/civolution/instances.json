@@ -24,7 +24,10 @@
         "zh": "迁徙模组的物理板块。L1→L2 翻面，L2→L3 移除。",
         "en": "Physical tile for the Migration module. Flipped for L1→L2, removed for L2→L3."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有迁徙模组图标与激活费用——两颗白骰子的点数 1 和 3；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有迁徙模组图标与激活费用——两颗白骰子的点数 1 和 3；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Migration module icon and its activation cost — two white dice showing 1 and 3; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_procreation",
@@ -38,7 +41,10 @@
         "zh": "繁育模组的物理板块。",
         "en": "Physical tile for the Procreation module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有繁育模组图标与激活费用——两颗白骰子的点数 2 和 5；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有繁育模组图标与激活费用——两颗白骰子的点数 2 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Procreation module icon and its activation cost — two white dice showing 2 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_production",
@@ -52,7 +58,10 @@
         "zh": "生产模组的物理板块。",
         "en": "Physical tile for the Production module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有生产模组图标与激活费用——两颗白骰子的点数 3 和 5；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有生产模组图标与激活费用——两颗白骰子的点数 3 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Production module icon and its activation cost — two white dice showing 3 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_transport",
@@ -66,7 +75,10 @@
         "zh": "运输模组的物理板块。",
         "en": "Physical tile for the Transport module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有运输模组图标与激活费用——两颗白骰子的点数 1 和 5；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有运输模组图标与激活费用——两颗白骰子的点数 1 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Transport module icon and its activation cost — two white dice showing 1 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_sustenance",
@@ -80,7 +92,10 @@
         "zh": "给养模组的物理板块。",
         "en": "Physical tile for the Sustenance module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有给养模组图标与激活费用——两颗白骰子的点数 2 和 4；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有给养模组图标与激活费用——两颗白骰子的点数 2 和 4；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Sustenance module icon and its activation cost — two white dice showing 2 and 4; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_exploration",
@@ -94,7 +109,10 @@
         "zh": "探索模组的物理板块。",
         "en": "Physical tile for the Exploration module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有探索模组图标与激活费用——两颗白骰子的点数 1 和 4；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有探索模组图标与激活费用——两颗白骰子的点数 1 和 4；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Exploration module icon and its activation cost — two white dice showing 1 and 4; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_building",
@@ -108,7 +126,10 @@
         "zh": "建造模组的物理板块。",
         "en": "Physical tile for the Building module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有建造模组图标与激活费用——两颗白骰子的点数 4 和 6；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有建造模组图标与激活费用——两颗白骰子的点数 4 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Building module icon and its activation cost — two white dice showing 4 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_planning",
@@ -122,7 +143,10 @@
         "zh": "计划模组的物理板块。",
         "en": "Physical tile for the Planning module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有计划模组图标与激活费用——两颗白骰子的点数 3 和 4；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有计划模组图标与激活费用——两颗白骰子的点数 3 和 4；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Planning module icon and its activation cost — two white dice showing 3 and 4; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_research",
@@ -136,7 +160,10 @@
         "zh": "研究模组的物理板块。",
         "en": "Physical tile for the Research module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有研究模组图标与激活费用——两颗白骰子的点数 1 和 2；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有研究模组图标与激活费用——两颗白骰子的点数 1 和 2；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Research module icon and its activation cost — two white dice showing 1 and 2; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_achievement",
@@ -150,7 +177,10 @@
         "zh": "成就模组的物理板块。",
         "en": "Physical tile for the Achievement module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有成就模组图标与激活费用——两颗白骰子的点数 5 和 6；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有成就模组图标与激活费用——两颗白骰子的点数 5 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Achievement module icon and its activation cost — two white dice showing 5 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_insight",
@@ -164,7 +194,10 @@
         "zh": "洞悉模组的物理板块。",
         "en": "Physical tile for the Insight module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有洞悉模组图标与激活费用——两颗白骰子的点数 3 和 6；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有洞悉模组图标与激活费用——两颗白骰子的点数 3 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Insight module icon and its activation cost — two white dice showing 3 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_mutation",
@@ -178,7 +211,10 @@
         "zh": "突变模组的物理板块。",
         "en": "Physical tile for the Mutation module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有突变模组图标与激活费用——两颗白骰子的点数 3 和 6；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有突变模组图标与激活费用——两颗白骰子的点数 3 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Mutation module icon and its activation cost — two white dice showing 3 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_invention",
@@ -192,7 +228,10 @@
         "zh": "发明模组的物理板块。",
         "en": "Physical tile for the Invention module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有发明模组图标与激活费用——两颗白骰子的点数 1 和 6；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有发明模组图标与激活费用——两颗白骰子的点数 1 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Invention module icon and its activation cost — two white dice showing 1 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_trade",
@@ -206,7 +245,10 @@
         "zh": "交易模组的物理板块。",
         "en": "Physical tile for the Trade module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有交易模组图标与激活费用——两颗白骰子的点数 4 和 5；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有交易模组图标与激活费用——两颗白骰子的点数 4 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Trade module icon and its activation cost — two white dice showing 4 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
     },
     {
       "id": "tile_activity",
@@ -220,7 +262,10 @@
         "zh": "活动模组的物理板块。",
         "en": "Physical tile for the Activity module."
       },
-      "appearance": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有活动模组图标与激活费用——两颗白骰子的点数 2 和 3；背面为等级二效果。升到等级三时此板块移除。"
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有活动模组图标与激活费用——两颗白骰子的点数 2 和 3；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Activity module icon and its activation cost — two white dice showing 2 and 3; the back is the level-II effect. Removed when upgraded to level III."
+      }
     }
   ],
   "modules": [
@@ -2765,7 +2810,10 @@
         "zh": "洞悉型<research_card>，编号 C16。",
         "en": "Insight research card, number C16."
       },
-      "appearance": "洞悉类研究牌（黄色卡面），编号 C16。上三分之一为活动能力（支付 1 个<food>，在最多 2 个空置营地上各放置 1 个虚弱<tribe>）；中部 5 个费用格——第 1 格返还 1 个智慧特征、第 2 格持有 2 个表达特征、第 3 格持有 1 个镇定特征、第 4~5 格为空；下部即时奖励为文化进程轨推进 1 格。",
+      "appearance": {
+        "zh": "洞悉类研究牌（黄色卡面），编号 C16。上三分之一为活动能力（支付 1 个<food>，在最多 2 个空置营地上各放置 1 个虚弱<tribe>）；中部 5 个费用格——第 1 格返还 1 个智慧特征、第 2 格持有 2 个表达特征、第 3 格持有 1 个镇定特征、第 4~5 格为空；下部即时奖励为文化进程轨推进 1 格。",
+        "en": "An Insight research card (yellow), number C16. Top third: activity ability (pay 1 <food> to place 1 weak <tribe> on up to 2 vacant encampments); middle: 5 cost spaces — return 1 Intelligence feature marker (1st), hold 2 Expression feature markers (2nd), hold 1 Calm feature marker (3rd), empty (4th-5th); bottom: instant bonus advancing the culture progress track by 1 step."
+      },
       "<research_ability>": {
         "<activity>": {
           "<ontology::cost>": {
@@ -2876,7 +2924,10 @@
         "zh": "共 2 块。任何玩家不能在与火山相邻的<territory>中<build_farm>；当本地点被翻开时，与它相邻的所有<territory>中已有的<farm>必须立即退回各自<console>的<farm_supply>。",
         "en": "There are 2 Volcanoes. No player may build a <farm> in any <territory> adjacent to a Volcano; when this site is revealed, any <farm> already in an adjacent territory must immediately be returned to its console's farm supply (<farm_supply>)."
       },
-      "appearance": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有火山插画，左上角为翻开分数（4 分）。",
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有火山插画，左上角为翻开分数（4 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (2 in total). Face down until revealed; the front shows a Volcano illustration with the reveal score in the top-left corner (4 points)."
+      },
       "score": 4,
       "own_effect": {
         "<ontology::instant_effect>": {
@@ -2911,7 +2962,10 @@
         "zh": "共 2 块，各自独立结算。<phase_5_site>结算：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮<tribe>（<ontology::state_change> posture → <lying>）；弱<tribe>不受影响，无强壮<tribe>则豁免。",
         "en": "2 Glaciers exist; each resolves independently. Site phase resolution: each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<ontology::state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
       },
-      "appearance": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有冰川插画，左上角为翻开分数（4 分）。",
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有冰川插画，左上角为翻开分数（4 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (2 in total). Face down until revealed; the front shows a Glacier illustration with the reveal score in the top-left corner (4 points)."
+      },
       "score": 4,
       "own_effect": {
         "<ontology::continuous_effect>": {
@@ -2944,7 +2998,10 @@
         "zh": "共 3 块，各自独立结算。<phase_5_site>结算：对每块橡树，本玩家检查相邻且有自己的<tribe>的<territory>——每个<water_territory>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
         "en": "3 Mystic oaks exist; each resolves independently. Site phase resolution: for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <water_territory>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
       },
-      "appearance": "正八边形纸板地点板块，一角为弧形指取角（共 3 块）。翻开前背面朝上；正面印有神秘橡树插画，左上角为翻开分数（1 分）。",
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 3 块）。翻开前背面朝上；正面印有神秘橡树插画，左上角为翻开分数（1 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (3 in total). Face down until revealed; the front shows a Mystic Oak illustration with the reveal score in the top-left corner (1 points)."
+      },
       "score": 1,
       "own_effect": {
         "<ontology::continuous_effect>": {
@@ -2976,7 +3033,10 @@
         "zh": "共 2 块。<phase_5_site>结算（各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无<food>则豁免。",
         "en": "2 Gorges exist; each resolves independently during the site phase: each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
       },
-      "appearance": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有狼谷插画，左上角为翻开分数（5 分）。",
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有狼谷插画，左上角为翻开分数（5 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (2 in total). Face down until revealed; the front shows a Gorge of the Grimwolves illustration with the reveal score in the top-left corner (5 points)."
+      },
       "score": 5,
       "own_effect": {
         "<ontology::continuous_effect>": {
