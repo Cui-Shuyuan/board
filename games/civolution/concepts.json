@@ -1856,8 +1856,8 @@
         "en": "A <ontology::tile> forming part of the <continent>. The front is printed with different terrain zones, <material_slot>s, and encampment positions; the 1×1 tile instance additionally carries a <site> logical identity (Building Ground) via the <ontology::tile> parts mechanism."
       },
       "appearance": {
-        "zh": "厚纸板板块（共 8 个），拼成大陆。正面印有地形区域（<territory>）、材料板块格（<material_slot>）、营地（<encampment>）与篝火营地（<fire_encampment>）；其中 3 块带可折叠粘贴到正面的山脉部件。",
-        "en": "A thick cardboard tile (8 in total) forming the continent. The front shows terrain territories (<territory>), material slots (<material_slot>), encampments (<encampment>) and fire encampments (<fire_encampment>); 3 of them have a mountain part that folds and glues onto the front."
+        "zh": "厚纸板板块（共 8 个），拼成 5×3 的大陆：7 块 2×1 矩形和 1 块 1×1 正方形。每块板块的四角、每块矩形板块的长边中点各有一个凹槽，与分轨上的凹槽一起拼成 24 个放置地点（<site>）的空位。正面印有地形区域（<territory>）、材料板块格（<material_slot>）、营地（<encampment>）与篝火营地（<fire_encampment>）；其中 3 块带可折叠粘贴到正面的山脉部件。",
+        "en": "Thick cardboard tiles (8 in total) assembling into a 5×3 continent: seven 2×1 rectangles and one 1×1 square. Each tile has a recess at every corner, and each rectangle has one at the midpoint of each long edge; together with recesses on the score track frame these form 24 slots for placing sites (<site>). The front shows terrain territories (<territory>), material slots (<material_slot>), encampments (<encampment>) and fire encampments (<fire_encampment>); 3 of them have a mountain part that folds and glues onto the front."
       },
       "size": {
         "zh": "7 块为 2×1，1 块为 1×1",
