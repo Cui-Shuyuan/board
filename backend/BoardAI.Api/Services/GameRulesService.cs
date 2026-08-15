@@ -430,9 +430,16 @@ public class GameRulesService
             result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity));
         }
 
-        if (result.Results.Any(r => r.Status == "unresolved" || r.Status == "unsupported"))
+        if (result.Results.Any(r => r.Status is "unresolved" or "unsupported" or "no_match"))
         {
-            result.Note = "部分查询未完成：unresolved 的 entity 请用候选中的确切 id 或名字重试；unsupported 的 relation 请改用 identify（按描述找概念）或 list 浏览。";
+            var notes = new List<string>();
+            if (result.Results.Any(r => r.Status == "unresolved"))
+                notes.Add("unresolved 的查询请用候选中的确切 id 或名字重试");
+            if (result.Results.Any(r => r.Status == "no_match"))
+                notes.Add("no_match 的查询表示规则库无相近概念，该部分只能自行发挥（详见查询 Message）");
+            if (result.Results.Any(r => r.Status == "unsupported"))
+                notes.Add("unsupported 的 relation 请改用 identify 或 list");
+            result.Note = "部分查询未完成：" + string.Join("；", notes) + "。";
         }
         return result;
     }
@@ -441,6 +448,15 @@ public class GameRulesService
     {
         "explain", "condition", "ordering", "boundary", "flow", "list", "identify"
     };
+
+    /// <summary>语义候选的最低可信分数——低于此分数视为「规则库查不到」（tier 3）。
+    /// 分数为多通道累加归一化值（向量余弦 + 关键词命中）。实测校准（2026-08-16，name 集合）：
+    /// 噪声带 0.80–0.84（无意义词「小精灵」top=0.833 全是无关概念），可靠匹配 ≥0.85
+    /// （「钱币」=0.887、「招募官」=0.852）。经典版别名（杜布隆/市长/殖民者/探矿者）语义
+    /// 匹配全部失败且 top1 错误——这类映射必须走数据层 aliases 精确匹配，向量兜底只对
+    /// 自然语言转述有效。阈值取 0.85：宁可漏掉弱候选（LLM 可改走 list/identify），
+    /// 也不让噪声带概念污染候选池。</summary>
+    private const float SemanticCandidateThreshold = 0.85f;
 
     private async Task<PlanItemResult> ExecutePlanQueryAsync(string game, string relation, string entity)
     {
@@ -475,7 +491,13 @@ public class GameRulesService
             var gameConcept = GetConcepts(game, "game");
             return gameConcept.Count > 0
                 ? new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Matched = gameConcept.ToList() }
-                : new PlanItemResult { Relation = relation, Entity = entity, Status = "unresolved", Message = "未找到 game 流程概念。" };
+                : new PlanItemResult
+                {
+                    Relation = relation,
+                    Entity = entity,
+                    Status = "no_match",
+                    Message = "规则库中没有该游戏的流程定义，无法返回任何流程数据。此问题只能由你基于自己的知识自行发挥——请谨慎回答，并建议向客人说明这是规则库之外的信息。"
+                };
         }
         if (relation == "list")
         {
@@ -486,15 +508,41 @@ public class GameRulesService
         var matched = ResolvePlanEntity(game, entity, out var candidates);
         if (matched.Count == 0)
         {
+            // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
+            // 名称包含的确定性候选无条件保留；语义候选须过分数阈值。
+            var merged = new List<ConceptSummary>(candidates);
+            var seen = new HashSet<string>(candidates.Select(c => c.Id), StringComparer.Ordinal);
+            if (_vectorSearch != null)
+            {
+                var semantic = await SearchConceptsAsync(game, entity, searchMode: "name");
+                foreach (var c in semantic.Results.Where(r => r.Score >= SemanticCandidateThreshold))
+                {
+                    if (!seen.Add(c.Id)) continue;
+                    merged.Add(c);
+                    if (merged.Count >= 8) break;
+                }
+            }
+
+            if (merged.Count > 0)
+            {
+                return new PlanItemResult
+                {
+                    Relation = relation,
+                    Entity = entity,
+                    Status = "unresolved",
+                    Candidates = merged,
+                    Message = "实体未精确命中——程序已检索出以下候选概念（含相似度分）。请从中挑选确切的概念，用它的 id 或中文名重新发起查询；若候选都不合适，再用 list 浏览全部概念。"
+                };
+            }
+
+            // Tier 3：确定性匹配与语义检索都没有可信结果——显式告知 LLM 规则库无此信息，
+            // 让「自行发挥」成为一个被程序声明、可观测的状态，而不是 LLM 的隐式选择。
             return new PlanItemResult
             {
                 Relation = relation,
                 Entity = entity,
-                Status = "unresolved",
-                Candidates = candidates,
-                Message = candidates.Count > 0
-                    ? "实体未精确命中，以下是候选概念。"
-                    : "实体未命中任何概念，请用 relation=list 浏览概念目录。"
+                Status = "no_match",
+                Message = $"程序未能在规则库中找到与「{entity}」足够相近的概念，本查询无法获得任何规则数据。此问题只能由你基于自己的知识自行发挥——请谨慎回答，并建议向客人说明这是规则库之外的信息。"
             };
         }
 

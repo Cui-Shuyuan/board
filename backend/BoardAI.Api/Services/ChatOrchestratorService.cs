@@ -69,6 +69,7 @@ public class ChatOrchestratorService
             history.Count);
 
         var tools = BuildTools(gameId);
+        var evidence = new AnswerEvidence();
 
         for (int round = 0; round < MaxToolRounds; round++)
         {
@@ -85,7 +86,8 @@ public class ChatOrchestratorService
             {
                 var reply = assistantMessage.Content ?? string.Empty;
                 sw.Stop();
-                _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms): {Reply}", gameId, round + 1, sw.Elapsed.TotalMilliseconds, reply);
+                _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
+                    gameId, round + 1, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
                 return reply;
             }
 
@@ -103,6 +105,8 @@ public class ChatOrchestratorService
             {
                 var result = await ExecuteToolAsync(toolCall, gameId, cancellationToken);
                 _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}", gameId, toolCall.Function.Name, FormatForLog(result));
+                if (toolCall.Function.Name == "execute_plan")
+                    UpdateEvidence(result, evidence);
                 messages.Add(new ChatMessage
                 {
                     Role = "tool",
@@ -129,8 +133,55 @@ public class ChatOrchestratorService
 
         var finalReply = finalMessage.Content ?? string.Empty;
         sw.Stop();
-        _logger.LogInformation("[Chat] Game {GameId}, Final reply after {Rounds} rounds ({Elapsed:F0}ms): {Reply}", gameId, MaxToolRounds, sw.Elapsed.TotalMilliseconds, finalReply);
+        _logger.LogInformation("[Chat] Game {GameId}, Final reply after {Rounds} rounds ({Elapsed:F0}ms, {Tier}): {Reply}",
+            gameId, MaxToolRounds, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), finalReply);
         return finalReply;
+    }
+
+    /// <summary>回答证据分级：tier1 = 有 ok 数据支撑；tier2 = 只有候选兜底；tier3 = 无任何数据（自行发挥）。</summary>
+    private sealed class AnswerEvidence
+    {
+        public bool SawData;
+        public bool SawCandidates;
+
+        public string GetTier() =>
+            SawData ? "tier1-数据回答" : SawCandidates ? "tier2-候选兜底" : "tier3-无数据自行发挥";
+    }
+
+    /// <summary>从 execute_plan 结果中提取证据：ok + 非空 Matched → tier1；unresolved + 非空 Candidates → tier2。
+    /// no_match / 空结果不产生任何证据——最终若两者皆无则判为 tier3。</summary>
+    private static void UpdateEvidence(string toolResult, AnswerEvidence evidence)
+    {
+        if (evidence.SawData) return;
+        try
+        {
+            using var doc = JsonDocument.Parse(toolResult);
+            if (!doc.RootElement.TryGetProperty("Results", out var results) || results.ValueKind != JsonValueKind.Array)
+                return;
+            foreach (var item in results.EnumerateArray())
+            {
+                var status = item.TryGetProperty("Status", out var sp) ? sp.GetString() : null;
+                if (status == "ok"
+                    && item.TryGetProperty("Matched", out var m)
+                    && m.ValueKind == JsonValueKind.Array
+                    && m.GetArrayLength() > 0)
+                {
+                    evidence.SawData = true;
+                    return;
+                }
+                if (status == "unresolved"
+                    && item.TryGetProperty("Candidates", out var c)
+                    && c.ValueKind == JsonValueKind.Array
+                    && c.GetArrayLength() > 0)
+                {
+                    evidence.SawCandidates = true;
+                }
+            }
+        }
+        catch
+        {
+            // 非 plan 结果或解析失败——不参与 tier 判定
+        }
     }
 
     private List<ToolDefinition> BuildTools(string gameId)
@@ -152,7 +203,7 @@ public class ChatOrchestratorService
 - flow：整体游戏流程（几个阶段、怎么进行、怎么结束）
 - list：浏览全部概念目录（实体解析失败需要找概念时用）
 - identify：客人用外观/位置描述某物（如""黄色的六边形标记""）但你不确定是哪个概念时，把描述原文作为 entity 传入——返回带定义的候选概念，挑最吻合的再 explain
-entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述文本）。一个问题涉及多个概念时，一个 plan 里放多个 queries 一次拿全。实体解析失败会返回候选列表：从候选中挑确切的名字重新发起计划；没有候选用 identify（按描述找）或 list 浏览。",
+entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述文本）。一个问题涉及多个概念时，一个 plan 里放多个 queries 一次拿全。实体解析分三层：精确命中直接返回规则事实；未精确命中时程序会先做语义检索补候选（Status=unresolved + Candidates，含相似度分），请从候选中挑确切的概念重新发起计划，没有合适的候选再用 identify（按描述找）或 list 浏览；若程序返回 Status=no_match，说明规则库查不到任何相近概念——该部分只能基于你自己的知识回答，请向客人说明这是规则库之外的信息，或直接反问客人确认。",
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
