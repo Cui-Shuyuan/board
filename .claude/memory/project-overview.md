@@ -36,7 +36,7 @@ metadata:
 2. **第二阶段（基本完成）：Rule DSL** — 用结构化 JSON 表达具体游戏规则。首个游戏：璀璨宝石（Splendor），`concepts.json` 与 `flow.json` 已完成。
 3. **第三阶段（基本完成）：Runtime / Intent Interface** — `backend/BoardAI.Api` 已跑通：支持客人选择游戏后多轮对话；LLM 通过 `search_concepts` / `get_concept` / `get_action_conditions` 查询规则，程序返回结构化数据，LLM 再组织成 TTS 友好的口语回答。Splendor 验证效果良好。**2026-07-22 升级为向量语义搜索**（Qdrant + BGE-small-zh ONNX），解决中文同义词/近义词检索问题（如"白色骰子" → "白色的六面骰"）。详见 [[vector-search]] 与 [[runtime-architecture]]。
 4. **第四阶段（当前重点）：补充更多游戏与游戏元信息** — 在 `games/` 下录入第二款桌游，验证系统在非 LLM 熟知规则上的真实表现；为每款游戏增加 `manifest.json` 供前端选游戏。
-5. **第五阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。**技术选型已定稿（2026-08-15）：Unity 原生安卓客户端 + 数据驱动程序化动画**，详见 [[tutorial-module]]
+5. **第五阶段：Tutorial Tree** — 结构化教程内容，每个节点配 TTS/字幕/关键词。**技术选型已定稿（2026-08-15）：Unity 原生安卓客户端 + 数据驱动 2D/2.5D sprite 动画（50° 固定俯角）；Unity 6 环境已就绪（全落 D 盘），client 骨架与首个原型已跑通**，详见 [[tutorial-module]]
 6. **第六阶段：Controller** — 状态机连接 STT → LLM → Rule Engine → TTS。
 7. **第七阶段：UI** — PWA/Flutter 前端，平板作为主要交互入口。
 
@@ -66,6 +66,8 @@ metadata:
 **当前阻塞**：剩余 supply、deck、piece/token、骰子、研究牌、芯片等组件待 review；flow.json 占位 action（`<activate_module>`、`<reset>` 等）已补全，仅剩 `<action_phase_end>` 一个悬空引用（until 条件未定义）。详见 [[civolution-progress]]。
 
 短期仍需为每款游戏补 `manifest.json` 供前端选游戏。
+
+**讲规模块（第五阶段）已开工（2026-08-15）**：client 项目位于 `client/`（Unity 6 + URP 模板，全部落 D 盘），运行时搭景播放器 + 占位素材已跑通首个原型（50° 俯角 + 三圆片演示动画）；观感迭代待用户用多模态模型发截图。详见 [[tutorial-module]]。
 
 ## 项目路径
 D:\workspace\board

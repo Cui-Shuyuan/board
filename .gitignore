@@ -20,7 +20,8 @@ obj/
 # Qdrant runtime data
 backend/BoardAI.Api/storage/
 
-.claude
+.claude/*
+!.claude/memory/
 CLAUDE.md
 faq.md
 # Runtime logs & QA artifacts
