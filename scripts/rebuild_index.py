@@ -26,7 +26,7 @@ from transformers import AutoTokenizer
 
 # ---- 配置 ----
 BOARD_ROOT = Path(__file__).resolve().parent.parent
-MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-small-zh"
+MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5"
 QDRANT_URL = "http://localhost:6333"
 BATCH_SIZE = 100
 
@@ -67,10 +67,10 @@ def embed(text: str) -> np.ndarray:
 
     encoded = tokenizer(text, padding=True, truncation=True,
                         max_length=512, return_tensors="np")
-    outputs = session.run(None, {
-        "input_ids": encoded["input_ids"],
-        "attention_mask": encoded["attention_mask"],
-    })
+    feed = {"input_ids": encoded["input_ids"], "attention_mask": encoded["attention_mask"]}
+    if "token_type_ids" in tokenizer.model_input_names:
+        feed["token_type_ids"] = np.zeros_like(encoded["input_ids"])
+    outputs = session.run(None, feed)
     hidden = outputs[0]  # [1, seq_len, dim]
     mask = encoded["attention_mask"][0]  # [seq_len]
 

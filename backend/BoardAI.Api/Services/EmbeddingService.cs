@@ -70,6 +70,13 @@ public class EmbeddingService : IDisposable
             NamedOnnxValue.CreateFromTensor("attention_mask", maskTensor),
         };
 
+        // BERT 系模型（如 bge-base）需要 token_type_ids；全零 = 全部 token 属于 A 段（单句）。
+        // 按模型签名条件添加——不需要该输入的模型（如 bge-small）不喂，避免推理报错。
+        if (_session.InputMetadata.ContainsKey("token_type_ids"))
+        {
+            inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", new DenseTensor<long>(new[] { 1, seqLen })));
+        }
+
         using var results = _session.Run(inputs);
 
         // results[0] = last_hidden_state, shape [1, seq_len, dimension]
