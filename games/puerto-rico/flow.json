@@ -1,0 +1,548 @@
+{
+  "meta": {
+    "name": {
+      "zh": "波多黎各 1897",
+      "en": "Puerto Rico 1897"
+    },
+    "description": {
+      "zh": "波多黎各 1897 的流程定义——一局游戏从 Setup 到终局计分的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、角色行动、条件），本文档定义「按什么顺序进行」（Setup、回合结构、终局计分）。回合结构：总督先选角色，顺时针每人各选 1 张；每个角色阶段选角者执行行动+特权、其他玩家只执行行动；回合结束时旧总督给未选角色卡各放 1 元、回收角色卡、总督卡传左。终局：任一终局条件在回合内达成后，本回合打完即进入终局计分。Setup 阶段使用 do_after 表达事件依赖：无 do_after 的事件互相独立，可任意顺序或并行执行。",
+      "en": "Flow definition for Puerto Rico 1897 — the complete sequence of a game from setup to final scoring. Complements concepts.json: concepts.json defines 'what exists' (objects, role actions, conditions); this document defines 'in what order it happens' (setup, round structure, final scoring). Round structure: the governor picks a role first, then each player picks 1 clockwise; in each role phase the chooser performs the action with the privilege while the others perform only the action; at round end the outgoing governor places 1 coin on each unchosen role card, role cards are returned, and the governor card passes left. Endgame: once any endgame condition is met within a round, that round is played out and final scoring follows. The setup phase uses do_after for dependencies: events without do_after are independent and may run in any order or in parallel."
+    },
+    "game": "puerto-rico",
+    "version": "0.1.0"
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "整局波多黎各游戏，作为最外层轮。包含设置、按年进行的回合轮与终局计分。",
+        "en": "The whole game of Puerto Rico as the outermost round: setup, the year-by-year rounds, and final scoring."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "游戏设置：中央版图与建筑、银行、发岛屿版图与起始钱币/庄园、VP 筹码、采石场与庄园堆、角色卡、货船、货物、交易所、工作登记册与工人供应。",
+              "en": "Game setup: the central board and buildings, the bank, island boards with starting coins and estates, VP chips, quarries and estate stacks, role cards, cargo ships, goods, the trading house, and the Work Register with the worker supply."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "place_central_board",
+                  "name": {
+                    "zh": "摆放中央版图",
+                    "en": "Place the Central Board"
+                  },
+                  "description": {
+                    "zh": "把<central_board>放到桌面中央。",
+                    "en": "Place the <central_board> in the middle of the table."
+                  }
+                },
+                {
+                  "id": "stack_buildings",
+                  "name": {
+                    "zh": "堆叠建筑",
+                    "en": "Stack the Buildings"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部 49 座<building>从<ontology::game_box>取出，按类型堆叠到<central_board>的<building_supply>各自位置上。",
+                    "en": "Take all 49 <building>s from the <ontology::game_box> and stack them by type in their spaces of the <building_supply> on the <central_board>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<building_supply>",
+                  "<ontology::object>": "<building>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "form_bank",
+                  "name": {
+                    "zh": "组建银行",
+                    "en": "Form the Bank"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部 51 枚<coin>（43 枚 1 元银币 + 8 枚 5 元金币）放到<central_board>上组成<bank>。",
+                    "en": "Put all 51 <coin>s (43 silver ones + 8 gold fives) onto the <central_board> to form the <bank>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<bank>",
+                  "<ontology::object>": "<coin>",
+                  "quantity": 51
+                },
+                {
+                  "id": "choose_governor",
+                  "name": {
+                    "zh": "选定总督",
+                    "en": "Choose the Governor"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "subject": "<ontology::starting_player>",
+                  "to": "任选的一名玩家",
+                  "rules": {
+                    "zh": "任选一名玩家作为起始玩家，<ontology::starting_player>状态设为该玩家。",
+                    "en": "Choose any player as the starting player and set <ontology::starting_player> to them."
+                  }
+                },
+                {
+                  "id": "give_governor_card",
+                  "name": {
+                    "zh": "发总督卡",
+                    "en": "Give the Governor Card"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把<governor_card>交给起始玩家。",
+                    "en": "Give the <governor_card> to the starting player."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "起始玩家",
+                  "<ontology::object>": "<governor_card>",
+                  "quantity": 1,
+                  "do_after": "choose_governor"
+                },
+                {
+                  "id": "give_island_boards",
+                  "name": {
+                    "zh": "发岛屿版图",
+                    "en": "Deal Island Boards"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家各拿 1 块<island_board>放在自己面前。",
+                    "en": "Each player takes 1 <island_board> and places it in front of them."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "每名玩家面前",
+                  "<ontology::object>": "<island_board>",
+                  "quantity": {
+                    "expr": "player_count"
+                  }
+                },
+                {
+                  "id": "give_starting_coins",
+                  "name": {
+                    "zh": "发起始钱币",
+                    "en": "Deal Starting Coins"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家从<bank>拿起始钱币放到<portrait>（公开可见）：3 人局每人 2 元、4 人局 3 元、5 人局 4 元（比玩家数少 1）。",
+                    "en": "Each player takes starting coins from the <bank> onto their <portrait> (visible to all): 2 each in a 3-player game, 3 in a 4-player game, 4 in a 5-player game (one fewer than the player count)."
+                  },
+                  "source": "<bank>",
+                  "destination": "<portrait>",
+                  "<ontology::object>": "<coin>",
+                  "quantity": {
+                    "3": 2,
+                    "4": 3,
+                    "5": 4
+                  },
+                  "do_after": "form_bank"
+                },
+                {
+                  "id": "give_starting_estates",
+                  "name": {
+                    "zh": "发起始庄园",
+                    "en": "Deal Starting Estates"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "从总督开始按顺时针，每名玩家拿 1 块明置庄园放到<countryside>：3 人局第 1、2 位玩家各拿<fruit_estate>，第 3 位拿<corn_estate>；4 人局前 2 位拿水果、后 2 位拿玉米；5 人局前 3 位拿水果、后 2 位拿玉米。",
+                    "en": "Starting with the governor and going clockwise, each player takes 1 face-up estate into their <countryside>: in a 3-player game the 1st and 2nd take a <fruit_estate> and the 3rd a <corn_estate>; with 4 players the first 2 take fruit and the last 2 corn; with 5 players the first 3 take fruit and the last 2 corn."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<countryside>",
+                  "<ontology::object>": "<fruit_estate> | <corn_estate>",
+                  "quantity": {
+                    "expr": "player_count"
+                  },
+                  "do_after": "choose_governor"
+                },
+                {
+                  "id": "prepare_vp_chips",
+                  "name": {
+                    "zh": "备 VP 筹码",
+                    "en": "Prepare VP Chips"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "按人数把 VP 筹码放到<vp_supply>（1 分/5 分筹码分开摆）：3 人局 75 VP、4 人局 100 VP、5 人局 126 VP。多余的放回游戏盒。",
+                    "en": "Place VP chips in the <vp_supply> by player count (1-VP and 5-VP chips separated): 75 VP for 3 players, 100 for 4, 126 for 5. Return the rest to the box."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<vp_supply>",
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": {
+                    "3": 75,
+                    "4": 100,
+                    "5": 126
+                  }
+                },
+                {
+                  "id": "stack_quarries",
+                  "name": {
+                    "zh": "叠采石场",
+                    "en": "Stack the Quarries"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部 8 块<quarry_tile>正面朝上叠成<quarry_stack>，摆在<central_board>旁。",
+                    "en": "Stack all 8 <quarry_tile>s face-up as the <quarry_stack> beside the <central_board>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<quarry_stack>",
+                  "<ontology::object>": "<quarry_tile>",
+                  "quantity": 8
+                },
+                {
+                  "id": "shuffle_estate_stacks",
+                  "name": {
+                    "zh": "洗庄园堆",
+                    "en": "Shuffle the Estate Stacks"
+                  },
+                  "specifies": "<ontology::shuffle>",
+                  "description": {
+                    "zh": "把剩余的<estate_tile>洗混，背面朝上叠成<estate_face_down_stack>。",
+                    "en": "Shuffle the remaining <estate_tile>s into face-down stacks forming the <estate_face_down_stack>."
+                  },
+                  "target": "<estate_face_down_stack>",
+                  "do_after": "give_starting_estates"
+                },
+                {
+                  "id": "display_estates",
+                  "name": {
+                    "zh": "翻明置庄园",
+                    "en": "Flip the Face-Up Estates"
+                  },
+                  "specifies": "<ontology::top_draw>",
+                  "description": {
+                    "zh": "从<estate_face_down_stack>翻出「玩家数 +1」块庄园（3 人 4 块、4 人 5 块、5 人 6 块），正面朝上放在<estate_display>（紧挨<quarry_stack>）。",
+                    "en": "Flip 'player count + 1' estates (4/5/6 for 3/4/5 players) from the <estate_face_down_stack> face-up into the <estate_display> (next to the <quarry_stack>)."
+                  },
+                  "source": "<estate_face_down_stack>",
+                  "destination": "<estate_display>",
+                  "<ontology::object>": {
+                    "<estate_tile>": {
+                      "face": "face_up"
+                    }
+                  },
+                  "quantity": {
+                    "expr": "player_count + 1"
+                  },
+                  "do_after": "shuffle_estate_stacks"
+                },
+                {
+                  "id": "deal_role_cards",
+                  "name": {
+                    "zh": "发角色卡",
+                    "en": "Deal Role Cards"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把角色卡放到<role_card_area>：3 人局 6 张（去掉 2 张<adventurer_card>）、4 人局 7 张（去掉 1 张冒险家）、5 人局 8 张全用。",
+                    "en": "Place role cards in the <role_card_area>: 6 cards for 3 players (both <adventurer_card>s removed), 7 for 4 players (one Adventurer removed), all 8 for 5 players."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<role_card_area>",
+                  "<ontology::object>": "<role_card>",
+                  "quantity": {
+                    "3": 6,
+                    "4": 7,
+                    "5": 8
+                  }
+                },
+                {
+                  "id": "place_ships",
+                  "name": {
+                    "zh": "停放货船",
+                    "en": "Dock the Cargo Ships"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 3 艘货船停进<port>：3 人局用<cargo_ship_4>/<cargo_ship_5>/<cargo_ship_6>；4 人局用<cargo_ship_5>/<cargo_ship_6>/<cargo_ship_7>；5 人局用<cargo_ship_6>/<cargo_ship_7>/<cargo_ship_8>。其余放回游戏盒。",
+                    "en": "Dock 3 cargo ships in the <port>: <cargo_ship_4>/<cargo_ship_5>/<cargo_ship_6> for 3 players; <cargo_ship_5>/<cargo_ship_6>/<cargo_ship_7> for 4; <cargo_ship_6>/<cargo_ship_7>/<cargo_ship_8> for 5. Return the rest to the box."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<port>",
+                  "<ontology::object>": "<cargo_ship>",
+                  "quantity": 3
+                },
+                {
+                  "id": "sort_goods",
+                  "name": {
+                    "zh": "分类货物",
+                    "en": "Sort the Goods"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部 50 桶<good>（玉米 10、水果 11、糖 11、烟草 9、咖啡 9）按颜色分开放入<goods_supply>。",
+                    "en": "Place all 50 <good> barrels (10 corn, 11 fruit, 11 sugar, 9 tobacco, 9 coffee) into the <goods_supply>, sorted by color."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<goods_supply>",
+                  "<ontology::object>": "<good>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "place_trading_house",
+                  "name": {
+                    "zh": "放交易所",
+                    "en": "Place the Trading House"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把<trading_house>（空的）放在<port>旁。",
+                    "en": "Place the empty <trading_house> beside the <port>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<port>",
+                  "<ontology::object>": "<trading_house>",
+                  "quantity": 1
+                },
+                {
+                  "id": "prepare_worker_supply",
+                  "name": {
+                    "zh": "备工人供应",
+                    "en": "Prepare the Worker Supply"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把工人放入<worker_supply>：3 人局 55 名、4 人局 75 名、5 人局 95 名。其余放回游戏盒。",
+                    "en": "Fill the <worker_supply>: 55 workers for 3 players, 75 for 4, 95 for 5. Return the rest to the box."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<worker_supply>",
+                  "<ontology::object>": "<worker>",
+                  "quantity": {
+                    "3": 55,
+                    "4": 75,
+                    "5": 95
+                  }
+                },
+                {
+                  "id": "seed_work_register",
+                  "name": {
+                    "zh": "放工作登记册工人",
+                    "en": "Seed the Work Register"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "从<worker_supply>拿「玩家数」名工人放到<work_register>上。",
+                    "en": "Move a number of workers equal to the player count from the <worker_supply> onto the <work_register>."
+                  },
+                  "source": "<worker_supply>",
+                  "destination": "<work_register>",
+                  "<ontology::object>": "<worker>",
+                  "quantity": {
+                    "expr": "player_count"
+                  },
+                  "do_after": "prepare_worker_supply"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "years",
+            "name": {
+              "zh": "年度循环",
+              "en": "Years"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "主游戏流程：一年（回合）接一年地进行，直到某回合内达成任一终局条件（<game_end_reached>）——该回合照常打完，之后游戏结束。每一年：从总督开始顺时针，每名玩家各选 1 张角色卡并结算该角色阶段（选角者享特权）；年末旧总督给未选的角色卡各放 1 元、回收角色卡、总督卡传左。",
+              "en": "Main gameplay: year (round) after year until any endgame condition is met within a round (<game_end_reached>) — that round is played out, then the game ends. Each year: starting with the governor and going clockwise, each player picks 1 role card and resolves its role phase (the chooser gets the privilege); at year end the outgoing governor places 1 coin on each unchosen role card, role cards return, and the governor card passes left."
+            },
+            "do_after": "setup",
+            "loop": {
+              "until": "<game_end_reached>"
+            },
+            "<ontology::round>": {
+              "id": "year",
+              "name": {
+                "zh": "年",
+                "en": "Year"
+              },
+              "description": {
+                "zh": "一年的流程：每名玩家从总督开始顺时针各选 1 张角色卡并结算角色阶段；然后年末清理（给未选角色卡放钱、回收角色卡、传总督卡）。终局条件在本年内的各阶段中达成，年末检查——达成本年打完即结束。",
+                "en": "One year: each player, starting with the governor and going clockwise, picks 1 role card and resolves its role phase; then year-end cleanup (coins on unchosen roles, role cards returned, governor card passed left). Endgame conditions are met during this year's phases and checked at year end — if met, this year is played out and the game ends."
+              },
+              "<ontology::pipeline>": {
+                "options": [
+                  {
+                    "id": "role_turn",
+                    "name": {
+                      "zh": "选角回合",
+                      "en": "Role Turn"
+                    },
+                    "specifies": "<ontology::turn>",
+                    "description": {
+                      "zh": "一名玩家的回合：从<role_card_area>选 1 张角色卡（拿走卡上的钱），然后结算该角色阶段——选角者执行行动+特权，其他玩家按顺时针只执行行动。",
+                      "en": "One player's turn: pick 1 role card from the <role_card_area> (taking its coins), then resolve the role phase — the chooser performs the action with the privilege; the others, clockwise, perform only the action."
+                    },
+                    "<ontology::action>": "<choose_role>"
+                  },
+                  {
+                    "id": "place_coins_on_unchosen_roles",
+                    "name": {
+                      "zh": "给未选角色卡放钱",
+                      "en": "Place Coins on Unchosen Roles"
+                    },
+                    "specifies": "<ontology::transfer>",
+                    "description": {
+                      "zh": "年末，总督从<bank>拿银币，给<role_card_area>中每张未被选的角色卡放 1 元——让这些角色下回合更有吸引力。",
+                      "en": "At year end, the governor places 1 silver coin from the <bank> on each unchosen role card in the <role_card_area> — making those roles more attractive next year."
+                    },
+                    "source": "<bank>",
+                    "destination": "<role_card_area>",
+                    "<ontology::object>": "<coin>",
+                    "quantity": {
+                      "zh": "未选角色卡张数 ×1。",
+                      "en": "The number of unchosen role cards ×1."
+                    },
+                    "do_after": "role_turn"
+                  },
+                  {
+                    "id": "return_role_cards",
+                    "name": {
+                      "zh": "回收角色卡",
+                      "en": "Return the Role Cards"
+                    },
+                    "specifies": "<ontology::transfer>",
+                    "description": {
+                      "zh": "所有玩家把面前的<role_card>放回<role_card_area>。",
+                      "en": "All players return their <role_card>s to the <role_card_area>."
+                    },
+                    "source": "各玩家面前",
+                    "destination": "<role_card_area>",
+                    "<ontology::object>": "<role_card>",
+                    "quantity": "all",
+                    "do_after": "place_coins_on_unchosen_roles"
+                  },
+                  {
+                    "id": "pass_governor",
+                    "name": {
+                      "zh": "传总督卡",
+                      "en": "Pass the Governor Card"
+                    },
+                    "specifies": "<ontology::state_change>",
+                    "description": {
+                      "zh": "总督卡传给左边玩家：<ontology::starting_player>状态更新为下一位玩家，该玩家持有<governor_card>并在下一年首先选角。",
+                      "en": "The governor card passes left: <ontology::starting_player> becomes the next player, who holds the <governor_card> and picks first next year."
+                    },
+                    "subject": "<ontology::starting_player>",
+                    "to": "顺时针下一位玩家",
+                    "do_after": "return_role_cards"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          },
+          {
+            "id": "final_scoring",
+            "name": {
+              "zh": "终局计分",
+              "en": "Final Scoring"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "终局计分阶段：加总 VP 筹码（含纸笔记录）+ 建筑 VP（无论是否被占据）+ 被占据大建筑的加成 VP，按<most_vp_wins>判胜——总分最高者胜，并列时钱币与货物之和多者胜。",
+              "en": "Final scoring: add up VP chips (plus paper) + building VP (occupied or not) + bonus VP of occupied large buildings, and adjudicate by <most_vp_wins> — highest total wins; ties go to the most coins and goods combined."
+            },
+            "do_after": "years",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "tally_vp_chips",
+                  "name": {
+                    "zh": "清点 VP 筹码",
+                    "en": "Tally VP Chips"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家清点自己<portrait>上的<victory_point>筹码面值之和（加上筹码用完后的纸笔记录）。",
+                    "en": "Each player sums the face value of their <victory_point> chips on the <portrait> (plus any paper tracking after the chips ran out)."
+                  },
+                  "result": {
+                    "zh": "该玩家的 VP 筹码总分。",
+                    "en": "The player's total VP chips."
+                  }
+                },
+                {
+                  "id": "tally_building_vp",
+                  "name": {
+                    "zh": "清点建筑 VP",
+                    "en": "Tally Building VP"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家把自己<city>中所有<building>右上角的 VP 数字加总——无论建筑是否被占据（大建筑未占据也计其 4 VP）。",
+                    "en": "Each player sums the top-right VP numbers of all <building>s in their <city> — occupied or not (unoccupied large buildings still score their 4 VP)."
+                  },
+                  "result": {
+                    "zh": "该玩家的建筑 VP 总分。",
+                    "en": "The player's total building VP."
+                  },
+                  "do_after": "tally_vp_chips"
+                },
+                {
+                  "id": "tally_large_building_bonuses",
+                  "name": {
+                    "zh": "清点大建筑加成",
+                    "en": "Tally Large Building Bonuses"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家结算被占据的大建筑加成（未占据的大建筑只有 4 VP 基础分，无加成）：<fire_station>小生产建筑 +1、大生产建筑 +2；<residence>按乡村已填格数 4/5/6/7 VP；<fortress>每 3 名工人 +1 VP（向下取整）；<customs_house>每 4 个 VP 筹码 +1 VP（向下取整，只数筹码）；<city_hall>每座商业建筑 +1 VP（含自身）。",
+                    "en": "Each player resolves the bonuses of their occupied large buildings (unoccupied ones score only the base 4 VP): <fire_station> +1 per small / +2 per large production building; <residence> 4/5/6/7 VP by filled countryside spaces; <fortress> +1 VP per 3 workers (rounded down); <customs_house> +1 VP per 4 VP chips (rounded down, chips only); <city_hall> +1 VP per commercial building (including itself)."
+                  },
+                  "result": {
+                    "zh": "该玩家的大建筑加成 VP。",
+                    "en": "The player's large-building bonus VP."
+                  },
+                  "do_after": "tally_building_vp"
+                },
+                {
+                  "id": "adjudicate_victory",
+                  "name": {
+                    "zh": "判定胜者",
+                    "en": "Adjudicate Victory"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "按<most_vp_wins>判定胜者：总分 = VP 筹码 + 建筑 VP + 大建筑加成；总分最高者胜，并列时钱币与货物之和（每枚钱币或每桶货物计 1）多者胜。",
+                    "en": "Adjudicate by <most_vp_wins>: total = VP chips + building VP + large-building bonuses; the highest total wins; ties go to the most coins and goods combined (each coin or barrel counts 1)."
+                  },
+                  "do_after": "tally_large_building_bonuses",
+                  "result": {
+                    "zh": "胜者玩家。",
+                    "en": "The winning player."
+                  },
+                  "rules": {
+                    "zh": "按<most_vp_wins>判定：先比总分（<vp_highest>），并列者再比钱币+货物（<most_coins_and_goods>）。",
+                    "en": "Adjudicate by <most_vp_wins>: highest total (<vp_highest>), then most coins and goods among ties (<most_coins_and_goods>)."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ]
+}
