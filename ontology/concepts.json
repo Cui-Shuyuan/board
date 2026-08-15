@@ -2276,8 +2276,8 @@
           {
             "id": "attribute",
             "description": {
-              "zh": "变更的属性名。多数情况下状态自身即语义——如 <upright> 不需要套在 'posture' 下。仅当同一个 object 有多个正交状态维度时才需要（如一张卡同时有 'orientation' 和 'face' 两个状态）。",
-              "en": "The attribute name being changed. Usually unnecessary — states carry their own semantics (e.g., <upright> doesn't need a 'posture' wrapper). Only needed when an object has multiple orthogonal state dimensions (e.g., a card with both 'orientation' and 'face' states)."
+              "zh": "变更的属性名。多数情况下状态自身即语义——如 upright 不需要套在 'posture' 下。仅当同一个 object 有多个正交状态维度时才需要（如一张卡同时有 'orientation' 和 'face' 两个状态）。",
+              "en": "The attribute name being changed. Usually unnecessary — states carry their own semantics (e.g., upright doesn't need a 'posture' wrapper). Only needed when an object has multiple orthogonal state dimensions (e.g., a card with both 'orientation' and 'face' states)."
             }
           },
           {
@@ -2302,6 +2302,34 @@
         "zh": "将 <card> 或 <tile> 翻至另一面。attribute 固定为 face，to 为 face_up 或 face_down。",
         "en": "Flip a <card> or <tile> to its other side. Attribute is fixed to face; to is face_up or face_down."
       },
+      "subject": {
+        "type": "<card> | <tile>",
+        "description": {
+          "zh": "被翻面的 <card> 或 <tile>。",
+          "en": "The <card> or <tile> being flipped."
+        }
+      },
+      "attribute": {
+        "type": "enum",
+        "enum": [
+          "face"
+        ],
+        "description": {
+          "zh": "固定为 face。",
+          "en": "Fixed to face."
+        }
+      },
+      "to": {
+        "type": "enum",
+        "enum": [
+          "face_up",
+          "face_down"
+        ],
+        "description": {
+          "zh": "翻面后的目标朝向。",
+          "en": "The target side after the flip."
+        }
+      },
       "constraints": {
         "required": [],
         "optional": []
@@ -2316,8 +2344,32 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一个 <state_change>：object 的 level 属性从 A 变为 B。subject 为被升级的 object，attribute 固定为 level，to 为目标等级。level 提升可能伴随载体切换——当新旧 level 由不同实体承载时，旧载体 <lose> 旧 effect、新载体 <gain> 新 effect；当同一载体承载（如 tile 翻面）时，仅为 level 变化，无 lose/gain。物理操作（翻面、移除板块）是 level 变化的物理后果，由游戏层表达。",
-        "en": "A <state_change>: an object's level attribute changes from A to B. subject is the object being upgraded, attribute is fixed to level, to is the target level. Level increase may involve carrier switch — when old and new levels are carried by different entities, the old carrier <lose>s the old effect and the new carrier <gain>s the new effect; when carried by the same entity (e.g., tile flip), it is purely a level change with no lose/gain. Physical operations (flip, remove tile) are consequences of the level change, expressed at the game layer."
+        "zh": "一个 <state_change>：<piece> 的 level 属性从 A 变为 B。subject 为被升级的 <piece>，attribute 固定为 level，to 为目标等级。level 提升可能伴随载体切换——当新旧 level 由不同实体承载时，旧载体 <lose> 旧 effect、新载体 <gain> 新 effect；当同一载体承载（如 tile 翻面）时，仅为 level 变化，无 lose/gain。物理操作（翻面、移除板块）是 level 变化的物理后果，由游戏层表达。",
+        "en": "A <state_change>: a <piece>'s level attribute changes from A to B. subject is the <piece> being upgraded, attribute is fixed to level, to is the target level. Level increase may involve carrier switch — when old and new levels are carried by different entities, the old carrier <lose>s the old effect and the new carrier <gain>s the new effect; when carried by the same entity (e.g., tile flip), it is purely a level change with no lose/gain. Physical operations (flip, remove tile) are consequences of the level change, expressed at the game layer."
+      },
+      "subject": {
+        "type": "<piece>",
+        "description": {
+          "zh": "被升级的 <piece>。",
+          "en": "The <piece> being upgraded."
+        }
+      },
+      "attribute": {
+        "type": "enum",
+        "enum": [
+          "level"
+        ],
+        "description": {
+          "zh": "固定为 level。",
+          "en": "Fixed to level."
+        }
+      },
+      "to": {
+        "type": "integer",
+        "description": {
+          "zh": "目标等级。",
+          "en": "The target level."
+        }
       },
       "constraints": {
         "required": [],
