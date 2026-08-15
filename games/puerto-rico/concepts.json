@@ -1601,7 +1601,7 @@
         }
       },
       "description": {
-        "zh": "波多黎各中的角色卡——一种<ontology::card>，共 8 张：<planter_card>、<builder_card>、<recruiter_card>、<craftsman_card>、<trader_card>、<captain_card> 各 1 张 + <adventurer_card> 2 张。开局摆在<role_card_area>（3 人局只用 6 张——去掉 2 张冒险家；4 人局 7 张——去掉 1 张冒险家；5 人局全用）。每回合每名玩家选 1 张：选角者执行该角色的行动并享受特权，其他玩家按顺时针只执行行动；角色卡留在选角者面前直到回合结束。回合结束时，未被选中的角色卡各放 1 元（由旧总督执行），下次选到该卡的人拿走上面的钱。",
+        "zh": "波多黎各中的角色卡——一种<ontology::card>，共 8 张：<planter_card>、<builder_card>、<recruiter_card>、<craftsman_card>、<trader_card>、<captain_card> 各 1 张 + <adventurer_card> 2 张。开局摆在<role_card_area>（3 人局只用 6 张——去掉 2 张冒险家；4 人局 7 张——去掉 1 张冒险家；5 人局全用）。每回合每名玩家选 1 张：选角者执行该角色的行动并享受特权，其他玩家按顺时针只执行行动；除船长外，执行行动是可选的——不能做或不想做的玩家跳过该角色。角色卡留在选角者面前直到回合结束。回合结束时，未被选中的角色卡各放 1 元（由旧总督执行），下次选到该卡的人拿走上面的钱。",
         "en": "Role cards in Puerto Rico — a type of <ontology::card>, 8 in total: one each of <planter_card>, <builder_card>, <recruiter_card>, <craftsman_card>, <trader_card>, <captain_card>, plus 2 <adventurer_card>s. At setup they sit in the <role_card_area> (3 players use 6 cards — both Adventurers removed; 4 players use 7 — one Adventurer removed; 5 players use all 8). Each round every player picks 1: the chooser performs the role's action with its privilege; the others, clockwise, perform only the action; the role card stays in front of the chooser until the round ends. At round end, 1 coin is placed on each unchosen role card (by the outgoing governor); whoever later picks such a card takes its coins."
       },
       "advantage": {
@@ -2514,8 +2514,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "波多黎各中每回合唯一的行动：从<role_card_area>选 1 张<role_card>放在自己面前——拿走卡上已有的钱（若有）。随后结算该角色阶段：选角者执行行动并享受特权，其他玩家按顺时针只执行行动。选走的卡直到回合结束不能再次被选。每回合每名玩家恰好选 1 次。",
-        "en": "The single action of each turn in Puerto Rico: pick 1 <role_card> from the <role_card_area> and place it in front of you — taking any coins on the card. Then the role phase resolves: the chooser performs the action with the privilege; the others, clockwise, perform only the action. A picked card cannot be chosen again this round. Each player picks exactly once per round."
+        "zh": "波多黎各中每回合唯一的行动：从<role_card_area>选 1 张<role_card>放在自己面前——拿走卡上已有的钱（若有）。随后结算该角色阶段：选角者执行行动并享受特权，其他玩家按顺时针只执行行动。重要：除船长外，执行角色的行动是可选的——不能做或不想做的玩家跳过该角色（选角者跳过则特权也作废）。选走的卡直到回合结束不能再次被选。每回合每名玩家恰好选 1 次。",
+        "en": "The single action of each turn in Puerto Rico: pick 1 <role_card> from the <role_card_area> and place it in front of you — taking any coins on the card. Then the role phase resolves: the chooser performs the action with the privilege; the others, clockwise, perform only the action. Important: except for the Captain, performing a role's action is optional — a player who cannot or does not want to act is skipped for that role (a chooser who skips also loses the privilege). A picked card cannot be chosen again this round. Each player picks exactly once per round."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -2758,8 +2758,8 @@
                   {
                     "id": "_skip",
                     "description": {
-                      "zh": "无空格或无可选板块时跳过种植。",
-                      "en": "Skip planting when no space or no tile is available."
+                      "zh": "种植是可选的——不想拿、没空格或没有可选板块时都可以跳过（除船长外，角色行动均可选）。",
+                      "en": "Planting is optional — you may skip when unwilling, when no space remains, or when no tile is available (all role actions except the Captain's are optional)."
                     }
                   }
                 ],
@@ -2958,7 +2958,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "招募阶段行动。选角者先从<worker_supply>多拿 1 名（特权）；然后所有玩家从<work_register>轮流各拿 1 名直到拿完（人数可能不均）；之后每人放置/移动自己的工人——工人只能放在板块空半圆槽上，可移动上一回合已放的工人；岛上无空槽时多余工人放<portrait>，留待以后招募阶段。全员完成后招募官补充登记册：数所有玩家岛上建筑（不含庄园/采石场）的空半圆槽，从<worker_supply>放同样数量（至少玩家数）。工人供应不足时特权作废；登记册补不齐时触发终局条件。",
+        "zh": "招募阶段行动。选角者先从<worker_supply>多拿 1 名（特权）；然后所有玩家从<work_register>轮流各拿 1 名直到拿完（人数可能不均）——拿工人也是可选的，不想拿的玩家跳过，工人继续轮给其他人；之后每人放置/移动自己的工人——工人只能放在板块空半圆槽上，可移动上一回合已放的工人；岛上无空槽时多余工人放<portrait>，留待以后招募阶段。全员完成后招募官补充登记册：数所有玩家岛上建筑（不含庄园/采石场）的空半圆槽，从<worker_supply>放同样数量（至少玩家数）。工人供应不足时特权作废；登记册补不齐时触发终局条件。",
         "en": "The recruitment phase action. The chooser first takes 1 extra worker from the <worker_supply> (privilege); then all players take workers from the <work_register> one at a time in rotation until empty (amounts may differ); then each player places or moves their workers — workers only go on empty semicircles of tiles; workers from previous rounds may be moved; with no empty slot left, surplus workers sit on the <portrait> for future recruitment phases. Afterwards, the recruiter repopulates the register: count empty semicircles on building tiles (not estates or quarries) across all players' boards and add that many workers from the <worker_supply> (at least the player count). An empty worker supply voids the privilege; a failed repopulation triggers an endgame condition."
       },
       "<ontology::content>": {
@@ -2997,8 +2997,8 @@
                 },
                 "<ontology::transfer>": {
                   "description": {
-                    "zh": "从选角者开始顺时针，每名玩家轮流从<work_register>拿 1 名工人，直到拿完。",
-                    "en": "Starting with the chooser and going clockwise, each player takes 1 worker from the <work_register> in rotation until it is empty."
+                    "zh": "从选角者开始顺时针，每名玩家轮流从<work_register>拿 1 名工人，直到拿完。除船长外行动都可选——不想拿的玩家可以跳过，工人继续轮给其他玩家；若所有人都不拿，工人就留在登记册上。",
+                    "en": "Starting with the chooser and going clockwise, each player takes 1 worker from the <work_register> in rotation until it is empty. Actions other than the Captain's are optional — a player may skip, and the workers keep rotating among the others; if nobody takes any, they stay on the register."
                   },
                   "source": "<work_register>",
                   "destination": {
@@ -3080,18 +3080,35 @@
                   }
                 },
                 "description": {
-                  "zh": "从选角者开始顺时针，每名玩家按生产能力取货：每座被占据的<corn_estate>产 1 桶<corn>；<fruit>/<sugar>/<tobacco>/<coffee>产量 = min(被占据庄园数, 对应生产建筑被占据半圆槽数)。",
-                  "en": "Starting with the chooser and going clockwise, each player takes goods per production ability: 1 <corn> per occupied <corn_estate>; <fruit>/<sugar>/<tobacco>/<coffee> produce min(occupied estates, occupied semicircles on the matching production buildings)."
+                  "zh": "从选角者开始顺时针，每名玩家按生产能力取货（生产是可选的，不想拿的玩家跳过）：每座被占据的<corn_estate>产 1 桶<corn>；<fruit>/<sugar>/<tobacco>/<coffee>产量 = min(被占据庄园数, 对应生产建筑被占据半圆槽数)。",
+                  "en": "Starting with the chooser and going clockwise, each player takes goods per production ability (production is optional — a player who does not want the goods is skipped): 1 <corn> per occupied <corn_estate>; <fruit>/<sugar>/<tobacco>/<coffee> produce min(occupied estates, occupied semicircles on the matching production buildings)."
                 },
-                "<ontology::transfer>": {
-                  "source": "<goods_supply>",
-                  "destination": "<portrait>",
-                  "<ontology::object>": "<good>[]",
-                  "quantity": {
-                    "zh": "按生产能力逐种计算。",
-                    "en": "Computed per good type from production ability."
+                "options": [
+                  {
+                    "id": "produce_goods",
+                    "name": {
+                      "zh": "取生产货物",
+                      "en": "Take Produced Goods"
+                    },
+                    "<ontology::transfer>": {
+                      "source": "<goods_supply>",
+                      "destination": "<portrait>",
+                      "<ontology::object>": "<good>[]",
+                      "quantity": {
+                        "zh": "按生产能力逐种计算。",
+                        "en": "Computed per good type from production ability."
+                      }
+                    }
+                  },
+                  {
+                    "id": "_skip",
+                    "description": {
+                      "zh": "生产是可选的——不想拿可以跳过（除船长外，角色行动均可选）。",
+                      "en": "Production is optional — skip if the goods are unwanted (all role actions except the Captain's are optional)."
+                    }
                   }
-                }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
               },
               {
                 "id": "advantage_extra_barrel",
@@ -3239,8 +3256,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "装运阶段行动——唯一的强制行动：能装货的玩家必须装。从选角者开始顺时针轮流装船，每人每次把 1 种货物的尽量多的桶装上 1 艘船，直到无人能装；每桶 1 VP。装船规则：每艘船只装 1 种货物；不同船不装同一种；多个空船可选时必选能装最多的那艘；不能留桶不装（船上有空位就得装）。选角者特权：本阶段装了 ≥1 桶则多得 1 VP（每阶段 1 次）。阶段结束：每人至多保留 1 桶（有<small_warehouse>可保留 1 种全部、<large_warehouse> 2 种全部、两者叠加 3 种），其余回<goods_supply>；满载的船清空离港。相关建筑：<harbor>（每次装货 +1 VP）、<wharf>（包租船，每阶段 1 次）。",
-        "en": "The shipment phase action — the only forced action: whoever can load must load. Starting with the chooser and going clockwise, players take turns loading as many barrels of 1 type as possible onto 1 ship, until no one can load; 1 VP per barrel. Loading rules: each ship carries only 1 type; no two ships carry the same type; among multiple empty ships the one allowing the most barrels must be chosen; barrels may not be held back while a ship has open spots. Chooser privilege: if they loaded ≥1 barrel this phase, +1 VP (once per phase). Phase end: each player keeps at most 1 barrel (with <small_warehouse> all of 1 extra type, <large_warehouse> 2 extra types, both together 3), the rest return to the <goods_supply>; full ships are emptied and depart. Related buildings: <harbor> (+1 VP per load), <wharf> (chartered ship, once per phase)."
+        "zh": "装运阶段行动——唯一的强制行动：能装货的玩家必须装。从选角者开始顺时针轮流装船，每人每次把 1 种货物的尽量多的桶装上 1 艘船，直到无人能装；每桶 1 VP。有<wharf>的玩家在轮到自己装货时，可以改用码头包租船装一种货物的全部桶来代替装普通船（每阶段一次）——只要轮到你时还有货可装，装普通船或码头必须选一个，不能什么都不装。装船规则：每艘船只装 1 种货物；不同船不装同一种；多个空船可选时必选能装最多的那艘；不能留桶不装（船上有空位就得装）。选角者特权：本阶段装了 ≥1 桶则多得 1 VP（每阶段 1 次）。阶段结束：每人至多保留 1 桶（有<small_warehouse>可保留 1 种全部、<large_warehouse> 2 种全部、两者叠加 3 种），其余回<goods_supply>；满载的船清空离港。相关建筑：<harbor>（每次装货 +1 VP）、<wharf>（包租船，每阶段 1 次）。",
+        "en": "The shipment phase action — the only forced action: whoever can load must load. Starting with the chooser and going clockwise, players take turns loading as many barrels of 1 type as possible onto 1 ship, until no one can load; 1 VP per barrel. A player with a <wharf> may instead use the chartered ship on their loading turn, shipping all barrels of 1 type (once per phase) — whenever it is your turn and you still have loadable goods, you must choose one: a cargo ship or the chartered ship; doing neither is not allowed. Loading rules: each ship carries only 1 type; no two ships carry the same type; among multiple empty ships the one allowing the most barrels must be chosen; barrels may not be held back while a ship has open spots. Chooser privilege: if they loaded ≥1 barrel this phase, +1 VP (once per phase). Phase end: each player keeps at most 1 barrel (with <small_warehouse> all of 1 extra type, <large_warehouse> 2 extra types, both together 3), the rest return to the <goods_supply>; full ships are emptied and depart. Related buildings: <harbor> (+1 VP per load), <wharf> (chartered ship, once per phase)."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -3273,8 +3290,8 @@
                         }
                       },
                       "description": {
-                        "zh": "当前玩家必须装货（<can_ship_goods>成立即强制）：选 1 种货物，把尽量多的桶装上 1 艘船——船类型唯一、船间类型不重、空船选装得最多的。",
-                        "en": "The current player must load (<can_ship_goods> forces it): choose 1 good type and load as many barrels as possible onto 1 ship — one type per ship, no type on two ships, the empty ship holding the most must be chosen."
+                        "zh": "当前玩家必须装货（<can_ship_goods>成立即强制）：选 1 种货物，把尽量多的桶装上 1 艘船——船类型唯一、船间类型不重、空船选装得最多的。有码头的玩家这一轮可改用码头包租船装一种货物的全部桶代替，同样算履行装货义务。",
+                        "en": "The current player must load (<can_ship_goods> forces it): choose 1 good type and load as many barrels as possible onto 1 ship — one type per ship, no type on two ships, the empty ship holding the most must be chosen. A wharf owner may instead use the chartered ship this round to ship all barrels of 1 type, which equally satisfies the loading obligation."
                       },
                       "<ontology::condition>": "<can_ship_goods>",
                       "<ontology::pipeline>": {
@@ -3347,10 +3364,9 @@
                   "zh": "码头包租船",
                   "en": "Wharf Chartered Shipment"
                 },
-                "do_after": "loading_rounds",
                 "description": {
-                  "zh": "有被占据的<wharf>的玩家可把任意 1 种货物的全部桶装包租船（每阶段至多 1 次，可选；规则上可在装运阶段任意时刻进行）：桶全部回<goods_supply>，每桶 1 VP。",
-                  "en": "A player with an occupied <wharf> may load all barrels of any 1 type onto the chartered ship (at most once per phase, optional; allowed at any time during the phase): all barrels return to the <goods_supply>, 1 VP per barrel."
+                  "zh": "有被占据的<wharf>的玩家可把任意 1 种货物的全部桶装包租船（每阶段至多 1 次，可选）。时点自由：可在装运阶段任意时刻使用——包括装普通船之前、装船轮次之间或全部装完之后；一旦某货物被包租，它就不在手上，之后的装船轮次自然没有它可装。用它装货即履行该轮装货义务：轮到自己装货时，装普通船或码头必选其一。桶全部回<goods_supply>，每桶 1 VP。",
+                  "en": "A player with an occupied <wharf> may load all barrels of any 1 type onto the chartered ship (at most once per phase, optional). Timing is free: usable at any point in the shipment phase — before loading cargo ships, between loading rounds, or after all loading; once a good is chartered it is gone, so later loading rounds simply have nothing of it to load. Using it satisfies that round's loading obligation: on your loading turn, you must pick one — cargo ship or chartered ship. All barrels return to the <goods_supply>, 1 VP per barrel."
                 },
                 "<ontology::condition>": "<wharf_occupied>",
                 "<ontology::pipeline>": {
