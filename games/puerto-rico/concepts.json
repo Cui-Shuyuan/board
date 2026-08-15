@@ -1221,8 +1221,9 @@
         "en": "Purple commercial building tile, cost 9, 3 VP, marked with the shipment-phase icon."
       },
       "description": {
-        "zh": "费用 9 元、3 VP 的<commercial_building>。功能：<captain_role>阶段内任意时刻（若使用），可把任意 1 种货物的全部桶装上「包租船」——包租船没有容量限制、可装货船上已有的类型，每桶得 1 VP，装完后桶全部放回<goods_supply>。每阶段至多使用 1 次，可不用。注意：装货义务不变——装运阶段能装货船时仍必须装，不能用包租船逃避。",
-        "en": "A <commercial_building> costing 9, worth 3 VP. Function: at any one time during the <captain_role> phase (if used at all), you may load all barrels of any 1 type onto a 'Chartered Ship' — unlimited capacity, may carry a type already on a cargo ship, 1 VP per barrel, then all barrels return to the <goods_supply>. At most once per phase; may be skipped. Note: the loading obligation is unchanged — you must still load cargo ships whenever able; the chartered ship is no escape."
+        "zh": "费用 9 元、3 VP 的<commercial_building>。功能：<captain_role>阶段内任意时刻（若使用），可把任意 1 种货物的全部桶装上「包租船」——包租船没有容量限制、可装货船上已有的类型，每桶得 1 VP，装完后桶全部放回<goods_supply>。每阶段至多使用 1 次，可不用。用它装货同样履行该轮装货义务：轮到自己装货时，装普通船或码头包租船必选其一（不能两者都不装）；可以先包租再装普通船，顺序自由。",
+        "en": "A <commercial_building> costing 9, worth 3 VP. Function: at any one time during the <captain_role> phase (if used at all), you may load all barrels of any 1 type onto a 'Chartered Ship' — unlimited capacity, may carry a type already on a cargo ship, 1 VP per barrel, then all barrels return to the <goods_supply>. At most once per phase; may be skipped. Using it equally satisfies that round's loading obligation: on your loading turn you must choose one — cargo ship or chartered ship (doing neither is not allowed); you may charter before loading cargo ships, in either order."
+
       },
       "cost": 9,
       "vp": 3,
