@@ -26,7 +26,7 @@ from transformers import AutoTokenizer
 
 # ---- 配置 ----
 BOARD_ROOT = Path(__file__).resolve().parent.parent
-MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5"
+MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5-fp32"
 QDRANT_URL = "http://localhost:6333"
 BATCH_SIZE = 100
 

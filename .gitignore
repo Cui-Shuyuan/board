@@ -20,6 +20,9 @@ obj/
 # Qdrant runtime data
 backend/BoardAI.Api/storage/
 
+# ML 模型（下载/转换产物，不进 git——所有模型统一放 ml_models/ 下）
+backend/BoardAI.Api/ml_models/
+
 .claude/
 CLAUDE.md
 doc/
