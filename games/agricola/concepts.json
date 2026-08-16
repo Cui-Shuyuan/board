@@ -1,0 +1,3492 @@
+{
+  "meta": {
+    "game": "agricola",
+    "name": {
+      "zh": "农场主",
+      "en": "Agricola"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "《农场主》（Agricola，2022 年 Lookout 15 周年纪念版）的结构化规则定义。基于 board-game-ontology v0.1.0。仅含基础多人规则（2-4 人），不含单人规则、变体与扩展。职业卡与次要改良卡各 168 张不逐一建模——按系统建模（手牌、打出规则、费用、前置条件、旅行卡），并完整建模 10 张主要改良与 14 张回合卡。卡牌文字优先于规则书。",
+      "en": "Structured rule definition for Agricola (2022 Lookout 15th Anniversary Edition). Based on board-game-ontology v0.1.0. Base multiplayer rules only (2-4 players), no solo rules, variants, or expansions. The 168 occupation and 168 minor improvement cards are modeled as a system (hand, play rules, costs, prerequisites, traveling cards) rather than individually; all 10 major improvements and 14 round cards are fully modeled. Card text takes precedence over the rulebook."
+    }
+  },
+  "objects": [
+    {
+      "id": "food",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "食物",
+        "en": "Food"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "农场主中的<ontology::resource>。用「1 食物」标记（55 个）与「5 食物」标记（10 个）表示，共 65 个；不足时可用<goods_tile>或替代品，食物无物理数量上限。核心用途：喂养家庭成员——每个家庭成员每次收获需 2 食物、新生儿 1 食物（<harvest_feeding>），不足时每缺 1 食物拿 1 个<begging_marker>（-3 分）。获得途径：开局起始玩家 2 食物、其余玩家 3 食物；<space_day_labourer> 2 食物；<space_fishing>与<space_travelling_players>各 1 食物（累积）；<well>每回合 1 食物（5 回合）；把<grain>/<vegetable>生吃各 1 食物（<eat_raw_crops>，随时）；🍖 烹饪改良把动物/蔬菜换成食物（<cook_goods>，随时）；🍞 烘焙改良把谷物烤成食物（<bake_bread>）；<joinery>/<pottery>/<basketmakers_workshop>每收获把建材换成食物（<craft_conversion>）。终局计分时食物不计分（「除了食物什么都计分」）。",
+        "en": "A <ontology::resource> in Agricola. Represented by '1 food' markers (55) and '5 food' markers (10), 65 total; unlimited in practice — use <goods_tile>s or improvise. Core use: feeding — each family member needs 2 food per harvest, a newborn 1 (<harvest_feeding>); for every food short you take a <begging_marker> (-3 points). Sources: 2 food for the starting player and 3 for each other player at setup; 2 from <space_day_labourer>; 1 (accumulating) each from <space_fishing> and <space_travelling_players>; 1 per round for 5 rounds from <well>; 1 each for eating <grain>/<vegetable> raw (<eat_raw_crops>, any time); 🍖 cooking improvements convert animals/vegetables (<cook_goods>, any time); 🍞 baking improvements convert grain (<bake_bread>); <joinery>/<pottery>/<basketmakers_workshop> convert a building resource per harvest (<craft_conversion>). Food scores nothing at game end."
+      },
+      "unit": {
+        "type": "string",
+        "default": "份",
+        "description": {
+          "zh": "食物的计量单位。如「支付 2 份食物」「日工得 2 份食物」。",
+          "en": "Unit of food. E.g., 'pay 2 food', 'the day labourer takes 2 food'."
+        }
+      },
+      "appearance": {
+        "zh": "圆形纸板标记，正面印有食物图案；「1 食物」小标记 55 个、「5 食物」大标记 10 个。",
+        "en": "Round cardboard markers with a food symbol; 55 small '1 food' and 10 large '5 food' markers."
+      }
+    },
+    {
+      "id": "building_resource",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "建材",
+        "en": "Building Resource"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "四种建筑资源的统称：<wood>、<clay>、<reed>、<stone>。用途：建房（每房间 5 份对应建材 + 2 <reed>）、建栅栏（每根 1 <wood>）、建马厩（每个 2 <wood>）、翻新（每房间 1 <clay> 或 1 <stone> + 总计 1 <reed>）、建造主要改良。平局决胜：终局时个人供应中建材数量更多者获胜（<most_building_resources_left>）。",
+        "en": "The collective term for the four building resources: <wood>, <clay>, <reed>, <stone>. Uses: building rooms (5 of the matching material + 2 <reed> each), fences (1 <wood> each), stables (2 <wood> each), renovation (1 <clay> or 1 <stone> per room + 1 <reed> total), and major improvements. Tie-break: at game end, the player with more building resources left in their supply wins (<most_building_resources_left>)."
+      },
+      "unit": {
+        "type": "string",
+        "description": {
+          "zh": "建材的计量单位，由各具体资源定义（木头/芦苇用「根」，黏土/石头用「块」）。",
+          "en": "Unit of building resources, defined per resource (wood/reed in pieces, clay/stone in blocks)."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "本抽象类不指定外观，由各具体建材定义（如木头=棕色小木块、黏土=赤褐色小方块、芦苇=白色长条、石头=黑色小方块）。",
+          "en": "This abstract category specifies no appearance; each concrete resource defines its own (e.g. wood = small brown log-shaped markers, clay = small auburn cubes, reed = small white reed-shaped markers, stone = small black cubes)."
+        }
+      }
+    },
+    {
+      "id": "wood",
+      "specifies": "<building_resource>",
+      "name": {
+        "zh": "木头",
+        "en": "Wood"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<building_resource>。共 38 根（不足可用<goods_tile>替代）。获得途径：<space_forest>每回合累积 3 根（取时全拿）、3 人局<space_wood_3p>累积 2 根、4 人局<space_wood_4p>累积 1 根与<space_wood_4p_2>累积 2 根、<space_reed_stone_food_4p>、职业/次要改良效果。用途：建房（木屋每房间 5 根 + 2 芦苇）、栅栏（每根栅栏 1 根木头）、马厩（每个 2 根）、<joinery>费用 2 根、<well>费用 1 根。",
+        "en": "A <building_resource>. 38 pieces (use <goods_tile>s if they run out). Sources: <space_forest> accumulates 3 per round; in 3-player games <space_wood_3p> accumulates 2; in 4-player games <space_wood_4p> accumulates 1 and <space_wood_4p_2> accumulates 2; <space_reed_stone_food_4p>; occupation/minor-improvement effects. Uses: rooms (5 per wooden room + 2 reeds), fences (1 per fence), stables (2 each), <joinery> costs 2, <well> costs 1."
+      },
+      "unit": {
+        "type": "string",
+        "default": "根",
+        "description": {
+          "zh": "木头的计量单位。如「每根栅栏 1 根木头」「森林累积 3 根木头」。",
+          "en": "Unit of wood. E.g., '1 wood per fence', 'the forest accumulates 3 wood'."
+        }
+      },
+      "appearance": {
+        "zh": "棕色小木块状标记，共 38 个。",
+        "en": "Small brown log-shaped markers, 38 in total."
+      }
+    },
+    {
+      "id": "clay",
+      "specifies": "<building_resource>",
+      "name": {
+        "zh": "黏土",
+        "en": "Clay"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<building_resource>。共 26 块（不足可用<goods_tile>替代）。获得途径：<space_clay_pit>每回合累积 1 块、3 人局<space_clay_3p>累积 1 块、4 人局<space_clay_4p>累积 2 块、职业/次要改良效果。用途：翻新为泥屋（每房间 1 块）、泥屋建房（每房间 5 块 + 2 芦苇）、主要改良费用（<fireplace> 2 或 3 块、<cooking_hearth> 4 或 5 块、<clay_oven> 2 块、<stone_oven> 1 块、<pottery> 2 块）。",
+        "en": "A <building_resource>. 26 blocks (use <goods_tile>s if they run out). Sources: <space_clay_pit> accumulates 1 per round; in 3-player games <space_clay_3p> accumulates 1; in 4-player games <space_clay_4p> accumulates 2; occupation/minor-improvement effects. Uses: renovation to a clay hut (1 per room), clay rooms (5 per room + 2 reeds), major improvement costs (<fireplace> 2 or 3, <cooking_hearth> 4 or 5, <clay_oven> 2, <stone_oven> 1, <pottery> 2)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "块",
+        "description": {
+          "zh": "黏土的计量单位。如「翻新每房间 1 块黏土」。",
+          "en": "Unit of clay. E.g., '1 clay per room when renovating'."
+        }
+      },
+      "appearance": {
+        "zh": "赤褐色小方块标记，共 26 个。",
+        "en": "Small auburn cube markers, 26 in total."
+      }
+    },
+    {
+      "id": "reed",
+      "specifies": "<building_resource>",
+      "name": {
+        "zh": "芦苇",
+        "en": "Reed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<building_resource>。共 14 根（不足可用<goods_tile>替代）。获得途径：<space_reed_bank>每回合累积 1 根、4 人局<space_reed_stone_food_4p>、职业/次要改良效果。用途：建房（每房间 2 根，任何材质都要）、翻新（每次总计 1 根——不是每房间）、<basketmakers_workshop>费用 2 根。",
+        "en": "A <building_resource>. 14 pieces (use <goods_tile>s if they run out). Sources: <space_reed_bank> accumulates 1 per round; <space_reed_stone_food_4p> in 4-player games; occupation/minor-improvement effects. Uses: building rooms (2 per room, any material), renovation (1 total per renovation — not per room), <basketmakers_workshop> costs 2."
+      },
+      "unit": {
+        "type": "string",
+        "default": "根",
+        "description": {
+          "zh": "芦苇的计量单位。如「每房间 2 根芦苇」「翻新总计 1 根芦苇」。",
+          "en": "Unit of reed. E.g., '2 reeds per room', '1 reed total per renovation'."
+        }
+      },
+      "appearance": {
+        "zh": "白色长条状标记，共 14 个。",
+        "en": "Small white reed-shaped markers, 14 in total."
+      }
+    },
+    {
+      "id": "stone",
+      "specifies": "<building_resource>",
+      "name": {
+        "zh": "石头",
+        "en": "Stone"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<building_resource>。共 16 块（不足可用<goods_tile>替代）。获得途径：第 2 阶段与第 4 阶段各有一张「1 块石头」回合卡（<rc_stone_s2>、<rc_stone_s4>，累积）、4 人局<space_reed_stone_food_4p>、职业/次要改良效果。用途：翻新为石屋（每房间 1 块）、石屋建房（每房间 5 块 + 2 芦苇）、主要改良费用（<clay_oven> 1 块、<stone_oven> 3 块、<well> 3 块、<joinery> 2 块、<pottery> 2 块、<basketmakers_workshop> 2 块）。",
+        "en": "A <building_resource>. 16 blocks (use <goods_tile>s if they run out). Sources: one '1 stone' round card in stage 2 and one in stage 4 (<rc_stone_s2>, <rc_stone_s4>; both accumulate); <space_reed_stone_food_4p> in 4-player games; occupation/minor-improvement effects. Uses: renovation to a stone house (1 per room), stone rooms (5 per room + 2 reeds), major improvement costs (<clay_oven> 1, <stone_oven> 3, <well> 3, <joinery> 2, <pottery> 2, <basketmakers_workshop> 2)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "块",
+        "description": {
+          "zh": "石头的计量单位。如「翻新每房间 1 块石头」。",
+          "en": "Unit of stone. E.g., '1 stone per room when renovating'."
+        }
+      },
+      "appearance": {
+        "zh": "黑色小方块标记，共 16 个。",
+        "en": "Small black cube markers, 16 in total."
+      }
+    },
+    {
+      "id": "crop",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "作物",
+        "en": "Crop"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "两种作物的统称：<grain>与<vegetable>。作物放在<personal_supply>里，也可种在<field_tile>上（<sow>：谷物每田 3 个标记、蔬菜每田 2 个标记）。每个收获回合的田地阶段必须从每块田上取 1 个作物进供应（<harvest_field_phase>）；田上的作物收获前不可用，但终局计分时算数。作物可随时生吃换 1 食物（<eat_raw_crops>），也可烤成更多食物（<bake_bread>）。终局计分按持有总量：谷物 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；蔬菜 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4。",
+        "en": "The collective term for the two crops: <grain> and <vegetable>. Crops sit in your <personal_supply> and can be planted on <field_tile>s (<sow>: grain fields hold 3 markers, vegetable fields 2). Each harvest's field phase must take exactly 1 crop from every field into your supply (<harvest_field_phase>); crops on fields are unusable until harvested but count at final scoring. Crops can be eaten raw for 1 food each at any time (<eat_raw_crops>) or baked for more (<bake_bread>). Final scoring by total held: grain 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; vegetables 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4."
+      },
+      "unit": {
+        "type": "string",
+        "description": {
+          "zh": "作物的计量单位，由各具体作物定义（个）。",
+          "en": "Unit of crops, defined per crop type."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "本抽象类不指定外观，由各具体作物定义（如谷物=黄色圆形小标记、蔬菜=橙色圆形小标记）。",
+          "en": "This abstract category specifies no appearance; each concrete crop defines its own (e.g. grain = small yellow round markers, vegetables = small orange round markers)."
+        }
+      }
+    },
+    {
+      "id": "grain",
+      "specifies": "<crop>",
+      "name": {
+        "zh": "谷物",
+        "en": "Grain"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<crop>。共 24 个黄色标记（不足可用<goods_tile>替代）。获得途径：<space_grain_seeds>拿 1 个（「谷种」行动格——拿到的种子已是完全成熟的作物，不必播种）、职业/次要改良效果。用途：生吃 1 食物（<eat_raw_crops>）；播种（<sow>：每块空田放 1 个自己供应的谷物 + 2 个供应堆的，共 3 个）；烘焙（<bake_bread>：<fireplace>每个 2 食物、<cooking_hearth>每个 3 食物、<clay_oven>最多 1 个→5 食物、<stone_oven>最多 2 个→每个 4 食物，可组合）。终局计分：0 个 -1，1-3 个 +1，4-5 个 +2，6-7 个 +3，8+ 个 +4（供应中 + 田上 + 自称为田的卡上全部算）。",
+        "en": "A <crop>. 24 yellow markers (use <goods_tile>s if they run out). Sources: 1 from <space_grain_seeds> (the 'Grain Seeds' space — seeds taken are already fully grown crops; no planting required), occupation/minor-improvement effects. Uses: eaten raw for 1 food (<eat_raw_crops>); sown (<sow>: 1 grain from your supply + 2 from the general supply = 3 per empty field); baked (<bake_bread>: <fireplace> 2 food each, <cooking_hearth> 3 food each, <clay_oven> up to 1 → 5 food, <stone_oven> up to 2 → 4 food each; combinable). Final scoring: 0 → -1, 1-3 → +1, 4-5 → +2, 6-7 → +3, 8+ → +4 (supply + fields + cards identifying as fields all count)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "个",
+        "description": {
+          "zh": "谷物的计量单位。如「播种每块田放 3 个谷物」。",
+          "en": "Unit of grain. E.g., 'each sown field holds 3 grain'."
+        }
+      },
+      "appearance": {
+        "zh": "黄色圆形小标记，共 24 个。",
+        "en": "Small yellow round markers, 24 in total."
+      }
+    },
+    {
+      "id": "vegetable",
+      "specifies": "<crop>",
+      "name": {
+        "zh": "蔬菜",
+        "en": "Vegetable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<crop>。共 16 个橙色标记（不足可用<goods_tile>替代）。获得途径：第 3 阶段的「拿取 1 个蔬菜」回合卡（<rc_vegetable>）、职业/次要改良效果。用途：生吃 1 食物（<eat_raw_crops>）；播种（<sow>：每块空田放 1 个自己供应的蔬菜 + 1 个供应堆的，共 2 个）；用🍖改良换成食物（<cook_goods>：<fireplace> 2 食物、<cooking_hearth> 3 食物）。终局计分：0 个 -1，1 个 +1，2 个 +2，3 个 +3，4+ 个 +4。",
+        "en": "A <crop>. 16 orange markers (use <goods_tile>s if they run out). Sources: the stage-3 'take 1 vegetable' round card (<rc_vegetable>), occupation/minor-improvement effects. Uses: eaten raw for 1 food (<eat_raw_crops>); sown (<sow>: 1 vegetable from your supply + 1 from the general supply = 2 per empty field); converted with a 🍖 improvement (<cook_goods>: <fireplace> 2 food, <cooking_hearth> 3 food). Final scoring: 0 → -1, 1 → +1, 2 → +2, 3 → +3, 4+ → +4."
+      },
+      "unit": {
+        "type": "string",
+        "default": "个",
+        "description": {
+          "zh": "蔬菜的计量单位。如「播种每块田放 2 个蔬菜」。",
+          "en": "Unit of vegetables. E.g., 'each sown vegetable field holds 2 vegetables'."
+        }
+      },
+      "appearance": {
+        "zh": "橙色圆形小标记，共 16 个。",
+        "en": "Small orange round markers, 16 in total."
+      }
+    },
+    {
+      "id": "animal",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "动物",
+        "en": "Animal"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "三种动物的统称：<sheep>、<wild_boar>、<cattle>。与作物/建材不同，动物**必须安置在农场板上**（<pasture>或马厩），否则走失；房子里的宠物恰好 1 只（任意种类）。每回合可从<general_supply>把动物移到农场任意位置（随时移动）；随时可丢弃动物（或任何货物）到<general_supply>。繁殖：每个收获回合，每种动物若有至少 2 只且能安置新生动物，则多得 1 只（<harvest_breeding>，每收获每种类至多 1 只新生）。用🍖改良可把动物直接换成食物（<cook_goods>，取动物时可直接换、不必先安置）。终局计分按数量：羊 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；野猪 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4；牛 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4。卡上的动物除非另有说明也算。",
+        "en": "The collective term for the three animals: <sheep>, <wild_boar>, <cattle>. Unlike crops and building resources, animals **must be accommodated on the farmyard board** (<pasture> or stables) or they wander off; exactly 1 pet animal (any type) may live in the house. Animals may be moved around the farm at any time, and you may discard animals (or any goods) to the <general_supply> at any time. Breeding: each harvest, for each animal type with at least 2, gain exactly 1 newborn if it can be accommodated (<harvest_breeding>; at most 1 newborn per type per harvest). A 🍖 improvement lets you convert animals directly to food (<cook_goods>; when taking animals you may convert them at once without accommodating them). Final scoring: sheep 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; wild boar 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4; cattle 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4. Animals on cards count unless stated otherwise."
+      },
+      "unit": {
+        "type": "string",
+        "description": {
+          "zh": "动物的计量单位（只/头），由各具体动物定义。",
+          "en": "Unit of animals, defined per animal type."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "本抽象类不指定外观，由各具体动物定义（如羊=白色小羊木块、野猪=黑色小猪木块、牛=棕色小牛木块）。",
+          "en": "This abstract category specifies no appearance; each concrete animal defines its own (e.g. sheep = white sheep-shaped wooden pieces, wild boar = black pig-shaped pieces, cattle = brown cattle-shaped pieces)."
+        }
+      }
+    },
+    {
+      "id": "sheep",
+      "specifies": "<animal>",
+      "name": {
+        "zh": "羊",
+        "en": "Sheep"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<animal>。共 18 只白色（不足可用<goods_tile>替代）。获得途径：第 1 阶段的「1 只羊」回合卡（<rc_sheep>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、🍖换食物（<fireplace> 2 食物、<cooking_hearth> 2 食物）、宠物、终局计分（0 只 -1，1-3 只 +1，4-5 只 +2，6-7 只 +3，8+ 只 +4）。",
+        "en": "An <animal>. 18 white sheep (use <goods_tile>s if they run out). Sources: the stage-1 '1 sheep' round card (<rc_sheep>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), 🍖 conversion (<fireplace> 2 food, <cooking_hearth> 2 food), as a pet, final scoring (0 → -1, 1-3 → +1, 4-5 → +2, 6-7 → +3, 8+ → +4)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "只",
+        "description": {
+          "zh": "羊的计量单位。如「8 只羊得 4 分」。",
+          "en": "Unit of sheep. E.g., '8 sheep score 4 points'."
+        }
+      },
+      "appearance": {
+        "zh": "白色小羊造型木块，共 18 只。",
+        "en": "Small white sheep-shaped wooden pieces, 18 in total."
+      }
+    },
+    {
+      "id": "wild_boar",
+      "specifies": "<animal>",
+      "name": {
+        "zh": "野猪",
+        "en": "Wild Boar"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<animal>。共 15 只黑色（不足可用<goods_tile>替代）。获得途径：第 3 阶段的「1 只野猪」回合卡（<rc_wild_boar>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、🍖换食物（<fireplace> 2 食物、<cooking_hearth> 3 食物）、宠物、终局计分（0 只 -1，1-2 只 +1，3-4 只 +2，5-6 只 +3，7+ 只 +4）。",
+        "en": "A <animal>. 15 black boars (use <goods_tile>s if they run out). Sources: the stage-3 '1 wild boar' round card (<rc_wild_boar>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), 🍖 conversion (<fireplace> 2 food, <cooking_hearth> 3 food), as a pet, final scoring (0 → -1, 1-2 → +1, 3-4 → +2, 5-6 → +3, 7+ → +4)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "只",
+        "description": {
+          "zh": "野猪的计量单位。如「6 只野猪得 3 分」。",
+          "en": "Unit of wild boar. E.g., '6 wild boar score 3 points'."
+        }
+      },
+      "appearance": {
+        "zh": "黑色小猪造型木块，共 15 只。",
+        "en": "Small black pig-shaped wooden pieces, 15 in total."
+      }
+    },
+    {
+      "id": "cattle",
+      "specifies": "<animal>",
+      "name": {
+        "zh": "牛",
+        "en": "Cattle"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种<animal>。共 13 头棕色（不足可用<goods_tile>替代）。获得途径：第 4 阶段的「1 头牛」回合卡（<rc_cattle>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、🍖换食物（<fireplace> 3 食物、<cooking_hearth> 4 食物）、宠物、终局计分（0 头 -1，1 头 +1，2-3 头 +2，4-5 头 +3，6+ 头 +4）。",
+        "en": "An <animal>. 13 brown cattle (use <goods_tile>s if they run out). Sources: the stage-4 '1 cattle' round card (<rc_cattle>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), 🍖 conversion (<fireplace> 3 food, <cooking_hearth> 4 food), as a pet, final scoring (0 → -1, 1 → +1, 2-3 → +2, 4-5 → +3, 6+ → +4)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "头",
+        "description": {
+          "zh": "牛的计量单位。如「6 头牛得 4 分」。",
+          "en": "Unit of cattle. E.g., '6 cattle score 4 points'."
+        }
+      },
+      "appearance": {
+        "zh": "棕色小牛造型木块，共 13 头。",
+        "en": "Small brown cattle-shaped wooden pieces, 13 in total."
+      }
+    },
+    {
+      "id": "vp",
+      "specifies": "<ontology::score>",
+      "name": {
+        "zh": "分数",
+        "en": "Victory Point"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "农场主的胜利分（VP）。不可消费、不可转移，只在终局用<scoring_pad>一次性结算（<final_scoring>）：田地、牧场、作物、动物按数量表计分；每个空农场格 -1；每个围起来的马厩 +1；每个泥屋房间 +1、每个石屋房间 +2（木屋房间 0 分）；每个家庭成员 +3；每个<begging_marker> -3；主要/次要改良按卡上印的分数计分。分数最高者获胜（平手比剩余建材，<most_points_wins>）。",
+        "en": "Victory points (VP) in Agricola. Never spent or transferred; settled once at game end on the <scoring_pad> (<final_scoring>): fields, pastures, crops, and animals score by quantity tables; -1 per unused farmyard space; +1 per fenced stable; +1 per clay room and +2 per stone room (wooden rooms score 0); +3 per family member; -3 per <begging_marker>; major/minor improvements score their printed points. Most points wins (tie: more building resources left, <most_points_wins>)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "分",
+        "description": {
+          "zh": "分数的计量单位。如「每个家庭成员 3 分」。",
+          "en": "Unit of VP. E.g., '3 points per family member'."
+        }
+      },
+      "appearance": {
+        "zh": "不是独立零件——用随附的计分纸记录，结算后比较总数。",
+        "en": "Not a standalone component — recorded on the included scoring pad and compared at the end."
+      }
+    },
+    {
+      "id": "family_member",
+      "specifies": "<ontology::piece>",
+      "name": {
+        "zh": "家庭成员",
+        "en": "Family Member"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的<ontology::piece>——工人的圆形木片，每人 5 个（2 人开局在木屋房间里，其余 3 人在个人供应中）。每回合工作阶段，每个家庭成员各放 1 次行动格并立即执行行动（<place_family_member>）；房间数与人数相等时才能容下（每个房间住 1 人）。通过家庭成长增加（<family_growth_with_room> 需空房间，第 5-7 回合；<family_growth_without_room> 无需房间，第 12-13 回合）——新生儿放在行动格旁，回家阶段进自己的房间，出生当回合的收获只吃 1 食物。终局每个家庭成员 +3 <vp>。",
+        "en": "A player's <ontology::piece> — a round wooden disc, 5 per player (2 start in the wooden rooms, the other 3 in your supply). Each work phase, every family member is placed on exactly one action space and resolves it immediately (<place_family_member>); one person lives in each room. Family members are added through family growth (<family_growth_with_room> needs an empty room, rounds 5-7; <family_growth_without_room> needs no room, rounds 12-13) — the newborn stands next to the acting person on the space, moves into its own room when returning home, and needs only 1 food in the harvest of the round it was born. Final scoring: +3 <vp> each."
+      },
+      "appearance": {
+        "zh": "玩家颜色的圆形木片，直径约 1.5 厘米，每名玩家 5 个。",
+        "en": "A round wooden disc in the player color, about 1.5 cm across, 5 per player."
+      }
+    },
+    {
+      "id": "fence",
+      "specifies": "<ontology::piece>",
+      "name": {
+        "zh": "栅栏",
+        "en": "Fence"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的<ontology::piece>——木条，每名玩家 15 根。通过<build_fences>建造（每根 1 <wood>，一次行动可建多根）。栅栏必须围出**完全封闭**的<pasture>（四边都是栅栏）；第一个牧场可建在农场任意空地（空间连续），之后的牧场必须与已有牧场相邻；相邻牧场共用边界栅栏。栅栏建成后不可拆除，可在一个已有牧场内加栅栏细分它。房间与田地的边不算栅栏。终局每个有围栏的马厩 +1 <vp>（牧场本身按个数计分，与大小无关）。",
+        "en": "A player's <ontology::piece> — a wooden stick, 15 per player. Built via <build_fences> (1 <wood> each; any number in one action). Fences must create a **fully enclosed** <pasture> (fences on all sides); your first pasture can go anywhere on the farmyard (empty, contiguous spaces), later pastures must be adjacent to an existing one; adjacent pastures share their bordering fences. Fences are permanent — never demolished — and may be added inside an existing pasture to subdivide it. The edges of room and field tiles do not count as fences. Final scoring: +1 <vp> per fenced stable (pastures themselves score per pasture, regardless of size)."
+      },
+      "appearance": {
+        "zh": "玩家颜色的小木条，每名玩家 15 根。",
+        "en": "Small wooden sticks in the player color, 15 per player."
+      }
+    },
+    {
+      "id": "stable",
+      "specifies": "<ontology::piece>",
+      "name": {
+        "zh": "马厩",
+        "en": "Stable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的<ontology::piece>——马厩木块，每名玩家 4 个。通过<build_stables>建造（每个 2 <wood>，一次行动可建多个、一个一个地建）。每个农场格最多 1 个马厩（格上不能有板块），马厩不需要与其它马厩相邻。效果：马厩建在<pasture>里使该牧场容量翻倍（每格基础 2 只 × 每个马厩 ×2，如 1×2 牧场 + 2 马厩 = 16 只）；牧场外的马厩只能容纳恰好 1 只动物，之后可被栅栏围起来。放置后永久。某些卡可给马厩附加特殊能力（每个马厩至多 1 个）。终局每个围起来的马厩 +1 <vp>。",
+        "en": "A player's <ontology::piece> — a wooden stable, 4 per player. Built via <build_stables> (2 <wood> each; several in one action, one after another). At most one stable per farmyard space (the space may not be covered by a tile); stables need no adjacency. Effect: a stable inside a <pasture> doubles that pasture's capacity (base 2 per space ×2 per stable; e.g. a 1×2 pasture with 2 stables holds 16 animals); a stable outside any pasture holds exactly 1 animal and can be fenced in later. Stables are permanent. Certain cards may give a stable a special ability (at most one each). Final scoring: +1 <vp> per fenced stable."
+      },
+      "appearance": {
+        "zh": "玩家颜色的马厩形小木块，每名玩家 4 个。",
+        "en": "Small stable-shaped wooden pieces in the player color, 4 per player."
+      }
+    },
+    {
+      "id": "room_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "房间板块",
+        "en": "Room Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "房屋的<ontology::tile>，三种材质：木（木屋）、黏土（泥屋）、石头（石屋）。开局每名玩家的<farmyard_board>上预印 2 个木屋房间。建房（<build_rooms>）时按当前房屋材质加房间：木 5 <wood> + 2 <reed>、泥 5 <clay> + 2 <reed>、石 5 <stone> + 2 <reed>；房间必须与已有房间相邻。翻新（<renovation>）把**所有**房间换成下一级材质：木→泥（每房间 1 <clay> + 总计 1 <reed>）、泥→石（每房间 1 <stone> + 总计 1 <reed>），必须分两步不能跳级。物理上：23 块木房间/田地双面板块（一面木房间、一面田）+ 16 块黏土/石头双面板块（一面泥、一面石，翻新到石屋时翻面）。终局：木房间 0 分、泥房间 +1、石房间 +2。",
+        "en": "The house's <ontology::tile>, in three materials: wood, clay, stone. Each player's <farmyard_board> starts with 2 pre-printed wooden rooms. Building rooms (<build_rooms>) uses the current house material: 5 <wood> + 2 <reed>, 5 <clay> + 2 <reed>, or 5 <stone> + 2 <reed>; rooms must be adjacent to existing rooms. Renovation (<renovation>) replaces **all** rooms with the next material: wood→clay (1 <clay> per room + 1 <reed> total), clay→stone (1 <stone> per room + 1 <reed> total); always step by step, never skipping. Physically: 23 double-sided wood room/field tiles (wooden room one side, field the other) + 16 double-sided clay/stone tiles (clay one side, stone the other — flipped when renovating to stone). Final scoring: wooden rooms 0, clay rooms +1, stone rooms +2."
+      },
+      "material": {
+        "type": "enum",
+        "enum": [
+          "wood",
+          "clay",
+          "stone"
+        ],
+        "description": {
+          "zh": "房间材质：wood=木屋（终局 0 分）、clay=泥屋（+1）、stone=石屋（+2）。房屋所有房间材质相同，翻新时整体升级。",
+          "en": "Room material: wood (0 points at game end), clay (+1), stone (+2). All rooms of a house share the same material, upgraded together by renovation."
+        }
+      },
+      "appearance": {
+        "zh": "方形厚纸板块：木房间/田地为双面板块（23 块），黏土/石头为双面板块（16 块）。",
+        "en": "Square cardboard tiles: wood-room/field double-sided tiles (23) and clay/stone double-sided tiles (16)."
+      }
+    },
+    {
+      "id": "field_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "田地板块",
+        "en": "Field Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "农田的<ontology::tile>。通过<plough_field>获得（第一个田可放在农场任意空地，之后的必须与已有田相邻）。田地一旦放置不可移除。用途：<sow>播种——每块空田放 1 个自己供应的作物 + 供应堆的额外标记（谷物 +2、蔬菜 +1），一次播种行动可播任意多块田、可混合谷物与蔬菜，也可留空田闲置。每个收获回合的田地阶段必须从每块田上取 1 个作物进供应（<harvest_field_phase>）。终局所有田（无论是否播种）都按数量计分：0-1 块 -1，2 块 +1，3 块 +2，4 块 +3，5+ 块 +4。",
+        "en": "The farmland's <ontology::tile>. Gained by <plough_field> (your first field may go anywhere on the farmyard, later ones must be adjacent to an existing field). Fields can never be removed. Use: <sow> plants them — each empty field takes 1 crop from your supply plus markers from the general supply (grain +2, vegetables +1); one sow action may plant any number of fields, mixing grain and vegetables, and may leave fields fallow. Each harvest's field phase must take exactly 1 crop from every field into your supply (<harvest_field_phase>). Final scoring counts all fields, planted or not: 0-1 → -1, 2 → +1, 3 → +2, 4 → +3, 5+ → +4."
+      },
+      "appearance": {
+        "zh": "与木房间共享的 23 块双面板块的另一面（背面为木房间）。",
+        "en": "The reverse side of the 23 double-sided tiles shared with wooden rooms (back shows a wooden room)."
+      }
+    },
+    {
+      "id": "starting_player_token",
+      "specifies": "<ontology::starting_player_marker>",
+      "name": {
+        "zh": "起始玩家标记",
+        "en": "Starting Player Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "黄色起始玩家标记。开局随机决定持有者（持有者得 2 食物，其余玩家 3 食物）。起始玩家**不会自动轮换**——只有用<space_meeting_place>的「拿取起始玩家」行动（<take_starting_player>）才能夺取标记（可同时打 1 张次要改良）。若无人使用该行动，标记留在原持有者处。工作阶段从起始玩家开始顺时针依次放置家庭成员。",
+        "en": "The yellow starting player marker. Its holder is determined randomly at setup (that player gets 2 food, the others 3). The starting player **never rotates automatically** — only the 'take starting player' action on <space_meeting_place> (<take_starting_player>) claims the token (a minor improvement may be played at the same time). If nobody uses that action, the token stays put. The work phase begins with the starting player and proceeds clockwise."
+      },
+      "appearance": {
+        "zh": "黄色木制标记，1 个。",
+        "en": "A single yellow wooden token."
+      }
+    },
+    {
+      "id": "begging_marker",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "乞讨标记",
+        "en": "Begging Marker"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 7 个。喂养阶段（<harvest_feeding>）中，每缺少 1 食物就须拿 1 个乞讨标记（无论是不足还是选择不付）。乞讨标记**无法移除**，终局每个 -3 <vp>。",
+        "en": "7 markers in total. During the feeding phase (<harvest_feeding>), you must take 1 begging marker for each food you are short (whether unable or unwilling to pay). Begging markers can **never be removed** and cost -3 <vp> each at final scoring."
+      },
+      "appearance": {
+        "zh": "灰色小圆片，共 7 个。",
+        "en": "Small grey round markers, 7 in total."
+      }
+    },
+    {
+      "id": "goods_tile",
+      "specifies": "<ontology::token>",
+      "name": {
+        "zh": "货物板块",
+        "en": "Goods Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "替代用大号货物板块，共 20 块：2 蔬菜、3 谷物、4 动物（每种 1 块）、5 建材（每种 1 块）。任何供应组件耗尽时用它或任何替代品顶替——只有家庭成员（5 个）、马厩（4 个）、栅栏（15 根）是刻意限量的。",
+        "en": "20 substitute goods tiles: 2 vegetables, 3 grain, 4 animals (one tile per type), 5 building resources (one per type). Use them (or improvise) whenever a shared supply runs out — only family members (5), stables (4), and fences (15) are intentionally limited."
+      },
+      "appearance": {
+        "zh": "印有货物图案的大号纸板块，共 20 块。",
+        "en": "Large cardboard tiles printed with goods illustrations, 20 in total."
+      }
+    },
+    {
+      "id": "occupation_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "职业卡",
+        "en": "Occupation Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "黄色<ontology::card>，共 168 张（15 周年纪念版卡池）。按人数筛选：左侧方块符号 [1+] 用于 1-4 人、[3+] 用于 3-4 人、[4] 仅 4 人局——不用的放回盒中。开局洗混后每人发 7 张，游戏中**不再抽牌**。通过「学习」行动格打出（<play_occupation>）：<space_lessons>上第一张免费、之后每张 1 <food>；3 人局<space_lessons_3p>每张 2 <food>；4 人局<space_lessons_4p>前两张各 1 <food>、之后每张 2 <food>。职业数量不受家庭成员数限制。打出的职业正面朝上放在<played_cards_area>，文字生效；卡上文字优先于规则书；个别职业另有费用或条件（以卡面为准）。本定义按系统建模，不逐一列举 168 张。",
+        "en": "A yellow <ontology::card>, 168 cards (15th anniversary pool). Filtered by player count: the square symbol on the left side shows [1+] for 1-4 players, [3+] for 3-4, [4] for 4 only — unused cards go back in the box. At setup the remaining cards are shuffled and each player is dealt 7; **no cards are drawn during the game**. Occupations are played via the 'Lessons' action spaces (<play_occupation>): on <space_lessons> your first is free and each additional one costs 1 <food>; on <space_lessons_3p> (3 players) each costs 2 <food>; on <space_lessons_4p> (4 players) the first two cost 1 <food> each and each further one 2 <food>. The number of occupations is not limited by your family size. Played occupations lie face up in your <played_cards_area> and their text takes effect; card text takes precedence over the rulebook; some occupations carry additional costs or conditions (per card). Modeled as a system — the 168 cards are not listed individually."
+      },
+      "player_filter": {
+        "type": "enum",
+        "enum": [
+          "1_plus",
+          "3_plus",
+          "4_only"
+        ],
+        "description": {
+          "zh": "人数筛选：1_plus=[1+]（1-4 人）、3_plus=[3+]（3-4 人）、4_only=[4]（仅 4 人）。",
+          "en": "Player-count filter: 1_plus=[1+] (1-4 players), 3_plus=[3+] (3-4), 4_only=[4] (4 only)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色卡牌，左侧印有人数方块符号，卡面为职业插图与效果文字。",
+        "en": "A yellow card with a player-count square symbol on the left and an occupation illustration with effect text."
+      }
+    },
+    {
+      "id": "minor_improvement_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "次要改良卡",
+        "en": "Minor Improvement Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "橙色<ontology::card>，共 168 张（15 周年纪念版卡池）。开局洗混后每人发 7 张，游戏中**不再抽牌**。打出途径：<rc_improvement>的「主要或次要改良」行动、<space_meeting_place>（拿起始玩家的同时）、<rc_family_growth_minor>（家庭成长后）。打出前必须先满足卡上的**前置条件**（只要求拥有、不要求支付，如「已有至少 2 个职业」）；右上角是建材费用，须从供应支付；打出的卡正面朝上放<played_cards_area>，文字生效并优先于规则书。**旅行卡**（左箭头标记）：执行完卡上指示后传给左边玩家，该玩家收进手中。大多数次要改良有终局分数（黄色圆圈数字）或🔷奖励分。本定义按系统建模，不逐一列举 168 张（规则书示例：<space_meeting_place>能打的卡如织布机 1 分 + 每 3 只羊 1 奖励分；货摊把 1 谷物换成 1 蔬菜）。",
+        "en": "An orange <ontology::card>, 168 cards (15th anniversary pool). At setup each player is dealt 7; **no cards are drawn during the game**. Played via: the 'major or minor improvement' action of <rc_improvement>, <space_meeting_place> (along with taking the starting player), or <rc_family_growth_minor> (after family growth). The card's **prerequisite** must be met first (it only demands that you have something, not that you pay it — e.g. 'at least 2 occupations'); the building cost in the top right corner is paid from your supply. Played cards lie face up in your <played_cards_area>, their text taking effect and precedence over the rulebook. **Traveling cards** (a left-pointing arrow): after carrying out the instructions, pass the card to the player on your left, who takes it into hand. Most minor improvements have final points (yellow circle) or 🔷 bonus points. Modeled as a system — the 168 cards are not listed individually (rulebook examples: the Loom, 1 point + 1 bonus per 3 sheep; the Market Stand, 1 grain → 1 vegetable)."
+      },
+      "prerequisite": {
+        "type": "string",
+        "description": {
+          "zh": "卡上的前置条件（如「至少 2 个职业」），满足才能打出；只要求拥有、不要求支付。",
+          "en": "The card's printed prerequisite (e.g. 'at least 2 occupations'), which must be met to play the card; it demands ownership, never payment."
+        }
+      },
+      "cost": {
+        "type": "string",
+        "description": {
+          "zh": "右上角印的建材费用（如「1 木头 1 黏土」），从个人供应支付。",
+          "en": "The building resource cost printed in the top right corner, paid from your personal supply."
+        }
+      },
+      "traveling": {
+        "type": "boolean",
+        "description": {
+          "zh": "是否为旅行卡（左箭头）：执行完指示后传给左边玩家收进手牌。",
+          "en": "Whether it is a traveling card (left arrow): after carrying out its instructions, pass it to the player on your left, who takes it into hand."
+        }
+      },
+      "appearance": {
+        "zh": "橙色卡牌，右上角印建材费用，卡面为插图与效果文字，旅行卡带左箭头标记。",
+        "en": "An orange card with the building cost in the top right corner, an illustration with effect text, and a left arrow on traveling cards."
+      }
+    },
+    {
+      "id": "major_improvement_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "主要改良卡",
+        "en": "Major Improvement Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "红色<ontology::card>，共 10 张（厚纸板）：<fireplace>×2、<cooking_hearth>×2、<well>、<clay_oven>、<stone_oven>、<joinery>、<pottery>、<basketmakers_workshop>。开局全部正面朝上放在<major_improvement_frame>里，所有玩家可用（先到先得）。通过<build_major_improvement>建造（主要途径是<rc_improvement>；<rc_renovation_improvement>翻新后可加建）。右上角是建材费用；一旦拥有整局可用。主要改良的用途是把货物变成食物（🍖 烹饪动物/蔬菜、🍞 烘焙谷物、手工建筑每收获换食物），黄色圆圈数字是终局<vp>。",
+        "en": "A red <ontology::card>, 10 cards on thick cardboard: <fireplace>×2, <cooking_hearth>×2, <well>, <clay_oven>, <stone_oven>, <joinery>, <pottery>, <basketmakers_workshop>. All start face up in the <major_improvement_frame>, available to every player (first come, first served). Built via <build_major_improvement> (mainly through <rc_improvement>; <rc_renovation_improvement> adds one after renovating). The building cost is printed in the top right corner; once owned, the improvement is usable for the rest of the game. Major improvements turn goods into food (🍖 cooking animals/vegetables, 🍞 baking grain, craft buildings converting a resource per harvest); the number in the yellow circle is its final <vp>."
+      },
+      "vp_value": {
+        "type": "integer",
+        "description": {
+          "zh": "黄色圆圈里的终局分数（1-4）。",
+          "en": "The final points printed in the yellow circle (1-4)."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，右上角印建材费用，黄色圆圈印终局分数。",
+        "en": "A red thick-cardboard card with the building cost in the top right and the final points in a yellow circle."
+      }
+    },
+    {
+      "id": "fireplace",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "壁炉",
+        "en": "Fireplace"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良之一，共 2 张：一张 2 <clay>、一张 3 <clay>。终局 1 <vp>。🍖 效果（随时，不限次数）：把动物/蔬菜直接换成食物——蔬菜 2 食物、<sheep> 2 食物、<wild_boar> 2 食物、<cattle> 3 食物；从累积格取动物时可立即转换、不必先安置。🍞 效果：<bake_bread>时每个<grain>烤成 2 食物（可部分烘焙、保留剩余谷物）。拿主要改良行动时可把壁炉退还换< cooking_hearth>，不额外付建材。",
+        "en": "One of the major improvements, 2 copies: one costs 2 <clay>, the other 3 <clay>. Final: 1 <vp>. 🍖 effect (any time, unlimited): convert animals/vegetables directly to food — vegetables 2 food, <sheep> 2, <wild_boar> 2, <cattle> 3; animals taken from an accumulation space may be converted at once without being accommodated. 🍞 effect: during <bake_bread>, each <grain> bakes into 2 food (you may bake partially and keep the rest). When taking a major improvement action you may return the Fireplace and take a <cooking_hearth> for free."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有壁炉图案；左下角 🍖、右下角 🍞 符号。",
+        "en": "A red thick-cardboard card with a fireplace illustration; 🍖 bottom left, 🍞 bottom right."
+      }
+    },
+    {
+      "id": "cooking_hearth",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "烹饪炉",
+        "en": "Cooking Hearth"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良之一，共 2 张：一张 4 <clay>、一张 5 <clay>。终局 1 <vp>。🍖 效果（随时，不限次数）：蔬菜 3 食物、<sheep> 2 食物、<wild_boar> 3 食物、<cattle> 4 食物。🍞 效果：<bake_bread>时每个<grain>烤成 3 食物。拿主要改良行动时可退还<fireplace>免费换烹饪炉（不额外付建材）。",
+        "en": "One of the major improvements, 2 copies: one costs 4 <clay>, the other 5 <clay>. Final: 1 <vp>. 🍖 effect (any time, unlimited): vegetables 3 food, <sheep> 2, <wild_boar> 3, <cattle> 4. 🍞 effect: during <bake_bread>, each <grain> bakes into 3 food. When taking a major improvement action you may return your <fireplace> and take a Cooking Hearth for free."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有烹饪炉图案；左下角 🍖、右下角 🍞 符号。",
+        "en": "A red thick-cardboard card with a cooking hearth illustration; 🍖 bottom left, 🍞 bottom right."
+      }
+    },
+    {
+      "id": "clay_oven",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "黏土烤炉",
+        "en": "Clay Oven"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良，费用 2 <clay> + 1 <stone>。终局 3 <vp>。🍞 效果：<bake_bread>时最多 1 个<grain>烤成 5 食物。建造时**立即获得一次烘焙行动**（所以最好手里已有谷物再建）。可与其他🍞改良组合（如黏土烤炉 1 个→5 食物 + 烹饪炉其余每个 3 食物）。",
+        "en": "A major improvement costing 2 <clay> + 1 <stone>. Final: 3 <vp>. 🍞 effect: during <bake_bread>, bake at most 1 <grain> into 5 food. When built, you **immediately get a bake action** (so build it preferably when you already have grain). Combines with other 🍞 improvements (e.g. Clay Oven 1 grain → 5 food + Cooking Hearth 3 food per further grain)."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "固定为 3。",
+          "en": "Fixed to 3."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有黏土烤炉图案；右下角 🍞 符号。",
+        "en": "A red thick-cardboard card with a clay oven illustration; 🍞 bottom right."
+      }
+    },
+    {
+      "id": "stone_oven",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "石烤炉",
+        "en": "Stone Oven"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良，费用 3 <stone> + 1 <clay>。终局 3 <vp>。🍞 效果：<bake_bread>时最多 2 个<grain>各烤成 4 食物。建造时**立即获得一次烘焙行动**。可与其他🍞改良组合。",
+        "en": "A major improvement costing 3 <stone> + 1 <clay>. Final: 3 <vp>. 🍞 effect: during <bake_bread>, bake up to 2 <grain> into 4 food each. When built, you **immediately get a bake action**. Combines with other 🍞 improvements."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "固定为 3。",
+          "en": "Fixed to 3."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有石烤炉图案；右下角 🍞 符号。",
+        "en": "A red thick-cardboard card with a stone oven illustration; 🍞 bottom right."
+      }
+    },
+    {
+      "id": "well",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "水井",
+        "en": "Well"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良，费用 3 <stone> + 1 <wood>。终局 4 <vp>。效果：建造时在接下来的 5 个**尚未被回合卡覆盖**的<round_space>上各放 1 食物，这些回合开始时（准备阶段）获得该食物（<well_income>）。",
+        "en": "A major improvement costing 3 <stone> + 1 <wood>. Final: 4 <vp>. Effect: when built, place 1 food on each of the next 5 <round_space>s not yet covered by round cards (if possible); at the start of those rounds, during the preparation phase, you receive that food (<well_income>)."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 4,
+        "description": {
+          "zh": "固定为 4。",
+          "en": "Fixed to 4."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有水井图案。",
+        "en": "A red thick-cardboard card with a well illustration."
+      }
+    },
+    {
+      "id": "joinery",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "细木工坊",
+        "en": "Joinery"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良（手工建筑），费用 2 <wood> + 2 <stone>。终局 2 <vp>。效果：每个收获至多把 1 <wood> 换成 2 食物（<craft_conversion>）；终局按供应中剩余木头得奖励分：3-4 根 +1、5-6 根 +2、7+ 根 +3。",
+        "en": "A major improvement (craft building) costing 2 <wood> + 2 <stone>. Final: 2 <vp>. Effect: each harvest, convert at most 1 <wood> into 2 food (<craft_conversion>); final bonus points for wood left in your supply: 3-4 → +1, 5-6 → +2, 7+ → +3."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有细木工坊图案。",
+        "en": "A red thick-cardboard card with a joinery illustration."
+      }
+    },
+    {
+      "id": "pottery",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "陶坊",
+        "en": "Pottery"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良（手工建筑），费用 2 <clay> + 2 <stone>。终局 2 <vp>。效果：每个收获至多把 1 <clay> 换成 2 食物（<craft_conversion>）；终局按供应中剩余黏土得奖励分：3-5 块 +1、5-6 块 +2、7+ 块 +3。",
+        "en": "A major improvement (craft building) costing 2 <clay> + 2 <stone>. Final: 2 <vp>. Effect: each harvest, convert at most 1 <clay> into 2 food (<craft_conversion>); final bonus points for clay left in your supply: 3-4 → +1, 5-6 → +2, 7+ → +3."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有陶坊图案。",
+        "en": "A red thick-cardboard card with a pottery illustration."
+      }
+    },
+    {
+      "id": "basketmakers_workshop",
+      "specifies": "<major_improvement_card>",
+      "name": {
+        "zh": "编篮工坊",
+        "en": "Basket Weaver's Workshop"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主要改良（手工建筑），费用 2 <reed> + 2 <stone>。终局 2 <vp>。效果：每个收获至多把 1 <reed> 换成 3 食物（<craft_conversion>）；终局按供应中剩余芦苇得奖励分：2-3 根 +1、4 根 +2、5+ 根 +3。",
+        "en": "A major improvement (craft building) costing 2 <reed> + 2 <stone>. Final: 2 <vp>. Effect: each harvest, convert at most 1 <reed> into 3 food (<craft_conversion>); final bonus points for reed left in your supply: 2-3 → +1, 4 → +2, 5+ → +3."
+      },
+      "vp_value": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "红色厚纸板卡，印有编篮工坊图案。",
+        "en": "A red thick-cardboard card with a basket weaver's workshop illustration."
+      }
+    },
+    {
+      "id": "round_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "回合卡",
+        "en": "Round Card"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "共 14 张回合卡（行动空间卡），分 6 个阶段：第 1 阶段 4 张（回合 1-4 随机出现）、第 2 阶段 3 张（回合 5-7）、第 3 阶段 2 张（回合 8-9）、第 4 阶段 2 张（回合 10-11）、第 5 阶段 2 张（回合 12-13）、第 6 阶段 1 张（回合 14）。开局按背面数字分堆洗混，阶段顺序叠放。每回合准备阶段翻开最上面一张，放在对应回合编号的<round_space>上——从此成为新的行动格（<reveal_round_card>），本回合起每回合都可用。14 张：<rc_improvement>、<rc_sheep>、<rc_sow_bake>、<rc_fences>、<rc_stone_s2>、<rc_family_growth_minor>、<rc_renovation_improvement>、<rc_vegetable>、<rc_wild_boar>、<rc_cattle>、<rc_stone_s4>、<rc_plough_sow>、<rc_family_growth_no_room>、<rc_renovation_fences>。",
+        "en": "14 round cards (action space cards) in 6 stages: 4 in stage 1 (rounds 1-4, in random order), 3 in stage 2 (rounds 5-7), 2 in stage 3 (rounds 8-9), 2 in stage 4 (rounds 10-11), 2 in stage 5 (rounds 12-13), 1 in stage 6 (round 14). At setup they are shuffled within their number and stacked by stage. Each preparation phase, the top card is revealed onto the <round_space> matching the current round number — it becomes a new action space from this round on (<reveal_round_card>). The 14: <rc_improvement>, <rc_sheep>, <rc_sow_bake>, <rc_fences>, <rc_stone_s2>, <rc_family_growth_minor>, <rc_renovation_improvement>, <rc_vegetable>, <rc_wild_boar>, <rc_cattle>, <rc_stone_s4>, <rc_plough_sow>, <rc_family_growth_no_room>, <rc_renovation_fences>."
+      },
+      "stage": {
+        "type": "integer",
+        "description": {
+          "zh": "所属阶段 1-6，决定出现的回合窗口。",
+          "en": "Its stage, 1-6, determining the round window in which it appears."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "回合卡的外观——14 张厚纸板卡，正面印行动格说明与图示，背面印编号与阶段。",
+          "en": "The round card's appearance — one of 14 thick cardboard cards with the action space text and illustration on the front, and its number and stage on the back."
+        }
+      }
+    },
+    {
+      "id": "rc_improvement",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "主要或次要改良（回合卡）",
+        "en": "Major or Minor Improvement (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 1 阶段的<round_card>（回合 1-4 随机出现）。翻开后成为行动格：执行<build_major_improvement>**或**<play_minor_improvement>（二选一）。",
+        "en": "A stage-1 <round_card> (appears in rounds 1-4 in random order). Once revealed it becomes an action space: take <build_major_improvement> **or** <play_minor_improvement>."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<build_major_improvement>",
+            "<play_minor_improvement>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
+    {
+      "id": "rc_sheep",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "羊（回合卡）",
+        "en": "Sheep (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 1 阶段的<round_card>（回合 1-4 随机出现）。翻开后成为**累积行动格**：每回合准备阶段放 1 只<sheep>（<accumulation_refill>），使用该格时取走全部羊（<take_accumulated_goods>）。",
+        "en": "A stage-1 <round_card> (rounds 1-4 in random order). Once revealed it becomes an **accumulation action space**: each preparation phase places 1 <sheep> on it (<accumulation_refill>); using the space takes all sheep (<take_accumulated_goods>)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<sheep>",
+            "quantity": {
+              "zh": "该格上的全部羊。",
+              "en": "All sheep on the space."
+            },
+            "description": {
+              "zh": "取走该行动格上的全部<sheep>放入个人供应（若需安置到农场，见<animal>的安置规则；有🍖改良可直接换成食物）。",
+              "en": "Take all <sheep> from the space into your personal supply (to keep them you must accommodate them per <animal>; with a 🍖 improvement you may convert them to food at once)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_sow_bake",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "播种和/或烘焙面包（回合卡）",
+        "en": "Sow and/or Bake Bread (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 1 阶段的<round_card>（回合 1-4 随机出现）。翻开后成为行动格（「谷物利用」）：执行<sow>和/或<bake_bread>（至少做一个，可都做）。",
+        "en": "A stage-1 <round_card> (rounds 1-4 in random order). Once revealed it becomes an action space ('Grain Utilization'): take <sow> and/or <bake_bread> (at least one)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<sow>",
+            "<bake_bread>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+        }
+      }
+    },
+    {
+      "id": "rc_fences",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "栅栏（回合卡）",
+        "en": "Fences (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 1 阶段的<round_card>（回合 1-4 随机出现）。翻开后成为行动格：执行<build_fences>（每根栅栏 1 <wood>）。",
+        "en": "A stage-1 <round_card> (rounds 1-4 in random order). Once revealed it becomes an action space: take <build_fences> (1 <wood> per fence)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<build_fences>": {
+            "description": {
+              "zh": "执行<build_fences>：每根栅栏付 1 <wood>，一次行动可建多根。",
+              "en": "Resolve <build_fences>: pay 1 <wood> per fence; any number in one action."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_stone_s2",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "石头（第 2 阶段回合卡）",
+        "en": "Stone (Stage 2 Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 2 阶段的<round_card>（回合 5-7 随机出现）。翻开后成为**累积行动格**：每回合准备阶段放 1 块<stone>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "A stage-2 <round_card> (rounds 5-7 in random order). Once revealed it becomes an **accumulation action space**: each preparation phase places 1 <stone>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<stone>",
+            "quantity": {
+              "zh": "该格上的全部石头。",
+              "en": "All stone on the space."
+            },
+            "description": {
+              "zh": "取走该行动格上的全部<stone>放入个人供应。",
+              "en": "Take all <stone> from the space into your personal supply."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_family_growth_minor",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "家庭成长后另加次要改良（回合卡）",
+        "en": "Family Growth and Minor Improvement (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 2 阶段的<round_card>（回合 5-7 随机出现，即「Basic Wish for Children」）。翻开后成为行动格：先执行<family_growth_with_room>（必须做），**之后**可选打 1 张<minor_improvement_card>（<play_minor_improvement>）。",
+        "en": "A stage-2 <round_card> (rounds 5-7 in random order; the 'Basic Wish for Children'). Once revealed it becomes an action space: first take <family_growth_with_room> (mandatory), **and afterward** you may play 1 <minor_improvement_card> (<play_minor_improvement>)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "do_family_growth",
+              "name": {
+                "zh": "家庭成长",
+                "en": "Family Growth"
+              },
+              "<family_growth_with_room>": {
+                "description": {
+                  "zh": "必须执行<family_growth_with_room>。",
+                  "en": "Take <family_growth_with_room> (mandatory)."
+                }
+              }
+            },
+            {
+              "id": "then_minor_improvement",
+              "name": {
+                "zh": "之后打次要改良（可选）",
+                "en": "Then Play a Minor Improvement (Optional)"
+              },
+              "do_after": [
+                "do_family_growth"
+              ],
+              "options": [
+                {
+                  "id": "play_minor",
+                  "name": {
+                    "zh": "打 1 张次要改良",
+                    "en": "Play a Minor Improvement"
+                  },
+                  "<play_minor_improvement>": {
+                    "description": {
+                      "zh": "家庭成长之后，可另打 1 张次要改良。",
+                      "en": "After family growth, you may also play a minor improvement."
+                    }
+                  }
+                },
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不打（跳过此项）",
+                    "en": "Skip — play none."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "rc_renovation_improvement",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "翻新后另加改良（回合卡）",
+        "en": "Renovation and Major or Minor Improvement (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 2 阶段的<round_card>（回合 5-7 随机出现，即「House Redevelopment」）。翻开后成为行动格：先执行<renovation>（必须做，木→泥或泥→石），**之后**可选建造 1 张主要改良或打 1 张次要改良。",
+        "en": "A stage-2 <round_card> (rounds 5-7 in random order; the 'House Redevelopment'). Once revealed it becomes an action space: first take <renovation> (mandatory, wood→clay or clay→stone), **and afterward** you may build 1 major improvement or play 1 minor improvement."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "do_renovation",
+              "name": {
+                "zh": "执行翻新（必做）",
+                "en": "Renovate (Mandatory)"
+              },
+              "<renovation>": {
+                "description": {
+                  "zh": "必须执行<renovation>。",
+                  "en": "Take <renovation> (mandatory)."
+                }
+              }
+            },
+            {
+              "id": "then_improvement",
+              "name": {
+                "zh": "之后改良（可选）",
+                "en": "Then an Improvement (Optional)"
+              },
+              "do_after": [
+                "do_renovation"
+              ],
+              "options": [
+                "<build_major_improvement>",
+                "<play_minor_improvement>",
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不打（跳过此项）",
+                    "en": "Skip — play none."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "rc_vegetable",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "拿取 1 个蔬菜（回合卡）",
+        "en": "Take 1 Vegetable (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 3 阶段的<round_card>（回合 8-9 随机出现）。翻开后成为行动格：从<general_supply>拿 1 个<vegetable>放入个人供应。",
+        "en": "A stage-3 <round_card> (rounds 8-9 in random order). Once revealed it becomes an action space: take 1 <vegetable> from the <general_supply> into your personal supply."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "固定为 3。",
+          "en": "Fixed to 3."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<vegetable>",
+            "quantity": 1,
+            "description": {
+              "zh": "从<general_supply>拿 1 个<vegetable>放入个人供应。",
+              "en": "Take 1 <vegetable> from the <general_supply> into your personal supply."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_wild_boar",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "野猪（回合卡）",
+        "en": "Wild Boar (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 3 阶段的<round_card>（回合 8-9 随机出现）。翻开后成为**累积行动格**：每回合准备阶段放 1 只<wild_boar>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "A stage-3 <round_card> (rounds 8-9 in random order). Once revealed it becomes an **accumulation action space**: each preparation phase places 1 <wild_boar>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "固定为 3。",
+          "en": "Fixed to 3."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<wild_boar>",
+            "quantity": {
+              "zh": "该格上的全部野猪。",
+              "en": "All wild boar on the space."
+            },
+            "description": {
+              "zh": "取走该行动格上的全部<wild_boar>放入个人供应（需安置到农场；有🍖改良可直接换成食物）。",
+              "en": "Take all <wild_boar> from the space into your personal supply (accommodate them on the farm; with a 🍖 improvement you may convert them to food at once)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_cattle",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "牛（回合卡）",
+        "en": "Cattle (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 4 阶段的<round_card>（回合 10-11 随机出现）。翻开后成为**累积行动格**：每回合准备阶段放 1 头<cattle>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "A stage-4 <round_card> (rounds 10-11 in random order). Once revealed it becomes an **accumulation action space**: each preparation phase places 1 <cattle>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 4,
+        "description": {
+          "zh": "固定为 4。",
+          "en": "Fixed to 4."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<cattle>",
+            "quantity": {
+              "zh": "该格上的全部牛。",
+              "en": "All cattle on the space."
+            },
+            "description": {
+              "zh": "取走该行动格上的全部<cattle>放入个人供应（需安置到农场；有🍖改良可直接换成食物）。",
+              "en": "Take all <cattle> from the space into your personal supply (accommodate them on the farm; with a 🍖 improvement you may convert them to food at once)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_stone_s4",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "石头（第 4 阶段回合卡）",
+        "en": "Stone (Stage 4 Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 4 阶段的<round_card>（回合 10-11 随机出现）。翻开后成为**累积行动格**：每回合准备阶段放 1 块<stone>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "A stage-4 <round_card> (rounds 10-11 in random order). Once revealed it becomes an **accumulation action space**: each preparation phase places 1 <stone>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 4,
+        "description": {
+          "zh": "固定为 4。",
+          "en": "Fixed to 4."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<stone>",
+            "quantity": {
+              "zh": "该格上的全部石头。",
+              "en": "All stone on the space."
+            },
+            "description": {
+              "zh": "取走该行动格上的全部<stone>放入个人供应。",
+              "en": "Take all <stone> from the space into your personal supply."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_plough_sow",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "犁田和/或播种（回合卡）",
+        "en": "Plough 1 Field and/or Sow (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 5 阶段的<round_card>（回合 12-13 随机出现）。翻开后成为行动格：执行<plough_field>和/或<sow>（至少做一个，可都做）。",
+        "en": "A stage-5 <round_card> (rounds 12-13 in random order). Once revealed it becomes an action space: take <plough_field> and/or <sow> (at least one)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 5,
+        "description": {
+          "zh": "固定为 5。",
+          "en": "Fixed to 5."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<plough_field>",
+            "<sow>"
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+        }
+      }
+    },
+    {
+      "id": "rc_family_growth_no_room",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "无空间家庭成长（回合卡）",
+        "en": "Family Growth Even Without Room (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 5 阶段的<round_card>（回合 12-13 随机出现，即「Urgent Wish for Children」）。翻开后成为行动格：执行<family_growth_without_room>。",
+        "en": "A stage-5 <round_card> (rounds 12-13 in random order; the 'Urgent Wish for Children'). Once revealed it becomes an action space: take <family_growth_without_room>."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 5,
+        "description": {
+          "zh": "固定为 5。",
+          "en": "Fixed to 5."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<family_growth_without_room>": {
+            "description": {
+              "zh": "执行<family_growth_without_room>。",
+              "en": "Resolve <family_growth_without_room>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "rc_renovation_fences",
+      "specifies": "<round_card>",
+      "name": {
+        "zh": "翻新后另加栅栏（回合卡）",
+        "en": "Renovation and Fences (Round Card)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 6 阶段的<round_card>（固定在第 14 回合，即「Farm Redevelopment」）。翻开后成为行动格：先执行<renovation>（必须做），**之后**可选执行<build_fences>（每根栅栏 1 <wood>）。",
+        "en": "The stage-6 <round_card> (always round 14; the 'Farm Redevelopment'). Once revealed it becomes an action space: first take <renovation> (mandatory), **and afterward** you may take <build_fences> (1 <wood> per fence)."
+      },
+      "stage": {
+        "type": "integer",
+        "default": 6,
+        "description": {
+          "zh": "固定为 6。",
+          "en": "Fixed to 6."
+        }
+      },
+      "appearance": {
+        "zh": "厚纸板回合卡，正面印有该行动格说明与图示，背面印编号与阶段。",
+        "en": "A thick cardboard round card with the action space text and illustration on the front, and its number and stage on the back."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "do_renovation",
+              "name": {
+                "zh": "执行翻新（必做）",
+                "en": "Renovate (Mandatory)"
+              },
+              "<renovation>": {
+                "description": {
+                  "zh": "必须执行<renovation>。",
+                  "en": "Take <renovation> (mandatory)."
+                }
+              }
+            },
+            {
+              "id": "then_fences",
+              "name": {
+                "zh": "之后建栅栏（可选）",
+                "en": "Then Fences (Optional)"
+              },
+              "do_after": [
+                "do_renovation"
+              ],
+              "options": [
+                "<build_fences>",
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不建（跳过此项）",
+                    "en": "Skip — build none."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "game_board",
+      "specifies": "<ontology::public_board>",
+      "name": {
+        "zh": "主版图",
+        "en": "Game Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "中央公共<ontology::public_board>：印有 10 个永久行动格（<space_farm_expansion>、<space_meeting_place>、<space_grain_seeds>、<space_plough_field>、<space_lessons>、<space_day_labourer>、<space_forest>、<space_clay_pit>、<space_reed_bank>、<space_fishing>）与编号 1-14 的<round_space>（放回合卡）、收获标记（第 4/7/9/11/13/14 回合）与计分表。按人数加装扩展板：3 人局加 3 个行动格（<space_lessons_3p>、<space_clay_3p>、<space_wood_3p>），4 人局加 6 个（<space_reed_stone_food_4p>、<space_travelling_players>、<space_wood_4p>、<space_lessons_4p>、<space_clay_4p>、<space_wood_4p_2>）。",
+        "en": "The central public <ontology::public_board>: printed with the 10 permanent action spaces (<space_farm_expansion>, <space_meeting_place>, <space_grain_seeds>, <space_plough_field>, <space_lessons>, <space_day_labourer>, <space_forest>, <space_clay_pit>, <space_reed_bank>, <space_fishing>), the numbered 1-14 <round_space>s for round cards, the harvest markers (rounds 4/7/9/11/13/14), and the scoring table. An extension board is attached by player count: 3 action spaces in 3-player games (<space_lessons_3p>, <space_clay_3p>, <space_wood_3p>) and 6 in 4-player games (<space_reed_stone_food_4p>, <space_travelling_players>, <space_wood_4p>, <space_lessons_4p>, <space_clay_4p>, <space_wood_4p_2>)."
+      },
+      "appearance": {
+        "zh": "大型版图，中央为行动格区域，边缘有 1-14 回合轨与计分表。",
+        "en": "A large board with the action space area in the middle and a 1-14 round track plus scoring table along the edge."
+      }
+    },
+    {
+      "id": "round_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "回合格",
+        "en": "Round Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>上编号 1-14 的格子。每个格子放对应回合的<round_card>（<reveal_round_card>翻开后放上）；<well>建造时在接下来 5 个尚未被回合卡覆盖的回合格上各放 1 食物，对应回合开始时获得。",
+        "en": "A numbered space (1-14) on the <game_board>. Each space receives the <round_card> of its round (placed when revealed, <reveal_round_card>); when the <well> is built, 1 food is placed on each of the next 5 round spaces not yet covered, collected at the start of those rounds."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "每个回合格放 1 张回合卡（+ 可能的食物）。",
+          "en": "One round card per space (plus possibly food)."
+        }
+      }
+    },
+    {
+      "id": "action_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "行动格",
+        "en": "Action Space"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "<game_board>上的行动格（含回合卡翻开后形成的行动格）。工作阶段放 1 个<family_member>上去并**立即**执行该格提供的行动（<place_family_member>）。每个行动格**每回合只能被 1 个家庭成员使用**——被占后本回合不可再用；不能只为阻挡而放置（至少须执行格上的一种可用行动）。分两类：<permanent_action_space>（每回合提供相同行动）与<accumulation_space>（每回合累积货物）。",
+        "en": "An action space on the <game_board> (including spaces created by revealed round cards). In the work phase, a <family_member> is placed on one and its action is resolved **immediately** (<place_family_member>). Each action space can be used by **only one family member per round** — once occupied it is blocked for the round; you cannot place there just to block (you must take at least one available action of the space). Two kinds: <permanent_action_space> (the same actions every round) and <accumulation_space> (goods accumulate each round)."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "每回合 1 个家庭成员。",
+          "en": "One family member per round."
+        }
+      }
+    },
+    {
+      "id": "permanent_action_space",
+      "specifies": "<action_space>",
+      "name": {
+        "zh": "永久行动格",
+        "en": "Permanent Action Space"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "每回合提供完全相同行动的<action_space>（与累积格相对）。有的提供多个行动可任意顺序做（「和/或」and/or），有的要求按顺序做（「之后」and afterward——第一个行动必须先做，第二个可选）。",
+        "en": "An <action_space> that provides the exact same actions every round (vs. accumulation spaces). Some offer several actions in any order ('and/or'); others require the order shown ('and afterward' — the first action is mandatory, the second optional)."
+      }
+    },
+    {
+      "id": "accumulation_space",
+      "extends": "<action_space>",
+      "name": {
+        "zh": "累积行动格",
+        "en": "Accumulation Space"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "带赭色箭头的<action_space>：每回合准备阶段按标注数量补充货物（<accumulation_refill>——**即使上一回合的货物还在也照加**），使用该格时取走**全部**货物（<take_accumulated_goods>）。",
+        "en": "An <action_space> marked with an ocher arrow: each preparation phase adds the depicted goods (<accumulation_refill> — **even if goods remain from previous rounds**); using the space takes **all** the goods (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "type": "object",
+        "description": {
+          "zh": "每回合准备阶段放置到该格上的货物：goods 为货物概念引用，quantity 为数量。",
+          "en": "Goods placed on this space each preparation phase: goods is a goods-concept reference, quantity is the amount."
+        }
+      }
+    },
+    {
+      "id": "space_farm_expansion",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "农场扩建（行动格）",
+        "en": "Farm Expansion (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的永久行动格。提供建房（<build_rooms>：木屋 5 <wood> + 2 <reed>、泥屋 5 <clay> + 2 <reed>、石屋 5 <stone> + 2 <reed>，一次行动可建多间、材质必须与当前房屋一致）和/或建马厩（<build_stables>：每个 2 <wood>，一次行动可建多个）。至少执行其一。",
+        "en": "A permanent action space on the main board. Provides building rooms (<build_rooms>: 5 <wood> + 2 <reed> for wooden, 5 <clay> + 2 <reed> for clay, 5 <stone> + 2 <reed> for stone rooms; several in one action, material must match the current house) and/or building stables (<build_stables>: 2 <wood> each; several in one action). At least one must be taken."
+      },
+      "<ontology::action>": {
+        "options": [
+          "<build_rooms>",
+          "<build_stables>"
+        ],
+        "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+      }
+    },
+    {
+      "id": "space_meeting_place",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "集会场所（行动格）",
+        "en": "Meeting Place (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的永久行动格。提供拿取<starting_player_token>（<take_starting_player>）和/或打 1 张次要改良（<play_minor_improvement>）。至少执行其一。起始玩家从不自动轮换——只有这里能夺取。",
+        "en": "A permanent action space on the main board. Provides taking the <starting_player_token> (<take_starting_player>) and/or playing 1 minor improvement (<play_minor_improvement>). At least one must be taken. The starting player never rotates automatically — only this space claims the token."
+      },
+      "<ontology::action>": {
+        "options": [
+          "<take_starting_player>",
+          "<play_minor_improvement>"
+        ],
+        "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+      }
+    },
+    {
+      "id": "space_grain_seeds",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "谷种（行动格）",
+        "en": "Grain Seeds (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的永久行动格（「Grain Seeds」）。从<general_supply>拿 1 个<grain>放入个人供应——拿到的种子已是完全成熟的作物，不必播种即可用（吃/烤/种）。",
+        "en": "A permanent action space on the main board ('Grain Seeds'). Take 1 <grain> from the <general_supply> into your personal supply — the seed taken is already a fully grown crop; you need not plant it (you can eat, bake, or sow it)."
+      },
+      "<ontology::action>": {
+        "<ontology::transfer>": {
+          "source": "<general_supply>",
+          "destination": "<personal_supply>",
+          "<ontology::object>": "<grain>",
+          "quantity": 1,
+          "description": {
+            "zh": "从<general_supply>拿 1 个<grain>放入个人供应。",
+            "en": "Take 1 <grain> from the <general_supply> into your personal supply."
+          }
+        }
+      }
+    },
+    {
+      "id": "space_plough_field",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "犁田（行动格）",
+        "en": "Plough 1 Field (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的永久行动格。执行<plough_field>：犁 1 块田。",
+        "en": "A permanent action space on the main board. Resolve <plough_field>: plough 1 field."
+      },
+      "<ontology::action>": "<plough_field>"
+    },
+    {
+      "id": "space_lessons",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "学习（行动格）",
+        "en": "Lessons (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的永久行动格（在日工上方）。打 1 张<occupation_card>：该格上你的**第一张职业免费**，之后每张 1 <food>。3 人局另有<space_lessons_3p>（每张 2 <food>），4 人局另有<space_lessons_4p>（前两张各 1 <food>、之后每张 2 <food>）。",
+        "en": "A permanent action space on the main board (above the Day Labourer). Play 1 <occupation_card>: on this space your **first occupation is free**, each additional one costs 1 <food>. In 3-player games there is also <space_lessons_3p> (2 <food> each); in 4-player games <space_lessons_4p> (the first two cost 1 <food> each, each further one 2 <food>)."
+      },
+      "<ontology::action>": "<play_occupation>"
+    },
+    {
+      "id": "space_day_labourer",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "日工（行动格）",
+        "en": "Day Labourer (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的永久行动格（「Day Labourer」）。从<general_supply>拿 2 <food>放入个人供应。",
+        "en": "A permanent action space on the main board ('Day Labourer'). Take 2 <food> from the <general_supply> into your personal supply."
+      },
+      "<ontology::action>": {
+        "<ontology::transfer>": {
+          "source": "<general_supply>",
+          "destination": "<personal_supply>",
+          "<ontology::object>": "<food>",
+          "quantity": 2,
+          "description": {
+            "zh": "从<general_supply>拿 2 <food>放入个人供应。",
+            "en": "Take 2 <food> from the <general_supply> into your personal supply."
+          }
+        }
+      }
+    },
+    {
+      "id": "space_forest",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "森林（行动格）",
+        "en": "Forest (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的累积行动格。每回合准备阶段累积 3 <wood>（已有的不拿走照加），使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An accumulation action space on the main board. Each preparation phase accumulates 3 <wood> (even if wood remains, more is added); using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<wood>",
+        "quantity": 3,
+        "description": {
+          "zh": "每回合 +3 根木头。",
+          "en": "+3 wood per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_clay_pit",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "黏土坑（行动格）",
+        "en": "Clay Pit (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的累积行动格。每回合准备阶段累积 1 <clay>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An accumulation action space on the main board. Each preparation phase accumulates 1 <clay>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<clay>",
+        "quantity": 1,
+        "description": {
+          "zh": "每回合 +1 块黏土。",
+          "en": "+1 clay per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_reed_bank",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "芦苇塘（行动格）",
+        "en": "Reed Bank (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的累积行动格。每回合准备阶段累积 1 <reed>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An accumulation action space on the main board. Each preparation phase accumulates 1 <reed>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<reed>",
+        "quantity": 1,
+        "description": {
+          "zh": "每回合 +1 根芦苇。",
+          "en": "+1 reed per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_fishing",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "捕鱼（行动格）",
+        "en": "Fishing (Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "主版图上的累积行动格。每回合准备阶段累积 1 <food>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An accumulation action space on the main board. Each preparation phase accumulates 1 <food>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<food>",
+        "quantity": 1,
+        "description": {
+          "zh": "每回合 +1 食物。",
+          "en": "+1 food per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_lessons_3p",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "学习（3 人局行动格）",
+        "en": "Lessons (3-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "3 人局的额外行动格（扩展板）。打 1 张<occupation_card>：每张 2 <food>。",
+        "en": "An extra action space in 3-player games (extension board). Play 1 <occupation_card>: 2 <food> each."
+      },
+      "<ontology::action>": "<play_occupation>"
+    },
+    {
+      "id": "space_clay_3p",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "黏土（3 人局行动格）",
+        "en": "Clay (3-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "3 人局的额外累积行动格（扩展板）。每回合准备阶段累积 1 <clay>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An extra accumulation action space in 3-player games (extension board). Each preparation phase accumulates 1 <clay>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<clay>",
+        "quantity": 1,
+        "description": {
+          "zh": "每回合 +1 块黏土。",
+          "en": "+1 clay per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_wood_3p",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "木材（3 人局行动格）",
+        "en": "Wood (3-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "3 人局的额外累积行动格（扩展板）。每回合准备阶段累积 2 <wood>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An extra accumulation action space in 3-player games (extension board). Each preparation phase accumulates 2 <wood>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<wood>",
+        "quantity": 2,
+        "description": {
+          "zh": "每回合 +2 根木头。",
+          "en": "+2 wood per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_reed_stone_food_4p",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "芦苇+石头+食物（4 人局行动格）",
+        "en": "Reeds, Stone and Food (4-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "4 人局的额外行动格（扩展板）。从<general_supply>拿 1 <reed>、1 <stone>和 1 <food>放入个人供应。",
+        "en": "An extra action space in 4-player games (extension board). Take 1 <reed>, 1 <stone>, and 1 <food> from the <general_supply> into your personal supply."
+      },
+      "<ontology::action>": {
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "options": [
+              {
+                "id": "take_reed",
+                "name": {
+                  "zh": "拿 1 芦苇",
+                  "en": "Take 1 Reed"
+                },
+                "<ontology::transfer>": {
+                  "source": "<general_supply>",
+                  "destination": "<personal_supply>",
+                  "<ontology::object>": "<reed>",
+                  "quantity": 1,
+                  "description": {
+                    "zh": "从<general_supply>拿 1 <reed>。",
+                    "en": "Take 1 <reed> from the <general_supply>."
+                  }
+                }
+              },
+              {
+                "id": "take_stone",
+                "name": {
+                  "zh": "拿 1 石头",
+                  "en": "Take 1 Stone"
+                },
+                "<ontology::transfer>": {
+                  "source": "<general_supply>",
+                  "destination": "<personal_supply>",
+                  "<ontology::object>": "<stone>",
+                  "quantity": 1,
+                  "description": {
+                    "zh": "从<general_supply>拿 1 <stone>。",
+                    "en": "Take 1 <stone> from the <general_supply>."
+                  }
+                }
+              },
+              {
+                "id": "take_food",
+                "name": {
+                  "zh": "拿 1 食物",
+                  "en": "Take 1 Food"
+                },
+                "<ontology::transfer>": {
+                  "source": "<general_supply>",
+                  "destination": "<personal_supply>",
+                  "<ontology::object>": "<food>",
+                  "quantity": 1,
+                  "description": {
+                    "zh": "从<general_supply>拿 1 <food>。",
+                    "en": "Take 1 <food> from the <general_supply>."
+                  }
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "space_travelling_players",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "巡游艺人（4 人局行动格）",
+        "en": "Travelling Players (4-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "4 人局的额外累积行动格（扩展板，仅 4 人局可用）。每回合准备阶段累积 1 <food>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An extra accumulation action space in 4-player games (extension board; 4-player games only). Each preparation phase accumulates 1 <food>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<food>",
+        "quantity": 1,
+        "description": {
+          "zh": "每回合 +1 食物。",
+          "en": "+1 food per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_wood_4p",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "木材（4 人局行动格）",
+        "en": "Wood (4-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "4 人局的额外累积行动格（扩展板）。每回合准备阶段累积 1 <wood>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An extra accumulation action space in 4-player games (extension board). Each preparation phase accumulates 1 <wood>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<wood>",
+        "quantity": 1,
+        "description": {
+          "zh": "每回合 +1 根木头。",
+          "en": "+1 wood per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_lessons_4p",
+      "specifies": "<permanent_action_space>",
+      "name": {
+        "zh": "学习（4 人局行动格）",
+        "en": "Lessons (4-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "4 人局的额外行动格（扩展板）。打 1 张<occupation_card>：前两张各 1 <food>、之后每张 2 <food>。",
+        "en": "An extra action space in 4-player games (extension board). Play 1 <occupation_card>: your first two occupations here cost 1 <food> each, each further one 2 <food>."
+      },
+      "<ontology::action>": "<play_occupation>"
+    },
+    {
+      "id": "space_clay_4p",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "黏土（4 人局行动格）",
+        "en": "Clay (4-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "4 人局的额外累积行动格（扩展板）。每回合准备阶段累积 2 <clay>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An extra accumulation action space in 4-player games (extension board). Each preparation phase accumulates 2 <clay>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<clay>",
+        "quantity": 2,
+        "description": {
+          "zh": "每回合 +2 块黏土。",
+          "en": "+2 clay per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "space_wood_4p_2",
+      "specifies": "<accumulation_space>",
+      "name": {
+        "zh": "木材×2（4 人局行动格）",
+        "en": "2 Wood (4-Player Action Space)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "4 人局的额外累积行动格（扩展板）。每回合准备阶段累积 2 <wood>，使用该格时取走全部（<take_accumulated_goods>）。",
+        "en": "An extra accumulation action space in 4-player games (extension board). Each preparation phase accumulates 2 <wood>; using the space takes all (<take_accumulated_goods>)."
+      },
+      "accumulates": {
+        "goods": "<wood>",
+        "quantity": 2,
+        "description": {
+          "zh": "每回合 +2 根木头。",
+          "en": "+2 wood per round."
+        }
+      },
+      "<ontology::action>": "<take_accumulated_goods>"
+    },
+    {
+      "id": "farmyard_board",
+      "specifies": "<ontology::player_board>",
+      "name": {
+        "zh": "农场板",
+        "en": "Farmyard Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家的个人<ontology::player_board>：15 个<farmyard_space>（5×3），左下角预印 2 个木屋<room_tile>。房间、田地、牧场三个责任区各自必须互相相邻（房间挨房间、田挨田、牧场挨牧场）；马厩不适用。板上养宠物（房子里恰好 1 只）、安置动物、种田、建房。每名玩家另有 5 个<family_member>、4 个<stable>、15 根<fence>。",
+        "en": "Each player's personal <ontology::player_board>: 15 <farmyard_space>s (5×3) with 2 wooden <room_tile>s pre-printed in the bottom left corner. The three areas of responsibility must each be adjacent to their own kind (rooms to rooms, fields to fields, pastures to pastures); stables are exempt. The board holds your house (1 pet), animals, fields, and rooms. Each player also has 5 <family_member>s, 4 <stable>s, and 15 <fence>s."
+      },
+      "appearance": {
+        "zh": "每名玩家一张大板，5×3 农场格 + 左下角两个预印木屋房间，个人供应区印在角落。",
+        "en": "One large board per player with a 5×3 farmyard grid, two pre-printed wooden rooms at the bottom left, and the personal supply area printed in a corner."
+      }
+    },
+    {
+      "id": "farmyard_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "农场格",
+        "en": "Farmyard Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<farmyard_board>上的单个格子（每名玩家 15 个）。用途：建房（<room_tile>）、犁田（<field_tile>）、建马厩（<stable>，每格最多 1 个）、围牧场（<pasture>）。终局每个**未使用**的农场格 -1 <vp>。",
+        "en": "One space on a <farmyard_board> (15 per player). Uses: rooms (<room_tile>), fields (<field_tile>), stables (<stable>, at most one per space), pastures (<pasture>). Final scoring: -1 <vp> per **unused** farmyard space."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "1 个板块或 1 个马厩（牧场可覆盖多个格）。",
+          "en": "One tile or one stable (a pasture may cover several spaces)."
+        }
+      }
+    },
+    {
+      "id": "house",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "房屋",
+        "en": "House"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的房屋——<farmyard_board>上<room_tile>组成的区域，开局 2 间木屋。每个房间住 1 个<family_member>；家庭成长需要空房间（<family_growth_with_room>）。房屋整体材质随<renovation>升级：wood（木）→clay（泥）→stone（石），翻新必须整体进行、不可跳级；翻新后新建房间必须用新材质。房子里可养恰好 1 只宠物（任意动物）。终局计分：木房间 0 分、泥房间每间 +1、石房间每间 +2。",
+        "en": "The player's house — the area of <room_tile>s on the <farmyard_board>, starting with 2 wooden rooms. Each room houses 1 <family_member>; family growth requires an empty room (<family_growth_with_room>). The whole house is renovated in material steps: wood → clay → stone (<renovation>); renovation is always of the entire house and never skips a step; new rooms afterwards must use the new material. Exactly 1 pet (any animal) may live in the house. Final scoring: wooden rooms 0, clay rooms +1 each, stone rooms +2 each."
+      },
+      "material": {
+        "type": "enum",
+        "enum": [
+          "wood",
+          "clay",
+          "stone"
+        ],
+        "default": "wood",
+        "description": {
+          "zh": "房屋当前材质，开局为 wood。",
+          "en": "The house's current material, wood at setup."
+        }
+      },
+      "contains": {
+        "type": "<room_tile>[]",
+        "description": {
+          "zh": "房屋包含的房间板块。",
+          "en": "The room tiles the house contains."
+        }
+      }
+    },
+    {
+      "id": "pasture",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "牧场",
+        "en": "Pasture"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用<fence>完全围起来的<farmyard_space>区域。容量：每格 **2 只**动物 × 每个马厩 ×2（1×2 牧场 + 2 马厩 = 16 只）。每个牧场只能养**一种**动物；不同牧场的同种动物照常一起繁殖。牧场可被栅栏细分；相邻牧场共享边界栅栏。终局按牧场**个数**计分（与大小无关）：0 个 -1，1 个 +1，2 个 +2，3 个 +3，4+ 个 +4。",
+        "en": "An area of <farmyard_space>s fully enclosed by <fence>s. Capacity: **2 animals per space** ×2 per stable inside (a 1×2 pasture with 2 stables holds 16). Each pasture holds only **one type** of animal; same-type animals in different pastures still breed together. Pastures may be subdivided with fences; adjacent pastures share their bordering fences. Final scoring counts the **number** of pastures, regardless of size: 0 → -1, 1 → +1, 2 → +2, 3 → +3, 4+ → +4."
+      },
+      "capacity": {
+        "type": "integer",
+        "description": {
+          "zh": "容量 = 2 × 格数 × 2^马厩数。",
+          "en": "Capacity = 2 × spaces × 2^stables."
+        }
+      }
+    },
+    {
+      "id": "general_supply",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "公共供应",
+        "en": "General Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "公共的<ontology::public_supply>：所有<animal>（18 只羊、15 只野猪、13 头牛）、<building_resource>（38 木头、26 黏土、14 芦苇、16 石头）、<crop>（24 谷物、16 蔬菜）与<food>标记放版图旁。供应耗尽时用<goods_tile>或替代品。动物**不能**直接放个人供应——必须安置到农场（<pasture>/马厩/宠物），否则走失；繁殖的新生动物、播种的额外作物、累积格的货物都从这里拿；支付/丢弃的货物放回这里。",
+        "en": "The shared <ontology::public_supply>: all <animal>s (18 sheep, 15 wild boar, 13 cattle), <building_resource>s (38 wood, 26 clay, 14 reed, 16 stone), <crop>s (24 grain, 16 vegetables), and <food> markers, placed next to the board. Use <goods_tile>s or improvise when it runs out. Animals can **never** simply sit in your personal supply — they must be accommodated on the farm (<pasture>/stable/pet) or they wander off; newborn animals, extra sown crops, and accumulation-space goods come from here; payments and discards go back here."
+      }
+    },
+    {
+      "id": "personal_supply",
+      "specifies": "<ontology::player_supply>",
+      "name": {
+        "zh": "个人供应",
+        "en": "Personal Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家自己的<ontology::player_supply>（农场板旁的私人物品区）：持有<food>、<building_resource>、<crop>、未安置的<animal>（动物必须尽快安置到农场）、未使用的<fence>/<stable>/<family_member>。结算行动时所得货物进入这里。终局平手决胜：个人供应中建材更多者获胜（<most_building_resources_left>）。",
+        "en": "Each player's own <ontology::player_supply> (the private area beside the farmyard board): holds <food>, <building_resource>s, <crop>s, not-yet-accommodated <animal>s (animals must be accommodated on the farm promptly), and unused <fence>s/<stable>s/<family_member>s. Goods gained from actions go here. Tie-break at game end: more building resources here wins (<most_building_resources_left>)."
+      }
+    },
+    {
+      "id": "hand",
+      "specifies": "<ontology::hand>",
+      "name": {
+        "zh": "手牌",
+        "en": "Hand"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家的<ontology::hand>：7 张<occupation_card> + 7 张<minor_improvement_card>（开局各发 7 张，游戏中不抽牌）。手中的卡不影响游戏，打出才生效。旅行卡打出后传给左边玩家——该玩家收进手牌。",
+        "en": "Each player's <ontology::hand>: 7 <occupation_card>s + 7 <minor_improvement_card>s (7 of each dealt at setup; no drawing during the game). Cards in hand have no effect until played. Traveling cards are passed to the player on the left after being played — that player takes them into hand."
+      }
+    },
+    {
+      "id": "played_cards_area",
+      "specifies": "<ontology::development_area>",
+      "name": {
+        "zh": "已打出卡牌区",
+        "en": "Played Cards Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家面前正面朝上的区域：打出的<occupation_card>、<minor_improvement_card>与建好的<major_improvement_card>放在这里，文字立即生效（卡牌文字优先于规则书）。终局按卡上印的分数与奖励条件计分。",
+        "en": "The face-up area in front of each player: played <occupation_card>s, <minor_improvement_card>s, and built <major_improvement_card>s lie here with their text in effect (card text takes precedence over the rulebook). Final scoring includes their printed points and bonus conditions."
+      }
+    },
+    {
+      "id": "major_improvement_frame",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "主要改良供应架",
+        "en": "Major Improvement Frame"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放 10 张<major_improvement_card>的供应架：第一排 2 个<fireplace>、2 个<cooking_hearth>、<well>；第二排<clay_oven>、<stone_oven>、<joinery>、<pottery>、<basketmakers_workshop>。全部正面朝上，所有玩家可建造（先到先得）。",
+        "en": "The frame holding the 10 <major_improvement_card>s: first row the two <fireplace>s, two <cooking_hearth>s, and the <well>; second row the <clay_oven>, <stone_oven>, <joinery>, <pottery>, and <basketmakers_workshop>. All face up, buildable by every player (first come, first served)."
+      }
+    },
+    {
+      "id": "scoring_pad",
+      "specifies": "<ontology::aid>",
+      "name": {
+        "zh": "计分纸",
+        "en": "Scoring Pad"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "终局用的<ontology::aid>。计分表（<final_scoring>）：田地 0-1:-1, 2:+1, 3:+2, 4:+3, 5+:+4；牧场 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4；谷物 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；蔬菜 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4；羊 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；野猪 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4；牛 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4。另有：每个未使用农场格 -1；每个围起来的马厩 +1；每个泥房间 +1、每个石房间 +2（木房间 0 分）；每个家庭成员 +3；每个乞讨标记 -3；改良卡按卡面分数。",
+        "en": "The <ontology::aid> used at game end. Scoring table (<final_scoring>): fields 0-1:-1, 2:+1, 3:+2, 4:+3, 5+:+4; pastures 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4; grain 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; vegetables 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4; sheep 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; wild boar 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4; cattle 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4. Plus: -1 per unused farmyard space; +1 per fenced stable; +1 per clay room, +2 per stone room (wooden rooms 0); +3 per family member; -3 per begging marker; improvements score their printed points."
+      },
+      "appearance": {
+        "zh": "纸质计分表，栏目与版图边的计分表一致。",
+        "en": "A paper pad matching the scoring table printed along the game board's edge."
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "place_family_member",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "放置家庭成员",
+        "en": "Place Family Member"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "工作阶段的基本行动：把 1 个<family_member>放到一个**本回合无人使用**的<action_space>上，并**立即**结算该格提供的行动（<action_space>见各格定义；资源立刻可用——本回合下一个家庭成员就能用刚拿到的资源）。每回合每个行动格只能被 1 人使用（<action_space_free>）；不能只为阻挡而放置——至少须执行该格的一种可用行动。「和/或」空间可任意顺序做任意组合；「之后」空间第一个行动必须先做、第二个才可选。每个家庭成员每回合恰好放置 1 次。",
+        "en": "The basic work-phase action: place 1 <family_member> on an <action_space> that is **unused this round** and resolve the space's action **immediately** (see each <action_space>; resources gained are usable at once — your next family member this round can spend them). Each space takes only one person per round (<action_space_free>); you cannot place just to block — at least one available action of the space must be taken. 'and/or' spaces allow any combination in any order; 'and afterward' spaces require the first action before the optional second. Each family member is placed exactly once per round."
+      },
+      "<ontology::condition>": "<action_space_free>",
+      "target": "一个本回合未被占用的<action_space>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "put_person_on_space",
+              "name": {
+                "zh": "放人上格",
+                "en": "Put the Person on the Space"
+              },
+              "<ontology::transfer>": {
+                "source": "玩家的房间/供应",
+                "destination": "this.target",
+                "<ontology::object>": "<family_member>",
+                "quantity": 1,
+                "description": {
+                  "zh": "把 1 个<family_member>放到所选<action_space>上（回家阶段才回房间）。",
+                  "en": "Place 1 <family_member> on the chosen <action_space> (returning home happens in the home phase)."
+                }
+              }
+            },
+            {
+              "id": "resolve_space_action",
+              "name": {
+                "zh": "结算该格行动",
+                "en": "Resolve the Space's Action"
+              },
+              "do_after": [
+                "put_person_on_space"
+              ],
+              "description": {
+                "zh": "立即执行该<action_space>提供的行动（各格见各自定义）。",
+                "en": "Immediately resolve the action provided by that <action_space> (per its own definition)."
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "take_accumulated_goods",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "取走累积货物",
+        "en": "Take Accumulated Goods"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<accumulation_space>提供的行动：取走该格上的**全部**货物（含前几回合积下的）放入<personal_supply>。动物随后按<animal>的安置规则安置（或有🍖改良直接换成食物）；谷物/蔬菜照常入供应。",
+        "en": "The action an <accumulation_space> provides: take **all** goods on the space (including those accumulated over previous rounds) into your <personal_supply>. Animals must then be accommodated per <animal> (or converted to food at once with a 🍖 improvement); grain and vegetables simply enter your supply."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "this.target",
+            "destination": "<personal_supply>",
+            "<ontology::object>": {
+              "description": {
+                "zh": "该累积格上标注的货物类型（见各格 accumulates 字段）。",
+                "en": "The goods type shown on the space (see each space's accumulates field)."
+              }
+            },
+            "quantity": {
+              "zh": "该格上的全部货物。",
+              "en": "All goods on the space."
+            },
+            "description": {
+              "zh": "取走该<accumulation_space>上的全部货物放入<personal_supply>。",
+              "en": "Take all goods from the <accumulation_space> into your <personal_supply>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "build_rooms",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "建房",
+        "en": "Build Rooms"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<space_farm_expansion>提供的行动。按**当前房屋材质**加建<room_tile>：木屋每间 5 <wood> + 2 <reed>、泥屋 5 <clay> + 2 <reed>、石屋 5 <stone> + 2 <reed>。一次行动可建任意多间（一间一间建、付得起就建，<can_afford_cost>）；房间必须与已有房间相邻（<has_legal_room_space>），无合法位置则不能加建。材质必须与当前房屋一致——木屋时不能直接建泥/石房间（先翻新）。",
+        "en": "The action on <space_farm_expansion>. Add <room_tile>s in the **current house material**: 5 <wood> + 2 <reed> per wooden room, 5 <clay> + 2 <reed> per clay room, 5 <stone> + 2 <reed> per stone room. Any number in one action (one after another, as many as you can afford); rooms must be adjacent to existing rooms (<has_legal_room_space>) — without a legal space you cannot add rooms. The material must match the current house — you cannot build clay or stone rooms while still in a wooden house (renovate first)."
+      },
+      "<ontology::condition>": "<has_legal_room_space>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<building_resource>",
+            "quantity": {
+              "zh": "每间房间：5 份当前材质建材 + 2 根芦苇（木 5+2 芦苇 / 泥 5+2 芦苇 / 石 5+2 芦苇）。",
+              "en": "Per room: 5 of the current material + 2 reed (wood 5+2 reed / clay 5+2 reed / stone 5+2 reed)."
+            },
+            "description": {
+              "zh": "从<personal_supply>支付每间房间的建材到<general_supply>。",
+              "en": "Pay the building resources per room from your <personal_supply> to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "房间板块堆",
+            "destination": "<house>",
+            "<ontology::object>": "<room_tile>",
+            "quantity": {
+              "zh": "任意间（付得起多少建多少）。",
+              "en": "Any number (as many as you can afford)."
+            },
+            "description": {
+              "zh": "把对应材质的<room_tile>放到与已有房间相邻的<farmyard_space>上。",
+              "en": "Place <room_tile>s of the matching material on <farmyard_space>s adjacent to existing rooms."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "build_stables",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "建马厩",
+        "en": "Build Stables"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<space_farm_expansion>提供的行动。每个<stable>付 2 <wood>；一次行动可建多个（一个一个建）。每个<farmyard_space>最多 1 个马厩，格上不能有板块；马厩不需要相邻。效果：在<pasture>里使该牧场容量翻倍（每格基础 2 只 × 每个马厩 ×2）；牧场外恰好容 1 只动物（之后可围起来）。建成后永久。",
+        "en": "The action on <space_farm_expansion>. Pay 2 <wood> per <stable>; build several in one action (one after another). At most one stable per <farmyard_space>, and the space may not be covered by a tile; stables need no adjacency. Effect: inside a <pasture> it doubles that pasture's capacity (base 2 per space, ×2 per stable); outside any pasture it holds exactly 1 animal (and can be fenced in later). Stables are permanent."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<wood>",
+            "quantity": {
+              "zh": "每个马厩 2 根木头。",
+              "en": "2 wood per stable."
+            },
+            "description": {
+              "zh": "从<personal_supply>支付每个马厩 2 <wood>到<general_supply>。",
+              "en": "Pay 2 <wood> per stable from your <personal_supply> to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "玩家的马厩供应",
+            "destination": "<farmyard_space>",
+            "<ontology::object>": "<stable>",
+            "quantity": {
+              "zh": "任意个（付得起多少建多少）。",
+              "en": "Any number (as many as you can afford)."
+            },
+            "description": {
+              "zh": "把<stable>放到空的<farmyard_space>上（每格最多 1 个）。",
+              "en": "Place <stable>s on empty <farmyard_space>s (at most one each)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "build_fences",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "建栅栏",
+        "en": "Build Fences"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<rc_fences>与<rc_renovation_fences>提供的行动。每根<fence>付 1 <wood>；一次行动可建任意多根（付得起多少建多少）。限制：栅栏必须围出**完全封闭**的<pasture>（四边都是栅栏）；第一个牧场可建在农场任意空地（空间连续），之后的牧场必须与已有牧场相邻（<has_legal_pasture_space>）；可在已有牧场内加栅栏细分；栅栏不可拆除；房间与田地的边不算栅栏。",
+        "en": "The action on <rc_fences> and <rc_renovation_fences>. Pay 1 <wood> per <fence>; any number in one action. Restrictions: fences must create a **fully enclosed** <pasture> (fences on all sides); your first pasture may go anywhere on the farmyard (empty, contiguous spaces), later ones must be adjacent to an existing pasture (<has_legal_pasture_space>); you may subdivide an existing pasture with new fences; fences are never demolished; room and field edges do not count as fences."
+      },
+      "<ontology::condition>": "<has_legal_pasture_space>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<wood>",
+            "quantity": {
+              "zh": "每根栅栏 1 根木头。",
+              "en": "1 wood per fence."
+            },
+            "description": {
+              "zh": "从<personal_supply>支付每根栅栏 1 <wood>到<general_supply>。",
+              "en": "Pay 1 <wood> per fence from your <personal_supply> to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "玩家的栅栏供应",
+            "destination": "<farmyard_board>",
+            "<ontology::object>": "<fence>",
+            "quantity": {
+              "zh": "任意根（付得起多少建多少）。",
+              "en": "Any number (as many as you can afford)."
+            },
+            "description": {
+              "zh": "把<fence>放到<farmyard_board>上围出封闭的<pasture>。",
+              "en": "Place <fence>s on the <farmyard_board> forming an enclosed <pasture>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "plough_field",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "犁田",
+        "en": "Plough 1 Field"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<space_plough_field>与<rc_plough_sow>提供的行动。把 1 块<field_tile>放到空的<farmyard_space>上：第一块田可放农场任意空地，之后的田必须与已有田相邻（<has_legal_field_space>）。田一旦放置不可移除。",
+        "en": "The action on <space_plough_field> and <rc_plough_sow>. Place 1 <field_tile> on an empty <farmyard_space>: your first field may go anywhere on the farmyard, later fields must be adjacent to an existing field (<has_legal_field_space>). Fields can never be removed."
+      },
+      "<ontology::condition>": "<has_legal_field_space>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "田地板块堆",
+            "destination": "<farmyard_board>",
+            "<ontology::object>": "<field_tile>",
+            "quantity": 1,
+            "description": {
+              "zh": "把 1 块<field_tile>放到空的<farmyard_space>上（与已有田相邻）。",
+              "en": "Place 1 <field_tile> on an empty <farmyard_space> (adjacent to an existing field)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "sow",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "播种",
+        "en": "Sow"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<rc_sow_bake>与<rc_plough_sow>提供的行动。在任意多块**空**<field_tile>上播种（需<has_crop>作种子；可混合谷物与蔬菜，也可留空田闲置）：每块田放 1 个自己供应的作物 + 供应堆的额外标记——谷物田共 3 个<grain>（自己 1 + 供应 2）、蔬菜田共 2 个<vegetable>（自己 1 + 供应 1）。作物留在田上直到收获；田上的作物收获前不可用，但终局计分算数。",
+        "en": "The action on <rc_sow_bake> and <rc_plough_sow>. Plant any number of **empty** <field_tile>s (mixing grain and vegetables, or leaving fields fallow): each field takes 1 crop from your supply plus markers from the general supply — grain fields end with 3 <grain> (your 1 + 2 from supply), vegetable fields with 2 <vegetable> (your 1 + 1). Crops stay on the fields until harvest; they are unusable until then but count at final scoring."
+      },
+      "<ontology::condition>": "<has_unplanted_field>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<field_tile>",
+            "<ontology::object>": "<crop>",
+            "quantity": {
+              "zh": "每块播种的田 1 个（谷物或蔬菜，自己供应的种子）。",
+              "en": "1 per sown field (grain or vegetable, the seed from your own supply)."
+            },
+            "description": {
+              "zh": "每块播种的田从<personal_supply>放 1 个作物做种子。",
+              "en": "Place 1 crop from your <personal_supply> as seed on each sown field."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<field_tile>",
+            "<ontology::object>": "<crop>",
+            "quantity": {
+              "zh": "每块谷物田额外 2 个、每块蔬菜田额外 1 个。",
+              "en": "2 extra per grain field, 1 extra per vegetable field."
+            },
+            "description": {
+              "zh": "从<general_supply>往每块播种的田上补加作物（谷物田 2 个、蔬菜田 1 个）。",
+              "en": "Add crops from the <general_supply> onto each sown field (2 for grain fields, 1 for vegetable fields)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "bake_bread",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "烘焙面包",
+        "en": "Bake Bread"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "🍞 行动：把<personal_supply>中的<grain>烤成<food>（需<has_grain>；把谷物放回<general_supply>、拿相应食物）。触发途径：<rc_sow_bake>行动格（「播种和/或烘焙」）；建<clay_oven>/<stone_oven>时**立即**获得一次烘焙行动；职业/次要改良效果。各🍞改良的转换率：<fireplace>每个谷物 2 食物；<cooking_hearth>每个 3 食物；<clay_oven>最多 1 个谷物 → 5 食物；<stone_oven>最多 2 个谷物 → 每个 4 食物。可组合（如黏土烤炉 1 个→5 食物 + 烹饪炉其余每个 3 食物）、可部分烘焙保留剩余谷物、次数不限（受谷物数量限制）。",
+        "en": "The 🍞 action: convert <grain> from your <personal_supply> into <food> (grain back to the <general_supply>, food taken instead). Triggers: the <rc_sow_bake> action space ('Sow and/or Bake Bread'); building the <clay_oven> or <stone_oven> **immediately** grants one bake action; occupation/minor-improvement effects. Conversion rates: <fireplace> 2 food per grain; <cooking_hearth> 3 food per grain; <clay_oven> at most 1 grain → 5 food; <stone_oven> at most 2 grain → 4 food each. Combinable (e.g. Clay Oven 1 → 5 food + Cooking Hearth 3 per further grain); you may bake partially and keep the rest; unlimited uses (bounded only by your grain)."
+      },
+      "<ontology::condition>": "<owns_baking_improvement>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<grain>",
+            "quantity": {
+              "zh": "要烤的谷物数（可部分烘焙）。",
+              "en": "The number of grain to bake (may be partial)."
+            },
+            "description": {
+              "zh": "把要烤的<grain>从<personal_supply>放回<general_supply>。",
+              "en": "Return the grain to bake from your <personal_supply> to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": {
+              "zh": "按所持🍞改良的转换率（壁炉 2/个、烹饪炉 3/个、黏土烤炉最多 1 个→5、石烤炉最多 2 个→各 4）。",
+              "en": "Per the owned 🍞 improvements' rates (Fireplace 2 each, Cooking Hearth 3 each, Clay Oven at most 1 → 5, Stone Oven at most 2 → 4 each)."
+            },
+            "description": {
+              "zh": "从<general_supply>拿相应<food>放入<personal_supply>。",
+              "en": "Take the corresponding <food> from the <general_supply> into your <personal_supply>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "family_growth_with_room",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "家庭成长（需空房间）",
+        "en": "Family Growth With Room"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<rc_family_growth_minor>提供的行动（第 5-7 回合出现）。条件：房间数 > 家庭成员数（<has_empty_room>）。执行：从供应拿 1 个<family_member>放在行动格上执行此行动的人旁边；回家阶段新成员进自己的房间，下回合起多一次行动。出生当回合的收获中新生儿只吃 1 <food>。检查时机是执行时——同一回合不能先成长再补建房（标准成长必须先有空房间）。",
+        "en": "The action on <rc_family_growth_minor> (appears in rounds 5-7). Condition: more rooms than family members (<has_empty_room>). Resolution: take 1 <family_member> from your supply and stand it next to the person taking the action; in the home phase the newborn moves into its own room, giving you an extra action from next round. In the harvest of the round it was born, the newborn needs only 1 <food>. The check happens when taking the action — you cannot grow first and build the room later in the same round (standard growth requires an empty room up front)."
+      },
+      "<ontology::condition>": "<has_empty_room>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "玩家的家庭成员供应",
+            "destination": "this.target",
+            "<ontology::object>": "<family_member>",
+            "quantity": 1,
+            "description": {
+              "zh": "从供应拿 1 个<family_member>放在执行行动的成员旁边（回家阶段进自己的房间）。",
+              "en": "Take 1 <family_member> from your supply and stand it next to the acting member (it moves into its own room in the home phase)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "family_growth_without_room",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "家庭成长（无需房间）",
+        "en": "Family Growth Even Without Room"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<rc_family_growth_no_room>提供的行动（第 12-13 回合出现，「Urgent Wish for Children」）。**不需要空房间**：从供应拿 1 个<family_member>放在执行行动的人旁边，回家阶段进房间（房间不够时也可以这样成长——之后建房时其中一人立刻搬进去）。新生儿当回合收获只吃 1 <food>。注意：先做此行动后，本回合内普通家庭成长（<family_growth_with_room>）条件不再满足。",
+        "en": "The action on <rc_family_growth_no_room> (rounds 12-13; the 'Urgent Wish for Children'). **No empty room required**: take 1 <family_member> from your supply and stand it next to the acting person; in the home phase it enters a room (you may grow beyond your room count this way — when you later build a room, one person moves in immediately). The newborn needs only 1 <food> in that round's harvest. Note: after taking this action, standard family growth (<family_growth_with_room>) is no longer possible in the same round."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "玩家的家庭成员供应",
+            "destination": "this.target",
+            "<ontology::object>": "<family_member>",
+            "quantity": 1,
+            "description": {
+              "zh": "从供应拿 1 个<family_member>放在执行行动的成员旁边（回家阶段进房间）。",
+              "en": "Take 1 <family_member> from your supply and stand it next to the acting member (it enters a room in the home phase)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "renovation",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "翻新",
+        "en": "Renovation"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<rc_renovation_improvement>与<rc_renovation_fences>提供的行动。把**所有**<room_tile>升级一级：木→泥（每房间 1 <clay> + **总计** 1 <reed>），泥→石（每房间 1 <stone> + 总计 1 <reed>）——芦苇不是每房间 1 根。必须整体翻新、不可只翻一部分；必须逐级（木→泥→石），不能一次从木跳到石。翻新后房屋材质立即改变，之后建房用新材质。",
+        "en": "The action on <rc_renovation_improvement> and <rc_renovation_fences>. Upgrade **all** <room_tile>s one step: wood→clay (1 <clay> per room + **1 <reed> in total**), clay→stone (1 <stone> per room + 1 <reed> total) — the reed is not per room. The whole house must be renovated, never a part of it; always step by step (wood→clay→stone), never skipping a level. The house material changes immediately; later rooms use the new material."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<building_resource>",
+            "quantity": {
+              "zh": "每房间 1 块黏土（木→泥）或 1 块石头（泥→石）+ 总计 1 根芦苇。",
+              "en": "1 clay per room (wood→clay) or 1 stone per room (clay→stone) + 1 reed in total."
+            },
+            "description": {
+              "zh": "从<personal_supply>支付翻新建材到<general_supply>。",
+              "en": "Pay the renovation resources from your <personal_supply> to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "把<house>中所有<room_tile>换成下一级材质（预印房间盖上泥/石板块；泥→石时板块翻面）。",
+            "en": "Replace all <room_tile>s in the <house> with the next material (cover pre-printed rooms with clay/stone tiles; flip tiles when going clay→stone)."
+          }
+        }
+      }
+    },
+    {
+      "id": "play_occupation",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "打出职业",
+        "en": "Play Occupation"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "「学习」行动格（<space_lessons>/<space_lessons_3p>/<space_lessons_4p>）提供的行动：从<hand>打出恰好 1 张<occupation_card>，正面朝上放<played_cards_area>，文字立即生效（优先于规则书）。职业费用（「职业费用」）：<space_lessons>上第一张免费、之后每张 1 <food>；3 人局<space_lessons_3p>每张 2 <food>；4 人局<space_lessons_4p>前两张各 1 <food>、之后每张 2 <food>。职业数量不受家庭成员数限制。个别职业另有费用/条件（卡面为准）。",
+        "en": "The action on the 'Lessons' spaces (<space_lessons>/<space_lessons_3p>/<space_lessons_4p>): play exactly 1 <occupation_card> from your <hand> face up into your <played_cards_area>; its text takes effect immediately (and takes precedence over the rulebook). Occupation costs: on <space_lessons> your first is free, each additional one costs 1 <food>; on <space_lessons_3p> (3-player games) each costs 2 <food>; on <space_lessons_4p> (4-player games) the first two cost 1 <food> each, each further one 2 <food>. The number of occupations is not limited by family size. Some occupations carry extra costs or conditions (per card)."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": {
+              "zh": "按所用学习行动格的职业费用方案（0/1/2 食物，见各格说明）。",
+              "en": "Per the Lessons space's occupation cost scheme (0/1/2 food, see each space)."
+            },
+            "description": {
+              "zh": "支付职业费用（<space_lessons>第一张免费）。",
+              "en": "Pay the occupation cost (your first on <space_lessons> is free)."
+            }
+          }
+        }
+      },
+      "target": "手中 1 张<occupation_card>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<hand>",
+            "destination": "<played_cards_area>",
+            "<ontology::object>": "<occupation_card>",
+            "quantity": 1,
+            "description": {
+              "zh": "把 1 张<occupation_card>从<hand>打出到<played_cards_area>，文字生效。",
+              "en": "Play 1 <occupation_card> from your <hand> into your <played_cards_area>; its text takes effect."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "play_minor_improvement",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "打出次要改良",
+        "en": "Play Minor Improvement"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从<hand>打出 1 张<minor_improvement_card>，正面朝上放<played_cards_area>，文字立即生效（优先于规则书）。触发途径：<rc_improvement>（或建主要改良）、<space_meeting_place>（与拿起始玩家同时）、<rc_family_growth_minor>（家庭成长后）、<rc_renovation_improvement>（翻新后）。条件：卡上的前置条件已满足（<prerequisite_met>，只要求拥有不要求支付）；右上角建材费用从<personal_supply>支付。旅行卡：执行完指示后传给左边玩家收进手牌。",
+        "en": "Play 1 <minor_improvement_card> from your <hand> face up into your <played_cards_area>; its text takes effect immediately (and takes precedence over the rulebook). Triggers: <rc_improvement> (or building a major improvement instead), <space_meeting_place> (together with taking the starting player), <rc_family_growth_minor> (after family growth), <rc_renovation_improvement> (after renovation). Conditions: the card's prerequisite is met (<prerequisite_met> — demands ownership, never payment); the building cost in the top right corner is paid from your <personal_supply>. Traveling cards: after carrying out the instructions, pass the card to the player on your left, who takes it into hand."
+      },
+      "<ontology::condition>": "<prerequisite_met>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<building_resource>",
+            "quantity": {
+              "zh": "卡面右上角印的建材费用。",
+              "en": "The building resources printed in the card's top right corner."
+            },
+            "description": {
+              "zh": "支付卡面建材费用。",
+              "en": "Pay the card's printed building cost."
+            }
+          }
+        }
+      },
+      "target": "手中 1 张<minor_improvement_card>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<hand>",
+            "destination": "<played_cards_area>",
+            "<ontology::object>": "<minor_improvement_card>",
+            "quantity": 1,
+            "description": {
+              "zh": "把 1 张<minor_improvement_card>从<hand>打出到<played_cards_area>，文字生效；旅行卡之后传给左边玩家。",
+              "en": "Play 1 <minor_improvement_card> from your <hand> into your <played_cards_area>; its text takes effect; a traveling card is then passed to the player on your left."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "build_major_improvement",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "建造主要改良",
+        "en": "Build Major Improvement"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从<major_improvement_frame>拿 1 张<major_improvement_card>，付右上角建材费用，正面朝上放<played_cards_area>——从此整局可用。触发途径：<rc_improvement>（「主要或次要改良」二选一）、<rc_renovation_improvement>（翻新后的奖励）。所有 10 张改良先到先得。<cooking_hearth>特殊：可退还自己的<fireplace>免费换取。",
+        "en": "Take 1 <major_improvement_card> from the <major_improvement_frame>, pay its building cost from the top right corner, and place it face up in your <played_cards_area> — usable for the rest of the game. Triggers: <rc_improvement> (choosing between major and minor), <rc_renovation_improvement> (the bonus after renovating). All 10 improvements are first come, first served. <cooking_hearth> special: you may return your <fireplace> and take it for free."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<building_resource>",
+            "quantity": {
+              "zh": "卡面右上角印的建材费用（如壁炉 2 或 3 黏土、水井 3 石头 + 1 木头）。",
+              "en": "The building resources printed in the card's top right corner (e.g. Fireplace 2 or 3 clay, Well 3 stone + 1 wood)."
+            },
+            "description": {
+              "zh": "支付卡面建材费用（换烹饪炉时可退还壁炉免付）。",
+              "en": "Pay the printed building cost (free when exchanging a Fireplace for a Cooking Hearth)."
+            }
+          }
+        }
+      },
+      "target": "<major_improvement_frame>中 1 张<major_improvement_card>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<major_improvement_frame>",
+            "destination": "<played_cards_area>",
+            "<ontology::object>": "<major_improvement_card>",
+            "quantity": 1,
+            "description": {
+              "zh": "把 1 张<major_improvement_card>从<major_improvement_frame>放入<played_cards_area>；建烤炉立即获得一次<bake_bread>；建<well>在接下来 5 个回合格放食物。",
+              "en": "Move 1 <major_improvement_card> from the <major_improvement_frame> into your <played_cards_area>; building an oven grants an immediate <bake_bread>; building the <well> places food on the next 5 round spaces."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "take_starting_player",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "拿取起始玩家",
+        "en": "Take Starting Player"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<space_meeting_place>提供的行动。拿取<starting_player_token>——起始玩家从不自动轮换，只有这里能夺取。可同时打 1 张次要改良（<play_minor_improvement>）。下回合工作阶段从你开始。",
+        "en": "The action on <space_meeting_place>. Take the <starting_player_token> — the starting player never rotates automatically; only this space claims it. A minor improvement may be played at the same time (<play_minor_improvement>). The work phase starts with you from the next round."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::state_change>": {
+            "subject": "<ontology::starting_player>",
+            "to": "执行此行动的玩家",
+            "rules": {
+              "zh": "把<ontology::starting_player>状态设为执行此行动的玩家，并把<starting_player_token>移交给他。",
+              "en": "Set <ontology::starting_player> to the acting player and hand them the <starting_player_token>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "cook_goods",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "烹饪（🍖）",
+        "en": "Cook Goods (🍖)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "**随时**可做的转换行动（不占行动、不限次数）：有🍖改良（<fireplace>/<cooking_hearth>或相应职业/次要改良）时，把动物/蔬菜换成<food>。转换率：<fireplace>蔬菜 2、羊 2、野猪 2、牛 3；<cooking_hearth>蔬菜 3、羊 2、野猪 3、牛 4。从累积格取动物时可**立即**烹饪、不必先安置。**繁殖阶段禁止**把父母或新生动物烹饪。",
+        "en": "An **anytime** conversion action (no action space, unlimited uses): with a 🍖 improvement (<fireplace>/<cooking_hearth> or matching occupation/minor improvement), convert animals/vegetables into <food>. Rates: <fireplace> vegetables 2, sheep 2, wild boar 2, cattle 3; <cooking_hearth> vegetables 3, sheep 2, wild boar 3, cattle 4. Animals taken from an accumulation space may be cooked **at once** without being accommodated. Cooking the parents or the newborn is **forbidden during the breeding phase**."
+      },
+      "<ontology::condition>": "<owns_cooking_improvement>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": {
+              "description": {
+                "zh": "要烹饪的动物或蔬菜（蔬菜 2/3、羊 2/2、野猪 2/3、牛 3/4 食物，按壁炉/烹饪炉）。",
+                "en": "The animal or vegetable to cook (vegetables 2/3, sheep 2/2, wild boar 2/3, cattle 3/4 food, by Fireplace/Cooking Hearth)."
+              }
+            },
+            "quantity": {
+              "zh": "任意数量。",
+              "en": "Any number."
+            },
+            "description": {
+              "zh": "把要烹饪的动物/蔬菜放回<general_supply>。",
+              "en": "Return the cooked animals/vegetables to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": {
+              "zh": "按🍖改良的转换率。",
+              "en": "Per the 🍖 improvement's conversion rate."
+            },
+            "description": {
+              "zh": "从<general_supply>拿相应<food>放入<personal_supply>。",
+              "en": "Take the corresponding <food> from the <general_supply> into your <personal_supply>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "eat_raw_crops",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "生吃作物",
+        "en": "Eat Raw Crops"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "**随时**可做的转换行动（不占行动、不限次数、无需任何改良）：把<personal_supply>中的<grain>/<vegetable>按 1:1 换成<food>（谷物粥、生吃蔬菜）。烘焙/烹饪能换更多（<bake_bread>/<cook_goods>）。",
+        "en": "An **anytime** conversion action (no action space, unlimited uses, no improvement required): convert <grain>/<vegetable> in your <personal_supply> into <food> at 1:1 (millet gruel, uncooked vegetables). Baking and cooking yield more (<bake_bread>/<cook_goods>)."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<crop>",
+            "quantity": {
+              "zh": "任意数量（1 作物 = 1 食物）。",
+              "en": "Any number (1 crop = 1 food)."
+            },
+            "description": {
+              "zh": "把要吃的作物放回<general_supply>。",
+              "en": "Return the eaten crops to the <general_supply>."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": {
+              "zh": "与吃掉的作物 1:1。",
+              "en": "1:1 with the crops eaten."
+            },
+            "description": {
+              "zh": "从<general_supply>拿相应<food>放入<personal_supply>。",
+              "en": "Take the corresponding <food> from the <general_supply> into your <personal_supply>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "craft_conversion",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "手工转换",
+        "en": "Craft Conversion"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "手工建筑的转换：**每个收获**（喂养阶段）至多 1 次——<joinery> 1 <wood> → 2 <food>；<pottery> 1 <clay> → 2 <food>；<basketmakers_workshop> 1 <reed> → 3 <food>。可同时用多栋手工建筑（每栋 1 份）。",
+        "en": "The craft buildings' conversion: **once per harvest** (during the feeding phase) at most — <joinery> 1 <wood> → 2 <food>; <pottery> 1 <clay> → 2 <food>; <basketmakers_workshop> 1 <reed> → 3 <food>. Multiple craft buildings may each convert once in the same harvest."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<building_resource>",
+            "quantity": 1,
+            "description": {
+              "zh": "每栋手工建筑 1 份对应建材（木头/黏土/芦苇）。",
+              "en": "1 of the matching resource per craft building (wood/clay/reed)."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": {
+              "zh": "细木工坊 2、陶坊 2、编篮工坊 3 食物。",
+              "en": "Joinery 2, Pottery 2, Basket Weaver's 3 food."
+            },
+            "description": {
+              "zh": "从<general_supply>拿相应<food>放入<personal_supply>。",
+              "en": "Take the corresponding <food> from the <general_supply> into your <personal_supply>."
+            }
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "harvest_field_phase",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "收获·田地阶段",
+        "en": "Harvest: Field Phase"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "收获的第一阶段（<harvest_round>回合结束时，每位玩家依次结算）：**必须**从自己的每块<field_tile>上取 1 个作物放入<personal_supply>（一块也不能跳过）。田上只剩 1 个标记时取走即空。",
+        "en": "The first harvest phase (at the end of a <harvest_round>, resolved by each player): you **must** take exactly 1 crop from every one of your <field_tile>s into your <personal_supply> (you may not skip a single field). A field with only 1 marker left becomes empty when it is taken."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<field_tile>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<crop>",
+            "quantity": {
+              "zh": "每块田恰好 1 个。",
+              "en": "Exactly 1 per field."
+            },
+            "description": {
+              "zh": "从每块<field_tile>取 1 个作物放入<personal_supply>。",
+              "en": "Take 1 crop from each <field_tile> into your <personal_supply>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "harvest_feeding",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "收获·喂养阶段",
+        "en": "Harvest: Feeding Phase"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "收获的第二阶段（每位玩家依次结算）：每个已上场的<family_member>需 2 <food>；本回合家庭成长的新生儿只需 1。支付方式：<food>标记；<grain>/<vegetable>生吃各 1 食物（<eat_raw_crops>）；🍖烹饪动物/蔬菜（<cook_goods>）；手工建筑转换（<craft_conversion>，每收获每栋至多 1 份）；卡牌效果。若不能或选择不喂足，**每个缺少的食物拿 1 个<begging_marker>**（-3 分、无法移除）。",
+        "en": "The second harvest phase (resolved by each player): every <family_member> in play needs 2 <food>; a newborn from this round's family growth needs only 1. Payment: <food> markers; <grain>/<vegetable> eaten raw at 1 food each (<eat_raw_crops>); 🍖 cooking animals/vegetables (<cook_goods>); craft-building conversions (<craft_conversion>, at most one resource per building per harvest); card effects. If you cannot or choose not to feed enough, **take 1 <begging_marker> for every food short** (-3 points, never removable)."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<personal_supply>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": {
+              "zh": "2 × 已上场家庭成员数（新生儿只算 1）。",
+              "en": "2 × family members in play (newborns count as 1)."
+            },
+            "description": {
+              "zh": "支付喂养所需的<food>（含生吃/烹饪/手工转换所得）。",
+              "en": "Pay the required <food> (including food gained from raw eating, cooking, and craft conversions)."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "feed_family",
+              "name": {
+                "zh": "喂养家人",
+                "en": "Feed the Family"
+              },
+              "description": {
+                "zh": "支付足额食物，不拿乞讨标记。",
+                "en": "Pay the full amount; no begging markers."
+              }
+            },
+            {
+              "id": "beg_for_missing_food",
+              "name": {
+                "zh": "乞讨",
+                "en": "Beg for Missing Food"
+              },
+              "<ontology::condition>": {
+                "zh": "食物不足（或玩家选择不付足）——按缺少的数量执行。",
+                "en": "Food is short (or the player chooses not to pay in full) — resolved per missing food."
+              },
+              "<ontology::transfer>": {
+                "source": "<general_supply>",
+                "destination": "玩家的乞讨标记区",
+                "<ontology::object>": "<begging_marker>",
+                "quantity": {
+                  "zh": "每缺少 1 食物 1 个。",
+                  "en": "One per missing food."
+                },
+                "description": {
+                  "zh": "每缺 1 食物拿 1 个<begging_marker>（终局 -3 分）。",
+                  "en": "Take 1 <begging_marker> per missing food (-3 points at game end)."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "harvest_breeding",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "收获·繁殖阶段",
+        "en": "Harvest: Breeding Phase"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "收获的第三阶段（每位玩家依次结算）：对每种动物，若你**至少 2 只**且能安置新生动物（<can_accommodate_animal>），从<general_supply>得**恰好 1 只**同类新生动物——不管有几对，每种每收获至多 1 只。父母不必住在同一空间；宠物也参与繁殖。若无处安置则不得新生动物（不是走失——只是不繁殖）。**繁殖阶段禁止**把父母或新生动物烹饪。",
+        "en": "The third harvest phase (resolved by each player): for each animal type, if you have **at least 2** and can accommodate a newborn (<can_accommodate_animal>), take **exactly 1** newborn of that type from the <general_supply> — regardless of how many pairs, at most 1 per type per harvest. The parents need not live in the same space; pets breed too. Without room you simply get no newborn (nothing runs away — it just does not breed). Cooking the parents or the newborn is **forbidden during the breeding phase**."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "breed_sheep",
+              "name": {
+                "zh": "羊繁殖",
+                "en": "Breed Sheep"
+              },
+              "<ontology::condition>": {
+                "zh": "至少 2 只<sheep>且能安置新生羊（<has_2_same_animals> + <can_accommodate_animal>）。",
+                "en": "At least 2 <sheep> and room for a newborn (<has_2_same_animals> + <can_accommodate_animal>)."
+              },
+              "<ontology::transfer>": {
+                "source": "<general_supply>",
+                "destination": "<farmyard_board>",
+                "<ontology::object>": "<sheep>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从<general_supply>拿 1 只新<sheep>安置到农场。",
+                  "en": "Take 1 newborn <sheep> from the <general_supply> onto the farmyard."
+                }
+              }
+            },
+            {
+              "id": "breed_wild_boar",
+              "name": {
+                "zh": "野猪繁殖",
+                "en": "Breed Wild Boar"
+              },
+              "<ontology::condition>": {
+                "zh": "至少 2 只<wild_boar>且能安置新生野猪。",
+                "en": "At least 2 <wild_boar> and room for a newborn."
+              },
+              "<ontology::transfer>": {
+                "source": "<general_supply>",
+                "destination": "<farmyard_board>",
+                "<ontology::object>": "<wild_boar>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从<general_supply>拿 1 只新<wild_boar>安置到农场。",
+                  "en": "Take 1 newborn <wild_boar> from the <general_supply> onto the farmyard."
+                }
+              }
+            },
+            {
+              "id": "breed_cattle",
+              "name": {
+                "zh": "牛繁殖",
+                "en": "Breed Cattle"
+              },
+              "<ontology::condition>": {
+                "zh": "至少 2 头<cattle>且能安置新生牛。",
+                "en": "At least 2 <cattle> and room for a newborn."
+              },
+              "<ontology::transfer>": {
+                "source": "<general_supply>",
+                "destination": "<farmyard_board>",
+                "<ontology::object>": "<cattle>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从<general_supply>拿 1 头新<cattle>安置到农场。",
+                  "en": "Take 1 newborn <cattle> from the <general_supply> onto the farmyard."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "accumulation_refill",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "累积补充",
+        "en": "Accumulation Refill"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每回合准备阶段结算：在**每个**<accumulation_space>（主版图 4 个 + 3/4 人局扩展格 + 已翻开的羊/野猪/牛/石头回合卡）上按标注数量补充货物——**即使上一回合的货物还在也照加**（<space_forest> +3 木头、<space_clay_pit> +1 黏土、<space_reed_bank> +1 芦苇、<space_fishing> +1 食物、<space_travelling_players> +1 食物、<space_clay_3p> +1 黏土、<space_wood_3p> +2 木头、<space_wood_4p> +1 木头、<space_clay_4p> +2 黏土、<space_wood_4p_2> +2 木头、<rc_sheep> +1 羊、<rc_wild_boar> +1 野猪、<rc_cattle> +1 牛、<rc_stone_s2>/<rc_stone_s4> 各 +1 石头）。",
+        "en": "Settled in each round's preparation phase: on **every** <accumulation_space> (4 on the main board + the 3/4-player extension spaces + any revealed sheep/wild boar/cattle/stone round cards) place the depicted amount of goods — **even if goods remain from previous rounds** (<space_forest> +3 wood, <space_clay_pit> +1 clay, <space_reed_bank> +1 reed, <space_fishing> +1 food, <space_travelling_players> +1 food, <space_clay_3p> +1 clay, <space_wood_3p> +2 wood, <space_wood_4p> +1 wood, <space_clay_4p> +2 clay, <space_wood_4p_2> +2 wood, <rc_sheep> +1 sheep, <rc_wild_boar> +1 wild boar, <rc_cattle> +1 cattle, <rc_stone_s2>/<rc_stone_s4> +1 stone each)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<general_supply>",
+            "destination": "<accumulation_space>",
+            "<ontology::object>": {
+              "description": {
+                "zh": "该累积格标注的货物（见各格 accumulates 字段）。",
+                "en": "The goods shown on the space (see each space's accumulates field)."
+              }
+            },
+            "quantity": {
+              "zh": "该累积格标注的数量。",
+              "en": "The amount shown on the space."
+            },
+            "description": {
+              "zh": "从<general_supply>往每个<accumulation_space>补货（已有货物不清走）。",
+              "en": "Refill every <accumulation_space> from the <general_supply> (existing goods are not removed)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "reveal_round_card",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "翻开回合卡",
+        "en": "Reveal Round Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每回合准备阶段结算（<well>食物结算之前）：从阶段牌堆最上面翻 1 张<round_card>，放到与当前回合编号相同的<round_space>上——从此成为新的行动格，本回合起每回合都可用。",
+        "en": "Settled in each round's preparation phase (before the <well> food): reveal the top <round_card> of the stage pile and place it on the <round_space> matching the current round number — it becomes a new action space, usable from this round on."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "阶段牌堆顶",
+            "destination": "<round_space>",
+            "<ontology::object>": "<round_card>",
+            "quantity": 1,
+            "description": {
+              "zh": "把最上面的<round_card>放到当前回合编号的<round_space>上，成为新的行动格。",
+              "en": "Place the top <round_card> on the <round_space> of the current round number; it becomes a new action space."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "well_income",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "水井收入",
+        "en": "Well Income"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "准备阶段结算（翻开回合卡之后）：若当前回合的<round_space>上有<well>放的食物（建井时在接下来 5 个尚未被回合卡覆盖的回合格上各放 1 食物），井主获得该食物。",
+        "en": "Settled in the preparation phase (after revealing the round card): if the current round's <round_space> holds food placed by the <well> (1 food on each of the next 5 round spaces not yet covered when the well was built), the well's owner receives it."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<round_space>",
+            "destination": "<personal_supply>",
+            "<ontology::object>": "<food>",
+            "quantity": 1,
+            "description": {
+              "zh": "把当前回合格上的 1 食物交给<well>的拥有者。",
+              "en": "Give the 1 food on the current round space to the <well>'s owner."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "final_scoring",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "终局计分",
+        "en": "Final Scoring"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "第 14 回合的收获结束后结算（<round_14_completed>），用<scoring_pad>对每位玩家计分。计分表：田地 0-1:-1, 2:+1, 3:+2, 4:+3, 5+:+4（无论是否播种）；牧场 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4（按个数）；谷物 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；蔬菜 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4（供应 + 田上 + 自称为田的卡上全部算）；羊 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；野猪 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4；牛 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4（卡上动物除非另有说明也算）。另有：每个未使用<farmyard_space> -1；每个围起来的马厩 +1；每个泥房间 +1、每个石房间 +2（木房间 0 分）；每个家庭成员 +3；每个<begging_marker> -3；主要/次要改良按卡面分数与奖励条件；职业按卡面。食物不计分。",
+        "en": "Settled after the round-14 harvest (<round_14_completed>), using the <scoring_pad> for each player. Table: fields 0-1:-1, 2:+1, 3:+2, 4:+3, 5+:+4 (planted or not); pastures 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4 (by count); grain 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; vegetables 0:-1, 1:+1, 2:+2, 3:+3, 4+:+4 (supply + fields + cards identifying as fields all count); sheep 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; wild boar 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4; cattle 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4 (animals on cards count unless stated otherwise). Plus: -1 per unused <farmyard_space>; +1 per fenced stable; +1 per clay room, +2 per stone room (wooden rooms 0); +3 per family member; -3 per <begging_marker>; major/minor improvements score their printed points and bonus conditions; occupations per card. Food scores nothing."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "按<scoring_pad>的计分表对每位玩家逐项计分并汇总<vp>。",
+            "en": "Score each category per <scoring_pad> for every player and total their <vp>."
+          }
+        }
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "id": "harvest_round",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "收获回合",
+        "en": "Harvest Round"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "当前回合结束时进行收获——收获在第 4、7、9、11、13、14 回合结束时进行（版图上以 🌾 标记）。满足时执行收获（<harvest_field_phase> → <harvest_feeding> → <harvest_breeding>）。",
+        "en": "The current round ends with a harvest — harvests happen at the end of rounds 4, 7, 9, 11, 13, and 14 (marked 🌾 on the board). When satisfied, the harvest runs (<harvest_field_phase> → <harvest_feeding> → <harvest_breeding>)."
+      }
+    },
+    {
+      "id": "action_space_free",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "行动格空闲",
+        "en": "Action Space Free"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "所选<action_space>本回合还没有<family_member>。是<place_family_member>的可用条件——每回合每个行动格只能被 1 人使用，被占后本回合不可再用。",
+        "en": "The chosen <action_space> holds no <family_member> this round. Availability condition of <place_family_member> — each space takes only one person per round; once occupied it is blocked for the round."
+      }
+    },
+    {
+      "id": "has_empty_room",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有空房间",
+        "en": "Has an Empty Room"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的房间数多于家庭成员数（每个房间住 1 人）。是<family_growth_with_room>的可用条件，执行时检查——本回合先建房再成长也不行（检查时必须有空房间）；「无需房间」成长（<family_growth_without_room>）不受此限制。",
+        "en": "The player has more rooms than family members (one person per room). Availability condition of <family_growth_with_room>, checked when taking the action — building a room later in the same round does not help (the room must exist at check time); growth without room (<family_growth_without_room>) ignores this."
+      }
+    },
+    {
+      "id": "has_legal_room_space",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有合法建房位",
+        "en": "Has a Legal Room Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<farmyard_board>上存在与已有<room_tile>相邻的空<farmyard_space>。是<build_rooms>的可用条件——没有合法位置就不能加建房间。",
+        "en": "The <farmyard_board> has an empty <farmyard_space> adjacent to an existing <room_tile>. Availability condition of <build_rooms> — without a legal space no rooms can be added."
+      }
+    },
+    {
+      "id": "has_legal_field_space",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有合法犁田位",
+        "en": "Has a Legal Field Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<farmyard_board>上存在空的<farmyard_space>可放<field_tile>：第一块田任意空地；之后必须与已有田相邻。是<plough_field>的可用条件。",
+        "en": "The <farmyard_board> has an empty <farmyard_space> for a <field_tile>: the first field may go on any empty space; later fields must be adjacent to an existing field. Availability condition of <plough_field>."
+      }
+    },
+    {
+      "id": "has_legal_pasture_space",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有合法牧场位",
+        "en": "Has a Legal Pasture Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<farmyard_board>上存在空<farmyard_space>能围出**完全封闭**的<pasture>：第一个牧场任意位置（空间连续），之后的牧场必须与已有牧场相邻。是<build_fences>的可用条件。",
+        "en": "The <farmyard_board> has empty <farmyard_space>s that can form a **fully enclosed** <pasture>: the first pasture anywhere (contiguous spaces), later ones adjacent to an existing pasture. Availability condition of <build_fences>."
+      }
+    },
+    {
+      "id": "has_unplanted_field",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有空田",
+        "en": "Has an Unplanted Field"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家至少 1 块<field_tile>上没有作物。是<sow>的可用条件。播种不必种满所有空田——田可闲置。",
+        "en": "The player has at least one <field_tile> without crops. Availability condition of <sow>. You need not plant every empty field — fields may lie fallow."
+      }
+    },
+    {
+      "id": "has_crop",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有作物种子",
+        "en": "Has Crop Seeds"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家<personal_supply>中至少有 1 个<crop>（<grain>或<vegetable>）可作种子。是<sow>的可用条件（每块播种的田需要 1 个自己供应的作物）。",
+        "en": "The player has at least 1 <crop> (<grain> or <vegetable>) in their <personal_supply> to use as seed. Availability condition of <sow> (each sown field needs 1 crop from your own supply)."
+      }
+    },
+    {
+      "id": "has_grain",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有谷物",
+        "en": "Has Grain"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家<personal_supply>中至少有 1 个<grain>。是<bake_bread>的可用条件（田上的谷物收获前不可用）。",
+        "en": "The player has at least 1 <grain> in their <personal_supply>. Availability condition of <bake_bread> (grain on fields is unusable until harvested)."
+      }
+    },
+    {
+      "id": "has_2_same_animals",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有 2 只同类动物",
+        "en": "Has 2 Animals of a Type"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家（农场各处合计）至少有 2 只同种动物——不必住在同一空间，宠物也算。是<harvest_breeding>对该种动物的繁殖条件。",
+        "en": "The player has at least 2 animals of one type anywhere on the farm — not necessarily in the same space, pets included. Breeding condition per type in <harvest_breeding>."
+      }
+    },
+    {
+      "id": "can_accommodate_animal",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "能安置动物",
+        "en": "Can Accommodate an Animal"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "农场上有空间容纳动物：<pasture>内空位（容量 = 2 × 格数 × 2^马厩数，只容同种动物）、牧场外马厩（恰好 1 只）、或宠物位（房子里恰好 1 只）。是<harvest_breeding>的安置条件——安置不下则不繁殖；平时取动物也必须能安置（或立即烹饪）。",
+        "en": "The farm has room for an animal: free capacity in a <pasture> (capacity = 2 × spaces × 2^stables, single type per pasture), a stable outside pastures (exactly 1), or the pet spot (exactly 1 in the house). Accommodation condition of <harvest_breeding> — without room, no newborn is gained; animals taken during play must also be accommodated (or cooked at once)."
+      }
+    },
+    {
+      "id": "owns_baking_improvement",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "拥有烘焙改良",
+        "en": "Owns a Baking Improvement"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家<played_cards_area>中有🍞改良（<fireplace>、<cooking_hearth>、<clay_oven>、<stone_oven>或相应职业/次要改良）。是<bake_bread>的可用条件。",
+        "en": "The player's <played_cards_area> holds a 🍞 improvement (<fireplace>, <cooking_hearth>, <clay_oven>, <stone_oven>, or a matching occupation/minor improvement). Availability condition of <bake_bread>."
+      }
+    },
+    {
+      "id": "owns_cooking_improvement",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "拥有烹饪改良",
+        "en": "Owns a Cooking Improvement"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家<played_cards_area>中有🍖改良（<fireplace>、<cooking_hearth>或相应职业/次要改良）。是<cook_goods>的可用条件。",
+        "en": "The player's <played_cards_area> holds a 🍖 improvement (<fireplace>, <cooking_hearth>, or a matching occupation/minor improvement). Availability condition of <cook_goods>."
+      }
+    },
+    {
+      "id": "prerequisite_met",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "前置条件满足",
+        "en": "Prerequisite Met"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "要打出的<minor_improvement_card>（或职业卡）的前置条件已满足——前置条件只要求你**拥有**某物（如「至少 2 个职业」），不要求支付。是<play_minor_improvement>的可用条件，打出时检查。",
+        "en": "The prerequisite of the <minor_improvement_card> (or occupation card) to play is met — prerequisites only demand that you **have** something (e.g. 'at least 2 occupations'), never that you pay it. Availability condition of <play_minor_improvement>, checked when playing."
+      }
+    },
+    {
+      "id": "can_afford_cost",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "支付得起费用",
+        "en": "Can Afford the Cost"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家<personal_supply>中有足够货物支付行动费用（建材、食物等）。是带费用行动的通用可用条件（如<build_rooms>、<build_stables>、<build_fences>、<play_occupation>、<build_major_improvement>）。",
+        "en": "The player's <personal_supply> holds enough goods to pay the action's cost (building resources, food, etc.). Generic availability condition of actions with costs (e.g. <build_rooms>, <build_stables>, <build_fences>, <play_occupation>, <build_major_improvement>)."
+      }
+    },
+    {
+      "id": "all_people_placed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "所有人已放置",
+        "en": "All People Placed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "所有玩家的所有<family_member>都已放置到行动格（没有人的玩家跳过）。是工作阶段循环的结束条件——满足后进入回家阶段。",
+        "en": "Every player has placed all their <family_member>s on action spaces (players with no people left are skipped). End condition of the work-phase cycle — afterwards comes the returning-home phase."
+      }
+    },
+    {
+      "id": "round_14_completed",
+      "specifies": "<ontology::endgame_condition>",
+      "name": {
+        "zh": "第 14 回合完成",
+        "en": "Round 14 Completed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "农场主的终局条件：第 14 回合及其最终收获全部结束（14 回合 × 4 阶段打完）。游戏结束，进入<final_scoring>。",
+        "en": "Agricola's endgame condition: round 14 and its final harvest are complete (all 14 rounds × 4 phases played). The game ends and <final_scoring> begins."
+      }
+    },
+    {
+      "id": "most_points_wins",
+      "specifies": "<ontology::victory_condition>",
+      "name": {
+        "zh": "最高分获胜",
+        "en": "Most Points Wins"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "农场主的胜利条件：<final_scoring>完成后<vp>最高的玩家获胜。平手时按<most_building_resources_left>决胜——个人供应中建材（木头+黏土+芦苇+石头）更多者获胜；仍平手则并列分享名次。",
+        "en": "Agricola's victory condition: after <final_scoring>, the player with the most <vp> wins. Ties are broken by <most_building_resources_left> — more building resources (wood + clay + reed + stone) in the personal supply wins; if still tied, the players share the rank."
+      },
+      "<ontology::condition>[]": [
+        "<most_points>",
+        "<most_building_resources_left>"
+      ]
+    },
+    {
+      "id": "most_points",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "分数最高",
+        "en": "Highest Score"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家的总<vp>为全场最高（允许并列——并列最高者同时满足）。用于<most_points_wins>第 1 条。",
+        "en": "The player's total <vp> is the highest in the game (ties allowed — all tied players satisfy it). Used as criterion 1 of <most_points_wins>."
+      }
+    },
+    {
+      "id": "most_building_resources_left",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "剩余建材最多",
+        "en": "Most Building Resources Left"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家<personal_supply>中的<building_resource>（<wood>+<clay>+<reed>+<stone>）总数在平手玩家中最多。用于<most_points_wins>的平手决胜（仍平手则并列分享名次）。",
+        "en": "The player's total <building_resource>s (<wood>+<clay>+<reed>+<stone>) in their <personal_supply> are the most among tied players. Tie-breaker of <most_points_wins> (if still tied, the players share the rank)."
+      }
+    }
+  ]
+}
