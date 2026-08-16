@@ -660,15 +660,78 @@
                   "specifies": "<ontology::evaluate>",
                   "description": {
                     "zh": "判定胜者：每位玩家的胜利分 = 自己的吸引力值 − 目标数（<conservation_counter> 所在计分区的最低吸引力值），胜利分可为负。胜利分最高者获胜；平局时支持保护项目更多者获胜（数 <bonus_spaces> 上已取走的 <player_token> 数）；仍平局则并列获胜。",
-                    "en": "Adjudicate the winner: each player's Victory Points = their Appeal value − their Target Number (the lowest Appeal value in the scoring area holding their <conservation_counter>). The player with the highest positive Victory Point total wins; ties go to the player who supported the most conservation projects (count the <player_token>s removed from the <bonus_spaces>); if still tied, all tied players share the victory."
+                    "en": "Adjudicate the winner: each player's Victory Points = their Appeal value − their Target Number (the lowest Appeal value in the scoring area holding their <conservation_counter>). Victory Points may be negative. The player with the highest Victory Point total wins; ties go to the player who supported the most conservation projects (count the <player_token>s removed from the <bonus_spaces>); if still tied, all tied players share the victory."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "highest_victory_points_wins",
+                          "name": {
+                            "zh": "最高胜利分者获胜",
+                            "en": "Highest Victory Points Wins"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "比较所有玩家的胜利分，最高者获胜。",
+                            "en": "Compare all players' Victory Points; the highest wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "胜利分最高的玩家唯一（无并列）。",
+                              "en": "Exactly one player has the highest Victory Point total."
+                            }
+                          },
+                          "result": {
+                            "zh": "胜利分最高的玩家（唯一时即胜者）。",
+                            "en": "The player with the highest Victory Points (the winner when unique)."
+                          }
+                        },
+                        {
+                          "id": "tie_break_by_supported_projects",
+                          "name": {
+                            "zh": "平局比支持保护项目数",
+                            "en": "Tie-Break by Supported Projects"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "最高胜利分并列的玩家中，支持保护项目更多者获胜（数 <bonus_spaces> 上已取走的 <player_token> 数）。",
+                            "en": "Among the players tied for the highest Victory Points, the one who supported more conservation projects wins (count the <player_token>s removed from their <bonus_spaces>)."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "胜利分最高者并列，且并列者中支持项目最多者唯一。",
+                              "en": "The highest Victory Points are tied, and exactly one of the tied players supported the most projects."
+                            }
+                          },
+                          "result": {
+                            "zh": "支持项目最多的并列玩家（唯一时即胜者）。",
+                            "en": "The tied player who supported the most projects (the winner when unique)."
+                          }
+                        },
+                        {
+                          "id": "shared_victory",
+                          "name": {
+                            "zh": "并列获胜",
+                            "en": "Shared Victory"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "仍并列的玩家并列获胜。",
+                            "en": "The still-tied players share the victory."
+                          },
+                          "result": {
+                            "zh": "并列的玩家们。",
+                            "en": "The tied players."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FIRST_MATCH>"
+                    }
                   },
                   "result": {
                     "zh": "胜者玩家。",
                     "en": "The winning player."
-                  },
-                  "rules": {
-                    "zh": "胜利分 = 吸引力值 − 目标数；最高正分胜；平局比支持保护项目数；再平并列。",
-                    "en": "Victory Points = Appeal − Target Number; highest positive total wins; tie-break by number of supported conservation projects; still tied, share the victory."
                   }
                 }
               ],
@@ -1469,8 +1532,8 @@
               },
               "specifies": "<ontology::trigger>",
               "description": {
-                "zh": "释放动物的围栏清空流程：按 ①→④ 依次检查，第 1 个成立者执行、其余跳过（条件互斥）；4 步全不成立时棋盘不做任何变化。",
-                "en": "The enclosure-clearing flow of a release: check ①→④ in order, execute the first that holds and skip the rest (mutually exclusive conditions); if none of the four holds, nothing changes on the board."
+                "zh": "释放动物的围栏清空流程：按 ①→④ 依次检查，第一个条件成立者执行、其余忽略（FIRST_MATCH）；4 步全不成立时棋盘不做任何变化。",
+                "en": "The enclosure-clearing flow of a release: check ①→④ in order; the first whose condition holds executes and the rest are ignored (FIRST_MATCH); if none of the four holds, nothing changes on the board."
               },
               "<ontology::content>": {
                 "<ontology::instant_content>": {
@@ -1487,8 +1550,8 @@
                         "en": "Remove the printed number of <player_token>s from the <special_enclosure> the animal is in, returning them to the personal supply."
                       },
                       "<ontology::condition>": {
-                        "zh": "①有匹配的特殊围栏：动物卡标有该围栏图标、围栏上有足够数量的 <player_token>、且满足水/岩要求。",
-                        "en": "① There is a matching special enclosure: the card shows its icon, enough <player_token>s are on it, and the water/rock requirements are met."
+                        "zh": "有匹配的特殊围栏：动物卡标有该围栏图标、围栏上有足够数量的 <player_token>、且满足水/岩要求。",
+                        "en": "There is a matching special enclosure: the card shows its icon, enough <player_token>s are on it, and the water/rock requirements are met."
                       },
                       "source": "该动物所在的 <special_enclosure>",
                       "destination": "<ontology::player_supply>",
@@ -1507,8 +1570,8 @@
                         "en": "Flip the smallest occupied <standard_enclosure> of that size back to its empty side."
                       },
                       "<ontology::condition>": {
-                        "zh": "②①不成立（无匹配的特殊围栏），但存在匹配的标准围栏：已占用、尺寸够大、满足水/岩要求。",
-                        "en": "② ① fails (no matching special enclosure), but there is a matching standard enclosure: occupied, large enough, water/rock requirements met."
+                        "zh": "存在匹配的标准围栏：已占用、尺寸够大、满足水/岩要求。",
+                        "en": "There is a matching standard enclosure: occupied, large enough, water/rock requirements met."
                       },
                       "subject": "最小的该类已占用 <standard_enclosure>",
                       "to": "face_up"
@@ -1525,8 +1588,8 @@
                         "en": "Remove the printed number of <player_token>s from the <special_enclosure> the animal is in, returning them to the personal supply (water/rock requirements disregarded)."
                       },
                       "<ontology::condition>": {
-                        "zh": "③①②均不成立，但存在忽略水/岩也匹配的特殊围栏：动物卡标有该围栏图标、围栏上有足够数量的 <player_token>。",
-                        "en": "③ ① and ② fail, but there is a matching special enclosure ignoring water/rock: the card shows its icon and enough <player_token>s are on it."
+                        "zh": "存在忽略水/岩也匹配的特殊围栏：动物卡标有该围栏图标、围栏上有足够数量的 <player_token>。",
+                        "en": "There is a matching special enclosure ignoring water/rock: the card shows its icon and enough <player_token>s are on it."
                       },
                       "source": "该动物所在的 <special_enclosure>",
                       "destination": "<ontology::player_supply>",
@@ -1545,14 +1608,14 @@
                         "en": "Flip the smallest occupied <standard_enclosure> of that size back to its empty side (water/rock requirements disregarded)."
                       },
                       "<ontology::condition>": {
-                        "zh": "④①②③均不成立，但存在忽略水/岩也匹配的标准围栏：已占用、尺寸够大。",
-                        "en": "④ ①, ② and ③ fail, but there is a matching standard enclosure ignoring water/rock: occupied and large enough."
+                        "zh": "存在忽略水/岩也匹配的标准围栏：已占用、尺寸够大。",
+                        "en": "There is a matching standard enclosure ignoring water/rock: occupied and large enough."
                       },
                       "subject": "最小的该类已占用 <standard_enclosure>",
                       "to": "face_up"
                     }
                   ],
-                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  "type": "<ontology::multiple_choice_enum.FIRST_MATCH>"
                 }
               }
             },

@@ -1958,6 +1958,12 @@
                             "zh": "比较所有玩家的<success_point>，最高者获胜（唯一时判定结束）。",
                             "en": "Compare all players' success points; the highest wins (adjudication ends if unique)."
                           },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "成功点数最高的玩家唯一（无并列）。",
+                              "en": "Exactly one player has the highest success points (no tie)."
+                            }
+                          },
                           "result": {
                             "zh": "成功点数最高的玩家；若并列则并列者进入下一级。",
                             "en": "The player(s) with the highest success points; ties advance to the next level."
@@ -1969,9 +1975,6 @@
                             "zh": "比较模组升级数",
                             "en": "Compare Module Upgrades"
                           },
-                          "do_after": [
-                            "compare_success_points"
-                          ],
                           "specifies": "<ontology::evaluate>",
                           "description": {
                             "zh": "<success_point>并列的玩家中，已执行更多<upgrade_main_module>者获胜（唯一时判定结束）。",
@@ -1979,8 +1982,8 @@
                           },
                           "<ontology::condition>": {
                             "description": {
-                              "zh": "成功点数最高的玩家不唯一（存在并列）。",
-                              "en": "The player(s) with the highest success points are not unique (a tie exists)."
+                              "zh": "成功点数最高者并列，且并列者中已执行<upgrade_main_module>最多者唯一。",
+                              "en": "The highest success points are tied, and exactly one of the tied players performed the most module upgrades."
                             }
                           },
                           "result": {
@@ -1994,19 +1997,10 @@
                             "zh": "比较座次顺序",
                             "en": "Compare Seating Order"
                           },
-                          "do_after": [
-                            "compare_module_upgrades"
-                          ],
                           "specifies": "<ontology::evaluate>",
                           "description": {
                             "zh": "仍并列的玩家按座次顺序（从起始玩家顺时针）先到者获胜。",
                             "en": "Among the still-tied players, the one earliest in seating order (clockwise from the starting player) wins."
-                          },
-                          "<ontology::condition>": {
-                            "description": {
-                              "zh": "模组升级数最多的平局玩家不唯一（仍存在并列）。",
-                              "en": "The tied player(s) with the most module upgrades are not unique (still tied)."
-                            }
                           },
                           "result": {
                             "zh": "座次最前的平局玩家（必为唯一胜者）。",
@@ -2014,7 +2008,7 @@
                           }
                         }
                       ],
-                      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                      "type": "<ontology::multiple_choice_enum.FIRST_MATCH>"
                     }
                   },
                   "result": {

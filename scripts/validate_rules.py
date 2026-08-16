@@ -46,6 +46,7 @@ REF_RE = re.compile(r"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?(?:\.
 # multiple_choice_enum 合法枚举值
 MCE_VALUES = {
     "EXECUTE_ALL", "CHOOSE_ONE", "CHOOSE_AT_LEAST_ONE", "CHOOSE_ANY", "MATCH",
+    "FIRST_MATCH",
 }
 
 # 允许出现在 "type" 值中的完整引用
