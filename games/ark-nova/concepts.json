@@ -47,8 +47,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "用于临时提升动作强度的资源。执行动作前可支付任意数量 X Token，每个使本次动作强度 +1；支付后归还总供应。每名玩家最多持有 5 个 X Token，不能获得第 6 个。可通过 <x_token_action> 动作或卡牌效果获得。触发 <break_track> 的 Break 时，触发者获得 1 个 X Token。动作中途获得的 X Token 不能用于提升当前动作的强度（强度在动作开始前确定）。",
-        "en": "A resource that temporarily boosts action strength. Before performing an action, you may spend any number of X-tokens; each increases the action's strength by 1, and spent tokens return to the general supply. A player may never hold more than 5 X-tokens. Gained via the <x_token_action> or card effects. When a break is triggered, the player who triggered it gains 1 X-token. X-tokens gained during an action cannot boost that same action — strength is set before the action begins."
+        "zh": "用于临时提升动作强度的资源。执行动作前可支付任意数量 X Token，每个使本次动作强度 +1；支付后归还总供应。每名玩家最多持有 5 个 X Token，不能获得第 6 个。可通过 <x_token_action> 动作或卡牌效果获得。触发 <break_track> 的 Break 时，触发者获得 1 个 X Token。计划用于提升的 X Token 必须在执行动作前就已持有：强度在执行动作前确定，动作中途获得的 X Token 不能用于提升当前动作。",
+        "en": "A resource that temporarily boosts action strength. Before performing an action, you may spend any number of X-tokens; each increases the action's strength by 1, and spent tokens return to the general supply. A player may never hold more than 5 X-tokens. Gained via the <x_token_action> or card effects. When a break is triggered, the player who triggered it gains 1 X-token. X-tokens you plan to spend must already be in your possession before the action: strength is set before the action begins, so X-tokens gained during an action cannot boost that same action."
       },
       "quantity": {
         "zh": "每名玩家最多持有 5 个 X Token",
@@ -599,10 +599,14 @@
         "zh": "动物园地图",
         "en": "Zoo Map"
       },
+      "aliases": {
+        "zh": ["边界空间", "地图"],
+        "en": ["border space"]
+      },
       "abstract": false,
       "description": {
-        "zh": "每位玩家的个人地图。中央大片区域是 <building_area>（建围栏、亭、馆、独特建筑处）；底部是 5 个 <card_slot>（数字 1-5 表示动作强度）；左边缘是 7 个 <bonus_spaces>（开局放 7 个 <player_token>，支持保护项目时逐个取走并激活对应奖励）；右侧是 <partner_zoo_spaces>（5 格）与 <university_spaces>（3 格）；右下是 <worker_supply_spaces>；上方是 <notepad>（放钱、X Token 与活跃工人）。部分空格有水（W）、岩（R）、公园图标或放置奖励图标。进阶地图（1-8 号）各有独特能力；地图 A 开局在指定位置放 1 个 3 格空标准围栏；地图 0 有更多奖励格。",
-        "en": "Each player's personal map. The large middle area is the <building_area> (where enclosures, kiosks, pavilions, and unique buildings are placed); the bottom holds 5 <card_slot>s (numbered 1-5 showing action strength); the left edge holds 7 <bonus_spaces> (holding 7 <player_token>s at setup, removed one by one when supporting conservation projects, each activating a bonus); the right side holds the <partner_zoo_spaces> (5 spaces) and <university_spaces> (3 spaces); bottom-right are the <worker_supply_spaces>; at the top is the <notepad> (money, X-tokens, and active workers). Some spaces show water (W), rock (R), a park icon, or a placement bonus icon. Advanced maps (1-8) each have a unique ability; Map A starts with a 3-space empty standard enclosure placed on the indicated spaces; Map 0 has more bonus spaces."
+        "zh": "每位玩家的个人地图。地图边缘的边界空间（border space）指至少有一侧没有相邻空间的格子。中央大片区域是 <building_area>中央大片区域是 <building_area>（建围栏、亭、馆、独特建筑处）；底部是 5 个 <card_slot>（数字 1-5 表示动作强度）；左边缘是 7 个 <bonus_spaces>（开局放 7 个 <player_token>，支持保护项目时逐个取走并激活对应奖励）；右侧是 <partner_zoo_spaces>（5 格）与 <university_spaces>（3 格）；右下是 <worker_supply_spaces>；上方是 <notepad>（放钱、X Token 与活跃工人）。部分空格有水（W）、岩（R）、公园图标或放置奖励图标。进阶地图（1-8 号）各有独特能力；地图 A 开局在指定位置放 1 个 3 格空标准围栏；地图 0 有更多奖励格。",
+        "en": "Each player's personal map. A border space is a space that has at least one side with no adjacent space. The large middle area is the <building_area> (where enclosures, kiosks, pavilions, and unique buildings are placed); the bottom holds 5 <card_slot>s (numbered 1-5 showing action strength); the left edge holds 7 <bonus_spaces> (holding 7 <player_token>s at setup, removed one by one when supporting conservation projects, each activating a bonus); the right side holds the <partner_zoo_spaces> (5 spaces) and <university_spaces> (3 spaces); bottom-right are the <worker_supply_spaces>; at the top is the <notepad> (money, X-tokens, and active workers). Some spaces show water (W), rock (R), a park icon, or a placement bonus icon. Advanced maps (1-8) each have a unique ability; Map A starts with a 3-space empty standard enclosure placed on the indicated spaces; Map 0 has more bonus spaces."
       },
       "parts": [
         {

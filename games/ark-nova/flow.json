@@ -1005,6 +1005,10 @@
                 "zh": "结算「动作结束后」效果",
                 "en": "Resolve After-Finishing Effects"
               },
+              "aliases": {
+                "zh": ["效果结算顺序", "同时触发", "多个效果", "结算顺序"],
+                "en": ["effect resolution order", "simultaneous effects"]
+              },
               "specifies": "<ontology::effect>",
               "description": {
                 "zh": "移卡到槽 1 之后，结算本动作触发的所有「动作结束后」（after finishing）效果（含动物卡与赞助卡触发的）。多个同类效果时玩家自选顺序。",
