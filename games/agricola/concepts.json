@@ -21,8 +21,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "农场主中的<ontology::resource>。用「1 食物」标记（55 个）与「5 食物」标记（10 个）表示，共 65 个；不足时可用<goods_tile>或替代品，食物无物理数量上限。核心用途：喂养家庭成员——每个家庭成员每次收获需 2 食物、新生儿 1 食物（<harvest_feeding>），不足时每缺 1 食物拿 1 个<begging_marker>（-3 分）。获得途径：开局起始玩家 2 食物、其余玩家 3 食物；<space_day_labourer> 2 食物；<space_fishing>与<space_travelling_players>各 1 食物（累积）；<well>每回合 1 食物（5 回合）；把<grain>/<vegetable>生吃各 1 食物（<eat_raw_crops>，随时）；🍖 烹饪改良把动物/蔬菜换成食物（<cook_goods>，随时）；🍞 烘焙改良把谷物烤成食物（<bake_bread>）；<joinery>/<pottery>/<basketmakers_workshop>每收获把建材换成食物（<craft_conversion>）。终局计分时食物不计分（「除了食物什么都计分」）。",
-        "en": "A <ontology::resource> in Agricola. Represented by '1 food' markers (55) and '5 food' markers (10), 65 total; unlimited in practice — use <goods_tile>s or improvise. Core use: feeding — each family member needs 2 food per harvest, a newborn 1 (<harvest_feeding>); for every food short you take a <begging_marker> (-3 points). Sources: 2 food for the starting player and 3 for each other player at setup; 2 from <space_day_labourer>; 1 (accumulating) each from <space_fishing> and <space_travelling_players>; 1 per round for 5 rounds from <well>; 1 each for eating <grain>/<vegetable> raw (<eat_raw_crops>, any time); 🍖 cooking improvements convert animals/vegetables (<cook_goods>, any time); 🍞 baking improvements convert grain (<bake_bread>); <joinery>/<pottery>/<basketmakers_workshop> convert a building resource per harvest (<craft_conversion>). Food scores nothing at game end."
+        "zh": "农场主中的<ontology::resource>。用「1 食物」标记（55 个）与「5 食物」标记（10 个）表示，共 65 个；不足时可用<goods_tile>或替代品，食物无物理数量上限。核心用途：喂养家庭成员——每个家庭成员每次收获需 2 食物、新生儿 1 食物（<harvest_feeding>），不足时每缺 1 食物拿 1 个<begging_marker>（-3 分）。获得途径：开局起始玩家 2 食物、其余玩家 3 食物；<space_day_labourer> 2 食物；<space_fishing>与<space_travelling_players>各 1 食物（累积）；<well>每回合 1 食物（5 回合）；把<grain>/<vegetable>生吃各 1 食物（<eat_raw_crops>，随时）；烹饪改良把动物/蔬菜换成食物（<cook_goods>，随时）；烘焙改良把谷物烤成食物（<bake_bread>）；<joinery>/<pottery>/<basketmakers_workshop>每收获把建材换成食物（<craft_conversion>）。终局计分时食物不计分（「除了食物什么都计分」）。",
+        "en": "A <ontology::resource> in Agricola. Represented by '1 food' markers (55) and '5 food' markers (10), 65 total; unlimited in practice — use <goods_tile>s or improvise. Core use: feeding — each family member needs 2 food per harvest, a newborn 1 (<harvest_feeding>); for every food short you take a <begging_marker> (-3 points). Sources: 2 food for the starting player and 3 for each other player at setup; 2 from <space_day_labourer>; 1 (accumulating) each from <space_fishing> and <space_travelling_players>; 1 per round for 5 rounds from <well>; 1 each for eating <grain>/<vegetable> raw (<eat_raw_crops>, any time); cooking improvements convert animals/vegetables (<cook_goods>, any time); baking improvements convert grain (<bake_bread>); <joinery>/<pottery>/<basketmakers_workshop> convert a building resource per harvest (<craft_conversion>). Food scores nothing at game end."
       },
       "unit": {
         "type": "string",
@@ -225,8 +225,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种<crop>。共 16 个橙色标记（不足可用<goods_tile>替代）。获得途径：第 3 阶段的「拿取 1 个蔬菜」回合卡（<rc_vegetable>）、职业/次要改良效果。用途：生吃 1 食物（<eat_raw_crops>）；播种（<sow>：每块空田放 1 个自己供应的蔬菜 + 1 个供应堆的，共 2 个）；用🍖改良换成食物（<cook_goods>：<fireplace> 2 食物、<cooking_hearth> 3 食物）。终局计分：0 个 -1，1 个 +1，2 个 +2，3 个 +3，4+ 个 +4。",
-        "en": "A <crop>. 16 orange markers (use <goods_tile>s if they run out). Sources: the stage-3 'take 1 vegetable' round card (<rc_vegetable>), occupation/minor-improvement effects. Uses: eaten raw for 1 food (<eat_raw_crops>); sown (<sow>: 1 vegetable from your supply + 1 from the general supply = 2 per empty field); converted with a 🍖 improvement (<cook_goods>: <fireplace> 2 food, <cooking_hearth> 3 food). Final scoring: 0 → -1, 1 → +1, 2 → +2, 3 → +3, 4+ → +4."
+        "zh": "一种<crop>。共 16 个橙色标记（不足可用<goods_tile>替代）。获得途径：第 3 阶段的「拿取 1 个蔬菜」回合卡（<rc_vegetable>）、职业/次要改良效果。用途：生吃 1 食物（<eat_raw_crops>）；播种（<sow>：每块空田放 1 个自己供应的蔬菜 + 1 个供应堆的，共 2 个）；用烹饪改良换成食物（<cook_goods>：<fireplace> 2 食物、<cooking_hearth> 3 食物）。终局计分：0 个 -1，1 个 +1，2 个 +2，3 个 +3，4+ 个 +4。",
+        "en": "A <crop>. 16 orange markers (use <goods_tile>s if they run out). Sources: the stage-3 'take 1 vegetable' round card (<rc_vegetable>), occupation/minor-improvement effects. Uses: eaten raw for 1 food (<eat_raw_crops>); sown (<sow>: 1 vegetable from your supply + 1 from the general supply = 2 per empty field); converted with a cooking improvement (<cook_goods>: <fireplace> 2 food, <cooking_hearth> 3 food). Final scoring: 0 → -1, 1 → +1, 2 → +2, 3 → +3, 4+ → +4."
       },
       "unit": {
         "type": "string",
@@ -250,8 +250,8 @@
       },
       "abstract": true,
       "description": {
-        "zh": "三种动物的统称：<sheep>、<wild_boar>、<cattle>。与作物/建材不同，动物**必须安置在农场板上**（<pasture>或马厩），否则走失；房子里的宠物恰好 1 只（任意种类）。每回合可从<general_supply>把动物移到农场任意位置（随时移动）；随时可丢弃动物（或任何货物）到<general_supply>。繁殖：每个收获回合，每种动物若有至少 2 只且能安置新生动物，则多得 1 只（<harvest_breeding>，每收获每种类至多 1 只新生）。用🍖改良可把动物直接换成食物（<cook_goods>，取动物时可直接换、不必先安置）。终局计分按数量：羊 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；野猪 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4；牛 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4。卡上的动物除非另有说明也算。",
-        "en": "The collective term for the three animals: <sheep>, <wild_boar>, <cattle>. Unlike crops and building resources, animals **must be accommodated on the farmyard board** (<pasture> or stables) or they wander off; exactly 1 pet animal (any type) may live in the house. Animals may be moved around the farm at any time, and you may discard animals (or any goods) to the <general_supply> at any time. Breeding: each harvest, for each animal type with at least 2, gain exactly 1 newborn if it can be accommodated (<harvest_breeding>; at most 1 newborn per type per harvest). A 🍖 improvement lets you convert animals directly to food (<cook_goods>; when taking animals you may convert them at once without accommodating them). Final scoring: sheep 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; wild boar 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4; cattle 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4. Animals on cards count unless stated otherwise."
+        "zh": "三种动物的统称：<sheep>、<wild_boar>、<cattle>。与作物/建材不同，动物**必须安置在农场板上**（<pasture>或马厩），否则走失；房子里的宠物恰好 1 只（任意种类）。每回合可从<general_supply>把动物移到农场任意位置（随时移动）；随时可丢弃动物（或任何货物）到<general_supply>。繁殖：每个收获回合，每种动物若有至少 2 只且能安置新生动物，则多得 1 只（<harvest_breeding>，每收获每种类至多 1 只新生）。用烹饪改良可把动物直接换成食物（<cook_goods>，取动物时可直接换、不必先安置）。终局计分按数量：羊 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；野猪 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4；牛 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4。卡上的动物除非另有说明也算。",
+        "en": "The collective term for the three animals: <sheep>, <wild_boar>, <cattle>. Unlike crops and building resources, animals **must be accommodated on the farmyard board** (<pasture> or stables) or they wander off; exactly 1 pet animal (any type) may live in the house. Animals may be moved around the farm at any time, and you may discard animals (or any goods) to the <general_supply> at any time. Breeding: each harvest, for each animal type with at least 2, gain exactly 1 newborn if it can be accommodated (<harvest_breeding>; at most 1 newborn per type per harvest). A cooking improvement lets you convert animals directly to food (<cook_goods>; when taking animals you may convert them at once without accommodating them). Final scoring: sheep 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4; wild boar 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4; cattle 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4. Animals on cards count unless stated otherwise."
       },
       "unit": {
         "type": "string",
@@ -277,8 +277,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种<animal>。共 18 只白色（不足可用<goods_tile>替代）。获得途径：第 1 阶段的「1 只羊」回合卡（<rc_sheep>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、🍖换食物（<fireplace> 2 食物、<cooking_hearth> 2 食物）、宠物、终局计分（0 只 -1，1-3 只 +1，4-5 只 +2，6-7 只 +3，8+ 只 +4）。",
-        "en": "An <animal>. 18 white sheep (use <goods_tile>s if they run out). Sources: the stage-1 '1 sheep' round card (<rc_sheep>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), 🍖 conversion (<fireplace> 2 food, <cooking_hearth> 2 food), as a pet, final scoring (0 → -1, 1-3 → +1, 4-5 → +2, 6-7 → +3, 8+ → +4)."
+        "zh": "一种<animal>。共 18 只白色（不足可用<goods_tile>替代）。获得途径：第 1 阶段的「1 只羊」回合卡（<rc_sheep>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、烹饪换食物（<fireplace> 2 食物、<cooking_hearth> 2 食物）、宠物、终局计分（0 只 -1，1-3 只 +1，4-5 只 +2，6-7 只 +3，8+ 只 +4）。",
+        "en": "An <animal>. 18 white sheep (use <goods_tile>s if they run out). Sources: the stage-1 '1 sheep' round card (<rc_sheep>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), cooking conversion (<fireplace> 2 food, <cooking_hearth> 2 food), as a pet, final scoring (0 → -1, 1-3 → +1, 4-5 → +2, 6-7 → +3, 8+ → +4)."
       },
       "unit": {
         "type": "string",
@@ -302,8 +302,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种<animal>。共 15 只黑色（不足可用<goods_tile>替代）。获得途径：第 3 阶段的「1 只野猪」回合卡（<rc_wild_boar>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、🍖换食物（<fireplace> 2 食物、<cooking_hearth> 3 食物）、宠物、终局计分（0 只 -1，1-2 只 +1，3-4 只 +2，5-6 只 +3，7+ 只 +4）。",
-        "en": "A <animal>. 15 black boars (use <goods_tile>s if they run out). Sources: the stage-3 '1 wild boar' round card (<rc_wild_boar>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), 🍖 conversion (<fireplace> 2 food, <cooking_hearth> 3 food), as a pet, final scoring (0 → -1, 1-2 → +1, 3-4 → +2, 5-6 → +3, 7+ → +4)."
+        "zh": "一种<animal>。共 15 只黑色（不足可用<goods_tile>替代）。获得途径：第 3 阶段的「1 只野猪」回合卡（<rc_wild_boar>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、烹饪换食物（<fireplace> 2 食物、<cooking_hearth> 3 食物）、宠物、终局计分（0 只 -1，1-2 只 +1，3-4 只 +2，5-6 只 +3，7+ 只 +4）。",
+        "en": "A <animal>. 15 black boars (use <goods_tile>s if they run out). Sources: the stage-3 '1 wild boar' round card (<rc_wild_boar>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), cooking conversion (<fireplace> 2 food, <cooking_hearth> 3 food), as a pet, final scoring (0 → -1, 1-2 → +1, 3-4 → +2, 5-6 → +3, 7+ → +4)."
       },
       "unit": {
         "type": "string",
@@ -327,8 +327,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "一种<animal>。共 13 头棕色（不足可用<goods_tile>替代）。获得途径：第 4 阶段的「1 头牛」回合卡（<rc_cattle>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、🍖换食物（<fireplace> 3 食物、<cooking_hearth> 4 食物）、宠物、终局计分（0 头 -1，1 头 +1，2-3 头 +2，4-5 头 +3，6+ 头 +4）。",
-        "en": "An <animal>. 13 brown cattle (use <goods_tile>s if they run out). Sources: the stage-4 '1 cattle' round card (<rc_cattle>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), 🍖 conversion (<fireplace> 3 food, <cooking_hearth> 4 food), as a pet, final scoring (0 → -1, 1 → +1, 2-3 → +2, 4-5 → +3, 6+ → +4)."
+        "zh": "一种<animal>。共 13 头棕色（不足可用<goods_tile>替代）。获得途径：第 4 阶段的「1 头牛」回合卡（<rc_cattle>，累积空间）、职业/次要改良效果。用途：繁殖（<harvest_breeding>）、烹饪换食物（<fireplace> 3 食物、<cooking_hearth> 4 食物）、宠物、终局计分（0 头 -1，1 头 +1，2-3 头 +2，4-5 头 +3，6+ 头 +4）。",
+        "en": "An <animal>. 13 brown cattle (use <goods_tile>s if they run out). Sources: the stage-4 '1 cattle' round card (<rc_cattle>, an accumulation space), occupation/minor-improvement effects. Uses: breeding (<harvest_breeding>), cooking conversion (<fireplace> 3 food, <cooking_hearth> 4 food), as a pet, final scoring (0 → -1, 1 → +1, 2-3 → +2, 4-5 → +3, 6+ → +4)."
       },
       "unit": {
         "type": "string",
@@ -554,8 +554,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "橙色<ontology::card>，共 168 张（15 周年纪念版卡池）。开局洗混后每人发 7 张，游戏中**不再抽牌**。打出途径：<rc_improvement>的「主要或次要改良」行动、<space_meeting_place>（拿起始玩家的同时）、<rc_family_growth_minor>（家庭成长后）。打出前必须先满足卡上的**前置条件**（只要求拥有、不要求支付，如「已有至少 2 个职业」）；右上角是建材费用，须从供应支付；打出的卡正面朝上放<played_cards_area>，文字生效并优先于规则书。**旅行卡**（左箭头标记）：执行完卡上指示后传给左边玩家，该玩家收进手中。大多数次要改良有终局分数（黄色圆圈数字）或🔷奖励分。本定义按系统建模，不逐一列举 168 张（规则书示例：<space_meeting_place>能打的卡如织布机 1 分 + 每 3 只羊 1 奖励分；货摊把 1 谷物换成 1 蔬菜）。",
-        "en": "An orange <ontology::card>, 168 cards (15th anniversary pool). At setup each player is dealt 7; **no cards are drawn during the game**. Played via: the 'major or minor improvement' action of <rc_improvement>, <space_meeting_place> (along with taking the starting player), or <rc_family_growth_minor> (after family growth). The card's **prerequisite** must be met first (it only demands that you have something, not that you pay it — e.g. 'at least 2 occupations'); the building cost in the top right corner is paid from your supply. Played cards lie face up in your <played_cards_area>, their text taking effect and precedence over the rulebook. **Traveling cards** (a left-pointing arrow): after carrying out the instructions, pass the card to the player on your left, who takes it into hand. Most minor improvements have final points (yellow circle) or 🔷 bonus points. Modeled as a system — the 168 cards are not listed individually (rulebook examples: the Loom, 1 point + 1 bonus per 3 sheep; the Market Stand, 1 grain → 1 vegetable)."
+        "zh": "橙色<ontology::card>，共 168 张（15 周年纪念版卡池）。开局洗混后每人发 7 张，游戏中**不再抽牌**。打出途径：<rc_improvement>的「主要或次要改良」行动、<space_meeting_place>（拿起始玩家的同时）、<rc_family_growth_minor>（家庭成长后）。打出前必须先满足卡上的**前置条件**（只要求拥有、不要求支付，如「已有至少 2 个职业」）；右上角是建材费用，须从供应支付；打出的卡正面朝上放<played_cards_area>，文字生效并优先于规则书。**旅行卡**（左箭头标记）：执行完卡上指示后传给左边玩家，该玩家收进手中。大多数次要改良有终局分数（黄色圆圈数字）或菱形符号奖励分。本定义按系统建模，不逐一列举 168 张（规则书示例：<space_meeting_place>能打的卡如织布机 1 分 + 每 3 只羊 1 奖励分；货摊把 1 谷物换成 1 蔬菜）。",
+        "en": "An orange <ontology::card>, 168 cards (15th anniversary pool). At setup each player is dealt 7; **no cards are drawn during the game**. Played via: the 'major or minor improvement' action of <rc_improvement>, <space_meeting_place> (along with taking the starting player), or <rc_family_growth_minor> (after family growth). The card's **prerequisite** must be met first (it only demands that you have something, not that you pay it — e.g. 'at least 2 occupations'); the building cost in the top right corner is paid from your supply. Played cards lie face up in your <played_cards_area>, their text taking effect and precedence over the rulebook. **Traveling cards** (a left-pointing arrow): after carrying out the instructions, pass the card to the player on your left, who takes it into hand. Most minor improvements have final points (yellow circle) or diamond-symbol bonus points. Modeled as a system — the 168 cards are not listed individually (rulebook examples: the Loom, 1 point + 1 bonus per 3 sheep; the Market Stand, 1 grain → 1 vegetable)."
       },
       "prerequisite": {
         "type": "string",
@@ -592,8 +592,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "红色<ontology::card>，共 10 张（厚纸板）：<fireplace>×2、<cooking_hearth>×2、<well>、<clay_oven>、<stone_oven>、<joinery>、<pottery>、<basketmakers_workshop>。开局全部正面朝上放在<major_improvement_frame>里，所有玩家可用（先到先得）。通过<build_major_improvement>建造（主要途径是<rc_improvement>；<rc_renovation_improvement>翻新后可加建）。右上角是建材费用；一旦拥有整局可用。主要改良的用途是把货物变成食物（🍖 烹饪动物/蔬菜、🍞 烘焙谷物、手工建筑每收获换食物），黄色圆圈数字是终局<vp>。",
-        "en": "A red <ontology::card>, 10 cards on thick cardboard: <fireplace>×2, <cooking_hearth>×2, <well>, <clay_oven>, <stone_oven>, <joinery>, <pottery>, <basketmakers_workshop>. All start face up in the <major_improvement_frame>, available to every player (first come, first served). Built via <build_major_improvement> (mainly through <rc_improvement>; <rc_renovation_improvement> adds one after renovating). The building cost is printed in the top right corner; once owned, the improvement is usable for the rest of the game. Major improvements turn goods into food (🍖 cooking animals/vegetables, 🍞 baking grain, craft buildings converting a resource per harvest); the number in the yellow circle is its final <vp>."
+        "zh": "红色<ontology::card>，共 10 张（厚纸板）：<fireplace>×2、<cooking_hearth>×2、<well>、<clay_oven>、<stone_oven>、<joinery>、<pottery>、<basketmakers_workshop>。开局全部正面朝上放在<major_improvement_frame>里，所有玩家可用（先到先得）。通过<build_major_improvement>建造（主要途径是<rc_improvement>；<rc_renovation_improvement>翻新后可加建）。右上角是建材费用；一旦拥有整局可用。主要改良的用途是把货物变成食物（烹饪动物/蔬菜、烘焙谷物、手工建筑每收获换食物），黄色圆圈数字是终局<vp>。",
+        "en": "A red <ontology::card>, 10 cards on thick cardboard: <fireplace>×2, <cooking_hearth>×2, <well>, <clay_oven>, <stone_oven>, <joinery>, <pottery>, <basketmakers_workshop>. All start face up in the <major_improvement_frame>, available to every player (first come, first served). Built via <build_major_improvement> (mainly through <rc_improvement>; <rc_renovation_improvement> adds one after renovating). The building cost is printed in the top right corner; once owned, the improvement is usable for the rest of the game. Major improvements turn goods into food (cooking animals/vegetables, baking grain, craft buildings converting a resource per harvest); the number in the yellow circle is its final <vp>."
       },
       "vp_value": {
         "type": "integer",
@@ -616,8 +616,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "主要改良之一，共 2 张：一张 2 <clay>、一张 3 <clay>。终局 1 <vp>。🍖 效果（随时，不限次数）：把动物/蔬菜直接换成食物——蔬菜 2 食物、<sheep> 2 食物、<wild_boar> 2 食物、<cattle> 3 食物；从累积格取动物时可立即转换、不必先安置。🍞 效果：<bake_bread>时每个<grain>烤成 2 食物（可部分烘焙、保留剩余谷物）。拿主要改良行动时可把壁炉退还换< cooking_hearth>，不额外付建材。",
-        "en": "One of the major improvements, 2 copies: one costs 2 <clay>, the other 3 <clay>. Final: 1 <vp>. 🍖 effect (any time, unlimited): convert animals/vegetables directly to food — vegetables 2 food, <sheep> 2, <wild_boar> 2, <cattle> 3; animals taken from an accumulation space may be converted at once without being accommodated. 🍞 effect: during <bake_bread>, each <grain> bakes into 2 food (you may bake partially and keep the rest). When taking a major improvement action you may return the Fireplace and take a <cooking_hearth> for free."
+        "zh": "主要改良之一，共 2 张：一张 2 <clay>、一张 3 <clay>。终局 1 <vp>。烹饪效果（随时，不限次数）：把动物/蔬菜直接换成食物——蔬菜 2 食物、<sheep> 2 食物、<wild_boar> 2 食物、<cattle> 3 食物；从累积格取动物时可立即转换、不必先安置。烘焙效果：<bake_bread>时每个<grain>烤成 2 食物（可部分烘焙、保留剩余谷物）。拿主要改良行动时可把壁炉退还换< cooking_hearth>，不额外付建材。",
+        "en": "One of the major improvements, 2 copies: one costs 2 <clay>, the other 3 <clay>. Final: 1 <vp>. cooking effect (any time, unlimited): convert animals/vegetables directly to food — vegetables 2 food, <sheep> 2, <wild_boar> 2, <cattle> 3; animals taken from an accumulation space may be converted at once without being accommodated. baking effect: during <bake_bread>, each <grain> bakes into 2 food (you may bake partially and keep the rest). When taking a major improvement action you may return the Fireplace and take a <cooking_hearth> for free."
       },
       "vp_value": {
         "type": "integer",
@@ -628,8 +628,8 @@
         }
       },
       "appearance": {
-        "zh": "红色厚纸板卡，印有壁炉图案；左下角 🍖、右下角 🍞 符号。",
-        "en": "A red thick-cardboard card with a fireplace illustration; 🍖 bottom left, 🍞 bottom right."
+        "zh": "红色厚纸板卡，印有壁炉图案；左下角烹饪符号、右下角烘焙符号。",
+        "en": "A red thick-cardboard card with a fireplace illustration; a cooking symbol bottom left and a baking symbol bottom right."
       }
     },
     {
@@ -641,8 +641,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "主要改良之一，共 2 张：一张 4 <clay>、一张 5 <clay>。终局 1 <vp>。🍖 效果（随时，不限次数）：蔬菜 3 食物、<sheep> 2 食物、<wild_boar> 3 食物、<cattle> 4 食物。🍞 效果：<bake_bread>时每个<grain>烤成 3 食物。拿主要改良行动时可退还<fireplace>免费换烹饪炉（不额外付建材）。",
-        "en": "One of the major improvements, 2 copies: one costs 4 <clay>, the other 5 <clay>. Final: 1 <vp>. 🍖 effect (any time, unlimited): vegetables 3 food, <sheep> 2, <wild_boar> 3, <cattle> 4. 🍞 effect: during <bake_bread>, each <grain> bakes into 3 food. When taking a major improvement action you may return your <fireplace> and take a Cooking Hearth for free."
+        "zh": "主要改良之一，共 2 张：一张 4 <clay>、一张 5 <clay>。终局 1 <vp>。烹饪效果（随时，不限次数）：蔬菜 3 食物、<sheep> 2 食物、<wild_boar> 3 食物、<cattle> 4 食物。烘焙效果：<bake_bread>时每个<grain>烤成 3 食物。拿主要改良行动时可退还<fireplace>免费换烹饪炉（不额外付建材）。",
+        "en": "One of the major improvements, 2 copies: one costs 4 <clay>, the other 5 <clay>. Final: 1 <vp>. cooking effect (any time, unlimited): vegetables 3 food, <sheep> 2, <wild_boar> 3, <cattle> 4. baking effect: during <bake_bread>, each <grain> bakes into 3 food. When taking a major improvement action you may return your <fireplace> and take a Cooking Hearth for free."
       },
       "vp_value": {
         "type": "integer",
@@ -653,8 +653,8 @@
         }
       },
       "appearance": {
-        "zh": "红色厚纸板卡，印有烹饪炉图案；左下角 🍖、右下角 🍞 符号。",
-        "en": "A red thick-cardboard card with a cooking hearth illustration; 🍖 bottom left, 🍞 bottom right."
+        "zh": "红色厚纸板卡，印有烹饪炉图案；左下角烹饪符号、右下角烘焙符号。",
+        "en": "A red thick-cardboard card with a cooking hearth illustration; a cooking symbol bottom left and a baking symbol bottom right."
       }
     },
     {
@@ -666,8 +666,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "主要改良，费用 2 <clay> + 1 <stone>。终局 3 <vp>。🍞 效果：<bake_bread>时最多 1 个<grain>烤成 5 食物。建造时**立即获得一次烘焙行动**（所以最好手里已有谷物再建）。可与其他🍞改良组合（如黏土烤炉 1 个→5 食物 + 烹饪炉其余每个 3 食物）。",
-        "en": "A major improvement costing 2 <clay> + 1 <stone>. Final: 3 <vp>. 🍞 effect: during <bake_bread>, bake at most 1 <grain> into 5 food. When built, you **immediately get a bake action** (so build it preferably when you already have grain). Combines with other 🍞 improvements (e.g. Clay Oven 1 grain → 5 food + Cooking Hearth 3 food per further grain)."
+        "zh": "主要改良，费用 2 <clay> + 1 <stone>。终局 3 <vp>。烘焙效果：<bake_bread>时最多 1 个<grain>烤成 5 食物。建造时**立即获得一次烘焙行动**（所以最好手里已有谷物再建）。可与其他烘焙改良组合（如黏土烤炉 1 个→5 食物 + 烹饪炉其余每个 3 食物）。",
+        "en": "A major improvement costing 2 <clay> + 1 <stone>. Final: 3 <vp>. baking effect: during <bake_bread>, bake at most 1 <grain> into 5 food. When built, you **immediately get a bake action** (so build it preferably when you already have grain). Combines with other baking improvements (e.g. Clay Oven 1 grain → 5 food + Cooking Hearth 3 food per further grain)."
       },
       "vp_value": {
         "type": "integer",
@@ -678,8 +678,8 @@
         }
       },
       "appearance": {
-        "zh": "红色厚纸板卡，印有黏土烤炉图案；右下角 🍞 符号。",
-        "en": "A red thick-cardboard card with a clay oven illustration; 🍞 bottom right."
+        "zh": "红色厚纸板卡，印有黏土烤炉图案；右下角烘焙符号。",
+        "en": "A red thick-cardboard card with a clay oven illustration; a baking symbol bottom right."
       }
     },
     {
@@ -691,8 +691,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "主要改良，费用 3 <stone> + 1 <clay>。终局 3 <vp>。🍞 效果：<bake_bread>时最多 2 个<grain>各烤成 4 食物。建造时**立即获得一次烘焙行动**。可与其他🍞改良组合。",
-        "en": "A major improvement costing 3 <stone> + 1 <clay>. Final: 3 <vp>. 🍞 effect: during <bake_bread>, bake up to 2 <grain> into 4 food each. When built, you **immediately get a bake action**. Combines with other 🍞 improvements."
+        "zh": "主要改良，费用 3 <stone> + 1 <clay>。终局 3 <vp>。烘焙效果：<bake_bread>时最多 2 个<grain>各烤成 4 食物。建造时**立即获得一次烘焙行动**。可与其他烘焙改良组合。",
+        "en": "A major improvement costing 3 <stone> + 1 <clay>. Final: 3 <vp>. baking effect: during <bake_bread>, bake up to 2 <grain> into 4 food each. When built, you **immediately get a bake action**. Combines with other baking improvements."
       },
       "vp_value": {
         "type": "integer",
@@ -703,8 +703,8 @@
         }
       },
       "appearance": {
-        "zh": "红色厚纸板卡，印有石烤炉图案；右下角 🍞 符号。",
-        "en": "A red thick-cardboard card with a stone oven illustration; 🍞 bottom right."
+        "zh": "红色厚纸板卡，印有石烤炉图案；右下角烘焙符号。",
+        "en": "A red thick-cardboard card with a stone oven illustration; a baking symbol bottom right."
       }
     },
     {
@@ -903,8 +903,8 @@
               "en": "All sheep on the space."
             },
             "description": {
-              "zh": "取走该行动格上的全部<sheep>放入个人供应（若需安置到农场，见<animal>的安置规则；有🍖改良可直接换成食物）。",
-              "en": "Take all <sheep> from the space into your personal supply (to keep them you must accommodate them per <animal>; with a 🍖 improvement you may convert them to food at once)."
+              "zh": "取走该行动格上的全部<sheep>放入个人供应（若需安置到农场，见<animal>的安置规则；有烹饪改良可直接换成食物）。",
+              "en": "Take all <sheep> from the space into your personal supply (to keep them you must accommodate them per <animal>; with a cooking improvement you may convert them to food at once)."
             }
           }
         }
@@ -1240,8 +1240,8 @@
               "en": "All wild boar on the space."
             },
             "description": {
-              "zh": "取走该行动格上的全部<wild_boar>放入个人供应（需安置到农场；有🍖改良可直接换成食物）。",
-              "en": "Take all <wild_boar> from the space into your personal supply (accommodate them on the farm; with a 🍖 improvement you may convert them to food at once)."
+              "zh": "取走该行动格上的全部<wild_boar>放入个人供应（需安置到农场；有烹饪改良可直接换成食物）。",
+              "en": "Take all <wild_boar> from the space into your personal supply (accommodate them on the farm; with a cooking improvement you may convert them to food at once)."
             }
           }
         }
@@ -1282,8 +1282,8 @@
               "en": "All cattle on the space."
             },
             "description": {
-              "zh": "取走该行动格上的全部<cattle>放入个人供应（需安置到农场；有🍖改良可直接换成食物）。",
-              "en": "Take all <cattle> from the space into your personal supply (accommodate them on the farm; with a 🍖 improvement you may convert them to food at once)."
+              "zh": "取走该行动格上的全部<cattle>放入个人供应（需安置到农场；有烹饪改良可直接换成食物）。",
+              "en": "Take all <cattle> from the space into your personal supply (accommodate them on the farm; with a cooking improvement you may convert them to food at once)."
             }
           }
         }
@@ -2234,8 +2234,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<accumulation_space>提供的行动：取走该格上的**全部**货物（含前几回合积下的）放入<personal_supply>。动物随后按<animal>的安置规则安置（或有🍖改良直接换成食物）；谷物/蔬菜照常入供应。",
-        "en": "The action an <accumulation_space> provides: take **all** goods on the space (including those accumulated over previous rounds) into your <personal_supply>. Animals must then be accommodated per <animal> (or converted to food at once with a 🍖 improvement); grain and vegetables simply enter your supply."
+        "zh": "<accumulation_space>提供的行动：取走该格上的**全部**货物（含前几回合积下的）放入<personal_supply>。动物随后按<animal>的安置规则安置（或有烹饪改良直接换成食物）；谷物/蔬菜照常入供应。",
+        "en": "The action an <accumulation_space> provides: take **all** goods on the space (including those accumulated over previous rounds) into your <personal_supply>. Animals must then be accommodated per <animal> (or converted to food at once with a cooking improvement); grain and vegetables simply enter your supply."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -2488,8 +2488,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "🍞 行动：把<personal_supply>中的<grain>烤成<food>（需<has_grain>；把谷物放回<general_supply>、拿相应食物）。触发途径：<rc_sow_bake>行动格（「播种和/或烘焙」）；建<clay_oven>/<stone_oven>时**立即**获得一次烘焙行动；职业/次要改良效果。各🍞改良的转换率：<fireplace>每个谷物 2 食物；<cooking_hearth>每个 3 食物；<clay_oven>最多 1 个谷物 → 5 食物；<stone_oven>最多 2 个谷物 → 每个 4 食物。可组合（如黏土烤炉 1 个→5 食物 + 烹饪炉其余每个 3 食物）、可部分烘焙保留剩余谷物、次数不限（受谷物数量限制）。",
-        "en": "The 🍞 action: convert <grain> from your <personal_supply> into <food> (grain back to the <general_supply>, food taken instead). Triggers: the <rc_sow_bake> action space ('Sow and/or Bake Bread'); building the <clay_oven> or <stone_oven> **immediately** grants one bake action; occupation/minor-improvement effects. Conversion rates: <fireplace> 2 food per grain; <cooking_hearth> 3 food per grain; <clay_oven> at most 1 grain → 5 food; <stone_oven> at most 2 grain → 4 food each. Combinable (e.g. Clay Oven 1 → 5 food + Cooking Hearth 3 per further grain); you may bake partially and keep the rest; unlimited uses (bounded only by your grain)."
+        "zh": "烘焙行动：把<personal_supply>中的<grain>烤成<food>（需<has_grain>；把谷物放回<general_supply>、拿相应食物）。触发途径：<rc_sow_bake>行动格（「播种和/或烘焙」）；建<clay_oven>/<stone_oven>时**立即**获得一次烘焙行动；职业/次要改良效果。各烘焙改良的转换率：<fireplace>每个谷物 2 食物；<cooking_hearth>每个 3 食物；<clay_oven>最多 1 个谷物 → 5 食物；<stone_oven>最多 2 个谷物 → 每个 4 食物。可组合（如黏土烤炉 1 个→5 食物 + 烹饪炉其余每个 3 食物）、可部分烘焙保留剩余谷物、次数不限（受谷物数量限制）。",
+        "en": "The baking action: convert <grain> from your <personal_supply> into <food> (grain back to the <general_supply>, food taken instead). Triggers: the <rc_sow_bake> action space ('Sow and/or Bake Bread'); building the <clay_oven> or <stone_oven> **immediately** grants one bake action; occupation/minor-improvement effects. Conversion rates: <fireplace> 2 food per grain; <cooking_hearth> 3 food per grain; <clay_oven> at most 1 grain → 5 food; <stone_oven> at most 2 grain → 4 food each. Combinable (e.g. Clay Oven 1 → 5 food + Cooking Hearth 3 per further grain); you may bake partially and keep the rest; unlimited uses (bounded only by your grain)."
       },
       "<ontology::condition>": "<owns_baking_improvement>",
       "<ontology::cost>": {
@@ -2516,8 +2516,8 @@
             "destination": "<personal_supply>",
             "<ontology::object>": "<food>",
             "quantity": {
-              "zh": "按所持🍞改良的转换率（壁炉 2/个、烹饪炉 3/个、黏土烤炉最多 1 个→5、石烤炉最多 2 个→各 4）。",
-              "en": "Per the owned 🍞 improvements' rates (Fireplace 2 each, Cooking Hearth 3 each, Clay Oven at most 1 → 5, Stone Oven at most 2 → 4 each)."
+              "zh": "按所持烘焙改良的转换率（壁炉 2/个、烹饪炉 3/个、黏土烤炉最多 1 个→5、石烤炉最多 2 个→各 4）。",
+              "en": "Per the owned baking improvements' rates (Fireplace 2 each, Cooking Hearth 3 each, Clay Oven at most 1 → 5, Stone Oven at most 2 → 4 each)."
             },
             "description": {
               "zh": "从<general_supply>拿相应<food>放入<personal_supply>。",
@@ -2785,13 +2785,13 @@
       "id": "cook_goods",
       "specifies": "<ontology::action>",
       "name": {
-        "zh": "烹饪（🍖）",
-        "en": "Cook Goods (🍖)"
+        "zh": "烹饪",
+        "en": "Cook Goods"
       },
       "abstract": false,
       "description": {
-        "zh": "**随时**可做的转换行动（不占行动、不限次数）：有🍖改良（<fireplace>/<cooking_hearth>或相应职业/次要改良）时，把动物/蔬菜换成<food>。转换率：<fireplace>蔬菜 2、羊 2、野猪 2、牛 3；<cooking_hearth>蔬菜 3、羊 2、野猪 3、牛 4。从累积格取动物时可**立即**烹饪、不必先安置。**繁殖阶段禁止**把父母或新生动物烹饪。",
-        "en": "An **anytime** conversion action (no action space, unlimited uses): with a 🍖 improvement (<fireplace>/<cooking_hearth> or matching occupation/minor improvement), convert animals/vegetables into <food>. Rates: <fireplace> vegetables 2, sheep 2, wild boar 2, cattle 3; <cooking_hearth> vegetables 3, sheep 2, wild boar 3, cattle 4. Animals taken from an accumulation space may be cooked **at once** without being accommodated. Cooking the parents or the newborn is **forbidden during the breeding phase**."
+        "zh": "**随时**可做的转换行动（不占行动、不限次数）：有烹饪改良（<fireplace>/<cooking_hearth>或相应职业/次要改良）时，把动物/蔬菜换成<food>。转换率：<fireplace>蔬菜 2、羊 2、野猪 2、牛 3；<cooking_hearth>蔬菜 3、羊 2、野猪 3、牛 4。从累积格取动物时可**立即**烹饪、不必先安置。**繁殖阶段禁止**把父母或新生动物烹饪。",
+        "en": "An **anytime** conversion action (no action space, unlimited uses): with a cooking improvement (<fireplace>/<cooking_hearth> or matching occupation/minor improvement), convert animals/vegetables into <food>. Rates: <fireplace> vegetables 2, sheep 2, wild boar 2, cattle 3; <cooking_hearth> vegetables 3, sheep 2, wild boar 3, cattle 4. Animals taken from an accumulation space may be cooked **at once** without being accommodated. Cooking the parents or the newborn is **forbidden during the breeding phase**."
       },
       "<ontology::condition>": "<owns_cooking_improvement>",
       "<ontology::cost>": {
@@ -2823,8 +2823,8 @@
             "destination": "<personal_supply>",
             "<ontology::object>": "<food>",
             "quantity": {
-              "zh": "按🍖改良的转换率。",
-              "en": "Per the 🍖 improvement's conversion rate."
+              "zh": "按烹饪改良的转换率。",
+              "en": "Per the cooking improvement's conversion rate."
             },
             "description": {
               "zh": "从<general_supply>拿相应<food>放入<personal_supply>。",
@@ -2966,8 +2966,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "收获的第二阶段（每位玩家依次结算）：每个已上场的<family_member>需 2 <food>；本回合家庭成长的新生儿只需 1。支付方式：<food>标记；<grain>/<vegetable>生吃各 1 食物（<eat_raw_crops>）；🍖烹饪动物/蔬菜（<cook_goods>）；手工建筑转换（<craft_conversion>，每收获每栋至多 1 份）；卡牌效果。若不能或选择不喂足，**每个缺少的食物拿 1 个<begging_marker>**（-3 分、无法移除）。",
-        "en": "The second harvest phase (resolved by each player): every <family_member> in play needs 2 <food>; a newborn from this round's family growth needs only 1. Payment: <food> markers; <grain>/<vegetable> eaten raw at 1 food each (<eat_raw_crops>); 🍖 cooking animals/vegetables (<cook_goods>); craft-building conversions (<craft_conversion>, at most one resource per building per harvest); card effects. If you cannot or choose not to feed enough, **take 1 <begging_marker> for every food short** (-3 points, never removable)."
+        "zh": "收获的第二阶段（每位玩家依次结算）：每个已上场的<family_member>需 2 <food>；本回合家庭成长的新生儿只需 1。支付方式：<food>标记；<grain>/<vegetable>生吃各 1 食物（<eat_raw_crops>）；烹饪动物/蔬菜（<cook_goods>）；手工建筑转换（<craft_conversion>，每收获每栋至多 1 份）；卡牌效果。若不能或选择不喂足，**每个缺少的食物拿 1 个<begging_marker>**（-3 分、无法移除）。",
+        "en": "The second harvest phase (resolved by each player): every <family_member> in play needs 2 <food>; a newborn from this round's family growth needs only 1. Payment: <food> markers; <grain>/<vegetable> eaten raw at 1 food each (<eat_raw_crops>); cooking animals/vegetables (<cook_goods>); craft-building conversions (<craft_conversion>, at most one resource per building per harvest); card effects. If you cannot or choose not to feed enough, **take 1 <begging_marker> for every food short** (-3 points, never removable)."
       },
       "<ontology::cost>": {
         "<ontology::instant_cost>": {
@@ -3233,8 +3233,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "当前回合结束时进行收获——收获在第 4、7、9、11、13、14 回合结束时进行（版图上以 🌾 标记）。满足时执行收获（<harvest_field_phase> → <harvest_feeding> → <harvest_breeding>）。",
-        "en": "The current round ends with a harvest — harvests happen at the end of rounds 4, 7, 9, 11, 13, and 14 (marked 🌾 on the board). When satisfied, the harvest runs (<harvest_field_phase> → <harvest_feeding> → <harvest_breeding>)."
+        "zh": "当前回合结束时进行收获——收获在第 4、7、9、11、13、14 回合结束时进行（版图上以 收获符号标记）。满足时执行收获（<harvest_field_phase> → <harvest_feeding> → <harvest_breeding>）。",
+        "en": "The current round ends with a harvest — harvests happen at the end of rounds 4, 7, 9, 11, 13, and 14 (marked with a harvest symbol on the board). When satisfied, the harvest runs (<harvest_field_phase> → <harvest_feeding> → <harvest_breeding>)."
       }
     },
     {
@@ -3376,8 +3376,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "玩家<played_cards_area>中有🍞改良（<fireplace>、<cooking_hearth>、<clay_oven>、<stone_oven>或相应职业/次要改良）。是<bake_bread>的可用条件。",
-        "en": "The player's <played_cards_area> holds a 🍞 improvement (<fireplace>, <cooking_hearth>, <clay_oven>, <stone_oven>, or a matching occupation/minor improvement). Availability condition of <bake_bread>."
+        "zh": "玩家<played_cards_area>中有烘焙改良（<fireplace>、<cooking_hearth>、<clay_oven>、<stone_oven>或相应职业/次要改良）。是<bake_bread>的可用条件。",
+        "en": "The player's <played_cards_area> holds a baking improvement (<fireplace>, <cooking_hearth>, <clay_oven>, <stone_oven>, or a matching occupation/minor improvement). Availability condition of <bake_bread>."
       }
     },
     {
@@ -3389,8 +3389,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "玩家<played_cards_area>中有🍖改良（<fireplace>、<cooking_hearth>或相应职业/次要改良）。是<cook_goods>的可用条件。",
-        "en": "The player's <played_cards_area> holds a 🍖 improvement (<fireplace>, <cooking_hearth>, or a matching occupation/minor improvement). Availability condition of <cook_goods>."
+        "zh": "玩家<played_cards_area>中有烹饪改良（<fireplace>、<cooking_hearth>或相应职业/次要改良）。是<cook_goods>的可用条件。",
+        "en": "The player's <played_cards_area> holds a cooking improvement (<fireplace>, <cooking_hearth>, or a matching occupation/minor improvement). Availability condition of <cook_goods>."
       }
     },
     {
