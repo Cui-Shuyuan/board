@@ -1794,8 +1794,8 @@
                         },
                         "specifies": "<ontology::trigger>",
                         "description": {
-                          "zh": "每位玩家从自己的<ontology::supply>为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。注意：这只是补满重置标记，不是免费的 <reset> 行动——时代之间骰子不自动清空回收，仍留在骰位。",
-                          "en": "Each player refills each empty <reset_column> with 1 <reset_marker> from their supply. Skipped in the 4th era. Note: this only refills reset markers — it is NOT a free <reset> action: dice are not automatically cleared between eras and stay in their slots."
+                          "zh": "每位玩家从自己的<ontology::supply>为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。",
+                          "en": "Each player refills each empty <reset_column> with 1 <reset_marker> from their supply. Skipped in the 4th era."
                         },
                         "<ontology::condition>": {
                           "zh": "<era_scoring_area> 还有计分板块（非第四时代）。",
@@ -3449,8 +3449,8 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该<site>的 <ontology::effect>。若翻开的<site>揭示出资源图标，立即在对应<territory>放置相应的<feature_marker>（除非该地点效果另有说明）。翻开后<site>保持正面朝上，持续影响相邻<territory>。",
-        "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. If the revealed <site> shows a resource icon, immediately place the corresponding <feature_marker> on the relevant <territory> (unless the site's effect says otherwise). The site stays face up and affects adjacent territories for the rest of the game."
+        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该<site>的 <ontology::effect>。翻开后<site>保持正面朝上，持续影响相邻<territory>。",
+        "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. The site stays face up and affects adjacent territories for the rest of the game."
       },
       "<ontology::condition>": {
         "zh": "存在至少 1 个 face == face_down 的 <site>。",

@@ -1845,8 +1845,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<game_board>中央的仓库，8 个板块格，只放**黑色背面**的<hex_tile>。每阶段开始时从<hex_tile_pool>补满并翻到正面。与编号仓库不同：不能靠骰子拿取，只能在回合中额外花 2 <silver>购买 1 块（buy_from_black_depot，每回合至多 1 次）；<monastery_tile_6>可用 2 个<worker>代替银币并从所有仓库任选。FAQ 称此购买为「免费行动」——「免费」指**不需骰子**，不是免银币。",
-        "en": "The central depot on the <game_board> with 8 tile spaces, holding only **black-backed** <hex_tile>s. Refilled from the <hex_tile_pool> and turned face up at each phase start. Unlike numbered depots: tiles here cannot be taken with a die; during your turn you may buy 1 for 2 <silver> (buy_from_black_depot, at most once per turn); <monastery_tile_6> lets you pay 2 <worker>s instead and choose from any depot. The FAQ calls this purchase a \"free action\" — \"free\" means **no die needed**, not free of silver."
+        "zh": "<game_board>中央的仓库，8 个板块格，只放**黑色背面**的<hex_tile>。每阶段开始时从<hex_tile_pool>补满并翻到正面。与编号仓库不同：不能靠骰子免费拿取，只能在回合中额外花 2 <silver>购买 1 块（buy_from_black_depot，每回合至多 1 次）；<monastery_tile_6>可用 2 个<worker>代替银币并从所有仓库任选。",
+        "en": "The central depot on the <game_board> with 8 tile spaces, holding only **black-backed** <hex_tile>s. Refilled from the <hex_tile_pool> and turned face up at each phase start. Unlike numbered depots: tiles here cannot be taken for free with a die; during your turn you may buy 1 for 2 <silver> (buy_from_black_depot, at most once per turn); <monastery_tile_6> lets you pay 2 <worker>s instead and choose from any depot."
       },
       "capacity": {
         "type": "integer",
@@ -2612,8 +2612,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "回合内的**额外行动**（不占用骰子）：支付 2 <silver>，从<black_depot>**任选 1 块**<hex_tile>放入空的<key_space>（满仓同样必须先弃一块）。**每回合至多 1 次**，可在本回合任意时刻进行——两次骰子行动之前、之间或之后。<monastery_tile_6>：可花 2 个<worker>代替 2 银，且可从**所有**仓库任选板块。FAQ 称此行动为「免费行动」——「免费」指**不需骰子**（免骰子的额外行动），并非免银币：仍需付 2 <silver>。",
-        "en": "An **extra action** within your turn (does not use a die): pay 2 <silver> and take **any 1** <hex_tile> from the <black_depot> into an empty <key_space> (if full, first discard one as usual). **At most once per turn**, at any moment in your turn — before, between, or after your two die actions. <monastery_tile_6>: pay 2 <worker>s instead of 2 silver and choose from **any** depot. The FAQ calls this a \"free action\" — \"free\" means **no die needed** (a die-free extra action), not free of silver: you still pay 2 <silver>.",
+        "zh": "回合内的**额外行动**（不占用骰子）：支付 2 <silver>，从<black_depot>**任选 1 块**<hex_tile>放入空的<key_space>（满仓同样必须先弃一块）。**每回合至多 1 次**，可在本回合任意时刻进行——两次骰子行动之前、之间或之后。<monastery_tile_6>：可花 2 个<worker>代替 2 银，且可从**所有**仓库任选板块。",
         "en": "An **extra action** within your turn (no die spent): pay 2 <silver> and take **any 1** <hex_tile> from the <black_depot> into an empty <key_space> (if full, discard one first as usual). **At most once per turn**, at any point during your turn — before, between, or after your two die actions. <monastery_tile_6>: pay 2 <worker>s instead of 2 silver, and choose from **all** depots."
       },
       "<ontology::condition>": "<has_2_silver>",
@@ -3152,8 +3151,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<key_space>强制上限的执行机制：3 个存储格全满时，若还要拿新<hex_tile>（无论骰子行动还是免费拿取、无论来自<depot>还是<black_depot>），**必须先**把一块已存板块弃入<game_box>（永久移出游戏，弃哪块由玩家决定）。不能在没有拿取的情况下单纯丢弃。弃置按**每次拿取**单独判定：一次拿取至多弃 1 块；同回合用两颗骰子做两次拿取且都满仓时，各弃 1 块、合计最多弃 2 块。",
-        "en": "The enforcement mechanism for the <key_space> capacity: when all 3 storage spaces are full and you take another <hex_tile> (whether by die action or free take, from a <depot> or the <black_depot>), you **must first** discard one stored tile into the <game_box> (removed from the game for good; you choose which). You may not discard without taking. Discarding is judged **per taking**: at most 1 discarded tile per taking; with two dice in one turn, if both takings hit a full <key_space>, discard 1 each — at most 2 total."
+        "zh": "<key_space>强制上限的执行机制：3 个存储格全满时，若还要拿新<hex_tile>（无论骰子行动还是免费拿取、无论来自<depot>还是<black_depot>），**必须先**把一块已存板块弃入<game_box>（永久移出游戏，弃哪块由玩家决定）。不能在没有拿取的情况下单纯丢弃。",
+        "en": "The enforcement mechanism for the <key_space> capacity: when all 3 storage spaces are full and you take another <hex_tile> (whether by die action or free take, from a <depot> or the <black_depot>), you **must first** discard one stored tile into the <game_box> (removed from the game for good; you choose which). You may not discard without taking."
       },
       "<ontology::condition>": "<key_space_full>",
       "<ontology::content>": {

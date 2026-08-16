@@ -802,7 +802,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "玩家的路网状态——一个<location>属于某玩家<network>，当且仅当：① 该地点有其<industry_tile>；或 ② 该地点与其某条<canal_link>/<rail_link>相邻。用途：行业卡建造必须在自己路网内；链接必须邻接自己路网地点（**例外**：板上没有任何板块/链接时可在任意地点建链接——<no_tiles_on_board>）；对手酒厂的啤酒必须连通到自己路网某地点。区别于「连通」（<ontology::connected>）：连通沿**任何人**的链接追溯路径，路网只看**自己**的板块。",
+        "zh": "玩家的路网状态——一个<location>属于某玩家<network>，当且仅当：① 该地点有其<industry_tile>；或 ② 该地点与其某条<canal_link>/<rail_link>相邻。用途：行业卡建造必须在自己路网内；链接必须邻接自己路网地点；对手酒厂的啤酒必须连通到自己路网某地点。区别于「连通」（<ontology::connected>）：连通沿**任何人**的链接追溯路径，路网只看**自己**的板块。",
         "en": "A player's network state — a <location> belongs to a player's <network> iff: ① it holds one of their <industry_tile>s; or ② it is adjacent to one of their <canal_link>s/<rail_link>s. Uses: industry-card builds must be inside your network; links must be adjacent to a network location; an opponent's brewery beer must be connected to a location in your network. Distinct from 'connected' (<ontology::connected>): connectivity traces a route along **anyone's** links; the network only counts **your own** tiles."
       }
     },
@@ -1950,7 +1950,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "该玩家在版图上没有任何<industry_tile>或<canal_link>/<rail_link>——即没有任何「存在」（无 link 无建筑，开局或运河时代结束后可能出现）。此时：行业卡可在任意地点建；链接可建在任意未开发线路。",
+        "zh": "该玩家在版图上没有任何<industry_tile>或<canal_link>/<rail_link>（开局或运河时代结束后可能出现）。此时：行业卡可在任意地点建；链接可建在任意未开发线路。",
         "en": "The player has no <industry_tile>s or <canal_link>s/<rail_link>s on the board (possible at game start or right after the Canal Era). Then: industry cards build anywhere; links may go on any undeveloped line."
       }
     },
@@ -2120,7 +2120,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "带灯泡图标的<pottery>板块——即 1 级陶器（陶器最低级）——**不能**被<develop>移除（唯一例外）——只能通过建造消耗掉，或通过 Gloucester 商人加成（免费开发）移除。若玩家板某行业最低级只剩灯泡陶器，该行业无法再开发。",
+        "zh": "带灯泡图标的<pottery>板块**不能**被<develop>移除（唯一例外）——只能通过建造消耗掉，或通过 Gloucester 商人加成（免费开发）移除。若玩家板某行业最低级只剩灯泡陶器，该行业无法再开发。",
         "en": "A lightbulb-icon <pottery> tile **cannot** be removed by <develop> (the only exception) — it leaves the mat only by being built, or via the Gloucester merchant bonus (free develop). If an industry's lowest remaining tiles are all lightbulb potteries, that industry can no longer be developed."
       }
     },
