@@ -1409,14 +1409,137 @@
       },
       "specifies": "<ontology::play>",
       "description": {
-        "zh": "释放动物到野外（释放类保护项目条件）：从自己动物园弃 1 张带要求图标的 <animal_card>。该动物必须要求指定大小的 <standard_enclosure>（动物能否也进特殊围栏与条件无关）。<appeal_counter> 按卡面所示步数后退；翻回最小的满足该动物要求的已占用标准围栏（含水/岩要求）到空面，或从该动物所在特殊围栏移除相应数量 <player_token> 归还个人供应；动物卡进 <discard_pile>。之后获得该条件的保护分与声望奖励（见 <support_conservation_project>）。",
-        "en": "Release an animal into the wild (the condition of release-type conservation projects): discard 1 <animal_card> with the required icon from your zoo. The animal must require a standard enclosure of the depicted size (whether it could also go in a special enclosure is irrelevant to the condition). Move the <appeal_counter> back by the steps shown on the card; flip the smallest occupied qualifying standard enclosure (including water/rock requirements) back to its empty side, or remove the appropriate number of <player_token>s from the special enclosure the animal is in, returning them to your personal supply; the Animal card goes to the <discard_pile>. Then gain the condition's conservation points and reputation reward (see <support_conservation_project>)."
+        "zh": "释放动物到野外（释放类保护项目条件）：从自己动物园弃 1 张带要求图标的 <animal_card>。然后按 <clear_release_enclosure> 的 4 步依次判断清空围栏（全不成立则棋盘不变，释放仍然成立），<appeal_counter> 按卡面步数后退。之后获得该条件的保护分与声望奖励（见 <support_conservation_project>）。",
+        "en": "Release an animal into the wild (the condition of release-type conservation projects): discard 1 <animal_card> with the required icon from your zoo. Then clear the enclosure per the 4 ordered checks of <clear_release_enclosure> (if none applies, the release still succeeds and the board is unchanged) and move the <appeal_counter> back by the printed steps. Then gain the condition's conservation points and reputation reward (see <support_conservation_project>)."
       },
+      "<ontology::condition>": {
+        "zh": "释放的 <animal_card> 带有所选保护项目条件要求的图标，且该动物必须要求指定大小的 <standard_enclosure>（动物能否也进特殊围栏与条件无关）。",
+        "en": "The released <animal_card> has the icon required by the chosen project condition, and the animal must require a standard enclosure of the depicted size (whether it could also go in a special enclosure is irrelevant to the condition)."
+      },
+      "<ontology::piece>": "<animal_card>",
       "source": "<ontology::development_area>",
       "destination": "<discard_pile>",
       "<ontology::object>": "<animal_card>",
       "quantity": 1,
-      "<ontology::piece>": "<animal_card>"
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "clear_release_enclosure",
+              "name": {
+                "zh": "清空释放动物的围栏",
+                "en": "Clear the Released Animal's Enclosure"
+              },
+              "specifies": "<ontology::trigger>",
+              "description": {
+                "zh": "释放动物的围栏清空流程：按 ①→④ 依次检查，第 1 个成立者执行、其余跳过（条件互斥）；4 步全不成立时棋盘不做任何变化。",
+                "en": "The enclosure-clearing flow of a release: check ①→④ in order, execute the first that holds and skip the rest (mutually exclusive conditions); if none of the four holds, nothing changes on the board."
+              },
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "remove_tokens_from_special_enclosure",
+                      "name": {
+                        "zh": "从特殊围栏移除标记",
+                        "en": "Remove Tokens From the Special Enclosure"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "description": {
+                        "zh": "从该动物所在的 <special_enclosure> 移除卡面标注数量的 <player_token> 归还个人供应。",
+                        "en": "Remove the printed number of <player_token>s from the <special_enclosure> the animal is in, returning them to the personal supply."
+                      },
+                      "<ontology::condition>": {
+                        "zh": "①有匹配的特殊围栏：动物卡标有该围栏图标、围栏上有足够数量的 <player_token>、且满足水/岩要求。",
+                        "en": "① There is a matching special enclosure: the card shows its icon, enough <player_token>s are on it, and the water/rock requirements are met."
+                      },
+                      "source": "该动物所在的 <special_enclosure>",
+                      "destination": "<ontology::player_supply>",
+                      "<ontology::object>": "<player_token>",
+                      "quantity": "卡面标注数量"
+                    },
+                    {
+                      "id": "unflip_standard_enclosure",
+                      "name": {
+                        "zh": "翻回标准围栏",
+                        "en": "Unflip a Standard Enclosure"
+                      },
+                      "specifies": "<ontology::flip>",
+                      "description": {
+                        "zh": "把最小的该类已占用 <standard_enclosure> 翻回空面。",
+                        "en": "Flip the smallest occupied <standard_enclosure> of that size back to its empty side."
+                      },
+                      "<ontology::condition>": {
+                        "zh": "②①不成立（无匹配的特殊围栏），但存在匹配的标准围栏：已占用、尺寸够大、满足水/岩要求。",
+                        "en": "② ① fails (no matching special enclosure), but there is a matching standard enclosure: occupied, large enough, water/rock requirements met."
+                      },
+                      "subject": "最小的该类已占用 <standard_enclosure>",
+                      "to": "face_up"
+                    },
+                    {
+                      "id": "remove_tokens_from_special_enclosure_ignoring_terrain",
+                      "name": {
+                        "zh": "从特殊围栏移除标记（忽略水/岩）",
+                        "en": "Remove Tokens From the Special Enclosure (Ignoring Water/Rock)"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "description": {
+                        "zh": "从该动物所在的 <special_enclosure> 移除卡面标注数量的 <player_token> 归还个人供应（不考虑水/岩要求）。",
+                        "en": "Remove the printed number of <player_token>s from the <special_enclosure> the animal is in, returning them to the personal supply (water/rock requirements disregarded)."
+                      },
+                      "<ontology::condition>": {
+                        "zh": "③①②均不成立，但存在忽略水/岩也匹配的特殊围栏：动物卡标有该围栏图标、围栏上有足够数量的 <player_token>。",
+                        "en": "③ ① and ② fail, but there is a matching special enclosure ignoring water/rock: the card shows its icon and enough <player_token>s are on it."
+                      },
+                      "source": "该动物所在的 <special_enclosure>",
+                      "destination": "<ontology::player_supply>",
+                      "<ontology::object>": "<player_token>",
+                      "quantity": "卡面标注数量"
+                    },
+                    {
+                      "id": "unflip_standard_enclosure_ignoring_terrain",
+                      "name": {
+                        "zh": "翻回标准围栏（忽略水/岩）",
+                        "en": "Unflip a Standard Enclosure (Ignoring Water/Rock)"
+                      },
+                      "specifies": "<ontology::flip>",
+                      "description": {
+                        "zh": "把最小的该类已占用 <standard_enclosure> 翻回空面（不考虑水/岩要求）。",
+                        "en": "Flip the smallest occupied <standard_enclosure> of that size back to its empty side (water/rock requirements disregarded)."
+                      },
+                      "<ontology::condition>": {
+                        "zh": "④①②③均不成立，但存在忽略水/岩也匹配的标准围栏：已占用、尺寸够大。",
+                        "en": "④ ①, ② and ③ fail, but there is a matching standard enclosure ignoring water/rock: occupied and large enough."
+                      },
+                      "subject": "最小的该类已占用 <standard_enclosure>",
+                      "to": "face_up"
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              }
+            },
+            {
+              "id": "move_appeal_back",
+              "name": {
+                "zh": "后退吸引力",
+                "en": "Move Appeal Back"
+              },
+              "specifies": "<ontology::push_track>",
+              "description": {
+                "zh": "<appeal_counter> 按卡面所示步数后退。",
+                "en": "Move the <appeal_counter> back by the steps shown on the card."
+              },
+              "<ontology::track>": "<appeal_track>",
+              "step": {
+                "zh": "卡面所示步数（后退）",
+                "en": "the steps shown on the card (backward)"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
     },
     {
       "id": "donation",
