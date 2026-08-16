@@ -329,8 +329,11 @@ def rebuild_game(game_id: str):
     print(f"  {len(items)} concepts found, generating embeddings...")
 
     # build name-only search text for each item
+    # 纯中文名：英文 id（下划线串被 tokenizer 拆碎）与英文名会稀释中文查询的
+    # 语义相似度（2026-08-16 实测「乞讨卡」在混合文本上排不进向量 top-15）。
+    # 中文名缺失时退回英文名；仍为空则不入 name 集合（零向量无意义）。
     for c in items:
-        c["name_text"] = f"{c['concept_id']} {c['name_zh']} {c['name_en']}".strip()
+        c["name_text"] = (c["name_zh"] or c["name_en"] or "").strip()
 
     # ---- full-text collection (id + name + description) ----
     name_full = collection_name(game_id)
@@ -356,7 +359,8 @@ def rebuild_game(game_id: str):
         batch = items[i:i + BATCH_SIZE]
         # 嵌入前剥离 <> 引用——概念引用不参与相似度计算
         full_vectors = [embed(strip_refs(c["search_text"])).tolist() for c in batch]
-        name_vectors = [embed(strip_refs(c["name_text"])).tolist() for c in batch]
+        name_batch = [c for c in batch if c["name_text"]]
+        name_vectors = [embed(c["name_text"]).tolist() for c in name_batch]
 
         full_points = []
         name_points = []
@@ -372,9 +376,16 @@ def rebuild_game(game_id: str):
                 "vector": full_vectors[j],
                 "payload": payload,
             })
+        for c, vec in zip(name_batch, name_vectors):
+            payload = {
+                "concept_id": c["concept_id"],
+                "type": c["type"],
+                "name_zh": c["name_zh"],
+                "name_en": c["name_en"],
+            }
             name_points.append({
                 "id": make_uuid(f"{game_id}::{c.get('source', '')}::{c['concept_id']}_name"),
-                "vector": name_vectors[j],
+                "vector": vec,
                 "payload": payload,
             })
 

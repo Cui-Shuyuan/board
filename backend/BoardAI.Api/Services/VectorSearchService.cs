@@ -110,6 +110,8 @@ public class VectorSearchService : IDisposable
         var collection = searchMode == "name"
             ? CollectionName(gameId) + "_name"
             : CollectionName(gameId);
+        // 查询侧不加 BGE 官方指令前缀：离线实验（scripts/_embed_gap_experiment.py）证明
+        // 短概念名查询加前缀后 top1 分数整体下降约 0.3、排序变差（2026-08-16 回退）。
         var queryVec = _embedder.Embed(query);
 
         try

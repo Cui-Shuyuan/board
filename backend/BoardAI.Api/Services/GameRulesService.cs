@@ -450,11 +450,13 @@ public class GameRulesService
     };
 
     /// <summary>语义候选的最低可信分数——低于此分数视为「规则库查不到」（tier 3）。
-    /// 分数为多通道累加归一化值（向量余弦 + 关键词命中）。实测校准（2026-08-16，name 集合，
-    /// bge-base-zh-v1.5 量化版）：噪声带 0.36–0.47（无意义词「小精灵」top=0.466 全是无关
-    /// 概念），可靠匹配 ≥0.53（「钱币」=0.701、「招募官」=0.638、转述「领工人的角色」→
-    /// worker=0.672）。经典版别名（杜布隆/市长/殖民者/探矿者）语义匹配全部失败——这类
-    /// 映射必须走数据层 aliases 精确匹配，向量兜底只对自然语言转述有效。阈值取 0.50：
+    /// 分数为多通道累加归一化值（向量余弦 + 关键词小幅加成）。关键词加成已降级
+    /// （名字命中 +0.3、内容命中 +0.05），仅凭关键词无法过阈值——过线的概念必须
+    /// 有真实向量语义支撑。实测校准（2026-08-16，name 集合，bge-base-zh-v1.5 量化版）：
+    /// 噪声带 0.36–0.47（无意义词「小精灵」top=0.466 全是无关概念），可靠匹配 ≥0.53
+    /// （「钱币」=0.701、「招募官」=0.638、转述「领工人的角色」→ worker=0.672）。
+    /// 经典版别名（杜布隆/市长/殖民者/探矿者）语义匹配全部失败——这类映射必须走
+    /// 数据层 aliases 精确匹配，向量兜底只对自然语言转述有效。阈值取 0.50：
     /// 噪声与信号的实测分界，宁漏勿错。</summary>
     private const float SemanticCandidateThreshold = 0.50f;
 
@@ -511,20 +513,48 @@ public class GameRulesService
             // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
             // 名称包含的确定性候选无条件保留；语义候选须过分数阈值。
             var merged = new List<ConceptSummary>(candidates);
-            var seen = new HashSet<string>(candidates.Select(c => c.Id), StringComparer.Ordinal);
+            var indexById = new Dictionary<string, int>(StringComparer.Ordinal);
+            for (var i = 0; i < merged.Count; i++) indexById[merged[i].Id] = i;
             if (_vectorSearch != null)
             {
                 var semantic = await SearchConceptsAsync(game, entity, searchMode: "name");
                 foreach (var c in semantic.Results.Where(r => r.Score >= SemanticCandidateThreshold))
                 {
-                    if (!seen.Add(c.Id)) continue;
-                    merged.Add(c);
-                    if (merged.Count >= 8) break;
+                    if (indexById.TryGetValue(c.Id, out var i))
+                    {
+                        // 同一 id 的确定性候选（名称包含，分 0）与语义结果并存时取高分——
+                        // 先到先得会把语义高分丢成 0，正确概念垫底、噪声概念霸榜（2026-08-16 实测）
+                        if (c.Score > merged[i].Score) merged[i] = c;
+                    }
+                    else
+                    {
+                        indexById[c.Id] = merged.Count;
+                        merged.Add(c);
+                        if (merged.Count >= 8) break;
+                    }
                 }
             }
+            // 更新/合并后重新排序，保证候选列表按分数降序呈现给 LLM
+            merged = merged.OrderByDescending(c => c.Score).ToList();
 
             if (merged.Count > 0)
             {
+                // 高置信语义候选直接解析为命中（2026-08-16 QA 实测）：LLM 对 tier2 候选
+                // 常不重新查询、直接凭记忆作答（18/55 题 C 类）。程序自己判定：top1 显著
+                // 领先且过线时无需 LLM 二次确认，直接取 top1 概念的数据——「程序自己推理」
+                // 的比重由此扩大。阈值用 QA 全量候选分布校准：低分或胶着区间不得自动解析
+                // （错把 scoring_pad 当计分、错把 accumulation_refill 当累积空间都是胶着区间）。
+                var autoTop = merged[0];
+                var autoGap = merged.Count > 1 ? autoTop.Score - merged[1].Score : float.PositiveInfinity;
+                if ((autoTop.Score >= 0.72f && autoGap >= 0.08f)
+                    || (autoGap >= 0.15f && autoTop.Score >= 0.60f)
+                    || (autoTop.Score >= 1.0f && autoGap >= 0.05f))
+                {
+                    var autoMatched = GetConcepts(game, autoTop.Id).ToList();
+                    if (autoMatched.Count > 0)
+                        return BuildOkResult(game, relation, entity, autoMatched);
+                }
+
                 return new PlanItemResult
                 {
                     Relation = relation,
@@ -547,6 +577,15 @@ public class GameRulesService
             };
         }
 
+        return BuildOkResult(game, relation, entity, matched);
+    }
+
+    /// <summary>
+    /// 把已解析的概念构造成 ok 结果：本体扩展数据 + 流程位置 + 关系专属字段。
+    /// 精确解析与「高置信语义候选自动解析」共用此路径（2026-08-16 提取）。
+    /// </summary>
+    private PlanItemResult BuildOkResult(string game, string relation, string entity, List<JsonElement> matched)
+    {
         var resolvedId = GetElementId(matched[0]);
         var expanded = GetConceptsWithExpansion(game, string.IsNullOrEmpty(resolvedId) ? entity : resolvedId);
 
@@ -956,15 +995,17 @@ public class GameRulesService
             var results = KeywordSearch(game, query);
             return results.Select(r =>
             {
-                // 关键词匹配给高分：精确 ID 命中 > 名字命中 > 内容命中
+                // 关键词匹配只作小幅加成，不主导排序（2026-08-16 实测：内容命中 0.90 的
+                // 固定分把「描述里提到该词」的无关概念顶上榜首，盖过向量语义分）。
+                // 向量语义分是排序主体；关键词加成只用于打破同分与弱向量时的微调。
                 var terms = Tokenize(query).ToList();
-                float score = 1.0f;
+                float score;
                 if (terms.Any(t => r.Id.Equals(t, StringComparison.InvariantCultureIgnoreCase)))
-                    score = 1.0f;
+                    score = 0.5f;
                 else if (terms.Any(t => r.Name.Contains(t, StringComparison.InvariantCultureIgnoreCase)))
-                    score = 0.95f;
+                    score = 0.3f;
                 else
-                    score = 0.90f;
+                    score = 0.05f;
                 return (r, score);
             }).ToList();
         });
