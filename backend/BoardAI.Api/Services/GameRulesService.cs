@@ -671,11 +671,11 @@ public class GameRulesService
 
     /// <summary>分数词：问题在问计分/得分（含「扣1分」「+3分」这类数字嵌入形式）。</summary>
     private static readonly Regex ScoreWordRegex = new(
-        @"计分|得分|扣分|加分|几分|多少分|算分|分数|\d+\s*分", RegexOptions.Compiled);
+        @"计分|得分|扣分|加分|几分|多少分|算分|分数|\d+\s*分|VP", RegexOptions.Compiled);
 
     /// <summary>数量词：问题在问数量/容量/上限。</summary>
     private static readonly Regex QuantityWordRegex = new(
-        @"几个|几只|几头|几块|几根|几间|几格|几多|多少|上限|容量|能养|能放|拿几|放几|给几|得几",
+        @"几个|几只|几头|几块|几根|几间|几格|几多|几张|多少|上限|容量|能养|能放|拿几|放几|给几|得几",
         RegexOptions.Compiled);
 
     private static readonly Regex IntegerRegex = new(@"\d+", RegexOptions.Compiled);

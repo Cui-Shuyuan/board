@@ -145,9 +145,13 @@
                   "destination": "<portrait>",
                   "<ontology::object>": "<coin>",
                   "quantity": {
-                    "3": 2,
-                    "4": 3,
-                    "5": 4
+                    "zh": "起始钱币按人数：三人局 2 元、四人局 3 元、五人局 4 元（比玩家数少 1）。",
+                    "en": "Starting coins by player count: 2 in a 3-player game, 3 in a 4-player game, 4 in a 5-player game (one fewer than the player count).",
+                    "numeric": [
+                      {"when": {"zh": "三人"}, "value": 2, "unit": "元"},
+                      {"when": {"zh": "四人"}, "value": 3, "unit": "元"},
+                      {"when": {"zh": "五人"}, "value": 4, "unit": "元"}
+                    ]
                   },
                   "do_after": "form_bank"
                 },
@@ -463,6 +467,16 @@
               "en": "Final scoring: add up VP chips (plus paper) + building VP (occupied or not) + bonus VP of occupied large buildings, and adjudicate by <most_vp_wins> — highest total wins; ties go to the most coins and goods combined."
             },
             "do_after": "years",
+            "score_table": {
+              "by_card": [
+                {"what": "building", "zh": "建筑", "aliases": ["建筑牌"], "rule": "印刷 VP 无论是否被占据都全计（大建筑未占据也计其基础 4 VP）。"},
+                {"what": "large_commercial_building", "zh": "大建筑加成", "aliases": ["大型建筑"], "rule": "被占据才有的终局加成：<fire_station> 每座小生产建筑 +1 VP、每座大生产建筑 +2 VP；<residence> 按乡村已填格数 4/5/6/7 VP；<fortress> 每 3 名工人 +1 VP（向下取整）；<customs_house> 每 4 个 VP 筹码 +1 VP（向下取整，只数筹码）；<city_hall> 每座商业建筑 +1 VP（含自身）。"}
+              ],
+              "aliases": [
+                {"zh": "终局计分", "whats": ["building", "large_commercial_building"]}
+              ],
+              "note": "总 VP = VP 筹码面值之和 + 建筑印刷 VP + 被占据大建筑的加成 VP；平局时钱币与货物之和多者胜（每枚钱币或每桶货物计 1）。"
+            },
             "<ontology::pipeline>": {
               "options": [
                 {

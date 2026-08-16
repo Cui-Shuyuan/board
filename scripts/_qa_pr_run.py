@@ -11,7 +11,7 @@ import urllib.request
 from pathlib import Path
 
 API = "http://localhost:5000/api/chat"
-FAQ = Path(r"D:\workspace\board\doc\faq\puerto rico\faq.md")
+FAQ = Path(r"D:\workspace\board\doc\puerto-rico\faq.md")
 OUT = Path(r"D:\workspace\board\scripts\_qa_pr_results.jsonl")
 
 # 类别名映射（### N. 标题）

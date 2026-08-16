@@ -442,8 +442,8 @@
       "cost": {
         "type": "integer",
         "description": {
-          "zh": "建筑费用（元）。<builder_role>阶段支付：基础费用 − 采石场折扣（≤ 区块上限）− 选角者特权 1 元。",
-          "en": "Building cost (coins). Paid in the <builder_role> phase: base cost − quarry discount (≤ section cap) − 1 for the chooser's privilege."
+          "zh": "建筑费用（元）。<builder_role>阶段支付：基础费用 − 采石场折扣（≤ 区块上限）− 选角者特权 1 元。只有折扣上限、没有最低费用限制——折扣后费用可为 0（例：顶层 1 元建筑 + 1 座被占据的采石场 = 免费建）。",
+          "en": "Building cost (coins). Paid in the <builder_role> phase: base cost − quarry discount (≤ section cap) − 1 for the chooser's privilege. Only the discount is capped — there is no minimum cost: it may drop to 0 (e.g. a top 1-coin building with 1 occupied quarry builds free)."
         }
       },
       "vp": {
@@ -1175,6 +1175,13 @@
         "zh": "紫色调商业建筑板块，费用 8、3 VP，标装运阶段图标。",
         "en": "Purple commercial building tile, cost 8, 3 VP, marked with the shipment-phase icon."
       },
+      "quantity": {
+        "zh": "每次装货 +1 VP",
+        "en": "+1 VP per load",
+        "numeric": [
+          {"when": {"zh": "装货、装船、装载"}, "value": 1, "unit": "VP", "per": {"zh": "每次装货"}}
+        ]
+      },
       "description": {
         "zh": "费用 8 元、3 VP 的<commercial_building>。功能：<captain_role>阶段，自己每次往船上装货（含<wharf>的包租船）多得 1 VP——按「装货次数」而非桶数计。例：一次装 3 桶得 3+1 VP，之后同阶段再装 2 桶又得 2+1 VP。",
         "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <captain_role> phase, +1 VP each time you load goods onto a ship (including the <wharf> chartered ship) — counted per load, not per barrel. Example: loading 3 barrels earns 3+1 VP; loading 2 more later in the same phase earns 2+1 VP."
@@ -1221,8 +1228,8 @@
         "en": "Purple commercial building tile, cost 9, 3 VP, marked with the shipment-phase icon."
       },
       "description": {
-        "zh": "费用 9 元、3 VP 的<commercial_building>。功能：<captain_role>阶段内任意时刻（若使用），可把任意 1 种货物的全部桶装上「包租船」——包租船没有容量限制、可装货船上已有的类型，每桶得 1 VP，装完后桶全部放回<goods_supply>。每阶段至多使用 1 次，可不用。用它装货同样履行该轮装货义务：轮到自己装货时，装普通船或码头包租船必选其一（不能两者都不装）；可以先包租再装普通船，顺序自由。",
-        "en": "A <commercial_building> costing 9, worth 3 VP. Function: at any one time during the <captain_role> phase (if used at all), you may load all barrels of any 1 type onto a 'Chartered Ship' — unlimited capacity, may carry a type already on a cargo ship, 1 VP per barrel, then all barrels return to the <goods_supply>. At most once per phase; may be skipped. Using it equally satisfies that round's loading obligation: on your loading turn you must choose one — cargo ship or chartered ship (doing neither is not allowed); you may charter before loading cargo ships, in either order."
+        "zh": "费用 9 元、3 VP 的<commercial_building>。功能：<captain_role>阶段内任意时刻（若使用），可把任意 1 种货物的全部桶装上「包租船」——包租船没有容量限制、可装货船上已有的类型，每桶得 1 VP，装完后桶全部放回<goods_supply>。每阶段至多使用 1 次，可不用（用不用码头是可选的）；但一旦选择用码头装某 1 种货物，必须把该类型的全部桶一次装完，不能只装一部分。用它装货同样履行该轮装货义务：轮到自己装货时，装普通船或码头包租船必选其一（不能两者都不装）；可以先包租再装普通船，顺序自由。",
+        "en": "A <commercial_building> costing 9, worth 3 VP. Function: at any one time during the <captain_role> phase (if used at all), you may load all barrels of any 1 type onto a 'Chartered Ship' — unlimited capacity, may carry a type already on a cargo ship, 1 VP per barrel, then all barrels return to the <goods_supply>. At most once per phase; using it at all is optional — but once you choose to ship a type by wharf, ALL barrels of that type must be loaded at once, never just part. Using it equally satisfies that round's loading obligation: on your loading turn you must choose one — cargo ship or chartered ship (doing neither is not allowed); you may charter before loading cargo ships, in either order."
 
       },
       "cost": 9,
@@ -2181,6 +2188,15 @@
         "zh": "波多黎各中的 VP 筹码供应堆。开局按人数放筹码：3 人局 75 VP、4 人局 100 VP、5 人局 126 VP（1 分筹码 31 枚 + 5 分筹码 19 枚的组合）。<captain_role>装船、<harbor>、<wharf>从这里拿筹码。筹码拿完即触发终局条件之一，之后用纸笔记录 VP。",
         "en": "The VP chip supply of Puerto Rico. At setup it holds chips per player count: 75 VP for 3 players, 100 for 4, 126 for 5 (a mix of 31 one-VP chips and 19 five-VP chips). Shipping in the <captain_role>, <harbor>, and <wharf> take chips from here. When the chips run out, an endgame condition triggers and VP are tracked on paper."
       },
+      "quantity": {
+        "zh": "VP 筹码总量按人数",
+        "en": "Total VP chips by player count",
+        "numeric": [
+          {"when": {"zh": "三人"}, "value": 75, "unit": "VP"},
+          {"when": {"zh": "四人"}, "value": 100, "unit": "VP"},
+          {"when": {"zh": "五人"}, "value": 126, "unit": "VP"}
+        ]
+      },
       "contains": {
         "type": "<victory_point>[]",
         "description": {
@@ -2202,6 +2218,25 @@
       "description": {
         "zh": "摆在<central_board>旁的明置庄园<ontology::market>，开局从<estate_face_down_stack>翻出「玩家数 +1」块（3 人 4 块、4 人 5 块、5 人 6 块）正面朝上陈列。<planter_role>阶段玩家从这里取庄园；阶段结束由种植园主刷新：弃掉剩余的明置庄园到<estate_discard>，再从暗堆翻到「玩家数 +1」块。",
         "en": "The face-up estate <ontology::market> beside the <central_board>, set up with 'player count + 1' tiles (4/5/6 for 3/4/5 players) flipped face-up from the <estate_face_down_stack>. Players take estates from here during the <planter_role> phase; at phase end the planter refreshes it: remaining face-up estates go to the <estate_discard>, then new ones are flipped until player count + 1."
+      },
+      "capacity": {
+        "type": "integer",
+        "description": {
+          "zh": "陈列庄园数 = 玩家数 + 1（<planter_role>阶段结束刷新时同样补到玩家数 + 1）。",
+          "en": "Displayed estates = player count + 1 (refilled to the same after the <planter_role> phase)."
+        },
+        "formula": {
+          "op": "+",
+          "operands": [
+            {"var": "players", "zh": "玩家数", "en": "players"},
+            1
+          ]
+        },
+        "examples": [
+          {"zh": "3 人局", "bindings": {"players": 3}},
+          {"zh": "4 人局", "bindings": {"players": 4}},
+          {"zh": "5 人局", "bindings": {"players": 5}}
+        ]
       },
       "contains": {
         "type": "<estate_tile>[]",
@@ -2655,6 +2690,15 @@
       "description": {
         "zh": "种植阶段行动。选角者可用<quarry_tile>代替庄园（特权），其他玩家从<estate_display>取明置庄园（有<builders_yard>才可选采石场）。庄园/采石场放到<countryside>的空格。全员完成后刷新<estate_display>：弃掉剩余明置庄园，从暗堆翻到「玩家数 +1」块。12 格全满者不能种植；采石场没了特权作废。相关建筑：<hacienda>（正常行动前先暗抽 1 块）、<hospital>（放板块时上 1 名工人）。",
         "en": "The planting phase action. The chooser may take a <quarry_tile> instead of an estate (privilege); the others take a face-up estate from the <estate_display> (a quarry only with a <builders_yard>). Estates and quarries go onto empty <countryside> spaces. After everyone has acted, refresh the <estate_display>: discard remaining face-up estates and flip new ones until player count + 1. Players with all 12 spaces filled cannot plant; when quarries run out the privilege is lost. Related buildings: <hacienda> (blind-draw 1 estate before the normal action), <hospital> (a worker onto the placed tile)."
+      },
+      "quantity": {
+        "zh": "阶段结束刷新<estate_display>时抽的庄园数按人数（玩家数 +1）。",
+        "en": "Estates drawn to refresh the <estate_display> at phase end, by player count (players + 1).",
+        "numeric": [
+          {"when": {"zh": "三人"}, "value": 4, "unit": "块"},
+          {"when": {"zh": "四人"}, "value": 5, "unit": "块"},
+          {"when": {"zh": "五人"}, "value": 6, "unit": "块"}
+        ]
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -3412,6 +3456,10 @@
                 "name": {
                   "zh": "留存结算",
                   "en": "Storage Cleanup"
+                },
+                "aliases": {
+                  "zh": ["剩余货物", "保留货物", "保存货物", "留一桶", "货物留存"],
+                  "en": ["keep barrels", "storing leftover goods"]
                 },
                 "do_after": "wharf_shipment",
                 "loop": {
