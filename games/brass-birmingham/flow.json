@@ -1,0 +1,936 @@
+{
+  "meta": {
+    "name": {
+      "zh": "工业革命：伯明翰",
+      "en": "Brass: Birmingham"
+    },
+    "description": {
+      "zh": "《Brass: Birmingham》的流程定义——一局游戏从 Setup 到终局计分的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、条件），本文档定义「按什么顺序进行」（设置、运河时代、铁路时代、终局计分）。核心结构：设置（版图/市场/商人/抽牌堆/角色板块随机顺序/每玩家 £17+8 张手牌+1 张面朝下弃牌）→ 运河时代（首回合每玩家仅 1 个行动；此后主回合循环直到抽牌堆空且所有手牌为空——每回合末确定下回合顺序并收收入，运河最终回合不收收入；随后运河计分＋时代转换）→ 铁路时代（同一回合结构，每回合收收入；铁路计分后直接进入终局计分——MD 的「End of Rail Era」一节重复了运河转换步骤，系规则书勘误）→ 终局计分（钱每 £4 得 1 分上限 15、收入等级 ±分、2 级及以上板块二次计分，按<most_vp_wins>判胜）。两时代共用同一回合定义（<round>，运河时代定义、铁路时代引用）。",
+      "en": "The flow definition for Brass: Birmingham — the complete sequence of a game from setup to final scoring. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, conditions); this document defines 'in what order it happens' (setup, the Canal Era, the Rail Era, final scoring). Core structure: setup (board/markets/merchants/draw deck/random character-tile order/£17 + 8 cards + 1 face-down discard per player) → the Canal Era (opening round with only 1 action per player; then main rounds repeating until the draw deck is exhausted and every hand is empty — each round ends with turn-order determination and income, except the Canal Era's final round which skips income; then Canal scoring and the era transition) → the Rail Era (the same round structure with income every round; after Rail scoring the game goes straight to final scoring — the MD's 'End of Rail Era' section duplicates the Canal transition steps, a rulebook erratum) → final scoring (money at 1 VP per £4, max 15; income-level ±VPs; Level 2+ tiles score a second time; adjudicated by <most_vp_wins>). Both eras share one round definition (<round>, defined in the Canal Era and referenced by the Rail Era)."
+    },
+    "game": "brass-birmingham",
+    "version": "0.1.0"
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "整局伯明翰游戏，作为最外层轮：设置、运河时代、铁路时代与终局计分。",
+        "en": "The whole game of Brass: Birmingham as the outermost round: setup, the Canal Era, the Rail Era, and final scoring."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "游戏设置：版图、商人板块与商人啤酒、煤/铁市场、万能卡区、抽牌堆（按人数移除地点卡）、银行、角色板块随机顺序，以及每名玩家的链接板块、工业板块堆、£17、标记与起始手牌（8 张 + 1 张面朝下弃牌底卡）。",
+              "en": "Game setup: the board, merchant tiles and merchant beer, the coal/iron markets, the wild-card areas, the draw deck (location cards removed by player count), the bank, the random character-tile order, and each player's link tiles, industry tile stacks, £17, markers, and starting hand (8 cards + 1 face-down discard bottom)."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "place_board",
+                  "name": {
+                    "zh": "摆放版图",
+                    "en": "Place the Board"
+                  },
+                  "description": {
+                    "zh": "把<board>放到桌面中央。",
+                    "en": "Place the <board> in the middle of the table."
+                  }
+                },
+                {
+                  "id": "place_merchant_tiles",
+                  "name": {
+                    "zh": "放商人板块",
+                    "en": "Place the Merchant Tiles"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 78 张<merchant_tile>洗混，正面朝上放在标记不超过本局人数的<merchant_space>上（2 人局只用 2+ 空位、3 人局 2+/3+、4 人局全部）。",
+                    "en": "Shuffle the 78 <merchant_tile>s and place them face up on <merchant_space>s whose mark does not exceed the player count (2-player games use only 2+ spaces, 3-player games 2+/3+, 4-player games all)."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<merchant_space>",
+                  "<ontology::object>": "<merchant_tile>",
+                  "quantity": {
+                    "zh": "标记与玩家数相符的商人空位数。",
+                    "en": "The number of merchant spaces matching the player count."
+                  }
+                },
+                {
+                  "id": "place_merchant_beer",
+                  "name": {
+                    "zh": "放商人啤酒",
+                    "en": "Place the Merchant Beer"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "从<ontology::game_box>取<beer_barrel>，在每个非空白<merchant_tile>旁的<merchant_beer_space>放 1 桶。",
+                    "en": "Take <beer_barrel>s from the <ontology::game_box> and place 1 on each <merchant_beer_space> beside a non-blank <merchant_tile>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<merchant_beer_space>",
+                  "<ontology::object>": "<beer_barrel>",
+                  "quantity": {
+                    "zh": "每个非空白商人板块旁 1 桶。",
+                    "en": "1 per non-blank merchant tile."
+                  }
+                },
+                {
+                  "id": "fill_coal_market",
+                  "name": {
+                    "zh": "填煤市场",
+                    "en": "Fill the Coal Market"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "用<coal>填满<coal_market>的槽位——**只留 1 个 £1 槽为空**。",
+                    "en": "Fill the <coal_market>'s slots with <coal> — **leaving only one £1 slot empty**."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<coal_market>",
+                  "<ontology::object>": "<coal>",
+                  "quantity": {
+                    "zh": "除 1 个 £1 槽外的全部槽位。",
+                    "en": "Every slot except one £1 slot."
+                  }
+                },
+                {
+                  "id": "fill_iron_market",
+                  "name": {
+                    "zh": "填铁市场",
+                    "en": "Fill the Iron Market"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "用<iron>填满<iron_market>的槽位——**只留 2 个 £1 槽为空**。",
+                    "en": "Fill the <iron_market>'s slots with <iron> — **leaving only two £1 slots empty**."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<iron_market>",
+                  "<ontology::object>": "<iron>",
+                  "quantity": {
+                    "zh": "除 2 个 £1 槽外的全部槽位。",
+                    "en": "Every slot except two £1 slots."
+                  }
+                },
+                {
+                  "id": "arrange_wild_location_cards",
+                  "name": {
+                    "zh": "摆万能地点卡",
+                    "en": "Arrange the Wild Location Cards"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 2 张<wild_location_card>正面朝上放到第 1 个<card_draw_area>。",
+                    "en": "Place the 2 <wild_location_card>s face up on the first <card_draw_area>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<card_draw_area>",
+                  "<ontology::object>": "<wild_location_card>",
+                  "quantity": 2
+                },
+                {
+                  "id": "arrange_wild_industry_cards",
+                  "name": {
+                    "zh": "摆万能行业卡",
+                    "en": "Arrange the Wild Industry Cards"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 2 张<wild_industry_card>正面朝上放到第 2 个<card_draw_area>。",
+                    "en": "Place the 2 <wild_industry_card>s face up on the second <card_draw_area>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<card_draw_area>",
+                  "<ontology::object>": "<wild_industry_card>",
+                  "quantity": 2
+                },
+                {
+                  "id": "build_draw_deck",
+                  "name": {
+                    "zh": "组建抽牌堆",
+                    "en": "Build the Draw Deck"
+                  },
+                  "specifies": "<ontology::shuffle>",
+                  "description": {
+                    "zh": "先按人数移除<location_card>：2 人局移除蓝色与青色横幅地点的全部地点卡、3 人局仅移除青色（万能卡不进抽牌堆）。把剩余的<location_card>与<industry_card>洗混，面朝下放到第 3 个<card_draw_area>作为<draw_deck>。",
+                    "en": "First remove <location_card>s by player count: in a 2-player game remove all cards of blue- and teal-banner locations; in a 3-player game only teal (wild cards never enter the deck). Shuffle the remaining <location_card>s and <industry_card>s and place them face down on the third <card_draw_area> as the <draw_deck>."
+                  },
+                  "target": "<draw_deck>",
+                  "do_after": "place_board"
+                },
+                {
+                  "id": "form_bank",
+                  "name": {
+                    "zh": "组建银行",
+                    "en": "Form the Bank"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把所有<money>（£1/£5/£10/£20 面额）放到<bank>。",
+                    "en": "Put all <money> (£1/£5/£10/£20 denominations) into the <bank>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<bank>",
+                  "<ontology::object>": "<money>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "randomize_turn_order",
+                  "name": {
+                    "zh": "随机初始回合顺序",
+                    "en": "Randomize the Initial Turn Order"
+                  },
+                  "specifies": "<ontology::shuffle>",
+                  "description": {
+                    "zh": "每名玩家各选 1 张颜色的<character_tile>；把这些角色板块洗混后随机排列在<turn_order_track>上，决定初始回合顺序（轨上从左到右即行动顺序）。",
+                    "en": "Each player chooses a colored <character_tile>; shuffle these character tiles and arrange them randomly on the <turn_order_track> to fix the initial turn order (the track reads left to right as the action order)."
+                  },
+                  "target": "<turn_order_track>",
+                  "do_after": "place_board"
+                },
+                {
+                  "id": "place_player_links",
+                  "name": {
+                    "zh": "发链接板块",
+                    "en": "Deal the Link Tiles"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家从<ontology::game_box>拿与自己角色板块同色的 20 条<link_tile>放到自己的玩家区。",
+                    "en": "Each player takes their 20 <link_tile>s in their character-tile color from the <ontology::game_box> into their player area."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "每名玩家的玩家区",
+                  "<ontology::object>": "<link_tile>",
+                  "quantity": 20
+                },
+                {
+                  "id": "stack_industry_tiles",
+                  "name": {
+                    "zh": "叠工业板块",
+                    "en": "Stack the Industry Tiles"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家把 43 张<industry_tile>按行业分列、从低级到高级（I–VII）堆到<player_mat>对应槽位上，黑顶面朝下。",
+                    "en": "Each player stacks their 43 <industry_tile>s by industry, lowest to highest level (I–VII), onto the matching <player_mat> slots, black-top face down."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<player_mat>",
+                  "<ontology::object>": "<industry_tile>",
+                  "quantity": 43
+                },
+                {
+                  "id": "take_starting_money",
+                  "name": {
+                    "zh": "发起始钱",
+                    "en": "Take Starting Money"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家从<bank>拿 £17。",
+                    "en": "Each player takes £17 from the <bank>."
+                  },
+                  "source": "<bank>",
+                  "destination": "每名玩家",
+                  "<ontology::object>": "<money>",
+                  "quantity": 17,
+                  "do_after": "form_bank"
+                },
+                {
+                  "id": "place_vp_markers",
+                  "name": {
+                    "zh": "放分数标记",
+                    "en": "Place the VP Markers"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家把 1 枚<vp_marker>放到<vp_track>的 0 位置。",
+                    "en": "Each player places their <vp_marker> on the 0 space of the <vp_track>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<vp_track>",
+                  "<ontology::object>": "<vp_marker>",
+                  "quantity": {
+                    "expr": "player_count"
+                  }
+                },
+                {
+                  "id": "place_income_markers",
+                  "name": {
+                    "zh": "放收入标记",
+                    "en": "Place the Income Markers"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家把 1 枚<income_marker>放到<income_track>的 10 级。",
+                    "en": "Each player places their <income_marker> on the 10 space of the <income_track>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<income_track>",
+                  "<ontology::object>": "<income_marker>",
+                  "quantity": {
+                    "expr": "player_count"
+                  }
+                },
+                {
+                  "id": "draw_hands",
+                  "name": {
+                    "zh": "发初始手牌",
+                    "en": "Deal the Starting Hands"
+                  },
+                  "specifies": "<ontology::top_draw>",
+                  "description": {
+                    "zh": "每名玩家从<draw_deck>抽 8 张卡作为<hand>——手牌保密。",
+                    "en": "Each player draws 8 cards from the <draw_deck> as their <hand> — kept secret."
+                  },
+                  "source": "<draw_deck>",
+                  "destination": "<hand>",
+                  "<ontology::object>": "<card>",
+                  "quantity": 8,
+                  "do_after": "build_draw_deck"
+                },
+                {
+                  "id": "deal_discard_bottoms",
+                  "name": {
+                    "zh": "发弃牌堆底卡",
+                    "en": "Deal the Discard Bottoms"
+                  },
+                  "specifies": "<ontology::top_draw>",
+                  "description": {
+                    "zh": "每名玩家再从<draw_deck>抽 1 张卡，**面朝下**放到自己的<discard_pile>作为底卡。",
+                    "en": "Each player draws 1 more card from the <draw_deck> and places it **face down** onto their <discard_pile> as the bottom card."
+                  },
+                  "source": "<draw_deck>",
+                  "destination": "<discard_pile>",
+                  "<ontology::object>": {
+                    "<card>": {
+                      "face": "face_down"
+                    }
+                  },
+                  "quantity": 1,
+                  "do_after": "draw_hands"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "canal_era",
+            "name": {
+              "zh": "运河时代",
+              "en": "Canal Era"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "运河时代——<current_era>为 canal：每名玩家每个<location>最多 1 个板块（覆盖除外）、酒厂放 1 桶啤酒、只能建<canal_link>（£3、每行动 1 条）。结构：首回合（每玩家仅 1 个行动）→ 主回合循环（每回合末确定下回合顺序＋收收入；**运河最终回合不收收入**）直到<era_end>→ 运河计分 → 时代转换。",
+              "en": "The Canal Era — <current_era> is canal: at most 1 tile per <location> per player (except overbuilds), breweries receive 1 beer, only <canal_link>s are built (£3, 1 per action). Structure: an opening round (only 1 action per player) → main rounds (each ending with turn-order determination + income; **the Canal Era's final round skips income**) until <era_end> → Canal scoring → the era transition."
+            },
+            "do_after": "setup",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "opening_round",
+                  "name": {
+                    "zh": "首回合",
+                    "en": "Opening Round"
+                  },
+                  "specifies": "<ontology::round>",
+                  "description": {
+                    "zh": "运河时代的第一回合：从<turn_order_track>首位开始，每名玩家**只执行 1 个行动**（之后的回合才是 2 个）。回合末同样确定下回合顺序并收收入（此时抽牌堆尚满，<era_end>不可能成立）。",
+                    "en": "The Canal Era's first round: starting from the front of the <turn_order_track>, each player performs **only 1 action** (later rounds allow 2). The round still ends with turn-order determination and income (the deck is still full, so <era_end> cannot hold yet)."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "opening_turn",
+                        "name": {
+                          "zh": "首回合玩家回合",
+                          "en": "Opening Turn"
+                        },
+                        "specifies": "<ontology::turn>",
+                        "description": {
+                          "zh": "首回合中一名玩家的回合：执行 1 个行动，然后把<hand>补至 8 张。",
+                          "en": "One player's turn in the opening round: perform 1 action, then refill the <hand> to 8 cards."
+                        },
+                        "<ontology::pipeline>": {
+                          "options": [
+                            {
+                              "id": "opening_action_choice",
+                              "name": {
+                                "zh": "执行 1 个行动",
+                                "en": "Perform 1 Action"
+                              },
+                              "description": {
+                                "zh": "从 7 个行动中选 1 个执行（每个行动弃 1 张卡）。",
+                                "en": "Choose and perform 1 of the 7 actions (each action discards 1 card)."
+                              },
+                              "<ontology::action>": {
+                                "options": [
+                                  "<build>",
+                                  "<network_action>",
+                                  "<develop>",
+                                  "<sell>",
+                                  "<loan>",
+                                  "<scout>",
+                                  "<pass>"
+                                ],
+                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                              }
+                            },
+                            {
+                              "id": "opening_refill_hand",
+                              "name": {
+                                "zh": "补手牌至 8 张（首回合）",
+                                "en": "Refill the Hand to 8 (Opening)"
+                              },
+                              "specifies": "<ontology::top_draw>",
+                              "description": {
+                                "zh": "从<draw_deck>补牌至 8 张（超 8 张则弃至 8；抽牌堆空则补不满）。",
+                                "en": "Draw from the <draw_deck> back to 8 cards (discard down to 8 if above; impossible once the deck is empty)."
+                              },
+                              "source": "<draw_deck>",
+                              "destination": "<hand>",
+                              "<ontology::object>": "<card>",
+                              "quantity": {
+                                "zh": "补满至 8 张。",
+                                "en": "Refill to 8 cards."
+                              },
+                              "do_after": "opening_action_choice"
+                            }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                        }
+                      },
+                      {
+                        "id": "opening_determine_turn_order",
+                        "name": {
+                          "zh": "确定下回合顺序（首回合）",
+                          "en": "Determine Turn Order (Opening)"
+                        },
+                        "description": {
+                          "zh": "按本回合花钱从少到多重排<turn_order_track>上的<character_tile>（花费相同保持相对次序）；随后把角色板块上的钱收回<bank>。",
+                          "en": "Reorder the <character_tile>s on the <turn_order_track> by least money spent this round (ties keep their relative order); then return the money on the tiles to the <bank>."
+                        },
+                        "do_after": "opening_turn"
+                      },
+                      {
+                        "id": "opening_take_income",
+                        "name": {
+                          "zh": "收收入（首回合）",
+                          "en": "Take Income (Opening)"
+                        },
+                        "<ontology::condition>": {
+                          "zh": "本回合不是运河时代的最终回合（首回合时<era_end>必不成立，恒真）。",
+                          "en": "This round is not the Canal Era's final round (trivially true in the opening round — <era_end> cannot hold yet)."
+                        },
+                        "description": {
+                          "zh": "每名玩家按<income_level>收/付钱：正收入从<bank>拿钱、负收入付给<bank>；付不起时触发<cover_income_shortfall>。",
+                          "en": "Each player collects/pays per their <income_level>: positive income takes money from the <bank>, negative income pays the <bank>; if unable to pay, <cover_income_shortfall> triggers."
+                        },
+                        "do_after": "opening_determine_turn_order"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "main_rounds",
+                  "name": {
+                    "zh": "运河主回合循环",
+                    "en": "Canal Main Rounds"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "从第二回合开始重复<round>，直到达成<era_end>（<draw_deck>空 且 所有玩家的<hand>为空）。两个时代共用同一回合定义。",
+                    "en": "Repeat <round> from the second round on until <era_end> holds (the <draw_deck> is empty AND every player's <hand> is empty). Both eras share this one round definition."
+                  },
+                  "do_after": "opening_round",
+                  "loop": {
+                    "until": "<era_end>"
+                  },
+                  "<ontology::round>": {
+                    "id": "round",
+                    "name": {
+                      "zh": "回合",
+                      "en": "Round"
+                    },
+                    "description": {
+                      "zh": "一回合：从<turn_order_track>首位开始，每名玩家依次执行自己的回合（2 个行动＋补手牌至 8 张）；随后确定下回合顺序（花钱最少者先行）并收收入。此回合结构为运河与铁路两个时代共用。",
+                      "en": "One round: starting from the front of the <turn_order_track>, each player takes their turn (2 actions + refill to 8 cards); then turn order is determined (least money spent first) and income is collected. This round structure is shared by both eras."
+                    },
+                    "<ontology::pipeline>": {
+                      "options": [
+                        {
+                          "id": "player_turn",
+                          "name": {
+                            "zh": "玩家回合",
+                            "en": "Player Turn"
+                          },
+                          "specifies": "<ontology::turn>",
+                          "description": {
+                            "zh": "一名玩家的回合：执行 2 个行动（可相同、每个行动弃 1 张卡），然后把<hand>补至 8 张。",
+                            "en": "One player's turn: perform 2 actions (repeatable, each discarding 1 card), then refill the <hand> to 8 cards."
+                          },
+                          "<ontology::pipeline>": {
+                            "options": [
+                              {
+                                "id": "take_actions",
+                                "name": {
+                                  "zh": "执行 2 个行动",
+                                  "en": "Perform 2 Actions"
+                                },
+                                "description": {
+                                  "zh": "连续选择并执行 2 个行动（每个行动弃 1 张卡，可执行相同行动两次）。",
+                                  "en": "Choose and perform 2 actions in sequence (each discards 1 card; the same action may be taken twice)."
+                                },
+                                "loop": {
+                                  "count": 2
+                                },
+                                "<ontology::action>": {
+                                  "options": [
+                                    "<build>",
+                                    "<network_action>",
+                                    "<develop>",
+                                    "<sell>",
+                                    "<loan>",
+                                    "<scout>",
+                                    "<pass>"
+                                  ],
+                                  "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                                }
+                              },
+                              {
+                                "id": "refill_hand",
+                                "name": {
+                                  "zh": "补手牌至 8 张",
+                                  "en": "Refill the Hand to 8"
+                                },
+                                "specifies": "<ontology::top_draw>",
+                                "description": {
+                                  "zh": "从<draw_deck>补牌至 8 张（超 8 张则弃至 8；抽牌堆空则补不满——这正是时代走向结束的标志）。",
+                                  "en": "Draw from the <draw_deck> back to 8 cards (discard down to 8 if above; impossible once the deck is empty — the very sign the era is ending)."
+                                },
+                                "source": "<draw_deck>",
+                                "destination": "<hand>",
+                                "<ontology::object>": "<card>",
+                                "quantity": {
+                                  "zh": "补满至 8 张。",
+                                  "en": "Refill to 8 cards."
+                                },
+                                "do_after": "take_actions"
+                              }
+                            ],
+                            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                          }
+                        },
+                        {
+                          "id": "determine_turn_order",
+                          "name": {
+                            "zh": "确定下回合顺序",
+                            "en": "Determine Turn Order"
+                          },
+                          "description": {
+                            "zh": "按本回合花钱从少到多重排<turn_order_track>上的<character_tile>（花费相同保持相对次序）；随后把角色板块上的钱收回<bank>。运河时代最终回合也执行此步——它决定铁路时代的起始顺序。",
+                            "en": "Reorder the <character_tile>s on the <turn_order_track> by least money spent this round (ties keep their relative order); then return the money on the tiles to the <bank>. The Canal Era's final round does this too — it fixes the Rail Era's starting order."
+                          },
+                          "do_after": "player_turn"
+                        },
+                        {
+                          "id": "take_income",
+                          "name": {
+                            "zh": "收收入",
+                            "en": "Take Income"
+                          },
+                          "<ontology::condition>": {
+                            "zh": "本回合不是运河时代的最终回合——运河时代达成<era_end>的回合不收收入（铁路时代每回合均收）。",
+                            "en": "This round is not the Canal Era's final round — no income is collected in the round where <era_end> holds during the Canal Era (the Rail Era collects every round)."
+                          },
+                          "description": {
+                            "zh": "每名玩家按<income_level>收/付钱：正收入从<bank>拿钱、负收入付给<bank>；付不起时触发<cover_income_shortfall>。",
+                            "en": "Each player collects/pays per their <income_level>: positive income takes money from the <bank>, negative income pays the <bank>; if unable to pay, <cover_income_shortfall> triggers."
+                          },
+                          "do_after": "determine_turn_order"
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                    }
+                  }
+                },
+                {
+                  "id": "canal_scoring",
+                  "name": {
+                    "zh": "运河计分",
+                    "en": "Canal Scoring"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "运河时代结束计分：先计所有<canal_link>（每条得两端地点 £ 图标数之和，计分后移除），再计版图上所有翻面<industry_tile>（左下角 VP 之和）。超过 100 分绕圈继续。",
+                    "en": "Canal Era end scoring: first all <canal_link>s (each scores the sum of the £ symbols of its two endpoint locations, then is removed), then all flipped <industry_tile>s on the board (sum of their bottom-left VPs). Past 100 VPs the marker starts another loop."
+                  },
+                  "do_after": "main_rounds",
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "score_canal_links",
+                        "name": {
+                          "zh": "运河链接计分",
+                          "en": "Score the Canal Links"
+                        },
+                        "specifies": "<ontology::push_track>",
+                        "description": {
+                          "zh": "每名玩家自己的每条<canal_link>得 1 分 × 两端相邻地点 £ 图标数之和，<vp_marker>沿<vp_track>推进。",
+                          "en": "Each of your <canal_link>s scores 1 VP per £ symbol in its two adjacent locations; advance the <vp_marker> along the <vp_track>."
+                        },
+                        "<ontology::track>": "<vp_track>",
+                        "step": {
+                          "zh": "该玩家全部运河链接的 £ 图标数之和。",
+                          "en": "The sum of £ symbols across that player's canal links."
+                        }
+                      },
+                      {
+                        "id": "remove_canal_links",
+                        "name": {
+                          "zh": "移除运河链接",
+                          "en": "Remove the Canal Links"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "把版图上所有<canal_link>移除，归还各自所有者的玩家区。",
+                          "en": "Remove all <canal_link>s from the board and return them to their owners' player areas."
+                        },
+                        "source": "<board>",
+                        "destination": "各所有者的玩家区",
+                        "<ontology::object>": "<canal_link>",
+                        "quantity": "all",
+                        "do_after": "score_canal_links"
+                      },
+                      {
+                        "id": "score_canal_flipped_tiles",
+                        "name": {
+                          "zh": "运河翻面板块计分",
+                          "en": "Score the Canal Flipped Tiles"
+                        },
+                        "specifies": "<ontology::push_track>",
+                        "description": {
+                          "zh": "每名玩家把版图上自己所有**翻面**<industry_tile>的左下角 VP 加总，<vp_marker>沿<vp_track>推进。未翻面板块不计分。",
+                          "en": "Each player sums the bottom-left VPs of their **flipped** <industry_tile>s on the board and advances their <vp_marker> along the <vp_track>. Unflipped tiles do not score."
+                        },
+                        "<ontology::track>": "<vp_track>",
+                        "step": {
+                          "zh": "该玩家全部翻面板块的 VP 之和。",
+                          "en": "The sum of that player's flipped tiles' VPs."
+                        },
+                        "do_after": "remove_canal_links"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "canal_transition",
+                  "name": {
+                    "zh": "运河转换",
+                    "en": "Canal Transition"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "运河时代→铁路时代的转换：移除版图上全部 1 级板块、补满商人啤酒、把所有弃牌洗回抽牌堆、每名玩家抽 8 张新手牌。<current_era>切换为 rail。",
+                    "en": "The Canal-to-Rail transition: remove all Level 1 tiles from the board, refill the merchant beer, shuffle all discards into the draw deck, and deal each player a new hand of 8 cards. <current_era> becomes rail."
+                  },
+                  "do_after": "canal_scoring",
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "remove_l1_tiles",
+                        "name": {
+                          "zh": "移除 1 级板块",
+                          "en": "Remove the Level 1 Tiles"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "把版图上**所有 1 级**<industry_tile>（无论是否翻面）移除进盒；其上未用完的<coal>/<iron>/<beer_barrel>回<general_supply>。玩家板上的板块保留。2 级及以上板块留在版图上。",
+                          "en": "Remove **all Level 1** <industry_tile>s (flipped or not) from the board to the box; any remaining <coal>/<iron>/<beer_barrel>s on them return to the <general_supply>. Player-mat tiles stay. Level 2+ tiles remain on the board."
+                        },
+                        "source": "<board>",
+                        "destination": "<ontology::game_box>",
+                        "<ontology::object>": "<industry_tile>",
+                        "quantity": {
+                          "zh": "版图上所有 1 级板块。",
+                          "en": "All Level 1 tiles on the board."
+                        }
+                      },
+                      {
+                        "id": "reset_merchant_beer",
+                        "name": {
+                          "zh": "补商人啤酒",
+                          "en": "Refill the Merchant Beer"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "从<general_supply>取<beer_barrel>，在每个非空白<merchant_tile>旁的空<merchant_beer_space>放 1 桶。",
+                          "en": "Take <beer_barrel>s from the <general_supply> and place 1 on each empty <merchant_beer_space> beside a non-blank <merchant_tile>."
+                        },
+                        "source": "<general_supply>",
+                        "destination": "<merchant_beer_space>",
+                        "<ontology::object>": "<beer_barrel>",
+                        "quantity": {
+                          "zh": "每个非空白商人板块旁 1 桶。",
+                          "en": "1 per non-blank merchant tile."
+                        },
+                        "do_after": "remove_l1_tiles"
+                      },
+                      {
+                        "id": "shuffle_discards",
+                        "name": {
+                          "zh": "洗回弃牌",
+                          "en": "Shuffle the Discards"
+                        },
+                        "specifies": "<ontology::shuffle>",
+                        "description": {
+                          "zh": "把所有玩家的<discard_pile>合并（每堆底部的面朝下卡先翻回正面），洗混后放回<draw_deck>区（面朝下）。",
+                          "en": "Combine all players' <discard_pile>s (turning the face-down bottom cards over first), shuffle them, and place them face down as the <draw_deck>."
+                        },
+                        "target": "<draw_deck>",
+                        "do_after": "reset_merchant_beer"
+                      },
+                      {
+                        "id": "draw_new_hands",
+                        "name": {
+                          "zh": "发新手牌",
+                          "en": "Deal the New Hands"
+                        },
+                        "specifies": "<ontology::top_draw>",
+                        "description": {
+                          "zh": "每名玩家从新洗成的<draw_deck>抽 8 张卡作为<hand>。",
+                          "en": "Each player draws 8 cards from the newly shuffled <draw_deck> as their <hand>."
+                        },
+                        "source": "<draw_deck>",
+                        "destination": "<hand>",
+                        "<ontology::object>": "<card>",
+                        "quantity": 8,
+                        "do_after": "shuffle_discards"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "rail_era",
+            "name": {
+              "zh": "铁路时代",
+              "en": "Rail Era"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "铁路时代——<current_era>为 rail：每地点可建多块、酒厂放 2 桶啤酒、只能建<rail_link>（£5/条或 £15 两条＋1 桶酒厂啤酒）、锁图标板块禁建（陶器 1 级除外）。结构：主回合循环（与运河时代共用<round>，每回合均收收入）直到<era_end>→ 铁路计分。注意：MD 的「End of Rail Era」一节重复了运河转换步骤，系规则书勘误——铁路计分后直接进入终局计分，不再转换。",
+              "en": "The Rail Era — <current_era> is rail: multiple tiles per location, breweries receive 2 beers, only <rail_link>s are built (£5 each or £15 for two plus 1 brewery beer), lock-icon tiles are forbidden (except Pottery L1). Structure: main rounds (sharing <round> with the Canal Era, income every round) until <era_end> → Rail scoring. Note: the MD's 'End of Rail Era' section duplicates the Canal transition steps — a rulebook erratum; after Rail scoring the game goes straight to final scoring."
+            },
+            "do_after": "canal_era",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "rail_main_rounds",
+                  "name": {
+                    "zh": "铁路主回合循环",
+                    "en": "Rail Main Rounds"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "重复运河时代定义的同款<round>（每玩家 2 个行动＋补手牌；回合末确定下回合顺序＋收收入），直到达成<era_end>。铁路时代**最终回合照常收收入**。",
+                    "en": "Repeat the same <round> defined in the Canal Era (2 actions per player + refill; round ends with turn-order determination + income) until <era_end> holds. The Rail Era's **final round collects income as usual**."
+                  },
+                  "loop": {
+                    "until": "<era_end>"
+                  },
+                  "<ontology::round>": "<round>"
+                },
+                {
+                  "id": "rail_scoring",
+                  "name": {
+                    "zh": "铁路计分",
+                    "en": "Rail Scoring"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "铁路时代结束计分：先计所有<rail_link>（每条得两端地点 £ 图标数之和，计分后移除），再计版图上所有翻面<industry_tile>（左下角 VP 之和）。超过 100 分绕圈继续。计分后直接进入终局计分。",
+                    "en": "Rail Era end scoring: first all <rail_link>s (each scores the sum of the £ symbols of its two endpoint locations, then is removed), then all flipped <industry_tile>s on the board (sum of their bottom-left VPs). Past 100 VPs the marker starts another loop. Final scoring follows directly."
+                  },
+                  "do_after": "main_rounds",
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "score_rail_links",
+                        "name": {
+                          "zh": "铁路链接计分",
+                          "en": "Score the Rail Links"
+                        },
+                        "specifies": "<ontology::push_track>",
+                        "description": {
+                          "zh": "每名玩家自己的每条<rail_link>得 1 分 × 两端相邻地点 £ 图标数之和，<vp_marker>沿<vp_track>推进。",
+                          "en": "Each of your <rail_link>s scores 1 VP per £ symbol in its two adjacent locations; advance the <vp_marker> along the <vp_track>."
+                        },
+                        "<ontology::track>": "<vp_track>",
+                        "step": {
+                          "zh": "该玩家全部铁路链接的 £ 图标数之和。",
+                          "en": "The sum of £ symbols across that player's rail links."
+                        }
+                      },
+                      {
+                        "id": "remove_rail_links",
+                        "name": {
+                          "zh": "移除铁路链接",
+                          "en": "Remove the Rail Links"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "把版图上所有<rail_link>移除，归还各自所有者的玩家区。",
+                          "en": "Remove all <rail_link>s from the board and return them to their owners' player areas."
+                        },
+                        "source": "<board>",
+                        "destination": "各所有者的玩家区",
+                        "<ontology::object>": "<rail_link>",
+                        "quantity": "all",
+                        "do_after": "score_rail_links"
+                      },
+                      {
+                        "id": "score_rail_flipped_tiles",
+                        "name": {
+                          "zh": "铁路翻面板块计分",
+                          "en": "Score the Rail Flipped Tiles"
+                        },
+                        "specifies": "<ontology::push_track>",
+                        "description": {
+                          "zh": "每名玩家把版图上自己所有**翻面**<industry_tile>的左下角 VP 加总，<vp_marker>沿<vp_track>推进。未翻面板块不计分。",
+                          "en": "Each player sums the bottom-left VPs of their **flipped** <industry_tile>s on the board and advances their <vp_marker> along the <vp_track>. Unflipped tiles do not score."
+                        },
+                        "<ontology::track>": "<vp_track>",
+                        "step": {
+                          "zh": "该玩家全部翻面板块的 VP 之和。",
+                          "en": "The sum of that player's flipped tiles' VPs."
+                        },
+                        "do_after": "remove_rail_links"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "final_scoring",
+            "name": {
+              "zh": "终局计分",
+              "en": "Final Scoring"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "终局计分阶段：钱兑分（每 £4 得 1 分、上限 15 分）、收入等级 ±分、版图上所有 2 级及以上<industry_tile>的 VP 二次计分，最后按<most_vp_wins>判胜——总分最高者胜，并列先比收入等级再比剩余钱。",
+              "en": "Final scoring: money converts to VPs (1 per £4, max 15), income level adds ±VPs, all Level 2+ <industry_tile>s on the board score their VPs a second time, then <most_vp_wins> adjudicates — highest total wins; ties compare income level, then remaining money."
+            },
+            "do_after": "rail_era",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "score_money_vp",
+                  "name": {
+                    "zh": "钱兑分",
+                    "en": "Score Money for VPs"
+                  },
+                  "specifies": "<ontology::push_track>",
+                  "description": {
+                    "zh": "每名玩家把剩余<money>按每 £4 兑 1 分推进<vp_marker>（向下取整，**上限 15 分**）。",
+                    "en": "Each player advances their <vp_marker> by 1 VP per £4 of remaining <money> (rounded down, **max 15 VPs**)."
+                  },
+                  "<ontology::track>": "<vp_track>",
+                  "step": {
+                    "zh": "剩余钱 ÷ 4 向下取整（上限 15）。",
+                    "en": "Money ÷ 4 rounded down (max 15)."
+                  }
+                },
+                {
+                  "id": "score_income_level_vp",
+                  "name": {
+                    "zh": "收入等级计分",
+                    "en": "Score the Income Level"
+                  },
+                  "specifies": "<ontology::push_track>",
+                  "description": {
+                    "zh": "每名玩家按<income_track>上标记所在等级旁印的 ±分推进或后退<vp_marker>——负收入等级扣分。",
+                    "en": "Each player advances or moves back their <vp_marker> by the ±VP printed beside their marker's level on the <income_track> — negative levels lose VPs."
+                  },
+                  "<ontology::track>": "<vp_track>",
+                  "step": {
+                    "zh": "收入等级旁印的 ± 分数。",
+                    "en": "The ±VP printed beside the income level."
+                  },
+                  "do_after": "score_money_vp"
+                },
+                {
+                  "id": "rescore_level2_tiles",
+                  "name": {
+                    "zh": "二级以上板块二次计分",
+                    "en": "Rescore the Level 2+ Tiles"
+                  },
+                  "specifies": "<ontology::push_track>",
+                  "description": {
+                    "zh": "每名玩家把版图上自己**所有 2 级及以上**<industry_tile>（无论是否翻面）的 VP 加总推进<vp_marker>——翻面板块相当于第二次计分。",
+                    "en": "Each player sums the VPs of **all their Level 2+** <industry_tile>s on the board (flipped or not) and advances their <vp_marker> — flipped tiles effectively score a second time."
+                  },
+                  "<ontology::track>": "<vp_track>",
+                  "step": {
+                    "zh": "所有 2 级及以上板块的 VP 之和。",
+                    "en": "The sum of all Level 2+ tiles' VPs."
+                  },
+                  "do_after": "score_income_level_vp"
+                },
+                {
+                  "id": "adjudicate_victory",
+                  "name": {
+                    "zh": "判定胜者",
+                    "en": "Adjudicate Victory"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "按<most_vp_wins>判定胜者：总分最高者胜；并列者先比收入等级（<highest_income_level>），再比剩余钱（<most_money_remaining>），仍并列则共享胜利。",
+                    "en": "Adjudicate by <most_vp_wins>: the highest total wins; ties compare income level (<highest_income_level>), then remaining money (<most_money_remaining>); a final tie shares victory."
+                  },
+                  "result": {
+                    "zh": "胜者玩家（们）。",
+                    "en": "The winning player(s)."
+                  },
+                  "rules": {
+                    "zh": "按<most_vp_wins>判定：先比总分（<vp_highest>），再比收入等级（<highest_income_level>），再比剩余钱（<most_money_remaining>）。",
+                    "en": "Adjudicate by <most_vp_wins>: highest total (<vp_highest>), then income level (<highest_income_level>), then remaining money (<most_money_remaining>)."
+                  },
+                  "do_after": "rescore_level2_tiles"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ]
+}
