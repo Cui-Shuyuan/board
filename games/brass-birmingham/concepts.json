@@ -1,0 +1,2170 @@
+{
+  "meta": {
+    "game": "brass-birmingham",
+    "name": {
+      "zh": "工业革命：伯明翰",
+      "en": "Brass: Birmingham"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "《Brass: Birmingham》的结构化规则定义（标准 2–4 人，不含单人/锦标赛变体）。基于 doc/brass-birmingham/Brass-Birmingham-Rulebook.md 与 FAQ。核心机制：每回合 2 个行动（运河时代首回合 1 个），每个行动弃 1 张卡，回合末补至 8 张；7 种行动（建造/网络/开发/售卖/贷款/侦察/跳过）；回合顺序按花钱最少者先行；运河与铁路两个时代，时代结束 = 抽牌堆空且所有手牌为空；煤需连通（最近煤矿免费，否则市场价）、铁无需连通、啤酒三分来源（自己任意未翻面酒厂/对手连通酒厂/商人啤酒）；覆盖建造按「自己的任意行业/对手仅煤铁且全板无该类型方块」区分；终局计分 = 钱（每 £4 得 1 分、上限 15）+ 收入等级 ±分 + 2 级及以上工业板块二次计分。第一版约定：版图抽象化（地点/线路建模为概念，不做逐点枚举）；玩家板板块成本/产量/分数数值待实物核实。",
+      "en": "Structured rule definition for Brass: Birmingham (standard 2–4 players, excluding solo and tournament variants). Based on doc/brass-birmingham/Brass-Birmingham-Rulebook.md and the FAQ. Core mechanics: 2 actions per turn (1 in the Canal Era's first round); each action discards 1 card; refill to 8 at turn end; 7 actions (build/network/develop/sell/loan/scout/pass); turn order by least money spent; two eras — Canal and Rail; an era ends when the draw deck is exhausted and every hand is empty; coal needs a connection (nearest mine free, else market price), iron needs none, beer from three sources (own unflipped brewery anywhere / opponent's connected brewery / merchant beer); overbuilding differs for your own tiles (any industry) vs opponents' (coal/iron only, when no cubes of that type remain anywhere); final scoring = money (1 VP per £4, max 15) + income-level ±VPs + second scoring of Level 2+ tiles. First-version conventions: the board is abstracted (locations and lines modeled as concepts, not enumerated); tile costs/outputs/VP values await physical verification."
+    }
+  },
+  "objects": [
+    {
+      "id": "board",
+      "specifies": "<ontology::public_board>",
+      "name": {
+        "zh": "版图",
+        "en": "Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "伯明翰的双面公共版图（日/夜两面）。上面印有：<location>（地点，含<industry_space>）、<canal_line>/<rail_line>（未开发线路）、<coal_market>/<iron_market>、边缘的<merchant_space>（带 2+/3+/4 玩家数标记）与<merchant_beer_space>、3 个<card_draw_area>、<turn_order_track>、<vp_track>与<income_track>（合称进度轨）。第一版抽象化：不逐点枚举地点与线路数据。",
+        "en": "Birmingham's double-sided public board (day and night sides). Printed on it: <location>s (with their <industry_space>s), <canal_line>/<rail_line> undeveloped lines, the <coal_market>/<iron_market>, edge <merchant_space>s (marked 2+/3+/4 by player count) with <merchant_beer_space>s, the 3 <card_draw_area>s, the <turn_order_track>, and the <vp_track>/<income_track> (together the Progress Track). First-version abstraction: locations and lines are not enumerated."
+      },
+      "appearance": {
+        "zh": "大版图：中部为地点与线路网络（运河/铁路双层），上沿为市场，边缘为商人空位，另含回合顺序轨与进度轨。",
+        "en": "A large board: the location-and-line network in the center (canal and rail layers), markets along the top, merchant spaces around the edges, plus the turn order track and the Progress Track."
+      },
+      "zones": [
+        {
+          "<location>": {
+            "position": "版图中部",
+            "description": {
+              "zh": "地点与线路构成版图主体网络。",
+              "en": "Locations and lines form the board's main network."
+            }
+          }
+        },
+        {
+          "<coal_market>": {
+            "position": "版图上沿",
+            "description": {
+              "zh": "带价格槽的煤市场。",
+              "en": "The Coal Market with priced slots."
+            }
+          }
+        },
+        {
+          "<iron_market>": {
+            "position": "版图上沿",
+            "description": {
+              "zh": "带价格槽的铁市场。",
+              "en": "The Iron Market with priced slots."
+            }
+          }
+        },
+        {
+          "<merchant_space>": {
+            "position": "版图边缘",
+            "description": {
+              "zh": "商人空位带玩家数标记与位置加成文字。",
+              "en": "Merchant spaces marked with player counts and printed location bonuses."
+            }
+          }
+        },
+        {
+          "<card_draw_area>": {
+            "position": "版图一侧",
+            "description": {
+              "zh": "万能地点卡区、万能行业卡区、抽牌堆区。",
+              "en": "The Wild Location area, Wild Industry area, and Draw Deck area."
+            }
+          }
+        },
+        {
+          "<turn_order_track>": {
+            "position": "版图一角",
+            "description": {
+              "zh": "角色板块排列于此。",
+              "en": "Character tiles are arranged here."
+            }
+          }
+        },
+        {
+          "<vp_track>": {
+            "position": "进度轨上部",
+            "description": {
+              "zh": "0–100 环状分数轨。",
+              "en": "The circular 0–100 VP track."
+            }
+          }
+        },
+        {
+          "<income_track>": {
+            "position": "进度轨下部",
+            "description": {
+              "zh": "收入等级轨。",
+              "en": "The income-level track."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "location",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "地点",
+        "en": "Location"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图上的地点（城市/城镇）。玩家在此建造<industry_tile>（占据其<industry_space>）；<canal_link>/<rail_link>以地点为端点连接相邻地点。地点横幅颜色标记该地点的<location_card>是否在<draw_deck>中：2 人局蓝色与青色横幅的地点卡移除、3 人局仅青色移除——被移除卡的地点仍可被建造（用行业卡/万能卡在网络内建）。",
+        "en": "A location (city/town) on the board. Players build <industry_tile>s here (occupying its <industry_space>s); <canal_link>s/<rail_link>s join adjacent locations with locations as endpoints. The banner color shows whether this location's <location_card>s are in the <draw_deck>: in a 2-player game blue- and teal-banner cards are removed, in a 3-player game only teal — removed locations may still be built in (via industry/wild cards inside your network)."
+      },
+      "contains": {
+        "type": "<industry_space>[]",
+        "description": {
+          "zh": "地点内的工业建造空位。",
+          "en": "The industry build spaces inside the location."
+        }
+      }
+    },
+    {
+      "id": "industry_space",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "工业空位",
+        "en": "Industry Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<location>内的工业建造空位。两种：单图标空位（只显示一个行业图标）与双图标空位（显示两个行业图标）。<build>时必须优先占单图标空位，无单图标空位才可用双图标空位；空位不显示本行业图标则不能在该地点建该行业。覆盖（overbuild）替换不受此优先规则限制。",
+        "en": "A buildable industry slot inside a <location>. Two kinds: single-icon spaces (showing one industry icon) and dual-icon spaces (two icons). The <build> action must use a single-icon space first, falling back to a dual-icon space only when none remains; without any space showing that industry's icon, that industry cannot be built at the location. Overbuilding (replacement) ignores this priority rule."
+      }
+    },
+    {
+      "id": "canal_line",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "运河线路",
+        "en": "Canal Line"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "运河时代可开发的线路——<network_action>放置<canal_link>的目标。铁路时代不可用。",
+        "en": "A line developable during the Canal Era — the placement target of <canal_link> via <network_action>. Unusable in the Rail Era."
+      }
+    },
+    {
+      "id": "rail_line",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "铁路线路",
+        "en": "Rail Line"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "铁路时代可开发的线路——<network_action>放置<rail_link>的目标。<rail_link>也可建在已有<canal_link>的线路上（替换之，被替换的运河链接归还其所有者供应）。运河时代不可用。",
+        "en": "A line developable during the Rail Era — the placement target of <rail_link> via <network_action>. A <rail_link> may also be placed on a line already carrying a <canal_link> (replacing it; the replaced canal returns to its owner's supply). Unusable in the Canal Era."
+      }
+    },
+    {
+      "id": "farm_brewery",
+      "specifies": "<location>",
+      "name": {
+        "zh": "农场酒厂",
+        "en": "Farm Brewery"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "2 个无名地点，各带 1 个只显示酒厂图标的<industry_space>——农场酒厂。建造限制：只能用酒厂图标的<industry_card>（酿酒行业卡）或<wild_industry_card>——<location_card>与<wild_location_card>均不可用。连通规则特殊：左侧农场酒厂只有建起 Cannock 链接才接入<network>；Kidderminster–Worcester 之间的链接同时连接 Kidderminster 与其左侧农场酒厂（不需要、也不能再建第二条链接）。",
+        "en": "2 unnamed locations, each with a single Brewery-icon <industry_space> — the Farm Breweries. Build restriction: only a Brewery-icon <industry_card> or a <wild_industry_card> may build here — neither <location_card>s nor <wild_location_card>s may. Special connectivity: the farm brewery on the left joins your <network> only via the link at Cannock; a link between Kidderminster and Worcester also connects Kidderminster to the farm brewery on its left (a second link is neither required nor allowed)."
+      }
+    },
+    {
+      "id": "merchant_space",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "商人空位",
+        "en": "Merchant Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图边缘的商人空位（带玩家数标记，setup 时只使用标记不超过本局人数的空位），各放 1 张面朝上的<merchant_tile>，旁有<merchant_beer_space>。空位印有位置加成——用该商人旁的啤酒卖出货物时触发：Gloucester=免费开发 1 个最低级板块（可开发灯泡陶器）、Oxford=收入+2 格、Nottingham 与 Shrewsbury=分数+若干、Warrington=得 £5。商人空位同时也是煤图标连通端点（买市场煤的前提之一）。第一版抽象化：第 6 个商人空位名称与各加成数值待实物核实。",
+        "en": "Merchant spaces along the board edge (each marked with a player count; only spaces whose mark does not exceed the player count are used at setup), each holding 1 face-up <merchant_tile> with a <merchant_beer_space> beside it. Each space has a printed location bonus, gained when selling with the beer beside that merchant: Gloucester = free Develop of 1 lowest-level tile (lightbulb pottery allowed), Oxford = +2 income spaces, Nottingham and Shrewsbury = +VPs, Warrington = +£5. Merchant spaces are also coal-icon connection endpoints (one prerequisite for buying market coal). First-version abstraction: the 6th merchant space's name and exact bonus values await physical verification."
+      }
+    },
+    {
+      "id": "merchant_beer_space",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "商人啤酒空位",
+        "en": "Merchant Beer Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<merchant_space>旁的啤酒桶空位。setup 时每个非空白<merchant_tile>旁放 1 个<beer_barrel>；时代转换时补满。桶里的啤酒只能用于<sell>（卖到旁邻商人时每板块最多用 1 桶），且用后拿位置加成；绝不能用于铁路时代双铁建造。",
+        "en": "The beer-barrel space beside a <merchant_space>. At setup each non-blank <merchant_tile> gets 1 <beer_barrel> beside it; refilled at each era transition. This beer is usable only by the <sell> action (at most 1 barrel per tile sold to the adjacent merchant) and grants the location bonus; it can never fuel a Rail Era double link."
+      }
+    },
+    {
+      "id": "card_draw_area",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "卡牌抽取区",
+        "en": "Card Draw Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图上的 3 个卡区：<wild_location_card>区（2 张面朝上）、<wild_industry_card>区（2 张面朝上）、<draw_deck>区（面朝下）。<scout>取走的<wild_card>用后弃回各自卡区而非<discard_pile>。",
+        "en": "3 card areas on the board: the <wild_location_card> area (2 face up), the <wild_industry_card> area (2 face up), and the <draw_deck> area (face down). <wild_card>s taken by <scout> are discarded back to their own areas, never to the <discard_pile>."
+      }
+    },
+    {
+      "id": "coal_market",
+      "specifies": "<ontology::market>",
+      "name": {
+        "zh": "煤市场",
+        "en": "Coal Market"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图上的煤市场——带价格槽的<ontology::market>。setup 时除 1 个 £1 槽外全部放<coal>。流入：<coal_mine>建造瞬间若连通任一<merchant_space>（无论其上有没有<merchant_tile>），立即把方块移入市场、**先填最贵的槽**，每块按槽价收钱。流出：无连通煤矿时，可从市场买煤——**从最便宜的槽起买**；前提是建造位置连通带煤图标的地点（Warrington、Shrewsbury、Nottingham、Gloucester、Oxford 的商人空位）；市场空时按 £8/块 直接购买。",
+        "en": "The Coal Market on the board — a <ontology::market> with priced slots. At setup every slot except one £1 slot is filled with <coal>. Inflow: when a <coal_mine> is built connected to any <merchant_space> (with or without a <merchant_tile>), its cubes immediately move to the market, **filling the most expensive slots first**, each earning the slot's price. Outflow: with no connected mine, coal may be bought from the market — **starting from the cheapest slot**; this requires the build location to be connected to a coal-icon location (the merchant spaces at Warrington, Shrewsbury, Nottingham, Gloucester, Oxford); if the market is empty, coal may be purchased outright at £8 per cube."
+      }
+    },
+    {
+      "id": "iron_market",
+      "specifies": "<ontology::market>",
+      "name": {
+        "zh": "铁市场",
+        "en": "Iron Market"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图上的铁市场——带价格槽的<ontology::market>。setup 时除 2 个 £1 槽外全部放<iron>。流入：<iron_works>建造瞬间（无需任何连通）立即把方块移入市场、**先填最贵的槽**，每块按槽价收钱。流出：无未翻面<iron_works>时，可从市场买铁——**从最便宜的槽起买**，无需连通；市场空时按 £6/块 直接购买。",
+        "en": "The Iron Market on the board — a <ontology::market> with priced slots. At setup every slot except two £1 slots is filled with <iron>. Inflow: when an <iron_works> is built (no connection required), its cubes immediately move to the market, **filling the most expensive slots first**, each earning the slot's price. Outflow: with no unflipped <iron_works>, iron may be bought from the market — **starting from the cheapest slot**, no connection required; if the market is empty, iron may be purchased outright at £6 per cube."
+      }
+    },
+    {
+      "id": "general_supply",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "总供应",
+        "en": "General Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图旁的总供应区——剩余<coal>、<iron>、<beer_barrel>。<coal_mine>/<iron_works>/<brewery>建造时从这里取方块/啤酒桶；被覆盖（overbuild）板块上的资源回这里。",
+        "en": "The supply beside the board holding the remaining <coal>, <iron>, and <beer_barrel>s. <coal_mine>/<iron_works>/<brewery> tiles draw cubes/barrels from here when built; resources on overbuilt tiles return here."
+      }
+    },
+    {
+      "id": "bank",
+      "specifies": "<ontology::supply>",
+      "name": {
+        "zh": "银行",
+        "en": "Bank"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放<money>的银行（面额 £1/£5/£10/£20）。收入来源：<sell>、收入阶段、<loan>、煤/铁流入市场。花钱时把钱放到自己的<character_tile>上（回合末再回银行）。",
+        "en": "The bank holding <money> (denominations £1/£5/£10/£20). Income comes from <sell>s, the income phase, <loan>s, and coal/iron flowing into the markets. Money spent is placed on your <character_tile> (returned to the bank at round end)."
+      }
+    },
+    {
+      "id": "turn_order_track",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "回合顺序轨",
+        "en": "Turn Order Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "版图上的回合顺序轨：玩家的<character_tile>按座次排列于此。回合内花掉的钱都放在自己的角色板块上；回合末按花费从少到多重排（花费相同保持相对次序），钱随后回<bank>。",
+        "en": "The turn order track on the board: players' <character_tile>s arranged in seating order. Money spent during the round sits on each player's character tile; at round end tiles are reordered by least money spent (ties keep relative order), and the money returns to the <bank>."
+      }
+    },
+    {
+      "id": "vp_track",
+      "specifies": "<ontology::score_track>",
+      "name": {
+        "zh": "分数轨",
+        "en": "VP Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "进度轨上部的 0–100 环状分数轨。玩家的<vp_marker>指示当前分数；超过 100 分时开始再绕一圈继续累加。分数来源：时代结束计分（翻面<industry_tile>、<link_tile>）、商人加成（Nottingham/Shrewsbury）、终局计分（钱/收入等级/二次计分）。",
+        "en": "The circular 0–100 VP track on the upper part of the Progress Track. Each player's <vp_marker> shows current VPs; beyond 100 the marker starts another loop and keeps accumulating. VPs come from era-end scoring (flipped <industry_tile>s, <link_tile>s), merchant bonuses (Nottingham/Shrewsbury), and final scoring (money/income level/second scoring)."
+      },
+      "contains": {
+        "type": "<vp_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的分数标记。",
+          "en": "This track holds all players' VP markers."
+        }
+      },
+      "slots": "0–100"
+    },
+    {
+      "id": "income_track",
+      "specifies": "<ontology::linear_track>",
+      "name": {
+        "zh": "收入轨",
+        "en": "Income Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "进度轨下部的收入等级轨（-10 至 30 级），玩家的<income_marker>指示收入等级。移动规则：移到目标等级「最高可用槽位」；<loan>退 3 个等级（不是 3 格），-10 级时不可贷（<loan_allowed>）。等级旁印有终局 ±分数。每级槽位数待实物核实（MD 中另有「玩家板左侧收入轨」的表述，物理位置以实物为准）。",
+        "en": "The income-level track on the lower part of the Progress Track (levels -10 to 30); each player's <income_marker> shows the income level. Movement: to the highest available space of the target level; <loan> moves back 3 levels (not spaces), never allowed at level -10 (<loan_allowed>). Each level has a printed end-game ±VP value. Spaces per level await physical verification (the MD also mentions an income track on the player mat's left column; physical placement to be verified against the real components)."
+      },
+      "contains": {
+        "type": "<income_marker>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的收入标记。",
+          "en": "This track holds all players' income markers."
+        }
+      },
+      "slots": "-10–30",
+      "<ontology::overflow_compensation>": {
+        "zh": "推进越过 30 级：停在 30 级，不继续（收入轨没有 30 级以上）。",
+        "en": "Advancing past level 30: stop at 30 (there is nothing above 30)."
+      },
+      "<ontology::underflow_compensation>": {
+        "zh": "后退越过 -10 级：不允许——<loan_allowed> 已阻止（-10 级时不可贷款）。",
+        "en": "Moving back past level -10: forbidden — <loan_allowed> already blocks it (no loans at -10)."
+      }
+    },
+    {
+      "id": "character_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "角色板块",
+        "en": "Character Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 6 张角色板块（每名玩家 1 张，颜色各异），排列在<turn_order_track>上。回合内花费的<money>放在其上；回合末按花费金额排序决定下一回合顺序。setup 时洗混随机排列决定初始顺序。",
+        "en": "6 character tiles (1 per player, distinct colors) arranged on the <turn_order_track>. <money> spent during a round is placed on them; at round end they are reordered by amount to fix next round's order. Setup shuffles them into a random initial order."
+      },
+      "appearance": {
+        "zh": "颜色鲜明的玩家板块，正面是角色插画。",
+        "en": "Brightly colored player tile with a character illustration."
+      }
+    },
+    {
+      "id": "merchant_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "商人板块",
+        "en": "Merchant Tile"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "方形小板块，印行业图标与玩家数要求。",
+        "en": "A small square tile showing an industry icon and a player-count requirement."
+      },
+      "description": {
+        "zh": "共 78 张商人板块（MD 组件数据，待实物核实），setup 洗混后放在与玩家数标记相符的<merchant_space>上。板块面印行业图标（决定可卖到它的行业）与玩家数要求；位置加成印在空位旁（见<merchant_space>）。setup 规则「每个非空白商人板块旁放啤酒桶」暗示存在空白板块——空白板块不提供啤酒桶、只作连通端点，具体构成待实物核实。",
+        "en": "78 merchant tiles (MD component count, to be verified physically), shuffled onto <merchant_space>s matching the player count at setup. Each shows an industry icon (what may be sold to it) and a player-count requirement; the bonus is printed beside the space (see <merchant_space>). The setup rule 'a beer barrel beside each non-blank Merchant tile' implies blank tiles exist — they provide no beer barrel and serve only as connection endpoints; the exact composition awaits physical verification."
+      }
+    },
+    {
+      "id": "industry_tile",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "工业板块",
+        "en": "Industry Tile"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "双面方形板块：黑顶面朝下，为建筑插画＋成本/等级/资源/收入/VP 信息；背面亮色建筑＋VP。",
+        "en": "A double-sided square tile: the black-top face shows the building artwork plus cost/level/resource/income/VP info; the back shows a bright building plus VP."
+      },
+      "description": {
+        "zh": "玩家建造的工业板块基类——每名玩家 43 张（共 172），按行业分列堆在<player_mat>槽位上，从低级到高级（I 至 VII 级）编号。板块印有：成本（左上角）、等级（右上角）、翻面后的 VP（左下角）、建造所需资源/啤酒数（右上角）、翻面后收入推进格数（右下角）。黑顶面朝下放置；翻面的板块时代结束计分。建造必须取该行业「最低可用」板块（不能跳级）；<develop>移除最低级板块以解锁更高级。覆盖（overbuild）时被替换板块进盒（其上资源回<general_supply>），不再计分、不退回已获得的收入/VP。第一版只建模机制：成本/产量/VP 数值待实物核实。",
+        "en": "Base concept of the industry tiles players build — 43 per player (172 total), stacked on <player_mat> slots by industry, numbered from lowest to highest level (I to VII). A tile shows: cost (top left), level (top right), flipped VP (bottom left), build resource/beer requirement (top right), and flipped income advance (bottom right). Tiles sit black-top face down; flipped tiles score at era end. Building must take the industry's lowest available tile (no level skipping); <develop> removes the lowest tiles to unlock higher levels. Overbuilt tiles leave the game (their resources return to the <general_supply>), score no VPs, and cost no already-gained income/VP. First version models mechanics only: cost/output/VP values await physical verification."
+      }
+    },
+    {
+      "id": "cotton_mill",
+      "specifies": "<industry_tile>",
+      "name": {
+        "zh": "棉纺织厂",
+        "en": "Cotton Mill"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "印纺织厂插画的工业板块。",
+        "en": "An industry tile with cotton-mill artwork."
+      },
+      "description": {
+        "zh": "纺织厂（棉）板块。<sell>时翻面；翻面前右上角标示需消耗 1 个啤酒。只能卖**未翻面**的板块——卖出即翻面并推进收入；翻面后不可再卖。",
+        "en": "The cotton mill tile. Flips on <sell>; its top right shows 1 beer required per sale. Only **unflipped** tiles may be sold — selling flips the tile and advances income; a flipped tile cannot be sold again."
+      }
+    },
+    {
+      "id": "coal_mine",
+      "specifies": "<industry_tile>",
+      "name": {
+        "zh": "煤矿",
+        "en": "Coal Mine"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "印煤矿插画的工业板块。",
+        "en": "An industry tile with coal-mine artwork."
+      },
+      "description": {
+        "zh": "煤矿板块。建造时从<general_supply>放煤方块（右下角数量）。建造瞬间若连通任一<merchant_space>，方块立即流入<coal_market>（先填最贵槽、按槽价收钱）。最后一块煤被取走时立即翻面并推进其所有者收入（对手取走亦然）——见<depletion_flip>。对手可在全板（含市场）无煤时覆盖它（<overbuild_opponent_allowed>）。",
+        "en": "The coal mine tile. On build, coal cubes are placed on it from the <general_supply> (bottom-right quantity). If built connected to any <merchant_space>, the cubes immediately flow into the <coal_market> (most expensive slots first, slot price each). When the last coal is taken the tile immediately flips and advances its owner's income (even on an opponent's turn) — see <depletion_flip>. Opponents may overbuild it when no coal remains anywhere on the board including the market (<overbuild_opponent_allowed>)."
+      }
+    },
+    {
+      "id": "iron_works",
+      "specifies": "<industry_tile>",
+      "name": {
+        "zh": "铁厂",
+        "en": "Iron Works"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "印铁厂插画的工业板块。",
+        "en": "An industry tile with iron-works artwork."
+      },
+      "description": {
+        "zh": "铁厂板块。建造时从<general_supply>放铁方块；建造瞬间（无需连通）方块立即流入<iron_market>（先填最贵槽、按槽价收钱）。最后一块铁被取走时立即翻面并推进其所有者收入（对手取走亦然）——见<depletion_flip>。对手可在全板（含市场）无铁时覆盖它（<overbuild_opponent_allowed>）。",
+        "en": "The iron works tile. On build, iron cubes are placed on it from the <general_supply>; immediately (no connection needed) they flow into the <iron_market> (most expensive slots first, slot price each). When the last iron is taken the tile immediately flips and advances its owner's income (even on an opponent's turn) — see <depletion_flip>. Opponents may overbuild it when no iron remains anywhere on the board including the market (<overbuild_opponent_allowed>)."
+      }
+    },
+    {
+      "id": "manufactory",
+      "specifies": "<industry_tile>",
+      "name": {
+        "zh": "制铁品厂",
+        "en": "Manufactory"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "印制铁品厂插画的工业板块。",
+        "en": "An industry tile with manufactory artwork."
+      },
+      "description": {
+        "zh": "制铁品（制造品）厂板块。<sell>时翻面；翻面前右上角标示需消耗 1 个啤酒。只能卖**未翻面**的板块——卖出即翻面并推进收入；翻面后不可再卖。",
+        "en": "The manufactory (manufactured goods) tile. Flips on <sell>; its top right shows 1 beer required per sale. Only **unflipped** tiles may be sold — selling flips the tile and advances income; a flipped tile cannot be sold again."
+      }
+    },
+    {
+      "id": "pottery",
+      "specifies": "<industry_tile>",
+      "name": {
+        "zh": "陶瓷厂",
+        "en": "Pottery"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "印陶瓷厂插画的工业板块。",
+        "en": "An industry tile with pottery artwork."
+      },
+      "description": {
+        "zh": "陶瓷厂板块。<sell>时翻面；翻面前右上角标示需消耗 2 个啤酒。只能卖**未翻面**的板块——卖出即翻面并推进收入；翻面后不可再卖。两个特殊点：① 1 级陶器**无锁图标**——铁路时代仍可建造（其余 1 级板块全部锁死）；② 灯泡图标陶器**不可<develop>移除**——只能通过建造消耗，或 Gloucester 商人加成（免费开发）移除。",
+        "en": "The pottery tile. Flips on <sell>; its top right shows 2 beers required per sale. Only **unflipped** tiles may be sold — selling flips the tile and advances income; a flipped tile cannot be sold again. Two special points: ① the Level 1 pottery has **no lock icon** — it stays buildable in the Rail Era (all other Level 1 tiles are locked); ② lightbulb-icon pottery **cannot be removed by <develop>** — only by building it, or via the Gloucester merchant bonus (free develop)."
+      }
+    },
+    {
+      "id": "brewery",
+      "specifies": "<industry_tile>",
+      "name": {
+        "zh": "酿酒厂",
+        "en": "Brewery"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "印酿酒厂插画的工业板块。",
+        "en": "An industry tile with brewery artwork."
+      },
+      "description": {
+        "zh": "酿酒厂板块。建造时放啤酒桶：运河时代 1 桶、铁路时代 2 桶。啤酒可被自己任意取用（无需连通）、对手连通取用（连通到自己<network>某地点）。桶用尽立即翻面+推进其所有者收入（对手取走亦然）——见<depletion_flip>。城市酒厂可用<location_card>/<wild_location_card>或行业卡建造；农场酒厂（<farm_brewery>）只能用酒厂图标<industry_card>或<wild_industry_card>。",
+        "en": "The brewery tile. On build, beer barrels are placed: 1 in the Canal Era, 2 in the Rail Era. Its beer is usable by its owner anywhere (no connection needed) and by opponents when connected (to a location in their <network>). When the barrels run out the tile immediately flips and advances its owner's income (even on an opponent's turn) — see <depletion_flip>. City breweries are built with a <location_card>/<wild_location_card> or industry card; Farm Breweries (<farm_brewery>) only with a Brewery-icon <industry_card> or a <wild_industry_card>."
+      }
+    },
+    {
+      "id": "link_tile",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "链接板块",
+        "en": "Link Tile"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "狭长条状链接板块，颜色与所属玩家的角色板块一致。",
+        "en": "A narrow elongated link tile in its player's character color."
+      },
+      "description": {
+        "zh": "链接板块基类——建在未开发线路上、以两个相邻<location>为端点。时代结束计分：每条按两端地点 £ 图标数之和得分，计分后从版图移除。玩家链接共 80 条（每人 20 条，颜色匹配角色板块），另有 125 条运河/铁路链接（25 运河 + 100 铁路）。",
+        "en": "Base concept of the link tiles — placed on undeveloped lines with two adjacent <location>s as endpoints. Era-end scoring: each scores the sum of the £ symbols of its two endpoint locations, then is removed from the board. 80 player links (20 per player, matching their character tile color), plus 125 canal/rail links (25 canal + 100 rail)."
+      }
+    },
+    {
+      "id": "canal_link",
+      "specifies": "<link_tile>",
+      "name": {
+        "zh": "运河链接",
+        "en": "Canal Link"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "狭长条状板块，运河样式插画。",
+        "en": "A narrow elongated tile with canal artwork."
+      },
+      "description": {
+        "zh": "运河链接——运河时代专属：£3/条，每行动最多建 1 条，只能建在<canal_line>上。铁路时代可被<rail_link>替换（被替换的运河归还其所有者供应）。运河时代结束计分后移除。",
+        "en": "The canal link — Canal Era only: £3 each, at most 1 per action, only on a <canal_line>. In the Rail Era it may be replaced by a <rail_link> (the replaced canal returns to its owner's supply). Scored and removed at the end of the Canal Era."
+      }
+    },
+    {
+      "id": "rail_link",
+      "specifies": "<link_tile>",
+      "name": {
+        "zh": "铁路链接",
+        "en": "Rail Link"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "狭长条状板块，铁路样式插画。",
+        "en": "A narrow elongated tile with railway artwork."
+      },
+      "description": {
+        "zh": "铁路链接——铁路时代专属：£5/条；一个行动可建 2 条共 £15，且必须额外消耗 1 个酒厂啤酒（商人啤酒不可）；每条铁路需 1 煤（放置后须连通煤源）。可建在<rail_line>或已有<canal_link>的线路上（替换运河）。铁路时代结束计分后移除。",
+        "en": "The rail link — Rail Era only: £5 each; one action may build 2 for £15 plus 1 extra brewery beer (never merchant beer); each rail requires 1 coal (the placed link must be connected to a coal source). May be placed on a <rail_line> or on a line carrying a <canal_link> (replacing the canal). Scored and removed at the end of the Rail Era."
+      }
+    },
+    {
+      "id": "player_mat",
+      "specifies": "<ontology::player_board>",
+      "name": {
+        "zh": "玩家板",
+        "en": "Player Mat"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "个人板：行业板块槽位网格＋收入轨。",
+        "en": "A personal board: a grid of industry-tile slots plus an income track."
+      },
+      "description": {
+        "zh": "玩家的个人板。行业板块按行业分列、按等级 I–VII 从低到高堆叠在槽位上（槽位左侧印成本、带锁图标的槽位见<rail_era_lock_forbidden>）；另印有收入轨（MD 表述，物理位置见<income_track>待核实）。<build>从板上取板块，<develop>把板块移除进盒。",
+        "en": "A player's personal board. Industry tiles stack by industry, from lowest to highest level (I to VII) on slots (cost printed left of each slot; lock-icon slots — see <rail_era_lock_forbidden>); it also carries an income track per the MD (physical placement — see <income_track>, to be verified). <build> takes tiles from the mat; <develop> removes them from the game."
+      }
+    },
+    {
+      "id": "coal",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "煤",
+        "en": "Coal"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "黑色小方块（立方体）。",
+        "en": "Small black cubes."
+      },
+      "description": {
+        "zh": "煤方块（共 100）。消耗场景：建造含煤成本的<industry_tile>与每条<rail_link>。取煤：必须连通最近未翻面<coal_mine>（免费）；否则连通带煤图标地点（<merchant_space>）从<coal_market>最便宜槽买，市场空则 £8/块。煤/铁方块只能在对应矿山/铁厂**建造当刻**流入市场——之后再连通也不能出售。",
+        "en": "Coal cubes (100 total). Consumed when building coal-costing <industry_tile>s and each <rail_link>. Obtaining coal: connect to the nearest unflipped <coal_mine> (free); otherwise, connected to a coal-icon location (a <merchant_space>), buy from the <coal_market> starting from the cheapest slot, or £8 per cube when the market is empty. Coal/iron cubes flow to their markets **only at the moment** the mine/works is built — connecting later does not allow selling."
+      }
+    },
+    {
+      "id": "iron",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "铁",
+        "en": "Iron"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "铁灰色小方块（立方体）。",
+        "en": "Small iron-grey cubes."
+      },
+      "description": {
+        "zh": "铁方块（共 90）。消耗场景：<develop>（每移除板块 1 铁）与建造含铁成本的<industry_tile>。取铁：**无需连通**——任何未翻面<iron_works>免费取（每块可来自不同厂）；无未翻面铁厂时从<iron_market>最便宜槽买，市场空则 £6/块。",
+        "en": "Iron cubes (90 total). Consumed by <develop> (1 per removed tile) and when building iron-costing <industry_tile>s. Obtaining iron: **no connection required** — take freely from any unflipped <iron_works> (each cube may come from a different one); with none unflipped, buy from the <iron_market> starting from the cheapest slot, or £6 per cube when the market is empty."
+      }
+    },
+    {
+      "id": "beer_barrel",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "啤酒桶",
+        "en": "Beer Barrel"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "金色/棕色小酒桶形标记。",
+        "en": "Small golden/brown barrel-shaped markers."
+      },
+      "description": {
+        "zh": "啤酒桶（共 30）。产出：<brewery>建造时放置（运河时代 1 桶/铁路时代 2 桶）、<merchant_beer_space>里的商人啤酒。消耗场景：<sell>（每个板块按右上角数量——陶器 2、其余 1）与铁路时代双铁（1 桶酒厂啤酒）。来源三分：自己任意未翻面<brewery>（无需连通）/对手未翻面<brewery>（连通到自己<network>某地点）/商人啤酒（仅<sell>且卖到旁邻商人时，每板块最多 1 桶，用后拿位置加成）。",
+        "en": "Beer barrels (30 total). Produced: placed when a <brewery> is built (1 in the Canal Era / 2 in the Rail Era) and as merchant beer in <merchant_beer_space>s. Consumed by <sell> (per tile's top-right quantity — pottery 2, others 1) and by a Rail Era double link (1 brewery beer). Three sources: your own unflipped <brewery> (no connection needed) / an opponent's unflipped <brewery> (connected to a location in your <network>) / merchant beer (only for <sell> to the adjacent merchant, at most 1 barrel per tile, granting the location bonus)."
+      }
+    },
+    {
+      "id": "money",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "钱",
+        "en": "Money"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "卡片形纸币，面额 £1/£5/£10/£20。",
+        "en": "Card-like banknotes in £1/£5/£10/£20 denominations."
+      },
+      "description": {
+        "zh": "货币（£1/£5/£10/£20 面额）。花费时放到自己的<character_tile>上（回合末回<bank>）。用途：<build>成本、链接成本、<develop>的铁钱、市场购煤/铁。终局计分：每 £4 兑 1 分（上限 15 分）。",
+        "en": "Currency (£1/£5/£10/£20 denominations). When spent it goes onto your <character_tile> (back to the <bank> at round end). Used for: <build> costs, link costs, buying iron for <develop>, buying market coal/iron. Final scoring: 1 VP per £4 (max 15 VPs)."
+      }
+    },
+    {
+      "id": "card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "卡牌",
+        "en": "Card"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "标准卡尺寸卡牌，正面印地点名或行业图标。",
+        "en": "Standard card-size cards; the face shows a location name or an industry icon."
+      },
+      "description": {
+        "zh": "卡牌基类（共 245 张，MD 组件数据）。三类：<location_card>、<industry_card>、<wild_card>。每个行动弃 1 张卡（面朝上放<discard_pile>；<wild_card>弃回各自<card_draw_area>）。",
+        "en": "Base card concept (245 total per MD components). Three families: <location_card>, <industry_card>, <wild_card>. Every action discards 1 card (face up onto the <discard_pile>; <wild_card>s return to their own <card_draw_area>)."
+      }
+    },
+    {
+      "id": "location_card",
+      "specifies": "<card>",
+      "name": {
+        "zh": "地点卡",
+        "en": "Location Card"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "正面印地点名，颜色与版图上该地点的横幅颜色一致。",
+        "en": "The face shows a location name; its color matches the location's banner on the board."
+      },
+      "description": {
+        "zh": "地点卡（共 80 张）——面印地点名。可在该地点建**任意行业**板块，即使地点不在自己的<network>内。2/3 人局按地点横幅颜色移除部分地点卡（见<location>）。不能用于建<farm_brewery>。",
+        "en": "Location cards (80 total) — each names a location. May build **any industry** tile at that location, even outside your <network>. In 2/3-player games some location cards are removed by banner color (see <location>). Cannot be used for a <farm_brewery>."
+      }
+    },
+    {
+      "id": "industry_card",
+      "specifies": "<card>",
+      "name": {
+        "zh": "行业卡",
+        "en": "Industry Card"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "正面右上角印一个行业图标：煤、铁、棉、制铁品、陶或酒。",
+        "en": "The face shows one industry icon in its top right: coal, iron, cotton, manufactured goods, pottery, or brewery."
+      },
+      "description": {
+        "zh": "行业卡——右上角印一个行业图标：煤、铁、棉、制铁品、陶、酒各成卡。用于在自己<network>内的地点建对应行业的板块。酒厂图标行业卡（酿酒行业卡）是建<farm_brewery>的两种卡之一。注意：MD 组件表写作「60 Coal/Iron cards」且未列酿酒卡——实际游戏**存在酿酒行业卡**（已核实），各行业卡的具体张数与煤/铁是否为同卡双图标待实物核实。",
+        "en": "Industry cards — each shows one industry icon in its top right: coal, iron, cotton, manufactured goods, pottery, or brewery. Used to build the matching industry in a location inside your <network>. The Brewery-icon industry card is one of the two cards that may build a <farm_brewery>. Note: the MD components list says '60 Coal/Iron cards' and omits brewery cards — the real game **does have brewery industry cards** (verified); exact counts per industry and whether coal/iron share one dual-icon card await physical verification."
+      }
+    },
+    {
+      "id": "wild_card",
+      "specifies": "<card>",
+      "name": {
+        "zh": "万能卡",
+        "en": "Wild Card"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "正面印「WILD」字样与卡种标识。",
+        "en": "The face reads 'WILD' with a card-family indicator."
+      },
+      "description": {
+        "zh": "万能卡基类——面朝上放在各自<card_draw_area>，<scout>取走，用后弃回原卡区（不进<discard_pile>）。手中已有万能卡时不能<scout>。",
+        "en": "Base wild-card concept — they sit face up in their own <card_draw_area>s, are taken by <scout>, and return there when discarded (never to the <discard_pile>). <scout> is forbidden while you hold a wild card."
+      }
+    },
+    {
+      "id": "wild_location_card",
+      "specifies": "<wild_card>",
+      "name": {
+        "zh": "万能地点卡",
+        "en": "Wild Location Card"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "正面印「WILD」与地点图案。",
+        "en": "The face reads 'WILD' with location artwork."
+      },
+      "description": {
+        "zh": "万能地点卡（共 8 张）——可当任意<location_card>用（可在该地点建任意行业、网络外亦可）。**不含 2 个<farm_brewery>**。",
+        "en": "Wild location cards (8 total) — playable as any <location_card> (build any industry at that location, even outside your network). **Does not include the 2 <farm_brewery>s**."
+      }
+    },
+    {
+      "id": "wild_industry_card",
+      "specifies": "<wild_card>",
+      "name": {
+        "zh": "万能行业卡",
+        "en": "Wild Industry Card"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "正面印「WILD」与行业图案。",
+        "en": "The face reads 'WILD' with industry artwork."
+      },
+      "description": {
+        "zh": "万能行业卡（共 11 张）——可当任意<industry_card>用（在自己<network>内地点建对应行业，含酒厂）。",
+        "en": "Wild industry cards (11 total) — playable as any <industry_card> (build the matching industry in a location inside your <network>, breweries included)."
+      }
+    },
+    {
+      "id": "hand",
+      "specifies": "<ontology::hand>",
+      "name": {
+        "zh": "手牌",
+        "en": "Hand"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "手牌——上限 8 张。回合末从<draw_deck>补至 8 张（抽牌堆空则补不满）；时代开始抽 8 张新手牌；手牌减至 0 时无法执行任何行动（连跳过也不行）。",
+        "en": "Hand — limit 8 cards. Refilled to 8 from the <draw_deck> at turn end (impossible once the deck is empty); a new hand of 8 is drawn at the start of each era; with 0 cards no action is possible (not even passing)."
+      }
+    },
+    {
+      "id": "draw_deck",
+      "specifies": "<ontology::deck>",
+      "name": {
+        "zh": "抽牌堆",
+        "en": "Draw Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "面朝下的抽牌堆（放在第 3 个<card_draw_area>）。抽空后手牌逐回合减少直至所有玩家手牌为空——时代结束（<era_end>）。时代转换时把所有人的<discard_pile>合并洗回（面朝下的底卡先翻回）。",
+        "en": "The face-down draw deck (on the 3rd <card_draw_area>). Once exhausted, hands shrink round by round until every hand is empty — the era ends (<era_end>). At era transition all <discard_pile>s are shuffled together into it (the face-down bottom cards are turned over first)."
+      }
+    },
+    {
+      "id": "discard_pile",
+      "specifies": "<ontology::discard_pile>",
+      "name": {
+        "zh": "弃牌堆",
+        "en": "Discard Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "面朝上的弃牌堆。setup 时先放 1 张面朝下的卡作为底卡；每个行动弃的卡放于此（<wild_card>除外）。时代转换时洗回<draw_deck>。",
+        "en": "The face-up discard pile. Setup places 1 face-down card as its bottom; every action's discarded card lands here (except <wild_card>s). Shuffled back into the <draw_deck> at era transition."
+      }
+    },
+    {
+      "id": "income_marker",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "收入标记",
+        "en": "Income Marker"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "玩家颜色的小标记，置于收入轨上。",
+        "en": "A small player-colored marker on the income track."
+      },
+      "description": {
+        "zh": "玩家的收入标记，位于<income_track>上指示收入等级。setup 放在 10 级；<sell>翻面与<depletion_flip>时推进（板块右下角格数）；<loan>退 3 个等级；Oxford 商人加成 +2 格。",
+        "en": "A player's income marker on the <income_track>, showing the income level. Setup places it at level 10; <sell> flips and <depletion_flip> advance it (tile's bottom-right steps); <loan> moves it back 3 levels; the Oxford merchant bonus advances it 2 spaces."
+      }
+    },
+    {
+      "id": "vp_marker",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "分数标记",
+        "en": "VP Marker"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "玩家颜色的小标记，置于分数轨上。",
+        "en": "A small player-colored marker on the VP track."
+      },
+      "description": {
+        "zh": "玩家的分数标记，位于<vp_track>上指示当前分数。setup 放在 0；超过 100 分绕圈继续。",
+        "en": "A player's VP marker on the <vp_track>, showing current VPs. Setup places it at 0; past 100 it starts another loop."
+      }
+    },
+    {
+      "id": "network",
+      "extends": "<ontology::state>",
+      "name": {
+        "zh": "路网",
+        "en": "Network"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的路网状态——一个<location>属于某玩家<network>，当且仅当：① 该地点有其<industry_tile>；或 ② 该地点与其某条<canal_link>/<rail_link>相邻。用途：行业卡建造必须在自己路网内；链接必须邻接自己路网地点；对手酒厂的啤酒必须连通到自己路网某地点。区别于「连通」（<ontology::connected>）：连通沿**任何人**的链接追溯路径，路网只看**自己**的板块。",
+        "en": "A player's network state — a <location> belongs to a player's <network> iff: ① it holds one of their <industry_tile>s; or ② it is adjacent to one of their <canal_link>s/<rail_link>s. Uses: industry-card builds must be inside your network; links must be adjacent to a network location; an opponent's brewery beer must be connected to a location in your network. Distinct from 'connected' (<ontology::connected>): connectivity traces a route along **anyone's** links; the network only counts **your own** tiles."
+      }
+    },
+    {
+      "id": "current_era",
+      "extends": "<ontology::state>",
+      "name": {
+        "zh": "当前时代",
+        "en": "Current Era"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "当前时代状态：canal（运河时代）或 rail（铁路时代）。时代决定：可建链接类型（<canal_link>/<rail_link>）、酒厂桶数（1/2）、每地点建造上限（1 块/不限）、锁图标限制（<rail_era_lock_forbidden>）、以及运河最终轮不收收入等差异。",
+        "en": "The current era state: canal (Canal Era) or rail (Rail Era). The era decides: buildable link type (<canal_link>/<rail_link>), brewery barrels (1/2), per-location build limit (1 tile/unlimited), lock-icon restrictions (<rail_era_lock_forbidden>), and differences like no income at the Canal Era's final round."
+      }
+    },
+    {
+      "id": "income_level",
+      "extends": "<ontology::state>",
+      "name": {
+        "zh": "收入等级",
+        "en": "Income Level"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的收入等级状态——由<income_marker>所在等级决定（初始 10 级）。收入阶段按此收/付钱；<loan>-3 级（下限 -10）；终局按等级旁印的 ±分计分。",
+        "en": "A player's income-level state — the level of their <income_marker> (initially 10). The income phase pays/receives according to it; <loan> takes it back 3 levels (floor -10); final scoring uses the ±VP printed beside the level."
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "depletion_flip",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "资源耗尽翻面",
+        "en": "Depletion Flip"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "煤矿/铁厂/酿酒厂的最后一块资源（煤/铁/啤酒）被取走时立即触发：板块翻面、其所有者收入沿<income_track>前进该板块右下角格数——即使资源在对手回合被取走，也由板块所有者受益。<sell>卖出棉/制铁/陶的翻面与收入推进不属本触发器（在<sell>内结算）。",
+        "en": "Triggers the moment the last resource (coal/iron/beer) is taken from a Coal Mine/Iron Works/Brewery: the tile flips and its owner advances income along the <income_track> by the tile's bottom-right steps — the owner benefits even when the resource was taken on an opponent's turn. Flipping cotton/manufactory/pottery via <sell> is resolved inside <sell>, not by this trigger."
+      },
+      "<ontology::condition>": {
+        "zh": "某个<coal_mine>/<iron_works>/<brewery>上的最后一块<coal>/<iron>/<beer_barrel>刚被移除。",
+        "en": "The last <coal>/<iron>/<beer_barrel> has just been removed from a <coal_mine>/<iron_works>/<brewery>."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "flip_depleted_tile",
+                "name": {
+                  "zh": "翻面耗尽板块",
+                  "en": "Flip the Depleted Tile"
+                },
+                "specifies": "<ontology::flip>",
+                "subject": "资源耗尽的<coal_mine>/<iron_works>/<brewery>",
+                "to": "face_up"
+              },
+              {
+                "id": "advance_owner_income",
+                "name": {
+                  "zh": "所有者收入推进",
+                  "en": "Advance the Owner's Income"
+                },
+                "do_after": "flip_depleted_tile",
+                "specifies": "<ontology::push_track>",
+                "<ontology::track>": "<income_track>",
+                "step": {
+                  "zh": "该板块右下角印的格数。",
+                  "en": "The number of steps printed on the tile's bottom right."
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "sell_cubes_to_market",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "方块流入市场",
+        "en": "Move Cubes to Market"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "建造<coal_mine>（连通任一<merchant_space>时）或<iron_works>（无条件）的瞬间触发：把板块上的方块尽可能多地移入对应市场——**先填最贵的槽**——每块按槽价从<bank>收钱；移走最后一块时板块立即翻面+所有者收入推进（<depletion_flip>）。只在建造动作当刻发生——之后再连通市场也不能出售。",
+        "en": "Triggers the moment a <coal_mine> (when connected to any <merchant_space>) or an <iron_works> (unconditionally) is built: move as many cubes as possible from the tile into its market — **filling the most expensive slots first** — collecting the slot price from the <bank> for each; moving the last cube immediately flips the tile and advances its owner's income (<depletion_flip>). This happens only at the moment of building — connecting to a market later does not allow selling."
+      },
+      "<ontology::condition>": {
+        "zh": "刚建成的板块是<iron_works>，或是连通任一<merchant_space>（无论其上有没有<merchant_tile>）的<coal_mine>。",
+        "en": "The just-built tile is an <iron_works>, or a <coal_mine> connected to any <merchant_space> (with or without a <merchant_tile>)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "move_cubes",
+                "name": {
+                  "zh": "移入方块",
+                  "en": "Move the Cubes"
+                },
+                "loop": {
+                  "until": {
+                    "zh": "板块上方块移完，或对应市场已无空槽。",
+                    "en": "The tile has no cubes left, or the market has no empty slots."
+                  }
+                },
+                "<ontology::pipeline>": {
+                  "options": [
+                    {
+                      "id": "move_one_cube",
+                      "name": {
+                        "zh": "移一块到最贵空槽",
+                        "en": "Move One Cube to the Priciest Slot"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "source": "刚建的<coal_mine>/<iron_works>",
+                      "destination": "对应的<coal_market>/<iron_market>",
+                      "<ontology::object>": "<coal>",
+                      "quantity": 1,
+                      "description": {
+                        "zh": "先填最贵的空槽；<iron_works>的方块移入<iron_market>、对象为<iron>。",
+                        "en": "Fill the priciest empty slot first; an <iron_works> moves <iron> into the <iron_market>."
+                      }
+                    },
+                    {
+                      "id": "collect_slot_price",
+                      "name": {
+                        "zh": "收槽价",
+                        "en": "Collect the Slot Price"
+                      },
+                      "do_after": "move_one_cube",
+                      "specifies": "<ontology::transfer>",
+                      "source": "<bank>",
+                      "destination": "建造玩家的<character_tile>",
+                      "<ontology::object>": "<money>",
+                      "quantity": {
+                        "zh": "所填槽位左侧印的价格。",
+                        "en": "The price printed left of the filled slot."
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              },
+              {
+                "id": "flip_if_emptied",
+                "name": {
+                  "zh": "移空则翻面",
+                  "en": "Flip if Emptied"
+                },
+                "do_after": "move_cubes",
+                "<ontology::condition>": {
+                  "zh": "最后一块方块被移走。",
+                  "en": "The last cube was moved."
+                },
+                "<depletion_flip>": {}
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "cover_income_shortfall",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "弥补收入缺口",
+        "en": "Cover Income Shortfall"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "收入阶段付不起负收入时触发（<income_shortfall>）：移除自己的<industry_tile>凑钱——**先移除版图上的**，其次玩家板——每个被移除板块从<bank>得「成本一半、向下取整」，凑够即停（多余的钱保留）；被移除板块出局。若移除全部板块仍不够：每缺 £1 扣 1 分（<vp_track>后退，分数不足则扣到 0）。板块只允许为弥补收入缺口而移除，不能主动变卖。",
+        "en": "Triggers when a negative income cannot be paid (<income_shortfall>): remove your own <industry_tile>s for cash — **board tiles first**, then mat tiles — each removed tile earns half its cost (rounded down) from the <bank>, stopping as soon as the debt is covered (excess is kept); removed tiles leave the game. If removing everything is still insufficient: lose 1 VP per £1 short (move back on the <vp_track>; stop at 0). Tiles may only be removed to cover a shortfall — never sold voluntarily."
+      },
+      "<ontology::condition>": "<income_shortfall>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "remove_tiles_for_cash",
+                "name": {
+                  "zh": "移除板块换钱",
+                  "en": "Remove Tiles for Cash"
+                },
+                "loop": {
+                  "until": {
+                    "zh": "凑够欠款，或已无板块可移除。",
+                    "en": "The debt is covered, or no removable tiles remain."
+                  }
+                },
+                "<ontology::pipeline>": {
+                  "options": [
+                    {
+                      "id": "choose_tile",
+                      "name": {
+                        "zh": "选一个自己的板块",
+                        "en": "Choose One of Your Tiles"
+                      },
+                      "<ontology::condition>": {
+                        "zh": "仍有板块可移除（版图优先，其次玩家板）。",
+                        "en": "A removable tile remains (board first, then mat)."
+                      },
+                      "options": [
+                        {
+                          "id": "choose_board_tile",
+                          "name": {
+                            "zh": "移除版图上的板块",
+                            "en": "Remove a Board Tile"
+                          },
+                          "<industry_tile>": {}
+                        },
+                        {
+                          "id": "choose_mat_tile",
+                          "name": {
+                            "zh": "移除玩家板上的板块",
+                            "en": "Remove a Mat Tile"
+                          },
+                          "<industry_tile>": {},
+                          "<ontology::condition>": {
+                            "zh": "版图上已无自己的板块。",
+                            "en": "No own tiles remain on the board."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                    },
+                    {
+                      "id": "receive_half_cost",
+                      "name": {
+                        "zh": "收一半成本",
+                        "en": "Receive Half the Cost"
+                      },
+                      "do_after": "choose_tile",
+                      "specifies": "<ontology::transfer>",
+                      "source": "<bank>",
+                      "destination": "欠款玩家",
+                      "<ontology::object>": "<money>",
+                      "quantity": {
+                        "zh": "被移除板块成本的一半，向下取整。",
+                        "en": "Half the removed tile's cost, rounded down."
+                      },
+                      "description": {
+                        "zh": "被移除板块出局（进游戏盒）。",
+                        "en": "The removed tile leaves the game (back to the box)."
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              },
+              {
+                "id": "lose_vp_for_shortfall",
+                "name": {
+                  "zh": "缺口扣分",
+                  "en": "Lose VPs for the Shortfall"
+                },
+                "do_after": "remove_tiles_for_cash",
+                "<ontology::condition>": {
+                  "zh": "移除全部板块后仍不够付欠款。",
+                  "en": "Even after removing every tile, the debt is not covered."
+                },
+                "specifies": "<ontology::push_track>",
+                "<ontology::track>": "<vp_track>",
+                "step": {
+                  "zh": "每缺 £1 后退 1 格（VP 不足则扣到 0）。",
+                  "en": "1 step back per £1 short (stop at 0)."
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "build",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "建造",
+        "en": "Build"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "建造行动——把<player_mat>上的<industry_tile>建到<location>的<industry_space>，或覆盖（overbuild）已有板块。弃卡要求：<location_card>（或<wild_location_card>）须匹配目标地点（网络外亦可）；<industry_card>（或<wild_industry_card>）须匹配行业图标且地点在自己的<network>内（无场上板块时行业卡可在任意地点建）。其他要点：取该行业最低可用板块（覆盖须更高等级）；空位先单后双；运河时代每地点限 1 块（覆盖除外）；铁路时代锁图标禁建（陶器 1 级除外）；覆盖对象合规（自己的任意行业/对手仅煤铁且全板无该类方块）；支付成本并消耗煤/铁（煤需连通）；煤矿/铁厂/酿酒厂放方块或啤酒桶；随后按条件触发<sell_cubes_to_market>。",
+        "en": "The Build action — place an <industry_tile> from your <player_mat> onto an <industry_space> of a <location>, or overbuild an existing tile. Card requirement: a <location_card> (or <wild_location_card>) must match the target location (network not required); an <industry_card> (or <wild_industry_card>) must match the industry icon with the location inside your <network> (with no tiles on the board, an industry card builds anywhere). Other points: take the industry's lowest available tile (overbuilds must be a higher level); single-icon spaces first, then dual; Canal Era limits 1 tile per location (except overbuilds); Rail Era forbids lock-icon tiles (except Pottery L1); overbuild targets must be legal (your own: any industry / opponents': only coal/iron with no cubes of that type anywhere); pay the cost and consume coal/iron (coal needs a connection); mines/works/breweries receive their cubes or barrels; then <sell_cubes_to_market> triggers conditionally."
+      },
+      "<ontology::condition>": "<build_allowed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "build_discard_card",
+                "name": {
+                  "zh": "弃匹配卡",
+                  "en": "Discard the Matching Card"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 1,
+                "description": {
+                  "zh": "弃 1 张匹配卡（<wild_location_card>/<wild_industry_card>弃回各自<card_draw_area>）。",
+                  "en": "Discard 1 matching card (<wild_location_card>/<wild_industry_card> return to their own <card_draw_area>)."
+                }
+              },
+              {
+                "id": "place_tile",
+                "name": {
+                  "zh": "放置板块",
+                  "en": "Place the Tile"
+                },
+                "do_after": "build_discard_card",
+                "specifies": "<ontology::transfer>",
+                "source": "<player_mat>",
+                "destination": {
+                  "zh": "目标<location>的<industry_space>（先单图标空位）。",
+                  "en": "An <industry_space> of the target <location> (single-icon spaces first)."
+                },
+                "<ontology::object>": "<industry_tile>",
+                "quantity": 1,
+                "description": {
+                  "zh": "取该行业最低可用板块（覆盖时取更高等级）。",
+                  "en": "Take the industry's lowest available tile (a higher level for overbuilds)."
+                }
+              },
+              {
+                "id": "pay_build_cost",
+                "name": {
+                  "zh": "付成本",
+                  "en": "Pay the Cost"
+                },
+                "do_after": "place_tile",
+                "specifies": "<ontology::transfer>",
+                "source": "建造玩家的钱",
+                "destination": "建造玩家的<character_tile>",
+                "<ontology::object>": "<money>",
+                "quantity": {
+                  "zh": "板块成本（玩家板上槽位左侧印的价格）。",
+                  "en": "The tile's cost (printed left of its mat slot)."
+                }
+              },
+              {
+                "id": "consume_resources",
+                "name": {
+                  "zh": "消耗资源",
+                  "en": "Consume Resources"
+                },
+                "do_after": "pay_build_cost",
+                "description": {
+                  "zh": "按板块右上角图标消耗煤/铁（建造不需要啤酒）。煤：必须连通——最近未翻面<coal_mine>免费，否则连通煤图标地点从<coal_market>最便宜槽买（空则 £8/块）；铁：任意未翻面<iron_works>免费，否则<iron_market>最便宜槽买（空则 £6/块）。消耗使来源板块变空时触发<depletion_flip>（对手板块亦然）。",
+                  "en": "Consume coal/iron per the tile's top-right icons (building never consumes beer). Coal: connection required — nearest unflipped <coal_mine> free, else buy from the <coal_market>'s cheapest slot via a coal-icon location (£8/cube if empty); iron: any unflipped <iron_works> free, else the <iron_market>'s cheapest slot (£6/cube if empty). Depleting a source tile triggers <depletion_flip> (opponents' tiles too)."
+                }
+              },
+              {
+                "id": "place_resources",
+                "name": {
+                  "zh": "放置产出",
+                  "en": "Place Output"
+                },
+                "do_after": "consume_resources",
+                "specifies": "<ontology::transfer>",
+                "source": "<general_supply>",
+                "destination": "刚建的板块",
+                "<ontology::object>": "<coal>",
+                "quantity": {
+                  "zh": "板块右下角数量。",
+                  "en": "The bottom-right quantity."
+                },
+                "description": {
+                  "zh": "<coal_mine>放<coal>、<iron_works>放<iron>、<brewery>放<beer_barrel>（运河时代 1 桶/铁路时代 2 桶）。",
+                  "en": "<coal_mine>s get <coal>, <iron_works> get <iron>, <brewery>s get <beer_barrel>s (1 in the Canal Era / 2 in the Rail Era)."
+                }
+              },
+              {
+                "id": "sell_cubes_step",
+                "name": {
+                  "zh": "触发市场流入",
+                  "en": "Trigger Market Inflow"
+                },
+                "do_after": "place_resources",
+                "<sell_cubes_to_market>": {}
+              },
+              {
+                "id": "overbuild_remove",
+                "name": {
+                  "zh": "移除被覆盖板块",
+                  "en": "Remove the Overbuilt Tile"
+                },
+                "do_after": "place_tile",
+                "<ontology::condition>": {
+                  "zh": "该空位原有<industry_tile>（覆盖建造）。",
+                  "en": "The space held an <industry_tile> (overbuild)."
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "该空位",
+                "destination": "游戏盒（出局）",
+                "<ontology::object>": "被覆盖的<industry_tile>",
+                "quantity": 1,
+                "description": {
+                  "zh": "被覆盖板块出局、其上资源回<general_supply>；不退回所有者已获得的收入/VP。",
+                  "en": "The overbuilt tile leaves the game and its resources return to the <general_supply>; the owner keeps already-gained income/VPs."
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "network_action",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "网络行动",
+        "en": "Network Action"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "网络行动——在未开发线路上放<canal_link>/<rail_link>扩大<network>。运河时代：£3/条、最多 1 条；铁路时代：£5/条，或一个行动建 2 条共 £15 且额外消耗 1 桶酒厂啤酒（商人啤酒不可）。每条铁路需 1 煤（放置后须连通煤源）。链接必须邻接自己<network>地点；无任何场上板块时可在任意未开发线路建（铁路仍须耗煤）。铁路可替换已有<canal_link>（被替换的运河归还其所有者供应）。",
+        "en": "The Network action — place a <canal_link>/<rail_link> on an undeveloped line to expand your <network>. Canal Era: £3 each, at most 1; Rail Era: £5 each, or 2 links in one action for £15 plus 1 extra brewery beer (never merchant beer). Each rail needs 1 coal (the placed link must be connected to a coal source). A link must be adjacent to a location in your <network>; with no tiles on the board at all, it may go on any undeveloped line (coal still required for rails). A rail may replace an existing <canal_link> (the replaced canal returns to its owner's supply)."
+      },
+      "<ontology::condition>": "<network_allowed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "network_discard_card",
+                "name": {
+                  "zh": "弃任意卡（网络）",
+                  "en": "Discard Any Card (Network)"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 1,
+                "description": {
+                  "zh": "弃任意 1 张卡（<wild_card>弃回各自<card_draw_area>）。",
+                  "en": "Discard any 1 card (<wild_card>s return to their own <card_draw_area>)."
+                }
+              },
+              {
+                "id": "place_link",
+                "name": {
+                  "zh": "放置链接",
+                  "en": "Place the Link"
+                },
+                "do_after": "network_discard_card",
+                "specifies": "<ontology::transfer>",
+                "source": "玩家自己的链接供应",
+                "destination": {
+                  "zh": "未开发的<canal_line>/<rail_line>（铁路可覆盖已有<canal_link>）。",
+                  "en": "An undeveloped <canal_line>/<rail_line> (a rail may cover an existing <canal_link>)."
+                },
+                "<ontology::object>": "<link_tile>",
+                "quantity": {
+                  "zh": "运河时代 1 条；铁路时代 1 或 2 条。",
+                  "en": "1 in the Canal Era; 1 or 2 in the Rail Era."
+                }
+              },
+              {
+                "id": "pay_link_cost",
+                "name": {
+                  "zh": "付链接费",
+                  "en": "Pay the Link Cost"
+                },
+                "do_after": "place_link",
+                "specifies": "<ontology::transfer>",
+                "source": "行动玩家的钱",
+                "destination": "行动玩家的<character_tile>",
+                "<ontology::object>": "<money>",
+                "quantity": {
+                  "zh": "运河 £3/条；铁路 £5/条（同行动第 2 条使总价 £15）。",
+                  "en": "£3 per canal; £5 per rail (a second rail in one action makes £15 total)."
+                }
+              },
+              {
+                "id": "consume_coal",
+                "name": {
+                  "zh": "消耗煤",
+                  "en": "Consume Coal"
+                },
+                "do_after": "place_link",
+                "<ontology::condition>": {
+                  "zh": "本行动放置了<rail_link>。",
+                  "en": "A <rail_link> was placed this action."
+                },
+                "description": {
+                  "zh": "每条铁路 1 煤——放置后须连通煤源：最近未翻面<coal_mine>免费，否则市场最便宜槽/£8（<coal_obtainable>）。消耗使来源变空触发<depletion_flip>。",
+                  "en": "1 coal per rail — after placement it must be connected to a coal source: nearest unflipped <coal_mine> free, else market cheapest slot /£8 (<coal_obtainable>). Depleting a source triggers <depletion_flip>."
+                }
+              },
+              {
+                "id": "consume_extra_beer",
+                "name": {
+                  "zh": "消耗额外啤酒",
+                  "en": "Consume Extra Beer"
+                },
+                "do_after": "place_link",
+                "<ontology::condition>": {
+                  "zh": "一个行动建了 2 条<rail_link>。",
+                  "en": "2 <rail_link>s were placed in one action."
+                },
+                "description": {
+                  "zh": "额外消耗 1 桶**酒厂啤酒**（商人啤酒不可）：自己任意未翻面<brewery>（无需连通），或对手未翻面<brewery>——须连通到第 2 条铁放置后的位置（<brewery_beer_available>）。",
+                  "en": "Consume 1 extra **brewery beer** (never merchant beer): your own unflipped <brewery> (no connection needed), or an opponent's unflipped <brewery> connected to the second rail after placement (<brewery_beer_available>)."
+                }
+              },
+              {
+                "id": "replace_canal",
+                "name": {
+                  "zh": "归还被替换的运河",
+                  "en": "Return the Replaced Canal"
+                },
+                "do_after": "place_link",
+                "<ontology::condition>": {
+                  "zh": "该线路上原有<canal_link>（被<rail_link>替换）。",
+                  "en": "The line held a <canal_link> (replaced by a <rail_link>)."
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "该线路",
+                "destination": "被替换<canal_link>的所有者供应",
+                "<ontology::object>": "被替换的<canal_link>",
+                "quantity": 1
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "develop",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "开发",
+        "en": "Develop"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "开发行动——从<player_mat>移除 1 或 2 个板块进盒：每个被移除板块必须是**其所在行业的最低级**（各行业独立判定），可同行业或不同行业；每个板块消耗 1 铁（无需连通）。灯泡图标陶器不可开发（<pottery_lightbulb_undevelopable>）——只能通过建造消耗或 Gloucester 商人加成移除。锁图标板块也必须先开发移除才能解锁更高级板块。",
+        "en": "The Develop action — remove 1 or 2 tiles from your <player_mat> to the box: each removed tile must be the **lowest level of its own industry** (judged per industry), same or different industries allowed; each tile consumes 1 iron (no connection needed). Lightbulb-icon pottery cannot be developed (<pottery_lightbulb_undevelopable>) — it leaves the mat only by being built, or via the Gloucester merchant bonus. Lock-icon tiles must likewise be developed away to unlock higher levels."
+      },
+      "<ontology::condition>": "<develop_allowed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "develop_discard_card",
+                "name": {
+                  "zh": "弃任意卡（开发）",
+                  "en": "Discard Any Card (Develop)"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 1
+              },
+              {
+                "id": "remove_tiles",
+                "name": {
+                  "zh": "移除板块",
+                  "en": "Remove the Tiles"
+                },
+                "do_after": "develop_discard_card",
+                "specifies": "<ontology::transfer>",
+                "source": "<player_mat>",
+                "destination": "游戏盒（出局）",
+                "<ontology::object>": "<industry_tile>",
+                "quantity": {
+                  "zh": "1 或 2 块。",
+                  "en": "1 or 2 tiles."
+                },
+                "description": {
+                  "zh": "各取所在行业最低级；灯泡陶器不可。",
+                  "en": "Each the lowest level of its industry; lightbulb pottery excluded."
+                }
+              },
+              {
+                "id": "consume_iron",
+                "name": {
+                  "zh": "消耗铁",
+                  "en": "Consume Iron"
+                },
+                "do_after": "remove_tiles",
+                "description": {
+                  "zh": "每个被移除板块 1 铁：任意未翻面<iron_works>免费（无需连通），否则<iron_market>最便宜槽买（空则 £6/块）。消耗使来源变空触发<depletion_flip>。",
+                  "en": "1 iron per removed tile: any unflipped <iron_works> free (no connection needed), else the <iron_market>'s cheapest slot (£6/cube if empty). Depleting a source triggers <depletion_flip>."
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "sell",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "售卖",
+        "en": "Sell"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "售卖行动——翻面 1 个或多个**未翻面**的棉/制铁/陶板块：每个被卖板块必须连通到显示其行业图标的<merchant_tile>（沿当前时代链接：运河时代<canal_link>、铁路时代<rail_link>）；每个板块消耗其右上角数量的啤酒（陶器 2、其余 1）——来源：自己任意未翻面<brewery>（无需连通）/对手未翻面<brewery>（连通到自己<network>某地点）/所卖商人的<merchant_beer_space>（每板块最多 1 桶）；板块翻面+收入前进；用了商人啤酒则拿该商人位置加成（<merchant_space>）。一个行动可卖多个板块，可不同行业、卖向不同商人。无啤酒可消耗则不能执行本行动。",
+        "en": "The Sell action — flip 1 or more **unflipped** cotton/manufactory/pottery tiles: each sold tile must be connected to a <merchant_tile> showing its industry icon (along current-era links: <canal_link> in the Canal Era, <rail_link> in the Rail Era); each tile consumes the beer quantity on its top right (pottery 2, others 1) — sources: your own unflipped <brewery> (no connection needed) / an opponent's unflipped <brewery> (connected to a location in your <network>) / the selling merchant's <merchant_beer_space> (at most 1 barrel per tile); the tile flips and income advances; using merchant beer grants that merchant's location bonus (<merchant_space>). One action may sell several tiles, of different industries, to different merchants. Without consumable beer, this action cannot be performed."
+      },
+      "<ontology::condition>": "<sell_allowed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "sell_discard_card",
+                "name": {
+                  "zh": "弃任意卡（售卖）",
+                  "en": "Discard Any Card (Sell)"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 1
+              },
+              {
+                "id": "choose_tiles",
+                "name": {
+                  "zh": "选择要卖的板块",
+                  "en": "Choose Tiles to Sell"
+                },
+                "do_after": "sell_discard_card",
+                "options": [
+                  {
+                    "id": "sell_cotton_mills",
+                    "name": {
+                      "zh": "卖棉纺织厂",
+                      "en": "Sell Cotton Mills"
+                    },
+                    "<cotton_mill>": {},
+                    "<ontology::condition>": "<merchant_connected>"
+                  },
+                  {
+                    "id": "sell_manufactories",
+                    "name": {
+                      "zh": "卖制铁品厂",
+                      "en": "Sell Manufactories"
+                    },
+                    "<manufactory>": {},
+                    "<ontology::condition>": "<merchant_connected>"
+                  },
+                  {
+                    "id": "sell_potteries",
+                    "name": {
+                      "zh": "卖陶瓷厂",
+                      "en": "Sell Potteries"
+                    },
+                    "<pottery>": {},
+                    "<ontology::condition>": "<merchant_connected>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+              },
+              {
+                "id": "resolve_per_tile",
+                "name": {
+                  "zh": "逐个板块结算",
+                  "en": "Resolve Per Tile"
+                },
+                "do_after": "choose_tiles",
+                "description": {
+                  "zh": "对每个被选中的板块依次执行以下三步。",
+                  "en": "For each chosen tile, perform the following three steps."
+                },
+                "<ontology::pipeline>": {
+                  "options": [
+                    {
+                      "id": "consume_beer",
+                      "name": {
+                        "zh": "消耗啤酒",
+                        "en": "Consume Beer"
+                      },
+                      "description": {
+                        "zh": "按板块右上角数量消耗（陶器 2、其余 1），可混合来源：自己任意未翻面<brewery>/对手连通未翻面<brewery>/旁邻<merchant_beer_space>（每板块最多 1 桶）。消耗使酒厂变空触发<depletion_flip>。",
+                        "en": "Consume the top-right quantity (pottery 2, others 1), sources mixable: own unflipped <brewery> anywhere / opponent's connected unflipped <brewery> / the adjacent <merchant_beer_space> (at most 1 barrel per tile). Emptying a brewery triggers <depletion_flip>."
+                      }
+                    },
+                    {
+                      "id": "flip_sold_tile",
+                      "name": {
+                        "zh": "翻面并推进收入",
+                        "en": "Flip and Advance Income"
+                      },
+                      "do_after": "consume_beer",
+                      "specifies": "<ontology::flip>",
+                      "subject": "被卖的<cotton_mill>/<manufactory>/<pottery>",
+                      "to": "face_up",
+                      "description": {
+                        "zh": "翻面后，所有者收入沿<income_track>前进该板块右下角格数。",
+                        "en": "After the flip, the owner's income advances by the tile's bottom-right steps."
+                      }
+                    },
+                    {
+                      "id": "merchant_bonus",
+                      "name": {
+                        "zh": "商人加成",
+                        "en": "Merchant Bonus"
+                      },
+                      "do_after": "consume_beer",
+                      "<ontology::condition>": {
+                        "zh": "本板块消耗了某<merchant_beer_space>的啤酒——按该<merchant_space>印的位置加成执行对应奖励。",
+                        "en": "This tile consumed beer from a <merchant_beer_space> — apply the bonus printed on that <merchant_space>."
+                      },
+                      "options": [
+                        {
+                          "id": "develop_bonus",
+                          "name": {
+                            "zh": "免费开发",
+                            "en": "Free Develop"
+                          },
+                          "description": {
+                            "zh": "Gloucester：免费移除 1 个最低级板块（任何行业、无需铁）；例外——可移除灯泡陶器。",
+                            "en": "Gloucester: remove 1 lowest-level tile free (any industry, no iron); exception — a lightbulb pottery may be removed."
+                          }
+                        },
+                        {
+                          "id": "income_bonus",
+                          "name": {
+                            "zh": "收入加成",
+                            "en": "Income Bonus"
+                          },
+                          "specifies": "<ontology::push_track>",
+                          "<ontology::track>": "<income_track>",
+                          "step": 2,
+                          "description": {
+                            "zh": "Oxford：收入沿<income_track>前进 2 格。",
+                            "en": "Oxford: advance income 2 spaces."
+                          }
+                        },
+                        {
+                          "id": "vp_bonus",
+                          "name": {
+                            "zh": "分数加成",
+                            "en": "VP Bonus"
+                          },
+                          "specifies": "<ontology::push_track>",
+                          "<ontology::track>": "<vp_track>",
+                          "step": {
+                            "zh": "版图上标示的数量。",
+                            "en": "The amount printed on the board."
+                          },
+                          "description": {
+                            "zh": "Nottingham/Shrewsbury：按标示获得分数。",
+                            "en": "Nottingham/Shrewsbury: gain the printed VPs."
+                          }
+                        },
+                        {
+                          "id": "money_bonus",
+                          "name": {
+                            "zh": "金钱加成",
+                            "en": "Money Bonus"
+                          },
+                          "specifies": "<ontology::transfer>",
+                          "source": "<bank>",
+                          "destination": "售卖玩家",
+                          "<ontology::object>": "<money>",
+                          "quantity": 5,
+                          "description": {
+                            "zh": "Warrington：从<bank>得 £5。",
+                            "en": "Warrington: gain £5 from the <bank>."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.MATCH>"
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "loan",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "贷款",
+        "en": "Loan"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "贷款行动——弃任意卡，从<bank>拿 £30；收入标记退 3 个**等级**（不是 3 格），落到目标等级「最高可用槽位」。-10 级时不可贷款（<loan_allowed>）。贷款永不偿还。",
+        "en": "The Loan action — discard any card, take £30 from the <bank>; the income marker moves back 3 **levels** (not spaces), landing on the highest available space of the lower level. No loans at level -10 (<loan_allowed>). Loans are never repaid."
+      },
+      "<ontology::condition>": "<loan_allowed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "loan_discard_card",
+                "name": {
+                  "zh": "弃任意卡（贷款）",
+                  "en": "Discard Any Card (Loan)"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 1
+              },
+              {
+                "id": "take_loan_money",
+                "name": {
+                  "zh": "取 £30",
+                  "en": "Take £30"
+                },
+                "do_after": "loan_discard_card",
+                "specifies": "<ontology::transfer>",
+                "source": "<bank>",
+                "destination": "贷款玩家",
+                "<ontology::object>": "<money>",
+                "quantity": 30
+              },
+              {
+                "id": "income_back_3_levels",
+                "name": {
+                  "zh": "收入退 3 级",
+                  "en": "Income Back 3 Levels"
+                },
+                "do_after": "take_loan_money",
+                "specifies": "<ontology::push_track>",
+                "<ontology::track>": "<income_track>",
+                "step": {
+                  "zh": "向后退 3 个等级，落到目标等级的最高可用槽位。",
+                  "en": "3 levels back, onto the highest available space of the lower level."
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "scout",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "侦察",
+        "en": "Scout"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "侦察行动——弃 1 张任意卡＋额外 2 张（共 3 张，全部面朝上弃到<discard_pile>）；拿 1 张<wild_location_card>＋1 张<wild_industry_card>（从各自<card_draw_area>）。手中已有任何<wild_card>时不可执行（<scout_allowed>）。万能卡用后弃回各自卡区，不进弃牌堆。待核实：对应卡区已空时是否仍可执行侦察。",
+        "en": "The Scout action — discard any 1 card plus 2 more (3 total, all face up onto the <discard_pile>); take 1 <wild_location_card> + 1 <wild_industry_card> (from their own <card_draw_area>s). Forbidden while holding any <wild_card> (<scout_allowed>). Wild cards return to their own areas when discarded, never to the discard pile. To be verified: whether Scout is allowed when a wild-card area is empty."
+      },
+      "<ontology::condition>": "<scout_allowed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "discard_three_cards",
+                "name": {
+                  "zh": "弃 3 张卡",
+                  "en": "Discard 3 Cards"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 3
+              },
+              {
+                "id": "take_wild_location",
+                "name": {
+                  "zh": "取万能地点卡",
+                  "en": "Take the Wild Location Card"
+                },
+                "do_after": "discard_three_cards",
+                "specifies": "<ontology::transfer>",
+                "source": {
+                  "zh": "<wild_location_card>的<card_draw_area>。",
+                  "en": "The <card_draw_area> of <wild_location_card>s."
+                },
+                "destination": "<hand>",
+                "<ontology::object>": "<wild_location_card>",
+                "quantity": 1
+              },
+              {
+                "id": "take_wild_industry",
+                "name": {
+                  "zh": "取万能行业卡",
+                  "en": "Take the Wild Industry Card"
+                },
+                "do_after": "discard_three_cards",
+                "specifies": "<ontology::transfer>",
+                "source": {
+                  "zh": "<wild_industry_card>的<card_draw_area>。",
+                  "en": "The <card_draw_area> of <wild_industry_card>s."
+                },
+                "destination": "<hand>",
+                "<ontology::object>": "<wild_industry_card>",
+                "quantity": 1
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    },
+    {
+      "id": "pass",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "跳过",
+        "en": "Pass"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "跳过行动——弃 1 张卡、不做任何事，消耗 1 个行动。没有卡时连跳过也无法执行（<has_card_in_hand>）。",
+        "en": "The Pass action — discard 1 card and do nothing, consuming 1 action. With no cards even passing is impossible (<has_card_in_hand>)."
+      },
+      "<ontology::condition>": "<has_card_in_hand>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::pipeline>": {
+            "options": [
+              {
+                "id": "pass_discard_card",
+                "name": {
+                  "zh": "弃任意卡（跳过）",
+                  "en": "Discard Any Card (Pass)"
+                },
+                "specifies": "<ontology::transfer>",
+                "source": "<hand>",
+                "destination": "<discard_pile>",
+                "<ontology::object>": "<card>",
+                "quantity": 1
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+          }
+        }
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "id": "has_card_in_hand",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "手牌非空",
+        "en": "Has a Card in Hand"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家<hand>中至少 1 张卡。每个行动都须弃 1 张卡（包括<pass>）——手牌为 0 时任何行动都不可执行。",
+        "en": "At least 1 card in the player's <hand>. Every action discards 1 card (<pass> included) — with 0 cards no action is possible."
+      }
+    },
+    {
+      "id": "era_end",
+      "specifies": "<ontology::endgame_condition>",
+      "name": {
+        "zh": "时代结束",
+        "en": "Era End"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "时代的终局条件：<draw_deck>被抽空 且 所有玩家的<hand>为空。时代在回合结束时结束——进入时代计分；运河时代还进入转换阶段，铁路时代则直接终局计分。用作两个时代主循环的 loop.until 条件。",
+        "en": "The era's endgame condition: the <draw_deck> is exhausted AND every player's <hand> is empty. The era ends at round end — era scoring follows; the Canal Era then enters its transition, while the Rail Era goes straight to final scoring. Used as the loop.until condition of both eras' main loops."
+      }
+    },
+    {
+      "id": "build_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可建造",
+        "en": "Build Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<build>的复合合法性条件（全部满足）：① 弃卡匹配——<location_card_matches>或<industry_card_matches>（含<no_tiles_on_board>例外）；② <space_available>（空位先单后双）；③ 运河时代<canal_era_location_limit>（每地点 1 块，覆盖除外）；④ 铁路时代<rail_era_lock_forbidden>（锁图标禁建，陶器 1 级除外）；⑤ 取该行业最低可用板块（覆盖须更高等级）；⑥ 覆盖对象合规——<overbuild_own_allowed>或<overbuild_opponent_allowed>；⑦ 所需资源可得——含煤成本的板块须<coal_obtainable>、含铁成本的板块须<iron_obtainable>。",
+        "en": "<build>'s composite legality condition (all must hold): ① matching discard — <location_card_matches> or <industry_card_matches> (including the <no_tiles_on_board> exception); ② <space_available> (single-icon spaces first); ③ Canal Era <canal_era_location_limit> (1 tile per location, except overbuilds); ④ Rail Era <rail_era_lock_forbidden> (lock icons forbidden, Pottery L1 excepted); ⑤ take the industry's lowest available tile (overbuilds must be higher); ⑥ legal overbuild target — <overbuild_own_allowed> or <overbuild_opponent_allowed>; ⑦ obtainable resources — <coal_obtainable> for coal-costing tiles, <iron_obtainable> for iron-costing tiles."
+      }
+    },
+    {
+      "id": "network_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可建网",
+        "en": "Network Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<network_action>的复合合法性条件（全部满足）：① 有可放置的未开发线路（运河时代<canal_line>、铁路时代<rail_line>或可被铁路替换的<canal_link>）；② 线路一端邻接自己<network>地点，或<no_tiles_on_board>（任意线路）；③ 铁路时代：每条铁须<coal_obtainable>（放置后连通）；④ 建 2 条铁时须<brewery_beer_available>（1 桶酒厂啤酒）。",
+        "en": "<network_action>'s composite legality condition (all must hold): ① an undeveloped line is available (a <canal_line> in the Canal Era; a <rail_line> or a <canal_link>-replacing rail in the Rail Era); ② the line is adjacent to a location in your <network>, or <no_tiles_on_board> (any line); ③ Rail Era: <coal_obtainable> for each rail (connected after placement); ④ when building 2 rails, <brewery_beer_available> (1 brewery beer)."
+      }
+    },
+    {
+      "id": "develop_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可开发",
+        "en": "Develop Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<develop>的复合合法性条件（全部满足）：① <player_mat>上有可移除的最低级板块——且不是灯泡陶器（<pottery_lightbulb_undevelopable>）；② 移除 1 或 2 块所需的铁可得（<iron_obtainable>）。",
+        "en": "<develop>'s composite legality condition (all must hold): ① a removable lowest-level tile exists on the <player_mat> — and it is not a lightbulb pottery (<pottery_lightbulb_undevelopable>); ② the iron for removing 1 or 2 tiles is obtainable (<iron_obtainable>)."
+      }
+    },
+    {
+      "id": "sell_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可售卖",
+        "en": "Sell Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<sell>的复合合法性条件（全部满足）：① 至少有 1 个未翻面的<cotton_mill>/<manufactory>/<pottery>满足<merchant_connected>（连通到接受其行业图标的<merchant_tile>）且<merchant_accepts_industry>；② 该板块所需的啤酒可得（<beer_obtainable>）。",
+        "en": "<sell>'s composite legality condition (all must hold): ① at least one unflipped <cotton_mill>/<manufactory>/<pottery> satisfies <merchant_connected> (connected to a <merchant_tile> accepting its icon) and <merchant_accepts_industry>; ② the beer it requires is obtainable (<beer_obtainable>)."
+      }
+    },
+    {
+      "id": "loan_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可贷款",
+        "en": "Loan Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<loan>的合法性条件：当前<income_level>高于 -10 级（退 3 级不会越过 -10）。-10 级时不可贷款。",
+        "en": "<loan>'s legality condition: the current <income_level> is above -10 (moving back 3 levels would not pass -10). No loans at level -10."
+      }
+    },
+    {
+      "id": "scout_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可侦察",
+        "en": "Scout Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<scout>的合法性条件（全部满足）：① 手中没有任何<wild_card>；② 手牌至少 3 张（弃 1+2）；③ 对应<card_draw_area>中各有至少 1 张万能卡可拿（卡区为空时是否仍可执行侦察——待核实）。",
+        "en": "<scout>'s legality condition (all must hold): ① no <wild_card> in hand; ② at least 3 cards in hand (discard 1+2); ③ each corresponding <card_draw_area> holds at least 1 wild card to take (whether Scout is still allowed when an area is empty — to be verified)."
+      }
+    },
+    {
+      "id": "location_card_matches",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "地点卡匹配",
+        "en": "Location Card Matches"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "弃的卡与目标<location>匹配：该地点的<location_card>，或<wild_location_card>（万能地点卡）。地点卡可在网络外建造；不能用于<farm_brewery>。",
+        "en": "The discarded card matches the target <location>: its <location_card>, or a <wild_location_card>. Location cards build outside the network; they cannot target a <farm_brewery>."
+      }
+    },
+    {
+      "id": "industry_card_matches",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "行业卡匹配",
+        "en": "Industry Card Matches"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "弃的卡与所建行业匹配：对应行业图标的<industry_card>，或<wild_industry_card>；且目标<location>在自己的<network>内（<in_network>）。例外：<no_tiles_on_board>时，行业卡可在任意地点建（无网络限制）。",
+        "en": "The discarded card matches the built industry: an <industry_card> with the matching icon, or a <wild_industry_card>; and the target <location> is inside your <network> (<in_network>). Exception: with <no_tiles_on_board>, an industry card builds anywhere (no network restriction)."
+      }
+    },
+    {
+      "id": "in_network",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "地点在路网内",
+        "en": "Location in Network"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "目标<location>属于当前行动玩家的<network>——该地点有其<industry_tile>，或与其某条<canal_link>/<rail_link>相邻。注意与连通（<ontology::connected>）的区别：路网只看自己的板块，连通沿任何人的链接。",
+        "en": "The target <location> belongs to the acting player's <network> — it holds one of their <industry_tile>s, or is adjacent to one of their <canal_link>s/<rail_link>s. Distinct from connectivity (<ontology::connected>): the network counts only your own tiles; connectivity follows anyone's links."
+      }
+    },
+    {
+      "id": "no_tiles_on_board",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "场上无板块",
+        "en": "No Tiles on Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家在版图上没有任何<industry_tile>或<canal_link>/<rail_link>（开局或运河时代结束后可能出现）。此时：行业卡可在任意地点建；链接可建在任意未开发线路。",
+        "en": "The player has no <industry_tile>s or <canal_link>s/<rail_link>s on the board (possible at game start or right after the Canal Era). Then: industry cards build anywhere; links may go on any undeveloped line."
+      }
+    },
+    {
+      "id": "space_available",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "空位可用",
+        "en": "Space Available"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "目标<location>有显示该行业图标的未开发<industry_space>——先看单图标空位，无单图标空位才可用双图标空位；两者皆无则不能在该地点建该行业。",
+        "en": "The target <location> has an undeveloped <industry_space> showing the industry's icon — single-icon spaces first, dual-icon only when none remain; with neither, that industry cannot be built there."
+      }
+    },
+    {
+      "id": "canal_era_location_limit",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "运河时代单地点限制",
+        "en": "Canal Era Location Limit"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "运河时代：每个<location>最多有 1 个自己的<industry_tile>——已有自己的板块则不能在该地点**新建**（可与其他玩家同地点）。覆盖（overbuild）替换不受此限。铁路时代无此限制。",
+        "en": "Canal Era: at most 1 of your own <industry_tile>s per <location> — with one already there you cannot **build anew** at that location (sharing with other players is fine). Overbuilding (replacement) is unaffected. The Rail Era has no such limit."
+      }
+    },
+    {
+      "id": "rail_era_lock_forbidden",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "铁路时代锁图标禁建",
+        "en": "Rail Era Lock Forbidden"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "铁路时代：带锁图标槽位的<industry_tile>（全部 1 级板块，**陶器 1 级除外**）不可建造——必须先<develop>移除它们解锁更高级。运河时代锁图标板块可以正常建造。",
+        "en": "Rail Era: <industry_tile>s in lock-icon slots (all Level 1 tiles, **except the Pottery L1**) cannot be built — they must first be removed by <develop> to unlock higher levels. In the Canal Era, lock-icon tiles build normally."
+      }
+    },
+    {
+      "id": "coal_obtainable",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "煤可得",
+        "en": "Coal Obtainable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "建造位置（或放置后的链接）能获得所需煤：① 沿链接（<ontology::connected>，via=当前时代链接）连通到**最近**的未翻面<coal_mine>（免费）；或 ② 连通到带煤图标的地点（<merchant_space>）且（<coal_market>有煤——从最便宜槽买，或市场空时付 £8/块）。两者皆无则无法消耗煤——含煤成本的建造不可执行。",
+        "en": "The build location (or the placed link) can obtain the coal needed: ① connected (via <ontology::connected>, via current-era links) to the **nearest** unflipped <coal_mine> (free); or ② connected to a coal-icon location (a <merchant_space>) with either <coal_market> coal (cheapest slot first) or £8 per cube when the market is empty. With neither, coal cannot be consumed — coal-costing builds are impossible."
+      }
+    },
+    {
+      "id": "iron_obtainable",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "铁可得",
+        "en": "Iron Obtainable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "所需铁可获得：① 任何未翻面<iron_works>（无需连通、免费）；或 ② <iron_market>有铁（从最便宜槽买）；或 ③ 市场空时付 £6/块。由于有 £6 兜底，只要有钱铁即恒可得——本条件实际只在「无未翻面铁厂且无市场铁且钱不足 £6/块」时不成立。",
+        "en": "The iron needed is obtainable: ① any unflipped <iron_works> (no connection, free); or ② <iron_market> iron (cheapest slot first); or ③ £6 per cube when the market is empty. Thanks to the £6 fallback, iron is always obtainable with enough money — this condition fails only with no unflipped works, no market iron, and under £6 per cube."
+      }
+    },
+    {
+      "id": "beer_obtainable",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "啤酒可得",
+        "en": "Beer Obtainable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<sell>语境下所需啤酒可消耗：① 自己的未翻面<brewery>（任意位置，无需连通）；② 对手的未翻面<brewery>——须连通（<ontology::connected>）到自己<network>的某个地点；③ 所卖商人的<merchant_beer_space>（每板块最多 1 桶）。多桶可混合来源。",
+        "en": "In the <sell> context, the required beer is consumable: ① your own unflipped <brewery> (anywhere, no connection); ② an opponent's unflipped <brewery> — connected (via <ontology::connected>) to a location in your <network>; ③ the selling merchant's <merchant_beer_space> (at most 1 barrel per tile). Multiple barrels may mix sources."
+      }
+    },
+    {
+      "id": "brewery_beer_available",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "酒厂啤酒可得",
+        "en": "Brewery Beer Available"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "铁路时代双铁语境下**酒厂啤酒**可得（商人啤酒绝不可用）：① 自己的未翻面<brewery>（任意位置，无需连通）；② 对手的未翻面<brewery>——须连通到第 2 条铁放置后的位置（<ontology::connected>）。",
+        "en": "In the Rail Era double-link context, a **brewery beer** is available (merchant beer never counts): ① your own unflipped <brewery> (anywhere, no connection); ② an opponent's unflipped <brewery> — connected (via <ontology::connected>) to the second rail's post-placement position."
+      }
+    },
+    {
+      "id": "merchant_connected",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "连通商人",
+        "en": "Connected to Merchant"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "待售<industry_tile>的地点与接受其行业图标的<merchant_tile>之间连通（<ontology::connected>状态成立）：沿当前时代的链接（运河时代<canal_link>、铁路时代<rail_link>）可追溯一条路径。卖多个板块时各板块分别判定、可卖向不同商人。",
+        "en": "The selling <industry_tile>'s location is connected to a <merchant_tile> accepting its industry icon (the <ontology::connected> state holds): a route exists along current-era links (<canal_link> in the Canal Era, <rail_link> in the Rail Era). Each sold tile is judged separately and may sell to a different merchant."
+      },
+      "<ontology::connected>": {
+        "from": {
+          "zh": "待售<industry_tile>所在地点。",
+          "en": "The location of the <industry_tile> being sold."
+        },
+        "to": {
+          "zh": "接受该行业图标的<merchant_tile>所在<merchant_space>。",
+          "en": "The <merchant_space> holding a <merchant_tile> that accepts the industry icon."
+        },
+        "via": {
+          "zh": "当前时代的链接：运河时代<canal_link>、铁路时代<rail_link>。",
+          "en": "Current-era links: <canal_link> in the Canal Era, <rail_link> in the Rail Era."
+        }
+      }
+    },
+    {
+      "id": "merchant_accepts_industry",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "商人接受该行业",
+        "en": "Merchant Accepts the Industry"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "目标<merchant_tile>面上显示待售板块的行业图标（棉/制铁品/陶之一）。行业不符的商人不能作为售卖对象。",
+        "en": "The target <merchant_tile> shows the sold tile's industry icon (cotton/manufactured goods/pottery). A merchant with a non-matching icon cannot be sold to."
+      }
+    },
+    {
+      "id": "overbuild_own_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可覆盖自己的板块",
+        "en": "Overbuild Own Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "覆盖对象是自己的<industry_tile>：**任意行业**皆可，只需更高等级板块（遵守正常建造规则：匹配卡、最低可用、付成本）。被覆盖板块进盒、其上资源回<general_supply>。",
+        "en": "The overbuild target is your own <industry_tile>: **any industry** works, needing only a higher-level tile (normal build rules apply: matching card, lowest available, pay costs). The replaced tile leaves the game and its resources return to the <general_supply>."
+      }
+    },
+    {
+      "id": "overbuild_opponent_allowed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "可覆盖对手的板块",
+        "en": "Overbuild Opponent Allowed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "覆盖对象是对手的板块：只能覆盖<coal_mine>或<iron_works>，且**整个版图（含对应市场）没有任何该类型的方块**——即所有煤（或铁）已被耗尽。仍需更高等级板块并遵守正常建造规则。",
+        "en": "The overbuild target is an opponent's tile: only a <coal_mine> or an <iron_works>, and **no cubes of that type remain anywhere on the board (its market included)** — all coal (or iron) has been consumed. A higher-level tile and normal build rules still apply."
+      }
+    },
+    {
+      "id": "pottery_lightbulb_undevelopable",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "灯泡陶器不可开发",
+        "en": "Lightbulb Pottery Undevelopable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "带灯泡图标的<pottery>板块**不能**被<develop>移除（唯一例外）——只能通过建造消耗掉，或通过 Gloucester 商人加成（免费开发）移除。若玩家板某行业最低级只剩灯泡陶器，该行业无法再开发。",
+        "en": "A lightbulb-icon <pottery> tile **cannot** be removed by <develop> (the only exception) — it leaves the mat only by being built, or via the Gloucester merchant bonus (free develop). If an industry's lowest remaining tiles are all lightbulb potteries, that industry can no longer be developed."
+      }
+    },
+    {
+      "id": "income_shortfall",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "收入缺口",
+        "en": "Income Shortfall"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "收入阶段：<income_level>为负，且玩家付不起该金额（负收入须付钱给<bank>）。触发<cover_income_shortfall>。",
+        "en": "In the income phase: the <income_level> is negative and the player cannot pay the amount (negative income is paid to the <bank>). Triggers <cover_income_shortfall>."
+      }
+    },
+    {
+      "id": "vp_highest",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "分数最高",
+        "en": "Highest VPs"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家的总分（<vp_track>上的位置）为全场最高。作为<most_vp_wins>的第一条判定。",
+        "en": "The player's total VPs (position on the <vp_track>) is the highest among all players. The first criterion of <most_vp_wins>."
+      }
+    },
+    {
+      "id": "highest_income_level",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "收入等级最高",
+        "en": "Highest Income Level"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家的<income_level>为（候选胜者中）最高。作为<most_vp_wins>的第二条判定（平局决胜）。",
+        "en": "The player's <income_level> is the highest among the (candidate) winners. The second criterion of <most_vp_wins> (tiebreaker)."
+      }
+    },
+    {
+      "id": "most_money_remaining",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "剩余钱最多",
+        "en": "Most Money Remaining"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家剩余的<money>为（候选胜者中）最多。作为<most_vp_wins>的第三条判定（平局决胜）。",
+        "en": "The player's remaining <money> is the most among the (candidate) winners. The third criterion of <most_vp_wins> (tiebreaker)."
+      }
+    },
+    {
+      "id": "most_vp_wins",
+      "specifies": "<ontology::victory_condition>",
+      "name": {
+        "zh": "总分最高获胜",
+        "en": "Most VPs Wins"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "伯明翰的胜利条件：终局计分后，按顺序满足以下条件的<ontology::player>（们）是胜者——1. 总分最高（<vp_highest>）；2. 收入等级最高（<highest_income_level>）；3. 剩余钱最多（<most_money_remaining>）。序列用完仍并列则共享胜利。",
+        "en": "Birmingham's victory condition: after final scoring, the <ontology::player>(s) satisfying the criteria in order win — 1. highest total VPs (<vp_highest>); 2. highest income level (<highest_income_level>); 3. most remaining money (<most_money_remaining>). If multiple remain after the sequence, victory is shared."
+      },
+      "<ontology::condition>[]": [
+        "<vp_highest>",
+        "<highest_income_level>",
+        "<most_money_remaining>"
+      ]
+    }
+  ]
+}

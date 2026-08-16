@@ -1352,6 +1352,53 @@
       }
     },
     {
+      "id": "connected",
+      "extends": "<state>",
+      "name": {
+        "zh": "连通",
+        "en": "Connected"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "图连通性 <state>——断言「两个 <zone>（或占据某 <zone> 的 <object>）之间存在一条路径」这一事实。路径由 via 指定的链接类 <piece> 依次首尾相接构成（每个链接 <piece> 衔接两个相邻 <zone>）。不考虑 <ownership>：任何 <player> 的链接均计入路径。该状态随链接 <piece> 的放置与移除而成立/失效，<condition> 可随时查询。",
+        "en": "A graph-connectivity <state> — the fact that a route exists between two <zone>s (or the <object>s that occupy a <zone>): the route consists of 'link-type' <piece>s specified by via, chained end to end (each link <piece> joins two adjacent <zone>s). <ownership> is not considered: links belonging to any <player> count toward the route. The state becomes true/false as link <piece>s are placed and removed; <condition>s may query it at any time."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "from",
+            "description": {
+              "zh": "路径起点——<zone> 或占据该 <zone> 的 <object>。",
+              "en": "Route start — a <zone> or the <object> occupying one."
+            }
+          },
+          {
+            "id": "to",
+            "description": {
+              "zh": "路径终点——<zone> 或占据该 <zone> 的 <object>。",
+              "en": "Route end — a <zone> or the <object> occupying one."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "via",
+            "description": {
+              "zh": "构成路径的链接类 <piece> 概念 id；省略 = 不限制链接类型。",
+              "en": "The concept id of the link-type <piece> forming the route; omitted = unrestricted link type."
+            }
+          },
+          {
+            "id": "owned_by",
+            "description": {
+              "zh": "路径链接所属的 <player>；省略 = 任何所有者的链接均计入。",
+              "en": "The <player> owning the route's links; omitted = links of any owner count."
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "trigger",
       "extends": "<event>",
       "name": {
