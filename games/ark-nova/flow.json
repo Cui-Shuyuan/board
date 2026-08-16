@@ -365,8 +365,8 @@
             },
             "specifies": "<ontology::phase>",
             "description": {
-              "zh": "主游戏流程：无固定轮次，玩家按顺时针轮流执行回合，回合之间穿插 Break，直到终局被触发。每圈回合结束（turn_cycle 完成）时，本阶段的 loop 检查 <endgame_trigger>——触发玩家完整执行完自己的回合，其后的玩家照常完成本圈剩余回合。",
-              "en": "Main gameplay: no fixed rounds — players take turns clockwise, with breaks interleaved, until the end of the game is triggered. At the end of each turn cycle, the phase loop checks <endgame_trigger> — the triggering player completes their turn in full, and later players in the cycle still take their normal turns."
+              "zh": "主游戏流程：无固定轮次，玩家按顺时针轮流执行回合，回合之间穿插 Break，直到终局被触发（<endgame_trigger>：任一玩家的 <conservation_counter> 与 <appeal_counter> 位于同一 <scoring_area> 或已相互越过）。每圈回合结束（turn_cycle 完成）时，本阶段的 loop 检查 <endgame_trigger>——触发玩家完整执行完自己的回合，其后的玩家照常完成本圈剩余回合。",
+              "en": "Main gameplay: no fixed rounds — players take turns clockwise, with breaks interleaved, until the end of the game is triggered (<endgame_trigger>: a player's <conservation_counter> and <appeal_counter> are in the same <scoring_area> or have passed each other). At the end of each turn cycle, the phase loop checks <endgame_trigger> — the triggering player completes their turn in full, and later players in the cycle still take their normal turns."
             },
             "do_after": "setup",
             "loop": {
@@ -455,6 +455,16 @@
               "en": "Final Turn Cycle"
             },
             "specifies": "<ontology::phase>",
+            "aliases": {
+              "zh": [
+                "终局触发后的补完回合",
+                "最后一回合"
+              ],
+              "en": [
+                "final turns",
+                "last turns"
+              ]
+            },
             "description": {
               "zh": "终局触发后的补完回合：触发玩家已完成自己的回合，其余玩家各再执行 1 回合。若终局在 Break 中触发，则所有玩家（含触发者）各再执行 1 回合。",
               "en": "The final turn cycle after the end of the game is triggered: the triggering player has already completed their turn, and each other player takes one more turn. If the end is triggered during a break, all players (including the triggerer) take one more turn."
@@ -574,7 +584,7 @@
                   ]
                 }
               ],
-              "note": "胜利分 = 自己的吸引力值 − 目标数（目标数 = <conservation_counter> 所在计分区的最低吸引力值）。最高正分者获胜；平局时支持保护项目更多者（<bonus_spaces> 取走的玩家标记更多者）获胜；仍平局则并列。"
+              "note": "胜利分 = 自己的吸引力值 − 目标数（目标数 = <conservation_counter> 所在计分区的最低吸引力值），胜利分可为负。胜利分最高者获胜；平局时支持保护项目更多者（<bonus_spaces> 取走的玩家标记更多者）获胜；仍平局则并列。"
             },
             "<ontology::pipeline>": {
               "options": [
@@ -649,7 +659,7 @@
                   },
                   "specifies": "<ontology::evaluate>",
                   "description": {
-                    "zh": "判定胜者：每位玩家的胜利分 = 自己的吸引力值 − 目标数（<conservation_counter> 所在计分区的最低吸引力值）。胜利分最高的正分玩家获胜；平局时支持保护项目更多者获胜（数 <bonus_spaces> 上已取走的 <player_token> 数）；仍平局则并列获胜。",
+                    "zh": "判定胜者：每位玩家的胜利分 = 自己的吸引力值 − 目标数（<conservation_counter> 所在计分区的最低吸引力值），胜利分可为负。胜利分最高者获胜；平局时支持保护项目更多者获胜（数 <bonus_spaces> 上已取走的 <player_token> 数）；仍平局则并列获胜。",
                     "en": "Adjudicate the winner: each player's Victory Points = their Appeal value − their Target Number (the lowest Appeal value in the scoring area holding their <conservation_counter>). The player with the highest positive Victory Point total wins; ties go to the player who supported the most conservation projects (count the <player_token>s removed from the <bonus_spaces>); if still tied, all tied players share the victory."
                   },
                   "result": {
@@ -796,6 +806,19 @@
         "en": "Build Action"
       },
       "specifies": "<ontology::action>",
+      "aliases": {
+        "zh": [
+          "建筑放置",
+          "兽栏放置",
+          "建造",
+          "建建筑",
+          "新建筑"
+        ],
+        "en": [
+          "building placement",
+          "construct"
+        ]
+      },
       "description": {
         "zh": "BUILD 动作：side I 建造恰好 1 栋建筑，最大尺寸 X；side II 可建多栋不同建筑，总尺寸不超过 X，并可建 <reptile_house> 与 <large_bird_aviary>，还能盖公园格。每栋建筑费用 = 格数 ×2 钱，先付钱再放置；每栋依次建造（side II 可边拿放置奖励边付下一栋的钱）。可选建筑：<kiosk>/<pavilion>（同板块两面）、<standard_enclosure> 1-5 格、<petting_zoo>（3 格，限 1 个）；side II 加 <reptile_house>/<large_bird_aviary>（各 5 格，限 1 个，建成时可立即迁移动物一次）。第一个建筑至少 1 格在地图边缘格；之后每个建筑须与现有建筑至少共 1 条边。只能建在空格上；不能盖水/岩格；升级前不能盖公园格。亭与亭至少相距 3 格。馆建成立即 +1 吸引力。围栏以空面朝上建。<unique_building> 不能用此动作建。执行后把卡移到槽 1。",
         "en": "BUILD action: side I builds exactly 1 building with a maximum size of X; side II may build several different buildings with a maximum total size of X, may build the <reptile_house> and <large_bird_aviary>, and may cover park-icon spaces. Each building costs 2 money per space, paid before placing it; with side II, build one after the other (placement bonuses taken immediately can pay for the next building). Available: <kiosk>/<pavilion> (the two sides of the same tile), <standard_enclosure>s of sizes 1-5, <petting_zoo> (size 3, at most 1); side II adds the <reptile_house>/<large_bird_aviary> (size 5 each, at most 1, with a one-time immediate animal move-in when built). The first building must have at least 1 space on a border space of the map; every later building must share at least 1 edge with an existing building. Build only on empty spaces; never cover water or rock spaces; park-icon spaces require the upgraded action. Kiosks must be at least 3 spaces apart. Each pavilion immediately grants +1 appeal. Enclosures are built empty-side up. <unique_building>s cannot be built with this action. Afterwards the card moves to slot 1."
@@ -1408,6 +1431,16 @@
         "en": "Release an Animal"
       },
       "specifies": "<ontology::play>",
+      "aliases": {
+        "zh": [
+          "释放",
+          "放生"
+        ],
+        "en": [
+          "release",
+          "release into the wild"
+        ]
+      },
       "description": {
         "zh": "释放动物到野外（释放类保护项目条件）：从自己动物园弃 1 张带要求图标的 <animal_card>。然后按 <clear_release_enclosure> 的 4 步依次判断清空围栏（全不成立则棋盘不变，释放仍然成立），<appeal_counter> 按卡面步数后退。之后获得该条件的保护分与声望奖励（见 <support_conservation_project>）。",
         "en": "Release an animal into the wild (the condition of release-type conservation projects): discard 1 <animal_card> with the required icon from your zoo. Then clear the enclosure per the 4 ordered checks of <clear_release_enclosure> (if none applies, the release still succeeds and the board is unchanged) and move the <appeal_counter> back by the printed steps. Then gain the condition's conservation points and reputation reward (see <support_conservation_project>)."
@@ -1939,6 +1972,17 @@
         "en": "End of Game Trigger"
       },
       "specifies": "<ontology::trigger>",
+      "aliases": {
+        "zh": [
+          "游戏结束",
+          "游戏结束条件",
+          "游戏结束时机"
+        ],
+        "en": [
+          "end of game",
+          "game end"
+        ]
+      },
       "description": {
         "zh": "终局触发条件：任一玩家的 <conservation_counter> 与 <appeal_counter> 位于同一 <scoring_area>（保护轨 1 格及其对应的吸引力轨相邻格段），或已相互越过。触发玩家完成自己的回合，其余玩家各再执行 1 回合（<final_turn_cycle>）；若终局在 Break 中触发，则所有玩家各再执行 1 回合。之后进入 <final_scoring>。",
         "en": "End-of-game trigger condition: a player's <conservation_counter> and <appeal_counter> are ever in the same <scoring_area> (one Conservation track space and its adjacent Appeal track spaces), or pass each other. The triggering player completes their turn and all other players take one more turn (<final_turn_cycle>); if the end is triggered during a break, all players take one more turn. Then <final_scoring> follows."

@@ -84,6 +84,14 @@
         "zh": "保护分计数器",
         "en": "Conservation Counter"
       },
+      "aliases": {
+        "zh": [
+          "保护分"
+        ],
+        "en": [
+          "conservation points"
+        ]
+      },
       "abstract": false,
       "description": {
         "zh": "玩家在 <conservation_track> 上表示保护分的计数器（树叶图标）。所有玩家都从轨的首格（0 分）出发。通过支持保护项目、捐赠、动物/赞助卡效果、终局计分等获得保护分。达到 2/5/8/10 分时触发对应一次性奖励。",
@@ -242,8 +250,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "双面板块：空面（黄边，显示围栏大小）与已占用面。大小 1-5 格：1 格 28 块、2 格 24 块、3 格 15 块、4 格 13 块、5 格 10 块（共 82 块）。通过 <build_action> 以空面朝上建造在 <building_area>。安置动物时把满足动物 <enclosure_requirement> 的围栏翻到已占用面；释放动物时把最小的满足要求的已占用围栏翻回空面。标准围栏只翻转表示占用，不放 <player_token>。",
-        "en": "Double-sided tiles: an empty side (yellow edge, showing the enclosure size) and an occupied side. Sizes 1-5 spaces: 28x size-1, 24x size-2, 15x size-3, 13x size-4, 10x size-5 (82 in total). Built empty-side-up in the <building_area> via the <build_action>. Accommodating an animal flips an enclosure meeting the animal's <enclosure_requirement> to its occupied side; releasing an animal flips the smallest qualifying occupied enclosure back to its empty side. Standard enclosures are only flipped to show occupation — no <player_token>s are placed on them."
+        "zh": "双面板块：空面（黄边，显示围栏大小）与已占用面。大小 1-5 格：1 格 28 块、2 格 24 块、3 格 15 块、4 格 13 块、5 格 10 块（共 82 块）。通过 <build_action> 以空面朝上建造在 <building_area>。安置动物时把满足动物 <enclosure_requirement> 的围栏翻到已占用面；释放动物时按 <release_animal> 的 4 步依次判断清空（轮到标准围栏时把最小的满足要求的已占用围栏翻回空面）。标准围栏只翻转表示占用，不放 <player_token>。",
+        "en": "Double-sided tiles: an empty side (yellow edge, showing the enclosure size) and an occupied side. Sizes 1-5 spaces: 28x size-1, 24x size-2, 15x size-3, 13x size-4, 10x size-5 (82 in total). Built empty-side-up in the <building_area> via the <build_action>. Accommodating an animal flips an enclosure meeting the animal's <enclosure_requirement> to its occupied side; releasing an animal clears the enclosure per the 4 ordered checks of <release_animal> (for a standard enclosure, flip the smallest qualifying occupied enclosure back to its empty side). Standard enclosures are only flipped to show occupation — no <player_token>s are placed on them."
       }
     },
     {
@@ -281,8 +289,8 @@
       },
       "abstract": true,
       "description": {
-        "zh": "3 种特殊围栏（<petting_zoo>、<reptile_house>、<large_bird_aviary>）的抽象概念。每种每个动物园最多 1 个。特殊围栏正反两面相同，不翻转；安置动物时按动物卡特殊围栏图标标注的数量放 <player_token>（从个人供应取），标记已占用格数；空间不足则不能安置。释放动物时从特殊围栏移除相应数量的 <player_token> 归还个人供应。",
-        "en": "Abstract concept for the 3 special enclosures (<petting_zoo>, <reptile_house>, <large_bird_aviary>). Each zoo may have at most 1 of each type. Both sides of a special enclosure are identical and it is never flipped; accommodating an animal places the number of <player_token>s indicated on the card's special enclosure icon (from the personal supply) to mark occupied spaces; if there is not enough free space, the animal cannot be accommodated there. Releasing an animal removes the appropriate number of <player_token>s back to the personal supply."
+        "zh": "3 种特殊围栏（<petting_zoo>、<reptile_house>、<large_bird_aviary>）的抽象概念。每种每个动物园最多 1 个。特殊围栏正反两面相同，不翻转；安置动物时按动物卡特殊围栏图标标注的数量放 <player_token>（从个人供应取），标记已占用格数；空间不足则不能安置。释放动物时按 <release_animal> 的 4 步依次判断清空（轮到特殊围栏时移除相应数量的 <player_token> 归还个人供应）。",
+        "en": "Abstract concept for the 3 special enclosures (<petting_zoo>, <reptile_house>, <large_bird_aviary>). Each zoo may have at most 1 of each type. Both sides of a special enclosure are identical and it is never flipped; accommodating an animal places the number of <player_token>s indicated on the card's special enclosure icon (from the personal supply) to mark occupied spaces; if there is not enough free space, the animal cannot be accommodated there. Releasing an animal clears the enclosure per the 4 ordered checks of <release_animal> (for a special enclosure, remove the appropriate number of <player_token>s back to the personal supply)."
       }
     },
     {
@@ -1129,6 +1137,12 @@
       "name": {
         "zh": "终局计分卡",
         "en": "Final Scoring Card"
+      },
+      "aliases": {
+        "zh": [
+          "最终计分卡"
+        ],
+        "en": []
       },
       "abstract": false,
       "description": {
