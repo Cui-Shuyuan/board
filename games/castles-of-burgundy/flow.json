@@ -620,6 +620,10 @@
                     "en": "Phase End"
                   },
                   "specifies": "<ontology::phase>",
+                  "aliases": {
+                    "zh": ["阶段奖励"],
+                    "en": ["Phase Rewards"]
+                  },
                   "description": {
                     "zh": "本阶段 5 轮打完后结算阶段结束收入：先按庄园中<mine_tile>数量发<silver>（<mine_income>），再结算<monastery_tile_2>的工人收入（<monastery_mine_worker_income>）。每位玩家各自结算。",
                     "en": "After this phase's 5 rounds, settle phase-end income: first <silver> per <mine_tile> in each duchy (<mine_income>), then the <monastery_tile_2> worker income (<monastery_mine_worker_income>). Settled for each player."
@@ -702,6 +706,17 @@
                       "zh": "结算<final_scoring>：未售货物每块 1 分、银币每枚 1 分、工人每 2 个 1 分、终局计分黄色瓷砖按各自规则。",
                       "en": "Resolve <final_scoring>: 1 per unsold goods, 1 per silver, 1 per 2 workers, plus each final-scoring yellow tile's own rule."
                     }
+                  },
+                  "score_table": {
+                    "per_unit": [
+                      {"what": "goods", "zh": "货物", "aliases": ["商品"], "vp": 1, "unit": "每块"},
+                      {"what": "silver", "zh": "银币", "aliases": ["银"], "vp": 1, "unit": "每枚"},
+                      {"what": "worker", "zh": "工人", "aliases": ["劳工"], "vp": 1, "divisor": 2, "unit": "每 2 个"}
+                    ],
+                    "by_card": [
+                      {"what": "monastery_tile", "zh": "知识瓷砖", "aliases": ["黄色瓷砖", "修道院板块", "终局计分瓷砖"], "rule": "只有放入庄园的知识瓷砖才计分，存储区里剩的不算。终局计分瓷砖：#15 每种已售货物 2 分；#16-23 庄园中每块对应建筑 4 分；#24 每种牲畜 4 分；#25 每块已售货物 1 分；#26 每块奖励板块 3 分。"}
+                    ],
+                    "note": "存储区剩余瓷砖不计分。"
                   }
                 },
                 {

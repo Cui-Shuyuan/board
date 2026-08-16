@@ -680,6 +680,14 @@
         "en": "Monastery Tile 1 (Multiple Buildings Per Town)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#1"
+        ],
+        "en": [
+          "#1"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 1（玩家常称「黄色瓷砖 #1」）。**持续效果**：你的<duchy>中不再限制每个<town>每类<building_tile>只能建 1 个——可以在同一城镇内建造多个同类型建筑（如 2 个<building_bank>）。",
         "en": "Monastery tile 1 of 26 (players often call it 'yellow tile #1'). **Continuous effect**: you are no longer limited to one <building_tile> per kind in each of your <town>s — you may build multiple buildings of the same kind within a single town (e.g. 2 <building_bank>s)."
@@ -715,6 +723,14 @@
         "en": "Monastery Tile 2 (Worker Per Mine)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#2"
+        ],
+        "en": [
+          "#2"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 2（玩家常称「黄色瓷砖 #2」）。**持续效果**：每阶段结束时，庄园中每个<mine_tile>除正常 1 <silver>外，额外得 1 <worker>。",
         "en": "Monastery tile 2 of 26 (players often call it 'yellow tile #2'). **Continuous effect**: at the end of each phase, for each <mine_tile> you have placed you also get 1 <worker> in addition to the usual <silver>."
@@ -750,6 +766,14 @@
         "en": "Monastery Tile 3 (Two Silver Per Sale)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#3"
+        ],
+        "en": [
+          "#3"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 3（玩家常称「黄色瓷砖 #3」）。**持续效果**：每次出售<goods>（无论是骰子行动还是放置<building_warehouse>）得 2 <silver>而非 1。",
         "en": "Monastery tile 3 of 26 (players often call it 'yellow tile #3'). **Continuous effect**: whenever you sell <goods> (whether via the die action or placing a <building_warehouse>), you gain 2 <silver> instead of 1."
@@ -785,6 +809,14 @@
         "en": "Monastery Tile 4 (Worker Per Sale)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#4"
+        ],
+        "en": [
+          "#4"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 4（玩家常称「黄色瓷砖 #4」）。**持续效果**：每次出售一种<goods>（无论是骰子行动还是放置<building_warehouse>）除正常 1 <silver>外，额外得 1 <worker>。",
         "en": "Monastery tile 4 of 26 (players often call it 'yellow tile #4'). **Continuous effect**: whenever you sell a type of <goods> (whether via the die action or placing a <building_warehouse>), you gain 1 <worker> in addition to the usual <silver>."
@@ -820,6 +852,14 @@
         "en": "Monastery Tile 5 (Ship Takes Adjacent Depot)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#5"
+        ],
+        "en": [
+          "#5"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 5（玩家常称「黄色瓷砖 #5」）。**持续效果**：放置<ship_tile>时，除从任选一个<depot>拿走全部<goods>外，还可从一个**相邻**仓库再拿走全部货物。",
         "en": "Monastery tile 5 of 26 (players often call it 'yellow tile #5'). **Continuous effect**: when you place a <ship_tile>, in addition to taking all <goods> from one chosen <depot>, you may also take all goods from an **adjacent** depot."
@@ -855,6 +895,14 @@
         "en": "Monastery Tile 6 (Buy From Any Depot With Workers)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#6"
+        ],
+        "en": [
+          "#6"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 6（玩家常称「黄色瓷砖 #6」）。**持续效果**：从游戏版图购买<hex_tile>时可花 **2 个<worker>代替 2 <silver>**，且可从**所有**<depot>（含<black_depot>）任选板块——不再局限于中央黑色仓库。仍每回合至多买 1 块。注：2019 版与早期版本在此处有细微差异（是否限购建筑），本定义按 2019 版规则书。",
         "en": "Monastery tile 6 of 26 (players often call it 'yellow tile #6'). **Continuous effect**: when buying a <hex_tile> from the game board you may spend **2 <worker>s instead of 2 <silver>**, and you may choose a tile from **all** <depot>s (including the <black_depot>) — not just the central black depot. Still at most one purchase per turn. Note: the 2019 edition differs slightly from earlier ones here (whether buying is restricted to buildings); this definition follows the 2019 rulebook."
@@ -890,6 +938,14 @@
         "en": "Monastery Tile 7 (Livestock +1 Each)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#7"
+        ],
+        "en": [
+          "#7"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 7（玩家常称「黄色瓷砖 #7」）。**持续效果**：放置<livestock_tile>时，当时计分的**每块**牲畜板块（含新放的这块，含同牧场同种的旧板块）各额外 +1 <vp>。例：在已有 4 羊的牧场放置 3 羊板块：(3+1)+(4+1)=9 分；若放 2 猪板块则得 3 分。",
         "en": "Monastery tile 7 of 26 (players often call it 'yellow tile #7'). **Continuous effect**: when you place a <livestock_tile>, each livestock tile that scores at that moment (the new one included, plus same-kind tiles in the same pasture) gains +1 <vp>. Example: placing a 3-sheep tile in a pasture holding a 4-sheep tile scores (3+1)+(4+1)=9; a 2-pig tile would score 3."
@@ -925,6 +981,14 @@
         "en": "Monastery Tile 8 (Worker Adjusts ±2)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#8"
+        ],
+        "en": [
+          "#8"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 8（玩家常称「黄色瓷砖 #8」）。**持续效果**：用<worker>修改<player_die>点数时，每个工人改 ±2 而非 ±1。例：把 3 改成 6 只需 2 个工人（而非 3 个）。",
         "en": "Monastery tile 8 of 26 (players often call it 'yellow tile #8'). **Continuous effect**: when you use a <worker> to change a <player_die>'s value, each worker adjusts by ±2 instead of ±1. Example: changing a 3 to a 6 needs only 2 workers (instead of 3)."
@@ -960,6 +1024,14 @@
         "en": "Monastery Tile 9 (Free ±1 When Placing Building)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#9"
+        ],
+        "en": [
+          "#9"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 9（玩家常称「黄色瓷砖 #9」）。**持续效果**：每次想放置<building_tile>（米色板块）时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
         "en": "Monastery tile 9 of 26 (players often call it 'yellow tile #9'). **Continuous effect**: whenever you want to place a <building_tile> (beige), you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
@@ -995,6 +1067,14 @@
         "en": "Monastery Tile 10 (Free ±1 When Placing Ship/Livestock)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#10"
+        ],
+        "en": [
+          "#10"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 10（玩家常称「黄色瓷砖 #10」）。**持续效果**：每次想放置<ship_tile>（蓝色）或<livestock_tile>（浅绿色）时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
         "en": "Monastery tile 10 of 26 (players often call it 'yellow tile #10'). **Continuous effect**: whenever you want to place a <ship_tile> (blue) or <livestock_tile> (light green), you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
@@ -1030,6 +1110,14 @@
         "en": "Monastery Tile 11 (Free ±1 When Placing Castle/Mine/Monastery)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#11"
+        ],
+        "en": [
+          "#11"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 11（玩家常称「黄色瓷砖 #11」）。**持续效果**：每次想放置<castle_tile>（深绿色）、<mine_tile>（灰色）或<monastery_tile>（黄色）时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
         "en": "Monastery tile 11 of 26 (players often call it 'yellow tile #11'). **Continuous effect**: whenever you want to place a <castle_tile> (dark green), <mine_tile> (gray), or <monastery_tile> (yellow), you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
@@ -1065,6 +1153,14 @@
         "en": "Monastery Tile 12 (Free ±1 When Taking Hex Tile)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#12"
+        ],
+        "en": [
+          "#12"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 12（玩家常称「黄色瓷砖 #12」）。**持续效果**：每次想从游戏版图拿取<hex_tile>时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
         "en": "Monastery tile 12 of 26 (players often call it 'yellow tile #12'). **Continuous effect**: whenever you want to take a <hex_tile> from the game board, you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
@@ -1100,6 +1196,14 @@
         "en": "Monastery Tile 13 (Silver With Take Workers)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#13"
+        ],
+        "en": [
+          "#13"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 13（玩家常称「黄色瓷砖 #13」）。**持续效果**：执行「拿取工人片」行动时，除 2 个<worker>外额外得 1 <silver>。注意：对放置<building_boarding_house>无效。",
         "en": "Monastery tile 13 of 26 (players often call it 'yellow tile #13'). **Continuous effect**: when you use the 'take worker chips' action, you gain 1 <silver> in addition to the 2 <worker>s. Note: has no effect when placing a <building_boarding_house>."
@@ -1135,6 +1239,14 @@
         "en": "Monastery Tile 14 (Take Four Workers)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#14"
+        ],
+        "en": [
+          "#14"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 14（玩家常称「黄色瓷砖 #14」）。**持续效果**：执行「拿取工人片」行动时得 **4 个<worker>**而非 2 个。注意：对放置<building_boarding_house>无效。",
         "en": "Monastery tile 14 of 26 (players often call it 'yellow tile #14'). **Continuous effect**: when you use the 'take worker chips' action, you get **4 <worker>s** instead of 2. Note: has no effect when placing a <building_boarding_house>."
@@ -1170,6 +1282,14 @@
         "en": "Monastery Tile 15 (2 VP Per Sold Goods Type)"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "#15"
+        ],
+        "en": [
+          "#15"
+        ]
+      },
       "description": {
         "zh": "26 块<monastery_tile>之 15（玩家常称「黄色瓷砖 #15」）。**终局计分**：每**卖出过至少一次**的<goods>颜色得 2 <vp>（未卖出的货物忽略）。例：已售 4 红、3 紫、3 粉、1 橙 → 4 种 × 2 = 8 分。注意：你随时可以查看自己的<sold_goods_pile>。",
         "en": "Monastery tile 15 of 26 (players often call it 'yellow tile #15'). **Final scoring**: 2 <vp> for each different <goods> color you sold at least once during the game (unsold goods are ignored). Example: sold 4 red, 3 purple, 3 pink, 1 orange → 4 types × 2 = 8 points. Note: you may look at your <sold_goods_pile> at any time."
@@ -1725,8 +1845,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<game_board>中央的仓库，8 个板块格，只放**黑色背面**的<hex_tile>。每阶段开始时从<hex_tile_pool>补满并翻到正面。与编号仓库不同：不能靠骰子免费拿取，只能在回合中额外花 2 <silver>购买 1 块（buy_from_black_depot，每回合至多 1 次）；<monastery_tile_6>可用 2 个<worker>代替银币并从所有仓库任选。",
-        "en": "The central depot on the <game_board> with 8 tile spaces, holding only **black-backed** <hex_tile>s. Refilled from the <hex_tile_pool> and turned face up at each phase start. Unlike numbered depots: tiles here cannot be taken for free with a die; during your turn you may buy 1 for 2 <silver> (buy_from_black_depot, at most once per turn); <monastery_tile_6> lets you pay 2 <worker>s instead and choose from any depot."
+        "zh": "<game_board>中央的仓库，8 个板块格，只放**黑色背面**的<hex_tile>。每阶段开始时从<hex_tile_pool>补满并翻到正面。与编号仓库不同：不能靠骰子拿取，只能在回合中额外花 2 <silver>购买 1 块（buy_from_black_depot，每回合至多 1 次）；<monastery_tile_6>可用 2 个<worker>代替银币并从所有仓库任选。FAQ 称此购买为「免费行动」——「免费」指**不需骰子**，不是免银币。",
+        "en": "The central depot on the <game_board> with 8 tile spaces, holding only **black-backed** <hex_tile>s. Refilled from the <hex_tile_pool> and turned face up at each phase start. Unlike numbered depots: tiles here cannot be taken with a die; during your turn you may buy 1 for 2 <silver> (buy_from_black_depot, at most once per turn); <monastery_tile_6> lets you pay 2 <worker>s instead and choose from any depot. The FAQ calls this purchase a \"free action\" — \"free\" means **no die needed**, not free of silver."
       },
       "capacity": {
         "type": "integer",
@@ -1887,6 +2007,11 @@
         "en": "Key Space"
       },
       "abstract": false,
+      "aliases": {
+        "zh": [
+          "存储区"
+        ]
+      },
       "description": {
         "zh": "玩家面板左下角的 3 个<hex_tile>存储格——玩家的<ontology::player_holding>。从版图拿取的板块先放这里（**永远不能**直接放进<duchy>），放这里时不触发任何效果。3 格全满时若还要拿新板块，**必须先把一块已存板块弃到<game_box>**（永久移出游戏）；不能单纯为了丢弃而丢弃。存储格中的板块终局不计分。玩家口语常称「存储位」——注意与<goods_storage>区分：这里是放<hex_tile>板块的地方（3 格），<goods_storage>才是放<goods>的（最多 3 种颜色）。",
         "en": "The 3 <hex_tile> storage spaces at the bottom left of your player board — your <ontology::player_holding>. Tiles taken from the board go here first (**never** directly into your <duchy>), and trigger no effects while stored. If all 3 are full when you take another tile, you **must first discard one stored tile to the <game_box>** (removed from the game for good); you may not discard without taking. Stored tiles score nothing at game end. Players colloquially call these 'storage spaces' — not to be confused with the <goods_storage>, which holds <goods> (max 3 colors); this holds <hex_tile>s (3 spaces)."
@@ -2487,7 +2612,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "回合内的**额外行动**（不占用骰子）：支付 2 <silver>，从<black_depot>**任选 1 块**<hex_tile>放入空的<key_space>（满仓同样必须先弃一块）。**每回合至多 1 次**，可在本回合任意时刻进行——两次骰子行动之前、之间或之后。<monastery_tile_6>：可花 2 个<worker>代替 2 银，且可从**所有**仓库任选板块。",
+        "zh": "回合内的**额外行动**（不占用骰子）：支付 2 <silver>，从<black_depot>**任选 1 块**<hex_tile>放入空的<key_space>（满仓同样必须先弃一块）。**每回合至多 1 次**，可在本回合任意时刻进行——两次骰子行动之前、之间或之后。<monastery_tile_6>：可花 2 个<worker>代替 2 银，且可从**所有**仓库任选板块。FAQ 称此行动为「免费行动」——「免费」指**不需骰子**（免骰子的额外行动），并非免银币：仍需付 2 <silver>。",
+        "en": "An **extra action** within your turn (does not use a die): pay 2 <silver> and take **any 1** <hex_tile> from the <black_depot> into an empty <key_space> (if full, first discard one as usual). **At most once per turn**, at any moment in your turn — before, between, or after your two die actions. <monastery_tile_6>: pay 2 <worker>s instead of 2 silver and choose from **any** depot. The FAQ calls this a \"free action\" — \"free\" means **no die needed** (a die-free extra action), not free of silver: you still pay 2 <silver>.",
         "en": "An **extra action** within your turn (no die spent): pay 2 <silver> and take **any 1** <hex_tile> from the <black_depot> into an empty <key_space> (if full, discard one first as usual). **At most once per turn**, at any point during your turn — before, between, or after your two die actions. <monastery_tile_6>: pay 2 <worker>s instead of 2 silver, and choose from **all** depots."
       },
       "<ontology::condition>": "<has_2_silver>",
@@ -3026,8 +3152,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<key_space>强制上限的执行机制：3 个存储格全满时，若还要拿新<hex_tile>（无论骰子行动还是免费拿取、无论来自<depot>还是<black_depot>），**必须先**把一块已存板块弃入<game_box>（永久移出游戏，弃哪块由玩家决定）。不能在没有拿取的情况下单纯丢弃。",
-        "en": "The enforcement mechanism for the <key_space> capacity: when all 3 storage spaces are full and you take another <hex_tile> (whether by die action or free take, from a <depot> or the <black_depot>), you **must first** discard one stored tile into the <game_box> (removed from the game for good; you choose which). You may not discard without taking."
+        "zh": "<key_space>强制上限的执行机制：3 个存储格全满时，若还要拿新<hex_tile>（无论骰子行动还是免费拿取、无论来自<depot>还是<black_depot>），**必须先**把一块已存板块弃入<game_box>（永久移出游戏，弃哪块由玩家决定）。不能在没有拿取的情况下单纯丢弃。弃置按**每次拿取**单独判定：一次拿取至多弃 1 块；同回合用两颗骰子做两次拿取且都满仓时，各弃 1 块、合计最多弃 2 块。",
+        "en": "The enforcement mechanism for the <key_space> capacity: when all 3 storage spaces are full and you take another <hex_tile> (whether by die action or free take, from a <depot> or the <black_depot>), you **must first** discard one stored tile into the <game_box> (removed from the game for good; you choose which). You may not discard without taking. Discarding is judged **per taking**: at most 1 discarded tile per taking; with two dice in one turn, if both takings hit a full <key_space>, discard 1 each — at most 2 total."
       },
       "<ontology::condition>": "<key_space_full>",
       "<ontology::content>": {

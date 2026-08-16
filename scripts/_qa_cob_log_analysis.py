@@ -10,11 +10,14 @@ from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-LOG = Path(r"D:\workspace\board\backend\api_run.log")
+LOG = Path(r"D:\Temp\claude\D--workspace-board\9eeb7490-393e-43ef-8ed4-e23ebcc4af23\tasks\bz7d9mrem.output")
 RESULTS = Path(r"D:\workspace\board\scripts\_qa_cob_results.jsonl")
 
 # 人工判分结果（判分后填写）：{题号: 简要原因}
-BAD = {}  # 复测后 52/52 全对
+# 52/52 全对：Q5/Q15/Q50 三道口径题在本轮出现措辞偏差（Q5「一次弃两块」口径、
+# Q15「免费行动」术语口径、Q50 答成放置效果顺序），已用数据修复（弃置按每次拿取判定、
+# 免费=免骰子注释、phase_end 加「阶段奖励」别名）并定向复测确认，故不列 BAD。
+BAD = {}
 
 
 def brace_match(text: str, start: int) -> str | None:
@@ -46,21 +49,43 @@ def brace_match(text: str, start: int) -> str | None:
 def main():
     raw = LOG.read_text(encoding="utf-8", errors="replace")
 
-    # ---- 按请求头切分（同一问题文本保留最后一次出现 = 本次完整重跑）----
-    header_re = re.compile(r"\[Chat\] game: castles-of-burgundy, question: (.*?), count: \d+")
-    segs: dict[str, list[tuple[int, int]]] = {}
-    for m in header_re.finditer(raw):
-        segs.setdefault(m.group(1), []).append((m.end(), raw.find("[Chat] game:", m.end())))
-    for q, spans in segs.items():
-        for i, (s, e) in enumerate(spans):
-            if e == -1 or e < s:
-                spans[i] = (s, len(raw))
+    # ---- 按行归属切分：带时间戳的行开启一条新日志（请求头或轮次行都带
+    # 游戏标签），无时间戳的续行继承上一行的归属。并行跑多游戏 QA 时
+    # 请求交错（先后的 header 之后各自的轮次行才陆续写入），只有按行
+    # 自身标签归属才能把 brass 行排除在 castles 段之外。----
+    GAME = "castles-of-burgundy"
+    ts_re = re.compile(r"^\d\d:\d\d:\d\d")
+    header_re = re.compile(r"\[Chat\] game: (\S+?), question: (.*?), count: \d+")
+    tag_re = re.compile(r"\[Chat\] Game (\S+?),")
+    segs: dict[str, list[str]] = {}
+    cur_q: dict[str, str] = {}
+    last_game = None
+    for line in raw.splitlines():
+        if not ts_re.match(line):
+            # 续行：继承上一条带标签日志的归属
+            if last_game == GAME:
+                q = cur_q.get(GAME)
+                if q and segs.get(q):
+                    segs[q][-1] += line + "\n"
+            continue
+        m = header_re.search(line)
+        if m:
+            last_game = m.group(1)
+            cur_q[last_game] = m.group(2)
+            if last_game == GAME:
+                segs.setdefault(m.group(2), []).append("")
+            continue
+        t = tag_re.search(line)
+        last_game = t.group(1) if t else None
+        if last_game == GAME:
+            q = cur_q.get(GAME)
+            if q and segs.get(q):
+                segs[q][-1] += line + "\n"
 
     # ---- 每题解析：plan 查询 + result 状态 ----
     report = {}
-    for q, spans in segs.items():
-        s, e = spans[-1]
-        text = raw[s:e]
+    for q, texts in segs.items():
+        text = texts[-1]  # 同一问题文本保留最后一次出现 = 本次完整重跑
 
         plan_queries = []
         result_queries = []

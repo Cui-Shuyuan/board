@@ -832,8 +832,12 @@ public class GameRulesService
                 case "per_unit":
                     fact["vp"] = entry.GetProperty("vp").GetInt32();
                     if (entry.TryGetProperty("unit", out var unit)) fact["unit"] = unit;
+                    var d = entry.TryGetProperty("divisor", out var dv) && dv.ValueKind == JsonValueKind.Number
+                        ? dv.GetInt32()
+                        : 1;
+                    if (d != 1) fact["divisor"] = d;
                     if (n.HasValue)
-                        fact["computed"] = new { count = n.Value, vp = entry.GetProperty("vp").GetInt32() * n.Value };
+                        fact["computed"] = new { count = n.Value, vp = entry.GetProperty("vp").GetInt32() * n.Value / d };
                     break;
                 case "by_material":
                     fact["rows"] = entry.GetProperty("rows");
