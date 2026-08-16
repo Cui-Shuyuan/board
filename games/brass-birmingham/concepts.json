@@ -802,7 +802,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "玩家的路网状态——一个<location>属于某玩家<network>，当且仅当：① 该地点有其<industry_tile>；或 ② 该地点与其某条<canal_link>/<rail_link>相邻。用途：行业卡建造必须在自己路网内；链接必须邻接自己路网地点；对手酒厂的啤酒必须连通到自己路网某地点。区别于「连通」（<ontology::connected>）：连通沿**任何人**的链接追溯路径，路网只看**自己**的板块。",
+        "zh": "玩家的路网状态——一个<location>属于某玩家<network>，当且仅当：① 该地点有其<industry_tile>；或 ② 该地点与其某条<canal_link>/<rail_link>相邻。用途：行业卡建造必须在自己路网内；链接必须邻接自己路网地点（**例外**：板上没有任何板块/链接时可在任意地点建链接——<no_tiles_on_board>）；对手酒厂的啤酒必须连通到自己路网某地点。区别于「连通」（<ontology::connected>）：连通沿**任何人**的链接追溯路径，路网只看**自己**的板块。",
         "en": "A player's network state — a <location> belongs to a player's <network> iff: ① it holds one of their <industry_tile>s; or ② it is adjacent to one of their <canal_link>s/<rail_link>s. Uses: industry-card builds must be inside your network; links must be adjacent to a network location; an opponent's brewery beer must be connected to a location in your network. Distinct from 'connected' (<ontology::connected>): connectivity traces a route along **anyone's** links; the network only counts **your own** tiles."
       }
     },
@@ -1644,7 +1644,13 @@
                 "source": "<bank>",
                 "destination": "贷款玩家",
                 "<ontology::object>": "<money>",
-                "quantity": 30
+                "quantity": {
+                  "zh": "£30",
+                  "en": "£30",
+                  "numeric": [
+                    {"value": 30, "unit": "£"}
+                  ]
+                }
               },
               {
                 "id": "income_back_3_levels",
@@ -1658,6 +1664,13 @@
                 "step": {
                   "zh": "向后退 3 个等级，落到目标等级的最高可用槽位。",
                   "en": "3 levels back, onto the highest available space of the lower level."
+                },
+                "quantity": {
+                  "zh": "3 级",
+                  "en": "3 levels",
+                  "numeric": [
+                    {"value": 3, "unit": "级"}
+                  ]
                 }
               }
             ],
@@ -1709,7 +1722,13 @@
                 },
                 "destination": "<hand>",
                 "<ontology::object>": "<wild_location_card>",
-                "quantity": 1
+                "quantity": {
+                  "zh": "1 张",
+                  "en": "1",
+                  "numeric": [
+                    {"when": {"zh": "万能地点卡、地点卡", "en": "wild location card"}, "value": 1, "unit": "张"}
+                  ]
+                }
               },
               {
                 "id": "take_wild_industry",
@@ -1725,7 +1744,13 @@
                 },
                 "destination": "<hand>",
                 "<ontology::object>": "<wild_industry_card>",
-                "quantity": 1
+                "quantity": {
+                  "zh": "1 张",
+                  "en": "1",
+                  "numeric": [
+                    {"when": {"zh": "万能产业卡、产业卡", "en": "wild industry card"}, "value": 1, "unit": "张"}
+                  ]
+                }
               }
             ],
             "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
@@ -1919,6 +1944,9 @@
       "name": {
         "zh": "场上无板块",
         "en": "No Tiles on Board"
+      },
+      "aliases": {
+        "zh": ["没有任何存在", "无 link 无建筑", "板上没有任何板块", "板上没有板块"]
       },
       "abstract": false,
       "description": {

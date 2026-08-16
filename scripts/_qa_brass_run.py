@@ -15,7 +15,7 @@ from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 API = "http://localhost:5000/api/chat"
-FAQ = Path(r"D:\workspace\board\doc\faq\brass-birmingham\faq.md")
+FAQ = Path(r"D:\workspace\board\doc\brass-birmingham\faq.md")
 OUT = Path(r"D:\workspace\board\scripts\_qa_brass_results.jsonl")
 
 CAT_RE = re.compile(r"^### (\d+)\. (.+)$")
