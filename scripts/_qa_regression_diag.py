@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-LOG = Path(r"D:\Temp\claude\D--workspace-board\9eeb7490-393e-43ef-8ed4-e23ebcc4af23\tasks\bd3j6l8um.output")
+LOG = Path(r"D:\Temp\claude\D--workspace-board\9eeb7490-393e-43ef-8ed4-e23ebcc4af23\tasks\bs4kxr4r5.output")
 RESULTS = Path(r"D:\workspace\board\scripts\_qa_agricola_results.jsonl")
 WANT = {4, 5, 6, 9, 13, 22, 23, 25, 31, 36, 44, 45, 47, 51, 54}
 

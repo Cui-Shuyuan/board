@@ -506,8 +506,8 @@ public class GameRulesService
             return new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Catalog = ListAllConceptIds(game) };
         }
 
-        // 实体解析：精确 id → 精确中文名 → 名称包含候选
-        var matched = ResolvePlanEntity(game, entity, out var candidates);
+        // 实体解析：精确 id → 精确名/别名（直呼工具）→ 名称包含候选
+        var matched = ResolvePlanEntity(game, entity, out var candidates, out var source);
         if (matched.Count == 0)
         {
             // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
@@ -552,7 +552,7 @@ public class GameRulesService
                 {
                     var autoMatched = GetConcepts(game, autoTop.Id).ToList();
                     if (autoMatched.Count > 0)
-                        return BuildOkResult(game, relation, entity, autoMatched);
+                        return BuildOkResult(game, relation, entity, autoMatched, "auto_semantic");
                 }
 
                 return new PlanItemResult
@@ -577,14 +577,14 @@ public class GameRulesService
             };
         }
 
-        return BuildOkResult(game, relation, entity, matched);
+        return BuildOkResult(game, relation, entity, matched, source);
     }
 
     /// <summary>
     /// 把已解析的概念构造成 ok 结果：本体扩展数据 + 流程位置 + 关系专属字段。
     /// 精确解析与「高置信语义候选自动解析」共用此路径（2026-08-16 提取）。
     /// </summary>
-    private PlanItemResult BuildOkResult(string game, string relation, string entity, List<JsonElement> matched)
+    private PlanItemResult BuildOkResult(string game, string relation, string entity, List<JsonElement> matched, string source = "")
     {
         var resolvedId = GetElementId(matched[0]);
         var expanded = GetConceptsWithExpansion(game, string.IsNullOrEmpty(resolvedId) ? entity : resolvedId);
@@ -594,6 +594,7 @@ public class GameRulesService
             Relation = relation,
             Entity = entity,
             Status = "ok",
+            Source = source,
             Matched = expanded.Matched,
             Related = expanded.Related
         };
@@ -651,23 +652,36 @@ public class GameRulesService
             : null;
     }
 
-    private List<JsonElement> ResolvePlanEntity(string game, string entity, out List<ConceptSummary> candidates)
+    private List<JsonElement> ResolvePlanEntity(string game, string entity, out List<ConceptSummary> candidates, out string source)
     {
         candidates = new List<ConceptSummary>();
+        source = "";
+        entity = entity.Trim();
 
         var byId = GetConcepts(game, entity).ToList();
-        if (byId.Count > 0) return byId;
+        if (byId.Count > 0)
+        {
+            source = "exact_id";
+            return byId;
+        }
 
-        // 精确中文名匹配（覆盖 flow 节点）
-        var map = GetNameMap(game);
-        var exact = map.Where(kv => kv.Value == entity).Select(kv => kv.Key).ToList();
-        if (exact.Count > 0)
-            return exact.SelectMany(id => GetConcepts(game, id)).ToList();
+        // 精确匹配：中文名 / 英文名 / 别名（大小写不敏感；覆盖 flow 节点与实例）。
+        // 「名词直呼」工具：客人按名字提到概念时，程序直接确定检索目标，不走向量。
+        var lookup = GetExactLookup(game);
+        if (lookup.TryGetValue(entity, out var hit))
+        {
+            source = hit.Kind;
+            return GetConcepts(game, hit.Id).ToList();
+        }
 
         // 名称包含 → 唯一则直接解析，多个则返回候选供消歧
+        var map = GetNameMap(game);
         var containing = map.Where(kv => kv.Value.Contains(entity, StringComparison.Ordinal)).Take(6).ToList();
         if (containing.Count == 1)
+        {
+            source = "contain_unique";
             return GetConcepts(game, containing[0].Key).ToList();
+        }
 
         candidates = containing
             .Select(kv => new ConceptSummary { Id = kv.Key, Name = kv.Value })
@@ -814,6 +828,110 @@ public class GameRulesService
         {
             foreach (var item in node.EnumerateArray())
                 WalkFlowForNames(item, map);
+        }
+    }
+
+    private readonly Dictionary<string, Dictionary<string, (string Id, string Kind)>> _exactLookups = new();
+
+    /// <summary>
+    /// 「名词直呼」精确查找表：zh 名 / en 名（大小写不敏感）/ aliases → (概念 id, 匹配类别)。
+    /// 与 GetNameMap 同源（概念 + 实例 + flow + 本体），另补充 en 名与 aliases 字段。
+    /// 首次访问时构建并缓存；JSON 修改后需重启 API 才生效（与 LoadGameConcepts 一致）。
+    /// </summary>
+    private Dictionary<string, (string Id, string Kind)> GetExactLookup(string game)
+    {
+        if (_exactLookups.TryGetValue(game, out var cached)) return cached;
+
+        var map = new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase);
+        void Add(string key, string id, string kind)
+        {
+            if (!string.IsNullOrEmpty(key) && !map.ContainsKey(key)) map[key] = (id, kind);
+        }
+
+        // 1) 既有来源的 zh 名（与 GetNameMap 同源，保持原行为）
+        foreach (var type in GetConceptTypes(game))
+            foreach (var summary in ListConcepts(game, type))
+                Add(summary.Name, summary.Id, "exact_name_zh");
+
+        // 2) 游戏概念 + 实例的 en 名与 aliases（只有原始 JSON 才有这两个字段）
+        AddRawNames(LoadGameConcepts(game), ConceptArrayTypes, map);
+        AddRawNames(LoadGameInstances(game), InstanceArrayTypes, map);
+
+        // 3) 本体概念 en 名
+        AddRawNames(LoadOntology(), new[] { "concepts" }, map);
+
+        // 4) flow 节点 en 名
+        var flow = LoadGameFlow(game);
+        if (flow != null) WalkFlowEn(flow.RootElement, map);
+        var ontologyFlow = LoadOntologyFlow();
+        if (ontologyFlow != null) WalkFlowEn(ontologyFlow.RootElement, map);
+
+        _exactLookups[game] = map;
+        return map;
+    }
+
+    private static void AddRawNames(JsonDocument? doc, string[] arrays,
+        Dictionary<string, (string Id, string Kind)> map)
+    {
+        if (doc == null) return;
+        foreach (var type in arrays)
+        {
+            if (!doc.RootElement.TryGetProperty(type, out var arr) || arr.ValueKind != JsonValueKind.Array)
+                continue;
+            foreach (var el in arr.EnumerateArray())
+            {
+                var id = GetElementId(el);
+                if (string.IsNullOrEmpty(id)) continue;
+                if (el.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object
+                    && name.TryGetProperty("en", out var en))
+                {
+                    var enName = en.GetString() ?? "";
+                    if (!string.IsNullOrEmpty(enName) && !map.ContainsKey(enName))
+                        map[enName] = (id, "exact_name_en");
+                }
+                if (el.TryGetProperty("aliases", out var al) && al.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var lang in new[] { "zh", "en" })
+                    {
+                        if (al.TryGetProperty(lang, out var list) && list.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var a in list.EnumerateArray())
+                            {
+                                var s = a.GetString() ?? "";
+                                if (!string.IsNullOrEmpty(s) && !map.ContainsKey(s))
+                                    map[s] = (id, "exact_alias");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void WalkFlowEn(JsonElement node, Dictionary<string, (string Id, string Kind)> map)
+    {
+        if (node.ValueKind == JsonValueKind.Object)
+        {
+            if (node.TryGetProperty("id", out var idProp))
+            {
+                var id = idProp.GetString() ?? "";
+                if (!string.IsNullOrEmpty(id)
+                    && node.TryGetProperty("name", out var name)
+                    && name.ValueKind == JsonValueKind.Object
+                    && name.TryGetProperty("en", out var en))
+                {
+                    var enName = en.GetString() ?? "";
+                    if (!string.IsNullOrEmpty(enName) && !map.ContainsKey(enName))
+                        map[enName] = (id, "exact_name_en");
+                }
+            }
+            foreach (var prop in node.EnumerateObject())
+                WalkFlowEn(prop.Value, map);
+        }
+        else if (node.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in node.EnumerateArray())
+                WalkFlowEn(item, map);
         }
     }
 
@@ -1727,6 +1845,8 @@ public class PlanItemResult
     public string Entity { get; set; } = "";
     /// <summary>ok | unresolved（实体未命中，看 Candidates）| unsupported（relation 未支持，走兜底工具）</summary>
     public string Status { get; set; } = "ok";
+    /// <summary>拍板来源：exact_id / exact_name_zh / exact_name_en / exact_alias / contain_unique / auto_semantic；空 = 程序未拍板（unresolved/no_match 由 LLM 决定）。</summary>
+    public string Source { get; set; } = "";
     public List<JsonElement> Matched { get; set; } = new();
     public List<JsonElement> Related { get; set; } = new();
     /// <summary>flow 节点的祖先链（zh 名）——回答「在哪个阶段/回合发生」的语境。</summary>

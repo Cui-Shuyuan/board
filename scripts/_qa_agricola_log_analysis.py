@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-LOG = Path(r"D:\Temp\claude\D--workspace-board\9eeb7490-393e-43ef-8ed4-e23ebcc4af23\tasks\bd3j6l8um.output")
+LOG = Path(r"D:\Temp\claude\D--workspace-board\9eeb7490-393e-43ef-8ed4-e23ebcc4af23\tasks\bs4kxr4r5.output")
 RESULTS = Path(r"D:\workspace\board\scripts\_qa_agricola_results.jsonl")
 
 # 人工判分结果（判分后填写）：{题号: 简要原因}
@@ -102,6 +102,7 @@ def main():
                         cur_round, rq.get("Relation", ""), rq.get("Entity", ""),
                         rq.get("Status", ""), matched_ids,
                         len(rq.get("Candidates") or []), rq.get("Catalog") is not None,
+                        rq.get("Source", ""),
                     ))
         report[q] = {"plan": plan_queries, "results": result_queries}
 
@@ -152,6 +153,18 @@ def main():
     print("D 凭记忆答错:", stats["D"])
     print("E 有数据仍错:", stats["E"])
     print("未匹配:", stats["?"])
+
+    # ---- 拍板来源统计（程序自己拍板 vs 交给 LLM）----
+    src_stats = {}
+    for q, info in report.items():
+        for r in info["results"]:
+            if r[3] == "ok":
+                src = r[7] or "llm_picked"
+                src_stats[src] = src_stats.get(src, 0) + 1
+    print("\n拍板来源（ok 结果中）:")
+    total = sum(src_stats.values())
+    for k, v in sorted(src_stats.items(), key=lambda x: -x[1]):
+        print(f"  {k}: {v} ({v * 100 // max(total, 1)}%)")
 
 
 if __name__ == "__main__":

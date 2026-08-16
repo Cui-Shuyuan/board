@@ -1106,6 +1106,9 @@
         "zh": "翻新后另加改良（回合卡）",
         "en": "Renovation and Major or Minor Improvement (Round Card)"
       },
+      "aliases": {
+        "zh": ["翻新后还可改良"]
+      },
       "abstract": false,
       "description": {
         "zh": "第 2 阶段的<round_card>（回合 5-7 随机出现，即「House Redevelopment」）。翻开后成为行动格：先执行<renovation>（必须做，木→泥或泥→石），**之后**可选建造 1 张主要改良或打 1 张次要改良。",
@@ -2672,6 +2675,9 @@
         "zh": "打出次要改良",
         "en": "Play Minor Improvement"
       },
+      "aliases": {
+        "zh": ["次要改良行动"]
+      },
       "abstract": false,
       "description": {
         "zh": "从<hand>打出 1 张<minor_improvement_card>，正面朝上放<played_cards_area>，文字立即生效（优先于规则书）。触发途径：<rc_improvement>（或建主要改良）、<space_meeting_place>（与拿起始玩家同时）、<rc_family_growth_minor>（家庭成长后）、<rc_renovation_improvement>（翻新后）。条件：卡上的前置条件已满足（<prerequisite_met>，只要求拥有不要求支付）；右上角建材费用从<personal_supply>支付。旅行卡：执行完指示后传给左边玩家收进手牌。",
@@ -2717,6 +2723,9 @@
       "name": {
         "zh": "建造主要改良",
         "en": "Build Major Improvement"
+      },
+      "aliases": {
+        "zh": ["主要改良行动"]
       },
       "abstract": false,
       "description": {
@@ -3399,6 +3408,9 @@
       "name": {
         "zh": "前置条件满足",
         "en": "Prerequisite Met"
+      },
+      "aliases": {
+        "zh": ["前置条件"]
       },
       "abstract": false,
       "description": {
