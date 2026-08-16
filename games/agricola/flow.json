@@ -627,29 +627,64 @@
                     "en": "Adjudicate Victory"
                   },
                   "description": {
-                    "zh": "按<most_points_wins>判定胜者：总<vp>最高者获胜；平手时个人供应中建材（木头+黏土+芦苇+石头）更多者获胜（<most_building_resources_left>）；仍平手则并列分享名次。",
-                    "en": "Adjudicate the winner by <most_points_wins>: highest total <vp> wins; ties are broken by more building resources (wood + clay + reed + stone) in the personal supply (<most_building_resources_left>); if still tied, the players share the rank."
+                    "zh": "判定胜者（FILTER）：总<vp>最高的玩家获胜。如果总<vp>最高的玩家不止一人，则其中<personal_supply>中建材（<wood>+<clay>+<reed>+<stone>）更多者获胜；若仍不止一人，则并列分享名次。",
+                    "en": "Adjudicate the winner (FILTER): the player with the highest total <vp> wins. If more than one player has the highest total, the one among them with more building resources (<wood>+<clay>+<reed>+<stone>) in their <personal_supply> wins; if still more than one, they share the rank."
                   },
                   "do_after": "resolve_final_scoring",
-                  "<ontology::evaluate>": {
-                    "id": "evaluate_victory",
-                    "name": {
-                      "zh": "评估胜利条件",
-                      "en": "Evaluate Victory Condition"
-                    },
-                    "specifies": "<ontology::evaluate>",
-                    "description": {
-                      "zh": "按顺序应用<most_points_wins>的两条标准筛选胜者。",
-                      "en": "Apply <most_points_wins>'s two criteria in order to select the winner."
-                    },
-                    "result": {
-                      "zh": "胜者玩家（或并列平局）。",
-                      "en": "The winning player (or a tie)."
-                    },
-                    "rules": {
-                      "zh": "按<most_points_wins>判定胜者：先比较总<vp>（<most_points>），并列者比较<personal_supply>中建材数量（<most_building_resources_left>），仍并列则分享名次。",
-                      "en": "Adjudicate by <most_points_wins>: compare total <vp> (<most_points>), then building resources in the <personal_supply> among ties (<most_building_resources_left>), then share the rank if still tied."
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "filter_most_points",
+                          "name": {
+                            "zh": "VP 最高者",
+                            "en": "Most Points"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "总<vp>最高的玩家获胜。",
+                            "en": "The player with the highest total <vp> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家总<vp>最高。",
+                              "en": "The player has the highest total <vp>."
+                            }
+                          },
+                          "result": {
+                            "zh": "总<vp>最高的玩家。",
+                            "en": "The player(s) with the highest total <vp>."
+                          }
+                        },
+                        {
+                          "id": "filter_most_building_resources_left",
+                          "name": {
+                            "zh": "建材更多者",
+                            "en": "More Building Resources Left"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果总<vp>最高的玩家不止一人，则其中<personal_supply>中建材（<wood>+<clay>+<reed>+<stone>）更多者获胜。",
+                            "en": "If more than one player has the highest total, the one among them with more building resources (<wood>+<clay>+<reed>+<stone>) in their <personal_supply> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家<personal_supply>中建材（<wood>+<clay>+<reed>+<stone>）最多。",
+                              "en": "The player has the most building resources (<wood>+<clay>+<reed>+<stone>) in their <personal_supply>."
+                            }
+                          },
+                          "result": {
+                            "zh": "建材最多的玩家。",
+                            "en": "The player(s) with the most building resources."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FILTER>"
                     }
+                  },
+                  "result": {
+                    "zh": "胜者玩家（或并列平局）。",
+                    "en": "The winning player (or a tie)."
                   }
                 }
               ],

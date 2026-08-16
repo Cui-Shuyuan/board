@@ -321,16 +321,63 @@
               },
               "specifies": "<ontology::evaluate>",
               "description": {
-                "zh": "判定胜者：声望最高者获胜；平局时比较发展卡数量，更少者胜。",
-                "en": "Adjudicate the winner: highest prestige wins; ties are broken by fewer development cards."
+                "zh": "判定胜者（FILTER）：声望（<prestige_point>总数）最高的玩家获胜。如果声望最高的玩家不止一人，则其中<ontology::development_area>中<development_card>更少者获胜。",
+                "en": "Adjudicate the winner (FILTER): the player with the highest prestige (total <prestige_point>s) wins. If more than one player has the highest prestige, the one among them with fewer <development_card>s in their <ontology::development_area> wins."
+              },
+              "<ontology::content>": {
+                "<ontology::instant_content>": {
+                  "options": [
+                    {
+                      "id": "filter_highest_prestige",
+                      "name": {
+                        "zh": "声望最高者",
+                        "en": "Highest Prestige"
+                      },
+                      "specifies": "<ontology::evaluate>",
+                      "description": {
+                        "zh": "声望最高的玩家获胜。",
+                        "en": "The player with the highest prestige wins."
+                      },
+                      "<ontology::condition>": {
+                        "description": {
+                          "zh": "玩家<prestige_point>总数最高。",
+                          "en": "The player has the highest total <prestige_point>s."
+                        }
+                      },
+                      "result": {
+                        "zh": "声望最高的玩家。",
+                        "en": "The player(s) with the highest prestige."
+                      }
+                    },
+                    {
+                      "id": "filter_fewest_development_cards",
+                      "name": {
+                        "zh": "发展卡更少者",
+                        "en": "Fewest Development Cards"
+                      },
+                      "specifies": "<ontology::evaluate>",
+                      "description": {
+                        "zh": "如果声望最高的玩家不止一人，则其中<ontology::development_area>中<development_card>更少者获胜。",
+                        "en": "If more than one player has the highest prestige, the one among them with fewer <development_card>s in their <ontology::development_area> wins."
+                      },
+                      "<ontology::condition>": {
+                        "description": {
+                          "zh": "玩家<ontology::development_area>中<development_card>数量最少。",
+                          "en": "The player has the fewest <development_card>s in their <ontology::development_area>."
+                        }
+                      },
+                      "result": {
+                        "zh": "发展卡更少的玩家。",
+                        "en": "The player(s) with the fewest development cards."
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.FILTER>"
+                }
               },
               "result": {
                 "zh": "胜者玩家。",
                 "en": "The winning player."
-              },
-              "rules": {
-                "zh": "按<highest_prestige_wins>判定胜者：先比较<prestige_point>总数，并列者再比较<ontology::development_area>中<development_card>数量。",
-                "en": "Adjudicate by <highest_prestige_wins>: highest total <prestige_point>s, then fewest <development_card>s in <ontology::development_area>."
               }
             }
           }

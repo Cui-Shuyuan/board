@@ -911,16 +911,85 @@
                   },
                   "specifies": "<ontology::evaluate>",
                   "description": {
-                    "zh": "按<most_vp_wins>判定胜者：总分最高者胜；并列者先比收入等级（<highest_income_level>），再比剩余钱（<most_money_remaining>），仍并列则共享胜利。",
-                    "en": "Adjudicate by <most_vp_wins>: the highest total wins; ties compare income level (<highest_income_level>), then remaining money (<most_money_remaining>); a final tie shares victory."
+                    "zh": "判定胜者（FILTER）：总分（<vp_track>上的位置）最高的玩家获胜；如果总分最高的玩家不止一人，则其中收入等级更高者获胜；若仍不止一人，则其中剩余<money>更多者获胜；若仍并列，则共享胜利。",
+                    "en": "Adjudicate the winner (FILTER): the player with the highest total (position on the <vp_track>) wins; if more than one player has the highest total, the one among them with the higher income level wins; if still more than one, the one among them with more remaining <money> wins; a final tie shares victory."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "filter_highest_total",
+                          "name": {
+                            "zh": "总分最高者",
+                            "en": "Highest Total"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "总分最高的玩家获胜。",
+                            "en": "The player with the highest total wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家总分（<vp_track>上的位置）最高。",
+                              "en": "The player's total VPs (position on the <vp_track>) are the highest."
+                            }
+                          },
+                          "result": {
+                            "zh": "总分最高的玩家。",
+                            "en": "The player(s) with the highest total."
+                          }
+                        },
+                        {
+                          "id": "filter_highest_income_level",
+                          "name": {
+                            "zh": "收入等级更高者",
+                            "en": "Highest Income Level"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果总分最高的玩家不止一人，则其中收入等级更高者获胜。",
+                            "en": "If more than one player has the highest total, the one among them with the higher income level wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家<income_level>最高。",
+                              "en": "The player's <income_level> is the highest."
+                            }
+                          },
+                          "result": {
+                            "zh": "收入等级最高的玩家。",
+                            "en": "The player(s) with the highest income level."
+                          }
+                        },
+                        {
+                          "id": "filter_most_money_remaining",
+                          "name": {
+                            "zh": "剩余钱更多者",
+                            "en": "Most Money Remaining"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果收入等级也相同，则其中剩余<money>更多者获胜。",
+                            "en": "If the income levels are also tied, the one among them with more remaining <money> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家剩余<money>最多。",
+                              "en": "The player has the most remaining <money>."
+                            }
+                          },
+                          "result": {
+                            "zh": "剩余钱最多的玩家。",
+                            "en": "The player(s) with the most remaining money."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FILTER>"
+                    }
                   },
                   "result": {
                     "zh": "胜者玩家（们）。",
                     "en": "The winning player(s)."
-                  },
-                  "rules": {
-                    "zh": "按<most_vp_wins>判定：先比总分（<vp_highest>），再比收入等级（<highest_income_level>），再比剩余钱（<most_money_remaining>）。",
-                    "en": "Adjudicate by <most_vp_wins>: highest total (<vp_highest>), then income level (<highest_income_level>), then remaining money (<most_money_remaining>)."
                   },
                   "do_after": "rescore_level2_tiles"
                 }

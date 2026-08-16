@@ -726,29 +726,86 @@
                     "en": "Adjudicate Victory"
                   },
                   "description": {
-                    "zh": "按<most_vp_wins>判定胜者：总<vp>最高者获胜；平局时先比庄园空位数（少者胜），再比石桥上位置（更靠后者胜）。",
-                    "en": "Adjudicate the winner by <most_vp_wins>: highest total <vp> wins; ties are broken first by fewest empty duchy spaces, then by furthest back on the bridge."
+                    "zh": "判定胜者（FILTER）：总<vp>（<score_track>位置 + <vp_tile>）最高的玩家获胜；如果总<vp>最高的玩家不止一人，则其中<duchy>空位数更少者获胜；若仍不止一人，则其中<bridge>上位置更靠后者获胜。",
+                    "en": "Adjudicate the winner (FILTER): the player with the highest total <vp> (position on the <score_track> plus the <vp_tile>) wins; if more than one player has the highest total, the one among them with fewer empty <duchy> spaces wins; if still more than one, the one among them furthest back on the <bridge> wins."
                   },
                   "do_after": "resolve_final_scoring",
-                  "<ontology::evaluate>": {
-                    "id": "evaluate_victory",
-                    "name": {
-                      "zh": "评估胜利条件",
-                      "en": "Evaluate Victory Condition"
-                    },
-                    "specifies": "<ontology::evaluate>",
-                    "description": {
-                      "zh": "按顺序应用<most_vp_wins>的三条标准筛选胜者。",
-                      "en": "Apply <most_vp_wins>'s three criteria in order to select the winner."
-                    },
-                    "result": {
-                      "zh": "胜者玩家（或并列平局）。",
-                      "en": "The winning player (or a tie)."
-                    },
-                    "rules": {
-                      "zh": "按<most_vp_wins>判定胜者：先比较总<vp>（<score_track>位置 + <vp_tile>），并列者比较<duchy>空位数（<fewest_empty_duchy_spaces>），仍并列者比较<bridge>位置（<farthest_behind_on_bridge>）。",
-                      "en": "Adjudicate by <most_vp_wins>: compare total <vp> (position on the <score_track> plus the <vp_tile>), then <fewest_empty_duchy_spaces> among ties, then <farthest_behind_on_bridge>."
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "filter_most_vp",
+                          "name": {
+                            "zh": "VP 最高者",
+                            "en": "Most VP"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "总<vp>最高的玩家获胜。",
+                            "en": "The player with the highest total <vp> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家总<vp>（<score_track>位置 + <vp_tile>）最高。",
+                              "en": "The player's total <vp> (position on the <score_track> plus the <vp_tile>) is the highest."
+                            }
+                          },
+                          "result": {
+                            "zh": "总<vp>最高的玩家。",
+                            "en": "The player(s) with the highest total <vp>."
+                          }
+                        },
+                        {
+                          "id": "filter_fewest_empty_duchy_spaces",
+                          "name": {
+                            "zh": "庄园空位更少者",
+                            "en": "Fewest Empty Duchy Spaces"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果总<vp>最高的玩家不止一人，则其中<duchy>空位数更少者获胜。",
+                            "en": "If more than one player has the highest total, the one among them with fewer empty <duchy> spaces wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家<duchy>中未铺板块的空格数最少。",
+                              "en": "The player has the fewest unused hex spaces in their <duchy>."
+                            }
+                          },
+                          "result": {
+                            "zh": "庄园空位最少的玩家。",
+                            "en": "The player(s) with the fewest empty duchy spaces."
+                          }
+                        },
+                        {
+                          "id": "filter_farthest_behind_on_bridge",
+                          "name": {
+                            "zh": "石桥更靠后者",
+                            "en": "Farthest Behind on Bridge"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果庄园空位数也相同，则其中<bridge>上位置更靠后者获胜。",
+                            "en": "If the empty duchy spaces are also tied, the one among them furthest back on the <bridge> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家<playing_piece>在<bridge>上位置最靠后（离市中心最远）。",
+                              "en": "The player's <playing_piece> is furthest back on the <bridge> (farthest from the city center)."
+                            }
+                          },
+                          "result": {
+                            "zh": "桥上位置最靠后的玩家。",
+                            "en": "The player(s) furthest back on the bridge."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FILTER>"
                     }
+                  },
+                  "result": {
+                    "zh": "胜者玩家（或并列平局）。",
+                    "en": "The winning player (or a tie)."
                   }
                 }
               ],

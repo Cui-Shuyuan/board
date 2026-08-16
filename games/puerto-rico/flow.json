@@ -537,17 +537,64 @@
                   },
                   "specifies": "<ontology::evaluate>",
                   "description": {
-                    "zh": "按<most_vp_wins>判定胜者：总分 = VP 筹码 + 建筑 VP + 大建筑加成；总分最高者胜，并列时钱币与货物之和（每枚钱币或每桶货物计 1）多者胜。",
-                    "en": "Adjudicate by <most_vp_wins>: total = VP chips + building VP + large-building bonuses; the highest total wins; ties go to the most coins and goods combined (each coin or barrel counts 1)."
+                    "zh": "判定胜者（FILTER）：总分最高的玩家获胜——总分 = VP 筹码（含纸笔记录）+ 建筑 VP（无论是否被占据）+ 被占据大建筑的加成 VP。如果总分最高的玩家不止一人，则其中钱币与货物之和更多者获胜（每枚钱币或每桶货物计 1）。",
+                    "en": "Adjudicate the winner (FILTER): the player with the highest total wins — total = VP chips (plus paper) + building VP (occupied or not) + bonus VP of occupied large buildings. If more than one player has the highest total, the one among them with the most coins and goods combined wins (each coin or barrel counts 1)."
                   },
                   "do_after": "tally_large_building_bonuses",
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "filter_highest_total",
+                          "name": {
+                            "zh": "总分最高者",
+                            "en": "Highest Total"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "总分最高的玩家获胜。",
+                            "en": "The player with the highest total wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家总分（VP 筹码 + 建筑 VP + 大建筑加成）最高。",
+                              "en": "The player has the highest total (VP chips + building VP + large-building bonuses)."
+                            }
+                          },
+                          "result": {
+                            "zh": "总分最高的玩家。",
+                            "en": "The player(s) with the highest total."
+                          }
+                        },
+                        {
+                          "id": "filter_most_coins_and_goods",
+                          "name": {
+                            "zh": "钱币与货物更多者",
+                            "en": "Most Coins and Goods"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果总分最高的玩家不止一人，则其中钱币与货物之和更多者获胜（每枚钱币或每桶货物计 1）。",
+                            "en": "If more than one player has the highest total, the one among them with the most coins and goods combined wins (each coin or barrel counts 1)."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家钱币数与货物桶数之和最多（每枚钱币或每桶货物各计 1）。",
+                              "en": "The player's coins plus goods barrels total the most (each coin or barrel counts 1)."
+                            }
+                          },
+                          "result": {
+                            "zh": "钱币与货物之和最多的玩家。",
+                            "en": "The player(s) with the most coins and goods combined."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FILTER>"
+                    }
+                  },
                   "result": {
                     "zh": "胜者玩家。",
                     "en": "The winning player."
-                  },
-                  "rules": {
-                    "zh": "按<most_vp_wins>判定：先比总分（<vp_highest>），并列者再比钱币+货物（<most_coins_and_goods>）。",
-                    "en": "Adjudicate by <most_vp_wins>: highest total (<vp_highest>), then most coins and goods among ties (<most_coins_and_goods>)."
                   }
                 }
               ],
