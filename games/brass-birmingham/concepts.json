@@ -1922,7 +1922,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "该玩家在版图上没有任何<industry_tile>或<canal_link>/<rail_link>（开局或运河时代结束后可能出现）。此时：行业卡可在任意地点建；链接可建在任意未开发线路。",
+        "zh": "该玩家在版图上没有任何<industry_tile>或<canal_link>/<rail_link>——即没有任何「存在」（无 link 无建筑，开局或运河时代结束后可能出现）。此时：行业卡可在任意地点建；链接可建在任意未开发线路。",
         "en": "The player has no <industry_tile>s or <canal_link>s/<rail_link>s on the board (possible at game start or right after the Canal Era). Then: industry cards build anywhere; links may go on any undeveloped line."
       }
     },
@@ -2092,7 +2092,7 @@
       },
       "abstract": false,
       "description": {
-        "zh": "带灯泡图标的<pottery>板块**不能**被<develop>移除（唯一例外）——只能通过建造消耗掉，或通过 Gloucester 商人加成（免费开发）移除。若玩家板某行业最低级只剩灯泡陶器，该行业无法再开发。",
+        "zh": "带灯泡图标的<pottery>板块——即 1 级陶器（陶器最低级）——**不能**被<develop>移除（唯一例外）——只能通过建造消耗掉，或通过 Gloucester 商人加成（免费开发）移除。若玩家板某行业最低级只剩灯泡陶器，该行业无法再开发。",
         "en": "A lightbulb-icon <pottery> tile **cannot** be removed by <develop> (the only exception) — it leaves the mat only by being built, or via the Gloucester merchant bonus (free develop). If an industry's lowest remaining tiles are all lightbulb potteries, that industry can no longer be developed."
       }
     },
