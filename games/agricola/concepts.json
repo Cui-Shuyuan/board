@@ -248,6 +248,9 @@
         "zh": "动物",
         "en": "Animal"
       },
+      "aliases": {
+        "zh": ["宠物"]
+      },
       "abstract": true,
       "description": {
         "zh": "三种动物的统称：<sheep>、<wild_boar>、<cattle>。与作物/建材不同，动物**必须安置在农场板上**（<pasture>或马厩），否则走失；房子里的宠物恰好 1 只（任意种类）。每回合可从<general_supply>把动物移到农场任意位置（随时移动）；随时可丢弃动物（或任何货物）到<general_supply>。繁殖：每个收获回合，每种动物若有至少 2 只且能安置新生动物，则多得 1 只（<harvest_breeding>，每收获每种类至多 1 只新生）。用烹饪改良可把动物直接换成食物（<cook_goods>，取动物时可直接换、不必先安置）。终局计分按数量：羊 0:-1, 1-3:+1, 4-5:+2, 6-7:+3, 8+:+4；野猪 0:-1, 1-2:+1, 3-4:+2, 5-6:+3, 7+:+4；牛 0:-1, 1:+1, 2-3:+2, 4-5:+3, 6+:+4。卡上的动物除非另有说明也算。",
@@ -522,6 +525,9 @@
       "name": {
         "zh": "职业卡",
         "en": "Occupation Card"
+      },
+      "aliases": {
+        "zh": ["职业"]
       },
       "abstract": false,
       "description": {
@@ -1514,6 +1520,9 @@
         "zh": "行动格",
         "en": "Action Space"
       },
+      "aliases": {
+        "zh": ["行动空间", "阻挡"]
+      },
       "abstract": true,
       "description": {
         "zh": "<game_board>上的行动格（含回合卡翻开后形成的行动格）。工作阶段放 1 个<family_member>上去并**立即**执行该格提供的行动（<place_family_member>）。每个行动格**每回合只能被 1 个家庭成员使用**——被占后本回合不可再用；不能只为阻挡而放置（至少须执行格上的一种可用行动）。分两类：<permanent_action_space>（每回合提供相同行动）与<accumulation_space>（每回合累积货物）。",
@@ -2441,6 +2450,9 @@
         "zh": "播种",
         "en": "Sow"
       },
+      "aliases": {
+        "zh": ["播种谷物", "谷物播种"]
+      },
       "abstract": false,
       "description": {
         "zh": "<rc_sow_bake>与<rc_plough_sow>提供的行动。在任意多块**空**<field_tile>上播种（需<has_crop>作种子；可混合谷物与蔬菜，也可留空田闲置）：每块田放 1 个自己供应的作物 + 供应堆的额外标记——谷物田共 3 个<grain>（自己 1 + 供应 2）、蔬菜田共 2 个<vegetable>（自己 1 + 供应 1）。作物留在田上直到收获；田上的作物收获前不可用，但终局计分算数。",
@@ -2676,7 +2688,7 @@
         "en": "Play Minor Improvement"
       },
       "aliases": {
-        "zh": ["次要改良行动"]
+        "zh": ["次要改良行动", "次要改良"]
       },
       "abstract": false,
       "description": {
@@ -2797,6 +2809,9 @@
         "zh": "烹饪",
         "en": "Cook Goods"
       },
+      "aliases": {
+        "zh": ["屠宰", "随时转换效果"]
+      },
       "abstract": false,
       "description": {
         "zh": "**随时**可做的转换行动（不占行动、不限次数）：有烹饪改良（<fireplace>/<cooking_hearth>或相应职业/次要改良）时，把动物/蔬菜换成<food>。转换率：<fireplace>蔬菜 2、羊 2、野猪 2、牛 3；<cooking_hearth>蔬菜 3、羊 2、野猪 3、牛 4。从累积格取动物时可**立即**烹饪、不必先安置。**繁殖阶段禁止**把父母或新生动物烹饪。",
@@ -2849,6 +2864,9 @@
       "name": {
         "zh": "生吃作物",
         "en": "Eat Raw Crops"
+      },
+      "aliases": {
+        "zh": ["随时转换效果"]
       },
       "abstract": false,
       "description": {
@@ -3239,6 +3257,9 @@
       "name": {
         "zh": "收获回合",
         "en": "Harvest Round"
+      },
+      "aliases": {
+        "zh": ["收获"]
       },
       "abstract": false,
       "description": {

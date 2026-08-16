@@ -410,10 +410,12 @@ public class GameRulesService
 
     /// <summary>
     /// 执行 LLM 提交的查询计划。各 relation 均为确定性数据导航：
-    /// explain/condition/ordering/boundary 按实体解析（精确 id → 精确中文名 → 名称包含候选）；
-    /// identify 按外观/位置描述搜索候选（复用退役的搜索设施）；flow/list 不需要实体。
+    /// explain/condition/ordering/boundary 按实体解析（精确 id → 精确名/别名/基名 →
+    /// 问题原文直呼 → 名称包含候选）；identify 按外观/位置描述搜索候选；
+    /// flow/list 不需要实体。question 为客人问题原文——实体解析失败时程序直接扫原文
+    /// 找概念名（「广播」第二站），不依赖 LLM 的转述质量。
     /// </summary>
-    public async Task<PlanExecutionResult> ExecutePlanAsync(string game, JsonElement plan)
+    public async Task<PlanExecutionResult> ExecutePlanAsync(string game, JsonElement plan, string question = "")
     {
         var result = new PlanExecutionResult();
         if (!plan.TryGetProperty("queries", out var queries) || queries.ValueKind != JsonValueKind.Array)
@@ -427,7 +429,7 @@ public class GameRulesService
             if (q.ValueKind != JsonValueKind.Object) continue;
             var relation = q.TryGetProperty("relation", out var rp) ? rp.GetString() ?? "" : "";
             var entity = q.TryGetProperty("entity", out var ep) ? ep.GetString() ?? "" : "";
-            result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity));
+            result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity, question));
         }
 
         if (result.Results.Any(r => r.Status is "unresolved" or "unsupported" or "no_match"))
@@ -460,7 +462,7 @@ public class GameRulesService
     /// 噪声与信号的实测分界，宁漏勿错。</summary>
     private const float SemanticCandidateThreshold = 0.50f;
 
-    private async Task<PlanItemResult> ExecutePlanQueryAsync(string game, string relation, string entity)
+    private async Task<PlanItemResult> ExecutePlanQueryAsync(string game, string relation, string entity, string question = "")
     {
         if (!PlanRelations.Contains(relation))
         {
@@ -473,9 +475,14 @@ public class GameRulesService
             };
         }
 
-        // identify：客人用外观/位置描述某物时，按描述搜索候选概念（带定义）
+        // identify：客人用外观/位置描述某物时，按描述搜索候选概念（带定义）。
+        // 问题原文直接命名了已知概念时（含别名/基名），直接返回该概念——比候选列表更确定
         if (relation == "identify")
         {
+            var qhits = ResolveFromQuestion(game, question, out var qsource);
+            if (qhits.Count > 0)
+                return BuildOkResult(game, relation, entity, qhits, qsource);
+
             var search = await SearchConceptsAsync(game, entity);
             return new PlanItemResult
             {
@@ -506,10 +513,16 @@ public class GameRulesService
             return new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Catalog = ListAllConceptIds(game) };
         }
 
-        // 实体解析：精确 id → 精确名/别名（直呼工具）→ 名称包含候选
+        // 实体解析：精确 id → 精确名/别名/基名（直呼工具）→ 名称包含候选
         var matched = ResolvePlanEntity(game, entity, out var candidates, out var source);
         if (matched.Count == 0)
         {
+            // 问题级直呼（广播第二站）：实体转述失败时扫客人问题原文。
+            // 命中即拍板（source=question_hit），返回的概念就是程序给出的全部事实——
+            // related 轻量化不展开本体概念，减少 LLM 接收的噪声
+            var qhits = ResolveFromQuestion(game, question, out var qsource);
+            if (qhits.Count > 0)
+                return BuildOkResult(game, relation, entity, qhits, qsource);
             // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
             // 名称包含的确定性候选无条件保留；语义候选须过分数阈值。
             var merged = new List<ConceptSummary>(candidates);
@@ -581,13 +594,14 @@ public class GameRulesService
     }
 
     /// <summary>
-    /// 把已解析的概念构造成 ok 结果：本体扩展数据 + 流程位置 + 关系专属字段。
-    /// 精确解析与「高置信语义候选自动解析」共用此路径（2026-08-16 提取）。
+    /// 把已解析的概念构造成 ok 结果：引用扩展数据 + 流程位置 + 关系专属字段。
+    /// 精确解析、问题级直呼与「高置信语义候选自动解析」共用此路径（2026-08-16 提取）。
+    /// 多命中（基名/别名/问题直呼）时 Matched 返回全部命中概念，Related 为各概念
+    /// 直接引用的并集——多概念共享的事实（如播种与谷物）一次性给全。
     /// </summary>
     private PlanItemResult BuildOkResult(string game, string relation, string entity, List<JsonElement> matched, string source = "")
     {
         var resolvedId = GetElementId(matched[0]);
-        var expanded = GetConceptsWithExpansion(game, string.IsNullOrEmpty(resolvedId) ? entity : resolvedId);
 
         var item = new PlanItemResult
         {
@@ -595,8 +609,8 @@ public class GameRulesService
             Entity = entity,
             Status = "ok",
             Source = source,
-            Matched = expanded.Matched,
-            Related = expanded.Related
+            Matched = matched,
+            Related = ExpandRelated(game, matched, light: source == "question_hit")
         };
 
         var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
@@ -607,9 +621,9 @@ public class GameRulesService
             item.FlowContext = pos.Ancestors;
 
         // condition 关系：额外提取「能不能」答案所需的三要素——条件谓词、费用、目标约束
-        if (relation == "condition" && expanded.Matched.Count > 0)
+        if (relation == "condition" && matched.Count > 0)
         {
-            var el = expanded.Matched[0];
+            var el = matched[0];
             item.Condition = ExtractTopField(el, "<ontology::condition>");
             item.Cost = ExtractTopField(el, "<ontology::cost>");
             item.Target = ExtractTopField(el, "target");
@@ -624,9 +638,9 @@ public class GameRulesService
         }
 
         // boundary 关系：溢出/下溢/圈事件等边界字段 + 缺省语义说明
-        if (relation == "boundary" && expanded.Matched.Count > 0)
+        if (relation == "boundary" && matched.Count > 0)
         {
-            var el = expanded.Matched[0];
+            var el = matched[0];
             var boundary = new Dictionary<string, JsonElement>();
             foreach (var key in new[]
                      {
@@ -652,6 +666,48 @@ public class GameRulesService
             : null;
     }
 
+    /// <summary>
+    /// ok 结果的引用扩展：所有命中概念直接引用的概念的并集（去重、按首现顺序、
+    /// 上限 MaxRelatedConcepts）。light=true（问题级直呼）时跳过本体引用
+    /// （&lt;ontology::x&gt;）——程序已拍板目标概念，只给游戏概念引用，减少 LLM 噪声。
+    /// </summary>
+    private List<JsonElement> ExpandRelated(string game, List<JsonElement> matched, bool light)
+    {
+        var related = new List<JsonElement>();
+        var excluded = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var el in matched)
+        {
+            var mid = GetElementId(el);
+            if (!string.IsNullOrEmpty(mid)) excluded.Add(mid);
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var appendedIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var el in matched)
+        {
+            var text = JsonSerializer.Serialize(el, RelaxedJsonOptions);
+            foreach (Match m in ConceptRefRegex.Matches(text))
+            {
+                var raw = m.Groups[1].Value;
+                if (!seen.Add(raw)) continue;
+                if (light && raw.Contains("::")) continue; // 本体概念在问题级直呼时不展开
+
+                var local = raw.Contains("::") ? raw[(raw.IndexOf("::", StringComparison.Ordinal) + 2)..] : raw;
+                if (excluded.Contains(local)) continue;
+
+                foreach (var found in GetConcepts(game, raw))
+                {
+                    var foundId = GetElementId(found);
+                    if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))
+                        continue;
+                    if (related.Count >= MaxRelatedConcepts) return related;
+                    related.Add(found);
+                }
+            }
+        }
+        return related;
+    }
+
     private List<JsonElement> ResolvePlanEntity(string game, string entity, out List<ConceptSummary> candidates, out string source)
     {
         candidates = new List<ConceptSummary>();
@@ -665,13 +721,19 @@ public class GameRulesService
             return byId;
         }
 
-        // 精确匹配：中文名 / 英文名 / 别名（大小写不敏感；覆盖 flow 节点与实例）。
+        // 精确匹配：中文名 / 英文名 / 别名 / 基名（大小写不敏感；覆盖 flow 节点与实例）。
         // 「名词直呼」工具：客人按名字提到概念时，程序直接确定检索目标，不走向量。
+        // 一个键可映射多个概念（基名「家庭成长」→ 需/无需房间两个行动），多命中全部返回。
         var lookup = GetExactLookup(game);
-        if (lookup.TryGetValue(entity, out var hit))
+        if (lookup.TryGetValue(entity, out var hits))
         {
-            source = hit.Kind;
-            return GetConcepts(game, hit.Id).ToList();
+            var exact = new List<JsonElement>();
+            foreach (var h in hits) exact.AddRange(GetConcepts(game, h.Id));
+            if (exact.Count > 0)
+            {
+                source = hits[0].Kind;
+                return exact;
+            }
         }
 
         // 名称包含 → 唯一则直接解析，多个则返回候选供消歧
@@ -687,6 +749,59 @@ public class GameRulesService
             .Select(kv => new ConceptSummary { Id = kv.Key, Name = kv.Value })
             .ToList();
         return new List<JsonElement>();
+    }
+
+    /// <summary>
+    /// 「问题级直呼」（广播第二站）：实体解析失败时，直接扫客人问题原文——命中的
+    /// 概念名/别名/基名即拍板，不再依赖 LLM 的转述质量（2026-08-16 QA：C 类 10 题
+    /// 的查询几乎全是转述失败，如「谷物播种」「开局食物」「农场空格」）。
+    /// 最长名字优先 + 区间不重叠；命中概念去重后最多返回 MaxQuestionHits 个。
+    /// </summary>
+    private const int MaxQuestionHits = 4;
+
+    private List<JsonElement> ResolveFromQuestion(string game, string question, out string source)
+    {
+        source = "";
+        if (string.IsNullOrWhiteSpace(question)) return new List<JsonElement>();
+
+        var lookup = GetExactLookup(game);
+
+        // 收集所有命中区间（key, 起点, 长度）
+        var spans = new List<(string Key, int Start, int Len)>();
+        foreach (var (key, _) in lookup)
+        {
+            var idx = question.IndexOf(key, StringComparison.OrdinalIgnoreCase);
+            while (idx >= 0)
+            {
+                spans.Add((key, idx, key.Length));
+                idx = question.IndexOf(key, idx + 1, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+        if (spans.Count == 0) return new List<JsonElement>();
+
+        spans.Sort((a, b) => a.Len != b.Len ? b.Len.CompareTo(a.Len) : a.Start.CompareTo(b.Start));
+
+        var takenUntil = -1;
+        var result = new List<JsonElement>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (key, start, len) in spans)
+        {
+            if (start < takenUntil) continue; // 被更长的名字覆盖（如「家庭成员」盖住「成员」）
+            takenUntil = start + len;
+            foreach (var h in lookup[key])
+            {
+                if (!seen.Add(h.Id)) continue;
+                result.AddRange(GetConcepts(game, h.Id));
+                if (result.Count >= MaxQuestionHits)
+                {
+                    source = "question_hit";
+                    return result;
+                }
+            }
+        }
+
+        if (result.Count > 0) source = "question_hit";
+        return result;
     }
 
     /// <summary>flow 节点 id → 流程位置（祖先链 + 同级选项顺序 + 位置 + 最近 loop）。</summary>
@@ -831,21 +946,29 @@ public class GameRulesService
         }
     }
 
-    private readonly Dictionary<string, Dictionary<string, (string Id, string Kind)>> _exactLookups = new();
+    private readonly Dictionary<string, Dictionary<string, List<(string Id, string Kind)>>> _exactLookups = new();
 
     /// <summary>
-    /// 「名词直呼」精确查找表：zh 名 / en 名（大小写不敏感）/ aliases → (概念 id, 匹配类别)。
-    /// 与 GetNameMap 同源（概念 + 实例 + flow + 本体），另补充 en 名与 aliases 字段。
-    /// 首次访问时构建并缓存；JSON 修改后需重启 API 才生效（与 LoadGameConcepts 一致）。
+    /// 「名词直呼」精确查找表：zh 名 / en 名（大小写不敏感）/ aliases / 基名（括号注解剥除）
+    /// → 概念 id 列表 + 匹配类别。一个键可以映射多个概念（如基名「家庭成长」→ 需空房间与
+    /// 无需房间两个行动；别名「随时转换效果」→ 烹饪与生吃），多命中全部返回由 LLM 读数据取舍。
+    /// 与 GetNameMap 同源（概念 + 实例 + flow + 本体）。首次访问时构建并缓存；
+    /// JSON 修改后需重启 API 才生效（与 LoadGameConcepts 一致）。
     /// </summary>
-    private Dictionary<string, (string Id, string Kind)> GetExactLookup(string game)
+    private Dictionary<string, List<(string Id, string Kind)>> GetExactLookup(string game)
     {
         if (_exactLookups.TryGetValue(game, out var cached)) return cached;
 
-        var map = new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase);
+        var map = new Dictionary<string, List<(string, string)>>(StringComparer.OrdinalIgnoreCase);
         void Add(string key, string id, string kind)
         {
-            if (!string.IsNullOrEmpty(key) && !map.ContainsKey(key)) map[key] = (id, kind);
+            if (string.IsNullOrEmpty(key)) return;
+            if (!map.TryGetValue(key, out var list))
+            {
+                list = new List<(string, string)>();
+                map[key] = list;
+            }
+            if (!list.Any(e => e.Item1 == id)) list.Add((id, kind));
         }
 
         // 1) 既有来源的 zh 名（与 GetNameMap 同源，保持原行为）
@@ -853,25 +976,50 @@ public class GameRulesService
             foreach (var summary in ListConcepts(game, type))
                 Add(summary.Name, summary.Id, "exact_name_zh");
 
-        // 2) 游戏概念 + 实例的 en 名与 aliases（只有原始 JSON 才有这两个字段）
-        AddRawNames(LoadGameConcepts(game), ConceptArrayTypes, map);
-        AddRawNames(LoadGameInstances(game), InstanceArrayTypes, map);
+        // 2) 游戏概念 + 实例的 zh/en 名与 aliases（只有原始 JSON 才有这些字段）
+        AddRawNames(LoadGameConcepts(game), ConceptArrayTypes, Add);
+        AddRawNames(LoadGameInstances(game), InstanceArrayTypes, Add);
 
-        // 3) 本体概念 en 名
-        AddRawNames(LoadOntology(), new[] { "concepts" }, map);
+        // 3) 本体概念 en 名（zh 名太通用——行动/转移/对象——不进直呼表，避免噪声）
+        AddRawNames(LoadOntology(), new[] { "concepts" }, Add);
 
-        // 4) flow 节点 en 名
+        // 4) flow 节点 zh/en 名
         var flow = LoadGameFlow(game);
-        if (flow != null) WalkFlowEn(flow.RootElement, map);
+        if (flow != null) WalkFlowNames(flow.RootElement, Add);
         var ontologyFlow = LoadOntologyFlow();
-        if (ontologyFlow != null) WalkFlowEn(ontologyFlow.RootElement, map);
+        if (ontologyFlow != null) WalkFlowNames(ontologyFlow.RootElement, Add);
+
+        // 5) 基名：把 zh 名里的括号注解剥掉（「家庭成长（需空房间）」→「家庭成长」），
+        //    让客人/LLM 只说名字主体也能直呼命中——2026-08-16 QA 显示 C 类题几乎全是
+        //    转述与全名不一致导致的实体解析失败
+        var bases = new List<(string Key, string Id)>();
+        foreach (var (key, list) in map)
+            foreach (var (id, kind) in list)
+                if (kind == "exact_name_zh")
+                {
+                    var b = StripAnnotations(key);
+                    if (b != null && !string.Equals(b, key, StringComparison.Ordinal))
+                        bases.Add((b, id));
+                }
+        foreach (var (key, id) in bases)
+            Add(key, id, "exact_base");
 
         _exactLookups[game] = map;
         return map;
     }
 
+    /// <summary>剥除中文名里的括号注解（全角/半角均可），剥后不足 2 字返回 null。</summary>
+    private static string? StripAnnotations(string name)
+    {
+        var s = ParentheticalRegex.Replace(name, "");
+        s = s.Trim();
+        return s.Length >= 2 ? s : null;
+    }
+
+    private static readonly Regex ParentheticalRegex = new(@"[（(][^（）()]*[）)]");
+
     private static void AddRawNames(JsonDocument? doc, string[] arrays,
-        Dictionary<string, (string Id, string Kind)> map)
+        Action<string, string, string> add)
     {
         if (doc == null) return;
         foreach (var type in arrays)
@@ -882,12 +1030,18 @@ public class GameRulesService
             {
                 var id = GetElementId(el);
                 if (string.IsNullOrEmpty(id)) continue;
-                if (el.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object
-                    && name.TryGetProperty("en", out var en))
+                if (el.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
                 {
-                    var enName = en.GetString() ?? "";
-                    if (!string.IsNullOrEmpty(enName) && !map.ContainsKey(enName))
-                        map[enName] = (id, "exact_name_en");
+                    if (name.TryGetProperty("zh", out var zh))
+                    {
+                        var zhName = zh.GetString() ?? "";
+                        if (!string.IsNullOrEmpty(zhName)) add(zhName, id, "exact_name_zh");
+                    }
+                    if (name.TryGetProperty("en", out var en))
+                    {
+                        var enName = en.GetString() ?? "";
+                        if (!string.IsNullOrEmpty(enName)) add(enName, id, "exact_name_en");
+                    }
                 }
                 if (el.TryGetProperty("aliases", out var al) && al.ValueKind == JsonValueKind.Object)
                 {
@@ -898,8 +1052,7 @@ public class GameRulesService
                             foreach (var a in list.EnumerateArray())
                             {
                                 var s = a.GetString() ?? "";
-                                if (!string.IsNullOrEmpty(s) && !map.ContainsKey(s))
-                                    map[s] = (id, "exact_alias");
+                                if (!string.IsNullOrEmpty(s)) add(s, id, "exact_alias");
                             }
                         }
                     }
@@ -908,7 +1061,7 @@ public class GameRulesService
         }
     }
 
-    private static void WalkFlowEn(JsonElement node, Dictionary<string, (string Id, string Kind)> map)
+    private static void WalkFlowNames(JsonElement node, Action<string, string, string> add)
     {
         if (node.ValueKind == JsonValueKind.Object)
         {
@@ -917,21 +1070,27 @@ public class GameRulesService
                 var id = idProp.GetString() ?? "";
                 if (!string.IsNullOrEmpty(id)
                     && node.TryGetProperty("name", out var name)
-                    && name.ValueKind == JsonValueKind.Object
-                    && name.TryGetProperty("en", out var en))
+                    && name.ValueKind == JsonValueKind.Object)
                 {
-                    var enName = en.GetString() ?? "";
-                    if (!string.IsNullOrEmpty(enName) && !map.ContainsKey(enName))
-                        map[enName] = (id, "exact_name_en");
+                    if (name.TryGetProperty("zh", out var zh))
+                    {
+                        var zhName = zh.GetString() ?? "";
+                        if (!string.IsNullOrEmpty(zhName)) add(zhName, id, "exact_name_zh");
+                    }
+                    if (name.TryGetProperty("en", out var en))
+                    {
+                        var enName = en.GetString() ?? "";
+                        if (!string.IsNullOrEmpty(enName)) add(enName, id, "exact_name_en");
+                    }
                 }
             }
             foreach (var prop in node.EnumerateObject())
-                WalkFlowEn(prop.Value, map);
+                WalkFlowNames(prop.Value, add);
         }
         else if (node.ValueKind == JsonValueKind.Array)
         {
             foreach (var item in node.EnumerateArray())
-                WalkFlowEn(item, map);
+                WalkFlowNames(item, add);
         }
     }
 

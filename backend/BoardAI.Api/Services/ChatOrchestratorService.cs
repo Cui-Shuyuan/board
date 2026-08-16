@@ -63,9 +63,10 @@ public class ChatOrchestratorService
         messages.AddRange(history);
 
         var latestUser = history.LastOrDefault(m => m.Role == "user");
+        var question = latestUser?.Content ?? "";
         _logger.LogInformation("[Chat] game: {GameId}, question: {Question}, count: {Count}",
             gameId,
-            latestUser?.Content ?? "(empty)",
+            question == "" ? "(empty)" : question,
             history.Count);
 
         var tools = BuildTools(gameId);
@@ -103,7 +104,7 @@ public class ChatOrchestratorService
             // Execute each tool call and add results
             foreach (var toolCall in assistantMessage.ToolCalls)
             {
-                var result = await ExecuteToolAsync(toolCall, gameId, cancellationToken);
+                var result = await ExecuteToolAsync(toolCall, gameId, question, cancellationToken);
                 _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}", gameId, toolCall.Function.Name, FormatForLog(result));
                 if (toolCall.Function.Name == "execute_plan")
                     UpdateEvidence(result, evidence);
@@ -240,7 +241,7 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
         };
     }
 
-    private async Task<string> ExecuteToolAsync(ToolCall toolCall, string gameId, CancellationToken cancellationToken)
+    private async Task<string> ExecuteToolAsync(ToolCall toolCall, string gameId, string question, CancellationToken cancellationToken)
     {
         try
         {
@@ -271,7 +272,7 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
                     {
                         if (!args.RootElement.TryGetProperty("plan", out var plan))
                             return $"{{\"error\": \"plan is required\"}}";
-                        var planResult = await _rulesService.ExecutePlanAsync(gameId, plan);
+                        var planResult = await _rulesService.ExecutePlanAsync(gameId, plan, question);
                         return _rulesService.AnnotateReferences(JsonSerializer.Serialize(planResult, ToolResultOptions), gameId);
                     }
 
