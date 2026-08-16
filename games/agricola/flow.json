@@ -196,6 +196,10 @@
                     "en": "Give Starting Food"
                   },
                   "specifies": "<ontology::transfer>",
+                  "aliases": {
+                    "zh": ["开局食物"],
+                    "en": ["starting food"]
+                  },
                   "description": {
                     "zh": "起始玩家得 2 <food>、其他玩家各 3 <food>，放入<personal_supply>。",
                     "en": "The starting player gets 2 <food> and each other player 3 <food>, into their <personal_supply>."
@@ -207,7 +211,11 @@
                   "<ontology::object>": "<food>",
                   "quantity": {
                     "zh": "起始玩家 2 份、其他玩家 3 份。",
-                    "en": "2 for the starting player, 3 for each other player."
+                    "en": "2 for the starting player, 3 for each other player.",
+                    "numeric": [
+                      {"when": {"zh": "起始玩家", "en": "starting player"}, "value": 2, "unit": "份"},
+                      {"when": {"zh": "其他玩家", "en": "each other player"}, "value": 3, "unit": "份"}
+                    ]
                   }
                 }
               ],
@@ -488,6 +496,119 @@
                     "description": {
                       "zh": "按计分表逐项计分并汇总<vp>。",
                       "en": "Score each category and total the <vp>."
+                    },
+                    "score_table": {
+                      "by_count": [
+                        {
+                          "what": "<field_tile>",
+                          "zh": "田地",
+                          "aliases": ["田"],
+                          "note": {"zh": "无论是否播种", "en": "planted or not"},
+                          "rows": [
+                            {"min": 0, "max": 1, "vp": -1},
+                            {"min": 2, "max": 2, "vp": 1},
+                            {"min": 3, "max": 3, "vp": 2},
+                            {"min": 4, "max": 4, "vp": 3},
+                            {"min": 5, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<pasture>",
+                          "zh": "牧场",
+                          "note": {"zh": "按个数", "en": "by count"},
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 1, "vp": 1},
+                            {"min": 2, "max": 2, "vp": 2},
+                            {"min": 3, "max": 3, "vp": 3},
+                            {"min": 4, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<grain>",
+                          "zh": "谷物",
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 3, "vp": 1},
+                            {"min": 4, "max": 5, "vp": 2},
+                            {"min": 6, "max": 7, "vp": 3},
+                            {"min": 8, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<vegetable>",
+                          "zh": "蔬菜",
+                          "note": {"zh": "供应+田上+自称田的卡全算", "en": "supply + fields + cards identifying as fields all count"},
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 1, "vp": 1},
+                            {"min": 2, "max": 2, "vp": 2},
+                            {"min": 3, "max": 3, "vp": 3},
+                            {"min": 4, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<sheep>",
+                          "zh": "羊",
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 3, "vp": 1},
+                            {"min": 4, "max": 5, "vp": 2},
+                            {"min": 6, "max": 7, "vp": 3},
+                            {"min": 8, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<wild_boar>",
+                          "zh": "野猪",
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 2, "vp": 1},
+                            {"min": 3, "max": 4, "vp": 2},
+                            {"min": 5, "max": 6, "vp": 3},
+                            {"min": 7, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<cattle>",
+                          "zh": "牛",
+                          "note": {"zh": "卡上动物除非另有说明也算", "en": "animals on cards count unless stated otherwise"},
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 1, "vp": 1},
+                            {"min": 2, "max": 3, "vp": 2},
+                            {"min": 4, "max": 5, "vp": 3},
+                            {"min": 6, "max": null, "vp": 4}
+                          ]
+                        }
+                      ],
+                      "per_unit": [
+                        {"what": "<farmyard_space>", "zh": "未使用农场格", "aliases": ["农场格", "农场空格", "空格"], "vp": -1, "unit": "格"},
+                        {"what": "<stable>", "zh": "围起来的马厩", "aliases": ["马厩"], "vp": 1, "unit": "个"},
+                        {"what": "<family_member>", "zh": "家庭成员", "vp": 3, "unit": "个"},
+                        {"what": "<begging_marker>", "zh": "乞讨标记", "vp": -3, "unit": "个"}
+                      ],
+                      "by_material": [
+                        {
+                          "what": "<room_tile>",
+                          "zh": "房间",
+                          "rows": [
+                            {"material": "wood", "zh": "木房间", "vp": 0},
+                            {"material": "clay", "zh": "泥房间", "vp": 1},
+                            {"material": "stone", "zh": "石房间", "vp": 2}
+                          ]
+                        }
+                      ],
+                      "by_card": [
+                        {"what": "<major_improvement_card>", "zh": "主要改良", "rule": {"zh": "按卡面分数与奖励条件", "en": "printed points and bonus conditions"}},
+                        {"what": "<minor_improvement_card>", "zh": "次要改良", "rule": {"zh": "按卡面分数与奖励条件", "en": "printed points and bonus conditions"}},
+                        {"what": "<occupation_card>", "zh": "职业", "rule": {"zh": "按卡面", "en": "per card"}}
+                      ],
+                      "aliases": [
+                        {"zh": "动物", "whats": ["<sheep>", "<wild_boar>", "<cattle>"]},
+                        {"zh": "作物", "whats": ["<grain>", "<vegetable>"]}
+                      ],
+                      "note": {"zh": "食物不计分", "en": "Food scores nothing."}
                     }
                   }
                 },

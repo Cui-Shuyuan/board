@@ -1544,6 +1544,10 @@
         "zh": "永久行动格",
         "en": "Permanent Action Space"
       },
+      "aliases": {
+        "zh": ["永久行动空间"],
+        "en": ["After X, also Y", "After X also Y"]
+      },
       "abstract": true,
       "description": {
         "zh": "每回合提供完全相同行动的<action_space>（与累积格相对）。有的提供多个行动可任意顺序做（「和/或」and/or），有的要求按顺序做（「之后」and afterward——第一个行动必须先做，第二个可选）。",
@@ -2054,6 +2058,10 @@
         "zh": "房屋",
         "en": "House"
       },
+      "aliases": {
+        "zh": ["木屋", "泥屋", "石屋"],
+        "en": ["wooden house", "clay house", "stone house"]
+      },
       "abstract": false,
       "description": {
         "zh": "玩家的房屋——<farmyard_board>上<room_tile>组成的区域，开局 2 间木屋。每个房间住 1 个<family_member>；家庭成长需要空房间（<family_growth_with_room>）。房屋整体材质随<renovation>升级：wood（木）→clay（泥）→stone（石），翻新必须整体进行、不可跳级；翻新后新建房间必须用新材质。房子里可养恰好 1 只宠物（任意动物）。终局计分：木房间 0 分、泥房间每间 +1、石房间每间 +2。",
@@ -2097,7 +2105,18 @@
         "description": {
           "zh": "容量 = 2 × 格数 × 2^马厩数。",
           "en": "Capacity = 2 × spaces × 2^stables."
-        }
+        },
+        "formula": {
+          "op": "*",
+          "operands": [
+            2,
+            {"var": "spaces", "zh": "格数", "en": "spaces"},
+            {"op": "^", "operands": [2, {"var": "stables", "zh": "马厩数", "en": "stables"}]}
+          ]
+        },
+        "examples": [
+          {"zh": "1×2 牧场 + 2 马厩", "bindings": {"spaces": 2, "stables": 2}}
+        ]
       }
     },
     {
@@ -2467,7 +2486,10 @@
             "<ontology::object>": "<crop>",
             "quantity": {
               "zh": "每块播种的田 1 个（谷物或蔬菜，自己供应的种子）。",
-              "en": "1 per sown field (grain or vegetable, the seed from your own supply)."
+              "en": "1 per sown field (grain or vegetable, the seed from your own supply).",
+              "numeric": [
+                {"value": 1, "per": {"zh": "每块播种的田", "en": "per sown field"}, "from": {"zh": "自己供应", "en": "own supply"}}
+              ]
             },
             "description": {
               "zh": "每块播种的田从<personal_supply>放 1 个作物做种子。",
@@ -2484,7 +2506,11 @@
             "<ontology::object>": "<crop>",
             "quantity": {
               "zh": "每块谷物田额外 2 个、每块蔬菜田额外 1 个。",
-              "en": "2 extra per grain field, 1 extra per vegetable field."
+              "en": "2 extra per grain field, 1 extra per vegetable field.",
+              "numeric": [
+                {"when": {"zh": "谷物田、谷物", "en": "grain field"}, "value": 2, "per": {"zh": "每块田", "en": "per field"}, "from": {"zh": "公共供应", "en": "general supply"}},
+                {"when": {"zh": "蔬菜田、蔬菜", "en": "vegetable field"}, "value": 1, "per": {"zh": "每块田", "en": "per field"}, "from": {"zh": "公共供应", "en": "general supply"}}
+              ]
             },
             "description": {
               "zh": "从<general_supply>往每块播种的田上补加作物（谷物田 2 个、蔬菜田 1 个）。",

@@ -245,15 +245,40 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
     {
         try
         {
-            var args = JsonDocument.Parse(toolCall.Function.Arguments);
+            JsonElement args;
+            try
+            {
+                args = JsonDocument.Parse(toolCall.Function.Arguments).RootElement;
+            }
+            catch (JsonException)
+            {
+                return "{\"error\": \"arguments 不是合法 JSON——请严格按函数 schema 输出 {\\\"plan\\\":{\\\"queries\\\":[{\\\"relation\\\":\\\"...\\\",\\\"entity\\\":\\\"...\\\"}]}} 形状的工具参数。\"}";
+            }
+
+            // 自愈：模型偶尔把参数包成 {"arguments": "<json 字符串>"} 的 OpenAI 风格外壳
+            // （2026-08-16 实测：一次调用报错后模型陷入该模式 29 轮，全部得到 plan is required）。
+            // 检测到外壳时解包内层 JSON 字符串再执行。
+            if (!args.TryGetProperty("plan", out _)
+                && args.TryGetProperty("arguments", out var wrapped)
+                && wrapped.ValueKind == JsonValueKind.String)
+            {
+                try
+                {
+                    args = JsonDocument.Parse(wrapped.GetString()!).RootElement;
+                }
+                catch (JsonException)
+                {
+                    // 解包失败保持原样，走下方原有错误路径
+                }
+            }
 
             switch (toolCall.Function.Name)
             {
                 case "search_concepts":
                     {
-                        var query = args.RootElement.GetProperty("query").GetString() ?? string.Empty;
+                        var query = args.GetProperty("query").GetString() ?? string.Empty;
                         var searchMode = "full";
-                        if (args.RootElement.TryGetProperty("search_mode", out var modeProp))
+                        if (args.TryGetProperty("search_mode", out var modeProp))
                             searchMode = modeProp.GetString() ?? "full";
                         var results = await _rulesService.SearchConceptsAsync(gameId, query, searchMode);
                         return _rulesService.AnnotateReferences(JsonSerializer.Serialize(results, ToolResultOptions), gameId);
@@ -261,7 +286,7 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
 
                 case "get_concept":
                     {
-                        var conceptId = args.RootElement.GetProperty("concept_id").GetString() ?? string.Empty;
+                        var conceptId = args.GetProperty("concept_id").GetString() ?? string.Empty;
                         var result = _rulesService.GetConceptsWithExpansion(gameId, conceptId);
                         return result.Matched.Count > 0
                             ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId)
@@ -270,8 +295,8 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
 
                 case "execute_plan":
                     {
-                        if (!args.RootElement.TryGetProperty("plan", out var plan))
-                            return $"{{\"error\": \"plan is required\"}}";
+                        if (!args.TryGetProperty("plan", out var plan))
+                            return "{\"error\": \"plan is required——arguments 顶层必须有 plan 键：{\\\"plan\\\":{\\\"queries\\\":[{\\\"relation\\\":\\\"...\\\",\\\"entity\\\":\\\"...\\\"}]}}\"}";
                         var planResult = await _rulesService.ExecutePlanAsync(gameId, plan, question);
                         return _rulesService.AnnotateReferences(JsonSerializer.Serialize(planResult, ToolResultOptions), gameId);
                     }
@@ -286,7 +311,7 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
 
                 case "get_action_conditions":
                     {
-                        var actionId = args.RootElement.GetProperty("action_id").GetString() ?? string.Empty;
+                        var actionId = args.GetProperty("action_id").GetString() ?? string.Empty;
                         var conditions = _rulesService.GetActionConditions(gameId, actionId);
                         return _rulesService.AnnotateReferences(JsonSerializer.Serialize(conditions, ToolResultOptions), gameId);
                     }
