@@ -654,7 +654,13 @@
                         "source": "<starting_marker_deck>",
                         "destination": "<ontology::player_holding>",
                         "<ontology::object>": "<starting_marker_card>",
-                        "quantity": 3,
+                        "quantity": {
+                          "zh": "抽 3 张选 1 张",
+                          "en": "Draw 3, keep 1",
+                          "numeric": [
+                            {"value": 3, "unit": "张"}
+                          ]
+                        },
                         "<ontology::per_player>": true
                       }
                     },
@@ -874,7 +880,10 @@
                         "<ontology::object>": "<research_card>",
                         "quantity": {
                           "zh": "每个研究牌堆各抽 2 张（5 堆共 10 张）。",
-                          "en": "2 from each of the 5 research decks (10 total)."
+                          "en": "2 from each of the 5 research decks (10 total).",
+                          "numeric": [
+                            {"value": 2, "unit": "张", "per": {"zh": "每种研究牌"}}
+                          ]
                         },
                         "<ontology::per_player>": true
                       }
@@ -1785,8 +1794,8 @@
                         },
                         "specifies": "<ontology::trigger>",
                         "description": {
-                          "zh": "每位玩家从自己的<ontology::supply>为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。",
-                          "en": "Each player refills each empty <reset_column> with 1 <reset_marker> from their supply. Skipped in the 4th era."
+                          "zh": "每位玩家从自己的<ontology::supply>为每个空的 <reset_column> 补 1 个 <reset_marker>。第四时代跳过本步。注意：这只是补满重置标记，不是免费的 <reset> 行动——时代之间骰子不自动清空回收，仍留在骰位。",
+                          "en": "Each player refills each empty <reset_column> with 1 <reset_marker> from their supply. Skipped in the 4th era. Note: this only refills reset markers — it is NOT a free <reset> action: dice are not automatically cleared between eras and stay in their slots."
                         },
                         "<ontology::condition>": {
                           "zh": "<era_scoring_area> 还有计分板块（非第四时代）。",
@@ -1877,6 +1886,17 @@
             },
             "specifies": "<ontology::phase>",
             "do_after": "era_loop",
+            "score_table": {
+              "by_card": [
+                {"what": "scoring_tile", "zh": "计分板块", "aliases": ["计分瓦片"], "rule": "时代结束与终局计分都按板块显示的类别计分，板块显示的分值即该类别的每个计分项分值。终局计分板块覆盖终局计分区对应图标格的默认分值，取板块上的分数。"},
+                {"what": "statue", "zh": "雕像", "aliases": ["雕像计分"], "rule": "雕像计分 = 已建造雕像数 × <favor_of_ager_track> 上自己圆盘所在位置印的分数。<phase_8_income> 每时代结算一次，第四时代进入终局计分前再结算一次（<score_statues>）。"},
+                {"what": "storage_area", "zh": "存储区钻石", "aliases": ["钻石"], "rule": "繁荣类别计分（<score_prosperity>）：活跃钻石数 × 该类别的分值。活跃钻石来源：<food_space> 每 3 枚 1 钻石、<money_space> 每 2 枚 1 钻石（食物+钱币合计最多 5 个）、已建<settlement>露出的凹槽钻石（每格 1/2/3 颗）、<storage_area> 每列行 1-2 间 1 颗与行 2-3 间 2 颗（上下相邻两格均存放材料时激活）。"}
+              ],
+              "aliases": [
+                {"zh": "终局计分", "whats": ["scoring_tile", "statue", "storage_area"]}
+              ],
+              "note": "终局计分沿 11 格推进：9 个类别格（技术/声望/知识/建造/文化/进化/繁荣/人口/扩张）+ 控制台 A（分区计分）+ 控制台 B（point bonus 卡）。平局先比模组升级数、再比座位顺序。分数轨跑完一圈拿 1 个 100 分标记。"
+            },
             "description": {
               "zh": "终局计分阶段。第四时代<phase_8_income>执行完 A（收入）和 B（<score_statues>）后，跳过 C 和 D，将<phase_indicator>放到<final_scoring_area_hex>起点（科技格），沿轨逐格推进——每格自带效果（见 <final_scoring_area_hex> slots），推进到哪格即结算哪格：9 个类别格各结算对应计分类别、控制台 A 格结算<stage_partition>、控制台 B 格结算 point bonus 卡。走完全轨后比较总分，最高者获胜。",
               "en": "Final scoring phase. After the 4th era's Income phase steps A (income) and B (statue scoring), skip C and D. Place the phase indicator on the start of the final scoring track (the Technology cell) and advance cell by cell — each cell carries its own effect (see the <final_scoring_area_hex> slots): the 9 category cells score their categories, the Console A cell scores the stage partition, the Console B cell scores point bonus cards. After the whole track, compare totals; the highest wins."
@@ -3429,8 +3449,8 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该<site>的 <ontology::effect>。翻开后<site>保持正面朝上，持续影响相邻<territory>。",
-        "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. The site stays face up and affects adjacent territories for the rest of the game."
+        "zh": "选择 1 个背面朝上的 <site>，将其翻转至正面朝上，立即获得其正面左上角标记的分数（推进 <score_track>），随后结算该<site>的 <ontology::effect>。若翻开的<site>揭示出资源图标，立即在对应<territory>放置相应的<feature_marker>（除非该地点效果另有说明）。翻开后<site>保持正面朝上，持续影响相邻<territory>。",
+        "en": "Choose 1 face-down <site>, flip it face up, immediately gain the success points marked in its top-left corner (advance <score_track>), then resolve the site's <ontology::effect>. If the revealed <site> shows a resource icon, immediately place the corresponding <feature_marker> on the relevant <territory> (unless the site's effect says otherwise). The site stays face up and affects adjacent territories for the rest of the game."
       },
       "<ontology::condition>": {
         "zh": "存在至少 1 个 face == face_down 的 <site>。",

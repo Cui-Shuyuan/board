@@ -636,8 +636,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "代表玩家文明在 <continent> 上存在的核心 <ontology::piece>。每个部落有两种状态：站立（strong）和躺倒（weak）。只有站立部落可以<migrate>；躺倒部落在<phase_6_feeding>若未被喂饱会死亡。",
-        "en": "The core <ontology::piece> representing a player's civilization on the <continent>. Each tribe has two states: strong (upright) and weak (lying). Only strong tribes can migrate; weak tribes die in the Feeding phase if not fed."
+        "zh": "代表玩家文明在 <continent> 上存在的核心 <ontology::piece>。每个部落有两种状态：站立（strong）和躺倒（weak）。只有站立部落可以<migrate>；躺倒部落在<phase_6_feeding>若未被喂饱会死亡。喂饱躺倒部落只能保命、不会自动恢复站立——重新变强需 Sustenance 模组或其他研究牌能力。",
+        "en": "The core <ontology::piece> representing a player's civilization on the <continent>. Each tribe has two states: strong (upright) and weak (lying). Only strong tribes can migrate; weak tribes die in the Feeding phase if not fed. Feeding a weak tribe only saves it — it does not become strong again; regaining strength requires the Sustenance module or other research-card abilities."
       },
       "<ontology::state>": {
         "posture": {
@@ -1081,8 +1081,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "可安装到<stage_partition>的 <ontology::card>。纵向三段：上部「能力」区（<research_ability>，安装后唯一露出、持续可用）、中部五个「费用格」（<cost_space>，格下方可能印有 <success_point>）、下部「即时奖励」（<instant_bonus>）。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。效果的触发与结算过程见 <install_research_card>。",
-        "en": "A <ontology::card> that can be installed into the stage partition. Three vertical sections: the top-third \"ability\" (<research_ability>, the only visible part after installation and persistently usable), the middle five \"cost spaces\" (<cost_space>; each may have <success_point> printed below), and the bottom \"instant bonus\" (<instant_bonus>). Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition. How these effects trigger and resolve is described in <install_research_card>."
+        "zh": "可安装到<stage_partition>的 <ontology::card>。纵向三段：上部「能力」区（<research_ability>，安装后唯一露出、持续可用）、中部五个「费用格」（<cost_space>，格下方可能印有 <success_point>）、下部「即时奖励」（<instant_bonus>）。共 5 种类型——建造（蓝）、洞悉（黄）、突变（绿）、成就（紫）、发明（棕）——每种类型在层级分区中独占一列。突变（绿）牌与其他类型不同（Errata/Glossary 口径）：其费用格只印特征要求（<feature_marker>），不含存储材料；其即时奖励不给<progress_track>步数（最常见的例外是给<favor_of_ager_track>步数）。效果的触发与结算过程见 <install_research_card>。",
+        "en": "A <ontology::card> that can be installed into the stage partition. Three vertical sections: the top-third \"ability\" (<research_ability>, the only visible part after installation and persistently usable), the middle five \"cost spaces\" (<cost_space>; each may have <success_point> printed below), and the bottom \"instant bonus\" (<instant_bonus>). Five types — Building (blue), Insight (yellow), Mutation (green), Achievement (purple), Invention (brown) — each type occupies one dedicated <column> in the stage partition. Mutation (green) cards differ from the others (Errata/Glossary): their cost spaces show only feature requirements (<feature_marker>), never stored materials; their instant bonus grants no <progress_track> steps (the most common exception being <favor_of_ager_track> steps). How these effects trigger and resolve is described in <install_research_card>."
       },
       "appearance": {
         "zh": "纸质卡牌（共 160 张，5 种类型各 32 张：建造蓝、洞悉黄、突变绿、成就紫、发明棕，左下角印有牌编号）。纵向三段：上三分之一为能力区（<research_ability>，安装后唯一露出），中部为 5 个费用格（<cost_space>，格下方印有分数），下部为即时奖励（<instant_bonus>）。",
@@ -1466,8 +1466,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "可安装到 <console> 的白色芯片。安装时效果不触发——仅在<phase_8_income>、<weather_gauge.warm>或<progress_track>奖励中通过 <activate_income_chip> 选中时结算。收入芯片可安装在任意列。",
-        "en": "A white chip that can be installed in a <console>. Its effect does not trigger on install — it only resolves when selected by <activate_income_chip> during the Income phase, weather gauge Warm slot, or track bonuses. Income chips can be installed in any column."
+        "zh": "可安装到 <console> 的白色芯片。安装时立即执行一次其行动（<gain_income_chip> 的流程：拿取→补满展示区→安装→立即触发效果）；之后在<phase_8_income>、<weather_gauge.warm>或<progress_track>奖励中通过 <activate_income_chip> 选中时再结算。收入芯片可安装在任意列。",
+        "en": "A white chip that can be installed in a <console>. Its action is performed once immediately upon install (<gain_income_chip>: take → refill display → install → trigger effect at once); afterwards it resolves again whenever selected by <activate_income_chip> during the Income phase, weather gauge Warm slot, or track bonuses. Income chips can be installed in any column."
       },
       "appearance": {
         "zh": "白色芯片（共 25 个），正面印有效果图标。",
@@ -1560,8 +1560,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "黄色的芯片。左侧为安装 cost，右侧为条件 effect。中间属性图标仅视觉提示，不被规则引用。",
-        "en": "A yellow chip. Left: install cost. Right: conditional effect. The attribute icon in the middle is visual only, not referenced by rules."
+        "zh": "黄色的芯片。左侧为安装 cost，右侧为条件 effect。左侧安装费用即特征要求：需持有中间属性图标对应类型的<feature_marker>若干（通常 3–4 个）并把其中 1 个归还到供应堆后即可安装。中间属性图标仅视觉提示，不被规则引用。",
+        "en": "A yellow chip. Left: install cost. Right: conditional effect. The install cost on the left is a feature requirement: hold several <feature_marker>s of the type shown by the middle icon (usually 3–4) and return 1 of them to the supply to install. The attribute icon in the middle is visual only, not referenced by rules."
       },
       "appearance": {
         "zh": "黄色芯片（共 12 个）。左侧为安装费用，右侧为条件效果，中间印有属性图标。",
@@ -3330,6 +3330,25 @@
       "description": {
         "zh": "<phase_sequence> 上<phase_4_action>与<phase_5_site>之间的行动阶段轨段中的黄色格。<phase_indicator>被<reset>的 A 步沿黄色箭头逐格推进。轨段长度随人数变化（2 人 5 格、3 人 7 格、4 人 9 格）——部分格带人数标记：带 3 标记的格在 3 人及以上局使用，带 4 标记的格仅在 4 人局使用，其余在<setup>时被<hundred_point_token>背面（阻挡标记）覆盖。",
         "en": "A yellow space in the Action phase track segment of <phase_sequence>, between Phase 4 and Phase 5. The phase indicator advances along the yellow arrow one space per Reset step A. The segment length varies by player count (5 spaces for 2 players, 7 for 3, 9 for 4) — some spaces bear player-count marks: spaces marked 3 are used in games of 3+ players, spaces marked 4 only in 4-player games; the rest are covered with blocking tokens (backs of 100-point tokens) during setup."
+      },
+      "capacity": {
+        "type": "integer",
+        "description": {
+          "zh": "有效重置格数 = 玩家数 × 2 + 1（2 人 5 格、3 人 7 格、4 人 9 格），即每个时代保证的 Reset 次数。",
+          "en": "Effective reset spaces = player count × 2 + 1 (5 for 2 players, 7 for 3, 9 for 4) — the number of guaranteed Resets per era."
+        },
+        "formula": {
+          "op": "+",
+          "operands": [
+            {"op": "*", "operands": [{"var": "players", "zh": "玩家数", "en": "players"}, 2]},
+            1
+          ]
+        },
+        "examples": [
+          {"zh": "2 人局", "bindings": {"players": 2}},
+          {"zh": "3 人局", "bindings": {"players": 3}},
+          {"zh": "4 人局", "bindings": {"players": 4}}
+        ]
       }
     },
     {
@@ -4428,6 +4447,10 @@
         "zh": "正面朝上研究牌堆",
         "en": "Face-Up Research Stack"
       },
+      "aliases": {
+        "zh": ["正面牌堆", "正面朝上牌堆", "明牌堆"],
+        "en": ["face-up pile"]
+      },
       "abstract": false,
       "description": {
         "zh": "每种<research_card>类型各有一个的正面朝上牌堆，展示该类型当前可被直接拿取的 <research_card>。与对应的 <research_deck> 配对——当此堆被拿空时，立即从对应<research_deck>翻一张补充。",
@@ -4506,8 +4529,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "《文明演化》纸质规则书，用于查询详细规则。",
-        "en": "The printed rulebook for Civolution, used for detailed rule lookups."
+        "zh": "《文明演化》纸质规则书，用于查询详细规则。术语表（Glossary）不是规则书的一部分——它是独立文件，收录卡牌描述与术语定义。",
+        "en": "The printed rulebook for Civolution, used for detailed rule lookups. The Glossary is not part of the rulebook — it is a separate file with card descriptions and term definitions."
       },
       "appearance": {
         "zh": "纸质规则手册。",
