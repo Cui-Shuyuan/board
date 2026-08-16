@@ -1,0 +1,748 @@
+{
+  "meta": {
+    "name": {
+      "zh": "勃艮第城堡",
+      "en": "The Castles of Burgundy"
+    },
+    "description": {
+      "zh": "勃艮第城堡（基础版）的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、阶段结构、回合结构、终局流程）。Setup 阶段使用 do_after 表达事件间的依赖关系：无 do_after 的事件互相独立，可任意顺序或并行执行；do_after 引用的事件必须先完成。每局 = 5 个阶段 × 5 轮 = 25 轮，每轮每位玩家一个回合（2 次骰子行动）。回合顺序不是座位顺序，而是石桥上的位置。",
+      "en": "Flow definition for The Castles of Burgundy (base game) — the complete sequence of a game from setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, phase structure, turn structure, endgame). The setup phase uses do_after to express dependencies between events: events without do_after are independent and may execute in any order or in parallel; events listed in do_after must complete first. A game = 5 phases × 5 rounds = 25 rounds; each round gives every player one turn (2 die actions). Turn order follows the bridge, not seating."
+    },
+    "game": "castles-of-burgundy",
+    "version": "0.1.0"
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "整局勃艮第城堡游戏，作为最外层轮。包含设置、5 个阶段的循环（每阶段 5 轮）与终局。",
+        "en": "The whole game of Castles of Burgundy as the outermost round: setup, the 5-phase loop (5 rounds each), and the endgame."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "游戏设置：铺开<game_board>、按背面颜色分堆<hex_tile>、分配<goods>（5×5+17）、每名玩家拿 3 块货物、备好<silver>/<worker>、放<bonus_tile>、掷骰决定起始玩家、分发初始工人与起始<castle_tile>、堆叠石桥棋子。",
+              "en": "Game setup: lay out the <game_board>, sort <hex_tile>s by back color, deal the <goods> (5×5+17), give each player 3 goods, prepare the <silver>/<worker> supplies, place <bonus_tile>s, roll for the starting player, deal starting workers and the starting <castle_tile>, and stack the bridge pieces."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "place_game_board",
+                  "name": {
+                    "zh": "铺开游戏版图",
+                    "en": "Place Game Board"
+                  },
+                  "description": {
+                    "zh": "把<game_board>按人数选择正确一面铺在桌中央（4 人用 4 人面，2-3 人用 2-3 人面）；<white_die>放版图旁。",
+                    "en": "Place the <game_board> in the center of the table on the correct side for the player count (4-player side, or the 2-3-player side); put the <white_die> next to it."
+                  }
+                },
+                {
+                  "id": "sort_hex_tiles",
+                  "name": {
+                    "zh": "按背面颜色分堆六边形板块",
+                    "en": "Sort Hex Tiles By Back Color"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部<hex_tile>从<game_box>取出，按背面颜色分成 7 堆（6 色 + 黑色）面朝下放入<hex_tile_pool>并各自洗匀。",
+                    "en": "Take all <hex_tile>s from the <game_box>, sort them face down into 7 piles by back color (6 colors + black) in the <hex_tile_pool>, and shuffle each pile."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<hex_tile_pool>",
+                  "<ontology::object>": "<hex_tile>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "deal_goods_to_phase_spaces",
+                  "name": {
+                    "zh": "分配货物到阶段格",
+                    "en": "Deal Goods To Phase Spaces"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 42 块<goods>面朝下洗匀，分成 5 叠各 5 块，放入<game_board>的 5 个<phase_space>（A-E）。",
+                    "en": "Shuffle the 42 <goods> tiles face down, split them into 5 stacks of 5, and place one on each of the <game_board>'s 5 <phase_space>s (A-E)."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<phase_space>",
+                  "<ontology::object>": "<goods>",
+                  "quantity": {
+                    "zh": "每个阶段格 5 块，共 25 块。",
+                    "en": "5 per phase space, 25 total."
+                  }
+                },
+                {
+                  "id": "form_goods_pool",
+                  "name": {
+                    "zh": "组成货物堆",
+                    "en": "Form Goods Pool"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "分配阶段格后剩余的 17 块<goods>面朝下放入<goods_pool>。",
+                    "en": "The remaining 17 <goods> tiles after dealing the phase spaces go face down into the <goods_pool>."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<goods_pool>",
+                  "<ontology::object>": "<goods>",
+                  "quantity": 17,
+                  "do_after": "deal_goods_to_phase_spaces"
+                },
+                {
+                  "id": "deal_starting_goods",
+                  "name": {
+                    "zh": "分发起始货物",
+                    "en": "Deal Starting Goods"
+                  },
+                  "specifies": "<ontology::random_draw>",
+                  "description": {
+                    "zh": "每名玩家从<goods_pool>随机盲抽 3 块<goods>放入自己的<goods_storage>（同色叠放）。发完后剩余的货物放回盒中，本局不再使用。",
+                    "en": "Each player blindly draws 3 random <goods> tiles from the <goods_pool> into their <goods_storage> (same colors stacked). Whatever remains goes back in the box, unused this game."
+                  },
+                  "source": "<goods_pool>",
+                  "destination": "<goods_storage>",
+                  "<ontology::object>": "<goods>",
+                  "quantity": 3,
+                  "<ontology::per_player>": true,
+                  "do_after": "form_goods_pool"
+                },
+                {
+                  "id": "set_up_silver_supply",
+                  "name": {
+                    "zh": "备好银币供应",
+                    "en": "Set Up Silver Supply"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部 24 <silver>从<game_box>取出放入<silver_supply>（版图旁）。",
+                    "en": "Take all 24 <silver> from the <game_box> into the <silver_supply> (next to the board)."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<silver_supply>",
+                  "<ontology::object>": "<silver>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "set_up_worker_supply",
+                  "name": {
+                    "zh": "备好工人供应",
+                    "en": "Set Up Worker Supply"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把全部 26 <worker>从<game_box>取出放入<worker_supply>（版图旁）。",
+                    "en": "Take all 26 <worker>s from the <game_box> into the <worker_supply> (next to the board)."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<worker_supply>",
+                  "<ontology::object>": "<worker>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "place_bonus_tiles",
+                  "name": {
+                    "zh": "摆放奖励板块",
+                    "en": "Place Bonus Tiles"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 12 块<bonus_tile>从<game_box>取出，按颜色放到<game_board>的 6 个奖励板块格上（大板块叠在小板块上）。",
+                    "en": "Take the 12 <bonus_tile>s from the <game_box> and place them on the <game_board>'s 6 bonus spaces by color (large stacked on small)."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<game_board>",
+                  "<ontology::object>": "<bonus_tile>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "choose_starting_player",
+                  "name": {
+                    "zh": "选择起始玩家",
+                    "en": "Choose Starting Player"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "description": {
+                    "zh": "所有玩家各掷 1 颗骰子，点数最高者成为起始玩家（平手重掷）。",
+                    "en": "All players roll one die each; the highest roller becomes the starting player (reroll ties)."
+                  },
+                  "subject": "<ontology::starting_player>",
+                  "to": "掷出最高点数的玩家",
+                  "rules": {
+                    "zh": "点数最高者成为起始玩家，将<ontology::starting_player>状态设为该玩家。",
+                    "en": "Set <ontology::starting_player> to the player with the highest die roll."
+                  }
+                },
+                {
+                  "id": "give_white_die",
+                  "name": {
+                    "zh": "给予白色骰子",
+                    "en": "Give White Die"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把<white_die>交给起始玩家——白骰持有者即起始玩家。",
+                    "en": "Give the <white_die> to the starting player — the white die's holder is the starting player."
+                  },
+                  "source": "<game_box>",
+                  "destination": "起始玩家",
+                  "<ontology::object>": "<white_die>",
+                  "quantity": 1,
+                  "do_after": "choose_starting_player"
+                },
+                {
+                  "id": "distribute_starting_workers",
+                  "name": {
+                    "zh": "分发起始工人",
+                    "en": "Distribute Starting Workers"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "起始玩家得 1 个<worker>，其余玩家顺时针依次得 2/3/4 个——从<worker_supply>放入各自的<worker_space>。",
+                    "en": "The starting player takes 1 <worker>; the others take 2/3/4 clockwise in seating order — from the <worker_supply> into their <worker_space>s."
+                  },
+                  "source": "<worker_supply>",
+                  "destination": "<worker_space>",
+                  "<ontology::object>": "<worker>",
+                  "quantity": {
+                    "zh": "起始玩家 1 个，顺时针依次 2、3、4 个（按座位顺序）。",
+                    "en": "1 for the starting player, then 2, 3, 4 clockwise by seating."
+                  },
+                  "<ontology::per_player>": true,
+                  "do_after": "choose_starting_player"
+                },
+                {
+                  "id": "place_starting_castle",
+                  "name": {
+                    "zh": "放置起始城堡",
+                    "en": "Place Starting Castle"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每名玩家把 1 块起始<castle_tile>从<game_box>放入自己<duchy>中央的深绿色 6 号空格上（第一块放置只需与它相邻）。",
+                    "en": "Each player places 1 starting <castle_tile> from the <game_box> onto the central dark-green 6 space of their <duchy> (your first placement only needs to touch it)."
+                  },
+                  "source": "<game_box>",
+                  "destination": "<duchy>",
+                  "<ontology::object>": "<castle_tile>",
+                  "quantity": 1,
+                  "<ontology::per_player>": true,
+                  "do_after": "choose_starting_player"
+                },
+                {
+                  "id": "stack_bridge_pieces",
+                  "name": {
+                    "zh": "堆叠石桥棋子",
+                    "en": "Stack Bridge Pieces"
+                  },
+                  "description": {
+                    "zh": "起始玩家的<playing_piece>放在<bridge>的 1 号格上，其余玩家的棋子按座位顺位依次叠在下面——此后每轮的行动顺序都按石桥位置（离市中心越近越先），与座位顺序无关。",
+                    "en": "The starting player's <playing_piece> goes on space 1 of the <bridge>, with the other players' pieces stacked below in seating order — from now on, each round's action order follows bridge position (closer to the city center acts first), not seating."
+                  },
+                  "do_after": "choose_starting_player"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "phase_loop",
+            "name": {
+              "zh": "阶段循环",
+              "en": "Phase Loop"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "5 个阶段（A-E）的循环：每阶段开始做阶段准备（清理并补充仓库、摆放货物），然后打 5 轮，最后结算阶段结束收入。阶段数从 A 到 E，附带的区域完成附加分依次 10/8/6/4/2。",
+              "en": "The loop of 5 phases (A-E): each phase starts with preparation (clearing and refilling depots, setting out goods), then plays 5 rounds, and finally settles phase-end income. Phases run A through E with area-completion bonuses of 10/8/6/4/2."
+            },
+            "do_after": "setup",
+            "loop": {
+              "count": 5,
+              "counter": "phase_number"
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "phase_preparation",
+                  "name": {
+                    "zh": "阶段准备",
+                    "en": "Phase Preparation"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "阶段开始准备：把版图上剩余的<hex_tile>移出游戏（A 阶段跳过），然后按背面颜色补满 6 个编号<depot>与<black_depot>并翻到正面，最后把当前<phase_space>的 5 块货物翻开放到<round_space>。",
+                    "en": "Phase-start preparation: remove leftover <hex_tile>s from the board (skipped in phase A), then refill the 6 numbered <depot>s and the <black_depot> by back color and turn them face up, and finally move the current <phase_space>'s 5 goods face up onto the <round_space>s."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "prepare_phase_a",
+                        "name": {
+                          "zh": "准备 A 阶段",
+                          "en": "Prepare Phase A"
+                        },
+                        "<ontology::condition>": {
+                          "zh": "当前阶段是 A（第一个阶段）——A 阶段开始时不移除任何板块，直接从空版图补货。",
+                          "en": "The current phase is A (the first) — no tiles are removed at the start of phase A; the empty board is filled directly."
+                        },
+                        "options": [
+                          {
+                            "id": "refill_depots_phase_a",
+                            "name": {
+                              "zh": "补满编号仓库（A）",
+                              "en": "Refill Numbered Depots (A)"
+                            },
+                            "specifies": "<ontology::random_draw>",
+                            "description": {
+                              "zh": "从<hex_tile_pool>按背面颜色随机抽取<hex_tile>，翻到正面补满 6 个编号<depot>的板块格（4 人局各 4 格；2-3 人局按人数面更少）。",
+                              "en": "Randomly draw <hex_tile>s from the <hex_tile_pool> by back color and turn them face up to fill the 6 numbered <depot>s' tile spaces (4 each in a 4-player game; fewer on the 2-3-player side)."
+                            },
+                            "source": "<hex_tile_pool>",
+                            "destination": "<depot>",
+                            "<ontology::object>": "<hex_tile>",
+                            "quantity": {
+                              "zh": "每个仓库补满板块格（4 人局各 4 块）。",
+                              "en": "Fill each depot's tile spaces (4 each with 4 players)."
+                            }
+                          },
+                          {
+                            "id": "refill_black_depot_phase_a",
+                            "name": {
+                              "zh": "补满黑色仓库（A）",
+                              "en": "Refill Black Depot (A)"
+                            },
+                            "specifies": "<ontology::random_draw>",
+                            "description": {
+                              "zh": "从<hex_tile_pool>黑色背面堆随机抽取<hex_tile>，翻到正面补满<black_depot>（4 人/3 人局 8 块，2 人局 4 块）。",
+                              "en": "Randomly draw black-backed <hex_tile>s from the <hex_tile_pool> and turn them face up to fill the <black_depot> (8 with 3-4 players, 4 with 2)."
+                            },
+                            "source": "<hex_tile_pool>",
+                            "destination": "<black_depot>",
+                            "<ontology::object>": "<hex_tile>",
+                            "quantity": {
+                              "zh": "4 人/3 人局 8 块，2 人局 4 块。",
+                              "en": "8 with 3-4 players, 4 with 2."
+                            }
+                          },
+                          {
+                            "id": "move_goods_to_round_spaces_phase_a",
+                            "name": {
+                              "zh": "摆放货物到轮次格（A）",
+                              "en": "Move Goods To Round Spaces (A)"
+                            },
+                            "specifies": "<ontology::transfer>",
+                            "description": {
+                              "zh": "把当前<phase_space>的 5 块<goods>翻开，逐个放到 5 个<round_space>上。",
+                              "en": "Turn the current <phase_space>'s 5 <goods> face up and place them one by one onto the 5 <round_space>s."
+                            },
+                            "source": "<phase_space>",
+                            "destination": "<round_space>",
+                            "<ontology::object>": "<goods>",
+                            "quantity": 5,
+                            "do_after": [
+                              "refill_depots_phase_a",
+                              "refill_black_depot_phase_a"
+                            ]
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                      },
+                      {
+                        "id": "prepare_phases_b_to_e",
+                        "name": {
+                          "zh": "准备 B-E 阶段",
+                          "en": "Prepare Phases B Through E"
+                        },
+                        "<ontology::condition>": {
+                          "zh": "当前阶段是 B-E——先移除版图上剩余的<hex_tile>，再补货。",
+                          "en": "The current phase is B through E — leftover <hex_tile>s are removed first, then the board is refilled."
+                        },
+                        "options": [
+                          {
+                            "id": "remove_depot_tiles",
+                            "name": {
+                              "zh": "移除编号仓库剩余板块",
+                              "en": "Remove Leftover Depot Tiles"
+                            },
+                            "specifies": "<ontology::transfer>",
+                            "description": {
+                              "zh": "把 6 个编号<depot>中剩余的<hex_tile>全部移入<game_box>——永久移出游戏，不回<hex_tile_pool>。即「阶段结束时剩余的瓷砖退回供应堆还是移出游戏？」的答案：**移出游戏、不退回**；船、矿、城堡等所有类型一视同仁。",
+                              "en": "Move all leftover <hex_tile>s in the 6 numbered <depot>s into the <game_box> — removed from the game for good, never back to the <hex_tile_pool>. This is the answer to 'are unused tiles returned to the supply at phase end?': **removed from the game, not returned**; ships, mines, castles — every type alike."
+                            },
+                            "source": "<depot>",
+                            "destination": "<game_box>",
+                            "<ontology::object>": "<hex_tile>",
+                            "quantity": "all"
+                          },
+                          {
+                            "id": "remove_black_depot_tiles",
+                            "name": {
+                              "zh": "移除黑色仓库剩余板块",
+                              "en": "Remove Leftover Black Depot Tiles"
+                            },
+                            "specifies": "<ontology::transfer>",
+                            "description": {
+                              "zh": "把<black_depot>中剩余的<hex_tile>全部移入<game_box>（永久移出游戏）。黑色背面的板块在阶段转换时同样被移出，与普通板块没有任何规则差异。",
+                              "en": "Move all leftover <hex_tile>s in the <black_depot> into the <game_box> (removed from the game for good). Black-backed tiles are removed at phase transitions just the same — no rule difference from regular tiles."
+                            },
+                            "source": "<black_depot>",
+                            "destination": "<game_box>",
+                            "<ontology::object>": "<hex_tile>",
+                            "quantity": "all"
+                          },
+                          {
+                            "id": "refill_depots",
+                            "name": {
+                              "zh": "补满编号仓库",
+                              "en": "Refill Numbered Depots"
+                            },
+                            "specifies": "<ontology::random_draw>",
+                            "description": {
+                              "zh": "从<hex_tile_pool>按背面颜色随机抽取<hex_tile>，翻到正面补满 6 个编号<depot>的板块格（4 人局各 4 格；2-3 人局按人数面更少）。",
+                              "en": "Randomly draw <hex_tile>s from the <hex_tile_pool> by back color and turn them face up to fill the 6 numbered <depot>s' tile spaces (4 each in a 4-player game; fewer on the 2-3-player side)."
+                            },
+                            "source": "<hex_tile_pool>",
+                            "destination": "<depot>",
+                            "<ontology::object>": "<hex_tile>",
+                            "quantity": {
+                              "zh": "每个仓库补满板块格（4 人局各 4 块）。",
+                              "en": "Fill each depot's tile spaces (4 each with 4 players)."
+                            },
+                            "do_after": [
+                              "remove_depot_tiles",
+                              "remove_black_depot_tiles"
+                            ]
+                          },
+                          {
+                            "id": "refill_black_depot",
+                            "name": {
+                              "zh": "补满黑色仓库",
+                              "en": "Refill Black Depot"
+                            },
+                            "specifies": "<ontology::random_draw>",
+                            "description": {
+                              "zh": "从<hex_tile_pool>黑色背面堆随机抽取<hex_tile>，翻到正面补满<black_depot>（4 人/3 人局 8 块，2 人局 4 块）。",
+                              "en": "Randomly draw black-backed <hex_tile>s from the <hex_tile_pool> and turn them face up to fill the <black_depot> (8 with 3-4 players, 4 with 2)."
+                            },
+                            "source": "<hex_tile_pool>",
+                            "destination": "<black_depot>",
+                            "<ontology::object>": "<hex_tile>",
+                            "quantity": {
+                              "zh": "4 人/3 人局 8 块，2 人局 4 块。",
+                              "en": "8 with 3-4 players, 4 with 2."
+                            },
+                            "do_after": [
+                              "remove_depot_tiles",
+                              "remove_black_depot_tiles"
+                            ]
+                          },
+                          {
+                            "id": "move_goods_to_round_spaces",
+                            "name": {
+                              "zh": "摆放货物到轮次格",
+                              "en": "Move Goods To Round Spaces"
+                            },
+                            "specifies": "<ontology::transfer>",
+                            "description": {
+                              "zh": "把当前<phase_space>的 5 块<goods>翻开，逐个放到 5 个<round_space>上（货物从不被移除——阶段开始时不清走仓库里的货物）。",
+                              "en": "Turn the current <phase_space>'s 5 <goods> face up and place them one by one onto the 5 <round_space>s (goods are never removed — depot goods are not cleared at phase start)."
+                            },
+                            "source": "<phase_space>",
+                            "destination": "<round_space>",
+                            "<ontology::object>": "<goods>",
+                            "quantity": 5,
+                            "do_after": [
+                              "refill_depots",
+                              "refill_black_depot"
+                            ]
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "round_loop",
+                  "name": {
+                    "zh": "轮循环",
+                    "en": "Round Loop"
+                  },
+                  "specifies": "<ontology::round>",
+                  "description": {
+                    "zh": "本阶段 5 轮的循环。每轮三步：①所有玩家同时掷自己的 2 颗<player_die>（起始玩家同时掷<white_die>）；②起始玩家把<round_space>最上面 1 块<goods>放到<white_die>点数对应的<depot>；③每位玩家按<bridge>位置依次各行动一个回合（每个回合 2 次骰子行动）。轮次格上的货物数即剩余轮数。",
+                    "en": "The loop of this phase's 5 rounds. Each round has three steps: ① all players roll their 2 <player_die>s simultaneously (the starting player also rolls the <white_die>); ② the starting player places the topmost <goods> from the <round_space>s onto the <depot> matching the <white_die>; ③ each player takes one turn in <bridge> order (each turn = 2 die actions). The goods remaining on the round spaces show the rounds left."
+                  },
+                  "do_after": "phase_preparation",
+                  "loop": {
+                    "count": 5,
+                    "counter": "round_number"
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "roll_dice",
+                        "name": {
+                          "zh": "掷骰",
+                          "en": "Roll Dice"
+                        },
+                        "specifies": "<ontology::die_roll>",
+                        "description": {
+                          "zh": "所有玩家同时掷自己的 2 颗<player_die>，点数公开；起始玩家同时掷<white_die>（白骰只能决定货物去向，不可用于行动、不可改）。",
+                          "en": "All players roll their 2 <player_die>s simultaneously; results are public. The starting player also rolls the <white_die> (its value only decides where goods go — never usable for actions, never modifiable)."
+                        },
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "place_goods_by_white_die",
+                        "name": {
+                          "zh": "白骰放货",
+                          "en": "Place Goods By White Die"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "起始玩家把<round_space>上**最上面**的 1 块<goods>放到<white_die>点数对应的编号<depot>（放在该仓库的货物格上，与已有货物叠放）。",
+                          "en": "The starting player places the **topmost** <goods> from the <round_space>s onto the numbered <depot> matching the <white_die> (on its goods space, stacking on any goods already there)."
+                        },
+                        "source": "<round_space>",
+                        "destination": {
+                          "zh": "<white_die>点数对应的编号<depot>",
+                          "en": "The numbered <depot> matching the <white_die> value"
+                        },
+                        "<ontology::object>": "<goods>",
+                        "quantity": 1,
+                        "do_after": "roll_dice"
+                      },
+                      {
+                        "id": "turn_cycle",
+                        "name": {
+                          "zh": "回合轮",
+                          "en": "Turn Cycle"
+                        },
+                        "specifies": "<ontology::round>",
+                        "description": {
+                          "zh": "一轮玩家回合：每位玩家一个回合，**行动顺序按<bridge>位置**——越靠近市中心越先行动，同格叠堆最上面的先行动（与座位顺序无关）。",
+                          "en": "One cycle of player turns: one turn per player, in **<bridge> order** — closer to the city center acts first, and in a stack the top piece acts first (seating order is irrelevant)."
+                        },
+                        "do_after": "place_goods_by_white_die",
+                        "<ontology::turn>": {
+                          "id": "player_turn",
+                          "name": {
+                            "zh": "玩家回合",
+                            "en": "Player Turn"
+                          },
+                          "description": {
+                            "zh": "一位玩家的回合：用 2 颗<player_die>执行 **2 次骰子行动**（每次行动用 1 颗骰子）——任意组合、任意顺序，可重复同一行动；行动前后随时可用<worker>改骰（每 1 个 ±1，1↔6 回绕）。此外每回合**至多 1 次**可额外花 2 <silver>从<black_depot>购买 1 块<hex_tile>（不占骰子），可在两次行动之前、之间或之后进行。",
+                            "en": "One player's turn: use your 2 <player_die>s to take **2 die actions** (one die per action) — any combination and order, repeating is allowed; you may spend <worker>s to adjust a die at any time before an action (±1 each, wrapping 1↔6). Additionally, **at most once per turn** you may pay 2 <silver> to buy 1 <hex_tile> from the <black_depot> (no die spent), before, between, or after your two actions."
+                          },
+                          "<ontology::pipeline>": {
+                            "options": [
+                              {
+                                "id": "die_action_first",
+                                "name": {
+                                  "zh": "第一次骰子行动",
+                                  "en": "First Die Action"
+                                },
+                                "description": {
+                                  "zh": "用第 1 颗<player_die>执行一个合法行动。四种行动按各自条件过滤（如对应<depot>无板块时<take_hex_tile>不可选；<take_workers>永远可选）。",
+                                  "en": "Use your 1st <player_die> for one legal action. The four actions are filtered by their own conditions (e.g. <take_hex_tile> is unavailable when the matching <depot> is empty; <take_workers> is always available)."
+                                },
+                                "options": [
+                                  "<take_hex_tile>",
+                                  "<place_hex_tile>",
+                                  "<sell_goods>",
+                                  "<take_workers>"
+                                ],
+                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                              },
+                              {
+                                "id": "die_action_second",
+                                "name": {
+                                  "zh": "第二次骰子行动",
+                                  "en": "Second Die Action"
+                                },
+                                "description": {
+                                  "zh": "用第 2 颗<player_die>执行一个合法行动——可以与第一次相同。",
+                                  "en": "Use your 2nd <player_die> for one legal action — the same action may be repeated."
+                                },
+                                "do_after": "die_action_first",
+                                "options": [
+                                  "<take_hex_tile>",
+                                  "<place_hex_tile>",
+                                  "<sell_goods>",
+                                  "<take_workers>"
+                                ],
+                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                              },
+                              {
+                                "id": "black_depot_purchase",
+                                "name": {
+                                  "zh": "黑色仓库购买（可选）",
+                                  "en": "Black Depot Purchase (Optional)"
+                                },
+                                "description": {
+                                  "zh": "可选：本回合至多 1 次，花 2 <silver>从<black_depot>买 1 块<hex_tile>。本流程放在两次骰子行动之后，实际规则允许在行动之前、之间或之后进行。",
+                                  "en": "Optional: at most once this turn, pay 2 <silver> to buy 1 <hex_tile> from the <black_depot>. Shown after the two die actions here, but the rules allow it before, between, or after them."
+                                },
+                                "options": [
+                                  "<buy_from_black_depot>",
+                                  "_skip"
+                                ],
+                                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                              }
+                            ],
+                            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                          }
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "phase_end",
+                  "name": {
+                    "zh": "阶段结束",
+                    "en": "Phase End"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "本阶段 5 轮打完后结算阶段结束收入：先按庄园中<mine_tile>数量发<silver>（<mine_income>），再结算<monastery_tile_2>的工人收入（<monastery_mine_worker_income>）。每位玩家各自结算。",
+                    "en": "After this phase's 5 rounds, settle phase-end income: first <silver> per <mine_tile> in each duchy (<mine_income>), then the <monastery_tile_2> worker income (<monastery_mine_worker_income>). Settled for each player."
+                  },
+                  "do_after": "round_loop",
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "collect_mine_income",
+                        "name": {
+                          "zh": "矿收入结算",
+                          "en": "Collect Mine Income"
+                        },
+                        "description": {
+                          "zh": "每位玩家按<duchy>中<mine_tile>数量得<silver>。",
+                          "en": "Each player gains <silver> equal to their <mine_tile>s in the <duchy>."
+                        },
+                        "<ontology::per_player>": true,
+                        "<mine_income>": {
+                          "description": {
+                            "zh": "结算<mine_income>：每个矿 1 <silver>。",
+                            "en": "Resolve <mine_income>: 1 <silver> per mine."
+                          }
+                        }
+                      },
+                      {
+                        "id": "collect_monastery_worker_income",
+                        "name": {
+                          "zh": "修道院工人收入结算",
+                          "en": "Collect Monastery Worker Income"
+                        },
+                        "description": {
+                          "zh": "拥有<monastery_tile_2>的玩家按矿数额外得<worker>（先矿银币、后黄色效果）。",
+                          "en": "Players owning <monastery_tile_2> gain extra <worker>s per mine (silver first, then yellow-tile effects)."
+                        },
+                        "do_after": "collect_mine_income",
+                        "<ontology::per_player>": true,
+                        "<monastery_mine_worker_income>": {
+                          "description": {
+                            "zh": "结算<monastery_mine_worker_income>：每个矿额外 1 <worker>。",
+                            "en": "Resolve <monastery_mine_worker_income>: 1 extra <worker> per mine."
+                          }
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "endgame",
+            "name": {
+              "zh": "终局",
+              "en": "Endgame"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "终局阶段：E 阶段的 5 轮（共 25 轮）全部打完后进入——先结算<final_scoring>，再按<most_vp_wins>判定胜者。",
+              "en": "Endgame phase: entered after all 5 rounds of phase E (25 rounds total) — first resolve <final_scoring>, then adjudicate the winner by <most_vp_wins>."
+            },
+            "do_after": "phase_loop",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "resolve_final_scoring",
+                  "name": {
+                    "zh": "终局结算",
+                    "en": "Resolve Final Scoring"
+                  },
+                  "description": {
+                    "zh": "每位玩家结算<final_scoring>：未售<goods>、<silver>、<worker>换算<vp>，加上已放置的终局计分类<monastery_tile>。",
+                    "en": "Each player resolves <final_scoring>: unsold <goods>, <silver>, and <worker>s convert to <vp>, plus any placed final-scoring <monastery_tile>s."
+                  },
+                  "<ontology::per_player>": true,
+                  "<final_scoring>": {
+                    "description": {
+                      "zh": "结算<final_scoring>：未售货物每块 1 分、银币每枚 1 分、工人每 2 个 1 分、终局计分黄色瓷砖按各自规则。",
+                      "en": "Resolve <final_scoring>: 1 per unsold goods, 1 per silver, 1 per 2 workers, plus each final-scoring yellow tile's own rule."
+                    }
+                  }
+                },
+                {
+                  "id": "adjudicate_victory",
+                  "name": {
+                    "zh": "判定胜者",
+                    "en": "Adjudicate Victory"
+                  },
+                  "description": {
+                    "zh": "按<most_vp_wins>判定胜者：总<vp>最高者获胜；平局时先比庄园空位数（少者胜），再比石桥上位置（更靠后者胜）。",
+                    "en": "Adjudicate the winner by <most_vp_wins>: highest total <vp> wins; ties are broken first by fewest empty duchy spaces, then by furthest back on the bridge."
+                  },
+                  "do_after": "resolve_final_scoring",
+                  "<ontology::evaluate>": {
+                    "id": "evaluate_victory",
+                    "name": {
+                      "zh": "评估胜利条件",
+                      "en": "Evaluate Victory Condition"
+                    },
+                    "specifies": "<ontology::evaluate>",
+                    "description": {
+                      "zh": "按顺序应用<most_vp_wins>的三条标准筛选胜者。",
+                      "en": "Apply <most_vp_wins>'s three criteria in order to select the winner."
+                    },
+                    "result": {
+                      "zh": "胜者玩家（或并列平局）。",
+                      "en": "The winning player (or a tie)."
+                    },
+                    "rules": {
+                      "zh": "按<most_vp_wins>判定胜者：先比较总<vp>（<score_track>位置 + <vp_tile>），并列者比较<duchy>空位数（<fewest_empty_duchy_spaces>），仍并列者比较<bridge>位置（<farthest_behind_on_bridge>）。",
+                      "en": "Adjudicate by <most_vp_wins>: compare total <vp> (position on the <score_track> plus the <vp_tile>), then <fewest_empty_duchy_spaces> among ties, then <farthest_behind_on_bridge>."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ]
+}
