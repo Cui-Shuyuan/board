@@ -431,6 +431,14 @@
                           "zh": "结算<harvest_feeding>：每个已上场<family_member>需 2 <food>、本回合新生儿只需 1；可用生吃、烹饪、手工建筑转换或卡牌效果支付；每缺 1 食物拿 1 个<begging_marker>（-3 分）。",
                           "en": "Resolve <harvest_feeding>: every <family_member> in play needs 2 <food>, a newborn only 1; pay via raw eating, cooking, craft conversions, or card effects; take 1 <begging_marker> (-3 points) per food short."
                         },
+                        "quantity": {
+                          "zh": "2 × 家庭成员（新生儿只算 1）。",
+                          "en": "2 × family members (newborns count as 1).",
+                          "numeric": [
+                            {"when": {"zh": "新生儿、婴儿", "en": "newborn"}, "value": 1, "unit": "份"},
+                            {"when": {"zh": "家庭成员、正式成员", "en": "family member"}, "value": 2, "per": {"zh": "每人", "en": "per person"}, "unit": "份"}
+                          ]
+                        },
                         "do_after": "harvest_field_phase",
                         "<ontology::per_player>": true,
                         "<harvest_feeding>": {

@@ -3030,7 +3030,11 @@
             "<ontology::object>": "<food>",
             "quantity": {
               "zh": "2 × 已上场家庭成员数（新生儿只算 1）。",
-              "en": "2 × family members in play (newborns count as 1)."
+              "en": "2 × family members in play (newborns count as 1).",
+              "numeric": [
+                {"when": {"zh": "新生儿、婴儿", "en": "newborn"}, "value": 1, "unit": "份"},
+                {"when": {"zh": "家庭成员、正式成员", "en": "family member"}, "value": 2, "per": {"zh": "每人", "en": "per person"}, "unit": "份"}
+              ]
             },
             "description": {
               "zh": "支付喂养所需的<food>（含生吃/烹饪/手工转换所得）。",
