@@ -1,0 +1,2081 @@
+{
+  "meta": {
+    "name": {
+      "zh": "方舟动物园",
+      "en": "Ark Nova"
+    },
+    "description": {
+      "zh": "方舟动物园的流程定义——一局游戏从 Setup 到终局计分判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象），本文档定义「按什么顺序进行」（Setup、回合结构、Break、终局流程）与动作/触发器的执行结构。无固定轮次：玩家轮流行动，Break 插入其间，直到任一玩家的吸引力与保护分计数器相遇触发终局。",
+      "en": "Flow definition for Ark Nova — the complete sequence of a game from setup to final scoring and adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects); this document defines 'in what order it happens' (setup, turn structure, break, endgame process) and the structure of actions and triggers. There are no fixed rounds: players take turns, breaks are interleaved, and the game ends when a player's appeal and conservation counters meet."
+    },
+    "game": "ark-nova",
+    "version": "1.0"
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "一局完整的 <ark_nova_setting>，作为最外层轮：设置、主游戏流程、补完回合与终局计分判胜。",
+        "en": "A whole game of <ark_nova_setting> as the outermost round: setup, main gameplay, the final turn cycle, and final scoring with adjudication."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "游戏设置阶段，分为公共设置与个人设置。",
+              "en": "Game setup phase, divided into global setup and personal setup."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "global_setup",
+                  "name": {
+                    "zh": "公共设置",
+                    "en": "Global Setup"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "公共设置：摆版图与 Break 标记、放奖励板块、洗动物园牌堆、发展示区、摆协会板、准备终局计分卡堆、2 人局封堵格、决定起始玩家。",
+                    "en": "Global setup: place the board and Break token, place bonus tiles, shuffle the zoo deck, deal the display, set up the Association board, prepare the Final Scoring deck, block spaces in 2-player games, and determine the start player."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "place_game_board_and_break_token",
+                        "name": {
+                          "zh": "摆放游戏版图与 Break 标记",
+                          "en": "Place Game Board and Break Token"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "把 <game_board> 放在桌面中央；把 <break_token> 放在 <break_track> 上与玩家人数对应的起始格（2/3/4 人局分别对应标注 [2]/[3]/[4] 的格）。",
+                          "en": "Place the <game_board> in the center of the table; place the <break_token> on the start space of the <break_track> matching the player count (the spaces marked [2]/[3]/[4] for 2/3/4 players)."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<break_track>",
+                        "<ontology::object>": "<break_token>",
+                        "quantity": 1
+                      },
+                      {
+                        "id": "place_bonus_tiles",
+                        "name": {
+                          "zh": "放置奖励板块",
+                          "en": "Place Bonus Tiles"
+                        },
+                        "specifies": "<ontology::random_draw>",
+                        "description": {
+                          "zh": "洗混 9 块 <bonus_tile>，随机抽 4 块面朝上放在 <bonus_tile_spaces> 的 4 个空白黄色格上；两个带图标的空格不放板块。其余 5 块放回盒中，本局不使用。",
+                          "en": "Shuffle the 9 <bonus_tile>s and randomly place 4 face up on the 4 blank yellow spaces of the <bonus_tile_spaces>; the 2 spaces with printed icons stay empty. Return the remaining 5 tiles to the box; they are not used."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<bonus_tile_spaces>",
+                        "<ontology::object>": "<bonus_tile>",
+                        "quantity": 4
+                      },
+                      {
+                        "id": "prepare_zoo_deck",
+                        "name": {
+                          "zh": "准备动物园牌堆",
+                          "en": "Prepare Zoo Deck"
+                        },
+                        "specifies": "<ontology::shuffle>",
+                        "description": {
+                          "zh": "把全部 212 张 <zoo_card> 洗混，面朝下组成 <zoo_deck> 放在 <game_board> 的牌堆位置。",
+                          "en": "Shuffle all 212 <zoo_card>s into a face-down <zoo_deck> on the deck space of the <game_board>."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<zoo_deck>",
+                        "<ontology::object>": "<zoo_card>",
+                        "quantity": "all"
+                      },
+                      {
+                        "id": "deal_card_display",
+                        "name": {
+                          "zh": "发展示区",
+                          "en": "Deal the Display"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "从 <zoo_deck> 发 6 张牌面朝下到 <card_display> 的 6 个档位（folders 1-6）。",
+                          "en": "Deal 6 cards face down from the <zoo_deck> into the 6 folders (1-6) of the <card_display>."
+                        },
+                        "source": "<zoo_deck>",
+                        "destination": "<card_display>",
+                        "<ontology::object>": "<zoo_card>",
+                        "quantity": 6,
+                        "do_after": "prepare_zoo_deck"
+                      },
+                      {
+                        "id": "place_association_board",
+                        "name": {
+                          "zh": "摆放协会板",
+                          "en": "Set Up the Association Board"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "把 <association_board> 放在 <game_board> 旁。在 <association_task_area> 放各大洲 1 块 <partner_zoo_tile>（共 5 块）与每种 1 块 <university_tile>（共 3 块）。洗混 12 张 <base_conservation_project_card> 面朝下放协会板旁，翻开 4 人局 4 张、其他人数 3 张放入 <base_conservation_project_area>。",
+                          "en": "Place the <association_board> next to the <game_board>. Put 1 <partner_zoo_tile> of each continent (5 total) and 1 <university_tile> of each kind (3 total) in the <association_task_area>. Shuffle the 12 <base_conservation_project_card>s face down next to the board and reveal the top 4 (4 players) or 3 (otherwise) into the <base_conservation_project_area>."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<association_board>",
+                        "<ontology::object>": "<partner_zoo_tile>",
+                        "quantity": "5 块合作动物园 + 3 块大学 + 3/4 张基础保护项目卡"
+                      },
+                      {
+                        "id": "prepare_final_scoring_deck",
+                        "name": {
+                          "zh": "准备终局计分卡堆",
+                          "en": "Prepare Final Scoring Deck"
+                        },
+                        "specifies": "<ontology::shuffle>",
+                        "description": {
+                          "zh": "洗混 11 张 <final_scoring_card>，面朝下组成 <final_scoring_deck> 放在 <association_board> 旁。",
+                          "en": "Shuffle the 11 <final_scoring_card>s into the face-down <final_scoring_deck> next to the <association_board>."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<final_scoring_deck>",
+                        "<ontology::object>": "<final_scoring_card>",
+                        "quantity": "all"
+                      },
+                      {
+                        "id": "two_player_blocking",
+                        "name": {
+                          "zh": "两人局封堵格",
+                          "en": "Two-Player Blocking"
+                        },
+                        "specifies": "<ontology::state_change>",
+                        "description": {
+                          "zh": "仅 2 人局：取 6 个未使用颜色的 <player_token> 盖住——<base_conservation_project_area> 3 张牌上：左牌盖左条件、中牌盖中条件、右牌盖右条件；<donation_area> 左列 3 格。被盖住的条件/格整局视为被占用，任何玩家都不能使用。",
+                          "en": "2-player games only: take 6 <player_token>s of an unused color and cover — on the 3 <base_conservation_project_area> cards: the left condition on the left card, the middle on the middle card, the right on the right card; and the 3 spaces of the left column of the <donation_area>. Covered conditions/spaces count as occupied for the whole game and cannot be used by either player."
+                        },
+                        "<ontology::condition>": {
+                          "zh": "2 人局。",
+                          "en": "A 2-player game."
+                        },
+                        "subject": "<base_conservation_project_area> 与 <donation_area> 的被封格",
+                        "to": "被 <player_token> 盖住，整局视为占用"
+                      },
+                      {
+                        "id": "determine_start_player",
+                        "name": {
+                          "zh": "决定起始玩家",
+                          "en": "Determine Start Player"
+                        },
+                        "specifies": "<ontology::state_change>",
+                        "description": {
+                          "zh": "随机决定起始玩家。回合顺序为顺时针。起始玩家之后，各玩家的 <appeal_counter> 起始位置依次为 0/1/2/3（起始玩家 0）。",
+                          "en": "Randomly determine the start player. Turn order is clockwise. After the start player, each player's <appeal_counter> starts on 0/1/2/3 in turn order (the start player on 0)."
+                        },
+                        "subject": "<ontology::starting_player>",
+                        "to": "随机选中的玩家"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "personal_setup",
+                  "name": {
+                    "zh": "个人设置",
+                    "en": "Personal Setup"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "每位玩家独立进行的个人设置（无顺序要求，以下各步互相独立可任意顺序执行）。",
+                    "en": "Personal setup performed by each player independently (the steps below are independent and may be done in any order)."
+                  },
+                  "do_after": "global_setup",
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "take_zoo_map",
+                        "name": {
+                          "zh": "拿取动物园地图",
+                          "en": "Take a Zoo Map"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "每位玩家随机拿 1 张地图 A 的 <zoo_map>（首次游戏推荐），或按进阶规则选地图（0 号或 1-8 号）。地图 A 开局在指定位置放 1 个 3 格空 <standard_enclosure>。",
+                          "en": "Each player takes a random Map A <zoo_map> (recommended for the first game), or chooses a map per the advanced rules (Map 0 or Maps 1-8). Map A starts with a 3-space empty <standard_enclosure> on the indicated spaces."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<ontology::player>",
+                        "<ontology::object>": "<zoo_map>",
+                        "quantity": 1,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "place_action_cards",
+                        "name": {
+                          "zh": "摆放动作卡",
+                          "en": "Place Action Cards"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "每位玩家拿 1 套 5 张 <action_card>（Cards、Build、Animals、Association、Sponsors），side I 朝上放在 <zoo_map> 底部的 5 个 <card_slot> 下：Animals 卡固定放在最左标 [3] 的槽位下，其余 4 张随机放其余槽位。",
+                          "en": "Each player takes 1 set of 5 <action_card>s (Cards, Build, Animals, Association, Sponsors), places them side I up under the 5 <card_slot>s at the bottom of the <zoo_map>: the Animals card under the slot marked [3] (furthest left), the other 4 randomly under the remaining slots."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<card_slot>",
+                        "<ontology::object>": "<action_card>",
+                        "quantity": 5,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "place_counters",
+                        "name": {
+                          "zh": "放计数器",
+                          "en": "Place Counters"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "每位玩家拿同色组件，把 <appeal_counter>、<conservation_counter>、<reputation_counter> 放在各自轨道首格。<appeal_counter> 按回合顺位：起始玩家 0、第二玩家 1、第三 2、第四 3；<conservation_counter> 与 <reputation_counter> 都从 0 出发。",
+                          "en": "Each player takes their color's components and places the <appeal_counter>, <conservation_counter>, and <reputation_counter> on the first spaces of their tracks. The <appeal_counter> follows turn order: start player 0, second 1, third 2, fourth 3; the <conservation_counter> and <reputation_counter> both start at 0."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<game_board>",
+                        "<ontology::object>": "<appeal_counter>",
+                        "quantity": 3,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "place_bonus_space_tokens",
+                        "name": {
+                          "zh": "放奖励格玩家标记",
+                          "en": "Place Bonus Space Tokens"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "每位玩家取 7 个自己的 <player_token> 放在 <zoo_map> 左边缘 <bonus_spaces> 的 7 个格上，其余 <player_token> 放在地图旁的个人供应备用。",
+                          "en": "Each player places 7 of their <player_token>s on the 7 <bonus_spaces> at the left edge of the <zoo_map>; the rest stay in the personal supply next to the map."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<bonus_spaces>",
+                        "<ontology::object>": "<player_token>",
+                        "quantity": 7,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "place_association_workers",
+                        "name": {
+                          "zh": "放协会工人",
+                          "en": "Place Association Workers"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "每位玩家拿 4 个 <association_worker>：2-3 个立放在 <notepad> 上作为活跃工人，其余 1-2 个平放在 <worker_supply_spaces> 上（从下到上使用）。",
+                          "en": "Each player takes 4 <association_worker>s: 2-3 stand upright on the <notepad> as active workers; the remaining 1-2 lie on the <worker_supply_spaces> (used bottom to top)."
+                        },
+                        "source": "<ontology::game_box>",
+                        "destination": "<notepad>",
+                        "<ontology::object>": "<association_worker>",
+                        "quantity": 4,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "take_starting_money",
+                        "name": {
+                          "zh": "拿起始钱",
+                          "en": "Take Starting Money"
+                        },
+                        "specifies": "<ontology::transfer>",
+                        "description": {
+                          "zh": "每位玩家从 <general_supply> 拿 25 <money> 放在 <notepad> 上。",
+                          "en": "Each player takes 25 <money> from the <general_supply> onto their <notepad>."
+                        },
+                        "source": "<general_supply>",
+                        "destination": "<notepad>",
+                        "<ontology::object>": "<money>",
+                        "quantity": 25,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "draw_final_scoring_cards",
+                        "name": {
+                          "zh": "抽终局计分卡",
+                          "en": "Draw Final Scoring Cards"
+                        },
+                        "specifies": "<ontology::random_draw>",
+                        "description": {
+                          "zh": "每位玩家从 <final_scoring_deck> 抽 2 张 <final_scoring_card> 放在地图旁。可随时查看自己的，但须对其他玩家保密。",
+                          "en": "Each player draws 2 <final_scoring_card>s from the <final_scoring_deck> and places them next to their zoo map. They may look at them at any time but must keep them hidden from the other players."
+                        },
+                        "source": "<final_scoring_deck>",
+                        "destination": "<ontology::player>",
+                        "<ontology::object>": "<final_scoring_card>",
+                        "quantity": 2,
+                        "<ontology::per_player>": true
+                      },
+                      {
+                        "id": "draw_keep_hand_cards",
+                        "name": {
+                          "zh": "抽手牌",
+                          "en": "Draw Hand Cards"
+                        },
+                        "specifies": "<ontology::random_draw>",
+                        "description": {
+                          "zh": "每位玩家从 <zoo_deck> 抽 8 张 <zoo_card>，选择 4 张留作手牌，其余 4 张面朝上弃入 <discard_pile>。手牌对其他玩家保密。",
+                          "en": "Each player draws 8 <zoo_card>s from the <zoo_deck>, keeps 4 as hand cards, and discards the other 4 face up onto the <discard_pile>. Hand cards stay hidden from the other players."
+                        },
+                        "source": "<zoo_deck>",
+                        "destination": "<ontology::hand>",
+                        "<ontology::object>": "<zoo_card>",
+                        "quantity": "抽 8 留 4，弃 4 张到 <discard_pile>",
+                        "<ontology::per_player>": true
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "reveal_display",
+                  "name": {
+                    "zh": "翻开展示区",
+                    "en": "Reveal the Display"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "description": {
+                    "zh": "所有玩家都完成个人设置后，把 <card_display> 的 6 张牌全部翻开。",
+                    "en": "After all players have finished personal setup, flip the 6 cards of the <card_display> face up."
+                  },
+                  "do_after": "personal_setup",
+                  "subject": "<card_display>",
+                  "to": "6 张牌全部翻开（face_up）"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "main_gameplay",
+            "name": {
+              "zh": "主游戏流程",
+              "en": "Main Gameplay"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "主游戏流程：无固定轮次，玩家按顺时针轮流执行回合，回合之间穿插 Break，直到终局被触发。每圈回合结束（turn_cycle 完成）时，本阶段的 loop 检查 <endgame_trigger>——触发玩家完整执行完自己的回合，其后的玩家照常完成本圈剩余回合。",
+              "en": "Main gameplay: no fixed rounds — players take turns clockwise, with breaks interleaved, until the end of the game is triggered. At the end of each turn cycle, the phase loop checks <endgame_trigger> — the triggering player completes their turn in full, and later players in the cycle still take their normal turns."
+            },
+            "do_after": "setup",
+            "loop": {
+              "until": "<endgame_trigger>"
+            },
+            "<ontology::round>": {
+              "id": "turn_cycle",
+              "name": {
+                "zh": "回合轮",
+                "en": "Turn Cycle"
+              },
+              "description": {
+                "zh": "一圈玩家回合：每位玩家一个回合（从起始玩家开始顺时针）。",
+                "en": "One cycle of player turns: one turn per player, starting with the start player and going clockwise."
+              },
+              "<ontology::turn>": {
+                "id": "player_turn",
+                "name": {
+                  "zh": "玩家回合",
+                  "en": "Player Turn"
+                },
+                "description": {
+                  "zh": "一位玩家的回合：选择 1 张动作卡执行其动作（可先支付 X Token 提升强度），执行完后把该卡移到槽 1；若回合结束时 <break_token> 已到达最后一格，结算 <break>。",
+                  "en": "One player's turn: choose 1 Action card and perform its action (X-tokens may boost its strength first), then move the card to slot 1; if the <break_token> is on the last space at the end of the turn, resolve the <break>."
+                },
+                "<ontology::pipeline>": {
+                  "options": [
+                    {
+                      "id": "perform_action",
+                      "name": {
+                        "zh": "执行动作",
+                        "en": "Perform Action"
+                      },
+                      "specifies": "<ontology::action>",
+                      "description": {
+                        "zh": "选择 1 张自己的 <action_card> 并执行其动作。动作强度 X = 该卡所在 <card_slot> 编号 + 本次支付的 X Token 数（X Token 可让强度超过 5；动作开始前决定强度，动作中途获得的 X Token 不能用于本次动作）。<x_token_action> 不受强度影响。",
+                        "en": "Choose 1 of your <action_card>s and perform its action. The action strength X equals the card's <card_slot> number plus the X-tokens spent this action (X-tokens may push strength beyond 5; strength is fixed before the action begins, so X-tokens gained during the action cannot be used). The <x_token_action> ignores strength."
+                      },
+                      "<ontology::action>": {
+                        "options": [
+                          "<cards_action>",
+                          "<build_action>",
+                          "<animals_action>",
+                          "<association_action>",
+                          "<sponsors_action>",
+                          "<x_token_action>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      }
+                    },
+                    {
+                      "id": "resolve_break",
+                      "name": {
+                        "zh": "结算 Break",
+                        "en": "Resolve Break"
+                      },
+                      "specifies": "<ontology::trigger>",
+                      "description": {
+                        "zh": "若回合结束时 <break_token> 已到达 <break_track> 最后一格，结算 <break>（执行其全部 6 步）。",
+                        "en": "If the <break_token> is on the last space of the <break_track> at the end of the turn, resolve the <break> (all 6 of its steps)."
+                      },
+                      "do_after": "perform_action",
+                      "<ontology::condition>": {
+                        "zh": "<break_token> 位于 <break_track> 最后一格（玩家回合结束后检查）。",
+                        "en": "The <break_token> is on the last space of the <break_track> (checked after the player's turn)."
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "description": {
+                            "zh": "执行 <break> 触发器的全部步骤（触发者拿 X Token → 手牌上限 → 清标记 → 工人与协会板 → 补展示区 → 收入 → 重置 Break 轨）。",
+                            "en": "Execute all steps of the <break> trigger (triggerer gains an X-token → hand limit → clear tokens → workers and Association board → replenish display → income → reset Break track)."
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              }
+            }
+          },
+          {
+            "id": "final_turn_cycle",
+            "name": {
+              "zh": "补完回合",
+              "en": "Final Turn Cycle"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "终局触发后的补完回合：触发玩家已完成自己的回合，其余玩家各再执行 1 回合。若终局在 Break 中触发，则所有玩家（含触发者）各再执行 1 回合。",
+              "en": "The final turn cycle after the end of the game is triggered: the triggering player has already completed their turn, and each other player takes one more turn. If the end is triggered during a break, all players (including the triggerer) take one more turn."
+            },
+            "do_after": "main_gameplay",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "final_turn_cycle_after_turn_trigger",
+                  "name": {
+                    "zh": "回合中触发的补完回合",
+                    "en": "Final Turn Cycle After a Turn Trigger"
+                  },
+                  "specifies": "<ontology::round>",
+                  "description": {
+                    "zh": "终局在某玩家的回合中触发时：从触发玩家的下家开始顺时针，除触发玩家外的其他玩家各执行 1 回合。",
+                    "en": "When the end is triggered during a player's turn: starting clockwise from the triggering player, each player except the triggerer takes one more turn."
+                  },
+                  "<ontology::condition>": {
+                    "zh": "终局在某个玩家的回合中触发（非 Break 期间）。",
+                    "en": "The end of the game was triggered during a player's turn (not during a break)."
+                  },
+                  "<ontology::turn>": {
+                    "id": "final_player_turn_excluding_triggerer",
+                    "name": {
+                      "zh": "补完玩家回合（除触发者）",
+                      "en": "Final Player Turn (Except Triggerer)"
+                    },
+                    "description": {
+                      "zh": "除触发玩家外的玩家执行的最后 1 回合：选择 1 张动作卡执行其动作（与普通回合相同，执行完移卡到槽 1；若因此把 <break_token> 推到最后一格，仍照常结算 <break>）。",
+                      "en": "The last turn for each player except the triggerer: choose 1 Action card and perform its action (same as a normal turn, including moving the card to slot 1; if this advances the <break_token> to the last space, the <break> resolves normally)."
+                    },
+                    "<ontology::action>": {
+                      "options": [
+                        "<cards_action>",
+                        "<build_action>",
+                        "<animals_action>",
+                        "<association_action>",
+                        "<sponsors_action>",
+                        "<x_token_action>"
+                      ],
+                      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                    }
+                  }
+                },
+                {
+                  "id": "final_turn_cycle_after_break_trigger",
+                  "name": {
+                    "zh": "Break 中触发的补完回合",
+                    "en": "Final Turn Cycle After a Break Trigger"
+                  },
+                  "specifies": "<ontology::round>",
+                  "description": {
+                    "zh": "终局在 Break 中触发时：所有玩家（含触发者）各执行 1 回合（从 Break 结束后应行动的玩家开始顺时针）。",
+                    "en": "When the end is triggered during a break: all players (including the triggerer) take one more turn, starting clockwise from whoever would act after the break."
+                  },
+                  "<ontology::condition>": {
+                    "zh": "终局在 Break 期间触发。",
+                    "en": "The end of the game was triggered during a break."
+                  },
+                  "<ontology::turn>": {
+                    "id": "final_player_turn_all_players",
+                    "name": {
+                      "zh": "补完玩家回合（所有玩家）",
+                      "en": "Final Player Turn (All Players)"
+                    },
+                    "description": {
+                      "zh": "所有玩家执行的最后 1 回合：选择 1 张动作卡执行其动作（与普通回合相同）。",
+                      "en": "The last turn for every player: choose 1 Action card and perform its action (same as a normal turn)."
+                    },
+                    "<ontology::action>": {
+                      "options": [
+                        "<cards_action>",
+                        "<build_action>",
+                        "<animals_action>",
+                        "<association_action>",
+                        "<sponsors_action>",
+                        "<x_token_action>"
+                      ],
+                      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "final_scoring",
+            "name": {
+              "zh": "终局计分",
+              "en": "Final Scoring"
+            },
+            "specifies": "<ontology::phase>",
+            "do_after": "final_turn_cycle",
+            "description": {
+              "zh": "终局计分阶段：无人达到 10 保护分时先弃终局计分卡 → 结算终局计分卡与终局图标的卡牌效果 → 计算胜利分判定胜者。",
+              "en": "Final scoring phase: if no one reached 10 conservation points, discard a Final Scoring card first → resolve Final Scoring cards and cards with end-of-game icons → compute Victory Points and adjudicate the winner."
+            },
+            "score_table": {
+              "by_card": [
+                {
+                  "what": "final_scoring_card",
+                  "zh": "终局计分卡",
+                  "aliases": [
+                    "终局计分",
+                    "最终计分卡"
+                  ],
+                  "rule": "终局时每张剩余 <final_scoring_card> 按卡面（表格或文字）获得 1-4 点保护分，计入总分；单张最多 4 分。"
+                }
+              ],
+              "aliases": [
+                {
+                  "zh": "终局计分",
+                  "whats": [
+                    "final_scoring_card"
+                  ]
+                }
+              ],
+              "note": "胜利分 = 自己的吸引力值 − 目标数（目标数 = <conservation_counter> 所在计分区的最低吸引力值）。最高正分者获胜；平局时支持保护项目更多者（<bonus_spaces> 取走的玩家标记更多者）获胜；仍平局则并列。"
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "discard_final_scoring_card_if_no_10cp",
+                  "name": {
+                    "zh": "无人达 10 分时弃终局计分卡",
+                    "en": "Discard Final Scoring Card If No One Reached 10 CP"
+                  },
+                  "specifies": "<ontology::trigger>",
+                  "description": {
+                    "zh": "若终局前没有任何玩家达到过 10 保护分，所有玩家各选择并弃掉 1 张自己的 <final_scoring_card>（面朝下放到剩余 <final_scoring_deck> 牌堆下）。",
+                    "en": "If no player reached 10 conservation points before the game ended, every player chooses and discards 1 of their <final_scoring_card>s (face down under the remaining <final_scoring_deck>)."
+                  },
+                  "<ontology::condition>": {
+                    "zh": "整局游戏中没有任何玩家达到或超过 10 保护分。",
+                    "en": "No player reached or exceeded 10 conservation points during the game."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "<ontology::transfer>": {
+                        "description": {
+                          "zh": "每位玩家弃 1 张自己的 <final_scoring_card>，面朝下放到剩余终局计分卡堆下。",
+                          "en": "Each player discards 1 of their <final_scoring_card>s, face down under the remaining Final Scoring stack."
+                        },
+                        "source": "<ontology::player>",
+                        "destination": "<final_scoring_deck>",
+                        "<ontology::object>": "<final_scoring_card>",
+                        "quantity": 1,
+                        "<ontology::per_player>": true
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "score_final_scoring_cards",
+                  "name": {
+                    "zh": "结算终局计分卡",
+                    "en": "Score Final Scoring Cards"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每位玩家结算自己剩余的每张 <final_scoring_card>：按卡面表格或文字获得 1-4 点保护分（计分时考虑自己的大学、面前卡牌及其图标）。单张卡最多获得 4 点保护分。所得保护分推进 <conservation_counter> 并计入总分。",
+                    "en": "Each player resolves each of their remaining <final_scoring_card>s: gain 1-4 conservation points per card per the table or text on the card (considering your universities and the cards in front of you with their icons). A single card never grants more than 4 conservation points. The points advance the <conservation_counter> and count toward the total."
+                  },
+                  "result": {
+                    "zh": "每张终局计分卡获得的保护分（1-4）。",
+                    "en": "The conservation points gained from each Final Scoring card (1-4)."
+                  }
+                },
+                {
+                  "id": "score_endgame_effects",
+                  "name": {
+                    "zh": "结算终局图标的卡",
+                    "en": "Score End-of-Game Card Effects"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每位玩家结算所有带终局图标（右下角棕色背景、竖棕色条的卡）的 <sponsor_card> 与 <animal_card> 效果，获得额外吸引力或保护分，计入总分。",
+                    "en": "Each player resolves the effects of all <sponsor_card>s and <animal_card>s with the end-of-game icon (brown background in the lower-right corner, vertical brown strip), gaining extra appeal or conservation points that count toward the total."
+                  },
+                  "result": {
+                    "zh": "终局卡牌效果获得的吸引力/保护分。",
+                    "en": "The appeal/conservation points gained from end-of-game card effects."
+                  }
+                },
+                {
+                  "id": "determine_winner",
+                  "name": {
+                    "zh": "判定胜者",
+                    "en": "Determine Winner"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "判定胜者：每位玩家的胜利分 = 自己的吸引力值 − 目标数（<conservation_counter> 所在计分区的最低吸引力值）。胜利分最高的正分玩家获胜；平局时支持保护项目更多者获胜（数 <bonus_spaces> 上已取走的 <player_token> 数）；仍平局则并列获胜。",
+                    "en": "Adjudicate the winner: each player's Victory Points = their Appeal value − their Target Number (the lowest Appeal value in the scoring area holding their <conservation_counter>). The player with the highest positive Victory Point total wins; ties go to the player who supported the most conservation projects (count the <player_token>s removed from the <bonus_spaces>); if still tied, all tied players share the victory."
+                  },
+                  "result": {
+                    "zh": "胜者玩家。",
+                    "en": "The winning player."
+                  },
+                  "rules": {
+                    "zh": "胜利分 = 吸引力值 − 目标数；最高正分胜；平局比支持保护项目数；再平并列。",
+                    "en": "Victory Points = Appeal − Target Number; highest positive total wins; tie-break by number of supported conservation projects; still tied, share the victory."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "cards_action",
+      "name": {
+        "zh": "卡牌动作",
+        "en": "Cards Action"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "CARDS 动作：先把 <break_token> 推进 2 格（不因此得钱），然后从牌堆抽牌（side I）或从牌堆抽牌/声望范围内拿牌/snap 三选一（side II）。side I：按卡面表格从 <zoo_deck> 抽牌（最多 3 张），某些档位抽后须弃 1 张手牌（可以是刚抽的）；snap 需要强度至少 5。side II：表格更强，可在 <reputation_range> 内从 <card_display> 拿牌（与牌堆混抽、顺序自选），snap 门槛降为强度 3（强度更高与 3 无区别）。snap 无视声望范围，拿 1 张展示卡入手。回合内从展示区拿牌不立即补牌，回合结束才补（高编号档位下滑+翻新牌）。动作后手牌数不受限（Break 时才弃至上限）。升级 side II 后声望可超过 9。执行后把卡移到槽 1。",
+        "en": "CARDS action: first advance the <break_token> 2 spaces (no money for this), then draw from the deck (side I) or choose among drawing from the deck / taking within reputation range / snapping (side II). Side I: draw from the <zoo_deck> per the table printed on the card (maximum 3 cards); at some strength levels you must then discard 1 hand card (possibly one just drawn); snapping requires strength at least 5. Side II: the table is upgraded, you may take cards from the <card_display> within <reputation_range> (mixed with deck draws, any order), and the snap threshold drops to strength 3 (higher strength makes no difference for snapping). Snapping ignores reputation range and takes exactly 1 display card into your hand. The display is not replenished until the end of the turn (higher folders slide down, then new cards are revealed). There is no hand limit after this action (you discard down only at breaks). The upgraded side II also allows reputation above 9. Afterwards the card moves to slot 1."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "可选：支付任意数量 X Token（0 至持有数，最多 5 个），每个使本次动作强度 +1。支付后归还 <general_supply>。",
+            "en": "Optional: spend any number of X-tokens (0 up to what you hold, at most 5), each increasing this action's strength by 1. Spent tokens return to the <general_supply>."
+          },
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "把支付的 X Token 归还总供应。",
+              "en": "Return the spent X-tokens to the general supply."
+            },
+            "source": "<notepad>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<x_token>",
+            "quantity": "自选 0-5 个"
+          }
+        }
+      },
+      "target": "自己的 Cards <action_card>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "advance_break_2",
+              "name": {
+                "zh": "推进 Break 2 格",
+                "en": "Advance Break 2 Spaces"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "把 <break_token> 向 <break_track> 终点推进 2 格（不因此获得钱；若到达最后一格，多余步数被忽略，回合结束后结算 <break>，触发者得 1 个 X Token）。",
+                "en": "Advance the <break_token> 2 spaces toward the end of the <break_track> (no money for this; if it reaches the last space, extra steps are ignored and the <break> resolves after the turn, with the triggerer gaining 1 X-token)."
+              },
+              "quantity": 2,
+              "subject": "<break_token>",
+              "to": "向 <break_track> 终点推进 2 格"
+            },
+            {
+              "id": "draw_or_snap",
+              "name": {
+                "zh": "抽牌或 snap",
+                "en": "Draw or Snap"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "二选一：从牌堆抽牌（side I/II 按各自卡面表格；side II 还可在 <reputation_range> 内从 <card_display> 拿牌，与牌堆抽卡混合、顺序自选）或 snap（side I 需强度 ≥5；side II 强度 ≥3 即可——强度更高与 3 无区别。拿 <card_display> 中任意 1 张卡入手，无视声望范围）。选择抽牌时不拿展示卡。",
+                "en": "Choose one: draw from the deck (side I/II each per their printed tables; side II may also take cards from the <card_display> within <reputation_range>, mixed with deck draws in any order) or snap (side I requires strength ≥5; side II requires only strength ≥3 — anything higher is the same as 3; take any 1 card from the <card_display> into your hand, ignoring reputation range). When drawing, no display cards are taken."
+              },
+              "do_after": "advance_break_2",
+              "<ontology::action>": {
+                "options": [
+                  {
+                    "id": "draw_from_deck",
+                    "name": {
+                      "zh": "从牌堆抽牌",
+                      "en": "Draw from the Deck"
+                    },
+                    "specifies": "<ontology::random_draw>",
+                    "description": {
+                      "zh": "比较动作强度 X 与卡面表格，从 <zoo_deck> 抽至多表格所示张数（最多 3 张）。某些强度档抽完后须从手牌弃 1 张（可以是刚抽的牌，也可以是原有手牌）。side II 时还可在 <reputation_range> 内从 <card_display> 拿牌（最多到声望计数器所在档），与牌堆抽卡混合，顺序自选。",
+                      "en": "Compare the action strength X with the table on the card and draw up to the indicated number of cards (maximum 3) from the <zoo_deck>. At some strength levels you must then discard 1 hand card (either one just drawn or one already in hand). With side II you may also take cards from the <card_display> within <reputation_range> (up to the folder of your Reputation counter), mixed with deck draws in any order."
+                    },
+                    "source": "<zoo_deck>",
+                    "destination": "<ontology::hand>",
+                    "<ontology::object>": "<zoo_card>",
+                    "quantity": "按卡面表格（最多 3 张）"
+                  },
+                  {
+                    "id": "snap_card",
+                    "name": {
+                      "zh": "Snap 拿牌",
+                      "en": "Snap"
+                    },
+                    "specifies": "<ontology::transfer>",
+                    "description": {
+                      "zh": "从 <card_display> 拿任意 1 张卡入手，无视声望范围（无需看 <reputation_counter> 位置）。side I 需动作强度至少 5；side II 强度 3 起即可（3 以上与 3 无区别）。选择 snap 后本动作不能再抽牌。展示区回合结束才补。",
+                      "en": "Take any 1 card from the <card_display> into your hand, regardless of your zoo's reputation (the <reputation_counter> position does not matter). Side I requires action strength at least 5; side II only requires strength 3 or more (higher is the same as 3). After snapping you may draw no further cards this action. The display is replenished only at the end of the turn."
+                    },
+                    "source": "<card_display>",
+                    "destination": "<ontology::hand>",
+                    "<ontology::object>": "<zoo_card>",
+                    "quantity": 1
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            },
+            {
+              "id": "move_card_to_slot_1_cards",
+              "name": {
+                "zh": "移卡到槽 1（Cards）",
+                "en": "Move Card to Slot 1"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "动作完成后，把所选 <action_card> 从原 <card_slot> 取下，其左侧的卡整体右移，该卡放入空出的槽 [1]。",
+                "en": "After completing the action, remove the chosen <action_card> from its <card_slot>, shift all cards left of the empty slot to the right, and place the chosen card in the now-empty slot [1]."
+              },
+              "do_after": "draw_or_snap",
+              "subject": "所选 <action_card>",
+              "to": "槽 [1]（中间卡右移）"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "build_action",
+      "name": {
+        "zh": "建造动作",
+        "en": "Build Action"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "BUILD 动作：side I 建造恰好 1 栋建筑，最大尺寸 X；side II 可建多栋不同建筑，总尺寸不超过 X，并可建 <reptile_house> 与 <large_bird_aviary>，还能盖公园格。每栋建筑费用 = 格数 ×2 钱，先付钱再放置；每栋依次建造（side II 可边拿放置奖励边付下一栋的钱）。可选建筑：<kiosk>/<pavilion>（同板块两面）、<standard_enclosure> 1-5 格、<petting_zoo>（3 格，限 1 个）；side II 加 <reptile_house>/<large_bird_aviary>（各 5 格，限 1 个，建成时可立即迁移动物一次）。第一个建筑至少 1 格在地图边缘格；之后每个建筑须与现有建筑至少共 1 条边。只能建在空格上；不能盖水/岩格；升级前不能盖公园格。亭与亭至少相距 3 格。馆建成立即 +1 吸引力。围栏以空面朝上建。<unique_building> 不能用此动作建。执行后把卡移到槽 1。",
+        "en": "BUILD action: side I builds exactly 1 building with a maximum size of X; side II may build several different buildings with a maximum total size of X, may build the <reptile_house> and <large_bird_aviary>, and may cover park-icon spaces. Each building costs 2 money per space, paid before placing it; with side II, build one after the other (placement bonuses taken immediately can pay for the next building). Available: <kiosk>/<pavilion> (the two sides of the same tile), <standard_enclosure>s of sizes 1-5, <petting_zoo> (size 3, at most 1); side II adds the <reptile_house>/<large_bird_aviary> (size 5 each, at most 1, with a one-time immediate animal move-in when built). The first building must have at least 1 space on a border space of the map; every later building must share at least 1 edge with an existing building. Build only on empty spaces; never cover water or rock spaces; park-icon spaces require the upgraded action. Kiosks must be at least 3 spaces apart. Each pavilion immediately grants +1 appeal. Enclosures are built empty-side up. <unique_building>s cannot be built with this action. Afterwards the card moves to slot 1."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "可选：支付任意数量 X Token（每个 +1 强度）。每栋建筑另付 2×格数 钱到 <general_supply>（逐栋支付）。",
+            "en": "Optional: spend any number of X-tokens (each +1 strength). Additionally, each building costs 2×its size in money to the <general_supply>, paid per building."
+          },
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "X Token 归还总供应；每栋建筑支付 2×格数 钱。",
+              "en": "X-tokens return to the general supply; each building costs 2×size money."
+            },
+            "source": "<notepad>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<x_token>",
+            "quantity": "自选 0-5 个；每栋建筑另付 2×格数 钱"
+          }
+        }
+      },
+      "target": "<building_area> 的空格",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "build_buildings",
+              "name": {
+                "zh": "建造建筑",
+                "en": "Build Buildings"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "side I：建恰好 1 栋尺寸 ≤X 的建筑；side II：建任意多栋不同建筑，总尺寸 ≤X。逐栋：支付费用 → 放置（遵守相邻/边界/公园/水岩限制与亭间距）→ 若盖住带奖励图标格立即拿放置奖励（side II 可在下一栋建造前拿）。特殊规则：馆建成 +1 吸引力；<reptile_house>/<large_bird_aviary> 建成时可立即迁移符合条件动物（仅此一次）；盖满地图（水岩除外）立即 +7 吸引力。",
+                "en": "Side I: build exactly 1 building of size ≤X; side II: build any number of different buildings with total size ≤X. Per building: pay the cost → place it (adjacency/border/park/water-rock limits and kiosk spacing apply) → if a space with a bonus icon is covered, take the placement bonus immediately (with side II, before building the next one). Special rules: each pavilion grants +1 appeal; building the <reptile_house>/<large_bird_aviary> allows an immediate one-time move-in of qualifying animals; covering every map space (except water and rock) immediately grants +7 appeal."
+              },
+              "<ontology::action>": {
+                "options": [
+                  {
+                    "id": "build_single_building",
+                    "name": {
+                      "zh": "建 1 栋建筑",
+                      "en": "Build One Building"
+                    },
+                    "specifies": "<ontology::play>",
+                    "description": {
+                      "zh": "side I：选 1 栋 <kiosk>/<pavilion>/<standard_enclosure>（1-5 格，空面朝上）/<petting_zoo>（3 格，限 1 个），尺寸 ≤ 动作强度 X。付 2×格数 钱后放置。",
+                      "en": "Side I: choose 1 <kiosk>/<pavilion>/<standard_enclosure> (1-5 spaces, empty side up)/<petting_zoo> (size 3, at most 1) with size ≤ action strength X. Pay 2×size money, then place it."
+                    },
+                    "<ontology::condition>": {
+                      "zh": "<action_card> 为 side I。",
+                      "en": "The <action_card> is on side I."
+                    },
+                    "<ontology::piece>": "所建建筑（<kiosk>/<pavilion>/<standard_enclosure>/<petting_zoo> 之一）",
+                    "source": "<general_supply>",
+                    "destination": "<building_area>"
+                  },
+                  {
+                    "id": "build_multiple_buildings",
+                    "name": {
+                      "zh": "建多栋建筑",
+                      "en": "Build Several Buildings"
+                    },
+                    "specifies": "<ontology::play>",
+                    "description": {
+                      "zh": "side II：建任意多栋互不相同的建筑（含 <reptile_house>/<large_bird_aviary>，各限 1 个），总尺寸 ≤ 动作强度 X。逐栋付费放置；盖住奖励格立即拿奖励（可在下一栋前）。",
+                      "en": "Side II: build any number of mutually different buildings (including the <reptile_house>/<large_bird_aviary>, at most 1 each), total size ≤ action strength X. Pay and place one after the other; placement bonuses are taken immediately (usable before the next building)."
+                    },
+                    "<ontology::condition>": {
+                      "zh": "<action_card> 已升级为 side II。",
+                      "en": "The <action_card> is upgraded to side II."
+                    },
+                    "<ontology::piece>": "所建建筑（<kiosk>/<pavilion>/<standard_enclosure>/<petting_zoo> 之一）",
+                    "source": "<general_supply>",
+                    "destination": "<building_area>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            },
+            {
+              "id": "move_card_to_slot_1_build",
+              "name": {
+                "zh": "移卡到槽 1（Build）",
+                "en": "Move Card to Slot 1"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "动作完成后把所选 <action_card> 移到槽 [1]，中间卡右移。",
+                "en": "After completing the action, move the chosen <action_card> to slot [1], shifting the intervening cards right."
+              },
+              "do_after": "build_buildings",
+              "subject": "所选 <action_card>",
+              "to": "槽 [1]（中间卡右移）"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "animals_action",
+      "name": {
+        "zh": "动物动作",
+        "en": "Animals Action"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "ANIMALS 动作：从手牌打动物卡，按卡面表格张数上限（逐张完成 5 步）。side II：还可在 <reputation_range> 内从 <card_display> 打动物（额外支付档位编号等值的钱），可打带公园图标的动物，且强度 ≥5 时动作最开始先 +1 声望（使本次动作的声望范围已更高）。每张动物卡 5 步：①检查条件 ②付费用（同大陆 <partner_zoo_tile> 每图标 −3 钱；必须先付得起全额，即使之后有返钱效果）③填围栏（标准围栏翻面或特殊围栏放标记）④放卡 ⑤结算效果（吸引力/保护分/声望与即时效果；「动作结束后」效果延后）。执行后移卡到槽 1，再结算「动作结束后」效果。倍增标记不适用于本动作。",
+        "en": "ANIMALS action: play Animal cards from your hand, up to the number on the card's table (completing all 5 steps per animal). Side II: you may also play animals from the <card_display> within <reputation_range> (paying extra money equal to the folder number), may play animals with the park icon as a condition, and at strength ≥5 you first gain +1 reputation (so your reputation range for this action is already higher). The 5 steps per Animal card: ① check conditions ② pay the cost (each <partner_zoo_tile> of the animal's continent reduces it by 3 money per continent icon; you must be able to pay the full cost up front, even if a later effect refunds money) ③ fill an enclosure (flip a standard enclosure or mark a special enclosure) ④ place the card ⑤ resolve effects (appeal/conservation points/reputation and immediate effects; \"after finishing\" effects wait). Afterwards move the card to slot 1, then resolve the \"after finishing\" effects. Multiplier tokens do not apply to this action."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "可选：支付任意数量 X Token（每个 +1 强度）。每张动物卡另付卡面费用（同大陆 <partner_zoo_tile> 每大陆图标 −3 钱）；side II 从展示区打另付档位编号等值的钱。",
+            "en": "Optional: spend any number of X-tokens (each +1 strength). Each Animal card also costs its printed price (reduced by 3 money per continent icon per <partner_zoo_tile> of that continent); side II display plays cost extra money equal to the folder number."
+          },
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "X Token 归还总供应；支付动物费用与展示区附加费。",
+              "en": "X-tokens return to the general supply; pay the animal costs and display surcharges."
+            },
+            "source": "<notepad>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<x_token>",
+            "quantity": "自选 0-5 个"
+          }
+        }
+      },
+      "target": "手牌中的 <animal_card>（side II 可在 <reputation_range> 内从 <card_display> 打）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "gain_reputation_at_strength_5",
+              "name": {
+                "zh": "强度 5 先加声望",
+                "en": "Gain Reputation at Strength 5"
+              },
+              "specifies": "<ontology::push_track>",
+              "description": {
+                "zh": "side II 且动作强度 ≥5 时：在动作最开始把 <reputation_counter> 推进 1 格（本次动作的声望范围即刻变高）。",
+                "en": "With side II and action strength ≥5: at the very beginning of the action, advance the <reputation_counter> 1 step (your reputation range for this action is already higher)."
+              },
+              "<ontology::condition>": {
+                "zh": "<action_card> 已升级为 side II 且动作强度至少 5。",
+                "en": "The <action_card> is upgraded to side II and the action strength is at least 5."
+              },
+              "quantity": 1,
+              "<ontology::track>": "<reputation_track>"
+            },
+            {
+              "id": "play_animals",
+              "name": {
+                "zh": "打动物",
+                "en": "Play Animals"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "按卡面表格打至多所示张数 <animal_card>（逐张走完 <play_animal_card> 的 5 步再做下一张；可以不把张数打满）。side II 可 2 张手牌、2 张展示区或各 1 张混打。",
+                "en": "Play up to the number of <animal_card>s shown on the card's table (complete all steps of <play_animal_card> for one animal before the next; you may play fewer). With side II, 2 cards may come from the hand, 2 from the display, or 1 each."
+              },
+              "do_after": "gain_reputation_at_strength_5"
+            },
+            {
+              "id": "move_card_to_slot_1_animals",
+              "name": {
+                "zh": "移卡到槽 1（Animals）",
+                "en": "Move Card to Slot 1"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "动作完成后把所选 <action_card> 移到槽 [1]，中间卡右移。",
+                "en": "After completing the action, move the chosen <action_card> to slot [1], shifting the intervening cards right."
+              },
+              "do_after": "play_animals",
+              "subject": "所选 <action_card>",
+              "to": "槽 [1]（中间卡右移）"
+            },
+            {
+              "id": "resolve_after_finishing_effects",
+              "name": {
+                "zh": "结算「动作结束后」效果",
+                "en": "Resolve After-Finishing Effects"
+              },
+              "specifies": "<ontology::effect>",
+              "description": {
+                "zh": "移卡到槽 1 之后，结算本动作触发的所有「动作结束后」（after finishing）效果（含动物卡与赞助卡触发的）。多个同类效果时玩家自选顺序。",
+                "en": "After moving the card to slot 1, resolve all \"after finishing\" effects triggered by this action (from animal or sponsor cards). With multiple such effects, the player chooses the order."
+              },
+              "do_after": "move_card_to_slot_1_animals"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "play_animal_card",
+      "name": {
+        "zh": "打动物卡",
+        "en": "Play an Animal Card"
+      },
+      "specifies": "<ontology::play>",
+      "description": {
+        "zh": "打出 1 张 <animal_card> 的 5 步流程：①检查左侧条件（需全部满足，如特定合作动物园、类别/大陆图标）②支付费用（同大陆 <partner_zoo_tile> 每个大陆图标 −3 钱；须先付得起全额，返钱效果之后才结算）③填围栏（宠物动物园动物只能进 <petting_zoo>；爬行动物与部分鸟类可标准/特殊二选一；标准围栏翻到占用面；特殊围栏放相应数量 <player_token>，空间不足不能安置；水/岩要求同样适用特殊围栏）④把卡放在地图旁（叠放）⑤结算效果：吸引力推进卡面步数，可能有保护分/声望；即时效果立即结算（包括其他卡被触发的效果）；「动作结束后」效果延后。多个同时效果自选顺序。互动效果只对吸引力 ≥5 的玩家生效。",
+        "en": "The 5-step flow of playing 1 <animal_card>: ① check the conditions on the left side (all must be met, e.g. a specific partner zoo or category/continent icons) ② pay the cost (reduced by 3 money per continent icon per <partner_zoo_tile> of that continent; the full cost must be payable up front — refund effects resolve later) ③ fill an enclosure (Petting Zoo animals can only go in the <petting_zoo>; reptiles and some birds may choose standard or special; flip a standard enclosure to its occupied side; place the appropriate number of <player_token>s on a special enclosure — if there is not enough space, the animal cannot go there; water/rock requirements also apply to the special enclosure) ④ place the card next to your zoo map (overlapping) ⑤ resolve effects: advance appeal by the printed amount, possibly conservation points/reputation; immediate effects resolve right away (including effects of other cards triggered by this play); \"after finishing\" effects wait. With multiple simultaneous effects, choose the order. Interactive effects only apply to players with at least 5 appeal."
+      },
+      "<ontology::piece>": "<animal_card>",
+      "source": "<ontology::hand>",
+      "destination": "<ontology::development_area>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "支付卡面费用（同大陆 <partner_zoo_tile> 每个大陆图标 −3 钱，多个可叠加；side II 从展示区打另付档位编号等值的钱）。",
+            "en": "Pay the card's printed cost (reduced by 3 money per continent icon per <partner_zoo_tile> of that continent, stacking; side II display plays add the folder number in money)."
+          }
+        }
+      },
+      "target": {
+        "options": [
+          {
+            "id": "standard_enclosure_target",
+            "name": {
+              "zh": "标准围栏",
+              "en": "Standard Enclosure"
+            },
+            "<ontology::condition>": {
+              "zh": "动物可安置在标准围栏（非宠物动物园动物；满足最小尺寸与水/岩要求）。",
+              "en": "The animal can go in a standard enclosure (not a Petting Zoo animal; minimum size and water/rock requirements met)."
+            },
+            "description": {
+              "zh": "选 1 个空的满足要求的 <standard_enclosure> 翻到占用面（宠物动物园动物不能选此目标）。",
+              "en": "Choose an empty qualifying <standard_enclosure> and flip it to its occupied side (not an option for Petting Zoo animals)."
+            }
+          },
+          {
+            "id": "special_enclosure_target",
+            "name": {
+              "zh": "特殊围栏",
+              "en": "Special Enclosure"
+            },
+            "<ontology::condition>": {
+              "zh": "动物卡标有可入住的特殊围栏，且其中剩余空间足够。",
+              "en": "The card shows a special enclosure option and enough free space remains in it."
+            },
+            "description": {
+              "zh": "从个人供应取卡面标注数量的 <player_token> 放到该 <special_enclosure> 上（宠物动物园动物只能选此目标）。",
+              "en": "Place the number of <player_token>s shown on the card from your personal supply onto that <special_enclosure> (the only option for Petting Zoo animals)."
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "check_conditions",
+              "name": {
+                "zh": "检查条件",
+                "en": "Check Conditions"
+              },
+              "specifies": "<ontology::check>",
+              "description": {
+                "zh": "检查并满足卡左侧所有打牌条件（例如：需某大陆 <partner_zoo_tile>、类别/大陆图标数、最低声望等）。",
+                "en": "Check and fulfill all play conditions on the left side of the card (e.g. a specific continent's <partner_zoo_tile>, category/continent icon counts, minimum reputation)."
+              },
+              "result": {
+                "expression": {
+                  "zh": "通过 = 卡左侧所有打牌条件均满足",
+                  "en": "Pass = all play conditions on the left side of the card are met."
+                }
+              }
+            },
+            {
+              "id": "pay_animal_cost",
+              "name": {
+                "zh": "支付费用",
+                "en": "Pay the Cost"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "把费用付入 <general_supply>（扣减合作动物园减免）。必须在结算任何返钱效果前付得起全额。",
+                "en": "Pay the cost into the <general_supply> (after partner zoo discounts). The full amount must be payable before any money-returning effects resolve."
+              },
+              "source": "<notepad>",
+              "destination": "<general_supply>",
+              "<ontology::object>": "<money>",
+              "quantity": "卡面费用 − 3×大陆图标数×同大陆合作动物园数"
+            },
+            {
+              "id": "fill_enclosure",
+              "name": {
+                "zh": "填围栏",
+                "en": "Fill an Enclosure"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "标准围栏：翻到占用面；特殊围栏：放相应数量 <player_token>。",
+                "en": "Standard enclosure: flip to the occupied side; special enclosure: place the appropriate number of <player_token>s."
+              },
+              "do_after": "pay_animal_cost",
+              "subject": "this.target",
+              "to": "翻到占用面（标准围栏）或放上卡面标注数量的 <player_token>（特殊围栏）"
+            },
+            {
+              "id": "place_animal_card_near_map",
+              "name": {
+                "zh": "放动物卡",
+                "en": "Place the Animal Card"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "把 <animal_card> 放在 <zoo_map> 旁，与其他已打出的动物/赞助卡叠放（只需露出卡顶部信息）。",
+                "en": "Place the <animal_card> next to the <zoo_map>, overlapping the other played animal/sponsor cards (only the top information needs to stay visible)."
+              },
+              "source": "<ontology::hand>",
+              "destination": "<ontology::development_area>",
+              "<ontology::object>": "<animal_card>",
+              "quantity": 1,
+              "do_after": "fill_enclosure"
+            },
+            {
+              "id": "execute_animal_effects",
+              "name": {
+                "zh": "结算动物效果",
+                "en": "Execute Effects"
+              },
+              "specifies": "<ontology::effect>",
+              "description": {
+                "zh": "<appeal_counter> 推进卡面步数（可能有保护分/声望）；卡与触发效果按文字结算（即时效果立即结算，可与其他卡的触发效果混序自选；「动作结束后」效果延后；互动效果只影响吸引力 ≥5 的玩家；卡面图标计入该卡自身效果）。",
+                "en": "Advance the <appeal_counter> by the printed steps (possibly conservation points/reputation); resolve the card's and triggered effects per their text (immediate effects resolve now, order chosen freely among simultaneous effects; \"after finishing\" effects wait; interactive effects only affect players with ≥5 appeal; icons on the card itself count for its own effect)."
+              },
+              "do_after": "place_animal_card_near_map"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "association_action",
+      "name": {
+        "zh": "协会动作",
+        "en": "Association Action"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "ASSOCIATION 动作：用工人执行协会任务。side I：恰好 1 个任务，强度 ≥ 任务编号（[2] 声望、[3] 合作动物园、[4] 大学、[5] 保护项目）；side II：可执行多个不同任务，任务编号总和 ≤ 强度，并可做 1 次捐赠。每个任务需把 1 个活跃 <association_worker> 放到协会板对应任务上；同一任务已有自己 1 个工人时需放 2 个；已有自己 3 个时不能再执行（其他玩家的工人不影响）。捐赠不需工人，但必须执行过至少 1 个任务，每次协会动作最多 1 次。执行后把卡移到槽 1。",
+        "en": "ASSOCIATION action: perform association tasks with workers. Side I: exactly 1 task, requiring strength ≥ the task's number ([2] reputation, [3] partner zoo, [4] university, [5] conservation project work); side II: several different tasks with total numbers ≤ strength, plus the option to make 1 donation. Each task places 1 active <association_worker> on that task on the Association board; if 1 of your own workers is already on this task you must place 2; with 3 of your own there you cannot perform it again (other players' workers do not matter). A donation needs no worker but requires at least 1 completed task, at most 1 donation per Association action. Afterwards the card moves to slot 1."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "可选：支付任意数量 X Token（每个 +1 强度）。每任务放 1-2 个 <association_worker> 到协会板。",
+            "en": "Optional: spend any number of X-tokens (each +1 strength). Each task places 1-2 <association_worker>s on the Association board."
+          },
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "X Token 归还总供应。",
+              "en": "X-tokens return to the general supply."
+            },
+            "source": "<notepad>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<x_token>",
+            "quantity": "自选 0-5 个"
+          }
+        }
+      },
+      "target": "<association_task_area> 的任务",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "perform_association_tasks",
+              "name": {
+                "zh": "执行协会任务",
+                "en": "Perform Association Tasks"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "side I：执行恰好 1 个任务（<association_task_reputation>/<association_task_partner_zoo>/<association_task_university>/<association_task_conservation_project>），动作强度须 ≥ 任务编号。side II：执行 1 个或多个不同任务，各任务编号总和 ≤ 动作强度。每任务放 1 个工人；同一任务已有自己 1 个工人时放 2 个；已有自己 3 个时不能执行该任务。",
+                "en": "Side I: perform exactly 1 task (<association_task_reputation>/<association_task_partner_zoo>/<association_task_university>/<association_task_conservation_project>), requiring action strength ≥ the task's number. Side II: perform 1 or more different tasks with total task numbers ≤ action strength. Each task places 1 worker; if 1 of your own workers is already on that task, place 2; with 3 of your own there, the task cannot be performed."
+              },
+              "<ontology::action>": {
+                "options": [
+                  "<association_task_reputation>",
+                  "<association_task_partner_zoo>",
+                  "<association_task_university>",
+                  "<association_task_conservation_project>"
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            },
+            {
+              "id": "make_donation",
+              "name": {
+                "zh": "执行捐赠",
+                "en": "Make a Donation"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "side II 且已执行至少 1 个任务时可捐赠（最多 1 次，不需工人）：执行 <donation>。",
+                "en": "With side II and at least 1 task performed, you may donate (at most once, no worker needed): resolve the <donation>."
+              },
+              "do_after": "perform_association_tasks"
+            },
+            {
+              "id": "move_card_to_slot_1_association",
+              "name": {
+                "zh": "移卡到槽 1（Association）",
+                "en": "Move Card to Slot 1"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "动作完成后把所选 <action_card> 移到槽 [1]，中间卡右移。",
+                "en": "After completing the action, move the chosen <action_card> to slot [1], shifting the intervening cards right."
+              },
+              "do_after": "perform_association_tasks",
+              "subject": "所选 <action_card>",
+              "to": "槽 [1]（中间卡右移）"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "association_task_reputation",
+      "name": {
+        "zh": "协会任务：声望",
+        "en": "Association Task: Reputation"
+      },
+      "specifies": "<ontology::push_track>",
+      "description": {
+        "zh": "[2] 声望任务：把 <reputation_counter> 推进 2 格；若推进到带奖励的格立即获得该奖励（仅一次，见 <reputation_track_bonus>）。声望决定展示区 <reputation_range>，也是打部分 <sponsor_card> 的最低要求。需要 1 个活跃 <association_worker>（该任务已有自己 1 个工人时需 2 个）放在协会板此任务上。",
+        "en": "The [2] reputation task: advance the <reputation_counter> 2 steps; if you land on or pass a space with a bonus, take it immediately, once (see <reputation_track_bonus>). Reputation determines the display <reputation_range> and is a minimum requirement for some <sponsor_card>s. Requires 1 active <association_worker> placed on this task (2 if 1 of your own is already there)."
+      },
+      "<ontology::condition>": {
+        "zh": "动作强度 ≥ 2，且有 1 个活跃 <association_worker>（或该任务已有自己 1 个工人时 2 个）。",
+        "en": "Action strength ≥ 2, with 1 active <association_worker> available (or 2 if 1 of your own is already on this task)."
+      },
+      "quantity": 2,
+      "<ontology::track>": "<reputation_track>"
+    },
+    {
+      "id": "association_task_partner_zoo",
+      "name": {
+        "zh": "协会任务：合作动物园",
+        "en": "Association Task: Partner Zoo"
+      },
+      "specifies": "<ontology::transfer>",
+      "description": {
+        "zh": "[3] 合作动物园任务：从 <association_task_area> 拿 1 块自己还没有的大洲的 <partner_zoo_tile>，放到 <zoo_map> 右侧 <partner_zoo_spaces> 最下空位；该格有奖励时立即获得一次。不能拿已有同大洲的；最多 4 块（没有第 5 格）；拿第 3、4 块必须先升级 Association 到 side II；协会板上没有可拿的（或没格子放）时不能执行此任务。Break 时协会板补货。",
+        "en": "The [3] partner zoo task: take 1 <partner_zoo_tile> of a continent you do not have from the <association_task_area> and place it on the lowest empty space of the <partner_zoo_spaces> on the right side of the <zoo_map>; if that space shows a bonus, take it once, immediately. You cannot take a continent you already have; at most 4 total (there is no 5th space); the 3rd and 4th require the upgraded (side II) Association card; if nothing you can take is on the board (or you have no space), the task cannot be performed. The Association board is replenished during breaks."
+      },
+      "<ontology::condition>": {
+        "zh": "动作强度 ≥ 3，且有 1 个活跃 <association_worker>（或该任务已有自己 1 个工人时 2 个）；协会板上有可拿的板块且 <partner_zoo_spaces> 有空位。",
+        "en": "Action strength ≥ 3, with 1 active <association_worker> (or 2 if 1 of your own is already on this task); a tile you can take is on the board and a space is free."
+      },
+      "source": "<association_task_area>",
+      "destination": "<partner_zoo_spaces>",
+      "<ontology::object>": "<partner_zoo_tile>",
+      "quantity": 1
+    },
+    {
+      "id": "association_task_university",
+      "name": {
+        "zh": "协会任务：大学",
+        "en": "Association Task: University"
+      },
+      "specifies": "<ontology::transfer>",
+      "description": {
+        "zh": "[4] 大学任务：从 <association_task_area> 拿 1 块自己还没有的种类的 <university_tile>，放到 <zoo_map> 右侧 <university_spaces> 最下空位；该格有奖励时立即获得一次；板块上标有声望时相应推进 <reputation_counter>。每种大学只能拿 1 块；协会板上没有可拿的时不能执行。Break 时补货。",
+        "en": "The [4] university task: take 1 <university_tile> of a kind you do not have from the <association_task_area> and place it on the lowest empty space of the <university_spaces> on the right side of the <zoo_map>; if that space shows a bonus, take it once, immediately; if the tile shows reputation, advance the <reputation_counter> accordingly. Each university kind may be taken only once; if nothing you can take is on the board, the task cannot be performed. Replenished during breaks."
+      },
+      "<ontology::condition>": {
+        "zh": "动作强度 ≥ 4，且有 1 个活跃 <association_worker>（或该任务已有自己 1 个工人时 2 个）；协会板上有可拿的大学。",
+        "en": "Action strength ≥ 4, with 1 active <association_worker> (or 2 if 1 of your own is already on this task); a university you can take is on the board."
+      },
+      "source": "<association_task_area>",
+      "destination": "<university_spaces>",
+      "<ontology::object>": "<university_tile>",
+      "quantity": 1
+    },
+    {
+      "id": "association_task_conservation_project",
+      "name": {
+        "zh": "协会任务：保护项目工作",
+        "en": "Association Task: Conservation Project Work"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "[5] 保护项目任务：两个可选部分——①支持 1 个已在场上的保护项目（<support_conservation_project>）；②从手牌打出 1 张新 <conservation_project_card> 放到 <conservation_project_area> 最左格并立即支持它（原有牌右移；超出人数容量时最右牌进 <discard_pile>，其上 <player_token> 归还对应玩家个人供应）。side II 且从 <card_display> 打保护项目卡时：卡须在 <reputation_range> 内，并额外支付档位编号等值的钱。基础保护项目不移不换。",
+        "en": "The [5] conservation project work task: two possible parts — ① support 1 conservation project already in play (<support_conservation_project>); ② play a new <conservation_project_card> from your hand onto the leftmost space of the <conservation_project_area> and support it immediately (existing cards shift right; if capacity for the player count is exceeded, the rightmost card goes to the <discard_pile> and its <player_token>s return to the corresponding players' personal supplies). With side II, a conservation project card may be played from the <card_display> if within <reputation_range>, paying extra money equal to the folder number. Base conservation projects are never moved or replaced."
+      },
+      "<ontology::condition>": {
+        "zh": "动作强度 ≥ 5，且有 1 个活跃 <association_worker>（或该任务已有自己 1 个工人时 2 个）。",
+        "en": "Action strength ≥ 5, with 1 active <association_worker> (or 2 if 1 of your own is already on this task)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "play_new_conservation_project_card",
+              "name": {
+                "zh": "打出新保护项目卡",
+                "en": "Play a New Conservation Project Card"
+              },
+              "specifies": "<ontology::play>",
+              "description": {
+                "zh": "从手牌（side II 可从展示区 <reputation_range> 内，另付档位费）打 1 张 <conservation_project_card> 到 <conservation_project_area> 最左格，然后立即支持它。",
+                "en": "Play 1 <conservation_project_card> from the hand (side II may use the display within <reputation_range> for an extra folder fee) onto the leftmost space of the <conservation_project_area>, then support it immediately."
+              },
+              "source": "<ontology::hand>",
+              "destination": "<conservation_project_area>",
+              "<ontology::object>": "<conservation_project_card>",
+              "quantity": 1,
+              "<ontology::piece>": "<conservation_project_card>"
+            },
+            {
+              "id": "support_a_project",
+              "name": {
+                "zh": "执行支持保护项目",
+                "en": "Support a Conservation Project"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "执行 <support_conservation_project>（图标收集或释放动物）。",
+                "en": "Resolve <support_conservation_project> (icon collection or releasing an animal)."
+              },
+              "do_after": "play_new_conservation_project_card"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "support_conservation_project",
+      "name": {
+        "zh": "支持保护项目",
+        "en": "Support a Conservation Project"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "支持 1 个保护项目：满足 1 个还没有任何 <player_token> 的条件（且自己未支持过该项目），从 <bonus_spaces> 取 1 个自己的 <player_token> 放到该条件上，获得该条件标注的保护分（可能还有声望）。两类条件：①图标收集——数自己已打出的动物/赞助卡上边图标（含水/岩要求图标，不含左侧条件图标）加 <partner_zoo_tile> 与 <university_tile> 的图标；②释放动物（<release_animal>）。取标记时立即激活对应奖励格奖励；部分奖励格每次 Break 重复获得。奖励格奖励与项目奖励的先后顺序自选。每个保护项目每名玩家只能支持 1 次。",
+        "en": "Support 1 conservation project: fulfill 1 condition that has no <player_token> on it (and which you have not supported on this project), take 1 of your <player_token>s from the <bonus_spaces> onto that condition, and gain the conservation points (and possibly reputation) shown for it. Two kinds of conditions: ① icon collection — count icons on the top edge of your played animal/sponsor cards (including water/rock requirement icons but not left-side conditions) plus <partner_zoo_tile>s and <university_tile>s; ② releasing an animal (<release_animal>). Taking the token activates the corresponding bonus-space reward immediately; some repeat at every break. The order between the bonus-space reward and the project reward is the player's choice. Each player may support each conservation project only once."
+      },
+      "target": "一个可支持的保护项目条件",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "collect_icons",
+              "name": {
+                "zh": "图标收集条件",
+                "en": "Icon Collection Condition"
+              },
+              "specifies": "<ontology::check>",
+              "description": {
+                "zh": "满足图标收集条件：数自己已打出的 <animal_card> 与 <sponsor_card> 上边图标（含水/岩空间要求图标，不含左侧条件图标）+ <partner_zoo_tile> + <university_tile> 的对应图标数。",
+                "en": "Fulfill the icon collection condition: count the required icons on the top edge of your played <animal_card>s and <sponsor_card>s (including water/rock space requirement icons but not left-side conditions) plus <partner_zoo_tile>s and <university_tile>s."
+              },
+              "result": {
+                "expression": {
+                  "zh": "通过 = 已打出卡牌上边图标 + <partner_zoo_tile> + <university_tile> 的数量达到条件要求",
+                  "en": "Pass = the icons on the top edge of your played cards plus <partner_zoo_tile>s and <university_tile>s reach the requirement."
+                }
+              }
+            },
+            {
+              "id": "release_animal_condition",
+              "name": {
+                "zh": "释放动物条件",
+                "en": "Release Animal Condition"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "释放动物条件：执行 <release_animal>。",
+                "en": "The release condition: resolve <release_animal>."
+              }
+            },
+            {
+              "id": "place_player_token_and_gain_reward",
+              "name": {
+                "zh": "放标记得奖励",
+                "en": "Place Token and Gain Reward"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "从 <bonus_spaces> 取 1 个自己的 <player_token> 放到所选条件上；<conservation_counter> 与 <reputation_counter>（若标注）按该条件奖励推进；激活所选奖励格的奖励（立即；部分 Break 重复）。奖励格奖励与项目奖励顺序自选。",
+                "en": "Take 1 of your <player_token>s from the <bonus_spaces> onto the chosen condition; advance the <conservation_counter> and (if shown) the <reputation_counter> by that condition's reward; activate the chosen bonus space's reward (immediately; some repeat at breaks). The order between the bonus-space reward and the project reward is your choice."
+              },
+              "do_after": "release_animal",
+              "subject": "所选保护项目条件",
+              "to": "放上 1 个自己的 <player_token>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "release_animal",
+      "name": {
+        "zh": "释放动物",
+        "en": "Release an Animal"
+      },
+      "specifies": "<ontology::play>",
+      "description": {
+        "zh": "释放动物到野外（释放类保护项目条件）：从自己动物园弃 1 张带要求图标的 <animal_card>。该动物必须要求指定大小的 <standard_enclosure>（动物能否也进特殊围栏与条件无关）。<appeal_counter> 按卡面所示步数后退；翻回最小的满足该动物要求的已占用标准围栏（含水/岩要求）到空面，或从该动物所在特殊围栏移除相应数量 <player_token> 归还个人供应；动物卡进 <discard_pile>。之后获得该条件的保护分与声望奖励（见 <support_conservation_project>）。",
+        "en": "Release an animal into the wild (the condition of release-type conservation projects): discard 1 <animal_card> with the required icon from your zoo. The animal must require a standard enclosure of the depicted size (whether it could also go in a special enclosure is irrelevant to the condition). Move the <appeal_counter> back by the steps shown on the card; flip the smallest occupied qualifying standard enclosure (including water/rock requirements) back to its empty side, or remove the appropriate number of <player_token>s from the special enclosure the animal is in, returning them to your personal supply; the Animal card goes to the <discard_pile>. Then gain the condition's conservation points and reputation reward (see <support_conservation_project>)."
+      },
+      "source": "<ontology::development_area>",
+      "destination": "<discard_pile>",
+      "<ontology::object>": "<animal_card>",
+      "quantity": 1,
+      "<ontology::piece>": "<animal_card>"
+    },
+    {
+      "id": "donation",
+      "name": {
+        "zh": "捐赠",
+        "en": "Donation"
+      },
+      "specifies": "<ontology::transfer>",
+      "description": {
+        "zh": "捐赠：支付 <donation_area> 中可见的最小金额到 <general_supply>，获得 1 保护分，用 1 个自己的 <player_token>（从个人供应）盖住该格。除最后一格外所有格都被盖住后，之后每次捐赠都付 12 钱且不再放标记。不需要 <association_worker>；每次 <association_action> 最多 1 次；必须先执行过至少 1 个协会任务。2 人局开局封堵的左列 3 格整局视为被占用。",
+        "en": "Donation: pay the smallest visible amount in the <donation_area> into the <general_supply>, gain 1 conservation point, and cover that space with 1 of your <player_token>s (from your personal supply). Once all spaces but the last are covered, each subsequent donation costs 12 money and no more tokens are placed. No <association_worker> is needed; at most 1 donation per <association_action>; at least 1 association task must have been performed in the same action. The 3 spaces blocked at setup in a 2-player game count as occupied for the whole game."
+      },
+      "<ontology::condition>": {
+        "zh": "side II 的 <association_action> 中已执行至少 1 个任务，且本动作尚未捐赠。",
+        "en": "At least 1 task has been performed in this side II <association_action>, and no donation has been made yet in it."
+      },
+      "source": "<notepad>",
+      "destination": "<general_supply>",
+      "<ontology::object>": "<money>",
+      "quantity": "捐赠区可见的最小金额（全盖满后 12）"
+    },
+    {
+      "id": "sponsors_action",
+      "name": {
+        "zh": "赞助动作",
+        "en": "Sponsors Action"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "SPONSORS 动作：二选一——①打赞助卡：side I 恰好 1 张 <sponsor_card>，等级 ≤ 强度 X 且满足卡面条件；side II 可多张，等级总和 ≤ X+1（X Token 可推过 5），逐张打完即时效果（「动作结束后」效果除外）再打下一张；side II 可从 <card_display> 在 <reputation_range> 内打，另付档位编号等值的钱；side II 可打带公园图标的赞助卡。②推进 <break_token> X 步并拿 X 钱（side I）/ 2X 钱（side II）——即使 Break 标记不需要全部步数也拿全额。执行后把卡移到槽 1。",
+        "en": "SPONSORS action: choose one — ① play Sponsor cards: side I, exactly 1 <sponsor_card> with level ≤ strength X and all card conditions met; side II, several cards with total levels ≤ X+1 (X-tokens may push X beyond 5), each card's instant effects (except \"after finishing\") fully resolving before the next; side II may play from the <card_display> within <reputation_range>, paying extra money equal to the folder number; side II may play sponsor cards with the park icon as a condition. ② advance the <break_token> X steps and take X money (side I) or 2X money (side II) — the full money is taken even if the Break token does not need all X steps to reach the final space. Afterwards the card moves to slot 1."
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "可选：支付任意数量 X Token（每个 +1 强度）。打赞助卡时另付卡面费用（如有）。",
+            "en": "Optional: spend any number of X-tokens (each +1 strength). Sponsor cards may also have printed costs."
+          },
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "X Token 归还总供应。",
+              "en": "X-tokens return to the general supply."
+            },
+            "source": "<notepad>",
+            "destination": "<general_supply>",
+            "<ontology::object>": "<x_token>",
+            "quantity": "自选 0-5 个"
+          }
+        }
+      },
+      "target": "手牌中的 <sponsor_card>（side II 可在 <reputation_range> 内从 <card_display> 打）",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "play_or_advance_break",
+              "name": {
+                "zh": "打赞助卡或推进 Break",
+                "en": "Play Sponsors or Advance Break"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "二选一：打赞助卡（<play_sponsor_card>，side I 1 张等级 ≤X；side II 多张等级总和 ≤X+1）或推进 <break_token> X 步拿 X 钱（side I）/ 2X 钱（side II）。",
+                "en": "Choose one: play Sponsor cards (<play_sponsor_card>; side I: 1 card with level ≤X; side II: several cards with total levels ≤X+1) or advance the <break_token> X steps and take X money (side I) / 2X money (side II)."
+              },
+              "<ontology::action>": {
+                "options": [
+                  {
+                    "id": "play_sponsors",
+                    "name": {
+                      "zh": "打出赞助卡",
+                      "en": "Play Sponsors"
+                    },
+                    "specifies": "<ontology::play>",
+                    "description": {
+                      "zh": "执行 <play_sponsor_card>：side I 恰好 1 张；side II 1 或多张，等级总和 ≤ X+1。",
+                      "en": "Resolve <play_sponsor_card>: exactly 1 card on side I; 1 or more cards with total levels ≤ X+1 on side II."
+                    },
+                    "<ontology::piece>": "<sponsor_card>",
+                    "source": "<ontology::hand>",
+                    "destination": "<ontology::development_area>"
+                  },
+                  {
+                    "id": "advance_break_take_money",
+                    "name": {
+                      "zh": "推进 Break 拿钱",
+                      "en": "Advance Break and Take Money"
+                    },
+                    "specifies": "<ontology::state_change>",
+                    "description": {
+                      "zh": "把 <break_token> 推进 X 步并拿 X 钱（side I）/ 2X 钱（side II）——即使 Break 标记不需要全部步数就到最后一格，仍拿全额；多余步数被忽略。",
+                      "en": "Advance the <break_token> X steps and take X money (side I) / 2X money (side II) — the full amount is taken even if the Break token does not need all X steps to reach the final space; extra steps are ignored."
+                    },
+                    "quantity": "推进 X 步，拿 X（side I）/2X（side II）钱",
+                    "subject": "<break_token>",
+                    "to": "向 <break_track> 终点推进 X 步"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            },
+            {
+              "id": "move_card_to_slot_1_sponsors",
+              "name": {
+                "zh": "移卡到槽 1（Sponsors）",
+                "en": "Move Card to Slot 1"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "动作完成后把所选 <action_card> 移到槽 [1]，中间卡右移。",
+                "en": "After completing the action, move the chosen <action_card> to slot [1], shifting the intervening cards right."
+              },
+              "do_after": "play_or_advance_break",
+              "subject": "所选 <action_card>",
+              "to": "槽 [1]（中间卡右移）"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "play_sponsor_card",
+      "name": {
+        "zh": "打赞助卡",
+        "en": "Play a Sponsor Card"
+      },
+      "specifies": "<ontology::play>",
+      "description": {
+        "zh": "打出 1 张 <sponsor_card>：等级 ≤ 强度（side II 多张时总和 ≤ X+1）且满足卡左侧条件。结算卡的即时效果（黄色区，若有）与持续效果（蓝色区/紫色收入区，若被卡面图标触发）；「动作结束后」效果延后。若卡附带 <unique_building>，把该建筑放到 <building_area>（遵守水/岩等要求）。然后放到 <zoo_map> 旁叠放。",
+        "en": "Play 1 <sponsor_card>: its level must be ≤ the strength (on side II with several cards, total levels ≤ X+1) and all conditions on the card's left side must be met. Resolve the card's instant effect (yellow area, if any) and recurring effect (blue area / purple income area, if triggered by the icon on the card); \"after finishing\" effects wait. If the card comes with a <unique_building>, place it in the <building_area> (water/rock requirements apply). Then place the card overlapping next to the <zoo_map>."
+      },
+      "<ontology::piece>": "<sponsor_card>",
+      "source": "<ontology::hand>",
+      "destination": "<ontology::development_area>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_unique_building",
+              "name": {
+                "zh": "放独特建筑",
+                "en": "Place the Unique Building"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "若卡附带 <unique_building>：从 <general_supply> 拿取并放到 <building_area> 空格上（遵守建造放置限制与卡面水/岩要求）。",
+                "en": "If the card comes with a <unique_building>: take it from the <general_supply> and place it on empty spaces of the <building_area> (placement limits and the card's water/rock requirements apply)."
+              },
+              "source": "<general_supply>",
+              "destination": "<building_area>",
+              "<ontology::object>": "<unique_building>",
+              "quantity": 1
+            },
+            {
+              "id": "execute_sponsor_effects",
+              "name": {
+                "zh": "结算赞助卡效果",
+                "en": "Execute Effects"
+              },
+              "specifies": "<ontology::effect>",
+              "description": {
+                "zh": "结算卡的即时效果与持续效果（按卡面文字；卡面图标计入该卡自身的触发与效果；「动作结束后」效果延后）。",
+                "en": "Resolve the card's instant and recurring effects per its text (icons on the card itself count for triggering its own effect; \"after finishing\" effects wait)."
+              },
+              "do_after": "place_unique_building"
+            },
+            {
+              "id": "place_sponsor_card_near_map",
+              "name": {
+                "zh": "放赞助卡",
+                "en": "Place the Sponsor Card"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "把 <sponsor_card> 放在 <zoo_map> 旁，与其他已打出的卡叠放（竖棕色条提醒该卡有终局效果）。",
+                "en": "Place the <sponsor_card> next to the <zoo_map>, overlapping the other played cards (the vertical brown strip reminds you of any endgame effect)."
+              },
+              "source": "<ontology::hand>",
+              "destination": "<ontology::development_area>",
+              "<ontology::object>": "<sponsor_card>",
+              "quantity": 1,
+              "do_after": "execute_sponsor_effects"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "x_token_action",
+      "name": {
+        "zh": "X Token 动作",
+        "en": "X-token Action"
+      },
+      "specifies": "<ontology::transfer>",
+      "description": {
+        "zh": "X-TOKEN 动作：拿 1 个 X Token（供 5 个常规动作不能或不想执行时使用）。用任意 1 张 <action_card> 执行：选卡、把卡移到槽 1（中间卡右移），然后从 <general_supply> 拿 1 个 <x_token>。与槽位强度无关，也与卡是否升级无关。已有 5 个 X Token 时不能执行此动作（拿不到第 6 个）。",
+        "en": "X-TOKEN action: take 1 X-token (an alternative when you cannot or do not want to perform any of the 5 actions). Perform it with any 1 <action_card>: select the card, move it to slot 1 (shifting the intervening cards right), then take 1 <x_token> from the <general_supply>. It is independent of the slot's strength and of whether the card is upgraded. You cannot perform this action if you already hold 5 X-tokens (no 6th can be gained)."
+      },
+      "source": "<general_supply>",
+      "destination": "<notepad>",
+      "<ontology::object>": "<x_token>",
+      "quantity": 1
+    },
+    {
+      "id": "upgrade_action_card",
+      "name": {
+        "zh": "升级动作卡",
+        "en": "Upgrade an Action Card"
+      },
+      "specifies": "<ontology::upgrade>",
+      "description": {
+        "zh": "把 1 张自己的 side I <action_card> 翻到 side II（更强的效果）。卡保持原 <card_slot> 位置。升级途径共 4 种，各 1 次：<conservation_bonus_2>（2 保护分奖励）、声望轨奖励格、获得第 2 个 <partner_zoo_tile>、获得第 2 个 <university_tile>——因此每局最多升级 4 张（不能升级全部 5 张）。升级的卡从下一次使用起按 side II 结算；动作中获得的升级不影响正在执行的该次动作。",
+        "en": "Flip 1 of your side I <action_card>s to side II (a more powerful action). The card stays in its current <card_slot>. There are 4 upgrade opportunities, each once: the <conservation_bonus_2> (2 conservation points), a reputation-track bonus space, the 2nd <partner_zoo_tile>, and the 2nd <university_tile> — so at most 4 upgrades per game (never all 5 cards). An upgraded card acts per side II from its next use; an upgrade gained during an action does not affect that action."
+      },
+      "target": {
+        "options": [
+          {
+            "id": "upgrade_cards",
+            "name": {
+              "zh": "Cards 动作卡",
+              "en": "Cards Action Card"
+            }
+          },
+          {
+            "id": "upgrade_build",
+            "name": {
+              "zh": "Build 动作卡",
+              "en": "Build Action Card"
+            }
+          },
+          {
+            "id": "upgrade_animals",
+            "name": {
+              "zh": "Animals 动作卡",
+              "en": "Animals Action Card"
+            }
+          },
+          {
+            "id": "upgrade_association",
+            "name": {
+              "zh": "Association 动作卡",
+              "en": "Association Action Card"
+            }
+          },
+          {
+            "id": "upgrade_sponsors",
+            "name": {
+              "zh": "Sponsors 动作卡",
+              "en": "Sponsors Action Card"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+      }
+    },
+    {
+      "id": "break",
+      "name": {
+        "zh": "Break",
+        "en": "Break"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "Break 结算（无固定轮次游戏中的行政阶段）：<break_token> 到达最后一格时，在触发者回合结束后执行。顺序：0) 触发者拿 1 个 X Token；1) 手牌弃至上限（默认 3，特定大学 5）；2) 动作卡上的 <multiplier_token>/<venom_token>/<constriction_token> 归还供应并失效；3) 协会板上的工人全部回到 <notepad> 重新可用，协会板补货合作动物园与大学（所有玩家已有的除外）；4) 展示区弃掉档 1 和 2 的牌，其余下滑并补满；5) 收入——a) 按 <appeal_counter> 所在格标注金额拿钱 b) 每个 <kiosk> 按相邻建筑数拿钱（每相邻建筑 1 钱：独特建筑、特殊围栏、已占用标准围栏、馆）c) 收入图标（紫色赞助卡与已激活奖励格）；6) <break_token> 放回人数对应起始格。Break 结束后从下一位玩家继续。",
+        "en": "The break resolution (the administration phase in this roundless game): when the <break_token> reaches the last space, resolve after the triggerer's turn. Order: 0) the triggerer gains 1 X-token; 1) discard hand cards down to the hand limit (normally 3, or 5 with a particular university); 2) <multiplier_token>/<venom_token>/<constriction_token> on Action cards return to the supply and lose their effect; 3) all association workers on the Association board return to the <notepad> as active, and the board's partner zoos and universities are replenished (except ones all players already have); 4) the display's folders 1 and 2 are discarded, the rest slide down, and the display is replenished; 5) income — a) take the money printed next to your <appeal_counter>'s space b) for each <kiosk>, take 1 money per adjacent building (unique building, special enclosure, occupied standard enclosure, pavilion) c) income icons (purple Sponsor cards and activated bonus spaces); 6) return the <break_token> to the start space for the player count. Play continues with the next player after the break."
+      },
+      "<ontology::condition>": {
+        "zh": "<break_token> 被推进到 <break_track> 最后一格（在触发者回合结束后结算）。",
+        "en": "The <break_token> has been advanced to the last space of the <break_track> (resolved after the triggerer's turn)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "triggerer_takes_x_token",
+              "name": {
+                "zh": "触发者拿 X Token",
+                "en": "Triggerer Takes an X-token"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "把 <break_token> 推到最后一格的玩家从 <general_supply> 拿 1 个 <x_token>（已满 5 个则拿不到）。",
+                "en": "The player who advanced the <break_token> to the last space takes 1 <x_token> from the <general_supply> (unless they already hold 5)."
+              },
+              "source": "<general_supply>",
+              "destination": "<notepad>",
+              "<ontology::object>": "<x_token>",
+              "quantity": 1
+            },
+            {
+              "id": "hand_card_limit",
+              "name": {
+                "zh": "手牌上限",
+                "en": "Hand Card Limit"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "手牌多于上限时，自选弃到 <discard_pile> 至上限。上限默认 3；持有特定 <university_tile> 时上限为 5。",
+                "en": "If you hold more cards than the hand limit, discard the surplus of your choice to the <discard_pile>. The limit is normally 3, or 5 with a particular <university_tile>."
+              },
+              "do_after": "triggerer_takes_x_token",
+              "quantity": {
+                "zh": "上限 3（特定大学 5）",
+                "en": "limit 3 (5 with a particular university)"
+              },
+              "subject": "<ontology::hand>",
+              "to": "弃至上限（默认 3，特定大学 5）"
+            },
+            {
+              "id": "clear_tokens_on_action_cards",
+              "name": {
+                "zh": "清动作卡上的标记",
+                "en": "Clear Tokens on Action Cards"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "动作卡上的 <multiplier_token>/<venom_token>/<constriction_token> 全部归还 <general_supply>，不再有效。",
+                "en": "All <multiplier_token>/<venom_token>/<constriction_token> on Action cards return to the <general_supply> and no longer have any effect."
+              },
+              "do_after": "hand_card_limit",
+              "subject": "所有玩家的 <action_card>",
+              "to": "其上 <multiplier_token>/<venom_token>/<constriction_token> 归还 <general_supply>"
+            },
+            {
+              "id": "workers_and_association_board",
+              "name": {
+                "zh": "工人与协会板",
+                "en": "Workers and the Association Board"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "所有玩家的 <association_worker> 从协会板回到各自 <notepad> 重新可用；<association_task_area> 补货 <partner_zoo_tile> 与 <university_tile>，使每种再次恰好 1 块在板上（所有玩家都已拥有的不再补）。",
+                "en": "All players' <association_worker>s return from the Association board to their <notepad>s as active; the <association_task_area> replenishes <partner_zoo_tile>s and <university_tile>s so each is again available exactly once (those all players already have are not replenished)."
+              },
+              "do_after": "clear_tokens_on_action_cards",
+              "subject": "<association_board>",
+              "to": "工人全部回到各自 <notepad>；补货 <partner_zoo_tile> 与 <university_tile>"
+            },
+            {
+              "id": "replenish_display",
+              "name": {
+                "zh": "补展示区",
+                "en": "Replenish the Display"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "弃掉 <card_display> 档 1 和档 2 的两张牌到 <discard_pile>，其余牌整体下滑，然后从 <zoo_deck> 翻牌补满 6 格。",
+                "en": "Discard the two bottom cards of the <card_display> (folders 1 and 2) to the <discard_pile>, slide the remaining cards down, and replenish the display from the <zoo_deck>."
+              },
+              "do_after": "workers_and_association_board",
+              "subject": "<card_display>",
+              "to": "弃档 1/2 的牌，其余下滑并从 <zoo_deck> 补满 6 格"
+            },
+            {
+              "id": "take_income",
+              "name": {
+                "zh": "拿收入",
+                "en": "Take Income"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "收入分三部分：a) 按 <appeal_counter> 所在 <appeal_track> 格旁标注的金额拿钱（例：7 格拿 11 钱）；b) 每个 <kiosk> 单独结算——与其共边的每个独特建筑、特殊围栏、已占用标准围栏、馆给 1 钱（空标准围栏不给；空的特殊围栏给）；c) 所有收入图标：紫色背景的 <sponsor_card> 与 <bonus_spaces> 中已激活的（取走标记的）格。",
+                "en": "Income in three parts: a) take the money printed next to your <appeal_counter>'s space on the <appeal_track> (e.g. space 7 gives 11 money); b) each <kiosk> separately — 1 money for each unique building, special enclosure, occupied standard enclosure, and pavilion adjacent to it (sharing at least one side of one space; empty standard enclosures give nothing, but an empty special enclosure does); c) all income icons: purple-background <sponsor_card>s and the activated (token-removed) <bonus_spaces>."
+              },
+              "source": "<general_supply>",
+              "destination": "<notepad>",
+              "<ontology::object>": "<money>",
+              "quantity": "a) 按吸引力格标注 b) 每亭按相邻建筑 c) 按收入图标",
+              "do_after": "replenish_display"
+            },
+            {
+              "id": "reset_break_track",
+              "name": {
+                "zh": "重置 Break 轨",
+                "en": "Reset the Break Track"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "把 <break_token> 放回与玩家人数对应的起始格。Break 结束，游戏从下一位玩家继续。",
+                "en": "Return the <break_token> to the start space matching the player count. The break ends and play continues with the next player."
+              },
+              "do_after": "take_income",
+              "subject": "<break_token>",
+              "to": "回到与玩家人数对应的起始格"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "endgame_trigger",
+      "name": {
+        "zh": "终局触发",
+        "en": "End of Game Trigger"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "终局触发条件：任一玩家的 <conservation_counter> 与 <appeal_counter> 位于同一 <scoring_area>（保护轨 1 格及其对应的吸引力轨相邻格段），或已相互越过。触发玩家完成自己的回合，其余玩家各再执行 1 回合（<final_turn_cycle>）；若终局在 Break 中触发，则所有玩家各再执行 1 回合。之后进入 <final_scoring>。",
+        "en": "End-of-game trigger condition: a player's <conservation_counter> and <appeal_counter> are ever in the same <scoring_area> (one Conservation track space and its adjacent Appeal track spaces), or pass each other. The triggering player completes their turn and all other players take one more turn (<final_turn_cycle>); if the end is triggered during a break, all players take one more turn. Then <final_scoring> follows."
+      },
+      "<ontology::condition>": {
+        "zh": "任一玩家的 <conservation_counter> 与 <appeal_counter> 位于同一 <scoring_area> 或已相互越过。",
+        "en": "A player's <conservation_counter> and <appeal_counter> are in the same <scoring_area> or have passed each other."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "标记终局已触发：触发者完成回合，随后进入 <final_turn_cycle> 与 <final_scoring>。",
+            "en": "Mark the end of the game as triggered: the triggerer completes their turn, then the <final_turn_cycle> and <final_scoring> follow."
+          }
+        }
+      }
+    },
+    {
+      "id": "conservation_bonus_2",
+      "name": {
+        "zh": "2 保护分奖励",
+        "en": "2 Conservation Points Bonus"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "<conservation_counter> 达到或越过 2 分格时获得一次性奖励，二选一：①升级 1 张 <action_card>（<upgrade_action_card>）②激活 1 个额外 <association_worker>（从 <worker_supply_spaces> 最下格取 1 个平躺工人立放到 <notepad>）。每个达到 2 分的玩家都可获得此选择。",
+        "en": "When your <conservation_counter> reaches or passes the 2 space, gain a one-time bonus, choose one: ① upgrade 1 <action_card> (<upgrade_action_card>) ② activate 1 additional <association_worker> (take the lying worker from the lowest <worker_supply_spaces> space and stand it on the <notepad>). Every player who reaches space 2 gets this choice."
+      },
+      "<ontology::condition>": {
+        "zh": "本玩家的 <conservation_counter> 达到或越过 2 分格（每人一次）。",
+        "en": "This player's <conservation_counter> reaches or passes the 2 space (once per player)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "upgrade_an_action_card",
+              "name": {
+                "zh": "升级 1 张动作卡",
+                "en": "Upgrade an Action Card"
+              },
+              "specifies": "<ontology::upgrade>",
+              "description": {
+                "zh": "选 1 张自己的 side I <action_card> 翻到 side II。",
+                "en": "Flip 1 of your side I <action_card>s to side II."
+              }
+            },
+            {
+              "id": "activate_extra_worker",
+              "name": {
+                "zh": "激活额外工人",
+                "en": "Activate an Extra Worker"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "从 <worker_supply_spaces> 最下格取 1 个 <association_worker> 立放到 <notepad> 成为活跃工人。",
+                "en": "Take 1 <association_worker> from the lowest space of the <worker_supply_spaces> and stand it on the <notepad> as an active worker."
+              },
+              "source": "<worker_supply_spaces>",
+              "destination": "<notepad>",
+              "<ontology::object>": "<association_worker>",
+              "quantity": 1
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
+    {
+      "id": "conservation_bonus_5_8",
+      "name": {
+        "zh": "5/8 保护分奖励",
+        "en": "5/8 Conservation Points Bonus"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "<conservation_counter> 达到或越过 5 分格与 8 分格时，各获得一次性奖励，二选一：①拿 5 <money> ②拿该格旁的 1 块 <bonus_tile> 并立即执行其效果（板块移出游戏，拿光后此选项消失，5 钱选项始终可用）。",
+        "en": "When your <conservation_counter> reaches or passes the 5 space and the 8 space, gain a one-time bonus at each, choose one: ① take 5 <money> ② take 1 <bonus_tile> next to this space and execute its effect immediately (the tile leaves the game; once both tiles are gone this option disappears, while the 5-money option always remains)."
+      },
+      "<ontology::condition>": {
+        "zh": "本玩家的 <conservation_counter> 达到或越过 5 分格或 8 分格（每格每人一次）。",
+        "en": "This player's <conservation_counter> reaches or passes the 5 space or the 8 space (once per player per space)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_5_money",
+              "name": {
+                "zh": "拿 5 钱",
+                "en": "Take 5 Money"
+              },
+              "specifies": "<ontology::transfer>",
+              "description": {
+                "zh": "从 <general_supply> 拿 5 <money>。",
+                "en": "Take 5 <money> from the <general_supply>."
+              },
+              "source": "<general_supply>",
+              "destination": "<notepad>",
+              "<ontology::object>": "<money>",
+              "quantity": 5
+            },
+            {
+              "id": "take_bonus_tile",
+              "name": {
+                "zh": "拿奖励板块",
+                "en": "Take a Bonus Tile"
+              },
+              "specifies": "<ontology::play>",
+              "description": {
+                "zh": "拿该格旁的 1 块 <bonus_tile>，立即执行其效果，然后把板块移出游戏。",
+                "en": "Take 1 <bonus_tile> next to this space, execute its effect immediately, then remove the tile from the game."
+              },
+              "<ontology::condition>": {
+                "zh": "该格旁还有 <bonus_tile>。",
+                "en": "A <bonus_tile> remains next to this space."
+              },
+              "<ontology::piece>": "<bonus_tile>",
+              "source": "<bonus_tile_spaces>",
+              "destination": "移出游戏（不再使用）"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+        }
+      }
+    },
+    {
+      "id": "conservation_bonus_10",
+      "name": {
+        "zh": "10 保护分奖励",
+        "en": "10 Conservation Points Bonus"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "首个达到或超过 10 保护分的玩家触发：所有玩家各选择并弃掉 1 张自己的 <final_scoring_card>（面朝下放到剩余 <final_scoring_deck> 牌堆下）。之后玩家保留剩余 1 张终局计分卡。若终局前无人达到 10 分，则改在终局计分前弃（见 <discard_final_scoring_card_if_no_10cp>）。",
+        "en": "Triggered by the first player to reach or exceed 10 conservation points: all players choose and discard 1 of their <final_scoring_card>s (face down under the remaining <final_scoring_deck>). Players keep their remaining Final Scoring card. If no one reaches 10 points before the game ends, the discard happens before end-game scoring instead (see <discard_final_scoring_card_if_no_10cp>)."
+      },
+      "<ontology::condition>": {
+        "zh": "首次有玩家达到或超过 10 保护分（整局一次）。",
+        "en": "A player reaches or exceeds 10 conservation points for the first time (once per game)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "所有玩家各弃 1 张自己的 <final_scoring_card>，面朝下放到剩余终局计分卡堆下。",
+              "en": "All players discard 1 of their <final_scoring_card>s, face down under the remaining Final Scoring stack."
+            },
+            "source": "<ontology::player>",
+            "destination": "<final_scoring_deck>",
+            "<ontology::object>": "<final_scoring_card>",
+            "quantity": 1,
+            "<ontology::per_player>": true
+          }
+        }
+      }
+    },
+    {
+      "id": "reputation_track_bonus",
+      "name": {
+        "zh": "声望轨奖励",
+        "en": "Reputation Track Bonus"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "<reputation_counter> 推进到带奖励图标的格时，立即获得该奖励（每格仅一次）。奖励之一是升级 1 张 <action_card>（<upgrade_action_card>）。",
+        "en": "When the <reputation_counter> reaches a space with a bonus next to it, take that bonus immediately, once per space. One of the bonuses is upgrading 1 <action_card> (<upgrade_action_card>)."
+      },
+      "<ontology::condition>": {
+        "zh": "本玩家的 <reputation_counter> 到达 <reputation_track> 上带奖励图标的格。",
+        "en": "This player's <reputation_counter> reaches a space on the <reputation_track> with a bonus icon."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "立即获得该格标注的奖励（一次性）。",
+            "en": "Take the bonus shown next to that space immediately (once)."
+          }
+        }
+      }
+    },
+    {
+      "id": "reputation_overflow",
+      "name": {
+        "zh": "声望溢出",
+        "en": "Reputation Overflow"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "<reputation_counter> 已在 15 格时再获声望：计数器停在 15 不动，每剩余 1 步改为获得 1 吸引力（推进 <appeal_counter>）。",
+        "en": "When the <reputation_counter> is at space 15 and further reputation is gained: the counter stays at 15, and each remaining step grants 1 appeal instead (advancing the <appeal_counter>)."
+      },
+      "<ontology::condition>": {
+        "zh": "<reputation_counter> 位于 15 格且玩家再获声望。",
+        "en": "The <reputation_counter> is on space 15 and the player gains more reputation."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "description": {
+              "zh": "每 1 步剩余声望转为 1 吸引力。",
+              "en": "Each remaining reputation step becomes 1 appeal."
+            },
+            "quantity": "剩余声望步数",
+            "<ontology::track>": "<appeal_track>"
+          }
+        }
+      }
+    },
+    {
+      "id": "cover_bonus_space",
+      "name": {
+        "zh": "盖住奖励格",
+        "en": "Cover a Bonus Space"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "建造时盖住 <building_space> 上带放置奖励图标的格子：立即获得该图标标注的奖励（side II 多栋建造时，在下一栋建造前拿，可用于支付下一栋）。",
+        "en": "When building covers a <building_space> with a placement bonus icon: take the bonus shown by the icon immediately (when building several buildings with side II, take it before the next building, so it can pay for the next one)."
+      },
+      "<ontology::condition>": {
+        "zh": "玩家盖住 <building_area> 中 1 个或多个带放置奖励图标的格子。",
+        "en": "The player covers one or more spaces of the <building_area> with a placement bonus icon."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "立即按图标获得对应奖励（一次性）。",
+            "en": "Take the bonus indicated by the icon immediately (once)."
+          }
+        }
+      }
+    },
+    {
+      "id": "cover_all_spaces",
+      "name": {
+        "zh": "盖满地图",
+        "en": "Cover All Spaces"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "盖满 <zoo_map> 上全部空格（水格与岩格除外）时，立即获得 7 吸引力。可通过 <build_action> 或任何其他放置建筑的效果达成。",
+        "en": "When every space of the <zoo_map> (except water and rock spaces) is covered, immediately gain 7 appeal. This can happen through the <build_action> or any other effect that places a building."
+      },
+      "<ontology::condition>": {
+        "zh": "玩家的 <zoo_map> 除水格与岩格外全部被盖住。",
+        "en": "Every space of the player's <zoo_map> except water and rock spaces is covered."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "description": {
+              "zh": "<appeal_counter> 立即推进 7 格。",
+              "en": "Advance the <appeal_counter> 7 steps immediately."
+            },
+            "quantity": 7,
+            "<ontology::track>": "<appeal_track>"
+          }
+        }
+      }
+    }
+  ]
+}
