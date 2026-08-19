@@ -42,24 +42,19 @@ Embedding 已启用 GPU 优先：使用 `Microsoft.ML.OnnxRuntime.Gpu` 和 `CUDA
 
 ## 配置 LLM
 
-修改 `appsettings.json`：
-
-```json
-{
-  "LLM": {
-    "Provider": "DeepSeek",
-    "BaseUrl": "https://api.deepseek.com/v1/",
-    "Model": "deepseek-v4-pro",
-    "ApiKey": "sk-xxxxxxxx"
-  }
-}
-```
-
-或通过环境变量（推荐，避免把 key 提交到仓库）：
+不要直接把 API Key 写进 `appsettings.json`。请通过环境变量提供（推荐）：
 
 ```bash
-set LLM__ApiKey=sk-xxxxxxxx
+export DEEPSEEK_API_KEY=sk-xxxxxxxx
 ```
+
+`scripts/start_api.sh` 和 `start.bat` 会自动读取根目录下的 `.env` 文件（该文件已被 `.gitignore` 忽略），所以也可以在项目根目录 `.env` 里写：
+
+```bash
+DEEPSEEK_API_KEY=sk-xxxxxxxx
+```
+
+后端同时兼容 ASP.NET Core 约定的 `LLM__ApiKey` 环境变量。
 
 ## 调用示例
 

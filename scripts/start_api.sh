@@ -5,6 +5,14 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="$REPO/.tools"
 DOTNET="$TOOL_DIR/dotnet/dotnet"
 
+# Load local .env (ignored by git) so DEEPSEEK_API_KEY etc. are available.
+if [ -f "$REPO/.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . "$REPO/.env"
+  set +a
+fi
+
 if [ ! -x "$DOTNET" ]; then
   echo "Local .NET SDK not found at $DOTNET" >&2
   echo "Please run the setup/install step or install .NET SDK 9/10 into $TOOL_DIR/dotnet." >&2

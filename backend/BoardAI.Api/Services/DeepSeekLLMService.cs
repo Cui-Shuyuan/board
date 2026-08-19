@@ -17,9 +17,15 @@ public class DeepSeekLLMService : ILLMService
         _httpClient = httpClient;
         _options = options.Value;
 
+        // 优先从环境变量读取，避免把 key 写进仓库。
+        // 支持 DEEPSEEK_API_KEY 和 ASP.NET Core 约定的 LLM__ApiKey。
+        var apiKey = Environment.GetEnvironmentVariable("DEEPSEEK_API_KEY")
+            ?? Environment.GetEnvironmentVariable("LLM__ApiKey")
+            ?? _options.ApiKey;
+
         _httpClient.BaseAddress = new Uri(_options.BaseUrl);
         _httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+            new AuthenticationHeaderValue("Bearer", apiKey);
     }
 
     public async Task<LLMChatResponse> ChatWithMessagesAsync(

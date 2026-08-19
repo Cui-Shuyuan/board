@@ -35,3 +35,6 @@ doc/
 backend/api_run.log
 scripts/_qa_*.log
 scripts/_qa_results.json
+
+# Editor swap files
+*.swp
