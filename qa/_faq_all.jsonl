@@ -1,0 +1,237 @@
+{"game": "agricola", "category": "1. 行动空间与时机（Work Phase / 行动解决）", "question": "放置家庭成员后，是立即执行行动，还是回合结束才结算？"}
+{"game": "agricola", "category": "1. 行动空间与时机（Work Phase / 行动解决）", "question": "“After X, also Y”空间必须做X和Y，还是Y可选？"}
+{"game": "agricola", "category": "1. 行动空间与时机（Work Phase / 行动解决）", "question": "可以只为阻挡而不执行行动吗？"}
+{"game": "agricola", "category": "1. 行动空间与时机（Work Phase / 行动解决）", "question": "累积空间上的资源如果不取会累积吗？"}
+{"game": "agricola", "category": "1. 行动空间与时机（Work Phase / 行动解决）", "question": "刚拿到的资源能马上用下一个家庭成员行动吗？"}
+{"game": "agricola", "category": "2. 家庭成长（Family Growth）", "question": "家庭成长是否必须有空房间（房间数 > 家庭成员数）？"}
+{"game": "agricola", "category": "2. 家庭成长（Family Growth）", "question": "先用不占房间的成长，同一回合还能用普通成长+次要改良吗？"}
+{"game": "agricola", "category": "2. 家庭成长（Family Growth）", "question": "新生儿何时变成正式成员？喂养时需要多少食物？"}
+{"game": "agricola", "category": "2. 家庭成长（Family Growth）", "question": "同一回合先成长再盖房可以吗？"}
+{"game": "agricola", "category": "3. 收获与喂养（Harvest / Feeding）", "question": "喂不起家人怎么办？"}
+{"game": "agricola", "category": "3. 收获与喂养（Harvest / Feeding）", "question": "繁殖时每对动物生一个，还是每种动物只生一个？"}
+{"game": "agricola", "category": "3. 收获与喂养（Harvest / Feeding）", "question": "繁殖阶段能把成年动物做成食物腾出空间给新生动物吗？"}
+{"game": "agricola", "category": "3. 收获与喂养（Harvest / Feeding）", "question": "不同牧场或宠物也能繁殖吗？"}
+{"game": "agricola", "category": "3. 收获与喂养（Harvest / Feeding）", "question": "收获作物是在喂养前还是后？"}
+{"game": "agricola", "category": "4. 动物与牧场（Animals / Pastures / Fences）", "question": "有马厩的牧场能养多少动物？"}
+{"game": "agricola", "category": "4. 动物与牧场（Animals / Pastures / Fences）", "question": "房子里能养一只宠物吗？"}
+{"game": "agricola", "category": "4. 动物与牧场（Animals / Pastures / Fences）", "question": "动物可以自由移动吗？"}
+{"game": "agricola", "category": "4. 动物与牧场（Animals / Pastures / Fences）", "question": "可以只为立刻做成食物而取动物吗？没空间就让它们跑掉？"}
+{"game": "agricola", "category": "4. 动物与牧场（Animals / Pastures / Fences）", "question": "马厩放进牧场后还能移动吗？"}
+{"game": "agricola", "category": "4. 动物与牧场（Animals / Pastures / Fences）", "question": "可以建栅栏分割已有牧场或围住马厩吗？"}
+{"game": "agricola", "category": "5. 房屋、翻新与房间（House / Renovation）", "question": "翻新时芦苇是按房间还是总共1个？"}
+{"game": "agricola", "category": "5. 房屋、翻新与房间（House / Renovation）", "question": "一次行动能直接从木屋翻到石屋吗？"}
+{"game": "agricola", "category": "5. 房屋、翻新与房间（House / Renovation）", "question": "“翻新后还可改良”空间必须先翻新吗？"}
+{"game": "agricola", "category": "5. 房屋、翻新与房间（House / Renovation）", "question": "还是木屋时能直接建泥/石房间吗？"}
+{"game": "agricola", "category": "6. 播种、烘焙与作物（Sow / Bake / Fields）", "question": "播种行动能一次播多个田吗？"}
+{"game": "agricola", "category": "6. 播种、烘焙与作物（Sow / Bake / Fields）", "question": "播种谷物时田上放几个标记？"}
+{"game": "agricola", "category": "6. 播种、烘焙与作物（Sow / Bake / Fields）", "question": "有允许烘焙的改良时，不走烘焙行动也能烤吗？"}
+{"game": "agricola", "category": "6. 播种、烘焙与作物（Sow / Bake / Fields）", "question": "壁炉/烤箱能烤几次？"}
+{"game": "agricola", "category": "6. 播种、烘焙与作物（Sow / Bake / Fields）", "question": "豆田等卡片算“田”吗（计分/前置）？"}
+{"game": "agricola", "category": "7. 职业与改良卡（Occupations / Improvements）", "question": "职业数量受家庭成员数限制吗？"}
+{"game": "agricola", "category": "7. 职业与改良卡（Occupations / Improvements）", "question": "打出的次要改良/职业会一直生效吗？"}
+{"game": "agricola", "category": "7. 职业与改良卡（Occupations / Improvements）", "question": "“随时”转换效果能多次用、任何阶段用吗？"}
+{"game": "agricola", "category": "7. 职业与改良卡（Occupations / Improvements）", "question": "有卡片先给食物时，职业的食物费用怎么算？"}
+{"game": "agricola", "category": "8. 计分与终局（Scoring）", "question": "空农场格子每个扣1分吗？"}
+{"game": "agricola", "category": "8. 计分与终局（Scoring）", "question": "空田和已播种田怎么计分？"}
+{"game": "agricola", "category": "8. 计分与终局（Scoring）", "question": "缺少某类动物或作物扣分吗？"}
+{"game": "agricola", "category": "8. 计分与终局（Scoring）", "question": "家庭成员和不同材质房间怎么计分？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "每人开局有多少食物？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "房间/栅栏/马厩放置有相邻要求吗？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "完整回合顺序是什么？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "主要改良行动可以打次要改良吗？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "第一回合累积空间就开始放资源吗？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "播种时能否同时播种谷物和蔬菜？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "烘焙时能否部分烤、保留部分谷物？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "宠物算在最终动物计分里吗？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "翻新后房屋类型立即改变，后续建房按新类型？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "“Family Growth even without room”获得的成员回家后是否占用房间？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "同一回合多个家庭成员可以连续使用同一类型资源吗？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "乞讨卡是否可被某些卡片移除/抵消？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "马厩是否必须建在牧场里才能翻倍容量？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "收获时如果田上只剩1个标记，取走后田变空？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "职业/改良的“前置条件”"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "起始玩家标记在何时传递？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "可以故意让动物跑掉以腾空间吗？"}
+{"game": "agricola", "category": "9. 其他常见困惑（设置、资源、杂项）", "question": "栅栏可以建在已有栅栏上或重叠吗？"}
+{"game": "brass-birmingham", "category": "1. 网络（Network）与连接（Connected）区别", "question": "你的 network 和 being connected 有什么区别？"}
+{"game": "brass-birmingham", "category": "1. 网络（Network）与连接（Connected）区别", "question": "我可以把 network 延伸到有商人牌的地点（如 Gloucester）之外吗？"}
+{"game": "brass-birmingham", "category": "1. 网络（Network）与连接（Connected）区别", "question": "当我在板上没有任何存在（无 link 无建筑）时，能否用 Network 动作在任意地方建 link？"}
+{"game": "brass-birmingham", "category": "1. 网络（Network）与连接（Connected）区别", "question": "使用自己酒厂的 beer 需要连接吗？"}
+{"game": "brass-birmingham", "category": "2. 建造（Build）与 Overbuild", "question": "我可以 overbuild 对手的煤矿或铁厂吗？条件是什么？"}
+{"game": "brass-birmingham", "category": "2. 建造（Build）与 Overbuild", "question": "我可以 overbuild 自己的工业 tile 吗？会丢 VP 吗？"}
+{"game": "brass-birmingham", "category": "2. 建造（Build）与 Overbuild", "question": "Overbuild 时必须用玩家板上最低可用 tile 吗？能跳级吗？"}
+{"game": "brass-birmingham", "category": "2. 建造（Build）与 Overbuild", "question": "Canal 时代同一地点能有多个玩家建工业吗？"}
+{"game": "brass-birmingham", "category": "2. 建造（Build）与 Overbuild", "question": "建造时必须优先单工业空位再考虑双工业空位吗？"}
+{"game": "brass-birmingham", "category": "2. 建造（Build）与 Overbuild", "question": "可以用野地点卡建 Farm Brewery 吗？"}
+{"game": "brass-birmingham", "category": "3. 资源（Coal / Iron / Beer）消耗与出售时机", "question": "我后来把煤矿连到商人城，能现在把煤卖到市场吗？"}
+{"game": "brass-birmingham", "category": "3. 资源（Coal / Iron / Beer）消耗与出售时机", "question": "煤和铁规则相反？煤需要连接，铁不需要？"}
+{"game": "brass-birmingham", "category": "3. 资源（Coal / Iron / Beer）消耗与出售时机", "question": "建好后立方体还能稍后卖到市场吗？"}
+{"game": "brass-birmingham", "category": "3. 资源（Coal / Iron / Beer）消耗与出售时机", "question": "商人 beer 只能用于 Sell，不能用于 Rail 双 link 吗？"}
+{"game": "brass-birmingham", "category": "3. 资源（Coal / Iron / Beer）消耗与出售时机", "question": "一次 Sell 多个 tile 时，能用多个商人 beer 吗？"}
+{"game": "brass-birmingham", "category": "3. 资源（Coal / Iron / Beer）消耗与出售时机", "question": "如果有商人 beer，必须先用它吗？"}
+{"game": "brass-birmingham", "category": "4. Sell 动作与翻面", "question": "Sell 需要连到商人吗？Beer 怎么算？"}
+{"game": "brass-birmingham", "category": "4. Sell 动作与翻面", "question": "工业 tile 何时翻面？最后一立方体被移除时立刻翻（即使对手用）吗？"}
+{"game": "brass-birmingham", "category": "5. Develop / Scout / Loan 等动作", "question": "能 Develop 1 级陶器吗？"}
+{"game": "brass-birmingham", "category": "5. Develop / Scout / Loan 等动作", "question": "手里已有 wild 卡时还能 Scout 吗？"}
+{"game": "brass-birmingham", "category": "5. Develop / Scout / Loan 等动作", "question": "一时代能 Scout 多次吗（只要手里没 wild）？"}
+{"game": "brass-birmingham", "category": "5. Develop / Scout / Loan 等动作", "question": "Loan 降多少 income？能负吗？"}
+{"game": "brass-birmingham", "category": "6. 回合、抽卡、时代转换", "question": "每时代开始抽几张卡？Canal 第一回合特殊吗？"}
+{"game": "brass-birmingham", "category": "6. 回合、抽卡、时代转换", "question": "Canal 结束移除哪些 tile？板和玩家板都移除吗？"}
+{"game": "brass-birmingham", "category": "6. 回合、抽卡、时代转换", "question": "每个动作（包括 pass）都要弃一张卡吗？"}
+{"game": "brass-birmingham", "category": "6. 回合、抽卡、时代转换", "question": "一回合能做两次相同动作吗？"}
+{"game": "brass-birmingham", "category": "7. 计分与胜负", "question": "平局怎么破？"}
+{"game": "brass-birmingham", "category": "7. 计分与胜负", "question": "工业和 links 的 VP 何时计？只在时代结束吗？"}
+{"game": "brass-birmingham", "category": "7. 计分与胜负", "question": "被 overbuild 会丢已获 income 或 VP 吗？"}
+{"game": "castles-of-burgundy", "category": "1. 阶段结束 / 棋盘清理 / 瓷砖处理", "question": "每阶段结束时，未使用的六边形瓷砖是退回供应堆，还是永久移出游戏？"}
+{"game": "castles-of-burgundy", "category": "1. 阶段结束 / 棋盘清理 / 瓷砖处理", "question": "船、矿和城堡瓷砖在阶段之间是否留在主板上？"}
+{"game": "castles-of-burgundy", "category": "1. 阶段结束 / 棋盘清理 / 瓷砖处理", "question": "编号仓库中剩余瓷砖在阶段结束时怎么处理？"}
+{"game": "castles-of-burgundy", "category": "2. 存储区（Storage / Key spaces）与丢弃", "question": "拿新瓷砖时三个存储位已满怎么办？"}
+{"game": "castles-of-burgundy", "category": "2. 存储区（Storage / Key spaces）与丢弃", "question": "用两个骰子拿瓷砖时，可以一次丢弃两个吗？"}
+{"game": "castles-of-burgundy", "category": "2. 存储区（Storage / Key spaces）与丢弃", "question": "可以不拿新瓷砖就单纯丢弃存储区的瓷砖吗？"}
+{"game": "castles-of-burgundy", "category": "3. 放置规则（相邻、颜色匹配、骰子匹配）", "question": "每个新放置的瓷砖都必须与已有瓷砖相邻吗？"}
+{"game": "castles-of-burgundy", "category": "3. 放置规则（相邻、颜色匹配、骰子匹配）", "question": "骰子结果必须匹配庄园上该空位的数字吗？"}
+{"game": "castles-of-burgundy", "category": "3. 放置规则（相邻、颜色匹配、骰子匹配）", "question": "起始城堡后的第一块瓷砖只能放在周围六个位置吗？"}
+{"game": "castles-of-burgundy", "category": "3. 放置规则（相邻、颜色匹配、骰子匹配）", "question": "如果买了无法放置的瓷砖（没有匹配相邻位置）怎么办？"}
+{"game": "castles-of-burgundy", "category": "4. 工人（Worker）使用", "question": "用多个工人可以把骰子调整超过 ±1 吗？"}
+{"game": "castles-of-burgundy", "category": "4. 工人（Worker）使用", "question": "工人何时使用——选择行动前还是后？"}
+{"game": "castles-of-burgundy", "category": "4. 工人（Worker）使用", "question": "工人在阶段或游戏结束时会返还吗？"}
+{"game": "castles-of-burgundy", "category": "5. 行动与时机（Turn / Actions）", "question": "一回合可以用两个骰子做相同行动吗？"}
+{"game": "castles-of-burgundy", "category": "5. 行动与时机（Turn / Actions）", "question": "从中央黑色仓库买瓷砖是免费行动（不需骰子）吗？"}
+{"game": "castles-of-burgundy", "category": "5. 行动与时机（Turn / Actions）", "question": "可以在回合中任何时候从黑色仓库买吗？"}
+{"game": "castles-of-burgundy", "category": "5. 行动与时机（Turn / Actions）", "question": "放置城堡会获得一个任意点数的额外行动吗？"}
+{"game": "castles-of-burgundy", "category": "6. 货物（Goods）与船（Ship）", "question": "放置船时，是拿走一个仓库的所有货物，还是只拿能存下的？"}
+{"game": "castles-of-burgundy", "category": "6. 货物（Goods）与船（Ship）", "question": "卖货物时无论卖多少堆，都只得 1 银币吗？"}
+{"game": "castles-of-burgundy", "category": "6. 货物（Goods）与船（Ship）", "question": "可以用仓库建筑代替骰子行动来卖货物吗？"}
+{"game": "castles-of-burgundy", "category": "7. 动物（Animal / Pasture）计分", "question": "同种动物瓷砖必须在同一牧场内相邻才能得奖励分吗？"}
+{"game": "castles-of-burgundy", "category": "7. 动物（Animal / Pasture）计分", "question": "动物分是立即计还是终局计？"}
+{"game": "castles-of-burgundy", "category": "8. 矿（Mine）", "question": "每阶段结束时每个矿得 1 银币吗？"}
+{"game": "castles-of-burgundy", "category": "8. 矿（Mine）", "question": "黄色知识瓷砖 #2：是每个矿额外得 1 工人，还是总共只得 1？"}
+{"game": "castles-of-burgundy", "category": "9. 黄色知识瓷砖（Knowledge / Monastery tiles）", "question": "黄色瓷砖 #1 具体做什么？"}
+{"game": "castles-of-burgundy", "category": "9. 黄色知识瓷砖（Knowledge / Monastery tiles）", "question": "黄色 #6：可以用 2 工人（或银币）从任意仓库买吗？"}
+{"game": "castles-of-burgundy", "category": "9. 黄色知识瓷砖（Knowledge / Monastery tiles）", "question": "终局计分的知识瓷砖只有放置后才生效吗？"}
+{"game": "castles-of-burgundy", "category": "9. 黄色知识瓷砖（Knowledge / Monastery tiles）", "question": "多个知识瓷砖可以叠加吗（如 #6 + 工人增强）？"}
+{"game": "castles-of-burgundy", "category": "10. 建筑效果（Beige buildings）", "question": "教堂允许我拿什么？"}
+{"game": "castles-of-burgundy", "category": "10. 建筑效果（Beige buildings）", "question": "木匠工坊 / 市场 / 市政厅效果？"}
+{"game": "castles-of-burgundy", "category": "10. 建筑效果（Beige buildings）", "question": "每个城市只能放一种建筑各一个吗？"}
+{"game": "castles-of-burgundy", "category": "11. 计分与终局", "question": "终局计分包括什么？"}
+{"game": "castles-of-burgundy", "category": "11. 计分与终局", "question": "存储区剩余瓷砖计分吗？"}
+{"game": "castles-of-burgundy", "category": "11. 计分与终局", "question": "区域完成奖励（大瓷砖）何时计分？"}
+{"game": "castles-of-burgundy", "category": "12. 回合顺序与白骰", "question": "白骰如何决定货物放置？"}
+{"game": "castles-of-burgundy", "category": "12. 回合顺序与白骰", "question": "回合顺序如何决定和改变？"}
+{"game": "castles-of-burgundy", "category": "13. 其他常见时机与边界情况", "question": "看到仓库内容后还能用工人改骰吗？"}
+{"game": "castles-of-burgundy", "category": "13. 其他常见时机与边界情况", "question": "放置瓷砖时即使无法完全使用效果也触发吗？"}
+{"game": "castles-of-burgundy", "category": "13. 其他常见时机与边界情况", "question": "3 人游戏每阶段填充哪些空位？"}
+{"game": "castles-of-burgundy", "category": "13. 其他常见时机与边界情况", "question": "“获得 2 工人”行动可以用任意骰子结果吗？"}
+{"game": "civolution", "category": "设置（Setup）", "question": "设置时每位玩家从几张起始标记卡中选择？"}
+{"game": "civolution", "category": "设置（Setup）", "question": "开局时每种研究牌发几张供选择？"}
+{"game": "civolution", "category": "设置（Setup）", "question": "术语表（Glossary）是规则书的一部分吗？"}
+{"game": "civolution", "category": "阶段流程（Phase Flow / Action Phase / Reset）", "question": "双人游戏中的 Reset 行动，我们玩得对吗？（Reset 后行动阶段何时结束？）"}
+{"game": "civolution", "category": "阶段流程（Phase Flow / Action Phase / Reset）", "question": "Reset 行动与回合结束怎么处理？阶段标记到橙色位时怎么办？"}
+{"game": "civolution", "category": "阶段流程（Phase Flow / Action Phase / Reset）", "question": "如果还有 4 个或更多骰子，我能提前 Reset 吗？"}
+{"game": "civolution", "category": "阶段流程（Phase Flow / Action Phase / Reset）", "question": "时代之间有免费 Reset 吗？骰子留在哪里？"}
+{"game": "civolution", "category": "阶段流程（Phase Flow / Action Phase / Reset）", "question": "每个时代保证有多少次 Reset？"}
+{"game": "civolution", "category": "模组与升级（Modules & Upgrades）", "question": "本回合激活模组时升级它，能立刻用新等级吗？"}
+{"game": "civolution", "category": "模组与升级（Modules & Upgrades）", "question": "如何从 II 级升级到 III 级？"}
+{"game": "civolution", "category": "模组与升级（Modules & Upgrades）", "question": "可以升级任意主要模组吗？"}
+{"game": "civolution", "category": "研究牌安装（Research Card Installation）", "question": "安装研究牌时如何确定列与阶段？"}
+{"game": "civolution", "category": "研究牌安装（Research Card Installation）", "question": "我能支付更高阶段成本来获得更多分吗？"}
+{"game": "civolution", "category": "研究牌安装（Research Card Installation）", "question": "安装导致正面牌堆空了怎么办？"}
+{"game": "civolution", "category": "研究牌安装（Research Card Installation）", "question": "突变牌的即时奖励会给进度轨道步数吗？"}
+{"game": "civolution", "category": "骰子与标记（Dice & Markers）", "question": "Idea 如何修改骰子？1 和 6 能循环吗？"}
+{"game": "civolution", "category": "骰子与标记（Dice & Markers）", "question": "Focus 能替代任意骰值吗？"}
+{"game": "civolution", "category": "骰子与标记（Dice & Markers）", "question": "Planning 标记能替代激活骰吗？"}
+{"game": "civolution", "category": "骰子与标记（Dice & Markers）", "question": "获得标记时供应空了怎么办？"}
+{"game": "civolution", "category": "地点（Sites）", "question": "地点阶段 Gorge、Glacier、Mystic Oak 如何结算？"}
+{"game": "civolution", "category": "地点（Sites）", "question": "其他地点（洞穴等）在地点阶段也生效吗？"}
+{"game": "civolution", "category": "喂养与死亡（Feeding & Death）", "question": "喂养弱化部落后，它们会重新变强吗？"}
+{"game": "civolution", "category": "喂养与死亡（Feeding & Death）", "question": "喂养阶段必须逐个喂吗？可以不喂荒野部落省食物吗？"}
+{"game": "civolution", "category": "喂养与死亡（Feeding & Death）", "question": "船上/营地部落与荒野的食物成本？农场如何帮助？"}
+{"game": "civolution", "category": "喂养与死亡（Feeding & Death）", "question": "“Deus ex machina” 是什么？"}
+{"game": "civolution", "category": "喂养与死亡（Feeding & Death）", "question": "喂养后每剩一个强部落得 1 分吗？"}
+{"game": "civolution", "category": "事件与天气（Events & Weather）", "question": "天气标记如何移动？极端时发生什么？"}
+{"game": "civolution", "category": "事件与天气（Events & Weather）", "question": "事件卡相对天气何时结算？"}
+{"game": "civolution", "category": "时代计分 / 终局计分（Era Scoring / Final Scoring）", "question": "时代结束中间计分如何？谁成为先手？"}
+{"game": "civolution", "category": "时代计分 / 终局计分（Era Scoring / Final Scoring）", "question": "终局计分：9 类 + 控制台分区 + 终局牌？"}
+{"game": "civolution", "category": "时代计分 / 终局计分（Era Scoring / Final Scoring）", "question": "分数轨道跑完一圈怎么办？"}
+{"game": "civolution", "category": "时代计分 / 终局计分（Era Scoring / Final Scoring）", "question": "Favor of Agera 已满时再前进怎么办？"}
+{"game": "civolution", "category": "其他", "question": "弱化部落能迁移吗？"}
+{"game": "civolution", "category": "其他", "question": "把部落推入荒野会削弱吗？"}
+{"game": "civolution", "category": "其他", "question": "“幸运发现”/命运骰与 Idea 如何互动？"}
+{"game": "civolution", "category": "其他", "question": "控制台资源存储区上的钻石如何在终局计分中生效？"}
+{"game": "civolution", "category": "其他", "question": "探索并揭示新领地资源时，要立刻在那里放标记吗？"}
+{"game": "civolution", "category": "其他", "question": "建造农场、船、雕像或定居点的确切要求与收益是什么？"}
+{"game": "civolution", "category": "其他", "question": "如何安装属性芯片？特征要求是什么？"}
+{"game": "civolution", "category": "其他", "question": "目标芯片如何运作？何时可以履行并安装？"}
+{"game": "civolution", "category": "其他", "question": "安装收入芯片时是否立即执行其行动？可以放在哪里？"}
+{"game": "civolution", "category": "其他", "question": "Activity 模组具体允许我做什么？"}
+{"game": "civolution", "category": "其他", "question": "Favor 测试如何进行？何时使用命运骰？"}
+{"game": "civolution", "category": "其他", "question": "突变牌的成本空间是否只有特征要求？"}
+{"game": "civolution", "category": "其他", "question": "建筑牌是否有基于已建造定居点的替代要求？"}
+{"game": "civolution", "category": "其他", "question": "需要多数的事件，是必须严格领先还是平局也可以？"}
+{"game": "civolution", "category": "其他", "question": "雕像在时代结束或终局时如何计分？"}
+{"game": "civolution", "category": "其他", "question": "喂养阶段可以使用降低喂养成本的研究牌能力吗？"}
+{"game": "civolution", "category": "其他", "question": "部落死亡时是否总能使用“Deus ex machina”？有无限制？"}
+{"game": "civolution", "category": "其他", "question": "安装研究牌时故意支付更高阶段成本只为拿成功点，是否仍能获得卡牌底部的即时奖励？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "V.I.C.I 如何选择目标芯片？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "V.I.C.I 如何 Reset？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "单人玩家或 V.I.C.I 能在空领地繁殖吗？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "V.I.C.I 在喂养阶段如何处理？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "如果 V.I.C.I 失去最后部落怎么办？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "V.I.C.I 行动卡难度（蓝/红半）如何？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "终局 V.I.C.I 计控制台分区分吗？"}
+{"game": "civolution", "category": "单人模式（V.I.C.I.）——单独分组", "question": "训练模式 vs 完整 V.I.C.I？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "如果玩家有一种货物可以装到多艘空船上，是否必须选择能装最多货物的那艘船？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "船长装了一种货后，其他玩家是否必须也装同一种货？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "如果能装船就必须装船吗？这是唯一强制行动吗？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "码头（Wharf）拥有者能否先把某种货装满普通船，下一轮再用码头装同一种货？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "有码头时，是否仍必须优先装普通船？还是可以自由选择用码头？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "船长特权额外1VP是只给第一次装船，还是每次？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "同一艘船不能混装不同货物？同一货物不能出现在两艘不同船上？"}
+{"game": "puerto-rico", "category": "1. 船长阶段（Captain / Shipping）规则", "question": "选定货物类型后，是否必须尽可能多装？"}
+{"game": "puerto-rico", "category": "2. 工匠阶段（Craftsman / Production）规则", "question": "工匠特权的额外货物是在什么时候拿的？"}
+{"game": "puerto-rico", "category": "2. 工匠阶段（Craftsman / Production）规则", "question": "工匠特权是否能让我拿超过自己生产能力的额外货物？"}
+{"game": "puerto-rico", "category": "2. 工匠阶段（Craftsman / Production）规则", "question": "玉米生产是否需要生产建筑？"}
+{"game": "puerto-rico", "category": "3. 市长 / 殖民者（Mayor / Colonists）规则", "question": "如果市长阶段没人拿殖民者会怎样？"}
+{"game": "puerto-rico", "category": "3. 市长 / 殖民者（Mayor / Colonists）规则", "question": "能故意把殖民者留在圣胡安（不分配）来人为增加下一轮殖民者船数量吗？"}
+{"game": "puerto-rico", "category": "3. 市长 / 殖民者（Mayor / Colonists）规则", "question": "重新装填殖民者船时，种植园/采石场的空圈是否计入？"}
+{"game": "puerto-rico", "category": "3. 市长 / 殖民者（Mayor / Colonists）规则", "question": "市长特权是从供应堆拿额外一个殖民者吗？"}
+{"game": "puerto-rico", "category": "4. 建设者 / 建筑（Builder / Buildings）与采石场折扣", "question": "采石场折扣用一次后是否回收？还是永久保留？"}
+{"game": "puerto-rico", "category": "4. 建设者 / 建筑（Builder / Buildings）与采石场折扣", "question": "采石场折扣按建筑列的上限如何计算？"}
+{"game": "puerto-rico", "category": "4. 建设者 / 建筑（Builder / Buildings）与采石场折扣", "question": "建设者特权+采石场能否把建筑建到免费？"}
+{"game": "puerto-rico", "category": "4. 建设者 / 建筑（Builder / Buildings）与采石场折扣", "question": "未占用建筑是否仍计印刷VP？大型建筑额外VP需要有人吗？"}
+{"game": "puerto-rico", "category": "4. 建设者 / 建筑（Builder / Buildings）与采石场折扣", "question": "建设者阶段能建多个建筑吗？"}
+{"game": "puerto-rico", "category": "5. 定居者 / 种植园（Settler）规则", "question": "种植园一旦放置能否丢弃或替换？"}
+{"game": "puerto-rico", "category": "5. 定居者 / 种植园（Settler）规则", "question": "刚拿的种植园能否不放直接丢弃？"}
+{"game": "puerto-rico", "category": "5. 定居者 / 种植园（Settler）规则", "question": "定居者同时有庄园或建筑小屋时，能拿几个采石场/种植园？"}
+{"game": "puerto-rico", "category": "5. 定居者 / 种植园（Settler）规则", "question": "12个岛位全满后还能再拿种植园吗？"}
+{"game": "puerto-rico", "category": "6. 商人 / 交易屋（Trader）规则", "question": "办公室是否允许卖交易屋已有的货物？"}
+{"game": "puerto-rico", "category": "6. 商人 / 交易屋（Trader）规则", "question": "交易屋满了还能卖吗？"}
+{"game": "puerto-rico", "category": "6. 商人 / 交易屋（Trader）规则", "question": "小/大市场额外金钱是否需要有人？"}
+{"game": "puerto-rico", "category": "7. 角色通用与回合结构", "question": "未使用的角色是否在回合结束时获得1杜布隆？"}
+{"game": "puerto-rico", "category": "7. 角色通用与回合结构", "question": "角色行动是否可选（除船长外）？"}
+{"game": "puerto-rico", "category": "7. 角色通用与回合结构", "question": "建设者不建建筑时，还能拿特权折扣对应的钱吗？"}
+{"game": "puerto-rico", "category": "8. 游戏结束与计分", "question": "游戏结束条件的精确时机是什么？"}
+{"game": "puerto-rico", "category": "8. 游戏结束与计分", "question": "游戏结束时未占用建筑是否仍计VP？"}
+{"game": "puerto-rico", "category": "8. 游戏结束与计分", "question": "VP筹码是否面朝下保密？"}
+{"game": "puerto-rico", "category": "9. 仓库、港口等特定建筑", "question": "小仓库+大仓库如何共同保存剩余货物？"}
+{"game": "puerto-rico", "category": "9. 仓库、港口等特定建筑", "question": "港口是否每次装货都+1VP（包括用码头时）？"}
+{"game": "puerto-rico", "category": "9. 仓库、港口等特定建筑", "question": "大学是否在建设时给免费殖民者？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "种植园/采石场/建筑必须有人才能发挥作用（除基础VP外）吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "建筑有最低成本1的限制吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "定居者阶段后补充种植园时抽几张？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "同一玩家同一回合能选同一角色多次吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "总督标记是否每回合传递？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "初始杜布隆和起始种植园如何分配？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "现有殖民者只能在市长阶段重新分配吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "工匠阶段货物供应耗尽怎么办？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "探矿者是否只有选者获得金钱？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "普通船还有该货物空位时，仍可用码头吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "用码头时是否必须装完该类型全部货物？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "工匠额外货物是否可能因供应耗尽而拿不到？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "角色卡是否一直放在自己面前直到回合结束？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "城位已满的玩家还能选建设者吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "工厂具体如何给生产额外收益？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "收容所是否在放置种植园时给免费殖民者？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "船长阶段，有多种货和多艘船时，是否必须选择能装最多总桶数的组合？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "船长后剩余货物只能保存在仓库或只留1桶吗？"}
+{"game": "puerto-rico", "category": "10. 其他常见规则困惑与长尾问题", "question": "游戏结束只在市长/建设者结束时检查吗？"}

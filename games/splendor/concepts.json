@@ -1,0 +1,1118 @@
+{
+  "meta": {
+    "game": "splendor",
+    "name": {
+      "zh": "璀璨宝石",
+      "en": "Splendor"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "璀璨宝石的结构化规则定义。基于 board-game-ontology v0.1.0。",
+      "en": "Structured rule definition for Splendor. Based on board-game-ontology v0.1.0."
+    }
+  },
+  "objects": [
+    {
+      "id": "gem",
+      "extends": "<ontology::resource>",
+      "name": {
+        "zh": "宝石",
+        "en": "Gem"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的宝石资源。共五种：<diamond>（钻石）、<sapphire>（蓝宝石）、<emerald>（绿宝石）、<ruby>（红宝石）、<onyx>（缟玛瑙）。<gem>是玩家购买<ontology::card>时的主要支付手段，也是游戏中最核心的<ontology::resource>。同色<gem>完全等价、可互相替代——玩家持有的是「3 颗蓝宝石」而非三个独立的个体。玩家可通过「拿取宝石」<ontology::action>从供应堆获取<gem>。注意：<gold>不属于<gem>，获取方式和使用规则均不同。",
+        "en": "Gem resources in Splendor. Five colors: diamond, sapphire, emerald, ruby, onyx. Gems are the primary payment method for purchasing <ontology::card>s and the most central <ontology::resource> in the game. Same-color gems are completely equivalent and interchangeable — a player holds '3 sapphires', not three distinct individuals. Players acquire gems through the 'take gems' <ontology::action> from the supply. Note: gold is not a gem; its acquisition method and usage rules differ."
+      },
+      "unit": {
+        "type": "string",
+        "default": "颗",
+        "description": {
+          "zh": "宝石的计量单位。如「3 颗蓝宝石」「支付 2 颗钻石」。",
+          "en": "Unit of measurement for gems. E.g., '3 sapphires', 'pay 2 diamonds'."
+        }
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "white",
+          "blue",
+          "green",
+          "red",
+          "black"
+        ],
+        "description": {
+          "zh": "宝石颜色。white=钻石，blue=蓝宝石，green=绿宝石，red=红宝石，black=缟玛瑙",
+          "en": "Gem color. white=diamond, blue=sapphire, green=emerald, red=ruby, black=onyx"
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "<gem>的外观描述。poker-chip 风格圆形厚片，中央印有一枚对应的图案，边缘一圈为对应的颜色。须包含 AI 向玩家解释「哪个是蓝宝石」时的关键视觉信息——颜色、质感、图案形状。",
+          "en": "Visual description of <gem>. Poker-chip style round thick disc, with a corresponding symbol printed in the center and a ring of the corresponding color around the edge. Must include key visual information for AI to help players identify which color is which."
+        }
+      }
+    },
+    {
+      "id": "diamond",
+      "specifies": "<gem>",
+      "name": {
+        "zh": "钻石",
+        "en": "Diamond"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "白色/透明的<gem>。poker-chip 风格圆形厚片，中央印有一枚钻石图案，边缘一圈为白色。",
+        "en": "White/transparent <gem>. Poker-chip style round thick disc, with a diamond symbol printed in the center and a white ring around the edge."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "white"
+        ],
+        "description": {
+          "zh": "固定为白色。",
+          "en": "Fixed to white."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "白色半透明圆形厚片，poker-chip 风格，表面有钻石切割纹理。",
+          "en": "White translucent round disc, poker-chip style, with diamond cut texture on the surface."
+        }
+      }
+    },
+    {
+      "id": "sapphire",
+      "specifies": "<gem>",
+      "name": {
+        "zh": "蓝宝石",
+        "en": "Sapphire"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "蓝色的<gem>。poker-chip 风格圆形厚片，中央印有一枚蓝宝石图案，边缘一圈为蓝色。",
+        "en": "Blue <gem>. Poker-chip style round thick disc, with a sapphire symbol printed in the center and a blue ring around the edge."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "blue"
+        ],
+        "description": {
+          "zh": "固定为蓝色。",
+          "en": "Fixed to blue."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "深蓝色不透明圆形厚片，poker-chip 风格。",
+          "en": "Deep blue opaque round disc, poker-chip style."
+        }
+      }
+    },
+    {
+      "id": "emerald",
+      "specifies": "<gem>",
+      "name": {
+        "zh": "绿宝石",
+        "en": "Emerald"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "绿色的<gem>。poker-chip 风格圆形厚片，中央印有一枚绿宝石图案，边缘一圈为绿色。",
+        "en": "Green <gem>. Poker-chip style round thick disc, with an emerald symbol printed in the center and a green ring around the edge."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "green"
+        ],
+        "description": {
+          "zh": "固定为绿色。",
+          "en": "Fixed to green."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "翠绿色不透明圆形厚片，poker-chip 风格。",
+          "en": "Emerald green opaque round disc, poker-chip style."
+        }
+      }
+    },
+    {
+      "id": "ruby",
+      "specifies": "<gem>",
+      "name": {
+        "zh": "红宝石",
+        "en": "Ruby"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "红色的<gem>。poker-chip 风格圆形厚片，中央印有一枚红宝石图案，边缘一圈为红色。",
+        "en": "Red <gem>. Poker-chip style round thick disc, with a ruby symbol printed in the center and a red ring around the edge."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "red"
+        ],
+        "description": {
+          "zh": "固定为红色。",
+          "en": "Fixed to red."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "深红色不透明圆形厚片，poker-chip 风格。",
+          "en": "Deep red opaque round disc, poker-chip style."
+        }
+      }
+    },
+    {
+      "id": "onyx",
+      "specifies": "<gem>",
+      "name": {
+        "zh": "缟玛瑙",
+        "en": "Onyx"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "黑色的<gem>。poker-chip 风格圆形厚片，中央印有一枚缟玛瑙图案，边缘一圈为黑色。",
+        "en": "Black <gem>. Poker-chip style round thick disc, with an onyx symbol printed in the center and a black ring around the edge."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "black"
+        ],
+        "description": {
+          "zh": "固定为黑色。",
+          "en": "Fixed to black."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "黑色不透明圆形厚片，poker-chip 风格。",
+          "en": "Black opaque round disc, poker-chip style."
+        }
+      }
+    },
+    {
+      "id": "development_card",
+      "extends": "<ontology::card>",
+      "name": {
+        "zh": "发展卡",
+        "en": "Development Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的发展卡——一种<ontology::card>。玩家通过支付<gem>费用购买<development_card>，将其从<ontology::market>移入自己的<ontology::development_area>，此后该卡永久提供<prestige_point>和<discount>。<development_card>分为三个等级（I/II/III），等级越高，费用越贵、<prestige_point>越多。",
+        "en": "Development cards in Splendor — a type of <ontology::card>. Players purchase <development_card>s by paying <gem> costs, moving them from the <ontology::market> to their <ontology::development_area>, after which the card permanently provides <prestige_point>s and a <discount>. <development_card>s come in three levels (I/II/III); higher levels have higher costs and more <prestige_point>s."
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "<development_card>的外观描述。必须说明卡牌正面和背面的元素布局——正面：左上角为<prestige_point>数值（0~5，0 时不显示），右上角为<discount>的颜色图标，左下角为<ontology::cost>（若干<gem>的组合），中央为插画；背面：中央为等级标记（I/II/III），其余为统一的牌背图案。所有<development_card>背面依等级区分（同一等级背面相同），正面各不相同。AI 向玩家解释「怎么看一张发展卡」时以此字段为主要信息来源。",
+          "en": "Visual description of <development_card>. Must describe the layout of the front and back faces — front: top-left shows prestige points (<prestige_point> value, 0-5, hidden when 0), top-right shows the discount gem icon (<discount> color), bottom-left shows the cost (combination of <gem>s), center is illustration; back: center shows the level marker (I/II/III), rest is a uniform card-back pattern. All <development_card> backs differ by level (identical within the same level), fronts are all unique. AI uses this field as the primary source when explaining 'how to read a development card'."
+        }
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "I",
+          "II",
+          "III"
+        ],
+        "description": {
+          "zh": "发展卡等级，位于卡牌背面中央。I=低级（费用低、<prestige_point>少），II=中级，III=高级（费用高、<prestige_point>多）。决定该卡归属哪个<ontology::deck>——游戏设置时按等级分为三叠独立的<ontology::deck>。",
+          "en": "Development card level, located center of the card back. I=low (cheap, few <prestige_point>s), II=mid, III=high (expensive, many <prestige_point>s). Determines which <ontology::deck> the card belongs to — during setup, cards are separated into three independent <ontology::deck>s by level."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "level",
+            "description": {
+              "zh": "每张<development_card>必有等级——决定其归属<ontology::deck>和强度区间。",
+              "en": "Every <development_card> has a level — determines its <ontology::deck> and power bracket."
+            }
+          }
+        ],
+        "optional": []
+      },
+      "parts": [
+        {
+          "<prestige_point>": {
+            "type": "integer",
+            "default": 0,
+            "description": {
+              "zh": "位于卡牌正面左上角。数值 0~5，0 时不显示数字。购买此卡后获得对应数量的<prestige_point>。",
+              "en": "Located top-left of the card front. Value 0-5, not shown when 0. The player gains this many <prestige_point>s after purchasing the card."
+            }
+          }
+        },
+        {
+          "<ontology::cost>": {
+            "type": "<ontology::cost>",
+            "description": {
+              "zh": "购买此卡所需支付的费用，位于卡牌正面左下角。以若干<gem>的组合体现——如 3 颗blue + 2 颗white + 1 颗green。玩家支付此<ontology::cost>（可用<gold>替代任意颜色，可用<discount>抵扣）后方可获得此卡。",
+              "en": "The cost to purchase this card, located bottom-left of the card front. Expressed as a combination of <gem>s — e.g., 3 <sapphire> + 2 <diamond> + 1 <emerald>. The player must pay this <ontology::cost> (using <gold> as wild and <discount>s to reduce) to acquire the card."
+            }
+          }
+        },
+        {
+          "<discount>": {
+            "type": "<discount>",
+            "description": {
+              "zh": "此卡提供的折扣效果，位于卡牌正面右上角。以一颗某种颜色的<gem>图标体现——表示该<ontology::player>此后购买任意<development_card>时，对应颜色费用减 1。",
+              "en": "The discount this card provides, located top-right of the card front. Shown as a single <gem> icon of a specific color — this means the <ontology::player> subsequently pays 1 fewer <gem> of that color when buying any <development_card>."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "development_card_level_1",
+      "specifies": "<development_card>",
+      "name": {
+        "zh": "一级发展卡",
+        "en": "Level I Development Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一级<development_card>。费用最低、<prestige_point>最少（通常 0~1 分），是游戏早期的核心获取目标。",
+        "en": "Level I <development_card>. Lowest cost, fewest <prestige_point>s (typically 0-1), the core acquisition target in the early game."
+      },
+      "appearance": {
+        "zh": "矩形卡牌。背面中央为等级标记 I（同一等级牌背图案相同）。正面左上角为声望点数（多为 0~1 分），右上角为折扣颜色图标，左下角为购买费用（宝石组合），中央为插画。",
+        "en": "Rectangular card. Back shows the level-I mark in the center (all level-I backs share the same art). Front: prestige points top-left (mostly 0-1), discount color icon top-right, purchase cost bottom-left (a combination of gems), illustration in the center."
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "I"
+        ],
+        "description": {
+          "zh": "固定为 I 级。",
+          "en": "Fixed to level I."
+        }
+      }
+    },
+    {
+      "id": "development_card_level_2",
+      "specifies": "<development_card>",
+      "name": {
+        "zh": "二级发展卡",
+        "en": "Level II Development Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "二级<development_card>。费用和<prestige_point>居中（通常 1~3 分），是游戏中期的过渡目标。",
+        "en": "Level II <development_card>. Mid-range cost and <prestige_point>s (typically 1-3), the transitional target in the mid game."
+      },
+      "appearance": {
+        "zh": "矩形卡牌。背面中央为等级标记 II（同一等级牌背图案相同）。正面左上角为声望点数（多为 1~3 分），右上角为折扣颜色图标，左下角为购买费用（宝石组合），中央为插画。",
+        "en": "Rectangular card. Back shows the level-II mark in the center (all level-II backs share the same art). Front: prestige points top-left (mostly 1-3), discount color icon top-right, purchase cost bottom-left (a combination of gems), illustration in the center."
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "II"
+        ],
+        "description": {
+          "zh": "固定为 II 级。",
+          "en": "Fixed to level II."
+        }
+      }
+    },
+    {
+      "id": "development_card_level_3",
+      "specifies": "<development_card>",
+      "name": {
+        "zh": "三级发展卡",
+        "en": "Level III Development Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "三级<development_card>。费用最高、<prestige_point>最多（通常 3~5 分），是游戏后期的高价值目标。",
+        "en": "Level III <development_card>. Highest cost, most <prestige_point>s (typically 3-5), the high-value target in the late game."
+      },
+      "appearance": {
+        "zh": "矩形卡牌。背面中央为等级标记 III（同一等级牌背图案相同）。正面左上角为声望点数（多为 3~5 分），右上角为折扣颜色图标，左下角为购买费用（宝石组合），中央为插画。",
+        "en": "Rectangular card. Back shows the level-III mark in the center (all level-III backs share the same art). Front: prestige points top-left (mostly 3-5), discount color icon top-right, purchase cost bottom-left (a combination of gems), illustration in the center."
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "III"
+        ],
+        "description": {
+          "zh": "固定为 III 级。",
+          "en": "Fixed to level III."
+        }
+      }
+    },
+    {
+      "id": "gem_supply",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "宝石供应堆",
+        "en": "Gem Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的宝石供应堆——一种<ontology::supply>。存放游戏中所有可供<ontology::player>拿取的<gem>（五种颜色）。所有<ontology::player>均可从此<ontology::supply>直接取用——无需抽取、无需随机，<ontology::player>对「取多少、取哪些颜色」有完全控制力（受拿取规则限制）。<gem>被<ontology::player>花费后回归此<ontology::supply>。注意：<gold>存放在独立的<gold_supply>中，获取方式不同。",
+        "en": "Gem supply in Splendor — a <ontology::supply>. Holds all <gem>s (five colors) available for <ontology::player>s to take. All <ontology::player>s can take directly from this <ontology::supply> — no drawing, no randomness; the <ontology::player> has full control over 'how many and which colors' (subject to taking rules). <gem>s spent by <ontology::player>s are returned to this <ontology::supply>. Note: <gold> is stored in a separate <gold_supply> with different acquisition rules."
+      },
+      "contains": {
+        "type": "<gem>[]",
+        "description": {
+          "zh": "此<ontology::supply>存放的<ontology::object>类型：<gem>（五种颜色）。",
+          "en": "The <ontology::object> types this <ontology::supply> holds: <gem> (five colors)."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "gold_supply",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "黄金供应堆",
+        "en": "Gold Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的黄金供应堆——一种<ontology::supply>。仅存放<gold>。<gold>不能通过「拿取宝石」<ontology::action>获取——<ontology::player>只能通过「保留卡牌」<ontology::action>从此<ontology::supply>获得 1 颗<gold>（若还有剩余）。<gold>被<ontology::player>花费后回归此<ontology::supply>。",
+        "en": "Gold supply in Splendor — a <ontology::supply>. Holds only <gold>. <gold> cannot be acquired through the 'take gems' <ontology::action> — <ontology::player>s only gain 1 <gold> from this <ontology::supply> via the 'reserve card' <ontology::action> (if any remain). <gold> spent by <ontology::player>s is returned to this <ontology::supply>."
+      },
+      "contains": {
+        "type": "<gold>[]",
+        "description": {
+          "zh": "此<ontology::supply>存放的<ontology::object>类型：仅<gold>。",
+          "en": "The <ontology::object> type this <ontology::supply> holds: <gold> only."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "development_deck",
+      "extends": "<ontology::deck>",
+      "name": {
+        "zh": "发展卡牌堆",
+        "en": "Development Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中存放<development_card>的<ontology::deck>。卡牌面朝下叠放，从顶部抽取以补充<card_market>。按等级分为三个独立<ontology::deck>——各等级<development_card>的数量和强度不同。",
+        "en": "A <ontology::deck> holding <development_card>s in Splendor. Cards are stacked face-down; drawn from the top to replenish the <card_market>. Separated into three independent <ontology::deck>s by level — each level has different card counts and power levels."
+      },
+      "contains": {
+        "type": "<development_card>[]",
+        "description": {
+          "zh": "此<ontology::deck>存放的<ontology::object>类型：<development_card>。子类窄化为各自等级的<development_card>。",
+          "en": "The <ontology::object> type this <ontology::deck> holds: <development_card>. Subclasses narrow to their respective level's <development_card>."
+        }
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "I",
+          "II",
+          "III"
+        ],
+        "description": {
+          "zh": "此<ontology::deck>的等级。决定存放哪种等级的<development_card>。",
+          "en": "The level of this <ontology::deck>. Determines which level of <development_card> it holds."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "hidden"
+    },
+    {
+      "id": "development_deck_level_1",
+      "specifies": "<development_deck>",
+      "name": {
+        "zh": "一级发展卡牌堆",
+        "en": "Level I Development Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放一级<development_card>的<development_deck>。",
+        "en": "A <development_deck> holding level I <development_card>s."
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "I"
+        ],
+        "description": {
+          "zh": "固定为 I 级。",
+          "en": "Fixed to level I."
+        }
+      }
+    },
+    {
+      "id": "development_deck_level_2",
+      "specifies": "<development_deck>",
+      "name": {
+        "zh": "二级发展卡牌堆",
+        "en": "Level II Development Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放二级<development_card>的<development_deck>。",
+        "en": "A <development_deck> holding level II <development_card>s."
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "II"
+        ],
+        "description": {
+          "zh": "固定为 II 级。",
+          "en": "Fixed to level II."
+        }
+      }
+    },
+    {
+      "id": "development_deck_level_3",
+      "specifies": "<development_deck>",
+      "name": {
+        "zh": "三级发展卡牌堆",
+        "en": "Level III Development Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放三级<development_card>的<development_deck>。",
+        "en": "A <development_deck> holding level III <development_card>s."
+      },
+      "level": {
+        "type": "enum",
+        "enum": [
+          "III"
+        ],
+        "description": {
+          "zh": "固定为 III 级。",
+          "en": "Fixed to level III."
+        }
+      }
+    },
+    {
+      "id": "card_market",
+      "extends": "<ontology::market>",
+      "name": {
+        "zh": "发展卡市场",
+        "en": "Development Card Market"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的发展卡市场——一种<ontology::market>。从每个等级的<development_deck>顶部各翻开 4 张<development_card>，正面朝上陈列，供<ontology::player>购买或保留。共 12 张卡牌，按等级分三组：I 级 4 张、II 级 4 张、III 级 4 张。当某张<development_card>被<ontology::player>购买或保留后，立即从对应等级的<development_deck>顶部翻开一张新卡补充至空位。若对应<development_deck>已空，则该位置永久空置，场上可显示的总卡数减少。<card_market>与<noble_market>不同——<card_market>中的卡牌支持玩家主动购买（支付<ontology::cost>）和主动保留（拿取<gold>），是<ontology::player>每回合主要的操作目标。",
+        "en": "Development card market in Splendor — a <ontology::market>. From the top of each level's <development_deck>, 4 <development_card>s are revealed face-up and displayed for <ontology::player>s to buy or reserve. 12 cards total, organized in three groups by level: 4 Level I, 4 Level II, 4 Level III. When a <development_card> is bought or reserved by a <ontology::player>, a new card is immediately drawn from the top of the corresponding level's <development_deck> to fill the empty slot. If the corresponding <development_deck> is empty, that slot remains permanently vacant, reducing the total cards visible. Unlike <noble_market> — cards in the <card_market> can be actively bought (paying <ontology::cost>) or reserved (taking <gold>), making this the primary operational target each turn."
+      },
+      "contains": {
+        "type": "<development_card>[]",
+        "description": {
+          "zh": "此<ontology::market>陈列的<ontology::object>类型：<development_card>（所有三个等级）。",
+          "en": "The <ontology::object> type this <ontology::market> displays: <development_card> (all three levels)."
+        }
+      },
+      "layout": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "发展卡市场的逻辑分组。按等级分三组、每组 4 张：{ \"groups\": 3, \"per_group\": 4, \"by_level\": true, \"level_order\": [\"I\", \"II\", \"III\"] }。每组对应一个等级的<development_deck>——从该<ontology::deck>顶部取卡补充。具体的物理摆放位置由<ontology::aid>（<ontology::public_board>）决定，与<card_market>自身的规则逻辑无关。",
+          "en": "Logical grouping of the development card market. Three groups by level, 4 cards each: { \"groups\": 3, \"per_group\": 4, \"by_level\": true, \"level_order\": [\"I\", \"II\", \"III\"] }. Each group corresponds to a level's <development_deck> — cards are drawn from that <ontology::deck>'s top to replenish. Actual physical placement is determined by the <ontology::aid> (<ontology::public_board>), independent of the <card_market>'s rule logic."
+        }
+      },
+      "replenish": {
+        "type": "map<string, concept_ref>",
+        "description": {
+          "zh": "补牌规则——按等级映射至对应的<ontology::deck>：{ \"I\": \"<development_deck_level_1>\", \"II\": \"<development_deck_level_2>\", \"III\": \"<development_deck_level_3>\" }。当某位置的<development_card>被取走后，立即从对应<development_deck>顶部翻开一张新卡补入。若对应<ontology::deck>已空，该位置不再补充。补牌发生在每次购买或保留操作完成后。",
+          "en": "Replenishment rule — maps each level to its corresponding <ontology::deck>: { \"I\": \"<development_deck_level_1>\", \"II\": \"<development_deck_level_2>\", \"III\": \"<development_deck_level_3>\" }. When a <development_card> is taken from a slot, immediately draw a new card from the top of the corresponding <development_deck> to fill it. If the corresponding <ontology::deck> is empty, the slot is not refilled. Replenishment occurs after each purchase or reserve operation."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "noble_market",
+      "specifies": "<ontology::market>",
+      "name": {
+        "zh": "贵族市场",
+        "en": "Noble Market"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的贵族市场——一种<ontology::market>。陈列所有可供获得的<noble>。与通常的<ontology::market>不同：<ontology::player>不能主动选择购买<noble>，而是在其回合结束时，若<ontology::development_area>满足某<noble>的获取条件，该<noble>自动归属该<ontology::player>。每枚<noble>只能被获得一次。",
+        "en": "Noble market in Splendor — a <ontology::market>. Displays all available <noble>s. Unlike a typical <ontology::market>: <ontology::player>s cannot actively choose to purchase a <noble>; instead, at the end of their turn, if their <ontology::development_area> meets a <noble>'s requirement, that <noble> is automatically granted to the <ontology::player>. Each <noble> can only be claimed once."
+      },
+      "contains": {
+        "type": "<noble>[]",
+        "description": {
+          "zh": "此<ontology::market>陈列的<ontology::object>类型：<noble>。",
+          "en": "The <ontology::object> type this <ontology::market> displays: <noble>."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "noble",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "贵族板块",
+        "en": "Noble Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的贵族板块——一种非购买型<ontology::tile>。<noble>不可用<gem>购买，而是当<ontology::player>的<ontology::development_area>中<development_card>的种类和数量满足<noble>的获取条件时，<ontology::player>可在其回合结束时自动免费获得<noble>。<noble>被获得后进入该<ontology::player>的<ontology::development_area>，提供 3 点<prestige_point>。每枚<noble>只能被获得一次。",
+        "en": "Noble tiles in Splendor — a non-purchasable <ontology::tile>. <noble>s cannot be bought with <gem>s; instead, when a <ontology::player>'s <ontology::development_area> contains the types and quantities of <development_card>s specified by the <noble>'s requirement, the <ontology::player> automatically and freely gains the <noble> at the end of their turn. The <noble> then enters the <ontology::player>'s <ontology::development_area> and provides 3 <prestige_point>s. Each <noble> can only be claimed once."
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "<noble>的外观描述。必须说明板块正面的元素布局——左上角为<prestige_point>数值（固定 3），下方为获取条件（若干<development_card>的图案和数量，如「3 张蓝色 + 3 张绿色 + 3 张白色」），中央为贵族肖像插画。板块背面为统一图案。AI 向玩家解释「怎么看一枚贵族板块」时以此字段为主要信息来源。",
+          "en": "Visual description of <noble>. Must describe the front face layout — top-left shows <prestige_point> value (fixed at 3), bottom shows the requirement (patterns and quantities of <development_card>s, e.g. '3 blue + 3 green + 3 white'), center is a noble portrait illustration. The back has a uniform pattern. AI uses this field as the primary source when explaining 'how to read a noble tile'."
+        }
+      },
+      "parts": [
+        {
+          "<prestige_point>": {
+            "type": "integer",
+            "default": 3,
+            "description": {
+              "zh": "位于板块正面左上角。固定为 3——每枚<noble>提供 3 点<prestige_point>。",
+              "en": "Located top-left of the tile front. Fixed at 3 — each <noble> provides 3 <prestige_point>s."
+            }
+          }
+        },
+        {
+          "requirement": {
+            "type": "map<string, integer>",
+            "description": {
+              "zh": "获取条件，位于板块正面下方。以若干<development_card>的颜色和数量体现——如 { \"blue\": 3, \"green\": 3, \"white\": 3 } 表示需要<ontology::development_area>中至少有 3 张蓝色<development_card>、3 张绿色、3 张白色。当<ontology::player>的<ontology::development_area>满足此条件时，可在其回合结束时自动获得此<noble>。",
+              "en": "Acquisition requirement, located at the bottom of the tile front. Expressed as colors and quantities of <development_card>s — e.g., { \"blue\": 3, \"green\": 3, \"white\": 3 } means the <ontology::development_area> must contain at least 3 blue, 3 green, and 3 white <development_card>s. When a <ontology::player>'s <ontology::development_area> meets this requirement, they automatically gain this <noble> at the end of their turn."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "prestige_point",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "声望点数",
+        "en": "Prestige Point"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的声望点数，即胜利分数（VP）。<prestige_point>是一种<ontology::resource>——不可被消费、不可被转移，只能通过购买<ontology::card>和吸引<noble>来获得。每张<ontology::card>和每个<noble>各提供固定数量的<prestige_point>。游戏终局时，拥有最多<prestige_point>的<ontology::player>获胜。",
+        "en": "Prestige points in Splendor, i.e. victory points (VP). <prestige_point> is a <ontology::resource> — it cannot be spent or transferred, only gained by purchasing <ontology::card>s and attracting <noble>s. Each <ontology::card> and <noble> provides a fixed number of <prestige_point>s. At endgame, the <ontology::player> with the most <prestige_point>s wins."
+      },
+      "appearance": {
+        "zh": "不是独立零件——印在每张发展卡左上角的白色数字（0~5，0 时不显示），也印在每枚贵族板块左上角（固定为 3）。",
+        "en": "Not a standalone component — printed as a white number in the top-left corner of each development card (0-5; hidden when 0) and on each noble tile (always 3)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "分",
+        "description": {
+          "zh": "声望点数的计量单位。如「3 分」「15 分触发终局」。",
+          "en": "Unit of measurement for prestige points. E.g., '3 points', '15 points triggers endgame'."
+        }
+      }
+    },
+    {
+      "id": "discount",
+      "extends": "<ontology::continuous_content>",
+      "name": {
+        "zh": "折扣",
+        "en": "Discount"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的折扣效果——一种<ontology::continuous_content>。当一张<ontology::card>被打出并进入<ontology::development_area>后，该<ontology::card>提供对应颜色的永久<discount>：此后该<ontology::player>购买任意<ontology::card>时，所需<gem>费用中对应颜色减少 1 颗。<discount>可叠加——若<ontology::development_area>中有多张同色<ontology::card>，<discount>累加（如两张蓝色<ontology::card>提供 2 颗蓝宝石<discount>）。<discount>不经过<ontology::activation>——<ontology::card>进入<ontology::development_area>后自动开始生效。此<ontology::effect>的<ontology::cost>为 null（被动生效，无需支付代价），<ontology::content>为 null（不是一次性事件）。",
+        "en": "Discount effect in Splendor — a <ontology::continuous_content>. When a <ontology::card> is played into the <ontology::development_area>, it provides a permanent <discount> of its color: thereafter, when that <ontology::player> buys any <ontology::card>, the required <gem> cost of the corresponding color is reduced by 1. <discount>s stack — multiple cards of the same color in the <ontology::development_area> provide cumulative <discount>s (e.g. two blue <ontology::card>s give 2 sapphire <discount>). <discount> does not go through <ontology::activation> — it automatically takes effect when the <ontology::card> enters the <ontology::development_area>. This <ontology::effect>'s <ontology::cost> is null (passive, no cost to activate), <ontology::content> is null (not a one-time event)."
+      },
+      "gem_color": {
+        "type": "enum",
+        "enum": [
+          "white",
+          "blue",
+          "green",
+          "red",
+          "black"
+        ],
+        "description": {
+          "zh": "此折扣对应的<gem>颜色。购买<ontology::card>时，该颜色的费用需求减 1。",
+          "en": "The <gem> color this <discount> applies to. When buying a <ontology::card>, the required cost of this color is reduced by 1."
+        }
+      }
+    },
+    {
+      "id": "gold",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "黄金",
+        "en": "Gold"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的黄金资源。<gold>是一种特殊的<ontology::resource>——它不属于<gem>，获取方式和使用规则均与<gem>不同。<gold>是百搭资源：支付<ontology::card>的<ontology::cost>时，1 颗<gold>可替代任意 1 颗<gem>。<gold>不能通过「拿取宝石」<ontology::action>获取——玩家只能通过「保留卡牌」<ontology::action>从供应堆获得 1 颗<gold>（若供应堆还有剩余）。",
+        "en": "Gold resource in Splendor. Gold is a special <ontology::resource> — it is not a <gem>, with distinct acquisition and usage rules. Gold is a wild resource: when paying a <ontology::card>'s <ontology::cost>, 1 gold can substitute for any 1 gem. Gold cannot be acquired through the 'take gems' <ontology::action> — players only gain gold through the 'reserve card' <ontology::action>, taking 1 gold from the supply (if available)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "颗",
+        "description": {
+          "zh": "黄金的计量单位，与<gem>相同。如「1 颗黄金」「用黄金替代蓝宝石」。",
+          "en": "Unit of measurement for gold, same as gems. E.g., '1 gold', 'substitute sapphire with gold'."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "<gold>的外观。poker-chip 风格圆形厚片，中央印有一枚黄金图案，边缘一圈为金色。与五种<gem>同尺寸但颜色明显不同。",
+          "en": "Visual description of <gold>. Poker-chip style round thick disc, with a gold symbol printed in the center and a golden ring around the edge. Same size as the five <gem>s but distinctly different in color."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "take_gems_different",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "拿取不同色宝石",
+        "en": "Take Different-Colored Gems"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「拿取不同色宝石」<ontology::action>。玩家从<gem_supply>中选择颜色各不相同的<gem>各取 1 颗，数量由供应情况决定——≥3 种颜色时取 3 颗，仅有 1~2 种时取走全部可用颜色。规则响应为一次<ontology::transfer>。这是每回合可选的两种拿取宝石方式之一。",
+        "en": "The 'take different-colored gems' <ontology::action> in Splendor. The player takes 1 <gem> of each chosen color from <gem_supply>, quantity determined by availability — 3 when ≥3 colors are in stock, or all available colors when only 1-2 remain. The rules respond with a <ontology::transfer>. One of two gem-taking options per turn."
+      },
+      "<ontology::condition>": "<gems_available_any>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "将玩家在 <ontology::action> 的 target 中指定的<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。数量由<gem_supply>当前状态决定——≥3 色时为 3，仅 1~2 色时等于可用颜色数。ownership_change隐式发生。",
+              "en": "Moves the <gem>s specified in the <ontology::action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. Quantity depends on <gem_supply> state — 3 when ≥3 colors, equals available color count when 1-2. ownership_change occurs implicitly."
+            },
+            "source": "<gem_supply>",
+            "destination": "<ontology::player_holding>",
+            "<ontology::object>": "<gem>[]",
+            "quantity": {
+              "zh": "≥3 种颜色可选时为 3，仅 1~2 种时等于玩家在 target 中选择的颜色数。",
+              "en": "3 when ≥3 colors are available; equals the number of colors chosen in target when only 1-2 remain."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "take_gems_same",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "拿取同色宝石",
+        "en": "Take Same-Colored Gems"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「拿取同色宝石」<ontology::action>。玩家从<gem_supply>中选择一种颜色，取走该颜色的 2 颗<gem>。仅当所选颜色在<gem_supply>中有 ≥4 颗存量时才允许执行——拿取后该颜色至少剩余 2 颗，保证供应不会因单次拿取而枯竭。规则响应为一次<ontology::transfer>。这是每回合可选的两种拿取宝石方式之一。",
+        "en": "The 'take same-colored gems' <ontology::action> in Splendor. The player chooses one color and takes 2 <gem>s of that color from <gem_supply>. Only allowed when the chosen color has ≥4 in <gem_supply> — at least 2 remain after taking, so a single take cannot drain the stack. The rules respond with a <ontology::transfer>. One of two gem-taking options per turn."
+      },
+      "<ontology::condition>": "<gems_available_same_color>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "将玩家在 <ontology::action> 的 target 中指定颜色的 2 颗<gem>从<gem_supply>移入该<ontology::player>的<ontology::player_holding>。ownership_change隐式发生。",
+              "en": "Moves 2 <gem>s of the color specified in the <ontology::action>'s target from <gem_supply> to the <ontology::player>'s <ontology::player_holding>. ownership_change occurs implicitly."
+            },
+            "source": "<gem_supply>",
+            "destination": "<ontology::player_holding>",
+            "<ontology::object>": "<gem>[]",
+            "quantity": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "purchase_development_card",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "购买发展卡",
+        "en": "Purchase Development Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「购买发展卡」<ontology::action>。玩家将一定种类和数量的<gem>从自己的<ontology::player_holding>返回供应堆——数量为发展卡的<ontology::cost>逐色减去<ontology::development_area>中已有<discount>（每色最低为 0），<gold>可替代任意颜色——并将该<development_card>从<card_market>（当面购买）或自己的<ontology::hand>（购买已保留的卡牌）打出至自己的<ontology::development_area>。返回的<gem>和<gold>分别回到<gem_supply>和<gold_supply>。若从<card_market>购买，立即从对应等级<development_deck>顶部翻一张新卡补入空位。购买后该卡永久提供<prestige_point>和<discount>。",
+        "en": "The 'purchase development card' <ontology::action> in Splendor. The player returns a set of <gem>s from their <ontology::player_holding> to the supply — the quantity per color being the development card's <ontology::cost> reduced by <discount>s already in <ontology::development_area> (minimum 0 per color), with <gold> substituting for any color — and plays that <development_card> from <card_market> (face-up purchase) or their own <ontology::hand> (buying a reserved card) into their <ontology::development_area>. Returned <gem>s and <gold> go back to <gem_supply> and <gold_supply> respectively. If bought from <card_market>, immediately reveal a new card from the top of the corresponding <development_deck> to fill the slot. The purchased card permanently provides <prestige_point>s and a <discount>."
+      }
+    },
+    {
+      "id": "reserve_development_card",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "保留发展卡",
+        "en": "Reserve Development Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「保留发展卡」<ontology::action>。玩家将一张<development_card>移入自己的<ontology::hand>——可以明面保留（从<card_market>任选一张）或暗面保留（从某一等级<development_deck>顶部取一张，事先不知道是哪张），同时从<gold_supply>拿取 1 个<gold>（若有库存）。<ontology::hand>上限为 3 张，满员时不可保留。保留的卡牌此后只能通过「购买发展卡」<ontology::action>打出至<ontology::development_area>。",
+        "en": "The 'reserve development card' <ontology::action> in Splendor. The player moves one <development_card> into their <ontology::hand> — either openly (choosing any card from <card_market>) or blindly (taking the top card of one level's <development_deck>, sight unseen) — and takes 1 <gold> from <gold_supply> (if in stock). The <ontology::hand> holds at most 3 cards; reserving is unavailable when full. A reserved card can later only be played into the <ontology::development_area> via the 'purchase development card' <ontology::action>."
+      }
+    },
+    {
+      "id": "skip_turn",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "跳过回合",
+        "en": "Skip Turn"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「跳过回合」<ontology::action>。若当前<ontology::player>没有任何可合法执行的<ontology::action>，其回合直接结束——不执行任何<ontology::action>，流程进入下一<ontology::player>的<ontology::turn>。这保证了极端局面（供应耗尽、无卡可买可留）下游戏仍能继续，不会因无行动可选而卡死。",
+        "en": "The 'skip turn' <ontology::action> in Splendor. If the current <ontology::player> has no legally executable <ontology::action>, their turn ends immediately — no <ontology::action> is performed, and play passes to the next <ontology::player>'s <ontology::turn>. This ensures the game continues even in extreme situations (exhausted supplies, nothing to buy or reserve) instead of deadlocking."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "当前<ontology::player>的<ontology::turn>直接结束——不执行任何<ontology::action>，不触发任何与<ontology::action>绑定的<ontology::trigger>，流程进入下一<ontology::player>的<ontology::turn>。回合结束时的<ontology::trigger>（<attract_noble>、<enter_endgame>）照常检查。",
+            "en": "The current <ontology::player>'s <ontology::turn> ends immediately — no <ontology::action> is performed and no <ontology::action>-bound <ontology::trigger> fires; play passes to the next <ontology::player>'s <ontology::turn>. End-of-turn <ontology::trigger>s (<attract_noble>, <enter_endgame>) are checked as usual."
+          }
+        }
+      },
+      "<ontology::condition>": "<no_action_available>"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "discard_excess_gems",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "弃置超额宝石",
+        "en": "Discard Excess Gems"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「弃置超额宝石」<ontology::trigger>。当一名<ontology::player>的<ontology::player_holding>中的<gem>与<gold>总数超过 10 时，本<ontology::trigger>立即触发——该<ontology::player>必须马上选择并返回若干颗使总数降回 10，然后才继续后续流程。这是<ontology::player_holding>上限（10 颗）的强制执行机制——拿取宝石和保留卡牌的<ontology::action>均不校验上限，统一由本<ontology::trigger>在超限的瞬间处理。返回的<gem>和<gold>分别回到<gem_supply>和<gold_supply>。与<attract_noble>的触发时机不同——本<ontology::trigger>在超限时立即触发，<attract_noble>在回合结束时触发，二者不会同时被触发。",
+        "en": "The 'discard excess gems' <ontology::trigger> in Splendor. When the total number of <gem>s and <gold> in a <ontology::player>'s <ontology::player_holding> exceeds 10, this <ontology::trigger> fires immediately — that <ontology::player> must choose and return gems right away until the total is back down to 10 before any further processing continues. This is the enforcement mechanism for the <ontology::player_holding> limit (10) — neither the take-gems nor the reserve <ontology::action> checks the limit; it is uniformly handled by this <ontology::trigger> the moment the limit is exceeded. Returned <gem>s and <gold> go back to <gem_supply> and <gold_supply> respectively. Unlike <attract_noble>'s timing — this <ontology::trigger> fires immediately upon exceeding the limit, while <attract_noble> fires at end of turn; the two never fire at the same time."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "将超出 10 颗部分的<gem>和<gold>从超限的<ontology::player>的<ontology::player_holding>返回供应堆。返回哪些颜色由该<ontology::player>自行选择——这是本<ontology::trigger>中唯一的玩家决策点。<gem>回到<gem_supply>，<gold>回到<gold_supply>。",
+              "en": "Returns the <gem>s and <gold> exceeding 10 from the <ontology::player_holding> of the <ontology::player> who exceeded the limit to the supply. Which colors to return is chosen by that <ontology::player> — the only player decision point in this <ontology::trigger>. <gem>s return to <gem_supply>, <gold> to <gold_supply>."
+            },
+            "source": "<ontology::player_holding>",
+            "destination": "<gem_supply> | <gold_supply>",
+            "<ontology::object>": "<gem>[] | <gold>[]",
+            "quantity": {
+              "zh": "该<ontology::player>的<ontology::player_holding>中<gem>与<gold>总数减去 10。",
+              "en": "Total <gem>s and <gold> in the <ontology::player>'s <ontology::player_holding> minus 10."
+            }
+          }
+        }
+      },
+      "<ontology::condition>": "<exceed_gem_limit>"
+    },
+    {
+      "id": "attract_noble",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "贵族来访",
+        "en": "Attract Noble"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「贵族来访」<ontology::trigger>。当一名<ontology::player>的回合结束时，若其<ontology::development_area>中各色<development_card>的数量满足了<noble_market>中某枚<noble>的 requirement，该<noble>自动来访——移入该<ontology::player>的<ontology::development_area>并提供 3 点<prestige_point>。玩家不能拒绝贵族来访；若同时有多枚<noble>满足条件，由该<ontology::player>选择其中一枚，每回合至多获得一枚<noble>。与<card_market>的主动购买不同，<noble>不可购买，只能通过本<ontology::trigger>获得。",
+        "en": "The 'attract noble' <ontology::trigger> in Splendor. When a <ontology::player>'s turn ends, if the numbers of <development_card>s of each color in their <ontology::development_area> meet the requirement of a <noble> in <noble_market>, that <noble> automatically visits — moving into the <ontology::player>'s <ontology::development_area> and providing 3 <prestige_point>s. The visit cannot be refused; if multiple <noble>s qualify at once, the <ontology::player> chooses one of them, gaining at most one <noble> per turn. Unlike active purchases from <card_market>, <noble>s cannot be bought and can only be gained via this <ontology::trigger>."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "description": {
+              "zh": "将一枚满足条件的<noble>从<noble_market>移入刚结束回合的<ontology::player>的<ontology::development_area>。ownership_change隐式发生，该<noble>自此提供 3 点<prestige_point>。",
+              "en": "Moves a satisfied <noble> from <noble_market> into the <ontology::development_area> of the <ontology::player> whose turn just ended. ownership_change occurs implicitly, and the <noble> provides 3 <prestige_point>s from now on."
+            },
+            "source": "<noble_market>",
+            "destination": "<ontology::development_area>",
+            "<ontology::object>": "<noble>",
+            "quantity": 1
+          }
+        }
+      },
+      "<ontology::condition>": "<noble_satisfied>"
+    },
+    {
+      "id": "enter_endgame",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "进入终局",
+        "en": "Enter Endgame"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石中的「进入终局」<ontology::trigger>。当任意<ontology::player>的<prestige_point>总数达到 15 时，游戏进入终局流程——终局流程的具体内容（补完当前<ontology::round>使所有<ontology::player>完成相同数量的<ontology::turn>、随后游戏结束、按<highest_prestige_wins>判定胜负）由流程文档定义，此处仅声明触发条件。达到阈值后不再触发——终局流程只进入一次。",
+        "en": "The 'enter endgame' <ontology::trigger> in Splendor. When any <ontology::player>'s total <prestige_point>s reach 15, the game enters its endgame process — the specifics of that process (finishing the current <ontology::round> so all <ontology::player>s complete an equal number of <ontology::turn>s, then ending the game and adjudicating by <highest_prestige_wins>) are defined by the procedure document; only the firing condition is declared here. It fires only once — the endgame process is entered exactly once."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "游戏进入终局流程。此后的具体流程——补完当前<ontology::round>使所有<ontology::player>完成相同数量的<ontology::turn>、游戏结束、按<highest_prestige_wins>判定胜负——由流程文档定义，此处仅标记游戏状态切换为「终局」。",
+            "en": "The game enters its endgame process. The specifics that follow — finishing the current <ontology::round> so all <ontology::player>s complete an equal number of <ontology::turn>s, ending the game, adjudicating by <highest_prestige_wins> — are defined by the procedure document; here it only marks the game state switching to 'endgame'."
+          }
+        }
+      },
+      "<ontology::condition>": "<reach_15_prestige>"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "gems_available_any",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "供应有货（任意色）",
+        "en": "Gems Available (Any Color)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<gem_supply>中至少存在 1 颗<gem>（任意颜色）。供应堆完全为空时不满足。",
+        "en": "At least 1 <gem> (of any color) remains in <gem_supply>. Not satisfied when the supply is completely empty."
+      }
+    },
+    {
+      "id": "gems_available_same_color",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "同色供应充足",
+        "en": "Same Color Well-Stocked"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<gem_supply>中至少存在一种颜色的<gem>存量 ≥4。所有颜色存量均 <4 时不满足。",
+        "en": "At least one color in <gem_supply> has ≥4 <gem>s in stock. Not satisfied when every color has fewer than 4."
+      }
+    },
+    {
+      "id": "card_purchasable",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "目标卡可购买",
+        "en": "Card Purchasable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "目标<development_card>位于<card_market>或当前<ontology::player>的<ontology::hand>中，且该<ontology::player>的<ontology::player_holding>足以返回所需<gem>——各色持有量（<gold>可补任意颜色的缺口）不少于该卡<ontology::cost>逐色减去其<ontology::development_area>中<discount>后的数量。与拿取宝石不同，购买不受<ontology::player_holding>上限（10 颗）约束——返回只会减少持有量。",
+        "en": "The target <development_card> is in <card_market> or in the current <ontology::player>'s <ontology::hand>, and that <ontology::player>'s <ontology::player_holding> holds enough <gem>s to return — each color's holdings (<gold> filling any color's gap) are no less than the card's <ontology::cost> reduced by the <discount>s in their <ontology::development_area> per color. Unlike taking gems, purchasing is not constrained by the <ontology::player_holding> limit (10) — returning only reduces holdings."
+      }
+    },
+    {
+      "id": "card_reservable",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "卡牌可保留",
+        "en": "Card Reservable"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "当前<ontology::player>的<ontology::hand>未满（<3 张），且<card_market>或任一<development_deck>中至少还有一张<development_card>。",
+        "en": "The current <ontology::player>'s <ontology::hand> is not full (<3 cards), and at least one <development_card> remains in <card_market> or any <development_deck>."
+      }
+    },
+    {
+      "id": "exceed_gem_limit",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "持有超限",
+        "en": "Exceed Gem Limit"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "某<ontology::player>的<ontology::player_holding>中<gem>与<gold>的总数 >10。",
+        "en": "The total number of <gem>s and <gold> in a <ontology::player>'s <ontology::player_holding> exceeds 10."
+      }
+    },
+    {
+      "id": "noble_satisfied",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "贵族条件满足",
+        "en": "Noble Satisfied"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<noble_market>中至少有一枚<noble>的 requirement 被刚结束回合的<ontology::player>的<ontology::development_area>满足——<ontology::development_area>中各色<development_card>的数量 ≥ 该<noble> requirement 中对应颜色的数量。",
+        "en": "At least one <noble> in <noble_market> has its requirement met by the <ontology::development_area> of the <ontology::player> whose turn just ended — the number of <development_card>s of each color in the <ontology::development_area> is ≥ the corresponding color count in that <noble>'s requirement."
+      }
+    },
+    {
+      "id": "no_action_available",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "无可用行动",
+        "en": "No Action Available"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "当前<ontology::player>没有任何可合法执行的<ontology::action>——<gems_available_any>、<gems_available_same_color>、<card_purchasable>、<card_reservable>四个条件全部不满足（复合条件：四者取反后求与）。通常出现在供应耗尽、市场无卡可买可留的极端局面。",
+        "en": "The current <ontology::player> has no legally executable <ontology::action> — all four conditions <gems_available_any>, <gems_available_same_color>, <card_purchasable>, and <card_reservable> fail (a compound condition: the AND of the four negations). Typically occurs in extreme situations where supplies are exhausted and no card can be bought or reserved."
+      },
+      "params": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "复合条件参数：{ \"op\": \"and\", \"operands\": [[\"not\", \"<gems_available_any>\"], [\"not\", \"<gems_available_same_color>\"], [\"not\", \"<card_purchasable>\"], [\"not\", \"<card_reservable>\"]] }。程序据此构造复合 evaluator。",
+          "en": "Compound condition parameters: { \"op\": \"and\", \"operands\": [[\"not\", \"<gems_available_any>\"], [\"not\", \"<gems_available_same_color>\"], [\"not\", \"<card_purchasable>\"], [\"not\", \"<card_reservable>\"]] }. The program builds a compound evaluator from this."
+        }
+      }
+    },
+    {
+      "id": "reach_15_prestige",
+      "specifies": "<ontology::endgame_condition>",
+      "name": {
+        "zh": "声望达到 15 分",
+        "en": "Reach 15 Prestige Points"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石的终局条件：任意<ontology::player>的<prestige_point>总数 ≥15。<prestige_point>只在自己的回合内变化（购买<development_card>、<attract_noble>获得<noble>），故在回合结束时检查任意<ontology::player>即可。满足此条件时游戏进入终局流程，终局流程完成后按<highest_prestige_wins>判定胜负。",
+        "en": "Splendor's endgame condition: any <ontology::player>'s total <prestige_point>s ≥15. <prestige_point>s only change during one's own turn (purchasing a <development_card>, gaining a <noble> via <attract_noble>), so checking all <ontology::player>s at end of any turn suffices. When satisfied, the game enters its endgame process, after which victory is adjudicated by <highest_prestige_wins>."
+      },
+      "params": {
+        "type": "map<string, any>",
+        "description": {
+          "zh": "判定参数：{ \"threshold\": 15 }。程序据此构造「任意<ontology::player>的<prestige_point>总数 ≥ threshold」的 evaluator。",
+          "en": "Evaluation parameters: { \"threshold\": 15 }. The program builds an evaluator for 'any <ontology::player>'s total <prestige_point>s ≥ threshold' from this."
+        }
+      }
+    },
+    {
+      "id": "highest_prestige_wins",
+      "specifies": "<ontology::victory_condition>",
+      "name": {
+        "zh": "最高声望获胜",
+        "en": "Highest Prestige Wins"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "璀璨宝石的胜利条件：终局流程完成后，按顺序满足以下条件的<ontology::player>（们）是胜者——1. <prestige_point>总数最高；2. <ontology::development_area>中<development_card>数量最少（用更少卡牌达到同样分数，效率更高）。允许多人平局。",
+        "en": "Splendor's victory condition: after the endgame process completes, the <ontology::player>(s) satisfying the following criteria in order win — 1. highest total <prestige_point>s; 2. fewest <development_card>s in the <ontology::development_area> (reaching the same score with fewer cards means higher efficiency). Ties among multiple players are allowed."
+      },
+      "<ontology::condition>[]": [
+        "<prestige_highest>",
+        "<fewest_development_cards>"
+      ]
+    },
+    {
+      "id": "prestige_highest",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "声望最高",
+        "en": "Highest Prestige"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该<ontology::player>的<prestige_point>总数为全场最高。允许并列——并列最高者同时满足。用于<highest_prestige_wins>的第 1 条判定。",
+        "en": "The <ontology::player>'s total <prestige_point>s are the highest in the game. Ties allowed — all players tied for highest satisfy it simultaneously. Used as the 1st criterion of <highest_prestige_wins>."
+      }
+    },
+    {
+      "id": "fewest_development_cards",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "发展卡最少",
+        "en": "Fewest Development Cards"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该<ontology::player>的<ontology::development_area>中<development_card>数量为全场最少。允许并列——并列最少者同时满足。用于<highest_prestige_wins>的第 2 条判定（声望并列时）。",
+        "en": "The <ontology::player>'s <development_card> count in their <ontology::development_area> is the lowest in the game. Ties allowed — all players tied for lowest satisfy it simultaneously. Used as the 2nd criterion of <highest_prestige_wins> (when prestige is tied)."
+      }
+    }
+  ],
+  "<player_holding>": {
+    "contains": {
+      "type": "<gem>[] | <gold>[]",
+      "description": {
+        "zh": "此<ontology::player_holding>存放的<ontology::object>类型：<gem>（五种颜色）和<gold>。玩家通过「拿取宝石」或「保留卡牌」<ontology::action>获得的宝石和黄金存放于此，购买<development_card>时从此处支付。",
+        "en": "The <ontology::object> types this <ontology::player_holding> holds: <gem> (five colors) and <gold>. Gems and gold acquired via the 'take gems' or 'reserve card' <ontology::action> are held here and spent from here when purchasing a <development_card>."
+      }
+    },
+    "capacity": {
+      "type": "integer",
+      "default": 10,
+      "description": {
+        "zh": "宝石持有上限，固定为 10。<ontology::player>持有的<gem>和<gold>总数达到 10 时，回合开始时不可再执行「拿取宝石」<ontology::action>，必须先通过购买<development_card>消耗至 10 以下。",
+        "en": "Gem holding limit, fixed at 10. When a <ontology::player>'s total <gem> and <gold> count reaches 10, they cannot perform the 'take gems' <ontology::action> at the start of their turn and must first spend down below 10 by purchasing a <development_card>."
+      }
+    },
+    "<ontology::ownership>": {
+      "type": "<ontology::player>",
+      "description": {
+        "zh": "从<ontology::player_zone>继承，<ontology::player_holding>始终归属于一个<ontology::player>。",
+        "en": "Inherited from <ontology::player_zone>, <ontology::player_holding> always belongs to a <ontology::player>."
+      }
+    },
+    "<ontology::information_visibility>": "public"
+  },
+  "<development_area>": {
+    "contains": {
+      "type": "<development_card>[] | <noble>[]",
+      "description": {
+        "zh": "此<ontology::development_area>存放的<ontology::object>类型：<development_card>和<noble>。玩家购买<development_card>或获得<noble>后，将其移入此区域。此区域中的<development_card>永久提供<prestige_point>和<discount>，<noble>提供<prestige_point>。",
+        "en": "The <ontology::object> types this <ontology::development_area> holds: <development_card> and <noble>. After purchasing a <development_card> or gaining a <noble>, the <ontology::player> moves it here. <development_card>s here permanently provide <prestige_point>s and <discount>; <noble>s provide <prestige_point>s."
+      }
+    },
+    "<ontology::ownership>": {
+      "type": "<ontology::player>",
+      "description": {
+        "zh": "从<ontology::player_zone>继承，<ontology::development_area>始终归属于一个<ontology::player>。",
+        "en": "Inherited from <ontology::player_zone>, <ontology::development_area> always belongs to a <ontology::player>."
+      }
+    },
+    "<ontology::information_visibility>": "public"
+  },
+  "<hand>": {
+    "contains": {
+      "type": "<development_card>[]",
+      "description": {
+        "zh": "此<ontology::hand>存放的<ontology::object>类型：<development_card>（所有三个等级）。保留卡牌时从<card_market>（明面保留）或对应等级<development_deck>顶部（暗面保留）移入。",
+        "en": "The <ontology::object> type this <ontology::hand> holds: <development_card> (all three levels). Moved in from <card_market> (open reserve) or from the top of the corresponding <development_deck> (blind reserve) when reserving."
+      }
+    },
+    "capacity": {
+      "type": "integer",
+      "default": 3,
+      "description": {
+        "zh": "手牌上限，固定为 3。达到上限后不可再执行「保留卡牌」<ontology::action>。",
+        "en": "Hand capacity, fixed at 3. The 'reserve card' <ontology::action> is unavailable when full."
+      }
+    },
+    "<ontology::ownership>": {
+      "type": "<ontology::player>",
+      "description": {
+        "zh": "从<ontology::player_zone>继承，<ontology::hand>始终归属于一个<ontology::player>。",
+        "en": "Inherited from <ontology::player_zone>, <ontology::hand> always belongs to a <ontology::player>."
+      }
+    },
+    "<ontology::information_visibility>": "private"
+  },
+  "<starting_player_marker>": {
+    "appearance": {
+      "zh": "由两个零件拼成的钻石形状。",
+      "en": "Two pieces that fit together to form a diamond shape."
+    }
+  }
+}
+

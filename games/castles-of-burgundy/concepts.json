@@ -1,0 +1,3376 @@
+{
+  "meta": {
+    "game": "castles-of-burgundy",
+    "name": {
+      "zh": "勃艮第城堡",
+      "en": "The Castles of Burgundy"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "勃艮第城堡（基础版，2019 alea 规则）的结构化规则定义。基于 board-game-ontology v0.1.0。仅含基础多人规则（2-4 人），不含扩展。",
+      "en": "Structured rule definition for The Castles of Burgundy (base game, 2019 alea rules). Based on board-game-ontology v0.1.0. Base multiplayer rules only (2-4 players), no expansions."
+    }
+  },
+  "objects": [
+    {
+      "id": "silver",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "银币",
+        "en": "Silver Coin"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡中的<ontology::resource>。共 24 枚，游戏开始时全部放在<game_board>旁的<silver_supply>中。用途：从<black_depot>购买<hex_tile>（每回合 1 次、每次 2 枚）、终局计分（每枚 1 <vp>）。获得途径：游戏开始每人 1 枚、出售货物每次 1 枚（有<monastery_tile_3>/<monastery_tile_4>时更多）、每阶段结束每个<mine_tile> 1 枚、<building_bank>一次性 2 枚等。玩家持有的银币放在玩家面板右上角的<silver_space>。注意：银币和<worker>在物理上无数量上限——不足时可用替代品。",
+        "en": "A <ontology::resource> in Castles of Burgundy. 24 coins, all placed in the <silver_supply> next to the <game_board> at setup. Uses: buying a <hex_tile> from the <black_depot> (once per turn, 2 coins each time); final scoring (1 <vp> each). Sources: 1 per player at setup; 1 per goods sale (more with <monastery_tile_3>/<monastery_tile_4>); 1 per <mine_tile> at each phase end; 2 from <building_bank>. A player's coins sit in the <silver_space> at the top right of their player board. Note: silver and <worker>s are intentionally unlimited — substitutes may be used."
+      },
+      "unit": {
+        "type": "string",
+        "default": "枚",
+        "description": {
+          "zh": "银币的计量单位。如「支付 2 枚银币」「每阶段结束每个矿得 1 枚银币」。",
+          "en": "Unit of measurement for silver. E.g., 'pay 2 silver coins', '1 silver per mine at each phase end'."
+        }
+      },
+      "appearance": {
+        "zh": "银灰色圆形金属质感硬币，直径约 2 厘米，正面有城堡纹样。",
+        "en": "Silver-grey round metallic coin, about 2 cm across, with a castle emblem on the front."
+      }
+    },
+    {
+      "id": "worker",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "工人片",
+        "en": "Worker Chip"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡中的<ontology::resource>。共 26 个，游戏开始时放在<worker_supply>。核心用途：修改自己<player_die>的点数——每花 1 个工人可将一颗骰子的点数 ±1（1 与 6 之间可回绕：1 减 1 变成 6，6 加 1 变成 1），可叠加使用多个，可在行动前任意时刻使用（如先看仓库再改骰）。使用后放回<worker_supply>。获得途径：开局按座位顺序得 1-4 个（起始玩家 1 个、顺时针递增）、「拿取工人片」行动每次 2 个、<building_boarding_house>一次性 4 个、<monastery_tile_2>每阶段每矿 1 个、<monastery_tile_4>卖货时 1 个。终局计分：每 2 个工人 1 <vp>。玩家持有的工人放在玩家面板右上角的<worker_space>。",
+        "en": "A <ontology::resource> in Castles of Burgundy. 26 chips, all in the <worker_supply> at setup. Core use: modifying your own <player_die> — spending 1 worker adjusts one of your dice by ±1 (wrapping between 1 and 6: 1−1=6, 6+1=1); multiple workers stack; usable at any time before the action (e.g. after seeing the depots). Spent workers return to the <worker_supply>. Sources: 1-4 at setup in seating order (starting player 1, increasing clockwise); 2 per 'take workers' action; 4 from <building_boarding_house>; 1 per mine per phase from <monastery_tile_2>; 1 per sale from <monastery_tile_4>. Final scoring: 1 <vp> per 2 workers. A player's workers sit in the <worker_space> at the top right of their player board."
+      },
+      "unit": {
+        "type": "string",
+        "default": "个",
+        "description": {
+          "zh": "工人片的计量单位。如「花 2 个工人」「拿取 2 个工人」。",
+          "en": "Unit of measurement for workers. E.g., 'spend 2 workers', 'take 2 workers'."
+        }
+      },
+      "appearance": {
+        "zh": "米色圆形厚纸板片，中央印有工人侧面头像图标。",
+        "en": "Beige round cardboard chip with a worker's profile icon printed in the center."
+      }
+    },
+    {
+      "id": "vp",
+      "specifies": "<ontology::score>",
+      "name": {
+        "zh": "胜利分",
+        "en": "Victory Point"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡的胜利分（VP）。<vp>是<ontology::score>——不可消费、不可转移，通过放置<livestock_tile>、完成<color_area>、拿取<bonus_tile>、出售<goods>、终局计分等获得。玩家的<vp>由<score_track>上的<playing_piece>记录（越过 0/100 时用<vp_tile>记 100/200）。游戏结束时<vp>最多的玩家获胜（平手依次看庄园空位、桥上位置）。",
+        "en": "Victory points (VP) in Castles of Burgundy. <vp> is a <ontology::score> — it cannot be spent or transferred; gained by placing <livestock_tile>s, completing <color_area>s, taking <bonus_tile>s, selling <goods>, and final scoring. A player's <vp> is tracked by their <playing_piece> on the <score_track> (a <vp_tile> records 100/200 when crossing 0/100). The player with the most <vp> at game end wins (ties: fewest empty duchy spaces, then furthest back on the bridge)."
+      },
+      "unit": {
+        "type": "string",
+        "default": "分",
+        "description": {
+          "zh": "胜利分的计量单位。如「完成区域得 10 分」「瞭望塔得 4 分」。",
+          "en": "Unit of measurement for VP. E.g., '10 points for completing an area', '4 points for the watchtower'."
+        }
+      },
+      "appearance": {
+        "zh": "不是独立零件——由<score_track>（0-100 一圈）上的<playing_piece>位置与 100/200 的<vp_tile>共同表示。",
+        "en": "Not a standalone component — represented by the <playing_piece>'s position on the <score_track> (0-100 around the board) plus the 100/200 <vp_tile>."
+      }
+    },
+    {
+      "id": "goods",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "货物板块",
+        "en": "Goods Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡中的货物——一种方形<ontology::tile>。共 42 块，6 种颜色各 7 块。颜色对应骰子点数 1-6（对应关系印在玩家面板的货物存储格上，待核实）：red（红）、orange（橙）、pink（粉）、purple（紫）、turquoise（青）、brown（棕）。游戏开始时 42 块洗混，5 叠各 5 块放在 A-E 五个<phase_space>，其余 17 块组成<goods_pool>；每名玩家从<goods_pool>随机拿 3 块放入<goods_storage>（余下放回盒中）。获得途径：放置<ship_tile>时从任意<depot>拿走该仓库全部货物。出售（sell_goods）：按骰子颜色整堆出售，全部面朝下放入<sold_goods_pile>。未售出的货物终局每块 1 <vp>。",
+        "en": "Goods in Castles of Burgundy — a square <ontology::tile>. 42 tiles, 7 each of 6 colors. Colors correspond to die values 1-6 (mapping printed on the player board's goods storage spaces; to be verified): red, orange, pink, purple, turquoise, brown. At setup, all 42 are shuffled: 5 stacks of 5 go on the five <phase_space>s A-E, the remaining 17 form the <goods_pool>; each player randomly draws 3 from the <goods_pool> into their <goods_storage> (the rest go back in the box). Source during play: placing a <ship_tile> takes all goods from one <depot> of your choice. Selling (sell_goods): sell the whole stack of the die's color, all face down into the <sold_goods_pile>. Unsold goods score 1 <vp> each at game end."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "red",
+          "orange",
+          "pink",
+          "purple",
+          "turquoise",
+          "brown"
+        ],
+        "description": {
+          "zh": "货物颜色，共 6 种，对应骰子点数 1-6（对应关系待核实）。同色货物叠放成一堆。",
+          "en": "Goods color, 6 kinds, matching die values 1-6 (mapping to be verified). Same-color goods are stacked into one pile."
+        }
+      },
+      "die_value": {
+        "type": "integer",
+        "description": {
+          "zh": "此颜色对应的骰子点数 1-6（印在玩家面板货物存储格旁，具体对应待核实）。出售货物时骰子点数决定可卖哪种颜色。",
+          "en": "The die value 1-6 this color corresponds to (printed next to the player board's goods storage spaces; exact mapping to be verified). When selling goods, the die value determines which color may be sold."
+        }
+      },
+      "appearance": {
+        "zh": "方形厚纸板片（比六边形板块小），正面印有货物图案，同色图案相同；背面无图案。",
+        "en": "Square cardboard tile (smaller than the hex tiles) with a goods illustration on the front; identical within a color. Plain back."
+      }
+    },
+    {
+      "id": "player_die",
+      "specifies": "<ontology::dice>",
+      "name": {
+        "zh": "玩家骰子",
+        "en": "Player Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡中的<ontology::dice>。每名玩家 2 颗，颜色与玩家色一致（白、黄、红、蓝等）。每轮开始时所有玩家同时掷自己的 2 颗骰子，点数公开。每颗骰子对应本回合一次<ontology::action>——点数决定行动目标（拿取/放置<hex_tile>的<depot>或庄园空格编号、出售<goods>的颜色）。可用<worker>在行动前任意时刻修改点数（每个 ±1，1↔6 回绕）；使用过的骰子放到玩家面板的公爵肖像上。每轮 2 颗骰子 = 2 次行动，任意组合、任意顺序，可重复做同一行动。",
+        "en": "The <ontology::dice> in Castles of Burgundy. Each player has 2 dice in their player color. At the start of every round all players roll both dice simultaneously; results are public. Each die grants one <ontology::action> that turn — its value determines the action's target (the <depot> or duchy space number for taking/placing a <hex_tile>, the color for selling <goods>). The value may be modified with <worker>s at any time before the action (±1 each, wrapping 1↔6); used dice are placed on the duke's portrait on your player board. 2 dice per round = 2 actions, any combination and order; the same action may be taken twice."
+      },
+      "sides": {
+        "type": "integer",
+        "default": 6,
+        "description": {
+          "zh": "六面骰，固定为 6 面。",
+          "en": "A six-sided die, fixed at 6 faces."
+        }
+      },
+      "value": {
+        "type": "integer",
+        "description": {
+          "zh": "当前朝上的点数 1-6。可用<worker>修改（±1，1↔6 回绕）。",
+          "en": "The current face-up value 1-6. Modifiable with <worker>s (±1, wrapping 1↔6)."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "外观占位——六面骰的实体外观描述由<player_die>子类或实例填充。",
+          "en": "Appearance placeholder — the physical look of the six-sided die is filled by subclasses or instances of <player_die>."
+        }
+      }
+    },
+    {
+      "id": "white_die",
+      "specifies": "<ontology::dice>",
+      "name": {
+        "zh": "白色骰子",
+        "en": "White Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡中的特殊<ontology::dice>——只有 1 颗，白色。每轮由起始玩家（<bridge>上最靠近市中心、叠堆最上方的玩家）在掷自己 2 颗骰子的同时掷出。用途只有一种：起始玩家在轮到自己之前，把当前轮次空格上最上面的 1 块<goods>放到白骰点数对应的<depot>。白骰点数不可用于任何行动，也**不能用<worker>修改**。白骰的持有者就是起始玩家：放置<ship_tile>推进<bridge>后，若自己成为下轮起始玩家，则获得<white_die>。",
+        "en": "A special <ontology::dice> in Castles of Burgundy — a single white die. Each round, the starting player (closest to the city center on the <bridge>, topmost if stacked) rolls it together with their 2 dice. Its only use: the starting player, before their turn, places the topmost <goods> tile from the round spaces onto the <depot> matching the white die's value. Its value cannot be used for any action and **cannot be modified with <worker>s**. The holder of the white die is the starting player: after placing a <ship_tile> and advancing on the <bridge>, if you become next round's starting player, you receive the <white_die>."
+      },
+      "sides": {
+        "type": "integer",
+        "default": 6,
+        "description": {
+          "zh": "六面骰，固定为 6 面。",
+          "en": "A six-sided die, fixed at 6 faces."
+        }
+      },
+      "value": {
+        "type": "integer",
+        "description": {
+          "zh": "当前朝上的点数 1-6。不可修改，不可用于行动。",
+          "en": "The current face-up value 1-6. Cannot be modified or used for actions."
+        }
+      },
+      "appearance": {
+        "type": "string",
+        "description": {
+          "zh": "外观占位——白色六面骰，点数与普通骰子相同。",
+          "en": "Appearance placeholder — a white six-sided die with standard pips."
+        }
+      }
+    },
+    {
+      "id": "hex_tile",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "六边形板块",
+        "en": "Hex Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡的核心<ontology::tile>。共 164 块，按背面颜色分堆：40 块背面有色的<building_tile>等。六种类型：<building_tile>（米色，8 种×7=56 块）、<livestock_tile>（浅绿，4 种×7=28 块）、<monastery_tile>（黄色，26 块）、<castle_tile>（深绿，16 块）、<mine_tile>（灰色，12 块）、<ship_tile>（蓝色，26 块）。其中 40 块背面为黑色（16+8+6+2+2+6），用于补充<black_depot>；其余背面为对应颜色，用于补充 6 个编号<depot>。板块经「拿取」进入<key_space>，经「放置」进入<duchy>——已放入庄园的板块永久固定，不可移动或移除。每种类型的放置效果见对应概念。",
+        "en": "The core <ontology::tile> in Castles of Burgundy. 164 tiles total, sorted by back color. Six types: <building_tile> (beige, 8 kinds × 7 = 56), <livestock_tile> (light green, 4 kinds × 7 = 28), <monastery_tile> (yellow, 26), <castle_tile> (dark green, 16), <mine_tile> (gray, 12), <ship_tile> (blue, 26). 40 tiles have black backs (16+8+6+2+2+6), used to refill the <black_depot>; the rest have color-matched backs for the 6 numbered <depot>s. Tiles enter your <key_space> by the take action and your <duchy> by the place action — placed tiles are permanent and can never be moved or removed. Placement effects by type are described in each type's concept."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "beige",
+          "light_green",
+          "yellow",
+          "dark_green",
+          "gray",
+          "blue"
+        ],
+        "description": {
+          "zh": "板块颜色（= 类型）：beige=建筑、light_green=牲畜、yellow=修道院、dark_green=城堡、gray=矿、blue=船。放置时必须与庄园空格颜色一致。",
+          "en": "Tile color (= type): beige=building, light_green=livestock, yellow=monastery, dark_green=castle, gray=mine, blue=ship. Must match the duchy space's color when placed."
+        }
+      },
+      "back": {
+        "type": "enum",
+        "enum": [
+          "colored",
+          "black"
+        ],
+        "description": {
+          "zh": "板块背面：colored=与正面同色（补充 6 个编号<depot>），black=黑色（补充<black_depot>）。黑色背面的板块能力与普通版完全相同。",
+          "en": "Tile back: colored = same as the front (refills the 6 numbered <depot>s), black = black (refills the <black_depot>). Black-backed tiles are functionally identical to normal ones."
+        }
+      },
+      "appearance": {
+        "zh": "六边形厚纸板片（约 2.5 厘米宽），正面为对应颜色并印有图案——建筑/动物/修道院/城堡/矿/船的图标，背面为同色或黑色。",
+        "en": "Hexagonal cardboard tile (about 2.5 cm wide), front colored with the matching icon (building/animal/monastery/castle/mine/ship), back colored or black."
+      }
+    },
+    {
+      "id": "building_tile",
+      "specifies": "<hex_tile>",
+      "name": {
+        "zh": "建筑板块",
+        "en": "Building Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "米色的<hex_tile>，共 8 种建筑、每种 7 块（56 块，其中 16 块黑色背面）。放置时**立即且仅一次**触发该建筑的效果（不需要额外骰子或行动），8 种效果：<building_market>、<building_carpenters_workshop>、<building_church>、<building_warehouse>、<building_boarding_house>、<building_bank>、<building_town_hall>、<building_watchtower>。若放置时无法立即使用效果（如市场放置时所有仓库无船无牲畜），效果作废、之后不能补用。**每个<town>中每类建筑至多 1 个**（即<no_same_building_in_town>；<monastery_tile_1>可解除此限制）。",
+        "en": "A beige <hex_tile>; 8 building kinds, 7 each (56 tiles, 16 with black backs). Placing one **immediately and only once** triggers its effect (no extra die or action needed). The 8 effects: <building_market>, <building_carpenters_workshop>, <building_church>, <building_warehouse>, <building_boarding_house>, <building_bank>, <building_town_hall>, <building_watchtower>. If the effect cannot be used right away (e.g. a market placed when no depot holds a ship or livestock), it is lost — it cannot be used later. **At most one building of each kind per <town>** (i.e. <no_same_building_in_town>; <monastery_tile_1> lifts this limit)."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "beige"
+        ],
+        "description": {
+          "zh": "固定为米色（beige）。",
+          "en": "Fixed to beige."
+        }
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "market",
+          "carpenters_workshop",
+          "church",
+          "warehouse",
+          "boarding_house",
+          "bank",
+          "town_hall",
+          "watchtower"
+        ],
+        "description": {
+          "zh": "建筑种类，共 8 种，每种每<town>至多 1 个（除非有<monastery_tile_1>）。",
+          "en": "The building kind; 8 kinds, at most one of each per <town> (unless <monastery_tile_1> is placed)."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有建筑图案——8 种建筑图案各不相同。",
+        "en": "Beige hex tile with a building illustration on the front — the 8 kinds have distinct illustrations."
+      }
+    },
+    {
+      "id": "livestock_tile",
+      "specifies": "<hex_tile>",
+      "name": {
+        "zh": "牲畜板块",
+        "en": "Livestock Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "浅绿色的<hex_tile>，4 种动物、每种 7 块（28 块，其中 8 块黑色背面）。板块上印有 2-4 头牲畜，数字即放置时的基本<vp>。放置到<duchy>时**立即计分**：板块上的牲畜数 + 同一<pasture>（连续的浅绿色区域）内**同种动物**的已有板块牲畜数（无需相邻，不同牧场不算）。例：在已有 4 牛的牧场放 4 牛板块得 4+4+3=11 分（3 牛计基本分）。动物种类：cattle（牛）、sheep（羊）、pig（猪）、chicken（鸡，待核实）。",
+        "en": "A light-green <hex_tile>; 4 animal kinds, 7 each (28 tiles, 8 with black backs). Each tile shows 2-4 livestock, the number being the base <vp> when placed. Placing one into your <duchy> scores **immediately**: the number on the tile + the numbers on already-placed tiles of the **same animal** in the same <pasture> (a contiguous light-green area; adjacency not required, other pastures don't count). Example: placing a 4-cattle tile in a pasture that already has a 4-cattle tile scores 4+4+3=11 (the 3 cattle score their base value). Animal kinds: cattle, sheep, pig, chicken (to be verified)."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "light_green"
+        ],
+        "description": {
+          "zh": "固定为浅绿色（light_green）。",
+          "en": "Fixed to light green."
+        }
+      },
+      "animal": {
+        "type": "enum",
+        "enum": [
+          "cattle",
+          "sheep",
+          "pig",
+          "chicken"
+        ],
+        "description": {
+          "zh": "牲畜种类：cattle=牛、sheep=羊、pig=猪、chicken=鸡（鸡待核实）。计分时只算同一<pasture>内同种动物。",
+          "en": "Animal kind: cattle, sheep, pig, chicken (chicken to be verified). Scoring counts only same-kind animals within the same <pasture>."
+        }
+      },
+      "livestock_count": {
+        "type": "integer",
+        "description": {
+          "zh": "板块上印的牲畜数量（2-4），即放置此板块时的基本<vp>。",
+          "en": "The number of livestock printed on the tile (2-4), i.e. the base <vp> when placing this tile."
+        }
+      },
+      "appearance": {
+        "zh": "浅绿色六边形板块，正面印有 2-4 头同种牲畜的图案。",
+        "en": "Light-green hex tile with a picture of 2-4 livestock of one kind on the front."
+      }
+    },
+    {
+      "id": "monastery_tile",
+      "specifies": "<hex_tile>",
+      "name": {
+        "zh": "修道院板块",
+        "en": "Monastery Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "黄色的<hex_tile>，共 26 块、各不相同（20 块黄色背面 + 6 块黑色背面）。放置到<duchy>后其效果生效——多数是**持续效果**（改变后续游戏规则，如<monastery_tile_1>、<monastery_tile_8>），少数只在**终局计分**时生效（如<monastery_tile_15>、<monastery_tile_24>）。只有放入庄园的修道院板块才计分，<key_space>里的不算。26 块全清单：<monastery_tile_1>、<monastery_tile_2>、<monastery_tile_3>、<monastery_tile_4>、<monastery_tile_5>、<monastery_tile_6>、<monastery_tile_7>、<monastery_tile_8>、<monastery_tile_9>、<monastery_tile_10>、<monastery_tile_11>、<monastery_tile_12>、<monastery_tile_13>、<monastery_tile_14>、<monastery_tile_15>、<monastery_building_score_market>、<monastery_building_score_carpenters_workshop>、<monastery_building_score_church>、<monastery_building_score_warehouse>、<monastery_building_score_boarding_house>、<monastery_building_score_bank>、<monastery_building_score_town_hall>、<monastery_building_score_watchtower>、<monastery_tile_24>、<monastery_tile_25>、<monastery_tile_26>。",
+        "en": "A yellow <hex_tile>; 26 unique tiles (20 yellow-backed + 6 black-backed). Placing one into your <duchy> activates its effect — most are **continuous effects** (changing later rules, e.g. <monastery_tile_1>, <monastery_tile_8>); a few score only in **final scoring** (e.g. <monastery_tile_15>, <monastery_tile_24>). Only monasteries placed in the duchy score; those in your <key_space> do not. All 26: <monastery_tile_1>, <monastery_tile_2>, <monastery_tile_3>, <monastery_tile_4>, <monastery_tile_5>, <monastery_tile_6>, <monastery_tile_7>, <monastery_tile_8>, <monastery_tile_9>, <monastery_tile_10>, <monastery_tile_11>, <monastery_tile_12>, <monastery_tile_13>, <monastery_tile_14>, <monastery_tile_15>, <monastery_building_score_market>, <monastery_building_score_carpenters_workshop>, <monastery_building_score_church>, <monastery_building_score_warehouse>, <monastery_building_score_boarding_house>, <monastery_building_score_bank>, <monastery_building_score_town_hall>, <monastery_building_score_watchtower>, <monastery_tile_24>, <monastery_tile_25>, <monastery_tile_26>."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "yellow"
+        ],
+        "description": {
+          "zh": "固定为黄色（yellow）。",
+          "en": "Fixed to yellow."
+        }
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous",
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "效果类别：continuous=持续效果（放置后一直改变规则，如修改行动方式、阶段结束收入）；final_scoring=终局计分（只在游戏结束时结算<vp>）。",
+          "en": "Effect category: continuous = ongoing rule changes from placement onward (e.g. modified actions, phase-end income); final_scoring = only settles <vp> at game end."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "板块编号（1-26，印在板块上）。其中 16-23 号对应 8 种建筑计分，具体编号对应关系除 #17=<building_watchtower>、#22=<building_bank> 外待核实。",
+          "en": "The tile's printed number (1-26). Numbers 16-23 score buildings; the exact mapping is unverified except #17=<building_watchtower> and #22=<building_bank>."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，正面印有修道院/学识主题图案与编号，26 块图案各不相同。",
+        "en": "Yellow hex tile with a monastery/knowledge-themed illustration and number on the front; all 26 are distinct."
+      }
+    },
+    {
+      "id": "castle_tile",
+      "specifies": "<hex_tile>",
+      "name": {
+        "zh": "城堡板块",
+        "en": "Castle Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "深绿色的<hex_tile>，共 16 块完全相同（14 块深绿背面 + 2 块黑色背面）。放置到<duchy>时**立即获得一次额外行动**——如同有一颗任意点数的骰子供你使用：可立即再放置一块板块、拿取 2 个<worker>、出售<goods>等。额外行动可反复触发（放置多块城堡=多次额外行动）。开局时每名玩家已有 1 块起始城堡放在庄园中央的深绿色 6 号空格上。",
+        "en": "A dark-green <hex_tile>; 16 identical tiles (14 dark-green-backed + 2 black-backed). Placing one into your <duchy> **immediately grants an extra action** — as if you had another die with any value: you could immediately place another tile, take 2 <worker>s, sell <goods>, etc. Extra actions chain (multiple castles = multiple extra actions). Each player starts with 1 starting castle on the central dark-green 6 space of their duchy."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "dark_green"
+        ],
+        "description": {
+          "zh": "固定为深绿色（dark_green）。",
+          "en": "Fixed to dark green."
+        }
+      },
+      "appearance": {
+        "zh": "深绿色六边形板块，正面印有城堡塔楼图案，所有城堡板块图案相同。",
+        "en": "Dark-green hex tile with a castle tower illustration; all castle tiles share the same art."
+      }
+    },
+    {
+      "id": "mine_tile",
+      "specifies": "<hex_tile>",
+      "name": {
+        "zh": "矿板块",
+        "en": "Mine Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "灰色的<hex_tile>，共 12 块完全相同（10 块灰色背面 + 2 块黑色背面）。除少数修道院板块外，矿是唯一**放置时无即时效果**的板块。效果在**每阶段结束时**结算：庄园中每个矿得 1 <silver>（有<monastery_tile_2>时每个矿额外得 1 <worker>）。",
+        "en": "A gray <hex_tile>; 12 identical tiles (10 gray-backed + 2 black-backed). Apart from a few monastery tiles, mines are the only tiles with **no immediate placement effect**. They pay off at the end of **each phase**: 1 <silver> per mine in your duchy (plus 1 <worker> per mine with <monastery_tile_2>)."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "gray"
+        ],
+        "description": {
+          "zh": "固定为灰色（gray）。",
+          "en": "Fixed to gray."
+        }
+      },
+      "appearance": {
+        "zh": "灰色六边形板块，正面印有矿洞图案，所有矿板块图案相同。",
+        "en": "Gray hex tile with a mine illustration; all mine tiles share the same art."
+      }
+    },
+    {
+      "id": "ship_tile",
+      "specifies": "<hex_tile>",
+      "name": {
+        "zh": "船板块",
+        "en": "Ship Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "蓝色的<hex_tile>，共 26 块完全相同（20 块蓝色背面 + 6 块黑色背面）。放置到<duchy>时立即发生两件事：①从**任意一个**<depot>（不必是骰子点数对应的）拿走该仓库的**全部**<goods>放入<goods_storage>——同色叠放，最多存 3 种颜色，存不下的货物留在仓库；②自己在<bridge>上的<playing_piece>向市中心前进 1 格（若该格已有他人棋子则叠在最上面）。若因此成为下轮起始玩家，获得<white_die>。有<monastery_tile_5>时可再从相邻仓库拿走全部货物。",
+        "en": "A blue <hex_tile>; 26 identical tiles (20 blue-backed + 6 black-backed). Placing one into your <duchy> does two things at once: ① take **all** <goods> from any one <depot> (not necessarily the one matching your die) into your <goods_storage> — same colors stacked, at most 3 different colors stored; goods you cannot store stay in the depot; ② advance your <playing_piece> on the <bridge> 1 space toward the city center (stack on top if the space is occupied). If you thereby become next round's starting player, you receive the <white_die>. With <monastery_tile_5>, also take all goods from an adjacent depot."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "blue"
+        ],
+        "description": {
+          "zh": "固定为蓝色（blue）。",
+          "en": "Fixed to blue."
+        }
+      },
+      "appearance": {
+        "zh": "蓝色六边形板块，正面印有帆船图案，所有船板块图案相同。",
+        "en": "Blue hex tile with a sailing ship illustration; all ship tiles share the same art."
+      }
+    },
+    {
+      "id": "building_market",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "市场（建筑）",
+        "en": "Market (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即免费**从任意一个编号<depot>（<black_depot>除外）拿 1 个<ship_tile>或<livestock_tile>，放入自己的<key_space>。若所有编号仓库都没有船或牲畜板块，效果作废。每个<town>至多 1 个市场。",
+        "en": "One of the 8 buildings. When placed, **immediately and for free** take 1 <ship_tile> or <livestock_tile> from any numbered <depot> (not the <black_depot>) into your <key_space>. If no depot holds a ship or livestock, the effect is lost. At most one market per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "market"
+        ],
+        "description": {
+          "zh": "固定为 market。",
+          "en": "Fixed to market."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有市场摊位图案。",
+        "en": "Beige hex tile with a market stall illustration."
+      }
+    },
+    {
+      "id": "building_carpenters_workshop",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "木匠工坊（建筑）",
+        "en": "Carpenter's Workshop (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即免费**从任意一个编号<depot>（<black_depot>除外）拿 1 个<building_tile>，放入自己的<key_space>。若所有编号仓库都没有建筑板块，效果作废。每个<town>至多 1 个木匠工坊。",
+        "en": "One of the 8 buildings. When placed, **immediately and for free** take 1 <building_tile> from any numbered <depot> (not the <black_depot>) into your <key_space>. If no depot holds a building, the effect is lost. At most one carpenter's workshop per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "carpenters_workshop"
+        ],
+        "description": {
+          "zh": "固定为 carpenters_workshop。",
+          "en": "Fixed to carpenters_workshop."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有木匠工坊图案。",
+        "en": "Beige hex tile with a carpenter's workshop illustration."
+      }
+    },
+    {
+      "id": "building_church",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "教堂（建筑）",
+        "en": "Church (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即免费**从任意一个编号<depot>（<black_depot>除外）拿 1 个<mine_tile>、<monastery_tile>或<castle_tile>，放入自己的<key_space>。若所有编号仓库都没有这三种板块，效果作废。每个<town>至多 1 个教堂。",
+        "en": "One of the 8 buildings. When placed, **immediately and for free** take 1 <mine_tile>, <monastery_tile>, or <castle_tile> from any numbered <depot> (not the <black_depot>) into your <key_space>. If no depot holds such a tile, the effect is lost. At most one church per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "church"
+        ],
+        "description": {
+          "zh": "固定为 church。",
+          "en": "Fixed to church."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有教堂图案。",
+        "en": "Beige hex tile with a church illustration."
+      }
+    },
+    {
+      "id": "building_warehouse",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "仓库（建筑）",
+        "en": "Warehouse (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即**出售一种自己拥有的<goods>（整堆）——完全等同于一次「出售货物」行动（得 1 <silver> + 每块 2/3/4 <vp>，按 2/3/4 人局），**不需要骰子**、不限定颜色。若没有货物可卖，效果作废。有<monastery_tile_3>得 2 <silver>，有<monastery_tile_4>额外得 1 <worker>。每个<town>至多 1 个仓库。",
+        "en": "One of the 8 buildings. When placed, **immediately** sell one type of <goods> you own (the whole stack) — exactly like a 'sell goods' action (1 <silver> + 2/3/4 <vp> per tile by player count) — **without a die** and in any color. If you have no goods, the effect is lost. <monastery_tile_3> makes it 2 <silver>; <monastery_tile_4> adds 1 <worker>. At most one warehouse per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "warehouse"
+        ],
+        "description": {
+          "zh": "固定为 warehouse。",
+          "en": "Fixed to warehouse."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有仓库图案。",
+        "en": "Beige hex tile with a warehouse illustration."
+      }
+    },
+    {
+      "id": "building_boarding_house",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "膳宿楼（建筑）",
+        "en": "Boarding House (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即**从<worker_supply>拿 4 个<worker>放入<worker_space>。注意：<monastery_tile_13>与<monastery_tile_14>对放置膳宿楼无效。每个<town>至多 1 个膳宿楼。",
+        "en": "One of the 8 buildings. When placed, **immediately** take 4 <worker>s from the <worker_supply> into your <worker_space>. Note: <monastery_tile_13> and <monastery_tile_14> do not apply when placing a boarding house. At most one boarding house per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "boarding_house"
+        ],
+        "description": {
+          "zh": "固定为 boarding_house。",
+          "en": "Fixed to boarding_house."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有膳宿楼图案。",
+        "en": "Beige hex tile with a boarding house illustration."
+      }
+    },
+    {
+      "id": "building_bank",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "银行（建筑）",
+        "en": "Bank (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即**从<silver_supply>拿 2 <silver>放入<silver_space>。每个<town>至多 1 个银行。",
+        "en": "One of the 8 buildings. When placed, **immediately** take 2 <silver> from the <silver_supply> into your <silver_space>. At most one bank per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "bank"
+        ],
+        "description": {
+          "zh": "固定为 bank。",
+          "en": "Fixed to bank."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有银行建筑图案。",
+        "en": "Beige hex tile with a bank building illustration."
+      }
+    },
+    {
+      "id": "building_town_hall",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "市政厅（建筑）",
+        "en": "Town Hall (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即**再放置一块自己拥有的<hex_tile>（任意颜色，来自<key_space>）——这次放置正常触发该板块的效果（如放置<castle_tile>又得一次额外行动）。仍需满足放置规则（数字与颜色匹配、相邻）。每个<town>至多 1 个市政厅。",
+        "en": "One of the 8 buildings. When placed, **immediately** place another <hex_tile> you own (any color, from your <key_space>) — that placement triggers its effect as usual (e.g. placing a <castle_tile> grants yet another extra action). Normal placement rules still apply (number and color match, adjacency). At most one town hall per <town>."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "town_hall"
+        ],
+        "description": {
+          "zh": "固定为 town_hall。",
+          "en": "Fixed to town_hall."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有市政厅图案。",
+        "en": "Beige hex tile with a town hall illustration."
+      }
+    },
+    {
+      "id": "building_watchtower",
+      "specifies": "<building_tile>",
+      "name": {
+        "zh": "瞭望塔（建筑）",
+        "en": "Watchtower (Building)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "8 种建筑之一。放置时**立即**得 4 <vp>（<score_track>前进 4 格）。每个<town>至多 1 个瞭望塔。对应<monastery_building_score_watchtower>（修道院 #17）。",
+        "en": "One of the 8 buildings. When placed, **immediately** score 4 <vp> (advance 4 spaces on the <score_track>). At most one watchtower per <town>. Matched by <monastery_building_score_watchtower> (monastery #17)."
+      },
+      "building_type": {
+        "type": "enum",
+        "enum": [
+          "watchtower"
+        ],
+        "description": {
+          "zh": "固定为 watchtower。",
+          "en": "Fixed to watchtower."
+        }
+      },
+      "appearance": {
+        "zh": "米色六边形板块，正面印有瞭望塔图案。",
+        "en": "Beige hex tile with a watchtower illustration."
+      }
+    },
+    {
+      "id": "monastery_tile_1",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 1（同城多建筑）",
+        "en": "Monastery Tile 1 (Multiple Buildings Per Town)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#1"
+        ],
+        "en": [
+          "#1"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 1（玩家常称「黄色瓷砖 #1」）。**持续效果**：你的<duchy>中不再限制每个<town>每类<building_tile>只能建 1 个——可以在同一城镇内建造多个同类型建筑（如 2 个<building_bank>）。",
+        "en": "Monastery tile 1 of 26 (players often call it 'yellow tile #1'). **Continuous effect**: you are no longer limited to one <building_tile> per kind in each of your <town>s — you may build multiple buildings of the same kind within a single town (e.g. 2 <building_bank>s)."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "固定为 1。",
+          "en": "Fixed to 1."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 1，图案为并列的两栋相同建筑。",
+        "en": "Yellow hex tile, number 1, showing two identical buildings side by side."
+      }
+    },
+    {
+      "id": "monastery_tile_2",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 2（每矿多得工人）",
+        "en": "Monastery Tile 2 (Worker Per Mine)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#2"
+        ],
+        "en": [
+          "#2"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 2（玩家常称「黄色瓷砖 #2」）。**持续效果**：每阶段结束时，庄园中每个<mine_tile>除正常 1 <silver>外，额外得 1 <worker>。",
+        "en": "Monastery tile 2 of 26 (players often call it 'yellow tile #2'). **Continuous effect**: at the end of each phase, for each <mine_tile> you have placed you also get 1 <worker> in addition to the usual <silver>."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 2,
+        "description": {
+          "zh": "固定为 2。",
+          "en": "Fixed to 2."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 2，图案为矿与工人头像。",
+        "en": "Yellow hex tile, number 2, showing a mine and a worker profile."
+      }
+    },
+    {
+      "id": "monastery_tile_3",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 3（卖货得 2 银币）",
+        "en": "Monastery Tile 3 (Two Silver Per Sale)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#3"
+        ],
+        "en": [
+          "#3"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 3（玩家常称「黄色瓷砖 #3」）。**持续效果**：每次出售<goods>（无论是骰子行动还是放置<building_warehouse>）得 2 <silver>而非 1。",
+        "en": "Monastery tile 3 of 26 (players often call it 'yellow tile #3'). **Continuous effect**: whenever you sell <goods> (whether via the die action or placing a <building_warehouse>), you gain 2 <silver> instead of 1."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "固定为 3。",
+          "en": "Fixed to 3."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 3，图案为货物与两枚银币。",
+        "en": "Yellow hex tile, number 3, showing goods and two silver coins."
+      }
+    },
+    {
+      "id": "monastery_tile_4",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 4（卖货多得工人）",
+        "en": "Monastery Tile 4 (Worker Per Sale)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#4"
+        ],
+        "en": [
+          "#4"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 4（玩家常称「黄色瓷砖 #4」）。**持续效果**：每次出售一种<goods>（无论是骰子行动还是放置<building_warehouse>）除正常 1 <silver>外，额外得 1 <worker>。",
+        "en": "Monastery tile 4 of 26 (players often call it 'yellow tile #4'). **Continuous effect**: whenever you sell a type of <goods> (whether via the die action or placing a <building_warehouse>), you gain 1 <worker> in addition to the usual <silver>."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 4,
+        "description": {
+          "zh": "固定为 4。",
+          "en": "Fixed to 4."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 4，图案为货物与工人头像。",
+        "en": "Yellow hex tile, number 4, showing goods and a worker profile."
+      }
+    },
+    {
+      "id": "monastery_tile_5",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 5（船取相邻仓库）",
+        "en": "Monastery Tile 5 (Ship Takes Adjacent Depot)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#5"
+        ],
+        "en": [
+          "#5"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 5（玩家常称「黄色瓷砖 #5」）。**持续效果**：放置<ship_tile>时，除从任选一个<depot>拿走全部<goods>外，还可从一个**相邻**仓库再拿走全部货物。",
+        "en": "Monastery tile 5 of 26 (players often call it 'yellow tile #5'). **Continuous effect**: when you place a <ship_tile>, in addition to taking all <goods> from one chosen <depot>, you may also take all goods from an **adjacent** depot."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 5,
+        "description": {
+          "zh": "固定为 5。",
+          "en": "Fixed to 5."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 5，图案为船与两个相邻仓库。",
+        "en": "Yellow hex tile, number 5, showing a ship and two adjacent depots."
+      }
+    },
+    {
+      "id": "monastery_tile_6",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 6（工人买任意仓库）",
+        "en": "Monastery Tile 6 (Buy From Any Depot With Workers)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#6"
+        ],
+        "en": [
+          "#6"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 6（玩家常称「黄色瓷砖 #6」）。**持续效果**：从游戏版图购买<hex_tile>时可花 **2 个<worker>代替 2 <silver>**，且可从**所有**<depot>（含<black_depot>）任选板块——不再局限于中央黑色仓库。仍每回合至多买 1 块。注：2019 版与早期版本在此处有细微差异（是否限购建筑），本定义按 2019 版规则书。",
+        "en": "Monastery tile 6 of 26 (players often call it 'yellow tile #6'). **Continuous effect**: when buying a <hex_tile> from the game board you may spend **2 <worker>s instead of 2 <silver>**, and you may choose a tile from **all** <depot>s (including the <black_depot>) — not just the central black depot. Still at most one purchase per turn. Note: the 2019 edition differs slightly from earlier ones here (whether buying is restricted to buildings); this definition follows the 2019 rulebook."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 6,
+        "description": {
+          "zh": "固定为 6。",
+          "en": "Fixed to 6."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 6，图案为工人与黑色仓库。",
+        "en": "Yellow hex tile, number 6, showing a worker and the black depot."
+      }
+    },
+    {
+      "id": "monastery_tile_7",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 7（牲畜额外 1 分）",
+        "en": "Monastery Tile 7 (Livestock +1 Each)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#7"
+        ],
+        "en": [
+          "#7"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 7（玩家常称「黄色瓷砖 #7」）。**持续效果**：放置<livestock_tile>时，当时计分的**每块**牲畜板块（含新放的这块，含同牧场同种的旧板块）各额外 +1 <vp>。例：在已有 4 羊的牧场放置 3 羊板块：(3+1)+(4+1)=9 分；若放 2 猪板块则得 3 分。",
+        "en": "Monastery tile 7 of 26 (players often call it 'yellow tile #7'). **Continuous effect**: when you place a <livestock_tile>, each livestock tile that scores at that moment (the new one included, plus same-kind tiles in the same pasture) gains +1 <vp>. Example: placing a 3-sheep tile in a pasture holding a 4-sheep tile scores (3+1)+(4+1)=9; a 2-pig tile would score 3."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 7,
+        "description": {
+          "zh": "固定为 7。",
+          "en": "Fixed to 7."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 7，图案为牲畜与 +1 标记。",
+        "en": "Yellow hex tile, number 7, showing livestock and a +1 marker."
+      }
+    },
+    {
+      "id": "monastery_tile_8",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 8（工人改骰 ±2）",
+        "en": "Monastery Tile 8 (Worker Adjusts ±2)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#8"
+        ],
+        "en": [
+          "#8"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 8（玩家常称「黄色瓷砖 #8」）。**持续效果**：用<worker>修改<player_die>点数时，每个工人改 ±2 而非 ±1。例：把 3 改成 6 只需 2 个工人（而非 3 个）。",
+        "en": "Monastery tile 8 of 26 (players often call it 'yellow tile #8'). **Continuous effect**: when you use a <worker> to change a <player_die>'s value, each worker adjusts by ±2 instead of ±1. Example: changing a 3 to a 6 needs only 2 workers (instead of 3)."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 8,
+        "description": {
+          "zh": "固定为 8。",
+          "en": "Fixed to 8."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 8，图案为骰子与 ±2 标记。",
+        "en": "Yellow hex tile, number 8, showing a die and a ±2 marker."
+      }
+    },
+    {
+      "id": "monastery_tile_9",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 9（放建筑免费 ±1）",
+        "en": "Monastery Tile 9 (Free ±1 When Placing Building)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#9"
+        ],
+        "en": [
+          "#9"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 9（玩家常称「黄色瓷砖 #9」）。**持续效果**：每次想放置<building_tile>（米色板块）时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
+        "en": "Monastery tile 9 of 26 (players often call it 'yellow tile #9'). **Continuous effect**: whenever you want to place a <building_tile> (beige), you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 9,
+        "description": {
+          "zh": "固定为 9。",
+          "en": "Fixed to 9."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 9，图案为建筑与骰子 ±1。",
+        "en": "Yellow hex tile, number 9, showing a building and a die with ±1."
+      }
+    },
+    {
+      "id": "monastery_tile_10",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 10（放船/牲畜免费 ±1）",
+        "en": "Monastery Tile 10 (Free ±1 When Placing Ship/Livestock)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#10"
+        ],
+        "en": [
+          "#10"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 10（玩家常称「黄色瓷砖 #10」）。**持续效果**：每次想放置<ship_tile>（蓝色）或<livestock_tile>（浅绿色）时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
+        "en": "Monastery tile 10 of 26 (players often call it 'yellow tile #10'). **Continuous effect**: whenever you want to place a <ship_tile> (blue) or <livestock_tile> (light green), you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 10,
+        "description": {
+          "zh": "固定为 10。",
+          "en": "Fixed to 10."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 10，图案为船、牲畜与骰子 ±1。",
+        "en": "Yellow hex tile, number 10, showing a ship, livestock, and a die with ±1."
+      }
+    },
+    {
+      "id": "monastery_tile_11",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 11（放城堡/矿/修道院免费 ±1）",
+        "en": "Monastery Tile 11 (Free ±1 When Placing Castle/Mine/Monastery)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#11"
+        ],
+        "en": [
+          "#11"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 11（玩家常称「黄色瓷砖 #11」）。**持续效果**：每次想放置<castle_tile>（深绿色）、<mine_tile>（灰色）或<monastery_tile>（黄色）时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
+        "en": "Monastery tile 11 of 26 (players often call it 'yellow tile #11'). **Continuous effect**: whenever you want to place a <castle_tile> (dark green), <mine_tile> (gray), or <monastery_tile> (yellow), you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 11,
+        "description": {
+          "zh": "固定为 11。",
+          "en": "Fixed to 11."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 11，图案为城堡、矿、修道院与骰子 ±1。",
+        "en": "Yellow hex tile, number 11, showing a castle, mine, monastery, and a die with ±1."
+      }
+    },
+    {
+      "id": "monastery_tile_12",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 12（拿板块免费 ±1）",
+        "en": "Monastery Tile 12 (Free ±1 When Taking Hex Tile)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#12"
+        ],
+        "en": [
+          "#12"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 12（玩家常称「黄色瓷砖 #12」）。**持续效果**：每次想从游戏版图拿取<hex_tile>时，可免费把所用骰子点数改 ±1（如同用了 1 个<worker>，但不必支付）。",
+        "en": "Monastery tile 12 of 26 (players often call it 'yellow tile #12'). **Continuous effect**: whenever you want to take a <hex_tile> from the game board, you may adjust the die value by ±1 for free (as if spending 1 <worker>, but without paying)."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 12,
+        "description": {
+          "zh": "固定为 12。",
+          "en": "Fixed to 12."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 12，图案为六边形板块与骰子 ±1。",
+        "en": "Yellow hex tile, number 12, showing a hex tile and a die with ±1."
+      }
+    },
+    {
+      "id": "monastery_tile_13",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 13（拿工人额外得银币）",
+        "en": "Monastery Tile 13 (Silver With Take Workers)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#13"
+        ],
+        "en": [
+          "#13"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 13（玩家常称「黄色瓷砖 #13」）。**持续效果**：执行「拿取工人片」行动时，除 2 个<worker>外额外得 1 <silver>。注意：对放置<building_boarding_house>无效。",
+        "en": "Monastery tile 13 of 26 (players often call it 'yellow tile #13'). **Continuous effect**: when you use the 'take worker chips' action, you gain 1 <silver> in addition to the 2 <worker>s. Note: has no effect when placing a <building_boarding_house>."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 13,
+        "description": {
+          "zh": "固定为 13。",
+          "en": "Fixed to 13."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 13，图案为工人与银币。",
+        "en": "Yellow hex tile, number 13, showing workers and a silver coin."
+      }
+    },
+    {
+      "id": "monastery_tile_14",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 14（拿工人改为 4 个）",
+        "en": "Monastery Tile 14 (Take Four Workers)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#14"
+        ],
+        "en": [
+          "#14"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 14（玩家常称「黄色瓷砖 #14」）。**持续效果**：执行「拿取工人片」行动时得 **4 个<worker>**而非 2 个。注意：对放置<building_boarding_house>无效。",
+        "en": "Monastery tile 14 of 26 (players often call it 'yellow tile #14'). **Continuous effect**: when you use the 'take worker chips' action, you get **4 <worker>s** instead of 2. Note: has no effect when placing a <building_boarding_house>."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "continuous"
+        ],
+        "description": {
+          "zh": "固定为 continuous。",
+          "en": "Fixed to continuous."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 14,
+        "description": {
+          "zh": "固定为 14。",
+          "en": "Fixed to 14."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 14，图案为四个工人头像。",
+        "en": "Yellow hex tile, number 14, showing four worker profiles."
+      }
+    },
+    {
+      "id": "monastery_tile_15",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 15（每种已售货物 2 分）",
+        "en": "Monastery Tile 15 (2 VP Per Sold Goods Type)"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "#15"
+        ],
+        "en": [
+          "#15"
+        ]
+      },
+      "description": {
+        "zh": "26 块<monastery_tile>之 15（玩家常称「黄色瓷砖 #15」）。**终局计分**：每**卖出过至少一次**的<goods>颜色得 2 <vp>（未卖出的货物忽略）。例：已售 4 红、3 紫、3 粉、1 橙 → 4 种 × 2 = 8 分。注意：你随时可以查看自己的<sold_goods_pile>。",
+        "en": "Monastery tile 15 of 26 (players often call it 'yellow tile #15'). **Final scoring**: 2 <vp> for each different <goods> color you sold at least once during the game (unsold goods are ignored). Example: sold 4 red, 3 purple, 3 pink, 1 orange → 4 types × 2 = 8 points. Note: you may look at your <sold_goods_pile> at any time."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 15,
+        "description": {
+          "zh": "固定为 15。",
+          "en": "Fixed to 15."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 15，图案为货物与 ×2 标记。",
+        "en": "Yellow hex tile, number 15, showing goods and a ×2 marker."
+      }
+    },
+    {
+      "id": "monastery_building_score_market",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（市场）",
+        "en": "Building-Scoring Monastery Tile (Market)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一（编号 16-23 之一，具体编号待核实；玩家常称「黄色瓷砖 #16-23 之一」）。**终局计分**：庄园中每放置 1 个<building_market>得 4 <vp>。例：庄园中有 2 个市场 → 8 分。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26 (one of numbers 16-23; exact number to be verified; players often call these 'yellow tiles #16-23'). **Final scoring**: 4 <vp> for each <building_market> placed in your duchy. Example: 2 markets in your duchy → 8 points."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "编号为 16-23 之一（待核实）。",
+          "en": "One of numbers 16-23 (to be verified)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 16-23 之一（待核实），图案为市场建筑与 ×4 分。",
+        "en": "Yellow hex tile, one of numbers 16-23 (to be verified), showing a market building with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_carpenters_workshop",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（木匠工坊）",
+        "en": "Building-Scoring Monastery Tile (Carpenter's Workshop)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一（编号 16-23 之一，具体编号待核实；玩家常称「黄色瓷砖 #16-23 之一」）。**终局计分**：庄园中每放置 1 个<building_carpenters_workshop>得 4 <vp>。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26 (one of numbers 16-23; exact number to be verified; players often call these 'yellow tiles #16-23'). **Final scoring**: 4 <vp> for each <building_carpenters_workshop> placed in your duchy."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "编号为 16-23 之一（待核实）。",
+          "en": "One of numbers 16-23 (to be verified)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 16-23 之一（待核实），图案为木匠工坊建筑与 ×4 分。",
+        "en": "Yellow hex tile, one of numbers 16-23 (to be verified), showing a carpenter's workshop with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_church",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（教堂）",
+        "en": "Building-Scoring Monastery Tile (Church)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一（编号 16-23 之一，具体编号待核实；玩家常称「黄色瓷砖 #16-23 之一」）。**终局计分**：庄园中每放置 1 个<building_church>得 4 <vp>。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26 (one of numbers 16-23; exact number to be verified; players often call these 'yellow tiles #16-23'). **Final scoring**: 4 <vp> for each <building_church> placed in your duchy."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "编号为 16-23 之一（待核实）。",
+          "en": "One of numbers 16-23 (to be verified)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 16-23 之一（待核实），图案为教堂建筑与 ×4 分。",
+        "en": "Yellow hex tile, one of numbers 16-23 (to be verified), showing a church with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_warehouse",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（仓库）",
+        "en": "Building-Scoring Monastery Tile (Warehouse)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一（编号 16-23 之一，具体编号待核实；玩家常称「黄色瓷砖 #16-23 之一」）。**终局计分**：庄园中每放置 1 个<building_warehouse>得 4 <vp>。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26 (one of numbers 16-23; exact number to be verified; players often call these 'yellow tiles #16-23'). **Final scoring**: 4 <vp> for each <building_warehouse> placed in your duchy."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "编号为 16-23 之一（待核实）。",
+          "en": "One of numbers 16-23 (to be verified)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 16-23 之一（待核实），图案为仓库建筑与 ×4 分。",
+        "en": "Yellow hex tile, one of numbers 16-23 (to be verified), showing a warehouse with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_boarding_house",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（膳宿楼）",
+        "en": "Building-Scoring Monastery Tile (Boarding House)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一（编号 16-23 之一，具体编号待核实；玩家常称「黄色瓷砖 #16-23 之一」）。**终局计分**：庄园中每放置 1 个<building_boarding_house>得 4 <vp>。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26 (one of numbers 16-23; exact number to be verified; players often call these 'yellow tiles #16-23'). **Final scoring**: 4 <vp> for each <building_boarding_house> placed in your duchy."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "编号为 16-23 之一（待核实）。",
+          "en": "One of numbers 16-23 (to be verified)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 16-23 之一（待核实），图案为膳宿楼建筑与 ×4 分。",
+        "en": "Yellow hex tile, one of numbers 16-23 (to be verified), showing a boarding house with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_bank",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（银行，22 号）",
+        "en": "Building-Scoring Monastery Tile (Bank, #22)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一，编号 **22**（规则书示例确认；玩家常称「黄色瓷砖 #22」）。**终局计分**：庄园中每放置 1 个<building_bank>得 4 <vp>。例：庄园中有 4 个银行 → 16 分。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26, number **22** (confirmed by the rulebook example; players often call it 'yellow tile #22'). **Final scoring**: 4 <vp> for each <building_bank> placed in your duchy. Example: 4 banks in your duchy → 16 points."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 22,
+        "description": {
+          "zh": "固定为 22（规则书示例确认）。",
+          "en": "Fixed to 22 (confirmed by the rulebook example)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 22，图案为银行建筑与 ×4 分。",
+        "en": "Yellow hex tile, number 22, showing a bank building with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_town_hall",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（市政厅）",
+        "en": "Building-Scoring Monastery Tile (Town Hall)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一（编号 16-23 之一，具体编号待核实；玩家常称「黄色瓷砖 #16-23 之一」）。**终局计分**：庄园中每放置 1 个<building_town_hall>得 4 <vp>。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26 (one of numbers 16-23; exact number to be verified; players often call these 'yellow tiles #16-23'). **Final scoring**: 4 <vp> for each <building_town_hall> placed in your duchy."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "description": {
+          "zh": "编号为 16-23 之一（待核实）。",
+          "en": "One of numbers 16-23 (to be verified)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 16-23 之一（待核实），图案为市政厅建筑与 ×4 分。",
+        "en": "Yellow hex tile, one of numbers 16-23 (to be verified), showing a town hall with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_building_score_watchtower",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "建筑计分修道院瓷砖（瞭望塔，17 号）",
+        "en": "Building-Scoring Monastery Tile (Watchtower, #17)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>中 8 块建筑计分瓷砖之一，编号 **17**（规则书示例确认；玩家常称「黄色瓷砖 #17」）。**终局计分**：庄园中每放置 1 个<building_watchtower>得 4 <vp>。例：庄园中有 2 个瞭望塔 → 8 分。",
+        "en": "One of the 8 building-scoring monastery tiles among the 26, number **17** (confirmed by the rulebook example; players often call it 'yellow tile #17'). **Final scoring**: 4 <vp> for each <building_watchtower> placed in your duchy. Example: 2 watchtowers in your duchy → 8 points."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 17,
+        "description": {
+          "zh": "固定为 17（规则书示例确认）。",
+          "en": "Fixed to 17 (confirmed by the rulebook example)."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 17，图案为瞭望塔建筑与 ×4 分。",
+        "en": "Yellow hex tile, number 17, showing a watchtower with ×4 points."
+      }
+    },
+    {
+      "id": "monastery_tile_24",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 24（每种牲畜 4 分）",
+        "en": "Monastery Tile 24 (4 VP Per Livestock Type)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>之 24（玩家常称「黄色瓷砖 #24」）。**终局计分**：庄园中每有 1 种不同<livestock_tile>（动物种类）得 4 <vp>。例：庄园中放了 3 羊、1 牛、1 猪 → 3 种 × 4 = 12 分。",
+        "en": "Monastery tile 24 of 26 (players often call it 'yellow tile #24'). **Final scoring**: 4 <vp> for each different <livestock_tile> kind (animal) you have placed in your duchy. Example: 3 sheep, 1 cattle, 1 pig placed → 3 kinds × 4 = 12 points."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 24,
+        "description": {
+          "zh": "固定为 24。",
+          "en": "Fixed to 24."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 24，图案为四种牲畜。",
+        "en": "Yellow hex tile, number 24, showing four kinds of livestock."
+      }
+    },
+    {
+      "id": "monastery_tile_25",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 25（每块已售货物 1 分）",
+        "en": "Monastery Tile 25 (1 VP Per Sold Goods Tile)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>之 25（玩家常称「黄色瓷砖 #25」）。**终局计分**：<sold_goods_pile>中每块已售<goods>得 1 <vp>（未售出的忽略）。例：若已售 11 块货物 → 11 分。",
+        "en": "Monastery tile 25 of 26 (players often call it 'yellow tile #25'). **Final scoring**: 1 <vp> for each sold <goods> tile in your <sold_goods_pile> (unsold goods are ignored). Example: 11 sold goods tiles → 11 points."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 25,
+        "description": {
+          "zh": "固定为 25。",
+          "en": "Fixed to 25."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 25，图案为货物与 ×1 分。",
+        "en": "Yellow hex tile, number 25, showing goods with ×1 point."
+      }
+    },
+    {
+      "id": "monastery_tile_26",
+      "specifies": "<monastery_tile>",
+      "name": {
+        "zh": "修道院瓷砖 26（每块奖励板块 3 分）",
+        "en": "Monastery Tile 26 (3 VP Per Bonus Tile)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "26 块<monastery_tile>之 26（玩家常称「黄色瓷砖 #26」）。**终局计分**：每拥有 1 块<bonus_tile>（大小都算）得 3 <vp>。例：拥有 2 大 1 小 → 9 分。",
+        "en": "Monastery tile 26 of 26 (players often call it 'yellow tile #26'). **Final scoring**: 3 <vp> for each <bonus_tile> you own (large and small both count). Example: 2 large and 1 small owned → 9 points."
+      },
+      "effect_category": {
+        "type": "enum",
+        "enum": [
+          "final_scoring"
+        ],
+        "description": {
+          "zh": "固定为 final_scoring。",
+          "en": "Fixed to final_scoring."
+        }
+      },
+      "tile_number": {
+        "type": "integer",
+        "default": 26,
+        "description": {
+          "zh": "固定为 26。",
+          "en": "Fixed to 26."
+        }
+      },
+      "appearance": {
+        "zh": "黄色六边形板块，编号 26，图案为两块奖励板块与 ×3 分。",
+        "en": "Yellow hex tile, number 26, showing two bonus tiles with ×3 points."
+      }
+    },
+    {
+      "id": "bonus_tile",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "奖励板块",
+        "en": "Bonus Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡中的<ontology::tile>，共 12 块——6 种颜色各 1 大 1 小，开局放在<game_board>的 6 个奖励板块格上（大板块叠在小板块上）。奖励规则：**第一个**把庄园中某种颜色的空格**全部**铺满的玩家，立即拿取并计分该颜色的大板块（2 人局 5 <vp>、3 人局 6 <vp>、4 人局 7 <vp>）；**第二个**完成同色的玩家得小板块（2/3/4 <vp>）；第三、四个完成的玩家没有奖励。板块拿到后放在玩家面板旁；终局<monastery_tile_26>按拥有数量计分。",
+        "en": "A <ontology::tile> in Castles of Burgundy; 12 total — 1 large and 1 small in each of 6 colors, placed on the <game_board>'s 6 bonus spaces at setup (large stacked on small). Reward rule: the **first** player to completely cover all spaces of one color in their duchy immediately takes and scores that color's large tile (5 <vp> in a 2-player game, 6 with 3, 7 with 4); the **second** player to complete the same color takes the small tile (2/3/4 <vp>); the third and fourth get nothing. Tiles go next to your player board; <monastery_tile_26> scores them at game end."
+      },
+      "size": {
+        "type": "enum",
+        "enum": [
+          "small",
+          "large"
+        ],
+        "description": {
+          "zh": "板块大小：large=大板块（首个完成者，5/6/7 <vp>），small=小板块（第二个完成者，2/3/4 <vp>）。",
+          "en": "Tile size: large = big tile (first completer, 5/6/7 <vp>), small = small tile (second completer, 2/3/4 <vp>)."
+        }
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "beige",
+          "light_green",
+          "yellow",
+          "dark_green",
+          "gray",
+          "blue"
+        ],
+        "description": {
+          "zh": "板块颜色，对应庄园中一种颜色的空格（beige=建筑、light_green=牲畜、yellow=修道院、dark_green=城堡、gray=矿、blue=船）。完成该颜色区域时获得。",
+          "en": "Tile color, matching one color of duchy spaces (beige=building, light_green=livestock, yellow=monastery, dark_green=castle, gray=mine, blue=ship). Earned by completing that color's areas."
+        }
+      },
+      "appearance": {
+        "zh": "正方形厚纸板片（大板块约 4 厘米、小板块约 3 厘米），中央印有对应颜色图标与角标数字（5/6/7 或 2/3/4）。",
+        "en": "Square cardboard tile (large about 4 cm, small about 3 cm) with the matching color icon and a corner number (5/6/7 or 2/3/4)."
+      }
+    },
+    {
+      "id": "vp_tile",
+      "extends": "<ontology::tile>",
+      "name": {
+        "zh": "分数板块（100/200）",
+        "en": "Victory Point Tile (100/200)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "双面<ontology::tile>（100/200 两面），4 种玩家颜色各 1 块，开局放在玩家面板旁。用法：<playing_piece>在<score_track>上第一次越过 0/100 起点时，把<vp_tile>以 100 面朝上放在起点格；第二次越过（总<vp>达到 200）时翻到 200 面。",
+        "en": "A double-sided <ontology::tile> (100/200), 1 per player color, placed next to your player board at setup. Use: the first time your <playing_piece> crosses the 0/100 start space on the <score_track>, place the <vp_tile> 100-side up on that space; the second time (200 total <vp>), flip it to the 200 side."
+      },
+      "appearance": {
+        "zh": "正方形厚纸板片，玩家颜色边框，一面印 100、另一面印 200。",
+        "en": "Square cardboard tile with a player-colored border, one side printed 100 and the other 200."
+      }
+    },
+    {
+      "id": "playing_piece",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "玩家棋子",
+        "en": "Playing Piece"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家 2 个同色小棋子：一个放在<score_track>上记录<vp>（0/100 起点出发），一个放在<bridge>上表示回合顺位（开局按座次堆叠在桥头 1 号格）。桥上的棋子越靠近市中心（或叠堆中越靠上）行动越早。",
+        "en": "Each player has 2 small pieces in their color: one marks <vp> on the <score_track> (starting at 0/100), the other marks turn order on the <bridge> (stacked on space 1 at setup in seating order). On the bridge, pieces closer to the city center (or higher in a stack) act earlier."
+      },
+      "appearance": {
+        "zh": "木制小圆片/圆柱，直径约 1.5 厘米，颜色与玩家色一致。",
+        "en": "Small wooden disc/cylinder, about 1.5 cm across, in the player's color."
+      }
+    },
+    {
+      "id": "game_board",
+      "specifies": "<ontology::public_board>",
+      "name": {
+        "zh": "游戏版图",
+        "en": "Game Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡的公共版图，双面（一面 4 人、一面 2-3 人）。4 人面包含：6 个编号<depot>（各 4 个板块格 + 1 个大货物格）、中央<black_depot>（8 格）、<bridge>（回合顺位轨）、<score_track>（0-100 分轨）、5 个<phase_space>（A-E）、5 个<round_space>（当前阶段 5 块货物）、6 个<bonus_tile>格。2-3 人面仓库格数更少——**每阶段填充哪些空位**：2 人局每阶段仅填标有「2」的最内圈 12 个板块格与 4 个黑色仓库中央格，3 人局每阶段再填 8 个标有「3」的格（即标有 2 和 3 的空位都填）；3 人局 6 号仓库的深绿色格特殊：A/C/E 阶段补城堡板块（深绿）、B/D 阶段补矿板块（灰）。开局时 24 <silver>、26 <worker>、<white_die>放在版图旁；<goods>按 5×5+17 分配（见<goods>）。",
+        "en": "The shared board in Castles of Burgundy, double-sided (4-player front, 2-3-player back). The 4-player side holds: 6 numbered <depot>s (4 tile spaces + 1 large goods space each), the central <black_depot> (8 spaces), the <bridge> (turn-order track), the <score_track> (0-100), 5 <phase_space>s (A-E), 5 <round_space>s (the phase's 5 goods), and 6 <bonus_tile> spaces. The 2-3-player side has fewer depot spaces — **which spaces each phase fills**: in the 2-player game each phase fills only the inner 12 tile spaces marked '2' and the 4 central black-depot spaces; the 3-player game also fills the eight spaces marked '3' (i.e. spaces marked 2 and 3 are all filled); in the 3-player game depot 6's dark-green space is special: refilled with a castle tile (dark green) in phases A/C/E and a mine tile (gray) in B/D. At setup, 24 <silver>, 26 <worker>s, and the <white_die> go next to the board; <goods> are dealt 5×5+17 (see <goods>)."
+      },
+      "appearance": {
+        "zh": "大方形厚纸板，中央印有勃艮第风景画；四周为编号 1-6 仓库、黑色仓库、石桥（回合顺位轨）、0-100 环形分轨，左上角为 A-E 阶段格与 5 个轮次格。",
+        "en": "Large square cardboard board with a Burgundy landscape in the center; surrounded by depots 1-6, the black depot, a stone bridge (turn-order track), the circular 0-100 score track; the top-left has the A-E phase spaces and 5 round spaces."
+      }
+    },
+    {
+      "id": "overview_board",
+      "specifies": "<ontology::player_aid>",
+      "name": {
+        "zh": "概览板",
+        "en": "Overview Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家 1 块的小型提示板，摆在<duchy>下缘。上面印有：各类型<hex_tile>的放置效果图标（船/城堡/矿/牲畜/8 种建筑的收益）与完成<color_area>的<vp>对照表。",
+        "en": "A small reference board, one per player, placed below your <duchy>. It shows: icons for each <hex_tile> type's placement benefit (ship/castle/mine/livestock/the 8 buildings) and the <vp> table for completing a <color_area>."
+      },
+      "appearance": {
+        "zh": "长条形薄纸板，横向印有两排图标：上排为各板块类型收益，下排为区域完成分数表。",
+        "en": "Long thin cardboard strip with two rows of icons: the top row shows tile-type benefits, the bottom row the area-completion scoring table."
+      }
+    },
+    {
+      "id": "depot",
+      "extends": "<ontology::market>",
+      "name": {
+        "zh": "编号仓库",
+        "en": "Numbered Depot"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>上的 6 个公开仓库，编号 1-6，编号对应骰子点数。每个仓库有 4 个<hex_tile>格（2-3 人局更少：2 人局只用最内圈 12 格与 4 个黑仓中央格，3 人局再填 8 个标「3」的格）与 1 个<goods>格。每阶段开始时从<hex_tile_pool>按背面颜色随机补满板块格并翻到正面；<white_die>决定当前轮次的<goods>放进哪个仓库。拿取板块时骰子点数 = 仓库编号（可用<worker>改骰；<monastery_tile_6>允许从任意仓库买）。**每阶段结束时（实际在下一阶段开始时结算）仓库中剩余的<hex_tile>全部移出游戏、不退回<hex_tile_pool>**——船/矿/城堡等所有类型一视同仁；A 阶段例外（A 开始时版图是空的）。",
+        "en": "The 6 public depots on the <game_board>, numbered 1-6, matching die values. Each has 4 <hex_tile> spaces (fewer with 2-3 players: 2 players use only the inner 12 spaces and 4 black-depot central spaces; 3 players add the eight '3' spaces) and 1 <goods> space. At each phase start, tile spaces are refilled at random from the <hex_tile_pool> by back color and turned face up; the <white_die> decides which depot receives the round's <goods>. When taking tiles, die value = depot number (adjustable with <worker>s; <monastery_tile_6> allows buying from any depot). **At each phase end (settled in practice at the next phase's start), leftover <hex_tile>s in the depot are removed from the game, never back to the <hex_tile_pool>** — ships, mines, castles, all types alike; phase A is the exception (the board starts empty)."
+      },
+      "number": {
+        "type": "integer",
+        "description": {
+          "zh": "仓库编号 1-6，等于对应骰子点数。",
+          "en": "Depot number 1-6, equal to the matching die value."
+        }
+      },
+      "contains": {
+        "type": "<hex_tile>[] | <goods>[]",
+        "description": {
+          "zh": "此仓库存放的<ontology::object>类型：<hex_tile>（4 个板块格）与<goods>（1 个货物格）。",
+          "en": "The <ontology::object> types this depot holds: <hex_tile> (4 tile spaces) and <goods> (1 goods space)."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "black_depot",
+      "extends": "<ontology::market>",
+      "name": {
+        "zh": "黑色仓库",
+        "en": "Black Depot"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>中央的仓库，8 个板块格，只放**黑色背面**的<hex_tile>。每阶段开始时从<hex_tile_pool>补满并翻到正面。与编号仓库不同：不能靠骰子免费拿取，只能在回合中额外花 2 <silver>购买 1 块（buy_from_black_depot，每回合至多 1 次）；<monastery_tile_6>可用 2 个<worker>代替银币并从所有仓库任选。",
+        "en": "The central depot on the <game_board> with 8 tile spaces, holding only **black-backed** <hex_tile>s. Refilled from the <hex_tile_pool> and turned face up at each phase start. Unlike numbered depots: tiles here cannot be taken for free with a die; during your turn you may buy 1 for 2 <silver> (buy_from_black_depot, at most once per turn); <monastery_tile_6> lets you pay 2 <worker>s instead and choose from any depot."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 8,
+        "description": {
+          "zh": "黑色仓库固定 8 个板块格（2 人局只填 4 格）。",
+          "en": "The black depot has a fixed 8 tile spaces (only 4 filled in 2-player games)."
+        }
+      },
+      "contains": {
+        "type": "<hex_tile>[]",
+        "description": {
+          "zh": "此仓库存放的<ontology::object>类型：黑色背面的<hex_tile>。",
+          "en": "The <ontology::object> type this depot holds: black-backed <hex_tile>s."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "duchy",
+      "specifies": "<ontology::development_area>",
+      "name": {
+        "zh": "庄园",
+        "en": "Duchy"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家面板上的 37 个六边形空格组成的领地，即玩家的<ontology::development_area>。空格分 6 种颜色，同色相邻空格连成<color_area>：浅绿=牧场（放<livestock_tile>）、蓝=河流（放<ship_tile>）、深绿=城堡（放<castle_tile>）、灰=矿（放<mine_tile>）、米色=城镇（放<building_tile>）、黄=修道院（放<monastery_tile>）。每个空格印有编号 1-6。开局时每名玩家把 1 块起始<castle_tile>放在中央的深绿色 6 号空格上。已放入庄园的板块永久固定。玩家面板其余部分：3 个<key_space>、<goods_storage>、<sold_goods_pile>、<silver_space>、<worker_space>；面板下方摆<overview_board>。",
+        "en": "The 37 hexagon spaces on your player board — your <ontology::development_area>. Spaces come in 6 colors; same-color adjacent spaces form <color_area>s: light green = pasture (<livestock_tile>s), blue = river (<ship_tile>s), dark green = castle (<castle_tile>s), gray = mine (<mine_tile>s), beige = town (<building_tile>s), yellow = monastery (<monastery_tile>s). Each space is printed with a number 1-6. At setup, each player places 1 starting <castle_tile> on the central dark-green 6 space. Placed tiles are permanent. The rest of the player board: 3 <key_space>s, the <goods_storage>, the <sold_goods_pile>, the <silver_space>, and the <worker_space>; the <overview_board> sits below."
+      },
+      "hex_space_count": {
+        "type": "integer",
+        "default": 37,
+        "description": {
+          "zh": "庄园空格总数，固定为 37。终局平手时先比较空位数量（空位少者胜）。",
+          "en": "Total duchy spaces, fixed at 37. End-game ties compare empty spaces first (fewer wins)."
+        }
+      },
+      "contains": {
+        "type": "<hex_tile>[]",
+        "description": {
+          "zh": "此<ontology::development_area>存放的<ontology::object>类型：已放置的<hex_tile>。",
+          "en": "The <ontology::object> type this <ontology::development_area> holds: placed <hex_tile>s."
+        }
+      },
+      "<ontology::ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "从<ontology::player_zone>继承——庄园始终归属于一名<ontology::player>。",
+          "en": "Inherited from <ontology::player_zone> — the duchy always belongs to one <ontology::player>."
+        }
+      },
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "duchy_hex_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "庄园空格",
+        "en": "Duchy Hex Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<duchy>中的单个六边形空格。属性：颜色（6 种之一）与编号 1-6。放置<hex_tile>的合法性：空格为空、空格颜色 = 板块颜色、空格编号 = 骰子点数（可用<worker>改骰）、与至少一块已放置板块相邻（开局第一块只需与起始<castle_tile>相邻）。同色相邻空格连成<color_area>——填满最后一块空格即完成区域。",
+        "en": "A single hexagonal space in your <duchy>. Attributes: color (one of 6) and number 1-6. Legal placement of a <hex_tile> requires: the space is empty, its color equals the tile's color, its number equals the die value (adjustable with <worker>s), and it is adjacent to at least one placed tile (your very first placement only needs to touch the starting <castle_tile>). Same-color adjacent spaces form a <color_area> — filling its last space completes the area."
+      },
+      "color": {
+        "type": "enum",
+        "enum": [
+          "beige",
+          "light_green",
+          "yellow",
+          "dark_green",
+          "gray",
+          "blue"
+        ],
+        "description": {
+          "zh": "空格颜色，必须与所放板块颜色一致。",
+          "en": "Space color; must match the placed tile's color."
+        }
+      },
+      "number": {
+        "type": "integer",
+        "description": {
+          "zh": "空格编号 1-6，必须与所用骰子的点数一致。",
+          "en": "Space number 1-6; must match the die value used."
+        }
+      },
+      "occupied": {
+        "type": "boolean",
+        "default": false,
+        "description": {
+          "zh": "是否已放板块。只能放在空位上。",
+          "en": "Whether a tile occupies it. Only empty spaces may be used."
+        }
+      }
+    },
+    {
+      "id": "color_area",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "同色区域",
+        "en": "Color Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<duchy>中由**相邻同色空格**连成的连续区域（大小 1-8 格）。玩家放下区域内最后一块空格时区域**完成**，立即双重计分：①按大小 1-8 格得 1-36 <vp>（1→1、2→3、3→6、4→10、5→15、6→21、7→28、8→36）；②按当前阶段得 10-2 <vp>（A=10、B=8、C=6、D=4、E=2）。两种特殊子类：<town>（米色，建筑限类）、<pasture>（浅绿，牲畜计分范围）。",
+        "en": "A contiguous region of adjacent same-color spaces in your <duchy> (size 1-8). When you place the area's final tile, the area is **completed** and scores twice: ① by size 1-8 → 1-36 <vp> (1→1, 2→3, 3→6, 4→10, 5→15, 6→21, 7→28, 8→36); ② by current phase → 10-2 <vp> (A=10, B=8, C=6, D=4, E=2). Two special subtypes: <town> (beige, building-kind limit) and <pasture> (light green, livestock scoring scope)."
+      },
+      "size": {
+        "type": "integer",
+        "description": {
+          "zh": "区域内的空格数（1-8）。完成时按大小对照表计<vp>。",
+          "en": "The number of spaces in the area (1-8). Used with the scoring table when completed."
+        }
+      },
+      "completed": {
+        "type": "boolean",
+        "default": false,
+        "description": {
+          "zh": "是否已完成（所有空格都有板块）。完成后不再变化。",
+          "en": "Whether the area is complete (all spaces filled). Complete areas never change again."
+        }
+      }
+    },
+    {
+      "id": "town",
+      "specifies": "<color_area>",
+      "name": {
+        "zh": "城镇",
+        "en": "Town"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "米色（beige）的<color_area>——放置<building_tile>的区域。每类建筑在**每个城镇**中至多 1 个（如一个城镇里不能有 2 个<building_bank>；不同城镇可以各放 1 个）。<monastery_tile_1>解除此限制。不同庄园的城镇数量和大小不同（大小 1-8 格）。",
+        "en": "A beige <color_area> — where <building_tile>s go. Each building kind may appear at most once **per town** (e.g. no two <building_bank>s in one town; different towns may each have one). <monastery_tile_1> lifts this limit. Different duchies have different numbers and sizes of towns (1-8 spaces)."
+      }
+    },
+    {
+      "id": "pasture",
+      "specifies": "<color_area>",
+      "name": {
+        "zh": "牧场",
+        "en": "Pasture"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "浅绿色（light_green）的<color_area>——放置<livestock_tile>的区域。牲畜计分范围：放置牲畜板块时，同一<pasture>内**同种动物**的已有板块一并计分（无需相邻；不同牧场的同种动物不计）。",
+        "en": "A light-green <color_area> — where <livestock_tile>s go. Livestock scoring scope: when placing a livestock tile, already-placed tiles of the **same animal** in the same <pasture> also score (adjacency not required; same animals in other pastures do not)."
+      }
+    },
+    {
+      "id": "key_space",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "存储格",
+        "en": "Key Space"
+      },
+      "abstract": false,
+      "aliases": {
+        "zh": [
+          "存储区"
+        ]
+      },
+      "description": {
+        "zh": "玩家面板左下角的 3 个<hex_tile>存储格——玩家的<ontology::player_holding>。从版图拿取的板块先放这里（**永远不能**直接放进<duchy>），放这里时不触发任何效果。3 格全满时若还要拿新板块，**必须先把一块已存板块弃到<game_box>**（永久移出游戏）；不能单纯为了丢弃而丢弃。存储格中的板块终局不计分。玩家口语常称「存储位」——注意与<goods_storage>区分：这里是放<hex_tile>板块的地方（3 格），<goods_storage>才是放<goods>的（最多 3 种颜色）。",
+        "en": "The 3 <hex_tile> storage spaces at the bottom left of your player board — your <ontology::player_holding>. Tiles taken from the board go here first (**never** directly into your <duchy>), and trigger no effects while stored. If all 3 are full when you take another tile, you **must first discard one stored tile to the <game_box>** (removed from the game for good); you may not discard without taking. Stored tiles score nothing at game end. Players colloquially call these 'storage spaces' — not to be confused with the <goods_storage>, which holds <goods> (max 3 colors); this holds <hex_tile>s (3 spaces)."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "存储格上限，固定为 3。满时拿新板块必须先弃一块。",
+          "en": "Key space capacity, fixed at 3. When full, taking a new tile forces a discard first."
+        }
+      },
+      "contains": {
+        "type": "<hex_tile>[]",
+        "description": {
+          "zh": "此<ontology::player_holding>存放的<ontology::object>类型：<hex_tile>。",
+          "en": "The <ontology::object> type this <ontology::player_holding> holds: <hex_tile>."
+        }
+      },
+      "<ontology::ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "从<ontology::player_zone>继承——存储格始终归属于一名<ontology::player>。",
+          "en": "Inherited from <ontology::player_zone> — key spaces always belong to one <ontology::player>."
+        }
+      },
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "goods_storage",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "货物存储区",
+        "en": "Goods Storage"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家面板右下角的 3 个<goods>存储格（每个格固定一种颜色）。最多存 **3 种不同颜色**的货物，同色叠放成一堆；已有 3 种颜色时，第 4 种颜色的货物**不能**收入（放<ship_tile>时这类货物留在仓库里）。开局从<goods_pool>随机拿 3 块放入（同色叠放）。",
+        "en": "The 3 <goods> storage spaces at the bottom right of your player board (each space is fixed to one color). You may store at most **3 different colors**, same colors stacked; a 4th color **cannot** be stored (when placing a <ship_tile>, such goods stay in the depot). At setup you randomly draw 3 tiles from the <goods_pool> into it (same colors stacked)."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 3,
+        "description": {
+          "zh": "存储上限：3 种颜色（每种颜色 1 格，同色数量不限）。",
+          "en": "Capacity: 3 colors (one space per color, unlimited stack per color)."
+        }
+      },
+      "contains": {
+        "type": "<goods>[]",
+        "description": {
+          "zh": "此<ontology::player_holding>存放的<ontology::object>类型：<goods>。",
+          "en": "The <ontology::object> type this <ontology::player_holding> holds: <goods>."
+        }
+      },
+      "<ontology::ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "从<ontology::player_zone>继承——货物存储区始终归属于一名<ontology::player>。",
+          "en": "Inherited from <ontology::player_zone> — goods storage always belongs to one <ontology::player>."
+        }
+      },
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "sold_goods_pile",
+      "specifies": "<ontology::discard_pile>",
+      "name": {
+        "zh": "已售货物堆",
+        "en": "Sold Goods Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家面板上的「已售货物」格——玩家的<ontology::discard_pile>。出售的<goods>整堆面朝下放在这里，**永远不能**再拿回或再出售。玩家随时可以查看自己的已售货物堆（<monastery_tile_15>、<monastery_tile_25>终局按此堆计分）。",
+        "en": "The 'sold goods' space on your player board — your <ontology::discard_pile>. Sold <goods> stacks go here face down, **never** to be recovered or sold again. You may look at your own sold goods pile at any time (<monastery_tile_15> and <monastery_tile_25> score from it at game end)."
+      },
+      "contains": {
+        "type": "<goods>[]",
+        "description": {
+          "zh": "此<ontology::discard_pile>存放的<ontology::object>类型：面朝下的已售<goods>。",
+          "en": "The <ontology::object> type this <ontology::discard_pile> holds: face-down sold <goods>."
+        }
+      },
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "silver_space",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "银币格",
+        "en": "Silver Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家面板右上角的银币存放格。玩家拥有的<silver>放在这里（公开可见）。",
+        "en": "The silver storage space at the top right of your player board. Your <silver> sits here (publicly visible)."
+      },
+      "contains": {
+        "type": "<silver>[]",
+        "description": {
+          "zh": "此<ontology::player_holding>存放的<ontology::object>类型：<silver>。",
+          "en": "The <ontology::object> type this <ontology::player_holding> holds: <silver>."
+        }
+      },
+      "<ontology::ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "从<ontology::player_zone>继承——银币格始终归属于一名<ontology::player>。",
+          "en": "Inherited from <ontology::player_zone> — the silver space always belongs to one <ontology::player>."
+        }
+      },
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "worker_space",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "工人格",
+        "en": "Worker Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家面板右上角的工人存放格。玩家拥有的<worker>放在这里（公开可见），使用后放回<worker_supply>。",
+        "en": "The worker storage space at the top right of your player board. Your <worker>s sit here (publicly visible); spent workers return to the <worker_supply>."
+      },
+      "contains": {
+        "type": "<worker>[]",
+        "description": {
+          "zh": "此<ontology::player_holding>存放的<ontology::object>类型：<worker>。",
+          "en": "The <ontology::object> type this <ontology::player_holding> holds: <worker>."
+        }
+      },
+      "<ontology::ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "从<ontology::player_zone>继承——工人格始终归属于一名<ontology::player>。",
+          "en": "Inherited from <ontology::player_zone> — the worker space always belongs to one <ontology::player>."
+        }
+      },
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "silver_supply",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "银币供应堆",
+        "en": "Silver Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>旁的公共银币<ontology::supply>，开局放全部 24 <silver>。玩家支付银币（如购买<black_depot>板块）时放回这里。注意：银币和<worker>物理上无数量上限，不足时可用替代品。",
+        "en": "The public <ontology::supply> of <silver> next to the <game_board>, holding all 24 at setup. Paid silver (e.g. buying from the <black_depot>) returns here. Note: silver and <worker>s are intentionally unlimited — substitutes may be used."
+      },
+      "contains": {
+        "type": "<silver>[]",
+        "description": {
+          "zh": "此<ontology::supply>存放的<ontology::object>类型：<silver>。",
+          "en": "The <ontology::object> type this <ontology::supply> holds: <silver>."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "worker_supply",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "工人供应堆",
+        "en": "Worker Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>旁的公共工人<ontology::supply>，开局放全部 26 <worker>。玩家使用工人改骰后放回这里。注意：银币和<worker>物理上无数量上限，不足时可用替代品。",
+        "en": "The public <ontology::supply> of <worker>s next to the <game_board>, holding all 26 at setup. Spent workers return here. Note: silver and <worker>s are intentionally unlimited — substitutes may be used."
+      },
+      "contains": {
+        "type": "<worker>[]",
+        "description": {
+          "zh": "此<ontology::supply>存放的<ontology::object>类型：<worker>。",
+          "en": "The <ontology::object> type this <ontology::supply> holds: <worker>."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "hex_tile_pool",
+      "specifies": "<ontology::pool>",
+      "name": {
+        "zh": "六边形板块堆",
+        "en": "Hex Tile Pool"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>旁面朝下分堆的<hex_tile>供应——按背面颜色分堆（6 色各一叠 + 黑色一叠）。每阶段开始时从中**随机**抽取板块补满 6 个编号<depot>（按各仓库对应颜色）与<black_depot>（黑色背面）。被移出游戏的板块**不回此堆**，去<game_box>。",
+        "en": "The face-down <hex_tile> piles next to the <game_board>, sorted by back color (six color piles + one black pile). At each phase start, tiles are drawn **at random** to refill the 6 numbered <depot>s (each by its color) and the <black_depot> (black backs). Removed tiles **never return** to these piles — they go to the <game_box>."
+      },
+      "contains": {
+        "type": "<hex_tile>[]",
+        "description": {
+          "zh": "此<ontology::pool>存放的<ontology::object>类型：<hex_tile>（按背面颜色分堆）。",
+          "en": "The <ontology::object> type this <ontology::pool> holds: <hex_tile> (piled by back color)."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "hidden"
+    },
+    {
+      "id": "goods_pool",
+      "specifies": "<ontology::pool>",
+      "name": {
+        "zh": "货物堆",
+        "en": "Goods Pool"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "开局时 42 块<goods>洗混后，5 叠各 5 块放上 A-E 的<phase_space>，**剩余 17 块**组成此面朝下的货物堆。每名玩家开局从<goods_pool>随机拿 3 块放入<goods_storage>；拿完后剩下的货物放回盒中、本局不再使用。",
+        "en": "After shuffling the 42 <goods> tiles at setup, 5 stacks of 5 go onto the <phase_space>s A-E and the **remaining 17** form this face-down pool. Each player randomly draws 3 tiles from the <goods_pool> into their <goods_storage> at setup; whatever remains goes back in the box, unused for this game."
+      },
+      "contains": {
+        "type": "<goods>[]",
+        "description": {
+          "zh": "此<ontology::pool>存放的<ontology::object>类型：<goods>（面朝下随机抽取）。",
+          "en": "The <ontology::object> type this <ontology::pool> holds: <goods> (drawn face down at random)."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "hidden"
+    },
+    {
+      "id": "phase_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "阶段格",
+        "en": "Phase Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>左上角的 5 个字母格（A-E）。开局各放 1 叠 5 块<goods>（面朝下洗混后分配）；每阶段开始时把当前阶段格的 5 块货物翻开，逐个放到 5 个<round_space>。格上的数字同时指示当前阶段的区域完成附加分（A=10、B=8、C=6、D=4、E=2）。",
+        "en": "The 5 lettered spaces (A-E) at the top left of the <game_board>. Each holds a stack of 5 <goods> at setup (dealt from the shuffled tiles); at each phase start the current space's 5 goods are turned face up and moved one by one onto the 5 <round_space>s. The space's number also shows the current phase's area-completion bonus (A=10, B=8, C=6, D=4, E=2)."
+      }
+    },
+    {
+      "id": "round_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "轮次格",
+        "en": "Round Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>上的 5 个方格，展示当前阶段的 5 块<goods>（每阶段开始时从当前<phase_space>翻开移入）。每轮开始时，起始玩家把最上面 1 块放到<white_die>点数对应的<depot>——轮次格上的剩余货物数量即当前阶段的剩余轮数（5 轮递减）。",
+        "en": "The 5 square spaces on the <game_board> showing the current phase's 5 <goods> (moved face up from the current <phase_space> at phase start). At each round's start, the starting player places the topmost tile onto the <depot> matching the <white_die> — the remaining tiles show how many rounds are left in the phase (5 and counting down)."
+      }
+    },
+    {
+      "id": "game_box",
+      "specifies": "<ontology::game_box>",
+      "name": {
+        "zh": "游戏盒",
+        "en": "Game Box"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "移出游戏的<hex_tile>与<goods>的去处。三种情况：①每阶段开始时，版图上（6 个<depot>与<black_depot>）剩余的<hex_tile>全部移入盒中（A 阶段跳过此步；**货物不移除**）；②<key_space>满时被迫弃置的板块；③开局发完后剩余的<goods>。盒中的板块本局不再出现。",
+        "en": "Where <hex_tile>s and <goods> go when removed from the game. Three cases: ① at each phase start, leftover <hex_tile>s on the board (the 6 <depot>s and the <black_depot>) are all moved into the box (skipped in phase A; **goods are never removed**); ② tiles forcibly discarded from a full <key_space>; ③ leftover <goods> after setup dealing. Tiles in the box never reappear this game."
+      }
+    },
+    {
+      "id": "score_track",
+      "specifies": "<ontology::score_track>",
+      "name": {
+        "zh": "分数轨",
+        "en": "Score Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>四周的环形<ontology::score_track>（0/100 共用一个起点格）。每名玩家的<playing_piece>在此记录<vp>。获得<vp>时棋子前进对应格数。**越过 0/100 起点**时触发<vp_track_lap>：第一次越过把<vp_tile>以 100 面放在起点格，第二次（累计 200 <vp>）翻到 200 面。",
+        "en": "The circular <ontology::score_track> around the <game_board> (0 and 100 share the start space). Each player's <playing_piece> records their <vp> here, advancing by the number scored. **Crossing the 0/100 start** fires <vp_track_lap>: the first crossing places your <vp_tile> 100-side up on the start space; the second (200 total <vp>) flips it to 200."
+      },
+      "slots": {
+        "type": "string",
+        "default": "0-100",
+        "description": {
+          "zh": "轨道槽位：0 到 100 共 101 格，0 与 100 为同一格（0/100 起点）。",
+          "en": "Track slots: 101 spaces from 0 to 100; 0 and 100 are the same space (the 0/100 start)."
+        }
+      },
+      "<ontology::lap_event>": "<vp_track_lap>"
+    },
+    {
+      "id": "bridge",
+      "specifies": "<ontology::track>",
+      "name": {
+        "zh": "石桥（回合顺位轨）",
+        "en": "Bridge (Turn Order Track)"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board>右上角的回合顺位<ontology::track>——从桥尾（起点）延伸向市中心。开局时起始玩家的<playing_piece>在 1 号格，其余玩家按顺位依次叠在下面。**每轮的行动顺序 = 桥上的位置**：越靠近市中心越先行动，同格叠堆时最上面的先行动（与座位顺序无关！）。放置<ship_tile>时自己的棋子向市中心前进 1 格（同格叠在上面）。最靠近市中心的玩家是下轮起始玩家（持<white_die>）。终局平手时，「桥上最靠后」的玩家获胜。",
+        "en": "The turn-order <ontology::track> at the top right of the <game_board>, running from the bridge end (start) toward the city center. At setup the starting player's <playing_piece> sits on space 1 with the others stacked below in order. **Each round's action order = bridge position**: closer to the city center acts earlier; in a stack, the top piece acts first (seating order is irrelevant!). Placing a <ship_tile> advances your piece 1 space toward the center (on top if occupied). The player closest to the center is next round's starting player (holding the <white_die>). In an end-game tie, the player **furthest back on the bridge** wins."
+      },
+      "slots": {
+        "type": "string",
+        "description": {
+          "zh": "轨道槽位：从桥尾 1 号格到市中心（共约 40 格，待核实）。棋子可同格叠放。",
+          "en": "Track slots: from space 1 at the bridge end to the city center (about 40 spaces, to be verified). Pieces may stack on the same space."
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "take_hex_tile",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "拿取六边形板块",
+        "en": "Take Hex Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种骰子行动之一。用一颗<player_die>：点数 = 编号仓库号（可用<worker>改骰），从该<depot>**任选 1 块**<hex_tile>放入自己**空的**<key_space>（永远不能直接放入<duchy>）。若 3 个<key_space>全满，必须**先弃掉一块已存板块**到<game_box>（永久移出游戏），再把新板块放入。满仓先弃的判定对**每次拿取**独立生效：用两颗骰子做两次拿取、每次都满，就各弃一块（一次拿取至多弃一块，一回合合计最多弃两块）。注意：拿取<building_church>/<building_market>/<building_carpenters_workshop>的免费拿取同样进<key_space>、同样适用满仓先弃。",
+        "en": "One of the four die actions. Spend one <player_die>: its value = the depot number (adjustable with <worker>s); take any 1 <hex_tile> from that <depot> into an **empty** <key_space> (never directly into your <duchy>). If all 3 <key_space>s are full, you must **first discard one stored tile** to the <game_box> (removed from the game for good) and then store the new one. The full-storage discard check applies **per take**: with two dice and two takes, discard once per full take (at most one per take, two per turn total). Note: the free takes granted by <building_church>/<building_market>/<building_carpenters_workshop> also go to a <key_space> and force the same discard when full."
+      },
+      "<ontology::condition>": "<depot_has_tile>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_direct",
+              "name": {
+                "zh": "直接放入",
+                "en": "Store Directly"
+              },
+              "<ontology::condition>": {
+                "zh": "<key_space_full> 不成立——3 个<key_space>至少有一个空位。",
+                "en": "<key_space_full> does not hold — at least one of the 3 <key_space>s is empty."
+              },
+              "<ontology::transfer>": {
+                "source": "this.target",
+                "destination": "<key_space>",
+                "<ontology::object>": "<hex_tile>",
+                "quantity": 1,
+                "description": {
+                  "zh": "把玩家选中的那块<hex_tile>从所选<depot>移入该玩家的<key_space>。",
+                  "en": "Moves the chosen <hex_tile> from the selected <depot> into the player's <key_space>."
+                }
+              }
+            },
+            {
+              "id": "discard_then_take",
+              "name": {
+                "zh": "满仓先弃再取",
+                "en": "Discard Then Take"
+              },
+              "<ontology::condition>": "<key_space_full>",
+              "options": [
+                {
+                  "id": "discard_one",
+                  "name": {
+                    "zh": "弃置一块",
+                    "en": "Discard One"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "<key_space>",
+                    "destination": "<game_box>",
+                    "<ontology::object>": "<hex_tile>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "玩家从 3 块已存板块中**任选 1 块**弃入<game_box>（永久移出游戏）——弃哪块由玩家决定。",
+                      "en": "The player **chooses 1** of their 3 stored tiles to discard into the <game_box> (removed from the game for good)."
+                    }
+                  }
+                },
+                {
+                  "id": "take_after_discard",
+                  "name": {
+                    "zh": "弃后放入",
+                    "en": "Take After Discard"
+                  },
+                  "do_after": [
+                    "discard_one"
+                  ],
+                  "<ontology::transfer>": {
+                    "source": "this.target",
+                    "destination": "<key_space>",
+                    "<ontology::object>": "<hex_tile>",
+                    "quantity": 1,
+                    "description": {
+                      "zh": "弃掉一块腾出空位后，把选中的<hex_tile>从所选<depot>放入<key_space>。",
+                      "en": "After discarding one stored tile, moves the chosen <hex_tile> from the selected <depot> into the freed <key_space>."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "place_hex_tile",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "放置六边形板块",
+        "en": "Place Hex Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种骰子行动之一。从自己的<key_space>选 1 块<hex_tile>放入<duchy>中一个**空的**<duchy_hex_space>：空格编号 = 骰子点数（可用<worker>改骰）、空格颜色 = 板块颜色、且与至少一块已放置板块相邻（开局第一块只需与起始<castle_tile>相邻）。放置后**立即**按板块类型触发效果（MATCH 分发）：<ship_tile>→<ship_effect>；<castle_tile>→<castle_effect>；<livestock_tile>→<livestock_effect>；<building_tile>→<building_effect>；<monastery_tile>→<monastery_effect>；<mine_tile>无即时效果。放置后还会检查：是否完成<color_area>（<area_completion_scoring>）、是否铺满某色全部空格（<color_completion_bonus>）。板块一旦放入庄园永久固定。",
+        "en": "One of the four die actions. Choose 1 <hex_tile> from your <key_space> and place it on an **empty** <duchy_hex_space> in your <duchy>: the space's number = your die value (adjustable with <worker>s), its color = the tile's color, and it must be adjacent to at least one placed tile (your first placement only needs to touch the starting <castle_tile>). After placement, the tile's type **immediately** triggers its effect (MATCH dispatch): <ship_tile>→<ship_effect>; <castle_tile>→<castle_effect>; <livestock_tile>→<livestock_effect>; <building_tile>→<building_effect>; <monastery_tile>→<monastery_effect>; <mine_tile> has no immediate effect. Then check: does this complete a <color_area> (<area_completion_scoring>)? Does it cover every space of a color (<color_completion_bonus>)? Placed tiles are permanent."
+      },
+      "<ontology::condition>": "<matching_space_available>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "move_tile_to_duchy",
+              "name": {
+                "zh": "板块移入庄园",
+                "en": "Move Tile To Duchy"
+              },
+              "<ontology::transfer>": {
+                "source": "<key_space>",
+                "destination": "<duchy>",
+                "<ontology::object>": "<hex_tile>",
+                "quantity": 1,
+                "description": {
+                  "zh": "把玩家选中的<hex_tile>从<key_space>移到<duchy>的匹配空格上。",
+                  "en": "Moves the chosen <hex_tile> from the <key_space> onto the matching space in the <duchy>."
+                }
+              }
+            },
+            {
+              "id": "resolve_placement_effect",
+              "name": {
+                "zh": "结算放置效果",
+                "en": "Resolve Placement Effect"
+              },
+              "do_after": [
+                "move_tile_to_duchy"
+              ],
+              "options": [
+                "<ship_effect>",
+                "<castle_effect>",
+                "<livestock_effect>",
+                "<building_effect>",
+                "<monastery_effect>"
+              ],
+              "type": "<ontology::multiple_choice_enum.MATCH>",
+              "<ontology::condition>": {
+                "zh": "匹配依据：刚放置板块的类型（颜色）。<mine_tile>不匹配任何候选项——无即时效果，直接跳过。",
+                "en": "Match basis: the type (color) of the just-placed tile. <mine_tile> matches no option — no immediate effect, skipped."
+              }
+            },
+            {
+              "id": "check_area_completion",
+              "name": {
+                "zh": "检查区域完成",
+                "en": "Check Area Completion"
+              },
+              "do_after": [
+                "move_tile_to_duchy"
+              ],
+              "<ontology::condition>": "<area_completed>",
+              "options": [
+                "<area_completion_scoring>",
+                "<color_completion_bonus>"
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "sell_goods",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "出售货物",
+        "en": "Sell Goods"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种骰子行动之一。用一颗<player_die>：点数决定出售**哪种颜色**的<goods>。把<goods_storage>中该颜色的**整堆**货物全部面朝下放到<sold_goods_pile>——**必须整堆卖**，不能留一部分。收益：+1 <silver>（无论卖几块；<monastery_tile_3>改为 2 银、<monastery_tile_4>额外 1 工人）+ 每块 2/3/4 <vp>（2/3/4 人局）。出售也可靠<building_warehouse>免费触发（颜色自选）。未售出的货物终局每块 1 <vp>。",
+        "en": "One of the four die actions. Spend one <player_die>: its value determines **which color** of <goods> may be sold. Move the **whole stack** of that color from your <goods_storage> face down onto your <sold_goods_pile> — you **must sell the complete stack**, never part of it. Gains: +1 <silver> (regardless of stack size; <monastery_tile_3> makes it 2 silver, <monastery_tile_4> adds 1 worker) + 2/3/4 <vp> per tile (2/3/4 players). Selling can also be triggered free by <building_warehouse> (any color). Unsold goods score 1 <vp> each at game end."
+      },
+      "<ontology::condition>": "<has_goods_of_die_color>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "move_sold_goods",
+              "name": {
+                "zh": "货物移入已售堆",
+                "en": "Move Sold Goods"
+              },
+              "<ontology::transfer>": {
+                "source": "<goods_storage>",
+                "destination": "<sold_goods_pile>",
+                "<ontology::object>": {
+                  "<goods>": {
+                    "face": "face_down"
+                  }
+                },
+                "quantity": {
+                  "zh": "该颜色货物整堆——必须全部卖出。",
+                  "en": "The whole stack of that color — all of it must be sold."
+                },
+                "description": {
+                  "zh": "把骰子点数对应颜色的整堆<goods>面朝下移入<sold_goods_pile>。",
+                  "en": "Moves the whole stack of the die-color <goods> face down into the <sold_goods_pile>."
+                }
+              }
+            },
+            {
+              "id": "gain_silver",
+              "name": {
+                "zh": "获得银币",
+                "en": "Gain Silver"
+              },
+              "do_after": [
+                "move_sold_goods"
+              ],
+              "<ontology::transfer>": {
+                "source": "<silver_supply>",
+                "destination": "<silver_space>",
+                "<ontology::object>": "<silver>",
+                "quantity": 1,
+                "description": {
+                  "zh": "从<silver_supply>拿 1 <silver>放入<silver_space>（<monastery_tile_3>改为 2 银；<monastery_tile_4>另得 1 <worker>）。",
+                  "en": "Take 1 <silver> from the <silver_supply> into your <silver_space> (<monastery_tile_3>: 2 silver; <monastery_tile_4>: also 1 <worker>)."
+                }
+              }
+            },
+            {
+              "id": "score_sold_goods",
+              "name": {
+                "zh": "售货计分",
+                "en": "Score Sold Goods"
+              },
+              "do_after": [
+                "move_sold_goods"
+              ],
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": {
+                  "zh": "2/3/4 分 × 本次售出块数（按 2/3/4 人局）。",
+                  "en": "2/3/4 points × the number of tiles sold this time (2/3/4-player game)."
+                },
+                "description": {
+                  "zh": "<playing_piece>在<score_track>上前进对应格数。",
+                  "en": "Advance the <playing_piece> that many spaces on the <score_track>."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "take_workers",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "拿取工人片",
+        "en": "Take Worker Chips"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种骰子行动之一。用一颗<player_die>——**点数无关紧要**（任何点数都可以执行）。从<worker_supply>拿 2 个<worker>放入<worker_space>。<monastery_tile_14>改为 4 个；<monastery_tile_13>额外 +1 <silver>。这是兜底行动：即使其他行动都不适用，每颗骰子也总能用来拿工人。",
+        "en": "One of the four die actions. Spend one <player_die> — **the value is irrelevant** (any value works). Take 2 <worker>s from the <worker_supply> into your <worker_space>. <monastery_tile_14> makes it 4; <monastery_tile_13> adds 1 <silver>. This is the fallback action: even when nothing else applies, every die can always take workers."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<worker_supply>",
+            "destination": "<worker_space>",
+            "<ontology::object>": "<worker>",
+            "quantity": 2,
+            "description": {
+              "zh": "从<worker_supply>拿 2 个<worker>放入<worker_space>。",
+              "en": "Take 2 <worker>s from the <worker_supply> into your <worker_space>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "buy_from_black_depot",
+      "specifies": "<ontology::action>",
+      "name": {
+        "zh": "从黑色仓库购买板块",
+        "en": "Buy From Black Depot"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "回合内的**额外行动**（不占用骰子）：支付 2 <silver>，从<black_depot>**任选 1 块**<hex_tile>放入空的<key_space>（满仓同样必须先弃一块）。**每回合至多 1 次**，可在本回合任意时刻进行——两次骰子行动之前、之间或之后。<monastery_tile_6>：可花 2 个<worker>代替 2 银，且可从**所有**仓库任选板块。",
+        "en": "An **extra action** within your turn (no die spent): pay 2 <silver> and take **any 1** <hex_tile> from the <black_depot> into an empty <key_space> (if full, discard one first as usual). **At most once per turn**, at any point during your turn — before, between, or after your two die actions. <monastery_tile_6>: pay 2 <worker>s instead of 2 silver, and choose from **all** depots."
+      },
+      "<ontology::condition>": "<has_2_silver>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<silver_space>",
+            "destination": "<silver_supply>",
+            "<ontology::object>": "<silver>",
+            "quantity": 2,
+            "description": {
+              "zh": "支付 2 <silver>——从<silver_space>放回<silver_supply>。<monastery_tile_6>：改付 2 个<worker>。",
+              "en": "Pay 2 <silver> — from your <silver_space> back to the <silver_supply>. <monastery_tile_6>: pay 2 <worker>s instead."
+            }
+          }
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<black_depot>",
+            "destination": "<key_space>",
+            "<ontology::object>": "<hex_tile>",
+            "quantity": 1,
+            "description": {
+              "zh": "把玩家选中的 1 块<hex_tile>从<black_depot>移入该玩家的<key_space>（满仓先弃一块，同<take_hex_tile>）。",
+              "en": "Moves the chosen <hex_tile> from the <black_depot> into the player's <key_space> (discard first if full, as in <take_hex_tile>)."
+            }
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "ship_effect",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "船板块放置效果",
+        "en": "Ship Placement Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置<ship_tile>时立即触发的<ontology::instant_effect>，两件事：①从**任意一个**<depot>（不必匹配骰子点数）拿走该仓库**全部**<goods>放入<goods_storage>——同色叠放、最多 3 种颜色，存不下的货物留在仓库；②自己在<bridge>上的<playing_piece>向市中心前进 1 格（同格叠在最上面），若因此成为下轮起始玩家则获得<white_die>。有<monastery_tile_5>时可再从一个相邻仓库拿走全部货物。",
+        "en": "The <ontology::instant_effect> fired when a <ship_tile> is placed — two things: ① take **all** <goods> from any one <depot> (not necessarily matching your die) into your <goods_storage> — same colors stacked, at most 3 colors stored, unstorable goods stay in the depot; ② advance your <playing_piece> 1 space on the <bridge> toward the city center (stack on top if occupied); if you thereby become next round's starting player, take the <white_die>. With <monastery_tile_5>, also take all goods from one adjacent depot."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_all_goods",
+              "name": {
+                "zh": "取走全部货物",
+                "en": "Take All Goods"
+              },
+              "<ontology::transfer>": {
+                "source": "this.target",
+                "destination": "<goods_storage>",
+                "<ontology::object>": "<goods>",
+                "quantity": {
+                  "zh": "所选仓库的全部货物；受 3 种颜色上限约束，第 4 种颜色的货物留在仓库。",
+                  "en": "All goods in the chosen depot; subject to the 3-color storage limit — goods of a 4th color stay in the depot."
+                },
+                "ownership_change": true,
+                "description": {
+                  "zh": "把玩家任选的一个<depot>中的全部<goods>移入该玩家的<goods_storage>。",
+                  "en": "Moves all <goods> from one <depot> of the player's choice into their <goods_storage>."
+                }
+              }
+            },
+            {
+              "id": "advance_on_bridge",
+              "name": {
+                "zh": "桥上推进",
+                "en": "Advance On Bridge"
+              },
+              "do_after": [
+                "take_all_goods"
+              ],
+              "<ontology::push_track>": {
+                "<ontology::track>": "<bridge>",
+                "step": 1,
+                "description": {
+                  "zh": "该玩家的<playing_piece>在<bridge>上向市中心前进 1 格；目标格有棋子则叠在最上面。",
+                  "en": "Advance the player's <playing_piece> 1 space toward the city center on the <bridge>; stack on top if occupied."
+                }
+              }
+            },
+            {
+              "id": "maybe_take_white_die",
+              "name": {
+                "zh": "可能获得白骰",
+                "en": "Maybe Take White Die"
+              },
+              "do_after": [
+                "advance_on_bridge"
+              ],
+              "<ontology::condition>": "<new_starting_player>",
+              "<ontology::transfer>": {
+                "source": "前起始玩家处",
+                "destination": "this.target",
+                "<ontology::object>": "<white_die>",
+                "quantity": 1,
+                "description": {
+                  "zh": "若该玩家现在最靠近市中心（成为下轮起始玩家），<white_die>移交给他。",
+                  "en": "If this player is now closest to the city center (next round's starting player), the <white_die> passes to them."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "castle_effect",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "城堡板块放置效果",
+        "en": "Castle Placement Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置<castle_tile>时立即触发的<ontology::instant_effect>：**立即获得一次额外行动**——如同有一颗任意点数的骰子。可用来执行任一种骰子行动（拿取/放置板块、出售货物、拿取 2 工人）。额外行动可反复触发：放置多块城堡（或用<building_town_hall>连放）就能连续行动。",
+        "en": "The <ontology::instant_effect> fired when a <castle_tile> is placed: **immediately gain an extra action** — as if you had a die of any value. Use it for any die action (take/place a tile, sell goods, take 2 workers). Extra actions chain: placing multiple castles (or chain-placing via <building_town_hall>) lets you act repeatedly."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "当前玩家立即获得一次额外行动（任意点数），行动选项同正常回合。",
+            "en": "The current player immediately gains one extra action (any die value), with the same options as a normal turn action."
+          }
+        }
+      }
+    },
+    {
+      "id": "livestock_effect",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "牲畜板块放置效果",
+        "en": "Livestock Placement Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置<livestock_tile>时立即触发的<ontology::instant_effect>：**立即计分**——板块上的牲畜数（2-4）= 基本<vp>，加上同一<pasture>内**同种动物**已有板块的牲畜数。同牧场即可，无需相邻；不同牧场的同种动物不计。例：在已有 4 牛的牧场放 4 牛板块 → 4+4+3=11 分；放 2 羊 → 2+3=5 分。<monastery_tile_7>：每块计分牲畜额外 +1 分。",
+        "en": "The <ontology::instant_effect> fired when a <livestock_tile> is placed: **score immediately** — the number on the tile (2-4) as base <vp>, plus the numbers on already-placed tiles of the **same animal** in the same <pasture>. Same pasture suffices, adjacency not required; same animals in other pastures don't count. Example: placing a 4-cattle tile in a pasture with a 4-cattle tile → 4+4+3=11; placing a 2-sheep → 2+3=5. <monastery_tile_7>: each scoring livestock tile gets +1."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "<ontology::track>": "<score_track>",
+            "step": {
+              "zh": "新板块牲畜数 + 同一<pasture>内同种动物已有板块牲畜数（<monastery_tile_7>：每块再 +1）。",
+              "en": "The new tile's livestock count + the counts on same-animal tiles already in the same <pasture> (<monastery_tile_7>: +1 each)."
+            },
+            "description": {
+              "zh": "<playing_piece>在<score_track>上前进对应格数。",
+              "en": "Advance the <playing_piece> that many spaces on the <score_track>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "building_effect",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "建筑板块放置效果",
+        "en": "Building Placement Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置<building_tile>时立即触发的<ontology::instant_effect>——**立即且仅一次**，不需要额外骰子或行动。按建筑种类（MATCH）执行对应效果：<building_market>免费拿船/牲畜、<building_carpenters_workshop>免费拿建筑、<building_church>免费拿矿/修道院/城堡、<building_warehouse>免费卖一种货物、<building_boarding_house>得 4 <worker>、<building_bank>得 2 <silver>、<building_town_hall>立即再放置一块任意颜色板块、<building_watchtower>得 4 <vp>。若放置时无法使用效果（如仓库全空），效果作废、之后不能补用。",
+        "en": "The <ontology::instant_effect> fired when a <building_tile> is placed — **immediately and only once**, with no extra die or action. The matching effect by building kind (MATCH): <building_market> takes a free ship/livestock, <building_carpenters_workshop> a free building, <building_church> a free mine/monastery/castle, <building_warehouse> sells one goods type for free, <building_boarding_house> gains 4 <worker>s, <building_bank> gains 2 <silver>, <building_town_hall> immediately places another tile of any color, <building_watchtower> scores 4 <vp>. If the effect cannot be used at placement time (e.g. all depots empty), it is lost forever."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            "<building_market>",
+            "<building_carpenters_workshop>",
+            "<building_church>",
+            "<building_warehouse>",
+            "<building_boarding_house>",
+            "<building_bank>",
+            "<building_town_hall>",
+            "<building_watchtower>"
+          ],
+          "type": "<ontology::multiple_choice_enum.MATCH>",
+          "<ontology::condition>": {
+            "zh": "匹配依据：刚放置建筑板块的种类（building_type）。每种建筑的具体效果见对应概念。",
+            "en": "Match basis: the kind (building_type) of the just-placed building tile. Each kind's effect is described in its own concept."
+          }
+        }
+      }
+    },
+    {
+      "id": "monastery_effect",
+      "specifies": "<ontology::instant_effect>",
+      "name": {
+        "zh": "修道院板块放置效果",
+        "en": "Monastery Placement Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置<monastery_tile>时立即触发的<ontology::instant_effect>：该板块的效果**开始生效**。26 块修道院各不相同——多数是持续效果（从此改变规则，如<monastery_tile_1>同城多建筑、<monastery_tile_2>每矿多工人、<monastery_tile_8>工人改骰 ±2），少数只在终局计分（如<monastery_tile_15>、<monastery_tile_24>）。只有放入<duchy>的修道院生效；<key_space>里的不计。",
+        "en": "The <ontology::instant_effect> fired when a <monastery_tile> is placed: that tile's effect **becomes active**. The 26 monasteries are all different — most are continuous (changing the rules from now on, e.g. <monastery_tile_1> multiple buildings per town, <monastery_tile_2> a worker per mine, <monastery_tile_8> workers adjust ±2), a few score only at game end (e.g. <monastery_tile_15>, <monastery_tile_24>). Only monasteries placed in the <duchy> count; those in the <key_space> do not."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "该<monastery_tile>的效果开始生效（持续效果立即改变规则；终局计分类记入终局结算）。",
+            "en": "The <monastery_tile>'s effect becomes active (continuous effects change the rules at once; final-scoring tiles register for endgame settlement)."
+          }
+        }
+      }
+    },
+    {
+      "id": "mine_income",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "矿收入",
+        "en": "Mine Income"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "**每阶段结束**时结算的<ontology::trigger>：每位玩家庄园中每个<mine_tile>得 1 <silver>（从<silver_supply>放入<silver_space>）。矿是唯一在阶段结束时产生收入的板块（<monastery_tile_2>还会给每矿额外 1 个<worker>，见<monastery_mine_worker_income>）。",
+        "en": "The <ontology::trigger> settled at the end of **each phase**: every player gains 1 <silver> per <mine_tile> in their duchy (from the <silver_supply> into their <silver_space>). Mines are the only tiles generating phase-end income (<monastery_tile_2> adds 1 <worker> per mine, see <monastery_mine_worker_income>)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<silver_supply>",
+            "destination": "<silver_space>",
+            "<ontology::object>": "<silver>",
+            "quantity": {
+              "zh": "该玩家<duchy>中<mine_tile>的数量。",
+              "en": "The number of <mine_tile>s in the player's <duchy>."
+            },
+            "description": {
+              "zh": "按庄园中矿的数量发<silver>（每位玩家各结算一次）。",
+              "en": "Pays <silver> per mine in the duchy (settled once for each player)."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "monastery_mine_worker_income",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "修道院 2 号矿工人收入",
+        "en": "Monastery 2 Mine Worker Income"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<monastery_tile_2>带来的**每阶段结束**结算：拥有该板块的玩家，庄园中每个<mine_tile>除正常 1 <silver>外额外得 1 <worker>。",
+        "en": "The **phase-end** settlement from <monastery_tile_2>: the owning player gains 1 <worker> per <mine_tile> in their duchy, in addition to the usual <silver>."
+      },
+      "<ontology::condition>": "<has_monastery_tile_2>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<worker_supply>",
+            "destination": "<worker_space>",
+            "<ontology::object>": "<worker>",
+            "quantity": {
+              "zh": "该玩家<duchy>中<mine_tile>的数量。",
+              "en": "The number of <mine_tile>s in the player's <duchy>."
+            },
+            "description": {
+              "zh": "按庄园中矿的数量额外发<worker>。",
+              "en": "Pays <worker>s per mine in the duchy."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "area_completion_scoring",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "区域完成计分",
+        "en": "Area Completion Scoring"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家放下某<color_area>最后一块空格时触发的<ontology::trigger>，**双重计分**：①按区域大小（1-8 格）得 1-36 <vp>——1→1、2→3、3→6、4→10、5→15、6→21、7→28、8→36；②按当前阶段得附加分——A=10、B=8、C=6、D=4、E=2（与区域大小无关）。",
+        "en": "The <ontology::trigger> fired when a player fills the last space of a <color_area> — **double scoring**: ① by area size (1-8 spaces) → 1-36 <vp>: 1→1, 2→3, 3→6, 4→10, 5→15, 6→21, 7→28, 8→36; ② by current phase → A=10, B=8, C=6, D=4, E=2 (independent of size)."
+      },
+      "<ontology::condition>": "<area_completed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::push_track>": {
+            "<ontology::track>": "<score_track>",
+            "step": {
+              "zh": "区域大小对应分（1-36）+ 当前阶段附加分（10-2）。",
+              "en": "Size-based points (1-36) + current-phase bonus (10-2)."
+            },
+            "description": {
+              "zh": "<playing_piece>在<score_track>上前进对应格数。",
+              "en": "Advance the <playing_piece> that many spaces on the <score_track>."
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "color_completion_bonus",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "颜色完成奖励",
+        "en": "Color Completion Bonus"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家铺满<duchy>中**某种颜色的全部空格**时触发的<ontology::trigger>（例如放上第 3 个矿或第 6 个修道院）。奖励<bonus_tile>：**第一个**完成该颜色的玩家拿大板块并立即计分（2 人局 5 <vp>、3 人局 6、4 人局 7）；**第二个**完成的拿小板块（2/3/4 <vp>）；第三、四个没有。",
+        "en": "The <ontology::trigger> fired when a player covers **every space of one color** in their <duchy> (e.g. placing their 3rd mine or 6th monastery). Rewards a <bonus_tile>: the **first** player to complete that color takes the large tile and scores it immediately (5 <vp> with 2 players, 6 with 3, 7 with 4); the **second** takes the small tile (2/3/4 <vp>); the third and fourth get nothing."
+      },
+      "<ontology::condition>": "<color_covered>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "take_large_bonus",
+              "name": {
+                "zh": "拿大奖励板块",
+                "en": "Take Large Bonus"
+              },
+              "<ontology::condition>": {
+                "zh": "此玩家是**第一个**铺满该颜色的玩家。",
+                "en": "This player is the **first** to complete this color."
+              },
+              "options": [
+                {
+                  "id": "move_large_bonus_tile",
+                  "name": {
+                    "zh": "移入大板块",
+                    "en": "Move Large Bonus Tile"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "<game_board>",
+                    "destination": "this.target",
+                    "<ontology::object>": {
+                      "<bonus_tile>": {
+                        "size": "large"
+                      }
+                    },
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从<game_board>取走该颜色的大<bonus_tile>，放在该玩家面板旁。",
+                      "en": "Takes the color's large <bonus_tile> from the <game_board> and places it next to the player's board."
+                    }
+                  }
+                },
+                {
+                  "id": "score_large_bonus",
+                  "name": {
+                    "zh": "大板块计分",
+                    "en": "Score Large Bonus"
+                  },
+                  "do_after": [
+                    "move_large_bonus_tile"
+                  ],
+                  "<ontology::push_track>": {
+                    "<ontology::track>": "<score_track>",
+                    "step": {
+                      "zh": "5/6/7 分（按 2/3/4 人局）。",
+                      "en": "5/6/7 points (2/3/4-player game)."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            },
+            {
+              "id": "take_small_bonus",
+              "name": {
+                "zh": "拿小奖励板块",
+                "en": "Take Small Bonus"
+              },
+              "<ontology::condition>": {
+                "zh": "此玩家是**第二个**铺满该颜色的玩家（大板块已被取走）。",
+                "en": "This player is the **second** to complete this color (the large tile is already taken)."
+              },
+              "options": [
+                {
+                  "id": "move_small_bonus_tile",
+                  "name": {
+                    "zh": "移入小板块",
+                    "en": "Move Small Bonus Tile"
+                  },
+                  "<ontology::transfer>": {
+                    "source": "<game_board>",
+                    "destination": "this.target",
+                    "<ontology::object>": {
+                      "<bonus_tile>": {
+                        "size": "small"
+                      }
+                    },
+                    "quantity": 1,
+                    "description": {
+                      "zh": "从<game_board>取走该颜色的小<bonus_tile>，放在该玩家面板旁。",
+                      "en": "Takes the color's small <bonus_tile> from the <game_board> and places it next to the player's board."
+                    }
+                  }
+                },
+                {
+                  "id": "score_small_bonus",
+                  "name": {
+                    "zh": "小板块计分",
+                    "en": "Score Small Bonus"
+                  },
+                  "do_after": [
+                    "move_small_bonus_tile"
+                  ],
+                  "<ontology::push_track>": {
+                    "<ontology::track>": "<score_track>",
+                    "step": {
+                      "zh": "2/3/4 分（按 2/3/4 人局）。",
+                      "en": "2/3/4 points (2/3/4-player game)."
+                    }
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "vp_track_lap",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "分轨绕圈",
+        "en": "Score Track Lap"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<score_track>的圈事件（specifies <ontology::lap_event> 的实例）：<playing_piece>沿推进方向越过 0/100 起点格时触发。第一次越过：把<vp_tile>以 100 面朝上放在起点格；第二次越过（总<vp>达 200）：把<vp_tile>翻到 200 面。",
+        "en": "The <score_track>'s lap event (an instance specifying <ontology::lap_event>): fires when a <playing_piece> crosses the 0/100 start space along the advance direction. First crossing: place the <vp_tile> 100-side up on the start space; second crossing (200 total <vp>): flip it to the 200 side."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "第一次越过 0/100：把该玩家的<vp_tile>以 100 面朝上放到起点格；第二次越过：翻到 200 面。",
+            "en": "First crossing: place the player's <vp_tile> 100-side up on the start space; second crossing: flip it to 200."
+          }
+        }
+      }
+    },
+    {
+      "id": "final_scoring",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "终局计分",
+        "en": "Final Scoring"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏结束（E 阶段完成、25 轮打完，即<phase_e_completed>）时触发的<ontology::trigger>。每位玩家的剩余物资换算<vp>：①<goods_storage>中每块未售<goods> +1；②<silver_space>中每<silver> +1；③每 2 个<worker> +1；④<duchy>中已放置的终局计分类<monastery_tile>按各自规则计分（**只有放进庄园的算**，<key_space>里的不算）。全部结算后按<most_vp_wins>判定胜者。",
+        "en": "The <ontology::trigger> fired at game end (phase E complete, 25 rounds played — <phase_e_completed>). Each player's leftover materials convert to <vp>: ① every unsold <goods> in the <goods_storage>: +1; ② every <silver> in the <silver_space>: +1; ③ every 2 <worker>s: +1; ④ final-scoring <monastery_tile>s placed in the <duchy> score per their own rules (**only placed ones count**, <key_space> tiles do not). After settling everything, victory is adjudicated by <most_vp_wins>."
+      },
+      "<ontology::condition>": "<phase_e_completed>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "score_unsold_goods",
+              "name": {
+                "zh": "未售货物计分",
+                "en": "Score Unsold Goods"
+              },
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": {
+                  "zh": "未售<goods>每块 1 分。",
+                  "en": "1 point per unsold <goods> tile."
+                }
+              }
+            },
+            {
+              "id": "score_silver",
+              "name": {
+                "zh": "银币计分",
+                "en": "Score Silver"
+              },
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": {
+                  "zh": "每<silver> 1 分。",
+                  "en": "1 point per <silver>."
+                }
+              }
+            },
+            {
+              "id": "score_workers",
+              "name": {
+                "zh": "工人计分",
+                "en": "Score Workers"
+              },
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": {
+                  "zh": "每 2 个<worker> 1 分（向下取整）。",
+                  "en": "1 point per 2 <worker>s (rounded down)."
+                }
+              }
+            },
+            {
+              "id": "score_monastery_tiles",
+              "name": {
+                "zh": "修道院瓷砖计分",
+                "en": "Score Monastery Tiles"
+              },
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": {
+                  "zh": "按<duchy>中各终局计分类<monastery_tile>的规则分别计分（如<monastery_tile_15>、<monastery_tile_24>、<monastery_tile_25>、<monastery_tile_26>及 8 块建筑计分瓷砖）。",
+                  "en": "Score each final-scoring <monastery_tile> in the <duchy> per its own rule (e.g. <monastery_tile_15>, <monastery_tile_24>, <monastery_tile_25>, <monastery_tile_26>, and the 8 building-scoring tiles)."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "discard_stored_tile",
+      "specifies": "<ontology::trigger>",
+      "name": {
+        "zh": "弃置存储板块",
+        "en": "Discard Stored Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<key_space>强制上限的执行机制：3 个存储格全满时，若还要拿新<hex_tile>（无论骰子行动还是免费拿取、无论来自<depot>还是<black_depot>），**必须先**把一块已存板块弃入<game_box>（永久移出游戏，弃哪块由玩家决定）。不能在没有拿取的情况下单纯丢弃。",
+        "en": "The enforcement mechanism for the <key_space> capacity: when all 3 storage spaces are full and you take another <hex_tile> (whether by die action or free take, from a <depot> or the <black_depot>), you **must first** discard one stored tile into the <game_box> (removed from the game for good; you choose which). You may not discard without taking."
+      },
+      "<ontology::condition>": "<key_space_full>",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "<key_space>",
+            "destination": "<game_box>",
+            "<ontology::object>": "<hex_tile>",
+            "quantity": 1,
+            "description": {
+              "zh": "玩家从 3 块已存板块中任选 1 块弃入<game_box>。",
+              "en": "The player chooses 1 of their 3 stored tiles to discard into the <game_box>."
+            }
+          }
+        }
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "id": "depot_has_tile",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "仓库有板块",
+        "en": "Depot Has Tiles"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "骰子点数对应的<depot>中至少还有 1 块<hex_tile>。是<take_hex_tile>的可用条件。",
+        "en": "The <depot> matching your die value holds at least 1 <hex_tile>. Availability condition of <take_hex_tile>."
+      }
+    },
+    {
+      "id": "key_space_full",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "存储格已满",
+        "en": "Key Spaces Full"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家的 3 个<key_space>全部被<hex_tile>占满。满仓时拿新板块必须先弃一块（<discard_stored_tile>）。",
+        "en": "All 3 of the player's <key_space>s are occupied by <hex_tile>s. When full, taking a new tile forces a discard first (<discard_stored_tile>)."
+      }
+    },
+    {
+      "id": "matching_space_available",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "存在匹配空位",
+        "en": "Matching Space Available"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家<key_space>中有板块，且<duchy>中存在满足全部放置条件的空<duchy_hex_space>：空格编号 = 骰子点数（改骰后）、空格颜色 = 板块颜色、与至少一块已放置板块相邻（开局第一块只需与起始<castle_tile>相邻）。是<place_hex_tile>的可用条件。",
+        "en": "The player has a tile in their <key_space> and their <duchy> has an empty <duchy_hex_space> satisfying all placement rules: space number = die value (after adjustment), space color = tile color, adjacent to at least one placed tile (your first placement only needs to touch the starting <castle_tile>). Availability condition of <place_hex_tile>."
+      }
+    },
+    {
+      "id": "no_same_building_in_town",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "城镇内无同种建筑",
+        "en": "No Same Building In Town"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置<building_tile>的合法性条件：目标<town>（板块所在的米色<color_area>）内还没有同种建筑。每个城镇每类建筑至多 1 个；有<monastery_tile_1>时此限制解除。",
+        "en": "Legality condition for placing a <building_tile>: the target <town> (the beige <color_area> the tile joins) contains no building of the same kind yet. At most one of each kind per town; <monastery_tile_1> lifts this limit."
+      }
+    },
+    {
+      "id": "has_goods_of_die_color",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有对应颜色货物",
+        "en": "Has Goods Of Die Color"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家<goods_storage>中至少有 1 块骰子点数对应颜色的<goods>。是<sell_goods>的可用条件。",
+        "en": "The player's <goods_storage> holds at least 1 <goods> of the color matching their die value. Availability condition of <sell_goods>."
+      }
+    },
+    {
+      "id": "has_2_silver",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "有 2 银币",
+        "en": "Has 2 Silver"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家<silver_space>中至少有 2 <silver>。是<buy_from_black_depot>的可用条件（<monastery_tile_6>：改为有 2 个<worker>）。",
+        "en": "The player's <silver_space> holds at least 2 <silver>. Availability condition of <buy_from_black_depot> (<monastery_tile_6>: having 2 <worker>s instead)."
+      }
+    },
+    {
+      "id": "area_completed",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "区域完成",
+        "en": "Area Completed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "刚放置的板块填上了某<color_area>（相邻同色空格组成的区域）的**最后一个空位**——该区域从此完成。触发<area_completion_scoring>。",
+        "en": "The just-placed tile filled the **last empty space** of a <color_area> (a region of adjacent same-color spaces) — the area is now complete. Fires <area_completion_scoring>."
+      }
+    },
+    {
+      "id": "color_covered",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "颜色铺满",
+        "en": "Color Covered"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家已用板块铺满<duchy>中**某种颜色的全部空格**（例如放上第 3 个<mine_tile>或第 6 个<monastery_tile>）。触发<color_completion_bonus>。",
+        "en": "The player has covered **every space of one color** in their <duchy> (e.g. placing their 3rd <mine_tile> or 6th <monastery_tile>). Fires <color_completion_bonus>."
+      }
+    },
+    {
+      "id": "new_starting_player",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "成为新起始玩家",
+        "en": "New Starting Player"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家在<bridge>上的<playing_piece>推进后**最靠近市中心**（同格时在最上面）——即成为下一轮的起始玩家，获得<white_die>。",
+        "en": "After advancing, the player's <playing_piece> is **closest to the city center** on the <bridge> (topmost if stacked) — making them next round's starting player, who receives the <white_die>."
+      }
+    },
+    {
+      "id": "has_monastery_tile_2",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "拥有修道院 2 号",
+        "en": "Owns Monastery Tile 2"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家<duchy>中已放置<monastery_tile_2>。满足时每阶段结束按矿数额外得<worker>（<monastery_mine_worker_income>）。",
+        "en": "The player has placed <monastery_tile_2> in their <duchy>. When satisfied, they gain extra <worker>s per mine at each phase end (<monastery_mine_worker_income>)."
+      }
+    },
+    {
+      "id": "phase_e_completed",
+      "specifies": "<ontology::endgame_condition>",
+      "name": {
+        "zh": "E 阶段完成",
+        "en": "Phase E Completed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡的终局条件：E 阶段（第 5 个阶段）的 5 轮全部打完——即 25 轮（= 50 次骰子行动）完成。游戏结束，进入<final_scoring>。",
+        "en": "Castles of Burgundy's endgame condition: all 5 rounds of phase E (the 5th phase) are finished — i.e. 25 rounds (= 50 die actions) are complete. The game ends and <final_scoring> begins."
+      }
+    },
+    {
+      "id": "most_vp_wins",
+      "specifies": "<ontology::victory_condition>",
+      "name": {
+        "zh": "最高分获胜",
+        "en": "Most VP Wins"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "勃艮第城堡的胜利条件：<final_scoring>完成后按顺序筛选胜者——1. <most_vp>（<vp>最多）；2. <fewest_empty_duchy_spaces>（庄园空位最少）；3. <farthest_behind_on_bridge>（桥上最靠后）。序列用完仍并列则为平局。",
+        "en": "Castles of Burgundy's victory condition: after <final_scoring>, the winner is selected in order — 1. <most_vp> (most <vp>); 2. <fewest_empty_duchy_spaces> (fewest empty duchy spaces); 3. <farthest_behind_on_bridge> (furthest back on the bridge). If the sequence is exhausted with a tie, the result is a draw."
+      },
+      "<ontology::condition>[]": [
+        "<most_vp>",
+        "<fewest_empty_duchy_spaces>",
+        "<farthest_behind_on_bridge>"
+      ]
+    },
+    {
+      "id": "most_vp",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "胜利分最高",
+        "en": "Highest VP"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家的总<vp>（<score_track>位置 + <vp_tile>的 100/200）为全场最高。允许并列——并列最高者同时满足。用于<most_vp_wins>第 1 条。",
+        "en": "The player's total <vp> (<score_track> position + the 100/200 <vp_tile>) is the highest in the game. Ties allowed — all tied players satisfy it. Used as criterion 1 of <most_vp_wins>."
+      }
+    },
+    {
+      "id": "fewest_empty_duchy_spaces",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "庄园空位最少",
+        "en": "Fewest Empty Duchy Spaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家<duchy>中未铺板块的空格数为全场最少。用于<most_vp_wins>第 2 条（<vp>并列时）。",
+        "en": "The player's number of unused hex spaces in their <duchy> is the fewest in the game. Used as criterion 2 of <most_vp_wins> (when <vp> is tied)."
+      }
+    },
+    {
+      "id": "farthest_behind_on_bridge",
+      "specifies": "<ontology::condition>",
+      "name": {
+        "zh": "桥上最靠后",
+        "en": "Farthest Behind On Bridge"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "该玩家的<playing_piece>在<bridge>上位置最靠后（离市中心最远）。用于<most_vp_wins>第 3 条（<vp>与空位数都并列时）。",
+        "en": "The player's <playing_piece> is furthest back on the <bridge> (farthest from the city center). Used as criterion 3 of <most_vp_wins> (when both <vp> and empty-space counts are tied)."
+      }
+    }
+  ]
+}

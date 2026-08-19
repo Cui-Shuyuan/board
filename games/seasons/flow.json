@@ -1,0 +1,820 @@
+{
+  "meta": {
+    "game": "seasons",
+    "name": {
+      "zh": "四季物语",
+      "en": "Seasons"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "四季物语流程定义——从设置、预兆阶段、锦标赛阶段到终局计分。回合结构：掷季节骰 → 玩家依次选骰 → 玩家依次执行骰面行动并召唤/激活力量卡、使用个人板奖励 → 按未选骰点数推进季节轮并处理季节/年份变更。终局：第 3 年季节标记跨过第 12 格时立即结束并计分。",
+      "en": "Flow definition for Seasons — setup, Prelude, Tournament, and final scoring. Round structure: roll season dice → players pick dice in turn order → players perform die actions and may summon/activate power cards or use player-board bonuses → move the season wheel by the unchosen die and handle season/year changes. The game ends immediately when the season token crosses space 12 in year 3, then score."
+    }
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "一局完整的四季物语游戏，作为最外层轮：设置、预兆阶段、锦标赛阶段与终局计分。背景见 <seasons_setting>。",
+        "en": "A whole game of Seasons as the outermost round: setup, Prelude, Tournament, and final scoring. See <seasons_setting> for the setting."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "游戏设置：摆版图与标记、放季节骰、准备水晶轨与能量供应、发 9 张牌、放个人标记、决定起始玩家。",
+              "en": "Setup: place the board and tokens, set out season dice, prepare the crystal track and energy stockpile, deal 9 cards to each player, place player markers, and determine the start player."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "place_game_board",
+                  "name": {
+                    "zh": "摆放游戏版图",
+                    "en": "Place Game Board"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 <game_board> 放在桌面中央。",
+                    "en": "Place the <game_board> in the center of the table."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "桌面中央",
+                  "<ontology::object>": "<game_board>",
+                  "quantity": 1
+                },
+                {
+                  "id": "place_year_and_season_tokens",
+                  "name": {
+                    "zh": "放年份与季节标记",
+                    "en": "Place Year and Season Tokens"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "description": {
+                    "zh": "把 <year_token> 放在 <year_track> 的 1 格，<season_token> 放在 <season_wheel> 的 1 格。",
+                    "en": "Place the <year_token> on space 1 of the <year_track> and the <season_token> on space 1 of the <season_wheel>."
+                  },
+                  "subject": "<year_token> 与 <season_token>",
+                  "to": "年份轨 1 格、季节轮 1 格"
+                },
+                {
+                  "id": "place_season_dice",
+                  "name": {
+                    "zh": "放季节骰",
+                    "en": "Place Season Dice"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "按人数放置对应颜色的季节骰：2 人局每种颜色 3 颗、3 人局每种颜色 4 颗、4 人局每种颜色全部 5 颗。",
+                    "en": "Place season dice of each color by player count: 3 of each color in a 2-player game, 4 with 3 players, and all 5 with 4 players."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "季节骰区（按颜色）",
+                  "<ontology::object>": "<season_die>",
+                  "quantity": {
+                    "2": 12,
+                    "3": 16,
+                    "4": 20
+                  }
+                },
+                {
+                  "id": "place_crystal_track_and_stockpile",
+                  "name": {
+                    "zh": "放水晶轨与能量供应",
+                    "en": "Place Crystal Track and Energy Stockpile"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 <crystal_track> 放在 <game_board> 旁，把能量代币放在 <energy_stockpile>。",
+                    "en": "Place the <crystal_track> next to the <game_board> and the energy tokens in the <energy_stockpile>."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<energy_stockpile>",
+                  "<ontology::object>": "<energy>",
+                  "quantity": "all"
+                },
+                {
+                  "id": "prepare_draw_pile",
+                  "name": {
+                    "zh": "准备抽牌堆",
+                    "en": "Prepare Draw Pile"
+                  },
+                  "specifies": "<ontology::shuffle>",
+                  "description": {
+                    "zh": "洗混全部 100 张 <power_card>（50 种各 2 份）。发完每人 9 张后，剩余卡组成 <draw_pile>，旁边留出 <discard_pile> 空间。",
+                    "en": "Shuffle all 100 <power_card>s (50 types, 2 copies each). After dealing 9 to each player, the rest form the <draw_pile>, with a <discard_pile> space beside it."
+                  },
+                  "target": "<draw_pile>"
+                },
+                {
+                  "id": "deal_nine_cards",
+                  "name": {
+                    "zh": "发九张力量卡",
+                    "en": "Deal Nine Power Cards"
+                  },
+                  "specifies": "<ontology::random_draw>",
+                  "description": {
+                    "zh": "给每位玩家面朝下发 9 张 <power_card>。",
+                    "en": "Deal 9 face-down <power_card>s to each player."
+                  },
+                  "source": "<draw_pile>",
+                  "destination": "<ontology::hand>",
+                  "<ontology::object>": "<power_card>",
+                  "quantity": 9,
+                  "<ontology::per_player>": true,
+                  "do_after": "prepare_draw_pile"
+                },
+                {
+                  "id": "place_player_markers",
+                  "name": {
+                    "zh": "放玩家标记",
+                    "en": "Place Player Markers"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "每位玩家拿一块 <player_board> 和同色 4 个 <sorcerer_token>：一个放水晶轨底部 0 格、一个放水晶轨顶部百位 0 格、一个放 <bonus_track> 0 格、一个放 <summoning_gauge> 0 格。每人拿 Library II 和 Library III 两个 <library_token>。",
+                    "en": "Each player takes a <player_board> and the 4 <sorcerer_token>s of the same color: one on the bottom 0 space of the crystal track, one on the top hundreds 0 space, one on the 0 space of the <bonus_track>, and one on the 0 space of the <summoning_gauge>. Each also takes the Library II and Library III <library_token>s."
+                  },
+                  "source": "<ontology::game_box>",
+                  "destination": "<player_board>",
+                  "<ontology::object>": "<sorcerer_token>",
+                  "quantity": 4,
+                  "<ontology::per_player>": true
+                },
+                {
+                  "id": "determine_first_player",
+                  "name": {
+                    "zh": "决定起始玩家",
+                    "en": "Determine Start Player"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "description": {
+                    "zh": "最年轻的玩家成为第一轮起始玩家。",
+                    "en": "The youngest player becomes the first player of the first round."
+                  },
+                  "subject": "<ontology::starting_player>",
+                  "to": "最年轻的玩家"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "prelude",
+            "name": {
+              "zh": "预兆阶段",
+              "en": "Prelude"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "预兆阶段：玩家轮抽 9 张力量卡，并把选到的 9 张分成三组各 3 张——第一组为起始手牌，第二组放 Library II 下（第 2 年加入手牌），第三组放 Library III 下（第 3 年加入手牌）。",
+              "en": "Prelude: players draft 9 power cards, then split them into three sets of 3 — the first is the starting hand, the second goes under Library II (added in year 2), and the third under Library III (added in year 3)."
+            },
+            "do_after": "setup",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "draft_rounds",
+                  "name": {
+                    "zh": "轮抽",
+                    "en": "Draft"
+                  },
+                  "specifies": "<ontology::round>",
+                  "description": {
+                    "zh": "轮抽重复 9 次：每位玩家从自己的手牌中选择 1 张面朝下保留，其余手牌传给左边玩家。9 轮后每人选到 9 张。",
+                    "en": "Repeat 9 times: each player secretly keeps 1 of their hand cards and passes the rest to the left. After 9 rounds each player has chosen 9 cards."
+                  },
+                  "loop": {
+                    "count": 9
+                  },
+                  "<ontology::turn>": {
+                    "id": "draft_turn",
+                    "name": {
+                      "zh": "轮抽回合",
+                      "en": "Draft Turn"
+                    },
+                    "specifies": "<ontology::turn>",
+                    "description": {
+                      "zh": "选 1 张手牌面朝下保留，其余传给左边玩家。",
+                      "en": "Keep 1 hand card face down and pass the rest to the player on your left."
+                    },
+                    "<ontology::action>": "<choose_power_card>"
+                  }
+                },
+                {
+                  "id": "construct_deck",
+                  "name": {
+                    "zh": "构建牌库",
+                    "en": "Construct Deck"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "description": {
+                    "zh": "每位玩家把轮抽到的 9 张牌分成三组各 3 张：第一组留在 <ontology::hand>；第二组放到 Library II 标记下；第三组放到 Library III 标记下。",
+                    "en": "Each player splits their 9 drafted cards into three sets of 3: the first remains in the <ontology::hand>; the second goes under the Library II token; the third under the Library III token."
+                  },
+                  "do_after": "draft_rounds",
+                  "subject": "每位玩家的 9 张 <power_card>",
+                  "to": "手牌 3 张 / Library II 3 张 / Library III 3 张"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "tournament",
+            "name": {
+              "zh": "锦标赛阶段",
+              "en": "Tournament"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "锦标赛阶段：多轮进行，直到第 3 年季节标记跨过第 12 格（<endgame_trigger>）。每轮：当前起始玩家掷当前季节的季节骰 → 从起始玩家开始顺时针每人选 1 颗骰 → 从起始玩家开始顺时针每人执行自己的回合（骰面行动、召唤/激活力量卡、使用奖励）→ 按未选骰点数推进季节轮并处理季节/年份变更 → 起始玩家左移。",
+              "en": "Tournament: play successive rounds until the season token crosses space 12 in year 3 (<endgame_trigger>). Each round: the current first player rolls the season dice of the current season → players pick 1 die each in clockwise order → players take their turns in clockwise order (die actions, summon/activate power cards, use bonuses) → move the season wheel by the unchosen die and handle season/year changes → the first player passes left."
+            },
+            "do_after": "prelude",
+            "loop": {
+              "until": "<endgame_trigger>"
+            },
+            "<ontology::round>": {
+              "id": "tournament_round",
+              "name": {
+                "zh": "锦标赛轮",
+                "en": "Tournament Round"
+              },
+              "description": {
+                "zh": "一轮：掷季节骰、选骰、玩家回合、季节轮推进与首玩左移。",
+                "en": "One round: roll season dice, pick dice, player turns, advance the season wheel, and pass the first player left."
+              },
+              "<ontology::pipeline>": {
+                "options": [
+                  {
+                    "id": "roll_season_dice",
+                    "name": {
+                      "zh": "掷季节骰",
+                      "en": "Roll Season Dice"
+                    },
+                    "specifies": "<ontology::die_roll>",
+                    "description": {
+                      "zh": "当前起始玩家取当前季节对应颜色的 <season_die>（<winter_die> 冬 / <spring_die> 春 / <summer_die> 夏 / <fall_die> 秋；2 人 3 颗、3 人 4 颗、4 人 5 颗）并掷出。",
+                      "en": "The current first player takes the <season_die>s of the current season's color (<winter_die> winter / <spring_die> spring / <summer_die> summer / <fall_die> fall; 3 with 2 players, 4 with 3, 5 with 4) and rolls them."
+                    },
+                    "<ontology::object>": "<season_die>",
+                    "quantity": {
+                      "zh": "玩家数 +1",
+                      "en": "player count +1"
+                    }
+                  },
+                  {
+                    "id": "choose_dice_round",
+                    "name": {
+                      "zh": "选骰",
+                      "en": "Choose Dice"
+                    },
+                    "specifies": "<ontology::round>",
+                    "description": {
+                      "zh": "从起始玩家开始顺时针，每位玩家从掷出的骰子中选 1 颗放在自己面前。最后剩 1 颗未选。",
+                      "en": "Starting with the first player and going clockwise, each player chooses 1 rolled die and places it in front of them. One die remains unchosen."
+                    },
+                    "<ontology::turn>": {
+                      "id": "choose_die_turn",
+                      "name": {
+                        "zh": "选骰回合",
+                        "en": "Die-Choosing Turn"
+                      },
+                      "specifies": "<ontology::turn>",
+                      "description": {
+                        "zh": "从剩余骰子中选 1 颗。",
+                        "en": "Choose 1 of the remaining dice."
+                      },
+                      "<ontology::action>": "<choose_die>"
+                    },
+                    "do_after": "roll_season_dice"
+                  },
+                  {
+                    "id": "players_turns_round",
+                    "name": {
+                      "zh": "玩家回合",
+                      "en": "Players' Turns"
+                    },
+                    "specifies": "<ontology::round>",
+                    "description": {
+                      "zh": "从起始玩家开始顺时针，每位玩家执行自己的回合。",
+                      "en": "Starting with the first player and going clockwise, each player takes their turn."
+                    },
+                    "<ontology::turn>": {
+                      "id": "player_turn",
+                      "name": {
+                        "zh": "玩家回合",
+                        "en": "Player Turn"
+                      },
+                      "specifies": "<ontology::turn>",
+                      "description": {
+                        "zh": "执行自己选择的季节骰上的行动，并可召唤/激活一张或多张力量卡、使用一个或多个个人板奖励。骰面上的获得能量、获得水晶、提升召唤量表、抽牌必须先结算，然后才能进行转化等其他行动。",
+                        "en": "Perform the actions on your chosen season die; you may also summon/activate one or more power cards and use one or more player-board bonuses. Die actions that gain energy, gain crystals, increase the summoning gauge, or draw a card must be resolved before any other actions such as transmuting."
+                      },
+                      "<ontology::action>": "<player_turn_action>"
+                    },
+                    "do_after": "choose_dice_round"
+                  },
+                  {
+                    "id": "resolve_end_round",
+                    "name": {
+                      "zh": "结算回合结束",
+                      "en": "Resolve End of Round"
+                    },
+                    "specifies": "<ontology::trigger>",
+                    "description": {
+                      "zh": "执行 <end_round>：未选骰点数决定季节轮前进格数，随后处理季节变更、年份变更与起始玩家左移。",
+                      "en": "Resolve <end_round>: move the season wheel by the unchosen die's pips, then handle season changes, year changes, and pass the first player left."
+                    },
+                    "<ontology::trigger>": "<end_round>",
+                    "do_after": "players_turns_round"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          },
+          {
+            "id": "final_scoring",
+            "name": {
+              "zh": "终局计分",
+              "en": "Final Scoring"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "终局计分：水晶总数 + 在场力量卡威望分 − 每张手牌 5 分 − 奖励轨惩罚。分数最高者获胜；平局时在场力量卡最多者获胜；仍平局则并列。",
+              "en": "Final scoring: total crystals + prestige points on power cards in play − 5 per hand card − bonus-track penalties. The highest score wins; ties go to the player with the most power cards in play; further ties share victory."
+            },
+            "do_after": "tournament",
+            "score_table": {
+              "by_card": [
+                {
+                  "what": "power_card",
+                  "zh": "力量卡威望分",
+                  "aliases": [
+                    "力量卡",
+                    "威望分"
+                  ],
+                  "rule": "每张在场 <power_card> 按其卡面威望分计入总分。"
+                }
+              ],
+              "aliases": [
+                {
+                  "zh": "终局计分",
+                  "whats": [
+                    "power_card"
+                  ]
+                }
+              ],
+              "note": "总分 = 水晶总数（每水晶 1 分）+ 在场卡威望分 − 每张剩余手牌 5 分 − 奖励轨惩罚。未使用能量不计分。"
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "score_crystals",
+                  "name": {
+                    "zh": "计算水晶分",
+                    "en": "Score Crystals"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家计算 <crystal_track> 上的 <crystal> 总数，每 1 个 <crystal> 计 1 点 <prestige_point>。",
+                    "en": "Each player counts their <crystal>s on the <crystal_track>; each <crystal> is worth 1 <prestige_point>."
+                  },
+                  "result": {
+                    "zh": "该玩家的水晶分。",
+                    "en": "The player's crystal score."
+                  }
+                },
+                {
+                  "id": "score_power_cards",
+                  "name": {
+                    "zh": "计算力量卡威望分",
+                    "en": "Score Power Cards"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家加总在场上所有 <power_card> 卡面右上角的威望分。",
+                    "en": "Each player sums the prestige points printed on all of their <power_card>s in play."
+                  },
+                  "result": {
+                    "zh": "该玩家在场卡牌威望分。",
+                    "en": "The player's power-card prestige points."
+                  }
+                },
+                {
+                  "id": "subtract_hand_penalty",
+                  "name": {
+                    "zh": "扣手牌惩罚",
+                    "en": "Subtract Hand Penalty"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家手牌中每剩 1 张 <power_card> 扣 5 威望分。",
+                    "en": "Each player subtracts 5 prestige points for each <power_card> remaining in their hand."
+                  },
+                  "result": {
+                    "zh": "该玩家的手牌惩罚（负数）。",
+                    "en": "The player's hand penalty (negative)."
+                  }
+                },
+                {
+                  "id": "subtract_bonus_penalty",
+                  "name": {
+                    "zh": "扣奖励轨惩罚",
+                    "en": "Subtract Bonus Penalty"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "每名玩家按 <bonus_track> 上已使用的奖励格扣相应威望分（第一次 -5、第二次 -7、第三次 -8，具体以个人板为准）。",
+                    "en": "Each player subtracts the penalty shown on their <bonus_track> for bonuses used (e.g. first -5, second -7, third -8, depending on the player board)."
+                  },
+                  "result": {
+                    "zh": "该玩家的奖励惩罚（负数）。",
+                    "en": "The player's bonus penalty (negative)."
+                  }
+                },
+                {
+                  "id": "determine_winner",
+                  "name": {
+                    "zh": "判定胜者",
+                    "en": "Determine Winner"
+                  },
+                  "specifies": "<ontology::evaluate>",
+                  "description": {
+                    "zh": "总分最高者获胜；平局时在场 <power_card> 最多者获胜；仍平局则并列。",
+                    "en": "The player with the highest total wins; ties go to the player with the most <power_card>s in play; further ties share victory."
+                  },
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "filter_highest_score",
+                          "name": {
+                            "zh": "总分最高者",
+                            "en": "Highest Score"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "总分最高的玩家获胜。",
+                            "en": "The player with the highest total wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家总威望分最高。",
+                              "en": "The player has the highest total prestige points."
+                            }
+                          },
+                          "result": {
+                            "zh": "总分最高的玩家。",
+                            "en": "The player(s) with the highest total."
+                          }
+                        },
+                        {
+                          "id": "filter_most_power_cards",
+                          "name": {
+                            "zh": "力量卡最多者",
+                            "en": "Most Power Cards"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "平局时在场上 <power_card> 数量最多者获胜。",
+                            "en": "On a tie, the player with the most <power_card>s in play wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家在场上力量卡数量最多。",
+                              "en": "The player has the most power cards in play."
+                            }
+                          },
+                          "result": {
+                            "zh": "在场力量卡最多的玩家。",
+                            "en": "The player(s) with the most power cards in play."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FILTER>"
+                    }
+                  },
+                  "result": {
+                    "zh": "胜者玩家。",
+                    "en": "The winning player."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "choose_power_card",
+      "name": {
+        "zh": "选择力量卡",
+        "en": "Choose a Power Card"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "轮抽中从当前手牌选 1 张 <power_card> 面朝下保留。",
+        "en": "In the draft, keep 1 <power_card> from your current hand face down."
+      }
+    },
+    {
+      "id": "choose_die",
+      "name": {
+        "zh": "选择季节骰",
+        "en": "Choose a Season Die"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "从掷出的季节骰中选 1 颗放在自己面前。",
+        "en": "Choose 1 of the rolled season dice and place it in front of you."
+      }
+    },
+    {
+      "id": "player_turn_action",
+      "name": {
+        "zh": "玩家回合行动",
+        "en": "Player Turn Action"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "玩家回合：先结算骰面上必须优先的行动（<gain_energy>、<gain_crystals>、<increase_summoning_gauge>、<draw_card>），然后可任意次数 <transmute_energy>，并可 <summon_power_card>、<activate_power_card>、<use_bonus>。",
+        "en": "Player turn: first resolve mandatory die actions (<gain_energy>, <gain_crystals>, <increase_summoning_gauge>, <draw_card>); afterwards use <transmute_energy> any number of times, and <summon_power_card>, <activate_power_card>, or <use_bonus>."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "resolve_mandatory_die_actions",
+              "name": {
+                "zh": "结算必须优先的骰面行动",
+                "en": "Resolve Mandatory Die Actions"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "按骰面结算：获得能量（受储备上限 7/10 约束，超出的立即弃掉）、获得水晶（不能拒绝）、召唤量表 +1、抽 1 张牌（可保留或弃掉）。这些行动必须先完成。",
+                "en": "Resolve the die face: gain energy (respecting the 7/10 reserve limit; excess is discarded immediately), gain crystals (mandatory), summoning gauge +1, and draw 1 card (keep or discard). These actions must be completed first."
+              }
+            },
+            {
+              "id": "optional_free_actions",
+              "name": {
+                "zh": "其他自由行动",
+                "en": "Other Free Actions"
+              },
+              "specifies": "<ontology::action>",
+              "description": {
+                "zh": "可任意顺序、任意次数进行：转化能量、召唤力量卡、激活力量卡、使用个人板奖励。",
+                "en": "Perform in any order and any number of times: transmute energy, summon power cards, activate power cards, and use player-board bonuses."
+              },
+              "do_after": "resolve_mandatory_die_actions"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "gain_energy",
+      "name": {
+        "zh": "获得能量",
+        "en": "Gain Energy"
+      },
+      "specifies": "<ontology::transfer>",
+      "description": {
+        "zh": "从 <energy_stockpile> 取骰面所示种类和数量的能量放到 <energy_reserve>。若超过上限（默认 7，Bespelled Grimoire（附魔魔典） 在场时为 10），立即弃掉多余能量。",
+        "en": "Take the shown type and amount of energy from the <energy_stockpile> into the <energy_reserve>. If this exceeds the limit (7, or 10 with the Bespelled Grimoire（附魔魔典）), immediately discard the excess."
+      },
+      "source": "<energy_stockpile>",
+      "destination": "<energy_reserve>",
+      "<ontology::object>": "<energy>",
+      "quantity": "骰面所示数量与种类"
+    },
+    {
+      "id": "gain_crystals",
+      "name": {
+        "zh": "获得水晶",
+        "en": "Gain Crystals"
+      },
+      "specifies": "<ontology::push_track>",
+      "description": {
+        "zh": "按骰面数字推进 <crystal_track> 上的术士标记。不能拒绝获得水晶。",
+        "en": "Advance your sorcerer token on the <crystal_track> by the die number. This cannot be refused."
+      },
+      "quantity": "骰面数字",
+      "<ontology::track>": "<crystal_track>"
+    },
+    {
+      "id": "increase_summoning_gauge",
+      "name": {
+        "zh": "提升召唤量表",
+        "en": "Increase Summoning Gauge"
+      },
+      "specifies": "<ontology::push_track>",
+      "description": {
+        "zh": "把 <summoning_gauge> 上的术士标记推进 1 格。召唤量表上限为 15。",
+        "en": "Advance the sorcerer token on the <summoning_gauge> by 1 space. The summoning gauge maximum is 15."
+      },
+      "quantity": 1,
+      "<ontology::track>": "<summoning_gauge>"
+    },
+    {
+      "id": "draw_card",
+      "name": {
+        "zh": "抽牌",
+        "en": "Draw a Card"
+      },
+      "specifies": "<ontology::random_draw>",
+      "description": {
+        "zh": "从 <draw_pile> 抽 1 张 <power_card>。玩家可以保留在手中或弃到 <discard_pile>。手牌数量没有上限。",
+        "en": "Draw 1 <power_card> from the <draw_pile>. The player may keep it in hand or discard it to the <discard_pile>. There is no hand-size limit."
+      },
+      "source": "<draw_pile>",
+      "destination": "<ontology::hand>",
+      "<ontology::object>": "<power_card>",
+      "quantity": 1
+    },
+    {
+      "id": "transmute_energy",
+      "name": {
+        "zh": "转化能量",
+        "en": "Transmute Energy"
+      },
+      "specifies": "<ontology::transfer>",
+      "description": {
+        "zh": "拥有转化骰面或转化能力时，玩家可在回合内任意次数把 <energy_reserve> 中的能量按当前季节的 <transmutation_chart> 汇率换成水晶：外圈能量 1 水晶、中圈 2、内圈 3。转化后的能量弃回 <energy_stockpile>，水晶推进 <crystal_track>。",
+        "en": "With the transmute die face or another transmutation ability, a player may convert energy from the <energy_reserve> into crystals any number of times during their turn at the current season's <transmutation_chart> rate: outer circle 1 crystal, middle 2, inner 3. Transmuted energy returns to the <energy_stockpile>, and crystals advance on the <crystal_track>."
+      },
+      "source": "<energy_reserve>",
+      "destination": "<energy_stockpile>",
+      "<ontology::object>": "<energy>",
+      "quantity": "任意数量"
+    },
+    {
+      "id": "summon_power_card",
+      "name": {
+        "zh": "召唤力量卡",
+        "en": "Summon a Power Card"
+      },
+      "specifies": "<ontology::play>",
+      "description": {
+        "zh": "支付手牌中 <power_card> 的召唤费用（能量和/或水晶），并把它从手牌放到场上。必须有足够的 <summoning_gauge> 空位；即使免费召唤也需要空位。若抽牌堆为空，先洗混 <discard_pile> 形成新抽牌堆。",
+        "en": "Pay the summoning cost of a <power_card> from hand in energy and/or crystals and put it into play. You must have a free space on the <summoning_gauge>; even a free summon requires a free space. If the draw pile is empty, shuffle the <discard_pile> into a new draw pile first."
+      },
+      "<ontology::piece>": "<power_card>",
+      "source": "<ontology::hand>",
+      "destination": "<ontology::development_area>"
+    },
+    {
+      "id": "activate_power_card",
+      "name": {
+        "zh": "激活力量卡",
+        "en": "Activate a Power Card"
+      },
+      "specifies": "<ontology::activation>",
+      "description": {
+        "zh": "横置在场上一张有激活效果的力量卡并支付激活费用（若有），结算其效果。激活效果每回合一次；横置卡在本回合不能再激活。",
+        "en": "Turn one of your in-play power cards with an activation effect sideways, pay its activation cost if any, and resolve the effect. An activation effect is once per turn; a turned card cannot be activated again that turn."
+      },
+      "<ontology::effect>": {
+        "description": {
+          "zh": "被激活的在场 <power_card> 的激活效果。",
+          "en": "The activation effect of the in-play <power_card> being activated."
+        }
+      }
+    },
+    {
+      "id": "use_bonus",
+      "name": {
+        "zh": "使用奖励",
+        "en": "Use a Bonus"
+      },
+      "specifies": "<ontology::activation>",
+      "description": {
+        "zh": "使用 <player_board> 奖励轨上的一个奖励，推进 <bonus_track> 上的术士标记。同一奖励可多次使用，同一回合可使用多个不同奖励。",
+        "en": "Use a bonus on the <player_board> bonus track and advance the sorcerer token on the <bonus_track>. The same bonus may be used multiple times, and different bonuses may be used in the same turn."
+      },
+      "<ontology::effect>": {
+        "description": {
+          "zh": "个人板 <bonus_track> 上被使用的奖励效果。",
+          "en": "The bonus effect used on the player board's <bonus_track>."
+        }
+      }
+    },
+    {
+      "id": "end_round",
+      "name": {
+        "zh": "回合结束",
+        "en": "End of Round"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "所有玩家完成回合后：按未选骰点数把 <season_token> 前进相应格数；若跨过季节分界则触发季节变更；若从 12 到 1 则触发年份变更；最后起始玩家左移。",
+        "en": "After all players have taken their turns: advance the <season_token> by the unchosen die's pips; if a season boundary is crossed, a season change triggers; if the wheel moves from 12 to 1, a year change triggers; finally, the first player passes left."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "move_season_token",
+              "name": {
+                "zh": "推进季节标记",
+                "en": "Move Season Token"
+              },
+              "specifies": "<ontology::push_track>",
+              "description": {
+                "zh": "把 <season_token> 沿 <season_wheel> 前进未选骰的点数格。",
+                "en": "Advance the <season_token> along the <season_wheel> by the unchosen die's pips."
+              },
+              "quantity": "未选骰点数",
+              "<ontology::track>": "<season_wheel>"
+            },
+            {
+              "id": "handle_season_change",
+              "name": {
+                "zh": "处理季节变更",
+                "en": "Handle Season Change"
+              },
+              "specifies": "<ontology::trigger>",
+              "description": {
+                "zh": "若季节标记跨过或落在季节分界（3/6/9/12），触发季节变更：受季节变更影响的力量卡效果立即结算。",
+                "en": "If the season token crosses or lands on a season boundary (3/6/9/12), a season change occurs: power cards affected by season changes resolve immediately."
+              },
+              "<ontology::condition>": {
+                "zh": "季节标记跨过或落在 3/6/9/12 格。",
+                "en": "The season token crosses or lands on spaces 3/6/9/12."
+              },
+              "do_after": "move_season_token"
+            },
+            {
+              "id": "handle_year_change",
+              "name": {
+                "zh": "处理年份变更",
+                "en": "Handle Year Change"
+              },
+              "specifies": "<ontology::trigger>",
+              "description": {
+                "zh": "若季节标记从 12 前进到 1，<year_token> 在 <year_track> 上推进 1 格。进入第 2 或第 3 年时，玩家把对应图书馆标记下的 3 张牌加入手牌。",
+                "en": "If the season token moves from 12 to 1, advance the <year_token> 1 space on the <year_track>. On entering year 2 or year 3, each player adds the 3 cards under the corresponding library token to their hand."
+              },
+              "<ontology::condition>": {
+                "zh": "季节标记从 12 前进到 1。",
+                "en": "The season token moves from 12 to 1."
+              },
+              "do_after": "move_season_token"
+            },
+            {
+              "id": "pass_first_player",
+              "name": {
+                "zh": "起始玩家左移",
+                "en": "Pass First Player Left"
+              },
+              "specifies": "<ontology::state_change>",
+              "description": {
+                "zh": "<ontology::starting_player> 变为当前起始玩家左边的玩家。",
+                "en": "The <ontology::starting_player> becomes the player to the left of the current first player."
+              },
+              "subject": "<ontology::starting_player>",
+              "to": "左边玩家",
+              "do_after": "move_season_token"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "endgame_trigger",
+      "name": {
+        "zh": "终局触发",
+        "en": "Endgame Trigger"
+      },
+      "specifies": "<ontology::endgame_condition>",
+      "description": {
+        "zh": "第 3 年季节标记跨过 <season_wheel> 第 12 格时，游戏立即结束，进入终局计分。",
+        "en": "When the season token crosses space 12 of the <season_wheel> during year 3, the game ends immediately and final scoring follows."
+      },
+      "<ontology::condition>": {
+        "zh": "<year_token> 在第 3 年，且 <season_token> 跨过季节轮第 12 格。",
+        "en": "The <year_token> is in year 3 and the <season_token> crosses space 12 of the season wheel."
+      }
+    }
+  ]
+}

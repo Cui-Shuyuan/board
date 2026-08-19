@@ -1,0 +1,1215 @@
+{
+  "meta": {
+    "game": "ark-nova",
+    "name": {
+      "zh": "方舟动物园",
+      "en": "Ark Nova"
+    },
+    "version": "1.0",
+    "description": {
+      "zh": "《方舟动物园》（Ark Nova）：玩家规划并建造一座现代化科学动物园。通过安置动物提升吸引力（appeal），通过支持保护项目积累保护分（conservation point），两条轨相向推进——计数器相遇即触发终局。本文件为概念层（objects），流程层见 flow.json。不含单人模式与扩展规则。",
+      "en": "Ark Nova: players plan and build a modern, scientifically managed zoo. Animals raise appeal; conservation projects raise conservation points; the two tracks run in opposite directions and the game ends when the counters meet. This file defines the concept layer (objects); the flow layer is in flow.json. Solo game and expansions are not included."
+    }
+  },
+  "objects": [
+    {
+      "id": "ark_nova_setting",
+      "specifies": "<ontology::setting>",
+      "name": {
+        "zh": "方舟动物园背景设定",
+        "en": "Ark Nova Setting"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "《方舟动物园》的世界观：玩家规划并建造一座现代化、科学管理的动物园。建造符合动物习性的围栏，支持世界各地的动物保护项目，与全球动物园协会、大学合作，共同维护物种多样性。",
+        "en": "The world of Ark Nova: players plan and build a modern, scientifically managed zoo, build enclosures matching the animals' way of life, support conservation projects worldwide, and cooperate with zoo associations and universities."
+      }
+    },
+    {
+      "id": "money",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "钱",
+        "en": "Money"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏中的货币资源。用于支付建筑费、动物费用、展示区拿牌附加费、捐赠等。每位玩家起始持有 25 钱，放在 <notepad> 上；支付时还给总供应。以面值 1/5/10/20 的 <money_token> 表示（共 55 枚）。",
+        "en": "The game's currency. Used to pay building costs, animal costs, the extra cost for taking cards from the display, donations, etc. Each player starts with 25 money on their <notepad>; payments return to the general supply. Represented by <money_token>s in denominations 1/5/10/20 (55 tokens in total)."
+      }
+    },
+    {
+      "id": "x_token",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "X Token",
+        "en": "X-token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于临时提升动作强度的资源。执行动作前可支付任意数量 X Token，每个使本次动作强度 +1；支付后归还总供应。每名玩家最多持有 5 个 X Token，不能获得第 6 个。可通过 <x_token_action> 动作或卡牌效果获得。触发 <break_track> 的 Break 时，触发者获得 1 个 X Token。计划用于提升的 X Token 必须在执行动作前就已持有：强度在执行动作前确定，动作中途获得的 X Token 不能用于提升当前动作。",
+        "en": "A resource that temporarily boosts action strength. Before performing an action, you may spend any number of X-tokens; each increases the action's strength by 1, and spent tokens return to the general supply. A player may never hold more than 5 X-tokens. Gained via the <x_token_action> or card effects. When a break is triggered, the player who triggered it gains 1 X-token. X-tokens you plan to spend must already be in your possession before the action: strength is set before the action begins, so X-tokens gained during an action cannot boost that same action."
+      },
+      "quantity": {
+        "zh": "每名玩家最多持有 5 个 X Token",
+        "en": "each player may hold at most 5 X-tokens",
+        "numeric": [
+          {
+            "when": {
+              "zh": "上限",
+              "en": "limit"
+            },
+            "value": 5
+          }
+        ]
+      }
+    },
+    {
+      "id": "appeal_counter",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "吸引力计数器",
+        "en": "Appeal Counter"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家在 <appeal_track> 上表示动物园吸引力的计数器（爪印图标）。起始位置按回合顺位：起始玩家 0，第二玩家 1，第三 2，第四 3。安置动物、盖满地图、某些卡牌效果等会增加吸引力；释放动物会后退。吸引力决定每次 Break 的收入。",
+        "en": "A player's counter on the <appeal_track> showing the zoo's appeal (paw icon). Starting position depends on turn order: start player 0, second player 1, third 2, fourth 3. Playing animals, covering the whole map, and some card effects increase appeal; releasing animals moves it back. Appeal determines break income."
+      }
+    },
+    {
+      "id": "conservation_counter",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "保护分计数器",
+        "en": "Conservation Counter"
+      },
+      "aliases": {
+        "zh": [
+          "保护分"
+        ],
+        "en": [
+          "conservation points"
+        ]
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家在 <conservation_track> 上表示保护分的计数器（树叶图标）。所有玩家都从轨的首格（0 分）出发。通过支持保护项目、捐赠、动物/赞助卡效果、终局计分等获得保护分。达到 2/5/8/10 分时触发对应一次性奖励。",
+        "en": "A player's counter on the <conservation_track> showing conservation points (leaf icon). All players start on the first space (0 points). Conservation points come from supporting conservation projects, donations, animal/sponsor card effects, and final scoring. Reaching 2/5/8/10 points triggers the corresponding one-time bonuses."
+      }
+    },
+    {
+      "id": "reputation_counter",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "声望计数器",
+        "en": "Reputation Counter"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家在 <reputation_track> 上表示动物园声望的计数器。所有玩家都从轨的首格（0 声望）出发。声望决定展示区中哪些卡在「声望范围内」。",
+        "en": "A player's counter on the <reputation_track> showing the zoo's reputation. All players start on the first space (reputation 0). Reputation determines which cards in the <card_display> are within the player's reputation range."
+      }
+    },
+    {
+      "id": "break_token",
+      "specifies": "<ontology::marker>",
+      "name": {
+        "zh": "Break 标记",
+        "en": "Break Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "在 <break_track> 上倒计时距离下一次 Break 还剩多少步的标记。开局及每次 Break 结束后，放在与玩家人数对应的起始格。每当被推进时向终点移动相应步数；到达最后一格即触发 Break（多余步数被忽略）。",
+        "en": "The token on the <break_track> counting down the time until the next break. At the start of the game and after each break it is placed on the starting space matching the player count. Whenever it is advanced, it moves the appropriate number of spaces toward the end; reaching the last space triggers a break (extra steps are ignored)."
+      }
+    },
+    {
+      "id": "player_token",
+      "specifies": "<ontology::token>",
+      "name": {
+        "zh": "玩家标记",
+        "en": "Player Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家 25 个的方块形标记。开局时取 7 个放在 <zoo_map> 左侧的 <bonus_spaces> 上，其余放在地图旁的个人供应。支持保护项目时从 <bonus_spaces> 取 1 个放到保护项目卡上；捐赠时从个人供应取 1 个盖住 <donation_area> 空格；安置动物到 <special_enclosure> 时从个人供应取相应数量放到特殊围栏上。",
+        "en": "Square tokens, 25 per player. At setup, 7 go on the <bonus_spaces> at the left edge of the <zoo_map>; the rest stay in the personal supply next to the map. One is moved from <bonus_spaces> onto a conservation project card when supporting it; one from the personal supply covers a donation space when donating; the appropriate number from the personal supply are placed on a <special_enclosure> when accommodating an animal there."
+      }
+    },
+    {
+      "id": "association_worker",
+      "specifies": "<ontology::token>",
+      "name": {
+        "zh": "协会工人",
+        "en": "Association Worker"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家 4 个的工人（棋子形）。开局时 1 个立放在 <notepad> 上作为可用的活跃工人，其余 3 个平放在 <worker_supply_spaces> 上（按从下到上使用）。执行 <association_task_area> 任务时把工人放到协会板上对应任务；同一任务已有自己 1 个工人时要放 2 个，已有自己 3 个时不能再执行。Break 时全部回到 <notepad> 重新可用。达到 2 保护分时可激活 1 个新工人。",
+        "en": "Each player's 4 workers (meeples). At setup, 1 stands upright on the <notepad> as the available active worker; the other 3 lie on the <worker_supply_spaces> (used bottom to top). To perform a task in the <association_task_area>, place a worker on that task on the Association board; if 1 of your own workers is already on this task, you must place 2; with 3 of your own there, you cannot perform it again. All return to the <notepad> and become active again during a break. At 2 conservation points you may activate 1 additional worker."
+      }
+    },
+    {
+      "id": "multiplier_token",
+      "specifies": "<ontology::token>",
+      "name": {
+        "zh": "倍增标记",
+        "en": "Multiplier Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "x2 标记（共 8 个）。由卡牌效果放到动作卡上；下次使用该动作卡时该动作可执行两次（多个倍增标记叠加，每个额外 1 次）。Break 时返回供应并失去效果。Animals 动作本身不支持倍增标记。",
+        "en": "x2 token (8 in total). Placed on an Action card by card effects; the next time that card is used, its action may be performed twice (multiple multiplier tokens stack, each granting one extra performance). Returned to the supply and inert after each break. The Animals action itself does not support multiplier tokens."
+      }
+    },
+    {
+      "id": "venom_token",
+      "specifies": "<ontology::token>",
+      "name": {
+        "zh": "毒液标记",
+        "en": "Venom Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "毒液标记（共 8 个）。由毒蛇等动物的互动效果放到其他玩家的动作卡上。带毒液标记的动作卡被使用后，该玩家失去 2 吸引力。互动效果只对吸引力达到 5 或以上的玩家生效（<appeal_track> 的 5 格有标注提醒）。Break 时返回供应并失去效果。",
+        "en": "Venom token (8 in total). Placed on other players' Action cards by interactive effects of animals like venomous snakes. When a card carrying a venom token is used, that player loses 2 appeal. Interactive effects only apply to players with at least 5 appeal (space 5 on the <appeal_track> is marked as a reminder). Returned to the supply and inert after each break."
+      }
+    },
+    {
+      "id": "constriction_token",
+      "specifies": "<ontology::token>",
+      "name": {
+        "zh": "绞杀标记",
+        "en": "Constriction Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "绞杀标记（共 8 个）。由蟒蛇等动物的互动效果放到其他玩家的动作卡上。带绞杀标记的动作卡被使用后，该玩家失去 1 个 X Token（若没有则不失去）。互动效果只对吸引力达到 5 或以上的玩家生效。Break 时返回供应并失去效果。",
+        "en": "Constriction token (8 in total). Placed on other players' Action cards by interactive effects of animals like constrictors. When a card carrying a constriction token is used, that player loses 1 X-token (or none if they have none). Interactive effects only apply to players with at least 5 appeal. Returned to the supply and inert after each break."
+      }
+    },
+    {
+      "id": "money_token",
+      "specifies": "<ontology::component>",
+      "name": {
+        "zh": "钱币",
+        "en": "Money Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "表示 <money> 的圆形标记，面值有 1（40 枚）、5（10 枚）、10（10 枚）、20（10 枚）四种，共 55 枚。",
+        "en": "Round tokens representing <money>, in denominations of 1 (40x), 5 (10x), 10 (10x), and 20 (10x), 55 in total."
+      }
+    },
+    {
+      "id": "bonus_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "奖励板块",
+        "en": "Bonus Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 9 块的奖励板块。开局洗混后随机在 <bonus_tile_spaces> 放置 4 块（另外 2 个带图标的空间不放），其余 5 块移出游戏。达到 5 或 8 保护分时，玩家可选择拿走 <conservation_track> 旁的 1 块奖励板块并立即执行其效果，之后板块移出游戏；拿光后仍可选拿 5 钱。",
+        "en": "Bonus tile, 9 in total. At setup, 4 randomly drawn tiles go face up on the 4 <bonus_tile_spaces> (the 2 spaces with printed icons remain empty); the other 5 are removed from the game. Upon reaching 5 or 8 conservation points, a player may take one of the bonus tiles next to the <conservation_track> and execute its effect immediately, then the tile leaves the game; the option to take 5 money remains after both tiles are gone."
+      }
+    },
+    {
+      "id": "partner_zoo_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "合作动物园板块",
+        "en": "Partner Zoo Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "代表 5 大洲各 4 块的合作动物园板块（共 20 块）。开局时各大洲 1 块放在 <association_board> 的任务区。通过协会任务（强度 [3]）获得，放在 <zoo_map> 右侧 <partner_zoo_spaces> 的最下空位；该格有奖励时立即获得一次。每名玩家最多 4 个，且必须来自不同大洲；拿第 3、4 个必须先升级 Association 动作卡。每个合作动物园：该大陆的动物卡每有 1 个大陆图标费用减 3 钱（同一大陆多个可叠加）；提供 1 个该大陆图标（计入条件与保护项目计分）。获得第 2 个时立即获得所在格奖励（升级动作卡）。Break 时协会板上被拿走的合作动物园补回。",
+        "en": "Tiles representing partner zoos on the 5 continents, 4 of each (20 in total). At setup, 1 of each continent is placed in the task area of the <association_board>. Gained via the association task (strength [3]) and placed on the lowest empty space of the <partner_zoo_spaces> on the right side of the <zoo_map>; if that space shows a bonus, take it immediately. Each player may have at most 4 partner zoos, all from different continents; the 3rd and 4th require the upgraded Association action card. Each partner zoo reduces the cost of Animal cards from its continent by 3 money per continent icon on the card (multiple zoos of the same continent stack), and provides 1 icon of that continent (counting toward conditions and conservation project scoring). Gaining the 2nd partner zoo grants the space's bonus (an Action card upgrade) immediately. During a break, partner zoos taken from the Association board are replenished."
+      }
+    },
+    {
+      "id": "university_tile",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "大学板块",
+        "en": "University Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "3 种各 4 块的大学板块（共 12 块）。开局时每种 1 块放在 <association_board> 的任务区。通过协会任务（强度 [4]）获得，放在 <zoo_map> 右侧 <university_spaces> 的最下空位；该格有奖励时立即获得一次。每种大学只能有 1 块。大学提供：研究图标、声望推进（若板块上标明）、以及其他奖励图标；特定大学是把手牌上限从 3 提高到 5 的唯一途径。获得第 2 个时立即获得所在格奖励（升级动作卡）。Break 时协会板上被拿走的大学补回。",
+        "en": "Tiles of 3 kinds, 4 of each (12 in total). At setup, 1 of each kind is placed in the task area of the <association_board>. Gained via the association task (strength [4]) and placed on the lowest empty space of the <university_spaces> on the right side of the <zoo_map>; if that space shows a bonus, take it immediately. Each kind may be taken only once. Universities provide research icons, reputation advancement (if shown on the tile), and other bonus icons; a particular university is the only way to raise the hand limit from 3 to 5. Gaining the 2nd university grants the space's bonus (an Action card upgrade) immediately. During a break, universities taken from the Association board are replenished."
+      }
+    },
+    {
+      "id": "standard_enclosure",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "标准围栏",
+        "en": "Standard Enclosure"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "双面板块：空面（黄边，显示围栏大小）与已占用面。大小 1-5 格：1 格 28 块、2 格 24 块、3 格 15 块、4 格 13 块、5 格 10 块（共 82 块）。通过 <build_action> 以空面朝上建造在 <building_area>。安置动物时把满足动物 <enclosure_requirement> 的围栏翻到已占用面；释放动物时按 <release_animal> 的 4 步依次判断清空（轮到标准围栏时把最小的满足要求的已占用围栏翻回空面）。标准围栏只翻转表示占用，不放 <player_token>。",
+        "en": "Double-sided tiles: an empty side (yellow edge, showing the enclosure size) and an occupied side. Sizes 1-5 spaces: 28x size-1, 24x size-2, 15x size-3, 13x size-4, 10x size-5 (82 in total). Built empty-side-up in the <building_area> via the <build_action>. Accommodating an animal flips an enclosure meeting the animal's <enclosure_requirement> to its occupied side; releasing an animal clears the enclosure per the 4 ordered checks of <release_animal> (for a standard enclosure, flip the smallest qualifying occupied enclosure back to its empty side). Standard enclosures are only flipped to show occupation — no <player_token>s are placed on them."
+      }
+    },
+    {
+      "id": "kiosk",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "售货亭",
+        "en": "Kiosk"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "双面板块（另一面是 <pavilion>），占 1 格，共 24 块。通过 <build_action> 建造，可建多个，但每个售货亭必须与地图上所有其他售货亭至少相距 3 格（即两个售货亭之间至少隔 2 格）。每次 Break 获得收入：售货亭每与 1 个相邻建筑（独特建筑、特殊围栏、已占用标准围栏、馆）共边，得 1 钱（空的标准围栏不给收入，空的特殊围栏给收入）。",
+        "en": "A double-sided tile (reverse is the <pavilion>), size 1, 24 tiles. Built via the <build_action>, multiple allowed, but each kiosk must be at least 3 spaces from every other kiosk on the map (at least 2 spaces between any 2 kiosks). Income at every break: for each adjacent building (unique building, special enclosure, occupied standard enclosure, pavilion) sharing at least one side with the kiosk, gain 1 money (an empty standard enclosure provides no income, but an empty special enclosure does)."
+      }
+    },
+    {
+      "id": "pavilion",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "馆",
+        "en": "Pavilion"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "双面板块（另一面是 <kiosk>），占 1 格。通过 <build_action> 建造。每建成 1 个馆立即（且仅此一次）使动物园吸引力 +1。也为相邻 <kiosk> 提供收入。",
+        "en": "A double-sided tile (reverse is the <kiosk>), size 1. Built via the <build_action>. Each pavilion built immediately (and only once) increases the zoo's appeal by 1. It also provides income to adjacent <kiosk>s."
+      }
+    },
+    {
+      "id": "special_enclosure",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "特殊围栏",
+        "en": "Special Enclosure"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "3 种特殊围栏（<petting_zoo>、<reptile_house>、<large_bird_aviary>）的抽象概念。每种每个动物园最多 1 个。特殊围栏正反两面相同，不翻转；安置动物时按动物卡特殊围栏图标标注的数量放 <player_token>（从个人供应取），标记已占用格数；空间不足则不能安置。释放动物时按 <release_animal> 的 4 步依次判断清空（轮到特殊围栏时移除相应数量的 <player_token> 归还个人供应）。",
+        "en": "Abstract concept for the 3 special enclosures (<petting_zoo>, <reptile_house>, <large_bird_aviary>). Each zoo may have at most 1 of each type. Both sides of a special enclosure are identical and it is never flipped; accommodating an animal places the number of <player_token>s indicated on the card's special enclosure icon (from the personal supply) to mark occupied spaces; if there is not enough free space, the animal cannot be accommodated there. Releasing an animal clears the enclosure per the 4 ordered checks of <release_animal> (for a special enclosure, remove the appropriate number of <player_token>s back to the personal supply)."
+      }
+    },
+    {
+      "id": "petting_zoo",
+      "specifies": "<ontology::tile>",
+      "extends": "<special_enclosure>",
+      "name": {
+        "zh": "宠物动物园",
+        "en": "Petting Zoo"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "特殊围栏之一，占 3 格，共 4 块，通过 <build_action> 建造。宠物动物园动物（爪印类别）只能安置在宠物动物园中，不能安置在标准围栏。每个动物园最多 1 个宠物动物园。",
+        "en": "One of the special enclosures, size 3, 4 tiles, built via the <build_action>. Petting Zoo animals (the paw category) can only be accommodated in the Petting Zoo, never in a standard enclosure. Each zoo may have at most 1 Petting Zoo."
+      }
+    },
+    {
+      "id": "reptile_house",
+      "specifies": "<ontology::tile>",
+      "extends": "<special_enclosure>",
+      "name": {
+        "zh": "爬行动物馆",
+        "en": "Reptile House"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "特殊围栏之一，占 5 格，共 4 块。只有升级了 <build_action> 才能建造。所有爬行动物及部分鸟类可以选择安置在标准围栏或爬行动物馆中（卡上有两种围栏要求时可选）。建成时每个动物园限 1 个；建成时可以立即（且仅此一次）把符合条件的动物从标准围栏迁入。",
+        "en": "One of the special enclosures, size 5, 4 tiles. Buildable only with the upgraded <build_action>. All reptiles and some birds may be accommodated either in a standard enclosure or in the Reptile House (when the card shows two enclosure requirements, the player chooses). Each zoo may have at most 1 Reptile House; when it is built, qualifying animals may be moved in from standard enclosures immediately and only this once."
+      }
+    },
+    {
+      "id": "large_bird_aviary",
+      "specifies": "<ontology::tile>",
+      "extends": "<special_enclosure>",
+      "name": {
+        "zh": "大型鸟舍",
+        "en": "Large Bird Aviary"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "特殊围栏之一，占 5 格，共 4 块。只有升级了 <build_action> 才能建造。部分鸟类可以选择安置在标准围栏或大型鸟舍中（卡上有两种围栏要求时可选）。建成时每个动物园限 1 个；建成时可以立即（且仅此一次）把符合条件的动物从标准围栏迁入。",
+        "en": "One of the special enclosures, size 5, 4 tiles. Buildable only with the upgraded <build_action>. Some birds may be accommodated either in a standard enclosure or in the Large Bird Aviary (when the card shows two enclosure requirements, the player chooses). Each zoo may have at most 1 Large Bird Aviary; when it is built, qualifying animals may be moved in from standard enclosures immediately and only this once."
+      }
+    },
+    {
+      "id": "unique_building",
+      "specifies": "<ontology::tile>",
+      "name": {
+        "zh": "独特建筑",
+        "en": "Unique Building"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 15 块的独特建筑。不能用 <build_action> 建造，只能随对应的 <sponsor_card> 进入游戏；某些独特建筑必须建在水/岩空间旁（要求显示在卡面等级旁）。若卡面图标出现在卡自身，该图标计入卡的效果。",
+        "en": "Unique building, 15 in total. They cannot be built with the <build_action>; they only come into play with the associated <sponsor_card>. Some unique buildings must be placed next to water or rock spaces (the requirement is shown next to the card's level). If an effect on the card refers to an icon on the card itself, that icon counts."
+      }
+    },
+    {
+      "id": "animal_category",
+      "specifies": "<ontology::multiple_choice_enum>",
+      "name": {
+        "zh": "动物类别",
+        "en": "Animal Category"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "动物的 7 个类别：鸟类（Bird）、草食动物（Herbivore）、捕食者（Predator）、灵长类（Primate）、爬行动物（Reptile）、熊（Bear）、宠物动物园动物（Petting Zoo animal）。其中熊和宠物动物园动物是特例（图标黑底白字）：熊更像子类别，常与草食动物或捕食者图标组合出现；宠物动物园动物是为玩法单独设立的类别。当游戏要求「动物类别」时，包括熊和宠物动物园动物在内；若不算在内会有明确说明。类别图标用于满足打牌条件、保护项目计分与卡牌效果。",
+        "en": "The 7 animal categories: Bird, Herbivore, Predator, Primate, Reptile, Bear, and Petting Zoo animal. Bear and Petting Zoo animal are special cases (black icon on white background): bear is more of a subcategory, mostly combined with the herbivore or predator icon; Petting Zoo animal is a separate category invented for gameplay. When the game asks for animal categories, bear and Petting Zoo animals are included unless explicitly excluded. Category icons are used for play conditions, conservation project scoring, and card effects."
+      },
+      "values": [
+        {
+          "id": "bird",
+          "name": {
+            "zh": "鸟类",
+            "en": "Bird"
+          }
+        },
+        {
+          "id": "herbivore",
+          "name": {
+            "zh": "草食动物",
+            "en": "Herbivore"
+          }
+        },
+        {
+          "id": "predator",
+          "name": {
+            "zh": "捕食者",
+            "en": "Predator"
+          }
+        },
+        {
+          "id": "primate",
+          "name": {
+            "zh": "灵长类",
+            "en": "Primate"
+          }
+        },
+        {
+          "id": "reptile",
+          "name": {
+            "zh": "爬行动物",
+            "en": "Reptile"
+          }
+        },
+        {
+          "id": "bear",
+          "name": {
+            "zh": "熊",
+            "en": "Bear"
+          }
+        },
+        {
+          "id": "petting_zoo_animal",
+          "name": {
+            "zh": "宠物动物园动物",
+            "en": "Petting Zoo animal"
+          }
+        }
+      ]
+    },
+    {
+      "id": "continent",
+      "specifies": "<ontology::multiple_choice_enum>",
+      "name": {
+        "zh": "大洲",
+        "en": "Continent"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "动物原产地的 5 个大洲：欧洲、亚洲、非洲、美洲、澳洲。大陆图标出现在动物卡右上角（宠物动物园动物除外）与 <partner_zoo_tile> 上，用于打牌条件（如需要同大陆合作动物园）、费用减免（每个该大陆 <partner_zoo_tile> 每图标减 3 钱）与保护项目计分。",
+        "en": "The 5 continents animals originate from: Europe, Asia, Africa, the Americas, and Australia. Continent icons appear in the upper-right corner of Animal cards (except Petting Zoo animals) and on <partner_zoo_tile>s; they are used for play conditions (e.g. requiring a partner zoo from the same continent), cost reduction (3 money per icon per <partner_zoo_tile> of that continent), and conservation project scoring."
+      },
+      "values": [
+        {
+          "id": "europe",
+          "name": {
+            "zh": "欧洲",
+            "en": "Europe"
+          }
+        },
+        {
+          "id": "asia",
+          "name": {
+            "zh": "亚洲",
+            "en": "Asia"
+          }
+        },
+        {
+          "id": "africa",
+          "name": {
+            "zh": "非洲",
+            "en": "Africa"
+          }
+        },
+        {
+          "id": "americas",
+          "name": {
+            "zh": "美洲",
+            "en": "Americas"
+          }
+        },
+        {
+          "id": "australia",
+          "name": {
+            "zh": "澳洲",
+            "en": "Australia"
+          }
+        }
+      ]
+    },
+    {
+      "id": "game_board",
+      "specifies": "<ontology::public_board>",
+      "name": {
+        "zh": "游戏版图",
+        "en": "Game Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "公共大版图。承载 <card_display>、<zoo_deck>、<discard_pile>、<bonus_tile_spaces>、<break_track>、<reputation_track>、<appeal_track>、<conservation_track>。背面是另一种展示区朝向，任选一面使用。",
+        "en": "The large shared board. It hosts the <card_display>, <zoo_deck>, <discard_pile>, <bonus_tile_spaces>, <break_track>, <reputation_track>, <appeal_track>, and <conservation_track>. The reverse shows a different orientation of the card spaces; either side may be used."
+      },
+      "appearance": {
+        "zh": "展示区与弃牌堆在版图中部偏左，Break 轨在其右侧，吸引力轨沿版图左上方外缘向下，保护轨沿左下方，声望轨沿展示区旁向下，黄色奖励板块格在保护轨旁。",
+        "en": "The display and discard pile in the middle-left, the Break track to their right, the Appeal track along the upper-left outer edge, the Conservation track along the lower-left, the Reputation track beside the display, and the yellow bonus tile spaces next to the Conservation track."
+      },
+      "parts": [
+        {
+          "<card_display>": {
+            "position": {
+              "zh": "版图中部偏左",
+              "en": "middle-left of the board"
+            }
+          }
+        },
+        {
+          "<zoo_deck>": {
+            "position": {
+              "zh": "版图中部偏左，展示区旁",
+              "en": "middle-left of the board, beside the display"
+            }
+          }
+        },
+        {
+          "<discard_pile>": {
+            "position": {
+              "zh": "版图中部偏左，展示区旁",
+              "en": "middle-left of the board, beside the display"
+            }
+          }
+        },
+        {
+          "<bonus_tile_spaces>": {
+            "position": {
+              "zh": "保护轨旁",
+              "en": "next to the Conservation track"
+            }
+          }
+        },
+        {
+          "<break_track>": {
+            "position": {
+              "zh": "版图中部偏右",
+              "en": "middle-right of the board"
+            }
+          }
+        },
+        {
+          "<reputation_track>": {
+            "position": {
+              "zh": "展示区旁",
+              "en": "beside the display"
+            }
+          }
+        },
+        {
+          "<appeal_track>": {
+            "position": {
+              "zh": "版图左上方外缘",
+              "en": "upper-left outer edge of the board"
+            }
+          }
+        },
+        {
+          "<conservation_track>": {
+            "position": {
+              "zh": "版图左下方外缘",
+              "en": "lower-left outer edge of the board"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "association_board",
+      "specifies": "<ontology::public_board>",
+      "name": {
+        "zh": "协会板",
+        "en": "Association Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "协会板，放在 <game_board> 旁。分为两个区域：蓝色区域是 4 个协会任务（<association_task_area>，含开局放置的合作动物园与大学供应），粉色区域是捐赠区（<donation_area>）。板上方是 <conservation_project_area>（保护项目牌行，2 人局 2 张、3 人局 3 张、4 人局 4 张），板下方是 <base_conservation_project_area>（基础保护项目，3 人局 3 张、4 人局 4 张，整局不移不换）。",
+        "en": "The Association board, placed next to the <game_board>. Two areas: the blue area holds the 4 association tasks (the <association_task_area>, including the initial partner zoo and university supply), the pink area is the <donation_area>. Above the board is the <conservation_project_area> (a row of conservation project cards: 2 in a 2-player game, 3 with 3 players, 4 with 4); below the board is the <base_conservation_project_area> (3 base projects with 3 players, 4 with 4; never moved or replaced during the game)."
+      },
+      "parts": [
+        {
+          "<association_task_area>": {
+            "position": {
+              "zh": "协会板蓝色区域",
+              "en": "blue area of the board"
+            }
+          }
+        },
+        {
+          "<donation_area>": {
+            "position": {
+              "zh": "协会板粉色区域",
+              "en": "pink area of the board"
+            }
+          }
+        },
+        {
+          "<conservation_project_area>": {
+            "position": {
+              "zh": "协会板上方",
+              "en": "above the board"
+            }
+          }
+        },
+        {
+          "<base_conservation_project_area>": {
+            "position": {
+              "zh": "协会板下方",
+              "en": "below the board"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "zoo_map",
+      "specifies": "<ontology::player_board>",
+      "name": {
+        "zh": "动物园地图",
+        "en": "Zoo Map"
+      },
+      "aliases": {
+        "zh": [
+          "边界空间",
+          "地图"
+        ],
+        "en": [
+          "border space"
+        ]
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每位玩家的个人地图。地图边缘的边界空间（border space）指至少有一侧没有相邻空间的格子。中央大片区域是 <building_area>（建围栏、亭、馆、独特建筑处）；底部是 5 个 <card_slot>（数字 1-5 表示动作强度）；左边缘是 7 个 <bonus_spaces>（开局放 7 个 <player_token>，支持保护项目时逐个取走并激活对应奖励）；右侧是 <partner_zoo_spaces>（5 格）与 <university_spaces>（3 格）；右下是 <worker_supply_spaces>；上方是 <notepad>（放钱、X Token 与活跃工人）。部分空格有水（W）、岩（R）、公园图标或放置奖励图标。进阶地图（1-8 号）各有独特能力；地图 A 开局在指定位置放 1 个 3 格空标准围栏；地图 0 有更多奖励格。",
+        "en": "Each player's personal map. A border space is a space that has at least one side with no adjacent space. The large middle area is the <building_area> (where enclosures, kiosks, pavilions, and unique buildings are placed); the bottom holds 5 <card_slot>s (numbered 1-5 showing action strength); the left edge holds 7 <bonus_spaces> (holding 7 <player_token>s at setup, removed one by one when supporting conservation projects, each activating a bonus); the right side holds the <partner_zoo_spaces> (5 spaces) and <university_spaces> (3 spaces); bottom-right are the <worker_supply_spaces>; at the top is the <notepad> (money, X-tokens, and active workers). Some spaces show water (W), rock (R), a park icon, or a placement bonus icon. Advanced maps (1-8) each have a unique ability; Map A starts with a 3-space empty standard enclosure placed on the indicated spaces; Map 0 has more bonus spaces."
+      },
+      "parts": [
+        {
+          "<building_area>": {
+            "position": {
+              "zh": "地图中央大片区域",
+              "en": "large middle area of the map"
+            }
+          }
+        },
+        {
+          "<card_slot>": {
+            "id": "card_slot_1",
+            "position": {
+              "zh": "地图底部最左",
+              "en": "far left at the bottom of the map"
+            }
+          }
+        },
+        {
+          "<card_slot>": {
+            "id": "card_slot_2",
+            "position": {
+              "zh": "地图底部左二",
+              "en": "second from the left at the bottom"
+            }
+          }
+        },
+        {
+          "<card_slot>": {
+            "id": "card_slot_3",
+            "position": {
+              "zh": "地图底部中间",
+              "en": "middle at the bottom"
+            }
+          }
+        },
+        {
+          "<card_slot>": {
+            "id": "card_slot_4",
+            "position": {
+              "zh": "地图底部右二",
+              "en": "second from the right at the bottom"
+            }
+          }
+        },
+        {
+          "<card_slot>": {
+            "id": "card_slot_5",
+            "position": {
+              "zh": "地图底部最右",
+              "en": "far right at the bottom"
+            }
+          }
+        },
+        {
+          "<bonus_spaces>": {
+            "position": {
+              "zh": "地图左边缘",
+              "en": "left edge of the map"
+            }
+          }
+        },
+        {
+          "<partner_zoo_spaces>": {
+            "position": {
+              "zh": "地图右侧上方",
+              "en": "upper right side of the map"
+            }
+          }
+        },
+        {
+          "<university_spaces>": {
+            "position": {
+              "zh": "地图右侧下方",
+              "en": "lower right side of the map"
+            }
+          }
+        },
+        {
+          "<worker_supply_spaces>": {
+            "position": {
+              "zh": "地图右下",
+              "en": "bottom-right of the map"
+            }
+          }
+        },
+        {
+          "<notepad>": {
+            "position": {
+              "zh": "地图上方",
+              "en": "top of the map"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "break_track",
+      "specifies": "<ontology::linear_track>",
+      "name": {
+        "zh": "Break 轨",
+        "en": "Break Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上的轨道，倒计时距离下一次 Break 还剩多少步。按人数有不同起始格（标有 2/3/4 的数字）；开局及每次 Break 结束后把 <break_token> 放回起始格。通过 <cards_action>、<sponsors_action> 或卡牌效果推进；推进到最后一格时触发 Break：触发者获得 1 个 X Token，多余的推进步数被忽略（停在终点）。",
+        "en": "A track on the <game_board> counting down the time until the next break. The start space depends on the player count (marked 2/3/4); the <break_token> returns to the start space at setup and after each break. It is advanced by the <cards_action>, <sponsors_action>, or card effects; when it reaches the last space, a break is triggered: the player who triggered it gains 1 X-token, and extra steps are ignored (the token stops there)."
+      },
+      "contains": {
+        "type": "<break_token>",
+        "description": {
+          "zh": "此轨上放着唯一的 Break 标记。",
+          "en": "This track holds the single Break token."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public",
+      "slots": "起始格按人数标注（2/3/4）；最后一格触发 Break"
+    },
+    {
+      "id": "reputation_track",
+      "specifies": "<ontology::linear_track>",
+      "name": {
+        "zh": "声望轨",
+        "en": "Reputation Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上紧邻 <card_display> 的轨道，格数 0-15。玩家用 <reputation_counter> 标记声望。声望决定 <card_display> 中哪些卡在「声望范围内」（与计数器同档及更低档的全部卡）。推进到带奖励的格时立即获得该奖励（仅一次）；升到 10 或以上必须先升级 <cards_action> 到 side II；到达 15 后若再获声望，计数器停在 15，每剩余 1 步改为获得 1 吸引力。",
+        "en": "A track on the <game_board> right next to the <card_display>, numbered 0-15. Players mark reputation with their <reputation_counter>. Reputation determines which cards in the <card_display> are within reputation range (the card on the same folder as the counter plus all cards on lower-numbered folders). Reaching a space with a bonus grants that bonus immediately, once. Reaching 10 or more requires the upgraded (side II) <cards_action>. At space 15, further reputation stays at 15 and each remaining step grants 1 appeal instead."
+      },
+      "contains": {
+        "type": "<reputation_counter>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的声望计数器。",
+          "en": "This track holds all players' reputation counters."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public",
+      "slots": "0–15"
+    },
+    {
+      "id": "appeal_track",
+      "specifies": "<ontology::linear_track>",
+      "name": {
+        "zh": "吸引力轨",
+        "en": "Appeal Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上的轨道。玩家用 <appeal_counter> 标记动物园吸引力。起始格按回合顺位：起始玩家 0、第二 1、第三 2、第四 3。每格旁标注了该吸引力对应的每次 Break 收入。5 格有互动效果提醒标注（互动效果只对吸引力达到 5 或以上的玩家生效）。",
+        "en": "A track on the <game_board>. Players mark their zoo's appeal with the <appeal_counter>. Starting spaces depend on turn order: start player 0, second 1, third 2, fourth 3. Each space shows the break income for that appeal level. Space 5 is marked as a reminder for interactive effects (which only apply to players with at least 5 appeal)."
+      },
+      "contains": {
+        "type": "<appeal_counter>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的吸引力计数器。",
+          "en": "This track holds all players' appeal counters."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public",
+      "slots": "0 起，每格旁标注该吸引力对应的每次 Break 收入；5 格有互动效果提醒标注"
+    },
+    {
+      "id": "conservation_track",
+      "specifies": "<ontology::linear_track>",
+      "name": {
+        "zh": "保护轨",
+        "en": "Conservation Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上的轨道，与 <appeal_track> 相对推进。玩家用 <conservation_counter> 标记保护分，所有玩家从首格（0 分）出发。达到或越过 2、5、8、10 分格时获得一次性奖励：2 分——升级 1 张动作卡或激活 1 个额外 <association_worker>（二选一，每个达到 2 分的玩家都可获得）；5 分与 8 分——拿 5 钱或该格旁的 1 块 <bonus_tile> 并立即执行（板块拿走移出游戏，拿光后仍可拿 5 钱）；10 分——首个达到或超过 10 分的玩家触发：所有玩家各选择并弃掉 1 张自己的终局计分卡（面朝下放回剩余终局计分卡堆下）。若终局前无人达到 10 分，终局计分前所有玩家各弃 1 张终局计分卡。",
+        "en": "A track on the <game_board> running opposite to the <appeal_track>. Players mark conservation points with the <conservation_counter>; all start on the first space (0 points). Reaching or passing the 2, 5, 8, and 10 spaces grants one-time bonuses: 2 points — either upgrade an Action card or activate one additional <association_worker> (each player who reaches space 2 gets this choice); 5 and 8 points — take either 5 money or one <bonus_tile> next to this space and execute it immediately (the tile leaves the game; the 5-money option remains after both tiles are gone); 10 points — the first time a player reaches or exceeds 10, all players choose and discard one of their Final Scoring cards (face down under the remaining Final Scoring cards). If no one reaches 10 points before the game ends, all players discard one Final Scoring card before end-game scoring."
+      },
+      "contains": {
+        "type": "<conservation_counter>[]",
+        "description": {
+          "zh": "此轨存放所有玩家的保护分计数器。",
+          "en": "This track holds all players' conservation counters."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public",
+      "slots": "0 起，每格对应一个计分区；2/5/8/10 格带一次性奖励"
+    },
+    {
+      "id": "card_display",
+      "specifies": "<ontology::market>",
+      "name": {
+        "zh": "展示区",
+        "en": "Display"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上 6 张面朝上的 <zoo_card> 展示区，分 6 个档位（folder），从低到高编号 1-6。从展示区拿卡（snap、声望范围、升级后各动作）时：从较高编号档位拿卡通常更强，snap 无限制；从展示区打动物/赞助/保护项目卡需额外支付档位编号等值的钱。回合内从展示区拿卡后不立即补牌，回合结束才补：较高编号档位的卡整体下滑到较低空档（顺序不变），然后从 <zoo_deck> 翻牌补满空格。Break 时弃掉档位 1 和 2 的卡，其余下滑并补满。牌堆为空时展示区相应位置留空。",
+        "en": "A market of 6 face-up <zoo_card>s on the <game_board>, in 6 folders numbered 1-6 from lowest to highest. When taking cards from the display (snapping, reputation range, upgraded actions): higher folders are generally stronger; snapping has no restriction; playing animal/sponsor/conservation project cards from the display costs extra money equal to the folder number. The display is not replenished until the end of the turn: cards from higher folders slide down into lower empty folders (order unchanged), then new cards fill empty spaces from the <zoo_deck>. During a break, the cards in folders 1 and 2 are discarded, the rest slide down, and the display is replenished. If the deck is empty, spaces stay empty."
+      },
+      "capacity": {
+        "type": "integer",
+        "description": {
+          "zh": "展示区固定 6 张卡、6 个档位。",
+          "en": "The display always holds up to 6 cards in 6 folders."
+        }
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "zoo_deck",
+      "specifies": "<ontology::deck>",
+      "name": {
+        "zh": "动物园牌堆",
+        "en": "Zoo Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "面朝下的动物园牌堆，洗混 212 张 <zoo_card> 组成：128 张 <animal_card>、64 张 <sponsor_card>、20 张 <conservation_project_card>。用于填充 <card_display> 和抽取手牌。弃牌堆不会重新洗回牌堆。",
+        "en": "The face-down deck of 212 shuffled <zoo_card>s: 128 <animal_card>s, 64 <sponsor_card>s, and 20 <conservation_project_card>s. Used to fill the <card_display> and to draw hand cards. The discard pile is never reshuffled into the deck."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "hidden"
+    },
+    {
+      "id": "discard_pile",
+      "specifies": "<ontology::discard_pile>",
+      "name": {
+        "zh": "弃牌堆",
+        "en": "Discard Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上 <card_display> 旁的弃牌堆，面朝上放置。被弃掉的手牌、展示区卡、被替换掉的保护项目卡、被释放的动物卡都进这里。游戏过程中任何玩家都不能翻看弃牌堆。",
+        "en": "The face-up pile on the <game_board> next to the <card_display>. Discarded hand cards, display cards, replaced conservation project cards, and released animal cards go here. No player may look through the discard pile during the game."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "bonus_tile_spaces",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "奖励板块格",
+        "en": "Bonus Tile Spaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 上 6 个黄色空格：4 个空白格开局随机放 1 块 <bonus_tile>（面朝上），另外 2 个带图标的空格不放任何板块。",
+        "en": "6 yellow spaces on the <game_board>: 4 blank spaces each hold 1 random face-up <bonus_tile> at setup; the 2 spaces with printed icons stay empty."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "association_task_area",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "协会任务区",
+        "en": "Association Task Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<association_board> 的蓝色区域，4 个协会任务：[2] 声望 +2、[3] 获得合作动物园、[4] 获得大学、[5] 保护项目工作。开局时各大洲 1 块 <partner_zoo_tile> 与每种 1 块 <university_tile> 放在此区；被玩家拿走后在 Break 中补回（已无玩家可拿的除外）。执行任务需要 1 个活跃 <association_worker> 放到协会板上对应任务上；同一任务已有自己 1 个工人时需放 2 个，已有 3 个时不能再执行。",
+        "en": "The blue area of the <association_board> with the 4 association tasks: [2] +2 reputation, [3] gain a partner zoo, [4] gain a university, [5] conservation project work. At setup, 1 <partner_zoo_tile> of each continent and 1 <university_tile> of each kind are placed here; tiles taken by players are replenished during each break (except ones all players already have). Performing a task requires placing 1 active <association_worker> on that task on the Association board; if 1 of your own workers is already there you must place 2, and with 3 of your own there you cannot perform it again."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "donation_area",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "捐赠区",
+        "en": "Donation Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<association_board> 的粉色区域，一排标注金额的空格。升级 Association 后可在执行任务之外做最多 1 次捐赠：支付当前可见的最小金额，获得 1 保护分，并用 1 个自己的 <player_token> 盖住该格。除最后一格外所有格都被盖住后，之后每次捐赠都付 12 钱且不再放标记。捐赠不需要 <association_worker>，但同一动作内必须执行过至少 1 个协会任务。2 人局开局时用未使用颜色的 6 个 <player_token> 盖住左列 3 格（这些格整局视为被占用）。",
+        "en": "The pink area of the <association_board>, a row of spaces with money amounts. With the upgraded Association action, in addition to the tasks, you may donate at most once: pay the smallest visible amount, gain 1 conservation point, and cover that space with 1 of your <player_token>s. Once all spaces but the last are covered, each subsequent donation costs 12 money and no more tokens are placed. A donation requires no <association_worker>, but at least 1 association task must have been performed in the same action. In a 2-player game, 6 <player_token>s of an unused color cover the 3 spaces of the left column at setup (treated as occupied for the whole game)."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "conservation_project_area",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "保护项目区",
+        "en": "Conservation Project Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<association_board> 上方的保护项目牌行。从手牌打出新 <conservation_project_card> 时放在最左格，原有牌整体右移；容量按人数（2 人 2 张、3 人 3 张、4 人 4 张），超出时最右侧的牌进 <discard_pile>，其上所有 <player_token> 归还对应玩家的个人供应（不回地图）。",
+        "en": "The row of conservation project cards above the <association_board>. A new <conservation_project_card> played from the hand goes on the leftmost space and existing cards shift right; capacity depends on player count (2 with 2 players, 3 with 3, 4 with 4). If the row would exceed capacity, the rightmost card goes to the <discard_pile> and all <player_token>s on it return to the corresponding players' personal supplies (not to the zoo maps)."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "base_conservation_project_area",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "基础保护项目区",
+        "en": "Base Conservation Project Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<association_board> 下方的面朝上基础保护项目牌：4 人局 4 张、其他人数 3 张。整局游戏不移走、不补充；被完全支持后仍在原地。2 人局开局时用未使用颜色的 <player_token> 盖住每张牌上指定的 1 个条件格（左牌盖左条件、中牌盖中条件、右牌盖右条件），这些条件整局视为被占用。",
+        "en": "The face-up Base Conservation Project cards below the <association_board>: 4 in a 4-player game, otherwise 3. They are never moved or replenished during the game and remain in place even when fully supported. In a 2-player game, <player_token>s of an unused color cover one condition on each card at setup (left condition on the left card, middle on the middle, right on the right); these conditions count as occupied for the whole game."
+      },
+      "<ontology::ownership>": null,
+      "<ontology::information_visibility>": "public"
+    },
+    {
+      "id": "building_area",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "建筑区",
+        "en": "Building Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 中央的大片区域，放置建筑（围栏、亭、馆、独特建筑）的地方。每个空格可能是普通空地、水（W）、岩（R）、公园图标或带放置奖励的格子。只能建在空格上；不能盖水格与岩格；升级 <build_action> 前不能盖公园格；盖住带奖励的格子立即获得对应奖励。第一个建筑必须至少 1 格位于地图边缘格（border space，即至少有一侧没有相邻空间的格子），之后每个新建筑必须与现有建筑至少共 1 条边。盖满全部空格（除水、岩格外）立即获得 7 吸引力。",
+        "en": "The large middle area of the <zoo_map> where buildings (enclosures, kiosks, pavilions, unique buildings) are placed. Each space may be a normal empty space, water (W), rock (R), a park icon, or carry a placement bonus. Buildings may only go on empty spaces, never covering water or rock spaces; park-icon spaces require the upgraded <build_action>; covering a bonus space grants its bonus immediately. The first building must have at least 1 space on a border space of the map (a space with at least one side without adjacent spaces); every later building must share at least 1 edge with an existing building. Covering every space of the map (except water and rock spaces) immediately grants 7 appeal."
+      }
+    },
+    {
+      "id": "building_space",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "建筑格",
+        "en": "Building Space"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<building_area> 中的一个空格。属性：普通空地、水（W）、岩（R）、公园图标、放置奖励图标。被建筑盖住的格子称为 covered（已覆盖）。",
+        "en": "One space of the <building_area>. Attributes: normal empty space, water (W), rock (R), park icon, placement bonus icon. A space with a building on it is called covered."
+      }
+    },
+    {
+      "id": "card_slot",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "动作卡槽位",
+        "en": "Action Card Slot"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 底部的 5 个动作卡槽位，从左到右编号 1-5，槽位编号即其中动作卡的强度 X。开局时 Animals 卡固定放在最左编号 [1] 的槽位，其余 4 张随机放其他槽。执行动作后把该卡移到槽 1，中间卡整体右移。",
+        "en": "The 5 card slots at the bottom of the <zoo_map>, numbered 1-5 left to right; the slot number is the strength X of the Action card in it. At setup, the Animals card goes under the leftmost slot marked [1], and the other 4 cards are randomly distributed under the remaining slots. After performing an action, that card moves to slot 1 and the intervening cards shift right."
+      }
+    },
+    {
+      "id": "bonus_spaces",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "奖励格",
+        "en": "Bonus Spaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 左边缘的 7 个奖励格，开局各放 1 个自己的 <player_token>。每次支持保护项目时从任一格取走 1 个 <player_token> 放到保护项目卡上，并立即获得该格奖励；部分格的奖励在每次 Break 还重复获得（取走后即激活）。奖励内容包括钱、X Token、升级动作卡、激活工人、保护分等。取走的 <player_token> 数在终局平局判定时用于比较支持保护项目的数量。",
+        "en": "The 7 bonus spaces on the left edge of the <zoo_map>, each holding 1 of your <player_token>s at setup. Whenever you support a conservation project, you take 1 <player_token> from one of these spaces onto the project card and immediately gain that space's bonus; some bonuses repeat at every break once activated. Bonuses include money, X-tokens, Action card upgrades, activating a worker, conservation points, etc. At the end of the game, the number of tokens removed from these spaces breaks ties by counting supported conservation projects."
+      }
+    },
+    {
+      "id": "partner_zoo_spaces",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "合作动物园格",
+        "en": "Partner Zoo Spaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 右侧的 5 个合作动物园格（5 大洲各 1），从下到上使用。获得合作动物园时放在最下空位；格上标有奖励时立即获得一次。每名玩家最多 4 个合作动物园（没有第 5 格可放）；拿第 3、4 个必须先升级 Association 动作卡（格背景色与公园图标作提醒）。",
+        "en": "The 5 partner zoo spaces on the right side of the <zoo_map> (1 per continent), filled bottom to top. A partner zoo is placed on the lowest empty space; if that space shows a bonus, take it immediately. Each player may have at most 4 partner zoos (there is no 5th space); the 3rd and 4th require the upgraded Association action card (the space background color and park icon serve as reminders)."
+      }
+    },
+    {
+      "id": "university_spaces",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "大学格",
+        "en": "University Spaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 右侧的 3 个大学格（3 种大学各 1），从下到上使用。获得大学时放在最下空位；格上标有奖励时立即获得一次。",
+        "en": "The 3 university spaces on the right side of the <zoo_map> (1 per university kind), filled bottom to top. A university is placed on the lowest empty space; if that space shows a bonus, take it immediately."
+      }
+    },
+    {
+      "id": "worker_supply_spaces",
+      "specifies": "<ontology::zone>",
+      "name": {
+        "zh": "工人供应格",
+        "en": "Worker Supply Spaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 右下方的格列，开局放 3 个平躺的备用 <association_worker>，从下到上使用。每次获准雇佣工人时，从最下格取 1 个立放到 <notepad> 成为活跃工人。某些地图在雇佣最后一个工人时奖励保护分。",
+        "en": "The column of spaces at the bottom-right of the <zoo_map>, holding the 3 lying spare <association_worker>s at setup, used bottom to top. Whenever you are allowed to hire a worker, take one from the lowest space and stand it on the <notepad> as an active worker. Some zoo maps reward conservation points for hiring the last worker."
+      }
+    },
+    {
+      "id": "notepad",
+      "specifies": "<ontology::player_holding>",
+      "name": {
+        "zh": "备忘录区",
+        "en": "Notepad"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<zoo_map> 上方的区域，放玩家的钱（起始 25）、X Token 与活跃 <association_worker>（立放）。",
+        "en": "The area at the top of the <zoo_map> holding the player's money (25 at start), X-tokens, and active (upright) <association_worker>s."
+      }
+    },
+    {
+      "id": "general_supply",
+      "specifies": "<ontology::supply>",
+      "name": {
+        "zh": "总供应",
+        "en": "General Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<game_board> 旁的两个收纳盒，装所有钱币、X Token、倍增/毒液/绞杀标记、围栏与亭/馆板块、独特建筑等。支付的钱还给总供应；拿取资源从总供应取。组件不足时可用替代物。",
+        "en": "The 2 organizers next to the <game_board>, holding all money tokens, X-tokens, multiplier/venom/constriction tokens, enclosures, kiosk/pavilion tiles, unique buildings, etc. Money paid returns to the general supply; resources are taken from it. If a component runs out, use a suitable substitute."
+      }
+    },
+    {
+      "id": "final_scoring_deck",
+      "specifies": "<ontology::deck>",
+      "name": {
+        "zh": "终局计分卡堆",
+        "en": "Final Scoring Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "11 张 <final_scoring_card> 洗混成堆。开局每位玩家抽 2 张放在地图旁（可随时查看，对其他玩家保密）。首个玩家达到或超过 10 保护分时，所有玩家各弃 1 张（面朝下放回剩余牌堆下）；若无人达到 10 分，终局计分前所有玩家各弃 1 张。终局计分时每张剩余卡提供 1-4 保护分。",
+        "en": "The shuffled stack of 11 <final_scoring_card>s. At setup, each player draws 2 and keeps them next to their zoo map (may be viewed at any time, kept hidden from others). When a player first reaches or exceeds 10 conservation points, all players discard one (face down under the remaining stack); if no one reaches 10, all players discard one before end-game scoring. At final scoring, each remaining card grants 1-4 conservation points."
+      }
+    },
+    {
+      "id": "base_conservation_deck",
+      "specifies": "<ontology::deck>",
+      "name": {
+        "zh": "基础保护项目牌堆",
+        "en": "Base Conservation Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "12 张 <base_conservation_project_card> 面朝下放在 <association_board> 旁；开局翻开 4 人局 4 张、其他人数 3 张放在 <base_conservation_project_area>。剩余牌整局不再使用。",
+        "en": "The 12 face-down <base_conservation_project_card>s kept next to the <association_board>; at setup, the top 4 (4 players) or 3 (otherwise) are revealed into the <base_conservation_project_area>. The rest are unused for the whole game."
+      }
+    },
+    {
+      "id": "zoo_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "动物园卡",
+        "en": "Zoo Card"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "3 种动物园卡（<animal_card>、<sponsor_card>、<conservation_project_card>）的抽象概念，共 212 张，组成 <zoo_deck>。动物卡把动物加进动物园；赞助卡雇佣专家、建独特建筑或获得其他效果；保护项目卡用于支持保护项目获得保护分。",
+        "en": "Abstract concept of the 3 Zoo card types (<animal_card>, <sponsor_card>, <conservation_project_card>), 212 in total, forming the <zoo_deck>. Animal cards add animals to the zoo; Sponsor cards hire specialists, build unique buildings, or provide other effects; Conservation Project cards support conservation projects for conservation points."
+      }
+    },
+    {
+      "id": "animal_card",
+      "specifies": "<ontology::card>",
+      "extends": "<zoo_card>",
+      "name": {
+        "zh": "动物卡",
+        "en": "Animal Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 128 张的动物卡，通过 <animals_action> 从手牌打出（升级后也可在声望范围内从展示区打出，额外支付档位编号等值的钱）。卡面结构：左上角是围栏要求（六边形内数字为最小标准围栏大小，旁边可能有 1-2 个水/岩图标，要求围栏紧邻相应空间；右侧是可选特殊围栏类型及占用格数）；围栏要求下方是费用；左下是打牌附加条件；右上角是 <animal_category> 与（宠物动物园动物除外）原产 <continent> 图标；右下角是安置后吸引力增加值，有的还有保护分或声望加成；有的动物有即时效果或「动作结束后」效果。图标计数时，动物卡自身图标计入其自身效果。某些动物有互动效果（只对吸引力 ≥5 的玩家生效）。条件、图标、效果细节以卡面为准。",
+        "en": "Animal card, 128 in total, played from the hand via the <animals_action> (or, when upgraded, from the display within reputation range for extra money equal to the folder number). Layout: top-left, the enclosure requirements (the number in the hexagon is the minimum standard enclosure size, possibly with 1-2 water/rock icons requiring adjacency; to the right, the optional special enclosure type and spaces occupied); below, the cost; bottom-left, additional play conditions; top-right, the animal's <animal_category> and (except Petting Zoo animals) home <continent> icons; bottom-right, the appeal gained, sometimes conservation points or reputation; some animals have an immediate or \"after finishing\" effect. An icon on the card itself counts for that card's effect. Some animals have interactive effects (only applying to players with 5+ appeal). Conditions, icons, and effect details follow each card's face."
+      }
+    },
+    {
+      "id": "sponsor_card",
+      "specifies": "<ontology::card>",
+      "extends": "<zoo_card>",
+      "name": {
+        "zh": "赞助卡",
+        "en": "Sponsor Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 64 张的赞助卡，通过 <sponsors_action> 打出。卡面结构：左上角是等级（决定所需动作强度），等级旁可能有水/岩建筑要求（建独特建筑时）；左侧是打牌条件（如最低声望、图标要求）；右上角可能有该卡提供的图标；顶部蓝色背景是持续效果，紫色背景是每次 Break 的收入效果；左下角黄色背景是一次性打出效果；右下角棕色背景是终局计分效果（牌背面竖棕色条提醒）。卡面图标计入该卡自身的触发与效果（只算右上角图标，另有水/岩图标在左上角）。效果细节以卡面为准。",
+        "en": "Sponsor card, 64 in total, played via the <sponsors_action>. Layout: top-left, the level (determining the required action strength), possibly with a water/rock building requirement (for unique buildings); left side, play conditions (e.g. minimum reputation, icon requirements); top-right, possibly an icon the card provides; a blue background at the top marks a recurring effect, purple marks break income; bottom-left yellow marks a one-off effect when played; bottom-right brown marks a final-scoring effect (with a vertical brown strip as a reminder). Icons on the card itself count for triggering and resolving that card's effects (only the upper-right icon, plus the water/rock icons at the top-left). Effect details follow each card's face."
+      }
+    },
+    {
+      "id": "conservation_project_card",
+      "specifies": "<ontology::card>",
+      "extends": "<zoo_card>",
+      "name": {
+        "zh": "保护项目卡",
+        "en": "Conservation Project Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 20 张的保护项目卡（在 <zoo_deck> 中）。通过协会任务 [5] 从手牌打出（升级后也可在声望范围内从展示区打出，额外支付档位编号等值的钱），放在 <conservation_project_area> 最左格。每张卡有 3 个条件与对应奖励；某些卡给打出者额外奖励。两类条件：图标收集类（数自己已打出的动物/赞助卡上边图标（含水/岩要求图标，不含左侧条件图标）＋合作动物园＋大学的图标数）或释放动物类（从动物园弃 1 张带特定图标的动物卡：该动物必须要求指定大小的标准围栏——动物能否进特殊围栏与条件无关；吸引力后退卡面所示步数；翻回最小满足要求的已占用标准围栏或从特殊围栏移除相应数量的 <player_token>；动物卡进 <discard_pile>）。支持项目：取 <bonus_spaces> 上 1 个自己的 <player_token> 放到一个自己未放标记且无其他标记的条件上，获得该条件标注的保护分（可能还有声望）。每个保护项目每名玩家只能支持 1 次。",
+        "en": "Conservation Project card, 20 in total (in the <zoo_deck>). Played from the hand via association task [5] (or, when upgraded, from the display within reputation range for extra money equal to the folder number), placed on the leftmost space of the <conservation_project_area>. Each card shows 3 conditions with corresponding rewards; some grant an extra bonus to the player who plays them. Two kinds of conditions: icon collection (count icons on the top edge of your played animal/sponsor cards — including water/rock requirement icons but excluding left-side conditions — plus partner zoos and universities) or releasing an animal (discard 1 Animal card with a specific icon from your zoo: the animal must require a standard enclosure of the depicted size — whether it could also go in a special enclosure is irrelevant; move your appeal back the number of steps shown on the card; flip the smallest qualifying occupied standard enclosure back or remove the appropriate number of <player_token>s from the special enclosure; the Animal card goes to the <discard_pile>). Supporting a project: take 1 of your <player_token>s from the <bonus_spaces> and place it on a condition you fulfill that has no token, gaining the conservation points (and possibly reputation) shown. Each player may support each conservation project only once."
+      }
+    },
+    {
+      "id": "base_conservation_project_card",
+      "specifies": "<ontology::card>",
+      "extends": "<zoo_card>",
+      "name": {
+        "zh": "基础保护项目卡",
+        "en": "Base Conservation Project Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 12 张，组成 <base_conservation_deck>，开局翻开 4 人局 4 张、其他 3 张放入 <base_conservation_project_area>。玩法与 <conservation_project_card> 相同，但整局不移走、不补充，被完全支持后仍留在原地。",
+        "en": "12 cards forming the <base_conservation_deck>; at setup, the top 4 (4 players) or 3 (otherwise) are revealed into the <base_conservation_project_area>. They play like <conservation_project_card>s but are never moved or replenished and remain in place even when fully supported."
+      }
+    },
+    {
+      "id": "final_scoring_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "终局计分卡",
+        "en": "Final Scoring Card"
+      },
+      "aliases": {
+        "zh": [
+          "最终计分卡"
+        ],
+        "en": []
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 11 张的终局计分卡。开局每位玩家抽 2 张保密持有；首个玩家达到或超过 10 保护分时（或无人达到时于终局计分前）所有玩家各弃 1 张。终局时每张剩余卡用表格或文字表示如何获得 1-4 点额外保护分（计入终局分数）。单张卡获得的保护分最多 4 点。",
+        "en": "Final Scoring card, 11 in total. At setup, each player draws 2 and keeps them hidden. When the first player reaches or exceeds 10 conservation points (or, if no one does, before end-game scoring), all players discard one of them. At the end of the game, each remaining card grants 1-4 additional conservation points (added to the final total) via a table or text on the card. A single Final Scoring card can never grant more than 4 conservation points."
+      }
+    },
+    {
+      "id": "action_card",
+      "specifies": "<ontology::card>",
+      "name": {
+        "zh": "动作卡",
+        "en": "Action Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "5 种动作卡（Cards、Build、Animals、Association、Sponsors），共 20 张双面卡（5 套）。每名玩家 1 套，开局放满 <zoo_map> 底部的 5 个 <card_slot>：Animals 卡固定放在最左标 [1] 的槽位，其余 4 张随机放。所有卡开局 side I 朝上；升级（翻转）为 side II 后动作更强，卡保持在原槽位。升级途径共 4 种：保护轨 2 分奖励、声望轨奖励格、获得第 2 个合作动物园、获得第 2 所大学——最多升级 4 次，不能升级全部 5 张卡。每回合选 1 张卡执行其动作：动作强度 X = 槽位编号 + 支付的 X Token 数（X Token 可让强度超过 5）；执行完后把卡移到槽 1，中间卡右移。",
+        "en": "The 5 Action cards (Cards, Build, Animals, Association, Sponsors), 20 double-sided cards (5 sets). Each player gets 1 set filling the 5 <card_slot>s at the bottom of their <zoo_map>: the Animals card goes under the leftmost slot marked [1], the other 4 randomly under the remaining slots. All cards start side I up; an upgrade flips a card to side II for a more powerful action, staying in its slot. There are 4 upgrade opportunities: the conservation-track 2-point bonus, a reputation-track bonus space, the 2nd partner zoo, and the 2nd university — so at most 4 upgrades and never all 5 cards. Each turn, choose 1 card and perform its action: the action strength X equals the slot number plus the X-tokens spent (X-tokens may push strength beyond 5); afterwards the card moves to slot 1 and the intervening cards shift right."
+      }
+    },
+    {
+      "id": "enclosure_requirement",
+      "specifies": "<ontology::object>",
+      "name": {
+        "zh": "围栏要求",
+        "en": "Enclosure Requirement"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<animal_card> 左上角的围栏要求：六边形内数字为最小标准围栏大小；旁边可能有 1-2 个水（W）/岩（R）图标，要求围栏紧邻相应数量的该类空间；右侧标注可选特殊围栏类型与该动物在其中的占用格数（水/岩要求同样适用于特殊围栏）。宠物动物园动物只能在 <petting_zoo> 中；爬行动物和部分鸟类可在标准围栏与对应特殊围栏中二选一（卡上显示两种围栏要求时可选）。",
+        "en": "The enclosure requirements in the top-left corner of an <animal_card>: the number in the hexagon is the minimum standard enclosure size; next to it, 1-2 water (W)/rock (R) icons may require the enclosure to be adjacent to that many spaces of that type; to the right, the optional special enclosure type and the spaces the animal occupies there (water/rock requirements also apply to the special enclosure). Petting Zoo animals can only go in the <petting_zoo>; reptiles and some birds may choose between a standard enclosure and the corresponding special enclosure (when the card shows two requirements)."
+      }
+    },
+    {
+      "id": "scoring_area",
+      "specifies": "<ontology::object>",
+      "name": {
+        "zh": "计分区",
+        "en": "Scoring Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "终局判定与计分的基本单位：<conservation_track> 上的 1 格与其对应的 <appeal_track> 相邻格段。当任一玩家的 <conservation_counter> 与 <appeal_counter> 位于同一计分区或相互越过时，触发游戏结束。终局计分时，目标数 = 自己的 <conservation_counter> 所在计分区中的最低吸引力值；胜利分 = 自己的吸引力值 − 目标数。",
+        "en": "The basic unit for end-game triggering and scoring: one space on the <conservation_track> and the adjacent spaces on the <appeal_track>. When a player's <conservation_counter> and <appeal_counter> are ever in the same scoring area, or pass each other, the end of the game is triggered. At final scoring, the Target Number is the lowest Appeal value in the scoring area containing your <conservation_counter>; Victory Points = your Appeal value − Target Number."
+      }
+    },
+    {
+      "id": "reputation_range",
+      "specifies": "<ontology::object>",
+      "name": {
+        "zh": "声望范围",
+        "en": "Reputation Range"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "由 <reputation_counter> 位置决定的概念：与计数器同档位（folder）的展示卡以及所有更低编号档位的卡都在「声望范围内」。声望越高，范围内可拿的卡越多。升级后多个动作可从声望范围内拿卡/打牌（Cards 抽牌、Animals 打动物、Association 打保护项目卡、Sponsors 打赞助卡），从展示区打牌需额外支付档位编号等值的钱。",
+        "en": "A concept determined by the <reputation_counter>'s position: the card on the same folder as the counter plus all cards on lower-numbered folders are within reputation range. The higher the reputation, the more cards are in range. With upgraded actions, several actions may take/play cards within reputation range (Cards drawing, Animals playing animals, Association playing conservation project cards, Sponsors playing sponsor cards); playing from the display costs extra money equal to the folder number."
+      }
+    }
+  ]
+}

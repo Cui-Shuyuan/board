@@ -1,0 +1,2619 @@
+{
+  "meta": {
+    "document": "board-game-ontology",
+    "version": "0.1.1",
+    "description": "桌游本体 — 统一定义游戏中的静态结构概念与流程时序概念。不定义具体游戏规则。",
+    "convention": "每个概念的 constraints.required 表示：若另一个概念继承或引用此概念，则必须提供这些字段的值。程序递归收集父链上的所有 required 约束和顶层字段。\n\n类型约定（type field convention）：字段的 type 值分为三类——(1) 概念引用：type 为已有概念的 id（如 player、zone、object、cost、content、information_visibility），表示该字段的值是对该概念实例的引用；(2) 泛引用：type 为 concept_ref，表示引用目标不限于单一概念，程序或 LLM 需根据上下文确定具体目标类型；(3) 原始类型：直接使用类型名——string、integer、boolean、any、map<string, any>、enum。enum 类型附带内联的 enum 数组枚举合法值。字段可空性由约束语境表达（constraints.optional 或 default: null），type 中不写「| null」后缀；字段 key 本身为 <concept_id> 格式时不再声明 type（key 即类型）。\n\n交叉引用约定（cross-reference convention）：所有 definition 和 field description 文本中，引用其他概念时使用 <concept_id> 占位符包裹概念 id。例如「指向游戏中一个具体的 <object> 实例（<player>、<zone>、<piece> 等，均为 <object> 的子类）」。LLM 读取时可据此识别交叉引用并沿 <concept_id> 查找对应概念的定义。"
+  },
+  "concepts": [
+    {
+      "id": "object",
+      "name": {
+        "zh": "对象",
+        "en": "Object"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "可被识别、引用或操作的实体或抽象概念。",
+        "en": "An entity or abstract concept that can be identified, referenced, or operated upon."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "唯一标识符。所有 <object> 实例必须通过此字段被识别和引用。由 <object> 自身定义，隐式赋予所有子类实例。",
+              "en": "Unique identifier. All <object> instances must be identifiable and referenceable through this field. Defined by <object> itself, implicitly available to all subclass instances."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "attributes",
+            "description": {
+              "zh": "描述该对象固有特征的键值对集合。由游戏规则预定义，描述对象「是什么」而非「此刻怎样」。注意：attributes 对应的是 Property（属性），不是 State（状态）。",
+              "en": "A map of key-value pairs describing the object's intrinsic characteristics. Predefined by game rules. Describes what the object 'is', not what it 'currently is' (which would be State)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "player",
+      "extends": "<object>",
+      "name": {
+        "zh": "玩家",
+        "en": "Player"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "直接参与游戏并能够做出决策的实体。<player> 是游戏中的能动主体——它发起 <action>、拥有 <object>、积累 Score、最终参与胜负判定。<player> 继承自 <object>。",
+        "en": "An entity that directly participates in the game and is capable of making decisions. <player> is the active agent in the game — it initiates <action>s, owns <object>s, accumulates Score, and ultimately participates in victory determination. <player> extends <object>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "name",
+            "description": {
+              "zh": "玩家名称，用于 UI 显示和 LLM 自然语言生成，不影响规则逻辑。",
+              "en": "Player name for UI display and LLM natural language generation. Does not affect rule logic."
+            }
+          },
+          {
+            "id": "order",
+            "description": {
+              "zh": "玩家在回合顺序中的位置（从 1 开始）。用于决定行动先后。若游戏采用其他顺序机制（如同时行动、竞标决定顺序），此字段可为空。",
+              "en": "The player's position in turn order (1-based). Used to determine action sequence. May be empty if the game uses other ordering mechanisms (e.g. simultaneous action, bidding)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "resource",
+      "extends": "<token>",
+      "name": {
+        "zh": "资源",
+        "en": "Resource"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种可被 <player> 拥有、计数、转移和消耗的价值概念。<resource> 继承自 <object>。其核心特征是可计量——玩家持有的是「3 个蓝宝石」而非「一个叫蓝宝石的物件」。同一类型的 <resource> 的所有个体完全等价、可互相替代。与 <marker> 的区别在于：resource 会被 action 的 <cost> 消耗或作为 <effect> 产出，而 marker 只用于指示状态。",
+        "en": "A value concept that can be owned, counted, transferred, and spent by <player>s. <resource> extends <object>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable. Unlike a <marker>, a resource is consumed by an action's <cost> or produced by an <effect>; a marker only indicates state."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "unit",
+            "description": {
+              "zh": "此资源的计量单位。如宝石用「颗」、钱币用「枚」、木材用「根」。仅供 UI 和 LLM 生成自然语言时使用，不影响规则逻辑。",
+              "en": "The unit of measurement for this resource. E.g., '颗' for gems, '枚' for coins. For UI and natural language generation only; does not affect rule logic."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "此资源的外观描述。如「蓝色六边形宝石，表面有切割纹理」「金黄色圆形硬币，正面有五角星图案」。用于动画生成、UI 渲染和 AI 讲解时帮助玩家识别实物，不影响规则逻辑。",
+              "en": "Visual description of this resource. E.g., 'blue hexagonal gem with cut texture', 'golden round coin with a star on the front'. Used for animation, UI rendering, and AI explanations to help players identify physical pieces. Does not affect rule logic."
+            }
+          },
+          {
+            "id": "component",
+            "default": null,
+            "description": {
+              "zh": "用于表示此资源的那个看得见摸得着的小零件。如棕色八角柱代表食物。若为 null，说明此资源本身外观特征明显、玩家一看就知道是什么。",
+              "en": "The tangible small piece used to represent this resource. E.g., a brown octagonal pillar represents food. If null, the resource is self-evidently identifiable."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "score",
+      "extends": "<resource>",
+      "name": {
+        "zh": "分数",
+        "en": "Score"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种特殊的 <resource>，代表玩家在游戏中获得的分数或胜利点数（victory points）。<score> 继承自 <resource>，核心特征是可被计数和增减，通常不用于支付费用或转移给其他玩家，而是用于胜负判定。",
+        "en": "A special <resource> representing a player's points or victory points. <score> extends <resource>. Its defining feature is that it is countable and can be increased or decreased; it is typically not spent as a cost or transferred to other players, but is used for victory determination."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "piece",
+      "extends": "<object>",
+      "name": {
+        "zh": "物件",
+        "en": "Piece"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种游戏零件，携带 <effect> 并可改变游戏状态。<piece> 继承自 <object>。并非所有 piece 都由玩家持有——归游戏系统所有（<ownership> 为 null）的 piece 不可被玩家 <play>，而是作为游戏环境的一部分存在（如地图板块、遭遇牌库）。只有 <ownership> 归属于 <player> 的 piece 才可被该玩家 <play>——打出它、建造它、激活它，游戏状态会因此改变。<piece> 与 <component> 的本质区别：<piece> 携带 <effect>；<component> 没有 <effect>，只负责标记事实。<effect> 的静态形态是 <property>——「这张牌的费用是 3 蓝」「打出后获得 2 分」「每轮结束时获得 1 银币」都是 <effect> 的规格说明。某些 <piece>（如 <card>、<tile>）可以承载 <zone>——zone 的生命周期绑定在宿主 piece 上，宿主被移除时 zone 随之消失。一块物理 piece 可能印有多重逻辑身份——通过 parts 字段声明，如大陆板块上印有地形区域和建造点、发展卡上印有费用和折扣和声望分；各 part 拥有独立的 concept parent 和属性，规则引擎按各自身份分别查询。",
+        "en": "A game component that carries <effect>s and can change game state. <piece> extends <object>. Not all pieces are owned by players — pieces owned by the game system (<ownership> is null) cannot be <play>ed by players; they exist as part of the game environment (e.g., map tiles, encounter decks). Only pieces whose <ownership> belongs to a <player> can be <play>ed by that player — playing, building, or activating it causes game state changes. The essential difference between <piece> and <component>: a <piece> carries <effect>s; a <component> has no <effect>s and only marks facts. <effect>s in static form are <property>s — 'this card costs 3 blue', 'gain 2 points when played', 'gain 1 silver at the end of each round' are all <effect> specifications. Some <piece>s (e.g., <card>, <tile>) can host <zone>s — the zone's lifecycle is bound to the host piece and disappears when the host is removed."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "parts",
+            "default": null,
+            "description": {
+              "zh": "此 piece 物理载体上印有的逻辑组件列表。一块实体板/卡上可能印有多种身份独立的组件——如大陆板块上印有地形区域、营地、材料格、建造点，或发展卡上印有费用、折扣、声望点数。每个元素拥有独立的 concept parent 和自身属性（zone、effect、property 等），规则引擎按各自身份分别查询。用「拿刀裁开即独立 piece」来理解——物理合一、逻辑分立。",
+              "en": "A list of logical components printed on this physical piece. One physical board/card may carry multiple independently identifiable components — e.g., a continent tile printed with terrain zones, encampments, material slots, and a building ground site; or a development card printed with cost, discount, and prestige points. Each element has its own concept parent and properties (zones, effects, etc.), queried independently by the rule engine. Think of it as 'cut them apart with a knife and each is an independent piece' — physically united, logically separate."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "此物件的外观描述。必须包含 AI 向玩家解释规则时所需的关键视觉信息——信息标注在什么位置、图案和颜色长什么样。如「矩形卡牌，左上角白色数字为该牌的分数，中央下方为效果文本」「棕色六角形厚纸板片，正面中央印有白色城堡图案，无数字标注」。AI 回答「怎么看」类问题时主要依赖此字段。",
+              "en": "Visual description of this piece. Must include key visual information needed for AI to explain rules to players — where information is printed, what patterns and colors look like. E.g., 'rectangular card, the white number in the top-left is the victory points, effect text is centered below', 'brown hexagonal tile with a white castle icon in the center, no numbers'. AI relies on this field when answering 'how do I see...' questions."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "board",
+      "extends": "<object>",
+      "name": {
+        "zh": "版图",
+        "en": "Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种承载游戏状态的物理组件。<board> 继承自 <object>。与 <aid> 的本质区别：<aid> 是纯被动参考物——上面的信息只是画上去的，收起来也不影响游戏；<board> 则承载游戏状态——上面可以放置 <piece> 和 <component>、可以容纳 <zone>（zone 虽由规则定义，但 board 是它的物理宿主）、可以携带自身的 <content>（如玩家面板上印着的活动图标能力，不依赖任何外部 <piece> 即可使用）。与 <piece> 的本质区别：<piece> 可以被 <transfer>——打出、交换、弃掉、移动；<board> 不可被转移——它固定属于某个 <player> 或公共区域，整个游戏过程中不会易主。<board> 的子类包括 <public_board> 和 <player_board>。",
+        "en": "A physical component that carries game state. <board> extends <object>. The essential difference from <aid>: an <aid> is a purely passive reference — the information on it is merely printed, and putting it away does not affect the game; a <board> carries game state — <piece>s and <component>s are placed on it, it can host <zone>s (zones are defined by rules, but the board is their physical host), and it can carry its own <content> (e.g., the activity icon ability printed on a player console, usable without any external <piece>). The essential difference from <piece>: a <piece> can be <transfer>red — played, exchanged, discarded, moved; a <board> cannot be transferred — it is fixed to a <player> or the public area and never changes hands during the game. Subclasses include <public_board> and <player_board>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "<ontology::zone>[]",
+            "description": {
+              "zh": "此版图上承载的 <zone>。每个 zone 至少包含 `position`（该 zone 在版图上的物理位置描述，如「左上角」「右半部」），可选包含 `description`（补充说明）。注意：zone 本身由规则独立定义——board 不「创造」zone，board 只是 zone 的物理宿主。客人问「某某东西放哪」时，系统通过此字段找到位置信息并给出精确回答。",
+              "en": "The <zone>s hosted on this board. Each zone contains at minimum `position` (physical location description on the board, e.g., 'top-left corner', 'right half'), optionally `description` for additional notes. Note: zones are independently defined by rules — the board does not 'create' zones, it is merely their physical host. When a guest asks 'where do I put X', the system uses this field to find the position and give a precise answer."
+            }
+          },
+          {
+            "id": "content",
+            "description": {
+              "zh": "此版图自身携带的效果或能力。不需要打出任何 <piece> 即可使用——这些能力直接印在版图上，由版图自身赋予玩家。数组中的每项描述一个独立的能力或效果。这些内容在版图进入游戏时自动生效，不依赖任何外部 <piece>。",
+              "en": "Effects or abilities carried by this board itself. Usable without playing any <piece> — these abilities are directly printed on the board and granted to the player by the board itself. Each entry in the array describes one independent ability or effect. These contents take effect automatically when the board enters the game, independent of any external <piece>."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "版图外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局时的核心信息来源。",
+              "en": "Visual description of this board — shape, material, size, and what is printed on it. Core information source when AI introduces board layout to players."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "aid",
+      "extends": "<object>",
+      "name": {
+        "zh": "辅助物",
+        "en": "Aid"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于向 <player> 展示参考信息、辅助玩家识别和操作的游戏实体。<aid> 继承自 <object>。其核心特征是「不承载游戏状态」——它上面的信息只是画上去的，不因游戏进程而改变；它上面不放置 <piece> 或 <component>，也不容纳 <zone>。<aid> 是纯参考物：规则书被合上、玩家提示卡被收起来，游戏规则依然存在并生效。熟练玩家在脑中记住了所有规则后，完全可以不借助 <aid> 进行游戏。注意：如果一块板子上面可以放置棋子、需要翻面、会被放标记——它承载游戏状态，则它不是 <aid>，应归入 <board>。",
+        "en": "A game entity used to present reference information to <player>s and assist in recognition and operation. <aid> extends <object>. Its defining trait is that it 'carries no game state' — the information on it is merely printed and does not change with gameplay; no <piece>s or <component>s are placed on it, and it hosts no <zone>s. An <aid> is a pure reference: close the rulebook, put away the player aid, and the game rules still exist and apply. A skilled player who has memorized all rules can play entirely without <aid>s. Note: if a board has pieces placed on it, needs to be flipped, or receives markers — it carries game state — then it is not an <aid> and should be categorized as a <board>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "maps_to",
+            "description": {
+              "zh": "此辅助物在视觉上对应哪些 <zone>。注意：Aid 不「包含」这些 zone，它只是把它们画在了上面——这种映射是单向的视觉关联。Zone 的存在和属性完全由规则定义，与 Aid 无关。",
+              "en": "Which <zone>s this Aid visually corresponds to. Note: the Aid does not 'contain' these zones; it merely depicts them. This is a one-way visual association — Zones exist and have properties defined purely by rules, independent of any Aid."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "辅助物外观描述——形状、材质、尺寸和上面印有的内容。AI 向玩家介绍版图布局和辅助工具时的核心信息来源。",
+              "en": "Visual description of this aid — shape, material, size, and what is printed on it. Core information source when AI introduces board layout and helper tools to players."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "component",
+      "extends": "<object>",
+      "name": {
+        "zh": "零件",
+        "en": "Component"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "桌游中最常见的小型物理零件。<component> 继承自 <object>。它代表盒子里那些看得见摸得着、但自身高度抽象的小零件——八角柱、圆片、方块、米宝等。一个 <component> 本身不决定自己代表什么；它与游戏概念的关联是外在的、可变的——同一个棕色八角柱，放在仓库里代表食物，放到重置轨上代表重置标记。<component> 本身不携带 <effect>，不能被 <play>——它不会因为被放置或移动而自己改变游戏状态；真正改变状态的是规则 <event>。",
+        "en": "The most common small physical piece in board games. <component> extends <object>. It represents those tangible, highly abstract little parts in the box — octagonal pillars, discs, cubes, meeples, etc. A <component> itself does not determine what it represents; its association with game concepts is external and mutable. A <component> itself carries no <effect> and cannot be <play>ed — placing or moving it does not change game state by itself; the rules <event> does."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "represents",
+            "description": {
+              "zh": "此零件代表什么逻辑概念。若一个零件是多用途的（红色方块既能计分又能标归属），此字段为空，含义由它当前所在的 <zone> 或使用上下文决定。",
+              "en": "What logical concept this component represents. For multi-purpose components, leave empty — the meaning is determined by its current <zone> or usage context."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "零件外观描述——形状、尺寸、颜色、材质。AI 向玩家解释实物识别时的核心信息。",
+              "en": "Visual description of this component — shape, size, color, material. Core information for AI to help players identify physical pieces."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "marker",
+      "extends": "<object>",
+      "name": {
+        "zh": "标记物",
+        "en": "Marker"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于指示某个 <state> 或位置的概念。<marker> 继承自 <object>。它不被当作资源消耗，而是被放置、移动或移除来反映游戏规则中的状态变化。",
+        "en": "A concept used to indicate a <state> or position. <marker> extends <object>. It is not spent as a resource; instead it is placed, moved, or removed to reflect state changes defined by the rules."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "represents",
+            "description": {
+              "zh": "此标记物代表的逻辑概念（如 State「起始玩家」、State「当前阶段」）。",
+              "en": "The logical concept this marker represents (e.g., State 'starting player', State 'current phase')."
+            }
+          },
+          {
+            "id": "component",
+            "default": null,
+            "description": {
+              "zh": "用于表示此标记物的那个看得见摸得着的小零件。如蓝色圆片代表分轨标记。若为 null，说明此标记物本身外观特征明显、玩家一看就知道是什么。",
+              "en": "The tangible small piece used to represent this marker. E.g., a blue disc represents a score track marker. If null, the marker is self-evidently identifiable."
+            }
+          },
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "标记物外观描述——形状、尺寸、颜色、材质。",
+              "en": "Visual description of this marker — shape, size, color, material."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "starting_player_marker",
+      "extends": "<marker>",
+      "name": {
+        "zh": "起始玩家标记",
+        "en": "Starting Player Marker"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于标记谁是起始 <player> 的 <marker>。<starting_player_marker> 继承自 <marker>。它是许多桌游中的通用组件——持有此标记的 <player> 即为当前 <round> 的起始玩家。每 <round> 结束后，标记传递给下一位 <player>，对应的 <starting_player> 状态随之更新。",
+        "en": "A <marker> used to mark who is the starting <player>. <starting_player_marker> extends <marker>. It is a common component in many board games — the <player> holding this marker is the starting player for the current <round>. After each <round>, the marker is passed to the next <player>, and the corresponding <starting_player> state is updated."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "zone",
+      "name": {
+        "zh": "区域",
+        "en": "Zone"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "游戏中的抽象逻辑容器，表示一组 <object> 的空间归属关系。不依赖版图和实体，只由规则决定。<zone> 是抽象概念，子类包括 <reserve>、<discard_pile>、<player_zone>、<track> 等。",
+        "en": "An abstract logical container in the game, representing the spatial belonging of a set of <object>s. Independent of board and physical components; defined solely by rules. <zone> is an abstract concept; subclasses include <reserve>, <discard_pile>, <player_zone>, <track>, etc."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Zone 的唯一标识符。继承自 <object>，用于在游戏规则中精确引用特定 Zone 实例。",
+              "en": "Unique identifier of the Zone. Inherited from <object>, used to precisely reference a specific Zone instance in game rules."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "capacity",
+            "description": {
+              "zh": "可容纳的对象数量上限。null 表示无上限。达到上限后，以此区域为目标的 Transfer 将被拒绝。",
+              "en": "Maximum number of objects this zone can hold. null means unlimited. When full, Transfers targeting this zone are rejected."
+            }
+          },
+          {
+            "id": "contains",
+            "description": {
+              "zh": "声明此 Zone 允许存放哪些类型的 <object>。程序校验 <transfer> 时以此过滤——若 what 的类型不在 contains 中，<transfer> 非法。空数组表示不限类型。",
+              "en": "Declares what types of <object> this Zone allows. Programs check this when validating a <transfer> — if what's type is not in contains, the <transfer> is illegal. Empty array means any type is allowed."
+            }
+          },
+          {
+            "id": "<information_visibility>",
+            "description": {
+              "zh": "此 Zone 的信息可见性级别。决定 Zone 中的内容可被哪些 <player> 观察——公开区全员可见，手牌区仅拥有者可见，牌堆区仅顶部部分可见等。",
+              "en": "Information visibility level of this Zone. Determines which <player>s can observe its contents — public zones are visible to all, hand zones are owner-only, deck zones may be partially visible at the top, etc."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "state",
+      "name": {
+        "zh": "状态",
+        "en": "State"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "某个时刻游戏世界中为真的断言。描述游戏实体「此刻怎样」，而非「是什么」。<state> 是运行时事实，随时可被 <effect> 改变。",
+        "en": "A true assertion about the game world at a given moment. Describes what a game entity 'currently is', not what it 'is'. <state> is a runtime fact, changeable at any time by <effect>s."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "State 的唯一标识符。用于在规则中精确引用特定状态实例（如「Player A 的分数」「Card X 的横置状态」）。",
+              "en": "Unique identifier of the State. Used to precisely reference a specific state instance in rules."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "value_type",
+            "description": {
+              "zh": "状态值的类型约束。如 \"integer\"、\"boolean\"、\"player\"。程序修改状态时以此校验。",
+              "en": "Type constraint for the state value. E.g., \"integer\", \"boolean\", \"player\". Programs validate state changes against this."
+            }
+          },
+          {
+            "id": "initial_value",
+            "description": {
+              "zh": "游戏开始时的初始值。用于 setup 和 reset。",
+              "en": "Initial value when the game starts. Used for setup and reset."
+            }
+          },
+          {
+            "id": "subject",
+            "description": {
+              "zh": "此 State 描述的实体——回答「谁此刻怎样」中的「谁」。指向一个具体的 <object> 实例（<player>、<zone>、<piece> 等）。",
+              "en": "The entity this State describes — the 'who' in 'who is currently in what state'. Points to a concrete <object> instance."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "property",
+      "name": {
+        "zh": "属性",
+        "en": "Property"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<object> 或 <zone> 固有的、由游戏规则预先定义的特征。描述游戏实体「是什么」「拥有什么能力」「具备什么特点」。默认不可变——在 <object> 进入游戏时即确定，仅在 <effect> 明确修改时才变化。<property> 是 <cost>、<content>、<effect>、<information_visibility> 的父概念。",
+        "en": "An intrinsic characteristic of an <object> or <zone>, pre-defined by game rules. Describes what a game entity 'is', 'what abilities it has', 'what traits it possesses'. Immutable by default — set when the <object> enters the game, only changed by an explicit <effect>. <property> is the parent of <cost>, <content>, <effect>, <information_visibility>."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Property 的唯一标识符。用于在规则中精确引用特定属性（如「Card X 的费用」「Zone Y 的可见性」）。",
+              "en": "Unique identifier of the Property. Used to precisely reference a specific property in rules."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "value_type",
+            "description": {
+              "zh": "属性值的类型约束。如 \"integer\"、\"boolean\"、\"cost_map\"、\"effect_spec\"。",
+              "en": "Type constraint for the property value. E.g., \"integer\", \"boolean\", \"cost_map\", \"effect_spec\"."
+            }
+          },
+          {
+            "id": "mutable",
+            "default": false,
+            "description": {
+              "zh": "是否可被游戏效果修改。默认 false（静态）。若为 true，修改必须经由 Effect 触发，不可被玩家随意更改。",
+              "en": "Whether this property can be modified by game effects. Default false (static). If true, modification must go through an Effect — players cannot arbitrarily change it."
+            }
+          },
+          {
+            "id": "default_value",
+            "description": {
+              "zh": "对象被创建或进入游戏时的默认值。",
+              "en": "Default value when the object is created or enters the game."
+            }
+          },
+          {
+            "id": "domain",
+            "description": {
+              "zh": "此 Property 附着于什么概念或实体——回答「谁拥有这个特征」。可指向本体概念（如 \"card\"，表示所有卡牌）或具体实例。",
+              "en": "What concept or entity this Property attaches to — answers 'who has this characteristic'. Can point to an ontology concept or a specific instance."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "per_player",
+      "extends": "<property>",
+      "name": {
+        "zh": "按玩家执行",
+        "en": "Per Player"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "标识一个 <event> 是否为每位 <ontology::player> 各执行一次——程序化分发，不重视排他性和行动顺序（如 setup 中每位玩家各获得自己的组件）。domain 为事件类概念（<transfer>、<play>、<state_change> 等），任何事件都可挂载。若场景强调行动顺序（必须按座次依次操作、一次只能一人操作），应改用流程树的 <round> + <turn> 结构而非此属性。",
+        "en": "Marks an <event> as executing once for each <ontology::player> — programmatic distribution, without emphasis on exclusivity or turn order (e.g., each player receiving their own components during setup). Domain is event concepts (<transfer>, <play>, <state_change>, etc.); any event may carry it. If strict turn order is required (players act one at a time in seating order), use the <round> + <turn> structure of the flow tree instead of this property."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "replaces",
+      "specifies": "<property>",
+      "name": {
+        "zh": "替换",
+        "en": "Replaces"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "通用替换工具：声明将 target 路径指向的任何对象替换为 with。**任何概念都可以选择持有 <ontology::replaces> 字段**（<trigger>、<effect>、<action>、<cost>、<content> 等）——持有方在 condition 成立时执行替换。被替换对象可以是任意可引用物——内容、作用目标、代价等。with 为 _skip 哨兵 = 使目标无效/取消。与 <substitution> 互补：substitution 声明「X 视为 Y」（身份借用），<replaces> 声明「用 Y 替换 X」（对象替换）。",
+        "en": "A general replacement tool: declares that whatever object the target path points to is replaced by `with`. **Any concept may choose to carry an <ontology::replaces> field** (<trigger>, <effect>, <action>, <cost>, <content>, etc.) — the carrier performs the replacement when its condition holds. The replaced object can be any referenceable thing — content, target, cost, etc. with = the _skip sentinel nullifies/cancels the target. Complements <substitution>: substitution declares 'X counts as Y' (identity borrowing); <replaces> declares 'Y replaces X' (object replacement)."
+      },
+      "target": {
+        "type": "string",
+        "description": {
+          "zh": "被替换对象的路径引用（\"<概念>.<字段>.<子字段>\" 形式）。",
+          "en": "Path reference to the object being replaced (of the form \"<concept>.<field>.<subfield>\")."
+        }
+      },
+      "with": {
+        "description": {
+          "zh": "替换后的对象。_skip 哨兵 = 使目标无效/取消。",
+          "en": "The replacement object. The _skip sentinel = nullify/cancel the target."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "target",
+            "description": {
+              "zh": "必须声明被替换对象的路径。",
+              "en": "The path of the object being replaced must be declared."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "with",
+            "description": {
+              "zh": "替换后的对象；缺省 = 取消目标（同 _skip）。",
+              "en": "The replacement object; absent = cancel the target (same as _skip)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "substitution",
+      "specifies": "<property>",
+      "name": {
+        "zh": "替代（视为）",
+        "en": "Substitution"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "声明对象 X 在特定语境中充当对象 Y：X 的物理身份不变，在 scope 内、满足 condition 时其行为等同于 Y，离开语境恢复自身身份。与 <piece>.parts 的静态身份声明互补——parts 表达「载体上印着什么身份」，<substitution> 表达「使用时的身份借用」。domain 为资源、标记等对象概念。",
+        "en": "Declares that object X acts as object Y within a specific context: X's physical identity is unchanged; inside scope, when the condition holds, its behavior equals Y's; outside, it reverts to itself. Complements the static identity declaration of <piece>.parts — parts states which identities are printed on a carrier, <substitution> states an identity borrowed at use time. Domain is object concepts such as resources and markers."
+      },
+      "target": {
+        "type": "<object>",
+        "description": {
+          "zh": "充当的对象——X 被视为什么。",
+          "en": "The object X is treated as."
+        }
+      },
+      "scope": {
+        "type": "string",
+        "default": null,
+        "description": {
+          "zh": "生效范围的路径式定位——概念.字段.步骤，如 \"<concept>.<ontology::pipeline>.pay_cost\" 表示「某动作的 pipeline 中的 pay_cost 步骤」。null = 全场合。",
+          "en": "Path-style scope — concept.field.step, e.g. \"<concept>.<ontology::pipeline>.pay_cost\" = the pay_cost step of some action's pipeline. null = everywhere."
+        }
+      },
+      "<condition>": {
+        "default": null,
+        "description": {
+          "zh": "适用条件（如「点数与所需一致」）。null = 无条件。",
+          "en": "Applicability condition (e.g. 'value matches the requirement'). null = unconditional."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "target",
+            "description": {
+              "zh": "必须声明充当的对象——X 被视为什么。",
+              "en": "The object being substituted for must be declared."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "scope",
+            "description": {
+              "zh": "生效范围。缺省为全场合。",
+              "en": "Scope of effect. Defaults to everywhere."
+            }
+          },
+          {
+            "id": "<condition>",
+            "description": {
+              "zh": "适用条件。缺省为无条件。",
+              "en": "Applicability condition. Defaults to unconditional."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ownership",
+      "extends": "<state>",
+      "name": {
+        "zh": "所有权",
+        "en": "Ownership"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "表示某个 <zone> 或 <object> 归属于哪个 <player> 的 <state>。<ownership> 继承自 <state>。所有权的建立有三种途径：(1) <zone> 推导——<object> 位于 owner 非 null 的 <zone> 中时，该 <zone> 的 owner 隐式拥有该 <object>；(2) 固有归属——<object> 在游戏开始时就已确定属于某 <player>（如玩家自带的牌组），不随 <zone> 变化而改变；(3) 游戏中获取——经由 <transfer>（ownership_change=true）或 <effect> 显式变更所有权。所有权可在游戏过程中被改变——转移、抢夺、赠予或剥夺均须经由规则定义的 <effect> 或 <transfer> 触发。",
+        "en": "A <state> representing which <player> a <zone> or <object> belongs to. <ownership> extends <state>. It is established in three ways: (1) <zone> derivation — when an <object> is in a <zone> whose owner is non-null, that <zone>'s owner implicitly owns the <object>; (2) Intrinsic — the <object> belonged to a <player> from the start of the game, independent of <zone> changes; (3) Acquired — explicitly changed via <transfer> (ownership_change=true) or an <effect> during gameplay. Ownership can change during the game — transferring, stealing, gifting, or revoking must all be triggered by rules-defined <effect>s or <transfer>s."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "owner",
+            "description": {
+              "zh": "拥有所有权的 <player>。State 的 subject 字段则指向被拥有的 <zone> 或 <object>。null 表示无所有者（公共区域）。",
+              "en": "The <player> who holds ownership. The State's subject field points to the <zone> or <object> being owned. null = public."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "所有权的来源。intrinsic = 游戏开始时即确定（如自备牌组）；zone = 由所在 Zone 的 owner 推导（默认行为）；transfer = 经由 Transfer 或 Effect 在游戏中获得。若未指定，程序默认按 zone 推导。",
+              "en": "The source of ownership. intrinsic = determined at game start (e.g., personal deck); zone = derived from containing Zone's owner (default); transfer = acquired via Transfer or Effect during gameplay. If unspecified, defaults to zone derivation."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "starting_player",
+      "extends": "<state>",
+      "name": {
+        "zh": "起始玩家",
+        "en": "Starting Player"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "标记当前<round>或游戏开始时谁最先行动的<state>。<starting_player>继承自<state>。在多数游戏中，起始玩家由物理的<starting_player_marker>标记——持有<starting_player_marker>的<player>即为起始玩家。每<round>结束后，<starting_player_marker>按规则传递给下一位<player>，<starting_player>随之更新。",
+        "en": "A <state> that marks which <player> acts first in the current <round> or at the start of the game. <starting_player> extends <state>. In most games, the starting player is indicated by a physical <starting_player_marker> — the <player> holding the <starting_player_marker> is the starting player. After each <round>, the <starting_player_marker> is passed to the next <player> according to the rules, and <starting_player> is updated accordingly."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "event",
+      "name": {
+        "zh": "事件",
+        "en": "Event"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "游戏过程中发生的、被游戏规则所识别和定义的、对游戏 <state> 或流程有意义的、不可再分的原子事实。<event> 是流程本体的根概念——一切「发生了什么」都始于 <event>。子类包括 <transfer>、<trigger>、<resolve>、<shuffle>、<play>、<lose>、<gain>。<action> 和 <effect> 均 specifies <trigger>——它们共享 trigger 的完整结构（condition → cost → target → content），仅点火源不同。",
+        "en": "An atomic fact that occurs during gameplay, recognized and defined by game rules, meaningful to game <state> or flow, and not further divisible. <event> is the root of the procedure ontology — everything that \"happens\" starts from <event>. Subclasses include <transfer>, <trigger>, <resolve>, <shuffle>, <play>, <lose>, <gain>. <action> and <effect> both specify <trigger> — they share trigger's complete structure (condition → cost → target → content), differing only in ignition source."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Event 的唯一标识符。用于在规则中精确引用特定事件实例，追溯游戏历史中的因果关系链。",
+              "en": "Unique identifier of the Event. Used to precisely reference a specific event instance and trace causal chains in game history."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "actor",
+            "description": {
+              "zh": "导致此事件发生的主体。若事件由玩家主动发起（如 <action>），actor 为该 <player>。若事件由规则自动引发（如 Trigger），actor 为 null。",
+              "en": "The entity that caused this event. If initiated by a player (e.g. <action>), actor is that <player>. If automatically triggered by rules (e.g. Trigger), actor is null."
+            }
+          },
+          {
+            "id": "target",
+            "description": {
+              "zh": "此事件作用的目标。可以是任意 <object> 的子类实例（<player>、<zone>、<piece> 等）。若事件无特定目标（如「回合开始」），target 为 null。",
+              "en": "The target this event acts upon. Can be any <object> subclass instance (<player>, <zone>, <piece>, etc.). If the event has no specific target (e.g. 'turn begins'), target is null."
+            }
+          },
+          {
+            "id": "rules",
+            "description": {
+              "zh": "此事件的执行规则说明。以中英双语描述事件执行时的具体约束——如「所选宝石颜色必须两两不同」「若不足 3 色则取走全部可用颜色」。这些规则描述超出了结构化字段的表达能力，供 LLM 理解规则和程序实现参考。",
+              "en": "Execution rules for this event. Bilingual description of specific constraints during execution — e.g., 'chosen gems must be of distinct colors', 'if fewer than 3 colors available, take all available'. These rules describe constraints beyond what structured fields capture, serving as reference for LLM understanding and program implementation."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "condition",
+      "name": {
+        "zh": "条件",
+        "en": "Condition"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "对游戏 <state> 的一个谓词——判断某个命题在当前状态下是否成立，任意时刻可求值、无副作用（只读状态，绝不改变状态）。<condition> 只回答「是」或「否」。谓词的形态不限：位置事实（「此牌在 <development_area> 中」）、历史派生事实（「打出后未超过 3 回合」）、跨玩家比较（「生命值并非全场最高」）、瞬间事实（「回合刚结束」「某 <event> 刚结算完」——只在一瞬为真的 state 事实）均为 <condition>。<condition> 是 Rule Engine 的核心判断单元：<action> 的合法性检查、<trigger> 的激活判断、<endgame_condition> 的触发检测，全部由 <condition> 驱动。<trigger> 对 <condition> 按边沿评估（谓词由假变真的跳变即「进入」，由真变假即「离开」），<continuous_content> 按电平维持（谓词本身）。",
+        "en": "A predicate over the game <state> — evaluates whether a proposition holds under the current state. Evaluable at any moment, side-effect-free (reads state only, never changes it). A <condition> only answers 'yes' or 'no'. Predicates take many forms: location facts ('this card is in the <development_area>'), history-derived facts ('no more than 3 rounds since it was played'), cross-player comparisons ('health is not the highest'), and instantaneous facts ('the turn just ended', 'an <event> just finished resolving' — state facts true only for an instant). <condition> is the core judgment unit of the Rule Engine: <action> legality checks, <trigger> activation, and <endgame_condition> detection are all driven by <condition>s. A <trigger> evaluates its <condition> on the edge (the false→true transition is 'entering', true→false is 'leaving'); a <continuous_content> is maintained on the level (the predicate itself)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Condition 的唯一标识符。程序根据此 id 查找对应的 evaluator 函数，传入 params 和当前 GameState，返回 boolean。",
+              "en": "Unique identifier of the Condition. The program looks up the corresponding evaluator function by this id, passes params and current GameState, and returns a boolean."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "params",
+            "description": {
+              "zh": "此条件的参数。内容由具体的条件类型决定。例如 SupplyCount 条件：{ \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }。复合条件（AND/OR）：{ \"op\": \"and\", \"operands\": [condition_ref, ...] }。程序根据条件的 id 查找对应的 evaluator 函数，传入 params 和当前 GameState，返回 boolean。",
+              "en": "Parameters for this condition. Content is determined by the specific condition type. E.g., a SupplyCount condition: { \"resource\": \"blue\", \"operator\": \">=\", \"value\": 4 }. Compound conditions (AND/OR): { \"op\": \"and\", \"operands\": [condition_ref, ...] }. The program looks up the evaluator function by the condition's id, passes params and current GameState, and returns a boolean."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "timing",
+      "name": {
+        "zh": "时机",
+        "en": "Timing"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "时间轴上的一个位置。<timing> 回答「何时发生」，是游戏时间秩序的基础。<timing> 可以是：某个状态变化的瞬间（「任何使宝石总数变化的 <event> 结算完成时」）、阶段边界（「一名 <player> 的回合结束时」）、或某个 <event> 完成后（「此 <action> 执行完毕时」）。<timing> 的持有者有两类：一是 <trigger>——决定何时检查 <condition>，时机到达且条件满足才触发；二是 <procedure>（<round>、<turn>、<phase>）——划定自身的起止边界。普通 <event> 不持有 <timing>——<trigger> 触发后其 <event> 序列按 order 依次执行，顺序本身就是时序，无需逐事件声明。<timing> 本身不改变游戏状态，它只是时间秩序的描述。",
+        "en": "A position on the timeline. <timing> answers 'when does it happen' and is the foundation of the game's temporal order. A <timing> can be: the instant of a state change ('when any <event> that changes the gem total finishes resolving'), a phase boundary ('when a <player>'s turn ends'), or the completion of some <event> ('when this <action> finishes executing'). <timing> has two kinds of holders: <trigger>s — which use it to decide when to check the <condition>, firing only when the timing arrives and the condition holds; and <procedure>s (<round>, <turn>, <phase>) — which use it to delimit their own start and end. Ordinary <event>s do not hold <timing> — once a <trigger> fires, its <event> sequence executes in order, and the sequence itself is the temporality; no per-event declaration is needed. <timing> itself changes no game state — it is merely a description of temporal order."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Timing 的唯一标识符。程序根据此 id 查找对应的 watcher 函数，在游戏循环中侦测时机是否到达。",
+              "en": "Unique identifier of the Timing. The program looks up the corresponding watcher function by this id and detects in the game loop whether the timing has arrived."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "params",
+            "description": {
+              "zh": "此时机的参数，内容由具体的时机类型决定。例如事件完成后：{ \"after\": \"<event_id>\" }；阶段边界：{ \"boundary\": \"turn_end\" }；状态变化瞬间：{ \"on_change\": { \"zone\": \"<zone_id>\", \"watch\": \"count\" } }。程序根据时机的 id 查找对应的 watcher 函数，在游戏循环中侦测时机是否到达，返回 boolean。",
+              "en": "Parameters for this timing. Content is determined by the specific timing type. E.g., after an event completes: { \"after\": \"<event_id>\" }; a phase boundary: { \"boundary\": \"turn_end\" }; the instant of a state change: { \"on_change\": { \"zone\": \"<zone_id>\", \"watch\": \"count\" } }. The program looks up the watcher function by the timing's id, detects in the game loop whether the timing has arrived, and returns a boolean."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cost",
+      "extends": "<property>",
+      "name": {
+        "zh": "费用",
+        "en": "Cost"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<effect> 或 <trigger> 在结算前必须履行的代价。<cost> 继承自 <property>。代价分两种性质：<instant_cost>——一次性支付，伴随实际资源转移；<continuous_cost>——纯粹的状态检查，不消耗任何东西。二者均缺省即免费。",
+        "en": "The cost that must be fulfilled before an <effect> or <trigger> resolves. <cost> extends <property>. Costs come in two forms: <instant_cost> — a one-time payment involving an actual resource transfer; <continuous_cost> — a pure state check that consumes nothing. When both are absent, the cost is free."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "<instant_cost>",
+            "default": null,
+            "description": {
+              "zh": "一次性支付的代价，伴随实际的 <event>。",
+              "en": "A one-time cost involving an actual <event>."
+            }
+          },
+          {
+            "id": "<continuous_cost>",
+            "default": null,
+            "description": {
+              "zh": "纯粹的状态条件，不消耗任何资源。",
+              "en": "A pure state condition that consumes nothing."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "instant_cost",
+      "extends": "<cost>",
+      "name": {
+        "zh": "即时费用",
+        "en": "Instant Cost"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一次性支付的代价，伴随实际的 <event>（通常为 <transfer>）。支付完毕即完成，不留持续约束。",
+        "en": "A one-time cost involving an actual <event> (usually a <transfer>). Paid once and done; no ongoing constraint remains."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "continuous_cost",
+      "extends": "<cost>",
+      "name": {
+        "zh": "永续费用",
+        "en": "Continuous Cost"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "纯粹的状态条件，不消耗任何资源。在 effect 激活期间持续检查——条件成立方可执行后续 content，条件不成立则阻塞。",
+        "en": "A pure state condition that consumes nothing. Checked continuously while the effect is active — content only executes while the condition holds; blocks otherwise."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "content",
+      "extends": "<property>",
+      "name": {
+        "zh": "内容",
+        "en": "Content"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<resolve> 结算时发生的事。三个独立字段可任意组合。<instant_content>：无条件，一次性执行。<continuous_content>：无条件，电平维持。<effect>：条件触发，分 instant（一次机会）和 continuous（持续武装）两种。",
+        "en": "What happens when <resolve> resolves. Three independent fields, freely combinable. <instant_content>: unconditional, one-shot. <continuous_content>: unconditional, level-maintained. <effect>: conditional, with instant (one chance) and continuous (persistent arming) forms."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "<instant_content>",
+            "default": null,
+            "description": {
+              "zh": "无条件，一次性执行完毕。",
+              "en": "Unconditional, executes once and is done."
+            }
+          },
+          {
+            "id": "<continuous_content>",
+            "default": null,
+            "description": {
+              "zh": "无条件，激活后电平维持。",
+              "en": "Unconditional, level-maintained after activation."
+            }
+          },
+          {
+            "id": "<effect>",
+            "default": null,
+            "description": {
+              "zh": "条件触发。含 <instant_effect> 和 <continuous_effect> 两个独立字段，可任意组合。",
+              "en": "Conditional trigger. Contains two independent fields <instant_effect> and <continuous_effect>, freely combinable."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "effect",
+      "name": {
+        "zh": "效果",
+        "en": "Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 <trigger>——绑定在 <piece> 上，携带 <condition> 监听状态变化，边沿激活后按 pipeline 结算。<effect> 是 armed 态的 trigger：它被 <resolve> 武装到 <piece> 上，此后由自身的 <condition> 决定何时点火。<effect> specifies <trigger>——不是 trigger 的子类型，而是一次参数填充：effect 填入 trigger 的全部槽位并附加「绑定于 <piece>、由 <condition> 边沿激活」的语义约束。含 <instant_effect>（部署即触发）和 <continuous_effect>（先部署后触发）两个独立字段，可任意组合。与 <action> 互为对偶：action 不依赖 <piece>、由玩家点燃；effect 依赖 <piece>、由状态边沿点燃。**生命周期**：效果经历「部署（arm）→ 监听（monitor）→ 触发（fire）→ 结算（cost → target → content）」四阶段——<instant_effect> 与 <continuous_effect> 的区别在于部署与触发是否同一时刻：instant 部署即触发（机会一次，错过不再）；continuous 先部署（开始监听，此刻不触发）、后按 condition 触发（可多次）。",
+        "en": "A <trigger> bound to a <piece>, carrying a <condition> to monitor state changes; upon edge activation, follows the pipeline to settle. <effect> is a trigger in armed form: it is armed onto a <piece> by <resolve>, after which its own <condition> determines when to fire. <effect> specifies <trigger> — not a subtype of trigger, but a parameter binding: effect fills in all of trigger's slots and adds the semantic constraint \"bound to a <piece>, edge-activated by <condition>\". Contains two independent fields <instant_effect> (arm-and-fire) and <continuous_effect> (arm-then-fire), freely combinable. Counterpart to <action>: action is independent of <piece> and ignited by player; effect depends on <piece> and is ignited by a state edge. **Lifecycle**: an effect passes through four stages — arm → monitor → fire → settle (cost → target → content). The difference between <instant_effect> and <continuous_effect> is whether arming and firing coincide: instant arms and fires in the same moment (one chance, missed opportunities are gone); continuous arms first (begins monitoring, no firing yet), then fires on each condition satisfaction (may fire repeatedly)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "<instant_effect>",
+            "default": null,
+            "description": {
+              "zh": "一次机会。condition 满足即执行 cost→content，失败则永远消失。",
+              "en": "One chance. If condition is met, executes cost→content; if it fails, gone forever."
+            }
+          },
+          {
+            "id": "<continuous_effect>",
+            "default": null,
+            "description": {
+              "zh": "持续武装。每次 condition 满足都执行 cost→content，直到 end_condition 成立、来源离场或被外部移除。end_condition 缺省 = 永不自动终结。",
+              "en": "Persistent arming. Fires cost→content each time condition is met, until end_condition holds, source leaves play, or externally removed. Absent end_condition = never auto-terminates."
+            }
+          }
+        ]
+      },
+      "specifies": "<trigger>"
+    },
+    {
+      "id": "instant_effect",
+      "extends": "<effect>",
+      "name": {
+        "zh": "即时效果",
+        "en": "Instant Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "部署即触发：<resolve> 武装本效果的那一刻即是触发机会——condition 满足即执行 cost→target→content，无论成败此 effect 永远消失（机会用完，条件后来满足也不触发）。content 的结算结果（如加入生效池的电平）不随 effect 消失。用于「打出时」「翻开时」等一次性激活场景。",
+        "en": "Arm-and-fire: the moment <resolve> arms this effect is itself the trigger chance — if condition is met, executes cost→target→content; whether it succeeds or fails, this effect is gone forever (the chance is spent; later condition satisfaction does not fire it). Settlement results of the content (e.g. a level entering the active pool) do not vanish with the effect. Used for one-shot activations like 'when played' or 'when revealed'."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "continuous_effect",
+      "extends": "<effect>",
+      "name": {
+        "zh": "永续效果",
+        "en": "Continuous Effect"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "先部署后触发：<resolve> 武装本效果时开始监听（此刻不触发）；此后每次 condition 满足都触发——走完整 trigger 流程（cost → target → content，与 <instant_effect> 相同，拥有自己的 cost 与 target），直到 end_condition 成立、来源离场或被外部移除。end_condition 缺省 = 永不自动终结。用于需要持续监听、条件开火的被动能力。注意：content 若是电平（<continuous_content>），部署时即应生效（激活式），无需等待触发——监听触发只对事件型 content（<instant_content>）有意义。",
+        "en": "Arm-then-fire: when <resolve> arms this effect, it begins monitoring (no firing yet); thereafter it fires on each condition satisfaction — following the full trigger flow (cost → target → content; like <instant_effect>, it has its own cost and target) — until end_condition holds, the source leaves play, or it is externally removed. Absent end_condition = never auto-terminates. Used for passive abilities that listen persistently and fire on condition. Note: if the content is a level (<continuous_content>), it should take effect at arming time (activative style) without waiting for a fire — monitored firing only makes sense for event-type content (<instant_content>)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "end_condition",
+            "default": null,
+            "description": {
+              "zh": "终结条件——成立时此 effect 永久失效。缺省 = 永不自动终结。",
+              "en": "Termination condition — when met, this effect permanently deactivates. Absent = never auto-terminates."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "instant_content",
+      "extends": "<content>",
+      "name": {
+        "zh": "即时内容",
+        "en": "Instant Content"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "无条件，一次性执行完毕。<resolve> 执行一次，终结。",
+        "en": "Unconditional, one-shot. <resolve> executes once, done."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "continuous_content",
+      "extends": "<content>",
+      "name": {
+        "zh": "永续内容",
+        "en": "Continuous Content"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "无条件，激活后电平维持。<resolve> 将其加入生效池，按 active_condition 判定适用与否。条件变假自动失效，条件再成立自动恢复。派生值 = 基础值 + Σ 生效池修饰。",
+        "en": "Unconditional, level-maintained after activation. <resolve> adds it to the active pool; applies or lapses based on active_condition. Derived value = base + Σ active modifiers. Auto-lapses when condition becomes false; auto-restores when true again."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "active_condition",
+            "default": null,
+            "description": {
+              "zh": "电平维持谓词。缺省沿用所属 effect 的 condition。",
+              "en": "Level-maintenance predicate. Absent = inherit the owning effect's condition."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "information_visibility",
+      "extends": "<property>",
+      "name": {
+        "zh": "信息可见性",
+        "en": "Information Visibility"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "决定游戏 <object> 或 <zone> 的信息可以被哪些 <player> 观察，以及这种观察是强制的还是可选的规则。<information_visibility> 继承自 <property>。定义了五种基本状态：Public（公开，必须对所有玩家可见）、Private（私有，仅拥有者可观察且不可公开）、Protected（保护，拥有者可选择是否向其他玩家临时展示）、Partially Public（部分公开，仅部分内容对全员可见）、Hidden（隐藏，所有玩家均不可观察）。可在游戏过程中被 <effect> 改变——一张面朝下的卡被翻转后，其可见性从 Hidden 变为 Public。",
+        "en": "A rule that determines which <player>s can observe the information of a game <object> or <zone>, and whether such observation is mandatory or optional. <information_visibility> extends <property>. It defines five basic states: Public (must be visible to all players), Private (only the owner can observe, cannot be shared), Protected (owner may choose to temporarily reveal to others), Partially Public (only part of the content is visible to all), Hidden (no player can observe). Can be changed during gameplay by <effect>s — a face-down card flipped face-up changes from Hidden to Public."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "type",
+            "description": {
+              "zh": "可见性级别枚举：public = 公开，所有 <player> 均可无条件观察；private = 私有，仅拥有者可观察且不可主动公开；protected = 保护，拥有者可选择是否临时展示；partially_public = 部分公开，集合中仅部分内容对全员可见；hidden = 隐藏，所有 <player> 均不可观察。",
+              "en": "Visibility level enum: public = all <player>s can observe unconditionally; private = only the owner can observe and cannot voluntarily reveal; protected = owner may choose to temporarily reveal; partially_public = only part of the content is visible to all; hidden = no <player> can observe."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "procedure",
+      "name": {
+        "zh": "流程",
+        "en": "Procedure"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "游戏流程的执行单元——它定义了「游戏现在处于什么阶段」「接下来该做什么」。<procedure> 的子类（<round>、<turn>、<phase>）语义各异但结构相同：**执行内容优先用 <ontology::pipeline> 定义**（options 序列 + do_after 依赖 + loop 循环），**仅干一件事时可直接持有对应概念（如 <ontology::action>），无需 pipeline 包装**——pipeline 是描述多 trigger/多步骤的工具，不是必包层。<procedure> 自身不再有 children / start / end 字段——步骤顺序与先后依赖由 pipeline 的 do_after 表达，循环边界由 pipeline 的 loop.until 表达，「谁能做某操作」由步骤的 <condition> 表达。嵌套仍是自由形式的：options 里的候选项可以是 <round>、<turn>、<phase> 或普通步骤，一整局游戏本身也可以是一个最外层的 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。",
+        "en": "An execution unit of game flow — it defines 'what stage the game is in' and 'what happens next'. The <procedure> subclasses (<round>, <turn>, <phase>) differ in semantics but share the same structure: **execution content is preferably defined via an <ontology::pipeline>** (options sequence + do_after dependencies + loop), **but a procedure doing a single thing may directly hold the concept itself (e.g. an <ontology::action>) without pipeline wrapping** — a pipeline is a tool for composing multiple triggers/steps, not a mandatory wrapper. <procedure> itself no longer has children / start / end fields — step order and prerequisites come from the pipeline's do_after, loop boundaries from the pipeline's loop.until, and 'who may perform an operation' from a step's <condition>. Nesting remains free-form: candidates in options can be <round>s, <turn>s, <phase>s, or plain steps, and an entire game can itself be an outermost <round>. There is no fixed hierarchy — the nesting is determined by each game's rules."
+      },
+      "<pipeline>": {
+        "default": null,
+        "description": {
+          "zh": "本 <procedure> 的执行内容（options / type / do_after 结构），仅当执行内容多于一个步骤/行动时使用；单内容时直接持有对应概念（如 <ontology::action>、<ontology::turn>、<ontology::round>）。子类 <round>、<turn>、<phase> 通过它描述多步骤执行：<turn> 用 CHOOSE_ONE 表达多行动选择（执行者轮转是 <turn> 的内建语义）、<phase> 用 options 承载子流程或程序化步骤（setup、结算等）。循环边界不在此字段内——见顶层 loop 字段。",
+          "en": "The execution content of this <procedure> (options / type / do_after structure), used only when the execution content has more than one step/action; a single-content procedure directly holds the concept itself (e.g. an <ontology::action>, <ontology::turn>, or <ontology::round>). The subclasses <round>, <turn>, and <phase> describe multi-step execution through it: <turn> uses CHOOSE_ONE for multi-action selection (turn order is <turn>'s built-in semantics), and <phase> holds child procedures or programmatic steps (setup, resolution, etc.) in its options. Loop boundaries are not part of this field — see the top-level loop field."
+        }
+      },
+      "loop": {
+        "default": null,
+        "description": {
+          "zh": "本 <procedure> 的循环边界（顶层字段，不属于 <pipeline>）。两种形态：(1) 定次循环 `{ \"count\": N, \"counter\": \"<名称>\" }`——执行内容恰好 N 次（N 为数字或引用，如 \"player_count\"），counter 可选——循环计数变量（如 era_number），供步骤引用当前迭代号；(2) 条件循环 `{ \"until\": <condition> }`——重复执行内容直到条件成立（until 为 <condition> 的字符串引用或内联谓词 { zh, en }）。**until 条件在迭代完整执行后检查**——正在进行的迭代（一轮）总是完整跑完才求值：触发条件在轮中被满足时，当前轮照常完成（剩余玩家继续行动），轮末循环才停止。**phase 与 round/turn 正交**：phase（规则上下文）切换不影响 round/turn（执行流程）——上下文切换发生在轮间，「完成当前轮」由 round 的完整性天然保证，无需补完结构。若规则要求触发即中断（罕见），用 round + turn 的「本轮尚未行动」condition 在触发后的阶段补完。<round> 用 count 表达「进行几轮」（口语「进行 4 轮」= count 4；缺省无 loop = 1 次 = 每位玩家恰好一个 turn），用 until 表达「直到条件才结束」（如行动阶段直到阶段标记推到红格）；<phase> 也可持有（如「一直进行到有人达到 15 分」）。缺省 null = 执行一次。",
+          "en": "The loop boundary of this <procedure> (a top-level field, not part of <pipeline>). Two forms: (1) fixed-count loop `{ \"count\": N, \"counter\": \"name\" }` — execute the content exactly N times (N is a number or reference such as \"player_count\"); counter is optional — the loop-count variable (e.g. era_number) referenced by steps for the current iteration; (2) conditional loop `{ \"until\": <condition> }` — repeat the content until the condition holds (until is a string reference to a <condition> or an inline predicate { zh, en }). **The until condition is evaluated after the iteration completes in full** — an iteration (a round) in progress always finishes before the condition is evaluated: when the trigger condition is satisfied mid-round, the current round completes normally (remaining players keep acting) and the loop stops at the end of the round. **<phase> and <round>/<turn> are orthogonal**: a <phase> (rule context) switch does not interrupt <round>/<turn> (execution flow) — context switches happen between rounds, and 'completing the current round' is guaranteed by the round's completeness, needing no catch-up structure. If a rule truly requires an immediate interruption (rare), use the catch-up pattern: a round whose turn carries a 'has not yet acted this round' condition in the phase after the trigger. <round> uses count for 'how many rounds' ('4 rounds' in colloquial terms = count 4; no loop = 1 pass = exactly one turn per player) and until for 'continue until a condition' (e.g. the action phase until the phase indicator is pushed onto the red space); <phase> may also hold it (e.g. 'keep going until someone reaches 15 points'). Default null = execute once."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "id",
+            "description": {
+              "zh": "Procedure 的唯一标识符。用于在规则中精确引用特定流程实例，管理流程间的嵌套和跳转关系。",
+              "en": "Unique identifier of the Procedure. Used to precisely reference a specific procedure instance and manage nesting and transitions."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "<pipeline>",
+            "description": {
+              "zh": "本 <procedure> 的执行内容定义，见顶层字段声明。多步骤/多行动时持有；单内容时直接持有对应概念（如 <ontology::action>、<ontology::turn>、<ontology::round>）。",
+              "en": "The execution content of this <procedure>; see the top-level field declaration. Held when there are multiple steps/actions; a single-content procedure directly holds the concept itself (e.g. an <ontology::action>, <ontology::turn>, or <ontology::round>)."
+            }
+          },
+          {
+            "id": "loop",
+            "description": {
+              "zh": "循环边界（count 定次 / until 条件），见顶层字段声明。缺省 null = 执行一次。",
+              "en": "Loop boundary (count / until); see the top-level field declaration. Default null = execute once."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "round",
+      "extends": "<procedure>",
+      "name": {
+        "zh": "轮",
+        "en": "Round"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏程序结构中一个完整的、可重复的循环单元。<round> 继承自 <procedure>。**<round> 的内建语义：一次 = 每位 <player> 按座次各行动一轮**（<turn> 按座次轮转推进，从起始玩家开始到末位玩家结束）。**执行次数（口语「进行几轮」）由顶层 loop 字段表达**：次数确定用 `loop.count`（缺省无 loop = 1 次 = 每位玩家恰好一个 turn，「进行 4 轮」= count 4）；次数未知、直到条件才结束用 `loop.until`（如「一直进行到有人达到 15 分」）。一整局游戏本身就是一个最外层的 <round>（「再来一局」=「再来一轮」）。<round> 可直接持有 <phase>、<turn> 或普通步骤（单内容不包 pipeline），多步骤时用 <pipeline> 承载——无需中间的包装层，只有 1 个 <phase> 时省略不写。",
+        "en": "A complete, repeatable cycle in game procedure structure. <round> extends <procedure>. **A round's built-in semantics: one pass = every <player> acts once in seating order** (<turn>s advance by seating order, from the starting player to the last). **The execution count ('how many rounds') is expressed by the top-level loop field**: fixed counts use `loop.count` (no loop = 1 pass = exactly one turn per player; '4 rounds' in colloquial terms = count 4); unknown counts that continue until a condition use `loop.until` (e.g. 'keep going until someone reaches 15 points'). An entire game is itself an outermost <round>. A <round> may directly hold a <phase>, <turn>, or plain step (single content without a pipeline); multi-step content uses a <pipeline> — no intermediate wrapper layers, and a single <phase> may be omitted."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "turn",
+      "extends": "<procedure>",
+      "name": {
+        "zh": "回合",
+        "en": "Turn"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "将排他的行动权授予单一 <player> 的执行单元。<turn> 继承自 <procedure>。同一时刻至多一个 <turn> 处于激活状态。行动内容：**持有 <ontology::action>——单候选时直接写概念引用（\"<concept>\"），多候选时该 action 携带 options/type 选择结构（如 {\"options\": [\"<a>\", \"<b>\"], \"type\": \"<ontology::multiple_choice_enum.CHOOSE_ONE>\"}）**——「从候选中选一个」是 action 自身的选项字段，不需要 pipeline 包装（options/type 只是 pipeline 的一块构件；整个内容只有一个动作时不叫 pipeline）。每个候选 action 自带 <condition> 决定可用性——不成立 = 该候选不可选（候选级排除），条件互补覆盖时玩家必选其一（「能 A 必须 A，否则跳过」= 跳过作为带「A 不可用」condition 的 action）。多步骤复合动作（非选择、按顺序执行的动作序列）才用 <ontology::pipeline> 承载。执行者（当前玩家）由流程推进按座次顺序轮转决定——轮转是 <turn> 的内建语义，无需字段声明。",
+        "en": "An execution unit that grants exclusive action rights to a single <player>. <turn> extends <procedure>. At most one <turn> is active at any given moment. Action content: **holds an <ontology::action> — a single candidate is a plain concept reference (\"<concept>\"); multiple candidates make the action carry an options/type choice structure (e.g. {\"options\": [\"<a>\", \"<b>\"], \"type\": \"<ontology::multiple_choice_enum.CHOOSE_ONE>\"})** — 'picking one from candidates' is the action's own option field, no pipeline wrapper needed (options/type is just one building block of a pipeline; a single action does not warrant being called a pipeline). Each candidate action carries its own <condition> deciding availability — failing = that candidate is not selectable (candidate-level exclusion); with complementary conditions the player must pick one of the available candidates ('if A is possible you must do A, otherwise skip' = skip as an action whose condition is the negation of A's availability). Multi-step compound actions (non-choice sequences executed in order) are carried by an <ontology::pipeline>. The actor (current player) is decided by flow progression in seating order — turn order is <turn>'s built-in semantics and needs no field declaration."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "phase",
+      "extends": "<procedure>",
+      "name": {
+        "zh": "阶段",
+        "en": "Phase"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏流程中，合法动作集合保持一致、规则上下文不发生强制切换的持续区间。<phase> 继承自 <procedure>。是唯一承载「规则上下文」的 <procedure>——当前 <phase> 决定了哪些 <action> 合法、哪些 <effect> 生效。不强制绑定 <player>，允许完全的自动机阶段（无人阶段，仅有 <trigger> 驱动）。<phase> 的 <ontology::pipeline> options 可以承载 <round>、<turn>、另一个 <phase> 或程序化步骤（setup、结算等）——后者的 pipeline 由流程自动执行而非玩家决策。",
+        "en": "A continuous interval in game flow where the set of legal actions remains consistent and the rule context does not switch. <phase> extends <procedure>. It is the only <procedure> that carries 'rule context' — the current <phase> determines which <action>s are legal and which <effect>s are active. Not required to bind to a <player>, allowing fully automated phases (player-less, driven only by <trigger>s). A <phase>'s <ontology::pipeline> options can carry <round>s, <turn>s, other <phase>s, or programmatic steps (setup, resolution, etc.) — the latter pipelines are auto-executed by the flow rather than player-chosen."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "transfer",
+      "extends": "<event>",
+      "name": {
+        "zh": "转移",
+        "en": "Transfer"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<object> 在 <zone> 之间移动或 <ownership> 变更的 <event>。<transfer> 继承自 <event>。",
+        "en": "An <event> where an <object> moves between <zone>s or its <ownership> changes. <transfer> extends <event>."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "<object> 移出的源 <zone>。必须是游戏中已定义的一个 <zone> 实例。没有 source，转移无从发生。",
+              "en": "The <zone> the <object> moves from. Must be a defined <zone> instance. Without a source, the transfer cannot occur."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "<object> 移入的目标 <zone>。可以是另一个 <zone>，也可以与 source 相同（如区域内重排序）。也可以是 options/type 结构——从多个候选 <zone> 中选择/全部执行（如 5 条进程轨各放 1 个标记：{\"options\": [轨...], \"type\": \"<ontology::multiple_choice_enum.EXECUTE_ALL>\"}）。",
+              "en": "The destination <zone> the <object> moves to. May differ from source or be the same (e.g., reordering within a <zone>). May also be an options/type structure — choose from or execute across multiple candidate <zone>s (e.g., placing 1 marker on each of 5 progress tracks: {\"options\": [tracks...], \"type\": \"<ontology::multiple_choice_enum.EXECUTE_ALL>\"})."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被移动的 <object>。同时承担 <event> 中 target 的语义——此 <object> 就是该转移事件所作用的目标。两种形式：① 纯引用字符串；② 带属性设定的对象——概念 ID 做 key、值为属性设定，转移后对象以该属性状态进入 destination（如 { \"<card>\": { \"face\": \"face_down\" } } 表示以背面朝上状态放置）。与 <piece>.parts 的属性写法一致。",
+              "en": "The <object> being moved. Also fulfills the <event> target semantics — this <object> is what the transfer event acts upon. Two forms: ① a plain reference string; ② an object with attribute settings — the concept id as key and the attribute values as its value; the object enters the destination in that attribute state (e.g. { \"<card>\": { \"face\": \"face_down\" } } means placed face down). Same attribute syntax as <piece>.parts."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "ownership_change",
+            "default": false,
+            "description": {
+              "zh": "是否同时改变 <ownership>。若为 true，则 destination <zone> 关联的 <player> 成为新所有者。",
+              "en": "Whether <ownership> also changes. If true, the <player> associated with the destination <zone> becomes the new owner."
+            }
+          },
+          {
+            "id": "quantity",
+            "default": 1,
+            "description": {
+              "zh": "转移的 <object> 数量。<component>（可互换）可能 > 1；<piece>（不可互换）通常 = 1。",
+              "en": "Quantity of <object>s transferred. <component>s (interchangeable) may be > 1; <piece>s (unique) are usually = 1."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "draw",
+      "extends": "<event>",
+      "name": {
+        "zh": "抽取",
+        "en": "Draw"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "从隐藏集合中抽取 <object> 的抽象概念——抽取前对象不可见，与 <transfer>（移动已知对象）相对。具体抽取规则由子类决定：<top_draw> 从 <deck> 顶部抽（位置规则确定，顶牌未知）；<random_draw> 从 <pool>（袋）中随机抽。游戏层不直接使用本概念。",
+        "en": "The abstract concept of drawing an <object> from a hidden collection — the object is unseen before drawing, as opposed to <transfer> (moving a known object). The concrete drawing rule is determined by the subclass: <top_draw> draws from the top of a <deck> (deterministic position, unseen card); <random_draw> draws blindly at random from a <pool> (bag). Game files do not use this concept directly."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "抽取的源 <zone>。必须是隐藏集合——<deck>（牌堆）或 <pool>（袋子）。",
+              "en": "The source <zone> the <object> is drawn from. Must be a hidden collection — a <deck> (stack) or a <pool> (bag)."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "抽取出的 <object> 移入的目标 <zone>。",
+              "en": "The destination <zone> the drawn <object> moves to."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被抽取的 <object> 类型。抽取前具体是哪个对象未知。",
+              "en": "The type of <object> being drawn. Which specific object is drawn is unknown beforehand."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "quantity",
+            "default": 1,
+            "description": {
+              "zh": "抽取的 <object> 数量。",
+              "en": "Quantity of <object>s drawn."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "top_draw",
+      "extends": "<draw>",
+      "name": {
+        "zh": "抽顶",
+        "en": "Top Draw"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从 <deck> 的顶部抽最上面 1 张（或指定数量）——抽取位置规则确定（顶部），但顶牌在抽取前未知。用于翻牌、发牌、暗面抽牌等场景。",
+        "en": "Draw the top 1 card (or a given quantity) from a <deck> — the draw position is deterministic (the top), but the top card is unseen until drawn. Used for revealing cards, dealing, blind draws, etc."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "抽牌的来源 <deck>。",
+              "en": "The source <deck> to draw from."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "抽出的 <object> 进入的目标区。",
+              "en": "Where drawn <object>s go."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被抽取的对象类型。",
+              "en": "The type of object being drawn."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "random_draw",
+      "extends": "<draw>",
+      "name": {
+        "zh": "随机抽",
+        "en": "Random Draw"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "从 <pool>（袋子等）中随机抽 <object>——完全随机，抽取前对象不可见。用于抽袋（芯片、指示物）等场景。",
+        "en": "Draw an <object> at random from a <pool> (bag, etc.) — completely random, the object is unseen before drawing. Used for bag draws (chips, tokens), etc."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "source",
+            "description": {
+              "zh": "抽牌的来源 <pool>（袋子等）。",
+              "en": "The source <pool> (bag etc.) to draw from."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "抽出的 <object> 进入的目标区。",
+              "en": "Where drawn <object>s go."
+            }
+          },
+          {
+            "id": "<object>",
+            "description": {
+              "zh": "被抽取的对象类型。",
+              "en": "The type of object being drawn."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "action",
+      "name": {
+        "zh": "行动",
+        "en": "Action"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 <trigger>——由 <player> 的决策直接点燃，不依赖任何 <piece> 即可存在。<action> 与 <trigger> 共享完全相同的结构（<condition> → <cost> → target → <content>），区别不在本体层面，而在称呼习惯：规则书和玩家将出现在回合菜单中、由玩家做出、且不依赖 <piece> 的 trigger 称为「行动」。<action> 自身不声明独有字段——所有字段均与 <trigger> 一致。<action> 的 <condition>（若有）用于定义此行动何时可选（菜单可用性），<cost>/target/<content> 由玩家在点火时填入。<action> 的 <content> 槽位可以嵌套另一个 <action>、<effect> 或任意 content 形态——正如 <effect> 的 <content> 可以包含 <transfer>，嵌套不改变被嵌套概念自身的类型。判据：不依赖 <piece> + 由 <player> 做出 = action。<action> 与 <effect> 互为对偶：effect 依赖 <piece>、由状态边沿点燃；action 不依赖 <piece>、由玩家决策点燃。",
+        "en": "A <trigger> ignited directly by a <player> decision, existing independently of any <piece>. <action> shares the exact same structure as <trigger> (<condition> → <cost> → target → <content>); the distinction lies not in ontology but in naming convention: rulebooks and players call triggers that appear in turn menus, are performed by players, and do not depend on <piece>s, \"actions\". <action> declares no unique fields of its own — all fields match <trigger>. <action>'s <condition> (if present) defines when this action is available (menu eligibility); <cost>/target/<content> are filled by the player at ignition time. <action>'s <content> slot may nest another <action>, <effect>, or any content form — just as <effect>'s <content> may contain a <transfer>, nesting does not change the nested concept's own type. Criterion: independent of <piece> + performed by <player> = action. <action> and <effect> are counterparts: effect depends on a <piece> and is ignited by a state edge; action is independent of any <piece> and is ignited by a player decision."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      },
+      "specifies": "<trigger>"
+    },
+    {
+      "id": "endgame_condition",
+      "extends": "<condition>",
+      "name": {
+        "zh": "终局条件",
+        "en": "Endgame Condition"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "标记游戏终局流程启动的 <condition>。<endgame_condition> 继承自 <condition>——结构上与普通 <condition> 无异，区别仅在于语义角色：当此 <condition> 评估为 true 时，游戏进入终局流程。终局流程的具体行为由游戏规则定义——可能是立即终止（如「<deck> 被抽空时游戏立刻结束」），也可能先执行一个收尾阶段（如「触发后所有 <player> 补完当前 <round> 再结算」）。典型触发条件：「任意 <player> 达到 10 分」「最后一张 <card> 被抽走」「所有 <tile> 放置完毕」。一局游戏可以有多个 <endgame_condition>——任一满足即触发终局流程。",
+        "en": "A <condition> that marks the start of the endgame process. <endgame_condition> extends <condition> — structurally identical to an ordinary <condition>, differing only in its semantic role: when this <condition> evaluates to true, the game enters its endgame process. What happens during endgame is defined by the specific game's rules — it could be immediate termination (e.g., 'game ends instantly when the <deck> runs out'), or a wrap-up phase first (e.g., 'all <player>s finish the current <round> before final scoring'). Typical trigger conditions: 'any <player> reaches 10 points', 'the last <card> is drawn', 'all <tile>s have been placed'. A game may have multiple <endgame_condition>s — satisfying any one triggers the endgame process."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "victory_condition",
+      "extends": "<condition>",
+      "name": {
+        "zh": "胜利条件",
+        "en": "Victory Condition"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "在终局流程完成后、决定哪位 <player> 胜出的 <condition>。<victory_condition> 继承自 <condition>，其判定标准是一个按优先级排序的 <condition> 序列——按顺序满足条件的 <player>（们）是胜者。判定流程：满足第 1 条 <condition> 的 <player> 为候选胜者；候选多于 1 人时，在候选中继续应用下一条 <condition> 筛选，直到只剩 1 人或序列用完；序列用完仍有多名候选则为平局。与 <endgame_condition> 的分工：<endgame_condition> 回答「游戏何时结束」，<victory_condition> 回答「结束后谁赢」。允许合作胜利（所有 <player> 共同获胜），允许无人获胜（全员失败）。",
+        "en": "A <condition> that determines which <player> wins, evaluated after the endgame process completes. <victory_condition> extends <condition>, and its adjudication standard is an ordered sequence of <condition>s — the <player>(s) satisfying the criteria in order win. Adjudication: <player>s satisfying the 1st <condition> become winner candidates; if more than one remains, apply the next <condition> to the candidates, continuing until exactly one remains or the sequence is exhausted; if multiple candidates remain after the sequence, the result is a tie. Division of labor with <endgame_condition>: <endgame_condition> answers 'when does the game end', <victory_condition> answers 'who wins after it ends'. Cooperative victories (all <player>s win together) are allowed, as is no winner at all (everyone loses)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<condition>[]",
+            "description": {
+              "zh": "胜负判定必须给出形式化的条件序列——没有条件序列，程序无法确定胜者。按优先级从高到低排序，每条<condition>都是对单个<player>求值的判定式（如「声望最高」「发展卡最少」）——允许并列，并列者视为同时满足。判定流程：满足第 1 条的<player>为候选；多于 1 人则在候选中应用下一条继续筛选；直到只剩 1 人或序列用完。",
+              "en": "Victory adjudication must provide a formalized condition sequence — without it, the program cannot determine the winner. Sorted from highest to lowest priority; each <condition> is a predicate evaluated per <player> (e.g., 'highest prestige', 'fewest development cards') — ties count as satisfied simultaneously. Adjudication: <player>s satisfying the 1st criterion become candidates; if more than one remains, apply the next criterion to the candidates; continue until exactly one remains or the sequence is exhausted."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "connected",
+      "extends": "<state>",
+      "name": {
+        "zh": "连通",
+        "en": "Connected"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "图连通性 <state>——断言「两个 <zone>（或占据某 <zone> 的 <object>）之间存在一条路径」这一事实。路径由 via 指定的链接类 <piece> 依次首尾相接构成（每个链接 <piece> 衔接两个相邻 <zone>）。不考虑 <ownership>：任何 <player> 的链接均计入路径。该状态随链接 <piece> 的放置与移除而成立/失效，<condition> 可随时查询。",
+        "en": "A graph-connectivity <state> — the fact that a route exists between two <zone>s (or the <object>s that occupy a <zone>): the route consists of 'link-type' <piece>s specified by via, chained end to end (each link <piece> joins two adjacent <zone>s). <ownership> is not considered: links belonging to any <player> count toward the route. The state becomes true/false as link <piece>s are placed and removed; <condition>s may query it at any time."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "from",
+            "description": {
+              "zh": "路径起点——<zone> 或占据该 <zone> 的 <object>。",
+              "en": "Route start — a <zone> or the <object> occupying one."
+            }
+          },
+          {
+            "id": "to",
+            "description": {
+              "zh": "路径终点——<zone> 或占据该 <zone> 的 <object>。",
+              "en": "Route end — a <zone> or the <object> occupying one."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "via",
+            "description": {
+              "zh": "构成路径的链接类 <piece> 概念 id；省略 = 不限制链接类型。",
+              "en": "The concept id of the link-type <piece> forming the route; omitted = unrestricted link type."
+            }
+          },
+          {
+            "id": "owned_by",
+            "description": {
+              "zh": "路径链接所属的 <player>；省略 = 任何所有者的链接均计入。",
+              "en": "The <player> owning the route's links; omitted = links of any owner count."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "trigger",
+      "extends": "<event>",
+      "name": {
+        "zh": "触发",
+        "en": "Trigger"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "可执行规格的最小完整单元：<condition> → <cost> → target → <content>，按 pipeline（见 ontology/flow.json）依次结算。<trigger> 是体系的核心机器——所有游戏效果都跑在这同一台机器上。按点火源分为三种角色：(1) 纯 trigger——<condition> 边沿激活，规则自动执行，actor 为 null；(2) <effect>——specifies trigger，绑定在 <piece> 上、由 <condition> 边沿激活；(3) <action>——specifies trigger，不依赖 <piece>、由 <player> 决策点燃。三者共享完全相同的结构（condition/cost/target/content），区别仅在于点火源和称呼习惯。",
+        "en": "The smallest complete unit of executable specification: <condition> → <cost> → target → <content>, settled sequentially per the pipeline (see ontology/flow.json). <trigger> is the core machine of the system — all game effects run on this same machine. Three roles by ignition source: (1) pure trigger — <condition> edge-activates, rules auto-execute, actor is null; (2) <effect> — specifies trigger, bound to a <piece>, edge-activated by <condition>; (3) <action> — specifies trigger, independent of any <piece>, ignited by a <player> decision. All three share the exact same structure (condition/cost/target/content), differing only in ignition source and naming convention."
+      },
+      "<pipeline>": {
+        "default": "trigger_pipeline",
+        "description": {
+          "zh": "本 trigger 的标准执行流程。缺省引用 ontology/flow.json 的 <trigger_pipeline>：evaluate_condition（不成立终止）→ pay_cost（足额支付，无法足额终止）→ select_target → resolve_content。步骤 id 全局可寻址——其他声明可用路径引用具体步骤（如 substitution 的 scope 写 \"<concept>.<ontology::pipeline>.pay_cost\" 表示「支付费用那一步」）。",
+          "en": "The standard execution flow of this trigger. Defaults to <trigger_pipeline> in ontology/flow.json: evaluate_condition (terminate if false) → pay_cost (pay in full; terminate if impossible) → select_target → resolve_content. Step ids are globally addressable — other declarations may reference a specific step via path (e.g. substitution scope \"<concept>.<ontology::pipeline>.pay_cost\" = the cost-payment step)."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "<condition>",
+            "default": null,
+            "description": {
+              "zh": "触发门槛——对 <state> 的谓词，按边沿评估。也是本 trigger 的 <content>（含 pipeline）能被执行的总体条件。",
+              "en": "The firing gate — a predicate over <state>, evaluated on the edge. It is also the overall precondition for the trigger's <content> (including its pipeline) to execute."
+            }
+          },
+          {
+            "id": "<cost>",
+            "default": null,
+            "description": {
+              "zh": "满足 condition 后足额支付的代价。缺省为免费。",
+              "en": "The cost paid in full after condition is met. Absent = free."
+            }
+          },
+          {
+            "id": "<content>",
+            "default": null,
+            "description": {
+              "zh": "代价支付后由 <resolve> 结算的内容。含 <instant_content>（一次执行）、<continuous_content>（电平维持）两个终结形态。<instant_content> 内部可以是 <pipeline>（options / type / do_after 步骤序列）——一个 trigger 触发多个事件（先转移再得分、分支选择等）时用 pipeline 表达，步骤可以是任意操作（<transfer>、<state_change>、<push_track> 等）或对其他概念的引用；<continuous_content> 表达光环类电平效果。",
+              "en": "The content settled by <resolve> after cost payment. Two terminal forms: <instant_content> (one-shot) and <continuous_content> (level-hold). <instant_content> may contain a <pipeline> (options / type / do_after step sequence) — used when one trigger causes multiple events (transfer then scoring, branching, etc.); steps can be any operation (<transfer>, <state_change>, <push_track>, etc.) or references to other concepts; <continuous_content> expresses aura-style level effects."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "overflow_compensation",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "溢出补偿",
+        "en": "Overflow Compensation"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "轨的通用溢出处理（双向）：任何 <track> 都有推到头的一天——沿推进方向过头（正溢出）或反向过头（负溢出）时，本次推进按本轨声明的补偿结算。实例填 <ontology::content> 声明超出部分的处理，常见形态：封顶停住 + 超出部分按步补偿、循环转圈、放弃该次推进、钳制在边界格并结算其效果。挂载字段定方向：<track> 顶层的 <overflow_compensation> 字段挂正向补偿、<underflow_compensation> 挂负向补偿；**缺省 = 没有处理**（该方向不会发生，或什么都不做）。",
+        "en": "Generic overflow handling for tracks (both directions): every <track> has an end — when a <marker> is advanced past the end along the advance direction (positive overflow) or past it in reverse (negative overflow), the advance resolves per this track's declared compensation. Instances fill <ontology::content> with the overflow handling; common forms: stop at the cap and compensate per excess step, loop around, forgo the advance, or clamp at a boundary space and settle its effect. The mounting field fixes the direction: a <track>'s top-level <overflow_compensation> field mounts the positive compensation, <underflow_compensation> the negative one; **absent = no handling** (that direction cannot occur, or nothing happens)."
+      },
+      "<ontology::condition>": {
+        "zh": "一次推进 <marker> 的步数超过本轨剩余长度（<marker> 将越过终点）。",
+        "en": "An advance of a <marker> exceeds the track's remaining length (the marker would cross the end)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "underflow_compensation",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "负向溢出补偿",
+        "en": "Underflow Compensation"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "溢出补偿的负向方向概念：<marker> 反向过头（越过起点所在的另一端点）时的处理。与 <overflow_compensation> 平等——两者结构相同、方向相反、condition 不同；由 <linear_track> 顶层的 <underflow_compensation> 字段挂载。",
+        "en": "The negative-direction overflow concept: handling when a <marker> is advanced past the other end in reverse. Peer of <overflow_compensation> — same structure, opposite direction, different condition; mounted via a <linear_track>'s top-level <underflow_compensation> field."
+      },
+      "<ontology::condition>": {
+        "zh": "一次反向推进使 <marker> 越过本轨起点（另一端点，反向过头）。",
+        "en": "A reverse advance takes a <marker> past the track's start (the other end; negative overflow)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "lap_event",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "圈事件",
+        "en": "Lap Event"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "环形轨（<circular_track>）的正向伴随事件：marker 沿推进方向越过循环起点时触发，通常用于发放圈指示物。由 <circular_track> 顶层的 <lap_event> 字段挂载。与溢出补偿的区别：环形轨无溢出——回绕是推轨的自然语义（99 前进 3 步即停在 2），圈事件只是越过起点时的附带结算。负向（反向越过起点）见 <underlap_event>。",
+        "en": "A <circular_track>'s positive companion event: triggered when a <marker> crosses the loop's start along the advance direction, typically to grant a lap token. Mounted via a <circular_track>'s top-level <lap_event> field. Unlike overflow compensation: a circular track has no overflow — wrapping around is the natural semantics of advancing (99 advanced 3 steps simply stops on 2); the lap event is only the incidental settlement when crossing the start. The negative direction (crossing the start in reverse) is <underlap_event>."
+      },
+      "<ontology::condition>": {
+        "zh": "<marker> 沿推进方向越过本轨循环起点。",
+        "en": "A <marker> crosses this track's loop start along the advance direction."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "underlap_event",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "负向圈事件",
+        "en": "Underlap Event"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "圈事件的负向方向概念：marker 反向越过循环起点时的伴随事件，通常用于回收圈指示物。与 <lap_event> 平等——两者结构相同、方向相反、condition 不同；由 <circular_track> 顶层的 <underlap_event> 字段挂载。",
+        "en": "The negative-direction lap-event concept: the companion event when a <marker> crosses the loop's start in reverse, typically to collect a lap token. Peer of <lap_event> — same structure, opposite direction, different condition; mounted via a <circular_track>'s top-level <underlap_event> field."
+      },
+      "<ontology::condition>": {
+        "zh": "<marker> 反向越过本轨循环起点。",
+        "en": "A <marker> crosses this track's loop start in reverse."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "evaluate",
+      "extends": "<trigger>",
+      "name": {
+        "zh": "求值",
+        "en": "Evaluate"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 <trigger>——按 condition → cost → content 执行后，产出 result（任意类型）。与通常 trigger 不同，<evaluate> 的 <content> 执行完毕后必须返回一个值，供后续 step 的 condition 引用。",
+        "en": "A <trigger> that produces a result (any type) after executing condition → cost → content. Unlike a regular trigger, <evaluate>'s <content> must return a value after execution, which can be referenced by subsequent steps' conditions."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "result",
+            "description": {
+              "zh": "求值完成后产出的返回值。类型取决于具体子类——<check> 为 boolean，通用的 <evaluate> 可为任意类型。",
+              "en": "The return value after evaluation completes. The type depends on the subclass — <check> is boolean; generic <evaluate> can be any type."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "check",
+      "specifies": "<evaluate>",
+      "name": {
+        "zh": "检定",
+        "en": "Check"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "产出 pass/fail 结果的 <evaluate>。result 的类型特化为 boolean——true 表示通过，false 表示未通过。用于恩惠检定、属性检定、狩猎判定等场景。",
+        "en": "An <evaluate> that produces a pass/fail result. result is specialized to boolean — true = passed, false = failed. Used for favor checks, attribute checks, hunting checks, etc."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "result",
+            "description": {
+              "zh": "pass 或 fail。",
+              "en": "pass or fail."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "resolve",
+      "extends": "<event>",
+      "name": {
+        "zh": "结算",
+        "en": "Resolve"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "将 <content> 应用到游戏 <state> 的 <event>。<resolve> 只接触 content 的三种形态：<instant_content>——执行一次，终结；<continuous_content>——进入生效池，电平维持；<effect>——<instant_effect> 武装一次（condition 满足即 cost→content，失败永远消失），<continuous_effect> 持续武装（每次 condition 满足都 cost→content，直到 end_condition 或来源离场）。",
+        "en": "An <event> that applies <content> to the game <state>. <resolve> only touches content's three forms: <instant_content> — execute once, done; <continuous_content> — enter active pool, level-maintained; <effect> — <instant_effect> arms once (condition met → cost→content, fail → gone forever), <continuous_effect> arms persistently (fires on each condition met, until end_condition or source removed)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<content>",
+            "description": {
+              "zh": "<resolve> 的本质是将 <content> 实例化为真实的 <event> 并应用到游戏状态——没有 <content>，<resolve> 无事可做。此约束要求子类提供一份可结算的 <content>，指明结算时应发生哪些具体事件。",
+              "en": "The essence of <resolve> is instantiating <content> as real <event>s and applying them to game state — without <content>, <resolve> has nothing to do. This constraint requires subclasses to provide a resolvable <content> specifying what concrete events should occur during resolution."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "shuffle",
+      "extends": "<event>",
+      "name": {
+        "zh": "洗混",
+        "en": "Shuffle"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "对某个 <zone>（通常为 <deck> 类型 <reserve>）中全部或部分 <object> 的顺序进行随机重排的 <event>。<shuffle> 继承自 <event>。其结果是使 <object> 的排列从当前已知或可推测的顺序变为不可预测的顺序，同时将该 <zone> 的信息状态从 Partially Public 重置为 Hidden。<shuffle> 可由 <player> 作为 <action> 的一部分主动执行（actor 为 <player>），也可由规则通过 <trigger> 自动要求（actor 为 null）——例如「每当 <discard_pile> 被洗入 <deck> 时自动洗混」。",
+        "en": "An <event> that randomly reorders all or some <object>s in a <zone> (typically a <deck>-type <reserve>). <shuffle> extends <event>. Its result is transitioning the object ordering from a known or inferable sequence to an unpredictable one, while resetting the <zone>'s information state from Partially Public to Hidden. <shuffle> may be actively performed by a <player> as part of an <action> (actor is <player>), or automatically required by rules via a <trigger> (actor is null) — e.g., 'shuffle automatically whenever the <discard_pile> is merged into the <deck>'."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "reserve",
+      "extends": "<zone>",
+      "name": {
+        "zh": "储备区",
+        "en": "Reserve"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "一种用于存放游戏组件的存储型 <zone>。<reserve> 继承自 <zone>，abstract。核心语义是「存放备用」——游戏物件在此被汇集、叠放或陈列，作为游戏物资的库存。物件在 <reserve> 中处于「备用」状态，直到被抽取、购买或以其他方式移入使用中。典型的 <reserve> 子类包括：<supply>（直接取用的可计数存储池；<ownership> 为 null 时是公共供应堆，指向特定 <player> 时是玩家供应堆）、<market>（待获取 <piece> 的陈列区）、<deck>（按序抽取的叠放区）、<pool>（随机化组件的存储区）。",
+        "en": "A storage-type <zone> for holding game components. <reserve> extends <zone>, abstract. Core semantic is 'keeping in storage' — game objects are pooled, stacked, or displayed here as the game's material inventory. Objects in a <reserve> are in a 'reserve' state until drawn, purchased, or otherwise moved into active use. Typical <reserve> subclasses: <supply> (countable direct-take storage pool; public when <ownership> is null, player-specific when <ownership> points to a <player>), <market> (display area of acquirable <piece>s), <deck> (ordered draw stack), <pool> (storage zone for randomizable components)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "discard_pile",
+      "extends": "<zone>",
+      "name": {
+        "zh": "弃牌堆",
+        "en": "Discard Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放已使用、已消耗或主动弃置的游戏物件的 <zone>。<discard_pile> 继承自 <zone>。物件离开活跃使用状态后进入弃牌堆——卡牌被使用后弃入、<component> 被消耗后归入、<piece> 被摧毁后置入。通常是面朝上的（全员可见），内容物成为所有玩家的公共信息。在许多游戏中可被重新洗入 <deck> 以实现物件的循环复用。在仅有一叠共用卡牌且使用后即弃入的游戏中，弃牌堆就是 <deck> 的「反面」——一个空了，另一个满到可以洗回来。",
+        "en": "A <zone> that holds game components that have been used, consumed, or voluntarily discarded. <discard_pile> extends <zone>. Objects enter after leaving active use — cards played and resolved, <component>s consumed, <piece>s destroyed. Typically face-up (visible to all), making its contents public information. In many games it can be reshuffled back into the <deck> to recycle components. In games with a single shared deck, the <discard_pile> is the <deck>'s 'mirror' — when one empties, the other is full enough to shuffle back."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_zone",
+      "extends": "<zone>",
+      "name": {
+        "zh": "玩家区域",
+        "en": "Player Zone"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "归属于特定 <player> 的 <zone>，用于存放该玩家个人的游戏组件。<player_zone> 继承自 <zone>，abstract。是 <reserve> 的对偶概念——<reserve> 存放共享的游戏物资，<player_zone> 存放属于单个玩家的东西。owner 始终指向一个 <player> 实例（不可为 null）。典型的子类包括：<player_holding>（玩家手持或暂存的 <piece>）、<development_area>（玩家已打出/建造、正处于活跃使用中的 <piece> 所在区域）。",
+        "en": "A <zone> that belongs to a specific <player>, holding that player's personal game components. <player_zone> extends <zone>, abstract. It is the counterpart to <reserve> — while <reserve> stores shared game materials, <player_zone> stores what belongs to an individual player. owner is always a <player> reference (never null). Typical subclasses: <player_holding> (where a player keeps <piece>s in hand or temporarily), <development_area> (where a player's played/built <piece>s reside in active use)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "card",
+      "extends": "<piece>",
+      "name": {
+        "zh": "卡牌",
+        "en": "Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 <piece>，通常为扁平矩形，有正面和背面两个面。<card> 继承自 <piece>。正面承载该卡牌的全部身份信息——名称、费用（<cost>）、效果文本（<effect>）、插画等；背面通常与同 <deck> 中其他卡牌一致，用于隐藏正面信息。卡牌是桌游中最常见的 <piece> 形态，也是 <play> 的主要对象——玩家从手牌（<player_holding> 的子类）中打出卡牌，支付其 <cost>，触发其 <effect>。",
+        "en": "A type of <piece>, typically flat and rectangular, with a front face and a back face. <card> extends <piece>. The front face carries the card's full identity — name, <cost>, <effect> text, illustration, etc.; the back face is usually identical across all cards in a <deck>, serving to conceal the front. Cards are the most common <piece> form in board games and the primary target of <play> — players play cards from their hand (a subclass of <player_holding>), pay their <cost>, and trigger their <effect>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "face",
+            "type": "enum",
+            "enum": [
+              "face_up",
+              "face_down"
+            ],
+            "default": null,
+            "description": {
+              "zh": "卡牌的朝向。face_up = 正面朝上（内容可见）；face_down = 背面朝上（内容隐藏）。null 表示不区分正反。",
+              "en": "Which side of the card is showing. face_up = front visible; face_down = back visible. null means the card does not distinguish sides."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "tile",
+      "extends": "<piece>",
+      "name": {
+        "zh": "板块",
+        "en": "Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 <piece>，通常较 <card> 更小更厚，形状不定——六边形、正方形、长方形或不规则形状均有。<tile> 继承自 <piece>。",
+        "en": "A type of <piece>, typically smaller and thicker than a <card>, with variable shapes — hexagonal, square, rectangular, or irregular. <tile> extends <piece>. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "face",
+            "type": "enum",
+            "enum": [
+              "face_up",
+              "face_down"
+            ],
+            "default": null,
+            "description": {
+              "zh": "板块的朝向。face_up = 正面朝上（内容可见）；face_down = 背面朝上（内容隐藏）。null 表示不区分正反。",
+              "en": "Which side of the tile is showing. face_up = front visible; face_down = back visible. null means the tile does not distinguish sides."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "token",
+      "extends": "<piece>",
+      "name": {
+        "zh": "棋子",
+        "en": "Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种 3D 的 <piece>，不同于平面的 <card> 或 <tile>。<token> 继承自 <piece>。典型如工放游戏中的工人、米宝、建筑模型——玩家直接拿起来放下去，不握在手里也不拼在版图上。<token> 可以携带 <effect>、可以被 <play>、可以拥有自己的 <zone>。",
+        "en": "A 3D <piece>, distinct from flat <card>s or <tile>s. <token> extends <piece>. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "appearance",
+            "description": {
+              "zh": "实物的外观描述（形状/颜色/尺寸/图标）——客人指着实物提问时据此识别，AI 回答时可复述外观确认身份。一对一实体概念（卡牌、板块、骰子等）直接声明；抽象概念（分数、流程、效果）不声明。",
+              "en": "Physical appearance (shape/color/size/icon) used to identify a piece when a guest points at it and for AI confirmation. Declared by one-to-one entity concepts (cards, tiles, dice); NOT declared by abstract concepts (score, flow, effect)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "supply",
+      "extends": "<reserve>",
+      "name": {
+        "zh": "供应堆",
+        "en": "Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放无差别的、可直接取用的 <object> 的 <reserve>。<supply> 继承自 <reserve>。核心语义是「备用且直接取用」——此区域中的 <object> 完全相同且可互相替代（通常为 <component> 或 <resource>），获取方式为直接取用而不需抽取或随机：玩家只决定「取多少」，不决定「取哪个」。对象数量可能有限或无限，不支持顺序操作和洗混。访问权限由 <ownership> 决定：<ownership> 为 null 时是公共供应堆，所有玩家均可取用；<ownership> 为特定 <player> 时是玩家供应堆，仅该玩家可取用。",
+        "en": "A <reserve> that holds undifferentiated <object>s which can be directly taken. <supply> extends <reserve>. Core semantic is 'kept in storage and directly taken' — objects here are identical and interchangeable (typically <component>s or <resource>s), accessed by direct taking without drawing or randomness: the player only decides 'how many', not 'which one'. Quantity may be limited or unlimited; no ordering or shuffling. Access rights are determined by <ownership>: when <ownership> is null it is a public supply open to all players; when <ownership> is a specific <player> it is a player supply accessible only to that player. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "market",
+      "extends": "<reserve>",
+      "name": {
+        "zh": "市场",
+        "en": "Market"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放可见的、各不相同的 <object>，供 <player> 主动选择获取的 <reserve>。<market> 继承自 <reserve>。与 <supply> 的对偶概念——<supply> 存放无差别物件（<player> 只管「取多少」），<market> 存放各不相同物件（<player> 需要决定「取哪个」）。核心特征：(1) 物件各不相同——通常为 <piece>（如 <card>、<tile>），每件有独立的身份和 <property>；(2) 完全可见——所有物件面朝上陈列，成为所有 <player> 的公共信息；(3) 主动选择——<player> 从陈列的物件中指定具体哪一件来获取，而非无差别取用；(4) 获取通常伴随 <cost>——玩家支付对应费用后获得所选物件。",
+        "en": "A <reserve> that holds visible, distinct <object>s from which <player>s can actively choose and acquire. <market> extends <reserve>. The counterpart to <supply> — while <supply> holds undifferentiated items (player only decides 'how many'), <market> holds distinct items (player must decide 'which one'). Core traits: (1) items are distinct — typically <piece>s (e.g., <card>, <tile>), each with its own identity and <property>; (2) fully visible — all items are displayed face-up as public information for all <player>s; (3) active choice — <player>s designate a specific item to acquire rather than taking undifferentiated units; (4) acquisition usually involves a <cost> — the player pays the associated cost to obtain the chosen item. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "deck",
+      "extends": "<reserve>",
+      "name": {
+        "zh": "牌堆",
+        "en": "Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放有序叠放的 <object> 序列、从固定位置（通常为顶部）抽取的 <reserve>。<deck> 继承自 <reserve>。与 <supply> 和 <market> 不同——<supply> 无序取用、<market> 主动挑选，<deck> 则是从固定的抽取位置按序获取，玩家无法选择取哪一张。核心特征：(1) 有序序列——<object> 之间有严格的先后顺序；(2) 固定抽取位——每次从同一位置（顶部）取走最上方的一张；(3) 支持洗混——<shuffle> 可随机重排整个 <deck> 的顺序，是 <deck> 特有的操作；(4) 默认隐藏——面朝下放置，<information_visibility> 通常为 hidden，洗混后信息状态重置为不可预测。",
+        "en": "A <reserve> that holds an ordered stack of <object>s, drawn from a fixed position (typically the top). <deck> extends <reserve>. Unlike <supply> (undifferentiated taking) and <market> (active choice), a <deck> is drawn from sequentially at a fixed position — the player cannot choose which one to take. Core traits: (1) ordered sequence — <object>s have a strict sequential order; (2) fixed draw position — the topmost <object> is always taken; (3) supports <shuffle> — randomly reordering is a <deck>-specific operation; (4) hidden by default — face-down, <information_visibility> is typically hidden, reset to unpredictable after <shuffle>. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "pool",
+      "extends": "<reserve>",
+      "name": {
+        "zh": "池",
+        "en": "Pool"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放各不相同的 <object>、通过随机方式抽取的无序 <reserve>。<pool> 继承自 <reserve>。与 <deck> 的关键区别：<deck> 有固定顺序、从顶部按序抽取、支持 <shuffle>；<pool> 无序、每次抽取为独立随机事件、不支持 <shuffle>——你把手伸进袋子里摸一个，摸到什么是独立概率，不依赖之前的抽取。核心特征：(1) 无序集合——<object> 之间没有先后关系；(2) 随机抽取——每次获取哪一个由随机决定，非玩家选择（区别于 <market>），也非按序获取（区别于 <deck>）；(3) 身份后验——<object> 被抽出后其身份才公开；(4) 概率可调——向 <pool> 中添加或移除特定 <object> 可改变后续抽取的概率分布。",
+        "en": "An unordered <reserve> holding distinct <object>s, accessed by random draw. <pool> extends <reserve>. Key difference from <deck>: a <deck> has a fixed order, draws from the top sequentially, and supports <shuffle>; a <pool> is unordered, each draw is an independent random event, and <shuffle> is not supported — you reach into a bag and pull one out; what you get is an independent probability, not dependent on previous draws. Core traits: (1) unordered collection — no sequence among <object>s; (2) random draw — which one you get is determined randomly, not by player choice (unlike <market>) nor by sequence (unlike <deck>); (3) identity post-hoc — the <object>'s identity is only revealed after drawing; (4) adjustable probability — adding or removing specific <object>s changes the probability distribution of subsequent draws. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "game_box",
+      "extends": "<reserve>",
+      "name": {
+        "zh": "游戏盒",
+        "en": "Game Box"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放当前未进入游戏流程的 <object> 的 <reserve>。<game_box> 继承自 <reserve>。与 <supply>、<market>、<deck>、<pool> 不同——这些游戏中的 <reserve> 内容直接参与当前游戏状态和规则判定；而 <game_box> 中的 <object> 暂时游离于当前游戏流程之外，既不可被 <player> 取用，也不触发任何游戏规则。核心特征：(1) 初始容器——游戏设置前，所有组件通常先放在 <game_box> 中；(2) setup 阶段入口——游戏设置时从这里取出组件，放入合适的游戏内 <reserve>；(3) 流程外暂存——游戏过程中，某些规则可能要求将 <object> 移回 <game_box>，表示该 <object> 暂时从当前游戏流程中移除（区别于 <discard_pile> 的永久弃置）；(4) 不直接参与规则——<game_box> 中的 <object> 不计入胜负、不可被选择或操作，直到再次进入某个游戏内 <reserve>。",
+        "en": "A <reserve> holding <object>s that are not currently part of the game flow. <game_box> extends <reserve>. Unlike <supply>, <market>, <deck>, and <pool> — in-game <reserve>s whose contents directly participate in the current game state and rules — <object>s in <game_box> are temporarily outside the current game flow: they cannot be taken by <player>s and trigger no game rules. Core traits: (1) initial container — before setup, all components usually start here; (2) setup entry point — during setup, components are taken from here and placed into appropriate in-game <reserve>s; (3) out-of-flow holding — during gameplay, certain rules may move <object>s back into <game_box>, indicating they are temporarily removed from the current game flow (distinct from permanent discarding to <discard_pile>); (4) non-participatory — <object>s in <game_box> do not count toward victory, cannot be selected or operated, until they re-enter an in-game <reserve>. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_holding",
+      "extends": "<player_zone>",
+      "name": {
+        "zh": "玩家保留区",
+        "en": "Player Holding"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "归属于单个 <player> 的私有 <player_zone>，用于存放该 <player> 已获得但尚未激活的 <piece> 或 <component>。<player_holding> 继承自 <player_zone>。其核心语义是「保留但未投入使用」——此区域中的 <object> 已经归该玩家所有，但尚未触发 <effect>，不直接参与公共游戏逻辑（如计分、战斗、生产）。<player> 通常可从 <player_holding> 中打出 <piece> 以将其移入公开区域。常见用途：手牌、已保留的卡牌、秘密任务指示物、未建造的板块、个人目标标记、仓库中的资源/材料。注意：因为其中的物件已经属于玩家，所以它不同于 <supply>（供应堆中的物件——无论 <ownership> 是公共还是玩家专属——通常尚未属于玩家）。",
+        "en": "A private <player_zone> belonging to a single <player>, holding <piece>s or <component>s that the <player> has acquired but not yet activated. <player_holding> extends <player_zone>. Its core semantic is 'reserved but not yet in play' — <object>s here already belong to the player but have not had their <effect>s triggered and do not directly participate in public game logic (e.g., scoring, combat, production). The <player> can typically <play> <piece>s from their <player_holding> to move them into a public zone. Common uses: hand cards, reserved cards, secret mission tokens, unbuilt tiles, personal objective markers, resources/materials in storage. Note: because its contents are already owned by the player, it is distinct from <supply> (whose contents — whether public or player-exclusive — are typically not yet owned)."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "development_area",
+      "extends": "<player_zone>",
+      "name": {
+        "zh": "发展区",
+        "en": "Development Area"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "归属于单个 <player> 的公开 <player_zone>，用于放置该 <player> 已打出、已购买或已建造的 <piece>。<development_area> 继承自 <player_zone>。与 <player_holding> 构成对偶——<player_holding> 是「手里攥着还没用的」，<development_area> 是「已经摆出来正在生效的」。核心特征：(1) 公开可见——<information_visibility> 通常为 public，成为所有 <player> 判断对手实力的主要依据；(2) 效果激活——此区域中的 <piece> 的 <effect> 已经或正在持续生效，直接参与公共游戏逻辑；(3) 通常不可逆——<piece> 一旦进入此区域，通常无法退回 <player_holding>，除非规则明确允许。",
+        "en": "A public <player_zone> belonging to a single <player>, holding <piece>s that the <player> has played, purchased, or built. <development_area> extends <player_zone>. The counterpart to <player_holding> — <player_holding> is 'what you're holding but haven't used yet', <development_area> is 'what you've already deployed and is now taking effect'. Core traits: (1) publicly visible — <information_visibility> is typically public, making this the main basis for opponents to assess your strength; (2) effects active — <piece>s here have their <effect>s already or continuously active, directly participating in public game logic; (3) typically irreversible — once a <piece> enters this zone, it usually cannot be returned to <player_holding> unless explicitly allowed by rules. "
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "public_board",
+      "extends": "<board>",
+      "name": {
+        "zh": "公共版图",
+        "en": "Public Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "所有玩家共用的 <board>，承载公共游戏状态。<public_board> 继承自 <board>。它上面可以容纳公共 <zone>（如轨、展示区）、放置公共 <piece> 和 <component>，并可能携带自身的 <content>。<zone> 的存在和属性由游戏规则独立定义，<public_board> 是它们的物理宿主。物理形态不固定，可由多块板拼接而成；拼接而成的公共版图通过 components 列出其组成部分。",
+        "en": "A <board> shared by all players, carrying public game state. <public_board> extends <board>. It can host public <zone>s (e.g., tracks, display areas), hold public <piece>s and <component>s, and may carry its own <content>. <zone>s exist and are defined independently by game rules; the <public_board> is their physical host. Physical form is not fixed and may consist of multiple assembled boards; an assembled public board lists its parts via components."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "components",
+            "description": {
+              "zh": "当此公共版图由多块板拼接而成时，列出组成它的 <board> 或 <aid> 实例。单块公共版图可省略此字段。注意：此处只应包含 board 和纯参考 aid，不包含 <piece>、<tile> 等游戏零件——后者属于游戏状态，应放在 <zone> 中。",
+              "en": "When this public board is physically assembled from multiple boards, list the <board> or <aid> instances that compose it. Omit for a single-piece board. Note: only boards and pure reference aids should be listed here; <piece>s, <tile>s, and other game components belong to game state and should reside in <zone>s."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "player_board",
+      "extends": "<board>",
+      "name": {
+        "zh": "玩家面板",
+        "en": "Player Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "分配给单个 <player> 的专属 <board>，承载该玩家的个人游戏状态。<player_board> 继承自 <board>。它上面可以容纳该玩家专属的 <player_zone>（如模组区、仓库区、收入区等），并可能携带自身的 <content>（如面板上印着的基础活动图标）。通常每个 <player> 各持一块。与 <public_board> 的区别：<public_board> 全员共用，<player_board> 每人一块。",
+        "en": "A personal <board> assigned to a single <player>, carrying that player's individual game state. <player_board> extends <board>. It can host that player's personal <player_zone>s (e.g., module area, storage area, income area) and may carry its own <content> (e.g., the basic activity icon printed on it). Typically each <player> has one. Difference from <public_board>: <public_board> is shared by all, while <player_board> is one per player."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_aid",
+      "extends": "<aid>",
+      "name": {
+        "zh": "玩家提示卡",
+        "en": "Player Aid"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "记录规则摘要、流程参考或计分信息的便携 <aid>。<player_aid> 继承自 <aid>。通常为卡片或薄板形式，内容为游戏规则的浓缩或索引——如回合流程速查、所有 <action> 的图标说明、计分规则摘要。可有正反两面。",
+        "en": "A portable <aid> recording rule summaries, procedure references, or scoring information. <player_aid> extends <aid>. Typically a card or thin board containing condensed or indexed game rules — e.g., turn flow quick-reference, icon guide for all <action>s, scoring rule summary. May have two sides."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "rulebook",
+      "extends": "<aid>",
+      "name": {
+        "zh": "规则书",
+        "en": "Rulebook"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "完整记录游戏规则、流程和组件说明的文档型 <aid>。<rulebook> 继承自 <aid>。通常在游戏开始前阅读学习，游戏中可作为参考查阅。不参与游戏逻辑的运作——即使没有 <rulebook>，游戏规则依然存在并生效。<rulebook> 只是规则的书面载体，不是规则本身。",
+        "en": "A document-type <aid> that fully records the game's rules, procedures, and component descriptions. <rulebook> extends <aid>. Typically read before the game starts and used as a reference during play. Does not participate in game logic — even without the <rulebook>, the game rules still exist and apply. The <rulebook> is merely the written carrier of rules, not the rules themselves."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "setting",
+      "extends": "<object>",
+      "name": {
+        "zh": "背景设定",
+        "en": "Setting"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏的虚构世界观、时代背景与关键角色设定，用于解释风味名称、主题和叙事元素，不直接参与规则判定。<setting> 继承自 <object>。每款游戏的具体背景设定见游戏层的 <setting> 实例。",
+        "en": "The fictional world view, historical backdrop, and key character setup of a game, used to explain flavor names, themes, and narrative elements without directly participating in rule adjudication. <setting> extends <object>. Each game's concrete background is defined by its <setting> instance in the game layer."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "track",
+      "extends": "<zone>",
+      "name": {
+        "zh": "轨",
+        "en": "Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种有序的 <zone>，用于放置 <marker> 并记录某个数值或进度的当前状态。<track> 继承自 <zone>。与普通 zone 的区别在于：object 在 track 中通常只做内部位置移动（前进/后退），不发生 zone 之间的 transfer。轨分两种：<linear_track>（有终点，推过头时按溢出补偿结算）与 <circular_track>（无终点，回绕是推轨的自然语义）。",
+        "en": "An ordered <zone> used to place <marker>s and record the current value or progress of some numeric or ordinal state. <track> extends <zone>. Unlike a regular zone, objects in a track usually only move internally (forward/backward) rather than being transferred between zones. Tracks come in two kinds: <linear_track> (has an end; pushing past it settles per its overflow compensation) and <circular_track> (no end; wrapping around is the natural semantics of advancing)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "此轨的槽位定义，必填。**parts 形式**（与 <piece>.parts 同款）：数组元素声明「格段」——每个元素是一个 part，概念 ID 做 key，值为属性对象（或纯概念引用字符串 = 1 格）：`{ \"<concept>\": { \"count\": 9 } }`。属性：count（格数，默认 1）、scope（可选——数值轨的数值范围，如 \"1–100\"）、parts（可选——本 part 内部再分多个子 part，如某段 = [A 类格 part, B 类格 part]）、description（可选）。数字轨写一个 part + count（格数）与 scope（数值范围）；槽位轨每类格一个 part（语义相同的多格共用一个 part + count）。**引用格式**：单格 part（count 1）直接写 `<track>.<part_id>`；多格 part 写 `<track>.<part_id>[n]`——n 为 part 内 0 基偏移。description 中用「第 n+1 个」对照表述，避免偏移误导。marker 的当前位置即其所在格——以「<marker> 位于 <track>.<part_id>」或「<marker> 位于 <track>.<part_id>[n]」表达。",
+              "en": "Slot definitions for this track, required. **Parts form** (same style as <piece>.parts): array elements declare 'space segments' — each element is a part whose key is a concept id with an attribute object as value (or a plain concept-reference string = 1 space): `{ \"<concept>\": { \"count\": 9 } }`. Attributes: count (number of spaces, default 1), scope (optional — the numeric range of a numeric track, e.g. \"1–100\"), parts (optional — sub-parts within this part, e.g. a segment = [class-A space part, class-B space part]), description (optional). Numeric tracks use one part with count (spaces) and scope (range); slot-based tracks use one part per class of space (semantically identical multiple spaces share one part + count). **Reference format**: single-space parts (count 1) are referenced directly as `<track>.<part_id>`; multi-space parts use `<track>.<part_id>[n]` with n the 0-based offset within the part. Descriptions phrase it as 'the n+1-th space' to avoid offset confusion. A marker's current position is its containing space — expressed as \"<marker> is on <track>.<part_id>\" or \"<marker> is on <track>.<part_id>[n]\"."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "linear_track",
+      "extends": "<track>",
+      "name": {
+        "zh": "直线轨",
+        "en": "Linear Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "有终点的 <track>：<marker> 沿推进方向推过头（正溢出）或反向过头（负溢出）时，按本概念声明的溢出补偿字段结算。任何直线轨都有推到头的一天——推到头后再次推进发生什么，由 <overflow_compensation> / <underflow_compensation> 字段声明（每个直线轨必须回答这个问题）。",
+        "en": "A <track> with an end: when a <marker> is pushed past the end along the advance direction (positive overflow) or past the other end in reverse (negative overflow), the advance settles per this concept's overflow-compensation fields. Every linear track has an end — what happens when a <marker> is advanced again after reaching it is declared by the <overflow_compensation> / <underflow_compensation> fields (every linear track must answer this question)."
+      },
+      "<overflow_compensation>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的正向溢出补偿：<marker> 沿推进方向推过头时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例），或指向内嵌机制的说明（如边界格的效果、到达终点后停住的规则）。缺省 = 没有处理（该方向不会发生，或什么都不做）。",
+          "en": "This track's positive overflow compensation: what happens when a <marker> is advanced past the end along the advance direction. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>), or a pointer to an embedded mechanism (e.g. a boundary-space effect, a stop-after-the-end rule). Absent = no handling (that direction cannot occur, or nothing happens)."
+        }
+      },
+      "<underflow_compensation>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的负向溢出补偿：<marker> 反向过头（越过起点/另一端点）时发生什么。值与 <overflow_compensation> 同款（trigger 引用或内嵌机制说明）。缺省 = 没有处理（该方向不会发生，或什么都不做）。",
+          "en": "This track's negative overflow compensation: what happens when a <marker> is advanced past the other end in reverse. Same value forms as <overflow_compensation> (trigger reference or embedded-mechanism pointer). Absent = no handling (that direction cannot occur, or nothing happens)."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "此轨的槽位定义（同 <track>）。",
+              "en": "This track's slot definitions (as <track>)."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "<overflow_compensation>",
+            "default": null,
+            "description": {
+              "zh": "本轨的正向溢出补偿（见字段声明）。",
+              "en": "This track's positive overflow compensation (see field declaration)."
+            }
+          },
+          {
+            "id": "<underflow_compensation>",
+            "default": null,
+            "description": {
+              "zh": "本轨的负向溢出补偿（见字段声明）。",
+              "en": "This track's negative overflow compensation (see field declaration)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "circular_track",
+      "extends": "<track>",
+      "name": {
+        "zh": "环形轨",
+        "en": "Circular Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "无终点的 <track>：<marker> 推过循环终点时自然回绕到起点继续（如 99 前进 3 步 = 停在 2 并完成一圈）。环形轨没有溢出——回绕是推轨的自然语义，不需要溢出补偿字段；「完成一圈」的伴随事件（如每圈拿取 1 个圈指示物）由 <lap_event>（正向）/ <underlap_event>（负向）字段挂载。",
+        "en": "A <track> without an end: a <marker> pushed past the loop's end naturally wraps around to the start (e.g. 99 advanced 3 steps = stop on 2 and complete a lap). A circular track has no overflow — wrapping is the natural semantics of advancing, so no overflow-compensation fields apply; the companion events of completing a lap (e.g. taking 1 lap token per lap) are mounted via the <lap_event> (positive) / <underlap_event> (negative) fields."
+      },
+      "<lap_event>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的正向圈事件：marker 沿推进方向越过循环起点时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::lap_event> 的实例）。",
+          "en": "This track's positive lap event: the companion event triggered when a <marker> crosses the loop's start along the advance direction. Value is a reference to this track's lap-event trigger (an instance specifying <ontology::lap_event>)."
+        }
+      },
+      "<underlap_event>": {
+        "default": null,
+        "description": {
+          "zh": "本轨的负向圈事件：marker 反向越过循环起点时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::underlap_event> 的实例）。",
+          "en": "This track's negative lap event: the companion event triggered when a <marker> crosses the loop's start in reverse. Value is a reference to this track's lap-event trigger (an instance specifying <ontology::underlap_event>)."
+        }
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "此轨的槽位定义（同 <track>）。",
+              "en": "This track's slot definitions (as <track>)."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "<lap_event>",
+            "default": null,
+            "description": {
+              "zh": "本轨的正向圈事件（见字段声明）。",
+              "en": "This track's positive lap event (see field declaration)."
+            }
+          },
+          {
+            "id": "<underlap_event>",
+            "default": null,
+            "description": {
+              "zh": "本轨的负向圈事件（见字段声明）。",
+              "en": "This track's negative lap event (see field declaration)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "score_track",
+      "extends": "<circular_track>",
+      "name": {
+        "zh": "分轨",
+        "en": "Score Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于记录 <player> 的 <score> 数量的 <track>。<score_track> 继承自 <track>。通常是公共版图的一部分或外框，每位玩家各用一个 <marker> 在此轨上指示自己当前拥有多少 <score>。<score> 本身是 <resource>，「玩家有 N 分」才是 <state>；分轨是这个 <state> 的可视化载体。",
+        "en": "A <track> used to record how much <score> each <player> has. <score_track> extends <track>. It is usually part of or the outer frame of the public board; each <player> uses a <marker> on this track to indicate how many <score> they currently have. <score> itself is a <resource>; 'Player has N points' is the <state>. The score track is the visual carrier of this <state>."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "slots",
+            "description": {
+              "zh": "轨道槽位定义——取值范围字符串（如「0–12」）或槽位对象数组（每个含 name + <ontology::effect>）。终局计分轨、进程轨等使用槽位数组，纯数值轨使用范围字符串。",
+              "en": "Track slot definition — a value range string (e.g. '0–12') or an array of slot objects (each with name + <ontology::effect>). Scoring and progress tracks use slot arrays; pure numeric tracks use a range string."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "hand",
+      "extends": "<player_holding>",
+      "name": {
+        "zh": "手牌",
+        "en": "Hand"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放 <card> 的 <player_holding>，是最常见的玩家保留区形态。<hand> 继承自 <player_holding>。<information_visibility> 通常为 private（仅拥有者可观察）或 protected（拥有者可选择向其他 <player> 展示），但具体可见性由游戏规则决定。<hand> 是 <play> 的主要源区域——<player> 从手牌中打出 <card>，将其移入 <development_area> 或 <discard_pile>。",
+        "en": "A <player_holding> that holds <card>s, the most common form of player holding. <hand> extends <player_holding>. <information_visibility> is typically private (only the owner can observe) or protected (owner may choose to reveal to other <player>s), but the specific visibility is determined by game rules. <hand> is the primary source zone for <play> — a <player> plays a <card> from their hand, moving it to the <development_area> or <discard_pile>."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "activation",
+      "name": {
+        "zh": "激活",
+        "en": "Activation"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一种特化的 <action>：<player> 的选择内容是从可用的 <effect> 池中激活某一个。<activation> specifies <action>——填入 action 的全部槽位并将 target 窄化为「选哪个 <effect>」。<player> 选择一个可用的 <effect> 并将其激活，该 <effect> 随即从静默（dormant）进入待结算（pending）状态，等待后续的 <resolve> 将其 <content> 应用到游戏 <state>。<activation> 不等同于 <resolve>——激活后效果可能排队等待，多个同时激活的 <effect> 需要通过优先级决定结算顺序。候选 <effect> 可能来自 <piece>（如研究牌上的活动能力）、<board>（如控制台自带的基础活动）、或其他游戏组件。",
+        "en": "A specialized <action>: the <player>'s choice is to activate one <effect> from a pool of available effects. <activation> specifies <action> — fills in all of action's slots and narrows target to \"which <effect>\". The <player> selects an available <effect> and activates it, transitioning it from dormant to pending state to await subsequent <resolve> which applies its <content> to the game <state>. <activation> is not the same as <resolve> — after activation, effects may queue; multiple simultaneously activated <effect>s require priority ordering for resolution. Candidate <effect>s may come from <piece>s (e.g., activity abilities on research cards), <board>s (e.g., the innate activity on a console), or other game components."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<effect>",
+            "description": {
+              "zh": "被激活的 <effect>。<activation> 的本质是使一个 <effect> 从静默转入待结算——没有 <effect>，激活无事可做。此约束要求子类指明从可用 <effect> 池中选择了哪一个。",
+              "en": "The <effect> being activated. The essence of <activation> is transitioning an <effect> from dormant to pending — without an <effect>, activation has nothing to do. This constraint requires subclasses to specify which <effect> was chosen from the available pool."
+            }
+          }
+        ],
+        "optional": []
+      },
+      "specifies": "<action>"
+    },
+    {
+      "id": "dice",
+      "extends": "<object>",
+      "name": {
+        "zh": "骰子",
+        "en": "Dice"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于产生随机数值的游戏组件。<dice> 继承自 <object>。每颗骰子有若干面，每面印有一个数值或符号；通过 <die_roll> 事件掷出后，根据朝上的一面确定结果。骰子本身没有 <effect>，不可被 <play>，只是随机数生成器。",
+        "en": "A game component used to generate random values. <dice> extends <object>. Each die has several faces, each printed with a value or symbol; after being rolled via a <die_roll> event, the result is determined by the face that lands upward. Dice themselves have no <effect> and cannot be <play>ed — they are random number generators."
+      },
+      "constraints": {
+        "required": [],
+        "optional": [
+          {
+            "id": "sides",
+            "description": {
+              "zh": "骰子的面数。如六面骰为 6。",
+              "en": "Number of faces on the die. E.g., 6 for a six-sided die."
+            }
+          },
+          {
+            "id": "value",
+            "description": {
+              "zh": "骰子当前朝上的面所显示的点数。用于结构化表达对骰子点数的要求——如 cost 中要求的特定点数、或 content 中产生的随机结果。null 表示尚未掷出或无需指定。",
+              "en": "The value shown on the currently upward face of the die. Used to structurally express die value requirements — e.g., a specific value required in a cost, or a random result produced in content. null means not yet rolled or not specified."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "die_roll",
+      "extends": "<event>",
+      "name": {
+        "zh": "掷骰",
+        "en": "Die Roll"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "投掷一颗或多颗 <dice> 以产生随机数值的 <event>。<die_roll> 继承自 <event>。结果由骰子朝上的一面决定，可用于判定、费用、资源获取等。玩家通常可以花费创意标记等资源修改骰子点数。",
+        "en": "An <event> in which one or more <dice> are rolled to generate random values. <die_roll> extends <event>. The result is determined by the face(s) that land upward and can be used for checks, costs, resource gains, etc. Players may often spend resources such as idea markers to modify die results."
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "lose",
+      "extends": "<event>",
+      "name": {
+        "zh": "失去",
+        "en": "Lose"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<object> 失去一个 <property>。失去后该 property 的 domain 变为 null。常用于 effect 的载体切换——当 effect 不再由某个实体持有时，该实体 lose 此 effect。",
+        "en": "An <object> loses a <property>. The property's domain becomes null after losing. Commonly used when an effect's carrier changes — when an effect is no longer held by an entity, that entity loses this effect."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "subject",
+            "description": {
+              "zh": "失去属性的实体。必须指明是哪个 <object> 在失去属性。",
+              "en": "The entity losing the property. Must specify which <object> is losing the property."
+            }
+          },
+          {
+            "id": "<property>",
+            "description": {
+              "zh": "被失去的属性。必须指明失去的是哪个 <property>（或 <effect>）。",
+              "en": "The property being lost. Must specify which <property> (or <effect>) is being lost."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "gain",
+      "extends": "<event>",
+      "name": {
+        "zh": "获得",
+        "en": "Gain"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "<object> 获得一个 <property>。获得后该 property 的 domain 指向此 object。常用于 effect 的载体切换——当 effect 改由新的实体持有时，新实体 gain 此 effect。",
+        "en": "An <object> gains a <property>. The property's domain points to this object after gaining. Commonly used when an effect's carrier changes — when an effect becomes held by a new entity, that entity gains this effect."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "subject",
+            "description": {
+              "zh": "获得属性的实体。必须指明是哪个 <object> 在获得属性。",
+              "en": "The entity gaining the property. Must specify which <object> is gaining the property."
+            }
+          },
+          {
+            "id": "<property>",
+            "description": {
+              "zh": "被获得的属性。必须指明获得的是哪个 <property>（或 <effect>）。",
+              "en": "The property being gained. Must specify which <property> (or <effect>) is being gained."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "state_change",
+      "extends": "<event>",
+      "name": {
+        "zh": "状态变更",
+        "en": "State Change"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一个 <object> 的某个属性的值从 A 变为 B。与 <lose>/<gain> 不同——后者操作的是 <property> 的 domain 归属；<state_change> 操作的是 <state> 的属性值（如部落的站立→躺倒、卡牌的横置→竖置、token 的正面→反面）。",
+        "en": "The value of an <object>'s attribute changes from A to B. Distinct from <lose>/<gain> — those operate on <property> domain ownership; <state_change> operates on <state> attribute values (e.g., tribe standing→lying, card tapped→untapped, token face-up→face-down)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "subject",
+            "description": {
+              "zh": "状态发生变更的 <object>。",
+              "en": "The <object> whose state is changing."
+            }
+          },
+          {
+            "id": "to",
+            "description": {
+              "zh": "变更后的目标状态值，用点号路径表达。",
+              "en": "The target state value after the change, expressed as a dot-path."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "attribute",
+            "description": {
+              "zh": "变更的属性名。多数情况下状态自身即语义——如 upright 不需要套在 'posture' 下。仅当同一个 object 有多个正交状态维度时才需要（如一张卡同时有 'orientation' 和 'face' 两个状态）。",
+              "en": "The attribute name being changed. Usually unnecessary — states carry their own semantics (e.g., upright doesn't need a 'posture' wrapper). Only needed when an object has multiple orthogonal state dimensions (e.g., a card with both 'orientation' and 'face' states)."
+            }
+          },
+          {
+            "id": "from",
+            "description": {
+              "zh": "变更前的旧 <state>。可不写——表示无论当前是什么状态，强制设为目标状态。",
+              "en": "The old <state> before the change. Optional — if absent, unconditionally set to the target state."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "flip",
+      "specifies": "<state_change>",
+      "name": {
+        "zh": "翻面",
+        "en": "Flip"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "将 <card> 或 <tile> 翻至另一面。attribute 固定为 face，to 为 face_up 或 face_down。",
+        "en": "Flip a <card> or <tile> to its other side. Attribute is fixed to face; to is face_up or face_down."
+      },
+      "subject": {
+        "type": "<card> | <tile>",
+        "description": {
+          "zh": "被翻面的 <card> 或 <tile>。",
+          "en": "The <card> or <tile> being flipped."
+        }
+      },
+      "attribute": {
+        "type": "enum",
+        "enum": [
+          "face"
+        ],
+        "description": {
+          "zh": "固定为 face。",
+          "en": "Fixed to face."
+        }
+      },
+      "to": {
+        "type": "enum",
+        "enum": [
+          "face_up",
+          "face_down"
+        ],
+        "description": {
+          "zh": "翻面后的目标朝向。",
+          "en": "The target side after the flip."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "upgrade",
+      "specifies": "<state_change>",
+      "name": {
+        "zh": "升级",
+        "en": "Upgrade"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "一个 <state_change>：<piece> 的 level 属性从 A 变为 B。subject 为被升级的 <piece>，attribute 固定为 level，to 为目标等级。level 提升可能伴随载体切换——当新旧 level 由不同实体承载时，旧载体 <lose> 旧 effect、新载体 <gain> 新 effect；当同一载体承载（如 tile 翻面）时，仅为 level 变化，无 lose/gain。物理操作（翻面、移除板块）是 level 变化的物理后果，由游戏层表达。",
+        "en": "A <state_change>: a <piece>'s level attribute changes from A to B. subject is the <piece> being upgraded, attribute is fixed to level, to is the target level. Level increase may involve carrier switch — when old and new levels are carried by different entities, the old carrier <lose>s the old effect and the new carrier <gain>s the new effect; when carried by the same entity (e.g., tile flip), it is purely a level change with no lose/gain. Physical operations (flip, remove tile) are consequences of the level change, expressed at the game layer."
+      },
+      "subject": {
+        "type": "<piece>",
+        "description": {
+          "zh": "被升级的 <piece>。",
+          "en": "The <piece> being upgraded."
+        }
+      },
+      "attribute": {
+        "type": "enum",
+        "enum": [
+          "level"
+        ],
+        "description": {
+          "zh": "固定为 level。",
+          "en": "Fixed to level."
+        }
+      },
+      "to": {
+        "type": "integer",
+        "description": {
+          "zh": "目标等级。",
+          "en": "The target level."
+        }
+      },
+      "constraints": {
+        "required": [],
+        "optional": []
+      }
+    },
+    {
+      "id": "play",
+      "extends": "<event>",
+      "name": {
+        "zh": "打出",
+        "en": "Play"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "将一个 <piece> 投入使用的 <event>。核心语义三环节：支付费用（cost，可在实现节点自身声明，或引用 <piece> 的 effect）、将 <piece> <transfer> 到目标 <zone>、结算内容（content/resolve）。三个环节的步骤顺序与扩展由实现节点的 options + do_after 自由配置——pay_cost → transfer_piece → resolve 只是典型顺序而非强制。纯转移的 play（无费用无结算）只需声明 <piece>/source/destination。",
+        "en": "An <event> that puts a <piece> into use. Three core steps: pay the cost (declared on the implementing node itself, or referenced from the <piece>'s effect), <transfer> the <piece> to the destination <zone>, and resolve the content. The order of and any extensions to these steps are freely configured by the implementing node's options + do_after — pay_cost → transfer_piece → resolve is only the typical order, not mandatory. A play with neither cost nor content simply declares <piece>/source/destination."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<piece>",
+            "description": {
+              "zh": "被打出的 <piece>。",
+              "en": "The <piece> being played."
+            }
+          },
+          {
+            "id": "source",
+            "description": {
+              "zh": "<piece> 的来源 <zone>。",
+              "en": "The source <zone> of the <piece>."
+            }
+          },
+          {
+            "id": "destination",
+            "description": {
+              "zh": "<piece> 移入的目标 <zone>。",
+              "en": "The destination <zone> for the <piece>."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "options",
+            "description": {
+              "zh": "打出流程的业务步骤配置（可选——纯转移的 play 无需配置）。步骤顺序与扩展自由，按 do_after 声明依赖。",
+              "en": "Business step configuration for the play procedure (optional — a plain-transfer play needs none). Step order and extensions are free, declared via do_after."
+            }
+          },
+          {
+            "id": "type",
+            "description": {
+              "zh": "步骤执行策略（配置 options 时通常为 EXECUTE_ALL）。",
+              "en": "Execution strategy for the steps (EXECUTE_ALL when options are configured)."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "push_track",
+      "extends": "<event>",
+      "name": {
+        "zh": "推进轨道",
+        "en": "Push Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "将一条 <track> 上的标记向前推进。桌游中最通用的位移 <event> 之一——计分、进程、天气等所有轨道共享此语义。两种形态：(1) `step`——推进几格；(2) `to`——推进到目标格（槽位轨的 slot 引用，需要轨的 slots 定义了每格 id）。",
+        "en": "Advance a marker on a <track>. One of the most universal displacement <event>s in board games — shared semantics across score tracks, progress tracks, weather gauges, etc. Two forms: (1) `step` — advance by a number of spaces; (2) `to` — advance to a target space (a slot reference on a slot-based track; requires the track's slots to define per-space ids)."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "<track>",
+            "description": {
+              "zh": "要推进的轨道。类型在子类中窄化为具体轨道。",
+              "en": "The track to advance on. Narrowed to a specific track in subclasses."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "step",
+            "description": {
+              "zh": "往前推进几个格。与 to 二选一。",
+              "en": "Number of steps to advance. Mutually exclusive with to."
+            }
+          },
+          {
+            "id": "to",
+            "description": {
+              "zh": "推进到的目标格——槽位轨 slot 的路径引用（\"<track>.<slot_id>\"）。与 step 二选一。",
+              "en": "The target space to advance to — a path reference to a slot on a slot-based track (\"<track>.<slot_id>\"). Mutually exclusive with step."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "pipeline",
+      "name": {
+        "zh": "流水线",
+        "en": "Pipeline"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "多选项的处理模型。从几个 token 中选一个拿走，从几个 action 中选一个执行，一个流程有好几个步骤按什么顺序进行——这些都是「从多个候选中做出选择并执行」的问题。<pipeline> 用 options 数组承载候选项，用 type 引用 <multiple_choice_enum> 决定处理策略，用 do_after 表达依赖。候选项可以是任何东西——<ontology::transfer>、<ontology::action>、另一个 <pipeline>、甚至是 <null>（表示「什么都不做」也是一种合法选择）。当一个流程涉及多种不同类型的子操作、难以用单个 extends/specifies 归类时使用。\n\n**<pipeline> 是唯一的结构原语——<round>、<turn>、<phase> 用 <pipeline> 定义多步骤实际流程**（children 数组、actor、start/end 字段均已废弃：流程顺序由 options + do_after 表达，循环由 <procedure> 顶层的 loop 字段表达，「谁能做」由步骤的 <condition> 表达，行动权轮转是 <turn> 的内建语义）。单内容时 procedure 直接持有对应概念（如 <ontology::action>、<ontology::turn>、<ontology::round>），不包 pipeline。<pipeline> 也是通用可挂载结构——任何概念都可以选择持有它：<trigger>（<action>/<effect>）把它作为多事件执行内容放在 <content>.<instant_content> 内（或直接持有）；<cost> 可用于多步支付的复杂代价；<content> 可用于多步骤的效果结算。持有是可选的、由使用方按需书写，不为此给每个概念设计专属字段——和 options 字段一样的通用模式。",
+        "en": "A model for handling multiple options. Picking one token from several, choosing one action to perform, deciding the order of steps in a procedure — these are all the same problem: selecting and executing among multiple candidates. A <pipeline> uses the options array for candidates, type to reference <multiple_choice_enum> for the selection strategy, and do_after for dependencies. Candidates can be anything — a <ontology::transfer>, an <ontology::action>, another <pipeline>, or even <null> (doing nothing is a valid choice). Use when a procedure involves sub-operations of different types that are hard to classify under a single extends/specifies.\n\n**<pipeline> is the single structural primitive — <round>, <turn>, and <phase> define their multi-step actual flow with a <pipeline>** (the children array, actor, and start/end fields are all deprecated: ordering comes from options + do_after, repetition from the <procedure>-level loop field, 'who may act' from a step's <condition>, and turn order is <turn>'s built-in semantics). A single-content procedure directly holds the concept itself (e.g. an <ontology::action>, <ontology::turn>, or <ontology::round>) without a pipeline. <pipeline> is also a universal mountable structure — any concept may choose to hold it: <trigger> (<action>/<effect>) places it inside <content>.<instant_content> (or holds it directly) as multi-event execution content; <cost> may use it for complex multi-step payments; <content> may use it for multi-step resolution. Holding is optional and written by the user as needed — no per-concept dedicated fields are designed, following the same universal pattern as the options field."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "options",
+            "description": {
+              "zh": "候选项数组。里面装什么由具体场景决定——可以是 <ontology::card>、<ontology::tile>、<ontology::resource>（从几个组件中选一个拿走），也可以是 <ontology::transfer>、<ontology::action>、子 pipeline（从几个操作中选一个执行），也可以是 <ontology::player>、<ontology::zone>（从几个目标中选一个作用）。null 表示「什么都不做」——被选中时跳过执行，但在 do_after 链上视为已完成。**候选级 condition 语义**：候选项携带的 <condition> 决定其可用性——condition 不成立 = 该候选项不可选（从选择池排除），不影响其他候选；与步骤级阻断（options 顶层项的 condition 不成立 = 该步骤及其 do_after 依赖项全部停止）相区分。「如果 A 可用则必须 A，否则 B」的表达：B 作为带「A 不可用」condition 的候选（如「跳过」的 condition 是全部行动条件取反），使候选 condition 互补覆盖所有情况，CHOOSE_ONE 从可用候选中必选其一。",
+              "en": "Array of candidates. What goes inside is determined by the specific scenario — it could be <ontology::card>s, <ontology::tile>s, <ontology::resource>s (picking a component to take), <ontology::transfer>s, <ontology::action>s, sub-pipelines (choosing an operation to perform), or <ontology::player>s, <ontology::zone>s (picking a target to affect). null means 'do nothing' — when selected, execution is skipped but the do_after chain treats it as completed. **Candidate-level condition semantics**: a candidate's <condition> decides its availability — a failing condition excludes that candidate from the pool without affecting the others; this differs from step-level blocking (a top-level option whose condition fails stops that step and everything depending on it via do_after). To express 'if A is available you must do A, otherwise B', give B a candidate condition that is the negation of A's availability (e.g. a 'skip' candidate whose condition is the AND of all action conditions being false), so candidate conditions cover all cases complementarily and CHOOSE_ONE picks exactly one from the available candidates."
+            }
+          },
+          {
+            "id": "type",
+            "description": {
+              "zh": "处理策略，引用 <multiple_choice_enum>——EXECUTE_ALL：按依赖顺序全部执行（拓扑排序）；CHOOSE_ONE：从中选一个；CHOOSE_AT_LEAST_ONE：至少选一个；CHOOSE_ANY：任意组合（每项最多一次）。",
+              "en": "Selection strategy, referencing <multiple_choice_enum> — EXECUTE_ALL: execute all in dependency order (topological sort); CHOOSE_ONE: pick exactly one; CHOOSE_AT_LEAST_ONE: pick at least one; CHOOSE_ANY: any subset, each at most once."
+            }
+          }
+        ],
+        "optional": [
+          {
+            "id": "do_after",
+            "description": {
+              "zh": "前置依赖。仅当 do_after 中的所有项都完成（或跳过）后才可执行本项。每个候选项内部也可有自己的 do_after。",
+              "en": "Prerequisite dependencies. This item only becomes executable after all entries in do_after are completed (or skipped). Each candidate may also have its own do_after."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "multiple_choice_enum",
+      "name": {
+        "zh": "多选方式",
+        "en": "Multiple Choice"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "多选项的选择方式枚举，适用于 <effect>、<cost>、<content> 的 options 字段。",
+        "en": "Enum for multi-option selection, used by the options field of <effect>, <cost>, and <content>."
+      },
+      "constraints": {
+        "required": [
+          {
+            "id": "values",
+            "description": {
+              "zh": "枚举值：EXECUTE_ALL = 全部执行，CHOOSE_ONE = 玩家选择 1 个执行，CHOOSE_AT_LEAST_ONE = 玩家选择至少 1 个执行，CHOOSE_ANY = 玩家选择任意数量执行（0 到全部，每项最多 1 次），MATCH = 规则匹配执行——由规则/局面事实决定哪个或哪些执行：选择结构（options/type）持有单个 <ontology::condition> 与 type 同级，描述匹配依据（如「按板块显示的类别匹配」），规则按该依据从候选中选定执行者，命中数量由局面决定。命中候选按 options 顺序执行；未命中的候选视为跳过，在 do_after 链上视为已完成（不阻断后续步骤，与 _skip 一致）。FIRST_MATCH = 按序取首个匹配——从 options 第一项开始逐项检查该项自身的 <ontology::condition>，第一个满足者执行，其余全部忽略（即使它们条件也满足）；全部不满足则什么都不执行（选择结构在 do_after 链上仍视为已完成）。每项条件只写自身成立的正向描述，无需写「前述均不成立」——顺序本身就是优先级；兜底分支写成最后一项不带条件的选项。典型场景：互斥替代分支（释放动物清围栏 4 步）。逐级判胜用 FILTER（见下），不用本类型。FILTER = 逐层收窄——候选集合（如全体玩家）按 options 顺序依次过每一道：每项自带 <ontology::condition> 作为该道的保留标准（如「分数最高」），满足者保留、不满足者淘汰；上一道留下的候选才进入下一道。全部过完后剩下的候选即最终结果；中途只剩一个候选时，后续项对它不再产生任何影响（无需提前停止，也无需在条件里写唯一性判定）。描述按规则书口吻叙述，如「如果分数最高的玩家不止一人，则其中……」。典型场景：逐级判胜（先比总分、再比次级指标、再比座次，最后剩下的就是赢家）。",
+              "en": "Enum values: EXECUTE_ALL = execute all, CHOOSE_ONE = a player chooses one, CHOOSE_AT_LEAST_ONE = a player chooses at least one, CHOOSE_ANY = a player chooses any (0 to all, each at most once), MATCH = rule-matched execution — the rules/board state determine which candidate(s) execute: the selection structure (options/type) holds a single <ontology::condition> at the same level as type, describing the matching basis (e.g. \"matched by the category shown on the tile\"); the rules select the executing candidate(s) per that basis; how many match depends on the state. Matched candidates execute in options order; unmatched candidates count as skipped and are treated as completed on the do_after chain (they do not block later steps, consistent with _skip). FIRST_MATCH = first match in order — options are checked from the first one, each against its own <ontology::condition>; the first whose condition holds executes and all remaining options are ignored entirely (even if their conditions would also hold); if none holds, nothing executes (the selection structure still counts as completed on the do_after chain). Each condition states only its own positive criterion — there is no need to write \"none of the above held\"; the order itself is the priority, and a fallback branch is simply a final option without a condition. Typical use: mutually exclusive alternative branches (the 4-step release enclosure clearing). Cascading winner adjudication uses FILTER (see below), not this type. FILTER = successive narrowing — the candidate set (e.g., all players) passes through the options in order: each option carries its own <ontology::condition> as that stage's retention criterion (e.g., \"has the highest score\"); candidates meeting it remain, the rest are eliminated; only candidates kept by the previous stage enter the next. After all options, the remaining candidates are the final result; once only one candidate remains, later options cannot change anything (no early exit, and no uniqueness checks in conditions). Descriptions follow the rulebook's phrasing, e.g. \"if more than one player has the highest score, then …\". Typical use: cascading winner adjudication (compare totals, then secondary metrics, then seating order — whoever remains wins)."
+            }
+          }
+        ],
+        "optional": []
+      }
+    },
+    {
+      "id": "player_supply",
+      "extends": "<supply>",
+      "name": {
+        "zh": "玩家供应堆",
+        "en": "Player Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "归属于某位玩家的供应堆——其中存放的 <object> 属于该玩家，其他玩家不可取用。公共供应堆的 <ownership> 为 null；玩家专属供应堆固定归属其玩家。",
+        "en": "A supply belonging to a specific player — the <object>s in it belong to that player, no other player may take them. Public supplies have <ownership> null; player supplies are owned by their player."
+      },
+      "<ownership>": {
+        "type": "<ontology::player>",
+        "description": {
+          "zh": "该供应堆的归属玩家。",
+          "en": "The player who owns this supply."
+        }
+      }
+    },
+    {
+      "id": "public_supply",
+      "extends": "<supply>",
+      "name": {
+        "zh": "公共供应堆",
+        "en": "Public Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "不归属任何玩家的供应堆——所有玩家均可取用其中的 <object>。<ownership> 固定为 null。",
+        "en": "A supply owned by no one — every player may take <object>s from it. <ownership> is fixed to null."
+      },
+      "<ownership>": null
+    }
+  ]
+}
+

@@ -1,0 +1,699 @@
+{
+  "meta": {
+    "name": {
+      "zh": "农场主",
+      "en": "Agricola"
+    },
+    "description": {
+      "zh": "农场主（15 周年纪念版，基础多人规则）的流程定义——一局游戏从 Setup 到终局判胜的完整流程。与 concepts.json 配合：concepts.json 定义「有什么」（对象、行动、触发器、条件），本文档定义「按什么顺序进行」（Setup、14 回合 × 4 阶段、终局流程）。Setup 阶段使用 do_after 表达事件间的依赖关系：无 do_after 的事件互相独立，可任意顺序或并行执行。每局固定 14 个回合，每回合：准备（翻回合卡、水井收入、累积补充）→ 工作（起始玩家顺时针轮流各放 1 人，直到全部放完）→ 回家 → 收获（仅第 4/7/9/11/13/14 回合，田地→喂养→繁殖）。",
+      "en": "Flow definition for Agricola (15th Anniversary Edition, base multiplayer rules) — the complete sequence of a game from setup to endgame adjudication. Complements concepts.json: concepts.json defines 'what exists' (objects, actions, triggers, conditions); this document defines 'in what order it happens' (setup, 14 rounds × 4 phases, endgame). The setup phase uses do_after to express dependencies between events: events without do_after are independent and may execute in any order or in parallel. A game is fixed at 14 rounds; each round: preparation (reveal round card, well income, accumulation refill) → work (starting with the starting player and going clockwise, each player places 1 person at a time until all are placed) → returning home → harvest (only rounds 4/7/9/11/13/14: fields → feeding → breeding)."
+    },
+    "game": "agricola",
+    "version": "0.1.0"
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "整局农场主游戏，作为最外层轮。包含设置、14 回合的循环与终局。",
+        "en": "The whole game of Agricola as the outermost round: setup, the 14-round loop, and the endgame."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "开局设置：铺版图（按人数装扩展板）、洗职业与次要改良各发 7 张、发放组件与起始食物、整理 14 张回合卡为 6 个阶段牌堆、摆好 10 张主要改良与公共供应、随机决定起始玩家。各步骤之间无依赖的可任意顺序。",
+              "en": "Game setup: lay out the board (attach the extension per player count), shuffle and deal 7 occupations and 7 minor improvements to each player, hand out components and starting food, sort the 14 round cards into 6 stage piles, set out the 10 major improvements and the general supply, and randomly determine the starting player. Steps without dependencies may run in any order."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "attach_board_extension",
+                  "name": {
+                    "zh": "铺设版图与扩展",
+                    "en": "Lay Out Board and Extension"
+                  },
+                  "description": {
+                    "zh": "把<game_board>放中间，按玩家人数装扩展板：2 人局不加；3 人局加<space_lessons_3p>、<space_clay_3p>、<space_wood_3p>；4 人局加<space_reed_stone_food_4p>、<space_travelling_players>、<space_wood_4p>、<space_lessons_4p>、<space_clay_4p>、<space_wood_4p_2>。把<room_tile>/<field_tile>板块堆放版图旁。",
+                    "en": "Place the <game_board> in the middle and attach the extension by player count: none with 2 players; <space_lessons_3p>, <space_clay_3p>, and <space_wood_3p> with 3; <space_reed_stone_food_4p>, <space_travelling_players>, <space_wood_4p>, <space_lessons_4p>, <space_clay_4p>, and <space_wood_4p_2> with 4. Put the <room_tile>/<field_tile> stacks beside the board."
+                  }
+                },
+                {
+                  "id": "filter_and_deal_occupations",
+                  "name": {
+                    "zh": "筛选并发放职业卡",
+                    "en": "Filter and Deal Occupations"
+                  },
+                  "specifies": "<ontology::random_draw>",
+                  "description": {
+                    "zh": "先按人数筛选<occupation_card>（左侧方块符号：[1+] 用于 1-4 人、[3+] 用于 3-4 人、[4] 仅 4 人局——不用的放回盒中），把剩下的洗混，每位玩家从牌堆顶抽 7 张入<hand>。",
+                    "en": "First filter the <occupation_card>s by player count (the square symbol on the left: [1+] for 1-4 players, [3+] for 3-4, [4] for 4 only — unused cards go back in the box), shuffle the rest, and deal 7 to each player's <hand>."
+                  },
+                  "<ontology::per_player>": true,
+                  "source": "按人数筛选后的职业牌堆",
+                  "destination": "<hand>",
+                  "<ontology::object>": "<occupation_card>",
+                  "quantity": 7
+                },
+                {
+                  "id": "deal_minor_improvements",
+                  "name": {
+                    "zh": "发放次要改良卡",
+                    "en": "Deal Minor Improvements"
+                  },
+                  "specifies": "<ontology::random_draw>",
+                  "description": {
+                    "zh": "把<minor_improvement_card>洗混，每位玩家抽 7 张入<hand>。之后整局不再抽牌。",
+                    "en": "Shuffle the <minor_improvement_card>s and deal 7 to each player's <hand>. No cards are drawn for the rest of the game."
+                  },
+                  "<ontology::per_player>": true,
+                  "source": "次要改良牌堆",
+                  "destination": "<hand>",
+                  "<ontology::object>": "<minor_improvement_card>",
+                  "quantity": 7
+                },
+                {
+                  "id": "distribute_starting_components",
+                  "name": {
+                    "zh": "发放起始组件",
+                    "en": "Distribute Starting Components"
+                  },
+                  "description": {
+                    "zh": "每位玩家拿到自己的<farmyard_board>（左下角预印 2 个木屋房间）与玩家颜色组件：5 个<family_member>（2 个放进木屋房间、3 个放<personal_supply>）、4 个<stable>、15 根<fence>。",
+                    "en": "Each player takes their <farmyard_board> (2 wooden rooms pre-printed at the bottom left) and their color's components: 5 <family_member>s (2 into the wooden rooms, 3 into the <personal_supply>), 4 <stable>s, and 15 <fence>s."
+                  },
+                  "<ontology::per_player>": true,
+                  "options": [
+                    {
+                      "id": "place_two_people_in_house",
+                      "name": {
+                        "zh": "2 人入房",
+                        "en": "Two People in the House"
+                      },
+                      "<ontology::transfer>": {
+                        "source": "玩家的组件供应",
+                        "destination": "<house>",
+                        "<ontology::object>": "<family_member>",
+                        "quantity": 2,
+                        "description": {
+                          "zh": "把 2 个<family_member>放进<house>的两个木屋房间（每个房间住 1 人）。",
+                          "en": "Place 2 <family_member>s into the <house>'s two wooden rooms (one per room)."
+                        }
+                      }
+                    },
+                    {
+                      "id": "place_remaining_components_in_supply",
+                      "name": {
+                        "zh": "其余组件入供应",
+                        "en": "Remaining Components into Supply"
+                      },
+                      "do_after": "place_two_people_in_house",
+                      "<ontology::transfer>": {
+                        "source": "玩家的组件供应",
+                        "destination": "<personal_supply>",
+                        "<ontology::object>": "<family_member>",
+                        "quantity": 3,
+                        "description": {
+                          "zh": "把剩余 3 个<family_member>、4 个<stable>、15 根<fence>放入<personal_supply>。",
+                          "en": "Put the remaining 3 <family_member>s, 4 <stable>s, and 15 <fence>s into the <personal_supply>."
+                        }
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                },
+                {
+                  "id": "sort_round_cards",
+                  "name": {
+                    "zh": "整理回合卡",
+                    "en": "Sort Round Cards"
+                  },
+                  "description": {
+                    "zh": "把 14 张<round_card>按背面数字分成 6 堆（第 1 阶段 4 张、第 2 阶段 3 张、第 3 阶段 2 张、第 4 阶段 2 张、第 5 阶段 2 张、第 6 阶段 1 张），各堆内部洗混，按阶段顺序叠成牌堆——每回合翻最上面一张。",
+                    "en": "Sort the 14 <round_card>s by the number on their backs into 6 piles (4 in stage 1, 3 in stage 2, 2 in stage 3, 2 in stage 4, 2 in stage 5, 1 in stage 6), shuffle each pile, and stack them in stage order — the top card is revealed each round."
+                  }
+                },
+                {
+                  "id": "place_major_improvements",
+                  "name": {
+                    "zh": "摆好主要改良",
+                    "en": "Set Out Major Improvements"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "description": {
+                    "zh": "把 10 张<major_improvement_card>全部正面朝上放入<major_improvement_frame>（先到先得）。",
+                    "en": "Place all 10 <major_improvement_card>s face up into the <major_improvement_frame> (first come, first served)."
+                  },
+                  "source": "游戏盒",
+                  "destination": "<major_improvement_frame>",
+                  "<ontology::object>": "<major_improvement_card>",
+                  "quantity": 10
+                },
+                {
+                  "id": "prepare_general_supply",
+                  "name": {
+                    "zh": "准备公共供应",
+                    "en": "Prepare the General Supply"
+                  },
+                  "description": {
+                    "zh": "把<animal>（18 只羊、15 只野猪、13 头牛）、<building_resource>（38 木头、26 黏土、14 芦苇、16 石头）、<crop>（24 谷物、16 蔬菜）、<food>标记与 7 个<begging_marker>放<general_supply>。",
+                    "en": "Place the <animal>s (18 sheep, 15 wild boar, 13 cattle), <building_resource>s (38 wood, 26 clay, 14 reed, 16 stone), <crop>s (24 grain, 16 vegetables), <food> markers, and 7 <begging_marker>s in the <general_supply>."
+                  }
+                },
+                {
+                  "id": "choose_starting_player",
+                  "name": {
+                    "zh": "随机决定起始玩家",
+                    "en": "Choose Starting Player Randomly"
+                  },
+                  "specifies": "<ontology::state_change>",
+                  "description": {
+                    "zh": "随机决定<ontology::starting_player>，把<starting_player_token>交给该玩家。之后起始玩家**不会自动轮换**——只有<take_starting_player>能夺取。",
+                    "en": "Randomly determine <ontology::starting_player> and hand them the <starting_player_token>. The starting player **never rotates automatically** — only <take_starting_player> claims it."
+                  },
+                  "subject": "<ontology::starting_player>",
+                  "to": "随机选中的玩家",
+                  "rules": {
+                    "zh": "随机选一名玩家设为<ontology::starting_player>并持有<starting_player_token>。",
+                    "en": "Pick a random player as <ontology::starting_player>, holding the <starting_player_token>."
+                  }
+                },
+                {
+                  "id": "give_starting_food",
+                  "name": {
+                    "zh": "发放起始食物",
+                    "en": "Give Starting Food"
+                  },
+                  "specifies": "<ontology::transfer>",
+                  "aliases": {
+                    "zh": ["开局食物"],
+                    "en": ["starting food"]
+                  },
+                  "description": {
+                    "zh": "起始玩家得 2 <food>、其他玩家各 3 <food>，放入<personal_supply>。",
+                    "en": "The starting player gets 2 <food> and each other player 3 <food>, into their <personal_supply>."
+                  },
+                  "do_after": "choose_starting_player",
+                  "<ontology::per_player>": true,
+                  "source": "<general_supply>",
+                  "destination": "<personal_supply>",
+                  "<ontology::object>": "<food>",
+                  "quantity": {
+                    "zh": "起始玩家 2 份、其他玩家 3 份。",
+                    "en": "2 for the starting player, 3 for each other player.",
+                    "numeric": [
+                      {"when": {"zh": "起始玩家", "en": "starting player"}, "value": 2, "unit": "份"},
+                      {"when": {"zh": "其他玩家", "en": "each other player"}, "value": 3, "unit": "份"}
+                    ]
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "round_loop",
+            "name": {
+              "zh": "回合循环",
+              "en": "Round Loop"
+            },
+            "specifies": "<ontology::round>",
+            "description": {
+              "zh": "14 个回合的循环（回合 1-14）。每回合依次：准备（翻回合卡、水井收入、累积补充）→ 工作（起始玩家顺时针轮流各放 1 人直到放完）→ 回家 → 收获（仅第 4/7/9/11/13/14 回合）。第 14 回合收获后进入终局。",
+              "en": "The loop of 14 rounds (1-14). Each round in order: preparation (reveal round card, well income, accumulation refill) → work (starting player first, clockwise, one person at a time until all placed) → returning home → harvest (only rounds 4/7/9/11/13/14). The endgame follows the round-14 harvest."
+            },
+            "do_after": "setup",
+            "loop": {
+              "count": 14,
+              "counter": "round_number"
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "preparation",
+                  "name": {
+                    "zh": "准备阶段",
+                    "en": "Preparation Phase"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "回合开始：翻开本回合的<round_card>（成为新的行动格）→ 若当前<round_space>上有<well>放的食物则井主获得 → 所有<accumulation_space>补充货物（已有货物不清走、照加）。",
+                    "en": "Round start: reveal this round's <round_card> (becoming a new action space) → if the current <round_space> holds food placed by the <well>, its owner collects it → refill every <accumulation_space> (existing goods stay and more are added)."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "reveal_round_card",
+                        "name": {
+                          "zh": "翻开回合卡",
+                          "en": "Reveal the Round Card"
+                        },
+                        "description": {
+                          "zh": "结算<reveal_round_card>：从阶段牌堆顶翻 1 张<round_card>放到当前回合编号的<round_space>上，从此成为新的行动格。",
+                          "en": "Resolve <reveal_round_card>: reveal the top <round_card> of the stage pile onto the <round_space> of the current round number; it becomes a new action space."
+                        },
+                        "<reveal_round_card>": {
+                          "description": {
+                            "zh": "翻开回合卡并放到对应回合格。",
+                            "en": "Reveal the round card onto its round space."
+                          }
+                        }
+                      },
+                      {
+                        "id": "collect_well_income",
+                        "name": {
+                          "zh": "水井收入",
+                          "en": "Well Income"
+                        },
+                        "description": {
+                          "zh": "结算<well_income>：若当前<round_space>上有食物，<well>的拥有者获得它。",
+                          "en": "Resolve <well_income>: if the current <round_space> holds food, the <well>'s owner receives it."
+                        },
+                        "do_after": "reveal_round_card",
+                        "<well_income>": {
+                          "description": {
+                            "zh": "井主获得当前回合格上的 1 食物。",
+                            "en": "The well's owner takes the 1 food on the current round space."
+                          }
+                        }
+                      },
+                      {
+                        "id": "refill_accumulation_spaces",
+                        "name": {
+                          "zh": "累积格补货",
+                          "en": "Refill Accumulation Spaces"
+                        },
+                        "description": {
+                          "zh": "结算<accumulation_refill>：每个<accumulation_space>按标注数量补货——即使上一回合的货物还在也照加。",
+                          "en": "Resolve <accumulation_refill>: every <accumulation_space> gains its depicted amount — even if goods remain from previous rounds."
+                        },
+                        "do_after": "reveal_round_card",
+                        "<accumulation_refill>": {
+                          "description": {
+                            "zh": "所有累积格按标注补充货物。",
+                            "en": "Refill all accumulation spaces by their printed amounts."
+                          }
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "work_phase",
+                  "name": {
+                    "zh": "工作阶段",
+                    "en": "Work Phase"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "本回合的行动轮：从起始玩家开始、顺时针依次，每位玩家每次恰好放 1 个<family_member>到空闲<action_space>并立即结算，直到所有玩家的所有人都放完（没有人的玩家跳过）。每个行动格每回合只能被 1 人使用。",
+                    "en": "This round's action phase: starting with the starting player and continuing clockwise, each player places exactly 1 <family_member> on a free <action_space> at a time, resolving it immediately, until every player has placed all their people (players with none left are skipped). Each action space takes only one person per round."
+                  },
+                  "do_after": "preparation",
+                  "loop": {
+                    "until": "<all_people_placed>"
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "turn_cycle",
+                        "name": {
+                          "zh": "回合轮",
+                          "en": "Turn Cycle"
+                        },
+                        "specifies": "<ontology::round>",
+                        "description": {
+                          "zh": "一轮放置：每位还有<family_member>的玩家按当前回合顺序（起始玩家开始、顺时针）各放 1 人。",
+                          "en": "One placement cycle: each player who still has <family_member>s places 1 person, in current round order (starting player first, then clockwise)."
+                        },
+                        "<ontology::turn>": {
+                          "id": "player_turn",
+                          "name": {
+                            "zh": "玩家回合",
+                            "en": "Player Turn"
+                          },
+                          "description": {
+                            "zh": "一位玩家的回合：放 1 个<family_member>到空闲<action_space>并立即结算（<place_family_member>）。没有人的玩家跳过。",
+                            "en": "One player's turn: place 1 <family_member> on a free <action_space> and resolve it immediately (<place_family_member>). Players with no people left are skipped."
+                          },
+                          "<ontology::condition>": {
+                            "zh": "该玩家还有未放置的<family_member>——没有人的玩家跳过本轮。",
+                            "en": "The player still has an unplaced <family_member> — players with none left are skipped."
+                          },
+                          "<ontology::pipeline>": {
+                            "options": [
+                              "<place_family_member>"
+                            ],
+                            "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                          }
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "returning_home",
+                  "name": {
+                    "zh": "回家阶段",
+                    "en": "Returning Home Phase"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "所有<family_member>从版图各<action_space>回到自己的房间（每个房间住 1 人）。本回合家庭成长的新生儿此时进入自己的房间，正式成为家庭成员。若房间不足（无房间成长造成），回家的人仍可住下——之后建新房时其中一人立刻搬进去。",
+                    "en": "All <family_member>s return from the board's <action_space>s to their rooms (one person per room). A newborn from this round's family growth enters its own room now, officially becoming a family member. If rooms are short (growth without room), the returning people still move in — when a room is built later, one person moves in immediately."
+                  },
+                  "do_after": "work_phase",
+                  "<ontology::per_player>": true,
+                  "<ontology::transfer>": {
+                    "source": "<action_space>",
+                    "destination": "<house>",
+                    "<ontology::object>": "<family_member>",
+                    "quantity": "all",
+                    "description": {
+                      "zh": "每位玩家把自己版图上所有<family_member>拿回<house>的房间（新生儿进自己的房间）。",
+                      "en": "Each player returns all their <family_member>s from the board's action spaces into the <house>'s rooms (a newborn enters its own room)."
+                    }
+                  }
+                },
+                {
+                  "id": "harvest",
+                  "name": {
+                    "zh": "收获阶段",
+                    "en": "Harvest Phase"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "仅在<harvest_round>（第 4/7/9/11/13/14 回合）结束时进行。每位玩家依次结算三小阶段：田地（每块田强制取 1 个作物）→ 喂养（每人 2 食物、新生儿 1，不足拿乞讨标记）→ 繁殖（每种 ≥2 只同类得 1 只新生，需能安置）。非收获回合跳过本阶段。",
+                    "en": "Only at the end of a <harvest_round> (rounds 4/7/9/11/13/14). Each player resolves three sub-phases: fields (must take 1 crop per field) → feeding (2 food per member, 1 per newborn, begging markers for shortfalls) → breeding (1 newborn per type with ≥2, if accommodable). Skipped in other rounds."
+                  },
+                  "do_after": "returning_home",
+                  "<ontology::condition>": "<harvest_round>",
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "harvest_field_phase",
+                        "name": {
+                          "zh": "田地阶段",
+                          "en": "Field Phase"
+                        },
+                        "description": {
+                          "zh": "结算<harvest_field_phase>：从自己的每块<field_tile>上取 1 个作物入<personal_supply>（必须取，一块也不能跳过）。",
+                          "en": "Resolve <harvest_field_phase>: take 1 crop from every <field_tile> into your <personal_supply> (mandatory, no field may be skipped)."
+                        },
+                        "<ontology::per_player>": true,
+                        "<harvest_field_phase>": {
+                          "description": {
+                            "zh": "每块田收 1 个作物。",
+                            "en": "Take 1 crop per field."
+                          }
+                        }
+                      },
+                      {
+                        "id": "harvest_feeding",
+                        "name": {
+                          "zh": "喂养阶段",
+                          "en": "Feeding Phase"
+                        },
+                        "description": {
+                          "zh": "结算<harvest_feeding>：每个已上场<family_member>需 2 <food>、本回合新生儿只需 1；可用生吃、烹饪、手工建筑转换或卡牌效果支付；每缺 1 食物拿 1 个<begging_marker>（-3 分）。",
+                          "en": "Resolve <harvest_feeding>: every <family_member> in play needs 2 <food>, a newborn only 1; pay via raw eating, cooking, craft conversions, or card effects; take 1 <begging_marker> (-3 points) per food short."
+                        },
+                        "quantity": {
+                          "zh": "2 × 家庭成员（新生儿只算 1）。",
+                          "en": "2 × family members (newborns count as 1).",
+                          "numeric": [
+                            {"when": {"zh": "新生儿、婴儿", "en": "newborn"}, "value": 1, "unit": "份"},
+                            {"when": {"zh": "家庭成员、正式成员", "en": "family member"}, "value": 2, "per": {"zh": "每人", "en": "per person"}, "unit": "份"}
+                          ]
+                        },
+                        "do_after": "harvest_field_phase",
+                        "<ontology::per_player>": true,
+                        "<harvest_feeding>": {
+                          "description": {
+                            "zh": "喂养家人，不足部分拿乞讨标记。",
+                            "en": "Feed the family; take begging markers for shortfalls."
+                          }
+                        }
+                      },
+                      {
+                        "id": "harvest_breeding",
+                        "name": {
+                          "zh": "繁殖阶段",
+                          "en": "Breeding Phase"
+                        },
+                        "description": {
+                          "zh": "结算<harvest_breeding>：每种动物若有 ≥2 只且能安置新生动物，从<general_supply>得 1 只同类新生（每收获每种类至多 1 只）。繁殖阶段禁止烹饪父母或新生动物。",
+                          "en": "Resolve <harvest_breeding>: for each animal type with ≥2 and room for a newborn, take 1 of that type from the <general_supply> (at most 1 per type per harvest). Cooking the parents or the newborn is forbidden during this phase."
+                        },
+                        "do_after": "harvest_feeding",
+                        "<ontology::per_player>": true,
+                        "<harvest_breeding>": {
+                          "description": {
+                            "zh": "每种动物符合条件得 1 只新生。",
+                            "en": "Gain 1 newborn per eligible animal type."
+                          }
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "endgame",
+            "name": {
+              "zh": "终局",
+              "en": "Endgame"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "终局阶段：第 14 回合及其最终收获全部结束后进入（<round_14_completed>）——先结算<final_scoring>，再按<most_points_wins>判定胜者。",
+              "en": "Endgame phase: entered after round 14 and its final harvest are complete (<round_14_completed>) — first resolve <final_scoring>, then adjudicate the winner by <most_points_wins>."
+            },
+            "do_after": "round_loop",
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "resolve_final_scoring",
+                  "name": {
+                    "zh": "终局计分",
+                    "en": "Resolve Final Scoring"
+                  },
+                  "description": {
+                    "zh": "每位玩家用<scoring_pad>结算<final_scoring>：田地、牧场、谷物、蔬菜、羊、野猪、牛按数量表；每个未使用农场格 -1；每个围起来的马厩 +1；泥房间 +1/间、石房间 +2/间（木房间 0 分）；每个家庭成员 +3；每个乞讨标记 -3；改良卡按卡面。",
+                    "en": "Each player resolves <final_scoring> on the <scoring_pad>: fields, pastures, grain, vegetables, sheep, wild boar, and cattle by the quantity tables; -1 per unused farmyard space; +1 per fenced stable; +1 per clay room and +2 per stone room (wooden rooms 0); +3 per family member; -3 per begging marker; improvements by their printed points."
+                  },
+                  "<ontology::per_player>": true,
+                  "<final_scoring>": {
+                    "description": {
+                      "zh": "按计分表逐项计分并汇总<vp>。",
+                      "en": "Score each category and total the <vp>."
+                    },
+                    "score_table": {
+                      "by_count": [
+                        {
+                          "what": "<field_tile>",
+                          "zh": "田地",
+                          "aliases": ["田"],
+                          "note": {"zh": "无论是否播种", "en": "planted or not"},
+                          "rows": [
+                            {"min": 0, "max": 1, "vp": -1},
+                            {"min": 2, "max": 2, "vp": 1},
+                            {"min": 3, "max": 3, "vp": 2},
+                            {"min": 4, "max": 4, "vp": 3},
+                            {"min": 5, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<pasture>",
+                          "zh": "牧场",
+                          "note": {"zh": "按个数", "en": "by count"},
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 1, "vp": 1},
+                            {"min": 2, "max": 2, "vp": 2},
+                            {"min": 3, "max": 3, "vp": 3},
+                            {"min": 4, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<grain>",
+                          "zh": "谷物",
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 3, "vp": 1},
+                            {"min": 4, "max": 5, "vp": 2},
+                            {"min": 6, "max": 7, "vp": 3},
+                            {"min": 8, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<vegetable>",
+                          "zh": "蔬菜",
+                          "note": {"zh": "供应+田上+自称田的卡全算", "en": "supply + fields + cards identifying as fields all count"},
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 1, "vp": 1},
+                            {"min": 2, "max": 2, "vp": 2},
+                            {"min": 3, "max": 3, "vp": 3},
+                            {"min": 4, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<sheep>",
+                          "zh": "羊",
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 3, "vp": 1},
+                            {"min": 4, "max": 5, "vp": 2},
+                            {"min": 6, "max": 7, "vp": 3},
+                            {"min": 8, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<wild_boar>",
+                          "zh": "野猪",
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 2, "vp": 1},
+                            {"min": 3, "max": 4, "vp": 2},
+                            {"min": 5, "max": 6, "vp": 3},
+                            {"min": 7, "max": null, "vp": 4}
+                          ]
+                        },
+                        {
+                          "what": "<cattle>",
+                          "zh": "牛",
+                          "note": {"zh": "卡上动物除非另有说明也算", "en": "animals on cards count unless stated otherwise"},
+                          "rows": [
+                            {"min": 0, "max": 0, "vp": -1},
+                            {"min": 1, "max": 1, "vp": 1},
+                            {"min": 2, "max": 3, "vp": 2},
+                            {"min": 4, "max": 5, "vp": 3},
+                            {"min": 6, "max": null, "vp": 4}
+                          ]
+                        }
+                      ],
+                      "per_unit": [
+                        {"what": "<farmyard_space>", "zh": "未使用农场格", "aliases": ["农场格", "农场空格", "空格"], "vp": -1, "unit": "格"},
+                        {"what": "<stable>", "zh": "围起来的马厩", "aliases": ["马厩"], "vp": 1, "unit": "个"},
+                        {"what": "<family_member>", "zh": "家庭成员", "vp": 3, "unit": "个"},
+                        {"what": "<begging_marker>", "zh": "乞讨标记", "vp": -3, "unit": "个"}
+                      ],
+                      "by_material": [
+                        {
+                          "what": "<room_tile>",
+                          "zh": "房间",
+                          "rows": [
+                            {"material": "wood", "zh": "木房间", "vp": 0},
+                            {"material": "clay", "zh": "泥房间", "vp": 1},
+                            {"material": "stone", "zh": "石房间", "vp": 2}
+                          ]
+                        }
+                      ],
+                      "by_card": [
+                        {"what": "<major_improvement_card>", "zh": "主要改良", "rule": {"zh": "按卡面分数与奖励条件", "en": "printed points and bonus conditions"}},
+                        {"what": "<minor_improvement_card>", "zh": "次要改良", "rule": {"zh": "按卡面分数与奖励条件", "en": "printed points and bonus conditions"}},
+                        {"what": "<occupation_card>", "zh": "职业", "rule": {"zh": "按卡面", "en": "per card"}}
+                      ],
+                      "aliases": [
+                        {"zh": "动物", "whats": ["<sheep>", "<wild_boar>", "<cattle>"]},
+                        {"zh": "作物", "whats": ["<grain>", "<vegetable>"]}
+                      ],
+                      "note": {"zh": "食物不计分", "en": "Food scores nothing."}
+                    }
+                  }
+                },
+                {
+                  "id": "adjudicate_victory",
+                  "name": {
+                    "zh": "判定胜者",
+                    "en": "Adjudicate Victory"
+                  },
+                  "description": {
+                    "zh": "判定胜者（FILTER）：总<vp>最高的玩家获胜。如果总<vp>最高的玩家不止一人，则其中<personal_supply>中建材（<wood>+<clay>+<reed>+<stone>）更多者获胜；若仍不止一人，则并列分享名次。",
+                    "en": "Adjudicate the winner (FILTER): the player with the highest total <vp> wins. If more than one player has the highest total, the one among them with more building resources (<wood>+<clay>+<reed>+<stone>) in their <personal_supply> wins; if still more than one, they share the rank."
+                  },
+                  "do_after": "resolve_final_scoring",
+                  "<ontology::content>": {
+                    "<ontology::instant_content>": {
+                      "options": [
+                        {
+                          "id": "filter_most_points",
+                          "name": {
+                            "zh": "VP 最高者",
+                            "en": "Most Points"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "总<vp>最高的玩家获胜。",
+                            "en": "The player with the highest total <vp> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家总<vp>最高。",
+                              "en": "The player has the highest total <vp>."
+                            }
+                          },
+                          "result": {
+                            "zh": "总<vp>最高的玩家。",
+                            "en": "The player(s) with the highest total <vp>."
+                          }
+                        },
+                        {
+                          "id": "filter_most_building_resources_left",
+                          "name": {
+                            "zh": "建材更多者",
+                            "en": "More Building Resources Left"
+                          },
+                          "specifies": "<ontology::evaluate>",
+                          "description": {
+                            "zh": "如果总<vp>最高的玩家不止一人，则其中<personal_supply>中建材（<wood>+<clay>+<reed>+<stone>）更多者获胜。",
+                            "en": "If more than one player has the highest total, the one among them with more building resources (<wood>+<clay>+<reed>+<stone>) in their <personal_supply> wins."
+                          },
+                          "<ontology::condition>": {
+                            "description": {
+                              "zh": "玩家<personal_supply>中建材（<wood>+<clay>+<reed>+<stone>）最多。",
+                              "en": "The player has the most building resources (<wood>+<clay>+<reed>+<stone>) in their <personal_supply>."
+                            }
+                          },
+                          "result": {
+                            "zh": "建材最多的玩家。",
+                            "en": "The player(s) with the most building resources."
+                          }
+                        }
+                      ],
+                      "type": "<ontology::multiple_choice_enum.FILTER>"
+                    }
+                  },
+                  "result": {
+                    "zh": "胜者玩家（或并列平局）。",
+                    "en": "The winning player (or a tie)."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ]
+}

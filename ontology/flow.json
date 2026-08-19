@@ -1,0 +1,70 @@
+{
+  "id": "trigger_pipeline",
+  "name": {
+    "zh": "触发器执行流程",
+    "en": "Trigger Execution Pipeline"
+  },
+  "description": {
+    "zh": "定义 <trigger> 和 <effect> 的标准执行流程。",
+    "en": "Defines the standard execution flow for <trigger> and <effect>."
+  },
+  "pipeline": {
+    "options": [
+      {
+        "id": "evaluate_condition",
+        "name": {
+          "zh": "评估条件",
+          "en": "Evaluate Condition"
+        },
+        "description": {
+          "zh": "评估 <trigger>.<condition>——对 <state> 的谓词，按边沿求值。假则终止。",
+          "en": "Evaluate <trigger>.<condition> — an edge-evaluated predicate over <state>. Terminate if false."
+        }
+      },
+      {
+        "id": "pay_cost",
+        "name": {
+          "zh": "支付代价",
+          "en": "Pay Cost"
+        },
+        "description": {
+          "zh": "足额支付 <trigger>.<cost>。无法足额支付则终止。为 null 时跳过。",
+          "en": "Pay <trigger>.<cost> in full. Terminate if unable to pay in full. Skip if null."
+        },
+        "do_after": [
+          "evaluate_condition"
+        ]
+      },
+      {
+        "id": "select_target",
+        "name": {
+          "zh": "选择目标",
+          "en": "Select Target"
+        },
+        "description": {
+          "zh": "确定作用目标。为 null 时跳过。",
+          "en": "Determine the target object. Skip if null."
+        },
+        "do_after": [
+          "pay_cost"
+        ]
+      },
+      {
+        "id": "resolve_content",
+        "name": {
+          "zh": "结算内容",
+          "en": "Resolve Content"
+        },
+        "description": {
+          "zh": "<resolve> <trigger>.<content>——将内容应用到 <state>。按三种形态分别处理：<instant_content> 一次性执行、<continuous_content> 进入生效池电平维持、<effect> 按 instant/continuous 武装。",
+          "en": "<resolve> <trigger>.<content> — applies content to <state>. Handled per form: <instant_content> executes once, <continuous_content> enters the active pool for level maintenance, <effect> arms as instant/continuous."
+        },
+        "do_after": [
+          "select_target"
+        ]
+      }
+    ],
+    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+  }
+}
+

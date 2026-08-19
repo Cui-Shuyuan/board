@@ -1,0 +1,4 @@
+# 规则数据与脚本统一 LF（防止 Windows CRLF 抖动污染 diff）
+*.json text eol=lf
+*.md text eol=lf
+*.py text eol=lf

@@ -1,0 +1,3123 @@
+{
+  "meta": {
+    "game": "civolution",
+    "name": {
+      "zh": "文明演化",
+      "en": "Civolution"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "文明演化的具体实例清单。存放效果、模块板块、卡牌、大陆板块、地点、芯片等具体实例的详细数据。",
+      "en": "Instance catalog for Civolution. Stores detailed data for effects, module tiles, cards, continent tiles, sites, chips, and other concrete instances."
+    }
+  },
+  "module_tiles": [
+    {
+      "id": "tile_migration",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "迁徙板块",
+        "en": "Migration Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "迁徙模组的物理板块。L1→L2 翻面，L2→L3 移除。",
+        "en": "Physical tile for the Migration module. Flipped for L1→L2, removed for L2→L3."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有迁徙模组图标与激活费用——两颗白骰子的点数 1 和 3；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Migration module icon and its activation cost — two white dice showing 1 and 3; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_procreation",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "繁育板块",
+        "en": "Procreation Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "繁育模组的物理板块。",
+        "en": "Physical tile for the Procreation module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有繁育模组图标与激活费用——两颗白骰子的点数 2 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Procreation module icon and its activation cost — two white dice showing 2 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_production",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "生产板块",
+        "en": "Production Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "生产模组的物理板块。",
+        "en": "Physical tile for the Production module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有生产模组图标与激活费用——两颗白骰子的点数 3 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Production module icon and its activation cost — two white dice showing 3 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_transport",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "运输板块",
+        "en": "Transport Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "运输模组的物理板块。",
+        "en": "Physical tile for the Transport module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有运输模组图标与激活费用——两颗白骰子的点数 1 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Transport module icon and its activation cost — two white dice showing 1 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_sustenance",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "给养板块",
+        "en": "Sustenance Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "给养模组的物理板块。",
+        "en": "Physical tile for the Sustenance module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有给养模组图标与激活费用——两颗白骰子的点数 2 和 4；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Sustenance module icon and its activation cost — two white dice showing 2 and 4; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_exploration",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "探索板块",
+        "en": "Exploration Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "探索模组的物理板块。",
+        "en": "Physical tile for the Exploration module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有探索模组图标与激活费用——两颗白骰子的点数 1 和 4；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Exploration module icon and its activation cost — two white dice showing 1 and 4; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_building",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "建造板块",
+        "en": "Building Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "建造模组的物理板块。",
+        "en": "Physical tile for the Building module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有建造模组图标与激活费用——两颗白骰子的点数 4 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Building module icon and its activation cost — two white dice showing 4 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_planning",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "计划板块",
+        "en": "Planning Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "计划模组的物理板块。",
+        "en": "Physical tile for the Planning module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有计划模组图标与激活费用——两颗白骰子的点数 3 和 4；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Planning module icon and its activation cost — two white dice showing 3 and 4; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_research",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "研究板块",
+        "en": "Research Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "研究模组的物理板块。",
+        "en": "Physical tile for the Research module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有研究模组图标与激活费用——两颗白骰子的点数 1 和 2；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Research module icon and its activation cost — two white dice showing 1 and 2; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_achievement",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "成就板块",
+        "en": "Achievement Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "成就模组的物理板块。",
+        "en": "Physical tile for the Achievement module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有成就模组图标与激活费用——两颗白骰子的点数 5 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Achievement module icon and its activation cost — two white dice showing 5 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_insight",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "洞悉板块",
+        "en": "Insight Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "洞悉模组的物理板块。",
+        "en": "Physical tile for the Insight module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有洞悉模组图标与激活费用——两颗白骰子的点数 3 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Insight module icon and its activation cost — two white dice showing 3 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_mutation",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "突变板块",
+        "en": "Mutation Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "突变模组的物理板块。",
+        "en": "Physical tile for the Mutation module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有突变模组图标与激活费用——两颗白骰子的点数 3 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Mutation module icon and its activation cost — two white dice showing 3 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_invention",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "发明板块",
+        "en": "Invention Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "发明模组的物理板块。",
+        "en": "Physical tile for the Invention module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有发明模组图标与激活费用——两颗白骰子的点数 1 和 6；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Invention module icon and its activation cost — two white dice showing 1 and 6; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_trade",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "交易板块",
+        "en": "Trade Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "交易模组的物理板块。",
+        "en": "Physical tile for the Trade module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有交易模组图标与激活费用——两颗白骰子的点数 4 和 5；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Trade module icon and its activation cost — two white dice showing 4 and 5; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    },
+    {
+      "id": "tile_activity",
+      "instance_of": "<ontology::tile>",
+      "name": {
+        "zh": "活动板块",
+        "en": "Activity Tile"
+      },
+      "abstract": false,
+      "definition": {
+        "zh": "活动模组的物理板块。",
+        "en": "Physical tile for the Activity module."
+      },
+      "appearance": {
+        "zh": "矩形纸板板块（每位玩家 1 个）。正面为等级一：印有活动模组图标与激活费用——两颗白骰子的点数 2 和 3；背面为等级二效果。升到等级三时此板块移除。",
+        "en": "A rectangular cardboard tile (1 per player). Front shows level I: the Activity module icon and its activation cost — two white dice showing 2 and 3; the back is the level-II effect. Removed when upgraded to level III."
+      }
+    }
+  ],
+  "modules": [
+    {
+      "id": "module_migration",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "迁徙",
+        "en": "Migration"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_migration>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 1
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 3
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 1 的<activation_die>和 1 个点数 3 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 1 AND 1 showing value 3 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "执行 1 次迁徙。",
+            "en": "Perform 1 migration."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": "<migrate>"
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "先过 1 次恩惠检定：通过则最多迁徙 2 次，未通过则迁徙 1 次。",
+            "en": "Take a favor test first: if it passes, perform up to 2 migrations; if not, perform 1 migration."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<favor_test>",
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<migrate>": {
+                            "quantity": "<=2"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == fail",
+                        "en": "<favor_test>.result == fail"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": "<migrate>"
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "先过 1 次恩惠检定：通过则最多迁徙 3 次，未通过则最多迁徙 2 次。同一部落多次迁徙时，仅最终落定的领地生效，其余领地只是穿越（不进入营地、不获得火营地分、不开发领地）。",
+            "en": "Take a favor test first: if it passes, perform up to 3 migrations; if not, up to 2 migrations. When the same tribe migrates multiple times, only the final territory is settled; the others are merely crossed through (no encampment entry, no fire encampment points, no territory development)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<favor_test>",
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<migrate>": {
+                            "quantity": "<=3"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == fail",
+                        "en": "<favor_test>.result == fail"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<migrate>": {
+                            "quantity": "<=2"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_procreation",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "繁育",
+        "en": "Procreation"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_procreation>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 2
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 2 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 2."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 5
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 2 的<activation_die>和 1 个点数 5 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 2 AND 1 showing value 5 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "执行 1 次繁育。",
+            "en": "Perform 1 procreation."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": "<procreate>"
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "先过 1 次恩惠检定：通过则最多繁育 2 次，未通过则繁育 1 次。",
+            "en": "Take a favor test first: if it passes, perform up to 2 procreations; if not, perform 1 procreation."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<favor_test>",
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<procreate>": {
+                            "quantity": "<=2"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == fail",
+                        "en": "<favor_test>.result == fail"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": "<procreate>"
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "最多繁育 2 次（可同区域或不同区域），随后过 1 次恩惠检定：通过则可强化 1 个虚弱部落（可不做）。两步骤顺序可互换。",
+            "en": "Perform up to 2 procreations (same or different territories), then take a favor test: if it passes, you may strengthen 1 weak tribe. The two steps may be performed in either order."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<procreate>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  "<favor_test>",
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<strengthen_tribe>": {
+                            "quantity": "<=1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_production",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "生产",
+        "en": "Production"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_production>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 3
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 5
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 5 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 5 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "生产 2 个原材料（可在相同或不同区域），随后过 1 次恩惠检定：通过则可运输 1 次原材料（可不做）。两步骤顺序可互换。",
+            "en": "Produce 2 raw materials (in the same or different territories), then take a favor test: if it passes, you may transport 1 raw material. The two steps may be performed in either order."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<produce_material>": {
+                      "quantity": 2
+                    }
+                  },
+                  "<favor_test>",
+                  {
+                    "<ontology::action>": {
+                      "do_after": [
+                        "<favor_test>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "<favor_test>.result == pass",
+                        "en": "<favor_test>.result == pass"
+                      },
+                      "<ontology::content>": {
+                        "<ontology::instant_content>": {
+                          "<transport_material>": {
+                            "quantity": "<=1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "共生产 3 个原材料（可在 1、2 或 3 个区域），并运输 1 个大陆上任意位置的原材料到仓库。两步骤顺序可互换。",
+            "en": "Produce a total of 3 raw materials (in one, two, or three territories), and transport 1 raw material from anywhere on the continent to your storage. The two steps may be performed in either order."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<produce_material>": {
+                      "quantity": 3
+                    }
+                  },
+                  {
+                    "<transport_material>": {
+                      "quantity": 1
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "共生产 4 个原材料（可在 1~4 个区域），并运输任意 2 个原材料到仓库。两步骤顺序可互换。",
+            "en": "Produce a total of 4 raw materials (in one to four territories), and transport any 2 raw materials from the continent to your storage. The two steps may be performed in either order."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<produce_material>": {
+                      "quantity": 4
+                    }
+                  },
+                  {
+                    "<transport_material>": {
+                      "quantity": 2
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_transport",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "运输",
+        "en": "Transport"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_transport>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 1
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 5
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 1 的<activation_die>和 1 个点数 5 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 1 AND 1 showing value 5 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "运输 3 个大陆上任意位置的原材料到仓库。",
+            "en": "Transport 3 of your raw materials from anywhere on the continent to your storage."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<transport_material>": {
+                  "quantity": 3
+                }
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "运输 6 个原材料到仓库。",
+            "en": "Transport 6 of your raw materials to your storage."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<transport_material>": {
+                  "quantity": 6
+                }
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "运输大陆上所有原材料到仓库：陆地原材料按所在区域类型入格；船载原材料可放到任意仓库格（不限于相邻已开发区域类型）。",
+            "en": "Transport all of your raw materials from the continent to your storage: land materials go to their territory-type spaces; boat materials may go to any storage space (not limited to adjacent developed territory types)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<transport_land_material>": {
+                      "quantity": "all"
+                    }
+                  },
+                  {
+                    "<transport_boat_material>": {
+                      "quantity": "all",
+                      "storage_space": "any"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_sustenance",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "给养",
+        "en": "Sustenance"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_sustenance>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 2
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 2 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 2."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 4
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 2 的<activation_die>和 1 个点数 4 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 2 AND 1 showing value 4 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "进行 1 次狩猎；或强化 1 个虚弱部落。",
+            "en": "Perform a hunt; or strengthen 1 of your weak tribes."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<hunt>",
+                  "<strengthen_tribe>"
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "进行 1 次狩猎；或强化最多 3 个虚弱部落。",
+            "en": "Perform a hunt; or strengthen up to 3 of your weak tribes."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<hunt>",
+                  {
+                    "<strengthen_tribe>": {
+                      "quantity": "<=3"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "连续进行最多 2 次狩猎（须在不同区域）；或强化最多 4 个虚弱部落。",
+            "en": "Perform up to 2 consecutive hunts (in different territories); or strengthen up to 4 of your weak tribes."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<hunt>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "<strengthen_tribe>": {
+                      "quantity": "<=4"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_exploration",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "探索",
+        "en": "Exploration"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_exploration>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 1
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 4
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 1 的<activation_die>和 1 个点数 4 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 1 AND 1 showing value 4 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "选择 1 个有你部落的区域，探索其相邻的所有背面朝上地点；或进行 1 次幸运收获。",
+            "en": "Choose a territory with at least one of your tribes and explore all face-down sites adjacent to it; or make 1 lucky find."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<explore_adjacent_sites>",
+                  "<lucky_find>"
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "先探索选定的有部落区域相邻的所有背面朝上地点，随后可任选大陆上 1 枚背面朝上地点进行探索（可不做），最后获得 2 分；或进行 1 次幸运收获。",
+            "en": "Explore all face-down sites adjacent to a territory with your tribe, then optionally explore 1 more face-down site anywhere on the continent, and finally gain 2 success points; or make 1 lucky find."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<explore_adjacent_sites>",
+                      {
+                        "id": "optional_explore",
+                        "name": {
+                          "zh": "任选地点探索（可选）",
+                          "en": "Explore Any Site (Optional)"
+                        },
+                        "do_after": [
+                          "<explore_adjacent_sites>"
+                        ],
+                        "options": [
+                          {
+                            "id": "_skip",
+                            "description": {
+                              "zh": "不做（跳过此项）",
+                              "en": "Skip this option"
+                            }
+                          },
+                          "<explore_site>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      },
+                      {
+                        "id": "gain_2_points",
+                        "name": {
+                          "zh": "获得 2 分",
+                          "en": "Gain 2 Points"
+                        },
+                        "do_after": [
+                          "optional_explore"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<score_track>",
+                          "step": 2
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  },
+                  "<lucky_find>"
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "先探索选定的有部落区域相邻的所有背面朝上地点，随后可任选大陆上 1 枚背面朝上地点进行探索（可不做），最后额外获得 4 分；或连续进行 2 次幸运收获（可在相同或不同的领地类型）。",
+            "en": "Explore all face-down sites adjacent to a territory with your tribe, then optionally explore 1 more face-down site anywhere on the continent, and finally gain 4 additional success points; or make 2 consecutive lucky finds (in the same or in different territory types)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<explore_adjacent_sites>",
+                      {
+                        "id": "optional_explore",
+                        "name": {
+                          "zh": "任选地点探索（可选）",
+                          "en": "Explore Any Site (Optional)"
+                        },
+                        "do_after": [
+                          "<explore_adjacent_sites>"
+                        ],
+                        "options": [
+                          {
+                            "id": "_skip",
+                            "description": {
+                              "zh": "不做（跳过此项）",
+                              "en": "Skip this option"
+                            }
+                          },
+                          "<explore_site>"
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      },
+                      {
+                        "id": "gain_4_points",
+                        "name": {
+                          "zh": "额外获得 4 分",
+                          "en": "Gain 4 Additional Points"
+                        },
+                        "do_after": [
+                          "optional_explore"
+                        ],
+                        "<ontology::push_track>": {
+                          "<ontology::track>": "<score_track>",
+                          "step": 4
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  },
+                  {
+                    "<lucky_find>": {
+                      "quantity": 2
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_building",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "建造",
+        "en": "Building"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_building>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 4
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 6
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 4 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 4 AND 1 showing value 6 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "完成 1 个建造项目（农场/船/雕像/聚落）；或从手牌安装 1 张建造牌。",
+            "en": "Complete 1 building project (farm/boat/statue/settlement); or install 1 building card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<complete_building_project>",
+                  {
+                    "<install_research_card>": {
+                      "card_type": "BUILDING_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "完成最多 2 个同类型建造项目；或从手牌安装 1 张建造牌。",
+            "en": "Complete up to 2 building projects of the same type; or install 1 building card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<complete_building_project>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "BUILDING_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "完成最多 2 个建造项目（可同类型或不同类型）；或从手牌安装 1 张建造牌并选择特殊奖励：忽略 1 个非唯一费用格，或安装后再立即安装 1 张同类型建造牌。",
+            "en": "Complete up to 2 building projects (same or different types); or install 1 building card from your hand with a special bonus: ignore 1 non-unique active cost space, or immediately install another building card after."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<complete_building_project>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "id": "install_with_bonus",
+                    "name": {
+                      "zh": "安装建造牌（含特殊奖励）",
+                      "en": "Install Building Card (with Special Bonus)"
+                    },
+                    "options": [
+                      {
+                        "id": "install_first",
+                        "name": {
+                          "zh": "安装牌",
+                          "en": "Install Card"
+                        },
+                        "<install_research_card>": {
+                          "card_type": "BUILDING_CARD_TYPE"
+                        }
+                      },
+                      {
+                        "id": "special_bonus",
+                        "name": {
+                          "zh": "安装特殊奖励",
+                          "en": "Install Special Bonus"
+                        },
+                        "do_after": [
+                          "install_first"
+                        ],
+                        "options": [
+                          {
+                            "id": "ignore_cost_space",
+                            "name": {
+                              "zh": "忽略一个费用格",
+                              "en": "Ignore One Cost Space"
+                            },
+                            "description": {
+                              "zh": "安装时可将任意 1 个非唯一的费用格视为空（该费用格失效；若费用格是唯一一个激活的费用格则不能忽略）。",
+                              "en": "When installing, any 1 non-unique active cost space may be treated as empty/inactive (not allowed if it would leave no active cost spaces)."
+                            }
+                          },
+                          {
+                            "id": "install_second_card",
+                            "name": {
+                              "zh": "再安装一张同类型牌",
+                              "en": "Install Another Card of Same Type"
+                            },
+                            "<install_research_card>": {
+                              "card_type": "BUILDING_CARD_TYPE"
+                            },
+                            "description": {
+                              "zh": "若未忽略费用格，安装后可立即按通常规则从手牌再安装 1 张同类型研究牌。",
+                              "en": "If no cost space was ignored, immediately install another research card of the same type from hand per the usual rules."
+                            }
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_planning",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "计划",
+        "en": "Planning"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_planning>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 3
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 4
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 4 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 4 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "安装 1 枚目标芯片；或从供应堆取 2 个标记作为计划标记放到同一骰子格。",
+            "en": "Install 1 goal chip; or take 2 markers as planning markers onto the same dice space."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<install_goal_chip>",
+                  {
+                    "<place_planning_markers>": {
+                      "quantity": 2
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "安装 1 枚目标芯片；或放置 3 个计划标记到同一骰子格。",
+            "en": "Install 1 goal chip; or place 3 markers as planning markers onto the same dice space."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<install_goal_chip>",
+                  {
+                    "<place_planning_markers>": {
+                      "quantity": 3
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "获得 1 枚目标芯片（展示区取入目标区）并/或安装 1 枚目标芯片（顺序自定）；或放置 3 个计划标记到同一骰子格。",
+            "en": "Gain 1 goal chip (from the display into your goal area) and/or install 1 goal chip, in either order; or place 3 markers as planning markers onto the same dice space."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<gain_goal_chip>",
+                      "<install_goal_chip>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ANY>"
+                  },
+                  {
+                    "<place_planning_markers>": {
+                      "quantity": 3
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_research",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "研究",
+        "en": "Research"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_research>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 1
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 2
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 2 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 2."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 1 的<activation_die>和 1 个点数 2 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 1 AND 1 showing value 2 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "从明面研究牌堆拿 1 张研究牌，或抽 2 张选 1 张。",
+            "en": "Take 1 research card from the face-up stacks, or draw 2 and keep 1."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<gain_research_card>",
+                  {
+                    "<draw_pick_return_research>": {
+                      "draw_count": 2,
+                      "pick_count": 1
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "从明面研究牌堆拿 1 张研究牌，或抽 4 张选 1 张。",
+            "en": "Take 1 research card from the face-up stacks, or draw 4 and keep 1."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<gain_research_card>",
+                  {
+                    "<draw_pick_return_research>": {
+                      "draw_count": 4,
+                      "pick_count": 1
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "执行 2 次拿研究牌，或抽 4 张选 2 张。",
+            "en": "Take research cards twice, or draw 4 and keep 2."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<gain_research_card>": {
+                      "quantity": 2
+                    }
+                  },
+                  {
+                    "<draw_pick_return_research>": {
+                      "draw_count": 4,
+                      "pick_count": 2
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_achievement",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "成就",
+        "en": "Achievement"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_achievement>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 5
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 6
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 5 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 5 AND 1 showing value 6 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "获得 1 个<activation_die>或 1 个<fate_die>；或从手牌安装 1 张成就牌。",
+            "en": "Gain either 1 activation die or 1 fate die; or install 1 achievement card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<gain_activation_die>",
+                      "<gain_fate_die>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "ACHIEVEMENT_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "获得 1 个<activation_die>和 1 个<fate_die>；或从手牌安装 1 张成就牌。",
+            "en": "Gain 1 activation die and 1 fate die; or install 1 achievement card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<gain_activation_die>",
+                      "<gain_fate_die>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "ACHIEVEMENT_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "获得 1 个<activation_die>和 1 个<fate_die>；或从手牌安装 1 张成就牌并选择特殊奖励（忽略 1 个非唯一费用格，或再安装 1 张同类型牌）。",
+            "en": "Gain 1 activation die and 1 fate die; or install 1 achievement card from your hand with the special bonus (ignore 1 non-unique cost space, or install another card of the same type)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "options": [
+                      "<gain_activation_die>",
+                      "<gain_fate_die>"
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  },
+                  {
+                    "id": "install_with_bonus",
+                    "name": {
+                      "zh": "安装成就牌（含特殊奖励）",
+                      "en": "Install Achievement Card (with Special Bonus)"
+                    },
+                    "options": [
+                      {
+                        "id": "install_first",
+                        "name": {
+                          "zh": "安装牌",
+                          "en": "Install Card"
+                        },
+                        "<install_research_card>": {
+                          "card_type": "ACHIEVEMENT_CARD_TYPE"
+                        }
+                      },
+                      {
+                        "id": "special_bonus",
+                        "name": {
+                          "zh": "安装特殊奖励",
+                          "en": "Install Special Bonus"
+                        },
+                        "do_after": [
+                          "install_first"
+                        ],
+                        "options": [
+                          {
+                            "id": "ignore_cost_space",
+                            "name": {
+                              "zh": "忽略一个费用格",
+                              "en": "Ignore One Cost Space"
+                            },
+                            "description": {
+                              "zh": "安装时可将任意 1 个非唯一的费用格视为空（该费用格失效；若费用格是唯一一个激活的费用格则不能忽略）。",
+                              "en": "When installing, any 1 non-unique active cost space may be treated as empty/inactive (not allowed if it would leave no active cost spaces)."
+                            }
+                          },
+                          {
+                            "id": "install_second_card",
+                            "name": {
+                              "zh": "再安装一张同类型牌",
+                              "en": "Install Another Card of Same Type"
+                            },
+                            "<install_research_card>": {
+                              "card_type": "ACHIEVEMENT_CARD_TYPE"
+                            },
+                            "description": {
+                              "zh": "若未忽略费用格，安装后可立即按通常规则从手牌再安装 1 张同类型研究牌。",
+                              "en": "If no cost space was ignored, immediately install another research card of the same type from hand per the usual rules."
+                            }
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_insight",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "洞悉",
+        "en": "Insight"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_insight>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 3
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 6
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 6 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "获得 3 个创意标记；或从手牌安装 1 张洞悉牌。",
+            "en": "Gain 3 idea markers; or install 1 insight card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<ontology::transfer>": {
+                      "source": "<ontology::supply>",
+                      "destination": "<idea_space>",
+                      "<ontology::object>": "<octagonal_pillar>",
+                      "quantity": 3,
+                      "description": {
+                        "zh": "（标记放上创意格后才成为<idea_marker>）",
+                        "en": "(the marker becomes an <idea_marker> once on the idea space)"
+                      }
+                    }
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "INSIGHT_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "获得 6 个创意标记；或从手牌安装 1 张洞悉牌。",
+            "en": "Gain 6 idea markers; or install 1 insight card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<ontology::transfer>": {
+                      "source": "<ontology::supply>",
+                      "destination": "<idea_space>",
+                      "<ontology::object>": "<octagonal_pillar>",
+                      "quantity": 6,
+                      "description": {
+                        "zh": "（标记放上创意格后才成为<idea_marker>）",
+                        "en": "(the marker becomes an <idea_marker> once on the idea space)"
+                      }
+                    }
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "INSIGHT_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "获得 6 个创意标记；或从手牌安装 1 张洞悉牌并选择特殊奖励（忽略 1 个非唯一费用格，或再安装 1 张同类型牌）。",
+            "en": "Gain 6 idea markers; or install 1 insight card from your hand with the special bonus (ignore 1 non-unique cost space, or install another card of the same type)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<ontology::transfer>": {
+                      "source": "<ontology::supply>",
+                      "destination": "<idea_space>",
+                      "<ontology::object>": "<octagonal_pillar>",
+                      "quantity": 6,
+                      "description": {
+                        "zh": "（标记放上创意格后才成为<idea_marker>）",
+                        "en": "(the marker becomes an <idea_marker> once on the idea space)"
+                      }
+                    }
+                  },
+                  {
+                    "id": "install_with_bonus",
+                    "name": {
+                      "zh": "安装洞悉牌（含特殊奖励）",
+                      "en": "Install Insight Card (with Special Bonus)"
+                    },
+                    "options": [
+                      {
+                        "id": "install_first",
+                        "name": {
+                          "zh": "安装牌",
+                          "en": "Install Card"
+                        },
+                        "<install_research_card>": {
+                          "card_type": "INSIGHT_CARD_TYPE"
+                        }
+                      },
+                      {
+                        "id": "special_bonus",
+                        "name": {
+                          "zh": "安装特殊奖励",
+                          "en": "Install Special Bonus"
+                        },
+                        "do_after": [
+                          "install_first"
+                        ],
+                        "options": [
+                          {
+                            "id": "ignore_cost_space",
+                            "name": {
+                              "zh": "忽略一个费用格",
+                              "en": "Ignore One Cost Space"
+                            },
+                            "description": {
+                              "zh": "安装时可将任意 1 个非唯一的费用格视为空（该费用格失效；若费用格是唯一一个激活的费用格则不能忽略）。",
+                              "en": "When installing, any 1 non-unique active cost space may be treated as empty/inactive (not allowed if it would leave no active cost spaces)."
+                            }
+                          },
+                          {
+                            "id": "install_second_card",
+                            "name": {
+                              "zh": "再安装一张同类型牌",
+                              "en": "Install Another Card of Same Type"
+                            },
+                            "<install_research_card>": {
+                              "card_type": "INSIGHT_CARD_TYPE"
+                            },
+                            "description": {
+                              "zh": "若未忽略费用格，安装后可立即按通常规则从手牌再安装 1 张同类型研究牌。",
+                              "en": "If no cost space was ignored, immediately install another research card of the same type from hand per the usual rules."
+                            }
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_mutation",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "突变",
+        "en": "Mutation"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_mutation>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 3
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 6
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 3 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 3 AND 1 showing value 6 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "移动 1 个特征标记到任意特征格；或从手牌安装 1 张突变牌。",
+            "en": "Move 1 of your feature markers to any of your feature spaces; or install 1 mutation card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<move_feature_marker>",
+                  {
+                    "<install_research_card>": {
+                      "card_type": "MUTATION_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "最多执行 2 次：移动 1 个特征标记到任意特征格；或从手牌安装 1 张突变牌。",
+            "en": "Do this up to twice: move 1 feature marker to any feature space; or install 1 mutation card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<move_feature_marker>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "MUTATION_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "最多执行 2 次：移动 1 个特征标记到任意特征格；或从手牌安装 1 张突变牌并选择特殊奖励（忽略 1 个非唯一费用格，或再安装 1 张同类型牌）。",
+            "en": "Do this up to twice: move 1 feature marker to any feature space; or install 1 mutation card from your hand with the special bonus (ignore 1 non-unique cost space, or install another card of the same type)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<move_feature_marker>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "id": "install_with_bonus",
+                    "name": {
+                      "zh": "安装突变牌（含特殊奖励）",
+                      "en": "Install Mutation Card (with Special Bonus)"
+                    },
+                    "options": [
+                      {
+                        "id": "install_first",
+                        "name": {
+                          "zh": "安装牌",
+                          "en": "Install Card"
+                        },
+                        "<install_research_card>": {
+                          "card_type": "MUTATION_CARD_TYPE"
+                        }
+                      },
+                      {
+                        "id": "special_bonus",
+                        "name": {
+                          "zh": "安装特殊奖励",
+                          "en": "Install Special Bonus"
+                        },
+                        "do_after": [
+                          "install_first"
+                        ],
+                        "options": [
+                          {
+                            "id": "ignore_cost_space",
+                            "name": {
+                              "zh": "忽略一个费用格",
+                              "en": "Ignore One Cost Space"
+                            },
+                            "description": {
+                              "zh": "安装时可将任意 1 个非唯一的费用格视为空（该费用格失效；若费用格是唯一一个激活的费用格则不能忽略）。",
+                              "en": "When installing, any 1 non-unique active cost space may be treated as empty/inactive (not allowed if it would leave no active cost spaces)."
+                            }
+                          },
+                          {
+                            "id": "install_second_card",
+                            "name": {
+                              "zh": "再安装一张同类型牌",
+                              "en": "Install Another Card of Same Type"
+                            },
+                            "<install_research_card>": {
+                              "card_type": "MUTATION_CARD_TYPE"
+                            },
+                            "description": {
+                              "zh": "若未忽略费用格，安装后可立即按通常规则从手牌再安装 1 张同类型研究牌。",
+                              "en": "If no cost space was ignored, immediately install another research card of the same type from hand per the usual rules."
+                            }
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_invention",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "发明",
+        "en": "Invention"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_invention>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 1
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 1 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 1."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 6
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 6 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 6."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 1 的<activation_die>和 1 个点数 6 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 1 AND 1 showing value 6 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "执行 1 枚收入芯片的行动；或从手牌安装 1 张发明牌。",
+            "en": "Perform the action of 1 of your income chips; or install 1 invention card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<activate_income_chip>",
+                  {
+                    "<install_research_card>": {
+                      "card_type": "INVENTION_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "执行最多 2 枚收入芯片的行动（可为 2 枚不同芯片或同一芯片 2 次）；或从手牌安装 1 张发明牌。",
+            "en": "Perform up to 2 actions of your income chips (2 different chips or the same action twice); or install 1 invention card from your hand."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<activate_income_chip>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "<install_research_card>": {
+                      "card_type": "INVENTION_CARD_TYPE"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "执行最多 2 枚收入芯片的行动；或从手牌安装 1 张发明牌并选择特殊奖励（忽略 1 个非唯一费用格，或再安装 1 张同类型牌）。",
+            "en": "Perform up to 2 actions of your income chips; or install 1 invention card from your hand with the special bonus (ignore 1 non-unique cost space, or install another card of the same type)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "<activate_income_chip>": {
+                      "quantity": "<=2"
+                    }
+                  },
+                  {
+                    "id": "install_with_bonus",
+                    "name": {
+                      "zh": "安装发明牌（含特殊奖励）",
+                      "en": "Install Invention Card (with Special Bonus)"
+                    },
+                    "options": [
+                      {
+                        "id": "install_first",
+                        "name": {
+                          "zh": "安装牌",
+                          "en": "Install Card"
+                        },
+                        "<install_research_card>": {
+                          "card_type": "INVENTION_CARD_TYPE"
+                        }
+                      },
+                      {
+                        "id": "special_bonus",
+                        "name": {
+                          "zh": "安装特殊奖励",
+                          "en": "Install Special Bonus"
+                        },
+                        "do_after": [
+                          "install_first"
+                        ],
+                        "options": [
+                          {
+                            "id": "ignore_cost_space",
+                            "name": {
+                              "zh": "忽略一个费用格",
+                              "en": "Ignore One Cost Space"
+                            },
+                            "description": {
+                              "zh": "安装时可将任意 1 个非唯一的费用格视为空（该费用格失效；若费用格是唯一一个激活的费用格则不能忽略）。",
+                              "en": "When installing, any 1 non-unique active cost space may be treated as empty/inactive (not allowed if it would leave no active cost spaces)."
+                            }
+                          },
+                          {
+                            "id": "install_second_card",
+                            "name": {
+                              "zh": "再安装一张同类型牌",
+                              "en": "Install Another Card of Same Type"
+                            },
+                            "<install_research_card>": {
+                              "card_type": "INVENTION_CARD_TYPE"
+                            },
+                            "description": {
+                              "zh": "若未忽略费用格，安装后可立即按通常规则从手牌再安装 1 张同类型研究牌。",
+                              "en": "If no cost space was ignored, immediately install another research card of the same type from hand per the usual rules."
+                            }
+                          }
+                        ],
+                        "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_trade",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "交易",
+        "en": "Trade"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_trade>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 4
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 4 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 4."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 5
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 5 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 5."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 4 的<activation_die>和 1 个点数 5 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 4 AND 1 showing value 5 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "执行出售和购买行动各最多 1 次（顺序任意）。",
+            "en": "Perform the Sale action and the Purchase action up to once each (in any order)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": "<trade>"
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "执行出售和购买行动各最多 2 次（顺序任意，可自由穿插）。",
+            "en": "Perform the Sale action and the Purchase action up to twice each (in any order)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<trade>": {
+                  "quantity": "<=2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "先获得 2 个钱币，再执行出售和购买行动各最多 2 次（顺序任意）。",
+            "en": "Gain 2 money markers, then perform the Sale action and the Purchase action up to twice each (in any order)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  {
+                    "id": "gain_money_l3",
+                    "name": {
+                      "zh": "获得钱币",
+                      "en": "Gain Money"
+                    },
+                    "<ontology::transfer>": {
+                      "source": "<ontology::supply>",
+                      "destination": "<money_space>",
+                      "<ontology::object>": "<octagonal_pillar>",
+                      "quantity": 2,
+                      "description": {
+                        "zh": "从供应堆取 2 个八角柱放到钱币格（放入后才成为<money>）。",
+                        "en": "Take 2 octagonal pillars from supply onto the money space (they become <money> once there)."
+                      }
+                    }
+                  },
+                  {
+                    "do_after": [
+                      "gain_money_l3"
+                    ],
+                    "<trade>": {
+                      "quantity": "<=2"
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_activity",
+      "instance_of": "<upgradable_module>",
+      "name": {
+        "zh": "活动",
+        "en": "Activity"
+      },
+      "abstract": false,
+      "module_type": "main",
+      "level": 1,
+      "tile": "<tile_activity>",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "options": [
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 2
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 2 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 2."
+                }
+              }
+            },
+            {
+              "<ontology::transfer>": {
+                "source": "<activation_dice_area>",
+                "destination": "<player_holding>",
+                "<ontology::object>": {
+                  "<activation_die>": {
+                    "value": 3
+                  }
+                },
+                "description": {
+                  "zh": "支付 1 个点数 3 的<activation_die>。",
+                  "en": "Pay 1 <activation_die> showing value 3."
+                }
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        },
+        "description": {
+          "zh": "同时支付 1 个点数 2 的<activation_die>和 1 个点数 3 的<activation_die>（两项都要支付，不是二选一）。",
+          "en": "Pay BOTH 1 <activation_die> showing value 2 AND 1 showing value 3 (both required, not either-or)."
+        }
+      },
+      "level_effects": [
+        {
+          "level": 1,
+          "description": {
+            "zh": "执行 1 个活动。",
+            "en": "Perform 1 activity."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": "<perform_activity>"
+            }
+          }
+        },
+        {
+          "level": 2,
+          "description": {
+            "zh": "执行 1~2 个活动，第二次执行的活动必须与第一次不同（不可重复执行同一活动）。",
+            "en": "Perform 1 or 2 activities; the second activity must differ from the first (the same activity may not be performed twice)."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "options": [
+                  "<perform_activity>",
+                  {
+                    "<perform_activity>": {
+                      "do_after": [
+                        "<perform_activity>"
+                      ],
+                      "<ontology::condition>": {
+                        "zh": "第二次选择的活动与第一次不同（同一活动在一次激活中不可重复执行）。",
+                        "en": "The activity chosen the second time must differ from the first (the same activity may not be performed twice in one activation)."
+                      }
+                    }
+                  }
+                ],
+                "type": "<ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE>"
+              }
+            }
+          }
+        },
+        {
+          "level": 3,
+          "description": {
+            "zh": "执行最多 2 个活动，可以是两个不同的活动，也可以是同一个活动执行两次。",
+            "en": "Perform up to 2 activities; they may be two different activities or the same activity twice."
+          },
+          "<ontology::instant_effect>": {
+            "<ontology::cost>": "this.<ontology::cost>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<perform_activity>": {
+                  "quantity": "<=2"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "module_feature_stamina",
+      "instance_of": "<feature_module>",
+      "name": {
+        "zh": "耐力",
+        "en": "Stamina"
+      },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "stamina",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
+      },
+      "dice_value": 1
+    },
+    {
+      "id": "module_feature_intelligence",
+      "instance_of": "<feature_module>",
+      "name": {
+        "zh": "智慧",
+        "en": "Intelligence"
+      },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "intelligence",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
+      },
+      "dice_value": 2
+    },
+    {
+      "id": "module_feature_calm",
+      "instance_of": "<feature_module>",
+      "name": {
+        "zh": "镇定",
+        "en": "Calm"
+      },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "calm",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
+      },
+      "dice_value": 3
+    },
+    {
+      "id": "module_feature_dexterity",
+      "instance_of": "<feature_module>",
+      "name": {
+        "zh": "灵巧",
+        "en": "Dexterity"
+      },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "dexterity",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
+      },
+      "dice_value": 4
+    },
+    {
+      "id": "module_feature_expression",
+      "instance_of": "<feature_module>",
+      "name": {
+        "zh": "表达",
+        "en": "Expression"
+      },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "expression",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
+      },
+      "dice_value": 5
+    },
+    {
+      "id": "module_feature_perception",
+      "instance_of": "<feature_module>",
+      "name": {
+        "zh": "观察",
+        "en": "Perception"
+      },
+      "abstract": false,
+      "module_type": "feature",
+      "feature": "perception",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": "<feature_module>.<ontology::cost>",
+        "<ontology::content>": "<feature_module>.<ontology::content>"
+      },
+      "dice_value": 6
+    },
+    {
+      "id": "module_sleep",
+      "instance_of": "<module>",
+      "name": {
+        "zh": "睡眠",
+        "en": "Sleep"
+      },
+      "abstract": false,
+      "module_type": "sleep",
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<activation_dice_area>",
+              "destination": "<ontology::supply>",
+              "<ontology::object>": "<activation_die>",
+              "quantity": 2,
+              "description": {
+                "zh": "支付任意 2 个<activation_die>，点数不限。",
+                "en": "Pay any 2 <activation_die>s, any values."
+              }
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "options": [
+              {
+                "<ontology::transfer>": {
+                  "source": "<ontology::supply>",
+                  "destination": "<focus_space>",
+                  "<ontology::object>": "<focus_marker>",
+                  "quantity": 1
+                }
+              },
+              {
+                "<ontology::transfer>": {
+                  "source": "<ontology::supply>",
+                  "destination": "<idea_space>",
+                  "<ontology::object>": "<idea_marker>",
+                  "quantity": 2
+                }
+              }
+            ],
+            "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+          }
+        }
+      }
+    }
+  ],
+  "cards": [
+    {
+      "id": "theocracy",
+      "instance_of": "<research_card>",
+      "name": {
+        "zh": "神权制",
+        "en": "Theocracy"
+      },
+      "card_no": "C16",
+      "card_type": "insight",
+      "abstract": false,
+      "description": {
+        "zh": "洞悉型<research_card>，编号 C16。",
+        "en": "Insight research card, number C16."
+      },
+      "appearance": {
+        "zh": "洞悉类研究牌（黄色卡面），编号 C16。上三分之一为活动能力（支付 1 个<food>，在最多 2 个空置营地上各放置 1 个虚弱<tribe>）；中部 5 个费用格——第 1 格返还 1 个智慧特征、第 2 格持有 2 个表达特征、第 3 格持有 1 个镇定特征、第 4~5 格为空；下部即时奖励为文化进程轨推进 1 格。",
+        "en": "An Insight research card (yellow), number C16. Top third: activity ability (pay 1 <food> to place 1 weak <tribe> on up to 2 vacant encampments); middle: 5 cost spaces — return 1 Intelligence feature marker (1st), hold 2 Expression feature markers (2nd), hold 1 Calm feature marker (3rd), empty (4th-5th); bottom: instant bonus advancing the culture progress track by 1 step."
+      },
+      "<research_ability>": {
+        "<activity>": {
+          "<ontology::cost>": {
+            "<ontology::instant_cost>": {
+              "<ontology::transfer>": {
+                "source": "<food_space>",
+                "destination": "<ontology::supply>",
+                "<ontology::object>": "<food>",
+                "quantity": 1,
+                "description": {
+                  "zh": "支付 1 个食物。",
+                  "en": "Pay 1 food."
+                }
+              }
+            }
+          },
+          "target": "你拥有的 1 个区域（<territory>）",
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::transfer>": {
+                "source": "<ontology::supply>",
+                "destination": "该区域内最多 2 个空置营地（<encampment>）",
+                "<ontology::object>": {
+                  "<tribe>": {
+                    "posture": "lying"
+                  }
+                },
+                "quantity": "每营地 1，最多 2",
+                "description": {
+                  "zh": "在该区域中最多 2 个空置营地上各放置 1 个虚弱部落。",
+                  "en": "Place 1 weak tribe on up to 2 vacant encampments within that territory."
+                }
+              }
+            }
+          }
+        }
+      },
+      "<cost_space>": {
+        "slots": [
+          {
+            "<cost_space>": {
+              "type": "payment",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "intelligence",
+              "amount": 1,
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "possession",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "expression",
+              "amount": 2,
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "possession",
+              "<ontology::object>": "<feature_marker>",
+              "feature_type": "calm",
+              "amount": 1,
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "empty",
+              "success_points": 0
+            }
+          },
+          {
+            "<cost_space>": {
+              "type": "empty",
+              "success_points": 0
+            }
+          }
+        ]
+      },
+      "<instant_bonus>": {
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<ontology::push_track>": {
+              "<ontology::track>": "<culture_track>",
+              "step": 1,
+              "description": {
+                "zh": "文化进程轨推进 1 格。",
+                "en": "Advance the Culture track by 1 step."
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "continent_tiles": [],
+  "sites": [
+    {
+      "id": "volcano",
+      "instance_of": "<effect_site>",
+      "name": {
+        "zh": "火山",
+        "en": "Volcano"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 2 块。任何玩家不能在与火山相邻的<territory>中<build_farm>；当本地点被翻开时，与它相邻的所有<territory>中已有的<farm>必须立即退回各自<console>的<farm_supply>。",
+        "en": "There are 2 Volcanoes. No player may build a <farm> in any <territory> adjacent to a Volcano; when this site is revealed, any <farm> already in an adjacent territory must immediately be returned to its console's farm supply (<farm_supply>)."
+      },
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有火山插画，左上角为翻开分数（4 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (2 in total). Face down until revealed; the front shows a Volcano illustration with the reveal score in the top-left corner (4 points)."
+      },
+      "score": 4,
+      "own_effect": {
+        "<ontology::instant_effect>": {
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::transfer>": {
+                "source": "与火山相邻的<territory>",
+                "destination": "各自控制台的<farm_supply>",
+                "<ontology::object>": "<farm>",
+                "quantity": "全部（翻开时立即退回）"
+              }
+            },
+            "<ontology::continuous_content>": {
+              "description": {
+                "zh": "与本地点相邻的区域不能成为 <build_farm> 的 target（不能在此建造 <farm>）。",
+                "en": "Territories adjacent to this site cannot be chosen as <build_farm>'s target (no <farm> may be built there)."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "glacier",
+      "instance_of": "<effect_site>",
+      "name": {
+        "zh": "冰川",
+        "en": "Glacier"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 2 块，各自独立结算。<phase_5_site>结算：相邻<territory>中有强壮（posture == <upright>）<tribe>的玩家，虚弱（躺倒）其中一个强壮<tribe>（<ontology::state_change> posture → <lying>）；弱<tribe>不受影响，无强壮<tribe>则豁免。",
+        "en": "2 Glaciers exist; each resolves independently. Site phase resolution: each player who has a strong (<upright>) <tribe> in an adjacent <territory> must weaken (lay down) one of those strong tribes (<ontology::state_change> posture → <lying>); weak tribes are never affected, and players without strong adjacent tribes are exempt."
+      },
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有冰川插画，左上角为翻开分数（4 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (2 in total). Face down until revealed; the front shows a Glacier illustration with the reveal score in the top-left corner (4 points)."
+      },
+      "score": 4,
+      "own_effect": {
+        "<ontology::continuous_effect>": {
+          "<ontology::condition>": {
+            "zh": "地点阶段结算中，且本玩家在与本地点相邻的<territory>中有 posture == <upright> 的<tribe>。",
+            "en": "During the site phase, and this player has a <tribe> with posture == <upright> in a <territory> adjacent to this site."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::state_change>": {
+                "subject": "本玩家在与本地点相邻的<territory>中的 1 个 posture == <upright> 的<tribe>",
+                "attribute": "posture",
+                "to": "<lying>"
+              },
+              "<ontology::per_player>": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "mystic_oak",
+      "instance_of": "<effect_site>",
+      "name": {
+        "zh": "神秘橡树",
+        "en": "Mystic Oak"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 3 块，各自独立结算。<phase_5_site>结算：对每块橡树，本玩家检查相邻且有自己的<tribe>的<territory>——每个<water_territory>/<swamp_territory>/<desert_territory>区域得 2 分，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域得 1 分。",
+        "en": "3 Mystic oaks exist; each resolves independently. Site phase resolution: for each oak, the player checks adjacent areas holding at least one of their <tribe>s — each <water_territory>/<swamp_territory>/<desert_territory> area scores 2 points and each <forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory> area scores 1 point."
+      },
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 3 块）。翻开前背面朝上；正面印有神秘橡树插画，左上角为翻开分数（1 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (3 in total). Face down until revealed; the front shows a Mystic Oak illustration with the reveal score in the top-left corner (1 points)."
+      },
+      "score": 1,
+      "own_effect": {
+        "<ontology::continuous_effect>": {
+          "<ontology::condition>": {
+            "zh": "地点阶段结算中，且本玩家在与本地点相邻的区域中有自己的<tribe>。",
+            "en": "During the site phase, and this player has one of their <tribe>s in an area adjacent to this site."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::push_track>": {
+                "<ontology::track>": "<score_track>",
+                "step": "按相邻且有自己的<tribe>的区域计：每个<water_territory>/<swamp_territory>/<desert_territory>区域 +2，每个<forest_territory>/<grassland_territory>/<hill_territory>/<mountain_territory>区域 +1"
+              },
+              "<ontology::per_player>": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "gorge_of_grimwolves",
+      "instance_of": "<effect_site>",
+      "name": {
+        "zh": "狼谷",
+        "en": "Gorge of the Grimwolves"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "共 2 块。<phase_5_site>结算（各自独立结算）：与狼谷相邻的<territory>中有本玩家<tribe>的玩家，若<food_space>中有<food>则失去 1 个<food>（<lose_food>）；无<food>则豁免。",
+        "en": "2 Gorges exist; each resolves independently during the site phase: each player who has a <tribe> in a <territory> adjacent to this site and has <food> on <food_space> loses 1 <food> (<lose_food>); players without food are exempt."
+      },
+      "appearance": {
+        "zh": "正八边形纸板地点板块，一角为弧形指取角（共 2 块）。翻开前背面朝上；正面印有狼谷插画，左上角为翻开分数（5 分）。",
+        "en": "A regular-octagon cardboard site tile with one rounded corner (2 in total). Face down until revealed; the front shows a Gorge of the Grimwolves illustration with the reveal score in the top-left corner (5 points)."
+      },
+      "score": 5,
+      "own_effect": {
+        "<ontology::continuous_effect>": {
+          "<ontology::condition>": {
+            "zh": "地点阶段结算中，且本玩家在与本地点相邻的<territory>中有<tribe>，且<food_space>中有<food>。",
+            "en": "During the site phase, and this player has a <tribe> in a <territory> adjacent to this site, and has <food> on <food_space>."
+          },
+          "<ontology::content>": {
+            "<ontology::instant_content>": {
+              "<ontology::transfer>": "<lose_food>",
+              "<ontology::per_player>": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "chips": [],
+  "states": [
+    {
+      "id": "upright",
+      "instance_of": "<ontology::state>",
+      "name": {
+        "zh": "站立",
+        "en": "Upright"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "健康状态。<tribe>可以<migrate>和<procreate>。",
+        "en": "Healthy state. Tribe can migrate and procreate."
+      },
+      "posture": {
+        "zh": "直立放置。",
+        "en": "Stands upright."
+      }
+    },
+    {
+      "id": "lying",
+      "instance_of": "<ontology::state>",
+      "name": {
+        "zh": "躺倒",
+        "en": "Lying"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "虚弱状态。<tribe>不能<migrate>，<phase_6_feeding>若未被喂饱会死亡。",
+        "en": "Weakened state. Tribe cannot migrate; dies in Feeding phase if not fed."
+      },
+      "posture": {
+        "zh": "躺倒放置。",
+        "en": "Lies flat."
+      }
+    }
+  ],
+  "<activity>s": [
+    {
+      "id": "activity_01",
+      "definition": {
+        "zh": "<console> 右上角自带的基础活动。支付 1 个 <money>，从 5 条进程轨中任选 1 条，将该轨上自己的 <progress_marker> 推进 1 格。",
+        "en": "Innate activity at the top-right of the <console>. Pay 1 <money>, choose any 1 of the 5 progress tracks, and advance your <progress_marker> on that track by 1 step."
+      },
+      "<ontology::instant_effect>": {
+        "<ontology::cost>": {
+          "<ontology::instant_cost>": {
+            "<ontology::transfer>": {
+              "source": "<money_space>",
+              "destination": "<ontology::supply>",
+              "<ontology::object>": "<money>",
+              "count": 1
+            }
+          }
+        },
+        "<ontology::content>": {
+          "<ontology::instant_content>": {
+            "<push_any_progress_track>": {
+              "step": 1
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+
