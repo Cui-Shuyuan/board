@@ -13,6 +13,8 @@ timeout /t 3 /nobreak >nul
 
 echo [2/2] 启动 BoardAI.Api...
 cd /d D:\workspace\board\backend\BoardAI.Api
+rem Development 环境使用 appsettings.Development.json 的本地 Qwen 配置
+set ASPNETCORE_ENVIRONMENT=Development
 D:\dotnet\dotnet.exe run --urls "http://localhost:5000"
 echo.
 echo API 已就绪: http://localhost:5000

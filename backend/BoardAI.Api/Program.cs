@@ -48,7 +48,20 @@ public class Program
 
         builder.Services.AddSingleton<GameRulesService>();
         builder.Services.AddScoped<ChatOrchestratorService>();
-        builder.Services.AddHttpClient<ILLMService, DeepSeekLLMService>();
+
+        // 本地模型走 OpenAI 兼容接口（Ollama / llama.cpp / vLLM 等）；
+        // DeepSeek 保持原实现，配置在 appsettings*.json 的 LLM:Provider。
+        var llmProvider = builder.Configuration.GetValue<string>("LLM:Provider") ?? "DeepSeek";
+        if (llmProvider.Equals("Local", StringComparison.OrdinalIgnoreCase)
+            || llmProvider.Equals("OpenAICompatible", StringComparison.OrdinalIgnoreCase))
+        {
+            builder.Services.AddHttpClient<ILLMService, OpenAICompatibleLLMService>();
+        }
+        else
+        {
+            builder.Services.AddHttpClient<ILLMService, DeepSeekLLMService>();
+        }
+
         builder.Services.AddControllers();
 
         var app = builder.Build();
