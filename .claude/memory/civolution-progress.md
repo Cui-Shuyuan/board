@@ -1,0 +1,325 @@
+---
+name: civolution-progress
+description: 第二款游戏《文明演化》规则形式化的进度、评估与待办阻塞项
+metadata:
+  type: project
+  originSessionId: fbc4a732-5c5a-482a-a184-077fdaab9f56
+---
+
+# 文明演化（Civolution）规则形式化进度
+
+## 基本信息
+
+- **目录**: `games/civolution/`
+- **当前文件**: `concepts.json`（Phase A 对象清单层骨架）、`口播稿.md`、`Civolution_Rules_US_web_v1_0.txt`
+- **权威规则书**: `Civolution_Rules_US_web_v1_0.pdf`（英文规则书，已提取为同目录 `.txt`）
+- **复杂度**: 远高于璀璨宝石，预计 `concepts.json` 体量是 Splendor 的 3~5 倍
+- **当前状态**: Phase A 进行中。进程版图与流程版图已 review 完成；模块升级模型已重构为 Lose + Gain（15 主模块拆为 45 个 effect 实例 + 15 个 tile，console.content 已扩展至 16 项）。2026-07-25：terrain/region 从 ontology 移除，7 种地形改为游戏层 `<ontology::zone>` 子类，territory 保留为游戏层 zone 概念。2026-07-26：`territory_token` 删除（本质即 hunting_token）；`site_slot` 修正为 24 格（非 25）；`site` 概念与 `building_slot` 边界澄清（site_slot 是分轨与大陆间的空位，building_slot 是建造点 site 自带的建造格）。对象总数：168。
+
+## 为什么选这款游戏
+
+- 规则极其复杂、卡牌/地点众多
+- 游戏较新，LLM 不联网时对它一无所知
+- 对系统、LLM 和形式化工作本身都是真实压力测试
+
+## 已确认的关键决策
+
+1. **允许扩展 ontology**: 为支持文明演化机制，需要新增骰子、轨道、升级、地点/区域、替代费用、被动效果等概念。
+2. **完整规则，但分阶段迭代**: 不一次性生成完整 JSON，按 Phase A~E 逐步推进。
+3. **多模态素材**: `pdftoppm` 已安装，可将 PDF 转成图片用 `Read` 工具分析；已有卡牌图片（`card/神权制.jpg`）验证过 piece 表结构。
+4. **牌表与地点表是必要的**: 研究牌、事件牌、地点牌需整理成结构化表后，再转进 `concepts.json`。
+5. **规则来源优先级**: 英文 PDF 规则书 > `.txt` 提取文本 > 口播稿.md。口播稿用于理解讲解重点，规则书用于确认精确数值与流程。
+6. **namespace 方案已确认**: ontology 概念引用统一使用 `<ontology::concept_id>` 格式（如 `<ontology::resource>`），游戏自定义概念保持 `<game_concept>` 原样。后端 `get_concept` / `search_concepts` 已同步支持带/不带 namespace 的查询。
+7. **ontology 概念直接引用，不在游戏层重复封装**: 当 ontology 中已有通用概念（如 `<setting>`、`<supply>`、`<player_board>`）时，游戏文件直接以 `<ontology::concept_id>` 引用或在顶层声明实例，不新建 `<game_xxx>` 包装概念。游戏特有的内容作为该概念定义中的示例/实例出现，避免同一语义两层定义。
+
+## 评估结论
+
+- **可以做**，但工程量大。
+- 当前本体 71 个概念，已可覆盖文明演化的骰子、轨道、模组升级、地点被动效果等核心机制。
+- 口播稿存在信息缺口：大量「等级二/等级三效果如图」、研究牌具体能力、24 个地点效果大部分缺失、部分数值模糊。
+- 建议先做「能解释核心规则」的最小可用版，再逐步补全高级模组和牌表。
+
+## 可用素材
+
+| 文件 | 类型 | 用途 |
+|---|---|---|
+| `Civolution_Rules_US_web_v1_0.pdf` | 英文规则书 | 权威来源，精确流程/数值/卡牌能力 |
+| `Civolution_Rules_US_web_v1_0.txt` | PDF 文本提取 | 快速检索、全文搜索 |
+| `口播稿.md` | 口播脚本 | 讲解顺序、术语对照、重点机制 |
+| `card/神权制.jpg` | 卡牌图片 | 验证研究牌三段式结构 |
+| `pdftoppm` | 工具 | 将 PDF 页面转成图片供视觉分析 |
+
+## 计划阶段（Phase A~E）
+
+- **Phase A**: 对象清单 + ontology 扩展草案（骨架已完成，待 review）
+  - 已扩展 ontology：新增 `dice`、`alternative_cost`、`choice`、`passive_effect`、`die_roll`、`upgrade`、`setting` 共 7 个概念。注：`terrain`、`region` 最初加入但于 2026-07-25 移回游戏层——地形类型本质是 zone 子类（`forest extends zone`），无需 ontology 概念；`encampment`、`site`、`favor_test` 也已移回游戏层
+  - 已梳理全部 object/resource/piece/token/aid/zone 并写入 `games/civolution/concepts.json` 的 `objects` 层（169 个对象，含 45 个 effect 实例 + 15 个 module tile）
+  - 已产出 `games/civolution/flow.json` 流程骨架（Setup、4 时代 × 8 阶段、终局计分）
+  - 剩余：对象层 review、修正 extends/specifies/引用。占位 action 已补全（`<activate_module>`、`<reset>`、`<complete_building_project>` 均已完整定义）
+- **Phase B**: 核心机制（区域/相邻/迁徙/生产/运输/建造/安装研究牌/收入芯片）
+- **Phase C**: 22 个模组（1~3 等级拆分为 actions）
+- **Phase D**: 流程层（4 时代 × 8 阶段 + 终局计分）
+- **Phase E**: 接入 `BoardAI.Api` Runtime 验证
+
+## 阻塞项
+
+- 当前 `concepts.json` 的进程版图/流程版图部分已 review 完成；剩余 console（已部分更新）、supply、deck、piece/token、大陆/地形、骰子等组件待继续 review
+- **`<action_phase_end>` 已补（2026-08-09）**：具名 condition（specifies `<ontology::condition>`，triggers 组末尾）——结构化谓词「`<phase_indicator>` 位于 `<phase_sequence>` 的 `<reset_end_space>`（由 Reset A 步推入）」
+- **`<final_scoring_track_end>` 已补（2026-08-10）**：原悬空引用（final_scoring_categories 的 loop.until）借 `final_scoring_area_hex` 具名 slots 解决——具名 condition「`<phase_indicator>` 位于 `<final_scoring_area_hex>.<expansion>`（第 9 格，最后类别格，9 类结算完毕第一轮结束）」；`start_final_scoring` 的 to 同步精确化为 `<final_scoring_area_hex>.<technology>`（最左格）
+- **终局计分二三轮改 trigger（2026-08-10，用户指出）**：`final_scoring_stage_partition` / `final_scoring_point_bonus_cards` 原 specifies `<ontology::phase>` 错误——它们是计分结算操作不是阶段；改为 trigger（condition=轨道位置，content=instant_content 描述 per_player 计分），参照 event_era_scoring 模式。**术语约定（用户纠正）**：终局计分没有「第几轮」概念——就是一个 pipeline 沿轨逐格推进结算（9 类别格→控制台 A→控制台 B），「轮」术语已从终局计分区域全部清除（condition 全部用轨道位置表达）。
+- **终局计分轨职责统一（2026-08-11，用户指出，定稿）**：`final_scoring_area_hex` 的 11 个 slot 各挂 `<ontology::effect>`（9 类别格=各自计分规则「每有 X 得本格下方印的分值/板块分数」、stage_partition=阶段分区结算、point_bonus=point bonus 结算）；**slot effect 展开式定稿（2026-08-11）**：每个 slot 的 effect 完整展开（instant_effect + condition「`<phase_indicator>` 位于本格（`<final_scoring_area_hex>.<格名>`）——marker 到达即触发」+ content 每格自定义）。**曾尝试抽象模板方案被否（用户纠正）**：抽象概念 `final_scoring_cell`（condition 定义一次、slot 引用只传 content、content 放 constraints）——问题：content 是 trigger 结构标准字段不是调用参数（constraints 先例是自定义入参），且模板+参数间接层增加 LLM 阅读成本——**JSON 给 LLM 读，展开版自包含优先于 DRY**，已 git checkout 回退（b62a484 状态）。`final_scoring` 简化为两步骤：`final_scoring_categories`（round，loop.until **final_scoring_track_end=位于 point_bonus（第 11 格走完全轨）**，evaluate score_next_category「推进到下一格——该格 slot 效果自动结算」）+ `determine_winner`（evaluate）——**两个 trigger 步骤删除**（职责移交轨 slot）。**写作约定（用户纠正）**：instant_content 与 condition 的 zh/en 必须包在 `description` 里（不直接 `{ "zh": ... }`，参照 weather_trend 的 description+事件共存写法）；得分类效果本质是 push_track 推轨不是描述文本。**终局计分轨 11 slot 全部形式化（2026-08-11）**：统一 trigger 完整结构——condition（marker 位于本格，description 包装）+ target + content（description 包装 + push_track score_track）。**stage_partition**：target=所有已激活层级中的安装物（层级 1/2/3 默认激活、4/5 需 <stage_tile> 翻激活面、6+ 不激活；各层分数印于 <console> 左半边每层旁的 <stage_indicator>，规则书 points to the left of that stage），计分对象含 <research_card>/<starting_chip_card>（位于层级分区第 9 列第 4 层级）/芯片，step=Σ（每已激活层级标示分数 × 该层安装物数）。**9 类别格**：target=每位玩家，step=单位数 × 本格下方印的分值（被板块覆盖取板块分数）。**point_bonus（2026-08-11 用户最终定义）**：target=所有已安装的包含分数奖励的研究牌（<research_card>），content=加总这些研究牌标示的分数之和推入 score_track（step=Σ 含分数奖励已安装研究牌的标示分数之和）——**非「加成牌为其列加分」旧语义**。
+**concepts 重复定义清理（2026-08-11，用户指出）**：删除 concepts.json objects 组中与 flow.json 重复的 8 个 phase 概念（phase_1_new_cards ~ phase_8_income）——完整流程定义在 flow.json procedures，concepts 侧是冗余（概念定义 12 行 vs flow 完整定义）；引用（phase_sequence slots 的 `<phase_1_new_cards>`、`<phase_sequence>.<phase_1_new_cards>` 路径）仍解析到 flow 定义。约定：**已在 flow 中定义的概念（phase/trigger/action）不重复进 concepts.json**。
+**determine_winner 判胜 pipeline 化（2026-08-11，用户指出）**：三级比较写成 EXECUTE_ALL pipeline——compare_success_points（成功点数最高，唯一则结束）→ compare_module_upgrades（do_after + condition「成功点数最高的玩家不唯一」）→ compare_seating_order（do_after + condition「模组升级数最多的平局玩家不唯一」）——每步 specifies evaluate + result；顶层 specifies evaluate + result=胜者玩家。参照 splendor 的 rules 引用具名胜利条件模式（本处直接用 pipeline 表达逐级判据）。
+**繁荣钻石上限（2026-08-11，用户增强）**：食物与钱币合计最多 5 个活跃钻石；storage_area 每列行 1-2 间最多 1 个、行 2-3 间最多 2 个（上下两格均存放材料时激活，印数即上限——参考 console parts 中 storage_area 的 aid）。已同步 score_prosperity（flow.json）与 prosperity slot（concepts.json 终局计分轨）。
+**score_lap trigger（2026-08-11）**：每当某玩家的 score_marker 在 score_track 上完成一圈（推过 100——移动到或越过 0 格），从 hundred_point_token_display 拿取 1 个 hundred_point_token 放控制台旁（实际总分 = 指示物数 × 100 + 圆盘位置）——规则书 p2181。triggers 组开头。
+**replenish_marker_supply trigger（2026-08-11）**：标记供应堆上限 50 个 octagonal_pillar；玩家需要拿标记但供应堆已空时，可立即回收补充——CHOOSE_ONE(_skip, recycle_markers)（「允许」= may）；transfer source=**「<console> 上除 <reset_marker> 以外的 <octagonal_pillar>，或 <continent> 上的 <octagonal_pillar>」**（用户精确化，顶层 description 与 quantity 保留第一版「雕像/重置标记/船上的标记除外」不动）；octagonal_pillar 概念描述不改（用户明确）。**教训**：批量脚本 out 构建漏掉 `lines[:slots_i]` 导致 concepts.json 被截断 3000+ 行（git checkout 恢复，无未提交修改丢失）——批量脚本先 commit + 先验证输出构建完整性
+- **重置格概念化（2026-08-09）**：ontology `<track>` 的 slot_spec 新增可选 `id`（格可被路径引用，如 `"<phase_sequence>.<reset_end_space>"`；marker 位置 = 「`<marker>` 位于 `<track>.<slot_id>`」）；civolution 新增 `<reset_space>`（黄格，2/3/4 人 5/7/9 格、人数标记覆盖）与 `<reset_end_space>`（末端唯一红格）概念；phase_sequence 的 slots 在第四/第五阶段间插入行动段——**1 个 `<reset_space>` 槽位 + 1 个 `<reset_end_space>` 槽位**（不展开成 9 个黄格——数量归概念定义）；Reset A 步/setup/advance 描述引用全部对齐
+- **行动阶段结束条件定稿 ★（2026-08-09 用户最终方案）**：**不拆 phase**——`phase_4_action` 单 phase，pipeline [action_turn_cycle（round，loop.until <action_phase_end>）→ advance_to_phase_5]；`action_phase_end` 条件 = **「<phase_indicator> 位于 <reset_end_space>，且自到达以来每位玩家又各完成了一个 turn」**——即「红格被推的那一轮 + 下一轮（最终行动轮）都完成」——循环自然包含触发轮（轮末检查：红格到但触发者及其前玩家在红格前行动，条件不成立继续）与最终轮（条件成立停）。曾试过：拆两个子 phase（太绕）、触发即停+补完（太复杂）——均废弃
+- **Splendor endgame 简化（2026-08-09 同思路）**：`main_gameplay` loop 轮末检查已保证 15 分触发轮完整——删除 `final_turn_cycle`（补完结构冗余）+ `scoring` 包装（含 events 旧结构残留）；`endgame` 直接持有 `<ontology::evaluate>`（adjudicate_victory 判胜）。**仍悬空**：`<final_scoring_track_end>`（final_scoring_categories 的 loop.until）
+- 需要从 PDF 中系统提取 22 个模组等级二/三效果、24 个地点效果、研究牌完整能力、事件牌/收入芯片/目标芯片集合
+- 部分数值和图标需结合 PDF 图片确认（尤其是费用格图标、进程轨奖励线位置）
+- Phase B~D 依赖对象层定稿，避免后续大量返工
+
+## 最近进展
+
+- **2026-08-12（进程轨与轨道奖励收敛为接口概念，用户定稿）**:
+    - **progress_track 接口概念**（concepts.json，extends `<ontology::track>`，abstract）：5 条轨差异仅 `track_type` + `bonus_die_value` 两个 required 参数——重复的 description/contains/ownership/visibility/slots（13 格 0–12，格名统一为 `progress_space`）全部上提；5 条轨（technology/prestige/knowledge/construction/culture）收敛为 `specifies <progress_track>` + 两参数。**bonus_die_value 数值用户口述（2026-08-12）：科技 1 / 声望 2 / 知识 3 / 建设 4 / 文化 5**。slots 格名从 xxx_space 改 progress_space（无 slot 级引用，安全）。
+    - **track_bonus 接口概念**（flow.json，specifies `<ontology::trigger>`，abstract）：required = `trigger_slot`（路径式格引用如 `<technology_track>.<slot_id>`，被 condition 引用——「`<progress_marker>` 越过 this.trigger_slot 声明的奖励线格」）+ `<ontology::content>`（触发后奖励效果，4 种类型说明在 description：升级模组按 bonus_die_value 点数匹配 / 恩惠 1 步或收入芯片 / 翻板块或 3 分 / 3 分）。原 MATCH 四候选结构删除（由实例取代）。
+    - **奖励线布局数据化（2026-08-12 用户口述，已提交 c576165）**：**5 条轨同布局**（版图同一模板）——格 1/5 升级模组、格 3 恩惠轨或收入芯片、格 7/11 得 3 分、格 9 翻 stage tile 或 3 分、**格 12 = 推到头补偿（非奖励线）**：进程轨只有 12 格、不支持「越过」，advance_beyond_end 触发条件 =「圆片已在 12 格时推进」，每本应推进的步改 2 分。trigger_slot 数组化（type: array of string），引用**接口概念 `<progress_track>.progress_space[N]`**（N=刻度，5 轨同布局所以不逐轨列）；实例 description 用客人友好语言（规则书式，无「<track_bonus> 实例」「trigger_slot 待补」等引擎视角叙述）。**advance_beyond_end condition 修正（d4f5881）**：恢复「推进步数超过剩余长度」（用户指出 11 格推 2 步跨过终点场景），content 两步（圆片到终点 + 超出每步 2 分）；description 保持规则书原文。
+    - **溢出补偿双向化（2026-08-12，ffa8226 + e8e6f69）**：ontology 新增 `<overflow_compensation>`（extends trigger，abstract）+ `<underflow_compensation>`（**平等概念**——均 extends trigger 各自声明 condition，非 specifies 继承，e8e6f69 后修正）；**`<linear_track>` 双字段** `<overflow_compensation>`（正向过头）+ `<underflow_compensation>`（负向过头）——**缺省 = 没有处理**（该方向不会发生或什么都不做，恩惠轨/阶段轨即缺省）；cost/content 继承 trigger 标准 optional，constraints 清空（evaluate 先例，子类不重复声明）。**各轨挂载**：进程轨（接口 progress_track）→ advance_beyond_end（condition 继承接口「步数超过剩余长度」，content 只留加分——圆片停终点是封顶轨自然语义）；**天气轨不适用溢出补偿（92a0f1d 回退 7 格白线模型）**——天气轨需「只结算白线外效果却把 marker 放回白线内」，硬套补偿还要 replacement 替换极端格 trigger 太复杂；越线格 slot effect + clamp 推回保留。**教训**：局部步骤 id 与概念重名会干扰 E11 继承链检查（setdefault 先收集局部无字段版）——局部 id 避免与顶层概念同名（remove_tribe → remove_tribe_step）。
+    - **site 分类重构 + 地点实例归位（2026-08-13，da3a7f9/ef380d2 等）**：`<site>`（abstract，extends tile）内置**翻开加分**（score 字段 + `<ontology::effect>` 通用效果：翻开者得 this.score 分——触发职责归 `<explore_site>` action）；细分 **`<effect_site>`**（效果地点：own_effect 接口字段，实例实现自身效果，翻开加分后触发）与 **`<building_site>`**（建造点：翻开加分后**自身成为 zone**（contains settlement/statue），无 own_effect——7 个建造点共享概念（1 水域岛屿 + 6 大陆地点），雕像材料 2~3 种各异印在板块上**不实例化**）。`<building_slot>` 概念与 `building_ground` 实例**删除**（建筑直接放在建造点上——tile 即容器，用户指出二者是同一事物两视角）。地点实例全部归位 instances.json sites 数组（volcano 4 分/glacier 4 分/mystic_oak 1 分/gorge 5 分——均 instance_of `<effect_site>` + own_effect）。explore_site pipeline：翻转 → 翻开加分（resolve this.target.`<ontology::effect>`）→ 自身效果（resolve this.target.own_effect）。build_farm 引用 `<volcano>`（其禁令为 instant_effect + continuous_content 平级并列——**激活式电平 + 事件组合**，2026-08-13 用户改写）；build_settlement/build_statue target 引用 `<building_site>`。
+    - **终结形态平级并列（2026-08-13 用户定稿，见 json-writing-conventions）**：content 下 instant_content + continuous_content 平级并列（cost/effect 同理）——不同性质必须并列、同性质按归属/位置合并或分开。volcano 是首个用例。
+    - **activity 定义完善（2026-08-13）**：活动 = perform_activity 候选的动作型 effect（平时不激活、非被动/持续），实例填 cost/target/content；机制细节留在 perform_activity（「选择 1 个可用的 activity 并激活」）。theocracy（神权制）研究牌能力包 `<activity>`（上三分之一是活动图标——只有 perform_activity 时可选）。
+    - **索引/查询双递归 bug 修复（2026-08-13，14553ec）**：flow.json **procedures 组嵌套在 pipeline 中的节点**（era_loop/phase_7_event/event_era_scoring/score_era_category 等）因递归容器键缺 `<ontology::pipeline>`（及 action/turn/round/phase/procedure）而**双双漏出**——Python `rebuild_index.py` 的 extract_flow 与 C# `GameRulesService` 的 TryFindFlowNodeRecursive/WalkFlowForSummaries **同源 bug**。症状：搜索命中（索引有）但 get_concept 返回 "not found"（服务端概念库无）→ LLM 拿不到定义 → 循环搜索 9-10 轮 → 慢题（时代计分 35.6s）。修复：三处递归补 procedure 持有键；另修复 uuid 冲突（匿名操作节点 `<ontology::flip>` 等跨位置重复提取、同 uuid 覆盖——515 概念只写 416——改为只索引带 id 节点 + uuid 加来源前缀）；**修复后慢题 35.6s→11.3s**。**教训**：flow 的递归遍历（索引/查询/枚举）必须覆盖 `<ontology::pipeline>` 等所有「持有子节点」的容器键；匿名节点（无 id 无 name）不入索引。**同源 bug 补齐（7d5e9f7）**：KeywordSearch 遍历列表缺 flow 类型（纯关键词搜索漏 flow 节点）+ WalkFlowNode 递归缺 pipeline 键（API `/api/rules/admin/rebuild-index` 端点建的索引漏嵌套节点——API 重建与 Python 脚本双轨都要同步修）。
+    - **QA 最终结果（2026-08-13 修复后全量）**：51 题平均 **7.2s**（08-12 基线 31.0s、修复前 8.4s），50/51 回答质量优秀（[41] 偶发截断重测正常）。慢题 4→3：原慢题 [21]时代计分/[27]山脉/[44]新时代全解决（索引+查询修复）；剩 [7]活动模组(32s)/[37]研究牌层级(31s) 为 **LLM 多轮确认行为**（R2 拿到核心概念后仍搜层级激活细节——偶发，同题前次 7-14s，回答准确）、[47]宝石商店(23s) 跨游戏复杂题。**不修**（LLM 行为噪声，边际收益低）。
+    - **轨型概念层级（2026-08-12，9495f1b 用户定稿）**：`<track>` 拆为 **`<linear_track>`**（extends track，有终点，挂 `<overflow_compensation>`/`<underflow_compensation>` 溢出补偿双字段）与 **`<circular_track>`**（extends track，无终点，挂 `<lap_event>` 圈事件字段）。**环形轨没有溢出——回绕是推轨的自然语义**（99 推 3 步 = 自然停在 2 并完成一圈，几乎不用教；用溢出 trigger + marker 倒退描述既啰嗦又反直觉——用户指出）。ontology `<score_track>` 改 extends `<circular_track>`；新增 `<lap_event>` 概念（extends trigger，圈事件：完成一圈时的伴随结算，如每圈拿取圈指示物）。civolution：progress_track/weather_gauge/favor_of_ager_track/phase_sequence 归 linear_track；score_track 挂 `"<ontology::lap_event>": ["<score_lap>", "<score_underflow>"]`（数组，正负向分开）；score_lap/score_underflow specifies `<ontology::lap_event>`。
+- **2026-08-09 晚（结构统一大重构：children/actor/start/end 全废弃）**:
+    - **pipeline 是唯一结构原语**：`<procedure>`（round/turn/phase）多步骤时持有 `<ontology::pipeline>` 定义实际流程，单内容时直接持有概念（如 `<ontology::action>`，player_extra_find_turn 已按此改）（详见 [[pipeline-model]]）。`children` 数组、`actor`、`start`/`end` 字段全部废弃
+    - **loop 定稿为 procedure 顶层字段（2026-08-09 追加）**：round/phase 执行次数（口语「进行几轮」，字段名不叫 rounds——「4」是次数）用**顶层 `loop`**（count 定次 / until 条件，**不在 pipeline 内**——loop 挂 pipeline 会逼单内容 round 包一层 pipeline，用户指出后修正：action_turn_cycle 改为「round.loop.until + 直接持有 turn」、main_gameplay 改为「phase.loop.until + 直接持有 turn_cycle」、era_loop 改为「round.loop.count 4 + pipeline 承载 8 phase」、final_scoring_categories 单元素 pipeline 改为直接持有 score_next_category（补 specifies evaluate + result））。
+    - **options/type 通用选择结构（2026-08-09 用户定稿）**：**1 个动作不叫 pipeline**——options/type 只是 pipeline 的一块构件，一个动作（即使多候选）直接把 options/type 挂在概念上。turn 的行动统一为 `"<ontology::action>": { "options": [...], "type": "CHOOSE_ONE" }`（单候选直接字符串引用）：player_action_turn（activate_module/reset）、player_goal_turn（_skip/take_goal_chip）、splendor player_turn 与 final_player_turn（四行动+skip_turn）均已改；player_draft_turn 的 EXECUTE_ALL 多步骤（选牌→放芯片→升级→安装）保留 pipeline（真多步骤）。turn 定义同步更新（action 携带 options/type 选择结构，不用 pipeline 包装）。**迁移完成**：draft_round/goal_choice_round/extra_find_round 删「所有玩家已行动」until loop（round 缺省无 loop = 1 次即每人一轮）；era_loop `loop.count 4`；action_turn_cycle（until action_phase_end）与终局计分循环保留（未知次数）。Splendor 同步：turn_cycle 删 player_turns phase 包装、player_turn 删 action_phase 包装（phase 不是必包层，只有 1 个 phase 省略不写）、final_turn_cycle 改「round 缺省 1 次 + turn 带『本轮尚未行动』condition」；main_gameplay 的 `until <reach_15_prestige>` 保留；孤儿条件 all_players_acted_this_round / no_remaining_players 已删
+    - **单内容直接持有（2026-08-09 收尾）**：扫描全库确认——**单元素 pipeline 一律去包装**：phase→round、round→turn、turn→action 直接持有下一层（phase_3_extra_find 内联为 phase→round→turn→action 四层无 pipeline；goal_choice_round/extra_find_round 直接持有 turn；phase_4_action 直接持有 round；splendor turn_cycle/final_turn_cycle 直接持有 turn）。**仅剩 2 处单元素 pipeline 为 loop.until 宿主**（未知次数循环，pipeline 必要）：civolution action_turn_cycle、splendor main_gameplay
+    - **pipeline 新增 `loop` 原语**：`{ "for": N, "counter": "<名>" }` 定次循环（era_loop 用 for 4）+ `{ "until": <condition> }` 条件循环（until 字符串引用或内联谓词）。内容层循环同款（「随机伤害直到有人被击败」）
+    - **轮转模型**：round 的 pipeline `loop.until` = 「所有玩家已行动」（内联谓词），options 一个 turn 节点；turn 执行者由内建轮转语义推进；轮抽「从右手边逆时针」等顺序写 description
+    - **步骤级 vs 候选级 condition 语义**：步骤级不成立 = 阻断（do_after 链停止）；候选级不成立 = 排除（不影响其他候选）。「能 A 必须 A，否则跳过」= 跳过作为带「全部行动条件取反」condition 的候选（Splendor `skip_turn` 从 trigger 改为 action 并加入 action_phase 的 CHOOSE_ONE）
+    - **迁移执行**：civolution flow.json（7 个 round + phase children + turn 的 actions/actor）+ splendor flow.json（全部 children）已迁移；final_scoring_categories 补了「结算下一计分项」步骤；splendor 12 个缺 name 节点 + civolution 5 个 phase 补 name/description；GameRulesService.cs 与 rebuild_index.py 删除 children 遍历（后端 build 通过）
+    - **遗留**：`<action_phase_end>`、`<final_scoring_track_end>` 两个悬空 condition 仍在；activate_module 缺「存在可激活模组」condition（行动阶段正式编写时补）；skip_turn 的 no_action_available 在 civolution 尚无对应物（其行动阶段兜底待查规则书）
+
+- **2026-08-09（setup 完整化 + phase 1-3 pipeline + 模型统一）**:
+    - **pipeline 模型定稿**：pipeline 收编进 trigger 的 content.instant_content（详见 [[pipeline-model]]）；`specifies <ontology::pipeline>` 与 trigger 顶层 `<pipeline>` 字段均废弃；action/effect 是 trigger（condition → cost → target → content），多步骤在 content.instant_content.options 表达。22 个 action 全部统一
+    - **phase 持有 `<ontology::pipeline>`**：ontology `<phase>` 新增 `<pipeline>` 可选字段（程序化阶段，如 setup）——与 trigger 的 content 内 pipeline 区分
+    - **`<draw>` 抽象化**：ontology 新增 draw（abstract）+ `<top_draw>`（抽顶：deck 顶部，位置确定顶牌未知）+ `<random_draw>`（随机抽：pool 袋盲抽）。覆盖：setup 三芯片展示、计分板块（random）、事件牌/研究牌翻牌（top）、游戏内补展示区等。Splendor 的 deal_nobles（原 transfer+random 游离字段）、reserve_from_deck、refill_market 同步迁移
+    - **`<per_player>` 概念化**：抽为独立 property（可挂任何 event）。分工原则：**无顺序的程序化分发用 per_player**（setup 个人准备、发牌）；**有顺序的轮转用 round+turn**（「从起始玩家开始，每位玩家…」一律 round+turn）。draft_round（轮抽）已从 per_player 改 round+turn
+    - **transfer 的 `<ontology::object>` 支持属性设定**：`{ "<event_card>": { "face": "face_down" } }`（对象以指定状态进入 destination，与 piece.parts 同款）；游离 face_down 字段清除。destination 也支持 options/type 结构（5 条进程轨各放 1 个）
+    - **setup 完整化**：35 步 pipeline（EXECUTE_ALL + do_after 链 27 处依赖）；按规则书修正收入/属性芯片 3 格、目标芯片 6 格（1 格标 3+、1 格标 4）人数标记描述（营地/骰子区/阶段流程同）；百分/狩猎指示物 2/3/4 人覆盖细节；event 抽象基类游戏层零使用（组装/放置→transfer、起始玩家→state_change+transfer、判胜→evaluate、得分→push_track）
+    - **轮抽三件套 pipeline 化**：draft_starting_marker_cards（抽 3 → 按牌指示获得标记 → 3 张全回盒，quantity=player_count*3）、draft_starting_chip_cards（翻 N+1 → 每张放目标芯片 → 轮抽 round+turn：选 → 芯片入目标区 → 模组升 L2 → install_starting_chip_card）、draft_starting_research_cards（每堆抽 2 → 选 1 → 未选放回牌堆底）
+    - **初始标记牌/芯片牌建模修正（重要）**：安装的是**初始芯片牌**不是标记牌！`<starting_marker_card>` 只指示标记、不安装、回盒；`<starting_chip_card>` 上三分之一是 `<income_chip>`（parts 声明），塞入收入区成为首个收入芯片（激活收入芯片时可选）。新增 `<install_starting_chip_card>`（无费用格，区别于 install_research_card——复用其 pipeline 会逼出空费用格描述，故独立）
+    - **规则书二选一约定**：选项 A 初始 / 选项 B 进阶一律选 B（起始手牌/芯片牌轮抽已按 B）
+    - **阶段 pipeline**：phase_1_new_cards（翻事件牌 + 翻 5 研究牌）、phase_2_new_goals（round+turn 选择轮 + 统一补满）、phase_3_extra_find（round+turn，修正「只按地形类型匹配存储格」）——phase 4 行动阶段待写（含「补完当前轮 + 最终轮」结构缺口）
+    - **待办**：era_loop 8 阶段 do_after 链；`<action_phase_end>` / `<final_scoring_track_end>` 两个悬空 condition；行动阶段最终轮结构
+
+- **2026-08-08（15 主模组全量程序化验证 + 占位 action 盘点 + 升级重构）**:
+    - **15 个主模组 level_effects 全部结构化（程序验证 15/15）**：每个模组 3 个等级均为 `<ontology::instant_effect>`（cost 引用 `this.<ontology::cost>` + 结构化 content），无 description 化残留
+    - **双骰 cost 复验 15/15**：EXECUTE_ALL 双骰支付全部就位，点数与 2026-08-07 确认一致
+    - **占位 action 补全确认**：`<activate_module>`（flow.json:3028，选择模组触发 `this.target 的 effect`）、`<reset>`（flow.json:3046，condition=激活骰 ≤3 + A/B/C 三步 pipeline，含全空列边界分支）、`<complete_building_project>`（建造四选一 pipeline）均已完整定义并被 action_phase 引用（flow.json:678-679）
+    - **发现唯一剩余悬空引用**：`<action_phase_end>`（flow.json:666 `until`）在 conditions 组未定义，待补
+    - **升级重构为 state_change（用户提出）**：ontology `<upgrade>` 从 extends `<trigger>` 改为 specifies `<state_change>`（attribute 固定 level，subject=模组，to=目标等级——与 `<flip>` 同类：翻转是 face 变更、升级是 level 变更）。游戏层 `upgrade_main_module` 同步从 specifies `<ontology::pipeline>` 改为 specifies `<ontology::upgrade>`，物理后果（L1→L2 翻面 / L2→L3 放回游戏盒）保留在 options 中作为升级的物理后果步骤。module/upgradable_module 定义中「trigger 驱动」措辞同步修正
+    - **`<upgradable_module>` 新增 `level` state 字段（用户指出缺口）**：升级是 state_change 后，subject 必须要有可变的 level 属性——此前 `module.level` 已删除（2026-07-24 改由 effect 实例 id 前缀表达），模组自身无 level 状态。补上：`"level": { "type": "enum", "enum": [1,2,3], "default": 1 }`（field-level 状态，参照 card.face 模式），15 个主模组实例各加 `"level": 1` 初始值（特征/睡眠模组无 level——仅可升级模组有此状态）。`upgrade_main_module` 的两个升级路径（upgrade_l1_to_l2 / upgrade_l2_to_l3）改为显式 `<ontology::state_change>`（subject=this.target，attribute=level，from=1/2，to=2/3），物理后果保留在 description
+
+- **2026-08-07（15 个主模组全部实例化 + 对话实测 + 逐模组 review）**:
+    - **15 个主模组骰子点数全部确认（15/15）**：research 1+2、migration 1+3、activity 2+3、exploration 1+4、sustenance 2+4、planning 3+4、transport 1+5、procreation 2+5、production 3+5、trade 4+5、invention 1+6、mutation 3+6、insight 3+6、building 4+6、achievement 5+6
+    - **procreate 拆分为 pipeline（用户 review）**：繁育 = `place_new_tribe`（action：选区域+transfer）+ 4 个平铺 trigger（驱逐原部落/虚弱/篝火营地得分/开发领地），均 do_after 放置 action；虚弱 do_after 驱逐（规则书 "before"，驱逐不发生则不虚弱）；补「未开发区域立即开发」缺口（原定义缺失）。L3 恩惠检定与繁育顺序可互换（规则书原文 "either before or after"，无 do_after）
+    - **production 模组 L1 补全**：补 favor_test + pass 分支运输（quantity <=1 = 可做可不做，规则书 "may transport"）
+    - **trade 模组**：骰子 4+5；L3 gain_money do_after（规则书 "Then"）；**顶层 CHOOSE_ANY → CHOOSE_AT_LEAST_ONE**（激活交易后必须至少卖或买一次，可只卖/只买）——sale 内部保持 CHOOSE_ANY
+    - **骰子获得 action 结构化重构（用户 review）**：`gain_activation_die` / `gain_fate_die` 从单 action + description 改为 pipeline——2 个 condition 分支（展示区有骰子 / 展示区空且自己不是唯一最多者）CHOOSE_ONE；target 分 zone（`<dice_display>`，source=`this.target.contains.<die>`）与 `<ontology::player>`（source=`this.target.<ontology::supply>.contains.<die>`）；激活骰三步（拿取无 destination → die_roll → 放入骰子格），命运骰两步（拿取 → 加入粉骰）
+    - **`<temporary_zone>` 从 DSL 全量清除**：拿取/抽牌的中间态不再暴露（LLM 可能把引擎概念教给客人）；`draw_pick_return_research` 用「刚拿取的/未选中的」自然语言指代中间态，补 constraints（draw_count/pick_count 必传），research 模组 L1/L2/L3 从 description 化重写为结构化引用
+    - **全量扫描结论**：15 个主模组 level_effects 全部结构化（favor_test 分支/quantity/install_with_bonus），无 description 化残留；唯一 desc-only 是 L3 特殊奖励的 `ignore_cost_space`（豁免类操作，无物理对象可结构化）与 `_skip` 哨兵（pipeline 模型标准写法）
+    - **新增 10 个基础 action**（flow.json，41 triggers）：procreate、hunt、strengthen_tribe、produce_material、transport_material（复合）、gain_activation_die、gain_fate_die、gain_goal_chip、place_planning_markers、move_feature_marker
+    - **运输拆分（用户 review 修正）**：transport_material 拆为 transport_land_material（陆地按区域类型）+ transport_boat_material（船载，constraints 定义 storage_space 入参：缺省=相邻已开发区域类型、'any'=任意格，L3 使用）+ 复合 CHOOSE_ONE。参照 migrate = move_tribe + resolve_migration_triggers 模式——需要「实例化时区分入参」的底层 action 用 constraints 定义参数
+    - **hunt 修正（用户 review）**：掷骰用 `<ontology::die_roll>`（fate_die[] count all）；食物数量改查表描述（quantity 0 占位删除）
+    - **激活骰支付 destination 统一 `<player_holding>`**（36 处：15 主模块 + 6 feature 模块）：激活骰属于玩家，支付后放回玩家保留区（重置时拿回），非公共 supply
+    - **标记物理形态统一**：供应堆里是通用 `<octagonal_pillar>`，进入食物格/创意格/钱币格/骰子格才「成为」food/idea_marker/money/planning_marker（6 处修正 + planning_marker/idea_marker 定义 component 印证）
+    - **planning_marker 描述补充**：用作支付时放回 `<ontology::supply>`（不进入玩家保留区），只能替代 `<activation_die>` 不能替代 `<fate_die>`；idea_marker 显式「可修改 activation_die 或 fate_die 点数」
+    - **单选项 condition 修正**：单条谓词直接写 zh/en，不再用 options/type 结构（7 处）；多条才用 options
+    - **cost 可读性修复**：15 个模组 cost 增加 description 明确「两项骰子都要支付，非二选一」——实测中发现 LLM 将 EXECUTE_ALL 双骰误读为「或」（Q5 回答成「一颗点数为一或四」）
+    - **对话实测结论**：10 题全部准确（含终局计分、喂养、目标芯片等复杂题）；耗时 4.4~21.5s 平均约 8s；状态依赖问题正确反问；工具链 2-6 轮偶有重复搜索
+    - **索引重建**：civolution 434 概念、splendor 160 概念，索引脚本兼容
+    - **工作方式反馈**：用户偏好 Edit 工具逐处修改（可审查 old→new），脚本只用于真正的机械批量且需先展示脚本内容
+
+- **2026-08-06（ontology 体系化 + 控制台右半边 + 迁徙 pipeline 重构 + evaluate/check/state）**:
+    - **ontology 新增**：`instant_cost`/`continuous_cost`/`instant_effect`/`continuous_effect`、`evaluate`（extends trigger，产出 result）、`check`（specifies evaluate，pass/fail）、`flip`（specifies state_change，face）、`temporary_zone`（瞬时中间态）、`state_change`（subject+to+optional attribute/from）
+    - **state 实例化**：tribe posture upright/lying；card/tile face face_up/face_down
+    - **控制台右半边完成**：activation_dice_area/fate_dice_area/feature_space/tier_1_completion_reward/tier_2_completion_reward/reset_column
+    - **effect 结构规范化**：effect→instant/continuous_effect→content→instant_content，null 省略，cost 分 instant/continuous_cost
+    - **迁徙 pipeline 拆分**：move_tribe（纯 transfer）+ resolve_migration_triggers（4 trigger，入参用 constraints 形式化）+ migrate = move→triggers。模块中灵活组合序列
+    - **favor_test 重写**：specifies check，content 掷 fate_die，result = any ∈ [1, track.position]
+    - **instances.json 大清理**：删除 45 个 effect 占位符；module_tiles 精简
+    - **module 新模型**：upgradable_module extends module，模块层 cost + level_effects[].content；research（骰 1+2）、migration（骰 1+3）已完成
+
+- **2026-08-04（控制台 review 继续 + trigger 迁入 flow + pipeline + 材料体系 + 建造行动）**:
+    - **ontology**：`multiple_choice_enum` 新增 `CHOOSE_ANY`（任意数量执行）；`trigger_pipeline` 定义标准执行流程
+    - **flow.json `triggers` 数组**：新建，容纳 action/activation/event/transfer/upgrade/play 类概念。`gain_income_chip` 从 procedures 迁入
+    - **events[] 弃用 → pipeline**：全文件 `events` 数组改为 `pipeline: { options, type }` 格式，与 ontology `trigger_pipeline` 对齐
+    - **type → specifies 统一**：全文件 `"type"` 改 `"specifies"`，仅 `multiple_choice_enum` 保留 `"type"`
+    - **console parts**：`lv3_effects` → `lv3_effect_zone`（zone 参照 goal_area）；匿名 stage effect+aid → `stage_indicator`（specifies effect + aid part）；删除 `dead_tribe_area`；food_space/money_space 位置修正为面板左半边 + 交易规则 aid
+    - **settlement_zone**：4 格 player_holding + continuous_effect（Prosperity 钻石计分）+ 材料清单 aid
+    - **farm_supply + boat_supply**：3 格/2 格 player_holding，不补充
+    - **领地类型 6 个**：forest/grassland/hill/swamp/mountain/desert（specifies territory）
+    - **stored_material 重写**：abstract，新增 territory_type/sell_price/lucky_harvest_die 属性
+    - **18 种材料**：3 行（基础/稀有/珍贵）× 6 列（领地），各有 sell_price 1/2/3 和 lucky_harvest_die 范围
+    - **storage_area 重写**：3×6 网格 + 行间钻石 aid（上下非空则激活）
+    - **以下概念从 concepts.json 迁入 flow.json triggers**：trade、favor_test、activate_income_chip、perform_activity、install_research_card（合并 5 变体，card_type enum 区分）、install_goal_chip、install_income_chip、install_attribute_chip、lose_food、remove_tribe、push_any_progress_track、weather_effect、upgrade_main_module
+    - **flow.json 新增 actions**：`lucky_find`（幸运收获）、`build_settlement`（建造聚落，4 格费用全写清）
+    - **concepts.json 保留**：`activity`（effect-identity，定义"是什么"）
+    - **待办**：建造聚落/农场/船/雕像 aid、feature_space（焦点格）、idea_space（创意格）
+
+- **2026-08-01~02（cost/content 模型重构 + 控制台 review + 芯片安装体系）**:
+    - **cost 二分**：`instant_cost`（一次性支付）+ `continuous_cost`（状态检查），替代旧 `condition` + `event`
+    - **content 三字段**：`<instant_content>`（无条件一次执行）、`<continuous_content>`（无条件电平维持）、`<effect>`（条件触发，含 `instant_effect` 一次机会 + `continuous_effect` 持续武装）
+    - **effect specifies trigger**：不再携带顶层 condition，由调用方决定时机。`instant_effect`（condition 失败永远消失）和 `continuous_effect`（持续监听，end_condition = null 永不自动终结）
+    - **play 重构**：三步 `pay_cost` → `transfer_piece` → `resolve`，替代旧 effect 模式的安装操作。`install_xxx_chip` 和 `install_research_card` 底层均改为 `<ontology::play>`
+    - **resolve 语义**：只接触 content 三种形态——instant 执行一次、continuous 进入生效池、effect 分 instant/continuous 武装
+    - **三种芯片 parts 定义完成**：`goal_chip`（chip_name / cost / chip_number）、`income_chip`（effect）、`attribute_chip`（chip_name / cost / effect）
+    - **install_goal_chip / install_income_chip / install_attribute_chip**：均改为 play，各自有列选择规则
+    - **goal_area**：3 格 player_holding，每格 `continuous_effect`（condition="格空后"→content=`upgrade_main_module`）
+    - **upgrade_main_module**：结构化升级——选模组→L1→L2 翻面 / L2→L3 放回游戏盒
+    - **lose_food / remove_tribe → transfer**：不再是 effect/trigger，就是纯粹的转移操作
+    - **控制台 content 数组移除**：`activity_01` 和 15 个 L3 效果改为 parts
+    - **stage_tile 重构**：双面——激活面含 effect（终局计分）+ aid（费用格提示）
+    - **控制台 stage 1-3 计分**：一组匿名 effect+aid（始终激活）
+    - **所有 parts 迁至 `type` 字段格式**：console、research_card、event_card 等
+    - **Splendor**：discount 删 target/params
+    - **后端兼容**：`GameRulesService` 同步更新
+
+- **2026-07-30（trigger/effect 模型重构 + activity_01 形式化）**:
+    - **ontology 重构**：trigger 从 "timing + condition → events" 改为 "condition + cost + content" 递归模型。effect specifies trigger，仅额外增加 options。删除 `<passive_effect>`。新增 `<push_track>` event。
+    - **activity 概念**：新增 `<activity>`（specifies `<ontology::effect>`），预填 condition="<perform_activity>"。
+    - **activity_01 实例**：进 `<activity>s` 数组，结构化 cost（condition + transfer：money_space → supply）和 content（push_any_progress_track）。
+    - **push_any_progress_track**：specifies `<ontology::push_track>`，track 绑为 5 条进程轨的 CHOOSE_ONE。
+    - **Splendor 迁移**：8 处 trigger 全迁新模型（删 timing，event[] → content，加 cost=null）。
+- **2026-07-27（概念补全 + parts 格式升级）**:
+  - **新增 2 个概念**：`<card_name>`（specifies `<ontology::object>`，卡牌名称标签）和 `<weather_trend>`（specifies `<ontology::object>`，事件牌天气趋势指示器）。二者均为通用概念，后续实例化各卡牌时通过 parts 引用。
+  - **event_card parts 维护**：事件牌三部分——`<card_name>`（左上角）、`<weather_trend>`（右上角）、`<ontology::instant_content>`（下半部分，全部即时内容；2026-07-30 由 instant_effect 改名）。
+  - **parts 格式升级**：全局 `"as": "<concept>"` → `"<concept>": {...}`，概念 ID 直接做 key。Civolution 7 概念 + Splendor 2 概念共 ~37 个 part 全部迁移。
+  - **终局计分区重构**：`<final_scoring_area>` 从 track 改为 zone，拆为两个子概念——`<final_scoring_area_icons>`（图标 zone，放置计分板块）和 `<final_scoring_area_hex>`（六角格 track，slots=null，终局计分时阶段标记逐格推进）。
+  - **外观描述补全**：`<scoring_tile>`（小型矩形 + 一角弧形角，双面）、`<site>`（正八边形 + 一角弧形角）、`<hundred_point_token>`（正方形而非圆形）。
+  - **命名对齐规则书**：`一百分指示物` → `100分指示物`，TTS 友好工作留给 LLM。
+  - **event_card_space 英文描述修正**：左格为 face-up stack（非单张），去掉 setup 流程细节。
+  - **phase_indicator 定义补全**：加入「六角形」同义词和终局计分流程引用，提升对「六角形黄色东西」类问题的搜索命中。
+- **2026-07-26（天气轨效果模型）**: 天气轨从纯文本描述升级为结构化 trigger + effect 模型：
+  - 新增 5 个概念：`<activate_income_chip>`（specifies `<ontology::activation>`）、`<perform_activity>`（specifies `<ontology::activation>`）、`<lose_food>`（specifies `<ontology::effect>`，cost=null）、`<remove_tribe>`（specifies `<ontology::effect>`，cost=null）、`<weather_effect>`（specifies `<ontology::trigger>`，timing=事件阶段天气标记移动完成，无 condition）
+  - weather_gauge 新增 `<ontology::trigger>` 引用 `<weather_effect>`，5 个 slot 从 `description` 文本升级为 `"<ontology::effect>": <ref>` 结构化引用
+  - 单引用格式：`"<ontology::effect>": "<activate_income_chip>"`；多选格式：`"<ontology::effect>": {"options": [...], "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"}`
+  - phase_sequence 补 8 个 slot（每阶段名称+概要），final_scoring_area 补 `slots` 字段
+  - ontology: `scale` → `slots`（必填），新增 `<multiple_choice_enum>`，effect/cost/content 各加 `options` 可选字段
+- **2026-07-26（关系重构）**: `parent` 已拆分为 `extends` / `specifies` / `instance_of` 三种关系。Civolution concepts.json 中 7 个 extends（module、research_card、stored_material、feature_marker、continent、continent_tile、site）+ 101 个 specifies。instances.json 中 60 个 instance_of。后端代码零改动。详见 [[ontology-design]]。
+
+- **2026-07-25（图片提取突破）**: OpenCV + PDF 布局分析成功提取组件图片：
+  - **正确页面定位**：组件目录页是 PDF 第 4-5 页（非之前误用的 setup 页 6-7）
+  - **方法演进**：纯 CV 阈值/边缘检测 → 失败（页面排版复杂）→ **投影分析法**：水平投影找组件行 + 垂直投影找行内单个组件 → 成功
+  - **脚本**：`scripts/extract_components_cv.py`，使用 PyMuPDF（fitz）渲染 600dpi 页面 + OpenCV 投影分析 + 文字标签锚定命名
+  - **输出**：126 个组件裁切 → `games/civolution/media/`（5.1 MB），其中 55 个大图（>30KB）为高质量组件照片
+  - **标注图**：`page-04_600dpi_annotated.jpg`、`page-05_600dpi_annotated.jpg` 供人工审核检测框质量
+  - **关键发现**：PDF 页面是单张全页渲染图（非独立嵌入图片），组件是整张图内的子区域
+  - **人工审核需要**：自动检测无法完美区分文字标签和组件照片（部分细长标签条、小图标被误检），建议人工筛选后保留 40-60 张关键组件图
+
+- **2026-07-25（深夜）**: site 重构 + piece.parts 统一 + 图片提取探索：
+  - **site_tile 并入 site**：删除过度抽象的 `site_tile`。全局替换 `<site_tile>` → `<site>`。
+  - **新增 `<building_slot>`**（extends zone）：建造点 site 上的建造格。
+  - **新增 `<site_slot>`**（extends zone）：continent 上 25 个凹槽（非 continent_tile），拼合后形成。
+  - **`<piece>.parts` 统一机制**：ontology 中 `<piece>` 新增 `parts`（`any[]`）。zone 不再单独挂在 piece 上——territory、encampment、material_slot 都是 part。Civolution 8 个概念 + Splendor 2 个概念已全部迁移。纯引用用字符串 `"<territory>"`，带属性的用 `{ "as": "<score_track>", "position": ... }`。
+  - **site.parts 新增 `<ontology::effect>`**：建造点和 8 个普通地点的效果都通过 parts 体现。
+  - **constraints.optional 精简**：36 个 LOCAL 字段改为字符串格式，净减 255 行。
+  - **图片提取探索**：`pdftoppm` 导出 PDF 第 6/7 页（组件展示）成功，但 DeepSeek v4 Pro 不支持多模态输入导致 Read 工具返回 `[Unsupported Image]`。结论：需要换用多模态模型（如 Kimi）才能让 LLM 直接识别组件并裁剪坐标。
+  - **site.parts 新增 `<ontology::effect>`**：建造点和 8 个普通地点的效果都通过 parts 体现。
+- **2026-07-25**: 概念与实例分离 + ontology 清理 + terrain/region 移除：
+  - **新增 `instances.json`**：从 `concepts.json` 拆出 45 个 effect 实例 + 15 个 module tile 实例。文件分 `effects`、`modules`、`cards`、`continent_tiles`、`sites`、`chips` 六个数组。
+  - **ontology 清理**：`<encampment>`、`<site>`、`<favor_test>`、`<terrain>`、`<region>` 从 ontology 移回游戏层（ontology 71→66）。concepts.json 新增 `site`、`favor_test`，`encampment` extends 改为 `<ontology::object>`，`site_tile` extends 改为 `<site>`。7 种地形改为 `<ontology::zone>` 子类，`territory` extends 改为 `<ontology::zone>`。
+  - **后端更新**：`GameRulesService` 全面支持 `instances.json`，Python `rebuild_index.py` 新增 `extract_instances()`。
+  - **大陆板块**：`continent_tile` 加 `size` 字段，`continent` zone 加 `grid`（5×3=15 格）和铺满约束。
+- **2026-07-25（晚间）**: 对象层补充 + 命名修正 + 格式化：
+  - **新增 `<material_slot>`**（材料板块格，extends zone）：位于 continent_tile 上，每陆地区域一个，放置 material_tile 决定产出材料类型
+  - **新增 `<encampment>` + `<fire_encampment>`**：英文规则书用 encampment（非 campsite），fire_encampment inherits encampment
+  - **命名修正**：campsite → encampment，fireside_encampment → fire_encampment，对齐英文规则书
+  - **`continent_tile` 声明 `"<ontology::zone>[]"`**：引用 `<territory>`、`<material_slot>`、`<encampment>`、`<fire_encampment>`
+  - **`starting_chip_card` zone 声明**：`"zones"` → `"<ontology::zone>[]"`
+  - **移除 4 个纯 setup supply**：`module_supply`、`site_supply`、`material_tile_supply`、`scoring_tile_supply`——setup 用 `<ontology::game_box>` 即可
+  - **ontology piece/board zones 字段统一**：`"zones"` → `"<ontology::zone>[]"`（key 即类型）
+  - **制表符→4空格**：concepts.json + instances.json 统一格式化
+  - **`<piece>` 定义修正**：`zones` 提升至 `<piece>`；play 能力由 ownership 决定。
+- **2026-07-24（晚间）**: 重构模块升级模型——Lose + Gain：
+  - **模块各等级改为独立 effect 实例**：15 个主模块各拆为 3 个 effect 实例（effect_xxx_lv1/lv2/lv3），通过 id 前缀保持模块 identity。L1/L2 由 tile 正反面持有，L3 由 console 持有。共新增 45 个 effect 实例 + 15 个 tile 概念。`module.level` 字段已删除。
+  - **`<upgrade>` 父类改为 `<trigger>`**：核心语义是 level 提升，不再硬编码 lose/gain。同一载体（tile 翻面 L1→L2）仅为 level 变化；载体切换（L2→L3）时旧载体 `<lose>` 旧 effect、新载体 `<gain>` 新 effect。
+  - **新增 `<lose>` 和 `<gain>` 作为 Event 子类**：`<lose>`——object 失去 property（domain → null）；`<gain>`——object 获得 property（domain → 新实体）。ontology 概念总数：69 → 71。
+  - **console.content 已更新**：从 1 项扩展为 16 项（1 innate_activity + 15 lv3 effect），所有 lv3 effect 初始不可用，升级时由 console `<gain>`。
+- **2026-07-24（凌晨）**: 理清模组本质与安装模型：
+  - **模组是 effect，带 level state**：[已废弃，见上方晚间更新] 模组的 extends 从 `<ontology::piece>` 改为 `<ontology::effect>`。主模组有 level 1/2/3，不同 level 对应不同 cost/content，identity 不变。等级一二由 tile 承载，等级三由 board content 承载（印在控制台上）。升级（`<upgrade>`）本质是 state change——先提升 level，翻面/移除板块是后果而非原因。Ontology 中 `<upgrade>` 定义已同步更新。
+  - **安装 = transfer**：卡牌/芯片安装到控制台就是从 source zone transfer 到控制台上逻辑坐标的 zone。Zone 是纯概念不绑定物理尺寸，所以纸片可以互相叠压。控制台每个行列坐标就是一个 zone（有独立 capacity）。
+  - **实体承载的 zone 不会销毁**：初始芯片牌在 setup 后 zone 还在，只是没有规则再引用它——不需要引入 availability 概念。
+  - **三级模组不是三个 effect**：[已废弃，见上方晚间更新——现已改为三个独立 effect 实例，通过 id 前缀关联]
+- **2026-07-23**: 完成本体重大重构——Board 概念拆分与 Zone 宿主模型修正：
+  - **新增 `<board>` 概念**（ontology 第 69 个概念）：从 `<aid>` 中拆出，承载游戏状态、可 host zone、可携带自身 content。Board 不可 transfer（区别于 piece），不承载状态的是 aid（缩窄为纯参考物）。`<public_board>` 和 `<player_board>` 的 extends 已从 `<aid>` 改为 `<board>`。
+  - **Zone 可由实体承载**：card 和 board 都可以提供 zone。`<card>` 新增可选 `zones` 字段。Civolution 的 `starting_chip_card` 已标注设置阶段提供的临时目标芯片 zone。
+  - **Board 的 `zones` 字段替代 `maps_to`**：`zones` 表达物理宿主关系（附带 position 和 description），而非 aid 时代的弱视觉映射。Civolution 的 `console`、`progress_board`、`sequence_board`、`public_board` 均已从 `maps_to` 迁移至 `zones`，每个 zone 附带面板上的物理位置描述。
+  - **`console` 新增 `content`**：面板自带的基础活动图标——玩家无需安装任何研究牌即可使用的 innate 能力。
+- **2026-07-23**: 完成进程版图与流程版图全部组件的逐项 review，主要改动：
+  - **extends 归类修正**：`final_scoring_area` zone→track（本质是标记逐格推进的轨）；`dice_display`/`hunting_token_display`/`hundred_point_token_display` zone→supply；`goal_chip_display`/`income_chip_display`/`attribute_chip_display` zone→market
+  - **market 新增 capacity**：ontology `market` 加 `capacity` 字段（`integer | null`），游戏层 `goal_chip_display`=6、`income_chip_display`=玩家人数+2、`attribute_chip_display`=3；`dice_display` 按玩家人数+1 每种骰子
+  - **全局 namespace 引用**：`<ownership>` → `<ontology::ownership>`（21处）、`<information_visibility>` → `<ontology::information_visibility>`（21处）
+  - **定义清理**：全文去掉「继承自」冗余表述，`extends` / `specifies` / `instance_of` 字段已足够
+  - **8 个阶段概念**：按英文规则书名称定义 `phase_1_new_cards` ~ `phase_8_income`，不设 order（顺序由 flow.json 的 `do_after` 表达）
+  - **`event_card_space` 两格结构**：右格背面朝上牌堆、左格正面朝上当前时代牌；定义中 "区域" → `<ontology::zone>`
+  - **Splendor flow.json**：phase 排序从 `order` 改为 `do_after` 依赖链，与复杂流程一致
+- 2026-07-22: 完成对象清单层细节修正：`private_board` → `player_board` 重命名；supply 的 public/player 区系统一用 `<ownership>` 表达，不再拆分子类；Civolution 中的「进程版图/流程版图」改为 `<progress_board>` / `<sequence_board>` 概念引用
+- 2026-07-22: 新增 `<favor_of_ager_track>` 概念并替换所有「阿格拉恩惠轨」文本；新增 `<ontology::setting>` 概念承载世界观/背景，删除冗余的 `<civolution_setting>`
+- 2026-07-22: 明确设计约定：ontology 已有概念直接引用，不在游戏层再包一层
+- 2026-07-21: 扩展 `ontology/concepts.json`，新增 11 个 Civolution 所需概念；完成 `concepts.json` objects 层骨架和 `flow.json` 流程骨架
+- 2026-07-21: 完成 namespace 替换并同步后端查询支持
+- **2026-07-26（概念修正 + 前端图片渲染）**:
+  - **删除 `<territory_token>`**：概念本质即 `<hunting_token>`（狩猎指示物），双面标记（正面狩猎/背面阻挡）。删除后全局无残留引用。
+  - **`<site_slot>` 修正为 24 格**：site_slot 是分轨与大陆板块之间的空位，共 24 格。第 25 个位置由建造点 site 自带的 `<building_slot>` 提供，非 site_slot。
+  - **前端图片渲染修复**：`wwwroot/index.html` 的 `addMessage` 对 assistant 消息改用 `innerHTML` + `mdToHtml()` 转换，`![alt](url)` 语法自动转为 `<img>` 标签，LLM 回复中的组件图片得以正常显示。
+  - **搜索信任问题修复**：`search_concepts` 返回带元数据的 `SearchConceptsResult`（count/strategy/note），告知 LLM 是 Top-K 非穷举。新增 `list_concept_ids` 工具：穷举全量概念 ID+名称，按类型分组，极轻量。System prompt 明确工具选择策略：search_concepts 找入口 → get_concept 跟引用 → list_concept_ids 仅兜底穷举。解决 LLM 不信任部分结果、反复换关键词查全量的问题。
+  - **`player_console` → `console` 重命名**：概念 ID、文件路径、flow.json 与 concepts.json 中所有 `<player_console>` 引用、civolution-progress.md 全文替换。
+
+- **2026-07-26（组件图片按边框裁切）**: 用 OpenCV CCOMP 轮廓层级法从 PDF 规则书检测黑色矩形边框裁切组件，产出一批裁切图到 `media/by_border/`。
+
+- **2026-08-09（替代/视为语义落地）**:
+    - **ontology 新增 `<substitution>` 概念**（specifies `<property>`）：X 在 scope 内、满足 condition 时充当 Y（动态身份借用，与 parts 的静态身份互补）。三要素：target（充当对象）、scope（路径式定位）、condition（复用 `<condition>`）
+    - **scope 路径式寻址**：`"<activate_module>.<ontology::pipeline>.pay_cost"`（概念.字段.步骤，ontology 概念带 namespace）。`<trigger>` 概念新增顶层 `<pipeline>` 字段（default 引用 trigger_pipeline），标准执行流程四步 evaluate_condition → pay_cost → select_target → resolve_content，步骤 id 全局可寻址
+    - **activate_module 重构**：content 改为 EXECUTE_ALL pipeline——pay_cost（引用 this.target 声明的 cost，替代生效点）+ resolve_effect（do_after pay_cost）。模组 effect 的 cost 引用**零改动**（cost 完整保留在 effect 内）
+    - **planning_marker / focus_marker 各挂 substitution**（target=`<activation_die>`，condition 点数匹配/任意点数，scope=pay_cost）。description 中「可替代」「相当于」措辞保留简版 + substitution 做权威结构
+    - **类型约定修正**：`| null` 后缀写法废弃（optional/default 即可空），key-as-type 不写 type。ontology 中 procedure 的 `<pipeline>` 字段与 meta.convention 同步修正
+    - **adjust_die_value 已完成并挂载**（2026-08-09 稍后）：独立 action——cost = 任意数量 `<idea_marker>`（idea_space → supply，每 1 个 ±1），target = 1 颗自己持有的 activation_die/fate_die，content = state_change（attribute=value，to=±N，1 和 6 相连）。**已挂载 3 个场景**，统一模式：掷骰后/支付前的 `CHOOSE_ONE(_skip, <adjust_die_value>)` 行动窗口（adjust 自带 condition「idea_space 有标记」，候选级不成立自动排除，只剩 _skip 即无标记自动跳过）——hunt（roll_dice → 窗口 → 查表取食物，食物 do_after 窗口）、favor_test（roll_fate_dice → 窗口，掷骰从 description 结构化为 die_roll）、activate_module（窗口 → effect，effect 内部经 trigger_pipeline 的 pay_cost 支付，调整先于支付）
+    - **用户已纠正**：trigger 底层流程（evaluate_condition → pay_cost → select_target → resolve_content）由 ontology trigger_pipeline 统一定义，action 具体实现只写参数值（condition/cost/target/content），不显式声明流程步骤；activate_module 的 content 是「调整窗口 + effect 引用」的 EXECUTE_ALL（这是 content 内业务步骤，非标准流程步骤），scope 路径 `<activate_module>.<ontology::pipeline>.pay_cost` 经 trigger 概念 `<pipeline>` 字段（default trigger_pipeline）寻址
+
+- **2026-08-10（QA 实测 52 题 + 修复）**:
+    - **50 题客人口吻实测**（`scripts/_qa_test.py` 可复用）：平均 10.1s（最快 2.7s / 最慢 40.1s），总体质量高（准确、口语化、TTS 友好）；亮点：正确识别不存在的概念并反问澄清
+    - **数据错误修复**：`fire_encampment` 定义「喂养阶段结算后得分」错误——规则书 p826-830 是**部落定居（settle）时立即获得印的分数**（flow.json 的 `fire_encampment_score` trigger 本来就正确，只有概念定义错）
+    - **LLM 译名幻觉根因与修复**（详见 [[runtime-architecture]] §11）：LLM 不跟 `<concept_id>` 引用查中文名、自译英文 id（idea→灵感/想法、focus→专注、hill→寒冷）——**注解机制**：程序把工具返回的 `<id>` 注解为 `<id>(中文名)`；关键坑是 JsonSerializer 默认转义尖括号，需 UnsafeRelaxedJsonEscaping
+    - **flow 关键词搜索补 triggers**（[[runtime-architecture]] §12）：favor_test 等 triggers 组概念原来不在 C# 关键词搜索范围；向量搜索对中英混合长文本不可靠（「恩惠检定」Top10 全噪音）
+    - **修复后 4 题回归全对**（睡眠模组/神秘橡树/激活模组/恩惠检定）
+    - **待办**：phase_8 收入阶段（marker 处理分情况：新时代回阶段一 / 终局计分）
+
+- **2026-08-10（phase_8 收入阶段完成）**: `phase_8_income` 占位 description 写实为 pipeline：A) `gain_income`（**round + turn 按座次顺位**——用户定稿：规则书「少数行动需要确定顺序」干脆全部按座次，去 per_player；turn 持有 `<ontology::activation>` 引用 activate_income_chip，target = 玩家全部已安装收入芯片（含塞入收入区的初始芯片牌），各芯片顺序自选——修正原占位「从上到下、从左到右」错误）；B) `score_statues`（per_player + push_track score_track，每座雕像得恩惠轨圆盘上方印的分数）；C) `remove_hunting_tokens`（trigger：condition=时代计分区还有板块（非第四时代），content 转移全部狩猎标记回展示区，不移动营地阻挡标记）；D) `equip_reset_columns`（trigger：同 condition，每个空重置列补 1 个 reset_marker，per_player）；E) `era_end_advance`（MATCH：匹配依据=时代计分区是否全空——还有板块=前三时代 push 回阶段一；全空=第四时代 push 到 final_scoring_area_hex 最左格进终局）。**era_end_advance 的 do_after 只挂 A/B**（trigger 被 condition 阻断 = 未结算会停 do_after 链，C/D 第四时代被跳过，不能作为前置）；concepts.json phase_8 定义同步修正。至此 8 个阶段全部写实（phase_1-8 完整 pipeline）。
+
+- **2026-08-10（phase_7 事件阶段完成）**:
+    - **phase_7_event 4 个子阶段占位全部写实**（flow.json）：`event_weather`（A 步：子 pipeline——adjust_weather_indicator 按事件牌 `<weather_trend>` 移动 `<weather_indicator>`（push_track step 描述 1-2 步向热/向冷，白线规则：越过白线停在极端格 hot/cold，结算极端格自身 effect）+ resolve_weather_effect do_after 引用 `<weather_effect>` trigger）、`event_card_resolution`（B 步：condition + `<event_card>.parts.<ontology::instant_content>` 引用——多文明奖励按座次、特定文明需明确识别、无人满足作废、少数要求移除 farm/boat）、`event_era_scoring`（C 步：score_era_category——per_player + push_track，description 含 9 类别单位定义（5 进程轨=圆盘格数字/进化=feature_marker 数/繁荣=活跃钻石/人口=tribe 数/扩张=有部落区域数）；remove_scoring_tile do_after——transfer 回 game_box）、`event_new_starting_player`（D 步：set_new_starting_player——state_change subject=starting_player，to=该类别得分最高者（平局含 0 分=现任起始玩家起座次顺序下一个平局者）；give_starting_monolith do_after——transfer 现任→新起始玩家）
+    - **weather_effect content 增强**：补「正面可放弃、负面必须执行、既无 food 也无 tribe 的玩家不受影响」（规则书 p34 原文）
+    - **concepts.json phase_7_event 定义同步**：「本阶段得分最高者」→「该计分类别中得分最高者」修正
+    - **weather_gauge slots「可放弃」结构化（用户确认）**：正面效果（warm/mild/rain）包 `CHOOSE_ONE(_skip, ...)`——warm=`CHOOSE_ONE(_skip, <activate_income_chip>)`、mild=`CHOOSE_ONE(_skip, <activate_income_chip>, <perform_activity>)`、rain=`CHOOSE_ONE(_skip, <perform_activity>)`；负面（hot/cold）保持 `CHOOSE_ONE(lose_food, remove_tribe)` 无 _skip 必须执行（规则书「正面可放弃、负面必须执行、斜杠=二选一」）。「无食物无部落豁免」仍靠 weather_effect 描述兜底（未加候选 condition，用户未要求）
+    - **白线规则澄清（用户口述 + 确认）**：白线位于轨道最外端（hot/cold 之外），白线内极端格自身效果 = 返还 1 食物 / 移除 1 部落二选一（正常停格时触发）；**白线外描绘的效果 = 移除 1 部落（单效果，无选择，不可换返还食物）**
+    - **weather_gauge 改 7 格（用户方案）**：白线外两端各加 1 个 slot——`hot_beyond`（白线外热端）/ `cold_beyond`（白线外冷端），效果 = `EXECUTE_ALL(移除 1 <tribe> → push_track 推回 <hot>/<cold>)`；越线时标记落在越线格停住（clamp，越 2 步也停在越线格不继续外移），结算后推回白线内极端格。白线位于 hot_beyond↔hot、cold_beyond↔cold 之间（白线内 5 格为正常天气格）。adjust_weather_indicator 描述与 weather_gauge 定义已同步（越线效果 ≠ 极端格 slot 效果：极端格=返还食物/移除部落二选一，越线=只移除部落）
+    - **weather_effect 触发点收紧（用户指出）**：condition 从「天气标记移动完成后」改为「事件阶段 A 步（<adjust_weather_indicator>）执行完毕」——**触发点 = A 步完成这一流程节点（一次），结算对象 = 标记所在格**（不用「最终所在」表述，结算时刻标记就在某格上）；越线格效果内的推回极端格移动不构成触发，避免推回后再次触发 hot/cold 格结算（玩家被二选一两次）
+    - **时代计分 9 类别 pipeline 化（用户指出）+ MATCH 枚举新增 ★（2026-08-10）**：`score_era_category` = per_player + **MATCH** pipeline。**ontology `<multiple_choice_enum>` 新增 MATCH 枚举**（用户命名）：由规则/局面事实决定哪个/哪些执行——**选择结构（options/type）持有单个 `<ontology::condition>` 与 type 同级（用户定稿：type 在上、condition 在其下相邻），描述匹配依据**（用户两次纠正：先否定「每个候选各带 condition」，再定稿「type 和 condition 同级，不管多少 options 只写一个 condition」）；**未命中的候选视为跳过，do_after 链上视为已完成（不阻断，与 _skip 一致——2026-08-10 补充）**；与 CHOOSE_ONE 的区别是规则判定非玩家决策，与 EXECUTE_ALL 的区别是命中才执行（MATCH_ONE 命名有局限性故用通用 MATCH）。**9 个类别步骤 = 操作步骤形态（`specifies: <ontology::push_track>` + 平铺 track/step，无 condition）**。`event_era_scoring` 是 trigger（specifies `<ontology::trigger>` + condition=流程位置「事件阶段 C 步」 + content.instant_content 包 pipeline [score_era_category, remove_scoring_tile]）。**已有文档 MATCH 迁移（2026-08-10 扫描）**：phase_5_site 的 3 个地点结算（resolve_gorge/glacier/mystic_oak，原 EXECUTE_ALL + 步骤级「至少 1 块已翻开」condition）迁移为 MATCH + type 级 condition（匹配依据=各地点类型是否已翻开）；扫描结论：其余 condition 均为 trigger 的 condition（归属合法，如 refill_market/procreation 步骤/内嵌 trigger），无 MATCH 场景；**resolve_migration_triggers 改为 trigger（2026-08-10，用户指出）**：specifies 从 action 改为 trigger（迁徙后规则自动结算，无玩家决策）；内部 displace_occupant（原 transfer+condition）与 fire_encampment_score（原 push_track+condition）改为 trigger 包装（specifies trigger + condition + content.instant_content 内嵌事件，参照 procreation_displace_occupant 写法）；weaken（无 condition、do_after displace_occupant 表达「驱逐发生才虚弱」）保持 state_change；develop_territory 原本就是 trigger。
+**setup 终局计分板块挂 replaces + 两步 pipeline（2026-08-10，用户指出）**：`prepare_final_scoring_tiles` 本质是「用计分板块替换终局计分区格下方印的默认分值空间」——两步 EXECUTE_ALL pipeline：① `draw_final_scoring_tiles`（random_draw 抽 3 张检视图标面，无 destination——中间态用自然语言指代，同 draw_pick_return_research 惯例）；② `place_final_scoring_tiles`（do_after，**只持有 `<ontology::replaces>`**——target=各图标格下方印的默认分值空间，with=`{ "<scoring_tile>": { "face": "face_up" } }`（分数面朝上）；**用户定稿：一个步骤只留一个顶级动作字段，transfer 与 replaces 平级不对，replaces 已完整表达语义（物理放置是替换的物理后果），去掉 transfer**）。final_scoring_area_icons 概念描述同步（每格下方印默认分值，被板块覆盖的格终局计分取板块分数，规则书「if a scoring tile is covering it」）。replaces 现有两处使用：deus_ex_machina（替换 tribe_death content）+ 此处。**表述约定（用户纠正）**：不引入「单位/单位数」术语，统一「每有 X 个 Y，得 Z 分」（Z = 板块显示的每个分值）
+    - **事件牌两效果模型（用户提出）**：`<event_card>` 携带两个具名效果 part、分两个环节结算——① 右上角 `<weather_trend>`（天气效果：A 步结算，移动 `<weather_indicator>`）：weather_trend 概念从纯指示器（specifies object）升级为带 `<ontology::effect>`（instant_effect → instant_content → push_track weather_gauge，step=本牌指示的 1-2 步向热/向冷，白线 clamp 规则入 description）；② 下半部分 `<event_effect>`（事件效果：B 步结算——2026-08-10 新增具名概念，specifies object + 携带 `<ontology::effect>`（instant_effect → condition/content，每张牌不同留实例），与 weather_trend 对称；最初曾用匿名 `<ontology::effect>` part，用户纠正「俩应该都有名」）。A 步 `adjust_weather_indicator` 引用 `<event_card>.parts.<weather_trend>`，B 步 `event_card_resolution` 引用 `<event_card>.parts.<event_effect>`——引用风格同 phase_5 的 `<site>.parts.<ontology::continuous_effect>`。**术语约定（用户纠正）**：requirement 就是 condition、bonus 就是 content——不创造 requirement/bonus 新术语，effect 的 trigger 结构自带；B 步不写占位 condition（原「见牌面要求」是空话），只引用 effect
+
+## 相关记忆
+
+- [[project-overview]] — 项目阶段与当前重点
+- [[ontology-design]] — 本体扩展约定
+- [[splendor-progress]] — 第一款游戏的实现参考
+- [[runtime-architecture]] — 后端接口与验证方式
+
+**Why:** 记录第二款游戏的形式化进度，避免下次重新开始评估。
+**How to apply:** 15 个主模组已全部实例化且骰子点数 15/15 确认。action 层已定稿：procreate（pipeline）、produce_material、transport_material（拆分）、gain_activation_die/gain_fate_die（condition 分支 + target/source 链）、draw_pick_return_research（N/K 参数化）、gain_research_card、install_research_card 等。写新 action 遵循：可执行分支用 condition 区分 + target 声明 + source 引用链，中间态不暴露（无 temporary_zone），豁免/哨兵类才用 description。

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pdftoppm *)",
+      "Bash(pdftotext *)",
+      "Bash(pdfimages *)",
+      "Bash(dotnet run *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet test *)",
+      "Bash(D:/dotnet/dotnet.exe run *)",
+      "Bash(D:/dotnet/dotnet.exe build *)",
+      "Bash(D:/dotnet/dotnet.exe test *)",
+      "Bash(/d/dotnet/dotnet.exe run *)",
+      "Bash(/d/dotnet/dotnet.exe build *)",
+      "Bash(/d/dotnet/dotnet.exe test *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)"
+    ]
+  }
+}
