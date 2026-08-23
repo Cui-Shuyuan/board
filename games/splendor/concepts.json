@@ -52,7 +52,8 @@
           "zh": "<gem>的外观描述。poker-chip 风格圆形厚片，中央印有一枚对应的图案，边缘一圈为对应的颜色。须包含 AI 向玩家解释「哪个是蓝宝石」时的关键视觉信息——颜色、质感、图案形状。",
           "en": "Visual description of <gem>. Poker-chip style round thick disc, with a corresponding symbol printed in the center and a ring of the corresponding color around the edge. Must include key visual information for AI to help players identify which color is which."
         }
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "diamond",
@@ -1115,4 +1116,3 @@
     }
   }
 }
-

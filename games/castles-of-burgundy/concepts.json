@@ -35,7 +35,8 @@
       "appearance": {
         "zh": "银灰色圆形金属质感硬币，直径约 2 厘米，正面有城堡纹样。",
         "en": "Silver-grey round metallic coin, about 2 cm across, with a castle emblem on the front."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "worker",
@@ -60,7 +61,8 @@
       "appearance": {
         "zh": "米色圆形厚纸板片，中央印有工人侧面头像图标。",
         "en": "Beige round cardboard chip with a worker's profile icon printed in the center."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "vp",

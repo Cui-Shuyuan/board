@@ -35,7 +35,8 @@
       "appearance": {
         "zh": "圆形硬币：1 元为银色，5 元为金色，中央有面值数字。",
         "en": "Round coins: silver for value 1, gold for value 5, with the denomination printed in the center."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "victory_point",
@@ -60,7 +61,8 @@
       "appearance": {
         "zh": "圆形小筹码：面值 1 或 5，颜色与图案按面值区分，可背面朝上放置在肖像上。",
         "en": "Small round chips with value 1 or 5, distinguished by color and design; may be placed face-down on the Portrait."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "worker",
@@ -85,7 +87,8 @@
       "appearance": {
         "zh": "木质小人形指示物，形象为岛上农场中的男女老幼，颜色按玩家人数区分的原木色。",
         "en": "Wooden meeple-like tokens depicting the diverse people of the island's farms."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "good",
@@ -114,13 +117,6 @@
           "en": "Unit of goods. E.g., 'produce 3 sugar barrels', 'sell 1 coffee barrel'."
         }
       },
-      "trade_price": {
-        "type": "integer",
-        "description": {
-          "zh": "此货物在<trading_house>的售价（元）。印在交易所的对应位置上。",
-          "en": "The sale price (coins) of this good at the <trading_house>, printed on the trading house."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -128,11 +124,13 @@
             "description": {
               "zh": "每种货物都有固定售价——出售时按此价从<bank>取钱。",
               "en": "Every good has a fixed sale price — the seller takes that many coins from the <bank>."
-            }
+            },
+            "type": "integer"
           }
         ],
         "optional": []
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "corn",
@@ -249,13 +247,6 @@
         "description": {
           "zh": "半圆槽数量，固定为 1。每块庄园至多 1 名工人。",
           "en": "Number of semicircle slots, fixed at 1. At most 1 worker per estate."
-        }
-      },
-      "crop": {
-        "type": "<good>",
-        "description": {
-          "zh": "此庄园种植的作物类型。决定生产阶段产出哪种<good>。",
-          "en": "The crop type of this estate, determining which <good> it produces in the production phase."
         }
       },
       "copies": {
@@ -439,45 +430,11 @@
         "zh": "波多黎各中的建筑板块——一种<ontology::tile>，共 49 座，开局全部按类型堆叠在<central_board>的对应位置上（<building_supply>）。建筑放在<island_board>的<city>（12 格）中。通用规则：每名玩家每种建筑至多建 1 座；只有被占据（半圆槽上有工人）的建筑才能使用特殊功能；建筑上的 VP 数字无论是否被占据都在终局计分；板块左下角第一个半圆内的数字是费用，建成后可忽略。建筑按区块分四层（顶层费用 1–2、第二层 3–5、第三层 6–9、底层大建筑 10），区块决定采石场折扣上限。三种建筑：<production_building>（生产货物）、<commercial_building>（特殊功能）、<large_commercial_building>（占 2 格、终局加成）。",
         "en": "Building tiles in Puerto Rico — a type of <ontology::tile>, 49 total, all stacked by type on their spaces on the <central_board> (<building_supply>) at setup. Buildings are placed in the <city> (12 spaces) of the <island_board>. General rules: each player may build each building type at most once; only occupied buildings (a worker on a semicircle) may use their special function; the VP number on a building scores at game end whether occupied or not; the number in the first semicircle is the cost, ignorable after building. Buildings sit in four board sections (top: cost 1–2; second: 3–5; third: 6–9; bottom: large buildings at 10), which cap the quarry discount. Three kinds: <production_building> (produce goods), <commercial_building> (special functions), <large_commercial_building> (take 2 spaces, endgame bonuses)."
       },
-      "cost": {
-        "type": "integer",
-        "description": {
-          "zh": "建筑费用（元）。<builder_role>阶段支付：基础费用 − 采石场折扣（≤ 区块上限）− 选角者特权 1 元。",
-          "en": "Building cost (coins). Paid in the <builder_role> phase: base cost − quarry discount (≤ section cap) − 1 for the chooser's privilege."
-        }
-      },
-      "vp": {
-        "type": "integer",
-        "description": {
-          "zh": "建筑提供的 VP（右上角数字）。终局计分时计入，无论是否被占据。",
-          "en": "The VP of this building (top-right number). Scored at game end, whether occupied or not."
-        }
-      },
       "semicircles": {
         "type": "integer",
         "description": {
           "zh": "建筑上的半圆槽数量（1–3），即最多可容纳的工人数，也参与<work_register>补充时的空槽计数。",
           "en": "Number of semicircle slots (1–3) on this building — its worker capacity, also counted when repopulating the <work_register>."
-        }
-      },
-      "board_section": {
-        "type": "enum",
-        "enum": [
-          "top",
-          "second",
-          "third",
-          "bottom"
-        ],
-        "description": {
-          "zh": "建筑在中央版图上所在的区块：top=顶层（费用 1–2）、second=第二层（费用 3–5）、third=第三层（费用 6–9）、bottom=底层大建筑（费用 10）。决定采石场折扣上限。",
-          "en": "The board section where this building sits: top (cost 1–2), second (cost 3–5), third (cost 6–9), bottom (large buildings, cost 10). Determines the quarry discount cap."
-        }
-      },
-      "max_quarry_discount": {
-        "type": "integer",
-        "description": {
-          "zh": "此建筑可享受的采石场折扣上限：top=1、second=2、third=3、bottom=4。",
-          "en": "The maximum quarry discount for this building: top=1, second=2, third=3, bottom=4."
         }
       },
       "city_spaces": {
@@ -502,28 +459,38 @@
             "description": {
               "zh": "每座建筑都有费用——购买时支付。",
               "en": "Every building has a cost paid on purchase."
-            }
+            },
+            "type": "integer"
           },
           {
             "id": "vp",
             "description": {
               "zh": "每座建筑都提供 VP——终局计分。",
               "en": "Every building provides VP for final scoring."
-            }
+            },
+            "type": "integer"
           },
           {
             "id": "board_section",
             "description": {
               "zh": "每座建筑都属于中央版图的某个区块——决定采石场折扣上限。",
               "en": "Every building belongs to a board section, which caps the quarry discount."
-            }
+            },
+            "type": "enum",
+            "enum": [
+              "top",
+              "second",
+              "third",
+              "bottom"
+            ]
           },
           {
             "id": "max_quarry_discount",
             "description": {
               "zh": "每座建筑的采石场折扣上限由其区块决定。",
               "en": "Each building's quarry discount cap is set by its section."
-            }
+            },
+            "type": "integer"
           }
         ],
         "optional": []
@@ -547,13 +514,6 @@
       "description": {
         "zh": "在<craftsman_role>阶段生产货物的<building>，共 20 座（6 种）。生产规则：每种货物（除<corn>）的生产量 = min(该作物被占据的<estate_tile>数, 该作物所有生产建筑上被占据的半圆槽数)——庄园和生产建筑都要有工人，缺一不可。玉米不需要生产建筑。生产建筑的半圆槽数即最大产量（<small_fruit_warehouse>/<small_sugar_mill> 1、<large_fruit_warehouse>/<large_sugar_mill> 2、<tobacco_storage>/<coffee_roaster> 3）。",
         "en": "A <building> that produces goods in the <craftsman_role> phase — 20 buildings of 6 types. Production rule: for each good (except <corn>), production = min(occupied <estate_tile>s of that crop, occupied semicircles across that crop's production buildings) — both the estates and the building must be occupied. Corn needs no production building. A production building's semicircle count is its maximum output (<small_fruit_warehouse>/<small_sugar_mill> 1, <large_fruit_warehouse>/<large_sugar_mill> 2, <tobacco_storage>/<coffee_roaster> 3)."
-      },
-      "produces": {
-        "type": "<good>",
-        "description": {
-          "zh": "此建筑生产的货物类型。",
-          "en": "The <good> type this building produces."
-        }
       },
       "constraints": {
         "required": [
@@ -1617,13 +1577,6 @@
         "zh": "波多黎各中的角色卡——一种<ontology::card>，共 8 张：<planter_card>、<builder_card>、<recruiter_card>、<craftsman_card>、<trader_card>、<captain_card> 各 1 张 + <adventurer_card> 2 张。开局摆在<role_card_area>（3 人局只用 6 张——去掉 2 张冒险家；4 人局 7 张——去掉 1 张冒险家；5 人局全用）。每回合每名玩家选 1 张：选角者执行该角色的行动并享受特权，其他玩家按顺时针只执行行动；除船长外，执行行动是可选的——不能做或不想做的玩家跳过该角色。角色卡留在选角者面前直到回合结束。回合结束时，未被选中的角色卡各放 1 元（由旧总督执行），下次选到该卡的人拿走上面的钱。",
         "en": "Role cards in Puerto Rico — a type of <ontology::card>, 8 in total: one each of <planter_card>, <builder_card>, <recruiter_card>, <craftsman_card>, <trader_card>, <captain_card>, plus 2 <adventurer_card>s. At setup they sit in the <role_card_area> (3 players use 6 cards — both Adventurers removed; 4 players use 7 — one Adventurer removed; 5 players use all 8). Each round every player picks 1: the chooser performs the role's action with its privilege; the others, clockwise, perform only the action; the role card stays in front of the chooser until the round ends. At round end, 1 coin is placed on each unchosen role card (by the outgoing governor); whoever later picks such a card takes its coins."
       },
-      "advantage": {
-        "type": "string",
-        "description": {
-          "zh": "此角色的特权——只有选角者享受，其他玩家仅执行行动。",
-          "en": "This role's privilege — enjoyed only by the chooser; others perform the action alone."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -1631,7 +1584,8 @@
             "description": {
               "zh": "每张角色卡都有特权说明。",
               "en": "Every role card has a privilege description."
-            }
+            },
+            "type": "string"
           }
         ],
         "optional": []
@@ -1856,13 +1810,6 @@
         "zh": "波多黎各中的货船——承载货舱的一种<ontology::board>，共 5 艘，容量（货舱格数）4–8。按人数用 3 艘：3 人局 4/5/6、4 人局 5/6/7、5 人局 6/7/8，停在<port>。装船规则：每艘船只能装 1 种货物；不同船不能装同一种货物；空船之间选择时必选能装最多桶的那艘；满载的船在船长阶段结束时清空（货物回<goods_supply>，船留在港口继续使用）；部分装载的船保留货物留到下个装运阶段。",
         "en": "The cargo ships of Puerto Rico — a type of <ontology::board> that hosts cargo holds, 5 in total, capacity (hold spaces) 4–8. Three are used per player count: 4/5/6 for 3 players, 5/6/7 for 4, 6/7/8 for 5; they dock in the <port>. Shipping rules: each ship carries only 1 type of good; no two ships may carry the same type; when choosing among empty ships a player must pick the one that can carry the most barrels; full ships are emptied at the end of the captain phase (barrels return to <goods_supply>, the ships remain in port for later use); partially loaded ships keep their cargo into the next shipment phase."
       },
-      "capacity": {
-        "type": "integer",
-        "description": {
-          "zh": "货舱容量（格数）。装满后在船长阶段末清空，船留在港口。",
-          "en": "Cargo hold capacity (spaces). A full ship is emptied at the end of the captain phase and remains in port."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -1870,7 +1817,8 @@
             "description": {
               "zh": "每艘货船都有容量。",
               "en": "Every cargo ship has a capacity."
-            }
+            },
+            "type": "integer"
           }
         ],
         "optional": []

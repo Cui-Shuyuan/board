@@ -565,7 +565,8 @@
       "description": {
         "zh": "煤方块（共 100）。消耗场景：建造含煤成本的<industry_tile>与每条<rail_link>。取煤：必须连通最近未翻面<coal_mine>（免费）；否则连通带煤图标地点（<merchant_space>）从<coal_market>最便宜槽买，市场空则 £8/块。煤/铁方块只能在对应矿山/铁厂**建造当刻**流入市场——之后再连通也不能出售。",
         "en": "Coal cubes (100 total). Consumed when building coal-costing <industry_tile>s and each <rail_link>. Obtaining coal: connect to the nearest unflipped <coal_mine> (free); otherwise, connected to a coal-icon location (a <merchant_space>), buy from the <coal_market> starting from the cheapest slot, or £8 per cube when the market is empty. Coal/iron cubes flow to their markets **only at the moment** the mine/works is built — connecting later does not allow selling."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "iron",
@@ -582,7 +583,8 @@
       "description": {
         "zh": "铁方块（共 90）。消耗场景：<develop>（每移除板块 1 铁）与建造含铁成本的<industry_tile>。取铁：**无需连通**——任何未翻面<iron_works>免费取（每块可来自不同厂）；无未翻面铁厂时从<iron_market>最便宜槽买，市场空则 £6/块。",
         "en": "Iron cubes (90 total). Consumed by <develop> (1 per removed tile) and when building iron-costing <industry_tile>s. Obtaining iron: **no connection required** — take freely from any unflipped <iron_works> (each cube may come from a different one); with none unflipped, buy from the <iron_market> starting from the cheapest slot, or £6 per cube when the market is empty."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "beer_barrel",
@@ -599,7 +601,8 @@
       "description": {
         "zh": "啤酒桶（共 30）。产出：<brewery>建造时放置（运河时代 1 桶/铁路时代 2 桶）、<merchant_beer_space>里的商人啤酒。消耗场景：<sell>（每个板块按右上角数量——陶器 2、其余 1）与铁路时代双铁（1 桶酒厂啤酒）。来源三分：自己任意未翻面<brewery>（无需连通）/对手未翻面<brewery>（连通到自己<network>某地点）/商人啤酒（仅<sell>且卖到旁邻商人时，每板块最多 1 桶，用后拿位置加成）。",
         "en": "Beer barrels (30 total). Produced: placed when a <brewery> is built (1 in the Canal Era / 2 in the Rail Era) and as merchant beer in <merchant_beer_space>s. Consumed by <sell> (per tile's top-right quantity — pottery 2, others 1) and by a Rail Era double link (1 brewery beer). Three sources: your own unflipped <brewery> (no connection needed) / an opponent's unflipped <brewery> (connected to a location in your <network>) / merchant beer (only for <sell> to the adjacent merchant, at most 1 barrel per tile, granting the location bonus)."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "money",
@@ -616,7 +619,8 @@
       "description": {
         "zh": "货币（£1/£5/£10/£20 面额）。花费时放到自己的<character_tile>上（回合末回<bank>）。用途：<build>成本、链接成本、<develop>的铁钱、市场购煤/铁。终局计分：每 £4 兑 1 分（上限 15 分）。",
         "en": "Currency (£1/£5/£10/£20 denominations). When spent it goes onto your <character_tile> (back to the <bank> at round end). Used for: <build> costs, link costs, buying iron for <develop>, buying market coal/iron. Final scoring: 1 VP per £4 (max 15 VPs)."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "card",
@@ -1648,7 +1652,10 @@
                   "zh": "£30",
                   "en": "£30",
                   "numeric": [
-                    {"value": 30, "unit": "£"}
+                    {
+                      "value": 30,
+                      "unit": "£"
+                    }
                   ]
                 }
               },
@@ -1669,7 +1676,10 @@
                   "zh": "3 级",
                   "en": "3 levels",
                   "numeric": [
-                    {"value": 3, "unit": "级"}
+                    {
+                      "value": 3,
+                      "unit": "级"
+                    }
                   ]
                 }
               }
@@ -1726,7 +1736,14 @@
                   "zh": "1 张",
                   "en": "1",
                   "numeric": [
-                    {"when": {"zh": "万能地点卡、地点卡", "en": "wild location card"}, "value": 1, "unit": "张"}
+                    {
+                      "when": {
+                        "zh": "万能地点卡、地点卡",
+                        "en": "wild location card"
+                      },
+                      "value": 1,
+                      "unit": "张"
+                    }
                   ]
                 }
               },
@@ -1748,7 +1765,14 @@
                   "zh": "1 张",
                   "en": "1",
                   "numeric": [
-                    {"when": {"zh": "万能产业卡、产业卡", "en": "wild industry card"}, "value": 1, "unit": "张"}
+                    {
+                      "when": {
+                        "zh": "万能产业卡、产业卡",
+                        "en": "wild industry card"
+                      },
+                      "value": 1,
+                      "unit": "张"
+                    }
                   ]
                 }
               }
@@ -1946,7 +1970,12 @@
         "en": "No Tiles on Board"
       },
       "aliases": {
-        "zh": ["没有任何存在", "无 link 无建筑", "板上没有任何板块", "板上没有板块"]
+        "zh": [
+          "没有任何存在",
+          "无 link 无建筑",
+          "板上没有任何板块",
+          "板上没有板块"
+        ]
       },
       "abstract": false,
       "description": {

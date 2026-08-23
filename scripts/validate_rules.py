@@ -346,6 +346,12 @@ class Validator:
                     if isinstance(cid, str) and cid.startswith("<"):
                         for ref in REF_RE.findall(cid):
                             self.check_ref(ref, f"{source} › {path} › id")
+                    # E18: constraints 条目中 type 不允许再写概念引用
+                    #      （<good>/<object> 等）；概念身份必须由 extends/specifies/instance_of 表达。
+                    tval = obj.get("type")
+                    if isinstance(tval, str) and tval.startswith("<"):
+                        self.err(f"{source} › {path} › type",
+                                 f"E18 constraints 中 type 不支持概念引用 {tval}——概念身份用 extends/specifies/instance_of 表达")
 
                 # E03: 层级关系引用
                 for rel in ("extends", "specifies", "instance_of"):
@@ -357,6 +363,26 @@ class Validator:
                         else:
                             for ref in REF_RE.findall(val):
                                 self.check_ref(ref, f"{source} › {path} › {rel}")
+                # E17: 字段不得同时在外层定义又在本概念 constraints 中重复声明
+                #      有自己的必填项/选填项的概念，应在 required/optional 条目内完成定义，
+                #      不要在外层再写一份字段定义。
+                if not in_cons and isinstance(obj.get("constraints"), dict):
+                    cons = obj.get("constraints", {})
+                    inner = set()
+                    for slot in ("required", "optional"):
+                        for item in cons.get(slot, []):
+                            fid = item if isinstance(item, str) else item.get("id")
+                            if isinstance(fid, str):
+                                inner.add(fid.strip("[]"))
+                    struct = {"id", "name", "abstract", "description", "definition",
+                              "constraints", "extends", "specifies", "instance_of",
+                              "level", "meta"}
+                    for key in obj:
+                        if key in struct or key.startswith("$"):
+                            continue
+                        if self.norm_field(key) in inner:
+                            self.err(f"{source} › {path} › {oid}",
+                                     f"E17 字段 {key} 同时在外层和 constraints.{'required' if self.norm_field(key) in {i.get('id') if isinstance(i,dict) else i for i in cons.get('required',[])} else 'optional'} 中定义——请在 required/optional 条目内完成定义，不要外层重复声明")
                 # E05: 选择结构 (有 options) 的 type 必须是完整引用
                 #      ontology 字段声明的 type (string/enum/<object>) 不检查
                 tval = obj.get("type")

@@ -36,7 +36,8 @@
       "description": {
         "zh": "四季物语中的主要资源与计分依据。水晶用于支付部分力量卡的召唤/激活费用；终局时每 1 个水晶等于 1 点威望分。玩家用水晶轨上的术士标记表示水晶数量；游戏过程中水晶不能低于 0，但终局总分可以为负。",
         "en": "The main resource and scoring unit in Seasons. Crystals pay some power-card summoning/activation costs; at game end each crystal is worth 1 prestige point. Players track crystals with a sorcerer token on the crystal track. Crystals can never go below 0 during the game, though the final score may be negative."
-      }
+      },
+      "limited_supply": false
     },
     {
       "id": "prestige_point",
@@ -62,7 +63,8 @@
       "description": {
         "zh": "四季物语中的能量资源，共四种：<water_energy>、<earth_energy>、<fire_energy>、<air_energy>。能量放在个人板的<energy_reserve>中，上限为 7（拥有Bespelled Grimoire（附魔魔典）时为 10）。能量用于召唤和激活力量卡，也可通过转化变为水晶。",
         "en": "The energy resource in Seasons, of four types: <water_energy>, <earth_energy>, <fire_energy>, and <air_energy>. Energy is stored in the <energy_reserve> of a player board, with a limit of 7 (or 10 with the Bespelled Grimoire（附魔魔典）). Energy pays power-card summoning/activation costs and can be transmuted into crystals."
-      }
+      },
+      "limited_supply": false
     },
     {
       "id": "water_energy",

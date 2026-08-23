@@ -658,7 +658,10 @@
                           "zh": "抽 3 张选 1 张",
                           "en": "Draw 3, keep 1",
                           "numeric": [
-                            {"value": 3, "unit": "张"}
+                            {
+                              "value": 3,
+                              "unit": "张"
+                            }
                           ]
                         },
                         "<ontology::per_player>": true
@@ -882,7 +885,13 @@
                           "zh": "每个研究牌堆各抽 2 张（5 堆共 10 张）。",
                           "en": "2 from each of the 5 research decks (10 total).",
                           "numeric": [
-                            {"value": 2, "unit": "张", "per": {"zh": "每种研究牌"}}
+                            {
+                              "value": 2,
+                              "unit": "张",
+                              "per": {
+                                "zh": "每种研究牌"
+                              }
+                            }
                           ]
                         },
                         "<ontology::per_player>": true
@@ -1888,12 +1897,40 @@
             "do_after": "era_loop",
             "score_table": {
               "by_card": [
-                {"what": "scoring_tile", "zh": "计分板块", "aliases": ["计分瓦片"], "rule": "时代结束与终局计分都按板块显示的类别计分，板块显示的分值即该类别的每个计分项分值。终局计分板块覆盖终局计分区对应图标格的默认分值，取板块上的分数。"},
-                {"what": "statue", "zh": "雕像", "aliases": ["雕像计分"], "rule": "雕像计分 = 已建造雕像数 × <favor_of_ager_track> 上自己圆盘所在位置印的分数。<phase_8_income> 每时代结算一次，第四时代进入终局计分前再结算一次（<score_statues>）。"},
-                {"what": "storage_area", "zh": "存储区钻石", "aliases": ["钻石"], "rule": "繁荣类别计分（<score_prosperity>）：活跃钻石数 × 该类别的分值。活跃钻石来源：<food_space> 每 3 枚 1 钻石、<money_space> 每 2 枚 1 钻石（食物+钱币合计最多 5 个）、已建<settlement>露出的凹槽钻石（每格 1/2/3 颗）、<storage_area> 每列行 1-2 间 1 颗与行 2-3 间 2 颗（上下相邻两格均存放材料时激活）。"}
+                {
+                  "what": "scoring_tile",
+                  "zh": "计分板块",
+                  "aliases": [
+                    "计分瓦片"
+                  ],
+                  "rule": "时代结束与终局计分都按板块显示的类别计分，板块显示的分值即该类别的每个计分项分值。终局计分板块覆盖终局计分区对应图标格的默认分值，取板块上的分数。"
+                },
+                {
+                  "what": "statue",
+                  "zh": "雕像",
+                  "aliases": [
+                    "雕像计分"
+                  ],
+                  "rule": "雕像计分 = 已建造雕像数 × <favor_of_ager_track> 上自己圆盘所在位置印的分数。<phase_8_income> 每时代结算一次，第四时代进入终局计分前再结算一次（<score_statues>）。"
+                },
+                {
+                  "what": "storage_area",
+                  "zh": "存储区钻石",
+                  "aliases": [
+                    "钻石"
+                  ],
+                  "rule": "繁荣类别计分（<score_prosperity>）：活跃钻石数 × 该类别的分值。活跃钻石来源：<food_space> 每 3 枚 1 钻石、<money_space> 每 2 枚 1 钻石（食物+钱币合计最多 5 个）、已建<settlement>露出的凹槽钻石（每格 1/2/3 颗）、<storage_area> 每列行 1-2 间 1 颗与行 2-3 间 2 颗（上下相邻两格均存放材料时激活）。"
+                }
               ],
               "aliases": [
-                {"zh": "终局计分", "whats": ["scoring_tile", "statue", "storage_area"]}
+                {
+                  "zh": "终局计分",
+                  "whats": [
+                    "scoring_tile",
+                    "statue",
+                    "storage_area"
+                  ]
+                }
               ],
               "note": "终局计分沿 11 格推进：9 个类别格（技术/声望/知识/建造/文化/进化/繁荣/人口/扩张）+ 控制台 A（分区计分）+ 控制台 B（point bonus 卡）。平局先比模组升级数、再比座位顺序。分数轨跑完一圈拿 1 个 100 分标记。"
             },
@@ -2070,16 +2107,6 @@
         "zh": "进程轨奖励线（印在轨上的奖励阈值）的接口概念：每条奖励线是一个 <track_bonus> 实例，声明自己的触发格（trigger_slot）与奖励效果（<ontology::content>）。共 4 种奖励类型：① <upgrade_main_module>（模组两个<activation_die>费用点数之一与本轨 bonus_die_value 一致即可选择，见 <technology_track>.bonus_die_value 等路径）；② <favor_of_ager_track>推进 1 格或执行 1 个<income_chip>效果（二选一）；③ 翻 1 个<stage_tile>到激活面或得 3 分（二选一）；④ 得 3 分。",
         "en": "Interface concept for the progress-track bonus lines (bonus thresholds printed on the tracks): each bonus line is a <track_bonus> instance declaring its trigger space (trigger_slot) and bonus effect (<ontology::content>). Four bonus types: ① upgrade 1 main module (selectable if one of its two activation die cost values matches this track's bonus_die_value, see paths like <technology_track>.bonus_die_value); ② advance the Favor of Agera track 1 step OR perform 1 income chip action; ③ flip 1 stage tile to active OR gain 3 success points; ④ gain 3 success points."
       },
-      "trigger_slot": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        },
-        "description": {
-          "zh": "本奖励线的触发格（可多个）：进程轨上的路径式格引用，如 <progress_track>.progress_space[1]（5 轨同布局，引用接口概念 <progress_track> 即覆盖全部 5 轨）。被 <ontology::condition> 引用——越过其中任一格即触发。",
-          "en": "This bonus line's trigger spaces (may be multiple): path-style space references on a progress track, e.g. <progress_track>.progress_space[1] (all five tracks share the layout, so referencing the interface concept <progress_track> covers all of them). Referenced by <ontology::condition> — crossing any of them triggers."
-        }
-      },
       "<ontology::condition>": {
         "zh": "本玩家的 <progress_marker> 越过 this.trigger_slot 声明的任一奖励线格。",
         "en": "A player's <progress_marker> crosses any bonus-line space declared by this.trigger_slot."
@@ -2091,6 +2118,10 @@
             "description": {
               "zh": "本奖励线的触发格（可多个：路径式格引用数组，被 <ontology::condition> 引用）。",
               "en": "This bonus line's trigger spaces (may be multiple: array of path-style references, referenced by <ontology::condition>)."
+            },
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           },
           {
@@ -4970,4 +5001,3 @@
     }
   ]
 }
-

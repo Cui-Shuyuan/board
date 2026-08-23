@@ -36,7 +36,8 @@
           "en": "Unit of measurement for food: 'marker'."
         }
       },
-      "component": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>",
+      "limited_supply": true
     },
     {
       "id": "money",
@@ -62,7 +63,8 @@
           "zh": "钱币的计量单位为「个」。",
           "en": "Unit of measurement for money: 'marker'."
         }
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "stored_material",
@@ -107,7 +109,8 @@
         "type": "string",
         "default": "个"
       },
-      "component": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>",
+      "limited_supply": true
     },
     {
       "id": "wood",
@@ -199,7 +202,8 @@
       "lucky_harvest_die": {
         "zh": "1 或 2",
         "en": "1 or 2"
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "stone",
@@ -360,7 +364,8 @@
       "lucky_harvest_die": {
         "zh": "3 或 4",
         "en": "3 or 4"
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "salt",
@@ -592,7 +597,8 @@
           "en": "Which <stored_material> this marker will become when transported, determined by the material tile of its region."
         }
       },
-      "component": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>",
+      "limited_supply": true
     },
     {
       "id": "feature_marker",
@@ -1005,7 +1011,8 @@
         "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的创意格（<idea_space>）上。",
         "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on the idea space (<idea_space>) of your console."
       },
-      "component": "<octagonal_pillar>"
+      "component": "<octagonal_pillar>",
+      "limited_supply": true
     },
     {
       "id": "planning_marker",
@@ -1031,7 +1038,8 @@
           "en": "value matches the required die (taken from the dice space of that value)"
         },
         "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "focus_marker",
@@ -1057,7 +1065,8 @@
           "en": "any value"
         },
         "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "card_name",
@@ -1087,13 +1096,6 @@
       "appearance": {
         "zh": "纸质卡牌（共 160 张，5 种类型各 32 张：建造蓝、洞悉黄、突变绿、成就紫、发明棕，左下角印有牌编号）。纵向三段：上三分之一为能力区（<research_ability>，安装后唯一露出），中部为 5 个费用格（<cost_space>，格下方印有分数），下部为即时奖励（<instant_bonus>）。",
         "en": "A paper card (160 in total, 5 types of 32 each: Building blue, Insight yellow, Mutation green, Achievement purple, Invention brown; card number printed bottom-left). Three vertical sections: ability area in the top third (<research_ability>, the only visible part after installation), 5 cost spaces in the middle (<cost_space>, score printed below each), instant bonus at the bottom (<instant_bonus>)."
-      },
-      "card_no": {
-        "type": "string",
-        "description": {
-          "zh": "研究牌编号（如 C16），见实例。",
-          "en": "Research card number (e.g., C16), see the instance."
-        }
       },
       "parts": [
         "<card_name>",
@@ -1130,24 +1132,31 @@
           }
         }
       ],
-      "card_type": {
-        "type": "enum",
-        "enum": [
-          "building",
-          "insight",
-          "mutation",
-          "achievement",
-          "invention"
-        ],
-        "description": {
-          "zh": "研究牌类型：建造、洞悉、突变、成就、发明。",
-          "en": "Research card type: Building, Insight, Mutation, Achievement, Invention."
-        }
-      },
       "constraints": {
         "required": [
-          "card_no",
-          "card_type",
+          {
+            "id": "card_no",
+            "type": "string",
+            "description": {
+              "zh": "研究牌编号（如 C16），见实例。",
+              "en": "Research card number (e.g., C16), see the instance."
+            }
+          },
+          {
+            "id": "card_type",
+            "type": "enum",
+            "description": {
+              "zh": "研究牌类型：建造、洞悉、突变、成就、发明。",
+              "en": "Research card type: Building, Insight, Mutation, Achievement, Invention."
+            },
+            "enum": [
+              "building",
+              "insight",
+              "mutation",
+              "achievement",
+              "invention"
+            ]
+          },
           "<research_ability>",
           "<cost_space>",
           "<success_point>",
@@ -1736,14 +1745,6 @@
         "zh": "正八边形纸板板块，一角为弧形指取角。翻开前背面朝上；正面左上角印有翻开分数，中央为地点插画。",
         "en": "A regular-octagon cardboard tile with one rounded corner for easy pickup. Face down until revealed; the front has the reveal score in the top-left corner and a site illustration in the center."
       },
-      "score": {
-        "type": "integer",
-        "default": null,
-        "description": {
-          "zh": "翻开此地点时立即获得的分数（标记在正面左上角）。",
-          "en": "Success points gained immediately when this site is revealed (marked in the top-left corner of its front side)."
-        }
-      },
       "<ontology::effect>": {
         "<ontology::instant_effect>": {
           "target": "翻开本地点的<ontology::player>",
@@ -1764,7 +1765,9 @@
             "description": {
               "zh": "翻开此地点时翻开者获得的分数（所有地点都有分）。",
               "en": "Points the revealer gains when this site is revealed (every site has points)."
-            }
+            },
+            "type": "integer",
+            "default": null
           }
         ],
         "optional": []
@@ -2593,27 +2596,6 @@
         "en": "A <ontology::track> on the <progress_board> recording a player's progress level. Crossing a bonus threshold while advancing settles <track_bonus> (4 bonus types, see its definition); exceeding the end grants 2 points per step. The five progress tracks (<technology_track> / <prestige_track> / <knowledge_track> / <construction_track> / <culture_track>) differ only in this concept's track_type and bonus_die_value parameters."
       },
       "<ontology::overflow_compensation>": "<advance_beyond_end>",
-      "track_type": {
-        "type": "enum",
-        "enum": [
-          "technology",
-          "prestige",
-          "knowledge",
-          "construction",
-          "culture"
-        ],
-        "description": {
-          "zh": "本轨的类型，5 条进程轨各实现其一。",
-          "en": "This track's type; each of the five progress tracks implements one."
-        }
-      },
-      "bonus_die_value": {
-        "type": "integer",
-        "description": {
-          "zh": "本轨对应的<activation_die>点数，用于 <track_bonus> 升级模组奖励的匹配：费用含此点数的主模组可升级（路径式引用如 <technology_track>.bonus_die_value）。",
-          "en": "The activation die value this track corresponds to, used for matching the upgrade-module track bonus (<track_bonus>): main modules whose cost includes this value are upgradable (referenced as paths like <technology_track>.bonus_die_value)."
-        }
-      },
       "contains": {
         "type": "<progress_marker>[]",
         "description": {
@@ -2638,14 +2620,23 @@
             "description": {
               "zh": "本轨的类型（technology / prestige / knowledge / construction / culture 之一）。",
               "en": "This track's type (one of technology / prestige / knowledge / construction / culture)."
-            }
+            },
+            "type": "enum",
+            "enum": [
+              "technology",
+              "prestige",
+              "knowledge",
+              "construction",
+              "culture"
+            ]
           },
           {
             "id": "bonus_die_value",
             "description": {
               "zh": "本轨对应的<activation_die>点数（规则书：奖励阈值上印的数值）。",
               "en": "The activation die value this track corresponds to (rulebook: the value printed on the bonus threshold)."
-            }
+            },
+            "type": "integer"
           }
         ],
         "optional": []
@@ -3340,14 +3331,39 @@
         "formula": {
           "op": "+",
           "operands": [
-            {"op": "*", "operands": [{"var": "players", "zh": "玩家数", "en": "players"}, 2]},
+            {
+              "op": "*",
+              "operands": [
+                {
+                  "var": "players",
+                  "zh": "玩家数",
+                  "en": "players"
+                },
+                2
+              ]
+            },
             1
           ]
         },
         "examples": [
-          {"zh": "2 人局", "bindings": {"players": 2}},
-          {"zh": "3 人局", "bindings": {"players": 3}},
-          {"zh": "4 人局", "bindings": {"players": 4}}
+          {
+            "zh": "2 人局",
+            "bindings": {
+              "players": 2
+            }
+          },
+          {
+            "zh": "3 人局",
+            "bindings": {
+              "players": 3
+            }
+          },
+          {
+            "zh": "4 人局",
+            "bindings": {
+              "players": 4
+            }
+          }
         ]
       }
     },
@@ -4448,8 +4464,14 @@
         "en": "Face-Up Research Stack"
       },
       "aliases": {
-        "zh": ["正面牌堆", "正面朝上牌堆", "明牌堆"],
-        "en": ["face-up pile"]
+        "zh": [
+          "正面牌堆",
+          "正面朝上牌堆",
+          "明牌堆"
+        ],
+        "en": [
+          "face-up pile"
+        ]
       },
       "abstract": false,
       "description": {
@@ -4577,4 +4599,3 @@
     }
   }
 }
-
