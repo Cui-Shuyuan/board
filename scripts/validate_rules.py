@@ -109,6 +109,26 @@ class Validator:
             k = "<" + k.split("::")[-1]
         return k
 
+    @staticmethod
+    def constraint_fid(item) -> str | None:
+        """从 constraints.required/optional 条目中取字段 ID。
+
+        支持三种形态:
+          - 纯字符串: "good" / "<work_slot>"
+          - 传统对象: { "id": "<good>", "description": ... }
+          - 概念增强: { "<good>": { "description": ... } } —— 概念本身作 key，
+            值对象是对该概念的语境增强，不是重复定义。
+        """
+        if isinstance(item, str):
+            return item
+        if isinstance(item, dict):
+            if "id" in item:
+                return item.get("id")
+            ckeys = [k for k in item if k.startswith("<")]
+            if len(ckeys) == 1:
+                return ckeys[0]
+        return None
+
     def is_defined(self, ref: str) -> bool:
         return ref in self.game_ids or ref in self.ontology_ids
 
@@ -240,7 +260,7 @@ class Validator:
                     merge_impl(obj, top)
                     for slot in ("required", "optional"):
                         for item in obj.get("constraints", {}).get(slot, []):
-                            fid = item if isinstance(item, str) else item.get("id")
+                            fid = self.constraint_fid(item)
                             if isinstance(fid, str):
                                 top.add(fid.strip("[]"))
                     # E12: 字段出现次数统计 (专属参数判定; 只统计概念定义文件,
@@ -315,6 +335,13 @@ class Validator:
         # E01b: 文件结构约定 (顶层键)
         self.check_structure(source, data)
 
+        # E20: 本文件已定义的概念 id 集合 (用于检测普通字段名撞概念名)
+        local_concept_ids: set[str] = set()
+        if source.endswith("concepts.json"):
+            arr = data.get("concepts") if is_ontology else data.get("objects", [])
+            if isinstance(arr, list):
+                local_concept_ids = {o.get("id") for o in arr if isinstance(o, dict) and isinstance(o.get("id"), str)}
+
         def walk(obj, path):
             if isinstance(obj, dict):
                 if path == "$.meta":
@@ -342,10 +369,16 @@ class Validator:
                                  "E10 _skip 必须带 description")
                 else:
                     # constraints 条目: 字段 ID 若是 <...> 引用格式则验证定义
+                    # 支持传统 {id: "<good>"} 与概念增强 { "<good>": { "description": ... } }
                     cid = obj.get("id")
                     if isinstance(cid, str) and cid.startswith("<"):
                         for ref in REF_RE.findall(cid):
                             self.check_ref(ref, f"{source} › {path} › id")
+                    else:
+                        ckeys = [k for k in obj if k.startswith("<")]
+                        if len(ckeys) == 1:
+                            for ref in REF_RE.findall(ckeys[0]):
+                                self.check_ref(ref, f"{source} › {path} › {ckeys[0]}")
                     # E18: constraints 条目中 type 不允许再写概念引用
                     #      （<good>/<object> 等）；概念身份必须由 extends/specifies/instance_of 表达。
                     tval = obj.get("type")
@@ -363,6 +396,20 @@ class Validator:
                         else:
                             for ref in REF_RE.findall(val):
                                 self.check_ref(ref, f"{source} › {path} › {rel}")
+                # E20: 普通字段名不得与本文件已定义概念同名
+                #      例如概念 <good> 已定义，就不能再写 "good": "<corn>"，应写 "<good>": "<corn>"
+                if not in_cons and ".slots[" not in path and local_concept_ids:
+                    _struct = {"id", "name", "abstract", "description", "definition",
+                               "constraints", "extends", "specifies", "instance_of",
+                               "level", "meta"}
+                    for key in obj:
+                        if key.startswith("<") or key.startswith("$") or key in _struct:
+                            continue
+                        base = key.strip("[]")
+                        if base in local_concept_ids:
+                            self.err(f"{source} › {path} › {key}",
+                                     f"E20 字段名 {key} 与本文件已定义概念 <{base}> 同名——若表示该概念请用 <{base}> 作 key，否则请换字段名")
+
                 # E17: 字段不得同时在外层定义又在本概念 constraints 中重复声明
                 #      有自己的必填项/选填项的概念，应在 required/optional 条目内完成定义，
                 #      不要在外层再写一份字段定义。
@@ -371,7 +418,7 @@ class Validator:
                     inner = set()
                     for slot in ("required", "optional"):
                         for item in cons.get(slot, []):
-                            fid = item if isinstance(item, str) else item.get("id")
+                            fid = self.constraint_fid(item)
                             if isinstance(fid, str):
                                 inner.add(fid.strip("[]"))
                     struct = {"id", "name", "abstract", "description", "definition",
@@ -382,7 +429,7 @@ class Validator:
                             continue
                         if self.norm_field(key) in inner:
                             self.err(f"{source} › {path} › {oid}",
-                                     f"E17 字段 {key} 同时在外层和 constraints.{'required' if self.norm_field(key) in {i.get('id') if isinstance(i,dict) else i for i in cons.get('required',[])} else 'optional'} 中定义——请在 required/optional 条目内完成定义，不要外层重复声明")
+                                     f"E17 字段 {key} 同时在外层和 constraints.{'required' if self.norm_field(key) in {self.constraint_fid(i) for i in cons.get('required',[])} else 'optional'} 中定义——请在 required/optional 条目内完成定义，不要外层重复声明")
                 # E05: 选择结构 (有 options) 的 type 必须是完整引用
                 #      ontology 字段声明的 type (string/enum/<object>) 不检查
                 tval = obj.get("type")
@@ -517,7 +564,7 @@ class Validator:
                 continue
             for slot in ("required", "optional"):
                 for item in c.get("constraints", {}).get(slot, []):
-                    fid = item if isinstance(item, str) else item.get("id")
+                    fid = self.constraint_fid(item)
                     if (isinstance(fid, str) and not fid.startswith("<")
                             and fid not in all_fields(cid, memo)):
                         self.warn(f"ontology › {cid} › constraints.{slot}",
@@ -547,7 +594,7 @@ class Validator:
             if not any(p == cid for p in self.concept_parent.values()):
                 continue  # 无子类不适用
             for item in c.get("constraints", {}).get("required", []):
-                fid = item if isinstance(item, str) else item.get("id")
+                fid = self.constraint_fid(item)
                 if not isinstance(fid, str):
                     continue
                 key = self.norm_field(fid)

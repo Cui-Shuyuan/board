@@ -19,7 +19,7 @@ D:/Python/Python312/python.exe scripts/validate_rules.py --errors-only   # 只�
 
 **pre-commit hook 已安装（2026-08-11）**：`.git/hooks/pre-commit` 每次 `git commit` 自动跑 `--errors-only` 并输出结果，**只报告不阻止提交**（用户定稿：git 是防误改的安全网，允许提交后靠 checkout 恢复——不允许 commit 会堵死第二次改错的退路）。E01 已升级为完整结构检查：JSON 语法错误带行号/列号定位 + 文件顶层结构约定（concepts.json 需 meta+objects/concepts、game flow.json 需 meta+procedures、ontology flow 需 trigger_pipeline 节点、instances.json 至少一组）。
 
-核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、**E13 cost/content 层级约束**（见下）、W05 孤立概念（有定义无引用且非触发型）。
+核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、**E13 cost/content 层级约束**（见下）、**E20 普通字段名不得与本文件已定义概念同名**、W05 孤立概念（有定义无引用且非触发型）。
 
 ## 终结形态平级并列 ★（2026-08-13 用户定稿）
 
@@ -327,11 +327,21 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] 没有 `"type": "<ontology::xxx>"` 这种写法（用 key-as-type）
 - [ ] type 中不写 `| null`（可空由 optional/default 表达）
 - [ ] key 已为 `<concept_id>` 格式时不写 type
+- [ ] constraints.required/optional 中的概念引用：概念自身定义已足够时直接写纯字符串（如 `"<work_slot>"`）；需要增强/说明该概念在当前字段的语境时用 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述）
+- [ ] 不要同时在外层写同一字段声明/值又在 constraints 中重复声明（E17 防重复）
+- [ ] 概念已定义后，普通字段名不要再与概念同名（如已有 `<good>` 就不要写 `"good": ...`），应写成 `"<good>": ...`（E20）
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)
 - [ ] **终结形态平级并列 ★（2026-08-13 定稿）**：content 可并列 instant_content + continuous_content（cost/effect 同理）；不同性质必须并列，同性质按归属/位置决定合并或分开
 - [ ] **description 是给客人的参考 ★（2026-08-12 用户定稿）**：LLM 懂得全部结构化概念，但面对客人用通俗语言回答（小学生学 1+1 不必先学群论）——description 提供可讲给客人的表述，概念术语（<card>、<die> 等）正常使用；**引擎视角的叙述不入 description**（「<x> 实例」「trigger_slot 待补」这类底层形式/待办状态不暴露给客人）；结构化表达进 condition/content/step 等字段
+
+## parts 中 effect 的写法 ★（2026-08 用户定稿）
+
+- **一个完整 effect 尽量用一个 effect part 表达**（方案 A）：`{ "<ontology::continuous_effect>": { ... } }` 或 `{ "<ontology::effect>": { ... } }`，把 condition/cost/content 放进去。
+- **effect 这一层不写 position**；如果 effect 的某部分是物理拆开的（如模组左下/右下费用、中间内容），position 写在对应的 `<ontology::cost>` / `<ontology::content>` 子部分里。
+- **区分「play/使用这个 piece 的 cost」和「激活 effect 的 cost」**：前者不属于 effect，放在 piece 层或 effect 外；后者才放进 effect 结构内。
+- **cost/target/condition/content 不要求必须在同一 JSON 层级**：effect 允许子概念内部有自己的 cost/content，那个 cost 可以就是外层 effect 的 cost（如 civolution `feature_module` 顶层 `<ontology::cost>` / `<ontology::content>`）。
 
 ## 概念层 vs 流程层职责 ★（2026-08-12 定稿）
 

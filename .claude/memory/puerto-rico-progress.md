@@ -17,9 +17,20 @@ metadata:
 - `games/puerto-rico/flow.json` — 流程层（Setup 18 步 → 年度循环 → 终局计分；2026-08-16 判胜改 FILTER：总分最高 → 钱币+货物更多，`<most_vp_wins>` 复合条件保留）
 - `doc/faq/puerto rico/faq.md` — Grok 抓的 55 道 BGG 真实提问（**基于经典版，术语与 1897 有差异**）
 
+## 工位概念抽象（2026-08 用户定稿）
+
+- **`<work_slot>`（工位）已抽为 PR 游戏层概念**，只放 `games/puerto-rico/concepts.json`，不进 ontology。
+- 所有板块（庄园、采石场、生产建筑、商业建筑、大型商业建筑）都通过 `"<work_slot>": n` 直接声明工位数；基类 `estate_tile`/`building` 的 `constraints.required` 中直接写字符串 `"<work_slot>"`。
+- 原 `semicircles` 字段已删除；描述中的「半圆槽」统一改为 `<work_slot>`，「半圆形工位」保留为外观描述。
+- constraints 概念引用约定：无需语境说明时写纯字符串（如 `"<work_slot>"`）；需要语境说明时在 required 内写 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述），不另在外层重复声明。
+- 校验 E20：普通字段名不得与本文件已定义概念同名（如已有 `<good>` 就不能再写 `"good": ...`）。
+- PR 中直接以 `<ontology::continuous_content>` 作 part 的光环效果（`quarry_tile`/`builders_yard`/`office`）已改为方案 A：外层用 `<ontology::continuous_effect>` 包 condition + content。
+- 生产职责定稿：由 `craftsman_role` 承担流程与聚合计算；`estate_tile` 与 `production_building` 只声明 `<good>` + `<work_slot>`，不持有 effect。基类 required 用 `{ "<good>": { "description": ... } }` 增强语境，具体板块直接写 `"<good>": "<fruit>"`。
+- 商业建筑与大建筑暂按 `count: 1` 填写；若实物确认有不同工位数，只改对应 count。
+
 ## 1897 版关键机制（与经典版差异，写规则时踩过的点）
 
-1. **工作登记册**按「所有玩家建筑板块的空半圆槽数、至少玩家数」补充；**工人不够补充 = 终局条件**
+1. **工作登记册**按「所有玩家建筑板块的空<work_slot>数、至少玩家数」补充；**工人不够补充 = 终局条件**
 2. **庄园公开陈列**（暗堆翻出玩家数+1 块任选）；暗堆空洗弃牌堆
 3. **采石场折扣按建筑区块封顶**：顶层（费 1–2）减 1、第二层（3–5）减 2、第三层（6–9）减 3、大建筑减 4
 4. **工人可移动**（招募阶段）；**大建筑未占据也计 4 VP**，加成才需占据
@@ -30,7 +41,7 @@ metadata:
 ## 待实局核实（规则书图片无法提取，请对着实物确认）
 
 1. **生产建筑份数**：规则书只给总数 20，按 2/2/4/4/4/4 写入
-2. **商业建筑与大建筑的半圆槽数**：正文未提（影响登记册补充计数）
+2. **商业建筑与大建筑的工位数**：正文未提（影响登记册补充计数）
 3. **交易所售价**：玉米=0 有例证，其余按经典版 1/2/3/4
 
 ## 2026-08-16 会话：QA 实测与系统级修复（提交 7f8d37c → 7857951）

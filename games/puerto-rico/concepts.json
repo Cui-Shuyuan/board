@@ -7,8 +7,8 @@
     },
     "version": "0.1.0",
     "description": {
-      "zh": "波多黎各 1897（基础版 3–5 人）的结构化规则定义。基于 Ravensburger 2022 年版规则书（doc/Puerto_Rico_1897_Rulebook.md），不含双人规则与扩展 I–IV。核心机制：每回合玩家从角色区选一张角色卡，选角者享特权、全员执行该角色的行动；种植园与建筑须有工人占据才生效；工人从工作登记册分发并按空半圆数补充。",
-      "en": "Structured rule definition for Puerto Rico 1897 (base game, 3–5 players). Based on the Ravensburger 2022 rulebook (doc/Puerto_Rico_1897_Rulebook.md), excluding the two-player rules and Expansions I–IV. Core mechanics: each turn a player picks a role card; the chooser gets the privilege while everyone performs the role's action; estates and buildings only function when occupied by workers; workers are distributed from the Work Register, which is repopulated by the number of empty semicircles."
+      "zh": "波多黎各 1897（基础版 3–5 人）的结构化规则定义。基于 Ravensburger 2022 年版规则书（doc/Puerto_Rico_1897_Rulebook.md），不含双人规则与扩展 I–IV。核心机制：每回合玩家从角色区选一张角色卡，选角者享特权、全员执行该角色的行动；种植园与建筑须有工人占据才生效；工人从工作登记册分发并按空<work_slot> 数补充。",
+      "en": "Structured rule definition for Puerto Rico 1897 (base game, 3–5 players). Based on the Ravensburger 2022 rulebook (doc/Puerto_Rico_1897_Rulebook.md), excluding the two-player rules and Expansions I–IV. Core mechanics: each turn a player picks a role card; the chooser gets the privilege while everyone performs the role's action; estates and buildings only function when occupied by workers; workers are distributed from the Work Register, which is repopulated by the number of empty <work_slot>s."
     }
   },
   "objects": [
@@ -73,8 +73,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "波多黎各中的劳动力资源。全游戏共 100 名：开局供应堆放 55/75/95 名（3/4/5 人局），另外从游戏盒放「玩家数」名在<work_register>上（不从供应堆扣）。工人的核心规则：<estate_tile>、<quarry_tile>与<building>板块上有 1–3 个半圆槽，每槽至多 1 名工人；板块上有至少 1 名工人即视为「被占据」，只有被占据的板块才生效。工人只能在<recruiter_role>阶段放置或移动；若岛上已无空槽，多余的工人放在<portrait>上，留待以后的招募阶段放置。",
-        "en": "The labor resource in Puerto Rico. 100 workers total: at setup the <worker_supply> holds 55/75/95 (for 3/4/5 players), and a number equal to the player count is placed on the <work_register> separately from the game box (not deducted from the supply). Core rules: <estate_tile>s, <quarry_tile>s, and <building>s have 1–3 semicircle slots, at most 1 worker each; a tile with at least 1 worker is 'occupied', and only occupied tiles function. Workers may only be placed or moved during the <recruiter_role> phase; if no empty slot remains on the island board, surplus workers sit on the <portrait> until a future recruitment phase."
+        "zh": "波多黎各中的劳动力资源。全游戏共 100 名：开局供应堆放 55/75/95 名（3/4/5 人局），另外从游戏盒放「玩家数」名在<work_register>上（不从供应堆扣）。工人的核心规则：<estate_tile>、<quarry_tile>与<building>板块上有 1–3 个<work_slot>，每个<work_slot>至多 1 名工人；板块上有至少 1 名工人即视为「被占据」，只有被占据的板块才生效。工人只能在<recruiter_role>阶段放置或移动；若岛上已无空<work_slot>，多余的工人放在<portrait>上，留待以后的招募阶段放置。",
+        "en": "The labor resource in Puerto Rico. 100 workers total: at setup the <worker_supply> holds 55/75/95 (for 3/4/5 players), and a number equal to the player count is placed on the <work_register> separately from the game box (not deducted from the supply). Core rules: <estate_tile>s, <quarry_tile>s, and <building>s have 1–3 <work_slot>s, at most 1 worker each; a tile with at least 1 worker is 'occupied', and only occupied tiles function. Workers may only be placed or moved during the <recruiter_role> phase; if no empty <work_slot> remains on the island board, surplus workers sit on the <portrait> until a future recruitment phase."
       },
       "unit": {
         "type": "string",
@@ -223,6 +223,34 @@
       }
     },
     {
+      "id": "work_slot",
+      "extends": "<ontology::zone>",
+      "name": {
+        "zh": "工位",
+        "en": "Work Slot"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "波多黎各板块上的工人位置。每块<estate_tile>、<quarry_tile>或<building>有 1–3 个<work_slot>，每个<work_slot>至多放 1 名<worker>；板块上有至少 1 名工人即视为被占据。",
+        "en": "A worker space on a Puerto Rico tile. Each <estate_tile>, <quarry_tile>, or <building> has 1–3 <work_slot>s, each holding at most 1 <worker>; a tile with at least 1 worker is considered occupied."
+      },
+      "contains": {
+        "type": "<worker>",
+        "description": {
+          "zh": "每个工位至多 1 名工人。",
+          "en": "Each work slot holds at most 1 worker."
+        }
+      },
+      "count": {
+        "type": "integer",
+        "default": 1,
+        "description": {
+          "zh": "此板块上的工位数量。",
+          "en": "Number of work slots on this tile."
+        }
+      }
+    },
+    {
       "id": "estate_tile",
       "extends": "<ontology::tile>",
       "name": {
@@ -233,21 +261,13 @@
       "appearance": {
         "type": "string",
         "description": {
-          "zh": "庄园板块的外观描述——方形小板块，正面画作物图案与 1 个工人半圆槽，背面统一图案。",
-          "en": "Appearance of an estate tile — a small square tile with the crop art and 1 worker semicircle on the front, uniform back."
+          "zh": "庄园板块的外观描述——方形小板块，正面画作物图案与 1 个工人<work_slot>，背面统一图案。",
+          "en": "Appearance of an estate tile — a small square tile with the crop art and 1 worker <work_slot> on the front, uniform back."
         }
       },
       "description": {
-        "zh": "波多黎各中的种植园板块——一种<ontology::tile>，共 50 块：<fruit_estate> 12、<sugar_estate> 11、<corn_estate> 10、<tobacco_estate> 9、<coffee_estate> 8。庄园放在<island_board>的<countryside>（12 格）中。来源：开局按座次发 1 块（明置）；<planter_role>阶段从<estate_display>取明置庄园、或用<builders_yard>/庄园特权额外获取。每块庄园有 1 个半圆槽，放工人即被占据；被占据的庄园参与生产——玉米庄园直接产玉米，其余庄园须有对应生产建筑的工人才产货。庄园一旦放置不可移出岛屿版图（可在 12 格内挪位置）。",
-        "en": "Plantation tiles in Puerto Rico — a type of <ontology::tile>, 50 in total: 12 <fruit_estate>, 11 <sugar_estate>, 10 <corn_estate>, 9 <tobacco_estate>, 8 <coffee_estate>. Estates are placed in the <countryside> (12 spaces) of the <island_board>. Sources: 1 face-up tile per player at setup (by seating order); face-up tiles from the <estate_display> during the <planter_role> phase, plus extras via <builders_yard> or the Hacienda privilege. Each estate has 1 semicircle slot; a worker on it makes it occupied. Occupied estates produce — corn estates produce corn directly; other estates need matching workers in their production building. Once placed, an estate may not leave the island board (it can be rearranged within the 12 spaces)."
-      },
-      "semicircles": {
-        "type": "integer",
-        "default": 1,
-        "description": {
-          "zh": "半圆槽数量，固定为 1。每块庄园至多 1 名工人。",
-          "en": "Number of semicircle slots, fixed at 1. At most 1 worker per estate."
-        }
+        "zh": "波多黎各中的种植园板块——一种<ontology::tile>，共 50 块：<fruit_estate> 12、<sugar_estate> 11、<corn_estate> 10、<tobacco_estate> 9、<coffee_estate> 8。庄园放在<island_board>的<countryside>（12 格）中。来源：开局按座次发 1 块（明置）；<planter_role>阶段从<estate_display>取明置庄园、或用<builders_yard>/庄园特权额外获取。每块庄园有 1 个<work_slot>，放工人即被占据；被占据的庄园参与生产——玉米庄园直接产玉米，其余庄园须有对应生产建筑的工人才产货。庄园一旦放置不可移出岛屿版图（可在 12 格内挪位置）。",
+        "en": "Plantation tiles in Puerto Rico — a type of <ontology::tile>, 50 in total: 12 <fruit_estate>, 11 <sugar_estate>, 10 <corn_estate>, 9 <tobacco_estate>, 8 <coffee_estate>. Estates are placed in the <countryside> (12 spaces) of the <island_board>. Sources: 1 face-up tile per player at setup (by seating order); face-up tiles from the <estate_display> during the <planter_role> phase, plus extras via <builders_yard> or the Hacienda privilege. Each estate has 1 <work_slot>; a worker on it makes it occupied. Occupied estates produce — corn estates produce corn directly; other estates need matching workers in their production building. Once placed, an estate may not leave the island board (it can be rearranged within the 12 spaces)."
       },
       "copies": {
         "type": "integer",
@@ -259,12 +279,14 @@
       "constraints": {
         "required": [
           {
-            "id": "crop",
-            "description": {
-              "zh": "每块庄园必有所属作物。",
-              "en": "Every estate belongs to a crop type."
+            "<good>": {
+              "description": {
+                "zh": "每块庄园必有所属的货物（作物）。本字段表示这块庄园种植/产出的货物类型。",
+                "en": "Every estate belongs to a good type. This field is the good the estate grows/produces."
+              }
             }
-          }
+          },
+          "<work_slot>"
         ],
         "optional": []
       }
@@ -278,15 +300,16 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "黄色玉米田图案的庄园小板块，带 1 个半圆槽。",
-        "en": "Small estate tile with yellow cornfield art and 1 semicircle."
+        "zh": "黄色玉米田图案的庄园小板块，带 1 个<work_slot>。",
+        "en": "Small estate tile with yellow cornfield art and 1 <work_slot>."
       },
       "description": {
         "zh": "种植玉米的<estate_tile>，共 10 块。被占据时在<craftsman_role>阶段直接产出 1 桶<corn>——玉米是唯一不需要生产建筑的作物。",
         "en": "A <estate_tile> growing corn, 10 copies. When occupied, it directly produces 1 <corn> barrel in the <craftsman_role> phase — corn is the only crop that needs no production building."
       },
-      "crop": "<corn>",
-      "copies": 10
+      "copies": 10,
+      "<work_slot>": 1,
+      "<good>": "<corn>"
     },
     {
       "id": "fruit_estate",
@@ -297,15 +320,16 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "绿色果园图案的庄园小板块，带 1 个半圆槽。",
-        "en": "Small estate tile with green orchard art and 1 semicircle."
+        "zh": "绿色果园图案的庄园小板块，带 1 个<work_slot>。",
+        "en": "Small estate tile with green orchard art and 1 <work_slot>."
       },
       "description": {
         "zh": "种植水果的<estate_tile>，共 12 块。被占据且<small_fruit_warehouse>/<large_fruit_warehouse>中有工人时，在<craftsman_role>阶段产出<fruit>。",
         "en": "A <estate_tile> growing fruit, 12 copies. When occupied and with a worker in a <small_fruit_warehouse> or <large_fruit_warehouse>, it produces <fruit> in the <craftsman_role> phase."
       },
-      "crop": "<fruit>",
-      "copies": 12
+      "copies": 12,
+      "<work_slot>": 1,
+      "<good>": "<fruit>"
     },
     {
       "id": "sugar_estate",
@@ -316,15 +340,16 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "白色甘蔗田图案的庄园小板块，带 1 个半圆槽。",
-        "en": "Small estate tile with white sugarcane art and 1 semicircle."
+        "zh": "白色甘蔗田图案的庄园小板块，带 1 个<work_slot>。",
+        "en": "Small estate tile with white sugarcane art and 1 <work_slot>."
       },
       "description": {
         "zh": "种植甘蔗的<estate_tile>，共 11 块。被占据且<small_sugar_mill>/<large_sugar_mill>中有工人时，在<craftsman_role>阶段产出<sugar>。",
         "en": "A <estate_tile> growing sugarcane, 11 copies. When occupied and with a worker in a <small_sugar_mill> or <large_sugar_mill>, it produces <sugar> in the <craftsman_role> phase."
       },
-      "crop": "<sugar>",
-      "copies": 11
+      "copies": 11,
+      "<work_slot>": 1,
+      "<good>": "<sugar>"
     },
     {
       "id": "tobacco_estate",
@@ -335,15 +360,16 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "棕色烟叶田图案的庄园小板块，带 1 个半圆槽。",
-        "en": "Small estate tile with brown tobacco-field art and 1 semicircle."
+        "zh": "棕色烟叶田图案的庄园小板块，带 1 个<work_slot>。",
+        "en": "Small estate tile with brown tobacco-field art and 1 <work_slot>."
       },
       "description": {
         "zh": "种植烟草的<estate_tile>，共 9 块。被占据且<tobacco_storage>中有工人时，在<craftsman_role>阶段产出<tobacco>。",
         "en": "A <estate_tile> growing tobacco, 9 copies. When occupied and with a worker in the <tobacco_storage>, it produces <tobacco> in the <craftsman_role> phase."
       },
-      "crop": "<tobacco>",
-      "copies": 9
+      "copies": 9,
+      "<work_slot>": 1,
+      "<good>": "<tobacco>"
     },
     {
       "id": "coffee_estate",
@@ -354,15 +380,16 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "黑色咖啡园图案的庄园小板块，带 1 个半圆槽。",
-        "en": "Small estate tile with black coffee-plantation art and 1 semicircle."
+        "zh": "黑色咖啡园图案的庄园小板块，带 1 个<work_slot>。",
+        "en": "Small estate tile with black coffee-plantation art and 1 <work_slot>."
       },
       "description": {
         "zh": "种植咖啡的<estate_tile>，共 8 块。被占据且<coffee_roaster>中有工人时，在<craftsman_role>阶段产出<coffee>。",
         "en": "A <estate_tile> growing coffee, 8 copies. When occupied and with a worker in the <coffee_roaster>, it produces <coffee> in the <craftsman_role> phase."
       },
-      "crop": "<coffee>",
-      "copies": 8
+      "copies": 8,
+      "<work_slot>": 1,
+      "<good>": "<coffee>"
     },
     {
       "id": "quarry_tile",
@@ -373,20 +400,12 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "灰色采石场图案的小板块，带 1 个半圆槽。",
-        "en": "Small tile with gray quarry art and 1 semicircle."
+        "zh": "灰色采石场图案的小板块，带 1 个<work_slot>。",
+        "en": "Small tile with gray quarry art and 1 <work_slot>."
       },
       "description": {
-        "zh": "波多黎各中的采石场板块——一种<ontology::tile>，共 8 块，开局全部明置叠在<quarry_stack>。采石场放在<island_board>的<countryside>中，有 1 个半圆槽。被占据的采石场在<builder_role>阶段提供建筑费折扣：每座被占据的采石场减 1 元，但减免上限由建筑所在区块决定（顶层 1 座、第二层 2 座、第三层 3 座、大建筑 4 座）。获取方式：<planter_role>的特权（选角者），或非选角者拥有被占据的<builders_yard>。若采石场被拿完，种植园主失去特权、建筑工棚无法使用。",
-        "en": "Quarry tiles in Puerto Rico — a type of <ontology::tile>, 8 copies, all face-up in a stack on the <quarry_stack> at setup. Quarries go into the <countryside> of the <island_board> and have 1 semicircle slot. An occupied quarry gives a building-cost discount in the <builder_role> phase: −1 coin per occupied quarry, capped by the building's board section (top: 1, second: 2, third: 3, large buildings: 4). Acquisition: the <planter_role> privilege (for the chooser), or a non-chooser with an occupied <builders_yard>. When quarries run out, the planter loses the privilege and the builders yard is unusable."
-      },
-      "semicircles": {
-        "type": "integer",
-        "default": 1,
-        "description": {
-          "zh": "半圆槽数量，固定为 1。每块采石场至多 1 名工人。",
-          "en": "Number of semicircle slots, fixed at 1. At most 1 worker per quarry."
-        }
+        "zh": "波多黎各中的采石场板块——一种<ontology::tile>，共 8 块，开局全部明置叠在<quarry_stack>。采石场放在<island_board>的<countryside>中，有 1 个<work_slot>。被占据的采石场在<builder_role>阶段提供建筑费折扣：每座被占据的采石场减 1 元，但减免上限由建筑所在区块决定（顶层 1 座、第二层 2 座、第三层 3 座、大建筑 4 座）。获取方式：<planter_role>的特权（选角者），或非选角者拥有被占据的<builders_yard>。若采石场被拿完，种植园主失去特权、建筑工棚无法使用。",
+        "en": "Quarry tiles in Puerto Rico — a type of <ontology::tile>, 8 copies, all face-up in a stack on the <quarry_stack> at setup. Quarries go into the <countryside> of the <island_board> and have 1 <work_slot>. An occupied quarry gives a building-cost discount in the <builder_role> phase: −1 coin per occupied quarry, capped by the building's board section (top: 1, second: 2, third: 3, large buildings: 4). Acquisition: the <planter_role> privilege (for the chooser), or a non-chooser with an occupied <builders_yard>. When quarries run out, the planter loses the privilege and the builders yard is unusable."
       },
       "copies": {
         "type": "integer",
@@ -398,18 +417,27 @@
       },
       "parts": [
         {
-          "<ontology::continuous_content>": {
+          "<ontology::continuous_effect>": {
             "description": {
               "zh": "采石场折扣——光环类效果。只要本采石场被占据（active_condition），该玩家购买建筑的费用减 1 元，每座被占据的采石场各减 1 元；总减免上限由目标建筑所在区块决定（见<building>的 board_section 与 max_quarry_discount）。参与计算的效果——购买费用查询时现算，采石场上的工人被移走则减免随之消失。",
               "en": "Quarry discount — an aura effect. As long as this quarry is occupied (active_condition), the player pays 1 coin less per building, stacking −1 per occupied quarry; the total discount is capped by the target building's board section (see board_section and max_quarry_discount on <building>). It participates in computation — the purchase cost is computed on query, and the discount disappears if the worker leaves the quarry."
             },
             "<ontology::condition>": {
-              "zh": "本采石场被占据（半圆槽上有工人）。",
-              "en": "This quarry is occupied (a worker is on its semicircle)."
+              "zh": "本采石场被占据（<work_slot>上有工人）。",
+              "en": "This quarry is occupied (a worker is on its <work_slot>)."
+            },
+            "<ontology::content>": {
+              "<ontology::continuous_content>": {
+                "description": {
+                  "zh": "购买建筑费用减 1 元；每座被占据的采石场各减 1 元，总减免上限由目标建筑所在区块决定（见<building>的 board_section 与 max_quarry_discount）。采石场上的工人被移走则减免随之消失。",
+                  "en": "Pay 1 coin less per building; each occupied quarry stacks, capped by the target building's board section (see board_section and max_quarry_discount on <building>). The discount disappears if the worker leaves the quarry."
+                }
+              }
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "building",
@@ -422,20 +450,13 @@
       "appearance": {
         "type": "string",
         "description": {
-          "zh": "建筑板块的外观描述——正面印建筑名、右上角 VP 数字、半圆槽（首个半圆内印费用）、功能图标（商业建筑），背面统一图案。",
-          "en": "Appearance of a building tile — front shows the name, the VP number top-right, semicircles (the first one printed with the cost), and the function icon (commercial buildings); uniform back."
+          "zh": "建筑板块的外观描述——正面印建筑名、右上角 VP 数字、<work_slot>（首个半圆形工位内印费用）、功能图标（商业建筑），背面统一图案。",
+          "en": "Appearance of a building tile — front shows the name, the VP number top-right, <work_slot>s (the first one printed with the cost), and the function icon (commercial buildings); uniform back."
         }
       },
       "description": {
-        "zh": "波多黎各中的建筑板块——一种<ontology::tile>，共 49 座，开局全部按类型堆叠在<central_board>的对应位置上（<building_supply>）。建筑放在<island_board>的<city>（12 格）中。通用规则：每名玩家每种建筑至多建 1 座；只有被占据（半圆槽上有工人）的建筑才能使用特殊功能；建筑上的 VP 数字无论是否被占据都在终局计分；板块左下角第一个半圆内的数字是费用，建成后可忽略。建筑按区块分四层（顶层费用 1–2、第二层 3–5、第三层 6–9、底层大建筑 10），区块决定采石场折扣上限。三种建筑：<production_building>（生产货物）、<commercial_building>（特殊功能）、<large_commercial_building>（占 2 格、终局加成）。",
-        "en": "Building tiles in Puerto Rico — a type of <ontology::tile>, 49 total, all stacked by type on their spaces on the <central_board> (<building_supply>) at setup. Buildings are placed in the <city> (12 spaces) of the <island_board>. General rules: each player may build each building type at most once; only occupied buildings (a worker on a semicircle) may use their special function; the VP number on a building scores at game end whether occupied or not; the number in the first semicircle is the cost, ignorable after building. Buildings sit in four board sections (top: cost 1–2; second: 3–5; third: 6–9; bottom: large buildings at 10), which cap the quarry discount. Three kinds: <production_building> (produce goods), <commercial_building> (special functions), <large_commercial_building> (take 2 spaces, endgame bonuses)."
-      },
-      "semicircles": {
-        "type": "integer",
-        "description": {
-          "zh": "建筑上的半圆槽数量（1–3），即最多可容纳的工人数，也参与<work_register>补充时的空槽计数。",
-          "en": "Number of semicircle slots (1–3) on this building — its worker capacity, also counted when repopulating the <work_register>."
-        }
+        "zh": "波多黎各中的建筑板块——一种<ontology::tile>，共 49 座，开局全部按类型堆叠在<central_board>的对应位置上（<building_supply>）。建筑放在<island_board>的<city>（12 格）中。通用规则：每名玩家每种建筑至多建 1 座；只有被占据（<work_slot>上有工人）的建筑才能使用特殊功能；建筑上的 VP 数字无论是否被占据都在终局计分；板块左下角第一个半圆形工位内的数字是费用，建成后可忽略。建筑按区块分四层（顶层费用 1–2、第二层 3–5、第三层 6–9、底层大建筑 10），区块决定采石场折扣上限。三种建筑：<production_building>（生产货物）、<commercial_building>（特殊功能）、<large_commercial_building>（占 2 格、终局加成）。",
+        "en": "Building tiles in Puerto Rico — a type of <ontology::tile>, 49 total, all stacked by type on their spaces on the <central_board> (<building_supply>) at setup. Buildings are placed in the <city> (12 spaces) of the <island_board>. General rules: each player may build each building type at most once; only occupied buildings (a worker on a <work_slot>) may use their special function; the VP number on a building scores at game end whether occupied or not; the number in the first <work_slot> is the cost, ignorable after building. Buildings sit in four board sections (top: cost 1–2; second: 3–5; third: 6–9; bottom: large buildings at 10), which cap the quarry discount. Three kinds: <production_building> (produce goods), <commercial_building> (special functions), <large_commercial_building> (take 2 spaces, endgame bonuses)."
       },
       "city_spaces": {
         "type": "integer",
@@ -487,11 +508,12 @@
           {
             "id": "max_quarry_discount",
             "description": {
-              "zh": "每座建筑的采石场折扣上限由其区块决定。",
-              "en": "Each building's quarry discount cap is set by its section."
+              "zh": "每座建筑的采石场折扣上限，由该建筑所在区块决定。意思是：无论玩家拥有多少座被占据的采石场，购买这座建筑时实际能减免的钱数都不能超过这个上限。例如费用为 1 元的建筑，即使有 3、4 座被占据的采石场，也最多只能减 1 元。",
+              "en": "The maximum quarry discount that can be applied when purchasing this building, set by its board section. No matter how many occupied quarries the player has, the discount cannot exceed this cap. For example, a building costing 1 coin can be reduced by at most 1 coin even if the player has 3 or 4 occupied quarries."
             },
             "type": "integer"
-          }
+          },
+          "<work_slot>"
         ],
         "optional": []
       }
@@ -512,16 +534,17 @@
         }
       },
       "description": {
-        "zh": "在<craftsman_role>阶段生产货物的<building>，共 20 座（6 种）。生产规则：每种货物（除<corn>）的生产量 = min(该作物被占据的<estate_tile>数, 该作物所有生产建筑上被占据的半圆槽数)——庄园和生产建筑都要有工人，缺一不可。玉米不需要生产建筑。生产建筑的半圆槽数即最大产量（<small_fruit_warehouse>/<small_sugar_mill> 1、<large_fruit_warehouse>/<large_sugar_mill> 2、<tobacco_storage>/<coffee_roaster> 3）。",
-        "en": "A <building> that produces goods in the <craftsman_role> phase — 20 buildings of 6 types. Production rule: for each good (except <corn>), production = min(occupied <estate_tile>s of that crop, occupied semicircles across that crop's production buildings) — both the estates and the building must be occupied. Corn needs no production building. A production building's semicircle count is its maximum output (<small_fruit_warehouse>/<small_sugar_mill> 1, <large_fruit_warehouse>/<large_sugar_mill> 2, <tobacco_storage>/<coffee_roaster> 3)."
+        "zh": "在<craftsman_role>阶段生产货物的<building>，共 20 座（6 种）。生产规则：每种货物（除<corn>）的生产量 = min(该作物被占据的<estate_tile>数, 该作物所有生产建筑上被占据的<work_slot>数)——庄园和生产建筑都要有工人，缺一不可。玉米不需要生产建筑。生产建筑的<work_slot>数即最大产量（<small_fruit_warehouse>/<small_sugar_mill> 1、<large_fruit_warehouse>/<large_sugar_mill> 2、<tobacco_storage>/<coffee_roaster> 3）。",
+        "en": "A <building> that produces goods in the <craftsman_role> phase — 20 buildings of 6 types. Production rule: for each good (except <corn>), production = min(occupied <estate_tile>s of that good, occupied <work_slot>s across that good's production buildings) — both the estates and the building must be occupied. Corn needs no production building. A production building's <work_slot> count is its maximum output (<small_fruit_warehouse>/<small_sugar_mill> 1, <large_fruit_warehouse>/<large_sugar_mill> 2, <tobacco_storage>/<coffee_roaster> 3)."
       },
       "constraints": {
         "required": [
           {
-            "id": "produces",
-            "description": {
-              "zh": "每座生产建筑必对应一种货物。",
-              "en": "Every production building maps to one good type."
+            "<good>": {
+              "description": {
+                "zh": "每座生产建筑必对应一种货物。本字段表示这座建筑能产出的货物类型。",
+                "en": "Every production building maps to one good type. This field is the good the building produces."
+              }
             }
           }
         ],
@@ -537,20 +560,20 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "绿色图案的生产建筑小板块，1 个半圆槽，费用 1、1 VP。",
-        "en": "Small green production building tile, 1 semicircle, cost 1, 1 VP."
+        "zh": "绿色图案的生产建筑小板块，1 个<work_slot>，费用 1、1 VP。",
+        "en": "Small green production building tile, 1 <work_slot>, cost 1, 1 VP."
       },
       "description": {
-        "zh": "费用 1 元、1 VP、1 个半圆槽的<production_building>，共 2 座。被占据时最多产 1 桶<fruit>。",
-        "en": "A <production_building> costing 1, worth 1 VP, with 1 semicircle; 2 copies. Produces up to 1 <fruit> barrel when occupied."
+        "zh": "费用 1 元、1 VP、1 个<work_slot>的<production_building>，共 2 座。被占据时最多产 1 桶<fruit>。",
+        "en": "A <production_building> costing 1, worth 1 VP, with 1 <work_slot>; 2 copies. Produces up to 1 <fruit> barrel when occupied."
       },
       "cost": 1,
       "vp": 1,
-      "semicircles": 1,
       "board_section": "top",
       "max_quarry_discount": 1,
       "copies": 2,
-      "produces": "<fruit>"
+      "<work_slot>": 1,
+      "<good>": "<fruit>"
     },
     {
       "id": "small_sugar_mill",
@@ -561,20 +584,20 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "白色图案的生产建筑小板块，1 个半圆槽，费用 2、1 VP。",
-        "en": "Small white production building tile, 1 semicircle, cost 2, 1 VP."
+        "zh": "白色图案的生产建筑小板块，1 个<work_slot>，费用 2、1 VP。",
+        "en": "Small white production building tile, 1 <work_slot>, cost 2, 1 VP."
       },
       "description": {
-        "zh": "费用 2 元、1 VP、1 个半圆槽的<production_building>，共 2 座。被占据时最多产 1 桶<sugar>。",
-        "en": "A <production_building> costing 2, worth 1 VP, with 1 semicircle; 2 copies. Produces up to 1 <sugar> barrel when occupied."
+        "zh": "费用 2 元、1 VP、1 个<work_slot>的<production_building>，共 2 座。被占据时最多产 1 桶<sugar>。",
+        "en": "A <production_building> costing 2, worth 1 VP, with 1 <work_slot>; 2 copies. Produces up to 1 <sugar> barrel when occupied."
       },
       "cost": 2,
       "vp": 1,
-      "semicircles": 1,
       "board_section": "top",
       "max_quarry_discount": 1,
       "copies": 2,
-      "produces": "<sugar>"
+      "<work_slot>": 1,
+      "<good>": "<sugar>"
     },
     {
       "id": "large_fruit_warehouse",
@@ -585,20 +608,20 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "绿色图案的生产建筑板块，2 个半圆槽，费用 3、2 VP。",
-        "en": "Green production building tile, 2 semicircles, cost 3, 2 VP."
+        "zh": "绿色图案的生产建筑板块，2 个<work_slot>，费用 3、2 VP。",
+        "en": "Green production building tile, 2 <work_slot>s, cost 3, 2 VP."
       },
       "description": {
-        "zh": "费用 3 元、2 VP、2 个半圆槽的<production_building>，共 4 座。被占据时最多产 2 桶<fruit>。",
-        "en": "A <production_building> costing 3, worth 2 VP, with 2 semicircles; 4 copies. Produces up to 2 <fruit> barrels when occupied."
+        "zh": "费用 3 元、2 VP、2 个<work_slot>的<production_building>，共 4 座。被占据时最多产 2 桶<fruit>。",
+        "en": "A <production_building> costing 3, worth 2 VP, with 2 <work_slot>s; 4 copies. Produces up to 2 <fruit> barrels when occupied."
       },
       "cost": 3,
       "vp": 2,
-      "semicircles": 2,
       "board_section": "second",
       "max_quarry_discount": 2,
       "copies": 4,
-      "produces": "<fruit>"
+      "<work_slot>": 2,
+      "<good>": "<fruit>"
     },
     {
       "id": "large_sugar_mill",
@@ -609,20 +632,20 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "白色图案的生产建筑板块，2 个半圆槽，费用 4、2 VP。",
-        "en": "White production building tile, 2 semicircles, cost 4, 2 VP."
+        "zh": "白色图案的生产建筑板块，2 个<work_slot>，费用 4、2 VP。",
+        "en": "White production building tile, 2 <work_slot>s, cost 4, 2 VP."
       },
       "description": {
-        "zh": "费用 4 元、2 VP、2 个半圆槽的<production_building>，共 4 座。被占据时最多产 2 桶<sugar>。",
-        "en": "A <production_building> costing 4, worth 2 VP, with 2 semicircles; 4 copies. Produces up to 2 <sugar> barrels when occupied."
+        "zh": "费用 4 元、2 VP、2 个<work_slot>的<production_building>，共 4 座。被占据时最多产 2 桶<sugar>。",
+        "en": "A <production_building> costing 4, worth 2 VP, with 2 <work_slot>s; 4 copies. Produces up to 2 <sugar> barrels when occupied."
       },
       "cost": 4,
       "vp": 2,
-      "semicircles": 2,
       "board_section": "second",
       "max_quarry_discount": 2,
       "copies": 4,
-      "produces": "<sugar>"
+      "<work_slot>": 2,
+      "<good>": "<sugar>"
     },
     {
       "id": "tobacco_storage",
@@ -633,20 +656,20 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "棕色图案的生产建筑板块，3 个半圆槽，费用 5、3 VP。",
-        "en": "Brown production building tile, 3 semicircles, cost 5, 3 VP."
+        "zh": "棕色图案的生产建筑板块，3 个<work_slot>，费用 5、3 VP。",
+        "en": "Brown production building tile, 3 <work_slot>s, cost 5, 3 VP."
       },
       "description": {
-        "zh": "费用 5 元、3 VP、3 个半圆槽的<production_building>，共 4 座。被占据时最多产 3 桶<tobacco>。",
-        "en": "A <production_building> costing 5, worth 3 VP, with 3 semicircles; 4 copies. Produces up to 3 <tobacco> barrels when occupied."
+        "zh": "费用 5 元、3 VP、3 个<work_slot>的<production_building>，共 4 座。被占据时最多产 3 桶<tobacco>。",
+        "en": "A <production_building> costing 5, worth 3 VP, with 3 <work_slot>s; 4 copies. Produces up to 3 <tobacco> barrels when occupied."
       },
       "cost": 5,
       "vp": 3,
-      "semicircles": 3,
       "board_section": "second",
       "max_quarry_discount": 2,
       "copies": 4,
-      "produces": "<tobacco>"
+      "<work_slot>": 3,
+      "<good>": "<tobacco>"
     },
     {
       "id": "coffee_roaster",
@@ -657,20 +680,20 @@
       },
       "abstract": false,
       "appearance": {
-        "zh": "黑色图案的生产建筑板块，3 个半圆槽，费用 6、3 VP。",
-        "en": "Black production building tile, 3 semicircles, cost 6, 3 VP."
+        "zh": "黑色图案的生产建筑板块，3 个<work_slot>，费用 6、3 VP。",
+        "en": "Black production building tile, 3 <work_slot>s, cost 6, 3 VP."
       },
       "description": {
-        "zh": "费用 6 元、3 VP、3 个半圆槽的<production_building>，共 4 座。被占据时最多产 3 桶<coffee>。",
-        "en": "A <production_building> costing 6, worth 3 VP, with 3 semicircles; 4 copies. Produces up to 3 <coffee> barrels when occupied."
+        "zh": "费用 6 元、3 VP、3 个<work_slot>的<production_building>，共 4 座。被占据时最多产 3 桶<coffee>。",
+        "en": "A <production_building> costing 6, worth 3 VP, with 3 <work_slot>s; 4 copies. Produces up to 3 <coffee> barrels when occupied."
       },
       "cost": 6,
       "vp": 3,
-      "semicircles": 3,
       "board_section": "third",
       "max_quarry_discount": 3,
       "copies": 4,
-      "produces": "<coffee>"
+      "<work_slot>": 3,
+      "<good>": "<coffee>"
     },
     {
       "id": "commercial_building",
@@ -743,7 +766,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "hacienda",
@@ -789,7 +813,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "builders_yard",
@@ -813,7 +838,7 @@
       "max_quarry_discount": 1,
       "parts": [
         {
-          "<ontology::continuous_content>": {
+          "<ontology::continuous_effect>": {
             "description": {
               "zh": "光环类效果：只要本建筑被占据，自己在<planter_role>阶段（非选角者时）种植行动的候选中增加「拿采石场」。",
               "en": "Aura effect: while this building is occupied, 'take a quarry' is added to your planting candidates in the <planter_role> phase (as a non-chooser)."
@@ -821,10 +846,19 @@
             "<ontology::condition>": {
               "zh": "本建筑被占据。",
               "en": "This building is occupied."
+            },
+            "<ontology::content>": {
+              "<ontology::continuous_content>": {
+                "description": {
+                  "zh": "自己的种植行动候选中增加「拿采石场」（非选角者时）。",
+                  "en": "Adds 'take a quarry' to your planting candidates (as a non-chooser)."
+                }
+              }
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "small_warehouse",
@@ -859,7 +893,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "hospital",
@@ -897,8 +932,8 @@
                 "<ontology::transfer>": {
                   "source": "<worker_supply>",
                   "destination": {
-                    "zh": "刚放置的那块庄园或采石场（半圆槽）。",
-                    "en": "The semicircle of the tile just placed."
+                    "zh": "刚放置的那块庄园或采石场（<work_slot>）。",
+                    "en": "The <work_slot> of the tile just placed."
                   },
                   "<ontology::object>": "<worker>",
                   "quantity": 1
@@ -907,7 +942,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "office",
@@ -931,7 +967,7 @@
       "max_quarry_discount": 2,
       "parts": [
         {
-          "<ontology::continuous_content>": {
+          "<ontology::continuous_effect>": {
             "description": {
               "zh": "光环类效果：只要本建筑被占据，自己在<trader_role>阶段出售货物的条件放宽——可出售交易所里已有的类型（交易所满 4 桶时仍不可）。",
               "en": "Aura effect: while this building is occupied, your sale condition in the <trader_role> phase is relaxed — you may sell a type already in the house (still blocked when the house is full at 4 barrels)."
@@ -939,10 +975,19 @@
             "<ontology::condition>": {
               "zh": "本建筑被占据。",
               "en": "This building is occupied."
+            },
+            "<ontology::content>": {
+              "<ontology::continuous_content>": {
+                "description": {
+                  "zh": "出售条件放宽：可出售交易所里已有的类型；交易所满 4 桶时仍不可。",
+                  "en": "Sale condition relaxed: you may sell a type already in the house; still blocked when the house is full at 4 barrels."
+                }
+              }
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "large_market",
@@ -987,7 +1032,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "large_warehouse",
@@ -1022,7 +1068,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "factory",
@@ -1070,7 +1117,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "school",
@@ -1085,8 +1133,8 @@
         "en": "Purple commercial building tile, cost 8, 3 VP, marked with the build-phase icon."
       },
       "description": {
-        "zh": "费用 8 元、3 VP 的<commercial_building>。功能：<builder_role>阶段，若自己建造了建筑，可从<worker_supply>（不是<work_register>）拿 1 名工人放在刚建好的建筑上（不能放别处）；<worker_supply>为空时可改从<work_register>拿。即使建筑有多个半圆槽，也只拿 1 名工人。",
-        "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <builder_role> phase, if you build a building, you may take 1 worker from the <worker_supply> (not the <work_register>) and place it on the newly built tile (nowhere else); if the <worker_supply> is empty, take from the <work_register> instead. Only 1 worker, even if the building has several semicircles."
+        "zh": "费用 8 元、3 VP 的<commercial_building>。功能：<builder_role>阶段，若自己建造了建筑，可从<worker_supply>（不是<work_register>）拿 1 名工人放在刚建好的建筑上（不能放别处）；<worker_supply>为空时可改从<work_register>拿。即使建筑有多个<work_slot>，也只拿 1 名工人。",
+        "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <builder_role> phase, if you build a building, you may take 1 worker from the <worker_supply> (not the <work_register>) and place it on the newly built tile (nowhere else); if the <worker_supply> is empty, take from the <work_register> instead. Only 1 worker, even if the building has several <work_slot>s."
       },
       "cost": 8,
       "vp": 3,
@@ -1108,8 +1156,8 @@
                 "<ontology::transfer>": {
                   "source": "<worker_supply>",
                   "destination": {
-                    "zh": "刚建成的建筑（半圆槽）。",
-                    "en": "A semicircle of the newly built building."
+                    "zh": "刚建成的建筑（<work_slot>）。",
+                    "en": "A <work_slot> of the newly built building."
                   },
                   "<ontology::object>": "<worker>",
                   "quantity": 1
@@ -1118,7 +1166,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "harbor",
@@ -1179,7 +1228,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "wharf",
@@ -1254,7 +1304,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "large_commercial_building",
@@ -1364,7 +1415,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "residence",
@@ -1412,7 +1464,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "fortress",
@@ -1460,7 +1513,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "customs_house",
@@ -1508,7 +1562,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "city_hall",
@@ -1556,7 +1611,8 @@
             }
           }
         }
-      ]
+      ],
+      "<work_slot>": 1
     },
     {
       "id": "role_card",
@@ -1656,8 +1712,8 @@
         "en": "Role card — front shows recruiter artwork and the action (distribute workers) / privilege (+1 worker) icons."
       },
       "description": {
-        "zh": "招募官（Recruiter）角色卡。行动：玩家按顺时针从<work_register>轮流各拿 1 名工人直到拿完，然后放置/移动自己的工人。特权：阶段开始时先从<worker_supply>多拿 1 名。所有玩家完成后，招募官补充登记册：数所有玩家建筑上的空半圆槽，从供应放同样数量（至少玩家数）的工人上去。对应的行动见<recruiter_role>。",
-        "en": "The Recruiter role card. Action: players take 1 worker at a time from the <work_register> in rotation until empty, then place or move their workers. Privilege: take 1 extra worker from the <worker_supply> at the start of the phase. Afterwards, the recruiter repopulates the register: count empty semicircles on all players' buildings and add that many workers (at least the player count) from the supply. The corresponding action is <recruiter_role>."
+        "zh": "招募官（Recruiter）角色卡。行动：玩家按顺时针从<work_register>轮流各拿 1 名工人直到拿完，然后放置/移动自己的工人。特权：阶段开始时先从<worker_supply>多拿 1 名。所有玩家完成后，招募官补充登记册：数所有玩家建筑上的空<work_slot>，从供应放同样数量（至少玩家数）的工人上去。对应的行动见<recruiter_role>。",
+        "en": "The Recruiter role card. Action: players take 1 worker at a time from the <work_register> in rotation until empty, then place or move their workers. Privilege: take 1 extra worker from the <worker_supply> at the start of the phase. Afterwards, the recruiter repopulates the register: count empty <work_slot>s on all players' buildings and add that many workers (at least the player count) from the supply. The corresponding action is <recruiter_role>."
       },
       "advantage": {
         "zh": "阶段开始时先从工人供应堆多拿 1 名工人。",
@@ -2036,7 +2092,7 @@
           "<portrait>": {
             "position": "岛屿版图侧边",
             "description": {
-              "zh": "肖像区——放钱币（公开）、货物、VP 筹码（可隐藏）和暂无空槽的工人。",
+              "zh": "肖像区——放钱币（公开）、货物、VP 筹码（可隐藏）和暂无空<work_slot>的工人。",
               "en": "The Portrait — holds coins (public), goods, VP chips (concealable), and workers awaiting slots."
             }
           }
@@ -2052,8 +2108,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "位于<central_board>上的<ontology::zone>，存放待分发的<worker>。开局从游戏盒另放「玩家数」名工人（不从<worker_supply>扣）。每次<recruiter_role>阶段：玩家按顺时针轮流各拿 1 名直到拿完；阶段结束时招募官补充——数所有玩家岛上建筑（不含庄园/采石场）的空半圆槽数，从<worker_supply>放同样数量（至少玩家数）的工人。若工人不够补充，触发终局条件。",
-        "en": "A <ontology::zone> on the <central_board> holding <worker>s awaiting distribution. At setup it receives a number equal to the player count from the game box (not deducted from the <worker_supply>). Each <recruiter_role> phase: players take 1 worker each in rotation until empty; at phase end the recruiter repopulates it — count the empty semicircles on building tiles (not estates or quarries) across all players' boards and add that many workers from the <worker_supply> (at least the player count). If there are not enough workers to repopulate, an endgame condition triggers."
+        "zh": "位于<central_board>上的<ontology::zone>，存放待分发的<worker>。开局从游戏盒另放「玩家数」名工人（不从<worker_supply>扣）。每次<recruiter_role>阶段：玩家按顺时针轮流各拿 1 名直到拿完；阶段结束时招募官补充——数所有玩家岛上建筑（不含庄园/采石场）的空<work_slot>数，从<worker_supply>放同样数量（至少玩家数）的工人。若工人不够补充，触发终局条件。",
+        "en": "A <ontology::zone> on the <central_board> holding <worker>s awaiting distribution. At setup it receives a number equal to the player count from the game box (not deducted from the <worker_supply>). Each <recruiter_role> phase: players take 1 worker each in rotation until empty; at phase end the recruiter repopulates it — count the empty <work_slot>s on building tiles (not estates or quarries) across all players' boards and add that many workers from the <worker_supply> (at least the player count). If there are not enough workers to repopulate, an endgame condition triggers."
       },
       "contains": {
         "type": "<worker>[]",
@@ -2510,8 +2566,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "<island_board>侧边的<ontology::player_holding>，存放该玩家的<coin>（必须公开）、<good>（可无限堆放）、<victory_point>筹码（可背面朝上隐藏——游戏中唯一的隐藏信息）与无处安放的<worker>（岛上无空半圆槽时暂存于此，留待以后的招募阶段放置）。",
-        "en": "The <ontology::player_holding> on the side of the <island_board>, holding the player's <coin>s (must be public), <good>s (unlimited stacking), <victory_point> chips (may be face-down — the only hidden information in the game), and unhoused <worker>s (kept here when no empty semicircle remains, placed in a future recruitment phase)."
+        "zh": "<island_board>侧边的<ontology::player_holding>，存放该玩家的<coin>（必须公开）、<good>（可无限堆放）、<victory_point>筹码（可背面朝上隐藏——游戏中唯一的隐藏信息）与无处安放的<worker>（岛上无空<work_slot>时暂存于此，留待以后的招募阶段放置）。",
+        "en": "The <ontology::player_holding> on the side of the <island_board>, holding the player's <coin>s (must be public), <good>s (unlimited stacking), <victory_point> chips (may be face-down — the only hidden information in the game), and unhoused <worker>s (kept here when no empty <work_slot> remains, placed in a future recruitment phase)."
       },
       "contains": {
         "type": "<coin>[] | <good>[] | <victory_point>[] | <worker>[]",
@@ -3327,8 +3383,8 @@
                           "<ontology::transfer>": {
                             "source": "<worker_supply>",
                             "destination": {
-                              "zh": "刚建成的建筑（半圆槽）。",
-                              "en": "A semicircle of the newly built building."
+                              "zh": "刚建成的建筑（<work_slot>）。",
+                              "en": "A <work_slot> of the newly built building."
                             },
                             "<ontology::object>": "<worker>",
                             "quantity": 1
@@ -3363,8 +3419,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "招募阶段行动。选角者先从<worker_supply>多拿 1 名（特权）；然后所有玩家从<work_register>轮流各拿 1 名直到拿完（人数可能不均）——拿工人也是可选的，不想拿的玩家跳过，工人继续轮给其他人；之后每人放置/移动自己的工人——工人只能放在板块空半圆槽上，可移动上一回合已放的工人；岛上无空槽时多余工人放<portrait>，留待以后招募阶段。全员完成后招募官补充登记册：数所有玩家岛上建筑（不含庄园/采石场）的空半圆槽，从<worker_supply>放同样数量（至少玩家数）。工人供应不足时特权作废；登记册补不齐时触发终局条件。",
-        "en": "The recruitment phase action. The chooser first takes 1 extra worker from the <worker_supply> (privilege); then all players take workers from the <work_register> one at a time in rotation until empty (amounts may differ); then each player places or moves their workers — workers only go on empty semicircles of tiles; workers from previous rounds may be moved; with no empty slot left, surplus workers sit on the <portrait> for future recruitment phases. Afterwards, the recruiter repopulates the register: count empty semicircles on building tiles (not estates or quarries) across all players' boards and add that many workers from the <worker_supply> (at least the player count). An empty worker supply voids the privilege; a failed repopulation triggers an endgame condition."
+        "zh": "招募阶段行动。选角者先从<worker_supply>多拿 1 名（特权）；然后所有玩家从<work_register>轮流各拿 1 名直到拿完（人数可能不均）——拿工人也是可选的，不想拿的玩家跳过，工人继续轮给其他人；之后每人放置/移动自己的工人——工人只能放在板块空<work_slot>上，可移动上一回合已放的工人；岛上无空<work_slot>时多余工人放<portrait>，留待以后招募阶段。全员完成后招募官补充登记册：数所有玩家岛上建筑（不含庄园/采石场）的空<work_slot>，从<worker_supply>放同样数量（至少玩家数）。工人供应不足时特权作废；登记册补不齐时触发终局条件。",
+        "en": "The recruitment phase action. The chooser first takes 1 extra worker from the <worker_supply> (privilege); then all players take workers from the <work_register> one at a time in rotation until empty (amounts may differ); then each player places or moves their workers — workers only go on empty <work_slot>s of tiles; workers from previous rounds may be moved; with no empty <work_slot> left, surplus workers sit on the <portrait> for future recruitment phases. Afterwards, the recruiter repopulates the register: count empty <work_slot>s on building tiles (not estates or quarries) across all players' boards and add that many workers from the <worker_supply> (at least the player count). An empty worker supply voids the privilege; a failed repopulation triggers an endgame condition."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -3444,8 +3500,8 @@
                   }
                 },
                 "description": {
-                  "zh": "每名玩家把本阶段得到的（以及此前阶段暂存的）工人放到空半圆槽上；也可移动之前已放的工人到其他板块。只有<recruiter_role>阶段才能放置/移动工人。若岛上已无空半圆槽，剩余工人放<portrait>。",
-                  "en": "Each player places workers gained this phase (and any kept from earlier) on empty semicircles; workers placed in previous rounds may also be moved between tiles. Workers may only be placed or moved during the <recruiter_role> phase. With no empty semicircle left, remaining workers go on the <portrait>."
+                  "zh": "每名玩家把本阶段得到的（以及此前阶段暂存的）工人放到空<work_slot>上；也可移动之前已放的工人到其他板块。只有<recruiter_role>阶段才能放置/移动工人。若岛上已无空<work_slot>，剩余工人放<portrait>。",
+                  "en": "Each player places workers gained this phase (and any kept from earlier) on empty <work_slot>s; workers placed in previous rounds may also be moved between tiles. Workers may only be placed or moved during the <recruiter_role> phase. With no empty <work_slot> left, remaining workers go on the <portrait>."
                 }
               },
               {
@@ -3457,15 +3513,15 @@
                 "do_after": "place_or_move_workers",
                 "specifies": "<ontology::transfer>",
                 "description": {
-                  "zh": "数所有玩家岛上建筑板块（不含庄园/采石场）的空半圆槽数 N，从<worker_supply>放 max(N, 玩家数) 名工人到<work_register>。若供应不足，放多少算多少——触发<not_enough_workers_to_repopulate>终局条件（回合结束游戏结束）。",
-                  "en": "Count the empty semicircles N on building tiles (not estates or quarries) across all players' boards and add max(N, player count) workers from the <worker_supply> to the <work_register>. If the supply falls short, add what remains — triggering the <not_enough_workers_to_repopulate> endgame condition (the game ends at round end)."
+                  "zh": "数所有玩家岛上建筑板块（不含庄园/采石场）的空<work_slot>数 N，从<worker_supply>放 max(N, 玩家数) 名工人到<work_register>。若供应不足，放多少算多少——触发<not_enough_workers_to_repopulate>终局条件（回合结束游戏结束）。",
+                  "en": "Count the empty <work_slot>s N on building tiles (not estates or quarries) across all players' boards and add max(N, player count) workers from the <worker_supply> to the <work_register>. If the supply falls short, add what remains — triggering the <not_enough_workers_to_repopulate> endgame condition (the game ends at round end)."
                 },
                 "source": "<worker_supply>",
                 "destination": "<work_register>",
                 "<ontology::object>": "<worker>",
                 "quantity": {
-                  "zh": "max(所有玩家建筑空半圆槽总数, 玩家数)。",
-                  "en": "max(total empty building semicircles across all players, player count)."
+                  "zh": "max(所有玩家建筑空<work_slot>总数, 玩家数)。",
+                  "en": "max(total empty building <work_slot>s across all players, player count)."
                 }
               }
             ],
@@ -3483,8 +3539,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "生产阶段行动。每名玩家按生产能力从<goods_supply>取货物到<portrait>：每座被占据的<corn_estate>产 1 桶<corn>；其余货物产量 = min(该作物被占据庄园数, 该作物生产建筑上被占据半圆槽数)。某色货物供应不足时，后面的玩家拿不到。选角者特权：阶段结束时多拿 1 桶本阶段生产过的货物（没生产则作废）。相关建筑：<factory>（按生产种类数得钱）。",
-        "en": "The production phase action. Each player takes goods from the <goods_supply> onto the <portrait> per their production ability: each occupied <corn_estate> produces 1 <corn> barrel; other goods produce min(occupied estates of that crop, occupied semicircles on that crop's production buildings). When a color runs out, later players get nothing of it. Chooser privilege: at phase end, 1 extra barrel of a good produced this phase (void if nothing was produced). Related building: <factory> (coins by number of produced types)."
+        "zh": "生产阶段行动。每名玩家按生产能力从<goods_supply>取货物到<portrait>：每座被占据的<corn_estate>产 1 桶<corn>；其余货物产量 = min(该作物被占据庄园数, 该作物生产建筑上被占据<work_slot>数)。某色货物供应不足时，后面的玩家拿不到。选角者特权：阶段结束时多拿 1 桶本阶段生产过的货物（没生产则作废）。相关建筑：<factory>（按生产种类数得钱）。",
+        "en": "The production phase action. Each player takes goods from the <goods_supply> onto the <portrait> per their production ability: each occupied <corn_estate> produces 1 <corn> barrel; other goods produce min(occupied estates of that good, occupied <work_slot>s on that good's production buildings). When a color runs out, later players get nothing of it. Chooser privilege: at phase end, 1 extra barrel of a good produced this phase (void if nothing was produced). Related building: <factory> (coins by number of produced types)."
       },
       "<ontology::content>": {
         "<ontology::instant_content>": {
@@ -3502,8 +3558,8 @@
                   }
                 },
                 "description": {
-                  "zh": "从选角者开始顺时针，每名玩家按生产能力取货（生产是可选的，不想拿的玩家跳过）：每座被占据的<corn_estate>产 1 桶<corn>；<fruit>/<sugar>/<tobacco>/<coffee>产量 = min(被占据庄园数, 对应生产建筑被占据半圆槽数)。",
-                  "en": "Starting with the chooser and going clockwise, each player takes goods per production ability (production is optional — a player who does not want the goods is skipped): 1 <corn> per occupied <corn_estate>; <fruit>/<sugar>/<tobacco>/<coffee> produce min(occupied estates, occupied semicircles on the matching production buildings)."
+                  "zh": "从选角者开始顺时针，每名玩家按生产能力取货（生产是可选的，不想拿的玩家跳过）：每座被占据的<corn_estate>产 1 桶<corn>；<fruit>/<sugar>/<tobacco>/<coffee>产量 = min(被占据庄园数, 对应生产建筑被占据<work_slot>数)。",
+                  "en": "Starting with the chooser and going clockwise, each player takes goods per production ability (production is optional — a player who does not want the goods is skipped): 1 <corn> per occupied <corn_estate>; <fruit>/<sugar>/<tobacco>/<coffee> produce min(occupied estates, occupied <work_slot>s on the matching production buildings)."
                 },
                 "options": [
                   {
