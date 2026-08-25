@@ -476,11 +476,12 @@
       "constraints": {
         "required": [
           {
-            "<ontology::cost>": {
+            "price": {
               "description": {
-                "zh": "每座建筑都有费用——购买时支付。",
-                "en": "Every building has a cost paid on purchase."
-              }
+                "zh": "购买这座建筑时必须支付的钱币数量。",
+                "en": "The number of coins that must be paid to purchase this building."
+              },
+              "type": "integer"
             }
           },
           {
@@ -516,6 +517,16 @@
           "<work_slot>"
         ],
         "optional": []
+      },
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "<ontology::transfer>": {
+            "source": "<portrait>",
+            "destination": "<bank>",
+            "<ontology::object>": "<coin>",
+            "quantity": "this.price"
+          }
+        }
       }
     },
     {
@@ -573,16 +584,7 @@
       "copies": 2,
       "<work_slot>": 1,
       "<good>": "<fruit>",
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 1
-          }
-        }
-      }
+      "price": 1
     },
     {
       "id": "small_sugar_mill",
@@ -606,16 +608,7 @@
       "copies": 2,
       "<work_slot>": 1,
       "<good>": "<sugar>",
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 2
-          }
-        }
-      }
+      "price": 2
     },
     {
       "id": "large_fruit_warehouse",
@@ -639,16 +632,7 @@
       "copies": 4,
       "<work_slot>": 2,
       "<good>": "<fruit>",
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 3
-          }
-        }
-      }
+      "price": 3
     },
     {
       "id": "large_sugar_mill",
@@ -672,16 +656,7 @@
       "copies": 4,
       "<work_slot>": 2,
       "<good>": "<sugar>",
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 4
-          }
-        }
-      }
+      "price": 4
     },
     {
       "id": "tobacco_storage",
@@ -705,16 +680,7 @@
       "copies": 4,
       "<work_slot>": 3,
       "<good>": "<tobacco>",
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 5
-          }
-        }
-      }
+      "price": 5
     },
     {
       "id": "coffee_roaster",
@@ -738,16 +704,7 @@
       "copies": 4,
       "<work_slot>": 3,
       "<good>": "<coffee>",
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 6
-          }
-        }
-      }
+      "price": 6
     },
     {
       "id": "commercial_building",
@@ -821,16 +778,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 1
-          }
-        }
-      }
+      "price": 1
     },
     {
       "id": "hacienda",
@@ -877,16 +825,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 2
-          }
-        }
-      }
+      "price": 2
     },
     {
       "id": "builders_yard",
@@ -930,16 +869,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 2
-          }
-        }
-      }
+      "price": 2
     },
     {
       "id": "small_warehouse",
@@ -975,16 +905,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 3
-          }
-        }
-      }
+      "price": 3
     },
     {
       "id": "hospital",
@@ -1033,16 +954,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 4
-          }
-        }
-      }
+      "price": 4
     },
     {
       "id": "office",
@@ -1086,16 +998,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 5
-          }
-        }
-      }
+      "price": 5
     },
     {
       "id": "large_market",
@@ -1141,16 +1044,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 5
-          }
-        }
-      }
+      "price": 5
     },
     {
       "id": "large_warehouse",
@@ -1186,16 +1080,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 6
-          }
-        }
-      }
+      "price": 6
     },
     {
       "id": "factory",
@@ -1244,16 +1129,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 7
-          }
-        }
-      }
+      "price": 7
     },
     {
       "id": "school",
@@ -1302,16 +1178,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 8
-          }
-        }
-      }
+      "price": 8
     },
     {
       "id": "harbor",
@@ -1373,16 +1240,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 8
-          }
-        }
-      }
+      "price": 8
     },
     {
       "id": "wharf",
@@ -1458,16 +1316,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 9
-          }
-        }
-      }
+      "price": 9
     },
     {
       "id": "large_commercial_building",
@@ -1522,21 +1371,12 @@
           "en": "Large buildings cap the quarry discount at 4."
         }
       },
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": {
-              "type": "integer",
-              "default": 10,
-              "description": {
-                "zh": "大建筑费用，固定为 10 元。",
-                "en": "Large building cost, fixed at 10."
-              }
-            }
-          }
+      "price": {
+        "type": "integer",
+        "default": 10,
+        "description": {
+          "zh": "大建筑费用，固定为 10 元。",
+          "en": "Large building cost, fixed at 10."
         }
       }
     },
@@ -1587,16 +1427,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 10
-          }
-        }
-      }
+      "price": 10
     },
     {
       "id": "residence",
@@ -1645,16 +1476,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 10
-          }
-        }
-      }
+      "price": 10
     },
     {
       "id": "fortress",
@@ -1703,16 +1525,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 10
-          }
-        }
-      }
+      "price": 10
     },
     {
       "id": "customs_house",
@@ -1761,16 +1574,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 10
-          }
-        }
-      }
+      "price": 10
     },
     {
       "id": "city_hall",
@@ -1819,16 +1623,7 @@
         }
       ],
       "<work_slot>": 1,
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": 10
-          }
-        }
-      }
+      "price": 10
     },
     {
       "id": "role_card",
