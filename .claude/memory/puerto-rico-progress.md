@@ -24,6 +24,7 @@ metadata:
 - 原 `semicircles` 字段已删除；描述中的「半圆槽」统一改为 `<work_slot>`，「半圆形工位」保留为外观描述。
 - constraints 概念引用约定：无需语境说明时写纯字符串（如 `"<work_slot>"`）；需要语境说明时在 required 内写 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述），不另在外层重复声明。
 - 校验 E20：普通字段名不得与本文件已定义概念同名（如已有 `<good>` 就不能再写 `"good": ...`）。
+- PR 建筑费用字段改为 `<ontology::cost>`（ontology 已有 `<cost>`，游戏层引用必须带 namespace），不再用裸 `cost` 字段。
 - PR 中直接以 `<ontology::continuous_content>` 作 part 的光环效果（`quarry_tile`/`builders_yard`/`office`）已改为方案 A：外层用 `<ontology::continuous_effect>` 包 condition + content。
 - 生产职责定稿：由 `craftsman_role` 承担流程与聚合计算；`estate_tile` 与 `production_building` 只声明 `<good>` + `<work_slot>`，不持有 effect。基类 required 用 `{ "<good>": { "description": ... } }` 增强语境，具体板块直接写 `"<good>": "<fruit>"`。
 - 商业建筑与大建筑暂按 `count: 1` 填写；若实物确认有不同工位数，只改对应 count。

@@ -329,7 +329,8 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] key 已为 `<concept_id>` 格式时不写 type
 - [ ] constraints.required/optional 中的概念引用：概念自身定义已足够时直接写纯字符串（如 `"<work_slot>"`）；需要增强/说明该概念在当前字段的语境时用 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述）
 - [ ] 不要同时在外层写同一字段声明/值又在 constraints 中重复声明（E17 防重复）
-- [ ] 概念已定义后，普通字段名不要再与概念同名（如已有 `<good>` 就不要写 `"good": ...`），应写成 `"<good>": ...`（E20）
+- [ ] 概念已定义后，普通字段名不要再与本文件概念同名（如已有 `<good>` 就不要写 `"good": ...`），应写成 `"<good>": ...`（E20）
+- [ ] 引用 ontology 概念作字段时用带 namespace 的 `"<ontology::cost>": ...`，不要用裸 `"cost"` 或裸 `<cost>`（E15）
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)

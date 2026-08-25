@@ -398,7 +398,7 @@ class Validator:
                                 self.check_ref(ref, f"{source} › {path} › {rel}")
                 # E20: 普通字段名不得与本文件已定义概念同名
                 #      例如概念 <good> 已定义，就不能再写 "good": "<corn>"，应写 "<good>": "<corn>"
-                if not in_cons and ".slots[" not in path and local_concept_ids:
+                if not is_ontology and not in_cons and ".slots[" not in path and ".media" not in path and local_concept_ids:
                     _struct = {"id", "name", "abstract", "description", "definition",
                                "constraints", "extends", "specifies", "instance_of",
                                "level", "meta"}
