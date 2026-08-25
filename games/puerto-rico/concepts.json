@@ -3341,7 +3341,11 @@
                           "source": "<portrait>",
                           "destination": "<bank>",
                           "<ontology::object>": "<coin>",
-                          "quantity": "this.<ontology::piece>.price − 采石场折扣 − 选角者特权"
+                          "quantity": "this.<ontology::piece>.price",
+                          "description": {
+                            "zh": "按建筑标价支付；实际支付还可能因被占据采石场（上限由区块决定）和选角者特权而减少，具体折扣依赖当前游戏状态，需现场确认。",
+                            "en": "Pay the building's printed price; the actual amount may be reduced by occupied quarries (capped by the building's section) and the chooser's privilege. These discounts depend on current game state and must be confirmed at the table."
+                          }
                         }
                       }
                     },
