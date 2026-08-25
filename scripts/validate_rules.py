@@ -474,7 +474,7 @@ class Validator:
                      ("<ontology::instant_content>", "<ontology::continuous_content>"), "content"),
                 ):
                     ov = obj.get(outer)
-                    if isinstance(ov, dict) and "type" not in ov and not in_parts:
+                    if isinstance(ov, dict) and "type" not in ov and not in_parts and not in_cons:
                         keys = set(ov.keys())
                         if not (set(inner_set) & keys):
                             self.err(f"{source} › {path} › {outer}",

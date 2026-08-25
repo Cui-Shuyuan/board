@@ -331,6 +331,7 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] 不要同时在外层写同一字段声明/值又在 constraints 中重复声明（E17 防重复）
 - [ ] 概念已定义后，普通字段名不要再与已定义概念同名（如已有 `<good>`/`<cost>` 就不要写 `"good": ...`/`"cost": ...`），应写成 `"<good>": ...`/`"<ontology::cost>": ...`（E20）
 - [ ] 引用 ontology 概念作字段时用带 namespace 的 `"<ontology::cost>": ...`，不要用裸 `"cost"` 或裸 `<cost>`（E15）
+- [ ] 具体费用/代价不要只写整数或 description；`<ontology::cost>` 应体现 cost 本质（如 `<ontology::instant_cost>` + `<ontology::transfer>`），例如 PR 建筑费用写成 `"<ontology::cost>": { "<ontology::instant_cost>": { "<ontology::transfer>": { ... } } }`
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)
