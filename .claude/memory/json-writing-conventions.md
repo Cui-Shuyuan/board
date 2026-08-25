@@ -332,7 +332,7 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] 概念已定义后，普通字段名不要再与已定义概念同名（如已有 `<good>`/`<cost>` 就不要写 `"good": ...`/`"cost": ...`），应写成 `"<good>": ...`/`"<ontology::cost>": ...`（E20）
 - [ ] 引用 ontology 概念作字段时用带 namespace 的 `"<ontology::cost>": ...`，不要用裸 `"cost"` 或裸 `<cost>`（E15）
 - [ ] 具体费用/代价不要只写整数或 description；`<ontology::cost>` 应体现 cost 本质（如 `<ontology::instant_cost>` + `<ontology::transfer>`）
-- [ ] 公共 transfer 结构应写在基类里，实例只填参数：如 PR `building` 定义 `"<ontology::cost>": { ... "quantity": "this.price" }`，具体建筑只写 `"price": 3`
+- [ ] 公共 transfer 结构应写在基类里，实例只填参数：如 PR `building` 只声明 `"price": 3`，购买动作 `buy_building`（`<ontology::play>`）里定义 `<ontology::cost>` + `<ontology::transfer>`，quantity 引用 `this.<ontology::piece>.price`
 - [ ] destination 用 `this.target` 而非写死 zone
 - [ ] 描述字段叫 `description` 不叫 `definition`
 - [ ] 必选/可选：may 就包 CHOOSE_ONE(_skip, step)

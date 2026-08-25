@@ -517,16 +517,6 @@
           "<work_slot>"
         ],
         "optional": []
-      },
-      "<ontology::cost>": {
-        "<ontology::instant_cost>": {
-          "<ontology::transfer>": {
-            "source": "<portrait>",
-            "destination": "<bank>",
-            "<ontology::object>": "<coin>",
-            "quantity": "this.price"
-          }
-        }
       }
     },
     {
@@ -3340,69 +3330,50 @@
                       "zh": "购买建筑",
                       "en": "Buy a Building"
                     },
+                    "specifies": "<ontology::play>",
                     "<ontology::condition>": "<building_available>",
-                    "<ontology::pipeline>": {
-                      "options": [
-                        {
-                          "id": "pay_building_cost",
-                          "name": {
-                            "zh": "支付建筑费用",
-                            "en": "Pay the Building Cost"
-                          },
-                          "specifies": "<ontology::transfer>",
-                          "description": {
-                            "zh": "从<portrait>付钱到<bank>：费用 = 建筑费用 − 被占据采石场数（≤ 区块上限）− 选角者特权 1 元。",
-                            "en": "Pay from the <portrait> to the <bank>: cost = building cost − occupied quarries (≤ section cap) − 1 for the chooser's privilege."
-                          },
+                    "<ontology::piece>": "<building>",
+                    "source": "<building_supply>",
+                    "destination": "<city>",
+                    "<ontology::cost>": {
+                      "<ontology::instant_cost>": {
+                        "<ontology::transfer>": {
                           "source": "<portrait>",
                           "destination": "<bank>",
                           "<ontology::object>": "<coin>",
-                          "quantity": {
-                            "zh": "建筑费用 − 采石场折扣 − 选角者特权。",
-                            "en": "Building cost − quarry discount − chooser privilege."
-                          }
-                        },
-                        {
-                          "id": "place_building",
-                          "name": {
-                            "zh": "放置建筑",
-                            "en": "Place the Building"
-                          },
-                          "specifies": "<ontology::transfer>",
-                          "do_after": "pay_building_cost",
-                          "description": {
-                            "zh": "将买到的<building>从<building_supply>放到自己<city>的空格（大建筑 2 个相邻空格）。",
-                            "en": "Move the bought <building> from the <building_supply> onto empty <city> spaces (2 adjacent for large buildings)."
-                          },
-                          "source": "<building_supply>",
-                          "destination": "<city>",
-                          "<ontology::object>": "<building>",
-                          "quantity": 1
-                        },
-                        {
-                          "id": "school_worker",
-                          "name": {
-                            "zh": "学校派工人",
-                            "en": "School Worker"
-                          },
-                          "do_after": "place_building",
-                          "description": {
-                            "zh": "有被占据的<school>时，从<worker_supply>（空则<work_register>）拿 1 名工人放到刚建成的建筑上（仅 1 名）。",
-                            "en": "With an occupied <school>, take 1 worker from the <worker_supply> (or the <work_register> if empty) onto the new building (only 1)."
-                          },
-                          "<ontology::condition>": "<school_occupied>",
-                          "<ontology::transfer>": {
-                            "source": "<worker_supply>",
-                            "destination": {
-                              "zh": "刚建成的建筑（<work_slot>）。",
-                              "en": "A <work_slot> of the newly built building."
-                            },
-                            "<ontology::object>": "<worker>",
-                            "quantity": 1
-                          }
+                          "quantity": "this.<ontology::piece>.price − 采石场折扣 − 选角者特权"
                         }
-                      ],
-                      "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                      }
+                    },
+                    "<ontology::content>": {
+                      "<ontology::instant_content>": {
+                        "<ontology::pipeline>": {
+                          "options": [
+                            {
+                              "id": "school_worker",
+                              "name": {
+                                "zh": "学校派工人",
+                                "en": "School Worker"
+                              },
+                              "description": {
+                                "zh": "有被占据的<school>时，从<worker_supply>（空则<work_register>）拿 1 名工人放到刚建成的建筑上（仅 1 名）。",
+                                "en": "With an occupied <school>, take 1 worker from the <worker_supply> (or the <work_register> if empty) onto the new building (only 1)."
+                              },
+                              "<ontology::condition>": "<school_occupied>",
+                              "<ontology::transfer>": {
+                                "source": "<worker_supply>",
+                                "destination": {
+                                  "zh": "刚建成的建筑（<work_slot>）。",
+                                  "en": "A <work_slot> of the newly built building."
+                                },
+                                "<ontology::object>": "<worker>",
+                                "quantity": 1
+                              }
+                            }
+                          ],
+                          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                        }
+                      }
                     }
                   },
                   {
