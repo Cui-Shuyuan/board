@@ -1295,38 +1295,11 @@
         "zh": "占 2 个<city>格（需 2 个相邻空格）的<building>，共 5 种、每种 1 份，费用均为 10 元。大建筑本身提供 4 VP——即使未被占据也计 4 VP；但只有被占据时才有额外加成（终局计分）。",
         "en": "A <building> taking 2 <city> spaces (requiring 2 adjacent empty spaces) — 5 types, 1 copy each, all costing 10. Each large building is worth 4 VP — counted even when unoccupied; the bonus VP apply only when occupied, at final scoring."
       },
-      "city_spaces": {
-        "type": "integer",
-        "default": 2,
-        "description": {
-          "zh": "大建筑占 2 个城市格。",
-          "en": "Large buildings occupy 2 city spaces."
-        }
-      },
-      "copies": {
-        "type": "integer",
-        "default": 1,
-        "description": {
-          "zh": "每种大建筑仅 1 份。",
-          "en": "Only 1 copy of each large building."
-        }
-      },
-      "max_quarry_discount": {
-        "type": "integer",
-        "default": 4,
-        "description": {
-          "zh": "大建筑最多能被采石场折扣减免 4 元。",
-          "en": "Large buildings can be discounted by at most 4 coins from quarries."
-        }
-      },
-      "price": {
-        "type": "integer",
-        "default": 10,
-        "description": {
-          "zh": "大建筑费用，固定为 10 元。",
-          "en": "Large building cost, fixed at 10."
-        }
-      }
+      "city_spaces": 2,
+      "copies": 1,
+      "max_quarry_discount": 4,
+      "price": 10,
+      "vp": 4
     },
     {
       "id": "fire_station",
