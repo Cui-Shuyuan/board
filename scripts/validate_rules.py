@@ -396,19 +396,23 @@ class Validator:
                         else:
                             for ref in REF_RE.findall(val):
                                 self.check_ref(ref, f"{source} › {path} › {rel}")
-                # E20: 普通字段名不得与本文件已定义概念同名
-                #      例如概念 <good> 已定义，就不能再写 "good": "<corn>"，应写 "<good>": "<corn>"
-                if not is_ontology and not in_cons and ".slots[" not in path and ".media" not in path and local_concept_ids:
-                    _struct = {"id", "name", "abstract", "description", "definition",
-                               "constraints", "extends", "specifies", "instance_of",
-                               "level", "meta"}
-                    for key in obj:
-                        if key.startswith("<") or key.startswith("$") or key in _struct:
-                            continue
-                        base = key.strip("[]")
-                        if base in local_concept_ids:
-                            self.err(f"{source} › {path} › {key}",
-                                     f"E20 字段名 {key} 与本文件已定义概念 <{base}> 同名——若表示该概念请用 <{base}> 作 key，否则请换字段名")
+                # E20: 普通字段名不得与已定义概念同名（本文件概念或 ontology 概念）
+                #      例如概念 <good>/<cost> 已定义，就不能再写 "good": ... / "cost": ...，
+                #      应写 "<good>": ... / "<ontology::cost>": ...
+                if (not is_ontology and not in_cons and source.endswith("concepts.json")
+                        and ".slots[" not in path and ".media" not in path):
+                    _known = local_concept_ids | self.ontology_ids
+                    if _known:
+                        _struct = {"id", "name", "abstract", "description", "definition",
+                                   "constraints", "extends", "specifies", "instance_of",
+                                   "level", "meta"}
+                        for key in obj:
+                            if key.startswith("<") or key.startswith("$") or key in _struct:
+                                continue
+                            base = key.strip("[]")
+                            if base in _known:
+                                self.err(f"{source} › {path} › {key}",
+                                         f"E20 字段名 {key} 与已定义概念 <{base}> 同名——若表示该概念请用 <{base}> 作 key，否则请换字段名")
 
                 # E17: 字段不得同时在外层定义又在本概念 constraints 中重复声明
                 #      有自己的必填项/选填项的概念，应在 required/optional 条目内完成定义，

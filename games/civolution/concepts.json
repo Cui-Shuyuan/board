@@ -36,8 +36,8 @@
           "en": "Unit of measurement for food: 'marker'."
         }
       },
-      "component": "<octagonal_pillar>",
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "money",
@@ -55,7 +55,6 @@
         "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的钱币格（<money_space>）上即表示钱币，每 2 个叠成一列。",
         "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — when placed on the money space (<money_space>) of your console, it represents money, stacked 2 per column."
       },
-      "component": "<octagonal_pillar>",
       "unit": {
         "type": "string",
         "default": "个",
@@ -64,7 +63,8 @@
           "en": "Unit of measurement for money: 'marker'."
         }
       },
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "stored_material",
@@ -109,8 +109,8 @@
         "type": "string",
         "default": "个"
       },
-      "component": "<octagonal_pillar>",
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "wood",
@@ -597,8 +597,8 @@
           "en": "Which <stored_material> this marker will become when transported, determined by the material tile of its region."
         }
       },
-      "component": "<octagonal_pillar>",
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "feature_marker",
@@ -631,7 +631,7 @@
           "en": "Feature types: Stamina, Intelligence, Calm, Dexterity, Expression, Perception."
         }
       },
-      "component": "<octagonal_pillar>"
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "tribe",
@@ -1011,8 +1011,8 @@
         "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的创意格（<idea_space>）上。",
         "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on the idea space (<idea_space>) of your console."
       },
-      "component": "<octagonal_pillar>",
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "planning_marker",
@@ -1030,7 +1030,6 @@
         "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台激活骰子区的骰子格中。",
         "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed in an activation dice slot of your console."
       },
-      "component": "<octagonal_pillar>",
       "<ontology::substitution>": {
         "target": "<activation_die>",
         "<ontology::condition>": {
@@ -1039,7 +1038,8 @@
         },
         "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
       },
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "focus_marker",
@@ -1057,7 +1057,6 @@
         "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在控制台的焦点格（<focus_space>）上。",
         "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed on the focus space (<focus_space>) of your console."
       },
-      "component": "<octagonal_pillar>",
       "<ontology::substitution>": {
         "target": "<activation_die>",
         "<ontology::condition>": {
@@ -1066,7 +1065,8 @@
         },
         "scope": "<activate_module>.<ontology::pipeline>.pay_cost"
       },
-      "limited_supply": true
+      "limited_supply": true,
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "card_name",
@@ -2335,7 +2335,7 @@
         "zh": "由玩家颜色的圆片（<stackable_disc>）表示——放在分数轨（<score_track>）上，每位玩家 1 个。",
         "en": "Represented by a disc (<stackable_disc>) in the player's color — placed on the score track (<score_track>); 1 per player."
       },
-      "component": "<stackable_disc>"
+      "<ontology::component>": "<stackable_disc>"
     },
     {
       "id": "sequence_board",
@@ -2581,7 +2581,7 @@
         "zh": "由玩家颜色的圆片（<stackable_disc>）表示——放在 5 条进程轨（<progress_track>）上，每位玩家 5 个。",
         "en": "Represented by a disc (<stackable_disc>) in the player's color — placed on the 5 progress tracks (<progress_track>); 5 per player."
       },
-      "component": "<stackable_disc>"
+      "<ontology::component>": "<stackable_disc>"
     },
     {
       "id": "progress_track",
@@ -4439,7 +4439,7 @@
         "zh": "由玩家颜色的八角柱标记（<octagonal_pillar>）表示——放在重置列（<reset_column>）顶部。",
         "en": "Represented by an octagonal marker (<octagonal_pillar>) in the player's color — placed at the top of a reset column (<reset_column>)."
       },
-      "component": "<octagonal_pillar>"
+      "<ontology::component>": "<octagonal_pillar>"
     },
     {
       "id": "research_display",

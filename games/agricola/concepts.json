@@ -578,13 +578,6 @@
           "en": "The card's printed prerequisite (e.g. 'at least 2 occupations'), which must be met to play the card; it demands ownership, never payment."
         }
       },
-      "cost": {
-        "type": "string",
-        "description": {
-          "zh": "右上角印的建材费用（如「1 木头 1 黏土」），从个人供应支付。",
-          "en": "The building resource cost printed in the top right corner, paid from your personal supply."
-        }
-      },
       "traveling": {
         "type": "boolean",
         "description": {
@@ -595,6 +588,13 @@
       "appearance": {
         "zh": "橙色卡牌，右上角印建材费用，卡面为插图与效果文字，旅行卡带左箭头标记。",
         "en": "An orange card with the building cost in the top right corner, an illustration with effect text, and a left arrow on traveling cards."
+      },
+      "<ontology::cost>": {
+        "type": "string",
+        "description": {
+          "zh": "右上角印的建材费用（如「1 木头 1 黏土」），从个人供应支付。",
+          "en": "The building resource cost printed in the top right corner, paid from your personal supply."
+        }
       }
     },
     {
