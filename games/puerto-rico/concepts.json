@@ -419,8 +419,8 @@
         {
           "<ontology::continuous_effect>": {
             "description": {
-              "zh": "采石场折扣——光环类效果。只要本采石场被占据（active_condition），该玩家购买建筑的费用减 1 元，每座被占据的采石场各减 1 元；总减免上限由目标建筑所在区块决定（见<building>的 board_section 与 max_quarry_discount）。参与计算的效果——购买费用查询时现算，采石场上的工人被移走则减免随之消失。",
-              "en": "Quarry discount — an aura effect. As long as this quarry is occupied (active_condition), the player pays 1 coin less per building, stacking −1 per occupied quarry; the total discount is capped by the target building's board section (see board_section and max_quarry_discount on <building>). It participates in computation — the purchase cost is computed on query, and the discount disappears if the worker leaves the quarry."
+              "zh": "采石场折扣——光环类效果。只要本采石场被占据（active_condition），该玩家购买建筑的费用减 1 元，每座被占据的采石场各减 1 元；总减免上限由目标建筑的 max_quarry_discount 决定（见<building>的 max_quarry_discount）。参与计算的效果——购买费用查询时现算，采石场上的工人被移走则减免随之消失。",
+              "en": "Quarry discount — an aura effect. As long as this quarry is occupied (active_condition), the player pays 1 coin less per building, stacking −1 per occupied quarry; the total discount is capped by the target building's max_quarry_discount (see <building>'s max_quarry_discount). It participates in computation — the purchase cost is computed on query, and the discount disappears if the worker leaves the quarry."
             },
             "<ontology::condition>": {
               "zh": "本采石场被占据（<work_slot>上有工人）。",
@@ -429,8 +429,8 @@
             "<ontology::content>": {
               "<ontology::continuous_content>": {
                 "description": {
-                  "zh": "购买建筑费用减 1 元；每座被占据的采石场各减 1 元，总减免上限由目标建筑所在区块决定（见<building>的 board_section 与 max_quarry_discount）。采石场上的工人被移走则减免随之消失。",
-                  "en": "Pay 1 coin less per building; each occupied quarry stacks, capped by the target building's board section (see board_section and max_quarry_discount on <building>). The discount disappears if the worker leaves the quarry."
+                  "zh": "购买建筑费用减 1 元；每座被占据的采石场各减 1 元，总减免上限由目标建筑的 max_quarry_discount 决定（见<building>的 max_quarry_discount）。采石场上的工人被移走则减免随之消失。",
+                  "en": "Pay 1 coin less per building; each occupied quarry stacks, capped by the target building's max_quarry_discount (see <building>'s max_quarry_discount). The discount disappears if the worker leaves the quarry."
                 }
               }
             }
@@ -493,24 +493,10 @@
             "type": "integer"
           },
           {
-            "id": "board_section",
-            "description": {
-              "zh": "每座建筑都属于中央版图的某个区块——决定采石场折扣上限。",
-              "en": "Every building belongs to a board section, which caps the quarry discount."
-            },
-            "type": "enum",
-            "enum": [
-              "top",
-              "second",
-              "third",
-              "bottom"
-            ]
-          },
-          {
             "id": "max_quarry_discount",
             "description": {
-              "zh": "每座建筑的采石场折扣上限，由该建筑所在区块决定。意思是：无论玩家拥有多少座被占据的采石场，购买这座建筑时实际能减免的钱数都不能超过这个上限。例如费用为 1 元的建筑，即使有 3、4 座被占据的采石场，也最多只能减 1 元。",
-              "en": "The maximum quarry discount that can be applied when purchasing this building, set by its board section. No matter how many occupied quarries the player has, the discount cannot exceed this cap. For example, a building costing 1 coin can be reduced by at most 1 coin even if the player has 3 or 4 occupied quarries."
+              "zh": "这座建筑最多能被采石场折扣减免的钱数。无论玩家有多少座被占据的采石场，购买时实际减免不能超过这个数。例如费用 1 元的建筑，即使有 3、4 座采石场，也最多减 1 元。",
+              "en": "The maximum number of coins this building can be discounted by quarries. No matter how many occupied quarries the player has, the discount cannot exceed this number. E.g., a building costing 1 coin can be reduced by at most 1 coin even with 3 or 4 quarries."
             },
             "type": "integer"
           },
@@ -569,7 +555,6 @@
         "en": "A <production_building> costing 1, worth 1 VP, with 1 <work_slot>; 2 copies. Produces up to 1 <fruit> barrel when occupied."
       },
       "vp": 1,
-      "board_section": "top",
       "max_quarry_discount": 1,
       "copies": 2,
       "<work_slot>": 1,
@@ -593,7 +578,6 @@
         "en": "A <production_building> costing 2, worth 1 VP, with 1 <work_slot>; 2 copies. Produces up to 1 <sugar> barrel when occupied."
       },
       "vp": 1,
-      "board_section": "top",
       "max_quarry_discount": 1,
       "copies": 2,
       "<work_slot>": 1,
@@ -617,7 +601,6 @@
         "en": "A <production_building> costing 3, worth 2 VP, with 2 <work_slot>s; 4 copies. Produces up to 2 <fruit> barrels when occupied."
       },
       "vp": 2,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "copies": 4,
       "<work_slot>": 2,
@@ -641,7 +624,6 @@
         "en": "A <production_building> costing 4, worth 2 VP, with 2 <work_slot>s; 4 copies. Produces up to 2 <sugar> barrels when occupied."
       },
       "vp": 2,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "copies": 4,
       "<work_slot>": 2,
@@ -665,7 +647,6 @@
         "en": "A <production_building> costing 5, worth 3 VP, with 3 <work_slot>s; 4 copies. Produces up to 3 <tobacco> barrels when occupied."
       },
       "vp": 3,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "copies": 4,
       "<work_slot>": 3,
@@ -689,7 +670,6 @@
         "en": "A <production_building> costing 6, worth 3 VP, with 3 <work_slot>s; 4 copies. Produces up to 3 <coffee> barrels when occupied."
       },
       "vp": 3,
-      "board_section": "third",
       "max_quarry_discount": 3,
       "copies": 4,
       "<work_slot>": 3,
@@ -741,7 +721,6 @@
         "en": "A <commercial_building> costing 1, worth 1 VP. Function: +1 coin when selling a good in the <trader_role> phase (stacks with <large_market> to +3, and further with the <trader_role> privilege). Example: selling 1 <corn> barrel (0 coins) earns 1 coin."
       },
       "vp": 1,
-      "board_section": "top",
       "max_quarry_discount": 1,
       "parts": [
         {
@@ -787,7 +766,6 @@
         "en": "A <commercial_building> costing 2, worth 1 VP. Function: in the <planter_role> phase, before your normal planting action, you may draw 1 extra estate from the top of the <estate_face_down_stack> and must immediately place it in your <countryside> (cannot be discarded); then you take your normal face-up estate from the <estate_display>. Note: with a <builders_yard> too, this extra tile cannot be a quarry, but the normal action may still take one."
       },
       "vp": 1,
-      "board_section": "top",
       "max_quarry_discount": 1,
       "parts": [
         {
@@ -834,7 +812,6 @@
         "en": "A <commercial_building> costing 2, worth 1 VP. Function: in the <planter_role> phase, a non-chooser may take a quarry instead of an estate. Note: this grants no second quarry — if you are the chooser (whose privilege already allows a quarry), or when using the <hacienda> function, you cannot take an additional quarry via the yard."
       },
       "vp": 1,
-      "board_section": "top",
       "max_quarry_discount": 1,
       "parts": [
         {
@@ -878,7 +855,6 @@
         "en": "A <commercial_building> costing 3, worth 1 VP. Function: at the end of the <captain_role> phase, in addition to the 1 barrel everyone keeps, you may keep all barrels of 1 more type (stored on the <portrait>). Note: the shipping obligation is unchanged — you must still load whatever you can during the phase."
       },
       "vp": 1,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "parts": [
         {
@@ -914,7 +890,6 @@
         "en": "A <commercial_building> costing 4, worth 2 VP. Function: in the <planter_role> phase, if you placed an estate or quarry in your <countryside>, you may take 1 worker from the <worker_supply> (not the <work_register>) and place it on the newly placed tile (nowhere else); if the <worker_supply> is empty, take from the <work_register> instead. With a <hacienda> too (two tiles placed this phase), choose one of them for the worker, but take only 1 worker."
       },
       "vp": 2,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "parts": [
         {
@@ -963,7 +938,6 @@
         "en": "A <commercial_building> costing 5, worth 2 VP. Function: in the <trader_role> phase, you may sell a good type already present in the <trading_house> (normally each type sells at most once per phase). You still sell only 1 barrel; a full house (4 barrels) still blocks the sale. Multiple Office owners may each sell the same type in one phase — space permitting."
       },
       "vp": 2,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "parts": [
         {
@@ -1007,7 +981,6 @@
         "en": "A <commercial_building> costing 5, worth 2 VP. Function: +2 coins when selling a good in the <trader_role> phase; with a <small_market> too, +3 coins in total."
       },
       "vp": 2,
-      "board_section": "second",
       "max_quarry_discount": 2,
       "parts": [
         {
@@ -1053,7 +1026,6 @@
         "en": "A <commercial_building> costing 6, worth 2 VP. Function: at the end of the <captain_role> phase, in addition to the 1 barrel everyone keeps, you may keep all barrels of 2 more types; with a <small_warehouse> too, 3 more types. Barrels stay on the <portrait>. The shipping obligation is unchanged."
       },
       "vp": 2,
-      "board_section": "third",
       "max_quarry_discount": 3,
       "parts": [
         {
@@ -1089,7 +1061,6 @@
         "en": "A <commercial_building> costing 7, worth 3 VP. Function: in the <craftsman_role> phase, if you produce more than 1 type of good, take coins from the <bank> regardless of barrel counts: 2 types → 1 coin, 3 → 2, 4 → 3, 5 → 5."
       },
       "vp": 3,
-      "board_section": "third",
       "max_quarry_discount": 3,
       "parts": [
         {
@@ -1138,7 +1109,6 @@
         "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <builder_role> phase, if you build a building, you may take 1 worker from the <worker_supply> (not the <work_register>) and place it on the newly built tile (nowhere else); if the <worker_supply> is empty, take from the <work_register> instead. Only 1 worker, even if the building has several <work_slot>s."
       },
       "vp": 3,
-      "board_section": "third",
       "max_quarry_discount": 3,
       "parts": [
         {
@@ -1203,7 +1173,6 @@
         "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <captain_role> phase, +1 VP each time you load goods onto a ship (including the <wharf> chartered ship) — counted per load, not per barrel. Example: loading 3 barrels earns 3+1 VP; loading 2 more later in the same phase earns 2+1 VP."
       },
       "vp": 3,
-      "board_section": "third",
       "max_quarry_discount": 3,
       "parts": [
         {
@@ -1249,7 +1218,6 @@
         "en": "A <commercial_building> costing 9, worth 3 VP. Function: at any one time during the <captain_role> phase (if used at all), you may load all barrels of any 1 type onto a 'Chartered Ship' — unlimited capacity, may carry a type already on a cargo ship, 1 VP per barrel, then all barrels return to the <goods_supply>. At most once per phase; may be skipped. Using it equally satisfies that round's loading obligation: on your loading turn you must choose one — cargo ship or chartered ship (doing neither is not allowed); you may charter before loading cargo ships, in either order."
       },
       "vp": 3,
-      "board_section": "third",
       "max_quarry_discount": 3,
       "parts": [
         {
@@ -1343,22 +1311,12 @@
           "en": "Only 1 copy of each large building."
         }
       },
-      "board_section": {
-        "type": "enum",
-        "enum": [
-          "bottom"
-        ],
-        "description": {
-          "zh": "大建筑位于中央版图底层区块。",
-          "en": "Large buildings sit in the bottom section of the central board."
-        }
-      },
       "max_quarry_discount": {
         "type": "integer",
         "default": 4,
         "description": {
-          "zh": "大建筑的采石场折扣上限为 4。",
-          "en": "Large buildings cap the quarry discount at 4."
+          "zh": "大建筑最多能被采石场折扣减免 4 元。",
+          "en": "Large buildings can be discounted by at most 4 coins from quarries."
         }
       },
       "price": {

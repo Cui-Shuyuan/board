@@ -24,6 +24,7 @@ metadata:
 - 原 `semicircles` 字段已删除；描述中的「半圆槽」统一改为 `<work_slot>`，「半圆形工位」保留为外观描述。
 - constraints 概念引用约定：无需语境说明时写纯字符串（如 `"<work_slot>"`）；需要语境说明时在 required 内写 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述），不另在外层重复声明。
 - 校验 E20：concepts.json 中普通字段名不得与已定义概念同名（本文件或 ontology，如 `<good>`/`<cost>`）；已同步修正 agricola `cost`、civolution `component`。
+- PR 建筑已删除 `board_section` 枚举，只保留 `max_quarry_discount` 表示“最多能被采石场折扣减免几块钱”。
 - PR 建筑费用建模：`building` 只声明 `"price": N` 作为接口；`buy_building`（`<ontology::play>`）里定义 `<ontology::cost>` + `<ontology::instant_cost>` + `<ontology::transfer>`，quantity 只引用 `this.<ontology::piece>.price`；采石场折扣/选角者特权依赖当前状态，目前放在 description 说明，不做伪公式。
 - PR 中直接以 `<ontology::continuous_content>` 作 part 的光环效果（`quarry_tile`/`builders_yard`/`office`）已改为方案 A：外层用 `<ontology::continuous_effect>` 包 condition + content。
 - 生产职责定稿：由 `craftsman_role` 承担流程与聚合计算；`estate_tile` 与 `production_building` 只声明 `<good>` + `<work_slot>`，不持有 effect。基类 required 用 `{ "<good>": { "description": ... } }` 增强语境，具体板块直接写 `"<good>": "<fruit>"`。
