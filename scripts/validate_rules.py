@@ -624,6 +624,132 @@ class Validator:
                 continue
             self.warn("", f"W05 孤立概念 <{cid}> — 有定义但无任何引用")
 
+
+    # ── concept/instance 放置启发式 (W08) ───────────────
+    # 依赖图判据：如果删除该类型全部副本后，其他规则会悬空/失去意义 → concept；
+    # 如果只是可选叶子、没有规则必须引用它 → instance。
+    # 这里是启发式 WARN，不是硬错误：最终仍由设计者根据游戏规模/查询需求判断。
+    def check_concept_instance_heuristics(self):
+        if self.game:
+            game_dirs = [GAMES_DIR / self.game]
+        else:
+            game_dirs = sorted(d for d in GAMES_DIR.iterdir() if d.is_dir() and (d / "concepts.json").exists())
+
+        ref_re = REF_RE
+
+        def collect_refs(obj, strong: set, weak: set, in_text=False):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    child_text = in_text or k in ("description", "definition", "appearance")
+                    for m in ref_re.findall(k):
+                        (weak if child_text else strong).add(m.split(".")[0].split("::")[-1])
+                    collect_refs(v, strong, weak, child_text)
+            elif isinstance(obj, list):
+                for v in obj:
+                    collect_refs(v, strong, weak, in_text)
+            elif isinstance(obj, str):
+                for m in ref_re.findall(obj):
+                    (weak if in_text else strong).add(m.split(".")[0].split("::")[-1])
+
+        for gd in game_dirs:
+            cp = gd / "concepts.json"
+            if not cp.exists():
+                continue
+            try:
+                concepts = json.loads(cp.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            concept_ids = {o.get("id") for o in concepts.get("objects", []) if isinstance(o, dict) and o.get("id")}
+            if not concept_ids:
+                continue
+
+            instance_ids = set()
+            ip = gd / "instances.json"
+            if ip.exists():
+                try:
+                    inst = json.loads(ip.read_text(encoding="utf-8"))
+                    for arr in inst.values():
+                        if isinstance(arr, list):
+                            for o in arr:
+                                if isinstance(o, dict) and o.get("id"):
+                                    instance_ids.add(o["id"])
+                except Exception:
+                    pass
+
+            strong = set()
+            weak = set()
+            parent_usage = {oid: 0 for oid in concept_ids}
+
+            # concepts.json 自身引用
+            for o in concepts.get("objects", []):
+                if not isinstance(o, dict):
+                    continue
+                oid = o.get("id")
+                s2, w2 = set(), set()
+                collect_refs(o, s2, w2)
+                for r in s2 | w2:
+                    if r in concept_ids and r != oid:
+                        (weak if r in w2 else strong).add(r)
+                for rel in ("extends", "specifies", "instance_of"):
+                    v = o.get(rel)
+                    if isinstance(v, str):
+                        p = v.strip("<>").split("::")[-1].split(".")[0]
+                        if p in concept_ids:
+                            parent_usage[p] += 1
+
+            # flow.json / instances.json 引用
+            for fn in ("flow.json", "instances.json"):
+                fp = gd / fn
+                if not fp.exists():
+                    continue
+                try:
+                    data = json.loads(fp.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                s2, w2 = set(), set()
+                collect_refs(data, s2, w2)
+                for r in s2 | w2:
+                    if r in concept_ids:
+                        (weak if r in w2 else strong).add(r)
+                    if r in instance_ids and r in s2:
+                        # 记录 instance 被强引用
+                        pass
+
+            # instance 被强引用计数
+            inst_strong = set()
+            for fn in ("concepts.json", "flow.json"):
+                fp = gd / fn
+                if not fp.exists():
+                    continue
+                try:
+                    data = json.loads(fp.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                s2, w2 = set(), set()
+                collect_refs(data, s2, w2)
+                for r in s2:
+                    if r in instance_ids:
+                        inst_strong.add(r)
+
+            # WARN: 孤立叶子 concept（没有被任何父链使用 + 没有任何引用）
+            # 只提示物理类概念（piece/tile/card/board 等），避免误报 setting/zone/state
+            for oid in sorted(concept_ids):
+                if parent_usage[oid] == 0 and oid not in strong and oid not in weak:
+                    chain = self.parent_chain(oid)
+                    physical = oid in self.physical_bases or any(a in self.physical_bases for a in chain)
+                    if physical:
+                        self.warn(f"games/{gd.name}/concepts.json",
+                                  f"W08 叶子概念 <{oid}> 没有任何引用——按依赖图判据可能应作为 instance_of 放入 instances.json")
+
+            # WARN: 被规则强引用的 instance，可能应提升为 concept（仅物理实例）
+            for iid in sorted(instance_ids):
+                if iid in inst_strong:
+                    chain = self.parent_chain(iid)
+                    physical = iid in self.physical_bases or any(a in self.physical_bases for a in chain)
+                    if physical:
+                        self.warn(f"games/{gd.name}/instances.json",
+                                  f"W08 实例 <{iid}> 被规则强引用——按依赖图判据可能应提升为 concept")
+
     # ── 总入口 ────────────────────────────────────────────
     def run(self) -> int:
         targets: list[tuple[Path, str, bool]] = []
@@ -681,6 +807,9 @@ class Validator:
                 self.err(src, f"E16 抽象概念 <{oid}> 不应填 appearance 数据 — 其继承链 {chain} 不经过物理基类 {sorted(self.physical_bases)}")
             elif physical and not has_key:
                 self.warn(src, f"W07 实体概念 <{oid}> 缺 appearance — 建议补外观描述（形状/颜色/尺寸/图标），供客人指着实物提问时识别")
+
+        # W08: concept/instance 放置启发式（仅游戏层）
+        self.check_concept_instance_heuristics()
 
         # ontology constraints 顶层字段引用 + E11/W05
         if self.include_ontology:

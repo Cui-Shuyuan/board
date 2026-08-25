@@ -19,7 +19,7 @@ D:/Python/Python312/python.exe scripts/validate_rules.py --errors-only   # 只�
 
 **pre-commit hook 已安装（2026-08-11）**：`.git/hooks/pre-commit` 每次 `git commit` 自动跑 `--errors-only` 并输出结果，**只报告不阻止提交**（用户定稿：git 是防误改的安全网，允许提交后靠 checkout 恢复——不允许 commit 会堵死第二次改错的退路）。E01 已升级为完整结构检查：JSON 语法错误带行号/列号定位 + 文件顶层结构约定（concepts.json 需 meta+objects/concepts、game flow.json 需 meta+procedures、ontology flow 需 trigger_pipeline 节点、instances.json 至少一组）。
 
-核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、**E13 cost/content 层级约束**（见下）、**E20 普通字段名不得与已定义概念同名（本文件或 ontology）**、W05 孤立概念（有定义无引用且非触发型）。
+核心检查：悬空引用（E02）、缺 name（E04）、type 引用格式（E05）、do_after 存在性（E06）、cost null（E07）、`| null` 旧写法（E08）、definition 误用（E09）、_skip 格式（E10）、**E11 继承链闭合**（父类 required 的每个字段，每条 extends/specifies/instance_of 链上至少一个节点实现——实现节点覆盖其下所有后代链）、**E13 cost/content 层级约束**（见下）、**E20 普通字段名不得与已定义概念同名（本文件或 ontology）**、W05 孤立概念（有定义无引用且非触发型）、**W08 concept/instance 放置启发式**（孤立叶子物理 concept 可能应放 instances；被强引用的物理 instance 可能应提升为 concept）。
 
 ## 终结形态平级并列 ★（2026-08-13 用户定稿）
 
@@ -330,6 +330,7 @@ id + name.zh + name.en + description.zh + description.en
 - [ ] constraints.required/optional 中的概念引用：概念自身定义已足够时直接写纯字符串（如 `"<work_slot>"`）；需要增强/说明该概念在当前字段的语境时用 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述）
 - [ ] 不要同时在外层写同一字段声明/值又在 constraints 中重复声明（E17 防重复）
 - [ ] 概念已定义后，普通字段名不要再与已定义概念同名（如已有 `<good>`/`<cost>` 就不要写 `"good": ...`/`"cost": ...`），应写成 `"<good>": ...`/`"<ontology::cost>": ...`（E20）
+- [ ] concept/instance 放置用依赖图判据：删除该类型全部副本后规则是否悬空/失去意义；脚本以 W08 做启发式提示
 - [ ] 引用 ontology 概念作字段时用带 namespace 的 `"<ontology::cost>": ...`，不要用裸 `"cost"` 或裸 `<cost>`（E15）
 - [ ] 具体费用/代价不要只写整数或 description；`<ontology::cost>` 应体现 cost 本质（如 `<ontology::instant_cost>` + `<ontology::transfer>`）
 - [ ] 公共 transfer 结构应写在基类里，实例只填参数：如 PR `building` 只声明 `"price": 3`，购买动作 `buy_building`（`<ontology::play>`）里定义 `<ontology::cost>` + `<ontology::transfer>`，quantity 引用 `this.<ontology::piece>.price`
