@@ -731,7 +731,7 @@
     },
     {
       "id": "role_card",
-      "extends": "<ontology::card>",
+      "extends": "<ontology::tile>",
       "name": {
         "zh": "角色卡",
         "en": "Role Card"

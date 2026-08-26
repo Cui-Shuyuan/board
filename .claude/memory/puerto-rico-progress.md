@@ -25,6 +25,7 @@ metadata:
 - constraints 概念引用约定：无需语境说明时写纯字符串（如 `"<work_slot>"`）；需要语境说明时在 required 内写 `{ "<good>": { "description": ... } }`（概念作 key，值对象是增强描述），不另在外层重复声明。
 - 校验 E20：concepts.json 中普通字段名不得与已定义概念同名（本文件或 ontology，如 `<good>`/`<cost>`）；已同步修正 agricola `cost`、civolution `component`。
 - PR 建筑已删除 `board_section` 枚举，只保留 `max_quarry_discount` 表示“最多能被采石场折扣减免几块钱”。
+- `role_card` 父类从 `<ontology::card>` 改为 `<ontology::tile>`（角色板块不是卡牌）。
 - 商业建筑（含大小仓库、市场、医院、学校、码头等 12 种普通商业 + 5 种大商业）已从 concepts.json 移到 `games/puerto-rico/instances.json`，`specifies` 改为 `instance_of`；生产建筑仍留在 concepts。
 - `large_commercial_building` 基类直接写具体值：`city_spaces: 2`、`price: 10`、`vp: 4`、`copies: 1`、`max_quarry_discount: 4`，不再用 schema 包装。
 - PR 建筑费用建模：`building` 只声明 `"price": N` 作为接口；`buy_building`（`<ontology::play>`）里定义 `<ontology::cost>` + `<ontology::instant_cost>` + `<ontology::transfer>`，quantity 只引用 `this.<ontology::piece>.price`；采石场折扣/选角者特权依赖当前状态，目前放在 description 说明，不做伪公式。
