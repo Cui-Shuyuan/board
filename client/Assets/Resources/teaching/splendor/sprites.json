@@ -1,0 +1,16 @@
+{
+  "game": "splendor",
+  "sprites": [
+    { "slot": "board", "png": "splendor/board" },
+    { "slot": "development_card_level_1", "png": "splendor/development_card_level_1" },
+    { "slot": "development_card_level_2", "png": "splendor/development_card_level_2" },
+    { "slot": "development_card_level_3", "png": "splendor/development_card_level_3" },
+    { "slot": "noble", "png": "splendor/noble" },
+    { "slot": "gem_diamond", "png": "splendor/gem_diamond" },
+    { "slot": "gem_sapphire", "png": "splendor/gem_sapphire" },
+    { "slot": "gem_emerald", "png": "splendor/gem_emerald" },
+    { "slot": "gem_ruby", "png": "splendor/gem_ruby" },
+    { "slot": "gem_onyx", "png": "splendor/gem_onyx" },
+    { "slot": "gem_gold", "png": "splendor/gem_gold" }
+  ]
+}
