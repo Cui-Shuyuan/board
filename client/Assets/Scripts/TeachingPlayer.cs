@@ -60,6 +60,19 @@ public class TeachingPlayer : MonoBehaviour
         PlayChunk(index);
     }
 
+    /// <summary>清掉场景里所有教学 sprite 子对象，供重复出图前重置。</summary>
+    void ClearScene()
+    {
+        objectMap.Clear();
+        baseScales.Clear();
+        if (transform != null)
+        {
+            var kids = new List<Transform>();
+            for (int i = 0; i < transform.childCount; i++) kids.Add(transform.GetChild(i));
+            foreach (var k in kids) DestroyImmediate(k.gameObject);
+        }
+    }
+
     /// <summary>同步把场景置为该 chunk 播完后的状态（供 batch 出图，不依赖协程）。
     /// 第 index 块的终态 = 前面所有 chunk 的终态累积 + 本块终态（数据驱动语义：前块播完的已就位）。</summary>
     public void ApplyChunkFinalStateSynced(int index)
@@ -106,6 +119,92 @@ public class TeachingPlayer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 同步把场景推进到 [0..index 的块累积终态 + 第 index 块的进度 t]（确定性，不依赖协程）。
+    /// t∈[0,1] 表示当前块动画的全局进度。用于 batch 出图评估动画中间态。
+    /// </summary>
+    public void ApplyChunkProgressSynced(int index, float t)
+    {
+        SetupCamera();
+        BuildScene();
+        SetupUI();
+        Load();
+        if (data == null || data.chunks.Count == 0) return;
+        chunkIndex = Mathf.Clamp(index, 0, data.chunks.Count - 1);
+        // 前面的块：全部到终态
+        for (int i = 0; i < chunkIndex; i++)
+            foreach (var shot in data.chunks[i].shots)
+                ApplyShotFinal(shot);
+        // 当前块：推进到局部进度 t
+        Say(data.chunks[chunkIndex].text?.zh ?? string.Empty);
+        foreach (var shot in data.chunks[chunkIndex].shots)
+        {
+            float local = AdvancedLocalProgress(shot, t);
+            ApplyShotProgress(shot, local);
+        }
+    }
+
+    /// <summary>求某个 shot 在当前块总进度 t 下的局部进度系数（受 delay/hold/duration 影响）。</summary>
+    float AdvancedLocalProgress(TeachingShot shot, float t)
+    {
+        float dur = Mathf.Max(0.001f, shot.duration);
+        float start = shot.delay;
+        float end = start + dur + shot.hold;
+        if (t <= start) return 0f;
+        if (t >= end) return 1f;
+        return Mathf.InverseLerp(start, start + dur, t);
+    }
+
+    void ApplyShotProgress(TeachingShot shot, float k)
+    {
+        switch (shot.type)
+        {
+            case "group":
+                if (shot.items != null) foreach (var s in shot.items) ApplyShotProgress(s, k);
+                break;
+            case "tell":
+                break;
+            case "appear":
+                ApplyAppearProgress(shot.target, k);
+                break;
+            case "move":
+                if (!string.IsNullOrEmpty(shot.target) && objectMap.TryGetValue(shot.target, out var mt))
+                {
+                    Vector3 f = shot.From.HasValue ? shot.From.Value : mt.localPosition;
+                    Vector3 to = shot.To.HasValue ? shot.To.Value : mt.localPosition;
+                    mt.localPosition = Vector3.LerpUnclamped(f, to, TweenLibrary.Ease(k, shot.easing));
+                }
+                break;
+            case "rotate":
+            case "flip":
+                if (!string.IsNullOrEmpty(shot.target) && objectMap.TryGetValue(shot.target, out var rt))
+                {
+                    Quaternion f = rt.localRotation;
+                    Quaternion to = shot.Angle.HasValue ? Quaternion.Euler(shot.Angle.Value) : Quaternion.Euler(0, 180, 0);
+                    rt.localRotation = Quaternion.SlerpUnclamped(f, to, TweenLibrary.Ease(k, shot.easing));
+                }
+                break;
+            case "scale":
+                if (!string.IsNullOrEmpty(shot.target) && objectMap.TryGetValue(shot.target, out var st))
+                {
+                    Vector3 f = baseScales.TryGetValue(shot.target, out var bs) ? bs * 0.6f : st.localScale;
+                    Vector3 to = shot.To.HasValue ? shot.To.Value : st.localScale;
+                    st.localScale = Vector3.LerpUnclamped(f, to, TweenLibrary.Ease(k, shot.easing));
+                }
+                break;
+        }
+    }
+
+    void ApplyAppearProgress(string name, float k)
+    {
+        if (string.IsNullOrEmpty(name) || !objectMap.TryGetValue(name, out var t)) return;
+        var sr = t.GetComponent<SpriteRenderer>();
+        if (sr == null) return;
+        float a = TweenLibrary.Ease(k, "easeOutCubic");
+        sr.color = new Color(1f, 1f, 1f, a);
+        t.localScale = baseScales.TryGetValue(name, out var s) ? s * Mathf.LerpUnclamped(0.4f, 1f, a) : t.localScale;
+    }
+
     void Show(string name)
     {
         if (string.IsNullOrEmpty(name) || !objectMap.TryGetValue(name, out var t)) return;
@@ -128,13 +227,15 @@ public class TeachingPlayer : MonoBehaviour
             Quaternion.Euler(50f, 0f, 0f));
     }
 
-    /// <summary>创建一把平躺(绕X转90°)的 sprite 对象，注册到 objectMap。</summary>
+    /// <summary>创建一把平躺(绕X转90°)的 sprite 对象，挂在宿主 transform 下（便于一次性清理），注册到 objectMap。</summary>
     Transform AddSprite(string name, Sprite sprite, Vector3 worldPos, float scale, int order, Vector3? euler = null)
     {
         var go = new GameObject(name);
         var sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
         sr.sortingOrder = order;
+        go.transform.SetParent(transform, false);
+        // 先设位置再挂父级会改变坐标系，这里挂在父下后设世界位置
         go.transform.SetPositionAndRotation(worldPos, Quaternion.Euler(euler ?? new Vector3(90f, 0f, 0f)));
         go.transform.localScale = Vector3.one * scale;
         objectMap[name] = go.transform;
@@ -157,6 +258,7 @@ public class TeachingPlayer : MonoBehaviour
 
     void BuildScene()
     {
+        ClearScene();
         // 版图
         AddSprite("board", GameSpriteFactory.Board(), BoardCenter, 1f, 0);
 
@@ -229,6 +331,7 @@ public class TeachingPlayer : MonoBehaviour
     void SetupUI()
     {
         var canvasGo = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler));
+        canvasGo.transform.SetParent(transform, false);
         var canvas = canvasGo.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         var scaler = canvasGo.GetComponent<CanvasScaler>();

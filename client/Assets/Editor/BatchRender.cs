@@ -22,23 +22,24 @@ public static class BatchRender
         EditorApplication.Exit(0);
     }
 
+    /// <summary>对每个 chunk 拍动画中间帧（t=0.3/0.6/0.85/1.0），用于评估动画动态质量。</summary>
+    public static void RenderMotion()
+    {
+        int n = TotalChunks();
+        float[] ts = { 0.3f, 0.6f, 0.85f, 1f };
+        for (int i = 0; i < n; i++)
+            foreach (var t in ts)
+                DoRender(i, t, false);
+        EditorApplication.Exit(0);
+    }
+
     public static void RenderFrame()
     {
         DoRender(0, exit: true);
     }
 
-    static int TotalChunks()
-    {
-        var asset = Resources.Load<TextAsset>(TeachingPlayer.ResourceName);
-        if (asset == null) return 6;
-        var data = JsonUtility.FromJson<TeachingData>(asset.text);
-        return data != null && data.chunks != null ? data.chunks.Count : 6;
-    }
-
-    // 允许从命令行传入块索引的办法：Unity -executeMethod 只接受无参方法；
-    // 这里用环境变量 / 静态字段让外部脚本可改……为简单起见固定 0 基块，控制台版可后续扩。
-
-    static void DoRender(int chunkIndex, bool exit)
+    // 进度版：确定 chunk + 进度 t
+    static void DoRender(int chunkIndex, float t, bool exit)
     {
         EnsureCamera();
 
@@ -46,14 +47,43 @@ public static class BatchRender
         foreach (var go in Object.FindObjectsOfType<TeachingPlayer>())
             Object.DestroyImmediate(go.gameObject);
 
-        // 创建教学播放器并同步把场景置为该 chunk 播完后的状态（确定性，不依赖协程）
+        var host = new GameObject("TeachingHost");
+        var player = host.AddComponent<TeachingPlayer>();
+        player.ApplyChunkProgressSynced(chunkIndex, t);
+
+        var bytes = CaptureFrame(Camera.main);
+        var dir = System.IO.Path.Combine(Application.dataPath, "../Logs", OUT_DIR);
+        System.IO.Directory.CreateDirectory(dir);
+        var path = System.IO.Path.Combine(dir, $"frame_chunk{chunkIndex}_t{t:0.00}.png");
+        System.IO.File.WriteAllBytes(path, bytes);
+        Debug.Log("[BatchRender] 已输出: " + path);
+
+        if (exit) EditorApplication.Exit(0);
+    }
+
+    static void DoRender(int chunkIndex, bool exit)
+    {
+        EnsureCamera();
+        foreach (var go in Object.FindObjectsOfType<TeachingPlayer>())
+            Object.DestroyImmediate(go.gameObject);
+
         var host = new GameObject("TeachingHost");
         var player = host.AddComponent<TeachingPlayer>();
         player.ApplyChunkFinalStateSynced(chunkIndex);
 
-        // 渲染相机一帧
-        var cam = Camera.main;
-        if (cam == null) { Debug.LogError("[BatchRender] 无相机"); return; }
+        var bytes = CaptureFrame(Camera.main);
+        var dir = System.IO.Path.Combine(Application.dataPath, "../Logs", OUT_DIR);
+        System.IO.Directory.CreateDirectory(dir);
+        var path = System.IO.Path.Combine(dir, "frame_chunk" + chunkIndex + ".png");
+        System.IO.File.WriteAllBytes(path, bytes);
+        Debug.Log("[BatchRender] 已输出: " + path);
+
+        if (exit) EditorApplication.Exit(0);
+    }
+
+    static byte[] CaptureFrame(Camera cam)
+    {
+        if (cam == null) { Debug.LogError("[BatchRender] 无相机"); return new byte[0]; }
         int w = 1280, h = 720;
         var rt = RenderTexture.GetTemporary(w, h, 24);
         var prevRT = cam.targetTexture;
@@ -70,14 +100,18 @@ public static class BatchRender
 
         var bytes = tex.EncodeToPNG();
         Object.Destroy(tex);
+        return bytes;
+    }
 
-        var dir = System.IO.Path.Combine(Application.dataPath, "../Logs", OUT_DIR);
-        System.IO.Directory.CreateDirectory(dir);
-        var path = System.IO.Path.Combine(dir, "frame_chunk" + chunkIndex + ".png");
-        System.IO.File.WriteAllBytes(path, bytes);
-        Debug.Log("[BatchRender] 已输出: " + path);
+    // 允许从命令行传入块索引的办法：Unity -executeMethod 只接受无参方法；
+    // 这里用环境变量 / 静态字段让外部脚本可改……为简单起见固定 0 基块，控制台版可后续扩。
 
-        if (exit) EditorApplication.Exit(0);
+    static int TotalChunks()
+    {
+        var asset = Resources.Load<TextAsset>(TeachingPlayer.ResourceName);
+        if (asset == null) return 6;
+        var data = JsonUtility.FromJson<TeachingData>(asset.text);
+        return data != null && data.chunks != null ? data.chunks.Count : 6;
     }
 
     static void EnsureCamera()

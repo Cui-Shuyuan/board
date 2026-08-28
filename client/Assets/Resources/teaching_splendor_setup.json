@@ -75,7 +75,8 @@
       "text": { "zh": "最后，随机选一位玩家，把起始玩家标记放到他面前。", "en": "Finally, randomly choose a starting player and give them the marker." },
       "shots": [
         { "type": "tell", "duration": 0.6 },
-        { "type": "move", "target": "start_marker", "from": [3.4, 0.02, -2.5], "to": [0, 0.02, -2.6], "duration": 1.2, "easing": "easeInOutCubic", "hold": 0.8 }
+        { "type": "appear", "target": "start_marker", "duration": 0.5, "easing": "easeOutCubic" },
+        { "type": "move", "target": "start_marker", "from": [3.2, 0.02, -3.2], "to": [0, 0.02, -2.6], "duration": 1.2, "easing": "easeInOutCubic", "hold": 0.8 }
       ]
     }
   ]
