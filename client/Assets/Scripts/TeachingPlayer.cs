@@ -331,13 +331,12 @@ public class TeachingPlayer : MonoBehaviour
         SetHidden("start_marker");
     }
 
-    /// <summary>把对象设为初始隐藏（待 appear 时显示），透明并缩到 0。</summary>
+    /// <summary>把对象设为初始隐藏（待 appear 时显示）。只隐藏透明度，保留原始 scale 作动画基准。</summary>
     void SetHidden(string name)
     {
         if (!objectMap.TryGetValue(name, out var t)) return;
         var sr = t.GetComponent<SpriteRenderer>();
         if (sr != null) sr.color = new Color(1f, 1f, 1f, 0f);
-        t.localScale = Vector3.zero;
     }
 
     // ---------------- UI ----------------
