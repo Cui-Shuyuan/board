@@ -26,6 +26,8 @@ public static class TweenLibrary
 
     public static float Ease(float t, string name)
     {
+        // null/空缓存名一律按 linear 处理（避免 Dictionary.TryGetValue 对 null key 抛 ArgumentNullException）
+        if (string.IsNullOrEmpty(name)) return Mathf.Clamp01(t);
         if (Easing.TryGetValue(name, out var f)) return f(Mathf.Clamp01(t));
         return t; // 未知缓动默认 linear
     }
