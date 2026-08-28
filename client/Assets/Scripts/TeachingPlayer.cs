@@ -430,7 +430,17 @@ public class TeachingPlayer : MonoBehaviour
             yield return TweenLibrary.Run(transform, shot);
             if (paused) { while (paused) yield return null; }
         }
-        Say(string.Empty);
+        // 播完当前块：若下一块存在且未暂停，停顿后自动连续播放下一块
+        if (!paused && chunkIndex + 1 < data.chunks.Count)
+        {
+            Say(string.Empty);
+            yield return new WaitForSeconds(0.9f);
+            PlayChunk(chunkIndex + 1);
+        }
+        else
+        {
+            Say(string.Empty);
+        }
     }
 
     void RestartChunk() { PlayChunk(chunkIndex); }
