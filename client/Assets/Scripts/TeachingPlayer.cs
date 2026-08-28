@@ -3,6 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>自动引导：按 Play 时若无教学播放器则创建一个并自动播放 Splendor 设置动画。</summary>
+public static class TeachingBootstrap
+{
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void Init()
+    {
+        if (Object.FindFirstObjectByType<TeachingPlayer>() == null)
+        {
+            var go = new GameObject("TeachingHost");
+            go.AddComponent<TeachingPlayer>();
+        }
+    }
+}
+
 /// <summary>
 /// 数据驱动教学播放器：读 teaching_splendor_setup.json，
 /// 按 chunk 逐块播放字幕 + 补间动画。

@@ -12,7 +12,9 @@ using UnityEngine.UI;
 /// </summary>
 public static class TutorialBootstrap
 {
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    // 已由 TeachingPlayer 取代：注释掉自动引导，避免按 Play 时抢建旧的"拿宝石"演示。
+    // 想恢复旧演示时，把下面这行取消注释（恢复 [RuntimeInitializeOnLoadMethod]）即可。
+    // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Init()
     {
         if (UnityEngine.Object.FindFirstObjectByType<TutorialPlayer>() == null)
