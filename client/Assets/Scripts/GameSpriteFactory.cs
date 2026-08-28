@@ -19,10 +19,10 @@ public static class GameSpriteFactory
         return MakeSprite(1000, 700, (x, y) => BoardPixel(x, y));
     }
 
-    /// <summary>发展卡，level 决定顶部色条与声望点。</summary>
+    /// <summary>发展卡（横向小卡，更贴近桌上平铺），level 决定顶部色条与声望点。</summary>
     public static Sprite Card(int level)
     {
-        return MakeSprite(150, 190, (x, y) => CardPixel(x, y, level));
+        return MakeSprite(170, 120, (x, y) => CardPixel(x, y, level));
     }
 
     /// <summary>贵族板块。</summary>
@@ -94,30 +94,28 @@ public static class GameSpriteFactory
 
     static Color CardPixel(int x, int y, int level)
     {
+        int W = 170, H = 120;
         // 卡底（米白）
-        Color c = new Color(0.97f, 0.97f, 0.94f);
-        if (x < 4 || x >= 146 || y < 4 || y >= 186)
-            return new Color(0f, 0f, 0f, 0f); // 透明边缘，天然圆角感
+        Color c = new Color(0.97f, 0.96f, 0.92f);
+        if (x < 4 || x >= W - 4 || y < 4 || y >= H - 4)
+            return new Color(0f, 0f, 0f, 0f); // 透明边缘
         // 边框
-        if (x < 8 || x >= 142 || y < 8 || y >= 182) c = new Color(0.55f, 0.50f, 0.42f);
-        // 顶部等级色条（y 从 0 是卡底，这里卡高 190，顶条在顶部 y∈[190-34,190-4]）
-        Color lvl = level == 1 ? new Color(0.40f, 0.63f, 0.42f)
-                   : level == 2 ? new Color(0.42f, 0.52f, 0.78f)
-                   : new Color(0.60f, 0.40f, 0.36f);
-        int top = 190;
-        int lvlTop = top - y; // y=0 底部，y=top 顶部
-        if (lvlTop >= 4 && lvlTop <= 34) c = lvl;
-        // 声望点圆圈（左上）
-        int px = x - 26, py = y - (top - 56);
-        if (px * px + py * py <= 14 * 14) c = new Color(0.35f, 0.35f, 0.35f);
-        // 底部费用小圆点（5 列 x 2 行，示意）
-        int row = rowOfY_Card(y);
-        int col = colOfX_Card(x);
+        if (x < 8 || x >= W - 8 || y < 8 || y >= H - 8) c = new Color(0.55f, 0.50f, 0.42f);
+        // 等级色条（顶部，宽 = 卡宽，y 靠近顶部）
+        Color lvl = level == 1 ? new Color(0.42f, 0.63f, 0.46f)
+                   : level == 2 ? new Color(0.44f, 0.52f, 0.76f)
+                   : new Color(0.60f, 0.42f, 0.38f);
+        if (y >= H - 30 && y <= H - 8) c = lvl;
+        // 声望点圆圈（左下）
+        int px = x - 22, py = y - (H - 68);
+        if (px * px + py * py <= 15 * 15) c = new Color(0.35f, 0.35f, 0.35f);
+        // 费用圆点（右下，5 列 x 2 行）
+        int row = rowOfY_Card(y), col = colOfX_Card(x);
         if (row >= 0 && col >= 0)
         {
-            int cx = 18 + col * 24, cy = (top - 130) + row * 30;
+            int cx = W - 22 - col * 26, cy = (H - 100) + row * 30;
             int dx = x - cx, dy = y - cy;
-            if (dx * dx + dy * dy <= 10 * 10)
+            if (dx * dx + dy * dy <= 11 * 11)
             {
                 Color[] gemCols = { new Color(0.26f, 0.52f, 0.96f), new Color(0.92f, 0.26f, 0.21f),
                                     new Color(0.20f, 0.66f, 0.33f), new Color(0.98f, 0.74f, 0.02f),
@@ -129,8 +127,8 @@ public static class GameSpriteFactory
         return c;
     }
 
-    static int rowOfY_Card(int y) { int ry = y - (190 - 160); return (ry >= -10 && ry <= 10) ? 1 : ((ry >= -40 && ry <= -20) ? 0 : -1); }
-    static int colOfX_Card(int x) { for (int c = 0; c < 5; c++) { int cx = 18 + c * 24; if (Mathf.Abs(x - cx) <= 12) return c; } return -1; }
+    static int rowOfY_Card(int y) { int ry = y - (120 - 100); return (ry >= -10 && ry <= 10) ? 1 : ((ry >= -40 && ry <= -20) ? 0 : -1); }
+    static int colOfX_Card(int x) { for (int c = 0; c < 5; c++) { int cx = (170 - 22) - c * 26; if (Mathf.Abs(x - cx) <= 13) return c; } return -1; }
 
     static Color NoblePixel(int x, int y)
     {

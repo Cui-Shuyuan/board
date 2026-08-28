@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "game": "splendor",
+    "title": { "zh": "璀璨宝石 · 设置", "en": "Splendor · Setup" },
+    "version": "0.1.0",
+    "camera": { "orthographicSize": 3.6, "angle": 50, "position": [0, 7.66, -6.43] }
+  },
+  "chunks": [
+    {
+      "id": "setup_intro",
+      "title": { "zh": "开场" },
+      "text": { "zh": "这是璀璨宝石的初始设置，我们一步步摆好整张桌子。", "en": "This is the Splendor setup. Let's lay out the table step by step." },
+      "shots": [
+        { "type": "tell", "duration": 1.6 },
+        { "type": "appear", "target": "board", "duration": 0.9, "easing": "easeOutCubic", "hold": 0.5 }
+      ]
+    },
+    {
+      "id": "setup_decks",
+      "title": { "zh": "洗牌堆" },
+      "text": { "zh": "先把三级发展卡分别洗成三叠牌堆。", "en": "First shuffle each of the three levels of development cards into its own deck." },
+      "shots": [
+        { "type": "appear", "target": "deck_1", "duration": 0.6, "easing": "easeOutCubic", "delay": 0.3 },
+        { "type": "appear", "target": "deck_2", "duration": 0.6, "easing": "easeOutCubic", "delay": 0.2 },
+        { "type": "appear", "target": "deck_3", "duration": 0.6, "easing": "easeOutCubic", "delay": 0.2 }
+      ]
+    },
+    {
+      "id": "setup_deal_market",
+      "title": { "zh": "发市场牌" },
+      "text": { "zh": "从每叠牌堆各翻开四张，排成三排，这就是发展卡市场。", "en": "Reveal four cards from each deck into three rows — that's the development card market." },
+      "shots": [
+        { "type": "appear", "target": "market_1_1", "duration": 0.5, "easing": "easeOutCubic" },
+        { "type": "appear", "target": "market_1_2", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_1_3", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_1_4", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_2_1", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.15 },
+        { "type": "appear", "target": "market_2_2", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_2_3", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_2_4", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_3_1", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.15 },
+        { "type": "appear", "target": "market_3_2", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_3_3", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "market_3_4", "duration": 0.5, "easing": "easeOutCubic", "delay": 0.1 }
+      ]
+    },
+    {
+      "id": "setup_nobles",
+      "title": { "zh": "摆贵族" },
+      "text": { "zh": "把贵族板块面朝上，随机摆一排。", "en": "Place the noble tiles face up in a row at random." },
+      "shots": [
+        { "type": "appear", "target": "noble_0", "duration": 0.6, "easing": "easeOutCubic", "delay": 0.3 },
+        { "type": "appear", "target": "noble_1", "duration": 0.6, "easing": "easeOutCubic", "delay": 0.1 },
+        { "type": "appear", "target": "noble_2", "duration": 0.6, "easing": "easeOutCubic", "delay": 0.1 }
+      ]
+    },
+    {
+      "id": "setup_gems",
+      "title": { "zh": "发宝石" },
+      "text": { "zh": "按人数把五种颜色的宝石补满供应堆，黄金总是五个。", "en": "Fill the gem supply by player count, and always place five gold." },
+      "shots": [
+        { "type": "group", "duration": 1.2, "items": [
+          { "type": "appear", "target": "gem_diamond", "duration": 0.5 },
+          { "type": "appear", "target": "gem_sapphire", "duration": 0.5 },
+          { "type": "appear", "target": "gem_emerald", "duration": 0.5 },
+          { "type": "appear", "target": "gem_ruby", "duration": 0.5 },
+          { "type": "appear", "target": "gem_onyx", "duration": 0.5 },
+          { "type": "appear", "target": "gem_gold", "duration": 0.5 }
+        ] }
+      ]
+    },
+    {
+      "id": "setup_start_player",
+      "title": { "zh": "选起始玩家" },
+      "text": { "zh": "最后，随机选一位玩家，把起始玩家标记放到他面前。", "en": "Finally, randomly choose a starting player and give them the marker." },
+      "shots": [
+        { "type": "tell", "duration": 0.6 },
+        { "type": "move", "target": "start_marker", "from": [3.4, 0.02, -2.5], "to": [0, 0.02, -2.6], "duration": 1.2, "easing": "easeInOutCubic", "hold": 0.8 }
+      ]
+    }
+  ]
+}
