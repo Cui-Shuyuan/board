@@ -59,6 +59,7 @@ internal class Factory
                     var it = new Factory(root).Build(sub);
                     runners.Add(it);
                 }
+                Debug.Log("[GroupProbe] group 子shot数=" + runners.Count + " 首个子=" + (shot.items.Count > 0 ? shot.items[0].target : "?"));
                 // 无法真正并行时用轮询等待全部完成（简化：顺序执行 each 到完成即整组完成）
                 // 说明：为保持确定性且避免协程并发复杂度，这里对 group 内子 shot 采用"整体运行直到所有完成"。
                 foreach (var it in runners) yield return it;
@@ -175,9 +176,9 @@ internal class Factory
     IEnumerator Appear(TeachingShot shot)
     {
         var t = Resolve(shot.target);
-        if (t == null) { Debug.LogWarning("[Tween] appear 找不到 " + shot.target); yield break; }
+        if (t == null) { Debug.LogWarning("[AppearProbe] 找不到目标 " + shot.target); yield break; }
         var sr = t.GetComponent<SpriteRenderer>();
-        if (sr == null) { yield break; }
+        if (sr == null) { Debug.LogWarning("[AppearProbe] 无SpriteRenderer " + shot.target); yield break; }
         float dur = Mathf.Max(0.001f, shot.duration);
         float start = Time.time;
         var baseScale = t.localScale;
@@ -185,6 +186,7 @@ internal class Factory
         Color baseColor = sr.color;
         baseColor.a = 0f;
         sr.color = baseColor;
+        Debug.Log($"[AppearProbe] 开始 {shot.target} dur={dur.ToString("F2")} baseScale={baseScale.ToString("F2")} sprite={(sr.sprite == null ? "NULL" : "OK")} pos={t.position}");
         while (Time.time - start < dur)
         {
             float k = TweenLibrary.Ease((Time.time - start) / dur, shot.easing);
@@ -198,5 +200,6 @@ internal class Factory
         fin.a = 1f;
         sr.color = fin;
         t.localScale = baseScale;
+        Debug.Log($"[AppearProbe] 完成 {shot.target} 最终alpha={sr.color.a.ToString("F2")} sprite={(sr.sprite == null ? "NULL" : "OK")}");
     }
 }

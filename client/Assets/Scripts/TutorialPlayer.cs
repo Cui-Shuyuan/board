@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 讲规模块最小骨架（v0）：
@@ -59,7 +60,9 @@ public class TutorialPlayer : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.R))
+        var kb = Keyboard.current;
+        if (kb == null) return;
+        if (kb.spaceKey.wasPressedThisFrame || kb.rKey.wasPressedThisFrame)
         {
             StopAllCoroutines();
             ResetDiscs();

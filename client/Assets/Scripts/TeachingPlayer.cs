@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>自动引导：按 Play 时若无教学播放器则创建一个并自动播放 Splendor 设置动画。</summary>
 public static class TeachingBootstrap
@@ -57,11 +58,14 @@ public class TeachingPlayer : MonoBehaviour
 
     void Update()
     {
-        // 出图模式(batch)下不响应键盘
-        if (Input.GetKeyDown(KeyCode.Space)) RestartChunk();
-        else if (Input.GetKeyDown(KeyCode.N)) NextChunk();
-        else if (Input.GetKeyDown(KeyCode.P)) TogglePause();
-        else if (Input.GetKeyDown(KeyCode.LeftBracket)) PrevChunk();
+        // 使用 Input System（项目 Active Input Handling 已切换为 Input System Package）
+        // 避免旧 Input.GetKeyDown 在 Input System 模式下每帧抛 InvalidOperationException
+        var kb = Keyboard.current;
+        if (kb == null) return;
+        if (kb.spaceKey.wasPressedThisFrame) RestartChunk();
+        else if (kb.nKey.wasPressedThisFrame) NextChunk();
+        else if (kb.pKey.wasPressedThisFrame) TogglePause();
+        else if (kb.leftBracketKey.wasPressedThisFrame) PrevChunk();
     }
 
     /// <summary>外部（含 batch 出图）创建对象后调用；搭景 + 加载 + 从第 index 块开始。</summary>
