@@ -466,4 +466,10 @@ public class TeachingPlayer : MonoBehaviour
         PlayChunk(index);
         // 简单实现：如果 progress>0 则推进内部时间（当前只按块播；复杂进度控后续再加）
     }
+
+    /// <summary>当前块索引（供批处理驱动协程时查询）。</summary>
+    public int CurrentChunkIndex() => chunkIndex;
+
+    /// <summary>是否正在播放某个块的协程（供批处理判断块是否播完）。</summary>
+    public bool IsPlaying() => playRoutine != null;
 }

@@ -95,6 +95,12 @@ internal class Factory
     {
         var t = root.Find(target);
         if (t == null) t = root.Find(target.TrimStart('/'));
+        // 兜底：按名字全场景查找（兼容对象不在 root 直接子级的情况）
+        if (t == null && !string.IsNullOrEmpty(target))
+        {
+            var all = UnityEngine.Object.FindObjectsOfType<Transform>(true);
+            foreach (var tr in all) if (tr.name == target) { t = tr; break; }
+        }
         return t;
     }
 
@@ -169,23 +175,28 @@ internal class Factory
     IEnumerator Appear(TeachingShot shot)
     {
         var t = Resolve(shot.target);
-        if (t == null) { yield break; }
+        if (t == null) { Debug.LogWarning("[Tween] appear 找不到 " + shot.target); yield break; }
         var sr = t.GetComponent<SpriteRenderer>();
         if (sr == null) { yield break; }
         float dur = Mathf.Max(0.001f, shot.duration);
         float start = Time.time;
-        Color from = new Color(1, 1, 1, 0);
-        float forFrom = 0f, to = 1f;
         var baseScale = t.localScale;
+        // 显式记录原色，避免依赖 sr.color 的残余 alpha
+        Color baseColor = sr.color;
+        baseColor.a = 0f;
+        sr.color = baseColor;
         while (Time.time - start < dur)
         {
             float k = TweenLibrary.Ease((Time.time - start) / dur, shot.easing);
-            float a = Mathf.LerpUnclamped(forFrom, to, k);
-            sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, a);
+            Color c = baseColor;
+            c.a = Mathf.LerpUnclamped(0f, 1f, k);
+            sr.color = c;
             t.localScale = baseScale * Mathf.LerpUnclamped(0.6f, 1f, k);
             yield return null;
         }
-        sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 1);
+        Color fin = baseColor;
+        fin.a = 1f;
+        sr.color = fin;
         t.localScale = baseScale;
     }
 }
