@@ -288,25 +288,44 @@ public class TeachingPlayer : MonoBehaviour
             SetHidden("noble_" + i);
         }
 
-        // 市场区：3 等级 x 4 列（竖版卡，世界尺寸约 0.71x1.03，行距 1.15 / 列距 0.85）——初始隐藏
+        // 卡堆（左，3 个等级，背面朝上, 独立一列）——真实卡背
+        for (int lv = 0; lv < 3; lv++)
+        {
+            float z = 0.75f + lv * 1.15f;
+            AddSprite("deck_" + (lv + 1), GameSpriteFactory.CardBack(), new Vector3(-3.7f, 0.04f, z), 0.42f, 8);
+            SetHidden("deck_" + (lv + 1));
+        }
+
+        // 市场一级卡：4 张各不相同的真实卡（产出宝石色不同），二级/三级先保持等级色
+        // 一级卡 4 张（对应你扫描的真实卡：蓝/红/绿/白——每张产出不同宝石）
+        Color[] l1Gems = {
+            new Color(0.26f, 0.52f, 0.96f), // 蓝宝石卡
+            new Color(0.92f, 0.26f, 0.21f), // 红宝石卡
+            new Color(0.20f, 0.66f, 0.33f), // 绿宝石卡
+            new Color(0.92f, 0.92f, 0.90f), // 钻石/白卡
+        };
+        Color[][] l1Costs = {
+            new Color[]{ new Color(0.92f, 0.92f, 0.90f) },                          // 蓝卡费用:1钻石
+            new Color[]{ new Color(0.92f, 0.92f, 0.90f), new Color(0.92f,0.26f,0.21f) }, // 红卡:2钻石+2红
+            new Color[]{ new Color(0.24f, 0.20f, 0.36f) },                          // 绿卡:4黑玛瑙
+            new Color[]{ new Color(0.26f,0.52f,0.96f), new Color(0.20f,0.66f,0.33f), new Color(0.92f,0.26f,0.21f), new Color(0.24f,0.20f,0.36f) }, // 白卡:多色
+        };
+        int[] l1Prestige = { 3, 2, 1, 0 };
+
+        // 市场区：3 等级 x 4 列（一级卡各异，二级/三级暂用等级色）——初始隐藏
         for (int lv = 0; lv < 3; lv++)
         {
             float yRow = 0.75f + lv * 1.15f;
             for (int c = 0; c < 4; c++)
             {
                 float x = -1.28f + c * 0.85f;
-                AddSprite("market_" + (lv + 1) + "_" + (c + 1), GameSpriteFactory.Card(lv + 1),
+                Sprite cardSpr = (lv == 0)
+                    ? GameSpriteFactory.CardGem(l1Gems[c], l1Costs[c], l1Prestige[c]) // 一级用真实卡
+                    : GameSpriteFactory.Card(lv + 1);                                 // 二级/三级暂保持等级色
+                AddSprite("market_" + (lv + 1) + "_" + (c + 1), cardSpr,
                     new Vector3(x, 0.03f, yRow), 0.42f, 10);
                 SetHidden("market_" + (lv + 1) + "_" + (c + 1));
             }
-        }
-
-        // 牌堆（左，3 个等级，竖着排，独立一列）——初始隐藏
-        for (int lv = 0; lv < 3; lv++)
-        {
-            float z = 0.75f + lv * 1.15f;
-            AddSprite("deck_" + (lv + 1), GameSpriteFactory.Card(lv + 1), new Vector3(-3.7f, 0.04f, z), 0.42f, 8);
-            SetHidden("deck_" + (lv + 1));
         }
 
         // 宝石供应（图中一排可先显示：钻石/蓝/绿/红/黑/黄金）

@@ -1,0 +1,45 @@
+{
+  "game": "splendor",
+  "cards": [
+    {
+      "id": "l1_emerald",
+      "level": 1,
+      "gem": "emerald",
+      "prestige": 1,
+      "cost": { "onyx": 4 },
+      "theme": "emerald",
+      "cost_colors": [ "onyx" ],
+      "cost_amounts": [ 4 ]
+    },
+    {
+      "id": "l1_sapphire",
+      "level": 1,
+      "gem": "sapphire",
+      "prestige": 3,
+      "cost": { "diamond": 1 },
+      "theme": "sapphire",
+      "cost_colors": [ "diamond" ],
+      "cost_amounts": [ 1 ]
+    },
+    {
+      "id": "l1_ruby",
+      "level": 1,
+      "gem": "ruby",
+      "prestige": 2,
+      "cost": { "diamond": 2, "ruby": 2 },
+      "theme": "ruby",
+      "cost_colors": [ "diamond", "ruby" ],
+      "cost_amounts": [ 2, 2 ]
+    },
+    {
+      "id": "l1_diamond",
+      "level": 1,
+      "gem": "diamond",
+      "prestige": 0,
+      "cost": { "sapphire": 1, "emerald": 2, "ruby": 1, "onyx": 1 },
+      "theme": "diamond",
+      "cost_colors": [ "sapphire", "emerald", "ruby", "onyx" ],
+      "cost_amounts": [ 1, 2, 1, 1 ]
+    }
+  ]
+}

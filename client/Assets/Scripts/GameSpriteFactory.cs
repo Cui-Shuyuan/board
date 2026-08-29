@@ -33,6 +33,12 @@ public static class GameSpriteFactory
         return MakeSprite(170, 245, (x, y) => CardGemPixel(x, y, gemColor, costGems, prestige));
     }
 
+    /// <summary>卡背：绿色 Splendor 卡背（深绿主图 + 金色 Splendor 字 + 底部白圆点）。</summary>
+    public static Sprite CardBack()
+    {
+        return MakeSprite(170, 245, CardBackPixel);
+    }
+
     /// <summary>贵族板块。</summary>
     public static Sprite Noble()
     {
@@ -173,6 +179,33 @@ public static class GameSpriteFactory
                 c = new Color(0.25f, 0.25f, 0.25f);
                 if (dx * dx + dy * dy >= 23 * 23) c = new Color(0.1f, 0.1f, 0.1f);
             }
+        }
+        return c;
+    }
+
+    static Color CardBackPixel(int x, int y)
+    {
+        int W = 170, H = 245;
+        // 圆角边缘
+        if (x < 4 || x >= W - 4 || y < 4 || y >= H - 4) return new Color(0f, 0f, 0f, 0f);
+        // 深绿底（顶部稍亮，向下渐深）
+        float t = y / (float)H;
+        Color c = Color.Lerp(new Color(0.16f, 0.42f, 0.20f), new Color(0.05f, 0.20f, 0.10f), t);
+        // 边框（白色细边）
+        if (x < 7 || x >= W - 7 || y < 7 || y >= H - 7) c = new Color(0.85f, 0.88f, 0.82f);
+        // 中央金色 "Splendor" 字样（用简单的渐变横条示意字的位置，为避免画字太复杂）
+        if (y >= (int)(H * 0.42f) && y <= (int)(H * 0.52f))
+        {
+            float band = Mathf.Abs(x - W / 2f) / (W * 0.40f);
+            if (band < 1f) c = new Color(0.95f, 0.80f, 0.15f); // 金色字带
+        }
+        // 底部白色圆点
+        int px = 85, py = H - 30;
+        int dx = x - px, dy = y - py;
+        if (dx * dx + dy * dy <= 14 * 14)
+        {
+            c = Color.white;
+            if (dx * dx + dy * dy >= 11 * 11) c = new Color(0.7f, 0.7f, 0.7f); // 描边
         }
         return c;
     }
