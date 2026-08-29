@@ -81,28 +81,12 @@ public static class GameSpriteFactory
 
     static Color BoardPixel(int x, int y)
     {
-        // 桌面底（浅木色）
+        // 干净木色桌面（去分支色块）：浅木纹底 + 深色外框
         Color c = new Color(0.70f, 0.52f, 0.34f);
         // 木纹：每条 90px 画一条浅浅的暗纹
         if ((x + y * 0.3f) % 90 < 2f) c *= 0.94f;
         // 外框向内 10px
         if (x < 10 || x >= 990 || y < 10 || y >= 690) c = new Color(0.48f, 0.33f, 0.20f);
-        // 顶：贵族区（y: 40..130 即从上数，注意 y 是高度坐标）
-        int rowFromTop = 700 - y;
-        if (rowFromTop >= 40 && rowFromTop <= 130 && x >= 60 && x <= 940)
-            c = new Color(0.60f, 0.56f, 0.50f);
-        // 中：市场区（行 160..470）
-        if (rowFromTop >= 160 && rowFromTop <= 470 && x >= 30 && x <= 940)
-            c = new Color(0.82f, 0.76f, 0.68f);
-        // 下左：宝石供应区（行 500..660, x 30..700）
-        if (rowFromTop >= 500 && rowFromTop <= 660 && x >= 30 && x <= 700)
-            c = new Color(0.90f, 0.86f, 0.80f);
-        // 下右：黄金区（行 500..660, x 720..940）
-        if (rowFromTop >= 500 && rowFromTop <= 660 && x >= 720 && x <= 940)
-            c = new Color(0.94f, 0.86f, 0.58f);
-        // 深色分区边框
-        if (rowFromTop == 40 || rowFromTop == 130 || rowFromTop == 160 || rowFromTop == 470 || rowFromTop == 500 || rowFromTop == 660)
-            c = new Color(0.45f, 0.34f, 0.22f);
         return c;
     }
 

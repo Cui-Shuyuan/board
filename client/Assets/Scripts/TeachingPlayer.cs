@@ -30,6 +30,9 @@ public class TeachingPlayer : MonoBehaviour
     const float PPU = 100f;
     public const string ResourceName = "teaching_splendor_setup";
 
+    // 尺寸系统：1 毫米 = 0.01 世界单位。卡牌 63x88mm → 0.63x0.88 世界。
+    const float MM = 0.01f;
+
     // ------- 场景槽位坐标 -------
     // 板图中心 (0,0)。世界单位。
     static readonly Vector3 BoardCenter = new Vector3(0f, 0.01f, 0f);
@@ -237,11 +240,12 @@ public class TeachingPlayer : MonoBehaviour
     {
         var cam = Camera.main;
         cam.orthographic = true;
-        cam.orthographicSize = 3.6f;
+        cam.orthographicSize = 2.5f;
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = new Color(0.11f, 0.12f, 0.16f);
+        // 维持 50° 俯角，抬高相机让桌面充满视野
         cam.transform.SetPositionAndRotation(
-            new Vector3(0f, 7.66f, -6.43f),
+            new Vector3(0f, 6.4f, -5.35f),
             Quaternion.Euler(50f, 0f, 0f));
     }
 
@@ -258,6 +262,25 @@ public class TeachingPlayer : MonoBehaviour
         go.transform.localScale = Vector3.one * scale;
         objectMap[name] = go.transform;
         baseScales[name] = Vector3.one * scale;
+        return go.transform;
+    }
+
+    /// <summary>按真实毫米尺寸创建 sprite：最终世界尺寸 = mmW x mmH（保持素材宽高比）。
+    /// 用非均匀 localScale 保证精确尺寸。</summary>
+    Transform AddSpriteMM(string name, Sprite sprite, Vector3 worldPos, float mmW, float mmH, int order)
+    {
+        var go = new GameObject(name);
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.sortingOrder = order;
+        go.transform.SetParent(transform, false);
+        go.transform.SetPositionAndRotation(worldPos, Quaternion.Euler(90f, 0f, 0f));
+        // sprite 的 PPU 给出固有世界尺寸；用 localScale 把它缩放到 mmW x mmH
+        float sx = (mmW * MM) / sprite.bounds.size.x;
+        float sy = (mmH * MM) / sprite.bounds.size.y;
+        go.transform.localScale = new Vector3(sx, sy, 1f);
+        objectMap[name] = go.transform;
+        baseScales[name] = go.transform.localScale;
         return go.transform;
     }
 
@@ -311,52 +334,46 @@ public class TeachingPlayer : MonoBehaviour
     void BuildScene()
     {
         ClearScene();
-        // 版图
-        AddSprite("board", GameSpriteFactory.Board(), BoardCenter, 1f, 0);
+        // 干净木色桌面（去分区色块），按真实桌面 660x460mm
+        AddSpriteMM("board", GameSpriteFactory.Board(), BoardCenter, 660, 460, 0);
 
-        // 贵族区（顶部，3 个）——初始隐藏，待 appear
+        // ---- 真实尺寸(mm→世界): 卡 63x88, 贵族 60x60, 宝石直径 43, 起始标记 51x41 ----
+        // 贵族区（顶部, 3 个）60x60，横向排
         for (int i = 0; i < 3; i++)
         {
-            float x = -2.1f + i * 2.1f;
-            AddSprite("noble_" + i, GameSpriteFactory.Noble(), new Vector3(x, 0.02f, NobleY), 0.5f, 20);
+            float x = (i - 1) * 110f * MM; // 间隔 110mm
+            AddSpriteMM("noble_" + i, GameSpriteFactory.Noble(), new Vector3(x, 0.02f, 200f*MM), 60, 60, 20);
             SetHidden("noble_" + i);
         }
 
-        // 卡堆（左，3 个等级，背面朝上, 独立一列）——真实扫描件卡背
+        // 卡堆（左, 3 个等级, 背面朝上）63x88，纵排 3 叠
         for (int lv = 0; lv < 3; lv++)
         {
-            float z = 0.75f + lv * 1.15f;
+            float z = -20f * MM + lv * 40f * MM;
             Sprite back = LoadScanCard("一级发展卡_背面.jpg");
-            AddSprite("deck_" + (lv + 1), back != null ? back : GameSpriteFactory.CardBack(), new Vector3(-3.7f, 0.04f, z), 0.42f, 8);
+            AddSpriteMM("deck_" + (lv + 1), back != null ? back : GameSpriteFactory.CardBack(),
+                new Vector3(-230f*MM, 0.04f, z), 63, 88, 8);
             SetHidden("deck_" + (lv + 1));
         }
 
-        // 市场一级卡：4 张用扫描件真实卡面（绿/蓝/红/白），二级/三级保持代码画等级色
-        string[] l1Scans = { "一级发展卡_绿.jpg",
-                             "一级发展卡_蓝.jpg",
-                             "一级发展卡_红.jpg",
-                             "一级发展卡_白.jpg" };
-        Color[] l1Gems = {
-            new Color(0.20f, 0.66f, 0.33f),
-            new Color(0.26f, 0.52f, 0.96f),
-            new Color(0.92f, 0.26f, 0.21f),
-            new Color(0.92f, 0.92f, 0.90f),
-        };
+        // 市场一级卡 4 张：绿/蓝/红/白（真正扫描件），等级2/3 用代码画
+        string[] l1Scans = { "一级发展卡_绿.jpg","一级发展卡_蓝.jpg","一级发展卡_红.jpg","一级发展卡_白.jpg" };
+        Color[] l1Gems = { new Color(0.20f,0.66f,0.33f),new Color(0.26f,0.52f,0.96f),new Color(0.92f,0.26f,0.21f),new Color(0.92f,0.92f,0.90f) };
         Color[][] l1Costs = {
-            new Color[]{ new Color(0.24f, 0.20f, 0.36f) },                          // 绿卡:4黑玛瑙
-            new Color[]{ new Color(0.92f, 0.92f, 0.90f) },                          // 蓝卡:1钻石
-            new Color[]{ new Color(0.92f, 0.92f, 0.90f), new Color(0.92f,0.26f,0.21f) }, // 红卡:2钻石+2红
-            new Color[]{ new Color(0.26f,0.52f,0.96f), new Color(0.20f,0.66f,0.33f), new Color(0.92f,0.26f,0.21f), new Color(0.24f,0.20f,0.36f) }, // 白卡:多色
+            new Color[]{ new Color(0.24f,0.20f,0.36f) },
+            new Color[]{ new Color(0.92f,0.92f,0.90f) },
+            new Color[]{ new Color(0.92f,0.92f,0.90f), new Color(0.92f,0.26f,0.21f) },
+            new Color[]{ new Color(0.26f,0.52f,0.96f), new Color(0.20f,0.66f,0.33f), new Color(0.92f,0.26f,0.21f), new Color(0.24f,0.20f,0.36f) },
         };
         int[] l1Prestige = { 1, 3, 2, 0 };
 
-        // 市场区：3 等级 x 4 列（一级卡用扫描件，二级/三级暂用代码画等级色）——初始隐藏
+        // 市场区 3 行 x 4 列（卡 63x88，间隔 100mm 横向、120mm 纵向）
         for (int lv = 0; lv < 3; lv++)
         {
-            float yRow = 0.75f + lv * 1.15f;
+            float yRow = (lv - 1) * 120f * MM;
             for (int c = 0; c < 4; c++)
             {
-                float x = -1.28f + c * 0.85f;
+                float x = (c - 1.5f) * 100f * MM;
                 Sprite cardSpr;
                 if (lv == 0)
                 {
@@ -365,41 +382,33 @@ public class TeachingPlayer : MonoBehaviour
                 }
                 else
                 {
-                    cardSpr = GameSpriteFactory.Card(lv + 1);   // 二级/三级暂保持等级色
+                    cardSpr = GameSpriteFactory.Card(lv + 1);
                 }
-                AddSprite("market_" + (lv + 1) + "_" + (c + 1), cardSpr,
-                    new Vector3(x, 0.03f, yRow), 0.42f, 10);
+                AddSpriteMM("market_" + (lv + 1) + "_" + (c + 1), cardSpr, new Vector3(x, 0.03f, yRow), 63, 88, 10);
                 SetHidden("market_" + (lv + 1) + "_" + (c + 1));
             }
         }
 
-        // 宝石供应（图中一排可先显示：钻石/蓝/绿/红/黑/黄金）
-        string[] gemIds = { "diamond", "sapphire", "emerald", "ruby", "onyx", "gold" };
-        Color[] gemCols =
-        {
-            new Color(0.70f, 0.86f, 1f),
-            new Color(0.26f, 0.52f, 0.96f),
-            new Color(0.20f, 0.66f, 0.33f),
-            new Color(0.92f, 0.26f, 0.21f),
-            new Color(0.24f, 0.20f, 0.36f),
-            new Color(0.98f, 0.74f, 0.02f),
+        // 宝石供应（下方, 6 个直径 43, 横向一排 间隔 80mm）
+        string[] gemIds = { "diamond","sapphire","emerald","ruby","onyx","gold" };
+        Color[] gemCols = {
+            new Color(0.70f,0.86f,1f), new Color(0.26f,0.52f,0.96f), new Color(0.20f,0.66f,0.33f),
+            new Color(0.92f,0.26f,0.21f), new Color(0.24f,0.20f,0.36f), new Color(0.98f,0.74f,0.02f),
         };
-        float gemY = -2.55f;
+        float gemY = -170f * MM;
         for (int i = 0; i < 6; i++)
         {
-            float x = -2.8f + i * 1.12f;
-            AddSprite("gem_" + gemIds[i], GameSpriteFactory.Gem(gemCols[i]), new Vector3(x, 0.02f, gemY), 0.34f, 12);
-            // 接触阴影
+            float x = (i - 2.5f) * 80f * MM;
+            AddSpriteMM("gem_" + gemIds[i], GameSpriteFactory.Gem(gemCols[i]), new Vector3(x, 0.02f, gemY), 43, 43, 12);
             AddChildSprite("gem_" + gemIds[i], "shadow_" + gemIds[i], GameSpriteFactory.Shadow(), Vector3.zero, 0.5f, 11);
             SetHidden("gem_" + gemIds[i]);
         }
 
-        // 起始玩家标记（藏在底下，播放时移到玩家面前）——初始隐藏
-        AddSprite("start_marker", LoadImageSprite("起始玩家标记_clean.png", "marker", 1.0f), new Vector3(3.2f, 0.02f, -3.2f), 0.5f, 30);
+        // 起始玩家标记（51x41, 藏在桌面左下角, 播放时移到玩家区中央）——初始隐藏
+        AddSpriteMM("start_marker", LoadImageSprite("起始玩家标记_clean.png", "marker", 1.0f),
+            new Vector3(-180f*MM, 0.02f, -150f*MM), 51, 41, 30);
         SetHidden("start_marker");
     }
-
-    /// <summary>把对象设为初始隐藏（待 appear 时显示）。只隐藏透明度，保留原始 scale 作动画基准。</summary>
     void SetHidden(string name)
     {
         if (!objectMap.TryGetValue(name, out var t)) return;
