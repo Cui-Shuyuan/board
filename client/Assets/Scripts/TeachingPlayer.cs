@@ -274,12 +274,27 @@ public class TeachingPlayer : MonoBehaviour
         objectMap[name] = go.transform;
     }
 
+    /// <summary>从 games/{game}/media/{subdir}/ 读原始图（绕开 Unity 纹理缩放），指定世界高度。
+    /// 失败返回 null。</summary>
+    Sprite LoadImageSprite(string fileName, string subdir, float worldHeight)
+    {
+        string dir = System.IO.Path.Combine(Application.dataPath, "..", "..", "games", "splendor", "media", subdir);
+        string path = System.IO.Path.Combine(dir, fileName);
+        if (!System.IO.File.Exists(path)) { Debug.LogWarning("[Teaching] 缺图: " + path); return null; }
+        var bytes = System.IO.File.ReadAllBytes(path);
+        var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        if (!ImageConversion.LoadImage(tex, bytes)) { Debug.LogWarning("[Teaching] 解码失败: " + path); return null; }
+        tex.filterMode = FilterMode.Bilinear;
+        float ppu = tex.height / worldHeight;
+        return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), ppu);
+    }
+
     /// <summary>从 games/{game}/media/cards/ 读原始扫描件 jpg（保持真实宽高比，绕开 Unity 纹理缩放）。
     /// 失败返回 null。路径按 dataPath 定位到仓库根。</summary>
     Sprite LoadScanCard(string fileName)
     {
-        // 扫描件放仓库根 games/splendor/media/cards/，相对 client 工程是上级目录
-        string cardsDir = System.IO.Path.Combine(Application.dataPath, "..", "..", "games", "splendor", "media", "cards");
+        // 扫描件放仓库根 games/splendor/media/card/，相对 client 工程是上级目录
+        string cardsDir = System.IO.Path.Combine(Application.dataPath, "..", "..", "games", "splendor", "media", "card");
         string path = System.IO.Path.Combine(cardsDir, fileName);
         if (!System.IO.File.Exists(path)) { Debug.LogWarning("[Teaching] 缺扫描件: " + path); return null; }
         byte[] bytes = System.IO.File.ReadAllBytes(path);
@@ -380,7 +395,7 @@ public class TeachingPlayer : MonoBehaviour
         }
 
         // 起始玩家标记（藏在底下，播放时移到玩家面前）——初始隐藏
-        AddSprite("start_marker", GameSpriteFactory.StartMarker(), new Vector3(3.2f, 0.02f, -3.2f), 0.5f, 30);
+        AddSprite("start_marker", LoadImageSprite("起始玩家标记_成图_nwm.png", "marker", 1.0f), new Vector3(3.2f, 0.02f, -3.2f), 0.5f, 30);
         SetHidden("start_marker");
     }
 
