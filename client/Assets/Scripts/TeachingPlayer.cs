@@ -274,6 +274,25 @@ public class TeachingPlayer : MonoBehaviour
         objectMap[name] = go.transform;
     }
 
+    /// <summary>从 games/{game}/media/cards/ 读原始扫描件 jpg（保持真实宽高比，绕开 Unity 纹理缩放）。
+    /// 失败返回 null。路径按 dataPath 定位到仓库根。</summary>
+    Sprite LoadScanCard(string fileName)
+    {
+        // 扫描件放仓库根 games/splendor/media/cards/，相对 client 工程是上级目录
+        string cardsDir = System.IO.Path.Combine(Application.dataPath, "..", "..", "games", "splendor", "media", "cards");
+        string path = System.IO.Path.Combine(cardsDir, fileName);
+        if (!System.IO.File.Exists(path)) { Debug.LogWarning("[Teaching] 缺扫描件: " + path); return null; }
+        byte[] bytes = System.IO.File.ReadAllBytes(path);
+        var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        if (!ImageConversion.LoadImage(tex, bytes)) { Debug.LogWarning("[Teaching] 解码失败: " + path); return null; }
+        tex.filterMode = FilterMode.Bilinear;
+        // 用统一 PPU 让卡世界高≈2.45，宽度按真实比例(0.68)，与代码卡接近
+        float ppu = tex.height / 2.45f;
+        var spr = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), ppu);
+        Debug.Log($"[CardDiag] {fileName} tex={tex.width}x{tex.height} worldSize={spr.bounds.size.x.ToString("F2")}x{spr.bounds.size.y.ToString("F2")}");
+        return spr;
+    }
+
     void BuildScene()
     {
         ClearScene();
@@ -288,40 +307,51 @@ public class TeachingPlayer : MonoBehaviour
             SetHidden("noble_" + i);
         }
 
-        // 卡堆（左，3 个等级，背面朝上, 独立一列）——真实卡背
+        // 卡堆（左，3 个等级，背面朝上, 独立一列）——真实扫描件卡背
         for (int lv = 0; lv < 3; lv++)
         {
             float z = 0.75f + lv * 1.15f;
-            AddSprite("deck_" + (lv + 1), GameSpriteFactory.CardBack(), new Vector3(-3.7f, 0.04f, z), 0.42f, 8);
+            Sprite back = LoadScanCard("一级发展卡_背面.jpg");
+            AddSprite("deck_" + (lv + 1), back != null ? back : GameSpriteFactory.CardBack(), new Vector3(-3.7f, 0.04f, z), 0.42f, 8);
             SetHidden("deck_" + (lv + 1));
         }
 
-        // 市场一级卡：4 张各不相同的真实卡（产出宝石色不同），二级/三级先保持等级色
-        // 一级卡 4 张（对应你扫描的真实卡：蓝/红/绿/白——每张产出不同宝石）
+        // 市场一级卡：4 张用扫描件真实卡面（绿/蓝/红/白），二级/三级保持代码画等级色
+        string[] l1Scans = { "一级发展卡_绿.jpg",
+                             "一级发展卡_蓝.jpg",
+                             "一级发展卡_红.jpg",
+                             "一级发展卡_白.jpg" };
         Color[] l1Gems = {
-            new Color(0.26f, 0.52f, 0.96f), // 蓝宝石卡
-            new Color(0.92f, 0.26f, 0.21f), // 红宝石卡
-            new Color(0.20f, 0.66f, 0.33f), // 绿宝石卡
-            new Color(0.92f, 0.92f, 0.90f), // 钻石/白卡
+            new Color(0.20f, 0.66f, 0.33f),
+            new Color(0.26f, 0.52f, 0.96f),
+            new Color(0.92f, 0.26f, 0.21f),
+            new Color(0.92f, 0.92f, 0.90f),
         };
         Color[][] l1Costs = {
-            new Color[]{ new Color(0.92f, 0.92f, 0.90f) },                          // 蓝卡费用:1钻石
-            new Color[]{ new Color(0.92f, 0.92f, 0.90f), new Color(0.92f,0.26f,0.21f) }, // 红卡:2钻石+2红
             new Color[]{ new Color(0.24f, 0.20f, 0.36f) },                          // 绿卡:4黑玛瑙
+            new Color[]{ new Color(0.92f, 0.92f, 0.90f) },                          // 蓝卡:1钻石
+            new Color[]{ new Color(0.92f, 0.92f, 0.90f), new Color(0.92f,0.26f,0.21f) }, // 红卡:2钻石+2红
             new Color[]{ new Color(0.26f,0.52f,0.96f), new Color(0.20f,0.66f,0.33f), new Color(0.92f,0.26f,0.21f), new Color(0.24f,0.20f,0.36f) }, // 白卡:多色
         };
-        int[] l1Prestige = { 3, 2, 1, 0 };
+        int[] l1Prestige = { 1, 3, 2, 0 };
 
-        // 市场区：3 等级 x 4 列（一级卡各异，二级/三级暂用等级色）——初始隐藏
+        // 市场区：3 等级 x 4 列（一级卡用扫描件，二级/三级暂用代码画等级色）——初始隐藏
         for (int lv = 0; lv < 3; lv++)
         {
             float yRow = 0.75f + lv * 1.15f;
             for (int c = 0; c < 4; c++)
             {
                 float x = -1.28f + c * 0.85f;
-                Sprite cardSpr = (lv == 0)
-                    ? GameSpriteFactory.CardGem(l1Gems[c], l1Costs[c], l1Prestige[c]) // 一级用真实卡
-                    : GameSpriteFactory.Card(lv + 1);                                 // 二级/三级暂保持等级色
+                Sprite cardSpr;
+                if (lv == 0)
+                {
+                    var scan = LoadScanCard(l1Scans[c]);
+                    cardSpr = scan != null ? scan : GameSpriteFactory.CardGem(l1Gems[c], l1Costs[c], l1Prestige[c]);
+                }
+                else
+                {
+                    cardSpr = GameSpriteFactory.Card(lv + 1);   // 二级/三级暂保持等级色
+                }
                 AddSprite("market_" + (lv + 1) + "_" + (c + 1), cardSpr,
                     new Vector3(x, 0.03f, yRow), 0.42f, 10);
                 SetHidden("market_" + (lv + 1) + "_" + (c + 1));
