@@ -395,7 +395,7 @@ public class TeachingPlayer : MonoBehaviour
         }
 
         // 起始玩家标记（藏在底下，播放时移到玩家面前）——初始隐藏
-        AddSprite("start_marker", LoadImageSprite("起始玩家标记_成图_nwm.png", "marker", 1.0f), new Vector3(3.2f, 0.02f, -3.2f), 0.5f, 30);
+        AddSprite("start_marker", LoadImageSprite("起始玩家标记_clean.png", "marker", 1.0f), new Vector3(3.2f, 0.02f, -3.2f), 0.5f, 30);
         SetHidden("start_marker");
     }
 
