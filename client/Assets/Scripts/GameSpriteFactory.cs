@@ -19,10 +19,18 @@ public static class GameSpriteFactory
         return MakeSprite(1000, 700, (x, y) => BoardPixel(x, y));
     }
 
-    /// <summary>发展卡（横向小卡，更贴近桌上平铺），level 决定顶部色条与声望点。</summary>
+    /// <summary>发展卡：贴合 Splendor 真实版面（竖版）。level 决定等级色并与宝石主色绑定。</summary>
     public static Sprite Card(int level)
     {
-        return MakeSprite(170, 120, (x, y) => CardPixel(x, y, level));
+        // 竖版：宽170 高245，比例≈0.69 贴近扫描件
+        return MakeSprite(170, 245, (x, y) => CardPixel(x, y, level));
+    }
+
+    /// <summary>按宝石类型 + 费用 + 声望画一张具体的一级卡（更贴近真实卡面）。</summary>
+    public static Sprite CardGem(Color gemColor, Color[] costGems, int prestige)
+    {
+        // 竖版
+        return MakeSprite(170, 245, (x, y) => CardGemPixel(x, y, gemColor, costGems, prestige));
     }
 
     /// <summary>贵族板块。</summary>
@@ -94,41 +102,80 @@ public static class GameSpriteFactory
 
     static Color CardPixel(int x, int y, int level)
     {
-        int W = 170, H = 120;
-        // 卡底（米白）
-        Color c = new Color(0.97f, 0.96f, 0.92f);
-        if (x < 4 || x >= W - 4 || y < 4 || y >= H - 4)
-            return new Color(0f, 0f, 0f, 0f); // 透明边缘
-        // 边框
-        if (x < 8 || x >= W - 8 || y < 8 || y >= H - 8) c = new Color(0.55f, 0.50f, 0.42f);
-        // 等级色条（顶部，宽 = 卡宽，y 靠近顶部）
-        Color lvl = level == 1 ? new Color(0.42f, 0.63f, 0.46f)
+        // 按等级绑定一个主色调（一级绿/二级蓝/三级红，Splendor 等级色）
+        Color main = level == 1 ? new Color(0.42f, 0.62f, 0.44f)
                    : level == 2 ? new Color(0.44f, 0.52f, 0.76f)
-                   : new Color(0.60f, 0.42f, 0.38f);
-        if (y >= H - 30 && y <= H - 8) c = lvl;
-        // 声望点圆圈（左下）
-        int px = x - 22, py = y - (H - 68);
-        if (px * px + py * py <= 15 * 15) c = new Color(0.35f, 0.35f, 0.35f);
-        // 费用圆点（右下，5 列 x 2 行）
-        int row = rowOfY_Card(y), col = colOfX_Card(x);
-        if (row >= 0 && col >= 0)
+                   : new Color(0.62f, 0.36f, 0.32f);
+        // 费用于此用默认宝石色（简化）；完整费用用 CardGem
+        Color[] costs = { new Color(0.26f, 0.52f, 0.96f), new Color(0.20f, 0.66f, 0.33f) };
+        return CardGemPixel(x, y, main, costs, level == 3 ? 4 : 0);
+    }
+
+    /// <summary>按 Splendor 版面画一张竖卡：左上绶带、右上宝石icon、左中主图渐变、左下费用圆列。</summary>
+    static Color CardGemPixel(int x, int y, Color gem, Color[] costGems, int prestige)
+    {
+        int W = 170, H = 245;
+        // 卡底（浅色）
+        Color c = new Color(0.97f, 0.96f, 0.92f);
+        if (x < 4 || x >= W - 4 || y < 4 || y >= H - 4) return new Color(0f, 0f, 0f, 0f);
+        // 边框
+        if (x < 6 || x >= W - 6 || y < 6 || y >= H - 6) c = new Color(0.45f, 0.40f, 0.34f);
+
+        // ---- 卡面主图：宝石色渐变(上方 60% 高度) ----
+        int artTop = H - 4, artBottom = (int)(H * 0.38f);
+        if (y <= artTop && y >= artBottom)
         {
-            int cx = W - 22 - col * 26, cy = (H - 100) + row * 30;
-            int dx = x - cx, dy = y - cy;
-            if (dx * dx + dy * dy <= 11 * 11)
+            float t = 1f - (y - artBottom) / (float)(artTop - artBottom); // 0底-1顶
+            c = Color.Lerp(Color.Lerp(gem, Color.white, 0.25f), gem, t);
+            // 主图底部一条"地面"暗色
+            if (y < artBottom + 30) c = Color.Lerp(gem, new Color(0.2f, 0.2f, 0.2f), 0.35f);
+        }
+
+        // ---- 左上绶带纹章(等级色, 竖条+顶部横条) ----
+        // 顶部横条(左半部, 宽130 高26)
+        if (y >= H - 34 && y <= H - 8 && x >= 6 && x <= 136)
+            c = Color.Lerp(gem, Color.black, 0.08f);
+        // 竖绶带(左边缘, 宽34, 从横条往下)
+        if (y >= H - 34 && y <= artBottom + 30 && x >= 6 && x <= 40)
+            c = Color.Lerp(gem, Color.black, 0.20f);
+
+        // ---- 右上宝石 icon(圆形) ----
+        int icx = 132, icy = H - 46, ico = 26;
+        int dix = x - icx, diy = y - icy;
+        if (dix * dix + diy * diy <= ico * ico)
+        {
+            c = Color.Lerp(gem, Color.white, 0.5f);   // 宝石圆
+            if (dix * dix + diy * diy >= (ico - 4) * (ico - 4)) c = new Color(0.3f, 0.22f, 0.12f); // 深描边
+            if (dix * dix + diy * diy <= 6 * 6) c = Color.Lerp(gem, Color.white, 0.8f); // 高光
+        }
+
+        // ---- 左下费用圆列(数量+宝石图标) ----
+        int cx0 = 22, cy0 = (int)(H * 0.30f);
+        int r = 22;
+        for (int i = 0; i < costGems.Length; i++)
+        {
+            int ccy = cy0 - i * (r * 2 + 4);
+            int dx = x - cx0, dy = y - ccy;
+            if (dx * dx + dy * dy <= r * r)
             {
-                Color[] gemCols = { new Color(0.26f, 0.52f, 0.96f), new Color(0.92f, 0.26f, 0.21f),
-                                    new Color(0.20f, 0.66f, 0.33f), new Color(0.98f, 0.74f, 0.02f),
-                                    new Color(0.60f, 0.40f, 0.24f) };
-                c = gemCols[col];
-                if (dx * dx + dy * dy >= 8 * 8) c = new Color(0.4f, 0.4f, 0.4f);
+                c = Color.Lerp(costGems[i], Color.black, 0.05f);  // 费用圆底=宝石色
+                if (dx * dx + dy * dy >= (r - 3) * (r - 3)) c = Color.Lerp(costGems[i], Color.black, 0.4f); // 描边
+            }
+        }
+
+        // ---- 声望点(左下大圆, 若有) ----
+        if (prestige > 0)
+        {
+            int px = 22, py = H - 40;
+            int dx = x - px, dy = y - py;
+            if (dx * dx + dy * dy <= 26 * 26)
+            {
+                c = new Color(0.25f, 0.25f, 0.25f);
+                if (dx * dx + dy * dy >= 23 * 23) c = new Color(0.1f, 0.1f, 0.1f);
             }
         }
         return c;
     }
-
-    static int rowOfY_Card(int y) { int ry = y - (120 - 100); return (ry >= -10 && ry <= 10) ? 1 : ((ry >= -40 && ry <= -20) ? 0 : -1); }
-    static int colOfX_Card(int x) { for (int c = 0; c < 5; c++) { int cx = (170 - 22) - c * 26; if (Mathf.Abs(x - cx) <= 13) return c; } return -1; }
 
     static Color NoblePixel(int x, int y)
     {

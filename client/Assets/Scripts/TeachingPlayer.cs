@@ -288,13 +288,13 @@ public class TeachingPlayer : MonoBehaviour
             SetHidden("noble_" + i);
         }
 
-        // 市场区：3 等级 x 4 列（横向小卡，行距 0.62 / 列距 0.80）——初始隐藏，待 appear
+        // 市场区：3 等级 x 4 列（竖版卡，世界尺寸约 0.71x1.03，行距 1.15 / 列距 0.85）——初始隐藏
         for (int lv = 0; lv < 3; lv++)
         {
-            float yRow = 0.55f + lv * 0.62f;
+            float yRow = 0.75f + lv * 1.15f;
             for (int c = 0; c < 4; c++)
             {
-                float x = -1.20f + c * 0.80f;
+                float x = -1.28f + c * 0.85f;
                 AddSprite("market_" + (lv + 1) + "_" + (c + 1), GameSpriteFactory.Card(lv + 1),
                     new Vector3(x, 0.03f, yRow), 0.42f, 10);
                 SetHidden("market_" + (lv + 1) + "_" + (c + 1));
@@ -304,8 +304,8 @@ public class TeachingPlayer : MonoBehaviour
         // 牌堆（左，3 个等级，竖着排，独立一列）——初始隐藏
         for (int lv = 0; lv < 3; lv++)
         {
-            float z = 0.55f + lv * 0.62f;
-            AddSprite("deck_" + (lv + 1), GameSpriteFactory.Card(lv + 1), new Vector3(-3.6f, 0.04f, z), 0.42f, 8);
+            float z = 0.75f + lv * 1.15f;
+            AddSprite("deck_" + (lv + 1), GameSpriteFactory.Card(lv + 1), new Vector3(-3.7f, 0.04f, z), 0.42f, 8);
             SetHidden("deck_" + (lv + 1));
         }
 
