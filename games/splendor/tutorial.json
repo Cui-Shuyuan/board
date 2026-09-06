@@ -1,0 +1,918 @@
+{
+  "meta": {
+    "game_id": "splendor",
+    "version": "0.2.0",
+    "title": {
+      "zh": "璀璨宝石 · 设置（8 原语数据驱动版）"
+    },
+    "locale": "zh",
+    "default_easing": "easeOutCubic",
+    "default_highlight_color": "#FFD54F",
+    "generator": "manual for primitive architecture test"
+  },
+  "board": {
+    "image": "board.png",
+    "width_mm": 660,
+    "height_mm": 460,
+    "origin": "top_left",
+    "pixels_per_unit": 100.0,
+    "comment": "程序化版图；真实版图扫描件就位后替换"
+  },
+  "slots": [
+    {
+      "id": "deck_1",
+      "x": 0.152,
+      "y": 0.544,
+      "z": 0.0,
+      "label": {
+        "zh": "一级牌堆"
+      }
+    },
+    {
+      "id": "deck_2",
+      "x": 0.152,
+      "y": 0.457,
+      "z": 0.0,
+      "label": {
+        "zh": "二级牌堆"
+      }
+    },
+    {
+      "id": "deck_3",
+      "x": 0.152,
+      "y": 0.37,
+      "z": 0.0,
+      "label": {
+        "zh": "三级牌堆"
+      }
+    },
+    {
+      "id": "market_1_1",
+      "x": 0.273,
+      "y": 0.761,
+      "z": 0.0,
+      "label": {
+        "zh": "市场1级第1张"
+      }
+    },
+    {
+      "id": "market_1_2",
+      "x": 0.425,
+      "y": 0.761,
+      "z": 0.0,
+      "label": {
+        "zh": "市场1级第2张"
+      }
+    },
+    {
+      "id": "market_1_3",
+      "x": 0.577,
+      "y": 0.761,
+      "z": 0.0,
+      "label": {
+        "zh": "市场1级第3张"
+      }
+    },
+    {
+      "id": "market_1_4",
+      "x": 0.729,
+      "y": 0.761,
+      "z": 0.0,
+      "label": {
+        "zh": "市场1级第4张"
+      }
+    },
+    {
+      "id": "market_2_1",
+      "x": 0.273,
+      "y": 0.5,
+      "z": 0.0,
+      "label": {
+        "zh": "市场2级第1张"
+      }
+    },
+    {
+      "id": "market_2_2",
+      "x": 0.425,
+      "y": 0.5,
+      "z": 0.0,
+      "label": {
+        "zh": "市场2级第2张"
+      }
+    },
+    {
+      "id": "market_2_3",
+      "x": 0.577,
+      "y": 0.5,
+      "z": 0.0,
+      "label": {
+        "zh": "市场2级第3张"
+      }
+    },
+    {
+      "id": "market_2_4",
+      "x": 0.729,
+      "y": 0.5,
+      "z": 0.0,
+      "label": {
+        "zh": "市场2级第4张"
+      }
+    },
+    {
+      "id": "market_3_1",
+      "x": 0.273,
+      "y": 0.239,
+      "z": 0.0,
+      "label": {
+        "zh": "市场3级第1张"
+      }
+    },
+    {
+      "id": "market_3_2",
+      "x": 0.425,
+      "y": 0.239,
+      "z": 0.0,
+      "label": {
+        "zh": "市场3级第2张"
+      }
+    },
+    {
+      "id": "market_3_3",
+      "x": 0.577,
+      "y": 0.239,
+      "z": 0.0,
+      "label": {
+        "zh": "市场3级第3张"
+      }
+    },
+    {
+      "id": "market_3_4",
+      "x": 0.729,
+      "y": 0.239,
+      "z": 0.0,
+      "label": {
+        "zh": "市场3级第4张"
+      }
+    },
+    {
+      "id": "noble_0",
+      "x": 0.333,
+      "y": 0.065,
+      "z": 0.0,
+      "label": {
+        "zh": "贵族1"
+      }
+    },
+    {
+      "id": "noble_1",
+      "x": 0.5,
+      "y": 0.065,
+      "z": 0.0,
+      "label": {
+        "zh": "贵族2"
+      }
+    },
+    {
+      "id": "noble_2",
+      "x": 0.667,
+      "y": 0.065,
+      "z": 0.0,
+      "label": {
+        "zh": "贵族3"
+      }
+    },
+    {
+      "id": "gem_diamond",
+      "x": 0.197,
+      "y": 0.87,
+      "z": 0.0,
+      "label": {
+        "zh": "diamond"
+      }
+    },
+    {
+      "id": "gem_sapphire",
+      "x": 0.318,
+      "y": 0.87,
+      "z": 0.0,
+      "label": {
+        "zh": "sapphire"
+      }
+    },
+    {
+      "id": "gem_emerald",
+      "x": 0.439,
+      "y": 0.87,
+      "z": 0.0,
+      "label": {
+        "zh": "emerald"
+      }
+    },
+    {
+      "id": "gem_ruby",
+      "x": 0.56,
+      "y": 0.87,
+      "z": 0.0,
+      "label": {
+        "zh": "ruby"
+      }
+    },
+    {
+      "id": "gem_onyx",
+      "x": 0.681,
+      "y": 0.87,
+      "z": 0.0,
+      "label": {
+        "zh": "onyx"
+      }
+    },
+    {
+      "id": "gem_gold",
+      "x": 0.802,
+      "y": 0.87,
+      "z": 0.0,
+      "label": {
+        "zh": "gold"
+      }
+    },
+    {
+      "id": "start_area",
+      "x": 0.5,
+      "y": 1.15,
+      "z": 0.0,
+      "label": {
+        "zh": "起始标记初始区（版图外）"
+      }
+    },
+    {
+      "id": "player_area",
+      "x": 0.5,
+      "y": 1.065,
+      "z": 0.0,
+      "label": {
+        "zh": "起始玩家区"
+      }
+    }
+  ],
+  "sprites": [
+    {
+      "id": "board",
+      "file": "board.png",
+      "width_mm": 660,
+      "height_mm": 460,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": false,
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "deck_1",
+      "file": "card/一级发展卡_背面.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "deck_1"
+    },
+    {
+      "id": "deck_2",
+      "file": "card/一级发展卡_背面.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "deck_2"
+    },
+    {
+      "id": "deck_3",
+      "file": "card/一级发展卡_背面.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "deck_3"
+    },
+    {
+      "id": "market_1_1",
+      "file": "card/一级发展卡_绿.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_1_1"
+    },
+    {
+      "id": "market_1_2",
+      "file": "card/一级发展卡_蓝.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_1_2"
+    },
+    {
+      "id": "market_1_3",
+      "file": "card/一级发展卡_红.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_1_3"
+    },
+    {
+      "id": "market_1_4",
+      "file": "card/一级发展卡_白.jpg",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_1_4"
+    },
+    {
+      "id": "market_2_1",
+      "file": "card/lv2.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_2_1",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_2_2",
+      "file": "card/lv2.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_2_2",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_2_3",
+      "file": "card/lv2.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_2_3",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_2_4",
+      "file": "card/lv2.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_2_4",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_3_1",
+      "file": "card/lv3.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_3_1",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_3_2",
+      "file": "card/lv3.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_3_2",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_3_3",
+      "file": "card/lv3.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_3_3",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "market_3_4",
+      "file": "card/lv3.png",
+      "width_mm": 63,
+      "height_mm": 88,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "market_3_4",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "noble_0",
+      "file": "noble.png",
+      "width_mm": 60,
+      "height_mm": 60,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "noble_0",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "noble_1",
+      "file": "noble.png",
+      "width_mm": 60,
+      "height_mm": 60,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "noble_1",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "noble_2",
+      "file": "noble.png",
+      "width_mm": 60,
+      "height_mm": 60,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "noble_2",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "gem_diamond",
+      "file": "gem.png",
+      "width_mm": 43,
+      "height_mm": 43,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "gem_diamond",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "gem_sapphire",
+      "file": "gem.png",
+      "width_mm": 43,
+      "height_mm": 43,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "gem_sapphire",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "gem_emerald",
+      "file": "gem.png",
+      "width_mm": 43,
+      "height_mm": 43,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "gem_emerald",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "gem_ruby",
+      "file": "gem.png",
+      "width_mm": 43,
+      "height_mm": 43,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "gem_ruby",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "gem_onyx",
+      "file": "gem.png",
+      "width_mm": 43,
+      "height_mm": 43,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "gem_onyx",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "gem_gold",
+      "file": "gem.png",
+      "width_mm": 43,
+      "height_mm": 43,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "gem_gold",
+      "comment": "程序化兜底"
+    },
+    {
+      "id": "start_marker",
+      "file": "marker/起始玩家标记_clean.png",
+      "width_mm": 51,
+      "height_mm": 41,
+      "pivot": "center",
+      "z_offset": 0.0,
+      "hidden": true,
+      "spawn_slot": "start_area"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "setup_board",
+      "title": {
+        "zh": "摆放版图"
+      },
+      "audio": "audio/setup_board.mp3",
+      "interrupt_context": "当前在讲摆放版图。",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "先把版图放在桌面中央。"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "wait_board",
+          "t": 0.0,
+          "duration": 0.8,
+          "action": "wait",
+          "comment": "版图已就位"
+        }
+      ]
+    },
+    {
+      "id": "setup_decks",
+      "title": {
+        "zh": "洗牌堆"
+      },
+      "audio": "audio/setup_decks.mp3",
+      "interrupt_context": "当前在讲洗牌堆。",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "三级发展卡洗成三叠牌堆。"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "fade_deck_1_0",
+          "t": 0.0,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "deck_1",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_deck_2_40",
+          "t": 0.4,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "deck_2",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_deck_3_80",
+          "t": 0.8,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "deck_3",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "shuffle_deck_1_140",
+          "t": 1.4,
+          "duration": 0.8,
+          "action": "shuffle",
+          "sprite": "deck_1",
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "shuffle_deck_2_229",
+          "t": 2.3,
+          "duration": 0.8,
+          "action": "shuffle",
+          "sprite": "deck_2",
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "shuffle_deck_3_320",
+          "t": 3.2,
+          "duration": 0.8,
+          "action": "shuffle",
+          "sprite": "deck_3",
+          "easing": "easeOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "setup_market",
+      "title": {
+        "zh": "发市场牌"
+      },
+      "audio": "audio/setup_market.mp3",
+      "interrupt_context": "当前在讲发市场牌。",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "从每叠牌堆翻开四张，排成三排。"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "fade_market_1_1_0",
+          "t": 0.0,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_1_1",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_1_2_12",
+          "t": 0.12,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_1_2",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_1_3_24",
+          "t": 0.24,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_1_3",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_1_4_36",
+          "t": 0.36,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_1_4",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_2_1_48",
+          "t": 0.48,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_2_1",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_2_2_60",
+          "t": 0.6,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_2_2",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_2_3_72",
+          "t": 0.72,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_2_3",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_2_4_84",
+          "t": 0.84,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_2_4",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_3_1_96",
+          "t": 0.96,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_3_1",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_3_2_108",
+          "t": 1.08,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_3_2",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_3_3_120",
+          "t": 1.2,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_3_3",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_market_3_4_132",
+          "t": 1.32,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "market_3_4",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "setup_nobles",
+      "title": {
+        "zh": "摆贵族"
+      },
+      "audio": "audio/setup_nobles.mp3",
+      "interrupt_context": "当前在讲摆贵族。",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "把贵族板块面朝上摆一排。"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "fade_noble_0_0",
+          "t": 0.0,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "noble_0",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_noble_1_15",
+          "t": 0.15,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "noble_1",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_noble_2_30",
+          "t": 0.3,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "noble_2",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "setup_gems",
+      "title": {
+        "zh": "发宝石"
+      },
+      "audio": "audio/setup_gems.mp3",
+      "interrupt_context": "当前在讲发宝石。",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "把宝石补满供应堆。"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "fade_gem_diamond_0",
+          "t": 0.0,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "gem_diamond",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_gem_sapphire_12",
+          "t": 0.12,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "gem_sapphire",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_gem_emerald_24",
+          "t": 0.24,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "gem_emerald",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_gem_ruby_36",
+          "t": 0.36,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "gem_ruby",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_gem_onyx_48",
+          "t": 0.48,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "gem_onyx",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "fade_gem_gold_60",
+          "t": 0.6,
+          "duration": 0.4,
+          "action": "fade",
+          "sprite": "gem_gold",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "hl_gem_diamond_90",
+          "t": 0.9,
+          "duration": 0.8,
+          "action": "highlight",
+          "slot": "gem_diamond",
+          "color": "#FFD54F",
+          "loop": false
+        }
+      ]
+    },
+    {
+      "id": "setup_start",
+      "title": {
+        "zh": "选起始玩家"
+      },
+      "audio": "audio/setup_start.mp3",
+      "interrupt_context": "当前在讲选起始玩家。",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "把起始玩家标记放到玩家面前。"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "fade_start_marker_0",
+          "t": 0.0,
+          "duration": 0.5,
+          "action": "fade",
+          "sprite": "start_marker",
+          "opacity": 1.0,
+          "easing": "easeOutCubic"
+        },
+        {
+          "id": "move_start_marker",
+          "t": 0.6,
+          "duration": 1.0,
+          "action": "move",
+          "sprite": "start_marker",
+          "from_slot": "start_area",
+          "to_slot": "player_area",
+          "easing": "easeInOutCubic"
+        },
+        {
+          "id": "hl_player_area_180",
+          "t": 1.8,
+          "duration": 0.8,
+          "action": "highlight",
+          "slot": "player_area",
+          "color": "#FFD54F",
+          "loop": false
+        }
+      ]
+    }
+  ]
+}
