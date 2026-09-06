@@ -228,8 +228,8 @@ class Validator:
             if not (ev.get("slot") or ev.get("sprite")):
                 self.error(f"{where}: action 'highlight' requires slot or sprite")
         elif action == "shuffle":
-            if not ev.get("sprites"):
-                self.error(f"{where}: action 'shuffle' requires sprites")
+            if not (ev.get("sprite") or ev.get("sprites")):
+                self.error(f"{where}: action 'shuffle' requires sprite or sprites")
         elif action == "wait":
             pass
         else:

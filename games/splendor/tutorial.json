@@ -1,182 +1,556 @@
 {
   "meta": {
     "game_id": "splendor",
-    "version": "0.1.0",
+    "version": "0.1.auto",
     "title": {
-      "zh": "璀璨宝石教学示例",
-      "en": "Splendor Tutorial Example"
+      "zh": "璀璨宝石",
+      "en": "Splendor"
     },
     "locale": "zh",
     "default_easing": "easeOutCubic",
-    "default_highlight_color": "#FFD54F"
+    "default_highlight_color": "#FFD54F",
+    "generator": "flow_to_tutorial.py"
   },
   "board": {
-    "image": "board/board.png",
-    "width_mm": 360,
-    "height_mm": 260,
+    "image": "media/board/board.png",
+    "width_mm": 360.0,
+    "height_mm": 260.0,
     "origin": "top_left",
-    "pixels_per_unit": 100
+    "pixels_per_unit": 100.0,
+    "comment": "自动生成占位：请替换为实际版图扫描图，并填写真实 width_mm/height_mm"
   },
   "slots": [
     {
       "id": "game_box",
-      "x": -0.15,
-      "y": 0.5,
-      "z": 0,
+      "x": 0.08,
+      "y": 0.12,
+      "z": 0.0,
       "label": {
-        "zh": "游戏盒"
-      }
+        "zh": "game_box"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：prepare_level_1_deck.source"
     },
     {
-      "id": "market_deck",
-      "x": 0.62,
-      "y": 0.35,
-      "z": 0,
+      "id": "development_deck_level_1",
+      "x": 0.29,
+      "y": 0.12,
+      "z": 0.0,
       "label": {
-        "zh": "市场牌堆"
-      }
+        "zh": "development_deck_level_1"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：prepare_level_1_deck.destination"
     },
     {
-      "id": "market_0",
-      "x": 0.7,
-      "y": 0.25,
-      "z": 0,
+      "id": "development_deck_level_2",
+      "x": 0.5,
+      "y": 0.12,
+      "z": 0.0,
       "label": {
-        "zh": "市场卡位 0"
-      }
+        "zh": "development_deck_level_2"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：prepare_level_2_deck.destination"
     },
     {
-      "id": "market_1",
-      "x": 0.78,
-      "y": 0.25,
-      "z": 0,
+      "id": "development_deck_level_3",
+      "x": 0.71,
+      "y": 0.12,
+      "z": 0.0,
       "label": {
-        "zh": "市场卡位 1"
-      }
+        "zh": "development_deck_level_3"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：prepare_level_3_deck.destination"
     },
     {
-      "id": "market_2",
-      "x": 0.86,
-      "y": 0.25,
-      "z": 0,
+      "id": "card_market",
+      "x": 0.08,
+      "y": 0.3,
+      "z": 0.0,
       "label": {
-        "zh": "市场卡位 2"
-      }
+        "zh": "card_market"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：deal_card_market_level_1.destination"
+    },
+    {
+      "id": "noble_market",
+      "x": 0.29,
+      "y": 0.3,
+      "z": 0.0,
+      "label": {
+        "zh": "noble_market"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：deal_nobles.destination"
+    },
+    {
+      "id": "gem_supply",
+      "x": 0.5,
+      "y": 0.3,
+      "z": 0.0,
+      "label": {
+        "zh": "gem_supply"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：distribute_gems.destination"
+    },
+    {
+      "id": "gold_supply",
+      "x": 0.71,
+      "y": 0.3,
+      "z": 0.0,
+      "label": {
+        "zh": "gold_supply"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：distribute_gold.destination"
+    },
+    {
+      "id": "starting_player",
+      "x": 0.08,
+      "y": 0.48,
+      "z": 0.0,
+      "label": {
+        "zh": "starting_player"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：choose_starting_player.subject"
+    },
+    {
+      "id": "give_starting_player_marker_destination",
+      "x": 0.29,
+      "y": 0.48,
+      "z": 0.0,
+      "label": {
+        "zh": "起始玩家"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：give_starting_player_marker.destination"
+    },
+    {
+      "id": "player_holding",
+      "x": 0.5,
+      "y": 0.48,
+      "z": 0.0,
+      "label": {
+        "zh": "player_holding"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：pay_cost.source"
+    },
+    {
+      "id": "development_area",
+      "x": 0.71,
+      "y": 0.48,
+      "z": 0.0,
+      "label": {
+        "zh": "development_area"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：play_card.destination"
+    },
+    {
+      "id": "hand",
+      "x": 0.08,
+      "y": 0.66,
+      "z": 0.0,
+      "label": {
+        "zh": "hand"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：reserve_from_market.destination"
+    },
+    {
+      "id": "development_deck",
+      "x": 0.29,
+      "y": 0.66,
+      "z": 0.0,
+      "label": {
+        "zh": "development_deck"
+      },
+      "comment": "自动生成占位，请校准版图坐标。来源：reserve_from_deck.source"
     }
   ],
   "sprites": [
     {
-      "id": "level1_deck",
-      "file": "cards/level1_deck.png",
-      "width_mm": 63,
-      "height_mm": 88,
+      "id": "development_card_level_1",
+      "file": "media/auto/development_card_level_1.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
       "pivot": "center",
-      "z_offset": 1
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：prepare_level_1_deck.object"
     },
     {
-      "id": "gem_blue",
-      "file": "tokens/gem_blue.png",
-      "width_mm": 25,
-      "height_mm": 25,
+      "id": "development_card_level_2",
+      "file": "media/auto/development_card_level_2.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
       "pivot": "center",
-      "z_offset": 2
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：prepare_level_2_deck.object"
     },
     {
-      "id": "gem_red",
-      "file": "tokens/gem_red.png",
-      "width_mm": 25,
-      "height_mm": 25,
+      "id": "development_card_level_3",
+      "file": "media/auto/development_card_level_3.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
       "pivot": "center",
-      "z_offset": 2
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：prepare_level_3_deck.object"
     },
     {
-      "id": "gem_green",
-      "file": "tokens/gem_green.png",
-      "width_mm": 25,
-      "height_mm": 25,
+      "id": "development_deck_level_1",
+      "file": "media/auto/development_deck_level_1.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
       "pivot": "center",
-      "z_offset": 2
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：shuffle_level_1_deck.target"
+    },
+    {
+      "id": "development_deck_level_2",
+      "file": "media/auto/development_deck_level_2.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：shuffle_level_2_deck.target"
+    },
+    {
+      "id": "development_deck_level_3",
+      "file": "media/auto/development_deck_level_3.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：shuffle_level_3_deck.target"
+    },
+    {
+      "id": "noble",
+      "file": "media/auto/noble.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：deal_nobles.object"
+    },
+    {
+      "id": "gem",
+      "file": "media/auto/gem.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：distribute_gems.object"
+    },
+    {
+      "id": "gold",
+      "file": "media/auto/gold.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：distribute_gold.object"
+    },
+    {
+      "id": "starting_player_marker",
+      "file": "media/auto/starting_player_marker.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：give_starting_player_marker.object"
+    },
+    {
+      "id": "development_card",
+      "file": "media/auto/development_card.png",
+      "width_mm": 60.0,
+      "height_mm": 60.0,
+      "pivot": "center",
+      "z_offset": 1.0,
+      "comment": "自动生成占位，请替换为实际扫描/拍摄图并填写真实尺寸。来源：play_card.object"
     }
   ],
   "chapters": [
     {
-      "id": "setup_market",
+      "id": "setup",
       "title": {
-        "zh": "设置市场"
+        "zh": "设置",
+        "en": "Setup"
       },
-      "audio": "audio/setup_market.mp3",
-      "interrupt_context": "当前在讲设置市场：把一级发展卡牌堆和宝石放到市场。",
+      "audio": "media/audio/setup.mp3",
+      "interrupt_context": "当前在讲：设置",
       "subtitles": [
         {
           "t": 0.0,
-          "text": "先准备一级发展卡牌堆。"
-        },
-        {
-          "t": 2.5,
-          "text": "然后向市场发放三张发展卡。"
-        },
-        {
-          "t": 5.0,
-          "text": "最后把宝石筹码放在市场旁边。"
+          "text": "设置"
         }
       ],
       "timeline": [
         {
-          "id": "e1",
+          "id": "prepare_level_1_deck",
           "t": 0.0,
-          "duration": 1.5,
+          "duration": 1.2,
           "action": "move",
-          "sprite": "level1_deck",
+          "sprite": "development_card_level_1",
           "from_slot": "game_box",
-          "to_slot": "market_deck",
+          "to_slot": "development_deck_level_1",
           "easing": "easeOutCubic",
-          "comment": "卡牌堆从游戏盒移到市场牌堆位"
+          "comment": "将游戏盒中所有一级发展卡移至一级发展卡牌堆，使其成为一个<ontology::deck>。"
         },
         {
-          "id": "e2",
-          "t": 2.5,
-          "duration": 1.0,
-          "action": "wait",
-          "comment": "等待口播"
-        },
-        {
-          "id": "e3",
-          "t": 3.5,
-          "duration": 0.8,
+          "id": "prepare_level_2_deck",
+          "t": 1.4,
+          "duration": 1.2,
           "action": "move",
-          "sprite": "gem_blue",
+          "sprite": "development_card_level_2",
           "from_slot": "game_box",
-          "to_slot": "market_0",
-          "easing": "easeOutCubic"
+          "to_slot": "development_deck_level_2",
+          "easing": "easeOutCubic",
+          "comment": "将游戏盒中所有二级发展卡移至二级发展卡牌堆，使其成为一个<ontology::deck>。"
         },
         {
-          "id": "e4",
-          "t": 4.3,
-          "duration": 0.8,
+          "id": "prepare_level_3_deck",
+          "t": 2.8,
+          "duration": 1.2,
           "action": "move",
-          "sprite": "gem_red",
+          "sprite": "development_card_level_3",
           "from_slot": "game_box",
-          "to_slot": "market_1",
-          "easing": "easeOutCubic"
+          "to_slot": "development_deck_level_3",
+          "easing": "easeOutCubic",
+          "comment": "将游戏盒中所有三级发展卡移至三级发展卡牌堆，使其成为一个<ontology::deck>。"
         },
         {
-          "id": "e5",
-          "t": 5.1,
-          "duration": 0.8,
+          "id": "shuffle_level_1_deck",
+          "t": 4.2,
+          "duration": 1.5,
+          "action": "shuffle",
+          "sprite": "development_deck_level_1",
+          "easing": "easeOutCubic",
+          "comment": "洗一级发展卡牌堆"
+        },
+        {
+          "id": "shuffle_level_2_deck",
+          "t": 5.9,
+          "duration": 1.5,
+          "action": "shuffle",
+          "sprite": "development_deck_level_2",
+          "easing": "easeOutCubic",
+          "comment": "洗二级发展卡牌堆"
+        },
+        {
+          "id": "shuffle_level_3_deck",
+          "t": 7.6,
+          "duration": 1.5,
+          "action": "shuffle",
+          "sprite": "development_deck_level_3",
+          "easing": "easeOutCubic",
+          "comment": "洗三级发展卡牌堆"
+        },
+        {
+          "id": "deal_card_market_level_1",
+          "t": 9.3,
+          "duration": 1.2,
           "action": "move",
-          "sprite": "gem_green",
-          "from_slot": "game_box",
-          "to_slot": "market_2",
-          "easing": "easeOutCubic"
+          "sprite": "development_card_level_1",
+          "from_slot": "development_deck_level_1",
+          "to_slot": "card_market",
+          "easing": "easeOutCubic",
+          "comment": "发一级发展卡市场"
         },
         {
-          "id": "e6",
-          "t": 6.0,
-          "duration": 0.6,
+          "id": "deal_card_market_level_2",
+          "t": 10.7,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "development_card_level_2",
+          "from_slot": "development_deck_level_2",
+          "to_slot": "card_market",
+          "easing": "easeOutCubic",
+          "comment": "发二级发展卡市场"
+        },
+        {
+          "id": "deal_card_market_level_3",
+          "t": 12.1,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "development_card_level_3",
+          "from_slot": "development_deck_level_3",
+          "to_slot": "card_market",
+          "easing": "easeOutCubic",
+          "comment": "发三级发展卡市场"
+        },
+        {
+          "id": "deal_nobles",
+          "t": 13.5,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "noble",
+          "from_slot": "game_box",
+          "to_slot": "noble_market",
+          "easing": "easeOutCubic",
+          "comment": "从游戏盒中随机盲抽 player_count + 1 枚贵族板块，放入贵族市场。"
+        },
+        {
+          "id": "distribute_gems",
+          "t": 14.9,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "gem",
+          "from_slot": "game_box",
+          "to_slot": "gem_supply",
+          "easing": "easeOutCubic",
+          "comment": "分发宝石"
+        },
+        {
+          "id": "distribute_gold",
+          "t": 16.3,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "gold",
+          "from_slot": "game_box",
+          "to_slot": "gold_supply",
+          "easing": "easeOutCubic",
+          "comment": "分发黄金"
+        },
+        {
+          "id": "choose_starting_player",
+          "t": 17.7,
+          "duration": 1.5,
           "action": "highlight",
-          "slot": "market_deck",
+          "slot": "starting_player",
           "color": "#FFD54F",
-          "loop": true
+          "loop": false,
+          "comment": "选择起始玩家"
+        },
+        {
+          "id": "give_starting_player_marker",
+          "t": 19.4,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "starting_player_marker",
+          "from_slot": "game_box",
+          "to_slot": "give_starting_player_marker_destination",
+          "easing": "easeOutCubic",
+          "comment": "给予起始玩家标记"
+        }
+      ]
+    },
+    {
+      "id": "purchase_development_card",
+      "title": {
+        "zh": "购买发展卡",
+        "en": "Purchase Development Card"
+      },
+      "audio": "media/audio/purchase_development_card.mp3",
+      "interrupt_context": "当前在讲：购买发展卡",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "购买发展卡"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "pay_cost",
+          "t": 0.0,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "gem",
+          "from_slot": "player_holding",
+          "to_slot": "gem_supply",
+          "easing": "easeOutCubic",
+          "comment": "支付费用"
+        },
+        {
+          "id": "play_card",
+          "t": 1.4,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "development_card",
+          "from_slot": "card_market",
+          "to_slot": "development_area",
+          "easing": "easeOutCubic",
+          "comment": "打出卡牌"
+        },
+        {
+          "id": "event",
+          "t": 2.8,
+          "duration": 0.8,
+          "action": "wait",
+          "comment": ""
+        }
+      ]
+    },
+    {
+      "id": "reserve_development_card",
+      "title": {
+        "zh": "保留发展卡",
+        "en": "Reserve Development Card"
+      },
+      "audio": "media/audio/reserve_development_card.mp3",
+      "interrupt_context": "当前在讲：保留发展卡",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "保留发展卡"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "reserve_from_market",
+          "t": 0.0,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "development_card",
+          "from_slot": "card_market",
+          "to_slot": "hand",
+          "easing": "easeOutCubic",
+          "comment": "明面保留"
+        },
+        {
+          "id": "reserve_from_deck",
+          "t": 1.4,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "development_card",
+          "from_slot": "development_deck",
+          "to_slot": "hand",
+          "easing": "easeOutCubic",
+          "comment": "暗面保留"
+        },
+        {
+          "id": "take_gold",
+          "t": 2.8,
+          "duration": 0.8,
+          "action": "wait",
+          "comment": "拿取金币"
+        },
+        {
+          "id": "event_2",
+          "t": 3.8,
+          "duration": 0.8,
+          "action": "wait",
+          "comment": ""
+        }
+      ]
+    },
+    {
+      "id": "refill_market",
+      "title": {
+        "zh": "补牌",
+        "en": "Refill Market"
+      },
+      "audio": "media/audio/refill_market.mp3",
+      "interrupt_context": "当前在讲：补牌",
+      "subtitles": [
+        {
+          "t": 0.0,
+          "text": "补牌"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "refill_market",
+          "t": 0.0,
+          "duration": 1.2,
+          "action": "move",
+          "sprite": "development_card",
+          "from_slot": "development_deck",
+          "to_slot": "card_market",
+          "easing": "easeOutCubic",
+          "comment": "补牌 trigger：当一张 <development_card> 从 <card_market> 被移走（购买或明面保留）后，从对应等级的 <development_deck> 顶部翻 1 张补入 <card_market> 空位。"
         }
       ]
     }

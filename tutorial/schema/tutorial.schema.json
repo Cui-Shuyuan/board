@@ -45,6 +45,10 @@
         "default_highlight_color": {
           "$ref": "#/$defs/color",
           "default": "#FFD54F"
+        },
+        "generator": {
+          "type": "string",
+          "description": "生成器标识，供追溯"
         }
       },
       "additionalProperties": false
@@ -81,6 +85,10 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "default": 100
+        },
+        "comment": {
+          "type": "string",
+          "description": "备注，播放器忽略"
         }
       },
       "additionalProperties": false
@@ -190,6 +198,10 @@
         },
         "label": {
           "$ref": "#/$defs/localized"
+        },
+        "comment": {
+          "type": "string",
+          "description": "备注，播放器忽略"
         }
       },
       "additionalProperties": false
@@ -232,6 +244,10 @@
           "type": "number",
           "default": 0,
           "description": "叠放高度偏移（mm）"
+        },
+        "comment": {
+          "type": "string",
+          "description": "备注，播放器忽略"
         }
       },
       "additionalProperties": false
@@ -313,7 +329,7 @@
         },
         "sprites": {
           "type": "array",
-          "minItems": 2,
+          "minItems": 1,
           "items": {
             "type": "string"
           },

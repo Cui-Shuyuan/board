@@ -61,8 +61,31 @@ python scripts/validate_tutorial.py --game splendor --json
 
 注意：`client/Assets/Scripts/TutorialPlayer.cs`（旧原型）与本播放器会各自搭景，二选一运行。新教程走 `TutorialDirector`，旧原型建议删除或禁用。
 
+## 从 flow.json 自动生成草稿
+
+`scripts/flow_to_tutorial.py` 会把 flow.json 里已经结构化好的语义直接翻译成 tutorial.json：
+
+- `transfer` / `random_draw` / `top_draw` / `play` → `move`
+- `shuffle` → `shuffle`
+- `state_change` → `highlight`
+- 没有对应动画语义的节点 → `wait`（待人工补动画）
+
+```bash
+python scripts/flow_to_tutorial.py --game splendor
+python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.tutorial.json
+```
+
+产物是「结构正确的草稿」：
+- 章节来自 flow 的叶子 phase/round；
+- 时间轴事件来自 flow 的叶子动作节点，顺序与 flow 一致；
+- slot 坐标是自动网格占位，需要你在版图扫描图上校准；
+- sprite 路径是 `media/auto/{id}.png` 占位，需要替换为实际扫描/拍摄图。
+
+这样 LLM 的职责从「创作动画」降为「校准坐标 + 替换素材 + 补充 wait 节点的动画」。
+
 ## 工作流
 
-1. 先写 `tutorial.json`（或让 LLM 生成）。
-2. 跑 `scripts/validate_tutorial.py --game xxx`，错误全部清零。
-3. 再进 Unity 看效果，之后只调视觉参数，不再改数据结构。
+1. 先跑 `flow_to_tutorial.py` 生成草稿；
+2. 替换 `media/auto/*` 为真实素材，校准 slot 坐标；
+3. 跑 `scripts/validate_tutorial.py --game xxx`，错误全部清零；
+4. 再进 Unity 看效果，之后只调视觉参数，不再改数据结构。

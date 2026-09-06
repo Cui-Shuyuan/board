@@ -123,6 +123,34 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
+        /// 单牌堆原地洗混：轻微抖动 + 左右摇摆，不改变位置。
+        /// 用于 tutorial.json 里 shuffle 只给单个 sprite 的牌堆场景。
+        /// </summary>
+        public static IEnumerator TweenShuffleInPlace(Transform target, float duration, string easing)
+        {
+            if (target == null) yield break;
+
+            Vector3 baseScale = target.localScale;
+            Vector3 baseEuler = target.localEulerAngles;
+
+            float t = 0f;
+            while (t < duration)
+            {
+                t = Mathf.Min(t + Time.deltaTime, duration);
+                float k = Easing.Evaluate(easing, t / duration);
+                float wave = Mathf.Sin(k * Mathf.PI * 6f);
+                target.localScale = baseScale * (1f + 0.03f * wave);
+                Vector3 e = target.localEulerAngles;
+                e.y = baseEuler.y + 10f * Mathf.Sin(k * Mathf.PI * 6f);
+                target.localEulerAngles = e;
+                yield return null;
+            }
+
+            target.localScale = baseScale;
+            target.localEulerAngles = baseEuler;
+        }
+
+        /// <summary>
         /// 简易洗混：让一组 sprite 在若干 slot 之间做一次交叉换位。
         /// 真正的洗牌视觉可以后续增强，这里保证「数据驱动的 shuffle」有确定性的落位结果。
         /// </summary>

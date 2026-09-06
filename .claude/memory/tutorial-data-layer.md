@@ -28,11 +28,16 @@ metadata:
 - **每章一个音频**，字幕按 t 升序；打断后从当前章节重播。
 - 旧 `TutorialPlayer.cs` 原型与 `TutorialDirector` 二选一运行，建议新教程走 TutorialDirector。
 
+## 从 flow.json 生成草稿（2026-09-06 追加）
+
+`scripts/flow_to_tutorial.py` 确定性翻译 flow.json：transfer/random_draw/top_draw/play → move，shuffle → shuffle，state_change → highlight，其余 → wait。章节取 flow 的叶子 phase/round，事件取叶子动作节点。产物 slot 坐标为自动网格占位、sprite 为 `media/auto/{id}.png` 占位，需人工校准/替换。
+
 ## 工作流
 
-1. LLM 生成 `tutorial.json`；
-2. `python scripts/validate_tutorial.py --game xxx` 清零错误；
-3. 再进 Unity 看效果，视觉问题只调参数/素材，不碰数据结构。
+1. `python scripts/flow_to_tutorial.py --game xxx` 生成草稿；
+2. 替换素材、校准 slot 坐标；
+3. `python scripts/validate_tutorial.py --game xxx` 清零错误；
+4. 再进 Unity 看效果，视觉问题只调参数/素材，不碰数据结构。
 
 **Why:** 教学动画制作的最大问题是 LLM 自由度太大导致小毛病反复返工。schema + validator + 原语库把错误前置到程序层。
 **How to apply:** 新增任何教学动画，先套 schema，再写数据；不要在 Unity 里为单个动画新写协程。

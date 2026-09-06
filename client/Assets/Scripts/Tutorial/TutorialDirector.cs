@@ -523,7 +523,14 @@ namespace BoardGameTutorial
                 }
                 case "shuffle":
                 {
-                    yield return StartCoroutine(ShuffleSprites(ev.sprites, duration, easing));
+                    if (ev.sprites != null && ev.sprites.Length >= 2)
+                    {
+                        yield return StartCoroutine(ShuffleSprites(ev.sprites, duration, easing));
+                    }
+                    else if (!string.IsNullOrEmpty(ev.sprite) && spriteObjects.TryGetValue(ev.sprite, out var deckGo))
+                    {
+                        yield return StartCoroutine(TutorialPrimitives.TweenShuffleInPlace(deckGo.transform, duration, easing));
+                    }
                     break;
                 }
                 case "wait":
