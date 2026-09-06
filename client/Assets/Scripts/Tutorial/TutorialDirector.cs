@@ -38,6 +38,7 @@ namespace BoardGameTutorial
         private readonly Dictionary<string, GameObject> spriteObjects = new Dictionary<string, GameObject>();
         private readonly Dictionary<string, Vector3> spriteBaseScales = new Dictionary<string, Vector3>();
         private readonly Dictionary<string, GameObject> highlightObjects = new Dictionary<string, GameObject>();
+        private readonly Dictionary<GameObject, float> highlightBaseScales = new Dictionary<GameObject, float>();
 
         private GameObject boardObject;
         private Coroutine playRoutine;
@@ -189,6 +190,7 @@ namespace BoardGameTutorial
             spriteObjects.Clear();
             spriteBaseScales.Clear();
             highlightObjects.Clear();
+            highlightBaseScales.Clear();
             boardObject = null;
         }
 
@@ -204,8 +206,8 @@ namespace BoardGameTutorial
             cam.backgroundColor = new Color(0.13f, 0.16f, 0.20f, 1f);
 
             float h = doc.board != null && doc.board.height_mm > 0f ? doc.board.height_mm : 260f;
-            cam.orthographicSize = h * 0.75f;
-            camGo.transform.position = new Vector3(0f, h * 0.9f, -h * 0.75f);
+            cam.orthographicSize = h * 0.62f;
+            camGo.transform.position = new Vector3(0f, h * 0.9f, -h * 0.62f);
             camGo.transform.LookAt(new Vector3(0f, 0f, 0f));
         }
 
@@ -276,7 +278,11 @@ namespace BoardGameTutorial
                 spriteBaseScales[def.id] = baseScale;
                 spriteObjects[def.id] = go;
 
-                go.transform.position = FindInitialSpawnPosition(def.id);
+                Vector3 spawnPos = FindInitialSpawnPosition(def.id);
+                // z-fighting 根修：sprite 必须抬离版图平面。世界单位=mm。
+                // z_offset 是叠放高度偏移（mm）；未显式配置时给 0.5mm 基础抬升。
+                spawnPos.y = Mathf.Max(def.z_offset, 0.5f);
+                go.transform.position = spawnPos;
             }
         }
 
@@ -288,9 +294,8 @@ namespace BoardGameTutorial
             foreach (var id in ids)
             {
                 if (!slotObjects.TryGetValue(id, out var target)) continue;
-                var hl = CreateHighlightDisc(id, parent);
-                hl.transform.SetParent(target.transform, false);
-                hl.transform.localPosition = new Vector3(0f, 0.02f, 0f);
+                float sizeMM = GetSlotDisplaySizeMM(id);
+                var hl = CreateHighlightDisc(id, target.transform.position, sizeMM, parent);
                 highlightObjects[id] = hl;
             }
 
@@ -298,15 +303,37 @@ namespace BoardGameTutorial
             foreach (var id in spriteIds)
             {
                 var target = spriteObjects[id];
-                var hl = CreateHighlightDisc(id, parent);
-                hl.transform.SetParent(target.transform, false);
-                hl.transform.localPosition = new Vector3(0f, 0.02f, 0f);
+                float sizeMM = GetSpriteDisplaySizeMM(id);
+                var hl = CreateHighlightDisc("sprite:" + id, target.transform.position, sizeMM, parent);
                 hl.name = "highlight:" + id;
                 highlightObjects["sprite:" + id] = hl;
             }
         }
 
-        private GameObject CreateHighlightDisc(string ownerId, GameObject parent)
+        /// <summary>slot 高亮的合理尺寸：优先取出生在该 slot 的 sprite 宽度，否则 60mm。</summary>
+        private float GetSlotDisplaySizeMM(string slotId)
+        {
+            float best = 0f;
+            if (doc.sprites != null)
+            {
+                foreach (var def in doc.sprites)
+                {
+                    if (def.spawn_slot == slotId || def.id == slotId)
+                    {
+                        best = Mathf.Max(best, def.width_mm);
+                    }
+                }
+            }
+            return best > 0f ? best : 60f;
+        }
+
+        private float GetSpriteDisplaySizeMM(string spriteId)
+        {
+            if (spritesById.TryGetValue(spriteId, out var def)) return Mathf.Max(def.width_mm, 1f);
+            return 60f;
+        }
+
+        private GameObject CreateHighlightDisc(string ownerId, Vector3 worldPos, float sizeMM, GameObject parent)
         {
             var go = new GameObject("highlight:" + ownerId);
             go.transform.SetParent(parent.transform, false);
@@ -314,8 +341,12 @@ namespace BoardGameTutorial
             sr.sprite = GenerateSoftDiscSprite(128, new Color(1f, 1f, 1f, 1f));
             sr.color = ColorFromHex(doc.meta != null ? doc.meta.default_highlight_color : "#FFD54F");
             sr.sortingOrder = 5;
-            go.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-            go.transform.localScale = Vector3.one * 0.6f;
+            go.transform.SetPositionAndRotation(worldPos + new Vector3(0f, 0.6f, 0f), Quaternion.Euler(90f, 0f, 0f));
+            // 高亮盘原生世界尺寸 = 128px / 100ppu = 1.28 世界单位。
+            // 按目标尺寸放大到约 0.85 倍目标宽，并存储基准 scale 供脉冲使用。
+            float baseScale = (sizeMM * 0.85f) / 1.28f;
+            go.transform.localScale = new Vector3(baseScale, baseScale, 1f);
+            highlightBaseScales[go] = baseScale;
             go.SetActive(false);
             return go;
         }
@@ -576,7 +607,8 @@ namespace BoardGameTutorial
                     var sr = hl.GetComponent<SpriteRenderer>();
                     Color target = ColorFromHex(string.IsNullOrEmpty(ev.color) ? (doc.meta != null ? doc.meta.default_highlight_color : "#FFD54F") : ev.color);
                     if (sr != null) sr.color = Color.Lerp(new Color(1f, 1f, 1f, 0.3f), target, e);
-                    float s = Mathf.LerpUnclamped(0.6f, 0.9f, e);
+                    float baseScale = highlightBaseScales.TryGetValue(hl, out var bs) ? bs : 1f;
+                    float s = baseScale * Mathf.LerpUnclamped(0.85f, 1f, e);
                     hl.transform.localScale = new Vector3(s, s, 1f);
                     break;
                 }
@@ -750,6 +782,7 @@ namespace BoardGameTutorial
             var sr = hl.GetComponent<SpriteRenderer>();
             Color target = ColorFromHex(string.IsNullOrEmpty(colorHex) ? (doc.meta != null ? doc.meta.default_highlight_color : "#FFD54F") : colorHex);
             Color original = sr != null ? sr.color : target;
+            float baseScale = highlightBaseScales.TryGetValue(hl, out var bs) ? bs : 1f;
 
             float t = 0f;
             do
@@ -763,7 +796,7 @@ namespace BoardGameTutorial
                     {
                         sr.color = Color.Lerp(original, target, k);
                     }
-                    float s = 0.6f + 0.25f * k;
+                    float s = baseScale * Mathf.LerpUnclamped(0.85f, 1.05f, k);
                     hl.transform.localScale = new Vector3(s, s, 1f);
                     yield return null;
                 }
