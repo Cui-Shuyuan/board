@@ -71,6 +71,8 @@ namespace BoardGameTutorial
         public float height_mm;
         public string pivot;            // "center" | "top_left" | "bottom_center"
         public float z_offset;          // 叠放高度偏移（mm），缺省 0
+        public bool hidden;             // 初始隐藏（alpha=0），配合 fade 原语做登场
+        public string spawn_slot;       // 初始摆放 slot；缺省用第一个 move 的 from_slot
     }
 
     [Serializable]

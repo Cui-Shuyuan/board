@@ -248,6 +248,15 @@
         "comment": {
           "type": "string",
           "description": "备注，播放器忽略"
+        },
+        "hidden": {
+          "type": "boolean",
+          "default": false,
+          "description": "初始是否隐藏（alpha=0）。用于配合 fade 原语实现登场。"
+        },
+        "spawn_slot": {
+          "type": "string",
+          "description": "初始摆放的 slot id；缺省时用时间轴中第一个 move 的 from_slot，再缺省为版图中心。"
         }
       },
       "additionalProperties": false
