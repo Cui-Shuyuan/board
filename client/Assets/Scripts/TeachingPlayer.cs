@@ -219,18 +219,15 @@ public class TeachingPlayer : MonoBehaviour
     void ApplyAppearProgress(string name, float k)
     {
         if (string.IsNullOrEmpty(name) || !objectMap.TryGetValue(name, out var t)) return;
-        var sr = t.GetComponent<SpriteRenderer>();
-        if (sr == null) return;
         float a = TweenLibrary.Ease(k, "easeOutCubic");
-        sr.color = new Color(1f, 1f, 1f, a);
+        SetAlphaRecursive(t, a);
         t.localScale = baseScales.TryGetValue(name, out var s) ? s * Mathf.LerpUnclamped(0.4f, 1f, a) : t.localScale;
     }
 
     void Show(string name)
     {
         if (string.IsNullOrEmpty(name) || !objectMap.TryGetValue(name, out var t)) return;
-        var sr = t.GetComponent<SpriteRenderer>();
-        if (sr != null) sr.color = new Color(1f, 1f, 1f, 1f);
+        SetAlphaRecursive(t, 1f);
         t.localScale = baseScales.TryGetValue(name, out var s) ? s : Vector3.one;
     }
 
@@ -240,7 +237,7 @@ public class TeachingPlayer : MonoBehaviour
     {
         var cam = Camera.main;
         cam.orthographic = true;
-        cam.orthographicSize = 2.5f;
+        cam.orthographicSize = 2.3f;
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = new Color(0.11f, 0.12f, 0.16f);
         // 维持 50° 俯角，抬高相机让桌面充满视野
@@ -393,14 +390,14 @@ public class TeachingPlayer : MonoBehaviour
         string[] gemIds = { "diamond","sapphire","emerald","ruby","onyx","gold" };
         Color[] gemCols = {
             new Color(0.70f,0.86f,1f), new Color(0.26f,0.52f,0.96f), new Color(0.20f,0.66f,0.33f),
-            new Color(0.92f,0.26f,0.21f), new Color(0.24f,0.20f,0.36f), new Color(0.98f,0.74f,0.02f),
+            new Color(0.92f,0.26f,0.21f), new Color(0.18f,0.18f,0.22f), new Color(0.98f,0.74f,0.02f),
         };
         float gemY = -170f * MM;
         for (int i = 0; i < 6; i++)
         {
             float x = (i - 2.5f) * 80f * MM;
             AddSpriteMM("gem_" + gemIds[i], GameSpriteFactory.Gem(gemCols[i]), new Vector3(x, 0.02f, gemY), 43, 43, 12);
-            AddChildSprite("gem_" + gemIds[i], "shadow_" + gemIds[i], GameSpriteFactory.Shadow(), Vector3.zero, 0.5f, 11);
+            AddChildSprite("gem_" + gemIds[i], "shadow_" + gemIds[i], GameSpriteFactory.Shadow(), new Vector3(0.08f, -0.22f, 0f), 0.5f, 11);
             SetHidden("gem_" + gemIds[i]);
         }
 
@@ -412,8 +409,16 @@ public class TeachingPlayer : MonoBehaviour
     void SetHidden(string name)
     {
         if (!objectMap.TryGetValue(name, out var t)) return;
+        SetAlphaRecursive(t, 0f);
+    }
+
+    /// <summary>递归设置对象及其所有子 SpriteRenderer 的 alpha（隐藏 gem 时必须连 shadow 一起藏）。</summary>
+    void SetAlphaRecursive(Transform t, float a)
+    {
         var sr = t.GetComponent<SpriteRenderer>();
-        if (sr != null) sr.color = new Color(1f, 1f, 1f, 0f);
+        if (sr != null) sr.color = new Color(1f, 1f, 1f, a);
+        for (int i = 0; i < t.childCount; i++)
+            SetAlphaRecursive(t.GetChild(i), a);
     }
 
     // ---------------- UI ----------------

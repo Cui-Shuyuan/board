@@ -83,8 +83,8 @@ public static class GameSpriteFactory
     {
         // 干净木色桌面（去分支色块）：浅木纹底 + 深色外框
         Color c = new Color(0.70f, 0.52f, 0.34f);
-        // 木纹：每条 90px 画一条浅浅的暗纹
-        if ((x + y * 0.3f) % 90 < 2f) c *= 0.94f;
+        // 木纹：低频 Perlin 噪声做柔和明暗，不再用机械斜纹
+        if (Mathf.PerlinNoise(x * 0.025f, y * 0.025f) > 0.62f) c *= 0.94f;
         // 外框向内 10px
         if (x < 10 || x >= 990 || y < 10 || y >= 690) c = new Color(0.48f, 0.33f, 0.20f);
         return c;
@@ -220,7 +220,7 @@ public static class GameSpriteFactory
         if (d > 120) return new Color(0f, 0f, 0f, 0f);
         // 边缘内的高光与内环
         Color c = color;
-        if (d > 114) c = new Color(1f, 1f, 1f, 1f);           // 白边
+        if (d > 114) c = Color.Lerp(color, Color.white, 0.6f); // 柔化边缘，避免像描边
         else if (d > 94) c = Color.Lerp(color, Color.white, 0.15f); // 内环微亮
         // 左上高光
         int hx = x - 96, hy = y - 96;
