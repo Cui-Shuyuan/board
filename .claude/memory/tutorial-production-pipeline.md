@@ -1,6 +1,6 @@
 ---
 name: tutorial-production-pipeline
-description: 讲规动画下一阶段路线——口播稿主/动画从、full 先做、quick 为店里默认、编译期起始画面、TTS 冻结后动画
+description: 讲规动画下一阶段路线——口播稿主/动画从、full 先做、quick 为店里默认、编译期起始画面、TTS 冻结后动画；Splendor full.lrc 已拆
 metadata:
   type: project
 ---
@@ -61,11 +61,13 @@ metadata:
 - **不传播放秒数**，避免半句话语义不完整；现有 `/api/chat` 可加可选 `tutorial_context`。
 - 回答后重播当前叶子，从起始画面和 0 秒开始。
 
-## 试点下一步
+## 试点当前状态
 
-1. 下一个标准模式会话只拆 `doc/splendor/口播稿.md`：按 1～3 句切叶子，挂 Splendor `flow` / `concepts` 引用，标注 core/extended/flavor，标注建议动作语义。
-2. 用户 review 拆分后再设计 L1 口播脚本 schema 与 L2 动作库 schema。
-3. 之后依次做组件扫描、slot 标定、TTS 冻结、动画生成、Unity 播放、打断问答接线。
+- 已将 `doc/splendor/口播稿.md`（full）拆成 `games/splendor/tutorial/full.lrc`：59 个播放单元、16 个导航分组，行格式 `[mm:ss.xx][id:...][ref:...]台词`。
+- 时间是 TTS 前估算，`[timing:estimated]`；TTS 冻结后重写为 `[timing:tts]`。
+- LRC-like 格式说明见 `tutorial/README.md`，解析/校验器为 `scripts/validate_timed_script.py`。
+- 待用户 review 拆分、台词和 source refs；quick 版及 core/extended/flavor 标记留到 quick 阶段。
+- review 后再进入动画会话：程序解析/加载、L2 动作库 schema、组件扫描、slot 标定、TTS 冻结、起始画面编译、动画生成、Unity 播放、打断问答接线。
 
 ## 相关记忆
 

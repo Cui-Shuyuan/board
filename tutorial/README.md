@@ -95,3 +95,17 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 讲规动画从「章节 + 时间轴」扩展到「口播稿层 + 版本（quick/full）+ 编译期起始画面」的方案，见：
 
 `tutorial/下一阶段工作指导.md`
+
+## 时间轴口播稿（LRC-like）
+
+口播稿以类似歌词的 LRC 格式存放，例如 `games/splendor/tutorial/full.lrc`。播放器/编译器不再直接读 Markdown，而是解析该格式后再生成运行时数据。
+
+格式约定：
+
+- 元数据行：`[ti:标题]`、`[game:splendor]`、`[track:full|quick]`、`[timing:estimated|tts]`、`[version:...]`、`[length:mm:ss.xx]`
+- 分组行：`[group:3.1 从宝石供应堆拿取宝石]`，只用于导航，没有时间。
+- 台词行：`[mm:ss.xx][id:...]台词`，时间表示该播放单元的开始时间。
+- 可选引用：`[ref:<concept>|flow:node|rulebook:xxx]`，多个引用用 `|` 分隔。
+- 一个 `id` 就是一个播放单元；时间结束以下一条时间或 `[length:...]` 为界。
+- `[timing:estimated]` 表示当前时间是 TTS 前的估算；TTS 冻结后应改成 `[timing:tts]` 并重写时间。
+- 校验/解析：`python scripts/validate_timed_script.py --file games/splendor/tutorial/full.lrc`；加 `--json` 可输出结构化结果供后续编译器使用。
