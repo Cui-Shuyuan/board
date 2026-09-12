@@ -73,6 +73,8 @@ metadata:
 
 **讲规模块（第五阶段）已开工（2026-08-15）**：client 项目位于 `client/`（Unity 6 + URP 模板，全部落 D 盘），运行时搭景播放器 + 占位素材已跑通首个原型（50° 俯角 + 三圆片演示动画）；观感迭代待用户用多模态模型发截图。详见 [[tutorial-module]]。
 
+**2026-09-13 讲规动画下一阶段方向**：重心从继续写规则文档转向讲规动画自动制作——口播稿主、动画从；full 先做、quick 为店里默认；任意跳转用编译器生成的每段起始画面实现；TTS 冻结后再生成动画。试点《璀璨宝石》full 口播稿 `doc/splendor/口播稿.md`。详见 [[tutorial-production-pipeline]] 和 `tutorial/下一阶段工作指导.md`。
+
 ## 项目路径
 D:\workspace\board
 

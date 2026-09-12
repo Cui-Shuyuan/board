@@ -32,6 +32,18 @@ metadata:
 
 `scripts/flow_to_tutorial.py` 确定性翻译 flow.json：transfer/random_draw/top_draw/play → move，shuffle → shuffle，state_change → highlight，其余 → wait。章节取 flow 的叶子 phase/round，事件取叶子动作节点。产物 slot 坐标为自动网格占位、sprite 为 `media/auto/{id}.png` 占位，需人工校准/替换。
 
+## 下一阶段演进（2026-09-13）
+
+现有 `tutorial.json` 是运行时动画层（L3/L4）的 v0，下一阶段要在它前面补口播稿层，并把状态前移到编译期：
+
+- **L1 口播脚本层**：播放单元树、narration、source_refs、quick/full 版本标记。叶子按 1～3 句口播切，不按规则小节切。
+- **L2 动作库层**：同一语义动作只实现一次；quick/full 复用动作内容，但各自按 TTS 音频时长编译时间轴。
+- **编译期起始画面**：为支持任意跳转，编译器离线计算每个叶子开头所有 sprite 的完整画面；运行时只加载「当前叶子起始画面 + 本节时间轴」，不维护历史。
+- **TTS 顺序**：口播定稿 → TTS → 冻结音频/时长 → 动画生成；音频冻结后不再为动画改时间轴。
+- 现有 validator/8 原语继续保留，但 schema 需扩展到口播稿与版本选择。
+
+详见 `tutorial/下一阶段工作指导.md` 与 [[tutorial-production-pipeline]]。
+
 ## 工作流
 
 1. `python scripts/flow_to_tutorial.py --game xxx` 生成草稿；

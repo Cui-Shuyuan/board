@@ -89,3 +89,9 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 2. 替换 `media/auto/*` 为真实素材，校准 slot 坐标；
 3. 跑 `scripts/validate_tutorial.py --game xxx`，错误全部清零；
 4. 再进 Unity 看效果，之后只调视觉参数，不再改数据结构。
+
+## 下一阶段路线
+
+讲规动画从「章节 + 时间轴」扩展到「口播稿层 + 版本（quick/full）+ 编译期起始画面」的方案，见：
+
+`tutorial/下一阶段工作指导.md`
