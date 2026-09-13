@@ -109,3 +109,26 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 - 一个 `id` 就是一个播放单元；时间结束以下一条时间或 `[length:...]` 为界。
 - `[timing:estimated]` 表示当前时间是 TTS 前的估算；TTS 冻结后应改成 `[timing:tts]` 并重写时间。
 - 校验/解析：`python scripts/validate_timed_script.py --file games/splendor/tutorial/full.lrc`；加 `--json` 可输出结构化结果供后续编译器使用。
+
+## 口播稿转音频（豆包语音）
+
+`scripts/tts_doubao.py` 使用火山引擎豆包语音合成 2.0 的 WebSocket 双向流式接口，把 LRC-like 口播稿逐 cue 合成为音频：
+
+```bash
+pip install -r scripts/requirements-tts.txt
+
+# 只预览
+python scripts/tts_doubao.py --input games/splendor/tutorial/full.lrc --dry-run
+
+# 先试听前 3 条
+python scripts/tts_doubao.py --input games/splendor/tutorial/full.lrc --limit 3
+
+# 全量生成，并回写 full.tts.lrc
+python scripts/tts_doubao.py --input games/splendor/tutorial/full.lrc --write-lrc
+```
+
+- 凭证从仓库根目录 `.env` 读取：`VOLCENGINE_API_KEY`
+- 输出：`games/{game}/media/tts/{track}/{cue_id}.mp3`、`{cue_id}.subtitle.json`、`tts_manifest.json`
+- `--voice` 指定音色，默认 `zh_female_vv_uranus_bigtts`
+- `--limit N` 用于小样试听；去掉后全量生成
+- `--write-lrc` 生成 `full.tts.lrc`，把 `[timing:estimated]` 改写为真实时长

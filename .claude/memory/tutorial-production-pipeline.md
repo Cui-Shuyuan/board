@@ -67,7 +67,9 @@ metadata:
 - 时间是 TTS 前估算，`[timing:estimated]`；TTS 冻结后重写为 `[timing:tts]`。
 - LRC-like 格式说明见 `tutorial/README.md`，解析/校验器为 `scripts/validate_timed_script.py`。
 - 待用户 review 拆分、台词和 source refs；quick 版及 core/extended/flavor 标记留到 quick 阶段。
-- review 后再进入动画会话：程序解析/加载、L2 动作库 schema、组件扫描、slot 标定、TTS 冻结、起始画面编译、动画生成、Unity 播放、打断问答接线。
+- TTS 已选用火山豆包语音合成 2.0（WebSocket 双向流式接口）。实现脚本：`scripts/tts_doubao.py`；协议模块：`scripts/volcengine_ws_protocols.py`；依赖：`scripts/requirements-tts.txt`。
+- 前 3 条 cue 已真实合成验证，输出 `*.mp3` + `*.subtitle.json`（含字级时间戳）+ `tts_manifest.json`；全量生成后可用 `--write-lrc` 回写 `full.tts.lrc`。
+- review 后再进入动画会话：L2 动作库 schema、组件扫描、slot 标定、起始画面编译、动画生成、Unity 播放、打断问答接线。
 
 ## 相关记忆
 
