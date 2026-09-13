@@ -1,0 +1,80 @@
+[
+  {
+    "phonemes": [],
+    "text": "这些是标记，后续称之为宝石。",
+    "words": [
+      {
+        "confidence": 0.975243,
+        "endTime": 0.445,
+        "startTime": 0.305,
+        "word": "这"
+      },
+      {
+        "confidence": 0.98048174,
+        "endTime": 0.585,
+        "startTime": 0.445,
+        "word": "些"
+      },
+      {
+        "confidence": 0.9111937,
+        "endTime": 0.715,
+        "startTime": 0.585,
+        "word": "是"
+      },
+      {
+        "confidence": 0.9663702,
+        "endTime": 0.945,
+        "startTime": 0.715,
+        "word": "标"
+      },
+      {
+        "confidence": 0.8659386,
+        "endTime": 1.235,
+        "startTime": 0.945,
+        "word": "记，"
+      },
+      {
+        "confidence": 0.8852527,
+        "endTime": 1.545,
+        "startTime": 1.415,
+        "word": "后"
+      },
+      {
+        "confidence": 0.8650986,
+        "endTime": 1.785,
+        "startTime": 1.545,
+        "word": "续"
+      },
+      {
+        "confidence": 0.76380795,
+        "endTime": 1.985,
+        "startTime": 1.785,
+        "word": "称"
+      },
+      {
+        "confidence": 0.8413825,
+        "endTime": 2.115,
+        "startTime": 1.985,
+        "word": "之"
+      },
+      {
+        "confidence": 0.90888983,
+        "endTime": 2.265,
+        "startTime": 2.115,
+        "word": "为"
+      },
+      {
+        "confidence": 0.9519103,
+        "endTime": 2.455,
+        "startTime": 2.265,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9514726,
+        "endTime": 2.835,
+        "startTime": 2.455,
+        "word": "石。"
+      }
+    ]
+  }
+]

@@ -1,0 +1,116 @@
+[
+  {
+    "phonemes": [],
+    "text": "左下角是这张牌的价格。",
+    "words": [
+      {
+        "confidence": 0.727636,
+        "endTime": 0.445,
+        "startTime": 0.285,
+        "word": "左"
+      },
+      {
+        "confidence": 0.8859388,
+        "endTime": 0.645,
+        "startTime": 0.445,
+        "word": "下"
+      },
+      {
+        "confidence": 0.9427902,
+        "endTime": 0.825,
+        "startTime": 0.645,
+        "word": "角"
+      },
+      {
+        "confidence": 0.8217617,
+        "endTime": 0.995,
+        "startTime": 0.825,
+        "word": "是"
+      },
+      {
+        "confidence": 0.98085004,
+        "endTime": 1.105,
+        "startTime": 0.995,
+        "word": "这"
+      },
+      {
+        "confidence": 0.96134603,
+        "endTime": 1.245,
+        "startTime": 1.105,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9732587,
+        "endTime": 1.405,
+        "startTime": 1.245,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9627623,
+        "endTime": 1.485,
+        "startTime": 1.405,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9374465,
+        "endTime": 1.685,
+        "startTime": 1.485,
+        "word": "价"
+      },
+      {
+        "confidence": 0.97189,
+        "endTime": 2.005,
+        "startTime": 1.685,
+        "word": "格。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "要想购买这张牌，\n",
+    "words": [
+      {
+        "confidence": 0.9200271,
+        "endTime": 2.4350417,
+        "startTime": 2.3650417,
+        "word": "要"
+      },
+      {
+        "confidence": 0.90348095,
+        "endTime": 2.6050417,
+        "startTime": 2.4350417,
+        "word": "想"
+      },
+      {
+        "confidence": 0.94055974,
+        "endTime": 2.7950416,
+        "startTime": 2.6050417,
+        "word": "购"
+      },
+      {
+        "confidence": 0.9656833,
+        "endTime": 2.9450417,
+        "startTime": 2.7950416,
+        "word": "买"
+      },
+      {
+        "confidence": 0.9500695,
+        "endTime": 3.0450416,
+        "startTime": 2.9450417,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9631723,
+        "endTime": 3.1950417,
+        "startTime": 3.0450416,
+        "word": "张"
+      },
+      {
+        "confidence": 0.951205,
+        "endTime": 3.5450416,
+        "startTime": 3.1950417,
+        "word": "牌，"
+      }
+    ]
+  }
+]

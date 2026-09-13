@@ -1,0 +1,104 @@
+[
+  {
+    "phonemes": [],
+    "text": "当供应堆宝石不足时，尽可能拿取宝石。",
+    "words": [
+      {
+        "confidence": 0.92567253,
+        "endTime": 0.495,
+        "startTime": 0.295,
+        "word": "当"
+      },
+      {
+        "confidence": 0.94582754,
+        "endTime": 0.685,
+        "startTime": 0.495,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8092192,
+        "endTime": 0.825,
+        "startTime": 0.685,
+        "word": "应"
+      },
+      {
+        "confidence": 0.679768,
+        "endTime": 0.975,
+        "startTime": 0.825,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.8773763,
+        "endTime": 1.135,
+        "startTime": 0.975,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9473891,
+        "endTime": 1.315,
+        "startTime": 1.135,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9337984,
+        "endTime": 1.445,
+        "startTime": 1.315,
+        "word": "不"
+      },
+      {
+        "confidence": 0.971504,
+        "endTime": 1.655,
+        "startTime": 1.445,
+        "word": "足"
+      },
+      {
+        "confidence": 0.9621174,
+        "endTime": 2.035,
+        "startTime": 1.655,
+        "word": "时，"
+      },
+      {
+        "confidence": 0.8952382,
+        "endTime": 2.415,
+        "startTime": 2.175,
+        "word": "尽"
+      },
+      {
+        "confidence": 0.960492,
+        "endTime": 2.595,
+        "startTime": 2.415,
+        "word": "可"
+      },
+      {
+        "confidence": 0.9804654,
+        "endTime": 2.755,
+        "startTime": 2.595,
+        "word": "能"
+      },
+      {
+        "confidence": 0.968989,
+        "endTime": 2.905,
+        "startTime": 2.755,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.8427259,
+        "endTime": 3.055,
+        "startTime": 2.905,
+        "word": "取"
+      },
+      {
+        "confidence": 0.9415933,
+        "endTime": 3.225,
+        "startTime": 3.055,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9536894,
+        "endTime": 3.545,
+        "startTime": 3.225,
+        "word": "石。"
+      }
+    ]
+  }
+]

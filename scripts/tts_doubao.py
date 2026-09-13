@@ -34,6 +34,7 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import sys
 import uuid
 import wave
@@ -331,34 +332,72 @@ def write_manifest(out_dir: Path, cues: list[dict[str, Any]], results: list[dict
 
 
 def write_tts_lrc(input_lrc: Path, output_lrc: Path, cues: list[dict[str, Any]], results: list[dict[str, Any]], args: argparse.Namespace) -> None:
-    doc = parse_file(input_lrc)
+    """基于原始 LRC 重写时间，保留原有 group 行和 ref 标签。"""
+    time_re = re.compile(r"^\[(\d{2}):(\d{2}\.\d{2})\]")
+    meta_re = re.compile(r"^\[([A-Za-z_]+):([^\]]*)\]")
     by_id = {r["id"]: r for r in results}
     cursor = 0.0
-    lines: list[str] = []
-    meta = doc["meta"]
-    lines.append(f"[ti:{meta.get('ti', '')}]")
-    lines.append(f"[game:{meta.get('game', '')}]")
-    lines.append(f"[track:{args.track}]")
-    lines.append("[timing:tts]")
-    if meta.get("version"):
-        lines.append(f"[version:{meta['version']}]")
-    lines.append("[generator:scripts/tts_doubao.py]")
+    out: list[str] = []
+    timing_written = False
 
-    last_group = None
-    for cue in cues:
-        r = by_id.get(cue["id"])
-        if not r:
+    for raw in input_lrc.read_text(encoding="utf-8").splitlines():
+        line = raw.rstrip()
+        if not line:
             continue
-        if cue["group"] != last_group:
-            if cue["group"]:
-                lines.append(f"[group:{cue['group']}]")
-            last_group = cue["group"]
-        lines.append(f"{format_time(cursor)}[id:{cue['id']}]{normalize_cue_refs(cue['refs'])}{cue['text']}")
-        cursor += float(r["duration"]) + args.gap
+        if line.startswith("[group:"):
+            out.append(line)
+            continue
 
-    lines.append(f"[length:{format_time(cursor)[1:-1]}]")
-    output_lrc.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        meta = meta_re.match(line)
+        if meta and not time_re.match(line):
+            key = meta.group(1)
+            if key == "timing":
+                continue
+            if key == "length":
+                continue
+            if key == "generator":
+                continue
+            out.append(line)
+            if key == "track":
+                out.append("[timing:tts]")
+                out.append("[generator:scripts/tts_doubao.py]")
+                timing_written = True
+            continue
+
+        time_match = time_re.match(line)
+        if not time_match:
+            out.append(line)
+            continue
+
+        rest = line[time_match.end():]
+        tags: list[str] = []
+        while rest.startswith("["):
+            end = rest.find("]")
+            if end < 0:
+                break
+            tag = rest[1:end]
+            if tag.startswith("id:") or tag.startswith("ref:"):
+                tags.append(tag)
+                rest = rest[end + 1:]
+                continue
+            break
+
+        cue_id = next((t[3:] for t in tags if t.startswith("id:")), "")
+        result = by_id.get(cue_id)
+        if result is None:
+            # limit 模式下缺失的 cue 不写入输出。
+            continue
+
+        tag_text = "".join(f"[{tag}]" for tag in tags)
+        out.append(f"{format_time(cursor)}{tag_text}{rest}")
+        cursor += float(result["duration"]) + args.gap
+
+    if not timing_written:
+        out.insert(0, "[timing:tts]")
+    out.append(f"[length:{format_time(cursor)[1:-1]}]")
+    output_lrc.write_text("\n".join(out) + "\n", encoding="utf-8")
     print(f"[lrc] {output_lrc}")
+
 
 
 def print_dry_run(cues: list[dict[str, Any]], args: argparse.Namespace) -> None:

@@ -1,0 +1,74 @@
+[
+  {
+    "phonemes": [],
+    "text": "也就是已购买的卡牌数量。",
+    "words": [
+      {
+        "confidence": 0.8626259,
+        "endTime": 0.445,
+        "startTime": 0.325,
+        "word": "也"
+      },
+      {
+        "confidence": 0.9547563,
+        "endTime": 0.615,
+        "startTime": 0.445,
+        "word": "就"
+      },
+      {
+        "confidence": 0.95195377,
+        "endTime": 0.865,
+        "startTime": 0.615,
+        "word": "是"
+      },
+      {
+        "confidence": 0.79524297,
+        "endTime": 1.015,
+        "startTime": 0.865,
+        "word": "已"
+      },
+      {
+        "confidence": 0.8144017,
+        "endTime": 1.235,
+        "startTime": 1.015,
+        "word": "购"
+      },
+      {
+        "confidence": 0.9617156,
+        "endTime": 1.415,
+        "startTime": 1.235,
+        "word": "买"
+      },
+      {
+        "confidence": 0.950783,
+        "endTime": 1.525,
+        "startTime": 1.415,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8858972,
+        "endTime": 1.695,
+        "startTime": 1.525,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9779253,
+        "endTime": 1.845,
+        "startTime": 1.695,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.89658594,
+        "endTime": 2.065,
+        "startTime": 1.845,
+        "word": "数"
+      },
+      {
+        "confidence": 0.9468798,
+        "endTime": 2.265,
+        "startTime": 2.065,
+        "word": "量。"
+      }
+    ]
+  }
+]

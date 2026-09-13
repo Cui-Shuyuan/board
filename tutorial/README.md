@@ -100,6 +100,14 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 
 口播稿以类似歌词的 LRC 格式存放，例如 `games/splendor/tutorial/full.lrc`。播放器/编译器不再直接读 Markdown，而是解析该格式后再生成运行时数据。
 
+长 cue 可以用 `scripts/split_lrc_long_cues.py` 按标点拆分：
+
+```bash
+python scripts/split_lrc_long_cues.py   --input games/splendor/tutorial/full.lrc   --output games/splendor/tutorial/full.short.lrc   --max-chars 40
+```
+
+Splendor full 已按此规则拆成 109 个 cue，避免单条 15 秒以上导致打断后重听过长。
+
 格式约定：
 
 - 元数据行：`[ti:标题]`、`[game:splendor]`、`[track:full|quick]`、`[timing:estimated|tts]`、`[version:...]`、`[length:mm:ss.xx]`

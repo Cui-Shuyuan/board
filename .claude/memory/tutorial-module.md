@@ -106,7 +106,7 @@ metadata:
 - quick / full 共享组件、资产和动作行为，但口播稿各写一份；full 先做，quick 为店里默认首讲版本。
 - 客人可任意跳转；运行端只维护当前播放单元，跳转所需「起始画面」由编译器离线生成。
 - 动画继续只用 8 个原语，LLM 只填参数，不写新协程；不做 authoring 界面。
-- 试点《璀璨宝石》，标杆稿为 `doc/splendor/口播稿.md`（full 版）；已拆出 `games/splendor/tutorial/full.lrc`（LRC-like，59 cues）。
+- 试点《璀璨宝石》，标杆稿为 `doc/splendor/口播稿.md`（full 版）；已拆出 `games/splendor/tutorial/full.lrc`（109 cues），full TTS 已全量生成。
 
 详见 `tutorial/下一阶段工作指导.md` 与 [[tutorial-production-pipeline]]。
 

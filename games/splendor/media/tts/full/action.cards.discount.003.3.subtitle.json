@@ -1,0 +1,62 @@
+[
+  {
+    "phonemes": [],
+    "text": "折扣的上限就是免费。",
+    "words": [
+      {
+        "confidence": 0.80472463,
+        "endTime": 0.525,
+        "startTime": 0.275,
+        "word": "折"
+      },
+      {
+        "confidence": 0.96626306,
+        "endTime": 0.775,
+        "startTime": 0.525,
+        "word": "扣"
+      },
+      {
+        "confidence": 0.93706423,
+        "endTime": 0.885,
+        "startTime": 0.775,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8956513,
+        "endTime": 1.145,
+        "startTime": 0.885,
+        "word": "上"
+      },
+      {
+        "confidence": 0.87536126,
+        "endTime": 1.435,
+        "startTime": 1.145,
+        "word": "限"
+      },
+      {
+        "confidence": 0.95797575,
+        "endTime": 1.555,
+        "startTime": 1.435,
+        "word": "就"
+      },
+      {
+        "confidence": 0.9786605,
+        "endTime": 1.705,
+        "startTime": 1.555,
+        "word": "是"
+      },
+      {
+        "confidence": 0.97432107,
+        "endTime": 1.885,
+        "startTime": 1.705,
+        "word": "免"
+      },
+      {
+        "confidence": 0.98313755,
+        "endTime": 2.175,
+        "startTime": 1.885,
+        "word": "费。"
+      }
+    ]
+  }
+]

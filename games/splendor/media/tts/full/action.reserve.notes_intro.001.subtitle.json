@@ -1,0 +1,44 @@
+[
+  {
+    "phonemes": [],
+    "text": "注意事项如下：\n",
+    "words": [
+      {
+        "confidence": 0.90396416,
+        "endTime": 0.425,
+        "startTime": 0.295,
+        "word": "注"
+      },
+      {
+        "confidence": 0.9776004,
+        "endTime": 0.535,
+        "startTime": 0.425,
+        "word": "意"
+      },
+      {
+        "confidence": 0.92921805,
+        "endTime": 0.705,
+        "startTime": 0.535,
+        "word": "事"
+      },
+      {
+        "confidence": 0.9612648,
+        "endTime": 0.885,
+        "startTime": 0.705,
+        "word": "项"
+      },
+      {
+        "confidence": 0.8720292,
+        "endTime": 1.025,
+        "startTime": 0.885,
+        "word": "如"
+      },
+      {
+        "confidence": 0.34111804,
+        "endTime": 1.565,
+        "startTime": 1.535,
+        "word": "下："
+      }
+    ]
+  }
+]

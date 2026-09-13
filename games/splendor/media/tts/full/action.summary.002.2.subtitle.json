@@ -1,0 +1,176 @@
+[
+  {
+    "phonemes": [],
+    "text": "左手边的玩家开始他的回合。",
+    "words": [
+      {
+        "confidence": 0.796207,
+        "endTime": 0.495,
+        "startTime": 0.295,
+        "word": "左"
+      },
+      {
+        "confidence": 0.93203104,
+        "endTime": 0.695,
+        "startTime": 0.495,
+        "word": "手"
+      },
+      {
+        "confidence": 0.88813764,
+        "endTime": 0.835,
+        "startTime": 0.695,
+        "word": "边"
+      },
+      {
+        "confidence": 0.924459,
+        "endTime": 0.945,
+        "startTime": 0.835,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9595961,
+        "endTime": 1.115,
+        "startTime": 0.945,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9092923,
+        "endTime": 1.375,
+        "startTime": 1.115,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9872885,
+        "endTime": 1.545,
+        "startTime": 1.375,
+        "word": "开"
+      },
+      {
+        "confidence": 0.9801847,
+        "endTime": 1.695,
+        "startTime": 1.545,
+        "word": "始"
+      },
+      {
+        "confidence": 0.95536184,
+        "endTime": 1.875,
+        "startTime": 1.695,
+        "word": "他"
+      },
+      {
+        "confidence": 0.94642746,
+        "endTime": 1.965,
+        "startTime": 1.875,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9806617,
+        "endTime": 2.115,
+        "startTime": 1.965,
+        "word": "回"
+      },
+      {
+        "confidence": 0.9781656,
+        "endTime": 2.445,
+        "startTime": 2.115,
+        "word": "合。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "就这样一直循环，直到整局游戏结束。",
+    "words": [
+      {
+        "confidence": 0.92932945,
+        "endTime": 3.0250416,
+        "startTime": 2.8700416,
+        "word": "就"
+      },
+      {
+        "confidence": 0.98714924,
+        "endTime": 3.1850417,
+        "startTime": 3.0250416,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9721804,
+        "endTime": 3.2950416,
+        "startTime": 3.1850417,
+        "word": "样"
+      },
+      {
+        "confidence": 0.96778286,
+        "endTime": 3.4450417,
+        "startTime": 3.2950416,
+        "word": "一"
+      },
+      {
+        "confidence": 0.96231884,
+        "endTime": 3.5750415,
+        "startTime": 3.4450417,
+        "word": "直"
+      },
+      {
+        "confidence": 0.8260474,
+        "endTime": 3.8050416,
+        "startTime": 3.5750415,
+        "word": "循"
+      },
+      {
+        "confidence": 0.8841485,
+        "endTime": 4.0950418,
+        "startTime": 3.8050416,
+        "word": "环，"
+      },
+      {
+        "confidence": 0.92452246,
+        "endTime": 4.495042,
+        "startTime": 4.3350415,
+        "word": "直"
+      },
+      {
+        "confidence": 0.9313039,
+        "endTime": 4.7350416,
+        "startTime": 4.495042,
+        "word": "到"
+      },
+      {
+        "confidence": 0.9613021,
+        "endTime": 4.995042,
+        "startTime": 4.7350416,
+        "word": "整"
+      },
+      {
+        "confidence": 0.7569999,
+        "endTime": 5.1850414,
+        "startTime": 4.995042,
+        "word": "局"
+      },
+      {
+        "confidence": 0.67004406,
+        "endTime": 5.2750416,
+        "startTime": 5.1850414,
+        "word": "游"
+      },
+      {
+        "confidence": 0.96818167,
+        "endTime": 5.455042,
+        "startTime": 5.2750416,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.979065,
+        "endTime": 5.6150417,
+        "startTime": 5.455042,
+        "word": "结"
+      },
+      {
+        "confidence": 0.9776867,
+        "endTime": 5.8450413,
+        "startTime": 5.6150417,
+        "word": "束。"
+      }
+    ]
+  }
+]

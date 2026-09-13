@@ -1,0 +1,224 @@
+[
+  {
+    "phonemes": [],
+    "text": "整场游戏将持续若干个回合，从起始玩家开始，",
+    "words": [
+      {
+        "confidence": 0.930918,
+        "endTime": 0.455,
+        "startTime": 0.285,
+        "word": "整"
+      },
+      {
+        "confidence": 0.88445437,
+        "endTime": 0.675,
+        "startTime": 0.455,
+        "word": "场"
+      },
+      {
+        "confidence": 0.8724534,
+        "endTime": 0.835,
+        "startTime": 0.675,
+        "word": "游"
+      },
+      {
+        "confidence": 0.96452606,
+        "endTime": 1.145,
+        "startTime": 0.835,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.9575509,
+        "endTime": 1.355,
+        "startTime": 1.145,
+        "word": "将"
+      },
+      {
+        "confidence": 0.93926257,
+        "endTime": 1.575,
+        "startTime": 1.355,
+        "word": "持"
+      },
+      {
+        "confidence": 0.87127674,
+        "endTime": 1.775,
+        "startTime": 1.575,
+        "word": "续"
+      },
+      {
+        "confidence": 0.9006059,
+        "endTime": 1.975,
+        "startTime": 1.775,
+        "word": "若"
+      },
+      {
+        "confidence": 0.904876,
+        "endTime": 2.165,
+        "startTime": 1.975,
+        "word": "干"
+      },
+      {
+        "confidence": 0.81591356,
+        "endTime": 2.285,
+        "startTime": 2.165,
+        "word": "个"
+      },
+      {
+        "confidence": 0.94910127,
+        "endTime": 2.465,
+        "startTime": 2.285,
+        "word": "回"
+      },
+      {
+        "confidence": 0.97659,
+        "endTime": 2.825,
+        "startTime": 2.465,
+        "word": "合，"
+      },
+      {
+        "confidence": 0.95732814,
+        "endTime": 3.425,
+        "startTime": 3.135,
+        "word": "从"
+      },
+      {
+        "confidence": 0.8193523,
+        "endTime": 3.635,
+        "startTime": 3.425,
+        "word": "起"
+      },
+      {
+        "confidence": 0.7414751,
+        "endTime": 3.785,
+        "startTime": 3.635,
+        "word": "始"
+      },
+      {
+        "confidence": 0.9680552,
+        "endTime": 3.935,
+        "startTime": 3.785,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9720702,
+        "endTime": 4.125,
+        "startTime": 3.935,
+        "word": "家"
+      },
+      {
+        "confidence": 0.98856246,
+        "endTime": 4.295,
+        "startTime": 4.125,
+        "word": "开"
+      },
+      {
+        "confidence": 0.9771033,
+        "endTime": 4.635,
+        "startTime": 4.295,
+        "word": "始，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "按顺时针顺序所有玩家依次进行行动。",
+    "words": [
+      {
+        "confidence": 0.4668855,
+        "endTime": 5.0050416,
+        "startTime": 4.975042,
+        "word": "按"
+      },
+      {
+        "confidence": 0.75361663,
+        "endTime": 5.2350416,
+        "startTime": 5.0050416,
+        "word": "顺"
+      },
+      {
+        "confidence": 0.81800944,
+        "endTime": 5.395042,
+        "startTime": 5.2350416,
+        "word": "时"
+      },
+      {
+        "confidence": 0.8854209,
+        "endTime": 5.545042,
+        "startTime": 5.395042,
+        "word": "针"
+      },
+      {
+        "confidence": 0.91457367,
+        "endTime": 5.765042,
+        "startTime": 5.545042,
+        "word": "顺"
+      },
+      {
+        "confidence": 0.8322136,
+        "endTime": 6.045042,
+        "startTime": 5.765042,
+        "word": "序"
+      },
+      {
+        "confidence": 0.90284866,
+        "endTime": 6.305042,
+        "startTime": 6.045042,
+        "word": "所"
+      },
+      {
+        "confidence": 0.8844685,
+        "endTime": 6.4050417,
+        "startTime": 6.305042,
+        "word": "有"
+      },
+      {
+        "confidence": 0.8840448,
+        "endTime": 6.575042,
+        "startTime": 6.4050417,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.8843131,
+        "endTime": 6.835042,
+        "startTime": 6.575042,
+        "word": "家"
+      },
+      {
+        "confidence": 0.7531124,
+        "endTime": 7.055042,
+        "startTime": 6.915042,
+        "word": "依"
+      },
+      {
+        "confidence": 0.95994925,
+        "endTime": 7.225042,
+        "startTime": 7.055042,
+        "word": "次"
+      },
+      {
+        "confidence": 0.90935546,
+        "endTime": 7.3850417,
+        "startTime": 7.225042,
+        "word": "进"
+      },
+      {
+        "confidence": 0.90669435,
+        "endTime": 7.5250416,
+        "startTime": 7.3850417,
+        "word": "行"
+      },
+      {
+        "confidence": 0.29079983,
+        "endTime": 7.585042,
+        "startTime": 7.5250416,
+        "word": "行"
+      },
+      {
+        "confidence": 0.2644686,
+        "endTime": 7.6450415,
+        "startTime": 7.585042,
+        "word": "动。"
+      }
+    ]
+  }
+]

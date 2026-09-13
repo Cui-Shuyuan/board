@@ -1,0 +1,170 @@
+[
+  {
+    "phonemes": [],
+    "text": "这是发展卡牌，共90张。",
+    "words": [
+      {
+        "confidence": 0.97299516,
+        "endTime": 0.415,
+        "startTime": 0.305,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9728379,
+        "endTime": 0.535,
+        "startTime": 0.415,
+        "word": "是"
+      },
+      {
+        "confidence": 0.97971654,
+        "endTime": 0.705,
+        "startTime": 0.535,
+        "word": "发"
+      },
+      {
+        "confidence": 0.7570871,
+        "endTime": 0.845,
+        "startTime": 0.705,
+        "word": "展"
+      },
+      {
+        "confidence": 0.847023,
+        "endTime": 1.035,
+        "startTime": 0.845,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.92869824,
+        "endTime": 1.425,
+        "startTime": 1.035,
+        "word": "牌，"
+      },
+      {
+        "confidence": 0.92695636,
+        "endTime": 1.865,
+        "startTime": 1.645,
+        "word": "共"
+      },
+      {
+        "confidence": 0.17301846,
+        "endTime": 1.895,
+        "startTime": 1.865,
+        "word": "90"
+      },
+      {
+        "confidence": 0.7499649,
+        "endTime": 2.505,
+        "startTime": 2.305,
+        "word": "张。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "根据背面可以将所有发展卡牌分为三类，\n",
+    "words": [
+      {
+        "confidence": 0.45160574,
+        "endTime": 3.1950417,
+        "startTime": 3.1200416,
+        "word": "根"
+      },
+      {
+        "confidence": 0.840199,
+        "endTime": 3.3050416,
+        "startTime": 3.1950417,
+        "word": "据"
+      },
+      {
+        "confidence": 0.98150325,
+        "endTime": 3.4950416,
+        "startTime": 3.3050416,
+        "word": "背"
+      },
+      {
+        "confidence": 0.9692561,
+        "endTime": 3.7250416,
+        "startTime": 3.4950416,
+        "word": "面"
+      },
+      {
+        "confidence": 0.82156426,
+        "endTime": 3.8750415,
+        "startTime": 3.7250416,
+        "word": "可"
+      },
+      {
+        "confidence": 0.74033356,
+        "endTime": 3.9950416,
+        "startTime": 3.8750415,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9404447,
+        "endTime": 4.1950417,
+        "startTime": 3.9950416,
+        "word": "将"
+      },
+      {
+        "confidence": 0.9723772,
+        "endTime": 4.4250417,
+        "startTime": 4.1950417,
+        "word": "所"
+      },
+      {
+        "confidence": 0.9419422,
+        "endTime": 4.5250416,
+        "startTime": 4.4250417,
+        "word": "有"
+      },
+      {
+        "confidence": 0.97064435,
+        "endTime": 4.6950417,
+        "startTime": 4.5250416,
+        "word": "发"
+      },
+      {
+        "confidence": 0.82549405,
+        "endTime": 4.8350415,
+        "startTime": 4.6950417,
+        "word": "展"
+      },
+      {
+        "confidence": 0.9462712,
+        "endTime": 5.035042,
+        "startTime": 4.8350415,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.94356,
+        "endTime": 5.3050413,
+        "startTime": 5.035042,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.888296,
+        "endTime": 5.4650416,
+        "startTime": 5.3050413,
+        "word": "分"
+      },
+      {
+        "confidence": 0.9598638,
+        "endTime": 5.6050415,
+        "startTime": 5.4650416,
+        "word": "为"
+      },
+      {
+        "confidence": 0.9232731,
+        "endTime": 5.8350415,
+        "startTime": 5.6050415,
+        "word": "三"
+      },
+      {
+        "confidence": 0.9508744,
+        "endTime": 5.9750414,
+        "startTime": 5.8350415,
+        "word": "类，"
+      }
+    ]
+  }
+]

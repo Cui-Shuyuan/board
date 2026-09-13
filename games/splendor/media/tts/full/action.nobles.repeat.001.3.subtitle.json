@@ -1,0 +1,200 @@
+[
+  {
+    "phonemes": [],
+    "text": "就这样一直循环，直到某一回合结束时，",
+    "words": [
+      {
+        "confidence": 0.8770816,
+        "endTime": 0.445,
+        "startTime": 0.275,
+        "word": "就"
+      },
+      {
+        "confidence": 0.9767565,
+        "endTime": 0.585,
+        "startTime": 0.445,
+        "word": "这"
+      },
+      {
+        "confidence": 0.97902745,
+        "endTime": 0.665,
+        "startTime": 0.585,
+        "word": "样"
+      },
+      {
+        "confidence": 0.97578484,
+        "endTime": 0.805,
+        "startTime": 0.665,
+        "word": "一"
+      },
+      {
+        "confidence": 0.95280087,
+        "endTime": 0.945,
+        "startTime": 0.805,
+        "word": "直"
+      },
+      {
+        "confidence": 0.7941654,
+        "endTime": 1.195,
+        "startTime": 0.945,
+        "word": "循"
+      },
+      {
+        "confidence": 0.8942135,
+        "endTime": 1.615,
+        "startTime": 1.195,
+        "word": "环，"
+      },
+      {
+        "confidence": 0.8491565,
+        "endTime": 2.055,
+        "startTime": 1.925,
+        "word": "直"
+      },
+      {
+        "confidence": 0.9235043,
+        "endTime": 2.305,
+        "startTime": 2.055,
+        "word": "到"
+      },
+      {
+        "confidence": 0.90673435,
+        "endTime": 2.455,
+        "startTime": 2.305,
+        "word": "某"
+      },
+      {
+        "confidence": 0.8568181,
+        "endTime": 2.555,
+        "startTime": 2.455,
+        "word": "一"
+      },
+      {
+        "confidence": 0.94186425,
+        "endTime": 2.715,
+        "startTime": 2.555,
+        "word": "回"
+      },
+      {
+        "confidence": 0.9072013,
+        "endTime": 2.865,
+        "startTime": 2.715,
+        "word": "合"
+      },
+      {
+        "confidence": 0.94346005,
+        "endTime": 3.015,
+        "startTime": 2.865,
+        "word": "结"
+      },
+      {
+        "confidence": 0.98795706,
+        "endTime": 3.215,
+        "startTime": 3.015,
+        "word": "束"
+      },
+      {
+        "confidence": 0.9704706,
+        "endTime": 3.645,
+        "startTime": 3.215,
+        "word": "时，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "供应堆中没有满足条件的贵族为止。",
+    "words": [
+      {
+        "confidence": 0.485126,
+        "endTime": 4.0850415,
+        "startTime": 4.0100417,
+        "word": "供"
+      },
+      {
+        "confidence": 0.60491234,
+        "endTime": 4.1350417,
+        "startTime": 4.0850415,
+        "word": "应"
+      },
+      {
+        "confidence": 0.71763283,
+        "endTime": 4.325042,
+        "startTime": 4.1350417,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.89216965,
+        "endTime": 4.5650415,
+        "startTime": 4.325042,
+        "word": "中"
+      },
+      {
+        "confidence": 0.9829244,
+        "endTime": 4.7750416,
+        "startTime": 4.5650415,
+        "word": "没"
+      },
+      {
+        "confidence": 0.91920555,
+        "endTime": 4.8150415,
+        "startTime": 4.7750416,
+        "word": "有"
+      },
+      {
+        "confidence": 0.89763737,
+        "endTime": 5.0050416,
+        "startTime": 4.8150415,
+        "word": "满"
+      },
+      {
+        "confidence": 0.9585246,
+        "endTime": 5.1450415,
+        "startTime": 5.0050416,
+        "word": "足"
+      },
+      {
+        "confidence": 0.94156164,
+        "endTime": 5.3550415,
+        "startTime": 5.1450415,
+        "word": "条"
+      },
+      {
+        "confidence": 0.982819,
+        "endTime": 5.515042,
+        "startTime": 5.3550415,
+        "word": "件"
+      },
+      {
+        "confidence": 0.96866065,
+        "endTime": 5.6150417,
+        "startTime": 5.515042,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9672851,
+        "endTime": 5.785042,
+        "startTime": 5.6150417,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.894661,
+        "endTime": 5.955042,
+        "startTime": 5.785042,
+        "word": "族"
+      },
+      {
+        "confidence": 0.9531368,
+        "endTime": 6.085042,
+        "startTime": 5.955042,
+        "word": "为"
+      },
+      {
+        "confidence": 0.93576884,
+        "endTime": 6.335042,
+        "startTime": 6.085042,
+        "word": "止。"
+      }
+    ]
+  }
+]

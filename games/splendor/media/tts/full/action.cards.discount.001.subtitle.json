@@ -1,0 +1,230 @@
+[
+  {
+    "phonemes": [],
+    "text": "右上角这颗宝石图案，代表玩家购买这张牌后，",
+    "words": [
+      {
+        "confidence": 0.9244532,
+        "endTime": 0.475,
+        "startTime": 0.325,
+        "word": "右"
+      },
+      {
+        "confidence": 0.95478094,
+        "endTime": 0.695,
+        "startTime": 0.475,
+        "word": "上"
+      },
+      {
+        "confidence": 0.9744638,
+        "endTime": 0.905,
+        "startTime": 0.695,
+        "word": "角"
+      },
+      {
+        "confidence": 0.8584165,
+        "endTime": 1.045,
+        "startTime": 0.905,
+        "word": "这"
+      },
+      {
+        "confidence": 0.8589625,
+        "endTime": 1.175,
+        "startTime": 1.045,
+        "word": "颗"
+      },
+      {
+        "confidence": 0.9653201,
+        "endTime": 1.355,
+        "startTime": 1.175,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9317312,
+        "endTime": 1.535,
+        "startTime": 1.355,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9379515,
+        "endTime": 1.755,
+        "startTime": 1.535,
+        "word": "图"
+      },
+      {
+        "confidence": 0.8864642,
+        "endTime": 1.955,
+        "startTime": 1.755,
+        "word": "案，"
+      },
+      {
+        "confidence": 0.9688004,
+        "endTime": 2.295,
+        "startTime": 2.145,
+        "word": "代"
+      },
+      {
+        "confidence": 0.9698657,
+        "endTime": 2.465,
+        "startTime": 2.295,
+        "word": "表"
+      },
+      {
+        "confidence": 0.9584886,
+        "endTime": 2.615,
+        "startTime": 2.465,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.92433846,
+        "endTime": 2.895,
+        "startTime": 2.615,
+        "word": "家"
+      },
+      {
+        "confidence": 0.94533813,
+        "endTime": 3.065,
+        "startTime": 2.895,
+        "word": "购"
+      },
+      {
+        "confidence": 0.982853,
+        "endTime": 3.215,
+        "startTime": 3.065,
+        "word": "买"
+      },
+      {
+        "confidence": 0.9225732,
+        "endTime": 3.335,
+        "startTime": 3.215,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9680377,
+        "endTime": 3.495,
+        "startTime": 3.335,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9646891,
+        "endTime": 3.725,
+        "startTime": 3.495,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9506539,
+        "endTime": 4.015,
+        "startTime": 3.725,
+        "word": "后，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "再购买其他卡牌的时候可以享受的折扣。",
+    "words": [
+      {
+        "confidence": 0.46224397,
+        "endTime": 4.3550415,
+        "startTime": 4.2800417,
+        "word": "再"
+      },
+      {
+        "confidence": 0.86547494,
+        "endTime": 4.475042,
+        "startTime": 4.3550415,
+        "word": "购"
+      },
+      {
+        "confidence": 0.9612953,
+        "endTime": 4.665042,
+        "startTime": 4.475042,
+        "word": "买"
+      },
+      {
+        "confidence": 0.87826335,
+        "endTime": 4.8850417,
+        "startTime": 4.665042,
+        "word": "其"
+      },
+      {
+        "confidence": 0.97063917,
+        "endTime": 5.0650415,
+        "startTime": 4.8850417,
+        "word": "他"
+      },
+      {
+        "confidence": 0.885935,
+        "endTime": 5.245042,
+        "startTime": 5.0650415,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.98476195,
+        "endTime": 5.4250417,
+        "startTime": 5.245042,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.96852684,
+        "endTime": 5.5250416,
+        "startTime": 5.4250417,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9551811,
+        "endTime": 5.6850414,
+        "startTime": 5.5250416,
+        "word": "时"
+      },
+      {
+        "confidence": 0.7265029,
+        "endTime": 5.8350415,
+        "startTime": 5.6850414,
+        "word": "候"
+      },
+      {
+        "confidence": 0.10532921,
+        "endTime": 5.8950415,
+        "startTime": 5.8350415,
+        "word": "可"
+      },
+      {
+        "confidence": 0.13444468,
+        "endTime": 5.9250417,
+        "startTime": 5.8950415,
+        "word": "以"
+      },
+      {
+        "confidence": 0.0777389,
+        "endTime": 5.9850416,
+        "startTime": 5.9250417,
+        "word": "享"
+      },
+      {
+        "confidence": 0.09857246,
+        "endTime": 6.0450416,
+        "startTime": 5.9850416,
+        "word": "受"
+      },
+      {
+        "confidence": 0.39502668,
+        "endTime": 6.165042,
+        "startTime": 6.0450416,
+        "word": "的"
+      },
+      {
+        "confidence": 0.37296766,
+        "endTime": 6.285042,
+        "startTime": 6.165042,
+        "word": "折"
+      },
+      {
+        "confidence": 0.34721005,
+        "endTime": 6.535042,
+        "startTime": 6.455042,
+        "word": "扣。"
+      }
+    ]
+  }
+]

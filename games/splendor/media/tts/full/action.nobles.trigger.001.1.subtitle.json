@@ -1,0 +1,74 @@
+[
+  {
+    "phonemes": [],
+    "text": "当玩家结束自己的回合后，\n",
+    "words": [
+      {
+        "confidence": 0.94096756,
+        "endTime": 0.465,
+        "startTime": 0.295,
+        "word": "当"
+      },
+      {
+        "confidence": 0.8371743,
+        "endTime": 0.625,
+        "startTime": 0.465,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9331981,
+        "endTime": 0.855,
+        "startTime": 0.625,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9453022,
+        "endTime": 1.015,
+        "startTime": 0.855,
+        "word": "结"
+      },
+      {
+        "confidence": 0.9776608,
+        "endTime": 1.195,
+        "startTime": 1.015,
+        "word": "束"
+      },
+      {
+        "confidence": 0.973482,
+        "endTime": 1.335,
+        "startTime": 1.195,
+        "word": "自"
+      },
+      {
+        "confidence": 0.99257475,
+        "endTime": 1.475,
+        "startTime": 1.335,
+        "word": "己"
+      },
+      {
+        "confidence": 0.9639933,
+        "endTime": 1.575,
+        "startTime": 1.475,
+        "word": "的"
+      },
+      {
+        "confidence": 0.97529644,
+        "endTime": 1.735,
+        "startTime": 1.575,
+        "word": "回"
+      },
+      {
+        "confidence": 0.9537191,
+        "endTime": 1.925,
+        "startTime": 1.735,
+        "word": "合"
+      },
+      {
+        "confidence": 0.8829037,
+        "endTime": 2.245,
+        "startTime": 1.925,
+        "word": "后，"
+      }
+    ]
+  }
+]

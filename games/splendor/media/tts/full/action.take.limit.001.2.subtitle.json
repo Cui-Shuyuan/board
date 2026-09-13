@@ -1,0 +1,188 @@
+[
+  {
+    "phonemes": [],
+    "text": "必须挑选一定数量的宝石或黄金回到供应堆，",
+    "words": [
+      {
+        "confidence": 0.8875479,
+        "endTime": 0.405,
+        "startTime": 0.265,
+        "word": "必"
+      },
+      {
+        "confidence": 0.9625935,
+        "endTime": 0.575,
+        "startTime": 0.405,
+        "word": "须"
+      },
+      {
+        "confidence": 0.8880376,
+        "endTime": 0.735,
+        "startTime": 0.575,
+        "word": "挑"
+      },
+      {
+        "confidence": 0.898683,
+        "endTime": 0.925,
+        "startTime": 0.735,
+        "word": "选"
+      },
+      {
+        "confidence": 0.852341,
+        "endTime": 1.065,
+        "startTime": 0.925,
+        "word": "一"
+      },
+      {
+        "confidence": 0.98363566,
+        "endTime": 1.225,
+        "startTime": 1.065,
+        "word": "定"
+      },
+      {
+        "confidence": 0.7788169,
+        "endTime": 1.425,
+        "startTime": 1.225,
+        "word": "数"
+      },
+      {
+        "confidence": 0.9789737,
+        "endTime": 1.565,
+        "startTime": 1.425,
+        "word": "量"
+      },
+      {
+        "confidence": 0.9656348,
+        "endTime": 1.655,
+        "startTime": 1.565,
+        "word": "的"
+      },
+      {
+        "confidence": 0.949327,
+        "endTime": 1.835,
+        "startTime": 1.655,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.8527801,
+        "endTime": 2.095,
+        "startTime": 1.835,
+        "word": "石"
+      },
+      {
+        "confidence": 0.8662291,
+        "endTime": 2.245,
+        "startTime": 2.095,
+        "word": "或"
+      },
+      {
+        "confidence": 0.94190997,
+        "endTime": 2.485,
+        "startTime": 2.245,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.9077074,
+        "endTime": 2.735,
+        "startTime": 2.485,
+        "word": "金"
+      },
+      {
+        "confidence": 0.9684118,
+        "endTime": 2.895,
+        "startTime": 2.735,
+        "word": "回"
+      },
+      {
+        "confidence": 0.9896133,
+        "endTime": 3.035,
+        "startTime": 2.895,
+        "word": "到"
+      },
+      {
+        "confidence": 0.9425414,
+        "endTime": 3.215,
+        "startTime": 3.035,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8398628,
+        "endTime": 3.355,
+        "startTime": 3.215,
+        "word": "应"
+      },
+      {
+        "confidence": 0.8832206,
+        "endTime": 3.615,
+        "startTime": 3.355,
+        "word": "堆，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "直到恰好剩下10个为止。",
+    "words": [
+      {
+        "confidence": 0.45991966,
+        "endTime": 4.0750413,
+        "startTime": 4.0000415,
+        "word": "直"
+      },
+      {
+        "confidence": 0.8486355,
+        "endTime": 4.2250414,
+        "startTime": 4.0750413,
+        "word": "到"
+      },
+      {
+        "confidence": 0.7368126,
+        "endTime": 4.4250417,
+        "startTime": 4.2250414,
+        "word": "恰"
+      },
+      {
+        "confidence": 0.9154324,
+        "endTime": 4.6250415,
+        "startTime": 4.4250417,
+        "word": "好"
+      },
+      {
+        "confidence": 0.8804728,
+        "endTime": 4.7850413,
+        "startTime": 4.6250415,
+        "word": "剩"
+      },
+      {
+        "confidence": 0.86961335,
+        "endTime": 4.9250417,
+        "startTime": 4.7850413,
+        "word": "下"
+      },
+      {
+        "confidence": 0.23557025,
+        "endTime": 4.9550414,
+        "startTime": 4.9250417,
+        "word": "10"
+      },
+      {
+        "confidence": 0.6223807,
+        "endTime": 5.325042,
+        "startTime": 5.2050414,
+        "word": "个"
+      },
+      {
+        "confidence": 0.907156,
+        "endTime": 5.4750414,
+        "startTime": 5.325042,
+        "word": "为"
+      },
+      {
+        "confidence": 0.9277027,
+        "endTime": 5.635041,
+        "startTime": 5.4750414,
+        "word": "止。"
+      }
+    ]
+  }
+]

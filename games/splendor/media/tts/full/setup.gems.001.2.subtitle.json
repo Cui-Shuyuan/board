@@ -1,0 +1,158 @@
+[
+  {
+    "phonemes": [],
+    "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。",
+    "words": [
+      {
+        "confidence": 0.97503006,
+        "endTime": 0.455,
+        "startTime": 0.275,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.91623926,
+        "endTime": 0.795,
+        "startTime": 0.455,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9601046,
+        "endTime": 0.975,
+        "startTime": 0.795,
+        "word": "分"
+      },
+      {
+        "confidence": 0.9237089,
+        "endTime": 1.115,
+        "startTime": 0.975,
+        "word": "为"
+      },
+      {
+        "confidence": 0.21191856,
+        "endTime": 1.145,
+        "startTime": 1.115,
+        "word": "5"
+      },
+      {
+        "confidence": 0.839098,
+        "endTime": 1.425,
+        "startTime": 1.275,
+        "word": "种"
+      },
+      {
+        "confidence": 0.90482676,
+        "endTime": 1.585,
+        "startTime": 1.425,
+        "word": "颜"
+      },
+      {
+        "confidence": 0.9834629,
+        "endTime": 1.895,
+        "startTime": 1.585,
+        "word": "色，"
+      },
+      {
+        "confidence": 0.92216265,
+        "endTime": 2.295,
+        "startTime": 2.115,
+        "word": "分"
+      },
+      {
+        "confidence": 0.9359805,
+        "endTime": 2.465,
+        "startTime": 2.295,
+        "word": "别"
+      },
+      {
+        "confidence": 0.84288925,
+        "endTime": 2.825,
+        "startTime": 2.465,
+        "word": "是"
+      },
+      {
+        "confidence": 0.5559652,
+        "endTime": 3.005,
+        "startTime": 2.885,
+        "word": "钻"
+      },
+      {
+        "confidence": 0.1476816,
+        "endTime": 3.035,
+        "startTime": 3.005,
+        "word": "石、"
+      },
+      {
+        "confidence": 0.8460316,
+        "endTime": 3.805,
+        "startTime": 3.655,
+        "word": "蓝"
+      },
+      {
+        "confidence": 0.8740583,
+        "endTime": 4.005,
+        "startTime": 3.805,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.124889046,
+        "endTime": 4.035,
+        "startTime": 4.005,
+        "word": "石、"
+      },
+      {
+        "confidence": 0.9512406,
+        "endTime": 4.775,
+        "startTime": 4.535,
+        "word": "红"
+      },
+      {
+        "confidence": 0.89609486,
+        "endTime": 4.965,
+        "startTime": 4.775,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.13824213,
+        "endTime": 4.995,
+        "startTime": 4.965,
+        "word": "石、"
+      },
+      {
+        "confidence": 0.86708605,
+        "endTime": 5.775,
+        "startTime": 5.485,
+        "word": "翡"
+      },
+      {
+        "confidence": 0.91656566,
+        "endTime": 6.135,
+        "startTime": 5.775,
+        "word": "翠"
+      },
+      {
+        "confidence": 0.85557085,
+        "endTime": 6.415,
+        "startTime": 6.165,
+        "word": "和"
+      },
+      {
+        "confidence": 0.84074,
+        "endTime": 6.575,
+        "startTime": 6.415,
+        "word": "缟"
+      },
+      {
+        "confidence": 0.7807967,
+        "endTime": 6.735,
+        "startTime": 6.575,
+        "word": "玛"
+      },
+      {
+        "confidence": 0.8318653,
+        "endTime": 7.005,
+        "startTime": 6.735,
+        "word": "瑙。"
+      }
+    ]
+  }
+]

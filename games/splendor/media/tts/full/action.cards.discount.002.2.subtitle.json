@@ -1,0 +1,116 @@
+[
+  {
+    "phonemes": [],
+    "text": "只需要支付1枚白宝石和1枚蓝宝石即可。",
+    "words": [
+      {
+        "confidence": 0.95592326,
+        "endTime": 0.435,
+        "startTime": 0.285,
+        "word": "只"
+      },
+      {
+        "confidence": 0.96120983,
+        "endTime": 0.585,
+        "startTime": 0.435,
+        "word": "需"
+      },
+      {
+        "confidence": 0.8955477,
+        "endTime": 0.705,
+        "startTime": 0.585,
+        "word": "要"
+      },
+      {
+        "confidence": 0.96654475,
+        "endTime": 0.875,
+        "startTime": 0.705,
+        "word": "支"
+      },
+      {
+        "confidence": 0.80407506,
+        "endTime": 1.025,
+        "startTime": 0.875,
+        "word": "付"
+      },
+      {
+        "confidence": 0.19607289,
+        "endTime": 1.165,
+        "startTime": 1.135,
+        "word": "1"
+      },
+      {
+        "confidence": 0.904477,
+        "endTime": 1.315,
+        "startTime": 1.165,
+        "word": "枚"
+      },
+      {
+        "confidence": 0.9694695,
+        "endTime": 1.485,
+        "startTime": 1.315,
+        "word": "白"
+      },
+      {
+        "confidence": 0.9656291,
+        "endTime": 1.665,
+        "startTime": 1.485,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.8415953,
+        "endTime": 1.935,
+        "startTime": 1.665,
+        "word": "石"
+      },
+      {
+        "confidence": 0.7531837,
+        "endTime": 2.165,
+        "startTime": 1.935,
+        "word": "和"
+      },
+      {
+        "confidence": 0.16886465,
+        "endTime": 2.195,
+        "startTime": 2.165,
+        "word": "1"
+      },
+      {
+        "confidence": 0.80531836,
+        "endTime": 2.345,
+        "startTime": 2.195,
+        "word": "枚"
+      },
+      {
+        "confidence": 0.85821116,
+        "endTime": 2.495,
+        "startTime": 2.345,
+        "word": "蓝"
+      },
+      {
+        "confidence": 0.9770529,
+        "endTime": 2.665,
+        "startTime": 2.495,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9694346,
+        "endTime": 2.835,
+        "startTime": 2.665,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9453608,
+        "endTime": 2.985,
+        "startTime": 2.835,
+        "word": "即"
+      },
+      {
+        "confidence": 0.96735847,
+        "endTime": 3.225,
+        "startTime": 2.985,
+        "word": "可。"
+      }
+    ]
+  }
+]

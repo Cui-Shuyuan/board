@@ -1,0 +1,110 @@
+[
+  {
+    "phonemes": [],
+    "text": "最终组成一个3乘4的发展卡牌供应堆。",
+    "words": [
+      {
+        "confidence": 0.7487364,
+        "endTime": 0.485,
+        "startTime": 0.325,
+        "word": "最"
+      },
+      {
+        "confidence": 0.9167093,
+        "endTime": 0.715,
+        "startTime": 0.485,
+        "word": "终"
+      },
+      {
+        "confidence": 0.9487712,
+        "endTime": 0.865,
+        "startTime": 0.715,
+        "word": "组"
+      },
+      {
+        "confidence": 0.9683722,
+        "endTime": 1.035,
+        "startTime": 0.865,
+        "word": "成"
+      },
+      {
+        "confidence": 0.78832877,
+        "endTime": 1.175,
+        "startTime": 1.035,
+        "word": "一"
+      },
+      {
+        "confidence": 0.8599011,
+        "endTime": 1.415,
+        "startTime": 1.175,
+        "word": "个"
+      },
+      {
+        "confidence": 0.10072193,
+        "endTime": 1.635,
+        "startTime": 1.605,
+        "word": "3"
+      },
+      {
+        "confidence": 0.76408386,
+        "endTime": 1.865,
+        "startTime": 1.635,
+        "word": "乘"
+      },
+      {
+        "confidence": 0.14587338,
+        "endTime": 2.045,
+        "startTime": 2.015,
+        "word": "4"
+      },
+      {
+        "confidence": 0.8555819,
+        "endTime": 2.215,
+        "startTime": 2.045,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9788153,
+        "endTime": 2.395,
+        "startTime": 2.215,
+        "word": "发"
+      },
+      {
+        "confidence": 0.89416385,
+        "endTime": 2.535,
+        "startTime": 2.395,
+        "word": "展"
+      },
+      {
+        "confidence": 0.949226,
+        "endTime": 2.735,
+        "startTime": 2.535,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9598487,
+        "endTime": 2.995,
+        "startTime": 2.735,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9441905,
+        "endTime": 3.175,
+        "startTime": 2.995,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8579162,
+        "endTime": 3.315,
+        "startTime": 3.175,
+        "word": "应"
+      },
+      {
+        "confidence": 0.85896695,
+        "endTime": 3.505,
+        "startTime": 3.315,
+        "word": "堆。"
+      }
+    ]
+  }
+]

@@ -1,0 +1,200 @@
+[
+  {
+    "phonemes": [],
+    "text": "按照之前介绍过的规则，",
+    "words": [
+      {
+        "confidence": 0.81812274,
+        "endTime": 0.415,
+        "startTime": 0.335,
+        "word": "按"
+      },
+      {
+        "confidence": 0.90410966,
+        "endTime": 0.605,
+        "startTime": 0.415,
+        "word": "照"
+      },
+      {
+        "confidence": 0.91973144,
+        "endTime": 0.755,
+        "startTime": 0.605,
+        "word": "之"
+      },
+      {
+        "confidence": 0.975596,
+        "endTime": 0.935,
+        "startTime": 0.755,
+        "word": "前"
+      },
+      {
+        "confidence": 0.9174665,
+        "endTime": 1.075,
+        "startTime": 0.935,
+        "word": "介"
+      },
+      {
+        "confidence": 0.97096545,
+        "endTime": 1.245,
+        "startTime": 1.075,
+        "word": "绍"
+      },
+      {
+        "confidence": 0.95739365,
+        "endTime": 1.385,
+        "startTime": 1.245,
+        "word": "过"
+      },
+      {
+        "confidence": 0.9467095,
+        "endTime": 1.485,
+        "startTime": 1.385,
+        "word": "的"
+      },
+      {
+        "confidence": 0.96739674,
+        "endTime": 1.675,
+        "startTime": 1.485,
+        "word": "规"
+      },
+      {
+        "confidence": 0.9781202,
+        "endTime": 2.035,
+        "startTime": 1.675,
+        "word": "则，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "支付费用，将一张被保留的，",
+    "words": [
+      {
+        "confidence": 0.3666277,
+        "endTime": 2.4850416,
+        "startTime": 2.4100416,
+        "word": "支"
+      },
+      {
+        "confidence": 0.4525294,
+        "endTime": 2.5450416,
+        "startTime": 2.4850416,
+        "word": "付"
+      },
+      {
+        "confidence": 0.9648125,
+        "endTime": 2.7750416,
+        "startTime": 2.5450416,
+        "word": "费"
+      },
+      {
+        "confidence": 0.93036926,
+        "endTime": 3.0150416,
+        "startTime": 2.7750416,
+        "word": "用，"
+      },
+      {
+        "confidence": 0.89568573,
+        "endTime": 3.3450415,
+        "startTime": 3.1750417,
+        "word": "将"
+      },
+      {
+        "confidence": 0.95931935,
+        "endTime": 3.4750416,
+        "startTime": 3.3450415,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9568468,
+        "endTime": 3.7250416,
+        "startTime": 3.4750416,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9397544,
+        "endTime": 3.9150414,
+        "startTime": 3.7250416,
+        "word": "被"
+      },
+      {
+        "confidence": 0.9607102,
+        "endTime": 4.1250415,
+        "startTime": 3.9150414,
+        "word": "保"
+      },
+      {
+        "confidence": 0.97191715,
+        "endTime": 4.3550415,
+        "startTime": 4.1250415,
+        "word": "留"
+      },
+      {
+        "confidence": 0.96412253,
+        "endTime": 4.575042,
+        "startTime": 4.3550415,
+        "word": "的，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "背面朝上的卡牌反面，\n",
+    "words": [
+      {
+        "confidence": 0.52341235,
+        "endTime": 5.025083,
+        "startTime": 4.9500833,
+        "word": "背"
+      },
+      {
+        "confidence": 0.74909556,
+        "endTime": 5.1250834,
+        "startTime": 5.025083,
+        "word": "面"
+      },
+      {
+        "confidence": 0.88871145,
+        "endTime": 5.365083,
+        "startTime": 5.1250834,
+        "word": "朝"
+      },
+      {
+        "confidence": 0.9767667,
+        "endTime": 5.595083,
+        "startTime": 5.365083,
+        "word": "上"
+      },
+      {
+        "confidence": 0.9211019,
+        "endTime": 5.695083,
+        "startTime": 5.595083,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8764809,
+        "endTime": 5.8550835,
+        "startTime": 5.695083,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9838917,
+        "endTime": 6.0250835,
+        "startTime": 5.8550835,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.96102864,
+        "endTime": 6.215083,
+        "startTime": 6.0250835,
+        "word": "反"
+      },
+      {
+        "confidence": 0.92715585,
+        "endTime": 6.405083,
+        "startTime": 6.215083,
+        "word": "面，"
+      }
+    ]
+  }
+]

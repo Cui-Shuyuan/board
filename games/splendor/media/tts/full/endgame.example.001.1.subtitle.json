@@ -1,0 +1,122 @@
+[
+  {
+    "phonemes": [],
+    "text": "以4人局为例：如果起始玩家的声望值达到15，\n",
+    "words": [
+      {
+        "confidence": 0.7231992,
+        "endTime": 0.385,
+        "startTime": 0.275,
+        "word": "以"
+      },
+      {
+        "confidence": 0.21564214,
+        "endTime": 0.695,
+        "startTime": 0.665,
+        "word": "4"
+      },
+      {
+        "confidence": 0.8396441,
+        "endTime": 0.885,
+        "startTime": 0.695,
+        "word": "人"
+      },
+      {
+        "confidence": 0.77372867,
+        "endTime": 1.035,
+        "startTime": 0.885,
+        "word": "局"
+      },
+      {
+        "confidence": 0.74301374,
+        "endTime": 1.185,
+        "startTime": 1.035,
+        "word": "为"
+      },
+      {
+        "confidence": 0.2726079,
+        "endTime": 1.215,
+        "startTime": 1.185,
+        "word": "例："
+      },
+      {
+        "confidence": 0.9818313,
+        "endTime": 1.885,
+        "startTime": 1.745,
+        "word": "如"
+      },
+      {
+        "confidence": 0.92149514,
+        "endTime": 2.075,
+        "startTime": 1.885,
+        "word": "果"
+      },
+      {
+        "confidence": 0.79320407,
+        "endTime": 2.275,
+        "startTime": 2.075,
+        "word": "起"
+      },
+      {
+        "confidence": 0.7246986,
+        "endTime": 2.405,
+        "startTime": 2.275,
+        "word": "始"
+      },
+      {
+        "confidence": 0.95803964,
+        "endTime": 2.545,
+        "startTime": 2.405,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.97452515,
+        "endTime": 2.715,
+        "startTime": 2.545,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9358805,
+        "endTime": 2.795,
+        "startTime": 2.715,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8475363,
+        "endTime": 2.955,
+        "startTime": 2.795,
+        "word": "声"
+      },
+      {
+        "confidence": 0.9462781,
+        "endTime": 3.125,
+        "startTime": 2.955,
+        "word": "望"
+      },
+      {
+        "confidence": 0.8756564,
+        "endTime": 3.395,
+        "startTime": 3.125,
+        "word": "值"
+      },
+      {
+        "confidence": 0.9690464,
+        "endTime": 3.545,
+        "startTime": 3.395,
+        "word": "达"
+      },
+      {
+        "confidence": 0.91560394,
+        "endTime": 3.655,
+        "startTime": 3.545,
+        "word": "到"
+      },
+      {
+        "confidence": 0.11918623,
+        "endTime": 3.685,
+        "startTime": 3.655,
+        "word": "15，"
+      }
+    ]
+  }
+]

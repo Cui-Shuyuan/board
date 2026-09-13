@@ -1,0 +1,206 @@
+[
+  {
+    "phonemes": [],
+    "text": "我们需要根据玩家人数拿取对应数量的宝石。",
+    "words": [
+      {
+        "confidence": 0.9545401,
+        "endTime": 0.395,
+        "startTime": 0.295,
+        "word": "我"
+      },
+      {
+        "confidence": 0.9841191,
+        "endTime": 0.485,
+        "startTime": 0.395,
+        "word": "们"
+      },
+      {
+        "confidence": 0.9601418,
+        "endTime": 0.645,
+        "startTime": 0.485,
+        "word": "需"
+      },
+      {
+        "confidence": 0.9374544,
+        "endTime": 0.775,
+        "startTime": 0.645,
+        "word": "要"
+      },
+      {
+        "confidence": 0.9577032,
+        "endTime": 0.925,
+        "startTime": 0.775,
+        "word": "根"
+      },
+      {
+        "confidence": 0.9666592,
+        "endTime": 1.115,
+        "startTime": 0.925,
+        "word": "据"
+      },
+      {
+        "confidence": 0.9718206,
+        "endTime": 1.255,
+        "startTime": 1.115,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9586737,
+        "endTime": 1.455,
+        "startTime": 1.255,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9290314,
+        "endTime": 1.605,
+        "startTime": 1.455,
+        "word": "人"
+      },
+      {
+        "confidence": 0.9464985,
+        "endTime": 1.915,
+        "startTime": 1.605,
+        "word": "数"
+      },
+      {
+        "confidence": 0.92569983,
+        "endTime": 2.095,
+        "startTime": 1.915,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.9259389,
+        "endTime": 2.305,
+        "startTime": 2.095,
+        "word": "取"
+      },
+      {
+        "confidence": 0.9160932,
+        "endTime": 2.445,
+        "startTime": 2.305,
+        "word": "对"
+      },
+      {
+        "confidence": 0.922877,
+        "endTime": 2.595,
+        "startTime": 2.445,
+        "word": "应"
+      },
+      {
+        "confidence": 0.8757867,
+        "endTime": 2.795,
+        "startTime": 2.595,
+        "word": "数"
+      },
+      {
+        "confidence": 0.9807947,
+        "endTime": 2.935,
+        "startTime": 2.795,
+        "word": "量"
+      },
+      {
+        "confidence": 0.9829436,
+        "endTime": 3.025,
+        "startTime": 2.935,
+        "word": "的"
+      },
+      {
+        "confidence": 0.93894845,
+        "endTime": 3.185,
+        "startTime": 3.025,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9533293,
+        "endTime": 3.555,
+        "startTime": 3.185,
+        "word": "石。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "2人游戏时，每种宝石拿取4枚。",
+    "words": [
+      {
+        "confidence": 0.2590573,
+        "endTime": 4.1750417,
+        "startTime": 4.145042,
+        "word": "2"
+      },
+      {
+        "confidence": 0.8774809,
+        "endTime": 4.355042,
+        "startTime": 4.1750417,
+        "word": "人"
+      },
+      {
+        "confidence": 0.61123526,
+        "endTime": 4.455042,
+        "startTime": 4.355042,
+        "word": "游"
+      },
+      {
+        "confidence": 0.97274154,
+        "endTime": 4.6550417,
+        "startTime": 4.455042,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.96531457,
+        "endTime": 5.045042,
+        "startTime": 4.6550417,
+        "word": "时，"
+      },
+      {
+        "confidence": 0.9297977,
+        "endTime": 5.3150415,
+        "startTime": 5.1550417,
+        "word": "每"
+      },
+      {
+        "confidence": 0.853512,
+        "endTime": 5.4650416,
+        "startTime": 5.3150415,
+        "word": "种"
+      },
+      {
+        "confidence": 0.9554993,
+        "endTime": 5.665042,
+        "startTime": 5.4650416,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9217277,
+        "endTime": 5.895042,
+        "startTime": 5.665042,
+        "word": "石"
+      },
+      {
+        "confidence": 0.93019557,
+        "endTime": 6.0650415,
+        "startTime": 5.895042,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.85961443,
+        "endTime": 6.225042,
+        "startTime": 6.0650415,
+        "word": "取"
+      },
+      {
+        "confidence": 0.1929293,
+        "endTime": 6.4350414,
+        "startTime": 6.4050417,
+        "word": "4"
+      },
+      {
+        "confidence": 0.8554655,
+        "endTime": 6.6950417,
+        "startTime": 6.4350414,
+        "word": "枚。"
+      }
+    ]
+  }
+]

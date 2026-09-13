@@ -1,0 +1,200 @@
+[
+  {
+    "phonemes": [],
+    "text": "玩家持有的宝石和黄金总数上限为10个。",
+    "words": [
+      {
+        "confidence": 0.9021645,
+        "endTime": 0.455,
+        "startTime": 0.295,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.95078635,
+        "endTime": 0.655,
+        "startTime": 0.455,
+        "word": "家"
+      },
+      {
+        "confidence": 0.908815,
+        "endTime": 0.835,
+        "startTime": 0.655,
+        "word": "持"
+      },
+      {
+        "confidence": 0.8821993,
+        "endTime": 0.965,
+        "startTime": 0.835,
+        "word": "有"
+      },
+      {
+        "confidence": 0.9609318,
+        "endTime": 1.095,
+        "startTime": 0.965,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9525718,
+        "endTime": 1.285,
+        "startTime": 1.095,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.8319285,
+        "endTime": 1.525,
+        "startTime": 1.285,
+        "word": "石"
+      },
+      {
+        "confidence": 0.8795256,
+        "endTime": 1.675,
+        "startTime": 1.525,
+        "word": "和"
+      },
+      {
+        "confidence": 0.9612803,
+        "endTime": 1.885,
+        "startTime": 1.675,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.89712876,
+        "endTime": 2.075,
+        "startTime": 1.885,
+        "word": "金"
+      },
+      {
+        "confidence": 0.9187762,
+        "endTime": 2.255,
+        "startTime": 2.075,
+        "word": "总"
+      },
+      {
+        "confidence": 0.9802702,
+        "endTime": 2.535,
+        "startTime": 2.255,
+        "word": "数"
+      },
+      {
+        "confidence": 0.980319,
+        "endTime": 2.725,
+        "startTime": 2.535,
+        "word": "上"
+      },
+      {
+        "confidence": 0.84001607,
+        "endTime": 2.925,
+        "startTime": 2.725,
+        "word": "限"
+      },
+      {
+        "confidence": 0.7512789,
+        "endTime": 3.035,
+        "startTime": 2.925,
+        "word": "为"
+      },
+      {
+        "confidence": 0.1369464,
+        "endTime": 3.065,
+        "startTime": 3.035,
+        "word": "10"
+      },
+      {
+        "confidence": 0.8546533,
+        "endTime": 3.515,
+        "startTime": 3.345,
+        "word": "个。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "任何时候当持有数量超过上限时，\n",
+    "words": [
+      {
+        "confidence": 0.6575688,
+        "endTime": 4.1250415,
+        "startTime": 4.0200415,
+        "word": "任"
+      },
+      {
+        "confidence": 0.91759104,
+        "endTime": 4.2750416,
+        "startTime": 4.1250415,
+        "word": "何"
+      },
+      {
+        "confidence": 0.9161041,
+        "endTime": 4.4250417,
+        "startTime": 4.2750416,
+        "word": "时"
+      },
+      {
+        "confidence": 0.88225067,
+        "endTime": 4.6950417,
+        "startTime": 4.4250417,
+        "word": "候"
+      },
+      {
+        "confidence": 0.9640633,
+        "endTime": 4.9050417,
+        "startTime": 4.6950417,
+        "word": "当"
+      },
+      {
+        "confidence": 0.9032881,
+        "endTime": 5.0950413,
+        "startTime": 4.9050417,
+        "word": "持"
+      },
+      {
+        "confidence": 0.9460668,
+        "endTime": 5.2250414,
+        "startTime": 5.0950413,
+        "word": "有"
+      },
+      {
+        "confidence": 0.9502091,
+        "endTime": 5.4150414,
+        "startTime": 5.2250414,
+        "word": "数"
+      },
+      {
+        "confidence": 0.97107255,
+        "endTime": 5.6050415,
+        "startTime": 5.4150414,
+        "word": "量"
+      },
+      {
+        "confidence": 0.9588859,
+        "endTime": 5.8050413,
+        "startTime": 5.6050415,
+        "word": "超"
+      },
+      {
+        "confidence": 0.9729736,
+        "endTime": 5.925041,
+        "startTime": 5.8050413,
+        "word": "过"
+      },
+      {
+        "confidence": 0.97746646,
+        "endTime": 6.0950413,
+        "startTime": 5.925041,
+        "word": "上"
+      },
+      {
+        "confidence": 0.35415894,
+        "endTime": 6.175041,
+        "startTime": 6.0950413,
+        "word": "限"
+      },
+      {
+        "confidence": 0.25494722,
+        "endTime": 6.2350416,
+        "startTime": 6.175041,
+        "word": "时，"
+      }
+    ]
+  }
+]

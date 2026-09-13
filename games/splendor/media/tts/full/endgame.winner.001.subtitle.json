@@ -1,0 +1,80 @@
+[
+  {
+    "phonemes": [],
+    "text": "声望值最高的玩家获得胜利。",
+    "words": [
+      {
+        "confidence": 0.8587138,
+        "endTime": 0.545,
+        "startTime": 0.285,
+        "word": "声"
+      },
+      {
+        "confidence": 0.97383374,
+        "endTime": 0.715,
+        "startTime": 0.545,
+        "word": "望"
+      },
+      {
+        "confidence": 0.85197526,
+        "endTime": 0.895,
+        "startTime": 0.715,
+        "word": "值"
+      },
+      {
+        "confidence": 0.9616966,
+        "endTime": 1.165,
+        "startTime": 0.895,
+        "word": "最"
+      },
+      {
+        "confidence": 0.9748142,
+        "endTime": 1.385,
+        "startTime": 1.165,
+        "word": "高"
+      },
+      {
+        "confidence": 0.77101225,
+        "endTime": 1.485,
+        "startTime": 1.385,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9066831,
+        "endTime": 1.675,
+        "startTime": 1.485,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.92803466,
+        "endTime": 1.965,
+        "startTime": 1.675,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8039597,
+        "endTime": 2.165,
+        "startTime": 2.025,
+        "word": "获"
+      },
+      {
+        "confidence": 0.8711647,
+        "endTime": 2.285,
+        "startTime": 2.165,
+        "word": "得"
+      },
+      {
+        "confidence": 0.89793104,
+        "endTime": 2.475,
+        "startTime": 2.285,
+        "word": "胜"
+      },
+      {
+        "confidence": 0.9278294,
+        "endTime": 2.675,
+        "startTime": 2.475,
+        "word": "利。"
+      }
+    ]
+  }
+]
