@@ -39,6 +39,9 @@ namespace BoardGameTutorial
         [Tooltip("调试：播放动画到 cue 结尾后停住不自动进入下一条。")]
         public bool pauseAtCueEnd;
 
+        [Tooltip("调试：按 B 直接跳到这条 cue（默认是当前正在制作的动画切片），再按一次回到原来的位置。")]
+        public string debugJumpCueId = "action.take.different.001";
+
         // 纯音频 cue 模式开关。
         // true：自动启动 cue 播放器，禁用旧的 TeachingPlayer 自动动画。
         // false：恢复旧的 TeachingPlayer 自动动画，cue 播放器不自动启动。
@@ -50,6 +53,8 @@ namespace BoardGameTutorial
         private TutorialCueAnimPlayer animPlayer;
         private Coroutine playbackRoutine;
         private int currentIndex = -1;
+        private int debugJumpReturnIndex = -1;
+        private bool inDebugJump;
         private bool isPaused;
         private string currentSubtitle = "";
         private GUIStyle debugStyle;
@@ -315,6 +320,34 @@ namespace BoardGameTutorial
             return false;
         }
 
+        /// <summary>
+        /// 调试用：一键在当前 cue 与 debugJumpCueId 之间来回跳，
+        /// 免得每次都要等前面 100 多条 cue 播完才能看到目标动画。
+        /// </summary>
+        public void ToggleDebugJump()
+        {
+            if (doc == null || doc.cues == null || string.IsNullOrEmpty(debugJumpCueId)) return;
+
+            if (inDebugJump)
+            {
+                inDebugJump = false;
+                PlayCue(debugJumpReturnIndex);
+                return;
+            }
+
+            for (int i = 0; i < doc.cues.Count; i++)
+            {
+                if (doc.cues[i].id == debugJumpCueId)
+                {
+                    debugJumpReturnIndex = currentIndex;
+                    inDebugJump = true;
+                    PlayCue(i);
+                    return;
+                }
+            }
+            Debug.LogWarning($"[TutorialCuePlayer] debugJumpCueId not found: {debugJumpCueId}");
+        }
+
         private void Update()
         {
             // 动画时钟 = 音频时间。暂停时音频时间不再前进，动画自动冻结。
@@ -332,6 +365,7 @@ namespace BoardGameTutorial
             if (kb.rightArrowKey.wasPressedThisFrame) Next();
             if (kb.aKey.wasPressedThisFrame) autoAdvance = !autoAdvance;
             if (kb.gKey.wasPressedThisFrame) ToggleCueAnimation();
+            if (kb.bKey.wasPressedThisFrame) ToggleDebugJump();
 #else
             if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
             if (Input.GetKeyDown(KeyCode.R)) ReplayCurrent();
@@ -339,6 +373,7 @@ namespace BoardGameTutorial
             if (Input.GetKeyDown(KeyCode.RightArrow)) Next();
             if (Input.GetKeyDown(KeyCode.A)) autoAdvance = !autoAdvance;
             if (Input.GetKeyDown(KeyCode.G)) ToggleCueAnimation();
+            if (Input.GetKeyDown(KeyCode.B)) ToggleDebugJump();
 #endif
         }
 
@@ -443,10 +478,11 @@ namespace BoardGameTutorial
                 animInfo = animPlayer.IsLoaded
                     ? $"anim: ON  {animPlayer.CueId}  t={t:0.00}s  动画总长 {animPlayer.TotalDuration:0.00}s"
                     : $"anim: none  (t={t:0.00}s)";
+                if (inDebugJump) animInfo += "   [B 返回]";
             }
             GUI.Label(new Rect(24, 150, Screen.width - 48, 24), animInfo, debugStyle);
             GUI.Label(new Rect(24, 172, Screen.width - 48, 24),
-                "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关", debugStyle);
+                "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关  B 跳到动画切片", debugStyle);
 
             DrawZoneLabels();
         }

@@ -541,6 +541,7 @@ namespace UnityEngine.InputSystem
         public KeyControl rKey = new KeyControl();
         public KeyControl aKey = new KeyControl();
         public KeyControl gKey = new KeyControl();
+        public KeyControl bKey = new KeyControl();
         public KeyControl nKey = new KeyControl();
         public KeyControl pKey = new KeyControl();
         public KeyControl leftArrowKey = new KeyControl();
@@ -593,7 +594,7 @@ namespace UnityEngine
         public static Vector3 mousePosition => Vector3.zero;
     }
 
-    public enum KeyCode { Space, R, A, G, N, P, LeftArrow, RightArrow, UpArrow, DownArrow, LeftBracket, RightBracket, Escape, Return }
+    public enum KeyCode { Space, R, A, G, B, N, P, LeftArrow, RightArrow, UpArrow, DownArrow, LeftBracket, RightBracket, Escape, Return }
 }
 """
 
