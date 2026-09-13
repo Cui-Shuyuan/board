@@ -36,7 +36,8 @@
       "description": {
         "zh": "游戏中的货币资源。用于支付建筑费、动物费用、展示区拿牌附加费、捐赠等。每位玩家起始持有 25 钱，放在 <notepad> 上；支付时还给总供应。以面值 1/5/10/20 的 <money_token> 表示（共 55 枚）。",
         "en": "The game's currency. Used to pay building costs, animal costs, the extra cost for taking cards from the display, donations, etc. Each player starts with 25 money on their <notepad>; payments return to the general supply. Represented by <money_token>s in denominations 1/5/10/20 (55 tokens in total)."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "x_token",
@@ -62,7 +63,8 @@
             "value": 5
           }
         ]
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "appeal_counter",

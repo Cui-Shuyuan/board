@@ -1,0 +1,955 @@
+{
+  "meta": {
+    "game": "wingspan",
+    "name": {
+      "zh": "展翅翱翔",
+      "en": "Wingspan"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "展翅翱翔的流程定义——设置、4 回合循环、回合末目标、终局计分与判胜。行动/触发器的结构化定义在 triggers 组。",
+      "en": "Wingspan flow definition — setup, 4-round loop, end-of-round goals, final scoring, and adjudication. Actions/triggers are defined in the triggers group."
+    }
+  },
+  "procedures": [
+    {
+      "id": "game",
+      "name": {
+        "zh": "游戏",
+        "en": "Game"
+      },
+      "specifies": "<ontology::round>",
+      "description": {
+        "zh": "一局完整的<wingspan_setting>：设置 → 4 个回合（每回合玩家行动至可用方块用完，随后回合末计分、刷新鸟盘、传递先手）→ 终局计分与判胜。",
+        "en": "A whole game of <wingspan_setting>: setup → 4 rounds (players act until available cubes are used, then end-of-round scoring, refresh bird tray, pass first player) → final scoring and adjudication."
+      },
+      "<ontology::pipeline>": {
+        "options": [
+          {
+            "id": "setup",
+            "name": {
+              "zh": "设置",
+              "en": "Setup"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "公共设置与玩家设置。",
+              "en": "Global and player setup."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "global_setup",
+                  "name": {
+                    "zh": "公共设置",
+                    "en": "Global Setup"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "准备鸟牌库、鸟盘、食物/蛋供应、骰塔、目标板、奖励牌库。",
+                    "en": "Prepare the bird deck, bird tray, food/egg supply, birdfeeder, goal board, and bonus deck."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "prepare_bird_deck",
+                        "name": {
+                          "zh": "准备鸟牌库",
+                          "en": "Prepare Bird Deck"
+                        },
+                        "specifies": "<ontology::shuffle>",
+                        "description": {
+                          "zh": "把所有<bird_card>洗匀成<bird_deck>，放在鸟盘旁。",
+                          "en": "Shuffle all <bird_card>s into <bird_deck> next to the bird tray."
+                        },
+                        "target": "<bird_deck>"
+                      },
+                      {
+                        "id": "prepare_bird_tray",
+                        "name": {
+                          "zh": "补充鸟盘",
+                          "en": "Fill Bird Tray"
+                        },
+                        "do_after": "prepare_bird_deck",
+                        "<ontology::transfer>": {
+                          "source": "<bird_deck>",
+                          "destination": "<bird_tray>",
+                          "<ontology::object>": {
+                            "<bird_card>": {
+                              "face": "face_up"
+                            }
+                          },
+                          "quantity": 3
+                        }
+                      },
+                      {
+                        "id": "prepare_supply",
+                        "name": {
+                          "zh": "准备供应区",
+                          "en": "Prepare Supply"
+                        },
+                        "description": {
+                          "zh": "把所有<food>与<egg>放入公共<ontology::supply>，对所有玩家可见。",
+                          "en": "Put all <food> and <egg> into the public supply, visible to all players."
+                        }
+                      },
+                      {
+                        "id": "prepare_birdfeeder",
+                        "name": {
+                          "zh": "准备骰塔",
+                          "en": "Prepare Birdfeeder"
+                        },
+                        "<ontology::transfer>": {
+                          "source": "<ontology::game_box>",
+                          "destination": "<birdfeeder>",
+                          "<ontology::object>": "<food_die>",
+                          "quantity": 5
+                        }
+                      },
+                      {
+                        "id": "prepare_goal_board",
+                        "name": {
+                          "zh": "准备目标板",
+                          "en": "Prepare Goal Board"
+                        },
+                        "description": {
+                          "zh": "选择<goal_board>使用的面（绿色多数决或蓝色每项 1 分），把 4 块<goal_tile>随机放到目标板空格。",
+                          "en": "Choose the active side of the <goal_board> (green majority or blue 1 point each) and randomly place 4 <goal_tile>s in its slots."
+                        }
+                      },
+                      {
+                        "id": "prepare_bonus_deck",
+                        "name": {
+                          "zh": "准备奖励牌库",
+                          "en": "Prepare Bonus Deck"
+                        },
+                        "specifies": "<ontology::shuffle>",
+                        "description": {
+                          "zh": "把所有<bonus_card>洗匀成<bonus_deck>。",
+                          "en": "Shuffle all <bonus_card>s into <bonus_deck>."
+                        },
+                        "target": "<bonus_deck>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                },
+                {
+                  "id": "player_setup",
+                  "name": {
+                    "zh": "玩家设置",
+                    "en": "Player Setup"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "description": {
+                    "zh": "每位玩家获得玩家板、8 个行动方块、5 张随机鸟牌、2 张奖励牌、5 个食物（每种 1 个）；保留最多 5 张鸟牌（每保留 1 张弃 1 个食物），保留 1 张奖励牌；然后随机决定先手玩家。",
+                    "en": "Each player receives a player mat, 8 action cubes, 5 random bird cards, 2 bonus cards, and 5 food (one of each type); keep up to 5 birds (discard 1 food per kept bird) and keep 1 bonus card; then randomly determine the first player."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "deal_player_hands",
+                        "name": {
+                          "zh": "发初始手牌与资源",
+                          "en": "Deal Starting Hands & Resources"
+                        },
+                        "description": {
+                          "zh": "每位玩家获得 1 张<player_mat>、8 个<action_cube>、5 张随机<bird_card>、2 张<bonus_card>、5 个<food>（每种 1 个）。",
+                          "en": "Each player receives 1 <player_mat>, 8 <action_cube>s, 5 random <bird_card>s, 2 <bonus_card>s, and 5 <food> (one of each type)."
+                        }
+                      },
+                      {
+                        "id": "choose_starting_birds_and_food",
+                        "name": {
+                          "zh": "保留鸟牌并弃食物",
+                          "en": "Keep Birds and Discard Food"
+                        },
+                        "do_after": "deal_player_hands",
+                        "description": {
+                          "zh": "从 5 张鸟牌中保留最多 5 张（可少于 5），其余弃掉；每保留 1 张鸟牌必须弃 1 个<food>。玩家可互相查看选择的鸟牌与奖励牌。",
+                          "en": "Keep up to 5 of the 5 bird cards (fewer is allowed) and discard the rest; discard 1 <food> for each bird kept. Players may reveal their kept birds and bonus cards to each other."
+                        }
+                      },
+                      {
+                        "id": "choose_bonus_card",
+                        "name": {
+                          "zh": "保留奖励牌",
+                          "en": "Keep a Bonus Card"
+                        },
+                        "do_after": "choose_starting_birds_and_food",
+                        "description": {
+                          "zh": "从 2 张<bonus_card>中保留 1 张，弃掉另一张。",
+                          "en": "Keep 1 of the 2 <bonus_card>s and discard the other."
+                        }
+                      },
+                      {
+                        "id": "determine_first_player",
+                        "name": {
+                          "zh": "决定先手玩家",
+                          "en": "Determine First Player"
+                        },
+                        "do_after": "choose_bonus_card",
+                        "description": {
+                          "zh": "在所有玩家选完鸟牌、食物与奖励牌后，随机决定先手玩家并给予<first_player_marker>。",
+                          "en": "After all players have chosen birds, food, and bonus cards, randomly determine the first player and give them the <first_player_marker>."
+                        }
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "round_loop",
+            "name": {
+              "zh": "四回合循环",
+              "en": "Four-Round Loop"
+            },
+            "specifies": "<ontology::round>",
+            "loop": {
+              "count": 4
+            },
+            "description": {
+              "zh": "游戏进行 4 个回合，每回合玩家可用行动方块数递减（8/7/6/5）。",
+              "en": "The game is played over 4 rounds; available action cubes decrease (8/7/6/5)."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "id": "player_action_round",
+                  "name": {
+                    "zh": "玩家行动轮",
+                    "en": "Player Action Round"
+                  },
+                  "specifies": "<ontology::round>",
+                  "loop": {
+                    "until": "<all_action_cubes_used_this_round>"
+                  },
+                  "description": {
+                    "zh": "从起始玩家开始按顺时针轮流行动，每位玩家每次从 4 个行动中选 1 个，直到本回合可用行动方块全部用完。",
+                    "en": "Starting with the start player, players take turns clockwise, each turn choosing one of the four actions, until all available action cubes for the round are used."
+                  },
+                  "<ontology::turn>": {
+                    "id": "player_turn",
+                    "name": {
+                      "zh": "玩家回合",
+                      "en": "Player Turn"
+                    },
+                    "<ontology::action>": {
+                      "options": [
+                        "<play_bird>",
+                        "<gain_food_action>",
+                        "<lay_eggs_action>",
+                        "<draw_cards_action>"
+                      ],
+                      "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+                    }
+                  }
+                },
+                {
+                  "id": "round_end",
+                  "name": {
+                    "zh": "回合末",
+                    "en": "End of Round"
+                  },
+                  "specifies": "<ontology::phase>",
+                  "do_after": "player_action_round",
+                  "description": {
+                    "zh": "移除所有行动方块，结算回合末目标，刷新鸟盘，传递先手玩家标记。",
+                    "en": "Remove all action cubes, score the end-of-round goal, refresh the bird tray, and pass the first player marker."
+                  },
+                  "<ontology::pipeline>": {
+                    "options": [
+                      {
+                        "id": "remove_action_cubes",
+                        "name": {
+                          "zh": "移除行动方块",
+                          "en": "Remove Action Cubes"
+                        },
+                        "description": {
+                          "zh": "从所有玩家板上移除本回合已使用的<action_cube>。",
+                          "en": "Remove all used <action_cube>s from every player mat."
+                        }
+                      },
+                      {
+                        "id": "score_round_goal",
+                        "name": {
+                          "zh": "结算回合末目标",
+                          "en": "Score End-of-Round Goal"
+                        },
+                        "do_after": "remove_action_cubes",
+                        "<ontology::effect>": "<end_of_round_scoring>"
+                      },
+                      {
+                        "id": "refresh_bird_tray",
+                        "name": {
+                          "zh": "刷新鸟盘",
+                          "en": "Refresh Bird Tray"
+                        },
+                        "do_after": "score_round_goal",
+                        "<ontology::effect>": "<refill_bird_tray>"
+                      },
+                      {
+                        "id": "pass_first",
+                        "name": {
+                          "zh": "传递先手",
+                          "en": "Pass First Player"
+                        },
+                        "do_after": "refresh_bird_tray",
+                        "<ontology::effect>": "<pass_first_player>"
+                      }
+                    ],
+                    "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          },
+          {
+            "id": "final_scoring",
+            "name": {
+              "zh": "终局计分",
+              "en": "Final Scoring"
+            },
+            "specifies": "<ontology::phase>",
+            "description": {
+              "zh": "第 4 回合结束后，汇总鸟牌分值、奖励牌、回合末目标、鸟蛋、缓存食物、塞入牌，并判胜。",
+              "en": "After round 4, total bird card points, bonus cards, end-of-round goals, eggs, cached food, and tucked cards, then determine the winner."
+            },
+            "<ontology::pipeline>": {
+              "options": [
+                {
+                  "<ontology::effect>": "<score_birds>"
+                },
+                {
+                  "<ontology::effect>": "<score_bonus_cards>"
+                },
+                {
+                  "<ontology::effect>": "<score_round_goals>"
+                },
+                {
+                  "<ontology::effect>": "<score_eggs>"
+                },
+                {
+                  "<ontology::effect>": "<score_cached_food>"
+                },
+                {
+                  "<ontology::effect>": "<score_tucked_cards>"
+                },
+                {
+                  "<ontology::effect>": "<adjudicate_victory>"
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+            }
+          }
+        ],
+        "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "all_action_cubes_used_this_round",
+      "name": {
+        "zh": "所有行动方块已使用",
+        "en": "All Action Cubes Used This Round"
+      },
+      "specifies": "<ontology::condition>",
+      "description": {
+        "zh": "本回合每位玩家都已把其可用数量的行动方块放到行动行上。",
+        "en": "Every player has placed all their available action cubes for this round."
+      }
+    },
+    {
+      "id": "play_bird",
+      "name": {
+        "zh": "打出一张鸟牌",
+        "en": "Play a Bird"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "选择 1 张手牌中的<bird_card>，决定放入的栖息地（<forest_habitat>/<grassland_habitat>/<wetland_habitat>，若牌上有多个栖息地符号可选其一）与所在列（第 1 列无蛋费，第 2–3 列 1 蛋，第 4–5 列 2 蛋）。支付食物费（只能用<player_food_supply>中的<food>；<wild_food>可当任意一种；打鸟时 2 个任意食物可当 1 个任意食物）。把鸟放到该栖息地最左侧空位，每栖息地最多 5 只。然后可选择触发该鸟的<when_played_power>。打鸟不激活该行棕色能力。",
+        "en": "Choose 1 <bird_card> from hand, decide the habitat (<forest_habitat>/<grassland_habitat>/<wetland_habitat>, choose one if the card has multiple) and column (column 1 has no egg cost; columns 2–3 cost 1 egg; columns 4–5 cost 2 eggs). Pay the food cost using food from <player_food_supply> only (<wild_food> counts as any one food; while playing a bird, 2 any food may count as 1 any food). Place the bird in the leftmost empty space of that habitat; each habitat holds at most 5 birds. Then you may trigger the bird's <when_played_power>. Playing a bird does not activate brown powers."
+      },
+      "target": "1 张手牌中的 <bird_card>，以及要放入的 <forest_habitat>/<grassland_habitat>/<wetland_habitat> 与列（1–5）",
+      "<ontology::cost>": {
+        "<ontology::instant_cost>": {
+          "description": {
+            "zh": "支付目标列的蛋费（第 1 列 0 蛋，第 2–3 列 1 蛋，第 4–5 列 2 蛋）与该鸟的食物费。",
+            "en": "Pay the egg cost of the target column (0 for column 1, 1 for columns 2–3, 2 for columns 4–5) and the bird's food cost."
+          },
+          "options": [
+            {
+              "id": "pay_egg_cost",
+              "name": {
+                "zh": "支付蛋费",
+                "en": "Pay Egg Cost"
+              },
+              "<ontology::transfer>": {
+                "source": "该玩家鸟牌上的任意 <egg>",
+                "destination": "<ontology::supply>",
+                "<ontology::object>": "<egg>",
+                "quantity": "目标列对应的蛋费（第 1 列 0；第 2–3 列 1；第 4–5 列 2）"
+              }
+            },
+            {
+              "id": "pay_food_cost",
+              "name": {
+                "zh": "支付食物费",
+                "en": "Pay Food Cost"
+              },
+              "<ontology::transfer>": {
+                "source": "<player_food_supply>",
+                "destination": "<ontology::supply>",
+                "<ontology::object>": "<food>",
+                "quantity": "该鸟牌的食物费用（<wild_food> 可当任意一种；打鸟时 2 个任意食物可当 1 个任意食物）"
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_bird",
+              "name": {
+                "zh": "放置鸟牌",
+                "en": "Place the Bird"
+              },
+              "specifies": "<ontology::transfer>",
+              "source": "<hand>",
+              "destination": "this.target 的栖息地",
+              "<ontology::object>": "<bird_card>",
+              "quantity": 1,
+              "description": {
+                "zh": "把鸟牌从手牌放到目标栖息地最左侧空位。",
+                "en": "Move the bird card from hand to the leftmost empty space of the target habitat."
+              }
+            },
+            {
+              "id": "trigger_when_played",
+              "name": {
+                "zh": "结算打出时能力（可选）",
+                "en": "Resolve When Played (Optional)"
+              },
+              "do_after": "place_bird",
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不触发",
+                    "en": "Do not trigger"
+                  }
+                },
+                {
+                  "id": "resolve_when_played",
+                  "name": {
+                    "zh": "触发打出时能力",
+                    "en": "Trigger When Played Power"
+                  },
+                  "description": {
+                    "zh": "可选：结算刚打出鸟的<when_played_power>。",
+                    "en": "Optionally resolve the played bird's <when_played_power>."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "gain_food_action",
+      "name": {
+        "zh": "获取食物",
+        "en": "Gain Food"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "在玩家板获取食物行最左侧未使用的格子放一个<action_cube>，获得该格收益。从<birdfeeder>的骰子一颗一颗获得食物：每颗骰子给 1 个对应类型<food>（若骰面是野生图标则自选任意一种）。管理骰塔：托盘空时把 5 颗骰全部抛回；若剩余骰子全部同一面（含只剩 1 颗），可在获得食物前选择全部重掷。若该格有 card-to-food 转换，可弃最多 1 张手牌额外得 1 食物。然后从右到左触发<forest_habitat>中所有鸟的<when_activated_power>（全部可选）。",
+        "en": "Place an <action_cube> on the leftmost unused space of the gain food row and gain its reward. Gain food from the <birdfeeder> one die at a time: each die gives 1 food of the shown type (wild icon = any one food). Manage the feeder: if the tray is empty, throw all 5 dice back; if all remaining dice show the same face (even one die), you may reroll all 5 before gaining food. If the space has a card-to-food conversion, you may discard up to 1 hand card to gain 1 extra food. Then activate brown <when_activated_power>s in <forest_habitat> from right to left, all optional."
+      },
+      "target": "玩家板获取食物行最左侧未使用的格",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_cube_food",
+              "name": {
+                "zh": "放置取食方块",
+                "en": "Place Food Cube"
+              },
+              "description": {
+                "zh": "把 1 个<action_cube>放在获取食物行最左侧未使用的格，获得该格印的食物数量。",
+                "en": "Place 1 <action_cube> on the leftmost unused gain food space and gain the printed number of food."
+              }
+            },
+            {
+              "id": "gain_food_from_feeder",
+              "name": {
+                "zh": "从骰塔获得食物",
+                "en": "Gain Food from Birdfeeder"
+              },
+              "description": {
+                "zh": "从<birdfeeder>逐颗取骰结算：每颗骰得 1 个对应类型食物；可先按骰塔规则决定是否重掷全部 5 颗。",
+                "en": "Take dice from the birdfeeder one at a time; each die gives 1 food of its type; apply the reroll rules first if desired."
+              }
+            },
+            {
+              "id": "card_to_food",
+              "name": {
+                "zh": "弃牌换食物（可选）",
+                "en": "Discard a Card for Food (Optional)"
+              },
+              "do_after": "gain_food_from_feeder",
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不换",
+                    "en": "Do not convert"
+                  }
+                },
+                {
+                  "id": "convert_card_to_food",
+                  "name": {
+                    "zh": "弃 1 张手牌得 1 食物",
+                    "en": "Discard 1 Hand Card for 1 Food"
+                  },
+                  "description": {
+                    "zh": "若该格有 card-to-food 转换：弃最多 1 张手牌，从<birdfeeder>剩余骰中选 1 颗得 1 个对应食物。",
+                    "en": "If the space has card-to-food: discard up to 1 hand card, choose 1 remaining die in the feeder, and gain 1 matching food."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "activate_forest_powers",
+              "name": {
+                "zh": "触发森林棕色能力",
+                "en": "Activate Forest Brown Powers"
+              },
+              "do_after": "card_to_food",
+              "description": {
+                "zh": "从右到左结算<forest_habitat>中每只鸟的<when_activated_power>；每项均可选。",
+                "en": "Resolve each <when_activated_power> in <forest_habitat> from right to left; each is optional."
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "lay_eggs_action",
+      "name": {
+        "zh": "下蛋",
+        "en": "Lay Eggs"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "在玩家板下蛋行最左侧未使用的格子放一个<action_cube>，获得该格数量的<egg>。蛋从<ontology::supply>放到鸟牌上，颜色无关；每只鸟有蛋上限，超过上限的蛋浪费。若该格有 food-to-egg 转换，可最多付 1 个食物额外下 1 颗蛋。然后从右到左触发<grassland_habitat>中所有鸟的<when_activated_power>（全部可选）。",
+        "en": "Place an <action_cube> on the leftmost unused lay eggs space and gain that many <egg>s from supply onto birds; color does not matter; each bird has an egg capacity, excess eggs are lost. If the space has food-to-egg, you may spend up to 1 food to lay 1 extra egg. Then activate brown <when_activated_power>s in <grassland_habitat> from right to left, all optional."
+      },
+      "target": "玩家板下蛋行最左侧未使用的格",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_cube_eggs",
+              "name": {
+                "zh": "放置下蛋方块",
+                "en": "Place Egg Cube"
+              },
+              "description": {
+                "zh": "把 1 个<action_cube>放在下蛋行最左侧未使用的格，获得该格印的蛋数量。",
+                "en": "Place 1 <action_cube> on the leftmost unused lay eggs space and gain the printed number of eggs."
+              }
+            },
+            {
+              "id": "lay_eggs_on_birds",
+              "name": {
+                "zh": "放置鸟蛋",
+                "en": "Lay Eggs on Birds"
+              },
+              "do_after": "place_cube_eggs",
+              "description": {
+                "zh": "从<ontology::supply>取得该数量<egg>，任意分配到自己的鸟牌上（可集中），每只鸟不能超过蛋上限。",
+                "en": "Take that many <egg>s from supply and place them on your birds (distribution is free), never exceeding each bird's egg capacity."
+              }
+            },
+            {
+              "id": "food_to_egg",
+              "name": {
+                "zh": "食物换蛋（可选）",
+                "en": "Food for Egg (Optional)"
+              },
+              "do_after": "lay_eggs_on_birds",
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不换",
+                    "en": "Do not convert"
+                  }
+                },
+                {
+                  "id": "convert_food_to_egg",
+                  "name": {
+                    "zh": "付 1 食物下 1 蛋",
+                    "en": "Spend 1 Food for 1 Egg"
+                  },
+                  "description": {
+                    "zh": "若该格有 food-to-egg 转换：最多付 1 个<food>，额外下 1 颗蛋。",
+                    "en": "If the space has food-to-egg: spend up to 1 <food> to lay 1 extra egg."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "activate_grassland_powers",
+              "name": {
+                "zh": "触发草原棕色能力",
+                "en": "Activate Grassland Brown Powers"
+              },
+              "do_after": "food_to_egg",
+              "description": {
+                "zh": "从右到左结算<grassland_habitat>中每只鸟的<when_activated_power>；每项均可选。",
+                "en": "Resolve each <when_activated_power> in <grassland_habitat> from right to left; each is optional."
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "draw_cards_action",
+      "name": {
+        "zh": "抽鸟牌",
+        "en": "Draw Bird Cards"
+      },
+      "specifies": "<ontology::action>",
+      "description": {
+        "zh": "在玩家板抽牌行最左侧未使用的格子放一个<action_cube>，获得该格数量的<bird_card>。可逐张从<bird_tray>的 3 张正面朝上牌或<bird_deck>顶选择；无手牌上限。若该格有 egg-to-card 转换，可从自己鸟牌上弃最多 1 颗<egg>多抽 1 张。抽走的正面朝上牌不立即补，回合末补。然后从右到左触发<wetland_habitat>中所有鸟的<when_activated_power>（全部可选）。",
+        "en": "Place an <action_cube> on the leftmost unused draw cards space and gain that many <bird_card>s. Draw each card from the <bird_tray> (3 face-up) or the top of <bird_deck>; no hand limit. If the space has egg-to-card, you may discard up to 1 <egg> from your birds to draw 1 extra card. Face-up cards are not refilled immediately; refill at round end. Then activate brown <when_activated_power>s in <wetland_habitat> from right to left, all optional."
+      },
+      "target": "玩家板抽牌行最左侧未使用的格",
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "place_cube_cards",
+              "name": {
+                "zh": "放置抽牌方块",
+                "en": "Place Card Cube"
+              },
+              "description": {
+                "zh": "把 1 个<action_cube>放在抽牌行最左侧未使用的格，获得该格印的抽牌数量。",
+                "en": "Place 1 <action_cube> on the leftmost unused draw cards space and gain the printed number of card draws."
+              }
+            },
+            {
+              "id": "draw_bird_cards",
+              "name": {
+                "zh": "抽取鸟牌",
+                "en": "Draw Bird Cards"
+              },
+              "do_after": "place_cube_cards",
+              "description": {
+                "zh": "逐张从<bird_tray>或<bird_deck>顶抽牌，可先看再决定后续来源。",
+                "en": "Draw each card from the <bird_tray> or the top of <bird_deck>; after seeing a card you may choose the next source."
+              }
+            },
+            {
+              "id": "egg_to_card",
+              "name": {
+                "zh": "蛋换牌（可选）",
+                "en": "Egg for Card (Optional)"
+              },
+              "do_after": "draw_bird_cards",
+              "options": [
+                {
+                  "id": "_skip",
+                  "description": {
+                    "zh": "不换",
+                    "en": "Do not convert"
+                  }
+                },
+                {
+                  "id": "convert_egg_to_card",
+                  "name": {
+                    "zh": "弃 1 蛋多抽 1 牌",
+                    "en": "Discard 1 Egg for 1 Card"
+                  },
+                  "description": {
+                    "zh": "若该格有 egg-to-card 转换：从自己鸟牌上移除最多 1 颗<egg>放回供应，多抽 1 张鸟牌。",
+                    "en": "If the space has egg-to-card: remove up to 1 <egg> from your birds to the supply and draw 1 extra bird card."
+                  }
+                }
+              ],
+              "type": "<ontology::multiple_choice_enum.CHOOSE_ONE>"
+            },
+            {
+              "id": "activate_wetland_powers",
+              "name": {
+                "zh": "触发湿地棕色能力",
+                "en": "Activate Wetland Brown Powers"
+              },
+              "do_after": "egg_to_card",
+              "description": {
+                "zh": "从右到左结算<wetland_habitat>中每只鸟的<when_activated_power>；每项均可选。",
+                "en": "Resolve each <when_activated_power> in <wetland_habitat> from right to left; each is optional."
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "refill_bird_tray",
+      "name": {
+        "zh": "补满鸟盘",
+        "en": "Refill Bird Tray"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "回合末把<bird_tray>上所有正面朝上的<bird_card>弃到<bird_discard_pile>，再从<bird_deck>顶补 3 张正面朝上。若牌库抽空，把弃牌堆洗成新牌库。",
+        "en": "At round end discard all face-up <bird_card>s from the <bird_tray> to <bird_discard_pile>, then draw 3 new ones face up from <bird_deck>. If the deck is empty, shuffle the discard pile into a new deck."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "options": [
+            {
+              "id": "clear_bird_tray",
+              "name": {
+                "zh": "清空鸟盘",
+                "en": "Clear Bird Tray"
+              },
+              "<ontology::transfer>": {
+                "source": "<bird_tray>",
+                "destination": "<bird_discard_pile>",
+                "<ontology::object>": "<bird_card>",
+                "quantity": "all"
+              }
+            },
+            {
+              "id": "draw_new_tray",
+              "name": {
+                "zh": "补充 3 张鸟牌",
+                "en": "Draw 3 New Bird Cards"
+              },
+              "do_after": "clear_bird_tray",
+              "<ontology::transfer>": {
+                "source": "<bird_deck>",
+                "destination": "<bird_tray>",
+                "<ontology::object>": {
+                  "<bird_card>": {
+                    "face": "face_up"
+                  }
+                },
+                "quantity": 3
+              }
+            }
+          ],
+          "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+        }
+      }
+    },
+    {
+      "id": "end_of_round_scoring",
+      "name": {
+        "zh": "回合末目标计分",
+        "en": "End-of-Round Goal Scoring"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "按<goal_board>当前面结算本回合的目标。绿色面按目标项数量排名给第 1/2/3 名分数，平局合并名次并向下取整；蓝色面每有 1 个目标项得 1 分，上限 5 分。每位玩家都必须在目标板上放一个<action_cube>标记得分（包括 0 分）。",
+        "en": "Score this round's goal according to the active side of the <goal_board>. Green side ranks the targeted item count and awards 1st/2nd/3rd; ties combine places and round down. Blue side scores 1 point per targeted item, max 5. Every player places an <action_cube> on the goal board to mark their score (including 0)."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "把本回合目标得分记录到<goal_board>。",
+            "en": "Record this round's goal score on the <goal_board>."
+          }
+        }
+      }
+    },
+    {
+      "id": "pass_first_player",
+      "name": {
+        "zh": "传递先手玩家标记",
+        "en": "Pass First Player Marker"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "每回合结束后把<first_player_marker>按顺时针交给下一位玩家。",
+        "en": "At the end of each round, pass the <first_player_marker> clockwise to the next player."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "<ontology::transfer>": {
+            "source": "当前起始玩家",
+            "destination": "顺时针下一位玩家",
+            "<ontology::object>": "<first_player_marker>",
+            "quantity": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "adjudicate_victory",
+      "name": {
+        "zh": "终局判胜",
+        "en": "Adjudicate Victory"
+      },
+      "specifies": "<ontology::evaluate>",
+      "description": {
+        "zh": "终局比较总分：鸟牌分值 + 奖励牌分值 + 回合末目标得分 + 鸟蛋 1 分/颗 + 缓存食物 1 分/个 + 塞入牌 1 分/张。总分最高者获胜；平局比较玩家板旁剩余<food>数量，最多者获胜；仍平局共享胜利。",
+        "en": "At game end compare total score: bird VP + bonus cards + end-of-round goals + eggs 1 VP each + cached food 1 VP each + tucked cards 1 VP each. Highest total wins; ties are broken by most food beside the mat; if still tied, players share the victory."
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "按总分→剩余食物数→共享胜利的顺序判定胜者。",
+            "en": "Determine the winner by total score, then food remaining, then shared victory."
+          }
+        }
+      },
+      "result": "胜者（玩家）"
+    },
+    {
+      "id": "score_birds",
+      "name": {
+        "zh": "鸟牌分值",
+        "en": "Bird Card Points"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "每张正面朝上的<bird_card>按牌面印的分值计分。",
+        "en": "每张正面朝上的<bird_card>按牌面印的分值计分。"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "每张正面朝上的<bird_card>按牌面印的分值计分。",
+            "en": "每张正面朝上的<bird_card>按牌面印的分值计分。"
+          }
+        }
+      }
+    },
+    {
+      "id": "score_bonus_cards",
+      "name": {
+        "zh": "奖励牌分值",
+        "en": "Bonus Card Points"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "按每张<bonus_card>上印的计分条件结算。",
+        "en": "按每张<bonus_card>上印的计分条件结算。"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "按每张<bonus_card>上印的计分条件结算。",
+            "en": "按每张<bonus_card>上印的计分条件结算。"
+          }
+        }
+      }
+    },
+    {
+      "id": "score_round_goals",
+      "name": {
+        "zh": "回合末目标得分",
+        "en": "End-of-Round Goal Points"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "把四回合在<goal_board>上获得的目标得分相加。",
+        "en": "把四回合在<goal_board>上获得的目标得分相加。"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "把四回合在<goal_board>上获得的目标得分相加。",
+            "en": "把四回合在<goal_board>上获得的目标得分相加。"
+          }
+        }
+      }
+    },
+    {
+      "id": "score_eggs",
+      "name": {
+        "zh": "鸟蛋得分",
+        "en": "Egg Points"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "玩家板鸟牌上每颗<egg>得 1 分。",
+        "en": "玩家板鸟牌上每颗<egg>得 1 分。"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "玩家板鸟牌上每颗<egg>得 1 分。",
+            "en": "玩家板鸟牌上每颗<egg>得 1 分。"
+          }
+        }
+      }
+    },
+    {
+      "id": "score_cached_food",
+      "name": {
+        "zh": "缓存食物得分",
+        "en": "Cached Food Points"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "鸟牌上每个<cached_food>得 1 分。",
+        "en": "鸟牌上每个<cached_food>得 1 分。"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "鸟牌上每个<cached_food>得 1 分。",
+            "en": "鸟牌上每个<cached_food>得 1 分。"
+          }
+        }
+      }
+    },
+    {
+      "id": "score_tucked_cards",
+      "name": {
+        "zh": "塞入牌得分",
+        "en": "Tucked Card Points"
+      },
+      "specifies": "<ontology::trigger>",
+      "description": {
+        "zh": "鸟牌下每张<tucked_cards>中的鸟牌得 1 分。",
+        "en": "鸟牌下每张<tucked_cards>中的鸟牌得 1 分。"
+      },
+      "<ontology::content>": {
+        "<ontology::instant_content>": {
+          "description": {
+            "zh": "鸟牌下每张<tucked_cards>中的鸟牌得 1 分。",
+            "en": "鸟牌下每张<tucked_cards>中的鸟牌得 1 分。"
+          }
+        }
+      }
+    }
+  ]
+}

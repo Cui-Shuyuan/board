@@ -3,6 +3,9 @@ echo ============================================
 echo   BoardAI 启动
 echo ============================================
 
+rem 读取根目录 .env（已被 gitignore，不会提交）
+if exist "%~dp0..\..\.env" for /F "usebackq tokens=1,* delims==" %%A in ("%~dp0..\..\.env") do set "%%A=%%B"
+
 echo [1/2] 启动 Qdrant 向量数据库...
 set QDRANT__STORAGE__STORAGE_PATH=D:\qdrant\data
 start "Qdrant" D:\qdrant\qdrant.exe
@@ -10,6 +13,8 @@ timeout /t 3 /nobreak >nul
 
 echo [2/2] 启动 BoardAI.Api...
 cd /d D:\workspace\board\backend\BoardAI.Api
+rem Development 环境使用 appsettings.Development.json 的本地 Qwen 配置
+set ASPNETCORE_ENVIRONMENT=Development
 D:\dotnet\dotnet.exe run --urls "http://localhost:5000"
 echo.
 echo API 已就绪: http://localhost:5000

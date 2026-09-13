@@ -1,0 +1,206 @@
+[
+  {
+    "phonemes": [],
+    "text": "举个例子：现在我已经购买了1张白宝石牌，",
+    "words": [
+      {
+        "confidence": 0.8826466,
+        "endTime": 0.445,
+        "startTime": 0.295,
+        "word": "举"
+      },
+      {
+        "confidence": 0.9064673,
+        "endTime": 0.555,
+        "startTime": 0.445,
+        "word": "个"
+      },
+      {
+        "confidence": 0.7868727,
+        "endTime": 0.695,
+        "startTime": 0.555,
+        "word": "例"
+      },
+      {
+        "confidence": 0.17161636,
+        "endTime": 0.725,
+        "startTime": 0.695,
+        "word": "子："
+      },
+      {
+        "confidence": 0.9787539,
+        "endTime": 1.495,
+        "startTime": 1.275,
+        "word": "现"
+      },
+      {
+        "confidence": 0.9542532,
+        "endTime": 1.735,
+        "startTime": 1.495,
+        "word": "在"
+      },
+      {
+        "confidence": 0.94949734,
+        "endTime": 1.845,
+        "startTime": 1.735,
+        "word": "我"
+      },
+      {
+        "confidence": 0.972998,
+        "endTime": 1.955,
+        "startTime": 1.845,
+        "word": "已"
+      },
+      {
+        "confidence": 0.9680319,
+        "endTime": 2.135,
+        "startTime": 1.955,
+        "word": "经"
+      },
+      {
+        "confidence": 0.961069,
+        "endTime": 2.315,
+        "startTime": 2.135,
+        "word": "购"
+      },
+      {
+        "confidence": 0.97006744,
+        "endTime": 2.505,
+        "startTime": 2.315,
+        "word": "买"
+      },
+      {
+        "confidence": 0.44633332,
+        "endTime": 2.605,
+        "startTime": 2.505,
+        "word": "了"
+      },
+      {
+        "confidence": 0.1687143,
+        "endTime": 2.635,
+        "startTime": 2.605,
+        "word": "1"
+      },
+      {
+        "confidence": 0.7475504,
+        "endTime": 2.935,
+        "startTime": 2.635,
+        "word": "张"
+      },
+      {
+        "confidence": 0.97059745,
+        "endTime": 3.135,
+        "startTime": 2.935,
+        "word": "白"
+      },
+      {
+        "confidence": 0.9694331,
+        "endTime": 3.295,
+        "startTime": 3.135,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9245625,
+        "endTime": 3.475,
+        "startTime": 3.295,
+        "word": "石"
+      },
+      {
+        "confidence": 0.95559967,
+        "endTime": 3.835,
+        "startTime": 3.475,
+        "word": "牌，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "那么下一回合我想购买这张牌时，\n",
+    "words": [
+      {
+        "confidence": 0.96259993,
+        "endTime": 4.245042,
+        "startTime": 4.120042,
+        "word": "那"
+      },
+      {
+        "confidence": 0.9897984,
+        "endTime": 4.3450418,
+        "startTime": 4.245042,
+        "word": "么"
+      },
+      {
+        "confidence": 0.9666739,
+        "endTime": 4.545042,
+        "startTime": 4.3450418,
+        "word": "下"
+      },
+      {
+        "confidence": 0.8722067,
+        "endTime": 4.6350417,
+        "startTime": 4.545042,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9695393,
+        "endTime": 4.815042,
+        "startTime": 4.6350417,
+        "word": "回"
+      },
+      {
+        "confidence": 0.93560076,
+        "endTime": 5.1150417,
+        "startTime": 4.815042,
+        "word": "合"
+      },
+      {
+        "confidence": 0.9486556,
+        "endTime": 5.225042,
+        "startTime": 5.1150417,
+        "word": "我"
+      },
+      {
+        "confidence": 0.98845595,
+        "endTime": 5.435042,
+        "startTime": 5.225042,
+        "word": "想"
+      },
+      {
+        "confidence": 0.91826236,
+        "endTime": 5.6150417,
+        "startTime": 5.435042,
+        "word": "购"
+      },
+      {
+        "confidence": 0.97983915,
+        "endTime": 5.785042,
+        "startTime": 5.6150417,
+        "word": "买"
+      },
+      {
+        "confidence": 0.85402507,
+        "endTime": 5.9250417,
+        "startTime": 5.785042,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9713621,
+        "endTime": 6.085042,
+        "startTime": 5.9250417,
+        "word": "张"
+      },
+      {
+        "confidence": 0.8177799,
+        "endTime": 6.2350416,
+        "startTime": 6.085042,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.253676,
+        "endTime": 6.295042,
+        "startTime": 6.2350416,
+        "word": "时，"
+      }
+    ]
+  }
+]

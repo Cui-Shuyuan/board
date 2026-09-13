@@ -1,0 +1,98 @@
+[
+  {
+    "phonemes": [],
+    "text": "后续我们就直接以颜色称呼它们了。",
+    "words": [
+      {
+        "confidence": 0.9210327,
+        "endTime": 0.465,
+        "startTime": 0.275,
+        "word": "后"
+      },
+      {
+        "confidence": 0.74866533,
+        "endTime": 0.695,
+        "startTime": 0.465,
+        "word": "续"
+      },
+      {
+        "confidence": 0.9128181,
+        "endTime": 0.815,
+        "startTime": 0.695,
+        "word": "我"
+      },
+      {
+        "confidence": 0.98215526,
+        "endTime": 0.905,
+        "startTime": 0.815,
+        "word": "们"
+      },
+      {
+        "confidence": 0.96823716,
+        "endTime": 1.045,
+        "startTime": 0.905,
+        "word": "就"
+      },
+      {
+        "confidence": 0.9629389,
+        "endTime": 1.205,
+        "startTime": 1.045,
+        "word": "直"
+      },
+      {
+        "confidence": 0.9571441,
+        "endTime": 1.375,
+        "startTime": 1.205,
+        "word": "接"
+      },
+      {
+        "confidence": 0.7656058,
+        "endTime": 1.535,
+        "startTime": 1.375,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9367345,
+        "endTime": 1.715,
+        "startTime": 1.535,
+        "word": "颜"
+      },
+      {
+        "confidence": 0.97996306,
+        "endTime": 1.915,
+        "startTime": 1.715,
+        "word": "色"
+      },
+      {
+        "confidence": 0.6711655,
+        "endTime": 2.075,
+        "startTime": 1.915,
+        "word": "称"
+      },
+      {
+        "confidence": 0.734193,
+        "endTime": 2.205,
+        "startTime": 2.075,
+        "word": "呼"
+      },
+      {
+        "confidence": 0.90871793,
+        "endTime": 2.375,
+        "startTime": 2.205,
+        "word": "它"
+      },
+      {
+        "confidence": 0.9547907,
+        "endTime": 2.475,
+        "startTime": 2.375,
+        "word": "们"
+      },
+      {
+        "confidence": 0.95358,
+        "endTime": 2.715,
+        "startTime": 2.475,
+        "word": "了。"
+      }
+    ]
+  }
+]

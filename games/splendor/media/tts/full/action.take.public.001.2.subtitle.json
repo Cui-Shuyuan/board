@@ -1,0 +1,80 @@
+[
+  {
+    "phonemes": [],
+    "text": "所有人都能清楚看到的地方。",
+    "words": [
+      {
+        "confidence": 0.90312743,
+        "endTime": 0.645,
+        "startTime": 0.295,
+        "word": "所"
+      },
+      {
+        "confidence": 0.98233736,
+        "endTime": 0.805,
+        "startTime": 0.645,
+        "word": "有"
+      },
+      {
+        "confidence": 0.94363016,
+        "endTime": 0.975,
+        "startTime": 0.805,
+        "word": "人"
+      },
+      {
+        "confidence": 0.93383557,
+        "endTime": 1.115,
+        "startTime": 0.975,
+        "word": "都"
+      },
+      {
+        "confidence": 0.9708129,
+        "endTime": 1.275,
+        "startTime": 1.115,
+        "word": "能"
+      },
+      {
+        "confidence": 0.9580887,
+        "endTime": 1.505,
+        "startTime": 1.275,
+        "word": "清"
+      },
+      {
+        "confidence": 0.8943457,
+        "endTime": 1.655,
+        "startTime": 1.505,
+        "word": "楚"
+      },
+      {
+        "confidence": 0.9544461,
+        "endTime": 1.865,
+        "startTime": 1.655,
+        "word": "看"
+      },
+      {
+        "confidence": 0.9754325,
+        "endTime": 2.015,
+        "startTime": 1.865,
+        "word": "到"
+      },
+      {
+        "confidence": 0.9560566,
+        "endTime": 2.125,
+        "startTime": 2.015,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9745367,
+        "endTime": 2.285,
+        "startTime": 2.125,
+        "word": "地"
+      },
+      {
+        "confidence": 0.9186141,
+        "endTime": 2.475,
+        "startTime": 2.285,
+        "word": "方。"
+      }
+    ]
+  }
+]

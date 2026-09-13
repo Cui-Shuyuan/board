@@ -1,0 +1,80 @@
+[
+  {
+    "phonemes": [],
+    "text": "接下来可以正式开始游戏了。",
+    "words": [
+      {
+        "confidence": 0.96836996,
+        "endTime": 0.445,
+        "startTime": 0.285,
+        "word": "接"
+      },
+      {
+        "confidence": 0.9759896,
+        "endTime": 0.585,
+        "startTime": 0.445,
+        "word": "下"
+      },
+      {
+        "confidence": 0.9434365,
+        "endTime": 0.815,
+        "startTime": 0.585,
+        "word": "来"
+      },
+      {
+        "confidence": 0.8699051,
+        "endTime": 0.955,
+        "startTime": 0.815,
+        "word": "可"
+      },
+      {
+        "confidence": 0.7853749,
+        "endTime": 1.085,
+        "startTime": 0.955,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9407556,
+        "endTime": 1.255,
+        "startTime": 1.085,
+        "word": "正"
+      },
+      {
+        "confidence": 0.8983248,
+        "endTime": 1.415,
+        "startTime": 1.255,
+        "word": "式"
+      },
+      {
+        "confidence": 0.9154833,
+        "endTime": 1.565,
+        "startTime": 1.415,
+        "word": "开"
+      },
+      {
+        "confidence": 0.95480704,
+        "endTime": 1.735,
+        "startTime": 1.565,
+        "word": "始"
+      },
+      {
+        "confidence": 0.9286468,
+        "endTime": 1.835,
+        "startTime": 1.735,
+        "word": "游"
+      },
+      {
+        "confidence": 0.9707296,
+        "endTime": 2.055,
+        "startTime": 1.835,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.96576214,
+        "endTime": 2.255,
+        "startTime": 2.055,
+        "word": "了。"
+      }
+    ]
+  }
+]

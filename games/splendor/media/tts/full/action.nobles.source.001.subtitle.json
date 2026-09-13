@@ -1,0 +1,152 @@
+[
+  {
+    "phonemes": [],
+    "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。",
+    "words": [
+      {
+        "confidence": 0.7881223,
+        "endTime": 0.445,
+        "startTime": 0.295,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9235028,
+        "endTime": 0.685,
+        "startTime": 0.445,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9694917,
+        "endTime": 0.855,
+        "startTime": 0.685,
+        "word": "只"
+      },
+      {
+        "confidence": 0.9887186,
+        "endTime": 1.015,
+        "startTime": 0.855,
+        "word": "能"
+      },
+      {
+        "confidence": 0.97447824,
+        "endTime": 1.285,
+        "startTime": 1.015,
+        "word": "从"
+      },
+      {
+        "confidence": 0.9437639,
+        "endTime": 1.485,
+        "startTime": 1.285,
+        "word": "供"
+      },
+      {
+        "confidence": 0.92682874,
+        "endTime": 1.645,
+        "startTime": 1.485,
+        "word": "应"
+      },
+      {
+        "confidence": 0.7359128,
+        "endTime": 1.855,
+        "startTime": 1.645,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.9077713,
+        "endTime": 2.045,
+        "startTime": 1.855,
+        "word": "中"
+      },
+      {
+        "confidence": 0.9374272,
+        "endTime": 2.205,
+        "startTime": 2.045,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.8920062,
+        "endTime": 2.365,
+        "startTime": 2.205,
+        "word": "取"
+      },
+      {
+        "confidence": 0.9547946,
+        "endTime": 2.565,
+        "startTime": 2.365,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.9440626,
+        "endTime": 2.865,
+        "startTime": 2.565,
+        "word": "族，"
+      },
+      {
+        "confidence": 0.9881556,
+        "endTime": 3.175,
+        "startTime": 3.075,
+        "word": "不"
+      },
+      {
+        "confidence": 0.76937044,
+        "endTime": 3.305,
+        "startTime": 3.175,
+        "word": "可"
+      },
+      {
+        "confidence": 0.5812745,
+        "endTime": 3.405,
+        "startTime": 3.305,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9131539,
+        "endTime": 3.605,
+        "startTime": 3.405,
+        "word": "从"
+      },
+      {
+        "confidence": 0.9066266,
+        "endTime": 3.805,
+        "startTime": 3.605,
+        "word": "其"
+      },
+      {
+        "confidence": 0.98170006,
+        "endTime": 4.035,
+        "startTime": 3.805,
+        "word": "他"
+      },
+      {
+        "confidence": 0.9507343,
+        "endTime": 4.145,
+        "startTime": 4.035,
+        "word": "人"
+      },
+      {
+        "confidence": 0.9417345,
+        "endTime": 4.305,
+        "startTime": 4.145,
+        "word": "那"
+      },
+      {
+        "confidence": 0.96177554,
+        "endTime": 4.405,
+        "startTime": 4.305,
+        "word": "里"
+      },
+      {
+        "confidence": 0.91899323,
+        "endTime": 4.575,
+        "startTime": 4.405,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.82879627,
+        "endTime": 4.835,
+        "startTime": 4.575,
+        "word": "取。"
+      }
+    ]
+  }
+]

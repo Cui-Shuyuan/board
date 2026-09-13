@@ -1,0 +1,206 @@
+[
+  {
+    "phonemes": [],
+    "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，",
+    "words": [
+      {
+        "confidence": 0.9278471,
+        "endTime": 0.475,
+        "startTime": 0.275,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.9182066,
+        "endTime": 0.675,
+        "startTime": 0.475,
+        "word": "取"
+      },
+      {
+        "confidence": 0.9546049,
+        "endTime": 0.825,
+        "startTime": 0.675,
+        "word": "之"
+      },
+      {
+        "confidence": 0.9749795,
+        "endTime": 1.095,
+        "startTime": 0.825,
+        "word": "后"
+      },
+      {
+        "confidence": 0.9586104,
+        "endTime": 1.235,
+        "startTime": 1.095,
+        "word": "必"
+      },
+      {
+        "confidence": 0.97338873,
+        "endTime": 1.405,
+        "startTime": 1.235,
+        "word": "须"
+      },
+      {
+        "confidence": 0.9348096,
+        "endTime": 1.615,
+        "startTime": 1.405,
+        "word": "保"
+      },
+      {
+        "confidence": 0.92642266,
+        "endTime": 1.865,
+        "startTime": 1.615,
+        "word": "证"
+      },
+      {
+        "confidence": 0.92282194,
+        "endTime": 1.985,
+        "startTime": 1.865,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9556823,
+        "endTime": 2.155,
+        "startTime": 1.985,
+        "word": "种"
+      },
+      {
+        "confidence": 0.973197,
+        "endTime": 2.335,
+        "startTime": 2.155,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.943106,
+        "endTime": 2.615,
+        "startTime": 2.335,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9859104,
+        "endTime": 2.815,
+        "startTime": 2.615,
+        "word": "在"
+      },
+      {
+        "confidence": 0.95139164,
+        "endTime": 3.005,
+        "startTime": 2.815,
+        "word": "供"
+      },
+      {
+        "confidence": 0.88927,
+        "endTime": 3.145,
+        "startTime": 3.005,
+        "word": "应"
+      },
+      {
+        "confidence": 0.7546106,
+        "endTime": 3.335,
+        "startTime": 3.145,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.9143595,
+        "endTime": 3.565,
+        "startTime": 3.335,
+        "word": "中"
+      },
+      {
+        "confidence": 0.9399191,
+        "endTime": 3.725,
+        "startTime": 3.565,
+        "word": "至"
+      },
+      {
+        "confidence": 0.9744382,
+        "endTime": 3.925,
+        "startTime": 3.725,
+        "word": "少"
+      },
+      {
+        "confidence": 0.74665695,
+        "endTime": 4.085,
+        "startTime": 3.925,
+        "word": "剩"
+      },
+      {
+        "confidence": 0.77914816,
+        "endTime": 4.265,
+        "startTime": 4.085,
+        "word": "下"
+      },
+      {
+        "confidence": 0.2764225,
+        "endTime": 4.445,
+        "startTime": 4.415,
+        "word": "2"
+      },
+      {
+        "confidence": 0.9408015,
+        "endTime": 4.795,
+        "startTime": 4.445,
+        "word": "枚，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "否则就不能这样拿取。",
+    "words": [
+      {
+        "confidence": 0.91943973,
+        "endTime": 5.325042,
+        "startTime": 5.1700416,
+        "word": "否"
+      },
+      {
+        "confidence": 0.8539547,
+        "endTime": 5.5850415,
+        "startTime": 5.325042,
+        "word": "则"
+      },
+      {
+        "confidence": 0.96694297,
+        "endTime": 5.7350416,
+        "startTime": 5.5850415,
+        "word": "就"
+      },
+      {
+        "confidence": 0.97436035,
+        "endTime": 5.8750415,
+        "startTime": 5.7350416,
+        "word": "不"
+      },
+      {
+        "confidence": 0.5147396,
+        "endTime": 5.9350414,
+        "startTime": 5.8750415,
+        "word": "能"
+      },
+      {
+        "confidence": 0.12287632,
+        "endTime": 5.9950414,
+        "startTime": 5.9350414,
+        "word": "这"
+      },
+      {
+        "confidence": 0.090949625,
+        "endTime": 6.0250416,
+        "startTime": 5.9950414,
+        "word": "样"
+      },
+      {
+        "confidence": 0.16925062,
+        "endTime": 6.0850415,
+        "startTime": 6.0250416,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.27600616,
+        "endTime": 6.1450415,
+        "startTime": 6.0850415,
+        "word": "取。"
+      }
+    ]
+  }
+]

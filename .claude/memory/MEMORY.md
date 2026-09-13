@@ -1,0 +1,21 @@
+- [AI桌游讲师项目总览](project-overview.md) — 核心架构、设计理念、技术选型
+- [桌游本体设计](ontology-design.md) — JSON schema 约定、关键决策、当前进度（71 概念）
+- [ontology 概念直接引用约定](ontology-direct-use.md) — 设计约定：已有 ontology 概念不在游戏层重复封装
+- [璀璨宝石规则进度](splendor-progress.md) — 概念层与流程层已完成，Runtime 已验证
+- [交互模型与 Runtime 目标](interaction-model.md) — LLM 与程序分工、无状态/无 CV 的阶段目标
+- [Runtime 架构](runtime-architecture.md) — BoardAI.Api 后端接口、工具设计与实现决策、问答三层结构（tier1/2/3）与文件缓存坑
+- [向量语义检索](vector-search.md) — Qdrant + bge-base-zh-v1.5 ONNX（2026-08-16 升级）、索引重建、搜索路由、换模型流程
+- [文明演化规则进度](civolution-progress.md) — setup 完整化 + phase 1-3 完成，pipeline/per_player/draw 模型定稿
+- [文明演化规则学习笔记](civolution-rules-notes.md) — 规则学习收获与 piece 表设计草案
+- [波多黎各 1897 规则进度](puerto-rico-progress.md) — 首版完成 + FAQ/civolution QA 基线 + 三层体系与模型升级决策记录；用户 2026-08-17 整体 review
+- [工业革命：伯明翰规则进度](brass-progress.md) — 概念层+流程层首版完成，FAQ 50 题 48/50；FAQ 与 MD 冲突 4 处待裁决
+- [勃艮第城堡规则进度](castles-of-burgundy-progress.md) — 概念层+流程层完成、校验全绿；QA 52 题 52/52（A41/C11），6 处检索强化修复；待用户 review 与实物核实
+- [方舟动物园规则进度](ark-nova-progress.md) — 概念层+流程层完成；FAQ 32 题 31 通过（Q23 单卡文本挂起）；FIRST_MATCH/FILTER 枚举新增；棋盘数值待高清原图、appearance 用户自补
+- [用户偏好](user-preferences.md) — 设计哲学、工作方式
+- [Pipeline 多选项处理模型](pipeline-model.md) — 定稿：pipeline 在 content.instant_content 内、步骤四形态、do_after 语义、场景模版
+- [JSON 编写约定](json-writing-conventions.md) — flow.json/concepts.json 编写时必须遵守的格式规则
+- [讲规模块](tutorial-module.md) — 第五阶段定稿：Unity 原生安卓 + 数据驱动 2D/2.5D sprite 动画（50° 固定俯角）；Unity 6 环境全落 D 盘；client 骨架与首个原型已跑通，观感待截图迭代
+- [教学动画数据层](tutorial-data-layer.md) — tutorial.json schema + validate_tutorial.py + Unity 动画原语库/播放器骨架（2026-09-06）
+- [讲规动画制作路线](tutorial-production-pipeline.md) — 口播稿主/动画从、full 先做/quick 默认、编译期起始画面、TTS 冻结后动画；Splendor full 109 cue 已 TTS、编译 runtime、实现 Unity 纯音频播放器 v0（2026-09-13）
+- [动画制作流水线](animation-pipeline.md) — 3D 车道备用参考：Image-to-3D vs LLM vs 手动标注分工边界（视觉层已转 2.5D，slot 空物体方案仍适用）
+- [FAQ 类型收敛与程序化工具](faq-tools.md) — 237 题聚类 9+ 类型；「名词直呼」工具已完成（87% 程序拍板）；广播架构愿景；候选下一类

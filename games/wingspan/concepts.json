@@ -1,0 +1,526 @@
+{
+  "meta": {
+    "game": "wingspan",
+    "name": {
+      "zh": "展翅翱翔",
+      "en": "Wingspan"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "展翅翱翔的结构化规则定义（首版：基础游戏规则，不含扩展/单人模式；卡牌实例与具体鸟能力留待后续）。包含设置、4 回合行动、回合末目标、终局计分与判胜。",
+      "en": "Structured rule definition for Wingspan (first version: base game only, no expansions/solo; card instances and per-bird abilities are left for later). Covers setup, 4 rounds of actions, end-of-round goals, final scoring, and adjudication."
+    }
+  },
+  "objects": [
+    {
+      "id": "wingspan_setting",
+      "name": {
+        "zh": "展翅翱翔背景设定",
+        "en": "Wingspan Setting"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "《展翅翱翔》的世界观：玩家是鸟类爱好者，通过打出鸟牌、获取食物、下蛋、抽牌，在自己的自然保护区中吸引鸟类并形成组合。游戏以北美鸟类为主题，目标是成为最成功的鸟类爱好者。",
+        "en": "The world of Wingspan: players are bird enthusiasts attracting birds to their wildlife preserves, forming powerful combos through birds, food, eggs, and cards."
+      },
+      "specifies": "<ontology::setting>"
+    },
+    {
+      "id": "bird_card",
+      "name": {
+        "zh": "鸟牌",
+        "en": "Bird Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家手牌与玩家板上的核心卡牌。每张鸟牌印有：栖息地（<forest_habitat>/<grassland_habitat>/<wetland_habitat>，多栖息地可选其一）、食物费用、蛋费用（按所在列）、分值、鸟巢类型、翼展、能力（<when_played_power>/<when_activated_power>/<once_between_turns_power>）等。打出后放在对应栖息地，最多 5 只。",
+        "en": "The core card in hand and on the player mat. Each bird card shows habitats (forest/grassland/wetland, choose one if multiple), food cost, egg cost by column, victory points, nest type, wingspan, and powers (when played / when activated / once between turns). Played birds are placed in a habitat, max 5 per habitat."
+      },
+      "specifies": "<ontology::card>",
+      "appearance": {
+        "zh": "长方形卡牌，正面印有鸟的插画、栖息地、食物费、分值、鸟巢、翼展与能力文字。",
+        "en": "Rectangular card with bird art, habitat, food cost, points, nest, wingspan, and power text."
+      }
+    },
+    {
+      "id": "bonus_card",
+      "name": {
+        "zh": "奖励牌",
+        "en": "Bonus Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "开局和部分鸟牌效果提供额外计分条件。终局时按奖励牌上印的计分方式结算。",
+        "en": "Bonus cards provide end-game scoring objectives. Score them at game end according to their printed text."
+      },
+      "specifies": "<ontology::card>",
+      "appearance": {
+        "zh": "长方形卡牌，印有终局计分条件与分值。",
+        "en": "Rectangular card printed with an end-game scoring condition and points."
+      }
+    },
+    {
+      "id": "food",
+      "name": {
+        "zh": "食物",
+        "en": "Food"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "用于打出鸟牌的基础资源。共有 5 种：<invertebrate>、<seed>、<fish>、<fruit>、<rodent>。食物放在玩家板旁（<player_food_supply>），也可以由部分鸟能力囤积在鸟牌上成为<cached_food>；玩家板旁的食物可支付鸟的费用，鸟牌上的缓存食物不能支付，只在终局计 1 分。",
+        "en": "Basic resource used to play birds. There are five types: invertebrate, seed, fish, fruit, rodent. Food beside the mat is spendable; food cached on bird cards is not spendable and scores 1 VP at game end."
+      },
+      "specifies": "<ontology::resource>",
+      "limited_supply": true,
+      "appearance": {
+        "zh": "小圆柱/圆形食物标记，共有昆虫、种子、鱼、果实、啮齿动物五种图标。",
+        "en": "Small cylindrical/round food tokens with five icons: invertebrate, seed, fish, fruit, rodent."
+      }
+    },
+    {
+      "id": "invertebrate",
+      "name": {
+        "zh": "无脊椎动物/昆虫",
+        "en": "Invertebrate"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "五种食物之一。鸟食骰的一个面。",
+        "en": "One of the five food types and a birdfeeder die face."
+      },
+      "specifies": "<food>",
+      "appearance": {
+        "zh": "食物标记，图标为无脊椎动物/昆虫。",
+        "en": "Food token showing the invertebrate/insect icon."
+      }
+    },
+    {
+      "id": "seed",
+      "name": {
+        "zh": "种子",
+        "en": "Seed"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "五种食物之一。鸟食骰的一个面。",
+        "en": "One of the five food types and a birdfeeder die face."
+      },
+      "specifies": "<food>",
+      "appearance": {
+        "zh": "食物标记，图标为种子。",
+        "en": "Food token showing the seed icon."
+      }
+    },
+    {
+      "id": "fish",
+      "name": {
+        "zh": "鱼",
+        "en": "Fish"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "五种食物之一。鸟食骰的一个面。",
+        "en": "One of the five food types and a birdfeeder die face."
+      },
+      "specifies": "<food>",
+      "appearance": {
+        "zh": "食物标记，图标为鱼。",
+        "en": "Food token showing the fish icon."
+      }
+    },
+    {
+      "id": "fruit",
+      "name": {
+        "zh": "果实",
+        "en": "Fruit"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "五种食物之一。鸟食骰的一个面。",
+        "en": "One of the five food types and a birdfeeder die face."
+      },
+      "specifies": "<food>",
+      "appearance": {
+        "zh": "食物标记，图标为果实。",
+        "en": "Food token showing the fruit icon."
+      }
+    },
+    {
+      "id": "rodent",
+      "name": {
+        "zh": "啮齿动物",
+        "en": "Rodent"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "五种食物之一。鸟食骰的一个面。",
+        "en": "One of the five food types and a birdfeeder die face."
+      },
+      "specifies": "<food>",
+      "appearance": {
+        "zh": "食物标记，图标为啮齿动物。",
+        "en": "Food token showing the rodent icon."
+      }
+    },
+    {
+      "id": "wild_food",
+      "name": {
+        "zh": "野生食物图标",
+        "en": "Wild Food Icon"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "鸟牌食物费用中的通配图标。支付时可当作任意一种<food>；规则书的「/」表示或，2 个任意食物可在打出鸟牌时当作 1 个任意食物使用。",
+        "en": "Wild icon in bird food costs. It can be paid as any one food type; '/' means or; two any food may be treated as one any food when playing a bird."
+      },
+      "specifies": "<ontology::property>"
+    },
+    {
+      "id": "egg",
+      "name": {
+        "zh": "鸟蛋",
+        "en": "Egg"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "下蛋行动获得，放在鸟牌上；蛋也是打出第 2–5 列鸟的额外费用。终局每颗蛋值 1 分。",
+        "en": "Eggs are gained by the lay eggs action and placed on bird cards; they also pay the column cost when playing a bird into columns 2–5. Each egg scores 1 VP at game end."
+      },
+      "specifies": "<ontology::resource>",
+      "limited_supply": true,
+      "appearance": {
+        "zh": "小蛋形/椭圆木件，有多种颜色，颜色无规则区别。",
+        "en": "Small egg-shaped/oval wooden piece in multiple colors; color has no game effect."
+      }
+    },
+    {
+      "id": "action_cube",
+      "name": {
+        "zh": "行动方块",
+        "en": "Action Cube"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每位玩家 8 个同色木块。每回合可用行动数递减：第 1–4 回合分别为 8/7/6/5 个。行动时放在玩家板对应行动行最左侧未使用的格，回合末移除。",
+        "en": "Each player has 8 colored cubes. Available actions per round: 8/7/6/5 for rounds 1–4. Place one on the leftmost unused space of the chosen action row; remove them at round end."
+      },
+      "specifies": "<ontology::marker>",
+      "appearance": {
+        "zh": "小木方块，每位玩家一个颜色，共 8 个。",
+        "en": "Small wooden cube in each player color, 8 per player."
+      }
+    },
+    {
+      "id": "first_player_marker",
+      "name": {
+        "zh": "先手玩家标记",
+        "en": "First Player Marker"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "指示当前起始玩家。每回合结束后按顺时针交给下一位玩家。",
+        "en": "Indicates the start player. Pass it clockwise at the end of each round."
+      },
+      "specifies": "<ontology::marker>",
+      "appearance": {
+        "zh": "起始玩家标记，通常是特殊造型的木件/圆片。",
+        "en": "First player marker, usually a special-shaped wooden piece/token."
+      }
+    },
+    {
+      "id": "player_mat",
+      "name": {
+        "zh": "玩家板",
+        "en": "Player Mat"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每位玩家一块，含三个栖息地（<forest_habitat>、<grassland_habitat>、<wetland_habitat>），每栖息地最多 5 只鸟；另有 4 条行动行：<play_bird>、<gain_food_action>、<lay_eggs_action>、<draw_cards_action>。行动行上有按回合使用的格子，最左侧未使用的格决定本次收益。",
+        "en": "Each player has a mat with three habitats (forest, grassland, wetland), each holding up to 5 birds, and four action rows: play bird, gain food, lay eggs, draw cards. The leftmost unused space on a row determines the reward."
+      },
+      "specifies": "<ontology::player_board>",
+      "appearance": {
+        "zh": "每位玩家一块纸板，含三个栖息地与四条行动行。",
+        "en": "Cardboard player mat with three habitats and four action rows."
+      }
+    },
+    {
+      "id": "habitat",
+      "name": {
+        "zh": "栖息地",
+        "en": "Habitat"
+      },
+      "abstract": true,
+      "description": {
+        "zh": "玩家板上的鸟类区域。每种栖息地对应一个行动：<forest_habitat> 对应获取食物，<grassland_habitat> 对应下蛋，<wetland_habitat> 对应抽牌。",
+        "en": "A bird area on the player mat. Each habitat corresponds to an action: forest = gain food, grassland = lay eggs, wetland = draw cards."
+      },
+      "specifies": "<ontology::zone>"
+    },
+    {
+      "id": "forest_habitat",
+      "name": {
+        "zh": "森林栖息地",
+        "en": "Forest Habitat"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置森林鸟的区域，最多 5 只。使用获取食物行动后，从右到左触发该行棕色能力。",
+        "en": "Forest bird area, max 5 birds. Brown powers here are activated right-to-left after taking the gain food action."
+      },
+      "specifies": "<habitat>",
+      "contains": {
+        "type": "<bird_card>[]"
+      },
+      "capacity": 5
+    },
+    {
+      "id": "grassland_habitat",
+      "name": {
+        "zh": "草原栖息地",
+        "en": "Grassland Habitat"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置草原鸟的区域，最多 5 只。使用下蛋行动后，从右到左触发该行棕色能力。",
+        "en": "Grassland bird area, max 5 birds. Brown powers here are activated right-to-left after taking the lay eggs action."
+      },
+      "specifies": "<habitat>",
+      "contains": {
+        "type": "<bird_card>[]"
+      },
+      "capacity": 5
+    },
+    {
+      "id": "wetland_habitat",
+      "name": {
+        "zh": "湿地栖息地",
+        "en": "Wetland Habitat"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放置湿地鸟的区域，最多 5 只。使用抽牌行动后，从右到左触发该行棕色能力。",
+        "en": "Wetland bird area, max 5 birds. Brown powers here are activated right-to-left after taking the draw cards action."
+      },
+      "specifies": "<habitat>",
+      "contains": {
+        "type": "<bird_card>[]"
+      },
+      "capacity": 5
+    },
+    {
+      "id": "bird_tray",
+      "name": {
+        "zh": "鸟盘",
+        "en": "Bird Tray"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "公共鸟牌展示区，始终有 3 张正面朝上的鸟牌。玩家抽牌时可从鸟盘或<bird_deck>顶抽取。回合结束时清空并补 3 张新牌。",
+        "en": "Public display of bird cards: always 3 face-up cards. Players may draw from the tray or the top of the bird deck. At round end, discard and refill 3 new cards."
+      },
+      "specifies": "<ontology::market>",
+      "capacity": 3
+    },
+    {
+      "id": "bird_deck",
+      "name": {
+        "zh": "鸟牌库",
+        "en": "Bird Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "所有鸟牌洗匀组成的暗牌堆。抽空时把<bird_discard_pile>洗成新牌库。",
+        "en": "Face-down deck of all bird cards. If empty, shuffle the discard pile into a new deck."
+      },
+      "specifies": "<ontology::deck>"
+    },
+    {
+      "id": "bird_discard_pile",
+      "name": {
+        "zh": "鸟牌弃牌堆",
+        "en": "Bird Discard Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "存放弃掉的鸟牌与回合末清出鸟盘的牌，正面朝上。",
+        "en": "Holds discarded bird cards and birds cleared from the tray at round end, face up."
+      },
+      "specifies": "<ontology::discard_pile>"
+    },
+    {
+      "id": "birdfeeder",
+      "name": {
+        "zh": "鸟食骰塔",
+        "en": "Birdfeeder"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "装有 5 颗<food_die>的公共骰塔。玩家获取食物时从里面取骰子结算；托盘空时把 5 颗骰全部抛回；若所有剩余骰子显示同一面（含只剩 1 颗），可在即将获得食物前选择全部重掷。",
+        "en": "The public dice tower holding 5 food dice. When gaining food, take dice from it; if empty, throw all 5 dice back; if all remaining dice show the same face (even one die), you may reroll all 5 before gaining food."
+      },
+      "specifies": "<ontology::pool>"
+    },
+    {
+      "id": "food_die",
+      "name": {
+        "zh": "食物骰",
+        "en": "Food Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "六面食物骰，每面对应一种食物图标（<invertebrate>/<seed>/<fish>/<fruit>/<rodent>，蜂鸟/野生图标算独立一面）。",
+        "en": "A six-sided food die; each face shows a food icon (invertebrate/seed/fish/fruit/rodent; the wild icon counts as its own face)."
+      },
+      "specifies": "<ontology::dice>",
+      "sides": 6
+    },
+    {
+      "id": "goal_board",
+      "name": {
+        "zh": "目标板",
+        "en": "Goal Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "双面目标板：绿色为多数决计分，蓝色为每项 1 分（上限 5 分）。4 个空格放置<goal_tile>，每回合末结算对应目标。",
+        "en": "Double-sided goal board: green uses majority scoring; blue scores 1 point per item (max 5). Four slots hold goal tiles; the corresponding goal is scored each round."
+      },
+      "specifies": "<ontology::public_board>",
+      "appearance": {
+        "zh": "双面目标板，绿面/蓝面各有 4 个目标空格。",
+        "en": "Double-sided goal board with green/blue sides and four goal slots."
+      }
+    },
+    {
+      "id": "goal_tile",
+      "name": {
+        "zh": "目标板块",
+        "en": "Goal Tile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "随机放置在<goal_board>上的 4 块目标板块，每回合末结算其中一个目标。目标通常基于某栖息地鸟/蛋数量或鸟巢类型。",
+        "en": "Tiles randomly placed on the goal board; one is scored at the end of each round. Goals are typically based on birds/eggs in a habitat or nest types."
+      },
+      "specifies": "<ontology::tile>",
+      "appearance": {
+        "zh": "小方形/矩形板块，印有目标图标。",
+        "en": "Small square/rectangular tile printed with a goal icon."
+      }
+    },
+    {
+      "id": "bonus_deck",
+      "name": {
+        "zh": "奖励牌库",
+        "en": "Bonus Card Deck"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "奖励牌组成的暗牌堆。设置时每位玩家抽 2 张保留 1 张；部分鸟牌效果可再抽。",
+        "en": "Face-down deck of bonus cards. During setup each player draws 2 and keeps 1; some bird powers allow drawing more."
+      },
+      "specifies": "<ontology::deck>"
+    },
+    {
+      "id": "hand",
+      "name": {
+        "zh": "手牌",
+        "en": "Hand"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家持有的鸟牌与奖励牌。手牌无数量上限（开局选牌除外）。",
+        "en": "Cards held by a player. There is no hand limit (except during setup selection)."
+      },
+      "specifies": "<ontology::hand>",
+      "contains": {
+        "type": "<bird_card>[] | <bonus_card>[]"
+      },
+      "capacity": null
+    },
+    {
+      "id": "player_food_supply",
+      "name": {
+        "zh": "玩家食物供应",
+        "en": "Player Food Supply"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "玩家板旁公开的食物标记区。只有这里的<food>可以支付鸟牌食物费用；<cached_food>不能支付。",
+        "en": "Public food tokens beside the player mat. Only food here may be spent on bird costs; cached food may not."
+      },
+      "specifies": "<ontology::player_supply>"
+    },
+    {
+      "id": "cached_food",
+      "name": {
+        "zh": "缓存食物",
+        "en": "Cached Food"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "通过部分棕色能力囤积在鸟牌上的食物标记。不能用于支付任何费用；终局时每个值 1 分。",
+        "en": "Food tokens cached on bird cards by certain brown powers. They cannot be spent; each scores 1 VP at game end."
+      },
+      "specifies": "<ontology::resource>",
+      "limited_supply": true,
+      "appearance": {
+        "zh": "与普通<food>相同的标记，但放在鸟牌上表示囤积。",
+        "en": "Same token as regular <food>, but placed on a bird card to indicate caching."
+      }
+    },
+    {
+      "id": "tucked_cards",
+      "name": {
+        "zh": "塞入的牌",
+        "en": "Tucked Cards"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "某些鸟能力把鸟牌塞到该鸟下方形成的牌堆。被塞的牌保留到终局，每张值 1 分；无数量上限。",
+        "en": "Cards tucked beneath a bird by certain powers. They remain until game end and score 1 VP each; no upper limit."
+      },
+      "specifies": "<ontology::zone>"
+    },
+    {
+      "id": "when_played_power",
+      "name": {
+        "zh": "打出时能力",
+        "en": "When Played Power"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "白色能力，仅在打出该鸟时触发一次，之后不再触发。鸟能力始终可选。",
+        "en": "White power, triggered only once when the bird is played. Bird powers are always optional."
+      },
+      "specifies": "<ontology::effect>"
+    },
+    {
+      "id": "when_activated_power",
+      "name": {
+        "zh": "激活时能力",
+        "en": "When Activated Power"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "棕色能力，在使用对应栖息地行动后从右到左依次触发，全部可选。",
+        "en": "Brown power, activated right-to-left after using the matching habitat action; all are optional."
+      },
+      "specifies": "<ontology::effect>"
+    },
+    {
+      "id": "once_between_turns_power",
+      "name": {
+        "zh": "回合之间一次能力",
+        "en": "Once Between Turns Power"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "粉色能力，可在对手回合触发；在自己两次回合之间同一种粉色能力只能触发一次。",
+        "en": "Pink power, may trigger on opponents' turns; each pink power can trigger only once between your own turns."
+      },
+      "specifies": "<ontology::effect>"
+    }
+  ]
+}

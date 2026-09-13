@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://board.local/tutorial.schema.json",
+  "title": "Board game tutorial animation schema",
+  "description": "数据驱动的桌游教学动画：章节 + 音频 + 字幕 + 时间轴事件。事件只允许引用固定动画原语，参数由本 schema 约束。",
+  "type": "object",
+  "required": [
+    "meta",
+    "board",
+    "slots",
+    "sprites",
+    "chapters"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "game_id",
+        "version",
+        "title"
+      ],
+      "properties": {
+        "game_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "version": {
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/localized"
+        },
+        "locale": {
+          "type": "string",
+          "default": "zh",
+          "enum": [
+            "zh",
+            "en"
+          ]
+        },
+        "default_easing": {
+          "$ref": "#/$defs/easing",
+          "default": "easeOutCubic"
+        },
+        "default_highlight_color": {
+          "$ref": "#/$defs/color",
+          "default": "#FFD54F"
+        },
+        "generator": {
+          "type": "string",
+          "description": "生成器标识，供追溯"
+        }
+      },
+      "additionalProperties": false
+    },
+    "board": {
+      "type": "object",
+      "required": [
+        "image",
+        "width_mm",
+        "height_mm"
+      ],
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "版图 sprite 文件路径，相对于 games/{game}/media/"
+        },
+        "width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "top_left",
+            "center"
+          ],
+          "default": "top_left"
+        },
+        "pixels_per_unit": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 100
+        },
+        "comment": {
+          "type": "string",
+          "description": "备注，播放器忽略"
+        }
+      },
+      "additionalProperties": false
+    },
+    "slots": {
+      "type": "array",
+      "description": "slot 是逻辑位置，只存坐标，不存表现。x/y 为版图归一化坐标，origin=top_left 时 (0,0) 是版图左上角，x 向右，y 向下；center 时 (0,0) 是版图中心。",
+      "items": {
+        "$ref": "#/$defs/slot"
+      }
+    },
+    "sprites": {
+      "type": "array",
+      "description": "sprite 是外观资产，只存文件和物理尺寸，不存坐标。",
+      "items": {
+        "$ref": "#/$defs/sprite"
+      }
+    },
+    "chapters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/chapter"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "required": [
+        "zh"
+      ],
+      "properties": {
+        "zh": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "easing": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "easeInQuad",
+        "easeOutQuad",
+        "easeInOutQuad",
+        "easeInCubic",
+        "easeOutCubic",
+        "easeInOutCubic",
+        "easeInBack",
+        "easeOutBack",
+        "easeInOutBack"
+      ]
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "position": {
+      "type": "object",
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "slot": {
+      "type": "object",
+      "required": [
+        "id",
+        "x",
+        "y"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+$"
+        },
+        "x": {
+          "type": "number",
+          "description": "归一化 x，允许超出 [0,1] 表示版图外（如游戏盒位置）"
+        },
+        "y": {
+          "type": "number",
+          "description": "归一化 y，允许超出 [0,1] 表示版图外"
+        },
+        "z": {
+          "type": "number",
+          "default": 0,
+          "description": "高度偏移（mm），默认 0 贴在版图上"
+        },
+        "label": {
+          "$ref": "#/$defs/localized"
+        },
+        "comment": {
+          "type": "string",
+          "description": "备注，播放器忽略"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sprite": {
+      "type": "object",
+      "required": [
+        "id",
+        "file",
+        "width_mm",
+        "height_mm"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+$"
+        },
+        "file": {
+          "type": "string",
+          "description": "PNG 路径，相对于 games/{game}/media/，建议 RGBA 透明底"
+        },
+        "width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pivot": {
+          "type": "string",
+          "enum": [
+            "center",
+            "top_left",
+            "bottom_center"
+          ],
+          "default": "center"
+        },
+        "z_offset": {
+          "type": "number",
+          "default": 0,
+          "description": "叠放高度偏移（mm）"
+        },
+        "comment": {
+          "type": "string",
+          "description": "备注，播放器忽略"
+        },
+        "hidden": {
+          "type": "boolean",
+          "default": false,
+          "description": "初始是否隐藏（alpha=0）。用于配合 fade 原语实现登场。"
+        },
+        "spawn_slot": {
+          "type": "string",
+          "description": "初始摆放的 slot id；缺省时用时间轴中第一个 move 的 from_slot，再缺省为版图中心。"
+        }
+      },
+      "additionalProperties": false
+    },
+    "subtitle": {
+      "type": "object",
+      "required": [
+        "t",
+        "text"
+      ],
+      "properties": {
+        "t": {
+          "type": "number",
+          "minimum": 0,
+          "description": "相对章节起点的秒数"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "id",
+        "t",
+        "duration",
+        "action"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+$"
+        },
+        "t": {
+          "type": "number",
+          "minimum": 0,
+          "description": "相对章节起点的开始秒数"
+        },
+        "duration": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "动画时长秒数"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "move",
+            "flip",
+            "rotate",
+            "scale",
+            "fade",
+            "highlight",
+            "shuffle",
+            "wait"
+          ]
+        },
+        "sprite": {
+          "type": "string",
+          "description": "事件作用的目标 sprite id"
+        },
+        "from_slot": {
+          "type": "string"
+        },
+        "to_slot": {
+          "type": "string"
+        },
+        "from_position": {
+          "$ref": "#/$defs/position"
+        },
+        "to_position": {
+          "$ref": "#/$defs/position"
+        },
+        "slot": {
+          "type": "string",
+          "description": "highlight 作用的目标 slot id"
+        },
+        "sprites": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "shuffle 作用的 sprite id 列表"
+        },
+        "rotation": {
+          "type": "number",
+          "description": "rotate 目标角度（度）"
+        },
+        "scale": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "scale 目标倍率"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "fade 目标透明度，0 全透明，1 不透明"
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "highlight 颜色，默认 meta.default_highlight_color"
+        },
+        "easing": {
+          "$ref": "#/$defs/easing"
+        },
+        "loop": {
+          "type": "boolean",
+          "default": false,
+          "description": "highlight 是否循环脉冲"
+        },
+        "comment": {
+          "type": "string",
+          "description": "给人类/LLM 看的备注，播放器忽略"
+        }
+      },
+      "additionalProperties": false
+    },
+    "chapter": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "audio",
+        "timeline"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_./-]+$"
+        },
+        "title": {
+          "$ref": "#/$defs/localized"
+        },
+        "audio": {
+          "type": "string",
+          "description": "章节音频路径，相对于 games/{game}/media/"
+        },
+        "subtitles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/subtitle"
+          }
+        },
+        "interrupt_context": {
+          "type": "string",
+          "description": "打断问答时注入的上下文，例如「当前在讲设置供应区」"
+        },
+        "timeline": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

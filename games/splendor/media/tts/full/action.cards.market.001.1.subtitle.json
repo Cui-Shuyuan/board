@@ -1,0 +1,194 @@
+[
+  {
+    "phonemes": [],
+    "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，",
+    "words": [
+      {
+        "confidence": 0.7917102,
+        "endTime": 0.455,
+        "startTime": 0.295,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9185774,
+        "endTime": 0.695,
+        "startTime": 0.455,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9168687,
+        "endTime": 0.845,
+        "startTime": 0.695,
+        "word": "只"
+      },
+      {
+        "confidence": 0.8143743,
+        "endTime": 1.005,
+        "startTime": 0.845,
+        "word": "可"
+      },
+      {
+        "confidence": 0.83830315,
+        "endTime": 1.165,
+        "startTime": 1.005,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9301057,
+        "endTime": 1.495,
+        "startTime": 1.165,
+        "word": "从"
+      },
+      {
+        "confidence": 0.9890969,
+        "endTime": 1.645,
+        "startTime": 1.495,
+        "word": "被"
+      },
+      {
+        "confidence": 0.68220603,
+        "endTime": 1.835,
+        "startTime": 1.645,
+        "word": "翻"
+      },
+      {
+        "confidence": 0.95062864,
+        "endTime": 2.095,
+        "startTime": 1.835,
+        "word": "开"
+      },
+      {
+        "confidence": 0.7467684,
+        "endTime": 2.205,
+        "startTime": 2.095,
+        "word": "的"
+      },
+      {
+        "confidence": 0.17067531,
+        "endTime": 2.595,
+        "startTime": 2.565,
+        "word": "12"
+      },
+      {
+        "confidence": 0.9223609,
+        "endTime": 2.805,
+        "startTime": 2.595,
+        "word": "张"
+      },
+      {
+        "confidence": 0.98659784,
+        "endTime": 2.995,
+        "startTime": 2.805,
+        "word": "发"
+      },
+      {
+        "confidence": 0.9215577,
+        "endTime": 3.125,
+        "startTime": 2.995,
+        "word": "展"
+      },
+      {
+        "confidence": 0.9497611,
+        "endTime": 3.305,
+        "startTime": 3.125,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9281778,
+        "endTime": 3.495,
+        "startTime": 3.305,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.97107893,
+        "endTime": 3.705,
+        "startTime": 3.495,
+        "word": "中"
+      },
+      {
+        "confidence": 0.9761428,
+        "endTime": 3.945,
+        "startTime": 3.705,
+        "word": "选"
+      },
+      {
+        "confidence": 0.98097086,
+        "endTime": 4.105,
+        "startTime": 3.945,
+        "word": "择"
+      },
+      {
+        "confidence": 0.93172765,
+        "endTime": 4.205,
+        "startTime": 4.105,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9454369,
+        "endTime": 4.375,
+        "startTime": 4.205,
+        "word": "张"
+      },
+      {
+        "confidence": 0.959277,
+        "endTime": 4.565,
+        "startTime": 4.375,
+        "word": "购"
+      },
+      {
+        "confidence": 0.9669846,
+        "endTime": 4.735,
+        "startTime": 4.565,
+        "word": "买，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "并且在任何时间，\n",
+    "words": [
+      {
+        "confidence": 0.6530739,
+        "endTime": 5.2250414,
+        "startTime": 5.1500416,
+        "word": "并"
+      },
+      {
+        "confidence": 0.87774897,
+        "endTime": 5.4550414,
+        "startTime": 5.2250414,
+        "word": "且"
+      },
+      {
+        "confidence": 0.898473,
+        "endTime": 5.6450415,
+        "startTime": 5.4550414,
+        "word": "在"
+      },
+      {
+        "confidence": 0.24565722,
+        "endTime": 5.7050414,
+        "startTime": 5.6450415,
+        "word": "任"
+      },
+      {
+        "confidence": 0.1348831,
+        "endTime": 5.7650414,
+        "startTime": 5.7050414,
+        "word": "何"
+      },
+      {
+        "confidence": 0.091155276,
+        "endTime": 5.825042,
+        "startTime": 5.7650414,
+        "word": "时"
+      },
+      {
+        "confidence": 0.18454327,
+        "endTime": 5.8850417,
+        "startTime": 5.825042,
+        "word": "间，"
+      }
+    ]
+  }
+]

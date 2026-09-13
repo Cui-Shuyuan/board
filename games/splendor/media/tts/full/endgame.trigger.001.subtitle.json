@@ -1,0 +1,140 @@
+[
+  {
+    "phonemes": [],
+    "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
+    "words": [
+      {
+        "confidence": 0.9694073,
+        "endTime": 0.445,
+        "startTime": 0.275,
+        "word": "当"
+      },
+      {
+        "confidence": 0.8446643,
+        "endTime": 0.565,
+        "startTime": 0.445,
+        "word": "一"
+      },
+      {
+        "confidence": 0.7834897,
+        "endTime": 0.715,
+        "startTime": 0.565,
+        "word": "位"
+      },
+      {
+        "confidence": 0.9251616,
+        "endTime": 0.875,
+        "startTime": 0.715,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9577253,
+        "endTime": 1.055,
+        "startTime": 0.875,
+        "word": "家"
+      },
+      {
+        "confidence": 0.95520324,
+        "endTime": 1.155,
+        "startTime": 1.055,
+        "word": "的"
+      },
+      {
+        "confidence": 0.82464683,
+        "endTime": 1.315,
+        "startTime": 1.155,
+        "word": "声"
+      },
+      {
+        "confidence": 0.92271423,
+        "endTime": 1.505,
+        "startTime": 1.315,
+        "word": "望"
+      },
+      {
+        "confidence": 0.8902673,
+        "endTime": 1.755,
+        "startTime": 1.505,
+        "word": "值"
+      },
+      {
+        "confidence": 0.97304344,
+        "endTime": 1.925,
+        "startTime": 1.755,
+        "word": "达"
+      },
+      {
+        "confidence": 0.9385973,
+        "endTime": 2.065,
+        "startTime": 1.925,
+        "word": "到"
+      },
+      {
+        "confidence": 0.14601967,
+        "endTime": 2.095,
+        "startTime": 2.065,
+        "word": "15"
+      },
+      {
+        "confidence": 0.86223924,
+        "endTime": 2.775,
+        "startTime": 2.645,
+        "word": "或"
+      },
+      {
+        "confidence": 0.96567255,
+        "endTime": 2.985,
+        "startTime": 2.775,
+        "word": "更"
+      },
+      {
+        "confidence": 0.9799053,
+        "endTime": 3.155,
+        "startTime": 2.985,
+        "word": "多"
+      },
+      {
+        "confidence": 0.9680571,
+        "endTime": 3.565,
+        "startTime": 3.155,
+        "word": "时，"
+      },
+      {
+        "confidence": 0.9256326,
+        "endTime": 3.915,
+        "startTime": 3.735,
+        "word": "触"
+      },
+      {
+        "confidence": 0.94441503,
+        "endTime": 4.225,
+        "startTime": 3.915,
+        "word": "发"
+      },
+      {
+        "confidence": 0.92775154,
+        "endTime": 4.355,
+        "startTime": 4.225,
+        "word": "游"
+      },
+      {
+        "confidence": 0.98874366,
+        "endTime": 4.555,
+        "startTime": 4.355,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.9891742,
+        "endTime": 4.705,
+        "startTime": 4.555,
+        "word": "结"
+      },
+      {
+        "confidence": 0.9763637,
+        "endTime": 4.915,
+        "startTime": 4.705,
+        "word": "束。"
+      }
+    ]
+  }
+]

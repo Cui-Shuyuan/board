@@ -1,0 +1,122 @@
+[
+  {
+    "phonemes": [],
+    "text": "只要卡牌被玩家买走，卡牌供应堆出现了空位，\n",
+    "words": [
+      {
+        "confidence": 0.9475907,
+        "endTime": 0.515,
+        "startTime": 0.295,
+        "word": "只"
+      },
+      {
+        "confidence": 0.97158235,
+        "endTime": 0.685,
+        "startTime": 0.515,
+        "word": "要"
+      },
+      {
+        "confidence": 0.8182107,
+        "endTime": 0.925,
+        "startTime": 0.685,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9784795,
+        "endTime": 1.205,
+        "startTime": 0.925,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9725082,
+        "endTime": 1.365,
+        "startTime": 1.205,
+        "word": "被"
+      },
+      {
+        "confidence": 0.96262056,
+        "endTime": 1.505,
+        "startTime": 1.365,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9606751,
+        "endTime": 1.675,
+        "startTime": 1.505,
+        "word": "家"
+      },
+      {
+        "confidence": 0.91304857,
+        "endTime": 1.855,
+        "startTime": 1.675,
+        "word": "买"
+      },
+      {
+        "confidence": 0.9193212,
+        "endTime": 2.205,
+        "startTime": 1.855,
+        "word": "走，"
+      },
+      {
+        "confidence": 0.781407,
+        "endTime": 2.535,
+        "startTime": 2.385,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9823009,
+        "endTime": 2.725,
+        "startTime": 2.535,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.8865866,
+        "endTime": 2.945,
+        "startTime": 2.725,
+        "word": "供"
+      },
+      {
+        "confidence": 0.9047008,
+        "endTime": 3.055,
+        "startTime": 2.945,
+        "word": "应"
+      },
+      {
+        "confidence": 0.8305429,
+        "endTime": 3.285,
+        "startTime": 3.055,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.9735292,
+        "endTime": 3.455,
+        "startTime": 3.285,
+        "word": "出"
+      },
+      {
+        "confidence": 0.96874666,
+        "endTime": 3.625,
+        "startTime": 3.455,
+        "word": "现"
+      },
+      {
+        "confidence": 0.94728076,
+        "endTime": 3.715,
+        "startTime": 3.625,
+        "word": "了"
+      },
+      {
+        "confidence": 0.93975466,
+        "endTime": 3.935,
+        "startTime": 3.715,
+        "word": "空"
+      },
+      {
+        "confidence": 0.93950826,
+        "endTime": 4.115,
+        "startTime": 3.935,
+        "word": "位，"
+      }
+    ]
+  }
+]

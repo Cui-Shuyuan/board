@@ -1,0 +1,62 @@
+[
+  {
+    "phonemes": [],
+    "text": "3人游戏时，拿取5枚。",
+    "words": [
+      {
+        "confidence": 0.25684166,
+        "endTime": 0.475,
+        "startTime": 0.445,
+        "word": "3"
+      },
+      {
+        "confidence": 0.7125805,
+        "endTime": 0.665,
+        "startTime": 0.475,
+        "word": "人"
+      },
+      {
+        "confidence": 0.7036756,
+        "endTime": 0.775,
+        "startTime": 0.665,
+        "word": "游"
+      },
+      {
+        "confidence": 0.9717609,
+        "endTime": 0.995,
+        "startTime": 0.775,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.9717612,
+        "endTime": 1.405,
+        "startTime": 0.995,
+        "word": "时，"
+      },
+      {
+        "confidence": 0.9445173,
+        "endTime": 1.775,
+        "startTime": 1.555,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.6344891,
+        "endTime": 2.125,
+        "startTime": 1.775,
+        "word": "取"
+      },
+      {
+        "confidence": 0.16778493,
+        "endTime": 2.155,
+        "startTime": 2.125,
+        "word": "5"
+      },
+      {
+        "confidence": 0.83591354,
+        "endTime": 2.495,
+        "startTime": 2.155,
+        "word": "枚。"
+      }
+    ]
+  }
+]

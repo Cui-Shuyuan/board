@@ -83,7 +83,17 @@
         "en": "A value concept that can be owned, counted, transferred, and spent by <player>s. <resource> extends <object>. Its defining feature is countability — a player holds '3 blue gems', not 'a thing called blue gem'. All units of the same <resource> type are completely equivalent and interchangeable. Unlike a <marker>, a resource is consumed by an action's <cost> or produced by an <effect>; a marker only indicates state."
       },
       "constraints": {
-        "required": [],
+        "required": [
+          {
+            "id": "limited_supply",
+            "type": "boolean",
+            "default": true,
+            "description": {
+              "zh": "此资源是否为有限供应。true = 供应有限（组件用完即无法再获得）；false = 视为无限供应（组件不足时可用替代物，或规则明确不设上限）。省略时默认按有限供应处理，具体游戏可在资源实例中覆盖。",
+              "en": "Whether this resource has a limited supply. true = finite supply (once components run out, no more can be gained); false = effectively unlimited (substitutes may be used or the rules impose no cap). When omitted, the default is treated as limited; game resource instances may override."
+            }
+          }
+        ],
         "optional": [
           {
             "id": "unit",
@@ -125,7 +135,8 @@
       "constraints": {
         "required": [],
         "optional": []
-      }
+      },
+      "limited_supply": false
     },
     {
       "id": "piece",
@@ -495,19 +506,6 @@
         "zh": "通用替换工具：声明将 target 路径指向的任何对象替换为 with。**任何概念都可以选择持有 <ontology::replaces> 字段**（<trigger>、<effect>、<action>、<cost>、<content> 等）——持有方在 condition 成立时执行替换。被替换对象可以是任意可引用物——内容、作用目标、代价等。with 为 _skip 哨兵 = 使目标无效/取消。与 <substitution> 互补：substitution 声明「X 视为 Y」（身份借用），<replaces> 声明「用 Y 替换 X」（对象替换）。",
         "en": "A general replacement tool: declares that whatever object the target path points to is replaced by `with`. **Any concept may choose to carry an <ontology::replaces> field** (<trigger>, <effect>, <action>, <cost>, <content>, etc.) — the carrier performs the replacement when its condition holds. The replaced object can be any referenceable thing — content, target, cost, etc. with = the _skip sentinel nullifies/cancels the target. Complements <substitution>: substitution declares 'X counts as Y' (identity borrowing); <replaces> declares 'Y replaces X' (object replacement)."
       },
-      "target": {
-        "type": "string",
-        "description": {
-          "zh": "被替换对象的路径引用（\"<概念>.<字段>.<子字段>\" 形式）。",
-          "en": "Path reference to the object being replaced (of the form \"<concept>.<field>.<subfield>\")."
-        }
-      },
-      "with": {
-        "description": {
-          "zh": "替换后的对象。_skip 哨兵 = 使目标无效/取消。",
-          "en": "The replacement object. The _skip sentinel = nullify/cancel the target."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -515,7 +513,8 @@
             "description": {
               "zh": "必须声明被替换对象的路径。",
               "en": "The path of the object being replaced must be declared."
-            }
+            },
+            "type": "string"
           }
         ],
         "optional": [
@@ -541,28 +540,6 @@
         "zh": "声明对象 X 在特定语境中充当对象 Y：X 的物理身份不变，在 scope 内、满足 condition 时其行为等同于 Y，离开语境恢复自身身份。与 <piece>.parts 的静态身份声明互补——parts 表达「载体上印着什么身份」，<substitution> 表达「使用时的身份借用」。domain 为资源、标记等对象概念。",
         "en": "Declares that object X acts as object Y within a specific context: X's physical identity is unchanged; inside scope, when the condition holds, its behavior equals Y's; outside, it reverts to itself. Complements the static identity declaration of <piece>.parts — parts states which identities are printed on a carrier, <substitution> states an identity borrowed at use time. Domain is object concepts such as resources and markers."
       },
-      "target": {
-        "type": "<object>",
-        "description": {
-          "zh": "充当的对象——X 被视为什么。",
-          "en": "The object X is treated as."
-        }
-      },
-      "scope": {
-        "type": "string",
-        "default": null,
-        "description": {
-          "zh": "生效范围的路径式定位——概念.字段.步骤，如 \"<concept>.<ontology::pipeline>.pay_cost\" 表示「某动作的 pipeline 中的 pay_cost 步骤」。null = 全场合。",
-          "en": "Path-style scope — concept.field.step, e.g. \"<concept>.<ontology::pipeline>.pay_cost\" = the pay_cost step of some action's pipeline. null = everywhere."
-        }
-      },
-      "<condition>": {
-        "default": null,
-        "description": {
-          "zh": "适用条件（如「点数与所需一致」）。null = 无条件。",
-          "en": "Applicability condition (e.g. 'value matches the requirement'). null = unconditional."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -579,14 +556,17 @@
             "description": {
               "zh": "生效范围。缺省为全场合。",
               "en": "Scope of effect. Defaults to everywhere."
-            }
+            },
+            "type": "string",
+            "default": null
           },
           {
             "id": "<condition>",
             "description": {
               "zh": "适用条件。缺省为无条件。",
               "en": "Applicability condition. Defaults to unconditional."
-            }
+            },
+            "default": null
           }
         ]
       }
@@ -1017,20 +997,6 @@
         "zh": "游戏流程的执行单元——它定义了「游戏现在处于什么阶段」「接下来该做什么」。<procedure> 的子类（<round>、<turn>、<phase>）语义各异但结构相同：**执行内容优先用 <ontology::pipeline> 定义**（options 序列 + do_after 依赖 + loop 循环），**仅干一件事时可直接持有对应概念（如 <ontology::action>），无需 pipeline 包装**——pipeline 是描述多 trigger/多步骤的工具，不是必包层。<procedure> 自身不再有 children / start / end 字段——步骤顺序与先后依赖由 pipeline 的 do_after 表达，循环边界由 pipeline 的 loop.until 表达，「谁能做某操作」由步骤的 <condition> 表达。嵌套仍是自由形式的：options 里的候选项可以是 <round>、<turn>、<phase> 或普通步骤，一整局游戏本身也可以是一个最外层的 <round>。没有固定的层级，具体嵌套关系由每款游戏的规则决定。",
         "en": "An execution unit of game flow — it defines 'what stage the game is in' and 'what happens next'. The <procedure> subclasses (<round>, <turn>, <phase>) differ in semantics but share the same structure: **execution content is preferably defined via an <ontology::pipeline>** (options sequence + do_after dependencies + loop), **but a procedure doing a single thing may directly hold the concept itself (e.g. an <ontology::action>) without pipeline wrapping** — a pipeline is a tool for composing multiple triggers/steps, not a mandatory wrapper. <procedure> itself no longer has children / start / end fields — step order and prerequisites come from the pipeline's do_after, loop boundaries from the pipeline's loop.until, and 'who may perform an operation' from a step's <condition>. Nesting remains free-form: candidates in options can be <round>s, <turn>s, <phase>s, or plain steps, and an entire game can itself be an outermost <round>. There is no fixed hierarchy — the nesting is determined by each game's rules."
       },
-      "<pipeline>": {
-        "default": null,
-        "description": {
-          "zh": "本 <procedure> 的执行内容（options / type / do_after 结构），仅当执行内容多于一个步骤/行动时使用；单内容时直接持有对应概念（如 <ontology::action>、<ontology::turn>、<ontology::round>）。子类 <round>、<turn>、<phase> 通过它描述多步骤执行：<turn> 用 CHOOSE_ONE 表达多行动选择（执行者轮转是 <turn> 的内建语义）、<phase> 用 options 承载子流程或程序化步骤（setup、结算等）。循环边界不在此字段内——见顶层 loop 字段。",
-          "en": "The execution content of this <procedure> (options / type / do_after structure), used only when the execution content has more than one step/action; a single-content procedure directly holds the concept itself (e.g. an <ontology::action>, <ontology::turn>, or <ontology::round>). The subclasses <round>, <turn>, and <phase> describe multi-step execution through it: <turn> uses CHOOSE_ONE for multi-action selection (turn order is <turn>'s built-in semantics), and <phase> holds child procedures or programmatic steps (setup, resolution, etc.) in its options. Loop boundaries are not part of this field — see the top-level loop field."
-        }
-      },
-      "loop": {
-        "default": null,
-        "description": {
-          "zh": "本 <procedure> 的循环边界（顶层字段，不属于 <pipeline>）。两种形态：(1) 定次循环 `{ \"count\": N, \"counter\": \"<名称>\" }`——执行内容恰好 N 次（N 为数字或引用，如 \"player_count\"），counter 可选——循环计数变量（如 era_number），供步骤引用当前迭代号；(2) 条件循环 `{ \"until\": <condition> }`——重复执行内容直到条件成立（until 为 <condition> 的字符串引用或内联谓词 { zh, en }）。**until 条件在迭代完整执行后检查**——正在进行的迭代（一轮）总是完整跑完才求值：触发条件在轮中被满足时，当前轮照常完成（剩余玩家继续行动），轮末循环才停止。**phase 与 round/turn 正交**：phase（规则上下文）切换不影响 round/turn（执行流程）——上下文切换发生在轮间，「完成当前轮」由 round 的完整性天然保证，无需补完结构。若规则要求触发即中断（罕见），用 round + turn 的「本轮尚未行动」condition 在触发后的阶段补完。<round> 用 count 表达「进行几轮」（口语「进行 4 轮」= count 4；缺省无 loop = 1 次 = 每位玩家恰好一个 turn），用 until 表达「直到条件才结束」（如行动阶段直到阶段标记推到红格）；<phase> 也可持有（如「一直进行到有人达到 15 分」）。缺省 null = 执行一次。",
-          "en": "The loop boundary of this <procedure> (a top-level field, not part of <pipeline>). Two forms: (1) fixed-count loop `{ \"count\": N, \"counter\": \"name\" }` — execute the content exactly N times (N is a number or reference such as \"player_count\"); counter is optional — the loop-count variable (e.g. era_number) referenced by steps for the current iteration; (2) conditional loop `{ \"until\": <condition> }` — repeat the content until the condition holds (until is a string reference to a <condition> or an inline predicate { zh, en }). **The until condition is evaluated after the iteration completes in full** — an iteration (a round) in progress always finishes before the condition is evaluated: when the trigger condition is satisfied mid-round, the current round completes normally (remaining players keep acting) and the loop stops at the end of the round. **<phase> and <round>/<turn> are orthogonal**: a <phase> (rule context) switch does not interrupt <round>/<turn> (execution flow) — context switches happen between rounds, and 'completing the current round' is guaranteed by the round's completeness, needing no catch-up structure. If a rule truly requires an immediate interruption (rare), use the catch-up pattern: a round whose turn carries a 'has not yet acted this round' condition in the phase after the trigger. <round> uses count for 'how many rounds' ('4 rounds' in colloquial terms = count 4; no loop = 1 pass = exactly one turn per player) and until for 'continue until a condition' (e.g. the action phase until the phase indicator is pushed onto the red space); <phase> may also hold it (e.g. 'keep going until someone reaches 15 points'). Default null = execute once."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -1047,14 +1013,16 @@
             "description": {
               "zh": "本 <procedure> 的执行内容定义，见顶层字段声明。多步骤/多行动时持有；单内容时直接持有对应概念（如 <ontology::action>、<ontology::turn>、<ontology::round>）。",
               "en": "The execution content of this <procedure>; see the top-level field declaration. Held when there are multiple steps/actions; a single-content procedure directly holds the concept itself (e.g. an <ontology::action>, <ontology::turn>, or <ontology::round>)."
-            }
+            },
+            "default": null
           },
           {
             "id": "loop",
             "description": {
               "zh": "循环边界（count 定次 / until 条件），见顶层字段声明。缺省 null = 执行一次。",
               "en": "Loop boundary (count / until); see the top-level field declaration. Default null = execute once."
-            }
+            },
+            "default": null
           }
         ]
       }
@@ -2010,20 +1978,6 @@
         "zh": "有终点的 <track>：<marker> 沿推进方向推过头（正溢出）或反向过头（负溢出）时，按本概念声明的溢出补偿字段结算。任何直线轨都有推到头的一天——推到头后再次推进发生什么，由 <overflow_compensation> / <underflow_compensation> 字段声明（每个直线轨必须回答这个问题）。",
         "en": "A <track> with an end: when a <marker> is pushed past the end along the advance direction (positive overflow) or past the other end in reverse (negative overflow), the advance settles per this concept's overflow-compensation fields. Every linear track has an end — what happens when a <marker> is advanced again after reaching it is declared by the <overflow_compensation> / <underflow_compensation> fields (every linear track must answer this question)."
       },
-      "<overflow_compensation>": {
-        "default": null,
-        "description": {
-          "zh": "本轨的正向溢出补偿：<marker> 沿推进方向推过头时发生什么。值为该轨补偿 trigger 的引用（specifies <ontology::overflow_compensation> 的实例），或指向内嵌机制的说明（如边界格的效果、到达终点后停住的规则）。缺省 = 没有处理（该方向不会发生，或什么都不做）。",
-          "en": "This track's positive overflow compensation: what happens when a <marker> is advanced past the end along the advance direction. Value is a reference to this track's compensation trigger (an instance specifying <ontology::overflow_compensation>), or a pointer to an embedded mechanism (e.g. a boundary-space effect, a stop-after-the-end rule). Absent = no handling (that direction cannot occur, or nothing happens)."
-        }
-      },
-      "<underflow_compensation>": {
-        "default": null,
-        "description": {
-          "zh": "本轨的负向溢出补偿：<marker> 反向过头（越过起点/另一端点）时发生什么。值与 <overflow_compensation> 同款（trigger 引用或内嵌机制说明）。缺省 = 没有处理（该方向不会发生，或什么都不做）。",
-          "en": "This track's negative overflow compensation: what happens when a <marker> is advanced past the other end in reverse. Same value forms as <overflow_compensation> (trigger reference or embedded-mechanism pointer). Absent = no handling (that direction cannot occur, or nothing happens)."
-        }
-      },
       "constraints": {
         "required": [
           {
@@ -2065,20 +2019,6 @@
       "description": {
         "zh": "无终点的 <track>：<marker> 推过循环终点时自然回绕到起点继续（如 99 前进 3 步 = 停在 2 并完成一圈）。环形轨没有溢出——回绕是推轨的自然语义，不需要溢出补偿字段；「完成一圈」的伴随事件（如每圈拿取 1 个圈指示物）由 <lap_event>（正向）/ <underlap_event>（负向）字段挂载。",
         "en": "A <track> without an end: a <marker> pushed past the loop's end naturally wraps around to the start (e.g. 99 advanced 3 steps = stop on 2 and complete a lap). A circular track has no overflow — wrapping is the natural semantics of advancing, so no overflow-compensation fields apply; the companion events of completing a lap (e.g. taking 1 lap token per lap) are mounted via the <lap_event> (positive) / <underlap_event> (negative) fields."
-      },
-      "<lap_event>": {
-        "default": null,
-        "description": {
-          "zh": "本轨的正向圈事件：marker 沿推进方向越过循环起点时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::lap_event> 的实例）。",
-          "en": "This track's positive lap event: the companion event triggered when a <marker> crosses the loop's start along the advance direction. Value is a reference to this track's lap-event trigger (an instance specifying <ontology::lap_event>)."
-        }
-      },
-      "<underlap_event>": {
-        "default": null,
-        "description": {
-          "zh": "本轨的负向圈事件：marker 反向越过循环起点时触发的伴随事件。值为该轨圈事件 trigger 的引用（specifies <ontology::underlap_event> 的实例）。",
-          "en": "This track's negative lap event: the companion event triggered when a <marker> crosses the loop's start in reverse. Value is a reference to this track's lap-event trigger (an instance specifying <ontology::underlap_event>)."
-        }
       },
       "constraints": {
         "required": [
@@ -2616,4 +2556,3 @@
     }
   ]
 }
-

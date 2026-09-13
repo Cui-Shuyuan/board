@@ -1,0 +1,194 @@
+[
+  {
+    "phonemes": [],
+    "text": "左上角是这张牌的声望值。",
+    "words": [
+      {
+        "confidence": 0.7518273,
+        "endTime": 0.465,
+        "startTime": 0.295,
+        "word": "左"
+      },
+      {
+        "confidence": 0.918934,
+        "endTime": 0.705,
+        "startTime": 0.465,
+        "word": "上"
+      },
+      {
+        "confidence": 0.9051293,
+        "endTime": 0.975,
+        "startTime": 0.705,
+        "word": "角"
+      },
+      {
+        "confidence": 0.8281942,
+        "endTime": 1.145,
+        "startTime": 0.975,
+        "word": "是"
+      },
+      {
+        "confidence": 0.9758095,
+        "endTime": 1.265,
+        "startTime": 1.145,
+        "word": "这"
+      },
+      {
+        "confidence": 0.96016407,
+        "endTime": 1.415,
+        "startTime": 1.265,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9737299,
+        "endTime": 1.635,
+        "startTime": 1.415,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9183413,
+        "endTime": 1.725,
+        "startTime": 1.635,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8137611,
+        "endTime": 1.875,
+        "startTime": 1.725,
+        "word": "声"
+      },
+      {
+        "confidence": 0.96201146,
+        "endTime": 2.045,
+        "startTime": 1.875,
+        "word": "望"
+      },
+      {
+        "confidence": 0.9168954,
+        "endTime": 2.385,
+        "startTime": 2.045,
+        "word": "值。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "玩家购买发展卡牌后，立即获得对应的声望值。",
+    "words": [
+      {
+        "confidence": 0.5399016,
+        "endTime": 2.9350417,
+        "startTime": 2.8900416,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.8888726,
+        "endTime": 3.1150415,
+        "startTime": 2.9350417,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9265707,
+        "endTime": 3.2750416,
+        "startTime": 3.1150415,
+        "word": "购"
+      },
+      {
+        "confidence": 0.972933,
+        "endTime": 3.4750416,
+        "startTime": 3.2750416,
+        "word": "买"
+      },
+      {
+        "confidence": 0.9721722,
+        "endTime": 3.6350417,
+        "startTime": 3.4750416,
+        "word": "发"
+      },
+      {
+        "confidence": 0.85736614,
+        "endTime": 3.7550416,
+        "startTime": 3.6350417,
+        "word": "展"
+      },
+      {
+        "confidence": 0.9554204,
+        "endTime": 3.9350414,
+        "startTime": 3.7550416,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.955163,
+        "endTime": 4.1550417,
+        "startTime": 3.9350414,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9345398,
+        "endTime": 4.455042,
+        "startTime": 4.1550417,
+        "word": "后，"
+      },
+      {
+        "confidence": 0.91814584,
+        "endTime": 4.745042,
+        "startTime": 4.5850415,
+        "word": "立"
+      },
+      {
+        "confidence": 0.8777976,
+        "endTime": 4.9050417,
+        "startTime": 4.745042,
+        "word": "即"
+      },
+      {
+        "confidence": 0.907024,
+        "endTime": 5.0850415,
+        "startTime": 4.9050417,
+        "word": "获"
+      },
+      {
+        "confidence": 0.95469517,
+        "endTime": 5.285042,
+        "startTime": 5.0850415,
+        "word": "得"
+      },
+      {
+        "confidence": 0.9481721,
+        "endTime": 5.455042,
+        "startTime": 5.285042,
+        "word": "对"
+      },
+      {
+        "confidence": 0.9669925,
+        "endTime": 5.6150417,
+        "startTime": 5.455042,
+        "word": "应"
+      },
+      {
+        "confidence": 0.93751264,
+        "endTime": 5.6950417,
+        "startTime": 5.6150417,
+        "word": "的"
+      },
+      {
+        "confidence": 0.87759674,
+        "endTime": 5.8650417,
+        "startTime": 5.6950417,
+        "word": "声"
+      },
+      {
+        "confidence": 0.92041713,
+        "endTime": 6.0150414,
+        "startTime": 5.8650417,
+        "word": "望"
+      },
+      {
+        "confidence": 0.9186212,
+        "endTime": 6.3150415,
+        "startTime": 6.0150414,
+        "word": "值。"
+      }
+    ]
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "phonemes": [],
+    "text": "我们再介绍一下贵族板块。",
+    "words": [
+      {
+        "confidence": 0.9687822,
+        "endTime": 0.375,
+        "startTime": 0.285,
+        "word": "我"
+      },
+      {
+        "confidence": 0.9767026,
+        "endTime": 0.485,
+        "startTime": 0.375,
+        "word": "们"
+      },
+      {
+        "confidence": 0.9732023,
+        "endTime": 0.655,
+        "startTime": 0.485,
+        "word": "再"
+      },
+      {
+        "confidence": 0.92905796,
+        "endTime": 0.795,
+        "startTime": 0.655,
+        "word": "介"
+      },
+      {
+        "confidence": 0.9740703,
+        "endTime": 0.955,
+        "startTime": 0.795,
+        "word": "绍"
+      },
+      {
+        "confidence": 0.9309292,
+        "endTime": 1.045,
+        "startTime": 0.955,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9690331,
+        "endTime": 1.265,
+        "startTime": 1.045,
+        "word": "下"
+      },
+      {
+        "confidence": 0.94505346,
+        "endTime": 1.455,
+        "startTime": 1.265,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.8952544,
+        "endTime": 1.575,
+        "startTime": 1.455,
+        "word": "族"
+      },
+      {
+        "confidence": 0.93183637,
+        "endTime": 1.755,
+        "startTime": 1.575,
+        "word": "板"
+      },
+      {
+        "confidence": 0.9678053,
+        "endTime": 2.015,
+        "startTime": 1.755,
+        "word": "块。"
+      }
+    ]
+  }
+]

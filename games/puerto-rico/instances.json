@@ -1,0 +1,833 @@
+{
+  "meta": {
+    "name": {
+      "zh": "波多黎各 1897 实例",
+      "en": "Puerto Rico 1897 Instances"
+    },
+    "description": {
+      "zh": "波多黎各 1897 中作为具体实例存在的商业建筑。",
+      "en": "Commercial buildings that exist as concrete instances in Puerto Rico 1897."
+    },
+    "game": "puerto-rico",
+    "version": "0.1.0"
+  },
+  "buildings": [
+    {
+      "id": "small_market",
+      "name": {
+        "zh": "小市场",
+        "en": "Small Market"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑小板块，费用 1、1 VP，标贸易阶段图标。",
+        "en": "Small purple commercial building tile, cost 1, 1 VP, marked with the trade-phase icon."
+      },
+      "description": {
+        "zh": "费用 1 元、1 VP 的<commercial_building>。功能：<trader_role>阶段出售货物时多得 1 元（与<large_market>叠加共 3 元，与<trader_role>特权再叠加）。例：卖 1 桶<corn>（0 元）得 1 元。",
+        "en": "A <commercial_building> costing 1, worth 1 VP. Function: +1 coin when selling a good in the <trader_role> phase (stacks with <large_market> to +3, and further with the <trader_role> privilege). Example: selling 1 <corn> barrel (0 coins) earns 1 coin."
+      },
+      "vp": 1,
+      "max_quarry_discount": 1,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次自己在<trader_role>阶段成功出售货物，多得 1 元。",
+              "en": "Monitor effect: each time you sell a good in the <trader_role> phase, gain 1 extra coin."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己在本<trader_role>阶段向<trading_house>出售了 1 桶货物。",
+              "en": "This building is occupied and you sold a barrel to the <trading_house> in this <trader_role> phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<bank>",
+                  "destination": "<portrait>",
+                  "<ontology::object>": "<coin>",
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 1,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "hacienda",
+      "name": {
+        "zh": "大庄园",
+        "en": "Hacienda"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑小板块，费用 2、1 VP，标种植阶段图标。",
+        "en": "Small purple commercial building tile, cost 2, 1 VP, marked with the planting-phase icon."
+      },
+      "description": {
+        "zh": "费用 2 元、1 VP 的<commercial_building>。功能：<planter_role>阶段，在自己正常种植行动之前，可从<estate_face_down_stack>顶额外抽 1 块庄园，抽到后必须立即放到自己的<countryside>（不能丢弃），然后再正常从<estate_display>取明置庄园。注意：若同时有<builders_yard>，这额外的一块不能用采石场替代，但正常行动可以选采石场。",
+        "en": "A <commercial_building> costing 2, worth 1 VP. Function: in the <planter_role> phase, before your normal planting action, you may draw 1 extra estate from the top of the <estate_face_down_stack> and must immediately place it in your <countryside> (cannot be discarded); then you take your normal face-up estate from the <estate_display>. Note: with a <builders_yard> too, this extra tile cannot be a quarry, but the normal action may still take one."
+      },
+      "vp": 1,
+      "max_quarry_discount": 1,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "可选效果：<planter_role>阶段自己正常种植前，从<estate_face_down_stack>顶抽 1 块庄园并立即放到<countryside>。",
+              "en": "Optional effect: before your normal planting in the <planter_role> phase, draw 1 estate from the top of the <estate_face_down_stack> and place it in the <countryside> immediately."
+            },
+            "<ontology::condition>": "<hacienda_occupied>",
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::top_draw>": {
+                  "source": "<estate_face_down_stack>",
+                  "destination": "<countryside>",
+                  "<ontology::object>": {
+                    "<estate_tile>": {
+                      "face": "face_up"
+                    }
+                  },
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 2,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "builders_yard",
+      "name": {
+        "zh": "建筑工棚",
+        "en": "Builders Yard"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑小板块，费用 2、1 VP，标种植阶段图标。",
+        "en": "Small purple commercial building tile, cost 2, 1 VP, marked with the planting-phase icon."
+      },
+      "description": {
+        "zh": "费用 2 元、1 VP 的<commercial_building>。功能：<planter_role>阶段，非选角者可用采石场代替庄园。注意：此功能不提供第二块采石场——若自己是选角者（特权已可拿采石场），或用<hacienda>功能时，不能借它额外再拿一块采石场。",
+        "en": "A <commercial_building> costing 2, worth 1 VP. Function: in the <planter_role> phase, a non-chooser may take a quarry instead of an estate. Note: this grants no second quarry — if you are the chooser (whose privilege already allows a quarry), or when using the <hacienda> function, you cannot take an additional quarry via the yard."
+      },
+      "vp": 1,
+      "max_quarry_discount": 1,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "光环类效果：只要本建筑被占据，自己在<planter_role>阶段（非选角者时）种植行动的候选中增加「拿采石场」。",
+              "en": "Aura effect: while this building is occupied, 'take a quarry' is added to your planting candidates in the <planter_role> phase (as a non-chooser)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据。",
+              "en": "This building is occupied."
+            },
+            "<ontology::content>": {
+              "<ontology::continuous_content>": {
+                "description": {
+                  "zh": "自己的种植行动候选中增加「拿采石场」（非选角者时）。",
+                  "en": "Adds 'take a quarry' to your planting candidates (as a non-chooser)."
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 2,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "small_warehouse",
+      "name": {
+        "zh": "小仓库",
+        "en": "Small Warehouse"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑小板块，费用 3、1 VP，标装运阶段图标。",
+        "en": "Small purple commercial building tile, cost 3, 1 VP, marked with the shipment-phase icon."
+      },
+      "description": {
+        "zh": "费用 3 元、1 VP 的<commercial_building>。功能：<captain_role>阶段结束时，除每人可保留的 1 桶外，可额外保留 1 种货物的全部桶（货物留在<portrait>上）。注意：装船义务不变——装运阶段中能装的货仍必须装。",
+        "en": "A <commercial_building> costing 3, worth 1 VP. Function: at the end of the <captain_role> phase, in addition to the 1 barrel everyone keeps, you may keep all barrels of 1 more type (stored on the <portrait>). Note: the shipping obligation is unchanged — you must still load whatever you can during the phase."
+      },
+      "vp": 1,
+      "max_quarry_discount": 2,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次<captain_role>阶段结束的留存结算时，自己可额外保留 1 种货物的全部桶。",
+              "en": "Monitor effect: at each end-of-phase storage resolution in the <captain_role> phase, you may keep all barrels of 1 additional type."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己正进行<captain_role>阶段结束时的货物留存。",
+              "en": "This building is occupied and you are resolving end-of-phase goods storage in the <captain_role> phase."
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 3,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "hospital",
+      "name": {
+        "zh": "医院",
+        "en": "Hospital"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 4、2 VP，标种植阶段图标。",
+        "en": "Purple commercial building tile, cost 4, 2 VP, marked with the planting-phase icon."
+      },
+      "description": {
+        "zh": "费用 4 元、2 VP 的<commercial_building>。功能：<planter_role>阶段，若自己在<countryside>放置了庄园或采石场，可从<worker_supply>（不是<work_register>）拿 1 名工人放在刚放置的那块板块上（不能放别处）；<worker_supply>为空时可改从<work_register>拿。若同时有<hacienda>（本阶段放了两块），可选其中一块放工人，但只拿 1 名。",
+        "en": "A <commercial_building> costing 4, worth 2 VP. Function: in the <planter_role> phase, if you placed an estate or quarry in your <countryside>, you may take 1 worker from the <worker_supply> (not the <work_register>) and place it on the newly placed tile (nowhere else); if the <worker_supply> is empty, take from the <work_register> instead. With a <hacienda> too (two tiles placed this phase), choose one of them for the worker, but take only 1 worker."
+      },
+      "vp": 2,
+      "max_quarry_discount": 2,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次自己在<planter_role>阶段放置庄园/采石场，可拿 1 名工人放在该板块上（<worker_supply>优先，空则<work_register>）。",
+              "en": "Monitor effect: each time you place an estate or quarry in the <planter_role> phase, you may take 1 worker onto that tile (from <worker_supply> first, or the <work_register> if empty)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己刚在<planter_role>阶段放置了庄园或采石场。",
+              "en": "This building is occupied and you just placed an estate or quarry in the <planter_role> phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<worker_supply>",
+                  "destination": {
+                    "zh": "刚放置的那块庄园或采石场（<work_slot>）。",
+                    "en": "The <work_slot> of the tile just placed."
+                  },
+                  "<ontology::object>": "<worker>",
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 4,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "office",
+      "name": {
+        "zh": "办公室",
+        "en": "Office"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 5、2 VP，标贸易阶段图标。",
+        "en": "Purple commercial building tile, cost 5, 2 VP, marked with the trade-phase icon."
+      },
+      "description": {
+        "zh": "费用 5 元、2 VP 的<commercial_building>。功能：<trader_role>阶段可出售<trading_house>里已有的货物类型（正常情况下每种类型一阶段只能卖 1 桶）。仍只能卖 1 桶；若交易所已满（4 桶）仍不能卖。多个有办公室的玩家可先后出售同一类型——只要还有空位。",
+        "en": "A <commercial_building> costing 5, worth 2 VP. Function: in the <trader_role> phase, you may sell a good type already present in the <trading_house> (normally each type sells at most once per phase). You still sell only 1 barrel; a full house (4 barrels) still blocks the sale. Multiple Office owners may each sell the same type in one phase — space permitting."
+      },
+      "vp": 2,
+      "max_quarry_discount": 2,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "光环类效果：只要本建筑被占据，自己在<trader_role>阶段出售货物的条件放宽——可出售交易所里已有的类型（交易所满 4 桶时仍不可）。",
+              "en": "Aura effect: while this building is occupied, your sale condition in the <trader_role> phase is relaxed — you may sell a type already in the house (still blocked when the house is full at 4 barrels)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据。",
+              "en": "This building is occupied."
+            },
+            "<ontology::content>": {
+              "<ontology::continuous_content>": {
+                "description": {
+                  "zh": "出售条件放宽：可出售交易所里已有的类型；交易所满 4 桶时仍不可。",
+                  "en": "Sale condition relaxed: you may sell a type already in the house; still blocked when the house is full at 4 barrels."
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 5,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "large_market",
+      "name": {
+        "zh": "大市场",
+        "en": "Large Market"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 5、2 VP，标贸易阶段图标。",
+        "en": "Purple commercial building tile, cost 5, 2 VP, marked with the trade-phase icon."
+      },
+      "description": {
+        "zh": "费用 5 元、2 VP 的<commercial_building>。功能：<trader_role>阶段出售货物时多得 2 元；若同时有<small_market>，共多得 3 元。",
+        "en": "A <commercial_building> costing 5, worth 2 VP. Function: +2 coins when selling a good in the <trader_role> phase; with a <small_market> too, +3 coins in total."
+      },
+      "vp": 2,
+      "max_quarry_discount": 2,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次自己在<trader_role>阶段成功出售货物，多得 2 元（与<small_market>叠加）。",
+              "en": "Monitor effect: each time you sell a good in the <trader_role> phase, gain 2 extra coins (stacking with <small_market>)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己在本<trader_role>阶段向<trading_house>出售了 1 桶货物。",
+              "en": "This building is occupied and you sold a barrel to the <trading_house> in this <trader_role> phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<bank>",
+                  "destination": "<portrait>",
+                  "<ontology::object>": "<coin>",
+                  "quantity": 2
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 5,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "large_warehouse",
+      "name": {
+        "zh": "大仓库",
+        "en": "Large Warehouse"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 6、2 VP，标装运阶段图标。",
+        "en": "Purple commercial building tile, cost 6, 2 VP, marked with the shipment-phase icon."
+      },
+      "description": {
+        "zh": "费用 6 元、2 VP 的<commercial_building>。功能：<captain_role>阶段结束时，除每人可保留的 1 桶外，可额外保留 2 种货物的全部桶；若同时有<small_warehouse>，共可额外保留 3 种。货物留在<portrait>上。装船义务不变。",
+        "en": "A <commercial_building> costing 6, worth 2 VP. Function: at the end of the <captain_role> phase, in addition to the 1 barrel everyone keeps, you may keep all barrels of 2 more types; with a <small_warehouse> too, 3 more types. Barrels stay on the <portrait>. The shipping obligation is unchanged."
+      },
+      "vp": 2,
+      "max_quarry_discount": 3,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次<captain_role>阶段结束的留存结算时，自己可额外保留 2 种货物的全部桶（有<small_warehouse>则 3 种）。",
+              "en": "Monitor effect: at each end-of-phase storage resolution in the <captain_role> phase, you may keep all barrels of 2 additional types (3 with a <small_warehouse>)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己正进行<captain_role>阶段结束时的货物留存。",
+              "en": "This building is occupied and you are resolving end-of-phase goods storage in the <captain_role> phase."
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 6,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "factory",
+      "name": {
+        "zh": "工厂",
+        "en": "Factory"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 7、3 VP，标生产阶段图标。",
+        "en": "Purple commercial building tile, cost 7, 3 VP, marked with the production-phase icon."
+      },
+      "description": {
+        "zh": "费用 7 元、3 VP 的<commercial_building>。功能：<craftsman_role>阶段，若自己生产的货物种类超过 1 种，从<bank>得钱（与桶数无关）：2 种 1 元、3 种 2 元、4 种 3 元、5 种 5 元。",
+        "en": "A <commercial_building> costing 7, worth 3 VP. Function: in the <craftsman_role> phase, if you produce more than 1 type of good, take coins from the <bank> regardless of barrel counts: 2 types → 1 coin, 3 → 2, 4 → 3, 5 → 5."
+      },
+      "vp": 3,
+      "max_quarry_discount": 3,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次自己在<craftsman_role>阶段产出 ≥2 种货物，按种类数得钱（2 种 1 元、3 种 2 元、4 种 3 元、5 种 5 元）。",
+              "en": "Monitor effect: each time you produce ≥2 types of goods in the <craftsman_role> phase, gain coins by type count (2→1, 3→2, 4→3, 5→5)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己在本<craftsman_role>阶段生产了超过 1 种货物。",
+              "en": "This building is occupied and you produced more than 1 type of good in this <craftsman_role> phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<bank>",
+                  "destination": "<portrait>",
+                  "<ontology::object>": "<coin>",
+                  "quantity": {
+                    "zh": "按生产货物种类数：2 种 1 元、3 种 2 元、4 种 3 元、5 种 5 元。",
+                    "en": "By number of produced types: 2→1, 3→2, 4→3, 5→5."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 7,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "school",
+      "name": {
+        "zh": "学校",
+        "en": "School"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 8、3 VP，标建造阶段图标。",
+        "en": "Purple commercial building tile, cost 8, 3 VP, marked with the build-phase icon."
+      },
+      "description": {
+        "zh": "费用 8 元、3 VP 的<commercial_building>。功能：<builder_role>阶段，若自己建造了建筑，可从<worker_supply>（不是<work_register>）拿 1 名工人放在刚建好的建筑上（不能放别处）；<worker_supply>为空时可改从<work_register>拿。即使建筑有多个<work_slot>，也只拿 1 名工人。",
+        "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <builder_role> phase, if you build a building, you may take 1 worker from the <worker_supply> (not the <work_register>) and place it on the newly built tile (nowhere else); if the <worker_supply> is empty, take from the <work_register> instead. Only 1 worker, even if the building has several <work_slot>s."
+      },
+      "vp": 3,
+      "max_quarry_discount": 3,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次自己在<builder_role>阶段建成建筑，可拿 1 名工人放在该建筑上（<worker_supply>优先，空则<work_register>）。",
+              "en": "Monitor effect: each time you build in the <builder_role> phase, you may take 1 worker onto that building (from <worker_supply> first, or the <work_register> if empty)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己刚在<builder_role>阶段建造了建筑。",
+              "en": "This building is occupied and you just built a building in the <builder_role> phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<worker_supply>",
+                  "destination": {
+                    "zh": "刚建成的建筑（<work_slot>）。",
+                    "en": "A <work_slot> of the newly built building."
+                  },
+                  "<ontology::object>": "<worker>",
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 8,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "harbor",
+      "name": {
+        "zh": "港口",
+        "en": "Harbor"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 8、3 VP，标装运阶段图标。",
+        "en": "Purple commercial building tile, cost 8, 3 VP, marked with the shipment-phase icon."
+      },
+      "quantity": {
+        "zh": "每次装货 +1 VP",
+        "en": "+1 VP per load",
+        "numeric": [
+          {
+            "when": {
+              "zh": "装货、装船、装载"
+            },
+            "value": 1,
+            "unit": "VP",
+            "per": {
+              "zh": "每次装货"
+            }
+          }
+        ]
+      },
+      "description": {
+        "zh": "费用 8 元、3 VP 的<commercial_building>。功能：<captain_role>阶段，自己每次往船上装货（含<wharf>的包租船）多得 1 VP——按「装货次数」而非桶数计。例：一次装 3 桶得 3+1 VP，之后同阶段再装 2 桶又得 2+1 VP。",
+        "en": "A <commercial_building> costing 8, worth 3 VP. Function: in the <captain_role> phase, +1 VP each time you load goods onto a ship (including the <wharf> chartered ship) — counted per load, not per barrel. Example: loading 3 barrels earns 3+1 VP; loading 2 more later in the same phase earns 2+1 VP."
+      },
+      "vp": 3,
+      "max_quarry_discount": 3,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：每次自己在<captain_role>阶段完成一次装货（普通货船或包租船），多得 1 VP。",
+              "en": "Monitor effect: each time you complete a load in the <captain_role> phase (cargo ship or chartered ship), gain 1 extra VP."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且自己刚在<captain_role>阶段装了一次货。",
+              "en": "This building is occupied and you just completed a load in the <captain_role> phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::transfer>": {
+                  "source": "<vp_supply>",
+                  "destination": "<portrait>",
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 8,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "wharf",
+      "name": {
+        "zh": "码头",
+        "en": "Wharf"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色调商业建筑板块，费用 9、3 VP，标装运阶段图标。",
+        "en": "Purple commercial building tile, cost 9, 3 VP, marked with the shipment-phase icon."
+      },
+      "description": {
+        "zh": "费用 9 元、3 VP 的<commercial_building>。功能：<captain_role>阶段内任意时刻（若使用），可把任意 1 种货物的全部桶装上「包租船」——包租船没有容量限制、可装货船上已有的类型，每桶得 1 VP，装完后桶全部放回<goods_supply>。每阶段至多使用 1 次，可不用。用它装货同样履行该轮装货义务：轮到自己装货时，装普通船或码头包租船必选其一（不能两者都不装）；可以先包租再装普通船，顺序自由。",
+        "en": "A <commercial_building> costing 9, worth 3 VP. Function: at any one time during the <captain_role> phase (if used at all), you may load all barrels of any 1 type onto a 'Chartered Ship' — unlimited capacity, may carry a type already on a cargo ship, 1 VP per barrel, then all barrels return to the <goods_supply>. At most once per phase; may be skipped. Using it equally satisfies that round's loading obligation: on your loading turn you must choose one — cargo ship or chartered ship (doing neither is not allowed); you may charter before loading cargo ships, in either order."
+      },
+      "vp": 3,
+      "max_quarry_discount": 3,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "监听式效果：<captain_role>阶段中可触发一次——把任意 1 种货物的全部桶装包租船：桶回<goods_supply>，每桶得 1 VP。",
+              "en": "Monitor effect: usable once per <captain_role> phase — load all barrels of any 1 type onto the chartered ship: barrels return to <goods_supply>, 1 VP per barrel."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，正处于<captain_role>阶段，且本阶段尚未使用过包租船。",
+              "en": "This building is occupied, we are in the <captain_role> phase, and the chartered ship has not been used this phase."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::pipeline>": {
+                  "options": [
+                    {
+                      "id": "return_wharf_barrels",
+                      "name": {
+                        "zh": "码头包租船货回供应",
+                        "en": "Return Wharf Chartered Barrels"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "source": "<portrait>",
+                      "destination": "<goods_supply>",
+                      "<ontology::object>": "<good>[]",
+                      "quantity": {
+                        "zh": "自己所选 1 种货物的全部桶。",
+                        "en": "All barrels of the chosen type."
+                      }
+                    },
+                    {
+                      "id": "gain_wharf_vp",
+                      "name": {
+                        "zh": "码头包租船得分",
+                        "en": "Gain Wharf Chartered VP"
+                      },
+                      "specifies": "<ontology::transfer>",
+                      "do_after": "return_wharf_barrels",
+                      "source": "<vp_supply>",
+                      "destination": "<portrait>",
+                      "<ontology::object>": "<victory_point>",
+                      "quantity": {
+                        "zh": "等于装包的桶数（每桶 1 分）。",
+                        "en": "Equal to the number of barrels loaded (1 VP each)."
+                      }
+                    }
+                  ],
+                  "type": "<ontology::multiple_choice_enum.EXECUTE_ALL>"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 9,
+      "instance_of": "<commercial_building>"
+    },
+    {
+      "id": "fire_station",
+      "name": {
+        "zh": "消防局",
+        "en": "Fire Station"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色两格高大建筑板块，费用 10、4 VP，印生产建筑加分图标。",
+        "en": "Purple double-height large building tile, cost 10, 4 VP, with production-building bonus icon."
+      },
+      "description": {
+        "zh": "费用 10 元、4 VP 的<large_commercial_building>。终局加成（须被占据）：自己<city>中每座小生产建筑（<small_fruit_warehouse>/<small_sugar_mill>，无论是否被占据）+1 VP，每座大生产建筑（<large_fruit_warehouse>/<large_sugar_mill>/<tobacco_storage>/<coffee_roaster>，无论是否被占据）+2 VP。",
+        "en": "A <large_commercial_building> costing 10, worth 4 VP. Endgame bonus (must be occupied): +1 VP for each small production building in your <city> (<small_fruit_warehouse>/<small_sugar_mill>, occupied or not) and +2 VP for each large production building (<large_fruit_warehouse>/<large_sugar_mill>/<tobacco_storage>/<coffee_roaster>, occupied or not)."
+      },
+      "vp": 4,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "终局计分加成：每座小生产建筑 +1 VP、每座大生产建筑 +2 VP（均不论是否被占据）。",
+              "en": "Endgame scoring bonus: +1 VP per small production building, +2 VP per large production building (occupied or not)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且处于终局计分。",
+              "en": "This building is occupied and final scoring is underway."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::gain>": {
+                  "description": {
+                    "zh": "获得 VP：小生产建筑数 ×1 + 大生产建筑数 ×2（计算值，计入总分而非筹码）。",
+                    "en": "Gain VP: small production buildings ×1 + large production buildings ×2 (computed into the total score, not chips)."
+                  },
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": {
+                    "zh": "小生产建筑数 ×1 + 大生产建筑数 ×2。",
+                    "en": "Small production buildings ×1 + large production buildings ×2."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 10,
+      "instance_of": "<large_commercial_building>"
+    },
+    {
+      "id": "residence",
+      "name": {
+        "zh": "宅邸",
+        "en": "Residence"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色两格高大建筑板块，费用 10、4 VP，印乡村格数计分表。",
+        "en": "Purple double-height large building tile, cost 10, 4 VP, with countryside-space scoring table."
+      },
+      "description": {
+        "zh": "费用 10 元、4 VP 的<large_commercial_building>。终局加成（须被占据）：按<countryside>已填满的格数（庄园和采石场合计）计分——1–9 格 4 VP、10 格 5 VP、11 格 6 VP、12 格 7 VP。板块是否被占据不影响（只数格数）。",
+        "en": "A <large_commercial_building> costing 10, worth 4 VP. Endgame bonus (must be occupied): scored by filled <countryside> spaces (estates and quarries combined) — 1–9 spaces → 4 VP, 10 → 5, 11 → 6, 12 → 7. Occupation of those tiles is irrelevant (spaces only)."
+      },
+      "vp": 4,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "终局计分加成：1–9 格 4 VP、10 格 5 VP、11 格 6 VP、12 格 7 VP。",
+              "en": "Endgame scoring bonus: 4/5/6/7 VP for 1–9/10/11/12 filled countryside spaces."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且处于终局计分。",
+              "en": "This building is occupied and final scoring is underway."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::gain>": {
+                  "description": {
+                    "zh": "获得 VP：按<countryside>已填格数计（计算值）。",
+                    "en": "Gain VP by filled countryside spaces (computed)."
+                  },
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": {
+                    "zh": "1–9 格 4 分、10 格 5 分、11 格 6 分、12 格 7 分。",
+                    "en": "4/5/6/7 VP for 1–9/10/11/12 spaces."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 10,
+      "instance_of": "<large_commercial_building>"
+    },
+    {
+      "id": "fortress",
+      "name": {
+        "zh": "要塞",
+        "en": "Fortress"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色两格高大建筑板块，费用 10、4 VP，印工人计分图标。",
+        "en": "Purple double-height large building tile, cost 10, 4 VP, with worker-scoring icon."
+      },
+      "description": {
+        "zh": "费用 10 元、4 VP 的<large_commercial_building>。终局加成（须被占据）：岛上每 3 名工人（庄园、采石场、建筑与<portrait>上的合计，向下取整）+1 VP。例：22 名工人得 7 VP。",
+        "en": "A <large_commercial_building> costing 10, worth 4 VP. Endgame bonus (must be occupied): +1 VP for every 3 workers on your island (on estates, quarries, buildings, and the <portrait> combined, rounded down). Example: 22 workers → 7 VP."
+      },
+      "vp": 4,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "终局计分加成：每 3 名工人 +1 VP（向下取整）。",
+              "en": "Endgame scoring bonus: +1 VP per 3 workers (rounded down)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且处于终局计分。",
+              "en": "This building is occupied and final scoring is underway."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::gain>": {
+                  "description": {
+                    "zh": "获得 VP：工人总数 ÷ 3 向下取整（计算值）。",
+                    "en": "Gain VP: total workers ÷ 3, rounded down (computed)."
+                  },
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": {
+                    "zh": "岛上工人总数 ÷ 3，向下取整。",
+                    "en": "Total workers on the island ÷ 3, rounded down."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 10,
+      "instance_of": "<large_commercial_building>"
+    },
+    {
+      "id": "customs_house",
+      "name": {
+        "zh": "海关大楼",
+        "en": "Customs House"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色两格高大建筑板块，费用 10、4 VP，印 VP 筹码计分图标。",
+        "en": "Purple double-height large building tile, cost 10, 4 VP, with VP-chip scoring icon."
+      },
+      "description": {
+        "zh": "费用 10 元、4 VP 的<large_commercial_building>。终局加成（须被占据）：游戏中获得的每 4 个 VP 筹码 +1 VP（向下取整）——只数筹码，不含终局计分的建筑 VP 与大建筑加成。例：30 个筹码得 7 VP。",
+        "en": "A <large_commercial_building> costing 10, worth 4 VP. Endgame bonus (must be occupied): +1 VP for every 4 VP chips earned during the game (rounded down) — chips only, excluding endgame building VP and large-building bonuses. Example: 30 chips → 7 VP."
+      },
+      "vp": 4,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "终局计分加成：每 4 个 VP 筹码 +1 VP（向下取整，只数筹码）。",
+              "en": "Endgame scoring bonus: +1 VP per 4 VP chips (rounded down, chips only)."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且处于终局计分。",
+              "en": "This building is occupied and final scoring is underway."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::gain>": {
+                  "description": {
+                    "zh": "获得 VP：游戏中所获 VP 筹码总数 ÷ 4，向下取整（计算值）。",
+                    "en": "Gain VP: total VP chips earned during the game ÷ 4, rounded down (computed)."
+                  },
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": {
+                    "zh": "VP 筹码总数 ÷ 4，向下取整。",
+                    "en": "Total VP chips ÷ 4, rounded down."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 10,
+      "instance_of": "<large_commercial_building>"
+    },
+    {
+      "id": "city_hall",
+      "name": {
+        "zh": "市政厅",
+        "en": "City Hall"
+      },
+      "abstract": false,
+      "appearance": {
+        "zh": "紫色两格高大建筑板块，费用 10、4 VP，印商业建筑计分图标。",
+        "en": "Purple double-height large building tile, cost 10, 4 VP, with commercial-building scoring icon."
+      },
+      "description": {
+        "zh": "费用 10 元、4 VP 的<large_commercial_building>。终局加成（须被占据）：自己<city>中每座商业建筑 +1 VP——包括所有小商业建筑、所有大商业建筑以及市政厅自身，无论是否被占据。",
+        "en": "A <large_commercial_building> costing 10, worth 4 VP. Endgame bonus (must be occupied): +1 VP for every commercial building in your <city> — all small commercial buildings, all large commercial buildings, and City Hall itself, occupied or not."
+      },
+      "vp": 4,
+      "parts": [
+        {
+          "<ontology::continuous_effect>": {
+            "description": {
+              "zh": "终局计分加成：每座商业建筑（含自身）+1 VP，不论是否被占据。",
+              "en": "Endgame scoring bonus: +1 VP per commercial building (including itself), occupied or not."
+            },
+            "<ontology::condition>": {
+              "zh": "本建筑被占据，且处于终局计分。",
+              "en": "This building is occupied and final scoring is underway."
+            },
+            "<ontology::content>": {
+              "<ontology::instant_content>": {
+                "<ontology::gain>": {
+                  "description": {
+                    "zh": "获得 VP：商业建筑总数 ×1（含市政厅自身，计算值）。",
+                    "en": "Gain VP: total commercial buildings ×1 (including City Hall itself, computed)."
+                  },
+                  "<ontology::object>": "<victory_point>",
+                  "quantity": {
+                    "zh": "商业建筑总数（含自身）。",
+                    "en": "Total commercial buildings (including itself)."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "<work_slot>": 1,
+      "price": 10,
+      "instance_of": "<large_commercial_building>"
+    }
+  ]
+}

@@ -1,0 +1,490 @@
+{
+  "meta": {
+    "game": "seasons",
+    "name": {
+      "zh": "四季物语",
+      "en": "Seasons"
+    },
+    "version": "0.1.0",
+    "description": {
+      "zh": "四季物语（Seasons）基础版 2–4 人的结构化规则定义。基于 Libellud 规则书（doc/seasons/SEASONS_RULES_US.md）。核心机制：预兆阶段轮抽 9 张力量卡并分成三组（起手/第二年/第三年）；锦标赛阶段每轮按当前季节掷季节骰，玩家依次选骰并执行骰面行动，随后召唤/激活力量卡或使用个人板奖励；未选骰决定季节轮前进格数；三年结束后按水晶+卡牌威望点-手牌惩罚-奖励惩罚计分。",
+      "en": "Structured rule definition for the base game of Seasons (2-4 players), based on the Libellud rulebook (doc/seasons/SEASONS_RULES_US.md). Core mechanisms: in the Prelude players draft 9 power cards and split them into three sets (starting hand / year 2 / year 3); in the Tournament each round the season dice are rolled, players pick dice and perform the die actions, then may summon/activate power cards or use personal-board bonuses; the unchosen die moves the season wheel; after three years, scoring is crystals + card prestige points − hand penalty − bonus penalty."
+    }
+  },
+  "objects": [
+    {
+      "id": "seasons_setting",
+      "specifies": "<ontology::setting>",
+      "name": {
+        "zh": "四季物语背景设定",
+        "en": "Seasons Setting"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "《四季物语》世界观：王国最伟大的术士们聚集在阿戈斯森林，参加传说中的十二季大赛。在三年比赛结束时，新的王国大法师将从参赛者中选出。",
+        "en": "The world of Seasons: the greatest sorcerers of the kingdom gather in the Argos forest for the legendary tournament of the 12 seasons. At the end of the three-year competition, the new Archmage of Xidit is chosen."
+      }
+    },
+    {
+      "id": "crystal",
+      "specifies": "<ontology::resource>",
+      "name": {
+        "zh": "水晶",
+        "en": "Crystal"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四季物语中的主要资源与计分依据。水晶用于支付部分力量卡的召唤/激活费用；终局时每 1 个水晶等于 1 点威望分。玩家用水晶轨上的术士标记表示水晶数量；游戏过程中水晶不能低于 0，但终局总分可以为负。",
+        "en": "The main resource and scoring unit in Seasons. Crystals pay some power-card summoning/activation costs; at game end each crystal is worth 1 prestige point. Players track crystals with a sorcerer token on the crystal track. Crystals can never go below 0 during the game, though the final score may be negative."
+      },
+      "limited_supply": false
+    },
+    {
+      "id": "prestige_point",
+      "specifies": "<ontology::score>",
+      "name": {
+        "zh": "威望分",
+        "en": "Prestige Point"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四季物语中的胜利分。终局计分 = 水晶总数（每水晶 1 分）+ 在场力量卡上的威望分 − 每张手牌 5 分 − 个人板奖励轨上的惩罚。未使用的能量不产生威望分。平局时召唤力量卡最多者获胜。",
+        "en": "Victory points in Seasons. Final score = total crystals (1 per crystal) + prestige points on power cards in play − 5 per hand card − penalties on the bonus track. Unused energy is worth nothing. Ties go to the player with the most summoned power cards."
+      }
+    },
+    {
+      "id": "energy",
+      "extends": "<ontology::resource>",
+      "name": {
+        "zh": "能量",
+        "en": "Energy"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四季物语中的能量资源，共四种：<water_energy>、<earth_energy>、<fire_energy>、<air_energy>。能量放在个人板的<energy_reserve>中，上限为 7（拥有Bespelled Grimoire（附魔魔典）时为 10）。能量用于召唤和激活力量卡，也可通过转化变为水晶。",
+        "en": "The energy resource in Seasons, of four types: <water_energy>, <earth_energy>, <fire_energy>, and <air_energy>. Energy is stored in the <energy_reserve> of a player board, with a limit of 7 (or 10 with the Bespelled Grimoire（附魔魔典）). Energy pays power-card summoning/activation costs and can be transmuted into crystals."
+      },
+      "limited_supply": false
+    },
+    {
+      "id": "water_energy",
+      "specifies": "<energy>",
+      "name": {
+        "zh": "水能量",
+        "en": "Water Energy"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种能量之一（水滴图标）。冬季为常见能量，春季常见，夏季无法从骰子获得，秋季无法从骰子获得（见转化表与季节骰分布）。",
+        "en": "One of the four energy types (water-drop icon). Common in winter and spring; unavailable from dice in summer and fall (see the transmutation chart and season dice distribution)."
+      }
+    },
+    {
+      "id": "earth_energy",
+      "specifies": "<energy>",
+      "name": {
+        "zh": "土能量",
+        "en": "Earth Energy"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种能量之一（树叶图标）。春季和夏季常见，秋季罕见，冬季无法从骰子获得。",
+        "en": "One of the four energy types (leaf icon). Common in spring and summer, uncommon in fall, unavailable from dice in winter."
+      }
+    },
+    {
+      "id": "fire_energy",
+      "specifies": "<energy>",
+      "name": {
+        "zh": "火能量",
+        "en": "Fire Energy"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种能量之一（火焰图标）。夏季和秋季常见，冬季罕见，春季无法从骰子获得。",
+        "en": "One of the four energy types (fire icon). Common in summer and fall, uncommon in winter, unavailable from dice in spring."
+      }
+    },
+    {
+      "id": "air_energy",
+      "specifies": "<energy>",
+      "name": {
+        "zh": "气能量",
+        "en": "Air Energy"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四种能量之一（气流图标）。秋季和冬季常见，春季罕见，夏季无法从骰子获得。",
+        "en": "One of the four energy types (air icon). Common in fall and winter, uncommon in spring, unavailable from dice in summer."
+      }
+    },
+    {
+      "id": "season_die",
+      "extends": "<ontology::dice>",
+      "name": {
+        "zh": "季节骰",
+        "en": "Season Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四季物语共 20 颗季节骰，分四色：蓝=冬、绿=春、黄=夏、红=秋。每颗骰面由以下符号组成：获得能量、获得水晶（数字）、转化、召唤量表 +1、抽牌。骰面点数（1/2/3，每种两面）在回合结束时决定季节轮前进格数。",
+        "en": "Seasons has 20 season dice in four colors: blue for winter, green for spring, yellow for summer, red for fall. Faces show: gain energy, gain crystals (a number), transmute, summoning gauge +1, and draw a card. The pips (1/2/3, two faces each) determine how many spaces the season wheel moves at round end."
+      }
+    },
+    {
+      "id": "winter_die",
+      "specifies": "<season_die>",
+      "name": {
+        "zh": "冬季骰",
+        "en": "Winter Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "蓝色冬季骰，共 5 颗。2 人局用 3 颗、3 人局用 4 颗、4 人局用 5 颗。冬季常见水/气能量，火能量罕见，土能量无法由骰子获得。",
+        "en": "Blue winter dice, 5 in total. Use 3 in a 2-player game, 4 with 3 players, and all 5 with 4 players. In winter water/air are common, fire is uncommon, and earth is unavailable from dice."
+      }
+    },
+    {
+      "id": "spring_die",
+      "specifies": "<season_die>",
+      "name": {
+        "zh": "春季骰",
+        "en": "Spring Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "绿色春季骰，共 5 颗。2 人局用 3 颗、3 人局用 4 颗、4 人局用 5 颗。春季常见土/水能量，气能量罕见，火能量无法由骰子获得。",
+        "en": "Green spring dice, 5 in total. Use 3 in a 2-player game, 4 with 3 players, and all 5 with 4 players. In spring earth/water are common, air is uncommon, and fire is unavailable from dice."
+      }
+    },
+    {
+      "id": "summer_die",
+      "specifies": "<season_die>",
+      "name": {
+        "zh": "夏季骰",
+        "en": "Summer Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "黄色夏季骰，共 5 颗。2 人局用 3 颗、3 人局用 4 颗、4 人局用 5 颗。夏季常见土/火能量，水能量罕见，气能量无法由骰子获得。",
+        "en": "Yellow summer dice, 5 in total. Use 3 in a 2-player game, 4 with 3 players, and all 5 with 4 players. In summer earth/fire are common, water is uncommon, and air is unavailable from dice."
+      }
+    },
+    {
+      "id": "fall_die",
+      "specifies": "<season_die>",
+      "name": {
+        "zh": "秋季骰",
+        "en": "Fall Die"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "红色秋季骰，共 5 颗。2 人局用 3 颗、3 人局用 4 颗、4 人局用 5 颗。秋季常见火/气能量，土能量罕见，水能量无法由骰子获得。",
+        "en": "Red fall dice, 5 in total. Use 3 in a 2-player game, 4 with 3 players, and all 5 with 4 players. In fall fire/air are common, earth is uncommon, and water is unavailable from dice."
+      }
+    },
+    {
+      "id": "season_token",
+      "extends": "<ontology::marker>",
+      "name": {
+        "zh": "季节标记",
+        "en": "Season Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "在<season_wheel>上指示当前季节的标记。季节轮有 12 格：1-3 为冬（蓝）、4-6 为春（绿）、7-9 为夏（黄）、10-12 为秋（红）。回合结束时按未选骰的点数前进。跨过 3/6/9/12 格时触发季节变更；从 12 到 1 时触发年份变更。",
+        "en": "The marker indicating the current season on the <season_wheel>. The wheel has 12 spaces: 1-3 winter (blue), 4-6 spring (green), 7-9 summer (yellow), 10-12 fall (red). At round end it moves by the unchosen die's pips. Crossing spaces 3/6/9/12 triggers a season change; moving from 12 to 1 triggers a year change."
+      }
+    },
+    {
+      "id": "year_token",
+      "extends": "<ontology::marker>",
+      "name": {
+        "zh": "年份标记",
+        "en": "Year Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "在<year_track>上指示当前年份（1/2/3）的标记。季节轮从 12 走到 1 时推进一年。进入第 2 年和第 3 年时，玩家把对应图书馆标记下的 3 张力量卡加入手牌。第 3 年季节标记跨过第 12 格时游戏立即结束。",
+        "en": "The marker indicating the current year (1/2/3) on the <year_track>. It advances one space when the season wheel moves from 12 to 1. At the start of years 2 and 3, players add the 3 cards under the corresponding library token to their hand. The game ends immediately when the season token crosses space 12 in the third year."
+      }
+    },
+    {
+      "id": "sorcerer_token",
+      "extends": "<ontology::marker>",
+      "name": {
+        "zh": "术士标记",
+        "en": "Sorcerer Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家 4 个的标记，用于指示：水晶轨个位、水晶轨百位、个人板召唤量表、个人板奖励轨。",
+        "en": "Each player has 4 of these markers, used to track: crystal units, crystal hundreds, the summoning gauge, and the bonus track on the player board."
+      }
+    },
+    {
+      "id": "library_token",
+      "extends": "<ontology::token>",
+      "name": {
+        "zh": "图书馆标记",
+        "en": "Library Token"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家 2 个（Library II 和 Library III）。预兆阶段把第 2 组 3 张牌压在 Library II 下、第 3 组 3 张牌压在 Library III 下；进入第 2、第 3 年时对应卡牌加入手牌。",
+        "en": "Two per player (Library II and Library III). During the Prelude, the second set of 3 cards is placed under Library II and the third set under Library III; these cards join the hand at the start of years 2 and 3 respectively."
+      }
+    },
+    {
+      "id": "power_card",
+      "extends": "<ontology::card>",
+      "name": {
+        "zh": "力量卡",
+        "en": "Power Card"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "四季物语中的卡牌，共 50 种、每种 2 份（1-30 为基础卡，31-50 为进阶卡）。分两类：<magic_item>（紫色边框，效果只利于持有者）与<familiar>（橙色边框，效果影响多名玩家）。卡面包括：名称、召唤费用（能量和/或水晶；按 2/3/4 人变化时用符号标出）、效果、终局威望分、卡牌编号与游戏符号、效果类型（入场/永久/激活）。",
+        "en": "The cards of Seasons: 50 different cards, 2 copies of each (1-30 basic, 31-50 advanced). Two categories: <magic_item>s (purple borders, effects benefit only the owner) and <familiar>s (orange borders, effects affect multiple players). A card shows: name, summoning cost in energy and/or crystals (with player-count variants for 2/3/4 players where applicable), effect, end-game prestige points, card number, and effect type (on-summon / permanent / activation)."
+      }
+    },
+    {
+      "id": "magic_item",
+      "specifies": "<power_card>",
+      "name": {
+        "zh": "魔法物品",
+        "en": "Magic Item"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "力量卡的一种，紫色上下边框。效果只对其持有者有利。",
+        "en": "A power-card category with purple top and bottom borders. Effects benefit only the owner."
+      }
+    },
+    {
+      "id": "familiar",
+      "specifies": "<power_card>",
+      "name": {
+        "zh": "使魔",
+        "en": "Familiar"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "力量卡的一种，橙色上下边框。效果会影响多名玩家。",
+        "en": "A power-card category with orange top and bottom borders. Effects apply to multiple players."
+      }
+    },
+    {
+      "id": "game_board",
+      "specifies": "<ontology::public_board>",
+      "name": {
+        "zh": "游戏版图",
+        "en": "Game Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "中央版图，包含<year_track>、<season_wheel>和<transmutation_chart>。",
+        "en": "The central board containing the <year_track>, the <season_wheel>, and the <transmutation_chart>."
+      }
+    },
+    {
+      "id": "crystal_track",
+      "extends": "<ontology::score_track>",
+      "name": {
+        "zh": "水晶轨",
+        "en": "Crystal Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "记录每名玩家水晶数量的轨道，放在游戏版图旁。有 0-99 的个位轨和百位轨：底部术士标记指示个位与十位，顶部第二个术士标记指示百位（超过 100 水晶时使用）。",
+        "en": "The track recording each player's crystals, placed next to the game board. It has a bottom 0-99 track and a top hundreds track; the bottom sorcerer token tracks units/tens and the top token tracks hundreds (used when a player exceeds 100 crystals)."
+      },
+      "slots": {
+        "type": "string",
+        "default": "0-99 个位/十位 + 顶部百位",
+        "description": {
+          "zh": "水晶轨槽位：底部 0-99 格用于个位/十位，顶部百位轨用于超过 100 水晶时。",
+          "en": "Crystal track slots: a bottom 0-99 track for units/tens, and a top hundreds track used when a player exceeds 100 crystals."
+        }
+      }
+    },
+    {
+      "id": "year_track",
+      "extends": "<ontology::linear_track>",
+      "name": {
+        "zh": "年份轨",
+        "en": "Year Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏版图中央的轨道，标有 1/2/3。年份标记指示当前年份。",
+        "en": "The track in the center of the game board, marked 1/2/3. The year token indicates the current year."
+      },
+      "slots": {
+        "type": "string",
+        "default": "1-3",
+        "description": {
+          "zh": "年份轨槽位：1、2、3 年。",
+          "en": "Year track slots: years 1, 2, and 3."
+        }
+      }
+    },
+    {
+      "id": "season_wheel",
+      "extends": "<ontology::circular_track>",
+      "name": {
+        "zh": "季节轮",
+        "en": "Season Wheel"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏版图上的环形轨道，共 12 格：1-3 冬季（蓝）、4-6 春季（绿）、7-9 夏季（黄）、10-12 秋季（红）。季节标记在此轨道上推进。",
+        "en": "The circular track on the game board with 12 spaces: 1-3 winter (blue), 4-6 spring (green), 7-9 summer (yellow), 10-12 fall (red). The season token advances on this wheel."
+      },
+      "slots": {
+        "type": "string",
+        "default": "1-12",
+        "description": {
+          "zh": "季节轮槽位：1-12。1-3 冬、4-6 春、7-9 夏、10-12 秋。",
+          "en": "Season wheel slots: 1-12. 1-3 winter, 4-6 spring, 7-9 summer, 10-12 fall."
+        }
+      }
+    },
+    {
+      "id": "transmutation_chart",
+      "extends": "<ontology::aid>",
+      "name": {
+        "zh": "能量转化表",
+        "en": "Energy Transmutation Chart"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏版图上的转化表，按季节显示每种能量可转化为多少水晶：外圈能量=1 水晶、中圈=2 水晶、内圈=3 水晶。玩家回合内若拥有转化骰面（或卡牌赋予转化），可按当前季节的汇率把储备中的能量换为水晶，转化后的能量弃回供应堆。",
+        "en": "The chart on the game board showing, by season, how many crystals each energy type transmutes into: outer circle = 1 crystal, middle circle = 2, inner circle = 3. During a turn with the transmute die face (or a card granting transmutation), a player may convert reserve energy into crystals at the current season's rate; transmuted energy returns to the stockpile."
+      }
+    },
+    {
+      "id": "energy_stockpile",
+      "specifies": "<ontology::public_supply>",
+      "name": {
+        "zh": "能量供应堆",
+        "en": "Energy Stockpile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "放在水晶轨旁的能量代币供应堆。玩家获得能量时从这里取；支付/转化/弃掉能量时放回这里。能量代币视为无限供应，实体代币不足时可用替代物。",
+        "en": "The supply of energy tokens next to the crystal track. Players take energy from here and return spent/transmuted/discarded energy to it. The energy supply is effectively unlimited; if tokens run out, use substitutes."
+      }
+    },
+    {
+      "id": "draw_pile",
+      "extends": "<ontology::deck>",
+      "name": {
+        "zh": "抽牌堆",
+        "en": "Draw Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "预兆阶段发完 9 张手牌后剩余的力量卡组成的牌堆。抽牌堆为空时，洗混弃牌堆形成新抽牌堆。",
+        "en": "The deck of remaining power cards after the Prelude hands are dealt. If it ever empties, shuffle the discard pile to form a new draw pile."
+      }
+    },
+    {
+      "id": "discard_pile",
+      "extends": "<ontology::discard_pile>",
+      "name": {
+        "zh": "弃牌堆",
+        "en": "Discard Pile"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "游戏版图旁放置被弃掉或牺牲的力量卡的区域。抽牌堆为空时洗混此堆形成新抽牌堆。",
+        "en": "The zone next to the board for discarded or sacrificed power cards. When the draw pile is empty, this pile is shuffled to form a new draw pile."
+      }
+    },
+    {
+      "id": "player_board",
+      "specifies": "<ontology::player_board>",
+      "name": {
+        "zh": "个人板",
+        "en": "Player Board"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "每名玩家一块的个人板，分为三个区域：<energy_reserve>（能量储备，上限 7）、<summoning_gauge>（召唤量表，表示在场上力量卡数量上限）、<bonus_track>（奖励轨，使用奖励会获得优势但终局扣分）。",
+        "en": "Each player's individual board with three zones: the <energy_reserve> (energy storage, limit 7), the <summoning_gauge> (maximum number of power cards in play), and the <bonus_track> (bonuses that help during the game but cost prestige points at the end)."
+      }
+    },
+    {
+      "id": "energy_reserve",
+      "extends": "<ontology::player_zone>",
+      "name": {
+        "zh": "能量储备",
+        "en": "Energy Reserve"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "个人板上的能量存放区。正常情况下最多放 7 个能量代币；Bespelled Grimoire（附魔魔典） 在场上时上限提高到 10。若获得能量后超过上限，玩家必须先保留 7 个（或 10 个）并弃掉多余，然后才能进行其他行动。",
+        "en": "The energy storage zone on a player board. Normally it holds at most 7 energy tokens; with the Bespelled Grimoire（附魔魔典） in play the limit is 10. If a gain would exceed the limit, the player keeps the allowed number and discards the excess before any further actions."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 7,
+        "description": {
+          "zh": "能量储备上限，默认 7；Bespelled Grimoire（附魔魔典） 在场上时为 10。",
+          "en": "Energy reserve limit, 7 by default; 10 with the Bespelled Grimoire（附魔魔典） in play."
+        }
+      }
+    },
+    {
+      "id": "summoning_gauge",
+      "extends": "<ontology::linear_track>",
+      "name": {
+        "zh": "召唤量表",
+        "en": "Summoning Gauge"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "个人板上的量表，表示玩家在场上最多可拥有的力量卡数量。上限为 15，不能超过。召唤力量卡时必须有足够的召唤量表空位；即使免费召唤（如神圣圣杯）也需要空位。",
+        "en": "The gauge on a player board indicating the maximum number of power cards that player may have in play. The maximum is 15 and cannot be exceeded. A player must have an empty summoning-gauge slot to summon a card, even when summoning it for free (e.g. via the Divine Chalice)."
+      },
+      "capacity": {
+        "type": "integer",
+        "default": 15,
+        "description": {
+          "zh": "召唤量表上限固定为 15。",
+          "en": "The summoning gauge maximum is fixed at 15."
+        }
+      },
+      "slots": {
+        "type": "string",
+        "default": "0-15",
+        "description": {
+          "zh": "召唤量表槽位：0-15。",
+          "en": "Summoning gauge slots: 0-15."
+        }
+      }
+    },
+    {
+      "id": "bonus_track",
+      "extends": "<ontology::linear_track>",
+      "name": {
+        "zh": "奖励轨",
+        "en": "Bonus Track"
+      },
+      "abstract": false,
+      "description": {
+        "zh": "个人板上的奖励轨。玩家可在自己回合使用一次或多次奖励；终局时按已用奖励次数扣除对应威望分（第一次 -5、第二次 -7、第三次 -8，具体以个人板/版本为准）。",
+        "en": "The bonus track on a player board. A player may use bonuses during their turns; at game end the bonuses used impose prestige-point penalties (e.g. first -5, second -7, third -8, depending on the player board/version)."
+      },
+      "slots": {
+        "type": "string",
+        "default": "0-10",
+        "description": {
+          "zh": "奖励轨槽位：0 到 10（具体以个人板版本为准）。",
+          "en": "Bonus track slots: 0 to 10 (depending on the player-board version)."
+        }
+      }
+    }
+  ]
+}

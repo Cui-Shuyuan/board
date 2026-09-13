@@ -1,0 +1,194 @@
+[
+  {
+    "phonemes": [],
+    "text": "一个回合内，只能选择一种行动进行，",
+    "words": [
+      {
+        "confidence": 0.88994825,
+        "endTime": 0.435,
+        "startTime": 0.305,
+        "word": "一"
+      },
+      {
+        "confidence": 0.95163715,
+        "endTime": 0.565,
+        "startTime": 0.435,
+        "word": "个"
+      },
+      {
+        "confidence": 0.9813356,
+        "endTime": 0.715,
+        "startTime": 0.565,
+        "word": "回"
+      },
+      {
+        "confidence": 0.9587051,
+        "endTime": 0.905,
+        "startTime": 0.715,
+        "word": "合"
+      },
+      {
+        "confidence": 0.8980044,
+        "endTime": 1.155,
+        "startTime": 0.905,
+        "word": "内，"
+      },
+      {
+        "confidence": 0.95863456,
+        "endTime": 1.485,
+        "startTime": 1.335,
+        "word": "只"
+      },
+      {
+        "confidence": 0.97177637,
+        "endTime": 1.625,
+        "startTime": 1.485,
+        "word": "能"
+      },
+      {
+        "confidence": 0.96066487,
+        "endTime": 1.845,
+        "startTime": 1.625,
+        "word": "选"
+      },
+      {
+        "confidence": 0.97528136,
+        "endTime": 2.095,
+        "startTime": 1.845,
+        "word": "择"
+      },
+      {
+        "confidence": 0.9351269,
+        "endTime": 2.245,
+        "startTime": 2.095,
+        "word": "一"
+      },
+      {
+        "confidence": 0.98015875,
+        "endTime": 2.395,
+        "startTime": 2.245,
+        "word": "种"
+      },
+      {
+        "confidence": 0.9724796,
+        "endTime": 2.615,
+        "startTime": 2.395,
+        "word": "行"
+      },
+      {
+        "confidence": 0.9725929,
+        "endTime": 2.775,
+        "startTime": 2.615,
+        "word": "动"
+      },
+      {
+        "confidence": 0.89994687,
+        "endTime": 2.945,
+        "startTime": 2.775,
+        "word": "进"
+      },
+      {
+        "confidence": 0.9400204,
+        "endTime": 3.305,
+        "startTime": 2.945,
+        "word": "行，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "随后回合立刻结束，按照顺时针顺序，\n",
+    "words": [
+      {
+        "confidence": 0.7243365,
+        "endTime": 3.7950416,
+        "startTime": 3.6500416,
+        "word": "随"
+      },
+      {
+        "confidence": 0.96215737,
+        "endTime": 4.0650415,
+        "startTime": 3.7950416,
+        "word": "后"
+      },
+      {
+        "confidence": 0.9868884,
+        "endTime": 4.245042,
+        "startTime": 4.0650415,
+        "word": "回"
+      },
+      {
+        "confidence": 0.95888597,
+        "endTime": 4.4350414,
+        "startTime": 4.245042,
+        "word": "合"
+      },
+      {
+        "confidence": 0.92893964,
+        "endTime": 4.5850415,
+        "startTime": 4.4350414,
+        "word": "立"
+      },
+      {
+        "confidence": 0.96473074,
+        "endTime": 4.7350416,
+        "startTime": 4.5850415,
+        "word": "刻"
+      },
+      {
+        "confidence": 0.961857,
+        "endTime": 4.9050417,
+        "startTime": 4.7350416,
+        "word": "结"
+      },
+      {
+        "confidence": 0.9860344,
+        "endTime": 5.2150416,
+        "startTime": 4.9050417,
+        "word": "束，"
+      },
+      {
+        "confidence": 0.89722544,
+        "endTime": 5.575042,
+        "startTime": 5.495042,
+        "word": "按"
+      },
+      {
+        "confidence": 0.9207231,
+        "endTime": 5.8150415,
+        "startTime": 5.575042,
+        "word": "照"
+      },
+      {
+        "confidence": 0.8429624,
+        "endTime": 6.0250416,
+        "startTime": 5.8150415,
+        "word": "顺"
+      },
+      {
+        "confidence": 0.7305221,
+        "endTime": 6.1950417,
+        "startTime": 6.0250416,
+        "word": "时"
+      },
+      {
+        "confidence": 0.9208985,
+        "endTime": 6.3350415,
+        "startTime": 6.1950417,
+        "word": "针"
+      },
+      {
+        "confidence": 0.888268,
+        "endTime": 6.5550413,
+        "startTime": 6.3350415,
+        "word": "顺"
+      },
+      {
+        "confidence": 0.8793005,
+        "endTime": 6.745042,
+        "startTime": 6.5550413,
+        "word": "序，"
+      }
+    ]
+  }
+]

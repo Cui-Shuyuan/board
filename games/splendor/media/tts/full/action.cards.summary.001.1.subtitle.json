@@ -1,0 +1,140 @@
+[
+  {
+    "phonemes": [],
+    "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，\n",
+    "words": [
+      {
+        "confidence": 0.9603798,
+        "endTime": 0.395,
+        "startTime": 0.285,
+        "word": "我"
+      },
+      {
+        "confidence": 0.9816991,
+        "endTime": 0.495,
+        "startTime": 0.395,
+        "word": "们"
+      },
+      {
+        "confidence": 0.92222935,
+        "endTime": 0.625,
+        "startTime": 0.495,
+        "word": "做"
+      },
+      {
+        "confidence": 0.8281173,
+        "endTime": 0.705,
+        "startTime": 0.625,
+        "word": "个"
+      },
+      {
+        "confidence": 0.83891064,
+        "endTime": 0.935,
+        "startTime": 0.705,
+        "word": "总"
+      },
+      {
+        "confidence": 0.17533003,
+        "endTime": 0.965,
+        "startTime": 0.935,
+        "word": "结："
+      },
+      {
+        "confidence": 0.92933136,
+        "endTime": 1.735,
+        "startTime": 1.575,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9200577,
+        "endTime": 2.005,
+        "startTime": 1.735,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8246918,
+        "endTime": 2.135,
+        "startTime": 2.005,
+        "word": "可"
+      },
+      {
+        "confidence": 0.83317816,
+        "endTime": 2.235,
+        "startTime": 2.135,
+        "word": "以"
+      },
+      {
+        "confidence": 0.94524866,
+        "endTime": 2.445,
+        "startTime": 2.235,
+        "word": "花"
+      },
+      {
+        "confidence": 0.9721891,
+        "endTime": 2.625,
+        "startTime": 2.445,
+        "word": "费"
+      },
+      {
+        "confidence": 0.9698497,
+        "endTime": 2.895,
+        "startTime": 2.625,
+        "word": "费"
+      },
+      {
+        "confidence": 0.76452345,
+        "endTime": 3.095,
+        "startTime": 2.895,
+        "word": "用"
+      },
+      {
+        "confidence": 0.91034716,
+        "endTime": 3.255,
+        "startTime": 3.095,
+        "word": "购"
+      },
+      {
+        "confidence": 0.9513752,
+        "endTime": 3.385,
+        "startTime": 3.255,
+        "word": "买"
+      },
+      {
+        "confidence": 0.9554324,
+        "endTime": 3.525,
+        "startTime": 3.385,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9545675,
+        "endTime": 3.755,
+        "startTime": 3.525,
+        "word": "张"
+      },
+      {
+        "confidence": 0.982727,
+        "endTime": 3.965,
+        "startTime": 3.755,
+        "word": "发"
+      },
+      {
+        "confidence": 0.9078811,
+        "endTime": 4.125,
+        "startTime": 3.965,
+        "word": "展"
+      },
+      {
+        "confidence": 0.94840807,
+        "endTime": 4.325,
+        "startTime": 4.125,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.942298,
+        "endTime": 4.675,
+        "startTime": 4.325,
+        "word": "牌，"
+      }
+    ]
+  }
+]

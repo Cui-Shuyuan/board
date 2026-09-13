@@ -1,0 +1,206 @@
+[
+  {
+    "phonemes": [],
+    "text": "当某种宝石在供应堆中的数量大于等于4时，",
+    "words": [
+      {
+        "confidence": 0.95428437,
+        "endTime": 0.455,
+        "startTime": 0.295,
+        "word": "当"
+      },
+      {
+        "confidence": 0.7527893,
+        "endTime": 0.595,
+        "startTime": 0.455,
+        "word": "某"
+      },
+      {
+        "confidence": 0.8527727,
+        "endTime": 0.755,
+        "startTime": 0.595,
+        "word": "种"
+      },
+      {
+        "confidence": 0.9467463,
+        "endTime": 0.965,
+        "startTime": 0.755,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.92625463,
+        "endTime": 1.265,
+        "startTime": 0.965,
+        "word": "石"
+      },
+      {
+        "confidence": 0.97731984,
+        "endTime": 1.505,
+        "startTime": 1.265,
+        "word": "在"
+      },
+      {
+        "confidence": 0.9316116,
+        "endTime": 1.715,
+        "startTime": 1.505,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8611336,
+        "endTime": 1.835,
+        "startTime": 1.715,
+        "word": "应"
+      },
+      {
+        "confidence": 0.6751103,
+        "endTime": 2.005,
+        "startTime": 1.835,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.89947104,
+        "endTime": 2.155,
+        "startTime": 2.005,
+        "word": "中"
+      },
+      {
+        "confidence": 0.956143,
+        "endTime": 2.255,
+        "startTime": 2.155,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9533602,
+        "endTime": 2.495,
+        "startTime": 2.255,
+        "word": "数"
+      },
+      {
+        "confidence": 0.9248077,
+        "endTime": 2.725,
+        "startTime": 2.495,
+        "word": "量"
+      },
+      {
+        "confidence": 0.94860524,
+        "endTime": 3.005,
+        "startTime": 2.725,
+        "word": "大"
+      },
+      {
+        "confidence": 0.92428565,
+        "endTime": 3.135,
+        "startTime": 3.005,
+        "word": "于"
+      },
+      {
+        "confidence": 0.9295206,
+        "endTime": 3.345,
+        "startTime": 3.135,
+        "word": "等"
+      },
+      {
+        "confidence": 0.7878127,
+        "endTime": 3.475,
+        "startTime": 3.345,
+        "word": "于"
+      },
+      {
+        "confidence": 0.15701279,
+        "endTime": 3.675,
+        "startTime": 3.645,
+        "word": "4"
+      },
+      {
+        "confidence": 0.89256316,
+        "endTime": 4.105,
+        "startTime": 3.675,
+        "word": "时，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "也可以改为拿取这种宝石两枚。",
+    "words": [
+      {
+        "confidence": 0.9312512,
+        "endTime": 4.4050417,
+        "startTime": 4.305042,
+        "word": "也"
+      },
+      {
+        "confidence": 0.78448576,
+        "endTime": 4.5450416,
+        "startTime": 4.4050417,
+        "word": "可"
+      },
+      {
+        "confidence": 0.7513725,
+        "endTime": 4.6450415,
+        "startTime": 4.5450416,
+        "word": "以"
+      },
+      {
+        "confidence": 0.836389,
+        "endTime": 4.8550415,
+        "startTime": 4.6450415,
+        "word": "改"
+      },
+      {
+        "confidence": 0.8729423,
+        "endTime": 5.1150417,
+        "startTime": 4.8550415,
+        "word": "为"
+      },
+      {
+        "confidence": 0.9549297,
+        "endTime": 5.335042,
+        "startTime": 5.1150417,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.8804672,
+        "endTime": 5.5250416,
+        "startTime": 5.335042,
+        "word": "取"
+      },
+      {
+        "confidence": 0.9307489,
+        "endTime": 5.665042,
+        "startTime": 5.5250416,
+        "word": "这"
+      },
+      {
+        "confidence": 0.95052695,
+        "endTime": 5.835042,
+        "startTime": 5.665042,
+        "word": "种"
+      },
+      {
+        "confidence": 0.98244274,
+        "endTime": 5.995042,
+        "startTime": 5.835042,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.92291015,
+        "endTime": 6.2150416,
+        "startTime": 5.995042,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9587281,
+        "endTime": 6.3950415,
+        "startTime": 6.2150416,
+        "word": "两"
+      },
+      {
+        "confidence": 0.94309914,
+        "endTime": 6.6750417,
+        "startTime": 6.3950415,
+        "word": "枚。"
+      }
+    ]
+  }
+]

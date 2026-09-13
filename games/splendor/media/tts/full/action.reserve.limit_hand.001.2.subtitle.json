@@ -1,0 +1,230 @@
+[
+  {
+    "phonemes": [],
+    "text": "如果一位玩家已经保留了3张发展卡牌，就不能继续保留了。",
+    "words": [
+      {
+        "confidence": 0.94870293,
+        "endTime": 0.445,
+        "startTime": 0.285,
+        "word": "如"
+      },
+      {
+        "confidence": 0.9598255,
+        "endTime": 0.565,
+        "startTime": 0.445,
+        "word": "果"
+      },
+      {
+        "confidence": 0.9063696,
+        "endTime": 0.695,
+        "startTime": 0.565,
+        "word": "一"
+      },
+      {
+        "confidence": 0.73920214,
+        "endTime": 0.815,
+        "startTime": 0.695,
+        "word": "位"
+      },
+      {
+        "confidence": 0.95304275,
+        "endTime": 0.985,
+        "startTime": 0.815,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.8997915,
+        "endTime": 1.235,
+        "startTime": 0.985,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8764103,
+        "endTime": 1.345,
+        "startTime": 1.235,
+        "word": "已"
+      },
+      {
+        "confidence": 0.9759459,
+        "endTime": 1.495,
+        "startTime": 1.345,
+        "word": "经"
+      },
+      {
+        "confidence": 0.954993,
+        "endTime": 1.725,
+        "startTime": 1.495,
+        "word": "保"
+      },
+      {
+        "confidence": 0.9796535,
+        "endTime": 1.945,
+        "startTime": 1.725,
+        "word": "留"
+      },
+      {
+        "confidence": 0.6875033,
+        "endTime": 2.045,
+        "startTime": 1.945,
+        "word": "了"
+      },
+      {
+        "confidence": 0.10441815,
+        "endTime": 2.315,
+        "startTime": 2.285,
+        "word": "3"
+      },
+      {
+        "confidence": 0.89043695,
+        "endTime": 2.495,
+        "startTime": 2.315,
+        "word": "张"
+      },
+      {
+        "confidence": 0.97450614,
+        "endTime": 2.685,
+        "startTime": 2.495,
+        "word": "发"
+      },
+      {
+        "confidence": 0.82307094,
+        "endTime": 2.815,
+        "startTime": 2.685,
+        "word": "展"
+      },
+      {
+        "confidence": 0.91677415,
+        "endTime": 3.015,
+        "startTime": 2.815,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.957873,
+        "endTime": 3.385,
+        "startTime": 3.015,
+        "word": "牌，"
+      },
+      {
+        "confidence": 0.9738512,
+        "endTime": 3.705,
+        "startTime": 3.555,
+        "word": "就"
+      },
+      {
+        "confidence": 0.98034596,
+        "endTime": 3.865,
+        "startTime": 3.705,
+        "word": "不"
+      },
+      {
+        "confidence": 0.9770277,
+        "endTime": 4.035,
+        "startTime": 3.865,
+        "word": "能"
+      },
+      {
+        "confidence": 0.9183181,
+        "endTime": 4.175,
+        "startTime": 4.035,
+        "word": "继"
+      },
+      {
+        "confidence": 0.9275823,
+        "endTime": 4.305,
+        "startTime": 4.175,
+        "word": "续"
+      },
+      {
+        "confidence": 0.9633075,
+        "endTime": 4.455,
+        "startTime": 4.305,
+        "word": "保"
+      },
+      {
+        "confidence": 0.97853,
+        "endTime": 4.655,
+        "startTime": 4.455,
+        "word": "留"
+      },
+      {
+        "confidence": 0.9654197,
+        "endTime": 4.865,
+        "startTime": 4.655,
+        "word": "了。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "此时他必须选择其他行动。",
+    "words": [
+      {
+        "confidence": 0.7120975,
+        "endTime": 5.4050417,
+        "startTime": 5.2300415,
+        "word": "此"
+      },
+      {
+        "confidence": 0.86761254,
+        "endTime": 5.6550417,
+        "startTime": 5.4050417,
+        "word": "时"
+      },
+      {
+        "confidence": 0.8829161,
+        "endTime": 5.8150415,
+        "startTime": 5.6550417,
+        "word": "他"
+      },
+      {
+        "confidence": 0.96243244,
+        "endTime": 5.9450417,
+        "startTime": 5.8150415,
+        "word": "必"
+      },
+      {
+        "confidence": 0.96216047,
+        "endTime": 6.0950413,
+        "startTime": 5.9450417,
+        "word": "须"
+      },
+      {
+        "confidence": 0.9327184,
+        "endTime": 6.2750416,
+        "startTime": 6.0950413,
+        "word": "选"
+      },
+      {
+        "confidence": 0.9870774,
+        "endTime": 6.4850416,
+        "startTime": 6.2750416,
+        "word": "择"
+      },
+      {
+        "confidence": 0.23819089,
+        "endTime": 6.5450416,
+        "startTime": 6.4850416,
+        "word": "其"
+      },
+      {
+        "confidence": 0.102145374,
+        "endTime": 6.6050415,
+        "startTime": 6.5450416,
+        "word": "他"
+      },
+      {
+        "confidence": 0.22358532,
+        "endTime": 6.6650414,
+        "startTime": 6.6050415,
+        "word": "行"
+      },
+      {
+        "confidence": 0.31679085,
+        "endTime": 6.7250414,
+        "startTime": 6.6650414,
+        "word": "动。"
+      }
+    ]
+  }
+]

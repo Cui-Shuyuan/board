@@ -1,0 +1,68 @@
+[
+  {
+    "phonemes": [],
+    "text": "我们介绍一下发展卡牌。",
+    "words": [
+      {
+        "confidence": 0.96663976,
+        "endTime": 0.395,
+        "startTime": 0.295,
+        "word": "我"
+      },
+      {
+        "confidence": 0.9758703,
+        "endTime": 0.485,
+        "startTime": 0.395,
+        "word": "们"
+      },
+      {
+        "confidence": 0.9060721,
+        "endTime": 0.615,
+        "startTime": 0.485,
+        "word": "介"
+      },
+      {
+        "confidence": 0.9118735,
+        "endTime": 0.775,
+        "startTime": 0.615,
+        "word": "绍"
+      },
+      {
+        "confidence": 0.9333669,
+        "endTime": 0.865,
+        "startTime": 0.775,
+        "word": "一"
+      },
+      {
+        "confidence": 0.95590067,
+        "endTime": 1.085,
+        "startTime": 0.865,
+        "word": "下"
+      },
+      {
+        "confidence": 0.97249556,
+        "endTime": 1.245,
+        "startTime": 1.085,
+        "word": "发"
+      },
+      {
+        "confidence": 0.9069309,
+        "endTime": 1.375,
+        "startTime": 1.245,
+        "word": "展"
+      },
+      {
+        "confidence": 0.94671196,
+        "endTime": 1.555,
+        "startTime": 1.375,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.94282883,
+        "endTime": 1.895,
+        "startTime": 1.555,
+        "word": "牌。"
+      }
+    ]
+  }
+]

@@ -35,7 +35,8 @@
       "appearance": {
         "zh": "圆形纸板标记，正面印有食物图案；「1 食物」小标记 55 个、「5 食物」大标记 10 个。",
         "en": "Round cardboard markers with a food symbol; 55 small '1 food' and 10 large '5 food' markers."
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "building_resource",
@@ -62,7 +63,8 @@
           "zh": "本抽象类不指定外观，由各具体建材定义（如木头=棕色小木块、黏土=赤褐色小方块、芦苇=白色长条、石头=黑色小方块）。",
           "en": "This abstract category specifies no appearance; each concrete resource defines its own (e.g. wood = small brown log-shaped markers, clay = small auburn cubes, reed = small white reed-shaped markers, stone = small black cubes)."
         }
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "wood",
@@ -189,7 +191,8 @@
           "zh": "本抽象类不指定外观，由各具体作物定义（如谷物=黄色圆形小标记、蔬菜=橙色圆形小标记）。",
           "en": "This abstract category specifies no appearance; each concrete crop defines its own (e.g. grain = small yellow round markers, vegetables = small orange round markers)."
         }
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "grain",
@@ -249,7 +252,9 @@
         "en": "Animal"
       },
       "aliases": {
-        "zh": ["宠物"]
+        "zh": [
+          "宠物"
+        ]
       },
       "abstract": true,
       "description": {
@@ -269,7 +274,8 @@
           "zh": "本抽象类不指定外观，由各具体动物定义（如羊=白色小羊木块、野猪=黑色小猪木块、牛=棕色小牛木块）。",
           "en": "This abstract category specifies no appearance; each concrete animal defines its own (e.g. sheep = white sheep-shaped wooden pieces, wild boar = black pig-shaped pieces, cattle = brown cattle-shaped pieces)."
         }
-      }
+      },
+      "limited_supply": true
     },
     {
       "id": "sheep",
@@ -527,7 +533,9 @@
         "en": "Occupation Card"
       },
       "aliases": {
-        "zh": ["职业"]
+        "zh": [
+          "职业"
+        ]
       },
       "abstract": false,
       "description": {
@@ -570,13 +578,6 @@
           "en": "The card's printed prerequisite (e.g. 'at least 2 occupations'), which must be met to play the card; it demands ownership, never payment."
         }
       },
-      "cost": {
-        "type": "string",
-        "description": {
-          "zh": "右上角印的建材费用（如「1 木头 1 黏土」），从个人供应支付。",
-          "en": "The building resource cost printed in the top right corner, paid from your personal supply."
-        }
-      },
       "traveling": {
         "type": "boolean",
         "description": {
@@ -587,6 +588,13 @@
       "appearance": {
         "zh": "橙色卡牌，右上角印建材费用，卡面为插图与效果文字，旅行卡带左箭头标记。",
         "en": "An orange card with the building cost in the top right corner, an illustration with effect text, and a left arrow on traveling cards."
+      },
+      "<ontology::cost>": {
+        "type": "string",
+        "description": {
+          "zh": "右上角印的建材费用（如「1 木头 1 黏土」），从个人供应支付。",
+          "en": "The building resource cost printed in the top right corner, paid from your personal supply."
+        }
       }
     },
     {
@@ -1113,7 +1121,9 @@
         "en": "Renovation and Major or Minor Improvement (Round Card)"
       },
       "aliases": {
-        "zh": ["翻新后还可改良"]
+        "zh": [
+          "翻新后还可改良"
+        ]
       },
       "abstract": false,
       "description": {
@@ -1521,7 +1531,10 @@
         "en": "Action Space"
       },
       "aliases": {
-        "zh": ["行动空间", "阻挡"]
+        "zh": [
+          "行动空间",
+          "阻挡"
+        ]
       },
       "abstract": true,
       "description": {
@@ -1545,8 +1558,13 @@
         "en": "Permanent Action Space"
       },
       "aliases": {
-        "zh": ["永久行动空间"],
-        "en": ["After X, also Y", "After X also Y"]
+        "zh": [
+          "永久行动空间"
+        ],
+        "en": [
+          "After X, also Y",
+          "After X also Y"
+        ]
       },
       "abstract": true,
       "description": {
@@ -2059,8 +2077,16 @@
         "en": "House"
       },
       "aliases": {
-        "zh": ["木屋", "泥屋", "石屋"],
-        "en": ["wooden house", "clay house", "stone house"]
+        "zh": [
+          "木屋",
+          "泥屋",
+          "石屋"
+        ],
+        "en": [
+          "wooden house",
+          "clay house",
+          "stone house"
+        ]
       },
       "abstract": false,
       "description": {
@@ -2110,12 +2136,32 @@
           "op": "*",
           "operands": [
             2,
-            {"var": "spaces", "zh": "格数", "en": "spaces"},
-            {"op": "^", "operands": [2, {"var": "stables", "zh": "马厩数", "en": "stables"}]}
+            {
+              "var": "spaces",
+              "zh": "格数",
+              "en": "spaces"
+            },
+            {
+              "op": "^",
+              "operands": [
+                2,
+                {
+                  "var": "stables",
+                  "zh": "马厩数",
+                  "en": "stables"
+                }
+              ]
+            }
           ]
         },
         "examples": [
-          {"zh": "1×2 牧场 + 2 马厩", "bindings": {"spaces": 2, "stables": 2}}
+          {
+            "zh": "1×2 牧场 + 2 马厩",
+            "bindings": {
+              "spaces": 2,
+              "stables": 2
+            }
+          }
         ]
       }
     },
@@ -2470,7 +2516,10 @@
         "en": "Sow"
       },
       "aliases": {
-        "zh": ["播种谷物", "谷物播种"]
+        "zh": [
+          "播种谷物",
+          "谷物播种"
+        ]
       },
       "abstract": false,
       "description": {
@@ -2488,7 +2537,17 @@
               "zh": "每块播种的田 1 个（谷物或蔬菜，自己供应的种子）。",
               "en": "1 per sown field (grain or vegetable, the seed from your own supply).",
               "numeric": [
-                {"value": 1, "per": {"zh": "每块播种的田", "en": "per sown field"}, "from": {"zh": "自己供应", "en": "own supply"}}
+                {
+                  "value": 1,
+                  "per": {
+                    "zh": "每块播种的田",
+                    "en": "per sown field"
+                  },
+                  "from": {
+                    "zh": "自己供应",
+                    "en": "own supply"
+                  }
+                }
               ]
             },
             "description": {
@@ -2508,8 +2567,36 @@
               "zh": "每块谷物田额外 2 个、每块蔬菜田额外 1 个。",
               "en": "2 extra per grain field, 1 extra per vegetable field.",
               "numeric": [
-                {"when": {"zh": "谷物田、谷物", "en": "grain field"}, "value": 2, "per": {"zh": "每块田", "en": "per field"}, "from": {"zh": "公共供应", "en": "general supply"}},
-                {"when": {"zh": "蔬菜田、蔬菜", "en": "vegetable field"}, "value": 1, "per": {"zh": "每块田", "en": "per field"}, "from": {"zh": "公共供应", "en": "general supply"}}
+                {
+                  "when": {
+                    "zh": "谷物田、谷物",
+                    "en": "grain field"
+                  },
+                  "value": 2,
+                  "per": {
+                    "zh": "每块田",
+                    "en": "per field"
+                  },
+                  "from": {
+                    "zh": "公共供应",
+                    "en": "general supply"
+                  }
+                },
+                {
+                  "when": {
+                    "zh": "蔬菜田、蔬菜",
+                    "en": "vegetable field"
+                  },
+                  "value": 1,
+                  "per": {
+                    "zh": "每块田",
+                    "en": "per field"
+                  },
+                  "from": {
+                    "zh": "公共供应",
+                    "en": "general supply"
+                  }
+                }
               ]
             },
             "description": {
@@ -2714,7 +2801,10 @@
         "en": "Play Minor Improvement"
       },
       "aliases": {
-        "zh": ["次要改良行动", "次要改良"]
+        "zh": [
+          "次要改良行动",
+          "次要改良"
+        ]
       },
       "abstract": false,
       "description": {
@@ -2763,7 +2853,9 @@
         "en": "Build Major Improvement"
       },
       "aliases": {
-        "zh": ["主要改良行动"]
+        "zh": [
+          "主要改良行动"
+        ]
       },
       "abstract": false,
       "description": {
@@ -2836,7 +2928,10 @@
         "en": "Cook Goods"
       },
       "aliases": {
-        "zh": ["屠宰", "随时转换效果"]
+        "zh": [
+          "屠宰",
+          "随时转换效果"
+        ]
       },
       "abstract": false,
       "description": {
@@ -2892,7 +2987,9 @@
         "en": "Eat Raw Crops"
       },
       "aliases": {
-        "zh": ["随时转换效果"]
+        "zh": [
+          "随时转换效果"
+        ]
       },
       "abstract": false,
       "description": {
@@ -3032,8 +3129,26 @@
               "zh": "2 × 已上场家庭成员数（新生儿只算 1）。",
               "en": "2 × family members in play (newborns count as 1).",
               "numeric": [
-                {"when": {"zh": "新生儿、婴儿", "en": "newborn"}, "value": 1, "unit": "份"},
-                {"when": {"zh": "家庭成员、正式成员", "en": "family member"}, "value": 2, "per": {"zh": "每人", "en": "per person"}, "unit": "份"}
+                {
+                  "when": {
+                    "zh": "新生儿、婴儿",
+                    "en": "newborn"
+                  },
+                  "value": 1,
+                  "unit": "份"
+                },
+                {
+                  "when": {
+                    "zh": "家庭成员、正式成员",
+                    "en": "family member"
+                  },
+                  "value": 2,
+                  "per": {
+                    "zh": "每人",
+                    "en": "per person"
+                  },
+                  "unit": "份"
+                }
               ]
             },
             "description": {
@@ -3289,7 +3404,9 @@
         "en": "Harvest Round"
       },
       "aliases": {
-        "zh": ["收获"]
+        "zh": [
+          "收获"
+        ]
       },
       "abstract": false,
       "description": {
@@ -3461,7 +3578,9 @@
         "en": "Prerequisite Met"
       },
       "aliases": {
-        "zh": ["前置条件"]
+        "zh": [
+          "前置条件"
+        ]
       },
       "abstract": false,
       "description": {

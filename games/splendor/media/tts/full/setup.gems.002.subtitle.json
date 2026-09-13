@@ -1,0 +1,176 @@
+[
+  {
+    "phonemes": [],
+    "text": "这是黄金，黄金不属于宝石。",
+    "words": [
+      {
+        "confidence": 0.96248317,
+        "endTime": 0.385,
+        "startTime": 0.265,
+        "word": "这"
+      },
+      {
+        "confidence": 0.959609,
+        "endTime": 0.505,
+        "startTime": 0.385,
+        "word": "是"
+      },
+      {
+        "confidence": 0.9662352,
+        "endTime": 0.745,
+        "startTime": 0.505,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.9358996,
+        "endTime": 1.065,
+        "startTime": 0.745,
+        "word": "金，"
+      },
+      {
+        "confidence": 0.96135354,
+        "endTime": 1.625,
+        "startTime": 1.425,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.94558895,
+        "endTime": 1.815,
+        "startTime": 1.625,
+        "word": "金"
+      },
+      {
+        "confidence": 0.96371883,
+        "endTime": 1.945,
+        "startTime": 1.815,
+        "word": "不"
+      },
+      {
+        "confidence": 0.9405819,
+        "endTime": 2.105,
+        "startTime": 1.945,
+        "word": "属"
+      },
+      {
+        "confidence": 0.9045776,
+        "endTime": 2.195,
+        "startTime": 2.105,
+        "word": "于"
+      },
+      {
+        "confidence": 0.93699366,
+        "endTime": 2.355,
+        "startTime": 2.195,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.94879466,
+        "endTime": 2.735,
+        "startTime": 2.355,
+        "word": "石。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "我们所说的宝石指的就是这五种宝石。",
+    "words": [
+      {
+        "confidence": 0.9175828,
+        "endTime": 3.1850417,
+        "startTime": 3.0900416,
+        "word": "我"
+      },
+      {
+        "confidence": 0.9402181,
+        "endTime": 3.2950416,
+        "startTime": 3.1850417,
+        "word": "们"
+      },
+      {
+        "confidence": 0.9532019,
+        "endTime": 3.4550416,
+        "startTime": 3.2950416,
+        "word": "所"
+      },
+      {
+        "confidence": 0.9741438,
+        "endTime": 3.6150417,
+        "startTime": 3.4550416,
+        "word": "说"
+      },
+      {
+        "confidence": 0.9701826,
+        "endTime": 3.7250416,
+        "startTime": 3.6150417,
+        "word": "的"
+      },
+      {
+        "confidence": 0.93522745,
+        "endTime": 3.8950417,
+        "startTime": 3.7250416,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.9236697,
+        "endTime": 4.1950417,
+        "startTime": 3.8950417,
+        "word": "石"
+      },
+      {
+        "confidence": 0.97824186,
+        "endTime": 4.3650417,
+        "startTime": 4.1950417,
+        "word": "指"
+      },
+      {
+        "confidence": 0.95474887,
+        "endTime": 4.4750414,
+        "startTime": 4.3650417,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9384315,
+        "endTime": 4.6050415,
+        "startTime": 4.4750414,
+        "word": "就"
+      },
+      {
+        "confidence": 0.97994834,
+        "endTime": 4.745042,
+        "startTime": 4.6050415,
+        "word": "是"
+      },
+      {
+        "confidence": 0.9472678,
+        "endTime": 4.8650417,
+        "startTime": 4.745042,
+        "word": "这"
+      },
+      {
+        "confidence": 0.84929657,
+        "endTime": 5.0150414,
+        "startTime": 4.8650417,
+        "word": "五"
+      },
+      {
+        "confidence": 0.96042717,
+        "endTime": 5.1750417,
+        "startTime": 5.0150414,
+        "word": "种"
+      },
+      {
+        "confidence": 0.9705009,
+        "endTime": 5.3450418,
+        "startTime": 5.1750417,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.96143365,
+        "endTime": 5.6150417,
+        "startTime": 5.3450418,
+        "word": "石。"
+      }
+    ]
+  }
+]
