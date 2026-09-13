@@ -40,3 +40,33 @@ scripts/_qa_results.json
 # Claude local-only files
 .claude/worktrees/
 .claude/settings.local.json
+
+# 模型文件（不进 git）
+*.onnx
+*.onnx.data
+*.pt
+*.pth
+*.safetensors
+*.gguf
+*.bin
+backend/BoardAI.Api/ml_models/
+
+# 音频 / 视频（不进 git；本地生成，运行时按路径加载）
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.m4a
+*.aac
+*.opus
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+
+# 规则书 PDF / 大页原始扫描
+*.pdf
+games/civolution/page-*.jpg
+games/civolution/*_600dpi*.jpg
+games/civolution/_review_pages/
