@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using BoardGameTutorial;
 
 /// <summary>自动引导：按 Play 时若无教学播放器则创建一个并自动播放 Splendor 设置动画。</summary>
 public static class TeachingBootstrap
@@ -10,6 +11,9 @@ public static class TeachingBootstrap
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Init()
     {
+        // 纯音频 cue 模式开启时不自动启动旧的 TeachingPlayer。
+        if (TutorialCuePlayer.CueModeEnabled) return;
+
         if (Object.FindFirstObjectByType<TeachingPlayer>() == null)
         {
             var go = new GameObject("TeachingHost");

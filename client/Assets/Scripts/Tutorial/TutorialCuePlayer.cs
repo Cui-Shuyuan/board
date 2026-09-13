@@ -8,6 +8,9 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace BoardGameTutorial
 {
@@ -25,9 +28,11 @@ namespace BoardGameTutorial
         public bool autoAdvance = true;
         public bool showDebugUI = true;
 
-        // 当 cue 播放器启用时，旧的动画 TutorialDirector 不再自动搭景。
-        // 需要回到旧动画原型时，把它设为 false 或手动把 TutorialDirector 挂到场景。
-        public static bool DisableLegacyBootstrap = true;
+        // 纯音频 cue 模式开关。
+        // true：自动启动纯音频播放器，禁用旧的 TeachingPlayer 自动动画。
+        // false：恢复旧的 TeachingPlayer 自动动画，cue 播放器不自动启动。
+        // 想手动测试 cue 播放器时，也可以把组件挂到场景对象上。
+        public static bool CueModeEnabled = true;
 
         private TutorialCueDoc doc;
         private string gameRoot;
@@ -58,6 +63,7 @@ namespace BoardGameTutorial
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
+            if (!CueModeEnabled) return;
             if (UnityEngine.Object.FindFirstObjectByType<TutorialCuePlayer>() != null) return;
             var go = new GameObject("TutorialCuePlayer");
             go.AddComponent<TutorialCuePlayer>();
@@ -266,11 +272,21 @@ namespace BoardGameTutorial
 
         private void Update()
         {
+#if ENABLE_INPUT_SYSTEM
+            var kb = Keyboard.current;
+            if (kb == null) return;
+            if (kb.spaceKey.wasPressedThisFrame) TogglePause();
+            if (kb.rKey.wasPressedThisFrame) ReplayCurrent();
+            if (kb.leftArrowKey.wasPressedThisFrame) Previous();
+            if (kb.rightArrowKey.wasPressedThisFrame) Next();
+            if (kb.aKey.wasPressedThisFrame) autoAdvance = !autoAdvance;
+#else
             if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
             if (Input.GetKeyDown(KeyCode.R)) ReplayCurrent();
             if (Input.GetKeyDown(KeyCode.LeftArrow)) Previous();
             if (Input.GetKeyDown(KeyCode.RightArrow)) Next();
             if (Input.GetKeyDown(KeyCode.A)) autoAdvance = !autoAdvance;
+#endif
         }
 
         private void UpdateSubtitle()
