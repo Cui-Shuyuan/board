@@ -1,0 +1,2166 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "title": "璀璨宝石 full 口播稿",
+  "version": "0.1.0",
+  "cues": [
+    {
+      "id": "bg.intro.001.1",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.001.1.b1",
+          "text": "《璀璨宝石》是一款支持2到4名玩家的游戏。"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.001.2",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.001.2.b1",
+          "text": "这款游戏于2015年出版，2024年再版。"
+        },
+        {
+          "id": "bg.intro.001.2.b2",
+          "text": "我手里的这一版是2024年的新版。"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.002.1",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.002.1.b1",
+          "text": "在老版璀璨宝石中，玩家将扮演文艺复兴时期的一名富商，利用手中的资源收购宝石矿、"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.002.2",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.002.2.b1",
+          "text": "开采宝石、雇佣宝石工匠将宝石加工成饰品，最后在城市中售卖，"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.002.3",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.002.3.b1",
+          "text": "获得声望的同时收获贵族的青睐。"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.003.1",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.003.1.b1",
+          "text": "而在新版璀璨宝石中，游戏主题由文艺复兴改为了丝绸之路，"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.003.2",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.003.2.b1",
+          "text": "宝石加工的过程也改为了游历丝绸之路的过程。"
+        },
+        {
+          "id": "bg.intro.003.2.b2",
+          "text": "玩家将扮演一位丝路商人，买卖宝石、"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.003.3",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "bg.intro.003.3.b1",
+          "text": "收获财富的同时结识各地的贵族，最终建立起属于自己的贸易帝国。"
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.001.1",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.cards.001.1.b1",
+          "text": "这是发展卡牌，共90张。"
+        },
+        {
+          "id": "setup.cards.001.1.b2",
+          "text": "根据背面可以将所有发展卡牌分为三类，"
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.001.2",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.cards.001.2.b1",
+          "text": "分别是40张绿色的一级发展卡牌、"
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.001.3",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.cards.001.3.b1",
+          "text": "30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌。"
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.002.1",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [
+        "flow:prepare_level_1_deck",
+        "flow:prepare_level_2_deck",
+        "flow:prepare_level_3_deck",
+        "flow:shuffle_level_1_deck",
+        "flow:shuffle_level_2_deck",
+        "flow:shuffle_level_3_deck",
+        "flow:deal_card_market_level_1",
+        "flow:deal_card_market_level_2",
+        "flow:deal_card_market_level_3"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.cards.002.1.b1",
+          "text": "将这三类牌分别洗混后按顺序摆成一列。"
+        },
+        {
+          "id": "setup.cards.002.1.b2",
+          "text": "从每摞牌上方分别翻开四张牌，在一侧摆成一行。"
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.002.2",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [
+        "flow:prepare_level_1_deck",
+        "flow:prepare_level_2_deck",
+        "flow:prepare_level_3_deck",
+        "flow:shuffle_level_1_deck",
+        "flow:shuffle_level_2_deck",
+        "flow:shuffle_level_3_deck",
+        "flow:deal_card_market_level_1",
+        "flow:deal_card_market_level_2",
+        "flow:deal_card_market_level_3"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.cards.002.2.b1",
+          "text": "最终组成一个3乘4的发展卡牌供应堆。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.001.1",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.001.1.b1",
+          "text": "这些是标记，后续称之为宝石。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.001.2",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.001.2.b1",
+          "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.001.3",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.001.3.b1",
+          "text": "后续我们就直接以颜色称呼它们了。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.002",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gold>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.002.b1",
+          "text": "这是黄金，黄金不属于宝石。"
+        },
+        {
+          "id": "setup.gems.002.b2",
+          "text": "我们所说的宝石指的就是这五种宝石。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.003.1",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "flow:distribute_gems"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.003.1.b1",
+          "text": "我们需要根据玩家人数拿取对应数量的宝石。"
+        },
+        {
+          "id": "setup.gems.003.1.b2",
+          "text": "2人游戏时，每种宝石拿取4枚。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.003.2",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "flow:distribute_gems"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.003.2.b1",
+          "text": "3人游戏时，拿取5枚。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.004",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "flow:distribute_gems"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.004.b1",
+          "text": "4人游戏时则使用全部的7枚宝石。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.005.1",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem_supply>",
+        "<gold_supply>",
+        "flow:distribute_gems",
+        "flow:distribute_gold"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.005.1.b1",
+          "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。"
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.005.2",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem_supply>",
+        "<gold_supply>",
+        "flow:distribute_gems",
+        "flow:distribute_gold"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.gems.005.2.b1",
+          "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。"
+        },
+        {
+          "id": "setup.gems.005.2.b2",
+          "text": "其余的宝石放回盒子。"
+        }
+      ]
+    },
+    {
+      "id": "setup.nobles.001.1",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [
+        "<noble>",
+        "<noble_market>",
+        "flow:deal_nobles"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.nobles.001.1.b1",
+          "text": "这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块，"
+        }
+      ]
+    },
+    {
+      "id": "setup.nobles.001.2",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [
+        "<noble>",
+        "<noble_market>",
+        "flow:deal_nobles"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.nobles.001.2.b1",
+          "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
+        }
+      ]
+    },
+    {
+      "id": "setup.nobles.002",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [
+        "flow:deal_nobles"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.nobles.002.b1",
+          "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。"
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.1",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "refs": [
+        "flow:choose_starting_player",
+        "flow:give_starting_player_marker",
+        "<starting_player_marker>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.starting_player.001.1.b1",
+          "text": "现在需要决定起始玩家。"
+        },
+        {
+          "id": "setup.starting_player.001.1.b2",
+          "text": "规则书中规定最年轻的玩家作为起始玩家，"
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.2",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "refs": [
+        "flow:choose_starting_player",
+        "flow:give_starting_player_marker",
+        "<starting_player_marker>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.starting_player.001.2.b1",
+          "text": "也可以使用所有人都认可的方式决定谁是起始玩家。"
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.3",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "refs": [
+        "flow:choose_starting_player",
+        "flow:give_starting_player_marker",
+        "<starting_player_marker>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.starting_player.001.3.b1",
+          "text": "这是起始玩家标记，起始玩家获得这枚标记。"
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.1",
+      "group": "2.5 设置完成",
+      "group_path": [
+        "2 设置",
+        "2.5 设置完成"
+      ],
+      "refs": [
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.end.001.1.b1",
+          "text": "至此，整个设置环节就大功告成了。"
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.2",
+      "group": "2.5 设置完成",
+      "group_path": [
+        "2 设置",
+        "2.5 设置完成"
+      ],
+      "refs": [
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.end.001.2.b1",
+          "text": "需要注意的是，这个设置方式适合两名玩家并排坐在桌子同一侧进行游戏时使用。"
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.3",
+      "group": "2.5 设置完成",
+      "group_path": [
+        "2 设置",
+        "2.5 设置完成"
+      ],
+      "refs": [
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.end.001.3.b1",
+          "text": "如果三到四位玩家同时进行游戏，更推荐使用这种设置方式，"
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.4",
+      "group": "2.5 设置完成",
+      "group_path": [
+        "2 设置",
+        "2.5 设置完成"
+      ],
+      "refs": [
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.end.001.4.b1",
+          "text": "这样可以避免对侧玩家阅读卡牌吃力。"
+        }
+      ]
+    },
+    {
+      "id": "setup.end.002",
+      "group": "2.5 设置完成",
+      "group_path": [
+        "2 设置",
+        "2.5 设置完成"
+      ],
+      "refs": [
+        "flow:main_gameplay"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.end.002.b1",
+          "text": "接下来可以正式开始游戏了。"
+        }
+      ]
+    },
+    {
+      "id": "action.turn.001",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "refs": [
+        "flow:turn_cycle",
+        "flow:player_turns",
+        "flow:player_turn"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.turn.001.b1",
+          "text": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。"
+        }
+      ]
+    },
+    {
+      "id": "action.turn.002",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "refs": [
+        "flow:action_phase"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.turn.002.b1",
+          "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行："
+        }
+      ]
+    },
+    {
+      "id": "action.take.different.001",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "flow:player_action_turn"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.different.001.b1",
+          "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。"
+        }
+      ]
+    },
+    {
+      "id": "action.take.same.001",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_same>",
+        "<gems_available_same_color>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.same.001.b1",
+          "text": "当某种宝石在供应堆中的数量大于等于4时，也可以改为拿取这种宝石两枚。"
+        }
+      ]
+    },
+    {
+      "id": "action.take.same.002",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_same>",
+        "<gems_available_same_color>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.same.002.b1",
+          "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，否则就不能这样拿取。"
+        }
+      ]
+    },
+    {
+      "id": "action.take.draw_rule.001.1",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "<take_gems_same>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.draw_rule.001.1.b1",
+          "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。"
+        }
+      ]
+    },
+    {
+      "id": "action.take.draw_rule.001.2",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "<take_gems_same>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.draw_rule.001.2.b1",
+          "text": "当供应堆宝石不足时，尽可能拿取宝石。"
+        }
+      ]
+    },
+    {
+      "id": "action.take.limit.001.1",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<player_holding>",
+        "<discard_excess_gems>",
+        "<exceed_gem_limit>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.limit.001.1.b1",
+          "text": "玩家持有的宝石和黄金总数上限为10个。"
+        },
+        {
+          "id": "action.take.limit.001.1.b2",
+          "text": "任何时候当持有数量超过上限时，"
+        }
+      ]
+    },
+    {
+      "id": "action.take.limit.001.2",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<player_holding>",
+        "<discard_excess_gems>",
+        "<exceed_gem_limit>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.limit.001.2.b1",
+          "text": "必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
+        }
+      ]
+    },
+    {
+      "id": "action.take.public.001.1",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<player_holding>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.public.001.1.b1",
+          "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，"
+        }
+      ]
+    },
+    {
+      "id": "action.take.public.001.2",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<player_holding>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.take.public.001.2.b1",
+          "text": "所有人都能清楚看到的地方。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.intro.001",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.intro.001.b1",
+          "text": "我们介绍一下发展卡牌。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.cost.001.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "<cost>",
+        "<purchase_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.cost.001.1.b1",
+          "text": "左下角是这张牌的价格。"
+        },
+        {
+          "id": "action.cards.cost.001.1.b2",
+          "text": "要想购买这张牌，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.cost.001.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "<cost>",
+        "<purchase_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.cost.001.2.b1",
+          "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.cost.001.3",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "<cost>",
+        "<purchase_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.cost.001.3.b1",
+          "text": "之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.market.001.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<card_market>",
+        "<refill_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.market.001.1.b1",
+          "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.market.001.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<card_market>",
+        "<refill_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.market.001.2.b1",
+          "text": "只要卡牌被玩家买走，卡牌供应堆出现了空位，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.market.001.3",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<card_market>",
+        "<refill_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.market.001.3.b1",
+          "text": "玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.market.001.4",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<card_market>",
+        "<refill_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.market.001.4.b1",
+          "text": "此时不再填补，而是用剩余的发展卡牌继续游戏。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.prestige.001.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.prestige.001.1.b1",
+          "text": "左上角是这张牌的声望值。"
+        },
+        {
+          "id": "action.cards.prestige.001.1.b2",
+          "text": "玩家购买发展卡牌后，立即获得对应的声望值。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.prestige.001.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_card>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.prestige.001.2.b1",
+          "text": "不过并不是所有卡牌都有声望值。"
+        },
+        {
+          "id": "action.cards.prestige.001.2.b2",
+          "text": "很多一级发展卡牌都没有声望值。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.discount.001",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.discount.001.b1",
+          "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.discount.002.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.discount.002.1.b1",
+          "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.discount.002.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.discount.002.2.b1",
+          "text": "只需要支付1枚白宝石和1枚蓝宝石即可。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.discount.003.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.discount.003.1.b1",
+          "text": "如果我已经购买了2张白宝石牌和1张蓝宝石牌，那么我购买这张牌时无需支付任何宝石。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.discount.003.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.discount.003.2.b1",
+          "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.discount.003.3",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.discount.003.3.b1",
+          "text": "折扣的上限就是免费。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.public.001.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_area>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.public.001.1.b1",
+          "text": "和宝石相同，已购买的发展卡牌也属于公开信息，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.public.001.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<development_area>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.public.001.2.b1",
+          "text": "每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.limit.001.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<development_area>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.limit.001.1.b1",
+          "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.limit.001.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<development_area>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.limit.001.2.b1",
+          "text": "但玩家总计可以购买的发展卡牌数量没有上限。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.intro.001",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.intro.001.b1",
+          "text": "我们再介绍一下贵族板块。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.value.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.value.001.1.b1",
+          "text": "左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.value.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.value.001.2.b1",
+          "text": "也就是已购买的卡牌数量。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.trigger.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.trigger.001.1.b1",
+          "text": "当玩家结束自己的回合后，"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.trigger.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.trigger.001.2.b1",
+          "text": "如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件，"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.trigger.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.trigger.001.3.b1",
+          "text": "他必须立即拿取这张贵族板块并立刻获得其声望值。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.forced.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.forced.001.1.b1",
+          "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.forced.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.forced.001.2.b1",
+          "text": "并且这个行动是强制性的，玩家不可以选择跳过。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.source.001",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble_market>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.source.001.b1",
+          "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.choice.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.choice.001.1.b1",
+          "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.choice.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.choice.001.2.b1",
+          "text": "他必须从这些贵族板块中挑选一个拿取。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.repeat.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.repeat.001.1.b1",
+          "text": "当他的下一个回合结束时，不管这回合他做了什么行动，"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.repeat.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.repeat.001.2.b1",
+          "text": "只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
+        }
+      ]
+    },
+    {
+      "id": "action.nobles.repeat.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.nobles.repeat.001.3.b1",
+          "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.summary.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.summary.001.1.b1",
+          "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.summary.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.summary.001.2.b1",
+          "text": "已购买的发展卡牌会为玩家带来声望值和折扣。"
+        }
+      ]
+    },
+    {
+      "id": "action.cards.summary.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.cards.summary.001.3.b1",
+          "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.intro.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<gold>",
+        "<gold_supply>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.intro.001.1.b1",
+          "text": "除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.intro.001.2",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<gold>",
+        "<gold_supply>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.intro.001.2.b1",
+          "text": "正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.gold.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<gold>",
+        "<purchase_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.gold.001.b1",
+          "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.deck.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<development_deck_level_1>",
+        "<development_deck_level_2>",
+        "<development_deck_level_3>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.deck.001.b1",
+          "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.notes_intro.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.notes_intro.001.b1",
+          "text": "注意事项如下："
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.limit_gold.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<player_holding>",
+        "<gold_available>",
+        "<discard_excess_gems>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.limit_gold.001.1.b1",
+          "text": "拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.limit_gold.001.2",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<player_holding>",
+        "<gold_available>",
+        "<discard_excess_gems>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.limit_gold.001.2.b1",
+          "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.limit_hand.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>",
+        "<card_reservable>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.limit_hand.001.1.b1",
+          "text": "每位玩家最多同时保留3张发展卡牌。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>",
+        "<card_reservable>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.limit_hand.001.2.b1",
+          "text": "如果一位玩家已经保留了3张发展卡牌，就不能继续保留了。"
+        },
+        {
+          "id": "action.reserve.limit_hand.001.2.b2",
+          "text": "此时他必须选择其他行动。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.private.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.private.001.1.b1",
+          "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容，"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.private.001.2",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.private.001.2.b1",
+          "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.private.002",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>",
+        "<reserve_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.private.002.b1",
+          "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。"
+        }
+      ]
+    },
+    {
+      "id": "action.reserve.not_purchase.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<discount>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.reserve.not_purchase.001.b1",
+          "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。"
+        }
+      ]
+    },
+    {
+      "id": "action.purchase_reserved.001",
+      "group": "3.4 购买保留的发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.4 购买保留的发展卡牌"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<hand>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.purchase_reserved.001.b1",
+          "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。"
+        }
+      ]
+    },
+    {
+      "id": "action.purchase_reserved.002.1",
+      "group": "3.4 购买保留的发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.4 购买保留的发展卡牌"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<attract_noble>",
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.purchase_reserved.002.1.b1",
+          "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，"
+        }
+      ]
+    },
+    {
+      "id": "action.purchase_reserved.002.2",
+      "group": "3.4 购买保留的发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.4 购买保留的发展卡牌"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<attract_noble>",
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.purchase_reserved.002.2.b1",
+          "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。"
+        }
+      ]
+    },
+    {
+      "id": "action.summary.001",
+      "group": "3.5 回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "<take_gems_same>",
+        "<purchase_development_card>",
+        "<reserve_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.summary.001.b1",
+          "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。"
+        }
+      ]
+    },
+    {
+      "id": "action.summary.002.1",
+      "group": "3.5 回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "refs": [
+        "flow:turn_cycle",
+        "flow:player_turns",
+        "flow:main_gameplay"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.summary.002.1.b1",
+          "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，"
+        }
+      ]
+    },
+    {
+      "id": "action.summary.002.2",
+      "group": "3.5 回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "refs": [
+        "flow:turn_cycle",
+        "flow:player_turns",
+        "flow:main_gameplay"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action.summary.002.2.b1",
+          "text": "左手边的玩家开始他的回合。"
+        },
+        {
+          "id": "action.summary.002.2.b2",
+          "text": "就这样一直循环，直到整局游戏结束。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.trigger.001",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<enter_endgame>",
+        "<reach_15_prestige>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.trigger.001.b1",
+          "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.final_rounds.001.1",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "flow:final_turn_cycle",
+        "flow:final_turns",
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.final_rounds.001.1.b1",
+          "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，"
+        }
+      ]
+    },
+    {
+      "id": "endgame.final_rounds.001.2",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "flow:final_turn_cycle",
+        "flow:final_turns",
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.final_rounds.001.2.b1",
+          "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.example.001.1",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.example.001.1.b1",
+          "text": "以4人局为例：如果起始玩家的声望值达到15，"
+        }
+      ]
+    },
+    {
+      "id": "endgame.example.001.2",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.example.001.2.b1",
+          "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.example.002",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.example.002.b1",
+          "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.winner.001",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<highest_prestige_wins>",
+        "<prestige_highest>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.winner.001.b1",
+          "text": "声望值最高的玩家获得胜利。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.tie.001.1",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<highest_prestige_wins>",
+        "<fewest_development_cards>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.tie.001.1.b1",
+          "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。"
+        }
+      ]
+    },
+    {
+      "id": "endgame.tie.001.2",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<highest_prestige_wins>",
+        "<fewest_development_cards>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame.tie.001.2.b1",
+          "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。"
+        }
+      ]
+    }
+  ]
+}

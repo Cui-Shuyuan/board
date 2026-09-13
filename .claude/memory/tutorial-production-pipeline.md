@@ -72,6 +72,7 @@ metadata:
 - 运行时数据编译器：`scripts/build_tutorial_runtime.py`；产物 `games/splendor/tutorial/full.runtime.json`（cue 顺序、音频、时长、字幕、group_path、refs）。
 - Unity 纯音频播放器 v0：`client/Assets/Scripts/Tutorial/TutorialCuePlayer.cs`，支持播放/字幕/跳转/上下段/暂停/重播当前 cue；默认关闭旧 `TutorialDirector` 的自动搭景，待进 Unity 实测。
 - 下一步：组件扫描、slot 标定、单 cue 动画 pilot、打断问答接线。
+- **分层编辑流程已加入**：编辑源 `games/{game}/tutorial/script.{track}.json`（group_path -> cue -> beat）；`scripts/tutorial_script_tool.py` 支持 import/build/validate/split/merge/set-pause；`scripts/rebuild_tutorial.py` 一条命令跑完 source -> LRC -> TTS -> runtime；`tts_doubao.py` 新增 `--force` / `--prune`。
 
 ## 相关记忆
 

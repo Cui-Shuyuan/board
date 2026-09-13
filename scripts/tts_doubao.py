@@ -263,7 +263,7 @@ async def synthesize_all(cues: list[dict[str, Any]], args: argparse.Namespace) -
             audio_path = out_dir / f"{cue['id']}.{args.format}"
             subtitle_path = out_dir / f"{cue['id']}.subtitle.json"
 
-            if audio_path.exists() and not args.overwrite:
+            if audio_path.exists() and not args.overwrite and not args.force:
                 duration = audio_duration(audio_path, args.format, args.sample_rate)
                 print(f"[skip] {cue['id']} 已存在")
             else:
@@ -292,6 +292,26 @@ async def synthesize_all(cues: list[dict[str, Any]], args: argparse.Namespace) -
             pass
 
     return results
+
+
+def prune_stale(out_dir: Path, cues: list[dict[str, Any]], audio_format: str) -> None:
+    expected = {cue["id"] for cue in cues}
+    removed = 0
+    for path in out_dir.iterdir():
+        if not path.is_file():
+            continue
+        if path.name == "tts_manifest.json":
+            continue
+        cue_id = None
+        if path.name.endswith(".subtitle.json"):
+            cue_id = path.name[: -len(".subtitle.json")]
+        elif path.name.endswith(f".{audio_format}"):
+            cue_id = path.name[: -len(f".{audio_format}")]
+        if cue_id and cue_id not in expected:
+            path.unlink()
+            removed += 1
+    if removed:
+        print(f"[prune] removed {removed} stale asset(s)")
 
 
 def write_manifest(out_dir: Path, cues: list[dict[str, Any]], results: list[dict[str, Any]], args: argparse.Namespace) -> None:
@@ -429,6 +449,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gap", type=float, default=DEFAULT_GAP_SECONDS, help="cue 之间的额外停顿秒数")
     parser.add_argument("--limit", type=int, default=None, help="只处理前 N 条 cue")
     parser.add_argument("--overwrite", action="store_true", help="覆盖已存在的音频")
+    parser.add_argument("--force", action="store_true", help="忽略已有音频，全部重新合成")
+    parser.add_argument("--prune", action="store_true", help="删除 source LRC 中已不存在的旧音频和字幕")
     parser.add_argument("--usage", action="store_true", help="请求返回计费用量")
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不调用 API")
     parser.add_argument("--write-lrc", action="store_true", help="合成后生成 full.tts.lrc")
@@ -448,6 +470,9 @@ def main() -> int:
     if not cues:
         print("error: no cues", file=sys.stderr)
         return 2
+    if args.prune and args.limit is not None:
+        print("error: --prune cannot be used together with --limit", file=sys.stderr)
+        return 2
 
     if args.dry_run:
         print_dry_run(cues, args)
@@ -458,6 +483,8 @@ def main() -> int:
         return 2
 
     results = asyncio.run(synthesize_all(cues, args))
+    if args.prune:
+        prune_stale(args.out_dir, cues, args.format)
     write_manifest(args.out_dir, cues, results, args)
 
     if args.write_lrc:

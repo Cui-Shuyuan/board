@@ -173,3 +173,57 @@ games/{game}/tutorial/{track}.runtime.json
 - 暴露 `CurrentCueId`、`CurrentCueText`、`CurrentCueGroupPath`，供后续打断问答使用
 
 它默认启用后会关闭旧 `TutorialDirector` 的自动动画搭景；需要回到旧动画原型时，把 `TutorialCuePlayer.DisableLegacyBootstrap` 设为 `false`，或手动把 `TutorialDirector` 挂到场景。
+
+## 分层口播稿编辑流程（2026-09-13）
+
+为了避免频繁手改 LRC 时间和 TTS 音频，口播稿现在以 source JSON 为编辑源：
+
+```text
+games/{game}/tutorial/script.{track}.json
+```
+
+结构：
+
+```text
+group_path -> cue -> beat
+```
+
+- `cue` 是 TTS 单元：一条 cue 一个音频文件。
+- `beat` 是文本最小单位：拆分 / 合并 / 动画 shot 都按 beat 分组。
+- `cue.pause_after` 是播完本 cue 后给动画留白的秒数。
+
+常用命令：
+
+```bash
+# source JSON -> estimated full.lrc
+python scripts/tutorial_script_tool.py build --game splendor --track full
+
+# 拆分 cue（--at 后的文本成为新 cue）
+python scripts/tutorial_script_tool.py split --game splendor --track full \
+  --cue action.take.different.001 --at "拿取"
+
+# 合并相邻 cue
+python scripts/tutorial_script_tool.py merge --game splendor --track full \
+  --cues bg.intro.002.1,bg.intro.002.2
+
+# 给 cue 尾部留白
+python scripts/tutorial_script_tool.py set-pause --game splendor --track full \
+  --cue action.take.different.001 --seconds 1.2
+```
+
+完整重生成（LRC → TTS → runtime）：
+
+```bash
+python scripts/rebuild_tutorial.py --game splendor --track full
+```
+
+只验证 source / estimated LRC、不重跑 TTS：
+
+```bash
+python scripts/rebuild_tutorial.py --game splendor --track full --skip-tts
+```
+
+TTS 脚本已支持：
+
+- `--force`：忽略已有音频，全量重生成。
+- `--prune`：删除 source LRC 中已不存在的旧音频和字幕。
