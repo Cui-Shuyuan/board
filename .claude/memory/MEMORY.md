@@ -19,4 +19,4 @@
 - [讲规动画制作路线](tutorial-production-pipeline.md) — 口播稿主/动画从、full 先做/quick 默认、编译期起始画面、TTS 冻结后动画；Splendor full 109 cue 已 TTS、编译 runtime、实现 Unity 纯音频播放器 v0（2026-09-13）
 - [动画制作流水线](animation-pipeline.md) — 3D 车道备用参考：Image-to-3D vs LLM vs 手动标注分工边界（视觉层已转 2.5D，slot 空物体方案仍适用）
 - [FAQ 类型收敛与程序化工具](faq-tools.md) — 237 题聚类 9+ 类型；「名词直呼」工具已完成（87% 程序拍板）；广播架构愿景；候选下一类
-- [工作区同步](workspace-sync.md) — Windows D:\workspace\board 与 WSL 仓库已合并到 33ab20d；本地同步方式与 GitHub 推送状态
+- [工作区同步](workspace-sync.md) — Windows/WSL 历史已合并并 force-push 清理大文件；模型/音频/视频/PDF/原始扫描不进 Git（2026-09-13）
