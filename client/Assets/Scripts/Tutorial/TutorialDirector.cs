@@ -45,6 +45,9 @@ namespace BoardGameTutorial
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
+            // 纯音频 cue 模式默认启用；旧的动画搭景不要和它同时自动创建。
+            if (TutorialCuePlayer.DisableLegacyBootstrap) return;
+
             // 如果场景里已经手动挂了 TutorialDirector，就不用再建。
             if (UnityEngine.Object.FindFirstObjectByType<TutorialDirector>() != null) return;
             var go = new GameObject("TutorialDirector");

@@ -38,6 +38,7 @@ metadata:
 
 - **L1 口播脚本层**：播放单元树、narration、source_refs、quick/full 版本标记。叶子按 1～3 句口播切，不按规则小节切。已产出 `games/splendor/tutorial/full.lrc`（LRC-like，109 cues），由 `scripts/validate_timed_script.py` 校验/解析；`scripts/split_lrc_long_cues.py` 负责过长 cue 拆分。
 - **TTS 生成**：`scripts/tts_doubao.py` 使用豆包语音合成 2.0 WebSocket 双向流式接口，按 cue 输出 `mp3 + subtitle.json`；full 版 109 条已全量生成，`--write-lrc` 已生成 `full.tts.lrc`。
+- **运行时 cue 数据**：`scripts/build_tutorial_runtime.py` 把 `full.tts.lrc + tts_manifest.json + subtitle.json` 编译为 `games/splendor/tutorial/full.runtime.json`；Unity 播放器 v0 为 `client/Assets/Scripts/Tutorial/TutorialCuePlayer.cs`。
 - **L2 动作库层**：同一语义动作只实现一次；quick/full 复用动作内容，但各自按 TTS 音频时长编译时间轴。
 - **编译期起始画面**：为支持任意跳转，编译器离线计算每个叶子开头所有 sprite 的完整画面；运行时只加载「当前叶子起始画面 + 本节时间轴」，不维护历史。
 - **TTS 顺序**：口播定稿 → TTS → 冻结音频/时长 → 动画生成；音频冻结后不再为动画改时间轴。

@@ -140,3 +140,36 @@ python scripts/tts_doubao.py --input games/splendor/tutorial/full.lrc --write-lr
 - `--voice` 指定音色，默认 `zh_female_vv_uranus_bigtts`
 - `--limit N` 用于小样试听；去掉后全量生成
 - `--write-lrc` 生成 `full.tts.lrc`，把 `[timing:estimated]` 改写为真实时长
+
+## 运行时 cue 数据
+
+TTS 产物通过编译器合并为运行时播放数据：
+
+```bash
+python scripts/build_tutorial_runtime.py --game splendor --track full --force
+```
+
+输出：
+
+```text
+games/{game}/tutorial/{track}.runtime.json
+```
+
+内容：
+
+- cue 顺序、音频相对路径、真实时长
+- 字级字幕时间戳
+- 导航用 `group_path`
+- `refs`
+- `animation: null`（动画后续按 cue id 挂独立数据）
+
+## Unity 纯音频播放器
+
+`client/Assets/Scripts/Tutorial/TutorialCuePlayer.cs` 是纯音频播放器 v0：
+
+- 读取 `{track}.runtime.json`
+- 播放 mp3、显示字幕
+- 上一段 / 下一段 / 跳转 / 暂停 / 重播当前 cue
+- 暴露 `CurrentCueId`、`CurrentCueText`、`CurrentCueGroupPath`，供后续打断问答使用
+
+它默认启用后会关闭旧 `TutorialDirector` 的自动动画搭景；需要回到旧动画原型时，把 `TutorialCuePlayer.DisableLegacyBootstrap` 设为 `false`，或手动把 `TutorialDirector` 挂到场景。
