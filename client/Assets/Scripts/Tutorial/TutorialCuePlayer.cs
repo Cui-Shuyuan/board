@@ -39,8 +39,8 @@ namespace BoardGameTutorial
         [Tooltip("调试：播放动画到 cue 结尾后停住不自动进入下一条。")]
         public bool pauseAtCueEnd;
 
-        [Tooltip("调试：按 B 直接跳到这条 cue（默认是当前正在制作的动画切片），再按一次回到原来的位置。")]
-        public string debugJumpCueId = "action.take.different.001";
+        [Tooltip("调试：按 B 直接跳到当前正在制作的动画（默认是设置段第一条），再按一次回到原来的位置。")]
+        public string debugJumpCueId = "setup.cards.001.1";
 
         // 纯音频 cue 模式开关。
         // true：自动启动 cue 播放器，禁用旧的 TeachingPlayer 自动动画。
