@@ -39,6 +39,7 @@ namespace BoardGameTutorial
 
         private StageDoc stage;
         private CueAnimDoc cueDoc;
+        private string gameRootPath;
         private GameObject animRoot;
         private Camera animCamera;
 
@@ -134,6 +135,7 @@ namespace BoardGameTutorial
 
             stage = JsonUtility.FromJson<StageDoc>(File.ReadAllText(path));
             Store.LoadStage(stage);
+            gameRootPath = gameRoot;
         }
 
         /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置 / 临时组件）。</summary>
@@ -249,8 +251,16 @@ namespace BoardGameTutorial
             return go;
         }
 
-        private static Sprite ResolveSprite(StageTemplate tpl)
+        private Sprite ResolveSprite(StageTemplate tpl)
         {
+            var image = ResolveImagePath(tpl);
+            if (image != null)
+            {
+                var loaded = CardImageLoader.Load(image);
+                if (loaded != null) return loaded;
+                Debug.LogWarning($"[TutorialCueAnim] card image failed: {image}");
+            }
+
             if (!string.IsNullOrEmpty(tpl.sprite))
             {
                 var loaded = Resources.Load<Sprite>(tpl.sprite);
@@ -272,6 +282,35 @@ namespace BoardGameTutorial
             }
 
             return GameSpriteFactory.Gem(color);
+        }
+
+        /// <summary>
+        /// 找到模板对应的扫描图。优先 face_image；否则按 card/level 约定查找
+        /// media/card/{level}_back.{jpg,png} 或 media/card/{level}_{color}.{jpg,png}。
+        /// </summary>
+        private string ResolveImagePath(StageTemplate tpl)
+        {
+            if (string.IsNullOrEmpty(gameRootPath)) return null;
+
+            foreach (var relative in ImageCandidates(tpl))
+            {
+                var candidate = Path.Combine(gameRootPath, relative);
+                if (File.Exists(candidate)) return candidate;
+            }
+            return null;
+        }
+
+        /// <summary>按顺序尝试的扫描图路径：face_image 优先，其次 media/card/ 的命名约定。</summary>
+        private static IEnumerable<string> ImageCandidates(StageTemplate tpl)
+        {
+            if (!string.IsNullOrEmpty(tpl.face_image)) yield return tpl.face_image;
+
+            if (tpl.shape != "card" || string.IsNullOrEmpty(tpl.palette)) yield break;
+            if (!tpl.palette.StartsWith("card_level_")) yield break;
+
+            string level = "level_" + tpl.palette.Substring("card_level_".Length);
+            yield return "media/card/" + level + "_back.jpg";
+            yield return "media/card/" + level + "_back.png";
         }
 
         private static Vector3 WorldSizeOf(StageTemplate tpl, Sprite sprite)

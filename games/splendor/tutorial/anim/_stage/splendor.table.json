@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。开局只有三摞发展卡在桌上，宝石与贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。cue 数据只写 zone 之间的移动，不写坐标；要改桌面布局只改这个文件。",
+  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。开局只有三摞发展卡在桌上，宝石与贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。cue 数据只写 zone 之间的移动，不写坐标；要改桌面布局只改这个文件。卡面用实物扫描 media/card/（不进 Git）：一级卡背已有，二三级卡背缺失时自动回退为等级色程序化卡背。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
@@ -211,7 +211,8 @@
       "palette": "card_level_1",
       "width": 0.63,
       "height": 0.88,
-      "sorting_order": 2
+      "sorting_order": 2,
+      "face_image": "media/card/一级发展卡_背面.jpg"
     },
     {
       "id": "card_back_2",
@@ -219,7 +220,8 @@
       "palette": "card_level_2",
       "width": 0.63,
       "height": 0.88,
-      "sorting_order": 2
+      "sorting_order": 2,
+      "face_image": "media/card/二级发展卡_背面.jpg"
     },
     {
       "id": "card_back_3",
@@ -227,7 +229,8 @@
       "palette": "card_level_3",
       "width": 0.63,
       "height": 0.88,
-      "sorting_order": 2
+      "sorting_order": 2,
+      "face_image": "media/card/三级发展卡_背面.jpg"
     },
     {
       "id": "noble",

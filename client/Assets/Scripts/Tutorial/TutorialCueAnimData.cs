@@ -92,6 +92,9 @@ namespace BoardGameTutorial
         public string shape = "gem";
         public string palette;
         public string sprite;
+
+        /// <summary>真实扫描图（相对 games/{game}，例如 media/card/一级发展卡_绿.jpg）。找不到则回退到 shape 的程序化图形。</summary>
+        public string face_image;
         public float world_size = 0.10f;
 
         /// <summary>非正方形件（区域底板）的显式宽高；留空则由 world_size + 贴图比例决定。</summary>
