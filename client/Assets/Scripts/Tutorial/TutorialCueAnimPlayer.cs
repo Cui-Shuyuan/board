@@ -71,6 +71,9 @@ namespace BoardGameTutorial
             return null;
         }
 
+        /// <summary>当前登记的片段数（自检用：应随 cue 长度有界，不应累积）。</summary>
+        public int ClipCountForTest => clips.Count;
+
         /// <summary>当前牌桌上已有的组件数（自检/调试用）。</summary>
         public int ActorCount
         {
@@ -131,6 +134,13 @@ namespace BoardGameTutorial
             cueDoc = null;
             StopAnimations();
             ClearActors();
+
+            // 关键：换 cue 必须清空片段列表。
+            // 曾经只在「回退」时清理，于是每条 cue 都往里加十几个片段、从不释放——
+            // 播到第 12 条时已累积 90+ 个陈旧片段，它们会被重新采样套用，
+            // 表现为「动作做了但没实际发生」「整行先出现」。
+            clips.Clear();
+            lastTraceTime = -99f;
 
             if (!animationEnabled || string.IsNullOrEmpty(gameRoot) || string.IsNullOrEmpty(cueId))
             {

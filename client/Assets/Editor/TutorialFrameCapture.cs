@@ -709,6 +709,60 @@ namespace BoardGameTutorial.Editor
             Debug.Log($"[Seq] 完成 → {outDir}");
         }
 
+        /// <summary>
+        /// 片段泄漏自检：顺序播过所有 setup cue，然后在发牌 cue 的各个时刻检查片段数。
+        /// 曾经 clips 只在「回退」时清空，导致播到第 12 条时累积 90+ 个陈旧片段。
+        /// </summary>
+        public static void SelfTestClipLeak()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("PlayerHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Clips] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            int target = -1;
+            for (int i = 0; i < player.Document.cues.Count; i++)
+                if (player.Document.cues[i].id == "setup.cards.002.1") { target = i; break; }
+
+            typeof(TutorialCuePlayer)
+                .GetMethod("RebuildTableBefore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(player, new object[] { anim, target });
+
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
+            anim.Seek(0f);
+
+            // 先顺序播过三条前置 cue（模拟不出问题时的时间推进），再进发牌 cue
+            foreach (var pre in new[] { "setup.cards.001.1", "setup.cards.001.2", "setup.cards.001.3" })
+            {
+                anim.LoadCue(gameRoot, "full", pre, true);
+                for (float tt = 0f; tt <= anim.TotalDuration; tt += 0.1f) anim.Seek(tt);
+            }
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
+
+            for (float tt = 0f; tt <= 8f; tt += 0.5f)
+            {
+                anim.Seek(tt);
+                int n = anim.ClipCountForTest;
+                if (n > 40)
+                {
+                    Debug.Log($"[Clips] FAIL t={tt:0.0} 片段数 {n}（应 ≤40，说明在泄漏）");
+                    failures++;
+                    break;
+                }
+            }
+            Debug.Log($"[Clips] t=8.0 片段数 {anim.ClipCountForTest}（发牌 cue 共 16 个事件，正常应 ≤ 40）");
+            Debug.Log($"[Clips] {(failures == 0 ? "PASS" : "FAIL")} 片段未泄漏");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
