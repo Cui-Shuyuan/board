@@ -290,8 +290,23 @@ namespace BoardGameTutorial
                     }
 
                     var color = Palette.TintFor(tpl.shape, tpl.palette);
+
+                    // 底板（锚点）的尺寸与中心由它覆盖的 zone 的实际格位范围算出，
+                    // 不手填。手填的数值与格位一旦不同步（曾经差了整整一行），
+                    // 画面就会出现「底板和牌对不齐」这类很难查的错位。
+                    float ax = anchor.x, az = anchor.z, aw = tpl.width, ah = tpl.height;
+                    if (anchor.zones != null && anchor.zones.Count > 0 &&
+                        TryZoneBounds(anchor.zones, out var bx0, out var bx1, out var bz0, out var bz1))
+                    {
+                        const float pad = 0.10f;
+                        ax = (bx0 + bx1) * 0.5f;
+                        az = (bz0 + bz1) * 0.5f;
+                        aw = (bx1 - bx0) + pad * 2f;
+                        ah = (bz1 - bz0) + pad * 2f;
+                    }
+
                     var go = CreateSpriteObject("anchor:" + anchor.id, tpl, color);
-                    go.transform.localPosition = new Vector3(anchor.x, anchor.y, anchor.z);
+                    go.transform.localPosition = new Vector3(ax, anchor.y, az);
 
                     var sr = go.GetComponent<SpriteRenderer>();
                     var item = new ZoneItem
@@ -518,9 +533,15 @@ namespace BoardGameTutorial
 
             if (tpl.width > 0f || tpl.height > 0f)
             {
-                // 显式宽高：按比例取较小的那个缩放，保证整体装进给定尺寸（不拉伸卡面）。
                 float wantW = tpl.width > 0f ? tpl.width : nativeW;
                 float wantH = tpl.height > 0f ? tpl.height : nativeH;
+
+                // 底板是纯色板，宽高必须各自贴合它负责的格位范围（不能等比）：
+                // 等比会让高度被宽度限制，底板就盖不住整列。
+                if (tpl.shape == "panel")
+                    return new Vector3(wantW / nativeW, wantH / nativeH, 1f);
+
+                // 卡牌/板块等有图案的：等比缩放，保证不拉伸变形。
                 float scale = Mathf.Min(wantW / nativeW, wantH / nativeH);
                 return new Vector3(scale, scale, 1f);
             }
@@ -708,6 +729,34 @@ namespace BoardGameTutorial
         /// 这是「动画 = 时间的函数」的落点：不累积、不依赖帧，因此完全可复现，
         /// 离屏出图只要依次 Seek 即可看到完整动画。
         /// </summary>
+        /// <summary>
+        /// 一组 zone 的全部格位包围盒（世界坐标）。用于让底板自动贴合内容。
+        /// </summary>
+        private bool TryZoneBounds(List<string> zoneIds, out float x0, out float x1, out float z0, out float z1)
+        {
+            x0 = z0 = float.MaxValue; x1 = z1 = float.MinValue;
+            bool any = false;
+            foreach (var zoneId in zoneIds)
+            {
+                if (string.IsNullOrEmpty(zoneId)) continue;
+                var zone = Store.GetZone(zoneId);
+                if (zone == null || zone.role == "offstage") continue;
+                int count = Mathf.Max(1, Store.CountInZone(zoneId));
+                // 至少覆盖该 zone 的标称容量，避免空 zone 时底板缩成一点
+                int capacity = zone.capacity > 0 ? Mathf.Max(zone.capacity, count) : count;
+                float halfW = (zone.size?.w ?? 0.14f) * 0.5f;
+                float halfH = (zone.size?.h ?? 0.14f) * 0.5f;
+                for (int i = 0; i < capacity; i++)
+                {
+                    var p = Store.ZonePosition(zoneId, i);
+                    x0 = Mathf.Min(x0, p.x - halfW); x1 = Mathf.Max(x1, p.x + halfW);
+                    z0 = Mathf.Min(z0, p.z - halfH); z1 = Mathf.Max(z1, p.z + halfH);
+                }
+                any = true;
+            }
+            return any;
+        }
+
         /// <summary>取（或新建）该组件在本时刻的片段，供各触发函数登记视觉变化。</summary>
         private Clip ClipAt(ZoneItem item, CueAnimActor actor, CueAnimEvent ev, float extraLead = 0f)
         {
@@ -721,6 +770,28 @@ namespace BoardGameTutorial
             };
             clips.Add(clip);
             return clip;
+        }
+
+        /// <summary>自检用：取某块底板的相机平面包围盒（x/z 范围）。</summary>
+        public bool TryPanelBounds(string anchorId, out float x0, out float x1, out float z0, out float z1)
+        {
+            x0 = x1 = z0 = z1 = 0f;
+            foreach (var kv in actors)
+            {
+                if (kv.Key != anchorId || kv.Value?.Go == null) continue;
+                // 注意：牌/底板是平躺的（绕 X 转 90°），SpriteRenderer.bounds 是世界空间，
+                // 它的 z 分量是贴图厚度、y 分量才是桌面进深 —— 不能直接用。
+                // 这里按「桌面足迹」算：宽度沿 x，高度沿桌面进深 z。
+                var go = kv.Value.Go;
+                var ls = go.transform.localScale;
+                float halfW = Mathf.Abs(ls.x) * 0.5f;   // localScale 已按世界尺寸归一
+                float halfH = Mathf.Abs(ls.y) * 0.5f;
+                var c = go.transform.localPosition;
+                x0 = c.x - halfW; x1 = c.x + halfW;
+                z0 = c.z - halfH; z1 = c.z + halfH;
+                return true;
+            }
+            return false;
         }
 
         /// <summary>自检/出图用：确保场景里有可用的相机。</summary>
@@ -1118,12 +1189,10 @@ namespace BoardGameTutorial
                 //   ① 后续事件按旧归属算位置时，把这些牌拉回起点（用户看到的「被收回去」）
                 //   ② 新发的牌按当前格位算，落到了别的行
                 // 现在统一按正常落位处理，动画起点仍由 from_zone 提供，所以看起来依旧「从牌堆飞出」。
-                // step.Order 可能是 -2（真实格位在 ev.slot），必须按 Destination + 格位落位，
-                // 否则「从别处出场落到第 N 格」这类搬运既不改归属、终点也取错 zone。
-                if (step.Destination != null && step.Order >= 0)
-                    Store.MoveToAt(step.Item, step.Destination, step.Order);
-                else if (step.Destination != null && step.Destination != step.Item.ZoneId)
-                    Store.MoveTo(step.Item, step.Destination);
+                // 统一走 MoveToSlot(item, zone, slot)：坐标由格位表给出，
+                // 「落到第几格」不再散落成算术。slot < 0 表示追加到末尾。
+                if (step.Destination != null)
+                    Store.MoveToSlot(step.Item, step.Destination, step.Order);
                 moved.Add(step.Item);
                 if (logImages && step.Order >= 0)
                     Debug.Log($"[Move] {step.Item.Id} → {step.Destination} order={step.Item.Order} " +
@@ -1131,8 +1200,8 @@ namespace BoardGameTutorial
                               $"zoneCount={Store.CountInZone(step.Destination)}");
 
                 // 终点：原位动画落在「目标 zone 的第 Order 格」，普通搬运落在新归属的格位。
-                // 落位后取终点。目的地明确时用「目标 zone + 格位」，否则用当前归属。
-                Vector3 to = (step.Destination != null && step.Order >= 0)
+                // 落位后取终点：直接问格位表，和底板贴合用的是同一张表。
+                Vector3 to = step.Destination != null
                     ? Store.ZonePosition(step.Destination, step.Order)
                     : Store.CurrentPosition(step.Item);
 

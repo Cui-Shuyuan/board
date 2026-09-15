@@ -529,6 +529,32 @@ namespace BoardGameTutorial.Editor
                 }
             }
             Debug.Log($"[Timeline] {(bad == 0 ? "PASS" : "FAIL")} 12 张市场牌全部落在自己的格位上（异常 {bad} 处）");
+
+            // 底板断言：① 必须包住它负责的每个格位 ② 两块底板不能互相压住。
+            // 底板尺寸由代码从格位范围推出，这两条能保证「底板和内容对齐」不再靠肉眼。
+            var checks = new (string id, string[] zones)[]
+            {
+                ("board_deck_area",   new[] { "deck_level_1", "deck_level_2", "deck_level_3" }),
+                ("board_market_area", new[] { "card_market" }),
+            };
+            var bounds = new System.Collections.Generic.Dictionary<string, float[]>();
+            foreach (var (id, zoneIds) in checks)
+            {
+                if (!anim.TryPanelBounds(id, out var px0, out var px1, out var pz0, out var pz1))
+                {
+                    Debug.LogWarning($"[Timeline] 找不到底板 {id}");
+                    bad++;
+                    continue;
+                }
+                bounds[id] = new[] { px0, px1, pz0, pz1 };
+            }
+            if (bounds.Count == 2)
+            {
+                var a = bounds["board_deck_area"]; var b = bounds["board_market_area"];
+                bool overlap = a[0] < b[1] && b[0] < a[1] && a[2] < b[3] && b[2] < a[3];
+                Debug.Log($"[Timeline] {(overlap ? "FAIL" : "PASS")} 牌堆底板与市场底板{(overlap ? "重叠" : "不重叠")}");
+                if (overlap) bad++;
+            }
             Debug.Log($"[Timeline] 已出 {n} 帧 → {outDir}");
         }
 

@@ -56,8 +56,76 @@ namespace BoardGameTutorial
         public int ActorCountHint() => items.Count;
         public IEnumerable<StageZone> Zones => zones.Values;
 
+        // ── 格位表 ────────────────────────────────────────────────────────
+        //
+        // 所有 zone 的每个格位坐标，在 stage 载入时一次性算好并缓存。
+        // 好处：移动/落位只需要「目标 zone + 第几格」，坐标不再是散落在各处的算术，
+        // 底板贴合、断言、离屏出图都读同一张表，不可能再出现「牌和底板差一行」这类错位。
+
+        private readonly Dictionary<string, List<Vector3>> slots = new Dictionary<string, List<Vector3>>();
+        private int occupancyVersion;
+        private int slotsVersion = -1;
+
+        /// <summary>占用变化后让格位表失效（stack 显示依赖总件数）。</summary>
+        private void InvalidateSlots() { occupancyVersion++; }
+
+        /// <summary>重建全部 zone 的格位表。</summary>
+        public void BuildSlotTable()
+        {
+            slots.Clear();
+            if (Stage?.zones == null) return;
+            foreach (var zone in Stage.zones)
+            {
+                if (zone == null || string.IsNullOrEmpty(zone.id)) continue;
+                if (zone.role == "offstage") continue;
+                int capacity = zone.capacity > 0 ? zone.capacity : 1;
+                // stack 显示只依赖可见层数，多留一点余量便于越界时仍返回合理值
+                if (zone.display != null && zone.display.mode == "stack") capacity = Mathf.Max(capacity, 16);
+                var list = new List<Vector3>(capacity);
+                for (int i = 0; i < capacity; i++) list.Add(ComputeZonePosition(zone.id, i));
+                slots[zone.id] = list;
+            }
+            slotsVersion = occupancyVersion;
+        }
+
+        /// <summary>
+        /// 把一件组件落到「某 zone 的第 slot 格」。这是搬运的统一入口：
+        /// 坐标全部来自格位表，调用方只关心 zone 和格号。
+        /// slot &lt; 0 表示追加到末尾。
+        /// </summary>
+        public void MoveToSlot(ZoneItem item, string zoneId, int slot)
+        {
+            if (item == null || string.IsNullOrEmpty(zoneId)) return;
+            if (slot < 0) { MoveTo(item, zoneId); return; }
+            MoveToAt(item, zoneId, slot);
+        }
+
+        /// <summary>格位坐标。表未建或已失效时自动重建。</summary>
+        public Vector3 SlotAt(string zoneId, int index)
+        {
+            if (string.IsNullOrEmpty(zoneId)) return Vector3.zero;
+            if (slotsVersion != occupancyVersion) BuildSlotTable();
+            if (slots.TryGetValue(zoneId, out var list) && list.Count > 0)
+            {
+                if (index < 0) index = 0;
+                if (index >= list.Count) index = list.Count - 1;
+                return list[index];
+            }
+            return ComputeZonePosition(zoneId, index);
+        }
+
+        /// <summary>该 zone 有多少个格位（表未建时按容量）。</summary>
+        public int SlotCount(string zoneId)
+        {
+            if (slotsVersion != occupancyVersion) BuildSlotTable();
+            if (slots.TryGetValue(zoneId, out var list)) return list.Count;
+            var zone = GetZone(zoneId);
+            return zone?.capacity > 0 ? zone.capacity : 0;
+        }
+
         public void LoadStage(StageDoc stage)
         {
+            BuildSlotTable();
             Stage = stage;
             zones.Clear();
             templates.Clear();
@@ -140,6 +208,7 @@ namespace BoardGameTutorial
                 };
                 items[item.Id] = item;
                 list?.Add(item);
+                InvalidateSlots();
                 item.LivePosition = CurrentPosition(item);
                 created.Add(item);
             }
@@ -248,6 +317,7 @@ namespace BoardGameTutorial
             int at = Mathf.Clamp(order, 0, list.Count);
             list.Insert(at, item);
             for (int i = 0; i < list.Count; i++) list[i].Order = i;
+            InvalidateSlots();
             if (logMoves)
                 Debug.Log($"[MoveToAt] {item.Id} → {targetZoneId} 请求 {order} 实际 {item.Order} 共 {list.Count} 件");
         }
@@ -280,6 +350,7 @@ namespace BoardGameTutorial
             item.ZoneId = targetZoneId;
             item.Order = to.Count;
             to.Add(item);
+            InvalidateSlots();
         }
 
         // ── 坐标推导 ──────────────────────────────────────────────────────
@@ -305,7 +376,12 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
-        /// 组件落点。摆放方式由 display.mode 与 layout.type 共同决定：
+        /// 格位坐标（走预计算的格位表；表会随占用变化自动重建）。
+        /// </summary>
+        public Vector3 ZonePosition(string zoneId, int order) => SlotAt(zoneId, order);
+
+        /// <summary>
+        /// 格位坐标的纯计算。摆放方式由 display.mode 与 layout.type 共同决定：
         ///
         ///   display.mode = "stack"  → 一层层盖住，每层只错开一点点（40/30/20 张的牌堆）
         ///   display.mode = "count"  → 一件件都看得见，按 layout.type 摆：
@@ -313,7 +389,7 @@ namespace BoardGameTutorial
         ///       "grid"  居中紧凑块（发展卡市场 4 列）
         /// 超出容量的部分压在最后一格并向外扩，避免整块突然移位。
         /// </summary>
-        public Vector3 ZonePosition(string zoneId, int order)
+        private Vector3 ComputeZonePosition(string zoneId, int order)
         {
             var zone = GetZone(zoneId);
             if (zone == null) return Vector3.zero;

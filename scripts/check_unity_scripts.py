@@ -280,7 +280,6 @@ namespace UnityEngine
     public class Sprite : Object
     {
         public Rect rect;
-        public Bounds bounds;
         public Vector2 pivot;
         public float pixelsPerUnit;
         public Texture2D texture;
@@ -327,6 +326,7 @@ namespace UnityEngine
 
     public class Renderer : Component
     {
+        public Bounds bounds;
         public bool enabled;
         public int sortingOrder;
         public string sortingLayerName;
