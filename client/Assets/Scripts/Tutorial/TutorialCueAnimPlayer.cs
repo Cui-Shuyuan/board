@@ -716,7 +716,8 @@ namespace BoardGameTutorial
             {
                 foreach (var step in PlanMove(ev))
                 {
-                    Store.MoveTo(step.Item, step.Destination);
+                    if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
+                    else Store.MoveTo(step.Item, step.Destination);
                     if (step.Item.Actor != null) ApplyCurrentPlacement(step.Item, step.Item.Actor);
                 }
                 return;
@@ -751,6 +752,7 @@ namespace BoardGameTutorial
         {
             public ZoneItem Item;
             public string Destination;
+            public int Order;      // -1 = 追加到末尾
         }
 
         /// <summary>
@@ -767,7 +769,7 @@ namespace BoardGameTutorial
             {
                 var actor = FindActor(ev.target);
                 if (actor?.Item != null)
-                    plan.Add(new MovePlan { Item = actor.Item, Destination = ev.zone });
+                    plan.Add(new MovePlan { Item = actor.Item, Destination = ev.zone, Order = ev.order });
                 return plan;
             }
 
@@ -800,7 +802,7 @@ namespace BoardGameTutorial
                     var item = PickFront(source, picked);
                     if (item == null) break;
                     picked.Add(item);
-                    plan.Add(new MovePlan { Item = item, Destination = ev.zone });
+                    plan.Add(new MovePlan { Item = item, Destination = ev.zone, Order = ev.order });
                 }
             }
             return plan;
@@ -826,7 +828,8 @@ namespace BoardGameTutorial
             {
                 var actor = step.Item.Actor;
                 Vector3 from = actor != null ? actor.LivePosition : step.Item.LivePosition;
-                Store.MoveTo(step.Item, step.Destination);
+                if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
+                else Store.MoveTo(step.Item, step.Destination);
                 moved.Add(step.Item);
 
                 Vector3 to = Store.CurrentPosition(step.Item);

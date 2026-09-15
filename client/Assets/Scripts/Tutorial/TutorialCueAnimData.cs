@@ -284,6 +284,9 @@ namespace BoardGameTutorial
         /// <summary>move 时顺便翻面：到终点恰好转到另一面（用于「翻开四张牌」）。</summary>
         public bool flip;
 
+        /// <summary>目的 zone 内的落位序号（-1 = 追加到末尾）。用于「这张牌放在第 3 格」。</summary>
+        public int order = -1;
+
         // ---- rotate / flip ----
         public float angle;
 

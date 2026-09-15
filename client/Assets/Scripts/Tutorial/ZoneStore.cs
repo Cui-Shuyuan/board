@@ -227,6 +227,23 @@ namespace BoardGameTutorial
             return moved;
         }
 
+        /// <summary>
+        /// 把组件搬到指定 zone 的指定顺序位（用于「这张牌放在第 3 个格子」）。
+        /// order 之后的组件依次后移，之后重新按顺序编号。
+        /// </summary>
+        public void MoveToAt(ZoneItem item, string targetZoneId, int order)
+        {
+            MoveTo(item, targetZoneId);
+            var list = string.IsNullOrEmpty(targetZoneId) ? null
+                : (occupancy.TryGetValue(targetZoneId, out var l) ? l : null);
+            if (list == null) return;
+
+            list.Remove(item);
+            int at = Mathf.Clamp(order, 0, list.Count);
+            list.Insert(at, item);
+            for (int i = 0; i < list.Count; i++) list[i].Order = i;
+        }
+
         /// <summary>把组件搬到另一个 zone，成为该 zone 的最后一件。</summary>
         public void MoveTo(ZoneItem item, string targetZoneId)
         {

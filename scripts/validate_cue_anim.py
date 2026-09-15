@@ -184,6 +184,14 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         return
 
     known_ids = set(derive_actor_ids(stage))
+    # cue 自己 start.set 出来的组件（如发牌前预置在盒里的正面卡）也是合法目标
+    for seed in (doc.get("start") or {}).get("set") or []:
+        tpl = seed.get("template")
+        if not tpl:
+            continue
+        n = int(seed.get("expand_to") or seed.get("count") or 1)
+        for i in range(1, max(1, n) + 1):
+            known_ids.add(f"{tpl}#{i}")
 
     start = doc.get("start") or {}
     for i, seed in enumerate(start.get("set") or []):

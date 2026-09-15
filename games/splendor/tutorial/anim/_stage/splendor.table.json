@@ -401,34 +401,169 @@
       "sorting_order": -20
     },
     {
-      "id": "market_card_1",
+      "id": "market_card_1_diamond",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（diamond），背面同该级卡背"
+    },
+    {
+      "id": "market_card_1_ruby",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（ruby），背面同该级卡背"
+    },
+    {
+      "id": "market_card_1_emerald",
       "shape": "card",
       "palette": "card_level_1",
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_绿.jpg",
-      "back_image": "media/card/一级发展卡_背面.jpg"
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（emerald），背面同该级卡背"
     },
     {
-      "id": "market_card_2",
+      "id": "market_card_1_sapphire",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_蓝.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（sapphire），背面同该级卡背"
+    },
+    {
+      "id": "market_card_1_onyx",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_黑.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（onyx），背面同该级卡背"
+    },
+    {
+      "id": "market_card_2_diamond",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_白.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（diamond），背面同该级卡背"
+    },
+    {
+      "id": "market_card_2_ruby",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_红.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（ruby），背面同该级卡背"
+    },
+    {
+      "id": "market_card_2_emerald",
       "shape": "card",
       "palette": "card_level_2",
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_绿.jpg",
-      "back_image": "media/card/二级发展卡_背面.jpg"
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（emerald），背面同该级卡背"
     },
     {
-      "id": "market_card_3",
+      "id": "market_card_2_sapphire",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_蓝.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（sapphire），背面同该级卡背"
+    },
+    {
+      "id": "market_card_2_onyx",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_黑.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（onyx），背面同该级卡背"
+    },
+    {
+      "id": "market_card_3_diamond",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_白.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（diamond），背面同该级卡背"
+    },
+    {
+      "id": "market_card_3_ruby",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_红.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（ruby），背面同该级卡背"
+    },
+    {
+      "id": "market_card_3_emerald",
       "shape": "card",
       "palette": "card_level_3",
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_绿.jpg",
-      "back_image": "media/card/三级发展卡_背面.jpg"
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（emerald），背面同该级卡背"
+    },
+    {
+      "id": "market_card_3_sapphire",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_蓝.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（sapphire），背面同该级卡背"
+    },
+    {
+      "id": "market_card_3_onyx",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_黑.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（onyx），背面同该级卡背"
     }
   ],
   "anchors": [
