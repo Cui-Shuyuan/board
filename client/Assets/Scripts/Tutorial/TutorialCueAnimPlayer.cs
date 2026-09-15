@@ -303,6 +303,20 @@ namespace BoardGameTutorial
                 // 正反两面都准备好：翻面时只换贴图，不重建对象。
                 actor.FaceSprite = sr.sprite;
                 actor.EffectiveTemplate = itemTpl;
+
+                // 市场牌预置在对应牌堆的位置：发牌时看起来就是「从牌堆里翻出来」。
+                if (item.Id.StartsWith("market_card_"))
+                {
+                    int lvl = item.Id.Contains("_1_") ? 1 : item.Id.Contains("_2_") ? 2 : 3;
+                    var deckZone = Store.GetZone("deck_level_" + lvl);
+                    if (deckZone != null)
+                    {
+                        var deckPos = Store.ZoneCenter("deck_level_" + lvl);
+                        item.LivePosition = deckPos;
+                        actor.LivePosition = deckPos;
+                        go.transform.localPosition = deckPos;
+                    }
+                }
                 var backPath = ResolveBackImagePath(itemTpl);
                 if (backPath != null)
                 {
@@ -776,9 +790,24 @@ namespace BoardGameTutorial
             {
                 foreach (var step in PlanMove(ev))
                 {
-                    if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
-                    else Store.MoveTo(step.Item, step.Destination);
-                    if (step.Item.Actor != null) ApplyCurrentPlacement(step.Item, step.Item.Actor);
+                    if (!step.InPlace)
+                    {
+                        if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
+                        else Store.MoveTo(step.Item, step.Destination);
+                    }
+                    if (step.Item.Actor != null)
+                    {
+                        if (step.InPlace)
+                        {
+                            // 原位动画：终态落在目标 zone 的第 Order 格，但占用不迁移
+                            // （牌仍属于牌堆/盒子，只是画面上落到市场格）。
+                            var pos = Store.ZonePosition(ev.zone, step.Order);
+                            step.Item.LivePosition = pos;
+                            step.Item.Actor.LivePosition = pos;
+                            step.Item.Actor.Go.transform.localPosition = pos;
+                        }
+                        else ApplyCurrentPlacement(step.Item, step.Item.Actor);
+                    }
                 }
                 return;
             }
@@ -813,6 +842,7 @@ namespace BoardGameTutorial
             public ZoneItem Item;
             public string Destination;
             public int Order;      // -1 = 追加到末尾
+            public bool InPlace;   // true = 只动画位置，不改占用
         }
 
         /// <summary>
@@ -829,7 +859,13 @@ namespace BoardGameTutorial
             {
                 var actor = FindActor(ev.target);
                 if (actor?.Item != null)
-                    plan.Add(new MovePlan { Item = actor.Item, Destination = ev.zone, Order = ev.order });
+                {
+                    // order=-2：只动画到 ev.slot 指定的格位，占用不变（牌仍在原 zone，
+                    // 入场点就是牌堆位置），因此看起来是「从牌堆飞出来」。
+                    var dest = ev.order == -2 ? actor.Item.ZoneId : ev.zone;
+                    int ord = ev.order == -2 ? ev.slot : ev.order;
+                    plan.Add(new MovePlan { Item = actor.Item, Destination = dest, Order = ord, InPlace = ev.order == -2 });
+                }
                 return plan;
             }
 
@@ -888,8 +924,11 @@ namespace BoardGameTutorial
             {
                 var actor = step.Item.Actor;
                 Vector3 from = actor != null ? actor.LivePosition : step.Item.LivePosition;
-                if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
-                else Store.MoveTo(step.Item, step.Destination);
+                if (!step.InPlace)
+                {
+                    if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
+                    else Store.MoveTo(step.Item, step.Destination);
+                }
                 moved.Add(step.Item);
                 if (logImages && step.Order >= 0)
                     Debug.Log($"[Move] {step.Item.Id} → {step.Destination} order={step.Item.Order} " +

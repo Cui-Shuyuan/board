@@ -269,6 +269,8 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                 report.error(ew, "move 缺少目的地 zone")
             if int(ev.get("take", 0)) < 0:
                 report.error(ew, "take 不能为负")
+            if ev.get("order") == -2 and int(ev.get("slot", -1)) < 0:
+                report.error(ew, "order=-2 需要同时给 slot（目标格位）")
         elif action == "rotate":
             if "angle" not in ev:
                 report.error(ew, "rotate 需要 angle")

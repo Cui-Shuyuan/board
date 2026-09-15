@@ -282,8 +282,16 @@ namespace BoardGameTutorial
         /// <summary>move 时顺便翻面：到终点恰好转到另一面（用于「翻开四张牌」）。</summary>
         public bool flip;
 
-        /// <summary>目的 zone 内的落位序号（-1 = 追加到末尾）。用于「这张牌放在第 3 格」。</summary>
+        /// <summary>
+        /// 目的 zone 内的落位序号。
+        ///   -1 = 追加到末尾
+        ///   ≥0 = 放到第 n 格
+        ///   -2 = 只动画到该格位，不改占用（用于「牌从牌堆位置飞出、落到市场格」）
+        /// </summary>
         public int order = -1;
+
+        /// <summary>order=-2 时用它指定目标格位（避免和 order=-2 的语义冲突）。</summary>
+        public int slot = -1;
 
         // ---- rotate / flip ----
         public float angle;
