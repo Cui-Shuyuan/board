@@ -160,6 +160,13 @@ namespace BoardGameTutorial
 
         /// <summary>翻转用的另一面（相对 games/{game}）。有它才能「边移动边翻转」。</summary>
         public string back_image;
+
+        /// <summary>
+        /// 入场起点落在这个 zone 的位置（而不是 offstage 中心）。
+        /// 用于「市场牌从对应牌堆的位置飞出来」这类需求：牌真正归属仍在盒子里，
+        /// 但出场位置对准牌堆。
+        /// </summary>
+        public string from_zone;
         public float world_size = 0.10f;
 
         /// <summary>非正方形件（区域底板）的显式宽高；留空则由 world_size + 贴图比例决定。</summary>

@@ -133,7 +133,7 @@ namespace BoardGameTutorial
                     ZoneId = zoneId,
                     Order = list != null ? list.Count : 0,
                     EntryFrom = string.IsNullOrEmpty(from) ? "auto" : from,
-                    EntryAnchor = AnchorFor(zoneId, from),
+                    EntryAnchor = AnchorFor(zoneId, from, tpl),
                     LiveScale = Vector3.one,
                     LiveRotation = tpl.rotation,
                     LiveAlpha = tpl.alpha,
@@ -293,8 +293,11 @@ namespace BoardGameTutorial
 
             if (zone.role == "offstage")
             {
-                // 移动原语是 Vector3.Lerp，所以起点取「落点 + 入场方向 × margin」：
-                // 多个组件落点不同、起点也不同，但共享同一段位移向量，飞入时保持相对位置。
+                // 模板声明了 from_zone：起点就是那个 zone 的位置，不再外推（否则会飞到画面外）。
+                if (item.Template != null && !string.IsNullOrEmpty(item.Template.from_zone))
+                    return item.EntryAnchor;
+                // 否则起点取「落点 + 入场方向 × margin」：多个组件落点不同、起点也不同，
+                // 但共享同一段位移向量，飞入时保持相对位置。
                 return item.EntryAnchor + EntryDirection(zone, item.EntryFrom) * zone.margin;
             }
 
@@ -409,8 +412,14 @@ namespace BoardGameTutorial
         }
 
         /// <summary>入场方向对应的桌内基准点（组件真正的落点附近）。</summary>
-        private Vector3 AnchorFor(string zoneId, string from)
+        private Vector3 AnchorFor(string zoneId, string from, StageTemplate tpl = null)
         {
+            // 模板指定了 from_zone：入场起点对准那个 zone（例如「市场牌从对应牌堆飞出」）。
+            if (tpl != null && !string.IsNullOrEmpty(tpl.from_zone))
+            {
+                var src = GetZone(tpl.from_zone);
+                if (src != null) return new Vector3(src.center.x, 0f, src.center.z);
+            }
             var zone = GetZone(zoneId);
             if (zone == null) return Vector3.zero;
             return new Vector3(zone.center.x, 0f, zone.center.z);

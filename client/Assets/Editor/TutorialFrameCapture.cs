@@ -11,6 +11,7 @@
 // 再把主相机渲染成 PNG，输出到 client/CaptureOut/。
 // 这样 batchmode 没有音频设备也能跑，而且画面是确定性的、可重复的。
 #if UNITY_EDITOR
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -345,6 +346,127 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 帧驱动版发牌自检：进入 Play 模式，让 Unity 正常跑帧（Time.deltaTime 才会推进），
+        /// 观察牌是否真的从牌堆飞到市场。批处理同步调用下 deltaTime 恒为 0，测不出补间。
+        /// </summary>
+        public static void SelfTestDealLive()
+        {
+            pendingDealTest = true;
+            EditorApplication.EnterPlaymode();
+        }
+
+        private static bool pendingDealTest;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void DealTestBootstrap()
+        {
+            if (!pendingDealTest) return;
+            pendingDealTest = false;
+            var go = new GameObject("DealLiveHost");
+            Object.DontDestroyOnLoad(go);
+            go.AddComponent<DealLiveRunner>();
+        }
+
+        private class DealLiveRunner : MonoBehaviour
+        {
+            private IEnumerator Start()
+            {
+                string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+                string gameRoot = Path.Combine(repoRoot, "games/splendor");
+                var anim = gameObject.AddComponent<TutorialCueAnimPlayer>();
+
+                yield return null;
+                if (!anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false))
+                {
+                    Debug.Log("[DealLive] FAIL LoadCue");
+                    EditorApplication.Exit(1);
+                    yield break;
+                }
+
+                string probeId = "market_card_1_emerald#1";
+                var deckPos = anim.Store.ZoneCenter("deck_level_1");
+                var slotPos = anim.Store.ZonePosition("card_market", 0);
+                Vector3 p0 = Vector3.zero;
+                foreach (var it in anim.Store.Items)
+                    if (it.Id == probeId && it.Actor != null) p0 = it.Actor.Go.transform.localPosition;
+                Debug.Log($"[DealLive] 起始=({p0.x:0.00},{p0.z:0.00}) 牌堆=({deckPos.x:0.00},{deckPos.z:0.00}) " +
+                          $"目标格位=({slotPos.x:0.00},{slotPos.z:0.00})");
+
+                // 按真实帧推进时间轴（0 → 5.2s，覆盖发牌）
+                float t = 0f;
+                while (t < 5.2f)
+                {
+                    t += Time.deltaTime;
+                    anim.Seek(t);
+                    yield return null;
+                }
+
+                Vector3 p1 = Vector3.zero;
+                foreach (var it in anim.Store.Items)
+                    if (it.Id == probeId && it.Actor != null) p1 = it.Actor.Go.transform.localPosition;
+                float dToSlot = Mathf.Sqrt((p1.x - slotPos.x) * (p1.x - slotPos.x) + (p1.z - slotPos.z) * (p1.z - slotPos.z));
+                Debug.Log($"[DealLive] {(dToSlot < 0.35f ? "PASS" : "FAIL")} 终态=({p1.x:0.00},{p1.z:0.00}) " +
+                          $"距目标格位 {dToSlot:0.00}");
+                EditorApplication.Exit(dToSlot < 0.35f ? 0 : 1);
+            }
+        }
+
+        /// <summary>
+        /// 专项自检：发牌动画是否真的把牌从牌堆移到了市场。
+        /// 复现用户操作：跳到 setup.cards.002.1，用 Seek 推进，观察市场牌位置变化。
+        /// </summary>
+        public static void SelfTestDealSync()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("DealHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.logMoves = true;
+
+            if (!anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false))
+            {
+                Debug.Log("[DealTest] FAIL LoadCue 返回 false");
+                EditorApplication.Exit(1);
+                return;
+            }
+
+            string probeId = "market_card_1_emerald#1";
+            Vector3 startPos = Vector3.zero;
+            bool got = false;
+            foreach (var it in anim.Store.Items)
+                if (it.Id == probeId && it.Actor != null) { startPos = it.Actor.Go.transform.localPosition; got = true; }
+
+            Debug.Log($"[DealTest] 起始位置 {probeId} = ({startPos.x:0.00},{startPos.z:0.00}) 找到={got}");
+            var deckPos = anim.Store.ZoneCenter("deck_level_1");
+            var slotPos = anim.Store.ZonePosition("card_market", 0);
+            Debug.Log($"[DealTest] 牌堆位置=({deckPos.x:0.00},{deckPos.z:0.00})  " +
+                      $"市场格位=({slotPos.x:0.00},{slotPos.z:0.00})");
+
+            foreach (float t in new[] { 4.0f, 4.6f, 7.5f })
+            {
+                anim.Seek(t);
+                Vector3 now = Vector3.zero;
+                foreach (var it in anim.Store.Items)
+                    if (it.Id == probeId && it.Actor != null) now = it.Actor.Go.transform.localPosition;
+                Debug.Log($"[DealTest] t={t:0.0} {probeId} 位置=({now.x:0.00},{now.z:0.00})");
+            }
+
+            Vector3 finalPos = Vector3.zero;
+            foreach (var it in anim.Store.Items)
+                if (it.Id == probeId && it.Actor != null) finalPos = it.Actor.Go.transform.localPosition;
+
+            bool moved = Mathf.Abs(finalPos.x - deckPos.x) > 0.5f || Mathf.Abs(finalPos.z - deckPos.z) > 0.5f;
+            Debug.Log($"[DealTest] {(moved ? "PASS" : "FAIL")} 牌是否离开牌堆：起始=({deckPos.x:0.00},{deckPos.z:0.00}) " +
+                      $"终态=({finalPos.x:0.00},{finalPos.z:0.00})");
+            if (!moved) failures++;
+
+            Debug.Log($"[DealTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
@@ -443,10 +565,10 @@ namespace BoardGameTutorial.Editor
                 if (dump)
                     WriteDump(anim, Path.Combine(outputDirectory, shot.File + ".txt"), $"{shot.Cue} t={shot.Time:0.00}");
 
-                if (shot.File == "cards_01_placed") anim.ProbeZoneOccupants("deck_level_1");
+                if (shot.File == "cards_01_placed") 
                 if (shot.File == "cards_00_start")
                 {
-                    anim.ProbeCardTexture(outputDirectory);
+                    
                 }
 
                 string path = Path.Combine(outputDirectory, shot.File + ".png");

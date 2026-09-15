@@ -152,6 +152,11 @@ namespace BoardGameTutorial
             }
             ApplyCueStart();
 
+            // 市场牌在发牌前停在对应牌堆的位置当「牌背」；它们必须显示背面，
+            // 否则会把整摞牌堆的卡背盖住，看起来像牌堆正面朝上。
+            foreach (var item in Store.Items)
+                if (item.Id.StartsWith("market_card_")) item.Flipped = true;
+
             BuildActorObjects();
             SyncActorsToStore();
 
@@ -304,19 +309,6 @@ namespace BoardGameTutorial
                 actor.FaceSprite = sr.sprite;
                 actor.EffectiveTemplate = itemTpl;
 
-                // 市场牌预置在对应牌堆的位置：发牌时看起来就是「从牌堆里翻出来」。
-                if (item.Id.StartsWith("market_card_"))
-                {
-                    int lvl = item.Id.Contains("_1_") ? 1 : item.Id.Contains("_2_") ? 2 : 3;
-                    var deckZone = Store.GetZone("deck_level_" + lvl);
-                    if (deckZone != null)
-                    {
-                        var deckPos = Store.ZoneCenter("deck_level_" + lvl);
-                        item.LivePosition = deckPos;
-                        actor.LivePosition = deckPos;
-                        go.transform.localPosition = deckPos;
-                    }
-                }
                 var backPath = ResolveBackImagePath(itemTpl);
                 if (backPath != null)
                 {
@@ -902,13 +894,7 @@ namespace BoardGameTutorial
                 }
             }
 
-            if (logMoves)
-            {
-                var names = new List<string>();
-                foreach (var step in plan) names.Add($"{step.Item.Id}(zone={step.Item.ZoneId},order={step.Item.Order})");
-                Debug.Log($"[MovePick] cue={CueId} from=[{string.Join(",", sources)}] take={take} → {ev.zone}：" +
-                          $"选中 {plan.Count} 件：[{string.Join(", ", names)}]");
-            }
+
             return plan;
         }
 

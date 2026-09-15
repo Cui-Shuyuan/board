@@ -409,7 +409,8 @@
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_白.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
-      "note": "1 级卡面（diamond），背面同该级卡背"
+      "note": "1 级卡面（diamond），背面同该级卡背",
+      "from_zone": "deck_level_1"
     },
     {
       "id": "market_card_1_ruby",
@@ -420,7 +421,8 @@
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_红.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
-      "note": "1 级卡面（ruby），背面同该级卡背"
+      "note": "1 级卡面（ruby），背面同该级卡背",
+      "from_zone": "deck_level_1"
     },
     {
       "id": "market_card_1_emerald",
@@ -431,7 +433,8 @@
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_绿.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
-      "note": "1 级卡面（emerald），背面同该级卡背"
+      "note": "1 级卡面（emerald），背面同该级卡背",
+      "from_zone": "deck_level_1"
     },
     {
       "id": "market_card_1_sapphire",
@@ -442,7 +445,8 @@
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_蓝.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
-      "note": "1 级卡面（sapphire），背面同该级卡背"
+      "note": "1 级卡面（sapphire），背面同该级卡背",
+      "from_zone": "deck_level_1"
     },
     {
       "id": "market_card_1_onyx",
@@ -453,7 +457,8 @@
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_黑.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
-      "note": "1 级卡面（onyx），背面同该级卡背"
+      "note": "1 级卡面（onyx），背面同该级卡背",
+      "from_zone": "deck_level_1"
     },
     {
       "id": "market_card_2_diamond",
@@ -464,7 +469,8 @@
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_白.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
-      "note": "2 级卡面（diamond），背面同该级卡背"
+      "note": "2 级卡面（diamond），背面同该级卡背",
+      "from_zone": "deck_level_2"
     },
     {
       "id": "market_card_2_ruby",
@@ -475,7 +481,8 @@
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_红.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
-      "note": "2 级卡面（ruby），背面同该级卡背"
+      "note": "2 级卡面（ruby），背面同该级卡背",
+      "from_zone": "deck_level_2"
     },
     {
       "id": "market_card_2_emerald",
@@ -486,7 +493,8 @@
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_绿.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
-      "note": "2 级卡面（emerald），背面同该级卡背"
+      "note": "2 级卡面（emerald），背面同该级卡背",
+      "from_zone": "deck_level_2"
     },
     {
       "id": "market_card_2_sapphire",
@@ -497,7 +505,8 @@
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_蓝.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
-      "note": "2 级卡面（sapphire），背面同该级卡背"
+      "note": "2 级卡面（sapphire），背面同该级卡背",
+      "from_zone": "deck_level_2"
     },
     {
       "id": "market_card_2_onyx",
@@ -508,7 +517,8 @@
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_黑.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
-      "note": "2 级卡面（onyx），背面同该级卡背"
+      "note": "2 级卡面（onyx），背面同该级卡背",
+      "from_zone": "deck_level_2"
     },
     {
       "id": "market_card_3_diamond",
@@ -519,7 +529,8 @@
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_白.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
-      "note": "3 级卡面（diamond），背面同该级卡背"
+      "note": "3 级卡面（diamond），背面同该级卡背",
+      "from_zone": "deck_level_3"
     },
     {
       "id": "market_card_3_ruby",
@@ -530,7 +541,8 @@
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_红.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
-      "note": "3 级卡面（ruby），背面同该级卡背"
+      "note": "3 级卡面（ruby），背面同该级卡背",
+      "from_zone": "deck_level_3"
     },
     {
       "id": "market_card_3_emerald",
@@ -541,7 +553,8 @@
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_绿.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
-      "note": "3 级卡面（emerald），背面同该级卡背"
+      "note": "3 级卡面（emerald），背面同该级卡背",
+      "from_zone": "deck_level_3"
     },
     {
       "id": "market_card_3_sapphire",
@@ -552,7 +565,8 @@
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_蓝.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
-      "note": "3 级卡面（sapphire），背面同该级卡背"
+      "note": "3 级卡面（sapphire），背面同该级卡背",
+      "from_zone": "deck_level_3"
     },
     {
       "id": "market_card_3_onyx",
@@ -563,7 +577,8 @@
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_黑.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
-      "note": "3 级卡面（onyx），背面同该级卡背"
+      "note": "3 级卡面（onyx），背面同该级卡背",
+      "from_zone": "deck_level_3"
     }
   ],
   "anchors": [
