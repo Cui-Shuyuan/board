@@ -238,7 +238,7 @@ namespace BoardGameTutorial
             color.a = Mathf.Clamp01(tpl.alpha);
             sr.color = color;
 
-            var size = WorldSizeOf(tpl, sprite);
+            var scale = LocalScaleFor(tpl, sprite);
             if (tpl.highlight)
             {
                 sr.enabled = false;
@@ -246,7 +246,7 @@ namespace BoardGameTutorial
             }
             else
             {
-                go.transform.localScale = new Vector3(size.x, size.y, 1f);
+                go.transform.localScale = scale;
             }
             return go;
         }
@@ -313,19 +313,35 @@ namespace BoardGameTutorial
             yield return "media/card/" + level + "_back.png";
         }
 
-        private static Vector3 WorldSizeOf(StageTemplate tpl, Sprite sprite)
+        /// <summary>
+        /// 计算 SpriteRenderer 需要的 localScale。
+        ///
+        /// 注意：sprite 的原生尺寸 = 像素 / pixelsPerUnit。扫描图是 712x1012 @100PPU，
+        /// 原生就已经是 7.12x10.12 世界单位，所以绝不能把「目标世界尺寸」直接当缩放用，
+        /// 否则卡牌会放大到占满屏幕。缩放 = 目标世界尺寸 / 原生世界尺寸。
+        /// </summary>
+        private static Vector3 LocalScaleFor(StageTemplate tpl, Sprite sprite)
         {
-            if (tpl.width > 0f || tpl.height > 0f)
+            float nativeW = 1f, nativeH = 1f;
+            if (sprite != null && sprite.rect.width > 0f && sprite.rect.height > 0f)
             {
-                float w = tpl.width > 0f ? tpl.width : (tpl.height > 0f ? tpl.height : 0.5f);
-                float h = tpl.height > 0f ? tpl.height : w;
-                return new Vector3(w, h, 1f);
+                float ppu = sprite.pixelsPerUnit > 0f ? sprite.pixelsPerUnit : GemPpu;
+                nativeW = sprite.rect.width / ppu;
+                nativeH = sprite.rect.height / ppu;
             }
 
-            float size = tpl.world_size <= 0f ? 0.10f : tpl.world_size;
-            float aspect = 1f;
-            if (sprite != null && sprite.rect.width > 0f) aspect = sprite.rect.height / sprite.rect.width;
-            return new Vector3(size, size * aspect, 1f);
+            if (tpl.width > 0f || tpl.height > 0f)
+            {
+                // 显式宽高：按比例取较小的那个缩放，保证整体装进给定尺寸（不拉伸卡面）。
+                float wantW = tpl.width > 0f ? tpl.width : nativeW;
+                float wantH = tpl.height > 0f ? tpl.height : nativeH;
+                float scale = Mathf.Min(wantW / nativeW, wantH / nativeH);
+                return new Vector3(scale, scale, 1f);
+            }
+
+            float target = tpl.world_size <= 0f ? 0.10f : tpl.world_size;
+            float uniform = target / Mathf.Max(nativeW, nativeH);
+            return new Vector3(uniform, uniform, 1f);
         }
 
         private static Sprite SharedSolidSprite()
