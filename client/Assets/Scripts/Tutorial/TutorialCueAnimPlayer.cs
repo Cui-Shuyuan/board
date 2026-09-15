@@ -996,6 +996,10 @@ namespace BoardGameTutorial
             float orthoSize = Mathf.Max(halfH2 * sinP, halfW2 / aspect);
             orthoSize = Mathf.Max(orthoSize, 0.6f);
 
+            // 横向上界兜底：相机实际 aspect 若比取景时窄，内容会从左右溢出。
+            float safeAspect = Mathf.Max(0.5f, aspect);
+            if (orthoSize * safeAspect < halfW2) orthoSize = halfW2 / safeAspect;
+
             float distance = orthoSize * 3.2f;
             var focus = new Vector3(cx, 0f, cz);
             var eye = focus + new Vector3(0f, Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad)) * distance;

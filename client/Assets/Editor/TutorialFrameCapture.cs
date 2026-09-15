@@ -31,6 +31,15 @@ namespace BoardGameTutorial.Editor
         }
 
         // 要在哪个 cue 的哪一秒出帧。要加内容改这里。
+        // 追踪模式：按 -captureTrack 传入 cue 名时，从 0 起每 0.15s 出一帧
+        private static Shot[] BuildTrackShots(string cue, int count, float step)
+        {
+            var list = new System.Collections.Generic.List<Shot>();
+            for (int i = 0; i < count; i++)
+                list.Add(new Shot { Cue = cue, Time = i * step, File = $"track_{i:00}_t{i * step:0.00}" });
+            return list.ToArray();
+        }
+
         private static readonly Shot[] Shots =
         {
             new Shot { Cue = "setup.cards.001.1", Time = 0.00f, File = "cards_00_start" },
@@ -52,7 +61,12 @@ namespace BoardGameTutorial.Editor
                       System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-captureVerbose") >= 0;
             var dir = Path.Combine(Application.dataPath, "..", OutputDir);
             Directory.CreateDirectory(dir);
-            Capture(dir, Shots);
+            var args = System.Environment.GetCommandLineArgs();
+            int trackIdx = System.Array.IndexOf(args, "-captureTrack");
+            Shot[] shots = Shots;
+            if (trackIdx >= 0 && trackIdx + 1 < args.Length)
+                shots = BuildTrackShots(args[trackIdx + 1], 16, 0.15f);
+            Capture(dir, shots);
             EditorApplication.Exit(0);
         }
 

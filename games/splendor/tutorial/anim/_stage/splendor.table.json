@@ -2,11 +2,11 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。board.extent 是相机取景的唯一依据（不要从 zone 布局反推，layout.cols 写错一次整个取景就失准）。开局只有三摞发展卡在桌上，宝石与贵族还在游戏盒里（zone=offstage）。高亮目标是具体组件；强调一整片区域时按该 zone 的 palette 现场生成专属高亮底板。卡面用实物扫描 media/card/（不进 Git）。",
+  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。board.extent 是相机取景的唯一依据。offstage 是画面外的入场通道，margin 必须大于可见范围，否则「还没拿进来的东西」会漏进画面（表现为小圆点在边缘飘）。开局只有三摞发展卡在桌上。高亮目标是具体组件或该 zone 专属的 glow 底板。卡面用实物扫描 media/card/（不进 Git）。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
-    "ortho_scale": 1.06,
+    "ortho_scale": 1.1,
     "aspect": 1.7778,
     "extent": {
       "min_x": -2.32,
@@ -22,9 +22,9 @@
       "role": "offstage",
       "center": {
         "x": 0.0,
-        "z": 0.2
+        "z": 0.0
       },
-      "margin": 3.2
+      "margin": 6.0
     },
     {
       "id": "deck_level_1",
