@@ -9,10 +9,10 @@
     "ortho_scale": 1.1,
     "aspect": 1.7778,
     "extent": {
-      "min_x": -2.85,
-      "max_x": 1.26,
-      "min_z": -4.2,
-      "max_z": 2.03
+      "min_x": -3.0,
+      "max_x": 1.8,
+      "min_z": -4.17,
+      "max_z": 2.14
     }
   },
   "zones": [
@@ -30,68 +30,86 @@
       "id": "deck_level_1",
       "label": "一级发展卡牌堆",
       "center": {
-        "x": -2.42,
-        "z": 1.05
+        "x": -2.55,
+        "z": 0.95
       },
       "layout": {
         "type": "pile",
         "cols": 1,
-        "x_step": 0.012,
-        "z_step": 0.012
+        "x_step": 0.0,
+        "z_step": 0.0
       },
-      "capacity": 3,
+      "capacity": 40,
       "palette": "accent_green",
       "size": {
         "w": 0.56,
         "h": 0.79
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.022,
+        "dz": 0.022,
+        "max_visible": 8
       }
     },
     {
       "id": "deck_level_2",
       "label": "二级发展卡牌堆",
       "center": {
-        "x": -2.42,
+        "x": -2.55,
         "z": 0.0
       },
       "layout": {
         "type": "pile",
         "cols": 1,
-        "x_step": 0.012,
-        "z_step": 0.012
+        "x_step": 0.0,
+        "z_step": 0.0
       },
-      "capacity": 3,
+      "capacity": 40,
       "palette": "accent_yellow",
       "size": {
         "w": 0.56,
         "h": 0.79
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.022,
+        "dz": 0.022,
+        "max_visible": 8
       }
     },
     {
       "id": "deck_level_3",
       "label": "三级发展卡牌堆",
       "center": {
-        "x": -2.42,
-        "z": -1.05
+        "x": -2.55,
+        "z": -0.95
       },
       "layout": {
         "type": "pile",
         "cols": 1,
-        "x_step": 0.012,
-        "z_step": 0.012
+        "x_step": 0.0,
+        "z_step": 0.0
       },
-      "capacity": 3,
+      "capacity": 40,
       "palette": "accent_blue",
       "size": {
         "w": 0.56,
         "h": 0.79
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.022,
+        "dz": 0.022,
+        "max_visible": 8
       }
     },
     {
       "id": "card_market",
       "label": "发展卡牌市场",
       "center": {
-        "x": -0.72,
-        "z": -0.1
+        "x": -0.55,
+        "z": -0.05
       },
       "layout": {
         "type": "grid",
@@ -104,164 +122,183 @@
       "size": {
         "w": 0.56,
         "h": 0.79
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "noble_market",
       "label": "贵族供应堆",
       "center": {
-        "x": -0.6,
-        "z": 1.58
+        "x": -0.55,
+        "z": 1.72
       },
       "layout": {
         "type": "row",
-        "x_step": 0.62
+        "x_step": 0.68
       },
       "capacity": 5,
       "palette": "panel_market",
       "size": {
         "w": 0.6,
         "h": 0.6
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "gem_supply_diamond",
       "label": "钻石供应堆",
       "center": {
-        "x": -0.75,
-        "z": -1.85
+        "x": -2.0,
+        "z": -1.8
       },
       "layout": {
-        "type": "pile",
-        "cols": 2,
-        "x_step": 0.3,
-        "z_step": 0.22
+        "type": "block",
+        "x_step": 0.36,
+        "z_step": 0.34
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "gem_supply_sapphire",
       "label": "蓝宝石供应堆",
       "center": {
-        "x": 0.0,
-        "z": -1.85
+        "x": -0.55,
+        "z": -1.8
       },
       "layout": {
-        "type": "pile",
-        "cols": 2,
-        "x_step": 0.3,
-        "z_step": 0.22
+        "type": "block",
+        "x_step": 0.36,
+        "z_step": 0.34
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "gem_supply_ruby",
       "label": "红宝石供应堆",
       "center": {
-        "x": 0.75,
-        "z": -1.85
+        "x": 0.8999999999999999,
+        "z": -1.8
       },
       "layout": {
-        "type": "pile",
-        "cols": 2,
-        "x_step": 0.3,
-        "z_step": 0.22
+        "type": "block",
+        "x_step": 0.36,
+        "z_step": 0.34
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "gem_supply_emerald",
       "label": "翡翠供应堆",
       "center": {
-        "x": -0.75,
-        "z": -2.62
+        "x": -2.0,
+        "z": -2.75
       },
       "layout": {
-        "type": "pile",
-        "cols": 2,
-        "x_step": 0.3,
-        "z_step": 0.22
+        "type": "block",
+        "x_step": 0.36,
+        "z_step": 0.34
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "gem_supply_onyx",
       "label": "缟玛瑙供应堆",
       "center": {
-        "x": 0.0,
-        "z": -2.62
+        "x": -0.55,
+        "z": -2.75
       },
       "layout": {
-        "type": "pile",
-        "cols": 2,
-        "x_step": 0.3,
-        "z_step": 0.22
+        "type": "block",
+        "x_step": 0.36,
+        "z_step": 0.34
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "gold_supply",
       "label": "黄金供应堆",
       "center": {
-        "x": 0.75,
-        "z": -2.62
+        "x": 0.8999999999999999,
+        "z": -2.75
       },
       "layout": {
-        "type": "pile",
-        "cols": 2,
-        "x_step": 0.3,
-        "z_step": 0.22
+        "type": "block",
+        "x_step": 0.36,
+        "z_step": 0.34
       },
-      "capacity": 5,
+      "capacity": 7,
       "palette": "panel_supply",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     },
     {
       "id": "player_holding",
       "label": "玩家持有区",
       "center": {
-        "x": -0.72,
-        "z": -3.6
+        "x": -0.55,
+        "z": -3.75
       },
       "layout": {
-        "type": "grid",
-        "cols": 5,
-        "x_step": 0.47,
-        "z_step": 0.47
+        "type": "row",
+        "x_step": 0.3
       },
       "capacity": 10,
       "palette": "panel_player",
       "size": {
         "w": 0.43,
         "h": 0.43
+      },
+      "display": {
+        "mode": "count"
       }
     }
   ],
@@ -313,7 +350,7 @@
       "shape": "panel",
       "palette": "panel_market",
       "width": 3.1,
-      "height": 3.05,
+      "height": 3.0,
       "alpha": 0.16,
       "sorting_order": -20
     },
@@ -321,8 +358,8 @@
       "id": "board_supply",
       "shape": "panel",
       "palette": "panel_supply",
-      "width": 2.9,
-      "height": 2.3,
+      "width": 5.1,
+      "height": 2.25,
       "alpha": 0.2,
       "sorting_order": -20
     },
@@ -330,8 +367,8 @@
       "id": "board_player",
       "shape": "panel",
       "palette": "panel_player",
-      "width": 2.6,
-      "height": 1.3,
+      "width": 3.15,
+      "height": 0.72,
       "alpha": 0.2,
       "sorting_order": -20
     },
@@ -349,8 +386,8 @@
       "id": "board_deck",
       "shape": "panel",
       "palette": "panel_market",
-      "width": 0.92,
-      "height": 3.1,
+      "width": 0.86,
+      "height": 3.05,
       "alpha": 0.16,
       "sorting_order": -20
     },
@@ -358,8 +395,8 @@
       "id": "board_noble",
       "shape": "panel",
       "palette": "panel_market",
-      "width": 2.1,
-      "height": 0.76,
+      "width": 2.3,
+      "height": 0.78,
       "alpha": 0.16,
       "sorting_order": -20
     }
@@ -368,8 +405,8 @@
     {
       "id": "board_market_area",
       "template": "board_market",
-      "x": -0.72,
-      "z": -0.08,
+      "x": -0.55,
+      "z": -0.05,
       "zones": [
         "card_market"
       ]
@@ -377,7 +414,7 @@
     {
       "id": "board_deck_area",
       "template": "board_deck",
-      "x": -2.42,
+      "x": -2.55,
       "z": 0.0,
       "zones": [
         "deck_level_1",
@@ -388,8 +425,8 @@
     {
       "id": "board_noble_area",
       "template": "board_noble",
-      "x": 0.0,
-      "z": 1.58,
+      "x": -0.55,
+      "z": 1.72,
       "zones": [
         "noble_market"
       ]
@@ -397,8 +434,8 @@
     {
       "id": "board_supply_area",
       "template": "board_supply",
-      "x": 0.0,
-      "z": -2.23,
+      "x": -0.55,
+      "z": -2.275,
       "zones": [
         "gem_supply_diamond",
         "gem_supply_sapphire",
@@ -411,8 +448,8 @@
     {
       "id": "board_player_area",
       "template": "board_player",
-      "x": -0.72,
-      "z": -3.6,
+      "x": -0.55,
+      "z": -3.75,
       "zones": [
         "player_holding"
       ]

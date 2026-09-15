@@ -92,6 +92,29 @@ namespace BoardGameTutorial
         /// 留空则按 layout 的步长推算。
         /// </summary>
         public StageSize size;
+
+        /// <summary>
+        /// 数量表现形式。两种语义不能混：
+        ///   count —— 少量（1~5），摊开摆放，一眼能数出枚数；
+        ///   stack —— 很多（40/30/20 张这类），逐个盖着、下面的错开露出一点，省位置并表示「一堆」。
+        /// 语义约定（人读的算式，不参与运行）：1+1=2、1+4=5 仍是可数；累积到一堆之后
+        /// 「一堆 ± n = 一堆」，即堆不会因为拿走几张就变回可数。
+        /// </summary>
+        public StageDisplay display;
+    }
+
+    [Serializable]
+    public class StageDisplay
+    {
+        /// <summary>count | stack</summary>
+        public string mode = "count";
+
+        /// <summary>stack 专用：逐层的错开量（世界单位）。越小压得越紧、露出的边越少。</summary>
+        public float dx = 0.03f;
+        public float dz = 0.03f;
+
+        /// <summary>stack 专用：最多画出几层（再多的只体现在计数上，不占位）。</summary>
+        public int max_visible = 8;
     }
 
     [Serializable]

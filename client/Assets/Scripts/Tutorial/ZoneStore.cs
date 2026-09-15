@@ -266,6 +266,15 @@ namespace BoardGameTutorial
             return ZonePosition(item.ZoneId, item.Order);
         }
 
+        /// <summary>
+        /// 组件落点。摆放方式由 display.mode 与 layout.type 共同决定：
+        ///
+        ///   display.mode = "stack"  → 一层层盖住，每层只错开一点点（40/30/20 张的牌堆）
+        ///   display.mode = "count"  → 一件件都看得见，按 layout.type 摆：
+        ///       "row"   单行等距排开（玩家持有区、贵族行、一排 7 枚的宝石堆）
+        ///       "grid"  居中紧凑块（发展卡市场 4 列）
+        /// 超出容量的部分压在最后一格并向外扩，避免整块突然移位。
+        /// </summary>
         public Vector3 ZonePosition(string zoneId, int order)
         {
             var zone = GetZone(zoneId);
@@ -273,13 +282,12 @@ namespace BoardGameTutorial
             if (zone.role == "offstage") return OffstagePosition(zone);
 
             var layout = zone.layout ?? new StageLayout();
-            int cols = Mathf.Max(1, layout.cols);
+            var display = zone.display;
             int capacity = zone.capacity > 0 ? zone.capacity : 12;
 
             float x = zone.center.x;
             float z = zone.center.z;
 
-            // 超出容量的部分压在最后一格并略微外扩，避免整堆突然移位。
             int slot = order;
             int overflow = 0;
             if (slot >= capacity)
@@ -288,26 +296,47 @@ namespace BoardGameTutorial
                 overflow = order - capacity + 1;
             }
 
-            if (slot > 0)
+            if (display != null && display.mode == "stack")
             {
-                if (layout.type == "row")
-                {
-                    x += slot * layout.x_step;
-                }
-                else
-                {
-                    int row = slot / cols;
-                    int col = slot % cols;
-                    float cx = (cols - 1) * 0.5f;
-                    x += (col - cx) * layout.x_step;
-                    z += row * layout.z_step;
-                }
+                int visible = display.max_visible > 0 ? display.max_visible : 8;
+                int layer = Mathf.Min(slot, visible - 1);
+                x += layer * display.dx;
+                z += layer * display.dz;
+                return new Vector3(x, 0f, z);
+            }
+
+            // 摆放方式：
+            //   row   单行、以 zone 中心对称展开（持有区、贵族行）
+            //   grid  固定列数的居中块（发展卡市场）
+            //   block 按「整齐的 2x2 块」摆（宝石堆：7 枚 = 4+3 两行，紧凑且数得清）
+            if (layout.type == "row")
+            {
+                x += (slot - (capacity - 1) * 0.5f) * layout.x_step;
+            }
+            else if (layout.type == "block")
+            {
+                int cols = Mathf.Max(1, Mathf.CeilToInt(capacity * 0.5f)); // 目标是两行
+                int row = slot / cols;
+                int col = slot % cols;
+                int inRow = Mathf.Min(cols, capacity - row * cols);
+                float cx = (inRow - 1) * 0.5f;
+                x += (col - cx) * layout.x_step;
+                z += (row - 0.5f) * layout.z_step;
+            }
+            else
+            {
+                int cols = Mathf.Max(1, layout.cols);
+                int row = slot / cols;
+                int col = slot % cols;
+                float cx = (cols - 1) * 0.5f;
+                x += (col - cx) * layout.x_step;
+                z += row * layout.z_step;
             }
 
             if (overflow > 0)
             {
-                x += overflow * layout.x_step * 0.12f;
-                z += overflow * layout.z_step * 0.12f;
+                x += overflow * layout.x_step * 0.10f;
+                z += overflow * layout.z_step * 0.10f;
             }
 
             return new Vector3(x, 0f, z);
