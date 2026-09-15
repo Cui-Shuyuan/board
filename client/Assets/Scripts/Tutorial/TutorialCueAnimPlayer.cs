@@ -1,13 +1,14 @@
 // BoardGameTutorial
-// cue 内动画播放器：把 anim/{track}/{cue_id}.json 的 shot 时间轴演出来。
+// cue 内动画播放器（状态版）。
 //
-// 设计要点：
-// 1. 时钟由外部（TutorialCuePlayer）喂入，通常是 audioSource.time。
-//    动画因此天然对齐口播，暂停即冻结，重播即从 0 重新采样。
-// 2. 只执行 8 个原语，全部通过 TutorialPrimitives / 本类的确定性采样完成，
-//    不为任何单条动画新写协程逻辑分支。
-// 3. 初始画面 = 数据里的 actors；ResetToStart() 直接重建 actors，
-//    因此不维护运行端历史状态，将来可由编译器把起始画面写进同一份数据。
+// 模型：动画 = 维护一组组件的状态。组件状态 = 它在哪个 zone、以什么姿态；
+// 位置由 zone 的布局规则推导。因此本播放器做两件事：
+//   1. 渲染层：把 ZoneStore 的每个组件实例成 sprite，位置由 (zone, slot) 算出；
+//   2. 时间轴层：按相对秒数触发 cue 数据里的原语，move 的语义就是 zone → zone。
+//
+// 时钟由 TutorialCuePlayer 喂入（audioSource.time）：动画天然对齐口播。
+// 重播当前 cue 恢复到这条 cue 的入口状态；顺序播放接着上一条的终态继续。
+// 将来编译器可以离线复算每个 cue 的入口状态写进 runtime，用于任意跳转。
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -19,65 +20,50 @@ namespace BoardGameTutorial
     {
         private const float GemPpu = 100f;
 
-        private static readonly Dictionary<string, Color> Palette = new Dictionary<string, Color>
-        {
-            { "gem_diamond",  new Color(0.85f, 0.90f, 0.93f) },
-            { "gem_sapphire", new Color(0.26f, 0.52f, 0.96f) },
-            { "gem_emerald",  new Color(0.20f, 0.66f, 0.33f) },
-            { "gem_ruby",     new Color(0.82f, 0.22f, 0.26f) },
-            { "gem_onyx",     new Color(0.22f, 0.23f, 0.27f) },
-            { "gem_gold",     new Color(0.95f, 0.79f, 0.22f) },
-            { "panel_supply", new Color(0.26f, 0.36f, 0.52f) },
-            { "panel_player", new Color(0.24f, 0.42f, 0.31f) },
-            { "shadow",       new Color(0f, 0f, 0f) },
-            { "white",        Color.white },
-        };
-
-        // 程序化占位图形全 cue 共用，避免重复生成纹理。
         private static Sprite solidSprite;
 
         [Header("Cue animation")]
-        [Tooltip("整条 cue 动画总开关；关掉后退回纯音频播放（便于 A/B 对比）。")]
+        [Tooltip("整条 cue 动画总开关；关掉后退回纯音频（便于 A/B 对比）。")]
         public bool animationEnabled = true;
 
         [Tooltip("动画整体速度倍率，只用于调试。")]
         public float timeScale = 1f;
 
-        public string GameId { get; private set; }
-        public string Track { get; private set; }
         public string CueId { get; private set; }
         public string Note { get; private set; }
-        public bool IsLoaded => doc != null;
-        public bool HasEvents => doc != null && doc.events != null && doc.events.Count > 0;
-        public int AnimRootChildCount => animRoot != null ? animRoot.transform.childCount : 0;
+        public bool IsLoaded => cueDoc != null;
+        public bool HasEvents => cueDoc != null && cueDoc.events != null && cueDoc.events.Count > 0;
         public float CameraGroundHalfWidth { get; private set; }
         public float CameraOrthoSize { get; private set; }
+        public ZoneStore Store { get; private set; } = new ZoneStore();
 
-        private CueAnimDoc doc;
+        private StageDoc stage;
+        private CueAnimDoc cueDoc;
         private GameObject animRoot;
         private Camera animCamera;
 
-        private readonly List<CueAnimActor> actors = new List<CueAnimActor>();
-        private readonly Dictionary<string, CueAnimActor> actorsById = new Dictionary<string, CueAnimActor>();
-        private readonly Dictionary<string, List<CueAnimActor>> actorsByGroup = new Dictionary<string, List<CueAnimActor>>();
-        private readonly List<Coroutine> runningTweens = new List<Coroutine>();
-        private readonly List<Coroutine> runningPulses = new List<Coroutine>();
+        private readonly Dictionary<string, CueAnimActor> actors = new Dictionary<string, CueAnimActor>();
+        /// <summary>区域底板：zone id → 代表它的装饰件 id。zone 级 highlight 打到这里。</summary>
+        private readonly Dictionary<string, List<string>> zonePanels = new Dictionary<string, List<string>>();
+        private readonly List<Coroutine> running = new List<Coroutine>();
 
         private float clock = -1f;
         private int nextIndex;
+        private ZoneSnapshot entrySnapshot;
 
-        // ── 数据加载 ──────────────────────────────────────────────────────
+        // ── 加载 ──────────────────────────────────────────────────────────
 
         /// <summary>
-        /// 读取 anim/{track}/{cueId}.json。找不到文件返回 false（表示这条 cue 没有动画）。
+        /// 载入牌桌与这一条 cue，并把画面摆到「本条 cue 开始播放时」的状态。
+        /// continueState=true 接着上一条的终态；false 从牌桌 initial + 本条 start 起。
         /// </summary>
-        public bool LoadCue(string gameRoot, string track, string cueId)
+        public bool LoadCue(string gameRoot, string track, string cueId, bool continueState)
         {
-            GameId = null;
-            Track = track;
             CueId = cueId;
             Note = null;
-            doc = null;
+            cueDoc = null;
+            StopAnimations();
+            ClearActors();
 
             if (!animationEnabled || string.IsNullOrEmpty(gameRoot) || string.IsNullOrEmpty(cueId))
             {
@@ -88,206 +74,201 @@ namespace BoardGameTutorial
             string path = Path.Combine(gameRoot, "tutorial", "anim", track, cueId + ".json");
             if (!File.Exists(path))
             {
-                ClearScene();
+                // 这条 cue 还没做动画：保留上一张牌桌画面，不要清空，
+                // 否则播到没做动画的 cue 时整张桌子会突然消失。
+                CueId = null;
+                clock = -1f;
+                nextIndex = 0;
                 return false;
             }
 
-            string json = File.ReadAllText(path);
-            doc = JsonUtility.FromJson<CueAnimDoc>(json);
-            if (doc == null || doc.scene == null || doc.events == null)
+            cueDoc = JsonUtility.FromJson<CueAnimDoc>(File.ReadAllText(path));
+            if (cueDoc == null || cueDoc.events == null)
             {
                 Debug.LogError($"[TutorialCueAnim] failed to parse {path}");
-                doc = null;
-                ClearScene();
+                cueDoc = null;
                 return false;
             }
+            Note = cueDoc.note;
 
-            GameId = doc.game_id;
-            Note = doc.note;
-            BuildScene();   // 只搭一次景；Seek(0) 不会重建（clock 此时为 0，非 -1）。
+            LoadStage(gameRoot, cueDoc.stage);
+
+            if (!continueState) Store.ApplyInitial();
+            ApplyCueStart();
+
+            BuildActorObjects();
+            SyncActorsToStore();
+
+            EnsureCamera();
+            SetBackground();
+            FitCamera();
+
+            CaptureEntry();
             clock = 0f;
             nextIndex = 0;
             return true;
         }
 
-        /// <summary>重建初始画面并把时间轴归零。</summary>
-        public void ResetToStart()
+        private void LoadStage(string gameRoot, string stageRel)
         {
-            StopAnimations();
-            ClearActors();
-            if (doc == null) return;
+            string rel = string.IsNullOrEmpty(stageRel) ? "_stage/splendor.table" : stageRel;
+            string path = Path.Combine(gameRoot, "tutorial", "anim", rel + ".json");
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"[TutorialCueAnim] missing stage file: {path}");
+                stage = null;
+                Store.LoadStage(null);
+                return;
+            }
 
-            BuildScene();
-            clock = 0f;
-            nextIndex = 0;
+            stage = JsonUtility.FromJson<StageDoc>(File.ReadAllText(path));
+            Store.LoadStage(stage);
         }
 
-        /// <summary>整条 cue 动画的总时长（最后一个 shot 的结束时间）。</summary>
-        public float TotalDuration
+        /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置 / 临时组件）。</summary>
+        private void ApplyCueStart()
         {
-            get
+            var start = cueDoc.start;
+            if (start == null) return;
+
+            if (start.clear) Store.Reset();
+
+            if (start.set != null)
             {
-                if (doc == null || doc.events == null) return 0f;
-                float end = 0f;
-                foreach (var ev in doc.events)
+                foreach (var seed in start.set)
                 {
-                    if (ev == null || ev.action == "wait") continue;
-                    end = Mathf.Max(end, ev.at + ev.lead + Mathf.Max(0f, ev.dur));
+                    int count = Mathf.Max(1, seed.count);
+                    if (seed.expand_to.HasValue)
+                    {
+                        int have = Store.CountIn(seed.zone, seed.palette, seed.template);
+                        count = Mathf.Max(0, seed.expand_to.Value - have);
+                    }
+                    if (count > 0) Store.Spawn(seed.template, seed.palette, seed.zone, count);
                 }
-                return end;
-            }
-        }
-
-        // ── 时间轴 ────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// 外部时钟推进。time 通常是 audioSource.time（cue 内相对秒数）。
-        /// 时间回退超过 0.25s 视为重播/拖动，重建画面后重新采样。
-        /// </summary>
-        public void Seek(float time)
-        {
-            if (doc == null) return;
-
-            if (clock < 0f || time + 0.25f < clock)
-            {
-                ResetToStart();
             }
 
-            clock = time;
-            float scaled = time * Mathf.Max(0.01f, timeScale);
-
-            // 触发所有到点的 shot。tween 协程自己按实时曲线推进。
-            while (nextIndex < doc.events.Count && doc.events[nextIndex].at <= scaled + 1e-4f)
-            {
-                var ev = doc.events[nextIndex];
-                nextIndex++;
-                Trigger(ev);
-            }
         }
 
-        public void ClearScene()
-        {
-            StopAnimations();
-            ClearActors();
-            doc = null;
-            clock = -1f;
-            nextIndex = 0;
-        }
+        // ── 渲染层 ────────────────────────────────────────────────────────
 
-        private void StopAnimations()
-        {
-            for (int i = 0; i < runningTweens.Count; i++)
-                if (runningTweens[i] != null) StopCoroutine(runningTweens[i]);
-            runningTweens.Clear();
-
-            for (int i = 0; i < runningPulses.Count; i++)
-                if (runningPulses[i] != null) StopCoroutine(runningPulses[i]);
-            runningPulses.Clear();
-        }
-
-        private void ClearActors()
-        {
-            actors.Clear();
-            actorsById.Clear();
-            actorsByGroup.Clear();
-
-            if (animRoot != null)
-            {
-                // 立即销毁：保证同一帧内重建不会出现新旧画面叠加。
-                Object.DestroyImmediate(animRoot);
-                animRoot = null;
-            }
-        }
-
-        // ── 搭景 ──────────────────────────────────────────────────────────
-
-        private void BuildScene()
+        private void BuildActorObjects()
         {
             var rootGo = new GameObject("CueAnimRoot");
             rootGo.transform.SetParent(transform, false);
             animRoot = rootGo;
 
-            EnsureCamera();
-            SetBackground();
-
-            if (doc.scene == null || doc.scene.actors == null) return;
-
-            foreach (var def in doc.scene.actors)
+            if (stage?.anchors != null)
             {
-                if (string.IsNullOrEmpty(def.id) || actorsById.ContainsKey(def.id)) continue;
-
-                var actor = BuildActor(def);
-                actors.Add(actor);
-                actorsById[def.id] = actor;
-                if (!string.IsNullOrEmpty(def.group))
+                foreach (var anchor in stage.anchors)
                 {
-                    if (!actorsByGroup.TryGetValue(def.group, out var list))
+                    if (string.IsNullOrEmpty(anchor.id)) continue;
+                    var tpl = Store.GetTemplate(anchor.template);
+                    if (tpl == null)
                     {
-                        list = new List<CueAnimActor>();
-                        actorsByGroup[def.group] = list;
+                        Debug.LogWarning($"[TutorialCueAnim] anchor '{anchor.id}' uses unknown template '{anchor.template}'");
+                        continue;
                     }
-                    list.Add(actor);
+
+                    var color = Palette.Resolve(tpl.palette);
+                    var go = CreateSpriteObject("anchor:" + anchor.id, tpl, color);
+                    go.transform.localPosition = new Vector3(anchor.x, anchor.y, anchor.z);
+
+                    var sr = go.GetComponent<SpriteRenderer>();
+                    var item = new ZoneItem
+                    {
+                        Id = anchor.id,
+                        Template = tpl,
+                        BaseColor = color,
+                        ZoneId = null,
+                        LiveAlpha = tpl.alpha,
+                        LivePosition = new Vector3(anchor.x, anchor.y, anchor.z),
+                        LiveScale = go.transform.localScale,
+                        LiveRotation = tpl.rotation,
+                    };
+                    actors[anchor.id] = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
+                    if (anchor.zones != null)
+                    {
+                        foreach (var zoneId in anchor.zones)
+                        {
+                            if (string.IsNullOrEmpty(zoneId)) continue;
+                            if (!zonePanels.TryGetValue(zoneId, out var list))
+                            {
+                                list = new List<string>();
+                                zonePanels[zoneId] = list;
+                            }
+                            list.Add(anchor.id);
+                        }
+                    }
                 }
             }
 
-            FitCamera();
+            foreach (var item in Store.Items)
+            {
+                if (actors.ContainsKey(item.Id)) continue;
+                var go = CreateSpriteObject("item:" + item.Id, item.Template, item.BaseColor);
+                var sr = go.GetComponent<SpriteRenderer>();
+                var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
+                item.Actor = actor;
+                actors[item.Id] = actor;
+            }
         }
 
-        private CueAnimActor BuildActor(CueAnimActorDef def)
+        private GameObject CreateSpriteObject(string name, StageTemplate tpl, Color color)
         {
-            var go = new GameObject("act:" + def.id);
+            var go = new GameObject(name);
             go.transform.SetParent(animRoot.transform, false);
-            go.transform.localPosition = new Vector3(def.x, def.y, def.z);
 
             var sr = go.AddComponent<SpriteRenderer>();
-            var sprite = ResolveSprite(def);
+            var sprite = ResolveSprite(tpl);
             sr.sprite = sprite;
-            sr.color = ColorFor(def);
-            sr.sortingOrder = def.sorting_order;
+            sr.sortingOrder = tpl.sorting_order;
+            color.a = Mathf.Clamp01(tpl.alpha);
+            sr.color = color;
 
-            Vector3 size = WorldSizeOf(def, sprite);
-            if (def.highlight)
+            var size = WorldSizeOf(tpl, sprite);
+            if (tpl.highlight)
             {
                 sr.enabled = false;
                 go.transform.localScale = Vector3.zero;
             }
             else
             {
-                float s = def.scale <= 0f ? 1f : def.scale;
-                go.transform.localScale = new Vector3(size.x * s, size.y * s, 1f);
+                go.transform.localScale = new Vector3(size.x, size.y, 1f);
             }
-
-            return new CueAnimActor(def, sprite, go, sr);
+            return go;
         }
 
-        private static Sprite ResolveSprite(CueAnimActorDef def)
+        private static Sprite ResolveSprite(StageTemplate tpl)
         {
-            if (!string.IsNullOrEmpty(def.sprite))
+            if (!string.IsNullOrEmpty(tpl.sprite))
             {
-                var loaded = Resources.Load<Sprite>(def.sprite);
+                var loaded = Resources.Load<Sprite>(tpl.sprite);
                 if (loaded != null) return loaded;
-                var tex = Resources.Load<Texture2D>(def.sprite);
+                var tex = Resources.Load<Texture2D>(tpl.sprite);
                 if (tex != null)
-                {
                     return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), GemPpu);
-                }
-                Debug.LogWarning($"[TutorialCueAnim] sprite not found: {def.sprite}");
+                Debug.LogWarning($"[TutorialCueAnim] sprite not found: {tpl.sprite}");
             }
 
-            if (def.shape == "panel" || def.shape == "dot" || def.shape == "shadow")
-            {
+            if (tpl.shape == "panel" || tpl.shape == "dot" || tpl.shape == "shadow")
                 return SharedSolidSprite();
-            }
 
-            Color c = Palette.TryGetValue(def.palette ?? "", out var p) ? p : Color.white;
-            return GameSpriteFactory.Gem(c);
+            return GameSpriteFactory.Gem(Palette.Resolve(tpl.palette));
         }
 
-        private static Color ColorFor(CueAnimActorDef def)
+        private static Vector3 WorldSizeOf(StageTemplate tpl, Sprite sprite)
         {
-            Color c = Palette.TryGetValue(def.palette ?? "", out var p) ? p : Color.white;
-            c.a = Mathf.Clamp01(def.alpha);
-            return c;
+            if (tpl.width > 0f || tpl.height > 0f)
+            {
+                float w = tpl.width > 0f ? tpl.width : (tpl.height > 0f ? tpl.height : 0.5f);
+                float h = tpl.height > 0f ? tpl.height : w;
+                return new Vector3(w, h, 1f);
+            }
+
+            float size = tpl.world_size <= 0f ? 0.10f : tpl.world_size;
+            float aspect = 1f;
+            if (sprite != null && sprite.rect.width > 0f) aspect = sprite.rect.height / sprite.rect.width;
+            return new Vector3(size, size * aspect, 1f);
         }
 
         private static Sprite SharedSolidSprite()
@@ -306,110 +287,142 @@ namespace BoardGameTutorial
             return solidSprite;
         }
 
-        /// <summary>actor 的基础世界尺寸（不受运行时缩放影响）。</summary>
-        private static Vector3 WorldSizeOf(CueAnimActorDef def, Sprite sprite)
+        /// <summary>把每个组件瞬间摆到它当前 (zone, slot) 的位置 —— 这是状态的可视化。</summary>
+        private void SyncActorsToStore()
         {
-            float size = def.world_size <= 0f ? 0.26f : def.world_size;
-            float aspect = 1f;
-            if (sprite != null && sprite.rect.width > 0f) aspect = sprite.rect.height / sprite.rect.width;
-            return new Vector3(size, size * aspect, 1f);
-        }
-
-        private Vector3 WorldSizeOf(CueAnimActor actor)
-        {
-            return WorldSizeOf(actor.Def, actor.Sprite);
-        }
-
-        private void SetBackground()
-        {
-            if (animCamera == null) return;
-            Color bg = new Color(0.12f, 0.13f, 0.16f, 1f);
-            if (doc.scene != null && !string.IsNullOrEmpty(doc.scene.background))
+            foreach (var item in Store.Items)
             {
-                Color parsed;
-                if (ColorUtility.TryParseHtmlString(doc.scene.background, out parsed)) bg = parsed;
+                if (item.Actor == null) continue;
+                var pos = Store.CurrentPosition(item);
+                item.LivePosition = pos;
+                item.Actor.LivePosition = pos;
+                item.Actor.Go.transform.localPosition = pos;
+
+                item.Actor.LiveScale = item.Actor.BaseScale;
+                item.Actor.LiveAlpha = item.Template.alpha;
+                item.Actor.LiveColor = item.BaseColor;
+                item.Actor.LiveRotation = item.Template.rotation;
+                item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
+                item.Actor.ApplyColor();
             }
-            animCamera.backgroundColor = bg;
         }
 
-        private void EnsureCamera()
-        {
-            if (animCamera == null) animCamera = Camera.main;
-            if (animCamera == null)
-            {
-                var camGo = new GameObject("TutorialCueCamera");
-                camGo.tag = "MainCamera";
-                animCamera = camGo.AddComponent<Camera>();
-            }
-            animCamera.orthographic = true;
-            animCamera.clearFlags = CameraClearFlags.SolidColor;
-        }
+        // ── 时间轴 ────────────────────────────────────────────────────────
 
-        /// <summary>按 actors 的包围盒取景，50° 固定俯角（与讲规模块一致）。</summary>
-        private void FitCamera()
+        public float TotalDuration
         {
-            float pitch = doc.scene != null && doc.scene.camera_pitch > 0f ? doc.scene.camera_pitch : 50f;
-            float orthoScale = doc.scene != null && doc.scene.ortho_scale > 0f ? doc.scene.ortho_scale : 1.25f;
-
-            float minX = -1f, maxX = 1f, minZ = -1f, maxZ = 1f;
-            bool any = false;
-            for (int i = 0; i < actors.Count; i++)
+            get
             {
-                var a = actors[i];
-                if (a.Def.highlight) continue;
-                Vector3 half = WorldSizeOf(a) * 0.5f * Mathf.Max(0.01f, a.Def.scale);
-                float x0 = a.Def.x - half.x, x1 = a.Def.x + half.x;
-                float z0 = a.Def.z - half.y, z1 = a.Def.z + half.y;
-                if (!any)
+                if (cueDoc?.events == null) return 0f;
+                float end = 0f;
+                foreach (var ev in cueDoc.events)
                 {
-                    minX = x0; maxX = x1; minZ = z0; maxZ = z1; any = true;
+                    if (ev == null || ev.action == "wait") continue;
+                    end = Mathf.Max(end, ev.at + ev.lead + Mathf.Max(0f, ev.dur));
                 }
-                else
-                {
-                    minX = Mathf.Min(minX, x0); maxX = Mathf.Max(maxX, x1);
-                    minZ = Mathf.Min(minZ, z0); maxZ = Mathf.Max(maxZ, z1);
-                }
+                return end;
             }
-
-            if (!any)
-            {
-                minX = -1.5f; maxX = 1.5f; minZ = -1f; maxZ = 1.4f;
-            }
-
-            float cx = (minX + maxX) * 0.5f;
-            float cz = (minZ + maxZ) * 0.5f;
-            float halfW = Mathf.Max(0.5f, (maxX - minX) * 0.5f * orthoScale);
-            float halfH = Mathf.Max(0.5f, (maxZ - minZ) * 0.5f * orthoScale);
-
-            float pitchRad = pitch * Mathf.Deg2Rad;
-            float sinP = Mathf.Max(0.15f, Mathf.Sin(pitchRad));
-            float aspect = Mathf.Max(0.5f, (float)Screen.width / Mathf.Max(1, Screen.height));
-
-            // 正交投影：可见世界横向半宽 = orthoSize*aspect；纵向折算到地面 ≈ orthoSize/sin(pitch)。
-            float orthoSize = Mathf.Max(halfH * sinP, halfW / aspect);
-            orthoSize = Mathf.Max(orthoSize, 0.4f);
-
-            float distance = orthoSize * 3.2f;
-            var focus = new Vector3(cx, 0f, cz);
-            var eye = focus + new Vector3(0f, Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad)) * distance;
-            animCamera.transform.SetPositionAndRotation(eye, Quaternion.Euler(pitch, 0f, 0f));
-            animCamera.orthographicSize = orthoSize;
-
-            CameraOrthoSize = orthoSize;
-            CameraGroundHalfWidth = orthoSize * aspect;
         }
 
-        /// <summary>世界坐标 → 屏幕坐标（GUI 叠层标注用）。</summary>
-        public bool WorldToScreen(Vector3 world, out Vector3 screen)
+        public void Seek(float time)
         {
-            screen = Vector3.zero;
-            if (animCamera == null) return false;
-            screen = animCamera.WorldToScreenPoint(world);
-            screen.y = Screen.height - screen.y;
-            return screen.z > 0f;
+            if (cueDoc == null) return;
+
+            if (clock < 0f || time + 0.25f < clock) ResetToStart();
+
+            clock = time;
+            float scaled = time * Mathf.Max(0.01f, timeScale);
+
+            while (nextIndex < cueDoc.events.Count && cueDoc.events[nextIndex].at <= scaled + 1e-4f)
+            {
+                var ev = cueDoc.events[nextIndex];
+                nextIndex++;
+                Trigger(ev);
+            }
         }
 
-        // ── 原语执行 ──────────────────────────────────────────────────────
+        /// <summary>把这条 cue 直接推到结束（顺序播放进入下一条之前用）。</summary>
+        public void Complete()
+        {
+            if (cueDoc?.events == null) return;
+            while (nextIndex < cueDoc.events.Count)
+            {
+                var ev = cueDoc.events[nextIndex];
+                nextIndex++;
+                TriggerFinal(ev);
+            }
+            clock = Mathf.Max(clock, TotalDuration);
+        }
+
+        /// <summary>恢复到本条 cue 的入口状态（重播 / 向后拖动时用）。</summary>
+        public void ResetToStart()
+        {
+            StopAnimations();
+            RestoreSnapshot(entrySnapshot);
+            clock = 0f;
+            nextIndex = 0;
+        }
+
+        private void CaptureEntry()
+        {
+            entrySnapshot = ZoneSnapshot.Capture(Store);
+        }
+
+        private void RestoreSnapshot(ZoneSnapshot snapshot)
+        {
+            if (snapshot == null) return;
+
+            foreach (var item in Store.Items)
+            {
+                if (item.Actor == null) continue;
+                if (!snapshot.TryGet(item.Id, out string zoneId, out int order)) continue;
+                item.ZoneId = zoneId;
+                item.Order = order;
+
+                var pos = Store.CurrentPosition(item);
+                item.LivePosition = pos;
+                item.Actor.LivePosition = pos;
+                item.Actor.Go.transform.localPosition = pos;
+
+                item.Actor.LiveScale = item.Actor.BaseScale;
+                item.Actor.LiveAlpha = item.Template.alpha;
+                item.Actor.LiveColor = item.BaseColor;
+                item.Actor.LiveRotation = item.Template.rotation;
+                item.Actor.Go.transform.localScale = item.Actor.BaseScale;
+                item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
+                item.Actor.ApplyColor();
+            }
+        }
+
+        public void ClearScene()
+        {
+            StopAnimations();
+            ClearActors();
+            cueDoc = null;
+            clock = -1f;
+            nextIndex = 0;
+            Store.Reset();
+        }
+
+        private void StopAnimations()
+        {
+            for (int i = 0; i < running.Count; i++)
+                if (running[i] != null) StopCoroutine(running[i]);
+            running.Clear();
+        }
+
+        private void ClearActors()
+        {
+            actors.Clear();
+            zonePanels.Clear();
+            if (animRoot != null)
+            {
+                Object.DestroyImmediate(animRoot);
+                animRoot = null;
+            }
+        }
+
+        // ── 原语 ──────────────────────────────────────────────────────────
 
         private void Trigger(CueAnimEvent ev)
         {
@@ -417,59 +430,171 @@ namespace BoardGameTutorial
 
             switch (ev.action)
             {
-                case "wait":
-                    return;
-                case "move":
-                    TriggerMove(ev);
-                    return;
+                case "wait": return;
+                case "move": TriggerMove(ev); return;
                 case "rotate":
-                case "flip":
-                    TriggerRotate(ev);
-                    return;
-                case "scale":
-                    TriggerScale(ev);
-                    return;
-                case "fade":
-                    TriggerFade(ev);
-                    return;
-                case "highlight":
-                    TriggerHighlight(ev);
-                    return;
-                case "shuffle":
-                    TriggerShuffle(ev);
-                    return;
+                case "flip": TriggerRotate(ev); return;
+                case "scale": TriggerScale(ev); return;
+                case "fade": TriggerFade(ev); return;
+                case "highlight": TriggerHighlight(ev); return;
+                case "shuffle": TriggerShuffle(ev); return;
                 default:
                     Debug.LogWarning($"[TutorialCueAnim] unknown action '{ev.action}' in cue {CueId}");
                     return;
             }
         }
 
+        /// <summary>把事件推到终态且不播协程，用于顺序播放时推进状态。</summary>
+        private void TriggerFinal(CueAnimEvent ev)
+        {
+            if (ev == null || ev.action == "wait") return;
+
+            if (ev.action == "move")
+            {
+                foreach (var step in PlanMove(ev))
+                {
+                    Store.MoveTo(step.Item, step.Destination);
+                    if (step.Item.Actor != null) ApplyCurrentPlacement(step.Item, step.Item.Actor);
+                }
+                return;
+            }
+
+            // 其余原语只影响外观：进入下一条前复原到基准。
+            foreach (var actor in Resolve(ev))
+            {
+                if (actor?.Item == null) continue;
+                actor.LiveScale = actor.BaseScale;
+                actor.LiveAlpha = actor.BaseAlpha;
+                actor.LiveColor = actor.BaseColor;
+                actor.LiveRotation = actor.Item.Template.rotation;
+                actor.Go.transform.localScale = actor.BaseScale;
+                actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
+                actor.Go.transform.localPosition = Store.CurrentPosition(actor.Item);
+                actor.ApplyColor();
+            }
+        }
+
+        private void ApplyCurrentPlacement(ZoneItem item, CueAnimActor actor)
+        {
+            var pos = Store.CurrentPosition(item);
+            item.LivePosition = pos;
+            actor.LivePosition = pos;
+            actor.Go.transform.localPosition = pos;
+            actor.LiveScale = actor.BaseScale;
+            actor.Go.transform.localScale = actor.BaseScale;
+        }
+
+        private struct MovePlan
+        {
+            public ZoneItem Item;
+            public string Destination;
+        }
+
+        /// <summary>
+        /// move 的语义：把组件从 source zone 搬到 destination zone。
+        /// 数据里只有两端 zone（+ 可选 take），落点位置由 zone 推导。
+        /// 注意：这里只算「搬哪几件、搬到哪」，不改账本；改账本由调用方决定
+        /// （播放时立即落账，位置动画负责补上视觉；推进终态时瞬间落账）。
+        /// </summary>
+        private List<MovePlan> PlanMove(CueAnimEvent ev)
+        {
+            var plan = new List<MovePlan>();
+
+            if (!string.IsNullOrEmpty(ev.target))
+            {
+                var actor = FindActor(ev.target);
+                if (actor?.Item != null)
+                    plan.Add(new MovePlan { Item = actor.Item, Destination = ev.zone });
+                return plan;
+            }
+
+            if (string.IsNullOrEmpty(ev.from) || Store.GetZone(ev.from) == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no resolvable from zone ('{ev.from}')");
+                return plan;
+            }
+
+            if (string.IsNullOrEmpty(ev.zone) || Store.GetZone(ev.zone) == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no resolvable destination ('{ev.zone}')");
+                return plan;
+            }
+
+            int take = ev.take > 0 ? ev.take : 1;
+            var picked = new List<ZoneItem>();
+            for (int i = 0; i < take; i++)
+            {
+                var item = PickFront(ev.from, picked);
+                if (item == null) break;
+                picked.Add(item);
+                plan.Add(new MovePlan { Item = item, Destination = ev.zone });
+            }
+            return plan;
+        }
+
+        /// <summary>取 zone 里最靠前、且不在 excluded 中的组件。</summary>
+        private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded)
+        {
+            ZoneItem best = null;
+            foreach (var item in Store.Items)
+            {
+                if (item.ZoneId != zoneId) continue;
+                if (excluded != null && excluded.Contains(item)) continue;
+                if (best == null || item.Order < best.Order) best = item;
+            }
+            return best;
+        }
+
         private void TriggerMove(CueAnimEvent ev)
         {
-            foreach (var actor in Resolve(ev.target))
+            var moved = new List<ZoneItem>();
+            foreach (var step in PlanMove(ev))
             {
-                Vector3 from = actor.LivePosition;
-                Vector3 to = from;
-                if (ev.move != null)
-                {
-                    to += new Vector3(ev.move.dx, ev.move.dy, ev.move.dz);
-                    if (ev.move.to_x.HasValue) to.x = ev.move.to_x.Value;
-                    if (ev.move.to_z.HasValue) to.z = ev.move.to_z.Value;
-                    if (!string.IsNullOrEmpty(ev.move.to_slot) &&
-                        actorsById.TryGetValue(ev.move.to_slot, out var slotActor))
-                    {
-                        to.x = slotActor.Def.x;
-                        to.z = slotActor.Def.z;
-                    }
-                }
-                actor.LivePosition = to;
-                RunTween(TweenPosition(actor, from, to, ev));
+                var actor = step.Item.Actor;
+                Vector3 from = actor != null ? actor.LivePosition : step.Item.LivePosition;
+                Store.MoveTo(step.Item, step.Destination);
+                moved.Add(step.Item);
+
+                Vector3 to = Store.CurrentPosition(step.Item);
+                step.Item.LivePosition = to;
+                if (actor == null) continue;
+                RunTween(TweenPosition(actor, step.Item, from, to, ev));
+            }
+
+            CloseGaps(moved, ev);
+        }
+
+        /// <summary>
+        /// 一件组件被拿走之后，同一 zone 里排在它后面的组件顺位前移。
+        /// 这样「从供应堆拿走宝石」会看到堆真的少了一枚，而不是留一个空位。
+        /// </summary>
+        private void CloseGaps(List<ZoneItem> moved, CueAnimEvent ev)
+        {
+            if (moved == null || moved.Count == 0) return;
+
+            var touched = new HashSet<string>();
+            foreach (var item in moved)
+            {
+                // 源 zone 需要重排；目标 zone 不需要（新来的排在最后）。
+                touched.Add(item.Id);
+            }
+
+            foreach (var item in Store.Items)
+            {
+                if (touched.Contains(item.Id) || item.Actor == null) continue;
+
+                var target = Store.CurrentPosition(item);
+                if ((target - item.Actor.LivePosition).sqrMagnitude < 1e-6f) continue;
+
+                Vector3 from = item.Actor.LivePosition;
+                item.LivePosition = target;
+                RunTween(TweenPosition(item.Actor, item, from, target, ev));
             }
         }
 
         private void TriggerRotate(CueAnimEvent ev)
         {
-            foreach (var actor in Resolve(ev.target))
+            foreach (var actor in Resolve(ev))
             {
                 float to = ev.action == "flip" ? actor.LiveRotation + 180f : ev.angle;
                 RunTween(TweenRotation(actor, actor.LiveRotation, to, ev));
@@ -479,12 +604,11 @@ namespace BoardGameTutorial
 
         private void TriggerScale(CueAnimEvent ev)
         {
-            foreach (var actor in Resolve(ev.target))
+            foreach (var actor in Resolve(ev))
             {
                 float factor = ev.scale <= 0f ? 1.25f : ev.scale;
-                Vector3 baseSize = WorldSizeOf(actor);
                 Vector3 from = actor.LiveScale;
-                Vector3 to = ev.scale_mode == "to" ? baseSize * factor : from * factor;
+                Vector3 to = ev.scale_mode == "to" ? actor.BaseScale * factor : from * factor;
                 actor.LiveScale = to;
                 RunTween(TweenScale(actor, from, to, ev));
             }
@@ -492,7 +616,7 @@ namespace BoardGameTutorial
 
         private void TriggerFade(CueAnimEvent ev)
         {
-            foreach (var actor in Resolve(ev.target))
+            foreach (var actor in Resolve(ev))
             {
                 float to = ev.to_alpha.HasValue
                     ? Mathf.Clamp01(ev.to_alpha.Value)
@@ -500,13 +624,17 @@ namespace BoardGameTutorial
                 float from = actor.LiveAlpha;
                 actor.LiveAlpha = to;
                 RunTween(TweenAlpha(actor, from, to, ev));
-                if (ev.hide_at_end && to <= 0.01f && actor.Go != null) actor.Go.SetActive(false);
             }
         }
 
+        /// <summary>
+        /// highlight：目标可以是某件组件，也可以是整个 zone。
+        /// zone 的情况只脉冲该区域的装饰底板（panel/dot），不脉冲里面每一枚宝石，
+        /// 否则「高亮供应区」会变成整堆宝石一起闪。
+        /// </summary>
         private void TriggerHighlight(CueAnimEvent ev)
         {
-            foreach (var actor in Resolve(ev.target))
+            foreach (var actor in ResolveHighlight(ev))
             {
                 if (actor.Renderer == null) continue;
 
@@ -514,20 +642,16 @@ namespace BoardGameTutorial
                 float grow = ev.grow.HasValue && ev.grow.Value > 0f ? ev.grow.Value : 1f;
                 float dur = Mathf.Max(ev.dur, 0.05f);
 
-                Color from = actor.Renderer.color;
+                Color from = actor.LiveColor;
                 from.a = 0f;
-                Color to = new Color(from.r, from.g, from.b, peak);
-
-                Vector3 baseSize = WorldSizeOf(actor);
-                Vector3 fromScale = Vector3.zero;
-                Vector3 toScale = baseSize * grow;
+                var to = new Color(from.r, from.g, from.b, peak);
+                Vector3 toScale = actor.BaseScale * grow;
 
                 actor.Renderer.enabled = true;
                 actor.Renderer.color = from;
-                actor.Go.transform.localScale = fromScale;
+                actor.Go.transform.localScale = Vector3.zero;
 
-                var routine = StartCoroutine(PulseRoutine(actor, from, to, fromScale, toScale, dur, ev));
-                runningPulses.Add(routine);
+                RunTween(PulseRoutine(actor, from, to, Vector3.zero, toScale, dur, ev));
             }
         }
 
@@ -546,46 +670,56 @@ namespace BoardGameTutorial
                 yield return null;
             }
 
-            // 高亮是叠加装饰：结束时收起，不残留。
-            actor.Renderer.color = to;
-            actor.Go.transform.localScale = toScale;
-            actor.Renderer.enabled = false;
-            actor.Go.transform.localScale = Vector3.zero;
+            // 装饰底板的高亮是「提亮后回落」，不是消失；普通件的高亮则收起。
+            if (actor.Item != null && actor.Item.Template != null && IsDecoration(actor.Item.Template))
+            {
+                actor.Renderer.color = actor.BaseColor;
+                actor.Go.transform.localScale = actor.BaseScale;
+            }
+            else
+            {
+                actor.Renderer.enabled = false;
+                actor.Go.transform.localScale = Vector3.zero;
+            }
+        }
+
+        private static bool IsDecoration(StageTemplate tpl)
+        {
+            return tpl.shape == "panel" || tpl.shape == "dot";
         }
 
         private void TriggerShuffle(CueAnimEvent ev)
         {
-            var list = Resolve(ev.target);
+            var list = Resolve(ev);
             if (list.Count == 0) return;
 
             var targets = new Transform[list.Count];
             var positions = new Vector3[list.Count];
-            const float spread = 0.16f;
+            const float spread = 0.12f;
             float center = (list.Count - 1) * 0.5f;
             for (int i = 0; i < list.Count; i++)
             {
                 targets[i] = list[i].Go.transform;
                 Vector3 from = list[i].LivePosition;
-                positions[i] = from + new Vector3((i - center) * spread, 0f, (i % 2 == 0 ? 1f : -1f) * 0.05f);
+                positions[i] = from + new Vector3((i - center) * spread, 0f, (i % 2 == 0 ? 1f : -1f) * 0.04f);
                 list[i].LivePosition = positions[i];
             }
-
             RunTween(TutorialPrimitives.TweenShuffle(targets, positions, Mathf.Max(ev.dur, 0.1f), EasingOr(ev)));
         }
 
-        // ── 原语协程：只做「读参 → 调原语」，没有单条动画的专用逻辑 ──────
+        // ── 协程 ──────────────────────────────────────────────────────────
 
-        private IEnumerator TweenPosition(CueAnimActor actor, Vector3 from, Vector3 to, CueAnimEvent ev)
+        private IEnumerator TweenPosition(CueAnimActor actor, ZoneItem item, Vector3 from, Vector3 to, CueAnimEvent ev)
         {
             if (ev.lead > 0f) yield return WaitScaled(ev.lead);
             yield return TutorialPrimitives.TweenPosition(actor.Go.transform, from, to, ev.dur, EasingOr(ev));
             actor.LivePosition = to;
+            item.LivePosition = to;
         }
 
         private IEnumerator TweenRotation(CueAnimActor actor, float from, float to, CueAnimEvent ev)
         {
             if (ev.lead > 0f) yield return WaitScaled(ev.lead);
-
             float dur = Mathf.Max(ev.dur, 0f);
             if (dur <= 0f)
             {
@@ -619,7 +753,9 @@ namespace BoardGameTutorial
             if (ev.lead > 0f) yield return WaitScaled(ev.lead);
             if (actor.Renderer != null)
             {
-                actor.Renderer.color = new Color(actor.Renderer.color.r, actor.Renderer.color.g, actor.Renderer.color.b, from);
+                var c = actor.LiveColor;
+                c.a = from;
+                actor.Renderer.color = c;
                 yield return TutorialPrimitives.TweenAlpha(actor.Renderer, from, to, ev.dur, EasingOr(ev));
             }
             actor.LiveAlpha = to;
@@ -643,26 +779,190 @@ namespace BoardGameTutorial
         private void RunTween(IEnumerator routine)
         {
             if (routine == null) return;
-            runningTweens.Add(StartCoroutine(routine));
+            running.Add(StartCoroutine(routine));
         }
 
-        private List<CueAnimActor> Resolve(string target)
+        // ── 解析 ──────────────────────────────────────────────────────────
+
+        private CueAnimActor FindActor(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+            return actors.TryGetValue(id, out var actor) ? actor : null;
+        }
+
+        /// <summary>highlight 的目标解析：zone → 该区域的装饰底板；显式 target → 那一件。</summary>
+        private List<CueAnimActor> ResolveHighlight(CueAnimEvent ev)
         {
             var result = new List<CueAnimActor>();
-            if (string.IsNullOrEmpty(target))
+            if (ev == null) return result;
+
+            if (!string.IsNullOrEmpty(ev.target))
             {
-                result.AddRange(actors);
+                var actor = FindActor(ev.target);
+                if (actor != null) result.Add(actor);
                 return result;
             }
 
-            if (actorsById.TryGetValue(target, out var single))
+            // zone 高亮：打到代表该 zone 的装饰底板，而不是区域里的每一件组件。
+            if (!string.IsNullOrEmpty(ev.zone) && zonePanels.TryGetValue(ev.zone, out var panelIds))
             {
-                result.Add(single);
+                foreach (var panelId in panelIds)
+                    if (actors.TryGetValue(panelId, out var panel)) result.Add(panel);
+                if (result.Count > 0) return result;
+            }
+
+            return Resolve(ev);
+        }
+
+        private List<CueAnimActor> Resolve(CueAnimEvent ev)
+        {
+            var result = new List<CueAnimActor>();
+            if (ev == null) return result;
+
+            if (!string.IsNullOrEmpty(ev.zone))
+            {
+                foreach (var item in Store.Items)
+                    if (item.ZoneId == ev.zone && item.Actor != null) result.Add(item.Actor);
                 return result;
             }
 
-            if (actorsByGroup.TryGetValue(target, out var group)) result.AddRange(group);
+            if (!string.IsNullOrEmpty(ev.target))
+            {
+                var actor = FindActor(ev.target);
+                if (actor != null) result.Add(actor);
+                return result;
+            }
+
+            foreach (var item in Store.Items)
+                if (item.Actor != null) result.Add(item.Actor);
             return result;
+        }
+
+        // ── 相机与背景 ────────────────────────────────────────────────────
+
+        private void EnsureCamera()
+        {
+            if (animCamera == null) animCamera = Camera.main;
+            if (animCamera == null)
+            {
+                var camGo = new GameObject("TutorialCueCamera");
+                camGo.tag = "MainCamera";
+                animCamera = camGo.AddComponent<Camera>();
+            }
+            animCamera.orthographic = true;
+            animCamera.clearFlags = CameraClearFlags.SolidColor;
+        }
+
+        private void SetBackground()
+        {
+            if (animCamera == null) return;
+            var bg = new Color(0.12f, 0.13f, 0.16f, 1f);
+            if (stage?.board != null && !string.IsNullOrEmpty(stage.board.background))
+            {
+                Color parsed;
+                if (Palette.TryResolveRgb(stage.board.background, out parsed)) bg = parsed;
+            }
+            animCamera.backgroundColor = bg;
+        }
+
+        /// <summary>按牌桌的 zone 范围取景，50° 固定俯角。</summary>
+        private void FitCamera()
+        {
+            float pitch = stage?.board != null && stage.board.camera_pitch > 0f ? stage.board.camera_pitch : 50f;
+            float orthoScale = stage?.board != null && stage.board.ortho_scale > 0f ? stage.board.ortho_scale : 1.18f;
+
+            float minX = -1.5f, maxX = 1.5f, minZ = -1f, maxZ = 1.4f;
+            bool any = false;
+
+            foreach (var zone in Store.Zones)
+            {
+                if (zone.role == "offstage") continue;
+                var layout = zone.layout ?? new StageLayout();
+                int capacity = zone.capacity > 0 ? zone.capacity : 1;
+                int cols = Mathf.Max(1, layout.cols);
+                int rows = Mathf.Max(1, Mathf.CeilToInt(capacity / (float)cols));
+                float halfW = Mathf.Max(0.05f, (cols - 1) * 0.5f * layout.x_step);
+                float halfH = Mathf.Max(0.05f, (rows - 1) * 0.5f * layout.z_step);
+                const float pad = 0.26f;
+
+                float x0 = zone.center.x - halfW - pad, x1 = zone.center.x + halfW + pad;
+                float z0 = zone.center.z - halfH - pad, z1 = zone.center.z + halfH + pad;
+                if (!any)
+                {
+                    minX = x0; maxX = x1; minZ = z0; maxZ = z1; any = true;
+                }
+                else
+                {
+                    minX = Mathf.Min(minX, x0); maxX = Mathf.Max(maxX, x1);
+                    minZ = Mathf.Min(minZ, z0); maxZ = Mathf.Max(maxZ, z1);
+                }
+            }
+
+            float cx = (minX + maxX) * 0.5f;
+            float cz = (minZ + maxZ) * 0.5f;
+            float halfW2 = Mathf.Max(0.5f, (maxX - minX) * 0.5f * orthoScale);
+            float halfH2 = Mathf.Max(0.5f, (maxZ - minZ) * 0.5f * orthoScale);
+
+            float pitchRad = pitch * Mathf.Deg2Rad;
+            float sinP = Mathf.Max(0.15f, Mathf.Sin(pitchRad));
+            float aspect = Mathf.Max(0.5f, (float)Screen.width / Mathf.Max(1, Screen.height));
+
+            float orthoSize = Mathf.Max(halfH2 * sinP, halfW2 / aspect);
+            orthoSize = Mathf.Max(orthoSize, 0.6f);
+
+            float distance = orthoSize * 3.2f;
+            var focus = new Vector3(cx, 0f, cz);
+            var eye = focus + new Vector3(0f, Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad)) * distance;
+            animCamera.transform.SetPositionAndRotation(eye, Quaternion.Euler(pitch, 0f, 0f));
+            animCamera.orthographicSize = orthoSize;
+
+            CameraOrthoSize = orthoSize;
+            CameraGroundHalfWidth = orthoSize * aspect;
+        }
+
+        public bool WorldToScreen(Vector3 world, out Vector3 screen)
+        {
+            screen = Vector3.zero;
+            if (animCamera == null) return false;
+            screen = animCamera.WorldToScreenPoint(world);
+            screen.y = Screen.height - screen.y;
+            return screen.z > 0f;
+        }
+    }
+
+    /// <summary>cue 入口状态的轻量快照，用于重播时恢复（不重建对象）。</summary>
+    public class ZoneSnapshot
+    {
+        private struct State
+        {
+            public string ZoneId;
+            public int Order;
+        }
+
+        private readonly Dictionary<string, State> states = new Dictionary<string, State>();
+
+        public static ZoneSnapshot Capture(ZoneStore store)
+        {
+            var snapshot = new ZoneSnapshot();
+            foreach (var item in store.Items)
+            {
+                snapshot.states[item.Id] = new State
+                {
+                    ZoneId = item.ZoneId,
+                    Order = item.Order,
+                };
+            }
+            return snapshot;
+        }
+
+        public bool TryGet(string id, out string zoneId, out int order)
+        {
+            zoneId = null;
+            order = -1;
+            if (!states.TryGetValue(id, out var state)) return false;
+            zoneId = state.ZoneId;
+            order = state.Order;
+            return true;
         }
     }
 }

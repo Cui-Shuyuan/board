@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Validate per-cue animation data against the runtime cue table.
+Validate the zone-based cue animation data.
 
 Data layout
 -----------
-    games/{game}/tutorial/{track}.runtime.json          cue order / audio / duration
-    games/{game}/tutorial/anim/{track}/{cue_id}.json    scene + primitive timeline
+    games/{game}/tutorial/{track}.runtime.json             cue order / audio / duration
+    games/{game}/tutorial/anim/_stage/{game}.table.json    table facts: zones, templates, initial
+    games/{game}/tutorial/anim/{track}/{cue_id}.json       this cue's delta on that table
 
-The validator is deterministic and runs before Unity: it makes the LLM-written
-animation data fail here with machine-readable errors instead of showing small
-visual bugs on a Windows screenshot round-trip.
+Model
+-----
+Animation = maintaining component state.  A component's state is (zone, order);
+world position is derived from the zone layout.  So a cue contains no coordinates:
+it only says things like "move gem#1 from its pile to player_holding".
 
 Checks
 ------
-* every anim file maps to a cue that exists in the runtime table (and vice versa
-  is only a warning: not every cue needs an animation)
-* header fields agree with the runtime (game_id / track / cue)
-* actor ids unique; palette, shape, sorting order, highlight actor validity
-* event timeline inside the cue audio duration
-* each event uses one of the 8 primitives with the fields that primitive needs
-* target resolves to an actor id, an actor group, or "all"
-* slot references in move.to_slot exist
-* easing names exist in Easing.cs
-* overlapping transforms on the same actor are reported as warnings
+* cue maps to a runtime cue and header fields agree
+* stage file exists and is well formed (zones / templates / anchors / initial)
+* every zone / template referenced by the cue exists
+* events use the 8 primitives with the fields that primitive needs
+* zone targets exist, `from` zones exist, `target` actor ids resolve
+* timeline stays inside the cue audio duration
+* warnings: unknown palette, animation ending too close to the audio end
 
 Usage
 -----
@@ -32,12 +32,11 @@ Usage
     python scripts/validate_cue_anim.py --file games/splendor/tutorial/anim/full/x.json
     python scripts/validate_cue_anim.py --game splendor --track full --json
 
-Exit codes: 0 = ok (warnings allowed), 1 = errors, 2 = file not found / not readable.
+Exit codes: 0 = ok (warnings allowed), 1 = errors, 2 = file not found.
 """
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -46,23 +45,18 @@ ROOT = Path(__file__).resolve().parent.parent
 ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "wait"}
 SHAPES = {"panel", "gem", "shadow", "dot"}
 
-# Kept in sync with client/Assets/Scripts/Tutorial/Easing.cs
 EASINGS = {
     "linear", "easeInQuad", "easeOutQuad", "easeInOutQuad",
     "easeInCubic", "easeOutCubic", "easeInOutCubic",
     "easeInBack", "easeOutBack", "easeInOutBack",
 }
 
-# Kept in sync with the Palette table in TutorialCueAnimPlayer.cs
+# Kept in sync with client/Assets/Scripts/Tutorial/Palette.cs
 PALETTES = {
     "gem_diamond", "gem_sapphire", "gem_emerald", "gem_ruby", "gem_onyx",
-    "gem_gold", "panel_supply", "panel_player", "shadow", "white",
+    "gem_gold", "panel_supply", "panel_player", "panel_card", "shadow", "white",
 }
 
-# Actions that animate a transform; used for the overlapping-animation warning.
-TRANSFORM_ACTIONS = {"move", "flip", "rotate", "scale", "fade"}
-
-# Minimum animation headroom before the audio ends (seconds).
 MIN_TAIL_MARGIN = 0.15
 
 
@@ -72,10 +66,10 @@ class Report:
         self.errors = []
         self.warnings = []
 
-    def error(self, where: str, message: str):
+    def error(self, where, message):
         self.errors.append({"where": where, "message": message})
 
-    def warn(self, where: str, message: str):
+    def warn(self, where, message):
         self.warnings.append({"where": where, "message": message})
 
 
@@ -84,96 +78,129 @@ def load_json(path: Path):
         return json.load(fh)
 
 
-def validate_file(anim_path: Path, runtime_cues: dict, track: str, game_id: str, report: Report):
-    try:
-        doc = load_json(anim_path)
-    except json.JSONDecodeError as exc:
-        report.error(anim_path.name, f"JSON 解析失败: {exc}")
-        return None
+def derive_actor_ids(stage):
+    """Reproduce ZoneStore.Spawn's id scheme: '{template}#{n}' with a per-template counter."""
+    counters = {}
+    ids = []
+    for entry in stage.get("initial", []):
+        tpl = entry.get("template", "")
+        for _ in range(max(1, int(entry.get("count", 1)))):
+            counters[tpl] = counters.get(tpl, 0) + 1
+            ids.append(f"{tpl}#{counters[tpl]}")
+    return ids
 
-    cue_id = anim_path.stem
+
+def validate_stage(stage_path: Path, report: Report, game_id: str):
+    if not stage_path.exists():
+        report.error("stage", f"牌桌文件不存在: {stage_path}")
+        return None, set(), set()
+
+    stage = load_json(stage_path)
+    zones = {z["id"] for z in stage.get("zones", []) if z.get("id")}
+    templates = {t["id"] for t in stage.get("templates", []) if t.get("id")}
+
+    if stage.get("game_id") and stage["game_id"] != game_id:
+        report.error("stage", f"game_id = {stage['game_id']!r}，应为 {game_id!r}")
+
+    for i, zone in enumerate(stage.get("zones", [])):
+        where = f"stage.zones[{i}]"
+        if not zone.get("id"):
+            report.error(where, "缺少 id")
+            continue
+        if "center" not in zone:
+            report.error(where, f"zone {zone['id']} 缺少 center")
+        layout = zone.get("layout") or {}
+        for key in ("x_step", "z_step"):
+            if float(layout.get(key, 0)) < 0:
+                report.error(where, f"zone {zone['id']} 的 {key} 不能为负")
+        if int(layout.get("cols", 1)) < 1:
+            report.error(where, f"zone {zone['id']} 的 cols 至少为 1")
+
+    for i, tpl in enumerate(stage.get("templates", [])):
+        where = f"stage.templates[{i}]"
+        if not tpl.get("id"):
+            report.error(where, "缺少 id")
+            continue
+        if tpl.get("shape", "gem") not in SHAPES:
+            report.error(where, f"未知 shape {tpl['shape']!r}")
+        if tpl.get("palette") and tpl["palette"] not in PALETTES:
+            report.warn(where, f"未知 palette {tpl['palette']!r}（见 Palette.cs）")
+
+    for i, anchor in enumerate(stage.get("anchors", [])):
+        where = f"stage.anchors[{i}]"
+        if not anchor.get("id"):
+            report.error(where, "缺少 id")
+        if anchor.get("template") not in templates:
+            report.error(where, f"anchor {anchor.get('id')!r} 引用了未知 template {anchor.get('template')!r}")
+
+    for i, entry in enumerate(stage.get("initial", [])):
+        where = f"stage.initial[{i}]"
+        if entry.get("template") not in templates:
+            report.error(where, f"未知 template {entry.get('template')!r}")
+        if entry.get("zone") not in zones:
+            report.error(where, f"未知 zone {entry.get('zone')!r}")
+        if entry.get("palette") and entry["palette"] not in PALETTES:
+            report.warn(where, f"未知 palette {entry['palette']!r}")
+        if int(entry.get("count", 1)) < 1:
+            report.error(where, "count 至少为 1")
+
+    return stage, zones, templates
+
+
+def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
+    try:
+        doc = load_json(path)
+    except json.JSONDecodeError as exc:
+        report.error(path.stem, f"JSON 解析失败: {exc}")
+        return
+
+    cue_id = path.stem
     where = cue_id
 
-    # ---- header ----
     if doc.get("schema_version") != 1:
         report.warn(where, f"schema_version = {doc.get('schema_version')!r}，当前校验器针对 1")
-    if doc.get("game_id") and doc.get("game_id") != game_id:
-        report.error(where, f"game_id = {doc.get('game_id')!r}，应为 {game_id!r}")
-    if doc.get("track") and doc.get("track") != track:
-        report.error(where, f"track = {doc.get('track')!r}，应为 {track!r}")
-    if doc.get("cue") and doc.get("cue") != cue_id:
-        report.error(where, f"cue = {doc.get('cue')!r}，与文件名 {cue_id!r} 不一致")
+    if doc.get("game_id") and doc["game_id"] != game_id:
+        report.error(where, f"game_id = {doc['game_id']!r}，应为 {game_id!r}")
+    if doc.get("track") and doc["track"] != track:
+        report.error(where, f"track = {doc['track']!r}，应为 {track!r}")
+    if doc.get("cue") and doc["cue"] != cue_id:
+        report.error(where, f"cue = {doc['cue']!r}，与文件名 {cue_id!r} 不一致")
 
     if cue_id not in runtime_cues:
         report.error(where, f"runtime 中不存在该 cue（{track}.runtime.json）")
-        return doc
+        return
+    duration = float(runtime_cues[cue_id].get("duration") or 0.0)
 
-    cue = runtime_cues[cue_id]
-    duration = float(cue.get("duration") or 0.0)
+    stage_rel = doc.get("stage") or f"_stage/{game_id}.table"
+    stage_path = ROOT / "games" / game_id / "tutorial" / "anim" / (stage_rel + ".json")
+    stage, zones, templates = validate_stage(stage_path, report, game_id)
+    if stage is None:
+        return
 
-    # ---- scene ----
-    scene = doc.get("scene")
-    if not isinstance(scene, dict):
-        report.error(where, "缺少 scene")
-        return doc
+    known_ids = set(derive_actor_ids(stage))
 
-    actors = scene.get("actors")
-    if not isinstance(actors, list) or not actors:
-        report.error(where, "scene.actors 为空")
-        return doc
+    start = doc.get("start") or {}
+    for i, seed in enumerate(start.get("set") or []):
+        sw = f"{where} start.set[{i}]"
+        if seed.get("template") not in templates:
+            report.error(sw, f"未知 template {seed.get('template')!r}")
+        if seed.get("zone") not in zones:
+            report.error(sw, f"未知 zone {seed.get('zone')!r}")
+        if seed.get("palette") and seed["palette"] not in PALETTES:
+            report.warn(sw, f"未知 palette {seed['palette']!r}")
+        if int(seed.get("count", 1)) < 1:
+            report.error(sw, "count 至少为 1")
 
-    ids = set()
-    groups = set()
-    highlights = set()
-    for i, actor in enumerate(actors):
-        aw = f"{where} scene.actors[{i}]"
-        aid = actor.get("id")
-        if not aid:
-            report.error(aw, "缺少 id")
-            continue
-        if aid in ids:
-            report.error(aw, f"actor id 重复: {aid}")
-        ids.add(aid)
-        if actor.get("group"):
-            groups.add(actor["group"])
-
-        palette = actor.get("palette")
-        if palette and palette not in PALETTES:
-            report.error(aw, f"未知 palette {palette!r}（见 TutorialCueAnimPlayer.Palette）")
-
-        shape = actor.get("shape", "gem")
-        if shape not in SHAPES:
-            report.error(aw, f"未知 shape {shape!r}，可选 {sorted(SHAPES)}")
-
-        if actor.get("highlight"):
-            highlights.add(aid)
-            if shape != "panel" and shape != "dot":
-                report.warn(aw, "highlight actor 建议用 panel/dot shape")
-
-        if actor.get("world_size", 0) is not None and float(actor.get("world_size", 0)) < 0:
-            report.error(aw, "world_size 不能为负")
-
-        alpha = float(actor.get("alpha", 1.0))
-        if not 0.0 <= alpha <= 1.0:
-            report.error(aw, f"alpha 超出 [0,1]: {alpha}")
-
-        for key in ("sprite",):
-            if actor.get(key) and not actor.get("shape"):
-                report.warn(aw, f"{key} 已指定但没有 shape，占位图形回退为 gem")
-
-    # ---- events ----
     events = doc.get("events")
     if not isinstance(events, list) or not events:
         report.error(where, "events 为空")
-        return doc
+        return
 
     prev_at = -1.0
-    transform_windows = {}  # target -> list of (start, end, action)
     last_end = 0.0
-
     for i, ev in enumerate(events):
         ew = f"{where} events[{i}]"
-        action = ev.get("action")
+        action = ev.get("action", "move")
         if action not in ACTIONS:
             report.error(ew, f"未知 action {action!r}，只能是 {sorted(ACTIONS)}")
             continue
@@ -181,76 +208,60 @@ def validate_file(anim_path: Path, runtime_cues: dict, track: str, game_id: str,
         at = float(ev.get("at", 0.0))
         dur = float(ev.get("dur", 0.0))
         lead = float(ev.get("lead", 0.0))
-
         if at < 0:
             report.error(ew, f"at 不能为负: {at}")
         if dur < 0:
             report.error(ew, f"dur 不能为负: {dur}")
         if at + 1e-6 < prev_at:
-            report.warn(ew, f"事件未按 at 升序排列（上一事件 at={prev_at:g}，本事件 at={at:g}）")
+            report.warn(ew, f"事件未按 at 升序（上一条 at={prev_at:g}）")
         prev_at = max(prev_at, at)
 
         easing = ev.get("easing")
         if easing and easing not in EASINGS:
-            report.error(ew, f"未知 easing {easing!r}，只能是 {sorted(EASINGS)}")
+            report.error(ew, f"未知 easing {easing!r}")
 
         target = ev.get("target")
-        if target and target not in ids and target not in groups:
-            report.error(ew, f"target {target!r} 既不是 actor id 也不是 group")
+        zone = ev.get("zone")
+        if zone and zone not in zones:
+            report.error(ew, f"未知 zone {zone!r}")
+        if target and target not in known_ids:
+            report.error(ew, f"target {target!r} 不是牌桌上已知的组件 id")
 
-        # primitive-specific requirements
         if action == "move":
-            mv = ev.get("move")
-            if not isinstance(mv, dict) or not any(k in mv for k in ("dx", "dy", "dz", "to_slot", "to_x", "to_z")):
-                report.error(ew, "move 需要 move.dx/dy/dz 或 move.to_slot / to_x / to_z 之一")
-            elif mv.get("to_slot") and mv["to_slot"] not in ids:
-                report.error(ew, f"move.to_slot {mv['to_slot']!r} 不是已定义的 actor")
-        elif action in ("rotate", "flip"):
-            if action == "rotate" and "angle" not in ev:
+            if not target and not ev.get("from"):
+                report.error(ew, "move 需要 target（指定某件）或 from（指定源 zone）")
+            if ev.get("from") and ev["from"] not in zones:
+                report.error(ew, f"from zone {ev['from']!r} 不存在")
+            if not zone and not target:
+                report.error(ew, "move 缺少目的地 zone")
+            if int(ev.get("take", 0)) < 0:
+                report.error(ew, "take 不能为负")
+        elif action == "rotate":
+            if "angle" not in ev:
                 report.error(ew, "rotate 需要 angle")
         elif action == "scale":
-            if "scale" not in ev and ev.get("scale_mode") != "to":
+            if "scale" not in ev:
                 report.error(ew, "scale 需要 scale（倍率）")
             if ev.get("scale_mode") not in (None, "to", "by"):
                 report.error(ew, f"scale_mode 只能是 by/to，得到 {ev.get('scale_mode')!r}")
-        elif action == "fade":
-            pass
         elif action == "highlight":
-            if target is None:
-                report.warn(ew, "highlight 未指定 target，会对全体 actor 生效")
-            elif target not in highlights and target not in groups:
-                report.warn(ew, f"highlight target {target!r} 不是 highlight actor（画面里没有对应的高亮层）")
+            if not zone and not target:
+                report.warn(ew, "highlight 既没有 zone 也没有 target，会对全体生效")
             peak = ev.get("peak_alpha")
             if peak is not None and not 0.0 <= float(peak) <= 1.0:
                 report.error(ew, f"peak_alpha 超出 [0,1]: {peak}")
         elif action == "shuffle":
-            if target is None:
-                report.warn(ew, "shuffle 未指定 target，会对全体 actor 生效")
+            if not zone and not target:
+                report.warn(ew, "shuffle 既没有 zone 也没有 target，会对全体生效")
 
-        # timeline bounds
         end = at + lead + dur
         if action != "wait":
             last_end = max(last_end, end)
         if duration > 0 and end > duration + 1e-6:
             report.error(ew, f"事件结束于 {end:.2f}s，超出 cue 音频时长 {duration:.2f}s")
 
-        if action in TRANSFORM_ACTIONS and target:
-            transform_windows.setdefault(target, []).append((at + lead, end, action))
-
-    # ---- warnings on the whole timeline ----
-    if duration > 0 and last_end > 0:
-        if duration - last_end < MIN_TAIL_MARGIN:
-            report.warn(where,
-                        f"动画结束 {last_end:.2f}s 距音频结束 {duration:.2f}s 不足 {MIN_TAIL_MARGIN:.2f}s")
-
-    for target, windows in transform_windows.items():
-        windows.sort()
-        for (s1, e1, a1), (s2, e2, a2) in zip(windows, windows[1:]):
-            if s2 < e1 - 1e-6 and a1 != "fade" and a2 != "fade":
-                report.warn(where,
-                            f"actor {target!r} 的 {a1}({s1:.2f}~{e1:.2f}s) 与 {a2}({s2:.2f}~{e2:.2f}s) 时间重叠")
-
-    return doc
+    if duration > 0 and last_end > 0 and duration - last_end < MIN_TAIL_MARGIN:
+        report.warn(where, f"动画结束 {last_end:.2f}s 距音频结束 {duration:.2f}s 不足 {MIN_TAIL_MARGIN:.2f}s")
 
 
 def main():
@@ -258,7 +269,7 @@ def main():
     parser.add_argument("--game", default="splendor")
     parser.add_argument("--track", default="full")
     parser.add_argument("--cue", help="只校验这一条 cue")
-    parser.add_argument("--file", help="直接校验指定文件（此时 --game/--track 只用于定位 runtime）")
+    parser.add_argument("--file", help="直接校验指定文件")
     parser.add_argument("--json", action="store_true", help="机器可读输出")
     args = parser.parse_args()
 
@@ -292,31 +303,25 @@ def main():
     reports = []
     for path in files:
         report = Report(path)
-        validate_file(path, runtime_cues, args.track, args.game, report)
+        validate_cue(path, runtime_cues, args.track, args.game, report)
         reports.append(report)
 
     total_errors = sum(len(r.errors) for r in reports)
     total_warnings = sum(len(r.warnings) for r in reports)
 
     if args.json:
-        errors = []
-        warnings = []
+        errors, warnings = [], []
         for r in reports:
             for e in r.errors:
                 errors.append({"file": str(r.path), **e})
             for w in r.warnings:
                 warnings.append({"file": str(r.path), **w})
-        print(json.dumps({
-            "ok": total_errors == 0,
-            "files": len(files),
-            "errors": errors,
-            "warnings": warnings,
-        }, ensure_ascii=False, indent=2))
+        print(json.dumps({"ok": total_errors == 0, "files": len(files),
+                          "errors": errors, "warnings": warnings}, ensure_ascii=False, indent=2))
     else:
         for r in reports:
-            status = "OK " if not r.errors else "ERR"
-            note = f"  ({len(r.warnings)} warning)" if r.warnings else ""
-            print(f"{status} {r.path.name}{note}")
+            print(f"{'OK ' if not r.errors else 'ERR'} {r.path.name}"
+                  + (f"  ({len(r.warnings)} warning)" if r.warnings else ""))
             for e in r.errors:
                 print(f"    error  {e['where']}: {e['message']}")
             for w in r.warnings:

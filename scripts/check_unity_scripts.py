@@ -89,6 +89,16 @@ namespace UnityEngine
         public static Vector3 operator *(float s, Vector3 a) => a * s;
         public static Vector3 operator /(Vector3 a, float s) => new Vector3(a.x / s, a.y / s, a.z / s);
         public static Vector3 LerpUnclamped(Vector3 a, Vector3 b, float t) => a;
+        public float magnitude => 0f;
+        public float sqrMagnitude => 0f;
+        public Vector3 normalized => this;
+        public void Normalize() { }
+        public static Vector3 Cross(Vector3 a, Vector3 b) => a;
+        public static float Dot(Vector3 a, Vector3 b) => 0f;
+        public static bool operator ==(Vector3 a, Vector3 b) => false;
+        public static bool operator !=(Vector3 a, Vector3 b) => false;
+        public override bool Equals(object o) => false;
+        public override int GetHashCode() => 0;
         public static Vector3 Lerp(Vector3 a, Vector3 b, float t) => a;
         public static float Distance(Vector3 a, Vector3 b) => 0f;
     }
@@ -110,6 +120,10 @@ namespace UnityEngine
         public static Color Lerp(Color a, Color b, float t) => a;
         public static Color LerpUnclamped(Color a, Color b, float t) => a;
         public static Color operator *(Color a, float s) => a;
+        public static bool operator ==(Color a, Color b) => false;
+        public static bool operator !=(Color a, Color b) => false;
+        public override bool Equals(object o) => false;
+        public override int GetHashCode() => 0;
         public static Color operator *(Color a, Color b) => a;
     }
 

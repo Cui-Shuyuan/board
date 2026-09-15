@@ -3,96 +3,41 @@
   "game_id": "splendor",
   "track": "full",
   "cue": "action.take.different.001",
-  "note": "拿取三种不同宝石：高亮供应区 → 三颗宝石依次移到玩家持有区 → 高亮持有区。音频 5.28s，动画 0.00~4.60s。布局约定：供应区 z=0.95，持有区 z=-0.62，黄金单独放在 z=1.34 且不参与移动。",
+  "stage": "_stage/splendor.table",
+  "note": "拿取三种不同宝石：高亮五堆宝石供应堆（黄金不参与）→ 三枚宝石依次从各自供应堆移到玩家持有区，供应堆随之少一枚且其余宝石收拢 → 高亮持有区并强调。动画 0.00~4.60s，音频 5.28s。",
 
-  "scene": {
-    "background": "#1E2126",
-    "camera_pitch": 50,
-    "ortho_scale": 1.18,
-    "actors": [
-      { "id": "panel_supply", "group": "supply", "zone": "supply", "shape": "panel", "palette": "panel_supply",
-        "x": 0.0, "z": 0.95, "y": -0.01, "world_size": 2.30, "alpha": 0.30, "sorting_order": -20 },
-      { "id": "panel_player", "group": "player", "zone": "holding", "shape": "panel", "palette": "panel_player",
-        "x": 0.0, "z": -0.62, "y": -0.01, "world_size": 2.30, "alpha": 0.30, "sorting_order": -20 },
-
-      { "id": "glow_supply", "group": "supply", "zone": "supply", "shape": "panel", "palette": "panel_supply",
-        "x": 0.0, "z": 0.95, "y": 0.01, "world_size": 2.30, "alpha": 0.55, "sorting_order": -18, "highlight": true },
-      { "id": "glow_player", "group": "player", "zone": "holding", "shape": "panel", "palette": "panel_player",
-        "x": 0.0, "z": -0.62, "y": 0.01, "world_size": 2.30, "alpha": 0.75, "sorting_order": -18, "highlight": true },
-
-      { "id": "slot_supply_left", "group": "supply", "zone": "supply", "shape": "dot", "palette": "shadow",
-        "x": -0.58, "z": 0.95, "world_size": 0.001, "alpha": 0.0, "sorting_order": -15 },
-      { "id": "slot_supply_mid", "group": "supply", "zone": "supply", "shape": "dot", "palette": "shadow",
-        "x": 0.0, "z": 0.95, "world_size": 0.001, "alpha": 0.0, "sorting_order": -15 },
-      { "id": "slot_supply_right", "group": "supply", "zone": "supply", "shape": "dot", "palette": "shadow",
-        "x": 0.58, "z": 0.95, "world_size": 0.001, "alpha": 0.0, "sorting_order": -15 },
-      { "id": "slot_player_left", "group": "player", "zone": "holding", "shape": "dot", "palette": "shadow",
-        "x": -0.42, "z": -0.62, "world_size": 0.001, "alpha": 0.0, "sorting_order": -15 },
-      { "id": "slot_player_mid", "group": "player", "zone": "holding", "shape": "dot", "palette": "shadow",
-        "x": 0.0, "z": -0.62, "world_size": 0.001, "alpha": 0.0, "sorting_order": -15 },
-      { "id": "slot_player_right", "group": "player", "zone": "holding", "shape": "dot", "palette": "shadow",
-        "x": 0.42, "z": -0.62, "world_size": 0.001, "alpha": 0.0, "sorting_order": -15 },
-
-      { "id": "shadow_diamond", "group": "supply", "zone": "supply", "shape": "shadow", "palette": "shadow",
-        "x": -0.58, "z": 0.95, "y": -0.005, "world_size": 0.30, "alpha": 0.30, "sorting_order": -4 },
-      { "id": "shadow_emerald", "group": "supply", "zone": "supply", "shape": "shadow", "palette": "shadow",
-        "x": 0.0, "z": 0.95, "y": -0.005, "world_size": 0.30, "alpha": 0.30, "sorting_order": -4 },
-      { "id": "shadow_ruby", "group": "supply", "zone": "supply", "shape": "shadow", "palette": "shadow",
-        "x": 0.58, "z": 0.95, "y": -0.005, "world_size": 0.30, "alpha": 0.30, "sorting_order": -4 },
-      { "id": "shadow_gold", "group": "gold", "zone": "supply", "shape": "shadow", "palette": "shadow",
-        "x": 0.0, "z": 1.34, "y": -0.005, "world_size": 0.30, "alpha": 0.30, "sorting_order": -4 },
-
-      { "id": "dot_diamond_1", "group": "supply", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": -0.52, "z": 0.64, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_diamond_2", "group": "supply", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": -0.62, "z": 0.64, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_emerald_1", "group": "supply", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": 0.06, "z": 0.64, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_emerald_2", "group": "supply", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": -0.04, "z": 0.64, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_ruby_1", "group": "supply", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": 0.64, "z": 0.64, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_ruby_2", "group": "supply", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": 0.54, "z": 0.64, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_gold_1", "group": "gold", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": 0.06, "z": 1.08, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-      { "id": "dot_gold_2", "group": "gold", "zone": "supply", "shape": "dot", "palette": "white",
-        "x": -0.04, "z": 1.08, "world_size": 0.045, "alpha": 0.75, "sorting_order": -1 },
-
-      { "id": "gold", "group": "gold", "zone": "supply", "shape": "gem", "palette": "gem_gold",
-        "x": 0.0, "z": 1.34, "world_size": 0.26, "sorting_order": 3 },
-
-      { "id": "gem_diamond", "group": "supply", "zone": "supply", "shape": "gem", "palette": "gem_diamond",
-        "x": -0.58, "z": 0.95, "world_size": 0.26, "sorting_order": 2 },
-      { "id": "gem_emerald", "group": "supply", "zone": "supply", "shape": "gem", "palette": "gem_emerald",
-        "x": 0.0, "z": 0.95, "world_size": 0.26, "sorting_order": 2 },
-      { "id": "gem_ruby", "group": "supply", "zone": "supply", "shape": "gem", "palette": "gem_ruby",
-        "x": 0.58, "z": 0.95, "world_size": 0.26, "sorting_order": 2 }
+  "start": {
+    "set": [
+      { "template": "gem", "palette": "gem_diamond",  "zone": "gem_supply_diamond",  "count": 7 },
+      { "template": "gem", "palette": "gem_sapphire", "zone": "gem_supply_sapphire", "count": 7 },
+      { "template": "gem", "palette": "gem_ruby",     "zone": "gem_supply_ruby",     "count": 7 },
+      { "template": "gem", "palette": "gem_emerald",  "zone": "gem_supply_emerald",  "count": 7 },
+      { "template": "gem", "palette": "gem_onyx",     "zone": "gem_supply_onyx",     "count": 7 },
+      { "template": "gem", "palette": "gem_gold",     "zone": "gold_supply",         "count": 5 }
     ]
   },
 
   "events": [
-    { "at": 0.00, "dur": 0.35, "action": "highlight", "target": "glow_supply",
-      "peak_alpha": 0.60, "grow": 1.0, "easing": "easeOutCubic" },
+    { "at": 0.00, "dur": 0.35, "action": "highlight", "zone": "gem_supply_diamond",
+      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
+    { "at": 0.15, "dur": 0.35, "action": "highlight", "zone": "gem_supply_sapphire",
+      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
+    { "at": 0.30, "dur": 0.35, "action": "highlight", "zone": "gem_supply_ruby",
+      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
+    { "at": 0.45, "dur": 0.35, "action": "highlight", "zone": "gem_supply_emerald",
+      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
+    { "at": 0.60, "dur": 0.35, "action": "highlight", "zone": "gem_supply_onyx",
+      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
 
-    { "at": 1.30, "dur": 1.60, "action": "highlight", "target": "glow_supply",
-      "peak_alpha": 0.22, "grow": 1.0, "easing": "linear" },
+    { "at": 3.30, "dur": 0.55, "action": "move", "target": "gem#1",  "zone": "player_holding", "easing": "easeInOutCubic" },
+    { "at": 3.55, "dur": 0.55, "action": "move", "target": "gem#8",  "zone": "player_holding", "easing": "easeInOutCubic" },
+    { "at": 3.80, "dur": 0.55, "action": "move", "target": "gem#15", "zone": "player_holding", "easing": "easeInOutCubic" },
 
-    { "at": 3.30, "dur": 0.55, "action": "move", "target": "gem_diamond",
-      "move": { "to_slot": "slot_player_left" }, "easing": "easeInOutCubic" },
-    { "at": 3.55, "dur": 0.55, "action": "move", "target": "gem_emerald",
-      "move": { "to_slot": "slot_player_mid" }, "easing": "easeInOutCubic" },
-    { "at": 3.80, "dur": 0.55, "action": "move", "target": "gem_ruby",
-      "move": { "to_slot": "slot_player_right" }, "easing": "easeInOutCubic" },
+    { "at": 4.05, "dur": 0.55, "action": "highlight", "zone": "player_holding",
+      "peak_alpha": 0.75, "grow": 1.0, "easing": "easeOutCubic" },
 
-    { "at": 4.05, "dur": 0.55, "action": "highlight", "target": "glow_player",
-      "peak_alpha": 0.85, "grow": 1.05, "easing": "easeOutCubic" },
-
-    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem_diamond",
-      "scale_mode": "by", "scale": 1.22, "easing": "easeOutCubic" },
-    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem_emerald",
-      "scale_mode": "by", "scale": 1.22, "easing": "easeOutCubic" },
-    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem_ruby",
-      "scale_mode": "by", "scale": 1.22, "easing": "easeOutCubic" }
+    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem#1",  "scale": 1.30, "easing": "easeOutCubic" },
+    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem#8",  "scale": 1.30, "easing": "easeOutCubic" },
+    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem#15", "scale": 1.30, "easing": "easeOutCubic" }
   ]
 }

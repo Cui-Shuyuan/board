@@ -200,15 +200,20 @@ namespace BoardGameTutorial
             }
         }
 
-        public void PlayCue(int index)
+        /// <summary>
+        /// continueState = true 表示「接着上一条 cue 的终态继续」（顺序播放）；
+        /// false 表示重新起局（首条 cue / 跳转 / 手动回到某条）。
+        /// 动画是牌桌状态的变化，所以这个区分决定了画面从哪种局面开始。
+        /// </summary>
+        public void PlayCue(int index, bool continueState = false)
         {
             if (doc == null || doc.cues == null || doc.cues.Count == 0) return;
             index = Mathf.Clamp(index, 0, doc.cues.Count - 1);
             if (playbackRoutine != null) StopCoroutine(playbackRoutine);
-            playbackRoutine = StartCoroutine(PlayCueRoutine(index));
+            playbackRoutine = StartCoroutine(PlayCueRoutine(index, continueState));
         }
 
-        private IEnumerator PlayCueRoutine(int index)
+        private IEnumerator PlayCueRoutine(int index, bool continueState)
         {
             if (audioSource.isPlaying) audioSource.Stop();
             audioSource.clip = null;
@@ -222,7 +227,7 @@ namespace BoardGameTutorial
             if (animPlayer != null)
             {
                 animPlayer.animationEnabled = enableCueAnimation;
-                if (animPlayer.LoadCue(gameRoot, track, cue.id))
+                if (animPlayer.LoadCue(gameRoot, track, cue.id, continueState))
                 {
                     RefreshZoneLabels();
                 }
@@ -270,7 +275,9 @@ namespace BoardGameTutorial
 
             if (autoAdvance && index + 1 < doc.cues.Count)
             {
-                PlayCue(index + 1);
+                // 先把本条动画推到终态，下一条才能在正确的牌桌状态上接续。
+                if (animPlayer != null && animPlayer.IsLoaded) animPlayer.Complete();
+                PlayCue(index + 1, true);
             }
         }
 
@@ -282,7 +289,8 @@ namespace BoardGameTutorial
         public void Next()
         {
             if (doc == null || doc.cues == null) return;
-            PlayCue(currentIndex + 1);
+            if (animPlayer != null && animPlayer.IsLoaded) animPlayer.Complete();
+            PlayCue(currentIndex + 1, true);
         }
 
         public void Previous()

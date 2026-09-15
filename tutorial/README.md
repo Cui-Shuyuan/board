@@ -96,6 +96,54 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 
 `tutorial/下一阶段工作指导.md`
 
+## cue 内动画：状态 / zone 模型（2026-09-15 定稿）
+
+动画 = **维护一组组件的状态**。组件的状态就是它「在哪个 zone、以什么姿态」；
+世界坐标由 zone 的布局规则推导，**cue 数据里不写坐标**。
+
+数据分两层：
+
+```text
+games/{game}/tutorial/anim/_stage/{game}.table.json   牌桌事实：zone 位置、模板、开局摆放
+games/{game}/tutorial/anim/{track}/{cue_id}.json      这一条 cue 对牌桌做了什么
+```
+
+- **stage**：`zones`（每个 zone 的 `center` 与 `layout`）、`templates`（外观：shape / palette / world_size）、
+  `anchors`（区域底板等固定装饰，`zones` 字段声明它代表哪些 zone）、`initial`（开局哪些组件放在哪些 zone）。
+- **cue**：只有 `events`，外加可选的 `start`（本条 cue 的入口状态）。移动事件只写两端 zone：
+
+```json
+{ "at": 3.30, "dur": 0.55, "action": "move", "target": "gem#1", "zone": "player_holding" }
+{ "at": 3.30, "dur": 0.55, "action": "move", "from": "gem_supply_diamond", "take": 3, "zone": "player_holding" }
+```
+
+两种写法等价：前者指定具体某一件（运行时实例 id = `{template}#{序号}`），
+后者表示「从源 zone 里搬最前面的 N 件」。
+
+关键性质：
+
+- **同一个原语覆盖设置阶段与游戏阶段**。玩家「从供应堆拿到持有区」和设置阶段
+  「从镜头外飞进供应堆」都是一次 zone → zone 的移动，只是源 zone 不同
+  （`offstage` 是镜头外的入场通道）。
+- **搬走会触发顺位收拢**。同一 zone 里排在后面的组件自动前移，所以「拿走一枚宝石」
+  看到的是堆真的少了一枚，而不是留一个空位。
+- **入口状态、重播与顺序播放**。顺序播放时一条 cue 接着上一条的终态；重播当前 cue
+  恢复到这条 cue 的入口状态。将来编译器可以离线复算每个 cue 的入口状态写进 runtime，
+  用于任意跳转。
+
+校验：
+
+```bash
+python scripts/validate_cue_anim.py --game splendor --track full
+python scripts/validate_cue_anim.py --game splendor --track full --cue action.take.different.001
+```
+
+进 Unity 之前还会跑一次 C# 编译检查（用生成的 Unity API stub，不需要 Unity）：
+
+```bash
+python scripts/check_unity_scripts.py
+```
+
 ## 时间轴口播稿（LRC-like）
 
 口播稿以类似歌词的 LRC 格式存放，例如 `games/splendor/tutorial/full.lrc`。播放器/编译器不再直接读 Markdown，而是解析该格式后再生成运行时数据。
