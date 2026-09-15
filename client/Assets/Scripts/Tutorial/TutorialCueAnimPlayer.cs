@@ -57,8 +57,16 @@ namespace BoardGameTutorial
             foreach (var ev in cueDoc.events)
             {
                 if (ev.action != "move" || ev.target != targetId) continue;
-                foreach (var step in PlanMove(ev))
-                    if (step.Item?.Id == targetId) return step;
+                var actor = FindActor(ev.target);
+                if (actor?.Item == null) continue;
+                int ord = ev.order == -2 ? ev.slot : ev.order;
+                var from = actor.LivePosition;
+                var to = ev.zone != null ? Store.ZonePosition(ev.zone, ord) : Store.CurrentPosition(actor.Item);
+                return new MovePlan
+                {
+                    Item = actor.Item, Destination = ev.zone, Order = ord, InPlace = false,
+                    From = from, To = to, Flip = ev.flip,
+                };
             }
             return null;
         }
@@ -808,11 +816,36 @@ namespace BoardGameTutorial
 
         private void SampleClips(float scaled)
         {
-            // 先复位到逻辑状态，再叠加片段
+            // 每个组件取「最近登记的那个片段」，用于决定本时刻它该在哪：
+            //   片段还没开始 → 停在片段起点（例如牌堆），这样「排队等发牌」的牌不会提前出现在市场
+            //   片段进行中   → 按插值位置
+            //   没有片段     → 按逻辑位置（格位表）
+            var latest = new Dictionary<string, Clip>();
+            foreach (var clip in clips)
+            {
+                if (clip?.Item == null) continue;
+                if (!latest.TryGetValue(clip.Item.Id, out var prev) || clip.Start >= prev.Start)
+                    latest[clip.Item.Id] = clip;
+            }
+
+            // 先复位到逻辑状态。**已有生效片段的组件跳过**：
+            // 它的位置由片段决定（可能是从牌堆飞到市场的中途）。
+            // 曾经无条件按逻辑位置复位，导致「还没轮到的牌先出现在市场」，
+            // 随后补间从牌堆飞过来 —— 用户看到的就是「先出一整行，再一张张往回飞」。
             foreach (var item in Store.Items)
             {
                 var actor = item.Actor;
                 if (actor?.Go == null) continue;
+                if (latest.TryGetValue(item.Id, out var pending))
+                {
+                    // 片段已登记：用它的起点（未开始）或由下面按插值覆盖。
+                    if (scaled < pending.Start)
+                    {
+                        actor.LivePosition = pending.From;
+                        actor.Go.transform.localPosition = pending.From;
+                    }
+                    continue;
+                }
                 actor.LivePosition = Store.CurrentPosition(item);
                 actor.Go.transform.localPosition = actor.LivePosition;
                 actor.LiveRotation = item.Template != null ? item.Template.rotation : 0f;
@@ -824,7 +857,7 @@ namespace BoardGameTutorial
                 RefreshFace(actor);
             }
 
-            foreach (var clip in clips)
+            foreach (var clip in latest.Values)
             {
                 if (clip?.Actor?.Go == null) continue;
                 if (scaled < clip.Start) continue;
@@ -995,24 +1028,10 @@ namespace BoardGameTutorial
             {
                 foreach (var step in PlanMove(ev))
                 {
-                    if (!step.InPlace)
-                    {
-                        if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
-                        else Store.MoveTo(step.Item, step.Destination);
-                    }
-                    if (step.Item.Actor != null)
-                    {
-                        if (step.InPlace)
-                        {
-                            // 原位动画：终态落在目标 zone 的第 Order 格，但占用不迁移
-                            // （牌仍属于牌堆/盒子，只是画面上落到市场格）。
-                            var pos = Store.ZonePosition(ev.zone, step.Order);
-                            step.Item.LivePosition = pos;
-                            step.Item.Actor.LivePosition = pos;
-                            step.Item.Actor.Go.transform.localPosition = pos;
-                        }
-                        else ApplyCurrentPlacement(step.Item, step.Item.Actor);
-                    }
+                    // 与 TriggerMove 一致：统一走 MoveToSlot，再按格位表落位。
+                    if (step.Destination != null)
+                        Store.MoveToSlot(step.Item, step.Destination, step.Order);
+                    if (step.Item.Actor != null) ApplyCurrentPlacement(step.Item, step.Item.Actor);
                 }
                 return;
             }

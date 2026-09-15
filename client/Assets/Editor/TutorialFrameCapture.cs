@@ -392,11 +392,12 @@ namespace BoardGameTutorial.Editor
             var plan = anim.PlanMoveForTest("market_card_1_emerald#1");
             if (plan != null)
             {
-                actualFrom = anim.Store.CurrentPosition(plan.Item);
-                actualTo = plan.InPlace ? anim.Store.ZonePosition("card_market", plan.Order)
-                                        : anim.Store.CurrentPosition(plan.Item);
+                // 直接用搬运计划记录的起终点（PlanMove 在触发时就快照好了），
+                // 不再自行推算 —— 自行推算会漏掉 from_zone 等语义。
+                actualFrom = plan.From;
+                actualTo = plan.To;
             }
-            bool planOk = plan != null && plan.InPlace
+            bool planOk = plan != null
                 && Mathf.Abs(actualTo.x - expectedTo.x) < 0.01f
                 && Mathf.Abs(actualTo.z - expectedTo.z) < 0.01f
                 && Mathf.Abs(actualFrom.x - deckPos.x) < 0.01f;
@@ -511,6 +512,56 @@ namespace BoardGameTutorial.Editor
                 }
                 Debug.Log($"[Timeline] {(monotonic ? "PASS" : "FAIL")} 发牌方向（落位数单调不减）：{string.Join(" ", counts)}");
                 if (!monotonic) bad++;
+                Object.DestroyImmediate(probe);
+            }
+
+            // ①b 独立性：任一时刻，**正在移动**的市场牌最多只应是「当前这一批」。
+            //     用户看到的是「发第 N 张时前 N-1 张一起往回飞再回来」——即已经落位的牌又动了。
+            //     判据：已经落位的牌，位置不应再离开它的格位。
+            {
+                var probe = new GameObject("indepProbe");
+                var pa = probe.AddComponent<TutorialCueAnimPlayer>();
+                pa.LoadCue(gameRoot, "full", cueId, false);
+                pa.logTweens = true;
+                var settledIds = new List<string>();
+                int violations = 0;
+                string firstViolation = null;
+                for (float tt = 3.6f; tt <= to + 0.2f; tt += 0.1f)
+                {
+                    pa.Seek(tt);
+                    for (int i = settledIds.Count - 1; i >= 0; i--)
+                    {
+                        string id = settledIds[i];
+                        foreach (var it in pa.Store.Items)
+                        {
+                            if (it.Id != id || it.Actor == null) continue;
+                            var p = it.Actor.Go.transform.localPosition;
+                            var w = pa.Store.ZonePosition("card_market", it.Order);
+                            if (Mathf.Abs(p.x - w.x) > 0.30f || Mathf.Abs(p.z - w.z) > 0.30f)
+                            {
+                                violations++;
+                                if (firstViolation == null)
+                                    firstViolation = $"t={tt:0.0} {id} 已落位却又离开格位 " +
+                                                     $"在({p.x:0.00},{p.z:0.00}) 应在({w.x:0.00},{w.z:0.00})";
+                                settledIds.RemoveAt(i);
+                            }
+                            break;
+                        }
+                    }
+                    foreach (var it in pa.Store.Items)
+                    {
+                        if (!it.Id.StartsWith("market_card_") || it.Actor == null) continue;
+                        if (it.ZoneId != "card_market" || settledIds.Contains(it.Id)) continue;
+                        var p = it.Actor.Go.transform.localPosition;
+                        var w = pa.Store.ZonePosition("card_market", it.Order);
+                        if (Mathf.Abs(p.x - w.x) < 0.15f && Mathf.Abs(p.z - w.z) < 0.15f)
+                            settledIds.Add(it.Id);
+
+                    }
+                }
+                Debug.Log($"[Timeline] {(violations == 0 ? "PASS" : "FAIL")} 已落位的牌不再移动（异常 {violations} 次）" +
+                          (firstViolation == null ? "" : $"  首个：{firstViolation}"));
+                if (violations > 0) bad++;
                 Object.DestroyImmediate(probe);
             }
 

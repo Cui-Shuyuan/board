@@ -43,7 +43,12 @@ namespace BoardGameTutorial
         private readonly Dictionary<string, StageZone> zones = new Dictionary<string, StageZone>();
         private readonly Dictionary<string, StageTemplate> templates = new Dictionary<string, StageTemplate>();
         private readonly Dictionary<string, ZoneItem> items = new Dictionary<string, ZoneItem>();
-        private readonly Dictionary<string, List<ZoneItem>> occupancy = new Dictionary<string, List<ZoneItem>>();
+        /// <summary>
+        /// zone → (格位号 → 组件)。**格位号是固定地址**：一件东西占上第 5 格就一直待在第 5 格，
+        /// 后来的东西不会让它重新编号。这是「第一张发到 (1,1)，第二张发到 (1,2)，然后都不再动」的模型。
+        /// （旧模型用 List，每次插入都重排所有 Order，导致已落位的牌被改地址、又飞一次。）
+        /// </summary>
+        private readonly Dictionary<string, Dictionary<int, ZoneItem>> occupancy = new Dictionary<string, Dictionary<int, ZoneItem>>();
         private readonly Dictionary<string, int> counters = new Dictionary<string, int>();
 
         /// <summary>调试：打印 PullFrom 的匹配数量。</summary>
@@ -184,7 +189,6 @@ namespace BoardGameTutorial
                 return created;
             }
 
-            var list = ListOf(zoneId);
             for (int i = 0; i < count; i++)
             {
                 if (!counters.TryGetValue(templateId, out int n)) n = 0;
@@ -199,7 +203,7 @@ namespace BoardGameTutorial
                     PaletteName = colorName,
                     BaseColor = baseColor,
                     ZoneId = zoneId,
-                    Order = list != null ? list.Count : 0,
+                    Order = NextFreeSlot(zoneId),
                     EntryFrom = string.IsNullOrEmpty(from) ? "auto" : from,
                     EntryAnchor = AnchorFor(zoneId, from, tpl),
                     LiveScale = Vector3.one,
@@ -207,7 +211,7 @@ namespace BoardGameTutorial
                     LiveAlpha = tpl.alpha,
                 };
                 items[item.Id] = item;
-                list?.Add(item);
+                SlotsOf(zoneId)[item.Order] = item;
                 InvalidateSlots();
                 item.LivePosition = CurrentPosition(item);
                 created.Add(item);
@@ -218,33 +222,42 @@ namespace BoardGameTutorial
         /// <summary>zone 里当前有多少件（给叠压居中用）。</summary>
         public int CountInZone(string zoneId)
         {
-            var list = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var l) ? l : null);
-            return list?.Count ?? 0;
+            var map = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var m) ? m : null);
+            return map?.Count ?? 0;
         }
 
-        private int NextOrder(string zoneId)
-        {
-            var list = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var l) ? l : null);
-            return list == null ? 0 : list.Count;
-        }
+        private int NextOrder(string zoneId) => NextFreeSlot(zoneId);
 
-        private List<ZoneItem> ListOf(string zoneId)
+        /// <summary>取（必要时创建）该 zone 的格位表。</summary>
+        private Dictionary<int, ZoneItem> SlotsOf(string zoneId)
         {
             if (string.IsNullOrEmpty(zoneId)) return null;
-            if (!occupancy.TryGetValue(zoneId, out var list))
+            if (!occupancy.TryGetValue(zoneId, out var map))
             {
-                list = new List<ZoneItem>();
-                occupancy[zoneId] = list;
+                map = new Dictionary<int, ZoneItem>();
+                occupancy[zoneId] = map;
             }
-            return list;
+            return map;
         }
+
+        /// <summary>下一个空着的格位号（不改变任何已有格位）。</summary>
+        private int NextFreeSlot(string zoneId)
+        {
+            var map = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var m) ? m : null);
+            if (map == null) return 0;
+            for (int i = 0; ; i++) if (!map.ContainsKey(i)) return i;
+        }
+
+        /// <summary>某格位的组件（没有则 null）。</summary>
+        public ZoneItem AtSlot(string zoneId, int slot)
+            => !string.IsNullOrEmpty(zoneId) && occupancy.TryGetValue(zoneId, out var m) && m.TryGetValue(slot, out var it) ? it : null;
 
         public int CountIn(string zoneId, string palette = null, string template = null)
         {
-            var list = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var l) ? l : null);
-            if (list == null) return 0;
+            var map = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var m) ? m : null);
+            if (map == null) return 0;
             int n = 0;
-            foreach (var item in list)
+            foreach (var item in map.Values)
             {
                 if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
@@ -256,11 +269,11 @@ namespace BoardGameTutorial
         /// <summary>zone 里最靠前（顺序最前）的组件；excluded 用于一次搬多件。</summary>
         public ZoneItem FrontOf(string zoneId, List<ZoneItem> excluded = null)
         {
-            var list = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var l) ? l : null);
-            if (list == null) return null;
+            var map = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var m) ? m : null);
+            if (map == null) return null;
 
             ZoneItem best = null;
-            foreach (var item in list)
+            foreach (var item in map.Values)
             {
                 if (excluded != null && excluded.Contains(item)) continue;
                 if (best == null || item.Order < best.Order) best = item;
@@ -276,11 +289,11 @@ namespace BoardGameTutorial
         public int PullFrom(string srcZone, string template, string palette, string dstZone, int count)
         {
             if (string.IsNullOrEmpty(srcZone) || string.IsNullOrEmpty(dstZone)) return 0;
-            var source = occupancy.TryGetValue(srcZone, out var list) ? list : null;
+            var source = occupancy.TryGetValue(srcZone, out var srcMap) ? srcMap : null;
             if (source == null) return 0;
 
             var matches = new List<ZoneItem>();
-            foreach (var item in source)
+            foreach (var item in source.Values)
             {
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
                 if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
@@ -308,18 +321,33 @@ namespace BoardGameTutorial
 
         public void MoveToAt(ZoneItem item, string targetZoneId, int order)
         {
-            MoveTo(item, targetZoneId);
-            var list = string.IsNullOrEmpty(targetZoneId) ? null
-                : (occupancy.TryGetValue(targetZoneId, out var l) ? l : null);
-            if (list == null) return;
+            if (item == null || string.IsNullOrEmpty(targetZoneId)) return;
+            if (!zones.ContainsKey(targetZoneId)) return;
 
-            list.Remove(item);
-            int at = Mathf.Clamp(order, 0, list.Count);
-            list.Insert(at, item);
-            for (int i = 0; i < list.Count; i++) list[i].Order = i;
+            var map = SlotsOf(targetZoneId);
+
+            // 从原 zone 释放（按格位号删除，其他人的格号不受影响）
+            if (!string.IsNullOrEmpty(item.ZoneId) && occupancy.TryGetValue(item.ZoneId, out var fromMap)
+                && item.Order >= 0 && fromMap.TryGetValue(item.Order, out var occupant) && ReferenceEquals(occupant, item))
+                fromMap.Remove(item.Order);
+
+            int slot = Mathf.Max(0, order);
+
+            // 目标格位已被别人占：把占用者挪到下一个空位（它的格号会变，但它本来就是「没被指定过」的）。
+            if (map.TryGetValue(slot, out var existing) && !ReferenceEquals(existing, item))
+            {
+                int free = NextFreeSlot(targetZoneId);
+                map.Remove(slot);
+                map[free] = existing;
+                existing.Order = free;
+            }
+
+            map[slot] = item;
+            item.ZoneId = targetZoneId;
+            item.Order = slot;
             InvalidateSlots();
             if (logMoves)
-                Debug.Log($"[MoveToAt] {item.Id} → {targetZoneId} 请求 {order} 实际 {item.Order} 共 {list.Count} 件");
+                Debug.Log($"[MoveToAt] {item.Id} → {targetZoneId} 第 {slot} 格（该 zone 共 {map.Count} 件）");
         }
 
         /// <summary>把组件搬到另一个 zone，成为该 zone 的最后一件。</summary>
@@ -333,23 +361,23 @@ namespace BoardGameTutorial
             }
             if (item.ZoneId == targetZoneId) return;
 
-            // 从镜头外第一次落到桌面上时，记下它在桌内的落点，
-            // 之后若再被移回 offstage，起点仍然对准这个位置。
+            // 落位时更新「桌内落点」锚点。但模板声明了 from_zone 的组件不更新：
+            // 它的出场点是那个 zone（例如「市场牌从对应牌堆飞出」），
+            // 一旦被落位坐标覆盖，牌就会一落位就直接出现在目标格、补间从原地起步。
             var targetZone = GetZone(targetZoneId);
-            if (targetZone != null && targetZone.role != "offstage")
+            bool hasFixedOrigin = item.Template != null && !string.IsNullOrEmpty(item.Template.from_zone);
+            if (!hasFixedOrigin && targetZone != null && targetZone.role != "offstage")
                 item.EntryAnchor = ZonePosition(targetZoneId, NextOrder(targetZoneId));
 
-            if (!string.IsNullOrEmpty(item.ZoneId) && occupancy.TryGetValue(item.ZoneId, out var from))
-            {
-                from.Remove(item);
-                // 顺位前移：后面的人补上空缺，视觉上就是堆变小、往前收拢。
-                for (int i = 0; i < from.Count; i++) from[i].Order = i;
-            }
+            // 从原 zone 释放自己那一格。**不重排其他格位**：别人的地址保持不变。
+            if (!string.IsNullOrEmpty(item.ZoneId) && occupancy.TryGetValue(item.ZoneId, out var from)
+                && item.Order >= 0 && from.TryGetValue(item.Order, out var occ) && ReferenceEquals(occ, item))
+                from.Remove(item.Order);
 
-            var to = ListOf(targetZoneId);
+            var to = SlotsOf(targetZoneId);
             item.ZoneId = targetZoneId;
-            item.Order = to.Count;
-            to.Add(item);
+            item.Order = NextFreeSlot(targetZoneId);   // 占一个空位，不动别人的格号
+            to[item.Order] = item;
             InvalidateSlots();
         }
 
