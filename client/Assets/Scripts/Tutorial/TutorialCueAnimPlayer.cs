@@ -671,13 +671,19 @@ namespace BoardGameTutorial
         {
             if (cueDoc == null) return;
 
-            if (clock < 0f || time + 0.25f < clock) ResetToStart();
+            if (clock < 0f || time + 0.25f < clock)
+            {
+                ResetToStart();
+                clips.Clear();          // 回退：片段全部失效，由当前时刻重新触发
+            }
 
             clock = time;
             float scaled = time * Mathf.Max(0.01f, timeScale);
 
             UpdatePanelVisibility();
 
+            // 触发所有已到点的事件。触发时就把「逻辑状态」推到终态（Store 是时间的阶跃函数），
+            // 视觉上的过渡交给片段采样 —— 这样跳转/暂停/倒放都不需要特殊处理。
             while (nextIndex < cueDoc.events.Count && cueDoc.events[nextIndex].at <= scaled + 1e-4f)
             {
                 var ev = cueDoc.events[nextIndex];
@@ -691,6 +697,111 @@ namespace BoardGameTutorial
                 var entry = pendingScales[i];
                 pendingScales.RemoveAt(i);
                 ApplyScale(entry.Actor, entry.Factor, entry.Event);
+            }
+
+            SampleClips(scaled);
+        }
+
+        /// <summary>
+        /// 按当前时刻采样所有片段，直接算出每个组件的画面状态。
+        /// 这是「动画 = 时间的函数」的落点：不累积、不依赖帧，因此完全可复现，
+        /// 离屏出图只要依次 Seek 即可看到完整动画。
+        /// </summary>
+        /// <summary>取（或新建）该组件在本时刻的片段，供各触发函数登记视觉变化。</summary>
+        private Clip ClipAt(ZoneItem item, CueAnimActor actor, CueAnimEvent ev, float extraLead = 0f)
+        {
+            var clip = new Clip
+            {
+                Item = item,
+                Actor = actor,
+                Start = clock * Mathf.Max(0.01f, timeScale) + Mathf.Max(0f, ev.lead) + Mathf.Max(0f, extraLead),
+                Dur = Mathf.Max(0.01f, ev.dur),
+                Easing = EasingOr(ev),
+            };
+            clips.Add(clip);
+            return clip;
+        }
+
+        /// <summary>自检/出图用：确保场景里有可用的相机。</summary>
+        public void EnsureCameraForCapture() => EnsureCamera();
+
+        /// <summary>把组件的实时透明度写到渲染器上。</summary>
+        private static void ApplyAlpha(CueAnimActor actor)
+        {
+            if (actor?.Renderer == null) return;
+            var c = actor.LiveColor;
+            c.a = Mathf.Clamp01(actor.LiveAlpha);
+            actor.Renderer.color = c;
+        }
+
+        private void SampleClips(float scaled)
+        {
+            // 先复位到逻辑状态，再叠加片段
+            foreach (var item in Store.Items)
+            {
+                var actor = item.Actor;
+                if (actor?.Go == null) continue;
+                actor.LivePosition = Store.CurrentPosition(item);
+                actor.Go.transform.localPosition = actor.LivePosition;
+                actor.LiveRotation = item.Template != null ? item.Template.rotation : 0f;
+                actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
+                actor.LiveScale = actor.BaseScale;
+                actor.Go.transform.localScale = actor.LiveScale;
+                actor.LiveAlpha = actor.BaseAlpha;
+                ApplyAlpha(actor);
+                RefreshFace(actor);
+            }
+
+            foreach (var clip in clips)
+            {
+                if (clip?.Actor?.Go == null) continue;
+                if (scaled < clip.Start) continue;
+                float k = clip.K(scaled);
+
+                if (clip.HasMove)
+                {
+                    var p = Vector3.LerpUnclamped(clip.From, clip.To, k);
+                    clip.Item.LivePosition = p;
+                    clip.Actor.LivePosition = p;
+                    clip.Actor.Go.transform.localPosition = p;
+                }
+
+                if (clip.HasFlip)
+                {
+                    float yaw = Mathf.LerpUnclamped(clip.FlipFromYaw, clip.FlipFromYaw + 180f, k);
+                    clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+                    bool showingBack = Mathf.Cos(yaw * Mathf.Deg2Rad) < 0f;
+                    if (clip.Actor.BackSprite != null)
+                        clip.Actor.Renderer.sprite = showingBack ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
+                }
+
+                if (clip.HasScale)
+                {
+                    clip.Actor.LiveScale = Vector3.LerpUnclamped(clip.ScaleFrom, clip.ScaleTo, k);
+                    clip.Actor.Go.transform.localScale = clip.Actor.LiveScale;
+                }
+
+                if (clip.HasAlpha)
+                {
+                    clip.Actor.LiveAlpha = Mathf.LerpUnclamped(clip.AlphaFrom, clip.AlphaTo, k);
+                    ApplyAlpha(clip.Actor);
+                }
+
+                if (clip.HasRotate && !clip.HasFlip)
+                {
+                    float rot = Mathf.LerpUnclamped(clip.RotFrom, clip.RotTo, k);
+                    clip.Actor.LiveRotation = rot;
+                    clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, rot);
+                }
+
+                if (clip.HasShuffle)
+                {
+                    float wave = Mathf.Sin(k * Mathf.PI);
+                    float dir = (clip.Item.Order % 2 == 0) ? 1f : -1f;
+                    var basePos = clip.Item.LivePosition;
+                    clip.Actor.Go.transform.localPosition =
+                        basePos + new Vector3(dir * clip.ShuffleAmp * wave, 0f, 0f);
+                }
             }
         }
 
@@ -865,7 +976,52 @@ namespace BoardGameTutorial
             public string Destination;
             public int Order;      // -1 = 追加到末尾
             public bool InPlace;   // true = 只动画位置，不改占用
+            public Vector3 From;   // 补间起点（触发时快照）
+            public Vector3 To;     // 补间终点（触发时快照）
+            public bool Flip;      // 是否同时翻面
         }
+
+        /// <summary>
+        /// 时间轴片段：一段只在 [Start, Start+Dur] 内生效的视觉变化。
+        /// 关键设计 —— 画面是**时间的纯函数**：Seek(t) 直接采样所有片段算出位置，
+        /// 不靠「每帧推进一点」。因此暂停、跳转、倒放天然正确，
+        /// 而且离屏出图时只要依次 Seek 就能看到完整动画（不依赖 Unity 帧循环）。
+        /// </summary>
+        private class Clip
+        {
+            public ZoneItem Item;
+            public CueAnimActor Actor;
+            public float Start;
+            public float Dur;
+
+            public bool HasMove;
+            public Vector3 From, To;
+
+            public bool HasFlip;
+            public float FlipFromYaw; // 起始偏航角（0 或 180）
+
+            public bool HasScale;
+            public Vector3 ScaleFrom, ScaleTo;
+
+            public bool HasAlpha;
+            public float AlphaFrom, AlphaTo;
+
+            public bool HasRotate;
+            public float RotFrom, RotTo;
+
+            public bool HasShuffle;
+            public float ShuffleAmp;
+
+            public string Easing;
+
+            public float K(float time)
+            {
+                if (Dur <= 0f) return 1f;
+                return Mathf.Clamp01(BoardGameTutorial.Easing.Evaluate(Easing, (time - Start) / Dur));
+            }
+        }
+
+        private readonly List<Clip> clips = new List<Clip>();
 
         /// <summary>
         /// move 的语义：把组件从 source zone 搬到 destination zone。
@@ -949,31 +1105,49 @@ namespace BoardGameTutorial
             {
                 var actor = step.Item.Actor;
                 Vector3 from = actor != null ? actor.LivePosition : step.Item.LivePosition;
-                if (!step.InPlace)
-                {
-                    if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
-                    else Store.MoveTo(step.Item, step.Destination);
-                }
+
+                // order=-2 的语义是「从别处出场、落在目标 zone 的第 Order 格」——
+                // 逻辑归属也必须落到那一格。之前只动了画面、不记格位，导致：
+                //   ① 后续事件按旧归属算位置时，把这些牌拉回起点（用户看到的「被收回去」）
+                //   ② 新发的牌按当前格位算，落到了别的行
+                // 现在统一按正常落位处理，动画起点仍由 from_zone 提供，所以看起来依旧「从牌堆飞出」。
+                if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
+                else if (!step.InPlace) Store.MoveTo(step.Item, step.Destination);
                 moved.Add(step.Item);
                 if (logImages && step.Order >= 0)
                     Debug.Log($"[Move] {step.Item.Id} → {step.Destination} order={step.Item.Order} " +
                               $"pos=({Store.CurrentPosition(step.Item).x:0.00},{Store.CurrentPosition(step.Item).z:0.00}) " +
                               $"zoneCount={Store.CountInZone(step.Destination)}");
 
-                // 原位动画（InPlace）：目标位置是**目标 zone 的第 Order 格**，不是当前 zone 的位置。
-                // 之前这里用 Store.CurrentPosition（当前 zone），于是牌「飞」到原地、看起来没动。
-                Vector3 to = step.InPlace
-                    ? Store.ZonePosition(ev.zone, step.Order)
+                // 终点：原位动画落在「目标 zone 的第 Order 格」，普通搬运落在新归属的格位。
+                // 落位后按目标 zone 的格位取终点（此时归属已更新，CurrentPosition 等价）。
+                Vector3 to = step.Order >= 0
+                    ? Store.ZonePosition(step.Destination, step.Order)
                     : Store.CurrentPosition(step.Item);
+
                 step.Item.LivePosition = to;
                 if (actor == null) continue;
+
+                step.From = from;
+                step.To = to;
+                step.Flip = ev.flip;
+
                 if (logTweens)
                     Debug.Log($"[Tween] {step.Item.Id} inPlace={step.InPlace} order={step.Order} " +
                               $"from=({from.x:0.00},{from.z:0.00}) to=({to.x:0.00},{to.z:0.00}) dur={ev.dur}");
-                RunTween(TweenPosition(actor, step.Item, from, to, ev));
+
+                var clip = ClipAt(step.Item, actor, ev);
+                clip.HasMove = true;
+                clip.From = from;
+                clip.To = to;
 
                 // 边移动边翻转：到终点恰好转到另一面。
-                if (ev.flip) RunTween(TweenFlip(actor, step.Item, ev));
+                if (ev.flip && actor.BackSprite != null)
+                {
+                    clip.HasFlip = true;
+                    clip.FlipFromYaw = step.Item.Flipped ? 180f : 0f;
+                    step.Item.Flipped = !step.Item.Flipped;   // 逻辑状态立即到终态
+                }
             }
 
             CloseGaps(moved, ev);
@@ -1080,11 +1254,16 @@ namespace BoardGameTutorial
         /// </summary>
         private void TriggerShuffle(CueAnimEvent ev)
         {
+            // 洗混也走片段：位移按 sin(πk) 起伏，牌堆只在原地抖动、不会摊开。
+            // 逐张错开一点，看起来才像在搓牌。
+            int i = 0;
             foreach (var actor in Resolve(ev))
             {
-                if (actor?.Go == null) continue;
-                RunTween(TutorialPrimitives.TweenShuffleInPlace(actor.Go.transform,
-                    Mathf.Max(ev.dur, 0.1f), EasingOr(ev)));
+                if (actor?.Go == null || actor.Item == null) continue;
+                var clip = ClipAt(actor.Item, actor, ev, i * 0.03f);
+                clip.HasShuffle = true;
+                clip.ShuffleAmp = 0.05f;
+                i++;
             }
         }
 

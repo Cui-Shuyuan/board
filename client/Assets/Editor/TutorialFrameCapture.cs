@@ -424,6 +424,55 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 逐帧出图：把一条 cue 的时间轴按固定步长走一遍，每步存一张 PNG。
+        /// 因为画面已经是「时间的函数」（Seek 采样片段），离屏也能看到完整动画，
+        /// 不需要 Unity 帧循环、也不需要人肉截图。
+        /// 用法：-executeMethod ...CaptureTimeline -captureCue &lt;id&gt; -captureFrom 0 -captureTo 8 -captureStep 0.15
+        /// </summary>
+        public static void CaptureTimeline()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = ArgValue("-captureCue", "setup.cards.002.1");
+            float from = float.Parse(ArgValue("-captureFrom", "0"));
+            float to = float.Parse(ArgValue("-captureTo", "8.5"));
+            float step = float.Parse(ArgValue("-captureStep", "0.15"));
+
+            string outDir = Path.Combine(Application.dataPath, "..", "CaptureOut", "timeline");
+            if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
+            Directory.CreateDirectory(outDir);
+
+            var go = new GameObject("TimelineHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            if (!anim.LoadCue(gameRoot, "full", cueId, false))
+            {
+                Debug.LogError($"[Timeline] LoadCue 失败: {cueId}");
+                EditorApplication.Exit(1);
+                return;
+            }
+
+            anim.EnsureCameraForCapture();
+
+            int n = 0;
+            for (float time = from; time <= to + 1e-4f; time += step)
+            {
+                anim.Seek(time);
+                var path = Path.Combine(outDir, $"t{time * 100:000}.png");
+                SaveFrame(path);
+                n++;
+            }
+            Debug.Log($"[Timeline] 已出 {n} 帧 → {outDir}");
+        }
+
+        private static string ArgValue(string name, string fallback)
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+                if (args[i] == name) return args[i + 1];
+            return fallback;
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&

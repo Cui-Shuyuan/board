@@ -102,3 +102,41 @@ metadata:
 必然漂移；后一种做法里牌桌只描述一次。
 **How to apply:** 做任何讲规动画前先确认三件事——牌桌（zone/模板/开局）写好了吗、
 这条 cue 的 flow 事实查到了吗、数据里有没有混进坐标或重复的语义。
+
+## 动画 = 时间的函数（2026-09 重构）
+
+**核心决定**：动画不靠「每帧推进一点」累积，而是 `Seek(t)` 直接采样算出画面。
+
+理由不是优雅，是**可验证性**：批处理环境（`-executeMethod`）没有帧循环，
+`Time.deltaTime` 恒为 0、`StartCoroutine` 的协程不会推进、`Time.captureDeltaTime`
+也无效。因此只要动画依赖帧推进，就**无法离屏验证**，只能靠人肉截图——
+这个盲区导致连续多轮「我这边通过、用户那边不对」。
+
+重构后：
+- 事件触发时，**逻辑状态立即到终态**（Store 是时间的阶跃函数）
+- 视觉过渡登记为 `Clip`，由 `SampleClips(t)` 采样：位置/翻转/缩放/透明/洗混全部如此
+- 暂停、跳转、倒放天然正确，不需要特判
+- `CaptureTimeline` 可按任意步长逐帧出图，离屏就能看到完整动画
+
+### 自检入口
+```
+Unity.exe -batchmode -projectPath <client> \
+  -executeMethod BoardGameTutorial.Editor.TutorialFrameCapture.CaptureTimeline \
+  -captureCue setup.cards.002.1 -captureFrom 4.0 -captureTo 7.6 -captureStep 0.2 \
+  -logFile <log>
+```
+输出到 `client/CaptureOut/timeline/t<毫秒>.png`。
+
+## 反复踩过的坑（都属「静默失败」）
+
+| 现象 | 真因 |
+|---|---|
+| 字段永远读不到 | `JsonUtility` 不支持 `int?`/`float?`，静默留 null |
+| move 从不执行 | `from` 写成字符串，而模型是 `List<string>`，静默丢弃 |
+| 牌堆里出现宝石 | `from`+`take` 按位置取件，盒子里宝石排在卡片前面；需用 `template` 筛选 |
+| 牌停在原地 | 补间终点取了「当前 zone」位置，而牌的归属还在盒子 |
+| 牌被后续事件拉回起点 | 只动画面、不记录格位；逻辑归属必须同步落到目标格 |
+| 牌堆看似正面朝上 | 停在牌堆上的市场牌未标记 `Flipped`，正面盖住了卡背 |
+
+**规律**：这些都不报错，只表现为「画面不对」。所以每遇到一种，
+都要在 `SelfTest` / 校验器里补一条对应断言。
