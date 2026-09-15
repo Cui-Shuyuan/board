@@ -47,8 +47,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": 0.022,
-        "dz": 0.022,
+        "dx": 0.016,
+        "dz": 0.016,
         "max_visible": 8
       }
     },
@@ -73,8 +73,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": 0.022,
-        "dz": 0.022,
+        "dx": 0.016,
+        "dz": 0.016,
         "max_visible": 8
       }
     },
@@ -99,8 +99,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": 0.022,
-        "dz": 0.022,
+        "dx": 0.016,
+        "dz": 0.016,
         "max_visible": 8
       }
     },
@@ -407,7 +407,8 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
-      "face_image": "media/card/一级发展卡_绿.jpg"
+      "face_image": "media/card/一级发展卡_绿.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg"
     },
     {
       "id": "market_card_2",
@@ -416,7 +417,8 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
-      "face_image": "media/card/二级发展卡_绿.jpg"
+      "face_image": "media/card/二级发展卡_绿.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg"
     },
     {
       "id": "market_card_3",
@@ -425,7 +427,8 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
-      "face_image": "media/card/三级发展卡_绿.jpg"
+      "face_image": "media/card/三级发展卡_绿.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg"
     }
   ],
   "anchors": [

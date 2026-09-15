@@ -18,6 +18,10 @@ namespace BoardGameTutorial
         public readonly float BaseAlpha;
         public readonly Color BaseColor;
 
+        /// <summary>正面/背面贴图。翻面时切换，配合绕本地 Y 轴旋转。</summary>
+        public Sprite FaceSprite;
+        public Sprite BackSprite;
+
         public Vector3 LivePosition;
         public Vector3 LiveScale;
         public float LiveRotation;

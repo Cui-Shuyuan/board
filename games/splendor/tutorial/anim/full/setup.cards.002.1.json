@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "设置 2.1 第四句：将这三类牌分别洗混后按顺序摆成一列；从每摞牌上方分别翻开四张牌，在一侧摆成一行。洗混对齐「洗混」(1.52~1.93)；翻牌对齐「翻开四张牌」(5.50~6.29)，每级四张依次到市场，一级在上、三级在下（3 行 × 4 列）。牌堆的暗牌留在原处，发出去的是扫描件的卡面（market_card_*）。",
+  "note": "设置 2.1 第四句：将这三类牌分别洗混后按顺序摆成一列；从每摞牌上方分别翻开四张牌，在一侧摆成一行。洗混对齐「洗混」(1.52~1.93)；翻牌对齐「翻开四张牌」(5.50~6.29)：每级四张从盒中出发、**边移动边翻转**，到市场时恰好翻成正面朝上；一级在上、三级在下（3 行 × 4 列）。牌堆的暗牌留在原处不动。",
   "events": [
     {
       "at": 1.55,
@@ -61,7 +61,8 @@
         "card_market"
       ],
       "zone": "card_market",
-      "easing": "easeOutCubic"
+      "easing": "easeOutCubic",
+      "flip": true
     },
     {
       "at": 5.45,
@@ -72,7 +73,8 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.22
+      "lead": 0.22,
+      "flip": true
     },
     {
       "at": 5.45,
@@ -83,7 +85,8 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.44
+      "lead": 0.44,
+      "flip": true
     },
     {
       "at": 5.45,
@@ -94,28 +97,8 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.66
-    },
-    {
-      "at": 6.3,
-      "dur": 0.42,
-      "action": "move",
-      "from": [
-        "card_market"
-      ],
-      "zone": "card_market",
-      "easing": "easeOutCubic"
-    },
-    {
-      "at": 6.3,
-      "dur": 0.42,
-      "action": "move",
-      "from": [
-        "card_market"
-      ],
-      "zone": "card_market",
-      "easing": "easeOutCubic",
-      "lead": 0.22
+      "lead": 0.66,
+      "flip": true
     },
     {
       "at": 6.3,
@@ -126,7 +109,7 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.44
+      "flip": true
     },
     {
       "at": 6.3,
@@ -137,17 +120,32 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.66
+      "lead": 0.22,
+      "flip": true
     },
     {
-      "at": 7.0,
+      "at": 6.3,
       "dur": 0.42,
       "action": "move",
       "from": [
         "card_market"
       ],
       "zone": "card_market",
-      "easing": "easeOutCubic"
+      "easing": "easeOutCubic",
+      "lead": 0.44,
+      "flip": true
+    },
+    {
+      "at": 6.3,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.66,
+      "flip": true
     },
     {
       "at": 7.0,
@@ -158,7 +156,7 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.22
+      "flip": true
     },
     {
       "at": 7.0,
@@ -169,7 +167,8 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.44
+      "lead": 0.22,
+      "flip": true
     },
     {
       "at": 7.0,
@@ -180,7 +179,20 @@
       ],
       "zone": "card_market",
       "easing": "easeOutCubic",
-      "lead": 0.66
+      "lead": 0.44,
+      "flip": true
+    },
+    {
+      "at": 7.0,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.66,
+      "flip": true
     },
     {
       "at": 7.6,

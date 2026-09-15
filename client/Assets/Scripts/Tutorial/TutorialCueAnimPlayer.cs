@@ -261,6 +261,16 @@ namespace BoardGameTutorial
                 var go = CreateSpriteObject("item:" + item.Id, item.Template, item.BaseColor);
                 var sr = go.GetComponent<SpriteRenderer>();
                 var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
+
+                // 正反两面都准备好：翻面时只换贴图，不重建对象。
+                actor.FaceSprite = sr.sprite;
+                var backPath = ResolveBackImagePath(item.Template);
+                if (backPath != null)
+                {
+                    var back = CardImageLoader.Load(backPath, item.Template.shape);
+                    if (back != null) actor.BackSprite = back;
+                }
+
                 item.Actor = actor;
                 actors[item.Id] = actor;
             }
@@ -345,6 +355,17 @@ namespace BoardGameTutorial
         /// <summary>
         /// 找到模板对应的扫描图。优先 face_image；其次按色板名的实物图；最后按等级卡背约定。
         /// </summary>
+        /// <summary>翻面用的另一面。模板写了 back_image 才有；否则不翻转。</summary>
+        private string ResolveBackImagePath(StageTemplate tpl)
+        {
+            if (tpl == null || string.IsNullOrEmpty(tpl.back_image) || string.IsNullOrEmpty(gameRootPath))
+                return null;
+            var path = Path.Combine(gameRootPath, tpl.back_image);
+            if (File.Exists(path)) return path;
+            Debug.LogWarning($"[TutorialCueAnim] back_image 不存在: {path}");
+            return null;
+        }
+
         private string ResolveImagePath(StageTemplate tpl)
         {
             if (string.IsNullOrEmpty(gameRootPath)) return null;
@@ -466,6 +487,15 @@ namespace BoardGameTutorial
             }
         }
 
+        /// <summary>按「是否已翻开」刷新贴图。有背面贴图且未翻开时显示背面。</summary>
+        private static void RefreshFace(CueAnimActor actor)
+        {
+            if (actor?.Renderer == null || actor.BackSprite == null) return;
+            actor.Renderer.sprite = actor.Item != null && actor.Item.Flipped
+                ? actor.BackSprite
+                : actor.FaceSprite;
+        }
+
         /// <summary>把每个组件瞬间摆到它当前 (zone, slot) 的位置 —— 这是状态的可视化。</summary>
         private void SyncActorsToStore()
         {
@@ -483,6 +513,7 @@ namespace BoardGameTutorial
                 item.Actor.LiveRotation = item.Template.rotation;
                 item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
                 item.Actor.ApplyColor();
+                RefreshFace(item.Actor);
             }
         }
 
@@ -619,6 +650,7 @@ namespace BoardGameTutorial
                 item.Actor.Go.transform.localScale = item.Actor.BaseScale;
                 item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
                 item.Actor.ApplyColor();
+                RefreshFace(item.Actor);
             }
         }
 
@@ -801,6 +833,9 @@ namespace BoardGameTutorial
                 step.Item.LivePosition = to;
                 if (actor == null) continue;
                 RunTween(TweenPosition(actor, step.Item, from, to, ev));
+
+                // 边移动边翻转：到终点恰好转到另一面。
+                if (ev.flip) RunTween(TweenFlip(actor, step.Item, ev));
             }
 
             CloseGaps(moved, ev);
@@ -925,6 +960,41 @@ namespace BoardGameTutorial
             yield return TutorialPrimitives.TweenPosition(actor.Go.transform, from, to, ev.dur, EasingOr(ev));
             actor.LivePosition = to;
             item.LivePosition = to;
+        }
+
+        /// <summary>
+        /// 边移动边翻转：与位移并行，到终点恰好转到另一面。
+        ///
+        /// 轴向取 actor 的**本地 Y 轴**——actor 已绕 X 转 90° 平躺，本地 Y 正是屏幕竖直方向，
+        /// 绕它转 180° 就是牌面水平翻过去（途中 90° 时收成一条线）。
+        /// 用 Mathf.Cos 判断当前朝哪边，决定显示正面还是背面贴图。
+        /// </summary>
+        private IEnumerator TweenFlip(CueAnimActor actor, ZoneItem item, CueAnimEvent ev)
+        {
+            if (actor?.Go == null || actor.BackSprite == null) yield break;
+            if (ev.lead > 0f) yield return WaitScaled(ev.lead);
+
+            float dur = Mathf.Max(ev.dur, 0.01f);
+            float fromYaw = item.Flipped ? 180f : 0f;
+            float toYaw = fromYaw + 180f;
+
+            float t = 0f;
+            while (t < dur)
+            {
+                t = Mathf.Min(t + Time.deltaTime, dur);
+                float k = Easing.Evaluate(EasingOr(ev), t / dur);
+                float yaw = Mathf.LerpUnclamped(fromYaw, toYaw, k);
+                actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+
+                // 以 90°/270° 为界切贴图：前半看到原面，后半看到另一面。
+                bool showingBack = Mathf.Cos(yaw * Mathf.Deg2Rad) < 0f;
+                actor.Renderer.sprite = showingBack ? actor.BackSprite : actor.FaceSprite;
+                yield return null;
+            }
+
+            actor.Go.transform.localRotation = Quaternion.identity;
+            item.Flipped = !item.Flipped;
+            actor.Renderer.sprite = item.Flipped ? actor.BackSprite : actor.FaceSprite;
         }
 
         private IEnumerator TweenRotation(CueAnimActor actor, float from, float to, CueAnimEvent ev)

@@ -29,6 +29,9 @@ namespace BoardGameTutorial
 
         public CueAnimActor Actor;     // 渲染实例
 
+        /// <summary>是否已翻到另一面（正面朝上的卡牌为 true）。</summary>
+        public bool Flipped;
+
         public Vector3 LivePosition;
         public Vector3 LiveScale;
         public float LiveRotation;
@@ -138,6 +141,13 @@ namespace BoardGameTutorial
                 created.Add(item);
             }
             return created;
+        }
+
+        /// <summary>zone 里当前有多少件（给叠压居中用）。</summary>
+        public int CountInZone(string zoneId)
+        {
+            var list = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var l) ? l : null);
+            return list?.Count ?? 0;
         }
 
         private int NextOrder(string zoneId)
@@ -298,10 +308,16 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                int visible = display.max_visible > 0 ? display.max_visible : 8;
+                // 「一堆」是一种**表现**，卡牌和 token 复用同一条规则：
+                // 最多画 max_visible 层，每层只错开一点点 —— 密实感来自错开量小，而不是画满全部。
+                // 40 张的牌堆和 20 枚的宝石堆，画七八层就已经"是那个意思"了。
+                // 整摞按可见层数居中：越深的层越往左上偏，最上面一件落在 zone 正中心。
+                int total = Mathf.Max(1, CountInZone(zoneId));
+                int visible = Mathf.Clamp(total, 1, display.max_visible > 0 ? display.max_visible : 8);
                 int layer = Mathf.Min(slot, visible - 1);
-                x += layer * display.dx;
-                z += layer * display.dz;
+                float depth = (visible - 1) * 0.5f;
+                x += layer * display.dx - depth * display.dx;
+                z += layer * display.dz - depth * display.dz;
                 return new Vector3(x, 0f, z);
             }
 

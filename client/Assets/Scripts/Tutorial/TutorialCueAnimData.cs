@@ -113,7 +113,11 @@ namespace BoardGameTutorial
         public float dx = 0.03f;
         public float dz = 0.03f;
 
-        /// <summary>stack 专用：最多画出几层（再多的只体现在计数上，不占位）。</summary>
+        /// <summary>
+        /// 最多画几层。七八层就足以表达「一大堆」，不必按实际数量画满
+        /// （牌堆 40 张、宝石堆 7~20 枚都适用同一条规则）。
+        /// 密实感由 dx/dz 决定：每层错开多少，越小越密。
+        /// </summary>
         public int max_visible = 8;
     }
 
@@ -155,6 +159,9 @@ namespace BoardGameTutorial
 
         /// <summary>真实扫描图（相对 games/{game}，例如 media/card/一级发展卡_绿.jpg）。找不到则回退到 shape 的程序化图形。</summary>
         public string face_image;
+
+        /// <summary>翻转用的另一面（相对 games/{game}）。有它才能「边移动边翻转」。</summary>
+        public string back_image;
         public float world_size = 0.10f;
 
         /// <summary>非正方形件（区域底板）的显式宽高；留空则由 world_size + 贴图比例决定。</summary>
@@ -273,6 +280,9 @@ namespace BoardGameTutorial
         public int take;
 
         public float stagger;
+
+        /// <summary>move 时顺便翻面：到终点恰好转到另一面（用于「翻开四张牌」）。</summary>
+        public bool flip;
 
         // ---- rotate / flip ----
         public float angle;
