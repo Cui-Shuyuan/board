@@ -16,7 +16,7 @@ using UnityEngine;
 
 namespace BoardGameTutorial
 {
-    public class TutorialCueAnimPlayer : MonoBehaviour
+    public partial class TutorialCueAnimPlayer : MonoBehaviour
     {
         private const float GemPpu = 100f;
 
@@ -44,8 +44,11 @@ namespace BoardGameTutorial
         private Camera animCamera;
 
         private readonly Dictionary<string, CueAnimActor> actors = new Dictionary<string, CueAnimActor>();
-        /// <summary>区域底板：zone id → 代表它的装饰件 id。zone 级 highlight 打到这里。</summary>
+        /// <summary>区域底板：zone id → 代表它的装饰件 id（静态底板，不带高亮）。</summary>
         private readonly Dictionary<string, List<string>> zonePanels = new Dictionary<string, List<string>>();
+
+        /// <summary>zone id → 该 zone 专属的高亮底板（每个 zone 一块，绝不共用）。</summary>
+        private readonly Dictionary<string, CueAnimActor> zoneGlow = new Dictionary<string, CueAnimActor>();
 
         private struct PendingScale
         {
@@ -397,6 +400,42 @@ namespace BoardGameTutorial
             }
         }
 
+        /// <summary>
+        /// 外部直接给定动画时间（离线出帧 / 帧截图用，不依赖音频）。
+        /// 与 Seek 的区别只是语义：Seek 由音频时钟驱动，这里由调用方驱动。
+        /// </summary>
+        public void DriveAnimation(float time)
+        {
+            Seek(time);
+        }
+
+        /// <summary>
+        /// 把这条 cue 推进到指定时刻的**终态**，不播协程、不等音频。
+        ///
+        /// 两个用途：
+        ///   1. 离线出帧（batchmode 里没有音频设备，不能靠音频时钟）；
+        ///   2. 将来编译器离线计算「某个时刻的完整画面」。
+        /// 与 Seek 的区别：Seek 触发协程做插值（表现为动画），这里直接落位（表现为状态）。
+        /// </summary>
+        public void SnapTo(float time)
+        {
+            if (cueDoc?.events == null) return;
+
+            var target = new List<CueAnimEvent>();
+            foreach (var ev in cueDoc.events)
+                if (ev != null && ev.at <= time + 1e-4f) target.Add(ev);
+
+            StopAnimations();
+            RestoreSnapshot(entrySnapshot);
+
+            // 需要按原始顺序逐条落位，因为 move 依赖前一条 move 之后的顺序（take 的取件顺序）。
+            foreach (var ev in target) TriggerFinal(ev);
+
+            clock = time;
+            nextIndex = cueDoc.events.Count;
+            pendingScales.Clear();
+        }
+
         public void Seek(float time)
         {
             if (cueDoc == null) return;
@@ -498,6 +537,7 @@ namespace BoardGameTutorial
         {
             actors.Clear();
             zonePanels.Clear();
+            zoneGlow.Clear();
             if (animRoot != null)
             {
                 Object.DestroyImmediate(animRoot);
@@ -739,62 +779,6 @@ namespace BoardGameTutorial
         /// zone 的情况只脉冲该区域的装饰底板（panel/dot），不脉冲里面每一枚宝石，
         /// 否则「高亮供应区」会变成整堆宝石一起闪。
         /// </summary>
-        private void TriggerHighlight(CueAnimEvent ev)
-        {
-            foreach (var actor in ResolveHighlight(ev))
-            {
-                if (actor.Renderer == null) continue;
-
-                float peak = ev.peak_alpha.HasValue ? Mathf.Clamp01(ev.peak_alpha.Value) : 0.6f;
-                float grow = ev.grow.HasValue && ev.grow.Value > 0f ? ev.grow.Value : 1f;
-                float dur = Mathf.Max(ev.dur, 0.05f);
-
-                Color from = actor.LiveColor;
-                from.a = 0f;
-                var to = new Color(from.r, from.g, from.b, peak);
-                Vector3 toScale = actor.BaseScale * grow;
-
-                actor.Renderer.enabled = true;
-                actor.Renderer.color = from;
-                actor.Go.transform.localScale = Vector3.zero;
-
-                RunTween(PulseRoutine(actor, from, to, Vector3.zero, toScale, dur, ev));
-            }
-        }
-
-        private IEnumerator PulseRoutine(CueAnimActor actor, Color from, Color to,
-            Vector3 fromScale, Vector3 toScale, float dur, CueAnimEvent ev)
-        {
-            if (ev.lead > 0f) yield return WaitScaled(ev.lead);
-
-            float t = 0f;
-            while (t < dur)
-            {
-                t = Mathf.Min(t + Time.unscaledDeltaTime, dur);
-                float k = Easing.Evaluate(EasingOr(ev), t / dur);
-                actor.Renderer.color = Color.LerpUnclamped(from, to, k);
-                actor.Go.transform.localScale = Vector3.LerpUnclamped(fromScale, toScale, k);
-                yield return null;
-            }
-
-            // 装饰底板的高亮是「提亮后回落」，不是消失；普通件的高亮则收起。
-            if (actor.Item != null && actor.Item.Template != null && IsDecoration(actor.Item.Template))
-            {
-                actor.Renderer.color = actor.BaseColor;
-                actor.Go.transform.localScale = actor.BaseScale;
-            }
-            else
-            {
-                actor.Renderer.enabled = false;
-                actor.Go.transform.localScale = Vector3.zero;
-            }
-        }
-
-        private static bool IsDecoration(StageTemplate tpl)
-        {
-            return tpl.shape == "panel" || tpl.shape == "dot";
-        }
-
         private void TriggerShuffle(CueAnimEvent ev)
         {
             var list = Resolve(ev);
@@ -878,6 +862,12 @@ namespace BoardGameTutorial
             }
         }
 
+        /// <summary>装饰件（区域底板/高亮层）不参与原地缩放脉冲。</summary>
+        private static bool IsDecoration(StageTemplate tpl)
+        {
+            return tpl != null && (tpl.shape == "panel" || tpl.shape == "dot");
+        }
+
         private static string EasingOr(CueAnimEvent ev)
         {
             return string.IsNullOrEmpty(ev.easing) ? Easing.Default : ev.easing;
@@ -895,30 +885,6 @@ namespace BoardGameTutorial
         {
             if (string.IsNullOrEmpty(id)) return null;
             return actors.TryGetValue(id, out var actor) ? actor : null;
-        }
-
-        /// <summary>highlight 的目标解析：zone → 该区域的装饰底板；显式 target → 那一件。</summary>
-        private List<CueAnimActor> ResolveHighlight(CueAnimEvent ev)
-        {
-            var result = new List<CueAnimActor>();
-            if (ev == null) return result;
-
-            if (!string.IsNullOrEmpty(ev.target))
-            {
-                var actor = FindActor(ev.target);
-                if (actor != null) result.Add(actor);
-                return result;
-            }
-
-            // zone 高亮：打到代表该 zone 的装饰底板，而不是区域里的每一件组件。
-            if (!string.IsNullOrEmpty(ev.zone) && zonePanels.TryGetValue(ev.zone, out var panelIds))
-            {
-                foreach (var panelId in panelIds)
-                    if (actors.TryGetValue(panelId, out var panel)) result.Add(panel);
-                if (result.Count > 0) return result;
-            }
-
-            return Resolve(ev);
         }
 
         private List<CueAnimActor> Resolve(CueAnimEvent ev)
@@ -981,9 +947,18 @@ namespace BoardGameTutorial
             float minX = -1.5f, maxX = 1.5f, minZ = -1f, maxZ = 1.4f;
             bool any = false;
 
+            // extent 是取景的唯一依据；没有时才退回按 zone 布局推算（容易因 cols 写错而失准）。
+            var extent = stage?.board?.extent;
+            if (extent != null && extent.max_x > extent.min_x && extent.max_z > extent.min_z)
+            {
+                minX = extent.min_x; maxX = extent.max_x;
+                minZ = extent.min_z; maxZ = extent.max_z;
+                any = true;
+            }
+
             foreach (var zone in Store.Zones)
             {
-                if (zone.role == "offstage") continue;
+                if (any || zone.role == "offstage") continue;
                 var layout = zone.layout ?? new StageLayout();
                 int capacity = zone.capacity > 0 ? zone.capacity : 1;
                 int cols = Mathf.Max(1, layout.cols);
@@ -1012,7 +987,11 @@ namespace BoardGameTutorial
 
             float pitchRad = pitch * Mathf.Deg2Rad;
             float sinP = Mathf.Max(0.15f, Mathf.Sin(pitchRad));
-            float aspect = Mathf.Max(0.5f, (float)Screen.width / Mathf.Max(1, Screen.height));
+            float aspect = cameraAspectOverride > 0f
+                ? cameraAspectOverride
+                : (stage?.board != null && stage.board.aspect > 0f
+                    ? stage.board.aspect
+                    : Mathf.Max(0.5f, (float)Screen.width / Mathf.Max(1, Screen.height)));
 
             float orthoSize = Mathf.Max(halfH2 * sinP, halfW2 / aspect);
             orthoSize = Mathf.Max(orthoSize, 0.6f);
@@ -1025,7 +1004,24 @@ namespace BoardGameTutorial
 
             CameraOrthoSize = orthoSize;
             CameraGroundHalfWidth = orthoSize * aspect;
+
+            if (logCameraFit)
+            {
+                Debug.Log($"[CueAnim.FitCamera] bounds x[{minX:0.00},{maxX:0.00}] z[{minZ:0.00},{maxZ:0.00}] " +
+                          $"halfW={halfW2:0.00} halfH={halfH2:0.00} orthoSize={orthoSize:0.00} " +
+                          $"aspect={aspect:0.00} pitch={pitch:0} eye=({eye.x:0.00},{eye.y:0.00},{eye.z:0.00})");
+            }
         }
+
+        /// <summary>调试开关：打印取景计算过程（离线出帧诊断用）。</summary>
+        public bool logCameraFit;
+
+        /// <summary>
+        /// 取景使用的宽高比。&lt;=0 表示用当前屏幕（正常运行）。
+        /// 离线出帧必须显式指定，否则 batchmode 的 4:3 GameView 会和 16:9 渲染目标不一致，
+        /// 导致画面被裁掉右边和下边。
+        /// </summary>
+        public float cameraAspectOverride;
 
         public bool WorldToScreen(Vector3 world, out Vector3 screen)
         {

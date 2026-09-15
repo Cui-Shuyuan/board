@@ -1,0 +1,193 @@
+// BoardGameTutorial
+// 高亮：介绍到谁，谁就高亮。
+//
+// 约定（2026-09 用户裁决）：
+//   高亮的目标永远是**一个具体对象**，不是「某片区域」。之前用 zone 当高亮目标，
+//   结果多个 zone 共用同一块区域底板，一个事件被广播到 6 个地方，整屏乱闪。
+//
+// 因此：
+//   - target = 某个组件实例（gem#1 / card_back_1#2 / anchor id）→ 原地强调该组件；
+//   - zone   = 要强调「这一片」时，只能用该 zone 自己的 glow（stage 里的 highlight 底板），
+//              没有就现场建一块只属于它的，绝不回退到共用底板；
+//   - 两者都没写 → 拒绝执行并报错，不猜。
+//
+// 视觉手法只有两种，都由数据驱动：
+//   Pulse  = 缩放到 grow 再回落（原地呼吸，不改变最终状态）
+//   Glow   = 底板透明度升到 peak 再回落
+using System.Collections;
+using UnityEngine;
+
+namespace BoardGameTutorial
+{
+    public partial class TutorialCueAnimPlayer
+    {
+        private void TriggerHighlight(CueAnimEvent ev)
+        {
+            if (string.IsNullOrEmpty(ev.target) && string.IsNullOrEmpty(ev.zone))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] highlight 未指定 target 或 zone（cue {CueId}），已忽略");
+                return;
+            }
+
+            float peak = ev.peak_alpha.HasValue ? Mathf.Clamp01(ev.peak_alpha.Value) : 0.55f;
+            float grow = ev.grow.HasValue && ev.grow.Value > 0f ? ev.grow.Value : 1.14f;
+            float dur = Mathf.Max(ev.dur, 0.05f);
+            float lead = Mathf.Max(0f, ev.lead);
+            string easing = EasingOr(ev);
+
+            if (!string.IsNullOrEmpty(ev.target))
+            {
+                var actor = FindActor(ev.target);
+                if (actor == null)
+                {
+                    Debug.LogWarning($"[TutorialCueAnim] highlight target '{ev.target}' 不存在（cue {CueId}）");
+                    return;
+                }
+                PulseActor(actor, grow, dur, lead, easing);
+                return;
+            }
+
+            var glowZone = Store.GetZone(ev.zone);
+            if (glowZone == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] highlight zone '{ev.zone}' 不存在（cue {CueId}）");
+                return;
+            }
+
+            var glow = GlowFor(ev.zone);
+            if (glow == null) return;
+            PulseGlow(glow, ev.zone, peak, dur, lead, easing);
+        }
+
+        /// <summary>原地强调一个组件：缩放到 grow 再回到基准，不改变它的最终状态。</summary>
+        private void PulseActor(CueAnimActor actor, float grow, float duration, float lead, string easing)
+        {
+            if (actor?.Go == null || actor.Renderer == null) return;
+            if (actor.Item != null && actor.Item.Template != null && IsDecoration(actor.Item.Template)) return;
+
+            RunTween(ScalePulseRoutine(actor, actor.BaseScale, grow, duration, lead, easing));
+        }
+
+        private IEnumerator ScalePulseRoutine(CueAnimActor actor, Vector3 baseScale, float grow, float duration, float lead, string easing)
+        {
+            if (lead > 0f) yield return WaitScaled(lead);
+
+            float t = 0f;
+            while (t < duration)
+            {
+                t = Mathf.Min(t + Time.unscaledDeltaTime, duration);
+                // 0 → 1 → 0：先放大再回到原位，峰值在中点。
+                float envelope = Mathf.Sin(Easing.Evaluate(easing, t / duration) * Mathf.PI);
+                actor.Go.transform.localScale = baseScale * (1f + (grow - 1f) * envelope);
+                yield return null;
+            }
+
+            actor.Go.transform.localScale = baseScale;
+            actor.LiveScale = baseScale;
+        }
+
+        /// <summary>强调一整片区域：只对该 zone 专属的 glow 底板做透明度呼吸。</summary>
+        private void PulseGlow(CueAnimActor glow, string zoneId, float peak, float duration, float lead, string easing)
+        {
+            if (glow?.Renderer == null || glow.Go == null) return;
+            RunTween(GlowPulseRoutine(glow, peak, duration, lead, easing));
+        }
+
+        private IEnumerator GlowPulseRoutine(CueAnimActor glow, float peak, float duration, float lead, string easing)
+        {
+            if (lead > 0f) yield return WaitScaled(lead);
+
+            var baseColor = glow.BaseColor;
+            float baseAlpha = glow.BaseAlpha;
+            float baseScale = glow.Go.transform.localScale.x;
+
+            glow.Renderer.enabled = true;
+            glow.Go.transform.localScale = new Vector3(baseScale * 1.06f, baseScale * 1.06f, 1f);
+
+            float t = 0f;
+            while (t < duration)
+            {
+                t = Mathf.Min(t + Time.unscaledDeltaTime, duration);
+                float envelope = Mathf.Sin(Easing.Evaluate(easing, t / duration) * Mathf.PI);
+                var c = baseColor;
+                c.a = Mathf.Lerp(baseAlpha, peak, envelope);
+                glow.Renderer.color = c;
+                yield return null;
+            }
+
+            var restored = baseColor;
+            restored.a = baseAlpha;
+            glow.Renderer.color = restored;
+            glow.Go.transform.localScale = new Vector3(baseScale, baseScale, 1f);
+            glow.Renderer.enabled = baseAlpha > 0.01f;
+        }
+
+        /// <summary>
+        /// 取该 zone 专属的高亮底板：优先 stage 里显式声明的 highlight 模板锚点；
+        /// 没声明就现场建一块只属于这个 zone 的（覆盖该 zone 的范围），
+        /// **绝不**复用到别处，避免一个事件点亮一片。
+        /// </summary>
+        private CueAnimActor GlowFor(string zoneId)
+        {
+            if (zoneGlow.TryGetValue(zoneId, out var existing)) return existing;
+
+            var zone = Store.GetZone(zoneId);
+            if (zone == null) return null;
+
+            var tpl = Store.GetTemplate("glow_zone");
+            if (tpl == null)
+            {
+                Debug.LogWarning("[TutorialCueAnim] stage 缺少 glow_zone 模板，无法高亮区域");
+                return null;
+            }
+
+            // 尺寸按该 zone 的实际跨度算，保证高亮只覆盖这一片。
+            // row 是单行：长度只由 capacity × x_step 决定（cols 对 row 无效）。
+            float width, height;
+            var layout = zone.layout ?? new StageLayout();
+            if (layout.type == "row")
+            {
+                width = Mathf.Max(0.30f, (Mathf.Max(1, zone.capacity) - 1) * layout.x_step + 0.40f);
+                height = 0.40f;
+            }
+            else
+            {
+                int cols = Mathf.Max(1, layout.cols);
+                int rows = Mathf.CeilToInt(Mathf.Max(1, zone.capacity) / (float)cols);
+                width = Mathf.Max(0.30f, (cols - 1) * layout.x_step + 0.40f);
+                height = Mathf.Max(0.30f, (rows - 1) * layout.z_step + 0.40f);
+            }
+
+            var local = new StageTemplate
+            {
+                id = "glow_zone",
+                shape = tpl.shape,
+                palette = string.IsNullOrEmpty(zone.palette) ? tpl.palette : zone.palette,
+                width = width,
+                height = height,
+                alpha = 0.0f,
+                sorting_order = -19,
+                highlight = true,
+            };
+
+            var go = CreateSpriteObject("glow:" + zoneId, local, Palette.Resolve(local.palette));
+            go.transform.localPosition = new Vector3(zone.center.x, 0.004f, zone.center.z);
+
+            var sr = go.GetComponent<SpriteRenderer>();
+            var item = new ZoneItem
+            {
+                Id = "glow:" + zoneId,
+                Template = local,
+                BaseColor = Palette.Resolve(local.palette),
+                ZoneId = zoneId,
+                LiveAlpha = 0f,
+                LivePosition = go.transform.localPosition,
+                LiveScale = go.transform.localScale,
+            };
+            var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
+            actor.Renderer.enabled = false;
+            zoneGlow[zoneId] = actor;
+            return actor;
+        }
+    }
+}

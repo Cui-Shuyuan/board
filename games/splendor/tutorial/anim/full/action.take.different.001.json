@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "action.take.different.001",
   "stage": "_stage/splendor.table",
-  "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。宝石供应堆在画面上按颜色分成五堆，所以写三条 zone 移动。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。动画 3.35~4.62s，音频 5.28s。",
+  "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。做法：介绍到哪一枚就高亮哪一枚（不是整片区域），然后依次搬到持有区；最后高亮一次持有区。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。",
 
   "start": {
     "set": [
@@ -18,11 +18,14 @@
   },
 
   "events": [
-    { "at": 3.35, "dur": 0.55, "action": "move", "from": "gem_supply_diamond",  "zone": "player_holding", "easing": "easeInOutCubic" },
-    { "at": 3.35, "dur": 0.55, "action": "move", "from": "gem_supply_sapphire", "zone": "player_holding", "easing": "easeInOutCubic", "lead": 0.25 },
-    { "at": 3.35, "dur": 0.55, "action": "move", "from": "gem_supply_ruby",     "zone": "player_holding", "easing": "easeInOutCubic", "lead": 0.50 },
+    { "at": 0.30, "dur": 0.35, "action": "highlight", "target": "gem#1",  "grow": 1.20, "easing": "easeInOutCubic" },
+    { "at": 0.55, "dur": 0.35, "action": "highlight", "target": "gem#8",  "grow": 1.20, "easing": "easeInOutCubic" },
+    { "at": 0.80, "dur": 0.35, "action": "highlight", "target": "gem#15", "grow": 1.20, "easing": "easeInOutCubic" },
 
-    { "at": 4.10, "dur": 0.45, "action": "highlight", "zone": "player_holding", "peak_alpha": 0.75, "grow": 1.0, "easing": "easeOutCubic" },
-    { "at": 4.40, "dur": 0.22, "action": "scale", "zone": "player_holding", "scale_mode": "by", "scale": 1.30, "stagger": 0.10, "easing": "easeOutCubic" }
+    { "at": 3.35, "dur": 0.50, "action": "move", "from": "gem_supply_diamond",  "zone": "player_holding", "easing": "easeInOutCubic" },
+    { "at": 3.35, "dur": 0.50, "action": "move", "from": "gem_supply_sapphire", "zone": "player_holding", "easing": "easeInOutCubic", "lead": 0.25 },
+    { "at": 3.35, "dur": 0.50, "action": "move", "from": "gem_supply_ruby",     "zone": "player_holding", "easing": "easeInOutCubic", "lead": 0.50 },
+
+    { "at": 4.10, "dur": 0.50, "action": "highlight", "zone": "player_holding", "peak_alpha": 0.65, "easing": "easeInOutCubic" }
   ]
 }

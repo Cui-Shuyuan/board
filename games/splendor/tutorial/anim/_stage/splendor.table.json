@@ -2,11 +2,18 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。开局只有三摞发展卡在桌上，宝石与贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。cue 数据只写 zone 之间的移动，不写坐标；要改桌面布局只改这个文件。卡面用实物扫描 media/card/（不进 Git）：一级卡背已有，二三级卡背缺失时自动回退为等级色程序化卡背。",
+  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。board.extent 是相机取景的唯一依据（不要从 zone 布局反推，layout.cols 写错一次整个取景就失准）。开局只有三摞发展卡在桌上，宝石与贵族还在游戏盒里（zone=offstage）。高亮目标是具体组件；强调一整片区域时按该 zone 的 palette 现场生成专属高亮底板。卡面用实物扫描 media/card/（不进 Git）。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
-    "ortho_scale": 1.2
+    "ortho_scale": 1.06,
+    "aspect": 1.7778,
+    "extent": {
+      "min_x": -2.32,
+      "max_x": 1.03,
+      "min_z": -2.27,
+      "max_z": 2.0
+    }
   },
   "zones": [
     {
@@ -23,8 +30,8 @@
       "id": "deck_level_1",
       "label": "一级发展卡牌堆",
       "center": {
-        "x": -2.3,
-        "z": 1.1
+        "x": -2.05,
+        "z": 1.02
       },
       "layout": {
         "type": "pile",
@@ -32,13 +39,14 @@
         "x_step": 0.01,
         "z_step": 0.01
       },
-      "capacity": 1
+      "capacity": 1,
+      "palette": "accent_green"
     },
     {
       "id": "deck_level_2",
       "label": "二级发展卡牌堆",
       "center": {
-        "x": -2.3,
+        "x": -2.05,
         "z": 0.1
       },
       "layout": {
@@ -47,14 +55,15 @@
         "x_step": 0.01,
         "z_step": 0.01
       },
-      "capacity": 1
+      "capacity": 1,
+      "palette": "accent_yellow"
     },
     {
       "id": "deck_level_3",
       "label": "三级发展卡牌堆",
       "center": {
-        "x": -2.3,
-        "z": -0.9
+        "x": -2.05,
+        "z": -0.82
       },
       "layout": {
         "type": "pile",
@@ -62,43 +71,47 @@
         "x_step": 0.01,
         "z_step": 0.01
       },
-      "capacity": 1
+      "capacity": 1,
+      "palette": "accent_blue"
     },
     {
       "id": "card_market",
       "label": "发展卡牌市场",
       "center": {
-        "x": -0.85,
+        "x": -0.7,
         "z": 0.1
       },
       "layout": {
         "type": "grid",
         "cols": 4,
         "x_step": 0.8,
-        "z_step": 1.0
+        "z_step": 0.86,
+        "capacity": 12
       },
-      "capacity": 12
+      "capacity": 12,
+      "palette": "panel_market"
     },
     {
       "id": "noble_market",
       "label": "贵族供应堆",
       "center": {
-        "x": -0.85,
-        "z": 1.85
+        "x": -0.7,
+        "z": 1.68
       },
       "layout": {
         "type": "row",
         "x_step": 0.58,
-        "z_step": 0.58
+        "z_step": 0
       },
-      "capacity": 5
+      "capacity": 5,
+      "palette": "panel_market"
     },
     {
       "id": "gem_supply_diamond",
       "label": "钻石供应堆",
       "center": {
         "x": -0.7,
-        "z": -0.95
+        "z": -1.0
       },
       "layout": {
         "type": "pile",
@@ -106,14 +119,15 @@
         "x_step": 0.075,
         "z_step": 0.075
       },
-      "capacity": 7
+      "capacity": 7,
+      "palette": "panel_supply"
     },
     {
       "id": "gem_supply_sapphire",
       "label": "蓝宝石供应堆",
       "center": {
         "x": 0.0,
-        "z": -0.95
+        "z": -1.0
       },
       "layout": {
         "type": "pile",
@@ -121,14 +135,15 @@
         "x_step": 0.075,
         "z_step": 0.075
       },
-      "capacity": 7
+      "capacity": 7,
+      "palette": "panel_supply"
     },
     {
       "id": "gem_supply_ruby",
       "label": "红宝石供应堆",
       "center": {
         "x": 0.7,
-        "z": -0.95
+        "z": -1.0
       },
       "layout": {
         "type": "pile",
@@ -136,14 +151,15 @@
         "x_step": 0.075,
         "z_step": 0.075
       },
-      "capacity": 7
+      "capacity": 7,
+      "palette": "panel_supply"
     },
     {
       "id": "gem_supply_emerald",
       "label": "翡翠供应堆",
       "center": {
         "x": -0.7,
-        "z": -1.3
+        "z": -1.34
       },
       "layout": {
         "type": "pile",
@@ -151,14 +167,15 @@
         "x_step": 0.075,
         "z_step": 0.075
       },
-      "capacity": 7
+      "capacity": 7,
+      "palette": "panel_supply"
     },
     {
       "id": "gem_supply_onyx",
       "label": "缟玛瑙供应堆",
       "center": {
         "x": 0.0,
-        "z": -1.3
+        "z": -1.34
       },
       "layout": {
         "type": "pile",
@@ -166,14 +183,15 @@
         "x_step": 0.075,
         "z_step": 0.075
       },
-      "capacity": 7
+      "capacity": 7,
+      "palette": "panel_supply"
     },
     {
       "id": "gold_supply",
       "label": "黄金供应堆",
       "center": {
         "x": 0.7,
-        "z": -1.3
+        "z": -1.34
       },
       "layout": {
         "type": "pile",
@@ -181,21 +199,23 @@
         "x_step": 0.075,
         "z_step": 0.075
       },
-      "capacity": 5
+      "capacity": 5,
+      "palette": "panel_supply"
     },
     {
       "id": "player_holding",
       "label": "玩家持有区",
       "center": {
-        "x": -0.85,
-        "z": -2.15
+        "x": -0.7,
+        "z": -1.95
       },
       "layout": {
         "type": "row",
         "x_step": 0.16,
-        "z_step": 0.16
+        "z_step": 0
       },
-      "capacity": 10
+      "capacity": 10,
+      "palette": "panel_player"
     }
   ],
   "templates": [
@@ -244,7 +264,7 @@
       "id": "board_market",
       "shape": "panel",
       "palette": "panel_market",
-      "width": 3.35,
+      "width": 2.85,
       "height": 2.75,
       "alpha": 0.16,
       "sorting_order": -20
@@ -254,7 +274,7 @@
       "shape": "panel",
       "palette": "panel_supply",
       "width": 1.9,
-      "height": 0.9,
+      "height": 0.95,
       "alpha": 0.2,
       "sorting_order": -20
     },
@@ -268,33 +288,13 @@
       "sorting_order": -20
     },
     {
-      "id": "glow_supply",
+      "id": "glow_zone",
       "shape": "panel",
-      "palette": "panel_supply",
-      "width": 1.9,
-      "height": 0.9,
-      "alpha": 0.45,
-      "sorting_order": -18,
-      "highlight": true
-    },
-    {
-      "id": "glow_player",
-      "shape": "panel",
-      "palette": "panel_player",
-      "width": 1.3,
-      "height": 0.48,
-      "alpha": 0.65,
-      "sorting_order": -18,
-      "highlight": true
-    },
-    {
-      "id": "glow_market",
-      "shape": "panel",
-      "palette": "panel_market",
-      "width": 3.35,
-      "height": 2.75,
-      "alpha": 0.45,
-      "sorting_order": -18,
+      "palette": "panel_neutral",
+      "width": 0.5,
+      "height": 0.5,
+      "alpha": 0.0,
+      "sorting_order": -19,
       "highlight": true
     }
   ],
@@ -302,7 +302,7 @@
     {
       "id": "board_market_area",
       "template": "board_market",
-      "x": -0.85,
+      "x": -0.7,
       "z": 0.1,
       "zones": [
         "card_market",
@@ -316,7 +316,7 @@
       "id": "board_supply_area",
       "template": "board_supply",
       "x": 0.0,
-      "z": -1.13,
+      "z": -1.17,
       "zones": [
         "gem_supply_diamond",
         "gem_supply_sapphire",
@@ -329,36 +329,11 @@
     {
       "id": "board_player_area",
       "template": "board_player",
-      "x": -0.85,
-      "z": -2.15,
+      "x": -0.7,
+      "z": -1.95,
       "zones": [
         "player_holding"
       ]
-    },
-    {
-      "id": "glow_supply_area",
-      "template": "glow_supply",
-      "x": 0.0,
-      "z": -1.13,
-      "zones": [
-        "gem_supply_diamond"
-      ]
-    },
-    {
-      "id": "glow_player_area",
-      "template": "glow_player",
-      "x": -0.85,
-      "z": -2.15,
-      "zones": [
-        "player_holding"
-      ]
-    },
-    {
-      "id": "glow_market_area",
-      "template": "glow_market",
-      "x": -0.85,
-      "z": 0.1,
-      "zones": []
     }
   ],
   "initial": [

@@ -198,6 +198,7 @@ namespace UnityEngine
         public string name;
         public static T FindFirstObjectByType<T>() where T : Object => null;
         public static T[] FindObjectsByType<T>(int sortMode) where T : Object => new T[0];
+        public static T[] FindObjectsByType<T>(FindObjectsSortMode sortMode) where T : Object => new T[0];
         public static T FindObjectOfType<T>() where T : Object => null;
         public static T[] FindObjectsOfType<T>() where T : Object => new T[0];
         public static Object Instantiate(Object original) => original;
@@ -285,6 +286,16 @@ namespace UnityEngine
         public static Sprite Create(Texture2D tex, Rect rect, Vector2 pivot, float ppu) => null;
     }
 
+    public class RenderTexture : Texture
+    {
+        public static RenderTexture active;
+        public static RenderTexture GetTemporary(int width, int height, int depth) => null;
+        public static RenderTexture GetTemporary(int width, int height, int depth, RenderTextureFormat format) => null;
+        public static void ReleaseTemporary(RenderTexture rt) { }
+    }
+
+    public enum RenderTextureFormat { ARGB32, RGB24, Default }
+
     public class Texture : Object { public int width, height; }
     public class Texture2D : Texture
     {
@@ -295,6 +306,9 @@ namespace UnityEngine
         public void SetPixel(int x, int y, Color c) { }
         public void SetPixels(Color[] colors) { }
         public Color[] GetPixels() => new Color[0];
+        public void ReadPixels(Rect rect, int destX, int destY) { }
+        public byte[] EncodeToPNG() => new byte[0];
+        public byte[] EncodeToJPG() => new byte[0];
         public void Apply() { }
     }
 
@@ -327,6 +341,10 @@ namespace UnityEngine
     public class Camera : Behaviour
     {
         public static Camera main => null;
+        public RenderTexture targetTexture;
+        public float depth;
+        public Rect rect;
+        public void Render() { }
         public bool orthographic;
         public float orthographicSize;
         public float fieldOfView;
@@ -473,6 +491,27 @@ namespace UnityEngine
         public bool MoveNext() => false;
         public void Reset() { }
     }
+}
+
+namespace UnityEditor
+{
+    public static class EditorApplication
+    {
+        public static bool isPlaying;
+        public static void EnterPlaymode() { }
+        public static void ExitPlaymode() { }
+        public static void Exit(int code) { }
+    }
+
+    public class MenuItem : System.Attribute { public MenuItem(string path) { } }
+
+    [System.AttributeUsage(System.AttributeTargets.Class)]
+    public class InitializeOnLoadAttribute : System.Attribute { }
+}
+
+namespace UnityEngine
+{
+    public enum FindObjectsSortMode { None, InstanceID }
 }
 
 namespace UnityEngine.Networking

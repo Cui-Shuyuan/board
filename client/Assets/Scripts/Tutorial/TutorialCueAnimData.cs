@@ -41,7 +41,27 @@ namespace BoardGameTutorial
     {
         public string background = "#1E2126";
         public float camera_pitch = 50f;
+
+        /// <summary>取景留白倍率（1.0 = 恰好装下 extent）。</summary>
         public float ortho_scale = 1.18f;
+
+        /// <summary>
+        /// 取景范围（世界坐标）。这是相机取景的**唯一依据**，
+        /// 不再从 zone 布局反推——layout.cols 写错一次就让整个取景失准。
+        /// </summary>
+        public StageExtent extent;
+
+        /// <summary>取景使用的宽高比；&lt;=0 表示用当前屏幕。离线出帧必须显式指定。</summary>
+        public float aspect;
+    }
+
+    [Serializable]
+    public class StageExtent
+    {
+        public float min_x;
+        public float max_x;
+        public float min_z;
+        public float max_z;
     }
 
     [Serializable]
@@ -54,6 +74,9 @@ namespace BoardGameTutorial
         public string role = "zone";
 
         public StagePoint center = new StagePoint();
+
+        /// <summary>该区域专属的底板/高亮颜色（缺省用 stage 的 glow_zone 模板色）。</summary>
+        public string palette;
 
         /// <summary>offstage 用：偏离桌心的距离。</summary>
         public float margin = 3f;

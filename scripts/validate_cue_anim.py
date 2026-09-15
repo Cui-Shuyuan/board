@@ -55,6 +55,7 @@ EASINGS = {
 PALETTES = {
     "gem_diamond", "gem_sapphire", "gem_emerald", "gem_ruby", "gem_onyx",
     "gem_gold", "panel_supply", "panel_player", "panel_market", "panel_card",
+    "panel_neutral", "accent_green", "accent_yellow", "accent_blue",
     "card_level_1", "card_level_2", "card_level_3", "noble", "shadow", "white",
 }
 
