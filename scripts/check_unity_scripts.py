@@ -431,6 +431,8 @@ namespace UnityEngine
         public static float time => 0f;
         public static float fixedDeltaTime => 0f;
         public static float timeScale;
+        public static int frameCount => 0;
+        public static float captureDeltaTime;
     }
 
     public static class Random

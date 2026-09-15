@@ -729,6 +729,7 @@ namespace BoardGameTutorial
             }
 
             SampleClips(scaled);
+            TracePositions(scaled);
 
         }
 
@@ -802,6 +803,29 @@ namespace BoardGameTutorial
             return false;
         }
 
+        /// <summary>
+        /// 采纳另一个播放器（重建实例）算出的牌桌状态：把归属/格位搬过来并按新状态摆好。
+        /// 用于「重建用独立实例、正式播放用主实例」，两者状态对接。
+        /// </summary>
+        public void AdoptStateFrom(TutorialCueAnimPlayer other)
+        {
+            if (other?.Store == null) return;
+
+            // 归属与格位按 id 对齐
+            foreach (var src in other.Store.Items)
+            {
+                if (!Store.TryGetItem(src.Id, out var dst)) continue;
+                dst.ZoneId = src.ZoneId;
+                dst.Order = src.Order;
+                dst.Flipped = src.Flipped;
+                dst.EntryAnchor = src.EntryAnchor;
+                dst.EntryFrom = src.EntryFrom;
+                Store.SetActiveItem(dst);      // 重新登记到占用表
+            }
+
+            SyncActorsToStore();
+        }
+
         /// <summary>自检/出图用：确保场景里有可用的相机。</summary>
         public void EnsureCameraForCapture() => EnsureCamera();
 
@@ -812,6 +836,41 @@ namespace BoardGameTutorial
             var c = actor.LiveColor;
             c.a = Mathf.Clamp01(actor.LiveAlpha);
             actor.Renderer.color = c;
+        }
+
+        /// <summary>
+        /// 运行时诊断：把「每张牌在什么时刻、由哪个片段决定、在什么位置」写进日志。
+        /// 打开后（按 T 或运行时设 runtimeTrace=true），编辑器里跑一遍就能和离屏出图逐帧对照，
+        /// 差异会直接暴露在哪一帧、哪张牌、哪个片段上。
+        /// </summary>
+        public bool runtimeTrace = true;   // 默认打开：出问题时日志里有可对照的坐标轨迹
+        private float lastTraceTime = -99f;
+
+        private void TracePositions(float scaled)
+        {
+            if (!runtimeTrace) return;
+            // 按时间节流，不用 Time.frameCount（批处理下它恒为 0，会把日志全挡掉）。
+            if (scaled - lastTraceTime < 0.3f) return;
+            lastTraceTime = scaled;
+
+            var sb = new System.Text.StringBuilder();
+            sb.Append($"[Trace] t={scaled:0.00} clips={clips.Count}");
+            foreach (var it in Store.Items)
+            {
+                if (it.Actor == null || !it.Id.StartsWith("market_card_")) continue;
+                var p = it.Actor.Go.transform.localPosition;
+                string by = "-";
+                foreach (var c in clips)
+                    if (c.Item != null && c.Item.Id == it.Id && c.HasMove)
+                        by = $"{c.Start:0.0}+{c.Dur:0.0}";
+                var sc = it.Actor.Go.transform.localScale;
+                var sr = it.Actor.Renderer;
+                string face = sr == null || sr.sprite == null ? "无图"
+                    : (ReferenceEquals(sr.sprite, it.Actor.BackSprite) ? "背" : "面");
+                sb.Append($"  {it.Id.Replace("market_card_", "")}=({p.x:0.0},{p.z:0.0})" +
+                          $"s{sc.x:0.00} a{it.Actor.LiveAlpha:0.0} {face} 显{(sr != null && sr.enabled ? 1 : 0)}[{by}]");
+            }
+            Debug.Log(sb.ToString());
         }
 
         private void SampleClips(float scaled)

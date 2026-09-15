@@ -230,6 +230,18 @@ namespace BoardGameTutorial
         {
             if (doc == null || doc.cues == null) return;
 
+            // 每次都从干净状态完整重放。LoadCue(continueState:false) 会 Reset + ApplyInitial，
+            // 所以重放是幂等的：不会因为重建两次而多出一批组件。
+            // 曾经的 bug：重建时不重置，每次 ApplyCueStart 都多生成一批市场牌，
+            // 它们停在盒子里，表现为「不知从哪往牌堆里发牌背」的孤儿牌。
+            // 用**独立**的播放器实例做重建：这样主播放器的时钟（音频时间或降级时钟）
+            // 不会被重建过程推进。曾经共用同一实例，重建把时钟推到很后面，
+            // 正式播放时动画会从「已经播完」的位置开始 —— 表现为整行先出现、动作一闪而过。
+            var rebuildHost = new GameObject("RebuildHost");
+            rebuildHost.transform.SetParent(transform, false);
+            var rebuild = rebuildHost.AddComponent<TutorialCueAnimPlayer>();
+            rebuild.animationEnabled = true;
+
             bool first = true;
             for (int i = 0; i < targetIndex && i < doc.cues.Count; i++)
             {
@@ -237,7 +249,7 @@ namespace BoardGameTutorial
                 bool applied;
                 try
                 {
-                    applied = anim.LoadCue(gameRoot, track, cue.id, !first);
+                    applied = rebuild.LoadCue(gameRoot, track, cue.id, !first);
                 }
                 catch (System.Exception e)
                 {
@@ -246,12 +258,14 @@ namespace BoardGameTutorial
                 }
                 if (!applied) continue;
 
-                // 用 Seek 把时间推进到该 cue 末尾（终态），而不是 SnapTo：
-                // SnapTo 每次会先恢复本条 cue 的入口快照，会把前一条累积的效果覆盖掉，
-                // 结果一条也积累不起来。
-                anim.Seek(anim.TotalDuration + 1f);
+                // Seek 推进到该 cue 末尾（终态）；SnapTo 会先恢复入口快照，累积不起来。
+                rebuild.Seek(rebuild.TotalDuration + 1f);
                 first = false;
             }
+
+            // 把重建出来的牌桌状态交给主播放器
+            anim.AdoptStateFrom(rebuild);
+            Object.DestroyImmediate(rebuildHost);
         }
 
         private IEnumerator PlayCueRoutine(int index, bool continueState)
@@ -269,6 +283,7 @@ namespace BoardGameTutorial
             if (animPlayer != null)
             {
                 animPlayer.animationEnabled = enableCueAnimation;
+                fallbackClock = 0f;   // 每条 cue 重置降级时钟，避免把它累积成「已经播完」
                 // 只有「紧接着的下一条」才继承上一条的终态。
                 bool continueFromPrevious = continueState && index == previousIndex + 1;
 

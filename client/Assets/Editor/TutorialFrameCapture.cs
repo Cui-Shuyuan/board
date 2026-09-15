@@ -461,6 +461,18 @@ namespace BoardGameTutorial.Editor
             for (float time = from; time <= to + 1e-4f; time += step)
             {
                 anim.Seek(time);
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.Append($"[Pos] t={time:0.00}");
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (it.Actor == null) continue;
+                        if (!it.Id.StartsWith("market_card_1_")) continue;
+                        var p = it.Actor.Go.transform.localPosition;
+                        sb.Append($"  {it.Id.Replace("market_card_1_", "")}=({p.x:0.0},{p.z:0.0})z:{it.ZoneId}");
+                    }
+                    Debug.Log(sb.ToString());
+                }
                 var path = Path.Combine(outDir, $"t{time * 100:000}.png");
                 SaveFrame(path);
                 n++;
@@ -642,6 +654,59 @@ namespace BoardGameTutorial.Editor
             for (int i = 0; i < args.Length - 1; i++)
                 if (args[i] == name) return args[i + 1];
             return fallback;
+        }
+
+        /// <summary>
+        /// 复现「从第 9 条顺序播到第 12 条」的真实路径（编辑器里就是这样），
+        /// 逐帧导出市场牌坐标 + 出图。单独载入某条 cue 与顺序播放的状态可能不同。
+        /// </summary>
+        /// <summary>
+        /// 复现编辑器里的真实路径：按 B 跳转 → RebuildTableBefore → 载入目标 cue → 逐帧 Seek。
+        /// 之前的版本被改坏了（循环体落在不可达分支里），所以「验证通过」是假的。
+        /// </summary>
+        public static void CaptureSequence()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string outDir = Path.Combine(Application.dataPath, "..", "CaptureOut", "seq");
+            if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
+            Directory.CreateDirectory(outDir);
+
+            var host = new GameObject("PlayerHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.LogError("[Seq] LoadRuntime 失败"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.runtimeTrace = true;
+            anim.logMoves = true;
+
+            int target = -1;
+            for (int i = 0; i < player.Document.cues.Count; i++)
+                if (player.Document.cues[i].id == "setup.cards.002.1") { target = i; break; }
+            Debug.Log($"[Seq] 目标 cue 序号 {target}");
+
+            // ① 真实跳转路径：重建桌面
+            typeof(TutorialCuePlayer)
+                .GetMethod("RebuildTableBefore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(player, new object[] { anim, target });
+
+            // ② 载入目标 cue（与播放器一致）
+            bool ok = anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
+            Debug.Log($"[Seq] 载入目标 cue = {ok}");
+
+            // ③ 逐帧推进 + 出图。
+            // 注意：重建时 SnapTo 会把时钟推到末尾，若不先归零，Seek(3.8) 会被当成「回退」而跳过整段。
+            anim.EnsureCameraForCapture();
+            anim.Seek(0f);
+            for (float time = 3.8f; time <= 7.9f; time += 0.2f)
+            {
+                anim.Seek(time);
+                SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
+            }
+            Debug.Log($"[Seq] 完成 → {outDir}");
         }
 
         public static void CaptureAll()

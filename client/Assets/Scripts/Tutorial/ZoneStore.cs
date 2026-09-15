@@ -248,6 +248,31 @@ namespace BoardGameTutorial
             for (int i = 0; ; i++) if (!map.ContainsKey(i)) return i;
         }
 
+        /// <summary>按 id 取组件。</summary>
+        public bool TryGetItem(string id, out ZoneItem item)
+        {
+            item = null;
+            return !string.IsNullOrEmpty(id) && items.TryGetValue(id, out item);
+        }
+
+        /// <summary>把组件按它当前的 ZoneId/Order 重新登记进占用表（用于重建后对接状态）。</summary>
+        public void SetActiveItem(ZoneItem item)
+        {
+            if (item == null || string.IsNullOrEmpty(item.ZoneId)) return;
+            var map = SlotsOf(item.ZoneId);
+            int slot = Mathf.Max(0, item.Order);
+            if (map.TryGetValue(slot, out var other) && !ReferenceEquals(other, item))
+            {
+                int free = NextFreeSlot(item.ZoneId);
+                map.Remove(slot);
+                map[free] = other;
+                other.Order = free;
+            }
+            map[slot] = item;
+            item.Order = slot;
+            InvalidateSlots();
+        }
+
         /// <summary>某格位的组件（没有则 null）。</summary>
         public ZoneItem AtSlot(string zoneId, int slot)
             => !string.IsNullOrEmpty(zoneId) && occupancy.TryGetValue(zoneId, out var m) && m.TryGetValue(slot, out var it) ? it : null;
