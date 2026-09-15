@@ -248,6 +248,46 @@ namespace BoardGameTutorial
             for (int i = 0; ; i++) if (!map.ContainsKey(i)) return i;
         }
 
+        /// <summary>
+        /// 从另一个 store 把「组件本身」搬过来（模板/色板/归属/格位/正反面）。
+        /// 用于「重建实例算好牌桌，再交给正式播放器」。
+        /// </summary>
+        public void AdoptItemsFrom(ZoneStore other)
+        {
+            if (other == null) return;
+            Reset();
+            foreach (var src in other.Items)
+            {
+                if (src?.Template == null) continue;
+                var copy = new ZoneItem
+                {
+                    Id = src.Id,
+                    Template = src.Template,
+                    PaletteName = src.PaletteName,
+                    BaseColor = src.BaseColor,
+                    ZoneId = src.ZoneId,
+                    Order = src.Order,
+                    EntryFrom = src.EntryFrom,
+                    EntryAnchor = src.EntryAnchor,
+                    Flipped = src.Flipped,
+                    LiveScale = src.LiveScale,
+                    LiveRotation = src.LiveRotation,
+                    LiveAlpha = src.LiveAlpha,
+                    LivePosition = src.LivePosition,
+                };
+                items[copy.Id] = copy;
+                var map = SlotsOf(copy.ZoneId);
+                if (map != null && !map.ContainsKey(copy.Order)) map[copy.Order] = copy;
+                else InvalidateSlots();
+                // 让后续 Spawn 不会重复用同一个编号
+                var parts = copy.Id.Split('#');
+                if (parts.Length == 2 && int.TryParse(parts[1], out int n))
+                    if (!counters.TryGetValue(parts[0], out int cur) || n > cur)
+                        counters[parts[0]] = n;
+            }
+            InvalidateSlots();
+        }
+
         /// <summary>按 id 取组件。</summary>
         public bool TryGetItem(string id, out ZoneItem item)
         {
@@ -284,8 +324,12 @@ namespace BoardGameTutorial
             int n = 0;
             foreach (var item in map.Values)
             {
-                if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
+                // 两个条件都是**必须匹配**才算数。
+                // 曾经只判 palette，而市场牌与牌堆共用同一个色板（card_level_1），
+                // 于是 12 张市场牌被当成 12 张牌堆卡，牌堆数量核对彻底失真 ——
+                // 表现为「三个牌堆没被创建」「发牌方向反过来」。
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
+                if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
                 n++;
             }
             return n;

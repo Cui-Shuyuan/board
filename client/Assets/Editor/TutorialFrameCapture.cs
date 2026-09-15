@@ -480,14 +480,6 @@ namespace BoardGameTutorial.Editor
             // 行位断言：每一级市场牌必须落在与**同级牌堆**相同深度的行上。
             // 这条正是用户报过的「一级牌被发到二级位置、又被收回」。
             foreach (var it in anim.Store.Items)
-                if (it.Id.StartsWith("card_back_1#1"))
-                {
-                    var sr = it.Actor?.Renderer;
-                    string f = sr?.sprite == null ? "无图" : (ReferenceEquals(sr.sprite, it.Actor.BackSprite) ? "背" : "面");
-                    Debug.Log($"[Deck] {it.Id} zone={it.ZoneId} order={it.Order} Flipped={it.Flipped} 显示={f} " +
-                              $"rot={it.Actor?.Go.transform.localRotation.eulerAngles} templateRotation={it.Template?.rotation}");
-                }
-            foreach (var it in anim.Store.Items)
                 if (it.Id.StartsWith("market_card_") && it.Order < 4)
                 {
                     var logical = anim.Store.CurrentPosition(it);
@@ -724,6 +716,18 @@ namespace BoardGameTutorial.Editor
             // ② 载入目标 cue（与播放器一致）
             bool ok = anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
             Debug.Log($"[Seq] 载入目标 cue = {ok}");
+
+            // 量牌堆：真实路径上三摞牌堆的 position / alpha / zone
+            foreach (var id in new[] { "card_back_1#1", "card_back_2#1", "card_back_3#1" })
+                foreach (var it in anim.Store.Items)
+                    if (it.Id == id)
+                    {
+                        var p = it.Actor?.Go.transform.localPosition ?? Vector3.zero;
+                        var sc = it.Actor?.Go.transform.localScale ?? Vector3.zero;
+                        Debug.Log($"[DeckProbe] {id} zone={it.ZoneId} ord={it.Order} " +
+                                  $"pos=({p.x:0.00},{p.z:0.00}) scale=({sc.x:0.00},{sc.y:0.00}) " +
+                                  $"alpha={it.Actor?.LiveAlpha:0.00} count={anim.Store.CountInZone(it.ZoneId)}");
+                    }
 
             // ③ 逐帧推进 + 出图。
             // 注意：重建时 SnapTo 会把时钟推到末尾，若不先归零，Seek(3.8) 会被当成「回退」而跳过整段。

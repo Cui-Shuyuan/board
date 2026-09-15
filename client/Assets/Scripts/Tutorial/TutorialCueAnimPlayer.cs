@@ -817,11 +817,16 @@ namespace BoardGameTutorial
         /// 采纳另一个播放器（重建实例）算出的牌桌状态：把归属/格位搬过来并按新状态摆好。
         /// 用于「重建用独立实例、正式播放用主实例」，两者状态对接。
         /// </summary>
-        public void AdoptStateFrom(TutorialCueAnimPlayer other)
+        public void AdoptStateFrom(TutorialCueAnimPlayer other, string gameRoot)
         {
             if (other?.Store == null) return;
 
-            // 归属与格位按 id 对齐
+            // 必须先把**组件本身**登记进来：主播放器的 store 可能是空的，
+            // 只复制 zone/order 是没有对象的。曾经漏了这一步，于是主播放器是一张空桌子，
+            // 牌堆不存在、发牌只能从孤立位置搬来搬去（表现为方向反过来）。
+            Store.AdoptItemsFrom(other.Store);
+
+            // 再对齐归属、格位、正反面
             foreach (var src in other.Store.Items)
             {
                 if (!Store.TryGetItem(src.Id, out var dst)) continue;
@@ -830,9 +835,12 @@ namespace BoardGameTutorial
                 dst.Flipped = src.Flipped;
                 dst.EntryAnchor = src.EntryAnchor;
                 dst.EntryFrom = src.EntryFrom;
-                Store.SetActiveItem(dst);      // 重新登记到占用表
+                Store.SetActiveItem(dst);
             }
 
+            // 按新状态重建画面对象（主播放器可能还没载入过 stage，用传入的 root）
+            LoadStage(gameRoot, null);
+            BuildActorObjects();
             SyncActorsToStore();
         }
 

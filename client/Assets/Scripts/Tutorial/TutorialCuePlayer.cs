@@ -230,13 +230,8 @@ namespace BoardGameTutorial
         {
             if (doc == null || doc.cues == null) return;
 
-            // 每次都从干净状态完整重放。LoadCue(continueState:false) 会 Reset + ApplyInitial，
-            // 所以重放是幂等的：不会因为重建两次而多出一批组件。
-            // 曾经的 bug：重建时不重置，每次 ApplyCueStart 都多生成一批市场牌，
-            // 它们停在盒子里，表现为「不知从哪往牌堆里发牌背」的孤儿牌。
-            // 用**独立**的播放器实例做重建：这样主播放器的时钟（音频时间或降级时钟）
-            // 不会被重建过程推进。曾经共用同一实例，重建把时钟推到很后面，
-            // 正式播放时动画会从「已经播完」的位置开始 —— 表现为整行先出现、动作一闪而过。
+            // 用**独立**的播放器实例做重建，再把结果交给主播放器。
+            // 共用同一实例会让重建把主播放器的时钟推到末尾、片段列表塞满旧片段。
             var rebuildHost = new GameObject("RebuildHost");
             rebuildHost.transform.SetParent(transform, false);
             var rebuild = rebuildHost.AddComponent<TutorialCueAnimPlayer>();
@@ -249,6 +244,7 @@ namespace BoardGameTutorial
                 bool applied;
                 try
                 {
+                    // continueState: 第一条从 initial 起，之后接着上一条累积
                     applied = rebuild.LoadCue(gameRoot, track, cue.id, !first);
                 }
                 catch (System.Exception e)
@@ -263,8 +259,7 @@ namespace BoardGameTutorial
                 first = false;
             }
 
-            // 把重建出来的牌桌状态交给主播放器
-            anim.AdoptStateFrom(rebuild);
+            anim.AdoptStateFrom(rebuild, gameRoot);
             Object.DestroyImmediate(rebuildHost);
         }
 
