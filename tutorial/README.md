@@ -96,21 +96,42 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 
 `tutorial/下一阶段工作指导.md`
 
-## cue 内动画：状态 / zone 模型（2026-09-15 定稿）
+## cue 内动画：状态 / zone / 语义绑定（2026-09-15 定稿）
 
 动画 = **维护一组组件的状态**。组件的状态就是它「在哪个 zone、以什么姿态」；
 世界坐标由 zone 的布局规则推导，**cue 数据里不写坐标**。
 
-数据分两层：
+三层分工，每层只写自己知道的事：
+
+| 层 | 文件 | 只负责 |
+|---|---|---|
+| 语义事实 | `games/{game}/flow.json`、`concepts.json` | 源、目的地、对象、数量 |
+| 视觉绑定 | `anim/_stage/{game}.table.json` 的 `visual` 段 | 语义区域画在屏幕哪里、颜色分成哪几堆 |
+| 时间 | `anim/{track}/{cue_id}.json` | 第几秒发生、强调与错峰 |
 
 ```text
-games/{game}/tutorial/anim/_stage/{game}.table.json   牌桌事实：zone 位置、模板、开局摆放
+games/{game}/tutorial/anim/_stage/{game}.table.json   牌桌事实：zone 位置、模板、开局摆放、语义绑定
 games/{game}/tutorial/anim/{track}/{cue_id}.json      这一条 cue 对牌桌做了什么
 ```
 
 - **stage**：`zones`（每个 zone 的 `center` 与 `layout`）、`templates`（外观：shape / palette / world_size）、
-  `anchors`（区域底板等固定装饰，`zones` 字段声明它代表哪些 zone）、`initial`（开局哪些组件放在哪些 zone）。
-- **cue**：只有 `events`，外加可选的 `start`（本条 cue 的入口状态）。移动事件只写两端 zone：
+  `anchors`（区域底板等固定装饰，`zones` 字段声明它代表哪些 zone）、`initial`（开局哪些组件放在哪些 zone）、
+  `visual`（语义 id → zone 的绑定，`colors` 把 `gem_supply` 拆成五堆）。
+- **cue**：只有 `events`，外加可选的 `start`（本条 cue 的入口状态）。
+
+`transfer` 直接从 flow / concepts 取事实，不在动画数据里重复：
+
+```json
+{ "at": 3.30, "dur": 0.55, "action": "transfer", "flow": "take_gems_different",
+  "each": ["diamond", "sapphire", "ruby"], "stagger": 0.25, "easing": "easeInOutCubic" }
+```
+
+运行时按 `flow` 找到语义节点，取出 `source` / `destination` / `quantity`，
+再用 stage 的 `visual` 绑定把 `<gem_supply>` 解析成 `gem_supply_diamond` 等画面 zone。
+所以「拿几颗、从哪到哪」只有 flow 一份事实；设置阶段按人数变化的数量
+（flow 里的 `quantity_per_color`）也天然跟着走。
+
+需要精确控制某一件时也可以直接写 zone：
 
 ```json
 { "at": 3.30, "dur": 0.55, "action": "move", "target": "gem#1", "zone": "player_holding" }

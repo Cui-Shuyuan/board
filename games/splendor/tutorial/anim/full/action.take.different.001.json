@@ -4,40 +4,123 @@
   "track": "full",
   "cue": "action.take.different.001",
   "stage": "_stage/splendor.table",
-  "note": "拿取三种不同宝石：高亮五堆宝石供应堆（黄金不参与）→ 三枚宝石依次从各自供应堆移到玩家持有区，供应堆随之少一枚且其余宝石收拢 → 高亮持有区并强调。动画 0.00~4.60s，音频 5.28s。",
-
+  "note": "拿取三种不同宝石。源/目的地/数量来自 flow 的 take_gems_different（<gem_supply> → <ontology::player_holding>，3 颗），画面区域由 stage.visual 绑定；cue 只提供时间与强调。动画 0.00~4.60s，音频 5.28s。",
   "start": {
     "set": [
-      { "template": "gem", "palette": "gem_diamond",  "zone": "gem_supply_diamond",  "count": 7 },
-      { "template": "gem", "palette": "gem_sapphire", "zone": "gem_supply_sapphire", "count": 7 },
-      { "template": "gem", "palette": "gem_ruby",     "zone": "gem_supply_ruby",     "count": 7 },
-      { "template": "gem", "palette": "gem_emerald",  "zone": "gem_supply_emerald",  "count": 7 },
-      { "template": "gem", "palette": "gem_onyx",     "zone": "gem_supply_onyx",     "count": 7 },
-      { "template": "gem", "palette": "gem_gold",     "zone": "gold_supply",         "count": 5 }
+      {
+        "template": "gem",
+        "palette": "gem_diamond",
+        "zone": "gem_supply_diamond",
+        "count": 7
+      },
+      {
+        "template": "gem",
+        "palette": "gem_sapphire",
+        "zone": "gem_supply_sapphire",
+        "count": 7
+      },
+      {
+        "template": "gem",
+        "palette": "gem_ruby",
+        "zone": "gem_supply_ruby",
+        "count": 7
+      },
+      {
+        "template": "gem",
+        "palette": "gem_emerald",
+        "zone": "gem_supply_emerald",
+        "count": 7
+      },
+      {
+        "template": "gem",
+        "palette": "gem_onyx",
+        "zone": "gem_supply_onyx",
+        "count": 7
+      },
+      {
+        "template": "gem",
+        "palette": "gem_gold",
+        "zone": "gold_supply",
+        "count": 5
+      }
     ]
   },
-
   "events": [
-    { "at": 0.00, "dur": 0.35, "action": "highlight", "zone": "gem_supply_diamond",
-      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
-    { "at": 0.15, "dur": 0.35, "action": "highlight", "zone": "gem_supply_sapphire",
-      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
-    { "at": 0.30, "dur": 0.35, "action": "highlight", "zone": "gem_supply_ruby",
-      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
-    { "at": 0.45, "dur": 0.35, "action": "highlight", "zone": "gem_supply_emerald",
-      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
-    { "at": 0.60, "dur": 0.35, "action": "highlight", "zone": "gem_supply_onyx",
-      "peak_alpha": 0.50, "grow": 1.10, "easing": "easeOutCubic" },
-
-    { "at": 3.30, "dur": 0.55, "action": "move", "target": "gem#1",  "zone": "player_holding", "easing": "easeInOutCubic" },
-    { "at": 3.55, "dur": 0.55, "action": "move", "target": "gem#8",  "zone": "player_holding", "easing": "easeInOutCubic" },
-    { "at": 3.80, "dur": 0.55, "action": "move", "target": "gem#15", "zone": "player_holding", "easing": "easeInOutCubic" },
-
-    { "at": 4.05, "dur": 0.55, "action": "highlight", "zone": "player_holding",
-      "peak_alpha": 0.75, "grow": 1.0, "easing": "easeOutCubic" },
-
-    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem#1",  "scale": 1.30, "easing": "easeOutCubic" },
-    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem#8",  "scale": 1.30, "easing": "easeOutCubic" },
-    { "at": 4.35, "dur": 0.25, "action": "scale", "target": "gem#15", "scale": 1.30, "easing": "easeOutCubic" }
+    {
+      "at": 0.0,
+      "dur": 0.35,
+      "action": "highlight",
+      "zone": "gem_supply_diamond",
+      "peak_alpha": 0.5,
+      "grow": 1.1,
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 0.15,
+      "dur": 0.35,
+      "action": "highlight",
+      "zone": "gem_supply_sapphire",
+      "peak_alpha": 0.5,
+      "grow": 1.1,
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 0.3,
+      "dur": 0.35,
+      "action": "highlight",
+      "zone": "gem_supply_ruby",
+      "peak_alpha": 0.5,
+      "grow": 1.1,
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 0.45,
+      "dur": 0.35,
+      "action": "highlight",
+      "zone": "gem_supply_emerald",
+      "peak_alpha": 0.5,
+      "grow": 1.1,
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 0.6,
+      "dur": 0.35,
+      "action": "highlight",
+      "zone": "gem_supply_onyx",
+      "peak_alpha": 0.5,
+      "grow": 1.1,
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 3.3,
+      "dur": 0.55,
+      "action": "transfer",
+      "flow": "take_gems_different",
+      "each": [
+        "diamond",
+        "sapphire",
+        "ruby"
+      ],
+      "stagger": 0.25,
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 4.05,
+      "dur": 0.55,
+      "action": "highlight",
+      "zone": "player_holding",
+      "peak_alpha": 0.75,
+      "grow": 1.0,
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 4.35,
+      "dur": 0.25,
+      "action": "scale",
+      "zone": "player_holding",
+      "scale": 1.3,
+      "stagger": 0.1,
+      "easing": "easeOutCubic"
+    }
   ]
 }

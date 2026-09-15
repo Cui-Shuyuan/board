@@ -45,6 +45,24 @@ namespace BoardGameTutorial
         private readonly Dictionary<string, CueAnimActor> actors = new Dictionary<string, CueAnimActor>();
         /// <summary>区域底板：zone id → 代表它的装饰件 id。zone 级 highlight 打到这里。</summary>
         private readonly Dictionary<string, List<string>> zonePanels = new Dictionary<string, List<string>>();
+
+        /// <summary>语义 id → 画面 zone 的绑定（stage.visual）。</summary>
+        public SemanticMap Semantics { get; } = new SemanticMap();
+        private string gameRootPath;
+
+        /// <summary>transfer 拆出的多件组件：{触发时刻, 组件}，到点后各自开始移动。</summary>
+        private readonly List<KeyValuePair<float, ZoneItem>> pending = new List<KeyValuePair<float, ZoneItem>>();
+
+        private struct PendingScale
+        {
+            public float At;
+            public CueAnimActor Actor;
+            public float Factor;
+            public CueAnimEvent Event;
+        }
+
+        /// <summary>错峰触发的缩放（scale + stagger）。</summary>
+        private readonly List<PendingScale> pendingScales = new List<PendingScale>();
         private readonly List<Coroutine> running = new List<Coroutine>();
 
         private float clock = -1f;
@@ -123,6 +141,9 @@ namespace BoardGameTutorial
 
             stage = JsonUtility.FromJson<StageDoc>(File.ReadAllText(path));
             Store.LoadStage(stage);
+            Semantics.Load(stage.visual);
+            gameRootPath = gameRoot;
+            SemanticFlow.Load(gameRoot);
         }
 
         /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置 / 临时组件）。</summary>
@@ -339,6 +360,23 @@ namespace BoardGameTutorial
                 nextIndex++;
                 Trigger(ev);
             }
+
+            // transfer 拆出的分批移动：按各自时刻启动，形成「依次拿走」的节奏。
+            for (int i = pending.Count - 1; i >= 0; i--)
+            {
+                if (pending[i].Key > scaled + 1e-4f) continue;
+                var item = pending[i].Value;
+                pending.RemoveAt(i);
+                StartItemMove(item, pendingEvent);
+            }
+
+            for (int i = pendingScales.Count - 1; i >= 0; i--)
+            {
+                if (pendingScales[i].At > scaled + 1e-4f) continue;
+                var entry = pendingScales[i];
+                pendingScales.RemoveAt(i);
+                ApplyScale(entry.Actor, entry.Factor, entry.Event);
+            }
         }
 
         /// <summary>把这条 cue 直接推到结束（顺序播放进入下一条之前用）。</summary>
@@ -358,6 +396,8 @@ namespace BoardGameTutorial
         public void ResetToStart()
         {
             StopAnimations();
+            pending.Clear();
+            pendingScales.Clear();
             RestoreSnapshot(entrySnapshot);
             clock = 0f;
             nextIndex = 0;
@@ -401,6 +441,8 @@ namespace BoardGameTutorial
             cueDoc = null;
             clock = -1f;
             nextIndex = 0;
+            pending.Clear();
+            pendingScales.Clear();
             Store.Reset();
         }
 
@@ -432,6 +474,7 @@ namespace BoardGameTutorial
             {
                 case "wait": return;
                 case "move": TriggerMove(ev); return;
+                case "transfer": TriggerTransfer(ev); return;
                 case "rotate":
                 case "flip": TriggerRotate(ev); return;
                 case "scale": TriggerScale(ev); return;
@@ -456,6 +499,15 @@ namespace BoardGameTutorial
                     Store.MoveTo(step.Item, step.Destination);
                     if (step.Item.Actor != null) ApplyCurrentPlacement(step.Item, step.Item.Actor);
                 }
+                return;
+            }
+
+            if (ev.action == "transfer")
+            {
+                // 顺序播放推进时：直接把待触发队列里的组件也落位。
+                foreach (var entry in pending)
+                    if (entry.Value?.Actor != null) ApplyCurrentPlacement(entry.Value, entry.Value.Actor);
+                pending.Clear();
                 return;
             }
 
@@ -520,7 +572,7 @@ namespace BoardGameTutorial
                 return plan;
             }
 
-            int take = ev.take > 0 ? ev.take : 1;
+            int take = ev.take.HasValue && ev.take.Value > 0 ? ev.take.Value : 1;
             var picked = new List<ZoneItem>();
             for (int i = 0; i < take; i++)
             {
@@ -543,6 +595,113 @@ namespace BoardGameTutorial
                 if (best == null || item.Order < best.Order) best = item;
             }
             return best;
+        }
+
+        /// <summary>
+        /// transfer：语义驱动。source / destination / quantity 由 flow / concepts 决定，
+        /// 画面 zone 由 stage.visual 决定；cue 数据只提供 flow 节点 id、颜色与时间。
+        /// </summary>
+        private void TriggerTransfer(CueAnimEvent ev)
+        {
+            pendingEvent = ev;
+            if (string.IsNullOrEmpty(ev.flow))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] transfer in cue {CueId} 缺少 flow 节点 id");
+                return;
+            }
+
+            var op = SemanticFlow.Find(gameRootPath, NormalizeNodeId(ev.flow));
+            if (op == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] flow 里找不到节点 '{ev.flow}'（cue {CueId}）");
+                return;
+            }
+
+            string sourceConcept = op.Source;
+            string destConcept = op.Destination;
+            if (string.IsNullOrEmpty(sourceConcept) || string.IsNullOrEmpty(destConcept))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] flow 节点 '{ev.flow}' 没有 source/destination，无法驱动 transfer");
+                return;
+            }
+
+            int quantity = (ev.each != null && ev.each.Count > 0) ? ev.each.Count : Mathf.Max(1, op.Quantity);
+            var colors = ColorsFor(ev, op, quantity);
+            float step = ev.stagger > 0f ? ev.stagger : 0f;
+            float scaledAt = clock * Mathf.Max(0.01f, timeScale);
+            int scheduled = 0;
+
+            for (int i = 0; i < quantity; i++)
+            {
+                string color = i < colors.Count ? colors[i] : null;
+                string fromZone = Semantics.ResolveZone(sourceConcept, color);
+                string toZone = Semantics.ResolveZone(destConcept, color);
+
+                if (string.IsNullOrEmpty(fromZone) || string.IsNullOrEmpty(toZone))
+                {
+                    Debug.LogWarning($"[TutorialCueAnim] stage.visual 缺少绑定：{sourceConcept}({color}) 或 {destConcept}");
+                    continue;
+                }
+
+                var item = Store.FrontOf(fromZone);
+                if (item == null)
+                {
+                    Debug.LogWarning($"[TutorialCueAnim] {fromZone} 里没有可搬运的组件（cue {CueId}）");
+                    break;
+                }
+
+                Store.MoveTo(item, toZone);
+                var moved = new List<ZoneItem> { item };
+                CloseGaps(moved, ev);
+
+                if (step <= 0f)
+                {
+                    StartItemMove(item, ev);
+                }
+                else
+                {
+                    pending.Add(new KeyValuePair<float, ZoneItem>(scaledAt + scheduled * step, item));
+                }
+                scheduled++;
+            }
+        }
+
+        /// <summary>events 数组里同一条 transfer 的分批移动共用它的时间参数。</summary>
+        private CueAnimEvent pendingEvent;
+
+        private void StartItemMove(ZoneItem item, CueAnimEvent ev)
+        {
+            if (item?.Actor == null || ev == null) return;
+            Vector3 from = item.Actor.LivePosition;
+            Vector3 to = Store.CurrentPosition(item);
+            item.LivePosition = to;
+            RunTween(TweenPosition(item.Actor, item, from, to, ev));
+        }
+
+        /// <summary>决定这次 transfer 涉及哪些颜色：cue 的 each 优先，其次 flow 的 quantity_per_color。</summary>
+        private List<string> ColorsFor(CueAnimEvent ev, SemanticOp op, int quantity)
+        {
+            if (ev.each != null && ev.each.Count > 0) return ev.each;
+            if (!string.IsNullOrEmpty(op.Color)) return new List<string> { op.Color };
+            return ColorsFromVisual(op.Source, quantity);
+        }
+
+        /// <summary>从 stage.visual 的 colors 列表取出前 N 个颜色（宝石供应堆的堆序）。</summary>
+        private List<string> ColorsFromVisual(string concept, int quantity)
+        {
+            var result = new List<string>();
+            var visual = Semantics.Resolve(concept);
+            if (visual?.colors == null) return result;
+            for (int i = 0; i < visual.colors.Count && i < quantity; i++)
+                if (!string.IsNullOrEmpty(visual.colors[i].color)) result.Add(visual.colors[i].color);
+            return result;
+        }
+
+        private static string NormalizeNodeId(string nodeId)
+        {
+            if (string.IsNullOrEmpty(nodeId)) return nodeId;
+            int colon = nodeId.IndexOf(':');
+            return colon >= 0 ? nodeId.Substring(colon + 1) : nodeId;
         }
 
         private void TriggerMove(CueAnimEvent ev)
@@ -604,14 +763,38 @@ namespace BoardGameTutorial
 
         private void TriggerScale(CueAnimEvent ev)
         {
+            float factor = ev.scale <= 0f ? 1.25f : ev.scale;
+            float step = ev.stagger > 0f ? ev.stagger : 0f;
+            float scaledAt = clock * Mathf.Max(0.01f, timeScale);
+            int scheduled = 0;
+
             foreach (var actor in Resolve(ev))
             {
-                float factor = ev.scale <= 0f ? 1.25f : ev.scale;
-                Vector3 from = actor.LiveScale;
-                Vector3 to = ev.scale_mode == "to" ? actor.BaseScale * factor : from * factor;
-                actor.LiveScale = to;
-                RunTween(TweenScale(actor, from, to, ev));
+                if (step <= 0f)
+                {
+                    ApplyScale(actor, factor, ev);
+                }
+                else
+                {
+                    // stagger：同一组组件错开缩放，视觉上是「一枚一枚被强调」。
+                    pendingScales.Add(new PendingScale
+                    {
+                        At = scaledAt + scheduled * step,
+                        Actor = actor,
+                        Factor = factor,
+                        Event = ev,
+                    });
+                }
+                scheduled++;
             }
+        }
+
+        private void ApplyScale(CueAnimActor actor, float factor, CueAnimEvent ev)
+        {
+            Vector3 from = actor.LiveScale;
+            Vector3 to = ev.scale_mode == "to" ? actor.BaseScale * factor : from * factor;
+            actor.LiveScale = to;
+            RunTween(TweenScale(actor, from, to, ev));
         }
 
         private void TriggerFade(CueAnimEvent ev)

@@ -42,7 +42,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "wait"}
+ACTIONS = {"move", "transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "wait"}
+
+# flow / concepts 里代表一次搬运的节点类型（键名带 <ontology::> 前缀）
+SEMANTIC_OP_KEYS = ("transfer", "top_draw", "random_draw", "play")
+
+
+def op_key_of(node, key):
+    """同时接受 'transfer' 与 '<ontology::transfer>' 两种写法。"""
+    if not isinstance(node, dict):
+        return None
+    if isinstance(node.get(key), dict):
+        return key
+    for prefix in ("<ontology::", "<"):
+        namespaced = f"{prefix}{key}>"
+        if isinstance(node.get(namespaced), dict):
+            return namespaced
+    return None
 SHAPES = {"panel", "gem", "shadow", "dot"}
 
 EASINGS = {
@@ -76,6 +92,59 @@ class Report:
 def load_json(path: Path):
     with path.open(encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def index_semantics(game_root: Path):
+    """Index every flow/concepts node by id, mirroring SemanticFlow.IndexNode."""
+    index = {}
+    for name in ("flow.json", "concepts.json"):
+        path = game_root / name
+        if not path.exists():
+            continue
+        try:
+            data = load_json(path)
+        except json.JSONDecodeError:
+            continue
+        stack = [data]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, dict):
+                node_id = node.get("id")
+                if isinstance(node_id, str) and node_id and node_id not in index:
+                    index[node_id] = node
+                stack.extend(node.values())
+            elif isinstance(node, list):
+                stack.extend(node)
+    return index
+
+
+def find_semantic_op(index, node_id):
+    """Return (kind, op_dict, owner_dict) for a semantic node, or None."""
+    node = index.get(node_id)
+    if node is None:
+        return None
+    for key in SEMANTIC_OP_KEYS:
+        found_key = op_key_of(node, key)
+        if found_key:
+            return found_key, node[found_key], node
+    # 递归往下找（concepts 的 action 把 transfer 放在 <ontology::instant_content> 里）。
+    # 用 BFS：先看浅层的操作键，避免深层同名键抢先命中。
+    queue = [node]
+    while queue:
+        current = queue.pop(0)
+        if isinstance(current, dict):
+            for key in SEMANTIC_OP_KEYS:
+                found_key = op_key_of(current, key)
+                if found_key:
+                    return found_key, current[found_key], current
+            for value in current.values():
+                if isinstance(value, (dict, list)):
+                    queue.append(value)
+        elif isinstance(current, list):
+            for value in current:
+                if isinstance(value, (dict, list)):
+                    queue.append(value)
+    return None
 
 
 def derive_actor_ids(stage):
@@ -133,6 +202,20 @@ def validate_stage(stage_path: Path, report: Report, game_id: str):
         if anchor.get("template") not in templates:
             report.error(where, f"anchor {anchor.get('id')!r} 引用了未知 template {anchor.get('template')!r}")
 
+    visual = stage.get("visual") or {}
+    for i, entry in enumerate(visual.get("zones") or []):
+        where = f"stage.visual.zones[{i}]"
+        if not entry.get("concept"):
+            report.error(where, "缺少 concept（语义 id）")
+        if entry.get("zone") and entry["zone"] not in zones:
+            report.error(where, f"zone {entry['zone']!r} 不在 stage.zones 里")
+        for j, color in enumerate(entry.get("colors") or []):
+            cw = f"{where}.colors[{j}]"
+            if not color.get("color"):
+                report.error(cw, "缺少 color")
+            if color.get("zone") not in zones:
+                report.error(cw, f"zone {color.get('zone')!r} 不在 stage.zones 里")
+
     for i, entry in enumerate(stage.get("initial", [])):
         where = f"stage.initial[{i}]"
         if entry.get("template") not in templates:
@@ -171,11 +254,13 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         return
     duration = float(runtime_cues[cue_id].get("duration") or 0.0)
 
+    semantic_index = index_semantics(ROOT / "games" / game_id)
     stage_rel = doc.get("stage") or f"_stage/{game_id}.table"
     stage_path = ROOT / "games" / game_id / "tutorial" / "anim" / (stage_rel + ".json")
     stage, zones, templates = validate_stage(stage_path, report, game_id)
     if stage is None:
         return
+    visual = stage.get("visual") or {}
 
     known_ids = set(derive_actor_ids(stage))
 
@@ -227,7 +312,31 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if target and target not in known_ids:
             report.error(ew, f"target {target!r} 不是牌桌上已知的组件 id")
 
-        if action == "move":
+        if action == "transfer":
+            flow_id = ev.get("flow")
+            if not flow_id:
+                report.error(ew, "transfer 需要 flow（语义节点 id）")
+            else:
+                node_id = flow_id.split(":", 1)[-1]
+                found = find_semantic_op(semantic_index, node_id)
+                if not found:
+                    report.error(ew, f"flow/concepts 里找不到节点 {node_id!r}")
+                else:
+                    kind, op, owner = found
+                    source = op.get("source") or owner.get("source")
+                    destination = op.get("destination") or owner.get("destination")
+                    if not source or not destination:
+                        report.error(ew, f"语义节点 {node_id!r} 没有 source/destination，无法驱动 transfer")
+                    else:
+                        for label, concept in (("source", source), ("destination", destination)):
+                            resolved = concept.strip().strip("<>").replace("ontology::", "")
+                            if not any(v.get("concept", "").strip().strip("<>").replace("ontology::", "") == resolved
+                                       or v.get("concept") == concept or v.get("concept") == resolved
+                                       for v in (visual.get("zones") or [])):
+                                report.error(ew, f"{label} {concept!r} 在 stage.visual 里没有视觉绑定")
+            if ev.get("each") and int(ev.get("take", 0) or 0) > 0:
+                report.warn(ew, "each 与 take 同时存在；each 优先")
+        elif action == "move":
             if not target and not ev.get("from"):
                 report.error(ew, "move 需要 target（指定某件）或 from（指定源 zone）")
             if ev.get("from") and ev["from"] not in zones:
