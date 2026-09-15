@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。board.extent 是相机取景的唯一依据。offstage 是画面外的入场通道，margin 必须大于可见范围，否则「还没拿进来的东西」会漏进画面（表现为小圆点在边缘飘）。开局只有三摞发展卡在桌上。高亮目标是具体组件或该 zone 专属的 glow 底板。卡面用实物扫描 media/card/（不进 Git）。",
+  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上（40/30/20 张，按实物），宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode 决定数量表现：count=可数（摊开），stack=一堆（叠压只露边）。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
@@ -114,14 +114,14 @@
       "layout": {
         "type": "grid",
         "cols": 4,
-        "x_step": 0.71,
-        "z_step": 0.92
+        "x_step": 0.72,
+        "z_step": 0.95
       },
       "capacity": 12,
       "palette": "panel_market",
       "size": {
-        "w": 0.56,
-        "h": 0.79
+        "w": 0.63,
+        "h": 0.88
       },
       "display": {
         "mode": "count"
@@ -399,6 +399,33 @@
       "height": 0.78,
       "alpha": 0.16,
       "sorting_order": -20
+    },
+    {
+      "id": "market_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_绿.jpg"
+    },
+    {
+      "id": "market_card_2",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_绿.jpg"
+    },
+    {
+      "id": "market_card_3",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_绿.jpg"
     }
   ],
   "anchors": [
@@ -457,19 +484,19 @@
   ],
   "initial": [
     {
-      "count": 3,
+      "count": 40,
       "template": "card_back_1",
       "palette": "card_level_1",
       "zone": "deck_level_1"
     },
     {
-      "count": 3,
+      "count": 30,
       "template": "card_back_2",
       "palette": "card_level_2",
       "zone": "deck_level_2"
     },
     {
-      "count": 3,
+      "count": 20,
       "template": "card_back_3",
       "palette": "card_level_3",
       "zone": "deck_level_3"

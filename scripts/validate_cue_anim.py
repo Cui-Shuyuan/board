@@ -81,7 +81,11 @@ def load_json(path: Path):
 
 
 def derive_actor_ids(stage):
-    """Reproduce ZoneStore.Spawn's id scheme: '{template}#{n}' with a per-template counter."""
+    """
+    Reproduce ZoneStore.Spawn's id scheme: '{template}#{n}' with a per-template counter,
+    numbered in stage.initial order regardless of zone.  This is the authoritative id set
+    the runtime assigns, so cue targets are checked against it.
+    """
     counters = {}
     ids = []
     for entry in stage.get("initial", []):

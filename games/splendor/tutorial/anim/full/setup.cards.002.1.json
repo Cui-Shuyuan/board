@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "cue": "setup.cards.002.1",
+  "stage": "_stage/splendor.table",
+  "note": "设置 2.1 第四句：将这三类牌分别洗混后按顺序摆成一列；从每摞牌上方分别翻开四张牌，在一侧摆成一行。洗混对齐「洗混」(1.52~1.93)；翻牌对齐「翻开四张牌」(5.50~6.29)，每级四张依次到市场，一级在上、三级在下（3 行 × 4 列）。牌堆的暗牌留在原处，发出去的是扫描件的卡面（market_card_*）。",
+  "events": [
+    {
+      "at": 1.55,
+      "dur": 0.9,
+      "action": "shuffle",
+      "zone": "deck_level_1",
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 1.55,
+      "dur": 0.9,
+      "action": "shuffle",
+      "zone": "deck_level_2",
+      "easing": "easeInOutCubic",
+      "lead": 0.05
+    },
+    {
+      "at": 1.55,
+      "dur": 0.9,
+      "action": "shuffle",
+      "zone": "deck_level_3",
+      "easing": "easeInOutCubic",
+      "lead": 0.1
+    },
+    {
+      "at": 2.35,
+      "dur": 0.8,
+      "action": "highlight",
+      "zone": "deck_level_1",
+      "peak_alpha": 0.35,
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 2.55,
+      "dur": 0.8,
+      "action": "highlight",
+      "zone": "deck_level_2",
+      "peak_alpha": 0.35,
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 2.75,
+      "dur": 0.8,
+      "action": "highlight",
+      "zone": "deck_level_3",
+      "peak_alpha": 0.35,
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 5.45,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 5.45,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.22
+    },
+    {
+      "at": 5.45,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.44
+    },
+    {
+      "at": 5.45,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.66
+    },
+    {
+      "at": 6.3,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 6.3,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.22
+    },
+    {
+      "at": 6.3,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.44
+    },
+    {
+      "at": 6.3,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.66
+    },
+    {
+      "at": 7.0,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 7.0,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.22
+    },
+    {
+      "at": 7.0,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.44
+    },
+    {
+      "at": 7.0,
+      "dur": 0.42,
+      "action": "move",
+      "from": [
+        "card_market"
+      ],
+      "zone": "card_market",
+      "easing": "easeOutCubic",
+      "lead": 0.66
+    },
+    {
+      "at": 7.6,
+      "dur": 0.55,
+      "action": "highlight",
+      "zone": "card_market",
+      "peak_alpha": 0.45,
+      "easing": "easeInOutCubic"
+    }
+  ],
+  "start": {
+    "set": [
+      {
+        "template": "market_card_1",
+        "palette": "card_level_1",
+        "zone": "card_market",
+        "expand_to": 4
+      },
+      {
+        "template": "market_card_2",
+        "palette": "card_level_2",
+        "zone": "card_market",
+        "expand_to": 4
+      },
+      {
+        "template": "market_card_3",
+        "palette": "card_level_3",
+        "zone": "card_market",
+        "expand_to": 4
+      }
+    ]
+  }
+}

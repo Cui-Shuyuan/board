@@ -10,7 +10,7 @@
       "at": 0.85,
       "dur": 1.6,
       "action": "highlight",
-      "target": "card_back_2#3",
+      "target": "card_back_2#30",
       "grow": 1.2,
       "easing": "easeInOutCubic"
     },
@@ -18,7 +18,7 @@
       "at": 3.65,
       "dur": 1.55,
       "action": "highlight",
-      "target": "card_back_3#3",
+      "target": "card_back_3#20",
       "grow": 1.2,
       "easing": "easeInOutCubic"
     }
