@@ -445,6 +445,8 @@ namespace BoardGameTutorial.Editor
 
             var go = new GameObject("TimelineHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.logMoves = true;
+            anim.logTweens = true;
             if (!anim.LoadCue(gameRoot, "full", cueId, false))
             {
                 Debug.LogError($"[Timeline] LoadCue 失败: {cueId}");
@@ -462,6 +464,71 @@ namespace BoardGameTutorial.Editor
                 SaveFrame(path);
                 n++;
             }
+            // 行位断言：每一级市场牌必须落在与**同级牌堆**相同深度的行上。
+            // 这条正是用户报过的「一级牌被发到二级位置、又被收回」。
+            foreach (var it in anim.Store.Items)
+                if (it.Id.StartsWith("market_card_") && it.Order < 4)
+                {
+                    var logical = anim.Store.CurrentPosition(it);
+                    var visual = it.Actor?.Go.transform.localPosition ?? Vector3.zero;
+                    var bySlot = anim.Store.ZonePosition(it.ZoneId, it.Order);
+                    Debug.Log($"[Timeline] {it.Id} order={it.Order} 逻辑=({logical.x:0.00},{logical.z:0.00}) " +
+                              $"画面=({visual.x:0.00},{visual.z:0.00}) 格位=({bySlot.x:0.00},{bySlot.z:0.00}) " +
+                              $"Flipped={it.Flipped}");
+                }
+            // 行位断言：第 N 级市场牌必须落在与第 N 级牌堆**同一深度**的行上。
+            // 这正是用户报过的「一级牌被发到二级位置、又被收回」。行 z 由
+            // center + row * z_step 决定，所以逐级对比牌堆 z 即可。
+            // 断言前先推到整条 cue 之后：动画可能还没播完，否则会误判成「位置错误」。
+            anim.Seek(to + 3f);
+
+            // 行位断言：第 N 级市场牌必须落在与第 N 级牌堆**同一深度**的行上。
+            // 这正是用户报过的「一级牌被发到二级位置、又被收回」。行 z 由
+            // center + row * z_step 决定，所以逐级对比牌堆 z 即可。
+            {
+                var z0 = anim.Store.GetZone("card_market");
+                Debug.Log($"[Runtime] card_market center=({z0?.center.x:0.00},{z0?.center.z:0.00}) " +
+                          $"layout={z0?.layout?.type} cols={z0?.layout?.cols} x_step={z0?.layout?.x_step:0.00} " +
+                          $"z_step={z0?.layout?.z_step:0.00} cap={z0?.capacity}");
+                for (int o = 0; o < 12; o++)
+                {
+                    var p = anim.Store.ZonePosition("card_market", o);
+                    Debug.Log($"[Runtime]   order={o:2d} → ({p.x:0.00},{p.z:0.00})");
+                }
+                for (int l = 1; l <= 3; l++)
+                    Debug.Log($"[Runtime] deck_level_{l} z={anim.Store.ZoneCenter("deck_level_" + l).z:0.00}");
+            }
+            int bad = 0;
+            for (int lvl = 1; lvl <= 3; lvl++)
+            {
+                int row = lvl - 1;
+                float rowZ = anim.Store.ZonePosition("card_market", row * 4).z;
+                float deckZ = anim.Store.ZoneCenter("deck_level_" + lvl).z;
+                bool aligned = Mathf.Abs(rowZ - deckZ) < 0.05f;
+                Debug.Log($"[Timeline] {(aligned ? "PASS" : "FAIL")} 第 {lvl} 级：市场行 z={rowZ:0.00} " +
+                          $"与牌堆 z={deckZ:0.00} {(aligned ? "对齐" : "错位")}");
+                if (!aligned) bad++;
+
+                for (int c = 0; c < 4; c++)
+                {
+                    int slot = row * 4 + c;
+                    var want = anim.Store.ZonePosition("card_market", slot);
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (!it.Id.StartsWith($"market_card_{lvl}_") || it.ZoneId != "card_market") continue;
+                        if (it.Order != slot || it.Actor == null) continue;
+                        var got = it.Actor.Go.transform.localPosition;
+                        if (Mathf.Abs(got.x - want.x) > 0.3f || Mathf.Abs(got.z - want.z) > 0.3f)
+                        {
+                            Debug.LogWarning($"[Timeline] 位置错误 {it.Id}: " +
+                                             $"在 ({got.x:0.00},{got.z:0.00}) 应在 ({want.x:0.00},{want.z:0.00}) " +
+                                             $"应在 ({want.x:0.00},{want.z:0.00})");
+                            bad++;
+                        }
+                    }
+                }
+            }
+            Debug.Log($"[Timeline] {(bad == 0 ? "PASS" : "FAIL")} 12 张市场牌全部落在自己的格位上（异常 {bad} 处）");
             Debug.Log($"[Timeline] 已出 {n} 帧 → {outDir}");
         }
 

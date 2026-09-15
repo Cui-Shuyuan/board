@@ -109,13 +109,13 @@
       "label": "发展卡牌市场",
       "center": {
         "x": -0.5,
-        "z": 0.52
+        "z": -0.62
       },
       "layout": {
         "type": "grid",
         "cols": 4,
         "x_step": 0.7,
-        "z_step": 1.14
+        "z_step": 1.1400000000000001
       },
       "capacity": 12,
       "palette": "panel_market",
@@ -586,7 +586,7 @@
       "id": "board_market_area",
       "template": "board_market",
       "x": -0.5,
-      "z": 0.52,
+      "z": -0.62,
       "zones": [
         "card_market"
       ]

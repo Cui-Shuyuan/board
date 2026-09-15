@@ -700,6 +700,7 @@ namespace BoardGameTutorial
             }
 
             SampleClips(scaled);
+
         }
 
         /// <summary>
@@ -1038,11 +1039,17 @@ namespace BoardGameTutorial
                 var actor = FindActor(ev.target);
                 if (actor?.Item != null)
                 {
-                    // order=-2：只动画到 ev.slot 指定的格位，占用不变（牌仍在原 zone，
-                    // 入场点就是牌堆位置），因此看起来是「从牌堆飞出来」。
-                    var dest = ev.order == -2 ? actor.Item.ZoneId : ev.zone;
+                    // order=-2：落到 ev.slot 指定的格位，**归属也真的迁过去**。
+                    // 视觉上仍从 from_zone（对应牌堆）飞出，所以看起来是「从牌堆翻出来」；
+                    // 但逻辑上必须落到市场，否则后续事件会把牌拉回起点、后面的牌也会占错格。
                     int ord = ev.order == -2 ? ev.slot : ev.order;
-                    plan.Add(new MovePlan { Item = actor.Item, Destination = dest, Order = ord, InPlace = ev.order == -2 });
+                    plan.Add(new MovePlan
+                    {
+                        Item = actor.Item,
+                        Destination = ev.zone,
+                        Order = ord,
+                        InPlace = false,
+                    });
                 }
                 return plan;
             }
@@ -1111,8 +1118,12 @@ namespace BoardGameTutorial
                 //   ① 后续事件按旧归属算位置时，把这些牌拉回起点（用户看到的「被收回去」）
                 //   ② 新发的牌按当前格位算，落到了别的行
                 // 现在统一按正常落位处理，动画起点仍由 from_zone 提供，所以看起来依旧「从牌堆飞出」。
-                if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
-                else if (!step.InPlace) Store.MoveTo(step.Item, step.Destination);
+                // step.Order 可能是 -2（真实格位在 ev.slot），必须按 Destination + 格位落位，
+                // 否则「从别处出场落到第 N 格」这类搬运既不改归属、终点也取错 zone。
+                if (step.Destination != null && step.Order >= 0)
+                    Store.MoveToAt(step.Item, step.Destination, step.Order);
+                else if (step.Destination != null && step.Destination != step.Item.ZoneId)
+                    Store.MoveTo(step.Item, step.Destination);
                 moved.Add(step.Item);
                 if (logImages && step.Order >= 0)
                     Debug.Log($"[Move] {step.Item.Id} → {step.Destination} order={step.Item.Order} " +
@@ -1120,8 +1131,8 @@ namespace BoardGameTutorial
                               $"zoneCount={Store.CountInZone(step.Destination)}");
 
                 // 终点：原位动画落在「目标 zone 的第 Order 格」，普通搬运落在新归属的格位。
-                // 落位后按目标 zone 的格位取终点（此时归属已更新，CurrentPosition 等价）。
-                Vector3 to = step.Order >= 0
+                // 落位后取终点。目的地明确时用「目标 zone + 格位」，否则用当前归属。
+                Vector3 to = (step.Destination != null && step.Order >= 0)
                     ? Store.ZonePosition(step.Destination, step.Order)
                     : Store.CurrentPosition(step.Item);
 
