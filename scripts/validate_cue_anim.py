@@ -257,8 +257,11 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if action == "move":
             if not target and not ev.get("from"):
                 report.error(ew, "move 需要 target（指定某件）或 from（指定源 zone）")
-            # from 可以是单个 zone，也可以是多个 zone（各取 take 件）
+            # from 必须是**数组**。写成字符串时 JsonUtility 会静默丢弃整个字段
+            # （类型不匹配不报错），表现为 move 永远拿不到源 zone、牌堆搭不起来。
             raw_from = ev.get("from")
+            if isinstance(raw_from, str):
+                report.error(ew, f'move.from 必须写成数组：["{raw_from}"]（字符串会被静默丢弃）')
             sources = raw_from if isinstance(raw_from, list) else ([raw_from] if raw_from else [])
             if isinstance(raw_from, list) and not raw_from:
                 report.error(ew, "move.from 是空数组")

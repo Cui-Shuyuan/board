@@ -10,7 +10,9 @@
       "at": 0.35,
       "dur": 0.42,
       "action": "move",
-      "from": "offstage",
+      "from": [
+        "offstage"
+      ],
       "take": 3,
       "zone": "deck_level_1",
       "easing": "easeOutCubic"
@@ -19,7 +21,9 @@
       "at": 0.35,
       "dur": 0.42,
       "action": "move",
-      "from": "offstage",
+      "from": [
+        "offstage"
+      ],
       "take": 3,
       "zone": "deck_level_2",
       "easing": "easeOutCubic",
@@ -29,7 +33,9 @@
       "at": 0.35,
       "dur": 0.42,
       "action": "move",
-      "from": "offstage",
+      "from": [
+        "offstage"
+      ],
       "take": 3,
       "zone": "deck_level_3",
       "easing": "easeOutCubic",
