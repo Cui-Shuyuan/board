@@ -1,0 +1,39 @@
+{
+  "game_id": "splendor",
+  "note": "璀璨宝石实物尺寸（用户实测，2026-09-15）。这是派生动画世界尺寸的依据：世界单位 = 毫米/100。动画里的 width/height/world_size 都由这里换算，不再靠扫描件反推——扫描件是紧贴裁切的，像素→毫米不可信。",
+  "unit": "mm",
+  "components": [
+    {
+      "id": "development_card",
+      "zh": "发展卡",
+      "w": 63,
+      "h": 88,
+      "confirmed_by": "user",
+      "source": "标准扑克牌尺寸，用户确认"
+    },
+    {
+      "id": "noble",
+      "zh": "贵族板块",
+      "w": 60,
+      "h": 60,
+      "confirmed_by": "user"
+    },
+    {
+      "id": "gem",
+      "zh": "宝石圆片",
+      "diameter": 43,
+      "confirmed_by": "user",
+      "note": "五色宝石各 43mm"
+    },
+    {
+      "id": "gold",
+      "zh": "黄金圆片",
+      "diameter": 43,
+      "confirmed_by": "user",
+      "note": "与宝石同径"
+    }
+  ],
+  "world_units": {
+    "mm_to_unit": 0.01
+  }
+}
