@@ -195,7 +195,7 @@ namespace BoardGameTutorial.Editor
             // Unity 每帧会把 Camera.aspect 重置回 Screen 的宽高比；batchmode 下 Screen 固定 640x480，
             // 与渲染目标不一致。取景时用 cameraAspectOverride，出帧前再显式覆盖一次。
             anim.cameraAspectOverride = (float)Width / Height;
-            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; }
+            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; anim.logImages = true; }
 
             if (verbose) anim.Store.logPull = true;
 

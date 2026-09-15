@@ -134,14 +134,14 @@
       "layout": {
         "type": "pile",
         "cols": 4,
-        "x_step": 0.075,
-        "z_step": 0.08
+        "x_step": 0.115,
+        "z_step": 0.12
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
-        "w": 0.13,
-        "h": 0.13
+        "w": 0.2,
+        "h": 0.2
       }
     },
     {
@@ -154,14 +154,14 @@
       "layout": {
         "type": "pile",
         "cols": 4,
-        "x_step": 0.075,
-        "z_step": 0.08
+        "x_step": 0.115,
+        "z_step": 0.12
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
-        "w": 0.13,
-        "h": 0.13
+        "w": 0.2,
+        "h": 0.2
       }
     },
     {
@@ -174,14 +174,14 @@
       "layout": {
         "type": "pile",
         "cols": 4,
-        "x_step": 0.075,
-        "z_step": 0.08
+        "x_step": 0.115,
+        "z_step": 0.12
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
-        "w": 0.13,
-        "h": 0.13
+        "w": 0.2,
+        "h": 0.2
       }
     },
     {
@@ -194,14 +194,14 @@
       "layout": {
         "type": "pile",
         "cols": 4,
-        "x_step": 0.075,
-        "z_step": 0.08
+        "x_step": 0.115,
+        "z_step": 0.12
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
-        "w": 0.13,
-        "h": 0.13
+        "w": 0.2,
+        "h": 0.2
       }
     },
     {
@@ -214,14 +214,14 @@
       "layout": {
         "type": "pile",
         "cols": 4,
-        "x_step": 0.075,
-        "z_step": 0.08
+        "x_step": 0.115,
+        "z_step": 0.12
       },
       "capacity": 7,
       "palette": "panel_supply",
       "size": {
-        "w": 0.13,
-        "h": 0.13
+        "w": 0.2,
+        "h": 0.2
       }
     },
     {
@@ -234,14 +234,14 @@
       "layout": {
         "type": "pile",
         "cols": 4,
-        "x_step": 0.075,
-        "z_step": 0.08
+        "x_step": 0.115,
+        "z_step": 0.12
       },
       "capacity": 5,
       "palette": "panel_supply",
       "size": {
-        "w": 0.13,
-        "h": 0.13
+        "w": 0.2,
+        "h": 0.2
       }
     },
     {
@@ -267,8 +267,8 @@
     {
       "id": "gem",
       "shape": "gem",
-      "world_size": 0.105,
-      "sorting_order": 5
+      "world_size": 0.2,
+      "sorting_order": 6
     },
     {
       "id": "card_back_1",
@@ -301,8 +301,8 @@
       "id": "noble",
       "shape": "card",
       "palette": "noble",
-      "width": 0.5,
-      "height": 0.5,
+      "width": 0.62,
+      "height": 0.62,
       "sorting_order": 2
     },
     {

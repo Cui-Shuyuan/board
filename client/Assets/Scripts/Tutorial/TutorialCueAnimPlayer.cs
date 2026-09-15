@@ -296,9 +296,13 @@ namespace BoardGameTutorial
             var image = ResolveImagePath(tpl);
             if (image != null)
             {
-                var loaded = CardImageLoader.Load(image);
-                if (loaded != null) return loaded;
-                Debug.LogWarning($"[TutorialCueAnim] card image failed: {image}");
+                var loaded = CardImageLoader.Load(image, tpl.shape);
+                if (loaded != null)
+                {
+                    if (logImages) Debug.Log($"[TutorialCueAnim] 扫描图: {tpl.id} ({tpl.palette}) ← {Path.GetFileName(image)}");
+                    return loaded;
+                }
+                Debug.LogWarning($"[TutorialCueAnim] 扫描图加载失败: {image}");
             }
 
             if (!string.IsNullOrEmpty(tpl.sprite))
@@ -325,8 +329,21 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
-        /// 找到模板对应的扫描图。优先 face_image；否则按 card/level 约定查找
-        /// media/card/{level}_back.{jpg,png} 或 media/card/{level}_{color}.{jpg,png}。
+        /// 色板名 → 扫描图文件名。宝石六色共用一个 gem 模板，靠 palette 区分实物图。
+        /// 键是 stage 里用的 palette 名；值是 media/card 下的文件名。
+        /// </summary>
+        private static readonly Dictionary<string, string> PaletteImages = new Dictionary<string, string>
+        {
+            { "gem_diamond",  "白宝石.jpg" },
+            { "gem_sapphire", "蓝宝石.jpg" },
+            { "gem_emerald",  "绿宝石.jpg" },
+            { "gem_ruby",     "红宝石.jpg" },
+            { "gem_onyx",     "黑宝石.jpg" },
+            { "gem_gold",     "黄金.jpg" },
+        };
+
+        /// <summary>
+        /// 找到模板对应的扫描图。优先 face_image；其次按色板名的实物图；最后按等级卡背约定。
         /// </summary>
         private string ResolveImagePath(StageTemplate tpl)
         {
@@ -344,6 +361,20 @@ namespace BoardGameTutorial
         private static IEnumerable<string> ImageCandidates(StageTemplate tpl)
         {
             if (!string.IsNullOrEmpty(tpl.face_image)) yield return tpl.face_image;
+
+            // 按色板名找实物图（宝石六色、黄金）
+            if (!string.IsNullOrEmpty(tpl.palette) && PaletteImages.TryGetValue(tpl.palette, out var image))
+            {
+                yield return "media/card/" + image;
+                yield return "media/card/" + Path.GetFileNameWithoutExtension(image) + ".png";
+            }
+
+            // 贵族板块
+            if (tpl.palette == "noble")
+            {
+                yield return "media/card/贵族_0001.jpg";
+                yield return "media/card/贵族_0001.png";
+            }
 
             if (tpl.shape != "card" || string.IsNullOrEmpty(tpl.palette)) yield break;
             if (!tpl.palette.StartsWith("card_level_")) yield break;
@@ -1107,6 +1138,9 @@ namespace BoardGameTutorial
 
         /// <summary>调试开关：打印取景计算过程（离线出帧诊断用）。</summary>
         public bool logCameraFit;
+
+        /// <summary>调试：打印扫锚图解析结果。</summary>
+        public bool logImages;
 
         /// <summary>
         /// 取景使用的宽高比。&lt;=0 表示用当前屏幕（正常运行）。

@@ -1,11 +1,15 @@
 // BoardGameTutorial
-// 卡牌扫描图加载器：JPG/PNG → Sprite，并把白底与白边转成透明。
+// 扫描图加载器：JPG/PNG → Sprite，按**形状**处理背景。
 //
-// 为什么需要：手里的发展卡是实物扫描（白底 + 圆角），直接当 sprite 会画出一块白方块。
-// 这里不引入任何图像库，只是读出像素、按亮度做一次 alpha key，再修掉边缘残留的白点。
+// 三类素材，三种处理：
+//   卡牌/贵族（矩形）  只做「白底转透明」——扫描件的白边在画面里无所谓；
+//   圆形 token（宝石） 除了白底，还要切掉四角：实物是圆片而扫描件是方图，
+//                     不切就会在圆片外露出一圈白。
 //
-// 结果按路径缓存，同一张图只处理一次。素材不进 Git，Unity 在运行时从
-// games/{game}/media/card/ 直接读文件。
+// 世界尺寸不在这里硬编码：由 stage 模板的 width/height/world_size 决定，
+// 所以「宝石实物到底多大」是数据问题，靠截图调，不用改代码。
+//
+// 扫描件不进 Git，Unity 运行时从 games/{game}/media/ 直接读文件。
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -20,12 +24,20 @@ namespace BoardGameTutorial
         /// <summary>亮度 ≤ 该值的像素视为完全不透明。</summary>
         private const float OpaqueCutoff = 0.78f;
 
+        /// <summary>圆形 token 的白底阈值：token 外圈常是略灰的白，用更松的阈值。</summary>
+        private const float TokenWhiteCutoff = 0.86f;
+
+        /// <summary>圆形遮罩外再留一点余量，避免边缘出现一圈透明缝。</summary>
+        private const float CircleMargin = 1.02f;
+
         private static readonly Dictionary<string, Sprite> Cache = new Dictionary<string, Sprite>();
 
-        public static Sprite Load(string absolutePath)
+        public static Sprite Load(string absolutePath, string shape = "card")
         {
             if (string.IsNullOrEmpty(absolutePath)) return null;
-            if (Cache.TryGetValue(absolutePath, out var cached)) return cached;
+
+            string key = absolutePath + "|" + shape;
+            if (Cache.TryGetValue(key, out var cached)) return cached;
             if (!File.Exists(absolutePath)) return null;
 
             byte[] bytes;
@@ -46,73 +58,162 @@ namespace BoardGameTutorial
                 return null;
             }
 
-            ApplyWhiteKey(tex);
+            if (shape == "gem")
+            {
+                ApplyTokenMask(tex);
+            }
+            else
+            {
+                ApplyWhiteKey(tex);
+            }
+
             tex.filterMode = FilterMode.Bilinear;
             tex.wrapMode = TextureWrapMode.Clamp;
 
             var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height),
                 new Vector2(0.5f, 0.5f), 100f);
-            Cache[absolutePath] = sprite;
+            Cache[key] = sprite;
             return sprite;
         }
 
-        /// <summary>把白底变透明。alpha = 1 - 亮度，并在白底阈值处截止，避免卡片边缘留一圈灰。</summary>
+        // ── 矩形件：白底转透明 ────────────────────────────────────────────
+
         private static void ApplyWhiteKey(Texture2D tex)
         {
             var pixels = tex.GetPixels();
-            int width = tex.width;
-            int height = tex.height;
-
             for (int i = 0; i < pixels.Length; i++)
             {
                 var c = pixels[i];
-                // 卡片外部是白底（含 jpeg 噪点），按亮度做一个软阈值。
-                float luma = 0.299f * c.r + 0.587f * c.g + 0.114f * c.b;
-
-                float a;
-                if (luma >= WhiteCutoff) a = 0f;
-                else if (luma <= OpaqueCutoff) a = 1f;
-                else a = Mathf.InverseLerp(WhiteCutoff, OpaqueCutoff, luma);
-
-                c.a = a;
+                c.a = AlphaFor(Luma(c), WhiteCutoff);
                 pixels[i] = c;
+            }
+            tex.SetPixels(pixels);
+            tex.Apply();
+            ErodeTransparentFringe(tex);
+        }
+
+        // ── 圆形 token：白底 + 圆形遮罩 ──────────────────────────────────
+
+        /// <summary>
+        /// 宝石/黄金是圆片，扫描件是方图。先按「与背景的差异」找出圆心与半径，
+        /// 再把圆外一律设为透明；圆内仍按亮度处理（含外圈的白色环）。
+        /// </summary>
+        private static void ApplyTokenMask(Texture2D tex)
+        {
+            int w = tex.width, h = tex.height;
+            var pixels = tex.GetPixels();
+
+            var circle = DetectCircle(pixels, w, h);
+            bool hasCircle = circle.z > 0f;
+
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    int i = y * w + x;
+                    var c = pixels[i];
+                    float a = AlphaFor(Luma(c), TokenWhiteCutoff);
+
+                    if (hasCircle)
+                    {
+                        float dx = x - circle.x;
+                        float dy = y - circle.y;
+                        if (Mathf.Sqrt(dx * dx + dy * dy) > circle.z * CircleMargin) a = 0f;
+                    }
+
+                    c.a = a;
+                    pixels[i] = c;
+                }
             }
 
             tex.SetPixels(pixels);
             tex.Apply();
-
-            // 圆角外的白像素带 jpeg 噪点，逐像素阈值化后会留下孤立的半透明白点。
-            // 用一次收缩把这些白点并入卡片本体，避免画面出现一圈毛刺。
-            ErodeTransparentFringe(tex, width, height);
+            ErodeTransparentFringe(tex);
         }
 
-        private static void ErodeTransparentFringe(Texture2D tex, int width, int height)
+        /// <summary>
+        /// 找圆片：逐行取「非背景」像素的最左最右，最宽的一行给出直径，该行中点是圆心。
+        /// 背景色取四角中位色，避免用固定阈值猜白。
+        /// 返回 (cx, cy, radius)；找不到时 radius = 0。
+        /// </summary>
+        private static Vector3 DetectCircle(Color[] px, int w, int h)
         {
+            var corners = new List<Color>();
+            int pad = Mathf.Clamp(Mathf.Min(w, h) / 12, 4, 16);
+            for (int y = 0; y < pad; y++)
+                for (int x = 0; x < pad; x++)
+                {
+                    corners.Add(px[y * w + x]);
+                    corners.Add(px[y * w + (w - 1 - x)]);
+                    corners.Add(px[(h - 1 - y) * w + x]);
+                    corners.Add(px[(h - 1 - y) * w + (w - 1 - x)]);
+                }
+            corners.Sort((a, b) => (a.r + a.g + a.b).CompareTo(b.r + b.g + b.b));
+            var bg = corners[corners.Count / 2];
+
+            const float dist = 0.10f;
+            float best = 0f, bestCy = 0f, bestCx = 0f;
+            for (int y = 0; y < h; y++)
+            {
+                int left = -1, right = -1;
+                for (int x = 0; x < w; x++)
+                {
+                    var c = px[y * w + x];
+                    float dr = c.r - bg.r, dg = c.g - bg.g, db = c.b - bg.b;
+                    if (Mathf.Sqrt(dr * dr + dg * dg + db * db) <= dist) continue;
+                    if (left < 0) left = x;
+                    right = x;
+                }
+                if (left < 0) continue;
+                float span = right - left + 1;
+                if (span > best)
+                {
+                    best = span;
+                    bestCy = y;
+                    bestCx = (left + right) * 0.5f;
+                }
+            }
+
+            return new Vector3(bestCx, bestCy, best * 0.5f);
+        }
+
+        // ── 公共 ──────────────────────────────────────────────────────────
+
+        private static float Luma(Color c) => 0.299f * c.r + 0.587f * c.g + 0.114f * c.b;
+
+        private static float AlphaFor(float luma, float whiteCutoff)
+        {
+            if (luma >= whiteCutoff) return 0f;
+            if (luma <= OpaqueCutoff) return 1f;
+            return Mathf.InverseLerp(whiteCutoff, OpaqueCutoff, luma);
+        }
+
+        /// <summary>圆角外残留的半透明白噪点并进本体，避免边缘一圈毛刺。</summary>
+        private static void ErodeTransparentFringe(Texture2D tex)
+        {
+            int w = tex.width, h = tex.height;
             var src = tex.GetPixels();
             var dst = (Color[])src.Clone();
             bool changed = false;
 
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < h; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < w; x++)
                 {
-                    int i = y * width + x;
-                    if (src[i].a <= 0f) continue;
+                    int i = y * w + x;
+                    if (src[i].a <= 0f || src[i].a >= 0.6f) continue;
 
-                    // 四周有完全透明的邻居 → 该像素属于边缘白噪点，收掉。
                     bool transparentNeighbour =
                         (x > 0 && src[i - 1].a <= 0f) ||
-                        (x < width - 1 && src[i + 1].a <= 0f) ||
-                        (y > 0 && src[i - width].a <= 0f) ||
-                        (y < height - 1 && src[i + width].a <= 0f);
+                        (x < w - 1 && src[i + 1].a <= 0f) ||
+                        (y > 0 && src[i - w].a <= 0f) ||
+                        (y < h - 1 && src[i + w].a <= 0f);
 
-                    if (transparentNeighbour && src[i].a < 0.6f)
-                    {
-                        var c = dst[i];
-                        c.a = 0f;
-                        dst[i] = c;
-                        changed = true;
-                    }
+                    if (!transparentNeighbour) continue;
+                    var c = dst[i];
+                    c.a = 0f;
+                    dst[i] = c;
+                    changed = true;
                 }
             }
 
