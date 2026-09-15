@@ -34,17 +34,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 # 卡牌按最大件估算（Splendor 发展卡 63x88mm）；其他件都很小，用 pad 覆盖。
-CARD_HALF_W = 0.315
-CARD_HALF_H = 0.44
-
-
 def load_json(path: Path):
     with path.open(encoding="utf-8") as fh:
         return json.load(fh)
 
 
 def zone_box(zone):
-    """zone 的世界包围盒 (min_x, max_x, min_z, max_z) 与是否用卡牌尺寸估算。"""
+    """
+    zone 的世界包围盒 (min_x, max_x, min_z, max_z)。
+
+    单件尺寸来源优先级：zone.size 显式声明 > layout 步长推算。
+    不再靠「猜里面放的是卡牌还是棋子」——猜错过一次，报了一堆假重叠。
+    """
     layout = zone.get("layout") or {}
     cols = max(1, int(layout.get("cols", 1)))
     capacity = int(zone.get("capacity", 1)) or 1
@@ -52,24 +53,29 @@ def zone_box(zone):
     z_step = float(layout.get("z_step", 0.09))
     typ = layout.get("type", "pile")
 
-    rows = max(1, math.ceil(capacity / cols))
-    half_w = max(0.05, (cols - 1) * 0.5 * x_step)
-    half_h = max(0.05, (rows - 1) * 0.5 * z_step)
+    size = zone.get("size") or {}
+    item_w = float(size.get("w", 0)) or None
+    item_h = float(size.get("h", 0)) or None
+    if item_w is None or item_h is None:
+        # 没有显式尺寸：用步长的 1.4 倍当占位，只求不出离谱结果
+        item_w = item_w or max(0.10, x_step * 1.4)
+        item_h = item_h or max(0.10, z_step * 1.4)
 
-    # row 是单行；grid 的纵向跨度由行数决定；pile 是小堆
+    half_item_w = item_w * 0.5
+    half_item_h = item_h * 0.5
+
     if typ == "row":
-        half_h = 0.05
-    cards = typ == "grid"
-    if cards:
-        half_w = max(half_w, CARD_HALF_W)
-        half_h = max(half_h, CARD_HALF_H)
+        span_w = (capacity - 1) * x_step
+        half_w = span_w * 0.5 + half_item_w
+        half_h = half_item_h
     else:
-        half_w += 0.07
-        half_h += 0.07
+        rows = max(1, math.ceil(capacity / cols))
+        half_w = (cols - 1) * 0.5 * x_step + half_item_w
+        half_h = (rows - 1) * 0.5 * z_step + half_item_h
 
     cx = zone["center"]["x"]
     cz = zone["center"]["z"]
-    return (cx - half_w, cx + half_w, cz - half_h, cz + half_h), cards
+    return (cx - half_w, cx + half_w, cz - half_h, cz + half_h)
 
 
 def main():
@@ -125,7 +131,7 @@ def main():
             err(f"zone {z['id']}: 缺少 center")
 
     # 2) 重叠
-    boxes = [(z["id"], *zone_box(z)[0]) for z in onstage if "center" in z]
+    boxes = [(z["id"], *zone_box(z)) for z in onstage if "center" in z]
     for i in range(len(boxes)):
         for j in range(i + 1, len(boxes)):
             a_id, ax0, ax1, az0, az1 = boxes[i]

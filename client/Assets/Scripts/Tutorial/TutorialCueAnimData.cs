@@ -85,6 +85,20 @@ namespace BoardGameTutorial
 
         /// <summary>逻辑容量，用于校验；实际排布由 layout 决定。</summary>
         public int capacity;
+
+        /// <summary>
+        /// 该 zone 内**单件**的占用尺寸（世界单位）。显式声明，
+        /// 让布局校验和相机取景都不必猜「这里面放的是卡牌还是棋子」。
+        /// 留空则按 layout 的步长推算。
+        /// </summary>
+        public StageSize size;
+    }
+
+    [Serializable]
+    public class StageSize
+    {
+        public float w = 0.14f;
+        public float h = 0.14f;
     }
 
     [Serializable]
@@ -197,7 +211,9 @@ namespace BoardGameTutorial
         public string palette;
         public string zone;
         public int count = 1;
-        public int? expand_to;
+
+        /// <summary>补到 N 件（0 = 未指定）。JsonUtility 不支持可空类型，只能用哨兵值。</summary>
+        public int expand_to;
         public string from;
     }
 
@@ -224,11 +240,14 @@ namespace BoardGameTutorial
         /// <summary>执行前先等（把同一 at 的动作错开）。</summary>
         public float lead;
 
-        /// <summary>move：源 zone。留空表示「组件原位」或按 target 指定。</summary>
-        public string from;
+        /// <summary>
+        /// move：源 zone。留空表示「组件原位」或按 target 指定。
+        /// 写成数组时表示「从这几个 zone 各取 take 件」（例如三种宝石各取一枚）。
+        /// </summary>
+        public List<string> from;
 
-        /// <summary>move：从 from zone 搬几件；留空表示 1。</summary>
-        public int? take;
+        /// <summary>move：从每个 from zone 搬几件（0 = 未指定，按 1 处理）。</summary>
+        public int take;
 
         public float stagger;
 
@@ -241,10 +260,14 @@ namespace BoardGameTutorial
         public float scale;
 
         // ---- fade ----
-        public float? to_alpha;
+        /// <summary>目标透明度；负数 = 未指定（在 0/1 之间切换）。</summary>
+        public float to_alpha = -1f;
 
         // ---- highlight ----
-        public float? peak_alpha;
-        public float? grow;
+        /// <summary>高亮峰值透明度；负数 = 未指定（用默认）。</summary>
+        public float peak_alpha = -1f;
+
+        /// <summary>高亮放大倍率；0 或负数 = 未指定（用默认）。</summary>
+        public float grow;
     }
 }

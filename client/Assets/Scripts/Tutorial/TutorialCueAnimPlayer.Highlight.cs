@@ -29,8 +29,8 @@ namespace BoardGameTutorial
                 return;
             }
 
-            float peak = ev.peak_alpha.HasValue ? Mathf.Clamp01(ev.peak_alpha.Value) : 0.55f;
-            float grow = ev.grow.HasValue && ev.grow.Value > 0f ? ev.grow.Value : 1.14f;
+            float peak = ev.peak_alpha >= 0f ? Mathf.Clamp01(ev.peak_alpha) : 0.55f;
+            float grow = ev.grow > 0f ? ev.grow : 1.14f;
             float dur = Mathf.Max(ev.dur, 0.05f);
             float lead = Mathf.Max(0f, ev.lead);
             string easing = EasingOr(ev);

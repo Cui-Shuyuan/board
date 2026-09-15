@@ -108,7 +108,14 @@ namespace BoardGameTutorial
 
             LoadStage(gameRoot, cueDoc.stage);
 
-            if (!continueState) Store.ApplyInitial();
+            // 续接（顺序播放）：接着上一条的终态。
+            // 不续接（跳转 / 重播 / 按 B 预览）：退回牌桌初始态，再按本条 cue 的 start 布置。
+            // 必须 Reset+ApplyInitial，否则跳到后面的 cue 会带着上一轮留下的组件。
+            if (!continueState)
+            {
+                Store.Reset();
+                Store.ApplyInitial();
+            }
             ApplyCueStart();
 
             BuildActorObjects();
@@ -124,6 +131,22 @@ namespace BoardGameTutorial
             return true;
         }
 
+        private string OffstageZoneId
+        {
+            get
+            {
+                if (offstageZoneId == null)
+                {
+                    offstageZoneId = "";
+                    foreach (var zone in Store.Zones)
+                        if (zone.role == "offstage") { offstageZoneId = zone.id; break; }
+                }
+                return offstageZoneId;
+            }
+        }
+
+        private string offstageZoneId;
+
         private void LoadStage(string gameRoot, string stageRel)
         {
             string rel = string.IsNullOrEmpty(stageRel) ? "_stage/splendor.table" : stageRel;
@@ -138,6 +161,7 @@ namespace BoardGameTutorial
 
             stage = JsonUtility.FromJson<StageDoc>(File.ReadAllText(path));
             Store.LoadStage(stage);
+            offstageZoneId = null;
             gameRootPath = gameRoot;
         }
 
@@ -153,13 +177,16 @@ namespace BoardGameTutorial
             {
                 foreach (var seed in start.set)
                 {
-                    int count = Mathf.Max(1, seed.count);
-                    if (seed.expand_to.HasValue)
-                    {
-                        int have = Store.CountIn(seed.zone, seed.palette, seed.template);
-                        count = Mathf.Max(0, seed.expand_to.Value - have);
-                    }
-                    if (count > 0) Store.Spawn(seed.template, seed.palette, seed.zone, count);
+                    int want = seed.expand_to > 0 ? seed.expand_to : Mathf.Max(1, seed.count);
+                    int have = Store.CountIn(seed.zone, seed.palette, seed.template);
+                    int need = Mathf.Max(0, want - have);
+                    if (need == 0) continue;
+
+                    // 已经把这一份放在 offstage 了（stage.initial 的写法）：搬进来，而不是凭空再造一份。
+                    // 否则会出现「一份在 zone 里、一份留在画面外」的重复件。
+                    int moved = Store.PullFrom(OffstageZoneId, seed.template, seed.palette, seed.zone, need);
+                    need -= moved;
+                    if (need > 0) Store.Spawn(seed.template, seed.palette, seed.zone, need);
                 }
             }
 
@@ -631,26 +658,37 @@ namespace BoardGameTutorial
                 return plan;
             }
 
-            if (string.IsNullOrEmpty(ev.from) || Store.GetZone(ev.from) == null)
-            {
-                Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no resolvable from zone ('{ev.from}')");
-                return plan;
-            }
-
             if (string.IsNullOrEmpty(ev.zone) || Store.GetZone(ev.zone) == null)
             {
                 Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no resolvable destination ('{ev.zone}')");
                 return plan;
             }
 
-            int take = ev.take.HasValue && ev.take.Value > 0 ? ev.take.Value : 1;
-            var picked = new List<ZoneItem>();
-            for (int i = 0; i < take; i++)
+            var sources = ev.from;
+            if (sources == null || sources.Count == 0)
             {
-                var item = PickFront(ev.from, picked);
-                if (item == null) break;
-                picked.Add(item);
-                plan.Add(new MovePlan { Item = item, Destination = ev.zone });
+                Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no from zone");
+                return plan;
+            }
+
+            int take = ev.take > 0 ? ev.take : 1;
+            var picked = new List<ZoneItem>();
+
+            // from 写多个 zone = 每个 zone 各取 take 件（三种宝石各一枚）。
+            foreach (var source in sources)
+            {
+                if (Store.GetZone(source) == null)
+                {
+                    Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId}: 未知 from zone '{source}'");
+                    continue;
+                }
+                for (int i = 0; i < take; i++)
+                {
+                    var item = PickFront(source, picked);
+                    if (item == null) break;
+                    picked.Add(item);
+                    plan.Add(new MovePlan { Item = item, Destination = ev.zone });
+                }
             }
             return plan;
         }
@@ -765,8 +803,8 @@ namespace BoardGameTutorial
         {
             foreach (var actor in Resolve(ev))
             {
-                float to = ev.to_alpha.HasValue
-                    ? Mathf.Clamp01(ev.to_alpha.Value)
+                float to = ev.to_alpha >= 0f
+                    ? Mathf.Clamp01(ev.to_alpha)
                     : (actor.LiveAlpha > 0.5f ? 0f : 1f);
                 float from = actor.LiveAlpha;
                 actor.LiveAlpha = to;

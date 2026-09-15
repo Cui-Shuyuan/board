@@ -53,6 +53,7 @@ namespace BoardGameTutorial
         private TutorialCueAnimPlayer animPlayer;
         private Coroutine playbackRoutine;
         private int currentIndex = -1;
+        private int previousIndex = -1;
         private int debugJumpReturnIndex = -1;
         private bool inDebugJump;
         private bool isPaused;
@@ -222,12 +223,15 @@ namespace BoardGameTutorial
             currentSubtitle = "";
 
             var cue = doc.cues[index];
+            previousIndex = index;
 
             // 动画在音频加载前就复位：重播/切 cue 时画面从头开始。
             if (animPlayer != null)
             {
                 animPlayer.animationEnabled = enableCueAnimation;
-                if (animPlayer.LoadCue(gameRoot, track, cue.id, continueState))
+                // 只有「紧接着的下一条」才继承上一条的终态；跳转/重播/按 B 都要回到牌桌初始态。
+                bool continueFromPrevious = continueState && index == previousIndex + 1;
+                if (animPlayer.LoadCue(gameRoot, track, cue.id, continueFromPrevious))
                 {
                     RefreshZoneLabels();
                 }

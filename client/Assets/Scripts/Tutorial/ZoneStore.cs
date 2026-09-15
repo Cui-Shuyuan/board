@@ -181,6 +181,36 @@ namespace BoardGameTutorial
             return best;
         }
 
+        /// <summary>
+        /// 从 srcZone 里挑最多 count 个匹配 (template, palette) 的组件搬到 dstZone。
+        /// 返回实际搬走的数量。用于「把已经在镜头外的组件拿到桌面上」，
+        /// 避免为了就位而重复生成一份。
+        /// </summary>
+        public int PullFrom(string srcZone, string template, string palette, string dstZone, int count)
+        {
+            if (string.IsNullOrEmpty(srcZone) || string.IsNullOrEmpty(dstZone)) return 0;
+            var source = occupancy.TryGetValue(srcZone, out var list) ? list : null;
+            if (source == null) return 0;
+
+            var matches = new List<ZoneItem>();
+            foreach (var item in source)
+            {
+                if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
+                if (!string.IsNullOrEmpty(palette) && item.BaseColor != Palette.Resolve(palette)) continue;
+                matches.Add(item);
+            }
+            matches.Sort((a, b) => a.Order.CompareTo(b.Order));
+
+            int moved = 0;
+            foreach (var item in matches)
+            {
+                if (moved >= count) break;
+                MoveTo(item, dstZone);
+                moved++;
+            }
+            return moved;
+        }
+
         /// <summary>把组件搬到另一个 zone，成为该 zone 的最后一件。</summary>
         public void MoveTo(ZoneItem item, string targetZoneId)
         {

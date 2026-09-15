@@ -193,6 +193,19 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if int(seed.get("count", 1)) < 1:
             report.error(sw, "count 至少为 1")
 
+    # 防重复：stage.initial 已经放过的 (template,palette,zone)，cue.start 再无条件 set 一次
+    # 就会凭空多出一份组件（一份在 zone 里、一份留在原处），表现为「画面外有东西飘」。
+    initialized = {}
+    for entry in stage.get("initial", []):
+        key = (entry.get("template"), entry.get("palette"), entry.get("zone"))
+        initialized[key] = initialized.get(key, 0) + int(entry.get("count", 1))
+    for i, seed in enumerate(start.get("set") or []):
+        key = (seed.get("template"), seed.get("palette"), seed.get("zone"))
+        if key in initialized and not seed.get("expand_to"):
+            report.warn(f"{where} start.set[{i}]: stage.initial 已在 {seed.get('zone')} 放了 "
+                        f"{initialized[key]} 个 {seed.get('template')}，这里又无条件 set {seed.get('count', 1)} 个，"
+                        f"会重复生成；若只是想让它们就位，删掉这条即可，或改用 expand_to")
+
     events = doc.get("events")
     if not isinstance(events, list) or not events:
         report.error(where, "events 为空")
@@ -232,8 +245,14 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if action == "move":
             if not target and not ev.get("from"):
                 report.error(ew, "move 需要 target（指定某件）或 from（指定源 zone）")
-            if ev.get("from") and ev["from"] not in zones:
-                report.error(ew, f"from zone {ev['from']!r} 不存在")
+            # from 可以是单个 zone，也可以是多个 zone（各取 take 件）
+            raw_from = ev.get("from")
+            sources = raw_from if isinstance(raw_from, list) else ([raw_from] if raw_from else [])
+            if isinstance(raw_from, list) and not raw_from:
+                report.error(ew, "move.from 是空数组")
+            for source in sources:
+                if source not in zones:
+                    report.error(ew, f"from zone {source!r} 不存在")
             if not zone and not target:
                 report.error(ew, "move 缺少目的地 zone")
             if int(ev.get("take", 0)) < 0:

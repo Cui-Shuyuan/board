@@ -54,6 +54,91 @@ namespace BoardGameTutorial.Editor
         };
 
         private static bool verbose;
+        private static bool dump;
+
+        /// <summary>
+        /// 把当前所有组件的位置、可见性、屏幕坐标写成文本。
+        /// 比读像素可靠：能直接看出「谁在画面里」「谁本该在画面外却进来了」。
+        /// </summary>
+        private static void WriteDump(TutorialCueAnimPlayer anim, string path, string tag)
+        {
+            var cam = Camera.main;
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"# {tag}  cam={(cam == null ? "null" : cam.name)} ortho={cam?.orthographicSize:0.000} aspect={cam?.aspect:0.000}");
+
+            // 区域（zone）中心
+            foreach (var zone in anim.Store.Zones)
+            {
+                var world = anim.Store.ZoneCenter(zone.id);
+                sb.AppendLine($"  zone  {zone.id,-24} world=({world.x,6:0.00},{world.z,6:0.00}) role={zone.role}");
+            }
+
+            // 所有组件实例：ZoneStore 是唯一事实来源
+            int visible = 0, offscreen = 0;
+            foreach (var item in anim.Store.Items)
+            {
+                var actor = item.Actor;
+                if (actor == null) continue;
+                var p = actor.Go.transform.localPosition;
+                float sx = float.NaN, sy = float.NaN;
+                bool onScreen = false;
+                if (cam != null)
+                {
+                    var sp = cam.WorldToScreenPoint(new Vector3(p.x, p.y, p.z));
+                    sx = sp.x / Mathf.Max(1, Screen.width);
+                    sy = sp.y / Mathf.Max(1, Screen.height);
+                    onScreen = sp.z > 0f && sx >= 0f && sx <= 1f && sy >= 0f && sy <= 1f;
+                }
+                if (onScreen) visible++; else offscreen++;
+                sb.AppendLine($"  item  {item.Id,-18} zone={item.ZoneId,-22} order={item.Order,2} " +
+                              $"pos=({p.x,6:0.00},{p.z,6:0.00}) " +
+                              $"{(onScreen ? "ONSCREEN" : "offscreen")}" +
+                              (onScreen ? $" vp=({sx:0.000},{sy:0.000})" : ""));
+            }
+            sb.AppendLine($"# onscreen={visible} offscreen={offscreen}");
+            File.WriteAllText(path, sb.ToString());
+            Debug.Log($"[TutorialFrameCapture] dump {path}");
+        }
+
+        /// <summary>
+        /// 类型契约自检：用 -executeMethod ...TutorialFrameCapture.SelfTest 调用。
+        ///
+        /// 为什么需要：Unity 的 JsonUtility **不支持可空类型**（int? / float?），遇到时静默返回 null，
+        /// 不报错。曾经因此让 take / expand_to / peak_alpha 三个字段从 JSON 读进来永远是空，
+        /// 表现为「三种宝石各取一枚」只搬了一枚。这里把契约钉死，改坏了会在 CI/出帧时立刻发现。
+        /// </summary>
+        public static void SelfTest()
+        {
+            int failures = 0;
+
+            void Check(string what, bool ok, string detail)
+            {
+                Debug.Log($"[SelfTest] {(ok ? "PASS" : "FAIL")} {what}: {detail}");
+                if (!ok) failures++;
+            }
+
+            var seed = JsonUtility.FromJson<CueAnimSeed>(
+                "{\"expand_to\":7,\"count\":3,\"template\":\"gem\",\"palette\":\"gem_ruby\",\"zone\":\"z\"}");
+            Check("CueAnimSeed.expand_to", seed.expand_to == 7, $"expand_to={seed.expand_to}");
+            Check("CueAnimSeed.count", seed.count == 3, $"count={seed.count}");
+
+            var ev = JsonUtility.FromJson<CueAnimEvent>(
+                "{\"at\":1.5,\"take\":3,\"peak_alpha\":0.55,\"grow\":1.2,\"to_alpha\":0.4,\"from\":[\"a\",\"b\"]}");
+            Check("CueAnimEvent.take", ev.take == 3, $"take={ev.take}");
+            Check("CueAnimEvent.peak_alpha", Mathf.Abs(ev.peak_alpha - 0.55f) < 1e-4f, $"peak_alpha={ev.peak_alpha}");
+            Check("CueAnimEvent.grow", Mathf.Abs(ev.grow - 1.2f) < 1e-4f, $"grow={ev.grow}");
+            Check("CueAnimEvent.to_alpha", Mathf.Abs(ev.to_alpha - 0.4f) < 1e-4f, $"to_alpha={ev.to_alpha}");
+            Check("CueAnimEvent.from[]", ev.from != null && ev.from.Count == 2, $"from={(ev.from == null ? "null" : string.Join(",", ev.from))}");
+
+            // 未指定时必须是哨兵值，而不是 0/NaN
+            var bare = JsonUtility.FromJson<CueAnimEvent>("{\"at\":0}");
+            Check("CueAnimEvent.默认 take=0", bare.take == 0, $"take={bare.take}");
+            Check("CueAnimEvent.默认 peak_alpha<0", bare.peak_alpha < 0f, $"peak_alpha={bare.peak_alpha}");
+            Check("CueAnimEvent.默认 to_alpha<0", bare.to_alpha < 0f, $"to_alpha={bare.to_alpha}");
+
+            Debug.Log($"[SelfTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
 
         public static void CaptureAll()
         {
@@ -62,10 +147,18 @@ namespace BoardGameTutorial.Editor
             var dir = Path.Combine(Application.dataPath, "..", OutputDir);
             Directory.CreateDirectory(dir);
             var args = System.Environment.GetCommandLineArgs();
+            dump = System.Array.IndexOf(args, "-captureDump") >= 0;
             int trackIdx = System.Array.IndexOf(args, "-captureTrack");
             Shot[] shots = Shots;
             if (trackIdx >= 0 && trackIdx + 1 < args.Length)
-                shots = BuildTrackShots(args[trackIdx + 1], 16, 0.15f);
+            {
+                int count = 16; float step = 0.15f;
+                int countIdx = System.Array.IndexOf(args, "-captureCount");
+                if (countIdx >= 0 && countIdx + 1 < args.Length) int.TryParse(args[countIdx + 1], out count);
+                int stepIdx = System.Array.IndexOf(args, "-captureStep");
+                if (stepIdx >= 0 && stepIdx + 1 < args.Length) float.TryParse(args[stepIdx + 1], out step);
+                shots = BuildTrackShots(args[trackIdx + 1], count, step);
+            }
             Capture(dir, shots);
             EditorApplication.Exit(0);
         }
@@ -123,6 +216,9 @@ namespace BoardGameTutorial.Editor
                 }
 
                 anim.SnapTo(shot.Time);
+
+                if (dump)
+                    WriteDump(anim, Path.Combine(outputDirectory, shot.File + ".txt"), $"{shot.Cue} t={shot.Time:0.00}");
 
                 string path = Path.Combine(outputDirectory, shot.File + ".png");
                 SaveFrame(path);
