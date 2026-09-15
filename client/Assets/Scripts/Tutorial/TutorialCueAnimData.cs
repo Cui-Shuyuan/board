@@ -162,6 +162,12 @@ namespace BoardGameTutorial
         public string back_image;
 
         /// <summary>
+        /// 在它自己的动画开始之前完全不可见。用于市场牌：否则它们会叠在牌堆位置上，
+        /// 看起来像牌堆多出好几层卡背。
+        /// </summary>
+        public bool hide_until_animated;
+
+        /// <summary>
         /// 入场起点落在这个 zone 的位置（而不是 offstage 中心）。
         /// 用于「市场牌从对应牌堆的位置飞出来」这类需求：牌真正归属仍在盒子里，
         /// 但出场位置对准牌堆。
@@ -283,6 +289,9 @@ namespace BoardGameTutorial
 
         /// <summary>move：从每个 from zone 搬几件（0 = 未指定，按 1 处理）。</summary>
         public int take;
+
+        /// <summary>move 时若 &gt;=0：从该透明度淡入到 1（用于「发牌前不可见」）。</summary>
+        public float fade_in = -1f;
 
         /// <summary>
         /// move：只搬这个模板的件（留空表示不限）。

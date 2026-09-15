@@ -912,11 +912,25 @@ namespace BoardGameTutorial
                     {
                         actor.LivePosition = pending.From;
                         actor.Go.transform.localPosition = pending.From;
+
+                        // 还没轮到的牌可以要求完全隐藏（否则会叠在牌堆上像多出几层卡背）
+                        if (item.Template != null && item.Template.hide_until_animated)
+                        {
+                            actor.LiveAlpha = 0f;
+                            ApplyAlpha(actor);
+                        }
                     }
                     continue;
                 }
                 actor.LivePosition = Store.CurrentPosition(item);
                 actor.Go.transform.localPosition = actor.LivePosition;
+
+                // 尚无动画片段且要求隐藏：彻底看不见
+                if (item.Template != null && item.Template.hide_until_animated)
+                {
+                    actor.LiveAlpha = 0f;
+                    ApplyAlpha(actor);
+                }
                 actor.LiveRotation = item.Template != null ? item.Template.rotation : 0f;
                 actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
                 actor.LiveScale = actor.BaseScale;
@@ -1308,6 +1322,14 @@ namespace BoardGameTutorial
                 clip.HasMove = true;
                 clip.From = from;
                 clip.To = to;
+
+                // 淡入：发牌前市场牌是隐藏的（避免它们叠在牌堆上，看起来像多出几层卡背）
+                if (ev.fade_in >= 0f)
+                {
+                    clip.HasAlpha = true;
+                    clip.AlphaFrom = Mathf.Clamp01(ev.fade_in);
+                    clip.AlphaTo = 1f;
+                }
 
                 // 边移动边翻转：到终点恰好转到另一面。
                 if (ev.flip && actor.BackSprite != null)

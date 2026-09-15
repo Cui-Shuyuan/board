@@ -480,6 +480,14 @@ namespace BoardGameTutorial.Editor
             // 行位断言：每一级市场牌必须落在与**同级牌堆**相同深度的行上。
             // 这条正是用户报过的「一级牌被发到二级位置、又被收回」。
             foreach (var it in anim.Store.Items)
+                if (it.Id.StartsWith("card_back_1#1"))
+                {
+                    var sr = it.Actor?.Renderer;
+                    string f = sr?.sprite == null ? "无图" : (ReferenceEquals(sr.sprite, it.Actor.BackSprite) ? "背" : "面");
+                    Debug.Log($"[Deck] {it.Id} zone={it.ZoneId} order={it.Order} Flipped={it.Flipped} 显示={f} " +
+                              $"rot={it.Actor?.Go.transform.localRotation.eulerAngles} templateRotation={it.Template?.rotation}");
+                }
+            foreach (var it in anim.Store.Items)
                 if (it.Id.StartsWith("market_card_") && it.Order < 4)
                 {
                     var logical = anim.Store.CurrentPosition(it);
