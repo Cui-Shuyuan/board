@@ -506,6 +506,26 @@ namespace BoardGameTutorial.Editor
 
             int bad = 0;
 
+            // ①a 发牌前不得有市场牌可见（否则它们叠在牌堆上，看起来像往牌堆里发卡背）。
+            {
+                var probe = new GameObject("hideProbe");
+                var pa = probe.AddComponent<TutorialCueAnimPlayer>();
+                pa.LoadCue(gameRoot, "full", cueId, false);
+                pa.Seek(4.0f);   // 洗混结束、发牌之前
+                int visible = 0; string firstId = null;
+                foreach (var it in pa.Store.Items)
+                {
+                    if (it.Actor == null || !it.Id.StartsWith("market_card_")) continue;
+                    float a = it.Actor.LiveAlpha;
+                    bool shown = it.Actor.Renderer != null && it.Actor.Renderer.enabled && a > 0.05f;
+                    if (shown) { visible++; firstId ??= $"{it.Id}(alpha={a:0.00})"; }
+                }
+                Debug.Log($"[Timeline] {(visible == 0 ? "PASS" : "FAIL")} 发牌前市场牌全部不可见（可见 {visible} 张" +
+                          (firstId == null ? "）" : $"，例如 {firstId}）"));
+                if (visible > 0) bad++;
+                Object.DestroyImmediate(probe);
+            }
+
             // ① 方向：发牌是「从牌堆飞到市场」，已落位的市场牌数必须单调不减。
             //    若起始就是一整行、随后变少，说明动画在倒着播。
             {

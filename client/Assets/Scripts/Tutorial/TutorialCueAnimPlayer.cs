@@ -907,35 +907,33 @@ namespace BoardGameTutorial
                 if (actor?.Go == null) continue;
                 if (latest.TryGetValue(item.Id, out var pending))
                 {
-                    // 片段已登记：用它的起点（未开始）或由下面按插值覆盖。
+                    // 片段已登记：位置由片段决定（未开始就停在起点，进行中由下面的采样覆盖）。
                     if (scaled < pending.Start)
                     {
                         actor.LivePosition = pending.From;
                         actor.Go.transform.localPosition = pending.From;
-
-                        // 还没轮到的牌可以要求完全隐藏（否则会叠在牌堆上像多出几层卡背）
-                        if (item.Template != null && item.Template.hide_until_animated)
-                        {
-                            actor.LiveAlpha = 0f;
-                            ApplyAlpha(actor);
-                        }
                     }
+
+                    // 透明度必须在这里也复位：要求隐藏的组件在片段生效前一律透明。
+                    // 之前这个分支直接 continue，跳过了这段 —— 二级/三级市场牌就带着
+                    // 默认 alpha=1 显示在自己的牌堆位置上，看起来像往牌堆里发卡背。
+                    actor.LiveAlpha = (item.Template != null && item.Template.hide_until_animated) ? 0f : actor.BaseAlpha;
+                    ApplyAlpha(actor);
                     continue;
                 }
                 actor.LivePosition = Store.CurrentPosition(item);
                 actor.Go.transform.localPosition = actor.LivePosition;
 
-                // 尚无动画片段且要求隐藏：彻底看不见
-                if (item.Template != null && item.Template.hide_until_animated)
-                {
-                    actor.LiveAlpha = 0f;
-                    ApplyAlpha(actor);
-                }
                 actor.LiveRotation = item.Template != null ? item.Template.rotation : 0f;
                 actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
                 actor.LiveScale = actor.BaseScale;
                 actor.Go.transform.localScale = actor.LiveScale;
-                actor.LiveAlpha = actor.BaseAlpha;
+                // 默认状态：要求「动画前不可见」的组件一律透明。
+                // 这是**默认**而非补丁——之前只在「有片段但未开始」时隐藏，
+                // 漏掉了「还没有任何片段」的那些（二级/三级市场牌），
+                // 它们就按默认透明度显示、叠在各自牌堆上，看起来像往牌堆里发卡背。
+                bool hideNow = item.Template != null && item.Template.hide_until_animated;
+                actor.LiveAlpha = hideNow ? 0f : actor.BaseAlpha;
                 ApplyAlpha(actor);
                 RefreshFace(actor);
             }
