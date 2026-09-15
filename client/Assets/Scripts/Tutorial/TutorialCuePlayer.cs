@@ -221,6 +221,39 @@ namespace BoardGameTutorial
             playbackRoutine = StartCoroutine(PlayCueRoutine(index, continueState));
         }
 
+        /// <summary>
+        /// 从第一条开始，把目标 cue 之前所有带动画数据的 cue 静默推到终态，重建牌桌。
+        /// 这样任意跳转都能看到正确的当前局面，而不依赖播放历史。
+        /// 将来编译器会把每个 cue 的入口状态直接写进 runtime，这一步即可省掉。
+        /// </summary>
+        private void RebuildTableBefore(TutorialCueAnimPlayer anim, int targetIndex)
+        {
+            if (doc == null || doc.cues == null) return;
+
+            bool first = true;
+            for (int i = 0; i < targetIndex && i < doc.cues.Count; i++)
+            {
+                var cue = doc.cues[i];
+                bool applied;
+                try
+                {
+                    applied = anim.LoadCue(gameRoot, track, cue.id, !first);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[TutorialCuePlayer] 重建桌面时异常 cue={cue.id}: {e}");
+                    applied = false;
+                }
+                if (!applied) continue;
+
+                // 用 Seek 把时间推进到该 cue 末尾（终态），而不是 SnapTo：
+                // SnapTo 每次会先恢复本条 cue 的入口快照，会把前一条累积的效果覆盖掉，
+                // 结果一条也积累不起来。
+                anim.Seek(anim.TotalDuration + 1f);
+                first = false;
+            }
+        }
+
         private IEnumerator PlayCueRoutine(int index, bool continueState)
         {
             if (audioSource.isPlaying) audioSource.Stop();
@@ -236,8 +269,16 @@ namespace BoardGameTutorial
             if (animPlayer != null)
             {
                 animPlayer.animationEnabled = enableCueAnimation;
-                // 只有「紧接着的下一条」才继承上一条的终态；跳转/重播/按 B 都要回到牌桌初始态。
+                // 只有「紧接着的下一条」才继承上一条的终态。
                 bool continueFromPrevious = continueState && index == previousIndex + 1;
+
+                // 跳到任意一条时，必须把「前面所有 cue 累积出来的桌面状态」重建出来，
+                // 否则像「直接跳到最终组成3乘4那条」会看到空市场 —— 因为发牌那条被跳过了。
+                // 做法与出帧工具一致：从第一条开始按顺序静默重放到目标前一条。
+                if (!continueFromPrevious && animPlayer != null)
+                {
+                    RebuildTableBefore(animPlayer, index);
+                }
 
                 // 注意：LoadCue 必须无条件调用。曾经写成 `if (showZoneLabels && LoadCue(...))`，
                 // 而 showZoneLabels 默认 false —— 短路导致动画永远不载入：

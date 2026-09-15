@@ -300,6 +300,47 @@ namespace BoardGameTutorial.Editor
                 if (actors == 0) failures++;
             }
 
+            // 关键用例：直接跳到「最终组成3乘4」那条（无动画数据），市场必须是已发好的 12 张。
+            // 之前没有重建桌面，直接跳过去会看到空市场。
+            {
+                var p2 = new GameObject("JumpHost");
+                var cuePlayer = p2.AddComponent<TutorialCuePlayer>();
+                cuePlayer.autoPlay = false;
+                cuePlayer.tutorialRoot = Path.Combine(Application.dataPath, "..", "..", "games");
+                if (!cuePlayer.LoadRuntime())
+                {
+                    Debug.Log("[LivePath] FAIL 跳转重建: LoadRuntime 失败");
+                    failures++;
+                }
+                else
+                {
+                    var anim2 = p2.GetComponent<TutorialCueAnimPlayer>();
+                    if (anim2 == null) anim2 = p2.AddComponent<TutorialCueAnimPlayer>();
+                    anim2.animationEnabled = true;
+
+                    int idx = -1;
+                    for (int i = 0; i < cuePlayer.Document.cues.Count; i++)
+                        if (cuePlayer.Document.cues[i].id == "setup.cards.002.2") { idx = i; break; }
+                    Debug.Log($"[LivePath] {(idx >= 0 ? "PASS" : "FAIL")} 跳转重建: 找到 setup.cards.002.2 index={idx}");
+                    if (idx < 0) failures++;
+
+                    if (idx >= 0)
+                    {
+                        // 与播放器跳转同样的做法：先把前面所有 cue 重放到终态
+                        typeof(TutorialCuePlayer)
+                            .GetMethod("RebuildTableBefore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(cuePlayer, new object[] { anim2, idx });
+
+                        int market = 0;
+                        foreach (var it in anim2.Store.Items)
+                            if (it.Id.StartsWith("market_card_")) market++;
+                        Debug.Log($"[LivePath] {(market == 12 ? "PASS" : "FAIL")} 跳转重建: 市场已有 {market} 张（应为 12）");
+                        if (market != 12) failures++;
+                    }
+                }
+                Object.DestroyImmediate(p2);
+            }
+
             Debug.Log($"[LivePath] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
