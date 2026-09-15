@@ -47,6 +47,9 @@ namespace BoardGameTutorial
         /// <summary>区域底板：zone id → 代表它的装饰件 id（静态底板，不带高亮）。</summary>
         private readonly Dictionary<string, List<string>> zonePanels = new Dictionary<string, List<string>>();
 
+        /// <summary>底板 id → 它代表的 zone 列表；这些 zone 里没有可见组件时底板不显示。</summary>
+        private readonly Dictionary<string, List<string>> panelZones = new Dictionary<string, List<string>>();
+
         /// <summary>zone id → 该 zone 专属的高亮底板（每个 zone 一块，绝不共用）。</summary>
         private readonly Dictionary<string, CueAnimActor> zoneGlow = new Dictionary<string, CueAnimActor>();
 
@@ -182,10 +185,16 @@ namespace BoardGameTutorial
                     int need = Mathf.Max(0, want - have);
                     if (need == 0) continue;
 
-                    // 已经把这一份放在 offstage 了（stage.initial 的写法）：搬进来，而不是凭空再造一份。
-                    // 否则会出现「一份在 zone 里、一份留在画面外」的重复件。
-                    int moved = Store.PullFrom(OffstageZoneId, seed.template, seed.palette, seed.zone, need);
-                    need -= moved;
+                    // 必须「先搬后生」：stage.initial 常把这一份放在 offstage（表示还在盒子里），
+                    // 直接 Spawn 会多造一份，出现在画面外的重复件。
+                    // 每一次都重新数一遍现有数量，因此重播/重复载入也不会翻倍。
+                    int guard = 0;
+                    while (need > 0 && guard++ < 64)
+                    {
+                        int moved = Store.PullFrom(OffstageZoneId, seed.template, seed.palette, seed.zone, need);
+                        need -= moved;
+                        if (moved == 0) break;
+                    }
                     if (need > 0) Store.Spawn(seed.template, seed.palette, seed.zone, need);
                 }
             }
@@ -231,6 +240,7 @@ namespace BoardGameTutorial
                     actors[anchor.id] = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
                     if (anchor.zones != null)
                     {
+                        panelZones[anchor.id] = new List<string>(anchor.zones);
                         foreach (var zoneId in anchor.zones)
                         {
                             if (string.IsNullOrEmpty(zoneId)) continue;
@@ -390,6 +400,41 @@ namespace BoardGameTutorial
             return solidSprite;
         }
 
+        /// <summary>
+        /// 区域底板随内容出现：它代表的 zone 里一件可见组件都没有时，底板不画。
+        /// 否则「宝石还在盒子里」时供应区底板就已经亮在那里了。
+        /// </summary>
+        private void UpdatePanelVisibility()
+        {
+            if (panelZones.Count == 0) return;
+
+            foreach (var pair in panelZones)
+            {
+                if (!actors.TryGetValue(pair.Key, out var panel) || panel.Renderer == null) continue;
+
+                bool occupied = false;
+                foreach (var zoneId in pair.Value)
+                {
+                    if (string.IsNullOrEmpty(zoneId)) continue;
+                    foreach (var item in Store.Items)
+                    {
+                        if (item.ZoneId != zoneId) continue;
+                        // 还在 offstage 的组件不算「在场」
+                        var zone = Store.GetZone(item.ZoneId);
+                        if (zone != null && zone.role == "offstage") continue;
+                        if (item.Actor != null && item.Actor.Go != null && item.Actor.Go.activeSelf)
+                        {
+                            occupied = true;
+                            break;
+                        }
+                    }
+                    if (occupied) break;
+                }
+
+                panel.Renderer.enabled = occupied;
+            }
+        }
+
         /// <summary>把每个组件瞬间摆到它当前 (zone, slot) 的位置 —— 这是状态的可视化。</summary>
         private void SyncActorsToStore()
         {
@@ -461,6 +506,7 @@ namespace BoardGameTutorial
             clock = time;
             nextIndex = cueDoc.events.Count;
             pendingScales.Clear();
+            UpdatePanelVisibility();
         }
 
         public void Seek(float time)
@@ -471,6 +517,8 @@ namespace BoardGameTutorial
 
             clock = time;
             float scaled = time * Mathf.Max(0.01f, timeScale);
+
+            UpdatePanelVisibility();
 
             while (nextIndex < cueDoc.events.Count && cueDoc.events[nextIndex].at <= scaled + 1e-4f)
             {
@@ -507,6 +555,7 @@ namespace BoardGameTutorial
             StopAnimations();
             pendingScales.Clear();
             RestoreSnapshot(entrySnapshot);
+            UpdatePanelVisibility();
             clock = 0f;
             nextIndex = 0;
         }
@@ -564,6 +613,7 @@ namespace BoardGameTutorial
         {
             actors.Clear();
             zonePanels.Clear();
+            panelZones.Clear();
             zoneGlow.Clear();
             if (animRoot != null)
             {

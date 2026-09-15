@@ -88,6 +88,9 @@ namespace BoardGameTutorial
         public bool IsPlaying => audioSource != null && audioSource.isPlaying;
         public TutorialCueAnimPlayer AnimPlayer => animPlayer;
 
+        /// <summary>当前载入的 runtime 文档（出帧/离线工具用）。</summary>
+        public TutorialCueDoc Document => doc;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {

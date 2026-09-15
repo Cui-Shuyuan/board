@@ -195,15 +195,33 @@ namespace BoardGameTutorial.Editor
             // Unity 每帧会把 Camera.aspect 重置回 Screen 的宽高比；batchmode 下 Screen 固定 640x480，
             // 与渲染目标不一致。取景时用 cameraAspectOverride，出帧前再显式覆盖一次。
             anim.cameraAspectOverride = (float)Width / Height;
-            if (verbose) anim.logCameraFit = true;
+            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; }
+
+            if (verbose) anim.Store.logPull = true;
 
             string currentCue = null;
             bool continueState = false;
+            bool primed = false;
 
             foreach (var shot in shots)
             {
                 if (shot.Cue != currentCue)
                 {
+                    // 出帧必须复现「顺序播到这条 cue」时的牌桌状态，而不是凭空起局：
+                    // 按真实顺序把目标 cue 之前所有有动画的 cue 走完。
+                    // 之前用「先加载某条 cue 当铺垫」的取巧做法，它会在 store 里留下副作用，
+                    // 导致后续 start.set 计数错位（宝石被倒进贵族区）。
+                    if (!primed)
+                    {
+                        // 目标 cue 之前若有动画 cue，先把它们走完；否则保持初始状态。
+                        ReplayPreceding(anim, player, shot.Cue);
+                        primed = true;
+                        // 若一条都没重放，说明目标就是时间轴上第一条，必须用 continueState=false
+                        // 让它自己初始化牌桌（Reset + ApplyInitial），否则画面是空的。
+                        continueState = replayedAny;
+                        currentCue = null;
+                    }
+
                     if (!anim.LoadCue(Path.Combine(player.tutorialRoot, player.gameId), player.track, shot.Cue, continueState))
                     {
                         Debug.LogWarning($"[TutorialFrameCapture] 载入 cue 动画失败: {shot.Cue}（跳过）");
@@ -211,8 +229,6 @@ namespace BoardGameTutorial.Editor
                         continue;
                     }
                     currentCue = shot.Cue;
-                    // 顺序出帧：同一条 cue 的多个时刻共享入口状态，跨 cue 才沿用终态。
-                    continueState = false;
                 }
 
                 anim.SnapTo(shot.Time);
@@ -251,6 +267,39 @@ namespace BoardGameTutorial.Editor
                 Vector3 screen;
                 bool ok = anim.WorldToScreen(probe.world, out screen);
                 Debug.Log($"[Capture.Dump {tag}] {probe.name,-14} screen=({screen.x:0},{screen.y:0}) visible={ok}");
+            }
+        }
+
+        /// <summary>
+        /// 按真实顺序重放目标 cue 之前所有存在动画数据的 cue，
+        /// 让牌桌状态等于「顺序播到这里」时的样子。
+        /// </summary>
+        private static bool replayedAny;
+
+        private static void ReplayPreceding(TutorialCueAnimPlayer anim, TutorialCuePlayer player, string targetCue)
+        {
+            replayedAny = false;
+            string root = Path.Combine(player.tutorialRoot, player.gameId);
+            var doc = player.Document;
+            if (doc?.cues == null)
+            {
+                Debug.LogWarning($"[TutorialFrameCapture] ReplayPreceding: Document 为空（root={root}）");
+                return;
+            }
+            Debug.Log($"[TutorialFrameCapture] ReplayPreceding 目标={targetCue}，runtime 共 {doc.cues.Count} 条 cue");
+
+            bool first = true;
+            foreach (var cue in doc.cues)
+            {
+                if (cue.id == targetCue) break;
+                string path = Path.Combine(root, "tutorial", "anim", player.track, cue.id + ".json");
+                if (!File.Exists(path)) continue;
+
+                if (!anim.LoadCue(root, player.track, cue.id, !first)) continue;
+                anim.SnapTo(999f);
+                first = false;
+                replayedAny = true;
+                Debug.Log($"[TutorialFrameCapture] replayed {cue.id}");
             }
         }
 

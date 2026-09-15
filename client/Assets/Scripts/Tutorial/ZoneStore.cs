@@ -17,6 +17,7 @@ namespace BoardGameTutorial
     {
         public string Id;              // 运行时实例 id，例如 gem#3
         public StageTemplate Template; // 外观
+        public string PaletteName;     // 色板名（身份的一部分，别拿 Color 值比较）
         public Color BaseColor;        // 调色后的基础色（alpha 另算）
 
         public string ZoneId;          // 当前所在 zone
@@ -41,6 +42,9 @@ namespace BoardGameTutorial
         private readonly Dictionary<string, ZoneItem> items = new Dictionary<string, ZoneItem>();
         private readonly Dictionary<string, List<ZoneItem>> occupancy = new Dictionary<string, List<ZoneItem>>();
         private readonly Dictionary<string, int> counters = new Dictionary<string, int>();
+
+        /// <summary>调试：打印 PullFrom 的匹配数量。</summary>
+        public bool logPull;
 
         public StageDoc Stage { get; private set; }
         public IEnumerable<ZoneItem> Items => items.Values;
@@ -118,6 +122,7 @@ namespace BoardGameTutorial
                 {
                     Id = $"{templateId}#{n + 1}",
                     Template = tpl,
+                    PaletteName = colorName,
                     BaseColor = baseColor,
                     ZoneId = zoneId,
                     Order = list != null ? list.Count : 0,
@@ -159,7 +164,7 @@ namespace BoardGameTutorial
             int n = 0;
             foreach (var item in list)
             {
-                if (!string.IsNullOrEmpty(palette) && item.BaseColor != Palette.Resolve(palette)) continue;
+                if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
                 n++;
             }
@@ -196,10 +201,11 @@ namespace BoardGameTutorial
             foreach (var item in source)
             {
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
-                if (!string.IsNullOrEmpty(palette) && item.BaseColor != Palette.Resolve(palette)) continue;
+                if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
                 matches.Add(item);
             }
             matches.Sort((a, b) => a.Order.CompareTo(b.Order));
+            if (logPull) Debug.Log($"[ZoneStore.PullFrom] {srcZone}->{dstZone} 匹配 {matches.Count} 个（要 {count} 个）");
 
             int moved = 0;
             foreach (var item in matches)
