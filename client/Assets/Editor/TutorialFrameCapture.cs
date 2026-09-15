@@ -57,7 +57,7 @@ namespace BoardGameTutorial.Editor
 
             new Shot { Cue = "setup.cards.002.1", Time = 0.30f, File = "deal_00_before" },
             new Shot { Cue = "setup.cards.002.1", Time = 1.90f, File = "deal_00_shuffle" },
-            new Shot { Cue = "setup.cards.002.1", Time = 5.90f, File = "deal_01_dealing" },
+            new Shot { Cue = "setup.cards.002.1", Time = 4.80f, File = "deal_01_dealing" },
             new Shot { Cue = "setup.cards.002.1", Time = 7.90f, File = "deal_02_done" },
 
             new Shot { Cue = "action.take.different.001", Time = 0.00f, File = "take_00_start" },
