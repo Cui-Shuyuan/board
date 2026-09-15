@@ -272,6 +272,11 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                 report.error(ew, "move 缺少目的地 zone")
             if int(ev.get("take", 0)) < 0:
                 report.error(ew, "take 不能为负")
+            # from+take 是按顺序取件：同一个 zone 里混放多种组件时极易取错，
+            # 例如盒子里同时有宝石和卡片。用 take 时建议显式给 template。
+            if ev.get("from") and int(ev.get("take", 0) or 0) > 0 and not ev.get("template"):
+                report.warn(ew, "move 用 from+take 按顺序取件但没写 template；"
+                                "若该 zone 混放多种组件，可能取到不该动的东西")
             if ev.get("order") == -2 and int(ev.get("slot", -1)) < 0:
                 report.error(ew, "order=-2 需要同时给 slot（目标格位）")
         elif action == "rotate":

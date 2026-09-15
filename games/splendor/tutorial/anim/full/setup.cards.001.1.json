@@ -15,7 +15,8 @@
       ],
       "take": 3,
       "zone": "deck_level_1",
-      "easing": "easeOutCubic"
+      "easing": "easeOutCubic",
+      "template": "card_back_1"
     },
     {
       "at": 0.35,
@@ -27,7 +28,8 @@
       "take": 3,
       "zone": "deck_level_2",
       "easing": "easeOutCubic",
-      "lead": 0.12
+      "lead": 0.12,
+      "template": "card_back_2"
     },
     {
       "at": 0.35,
@@ -39,7 +41,8 @@
       "take": 3,
       "zone": "deck_level_3",
       "easing": "easeOutCubic",
-      "lead": 0.24
+      "lead": 0.24,
+      "template": "card_back_3"
     }
   ]
 }

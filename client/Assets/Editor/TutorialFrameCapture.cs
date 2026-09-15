@@ -359,7 +359,7 @@ namespace BoardGameTutorial.Editor
             // Unity 每帧会把 Camera.aspect 重置回 Screen 的宽高比；batchmode 下 Screen 固定 640x480，
             // 与渲染目标不一致。取景时用 cameraAspectOverride，出帧前再显式覆盖一次。
             anim.cameraAspectOverride = (float)Width / Height;
-            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; anim.Store.logMoves = true; anim.logImages = true; }
+            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; anim.Store.logMoves = true; anim.logImages = true; anim.logMoves = true; }
 
             if (verbose) anim.Store.logPull = true;
 
@@ -402,6 +402,7 @@ namespace BoardGameTutorial.Editor
                 if (dump)
                     WriteDump(anim, Path.Combine(outputDirectory, shot.File + ".txt"), $"{shot.Cue} t={shot.Time:0.00}");
 
+                if (shot.File == "cards_01_placed") anim.ProbeZoneOccupants("deck_level_1");
                 if (shot.File == "cards_00_start")
                 {
                     anim.ProbeCardTexture(outputDirectory);

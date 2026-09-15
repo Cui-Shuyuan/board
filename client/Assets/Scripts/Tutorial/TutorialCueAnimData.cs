@@ -277,6 +277,13 @@ namespace BoardGameTutorial
         /// <summary>move：从每个 from zone 搬几件（0 = 未指定，按 1 处理）。</summary>
         public int take;
 
+        /// <summary>
+        /// move：只搬这个模板的件（留空表示不限）。
+        /// 同一个 zone 里混着不同组件时（例如盒子里的宝石和卡片），必须靠它区分，
+        /// 否则按顺序取件会取到不该动的东西。
+        /// </summary>
+        public string template;
+
         public float stagger;
 
         /// <summary>move 时顺便翻面：到终点恰好转到另一面（用于「翻开四张牌」）。</summary>

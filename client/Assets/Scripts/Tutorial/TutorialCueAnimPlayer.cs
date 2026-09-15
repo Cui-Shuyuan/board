@@ -895,23 +895,32 @@ namespace BoardGameTutorial
                 }
                 for (int i = 0; i < take; i++)
                 {
-                    var item = PickFront(source, picked);
+                    var item = PickFront(source, picked, ev.template);
                     if (item == null) break;
                     picked.Add(item);
                     plan.Add(new MovePlan { Item = item, Destination = ev.zone, Order = ev.order });
                 }
             }
+
+            if (logMoves)
+            {
+                var names = new List<string>();
+                foreach (var step in plan) names.Add($"{step.Item.Id}(zone={step.Item.ZoneId},order={step.Item.Order})");
+                Debug.Log($"[MovePick] cue={CueId} from=[{string.Join(",", sources)}] take={take} → {ev.zone}：" +
+                          $"选中 {plan.Count} 件：[{string.Join(", ", names)}]");
+            }
             return plan;
         }
 
         /// <summary>取 zone 里最靠前、且不在 excluded 中的组件。</summary>
-        private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded)
+        private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded, string template = null)
         {
             ZoneItem best = null;
             foreach (var item in Store.Items)
             {
                 if (item.ZoneId != zoneId) continue;
                 if (excluded != null && excluded.Contains(item)) continue;
+                if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
                 if (best == null || item.Order < best.Order) best = item;
             }
             return best;
@@ -1316,6 +1325,9 @@ namespace BoardGameTutorial
         /// <summary>调试：打印扫锚图解析结果。</summary>
         public bool logImages;
 
+        /// <summary>调试：打印 move 的取件过程。</summary>
+        public bool logMoves;
+
         /// <summary>
         /// 取景使用的宽高比。&lt;=0 表示用当前屏幕（正常运行）。
         /// 离线出帧必须显式指定，否则 batchmode 的 4:3 GameView 会和 16:9 渲染目标不一致，
@@ -1334,6 +1346,28 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
+        /// <summary>调试：打印某个 zone 中心附近所有可见对象（含贴图与层序），用于定位「谁画在了谁上面」。</summary>
+        public void ProbeZoneOccupants(string zoneId)
+        {
+            var center = Store.ZoneCenter(zoneId);
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"[ProbeZone] zone={zoneId} center=({center.x:0.00},{center.z:0.00}) 附近可见对象：");
+            foreach (var item in Store.Items)
+            {
+                if (item.Actor?.Renderer == null) continue;
+                var p = item.Actor.Go.transform.localPosition;
+                float d = Mathf.Sqrt((p.x - center.x) * (p.x - center.x) + (p.z - center.z) * (p.z - center.z));
+                if (d > 0.6f) continue;
+                var sprite = item.Actor.Renderer.sprite;
+                sb.AppendLine($"  {item.Id,-26} zone={item.ZoneId,-18} order={item.Order,3} " +
+                              $"pos=({p.x:0.00},{p.z:0.00}) " +
+                              $"sprite={(sprite == null ? "NULL" : sprite.rect.width + "x" + sprite.rect.height)} " +
+                              $"tex={(sprite?.texture == null ? "NULL" : sprite.texture.width + "x" + sprite.texture.height)} " +
+                              $"sort={item.Actor.Renderer.sortingOrder} enabled={item.Actor.Renderer.enabled}");
+            }
+            Debug.Log(sb.ToString());
+        }
+
         /// <summary>调试：渲染前检查卡牌贴图内容并导出，用于确认渲染采样到的是哪张图。</summary>
         public void ProbeCardTexture(string outDir)
         {
