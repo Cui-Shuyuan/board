@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "action.take.different.001",
   "stage": "_stage/splendor.table",
-  "note": "拿取三种不同宝石。源/目的地/数量来自 flow 的 take_gems_different（<gem_supply> → <ontology::player_holding>，3 颗），画面区域由 stage.visual 绑定；cue 只提供时间与强调。动画 0.00~4.60s，音频 5.28s。",
+  "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。供应堆在画面上按颜色分成五堆，因此写成三条 zone 移动；时间对齐字级口播时间戳（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。动画 0.40~4.62s，音频 5.28s。",
   "start": {
     "set": [
       {
@@ -47,7 +47,7 @@
   },
   "events": [
     {
-      "at": 0.0,
+      "at": 0.4,
       "dur": 0.35,
       "action": "highlight",
       "zone": "gem_supply_diamond",
@@ -56,7 +56,7 @@
       "easing": "easeOutCubic"
     },
     {
-      "at": 0.15,
+      "at": 0.7,
       "dur": 0.35,
       "action": "highlight",
       "zone": "gem_supply_sapphire",
@@ -65,7 +65,7 @@
       "easing": "easeOutCubic"
     },
     {
-      "at": 0.3,
+      "at": 1.0,
       "dur": 0.35,
       "action": "highlight",
       "zone": "gem_supply_ruby",
@@ -74,7 +74,7 @@
       "easing": "easeOutCubic"
     },
     {
-      "at": 0.45,
+      "at": 1.3,
       "dur": 0.35,
       "action": "highlight",
       "zone": "gem_supply_emerald",
@@ -83,7 +83,7 @@
       "easing": "easeOutCubic"
     },
     {
-      "at": 0.6,
+      "at": 1.6,
       "dur": 0.35,
       "action": "highlight",
       "zone": "gem_supply_onyx",
@@ -92,21 +92,32 @@
       "easing": "easeOutCubic"
     },
     {
-      "at": 3.3,
-      "dur": 0.55,
-      "action": "transfer",
-      "flow": "take_gems_different",
-      "each": [
-        "diamond",
-        "sapphire",
-        "ruby"
-      ],
-      "stagger": 0.25,
+      "at": 3.35,
+      "dur": 0.5,
+      "action": "move",
+      "from": "gem_supply_diamond",
+      "zone": "player_holding",
       "easing": "easeInOutCubic"
     },
     {
-      "at": 4.05,
-      "dur": 0.55,
+      "at": 3.6,
+      "dur": 0.5,
+      "action": "move",
+      "from": "gem_supply_sapphire",
+      "zone": "player_holding",
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 3.85,
+      "dur": 0.5,
+      "action": "move",
+      "from": "gem_supply_ruby",
+      "zone": "player_holding",
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 4.1,
+      "dur": 0.45,
       "action": "highlight",
       "zone": "player_holding",
       "peak_alpha": 0.75,
@@ -114,8 +125,8 @@
       "easing": "easeOutCubic"
     },
     {
-      "at": 4.35,
-      "dur": 0.25,
+      "at": 4.4,
+      "dur": 0.22,
       "action": "scale",
       "zone": "player_holding",
       "scale": 1.3,

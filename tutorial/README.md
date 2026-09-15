@@ -96,7 +96,7 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 
 `tutorial/下一阶段工作指导.md`
 
-## cue 内动画：状态 / zone / 语义绑定（2026-09-15 定稿）
+## cue 内动画：状态 / zone 模型（2026-09-15 定稿）
 
 动画 = **维护一组组件的状态**。组件的状态就是它「在哪个 zone、以什么姿态」；
 世界坐标由 zone 的布局规则推导，**cue 数据里不写坐标**。
@@ -106,40 +106,33 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 | 层 | 文件 | 只负责 |
 |---|---|---|
 | 语义事实 | `games/{game}/flow.json`、`concepts.json` | 源、目的地、对象、数量 |
-| 视觉绑定 | `anim/_stage/{game}.table.json` 的 `visual` 段 | 语义区域画在屏幕哪里、颜色分成哪几堆 |
-| 时间 | `anim/{track}/{cue_id}.json` | 第几秒发生、强调与错峰 |
+| 视觉绑定 | `anim/_stage/{game}.table.json` | 语义区域画在屏幕哪里（哪些 zone、颜色分几堆） |
+| 时间 | `anim/{track}/{cue_id}.json` | 第几秒发生、强调、错峰 |
 
 ```text
-games/{game}/tutorial/anim/_stage/{game}.table.json   牌桌事实：zone 位置、模板、开局摆放、语义绑定
+games/{game}/tutorial/anim/_stage/{game}.table.json   牌桌事实：zone 位置、模板、开局摆放
 games/{game}/tutorial/anim/{track}/{cue_id}.json      这一条 cue 对牌桌做了什么
 ```
 
 - **stage**：`zones`（每个 zone 的 `center` 与 `layout`）、`templates`（外观：shape / palette / world_size）、
-  `anchors`（区域底板等固定装饰，`zones` 字段声明它代表哪些 zone）、`initial`（开局哪些组件放在哪些 zone）、
-  `visual`（语义 id → zone 的绑定，`colors` 把 `gem_supply` 拆成五堆）。
+  `anchors`（区域底板等固定装饰，`zones` 字段声明它代表哪些 zone）、`initial`（开局哪些组件放在哪些 zone）。
 - **cue**：只有 `events`，外加可选的 `start`（本条 cue 的入口状态）。
 
-`transfer` 直接从 flow / concepts 取事实，不在动画数据里重复：
+**flow / concepts 只当查阅资料，不做运行时解析。** 写动画脚本时自己去读 flow 里的
+`source` / `destination` / `quantity`，把结论写进 cue 数据。这是一次性工作，读一次做好
+就可以一直用；为它写 JSON 解析器和语义运行时层，等于把一次性劳动变成永久维护的代码。
+
+例如 `take_gems_different` 在 concepts 里已经是 `<gem_supply>` → `<ontology::player_holding>`、
+3 颗，而画面上的宝石供应堆按颜色分成五堆，所以 cue 里直接写三条 zone 移动：
 
 ```json
-{ "at": 3.30, "dur": 0.55, "action": "transfer", "flow": "take_gems_different",
-  "each": ["diamond", "sapphire", "ruby"], "stagger": 0.25, "easing": "easeInOutCubic" }
+{ "at": 3.35, "dur": 0.50, "action": "move",
+  "from": "gem_supply_diamond", "zone": "player_holding", "easing": "easeInOutCubic" }
 ```
 
-运行时按 `flow` 找到语义节点，取出 `source` / `destination` / `quantity`，
-再用 stage 的 `visual` 绑定把 `<gem_supply>` 解析成 `gem_supply_diamond` 等画面 zone。
-所以「拿几颗、从哪到哪」只有 flow 一份事实；设置阶段按人数变化的数量
-（flow 里的 `quantity_per_color`）也天然跟着走。
-
-需要精确控制某一件时也可以直接写 zone：
-
-```json
-{ "at": 3.30, "dur": 0.55, "action": "move", "target": "gem#1", "zone": "player_holding" }
-{ "at": 3.30, "dur": 0.55, "action": "move", "from": "gem_supply_diamond", "take": 3, "zone": "player_holding" }
-```
-
-两种写法等价：前者指定具体某一件（运行时实例 id = `{template}#{序号}`），
-后者表示「从源 zone 里搬最前面的 N 件」。
+需要精确控制某一件时可以指定实例 id（运行时 id = `{template}#{序号}`）：
+`{ "action": "move", "target": "gem#1", "zone": "player_holding" }`；
+不指定 target/from 时按 `from` zone 的最前面 N 件搬（`"take": 3`）。
 
 关键性质：
 
@@ -151,6 +144,7 @@ games/{game}/tutorial/anim/{track}/{cue_id}.json      这一条 cue 对牌桌做
 - **入口状态、重播与顺序播放**。顺序播放时一条 cue 接着上一条的终态；重播当前 cue
   恢复到这条 cue 的入口状态。将来编译器可以离线复算每个 cue 的入口状态写进 runtime，
   用于任意跳转。
+- **`stagger`** 让同一组组件错峰触发，用于「一枚一枚」的节奏。
 
 校验：
 

@@ -2,56 +2,11 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。cue 数据不写坐标；要改桌面布局只改这个文件。",
+  "note": "璀璨宝石的牌桌事实：有哪些 zone、每个 zone 在哪、组件长什么样、开局各 zone 放什么。cue 数据只写 zone 之间的移动，不写坐标；要改桌面布局只改这个文件。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
     "ortho_scale": 1.18
-  },
-  "visual": {
-    "zones": [
-      {
-        "concept": "ontology::game_box",
-        "zone": "offstage",
-        "note": "游戏盒在画面外；设置阶段的「从盒中取出」表现为从镜头外飞入。"
-      },
-      {
-        "concept": "gem_supply",
-        "zone": "gem_supply_diamond",
-        "colors": [
-          {
-            "color": "diamond",
-            "zone": "gem_supply_diamond"
-          },
-          {
-            "color": "sapphire",
-            "zone": "gem_supply_sapphire"
-          },
-          {
-            "color": "ruby",
-            "zone": "gem_supply_ruby"
-          },
-          {
-            "color": "emerald",
-            "zone": "gem_supply_emerald"
-          },
-          {
-            "color": "onyx",
-            "zone": "gem_supply_onyx"
-          }
-        ],
-        "note": "五色宝石供应堆；colors 顺序即「拿取不同色宝石」时的默认取用顺序。"
-      },
-      {
-        "concept": "gold_supply",
-        "zone": "gold_supply"
-      },
-      {
-        "concept": "ontology::player_holding",
-        "zone": "player_holding",
-        "note": "当前讲解对象的持有区；多人局面将来按玩家 index 扩展成多块。"
-      }
-    ]
   },
   "zones": [
     {

@@ -17,6 +17,7 @@
 - [讲规模块](tutorial-module.md) — 第五阶段定稿：Unity 原生安卓 + 数据驱动 2D/2.5D sprite 动画（50° 固定俯角）；Unity 6 环境全落 D 盘；client 骨架与首个原型已跑通，观感待截图迭代
 - [教学动画数据层](tutorial-data-layer.md) — tutorial.json schema + validate_tutorial.py + Unity 动画原语库/播放器骨架（2026-09-06）
 - [讲规动画制作路线](tutorial-production-pipeline.md) — 口播稿主/动画从；Splendor 109 cue 已 TTS/runtime/Unity 播放器 v0；新增 source JSON + beat 分层与 split/merge/set-pause 流程（2026-09-13）
+- [讲规动画状态模型](tutorial-animation-state.md) — 定稿：动画=维护组件状态(zone+姿态)；运行时维护状态/重播回入口快照/跳转编译期复算；flow 只当查阅资料不建运行时解析器（2026-09-15）
 - [动画制作流水线](animation-pipeline.md) — 3D 车道备用参考：Image-to-3D vs LLM vs 手动标注分工边界（视觉层已转 2.5D，slot 空物体方案仍适用）
 - [FAQ 类型收敛与程序化工具](faq-tools.md) — 237 题聚类 9+ 类型；「名词直呼」工具已完成（87% 程序拍板）；广播架构愿景；候选下一类
 - [工作区同步](workspace-sync.md) — Windows/WSL 历史已合并并 force-push 清理大文件；模型/音频/视频/PDF/原始扫描不进 Git（2026-09-13）

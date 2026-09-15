@@ -28,6 +28,14 @@ metadata:
 - **每章一个音频**，字幕按 t 升序；打断后从当前章节重播。
 - 旧 `TutorialPlayer.cs` 原型与 `TutorialDirector` 二选一运行，建议新教程走 TutorialDirector。
 
+## 状态/zone 模型取代 slot 模型（2026-09-15，见 [[tutorial-animation-state]]）
+
+上面这套 `tutorial.json`（章节 + slot 坐标 + 事件时间轴）已被 **zone 状态模型**取代：
+组件状态 = (zone, 顺位)，坐标由 zone 布局推导，动画数据不写坐标。运行时维护状态，
+重播恢复入口快照，跳转由编译器离线复算入口状态。新数据在
+`games/{game}/tutorial/anim/`；本文件描述的 `tutorial.json` / `TutorialDirector` /
+`flow_to_tutorial.py` 保留为历史参考，不再是新教程的路线。
+
 ## 从 flow.json 生成草稿（2026-09-06 追加）
 
 `scripts/flow_to_tutorial.py` 确定性翻译 flow.json：transfer/random_draw/top_draw/play → move，shuffle → shuffle，state_change → highlight，其余 → wait。章节取 flow 的叶子 phase/round，事件取叶子动作节点。产物 slot 坐标为自动网格占位、sprite 为 `media/auto/{id}.png` 占位，需人工校准/替换。

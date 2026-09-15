@@ -29,8 +29,6 @@ namespace BoardGameTutorial
         public string note;
         public StageBoard board;
 
-        /// <summary>语义 id → 画面 zone 的绑定；动画据此把 flow 的 source/destination 落到画面上。</summary>
-        public StageVisual visual;
 
         public List<StageZone> zones;
         public List<StageTemplate> templates;
@@ -202,14 +200,6 @@ namespace BoardGameTutorial
         /// <summary>move：从 from zone 搬几件；留空表示 1。</summary>
         public int? take;
 
-        // ---- transfer（语义驱动，见 SemanticMap / SemanticFlow）----
-        /// <summary>语义节点 id，例如 take_gems_different 或 flow:player_action_turn。</summary>
-        public string flow;
-
-        /// <summary>按 color 覆盖 movement：把 which 列出的每个颜色各搬一件。</summary>
-        public List<string> each;
-
-        /// <summary>多个组件的触发间隔（秒）；首件仍在 at 触发。</summary>
         public float stagger;
 
         // ---- rotate / flip ----
