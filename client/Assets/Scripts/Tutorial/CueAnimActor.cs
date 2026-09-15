@@ -22,6 +22,9 @@ namespace BoardGameTutorial
         public Sprite FaceSprite;
         public Sprite BackSprite;
 
+        /// <summary>实例自己的有效模板（含从实例带过来的色板），翻面/换色时用它。</summary>
+        public StageTemplate EffectiveTemplate;
+
         public Vector3 LivePosition;
         public Vector3 LiveScale;
         public float LiveRotation;

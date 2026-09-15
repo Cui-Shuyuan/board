@@ -85,6 +85,8 @@ namespace BoardGameTutorial
 
             if (!animationEnabled || string.IsNullOrEmpty(gameRoot) || string.IsNullOrEmpty(cueId))
             {
+                Debug.LogWarning($"[TutorialCueAnim] 跳过动画: enabled={animationEnabled} " +
+                                 $"gameRoot='{gameRoot}' cue='{cueId}'");
                 ClearScene();
                 return false;
             }
@@ -94,6 +96,7 @@ namespace BoardGameTutorial
             {
                 // 这条 cue 还没做动画：保留上一张牌桌画面，不要清空，
                 // 否则播到没做动画的 cue 时整张桌子会突然消失。
+                Debug.Log($"[TutorialCueAnim] 本条 cue 还没有动画数据（保留牌桌）: {path}");
                 CueId = null;
                 clock = -1f;
                 nextIndex = 0;
@@ -103,7 +106,7 @@ namespace BoardGameTutorial
             cueDoc = JsonUtility.FromJson<CueAnimDoc>(File.ReadAllText(path));
             if (cueDoc == null || cueDoc.events == null)
             {
-                Debug.LogError($"[TutorialCueAnim] failed to parse {path}");
+                Debug.LogError($"[TutorialCueAnim] 解析失败: {path}");
                 cueDoc = null;
                 return false;
             }
@@ -166,6 +169,7 @@ namespace BoardGameTutorial
             Store.LoadStage(stage);
             offstageZoneId = null;
             gameRootPath = gameRoot;
+            Debug.Log($"[TutorialCueAnim] 动画载入: {CueId} events={cueDoc.events.Count} stage={(stage == null ? "NULL" : stage.game_id)}");
         }
 
         /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置 / 临时组件）。</summary>
@@ -262,22 +266,43 @@ namespace BoardGameTutorial
             foreach (var item in Store.Items)
             {
                 if (actors.ContainsKey(item.Id)) continue;
-                var go = CreateSpriteObject("item:" + item.Id, item.Template, item.BaseColor);
+                var itemTpl = EffectiveTemplate(item.Template, item.PaletteName);
+                var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor);
                 var sr = go.GetComponent<SpriteRenderer>();
                 var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
 
                 // 正反两面都准备好：翻面时只换贴图，不重建对象。
                 actor.FaceSprite = sr.sprite;
-                var backPath = ResolveBackImagePath(item.Template);
+                actor.EffectiveTemplate = itemTpl;
+                var backPath = ResolveBackImagePath(itemTpl);
                 if (backPath != null)
                 {
-                    var back = CardImageLoader.Load(backPath, item.Template.shape);
+                    var back = CardImageLoader.Load(backPath, itemTpl.shape);
                     if (back != null) actor.BackSprite = back;
                 }
 
                 item.Actor = actor;
                 actors[item.Id] = actor;
             }
+        }
+
+        /// <summary>
+        /// 生成 sprite 时用的模板。实例的色板（如 gem_diamond）可能只写在 stage.initial / start.set 上，
+        /// 模板里没有 —— 必须并进来，否则找不到该色板的扫描图，会退化成白色方块。
+        /// </summary>
+        private static StageTemplate EffectiveTemplate(StageTemplate tpl, string paletteName)
+        {
+            if (tpl == null || string.IsNullOrEmpty(paletteName) || tpl.palette == paletteName) return tpl;
+
+            var clone = new StageTemplate
+            {
+                id = tpl.id, shape = tpl.shape, palette = paletteName,
+                sprite = tpl.sprite, face_image = tpl.face_image, back_image = tpl.back_image,
+                world_size = tpl.world_size, width = tpl.width, height = tpl.height,
+                alpha = tpl.alpha, rotation = tpl.rotation,
+                sorting_order = tpl.sorting_order, highlight = tpl.highlight,
+            };
+            return clone;
         }
 
         private GameObject CreateSpriteObject(string name, StageTemplate tpl, Color color)
@@ -1238,6 +1263,84 @@ namespace BoardGameTutorial
                 if (kv.Value?.Renderer != null)
                     list.Add(new KeyValuePair<string, bool>(kv.Key, kv.Value.Renderer.enabled));
             return list;
+        }
+
+        /// <summary>
+        /// <summary>调试：渲染前检查卡牌贴图内容并导出，用于确认渲染采样到的是哪张图。</summary>
+        public void ProbeCardTexture(string outDir)
+        {
+            foreach (var item in Store.Items)
+            {
+                if (item.Actor?.Renderer?.sprite == null) continue;
+                if (!item.Id.StartsWith("card_back_1#")) continue;
+
+                var sp = item.Actor.Renderer.sprite;
+                var tex = sp.texture;
+                if (tex == null) { Debug.Log("[ProbeCard] sprite.texture == null"); return; }
+
+                var px = tex.GetPixels();
+                float r = 0, g = 0, b = 0, a = 0;
+                foreach (var c in px) { r += c.r; g += c.g; b += c.b; a += c.a; }
+                int n = px.Length;
+                Debug.Log($"[ProbeCard] {item.Id} sprite={sp.rect.width}x{sp.rect.height} tex={tex.width}x{tex.height} " +
+                          $"fmt={tex.format} readable={tex.isReadable} " +
+                          $"avgRGB=({r / n:0.00},{g / n:0.00},{b / n:0.00}) A={a / n:0.00}");
+
+                if (!string.IsNullOrEmpty(outDir))
+                {
+                    Directory.CreateDirectory(outDir);
+                    File.WriteAllBytes(Path.Combine(outDir, "probe_card_runtime.png"), tex.EncodeToPNG());
+                }
+                return;
+            }
+            Debug.Log("[ProbeCard] 没找到 card_back_1 的 actor");
+        }
+        /// <summary>调试：把卡牌染成红色，用于判断白色来自贴图还是另有覆盖。</summary>
+        public void TintCardRed()
+        {
+            foreach (var item in Store.Items)
+            {
+                if (item.Actor?.Renderer == null) continue;
+                if (!item.Id.StartsWith("card_back_1#")) continue;
+                item.Actor.Renderer.color = Color.red;
+            }
+            Debug.Log("[TintCardRed] 已把卡牌染红");
+        }
+        /// 调试：为所有组件重新解析并重新赋值贴图。
+        /// 用来区分「贴图/上传有问题」和「别处覆盖了 sprite」——替换后画面变化说明是前者。
+        /// </summary>
+        public void ForceReloadSprites()
+        {
+            foreach (var item in Store.Items)
+            {
+                if (item.Actor?.Renderer == null) continue;
+                var tpl = EffectiveTemplate(item.Template, item.PaletteName);
+                var fresh = ResolveSprite(tpl);
+                if (fresh != null) item.Actor.Renderer.sprite = fresh;
+                item.Actor.FaceSprite = fresh;
+            }
+            Debug.Log("[ForceReloadSprites] 已重新赋值");
+        }
+
+        /// <summary>调试：把画面里每个 sprite 的真实渲染状态打出来。</summary>
+        public void DumpRenderState()
+        {
+            if (animRoot == null) return;
+            var renderers = animRoot.GetComponentsInChildren<SpriteRenderer>();
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"[Render] 共 {renderers.Length} 个 SpriteRenderer");
+            int shown = 0;
+            foreach (var sr in renderers)
+            {
+                if (!sr.enabled) continue;
+                if (shown++ > 6) break;
+                var tex = sr.sprite != null ? sr.sprite.texture : null;
+                sb.AppendLine($"[Render] {sr.gameObject.name} sprite={(sr.sprite == null ? "NULL" : sr.sprite.rect.width + "x" + sr.sprite.rect.height)} " +
+                              $"tex={(tex == null ? "NULL" : tex.width + "x" + tex.height)} color=({sr.color.r:0.00},{sr.color.g:0.00},{sr.color.b:0.00},{sr.color.a:0.00}) " +
+                              $"scale=({sr.transform.localScale.x:0.000},{sr.transform.localScale.y:0.000}) order={sr.sortingOrder} " +
+                              $"mat={(sr.sharedMaterial == null ? "NULL" : sr.sharedMaterial.name)}");
+            }
+            Debug.Log(sb.ToString());
         }
 
         public bool WorldToScreen(Vector3 world, out Vector3 screen)

@@ -242,6 +242,8 @@ namespace UnityEngine
         public Transform transform;
         public T AddComponent<T>() where T : Component => null;
         public T GetComponent<T>() => default(T);
+        public T[] GetComponentsInChildren<T>() => new T[0];
+        public T[] GetComponentsInChildren<T>(bool includeInactive) => new T[0];
         public void SetActive(bool v) { }
         public static GameObject Find(string name) => null;
     }
@@ -303,6 +305,9 @@ namespace UnityEngine
         public Texture2D(int w, int h, TextureFormat format, bool mipChain) { }
         public FilterMode filterMode;
         public TextureWrapMode wrapMode;
+        public bool isReadable => true;
+        public TextureFormat format => TextureFormat.RGBA32;
+        public int GetInstanceID() => 0;
         public void SetPixel(int x, int y, Color c) { }
         public void SetPixels(Color[] colors) { }
         public Color[] GetPixels() => new Color[0];
@@ -310,6 +315,8 @@ namespace UnityEngine
         public byte[] EncodeToPNG() => new byte[0];
         public byte[] EncodeToJPG() => new byte[0];
         public void Apply() { }
+        public void Apply(bool updateMipmaps) { }
+        public void Apply(bool updateMipmaps, bool makeNoLongerReadable) { }
     }
 
     public enum TextureFormat { RGBA32, ARGB32, RGB24 }
@@ -324,6 +331,9 @@ namespace UnityEngine
         public int sortingOrder;
         public string sortingLayerName;
         public Material material;
+        public Material sharedMaterial;
+        public Material GetMaterial() => null;
+        public Material GetSharedMaterial() => null;
     }
 
     public class SpriteRenderer : Renderer
@@ -334,7 +344,15 @@ namespace UnityEngine
         public bool flipY;
     }
 
-    public class Material : Object { public Material(Shader s) { } public Color color; }
+    public class Material : Object
+    {
+        public Material(Shader s) { }
+        public Color color;
+        public Texture mainTexture;
+        public Texture2D mainTextureAsTexture2D => null;
+        public bool HasProperty(string name) => true;
+        public Texture GetTexture(string name) => null;
+    }
 
     public class Shader : Object { public static Shader Find(string name) => null; }
 

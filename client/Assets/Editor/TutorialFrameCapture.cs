@@ -128,6 +128,7 @@ namespace BoardGameTutorial.Editor
         public static void SelfTest()
         {
             int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
 
             void Check(string what, bool ok, string detail)
             {
@@ -186,7 +187,105 @@ namespace BoardGameTutorial.Editor
             }
             Check("MoveToAt 顺序号", ordered, $"放置 {placed.Count} 件，序号 {(placed.Count > 0 ? placed[0].Order + ".." + placed[placed.Count - 1].Order : "-")}");
 
+            // 处理前后对比：原图有内容、处理后变白 → LoadImage/SetPixels/Apply 的问题
+            {
+                string p2 = Path.Combine(repoRoot, "games/splendor/media/card/一级发展卡_背面.jpg");
+                var raw = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                ImageConversion.LoadImage(raw, File.ReadAllBytes(p2));
+                var before = raw.GetPixels();
+                float br = 0, bg2 = 0, bb = 0, ba = 0;
+                foreach (var c in before) { br += c.r; bg2 += c.g; bb += c.b; ba += c.a; }
+                int n2 = before.Length;
+                Check("LoadImage 后非全白", (br + bg2 + bb) / (3f * n2) < 0.9f,
+                    $"RGB=({br / n2:0.00},{bg2 / n2:0.00},{bb / n2:0.00}) A={ba / n2:0.00} fmt={raw.format} readable={raw.isReadable}");
+
+                var loaded2 = CardImageLoader.Load(p2, "card");
+                var after = loaded2.texture.GetPixels();
+                float ar = 0, ag = 0, ab = 0, aa = 0;
+                foreach (var c in after) { ar += c.r; ag += c.g; ab += c.b; aa += c.a; }
+                Check("处理后非全白", (ar + ag + ab) / (3f * n2) < 0.9f,
+                    $"RGB=({ar / n2:0.00},{ag / n2:0.00},{ab / n2:0.00}) A={aa / n2:0.00} fmt={loaded2.texture.format} readable={loaded2.texture.isReadable}");
+            }
+
+            // 扫件加载自检：确认卡背真的加载出有内容的贴图，而不是白块或空图
+            string cardPath = Path.Combine(repoRoot, "games/splendor/media/card/一级发展卡_背面.jpg");
+            Check("卡背文件存在", File.Exists(cardPath), cardPath);
+            var spr = CardImageLoader.Load(cardPath, "card");
+            if (spr == null)
+            {
+                Check("卡背加载", false, "返回 null");
+            }
+            else
+            {
+                var px = spr.texture.GetPixels();
+                float sumA = 0f, sumR = 0f, sumG = 0f, sumB = 0f;
+                int opaque = 0, transparent = 0;
+                foreach (var c in px)
+                {
+                    sumA += c.a; sumR += c.r; sumG += c.g; sumB += c.b;
+                    if (c.a > 0.9f) opaque++; else if (c.a < 0.1f) transparent++;
+                }
+                int n = px.Length;
+                Check("卡背尺寸", spr.texture.width > 100 && spr.texture.height > 100,
+                    $"{spr.texture.width}x{spr.texture.height}");
+                Check("卡背有不透明内容", opaque > n * 0.3f,
+                    $"不透明 {opaque * 100 / n}% 透明 {transparent * 100 / n}% 平均色 ({sumR / n:0.00},{sumG / n:0.00},{sumB / n:0.00}) a={sumA / n:0.00}");
+                Check("卡背不是纯白", (sumR + sumG + sumB) / (3f * n) < 0.9f,
+                    $"平均亮度 {(sumR + sumG + sumB) / (3f * n):0.00}");
+            }
+
+            // 把处理后的贴图导出，直接肉眼核对（白底/圆形遮罩是否正常）
+            string outDir = Path.Combine(Application.dataPath, "..", "CaptureOut");
+            Directory.CreateDirectory(outDir);
+            foreach (var probe in new (string id, string file, string shape)[]
+            {
+                ("card_back", "media/card/一级发展卡_背面.jpg", "card"),
+                ("gem_diamond", "media/card/白宝石.jpg", "gem"),
+                ("gem_gold", "media/card/黄金.jpg", "gem"),
+                ("market_face", "media/card/二级发展卡_白.jpg", "card"),
+            })
+            {
+                var path = Path.Combine(repoRoot, "games/splendor", probe.file);
+                var sp = CardImageLoader.Load(path, probe.shape);
+                if (sp == null) { Check($"导出 {probe.id}", false, "加载失败"); continue; }
+                var bytes = sp.texture.EncodeToPNG();
+                var outPath = Path.Combine(outDir, "sprite_" + probe.id + ".png");
+                File.WriteAllBytes(outPath, bytes);
+                Debug.Log($"[SelfTest] 已导出 {outPath}");
+            }
+
             Debug.Log($"[SelfTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        /// <summary>
+        /// 走「真实播放路径」自检：LoadCue + Seek（不是 SnapTo），
+        /// 与编辑器里 TutorialCuePlayer 驱动动画的方式一致。
+        /// </summary>
+        public static void SelfTestLivePath()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("LivePathHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+
+            foreach (var cue in new[] { "setup.cards.001.1", "setup.cards.002.1", "action.take.different.001" })
+            {
+                bool ok = anim.LoadCue(gameRoot, "full", cue, false);
+                if (!ok) { Debug.Log($"[LivePath] FAIL {cue}: LoadCue 返回 false"); failures++; continue; }
+
+                // 用 Seek 按时间推进，和真实播放一致
+                for (float t = 0f; t <= 8f; t += 0.25f) anim.Seek(t);
+
+                int actors = 0;
+                foreach (var it in anim.Store.Items) if (it.Actor != null) actors++;
+                Debug.Log($"[LivePath] {(actors > 0 ? "PASS" : "FAIL")} {cue}: LoadCue 成功, 动画对象 {actors} 个");
+                if (actors == 0) failures++;
+            }
+
+            Debug.Log($"[LivePath] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
@@ -287,6 +386,11 @@ namespace BoardGameTutorial.Editor
 
                 if (dump)
                     WriteDump(anim, Path.Combine(outputDirectory, shot.File + ".txt"), $"{shot.Cue} t={shot.Time:0.00}");
+
+                if (shot.File == "cards_00_start")
+                {
+                    anim.ProbeCardTexture(outputDirectory);
+                }
 
                 string path = Path.Combine(outputDirectory, shot.File + ".png");
                 SaveFrame(path);

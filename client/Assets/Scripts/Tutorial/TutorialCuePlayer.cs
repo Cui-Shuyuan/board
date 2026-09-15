@@ -60,6 +60,7 @@ namespace BoardGameTutorial
         private int debugJumpReturnIndex = -1;
         private bool inDebugJump;
         private bool isPaused;
+        private float fallbackClock;
         private string currentSubtitle = "";
         private GUIStyle debugStyle;
         private Texture2D swatchTexture;
@@ -237,14 +238,23 @@ namespace BoardGameTutorial
                 animPlayer.animationEnabled = enableCueAnimation;
                 // 只有「紧接着的下一条」才继承上一条的终态；跳转/重播/按 B 都要回到牌桌初始态。
                 bool continueFromPrevious = continueState && index == previousIndex + 1;
-                if (showZoneLabels && animPlayer.LoadCue(gameRoot, track, cue.id, continueFromPrevious))
+
+                // 注意：LoadCue 必须无条件调用。曾经写成 `if (showZoneLabels && LoadCue(...))`，
+                // 而 showZoneLabels 默认 false —— 短路导致动画永远不载入：
+                // 音频照常播放、画面全空、Console 一条日志都没有。
+                bool loaded;
+                try
                 {
-                    RefreshZoneLabels();
+                    loaded = animPlayer.LoadCue(gameRoot, track, cue.id, continueFromPrevious);
                 }
-                else
+                catch (System.Exception e)
                 {
-                    zoneLabels.Clear();
+                    Debug.LogError($"[TutorialCuePlayer] 载入动画异常 cue={cue.id}: {e}");
+                    loaded = false;
                 }
+
+                if (loaded && showZoneLabels) RefreshZoneLabels();
+                else if (!loaded) zoneLabels.Clear();
             }
 
             string audioPath = Path.Combine(gameRoot, cue.audio);
@@ -492,7 +502,8 @@ namespace BoardGameTutorial
             string animInfo = "anim: -";
             if (animPlayer != null)
             {
-                float t = audioSource != null ? audioSource.time : 0f;
+                // 没有 clip 时访问 AudioSource.time 会在 Console 刷警告并永远返回 0，必须先判。
+                float t = (audioSource != null && audioSource.clip != null) ? audioSource.time : 0f;
                 animInfo = animPlayer.IsLoaded
                     ? $"anim: ON  {animPlayer.CueId}  t={t:0.00}s  动画总长 {animPlayer.TotalDuration:0.00}s"
                     : $"anim: none  (t={t:0.00}s)";
