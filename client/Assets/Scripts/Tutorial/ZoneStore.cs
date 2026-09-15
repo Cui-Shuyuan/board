@@ -22,6 +22,10 @@ namespace BoardGameTutorial
         public string ZoneId;          // 当前所在 zone
         public int Order = -1;         // zone 内顺序，决定落在哪个槽位
 
+        /// <summary>在 offstage 时的入场方向与基准落点（用于「从盒子飞进来」的起点）。</summary>
+        public string EntryFrom = "auto";
+        public Vector3 EntryAnchor;
+
         public CueAnimActor Actor;     // 渲染实例
 
         public Vector3 LivePosition;
@@ -92,7 +96,7 @@ namespace BoardGameTutorial
         }
 
         /// <summary>批量生成组件并放进指定 zone（开局摆放 / 从镜头外入场都走这里）。</summary>
-        public List<ZoneItem> Spawn(string templateId, string palette, string zoneId, int count)
+        public List<ZoneItem> Spawn(string templateId, string palette, string zoneId, int count, string from = null)
         {
             var created = new List<ZoneItem>();
             var tpl = GetTemplate(templateId);
@@ -108,7 +112,8 @@ namespace BoardGameTutorial
                 if (!counters.TryGetValue(templateId, out int n)) n = 0;
                 counters[templateId] = n + 1;
 
-                var baseColor = Palette.Resolve(string.IsNullOrEmpty(palette) ? tpl.palette : palette);
+                var colorName = string.IsNullOrEmpty(palette) ? tpl.palette : palette;
+                var baseColor = Palette.TintFor(tpl.shape, colorName);
                 var item = new ZoneItem
                 {
                     Id = $"{templateId}#{n + 1}",
@@ -116,6 +121,8 @@ namespace BoardGameTutorial
                     BaseColor = baseColor,
                     ZoneId = zoneId,
                     Order = list != null ? list.Count : 0,
+                    EntryFrom = string.IsNullOrEmpty(from) ? "auto" : from,
+                    EntryAnchor = AnchorFor(zoneId, from),
                     LiveScale = Vector3.one,
                     LiveRotation = tpl.rotation,
                     LiveAlpha = tpl.alpha,
@@ -126,6 +133,12 @@ namespace BoardGameTutorial
                 created.Add(item);
             }
             return created;
+        }
+
+        private int NextOrder(string zoneId)
+        {
+            var list = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var l) ? l : null);
+            return list == null ? 0 : list.Count;
         }
 
         private List<ZoneItem> ListOf(string zoneId)
@@ -179,6 +192,12 @@ namespace BoardGameTutorial
             }
             if (item.ZoneId == targetZoneId) return;
 
+            // 从镜头外第一次落到桌面上时，记下它在桌内的落点，
+            // 之后若再被移回 offstage，起点仍然对准这个位置。
+            var targetZone = GetZone(targetZoneId);
+            if (targetZone != null && targetZone.role != "offstage")
+                item.EntryAnchor = ZonePosition(targetZoneId, NextOrder(targetZoneId));
+
             if (!string.IsNullOrEmpty(item.ZoneId) && occupancy.TryGetValue(item.ZoneId, out var from))
             {
                 from.Remove(item);
@@ -198,6 +217,16 @@ namespace BoardGameTutorial
         public Vector3 CurrentPosition(ZoneItem item)
         {
             if (item == null) return Vector3.zero;
+            var zone = GetZone(item.ZoneId);
+            if (zone == null) return Vector3.zero;
+
+            if (zone.role == "offstage")
+            {
+                // 移动原语是 Vector3.Lerp，所以起点取「落点 + 入场方向 × margin」：
+                // 多个组件落点不同、起点也不同，但共享同一段位移向量，飞入时保持相对位置。
+                return item.EntryAnchor + EntryDirection(zone, item.EntryFrom) * zone.margin;
+            }
+
             return ZonePosition(item.ZoneId, item.Order);
         }
 
@@ -248,13 +277,38 @@ namespace BoardGameTutorial
             return new Vector3(x, 0f, z);
         }
 
-        /// <summary>镜头外的入场点：从桌心朝该 zone 方向往外推。</summary>
-        public Vector3 OffstagePosition(StageZone zone)
+        /// <summary>
+        /// 镜头外的入场点。方向由 from 决定（top/bottom/left/right），
+        /// auto 时从桌心朝外推。距离取 zone.margin，必须足够远，投影到屏幕后才真的在画面外。
+        /// </summary>
+        public Vector3 OffstagePosition(StageZone zone, string from = null)
         {
-            var forward = new Vector3(zone.center.x, 0f, zone.center.z - 0.85f);
-            if (forward.sqrMagnitude < 1e-4f) forward = new Vector3(0f, 0f, 1f);
-            forward.Normalize();
-            return new Vector3(zone.center.x, 0f, zone.center.z) + forward * zone.margin;
+            var center = new Vector3(zone.center.x, 0f, zone.center.z);
+            return center + EntryDirection(zone, from) * zone.margin;
+        }
+
+        /// <summary>入场方向（单位向量）：top/bottom/left/right；auto 时从桌心朝外推。</summary>
+        public static Vector3 EntryDirection(StageZone zone, string from)
+        {
+            switch (from)
+            {
+                case "top": return new Vector3(0f, 0f, 1f);
+                case "bottom": return new Vector3(0f, 0f, -1f);
+                case "left": return new Vector3(-1f, 0f, 0f);
+                case "right": return new Vector3(1f, 0f, 0f);
+                default:
+                    var dir = new Vector3(zone.center.x, 0f, zone.center.z - 0.85f);
+                    if (dir.sqrMagnitude < 1e-4f) dir = new Vector3(0f, 0f, 1f);
+                    return dir.normalized;
+            }
+        }
+
+        /// <summary>入场方向对应的桌内基准点（组件真正的落点附近）。</summary>
+        private Vector3 AnchorFor(string zoneId, string from)
+        {
+            var zone = GetZone(zoneId);
+            if (zone == null) return Vector3.zero;
+            return new Vector3(zone.center.x, 0f, zone.center.z);
         }
 
         /// <summary>

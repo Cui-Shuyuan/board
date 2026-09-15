@@ -180,7 +180,7 @@ namespace BoardGameTutorial
                         continue;
                     }
 
-                    var color = Palette.Resolve(tpl.palette);
+                    var color = Palette.TintFor(tpl.shape, tpl.palette);
                     var go = CreateSpriteObject("anchor:" + anchor.id, tpl, color);
                     go.transform.localPosition = new Vector3(anchor.x, anchor.y, anchor.z);
 
@@ -264,7 +264,14 @@ namespace BoardGameTutorial
             if (tpl.shape == "panel" || tpl.shape == "dot" || tpl.shape == "shadow")
                 return SharedSolidSprite();
 
-            return GameSpriteFactory.Gem(Palette.Resolve(tpl.palette));
+            var color = Palette.Resolve(tpl.palette);
+            if (tpl.shape == "card")
+            {
+                // 贵族面向下用 noble 色板的方块；发展卡用等级色卡背。
+                return tpl.palette == "noble" ? GameSpriteFactory.NobleTile(color) : GameSpriteFactory.CardBack(color);
+            }
+
+            return GameSpriteFactory.Gem(color);
         }
 
         private static Vector3 WorldSizeOf(StageTemplate tpl, Sprite sprite)

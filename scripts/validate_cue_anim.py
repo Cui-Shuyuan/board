@@ -43,7 +43,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "wait"}
-SHAPES = {"panel", "gem", "shadow", "dot"}
+SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
 EASINGS = {
     "linear", "easeInQuad", "easeOutQuad", "easeInOutQuad",
@@ -54,7 +54,8 @@ EASINGS = {
 # Kept in sync with client/Assets/Scripts/Tutorial/Palette.cs
 PALETTES = {
     "gem_diamond", "gem_sapphire", "gem_emerald", "gem_ruby", "gem_onyx",
-    "gem_gold", "panel_supply", "panel_player", "panel_card", "shadow", "white",
+    "gem_gold", "panel_supply", "panel_player", "panel_market", "panel_card",
+    "card_level_1", "card_level_2", "card_level_3", "noble", "shadow", "white",
 }
 
 MIN_TAIL_MARGIN = 0.15

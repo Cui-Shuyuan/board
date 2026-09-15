@@ -39,10 +39,25 @@ public static class GameSpriteFactory
         return MakeSprite(170, 245, CardBackPixel);
     }
 
+    /// <summary>
+    /// 卡背（可指定等级主色）。三摞牌的背面图案相同，靠边框主色区分等级：
+    /// 一级绿、二级黄、三级蓝。
+    /// </summary>
+    public static Sprite CardBack(Color main)
+    {
+        return MakeSprite(170, 245, (x, y) => CardBackPixel(x, y, main));
+    }
+
+    /// <summary>贵族板块：卡其底 + 深色边框 + 简化人像（占位）。</summary>
+    public static Sprite NobleTile(Color main)
+    {
+        return MakeSprite(150, 150, (x, y) => NobleTilePixel(x, y, main));
+    }
+
     /// <summary>贵族板块。</summary>
     public static Sprite Noble()
     {
-        return MakeSprite(150, 150, (x, y) => NoblePixel(x, y));
+        return NobleTile(new Color(0.74f, 0.67f, 0.55f));
     }
 
     /// <summary>宝石圆片，color 为 RGB。</summary>
@@ -169,12 +184,18 @@ public static class GameSpriteFactory
 
     static Color CardBackPixel(int x, int y)
     {
+        return CardBackPixel(x, y, new Color(0.16f, 0.42f, 0.20f));
+    }
+
+    static Color CardBackPixel(int x, int y, Color main)
+    {
         int W = 170, H = 245;
         // 圆角边缘
         if (x < 4 || x >= W - 4 || y < 4 || y >= H - 4) return new Color(0f, 0f, 0f, 0f);
-        // 深绿底（顶部稍亮，向下渐深）
+        // 主色底（顶部稍亮，向下渐深）
+        Color dark = Color.Lerp(main, Color.black, 0.55f);
         float t = y / (float)H;
-        Color c = Color.Lerp(new Color(0.16f, 0.42f, 0.20f), new Color(0.05f, 0.20f, 0.10f), t);
+        Color c = Color.Lerp(main, dark, t);
         // 边框（白色细边）
         if (x < 7 || x >= W - 7 || y < 7 || y >= H - 7) c = new Color(0.85f, 0.88f, 0.82f);
         // 中央金色 "Splendor" 字样（用简单的渐变横条示意字的位置，为避免画字太复杂）
@@ -194,12 +215,12 @@ public static class GameSpriteFactory
         return c;
     }
 
-    static Color NoblePixel(int x, int y)
+    static Color NobleTilePixel(int x, int y, Color main)
     {
         // 卡其底
-        Color c = new Color(0.74f, 0.67f, 0.55f);
+        Color c = main;
         if (x < 4 || x >= 146 || y < 4 || y >= 146) return new Color(0f, 0f, 0f, 0f);
-        if (x < 8 || x >= 142 || y < 8 || y >= 142) c = new Color(0.48f, 0.40f, 0.28f);
+        if (x < 8 || x >= 142 || y < 8 || y >= 142) c = Color.Lerp(main, Color.black, 0.35f);
         // 脸
         int fx = x - 75, fy = y - 75;
         int faceTop = 150; // 简化：把脸放在中上部

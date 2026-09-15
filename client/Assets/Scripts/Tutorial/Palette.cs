@@ -17,7 +17,11 @@ namespace BoardGameTutorial
             { "gem_gold",     new Color(0.95f, 0.79f, 0.22f) },
             { "panel_supply", new Color(0.26f, 0.36f, 0.52f) },
             { "panel_player", new Color(0.24f, 0.42f, 0.31f) },
-            { "panel_card",   new Color(0.45f, 0.38f, 0.29f) },
+            { "panel_market", new Color(0.42f, 0.36f, 0.28f) },
+            { "card_level_1", new Color(0.24f, 0.52f, 0.30f) },
+            { "card_level_2", new Color(0.78f, 0.64f, 0.20f) },
+            { "card_level_3", new Color(0.24f, 0.42f, 0.72f) },
+            { "noble",        new Color(0.74f, 0.67f, 0.55f) },
             { "shadow",       new Color(0f, 0f, 0f) },
             { "white",        Color.white },
         };
@@ -26,6 +30,16 @@ namespace BoardGameTutorial
         {
             if (!string.IsNullOrEmpty(name) && Colors.TryGetValue(name, out var color)) return color;
             return Color.white;
+        }
+
+        /// <summary>
+        /// 组件染色。card / noble 的颜色已经画进程序化贴图（卡背主色、贵族底色），
+        /// tint 必须保持白色，否则等于二次着色；其余形状靠 tint 上色。
+        /// </summary>
+        public static Color TintFor(string shape, string paletteName)
+        {
+            if (shape == "card" || shape == "noble") return Color.white;
+            return Resolve(paletteName);
         }
 
         public static bool TryResolveRgb(string hex, out Color color)

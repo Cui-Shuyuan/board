@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "cue": "setup.cards.001.1",
+  "stage": "_stage/splendor.table",
+  "note": "设置 2.1 第一句：这是发展卡牌，共90张，根据背面分为三类。三摞牌从游戏盒（offstage，bottom）飞入牌堆位置，随后按台词次序逐摞强调：绿色一级（1.14~2.62，对「四十张绿色的」）、黄色二级（2.79~3.42）、蓝色三级（3.55~4.65）。动画 0.35~4.75s。真实牌张数（40/30/20）留到台词逐级报数时再体现，这里每摞先放 3 张表示厚度。",
+  "events": [
+    { "at": 0.35, "dur": 0.45, "action": "move", "from": "offstage", "take": 3, "zone": "deck_level_1", "easing": "easeOutCubic", "lead": 0.00 },
+    { "at": 0.35, "dur": 0.45, "action": "move", "from": "offstage", "take": 3, "zone": "deck_level_2", "easing": "easeOutCubic", "lead": 0.15 },
+    { "at": 0.35, "dur": 0.45, "action": "move", "from": "offstage", "take": 3, "zone": "deck_level_3", "easing": "easeOutCubic", "lead": 0.30 },
+
+    { "at": 1.14, "dur": 1.48, "action": "highlight", "zone": "deck_level_1", "peak_alpha": 0.55, "grow": 1.22, "easing": "linear" },
+    { "at": 2.79, "dur": 0.63, "action": "highlight", "zone": "deck_level_2", "peak_alpha": 0.55, "grow": 1.22, "easing": "linear" },
+    { "at": 3.55, "dur": 1.10, "action": "highlight", "zone": "deck_level_3", "peak_alpha": 0.55, "grow": 1.22, "easing": "linear" }
+  ]
+}

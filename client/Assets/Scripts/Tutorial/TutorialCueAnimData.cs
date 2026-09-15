@@ -126,6 +126,9 @@ namespace BoardGameTutorial
         public string palette;
         public string zone;
         public int count = 1;
+
+        /// <summary>放在 offstage 时的入场方向：auto / top / bottom / left / right。</summary>
+        public string from;
     }
 
     // ── 单条 cue 的差异 ────────────────────────────────────────────────
@@ -169,6 +172,7 @@ namespace BoardGameTutorial
         public string zone;
         public int count = 1;
         public int? expand_to;
+        public string from;
     }
 
     [Serializable]
