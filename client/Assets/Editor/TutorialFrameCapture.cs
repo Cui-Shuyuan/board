@@ -270,6 +270,7 @@ namespace BoardGameTutorial.Editor
 
             var go = new GameObject("LivePathHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.logCameraFit = true;
 
             // 含开场无动画的 cue：它也必须把牌桌搭出来，否则开场 48 秒画面全空
             foreach (var cue in new[] { "bg.intro.001.1", "setup.cards.001.1", "setup.cards.002.1", "action.take.different.001" })
@@ -280,7 +281,22 @@ namespace BoardGameTutorial.Editor
                 for (float t = 0f; t <= 8f; t += 0.25f) anim.Seek(t);
 
                 int actors = anim.ActorCount;
-                Debug.Log($"[LivePath] {(actors > 0 ? "PASS" : "FAIL")} {cue}: LoadCue={(ok ? "有动画" : "无动画")}, 动画对象 {actors} 个");
+                var cam = Camera.main;
+                Debug.Log($"[LivePath] {(actors > 0 ? "PASS" : "FAIL")} {cue}: LoadCue={(ok ? "有动画" : "无动画")}, 动画对象 {actors} 个, " +
+                          $"相机={(cam == null ? "NULL" : cam.name)} ortho={cam?.orthographicSize:0.00} aspect={cam?.aspect:0.00} " +
+                          $"pos={(cam == null ? "-" : $"({cam.transform.position.x:0.0},{cam.transform.position.y:0.0},{cam.transform.position.z:0.0})")} " +
+                          $"rot={(cam == null ? "-" : cam.transform.rotation.eulerAngles.ToString())}");
+                if (actors > 0)
+                {
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (it.Actor == null) continue;
+                        Vector3 sp;
+                        bool vis = anim.WorldToScreen(it.Actor.Go.transform.localPosition, out sp);
+                        Debug.Log($"[LivePath]   样例 {it.Id} zone={it.ZoneId} vp=({sp.x / Screen.width:0.00},{sp.y / Screen.height:0.00}) 可见={vis}");
+                        break;
+                    }
+                }
                 if (actors == 0) failures++;
             }
 

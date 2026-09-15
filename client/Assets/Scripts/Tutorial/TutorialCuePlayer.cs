@@ -379,9 +379,19 @@ namespace BoardGameTutorial
         private void Update()
         {
             // 动画时钟 = 音频时间。暂停时音频时间不再前进，动画自动冻结。
-            if (animPlayer != null && animPlayer.IsLoaded && audioSource != null && audioSource.clip != null)
+            // 音频尚未就绪（clip 为空）时退回本地计时：否则动画会永远停在 0，
+            // 表现为「音频在放、画面什么都没有」——这正是之前排查很久的现象。
+            if (animPlayer != null && animPlayer.IsLoaded)
             {
-                animPlayer.Seek(audioSource.time);
+                if (audioSource != null && audioSource.clip != null)
+                {
+                    animPlayer.Seek(audioSource.time);
+                }
+                else if (!isPaused)
+                {
+                    fallbackClock += Time.deltaTime;
+                    animPlayer.Seek(fallbackClock);
+                }
             }
 
 #if ENABLE_INPUT_SYSTEM
@@ -493,7 +503,7 @@ namespace BoardGameTutorial
                 debugStyle.normal.textColor = Color.white;
             }
 
-            GUI.Box(new Rect(10, 10, Screen.width - 20, 190), doc.title ?? "Tutorial");
+            GUI.Box(new Rect(10, 10, Screen.width - 20, 214), doc.title ?? "Tutorial");
             GUI.Label(new Rect(24, 28, Screen.width - 48, 24), $"cue {currentIndex + 1}/{doc.cues.Count}  {CurrentCueId}", debugStyle);
             GUI.Label(new Rect(24, 52, Screen.width - 48, 24), CurrentCueGroupPath, debugStyle);
             GUI.Label(new Rect(24, 76, Screen.width - 48, 28), currentSubtitle, debugStyle);
@@ -510,7 +520,14 @@ namespace BoardGameTutorial
                 if (inDebugJump) animInfo += "   [B 返回]";
             }
             GUI.Label(new Rect(24, 150, Screen.width - 48, 24), animInfo, debugStyle);
-            GUI.Label(new Rect(24, 172, Screen.width - 48, 24),
+
+            // 动画开关状态必须一眼可见：关掉时画面会完全空白，容易被误认为坏掉。
+            string animSwitch = enableCueAnimation ? "动画开关: 开" : "动画开关: 关 —— 按 G 打开（现在画面是空的）";
+            var switchStyle = new GUIStyle(debugStyle);
+            switchStyle.normal.textColor = enableCueAnimation ? Color.white : new Color(1f, 0.5f, 0.4f);
+            GUI.Label(new Rect(24, 172, Screen.width - 48, 24), animSwitch, switchStyle);
+
+            GUI.Label(new Rect(24, 194, Screen.width - 48, 24),
                 "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关  B 跳到动画切片", debugStyle);
 
             DrawZoneLabels();
