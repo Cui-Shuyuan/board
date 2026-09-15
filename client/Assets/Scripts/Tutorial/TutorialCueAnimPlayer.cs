@@ -32,6 +32,17 @@ namespace BoardGameTutorial
         public string CueId { get; private set; }
         public string Note { get; private set; }
         public bool IsLoaded => cueDoc != null;
+
+        /// <summary>当前牌桌上已有的组件数（自检/调试用）。</summary>
+        public int ActorCount
+        {
+            get
+            {
+                int n = 0;
+                foreach (var it in Store.Items) if (it.Actor != null) n++;
+                return n;
+            }
+        }
         public bool HasEvents => cueDoc != null && cueDoc.events != null && cueDoc.events.Count > 0;
         public float CameraGroundHalfWidth { get; private set; }
         public float CameraOrthoSize { get; private set; }
@@ -94,12 +105,29 @@ namespace BoardGameTutorial
             string path = Path.Combine(gameRoot, "tutorial", "anim", track, cueId + ".json");
             if (!File.Exists(path))
             {
-                // 这条 cue 还没做动画：保留上一张牌桌画面，不要清空，
-                // 否则播到没做动画的 cue 时整张桌子会突然消失。
-                Debug.Log($"[TutorialCueAnim] 本条 cue 还没有动画数据（保留牌桌）: {path}");
-                CueId = null;
+                // 这条 cue 还没有动画数据。
+                // 关键：即使没有动画，也要把**牌桌**搭出来并保留住 —— 否则开场那几条
+                // （背景介绍等）会让画面完全空白，看起来像整个模块坏了。
+                // 注意 Store 是同一个实例，所以后续 cue 会接着这张桌子继续。
+                Debug.Log($"[TutorialCueAnim] 本条 cue 无动画数据，只保留牌桌: {cueId}");
+                CueId = cueId;
                 clock = -1f;
                 nextIndex = 0;
+
+                bool hasScene = animRoot != null && Store.ActorCountHint() > 0;
+                if (!hasScene)
+                {
+                    // 牌桌还没搭过：先载入 stage（否则模板为空，什么都生成不出来），
+                    // 再按 initial 摆好、建对象、取景。
+                    LoadStage(gameRoot, null);
+                    Store.Reset();
+                    Store.ApplyInitial();
+                    BuildActorObjects();
+                    SyncActorsToStore();
+                    EnsureCamera();
+                    SetBackground();
+                    FitCamera();
+                }
                 return false;
             }
 
@@ -169,7 +197,8 @@ namespace BoardGameTutorial
             Store.LoadStage(stage);
             offstageZoneId = null;
             gameRootPath = gameRoot;
-            Debug.Log($"[TutorialCueAnim] 动画载入: {CueId} events={cueDoc.events.Count} stage={(stage == null ? "NULL" : stage.game_id)}");
+            Debug.Log($"[TutorialCueAnim] 牌桌载入: stage={(stage == null ? "NULL" : stage.game_id)} " +
+                      $"cue={CueId} events={(cueDoc?.events == null ? 0 : cueDoc.events.Count)}");
         }
 
         /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置 / 临时组件）。</summary>

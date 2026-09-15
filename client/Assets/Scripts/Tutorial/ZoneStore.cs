@@ -51,6 +51,9 @@ namespace BoardGameTutorial
 
         public StageDoc Stage { get; private set; }
         public IEnumerable<ZoneItem> Items => items.Values;
+
+        /// <summary>牌桌上组件总数（O(1)，用于快速判断牌桌是否已搭好）。</summary>
+        public int ActorCountHint() => items.Count;
         public IEnumerable<StageZone> Zones => zones.Values;
 
         public void LoadStage(StageDoc stage)

@@ -271,17 +271,16 @@ namespace BoardGameTutorial.Editor
             var go = new GameObject("LivePathHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
 
-            foreach (var cue in new[] { "setup.cards.001.1", "setup.cards.002.1", "action.take.different.001" })
+            // 含开场无动画的 cue：它也必须把牌桌搭出来，否则开场 48 秒画面全空
+            foreach (var cue in new[] { "bg.intro.001.1", "setup.cards.001.1", "setup.cards.002.1", "action.take.different.001" })
             {
                 bool ok = anim.LoadCue(gameRoot, "full", cue, false);
-                if (!ok) { Debug.Log($"[LivePath] FAIL {cue}: LoadCue 返回 false"); failures++; continue; }
 
                 // 用 Seek 按时间推进，和真实播放一致
                 for (float t = 0f; t <= 8f; t += 0.25f) anim.Seek(t);
 
-                int actors = 0;
-                foreach (var it in anim.Store.Items) if (it.Actor != null) actors++;
-                Debug.Log($"[LivePath] {(actors > 0 ? "PASS" : "FAIL")} {cue}: LoadCue 成功, 动画对象 {actors} 个");
+                int actors = anim.ActorCount;
+                Debug.Log($"[LivePath] {(actors > 0 ? "PASS" : "FAIL")} {cue}: LoadCue={(ok ? "有动画" : "无动画")}, 动画对象 {actors} 个");
                 if (actors == 0) failures++;
             }
 
