@@ -940,23 +940,21 @@ namespace BoardGameTutorial
         /// zone 的情况只脉冲该区域的装饰底板（panel/dot），不脉冲里面每一枚宝石，
         /// 否则「高亮供应区」会变成整堆宝石一起闪。
         /// </summary>
+        /// <summary>
+        /// shuffle：洗混是**原地**表现，不改变任何组件的位置。
+        ///
+        /// 以前这里把每张牌搬到新位置（「交叉换位」），作用于整摞 40 张时会把牌堆
+        /// 摊成一条横跨画面的长龙 —— 洗牌不该把牌洗到桌面上。所以改成原地抖动：
+        /// 轻微摇晃 + 微小缩放起伏，位置始终不变。
+        /// </summary>
         private void TriggerShuffle(CueAnimEvent ev)
         {
-            var list = Resolve(ev);
-            if (list.Count == 0) return;
-
-            var targets = new Transform[list.Count];
-            var positions = new Vector3[list.Count];
-            const float spread = 0.12f;
-            float center = (list.Count - 1) * 0.5f;
-            for (int i = 0; i < list.Count; i++)
+            foreach (var actor in Resolve(ev))
             {
-                targets[i] = list[i].Go.transform;
-                Vector3 from = list[i].LivePosition;
-                positions[i] = from + new Vector3((i - center) * spread, 0f, (i % 2 == 0 ? 1f : -1f) * 0.04f);
-                list[i].LivePosition = positions[i];
+                if (actor?.Go == null) continue;
+                RunTween(TutorialPrimitives.TweenShuffleInPlace(actor.Go.transform,
+                    Mathf.Max(ev.dur, 0.1f), EasingOr(ev)));
             }
-            RunTween(TutorialPrimitives.TweenShuffle(targets, positions, Mathf.Max(ev.dur, 0.1f), EasingOr(ev)));
         }
 
         // ── 协程 ──────────────────────────────────────────────────────────
