@@ -251,6 +251,10 @@ namespace BoardGameTutorial
                             }
                             list.Add(anchor.id);
                         }
+
+                        // 就地定好初始可见性：否则底板会先以「可见」被创建出来，
+                        // 等到几行之后的 UpdatePanelVisibility 才被关掉，跳 cue 时闪一下。
+                        sr.enabled = PanelShouldShow(panelZones[anchor.id]);
                     }
                 }
             }
@@ -452,6 +456,28 @@ namespace BoardGameTutorial
             return solidSprite;
         }
 
+        /// <summary>某个 zone 里是否有「在场」的组件（offstage 的不算）。</summary>
+        private bool ZoneHasContent(string zoneId)
+        {
+            if (string.IsNullOrEmpty(zoneId)) return false;
+            foreach (var item in Store.Items)
+            {
+                if (item.ZoneId != zoneId) continue;
+                var zone = Store.GetZone(item.ZoneId);
+                if (zone != null && zone.role == "offstage") continue;
+                if (item.Actor != null && item.Actor.Go != null && item.Actor.Go.activeSelf) return true;
+            }
+            return false;
+        }
+
+        private bool PanelShouldShow(List<string> zoneIds)
+        {
+            if (zoneIds == null) return false;
+            foreach (var zoneId in zoneIds)
+                if (ZoneHasContent(zoneId)) return true;
+            return false;
+        }
+
         /// <summary>
         /// 区域底板随内容出现：它代表的 zone 里一件可见组件都没有时，底板不画。
         /// 否则「宝石还在盒子里」时供应区底板就已经亮在那里了。
@@ -463,27 +489,7 @@ namespace BoardGameTutorial
             foreach (var pair in panelZones)
             {
                 if (!actors.TryGetValue(pair.Key, out var panel) || panel.Renderer == null) continue;
-
-                bool occupied = false;
-                foreach (var zoneId in pair.Value)
-                {
-                    if (string.IsNullOrEmpty(zoneId)) continue;
-                    foreach (var item in Store.Items)
-                    {
-                        if (item.ZoneId != zoneId) continue;
-                        // 还在 offstage 的组件不算「在场」
-                        var zone = Store.GetZone(item.ZoneId);
-                        if (zone != null && zone.role == "offstage") continue;
-                        if (item.Actor != null && item.Actor.Go != null && item.Actor.Go.activeSelf)
-                        {
-                            occupied = true;
-                            break;
-                        }
-                    }
-                    if (occupied) break;
-                }
-
-                panel.Renderer.enabled = occupied;
+                panel.Renderer.enabled = PanelShouldShow(pair.Value);
             }
         }
 
@@ -1223,6 +1229,16 @@ namespace BoardGameTutorial
         /// 导致画面被裁掉右边和下边。
         /// </summary>
         public float cameraAspectOverride;
+
+        /// <summary>调试：各区域底板当前是否可见。</summary>
+        public List<KeyValuePair<string, bool>> PanelStates()
+        {
+            var list = new List<KeyValuePair<string, bool>>();
+            foreach (var kv in actors)
+                if (kv.Value?.Renderer != null)
+                    list.Add(new KeyValuePair<string, bool>(kv.Key, kv.Value.Renderer.enabled));
+            return list;
+        }
 
         public bool WorldToScreen(Vector3 world, out Vector3 screen)
         {

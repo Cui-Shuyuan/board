@@ -330,10 +330,9 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                // 「一堆」是一种**表现**，卡牌和 token 复用同一条规则：
-                // 最多画 max_visible 层，每层只错开一点点 —— 密实感来自错开量小，而不是画满全部。
-                // 40 张的牌堆和 20 枚的宝石堆，画七八层就已经"是那个意思"了。
-                // 整摞按可见层数居中：越深的层越往左上偏，最上面一件落在 zone 正中心。
+                // 叠放显示：**超过 max_visible 个就只显示 max_visible 个**，多出来的压在最后一层。
+                // （没有「一堆」这个独立概念，就是一条显示规则。）
+                // 每层只错开一点点，整摞按可见层数居中：越深的层越往左上偏，最上面一件落在 zone 正中心。
                 int total = Mathf.Max(1, CountInZone(zoneId));
                 int visible = Mathf.Clamp(total, 1, display.max_visible > 0 ? display.max_visible : 8);
                 int layer = Mathf.Min(slot, visible - 1);

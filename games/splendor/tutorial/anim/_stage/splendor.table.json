@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上（40/30/20 张，按实物），宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode 决定数量表现：count=可数（摊开），stack=一堆（叠压只露边）。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。",
+  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上，实例数按实物（40/30/20）；显示上超过 8 张就只显示 8 张（display.max_visible），多出来的压在最后一层。宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode：count=摊开可数，stack=叠放只显示 max_visible 个。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,

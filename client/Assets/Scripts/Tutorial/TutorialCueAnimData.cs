@@ -94,11 +94,10 @@ namespace BoardGameTutorial
         public StageSize size;
 
         /// <summary>
-        /// 数量表现形式。两种语义不能混：
-        ///   count —— 少量（1~5），摊开摆放，一眼能数出枚数；
-        ///   stack —— 很多（40/30/20 张这类），逐个盖着、下面的错开露出一点，省位置并表示「一堆」。
-        /// 语义约定（人读的算式，不参与运行）：1+1=2、1+4=5 仍是可数；累积到一堆之后
-        /// 「一堆 ± n = 一堆」，即堆不会因为拿走几张就变回可数。
+        /// 数量表现：
+        ///   count —— 少量，摊开摆放，一眼能数出枚数；
+        ///   stack —— 叠放显示，**超过 max_visible 个就只显示 max_visible 个**，多出来的压在最后一层。
+        /// 没有「一堆」这个独立概念，就是一条显示规则；zone 里的实例数仍按实际数量存在。
         /// </summary>
         public StageDisplay display;
     }
@@ -114,9 +113,8 @@ namespace BoardGameTutorial
         public float dz = 0.03f;
 
         /// <summary>
-        /// 最多画几层。七八层就足以表达「一大堆」，不必按实际数量画满
-        /// （牌堆 40 张、宝石堆 7~20 枚都适用同一条规则）。
-        /// 密实感由 dx/dz 决定：每层错开多少，越小越密。
+        /// stack 模式最多显示几个。超过就只显示这么多，其余的压在最后一层。
+        /// 每层错开多少由 dx/dz 决定：越小越密。
         /// </summary>
         public int max_visible = 8;
     }

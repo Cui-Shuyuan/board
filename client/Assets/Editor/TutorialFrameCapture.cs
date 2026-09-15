@@ -48,6 +48,13 @@ namespace BoardGameTutorial.Editor
             new Shot { Cue = "setup.cards.001.1", Time = 2.90f, File = "cards_02_green" },
             new Shot { Cue = "setup.cards.001.1", Time = 4.20f, File = "cards_03_blue" },
 
+            new Shot { Cue = "setup.cards.001.2", Time = 0.05f, File = "x12_00" },
+            new Shot { Cue = "setup.cards.001.2", Time = 0.40f, File = "x12_01" },
+            new Shot { Cue = "setup.cards.001.3", Time = 0.05f, File = "x13_00" },
+            new Shot { Cue = "setup.cards.001.3", Time = 0.40f, File = "x13_01" },
+            new Shot { Cue = "setup.cards.002.1", Time = 0.05f, File = "x14_00" },
+            new Shot { Cue = "setup.cards.002.1", Time = 0.40f, File = "x14_01" },
+
             new Shot { Cue = "setup.cards.002.1", Time = 0.30f, File = "deal_00_before" },
             new Shot { Cue = "setup.cards.002.1", Time = 1.90f, File = "deal_00_shuffle" },
             new Shot { Cue = "setup.cards.002.1", Time = 5.90f, File = "deal_01_dealing" },
@@ -78,6 +85,11 @@ namespace BoardGameTutorial.Editor
                 var world = anim.Store.ZoneCenter(zone.id);
                 sb.AppendLine($"  zone  {zone.id,-24} world=({world.x,6:0.00},{world.z,6:0.00}) role={zone.role}");
             }
+
+            // 区域底板（不在 ZoneStore 里，单独列出来；只看 board_* 的，其余是组件自己的 Renderer）
+            foreach (var kv in anim.PanelStates())
+                if (kv.Key.StartsWith("board_"))
+                    sb.AppendLine($"  panel {kv.Key,-24} enabled={(kv.Value ? "ON" : "off")}");
 
             // 所有组件实例：ZoneStore 是唯一事实来源
             int visible = 0, offscreen = 0;

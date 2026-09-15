@@ -42,6 +42,9 @@ namespace BoardGameTutorial
         [Tooltip("调试：按 B 直接跳到当前正在制作的动画（默认是设置段第一条），再按一次回到原来的位置。")]
         public string debugJumpCueId = "setup.cards.001.1";
 
+        [Tooltip("调试叠层：在画面上标注供应区/持有区的位置。仅用于标定，默认关闭——它会在画面中间画出色块和文字。")]
+        public bool showZoneLabels;
+
         // 纯音频 cue 模式开关。
         // true：自动启动 cue 播放器，禁用旧的 TeachingPlayer 自动动画。
         // false：恢复旧的 TeachingPlayer 自动动画，cue 播放器不自动启动。
@@ -234,7 +237,7 @@ namespace BoardGameTutorial
                 animPlayer.animationEnabled = enableCueAnimation;
                 // 只有「紧接着的下一条」才继承上一条的终态；跳转/重播/按 B 都要回到牌桌初始态。
                 bool continueFromPrevious = continueState && index == previousIndex + 1;
-                if (animPlayer.LoadCue(gameRoot, track, cue.id, continueFromPrevious))
+                if (showZoneLabels && animPlayer.LoadCue(gameRoot, track, cue.id, continueFromPrevious))
                 {
                     RefreshZoneLabels();
                 }
@@ -504,7 +507,7 @@ namespace BoardGameTutorial
 
         private void DrawZoneLabels()
         {
-            if (zoneLabels.Count == 0 || animPlayer == null) return;
+            if (!showZoneLabels || zoneLabels.Count == 0 || animPlayer == null) return;
             if (debugStyle == null) return;
 
             var small = new GUIStyle(debugStyle) { fontSize = 14 };
