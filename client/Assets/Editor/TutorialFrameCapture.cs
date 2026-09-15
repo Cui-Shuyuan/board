@@ -795,6 +795,67 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 最小验证：只发一张牌。起点=一级牌堆，终点=一级市场第 1 槽。
+        /// 每 0.1 秒打印这张牌的坐标/正反面，并出图到 CaptureOut/one/。
+        /// </summary>
+        public static void CaptureOne()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string outDir = Path.Combine(Application.dataPath, "..", "CaptureOut", "one");
+            if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
+            Directory.CreateDirectory(outDir);
+
+            var go = new GameObject("OneHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            if (!anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false))
+            {
+                Debug.LogError("[One] LoadCue 失败");
+                EditorApplication.Exit(1);
+                return;
+            }
+            anim.EnsureCameraForCapture();
+
+            var ids = new List<string> { "market_card_1_emerald#1", "market_card_1_ruby#1",
+                                         "market_card_1_diamond#1", "market_card_1_sapphire#1" };
+            var deck = anim.Store.ZoneCenter("deck_level_1");
+            for (int i = 0; i < ids.Count; i++)
+            {
+                var sl = anim.Store.ZonePosition("card_market", i);
+                Debug.Log($"[One] 牌堆=({deck.x:0.00},{deck.z:0.00})  槽{i}=({sl.x:0.00},{sl.z:0.00})");
+            }
+
+            for (float time = 0f; time <= 4.2f; time += 0.1f)
+            {
+                anim.Seek(time);
+                int deckCount = anim.Store.CountInZone("deck_level_1");
+                var sb = new System.Text.StringBuilder($"[One] t={time:0.0} deck1={deckCount}");
+                foreach (var id in ids)
+                {
+                    bool found = false;
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (it.Id != id || it.Actor == null) continue;
+                        found = true;
+                        var p = it.Actor.Go.transform.localPosition;
+                        var sr = it.Actor.Renderer;
+                        string face = sr?.sprite == null ? "无图"
+                            : (ReferenceEquals(sr.sprite, it.Actor.BackSprite) ? "背" : "面");
+                        string shortId = id.Replace("market_card_1_", "").Replace("#1", "");
+                        sb.Append($"   {shortId}:[{it.ZoneId.Replace("card_market", "MKT").Replace("offstage", "BOX")}" +
+                                  $" o{it.Order} ({p.x:0.00},{p.z:0.00}) {face} a{it.Actor.LiveAlpha:0.00}]");
+                    }
+                    if (!found) sb.Append($"   {id}:未找到");
+                }
+                Debug.Log(sb.ToString());
+                if (time >= 2.3f && time <= 3.5f) SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
+            }
+            Debug.Log($"[One] 完成，图在 {outDir}");
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&

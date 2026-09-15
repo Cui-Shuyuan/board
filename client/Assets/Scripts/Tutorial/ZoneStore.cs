@@ -509,9 +509,11 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                // 叠放显示：**超过 max_visible 个就只显示 max_visible 个**，多出来的压在最后一层。
-                // （没有「一堆」这个独立概念，就是一条显示规则。）
-                // 每层只错开一点点，整摞按可见层数居中：越深的层越往左上偏，最上面一件落在 zone 正中心。
+                // 叠放显示：**超过 max_visible 就只显示 max_visible 层**。
+                // 这是刻意的：40 张和 36 张看上去应当一样（真实牌堆也看不出来），
+                // 只有掉到 max_visible 以下（例如剩 7 张）时才会明显变薄 —— 那才是
+                // 「牌堆快抽空了」的信号。
+                // 每层只错开一点点，整摞按可见层数居中：最上面一件落在 zone 中心。
                 int total = Mathf.Max(1, CountInZone(zoneId));
                 int visible = Mathf.Clamp(total, 1, display.max_visible > 0 ? display.max_visible : 8);
                 int layer = Mathf.Min(slot, visible - 1);
