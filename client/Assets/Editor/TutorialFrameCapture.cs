@@ -11,6 +11,7 @@
 // 再把主相机渲染成 PNG，输出到 client/CaptureOut/。
 // 这样 batchmode 没有音频设备也能跑，而且画面是确定性的、可重复的。
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -47,6 +48,7 @@ namespace BoardGameTutorial.Editor
             new Shot { Cue = "setup.cards.001.1", Time = 2.90f, File = "cards_02_green" },
             new Shot { Cue = "setup.cards.001.1", Time = 4.20f, File = "cards_03_blue" },
 
+            new Shot { Cue = "setup.cards.002.1", Time = 0.30f, File = "deal_00_before" },
             new Shot { Cue = "setup.cards.002.1", Time = 1.90f, File = "deal_00_shuffle" },
             new Shot { Cue = "setup.cards.002.1", Time = 5.90f, File = "deal_01_dealing" },
             new Shot { Cue = "setup.cards.002.1", Time = 7.90f, File = "deal_02_done" },
@@ -135,10 +137,42 @@ namespace BoardGameTutorial.Editor
             Check("CueAnimEvent.from[]", ev.from != null && ev.from.Count == 2, $"from={(ev.from == null ? "null" : string.Join(",", ev.from))}");
 
             // 未指定时必须是哨兵值，而不是 0/NaN
+            var orderEv = JsonUtility.FromJson<CueAnimEvent>("{\"at\":5.45,\"order\":3,\"flip\":true}");
+            Check("CueAnimEvent.order", orderEv.order == 3, $"order={orderEv.order}");
+            Check("CueAnimEvent.flip", orderEv.flip, $"flip={orderEv.flip}");
+
             var bare = JsonUtility.FromJson<CueAnimEvent>("{\"at\":0}");
+            Check("CueAnimEvent.默认 order=-1", bare.order == -1, $"order={bare.order}");
             Check("CueAnimEvent.默认 take=0", bare.take == 0, $"take={bare.take}");
             Check("CueAnimEvent.默认 peak_alpha<0", bare.peak_alpha < 0f, $"peak_alpha={bare.peak_alpha}");
             Check("CueAnimEvent.默认 to_alpha<0", bare.to_alpha < 0f, $"to_alpha={bare.to_alpha}");
+
+            // 验证 MoveToAt：把 12 件依次放到指定序号，落点必须与序号一致
+            var store = new ZoneStore();
+            var stage = JsonUtility.FromJson<StageDoc>(
+                "{\"zones\":[" +
+                "{\"id\":\"src\",\"center\":{\"x\":0,\"z\":0},\"layout\":{\"type\":\"row\",\"x_step\":1},\"capacity\":20}," +
+                "{\"id\":\"dst\",\"center\":{\"x\":0,\"z\":0},\"layout\":{\"type\":\"grid\",\"cols\":4,\"x_step\":0.72,\"z_step\":0.95},\"capacity\":12}]," +
+                "\"templates\":[{\"id\":\"t\"}]}");
+            store.LoadStage(stage);
+            for (int i = 0; i < 12; i++) store.Spawn("t", null, "src", 1);
+            var items = new List<ZoneItem>(store.Items);
+            for (int i = 0; i < 12; i++)
+            {
+                int want = (i / 4) * 4 + (i % 4);   // 0..11 顺序
+                store.MoveToAt(items[i], "dst", want);
+            }
+            var placed = new List<ZoneItem>();
+            foreach (var it in store.Items) if (it.ZoneId == "dst") placed.Add(it);
+            placed.Sort((a, b) => a.Order.CompareTo(b.Order));
+            bool ordered = true;
+            for (int i = 0; i < placed.Count; i++)
+            {
+                var p = store.CurrentPosition(placed[i]);
+                float expectZ = ((i / 4) - 0) * 0.95f;
+                if (placed[i].Order != i) { ordered = false; break; }
+            }
+            Check("MoveToAt 顺序号", ordered, $"放置 {placed.Count} 件，序号 {(placed.Count > 0 ? placed[0].Order + ".." + placed[placed.Count - 1].Order : "-")}");
 
             Debug.Log($"[SelfTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
@@ -199,7 +233,7 @@ namespace BoardGameTutorial.Editor
             // Unity 每帧会把 Camera.aspect 重置回 Screen 的宽高比；batchmode 下 Screen 固定 640x480，
             // 与渲染目标不一致。取景时用 cameraAspectOverride，出帧前再显式覆盖一次。
             anim.cameraAspectOverride = (float)Width / Height;
-            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; anim.logImages = true; }
+            if (verbose) { anim.logCameraFit = true; anim.Store.logPull = true; anim.Store.logMoves = true; anim.logImages = true; }
 
             if (verbose) anim.Store.logPull = true;
 
@@ -217,12 +251,14 @@ namespace BoardGameTutorial.Editor
                     // 导致后续 start.set 计数错位（宝石被倒进贵族区）。
                     if (!primed)
                     {
-                        // 目标 cue 之前若有动画 cue，先把它们走完；否则保持初始状态。
+                        // 只重放目标**之前**的 cue；目标本身必须留着自己载入。
+                        // 曾经把目标也重放了一遍，而 move 不是幂等的（每次追加到 zone 尾部），
+                        // 于是同一次搬运用执行两遍，市场多出一批牌挤在角落。
                         ReplayPreceding(anim, player, shot.Cue);
                         primed = true;
-                        // 若一条都没重放，说明目标就是时间轴上第一条，必须用 continueState=false
-                        // 让它自己初始化牌桌（Reset + ApplyInitial），否则画面是空的。
-                        continueState = replayedAny;
+                        // 前序终态就是目标的入口状态，所以目标用 continueState=false：
+                        // 它会以当前 store 为起点，并把这当作本条 cue 的入口快照。
+                        continueState = false;
                         currentCue = null;
                     }
 
@@ -295,7 +331,7 @@ namespace BoardGameTutorial.Editor
             bool first = true;
             foreach (var cue in doc.cues)
             {
-                if (cue.id == targetCue) break;
+                if (cue.id == targetCue) break;   // 目标本身不在这里重放
                 string path = Path.Combine(root, "tutorial", "anim", player.track, cue.id + ".json");
                 if (!File.Exists(path)) continue;
 

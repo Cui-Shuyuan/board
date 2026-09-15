@@ -831,6 +831,10 @@ namespace BoardGameTutorial
                 if (step.Order >= 0) Store.MoveToAt(step.Item, step.Destination, step.Order);
                 else Store.MoveTo(step.Item, step.Destination);
                 moved.Add(step.Item);
+                if (logImages && step.Order >= 0)
+                    Debug.Log($"[Move] {step.Item.Id} → {step.Destination} order={step.Item.Order} " +
+                              $"pos=({Store.CurrentPosition(step.Item).x:0.00},{Store.CurrentPosition(step.Item).z:0.00}) " +
+                              $"zoneCount={Store.CountInZone(step.Destination)}");
 
                 Vector3 to = Store.CurrentPosition(step.Item);
                 step.Item.LivePosition = to;
