@@ -367,11 +367,13 @@ namespace BoardGameTutorial
             {
                 audioSource.UnPause();
                 isPaused = false;
+                TutorialPrimitives.Paused = false;
             }
             else if (audioSource.isPlaying)
             {
                 audioSource.Pause();
                 isPaused = true;
+                TutorialPrimitives.Paused = true;   // 动画一起冻结
                 UpdateSubtitle();
             }
         }

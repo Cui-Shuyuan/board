@@ -33,6 +33,36 @@ namespace BoardGameTutorial
         public string Note { get; private set; }
         public bool IsLoaded => cueDoc != null;
 
+        /// <summary>
+        /// 测试用：把时间轴推进到 target 秒，并返回一个「把当前所有补间跑完」的迭代器。
+        /// 批处理没有帧循环，调用方需自行 MoveNext 驱动（配合 Time.captureDeltaTime）。
+        /// </summary>
+        public IEnumerator DriveForTest(float target)
+        {
+            const float step = 1f / 60f;
+            for (float t = 0f; t <= target; t += step)
+            {
+                Seek(t);
+                yield return null;
+            }
+            Seek(target);
+            // 让已经启动的补间继续跑完
+            for (int i = 0; i < 240 && running.Count > 0; i++) yield return null;
+        }
+
+        /// <summary>自检用：按目标 id 求出本条 cue 的搬运计划。</summary>
+        public MovePlan PlanMoveForTest(string targetId)
+        {
+            if (cueDoc?.events == null) return null;
+            foreach (var ev in cueDoc.events)
+            {
+                if (ev.action != "move" || ev.target != targetId) continue;
+                foreach (var step in PlanMove(ev))
+                    if (step.Item?.Id == targetId) return step;
+            }
+            return null;
+        }
+
         /// <summary>当前牌桌上已有的组件数（自检/调试用）。</summary>
         public int ActorCount
         {
@@ -829,7 +859,7 @@ namespace BoardGameTutorial
             actor.Go.transform.localScale = actor.BaseScale;
         }
 
-        private struct MovePlan
+        public class MovePlan
         {
             public ZoneItem Item;
             public string Destination;
@@ -930,9 +960,16 @@ namespace BoardGameTutorial
                               $"pos=({Store.CurrentPosition(step.Item).x:0.00},{Store.CurrentPosition(step.Item).z:0.00}) " +
                               $"zoneCount={Store.CountInZone(step.Destination)}");
 
-                Vector3 to = Store.CurrentPosition(step.Item);
+                // 原位动画（InPlace）：目标位置是**目标 zone 的第 Order 格**，不是当前 zone 的位置。
+                // 之前这里用 Store.CurrentPosition（当前 zone），于是牌「飞」到原地、看起来没动。
+                Vector3 to = step.InPlace
+                    ? Store.ZonePosition(ev.zone, step.Order)
+                    : Store.CurrentPosition(step.Item);
                 step.Item.LivePosition = to;
                 if (actor == null) continue;
+                if (logTweens)
+                    Debug.Log($"[Tween] {step.Item.Id} inPlace={step.InPlace} order={step.Order} " +
+                              $"from=({from.x:0.00},{from.z:0.00}) to=({to.x:0.00},{to.z:0.00}) dur={ev.dur}");
                 RunTween(TweenPosition(actor, step.Item, from, to, ev));
 
                 // 边移动边翻转：到终点恰好转到另一面。
@@ -1080,7 +1117,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < dur)
             {
-                t = Mathf.Min(t + Time.deltaTime, dur);
+                t = Mathf.Min(t + TutorialPrimitives.Delta, dur);
                 float k = Easing.Evaluate(EasingOr(ev), t / dur);
                 float yaw = Mathf.LerpUnclamped(fromYaw, toYaw, k);
                 actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
@@ -1109,7 +1146,7 @@ namespace BoardGameTutorial
                 float t = 0f;
                 while (t < dur)
                 {
-                    t = Mathf.Min(t + Time.deltaTime, dur);
+                    t = Mathf.Min(t + TutorialPrimitives.Delta, dur);
                     float k = Easing.Evaluate(EasingOr(ev), t / dur);
                     actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(from, to, k));
                     yield return null;
@@ -1145,7 +1182,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < seconds)
             {
-                t += Time.deltaTime;
+                t += TutorialPrimitives.Delta;
                 yield return null;
             }
         }
@@ -1313,6 +1350,9 @@ namespace BoardGameTutorial
 
         /// <summary>调试：打印 move 的取件过程。</summary>
         public bool logMoves;
+
+        /// <summary>调试：打印补间的起点终点。</summary>
+        public bool logTweens;
 
         /// <summary>
         /// 取景使用的宽高比。&lt;=0 表示用当前屏幕（正常运行）。

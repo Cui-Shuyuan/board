@@ -10,6 +10,22 @@ namespace BoardGameTutorial
     public static class TutorialPrimitives
     {
         /// <summary>
+        /// 全局暂停开关。暂停时所有原语停止推进，保证「暂停」是音画一起停，
+        /// 而不是只有音频停、动画继续跑完当前动作。
+        /// </summary>
+        public static bool Paused;
+
+        /// <summary>
+        /// 可注入的固定时间步（≤0 表示不启用）。批处理没有帧循环、Time.deltaTime 恒为 0，
+        /// 补间永远不推进，自检因此测不出「牌有没有真的飞过去」。设成 1/60 即可确定性驱动。
+        /// </summary>
+        public static float ManualDelta;
+
+
+        /// <summary>补间用的时间步：暂停时为 0（画面冻结）；注入了固定步长则用它。</summary>
+        public static float Delta => Paused ? 0f : (ManualDelta > 0f ? ManualDelta : Time.deltaTime);
+
+        /// <summary>
         /// 世界空间位置插值。from/to 可以是 slot 坐标，也可以是任意位置。
         /// </summary>
         public static IEnumerator TweenPosition(Transform target, Vector3 from, Vector3 to, float duration, string easing)
@@ -23,7 +39,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < duration)
             {
-                t = Mathf.Min(t + Time.deltaTime, duration);
+                t = Mathf.Min(t + Delta, duration);
                 float k = Easing.Evaluate(easing, t / duration);
                 target.position = Vector3.LerpUnclamped(from, to, k);
                 yield return null;
@@ -46,7 +62,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < duration)
             {
-                t = Mathf.Min(t + Time.deltaTime, duration);
+                t = Mathf.Min(t + Delta, duration);
                 float k = Easing.Evaluate(easing, t / duration);
                 ApplyYaw(target, Mathf.LerpUnclamped(fromYaw, toYaw, k));
                 yield return null;
@@ -83,7 +99,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < duration)
             {
-                t = Mathf.Min(t + Time.deltaTime, duration);
+                t = Mathf.Min(t + Delta, duration);
                 float k = Easing.Evaluate(easing, t / duration);
                 target.localScale = Vector3.LerpUnclamped(fromScale, toScale, k);
                 yield return null;
@@ -107,7 +123,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < duration)
             {
-                t = Mathf.Min(t + Time.deltaTime, duration);
+                t = Mathf.Min(t + Delta, duration);
                 float k = Easing.Evaluate(easing, t / duration);
                 SetAlpha(renderer, Mathf.LerpUnclamped(fromAlpha, toAlpha, k));
                 yield return null;
@@ -136,7 +152,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < duration)
             {
-                t = Mathf.Min(t + Time.deltaTime, duration);
+                t = Mathf.Min(t + Delta, duration);
                 float k = Easing.Evaluate(easing, t / duration);
                 float wave = Mathf.Sin(k * Mathf.PI * 6f);
                 target.localScale = baseScale * (1f + 0.03f * wave);
@@ -169,7 +185,7 @@ namespace BoardGameTutorial
             float t = 0f;
             while (t < duration)
             {
-                t = Mathf.Min(t + Time.deltaTime, duration);
+                t = Mathf.Min(t + Delta, duration);
                 float k = Easing.Evaluate(easing, t / duration);
                 for (int i = 0; i < targets.Length; i++)
                 {
