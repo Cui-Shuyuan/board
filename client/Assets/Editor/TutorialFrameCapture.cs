@@ -480,25 +480,41 @@ namespace BoardGameTutorial.Editor
             // 这正是用户报过的「一级牌被发到二级位置、又被收回」。行 z 由
             // center + row * z_step 决定，所以逐级对比牌堆 z 即可。
             // 断言前先推到整条 cue 之后：动画可能还没播完，否则会误判成「位置错误」。
+            // 断言统一在整条 cue 之后做：动画可能还没播完，否则会把飞行中的牌误判为错位。
             anim.Seek(to + 3f);
 
-            // 行位断言：第 N 级市场牌必须落在与第 N 级牌堆**同一深度**的行上。
-            // 这正是用户报过的「一级牌被发到二级位置、又被收回」。行 z 由
-            // center + row * z_step 决定，所以逐级对比牌堆 z 即可。
-            {
-                var z0 = anim.Store.GetZone("card_market");
-                Debug.Log($"[Runtime] card_market center=({z0?.center.x:0.00},{z0?.center.z:0.00}) " +
-                          $"layout={z0?.layout?.type} cols={z0?.layout?.cols} x_step={z0?.layout?.x_step:0.00} " +
-                          $"z_step={z0?.layout?.z_step:0.00} cap={z0?.capacity}");
-                for (int o = 0; o < 12; o++)
-                {
-                    var p = anim.Store.ZonePosition("card_market", o);
-                    Debug.Log($"[Runtime]   order={o:2d} → ({p.x:0.00},{p.z:0.00})");
-                }
-                for (int l = 1; l <= 3; l++)
-                    Debug.Log($"[Runtime] deck_level_{l} z={anim.Store.ZoneCenter("deck_level_" + l).z:0.00}");
-            }
             int bad = 0;
+
+            // ① 方向：发牌是「从牌堆飞到市场」，已落位的市场牌数必须单调不减。
+            //    若起始就是一整行、随后变少，说明动画在倒着播。
+            {
+                var counts = new List<string>();
+                var probe = new GameObject("fwdProbe");
+                var pa = probe.AddComponent<TutorialCueAnimPlayer>();
+                pa.LoadCue(gameRoot, "full", cueId, false);
+                int prev = -1; bool monotonic = true;
+                for (float tt = 3.6f; tt <= to + 0.2f; tt += 0.2f)
+                {
+                    pa.Seek(tt);
+                    int settled = 0;
+                    foreach (var it in pa.Store.Items)
+                    {
+                        if (!it.Id.StartsWith("market_card_") || it.Actor == null) continue;
+                        if (it.ZoneId != "card_market") continue;      // 还没发出去的牌不算
+                        var p = it.Actor.Go.transform.localPosition;
+                        var w = pa.Store.ZonePosition("card_market", it.Order);   // 现算，不缓存
+                        if (Mathf.Abs(p.x - w.x) < 0.25f && Mathf.Abs(p.z - w.z) < 0.25f) settled++;
+                    }
+                    counts.Add($"{tt:0.0}:{settled}");
+                    if (settled < prev) monotonic = false;
+                    prev = settled;
+                }
+                Debug.Log($"[Timeline] {(monotonic ? "PASS" : "FAIL")} 发牌方向（落位数单调不减）：{string.Join(" ", counts)}");
+                if (!monotonic) bad++;
+                Object.DestroyImmediate(probe);
+            }
+
+            // ② 行位：第 N 级市场牌必须与第 N 级牌堆同一深度。
             for (int lvl = 1; lvl <= 3; lvl++)
             {
                 int row = lvl - 1;
@@ -520,9 +536,7 @@ namespace BoardGameTutorial.Editor
                         var got = it.Actor.Go.transform.localPosition;
                         if (Mathf.Abs(got.x - want.x) > 0.3f || Mathf.Abs(got.z - want.z) > 0.3f)
                         {
-                            Debug.LogWarning($"[Timeline] 位置错误 {it.Id}: " +
-                                             $"在 ({got.x:0.00},{got.z:0.00}) 应在 ({want.x:0.00},{want.z:0.00}) " +
-                                             $"应在 ({want.x:0.00},{want.z:0.00})");
+                            Debug.LogWarning($"[Timeline] 位置错误 {it.Id}: 在 ({got.x:0.00},{got.z:0.00}) 应在 ({want.x:0.00},{want.z:0.00})");
                             bad++;
                         }
                     }
@@ -530,8 +544,7 @@ namespace BoardGameTutorial.Editor
             }
             Debug.Log($"[Timeline] {(bad == 0 ? "PASS" : "FAIL")} 12 张市场牌全部落在自己的格位上（异常 {bad} 处）");
 
-            // 底板断言：① 必须包住它负责的每个格位 ② 两块底板不能互相压住。
-            // 底板尺寸由代码从格位范围推出，这两条能保证「底板和内容对齐」不再靠肉眼。
+            // ③ 底板：必须包住它负责的每个格位，且两块互不重叠。
             var checks = new (string id, string[] zones)[]
             {
                 ("board_deck_area",   new[] { "deck_level_1", "deck_level_2", "deck_level_3" }),
@@ -547,6 +560,19 @@ namespace BoardGameTutorial.Editor
                     continue;
                 }
                 bounds[id] = new[] { px0, px1, pz0, pz1 };
+                bool covers = true;
+                foreach (var zid in zoneIds)
+                {
+                    int slotCount = anim.Store.SlotCount(zid);
+                    for (int i = 0; i < slotCount; i++)
+                    {
+                        var p = anim.Store.ZonePosition(zid, i);
+                        if (p.x < px0 - 0.02f || p.x > px1 + 0.02f || p.z < pz0 - 0.02f || p.z > pz1 + 0.02f)
+                        { covers = false; }
+                    }
+                }
+                Debug.Log($"[Timeline] {(covers ? "PASS" : "FAIL")} 底板 {id} 包住其全部格位");
+                if (!covers) bad++;
             }
             if (bounds.Count == 2)
             {
@@ -555,6 +581,7 @@ namespace BoardGameTutorial.Editor
                 Debug.Log($"[Timeline] {(overlap ? "FAIL" : "PASS")} 牌堆底板与市场底板{(overlap ? "重叠" : "不重叠")}");
                 if (overlap) bad++;
             }
+
             Debug.Log($"[Timeline] 已出 {n} 帧 → {outDir}");
         }
 
