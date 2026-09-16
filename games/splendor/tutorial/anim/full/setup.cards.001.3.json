@@ -4,13 +4,13 @@
   "track": "full",
   "cue": "setup.cards.001.3",
   "stage": "_stage/splendor.table",
-  "note": "设置 2.1 第三句：30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌。黄色卡背对齐「黄」(0.91)、持续到「牌」(2.52)；蓝色卡背对齐「蓝」(3.71)、持续到「牌。」(5.26)。两次高亮互不重叠。",
+  "note": "高亮二级、三级牌堆：整摞一起放大再回落（区域高亮作用于整组）。",
   "events": [
     {
       "at": 0.85,
       "dur": 1.6,
       "action": "highlight",
-      "target": "card_back_2#26",
+      "zone": "deck_level_2",
       "grow": 1.2,
       "easing": "easeInOutCubic"
     },
@@ -18,7 +18,7 @@
       "at": 3.65,
       "dur": 1.55,
       "action": "highlight",
-      "target": "card_back_3#16",
+      "zone": "deck_level_3",
       "grow": 1.2,
       "easing": "easeInOutCubic"
     }

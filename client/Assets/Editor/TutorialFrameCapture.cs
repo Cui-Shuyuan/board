@@ -1186,57 +1186,65 @@ namespace BoardGameTutorial.Editor
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
             string gameRoot = Path.Combine(repoRoot, "games/splendor");
 
-            var go = new GameObject("HiHost");
-            var anim = go.AddComponent<TutorialCueAnimPlayer>();
-            anim.animationEnabled = true;
-            // 这条 cue 的高亮作用于整个 deck_level_1
-            anim.LoadCue(gameRoot, "full", "setup.cards.001.2", false);
-
-            System.Func<float, float[]> scalesAt = (time) =>
+            // 三个牌堆都要验：每个 cue 都有对某个牌堆的高亮。
+            // 只验一个时，另外两个漏改（还在用单张 target）就查不出来 —— 用户就是这么发现的。
+            var cases = new (string cue, string zone, float before, float peak, float after)[]
             {
-                anim.Seek(time);
-                var list = new System.Collections.Generic.List<float>();
-                foreach (var it in anim.Store.Items)
-                    if (it.ZoneId == "deck_level_1" && it.Actor != null)
-                        list.Add(it.Actor.Go.transform.localScale.x);
-                return list.ToArray();
+                ("setup.cards.001.2", "deck_level_1", 1.30f, 2.10f, 3.30f),
+                ("setup.cards.001.3", "deck_level_2", 0.70f, 1.65f, 2.90f),
+                ("setup.cards.001.3", "deck_level_3", 3.50f, 4.40f, 5.60f),
             };
 
-            var before = scalesAt(1.30f);     // 高亮前
-            var during = scalesAt(2.10f);     // 峰值附近
-            var after  = scalesAt(3.30f);     // 回落之后
-
-            // ① 每一张都要变大（允许极小误差）
-            int grown = 0, total = 0;
-            float baseScale = before.Length > 0 ? before[0] : 0f;
-            for (int i = 0; i < before.Length && i < during.Length; i++)
+            foreach (var c in cases)
             {
-                total++;
-                if (during[i] > before[i] * 1.05f) grown++;
-            }
-            bool allGrew = total > 0 && grown == total;
-            Debug.Log($"[Hi] {(allGrew ? "PASS" : "FAIL")} 整组高亮：{grown}/{total} 张被放大" +
-                      $"（基准 scale={baseScale:0.0000}）");
-            if (!allGrew) failures++;
+                var go = new GameObject("HiHost_" + c.zone);
+                var anim = go.AddComponent<TutorialCueAnimPlayer>();
+                anim.animationEnabled = true;
+                if (!anim.LoadCue(gameRoot, "full", c.cue, false))
+                { Debug.Log($"[Hi] FAIL {c.cue} 载入失败"); failures++; Object.DestroyImmediate(go); continue; }
 
-            // ② 缩放比例应当一致（整组等比，而不是某张特别大）
-            float maxR = 0f, minR = 99f;
-            for (int i = 0; i < before.Length && i < during.Length; i++)
-            {
-                float r = during[i] / Mathf.Max(1e-6f, before[i]);
-                maxR = Mathf.Max(maxR, r); minR = Mathf.Min(minR, r);
-            }
-            bool uniform = maxR - minR < 0.05f;
-            Debug.Log($"[Hi] {(uniform ? "PASS" : "FAIL")} 缩放比例一致：{minR:0.000}~{maxR:0.000}");
-            if (!uniform) failures++;
+                System.Func<float, float[]> scalesAt = (time) =>
+                {
+                    anim.Seek(time);
+                    var list = new System.Collections.Generic.List<float>();
+                    foreach (var it in anim.Store.Items)
+                        if (it.ZoneId == c.zone && it.Actor != null)
+                            list.Add(it.Actor.Go.transform.localScale.x);
+                    return list.ToArray();
+                };
 
-            // ③ 回落
-            bool returned = after.Length == before.Length;
-            if (returned)
-                for (int i = 0; i < before.Length; i++)
-                    if (Mathf.Abs(after[i] - before[i]) > 0.0005f) { returned = false; break; }
-            Debug.Log($"[Hi] {(returned ? "PASS" : "FAIL")} 脉冲回落到原尺寸");
-            if (!returned) failures++;
+                var before = scalesAt(c.before);
+                var during = scalesAt(c.peak);
+                var after  = scalesAt(c.after);
+
+                int grown = 0, total = 0;
+                for (int i = 0; i < before.Length && i < during.Length; i++)
+                {
+                    total++;
+                    if (during[i] > before[i] * 1.05f) grown++;
+                }
+                bool allGrew = total > 0 && grown == total;
+
+                float maxR = 0f, minR = 99f;
+                for (int i = 0; i < before.Length && i < during.Length; i++)
+                {
+                    float r = during[i] / Mathf.Max(1e-6f, before[i]);
+                    maxR = Mathf.Max(maxR, r); minR = Mathf.Min(minR, r);
+                }
+                bool uniform = maxR - minR < 0.05f;
+
+                bool returned = after.Length == before.Length;
+                if (returned)
+                    for (int i = 0; i < before.Length; i++)
+                        if (Mathf.Abs(after[i] - before[i]) > 0.0005f) { returned = false; break; }
+
+                bool ok = allGrew && uniform && returned;
+                Debug.Log($"[Hi] {(ok ? "PASS" : "FAIL")} {c.zone}（{c.cue}）: " +
+                          $"放大 {grown}/{total} 张，比例 {minR:0.000}~{maxR:0.000}，" +
+                          $"回落={(returned ? "是" : "否")}");
+                if (!ok) failures++;
+                Object.DestroyImmediate(go);
+            }
 
             Debug.Log($"[Hi] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
