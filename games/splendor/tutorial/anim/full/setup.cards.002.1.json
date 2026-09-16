@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "发展卡发牌：先洗混三个牌堆（0.5–1.2s），再每级发 4 张到市场槽 0–11。三行的**顺序与组合都不同**（真实市场是发牌结果，不应整齐成列）：一级 绿红白蓝、二级 蓝黑红绿、三级 红白绿黑。牌堆 40→36、30→26、20→16。",
+  "note": "台词「将这三类牌分别洗混后按顺序摆成一列」：删除三张展示卡背，三摞卡堆在此**被创建**并直接出现在桌面上（不从盒子飞），随后洗混、发牌。此前桌上只有几张展示用的样本卡，没有「卡堆」这个对象。",
   "start": {
     "set": [
       {
@@ -82,6 +82,57 @@
     ]
   },
   "events": [
+    {
+      "at": 0.05,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "board"
+    },
+    {
+      "at": 0.15,
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_back_1#1"
+    },
+    {
+      "at": 0.17,
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_back_2#1"
+    },
+    {
+      "at": 0.19,
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_back_3#1"
+    },
+    {
+      "at": 0.25,
+      "dur": 0.0,
+      "action": "create",
+      "template": "card_back_1",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 36
+    },
+    {
+      "at": 0.27,
+      "dur": 0.0,
+      "action": "create",
+      "template": "card_back_2",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 26
+    },
+    {
+      "at": 0.29,
+      "dur": 0.0,
+      "action": "create",
+      "template": "card_back_3",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 16
+    },
     {
       "at": 0.5,
       "dur": 0.7,

@@ -2,12 +2,12 @@
   "schema_version": 1,
   "game_id": "splendor",
   "track": "full",
-  "cue": "setup.cards.001.1",
   "stage": "_stage/splendor.table",
-  "note": "台词「这是发展卡牌，共90张」：切特写，展示 1 张发展卡正面；牌堆此时不可见。",
   "start": {
     "set": []
   },
+  "cue": "setup.cards.001.1",
+  "note": "台词「这是发展卡牌，共90张」：盒面收起，特写展示 1 张发展卡正面（画面只有它，不需要高亮）。牌堆此刻尚未登场。",
   "events": [
     {
       "at": 0.05,
@@ -23,19 +23,13 @@
       "camera_padding": 1.6
     },
     {
-      "at": 0.3,
-      "dur": 0.35,
-      "action": "fade",
-      "target": "sample_card_1#1",
-      "to_alpha": 1.0
-    },
-    {
-      "at": 0.75,
-      "dur": 0.5,
-      "action": "highlight",
-      "target": "sample_card_1#1",
-      "grow": 1.08,
-      "easing": "easeOutCubic"
+      "at": 0.15,
+      "dur": 0.0,
+      "action": "create",
+      "template": "sample_card_1",
+      "palette": "card_level_1",
+      "zone": "showcase",
+      "count": 1
     }
   ]
 }

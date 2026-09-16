@@ -20,6 +20,9 @@ namespace BoardGameTutorial
         public string PaletteName;     // 色板名（身份的一部分，别拿 Color 值比较）
         public Color BaseColor;        // 调色后的基础色（alpha 另算）
 
+        /// <summary>模板指定的染色（无则为白）。参与每帧的颜色复位，否则会被冲掉。</summary>
+        public Color Tint = Color.white;
+
         public string ZoneId;          // 当前所在 zone
         public int Order = -1;         // zone 内顺序，决定落在哪个槽位
 
@@ -169,6 +172,29 @@ namespace BoardGameTutorial
             counters.Clear();
         }
 
+        /// <summary>解析模板上的 "#RRGGBB" 染色；空/非法则返回白色（不染色）。</summary>
+        public static Color ParseTint(string hex)
+        {
+            if (!string.IsNullOrEmpty(hex) && ColorUtility.TryParseHtmlString(hex, out var c))
+            {
+                c.a = 1f;
+                return c;
+            }
+            return Color.white;
+        }
+
+        /// <summary>移除一个组件（对象在数据上真的不存在了，而不只是看不见）。</summary>
+        public bool RemoveItem(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId) || !items.TryGetValue(itemId, out var item) || item == null)
+                return false;
+            if (SlotsOf(item.ZoneId).TryGetValue(item.Order, out var at) && at == item)
+                SlotsOf(item.ZoneId).Remove(item.Order);
+            items.Remove(itemId);
+            InvalidateSlots();
+            return true;
+        }
+
         /// <summary>按牌桌的 initial 摆好开局状态。</summary>
         public void ApplyInitial()
         {
@@ -209,6 +235,9 @@ namespace BoardGameTutorial
                     LiveScale = Vector3.one,
                     LiveRotation = tpl.rotation,
                     LiveAlpha = tpl.alpha,
+                    // 模板染色必须落在 item 上：采样每帧按 BaseColor 复位渲染器颜色，
+                    // 只写在渲染器上会被冲掉（三张卡背因此全变回同一个颜色）。
+                    Tint = ParseTint(tpl.tint),
                 };
                 items[item.Id] = item;
                 SlotsOf(zoneId)[item.Order] = item;

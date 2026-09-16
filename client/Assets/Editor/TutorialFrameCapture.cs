@@ -459,7 +459,11 @@ namespace BoardGameTutorial.Editor
             // -captureReplay 1：先把该 cue 之前的所有 cue 依次推到终态，再出图。
             // 单条 cue 孤立载入会丢掉「上一条造成的状态」——例如牌堆是在上一条淡入的，
             // 孤立载入就一片空白（这类误判已经发生过多次）。
-            if (ArgValue("-captureReplay", "0") == "1")
+            // -captureReplay 1：把该 cue 之前的所有 cue **逐条播到终态**，再出图。
+            // 只解入口状态是不够的：create/destroy 发生在上一条**播放**时，
+            // 漏掉它们会让重放停在"上一条开始之前"（曾因此误判 destroy 找不到目标）。
+            bool replay = ArgValue("-captureReplay", "0") == "1";
+            if (replay)
             {
                 var playerGo = new GameObject("TimelineReplayHost");
                 var player = playerGo.AddComponent<TutorialCuePlayer>();
@@ -468,24 +472,19 @@ namespace BoardGameTutorial.Editor
                 if (player.LoadRuntime())
                 {
                     int idx = player.Document.cues.FindIndex(c => c.id == cueId);
-                    if (idx > 0)
+                    for (int k = 0; k < idx; k++)
                     {
-                        var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
-                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                        var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
-                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                        for (int k = 0; k < idx; k++)
-                            apply.Invoke(player, new object[] { anim,
-                                resolve.Invoke(player, new object[] { k }) });
-                        Debug.Log($"[Timeline] 已重放前 {idx} 条 cue 建立背景状态");
+                        string prev = player.Document.cues[k].id;
+                        if (!anim.LoadCue(gameRoot, "full", prev, k > 0)) continue;
+                        anim.Seek(anim.TotalDuration + 1f);
                     }
+                    Debug.Log($"[Timeline] 已顺序播完前 {idx} 条 cue");
                 }
                 Object.DestroyImmediate(playerGo);
             }
 
             // 有重放时用 continueState=true 延续刚建立的背景状态；
             // 用 false 会把重放结果重置回 stage.initial（那样重放就白做了）。
-            bool replay = ArgValue("-captureReplay", "0") == "1";
             if (!anim.LoadCue(gameRoot, "full", cueId, replay))
             {
                 Debug.LogError($"[Timeline] LoadCue 失败: {cueId}");
@@ -1087,34 +1086,36 @@ namespace BoardGameTutorial.Editor
                 if (it.Id.StartsWith("card_back_")) decksVisible++;
             }
 
-            bool ok = pendingVisible == 0 && decksVisible > 0;
+            // 这条测试只管「载入瞬间不该闪现待发的牌」。卡堆现在由 cue 12 创建，
+            // 所以载入时本就不存在（0 张）——旧断言要求"载入时已有牌堆"，那是卡堆常驻时的假设。
+            bool ok = pendingVisible == 0 && decksVisible == 0;
             Debug.Log($"[Flash] {(ok ? "PASS" : "FAIL")} 载入瞬间：待发市场牌可见 {pendingVisible} 张" +
-                      (example == null ? "" : $"（例如 {example}）") + $"，牌堆卡可见 {decksVisible} 张");
+                      (example == null ? "" : $"（例如 {example}）") + $"，牌堆卡 {decksVisible} 张（应为 0）");
             if (!ok) failures++;
 
-            // 卡背颜色断言：三摞必须**互不相同**。
-            // 曾经载入瞬间三摞都渲染成同一个蓝色背面（颜色要到第一次 Seek 才对），
-            // 断言不覆盖这一点时只能靠肉眼看出来。
+            // 三种卡背必须**一眼可分**：三张样本卡背的染色互不相同。
+            // 扫描图本身都是深蓝调（实测平均色几乎一样），不染色根本分不清 ——
+            // 而台词正在强调"绿色的一级/黄色的二级/蓝色的三级"。
             {
-                var seen = new System.Collections.Generic.Dictionary<string, string>();
-                foreach (var id in new[] { "card_back_1#1", "card_back_2#1", "card_back_3#1" })
+                if (!anim.LoadCue(gameRoot, "full", "setup.cards.001.2", false))
+                { Debug.Log("[Flash] FAIL 载入 setup.cards.001.2"); failures++; }
+                else
+                {
+                    anim.Seek(0.4f);
+                    var seen = new System.Collections.Generic.Dictionary<string, string>();
                     foreach (var it in anim.Store.Items)
-                        if (it.Id == id && it.Actor?.Renderer?.sprite != null)
+                        if (it.Id.StartsWith("sample_back_") && it.Actor?.Renderer != null)
                         {
-                            var tex = it.Actor.Renderer.sprite.texture;
-                            var pxs = tex.GetPixels();
-                            float sr = 0, sg = 0, sb = 0;
-                            foreach (var c in pxs) { sr += c.r; sg += c.g; sb += c.b; }
-                            int n = pxs.Length;
-                            string key = $"{sr / n:0.00},{sg / n:0.00},{sb / n:0.00}";
-                            seen[id] = key;
+                            var c = it.Actor.Renderer.color;
+                            seen[it.Id] = $"{c.r:0.00},{c.g:0.00},{c.b:0.00}";
                         }
-
-                var keys = new System.Collections.Generic.List<string>(seen.Values);
-                bool distinct = keys.Count == 3 && keys[0] != keys[1] && keys[1] != keys[2] && keys[0] != keys[2];
-                Debug.Log($"[Flash] {(distinct ? "PASS" : "FAIL")} 三摞卡背互不相同: " +
-                          string.Join("  ", keys));
-                if (!distinct) failures++;
+                    var keys = new System.Collections.Generic.List<string>(seen.Values);
+                    bool distinct = keys.Count == 3
+                        && keys[0] != keys[1] && keys[1] != keys[2] && keys[0] != keys[2];
+                    Debug.Log($"[Flash] {(distinct ? "PASS" : "FAIL")} 三种卡背染色互不相同: " +
+                              string.Join("  ", keys));
+                    if (!distinct) failures++;
+                }
             }
 
             SaveFrame(Path.Combine(Application.dataPath, "..", "CaptureOut", "load_frame.png"));
@@ -1218,50 +1219,54 @@ namespace BoardGameTutorial.Editor
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
             string gameRoot = Path.Combine(repoRoot, "games/splendor");
 
-            // 三个牌堆都要验：每个 cue 都有对某个牌堆的高亮。
-            // 只验一个时，另外两个漏改（还在用单张 target）就查不出来 —— 用户就是这么发现的。
-            var cases = new (string cue, string zone, float before, float peak, float after)[]
+            var go = new GameObject("HiHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            // 只量「卡堆自己的卡」：deck_level_N 里还混着 4 张待发的市场牌，
+            // 一起量会把它们算进来。
+            var zones = new (string zone, string tpl)[]
             {
-                ("setup.cards.001.2", "deck_level_1", 1.30f, 2.10f, 3.30f),
-                ("setup.cards.001.3", "deck_level_2", 0.70f, 1.65f, 2.90f),
-                ("setup.cards.001.3", "deck_level_3", 3.50f, 4.40f, 5.60f),
+                ("deck_level_1", "card_back_1"),
+                ("deck_level_2", "card_back_2"),
+                ("deck_level_3", "card_back_3"),
             };
 
-            foreach (var c in cases)
+            foreach (var (zone, tpl) in zones)
             {
-                var go = new GameObject("HiHost_" + c.zone);
-                var anim = go.AddComponent<TutorialCueAnimPlayer>();
-                anim.animationEnabled = true;
-                // 牌堆现在要先从盒子里飞上桌（第二节第一条），所以先把它跑完再验高亮。
-                // 否则牌堆还在 box_level_N，高亮 zone 里一张牌都没有。
-                if (!anim.LoadCue(gameRoot, "full", "setup.cards.001.1", false))
-                { Debug.Log("[Hi] FAIL setup.cards.001.1 载入失败"); failures++; Object.DestroyImmediate(go); continue; }
-                anim.Seek(anim.TotalDuration + 1f);
+                // 每条 zone 从干净场景重来，避免上一条的脉冲残留影响判据
+                anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+                anim.Seek(0.5f);          // create 之后、洗混之前
+                anim.SetFraming("board");
 
-                if (!anim.LoadCue(gameRoot, "full", c.cue, true))
-                { Debug.Log($"[Hi] FAIL {c.cue} 载入失败"); failures++; Object.DestroyImmediate(go); continue; }
-
-                System.Func<float, float[]> scalesAt = (time) =>
+                System.Func<float[]> scalesAt = () =>
                 {
-                    anim.Seek(time);
                     var list = new System.Collections.Generic.List<float>();
                     foreach (var it in anim.Store.Items)
-                        if (it.ZoneId == c.zone && it.Actor != null)
+                        if (it.ZoneId == zone && it.Template != null && it.Template.id == tpl
+                            && it.Actor != null)
                             list.Add(it.Actor.Go.transform.localScale.x);
                     return list.ToArray();
                 };
 
-                var before = scalesAt(c.before);
-                var during = scalesAt(c.peak);
-                var after  = scalesAt(c.after);
+                var before = scalesAt();
+                if (before.Length == 0)
+                { Debug.Log($"[Hi] FAIL {zone} 里没有 {tpl}（卡堆未创建？）"); failures++; continue; }
 
-                int grown = 0, total = 0;
-                for (int i = 0; i < before.Length && i < during.Length; i++)
+                anim.TriggerForTest(new CueAnimEvent
                 {
-                    total++;
+                    at = 0.5f, dur = 1.0f, action = "highlight", zone = zone,
+                    grow = 1.18f, easing = "easeInOutCubic",
+                });
+
+                anim.Seek(0.9f);
+                var during = scalesAt();
+                anim.Seek(1.6f);
+                var after = scalesAt();
+
+                int grown = 0;
+                for (int i = 0; i < before.Length && i < during.Length; i++)
                     if (during[i] > before[i] * 1.05f) grown++;
-                }
-                bool allGrew = total > 0 && grown == total;
 
                 float maxR = 0f, minR = 99f;
                 for (int i = 0; i < before.Length && i < during.Length; i++)
@@ -1269,30 +1274,22 @@ namespace BoardGameTutorial.Editor
                     float r = during[i] / Mathf.Max(1e-6f, before[i]);
                     maxR = Mathf.Max(maxR, r); minR = Mathf.Min(minR, r);
                 }
-                bool uniform = maxR - minR < 0.05f;
 
                 bool returned = after.Length == before.Length;
                 if (returned)
                     for (int i = 0; i < before.Length; i++)
                         if (Mathf.Abs(after[i] - before[i]) > 0.0005f) { returned = false; break; }
 
-                bool ok = allGrew && uniform && returned;
-                Debug.Log($"[Hi] {(ok ? "PASS" : "FAIL")} {c.zone}（{c.cue}）: " +
-                          $"放大 {grown}/{total} 张，比例 {minR:0.000}~{maxR:0.000}，" +
-                          $"回落={(returned ? "是" : "否")}");
+                bool ok = grown == before.Length && (maxR - minR) < 0.05f && returned;
+                Debug.Log($"[Hi] {(ok ? "PASS" : "FAIL")} {zone}: 放大 {grown}/{before.Length} 张，" +
+                          $"比例 {minR:0.000}~{maxR:0.000}，回落={(returned ? "是" : "否")}");
                 if (!ok) failures++;
-                Object.DestroyImmediate(go);
             }
 
             Debug.Log($"[Hi] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
-        /// <summary>
-        /// 容器自检：容器是「任意一组」，可以装**不属于同一个 zone** 的东西。
-        /// 验证：整组缩放只作用于组内成员、以组重心为锚点、且会回落。
-        /// 这是 zone 做不到的（zone 只能表达「恰好同属一个区域」）。
-        /// </summary>
         public static void SelfTestContainer()
         {
             int failures = 0;
@@ -1379,10 +1376,16 @@ namespace BoardGameTutorial.Editor
                       $"box_gem_diamond {before} → 供应堆 {inSupply}（盒中剩 {inBox}）");
             if (!moved) failures++;
 
-            // 牌堆也仍然好使（同一条代码路径）
+            // 牌堆也仍然好使（同一条代码路径）。
+            // 卡堆现在不再初始存在（cue 12 才创建），所以这里先 create 再搬。
             anim.TriggerForTest(new CueAnimEvent
             {
-                at = 1.3f, dur = 0.6f, action = "move", group = true,
+                at = 1.3f, dur = 0.0f, action = "create", template = "card_back_1",
+                palette = "card_level_1", zone = "box_level_1", count = 36,
+            });
+            anim.TriggerForTest(new CueAnimEvent
+            {
+                at = 1.35f, dur = 0.6f, action = "move", group = true,
                 from = new List<string> { "box_level_1" },
                 zone = "deck_level_1", easing = "easeInOutCubic",
             });

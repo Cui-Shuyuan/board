@@ -406,7 +406,81 @@
         "max_visible": 1
       },
       "layout": {
-        "type": "pile"
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      }
+    },
+    {
+      "id": "showcase_1",
+      "label": "卡背展示位 1",
+      "center": {
+        "x": -0.85,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      }
+    },
+    {
+      "id": "showcase_2",
+      "label": "卡背展示位 2",
+      "center": {
+        "x": 0.0,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      }
+    },
+    {
+      "id": "showcase_3",
+      "label": "卡背展示位 3",
+      "center": {
+        "x": 0.85,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 1,
       "size": {
@@ -431,7 +505,7 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/一级发展卡_背面.jpg",
-      "alpha": 0.0
+      "alpha": 1.0
     },
     {
       "id": "card_back_2",
@@ -441,7 +515,7 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/二级发展卡_背面.jpg",
-      "alpha": 0.0
+      "alpha": 1.0
     },
     {
       "id": "card_back_3",
@@ -451,7 +525,7 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/三级发展卡_背面.jpg",
-      "alpha": 0.0
+      "alpha": 1.0
     },
     {
       "id": "noble",
@@ -720,7 +794,47 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
-      "hide_until_animated": true
+      "hide_until_animated": false,
+      "alpha": 1.0
+    },
+    {
+      "id": "sample_back_1",
+      "shape": "card",
+      "palette": "card_level_3",
+      "face_image": "media/card/三级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "hide_until_animated": false,
+      "alpha": 1.0,
+      "tint": "#7FC7E8"
+    },
+    {
+      "id": "sample_back_2",
+      "shape": "card",
+      "palette": "card_level_2",
+      "face_image": "media/card/二级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "hide_until_animated": false,
+      "alpha": 1.0,
+      "tint": "#E8C24A"
+    },
+    {
+      "id": "sample_back_3",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "hide_until_animated": false,
+      "alpha": 1.0,
+      "tint": "#6FBF73"
     }
   ],
   "anchors": [
@@ -779,24 +893,6 @@
   ],
   "initial": [
     {
-      "count": 36,
-      "template": "card_back_1",
-      "palette": "card_level_1",
-      "zone": "deck_level_1"
-    },
-    {
-      "count": 26,
-      "template": "card_back_2",
-      "palette": "card_level_2",
-      "zone": "deck_level_2"
-    },
-    {
-      "count": 16,
-      "template": "card_back_3",
-      "palette": "card_level_3",
-      "zone": "deck_level_3"
-    },
-    {
       "count": 7,
       "template": "gem",
       "palette": "gem_diamond",
@@ -844,12 +940,6 @@
       "palette": "noble",
       "zone": "offstage",
       "from": "top"
-    },
-    {
-      "template": "sample_card_1",
-      "palette": "card_level_1",
-      "zone": "showcase",
-      "count": 1
     }
   ],
   "containers": [

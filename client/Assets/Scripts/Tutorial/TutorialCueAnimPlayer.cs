@@ -77,7 +77,8 @@ namespace BoardGameTutorial
         /// </summary>
         public void SetFraming(string zoneId, float padding = 0f)
         {
-            frameZoneId = string.IsNullOrEmpty(zoneId) || zoneId == "board" ? null : zoneId;
+            frameZoneId = string.IsNullOrEmpty(zoneId) || zoneId == "board" ? null
+                : (zoneId == "cards" ? FrameCardsToken : zoneId);
             framePadding = padding;
             FitCamera();
         }
@@ -152,6 +153,7 @@ namespace BoardGameTutorial
         private string gameRootPath;
         private GameObject animRoot;
         private Camera animCamera;
+        private const string FrameCardsToken = "__cards__";
         private string frameZoneId;      // 非空 = 特写取景到该 zone
         private float framePadding;
         private SpriteRenderer boxSprite;
@@ -247,7 +249,11 @@ namespace BoardGameTutorial
                 return false;
             }
 
+            // 重建画面会销毁盒面等整幅图，但**图片路径**是状态的一部分，必须留住。
+            // 这里先记下来，重建完再按它恢复（否则载入任意 cue 后盒面都消失）。
+            string keepPicture = currentPicture;
             ClearActors();   // 确定要重建画面了，才销毁旧对象
+            currentPicture = keepPicture;
             cueDoc = JsonUtility.FromJson<CueAnimDoc>(File.ReadAllText(path));
             if (cueDoc == null || cueDoc.events == null)
             {
@@ -280,6 +286,10 @@ namespace BoardGameTutorial
             EnsureCamera();
             SetBackground();
             FitCamera();
+
+            // 恢复整幅图（盒面等）：它的路径是入口状态的一部分
+            if (!string.IsNullOrEmpty(currentPicture))
+                TriggerShowBox(new CueAnimEvent { action = "showbox", picture = currentPicture, on = 1f });
 
             CaptureEntry();
             clock = 0f;
@@ -373,25 +383,42 @@ namespace BoardGameTutorial
             foreach (var item in Store.Items)
             {
                 if (actors.ContainsKey(item.Id)) continue;
-                var itemTpl = EffectiveTemplate(item.Template, item.PaletteName);
-                var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor);
-                var sr = go.GetComponent<SpriteRenderer>();
-                var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
-
-                // 正反两面都准备好：翻面时只换贴图，不重建对象。
-                actor.FaceSprite = sr.sprite;
-                actor.EffectiveTemplate = itemTpl;
-
-                var backPath = ResolveBackImagePath(itemTpl);
-                if (backPath != null)
-                {
-                    var back = CardImageLoader.Load(backPath, itemTpl.shape);
-                    if (back != null) actor.BackSprite = back;
-                }
-
-                item.Actor = actor;
-                actors[item.Id] = actor;
+                BuildActorObject(item);
             }
+        }
+
+        /// <summary>为单个组件建立可视对象（开局批量创建与新 create 事件共用）。</summary>
+        private void BuildActorObject(ZoneItem item)
+        {
+            if (item == null || actors.ContainsKey(item.Id)) return;
+            var itemTpl = EffectiveTemplate(item.Template, item.PaletteName);
+            // 染色来自 item.Tint（在 Spawn 时从模板解析好）——采样每帧会按它复位，
+            // 所以只写在渲染器上会被冲掉。
+            var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor * item.Tint);
+            if (animRoot != null) go.transform.SetParent(animRoot.transform, true);
+            var sr = go.GetComponent<SpriteRenderer>();
+            var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
+
+            // 正反两面都准备好：翻面时只换贴图，不重建对象。
+            actor.FaceSprite = sr.sprite;
+            actor.EffectiveTemplate = itemTpl;
+
+            var backPath = ResolveBackImagePath(itemTpl);
+            if (backPath != null)
+            {
+                var back = CardImageLoader.Load(backPath, itemTpl.shape);
+                if (back != null) actor.BackSprite = back;
+            }
+
+            item.Actor = actor;
+            actors[item.Id] = actor;
+
+            // 落在它的逻辑格位上，并按模板默认透明度显示
+            var pos = Store.CurrentPosition(item);
+            actor.LivePosition = pos;
+            go.transform.localPosition = pos;
+            actor.LiveAlpha = itemTpl.hide_until_animated ? 0f : itemTpl.alpha;
+            ApplyAlpha(actor);
         }
 
         /// <summary>
@@ -409,6 +436,11 @@ namespace BoardGameTutorial
                 world_size = tpl.world_size, width = tpl.width, height = tpl.height,
                 alpha = tpl.alpha, rotation = tpl.rotation,
                 sorting_order = tpl.sorting_order, highlight = tpl.highlight,
+                // 注意：新增模板字段必须在这里也复制一份，否则实例色板与模板不同时会静默丢失。
+                // 已经漏过 hide_until_animated / from_zone / tint（表现各不相同、都很难查）。
+                hide_until_animated = tpl.hide_until_animated,
+                from_zone = tpl.from_zone,
+                tint = tpl.tint,
             };
             return clone;
         }
@@ -639,7 +671,7 @@ namespace BoardGameTutorial
 
                 item.Actor.LiveScale = item.Actor.BaseScale;
                 item.Actor.LiveAlpha = item.Template.alpha;
-                item.Actor.LiveColor = item.BaseColor;
+                item.Actor.LiveColor = item.BaseColor * item.Tint;   // 染色必须一起带上，否则复位时会丢
                 item.Actor.LiveRotation = item.Template.rotation;
                 item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
                 item.Actor.ApplyColor();
@@ -935,6 +967,7 @@ namespace BoardGameTutorial
                     // 之前这个分支直接 continue，跳过了这段 —— 二级/三级市场牌就带着
                     // 默认 alpha=1 显示在自己的牌堆位置上，看起来像往牌堆里发卡背。
                     actor.LiveAlpha = (item.Template != null && item.Template.hide_until_animated) ? 0f : actor.BaseAlpha;
+                    actor.LiveColor = item.BaseColor * item.Tint;
                     ApplyAlpha(actor);
                     continue;
                 }
@@ -1088,7 +1121,7 @@ namespace BoardGameTutorial
 
                 item.Actor.LiveScale = item.Actor.BaseScale;
                 item.Actor.LiveAlpha = item.Template.alpha;
-                item.Actor.LiveColor = item.BaseColor;
+                item.Actor.LiveColor = item.BaseColor * item.Tint;   // 染色必须一起带上，否则复位时会丢
                 item.Actor.LiveRotation = item.Template.rotation;
                 item.Actor.Go.transform.localScale = item.Actor.BaseScale;
                 item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
@@ -1159,6 +1192,8 @@ namespace BoardGameTutorial
                 case "highlight": TriggerHighlight(ev); return;
                 case "shuffle": TriggerShuffle(ev); return;
                 case "showbox": TriggerShowBox(ev); return;
+                case "create": TriggerCreate(ev); return;
+                case "destroy": TriggerDestroy(ev); return;
                 default:
                     Debug.LogWarning($"[TutorialCueAnim] unknown action '{ev.action}' in cue {CueId}");
                     return;
@@ -1631,6 +1666,72 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
+        /// 创建组件：让对象**真的出现**在桌上（而不只是把已存在的对象显形）。
+        ///
+        /// 与「初始就在桌上、只是透明」的区别：
+        ///   - 语义清楚：这一幕之前，这个对象**不存在**（符合"这时才是卡堆登场"）
+        ///   - 不必为每个"以后可能出现"的东西写占位数据，也不用管它的默认透明度
+        /// 入口状态重放时会一并重放 create，所以跳转与顺序播放一致。
+        /// </summary>
+        private void TriggerCreate(CueAnimEvent ev)
+        {
+            if (string.IsNullOrEmpty(ev.template))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] create 缺少 template（cue {CueId}）");
+                return;
+            }
+            if (Store.GetTemplate(ev.template) == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] create 未知模板 '{ev.template}'（cue {CueId}）");
+                return;
+            }
+            string zone = string.IsNullOrEmpty(ev.zone) ? "offstage" : ev.zone;
+            int n = ev.count > 0 ? ev.count : 1;
+            var created = Store.Spawn(ev.template, ev.palette, zone, n);
+            foreach (var item in created)
+            {
+                if (item == null) continue;
+                BuildActorObject(item);
+            }
+        }
+
+        /// <summary>
+        /// 销毁组件：对象**真的消失**（从数据里移除），不是调成透明。
+        /// 用于「这三张卡背删掉不要了」这类：之前的对象不该继续存在于桌上。
+        /// </summary>
+        private void TriggerDestroy(CueAnimEvent ev)
+        {
+            var doomed = new List<ZoneItem>();
+
+            if (!string.IsNullOrEmpty(ev.target))
+            {
+                if (Store.TryGetItem(ev.target, out var one) && one != null) doomed.Add(one);
+                else Debug.LogWarning($"[TutorialCueAnim] destroy target '{ev.target}' 不存在（cue {CueId}）");
+            }
+            else
+            {
+                foreach (var item in Store.Items)
+                {
+                    if (!string.IsNullOrEmpty(ev.zone) && item.ZoneId != ev.zone) continue;
+                    if (!string.IsNullOrEmpty(ev.template)
+                        && (item.Template == null || item.Template.id != ev.template)) continue;
+                    if (!string.IsNullOrEmpty(ev.palette) && item.PaletteName != ev.palette) continue;
+                    doomed.Add(item);
+                }
+                if (doomed.Count == 0)
+                    Debug.LogWarning($"[TutorialCueAnim] destroy 没匹配到任何组件" +
+                                     $"（zone='{ev.zone}' template='{ev.template}'，cue {CueId}）");
+            }
+
+            foreach (var item in doomed)
+            {
+                if (item.Actor?.Go != null) Object.DestroyImmediate(item.Actor.Go);
+                actors.Remove(item.Id);
+                Store.RemoveItem(item.Id);
+            }
+        }
+
+        /// <summary>
         /// 显示/隐藏一张整幅图片（例如游戏盒封面）。
         ///
         /// 用途：纯讲述性的小节（背景介绍）没有牌桌动作，但需要一张画面撑住。
@@ -2087,8 +2188,22 @@ namespace BoardGameTutorial
                 }
             }
 
+            // 取景 "cards"：把 showcase（1,2,3）三张并排的卡背一起框住
+            if (frameZoneId == FrameCardsToken)
+            {
+                float hw = 0.315f, hh = 0.44f;
+                minX = float.MaxValue; maxX = float.MinValue;
+                minZ = float.MaxValue; maxZ = float.MinValue;
+                foreach (var zid in new[] { "showcase_1", "showcase_2", "showcase_3" })
+                {
+                    var q = Store.ZonePosition(zid, 0);
+                    minX = Mathf.Min(minX, q.x - hw); maxX = Mathf.Max(maxX, q.x + hw);
+                    minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
+                }
+                orthoScale = framePadding > 0f ? framePadding : 1.5f;
+            }
             // 特写：把取景范围换成指定 zone 的格位包围盒
-            if (!string.IsNullOrEmpty(frameZoneId))
+            else if (!string.IsNullOrEmpty(frameZoneId))
             {
                 var fz = Store.GetZone(frameZoneId);
                 if (fz != null && fz.role != "offstage")

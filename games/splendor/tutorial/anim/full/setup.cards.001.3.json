@@ -2,27 +2,27 @@
   "schema_version": 1,
   "game_id": "splendor",
   "track": "full",
-  "cue": "setup.cards.001.3",
   "stage": "_stage/splendor.table",
-  "note": "台词「30张黄色…和20张蓝色…」→ 依次高亮黄色、蓝色卡背。",
   "start": {
     "set": []
   },
+  "cue": "setup.cards.001.3",
+  "note": "台词「30张黄色的二级发展卡牌」→ 高亮黄；「20张蓝色的三级发展卡牌」→ 高亮蓝。",
   "events": [
     {
-      "at": 0.0,
-      "dur": 1.2,
+      "at": 0.1,
+      "dur": 1.3,
       "action": "highlight",
-      "zone": "deck_level_2",
-      "grow": 1.18,
+      "target": "sample_back_2#1",
+      "grow": 1.16,
       "easing": "easeInOutCubic"
     },
     {
       "at": 2.9,
-      "dur": 1.2,
+      "dur": 1.3,
       "action": "highlight",
-      "zone": "deck_level_3",
-      "grow": 1.18,
+      "target": "sample_back_1#1",
+      "grow": 1.16,
       "easing": "easeInOutCubic"
     }
   ]

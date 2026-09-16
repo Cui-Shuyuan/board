@@ -42,7 +42,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "showbox", "wait"}
+ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
+           "showbox", "create", "destroy", "wait"}
 SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
 EASINGS = {
@@ -167,6 +168,29 @@ def validate_stage(stage_path: Path, report: Report, game_id: str):
     return stage, zones, templates
 
 
+def collect_created_ids(anim_dir: Path):
+    """扫一遍：哪些组件 id 会在某条 cue 里被 create 出来。
+
+    跨 cue 的 create/destroy 是正常写法（cue 10 销毁 cue 9 创建的展示卡），
+    但校验单条 cue 时看不到前一条创建了什么，会误报 target 不存在。
+    """
+    created = {}   # template -> 出现过的最大序号
+    for p in sorted(anim_dir.glob("*.json")):
+        try:
+            doc = load_json(p)
+        except Exception:
+            continue
+        for ev in doc.get("events") or []:
+            if isinstance(ev, dict) and ev.get("action") == "create" and ev.get("template"):
+                n = int(ev.get("count") or 1)
+                created[ev["template"]] = max(created.get(ev["template"], 0), n)
+    ids = set()
+    for tpl, n in created.items():
+        for i in range(1, n + 1):
+            ids.add(f"{tpl}#{i}")
+    return ids
+
+
 def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
     try:
         doc = load_json(path)
@@ -199,7 +223,7 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
     if stage is None:
         return
 
-    known_ids = set(derive_actor_ids(stage))
+    known_ids = set(derive_actor_ids(stage)) | collect_created_ids(path.parent)
     # cue 自己 start.set 出来的组件（如发牌前预置在盒里的正面卡）也是合法目标
     for seed in (doc.get("start") or {}).get("set") or []:
         tpl = seed.get("template")
@@ -265,6 +289,10 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
 
         target = ev.get("target")
         zone = ev.get("zone")
+
+        # create 出来的组件 id 也算已知（模板名#序号），否则同一 cue 后续 target 会被误报
+        if action == "create" and ev.get("template"):
+            known_ids.add(f"{ev['template']}#1")
         if zone and zone not in zones:
             report.error(ew, f"未知 zone {zone!r}")
         if target and target not in known_ids:
@@ -309,6 +337,18 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             peak = ev.get("peak_alpha")
             if peak is not None and not 0.0 <= float(peak) <= 1.0:
                 report.error(ew, f"peak_alpha 超出 [0,1]: {peak}")
+        elif action == "create":
+            if not ev.get("template"):
+                report.error(ew, "create 需要 template（要创建什么）")
+            elif ev["template"] not in templates:
+                report.error(ew, f"create 的 template {ev['template']!r} 不在 stage.templates 里")
+            if not ev.get("zone"):
+                report.error(ew, "create 需要 zone（创建到哪里）")
+            elif ev["zone"] not in zones:
+                report.error(ew, f"create 的 zone {ev['zone']!r} 不存在")
+        elif action == "destroy":
+            if not ev.get("target") and not ev.get("zone") and not ev.get("template"):
+                report.error(ew, "destroy 需要 target 或 zone/template（否则要销毁什么不明确）")
         elif action == "showbox":
             on = ev.get("on", 1)
             # 隐藏时不需要 picture（沿用当前显示的那张）

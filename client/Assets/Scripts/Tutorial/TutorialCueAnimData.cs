@@ -181,6 +181,13 @@ namespace BoardGameTutorial
         public string back_image;
 
         /// <summary>
+        /// 可选的染色（"#RRGGBB"）。用于让同级但不同类的东西一眼可分 ——
+        /// 例如讲解"三种卡背"时，三张卡背的扫描图本身都是深蓝调，不染色看不出区别。
+        /// 留空则按 shape+palette 走调色板（卡片默认白色，即不染色）。
+        /// </summary>
+        public string tint;
+
+        /// <summary>
         /// 在它自己的动画开始之前完全不可见。用于市场牌：否则它们会叠在牌堆位置上，
         /// 看起来像牌堆多出好几层卡背。
         /// </summary>
@@ -317,6 +324,12 @@ namespace BoardGameTutorial
 
         /// <summary>执行前先等（把同一 at 的动作错开）。</summary>
         public float lead;
+
+        /// <summary>create：一次创建几个（0 = 1）。</summary>
+        public int count;
+
+        /// <summary>create：色板名（决定颜色/贴图，例如 card_level_1）。</summary>
+        public string palette;
 
         /// <summary>
         /// 取景目标：写 zone id 则把镜头对准该 zone（特写），写 "board" 或留空则回到整桌取景。

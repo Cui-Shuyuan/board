@@ -2,53 +2,59 @@
   "schema_version": 1,
   "game_id": "splendor",
   "track": "full",
-  "cue": "setup.cards.001.2",
   "stage": "_stage/splendor.table",
-  "note": "台词「根据背面分为三类」「40张绿色的一级」：回到整桌，卡面收起，三种卡背出现并高亮绿色。",
   "start": {
     "set": []
   },
+  "cue": "setup.cards.001.2",
+  "note": "台词「分为三类」：删掉那张正面卡，创建 3 张卡背一字排开；随后「40张绿色的一级」高亮绿色。注意此时还没有\"卡堆\"这个对象。",
   "events": [
     {
       "at": 0.05,
       "dur": 0.0,
       "action": "wait",
-      "camera": "board"
+      "camera": "cards",
+      "camera_padding": 1.5
     },
     {
       "at": 0.1,
-      "dur": 0.25,
-      "action": "fade",
-      "target": "sample_card_1#1",
-      "to_alpha": 0.0
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_card_1#1"
+    },
+    {
+      "at": 0.15,
+      "dur": 0.0,
+      "action": "create",
+      "template": "sample_back_1",
+      "palette": "card_level_3",
+      "zone": "showcase_1",
+      "count": 1
+    },
+    {
+      "at": 0.2,
+      "dur": 0.0,
+      "action": "create",
+      "template": "sample_back_2",
+      "palette": "card_level_2",
+      "zone": "showcase_2",
+      "count": 1
     },
     {
       "at": 0.25,
-      "dur": 0.4,
-      "action": "fade",
-      "zone": "deck_level_1",
-      "to_alpha": 1.0
+      "dur": 0.0,
+      "action": "create",
+      "template": "sample_back_3",
+      "palette": "card_level_1",
+      "zone": "showcase_3",
+      "count": 1
     },
     {
-      "at": 0.4,
-      "dur": 0.4,
-      "action": "fade",
-      "zone": "deck_level_2",
-      "to_alpha": 1.0
-    },
-    {
-      "at": 0.55,
-      "dur": 0.4,
-      "action": "fade",
-      "zone": "deck_level_3",
-      "to_alpha": 1.0
-    },
-    {
-      "at": 0.95,
+      "at": 0.6,
       "dur": 1.1,
       "action": "highlight",
-      "zone": "deck_level_1",
-      "grow": 1.18,
+      "target": "sample_back_3#1",
+      "grow": 1.16,
       "easing": "easeInOutCubic"
     }
   ]
