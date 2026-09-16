@@ -7,7 +7,7 @@
     "set": []
   },
   "cue": "setup.cards.001.2",
-  "note": "台词「分为三类」：删掉那张正面卡，创建 3 张卡背一字排开；随后「40张绿色的一级」高亮绿色。注意此时还没有\"卡堆\"这个对象。",
+  "note": "「根据背面可以分为三类」(3.12–5.97)：删除卡面，创建三张卡背一字排开——左=一级(sample_back_1) 中=二级(sample_back_2) 右=三级(sample_back_3)，**位置即身份**。随后「分别是40张绿色的一级发展卡牌」高亮最左那张。此时桌上没有\"卡堆\"这个对象。",
   "events": [
     {
       "at": 0.05,
@@ -27,7 +27,7 @@
       "dur": 0.0,
       "action": "create",
       "template": "sample_back_1",
-      "palette": "card_level_3",
+      "palette": "card_level_1",
       "zone": "showcase_1",
       "count": 1
     },
@@ -45,7 +45,7 @@
       "dur": 0.0,
       "action": "create",
       "template": "sample_back_3",
-      "palette": "card_level_1",
+      "palette": "card_level_3",
       "zone": "showcase_3",
       "count": 1
     },
@@ -53,7 +53,7 @@
       "at": 0.6,
       "dur": 1.1,
       "action": "highlight",
-      "target": "sample_back_3#1",
+      "target": "sample_back_1#1",
       "grow": 1.16,
       "easing": "easeInOutCubic"
     }

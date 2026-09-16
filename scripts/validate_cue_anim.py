@@ -388,6 +388,19 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if duration > 0 and end > duration + 1e-6:
             report.error(ew, f"事件结束于 {end:.2f}s，超出 cue 音频时长 {duration:.2f}s")
 
+    # 展示卡的「位置即身份」约定：sample_back_N 必须放在 showcase_N。
+    # 讲解发展卡时靠**位置**区分三个级别（卡背画作颜色不可靠：三张扫描图都偏蓝）。
+    # 这条规则防止将来把某张挪到别的展示位、导致"高亮的那张"与台词不对应。
+    for ev in doc.get("events") or []:
+        if not isinstance(ev, dict) or ev.get("action") != "create":
+            continue
+        tpl = ev.get("template") or ""
+        zone = ev.get("zone") or ""
+        if tpl.startswith("sample_back_") and zone.startswith("showcase_"):
+            want = "showcase_" + tpl[len("sample_back_"):]
+            if zone != want:
+                report.error(where, f"{tpl} 应放在 {want}（位置即身份），实际放在 {zone}")
+
     if duration > 0 and last_end > 0 and duration - last_end < MIN_TAIL_MARGIN:
         report.warn(where, f"动画结束 {last_end:.2f}s 距音频结束 {duration:.2f}s 不足 {MIN_TAIL_MARGIN:.2f}s")
 

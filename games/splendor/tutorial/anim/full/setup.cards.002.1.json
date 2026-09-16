@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "台词「将这三类牌分别洗混后按顺序摆成一列」：删除三张展示卡背，三摞卡堆在此**被创建**并直接出现在桌面上（不从盒子飞），随后洗混、发牌。此前桌上只有几张展示用的样本卡，没有「卡堆」这个对象。",
+  "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：销毁展示卡背、创建三摞卡堆（直接出现），洗混 0.30–1.40s。「从每摞牌上方分别翻开四张」(3.60 起)：发牌 3.58s 起、0.39s/张，最后一张 7.87–8.21s（音频 8.448s）。",
   "start": {
     "set": [
       {
@@ -83,31 +83,31 @@
   },
   "events": [
     {
-      "at": 0.05,
+      "at": 0.0,
       "dur": 0.0,
       "action": "wait",
       "camera": "board"
     },
     {
-      "at": 0.15,
+      "at": 0.0,
       "dur": 0.0,
       "action": "destroy",
       "target": "sample_back_1#1"
     },
     {
-      "at": 0.17,
+      "at": 0.0,
       "dur": 0.0,
       "action": "destroy",
       "target": "sample_back_2#1"
     },
     {
-      "at": 0.19,
+      "at": 0.0,
       "dur": 0.0,
       "action": "destroy",
       "target": "sample_back_3#1"
     },
     {
-      "at": 0.25,
+      "at": 0.05,
       "dur": 0.0,
       "action": "create",
       "template": "card_back_1",
@@ -116,7 +116,7 @@
       "count": 36
     },
     {
-      "at": 0.27,
+      "at": 0.07,
       "dur": 0.0,
       "action": "create",
       "template": "card_back_2",
@@ -125,7 +125,7 @@
       "count": 26
     },
     {
-      "at": 0.29,
+      "at": 0.09,
       "dur": 0.0,
       "action": "create",
       "template": "card_back_3",
@@ -134,29 +134,29 @@
       "count": 16
     },
     {
-      "at": 0.5,
-      "dur": 0.7,
+      "at": 0.3,
+      "dur": 1.1,
       "action": "shuffle",
       "zone": "deck_level_1",
       "easing": "easeOutCubic"
     },
     {
-      "at": 0.5,
-      "dur": 0.7,
+      "at": 0.3,
+      "dur": 1.1,
       "action": "shuffle",
       "zone": "deck_level_2",
       "easing": "easeOutCubic"
     },
     {
-      "at": 0.5,
-      "dur": 0.7,
+      "at": 0.3,
+      "dur": 1.1,
       "action": "shuffle",
       "zone": "deck_level_3",
       "easing": "easeOutCubic"
     },
     {
-      "at": 1.6,
-      "dur": 0.45,
+      "at": 3.58,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_1_emerald#1",
       "zone": "card_market",
@@ -167,8 +167,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 2.13,
-      "dur": 0.45,
+      "at": 3.97,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_1_ruby#1",
       "zone": "card_market",
@@ -179,8 +179,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 2.66,
-      "dur": 0.45,
+      "at": 4.36,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_1_diamond#1",
       "zone": "card_market",
@@ -191,8 +191,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 3.19,
-      "dur": 0.45,
+      "at": 4.75,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_1_sapphire#1",
       "zone": "card_market",
@@ -203,8 +203,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 3.72,
-      "dur": 0.45,
+      "at": 5.14,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_2_sapphire#1",
       "zone": "card_market",
@@ -215,8 +215,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 4.25,
-      "dur": 0.45,
+      "at": 5.53,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_2_onyx#1",
       "zone": "card_market",
@@ -227,8 +227,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 4.78,
-      "dur": 0.45,
+      "at": 5.92,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_2_ruby#1",
       "zone": "card_market",
@@ -239,8 +239,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 5.31,
-      "dur": 0.45,
+      "at": 6.31,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_2_emerald#1",
       "zone": "card_market",
@@ -251,8 +251,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 5.84,
-      "dur": 0.45,
+      "at": 6.7,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_3_ruby#1",
       "zone": "card_market",
@@ -263,8 +263,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 6.37,
-      "dur": 0.45,
+      "at": 7.09,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_3_diamond#1",
       "zone": "card_market",
@@ -275,8 +275,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 6.9,
-      "dur": 0.45,
+      "at": 7.48,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_3_emerald#1",
       "zone": "card_market",
@@ -287,8 +287,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 7.43,
-      "dur": 0.45,
+      "at": 7.87,
+      "dur": 0.34,
       "action": "move",
       "target": "market_card_3_onyx#1",
       "zone": "card_market",

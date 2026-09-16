@@ -392,9 +392,7 @@ namespace BoardGameTutorial
         {
             if (item == null || actors.ContainsKey(item.Id)) return;
             var itemTpl = EffectiveTemplate(item.Template, item.PaletteName);
-            // 染色来自 item.Tint（在 Spawn 时从模板解析好）——采样每帧会按它复位，
-            // 所以只写在渲染器上会被冲掉。
-            var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor * item.Tint);
+            var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor);
             if (animRoot != null) go.transform.SetParent(animRoot.transform, true);
             var sr = go.GetComponent<SpriteRenderer>();
             var actor = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
@@ -440,7 +438,6 @@ namespace BoardGameTutorial
                 // 已经漏过 hide_until_animated / from_zone / tint（表现各不相同、都很难查）。
                 hide_until_animated = tpl.hide_until_animated,
                 from_zone = tpl.from_zone,
-                tint = tpl.tint,
             };
             return clone;
         }
@@ -671,7 +668,7 @@ namespace BoardGameTutorial
 
                 item.Actor.LiveScale = item.Actor.BaseScale;
                 item.Actor.LiveAlpha = item.Template.alpha;
-                item.Actor.LiveColor = item.BaseColor * item.Tint;   // 染色必须一起带上，否则复位时会丢
+                item.Actor.LiveColor = item.BaseColor;   // 染色必须一起带上，否则复位时会丢
                 item.Actor.LiveRotation = item.Template.rotation;
                 item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
                 item.Actor.ApplyColor();
@@ -881,6 +878,18 @@ namespace BoardGameTutorial
         /// <summary>自检/出图用：确保场景里有可用的相机。</summary>
         public void EnsureCameraForCapture() => EnsureCamera();
 
+        /// <summary>
+        /// 坐标守卫：无效坐标一旦写进 Transform，Unity 会每帧报同样的错，
+        /// 但不会告诉你是哪个组件、哪一步产出的。这里一次说清。
+        /// </summary>
+        private void WarnIfInvalid(ZoneItem item, Vector3 pos, string stage)
+        {
+            if (!float.IsNaN(pos.x) && !float.IsNaN(pos.z)
+                && !float.IsInfinity(pos.x) && !float.IsInfinity(pos.z)) return;
+            Debug.LogError($"[CueAnim] 坐标无效（{stage}）{item?.Id} zone={item?.ZoneId} " +
+                           $"order={item?.Order} pos=({pos.x},{pos.z}) cue={CueId}");
+        }
+
         /// <summary>把组件的实时透明度写到渲染器上。</summary>
         private static void ApplyAlpha(CueAnimActor actor)
         {
@@ -967,11 +976,12 @@ namespace BoardGameTutorial
                     // 之前这个分支直接 continue，跳过了这段 —— 二级/三级市场牌就带着
                     // 默认 alpha=1 显示在自己的牌堆位置上，看起来像往牌堆里发卡背。
                     actor.LiveAlpha = (item.Template != null && item.Template.hide_until_animated) ? 0f : actor.BaseAlpha;
-                    actor.LiveColor = item.BaseColor * item.Tint;
+                    actor.LiveColor = item.BaseColor;
                     ApplyAlpha(actor);
                     continue;
                 }
                 actor.LivePosition = Store.CurrentPosition(item);
+                WarnIfInvalid(item, actor.LivePosition, "复位");
                 actor.Go.transform.localPosition = actor.LivePosition;
 
                 actor.LiveRotation = item.Template != null ? item.Template.rotation : 0f;
@@ -1121,7 +1131,7 @@ namespace BoardGameTutorial
 
                 item.Actor.LiveScale = item.Actor.BaseScale;
                 item.Actor.LiveAlpha = item.Template.alpha;
-                item.Actor.LiveColor = item.BaseColor * item.Tint;   // 染色必须一起带上，否则复位时会丢
+                item.Actor.LiveColor = item.BaseColor;   // 染色必须一起带上，否则复位时会丢
                 item.Actor.LiveRotation = item.Template.rotation;
                 item.Actor.Go.transform.localScale = item.Actor.BaseScale;
                 item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
@@ -1410,6 +1420,7 @@ namespace BoardGameTutorial
             {
                 var actor = step.Item.Actor;
                 Vector3 from = actor != null ? actor.LivePosition : step.Item.LivePosition;
+                WarnIfInvalid(step.Item, from, "move 起点");
 
                 // order=-2 的语义是「从别处出场、落在目标 zone 的第 Order 格」——
                 // 逻辑归属也必须落到那一格。之前只动了画面、不记格位，导致：
@@ -1443,6 +1454,7 @@ namespace BoardGameTutorial
                     Debug.Log($"[Tween] {step.Item.Id} inPlace={step.InPlace} order={step.Order} " +
                               $"from=({from.x:0.00},{from.z:0.00}) to=({to.x:0.00},{to.z:0.00}) dur={ev.dur}");
 
+                WarnIfInvalid(step.Item, to, "move 终点");
                 var clip = ClipAt(step.Item, actor, ev);
                 if (ev.group)
                 {
@@ -1879,6 +1891,7 @@ namespace BoardGameTutorial
 
                 var clip = ClipAt(actor.Item, actor, ev);
                 clip.HasShuffle = true;
+                WarnIfInvalid(actor.Item, actor.LivePosition, "shuffle 基准");
                 clip.ShuffleFrom = actor.LivePosition;
                 clip.ShuffleAmp = Mathf.Lerp(Shuffle.AmpMin, Shuffle.AmpMax, r1) * scale;
                 clip.ShuffleFreq = Mathf.Lerp(Shuffle.FreqMin, Shuffle.FreqMax, r2);

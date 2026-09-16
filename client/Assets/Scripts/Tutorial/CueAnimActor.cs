@@ -45,9 +45,7 @@ namespace BoardGameTutorial
             LiveScale = baseScale;
             LiveRotation = item.LiveRotation;
             LiveAlpha = item.LiveAlpha;
-            // 染色（item.Tint）必须一起带上：它是"同级但不同类的东西一眼可分"的手段，
-            // 只在渲染器上设一次会被后续复位冲掉。
-            LiveColor = item.BaseColor * item.Tint;
+            LiveColor = item.BaseColor;
         }
 
         public void ApplyColor()

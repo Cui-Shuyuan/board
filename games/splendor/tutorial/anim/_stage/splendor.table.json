@@ -800,15 +800,14 @@
     {
       "id": "sample_back_1",
       "shape": "card",
-      "palette": "card_level_3",
-      "face_image": "media/card/三级发展卡_背面.jpg",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_背面.jpg",
       "world_size": null,
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
       "hide_until_animated": false,
-      "alpha": 1.0,
-      "tint": "#7FC7E8"
+      "alpha": 1.0
     },
     {
       "id": "sample_back_2",
@@ -820,21 +819,19 @@
       "height": 0.88,
       "sorting_order": 2,
       "hide_until_animated": false,
-      "alpha": 1.0,
-      "tint": "#E8C24A"
+      "alpha": 1.0
     },
     {
       "id": "sample_back_3",
       "shape": "card",
-      "palette": "card_level_1",
-      "face_image": "media/card/一级发展卡_背面.jpg",
+      "palette": "card_level_3",
+      "face_image": "media/card/三级发展卡_背面.jpg",
       "world_size": null,
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
       "hide_until_animated": false,
-      "alpha": 1.0,
-      "tint": "#6FBF73"
+      "alpha": 1.0
     }
   ],
   "anchors": [

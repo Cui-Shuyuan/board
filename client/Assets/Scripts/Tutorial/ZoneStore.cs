@@ -20,8 +20,6 @@ namespace BoardGameTutorial
         public string PaletteName;     // 色板名（身份的一部分，别拿 Color 值比较）
         public Color BaseColor;        // 调色后的基础色（alpha 另算）
 
-        /// <summary>模板指定的染色（无则为白）。参与每帧的颜色复位，否则会被冲掉。</summary>
-        public Color Tint = Color.white;
 
         public string ZoneId;          // 当前所在 zone
         public int Order = -1;         // zone 内顺序，决定落在哪个槽位
@@ -172,17 +170,6 @@ namespace BoardGameTutorial
             counters.Clear();
         }
 
-        /// <summary>解析模板上的 "#RRGGBB" 染色；空/非法则返回白色（不染色）。</summary>
-        public static Color ParseTint(string hex)
-        {
-            if (!string.IsNullOrEmpty(hex) && ColorUtility.TryParseHtmlString(hex, out var c))
-            {
-                c.a = 1f;
-                return c;
-            }
-            return Color.white;
-        }
-
         /// <summary>移除一个组件（对象在数据上真的不存在了，而不只是看不见）。</summary>
         public bool RemoveItem(string itemId)
         {
@@ -235,9 +222,6 @@ namespace BoardGameTutorial
                     LiveScale = Vector3.one,
                     LiveRotation = tpl.rotation,
                     LiveAlpha = tpl.alpha,
-                    // 模板染色必须落在 item 上：采样每帧按 BaseColor 复位渲染器颜色，
-                    // 只写在渲染器上会被冲掉（三张卡背因此全变回同一个颜色）。
-                    Tint = ParseTint(tpl.tint),
                 };
                 items[item.Id] = item;
                 SlotsOf(zoneId)[item.Order] = item;
@@ -585,6 +569,25 @@ namespace BoardGameTutorial
                 x += overflow * layout.x_step * 0.10f;
                 z += overflow * layout.z_step * 0.10f;
             }
+
+            // NaN 防护：无效坐标一旦流进 Transform 就会每帧报错且很难定位。
+            // 这里直接指出是哪个 zone、哪个格位、以及可疑的输入，便于一次查清。
+            if (float.IsNaN(x) || float.IsNaN(z) || float.IsInfinity(x) || float.IsInfinity(z))
+            {
+                var c = zone.center;
+                Debug.LogError($"[ZoneStore] 格位坐标无效 zone={zoneId} order={order} " +
+                               $"center=({(c != null ? c.x.ToString() : "null")},{(c != null ? c.z.ToString() : "null")}) " +
+                               $"capacity={capacity} slot={slot} visible={((display != null && display.mode == "stack") ? Mathf.Clamp(CountInZone(zoneId), 1, display.max_visible > 0 ? display.max_visible : 8).ToString() : "-")} " +
+                               $"x_step={layout.x_step} z_step={layout.z_step} cols={layout.cols} " +
+                               $"dx={((display != null) ? display.dx.ToString() : "null")} dz={((display != null) ? display.dz.ToString() : "null")} → ({x},{z})");
+                return new Vector3(c != null ? c.x : 0f, 0f, c != null ? c.z : 0f);
+            }
+
+            // 该格位上的组件若已带无效坐标，一并指出（无效坐标流进 Transform 会每帧报错）
+            if (SlotsOf(zoneId).TryGetValue(order, out var liveItem) && liveItem != null
+                && (float.IsNaN(liveItem.LivePosition.x) || float.IsNaN(liveItem.LivePosition.z)))
+                Debug.LogError($"[ZoneStore] 组件坐标已失效 {liveItem.Id} zone={zoneId} order={order} " +
+                               $"LivePosition=({liveItem.LivePosition.x},{liveItem.LivePosition.z})");
 
             return new Vector3(x, 0f, z);
         }

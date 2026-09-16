@@ -1093,28 +1093,32 @@ namespace BoardGameTutorial.Editor
                       (example == null ? "" : $"（例如 {example}）") + $"，牌堆卡 {decksVisible} 张（应为 0）");
             if (!ok) failures++;
 
-            // 三种卡背必须**一眼可分**：三张样本卡背的染色互不相同。
-            // 扫描图本身都是深蓝调（实测平均色几乎一样），不染色根本分不清 ——
-            // 而台词正在强调"绿色的一级/黄色的二级/蓝色的三级"。
+            // 三种卡背靠**名称 + 位置**区分（不再染色：染色等于给画面糊一层滤镜，
+            // 而且三张扫描图本身颜色不同，染色反而把它们弄脏）。
+            // 规则：sample_back_N 必须在 showcase_N —— 同一张卡每次出现在同一位置，
+            // 观众靠位置认级别。校验器也会查这条（见 validate_cue_anim.py）。
             {
                 if (!anim.LoadCue(gameRoot, "full", "setup.cards.001.2", false))
                 { Debug.Log("[Flash] FAIL 载入 setup.cards.001.2"); failures++; }
                 else
                 {
                     anim.Seek(0.4f);
-                    var seen = new System.Collections.Generic.Dictionary<string, string>();
-                    foreach (var it in anim.Store.Items)
-                        if (it.Id.StartsWith("sample_back_") && it.Actor?.Renderer != null)
-                        {
-                            var c = it.Actor.Renderer.color;
-                            seen[it.Id] = $"{c.r:0.00},{c.g:0.00},{c.b:0.00}";
-                        }
-                    var keys = new System.Collections.Generic.List<string>(seen.Values);
-                    bool distinct = keys.Count == 3
-                        && keys[0] != keys[1] && keys[1] != keys[2] && keys[0] != keys[2];
-                    Debug.Log($"[Flash] {(distinct ? "PASS" : "FAIL")} 三种卡背染色互不相同: " +
-                              string.Join("  ", keys));
-                    if (!distinct) failures++;
+                    int ok3 = 0;
+                    var seen = new System.Text.StringBuilder();
+                    for (int lv = 1; lv <= 3; lv++)
+                    {
+                        string want = $"showcase_{lv}";
+                        foreach (var it in anim.Store.Items)
+                            if (it.Id == $"sample_back_{lv}#1")
+                            {
+                                bool right = it.ZoneId == want;
+                                if (right) ok3++;
+                                seen.Append($"{it.Id}@{it.ZoneId}{(right ? "" : "≠" + want)} ");
+                            }
+                    }
+                    bool placed = ok3 == 3;
+                    Debug.Log($"[Flash] {(placed ? "PASS" : "FAIL")} 三张卡背各就各位（位置即身份）: {seen}");
+                    if (!placed) failures++;
                 }
             }
 
@@ -1455,6 +1459,56 @@ namespace BoardGameTutorial.Editor
             }
 
             Debug.Log($"[Consist] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        /// <summary>
+        /// 逐条走一遍所有 cue，检查每一步的组件数与坐标是否正常。
+        /// 走的是**跳转**路径（先按 entry 解入口状态再播）——与顺序播放是两条不同路径，
+        /// 用户报的 NaN 只在跳转时出现。无效坐标会在这里被计出来。
+        /// </summary>
+        public static void SelfTestCueWalk()
+        {
+            int failures = 0, badPos = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("WalkHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Walk] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            int count = Mathf.Min(16, player.Document.cues.Count);
+            for (int i = 0; i < count; i++)
+            {
+                string cueId = player.Document.cues[i].id;
+                apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { i }) });
+                anim.LoadCue(gameRoot, "full", cueId, true);
+                anim.Seek(anim.TotalDuration + 1f);
+
+                int invalid = 0;
+                foreach (var it in anim.Store.Items)
+                {
+                    if (it.Actor?.Go == null) continue;
+                    var pos = it.Actor.Go.transform.localPosition;
+                    if (float.IsNaN(pos.x) || float.IsNaN(pos.z)) invalid++;
+                }
+                badPos += invalid;
+                int market = anim.Store.CountInZone("card_market");
+                Debug.Log($"[Walk] {i,2} {cueId,-22} items={anim.ActorCount,3} market={market,2} 无效坐标={invalid}");
+                if (invalid > 0) failures++;
+            }
+
+            Debug.Log($"[Walk] {(failures == 0 ? "全部通过" : failures + " 项失败")}（累计无效坐标 {badPos}）");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 

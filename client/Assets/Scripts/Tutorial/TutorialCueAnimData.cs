@@ -180,12 +180,6 @@ namespace BoardGameTutorial
         /// <summary>翻转用的另一面（相对 games/{game}）。有它才能「边移动边翻转」。</summary>
         public string back_image;
 
-        /// <summary>
-        /// 可选的染色（"#RRGGBB"）。用于让同级但不同类的东西一眼可分 ——
-        /// 例如讲解"三种卡背"时，三张卡背的扫描图本身都是深蓝调，不染色看不出区别。
-        /// 留空则按 shape+palette 走调色板（卡片默认白色，即不染色）。
-        /// </summary>
-        public string tint;
 
         /// <summary>
         /// 在它自己的动画开始之前完全不可见。用于市场牌：否则它们会叠在牌堆位置上，
