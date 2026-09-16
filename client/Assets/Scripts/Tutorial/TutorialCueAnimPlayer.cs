@@ -71,6 +71,17 @@ namespace BoardGameTutorial
             return null;
         }
 
+        /// <summary>
+        /// 设置取景目标。zoneId 为空或 "board" 表示整桌取景；
+        /// 否则把镜头对准该 zone（用于「这是某件东西」的特写）。
+        /// </summary>
+        public void SetFraming(string zoneId, float padding = 0f)
+        {
+            frameZoneId = string.IsNullOrEmpty(zoneId) || zoneId == "board" ? null : zoneId;
+            framePadding = padding;
+            FitCamera();
+        }
+
         /// <summary>自检用：当前是否正显示整幅图（盒面等）。</summary>
         public bool BoxVisibleForTest => boxSprite != null && boxSprite.enabled && boxSprite.sprite != null;
 
@@ -141,6 +152,8 @@ namespace BoardGameTutorial
         private string gameRootPath;
         private GameObject animRoot;
         private Camera animCamera;
+        private string frameZoneId;      // 非空 = 特写取景到该 zone
+        private float framePadding;
         private SpriteRenderer boxSprite;
         private string currentPicture;
 
@@ -1131,6 +1144,10 @@ namespace BoardGameTutorial
             // 会让动画起点漂移、按 elapsed 计算的效果（如洗混）不一致。
             currentEventAt = ev.at;
 
+            // 取景：事件若指定了 camera，先把镜头切过去再执行动作，
+            // 否则动作会发生在错误的取景下（例如特写时物体仍很小）。
+            if (!string.IsNullOrEmpty(ev.camera)) SetFraming(ev.camera, ev.camera_padding);
+
             switch (ev.action)
             {
                 case "wait": return;
@@ -2067,6 +2084,27 @@ namespace BoardGameTutorial
                 {
                     minX = Mathf.Min(minX, x0); maxX = Mathf.Max(maxX, x1);
                     minZ = Mathf.Min(minZ, z0); maxZ = Mathf.Max(maxZ, z1);
+                }
+            }
+
+            // 特写：把取景范围换成指定 zone 的格位包围盒
+            if (!string.IsNullOrEmpty(frameZoneId))
+            {
+                var fz = Store.GetZone(frameZoneId);
+                if (fz != null && fz.role != "offstage")
+                {
+                    int cnt = Mathf.Max(1, fz.capacity > 0 ? fz.capacity : Store.CountInZone(frameZoneId));
+                    float hw = (fz.size?.w ?? 0.2f) * 0.5f;
+                    float hh = (fz.size?.h ?? 0.2f) * 0.5f;
+                    minX = float.MaxValue; maxX = float.MinValue;
+                    minZ = float.MaxValue; maxZ = float.MinValue;
+                    for (int i = 0; i < cnt; i++)
+                    {
+                        var q = Store.ZonePosition(frameZoneId, i);
+                        minX = Mathf.Min(minX, q.x - hw); maxX = Mathf.Max(maxX, q.x + hw);
+                        minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
+                    }
+                    orthoScale = framePadding > 0f ? framePadding : 2.2f;
                 }
             }
 

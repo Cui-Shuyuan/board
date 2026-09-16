@@ -4,51 +4,37 @@
   "track": "full",
   "cue": "setup.cards.001.1",
   "stage": "_stage/splendor.table",
-  "note": "台词 0.30「这是发展卡牌，共90张」→ 展示 1 张发展卡正面（展示位居中）。第二节开始不再看盒子；三摞牌堆要到「摆成一列」那条才飞进来。",
+  "note": "台词「这是发展卡牌，共90张」：切特写，展示 1 张发展卡正面；牌堆此时不可见。",
   "start": {
     "set": []
   },
   "events": [
     {
-      "at": 0.1,
+      "at": 0.05,
       "dur": 0.0,
       "action": "showbox",
       "on": 0
     },
     {
-      "at": 0.15,
-      "dur": 0.3,
-      "action": "fade",
-      "zone": "deck_level_1",
-      "to_alpha": 0.0
+      "at": 0.1,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "showcase",
+      "camera_padding": 1.6
     },
     {
-      "at": 0.15,
-      "dur": 0.3,
-      "action": "fade",
-      "zone": "deck_level_2",
-      "to_alpha": 0.0
-    },
-    {
-      "at": 0.15,
-      "dur": 0.3,
-      "action": "fade",
-      "zone": "deck_level_3",
-      "to_alpha": 0.0
-    },
-    {
-      "at": 0.35,
+      "at": 0.3,
       "dur": 0.35,
       "action": "fade",
       "target": "sample_card_1#1",
       "to_alpha": 1.0
     },
     {
-      "at": 0.8,
-      "dur": 0.45,
+      "at": 0.75,
+      "dur": 0.5,
       "action": "highlight",
       "target": "sample_card_1#1",
-      "grow": 1.1,
+      "grow": 1.08,
       "easing": "easeOutCubic"
     }
   ]

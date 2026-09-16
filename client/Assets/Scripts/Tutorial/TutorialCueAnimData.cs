@@ -319,6 +319,15 @@ namespace BoardGameTutorial
         public float lead;
 
         /// <summary>
+        /// 取景目标：写 zone id 则把镜头对准该 zone（特写），写 "board" 或留空则回到整桌取景。
+        /// 用于「这是发展卡牌」这类特写时刻 —— 否则卡在整桌取景里只占很小一块。
+        /// </summary>
+        public string camera;
+
+        /// <summary>取景特写时的留白倍率（越大视野越宽、物体越小）。默认 2.2。</summary>
+        public float camera_padding;
+
+        /// <summary>
         /// showbox：要显示/隐藏的图片（相对 games/{game}，例如 media/box.png）。
         /// 配 action="showbox"，on=1 显示、on=0 隐藏。
         /// </summary>

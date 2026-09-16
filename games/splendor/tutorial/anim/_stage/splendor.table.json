@@ -431,7 +431,7 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/一级发展卡_背面.jpg",
-      "alpha": 1.0
+      "alpha": 0.0
     },
     {
       "id": "card_back_2",
@@ -441,7 +441,7 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/二级发展卡_背面.jpg",
-      "alpha": 1.0
+      "alpha": 0.0
     },
     {
       "id": "card_back_3",
@@ -451,7 +451,7 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/三级发展卡_背面.jpg",
-      "alpha": 1.0
+      "alpha": 0.0
     },
     {
       "id": "noble",
@@ -782,19 +782,19 @@
       "count": 36,
       "template": "card_back_1",
       "palette": "card_level_1",
-      "zone": "box_level_1"
+      "zone": "deck_level_1"
     },
     {
       "count": 26,
       "template": "card_back_2",
       "palette": "card_level_2",
-      "zone": "box_level_2"
+      "zone": "deck_level_2"
     },
     {
       "count": 16,
       "template": "card_back_3",
       "palette": "card_level_3",
-      "zone": "box_level_3"
+      "zone": "deck_level_3"
     },
     {
       "count": 7,
