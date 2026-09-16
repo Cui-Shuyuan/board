@@ -36,10 +36,10 @@ namespace BoardGameTutorial
         /// <summary>
         /// 是否**已经出场过**（被动画带出来过）。
         ///
-        /// 模板上的 hide_until_animated 是静态的，只能表达"还没出场"。
-        /// 若用它判断每一帧的可见性，场景一旦重建（换 cue 会重建），
-        /// 已经发出去的牌又会被当成"没出场"而变透明 —— 用户报的
-        /// "发完12张牌后这12张牌消失"就是这个。
+        /// 现在的"还没出场"主要靠**对象根本还没被创建**（见 create 原语）来表达；
+        /// 这个标记用于"预先存在、之后才被动画带出来"的那些（例如从头构建场景时的组件）。
+        /// 曾经模板上有一个静态的 hide_until_animated，用它判断每帧可见性 ——
+        /// 场景一重建就把已出场的牌重新隐藏（用户报的"发完12张牌后消失"）。
         /// </summary>
         public bool Shown;
 
@@ -294,7 +294,7 @@ namespace BoardGameTutorial
                     EntryAnchor = src.EntryAnchor,
                     Flipped = src.Flipped,
                     // 注意：新增的每件状态都要加进这份复制清单，否则交接后就丢了。
-                    // hide_until_animated 按模板判断时不会发现——它会在重建后重新隐藏已出场的牌。
+                    // 曾经漏掉它：重建后已出场的牌会重新隐藏。
                     Shown = src.Shown,
                     LiveScale = src.LiveScale,
                     LiveRotation = src.LiveRotation,

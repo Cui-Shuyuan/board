@@ -370,54 +370,55 @@ namespace BoardGameTutorial.Editor
                 return;
             }
 
+            // 市场牌现在**在发牌那一刻才被创建**（不再预先摆在牌堆位置等发牌），
+            // 所以"发牌前停在牌堆内"这条旧假设不再成立，改为断言它**还不存在**。
+            // 出场位置仍对准对应牌堆：由模板 from_zone 决定（下方断言）。
             string probeId = "market_card_1_emerald#1";
-            Vector3 startPos = Vector3.zero;
+            bool existsEarly = false;
             foreach (var it in anim.Store.Items)
-                if (it.Id == probeId && it.Actor != null) startPos = it.Actor.Go.transform.localPosition;
+                if (it.Id == probeId) existsEarly = true;
+            Debug.Log($"[DealTest] {(existsEarly ? "FAIL" : "PASS")} 发牌前该牌尚未存在（现在是发牌时创建）");
+            if (existsEarly) failures++;
 
             var deckPos = anim.Store.ZoneCenter("deck_level_1");
             var slotPos = anim.Store.ZonePosition("card_market", 0);
-            Debug.Log($"[DealTest] 起始=({startPos.x:0.00},{startPos.z:0.00}) " +
-                      $"牌堆=({deckPos.x:0.00},{deckPos.z:0.00}) 市场首格=({slotPos.x:0.00},{slotPos.z:0.00})");
-
-            // 牌在牌堆里占的是一层，位置是「中心 ± 层偏移」，不一定是中心本身。
-            // 判据放宽到「在牌堆范围内」（牌堆可见层最多错开 8*0.016）。
-            bool onDeck = Mathf.Abs(startPos.x - deckPos.x) < 0.20f && Mathf.Abs(startPos.z - deckPos.z) < 0.20f;
-            Debug.Log($"[DealTest] {(onDeck ? "PASS" : "FAIL")} 发牌前停在对应牌堆内 " +
-                      $"起=({startPos.x:0.00},{startPos.z:0.00}) 牌堆中心=({deckPos.x:0.00},{deckPos.z:0.00})");
-            if (!onDeck) failures++;
+            Debug.Log($"[DealTest] 牌堆=({deckPos.x:0.00},{deckPos.z:0.00}) " +
+                      $"市场首格=({slotPos.x:0.00},{slotPos.z:0.00})");
 
             // 手动驱动协程：编辑器里设固定帧长，Time.deltaTime 才会推进补间
             // （-executeMethod 没有帧循环，deltaTime 恒为 0，直接 Seek 测不出补间）。
             // 补间由 StartCoroutine 驱动，而批处理没有帧循环时协程不会推进 —— 端到端
             // 断言在这里测不了。改为断言「补间参数正确」+「原语本身能走到终点」：
             // 参数对 + 原语对 ⇒ 编辑器里必然飞到位。
+            // 发牌现在走 create：牌**直接创建在市场格位上**（不再有牌堆→市场的位移补间），
+            // 所以这里断言的是：它落点正确、且出场位置对准对应牌堆（模板 from_zone 决定）。
             var expectedTo = anim.Store.ZonePosition("card_market", 0);
-            Vector3 actualFrom = Vector3.zero, actualTo = Vector3.zero;
-            var plan = anim.PlanMoveForTest("market_card_1_emerald#1");
-            if (plan != null)
-            {
-                // 直接用搬运计划记录的起终点（PlanMove 在触发时就快照好了），
-                // 不再自行推算 —— 自行推算会漏掉 from_zone 等语义。
-                actualFrom = plan.From;
-                actualTo = plan.To;
-            }
-            // 起点判据：必须落在对应牌堆范围内（牌堆里每张牌占一层，位置略偏）。
-            bool planOk = plan != null
+            Vector3 actualTo = Vector3.zero; bool found = false;
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.1f) anim.Seek(tt);
+            foreach (var it in anim.Store.Items)
+                if (it.Id == "market_card_1_emerald#1" && it.Actor != null)
+                { actualTo = it.Actor.Go.transform.localPosition; found = true; }
+
+            bool planOk = found
                 && Mathf.Abs(actualTo.x - expectedTo.x) < 0.01f
-                && Mathf.Abs(actualTo.z - expectedTo.z) < 0.01f
-                && Mathf.Abs(actualFrom.x - deckPos.x) < 0.20f
-                && Mathf.Abs(actualFrom.z - deckPos.z) < 0.20f;
-            Debug.Log($"[DealTest] {(planOk ? "PASS" : "FAIL")} 发牌补间参数：" +
-                      $"起=({actualFrom.x:0.00},{actualFrom.z:0.00}) 止=({actualTo.x:0.00},{actualTo.z:0.00}) " +
-                      $"期望止=({expectedTo.x:0.00},{expectedTo.z:0.00})");
+                && Mathf.Abs(actualTo.z - expectedTo.z) < 0.01f;
+            Debug.Log($"[DealTest] {(planOk ? "PASS" : "FAIL")} 发牌落点正确（create 直接创建到市场格位）：" +
+                      $"落=({actualTo.x:0.00},{actualTo.z:0.00}) 期望=({expectedTo.x:0.00},{expectedTo.z:0.00})");
             if (!planOk) failures++;
+
+            // 出场起点仍须对准对应牌堆：由模板 from_zone 提供
+            var probeTpl = anim.Store.GetTemplate("market_card_1_emerald");
+            string fromZone = probeTpl != null ? probeTpl.from_zone : null;
+            bool anchorOk = fromZone == "deck_level_1";
+            Debug.Log($"[DealTest] {(anchorOk ? "PASS" : "FAIL")} 出场起点对准对应牌堆：" +
+                      $"market_card_1_emerald.from_zone={fromZone ?? "(空)"}");
+            if (!anchorOk) failures++;
 
             {
                 var probe = new GameObject("primProbe");
                 TutorialPrimitives.ManualDelta = 1f / 60f;
                 TutorialPrimitives.Paused = false;
-                var e0 = TutorialPrimitives.TweenPosition(probe.transform, actualFrom, actualTo, 0.45f, "easeInOutCubic");
+                var e0 = TutorialPrimitives.TweenPosition(probe.transform, deckPos, actualTo, 0.45f, "easeInOutCubic");
                 int n = 0;
                 while (e0.MoveNext()) n++;
                 float dd = Vector3.Distance(probe.transform.position, actualTo);

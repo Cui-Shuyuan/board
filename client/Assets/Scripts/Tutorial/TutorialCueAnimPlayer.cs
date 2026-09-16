@@ -415,7 +415,7 @@ namespace BoardGameTutorial
             var pos = Store.CurrentPosition(item);
             actor.LivePosition = pos;
             go.transform.localPosition = pos;
-            actor.LiveAlpha = (itemTpl.hide_until_animated && !item.Shown) ? 0f : itemTpl.alpha;
+            actor.LiveAlpha = itemTpl.alpha;
             ApplyAlpha(actor);
         }
 
@@ -435,8 +435,7 @@ namespace BoardGameTutorial
                 alpha = tpl.alpha, rotation = tpl.rotation,
                 sorting_order = tpl.sorting_order, highlight = tpl.highlight,
                 // 注意：新增模板字段必须在这里也复制一份，否则实例色板与模板不同时会静默丢失。
-                // 已经漏过 hide_until_animated / from_zone / tint（表现各不相同、都很难查）。
-                hide_until_animated = tpl.hide_until_animated,
+                // 已经漏过 from_zone / tint（表现各不相同、都很难查）。
                 from_zone = tpl.from_zone,
             };
             return clone;
@@ -456,10 +455,8 @@ namespace BoardGameTutorial
             // 曾经这里一律用模板 alpha（默认 1），靠之后采样才置 0 —— 于是
             // LoadCue 到第一次 Seek 之间有一段空档，十几张待发牌会以不透明状态
             // 叠在牌堆上闪一下（用户看到「牌堆闪了一下」）。
-            bool hidden = tpl.hide_until_animated;
-            color.a = hidden ? 0f : Mathf.Clamp01(tpl.alpha);
+            color.a = Mathf.Clamp01(tpl.alpha);
             sr.color = color;
-            if (hidden) sr.enabled = false;   // 双保险：连绘制都不参与
 
             var scale = LocalScaleFor(tpl, sprite);
             if (tpl.highlight)
@@ -975,9 +972,7 @@ namespace BoardGameTutorial
                     // 透明度必须在这里也复位：要求隐藏的组件在片段生效前一律透明。
                     // 之前这个分支直接 continue，跳过了这段 —— 二级/三级市场牌就带着
                     // 默认 alpha=1 显示在自己的牌堆位置上，看起来像往牌堆里发卡背。
-                    // 只看 hide_until_animated 会让已出场的牌在重建后重新隐藏（见 ZoneItem.Shown）
-                    actor.LiveAlpha = (item.Template != null && item.Template.hide_until_animated
-                                       && !item.Shown) ? 0f : actor.BaseAlpha;
+                    actor.LiveAlpha = actor.BaseAlpha;
                     actor.LiveColor = item.BaseColor;
                     ApplyAlpha(actor);
                     continue;
@@ -990,12 +985,10 @@ namespace BoardGameTutorial
                 actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
                 actor.LiveScale = actor.BaseScale;
                 actor.Go.transform.localScale = actor.LiveScale;
-                // 默认状态：要求「动画前不可见」的组件一律透明。
-                // 这是**默认**而非补丁——之前只在「有片段但未开始」时隐藏，
-                // 漏掉了「还没有任何片段」的那些（二级/三级市场牌），
-                // 它们就按默认透明度显示、叠在各自牌堆上，看起来像往牌堆里发卡背。
-                bool hideNow = item.Template != null && item.Template.hide_until_animated && !item.Shown;
-                actor.LiveAlpha = hideNow ? 0f : actor.BaseAlpha;
+                // 默认状态：按组件自己的基准透明度。
+                // 「还没出场的东西不可见」不再靠模板标记，而是**对象根本还没被创建**
+                // （见 create 原语）——所以这里不需要额外判断。
+                actor.LiveAlpha = actor.BaseAlpha;
                 ApplyAlpha(actor);
                 RefreshFace(actor);
             }
@@ -1016,7 +1009,8 @@ namespace BoardGameTutorial
 
                 if (clip.HasFlip)
                 {
-                    float yaw = Mathf.LerpUnclamped(clip.FlipFromYaw, clip.FlipFromYaw + 180f, k);
+                    float toYaw = clip.FlipHalfTurn ? clip.FlipFromYaw + 360f : clip.FlipFromYaw + 180f;
+                    float yaw = Mathf.LerpUnclamped(clip.FlipFromYaw, toYaw, k);
                     clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
                     bool showingBack = Mathf.Cos(yaw * Mathf.Deg2Rad) < 0f;
                     if (clip.Actor.BackSprite != null)
@@ -1292,6 +1286,7 @@ namespace BoardGameTutorial
 
             public bool HasFlip;
             public float FlipFromYaw; // 起始偏航角（0 或 180）
+            public bool FlipHalfTurn; // true = 翻半圈回到原角度（新建组件的翻转）
 
             public bool HasScale;
             public Vector3 ScaleFrom, ScaleTo;
@@ -1716,7 +1711,26 @@ namespace BoardGameTutorial
             foreach (var item in created)
             {
                 if (item == null) continue;
+                // 指定格位：发牌要发到"第 n 格"，否则只会追加到末尾、摆不成 4 列网格
+                if (ev.slot >= 0 && ev.slot != item.Order) Store.MoveToSlot(item, zone, ev.slot);
+                // 创建出来的组件默认"已出场"：它不曾处于"等待出场"的状态
+                item.Shown = true;
                 BuildActorObject(item);
+
+                // create 带 flip = 出场过程中翻到正面（发牌时"翻开四张"）。
+                // 与 move 的翻转走同一套：FlipFromYaw 起翻、逻辑状态立即到终态
+                // （漏了 FlipFromYaw 会一直停在背面 —— 因为它默认 0，翻完恰好是 180°）。
+                if (ev.flip && item.Actor != null && item.Actor.BackSprite != null)
+                {
+                    var clip = ClipAt(item, item.Actor, ev);
+                    clip.HasFlip = true;
+                    // 新建的组件没有历史偏航角：从 0° 起翻、走完半圈回到 0°，
+                    // 由 sprite 决定看到的是哪一面。若沿用 move 的 (from, from+180)
+                    // 会停在 180°，把正面贴图也镜像掉 —— 终态看起来仍是背面。
+                    clip.FlipFromYaw = 0f;
+                    clip.FlipHalfTurn = true;
+                    item.Flipped = true;
+                }
             }
         }
 

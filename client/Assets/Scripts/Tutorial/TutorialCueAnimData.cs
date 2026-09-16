@@ -180,13 +180,6 @@ namespace BoardGameTutorial
         /// <summary>翻转用的另一面（相对 games/{game}）。有它才能「边移动边翻转」。</summary>
         public string back_image;
 
-
-        /// <summary>
-        /// 在它自己的动画开始之前完全不可见。用于市场牌：否则它们会叠在牌堆位置上，
-        /// 看起来像牌堆多出好几层卡背。
-        /// </summary>
-        public bool hide_until_animated;
-
         /// <summary>
         /// 入场起点落在这个 zone 的位置（而不是 offstage 中心）。
         /// 用于「市场牌从对应牌堆的位置飞出来」这类需求：牌真正归属仍在盒子里，
