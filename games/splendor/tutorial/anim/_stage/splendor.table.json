@@ -330,6 +330,66 @@
         "z": 0.0
       },
       "margin": 6.0
+    },
+    {
+      "id": "box_gem_diamond",
+      "label": "gem_diamond 在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_gem_sapphire",
+      "label": "gem_sapphire 在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_gem_ruby",
+      "label": "gem_ruby 在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_gem_emerald",
+      "label": "gem_emerald 在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_gem_onyx",
+      "label": "gem_onyx 在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_gem_gold",
+      "label": "gem_gold 在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
     }
   ],
   "templates": [
@@ -703,42 +763,42 @@
       "count": 7,
       "template": "gem",
       "palette": "gem_diamond",
-      "zone": "offstage",
+      "zone": "box_gem_diamond",
       "from": "bottom"
     },
     {
       "count": 7,
       "template": "gem",
       "palette": "gem_sapphire",
-      "zone": "offstage",
+      "zone": "box_gem_sapphire",
       "from": "bottom"
     },
     {
       "count": 7,
       "template": "gem",
       "palette": "gem_ruby",
-      "zone": "offstage",
+      "zone": "box_gem_ruby",
       "from": "bottom"
     },
     {
       "count": 7,
       "template": "gem",
       "palette": "gem_emerald",
-      "zone": "offstage",
+      "zone": "box_gem_emerald",
       "from": "bottom"
     },
     {
       "count": 7,
       "template": "gem",
       "palette": "gem_onyx",
-      "zone": "offstage",
+      "zone": "box_gem_onyx",
       "from": "bottom"
     },
     {
       "count": 5,
       "template": "gem",
       "palette": "gem_gold",
-      "zone": "offstage",
+      "zone": "box_gem_gold",
       "from": "bottom"
     },
     {

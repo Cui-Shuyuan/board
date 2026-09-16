@@ -1314,6 +1314,59 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 机制通用性自检：**同一套「整组搬运」机制，对宝石和牌堆一样好使**。
+        /// 这条是为了守住一条设计原则：树里谁排第一取决于**先介绍谁**，
+        /// 不是"卡片有特殊地位"。所以搬运/分组机制不能对牌有特例。
+        /// </summary>
+        public static void SelfTestGroupMoveGeneric()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("GroupMoveHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", "setup.cards.001.1", false);
+            anim.Seek(0.2f);   // 牌堆还在盒子里
+
+            // 用与牌堆**完全相同的调用方式**把一堆宝石搬进供应堆
+            var before = anim.Store.CountInZone("box_gem_diamond");
+            anim.TriggerForTest(new CueAnimEvent
+            {
+                at = 0.3f, dur = 0.6f, action = "move", group = true,
+                from = new List<string> { "box_gem_diamond" },
+                zone = "gem_supply_diamond", easing = "easeInOutCubic",
+            });
+            anim.Seek(1.2f);
+
+            int inSupply = anim.Store.CountInZone("gem_supply_diamond");
+            int inBox = anim.Store.CountInZone("box_gem_diamond");
+            bool moved = inSupply == before && inBox == 0 && before > 0;
+            Debug.Log($"[Gen] {(moved ? "PASS" : "FAIL")} 同一套整组搬运可用于宝石：" +
+                      $"box_gem_diamond {before} → 供应堆 {inSupply}（盒中剩 {inBox}）");
+            if (!moved) failures++;
+
+            // 牌堆也仍然好使（同一条代码路径）
+            anim.TriggerForTest(new CueAnimEvent
+            {
+                at = 1.3f, dur = 0.6f, action = "move", group = true,
+                from = new List<string> { "box_level_1" },
+                zone = "deck_level_1", easing = "easeInOutCubic",
+            });
+            anim.Seek(2.2f);
+            int deck = anim.Store.CountInZone("deck_level_1");
+            int deckBox = anim.Store.CountInZone("box_level_1");
+            bool deckOk = deck == 36 && deckBox == 0;
+            Debug.Log($"[Gen] {(deckOk ? "PASS" : "FAIL")} 牌堆用同一机制搬进桌面：" +
+                      $"deck_level_1={deck}（盒中剩 {deckBox}）");
+            if (!deckOk) failures++;
+
+            Debug.Log($"[Gen] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
