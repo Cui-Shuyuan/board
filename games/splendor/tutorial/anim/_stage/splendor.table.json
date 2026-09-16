@@ -391,6 +391,28 @@
         "z": 0.0
       },
       "margin": 6.0
+    },
+    {
+      "id": "showcase",
+      "label": "展示位",
+      "center": {
+        "x": 0.0,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "pile"
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      }
     }
   ],
   "templates": [
@@ -408,7 +430,8 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
-      "face_image": "media/card/一级发展卡_背面.jpg"
+      "face_image": "media/card/一级发展卡_背面.jpg",
+      "alpha": 1.0
     },
     {
       "id": "card_back_2",
@@ -417,7 +440,8 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
-      "face_image": "media/card/二级发展卡_背面.jpg"
+      "face_image": "media/card/二级发展卡_背面.jpg",
+      "alpha": 1.0
     },
     {
       "id": "card_back_3",
@@ -426,7 +450,8 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
-      "face_image": "media/card/三级发展卡_背面.jpg"
+      "face_image": "media/card/三级发展卡_背面.jpg",
+      "alpha": 1.0
     },
     {
       "id": "noble",
@@ -685,6 +710,17 @@
       "note": "3 级卡面（onyx），背面同该级卡背",
       "from_zone": "deck_level_3",
       "hide_until_animated": true
+    },
+    {
+      "id": "sample_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_绿.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "hide_until_animated": true
     }
   ],
   "anchors": [
@@ -808,6 +844,12 @@
       "palette": "noble",
       "zone": "offstage",
       "from": "top"
+    },
+    {
+      "template": "sample_card_1",
+      "palette": "card_level_1",
+      "zone": "showcase",
+      "count": 1
     }
   ],
   "containers": [

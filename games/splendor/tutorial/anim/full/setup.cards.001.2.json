@@ -4,14 +4,45 @@
   "track": "full",
   "cue": "setup.cards.001.2",
   "stage": "_stage/splendor.table",
-  "note": "高亮一级牌堆：整摞一起放大再回落（区域高亮作用于整组，不是单张）。",
+  "note": "台词「分别是40张绿色的一级发展卡牌」：展示位那张正面收起，三种卡背（绿/黄/蓝）出现，并高亮绿色。三摞牌堆此时只是三张卡背（各一小摞），要到「摆成一列」那条才正式成堆。",
+  "start": {
+    "set": []
+  },
   "events": [
     {
-      "at": 1.45,
-      "dur": 1.45,
+      "at": 0.1,
+      "dur": 0.3,
+      "action": "fade",
+      "target": "sample_card_1#1",
+      "to_alpha": 0.0
+    },
+    {
+      "at": 0.2,
+      "dur": 0.4,
+      "action": "fade",
+      "zone": "deck_level_1",
+      "to_alpha": 1.0
+    },
+    {
+      "at": 0.35,
+      "dur": 0.4,
+      "action": "fade",
+      "zone": "deck_level_2",
+      "to_alpha": 1.0
+    },
+    {
+      "at": 0.5,
+      "dur": 0.4,
+      "action": "fade",
+      "zone": "deck_level_3",
+      "to_alpha": 1.0
+    },
+    {
+      "at": 0.9,
+      "dur": 1.1,
       "action": "highlight",
       "zone": "deck_level_1",
-      "grow": 1.2,
+      "grow": 1.18,
       "easing": "easeInOutCubic"
     }
   ]

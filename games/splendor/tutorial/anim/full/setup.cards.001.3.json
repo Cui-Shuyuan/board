@@ -4,22 +4,25 @@
   "track": "full",
   "cue": "setup.cards.001.3",
   "stage": "_stage/splendor.table",
-  "note": "高亮二级、三级牌堆：整摞一起放大再回落（区域高亮作用于整组）。",
+  "note": "台词「30张黄色…和20张蓝色…」→ 依次高亮黄色、蓝色卡背。",
+  "start": {
+    "set": []
+  },
   "events": [
     {
-      "at": 0.85,
-      "dur": 1.6,
+      "at": 0.0,
+      "dur": 1.2,
       "action": "highlight",
       "zone": "deck_level_2",
-      "grow": 1.2,
+      "grow": 1.18,
       "easing": "easeInOutCubic"
     },
     {
-      "at": 3.65,
-      "dur": 1.55,
+      "at": 2.9,
+      "dur": 1.2,
       "action": "highlight",
       "zone": "deck_level_3",
-      "grow": 1.2,
+      "grow": 1.18,
       "easing": "easeInOutCubic"
     }
   ]

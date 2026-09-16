@@ -1501,16 +1501,25 @@ namespace BoardGameTutorial
             RunTween(TweenScale(actor, from, to, ev));
         }
 
+        /// <summary>
+        /// 淡入/淡出。走**片段**而不是协程：与其它原语统一，因此
+        /// ① 批处理/离线出图能看到；② 跳转与顺序播放一致；③ 暂停会跟着停。
+        /// 之前用协程，导致它在离屏渲染里根本不发生（测不出来）。
+        /// </summary>
         private void TriggerFade(CueAnimEvent ev)
         {
             foreach (var actor in Resolve(ev))
             {
+                if (actor?.Item == null) continue;
+                float from = actor.LiveAlpha;
                 float to = ev.to_alpha >= 0f
                     ? Mathf.Clamp01(ev.to_alpha)
-                    : (actor.LiveAlpha > 0.5f ? 0f : 1f);
-                float from = actor.LiveAlpha;
-                actor.LiveAlpha = to;
-                RunTween(TweenAlpha(actor, from, to, ev));
+                    : (from > 0.5f ? 0f : 1f);
+
+                var clip = ClipAt(actor.Item, actor, ev);
+                clip.HasAlpha = true;
+                clip.AlphaFrom = from;
+                clip.AlphaTo = to;
             }
         }
 

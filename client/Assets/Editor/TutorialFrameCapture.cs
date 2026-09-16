@@ -455,7 +455,38 @@ namespace BoardGameTutorial.Editor
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.logMoves = true;
             anim.logTweens = true;
-            if (!anim.LoadCue(gameRoot, "full", cueId, false))
+
+            // -captureReplay 1：先把该 cue 之前的所有 cue 依次推到终态，再出图。
+            // 单条 cue 孤立载入会丢掉「上一条造成的状态」——例如牌堆是在上一条淡入的，
+            // 孤立载入就一片空白（这类误判已经发生过多次）。
+            if (ArgValue("-captureReplay", "0") == "1")
+            {
+                var playerGo = new GameObject("TimelineReplayHost");
+                var player = playerGo.AddComponent<TutorialCuePlayer>();
+                player.autoPlay = false;
+                player.tutorialRoot = Path.Combine(repoRoot, "games");
+                if (player.LoadRuntime())
+                {
+                    int idx = player.Document.cues.FindIndex(c => c.id == cueId);
+                    if (idx > 0)
+                    {
+                        var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        for (int k = 0; k < idx; k++)
+                            apply.Invoke(player, new object[] { anim,
+                                resolve.Invoke(player, new object[] { k }) });
+                        Debug.Log($"[Timeline] 已重放前 {idx} 条 cue 建立背景状态");
+                    }
+                }
+                Object.DestroyImmediate(playerGo);
+            }
+
+            // 有重放时用 continueState=true 延续刚建立的背景状态；
+            // 用 false 会把重放结果重置回 stage.initial（那样重放就白做了）。
+            bool replay = ArgValue("-captureReplay", "0") == "1";
+            if (!anim.LoadCue(gameRoot, "full", cueId, replay))
             {
                 Debug.LogError($"[Timeline] LoadCue 失败: {cueId}");
                 EditorApplication.Exit(1);
