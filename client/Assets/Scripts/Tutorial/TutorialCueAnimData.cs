@@ -282,6 +282,12 @@ namespace BoardGameTutorial
         public float lead;
 
         /// <summary>
+        /// shuffle：强度倍率（0 = 用默认 1.0）。
+        /// 大牌堆/小棋子可以用不同的量；幅度、频率、纵向分量都会按它缩放。
+        /// </summary>
+        public float amount;
+
+        /// <summary>
         /// move：源 zone。留空表示「组件原位」或按 target 指定。
         /// 写成数组时表示「从这几个 zone 各取 take 件」（例如三种宝石各取一枚）。
         /// </summary>

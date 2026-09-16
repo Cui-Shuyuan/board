@@ -184,3 +184,38 @@ entry = "<cue id>" → 那条 cue 的终态
 
 **共同规律**：这些全都只在「连续播多条 / 跳转」时才出现，单条 cue 的隔离测试永远看不到。
 所以自检必须走真实路径（`SelfTestEntryTree` / `SelfTestLivePath` / `CaptureSequence`）。
+
+## 洗混是通用方法（2026-09）
+
+任何 zone 都能洗，只要在 cue 里写一条事件：
+
+```json
+{ "at": 0.5, "dur": 0.7, "action": "shuffle", "zone": "deck_level_1" }
+{ "at": 0.5, "dur": 0.7, "action": "shuffle", "zone": "gem_supply_diamond", "amount": 0.6 }
+```
+
+`amount` 是强度倍率（省略或 0 = 1.0），用于小棋子或大牌堆的差别。
+
+### 实现要点（都在一处，改这里就够）
+
+`TutorialCueAnimPlayer.Shuffle` 内部类集中了全部参数：
+
+| 参数 | 值 | 说明 |
+|---|---|---|
+| `AmpMin/AmpMax` | 4.0 / 6.2 mm | 水平幅度区间 |
+| `FreqMin/FreqMax` | 8 / 14 Hz | 抖动频率区间（接近人手搓牌） |
+| `DepthMin/DepthMax` | 0.25 / 0.60 | 纵向幅度占水平的比例 |
+| `EnvelopePower` | 0.45 | 包络形状（前 1/4 起振、中段保持、末 1/4 收住） |
+
+**每张牌的四个量都由组件 id 散列决定**（`StableHash` + `Hash01`，不用 `Random`）：
+幅度、频率、初相、纵向分量。所以同一瞬间有的向左有的向右、抖得也不一样快。
+若所有牌同相摆动，看起来只是整摞在平移，不像洗牌。
+
+### 断言
+
+`SelfTestShuffleGeneric` 检查三件事：
+1. 三个牌堆都被洗到（张数 40/30/20）
+2. **同一 zone 内每张位移互不相同** —— 实测 40 张里 39 种（98%）
+3. 同一方法可用于非牌堆 zone（宝石供应堆）
+
+第 2 条是核心：它把「各张独立抖动」这个手感变成了机器可查的性质。

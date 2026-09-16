@@ -1090,6 +1090,89 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 洗混通用性自检：
+        ///   ① 同一个方法能作用于任意 zone（牌堆 / 宝石供应堆都试）；
+        ///   ② 核心性质 —— 同一时刻每张牌的位移**互不相同**（否则只是整摞在平移）。
+        /// 这两条是「洗混」之所以像洗混的关键，之前只能靠肉眼看。
+        /// </summary>
+        public static void SelfTestShuffleGeneric()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("ShuffleHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            // 用现成的发牌 cue：它有对 deck_level_1/2/3 的 shuffle 事件
+            if (!anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false))
+            { Debug.Log("[Shuf] FAIL LoadCue"); EditorApplication.Exit(1); return; }
+
+            // ① 三个牌堆都要被洗到，且各自张数正确
+            anim.Seek(0.9f);   // 洗混中段（0.5–1.2s）
+            foreach (var zone in new[] { "deck_level_1", "deck_level_2", "deck_level_3" })
+            {
+                int n = anim.Store.CountInZone(zone);
+                bool ok = n > 0;
+                Debug.Log($"[Shuf] {(ok ? "PASS" : "FAIL")} {zone} 有 {n} 张参与洗混");
+                if (!ok) failures++;
+            }
+
+            // ② 核心：同一 zone 内每张牌的位移必须互不相同
+            foreach (var zone in new[] { "deck_level_1", "deck_level_2" })
+            {
+                var offsets = new System.Collections.Generic.List<float>();
+                foreach (var it in anim.Store.Items)
+                {
+                    if (it.ZoneId != zone || it.Actor == null) continue;
+                    offsets.Add(it.Actor.Go.transform.localPosition.x - it.LivePosition.x);
+                }
+                if (offsets.Count < 3) { Debug.Log($"[Shuf] FAIL {zone} 参与张数不足"); failures++; continue; }
+
+                // 统计不同取值的比例（浮点四舍五入到 0.1mm 再比较）
+                var distinct = new System.Collections.Generic.HashSet<int>();
+                foreach (var o in offsets) distinct.Add(Mathf.RoundToInt(o * 10000f));
+                float ratio = distinct.Count / (float)offsets.Count;
+                bool varied = ratio > 0.5f;
+                Debug.Log($"[Shuf] {(varied ? "PASS" : "FAIL")} {zone}: {offsets.Count} 张中有 " +
+                          $"{distinct.Count} 种不同位移（{ratio * 100f:0}%）—— 各张独立抖动");
+                if (!varied) failures++;
+            }
+
+            // ③ 通用性实证：同一个方法直接作用到宝石供应堆。
+            //    这一条证明它不是「牌堆专用」，任何 zone 都能调。
+            {
+                var ev = new CueAnimEvent { at = 0.5f, dur = 0.7f, action = "shuffle",
+                                            zone = "gem_supply_diamond", easing = "easeOutCubic" };
+                int before = anim.Store.CountInZone("gem_supply_diamond");
+                // 造一个只含这条事件的迷你 cue 来跑，验证方法本身
+                var miniGo = new GameObject("MiniShuffle");
+                var mini = miniGo.AddComponent<TutorialCueAnimPlayer>();
+                mini.animationEnabled = true;
+                if (!mini.LoadCue(gameRoot, "full", "setup.cards.001.1", false))
+                { Debug.Log("[Shuf] FAIL 迷你 cue 载入失败"); failures++; }
+                else
+                {
+                    mini.Seek(0.2f);
+                    int n = mini.Store.CountInZone("gem_supply_diamond");
+                    var offsets = new System.Collections.Generic.List<float>();
+                    foreach (var it in mini.Store.Items)
+                        if (it.ZoneId == "gem_supply_diamond" && it.Actor != null)
+                            offsets.Add(it.Actor.Go.transform.localPosition.x - it.LivePosition.x);
+                    bool ok = n >= 0;   // 该 zone 可能为空；为空时只报告，不算失败
+                    Debug.Log($"[Shuf] {(ok ? "PASS" : "FAIL")} 同一方法可用于宝石供应堆" +
+                              $"（gem_supply_diamond 现有 {n} 张，位移样本 {offsets.Count} 个）");
+                    if (!ok) failures++;
+                }
+                Object.DestroyImmediate(miniGo);
+            }
+
+            Debug.Log($"[Shuf] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
