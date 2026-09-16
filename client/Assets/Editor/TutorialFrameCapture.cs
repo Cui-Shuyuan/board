@@ -500,8 +500,10 @@ namespace BoardGameTutorial.Editor
             // 这正是用户报过的「一级牌被发到二级位置、又被收回」。行 z 由
             // center + row * z_step 决定，所以逐级对比牌堆 z 即可。
             // 断言前先推到整条 cue 之后：动画可能还没播完，否则会误判成「位置错误」。
-            // 断言统一在整条 cue 之后做：动画可能还没播完，否则会把飞行中的牌误判为错位。
-            anim.Seek(to + 3f);
+            // 断言统一在**整条 cue 之后**做，并且用 cue 自己的时长推算，
+            // 不用出图窗口的 to —— 出图窗口是可以随便调的（曾经因此误判）。
+            float cueEnd = anim.TotalDuration;
+            anim.Seek(cueEnd + 3f);
 
             int bad = 0;
 
@@ -510,7 +512,7 @@ namespace BoardGameTutorial.Editor
                 var probe = new GameObject("hideProbe");
                 var pa = probe.AddComponent<TutorialCueAnimPlayer>();
                 pa.LoadCue(gameRoot, "full", cueId, false);
-                pa.Seek(4.0f);   // 洗混结束、发牌之前
+                pa.Seek(1.4f);   // 洗混结束(1.2s)、发牌开始(1.6s)之前
                 int visible = 0; string firstId = null;
                 foreach (var it in pa.Store.Items)
                 {
@@ -533,7 +535,7 @@ namespace BoardGameTutorial.Editor
                 var pa = probe.AddComponent<TutorialCueAnimPlayer>();
                 pa.LoadCue(gameRoot, "full", cueId, false);
                 int prev = -1; bool monotonic = true;
-                for (float tt = 3.6f; tt <= to + 0.2f; tt += 0.2f)
+                for (float tt = 1.4f; tt <= cueEnd + 0.2f; tt += 0.2f)
                 {
                     pa.Seek(tt);
                     int settled = 0;
@@ -806,7 +808,7 @@ namespace BoardGameTutorial.Editor
                 Debug.Log($"[One] 牌堆=({deck.x:0.00},{deck.z:0.00})  槽{i}=({sl.x:0.00},{sl.z:0.00})");
             }
 
-            for (float time = 0f; time <= 9.0f; time += 0.1f)
+            for (float time = 0f; time <= 1.4f; time += 0.05f)
             {
                 anim.Seek(time);
                 int d1 = anim.Store.CountInZone("deck_level_1");
@@ -831,7 +833,7 @@ namespace BoardGameTutorial.Editor
                     if (!found) sb.Append($"   {id}:未找到");
                 }
                 Debug.Log(sb.ToString());
-                if (time >= 5.6f && time <= 8.4f) SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
+                if (time >= 0.45f && time <= 1.30f) SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
             }
             Debug.Log($"[One] 完成，图在 {outDir}");
         }

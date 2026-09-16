@@ -116,6 +116,7 @@ namespace BoardGameTutorial
         private readonly List<Coroutine> running = new List<Coroutine>();
 
         private float clock = -1f;
+        private float currentEventAt;
         private int nextIndex;
         private ZoneSnapshot entrySnapshot;
 
@@ -705,7 +706,7 @@ namespace BoardGameTutorial
             {
                 Item = item,
                 Actor = actor,
-                Start = clock * Mathf.Max(0.01f, timeScale) + Mathf.Max(0f, ev.lead) + Mathf.Max(0f, extraLead),
+                Start = currentEventAt + Mathf.Max(0f, ev.lead) + Mathf.Max(0f, extraLead),
                 Dur = Mathf.Max(0.01f, ev.dur),
                 Easing = EasingOr(ev),
             };
@@ -920,11 +921,20 @@ namespace BoardGameTutorial
 
                 if (clip.HasShuffle)
                 {
-                    float wave = Mathf.Sin(k * Mathf.PI);
-                    float dir = (clip.Item.Order % 2 == 0) ? 1f : -1f;
-                    var basePos = clip.Item.LivePosition;
+                    // 洗牌 = 每张牌各自**左右高频颤抖**：
+                    //   频率、幅度、相位、纵向分量都按牌号取不同的值，
+                    //   所以同一瞬间有的向左有的向右、抖得也不一样快 —— 才像在搓牌。
+                    //   外面再乘一个衰减包络：开头最猛，末尾收住，整体不跑位。
+                    float elapsed = Mathf.Max(0f, scaled - clip.Start);
+                    // 包络：前 1/4 起振、中段保持满幅、末 1/4 收住。
+                    // 用 (1-k) 线性衰减会让抖动过早变弱（实测 0.9s 后就几乎不动了）。
+                    float envelope = Mathf.Sin(Mathf.Clamp01(k) * Mathf.PI);
+                    envelope = Mathf.Pow(envelope, 0.45f);
+                    float w = elapsed * clip.ShuffleFreq * Mathf.PI * 2f + clip.ShufflePhase;
+                    float dx = Mathf.Sin(w) * clip.ShuffleAmp * envelope;
+                    float dz = Mathf.Sin(w * 0.73f + 1.1f) * clip.ShuffleZ * envelope;
                     clip.Actor.Go.transform.localPosition =
-                        basePos + new Vector3(dir * clip.ShuffleAmp * wave, 0f, 0f);
+                        clip.ShuffleFrom + new Vector3(dx, 0f, dz);
                 }
             }
         }
@@ -1018,6 +1028,10 @@ namespace BoardGameTutorial
         private void Trigger(CueAnimEvent ev)
         {
             if (ev == null) return;
+            // 记下这条事件在时间轴上的位置：片段起点要用**事件时间**，
+            // 而不是「触发到它的那一刻」——后者随帧率/seek 粒度变化，
+            // 会让动画起点漂移、按 elapsed 计算的效果（如洗混）不一致。
+            currentEventAt = ev.at;
 
             switch (ev.action)
             {
@@ -1117,7 +1131,12 @@ namespace BoardGameTutorial
             public float RotFrom, RotTo;
 
             public bool HasShuffle;
-            public float ShuffleAmp;
+            public Vector3 ShuffleFrom;     // 抖动基准位置（触发时快照，别人挪它不影响）
+            public float ShuffleAmp;        // 水平幅度（每张不同）
+            public float ShuffleFreq;       // 抖动频率（每张不同）
+            public float ShufflePhase;      // 初相（每张不同）
+            public float ShuffleZ;          // 纵向幅度（比水平小，方向也各自不同）
+            public float ShuffleDecay;      // 衰减速度
 
             public string Easing;
 
@@ -1375,18 +1394,67 @@ namespace BoardGameTutorial
         /// 摊成一条横跨画面的长龙 —— 洗牌不该把牌洗到桌面上。所以改成原地抖动：
         /// 轻微摇晃 + 微小缩放起伏，位置始终不变。
         /// </summary>
+        /// <summary>
+        /// 洗混：牌堆里每张牌原地左右高频颤抖。
+        ///
+        /// 关键是**每张牌都不一样**：用牌号做种子决定幅度、频率、初相和纵向分量，
+        /// 同一瞬间有的向左有的向右、抖得也不一样快。若所有牌同相摆动，
+        /// 看起来只是整摞在晃，不像洗牌。
+        /// 颤抖幅度很小（毫米级），所以叠在一起的牌只会让牌堆边缘发毛 —— 正是要的效果。
+        /// </summary>
         private void TriggerShuffle(CueAnimEvent ev)
         {
-            // 洗混也走片段：位移按 sin(πk) 起伏，牌堆只在原地抖动、不会摊开。
-            // 逐张错开一点，看起来才像在搓牌。
             int i = 0;
+            int count = 0;
+            foreach (var actor in Resolve(ev)) count++;
+
             foreach (var actor in Resolve(ev))
             {
                 if (actor?.Go == null || actor.Item == null) continue;
-                var clip = ClipAt(actor.Item, actor, ev, i * 0.03f);
+
+                // 由牌号散列出的确定性伪随机（不用 Random，保证每次播放一致）
+                int h = StableHash(actor.Item.Id) + i * 7919;
+                float r1 = Hash01(h, 1);
+                float r2 = Hash01(h, 2);
+                float r3 = Hash01(h, 3);
+                float r4 = Hash01(h, 4);
+
+                var clip = ClipAt(actor.Item, actor, ev);
                 clip.HasShuffle = true;
-                clip.ShuffleAmp = 0.05f;
+                clip.ShuffleFrom = actor.LivePosition;
+
+                // 幅度 2.0~3.6mm（0.020~0.036 世界单位）：够看出「发毛」，又不会散开
+                clip.ShuffleAmp = Mathf.Lerp(0.040f, 0.062f, r1);
+                // 频率 8~14Hz：人手搓牌的频率区间
+                clip.ShuffleFreq = Mathf.Lerp(8f, 14f, r2);
+                clip.ShufflePhase = r3 * Mathf.PI * 2f;   // 初相不同 → 瞬时方向不同
+                clip.ShuffleZ = clip.ShuffleAmp * Mathf.Lerp(0.25f, 0.6f, r4);
+                clip.ShuffleDecay = 2.6f;                  // 约 1.5s 内收住
                 i++;
+            }
+        }
+
+        /// <summary>字符串的稳定散列（与平台/运行次数无关）。</summary>
+        private static int StableHash(string s)
+        {
+            unchecked
+            {
+                int h = 17;
+                if (s != null) foreach (char c in s) h = h * 31 + c;
+                return h;
+            }
+        }
+
+        /// <summary>把散列值映射到 [0,1)。</summary>
+        private static float Hash01(int h, int salt)
+        {
+            unchecked
+            {
+                int x = h ^ (salt * 2654435761u.GetHashCode());
+                x = (x ^ (x >> 15)) * 0x2c1b3c6d;
+                x = (x ^ (x >> 12)) * 0x297a2d39;
+                x ^= x >> 15;
+                return (x & 0x7fffffff) / (float)0x80000000;
             }
         }
 

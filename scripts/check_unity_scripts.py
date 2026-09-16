@@ -251,6 +251,9 @@ namespace UnityEngine
     public class Transform : Component
     {
         public Vector3 position;
+        public Vector3 forward;
+        public Vector3 up;
+        public Vector3 right;
         public Vector3 localPosition;
         public Vector3 localScale;
         public Vector3 localEulerAngles;

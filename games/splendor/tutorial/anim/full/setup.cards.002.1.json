@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "发展卡发牌：三级各 4 张，分别从 deck_level_1/2/3 发到市场槽 0–3 / 4–7 / 8–11。一级 1.0–3.3s，二级 3.4–5.7s，三级 5.8–8.1s。每张在上一张落位之后才开始。发走后牌堆 40→36、30→26、20→16。",
+  "note": "发牌：洗混 0.5–1.2s；12 张从 1.6s 起每 0.53s 一张（单张 0.45s，前一张落位后再发下一张）。最后一张 7.43–7.88s，音频 8.448s。每张从对应牌堆出发、落到市场槽 0–11。牌堆 40→36、30→26、20→16。",
   "start": {
     "set": [
       {
@@ -83,8 +83,29 @@
   },
   "events": [
     {
-      "at": 1.0,
-      "dur": 0.5,
+      "at": 0.5,
+      "dur": 0.7,
+      "action": "shuffle",
+      "zone": "deck_level_1",
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 0.5,
+      "dur": 0.7,
+      "action": "shuffle",
+      "zone": "deck_level_2",
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 0.5,
+      "dur": 0.7,
+      "action": "shuffle",
+      "zone": "deck_level_3",
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 1.6,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_1_emerald#1",
       "zone": "card_market",
@@ -95,8 +116,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 1.6,
-      "dur": 0.5,
+      "at": 2.13,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_1_ruby#1",
       "zone": "card_market",
@@ -107,8 +128,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 2.2,
-      "dur": 0.5,
+      "at": 2.66,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_1_diamond#1",
       "zone": "card_market",
@@ -119,8 +140,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 2.8,
-      "dur": 0.5,
+      "at": 3.19,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_1_sapphire#1",
       "zone": "card_market",
@@ -131,8 +152,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 3.4,
-      "dur": 0.5,
+      "at": 3.72,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_2_emerald#1",
       "zone": "card_market",
@@ -143,8 +164,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 4.0,
-      "dur": 0.5,
+      "at": 4.25,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_2_ruby#1",
       "zone": "card_market",
@@ -155,8 +176,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 4.6,
-      "dur": 0.5,
+      "at": 4.78,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_2_diamond#1",
       "zone": "card_market",
@@ -167,8 +188,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 5.2,
-      "dur": 0.5,
+      "at": 5.31,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_2_sapphire#1",
       "zone": "card_market",
@@ -179,8 +200,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 5.8,
-      "dur": 0.5,
+      "at": 5.84,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_3_emerald#1",
       "zone": "card_market",
@@ -191,8 +212,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 6.4,
-      "dur": 0.5,
+      "at": 6.37,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_3_ruby#1",
       "zone": "card_market",
@@ -203,8 +224,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 7.0,
-      "dur": 0.5,
+      "at": 6.9,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_3_diamond#1",
       "zone": "card_market",
@@ -215,8 +236,8 @@
       "fade_in": 0.0
     },
     {
-      "at": 7.6,
-      "dur": 0.5,
+      "at": 7.43,
+      "dur": 0.45,
       "action": "move",
       "target": "market_card_3_sapphire#1",
       "zone": "card_market",
