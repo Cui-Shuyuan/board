@@ -4,45 +4,56 @@
   "track": "full",
   "cue": "setup.cards.001.1",
   "stage": "_stage/splendor.table",
-  "note": "设置 2.1 第一句：这是发展卡牌，共90张，根据背面分为三类。三摞牌从游戏盒（offstage, bottom）飞入摆好；这条不提颜色，所以不高亮任何一摞。飞行放在「牌，(1.03)」到「共(1.65)」之间的停顿里，不压住解说。",
+  "note": "第二节开始：先显示盒面（承接第一节的根画面），三摞发展卡整组从盒子里飞到桌面 —— 每摞同步移动，不散成扇形。之后盒面消失，进入牌桌介绍。",
+  "start": {
+    "set": []
+  },
   "events": [
     {
       "at": 0.35,
-      "dur": 0.42,
+      "dur": 0.0,
+      "action": "showbox",
+      "picture": "media/box.png",
+      "on": 1
+    },
+    {
+      "at": 1.2,
+      "dur": 0.9,
       "action": "move",
+      "group": true,
       "from": [
-        "offstage"
+        "box_level_1"
       ],
-      "take": 3,
       "zone": "deck_level_1",
-      "easing": "easeOutCubic",
-      "template": "card_back_1"
+      "easing": "easeInOutCubic"
     },
     {
-      "at": 0.35,
-      "dur": 0.42,
+      "at": 1.45,
+      "dur": 0.9,
       "action": "move",
+      "group": true,
       "from": [
-        "offstage"
+        "box_level_2"
       ],
-      "take": 3,
       "zone": "deck_level_2",
-      "easing": "easeOutCubic",
-      "lead": 0.12,
-      "template": "card_back_2"
+      "easing": "easeInOutCubic"
     },
     {
-      "at": 0.35,
-      "dur": 0.42,
+      "at": 1.7,
+      "dur": 0.9,
       "action": "move",
+      "group": true,
       "from": [
-        "offstage"
+        "box_level_3"
       ],
-      "take": 3,
       "zone": "deck_level_3",
-      "easing": "easeOutCubic",
-      "lead": 0.24,
-      "template": "card_back_3"
+      "easing": "easeInOutCubic"
+    },
+    {
+      "at": 3.2,
+      "dur": 0.0,
+      "action": "showbox",
+      "on": 0
     }
   ]
 }

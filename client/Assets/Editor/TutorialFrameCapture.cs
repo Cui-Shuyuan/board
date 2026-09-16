@@ -468,6 +468,7 @@ namespace BoardGameTutorial.Editor
             for (float time = from; time <= to + 1e-4f; time += step)
             {
                 anim.Seek(time);
+
                 var path = Path.Combine(outDir, $"t{time * 100:000}.png");
                 SaveFrame(path);
                 n++;
@@ -1200,7 +1201,13 @@ namespace BoardGameTutorial.Editor
                 var go = new GameObject("HiHost_" + c.zone);
                 var anim = go.AddComponent<TutorialCueAnimPlayer>();
                 anim.animationEnabled = true;
-                if (!anim.LoadCue(gameRoot, "full", c.cue, false))
+                // 牌堆现在要先从盒子里飞上桌（第二节第一条），所以先把它跑完再验高亮。
+                // 否则牌堆还在 box_level_N，高亮 zone 里一张牌都没有。
+                if (!anim.LoadCue(gameRoot, "full", "setup.cards.001.1", false))
+                { Debug.Log("[Hi] FAIL setup.cards.001.1 载入失败"); failures++; Object.DestroyImmediate(go); continue; }
+                anim.Seek(anim.TotalDuration + 1f);
+
+                if (!anim.LoadCue(gameRoot, "full", c.cue, true))
                 { Debug.Log($"[Hi] FAIL {c.cue} 载入失败"); failures++; Object.DestroyImmediate(go); continue; }
 
                 System.Func<float, float[]> scalesAt = (time) =>

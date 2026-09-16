@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "cue": "bg.intro.001.1",
+  "stage": "_stage/splendor.table",
+  "note": "第一节（背景介绍）：整节显示游戏盒封面。盒面挂在画面根下，进入第二节时会被自动清掉。",
+  "start": {
+    "set": []
+  },
+  "events": [
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "showbox",
+      "picture": "media/box.png",
+      "on": 1
+    }
+  ]
+}

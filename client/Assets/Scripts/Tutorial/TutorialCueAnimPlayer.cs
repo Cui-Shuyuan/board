@@ -124,6 +124,7 @@ namespace BoardGameTutorial
         private string gameRootPath;
         private GameObject animRoot;
         private Camera animCamera;
+        private SpriteRenderer boxSprite;
 
         private readonly Dictionary<string, CueAnimActor> actors = new Dictionary<string, CueAnimActor>();
         /// <summary>区域底板：zone id → 代表它的装饰件 id（静态底板，不带高亮）。</summary>
@@ -950,6 +951,12 @@ namespace BoardGameTutorial
                     clip.Actor.Go.transform.localScale = clip.Actor.LiveScale;
                 }
 
+                if (clip.HasGroupMove)
+                {
+                    var p2 = Vector3.LerpUnclamped(clip.GroupMoveFrom, clip.GroupMoveTo, k);
+                    clip.Actor.Go.transform.localPosition = p2;
+                }
+
                 if (clip.HasGroupShift)
                 {
                     var d = Vector3.LerpUnclamped(clip.GroupShiftFrom, clip.GroupShiftTo, k);
@@ -1084,6 +1091,14 @@ namespace BoardGameTutorial
                 Object.DestroyImmediate(animRoot);
                 animRoot = null;
             }
+
+            // 盒面等整幅图也一并销毁：换节（continueState=false）时自动消失，
+            // 不需要在数据里额外写一条「隐藏」事件。
+            if (boxSprite != null)
+            {
+                Object.DestroyImmediate(boxSprite.gameObject);
+                boxSprite = null;
+            }
         }
 
         // ── 原语 ──────────────────────────────────────────────────────────
@@ -1106,6 +1121,7 @@ namespace BoardGameTutorial
                 case "fade": TriggerFade(ev); return;
                 case "highlight": TriggerHighlight(ev); return;
                 case "shuffle": TriggerShuffle(ev); return;
+                case "showbox": TriggerShowBox(ev); return;
                 default:
                     Debug.LogWarning($"[TutorialCueAnim] unknown action '{ev.action}' in cue {CueId}");
                     return;
@@ -1203,6 +1219,10 @@ namespace BoardGameTutorial
             public bool HasGroupShift;
             public Vector3 GroupShiftFrom, GroupShiftTo;
 
+            /// <summary>整组搬运：每件各自算位移（到自己的目标格位），但同一时刻、同一时长。</summary>
+            public bool HasGroupMove;
+            public Vector3 GroupMoveFrom, GroupMoveTo;
+
             public bool HasAlpha;
             public float AlphaFrom, AlphaTo;
 
@@ -1271,7 +1291,9 @@ namespace BoardGameTutorial
                 return plan;
             }
 
-            int take = ev.take > 0 ? ev.take : 1;
+            // 整组搬运（ev.group）时取该 zone 的**全部**：
+            // 缺省的 take=1 只搬一件，一摞牌会只剩一张动（用户会看到"牌堆没出来"）。
+            int take = ev.take > 0 ? ev.take : (ev.group ? int.MaxValue : 1);
             var picked = new List<ZoneItem>();
 
             // from 写多个 zone = 每个 zone 各取 take 件（三种宝石各一枚）。
@@ -1350,9 +1372,20 @@ namespace BoardGameTutorial
                               $"from=({from.x:0.00},{from.z:0.00}) to=({to.x:0.00},{to.z:0.00}) dur={ev.dur}");
 
                 var clip = ClipAt(step.Item, actor, ev);
-                clip.HasMove = true;
-                clip.From = from;
-                clip.To = to;
+                if (ev.group)
+                {
+                    // 整组搬运：同一时刻、同一时长，但每件各自飞向自己的目标格位。
+                    // 逐件错开会让一整摞牌散成扇形；同步则保持"这一摞"的整体感。
+                    clip.HasGroupMove = true;
+                    clip.GroupMoveFrom = from;
+                    clip.GroupMoveTo = to;
+                }
+                else
+                {
+                    clip.HasMove = true;
+                    clip.From = from;
+                    clip.To = to;
+                }
 
                 // 淡入：发牌前市场牌是隐藏的（避免它们叠在牌堆上，看起来像多出几层卡背）
                 if (ev.fade_in >= 0f)
@@ -1549,6 +1582,82 @@ namespace BoardGameTutorial
             center /= actors.Count;
 
             GroupScaleActors(actors, center, grow, dur, lead, easing);
+        }
+
+        /// <summary>
+        /// 显示/隐藏一张整幅图片（例如游戏盒封面）。
+        ///
+        /// 用途：纯讲述性的小节（背景介绍）没有牌桌动作，但需要一张画面撑住。
+        /// 放在很低的 sortingOrder（比任何卡牌都低），并按视口等比缩放 —— 只缩放不做裁剪，
+        /// 保证整张图完整可见。
+        ///
+        /// 注意：它挂在 animRoot 下，所以换 cue（continueState=false）重建画面时会自动清掉，
+        /// 进入下一节不需要额外写"隐藏"事件。
+        /// </summary>
+        private void TriggerShowBox(CueAnimEvent ev)
+        {
+            bool show = ev.on >= 0.5f;
+            if (!show || string.IsNullOrEmpty(ev.picture))
+            {
+                if (boxSprite != null) { Object.DestroyImmediate(boxSprite.gameObject); boxSprite = null; }
+                return;
+            }
+
+            if (string.IsNullOrEmpty(gameRootPath)) return;
+            var path = Path.Combine(gameRootPath, ev.picture);
+            if (!File.Exists(path))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] showbox 图片不存在: {path}");
+                return;
+            }
+
+            // 用 gem 形状（圆遮罩对这张图不适用）→ 走 card 分支只做白底抠除；
+            // 这张图没有白底，抠除不影响画面。
+            var sprite = CardImageLoader.Load(path, "card");
+            if (sprite == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] showbox 加载失败: {path}");
+                return;
+            }
+
+            if (boxSprite == null)
+            {
+                var go = new GameObject("BoxArt");
+                // 挂在播放器自己下面，**不是** animRoot：
+                // animRoot 是牌桌根节点，显示盒面时会被整体隐藏，盒面不能被一起藏掉。
+                go.transform.SetParent(transform, false);
+                boxSprite = go.AddComponent<SpriteRenderer>();
+                boxSprite.sortingOrder = -900;   // 比卡牌低，但在纯色背景之上
+            }
+            boxSprite.sprite = sprite;
+            boxSprite.enabled = true;
+
+            // 等比缩放到视口的 ~92% 高度，居中放在取景中心
+            float aspect = animCamera != null && animCamera.aspect > 0.01f ? animCamera.aspect : 1.7778f;
+            float ortho = animCamera != null ? animCamera.orthographicSize : 2.8f;
+            float viewH = 2f * ortho;
+            float viewW = viewH * aspect;
+
+            float ppu = sprite.pixelsPerUnit > 0f ? sprite.pixelsPerUnit : 100f;
+            float nativeW = sprite.rect.width / ppu;
+            float nativeH = sprite.rect.height / ppu;
+
+            float k = Mathf.Min(viewH * 0.92f / nativeH, viewW * 0.92f / nativeW);
+            boxSprite.transform.localScale = new Vector3(k, k, 1f);
+
+            // 让它**正对相机**并居中：盒面是一张竖图，相机俯视 50°，
+            // 若像卡牌那样平躺就会被压扁并跑到画面底部。
+            var cam = animCamera != null ? animCamera : Camera.main;
+            if (cam != null)
+            {
+                var tr = boxSprite.transform;
+                tr.rotation = cam.transform.rotation;                     // 与相机同朝向
+                tr.position = cam.transform.position + cam.transform.forward * ortho;
+            }
+
+            // 不动牌桌：第一节的牌桌是空的（牌堆还在盒子里），第二节的牌堆从盒面**后面**
+            // 飞出来，正是要的效果。曾经这里把 animRoot 整体关掉却忘了打开，
+            // 结果盒面一消失画面就全空了。
         }
 
         /// <summary>字符串的稳定散列（与平台/运行次数无关）。</summary>

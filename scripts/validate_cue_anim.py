@@ -42,7 +42,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "wait"}
+ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "showbox", "wait"}
 SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
 EASINGS = {
@@ -309,6 +309,13 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             peak = ev.get("peak_alpha")
             if peak is not None and not 0.0 <= float(peak) <= 1.0:
                 report.error(ew, f"peak_alpha 超出 [0,1]: {peak}")
+        elif action == "showbox":
+            on = ev.get("on", 1)
+            # 隐藏时不需要 picture（沿用当前显示的那张）
+            if on not in (0, 1, 0.0, 1.0):
+                report.warn(ew, f"showbox.on 只能写 0 或 1，当前 {on!r}")
+            if on and not ev.get("picture"):
+                report.error(ew, "showbox 显示时需要 picture（相对 games/{game} 的图片路径）")
         elif action == "shuffle":
             if not zone and not target:
                 report.warn(ew, "shuffle 既没有 zone 也没有 target，会对全体生效")

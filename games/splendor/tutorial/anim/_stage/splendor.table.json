@@ -300,6 +300,36 @@
       "display": {
         "mode": "count"
       }
+    },
+    {
+      "id": "box_level_1",
+      "label": "1 级牌堆在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_level_2",
+      "label": "2 级牌堆在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
+    },
+    {
+      "id": "box_level_3",
+      "label": "3 级牌堆在盒中",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0
     }
   ],
   "templates": [
@@ -655,19 +685,19 @@
       "count": 36,
       "template": "card_back_1",
       "palette": "card_level_1",
-      "zone": "deck_level_1"
+      "zone": "box_level_1"
     },
     {
       "count": 26,
       "template": "card_back_2",
       "palette": "card_level_2",
-      "zone": "deck_level_2"
+      "zone": "box_level_2"
     },
     {
       "count": 16,
       "template": "card_back_3",
       "palette": "card_level_3",
-      "zone": "deck_level_3"
+      "zone": "box_level_3"
     },
     {
       "count": 7,

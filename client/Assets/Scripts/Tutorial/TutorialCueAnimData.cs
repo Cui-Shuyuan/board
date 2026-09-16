@@ -311,6 +311,15 @@ namespace BoardGameTutorial
         public float lead;
 
         /// <summary>
+        /// showbox：要显示/隐藏的图片（相对 games/{game}，例如 media/box.png）。
+        /// 配 action="showbox"，on=1 显示、on=0 隐藏。
+        /// </summary>
+        public string picture;
+
+        /// <summary>showbox：1=显示、0=隐藏。</summary>
+        public float on = 1f;
+
+        /// <summary>
         /// 选择器：容器名。与 target/zone 同级，优先级 target &gt; container &gt; zone。
         /// 容器可以装任意一组组件，用于「整组一起动」。
         /// </summary>
@@ -330,6 +339,12 @@ namespace BoardGameTutorial
 
         /// <summary>move：从每个 from zone 搬几件（0 = 未指定，按 1 处理）。</summary>
         public int take;
+
+        /// <summary>
+        /// move：把这一组当作**一个整体**搬运（同一段位移、同一时刻），而不是逐件飞。
+        /// 用于「整摞牌堆从盒子里出来」：逐件飞会让一摞牌像扇形散开。
+        /// </summary>
+        public bool group;
 
         /// <summary>move 时若 &gt;=0：从该透明度淡入到 1（用于「发牌前不可见」）。</summary>
         public float fade_in = -1f;
