@@ -71,6 +71,36 @@ namespace BoardGameTutorial
             return null;
         }
 
+        /// <summary>自检用：临时注册一个容器。</summary>
+        public void RegisterContainerForTest(string id, string[] itemIds)
+        {
+            if (stage == null) return;
+            if (stage.containers == null) stage.containers = new List<StageContainer>();
+            stage.containers.RemoveAll(c => c != null && c.id == id);
+            stage.containers.Add(new StageContainer { id = id, items = new List<string>(itemIds) });
+        }
+
+        /// <summary>自检用：直接触发一条事件。</summary>
+        public void TriggerForTest(CueAnimEvent ev)
+        {
+            currentEventAt = ev.at;
+            Trigger(ev);
+        }
+
+        /// <summary>自检用：取某组件的当前缩放。</summary>
+        public float ScaleOf(string itemId)
+        {
+            var a = FindActor(itemId);
+            return a?.Go != null ? a.Go.transform.localScale.x : 0f;
+        }
+
+        /// <summary>自检用：取某组件的基准缩放。</summary>
+        public float BaseScaleOf(string itemId)
+        {
+            var a = FindActor(itemId);
+            return a != null ? a.BaseScale.x : 0f;
+        }
+
         /// <summary>当前登记的片段数（自检用：应随 cue 长度有界，不应累积）。</summary>
         public int ClipCountForTest => clips.Count;
 
@@ -920,6 +950,12 @@ namespace BoardGameTutorial
                     clip.Actor.Go.transform.localScale = clip.Actor.LiveScale;
                 }
 
+                if (clip.HasGroupShift)
+                {
+                    var d = Vector3.LerpUnclamped(clip.GroupShiftFrom, clip.GroupShiftTo, k);
+                    clip.Actor.Go.transform.localPosition = clip.Actor.LivePosition + d;
+                }
+
                 if (clip.HasGroupScale)
                 {
                     // 整组一起放大：自身缩放 × 位置相对重心外扩，等效于「以重心为锚点整体缩放」。
@@ -1157,8 +1193,15 @@ namespace BoardGameTutorial
             /// 单张缩放会让牌堆只有某一张变大（用户看到的「只有堆底那张大了一圈」）。
             /// </summary>
             public bool HasGroupScale;
-            public Vector3 GroupCenter;   // 触发时快照的组重心
+            public Vector3 GroupCenter;   // 触发时快照的组锚点
             public float GroupGrow;       // 目标倍率
+
+            /// <summary>
+            /// 整组平移：组内每件位移相同的量，**相对位置不变**。
+            /// 用于「把这一组东西挪到别处」（例如展示玩家的保留区）。
+            /// </summary>
+            public bool HasGroupShift;
+            public Vector3 GroupShiftFrom, GroupShiftTo;
 
             public bool HasAlpha;
             public float AlphaFrom, AlphaTo;
@@ -1457,27 +1500,55 @@ namespace BoardGameTutorial
         /// 变大，看起来是「一张牌出错」而不是「这一堆被选中」。整组缩放才对。
         /// 用重心而不是某张牌的位置，是为了对任意形状的组都成立（牌堆、宝石堆、玩家持有区）。
         /// </summary>
-        private void GroupScaleZone(string zoneId, float grow, float dur, float lead, string easing)
+        /// <summary>
+        /// 对一组组件做整组缩放。锚点由调用方给出（通常是组重心，也可由容器自带）。
+        ///
+        /// 与逐个缩放的区别：位置也相对锚点一起外扩，等效于「把这一组当一个对象缩放」。
+        /// 逐个缩放只会让每张牌各自变大、整堆并不看起来变大。
+        /// </summary>
+        private void GroupScaleActors(List<CueAnimActor> actors, Vector3 center,
+                                      float grow, float dur, float lead, string easing)
         {
-            var actors = new List<CueAnimActor>();
-            Vector3 center = Vector3.zero;
-            foreach (var item in Store.Items)
-            {
-                if (item.ZoneId != zoneId || item.Actor == null) continue;
-                actors.Add(item.Actor);
-                center += item.Actor.LivePosition;
-            }
-            if (actors.Count == 0) return;
-            center /= actors.Count;
-
+            if (actors == null || actors.Count == 0) return;
             var synthetic = new CueAnimEvent { at = currentEventAt, dur = dur, lead = lead, easing = easing };
             foreach (var actor in actors)
             {
+                if (actor?.Item == null) continue;
                 var clip = ClipAt(actor.Item, actor, synthetic);
                 clip.HasGroupScale = true;
                 clip.GroupCenter = center;
                 clip.GroupGrow = grow;
             }
+        }
+
+        /// <summary>整组平移：组内每件位移相同，相对位置保持不变。</summary>
+        private void GroupShiftActors(List<CueAnimActor> actors, Vector3 delta,
+                                      float dur, float lead, string easing)
+        {
+            if (actors == null || actors.Count == 0) return;
+            var synthetic = new CueAnimEvent { at = currentEventAt, dur = dur, lead = lead, easing = easing };
+            foreach (var actor in actors)
+            {
+                if (actor?.Item == null) continue;
+                var clip = ClipAt(actor.Item, actor, synthetic);
+                clip.HasGroupShift = true;
+                clip.GroupShiftFrom = Vector3.zero;
+                clip.GroupShiftTo = delta;
+            }
+        }
+
+        private void GroupScaleZone(string zoneId, float grow, float dur, float lead, string easing)
+        {
+            var actors = new List<CueAnimActor>();
+            foreach (var item in Store.Items)
+                if (item.ZoneId == zoneId && item.Actor != null) actors.Add(item.Actor);
+            if (actors.Count == 0) return;
+
+            var center = Vector3.zero;
+            foreach (var a in actors) center += a.LivePosition;
+            center /= actors.Count;
+
+            GroupScaleActors(actors, center, grow, dur, lead, easing);
         }
 
         /// <summary>字符串的稳定散列（与平台/运行次数无关）。</summary>
@@ -1667,31 +1738,102 @@ namespace BoardGameTutorial
             return actors.TryGetValue(id, out var actor) ? actor : null;
         }
 
+        private enum Selector { None, Target, Container, Zone }
+
+        /// <summary>判定事件用的是哪种选择器（优先级 target &gt; container &gt; zone）。</summary>
+        private Selector PickSelector(CueAnimEvent ev)
+        {
+            if (ev == null) return Selector.None;
+            bool hasTarget = !string.IsNullOrEmpty(ev.target);
+            bool hasContainer = !string.IsNullOrEmpty(ev.container);
+            bool hasZone = !string.IsNullOrEmpty(ev.zone);
+
+            int n = (hasTarget ? 1 : 0) + (hasContainer ? 1 : 0) + (hasZone ? 1 : 0);
+            if (n > 1)
+                Debug.LogWarning($"[TutorialCueAnim] 事件同时指定了多个选择器" +
+                                 $"（target='{ev.target}' container='{ev.container}' zone='{ev.zone}'，" +
+                                 $"cue {CueId}）：按 target > container > zone 取优先级最高的");
+
+            if (hasTarget) return Selector.Target;
+            if (hasContainer) return Selector.Container;
+            if (hasZone) return Selector.Zone;
+            return Selector.None;
+        }
+
+        /// <summary>
+        /// 解析容器：返回它点名的组件。
+        /// 容器只是「一组 id」，组内每个组件仍是独立组件 —— 所以既能整组操作，
+        /// 也能单独操作其中一件。找不到的 id 会警告（数据写错时能立刻发现）。
+        /// </summary>
+        private List<ZoneItem> ResolveContainer(string containerId)
+        {
+            var found = new List<ZoneItem>();
+            if (string.IsNullOrEmpty(containerId)) return found;
+
+            StageContainer def = null;
+            if (stage?.containers != null)
+                foreach (var c in stage.containers)
+                    if (c != null && c.id == containerId) { def = c; break; }
+
+            if (def?.items == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] 容器 '{containerId}' 未定义（cue {CueId}）");
+                return found;
+            }
+
+            foreach (var id in def.items)
+            {
+                ZoneItem item = null;
+                if (string.IsNullOrEmpty(id) || !Store.TryGetItem(id, out item) || item == null)
+                {
+                    Debug.LogWarning($"[TutorialCueAnim] 容器 '{containerId}' 里的 '{id}' 不存在（cue {CueId}）");
+                    continue;
+                }
+                found.Add(item);
+            }
+            return found;
+        }
+
+        /// <summary>容器的锚点：定义了中心就用它，否则用组内重心。</summary>
+        private Vector3 ContainerCenter(string containerId, List<ZoneItem> items)
+        {
+            if (stage?.containers != null)
+                foreach (var c in stage.containers)
+                    if (c != null && c.id == containerId && c.has_center)
+                        return new Vector3(c.x, 0f, c.z);
+
+            Vector3 sum = Vector3.zero;
+            int n = 0;
+            foreach (var it in items) { if (it?.Actor == null) continue; sum += it.Actor.LivePosition; n++; }
+            return n > 0 ? sum / n : Vector3.zero;
+        }
+
         private List<CueAnimActor> Resolve(CueAnimEvent ev)
         {
             var result = new List<CueAnimActor>();
             if (ev == null) return result;
 
-            // 选择器规则（全操作统一）：
-            //   target  = 单件
-            //   zone    = 整组（该 zone 内全部）
-            //   两者都写是数据错误：报警告，并以 target 为准。
+            // 选择器规则（全操作统一），优先级 target > container > zone：
+            //   target    = 单件
+            //   container = 任意一组（点名的一组，不要求同 zone）
+            //   zone      = 该区域全部
+            // 同时写多个是数据错误：报警告，按优先级取最高的那个。
             // 曾经这里的顺序是 zone 优先，而 highlight 是 target 优先，
             // 同一个事件在两类操作里会选中不同的东西。
-            bool hasTarget = !string.IsNullOrEmpty(ev.target);
-            bool hasZone = !string.IsNullOrEmpty(ev.zone);
-            if (hasTarget && hasZone)
-                Debug.LogWarning($"[TutorialCueAnim] 事件同时指定了 target='{ev.target}' 和 zone='{ev.zone}'" +
-                                 $"（cue {CueId}）：按 target 处理，zone 被忽略");
-
-            if (hasTarget)
+            var picked = PickSelector(ev);
+            if (picked == Selector.Target)
             {
                 var actor = FindActor(ev.target);
                 if (actor != null) result.Add(actor);
                 return result;
             }
-
-            if (hasZone)
+            if (picked == Selector.Container)
+            {
+                foreach (var item in ResolveContainer(ev.container))
+                    if (item?.Actor != null) result.Add(item.Actor);
+                return result;
+            }
+            if (picked == Selector.Zone)
             {
                 foreach (var item in Store.Items)
                     if (item.ZoneId == ev.zone && item.Actor != null) result.Add(item.Actor);

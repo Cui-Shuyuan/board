@@ -718,5 +718,16 @@
       "zone": "offstage",
       "from": "top"
     }
+  ],
+  "containers": [
+    {
+      "id": "level1_deck_and_top",
+      "items": [
+        "card_back_1#36",
+        "market_card_1_emerald#1"
+      ],
+      "has_center": false,
+      "_note": "示例：一级牌堆顶牌 + 即将发出的第一张。两者不同 zone，但可作为一个容器整组操作。"
+    }
   ]
 }

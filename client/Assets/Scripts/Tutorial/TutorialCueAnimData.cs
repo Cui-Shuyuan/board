@@ -33,6 +33,17 @@ namespace BoardGameTutorial
         public List<StageZone> zones;
         public List<StageTemplate> templates;
         public List<StageAnchor> anchors;
+
+        /// <summary>
+        /// 容器：把**任意一组**组件当成一个可操作对象。
+        ///
+        /// 与 zone 的区别：zone 是「恰好同属一个区域」，容器是「我点名要这一组」。
+        /// 例如「某张牌 + 压在它上面的宝石」不属于同一个 zone，但可以是一个容器。
+        /// 容器只是选择器的一种，不建父子节点 —— 组内每件仍是独立组件，
+        /// 所以既能整组操作，也能单独操作其中一件。
+        /// </summary>
+        public List<StageContainer> containers;
+
         public List<StageInitial> initial;
     }
 
@@ -185,6 +196,24 @@ namespace BoardGameTutorial
         public bool highlight;
     }
 
+    /// <summary>
+    /// 容器：任意一组组件的命名集合，可被事件当选择器使用。
+    /// 与 zone 的区别是「点名的一组」而非「同属一个区域」。
+    /// </summary>
+    [Serializable]
+    public class StageContainer
+    {
+        /// <summary>容器名，事件里用 container 引用。</summary>
+        public string id;
+
+        /// <summary>组内组件 id（可以任意组合，不要求同 zone）。</summary>
+        public List<string> items;
+
+        /// <summary>可选：组锚点。留空则用组内重心。</summary>
+        public float x, z;
+        public bool has_center;
+    }
+
     /// <summary>牌桌上固定不动的背景件（区域底板等），有 id 可以被事件 target。</summary>
     [Serializable]
     public class StageAnchor
@@ -280,6 +309,12 @@ namespace BoardGameTutorial
 
         /// <summary>执行前先等（把同一 at 的动作错开）。</summary>
         public float lead;
+
+        /// <summary>
+        /// 选择器：容器名。与 target/zone 同级，优先级 target &gt; container &gt; zone。
+        /// 容器可以装任意一组组件，用于「整组一起动」。
+        /// </summary>
+        public string container;
 
         /// <summary>
         /// shuffle：强度倍率（0 = 用默认 1.0）。

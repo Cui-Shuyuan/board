@@ -1,20 +1,21 @@
 // BoardGameTutorial
 // 高亮：介绍到谁，谁就高亮。
 //
-// 约定（2026-09 用户裁决）：
-//   高亮的目标永远是**一个具体对象**，不是「某片区域」。之前用 zone 当高亮目标，
-//   结果多个 zone 共用同一块区域底板，一个事件被广播到 6 个地方，整屏乱闪。
+// 选择器规则与全项目统一（2026-09 修订）：
+//   target    = 一件（原地呼吸）
+//   container = 任意一组（整组缩放，锚点用组重心或容器自带中心）
+//   zone      = 该区域全部（整组缩放）
+//   同时写多个 → 报警告，按 target > container > zone 取优先级最高的。
 //
-// 因此：
-//   - target = 某个组件实例（gem#1 / card_back_1#2 / anchor id）→ 原地强调该组件；
-//   - zone   = 要强调「这一片」时，只能用该 zone 自己的 glow（stage 里的 highlight 底板），
-//              没有就现场建一块只属于它的，绝不回退到共用底板；
-//   - 两者都没写 → 拒绝执行并报错，不猜。
+// 历史：早期高亮只能打单件，牌堆有几十张叠着，点一张只能让其中一张变大；
+// 后来改为按 zone 整组；再后来 zone 之外还需要「点名的一组」（例如卡 + 压在上面的宝石），
+// 于是有了 container。三者是同一套选择器的不同粒度，不是三套机制。
 //
-// 视觉手法只有两种，都由数据驱动：
-//   Pulse  = 缩放到 grow 再回落（原地呼吸，不改变最终状态）
-//   Glow   = 底板透明度升到 peak 再回落
+// 视觉手法：
+//   Pulse / GroupScale = 放大再回落（呼吸，不改变最终状态）
+//   Glow               = 底板透明度升到 peak 再回落（按需开启，默认不叠）
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BoardGameTutorial
@@ -23,16 +24,12 @@ namespace BoardGameTutorial
     {
         private void TriggerHighlight(CueAnimEvent ev)
         {
-            if (string.IsNullOrEmpty(ev.target) && string.IsNullOrEmpty(ev.zone))
+            if (string.IsNullOrEmpty(ev.target) && string.IsNullOrEmpty(ev.zone)
+                && string.IsNullOrEmpty(ev.container))
             {
-                Debug.LogWarning($"[TutorialCueAnim] highlight 未指定 target 或 zone（cue {CueId}），已忽略");
+                Debug.LogWarning($"[TutorialCueAnim] highlight 未指定 target/container/zone（cue {CueId}），已忽略");
                 return;
             }
-
-            // 选择器规则与 Resolve 一致：target 单件、zone 整组，两者同写时以 target 为准
-            if (!string.IsNullOrEmpty(ev.target) && !string.IsNullOrEmpty(ev.zone))
-                Debug.LogWarning($"[TutorialCueAnim] highlight 同时指定 target='{ev.target}' 和 " +
-                                 $"zone='{ev.zone}'（cue {CueId}）：按 target 处理");
 
             float peak = ev.peak_alpha >= 0f ? Mathf.Clamp01(ev.peak_alpha) : 0.55f;
             float grow = ev.grow > 0f ? ev.grow : 1.14f;
@@ -49,6 +46,16 @@ namespace BoardGameTutorial
                     return;
                 }
                 PulseActor(actor, grow, dur, lead, easing);
+                return;
+            }
+
+            // 容器：任意一组，整组缩放
+            if (PickSelector(ev) == Selector.Container)
+            {
+                var items = ResolveContainer(ev.container);
+                var actors = new List<CueAnimActor>();
+                foreach (var it in items) if (it?.Actor != null) actors.Add(it.Actor);
+                GroupScaleActors(actors, ContainerCenter(ev.container, items), grow, dur, lead, easing);
                 return;
             }
 

@@ -1250,6 +1250,63 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 容器自检：容器是「任意一组」，可以装**不属于同一个 zone** 的东西。
+        /// 验证：整组缩放只作用于组内成员、以组重心为锚点、且会回落。
+        /// 这是 zone 做不到的（zone 只能表达「恰好同属一个区域」）。
+        /// </summary>
+        public static void SelfTestContainer()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("ContainerHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+            anim.Seek(1.3f);   // 洗混结束、发牌之前：牌堆都在
+
+            // 组一个跨 zone 的容器：一级牌堆里的一张 + 二级牌堆里的一张
+            var members = new[] { "card_back_1#1", "card_back_2#1" };
+            var outsider = "card_back_3#1";
+            anim.RegisterContainerForTest("test_mixed", members);
+
+            var ev = new CueAnimEvent { at = 1.3f, dur = 0.8f, action = "highlight",
+                                        container = "test_mixed", grow = 1.3f };
+            anim.TriggerForTest(ev);
+
+            anim.Seek(1.7f);   // 脉冲峰值附近
+            float s1 = anim.ScaleOf("card_back_1#1");
+            float s2 = anim.ScaleOf("card_back_2#1");
+            float s3 = anim.ScaleOf("card_back_3#1");
+
+            bool grew = s1 > 0 && s2 > 0 && s3 > 0;
+            float r1 = s1 / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_1#1"));
+            float r2 = s2 / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_2#1"));
+            float r3 = s3 / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_3#1"));
+            bool membersGrew = r1 > 1.05f && r2 > 1.05f;
+            bool outsiderUntouched = Mathf.Abs(r3 - 1f) < 0.02f;
+            bool uniform = Mathf.Abs(r1 - r2) < 0.05f;
+
+            Debug.Log($"[Cont] {(membersGrew ? "PASS" : "FAIL")} 组内两件都放大（跨 zone）: r1={r1:0.000} r2={r2:0.000}");
+            if (!membersGrew) failures++;
+            Debug.Log($"[Cont] {(outsiderUntouched ? "PASS" : "FAIL")} 组外不受影响: r3={r3:0.000}");
+            if (!outsiderUntouched) failures++;
+            Debug.Log($"[Cont] {(uniform ? "PASS" : "FAIL")} 组内缩放一致（同一重心）");
+            if (!uniform) failures++;
+
+            anim.Seek(2.4f);   // 脉冲结束
+            float e1 = anim.ScaleOf("card_back_1#1") / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_1#1"));
+            bool returned = Mathf.Abs(e1 - 1f) < 0.02f;
+            Debug.Log($"[Cont] {(returned ? "PASS" : "FAIL")} 脉冲回落到原尺寸: r={e1:0.000}");
+            if (!returned) failures++;
+            if (!grew) failures++;
+
+            Debug.Log($"[Cont] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
