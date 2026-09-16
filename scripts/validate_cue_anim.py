@@ -75,6 +75,20 @@ class Report:
         self.warnings.append({"where": where, "message": message})
 
 
+MARKET_COLS = 4          # 市场每行几格（与 stage 的 layout.cols 一致）
+
+
+def color_of_target(target: str):
+    """从组件 id 里取出颜色名：market_card_1_emerald#1 → emerald。取不到返回 None。"""
+    if not target:
+        return None
+    base = target.split("#")[0]
+    for c in ("emerald", "ruby", "diamond", "sapphire", "onyx", "gold"):
+        if base.endswith("_" + c):
+            return c
+    return None
+
+
 def load_json(path: Path):
     with path.open(encoding="utf-8") as fh:
         return json.load(fh)
@@ -171,6 +185,8 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         report.error(where, f"track = {doc['track']!r}，应为 {track!r}")
     if doc.get("cue") and doc["cue"] != cue_id:
         report.error(where, f"cue = {doc['cue']!r}，与文件名 {cue_id!r} 不一致")
+
+    dealt_slots = {}
 
     if cue_id not in runtime_cues:
         report.error(where, f"runtime 中不存在该 cue（{track}.runtime.json）")
@@ -300,6 +316,28 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         end = at + lead + dur
         if action != "wait":
             last_end = max(last_end, end)
+
+        # 记录发牌格位：用于检查「每行颜色组合是否雷同」
+        slot = ev.get("slot")
+        if action == "move" and zone == "card_market" and isinstance(slot, int) and slot >= 0:
+            dealt_slots[slot] = target or ""
+
+    # 市场是多行网格（4 列）：两行颜色顺序完全相同会误导观众，
+    # 让人以为「必须这样摆」。真实市场是发牌结果，不会整齐成列。
+    if dealt_slots:
+        rows = {}
+        for slot, target in dealt_slots.items():
+            rows.setdefault(slot // MARKET_COLS, [None] * MARKET_COLS)[slot % MARKET_COLS] = target
+        sigs = {}
+        for row in sorted(rows):
+            colors = tuple(color_of_target(t) for t in rows[row])
+            sigs.setdefault(colors, []).append(row)
+        for colors, rowlist in sigs.items():
+            if len(rowlist) > 1 and any(c for c in colors):
+                report.warn(where, f"市场第 {'、'.join(str(r+1) for r in rowlist)} 行的颜色顺序完全相同"
+                                   f"（{' '.join(str(c) for c in colors)}）—— "
+                                   f"真实市场不会这么整齐，容易让人误以为必须这样摆")
+
         if duration > 0 and end > duration + 1e-6:
             report.error(ew, f"事件结束于 {end:.2f}s，超出 cue 音频时长 {duration:.2f}s")
 

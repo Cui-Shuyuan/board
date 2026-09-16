@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "发牌：洗混 0.5–1.2s；12 张从 1.6s 起每 0.53s 一张（单张 0.45s，前一张落位后再发下一张）。最后一张 7.43–7.88s，音频 8.448s。每张从对应牌堆出发、落到市场槽 0–11。牌堆 40→36、30→26、20→16。",
+  "note": "发展卡发牌：先洗混三个牌堆（0.5–1.2s），再每级发 4 张到市场槽 0–11。三行的**顺序与组合都不同**（真实市场是发牌结果，不应整齐成列）：一级 绿红白蓝、二级 蓝黑红绿、三级 红白绿黑。牌堆 40→36、30→26、20→16。",
   "start": {
     "set": [
       {
@@ -32,7 +32,13 @@
         "expand_to": 1
       },
       {
-        "template": "market_card_2_emerald",
+        "template": "market_card_2_sapphire",
+        "palette": "card_level_2",
+        "zone": "deck_level_2",
+        "expand_to": 1
+      },
+      {
+        "template": "market_card_2_onyx",
         "palette": "card_level_2",
         "zone": "deck_level_2",
         "expand_to": 1
@@ -44,21 +50,9 @@
         "expand_to": 1
       },
       {
-        "template": "market_card_2_diamond",
+        "template": "market_card_2_emerald",
         "palette": "card_level_2",
         "zone": "deck_level_2",
-        "expand_to": 1
-      },
-      {
-        "template": "market_card_2_sapphire",
-        "palette": "card_level_2",
-        "zone": "deck_level_2",
-        "expand_to": 1
-      },
-      {
-        "template": "market_card_3_emerald",
-        "palette": "card_level_3",
-        "zone": "deck_level_3",
         "expand_to": 1
       },
       {
@@ -74,7 +68,13 @@
         "expand_to": 1
       },
       {
-        "template": "market_card_3_sapphire",
+        "template": "market_card_3_emerald",
+        "palette": "card_level_3",
+        "zone": "deck_level_3",
+        "expand_to": 1
+      },
+      {
+        "template": "market_card_3_onyx",
         "palette": "card_level_3",
         "zone": "deck_level_3",
         "expand_to": 1
@@ -155,7 +155,7 @@
       "at": 3.72,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_2_emerald#1",
+      "target": "market_card_2_sapphire#1",
       "zone": "card_market",
       "order": -2,
       "slot": 4,
@@ -167,7 +167,7 @@
       "at": 4.25,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_2_ruby#1",
+      "target": "market_card_2_onyx#1",
       "zone": "card_market",
       "order": -2,
       "slot": 5,
@@ -179,7 +179,7 @@
       "at": 4.78,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_2_diamond#1",
+      "target": "market_card_2_ruby#1",
       "zone": "card_market",
       "order": -2,
       "slot": 6,
@@ -191,7 +191,7 @@
       "at": 5.31,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_2_sapphire#1",
+      "target": "market_card_2_emerald#1",
       "zone": "card_market",
       "order": -2,
       "slot": 7,
@@ -203,7 +203,7 @@
       "at": 5.84,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_3_emerald#1",
+      "target": "market_card_3_ruby#1",
       "zone": "card_market",
       "order": -2,
       "slot": 8,
@@ -215,7 +215,7 @@
       "at": 6.37,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_3_ruby#1",
+      "target": "market_card_3_diamond#1",
       "zone": "card_market",
       "order": -2,
       "slot": 9,
@@ -227,7 +227,7 @@
       "at": 6.9,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_3_diamond#1",
+      "target": "market_card_3_emerald#1",
       "zone": "card_market",
       "order": -2,
       "slot": 10,
@@ -239,7 +239,7 @@
       "at": 7.43,
       "dur": 0.45,
       "action": "move",
-      "target": "market_card_3_sapphire#1",
+      "target": "market_card_3_onyx#1",
       "zone": "card_market",
       "order": -2,
       "slot": 11,

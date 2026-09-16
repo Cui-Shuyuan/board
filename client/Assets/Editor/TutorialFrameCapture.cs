@@ -468,18 +468,6 @@ namespace BoardGameTutorial.Editor
             for (float time = from; time <= to + 1e-4f; time += step)
             {
                 anim.Seek(time);
-                {
-                    var sb = new System.Text.StringBuilder();
-                    sb.Append($"[Pos] t={time:0.00}");
-                    foreach (var it in anim.Store.Items)
-                    {
-                        if (it.Actor == null) continue;
-                        if (!it.Id.StartsWith("market_card_1_")) continue;
-                        var p = it.Actor.Go.transform.localPosition;
-                        sb.Append($"  {it.Id.Replace("market_card_1_", "")}=({p.x:0.0},{p.z:0.0})z:{it.ZoneId}");
-                    }
-                    Debug.Log(sb.ToString());
-                }
                 var path = Path.Combine(outDir, $"t{time * 100:000}.png");
                 SaveFrame(path);
                 n++;
@@ -635,6 +623,18 @@ namespace BoardGameTutorial.Editor
                 }
             }
             Debug.Log($"[Timeline] {(bad == 0 ? "PASS" : "FAIL")} 12 张市场牌全部落在自己的格位上（异常 {bad} 处）");
+
+            // 市场牌必须正面朝上（发牌时翻转，终态应当是卡面）
+            {
+                int backs = 0;
+                foreach (var it in anim.Store.Items)
+                {
+                    if (it.ZoneId != "card_market" || it.Actor?.Renderer == null) continue;
+                    if (ReferenceEquals(it.Actor.Renderer.sprite, it.Actor.BackSprite)) backs++;
+                }
+                Debug.Log($"[Timeline] {(backs == 0 ? "PASS" : "FAIL")} 市场牌都正面朝上（背面 {backs} 张）");
+                if (backs > 0) bad++;
+            }
 
             // 底板已不再绘制（zone 是逻辑概念，不需要可视化），故不再断言底板。
             // 若将来用 highlight 强调区域，可在此处改为断言 highlight 的出现/消失。
