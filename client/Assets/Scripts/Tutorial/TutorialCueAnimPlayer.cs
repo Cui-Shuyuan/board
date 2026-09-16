@@ -97,10 +97,8 @@ namespace BoardGameTutorial
 
         private readonly Dictionary<string, CueAnimActor> actors = new Dictionary<string, CueAnimActor>();
         /// <summary>区域底板：zone id → 代表它的装饰件 id（静态底板，不带高亮）。</summary>
-        private readonly Dictionary<string, List<string>> zonePanels = new Dictionary<string, List<string>>();
 
         /// <summary>底板 id → 它代表的 zone 列表；这些 zone 里没有可见组件时底板不显示。</summary>
-        private readonly Dictionary<string, List<string>> panelZones = new Dictionary<string, List<string>>();
 
         /// <summary>zone id → 该 zone 专属的高亮底板（每个 zone 一块，绝不共用）。</summary>
         private readonly Dictionary<string, CueAnimActor> zoneGlow = new Dictionary<string, CueAnimActor>();
@@ -133,7 +131,10 @@ namespace BoardGameTutorial
             Note = null;
             cueDoc = null;
             StopAnimations();
-            ClearActors();
+            // 注意：**这里不销毁画面对象**。
+            // 没有动画数据的 cue 要「保留牌桌」，若在开头就 ClearActors，
+            // store 里虽有数据但渲染对象已没了 —— 表现为「牌不见了」。
+            // 只在确定要重建画面（有动画 / 需要搭初始牌桌）时才清理。
 
             // 关键：换 cue 必须清空片段列表。
             // 曾经只在「回退」时清理，于是每条 cue 都往里加十几个片段、从不释放——
@@ -162,11 +163,14 @@ namespace BoardGameTutorial
                 clock = -1f;
                 nextIndex = 0;
 
-                bool hasScene = animRoot != null && Store.ActorCountHint() > 0;
+                // 判据是「画面上有没有对象」，不是「store 里有没有数据」。
+                // 这两者会不一致：store 有 12 张、animRoot 却被清空过。
+                bool hasScene = animRoot != null && animRoot.transform.childCount > 0;
                 if (!hasScene)
                 {
                     // 牌桌还没搭过：先载入 stage（否则模板为空，什么都生成不出来），
                     // 再按 initial 摆好、建对象、取景。
+                    ClearActors();
                     LoadStage(gameRoot, null);
                     Store.Reset();
                     Store.ApplyInitial();
@@ -179,6 +183,7 @@ namespace BoardGameTutorial
                 return false;
             }
 
+            ClearActors();   // 确定要重建画面了，才销毁旧对象
             cueDoc = JsonUtility.FromJson<CueAnimDoc>(File.ReadAllText(path));
             if (cueDoc == null || cueDoc.events == null)
             {
@@ -295,70 +300,11 @@ namespace BoardGameTutorial
             rootGo.transform.SetParent(transform, false);
             animRoot = rootGo;
 
-            if (stage?.anchors != null)
-            {
-                foreach (var anchor in stage.anchors)
-                {
-                    if (string.IsNullOrEmpty(anchor.id)) continue;
-                    var tpl = Store.GetTemplate(anchor.template);
-                    if (tpl == null)
-                    {
-                        Debug.LogWarning($"[TutorialCueAnim] anchor '{anchor.id}' uses unknown template '{anchor.template}'");
-                        continue;
-                    }
-
-                    var color = Palette.TintFor(tpl.shape, tpl.palette);
-
-                    // 底板（锚点）的尺寸与中心由它覆盖的 zone 的实际格位范围算出，
-                    // 不手填。手填的数值与格位一旦不同步（曾经差了整整一行），
-                    // 画面就会出现「底板和牌对不齐」这类很难查的错位。
-                    float ax = anchor.x, az = anchor.z, aw = tpl.width, ah = tpl.height;
-                    if (anchor.zones != null && anchor.zones.Count > 0 &&
-                        TryZoneBounds(anchor.zones, out var bx0, out var bx1, out var bz0, out var bz1))
-                    {
-                        const float pad = 0.10f;
-                        ax = (bx0 + bx1) * 0.5f;
-                        az = (bz0 + bz1) * 0.5f;
-                        aw = (bx1 - bx0) + pad * 2f;
-                        ah = (bz1 - bz0) + pad * 2f;
-                    }
-
-                    var go = CreateSpriteObject("anchor:" + anchor.id, tpl, color);
-                    go.transform.localPosition = new Vector3(ax, anchor.y, az);
-
-                    var sr = go.GetComponent<SpriteRenderer>();
-                    var item = new ZoneItem
-                    {
-                        Id = anchor.id,
-                        Template = tpl,
-                        BaseColor = color,
-                        ZoneId = null,
-                        LiveAlpha = tpl.alpha,
-                        LivePosition = new Vector3(anchor.x, anchor.y, anchor.z),
-                        LiveScale = go.transform.localScale,
-                        LiveRotation = tpl.rotation,
-                    };
-                    actors[anchor.id] = new CueAnimActor(item, sr.sprite, go, sr, go.transform.localScale);
-                    if (anchor.zones != null)
-                    {
-                        panelZones[anchor.id] = new List<string>(anchor.zones);
-                        foreach (var zoneId in anchor.zones)
-                        {
-                            if (string.IsNullOrEmpty(zoneId)) continue;
-                            if (!zonePanels.TryGetValue(zoneId, out var list))
-                            {
-                                list = new List<string>();
-                                zonePanels[zoneId] = list;
-                            }
-                            list.Add(anchor.id);
-                        }
-
-                        // 就地定好初始可见性：否则底板会先以「可见」被创建出来，
-                        // 等到几行之后的 UpdatePanelVisibility 才被关掉，跳 cue 时闪一下。
-                        sr.enabled = PanelShouldShow(panelZones[anchor.id]);
-                    }
-                }
-            }
+            // 注意：**不画 zone 底板**。
+            // 曾经每个锚点都生成一块半透明色块（市场/牌堆/供应区…），但 zone 是逻辑概念，
+            // 不需要可视化 —— 它们只是在画面上留下脏色块。
+            // 需要强调某个区域时用 highlight 原语（临时出现、会消失）。
+            // 锚点数据仍然保留：自检要用它的 zones 列表算格位范围。
 
             foreach (var item in Store.Items)
             {
@@ -599,28 +545,6 @@ namespace BoardGameTutorial
             return false;
         }
 
-        private bool PanelShouldShow(List<string> zoneIds)
-        {
-            if (zoneIds == null) return false;
-            foreach (var zoneId in zoneIds)
-                if (ZoneHasContent(zoneId)) return true;
-            return false;
-        }
-
-        /// <summary>
-        /// 区域底板随内容出现：它代表的 zone 里一件可见组件都没有时，底板不画。
-        /// 否则「宝石还在盒子里」时供应区底板就已经亮在那里了。
-        /// </summary>
-        private void UpdatePanelVisibility()
-        {
-            if (panelZones.Count == 0) return;
-
-            foreach (var pair in panelZones)
-            {
-                if (!actors.TryGetValue(pair.Key, out var panel) || panel.Renderer == null) continue;
-                panel.Renderer.enabled = PanelShouldShow(pair.Value);
-            }
-        }
 
         /// <summary>按「是否已翻开」刷新贴图。有背面贴图且未翻开时显示背面。</summary>
         private static void RefreshFace(CueAnimActor actor)
@@ -703,7 +627,6 @@ namespace BoardGameTutorial
             clock = time;
             nextIndex = cueDoc.events.Count;
             pendingScales.Clear();
-            UpdatePanelVisibility();
         }
 
         public void Seek(float time)
@@ -719,7 +642,6 @@ namespace BoardGameTutorial
             clock = time;
             float scaled = time * Mathf.Max(0.01f, timeScale);
 
-            UpdatePanelVisibility();
 
             // 触发所有已到点的事件。触发时就把「逻辑状态」推到终态（Store 是时间的阶跃函数），
             // 视觉上的过渡交给片段采样 —— 这样跳转/暂停/倒放都不需要特殊处理。
@@ -792,27 +714,6 @@ namespace BoardGameTutorial
         }
 
         /// <summary>自检用：取某块底板的相机平面包围盒（x/z 范围）。</summary>
-        public bool TryPanelBounds(string anchorId, out float x0, out float x1, out float z0, out float z1)
-        {
-            x0 = x1 = z0 = z1 = 0f;
-            foreach (var kv in actors)
-            {
-                if (kv.Key != anchorId || kv.Value?.Go == null) continue;
-                // 注意：牌/底板是平躺的（绕 X 转 90°），SpriteRenderer.bounds 是世界空间，
-                // 它的 z 分量是贴图厚度、y 分量才是桌面进深 —— 不能直接用。
-                // 这里按「桌面足迹」算：宽度沿 x，高度沿桌面进深 z。
-                var go = kv.Value.Go;
-                var ls = go.transform.localScale;
-                float halfW = Mathf.Abs(ls.x) * 0.5f;   // localScale 已按世界尺寸归一
-                float halfH = Mathf.Abs(ls.y) * 0.5f;
-                var c = go.transform.localPosition;
-                x0 = c.x - halfW; x1 = c.x + halfW;
-                z0 = c.z - halfH; z1 = c.z + halfH;
-                return true;
-            }
-            return false;
-        }
-
         /// <summary>
         /// 采纳另一个播放器（重建实例）算出的牌桌状态：把归属/格位搬过来并按新状态摆好。
         /// 用于「重建用独立实例、正式播放用主实例」，两者状态对接。
@@ -838,7 +739,11 @@ namespace BoardGameTutorial
                 Store.SetActiveItem(dst);
             }
 
-            // 按新状态重建画面对象（主播放器可能还没载入过 stage，用传入的 root）
+            // 按新状态重建画面对象。
+            // 必须先销毁旧对象：BuildActorObjects 只新建、不替换。
+            // 漏了这一步时每次跳转都在旧对象之上再叠一整套，半透明底板会越叠越浓
+            // （用户反复按左右时看到「框越来越明显」）。
+            ClearActors();
             LoadStage(gameRoot, null);
             BuildActorObjects();
             SyncActorsToStore();
@@ -1043,7 +948,6 @@ namespace BoardGameTutorial
             StopAnimations();
             pendingScales.Clear();
             RestoreSnapshot(entrySnapshot);
-            UpdatePanelVisibility();
             clock = 0f;
             nextIndex = 0;
         }
@@ -1101,8 +1005,6 @@ namespace BoardGameTutorial
         private void ClearActors()
         {
             actors.Clear();
-            zonePanels.Clear();
-            panelZones.Clear();
             zoneGlow.Clear();
             if (animRoot != null)
             {

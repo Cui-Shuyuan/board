@@ -634,43 +634,8 @@ namespace BoardGameTutorial.Editor
             }
             Debug.Log($"[Timeline] {(bad == 0 ? "PASS" : "FAIL")} 12 张市场牌全部落在自己的格位上（异常 {bad} 处）");
 
-            // ③ 底板：必须包住它负责的每个格位，且两块互不重叠。
-            var checks = new (string id, string[] zones)[]
-            {
-                ("board_deck_area",   new[] { "deck_level_1", "deck_level_2", "deck_level_3" }),
-                ("board_market_area", new[] { "card_market" }),
-            };
-            var bounds = new System.Collections.Generic.Dictionary<string, float[]>();
-            foreach (var (id, zoneIds) in checks)
-            {
-                if (!anim.TryPanelBounds(id, out var px0, out var px1, out var pz0, out var pz1))
-                {
-                    Debug.LogWarning($"[Timeline] 找不到底板 {id}");
-                    bad++;
-                    continue;
-                }
-                bounds[id] = new[] { px0, px1, pz0, pz1 };
-                bool covers = true;
-                foreach (var zid in zoneIds)
-                {
-                    int slotCount = anim.Store.SlotCount(zid);
-                    for (int i = 0; i < slotCount; i++)
-                    {
-                        var p = anim.Store.ZonePosition(zid, i);
-                        if (p.x < px0 - 0.02f || p.x > px1 + 0.02f || p.z < pz0 - 0.02f || p.z > pz1 + 0.02f)
-                        { covers = false; }
-                    }
-                }
-                Debug.Log($"[Timeline] {(covers ? "PASS" : "FAIL")} 底板 {id} 包住其全部格位");
-                if (!covers) bad++;
-            }
-            if (bounds.Count == 2)
-            {
-                var a = bounds["board_deck_area"]; var b = bounds["board_market_area"];
-                bool overlap = a[0] < b[1] && b[0] < a[1] && a[2] < b[3] && b[2] < a[3];
-                Debug.Log($"[Timeline] {(overlap ? "FAIL" : "PASS")} 牌堆底板与市场底板{(overlap ? "重叠" : "不重叠")}");
-                if (overlap) bad++;
-            }
+            // 底板已不再绘制（zone 是逻辑概念，不需要可视化），故不再断言底板。
+            // 若将来用 highlight 强调区域，可在此处改为断言 highlight 的出现/消失。
 
             Debug.Log($"[Timeline] 已出 {n} 帧 → {outDir}");
         }
@@ -957,6 +922,105 @@ namespace BoardGameTutorial.Editor
             a.entry = null;
 
             Debug.Log($"[Tree] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        /// <summary>
+        /// 反复跳转自检：连续多次解析入口状态，画面对象数必须稳定、不增长。
+        /// 曾经 AdoptStateFrom 少了 ClearActors，每次跳转都在旧对象上再叠一整套 ——
+        /// 用户反复按左右时看到半透明底板越叠越浓。
+        /// </summary>
+        public static void SelfTestNoLeakOnJump()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("JumpLeakHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Jump] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            int idx = player.Document.cues.FindIndex(c => c.id == "setup.cards.002.1");
+            int first = -1;
+            for (int round = 0; round < 6; round++)
+            {
+                string entry = (string)resolve.Invoke(player, new object[] { idx });
+                apply.Invoke(player, new object[] { anim, entry });
+
+                int objects = 0;
+                foreach (var t2 in host.GetComponentsInChildren<Transform>()) objects++;
+                if (first < 0) first = objects;
+                bool ok = objects == first;
+                Debug.Log($"[Jump] 第 {round + 1} 跳: 画面对象 {objects}（首次 {first}）{(ok ? "" : "  ← 增长了！")}");
+                if (!ok) failures++;
+            }
+            Debug.Log($"[Jump] {(failures == 0 ? "PASS" : "FAIL")} 反复跳转不叠加对象");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        /// <summary>
+        /// 顺序播放自检：模拟 autoAdvance 逐条往后播，检查画面在相邻 cue 之间不被打乱。
+        /// 曾经 previousIndex 在本条开头就被覆盖，导致「是否顺序播放」恒为 false，
+        /// 每条 cue 都被当成跳转、重新解入口状态 —— 顺序播到没有动画的 cue 时牌就不见了。
+        /// </summary>
+        public static void SelfTestSequential()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("SeqHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[SeqTest] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            // 找到 cue12（有动画、发 12 张牌）与紧随其后的 cue13（无动画）
+            int i12 = player.Document.cues.FindIndex(c => c.id == "setup.cards.002.1");
+            if (i12 < 0) { Debug.Log("[SeqTest] FAIL 找不到 setup.cards.002.1"); EditorApplication.Exit(1); return; }
+
+            var prevField = typeof(TutorialCuePlayer).GetField("previousIndex",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var play = typeof(TutorialCuePlayer).GetMethod("PlayCue",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+            // 批处理没有帧循环，PlayCue 里的协程不会推进 —— 直接驱动播放器，
+            // 复现「顺序播放时 continueFromPrevious 的判定」这条逻辑。
+            bool continueFromPrev = i12 > 0;   // 顺序播放下，上一条存在 → 应当沿用画面
+
+            // ① 先把 cue12 经入口状态 + 完整时间轴跑完
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.2f) anim.Seek(tt);
+            int market12 = anim.Store.CountInZone("card_market");
+            Debug.Log($"[SeqTest] cue12 播完: market={market12}（应为 12）");
+            if (market12 != 12) failures++;
+            anim.EnsureCameraForCapture();
+            SaveFrame(Path.Combine(Application.dataPath, "..", "CaptureOut", "seq12.png"));
+
+            // ② 顺序进入下一条（无动画）：continueState=true 时必须**沿用**当前画面
+            var c13 = player.Document.cues[i12 + 1];
+            bool loaded13 = anim.LoadCue(gameRoot, "full", c13.id, continueFromPrev);
+            int market13 = anim.Store.CountInZone("card_market");
+            bool kept = market13 == 12;
+            Debug.Log($"[SeqTest] {(kept ? "PASS" : "FAIL")} 顺序进入 {c13.id}(有动画={loaded13}) 后 " +
+                      $"市场仍有 {market13} 张");
+            if (!kept) failures++;
+            SaveFrame(Path.Combine(Application.dataPath, "..", "CaptureOut", "seq13.png"));
+
+            Debug.Log($"[SeqTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 

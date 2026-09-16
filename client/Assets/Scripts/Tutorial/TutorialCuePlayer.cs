@@ -316,7 +316,21 @@ namespace BoardGameTutorial
                 }
 
                 anim.AdoptStateFrom(scratch, gameRoot);
-                Debug.Log($"[TutorialCuePlayer] 入口状态 = {(entryCueId ?? "初始态")}");
+
+                // 入口状态诊断：市场/三个牌堆的数量与「可见张数」。
+                // 「数量对但看不见」和「数量就不对」是两类完全不同的 bug，
+                // 必须分开看，否则只能靠肉眼猜。
+                int visibleMarket = 0;
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == "card_market" && it.Actor != null &&
+                        it.Actor.Renderer != null && it.Actor.Renderer.enabled && it.Actor.LiveAlpha > 0.05f)
+                        visibleMarket++;
+                Debug.Log($"[Entry] 入口={(entryCueId ?? "初始态")} " +
+                          $"market={anim.Store.CountInZone("card_market")}(可见 {visibleMarket}) " +
+                          $"deck1={anim.Store.CountInZone("deck_level_1")} " +
+                          $"deck2={anim.Store.CountInZone("deck_level_2")} " +
+                          $"deck3={anim.Store.CountInZone("deck_level_3")} " +
+                          $"总={anim.ActorCount}");
             }
             finally
             {
@@ -340,7 +354,7 @@ namespace BoardGameTutorial
             currentSubtitle = "";
 
             var cue = doc.cues[index];
-            previousIndex = index;
+            int previous = previousIndex;   // 先记住上一条：下面的「是否顺序播放」要用它判断
 
             // 动画在音频加载前就复位：重播/切 cue 时画面从头开始。
             if (animPlayer != null)
@@ -351,7 +365,11 @@ namespace BoardGameTutorial
                 // 其它情况（跳转、重播、分支）一律按 cue 声明的 entry 重新解出来。
                 // 这正是「可以抽一张」和「不可以抽两张」能做兄弟的原因 ——
                 // 两条 cue 都声明同一个 entry，各自从同一张桌子出发。
-                bool continueFromPrevious = continueState && index == previousIndex + 1;
+                // 注意：必须和 `previous`（本条的**上一条**）比较。
+                // 曾经这里写成 `previousIndex`，而它在本函数开头已被赋成本条的 index，
+                // 于是条件恒为 false —— 每条 cue 都被当成跳转、都重新解入口状态，
+                // 顺序播放时画面被反复重建（用户看到 cue13 牌又不见了）。
+                bool continueFromPrevious = continueState && index == previous + 1;
                 if (!continueFromPrevious && animPlayer != null)
                 {
                     ApplyEntryState(animPlayer, ResolveEntryCueId(index));
@@ -409,6 +427,10 @@ namespace BoardGameTutorial
             }
 
             currentSubtitle = "";
+
+            // 本条播完，才把它记为「上一条」——下一条据此判断能否沿用当前画面。
+            previousIndex = index;
+
             if (pauseAtCueEnd) yield break;
 
             if (autoAdvance && index + 1 < doc.cues.Count)
