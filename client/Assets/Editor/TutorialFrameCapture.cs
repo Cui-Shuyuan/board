@@ -1173,6 +1173,75 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 整组高亮自检：
+        ///   ① 区域内**每一张**都被放大（不是只有某一张）；
+        ///   ② 用同一个重心做锚点，所以是整组一起变；
+        ///   ③ 脉冲会回落（曾经只长大不回落，牌堆永久变大）。
+        /// 用户报的「只有堆底那张大了一圈」正是 ① 的反例。
+        /// </summary>
+        public static void SelfTestGroupHighlight()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("HiHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            // 这条 cue 的高亮作用于整个 deck_level_1
+            anim.LoadCue(gameRoot, "full", "setup.cards.001.2", false);
+
+            System.Func<float, float[]> scalesAt = (time) =>
+            {
+                anim.Seek(time);
+                var list = new System.Collections.Generic.List<float>();
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == "deck_level_1" && it.Actor != null)
+                        list.Add(it.Actor.Go.transform.localScale.x);
+                return list.ToArray();
+            };
+
+            var before = scalesAt(1.30f);     // 高亮前
+            var during = scalesAt(2.10f);     // 峰值附近
+            var after  = scalesAt(3.30f);     // 回落之后
+
+            // ① 每一张都要变大（允许极小误差）
+            int grown = 0, total = 0;
+            float baseScale = before.Length > 0 ? before[0] : 0f;
+            for (int i = 0; i < before.Length && i < during.Length; i++)
+            {
+                total++;
+                if (during[i] > before[i] * 1.05f) grown++;
+            }
+            bool allGrew = total > 0 && grown == total;
+            Debug.Log($"[Hi] {(allGrew ? "PASS" : "FAIL")} 整组高亮：{grown}/{total} 张被放大" +
+                      $"（基准 scale={baseScale:0.0000}）");
+            if (!allGrew) failures++;
+
+            // ② 缩放比例应当一致（整组等比，而不是某张特别大）
+            float maxR = 0f, minR = 99f;
+            for (int i = 0; i < before.Length && i < during.Length; i++)
+            {
+                float r = during[i] / Mathf.Max(1e-6f, before[i]);
+                maxR = Mathf.Max(maxR, r); minR = Mathf.Min(minR, r);
+            }
+            bool uniform = maxR - minR < 0.05f;
+            Debug.Log($"[Hi] {(uniform ? "PASS" : "FAIL")} 缩放比例一致：{minR:0.000}~{maxR:0.000}");
+            if (!uniform) failures++;
+
+            // ③ 回落
+            bool returned = after.Length == before.Length;
+            if (returned)
+                for (int i = 0; i < before.Length; i++)
+                    if (Mathf.Abs(after[i] - before[i]) > 0.0005f) { returned = false; break; }
+            Debug.Log($"[Hi] {(returned ? "PASS" : "FAIL")} 脉冲回落到原尺寸");
+            if (!returned) failures++;
+
+            Debug.Log($"[Hi] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&

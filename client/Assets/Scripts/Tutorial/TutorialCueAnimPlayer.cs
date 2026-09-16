@@ -920,6 +920,20 @@ namespace BoardGameTutorial
                     clip.Actor.Go.transform.localScale = clip.Actor.LiveScale;
                 }
 
+                if (clip.HasGroupScale)
+                {
+                    // 整组一起放大：自身缩放 × 位置相对重心外扩，等效于「以重心为锚点整体缩放」。
+                    // 这样一整摞牌看起来是一个对象在变大，而不是某一张单独变大。
+                    // 脉冲 = 去程 + 回程：前半程放大到 grow，后半程回到原样。
+                    // 之前直接把 k 映到 [1, grow]，于是只长大不回落，牌堆永久变大了。
+                    float half = k < 0.5f ? k * 2f : (1f - k) * 2f;
+                    float g = Mathf.LerpUnclamped(1f, clip.GroupGrow, half);
+                    var basePos = clip.Actor.LivePosition;
+                    clip.Actor.Go.transform.localPosition =
+                        clip.GroupCenter + (basePos - clip.GroupCenter) * g;
+                    clip.Actor.Go.transform.localScale = clip.Actor.BaseScale * g;
+                }
+
                 if (clip.HasAlpha)
                 {
                     clip.Actor.LiveAlpha = Mathf.LerpUnclamped(clip.AlphaFrom, clip.AlphaTo, k);
@@ -1136,6 +1150,15 @@ namespace BoardGameTutorial
 
             public bool HasScale;
             public Vector3 ScaleFrom, ScaleTo;
+
+            /// <summary>
+            /// 整组缩放：把一组组件（例如一整摞牌堆）当作**一个对象**，
+            /// 以这组的重心为中心整体放大/缩小。
+            /// 单张缩放会让牌堆只有某一张变大（用户看到的「只有堆底那张大了一圈」）。
+            /// </summary>
+            public bool HasGroupScale;
+            public Vector3 GroupCenter;   // 触发时快照的组重心
+            public float GroupGrow;       // 目标倍率
 
             public bool HasAlpha;
             public float AlphaFrom, AlphaTo;
@@ -1425,6 +1448,36 @@ namespace BoardGameTutorial
 
             /// <summary>确定性伪随机 → [0,1)，不用 Random，保证每次播放一致。</summary>
             public static float Rand(int h, int salt) => Hash01(h, salt);
+        }
+
+        /// <summary>
+        /// 整组高亮/选中：以这一组的**重心**为锚点整体放大再回落。
+        ///
+        /// 为什么要按组：牌堆由几十张叠成，单张缩放只会让其中一张（还往往是堆底那张）
+        /// 变大，看起来是「一张牌出错」而不是「这一堆被选中」。整组缩放才对。
+        /// 用重心而不是某张牌的位置，是为了对任意形状的组都成立（牌堆、宝石堆、玩家持有区）。
+        /// </summary>
+        private void GroupScaleZone(string zoneId, float grow, float dur, float lead, string easing)
+        {
+            var actors = new List<CueAnimActor>();
+            Vector3 center = Vector3.zero;
+            foreach (var item in Store.Items)
+            {
+                if (item.ZoneId != zoneId || item.Actor == null) continue;
+                actors.Add(item.Actor);
+                center += item.Actor.LivePosition;
+            }
+            if (actors.Count == 0) return;
+            center /= actors.Count;
+
+            var synthetic = new CueAnimEvent { at = currentEventAt, dur = dur, lead = lead, easing = easing };
+            foreach (var actor in actors)
+            {
+                var clip = ClipAt(actor.Item, actor, synthetic);
+                clip.HasGroupScale = true;
+                clip.GroupCenter = center;
+                clip.GroupGrow = grow;
+            }
         }
 
         /// <summary>字符串的稳定散列（与平台/运行次数无关）。</summary>

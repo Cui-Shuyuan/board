@@ -54,9 +54,18 @@ namespace BoardGameTutorial
                 return;
             }
 
-            var glow = GlowFor(ev.zone);
-            if (glow == null) return;
-            PulseGlow(glow, ev.zone, peak, dur, lead, easing);
+            // 区域高亮 = **整组**一起放大再回落。这是「选中这一堆」的表达。
+            // 不要对组内单张做缩放：牌堆有几十张叠着，单张缩放只会让其中一张变大
+            // （用户看到的「只有堆底那张大了一圈」）。
+            //
+            // 不再默认叠一层区域光晕：那是一块覆盖整个 zone 的光斑，会盖住牌本身、
+            // 也让「变大」这件事看不清。需要时由 cue 数据显式开启（peak_alpha）。
+            GroupScaleZone(ev.zone, grow, dur, lead, easing);
+            if (ev.peak_alpha > 0f)
+            {
+                var glow = GlowFor(ev.zone);
+                if (glow != null) PulseGlow(glow, ev.zone, peak, dur, lead, easing);
+            }
         }
 
         /// <summary>原地强调一个组件：缩放到 grow 再回到基准，不改变它的最终状态。</summary>

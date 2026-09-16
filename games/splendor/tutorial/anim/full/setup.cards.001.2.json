@@ -4,13 +4,13 @@
   "track": "full",
   "cue": "setup.cards.001.2",
   "stage": "_stage/splendor.table",
-  "note": "设置 2.1 第二句：分别是40张绿色的一级发展卡牌。绿色卡背在台词说到「绿」(1.52) 时亮起，持续到「牌、」(2.96)。",
+  "note": "高亮一级牌堆：整摞一起放大再回落（区域高亮作用于整组，不是单张）。",
   "events": [
     {
       "at": 1.45,
       "dur": 1.45,
       "action": "highlight",
-      "target": "card_back_1#36",
+      "zone": "deck_level_1",
       "grow": 1.2,
       "easing": "easeInOutCubic"
     }
