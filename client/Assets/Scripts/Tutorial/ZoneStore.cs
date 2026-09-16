@@ -33,6 +33,16 @@ namespace BoardGameTutorial
         /// <summary>是否已翻到另一面（正面朝上的卡牌为 true）。</summary>
         public bool Flipped;
 
+        /// <summary>
+        /// 是否**已经出场过**（被动画带出来过）。
+        ///
+        /// 模板上的 hide_until_animated 是静态的，只能表达"还没出场"。
+        /// 若用它判断每一帧的可见性，场景一旦重建（换 cue 会重建），
+        /// 已经发出去的牌又会被当成"没出场"而变透明 —— 用户报的
+        /// "发完12张牌后这12张牌消失"就是这个。
+        /// </summary>
+        public bool Shown;
+
         public Vector3 LivePosition;
         public Vector3 LiveScale;
         public float LiveRotation;
@@ -283,6 +293,9 @@ namespace BoardGameTutorial
                     EntryFrom = src.EntryFrom,
                     EntryAnchor = src.EntryAnchor,
                     Flipped = src.Flipped,
+                    // 注意：新增的每件状态都要加进这份复制清单，否则交接后就丢了。
+                    // hide_until_animated 按模板判断时不会发现——它会在重建后重新隐藏已出场的牌。
+                    Shown = src.Shown,
                     LiveScale = src.LiveScale,
                     LiveRotation = src.LiveRotation,
                     LiveAlpha = src.LiveAlpha,

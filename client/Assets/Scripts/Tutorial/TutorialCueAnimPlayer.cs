@@ -415,7 +415,7 @@ namespace BoardGameTutorial
             var pos = Store.CurrentPosition(item);
             actor.LivePosition = pos;
             go.transform.localPosition = pos;
-            actor.LiveAlpha = itemTpl.hide_until_animated ? 0f : itemTpl.alpha;
+            actor.LiveAlpha = (itemTpl.hide_until_animated && !item.Shown) ? 0f : itemTpl.alpha;
             ApplyAlpha(actor);
         }
 
@@ -975,7 +975,9 @@ namespace BoardGameTutorial
                     // 透明度必须在这里也复位：要求隐藏的组件在片段生效前一律透明。
                     // 之前这个分支直接 continue，跳过了这段 —— 二级/三级市场牌就带着
                     // 默认 alpha=1 显示在自己的牌堆位置上，看起来像往牌堆里发卡背。
-                    actor.LiveAlpha = (item.Template != null && item.Template.hide_until_animated) ? 0f : actor.BaseAlpha;
+                    // 只看 hide_until_animated 会让已出场的牌在重建后重新隐藏（见 ZoneItem.Shown）
+                    actor.LiveAlpha = (item.Template != null && item.Template.hide_until_animated
+                                       && !item.Shown) ? 0f : actor.BaseAlpha;
                     actor.LiveColor = item.BaseColor;
                     ApplyAlpha(actor);
                     continue;
@@ -992,7 +994,7 @@ namespace BoardGameTutorial
                 // 这是**默认**而非补丁——之前只在「有片段但未开始」时隐藏，
                 // 漏掉了「还没有任何片段」的那些（二级/三级市场牌），
                 // 它们就按默认透明度显示、叠在各自牌堆上，看起来像往牌堆里发卡背。
-                bool hideNow = item.Template != null && item.Template.hide_until_animated;
+                bool hideNow = item.Template != null && item.Template.hide_until_animated && !item.Shown;
                 actor.LiveAlpha = hideNow ? 0f : actor.BaseAlpha;
                 ApplyAlpha(actor);
                 RefreshFace(actor);
@@ -1030,6 +1032,7 @@ namespace BoardGameTutorial
                 if (clip.HasGroupMove)
                 {
                     var p2 = Vector3.LerpUnclamped(clip.GroupMoveFrom, clip.GroupMoveTo, k);
+                    WarnIfInvalid(clip.Item, p2, "groupMove");
                     clip.Actor.Go.transform.localPosition = p2;
                 }
 
@@ -1048,8 +1051,9 @@ namespace BoardGameTutorial
                     float half = k < 0.5f ? k * 2f : (1f - k) * 2f;
                     float g = Mathf.LerpUnclamped(1f, clip.GroupGrow, half);
                     var basePos = clip.Actor.LivePosition;
-                    clip.Actor.Go.transform.localPosition =
-                        clip.GroupCenter + (basePos - clip.GroupCenter) * g;
+                    var gp = clip.GroupCenter + (basePos - clip.GroupCenter) * g;
+                    WarnIfInvalid(clip.Item, gp, "groupScale");
+                    clip.Actor.Go.transform.localPosition = gp;
                     clip.Actor.Go.transform.localScale = clip.Actor.BaseScale * g;
                 }
 
@@ -1075,12 +1079,19 @@ namespace BoardGameTutorial
                     float elapsed = Mathf.Max(0f, scaled - clip.Start);
                     // 包络：前 1/4 起振、中段保持满幅、末 1/4 收住。
                     // 用 (1-k) 线性衰减会让抖动过早变弱（实测 0.9s 后就几乎不动了）。
-                    float envelope = Mathf.Pow(Mathf.Sin(Mathf.Clamp01(k) * Mathf.PI), Shuffle.EnvelopePower);
+                    // 注意：sin(kπ) 在 k=1 处会因浮点误差得到 **极小的负数**（~-1e-8），
+                    // 而负数的小数次幂（Pow(x, 0.45)）在数学上无定义 → 返回 NaN。
+                    // NaN 一旦写进 Transform 就每帧报错，并且会让这一摞牌"消失"
+                    // （位置变 NaN 后不再被渲染，后续 cue 也修不回来）。
+                    // 所以底数必须先夹到非负。
+                    float baseWave = Mathf.Max(0f, Mathf.Sin(Mathf.Clamp01(k) * Mathf.PI));
+                    float envelope = Mathf.Pow(baseWave, Shuffle.EnvelopePower);
                     float w = elapsed * clip.ShuffleFreq * Mathf.PI * 2f + clip.ShufflePhase;
                     float dx = Mathf.Sin(w) * clip.ShuffleAmp * envelope;
                     float dz = Mathf.Sin(w * 0.73f + 1.1f) * clip.ShuffleZ * envelope;
-                    clip.Actor.Go.transform.localPosition =
-                        clip.ShuffleFrom + new Vector3(dx, 0f, dz);
+                    var sp2 = clip.ShuffleFrom + new Vector3(dx, 0f, dz);
+                    WarnIfInvalid(clip.Item, sp2, "shuffle 采样");
+                    clip.Actor.Go.transform.localPosition = sp2;
                 }
             }
         }
@@ -1429,6 +1440,7 @@ namespace BoardGameTutorial
                 // 现在统一按正常落位处理，动画起点仍由 from_zone 提供，所以看起来依旧「从牌堆飞出」。
                 // 统一走 MoveToSlot(item, zone, slot)：坐标由格位表给出，
                 // 「落到第几格」不再散落成算术。slot < 0 表示追加到末尾。
+                step.Item.Shown = true;   // 被动画带出来了，此后不再因静态标记而隐藏
                 if (step.Destination != null)
                     Store.MoveToSlot(step.Item, step.Destination, step.Order);
                 moved.Add(step.Item);
@@ -1575,6 +1587,7 @@ namespace BoardGameTutorial
             foreach (var actor in Resolve(ev))
             {
                 if (actor?.Item == null) continue;
+                actor.Item.Shown = true;   // 被淡入/淡出带出来了
                 float from = actor.LiveAlpha;
                 float to = ev.to_alpha >= 0f
                     ? Mathf.Clamp01(ev.to_alpha)
@@ -1892,7 +1905,11 @@ namespace BoardGameTutorial
                 var clip = ClipAt(actor.Item, actor, ev);
                 clip.HasShuffle = true;
                 WarnIfInvalid(actor.Item, actor.LivePosition, "shuffle 基准");
-                clip.ShuffleFrom = actor.LivePosition;
+                // 基准若已失效就用格位表的位置，绝不让坏坐标进入插值
+                var shuffleBase = actor.LivePosition;
+                if (float.IsNaN(shuffleBase.x) || float.IsNaN(shuffleBase.z))
+                    shuffleBase = Store.CurrentPosition(actor.Item);
+                clip.ShuffleFrom = shuffleBase;
                 clip.ShuffleAmp = Mathf.Lerp(Shuffle.AmpMin, Shuffle.AmpMax, r1) * scale;
                 clip.ShuffleFreq = Mathf.Lerp(Shuffle.FreqMin, Shuffle.FreqMax, r2);
                 clip.ShufflePhase = r3 * Mathf.PI * 2f;   // 初相不同 → 瞬时方向不同

@@ -1493,7 +1493,21 @@ namespace BoardGameTutorial.Editor
                 string cueId = player.Document.cues[i].id;
                 apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { i }) });
                 anim.LoadCue(gameRoot, "full", cueId, true);
-                anim.Seek(anim.TotalDuration + 1f);
+
+                // 逐帧推到终态：洗混/发牌这类"过程中产生坏坐标"的问题只有逐帧才能抓到
+                int invalidMid = 0;
+                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f)
+                {
+                    anim.Seek(tt);
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (it.Actor?.Go == null) continue;
+                        var pp = it.Actor.Go.transform.localPosition;
+                        if (float.IsNaN(pp.x) || float.IsNaN(pp.z)) invalidMid++;
+                    }
+                }
+                if (invalidMid > 0)
+                    Debug.LogError($"[Walk] {cueId} 播放过程中出现 {invalidMid} 次无效坐标");
 
                 int invalid = 0;
                 foreach (var it in anim.Store.Items)
@@ -1505,10 +1519,87 @@ namespace BoardGameTutorial.Editor
                 badPos += invalid;
                 int market = anim.Store.CountInZone("card_market");
                 Debug.Log($"[Walk] {i,2} {cueId,-22} items={anim.ActorCount,3} market={market,2} 无效坐标={invalid}");
-                if (invalid > 0) failures++;
+                if (invalid > 0 || invalidMid > 0) failures++;
             }
 
             Debug.Log($"[Walk] {(failures == 0 ? "全部通过" : failures + " 项失败")}（累计无效坐标 {badPos}）");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        /// <summary>
+        /// 发完 12 张牌后进入下一条 cue，牌必须**还在**、坐标有效、正面朝上。
+        /// 用户报过"发完12张牌后这12张牌会消失"。
+        /// </summary>
+        public static void SelfTestDealtCardsSurvive()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("DealtHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Dealt] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            System.Func<string> report = () =>
+            {
+                int inMarket = 0, visible = 0, nan = 0;
+                foreach (var it in anim.Store.Items)
+                {
+                    if (it.ZoneId != "card_market") continue;
+                    inMarket++;
+                    var sr = it.Actor?.Renderer;
+                    if (sr != null && sr.enabled && sr.sprite != null && sr.color.a > 0.05f) visible++;
+                    var pp = it.Actor?.Go != null ? it.Actor.Go.transform.localPosition : Vector3.zero;
+                    if (float.IsNaN(pp.x) || float.IsNaN(pp.z)) nan++;
+                }
+                return $"市场 {inMarket} 张，可见 {visible} 张，无效坐标 {nan}";
+            };
+
+            // 走**跳转**路径进入 cue 12（用户的路径），播完
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            int i12 = player.Document.cues.FindIndex(c => c.id == "setup.cards.002.1");
+            apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { i12 }) });
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.1f) anim.Seek(tt);
+            string after12 = report();
+            bool ok12 = after12.Contains("可见 12 张") && after12.Contains("无效坐标 0");
+            Debug.Log($"[Dealt] {(ok12 ? "PASS" : "FAIL")} cue12 播完: {after12}");
+            if (!ok12) failures++;
+
+            // 下一条（无动画数据）：牌必须保留。
+            // 走**顺序播放**路径（autoAdvance 就是这样进入下一条的）：
+            // 先按 entry 解入口状态，再 continueState=true 载入 —— 这正是实机的两条分支。
+            string next = player.Document.cues[i12 + 1].id;
+            apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { i12 + 1 }) });
+            anim.LoadCue(gameRoot, "full", next, true);
+            string after13 = report();
+            bool ok13 = after13.Contains("可见 12 张") && after13.Contains("无效坐标 0");
+            Debug.Log($"[Dealt] {(ok13 ? "PASS" : "FAIL")} 进入 {next} 后: {after13}");
+            if (!ok13) failures++;
+
+            // 再往下走两条（其中一条有动画）
+            for (int k = 2; k <= 3 && i12 + k < player.Document.cues.Count; k++)
+            {
+                string nid = player.Document.cues[i12 + k].id;
+                apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { i12 + k }) });
+                anim.LoadCue(gameRoot, "full", nid, true);
+                anim.Seek(anim.TotalDuration + 1f);
+                string r = report();
+                bool ok = r.Contains("可见 12 张") && r.Contains("无效坐标 0");
+                Debug.Log($"[Dealt] {(ok ? "PASS" : "FAIL")} 进入 {nid} 后: {r}");
+                if (!ok) failures++;
+            }
+
+            Debug.Log($"[Dealt] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
