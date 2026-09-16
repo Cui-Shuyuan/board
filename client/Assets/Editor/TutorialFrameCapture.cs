@@ -337,8 +337,8 @@ namespace BoardGameTutorial.Editor
                         int market = 0;
                         foreach (var it in anim2.Store.Items)
                             if (it.Id.StartsWith("market_card_")) market++;
-                        Debug.Log($"[LivePath] {(market == 8 ? "PASS" : "FAIL")} 跳转重建: 市场已有 {market} 张（应为 8）");
-                        if (market != 8) failures++;
+                        Debug.Log($"[LivePath] {(market == 12 ? "PASS" : "FAIL")} 跳转重建: 市场已有 {market} 张（应为 12）");
+                        if (market != 12) failures++;
                     }
                 }
                 Object.DestroyImmediate(p2);
@@ -831,7 +831,7 @@ namespace BoardGameTutorial.Editor
             anim.EnsureCameraForCapture();
 
             var ids = new List<string>();
-            foreach (var lvl in new[] { 1, 2 })
+            foreach (var lvl in new[] { 1, 2, 3 })
                 foreach (var col in new[] { "emerald", "ruby", "diamond", "sapphire" })
                     ids.Add($"market_card_{lvl}_{col}#1");
             var deck = anim.Store.ZoneCenter("deck_level_1");
@@ -841,12 +841,13 @@ namespace BoardGameTutorial.Editor
                 Debug.Log($"[One] 牌堆=({deck.x:0.00},{deck.z:0.00})  槽{i}=({sl.x:0.00},{sl.z:0.00})");
             }
 
-            for (float time = 0f; time <= 6.6f; time += 0.1f)
+            for (float time = 0f; time <= 9.0f; time += 0.1f)
             {
                 anim.Seek(time);
                 int d1 = anim.Store.CountInZone("deck_level_1");
                 int d2 = anim.Store.CountInZone("deck_level_2");
-                var sb = new System.Text.StringBuilder($"[One] t={time:0.0} deck1={d1} deck2={d2}");
+                int d3 = anim.Store.CountInZone("deck_level_3");
+                var sb = new System.Text.StringBuilder($"[One] t={time:0.0} d1={d1} d2={d2} d3={d3}");
                 foreach (var id in ids)
                 {
                     bool found = false;
@@ -865,7 +866,7 @@ namespace BoardGameTutorial.Editor
                     if (!found) sb.Append($"   {id}:未找到");
                 }
                 Debug.Log(sb.ToString());
-                if (time >= 3.2f && time <= 5.8f) SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
+                if (time >= 5.6f && time <= 8.4f) SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
             }
             Debug.Log($"[One] 完成，图在 {outDir}");
         }
@@ -926,7 +927,7 @@ namespace BoardGameTutorial.Editor
             anim.LoadCue(gameRoot, "full", b.id, true);
             anim.Seek(anim.TotalDuration + 1f);
             int marketAfterB = anim.Store.CountInZone("card_market");
-            int wantMarket = 8;   // 一级 4 张 + 二级 4 张
+            int wantMarket = 12;  // 一级 4 + 二级 4 + 三级 4
             Debug.Log($"[Tree] 让 B 跑完后: market={marketAfterB}（应为 {wantMarket}）");
             bool setupOk = marketAfterB == wantMarket;
             if (!setupOk) { Debug.Log($"[Tree] FAIL 前置条件：B 没发出 {wantMarket} 张牌"); failures++; }
