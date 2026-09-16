@@ -53,6 +53,14 @@ namespace BoardGameTutorial
         public string background = "#1E2126";
         public float camera_pitch = 50f;
 
+        /// <summary>
+        /// 牌桌的**根画面**：默认展示的整幅图（例如背景介绍时显示游戏盒封面）。
+        /// 这是「树根」的状态，事件 showbox 可以改变它。
+        /// 放在 stage 而不是某条 cue 里，是为了让入口状态**从根开始解** ——
+        /// 这样跳转与顺序播放得到同一画面（否则两条路会不一致）。
+        /// </summary>
+        public string default_picture;
+
         /// <summary>取景留白倍率（1.0 = 恰好装下 extent）。</summary>
         public float ortho_scale = 1.18f;
 

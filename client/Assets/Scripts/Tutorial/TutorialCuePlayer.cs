@@ -315,7 +315,13 @@ namespace BoardGameTutorial
                     }
                 }
 
+                // 交接后，盒面状态由草稿的结果决定（草稿从根开始重放了整条链）。
+                // 顺序很重要：AdoptStateFrom 会 ClearActors 并重建画面，
+                // 若在它之前应用根画面，盒面会被这次重建销毁。
+                bool boxVisible = scratch.BoxVisibleForTest;
+                string boxPic = scratch.BoxPictureForTest;
                 anim.AdoptStateFrom(scratch, gameRoot);
+                anim.ApplyPictureForTest(boxVisible, boxPic);
 
                 // 入口状态诊断：市场/三个牌堆的数量与「可见张数」。
                 // 「数量对但看不见」和「数量就不对」是两类完全不同的 bug，
@@ -361,19 +367,18 @@ namespace BoardGameTutorial
             {
                 animPlayer.animationEnabled = enableCueAnimation;
                 fallbackClock = 0f;   // 每条 cue 重置降级时钟，避免把它累积成「已经播完」
-                // 入口状态：只有「紧接着的下一条」可以直接沿用当前画面（顺序播放，最省）；
-                // 其它情况（跳转、重播、分支）一律按 cue 声明的 entry 重新解出来。
-                // 这正是「可以抽一张」和「不可以抽两张」能做兄弟的原因 ——
-                // 两条 cue 都声明同一个 entry，各自从同一张桌子出发。
-                // 注意：必须和 `previous`（本条的**上一条**）比较。
-                // 曾经这里写成 `previousIndex`，而它在本函数开头已被赋成本条的 index，
-                // 于是条件恒为 false —— 每条 cue 都被当成跳转、都重新解入口状态，
-                // 顺序播放时画面被反复重建（用户看到 cue13 牌又不见了）。
-                bool continueFromPrevious = continueState && index == previous + 1;
-                if (!continueFromPrevious && animPlayer != null)
+                // 入口状态**总是**按 cue 声明的 entry 解出来，不再有「顺序播放就沿用当前画面」
+                // 的快捷路径。那条捷径会让两条路得到不同画面：按右跳转到某条 cue 时从根解
+                // （树根画面/盒面会出现或消失），而顺序播到同一条却保留了上一条的画面。
+                // 用户就是这么发现的：按右盒面消失、往回两次又出现。
+                //
+                // 入口状态从根开始解，正是「可以抽一张 / 不可以抽两张」能做兄弟的原因 ——
+                // 两条 cue 声明同一个 entry，各自从同一张桌子出发。
+                if (animPlayer != null)
                 {
                     ApplyEntryState(animPlayer, ResolveEntryCueId(index));
                 }
+                bool continueFromPrevious = continueState && index == previous + 1;
 
                 // 注意：LoadCue 必须无条件调用。曾经写成 `if (showZoneLabels && LoadCue(...))`，
                 // 而 showZoneLabels 默认 false —— 短路导致动画永远不载入：

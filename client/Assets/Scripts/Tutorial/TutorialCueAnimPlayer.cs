@@ -71,6 +71,23 @@ namespace BoardGameTutorial
             return null;
         }
 
+        /// <summary>自检用：当前是否正显示整幅图（盒面等）。</summary>
+        public bool BoxVisibleForTest => boxSprite != null && boxSprite.enabled && boxSprite.sprite != null;
+
+        /// <summary>自检用：当前显示的图片名（没有则空）。</summary>
+        public string BoxPictureForTest => currentPicture;
+
+        /// <summary>自检/交接用：按给定状态应用整幅图。</summary>
+        public void ApplyPictureForTest(bool visible, string picture)
+        {
+            if (!visible || string.IsNullOrEmpty(picture))
+            {
+                if (boxSprite != null) { Object.DestroyImmediate(boxSprite.gameObject); boxSprite = null; }
+                return;
+            }
+            TriggerShowBox(new CueAnimEvent { action = "showbox", picture = picture, on = 1f });
+        }
+
         /// <summary>自检用：临时注册一个容器。</summary>
         public void RegisterContainerForTest(string id, string[] itemIds)
         {
@@ -125,6 +142,7 @@ namespace BoardGameTutorial
         private GameObject animRoot;
         private Camera animCamera;
         private SpriteRenderer boxSprite;
+        private string currentPicture;
 
         private readonly Dictionary<string, CueAnimActor> actors = new Dictionary<string, CueAnimActor>();
         /// <summary>区域底板：zone id → 代表它的装饰件 id（静态底板，不带高亮）。</summary>
@@ -211,6 +229,7 @@ namespace BoardGameTutorial
                     EnsureCamera();
                     SetBackground();
                     FitCamera();
+                    ApplyRootPicture();
                 }
                 return false;
             }
@@ -810,6 +829,7 @@ namespace BoardGameTutorial
             EnsureCamera();
             SetBackground();
             FitCamera();
+            ApplyRootPicture();     // 树根的根画面（例如背景介绍时的盒面）
             return true;
         }
 
@@ -1594,12 +1614,29 @@ namespace BoardGameTutorial
         /// 注意：它挂在 animRoot 下，所以换 cue（continueState=false）重建画面时会自动清掉，
         /// 进入下一节不需要额外写"隐藏"事件。
         /// </summary>
+        /// <summary>
+        /// 应用「树根画面」：stage.board.default_picture。
+        /// 入口状态从根开始解，所以每次解入口都会先摆成根的样子，再由 cue 的事件改变。
+        /// 这样「按右跳转」和「顺序播到同一条」得到完全相同的画面。
+        /// </summary>
+        private void ApplyRootPicture()
+        {
+            string pic = stage?.board != null ? stage.board.default_picture : null;
+            TriggerShowBox(new CueAnimEvent
+            {
+                action = "showbox",
+                picture = pic,
+                on = string.IsNullOrEmpty(pic) ? 0f : 1f,
+            });
+        }
+
         private void TriggerShowBox(CueAnimEvent ev)
         {
             bool show = ev.on >= 0.5f;
             if (!show || string.IsNullOrEmpty(ev.picture))
             {
                 if (boxSprite != null) { Object.DestroyImmediate(boxSprite.gameObject); boxSprite = null; }
+                currentPicture = null;
                 return;
             }
 
@@ -1631,6 +1668,7 @@ namespace BoardGameTutorial
             }
             boxSprite.sprite = sprite;
             boxSprite.enabled = true;
+            currentPicture = ev.picture;   // 显式记住路径（Sprite.Create 不给 sprite 命名）
 
             // 等比缩放到视口的 ~92% 高度，居中放在取景中心
             float aspect = animCamera != null && animCamera.aspect > 0.01f ? animCamera.aspect : 1.7778f;

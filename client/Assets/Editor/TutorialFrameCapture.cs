@@ -1367,6 +1367,63 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 跳转 vs 顺序播放一致性：两条路必须得到**同一画面**。
+        ///
+        /// 用户报的现象：按右跳到下一条时盒面消失，顺序播到同一条却还在。
+        /// 原因是「顺序播放就沿用当前画面」的快捷路径绕过了入口状态求解，
+        /// 而跳转会从树根重解 —— 同一个位置，两条路画面不同。
+        /// </summary>
+        public static void SelfTestJumpMatchesSequential()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("ConsistencyHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Consist] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            System.Func<string, bool> boxVisibleNow = (ignored) =>
+                anim.BoxVisibleForTest;
+
+            for (int idx = 0; idx < Mathf.Min(11, player.Document.cues.Count); idx++)
+            {
+                string cueId = player.Document.cues[idx].id;
+
+                // 路 A：直接跳到这一条
+                string entry = (string)resolve.Invoke(player, new object[] { idx });
+                apply.Invoke(player, new object[] { anim, entry });
+                bool boxJump = anim.BoxVisibleForTest;
+
+                // 路 B：从根顺序播到这一条
+                apply.Invoke(player, new object[] { anim, null });     // 先回到根
+                for (int k = 0; k <= idx; k++)
+                {
+                    string e2 = (string)resolve.Invoke(player, new object[] { k });
+                    apply.Invoke(player, new object[] { anim, e2 });
+                }
+                bool boxSeq = anim.BoxVisibleForTest;
+
+                bool same = boxJump == boxSeq;
+                Debug.Log($"[Consist] {(same ? "PASS" : "FAIL")} {cueId}: 跳转盒面={boxJump} 顺序盒面={boxSeq}");
+                if (!same) failures++;
+            }
+
+            Debug.Log($"[Consist] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
