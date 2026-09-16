@@ -29,6 +29,11 @@ namespace BoardGameTutorial
                 return;
             }
 
+            // 选择器规则与 Resolve 一致：target 单件、zone 整组，两者同写时以 target 为准
+            if (!string.IsNullOrEmpty(ev.target) && !string.IsNullOrEmpty(ev.zone))
+                Debug.LogWarning($"[TutorialCueAnim] highlight 同时指定 target='{ev.target}' 和 " +
+                                 $"zone='{ev.zone}'（cue {CueId}）：按 target 处理");
+
             float peak = ev.peak_alpha >= 0f ? Mathf.Clamp01(ev.peak_alpha) : 0.55f;
             float grow = ev.grow > 0f ? ev.grow : 1.14f;
             float dur = Mathf.Max(ev.dur, 0.05f);

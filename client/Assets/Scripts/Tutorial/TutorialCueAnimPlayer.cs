@@ -1672,17 +1672,29 @@ namespace BoardGameTutorial
             var result = new List<CueAnimActor>();
             if (ev == null) return result;
 
-            if (!string.IsNullOrEmpty(ev.zone))
-            {
-                foreach (var item in Store.Items)
-                    if (item.ZoneId == ev.zone && item.Actor != null) result.Add(item.Actor);
-                return result;
-            }
+            // 选择器规则（全操作统一）：
+            //   target  = 单件
+            //   zone    = 整组（该 zone 内全部）
+            //   两者都写是数据错误：报警告，并以 target 为准。
+            // 曾经这里的顺序是 zone 优先，而 highlight 是 target 优先，
+            // 同一个事件在两类操作里会选中不同的东西。
+            bool hasTarget = !string.IsNullOrEmpty(ev.target);
+            bool hasZone = !string.IsNullOrEmpty(ev.zone);
+            if (hasTarget && hasZone)
+                Debug.LogWarning($"[TutorialCueAnim] 事件同时指定了 target='{ev.target}' 和 zone='{ev.zone}'" +
+                                 $"（cue {CueId}）：按 target 处理，zone 被忽略");
 
-            if (!string.IsNullOrEmpty(ev.target))
+            if (hasTarget)
             {
                 var actor = FindActor(ev.target);
                 if (actor != null) result.Add(actor);
+                return result;
+            }
+
+            if (hasZone)
+            {
+                foreach (var item in Store.Items)
+                    if (item.ZoneId == ev.zone && item.Actor != null) result.Add(item.Actor);
                 return result;
             }
 
