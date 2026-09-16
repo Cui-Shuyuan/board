@@ -844,6 +844,31 @@ namespace BoardGameTutorial
             SyncActorsToStore();
         }
 
+        /// <summary>
+        /// 只把牌桌摆成 stage.initial 的样子（不载入任何 cue 的动画）。
+        /// 用于「入口状态 = 牌桌初始态」和自检。
+        /// </summary>
+        public bool LoadInitialOnly(string gameRoot)
+        {
+            StopAnimations();
+            ClearActors();
+            clips.Clear();
+            cueDoc = null;
+            CueId = null;
+            clock = -1f;
+            nextIndex = 0;
+
+            LoadStage(gameRoot, null);
+            Store.Reset();
+            Store.ApplyInitial();
+            BuildActorObjects();
+            SyncActorsToStore();
+            EnsureCamera();
+            SetBackground();
+            FitCamera();
+            return true;
+        }
+
         /// <summary>自检/出图用：确保场景里有可用的相机。</summary>
         public void EnsureCameraForCapture() => EnsureCamera();
 

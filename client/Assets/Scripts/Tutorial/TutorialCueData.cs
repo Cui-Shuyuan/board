@@ -35,6 +35,20 @@ namespace BoardGameTutorial
         public List<string> refs;
         public List<TutorialCueSubtitle> subtitles;
         public string animation;
+
+        /// <summary>
+        /// 本条 cue 的**入口状态**来自哪条 cue 的终态。
+        ///
+        ///   "" 或 null   → 继承「上一条 cue」的终态（顺序播放的默认）
+        ///   "initial"    → 牌桌初始状态（只有 stage.initial 摆好的样子）
+        ///   "&lt;cue id&gt;"   → 那条 cue 的终态
+        ///
+        /// 为什么需要它：像「可以抽一张」和「不可以抽两张」这种对照教学，
+        /// 两条 cue 必须都从同一个状态出发（否则演示第二条时手里已经有牌了），
+        /// 它们是**兄弟**而不是父子。有了这个字段，分支教学就是给两条 cue
+        /// 写同一个 entry。
+        /// </summary>
+        public string entry;
     }
 
     [Serializable]

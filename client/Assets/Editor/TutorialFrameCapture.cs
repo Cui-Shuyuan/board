@@ -329,14 +329,16 @@ namespace BoardGameTutorial.Editor
                     {
                         // 与播放器跳转同样的做法：先把前面所有 cue 重放到终态
                         typeof(TutorialCuePlayer)
-                            .GetMethod("RebuildTableBefore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .Invoke(cuePlayer, new object[] { anim2, idx });
+                            .GetMethod("ApplyEntryState", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                            .Invoke(cuePlayer, new object[] { anim2,
+                                typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                                    .Invoke(cuePlayer, new object[] { idx }) });
 
                         int market = 0;
                         foreach (var it in anim2.Store.Items)
                             if (it.Id.StartsWith("market_card_")) market++;
-                        Debug.Log($"[LivePath] {(market == 12 ? "PASS" : "FAIL")} 跳转重建: 市场已有 {market} 张（应为 12）");
-                        if (market != 12) failures++;
+                        Debug.Log($"[LivePath] {(market == 4 ? "PASS" : "FAIL")} 跳转重建: 市场已有 {market} 张（应为 4）");
+                        if (market != 4) failures++;
                     }
                 }
                 Object.DestroyImmediate(p2);
@@ -378,8 +380,11 @@ namespace BoardGameTutorial.Editor
             Debug.Log($"[DealTest] 起始=({startPos.x:0.00},{startPos.z:0.00}) " +
                       $"牌堆=({deckPos.x:0.00},{deckPos.z:0.00}) 市场首格=({slotPos.x:0.00},{slotPos.z:0.00})");
 
-            bool onDeck = Mathf.Abs(startPos.x - deckPos.x) < 0.35f && Mathf.Abs(startPos.z - deckPos.z) < 0.35f;
-            Debug.Log($"[DealTest] {(onDeck ? "PASS" : "FAIL")} 发牌前停在对应牌堆位置");
+            // 牌在牌堆里占的是一层，位置是「中心 ± 层偏移」，不一定是中心本身。
+            // 判据放宽到「在牌堆范围内」（牌堆可见层最多错开 8*0.016）。
+            bool onDeck = Mathf.Abs(startPos.x - deckPos.x) < 0.20f && Mathf.Abs(startPos.z - deckPos.z) < 0.20f;
+            Debug.Log($"[DealTest] {(onDeck ? "PASS" : "FAIL")} 发牌前停在对应牌堆内 " +
+                      $"起=({startPos.x:0.00},{startPos.z:0.00}) 牌堆中心=({deckPos.x:0.00},{deckPos.z:0.00})");
             if (!onDeck) failures++;
 
             // 手动驱动协程：编辑器里设固定帧长，Time.deltaTime 才会推进补间
@@ -397,10 +402,12 @@ namespace BoardGameTutorial.Editor
                 actualFrom = plan.From;
                 actualTo = plan.To;
             }
+            // 起点判据：必须落在对应牌堆范围内（牌堆里每张牌占一层，位置略偏）。
             bool planOk = plan != null
                 && Mathf.Abs(actualTo.x - expectedTo.x) < 0.01f
                 && Mathf.Abs(actualTo.z - expectedTo.z) < 0.01f
-                && Mathf.Abs(actualFrom.x - deckPos.x) < 0.01f;
+                && Mathf.Abs(actualFrom.x - deckPos.x) < 0.20f
+                && Mathf.Abs(actualFrom.z - deckPos.z) < 0.20f;
             Debug.Log($"[DealTest] {(planOk ? "PASS" : "FAIL")} 发牌补间参数：" +
                       $"起=({actualFrom.x:0.00},{actualFrom.z:0.00}) 止=({actualTo.x:0.00},{actualTo.z:0.00}) " +
                       $"期望止=({expectedTo.x:0.00},{expectedTo.z:0.00})");
@@ -681,7 +688,7 @@ namespace BoardGameTutorial.Editor
         /// 逐帧导出市场牌坐标 + 出图。单独载入某条 cue 与顺序播放的状态可能不同。
         /// </summary>
         /// <summary>
-        /// 复现编辑器里的真实路径：按 B 跳转 → RebuildTableBefore → 载入目标 cue → 逐帧 Seek。
+        /// 复现编辑器里的真实路径：按 B 跳转 → 解入口状态 → 载入目标 cue → 逐帧 Seek。
         /// 之前的版本被改坏了（循环体落在不可达分支里），所以「验证通过」是假的。
         /// </summary>
         public static void CaptureSequence()
@@ -710,8 +717,10 @@ namespace BoardGameTutorial.Editor
 
             // ① 真实跳转路径：重建桌面
             typeof(TutorialCuePlayer)
-                .GetMethod("RebuildTableBefore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .Invoke(player, new object[] { anim, target });
+                .GetMethod("ApplyEntryState", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(player, new object[] { anim,
+                    typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                        .Invoke(player, new object[] { target }) });
 
             // ② 载入目标 cue（与播放器一致）
             bool ok = anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
@@ -765,8 +774,10 @@ namespace BoardGameTutorial.Editor
                 if (player.Document.cues[i].id == "setup.cards.002.1") { target = i; break; }
 
             typeof(TutorialCuePlayer)
-                .GetMethod("RebuildTableBefore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .Invoke(player, new object[] { anim, target });
+                .GetMethod("ApplyEntryState", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(player, new object[] { anim,
+                    typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                        .Invoke(player, new object[] { target }) });
 
             anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
             anim.Seek(0f);
@@ -854,6 +865,94 @@ namespace BoardGameTutorial.Editor
                 if (time >= 2.3f && time <= 3.5f) SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
             }
             Debug.Log($"[One] 完成，图在 {outDir}");
+        }
+
+        /// <summary>
+        /// 树形入口自检：验证「兄弟分支」——
+        /// 两条 cue 声明同一个 entry 时，第二条不会带上第一条留下的东西。
+        /// 用现有数据模拟：setup.cards.001.3 与 setup.cards.002.1 都以
+        /// setup.cards.001.1 的终态为入口。
+        /// </summary>
+        public static void SelfTestEntryTree()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("TreeHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Tree] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            var m = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            // 打印整棵入口树
+            for (int i = 0; i < player.Document.cues.Count; i++)
+            {
+                var c = player.Document.cues[i];
+                if (!c.id.StartsWith("setup.")) continue;
+                string e = (string)m.Invoke(player, new object[] { i });
+                Debug.Log($"[Tree] {c.id,-26} entry={(e ?? "初始态")}  " +
+                          $"声明={(string.IsNullOrWhiteSpace(c.entry) ? "（未写，继承上一条）" : c.entry)}");
+            }
+
+            // 关键：改两条 cue 声明同一个 entry，验证第二条不带第一条的痕迹
+            var a = player.Document.cues.Find(x => x.id == "setup.cards.001.1");
+            var b = player.Document.cues.Find(x => x.id == "setup.cards.002.1");
+            if (a == null || b == null) { Debug.Log("[Tree] FAIL 找不到测试 cue"); EditorApplication.Exit(1); return; }
+            a.entry = "initial";
+            b.entry = "initial";
+
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            // 场景：先让 B（发牌）真正跑一遍，桌面上留下 4 张市场牌。
+            // 然后分别用「兄弟入口 initial」和「父子入口 A」解状态，看有没有带上那 4 张。
+            var entryOfB = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            int bi = player.Document.cues.IndexOf(b);
+
+            // 先跑 B 一次，制造「B 已经发过牌」的局面
+            b.entry = "initial";
+            apply.Invoke(player, new object[] { anim, null });
+            anim.LoadCue(gameRoot, "full", b.id, true);
+            anim.Seek(anim.TotalDuration + 1f);
+            int marketAfterB = anim.Store.CountInZone("card_market");
+            Debug.Log($"[Tree] 让 B 跑完后: market={marketAfterB}（应为 4）");
+            bool setupOk = marketAfterB == 4;
+            if (!setupOk) { Debug.Log("[Tree] FAIL 前置条件：B 没发出 4 张牌"); failures++; }
+
+            // ① 兄弟：B 声明 initial —— 解出的状态里 market 必须是 0
+            b.entry = "initial";
+            apply.Invoke(player, new object[] { anim, (string)entryOfB.Invoke(player, new object[] { bi }) });
+            int marketSibling = anim.Store.CountInZone("card_market");
+            int deckSibling = anim.Store.CountInZone("deck_level_1");
+            Debug.Log($"[Tree] {(marketSibling == 0 ? "PASS" : "FAIL")} 兄弟入口(initial): " +
+                      $"deck1={deckSibling} market={marketSibling}（market 应为 0，不带 B 的 4 张）");
+            if (marketSibling != 0) failures++;
+
+            // ② 父子：B 声明以 A 为入口 —— A 只建牌堆，market 仍是 0，但这条路走通了
+            b.entry = "setup.cards.001.1";
+            string resolved = (string)entryOfB.Invoke(player, new object[] { bi });
+            apply.Invoke(player, new object[] { anim, resolved });
+            int marketChild = anim.Store.CountInZone("card_market");
+            int deckChild = anim.Store.CountInZone("deck_level_1");
+            bool childOk = resolved == "setup.cards.001.1" && deckChild == 36 && marketChild == 0;
+            Debug.Log($"[Tree] {(childOk ? "PASS" : "FAIL")} 父子入口({resolved}): " +
+                      $"deck1={deckChild} market={marketChild}");
+            if (!childOk) failures++;
+
+            // ③ 还原声明，避免影响真实运行
+            b.entry = null;
+            a.entry = null;
+
+            Debug.Log($"[Tree] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
         public static void CaptureAll()
