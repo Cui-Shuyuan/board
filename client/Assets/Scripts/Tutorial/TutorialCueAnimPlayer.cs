@@ -1013,8 +1013,24 @@ namespace BoardGameTutorial
                     float yaw = Mathf.LerpUnclamped(clip.FlipFromYaw, toYaw, k);
                     clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
                     bool showingBack = Mathf.Cos(yaw * Mathf.Deg2Rad) < 0f;
-                    if (clip.Actor.BackSprite != null)
-                        clip.Actor.Renderer.sprite = showingBack ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
+
+                    // 发牌：翻过 90°（开始看到正面）那一刻才把贴图换成它真正的那张牌。
+                    // 牌堆里 40 张牌在发出去之前不知道是哪一张，所以只能在这里定下来。
+                    // 换面（只做一次）：翻过 90°、开始看到正面时，把这一件的模板换成它真正的牌。
+                    // 必须改到 item.Template 上，否则下一帧复位又会变回卡背。
+                    if (!string.IsNullOrEmpty(clip.SwapToTemplate) && !showingBack
+                        && clip.Item != null && clip.Item.Template != null
+                        && clip.Item.Template.id != clip.SwapToTemplate)
+                    {
+                        ApplySwap(clip.Actor, clip.SwapToTemplate, clip.SwapToPalette);
+                        clip.Actor.Renderer.sprite = clip.Actor.FaceSprite;   // 换完立刻显示正面
+                        WarnIfInvalid(clip.Item, clip.Actor.Go.transform.localPosition, "swap 后");
+                    }
+
+                    // 没有背图时，翻转前后都用当前正面 —— 翻的是"这张牌的身份"，
+                    // 真正的换面由上面的 ApplySwap 完成。
+                    var shown = clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
+                    clip.Actor.Renderer.sprite = showingBack ? shown : clip.Actor.FaceSprite;
                 }
 
                 if (clip.HasScale)
@@ -1209,6 +1225,7 @@ namespace BoardGameTutorial
                 case "showbox": TriggerShowBox(ev); return;
                 case "create": TriggerCreate(ev); return;
                 case "destroy": TriggerDestroy(ev); return;
+                case "swap": TriggerSwap(ev); return;
                 default:
                     Debug.LogWarning($"[TutorialCueAnim] unknown action '{ev.action}' in cue {CueId}");
                     return;
@@ -1286,6 +1303,10 @@ namespace BoardGameTutorial
 
             public bool HasFlip;
             public float FlipFromYaw; // 起始偏航角（0 或 180）
+
+            /// <summary>翻面过半时把贴图换成目标模板（发牌："翻开才知道是哪张"）。</summary>
+            public string SwapToTemplate;
+            public string SwapToPalette;
             public bool FlipHalfTurn; // true = 翻半圈回到原角度（新建组件的翻转）
 
             public bool HasScale;
@@ -1487,11 +1508,17 @@ namespace BoardGameTutorial
                 }
 
                 // 边移动边翻转：到终点恰好转到另一面。
-                if (ev.flip && actor.BackSprite != null)
+                // 翻转不依赖 back_image：牌堆的牌**正面就是卡背图**（它还没有"另一面"）。
+                // 曾经用 `ev.flip && actor.BackSprite != null` 作为条件，牌堆的牌
+                // 没有 back_image，于是整条翻转+换面都没发生（发到市场的牌一直是卡背）。
+                if (ev.flip)
                 {
                     clip.HasFlip = true;
                     clip.FlipFromYaw = step.Item.Flipped ? 180f : 0f;
                     step.Item.Flipped = !step.Item.Flipped;   // 逻辑状态立即到终态
+                    // 「翻开才知道是哪张」：翻过 90° 时换面
+                    clip.SwapToTemplate = ev.to_template;
+                    clip.SwapToPalette = ev.to_palette;
                 }
             }
 
@@ -1707,7 +1734,17 @@ namespace BoardGameTutorial
             }
             string zone = string.IsNullOrEmpty(ev.zone) ? "offstage" : ev.zone;
             int n = ev.count > 0 ? ev.count : 1;
-            var created = Store.Spawn(ev.template, ev.palette, zone, n);
+
+            // 幂等：只补齐差额。
+            // 「创建 N 件」如果被触发两次（重复 Seek、先解入口状态再载入等），
+            // 会把牌堆建两遍（40 张变 80 张）。按已有数量补齐比"每次全建"稳妥，
+            // 也让 create 可以安全地写在多条 cue 里（例如"确保牌堆已就位"）。
+            int have = Store.CountInZone(zone, ev.template);
+            n -= have;
+            if (n <= 0) return;
+
+            // plain = 不指定色板（整摞牌在发出去之前不区分颜色）
+            var created = Store.Spawn(ev.template, ev.plain ? null : ev.palette, zone, n);
             foreach (var item in created)
             {
                 if (item == null) continue;
@@ -1732,6 +1769,56 @@ namespace BoardGameTutorial
                     item.Flipped = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// 换面：把组件换成另一个模板的贴图（正反面一起换），对象本身不重建。
+        ///
+        /// 为什么需要它：一摞 40 张牌在发出去之前**不知道是哪张牌**，
+        /// 所以牌堆里只能是 40 张"背面朝上"的真牌；
+        /// 发到市场时才定下它是哪一张 —— 这时换面，而不是另造一个对象。
+        /// 这样"发牌"始终是**同一张牌从牌堆移动到市场**，与真实操作一致。
+        /// </summary>
+        private void TriggerSwap(CueAnimEvent ev)
+        {
+            if (string.IsNullOrEmpty(ev.to_template))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] swap 缺少 to_template（cue {CueId}）");
+                return;
+            }
+            var tpl = Store.GetTemplate(ev.to_template);
+            if (tpl == null)
+            {
+                Debug.LogWarning($"[TutorialCueAnim] swap 未知模板 '{ev.to_template}'（cue {CueId}）");
+                return;
+            }
+
+            foreach (var actor in Resolve(ev))
+                ApplySwap(actor, ev.to_template, ev.to_palette);
+        }
+
+        /// <summary>把一件东西换成另一个模板的贴图（正反两面一起换），对象不重建。</summary>
+        private void ApplySwap(CueAnimActor actor, string toTemplate, string toPalette)
+        {
+            var item = actor?.Item;
+            if (item == null || actor.Go == null) return;
+            var tpl = Store.GetTemplate(toTemplate);
+            if (tpl == null) return;
+
+            string palette = string.IsNullOrEmpty(toPalette) ? tpl.palette : toPalette;
+            var eff = EffectiveTemplate(tpl, palette);
+            item.Template = tpl;
+            item.PaletteName = palette;
+            item.BaseColor = Palette.TintFor(eff.shape, palette);
+            actor.EffectiveTemplate = eff;
+
+            var face = ResolveSprite(eff);
+            if (face != null) actor.FaceSprite = face;
+            actor.BackSprite = null;
+            var backPath = ResolveBackImagePath(eff);
+            if (backPath != null) actor.BackSprite = CardImageLoader.Load(backPath, eff.shape);
+
+            item.Shown = true;
         }
 
         /// <summary>

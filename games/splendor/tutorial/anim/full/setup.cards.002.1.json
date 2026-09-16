@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：销毁三张展示卡背、创建三摞卡堆，洗混。「从每摞牌上方分别翻开四张」(3.60 起)：**逐一创建**市场牌并直接落在市场格位 0–11，出场位置对准对应牌堆（模板 from_zone），落位后翻面朝上。待发的牌不再预先存在，因此不需要 hide_until_animated。",
+  "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：创建 40/30/20 张**真实的牌**（背面朝上），分别洗混。「从每摞牌上方分别翻开四张」(3.60 起)：从牌堆搬走最上面那张、边飞边翻面，翻过 90° 时换面成它真正的那张牌，落在市场格位 0–11。牌堆因此真的减少 4 张（40→36、30→26、20→16）。",
   "start": {
     "set": []
   },
@@ -38,27 +38,27 @@
       "dur": 0.0,
       "action": "create",
       "template": "card_back_1",
-      "palette": "card_level_1",
+      "plain": true,
       "zone": "deck_level_1",
-      "count": 36
+      "count": 40
     },
     {
       "at": 0.07,
       "dur": 0.0,
       "action": "create",
       "template": "card_back_2",
-      "palette": "card_level_2",
+      "plain": true,
       "zone": "deck_level_2",
-      "count": 26
+      "count": 30
     },
     {
       "at": 0.09,
       "dur": 0.0,
       "action": "create",
       "template": "card_back_3",
-      "palette": "card_level_3",
+      "plain": true,
       "zone": "deck_level_3",
-      "count": 16
+      "count": 20
     },
     {
       "at": 0.3,
@@ -84,146 +84,206 @@
     {
       "at": 3.58,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_1_emerald",
-      "palette": "card_level_1",
+      "action": "move",
+      "from": [
+        "deck_level_1"
+      ],
+      "take": 1,
+      "template": "card_back_1",
       "zone": "card_market",
-      "count": 1,
+      "order": 0,
       "slot": 0,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_1_emerald",
+      "to_palette": "card_level_1"
     },
     {
       "at": 3.97,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_1_ruby",
-      "palette": "card_level_1",
+      "action": "move",
+      "from": [
+        "deck_level_1"
+      ],
+      "take": 1,
+      "template": "card_back_1",
       "zone": "card_market",
-      "count": 1,
+      "order": 1,
       "slot": 1,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_1_ruby",
+      "to_palette": "card_level_1"
     },
     {
       "at": 4.36,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_1_diamond",
-      "palette": "card_level_1",
+      "action": "move",
+      "from": [
+        "deck_level_1"
+      ],
+      "take": 1,
+      "template": "card_back_1",
       "zone": "card_market",
-      "count": 1,
+      "order": 2,
       "slot": 2,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_1_diamond",
+      "to_palette": "card_level_1"
     },
     {
       "at": 4.75,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_1_sapphire",
-      "palette": "card_level_1",
+      "action": "move",
+      "from": [
+        "deck_level_1"
+      ],
+      "take": 1,
+      "template": "card_back_1",
       "zone": "card_market",
-      "count": 1,
+      "order": 3,
       "slot": 3,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_1_sapphire",
+      "to_palette": "card_level_1"
     },
     {
       "at": 5.14,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_2_sapphire",
-      "palette": "card_level_2",
+      "action": "move",
+      "from": [
+        "deck_level_2"
+      ],
+      "take": 1,
+      "template": "card_back_2",
       "zone": "card_market",
-      "count": 1,
+      "order": 4,
       "slot": 4,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_2_sapphire",
+      "to_palette": "card_level_2"
     },
     {
       "at": 5.53,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_2_onyx",
-      "palette": "card_level_2",
+      "action": "move",
+      "from": [
+        "deck_level_2"
+      ],
+      "take": 1,
+      "template": "card_back_2",
       "zone": "card_market",
-      "count": 1,
+      "order": 5,
       "slot": 5,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_2_onyx",
+      "to_palette": "card_level_2"
     },
     {
       "at": 5.92,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_2_ruby",
-      "palette": "card_level_2",
+      "action": "move",
+      "from": [
+        "deck_level_2"
+      ],
+      "take": 1,
+      "template": "card_back_2",
       "zone": "card_market",
-      "count": 1,
+      "order": 6,
       "slot": 6,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_2_ruby",
+      "to_palette": "card_level_2"
     },
     {
       "at": 6.31,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_2_emerald",
-      "palette": "card_level_2",
+      "action": "move",
+      "from": [
+        "deck_level_2"
+      ],
+      "take": 1,
+      "template": "card_back_2",
       "zone": "card_market",
-      "count": 1,
+      "order": 7,
       "slot": 7,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_2_emerald",
+      "to_palette": "card_level_2"
     },
     {
       "at": 6.7,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_3_ruby",
-      "palette": "card_level_3",
+      "action": "move",
+      "from": [
+        "deck_level_3"
+      ],
+      "take": 1,
+      "template": "card_back_3",
       "zone": "card_market",
-      "count": 1,
+      "order": 8,
       "slot": 8,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_3_ruby",
+      "to_palette": "card_level_3"
     },
     {
       "at": 7.09,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_3_diamond",
-      "palette": "card_level_3",
+      "action": "move",
+      "from": [
+        "deck_level_3"
+      ],
+      "take": 1,
+      "template": "card_back_3",
       "zone": "card_market",
-      "count": 1,
+      "order": 9,
       "slot": 9,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_3_diamond",
+      "to_palette": "card_level_3"
     },
     {
       "at": 7.48,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_3_emerald",
-      "palette": "card_level_3",
+      "action": "move",
+      "from": [
+        "deck_level_3"
+      ],
+      "take": 1,
+      "template": "card_back_3",
       "zone": "card_market",
-      "count": 1,
+      "order": 10,
       "slot": 10,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_3_emerald",
+      "to_palette": "card_level_3"
     },
     {
       "at": 7.87,
       "dur": 0.34,
-      "action": "create",
-      "template": "market_card_3_onyx",
-      "palette": "card_level_3",
+      "action": "move",
+      "from": [
+        "deck_level_3"
+      ],
+      "take": 1,
+      "template": "card_back_3",
       "zone": "card_market",
-      "count": 1,
+      "order": 11,
       "slot": 11,
       "flip": true,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "to_template": "market_card_3_onyx",
+      "to_palette": "card_level_3"
     }
   ]
 }

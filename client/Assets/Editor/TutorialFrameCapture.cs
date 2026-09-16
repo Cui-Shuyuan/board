@@ -336,7 +336,7 @@ namespace BoardGameTutorial.Editor
 
                         int market = 0;
                         foreach (var it in anim2.Store.Items)
-                            if (it.Id.StartsWith("market_card_")) market++;
+                            if (it.ZoneId == "card_market") market++;
                         Debug.Log($"[LivePath] {(market == 12 ? "PASS" : "FAIL")} 跳转重建: 市场已有 {market} 张（应为 12）");
                         if (market != 12) failures++;
                     }
@@ -352,6 +352,14 @@ namespace BoardGameTutorial.Editor
         /// 专项自检：发牌动画是否真的把牌从牌堆移到了市场。
         /// 复现用户操作：跳到 setup.cards.002.1，用 Seek 推进，观察市场牌位置变化。
         /// </summary>
+        /// <summary>
+        /// 发牌自检：**牌堆是真正的牌，发牌是把最上面那张搬到市场并翻面**。
+        ///
+        /// 要验的三件事（正是用户强调的模型）：
+        ///   ① 牌堆初始是真正的 40/30/20 张（每张都是一件东西，不是"一摞"）
+        ///   ② 发牌过程中牌**从牌堆搬到市场**，牌堆真的减少 4 张
+        ///   ③ 翻过 90° 时换面 —— 市场的每张牌都变成它真正的那张牌（不再是卡背）
+        /// </summary>
         public static void SelfTestDealSync()
         {
             int failures = 0;
@@ -363,396 +371,65 @@ namespace BoardGameTutorial.Editor
             anim.logMoves = true;
             anim.logTweens = true;
 
-            if (!anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false))
+            // continueState=true：本 cue 自己会 create 牌堆，不必先按 initial 摆一遍
+            // （用 false 会先解入口状态、再 create，牌堆被建两遍 → 张数翻倍）
+            if (!anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true))
             {
                 Debug.Log("[DealTest] FAIL LoadCue 返回 false");
                 EditorApplication.Exit(1);
                 return;
             }
 
-            // 市场牌现在**在发牌那一刻才被创建**（不再预先摆在牌堆位置等发牌），
-            // 所以"发牌前停在牌堆内"这条旧假设不再成立，改为断言它**还不存在**。
-            // 出场位置仍对准对应牌堆：由模板 from_zone 决定（下方断言）。
-            string probeId = "market_card_1_emerald#1";
-            bool existsEarly = false;
-            foreach (var it in anim.Store.Items)
-                if (it.Id == probeId) existsEarly = true;
-            Debug.Log($"[DealTest] {(existsEarly ? "FAIL" : "PASS")} 发牌前该牌尚未存在（现在是发牌时创建）");
-            if (existsEarly) failures++;
-
-            var deckPos = anim.Store.ZoneCenter("deck_level_1");
-            var slotPos = anim.Store.ZonePosition("card_market", 0);
-            Debug.Log($"[DealTest] 牌堆=({deckPos.x:0.00},{deckPos.z:0.00}) " +
-                      $"市场首格=({slotPos.x:0.00},{slotPos.z:0.00})");
-
-            // 手动驱动协程：编辑器里设固定帧长，Time.deltaTime 才会推进补间
-            // （-executeMethod 没有帧循环，deltaTime 恒为 0，直接 Seek 测不出补间）。
-            // 补间由 StartCoroutine 驱动，而批处理没有帧循环时协程不会推进 —— 端到端
-            // 断言在这里测不了。改为断言「补间参数正确」+「原语本身能走到终点」：
-            // 参数对 + 原语对 ⇒ 编辑器里必然飞到位。
-            // 发牌现在走 create：牌**直接创建在市场格位上**（不再有牌堆→市场的位移补间），
-            // 所以这里断言的是：它落点正确、且出场位置对准对应牌堆（模板 from_zone 决定）。
-            var expectedTo = anim.Store.ZonePosition("card_market", 0);
-            Vector3 actualTo = Vector3.zero; bool found = false;
-            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.1f) anim.Seek(tt);
-            foreach (var it in anim.Store.Items)
-                if (it.Id == "market_card_1_emerald#1" && it.Actor != null)
-                { actualTo = it.Actor.Go.transform.localPosition; found = true; }
-
-            bool planOk = found
-                && Mathf.Abs(actualTo.x - expectedTo.x) < 0.01f
-                && Mathf.Abs(actualTo.z - expectedTo.z) < 0.01f;
-            Debug.Log($"[DealTest] {(planOk ? "PASS" : "FAIL")} 发牌落点正确（create 直接创建到市场格位）：" +
-                      $"落=({actualTo.x:0.00},{actualTo.z:0.00}) 期望=({expectedTo.x:0.00},{expectedTo.z:0.00})");
-            if (!planOk) failures++;
-
-            // 出场起点仍须对准对应牌堆：由模板 from_zone 提供
-            var probeTpl = anim.Store.GetTemplate("market_card_1_emerald");
-            string fromZone = probeTpl != null ? probeTpl.from_zone : null;
-            bool anchorOk = fromZone == "deck_level_1";
-            Debug.Log($"[DealTest] {(anchorOk ? "PASS" : "FAIL")} 出场起点对准对应牌堆：" +
-                      $"market_card_1_emerald.from_zone={fromZone ?? "(空)"}");
-            if (!anchorOk) failures++;
-
+            var expectedPiles = new (string zone, string tpl, int total, int left)[]
             {
-                var probe = new GameObject("primProbe");
-                TutorialPrimitives.ManualDelta = 1f / 60f;
-                TutorialPrimitives.Paused = false;
-                var e0 = TutorialPrimitives.TweenPosition(probe.transform, deckPos, actualTo, 0.45f, "easeInOutCubic");
+                ("deck_level_1", "card_back_1", 40, 36),
+                ("deck_level_2", "card_back_2", 30, 26),
+                ("deck_level_3", "card_back_3", 20, 16),
+            };
+
+            // ① 牌堆张数必须是**真正的** 40/30/20。
+            // 注意：牌堆由本条 cue 的 create 建立，所以要先推到 create 之后（洗混之前）。
+            anim.Seek(0.5f);
+            foreach (var (zone, tpl, total, _) in expectedPiles)
+            {
                 int n = 0;
-                while (e0.MoveNext()) n++;
-                float dd = Vector3.Distance(probe.transform.position, actualTo);
-                bool primOk = dd < 0.01f && n > 1;
-                Debug.Log($"[DealTest] {(primOk ? "PASS" : "FAIL")} 补间原语走到终点：{n} 步, 偏差 {dd:0.0000}");
-                if (!primOk) failures++;
-                Object.DestroyImmediate(probe);
-                TutorialPrimitives.ManualDelta = 0f;
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == zone && it.Template != null && it.Template.id == tpl) n++;
+                Debug.Log($"[DealTest] {(n == total ? "PASS" : "FAIL")} {zone} 初始有 {n} 张真牌（应为 {total}）");
+                if (n != total) failures++;
             }
+
+            // ② 逐帧推进：牌堆只减不增，市场只增不减，最后各减 4 张
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.1f) anim.Seek(tt);
+
+            foreach (var (zone, tpl, total, left) in expectedPiles)
+            {
+                int n = 0;
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == zone && it.Template != null && it.Template.id == tpl) n++;
+                Debug.Log($"[DealTest] {(n == left ? "PASS" : "FAIL")} {zone} 发牌后剩 {n} 张（应为 {left}）" +
+                          $"—— 真的少了 {total - n} 张");
+                if (n != left) failures++;
+            }
+
+            // ③ 市场 12 张，且每张都已换面成它真正的那张牌
+            int inMarket = 0, swapped = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.ZoneId != "card_market") continue;
+                inMarket++;
+                if (it.Template != null && it.Template.id.StartsWith("market_card_")) swapped++;
+            }
+            Debug.Log($"[DealTest] {(inMarket == 12 ? "PASS" : "FAIL")} 市场 12 张（实际 {inMarket}）");
+            if (inMarket != 12) failures++;
+            Debug.Log($"[DealTest] {(swapped == 12 ? "PASS" : "FAIL")} 12 张都已换面成真正的牌（实际 {swapped}）" +
+                      $"—— 翻过 90° 才知道它是哪张");
+            if (swapped != 12) failures++;
 
             Debug.Log($"[DealTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
-        /// <summary>
-        /// 逐帧出图：把一条 cue 的时间轴按固定步长走一遍，每步存一张 PNG。
-        /// 因为画面已经是「时间的函数」（Seek 采样片段），离屏也能看到完整动画，
-        /// 不需要 Unity 帧循环、也不需要人肉截图。
-        /// 用法：-executeMethod ...CaptureTimeline -captureCue &lt;id&gt; -captureFrom 0 -captureTo 8 -captureStep 0.15
-        /// </summary>
-        public static void CaptureTimeline()
-        {
-            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
-            string gameRoot = Path.Combine(repoRoot, "games/splendor");
-            string cueId = ArgValue("-captureCue", "setup.cards.002.1");
-            float from = float.Parse(ArgValue("-captureFrom", "0"));
-            float to = float.Parse(ArgValue("-captureTo", "8.5"));
-            float step = float.Parse(ArgValue("-captureStep", "0.15"));
-
-            string outDir = Path.Combine(Application.dataPath, "..", "CaptureOut", "timeline");
-            if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
-            Directory.CreateDirectory(outDir);
-
-            var go = new GameObject("TimelineHost");
-            var anim = go.AddComponent<TutorialCueAnimPlayer>();
-            anim.logMoves = true;
-            anim.logTweens = true;
-
-            // -captureReplay 1：先把该 cue 之前的所有 cue 依次推到终态，再出图。
-            // 单条 cue 孤立载入会丢掉「上一条造成的状态」——例如牌堆是在上一条淡入的，
-            // 孤立载入就一片空白（这类误判已经发生过多次）。
-            // -captureReplay 1：把该 cue 之前的所有 cue **逐条播到终态**，再出图。
-            // 只解入口状态是不够的：create/destroy 发生在上一条**播放**时，
-            // 漏掉它们会让重放停在"上一条开始之前"（曾因此误判 destroy 找不到目标）。
-            bool replay = ArgValue("-captureReplay", "0") == "1";
-            if (replay)
-            {
-                var playerGo = new GameObject("TimelineReplayHost");
-                var player = playerGo.AddComponent<TutorialCuePlayer>();
-                player.autoPlay = false;
-                player.tutorialRoot = Path.Combine(repoRoot, "games");
-                if (player.LoadRuntime())
-                {
-                    int idx = player.Document.cues.FindIndex(c => c.id == cueId);
-                    for (int k = 0; k < idx; k++)
-                    {
-                        string prev = player.Document.cues[k].id;
-                        if (!anim.LoadCue(gameRoot, "full", prev, k > 0)) continue;
-                        anim.Seek(anim.TotalDuration + 1f);
-                    }
-                    Debug.Log($"[Timeline] 已顺序播完前 {idx} 条 cue");
-                }
-                Object.DestroyImmediate(playerGo);
-            }
-
-            // 有重放时用 continueState=true 延续刚建立的背景状态；
-            // 用 false 会把重放结果重置回 stage.initial（那样重放就白做了）。
-            if (!anim.LoadCue(gameRoot, "full", cueId, replay))
-            {
-                Debug.LogError($"[Timeline] LoadCue 失败: {cueId}");
-                EditorApplication.Exit(1);
-                return;
-            }
-
-            anim.EnsureCameraForCapture();
-
-            int n = 0;
-            for (float time = from; time <= to + 1e-4f; time += step)
-            {
-                anim.Seek(time);
-
-                var path = Path.Combine(outDir, $"t{time * 100:000}.png");
-                SaveFrame(path);
-                n++;
-            }
-            // 行位断言：每一级市场牌必须落在与**同级牌堆**相同深度的行上。
-            // 这条正是用户报过的「一级牌被发到二级位置、又被收回」。
-            foreach (var it in anim.Store.Items)
-                if (it.Id.StartsWith("market_card_") && it.Order < 4)
-                {
-                    var logical = anim.Store.CurrentPosition(it);
-                    var visual = it.Actor?.Go.transform.localPosition ?? Vector3.zero;
-                    var bySlot = anim.Store.ZonePosition(it.ZoneId, it.Order);
-                    Debug.Log($"[Timeline] {it.Id} order={it.Order} 逻辑=({logical.x:0.00},{logical.z:0.00}) " +
-                              $"画面=({visual.x:0.00},{visual.z:0.00}) 格位=({bySlot.x:0.00},{bySlot.z:0.00}) " +
-                              $"Flipped={it.Flipped}");
-                }
-            // 行位断言：第 N 级市场牌必须落在与第 N 级牌堆**同一深度**的行上。
-            // 这正是用户报过的「一级牌被发到二级位置、又被收回」。行 z 由
-            // center + row * z_step 决定，所以逐级对比牌堆 z 即可。
-            // 断言前先推到整条 cue 之后：动画可能还没播完，否则会误判成「位置错误」。
-            // 断言统一在**整条 cue 之后**做，并且用 cue 自己的时长推算，
-            // 不用出图窗口的 to —— 出图窗口是可以随便调的（曾经因此误判）。
-            float cueEnd = anim.TotalDuration;
-            anim.Seek(cueEnd + 3f);
-
-            int bad = 0;
-
-            // ①a 发牌前不得有市场牌可见（否则它们叠在牌堆上，看起来像往牌堆里发卡背）。
-            {
-                var probe = new GameObject("hideProbe");
-                var pa = probe.AddComponent<TutorialCueAnimPlayer>();
-                pa.LoadCue(gameRoot, "full", cueId, false);
-                pa.Seek(1.4f);   // 洗混结束(1.2s)、发牌开始(1.6s)之前
-                int visible = 0; string firstId = null;
-                foreach (var it in pa.Store.Items)
-                {
-                    if (it.Actor == null || !it.Id.StartsWith("market_card_")) continue;
-                    float a = it.Actor.LiveAlpha;
-                    bool shown = it.Actor.Renderer != null && it.Actor.Renderer.enabled && a > 0.05f;
-                    if (shown) { visible++; firstId ??= $"{it.Id}(alpha={a:0.00})"; }
-                }
-                Debug.Log($"[Timeline] {(visible == 0 ? "PASS" : "FAIL")} 发牌前市场牌全部不可见（可见 {visible} 张" +
-                          (firstId == null ? "）" : $"，例如 {firstId}）"));
-                if (visible > 0) bad++;
-                Object.DestroyImmediate(probe);
-            }
-
-            // ① 方向：发牌是「从牌堆飞到市场」，已落位的市场牌数必须单调不减。
-            //    若起始就是一整行、随后变少，说明动画在倒着播。
-            {
-                var counts = new List<string>();
-                var probe = new GameObject("fwdProbe");
-                var pa = probe.AddComponent<TutorialCueAnimPlayer>();
-                pa.LoadCue(gameRoot, "full", cueId, false);
-                int prev = -1; bool monotonic = true;
-                for (float tt = 1.4f; tt <= cueEnd + 0.2f; tt += 0.2f)
-                {
-                    pa.Seek(tt);
-                    int settled = 0;
-                    foreach (var it in pa.Store.Items)
-                    {
-                        if (!it.Id.StartsWith("market_card_") || it.Actor == null) continue;
-                        if (it.ZoneId != "card_market") continue;      // 还没发出去的牌不算
-                        var p = it.Actor.Go.transform.localPosition;
-                        var w = pa.Store.ZonePosition("card_market", it.Order);   // 现算，不缓存
-                        if (Mathf.Abs(p.x - w.x) < 0.25f && Mathf.Abs(p.z - w.z) < 0.25f) settled++;
-                    }
-                    counts.Add($"{tt:0.0}:{settled}");
-                    if (settled < prev) monotonic = false;
-                    prev = settled;
-                }
-                Debug.Log($"[Timeline] {(monotonic ? "PASS" : "FAIL")} 发牌方向（落位数单调不减）：{string.Join(" ", counts)}");
-                if (!monotonic) bad++;
-                Object.DestroyImmediate(probe);
-            }
-
-            // ①b 独立性：任一时刻，**正在移动**的市场牌最多只应是「当前这一批」。
-            //     用户看到的是「发第 N 张时前 N-1 张一起往回飞再回来」——即已经落位的牌又动了。
-            //     判据：已经落位的牌，位置不应再离开它的格位。
-            {
-                var probe = new GameObject("indepProbe");
-                var pa = probe.AddComponent<TutorialCueAnimPlayer>();
-                pa.LoadCue(gameRoot, "full", cueId, false);
-                pa.logTweens = true;
-                var settledIds = new List<string>();
-                int violations = 0;
-                string firstViolation = null;
-                for (float tt = 3.6f; tt <= to + 0.2f; tt += 0.1f)
-                {
-                    pa.Seek(tt);
-                    for (int i = settledIds.Count - 1; i >= 0; i--)
-                    {
-                        string id = settledIds[i];
-                        foreach (var it in pa.Store.Items)
-                        {
-                            if (it.Id != id || it.Actor == null) continue;
-                            var p = it.Actor.Go.transform.localPosition;
-                            var w = pa.Store.ZonePosition("card_market", it.Order);
-                            if (Mathf.Abs(p.x - w.x) > 0.30f || Mathf.Abs(p.z - w.z) > 0.30f)
-                            {
-                                violations++;
-                                if (firstViolation == null)
-                                    firstViolation = $"t={tt:0.0} {id} 已落位却又离开格位 " +
-                                                     $"在({p.x:0.00},{p.z:0.00}) 应在({w.x:0.00},{w.z:0.00})";
-                                settledIds.RemoveAt(i);
-                            }
-                            break;
-                        }
-                    }
-                    foreach (var it in pa.Store.Items)
-                    {
-                        if (!it.Id.StartsWith("market_card_") || it.Actor == null) continue;
-                        if (it.ZoneId != "card_market" || settledIds.Contains(it.Id)) continue;
-                        var p = it.Actor.Go.transform.localPosition;
-                        var w = pa.Store.ZonePosition("card_market", it.Order);
-                        if (Mathf.Abs(p.x - w.x) < 0.15f && Mathf.Abs(p.z - w.z) < 0.15f)
-                            settledIds.Add(it.Id);
-
-                    }
-                }
-                Debug.Log($"[Timeline] {(violations == 0 ? "PASS" : "FAIL")} 已落位的牌不再移动（异常 {violations} 次）" +
-                          (firstViolation == null ? "" : $"  首个：{firstViolation}"));
-                if (violations > 0) bad++;
-                Object.DestroyImmediate(probe);
-            }
-
-            // ② 行位：第 N 级市场牌必须与第 N 级牌堆同一深度。
-            for (int lvl = 1; lvl <= 3; lvl++)
-            {
-                int row = lvl - 1;
-                float rowZ = anim.Store.ZonePosition("card_market", row * 4).z;
-                float deckZ = anim.Store.ZoneCenter("deck_level_" + lvl).z;
-                bool aligned = Mathf.Abs(rowZ - deckZ) < 0.05f;
-                Debug.Log($"[Timeline] {(aligned ? "PASS" : "FAIL")} 第 {lvl} 级：市场行 z={rowZ:0.00} " +
-                          $"与牌堆 z={deckZ:0.00} {(aligned ? "对齐" : "错位")}");
-                if (!aligned) bad++;
-
-                for (int c = 0; c < 4; c++)
-                {
-                    int slot = row * 4 + c;
-                    var want = anim.Store.ZonePosition("card_market", slot);
-                    foreach (var it in anim.Store.Items)
-                    {
-                        if (!it.Id.StartsWith($"market_card_{lvl}_") || it.ZoneId != "card_market") continue;
-                        if (it.Order != slot || it.Actor == null) continue;
-                        var got = it.Actor.Go.transform.localPosition;
-                        if (Mathf.Abs(got.x - want.x) > 0.3f || Mathf.Abs(got.z - want.z) > 0.3f)
-                        {
-                            Debug.LogWarning($"[Timeline] 位置错误 {it.Id}: 在 ({got.x:0.00},{got.z:0.00}) 应在 ({want.x:0.00},{want.z:0.00})");
-                            bad++;
-                        }
-                    }
-                }
-            }
-            Debug.Log($"[Timeline] {(bad == 0 ? "PASS" : "FAIL")} 12 张市场牌全部落在自己的格位上（异常 {bad} 处）");
-
-            // 市场牌必须正面朝上（发牌时翻转，终态应当是卡面）
-            {
-                int backs = 0;
-                foreach (var it in anim.Store.Items)
-                {
-                    if (it.ZoneId != "card_market" || it.Actor?.Renderer == null) continue;
-                    if (ReferenceEquals(it.Actor.Renderer.sprite, it.Actor.BackSprite)) backs++;
-                }
-                Debug.Log($"[Timeline] {(backs == 0 ? "PASS" : "FAIL")} 市场牌都正面朝上（背面 {backs} 张）");
-                if (backs > 0) bad++;
-            }
-
-            // 底板已不再绘制（zone 是逻辑概念，不需要可视化），故不再断言底板。
-            // 若将来用 highlight 强调区域，可在此处改为断言 highlight 的出现/消失。
-
-            Debug.Log($"[Timeline] 已出 {n} 帧 → {outDir}");
-        }
-
-        private static string ArgValue(string name, string fallback)
-        {
-            var args = System.Environment.GetCommandLineArgs();
-            for (int i = 0; i < args.Length - 1; i++)
-                if (args[i] == name) return args[i + 1];
-            return fallback;
-        }
-
-        /// <summary>
-        /// 复现「从第 9 条顺序播到第 12 条」的真实路径（编辑器里就是这样），
-        /// 逐帧导出市场牌坐标 + 出图。单独载入某条 cue 与顺序播放的状态可能不同。
-        /// </summary>
-        /// <summary>
-        /// 复现编辑器里的真实路径：按 B 跳转 → 解入口状态 → 载入目标 cue → 逐帧 Seek。
-        /// 之前的版本被改坏了（循环体落在不可达分支里），所以「验证通过」是假的。
-        /// </summary>
-        public static void CaptureSequence()
-        {
-            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
-            string gameRoot = Path.Combine(repoRoot, "games/splendor");
-            string outDir = Path.Combine(Application.dataPath, "..", "CaptureOut", "seq");
-            if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
-            Directory.CreateDirectory(outDir);
-
-            var host = new GameObject("PlayerHost");
-            var player = host.AddComponent<TutorialCuePlayer>();
-            player.autoPlay = false;
-            player.tutorialRoot = Path.Combine(repoRoot, "games");
-            if (!player.LoadRuntime()) { Debug.LogError("[Seq] LoadRuntime 失败"); EditorApplication.Exit(1); return; }
-
-            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
-            anim.animationEnabled = true;
-            anim.runtimeTrace = true;
-            anim.logMoves = true;
-
-            int target = -1;
-            for (int i = 0; i < player.Document.cues.Count; i++)
-                if (player.Document.cues[i].id == "setup.cards.002.1") { target = i; break; }
-            Debug.Log($"[Seq] 目标 cue 序号 {target}");
-
-            // ① 真实跳转路径：重建桌面
-            typeof(TutorialCuePlayer)
-                .GetMethod("ApplyEntryState", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .Invoke(player, new object[] { anim,
-                    typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                        .Invoke(player, new object[] { target }) });
-
-            // ② 载入目标 cue（与播放器一致）
-            bool ok = anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
-            Debug.Log($"[Seq] 载入目标 cue = {ok}");
-
-            // 量牌堆：真实路径上三摞牌堆的 position / alpha / zone
-            foreach (var id in new[] { "card_back_1#1", "card_back_2#1", "card_back_3#1" })
-                foreach (var it in anim.Store.Items)
-                    if (it.Id == id)
-                    {
-                        var p = it.Actor?.Go.transform.localPosition ?? Vector3.zero;
-                        var sc = it.Actor?.Go.transform.localScale ?? Vector3.zero;
-                        Debug.Log($"[DeckProbe] {id} zone={it.ZoneId} ord={it.Order} " +
-                                  $"pos=({p.x:0.00},{p.z:0.00}) scale=({sc.x:0.00},{sc.y:0.00}) " +
-                                  $"alpha={it.Actor?.LiveAlpha:0.00} count={anim.Store.CountInZone(it.ZoneId)}");
-                    }
-
-            // ③ 逐帧推进 + 出图。
-            // 注意：重建时 SnapTo 会把时钟推到末尾，若不先归零，Seek(3.8) 会被当成「回退」而跳过整段。
-            anim.EnsureCameraForCapture();
-            anim.Seek(0f);
-            for (float time = 3.8f; time <= 7.9f; time += 0.2f)
-            {
-                anim.Seek(time);
-                SaveFrame(Path.Combine(outDir, $"t{time * 100:000}.png"));
-            }
-            Debug.Log($"[Seq] 完成 → {outDir}");
-        }
-
-        /// <summary>
-        /// 片段泄漏自检：顺序播过所有 setup cue，然后在发牌 cue 的各个时刻检查片段数。
-        /// 曾经 clips 只在「回退」时清空，导致播到第 12 条时累积 90+ 个陈旧片段。
-        /// </summary>
         public static void SelfTestClipLeak()
         {
             int failures = 0;

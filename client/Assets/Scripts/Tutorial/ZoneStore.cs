@@ -243,6 +243,15 @@ namespace BoardGameTutorial
         }
 
         /// <summary>zone 里当前有多少件（给叠压居中用）。</summary>
+        /// <summary>某 zone 内某模板的件数（用于 create 的幂等补齐）。</summary>
+        public int CountInZone(string zoneId, string templateId)
+        {
+            int n = 0;
+            foreach (var it in items.Values)
+                if (it.ZoneId == zoneId && it.Template != null && it.Template.id == templateId) n++;
+            return n;
+        }
+
         public int CountInZone(string zoneId)
         {
             var map = string.IsNullOrEmpty(zoneId) ? null : (occupancy.TryGetValue(zoneId, out var m) ? m : null);
