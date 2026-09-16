@@ -359,8 +359,15 @@ namespace BoardGameTutorial
             var sprite = ResolveSprite(tpl);
             sr.sprite = sprite;
             sr.sortingOrder = tpl.sorting_order;
-            color.a = Mathf.Clamp01(tpl.alpha);
+
+            // 「动画前不可见」的组件（例如在牌堆上待发的市场牌）必须**建出来就是透明的**。
+            // 曾经这里一律用模板 alpha（默认 1），靠之后采样才置 0 —— 于是
+            // LoadCue 到第一次 Seek 之间有一段空档，十几张待发牌会以不透明状态
+            // 叠在牌堆上闪一下（用户看到「牌堆闪了一下」）。
+            bool hidden = tpl.hide_until_animated;
+            color.a = hidden ? 0f : Mathf.Clamp01(tpl.alpha);
             sr.color = color;
+            if (hidden) sr.enabled = false;   // 双保险：连绘制都不参与
 
             var scale = LocalScaleFor(tpl, sprite);
             if (tpl.highlight)
@@ -782,9 +789,16 @@ namespace BoardGameTutorial
         private static void ApplyAlpha(CueAnimActor actor)
         {
             if (actor?.Renderer == null) return;
+            float a = Mathf.Clamp01(actor.LiveAlpha);
             var c = actor.LiveColor;
-            c.a = Mathf.Clamp01(actor.LiveAlpha);
+            c.a = a;
             actor.Renderer.color = c;
+
+            // 透明度与「是否绘制」联动：全透明就不画（省开销，也避免半透明底板那种脏像），
+            // 一旦淡入开始就重新打开。若只改 alpha 不改 enabled，
+            // 建对象时为隐藏而关掉的 renderer 会永远关着，牌再也出不来。
+            if (Mathf.Approximately(a, 0f)) actor.Renderer.enabled = false;
+            else if (!actor.Renderer.enabled) actor.Renderer.enabled = true;
         }
 
         /// <summary>

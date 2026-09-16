@@ -1026,6 +1026,70 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 载入瞬间不得闪现：LoadCue 之后、任何 Seek 之前，画面就该是最终的开场样子。
+        /// 曾经待发的市场牌建出来是「不透明 + 参与绘制」，靠之后采样才置 0，
+        /// 于是 cue 一开头十几张牌会叠在牌堆上闪一下。
+        /// </summary>
+        public static void SelfTestNoFlashOnLoad()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("FlashHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+            anim.EnsureCameraForCapture();
+
+            // 关键：这里**一次 Seek 都不做**，直接检查画面
+            int pendingVisible = 0; string example = null;
+            int decksVisible = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.Actor?.Renderer == null) continue;
+                bool drawn = it.Actor.Renderer.enabled && it.Actor.Renderer.color.a > 0.05f;
+                if (!drawn) continue;
+                if (it.Id.StartsWith("market_card_")) { pendingVisible++; example ??= it.Id; }
+                if (it.Id.StartsWith("card_back_")) decksVisible++;
+            }
+
+            bool ok = pendingVisible == 0 && decksVisible > 0;
+            Debug.Log($"[Flash] {(ok ? "PASS" : "FAIL")} 载入瞬间：待发市场牌可见 {pendingVisible} 张" +
+                      (example == null ? "" : $"（例如 {example}）") + $"，牌堆卡可见 {decksVisible} 张");
+            if (!ok) failures++;
+
+            // 卡背颜色断言：三摞必须**互不相同**。
+            // 曾经载入瞬间三摞都渲染成同一个蓝色背面（颜色要到第一次 Seek 才对），
+            // 断言不覆盖这一点时只能靠肉眼看出来。
+            {
+                var seen = new System.Collections.Generic.Dictionary<string, string>();
+                foreach (var id in new[] { "card_back_1#1", "card_back_2#1", "card_back_3#1" })
+                    foreach (var it in anim.Store.Items)
+                        if (it.Id == id && it.Actor?.Renderer?.sprite != null)
+                        {
+                            var tex = it.Actor.Renderer.sprite.texture;
+                            var pxs = tex.GetPixels();
+                            float sr = 0, sg = 0, sb = 0;
+                            foreach (var c in pxs) { sr += c.r; sg += c.g; sb += c.b; }
+                            int n = pxs.Length;
+                            string key = $"{sr / n:0.00},{sg / n:0.00},{sb / n:0.00}";
+                            seen[id] = key;
+                        }
+
+                var keys = new System.Collections.Generic.List<string>(seen.Values);
+                bool distinct = keys.Count == 3 && keys[0] != keys[1] && keys[1] != keys[2] && keys[0] != keys[2];
+                Debug.Log($"[Flash] {(distinct ? "PASS" : "FAIL")} 三摞卡背互不相同: " +
+                          string.Join("  ", keys));
+                if (!distinct) failures++;
+            }
+
+            SaveFrame(Path.Combine(Application.dataPath, "..", "CaptureOut", "load_frame.png"));
+            Debug.Log($"[Flash] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
