@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "一级发展卡发牌：4 张市场牌初始归属一级牌堆(deck_level_1)，依次被发到一级市场槽 0–3。发走后牌堆从 40 减少到 36。",
+  "note": "发展卡发牌：一级 4 张从 deck_level_1 发到槽 0–3（1.0–3.3），二级 4 张从 deck_level_2 发到槽 4–7（3.4–5.7）。每张在上一张落位之后才开始。发走后牌堆 40→36、30→26。",
   "start": {
     "set": [
       {
@@ -29,6 +29,30 @@
         "template": "market_card_1_sapphire",
         "palette": "card_level_1",
         "zone": "deck_level_1",
+        "expand_to": 1
+      },
+      {
+        "template": "market_card_2_emerald",
+        "palette": "card_level_2",
+        "zone": "deck_level_2",
+        "expand_to": 1
+      },
+      {
+        "template": "market_card_2_ruby",
+        "palette": "card_level_2",
+        "zone": "deck_level_2",
+        "expand_to": 1
+      },
+      {
+        "template": "market_card_2_diamond",
+        "palette": "card_level_2",
+        "zone": "deck_level_2",
+        "expand_to": 1
+      },
+      {
+        "template": "market_card_2_sapphire",
+        "palette": "card_level_2",
+        "zone": "deck_level_2",
         "expand_to": 1
       }
     ]
@@ -78,6 +102,54 @@
       "zone": "card_market",
       "order": -2,
       "slot": 3,
+      "easing": "easeInOutCubic",
+      "flip": true,
+      "fade_in": 0.0
+    },
+    {
+      "at": 3.4,
+      "dur": 0.5,
+      "action": "move",
+      "target": "market_card_2_emerald#1",
+      "zone": "card_market",
+      "order": -2,
+      "slot": 4,
+      "easing": "easeInOutCubic",
+      "flip": true,
+      "fade_in": 0.0
+    },
+    {
+      "at": 4.0,
+      "dur": 0.5,
+      "action": "move",
+      "target": "market_card_2_ruby#1",
+      "zone": "card_market",
+      "order": -2,
+      "slot": 5,
+      "easing": "easeInOutCubic",
+      "flip": true,
+      "fade_in": 0.0
+    },
+    {
+      "at": 4.6,
+      "dur": 0.5,
+      "action": "move",
+      "target": "market_card_2_diamond#1",
+      "zone": "card_market",
+      "order": -2,
+      "slot": 6,
+      "easing": "easeInOutCubic",
+      "flip": true,
+      "fade_in": 0.0
+    },
+    {
+      "at": 5.2,
+      "dur": 0.5,
+      "action": "move",
+      "target": "market_card_2_sapphire#1",
+      "zone": "card_market",
+      "order": -2,
+      "slot": 7,
       "easing": "easeInOutCubic",
       "flip": true,
       "fade_in": 0.0
