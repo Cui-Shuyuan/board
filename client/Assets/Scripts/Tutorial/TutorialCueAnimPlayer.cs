@@ -1448,11 +1448,14 @@ namespace BoardGameTutorial
 
         /// <summary>取 zone 里最靠前、且不在 excluded 中的组件。</summary>
         /// <summary>
-        /// 取牌堆"最上面"那张 = **`order` 最小**的那张（用户定义：order 0 先被发走）。
+        /// 取牌堆"最上面"那张 = **`order` 最大**的那张。
         ///
-        /// 与叠放位置一致：`ZoneStore` 把 `order` 最大的一端放在最下面（偏移最大），
-        /// `order` 0..7 逐层错开形成台阶，`order` 8 及以上全部重合在 order 7 上。
-        /// 于是从 order 0 一路发到 order 31 时，走的都是重合块里的牌 —— **形状天然不变**。
+        /// 与叠放位置一致：`ZoneStore` 用 `lift = min(capacity-1-order, 7)`，
+        /// 于是 **order 最大的一张错开最多（画在最上面）**，order 越小越往里面、
+        /// 从 `capacity-maxVisible` 起全部重合。
+        ///
+        /// 所以"最上面"= order 最大。曾经这里取 order 最小 —— 那正好是**埋在
+        /// 重合块最里面**的那张，表现就是"从牌堆底发牌"（用户报的问题）。
         /// </summary>
         private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded, string template = null)
         {
@@ -1462,7 +1465,7 @@ namespace BoardGameTutorial
                 if (item.ZoneId != zoneId) continue;
                 if (excluded != null && excluded.Contains(item)) continue;
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
-                if (best == null || item.Order < best.Order) best = item;
+                if (best == null || item.Order > best.Order) best = item;
             }
             return best;
         }
