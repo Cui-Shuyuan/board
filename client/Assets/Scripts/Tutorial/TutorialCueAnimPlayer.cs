@@ -1009,28 +1009,25 @@ namespace BoardGameTutorial
 
                 if (clip.HasFlip)
                 {
-                    float toYaw = clip.FlipHalfTurn ? clip.FlipFromYaw + 360f : clip.FlipFromYaw + 180f;
-                    float yaw = Mathf.LerpUnclamped(clip.FlipFromYaw, toYaw, k);
-                    clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-                    bool showingBack = Mathf.Cos(yaw * Mathf.Deg2Rad) < 0f;
+                    // 一张牌的两面由两个贴图表达，"翻转"不靠旋转：
+                    // 旋转同一张贴图会产生**镜像**（用户看到的"镜像卡背"就是这个）。
+                    // 朝向由逻辑状态决定：刚发出去时朝下（显示卡背），
+                    // 翻开后朝上（显示卡面，卡面由 move 的 to_template 换上）。
+                    clip.Actor.Go.transform.localRotation = Quaternion.identity;
 
-                    // 发牌：翻过 90°（开始看到正面）那一刻才把贴图换成它真正的那张牌。
-                    // 牌堆里 40 张牌在发出去之前不知道是哪一张，所以只能在这里定下来。
-                    // 换面（只做一次）：翻过 90°、开始看到正面时，把这一件的模板换成它真正的牌。
-                    // 必须改到 item.Template 上，否则下一帧复位又会变回卡背。
-                    if (!string.IsNullOrEmpty(clip.SwapToTemplate) && !showingBack
-                        && clip.Item != null && clip.Item.Template != null
+                    // 翻开（从朝下变为朝上）→ 换成它真正的那张牌
+                    if (clip.Item != null && clip.Item.Flipped
+                        && clip.Item.Template != null
+                        && !string.IsNullOrEmpty(clip.SwapToTemplate)
                         && clip.Item.Template.id != clip.SwapToTemplate)
                     {
                         ApplySwap(clip.Actor, clip.SwapToTemplate, clip.SwapToPalette);
-                        clip.Actor.Renderer.sprite = clip.Actor.FaceSprite;   // 换完立刻显示正面
-                        WarnIfInvalid(clip.Item, clip.Actor.Go.transform.localPosition, "swap 后");
                     }
 
-                    // 没有背图时，翻转前后都用当前正面 —— 翻的是"这张牌的身份"，
-                    // 真正的换面由上面的 ApplySwap 完成。
-                    var shown = clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
-                    clip.Actor.Renderer.sprite = showingBack ? shown : clip.Actor.FaceSprite;
+                    // 朝上显示卡面，朝下显示卡背；没有独立卡背时就显示当前面
+                    bool faceUp = clip.Item == null || clip.Item.Flipped;
+                    var backSide = clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
+                    clip.Actor.Renderer.sprite = faceUp ? clip.Actor.FaceSprite : backSide;
                 }
 
                 if (clip.HasScale)

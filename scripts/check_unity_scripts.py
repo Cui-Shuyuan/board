@@ -747,6 +747,12 @@ def main():
         print("dotnet SDK not found; cannot compile-check.", file=sys.stderr)
         return 2
 
+    # 入口方法是否齐备（这些被静默删掉过两次，删掉后跑出的"通过"是假的）
+    missing_methods = check_entry_methods()
+    if missing_methods:
+        print(f"FAIL 出图/自检入口方法缺失: {missing_methods}", file=sys.stderr)
+        return 1
+
     scripts_dir = Path(args.dir)
     files = sorted(p for p in scripts_dir.rglob("*.cs") if p.name not in EXCLUDED)
     if not files:
@@ -784,6 +790,29 @@ def main():
             print(f"[kept] {tmp}")
         else:
             shutil.rmtree(tmp, ignore_errors=True)
+
+
+# ── 出图/自检入口方法清单 ───────────────────────────────────────────
+# 这些方法被**静默删掉过两次**（脚本按区间替换时切走），而删掉后跑出来的
+# "通过"是假的 —— 因为 Unity 报 executeMethod could not be found，退出码非 0，
+# 但只看汇总输出时会误以为没事。所以在这里固化清单。
+ENTRY_METHODS = [
+    "CaptureTimeline", "CaptureOne", "CaptureSequence", "CaptureAll",
+    "SelfTest", "SelfTestLivePath", "SelfTestDealSync", "SelfTestClipLeak",
+    "SelfTestEntryTree", "SelfTestNoLeakOnJump", "SelfTestSequential",
+    "SelfTestNoFlashOnLoad", "SelfTestShuffleGeneric", "SelfTestGroupHighlight",
+    "SelfTestContainer", "SelfTestGroupMoveGeneric", "SelfTestJumpMatchesSequential",
+    "SelfTestCueWalk", "SelfTestDealtCardsSurvive",
+]
+
+
+def check_entry_methods():
+    """确认 TutorialFrameCapture 里的入口方法都在（防止被静默删除）。"""
+    path = ROOT / "client/Assets/Editor/TutorialFrameCapture.cs"
+    if not path.exists():
+        return [f"找不到 {path}"]
+    src = path.read_text(encoding="utf-8")
+    return [m for m in ENTRY_METHODS if f"public static void {m}(" not in src]
 
 
 if __name__ == "__main__":

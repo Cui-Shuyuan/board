@@ -505,7 +505,9 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/一级发展卡_背面.jpg",
-      "alpha": 1.0
+      "alpha": 1.0,
+      "back_image": null,
+      "note": "牌堆里的牌：只有卡背（牌还没翻开，无所谓是哪张）。发出去时由 move 的 to_template 换成市场卡模板，那一面是真卡面。因此翻转 = 换面，不需要旋转、不会镜像。"
     },
     {
       "id": "card_back_2",
@@ -515,7 +517,9 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/二级发展卡_背面.jpg",
-      "alpha": 1.0
+      "alpha": 1.0,
+      "back_image": null,
+      "note": "牌堆里的牌：只有卡背（牌还没翻开，无所谓是哪张）。发出去时由 move 的 to_template 换成市场卡模板，那一面是真卡面。因此翻转 = 换面，不需要旋转、不会镜像。"
     },
     {
       "id": "card_back_3",
@@ -525,7 +529,9 @@
       "height": 0.88,
       "sorting_order": 2,
       "face_image": "media/card/三级发展卡_背面.jpg",
-      "alpha": 1.0
+      "alpha": 1.0,
+      "back_image": null,
+      "note": "牌堆里的牌：只有卡背（牌还没翻开，无所谓是哪张）。发出去时由 move 的 to_template 换成市场卡模板，那一面是真卡面。因此翻转 = 换面，不需要旋转、不会镜像。"
     },
     {
       "id": "noble",

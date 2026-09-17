@@ -688,7 +688,32 @@ NaN 一旦写进 `Transform.localPosition`，Unity 每帧报同一个错，
 - 但同一张卡面会被重复发出（因为没有 90 张牌表）
 - 全部 11 条自检通过；工作区干净
 
-## 【明天第一件事】翻转的实现方式根本错了（2026-09 用户实机截图）
+## 翻面 = 换面，不旋转（2026-09 已修）
+
+**根因**：`card_back_*` 模板原本只有一张贴图（它的"正面"就是卡背扫描图），
+于是"翻转"只能靠**旋转同一张贴图** —— 旋转 180° 必然产生**镜像**（用户看到的"镜像卡背"）；
+再加上"转到一半换贴图"，前半程显示的又是卡面。换一条 cue 时场景重建、旋转复位，
+镜像就"突然恢复正常"（不是修好，是被重置掩盖）。
+
+**修法**：
+
+1. **牌堆里的牌只有卡背**（`card_back_N` 的 `face_image` = 该级卡背，`back_image` 为空）——
+   牌还没翻开，无所谓是哪张牌
+2. 发出去时 `move` 的 `to_template` **换成市场卡模板**，那一面就是真卡面
+3. 翻转采样**按"朝上/朝下"决定显示哪一面**，`localRotation` 恒为 `identity`：
+
+   ```csharp
+   bool faceUp = clip.Item == null || clip.Item.Flipped;
+   var backSide = clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
+   clip.Actor.Renderer.sprite = faceUp ? clip.Actor.FaceSprite : backSide;
+   ```
+
+4. `SelfTestDealSync` 加了断言：市场牌与牌堆牌**都不许被旋转**（旋转 = 镜像）
+
+**教训**：一张牌的两面应当由**两个贴图**直接切换。用旋转去表达"翻面"是错的 ——
+它翻的是**同一张图**，必然镜像。旋转只有在**两面都在**（真正的双面渲染）时才有意义。
+
+## 【已解决】翻转的实现方式（2026-09 用户实机截图）
 
 ### 用户看到的现象
 
