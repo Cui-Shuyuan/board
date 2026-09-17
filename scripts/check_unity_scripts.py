@@ -802,7 +802,7 @@ ENTRY_METHODS = [
     "SelfTestEntryTree", "SelfTestNoLeakOnJump", "SelfTestSequential",
     "SelfTestNoFlashOnLoad", "SelfTestShuffleGeneric", "SelfTestGroupHighlight",
     "SelfTestContainer", "SelfTestGroupMoveGeneric", "SelfTestJumpMatchesSequential",
-    "SelfTestCueWalk", "SelfTestDealtCardsSurvive", "SelfTestBranchDifferentTopCard", "SelfTestStateSnapshotIsStable", "SelfTestOrientationMatchesSprite", "DumpAdvancePath", "DumpState",
+    "SelfTestCueWalk", "SelfTestDealtCardsSurvive", "SelfTestBranchDifferentTopCard", "SelfTestStateSnapshotIsStable", "SelfTestOrientationMatchesSprite", "DumpAdvancePath", "SelfTestPileDealShape", "DumpState",
 ]
 
 

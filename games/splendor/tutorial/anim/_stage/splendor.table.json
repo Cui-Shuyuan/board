@@ -49,7 +49,7 @@
       "display": {
         "mode": "stack",
         "dx": 0.016,
-        "dz": 0.016,
+        "dz": -0.016,
         "max_visible": 8
       }
     },
@@ -75,7 +75,7 @@
       "display": {
         "mode": "stack",
         "dx": 0.016,
-        "dz": 0.016,
+        "dz": -0.016,
         "max_visible": 8
       }
     },
@@ -101,7 +101,7 @@
       "display": {
         "mode": "stack",
         "dx": 0.016,
-        "dz": 0.016,
+        "dz": -0.016,
         "max_visible": 8
       }
     },

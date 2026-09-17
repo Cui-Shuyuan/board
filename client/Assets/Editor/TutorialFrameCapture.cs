@@ -1818,21 +1818,6 @@ namespace BoardGameTutorial.Editor
             }
             for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
-            // 牌堆外形随张数的变化：分别在 40/36/32/28 张时测一级牌堆的"外形跨度"
-            // 以及"顶层错开台阶数"。发牌取的是最上面的牌，所以 40→36→… 正是发牌过程。
-            foreach (var probeAt in new[] { 2.6f, 4.2f, 5.8f, 7.4f, 8.4f })
-            {
-                for (float tt = 0f; tt <= probeAt; tt += 0.05f) anim.Seek(tt);
-                var it1 = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
-                                          .OrderBy(x => x.Order).ToList();
-                var xsAll = it1.Select(x => x.LivePosition.x).Distinct().OrderBy(v => v).ToList();
-                // 牌堆**轮廓**：所有牌的外接范围（这就是眼睛看到的厚度）
-                float lo = xsAll.Min(), hi = xsAll.Max();
-                Debug.Log($"[Shape] t={probeAt:0.0} {it1.Count}张 轮廓[{lo:0.000},{hi:0.000}] " +
-                          $"厚度={hi - lo:0.000} 台阶数={xsAll.Count} " +
-                          $"最低order={it1.First().Order} 最高order={it1.Last().Order}");
-            }
-
             var zones = new SortedDictionary<string, ZoneAgg>();
             foreach (var it in anim.Store.Items)
             {
@@ -2076,6 +2061,90 @@ namespace BoardGameTutorial.Editor
             }
             Debug.Log($"[Adv] {tag}: 市场 {mk} 张 → 显示卡面 {mkFace} / 显示卡背 {mkBack} / 隐藏 {mkHidden}" +
                       $"（Flipped=true 的有 {flippedTrue} 张）");
+        }
+
+        /// <summary>
+        /// 牌堆形状自检（用户定义的模型）：
+        ///   order 39 = 牌堆顶（第一张被发），往上叠到 order 32 共 8 张、每张偏左下一点；
+        ///   order 31 起全部完整重合；顺序发牌从 order 0 开始，一路发到 order 39。
+        ///
+        /// 期望行为（不需要任何"保持形状"的代码，天然成立）：
+        ///   发前 32 张（order 0..31）→ 厚度、台阶数**完全不变**（它们本就在重合块里）
+        ///   发第 33 张（order 32）起      → 每发一张少一层台阶
+        /// </summary>
+        public static void SelfTestPileDealShape()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("PileShapeHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+
+            System.Func<int[]> shape = () =>
+            {
+                var xs = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                         .Select(x => Mathf.Round(x.LivePosition.x * 10000f) / 10000f)
+                                         .Distinct().ToList();
+                int thick = xs.Count == 0 ? 0 : Mathf.RoundToInt((xs.Max() - xs.Min()) * 10000f);
+                return new[] { anim.Store.CountInZone("deck_level_1"), xs.Count, thick };
+            };
+
+            System.Action dealOne = () =>
+            {
+                // 牌堆顶 = order **最小**的那张（用户定义：order 0 先被发走）
+                ZoneItem front = null;
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == "deck_level_1" && (front == null || it.Order < front.Order)) front = it;
+                if (front == null) return;
+                anim.TriggerForTest(new CueAnimEvent { at = 0.1f, dur = 0f, action = "move",
+                    target = front.Id, zone = "card_market", slot = front.Order, flip = true });
+                anim.Seek(0.2f);
+            };
+
+            var start = shape();
+            Debug.Log($"[PileShape] 起始：{start[0]} 张，厚度 {start[2] / 10000f:0.000}，台阶 {start[1]}");
+
+            // ① 发 32 张（order 0..31，都在重合块里）→ 形状必须**完全不变**
+            int bad = 0;
+            for (int k = 0; k < 32; k++)
+            {
+                dealOne();
+                var s = shape();
+                if (s[1] != start[1] || s[2] != start[2]) bad++;
+            }
+            var after32 = shape();
+            {
+                var ords = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                           .Select(x => x.Order).OrderBy(v => v).ToList();
+                var xsv = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                          .Select(x => $"{x.Order}:{x.LivePosition.x:0.000}").OrderBy(s2 => s2).ToList();
+                Debug.Log($"[PileShape] 发32张后 order=[{string.Join(",", ords)}]");
+                Debug.Log($"[PileShape] 发32张后 坐标={string.Join(" ", xsv)}");
+            }
+            bool ok32 = bad == 0;
+            Debug.Log($"[PileShape] {(ok32 ? "PASS" : "FAIL")} 发 32 张后形状不变" +
+                      $"（剩 {after32[0]} 张，厚度 {after32[2] / 10000f:0.000}，台阶 {after32[1]}，" +
+                      $"其中 {bad} 次发生了变化）");
+            if (!ok32) failures++;
+
+            // ② 再发一张（即第 33 张 = order 32，有偏移的最外面那张）→ 形状**开始变小**。
+            //    注意 order 31 与 32 重合，所以要**发两张**才会少一层：
+            //    第 33 张（order 32）落点仍与 order 31 相同，第 34 张（order 31）才真正少一层。
+            dealOne();   // 第 33 张：order 32
+            dealOne();   // 第 34 张：order 31
+            var after33 = shape();
+            bool ok33 = after33[1] < after32[1];
+            Debug.Log($"[PileShape] {(ok33 ? "PASS" : "FAIL")} " +
+                      $"发到有偏移的那几张时开始变小（台阶 {after32[1]}→{after33[1]}，" +
+                      $"厚度 {after32[2] / 10000f:0.000}→{after33[2] / 10000f:0.000}）");
+            if (!ok33) failures++;
+
+            Debug.Log($"[PileShape] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
         public static void CaptureAll()
