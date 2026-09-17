@@ -801,7 +801,7 @@ def main():
 ENTRY_METHODS = [
     # 只保留**状态查询**（观察用）。自检（SelfTest*）已全部删除：
     # 自己出题自己阅卷，通过只说明"实现了我以为的东西"，不说明"实现了要的东西"。
-    "DumpState", "TraceState", "ListZone", "DumpAdvancePath", "TraceDealOrder",
+    "DumpState", "TraceState", "ListZone", "DumpAdvancePath", "TraceDealOrder", "TraceHighlightScale",
 ]
 
 

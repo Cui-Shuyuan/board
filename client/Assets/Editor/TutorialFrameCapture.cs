@@ -319,6 +319,44 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(0);
         }
 
+        /// <summary>
+        /// 高亮脉冲的**时间采样自检**：给定时序 Seek 到某时刻，打印目标缩放；
+        /// 然后**不再 Seek**（模拟暂停）再打印一次 —— 两次必须相同。
+        /// 协程版本在第二次会继续变化（它靠 deltaTime 自己跑）。
+        /// </summary>
+        public static void TraceHighlightScale()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = ArgValue("-hlCue", "setup.cards.001.3");
+            string target = ArgValue("-hlTarget", "sample_back_2#1");
+
+            var go = new GameObject("HlHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", cueId, false);
+
+            CueAnimActor Find()
+            {
+                foreach (var it in anim.Store.Items)
+                    if (it.Id == target) return it.Actor;
+                return null;
+            }
+            float Scale() { var a = Find(); return a?.Go?.transform.localScale.x ?? -1f; }
+
+            // 高亮 at=0.1 dur=1.3 → 峰值约在 0.75s
+            foreach (var t2 in new[] { 0.30f, 0.75f, 1.10f, 1.35f, 1.50f })
+            {
+                for (float s = 0f; s <= t2; s += 0.02f) anim.Seek(s);
+                float a = Scale();
+                // 关键：不再 Seek（= 暂停），再读一次
+                float b = Scale();
+                Debug.Log($"[Hl] t={t2:0.00} 采样后={a:0.0000} 暂停后再读={b:0.0000} " +
+                          $"{(Mathf.Abs(a - b) < 1e-6f ? "一致" : "**仍在变化**")}");
+            }
+            EditorApplication.Exit(0);
+        }
+
         public static void ListZone()
         {
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");

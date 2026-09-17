@@ -81,12 +81,27 @@ namespace BoardGameTutorial
         }
 
         /// <summary>原地强调一个组件：缩放到 grow 再回到基准，不改变它的最终状态。</summary>
+        /// <summary>
+        /// 单件高亮 = **原地**放大再回落（呼吸），锚点取它自己 → 位置不动。
+        ///
+        /// 必须走**时间采样**（clip），不能用协程：
+        /// 协程靠 `Time.unscaledDeltaTime` 自己往前跑，与 `Seek` 的时钟无关 ——
+        /// 于是**暂停时它照样放完**（用户报的问题）；而洗混用 `HasShuffle` 片段，
+        /// 采样是 `Seek(t)` 的纯函数，暂停就停住。
+        ///
+        /// 实现上直接复用 `HasGroupScale`（它本来就是"以某点为锚点整组缩放、去程+回程"），
+        /// 把锚点设为这张牌自己的位置，等效于原地呼吸 —— 不必再造一种脉冲机制。
+        /// </summary>
         private void PulseActor(CueAnimActor actor, float grow, float duration, float lead, string easing)
         {
             if (actor?.Go == null || actor.Renderer == null) return;
             if (actor.Item != null && actor.Item.Template != null && IsDecoration(actor.Item.Template)) return;
 
-            RunTween(ScalePulseRoutine(actor, actor.BaseScale, grow, duration, lead, easing));
+            var synthetic = new CueAnimEvent { at = currentEventAt, dur = duration, lead = lead, easing = easing };
+            var clip = ClipAt(actor.Item, actor, synthetic);
+            clip.HasGroupScale = true;
+            clip.GroupCenter = actor.LivePosition;   // 锚点 = 它自己 → 原地放大
+            clip.GroupGrow = grow;
         }
 
         private IEnumerator ScalePulseRoutine(CueAnimActor actor, Vector3 baseScale, float grow, float duration, float lead, string easing)

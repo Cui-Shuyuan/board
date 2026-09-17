@@ -12,15 +12,15 @@
     {
       "at": 0.05,
       "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_card_1#1"
+    },
+    {
+      "at": 0.05,
+      "dur": 0.0,
       "action": "wait",
       "camera": "cards",
       "camera_padding": 1.5
-    },
-    {
-      "at": 0.1,
-      "dur": 0.0,
-      "action": "destroy",
-      "target": "sample_card_1#1"
     },
     {
       "at": 0.15,

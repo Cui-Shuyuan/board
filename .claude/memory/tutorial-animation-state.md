@@ -1749,3 +1749,54 @@ at=0.15 create sample_back_3 zone=showcase_3
 
 **"同时发生" = 同一个 `at`；"依次发生" = `at` 递增。**
 两者之间只差一个数字，不需要两套机制 —— 这是我之前在数据里无意写成 0.05 递增造成的。
+
+
+## 【已修】cue9→10 交界处闪一张小牌：取景与销毁不同帧（2026-09）
+
+用户："cue9 的末尾（也可能是 cue10 的开头），非常短暂地出现了一张**小一号的正面卡面**。"
+
+**根因**：cue10 在 `at=0.05` 切取景到 `cards`，而销毁 cue9 那张牌在 `at=0.1`。
+中间这段时间里，cue9 的牌**仍摆在 showcase 的位置上，却被用新取景渲染** ——
+位置与缩放都属于旧取景，看起来就"小了一号"。
+
+**修法**：把"切取景"和"销毁"放到**同一个 `at`**（同一帧触发），
+并把 `destroy` 排在 `wait(camera)` 之前，保证同一帧内先移除旧牌、再切取景。
+
+```json
+{"at": 0.05, "action": "destroy", "target": "sample_card_1#1"}
+{"at": 0.05, "action": "wait", "camera": "cards", "camera_padding": 1.5}
+```
+
+实测 `t=0.1` 时 showcase 已空。**"同时发生"仍然只是同一个 `at`**（与 cue11 三张卡背同一招）。
+
+## 【已修】高亮不能暂停，而洗混能（2026-09）
+
+用户："cue11 播放高亮动画时按空格暂停，高亮动画不会停住；对比之下 cue12 的洗混动画能停住。"
+
+**根因是两套机制**：
+
+| 动作 | 机制 | 暂停表现 |
+|---|---|---|
+| `shuffle` / `flip` / `scale` / `fade` / `groupScale` | **时间采样片段**（`clip`，`Seek(t)` 的纯函数） | 暂停即停 ✅ |
+| `highlight` 单件（`PulseActor`） | **协程** `RunTween(ScalePulseRoutine)`，靠 `Time.unscaledDeltaTime` 自己跑 | 暂停照样放完 ❌ |
+
+**修法**：`PulseActor` 改走时间采样 —— 直接复用 `HasGroupScale`
+（它本来就是"以某点为锚点整组缩放、去程+回程"），把锚点设为该牌自身位置，
+等效于**原地呼吸**，不必再造第三种脉冲机制。
+
+```csharp
+var clip = ClipAt(actor.Item, actor, synthetic);
+clip.HasGroupScale = true;
+clip.GroupCenter = actor.LivePosition;   // 锚点 = 它自己 → 原地放大
+clip.GroupGrow = grow;
+```
+
+**验证方法（可复用）**：暂停的语义就是"**不再调用 `Seek` 时状态不变**"。
+`TraceHighlightScale` 采样后**不再 Seek** 再读一次，两次必须相同：
+
+```
+[Hl] t=1.10 采样后=0.0974 暂停后再读=0.0974 一致
+```
+
+**规则**：任何"随时间推进的视觉"都必须做成 `Seek(t)` 的纯函数（片段），
+**不要用协程** —— 协程与时钟无关，于是暂停、跳转、倒放都会不一致。
