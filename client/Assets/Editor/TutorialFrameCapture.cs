@@ -1988,6 +1988,85 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 按用户的真实路径采样：**播完 cue12，再跳/进到 cue13**，看市场牌显示哪一面。
+        ///
+        /// 为什么需要单独一条：`-dumpReplay` 走的是"沿 entry 链重放"，
+        /// 而用户是"顺序播到 cue13"（或跳转）。两条路径不同，前者查不出后者的问题。
+        /// </summary>
+        public static void DumpAdvancePath()
+        {
+            // 这条同时是**自检**：按编辑器真实路径逐条推进，任何一步市场牌显示异常都要报错。
+            bool advanceFail = false;
+
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("AdvHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            // 编辑器实际用的路径：PlayCue → ApplyEntryState（解入口状态）+ LoadCue。
+            // 所以这里必须**完整复现那两步**，否则采样和真实画面会不一致。
+            var playerGo = new GameObject("AdvPlayer");
+            var player = playerGo.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Adv] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            string[] path = { "setup.cards.002.1", "setup.cards.002.2",
+                              "setup.gems.001.1", "setup.gems.001.2" };
+            for (int i = 0; i < path.Length; i++)
+            {
+                int idx = player.Document.cues.FindIndex(c => c.id == path[i]);
+                if (idx < 0) { Debug.Log($"[Adv] 找不到 {path[i]}"); continue; }
+                // ① 解入口状态（编辑器里由 PlayCueRoutine 调用）
+                apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { idx }) });
+                Report(anim, path[i] + " [解入口状态后]");
+                // ② 载入本条，顺序进入时 continueState=true
+                anim.LoadCue(gameRoot, "full", path[i], i > 0);
+                Report(anim, path[i] + " [LoadCue 后]");
+                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+                Report(anim, path[i] + " 播完");
+                if (MarketShowsBack(anim)) advanceFail = true;
+            }
+            Debug.Log($"[Adv] {(advanceFail ? "FAIL" : "PASS")} " +
+                      $"逐条推进时市场牌始终正面朝上（含解入口状态那一步）");
+            EditorApplication.Exit(advanceFail ? 1 : 0);
+        }
+
+        /// <summary>市场里是否有牌显示成背面（画面异常）。</summary>
+        private static bool MarketShowsBack(TutorialCueAnimPlayer anim)
+        {
+            foreach (var it in anim.Store.Items)
+                if (it.ZoneId == "card_market" && it.Showing == "back") return true;
+            return false;
+        }
+
+        private static void Report(TutorialCueAnimPlayer anim, string tag)
+        {
+            int mk = 0, mkFace = 0, mkBack = 0, mkHidden = 0, flippedTrue = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.ZoneId != "card_market") continue;
+                mk++;
+                if (it.Flipped) flippedTrue++;
+                switch (it.Showing)
+                {
+                    case "face": mkFace++; break;
+                    case "back": mkBack++; break;
+                    default: mkHidden++; break;
+                }
+            }
+            Debug.Log($"[Adv] {tag}: 市场 {mk} 张 → 显示卡面 {mkFace} / 显示卡背 {mkBack} / 隐藏 {mkHidden}" +
+                      $"（Flipped=true 的有 {flippedTrue} 张）");
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&

@@ -649,12 +649,27 @@ namespace BoardGameTutorial
 
 
         /// <summary>按「是否已翻开」刷新贴图。有背面贴图且未翻开时显示背面。</summary>
+        /// <summary>
+        /// 按组件的朝向决定显示哪一面。
+        ///
+        /// **全项目只有这一套约定**（曾经有两套相反的，导致"播完动画是对的、
+        /// 换 cue 重建后又翻回背面"）：
+        ///   ZoneItem.Flipped == true  → 未翻开 / 背面朝上 → 显示 **BackSprite**（没有就用 FaceSprite）
+        ///   ZoneItem.Flipped == false → 已翻开 / 正面朝上 → 显示 **FaceSprite**
+        ///
+        /// 名字有点绕（Flipped=true 表示"还没有翻到正面"），但它在代码里已经广泛使用；
+        /// 关键是**只此一处定义**，flip 片段也必须遵守同一套。
+        /// </summary>
         private static void RefreshFace(CueAnimActor actor)
         {
-            if (actor?.Renderer == null || actor.BackSprite == null) return;
-            actor.Renderer.sprite = actor.Item != null && actor.Item.Flipped
-                ? actor.BackSprite
-                : actor.FaceSprite;
+            if (actor?.Renderer == null) return;
+            // 约定（全项目只此一处）：Flipped 表示**这张牌现在是不是正面朝上**。
+            bool faceUp = actor.Item != null && actor.Item.Flipped;
+            if (faceUp)
+                actor.Renderer.sprite = actor.FaceSprite;                 // 正面 = 真卡面
+            else
+                actor.Renderer.sprite = actor.BackSprite != null ? actor.BackSprite : actor.FaceSprite;
+                // 没有独立背图（牌堆里的牌）时，它的"那一面"本身就是卡背扫描图
         }
 
         /// <summary>把每个组件瞬间摆到它当前 (zone, slot) 的位置 —— 这是状态的可视化。</summary>
@@ -1023,15 +1038,13 @@ namespace BoardGameTutorial
                     float yaw = Mathf.LerpUnclamped(0f, 180f, k);
                     clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
 
-                    bool showingBack = yaw < 90f;
-                    if (clip.Actor.BackSprite != null)
-                        clip.Actor.Renderer.sprite = showingBack ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
-                    else
-                    {
-                        // 没有独立背图（牌堆里的牌）：翻面前后都是它自己那一面，
-                        // 只有换面（FaceSprite 被换掉）才会看到不同 —— 这里保持显示当前面。
-                        clip.Actor.Renderer.sprite = clip.Actor.FaceSprite;
-                    }
+                    // 翻转**过程中**的显示：前半程背面、后半程正面。
+                    // 终态（k=1）与 RefreshFace 的约定必须一致，否则一旦场景重建
+                    // 就会"翻回背面"（曾经两套相反的定义，就是这个症状）。
+                    bool faceUpNow = k >= 0.5f;   // 转过一半就露正面
+                    clip.Actor.Renderer.sprite = faceUpNow
+                        ? clip.Actor.FaceSprite
+                        : (clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite);
                 }
 
                 if (clip.HasScale)
@@ -1511,12 +1524,8 @@ namespace BoardGameTutorial
                 if (ev.flip)
                 {
                     clip.HasFlip = true;
-                    // **明确朝向，而不是取反**。
-                    // 取反的语义是"翻到另一面"，但对"从牌堆发到市场"来说，
-                    // 终态永远是确定的：这张牌到了市场就该**正面朝上**。
-                    // 用取反时，牌堆牌若已是"未翻开"（Flipped=true），取反后仍回到
-                    // 未翻开，表现就是**发出去的牌一直是卡背**（用户报的第二个现象）。
-                    step.Item.Flipped = true;   // 已翻开 → 显示真卡面
+                    // **明确朝向**：到市场就是正面朝上。语义统一为"是否正面朝上"。
+                    step.Item.Flipped = true;
                 }
             }
 
@@ -1751,7 +1760,9 @@ namespace BoardGameTutorial
                 // 创建出来的组件默认"已出场"：它不曾处于"等待出场"的状态
                 item.Shown = true;
                 // 背面朝上：牌堆里的牌就是这样（是哪张已定，但还没翻开）
-                if (ev.face_down) item.Flipped = true;
+                // 语义：Flipped = 是否正面朝上，所以这里是 false
+                if (ev.face_down) item.Flipped = false;
+                else item.Flipped = true;
                 BuildActorObject(item);
 
                 // create 带 flip = 出场过程中翻到正面（发牌时"翻开四张"）。

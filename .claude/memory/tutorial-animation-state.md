@@ -1050,3 +1050,45 @@ z += layer * display.dz;
 180° 旋转对称）。断言已改为"市场牌必须翻到 180°、牌堆牌不该被旋转"。
 
 ## 为什么对账没抓到「朝向」两个问题（2026-09 用户验收）
+
+
+## 【根因】朝向有两套相反的定义（2026-09 用户截图定位）
+
+用户报「cue13 市场牌全部朝下」，截图确证。**我的采样一开始查不出来**，因为：
+
+1. 我走的是"沿 entry 链重放"（`-dumpReplay`），而编辑器走的是
+   **`ApplyEntryState`（解入口状态）+ `LoadCue`**。**两条路径不同** ——
+   加上 `ApplyEntryState` 这一步后立刻复现：
+   ```
+   setup.cards.002.1 播完: 显示卡面 12 / 显示卡背 0
+   setup.cards.002.2 [解入口状态后]: 显示卡面 0 / 显示卡背 12   ← 复现
+   ```
+
+2. **真正的根因**：同一个概念在代码里有两套**相反**的定义：
+   ```csharp
+   // flip 片段（后来写的）：
+   bool showingBack = k < 0.5f;         // 转过一半 → 显示 FaceSprite
+   // RefreshFace（旧的）：
+   Flipped ? BackSprite : FaceSprite     // Flipped=true → 显示 BackSprite
+   ```
+   动画播放时片段最后执行，画面是对的；**一旦场景重建**
+   （`ApplyEntryState` 会重建）只剩 `RefreshFace` 在工作，就翻回背面。
+   所以"播完是对的、换 cue 就变背面"。
+
+### 修法：语义统一为「Flipped = 是否正面朝上」
+
+```csharp
+bool faceUp = item.Flipped;
+sprite = faceUp ? FaceSprite : (BackSprite ?? FaceSprite);
+```
+
+配套：`create` 的 `face_down` → `Flipped = false`；发牌 → `Flipped = true`；
+flip 片段 `k < 0.5` 显示背面、之后显示正面。**只此一处定义。**
+
+### 教训
+
+- **同一个概念只能有一处定义。** 两处相反的规则，谁最后执行谁赢，
+  于是"播放时对、重建后错"——这类 bug 极难查。
+- **采样必须走用户的真实路径。** 我少走一步 `ApplyEntryState`，就查了一整天。
+  现在 `DumpAdvancePath` 是**永久自检**：按真实路径逐条推进，
+  任何一步市场牌显示背面都会 FAIL。
