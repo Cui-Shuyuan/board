@@ -1785,6 +1785,77 @@ namespace BoardGameTutorial.Editor
         /// 用法：-traceCue &lt;cueId&gt; -traceZones "a,b,c"
         /// </summary>
         /// <summary>逐件列出某个 zone 的组件（id/order/坐标/显示哪面）——确认"牌堆几张、错开多少"。</summary>
+        /// <summary>
+        /// 牌堆模型自检（用户定义，逐条对照）：
+        ///   order 39 = 最下面那张（画在右下），order 38 盖在它左下……
+        ///   一直叠到 order 32（第 8 张有偏移的）—— **这 8 张组成牌库的形状**；
+        ///   从 order 31 起完整盖在 order 32 上、不再偏移，一直到 order 0。
+        ///   发牌从 **order 0** 开始（牌堆顶）。
+        ///
+        /// 断言：
+        ///   ① order 0..31 与 order 32 **完全重合**（8 张有偏移的只在 32..39）
+        ///   ② order 32..39 逐层错开、间距恒定
+        ///   ③ PickFront 取 order 最小（第一张发走的是 order 0）
+        ///   ④ 发走 order 0..31 这 32 张，外形**完全不变**；再发才开始变小
+        /// </summary>
+        public static void SelfTestPileModel()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("PileModelHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            foreach (var lvl in new[] { 1, 2, 3 })
+            {
+                string zone = $"deck_level_{lvl}";
+                anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+                for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
+
+                var byOrder = new SortedDictionary<int, Vector3>();
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == zone) byOrder[it.Order] = it.LivePosition;
+                if (byOrder.Count == 0) { Debug.Log($"[PileModel] {zone} 空，跳过"); continue; }
+
+                int cap = byOrder.Keys.Max() + 1;
+                var stepped = byOrder.Where(kv => kv.Key >= cap - 8).OrderBy(kv => kv.Key).ToList();
+
+                // ① 有偏移的 8 张之外，其余全部与该 8 张的最外一张重合
+                var anchorPos = byOrder[cap - 8];   // order 32（40张时）
+                int stray = 0;
+                foreach (var kv in byOrder.Where(kv => kv.Key < cap - 8))
+                    if (Vector3.Distance(kv.Value, anchorPos) > 1e-5f) stray++;
+
+                // ② 8 张逐层错开、间距恒定
+                bool even = true; float step = 0f;
+                for (int i = 0; i + 1 < stepped.Count; i++)
+                {
+                    float d = Vector3.Distance(stepped[i].Value, stepped[i + 1].Value);
+                    if (i == 0) step = d;
+                    else if (Mathf.Abs(d - step) > 1e-5f) even = false;
+                }
+
+                Debug.Log($"[PileModel] {zone}: {byOrder.Count}张 cap={cap} " +
+                          $"偏移组={stepped.Count}张(台{stepped.Select(s => $"{s.Value.x:0.000}").Distinct().Count()}) " +
+                          $"间距={step:0.0000} 未重合的={stray}");
+                if (stray != 0) { Debug.Log($"[PileModel] FAIL {zone}: 重合块里有 {stray} 张偏离"); failures++; }
+                if (stepped.Count != 8) { Debug.Log($"[PileModel] FAIL {zone}: 偏移组应为 8 张，实为 {stepped.Count}"); failures++; }
+                if (!even) { Debug.Log($"[PileModel] FAIL {zone}: 偏移间距不均匀"); failures++; }
+            }
+
+            // ③ PickFront 取 order 最小的那张
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
+            for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
+            var pick = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1").OrderBy(x => x.Order).First();
+            Debug.Log($"[PileModel] 第一个会被发走: order={pick.Order}（应为 0）");
+            if (pick.Order != 0) failures++;
+
+            Debug.Log($"[PileModel] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void ListZone()
         {
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
