@@ -2220,6 +2220,59 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(0);
         }
 
+        /// <summary>
+        /// 逐帧状态轨迹：把一条 cue 从 0 到结束每隔 0.1s 采样一次，
+        /// 打印关键 zone 的"件数 / 显示正面数 / 显示背面数 / 台阶数"。
+        ///
+        /// 这是"用状态查询看动画"的基本工具 —— 不看像素，只看数据。
+        /// 用法：-traceCue &lt;cueId&gt; -traceZones "a,b,c"
+        /// </summary>
+        public static void TraceState()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = ArgValue("-traceCue", "setup.cards.002.1");
+            string[] zones = ArgValue("-traceZones",
+                "deck_level_1,deck_level_2,deck_level_3,card_market,showcase_1,showcase_2,showcase_3")
+                .Split(',');
+
+            var go = new GameObject("TraceHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            if (!anim.LoadCue(gameRoot, "full", cueId, false))
+            {
+                Debug.LogError($"[Trace] LoadCue 失败: {cueId}");
+                EditorApplication.Exit(1);
+                return;
+            }
+
+            var header = new System.Text.StringBuilder("[Trace] t      ");
+            foreach (var z in zones) header.Append($"{z,-16}");
+            Debug.Log(header.ToString());
+
+            for (float tt = 0f; tt <= anim.TotalDuration + 0.1f; tt += 0.1f)
+            {
+                anim.Seek(tt);
+                var row = new System.Text.StringBuilder($"[Trace] {tt,5:0.0}  ");
+                foreach (var z in zones)
+                {
+                    int n = 0, face = 0, back = 0;
+                    var xs = new System.Collections.Generic.List<float>();
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (it.ZoneId != z) continue;
+                        n++;
+                        if (it.Showing == "face") face++; else if (it.Showing == "back") back++;
+                        xs.Add(Mathf.Round(it.LivePosition.x * 10000f) / 10000f);
+                    }
+                    int steps = xs.Count == 0 ? 0 : xs.Distinct().Count();
+                    row.Append($"{(n == 0 ? "-" : $"{n}张 正{face}背{back} 台{steps}"),-16}");
+                }
+                Debug.Log(row.ToString());
+            }
+            EditorApplication.Exit(0);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
