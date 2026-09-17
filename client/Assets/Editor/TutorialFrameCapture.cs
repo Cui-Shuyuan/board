@@ -1620,6 +1620,76 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 分支自检：**两条兄弟 cue 共享同一个父状态，但牌堆顶可以是不同的牌**。
+        ///
+        /// 场景（用户提出）："如果抽到了红色牌就加入手牌，抽到蓝色牌则塞回牌堆底"。
+        /// 两条分支的入口是同一个父 cue，所以牌堆内容相同；
+        /// 区别在于**各自在开头把不同的牌换到牌堆顶**，于是抽到不同的牌。
+        ///
+        /// 这条测的是"牌是个体、顺序可改"这个模型是否真的成立。
+        ///
+        /// 依赖三条临时 cue（branch.shared.001 / branch.red.001 / branch.blue.001）。
+        /// 它们只用于验证，不在正式 runtime 里 —— 跑这条测试前需要先把它们
+        /// 注册进 full.runtime.json，否则会报"无此 cue"。
+        /// </summary>
+        public static void SelfTestBranchDifferentTopCard()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var host = new GameObject("BranchHost");
+            var player = host.AddComponent<TutorialCuePlayer>();
+            player.autoPlay = false;
+            player.tutorialRoot = Path.Combine(repoRoot, "games");
+            if (!player.LoadRuntime()) { Debug.Log("[Branch] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
+
+            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+
+            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var docField = typeof(TutorialCuePlayer).GetProperty("Document",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+            System.Func<string, string> runBranch = (cueId) =>
+            {
+                int idx = player.Document.cues.FindIndex(c => c.id == cueId);
+                if (idx < 0) return "(无此 cue)";
+                apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { idx }) });
+                anim.LoadCue(gameRoot, "full", cueId, true);
+                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+
+                string picked = "(没抽到牌)";
+                foreach (var it in anim.Store.Items)
+                    if (it.ZoneId == "card_market" && it.Template != null)
+                        picked = it.Template.id;
+                return picked;
+            };
+
+            // 两条兄弟：入口都是 branch.shared.001
+            string a = runBranch("branch.red.001");
+            string b = runBranch("branch.blue.001");
+
+            bool aOk = a.Contains("ruby");
+            bool bOk = b.Contains("sapphire");
+            bool differ = a != b;
+            Debug.Log($"[Branch] {(aOk ? "PASS" : "FAIL")} 分支A（抽红）抽到: {a}");
+            if (!aOk) failures++;
+            Debug.Log($"[Branch] {(bOk ? "PASS" : "FAIL")} 分支B（抽蓝）抽到: {b}");
+            if (!bOk) failures++;
+            Debug.Log($"[Branch] {(differ ? "PASS" : "FAIL")} 两条兄弟分支抽到**不同的牌**（{a} vs {b}）" +
+                      $"—— 共享父状态、但牌堆顶不同");
+            if (!differ) failures++;
+            _ = docField;
+
+            Debug.Log($"[Branch] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
