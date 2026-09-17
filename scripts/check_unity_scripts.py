@@ -799,11 +799,9 @@ def main():
 # 出图（离屏渲染）已全部删除：它两次把错画面当成证据，而且状态查询足够回答"对不对"。
 # 现在只保留两类入口：状态查询（DumpState/TraceState）与自检（SelfTest*）。
 ENTRY_METHODS = [
-    "SelfTest", "SelfTestLivePath", "SelfTestDealSync", "SelfTestClipLeak",
-    "SelfTestEntryTree", "SelfTestNoLeakOnJump", "SelfTestSequential",
-    "SelfTestNoFlashOnLoad", "SelfTestShuffleGeneric", "SelfTestGroupHighlight",
-    "SelfTestContainer", "SelfTestGroupMoveGeneric", "SelfTestJumpMatchesSequential",
-    "SelfTestCueWalk", "SelfTestDealtCardsSurvive", "SelfTestBranchDifferentTopCard", "SelfTestStateSnapshotIsStable", "SelfTestOrientationMatchesSprite", "DumpAdvancePath", "SelfTestPileDealShape", "SelfTestCaptureVsDumpAgree", "TraceState", "ListZone", "SelfTestPileModel", "DumpState",
+    # 只保留**状态查询**（观察用）。自检（SelfTest*）已全部删除：
+    # 自己出题自己阅卷，通过只说明"实现了我以为的东西"，不说明"实现了要的东西"。
+    "DumpState", "TraceState", "ListZone", "DumpAdvancePath",
 ]
 
 

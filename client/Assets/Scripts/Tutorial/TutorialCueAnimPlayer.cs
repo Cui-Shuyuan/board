@@ -1448,11 +1448,10 @@ namespace BoardGameTutorial
 
         /// <summary>取 zone 里最靠前、且不在 excluded 中的组件。</summary>
         /// <summary>
-        /// 取牌堆"最上面"那张 = **`order` 最小**的那张（用户定义：order 0 先被发走）。
+        /// 取牌堆"最上面"那张 = **`order` 最小**的那张（用户定义：**先发 order 0**）。
         ///
-        /// 与叠放位置一致：`ZoneStore` 把 `order` 最大的一端放在最下面（偏移最大），
-        /// `order` 0..7 逐层错开形成台阶，`order` 8 及以上全部重合在 order 7 上。
-        /// 于是从 order 0 一路发到 order 31 时，走的都是重合块里的牌 —— **形状天然不变**。
+        /// 叠放位置把 order 0..容量-9 放在**重合块**里（全部盖在 order 32 上），
+        /// 所以从 order 0 一路发到 order 31，外形**天然不变**；再发才开始变小。
         /// </summary>
         private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded, string template = null)
         {

@@ -590,23 +590,16 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                // 叠放显示（用户定义）：order 0 是**牌堆顶**（第一个被发走），
-                // order 越大越靠里面（最后被发）。相邻两张错开一点点，
-                // 只有**离牌堆顶最远的 maxVisible 张**构成台阶，更靠外的全部重合。
+                // 叠放显示（用户定义，逐句对照）：
+                //   order 39..32（容量-1 … 容量-8）= **8 张错开的**，
+                //     39 在最上面那张（偏移 0），逐层错开到 32。
+                //   order 31..0 = **完整重合块**，全部盖在 order 32 上。
+                //   发牌从 order 0（重合块）一路走到 31 → 外形天然不变；
+                //   再发（order 32 起）才开始变小 —— "第 33 张才开始变小"。
                 //
-                //   fromBottom = capacity - 1 - order     ← 用**容量**，不用实际张数
-                //   lift       = min(fromBottom, maxVisible - 1)
-                //
-                // **锚必须是容量（固定值）**，不能是实际张数：
-                //   - 用实际张数：牌一被发走，"距底"就变小 → 台阶被吃掉（越发越薄）
-                //   - 用容量：L 是固定映射 → 发走任意张，剩下那些牌的台阶位置都不变
-                // 台阶在 order 最大那一端（容量决定），而发牌从 order 0 开始 ——
-                // **两端相反，所以发牌天然不改变可见形状**。
-                //
-                // 注意：**不能读 CountInZone**（它会读格位表，而格位表由本函数构建 ——
-                // 自引用会让位置取决于"算的那一刻有几张牌"）。
+                //   lift = min(capacity - 1 - order, maxVisible - 1)
                 int maxVisible = display.max_visible > 0 ? display.max_visible : 8;
-                int deckCapacity = zone.capacity > 0 ? zone.capacity : 8;
+                int deckCapacity = zone.capacity > 0 ? zone.capacity : maxVisible;
                 int fromBottom = Mathf.Max(0, deckCapacity - 1 - slot);
                 float lift = Mathf.Min(fromBottom, maxVisible - 1);
                 x += lift * display.dx;

@@ -1478,3 +1478,39 @@ t=4.0  38张 台6   ← 逐层从外端取
 用户问「你是怎么理解『order38 盖在 order 39 的左下一点点』这句话的」——
 **被迫把"位置方向"和"叠放顺序"分开说**，才发现我一直在调位置公式，
 而问题根本**不在位置**，在 **create 的 order 分配顺序**。
+
+
+## 【删除】所有自检（SelfTest*）—— 用户指出"自己给自己阅卷"是矛盾的（2026-09）
+
+用户原话：
+
+> 先把你的测试判定全部去掉，也许它能帮你规避一些问题，
+> 但**自己给自己当阅卷人，这个做法从根本上就是矛盾的**。
+> 你如果能知道自己写得对不对，那你根本用不着测试。
+
+**这是对的，而且解释了我一整天"测试全绿但效果全错"的根源**：
+我写的断言只编码了*我以为的*模型。测试通过 ⇒ 我实现了我以为的东西，
+**完全不说明**我实现了*用户要的*东西。今天 `SelfTestOrientationMatchesSprite`
+和 `SelfTestPileModel` 都反复出现"全绿而画面错"，正是这个结构性缺陷。
+
+**已删除**：`SelfTest`、`SelfTestLivePath`、`SelfTestDealSync`、`SelfTestClipLeak`、
+`SelfTestEntryTree`、`SelfTestNoLeakOnJump`、`SelfTestSequential`、
+`SelfTestNoFlashOnLoad`、`SelfTestShuffleGeneric`、`SelfTestGroupHighlight`、
+`SelfTestContainer`、`SelfTestGroupMoveGeneric`、`SelfTestJumpMatchesSequential`、
+`SelfTestCueWalk`、`SelfTestDealtCardsSurvive`、`SelfTestBranchDifferentTopCard`、
+`SelfTestStateSnapshotIsStable`、`SelfTestOrientationMatchesSprite`、
+`SelfTestPileDealShape`、`SelfTestCaptureVsDumpAgree`、`SelfTestPileModel`。
+`DumpAdvancePath` 里的 PASS/FAIL 判定也去掉了（只保留观察输出）。
+
+**保留的只有观察工具**（它们报告事实，不下结论）：
+
+| 工具 | 报告什么 |
+|---|---|
+| `DumpState` | 一条 cue 的终态 JSON |
+| `TraceState` | 逐帧状态轨迹 |
+| `ListZone` | 某 zone 每件的 id/order/坐标/显示哪面 |
+| `DumpAdvancePath` | 按编辑器真实路径逐条推进的状态 |
+
+`scripts/check_unity_scripts.py` 的入口清单同步更新为只认这四个。
+
+**判定由用户做。** 我只提供数据。
