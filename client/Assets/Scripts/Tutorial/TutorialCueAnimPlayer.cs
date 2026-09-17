@@ -1029,19 +1029,29 @@ namespace BoardGameTutorial
 
                 if (clip.HasFlip)
                 {
-                    // 翻面 = **一个 0°→180° 的连续过程**（用户要求），不是"移动中突然换一面"：
-                    //   0°..90°   显示卡背（牌的背面朝向镜头）
-                    //   90°       此时牌面与视线垂直（看作换面瞬间）
-                    //   90°..180° 显示卡面
-                    // 只旋转到 180° 就停住（不再转回 0°）—— 180° 与 0° 在正面看是一样的，
-                    // 但读者能看到"翻过去"这个动作本身。
-                    float yaw = Mathf.LerpUnclamped(0f, 180f, k);
-                    clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+                    // 翻面用**压扁-展开**表达，而不是绕 Y 轴旋转。
+                    //
+                    // 为什么不用旋转：把一张平面贴图绕 Y 轴转到 180°，它在屏幕上就是
+                    // **左右镜像**的（用户报的"翻出来的正面卡牌都是镜像的"）。
+                    // 真实的牌翻过去之所以不镜像，是因为实体牌的两面是两个不同的面；
+                    // 我们只有一张平面贴图，旋转必然镜像。
+                    //
+                    // 压扁-展开是 2D 里表达翻牌的标准手法：
+                    //   0 → 0.5：横向收缩到 0（牌"立起来"侧对镜头），显示背面
+                    //   0.5 → 1：横向展开回原宽，显示正面
+                    // 全程不旋转，所以正面始终是正的。
+                    float squash = Mathf.Abs(1f - 2f * k);      // 1 → 0 → 1
+                    // 最小不要压到 0：完全扁平的贴图会让"当前贴图身份"这类判断失去意义，
+                    // 也让复位逻辑更难判断。留一点点宽度即可（视觉上仍是"侧对镜头"）。
+                    squash = Mathf.Max(squash, 0.02f);
+                    var scl = clip.Actor.BaseScale;
+                    scl.x *= squash;
+                    clip.Actor.Go.transform.localScale = scl;
+                    clip.Actor.Go.transform.localRotation = Quaternion.identity;
+                    // 同步 LiveScale，否则复位时会把终态缩放当基准、越缩越小
+                    clip.Actor.LiveScale = scl;
 
-                    // 翻转**过程中**的显示：前半程背面、后半程正面。
-                    // 终态（k=1）与 RefreshFace 的约定必须一致，否则一旦场景重建
-                    // 就会"翻回背面"（曾经两套相反的定义，就是这个症状）。
-                    bool faceUpNow = k >= 0.5f;   // 转过一半就露正面
+                    bool faceUpNow = k >= 0.5f;
                     clip.Actor.Renderer.sprite = faceUpNow
                         ? clip.Actor.FaceSprite
                         : (clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite);

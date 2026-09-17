@@ -512,17 +512,35 @@ namespace BoardGameTutorial.Editor
                       $"—— 牌堆没有翻转动作");
             if (pileRotated != 0) failures++;
 
-            // 市场牌必须停在 180°（真的翻过去了），而不是 0°（根本没翻）
-            int notFlipped = 0;
+            // 翻面用压扁-展开表达，所以**市场牌不该有任何旋转**（旋转会产生镜像），
+            // 且缩放应当回到原值（压扁是过程，终态恢复）。
+            int rotatedMk = 0, shrunk = 0;
             foreach (var it in anim.Store.Items)
             {
                 if (it.Actor?.Go == null || it.ZoneId != "card_market") continue;
                 float yaw = Mathf.Abs(Mathf.DeltaAngle(0f, it.Actor.Go.transform.localRotation.eulerAngles.y));
-                if (yaw < 179f) notFlipped++;
+                if (yaw > 1f) rotatedMk++;
+                float sx = it.Actor.Go.transform.localScale.x;
+                if (Mathf.Abs(sx - it.Actor.BaseScale.x) > 0.001f) shrunk++;
             }
-            Debug.Log($"[DealTest] {(notFlipped == 0 ? "PASS" : "FAIL")} " +
-                      $"市场牌都翻到了 180°（没翻的 {notFlipped} 张）");
-            if (notFlipped != 0) failures++;
+            Debug.Log($"[DealTest] {(rotatedMk == 0 ? "PASS" : "FAIL")} " +
+                      $"市场牌没有被旋转（旋转会镜像，被旋转的 {rotatedMk} 张）");
+            if (rotatedMk != 0) failures++;
+            Debug.Log($"[DealTest] {(shrunk == 0 ? "PASS" : "FAIL")} " +
+                      $"市场牌缩放已恢复原值（未恢复的 {shrunk} 张）");
+            if (shrunk != 0) failures++;
+
+            // 市场牌必须显示**真卡面**（不是卡背）。这是"发牌看得到牌面"的根本判据。
+            int showsBack = 0; string firstBad = null;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.ZoneId != "card_market") continue;
+                if (it.Showing != "face") { showsBack++; firstBad ??= $"{it.Id}({it.Showing})"; }
+            }
+            Debug.Log($"[DealTest] {(showsBack == 0 ? "PASS" : "FAIL")} " +
+                      $"市场牌都显示真卡面（显示卡背的 {showsBack} 张" +
+                      (firstBad == null ? "）" : $"，例如 {firstBad}）"));
+            if (showsBack != 0) failures++;
 
             Debug.Log($"[DealTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
@@ -1939,50 +1957,47 @@ namespace BoardGameTutorial.Editor
             if (badMarket != 0) failures++;
             _ = badMarketAfterDeal;
 
-            // 牌堆外形模型（用户定义的）：**只有底部 max_visible 张错开，再往上的全部重合**。
-            System.Func<float, System.Collections.Generic.List<Vector3>> pileShape = (at) =>
+            // 牌堆外形模型（用户定义的）：**最底部 max_visible 张各自错开，再往上的全部重合**。
+            // 判据（这是"发牌看不出变少"的真正条件）：
+            //   ① order → 位置是固定的映射（与还剩几张无关）
+            //   ② 发牌后，**没被取走的那些牌坐标完全不变**
+            System.Func<string, System.Collections.Generic.Dictionary<int, Vector3>> byOrder = (zone) =>
             {
-                for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt);
-                return anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
-                                       .OrderBy(x => x.Order)
-                                       .Select(x => x.LivePosition).ToList();
+                var map = new System.Collections.Generic.Dictionary<int, Vector3>();
+                var last = Vector3.zero; bool has = false;
+                foreach (var it in anim.Store.Items.Where(x => x.ZoneId == zone))
+                { map[it.Order] = it.LivePosition; last = it.LivePosition; has = true; }
+                return has ? map : map;
             };
-            var s40 = pileShape(2.6f);   // 40 张
+            System.Action<float> seekTo = (at) => { for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt); };
 
-            var s36 = pileShape(8.4f);   // 发走 4 张
+            seekTo(2.6f);   var before = byOrder("deck_level_1");
+            seekTo(8.4f);   var after = byOrder("deck_level_1");
 
-            // ① 牌堆外形的"跨度"在发牌前后必须完全一致（这就是"看不出变少"）
-            System.Func<System.Collections.Generic.List<Vector3>, float> spanX =
-                (vs) => vs.Max(v => v.x) - vs.Min(v => v.x);
-            float spanBefore = spanX(s40), spanAfter = spanX(s36);
-            bool sameSpan = Mathf.Abs(spanBefore - spanAfter) < 1e-4f;
-            Debug.Log($"[Orient] {(sameSpan ? "PASS" : "FAIL")} " +
-                      $"发牌前后牌堆跨度不变（40张 {spanBefore:0.0000} / 36张 {spanAfter:0.0000}）");
-            if (!sameSpan) failures++;
-
-            // ② 距顶 max_visible 层以下的牌必须全部重合
-            Debug.Log($"[Orient] 错开层数：40张 {s40.Select(v => $"{v.x:0.000}").Distinct().Count()} 层，" +
-                      $"36张 {s36.Select(v => $"{v.x:0.000}").Distinct().Count()} 层（应恒为 8）");
-            bool deepCoincident = true;
-            for (int i = 0; i + 8 < s40.Count; i++)
-                if (Vector3.Distance(s40[i], s40[i + 1]) > 1e-5f) { }
-            // （按 order 从小到大 = 从底到顶；重合块在**底部**那一侧）
-            for (int i = 0; i + 1 < s40.Count - 7; i++)
-                if (Vector3.Distance(s40[i], s40[i + 1]) > 1e-5f) deepCoincident = false;
-            Debug.Log($"[Orient] {(deepCoincident ? "PASS" : "FAIL")} " +
-                      $"最下面那一叠（超出 8 层的部分）全部重合");
-            if (!deepCoincident) failures++;
-
-            // ③ 靠近顶的 8 张逐层错开、间距恒定
-            bool evenSpacing = true;
-            float step0 = Vector3.Distance(s40[s40.Count - 1], s40[s40.Count - 2]);
+            // ① 底部 8 张逐一错开、间距恒定
+            bool even = true; float step = Vector3.Distance(before[0], before[1]);
             for (int i = 1; i < 7; i++)
-                if (Mathf.Abs(Vector3.Distance(s40[s40.Count - 1 - i], s40[s40.Count - 2 - i]) - step0) > 1e-5f)
-                    evenSpacing = false;
-            bool spreadOk = step0 > 1e-6f;
-            Debug.Log($"[Orient] {(evenSpacing && spreadOk ? "PASS" : "FAIL")} " +
-                      $"靠近顶的 8 张逐层错开且间距恒定（每层 {step0:0.0000}）");
-            if (!evenSpacing || !spreadOk) failures++;
+                if (Mathf.Abs(Vector3.Distance(before[i], before[i + 1]) - step) > 1e-5f) even = false;
+            bool spread = step > 1e-6f;
+            Debug.Log($"[Orient] {(even && spread ? "PASS" : "FAIL")} " +
+                      $"底部 8 张逐层错开且间距恒定（每层 {step:0.0000}）");
+            if (!even || !spread) failures++;
+
+            // ② 第 8 张及以上的牌全部重合
+            bool coincide = true;
+            foreach (var o in before.Keys.Where(k => k >= 7))
+                if (Vector3.Distance(before[o], before[7]) > 1e-5f) coincide = false;
+            Debug.Log($"[Orient] {(coincide ? "PASS" : "FAIL")} 第 8 张往上的牌全部重合（重合块）");
+            if (!coincide) failures++;
+
+            // ③ **发牌后，没被取走的牌坐标完全不变** —— 这才是"看不出变少"
+            int moved = 0;
+            foreach (var kv in after)
+                if (before.TryGetValue(kv.Key, out var was)
+                    && Vector3.Distance(was, kv.Value) > 1e-5f) moved++;
+            Debug.Log($"[Orient] {(moved == 0 ? "PASS" : "FAIL")} " +
+                      $"发牌后未被取走的牌坐标完全不变（变化的 {moved} 张）");
+            if (moved != 0) failures++;
 
             Debug.Log($"[Orient] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
