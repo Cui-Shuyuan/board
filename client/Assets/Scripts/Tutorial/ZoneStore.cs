@@ -574,22 +574,19 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                // 叠放显示（用户定义）：
-                //   order 39 = 最下面那张（先放下的），order 38 盖在它偏左下，
-                //   ……一直盖到 order 32（第 8 张有偏移的）；order 31 起完整重合，
-                //   一路到 order 0。发牌从 **order 0** 开始，发到 order 39 结束。
+                // 叠放显示（用户定义）：共 total 张，order **最大**的是最下面那张，
+                // order **最小**的是牌堆顶（第一个被发走）。相邻两张错开一点点，
+                // 只错开最外面的 maxVisible 张，更里面的全部重合。
                 //
-                // 所以错开量按"**离最下面那张（order capacity-1）多远**"算：
-                //   fromBottom = capacity - 1 - order
-                //   lift       = min(fromBottom, max_visible - 1)
-                // order 39 → lift 0（最下面）、order 38 → 1、…、order 32 → 7、
-                // order 31..0 → 7（全部重合）。
+                //   fromBottom = total - 1 - order     ← 距最下面那张几层
+                //   lift       = min(fromBottom, maxVisible - 1)
                 //
-                // 于是发前 32 张（order 0..31）形状**完全不变**（它们都在重合块里），
-                // 发第 33 张（order 32）起才开始少一层 —— 天然成立，无保持形状的代码。
+                // **必须用 total，不能用 capacity**：二级牌堆只有 30 张，
+                // 用 capacity(40) 算的话 fromBottom 最小也有 30，全部封顶 → 30 张重合。
+                // （这就是"二级三级只有一张牌"的原因。）
+                int total = Mathf.Max(1, CountInZone(zoneId));
                 int maxVisible = display.max_visible > 0 ? display.max_visible : 8;
-                int deckCapacity = zone.capacity > 0 ? zone.capacity : Mathf.Max(1, CountInZone(zoneId));
-                int fromBottom = Mathf.Max(0, deckCapacity - 1 - slot);
+                int fromBottom = Mathf.Max(0, total - 1 - slot);
                 float lift = Mathf.Min(fromBottom, maxVisible - 1);
                 x += lift * display.dx;
                 z += lift * display.dz;

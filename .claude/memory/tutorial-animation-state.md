@@ -1306,3 +1306,43 @@ PASS 发到有偏移的那几张时开始变小（台阶 8→7，厚度 0.112→
 - 看到数据与像素矛盾时，继续用像素验证，而不是去查**为什么两者不同**
 
 **教训：当我怀疑自己在验证中投入的精力超过工作本身时，先问"有没有更直接的信号"。**
+
+## 【定位】二级/三级牌堆重合的真正原因（2026-09）
+
+**症状**：`deck_level_2` / `deck_level_3` 看上去只有一张牌。
+
+**用 `ListZone` 逐件查出的确凿数据**：
+
+```
+deck_level_2 共30件：
+  order=0  live=(-2.750,0.520) slot=(-2.862,0.632)
+  order=2  live=(-2.750,0.520) slot=(-2.862,0.632)
+  order=8  live=(-2.750,0.520) slot=(-2.862,0.632)
+  order=29 live=(-2.750,0.520) slot=(-2.750,0.520)   ← 只有它一致
+```
+
+**两个独立的问题**：
+
+### ① 公式用 `capacity` 而不是实际张数（已修）
+
+旧公式 `fromBottom = capacity - 1 - order`。二级牌堆只有 30 张，
+所以 `fromBottom` 最小也是 30，**全部 ≥ 封顶值 7** → 30 张全部重合。
+改成 `fromBottom = total - 1 - order`（`total = CountInZone`）后，
+**格位表已经能算出正确的错开值**（`slot=(-2.862,0.632)`）。
+
+### ② `LivePosition` 没跟上格位表（未修，这是当前症状的直接原因）
+
+格位表说 `(-2.862, 0.632)`，但牌对象显示的 `LivePosition` 停在 zone 中心 `(-2.750, 0.520)`
+—— 相当于 `lift = 0`。只有 order=29（最下面那张）两者一致。
+
+即**格位表是对的，渲染用的是 `LivePosition`，而它没同步**。
+下一步要查：谁负责把 `ZonePosition` 写进 `LivePosition`（`SyncActorsToStore`？
+`SampleClips` 的复位分支？），以及**"格子表被算出来的时刻"与"LivePosition 被写的时刻"的先后**。
+怀疑是 `CountInZone` 在创建过程中被读取，导致早期算出的位置被固化。
+
+### 可复现的查法
+
+```
+-executeMethod ...ListZone -listZone deck_level_2
+```
+它会同时打印 `live=` 与 `slot=`，一眼能看出两者是否一致。

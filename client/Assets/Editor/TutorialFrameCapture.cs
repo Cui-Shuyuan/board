@@ -1783,6 +1783,25 @@ namespace BoardGameTutorial.Editor
         /// 这是"用状态查询看动画"的基本工具 —— 不看像素，只看数据。
         /// 用法：-traceCue &lt;cueId&gt; -traceZones "a,b,c"
         /// </summary>
+        /// <summary>逐件列出某个 zone 的组件（id/order/坐标/显示哪面）——确认"牌堆几张、错开多少"。</summary>
+        public static void ListZone()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = ArgValue("-listCue", "setup.cards.002.1");
+            string zone = ArgValue("-listZone", "deck_level_2");
+
+            var go = new GameObject("ListHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", cueId, false);
+            anim.Seek(float.Parse(ArgValue("-listAt", "2.6")));
+
+            var items = anim.Store.Items.Where(x => x.ZoneId == zone).OrderBy(x => x.Order).ToList();
+            Debug.Log($"[List] {cueId} 的 {zone}：共 {items.Count} 件");
+            EditorApplication.Exit(0);
+        }
+
         public static void TraceState()
         {
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
