@@ -10,6 +10,156 @@
   },
   "events": [
     {
+      "at": 0.05,
+      "dur": 0.0,
+      "action": "create",
+      "template": "blank_card_1",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 36,
+      "face_down": true
+    },
+    {
+      "at": 0.05,
+      "dur": 0.0,
+      "action": "create",
+      "template": "blank_card_2",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 26,
+      "face_down": true
+    },
+    {
+      "at": 0.05,
+      "dur": 0.0,
+      "action": "create",
+      "template": "blank_card_3",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 16,
+      "face_down": true
+    },
+    {
+      "at": 0.07,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_emerald",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07100000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_ruby",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07200000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_diamond",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07300000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_sapphire",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07400000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_sapphire",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07500000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_onyx",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07600000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_ruby",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07700000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_emerald",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07800000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_ruby",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.07900000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_diamond",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.08,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_emerald",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1,
+      "face_down": true
+    },
+    {
+      "at": 0.081,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_onyx",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1,
+      "face_down": true
+    },
+    {
       "at": 0.0,
       "dur": 0.0,
       "action": "wait",
@@ -32,156 +182,6 @@
       "dur": 0.0,
       "action": "destroy",
       "target": "sample_back_3#1"
-    },
-    {
-      "at": 0.05,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_1_emerald",
-      "palette": "card_level_1",
-      "zone": "deck_level_1",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.051000000000000004,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_1_ruby",
-      "palette": "card_level_1",
-      "zone": "deck_level_1",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.052000000000000005,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_1_diamond",
-      "palette": "card_level_1",
-      "zone": "deck_level_1",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.053000000000000005,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_1_sapphire",
-      "palette": "card_level_1",
-      "zone": "deck_level_1",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.07,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_2_sapphire",
-      "palette": "card_level_2",
-      "zone": "deck_level_2",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.07100000000000001,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_2_onyx",
-      "palette": "card_level_2",
-      "zone": "deck_level_2",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.07200000000000001,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_2_ruby",
-      "palette": "card_level_2",
-      "zone": "deck_level_2",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.07300000000000001,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_2_emerald",
-      "palette": "card_level_2",
-      "zone": "deck_level_2",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.09,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_3_ruby",
-      "palette": "card_level_3",
-      "zone": "deck_level_3",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.091,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_3_diamond",
-      "palette": "card_level_3",
-      "zone": "deck_level_3",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.092,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_3_emerald",
-      "palette": "card_level_3",
-      "zone": "deck_level_3",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.093,
-      "dur": 0.0,
-      "action": "create",
-      "template": "market_card_3_onyx",
-      "palette": "card_level_3",
-      "zone": "deck_level_3",
-      "count": 1,
-      "face_down": true
-    },
-    {
-      "at": 0.2,
-      "dur": 0.0,
-      "action": "create",
-      "template": "blank_card_1",
-      "palette": "card_level_1",
-      "zone": "deck_level_1",
-      "count": 36,
-      "face_down": true
-    },
-    {
-      "at": 0.22,
-      "dur": 0.0,
-      "action": "create",
-      "template": "blank_card_2",
-      "palette": "card_level_2",
-      "zone": "deck_level_2",
-      "count": 26,
-      "face_down": true
-    },
-    {
-      "at": 0.24000000000000002,
-      "dur": 0.0,
-      "action": "create",
-      "template": "blank_card_3",
-      "palette": "card_level_3",
-      "zone": "deck_level_3",
-      "count": 16,
-      "face_down": true
     },
     {
       "at": 0.3,

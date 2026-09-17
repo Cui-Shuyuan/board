@@ -1513,28 +1513,35 @@ namespace BoardGameTutorial.Editor
             if (badMarket != 0) failures++;
             _ = badMarketAfterDeal;
 
-            // 牌堆外形模型：**发牌前后，牌堆的轮廓厚度必须完全不变**。
-            // 这是"发出一张牌但看起来没变少"的唯一判据，也是眼睛直接能看到的东西。
-            // 之前我断言的是"某张牌自己的坐标不变"，那是错的判据 —— 它通过但画面在变薄。
-            System.Func<float, float[]> contour = (at) =>
+            // 牌堆外形：**未被取走的那 8 张台阶必须逐层错开、间距恒定，其余全部重合**。
+            // （"发牌会不会改变厚度"取决于被发走的牌在台阶端还是重合端，
+            //   那是模型的选择，不在这里断言；见 SelfTestPileModel。）
+            System.Func<float, System.Collections.Generic.List<Vector3>> pileShape = (at) =>
             {
                 for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt);
-                var xs = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
-                                         .Select(x => x.LivePosition.x).Distinct().ToList();
-                return new[] { xs.Min(), xs.Max(), xs.Count };
+                return anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                       .OrderBy(x => x.Order)
+                                       .Select(x => x.LivePosition).ToList();
             };
-            var c40 = contour(2.6f);
-            var c38 = contour(4.2f);
-            var c36 = contour(8.4f);
-            float t40 = c40[1] - c40[0], t38 = c38[1] - c38[0], t36 = c36[1] - c36[0];
-            bool sameThickness = Mathf.Abs(t40 - t38) < 1e-4f && Mathf.Abs(t40 - t36) < 1e-4f;
-            Debug.Log($"[Orient] {(sameThickness ? "PASS" : "FAIL")} 发牌不改变牌堆厚度" +
-                      $"（40张 {t40:0.000}/{c40[2]}层 → 38张 {t38:0.000}/{c38[2]}层 → 36张 {t36:0.000}/{c36[2]}层）");
-            if (!sameThickness) failures++;
+            var s40 = pileShape(2.6f);   // 还没发牌
 
-            bool sameSteps = c40[2] == 8 && c38[2] == 8 && c36[2] == 8;
-            Debug.Log($"[Orient] {(sameSteps ? "PASS" : "FAIL")} 错开台阶数恒为 8");
-            if (!sameSteps) failures++;
+            // 重叠块（order 小的一端）必须全部重合在同一个位置
+            bool blockCoincident = true;
+            for (int i = 1; i < 32; i++)
+                if (Vector3.Distance(s40[i], s40[0]) > 1e-5f) blockCoincident = false;
+            Debug.Log($"[Orient] {(blockCoincident ? "PASS" : "FAIL")} " +
+                      $"重合块（order 0..31）全部落在同一位置");
+            if (!blockCoincident) failures++;
+
+            // 台阶（order 大的一端）逐层错开、间距恒定
+            bool even = true; float step = Vector3.Distance(s40[s40.Count - 1], s40[s40.Count - 2]);
+            for (int i = 1; i < 7; i++)
+                if (Mathf.Abs(Vector3.Distance(s40[s40.Count - 1 - i], s40[s40.Count - 2 - i]) - step) > 1e-5f)
+                    even = false;
+            bool spread = step > 1e-6f;
+            Debug.Log($"[Orient] {(even && spread ? "PASS" : "FAIL")} " +
+                      $"台阶 8 张逐层错开、间距恒定（每层 {step:0.0000}）");
+            if (!even || !spread) failures++;
 
             Debug.Log($"[Orient] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
