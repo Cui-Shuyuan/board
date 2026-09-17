@@ -1785,57 +1785,6 @@ namespace BoardGameTutorial.Editor
         /// 用法：-traceCue &lt;cueId&gt; -traceZones "a,b,c"
         /// </summary>
         /// <summary>逐件列出某个 zone 的组件（id/order/坐标/显示哪面）——确认"牌堆几张、错开多少"。</summary>
-        /// <summary>
-        /// 回答"牌堆里哪一张会被发走、它画在画面哪个位置"——不需要看画面。
-        /// 打印：每个 order 的 (x,z) → 屏幕坐标 + 屏幕上的相对方位（上/下/左/右）。
-        /// </summary>
-        public static void DumpPileOrder()
-        {
-            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
-            string gameRoot = Path.Combine(repoRoot, "games/splendor");
-            string cueId = ArgValue("-pileCue", "setup.cards.002.1");
-            string zone = ArgValue("-pileZone", "deck_level_1");
-
-            var go = new GameObject("PileHost");
-            var anim = go.AddComponent<TutorialCueAnimPlayer>();
-            anim.animationEnabled = true;
-            anim.LoadCue(gameRoot, "full", cueId, false);
-            for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
-
-            var items = anim.Store.Items.Where(x => x.ZoneId == zone).OrderBy(x => x.Order).ToList();
-            if (items.Count == 0) { Debug.Log($"[Pile] {zone} 是空的"); EditorApplication.Exit(0); return; }
-
-            // 屏幕映射：x 大=右，z 大=下（相机朝 +z 看）
-            Vector3 minP = items[0].LivePosition, maxP = items[0].LivePosition;
-            foreach (var it in items)
-            {
-                if (it.LivePosition.x < minP.x) minP = it.LivePosition;
-                if (it.LivePosition.x > maxP.x) maxP = it.LivePosition;
-            }
-            Debug.Log($"[Pile] {zone} 共 {items.Count} 张。屏幕：x 越大越靠右，z 越大越靠下");
-
-            // 只打印"两端 + 台阶边界"这几张，避免刷屏
-            var probe = new List<int> { 0, 1, 6, 7, 8, 9 };
-            foreach (var lvl in new[] { items.Count - 3, items.Count - 2, items.Count - 1 })
-                if (lvl >= 0 && !probe.Contains(lvl)) probe.Add(lvl);
-            foreach (var o in probe.OrderBy(v => v))
-            {
-                var it = items.FirstOrDefault(x => x.Order == o);
-                if (it == null) continue;
-                string rel = "";
-                if (Mathf.Abs(it.LivePosition.x - minP.x) < 1e-5f) rel += "最左 ";
-                if (Mathf.Abs(it.LivePosition.x - maxP.x) < 1e-5f) rel += "最右 ";
-                Debug.Log($"[Pile]   order={it.Order,3} pos=({it.LivePosition.x:0.000},{it.LivePosition.z:0.000}) " +
-                          $"{rel} ← {(it.Order == 0 ? "**会被第一个发走**" : "")}");
-            }
-
-            // 发牌顺序：PickFront 取 order **最大**（= 错开最多 = 画在最上面那张）
-            var top = items.OrderByDescending(x => x.Order).First();
-            Debug.Log($"[Pile] 发牌取 order 最大 → 第一张发走的是 order={top.Order} " +
-                      $"pos=({top.LivePosition.x:0.000},{top.LivePosition.z:0.000})（错开最多 = 最上面）");
-            EditorApplication.Exit(0);
-        }
-
         public static void ListZone()
         {
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
