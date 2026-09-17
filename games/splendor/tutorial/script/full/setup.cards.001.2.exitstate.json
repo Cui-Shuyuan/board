@@ -1,0 +1,8 @@
+{
+  "cue": "setup.cards.001.2",
+  "zones": {
+    "showcase_1": { "count": 1, "face_up": 0, "face_down": 1, "kinds": {"sample_back_1|card_level_1": 1} },
+    "showcase_2": { "count": 1, "face_up": 0, "face_down": 1, "kinds": {"sample_back_2|card_level_2": 1} },
+    "showcase_3": { "count": 1, "face_up": 0, "face_down": 1, "kinds": {"sample_back_3|card_level_3": 1} }
+  }
+}

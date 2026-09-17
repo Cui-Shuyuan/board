@@ -83,6 +83,10 @@ namespace BoardGameTutorial
             FitCamera();
         }
 
+        /// <summary>自检用：本条 cue 实际载入的事件（用于核对 JsonUtility 有没有丢字段）。</summary>
+        public IEnumerable<CueAnimEvent> EventsForTest =>
+            cueDoc != null && cueDoc.events != null ? cueDoc.events : new List<CueAnimEvent>();
+
         /// <summary>自检用：当前是否正显示整幅图（盒面等）。</summary>
         public bool BoxVisibleForTest => boxSprite != null && boxSprite.enabled && boxSprite.sprite != null;
 

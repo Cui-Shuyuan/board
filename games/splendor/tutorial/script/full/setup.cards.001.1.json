@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "cue": "setup.cards.001.1",
+  "entry_from": null,
+  "story": "【这是发展卡牌，共90张】\n桌上还什么都没有。先把盒子收起来，然后在桌子中央摆出一张发展卡的正面，让观众看清发展卡长什么样。此时牌堆还不存在——发展卡只是被介绍，还没有成摞。",
+  "enter": {
+    "zones": {
+      "deck_level_1": {
+        "count": 40,
+        "face_down": 40,
+        "kinds": {
+          "emerald": 8,
+          "ruby": 8,
+          "diamond": 8,
+          "sapphire": 8,
+          "onyx": 8
+        }
+      },
+      "deck_level_2": {
+        "count": 30,
+        "face_down": 30,
+        "kinds": {
+          "emerald": 6,
+          "ruby": 6,
+          "diamond": 6,
+          "sapphire": 6,
+          "onyx": 6
+        }
+      },
+      "deck_level_3": {
+        "count": 20,
+        "face_down": 20,
+        "kinds": {
+          "emerald": 4,
+          "ruby": 4,
+          "diamond": 4,
+          "sapphire": 4,
+          "onyx": 4
+        }
+      },
+      "box_level_1": {
+        "count": 28
+      },
+      "box_level_2": {
+        "count": 18
+      },
+      "box_level_3": {
+        "count": 8
+      },
+      "showcase": {
+        "count": 0
+      },
+      "card_market": {
+        "count": 0
+      }
+    }
+  },
+  "exit": {
+    "zones": {
+      "deck_level_1": {
+        "count": 40,
+        "face_down": 40
+      },
+      "deck_level_2": {
+        "count": 30,
+        "face_down": 30
+      },
+      "deck_level_3": {
+        "count": 20,
+        "face_down": 20
+      },
+      "showcase": {
+        "count": 1,
+        "face_up": 1,
+        "kinds": {
+          "card_level_1": 1
+        }
+      }
+    }
+  },
+  "timing": {
+    "放出一张卡正面": "0.30-2.50 这是发展卡牌，共90张"
+  }
+}

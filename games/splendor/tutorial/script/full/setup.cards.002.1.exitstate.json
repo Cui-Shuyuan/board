@@ -1,0 +1,9 @@
+{
+  "cue": "setup.cards.002.1",
+  "zones": {
+    "card_market": { "count": 11, "face_up": 11, "face_down": 0, "kinds": {"market_card_1_emerald|card_level_1": 1, "market_card_1_ruby|card_level_1": 1, "market_card_1_sapphire|card_level_1": 1, "market_card_2_emerald|card_level_2": 1, "market_card_2_onyx|card_level_2": 1, "market_card_2_ruby|card_level_2": 1, "market_card_2_sapphire|card_level_2": 1, "market_card_3_diamond|card_level_3": 1, "market_card_3_emerald|card_level_3": 1, "market_card_3_onyx|card_level_3": 1, "market_card_3_ruby|card_level_3": 1} },
+    "deck_level_1": { "count": 37, "face_up": 0, "face_down": 37, "kinds": {"blank_card_1|card_level_1": 36, "market_card_1_diamond|card_level_1": 1} },
+    "deck_level_2": { "count": 26, "face_up": 0, "face_down": 26, "kinds": {"blank_card_2|card_level_2": 26} },
+    "deck_level_3": { "count": 16, "face_up": 0, "face_down": 16, "kinds": {"blank_card_3|card_level_3": 16} }
+  }
+}

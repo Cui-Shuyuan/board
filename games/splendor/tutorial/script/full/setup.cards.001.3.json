@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "cue": "setup.cards.001.3",
+  "entry_from": "setup.cards.001.2",
+  "story": "【30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌】\n三张样本卡背保持不动。讲到黄色二级时高亮中间那张，讲到蓝色三级时高亮最右边那张。没有新的东西出现或消失。",
+  "enter": {
+    "zones": {
+      "showcase_1": {
+        "count": 1,
+        "face_down": 1
+      },
+      "showcase_2": {
+        "count": 1,
+        "face_down": 1
+      },
+      "showcase_3": {
+        "count": 1,
+        "face_down": 1
+      }
+    }
+  },
+  "exit": {
+    "zones": {
+      "showcase_1": {
+        "count": 1,
+        "face_down": 1
+      },
+      "showcase_2": {
+        "count": 1,
+        "face_down": 1
+      },
+      "showcase_3": {
+        "count": 1,
+        "face_down": 1
+      }
+    }
+  },
+  "timing": {
+    "高亮黄色(二级)": "0.00-2.98 30张黄色的二级发展卡牌",
+    "高亮蓝色(三级)": "2.90-5.54 20张蓝色的三级发展卡牌"
+  }
+}

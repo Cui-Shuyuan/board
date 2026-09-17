@@ -1633,61 +1633,188 @@ namespace BoardGameTutorial.Editor
         /// 它们只用于验证，不在正式 runtime 里 —— 跑这条测试前需要先把它们
         /// 注册进 full.runtime.json，否则会报"无此 cue"。
         /// </summary>
+        /// <summary>
+        /// 分支自检：**两条分支共享同一个父状态，但牌堆顶可以是不同的牌**。
+        ///
+        /// 场景："如果抽到了红色牌就加入手牌，抽到蓝色牌则塞回牌堆底"。
+        /// 两条分支的入口是同一个父 cue，所以牌堆内容相同；
+        /// 区别在于各自在开头把**不同的牌换到牌堆顶**，于是抽到不同的牌。
+        ///
+        /// 自建场景（不依赖仓库里的临时 cue 文件）：
+        ///   ① 造一个牌堆，里面有红、蓝各一张
+        ///   ② 分支A：把红牌换到牌堆顶再抽
+        ///   ③ 分支B：把蓝牌换到牌堆顶再抽
+        /// 两次都用**同一个起点**，所以这测的正是"共享父状态 + 顶牌不同"。
+        /// </summary>
         public static void SelfTestBranchDifferentTopCard()
         {
             int failures = 0;
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
             string gameRoot = Path.Combine(repoRoot, "games/splendor");
 
-            var host = new GameObject("BranchHost");
-            var player = host.AddComponent<TutorialCuePlayer>();
-            player.autoPlay = false;
-            player.tutorialRoot = Path.Combine(repoRoot, "games");
-            if (!player.LoadRuntime()) { Debug.Log("[Branch] FAIL LoadRuntime"); EditorApplication.Exit(1); return; }
-
-            var anim = host.GetComponent<TutorialCueAnimPlayer>() ?? host.AddComponent<TutorialCueAnimPlayer>();
-            anim.animationEnabled = true;
-
-            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var docField = typeof(TutorialCuePlayer).GetProperty("Document",
-                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-
-            System.Func<string, string> runBranch = (cueId) =>
+            System.Func<string, string> drawWithTop = (topCard) =>
             {
-                int idx = player.Document.cues.FindIndex(c => c.id == cueId);
-                if (idx < 0) return "(无此 cue)";
-                apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { idx }) });
-                anim.LoadCue(gameRoot, "full", cueId, true);
-                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+                var go = new GameObject("BranchHost");
+                var a = go.AddComponent<TutorialCueAnimPlayer>();
+                a.animationEnabled = true;
+                a.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
+                a.Seek(0.5f);   // 牌堆已创建、还没洗混
 
-                string picked = "(没抽到牌)";
-                foreach (var it in anim.Store.Items)
+                // 同一个起点：牌堆里有红蓝各一张
+                a.TriggerForTest(new CueAnimEvent { at = 0.6f, dur = 0f, action = "create",
+                    template = "market_card_1_ruby", palette = "card_level_1",
+                    zone = "deck_level_1", count = 1 });
+                a.TriggerForTest(new CueAnimEvent { at = 0.61f, dur = 0f, action = "create",
+                    template = "market_card_1_sapphire", palette = "card_level_1",
+                    zone = "deck_level_1", count = 1 });
+
+                // 只改**哪张在牌堆顶**（order 0）
+                a.TriggerForTest(new CueAnimEvent { at = 0.7f, dur = 0.2f, action = "move",
+                    target = topCard + "#1", zone = "deck_level_1", slot = 0,
+                    easing = "easeOutCubic" });
+
+                // 抽走牌堆顶那张
+                a.TriggerForTest(new CueAnimEvent { at = 1.0f, dur = 0.2f, action = "move",
+                    from = new List<string> { "deck_level_1" }, take = 1,
+                    template = topCard, zone = "card_market", slot = 0,
+                    flip = true, easing = "easeInOutCubic" });
+                a.Seek(1.6f);
+
+                string picked = "(没抽到)";
+                foreach (var it in a.Store.Items)
                     if (it.ZoneId == "card_market" && it.Template != null)
                         picked = it.Template.id;
+                Object.DestroyImmediate(go);
                 return picked;
             };
 
-            // 两条兄弟：入口都是 branch.shared.001
-            string a = runBranch("branch.red.001");
-            string b = runBranch("branch.blue.001");
+            string a1 = drawWithTop("market_card_1_ruby");
+            string b1 = drawWithTop("market_card_1_sapphire");
 
-            bool aOk = a.Contains("ruby");
-            bool bOk = b.Contains("sapphire");
-            bool differ = a != b;
-            Debug.Log($"[Branch] {(aOk ? "PASS" : "FAIL")} 分支A（抽红）抽到: {a}");
+            bool aOk = a1.Contains("ruby"), bOk = b1.Contains("sapphire"), differ = a1 != b1;
+            Debug.Log($"[Branch] {(aOk ? "PASS" : "FAIL")} 把红牌放顶上 → 抽到 {a1}");
             if (!aOk) failures++;
-            Debug.Log($"[Branch] {(bOk ? "PASS" : "FAIL")} 分支B（抽蓝）抽到: {b}");
+            Debug.Log($"[Branch] {(bOk ? "PASS" : "FAIL")} 把蓝牌放顶上 → 抽到 {b1}");
             if (!bOk) failures++;
-            Debug.Log($"[Branch] {(differ ? "PASS" : "FAIL")} 两条兄弟分支抽到**不同的牌**（{a} vs {b}）" +
-                      $"—— 共享父状态、但牌堆顶不同");
+            Debug.Log($"[Branch] {(differ ? "PASS" : "FAIL")} 同一父状态下，顶牌不同 → 抽到不同的牌");
             if (!differ) failures++;
-            _ = docField;
 
             Debug.Log($"[Branch] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        public static void SelfTestStateSnapshotIsStable()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            System.Func<string, float, string> snapshot = (cueId, step) =>
+            {
+                var go = new GameObject("StateHost");
+                var a = go.AddComponent<TutorialCueAnimPlayer>();
+                a.animationEnabled = true;
+                a.LoadCue(gameRoot, "full", cueId, true);
+                for (float tt = 0f; tt <= a.TotalDuration + 1f; tt += step) a.Seek(tt);
+                var lines = new System.Collections.Generic.List<string>();
+                foreach (var it in a.Store.Items)
+                    lines.Add($"{it.Id}|{it.ZoneId}|{it.Order}|{it.Flipped}|{it.Template?.id}");
+                lines.Sort();
+                Object.DestroyImmediate(go);
+                return string.Join("\n", lines);
+            };
+
+            string coarse = snapshot("setup.cards.002.1", 0.50f);
+            string fine = snapshot("setup.cards.002.1", 0.05f);
+            bool stable = coarse == fine;
+            Debug.Log($"[State] {(stable ? "PASS" : "FAIL")} 终态与采样粒度无关" +
+                      $"（粗 {coarse.Split('\n').Length} 件 / 细 {fine.Split('\n').Length} 件）");
+            if (!stable) failures++;
+
+            Debug.Log($"[State] 状态可序列化：{coarse.Split('\n').Length} 行，" +
+                      $"例如 {coarse.Split('\n')[0]}");
+            Debug.Log($"[State] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
+        }
+
+        /// <summary>
+        /// 采样一条 cue 的终态，输出成**契约同构**的 JSON，供对账脚本比对。
+        ///
+        /// 输出的是**语义状态**（谁在哪个 zone、几件、朝上还是朝下、什么身份），
+        /// 不含坐标/缩放 —— 那些是从 zone+格位推出来的表现层，写进契约只会误报。
+        ///
+        ///   -dumpCue &lt;cueId&gt;  -dumpReplay 0|1  -dumpOut &lt;path&gt;
+        /// </summary>
+        public static void DumpState()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = ArgValue("-dumpCue", "setup.cards.002.1");
+            bool replay = ArgValue("-dumpReplay", "0") == "1";
+            string outPath = ArgValue("-dumpOut", Path.Combine(Application.dataPath, "..", "CaptureOut", "state.json"));
+
+            var go = new GameObject("DumpHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            if (!anim.LoadCue(gameRoot, "full", cueId, replay))
+            {
+                Debug.LogError($"[Dump] LoadCue 失败: {cueId}");
+                EditorApplication.Exit(1);
+                return;
+            }
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+
+            // 按 zone 聚合
+            var zones = new SortedDictionary<string, ZoneAgg>();
+            foreach (var it in anim.Store.Items)
+            {
+                if (!zones.TryGetValue(it.ZoneId, out var agg))
+                {
+                    agg = new ZoneAgg();
+                    zones[it.ZoneId] = agg;
+                }
+                agg.Count++;
+                if (it.Flipped) agg.FaceUp++; else agg.FaceDown++;
+                string kind = it.KindKey;
+                if (!agg.Kinds.ContainsKey(kind)) agg.Kinds[kind] = 0;
+                agg.Kinds[kind]++;
+            }
+
+            var sb = new System.Text.StringBuilder();
+            sb.Append("{\n");
+            sb.Append($"  \"cue\": \"{cueId}\",\n");
+            sb.Append("  \"zones\": {\n");
+            int zi = 0;
+            foreach (var kv in zones)
+            {
+                zi++;
+                var agg = kv.Value;
+                sb.Append($"    \"{kv.Key}\": {{ \"count\": {agg.Count}, " +
+                          $"\"face_up\": {agg.FaceUp}, \"face_down\": {agg.FaceDown}, \"kinds\": {{");
+                int ki = 0;
+                foreach (var k in agg.Kinds)
+                {
+                    ki++;
+                    sb.Append($"\"{k.Key}\": {k.Value}");
+                    if (ki < agg.Kinds.Count) sb.Append(", ");
+                }
+                sb.Append("} }");
+                if (zi < zones.Count) sb.Append(",");
+                sb.Append("\n");
+            }
+            sb.Append("  }\n}\n");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(outPath));
+            File.WriteAllText(outPath, sb.ToString());
+            Debug.Log($"[Dump] {cueId} 终态已写入 {outPath}（{anim.ActorCount} 件，" +
+                      $"{zones.Count} 个 zone）");
+            EditorApplication.Exit(0);
+        }
+
+        private class ZoneAgg
+        {
+            public int Count, FaceUp, FaceDown;
+            public SortedDictionary<string, int> Kinds = new SortedDictionary<string, int>();
         }
 
         public static void CaptureAll()

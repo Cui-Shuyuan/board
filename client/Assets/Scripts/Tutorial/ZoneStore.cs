@@ -34,6 +34,12 @@ namespace BoardGameTutorial
         public bool Flipped;
 
         /// <summary>
+        /// 身份键："模板|色板"。契约里按它统计"哪个 zone 里各有什么"。
+        /// 用色板而不是只看模板名，是因为"宝石是哪种颜色"记在色板上（gem_emerald）。
+        /// </summary>
+        public string KindKey => (Template != null ? Template.id : "?") + "|" + (PaletteName ?? "");
+
+        /// <summary>
         /// 是否**已经出场过**（被动画带出来过）。
         ///
         /// 现在的"还没出场"主要靠**对象根本还没被创建**（见 create 原语）来表达；
