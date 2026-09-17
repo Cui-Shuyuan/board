@@ -320,6 +320,24 @@ namespace BoardGameTutorial
         public string palette;
 
         /// <summary>
+        /// stack：这一摞里"真实存在的牌"，按逗号分隔的模板 id，**第一个 = 最先被发走的**
+        /// （= 牌堆顶）。其余位置用 <see cref="pad_template"/> 补满到 <see cref="capacity"/>。
+        ///
+        /// 之所以要这个字段，是因为用 create 搭一摞牌有两个坑：
+        ///   ① order 由"谁先建"决定（NextFreeSlot），所以真牌必须**后建**才在顶面 ——
+        ///      规则隐晦，且发牌方向与 create 顺序耦合；
+        ///   ② 一摞牌要写 1 + N 个 create 事件，三摞就是十几个。
+        /// stack 把这个意图一步说清：给牌面顺序和垫牌模板，其余交给引擎。
+        /// </summary>
+        public string real_templates;
+
+        /// <summary>stack：垫牌模板（凑数用的空白牌，显示卡背）。</summary>
+        public string pad_template;
+
+        /// <summary>stack：这一摞的总张数（含垫牌）。0 = 只用 real_templates 的张数。</summary>
+        public int capacity;
+
+        /// <summary>
         /// create：创建成**背面朝上**。
         /// 牌堆里的牌就是这种状态：它是哪张牌已经定了，但还没翻开，所以显示卡背。
         /// 漏了它就会出现"牌堆最上面那张是正面朝上"——因为 Flipped 默认 false，

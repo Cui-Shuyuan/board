@@ -43,7 +43,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
-           "showbox", "create", "destroy", "wait"}
+           "showbox", "create", "destroy", "wait", "stack"}
 SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
 EASINGS = {

@@ -1618,3 +1618,55 @@ t=3.58 发走 order=0
 
 `TraceDealOrder` 会打印"画面最上/最下是哪张 order"，
 所以**每次只改一个轴、跑一次命令、看一行输出**就能确定方向，不需要看画面。
+
+
+## 【公共原语】`stack`：一步建好一摞牌（2026-09）
+
+用户要求："把这个创建牌库以及从牌库顶发出一张牌的方法抽出来，作为公共方法"。
+
+### 建摞：`stack` 事件（替代 1+N 个 create）
+
+```json
+{
+  "at": 0.05, "dur": 0, "action": "stack",
+  "zone": "deck_level_1",
+  "capacity": 40,
+  "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire",
+  "pad_template": "blank_card_1",
+  "plain": true, "face_down": true
+}
+```
+
+- **`real_templates` 的顺序 = 发牌顺序**：第一个 = 牌堆顶 = 第一个被发走
+- `pad_template` 补满到 `capacity`
+- 实现（`TriggerStack`）：**真牌先建**（拿最小 order = 顶面）→ 垫牌后建（拿大 order = 里面）
+
+**为什么需要它**：用 `create` 搭一摞有两个坑 ——
+① `order` 由"谁先建"决定（`NextFreeSlot`），所以**真牌必须后建**才在顶面，
+   规则隐晦、方向极易反（我为此错了一整天）；
+② 一摞要写 `1 + N` 个事件，三摞就是 15 个。现在三摞 = 3 个 `stack` 事件。
+
+### 从顶发牌：`move` + `from`
+
+```json
+{ "at": 3.58, "dur": 0.34, "action": "move", "from": ["deck_level_1"],
+  "zone": "card_market", "slot": 0, "flip": true }
+```
+
+`PickFront` 取 **order 最小** = 牌堆顶。**不需要写 `target`** —— 让它按 order 取，
+这样"发的是顶面那张"是引擎保证的，不依赖人工挑牌。
+
+### 实测
+
+```
+stack deck_level_1: 垫牌 +36 真牌 +4 → 共 40 张（capacity 40，顶面 market_card_1_emerald）
+order 0..3 = 真牌（重合块）   画面最上那张: order=0
+t=3.58 发走 order=0(emerald) → 3.98 order=1(ruby) → 4.36 order=2(diamond) → 4.76 order=3(sapphire)
+三摞全程 台8；发牌后 40→36 / 30→26 / 20→16
+```
+
+### 宝石供应堆可以直接复用
+
+宝石堆是"一摞 7 枚"，同样用 `stack`：
+`real_templates` 写 7 枚宝石模板（顺序 = 取用顺序）、`capacity: 7`、`pad_template` 留空。
+取用时 `move from: ["gem_supply_*"]` 即可按 order 从顶取。

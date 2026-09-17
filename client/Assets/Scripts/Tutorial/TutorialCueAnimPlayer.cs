@@ -11,6 +11,7 @@
 // 将来编译器可以离线复算每个 cue 的入口状态写进 runtime，用于任意跳转。
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using UnityEngine;
 
@@ -1264,6 +1265,7 @@ namespace BoardGameTutorial
                 case "shuffle": TriggerShuffle(ev); return;
                 case "showbox": TriggerShowBox(ev); return;
                 case "create": TriggerCreate(ev); return;
+                case "stack": TriggerStack(ev); return;
                 case "destroy": TriggerDestroy(ev); return;
                 default:
                     Debug.LogWarning($"[TutorialCueAnim] unknown action '{ev.action}' in cue {CueId}");
@@ -1759,6 +1761,83 @@ namespace BoardGameTutorial
         ///   - 不必为每个"以后可能出现"的东西写占位数据，也不用管它的默认透明度
         /// 入口状态重放时会一并重放 create，所以跳转与顺序播放一致。
         /// </summary>
+        /// <summary>
+        /// 建一整摞牌（公共原语）。
+        ///
+        /// 一摞牌 = 顶面若干张"真实存在的牌" + 底下垫满的空白牌。
+        /// 用户对牌堆的定义（也是"发牌天然不变形"的原因）：
+        ///   · `order` 越小越靠**牌堆顶**，第一个被发走；
+        ///   · 只有离顶最远的 `max_visible` 张形成台阶，其余全部重合；
+        ///   · 顶面那一叠（`order 0..capacity-max_visible-1`）是重合块，
+        ///     发它们不改变外形。
+        ///
+        /// 关键：**真牌必须占最小的 order**。所以这里**倒着建** ——
+        /// 先建垫牌（拿小 order）、再按 real_templates 的**倒序**建真牌（拿大 order 之上的），
+        /// 这样 real_templates 的第一个正好落在"顶面 + 重合块"里，成为第一个被发走的。
+        ///
+        /// 用 `NextFreeSlot` 的旧写法（谁先建谁 order 小）规则隐晦、方向易反；
+        /// 这里把意图一步说清：给牌面顺序和垫牌模板，其余交给引擎。
+        /// </summary>
+        private void TriggerStack(CueAnimEvent ev)
+        {
+            if (string.IsNullOrEmpty(ev.zone)) { Debug.LogWarning("[TutorialCueAnim] stack 缺少 zone"); return; }
+
+            var realIds = (ev.real_templates ?? "")
+                .Split(new[] { ',', '|', ' ' }, System.StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
+            if (realIds.Count == 0) { Debug.LogWarning($"[TutorialCueAnim] stack 缺少 real_templates（cue {CueId}）"); return; }
+
+            int capacity = ev.capacity > 0 ? ev.capacity : realIds.Count;
+            if (capacity < realIds.Count) capacity = realIds.Count;
+            int pad = capacity - realIds.Count;
+
+            // ① **真牌先建** → 拿到**最小**的 order = 牌堆顶面（`order 0` 第一个被发走）。
+            //    垫牌后建 → 拿较大的 order，落在牌堆更里面。
+            //    （反过来就会让真牌沉到底下 —— 表现是"从牌堆底发牌"。）
+            int realMade = 0;
+            foreach (var tid in realIds)
+            {
+                if (Store.GetTemplate(tid) == null)
+                {
+                    Debug.LogWarning($"[TutorialCueAnim] stack 未知模板 '{tid}'（cue {CueId}）");
+                    continue;
+                }
+                if (Store.CountInZone(ev.zone, tid) > 0) continue;   // 幂等
+                var made = Store.Spawn(tid, ev.plain ? null : ev.palette, ev.zone, 1);
+                foreach (var it in made)
+                {
+                    if (it == null) continue;
+                    it.Shown = true;
+                    it.Flipped = false;
+                    BuildActorObject(it);
+                    realMade++;
+                }
+            }
+
+            // ② 垫牌后建 → 拿到较大的 order（牌堆更里面）
+            int padMade = 0;
+            if (pad > 0 && !string.IsNullOrEmpty(ev.pad_template))
+            {
+                int have = Store.CountInZone(ev.zone, ev.pad_template);
+                int need = pad - have;
+                if (need > 0)
+                {
+                    var made = Store.Spawn(ev.pad_template, ev.plain ? null : ev.palette, ev.zone, need);
+                    foreach (var it in made)
+                    {
+                        if (it == null) continue;
+                        it.Shown = true;
+                        it.Flipped = false;           // 背面朝上
+                        BuildActorObject(it);
+                        padMade++;
+                    }
+                }
+            }
+
+            Debug.Log($"[TutorialCueAnim] stack {ev.zone}: 垫牌 +{padMade} 真牌 +{realMade} " +
+                      $"→ 共 {Store.CountInZone(ev.zone)} 张（capacity {capacity}，顶面 {realIds[0]}）");
+        }
+
         private void TriggerCreate(CueAnimEvent ev)
         {
             if (string.IsNullOrEmpty(ev.template))
