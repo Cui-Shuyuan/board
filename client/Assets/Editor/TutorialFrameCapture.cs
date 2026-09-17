@@ -1949,20 +1949,39 @@ namespace BoardGameTutorial.Editor
             };
             var s40 = pileShape(2.6f);   // 40 张
 
-            bool overflowCoincident = true;
-            for (int i = 8; i < s40.Count; i++)
-                if (Vector3.Distance(s40[i], s40[7]) > 1e-5f) overflowCoincident = false;
-            Debug.Log($"[Orient] {(overflowCoincident ? "PASS" : "FAIL")} " +
-                      $"第 8 张往上的牌全部重合（不再错开）");
-            if (!overflowCoincident) failures++;
+            var s36 = pileShape(8.4f);   // 发走 4 张
 
+            // ① 牌堆外形的"跨度"在发牌前后必须完全一致（这就是"看不出变少"）
+            System.Func<System.Collections.Generic.List<Vector3>, float> spanX =
+                (vs) => vs.Max(v => v.x) - vs.Min(v => v.x);
+            float spanBefore = spanX(s40), spanAfter = spanX(s36);
+            bool sameSpan = Mathf.Abs(spanBefore - spanAfter) < 1e-4f;
+            Debug.Log($"[Orient] {(sameSpan ? "PASS" : "FAIL")} " +
+                      $"发牌前后牌堆跨度不变（40张 {spanBefore:0.0000} / 36张 {spanAfter:0.0000}）");
+            if (!sameSpan) failures++;
+
+            // ② 距顶 max_visible 层以下的牌必须全部重合
+            Debug.Log($"[Orient] 错开层数：40张 {s40.Select(v => $"{v.x:0.000}").Distinct().Count()} 层，" +
+                      $"36张 {s36.Select(v => $"{v.x:0.000}").Distinct().Count()} 层（应恒为 8）");
+            bool deepCoincident = true;
+            for (int i = 0; i + 8 < s40.Count; i++)
+                if (Vector3.Distance(s40[i], s40[i + 1]) > 1e-5f) { }
+            // （按 order 从小到大 = 从底到顶；重合块在**底部**那一侧）
+            for (int i = 0; i + 1 < s40.Count - 7; i++)
+                if (Vector3.Distance(s40[i], s40[i + 1]) > 1e-5f) deepCoincident = false;
+            Debug.Log($"[Orient] {(deepCoincident ? "PASS" : "FAIL")} " +
+                      $"最下面那一叠（超出 8 层的部分）全部重合");
+            if (!deepCoincident) failures++;
+
+            // ③ 靠近顶的 8 张逐层错开、间距恒定
             bool evenSpacing = true;
-            float step0 = Vector3.Distance(s40[0], s40[1]);
+            float step0 = Vector3.Distance(s40[s40.Count - 1], s40[s40.Count - 2]);
             for (int i = 1; i < 7; i++)
-                if (Mathf.Abs(Vector3.Distance(s40[i], s40[i + 1]) - step0) > 1e-5f) evenSpacing = false;
+                if (Mathf.Abs(Vector3.Distance(s40[s40.Count - 1 - i], s40[s40.Count - 2 - i]) - step0) > 1e-5f)
+                    evenSpacing = false;
             bool spreadOk = step0 > 1e-6f;
             Debug.Log($"[Orient] {(evenSpacing && spreadOk ? "PASS" : "FAIL")} " +
-                      $"底部 8 张逐层错开且间距恒定（每层 {step0:0.0000}）");
+                      $"靠近顶的 8 张逐层错开且间距恒定（每层 {step0:0.0000}）");
             if (!evenSpacing || !spreadOk) failures++;
 
             Debug.Log($"[Orient] {(failures == 0 ? "全部通过" : failures + " 项失败")}");

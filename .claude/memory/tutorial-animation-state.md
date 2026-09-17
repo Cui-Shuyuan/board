@@ -963,6 +963,42 @@ step.Item.Flipped = true;   // 已翻开 → 显示真卡面
 
 ## 牌堆外形与翻转（2026-09 用户定义）
 
+### 牌堆错开模型（最终实现，2026-09）
+
+**要点：错开量必须用 `capacity` 算，不能用当前张数。**
+
+```csharp
+int maxVisible = display.max_visible > 0 ? display.max_visible : 8;
+int deckCapacity = zone.capacity > 0 ? zone.capacity : Mathf.Max(1, CountInZone(zoneId));
+int fromTop = Mathf.Max(0, deckCapacity - 1 - slot);
+float lift = Mathf.Min(fromTop, maxVisible - 1);
+x += lift * display.dx;   z += lift * display.dz;
+```
+
+"第几格错开多少"是**固定的**（只跟 capacity 有关），与还剩几张无关：
+
+- 靠近顶的格（lift 小）永远重合在一起
+- 越往下错开越多，到第 maxVisible 格封顶
+- 更下面的格全部落在**同一个位置**（重合块）
+
+于是从顶上发牌时，可见外形**完全不变** —— 被发走的那几张本来就在重合块里。
+
+实测：40 张与 36 张的跨度都是 `0.1120`，错开层数都是 8，
+**牌堆顶那 5 张的坐标完全一致**。
+
+**踩过的坑（三次）**：
+
+| 写法 | 后果 |
+|---|---|
+| `visible = Clamp(total, 1, max)` 再按可见层数错开 | 发一张就少一层 → **越发越薄** |
+| 按 `order` 从底部锚定（`layer = min(slot, max-1)`） | 同上：张数一变整体就平移 |
+| 按 `fromTop = total-1-order`（用当前张数） | 仍薄：发出的牌不在重合块里，抽走就少一层 |
+| **按 `deckCapacity-1-order`** | ✅ 固定外形，"发 7 张只剩一张"的问题消失 |
+
+用户的原话最准确：「发出的那4张牌，其实是连带着另外一部分牌是重叠在一起的。
+只有最底部那8张牌是错开的，这样发出4张牌，牌堆的样子也不会改变。现在这个牌堆的话，
+如果发出7张牌，牌堆看上去就只会剩下一张，然后这一张特别耐发，这是不对的。」
+
 ### 牌堆错开模型（用户原话）
 
 > 假如这一堆有20张牌，那应该是最下面一张牌放在那里，然后倒数第二张牌错开一点，
