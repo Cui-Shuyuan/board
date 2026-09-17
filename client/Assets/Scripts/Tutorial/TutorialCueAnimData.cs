@@ -320,6 +320,14 @@ namespace BoardGameTutorial
         public string palette;
 
         /// <summary>
+        /// create：创建成**背面朝上**。
+        /// 牌堆里的牌就是这种状态：它是哪张牌已经定了，但还没翻开，所以显示卡背。
+        /// 漏了它就会出现"牌堆最上面那张是正面朝上"——因为 Flipped 默认 false，
+        /// 而 RefreshFace 在 Flipped=false 时显示 FaceSprite（真卡面）。
+        /// </summary>
+        public bool face_down;
+
+        /// <summary>
         /// create：不指定色板（用模板自己的）。
         /// 用于发一整摞牌：牌堆里 40 张牌在发出去之前**不知道是哪张牌**，
         /// 所以不按颜色区分色板，整摞同色板即可。

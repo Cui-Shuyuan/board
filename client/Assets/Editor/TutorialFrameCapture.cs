@@ -12,6 +12,7 @@
 // 这样 batchmode 没有音频设备也能跑，而且画面是确定性的、可重复的。
 #if UNITY_EDITOR
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -1785,7 +1786,45 @@ namespace BoardGameTutorial.Editor
                 EditorApplication.Exit(1);
                 return;
             }
-            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+            // 定量判断：每摞牌里"正在用卡背贴图"的有几张、用卡面前的有几张。
+            // 判据不看颜色，而是**贴图是不是该级卡背那张**（用像素均值比）。
+            System.Action<float> pileReport = (at) =>
+            {
+                for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt);
+                foreach (var lvl in new[] { 1, 2, 3 })
+                {
+                    string zone = $"deck_level_{lvl}";
+                    var back = CardImageLoader.Load(
+                        Path.Combine(gameRoot, $"media/card/{new[]{"一","二","三"}[lvl-1]}级发展卡_背面.jpg"), "card");
+                    int isBack = 0, isFace = 0;
+                    foreach (var it in anim.Store.Items)
+                    {
+                        if (it.ZoneId != zone || it.Actor?.Renderer?.sprite == null) continue;
+                        if (ReferenceEquals(it.Actor.Renderer.sprite, back)) isBack++;
+                        else isFace++;
+                    }
+                    Debug.Log($"[Pile] t={at:0.0} {zone}: 用卡背={isBack} 用卡面={isFace}");
+                }
+            };
+            pileReport(2.6f);
+
+            // 先采一次「发牌前」（洗混中途），再看终态
+            for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
+            Debug.Log("[Pos@2.6] " + string.Join(" | ", anim.Store.Items
+                .Where(it => it.ZoneId == "deck_level_1")
+                .OrderByDescending(it => it.LivePosition.z)
+                .Take(5)
+                .Select(it => $"{it.Id} ord={it.Order} z={it.LivePosition.z:0.000} " +
+                              $"flip={it.Flipped} spr={(it.Actor?.Renderer?.sprite == it.Actor?.FaceSprite ? "面" : "背")}")));
+
+            for (float tt = 2.65f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+
+            Debug.Log("[Pos] " + string.Join("  ", anim.Store.Items
+                .Where(it => it.ZoneId == "deck_level_1")
+                .OrderBy(it => it.Order)
+                .Take(6)
+                .Select(it => $"{it.Id} ord={it.Order} z={it.LivePosition.z:0.000} flip={it.Flipped} " +
+                              $"tpl={it.Template?.id}")));
 
             // 按 zone 聚合
             var zones = new SortedDictionary<string, ZoneAgg>();
@@ -1838,6 +1877,88 @@ namespace BoardGameTutorial.Editor
         {
             public int Count, FaceUp, FaceDown;
             public SortedDictionary<string, int> Kinds = new SortedDictionary<string, int>();
+        }
+
+        /// <summary>
+        /// 逐帧检查「牌堆朝下、市场朝上」这条不变量。
+        ///
+        /// 用户报过两个现象，都是这条没被检查：
+        ///   ① cue12 牌堆最上面那张**正面朝上**（牌堆应全部朝下）
+        ///   ② cue12 发牌后 12 张市场牌**全部朝下**（市场应全部朝上）
+        ///
+        /// 注意本引擎既有的命名（**反直觉，但已固定下来**）：
+        ///   ZoneItem.Flipped == true  表示"已翻到正面"→ RefreshFace 显示 **BackSprite**
+        ///   ZoneItem.Flipped == false 表示"未翻开"  → RefreshFace 显示 **FaceSprite**
+        /// 也就是说对卡牌而言：FaceSprite 是**卡面**，BackSprite 是**卡背**，
+        /// 而 Flipped 记的是"要不要显示卡背"。名字别扭，但换了会动到很多地方。
+        /// </summary>
+        public static void SelfTestOrientationMatchesSprite()
+        {
+            int failures = 0;
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+
+            var go = new GameObject("OrientHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", "setup.cards.002.1", true);
+
+            int badPile = 0, badMarket = 0, badMarketAfterDeal = 0;
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f)
+            {
+                anim.Seek(tt);
+                foreach (var it in anim.Store.Items)
+                {
+                    var sr = it.Actor?.Renderer;
+                    if (sr == null || sr.sprite == null || !sr.enabled) continue;
+                    bool showingFace = ReferenceEquals(sr.sprite, it.Actor.FaceSprite);
+                    bool showingBack = ReferenceEquals(sr.sprite, it.Actor.BackSprite);
+
+                    // 牌堆：必须显示卡背。有独立背图就用背图；没有（牌堆牌往往没有）
+                    // 就显示它自己的 FaceSprite —— 那张就是卡背扫描图。
+                    if (it.ZoneId.StartsWith("deck_level_"))
+                    {
+                        bool ok = it.Actor.BackSprite != null ? showingBack : showingFace;
+                        if (!ok) badPile++;
+                    }
+
+                    // 市场：**已落位的**牌必须显示真卡面。
+                    // 正在飞的那张由片段控制（FlipFrom→FlipTo 的中间态），先不判。
+                    if (it.ZoneId == "card_market" && it.Actor != null)
+                    {
+                        var pos = it.Actor.Go.transform.localPosition;
+                        var want = anim.Store.ZonePosition("card_market", it.Order);
+                        bool settled = Mathf.Abs(pos.x - want.x) < 0.02f && Mathf.Abs(pos.z - want.z) < 0.02f;
+                        if (settled && !showingFace) badMarket++;
+                    }
+                }
+            }
+
+            // 终态逐张列出（定位是哪几张不对）
+            anim.Seek(anim.TotalDuration + 1f);
+            foreach (var it in anim.Store.Items)
+                if (it.ZoneId == "card_market" && it.Actor?.Renderer != null)
+                {
+                    var sr = it.Actor.Renderer;
+                    string cur = ReferenceEquals(sr.sprite, it.Actor.BackSprite) ? "背图"
+                        : ReferenceEquals(sr.sprite, it.Actor.FaceSprite) ? "面图" : "其他";
+                    if (cur != "面图")
+                        Debug.Log($"[Orient] 不对: {it.Id} Flipped={it.Flipped} 显示={cur} " +
+                                  $"sprite={(sr.sprite == null ? "NULL" : sr.sprite.texture.width + "x" + sr.sprite.texture.height)} " +
+                                  $"face={(it.Actor.FaceSprite == null ? "NULL" : it.Actor.FaceSprite.texture.width + "x" + it.Actor.FaceSprite.texture.height)} " +
+                                  $"back={(it.Actor.BackSprite == null ? "NULL" : it.Actor.BackSprite.texture.width + "x" + it.Actor.BackSprite.texture.height)} " +
+                                  $"enabled={sr.enabled} alpha={sr.color.a:0.00}");
+                }
+
+            Debug.Log($"[Orient] {(badPile == 0 ? "PASS" : "FAIL")} 牌堆全程显示卡背（异常 {badPile} 帧次）");
+            if (badPile != 0) failures++;
+            Debug.Log($"[Orient] {(badMarket == 0 ? "PASS" : "FAIL")} " +
+                      $"已落位的市场牌显示真卡面（异常 {badMarket} 帧次）");
+            if (badMarket != 0) failures++;
+            _ = badMarketAfterDeal;
+
+            Debug.Log($"[Orient] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
+            EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
         public static void CaptureAll()

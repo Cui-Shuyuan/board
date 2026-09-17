@@ -279,10 +279,11 @@ namespace BoardGameTutorial
             }
             ApplyCueStart();
 
-            // 市场牌在发牌前停在对应牌堆的位置当「牌背」；它们必须显示背面，
-            // 否则会把整摞牌堆的卡背盖住，看起来像牌堆正面朝上。
-            foreach (var item in Store.Items)
-                if (item.Id.StartsWith("market_card_")) item.Flipped = true;
+            // 这里曾经有一段「把所有 market_card_* 设成未翻开」的代码 —— 那是旧模型的遗留：
+            // 当年市场牌预先创建、停在牌堆位置当牌背，所以要藏起来。
+            // 现在市场牌是**发牌时从牌堆搬过来的真牌**，落位后本就该显示真卡面；
+            // 这一段会把它们全部设回"未翻开"，表现就是**发完牌后 12 张市场牌全部朝下**
+            // （用户报的第二个现象）。牌堆的"When 朝下"由 create 的 face_down 显式声明。
 
             BuildActorObjects();
             SyncActorsToStore();
@@ -1502,8 +1503,12 @@ namespace BoardGameTutorial
                 if (ev.flip)
                 {
                     clip.HasFlip = true;
-                    clip.FlipFromYaw = step.Item.Flipped ? 180f : 0f;
-                    step.Item.Flipped = !step.Item.Flipped;   // 逻辑状态立即到终态
+                    // **明确朝向，而不是取反**。
+                    // 取反的语义是"翻到另一面"，但对"从牌堆发到市场"来说，
+                    // 终态永远是确定的：这张牌到了市场就该**正面朝上**。
+                    // 用取反时，牌堆牌若已是"未翻开"（Flipped=true），取反后仍回到
+                    // 未翻开，表现就是**发出去的牌一直是卡背**（用户报的第二个现象）。
+                    step.Item.Flipped = true;   // 已翻开 → 显示真卡面
                 }
             }
 
@@ -1737,6 +1742,8 @@ namespace BoardGameTutorial
                 if (ev.slot >= 0 && ev.slot != item.Order) Store.MoveToSlot(item, zone, ev.slot);
                 // 创建出来的组件默认"已出场"：它不曾处于"等待出场"的状态
                 item.Shown = true;
+                // 背面朝上：牌堆里的牌就是这样（是哪张已定，但还没翻开）
+                if (ev.face_down) item.Flipped = true;
                 BuildActorObject(item);
 
                 // create 带 flip = 出场过程中翻到正面（发牌时"翻开四张"）。
