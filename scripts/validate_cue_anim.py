@@ -405,6 +405,45 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         report.warn(where, f"动画结束 {last_end:.2f}s 距音频结束 {duration:.2f}s 不足 {MIN_TAIL_MARGIN:.2f}s")
 
 
+
+def check_framing_chain(files, report):
+    """跨 cue 检查：**取景（camera）是延续状态**，一条 cue 不声明就沿用上一条的。
+
+    这在单条 cue 的文件里完全看不出来，于是很容易写出"脏动画"：
+    上一条 cue 结尾的画面，被下一条 cue 的新取景渲染了一小段时间，
+    看起来就是"牌突然变小了一下"（用户报过）。
+
+    规则：**任何"改变画面内容"的事件，都应该和"改变取景"的事件在同一时刻或之后**。
+    这里只查最容易漏的一种：本条 cue **没有**声明 camera（承接上一条的取景），
+    却在 `at > 0` 的时刻才做第一件改状态的事 —— 那段时间里，
+    上一帧的画面仍在，却已经被换成新取景，于是会"闪一下"。
+
+    这不是硬错误（有时确实想先停一会儿再动），所以报 warning 让人确认。
+    """
+    prev_camera = None
+    for path in files:
+        doc = load_json(path)
+        events = doc.get("events") or []
+        cams = [e for e in events if e.get("camera")]
+        declared = cams[0].get("camera") if cams else None
+        first_at = min((float(e.get("at", 0.0)) for e in events), default=0.0)
+        mutating = [e for e in events
+                    if e.get("action") not in (None, "wait")
+                    and float(e.get("at", 0.0)) > 1e-6]
+
+        if declared is None and prev_camera is not None and mutating:
+            earliest = min(float(e.get("at", 0.0)) for e in mutating)
+            if earliest > 1e-6:
+                report.warn(
+                    path.stem,
+                    f"承接上一条的取景 {prev_camera!r}，"
+                    f"但第一件改状态的事在 at={earliest:.2f} —— 这段时间画面会被用新取景渲染，"
+                    f"若与上一条结尾的取景不同就会「闪一下」。要么在 at=0 显式声明 camera，"
+                    f"要么确认确实想先停一会儿")
+
+        if declared is not None:
+            prev_camera = declared
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--game", default="splendor")
@@ -446,6 +485,13 @@ def main():
         report = Report(path)
         validate_cue(path, runtime_cues, args.track, args.game, report)
         reports.append(report)
+
+    # 跨 cue 检查：取景是延续状态，只有按顺序比才看得出来
+    # （只校验"整条轨道"时做，单条 --cue / --file 没有上下文）
+    if not args.cue and not args.file and reports:
+        chain = Report(anim_dir)
+        check_framing_chain(files, chain)
+        reports.append(chain)
 
     total_errors = sum(len(r.errors) for r in reports)
     total_warnings = sum(len(r.warnings) for r in reports)

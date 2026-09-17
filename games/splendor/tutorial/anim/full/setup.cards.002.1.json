@@ -10,6 +10,30 @@
   },
   "events": [
     {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "board"
+    },
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_back_1#1"
+    },
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_back_2#1"
+    },
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "destroy",
+      "target": "sample_back_3#1"
+    },
+    {
       "at": 0.05,
       "dur": 0.0,
       "action": "stack",
@@ -41,30 +65,6 @@
       "pad_template": "blank_card_3",
       "plain": true,
       "face_down": true
-    },
-    {
-      "at": 0.0,
-      "dur": 0.0,
-      "action": "wait",
-      "camera": "board"
-    },
-    {
-      "at": 0.0,
-      "dur": 0.0,
-      "action": "destroy",
-      "target": "sample_back_1#1"
-    },
-    {
-      "at": 0.0,
-      "dur": 0.0,
-      "action": "destroy",
-      "target": "sample_back_2#1"
-    },
-    {
-      "at": 0.0,
-      "dur": 0.0,
-      "action": "destroy",
-      "target": "sample_back_3#1"
     },
     {
       "at": 0.3,

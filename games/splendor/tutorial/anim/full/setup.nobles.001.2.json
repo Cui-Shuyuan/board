@@ -17,6 +17,12 @@
   },
   "events": [
     {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "board"
+    },
+    {
       "at": 1.05,
       "dur": 0.5,
       "action": "move",
