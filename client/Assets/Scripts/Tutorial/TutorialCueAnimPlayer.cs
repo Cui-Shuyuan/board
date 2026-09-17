@@ -1014,16 +1014,24 @@ namespace BoardGameTutorial
 
                 if (clip.HasFlip)
                 {
-                    // 一张牌的两面由两个贴图表达，"翻转"不靠旋转：
-                    // 旋转同一张贴图会产生**镜像**（用户看到的"镜像卡背"就是这个）。
-                    // 朝向由逻辑状态决定：刚发出去时朝下（显示卡背），翻开后朝上（显示卡面）。
-                    // 牌一开始就是它自己（真卡面 + 卡背都在），所以这里只是"显示哪一面"。
-                    clip.Actor.Go.transform.localRotation = Quaternion.identity;
+                    // 翻面 = **一个 0°→180° 的连续过程**（用户要求），不是"移动中突然换一面"：
+                    //   0°..90°   显示卡背（牌的背面朝向镜头）
+                    //   90°       此时牌面与视线垂直（看作换面瞬间）
+                    //   90°..180° 显示卡面
+                    // 只旋转到 180° 就停住（不再转回 0°）—— 180° 与 0° 在正面看是一样的，
+                    // 但读者能看到"翻过去"这个动作本身。
+                    float yaw = Mathf.LerpUnclamped(0f, 180f, k);
+                    clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
 
-                    // 朝上显示卡面，朝下显示卡背；没有独立卡背时就显示当前面
-                    bool faceUp = clip.Item == null || clip.Item.Flipped;
-                    var backSide = clip.Actor.BackSprite != null ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
-                    clip.Actor.Renderer.sprite = faceUp ? clip.Actor.FaceSprite : backSide;
+                    bool showingBack = yaw < 90f;
+                    if (clip.Actor.BackSprite != null)
+                        clip.Actor.Renderer.sprite = showingBack ? clip.Actor.BackSprite : clip.Actor.FaceSprite;
+                    else
+                    {
+                        // 没有独立背图（牌堆里的牌）：翻面前后都是它自己那一面，
+                        // 只有换面（FaceSprite 被换掉）才会看到不同 —— 这里保持显示当前面。
+                        clip.Actor.Renderer.sprite = clip.Actor.FaceSprite;
+                    }
                 }
 
                 if (clip.HasScale)

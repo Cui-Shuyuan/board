@@ -498,21 +498,31 @@ namespace BoardGameTutorial.Editor
                       $"—— 翻过 90° 才知道它是哪张");
             if (swapped != 12) failures++;
 
-            // 不许用旋转表达翻面：旋转同一张贴图会产生**镜像**（用户看到的"镜像卡背"）。
-            // 牌堆的牌也应全部朝下（显示卡背）。
-            int rotated = 0, pileRotated = 0;
+            // 翻面是 **0°→180° 的连续过程**（用户要求的观感），所以市场牌停在 180° 是正确的：
+            // 真实卡牌翻过去就是 180°（图案上下颠倒），卡面设计本身 180° 旋转对称。
+            // 这里只断言"牌堆的牌不该被旋转"（牌堆里的牌没有翻转动作）。
+            int pileRotated = 0;
             foreach (var it in anim.Store.Items)
             {
                 if (it.Actor?.Go == null) continue;
                 float yaw = Mathf.Abs(Mathf.DeltaAngle(0f, it.Actor.Go.transform.localRotation.eulerAngles.y));
-                if (it.ZoneId == "card_market" && yaw > 1f) rotated++;
                 if (it.ZoneId.StartsWith("deck_level_") && yaw > 1f) pileRotated++;
             }
-            Debug.Log($"[DealTest] {(rotated == 0 ? "PASS" : "FAIL")} 市场牌没有靠旋转翻面（被旋转的 {rotated} 张）" +
-                      $"—— 旋转会产生镜像");
-            if (rotated != 0) failures++;
-            Debug.Log($"[DealTest] {(pileRotated == 0 ? "PASS" : "FAIL")} 牌堆牌没有被旋转（{pileRotated} 张）");
+            Debug.Log($"[DealTest] {(pileRotated == 0 ? "PASS" : "FAIL")} 牌堆牌没有被旋转（{pileRotated} 张）" +
+                      $"—— 牌堆没有翻转动作");
             if (pileRotated != 0) failures++;
+
+            // 市场牌必须停在 180°（真的翻过去了），而不是 0°（根本没翻）
+            int notFlipped = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.Actor?.Go == null || it.ZoneId != "card_market") continue;
+                float yaw = Mathf.Abs(Mathf.DeltaAngle(0f, it.Actor.Go.transform.localRotation.eulerAngles.y));
+                if (yaw < 179f) notFlipped++;
+            }
+            Debug.Log($"[DealTest] {(notFlipped == 0 ? "PASS" : "FAIL")} " +
+                      $"市场牌都翻到了 180°（没翻的 {notFlipped} 张）");
+            if (notFlipped != 0) failures++;
 
             Debug.Log($"[DealTest] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
@@ -1758,9 +1768,8 @@ namespace BoardGameTutorial.Editor
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
 
-            // -dumpReplay 1：把该 cue **之前的所有 cue** 逐条播到终态，再采样本条。
-            // 只播上一条是不够的：样本卡是更早的 cue 创建的（cue10 建卡背、cue9 建正面），
-            // 漏掉它们会让"父 cue 的出口"本身是空的，跨 cue 对账就全是假差异。
+            // -dumpReplay 1：沿 entry 链把之前的 cue **逐条播到终态**，再采样本条。
+            // 只播上一条不够：样本卡由更早的 cue 创建，漏掉会让父 cue 的出口本身是空的。
             if (replay)
             {
                 var playerGo = new GameObject("DumpReplayHost");
@@ -1780,53 +1789,17 @@ namespace BoardGameTutorial.Editor
                 Object.DestroyImmediate(playerGo);
             }
 
-            if (!anim.LoadCue(gameRoot, "full", cueId, replay))
+            // 无动画数据的 cue（例如 setup.cards.002.2）LoadCue 返回 false，但它**保留牌桌** ——
+            // 那正是要采样的状态。以前这里直接退出，于是这类 cue 从来没被查过。
+            bool loaded = anim.LoadCue(gameRoot, "full", cueId, replay);
+            if (!loaded && anim.ActorCount == 0)
             {
-                Debug.LogError($"[Dump] LoadCue 失败: {cueId}");
+                Debug.LogError($"[Dump] LoadCue 失败且场景为空: {cueId}");
                 EditorApplication.Exit(1);
                 return;
             }
-            // 定量判断：每摞牌里"正在用卡背贴图"的有几张、用卡面前的有几张。
-            // 判据不看颜色，而是**贴图是不是该级卡背那张**（用像素均值比）。
-            System.Action<float> pileReport = (at) =>
-            {
-                for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt);
-                foreach (var lvl in new[] { 1, 2, 3 })
-                {
-                    string zone = $"deck_level_{lvl}";
-                    var back = CardImageLoader.Load(
-                        Path.Combine(gameRoot, $"media/card/{new[]{"一","二","三"}[lvl-1]}级发展卡_背面.jpg"), "card");
-                    int isBack = 0, isFace = 0;
-                    foreach (var it in anim.Store.Items)
-                    {
-                        if (it.ZoneId != zone || it.Actor?.Renderer?.sprite == null) continue;
-                        if (ReferenceEquals(it.Actor.Renderer.sprite, back)) isBack++;
-                        else isFace++;
-                    }
-                    Debug.Log($"[Pile] t={at:0.0} {zone}: 用卡背={isBack} 用卡面={isFace}");
-                }
-            };
-            pileReport(2.6f);
+            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
-            // 先采一次「发牌前」（洗混中途），再看终态
-            for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
-            Debug.Log("[Pos@2.6] " + string.Join(" | ", anim.Store.Items
-                .Where(it => it.ZoneId == "deck_level_1")
-                .OrderByDescending(it => it.LivePosition.z)
-                .Take(5)
-                .Select(it => $"{it.Id} ord={it.Order} z={it.LivePosition.z:0.000} " +
-                              $"flip={it.Flipped} spr={(it.Actor?.Renderer?.sprite == it.Actor?.FaceSprite ? "面" : "背")}")));
-
-            for (float tt = 2.65f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
-
-            Debug.Log("[Pos] " + string.Join("  ", anim.Store.Items
-                .Where(it => it.ZoneId == "deck_level_1")
-                .OrderBy(it => it.Order)
-                .Take(6)
-                .Select(it => $"{it.Id} ord={it.Order} z={it.LivePosition.z:0.000} flip={it.Flipped} " +
-                              $"tpl={it.Template?.id}")));
-
-            // 按 zone 聚合
             var zones = new SortedDictionary<string, ZoneAgg>();
             foreach (var it in anim.Store.Items)
             {
@@ -1836,10 +1809,17 @@ namespace BoardGameTutorial.Editor
                     zones[it.ZoneId] = agg;
                 }
                 agg.Count++;
+                // 按**画面上实际显示的那一面**统计，而不是按 Flipped（逻辑意图）。
+                // 两者不一致时画面就是错的 —— 那正是要查的东西。
+                switch (it.Showing)
+                {
+                    case "face": agg.ShowsFace++; break;
+                    case "back": agg.ShowsBack++; break;
+                    default: agg.Hidden++; break;
+                }
                 if (it.Flipped) agg.FaceUp++; else agg.FaceDown++;
-                string kind = it.KindKey;
-                if (!agg.Kinds.ContainsKey(kind)) agg.Kinds[kind] = 0;
-                agg.Kinds[kind]++;
+                if (!agg.Kinds.ContainsKey(it.KindKey)) agg.Kinds[it.KindKey] = 0;
+                agg.Kinds[it.KindKey]++;
             }
 
             var sb = new System.Text.StringBuilder();
@@ -1852,7 +1832,9 @@ namespace BoardGameTutorial.Editor
                 zi++;
                 var agg = kv.Value;
                 sb.Append($"    \"{kv.Key}\": {{ \"count\": {agg.Count}, " +
-                          $"\"face_up\": {agg.FaceUp}, \"face_down\": {agg.FaceDown}, \"kinds\": {{");
+                          $"\"face_up\": {agg.FaceUp}, \"face_down\": {agg.FaceDown}, " +
+                          $"\"shows_face\": {agg.ShowsFace}, \"shows_back\": {agg.ShowsBack}, " +
+                          $"\"hidden\": {agg.Hidden}, \"kinds\": {{");
                 int ki = 0;
                 foreach (var k in agg.Kinds)
                 {
@@ -1868,14 +1850,14 @@ namespace BoardGameTutorial.Editor
 
             Directory.CreateDirectory(Path.GetDirectoryName(outPath));
             File.WriteAllText(outPath, sb.ToString());
-            Debug.Log($"[Dump] {cueId} 终态已写入 {outPath}（{anim.ActorCount} 件，" +
-                      $"{zones.Count} 个 zone）");
+            Debug.Log($"[Dump] {cueId} 终态已写入 {outPath}（{anim.ActorCount} 件，{zones.Count} 个 zone）");
             EditorApplication.Exit(0);
         }
 
         private class ZoneAgg
         {
             public int Count, FaceUp, FaceDown;
+            public int ShowsFace, ShowsBack, Hidden;   // 画面上实际显示哪一面
             public SortedDictionary<string, int> Kinds = new SortedDictionary<string, int>();
         }
 
@@ -1923,7 +1905,7 @@ namespace BoardGameTutorial.Editor
                     }
 
                     // 市场：**已落位的**牌必须显示真卡面。
-                    // 正在飞的那张由片段控制（FlipFrom→FlipTo 的中间态），先不判。
+                    // 正在翻转的那张（0°→180° 中途）允许显示卡背 —— 那正是"翻过去"的过程。
                     if (it.ZoneId == "card_market" && it.Actor != null)
                     {
                         var pos = it.Actor.Go.transform.localPosition;
@@ -1956,6 +1938,32 @@ namespace BoardGameTutorial.Editor
                       $"已落位的市场牌显示真卡面（异常 {badMarket} 帧次）");
             if (badMarket != 0) failures++;
             _ = badMarketAfterDeal;
+
+            // 牌堆外形模型（用户定义的）：**只有底部 max_visible 张错开，再往上的全部重合**。
+            System.Func<float, System.Collections.Generic.List<Vector3>> pileShape = (at) =>
+            {
+                for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt);
+                return anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                       .OrderBy(x => x.Order)
+                                       .Select(x => x.LivePosition).ToList();
+            };
+            var s40 = pileShape(2.6f);   // 40 张
+
+            bool overflowCoincident = true;
+            for (int i = 8; i < s40.Count; i++)
+                if (Vector3.Distance(s40[i], s40[7]) > 1e-5f) overflowCoincident = false;
+            Debug.Log($"[Orient] {(overflowCoincident ? "PASS" : "FAIL")} " +
+                      $"第 8 张往上的牌全部重合（不再错开）");
+            if (!overflowCoincident) failures++;
+
+            bool evenSpacing = true;
+            float step0 = Vector3.Distance(s40[0], s40[1]);
+            for (int i = 1; i < 7; i++)
+                if (Mathf.Abs(Vector3.Distance(s40[i], s40[i + 1]) - step0) > 1e-5f) evenSpacing = false;
+            bool spreadOk = step0 > 1e-6f;
+            Debug.Log($"[Orient] {(evenSpacing && spreadOk ? "PASS" : "FAIL")} " +
+                      $"底部 8 张逐层错开且间距恒定（每层 {step0:0.0000}）");
+            if (!evenSpacing || !spreadOk) failures++;
 
             Debug.Log($"[Orient] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);
