@@ -2147,6 +2147,79 @@ namespace BoardGameTutorial.Editor
             EditorApplication.Exit(failures == 0 ? 0 : 1);
         }
 
+        /// <summary>
+        /// 判定"数据说对、画面不对"到底是哪一类问题：
+        ///   ① 出图路径与 DumpState 路径不同 → 比较两条路径的**终态**是否一致
+        ///   ② 若一致           → 出图工具自身有 bug（渲染层）
+        ///   ③ 若不一致         → 某个路径的驱动方式错了（例如少了 ApplyEntryState）
+        ///
+        /// 做法：同一条 cue 用**两种驱动方式**各跑一遍，逐件比较
+        /// （zone / order / Flipped / 显示哪一面），并打印第一条差异。
+        /// </summary>
+        public static void SelfTestCaptureVsDumpAgree()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = "setup.cards.002.1";
+
+            System.Func<bool, string> run = (useEntryState) =>
+            {
+                var host = new GameObject("CmpHost");
+                var anim = host.AddComponent<TutorialCueAnimPlayer>();
+                anim.animationEnabled = true;
+
+                if (useEntryState)
+                {
+                    var playerGo = new GameObject("CmpPlayer");
+                    var player = playerGo.AddComponent<TutorialCuePlayer>();
+                    player.autoPlay = false;
+                    player.tutorialRoot = Path.Combine(repoRoot, "games");
+                    if (player.LoadRuntime())
+                    {
+                        var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        int idx = player.Document.cues.FindIndex(c => c.id == cueId);
+                        apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { idx }) });
+                    }
+                    Object.DestroyImmediate(playerGo);
+                }
+
+                anim.LoadCue(gameRoot, "full", cueId, useEntryState);
+                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+
+                var lines = new System.Collections.Generic.List<string>();
+                foreach (var it in anim.Store.Items)
+                    lines.Add($"{it.Id}|{it.ZoneId}|{it.Order}|{it.Flipped}|{it.Showing}");
+                lines.Sort();
+                var s = string.Join("\n", lines);
+                Object.DestroyImmediate(host);
+                return s;
+            };
+
+            string plain = run(false);
+            string entry = run(true);
+            bool same = plain == entry;
+            Debug.Log($"[Cmp] 出图路径与解入口状态路径的终态：{(same ? "一致" : "**不一致**")}" +
+                      $"（各 {plain.Split('\n').Length} 件）");
+
+            if (!same)
+            {
+                var a = plain.Split('\n');
+                var b = entry.Split('\n');
+                int n = Mathf.Min(a.Length, b.Length), shown = 0;
+                for (int i = 0; i < n && shown < 5; i++)
+                    if (a[i] != b[i]) { Debug.Log($"[Cmp]   差异: 出图={a[i]}  解入口={b[i]}"); shown++; }
+                Debug.Log($"[Cmp] 结论：两条路径驱动方式不同 → 要查的是驱动方式，不是渲染");
+            }
+            else
+            {
+                Debug.Log($"[Cmp] 结论：两条路径终态一致 → 若画面仍不同，问题在**渲染层**（出图工具自身）");
+            }
+            EditorApplication.Exit(0);
+        }
+
         public static void CaptureAll()
         {
             verbose = System.Environment.GetCommandLineArgs().Length > 0 &&
