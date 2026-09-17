@@ -263,6 +263,58 @@ namespace BoardGameTutorial.Editor
 
 
 
+        /// <summary>
+        /// 发牌时**每一张被取走的牌**的 order 与它当时的坐标 —— 直接回答
+        /// "发的是牌堆顶还是牌堆底"（不判定，只列事实）。
+        /// </summary>
+        public static void TraceDealOrder()
+        {
+            string repoRoot = Path.Combine(Application.dataPath, "..", "..");
+            string gameRoot = Path.Combine(repoRoot, "games/splendor");
+            string cueId = ArgValue("-dealCue", "setup.cards.002.1");
+            string zone = ArgValue("-dealZone", "deck_level_1");
+
+            var go = new GameObject("DealTraceHost");
+            var anim = go.AddComponent<TutorialCueAnimPlayer>();
+            anim.animationEnabled = true;
+            anim.LoadCue(gameRoot, "full", cueId, false);
+
+            for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
+
+            // 位置表：order → 坐标，标出"最右上"与"最左下"两端
+            var snap = anim.Store.Items.Where(x => x.ZoneId == zone)
+                            .OrderBy(x => x.Order)
+                            .Select(x => (x.Order, x.Id, x.Template.id, x.LivePosition))
+                            .ToList();
+            if (snap.Count == 0) { Debug.Log($"[Deal] {zone} 空"); EditorApplication.Exit(0); return; }
+            var topRight = snap.OrderByDescending(s2 => s2.LivePosition.x).First();
+            var botLeft  = snap.OrderBy(s2 => s2.LivePosition.x).First();
+            Debug.Log($"[Deal] {zone} 共 {snap.Count} 张");
+            Debug.Log($"[Deal] 画面最右上那张: order={topRight.Order} ({topRight.Item3})");
+            Debug.Log($"[Deal] 画面最左下那张: order={botLeft.Order} ({botLeft.Item3})");
+
+            // 谁被发走了：zone 成员集合的差集
+            var known = new HashSet<string>(snap.Select(s2 => s2.Id));
+            var inZone = new Dictionary<string, (int Order, string Tpl)>();
+            foreach (var s2 in snap) inZone[s2.Id] = (s2.Order, s2.Item3);
+
+            for (float tt = 2.6f; tt <= anim.TotalDuration + 0.1f; tt += 0.02f)
+            {
+                anim.Seek(tt);
+                foreach (var id in known.ToList())
+                {
+                    ZoneItem it = null;
+                    foreach (var cand in anim.Store.Items) if (cand.Id == id) { it = cand; break; }
+                    if (it != null && it.ZoneId == zone) continue;
+                    string dest = it == null ? "(不存在)" : it.ZoneId;
+                    Debug.Log($"[Deal] t={tt:0.00} 发走 order={inZone[id].Order,3} " +
+                              $"{inZone[id].Tpl,-24} → {dest}");
+                    known.Remove(id);
+                }
+            }
+            EditorApplication.Exit(0);
+        }
+
         public static void ListZone()
         {
             string repoRoot = Path.Combine(Application.dataPath, "..", "..");
