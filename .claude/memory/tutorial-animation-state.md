@@ -1670,3 +1670,48 @@ t=3.58 发走 order=0(emerald) → 3.98 order=1(ruby) → 4.36 order=2(diamond) 
 宝石堆是"一摞 7 枚"，同样用 `stack`：
 `real_templates` 写 7 枚宝石模板（顺序 = 取用顺序）、`capacity: 7`、`pad_template` 留空。
 取用时 `move from: ["gem_supply_*"]` 即可按 order 从顶取。
+
+
+## 【已修】cue9 的"原地翻转" + `Showing` 的判据错（2026-09）
+
+用户："cue9 这张牌是不是原地翻转了一下？我想要的是它直接出现在画面里。"
+
+原来 cue9 是**两个事件凑出来的**：
+
+```json
+{"action":"create","template":"sample_card_1","zone":"showcase","count":1}          ← 建出来就是正面
+{"action":"move","target":"sample_card_1#1","zone":"showcase","order":0,"flip":true} ← 只是为了翻一下
+```
+
+那个 `move` 不换 zone、只是移格位 + 翻转，**动作纯粹是为了翻牌**，看起来就"多做了一个动作"。
+
+### 修法：加显式的 `face_up`，去掉翻转事件
+
+```json
+{"action":"create","template":"sample_card_1","zone":"showcase","count":1,"face_up":true}
+```
+
+`create` 朝向语义统一为：
+- `face_up: true` → 正面朝上（真卡面）
+- 否则（`face_down` 或不写）→ 背面朝上
+
+**"要正面就别靠 create+flip 两个事件凑"** —— 这句话写进了字段注释。
+
+### 顺带查出 `Showing` 的判据是错的
+
+```csharp
+// 错：假设"没有独立背图的模板 = 牌堆里的牌"
+return Actor.BackSprite == null ? "back" : "face";
+```
+
+`sample_card_1` 也**没有背图**，而它的 `face_image` 是**真卡面** —— 于是"正面朝上"被误报成 `back`。
+（我一度以为 `face_up` 没生效，其实是**报告**错了。）
+
+**改成只看渲染器当前贴图是不是 BackSprite**：
+
+```csharp
+if (Actor.BackSprite != null && ReferenceEquals(sr.sprite, Actor.BackSprite)) return "back";
+if (Actor.FaceSprite != null && ReferenceEquals(sr.sprite, Actor.FaceSprite)) return "face";
+```
+
+**教训：报告"画面显示哪一面"时，不要去猜模板语义 —— 直接比较渲染器手上的贴图。**

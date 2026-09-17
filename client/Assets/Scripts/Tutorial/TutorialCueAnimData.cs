@@ -338,6 +338,17 @@ namespace BoardGameTutorial
         public int capacity;
 
         /// <summary>
+        /// create：创建成**正面朝上**（真卡面）。
+        ///
+        /// 与 <see cref="face_down"/> 二选一；两个都不写时默认**背面朝上**
+        /// （牌堆里的牌就是这种：是哪张已定、但还没翻开）。
+        ///
+        /// 有了它，就不需要"create 成背面 + 紧跟一个 flip"来让一张牌翻出来 ——
+        /// 用户明确说过那种做法像"多做了一个动作"，他要的是**直接出现**。
+        /// </summary>
+        public bool face_up;
+
+        /// <summary>
         /// create：创建成**背面朝上**。
         /// 牌堆里的牌就是这种状态：它是哪张牌已经定了，但还没翻开，所以显示卡背。
         /// 漏了它就会出现"牌堆最上面那张是正面朝上"——因为 Flipped 默认 false，

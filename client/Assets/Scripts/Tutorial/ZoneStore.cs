@@ -46,13 +46,13 @@ namespace BoardGameTutorial
             {
                 var sr = Actor?.Renderer;
                 if (sr == null || sr.sprite == null || !sr.enabled) return "hidden";
+
+                // 判据只看**渲染器当前贴图是不是 BackSprite**。
+                // 曾经写过"BackSprite == null 就报 back"（理由是"没背图的模板就是牌堆里的牌"），
+                // 但那是错的：sample_card_1 也没有背图，而它的 face_image 是**真卡面** ——
+                // 于是"正面朝上"被误报成 back。报的是"画面显示哪一面"，就不要去猜模板语义。
                 if (Actor.BackSprite != null && ReferenceEquals(sr.sprite, Actor.BackSprite)) return "back";
-                if (Actor.FaceSprite != null && ReferenceEquals(sr.sprite, Actor.FaceSprite))
-                {
-                    // 没有独立背图的模板（牌堆里的牌）：它的"正面"就是卡背扫描图，
-                    // 所以显示 FaceSprite 实际看到的是**卡背**。
-                    return Actor.BackSprite == null ? "back" : "face";
-                }
+                if (Actor.FaceSprite != null && ReferenceEquals(sr.sprite, Actor.FaceSprite)) return "face";
                 return "other";
             }
         }

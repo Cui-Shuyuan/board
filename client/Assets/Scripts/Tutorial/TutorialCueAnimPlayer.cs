@@ -1872,8 +1872,10 @@ namespace BoardGameTutorial
                 item.Shown = true;
                 // 背面朝上：牌堆里的牌就是这样（是哪张已定，但还没翻开）
                 // 语义：Flipped = 是否正面朝上，所以这里是 false
-                if (ev.face_down) item.Flipped = false;
-                else item.Flipped = true;
+                // 朝向：face_up 显式正面；否则默认背面（face_down 或都没写）。
+                // 默认背面是有意的 —— 牌堆/待发牌本来就该先看到卡背，
+                // 要正面就别省 face_up（别再靠"create + flip"两个事件凑）。
+                item.Flipped = ev.face_up;
                 BuildActorObject(item);
 
                 // create 带 flip = 出场过程中翻到正面（发牌时"翻开四张"）。

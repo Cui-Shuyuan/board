@@ -29,17 +29,8 @@
       "template": "sample_card_1",
       "palette": "card_level_1",
       "zone": "showcase",
-      "count": 1
-    },
-    {
-      "at": 0.3,
-      "dur": 0.45,
-      "action": "move",
-      "target": "sample_card_1#1",
-      "zone": "showcase",
-      "order": 0,
-      "flip": true,
-      "easing": "easeOutCubic"
+      "count": 1,
+      "face_up": true
     }
   ]
 }
