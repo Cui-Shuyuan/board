@@ -980,6 +980,22 @@ namespace BoardGameTutorial
             {
                 var actor = item.Actor;
                 if (actor?.Go == null) continue;
+
+                // 牌堆层次：**按 order 递增**，order 越小越盖在上面。
+                // 必须每次采样都算 —— 建对象时整摞还没建完（张数不全→层次算错），
+                // 而牌堆成员每发一张就变。同一模板 sortingOrder 相同时谁盖住谁是任意的，
+                // 表现就是"最顶上那张被压在底下"。
+                var stackZone = Store.GetZone(item.ZoneId);
+                if (stackZone?.display != null && stackZone.display.mode == "stack")
+                {
+                    int n = Mathf.Max(1, Store.HighestOrderPlusOne(item.ZoneId));
+                    actor.Renderer.sortingOrder = item.Template.sorting_order + (n - item.Order);
+                }
+                else if (actor.Renderer.sortingOrder != item.Template.sorting_order)
+                {
+                    actor.Renderer.sortingOrder = item.Template.sorting_order;
+                }
+
                 if (latest.TryGetValue(item.Id, out var pending))
                 {
                     // 片段已登记：位置由片段决定（未开始就停在起点，进行中由下面的采样覆盖）。

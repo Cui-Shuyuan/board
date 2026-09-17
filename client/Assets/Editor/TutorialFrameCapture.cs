@@ -289,9 +289,13 @@ namespace BoardGameTutorial.Editor
             if (snap.Count == 0) { Debug.Log($"[Deal] {zone} 空"); EditorApplication.Exit(0); return; }
             var topRight = snap.OrderByDescending(s2 => s2.LivePosition.x).First();
             var botLeft  = snap.OrderBy(s2 => s2.LivePosition.x).First();
-            Debug.Log($"[Deal] {zone} 共 {snap.Count} 张");
-            Debug.Log($"[Deal] 画面最右上那张: order={topRight.Order} ({topRight.Item3})");
-            Debug.Log($"[Deal] 画面最左下那张: order={botLeft.Order} ({botLeft.Item3})");
+            Debug.Log($"[Deal] {zone} 共 {snap.Count} 张（按 order 列出）：");
+            // 屏幕 y ∝ -z（z 越大越靠下）；屏幕 x ∝ +x
+            foreach (var s2 in snap.OrderBy(s2 => -s2.LivePosition.z).ThenBy(s2 => s2.LivePosition.x).Take(12))
+                Debug.Log($"[Deal]   order={s2.Order,3} {s2.Item3,-24} " +
+                          $"({s2.LivePosition.x:0.000},{s2.LivePosition.z:0.000})");
+            Debug.Log($"[Deal] 画面最上那张: order={snap.OrderBy(s2 => s2.LivePosition.z).First().Order}");
+            Debug.Log($"[Deal] 画面最下那张: order={snap.OrderByDescending(s2 => s2.LivePosition.z).First().Order}");
 
             // 谁被发走了：zone 成员集合的差集
             var known = new HashSet<string>(snap.Select(s2 => s2.Id));

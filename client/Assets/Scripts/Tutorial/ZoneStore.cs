@@ -591,13 +591,15 @@ namespace BoardGameTutorial
             if (display != null && display.mode == "stack")
             {
                 // 叠放显示（用户定义，逐句对照）：
-                //   order 39..32（容量-1 … 容量-8）= **8 张错开的**，
-                //     39 在最上面那张（偏移 0），逐层错开到 32。
-                //   order 31..0 = **完整重合块**，全部盖在 order 32 上。
-                //   发牌从 order 0（重合块）一路走到 31 → 外形天然不变；
-                //   再发（order 32 起）才开始变小 —— "第 33 张才开始变小"。
+                //   **台阶** = order capacity-1 … capacity-8（40张时 39..32）
+                //     39 最先放上桌（最下面）、32 最后放上去（台阶顶）。
+                //   **重合块** = order capacity-9 … 0（40张时 31..0），
+                //     全部完整盖在 32 上，一直叠到 order 0。
                 //
                 //   lift = min(capacity - 1 - order, maxVisible - 1)
+                //
+                // 发牌从 order 0 一路走到 31（都在重合块里），外形天然不变；
+                // 再发（order 32 起）才开始变小。
                 int maxVisible = display.max_visible > 0 ? display.max_visible : 8;
                 int deckCapacity = zone.capacity > 0 ? zone.capacity : maxVisible;
                 int fromBottom = Mathf.Max(0, deckCapacity - 1 - slot);
