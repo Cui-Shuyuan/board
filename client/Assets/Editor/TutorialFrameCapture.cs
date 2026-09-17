@@ -162,7 +162,7 @@ namespace BoardGameTutorial.Editor
             Debug.Log($"[Seq] 载入目标 cue = {ok}");
 
             // 量牌堆：真实路径上三摞牌堆的 position / alpha / zone
-            foreach (var id in new[] { "card_back_1#1", "card_back_2#1", "card_back_3#1" })
+            foreach (var id in new[] { "blank_card_1#1", "blank_card_2#1", "blank_card_3#1" })
                 foreach (var it in anim.Store.Items)
                     if (it.Id == id)
                     {
@@ -443,33 +443,41 @@ namespace BoardGameTutorial.Editor
                 return;
             }
 
-            var expectedPiles = new (string zone, string tpl, int total, int left)[]
+            // 牌堆 = 12 张真牌（每级 4 张，在牌堆顶）+ 空白牌补足张数。
+            // 真牌一开始就是它自己，所以发牌不需要换面。
+            var expectedPiles = new (string zone, string real, string blank, int total)[]
             {
-                ("deck_level_1", "card_back_1", 40, 36),
-                ("deck_level_2", "card_back_2", 30, 26),
-                ("deck_level_3", "card_back_3", 20, 16),
+                ("deck_level_1", "market_card_1_", "blank_card_1", 40),
+                ("deck_level_2", "market_card_2_", "blank_card_2", 30),
+                ("deck_level_3", "market_card_3_", "blank_card_3", 20),
             };
 
-            // ① 牌堆张数必须是**真正的** 40/30/20。
-            // 注意：牌堆由本条 cue 的 create 建立，所以要先推到 create 之后（洗混之前）。
+            // ① 牌堆张数真的是 40/30/20：12 张真牌 + 空白牌补足
             anim.Seek(0.5f);
-            foreach (var (zone, tpl, total, _) in expectedPiles)
+            foreach (var (zone, real, blank, total) in expectedPiles)
             {
-                int n = 0;
+                int reals = 0, blanks = 0;
                 foreach (var it in anim.Store.Items)
-                    if (it.ZoneId == zone && it.Template != null && it.Template.id == tpl) n++;
-                Debug.Log($"[DealTest] {(n == total ? "PASS" : "FAIL")} {zone} 初始有 {n} 张真牌（应为 {total}）");
-                if (n != total) failures++;
+                {
+                    if (it.ZoneId != zone || it.Template == null) continue;
+                    if (it.Template.id.StartsWith(real)) reals++;
+                    else if (it.Template.id == blank) blanks++;
+                }
+                bool ok = reals + blanks == total && reals == 4;
+                Debug.Log($"[DealTest] {(ok ? "PASS" : "FAIL")} {zone}: 真牌 {reals} + 空白牌 {blanks} " +
+                          $"= {reals + blanks}（应为 4 + {total - 4} = {total}）");
+                if (!ok) failures++;
             }
 
             // ② 逐帧推进：牌堆只减不增，市场只增不减，最后各减 4 张
             for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.1f) anim.Seek(tt);
 
-            foreach (var (zone, tpl, total, left) in expectedPiles)
+            foreach (var (zone, real, blank, total) in expectedPiles)
             {
                 int n = 0;
                 foreach (var it in anim.Store.Items)
-                    if (it.ZoneId == zone && it.Template != null && it.Template.id == tpl) n++;
+                    if (it.ZoneId == zone) n++;
+                int left = total - 4;
                 Debug.Log($"[DealTest] {(n == left ? "PASS" : "FAIL")} {zone} 发牌后剩 {n} 张（应为 {left}）" +
                           $"—— 真的少了 {total - n} 张");
                 if (n != left) failures++;
@@ -1092,7 +1100,7 @@ namespace BoardGameTutorial.Editor
                 bool drawn = it.Actor.Renderer.enabled && it.Actor.Renderer.color.a > 0.05f;
                 if (!drawn) continue;
                 if (it.Id.StartsWith("market_card_")) { pendingVisible++; example ??= it.Id; }
-                if (it.Id.StartsWith("card_back_")) decksVisible++;
+                if (it.Id.StartsWith("blank_card_")) decksVisible++;
             }
 
             // 这条测试只管「载入瞬间不该闪现待发的牌」。卡堆现在由 cue 12 创建，
@@ -1240,9 +1248,9 @@ namespace BoardGameTutorial.Editor
             // 一起量会把它们算进来。
             var zones = new (string zone, string tpl)[]
             {
-                ("deck_level_1", "card_back_1"),
-                ("deck_level_2", "card_back_2"),
-                ("deck_level_3", "card_back_3"),
+                ("deck_level_1", "blank_card_1"),
+                ("deck_level_2", "blank_card_2"),
+                ("deck_level_3", "blank_card_3"),
             };
 
             foreach (var (zone, tpl) in zones)
@@ -1316,8 +1324,8 @@ namespace BoardGameTutorial.Editor
             anim.Seek(1.3f);   // 洗混结束、发牌之前：牌堆都在
 
             // 组一个跨 zone 的容器：一级牌堆里的一张 + 二级牌堆里的一张
-            var members = new[] { "card_back_1#1", "card_back_2#1" };
-            var outsider = "card_back_3#1";
+            var members = new[] { "blank_card_1#1", "blank_card_2#1" };
+            var outsider = "blank_card_3#1";
             anim.RegisterContainerForTest("test_mixed", members);
 
             var ev = new CueAnimEvent { at = 1.3f, dur = 0.8f, action = "highlight",
@@ -1325,14 +1333,14 @@ namespace BoardGameTutorial.Editor
             anim.TriggerForTest(ev);
 
             anim.Seek(1.7f);   // 脉冲峰值附近
-            float s1 = anim.ScaleOf("card_back_1#1");
-            float s2 = anim.ScaleOf("card_back_2#1");
-            float s3 = anim.ScaleOf("card_back_3#1");
+            float s1 = anim.ScaleOf("blank_card_1#1");
+            float s2 = anim.ScaleOf("blank_card_2#1");
+            float s3 = anim.ScaleOf("blank_card_3#1");
 
             bool grew = s1 > 0 && s2 > 0 && s3 > 0;
-            float r1 = s1 / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_1#1"));
-            float r2 = s2 / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_2#1"));
-            float r3 = s3 / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_3#1"));
+            float r1 = s1 / Mathf.Max(1e-6f, anim.BaseScaleOf("blank_card_1#1"));
+            float r2 = s2 / Mathf.Max(1e-6f, anim.BaseScaleOf("blank_card_2#1"));
+            float r3 = s3 / Mathf.Max(1e-6f, anim.BaseScaleOf("blank_card_3#1"));
             bool membersGrew = r1 > 1.05f && r2 > 1.05f;
             bool outsiderUntouched = Mathf.Abs(r3 - 1f) < 0.02f;
             bool uniform = Mathf.Abs(r1 - r2) < 0.05f;
@@ -1345,7 +1353,7 @@ namespace BoardGameTutorial.Editor
             if (!uniform) failures++;
 
             anim.Seek(2.4f);   // 脉冲结束
-            float e1 = anim.ScaleOf("card_back_1#1") / Mathf.Max(1e-6f, anim.BaseScaleOf("card_back_1#1"));
+            float e1 = anim.ScaleOf("blank_card_1#1") / Mathf.Max(1e-6f, anim.BaseScaleOf("blank_card_1#1"));
             bool returned = Mathf.Abs(e1 - 1f) < 0.02f;
             Debug.Log($"[Cont] {(returned ? "PASS" : "FAIL")} 脉冲回落到原尺寸: r={e1:0.000}");
             if (!returned) failures++;
@@ -1393,7 +1401,7 @@ namespace BoardGameTutorial.Editor
             // 卡堆现在不再初始存在（cue 12 才创建），所以这里先 create 再搬。
             anim.TriggerForTest(new CueAnimEvent
             {
-                at = 1.3f, dur = 0.0f, action = "create", template = "card_back_1",
+                at = 1.3f, dur = 0.0f, action = "create", template = "blank_card_1",
                 palette = "card_level_1", zone = "box_level_1", count = 36,
             });
             anim.TriggerForTest(new CueAnimEvent

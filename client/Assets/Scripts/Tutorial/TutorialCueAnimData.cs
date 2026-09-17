@@ -315,14 +315,6 @@ namespace BoardGameTutorial
         /// <summary>create：一次创建几个（0 = 1）。</summary>
         public int count;
 
-        /// <summary>
-        /// swap：把组件的张贴图换成另一个模板的（"这张牌翻过来是它"）。
-        /// 用于发牌：牌堆里是 40 张真牌（背面朝上），发出去时才知道它是哪一张。
-        /// </summary>
-        public string to_template;
-
-        /// <summary>swap：换面后用的色板。</summary>
-        public string to_palette;
 
         /// <summary>create：色板名（决定颜色/贴图，例如 card_level_1）。</summary>
         public string palette;

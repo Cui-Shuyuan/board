@@ -1011,18 +1011,9 @@ namespace BoardGameTutorial
                 {
                     // 一张牌的两面由两个贴图表达，"翻转"不靠旋转：
                     // 旋转同一张贴图会产生**镜像**（用户看到的"镜像卡背"就是这个）。
-                    // 朝向由逻辑状态决定：刚发出去时朝下（显示卡背），
-                    // 翻开后朝上（显示卡面，卡面由 move 的 to_template 换上）。
+                    // 朝向由逻辑状态决定：刚发出去时朝下（显示卡背），翻开后朝上（显示卡面）。
+                    // 牌一开始就是它自己（真卡面 + 卡背都在），所以这里只是"显示哪一面"。
                     clip.Actor.Go.transform.localRotation = Quaternion.identity;
-
-                    // 翻开（从朝下变为朝上）→ 换成它真正的那张牌
-                    if (clip.Item != null && clip.Item.Flipped
-                        && clip.Item.Template != null
-                        && !string.IsNullOrEmpty(clip.SwapToTemplate)
-                        && clip.Item.Template.id != clip.SwapToTemplate)
-                    {
-                        ApplySwap(clip.Actor, clip.SwapToTemplate, clip.SwapToPalette);
-                    }
 
                     // 朝上显示卡面，朝下显示卡背；没有独立卡背时就显示当前面
                     bool faceUp = clip.Item == null || clip.Item.Flipped;
@@ -1222,7 +1213,6 @@ namespace BoardGameTutorial
                 case "showbox": TriggerShowBox(ev); return;
                 case "create": TriggerCreate(ev); return;
                 case "destroy": TriggerDestroy(ev); return;
-                case "swap": TriggerSwap(ev); return;
                 default:
                     Debug.LogWarning($"[TutorialCueAnim] unknown action '{ev.action}' in cue {CueId}");
                     return;
@@ -1301,9 +1291,6 @@ namespace BoardGameTutorial
             public bool HasFlip;
             public float FlipFromYaw; // 起始偏航角（0 或 180）
 
-            /// <summary>翻面过半时把贴图换成目标模板（发牌："翻开才知道是哪张"）。</summary>
-            public string SwapToTemplate;
-            public string SwapToPalette;
             public bool FlipHalfTurn; // true = 翻半圈回到原角度（新建组件的翻转）
 
             public bool HasScale;
@@ -1513,9 +1500,6 @@ namespace BoardGameTutorial
                     clip.HasFlip = true;
                     clip.FlipFromYaw = step.Item.Flipped ? 180f : 0f;
                     step.Item.Flipped = !step.Item.Flipped;   // 逻辑状态立即到终态
-                    // 「翻开才知道是哪张」：翻过 90° 时换面
-                    clip.SwapToTemplate = ev.to_template;
-                    clip.SwapToPalette = ev.to_palette;
                 }
             }
 
@@ -1766,56 +1750,6 @@ namespace BoardGameTutorial
                     item.Flipped = true;
                 }
             }
-        }
-
-        /// <summary>
-        /// 换面：把组件换成另一个模板的贴图（正反面一起换），对象本身不重建。
-        ///
-        /// 为什么需要它：一摞 40 张牌在发出去之前**不知道是哪张牌**，
-        /// 所以牌堆里只能是 40 张"背面朝上"的真牌；
-        /// 发到市场时才定下它是哪一张 —— 这时换面，而不是另造一个对象。
-        /// 这样"发牌"始终是**同一张牌从牌堆移动到市场**，与真实操作一致。
-        /// </summary>
-        private void TriggerSwap(CueAnimEvent ev)
-        {
-            if (string.IsNullOrEmpty(ev.to_template))
-            {
-                Debug.LogWarning($"[TutorialCueAnim] swap 缺少 to_template（cue {CueId}）");
-                return;
-            }
-            var tpl = Store.GetTemplate(ev.to_template);
-            if (tpl == null)
-            {
-                Debug.LogWarning($"[TutorialCueAnim] swap 未知模板 '{ev.to_template}'（cue {CueId}）");
-                return;
-            }
-
-            foreach (var actor in Resolve(ev))
-                ApplySwap(actor, ev.to_template, ev.to_palette);
-        }
-
-        /// <summary>把一件东西换成另一个模板的贴图（正反两面一起换），对象不重建。</summary>
-        private void ApplySwap(CueAnimActor actor, string toTemplate, string toPalette)
-        {
-            var item = actor?.Item;
-            if (item == null || actor.Go == null) return;
-            var tpl = Store.GetTemplate(toTemplate);
-            if (tpl == null) return;
-
-            string palette = string.IsNullOrEmpty(toPalette) ? tpl.palette : toPalette;
-            var eff = EffectiveTemplate(tpl, palette);
-            item.Template = tpl;
-            item.PaletteName = palette;
-            item.BaseColor = Palette.TintFor(eff.shape, palette);
-            actor.EffectiveTemplate = eff;
-
-            var face = ResolveSprite(eff);
-            if (face != null) actor.FaceSprite = face;
-            actor.BackSprite = null;
-            var backPath = ResolveBackImagePath(eff);
-            if (backPath != null) actor.BackSprite = CardImageLoader.Load(backPath, eff.shape);
-
-            item.Shown = true;
         }
 
         /// <summary>

@@ -498,42 +498,6 @@
       "note": "实际尺寸见 games/splendor/components.json：直径 43mm"
     },
     {
-      "id": "card_back_1",
-      "shape": "card",
-      "palette": "card_level_1",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 2,
-      "face_image": "media/card/一级发展卡_背面.jpg",
-      "alpha": 1.0,
-      "back_image": null,
-      "note": "牌堆里的牌：只有卡背（牌还没翻开，无所谓是哪张）。发出去时由 move 的 to_template 换成市场卡模板，那一面是真卡面。因此翻转 = 换面，不需要旋转、不会镜像。"
-    },
-    {
-      "id": "card_back_2",
-      "shape": "card",
-      "palette": "card_level_2",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 2,
-      "face_image": "media/card/二级发展卡_背面.jpg",
-      "alpha": 1.0,
-      "back_image": null,
-      "note": "牌堆里的牌：只有卡背（牌还没翻开，无所谓是哪张）。发出去时由 move 的 to_template 换成市场卡模板，那一面是真卡面。因此翻转 = 换面，不需要旋转、不会镜像。"
-    },
-    {
-      "id": "card_back_3",
-      "shape": "card",
-      "palette": "card_level_3",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 2,
-      "face_image": "media/card/三级发展卡_背面.jpg",
-      "alpha": 1.0,
-      "back_image": null,
-      "note": "牌堆里的牌：只有卡背（牌还没翻开，无所谓是哪张）。发出去时由 move 的 to_template 换成市场卡模板，那一面是真卡面。因此翻转 = 换面，不需要旋转、不会镜像。"
-    },
-    {
       "id": "noble",
       "shape": "card",
       "palette": "noble",
@@ -819,6 +783,36 @@
       "height": 0.88,
       "sorting_order": 2,
       "alpha": 1.0
+    },
+    {
+      "id": "blank_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_背面.jpg",
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。"
+    },
+    {
+      "id": "blank_card_2",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_背面.jpg",
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。"
+    },
+    {
+      "id": "blank_card_3",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_背面.jpg",
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。"
     }
   ],
   "anchors": [

@@ -43,7 +43,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
-           "showbox", "create", "destroy", "swap", "wait"}
+           "showbox", "create", "destroy", "wait"}
 SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
 EASINGS = {
@@ -346,11 +346,6 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                 report.error(ew, "create 需要 zone（创建到哪里）")
             elif ev["zone"] not in zones:
                 report.error(ew, f"create 的 zone {ev['zone']!r} 不存在")
-        elif action == "swap":
-            if not ev.get("to_template"):
-                report.error(ew, "swap 需要 to_template（换成哪张牌）")
-            elif ev["to_template"] not in templates:
-                report.error(ew, f"swap 的 to_template {ev['to_template']!r} 不在 stage.templates 里")
         elif action == "destroy":
             if not ev.get("target") and not ev.get("zone") and not ev.get("template"):
                 report.error(ew, "destroy 需要 target 或 zone/template（否则要销毁什么不明确）")

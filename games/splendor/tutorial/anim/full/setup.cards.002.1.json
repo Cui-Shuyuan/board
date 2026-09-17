@@ -4,7 +4,7 @@
   "track": "full",
   "cue": "setup.cards.002.1",
   "stage": "_stage/splendor.table",
-  "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：创建 40/30/20 张**真实的牌**（背面朝上），分别洗混。「从每摞牌上方分别翻开四张」(3.60 起)：从牌堆搬走最上面那张、边飞边翻面，翻过 90° 时换面成它真正的那张牌，落在市场格位 0–11。牌堆因此真的减少 4 张（40→36、30→26、20→16）。",
+  "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（template）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。",
   "start": {
     "set": []
   },
@@ -37,28 +37,136 @@
       "at": 0.05,
       "dur": 0.0,
       "action": "create",
-      "template": "card_back_1",
-      "plain": true,
+      "template": "market_card_1_emerald",
+      "palette": "card_level_1",
       "zone": "deck_level_1",
-      "count": 40
+      "count": 1
+    },
+    {
+      "at": 0.051000000000000004,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_ruby",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1
+    },
+    {
+      "at": 0.052000000000000005,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_diamond",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1
+    },
+    {
+      "at": 0.053000000000000005,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_1_sapphire",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 1
     },
     {
       "at": 0.07,
       "dur": 0.0,
       "action": "create",
-      "template": "card_back_2",
-      "plain": true,
+      "template": "market_card_2_sapphire",
+      "palette": "card_level_2",
       "zone": "deck_level_2",
-      "count": 30
+      "count": 1
+    },
+    {
+      "at": 0.07100000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_onyx",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1
+    },
+    {
+      "at": 0.07200000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_ruby",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1
+    },
+    {
+      "at": 0.07300000000000001,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_2_emerald",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 1
     },
     {
       "at": 0.09,
       "dur": 0.0,
       "action": "create",
-      "template": "card_back_3",
-      "plain": true,
+      "template": "market_card_3_ruby",
+      "palette": "card_level_3",
       "zone": "deck_level_3",
-      "count": 20
+      "count": 1
+    },
+    {
+      "at": 0.091,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_diamond",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1
+    },
+    {
+      "at": 0.092,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_emerald",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1
+    },
+    {
+      "at": 0.093,
+      "dur": 0.0,
+      "action": "create",
+      "template": "market_card_3_onyx",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 1
+    },
+    {
+      "at": 0.2,
+      "dur": 0.0,
+      "action": "create",
+      "template": "blank_card_1",
+      "palette": "card_level_1",
+      "zone": "deck_level_1",
+      "count": 36
+    },
+    {
+      "at": 0.22,
+      "dur": 0.0,
+      "action": "create",
+      "template": "blank_card_2",
+      "palette": "card_level_2",
+      "zone": "deck_level_2",
+      "count": 26
+    },
+    {
+      "at": 0.24000000000000002,
+      "dur": 0.0,
+      "action": "create",
+      "template": "blank_card_3",
+      "palette": "card_level_3",
+      "zone": "deck_level_3",
+      "count": 16
     },
     {
       "at": 0.3,
@@ -89,14 +197,12 @@
         "deck_level_1"
       ],
       "take": 1,
-      "template": "card_back_1",
       "zone": "card_market",
       "order": 0,
       "slot": 0,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_1_emerald",
-      "to_palette": "card_level_1"
+      "template": "market_card_1_emerald"
     },
     {
       "at": 3.97,
@@ -106,14 +212,12 @@
         "deck_level_1"
       ],
       "take": 1,
-      "template": "card_back_1",
       "zone": "card_market",
       "order": 1,
       "slot": 1,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_1_ruby",
-      "to_palette": "card_level_1"
+      "template": "market_card_1_ruby"
     },
     {
       "at": 4.36,
@@ -123,14 +227,12 @@
         "deck_level_1"
       ],
       "take": 1,
-      "template": "card_back_1",
       "zone": "card_market",
       "order": 2,
       "slot": 2,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_1_diamond",
-      "to_palette": "card_level_1"
+      "template": "market_card_1_diamond"
     },
     {
       "at": 4.75,
@@ -140,14 +242,12 @@
         "deck_level_1"
       ],
       "take": 1,
-      "template": "card_back_1",
       "zone": "card_market",
       "order": 3,
       "slot": 3,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_1_sapphire",
-      "to_palette": "card_level_1"
+      "template": "market_card_1_sapphire"
     },
     {
       "at": 5.14,
@@ -157,14 +257,12 @@
         "deck_level_2"
       ],
       "take": 1,
-      "template": "card_back_2",
       "zone": "card_market",
       "order": 4,
       "slot": 4,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_2_sapphire",
-      "to_palette": "card_level_2"
+      "template": "market_card_2_sapphire"
     },
     {
       "at": 5.53,
@@ -174,14 +272,12 @@
         "deck_level_2"
       ],
       "take": 1,
-      "template": "card_back_2",
       "zone": "card_market",
       "order": 5,
       "slot": 5,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_2_onyx",
-      "to_palette": "card_level_2"
+      "template": "market_card_2_onyx"
     },
     {
       "at": 5.92,
@@ -191,14 +287,12 @@
         "deck_level_2"
       ],
       "take": 1,
-      "template": "card_back_2",
       "zone": "card_market",
       "order": 6,
       "slot": 6,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_2_ruby",
-      "to_palette": "card_level_2"
+      "template": "market_card_2_ruby"
     },
     {
       "at": 6.31,
@@ -208,14 +302,12 @@
         "deck_level_2"
       ],
       "take": 1,
-      "template": "card_back_2",
       "zone": "card_market",
       "order": 7,
       "slot": 7,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_2_emerald",
-      "to_palette": "card_level_2"
+      "template": "market_card_2_emerald"
     },
     {
       "at": 6.7,
@@ -225,14 +317,12 @@
         "deck_level_3"
       ],
       "take": 1,
-      "template": "card_back_3",
       "zone": "card_market",
       "order": 8,
       "slot": 8,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_3_ruby",
-      "to_palette": "card_level_3"
+      "template": "market_card_3_ruby"
     },
     {
       "at": 7.09,
@@ -242,14 +332,12 @@
         "deck_level_3"
       ],
       "take": 1,
-      "template": "card_back_3",
       "zone": "card_market",
       "order": 9,
       "slot": 9,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_3_diamond",
-      "to_palette": "card_level_3"
+      "template": "market_card_3_diamond"
     },
     {
       "at": 7.48,
@@ -259,14 +347,12 @@
         "deck_level_3"
       ],
       "take": 1,
-      "template": "card_back_3",
       "zone": "card_market",
       "order": 10,
       "slot": 10,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_3_emerald",
-      "to_palette": "card_level_3"
+      "template": "market_card_3_emerald"
     },
     {
       "at": 7.87,
@@ -276,14 +362,12 @@
         "deck_level_3"
       ],
       "take": 1,
-      "template": "card_back_3",
       "zone": "card_market",
       "order": 11,
       "slot": 11,
       "flip": true,
       "easing": "easeInOutCubic",
-      "to_template": "market_card_3_onyx",
-      "to_palette": "card_level_3"
+      "template": "market_card_3_onyx"
     }
   ]
 }
