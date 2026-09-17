@@ -1346,3 +1346,50 @@ deck_level_2 共30件：
 -executeMethod ...ListZone -listZone deck_level_2
 ```
 它会同时打印 `live=` 与 `slot=`，一眼能看出两者是否一致。
+
+
+## 【已修】二级/三级牌堆重合 —— 两个根因（2026-09）
+
+### 根因 1：容量写错
+
+`deck_level_2` / `deck_level_3` 的 `capacity` 都写成了 **40**，而它们实际只有 30/20 张。
+叠放台阶落在 `order = capacity-1 .. capacity-maxVisible` = **32..39**，
+而这两摞根本没有那些 order → 全部落进重合块 → **看上去只有一张**。
+
+改成 `capacity = 40 / 30 / 20` 后三摞都是 8 层台阶：
+
+```
+t=2.1   deck1: 40张 台8   deck2: 30张 台8   deck3: 20张 台8
+```
+
+### 根因 2：位置计算里读 `CountInZone` 造成自引用
+
+`ComputeZonePosition` 曾经调用 `CountInZone(zoneId)`，
+而 `CountInZone` **会去读格位表**，格位表又由 `ComputeZonePosition` 构建 ——
+**自引用**（严重时无限递归、Unity 静默崩溃，日志只打一半）。
+
+**规则：位置计算只准读 `zone`（配置）与 `order`（参数），绝不读任何"当前有几张"的状态。**
+
+### 最终公式（按容量锚定，不可改）
+
+```csharp
+int deckCapacity = zone.capacity > 0 ? zone.capacity : 8;
+int fromBottom = Mathf.Max(0, deckCapacity - 1 - order);
+float lift = Mathf.Min(fromBottom, maxVisible - 1);
+```
+
+**为什么必须锚容量、不能锚实际张数**：发牌从 `order 0` 开始，若锚实际张数，
+牌一被发走"距底"就变小 → 台阶被吃掉（实测 40张8层 → 36张4层）。
+锚容量则是固定映射 → 发走任意张，其余牌的台阶位置都不变。
+
+断言：
+```
+PASS 发牌不改变牌堆厚度（40张 0.112/8层 → 38张 0.112/8层 → 36张 0.112/8层）
+PASS 错开台阶数恒为 8
+```
+
+### 仍未解决
+
+`t=0.1` 时三摞各只有 4 张，`deck1` 在 `t=0.2` 才补齐到 40 张 ——
+用户看到的"先出现一张卡，再填充成一摞"。这是 `create` 事件分两批
+（先 4 张真牌、后空白牌）且**不同时触发**造成的，需要把三摞的创建做成一个动作。

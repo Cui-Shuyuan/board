@@ -1638,7 +1638,8 @@ namespace BoardGameTutorial.Editor
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
             anim.LoadCue(gameRoot, "full", "setup.cards.002.1", false);
-            for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+            // 只推到"三摞已建好、还没发牌"的时刻（洗混中段），不要在起点就已发走几张
+            for (float tt = 0f; tt <= 2.6f; tt += 0.05f) anim.Seek(tt);
 
             System.Func<int[]> shape = () =>
             {

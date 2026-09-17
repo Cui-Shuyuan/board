@@ -273,6 +273,22 @@ namespace BoardGameTutorial
         }
 
         /// <summary>zone 里当前有多少件（给叠压居中用）。</summary>
+        /// <summary>
+        /// 该 zone 里已用过的最大 order + 1。**只遍历 items，不读格位表。**
+        ///
+        /// 位置计算必须用它、不能用 CountInZone：CountInZone 会读格位表，
+        /// 而格位表正是由位置计算构建的 —— 自引用会让位置取决于
+        /// "算的那一刻有几张牌"（牌堆因此重合或错位）。
+        /// 最大 order 只增不减，是稳定的锚。
+        /// </summary>
+        public int HighestOrderPlusOne(string zoneId)
+        {
+            int max = -1;
+            foreach (var it in items.Values)
+                if (it.ZoneId == zoneId && it.Order > max) max = it.Order;
+            return max + 1;
+        }
+
         /// <summary>某 zone 内某模板的件数（用于 create 的幂等补齐）。</summary>
         public int CountInZone(string zoneId, string templateId)
         {
@@ -574,19 +590,24 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                // 叠放显示（用户定义）：共 total 张，order **最大**的是最下面那张，
-                // order **最小**的是牌堆顶（第一个被发走）。相邻两张错开一点点，
-                // 只错开最外面的 maxVisible 张，更里面的全部重合。
+                // 叠放显示（用户定义）：order 0 是**牌堆顶**（第一个被发走），
+                // order 越大越靠里面（最后被发）。相邻两张错开一点点，
+                // 只有**离牌堆顶最远的 maxVisible 张**构成台阶，更靠外的全部重合。
                 //
-                //   fromBottom = total - 1 - order     ← 距最下面那张几层
+                //   fromBottom = capacity - 1 - order     ← 用**容量**，不用实际张数
                 //   lift       = min(fromBottom, maxVisible - 1)
                 //
-                // **必须用 total，不能用 capacity**：二级牌堆只有 30 张，
-                // 用 capacity(40) 算的话 fromBottom 最小也有 30，全部封顶 → 30 张重合。
-                // （这就是"二级三级只有一张牌"的原因。）
-                int total = Mathf.Max(1, CountInZone(zoneId));
+                // **锚必须是容量（固定值）**，不能是实际张数：
+                //   - 用实际张数：牌一被发走，"距底"就变小 → 台阶被吃掉（越发越薄）
+                //   - 用容量：L 是固定映射 → 发走任意张，剩下那些牌的台阶位置都不变
+                // 台阶在 order 最大那一端（容量决定），而发牌从 order 0 开始 ——
+                // **两端相反，所以发牌天然不改变可见形状**。
+                //
+                // 注意：**不能读 CountInZone**（它会读格位表，而格位表由本函数构建 ——
+                // 自引用会让位置取决于"算的那一刻有几张牌"）。
                 int maxVisible = display.max_visible > 0 ? display.max_visible : 8;
-                int fromBottom = Mathf.Max(0, total - 1 - slot);
+                int deckCapacity = zone.capacity > 0 ? zone.capacity : 8;
+                int fromBottom = Mathf.Max(0, deckCapacity - 1 - slot);
                 float lift = Mathf.Min(fromBottom, maxVisible - 1);
                 x += lift * display.dx;
                 z += lift * display.dz;
@@ -634,7 +655,7 @@ namespace BoardGameTutorial
                 var c = zone.center;
                 Debug.LogError($"[ZoneStore] 格位坐标无效 zone={zoneId} order={order} " +
                                $"center=({(c != null ? c.x.ToString() : "null")},{(c != null ? c.z.ToString() : "null")}) " +
-                               $"capacity={capacity} slot={slot} visible={((display != null && display.mode == "stack") ? Mathf.Clamp(CountInZone(zoneId), 1, display.max_visible > 0 ? display.max_visible : 8).ToString() : "-")} " +
+                               $"capacity={capacity} slot={slot} " +
                                $"x_step={layout.x_step} z_step={layout.z_step} cols={layout.cols} " +
                                $"dx={((display != null) ? display.dx.ToString() : "null")} dz={((display != null) ? display.dz.ToString() : "null")} → ({x},{z})");
                 return new Vector3(c != null ? c.x : 0f, 0f, c != null ? c.z : 0f);
