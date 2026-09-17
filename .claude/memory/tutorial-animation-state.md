@@ -1246,6 +1246,30 @@ PASS 发到有偏移的那几张时开始变小（台阶 8→7，厚度 0.112→
 **下一步**：在 `SliceAt`/`BuildSlotTable`/`InvalidateSlots` 三处加日志，
 查清"谁在什么时候填充了 deck_level_2/3 的格位表"。
 
+## 【已删除】离屏出图系统（2026-09，用户要求）
+
+用户原话：「那个离屏什么查询工具是你自己写的吗，是的话把它删了」——
+**是的，是我写的，已全部删除**：
+
+- `CaptureTimeline` / `CaptureOne` / `CaptureSequence` / `CaptureAll` / `Capture`
+- 辅助：`SaveFrame` / `WriteDump` / `DumpProjection` / `ReplayPreceding`
+- 旧脚本：`BatchRender.cs` / `BatchRenderTutorial.cs` / `DiagAlpha.cs`
+- 所有自检里残留的 `SaveFrame(...)` 调用与贴图导出段
+
+**保留下来的是状态查询（这才是可靠的）**：
+
+| 工具 | 作用 |
+|---|---|
+| `DumpState` | 采一条 cue 的终态，输出 JSON（每个 zone 的件数/显示哪面/身份） |
+| `TraceState` | 逐帧打印状态轨迹（0.1s 一步），用来看"动画过程中发生了什么" |
+
+`check_unity_scripts.py` 的入口清单也相应更新：不再要求出图方法存在。
+
+### 为什么删
+
+它两次把**错的画面**当成证据（一次朝向、一次读了残留文件），
+而状态查询一句话就能回答"对不对"。**它的存在本身在诱导我犯"用像素判断"的错。**
+
 ## 【结论】离屏出图不可用于判定对错（2026-09，用户逼问后查清）
 
 用户的原话：「**你究竟能不能通过程序查询某一个cue的组件状态？**

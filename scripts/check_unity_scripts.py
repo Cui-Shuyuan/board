@@ -796,8 +796,9 @@ def main():
 # 这些方法被**静默删掉过两次**（脚本按区间替换时切走），而删掉后跑出来的
 # "通过"是假的 —— 因为 Unity 报 executeMethod could not be found，退出码非 0，
 # 但只看汇总输出时会误以为没事。所以在这里固化清单。
+# 出图（离屏渲染）已全部删除：它两次把错画面当成证据，而且状态查询足够回答"对不对"。
+# 现在只保留两类入口：状态查询（DumpState/TraceState）与自检（SelfTest*）。
 ENTRY_METHODS = [
-    "CaptureTimeline", "CaptureOne", "CaptureSequence", "CaptureAll",
     "SelfTest", "SelfTestLivePath", "SelfTestDealSync", "SelfTestClipLeak",
     "SelfTestEntryTree", "SelfTestNoLeakOnJump", "SelfTestSequential",
     "SelfTestNoFlashOnLoad", "SelfTestShuffleGeneric", "SelfTestGroupHighlight",
