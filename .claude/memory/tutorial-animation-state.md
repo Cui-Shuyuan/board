@@ -888,3 +888,23 @@ zone 的状态写成：`count` / `face_up` / `face_down` / `kinds`（**按身份
 - `TutorialCueAnimPlayer.EventsForTest` = 本条 cue 实际载入的事件
   （用于核对 **JsonUtility 有没有丢字段**）
 - `TutorialFrameCapture.DumpState`（`-dumpCue` / `-dumpReplay` / `-dumpOut`）
+
+### 对账工具抓到的三类问题（都是真事实）
+
+做完 cue 9–13 这一小节后，工具第一次全线跑通，过程中抓到：
+
+| 报的现象 | 实际是什么 |
+|---|---|
+| `showcase.kinds[一级卡背] 期望1 实际0`（cue10 入口） | **契约自相矛盾**：cue10 的 `enter` 写了"卡背"，但父 cue(cue9) 的出口是"正面" |
+| `deck_level_1.count 期望40 实际0`（cue9 出口） | **契约写错了**：我写了"牌堆 40 张"，但按脚本牌堆要到 cue 12 才创建。那句账目属于 `stage.initial`（数据），不属于这一 cue 的画面契约 |
+| `showcase.face_up 期望1 实际0`（cue9 出口） | **动画缺了一步**：那张卡创建后没有翻转，仍是背面朝上 |
+
+**三类问题对应三种修法**：改契约措辞、删掉错写的字段、给动画补一步。这正是
+"有偏差时能判断是脚本写错还是动画做错"的实用价值。
+
+### 一条硬教训：`-dumpReplay` 必须沿 entry 链逐条播完
+
+`-dumpReplay 1` 原先只播**上一条**，于是"父 cue 的出口"本身是空的，
+跨 cue 对账全是假差异。必须沿 `entry_from` 链把之前的 cue **逐条播到终态**。
+
+## 状态契约与对账工具（2026-09，用户提议）

@@ -50,6 +50,12 @@ def kind_matches(want_key, got_key):
     for lv, num in (("一", 1), ("二", 2), ("三", 3)):
         if want_key.startswith(lv + "级") and want_key[2:] in COLORS:
             return tmpl == f"market_card_{num}_{COLORS[want_key[2:]]}"
+    # "一级正面" / "一级卡背" → 展示位用的样本模板
+    for lv, num in (("一", 1), ("二", 2), ("三", 3)):
+        if want_key == f"{lv}级正面":
+            return tmpl in (f"sample_card_{num}", f"market_card_{num}_")
+        if want_key == f"{lv}级卡背":
+            return tmpl == f"sample_back_{num}"
     # 兜底：当作模板 id 前缀
     return want_key == tmpl
 
@@ -92,10 +98,13 @@ def main():
     ap.add_argument("--script-dir", default=None)
     ap.add_argument("-v", "--verbose", action="store_true", help="同时列出被忽略的 zone")
     ap.add_argument("--chain", action="store_true", help="跨 cue 对账：本 cue 的 enter vs 父 cue 的 exit")
+    ap.add_argument("--all", action="store_true", help="把这一小节全查：自己的 exit + 跨 cue 的链")
     args = ap.parse_args()
     args_verbose = args.verbose
     if args.chain:
         return chain(args)
+    if args.all:
+        return check_all(args)
 
     sdir = Path(args.script_dir) if args.script_dir else ROOT / "games" / args.game / "tutorial" / "script" / "full"
     cpath = sdir / f"{args.cue}.json"
@@ -136,6 +145,61 @@ def main():
 
     print(f"PASS  状态与契约一致（比对了 {len(want)} 个 zone）")
     return 0
+
+
+def check_all(args):
+    """把这一小节全部查一遍：① 每条自己的 exit ② 跨 cue 的链（enter vs 父 exit）。"""
+    sdir = Path(args.script_dir) if args.script_dir else ROOT / "games" / args.game / "tutorial" / "script" / "full"
+    sdir = Path(sdir)
+    fails = skipped = 0
+    for cpath in sorted(sdir.glob("*.json")):
+        if cpath.name.endswith(".exitstate.json"):
+            continue
+        cue = cpath.stem
+        contract = load(cpath)
+        state_file = sdir / f"{cue}.exitstate.json"
+
+        # ① 自己的出口
+        if state_file.exists():
+            want = (contract.get("exit") or {}).get("zones") or {}
+            got = (load(state_file).get("zones") or {})
+            diffs = []
+            for z, wz in want.items():
+                diffs += check_zone(z, wz, got.get(z))
+            if diffs:
+                print(f"FAIL  {cue}  exit:")
+                for d in diffs:
+                    print(f"        - {d}")
+                fails += 1
+            else:
+                print(f"PASS  {cue}  exit（{len(want)} 个 zone）")
+        else:
+            print(f"SKIP  {cue} exit（还没采样）")
+            skipped += 1
+
+        # ② 跨 cue：enter vs 父 exit
+        parent = contract.get("entry_from")
+        if parent:
+            ps = sdir / f"{parent}.exitstate.json"
+            if ps.exists():
+                want = (contract.get("enter") or {}).get("zones") or {}
+                got = (load(ps).get("zones") or {})
+                diffs = []
+                for z, wz in want.items():
+                    diffs += check_zone(z, wz, got.get(z))
+                if diffs:
+                    print(f"FAIL  {cue}  enter vs 父({parent}) exit:")
+                    for d in diffs:
+                        print(f"        - {d}")
+                    fails += 1
+                else:
+                    print(f"PASS  {cue}  enter == 父({parent}) 的终态")
+            else:
+                print(f"SKIP  {cue} enter（父 cue 还没采样）")
+
+    print("-" * 60)
+    print(f"{'FAIL' if fails else 'PASS'}  {fails} 处不一致" + (f"，{skipped} 条待采样" if skipped else ""))
+    return 1 if fails else 0
 
 
 def chain(args):

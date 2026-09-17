@@ -9,7 +9,7 @@
         "count": 1,
         "face_up": 1,
         "kinds": {
-          "card_level_1": 1
+          "一级正面": 1
         }
       }
     }
@@ -23,21 +23,21 @@
         "count": 1,
         "face_down": 1,
         "kinds": {
-          "card_level_1": 1
+          "一级卡背": 1
         }
       },
       "showcase_2": {
         "count": 1,
         "face_down": 1,
         "kinds": {
-          "card_level_2": 1
+          "二级卡背": 1
         }
       },
       "showcase_3": {
         "count": 1,
         "face_down": 1,
         "kinds": {
-          "card_level_3": 1
+          "三级卡背": 1
         }
       }
     }

@@ -1756,6 +1756,29 @@ namespace BoardGameTutorial.Editor
             var go = new GameObject("DumpHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
+
+            // -dumpReplay 1：把该 cue **之前的所有 cue** 逐条播到终态，再采样本条。
+            // 只播上一条是不够的：样本卡是更早的 cue 创建的（cue10 建卡背、cue9 建正面），
+            // 漏掉它们会让"父 cue 的出口"本身是空的，跨 cue 对账就全是假差异。
+            if (replay)
+            {
+                var playerGo = new GameObject("DumpReplayHost");
+                var player = playerGo.AddComponent<TutorialCuePlayer>();
+                player.autoPlay = false;
+                player.tutorialRoot = Path.Combine(repoRoot, "games");
+                if (player.LoadRuntime())
+                {
+                    int idx = player.Document.cues.FindIndex(c => c.id == cueId);
+                    for (int k = 0; k < idx; k++)
+                    {
+                        string prev = player.Document.cues[k].id;
+                        if (!anim.LoadCue(gameRoot, "full", prev, k > 0)) continue;
+                        anim.Seek(anim.TotalDuration + 1f);
+                    }
+                }
+                Object.DestroyImmediate(playerGo);
+            }
+
             if (!anim.LoadCue(gameRoot, "full", cueId, replay))
             {
                 Debug.LogError($"[Dump] LoadCue 失败: {cueId}");
