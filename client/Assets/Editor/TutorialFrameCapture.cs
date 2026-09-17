@@ -1818,6 +1818,21 @@ namespace BoardGameTutorial.Editor
             }
             for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
+            // 牌堆外形随张数的变化：分别在 40/36/32/28 张时测一级牌堆的"外形跨度"
+            // 以及"顶层错开台阶数"。发牌取的是最上面的牌，所以 40→36→… 正是发牌过程。
+            foreach (var probeAt in new[] { 2.6f, 4.2f, 5.8f, 7.4f, 8.4f })
+            {
+                for (float tt = 0f; tt <= probeAt; tt += 0.05f) anim.Seek(tt);
+                var it1 = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                          .OrderBy(x => x.Order).ToList();
+                var xsAll = it1.Select(x => x.LivePosition.x).Distinct().OrderBy(v => v).ToList();
+                // 牌堆**轮廓**：所有牌的外接范围（这就是眼睛看到的厚度）
+                float lo = xsAll.Min(), hi = xsAll.Max();
+                Debug.Log($"[Shape] t={probeAt:0.0} {it1.Count}张 轮廓[{lo:0.000},{hi:0.000}] " +
+                          $"厚度={hi - lo:0.000} 台阶数={xsAll.Count} " +
+                          $"最低order={it1.First().Order} 最高order={it1.Last().Order}");
+            }
+
             var zones = new SortedDictionary<string, ZoneAgg>();
             foreach (var it in anim.Store.Items)
             {
@@ -1957,47 +1972,28 @@ namespace BoardGameTutorial.Editor
             if (badMarket != 0) failures++;
             _ = badMarketAfterDeal;
 
-            // 牌堆外形模型（用户定义的）：**最底部 max_visible 张各自错开，再往上的全部重合**。
-            // 判据（这是"发牌看不出变少"的真正条件）：
-            //   ① order → 位置是固定的映射（与还剩几张无关）
-            //   ② 发牌后，**没被取走的那些牌坐标完全不变**
-            System.Func<string, System.Collections.Generic.Dictionary<int, Vector3>> byOrder = (zone) =>
+            // 牌堆外形模型：**发牌前后，牌堆的轮廓厚度必须完全不变**。
+            // 这是"发出一张牌但看起来没变少"的唯一判据，也是眼睛直接能看到的东西。
+            // 之前我断言的是"某张牌自己的坐标不变"，那是错的判据 —— 它通过但画面在变薄。
+            System.Func<float, float[]> contour = (at) =>
             {
-                var map = new System.Collections.Generic.Dictionary<int, Vector3>();
-                var last = Vector3.zero; bool has = false;
-                foreach (var it in anim.Store.Items.Where(x => x.ZoneId == zone))
-                { map[it.Order] = it.LivePosition; last = it.LivePosition; has = true; }
-                return has ? map : map;
+                for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt);
+                var xs = anim.Store.Items.Where(x => x.ZoneId == "deck_level_1")
+                                         .Select(x => x.LivePosition.x).Distinct().ToList();
+                return new[] { xs.Min(), xs.Max(), xs.Count };
             };
-            System.Action<float> seekTo = (at) => { for (float tt = 0f; tt <= at; tt += 0.05f) anim.Seek(tt); };
+            var c40 = contour(2.6f);
+            var c38 = contour(4.2f);
+            var c36 = contour(8.4f);
+            float t40 = c40[1] - c40[0], t38 = c38[1] - c38[0], t36 = c36[1] - c36[0];
+            bool sameThickness = Mathf.Abs(t40 - t38) < 1e-4f && Mathf.Abs(t40 - t36) < 1e-4f;
+            Debug.Log($"[Orient] {(sameThickness ? "PASS" : "FAIL")} 发牌不改变牌堆厚度" +
+                      $"（40张 {t40:0.000}/{c40[2]}层 → 38张 {t38:0.000}/{c38[2]}层 → 36张 {t36:0.000}/{c36[2]}层）");
+            if (!sameThickness) failures++;
 
-            seekTo(2.6f);   var before = byOrder("deck_level_1");
-            seekTo(8.4f);   var after = byOrder("deck_level_1");
-
-            // ① 底部 8 张逐一错开、间距恒定
-            bool even = true; float step = Vector3.Distance(before[0], before[1]);
-            for (int i = 1; i < 7; i++)
-                if (Mathf.Abs(Vector3.Distance(before[i], before[i + 1]) - step) > 1e-5f) even = false;
-            bool spread = step > 1e-6f;
-            Debug.Log($"[Orient] {(even && spread ? "PASS" : "FAIL")} " +
-                      $"底部 8 张逐层错开且间距恒定（每层 {step:0.0000}）");
-            if (!even || !spread) failures++;
-
-            // ② 第 8 张及以上的牌全部重合
-            bool coincide = true;
-            foreach (var o in before.Keys.Where(k => k >= 7))
-                if (Vector3.Distance(before[o], before[7]) > 1e-5f) coincide = false;
-            Debug.Log($"[Orient] {(coincide ? "PASS" : "FAIL")} 第 8 张往上的牌全部重合（重合块）");
-            if (!coincide) failures++;
-
-            // ③ **发牌后，没被取走的牌坐标完全不变** —— 这才是"看不出变少"
-            int moved = 0;
-            foreach (var kv in after)
-                if (before.TryGetValue(kv.Key, out var was)
-                    && Vector3.Distance(was, kv.Value) > 1e-5f) moved++;
-            Debug.Log($"[Orient] {(moved == 0 ? "PASS" : "FAIL")} " +
-                      $"发牌后未被取走的牌坐标完全不变（变化的 {moved} 张）");
-            if (moved != 0) failures++;
+            bool sameSteps = c40[2] == 8 && c38[2] == 8 && c36[2] == 8;
+            Debug.Log($"[Orient] {(sameSteps ? "PASS" : "FAIL")} 错开台阶数恒为 8");
+            if (!sameSteps) failures++;
 
             Debug.Log($"[Orient] {(failures == 0 ? "全部通过" : failures + " 项失败")}");
             EditorApplication.Exit(failures == 0 ? 0 : 1);

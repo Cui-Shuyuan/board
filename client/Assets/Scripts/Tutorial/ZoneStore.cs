@@ -574,18 +574,23 @@ namespace BoardGameTutorial
 
             if (display != null && display.mode == "stack")
             {
-                // 叠放显示：**最底部 max_visible 张各自错开，再往上的全部重合**。
+                // 叠放显示：**离牌堆顶越近错开越多，超出 max_visible 的部分全部重合**。
                 //
-                // 用户的原话：「最下面一张牌放在那里，然后倒数第二张牌错开一点，盖在最下面那张牌上，
-                // 倒数第三张牌再错开一点盖在倒数第二张牌上，以此类推，然后倒数第8张牌一直到
-                // 倒数第20张牌，一点都不错开，重合在一起，这样才能起到一个发出一张牌，
-                // 但牌堆看起来没变少的效果。」
+                // 用户的原话：「发出的那4张牌，其实是连带着另外一部分牌是重叠在一起的。
+                // 只有最底部那8张牌是错开的，这样发出4张牌，牌堆的样子也不会改变。
+                // 现在这个牌堆的话，如果发出7张牌，牌堆看上去就只会剩下一张，
+                // 然后这一张特别耐发，这是不对的。」
                 //
-                // 要点：错开量按 **order** 算（order 0 = 最下面），封顶在 max_visible-1。
-                // 第 max_visible 张**以及它上面的所有牌**都落在同一位置（重合块）。
-                // 这样从顶上发牌时，抽走的是重合块里的牌，**错开的那 8 层形状完全不变**。
+                // 关键：发牌取的是**离顶最近**的牌，所以形状必须由离顶最近的那几张决定，
+                // 取走它们外形才不变。用**距顶的层数**算错开量：
+                //   fromTop = capacity - 1 - order      （按容量，与实际张数无关）
+                //   lift    = min(fromTop, maxVisible - 1)
+                // 这样"第几格错开多少"是固定的映射；离顶最近的 maxVisible 张构成可见的台阶，
+                // 更靠下的牌全部重合在同一个位置（重合块）。
                 int maxVisible = display.max_visible > 0 ? display.max_visible : 8;
-                float lift = Mathf.Min(slot, maxVisible - 1);   // order 越大（越靠上）错开越多，封顶
+                int deckCapacity = zone.capacity > 0 ? zone.capacity : Mathf.Max(1, CountInZone(zoneId));
+                int fromTop = Mathf.Max(0, deckCapacity - 1 - slot);
+                float lift = Mathf.Min(fromTop, maxVisible - 1);
                 x += lift * display.dx;
                 z += lift * display.dz;
                 return new Vector3(x, 0f, z);
