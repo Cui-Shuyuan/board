@@ -1715,3 +1715,37 @@ if (Actor.FaceSprite != null && ReferenceEquals(sr.sprite, Actor.FaceSprite)) re
 ```
 
 **教训：报告"画面显示哪一面"时，不要去猜模板语义 —— 直接比较渲染器手上的贴图。**
+
+
+## 【已修】cue11 三张卡背"一一快速出现" → 同时出现（2026-09）
+
+用户："这三张卡背是非常快速地一一出现的……我觉得肯定有办法能做到让它们同时出现。"
+
+原因：cue10 里三个 `create` 写成了 `at = 0.15 / 0.2 / 0.25`（**间隔 0.05s**），
+所以是一张接一张出现。
+
+**`Seek` 的触发的写法保证了"同一 `at` 的事件在同一帧全部触发"**：
+
+```csharp
+while (nextIndex < cueDoc.events.Count && cueDoc.events[nextIndex].at <= scaled + 1e-4f)
+{
+    var ev = cueDoc.events[nextIndex];
+    nextIndex++;
+    Trigger(ev);          // 同一帧里连续触发，中间没有采样
+}
+```
+
+所以**只要把 `at` 写成同一个值**，它们就同时出现 —— 不需要新字段、不需要新原语。
+
+```
+at=0.15 create sample_back_1 zone=showcase_1
+at=0.15 create sample_back_2 zone=showcase_2
+at=0.15 create sample_back_3 zone=showcase_3
+```
+
+实测 `t=0.2` 三个 zone 都是 1 张。
+
+### 通用做法（写 cue 时记住）
+
+**"同时发生" = 同一个 `at`；"依次发生" = `at` 递增。**
+两者之间只差一个数字，不需要两套机制 —— 这是我之前在数据里无意写成 0.05 递增造成的。
