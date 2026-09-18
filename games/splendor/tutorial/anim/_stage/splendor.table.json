@@ -182,9 +182,10 @@
         "z": -1.72
       },
       "layout": {
-        "type": "block",
-        "x_step": 0.36,
-        "z_step": 0.34
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 7,
       "palette": "panel_supply",
@@ -193,12 +194,16 @@
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
       },
       "concept": "gem_supply",
       "contains": [
         "gem"
-      ]
+      ],
+      "note": "摆成一摞：每枚**错开 0.055**（约 1/8 个直径）压在一起，和牌堆同一个手法 —— 4/5/7 枚的差别靠\"露出来的边\"数得清，而不是摊成一片。方向与牌堆一致：order 0 在最前/最上（先被拿走的在上面）。"
     },
     {
       "id": "gem_supply_sapphire",
@@ -208,9 +213,10 @@
         "z": -1.72
       },
       "layout": {
-        "type": "block",
-        "x_step": 0.36,
-        "z_step": 0.34
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 7,
       "palette": "panel_supply",
@@ -219,12 +225,16 @@
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
       },
       "concept": "gem_supply",
       "contains": [
         "gem"
-      ]
+      ],
+      "note": "摆成一摞：每枚**错开 0.055**（约 1/8 个直径）压在一起，和牌堆同一个手法 —— 4/5/7 枚的差别靠\"露出来的边\"数得清，而不是摊成一片。方向与牌堆一致：order 0 在最前/最上（先被拿走的在上面）。"
     },
     {
       "id": "gem_supply_ruby",
@@ -234,9 +244,10 @@
         "z": -1.72
       },
       "layout": {
-        "type": "block",
-        "x_step": 0.36,
-        "z_step": 0.34
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 7,
       "palette": "panel_supply",
@@ -245,12 +256,16 @@
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
       },
       "concept": "gem_supply",
       "contains": [
         "gem"
-      ]
+      ],
+      "note": "摆成一摞：每枚**错开 0.055**（约 1/8 个直径）压在一起，和牌堆同一个手法 —— 4/5/7 枚的差别靠\"露出来的边\"数得清，而不是摊成一片。方向与牌堆一致：order 0 在最前/最上（先被拿走的在上面）。"
     },
     {
       "id": "gem_supply_emerald",
@@ -260,9 +275,10 @@
         "z": -2.34
       },
       "layout": {
-        "type": "block",
-        "x_step": 0.36,
-        "z_step": 0.34
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 7,
       "palette": "panel_supply",
@@ -271,12 +287,16 @@
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
       },
       "concept": "gem_supply",
       "contains": [
         "gem"
-      ]
+      ],
+      "note": "摆成一摞：每枚**错开 0.055**（约 1/8 个直径）压在一起，和牌堆同一个手法 —— 4/5/7 枚的差别靠\"露出来的边\"数得清，而不是摊成一片。方向与牌堆一致：order 0 在最前/最上（先被拿走的在上面）。"
     },
     {
       "id": "gem_supply_onyx",
@@ -286,9 +306,10 @@
         "z": -2.34
       },
       "layout": {
-        "type": "block",
-        "x_step": 0.36,
-        "z_step": 0.34
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 7,
       "palette": "panel_supply",
@@ -297,12 +318,16 @@
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
       },
       "concept": "gem_supply",
       "contains": [
         "gem"
-      ]
+      ],
+      "note": "摆成一摞：每枚**错开 0.055**（约 1/8 个直径）压在一起，和牌堆同一个手法 —— 4/5/7 枚的差别靠\"露出来的边\"数得清，而不是摊成一片。方向与牌堆一致：order 0 在最前/最上（先被拿走的在上面）。"
     },
     {
       "id": "gold_supply",
@@ -312,9 +337,10 @@
         "z": -2.34
       },
       "layout": {
-        "type": "block",
-        "x_step": 0.36,
-        "z_step": 0.34
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
       },
       "capacity": 7,
       "palette": "panel_supply",
@@ -323,12 +349,16 @@
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
       },
       "concept": "gold_supply",
       "contains": [
         "gold"
-      ]
+      ],
+      "note": "摆成一摞：每枚**错开 0.055**（约 1/8 个直径）压在一起，和牌堆同一个手法 —— 4/5/7 枚的差别靠\"露出来的边\"数得清，而不是摊成一片。方向与牌堆一致：order 0 在最前/最上（先被拿走的在上面）。"
     },
     {
       "id": "player_holding",

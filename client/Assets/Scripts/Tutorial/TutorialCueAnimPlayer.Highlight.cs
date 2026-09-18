@@ -199,7 +199,19 @@ namespace BoardGameTutorial
             // row 是单行：长度只由 capacity × x_step 决定（cols 对 row 无效）。
             float width, height;
             var layout = zone.layout ?? new StageLayout();
-            if (layout.type == "row")
+            // 一摞（牌堆 / 宝石堆）：尺寸由**错开量**决定，不能用 layout 的步长 ——
+            // stack 模式下 layout 的步长已经不作数了（那是 count 模式的摆法），
+            // 照它算会得到一块盖不住堆、或者大得离谱的光斑。
+            var disp = zone.display ?? new StageDisplay();
+            if (disp.mode == "stack")
+            {
+                int vis = Mathf.Clamp(Mathf.Max(1, zone.capacity),
+                                      1, disp.max_visible > 0 ? disp.max_visible : 8);
+                float span = Mathf.Max(1, vis) - 1;
+                width = Mathf.Max(0.30f, span * Mathf.Abs(disp.dx) + (zone.size?.w ?? 0.2f) + 0.10f);
+                height = Mathf.Max(0.30f, span * Mathf.Abs(disp.dz) + (zone.size?.h ?? 0.2f) + 0.10f);
+            }
+            else if (layout.type == "row")
             {
                 width = Mathf.Max(0.30f, (Mathf.Max(1, zone.capacity) - 1) * layout.x_step + 0.40f);
                 height = 0.40f;

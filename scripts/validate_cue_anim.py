@@ -41,6 +41,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from framing_geometry import visible_rect, _zone_box, overlaps   # noqa: E402  —— 取景几何只此一份
 
 # 原语名尽量与本体对齐：transfer = <ontology::transfer>、flip = <flip>、shuffle = <shuffle>。
 ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
@@ -547,6 +549,9 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
     # 不声明的话，这一维根本没人比 —— 上一次漏掉盒面就是因为整幅图不在被比的集合里，
     # 而不是比较逻辑写错了。这条是静态检查：事件与契约现在同在一个文件里，不需要采样。
     _check_contract_coverage(doc, cue_id, events, report)
+    # 切取景之后才清场 = 切换后的第一帧是脏的（用户 2026-09 报的 cue 18）
+    if isinstance(events, list):
+        _check_cleanup_timing(cue_id, events, stage, report)
 
     if not isinstance(events, list) or not events:
         # 契约写了、动画还没写（例如 setup.nobles.001.1）：这不是错误，跳过动画检查。
@@ -868,6 +873,58 @@ def check_framing_chain(files, report):
 
 # 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明
 STATE_CHANGING = {"transfer", "create", "destroy", "stack"}
+
+
+def _check_cleanup_timing(cue_id, events, stage, report):
+    """**切取景之后才清场** = 切换后的第一帧是脏的（用户 2026-09 报的 cue 18）。
+
+    那一 cue 是这么写的：`at=0.0` 切到供应区特写、`at=0.30` 才销毁展示位上那 6 枚样本。
+    于是镜头已经对着供应区了，展示位的 6 枚宝石还在画面里停了 0.3 秒 ——
+    用户一眼就看见"初始帧多了好几个宝石"，而不是"有个东西被清掉了"。
+
+    规则（是既有那条"改画面的动作要与改取景同帧"的**反方向**，两条合起来才完整）：
+
+      - **新增内容**可以在切镜头之后（观众等着看它出现）；
+      - **清掉内容**必须在切镜头**之前或同帧**，否则切换后的第一帧里它还在。
+
+    为什么上一轮的对账没查出来：对账比的是"契约声明的 zone vs 采样状态"，
+    而那 6 枚样本**确实在**入口状态里、契约也**如实声明了**（gem_display: 5）——
+    状态是对的，错的是**先后**。所以这条必须查"时间"，不能只查"状态"。
+
+    只对**特写取景**查（整桌取景没有"出框"可言，清场看得见也是正常的）；
+    只查 `destroy` 与"关掉整幅图"这类**纯移除**，不查移动（移动是给人看的动作）。
+    """
+    cams = [(i, ev) for i, ev in enumerate(events)
+            if isinstance(ev, dict) and ev.get("camera")]
+    if not cams or not stage:
+        return
+    for i, cev in cams:
+        cam = cev.get("camera")
+        rect = visible_rect(stage, cam, float(cev.get("camera_padding") or 0.0))
+        if rect is None:          # 整桌取景：不限制，跳过
+            continue
+        t_cam = float(cev.get("at", 0.0))
+        for j, ev in enumerate(events):
+            if j <= i or not isinstance(ev, dict):
+                continue
+            action = ev.get("action")
+            clears = action == "destroy" or (action == "showbox" and float(ev.get("on") or 0) == 0)
+            if not clears:
+                continue
+            t_ev = float(ev.get("at", 0.0))
+            if t_ev <= t_cam:
+                continue          # 同帧或更早 = 合格
+            zone = ev.get("zone")
+            box = _zone_box(stage, next((z for z in (stage.get("zones") or [])
+                                         if z.get("id") == zone), None)) if zone else None
+            if not box or not overlaps(rect, box):
+                continue          # 不在取景里：这一下清场看不见
+            what = f"销毁 {zone}" if action == "destroy" else "关掉整幅图"
+            report.error(
+                f"events[{j}]",
+                f"取景已在 at={t_cam:.2f} 切到 {cam!r}，{t_ev:.2f} 才{what}，"
+                f"而它在取景框里 —— 切换后的第一帧（{t_ev - t_cam:.2f}s 内）画面里还留着它，"
+                f"看起来就是「初始帧多了几个东西」。清场要与切取景**同帧**（写同一个 at）")
 
 
 def _check_contract_coverage(doc, cue_id, events, report):
