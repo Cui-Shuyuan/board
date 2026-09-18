@@ -43,7 +43,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from framing_geometry import (   # noqa: E402  —— 取景几何只此一份
-    visible_rect, _zone_box, overlaps, resolve_zone_ref,
+    visible_rect, _zone_box, overlaps, resolve_zone_ref, zone_ref_hint,
 )
 
 # 原语名尽量与本体对齐：transfer = <ontology::transfer>、flip = <flip>、shuffle = <shuffle>。
@@ -663,13 +663,15 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             report.error(ew, f"未知 zone {zone!r}" +
                              ("" if zone_id in zones else "（它是运行时开出来的区域吗？"
                               "那必须先在本 cue 前文写 `{\"action\":\"zone\",\"op\":\"add\",\"zone\":...}`）")
-                             + ("" if zone_id == zone else f"（按引用解析成 {zone_id!r}）"))
+                             + ("" if zone_id == zone else f"（按引用解析成 {zone_id!r}）")
+                             + zone_ref_hint(stage, zone))
         dest = ev.get("destination")
         dest_id = resolve_zone_ref(stage, dest) if dest else None
         if dest_id and dest_id not in available:
             report.error(ew, f"未知 destination {dest!r}" +
                              ("" if dest_id in zones else "（运行时开出来的区域要先 add 再用）")
-                             + ("" if dest_id == dest else f"（按引用解析成 {dest_id!r}）"))
+                             + ("" if dest_id == dest else f"（按引用解析成 {dest_id!r}）")
+                             + zone_ref_hint(stage, dest))
 
         # create 出来的组件 id 也算已知（模板名#序号），否则同一 cue 后续 target 会被误报
         if action == "create" and ev.get("template"):
@@ -700,7 +702,8 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                 if resolve_zone_ref(stage, source) not in available:
                     report.error(ew, f"source zone {source!r} 不存在"
                                      + ("" if resolve_zone_ref(stage, source) == source
-                                        else f"（按引用解析成 {resolve_zone_ref(stage, source)!r}）"))
+                                        else f"（按引用解析成 {resolve_zone_ref(stage, source)!r}）")
+                                     + zone_ref_hint(stage, source))
             if not dest and not target:
                 report.error(ew, "transfer 缺少目的地 destination")
             if int(ev.get("quantity", 0)) < 0:
@@ -776,7 +779,8 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                 report.error(ew, "create 需要 zone（创建到哪里）")
             elif resolve_zone_ref(stage, ev.get("destination") or "offstage") not in available:
                 report.error(ew, f"create 的 destination {ev.get('destination')!r} 不存在"
-                                 f"（运行时开出来的区域要先 `zone add` 再用）")
+                                 f"（运行时开出来的区域要先 `zone add` 再用）"
+                                 + zone_ref_hint(stage, ev.get("destination")))
         elif action == "destroy":
             if not ev.get("target") and not ev.get("zone") and not ev.get("template"):
                 report.error(ew, "destroy 需要 target 或 zone/template（否则要销毁什么不明确）")

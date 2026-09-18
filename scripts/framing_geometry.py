@@ -48,6 +48,11 @@ def resolve_zone_ref(stage, ref):
         if "=" in seg:
             k, v = seg.split("=", 1)
             want.append((k.strip(), v.strip()))
+    hits = _zone_ref_hits(stage, concept, want)
+    return hits[0] if len(hits) == 1 else s
+
+
+def _zone_ref_hits(stage, concept, want):
     hits = []
     for z in (stage.get("zones") or []):
         if not z or not z.get("id"):
@@ -57,7 +62,31 @@ def resolve_zone_ref(stage, ref):
         have = {(p.get("key"), p.get("value")) for p in (z.get("parts") or []) if isinstance(p, dict)}
         if all(w in have for w in want):
             hits.append(z["id"])
-    return hits[0] if len(hits) == 1 else s
+    return hits
+
+
+def zone_ref_hint(stage, ref):
+    """引用没解析出来时，给一句"到底怎么了"（没有匹配 / 说不清是哪一份）。
+
+    为什么值得单独一句：`<gem_supply>` 这种写法本身没错，**只是不够具体**（五个颜色堆都匹配）。
+    只说"未知 zone"会让人以为名字拼错了，而实际要说的是"把属性写全"。
+    """
+    s = str(ref or "").strip()
+    if len(s) < 3 or not s.startswith("<") or not s.endswith(">"):
+        return ""
+    segs = s[1:-1].split("|")
+    concept = _norm_concept(segs[0])
+    want = []
+    for seg in segs[1:]:
+        if "=" in seg:
+            k, v = seg.split("=", 1)
+            want.append((k.strip(), v.strip()))
+    hits = _zone_ref_hits(stage, concept, want)
+    if not hits:
+        return "（没有 zone 的 concept/属性 匹配它 —— 概念名或属性值写错了？）"
+    if len(hits) > 1:
+        return f"（匹配到 {len(hits)} 个区域 {hits} —— 说不清是哪一份，请把属性写全）"
+    return ""
 
 
 def _norm_concept(c):
