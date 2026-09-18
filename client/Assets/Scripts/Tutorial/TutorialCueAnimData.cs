@@ -9,7 +9,7 @@
 // 因此数据分两层：
 //   anim/_stage/{game}.table.json   —— 牌桌事实：有哪些 zone、每个 zone 在哪、
 //                                      模板长什么样、开局各 zone 里放什么
-//   anim/{track}/{cue_id}.json      —— 这一条 cue 对牌桌做了什么（移动 / 高亮 / 显隐）
+//   anim/{track}.json               —— 一个动画一个文件：每条 cue 一段（start/events 给引擎，story/enter/exit 给人和对账）
 //
 // 运行时维护 zone 占用状态；设置阶段「从镜头外飞进供应堆」与玩家「从供应堆拿到
 // 持有区」是同一个 move 原语，只是 source zone 不同。
@@ -289,6 +289,30 @@ namespace BoardGameTutorial
 
     // ── 单条 cue 的差异 ────────────────────────────────────────────────
 
+    /// <summary>
+    /// 一条 track 的动画脚本 —— **一个动画一个文件**（`anim/{track}.json`）。
+    ///
+    /// `cues` 按**轨道顺序**排；每条 cue 一段，段里同时放着两样东西：
+    ///   - 给人 & 对账工具：`entry_from` / `story` / `note` / `enter` / `exit` / `timing`
+    ///   - 给引擎：`start` / `events`
+    ///
+    /// **引擎只读后者**：本类与 <see cref="CueAnimDoc"/> 只声明引擎要用的字段，
+    /// 契约那些字段 JsonUtility 会原样忽略 —— 这不是丢数据，是两条链路共用一份文件
+    /// （所以"契约里写了、动画还没写"的 cue 允许 `events` 为空，引擎视为"本条无动画"）。
+    /// 反过来说：`events` 写错名字这种错，引擎不会报，得靠 validate_cue_anim.py 的
+    /// "events 为空"检查。两边各守一段。
+    /// </summary>
+    [Serializable]
+    public class TrackAnimDoc
+    {
+        public int schema_version;
+        public string game_id;
+        public string track;
+        public string stage;      // 这条 track 用哪张牌桌（相对 tutorial/anim）
+        public string note;
+        public List<CueAnimDoc> cues;
+    }
+
     [Serializable]
     public class CueAnimDoc
     {
@@ -297,9 +321,6 @@ namespace BoardGameTutorial
         public string track;
         public string cue;
         public string note;
-
-        /// <summary>牌桌文件相对 tutorial/anim 的路径（不含扩展名）。</summary>
-        public string stage = "_stage/splendor.table";
 
         /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置），用于单独预览或表达初始局面。</summary>
         public CueAnimStart start;

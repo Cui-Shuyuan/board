@@ -236,10 +236,38 @@ namespace BoardGameTutorial
                 return false;
             }
 
-            string path = Path.Combine(gameRoot, "tutorial", "anim", track, cueId + ".json");
-            if (!File.Exists(path))
+            // 一个动画一个文件：`anim/{track}.json`，里面按轨道顺序放着每条 cue。
+            string path = Path.Combine(gameRoot, "tutorial", "anim", track + ".json");
+            TrackAnimDoc trackDoc = null;
+            CueAnimDoc found = null;
+            if (File.Exists(path))
             {
-                // 这条 cue 还没有动画数据。
+                trackDoc = JsonUtility.FromJson<TrackAnimDoc>(File.ReadAllText(path));
+                if (trackDoc == null || trackDoc.cues == null)
+                {
+                    Debug.LogError($"[TutorialCueAnim] 解析失败（cues 读不到）: {path}");
+                    cueDoc = null;
+                    return false;
+                }
+                foreach (var c in trackDoc.cues)
+                    if (c != null && c.cue == cueId) { found = c; break; }
+
+                if (found == null)
+                {
+                    // 脚本里根本没有这条 cue：数据不一致，要留下痕迹（下面按"无动画"处理）
+                    Debug.LogWarning($"[TutorialCueAnim] {path} 里没有这条 cue: {cueId}");
+                }
+                else if (found.events == null || found.events.Count == 0)
+                {
+                    // 契约写了、动画还没写（例如 setup.nobles.001.1）：本条无动画，保留牌桌
+                    Debug.Log($"[TutorialCueAnim] 本条 cue 还没有动画数据（events 为空），只保留牌桌: {cueId}");
+                    found = null;
+                }
+            }
+
+            if (found == null)
+            {
+                // 没有动画数据（文件不存在 / 没有这条 cue / events 为空）。
                 // 关键：即使没有动画，也要把**牌桌**搭出来并保留住 —— 否则开场那几条
                 // （背景介绍等）会让画面完全空白，看起来像整个模块坏了。
                 // 注意 Store 是同一个实例，所以后续 cue 会接着这张桌子继续。
@@ -256,7 +284,7 @@ namespace BoardGameTutorial
                     // 牌桌还没搭过：先载入 stage（否则模板为空，什么都生成不出来），
                     // 再按 initial 摆好、建对象、取景。
                     ClearActors();
-                    LoadStage(gameRoot, null);
+                    LoadStage(gameRoot, trackDoc != null ? trackDoc.stage : null);
                     Store.Reset();
                     Store.ApplyInitial();
                     BuildActorObjects();
@@ -274,16 +302,10 @@ namespace BoardGameTutorial
             string keepPicture = currentPicture;
             ClearActors();   // 确定要重建画面了，才销毁旧对象
             currentPicture = keepPicture;
-            cueDoc = JsonUtility.FromJson<CueAnimDoc>(File.ReadAllText(path));
-            if (cueDoc == null || cueDoc.events == null)
-            {
-                Debug.LogError($"[TutorialCueAnim] 解析失败: {path}");
-                cueDoc = null;
-                return false;
-            }
+            cueDoc = found;
             Note = cueDoc.note;
 
-            LoadStage(gameRoot, cueDoc.stage);
+            LoadStage(gameRoot, trackDoc.stage);
 
             // 续接（顺序播放）：接着上一条的终态。
             // 不续接（跳转 / 重播 / 按 B 预览）：退回牌桌初始态，再按本条 cue 的 start 布置。

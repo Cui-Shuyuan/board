@@ -18,9 +18,9 @@
 | cue1–13（box / 发展卡） | 已通过用户验收（含牌堆、翻转、`stack` 原语） |
 | `stack` 原语 | 已有，建摞 + 从顶发牌都可复用（宝石供应堆形状相同） |
 | 宝石 zone | 已在 stage 里（`gem_supply_diamond` 等），尚未接动画 |
-| 宝石脚本 | ✅ **已写完 9 条**，合并在 `games/splendor/tutorial/script/full.json` 里（一个 track 一个文件，`cues` 按轨道顺序），待用户 review |
+| 动画脚本 | ✅ **一个动画一个文件**：`games/splendor/tutorial/anim/full.json`（17 条 cue：story/enter/exit/timing + start/events） |
 | 宝石的数量约定 | **已冻结**：增量演法，连演 2/3/4 人三种（1→4→5→7 枚），见下 |
-| 宝石动画 | ✅ **9 条已写完**（`anim/full/setup.gems.*.json`），**等用户看实际效果**；静态复算与契约一致、校验器 0 错 0 警告 |
+| 宝石动画 | ✅ **9 条已写完**（在 `anim/full.json` 里），**等用户看实际效果**；静态复算与契约一致、校验器 0 错 0 警告 |
 | 宝石采样 | **还没采**（要在 Windows 侧跑 `dump_states.sh`） |
 | 对账 | `check_cue_script.py` 可用（`--all` / `--chain` / `--cue X --which enter`）；宝石那 9 条**还没采样** |
 | 组件状态 | ✅ 采样逐身份 + 每件导出；契约可断言 `face`/`shows`。**`full.exitstate.json` 是旧格式，需在 Windows 侧重跑 `dump_states.sh`** |
@@ -51,7 +51,7 @@
   于是整篇之后走 2 人局（贵族抽 3 块 = 玩家数+1），与 `003.1` 先讲的 4 枚口径一致。
   **写贵族那节时必须记得做这一步**，否则宝石数会一直是 7。
 - **顺带记一笔（等写到玩法那节要处理）**：早先的试点 cue
-  `anim/full/action.take.different.001.json` 的 `start.set` 写的是
+  `anim/full.json` 里 `action.take.different.001` 的 `start.set` 写的是
   `expand_to: 7`（"保证供应堆里有 7 枚"）—— 那是按 4 人局写的。整篇改成 2 人局之后，
   这个 7 会把盒里的 3 枚又搬进供应堆，得改成 4（或干脆去掉 `expand_to`）。
 - 取景：这一节用 `camera: "supply"`（供应区整排特写）。
@@ -68,9 +68,9 @@
   「上一条的取景」是错的。改完立刻冒出一条被掩盖的真实警告（该 cue 承接 `board`
   却没显式声明），已按项目规矩补上 `camera: "board"`。
 - **契约与采样各合成一个文件**（用户 2026-09 要求：不要一个 cue 一个 json）：
-  - 契约 `games/splendor/tutorial/script/full.json`（`cues` 按轨道顺序；**别**和
+  - 脚本 `games/splendor/tutorial/anim/full.json`（`cues` 按轨道顺序；**别**和
     `script.full.json`（口播稿编辑源）搞混，两条链路互不写对方）；
-  - 采样 `games/splendor/tutorial/script/full.exitstate.json`（引擎生成）；
+  - 采样 `games/splendor/tutorial/anim/full.exitstate.json`（引擎生成）；
   - `DumpState` 新增 `-dumpCues "a,b,c"`：**一次 Unity 启动**从轨道头顺次播到尾、
     每条播到终态记一笔（就是播放器的真实路径），把「109 条 cue = 109 次启动 +
     109 次重放 entry 链」降成 1 次；
@@ -189,7 +189,7 @@
 
 ## 五、第一个具体动作
 
-1. 读 `games/splendor/tutorial/anim/full/setup.gems.*.json`（若已有）与口播稿对应段落
+1. 读 `games/splendor/tutorial/anim/full.json` 里 `setup.gems.*` 那几段与口播稿对应段落
 2. 按第二节格式写**宝石第一节的脚本**（自然语言 + 程序化的首尾帧）
 3. **给用户看脚本**，确认"颜色/数量约定"后再做动画
 4. 再按脚本做动画，最后用采样对账

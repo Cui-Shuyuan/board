@@ -59,7 +59,7 @@ metadata:
 |---|---|---|
 | 语义事实 | `games/{game}/flow.json`、`concepts.json` | 源、目的地、对象、数量 |
 | 视觉绑定 | `games/{game}/tutorial/anim/_stage/{game}.table.json` | 语义区域画在屏幕哪里、颜色分几堆、模板外观、开局摆放 |
-| 时间 | `games/{game}/tutorial/anim/{track}/{cue_id}.json` | 第几秒发生、强调、错峰 |
+| 时间 | `games/{game}/tutorial/anim/{track}.json` 里那条 cue 的 `events` | 第几秒发生、强调、错峰 |
 
 **cue 只写 zone，不写坐标也不重复 flow 的语义。**
 
@@ -860,8 +860,8 @@ PASS 两条兄弟分支抽到不同的牌 —— 共享父状态、但牌堆顶�
 
 | 文件 | 作用 |
 |---|---|
-| `games/{game}/tutorial/script/{track}.json` | **契约**：人写的意图 + 首尾状态，**整条 track 一个文件**（`cues` 按轨道顺序排） |
-| `games/{game}/tutorial/script/{track}.exitstate.json` | **采样终态**：引擎生成，别手改（`DumpState -dumpCues`） |
+| `games/{game}/tutorial/anim/{track}.json` | **一个动画一个文件**：每条 cue 一段 —— `story`/`note`（人读）+ `enter`/`exit`/`timing`（对账）+ `start`/`events`（引擎执行）；`cues` 按轨道顺序排 |
+| `games/{game}/tutorial/anim/{track}.exitstate.json` | **采样终态**：引擎生成，别手改（`DumpState -dumpCues`） |
 | `scripts/dump_states.sh` | 采样终态：**一次 Unity 启动**从轨道头播到尾，每条 cue 记一笔 |
 | `scripts/check_cue_script.py` | 对账：`--all` 整条查，`--chain` 只查跨 cue，`--cue X --which enter` 单条查 |
 
@@ -873,7 +873,7 @@ PASS 两条兄弟分支抽到不同的牌 —— 共享父状态、但牌堆顶�
 ### 契约结构
 
 ```jsonc
-// script/full.json —— 顶层，cues 按轨道顺序（--chain 依赖这个顺序）
+// anim/full.json —— 顶层，cues 按轨道顺序（--chain 依赖这个顺序）
 { "schema_version": 1, "game_id": "splendor", "track": "full",
   "kind": "animation_contract",
   "cues": [ /* 每条一段，见下 */ ] }

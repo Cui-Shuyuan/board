@@ -3,7 +3,7 @@
 //
 // 数据：
 //   games/{game}/tutorial/{track}.runtime.json        —— cue 顺序、音频、字幕、导航
-//   games/{game}/tutorial/anim/{track}/{cue_id}.json  —— 该 cue 的画面与动作时间轴
+//   games/{game}/tutorial/anim/{track}.json  —— 该 track 的动画脚本（每条 cue 一段）
 //
 // 三层时钟关系：音频是主，动画时钟直接取 audioSource.time，
 // 因此动画天然对齐口播、暂停即冻结、重播即从头。

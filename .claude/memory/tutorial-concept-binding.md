@@ -212,7 +212,7 @@ metadata:
 
 ### 顺带补齐的脚本
 
-`script/full.json` 现在 17 条契约，把**有动画但没脚本**的三条补上了：
+`anim/full.json`（那时还叫 `script/full.json`）现在 17 条契约，把**有动画但没脚本**的三条补上了：
 `bg.intro.001.1`（盒面 + 开局实物清单）、`setup.nobles.001.2`（贵族 3 块正面朝上）、
 `action.take.different.001`（拿三种不同宝石）；外加 `setup.nobles.001.1` ——
 它承担"宝石改回 2 人局 4 枚"那一步（用户裁决），enter 7 枚/色、exit 4 枚/色 + 盒里 3 枚。

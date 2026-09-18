@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# 采样 cue 的**终态** → games/splendor/tutorial/script/full.exitstate.json
-# 供 scripts/check_cue_script.py 与契约（script/full.json）做 diff。
+# 采样 cue 的**终态** → games/splendor/tutorial/anim/full.exitstate.json
+# 供 scripts/check_cue_script.py 与动画脚本（anim/full.json）里的契约做 diff。
 #
 # 一次 Unity 启动、从轨道头顺次播到尾，每条 cue 播到终态就记一笔 ——
 # 这正是播放器的真实路径（顺序播放），比一条条 cue 各自重放更接近用户看到的画面；
@@ -17,7 +17,7 @@ PROJ='D:\workspace\board\client'
 ROOT=/home/cui/workspace/board
 WIN_DIR='D:\workspace\board\games\splendor\tutorial\script'
 WIN_OUT="$WIN_DIR\\full.exitstate.json"
-WSL_OUT="$ROOT/games/splendor/tutorial/script/full.exitstate.json"
+WSL_OUT="$ROOT/games/splendor/tutorial/anim/full.exitstate.json"
 LOG='D:\workspace\board\client\Logs\dump_states.log'
 
 CUES=""
@@ -45,7 +45,7 @@ rm -f "$WSL_OUT"
   -logFile "$LOG" -quit >/dev/null 2>&1
 
 # 引擎写的是 Windows 侧的工作区，拷回 WSL 仓库
-cp "/mnt/d/workspace/board/games/splendor/tutorial/script/full.exitstate.json" "$WSL_OUT" 2>/dev/null
+cp "/mnt/d/workspace/board/games/splendor/tutorial/anim/full.exitstate.json" "$WSL_OUT" 2>/dev/null
 
 if [ -f "$WSL_OUT" ]; then
   python3 -c "

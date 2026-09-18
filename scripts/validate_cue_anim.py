@@ -7,7 +7,7 @@ Data layout
 -----------
     games/{game}/tutorial/{track}.runtime.json             cue order / audio / duration
     games/{game}/tutorial/anim/_stage/{game}.table.json    table facts: zones, templates, initial
-    games/{game}/tutorial/anim/{track}/{cue_id}.json       this cue's delta on that table
+    games/{game}/tutorial/anim/{track}.json                一条 cue 一段：story/enter/exit + start/events
 
 Model
 -----
@@ -29,7 +29,7 @@ Usage
 -----
     python scripts/validate_cue_anim.py --game splendor --track full
     python scripts/validate_cue_anim.py --game splendor --track full --cue action.take.different.001
-    python scripts/validate_cue_anim.py --file games/splendor/tutorial/anim/full/x.json
+    python scripts/validate_cue_anim.py --cue setup.gems.003.1
     python scripts/validate_cue_anim.py --game splendor --track full --json
 
 Exit codes: 0 = ok (warnings allowed), 1 = errors, 2 = file not found.
@@ -85,8 +85,9 @@ MIN_TAIL_MARGIN = 0.15
 
 
 class Report:
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, name: str = None):
         self.path = path
+        self.name = name or path.name
         self.errors = []
         self.warnings = []
 
@@ -389,27 +390,23 @@ def validate_stage(stage_path: Path, report: Report, game_id: str):
     return stage, zones, templates
 
 
-def collect_created_ids(anim_dir: Path):
+def collect_created_ids(cue_docs):
     """扫一遍：哪些组件 id 会在某条 cue 里被 create 出来。
 
     跨 cue 的 create/destroy 是正常写法（cue 10 销毁 cue 9 创建的展示卡），
-    但校验单条 cue 时看不到前一条创建了什么，会误报 target 不存在。
+    所以判据要跨整条轨道，不能只看本条。
     """
-    created = {}   # template -> 出现过的最大序号
-    for p in sorted(anim_dir.glob("*.json")):
-        try:
-            doc = load_json(p)
-        except Exception:
-            continue
+    created = {}
+    for doc in cue_docs:
         for ev in doc.get("events") or []:
-            if isinstance(ev, dict) and ev.get("action") == "create" and ev.get("template"):
-                n = int(ev.get("count") or 1)
-                created[ev["template"]] = max(created.get(ev["template"], 0), n)
-    ids = set()
-    for tpl, n in created.items():
-        for i in range(1, n + 1):
-            ids.add(f"{tpl}#{i}")
-    return ids
+            if not isinstance(ev, dict) or ev.get("action") != "create":
+                continue
+            tpl = ev.get("template")
+            if not tpl:
+                continue
+            n = int(ev.get("count") or 1)
+            created[tpl] = max(created.get(tpl, 0), n)
+    return created
 
 
 # 全轨道累计：字段 → 用了它的原语集合（--fields 报告用）
@@ -419,7 +416,6 @@ used_fields: dict[str, set[str]] = {}
 def print_field_report():
     """把所有出现过的字段按归属层列出来 —— "能否去掉单独声明的变量"的答案。"""
     w = load_world("splendor")
-    # 本体字段：把每个原语的默认概念与 realized 概念合起来看
     ontology_fields = {}
     for act, ref in sorted(PRIMITIVE_EVENT.items()):
         if not ref:
@@ -434,7 +430,6 @@ def print_field_report():
                           ("实现层（本体没有对应事件）", IMPLEMENTATION_FIELDS)):
         print(f"\n【{title}】")
         for f, info in sorted(bucket.items()):
-            # 字段名可能和 JSON 里写的不一样（本体叫 <object>，数据里写 what），别名也算用到
             names = {f} | {a for a, real in ONTOLOGY_FIELD_ALIAS.items() if real == f}
             used = "✔ 用到" if names & set(used_fields) else "·  未用"
             print(f"  {used}  {f:22s} {info if isinstance(info, str) else ''}")
@@ -445,24 +440,9 @@ def print_field_report():
     print("\n没有归属的字段:", stray if stray else "无 ✓")
 
 
-def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
-    try:
-        doc = load_json(path)
-    except json.JSONDecodeError as exc:
-        report.error(path.stem, f"JSON 解析失败: {exc}")
-        return
-
-    cue_id = path.stem
+def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
+                 created_ids=None, track_stage=None):
     where = cue_id
-
-    if doc.get("schema_version") != 1:
-        report.warn(where, f"schema_version = {doc.get('schema_version')!r}，当前校验器针对 1")
-    if doc.get("game_id") and doc["game_id"] != game_id:
-        report.error(where, f"game_id = {doc['game_id']!r}，应为 {game_id!r}")
-    if doc.get("track") and doc["track"] != track:
-        report.error(where, f"track = {doc['track']!r}，应为 {track!r}")
-    if doc.get("cue") and doc["cue"] != cue_id:
-        report.error(where, f"cue = {doc['cue']!r}，与文件名 {cue_id!r} 不一致")
 
     dealt_slots = {}
 
@@ -471,14 +451,14 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         return
     duration = float(runtime_cues[cue_id].get("duration") or 0.0)
 
-    stage_rel = doc.get("stage") or f"_stage/{game_id}.table"
+    stage_rel = doc.get("stage") or track_stage or f"_stage/{game_id}.table"
     stage_path = ROOT / "games" / game_id / "tutorial" / "anim" / (stage_rel + ".json")
     stage, zones, templates = validate_stage(stage_path, report, game_id)
     if stage is None:
         return
     world = load_world(game_id)
 
-    known_ids = set(derive_actor_ids(stage)) | collect_created_ids(path.parent)
+    known_ids = set(derive_actor_ids(stage)) | set((created_ids or {}).keys())
     # cue 自己 start.set 出来的组件（如发牌前预置在盒里的正面卡）也是合法目标
     for seed in (doc.get("start") or {}).get("set") or []:
         tpl = seed.get("template")
@@ -524,7 +504,10 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
 
     events = doc.get("events")
     if not isinstance(events, list) or not events:
-        report.error(where, "events 为空")
+        # 契约写了、动画还没写（例如 setup.nobles.001.1）：这不是错误，跳过动画检查。
+        # 两者都没有才是真错误 —— 那条 cue 什么都不说。
+        if not (doc.get("enter") or doc.get("exit")):
+            report.error(where, "既没有 events，也没有契约（enter/exit）—— 这条 cue 什么都没说")
         return
 
     prev_at = -1.0
@@ -809,8 +792,7 @@ def check_framing_chain(files, report):
     早期这里两者都用第一条，一条 cue 换两次取景时链就接错了。
     """
     prev_camera = None
-    for path in files:
-        doc = load_json(path)
+    for doc in files:
         events = doc.get("events") or []
         cams = [e for e in events if e.get("camera")]
         first_declared = cams[0].get("camera") if cams else None
@@ -823,13 +805,32 @@ def check_framing_chain(files, report):
             earliest = min(float(e.get("at", 0.0)) for e in mutating)
             if earliest > 1e-6:
                 report.warn(
-                    path.stem,
+                    doc.get("cue") or "?",
                     f"承接上一条的取景 {prev_camera!r}，"
                     f"但第一件改状态的事在 at={earliest:.2f} —— 这段时间画面会被用新取景渲染，"
                     f"若与上一条结尾的取景不同就会「闪一下」。要么在 at=0 显式声明 camera，"
                     f"要么确认确实想先停一会儿")
 
         prev_camera = leaves
+
+def load_script(args):
+    """读这条 track 的脚本（一个动画一个文件）。返回 (路径, 文档, runtime 里的 cue 表)。"""
+    game_root = ROOT / "games" / args.game
+    path = Path(args.file) if args.file else game_root / "tutorial" / "anim" / (args.track + ".json")
+    if not path.exists():
+        print(f"脚本不存在: {path}", file=sys.stderr)
+        return path, None, {}
+    try:
+        doc = load_json(path)
+    except json.JSONDecodeError as exc:
+        print(f"JSON 解析失败: {path}: {exc}", file=sys.stderr)
+        return path, None, {}
+    runtime_path = game_root / "tutorial" / (args.track + ".runtime.json")
+    runtime_cues = {}
+    if runtime_path.exists():
+        runtime_cues = {c["id"]: c for c in load_json(runtime_path).get("cues", [])}
+    return path, doc, runtime_cues
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -843,61 +844,60 @@ def main():
     args = parser.parse_args()
 
     if args.fields:
-        # 只会走一遍动画文件把字段收集齐，然后打印归属表（不判对错）
-        anim_dir0 = ROOT / "games" / args.game / "tutorial" / "anim" / args.track
-        rt0 = ROOT / "games" / args.game / "tutorial" / f"{args.track}.runtime.json"
-        runtime0 = load_json(rt0) if rt0.exists() else {}
-        cues0 = {c["id"]: c for c in runtime0.get("cues", [])}
-        if anim_dir0.is_dir():
-            for path0 in sorted(anim_dir0.glob("*.json")):
-                validate_cue(path0, cues0, args.track, args.game, Report(path0))
+        # 只会走一遍脚本把字段收集齐，然后打印归属表（不判对错）
+        f0, doc0, _ = load_script(args)
+        if doc0:
+            created0 = collect_created_ids(doc0.get("cues") or [])
+            for c in doc0.get("cues") or []:
+                if c.get("cue"):
+                    validate_cue(c, c["cue"], {}, args.track, args.game,
+                                 Report(f0, c["cue"]), created0, doc0.get("stage"))
         print_field_report()
         return 0
 
-    game_root = ROOT / "games" / args.game
-    runtime_path = game_root / "tutorial" / f"{args.track}.runtime.json"
-    if not runtime_path.exists():
-        print(f"runtime 不存在: {runtime_path}", file=sys.stderr)
+    script_path, doc, runtime_cues = load_script(args)
+    if doc is None:
+        return 2
+    if not runtime_cues:
+        print(f"runtime 不存在或为空: {script_path.with_name(args.track + '.runtime.json')}",
+              file=sys.stderr)
         return 2
 
-    runtime = load_json(runtime_path)
-    runtime_cues = {c["id"]: c for c in runtime.get("cues", [])}
-
-    anim_dir = game_root / "tutorial" / "anim" / args.track
-    if args.file:
-        files = [Path(args.file)]
-    else:
-        if not anim_dir.is_dir():
-            print(f"动画目录不存在: {anim_dir}", file=sys.stderr)
+    # **按脚本里的顺序**（= 轨道顺序）走，不按文件名字母序：取景是延续状态，
+    # 跨 cue 检查必须走真实播放顺序。
+    cues = [c for c in (doc.get("cues") or []) if c.get("cue")]
+    if args.cue:
+        cues = [c for c in cues if c["cue"] == args.cue]
+        if not cues:
+            print(f"脚本里没有这条 cue: {args.cue}", file=sys.stderr)
             return 2
-        # **按轨道顺序排，不按文件名字母序。**
-        # 取景是延续状态，跨 cue 检查必须走真实播放顺序；字母序会把
-        # action.take.different.001（轨道第 36 条）排到最前面，于是「上一条的取景」
-        # 全是错的。runtime.json 里 cues 的顺序就是轨道顺序。
-        track_order = {c["id"]: i for i, c in enumerate(runtime.get("cues", []))}
-        files = sorted(anim_dir.glob("*.json"),
-                       key=lambda f: (track_order.get(f.stem, len(track_order)), f.stem))
-        if args.cue:
-            files = [f for f in files if f.stem == args.cue]
-            if not files:
-                print(f"找不到 cue 动画: {anim_dir / (args.cue + '.json')}", file=sys.stderr)
-                return 2
-
-    if not files:
-        print(f"没有动画文件可校验（{anim_dir}）")
+    if not cues:
+        print(f"脚本里没有 cue（{script_path}）")
         return 0
 
+    # track 级的自述（一个动画一个文件之后，schema/game/track 只在这里声明一次）
+    if doc.get("schema_version") != 1:
+        print(f"warn  schema_version = {doc.get('schema_version')!r}，当前校验器针对 1", file=sys.stderr)
+    if doc.get("game_id") and doc["game_id"] != args.game:
+        print(f"error game_id = {doc['game_id']!r}，应为 {args.game!r}", file=sys.stderr)
+        return 2
+    if doc.get("track") and doc["track"] != args.track:
+        print(f"error track = {doc['track']!r}，应为 {args.track!r}", file=sys.stderr)
+        return 2
+
+    created = collect_created_ids(doc.get("cues") or [])
     reports = []
-    for path in files:
-        report = Report(path)
-        validate_cue(path, runtime_cues, args.track, args.game, report)
+    for c in cues:
+        report = Report(script_path, c["cue"])
+        validate_cue(c, c["cue"], runtime_cues, args.track, args.game,
+                     report, created, doc.get("stage"))
         reports.append(report)
 
     # 跨 cue 检查：取景是延续状态，只有按顺序比才看得出来
-    # （只校验"整条轨道"时做，单条 --cue / --file 没有上下文）
-    if not args.cue and not args.file and reports:
-        chain = Report(anim_dir)
-        check_framing_chain(files, chain)
+    # （只校验整条轨道时做，单条 --cue 没有上下文）
+    if not args.cue and reports:
+        chain = Report(script_path, "（跨 cue 取景链）")
+        check_framing_chain(cues, chain)
         reports.append(chain)
 
     total_errors = sum(len(r.errors) for r in reports)
@@ -907,20 +907,20 @@ def main():
         errors, warnings = [], []
         for r in reports:
             for e in r.errors:
-                errors.append({"file": str(r.path), **e})
+                errors.append({"cue": r.name, **e})
             for w in r.warnings:
-                warnings.append({"file": str(r.path), **w})
-        print(json.dumps({"ok": total_errors == 0, "files": len(files),
+                warnings.append({"cue": r.name, **w})
+        print(json.dumps({"ok": total_errors == 0, "cues": len(cues),
                           "errors": errors, "warnings": warnings}, ensure_ascii=False, indent=2))
     else:
         for r in reports:
-            print(f"{'OK ' if not r.errors else 'ERR'} {r.path.name}"
+            print(f"{'OK ' if not r.errors else 'ERR'} {r.name}"
                   + (f"  ({len(r.warnings)} warning)" if r.warnings else ""))
             for e in r.errors:
                 print(f"    error  {e['where']}: {e['message']}")
             for w in r.warnings:
                 print(f"    warn   {w['where']}: {w['message']}")
-        print(f"\n{len(files)} 个文件，{total_errors} 个错误，{total_warnings} 个警告")
+        print(f"\n{len(cues)} 条 cue，{total_errors} 个错误，{total_warnings} 个警告")
 
     return 1 if total_errors else 0
 

@@ -1,0 +1,3257 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "kind": "animation_script",
+  "stage": "_stage/splendor.table",
+  "note": "整条 track 的动画脚本：**一条 cue 一段**，每段三部分 —— ① `story`/`note` 人读的意图与实现要点；② `enter`/`exit` 可对账的首尾状态（语义，不写坐标）；③ `start`/`events` 机器执行的动画数据。\n两个读者共用这一份：引擎（TutorialCueAnimPlayer）只读 `start`/`events`；对账与校验工具（check_cue_script.py / validate_cue_anim.py）读 `story`/`enter`/`exit`/`timing`。\n`cues` **按轨道顺序**排列 —— 跨 cue 对账依赖这个顺序。契约里有、动画还没写的 cue 会带空 `events`（引擎视为「本条无动画，保留牌桌」）。\n注意别和 `script.full.json` 搞混：那个是口播稿编辑源，两条链路互不写对方。",
+  "cues": [
+    {
+      "cue": "bg.intro.001.1",
+      "entry_from": null,
+      "story": "【背景介绍的开场】整节显示游戏盒封面。这条 cue 只做一件事：把盒面显示出来\n（`showbox on=1 picture=media/box.png`），桌上还没有任何可见组件。\n\n顺带把**实物清单**作为基准记下来：宝石每色 7 枚、黄金 5 枚在盒里（`box_gem_*`），贵族 3 枚在镜头外（`offstage`）—— 开局的全部家当。之后每一节都从这份清单里搬，所以「桌上的数 + 盒里的数 = 实物总数」永远能核。\n\n**已知短板（待补）**：画面根状态（当前显示的是哪张整幅图）**不在采样里** —— DumpState 只导出 zone 里的组件状态，而盒面挂在画面根下（`stage.board.default_picture` + `showbox`）。所以这条契约现在只能声明\"可见区域全空 + 清单在此\"，盒面本身还没有证据可查。",
+      "note": "第一节（背景介绍）：整节显示游戏盒封面。盒面挂在画面根下，进入第二节时会被自动清掉。",
+      "timing": {
+        "显示盒面": "0.0（口播 0.00-4.25）"
+      },
+      "enter": {
+        "zones": {
+          "deck_level_1": {
+            "count": 0
+          },
+          "deck_level_2": {
+            "count": 0
+          },
+          "deck_level_3": {
+            "count": 0
+          },
+          "card_market": {
+            "count": 0
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 0
+          },
+          "gem_supply_sapphire": {
+            "count": 0
+          },
+          "gem_supply_ruby": {
+            "count": 0
+          },
+          "gem_supply_emerald": {
+            "count": 0
+          },
+          "gem_supply_onyx": {
+            "count": 0
+          },
+          "gold_supply": {
+            "count": 0
+          },
+          "player_holding": {
+            "count": 0
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "showcase_2": {
+            "count": 0
+          },
+          "showcase_3": {
+            "count": 0
+          },
+          "box_gem_diamond": {
+            "count": 7
+          },
+          "box_gem_sapphire": {
+            "count": 7
+          },
+          "box_gem_ruby": {
+            "count": 7
+          },
+          "box_gem_emerald": {
+            "count": 7
+          },
+          "box_gem_onyx": {
+            "count": 7
+          },
+          "box_gem_gold": {
+            "count": 5
+          },
+          "offstage": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "deck_level_1": {
+            "count": 0
+          },
+          "deck_level_2": {
+            "count": 0
+          },
+          "deck_level_3": {
+            "count": 0
+          },
+          "card_market": {
+            "count": 0
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 0
+          },
+          "gem_supply_sapphire": {
+            "count": 0
+          },
+          "gem_supply_ruby": {
+            "count": 0
+          },
+          "gem_supply_emerald": {
+            "count": 0
+          },
+          "gem_supply_onyx": {
+            "count": 0
+          },
+          "gold_supply": {
+            "count": 0
+          },
+          "player_holding": {
+            "count": 0
+          },
+          "box_gem_diamond": {
+            "count": 7
+          },
+          "box_gem_sapphire": {
+            "count": 7
+          },
+          "box_gem_ruby": {
+            "count": 7
+          },
+          "box_gem_emerald": {
+            "count": 7
+          },
+          "box_gem_onyx": {
+            "count": 7
+          },
+          "box_gem_gold": {
+            "count": 5
+          },
+          "offstage": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "showbox",
+          "on": 1,
+          "picture": "media/box.png"
+        }
+      ]
+    },
+    {
+      "cue": "setup.cards.001.1",
+      "entry_from": null,
+      "story": "【这是发展卡牌，共90张】\n桌上还什么都没有。先把盒子收起来，然后在桌子中央摆出一张发展卡的正面，让观众看清发展卡长什么样。\n此时牌堆还不存在——发展卡只是被介绍，还没有成摞。牌堆要到 cue 12「洗混」时才被创建。",
+      "note": "「这是发展卡牌，共90张」(0.30–2.50)：特写展示 1 张发展卡正面，不高亮（画面只有它）。牌堆此时尚未创建。",
+      "timing": {
+        "放出一张卡正面": "0.30-2.50 这是发展卡牌，共90张"
+      },
+      "enter": {
+        "zones": {
+          "showcase": {
+            "count": 0
+          },
+          "card_market": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "showcase": {
+            "count": 1,
+            "face_up": 1,
+            "kinds": {
+              "一级正面": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              }
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.05,
+          "dur": 0.0,
+          "action": "showbox",
+          "on": 0
+        },
+        {
+          "at": 0.1,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "showcase",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.15,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "showcase",
+          "template": "sample_card_1",
+          "palette": "card_level_1",
+          "to": "face_up",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "cue": "setup.cards.001.2",
+      "entry_from": "setup.cards.001.1",
+      "story": "【根据背面可以将所有发展卡牌分为三类】【分别是40张绿色的一级发展卡牌】\n把刚才那张正面收走。改成并排摆出三张卡背面朝上，对应三个级别；从左到右依次是一级、二级、三级。讲到绿色的一级时，高亮最左边那张。注意：这时仍然没有牌堆，只有这三张样本卡背。",
+      "note": "「根据背面可以分为三类」(3.12–5.97)：删除卡面，创建三张卡背一字排开——左=一级(sample_back_1) 中=二级(sample_back_2) 右=三级(sample_back_3)，**位置即身份**。随后「分别是40张绿色的一级发展卡牌」高亮最左那张。此时桌上没有\"卡堆\"这个对象。",
+      "timing": {
+        "摆出三种卡背": "3.12-5.97 根据背面可以将所有发展卡牌分为三类",
+        "高亮绿色(一级)": "0.33-2.98 分别是40张绿色的一级发展卡牌"
+      },
+      "enter": {
+        "zones": {
+          "showcase": {
+            "count": 1,
+            "face_up": 1,
+            "kinds": {
+              "一级正面": 1
+            }
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 1,
+            "face_down": 1,
+            "kinds": {
+              "一级卡背": 1
+            }
+          },
+          "showcase_2": {
+            "count": 1,
+            "face_down": 1,
+            "kinds": {
+              "二级卡背": 1
+            }
+          },
+          "showcase_3": {
+            "count": 1,
+            "face_down": 1,
+            "kinds": {
+              "三级卡背": 1
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.05,
+          "dur": 0.0,
+          "action": "destroy",
+          "what": {
+            "concept": "development_card_level_1"
+          },
+          "zone": "showcase"
+        },
+        {
+          "at": 0.05,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "cards",
+          "camera_padding": 1.5
+        },
+        {
+          "at": 0.15,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "showcase_1",
+          "template": "sample_back_1",
+          "palette": "card_level_1",
+          "count": 1
+        },
+        {
+          "at": 0.15,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "showcase_2",
+          "template": "sample_back_2",
+          "palette": "card_level_2",
+          "count": 1
+        },
+        {
+          "at": 0.15,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "showcase_3",
+          "template": "sample_back_3",
+          "palette": "card_level_3",
+          "count": 1
+        },
+        {
+          "at": 0.6,
+          "dur": 1.1,
+          "action": "highlight",
+          "what": {
+            "concept": "development_card_level_1"
+          },
+          "zone": "showcase_1",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "cue": "setup.cards.001.3",
+      "entry_from": "setup.cards.001.2",
+      "story": "【30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌】\n三张样本卡背保持不动。讲到黄色二级时高亮中间那张，讲到蓝色三级时高亮最右边那张。没有新的东西出现或消失。",
+      "note": "「30张黄色的二级发展卡牌」高亮中间那张(sample_back_2)；「20张蓝色的三级发展卡牌」高亮最右那张(sample_back_3)。",
+      "timing": {
+        "高亮黄色(二级)": "0.00-2.98 30张黄色的二级发展卡牌",
+        "高亮蓝色(三级)": "2.90-5.54 20张蓝色的三级发展卡牌"
+      },
+      "enter": {
+        "zones": {
+          "showcase_1": {
+            "count": 1,
+            "face_down": 1
+          },
+          "showcase_2": {
+            "count": 1,
+            "face_down": 1
+          },
+          "showcase_3": {
+            "count": 1,
+            "face_down": 1
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "showcase_1": {
+            "count": 1,
+            "face_down": 1
+          },
+          "showcase_2": {
+            "count": 1,
+            "face_down": 1
+          },
+          "showcase_3": {
+            "count": 1,
+            "face_down": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "cards",
+          "camera_padding": 1.5
+        },
+        {
+          "at": 0.1,
+          "dur": 1.3,
+          "action": "highlight",
+          "what": {
+            "concept": "development_card_level_2"
+          },
+          "zone": "showcase_2",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 2.9,
+          "dur": 1.3,
+          "action": "highlight",
+          "what": {
+            "concept": "development_card_level_3"
+          },
+          "zone": "showcase_3",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "cue": "setup.cards.002.1",
+      "entry_from": "setup.cards.001.3",
+      "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
+      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。",
+      "timing": {
+        "样本卡背退场 + 牌堆登场 + 洗混": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列",
+        "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
+      },
+      "enter": {
+        "zones": {
+          "showcase_1": {
+            "count": 1,
+            "face_down": 1
+          },
+          "showcase_2": {
+            "count": 1,
+            "face_down": 1
+          },
+          "showcase_3": {
+            "count": 1,
+            "face_down": 1
+          },
+          "card_market": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "showcase_1": {
+            "count": 0
+          },
+          "showcase_2": {
+            "count": 0
+          },
+          "showcase_3": {
+            "count": 0
+          },
+          "deck_level_1": {
+            "count": 36,
+            "face_down": 36,
+            "kinds": {
+              "一级垫牌": {
+                "count": 36,
+                "face": "down",
+                "shows": "face"
+              }
+            }
+          },
+          "deck_level_2": {
+            "count": 26,
+            "face_down": 26,
+            "kinds": {
+              "二级垫牌": {
+                "count": 26,
+                "face": "down",
+                "shows": "face"
+              }
+            }
+          },
+          "deck_level_3": {
+            "count": 16,
+            "face_down": 16,
+            "kinds": {
+              "三级垫牌": {
+                "count": 16,
+                "face": "down",
+                "shows": "face"
+              }
+            }
+          },
+          "card_market": {
+            "count": 12,
+            "face_up": 12,
+            "kinds": {
+              "一级绿": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "一级红": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "一级白": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "一级蓝": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级蓝": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级黑": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级红": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级绿": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级红": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级白": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级绿": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级黑": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              }
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "destroy",
+          "what": {
+            "concept": "development_card_level_1"
+          },
+          "zone": "showcase_1"
+        },
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "destroy",
+          "what": {
+            "concept": "development_card_level_2"
+          },
+          "zone": "showcase_2"
+        },
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "destroy",
+          "what": {
+            "concept": "development_card_level_3"
+          },
+          "zone": "showcase_3"
+        },
+        {
+          "at": 0.05,
+          "dur": 0.0,
+          "action": "stack",
+          "destination": "deck_level_1",
+          "to": "face_down",
+          "capacity": 40,
+          "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire",
+          "pad_template": "blank_card_1",
+          "plain": true
+        },
+        {
+          "at": 0.052,
+          "dur": 0.0,
+          "action": "stack",
+          "destination": "deck_level_2",
+          "to": "face_down",
+          "capacity": 30,
+          "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald",
+          "pad_template": "blank_card_2",
+          "plain": true
+        },
+        {
+          "at": 0.054,
+          "dur": 0.0,
+          "action": "stack",
+          "destination": "deck_level_3",
+          "to": "face_down",
+          "capacity": 20,
+          "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx",
+          "pad_template": "blank_card_3",
+          "plain": true
+        },
+        {
+          "at": 0.3,
+          "dur": 1.1,
+          "action": "shuffle",
+          "realizes": "<ontology::shuffle>",
+          "easing": "easeOutCubic",
+          "zone": "deck_level_1"
+        },
+        {
+          "at": 0.3,
+          "dur": 1.1,
+          "action": "shuffle",
+          "realizes": "<ontology::shuffle>",
+          "easing": "easeOutCubic",
+          "zone": "deck_level_2"
+        },
+        {
+          "at": 0.3,
+          "dur": 1.1,
+          "action": "shuffle",
+          "realizes": "<ontology::shuffle>",
+          "easing": "easeOutCubic",
+          "zone": "deck_level_3"
+        },
+        {
+          "at": 3.58,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_1"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 0,
+          "slot": 0,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 3.97,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_1"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 1,
+          "slot": 1,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 4.36,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_1"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 2,
+          "slot": 2,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 4.75,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_1"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 3,
+          "slot": 3,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 5.14,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_2"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 4,
+          "slot": 4,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 5.53,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_2"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 5,
+          "slot": 5,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 5.92,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_2"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 6,
+          "slot": 6,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 6.31,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_2"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 7,
+          "slot": 7,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 6.7,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_3"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 8,
+          "slot": 8,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 7.09,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_3"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 9,
+          "slot": 9,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 7.48,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_3"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 10,
+          "slot": 10,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 7.87,
+          "dur": 0.34,
+          "action": "transfer",
+          "realizes": "<top_draw>",
+          "source": [
+            "deck_level_3"
+          ],
+          "quantity": 1,
+          "destination": "card_market",
+          "what": {
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "to": "face_up",
+          "order": 11,
+          "slot": 11,
+          "easing": "easeInOutCubic"
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.001.1",
+      "entry_from": "setup.cards.002.1",
+      "story": "【这些是标记，后续称之为宝石】\n宝石第一次露面：五种颜色**各取 1 枚**，从镜头外的游戏盒（box_gem_*）飞到供应区里各自的位置（gem_supply_*）。\n\n为什么只出 1 枚：后面 003.1→004 要演「每种拿 4/5/7 枚」的增量过程，起点必须低于 4。开场先摆 1 枚，正好让「宝石」「五种颜色」这两句有实物可看。\n\n要点：\n  - 五枚**同时起飞**、只错开 0.12s，看起来像一只手一次放出来；逐个介绍是下一条 cue（001.2）的事。\n  - 顺序固定为 钻石 → 蓝宝石 → 红宝石 → 翡翠 → 缟玛瑙，与 001.2 点名顺序、与舞台上的位置（上排左→右、下排左→右）一致。\n  - 只搬 1 枚/色，所以盒子 7 → 6。\n  - 黄金不在这条里出场。\n\n取景：camera = \"supply\"（供应区整排）。**整桌取景（board）下宝石只占屏宽 4% 左右，数不清**，所以这一小节需要「供应区」这个取景目标 —— 这是本条新提出的需求，引擎侧要加一个和 \"cards\" 同类的取景 token（按 6 个供应 zone 的格位包围盒算），详见 review 说明。",
+      "note": "【这些是标记，后续称之为宝石】五种颜色**各 1 枚**从盒里飞到供应区各自的位置（`box_gem_*` → `gem_supply_*`）。\n只出 1 枚是刻意的：后面 003.1→004 要演「每种拿 4/5/7 枚」的**增量**，起点必须低于 4。\n五枚同时起飞、只错开 0.12s —— 看起来像一只手一次放出来。取景用 `supply`（供应区整排特写）：整桌取景下宝石只占屏宽 4.3%，数不清。",
+      "timing": {
+        "5 种宝石各 1 枚上场": "0.35-1.75（口播 0.30-2.83「这些是标记，后续称之为宝石」）"
+      },
+      "enter": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "box_gem_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "box_gem_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "box_gem_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 0
+          },
+          "gem_supply_sapphire": {
+            "count": 0
+          },
+          "gem_supply_ruby": {
+            "count": 0
+          },
+          "gem_supply_emerald": {
+            "count": 0
+          },
+          "gem_supply_onyx": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 6,
+            "kinds": {
+              "宝石白": 6
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 6,
+            "kinds": {
+              "宝石蓝": 6
+            }
+          },
+          "box_gem_ruby": {
+            "count": 6,
+            "kinds": {
+              "宝石红": 6
+            }
+          },
+          "box_gem_emerald": {
+            "count": 6,
+            "kinds": {
+              "宝石绿": 6
+            }
+          },
+          "box_gem_onyx": {
+            "count": 6,
+            "kinds": {
+              "宝石黑": 6
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 1,
+            "kinds": {
+              "宝石白": 1
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 1,
+            "kinds": {
+              "宝石蓝": 1
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 1,
+            "kinds": {
+              "宝石红": 1
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 1,
+            "kinds": {
+              "宝石绿": 1
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 1,
+            "kinds": {
+              "宝石黑": 1
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.35,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_diamond"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_diamond",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.0
+        },
+        {
+          "at": 0.35,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_sapphire"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_sapphire",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.12
+        },
+        {
+          "at": 0.35,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_ruby"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_ruby",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.24
+        },
+        {
+          "at": 0.35,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_emerald"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_emerald",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.36
+        },
+        {
+          "at": 0.35,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_onyx"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_onyx",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.48
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.001.2",
+      "entry_from": "setup.gems.001.1",
+      "story": "【宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙】\n口播按顺序点名五种颜色，**念到哪一种，哪一堆就呼吸一下**（highlight，不改状态、不搬东西）。\n\n高亮时刻直接对齐字幕的**字级时间戳**，不要凭感觉放：\n  钻石 2.88、蓝宝石 3.65、红宝石 4.54、翡翠 5.49、缟玛瑙 6.42\n\n位置与顺序的对应关系（一句话读完正好从左到右、从上到下）：\n  上排：钻石(左) 蓝宝石(中) 红宝石(右)\n  下排：翡翠(左) 缟玛瑙(中)\n\n这一条**不改变任何状态**（enter == exit），只有高亮 —— 契约里两边写一样的值，是刻意的：它证明「介绍性的一 cue 可以零状态变化」，对账照样能过。",
+      "note": "口播逐一点名五种颜色，**念到哪一种哪一堆就呼吸一下**（不改状态、不搬东西）。\n高亮时刻直接对齐字幕的**字级时间戳**：钻石 2.88 / 蓝宝石 3.65 / 红宝石 4.54 / 翡翠 5.49 / 缟玛瑙 6.42。\n顺序与舞台位置一致：上排左→右（钻石、蓝宝石、红宝石），下排左→右（翡翠、缟玛瑙）—— 正是阅读顺序。",
+      "timing": {
+        "钻石高亮": "2.85-3.35（字 2.88-3.04）",
+        "蓝宝石高亮": "3.62-4.12（字 3.65-4.04）",
+        "红宝石高亮": "4.51-5.01（字 4.54-5.00）",
+        "翡翠高亮": "5.46-5.96（字 5.49-6.13）",
+        "缟玛瑙高亮": "6.39-6.89（字 6.42-7.00）"
+      },
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 1,
+            "kinds": {
+              "宝石白": 1
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 1,
+            "kinds": {
+              "宝石蓝": 1
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 1,
+            "kinds": {
+              "宝石红": 1
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 1,
+            "kinds": {
+              "宝石绿": 1
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 1,
+            "kinds": {
+              "宝石黑": 1
+            }
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 1,
+            "kinds": {
+              "宝石白": 1
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 1,
+            "kinds": {
+              "宝石蓝": 1
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 1,
+            "kinds": {
+              "宝石红": 1
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 1,
+            "kinds": {
+              "宝石绿": 1
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 1,
+            "kinds": {
+              "宝石黑": 1
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 2.85,
+          "dur": 0.5,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.18
+        },
+        {
+          "at": 3.62,
+          "dur": 0.5,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.18
+        },
+        {
+          "at": 4.51,
+          "dur": 0.5,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.18
+        },
+        {
+          "at": 5.46,
+          "dur": 0.5,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.18
+        },
+        {
+          "at": 6.39,
+          "dur": 0.5,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.18
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.001.3",
+      "entry_from": "setup.gems.001.2",
+      "story": "【后续我们就直接以颜色称呼它们了】\n这句话是收束，**画面不需要新信息**。给五堆宝石一次轻微的集体呼吸，让画面不死，然后停住等下一句。\n\n（如果 review 时觉得多余，这条也可以整个不要 —— 但契约建议留着：enter == exit，明确记录「这里什么都没发生」，将来有人怀疑漏做动作时有据可查。）",
+      "note": "【后续我们就直接以颜色称呼它们了】收束句，画面不需要新信息 —— 五堆一起轻微呼吸一次，让画面不死。\n这条**不改变任何状态**（契约里 enter == exit）。",
+      "timing": {
+        "五堆一起呼吸一次": "0.60-1.60（口播 0.28-2.71）"
+      },
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 1,
+            "kinds": {
+              "宝石白": 1
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 1,
+            "kinds": {
+              "宝石蓝": 1
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 1,
+            "kinds": {
+              "宝石红": 1
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 1,
+            "kinds": {
+              "宝石绿": 1
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 1,
+            "kinds": {
+              "宝石黑": 1
+            }
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 1,
+            "kinds": {
+              "宝石白": 1
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 1,
+            "kinds": {
+              "宝石蓝": 1
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 1,
+            "kinds": {
+              "宝石红": 1
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 1,
+            "kinds": {
+              "宝石绿": 1
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 1,
+            "kinds": {
+              "宝石黑": 1
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.8,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.1
+        },
+        {
+          "at": 0.6,
+          "dur": 0.8,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.1
+        },
+        {
+          "at": 0.6,
+          "dur": 0.8,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.1
+        },
+        {
+          "at": 0.6,
+          "dur": 0.8,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.1
+        },
+        {
+          "at": 0.6,
+          "dur": 0.8,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.1
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.002",
+      "entry_from": "setup.gems.001.3",
+      "story": "【这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石】\n这句话要同时说清两件事：黄金是什么、黄金**不是**宝石。所以画面分三段：\n\n  0.30（「这是黄金」）：1 枚黄金从盒里飞到 gold_supply。**只出 1 枚** —— 「将全部 5 枚黄金」是 005.2 的事，这里先把这一枚介绍清楚。\n  1.40（「黄金不属于宝石」）：黄金单独呼吸一下。位置本身就是分开的：黄金在供应区下面一排的右端，与五堆宝石不同堆。\n  4.70（「这五种宝石」）：五堆宝石一起呼吸一次，把「宝石 = 这五种」再点一遍，和刚才单独呼吸的黄金形成对照。\n\n黄金落在 gold_supply（供应区最下排右端），与 5 堆宝石同框但位置独立 —— 这就是「放在一旁」的视觉依据，不需要额外搬动。",
+      "note": "【这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石】\n  0.30 只出 **1 枚**黄金（「这是黄金」）；另外 4 枚留到 005.2（「将全部 5 枚黄金」）\n  1.40 黄金单独呼吸（「黄金不属于宝石」）\n  4.70 五堆宝石一起呼吸（「这五种宝石」），与刚才单独呼吸的黄金形成对照\n黄金落在 `gold_supply`（供应区下排右端），与五堆宝石同框但位置独立 —— 这就是「放在一旁」的依据。",
+      "timing": {
+        "黄金 1 枚上场": "0.30-0.80（口播 0.27-1.06「这是黄金」）",
+        "黄金单独呼吸": "1.40-2.00（口播 1.43-2.73「黄金不属于宝石」）",
+        "五堆宝石一起呼吸": "4.70-5.30（口播 4.75-5.62「这五种宝石」）"
+      },
+      "enter": {
+        "zones": {
+          "box_gem_gold": {
+            "count": 5,
+            "kinds": {
+              "黄金": 5
+            }
+          },
+          "gold_supply": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 1
+          },
+          "gem_supply_sapphire": {
+            "count": 1
+          },
+          "gem_supply_ruby": {
+            "count": 1
+          },
+          "gem_supply_emerald": {
+            "count": 1
+          },
+          "gem_supply_onyx": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "box_gem_gold": {
+            "count": 4,
+            "kinds": {
+              "黄金": 4
+            }
+          },
+          "gold_supply": {
+            "count": 1,
+            "kinds": {
+              "黄金": 1
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 1
+          },
+          "gem_supply_sapphire": {
+            "count": 1
+          },
+          "gem_supply_ruby": {
+            "count": 1
+          },
+          "gem_supply_emerald": {
+            "count": 1
+          },
+          "gem_supply_onyx": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.3,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_gold"
+          ],
+          "quantity": 1,
+          "destination": "gold_supply",
+          "what": {
+            "concept": "gold"
+          },
+          "easing": "easeOutCubic"
+        },
+        {
+          "at": 1.4,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gold_supply",
+          "easing": "easeInOutCubic",
+          "grow": 1.2
+        },
+        {
+          "at": 4.7,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 4.7,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 4.7,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 4.7,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 4.7,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.003.1",
+      "entry_from": "setup.gems.002",
+      "story": "【我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚】\n第一种数量：**每种 4 枚**。\n\n  0.29-3.56（前半句「根据玩家人数拿取对应数量」）：**不动手**。桌上还是每色 1 枚，让观众先听完「数量由人数决定」这个前提。\n  4.20 起（后半句「每种宝石拿取4枚」从 4.14 开始）：五种颜色**各补 3 枚**，从盒里飞到各自的供应堆 —— 最少的那个数。\n\n数量演法（用户 2026-09 定）：**增量，不清空重摆**。整节的账是这样走的：\n  001.1 各 1 枚 → 003.1 各 4 枚 → 003.2 各 5 枚 → 004 各 7 枚\n每一枚都是**真件**：从盒子里搬出来，不是凭空 create。所以盒子里的数同步减少（6 → 3），一路算得平。\n\n逐色错开 0.10s（钻石→蓝宝石→红宝石→翡翠→缟玛瑙），像一只手依次抓；每颗 0.6s 落地。",
+      "note": "第一种数量：**每种 4 枚**。前半句（0.29-3.56「根据玩家人数拿取对应数量」）**不动手** —— 桌上还是每色 1 枚，让观众先听完前提；4.20 起（「每种宝石拿取4枚」）五色**各补 3 枚** → 每堆 4 枚。\n**增量演法**（用户定）：1→4→5→7，不做清空重摆；每一枚都是从盒里搬出来的真件，盒子同步 6→3。\n7 枚在 block 布局里是 4+3 两行，所以 4 / 5 / 7 三种数量靠**形状**就能分辨。",
+      "timing": {
+        "每种补 3 枚 → 各 4 枚": "4.20-5.30（口播 4.14-6.70「2人游戏时，每种宝石拿取4枚」）",
+        "五堆一起呼吸（强调 4）": "5.70-6.40"
+      },
+      "enter": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 6,
+            "kinds": {
+              "宝石白": 6
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 6,
+            "kinds": {
+              "宝石蓝": 6
+            }
+          },
+          "box_gem_ruby": {
+            "count": 6,
+            "kinds": {
+              "宝石红": 6
+            }
+          },
+          "box_gem_emerald": {
+            "count": 6,
+            "kinds": {
+              "宝石绿": 6
+            }
+          },
+          "box_gem_onyx": {
+            "count": 6,
+            "kinds": {
+              "宝石黑": 6
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 1
+          },
+          "gem_supply_sapphire": {
+            "count": 1
+          },
+          "gem_supply_ruby": {
+            "count": 1
+          },
+          "gem_supply_emerald": {
+            "count": 1
+          },
+          "gem_supply_onyx": {
+            "count": 1
+          },
+          "gold_supply": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "box_gem_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "box_gem_emerald": {
+            "count": 3,
+            "kinds": {
+              "宝石绿": 3
+            }
+          },
+          "box_gem_onyx": {
+            "count": 3,
+            "kinds": {
+              "宝石黑": 3
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 4.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_diamond"
+          ],
+          "quantity": 3,
+          "destination": "gem_supply_diamond",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.0
+        },
+        {
+          "at": 4.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_sapphire"
+          ],
+          "quantity": 3,
+          "destination": "gem_supply_sapphire",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.1
+        },
+        {
+          "at": 4.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_ruby"
+          ],
+          "quantity": 3,
+          "destination": "gem_supply_ruby",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.2
+        },
+        {
+          "at": 4.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_emerald"
+          ],
+          "quantity": 3,
+          "destination": "gem_supply_emerald",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.3
+        },
+        {
+          "at": 4.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_onyx"
+          ],
+          "quantity": 3,
+          "destination": "gem_supply_onyx",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.4
+        },
+        {
+          "at": 5.7,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 5.7,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 5.7,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 5.7,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 5.7,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.003.2",
+      "entry_from": "setup.gems.003.1",
+      "story": "【3人游戏时，拿取5枚】\n第二种数量：**每种 5 枚**。五种颜色各补 1 枚，4 → 5。\n\n只有 2.83s，动作必须短：0.55 起跳、每颗 0.45s、逐色错开 0.08s，1.2s 内全部落地；1.60 给五堆一次呼吸，把「现在是 5」压住。\n\n观众能自己数出来是关键：宝石堆用的是 block 布局，5 枚 = 上排 4 + 下排 1，和 4 枚（一整排）在形状上就能分辨 —— 不需要字幕报数。",
+      "note": "第二种数量：**每种 5 枚**（4 → 5）。只有 2.83s，动作要短：每颗 0.45s、逐色错开 0.08s。",
+      "timing": {
+        "每种补 1 枚 → 各 5 枚": "0.55-1.20（口播 0.45-2.50）",
+        "五堆一起呼吸（强调 5）": "1.60-2.20"
+      },
+      "enter": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "box_gem_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "box_gem_emerald": {
+            "count": 3,
+            "kinds": {
+              "宝石绿": 3
+            }
+          },
+          "box_gem_onyx": {
+            "count": 3,
+            "kinds": {
+              "宝石黑": 3
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 4
+          },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 4
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 2,
+            "kinds": {
+              "宝石白": 2
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 2,
+            "kinds": {
+              "宝石蓝": 2
+            }
+          },
+          "box_gem_ruby": {
+            "count": 2,
+            "kinds": {
+              "宝石红": 2
+            }
+          },
+          "box_gem_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "box_gem_onyx": {
+            "count": 2,
+            "kinds": {
+              "宝石黑": 2
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 5
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 5,
+            "kinds": {
+              "宝石蓝": 5
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 5,
+            "kinds": {
+              "宝石红": 5
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 5,
+            "kinds": {
+              "宝石绿": 5
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 5,
+            "kinds": {
+              "宝石黑": 5
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.55,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_diamond"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_diamond",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.0
+        },
+        {
+          "at": 0.55,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_sapphire"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_sapphire",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.08
+        },
+        {
+          "at": 0.55,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_ruby"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_ruby",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.16
+        },
+        {
+          "at": 0.55,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_emerald"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_emerald",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.24
+        },
+        {
+          "at": 0.55,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_onyx"
+          ],
+          "quantity": 1,
+          "destination": "gem_supply_onyx",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.32
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.004",
+      "entry_from": "setup.gems.003.2",
+      "story": "【4人游戏时则使用全部的7枚宝石】\n第三种数量：**每种 7 枚**。五种颜色各补 2 枚，5 → 7；补完之后盒子里的宝石**全部用完**（box_gem_* 全变 0），因为 7 就是全部。\n\n0.60 起跳、每颗 0.45s、逐色错开 0.08s；2.00 给五堆一次呼吸，把「7」压住。\n\n7 枚在 block 布局里正好是 **4+3 两行**（引擎注释原话：「紧凑且数得清」），和 4 枚（一整排）、5 枚（4+1）形状各不相同 —— 三种数量的区别靠形状就能看出来。\n\n注意账要平：这一步之后盒子里没有任何宝石了。005.x 不会再从盒里拿宝石，只拿黄金。",
+      "note": "第三种数量：**每种 7 枚**（5 → 7）。补完之后盒子里的宝石**全部用完**（`box_gem_*` 全 0）—— 7 就是全部。\n这一步之后 005.x 不会再从盒里拿宝石，只拿黄金。",
+      "timing": {
+        "每种补 2 枚 → 各 7 枚（盒子清空）": "0.60-1.40（口播 0.51-3.42）",
+        "五堆一起呼吸（强调 7）": "2.00-2.70"
+      },
+      "enter": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 2,
+            "kinds": {
+              "宝石白": 2
+            }
+          },
+          "box_gem_sapphire": {
+            "count": 2,
+            "kinds": {
+              "宝石蓝": 2
+            }
+          },
+          "box_gem_ruby": {
+            "count": 2,
+            "kinds": {
+              "宝石红": 2
+            }
+          },
+          "box_gem_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "box_gem_onyx": {
+            "count": 2,
+            "kinds": {
+              "宝石黑": 2
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 5
+          },
+          "gem_supply_sapphire": {
+            "count": 5
+          },
+          "gem_supply_ruby": {
+            "count": 5
+          },
+          "gem_supply_emerald": {
+            "count": 5
+          },
+          "gem_supply_onyx": {
+            "count": 5
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "box_gem_diamond": {
+            "count": 0
+          },
+          "box_gem_sapphire": {
+            "count": 0
+          },
+          "box_gem_ruby": {
+            "count": 0
+          },
+          "box_gem_emerald": {
+            "count": 0
+          },
+          "box_gem_onyx": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_diamond"
+          ],
+          "quantity": 2,
+          "destination": "gem_supply_diamond",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.0
+        },
+        {
+          "at": 0.6,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_sapphire"
+          ],
+          "quantity": 2,
+          "destination": "gem_supply_sapphire",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.08
+        },
+        {
+          "at": 0.6,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_ruby"
+          ],
+          "quantity": 2,
+          "destination": "gem_supply_ruby",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.16
+        },
+        {
+          "at": 0.6,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_emerald"
+          ],
+          "quantity": 2,
+          "destination": "gem_supply_emerald",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.24
+        },
+        {
+          "at": 0.6,
+          "dur": 0.45,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_onyx"
+          ],
+          "quantity": 2,
+          "destination": "gem_supply_onyx",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.32
+        },
+        {
+          "at": 2.0,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 2.0,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 2.0,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 2.0,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        },
+        {
+          "at": 2.0,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.14
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.005.1",
+      "entry_from": "setup.gems.004",
+      "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n这句话**没有新的搬运**：宝石在 003.1→004 里已经一枚一枚落在供应区了。所以这一条只做「确认」：\n\n  镜头留在供应区整排，1.20 起让五堆宝石一起呼吸一次，把「这一排就是宝石供应堆」点出来。\n\n为什么不在这里搬东西：位置在宝石出现的第一刻（001.1）就已经是最终位置了 —— 供应堆不是一个「先放在别处、再挪过来」的对象。这条 cue 的 enter == exit，正是这件事的书面证据。\n\n黄金不在这句里点（下一句 005.2 才说黄金）。",
+      "note": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n**没有新的搬运**：宝石在 003.1→004 里已经一枚一枚落在供应区了，所以这条只做「确认」——五堆一起呼吸一次，把「这一排就是宝石供应堆」点出来。enter == exit 是刻意的书面证据。\n黄金不在这句里点（下一句才说黄金）。",
+      "timing": {
+        "五堆一起呼吸（「成为宝石供应堆」）": "1.20-2.40（口播 0.28-5.55）"
+      },
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          },
+          "gold_supply": {
+            "count": 1
+          },
+          "box_gem_gold": {
+            "count": 4
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          },
+          "gold_supply": {
+            "count": 1
+          },
+          "box_gem_gold": {
+            "count": 4
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 1.2,
+          "dur": 1.0,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "easing": "easeInOutCubic",
+          "grow": 1.12
+        },
+        {
+          "at": 1.2,
+          "dur": 1.0,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "easing": "easeInOutCubic",
+          "grow": 1.12
+        },
+        {
+          "at": 1.2,
+          "dur": 1.0,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "easing": "easeInOutCubic",
+          "grow": 1.12
+        },
+        {
+          "at": 1.2,
+          "dur": 1.0,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "easing": "easeInOutCubic",
+          "grow": 1.12
+        },
+        {
+          "at": 1.2,
+          "dur": 1.0,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "easing": "easeInOutCubic",
+          "grow": 1.12
+        }
+      ]
+    },
+    {
+      "cue": "setup.gems.005.2",
+      "entry_from": "setup.gems.005.1",
+      "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n\n  0.50：盒里剩下的 4 枚黄金飞到 gold_supply，加上 002 里先出来的那 1 枚，共 5 枚。2.40 给黄金一次呼吸。\n  4.81 起的「其余的宝石放回盒子」**不给画面**（用户 2026-09 明确：这句话不需要对应画面）。\n\n由此产生一个**刻意的结果**，要写清楚以免以后误判：本 cue 结束时，宝石和黄金**全部在桌上**，六个盒子 zone 全是 0。\n  - 好的一面：`box_gem_*` 全 0 是一条干净的不变量，「桌上的数 + 盒里的数 = 实物总数」永远成立，谁多拿少拿一眼可见。\n  - 这一节的终点是 **4 人局的宝石数（每种 7 枚）**，这不代表整篇教程按 4 人局走。\n\n**数量改回 2 人局（每种 4 枚）放在下一 cue —— `setup.nobles.001.1`（用户 2026-09 裁决）**：\n  - 「其余的宝石放回盒子」在**本 cue 里不做任何动画**（用户明确）。\n  - 下一 cue 的开场动画里，每色从供应堆搬 3 枚回盒子 → 每种 4 枚、盒子每色 3 枚，\n    这样 003.1 先讲的「2 人游戏时每种 4 枚」才和后面整篇的口径一致\n    （贵族下一小节抽 3 块 = 玩家数 2 + 1，本就是 2 人局）。\n  - 也就是说 `setup.nobles.001.1` 的契约里，enter 是 7 枚/色 + 空盒，exit 是 4 枚/色 + 每色 3 枚在盒里。\n\n取景：这一条仍在供应区（黄金落位要看清楚）。切回整桌取景放在下一条 cue（贵族）的开头。",
+      "note": "【将全部5枚黄金也放在一旁，成为黄金供应堆】0.50 把盒里剩下的 4 枚黄金搬出来（+002 的 1 枚 = 5 枚），2.40 呼吸一次。\n【其余的宝石放回盒子】**刻意不给画面**（用户决定）—— 所以本 cue 结束时宝石与黄金全在桌上、六个盒子 zone 全 0。\n那一步（每色 3 枚搬回盒子、走 2 人局）放在下一条 cue `setup.nobles.001.1`。",
+      "timing": {
+        "黄金补到 5 枚": "0.50-1.20（口播 0.28-4.25「将全部5枚黄金也放在一旁，成为黄金供应堆」）",
+        "黄金呼吸": "2.40-3.10",
+        "「其余的宝石放回盒子」": "4.81-6.41 —— **刻意不给画面**（用户决定）"
+      },
+      "enter": {
+        "zones": {
+          "gold_supply": {
+            "count": 1,
+            "kinds": {
+              "黄金": 1
+            }
+          },
+          "box_gem_gold": {
+            "count": 4,
+            "kinds": {
+              "黄金": 4
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 7
+          },
+          "gem_supply_sapphire": {
+            "count": 7
+          },
+          "gem_supply_ruby": {
+            "count": 7
+          },
+          "gem_supply_emerald": {
+            "count": 7
+          },
+          "gem_supply_onyx": {
+            "count": 7
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gold_supply": {
+            "count": 5,
+            "kinds": {
+              "黄金": 5
+            }
+          },
+          "box_gem_gold": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.5,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "box_gem_gold"
+          ],
+          "quantity": 4,
+          "destination": "gold_supply",
+          "what": {
+            "concept": "gold"
+          },
+          "easing": "easeOutCubic"
+        },
+        {
+          "at": 2.4,
+          "dur": 0.7,
+          "action": "highlight",
+          "zone": "gold_supply",
+          "easing": "easeInOutCubic",
+          "grow": 1.2
+        }
+      ]
+    },
+    {
+      "cue": "setup.nobles.001.1",
+      "entry_from": "setup.gems.005.2",
+      "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n\n这条 cue 的口播讲贵族，**但它同时承担宝石那节留下的收尾**（用户 2026-09 裁决）：\n宝石小节按 2/3/4 人三种数量演到各 7 枚（4 人局），而整篇之后走 2 人局（贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径）。\n所以这里把每色多出来的 **3 枚搬回盒子**：7 → 4。\n\n动作是背景清理，与口播内容无关，所以时间上放在前半句说完之前完成，别抢戏：\n  1.00-2.60：五种颜色各 3 枚，从 `gem_supply_*` 飞回 `box_gem_*`\n\n黄金不在这条里动（5 枚一直放在 `gold_supply`，玩家数不影响它）。",
+      "timing": {
+        "每色搬 3 枚回盒子（7→4）": "1.00-2.60（口播 0.00-5.64，背景清理）"
+      },
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          },
+          "box_gem_diamond": {
+            "count": 0
+          },
+          "box_gem_sapphire": {
+            "count": 0
+          },
+          "box_gem_ruby": {
+            "count": 0
+          },
+          "box_gem_emerald": {
+            "count": 0
+          },
+          "box_gem_onyx": {
+            "count": 0
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "noble_market": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "box_gem_diamond": {
+            "count": 3
+          },
+          "box_gem_sapphire": {
+            "count": 3
+          },
+          "box_gem_ruby": {
+            "count": 3
+          },
+          "box_gem_emerald": {
+            "count": 3
+          },
+          "box_gem_onyx": {
+            "count": 3
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "noble_market": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": []
+    },
+    {
+      "cue": "setup.nobles.001.2",
+      "entry_from": "setup.nobles.001.1",
+      "story": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n\n贵族从镜头外（`offstage`，「从所有的贵族板块中随机抽出」= 盲抽）飞到贵族市场，**正面朝上**放好 —— 贵族是 `<tile>`，`<tile>.face` 是它的状态，所以这里能断言\"3 枚全朝上\"。\n三块依次落位（`lead` 0.35 错开），对齐台词「放(1.07)置(1.26)」。\n2 人局 = 玩家数 + 1 = 3 块（flow: deal_nobles）。\n\n「其余的放回盒子」不在这条里做：那 20 多枚贵族从来只是概念上\"在盒里\"，动画里没有把它们建出来，所以也就没有要放回的东西。",
+      "note": "设置 2.3 第二句：正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。贵族板块从游戏盒（offstage, top）飞到贵族供应堆；台词「放(1.07)置(1.26)」开始放，三块依次落位。2 人局抽玩家数+1 = 3 块（flow: deal_nobles）。",
+      "timing": {
+        "3 块贵族依次落位": "1.05-2.25（台词「放(1.07)置(1.26)」）",
+        "逐块高亮": "2.05 / 2.40 / 2.75"
+      },
+      "enter": {
+        "zones": {
+          "offstage": {
+            "count": 3
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "offstage": {
+            "count": 0
+          },
+          "noble_market": {
+            "count": 3,
+            "face_up": 3,
+            "shows_face": 3,
+            "kinds": {
+              "贵族": {
+                "count": 3,
+                "face": "up",
+                "shows": "face"
+              }
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          }
+        }
+      },
+      "start": {
+        "set": [
+          {
+            "what": {
+              "concept": "noble"
+            },
+            "zone": "noble_market",
+            "expand_to": 3
+          }
+        ]
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 1.05,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::random_draw>",
+          "source": [
+            "offstage"
+          ],
+          "destination": "noble_market",
+          "what": {
+            "concept": "noble"
+          },
+          "easing": "easeOutCubic"
+        },
+        {
+          "at": 1.05,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::random_draw>",
+          "source": [
+            "offstage"
+          ],
+          "destination": "noble_market",
+          "what": {
+            "concept": "noble"
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.35
+        },
+        {
+          "at": 1.05,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::random_draw>",
+          "source": [
+            "offstage"
+          ],
+          "destination": "noble_market",
+          "what": {
+            "concept": "noble"
+          },
+          "easing": "easeOutCubic",
+          "lead": 0.7
+        },
+        {
+          "at": 2.05,
+          "dur": 0.3,
+          "action": "highlight",
+          "what": {
+            "concept": "noble"
+          },
+          "zone": "noble_market",
+          "order": 0,
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 2.4,
+          "dur": 0.3,
+          "action": "highlight",
+          "what": {
+            "concept": "noble"
+          },
+          "zone": "noble_market",
+          "order": 1,
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        },
+        {
+          "at": 2.75,
+          "dur": 0.3,
+          "action": "highlight",
+          "what": {
+            "concept": "noble"
+          },
+          "zone": "noble_market",
+          "order": 2,
+          "easing": "easeInOutCubic",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "cue": "action.take.different.001",
+      "entry_from": "setup.nobles.001.2",
+      "story": "【拿取三种不同宝石】玩法第一条：从宝石供应堆拿三种**不同**颜色的宝石各一枚。\n事实来自 flow 的 `take_gems_different`：`<gem_supply>` → `<ontology::player_holding>`，3 颗。\n\n  0.30 / 0.55 / 0.80：先分别高亮三种宝石（台词在逐一点名）\n  3.35：三枚一起飞到玩家持有区（`stagger` 0.25 依次走）\n  4.10：持有区整体高亮，表示\"这三枚在你手上\"\n\n**已知短板（待重构）**：高亮用的是引擎实例 id（`gem#1` / `gem#8` / `gem#15`），而 id 是\"第几个被创建\"的产物 —— 同一条数据在顺序播放里（不靠 `start.set` 预置）拿到的 id 完全不同。这类\"点名\"要换成本体语言的选法（哪个概念、在哪个 zone、第几位），见 review 里的字段归属审计。",
+      "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。",
+      "timing": {
+        "三种宝石分别高亮": "0.30 / 0.55 / 0.80（三种不同宝石 3.21~4.44）",
+        "三枚飞到持有区": "3.35-3.85（各一枚 4.44~4.99）",
+        "持有区高亮": "4.10"
+      },
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1
+            }
+          }
+        }
+      },
+      "start": {
+        "set": [
+          {
+            "what": {
+              "concept": "gem",
+              "parts": [
+                {
+                  "key": "color",
+                  "value": "<diamond>"
+                }
+              ]
+            },
+            "zone": "gem_supply_diamond",
+            "expand_to": 4
+          },
+          {
+            "what": {
+              "concept": "gem",
+              "parts": [
+                {
+                  "key": "color",
+                  "value": "<sapphire>"
+                }
+              ]
+            },
+            "zone": "gem_supply_sapphire",
+            "expand_to": 4
+          },
+          {
+            "what": {
+              "concept": "gem",
+              "parts": [
+                {
+                  "key": "color",
+                  "value": "<ruby>"
+                }
+              ]
+            },
+            "zone": "gem_supply_ruby",
+            "expand_to": 4
+          },
+          {
+            "what": {
+              "concept": "gem",
+              "parts": [
+                {
+                  "key": "color",
+                  "value": "<emerald>"
+                }
+              ]
+            },
+            "zone": "gem_supply_emerald",
+            "expand_to": 4
+          },
+          {
+            "what": {
+              "concept": "gem",
+              "parts": [
+                {
+                  "key": "color",
+                  "value": "<onyx>"
+                }
+              ]
+            },
+            "zone": "gem_supply_onyx",
+            "expand_to": 4
+          },
+          {
+            "what": {
+              "concept": "gold"
+            },
+            "zone": "gold_supply",
+            "expand_to": 5
+          }
+        ]
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.3,
+          "dur": 0.35,
+          "action": "highlight",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "zone": "gem_supply_diamond",
+          "order": 0,
+          "easing": "easeInOutCubic",
+          "grow": 1.2
+        },
+        {
+          "at": 0.55,
+          "dur": 0.35,
+          "action": "highlight",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "zone": "gem_supply_sapphire",
+          "order": 0,
+          "easing": "easeInOutCubic",
+          "grow": 1.2
+        },
+        {
+          "at": 0.8,
+          "dur": 0.35,
+          "action": "highlight",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "zone": "gem_supply_ruby",
+          "order": 0,
+          "easing": "easeInOutCubic",
+          "grow": 1.2
+        },
+        {
+          "at": 3.35,
+          "dur": 0.5,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire",
+            "gem_supply_ruby"
+          ],
+          "destination": "player_holding",
+          "stagger": 0.25,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 4.1,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_holding"
+        }
+      ]
+    }
+  ]
+}

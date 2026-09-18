@@ -10,9 +10,11 @@
     # 只查跨 cue 的链
     python3 scripts/check_cue_script.py --chain
 
-数据在哪：
-    games/{game}/tutorial/script/{track}.json            契约 —— **人写**，整条 track 一个文件
-    games/{game}/tutorial/script/{track}.exitstate.json  采样终态 —— 引擎生成，别手改
+数据在哪（一个动画一个文件）：
+    games/{game}/tutorial/anim/{track}.json             **动画脚本**：每条 cue 的 story/enter/exit/timing
+                                                        + start/events。本工具只读契约那半（story/enter/exit）；
+                                                        引擎只读 start/events。
+    games/{game}/tutorial/anim/{track}.exitstate.json   采样终态 —— 引擎生成，别手改
     --script / --states 覆盖这两条路径；--state 直接给一份单独的采样文件（临时查一条用）
 
 为什么这么分：契约是人写的意图 + 首尾状态，采样是引擎跑出来的事实，两者结构相同 → 可 diff，
@@ -190,7 +192,7 @@ def diff_contract(want_zones, state_zones):
 # ── 数据装载 ──────────────────────────────────────────────────────────
 
 def resolve_paths(args):
-    base = ROOT / "games" / args.game / "tutorial" / "script"
+    base = ROOT / "games" / args.game / "tutorial" / "anim"
     contract = Path(args.script) if args.script else base / f"{args.track}.json"
     states = Path(args.states) if args.states else base / f"{args.track}.exitstate.json"
     return contract, states
@@ -198,7 +200,7 @@ def resolve_paths(args):
 
 def load_contracts(path):
     if not path.exists():
-        print(f"没有契约文件: {path}", file=sys.stderr)
+        print(f"没有脚本文件: {path}", file=sys.stderr)
         return None, {}
     doc = load(path)
     return doc, {c["cue"]: c for c in (doc.get("cues") or []) if c.get("cue")}
@@ -363,8 +365,8 @@ def main():
     ap.add_argument("--game", default="splendor")
     ap.add_argument("--track", default="full")
     ap.add_argument("--cue", default=None)
-    ap.add_argument("--script", help="契约文件（默认 games/{game}/tutorial/script/{track}.json）")
-    ap.add_argument("--states", help="采样文件（默认 .../{track}.exitstate.json）")
+    ap.add_argument("--script", help="动画脚本文件（默认 games/{game}/tutorial/anim/{track}.json）")
+    ap.add_argument("--states", help="采样文件（默认 .../anim/{track}.exitstate.json）")
     ap.add_argument("--state", help="单条 cue 的采样文件（临时查用，覆盖 --states）")
     ap.add_argument("--which", default="exit", choices=["exit", "enter"])
     ap.add_argument("-v", "--verbose", action="store_true", help="（保留）列出被忽略的 zone")

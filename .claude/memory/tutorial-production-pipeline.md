@@ -68,7 +68,7 @@ metadata:
 |---|---|---|
 | 语义事实 | `games/{game}/flow.json`、`concepts.json` | 源、目的地、对象、数量 |
 | 视觉绑定 | `anim/_stage/{game}.table.json` | 语义区域画在屏幕哪里（哪些 zone、颜色分几堆） |
-| 时间 | `anim/{track}/{cue_id}.json` | 第几秒发生、强调、错峰 |
+| 时间 | `anim/{track}.json` 里那条 cue 的 `events` | 第几秒发生、强调、错峰 |
 
 **flow 只当查阅资料，不做运行时解析（2026-09-15 用户裁决）**：flow / concepts 里的
 `source` / `destination` / `quantity` 由 AI 在**编写动画脚本时自己读**，然后把结论写进

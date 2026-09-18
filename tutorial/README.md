@@ -107,11 +107,11 @@ python scripts/flow_to_tutorial.py --game civolution --stdout > /tmp/civolution.
 |---|---|---|
 | 语义事实 | `games/{game}/flow.json`、`concepts.json` | 源、目的地、对象、数量 |
 | 视觉绑定 | `anim/_stage/{game}.table.json` | 语义区域画在屏幕哪里（哪些 zone、颜色分几堆） |
-| 时间 | `anim/{track}/{cue_id}.json` | 第几秒发生、强调、错峰 |
+| 时间 | `anim/{track}.json` 里那条 cue 的 `events` | 第几秒发生、强调、错峰 |
 
 ```text
 games/{game}/tutorial/anim/_stage/{game}.table.json   牌桌事实：zone 位置、模板、开局摆放
-games/{game}/tutorial/anim/{track}/{cue_id}.json      这一条 cue 对牌桌做了什么
+games/{game}/tutorial/anim/{track}.json               一个动画一个文件：每条 cue 的 story/enter/exit（人读+对账）+ start/events（引擎执行）
 ```
 
 - **stage**：`zones`（每个 zone 的 `center` 与 `layout`）、`templates`（外观：shape / palette / world_size）、
