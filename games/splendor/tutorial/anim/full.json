@@ -2597,7 +2597,8 @@
       "entry_from": "setup.gems.005.2",
       "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n\n这条 cue 的口播讲贵族，**但它同时承担宝石那节留下的收尾**（用户 2026-09 裁决）：\n宝石小节按 2/3/4 人三种数量演到各 7 枚（4 人局），而整篇之后走 2 人局（贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径）。\n所以这里把每色多出来的 **3 枚搬回盒子**：7 → 4。\n\n动作是背景清理，与口播内容无关，所以时间上放在前半句说完之前完成，别抢戏：\n  1.00-2.60：五种颜色各 3 枚，从 `gem_supply_*` 飞回 `box_gem_*`\n\n黄金不在这条里动（5 枚一直放在 `gold_supply`，玩家数不影响它）。",
       "timing": {
-        "每色搬 3 枚回盒子（7→4）": "1.00-2.60（口播 0.00-5.64，背景清理）"
+        "每色搬 3 枚回盒子（7→4）": "1.00-2.20（逐色错开 0.15s；口播 0.00-5.64，背景清理）",
+        "五堆一起呼吸（强调 4）": "2.60-3.20"
       },
       "enter": {
         "picture": null,
@@ -2714,13 +2715,171 @@
       "start": {
         "set": []
       },
-      "events": []
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 1.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "gem_supply_diamond"
+          ],
+          "quantity": 3,
+          "destination": "box_gem_diamond",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "easing": "easeInOutCubic",
+          "lead": 0.0
+        },
+        {
+          "at": 1.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "gem_supply_sapphire"
+          ],
+          "quantity": 3,
+          "destination": "box_gem_sapphire",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "easing": "easeInOutCubic",
+          "lead": 0.15
+        },
+        {
+          "at": 1.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "gem_supply_ruby"
+          ],
+          "quantity": 3,
+          "destination": "box_gem_ruby",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "easing": "easeInOutCubic",
+          "lead": 0.3
+        },
+        {
+          "at": 1.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "gem_supply_emerald"
+          ],
+          "quantity": 3,
+          "destination": "box_gem_emerald",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "easing": "easeInOutCubic",
+          "lead": 0.45
+        },
+        {
+          "at": 1.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "gem_supply_onyx"
+          ],
+          "quantity": 3,
+          "destination": "box_gem_onyx",
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "easing": "easeInOutCubic",
+          "lead": 0.6
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_diamond",
+          "grow": 1.1,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_sapphire",
+          "grow": 1.1,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_ruby",
+          "grow": 1.1,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_emerald",
+          "grow": 1.1,
+          "easing": "easeInOutCubic"
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "highlight",
+          "zone": "gem_supply_onyx",
+          "grow": 1.1,
+          "easing": "easeInOutCubic"
+        }
+      ],
+      "note": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n口播讲贵族，但这条 cue 同时做**宝石小节的收尾**（用户 2026-09 裁决）：\n  1.00 起：每色多出来的 **3 枚搬回盒子**（供应堆 7 → 4、盒子 0 → 3），逐色错开 0.15s。\n  为什么是 3：宝石小节按 2/3/4 人三种数量一路演到各 7 枚（4 人局），而整篇之后走 2 人局\n  —— 贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径。\n  2.60 五堆一起呼吸一次，把「现在每堆是 4」点住。\n这才把「桌上的数 + 盒里的数 = 实物总数（每色 7）」重新配平：3 + 4 = 7。\n黄金不动（玩家数不影响黄金）。贵族本身要等下一 cue 才出场。"
     },
     {
       "cue": "setup.nobles.001.2",
       "entry_from": "setup.nobles.001.1",
       "story": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n\n贵族从镜头外（`offstage`，「从所有的贵族板块中随机抽出」= 盲抽）飞到贵族市场，**正面朝上**放好 —— 贵族是 `<tile>`，`<tile>.face` 是它的状态，所以这里能断言\"3 枚全朝上\"。\n三块依次落位（`lead` 0.35 错开），对齐台词「放(1.07)置(1.26)」。\n2 人局 = 玩家数 + 1 = 3 块（flow: deal_nobles）。\n\n「其余的放回盒子」不在这条里做：那 20 多枚贵族从来只是概念上\"在盒里\"，动画里没有把它们建出来，所以也就没有要放回的东西。",
-      "note": "设置 2.3 第二句：正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。贵族板块从游戏盒（offstage, top）飞到贵族供应堆；台词「放(1.07)置(1.26)」开始放，三块依次落位。2 人局抽玩家数+1 = 3 块（flow: deal_nobles）。",
+      "note": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n贵族从镜头外（`offstage`，「从所有的贵族板块中随机抽出」= 盲抽）飞到贵族市场，**正面朝上**放好 —— 贵族是 `<tile>`，`<tile>.face` 是它的状态，所以这里能断言\"3 枚全朝上\"。\n三块依次落位（`lead` 0.35 错开），对齐台词「放(1.07)置(1.26)」。\n  注意：`transfer` 的 `to: \"face_up\"` 必须**写出来** —— 不写就是\"保持原来那一面\"，而从 `offstage` 来的贵族默认是背面（对账报过\"期望 3 面朝上、实际 0 面朝上\"）。\n2 人局 = 玩家数 + 1 = 3 块（flow: deal_nobles）。\n「其余的放回盒子」不在这条里做：那 20 多枚贵族从来只是概念上\"在盒里\"，动画里没有把它们建出来，所以也就没有要放回的东西。",
       "timing": {
         "3 块贵族依次落位": "1.05-2.25（台词「放(1.07)置(1.26)」）",
         "逐块高亮": "2.05 / 2.40 / 2.75"
@@ -2846,7 +3005,8 @@
           "what": {
             "concept": "noble"
           },
-          "easing": "easeOutCubic"
+          "easing": "easeOutCubic",
+          "to": "face_up"
         },
         {
           "at": 1.05,
@@ -2861,7 +3021,8 @@
             "concept": "noble"
           },
           "easing": "easeOutCubic",
-          "lead": 0.35
+          "lead": 0.35,
+          "to": "face_up"
         },
         {
           "at": 1.05,
@@ -2876,7 +3037,8 @@
             "concept": "noble"
           },
           "easing": "easeOutCubic",
-          "lead": 0.7
+          "lead": 0.7,
+          "to": "face_up"
         },
         {
           "at": 2.05,
