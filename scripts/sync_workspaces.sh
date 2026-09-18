@@ -96,7 +96,7 @@ push_origin() {
   local out
   if ! out=$(git -C "$LINUX" push origin "$BRANCH" 2>&1); then
     # 分清是"网络不通"还是"远端有新提交"——两件事的处理完全不同
-    if echo "$out" | grep -qiE 'could not resolve|unable to access|TLS|timed out|Connection'; then
+    if echo "$out" | grep -qiE 'could not resolve|unable to access|failed to connect|couldn.t connect|TLS|timed out|timeout|proxy|network|port 443'; then
       die "推送失败：**网络问题**（GitHub 连不上）。本地两个工作区的同步不受影响，用 from-windows / from-linux 即可。"
     fi
     die "推送被拒：远端有我们没有的提交 —— 先 fetch 看清楚，别 force"
