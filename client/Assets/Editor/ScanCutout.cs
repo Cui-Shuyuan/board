@@ -107,17 +107,20 @@ namespace BoardGameTutorial.Editor
             Color bg = MedianCorner(px, w, h);
 
             // 自适应容差：选"最像圆"的那个 mask
-            float bestTol = -1f, bestScore = -1f;
+            float bestTol = -1f, bestScore = -1f, bestRound = 0f;
             bool[] bestMask = null;
             foreach (var tol in Tolerances)
             {
                 var mask = LargestBlob(FillHoles(Foreground(px, w, h, bg, tol), w, h), w, h);
                 int area = Count(mask);
                 if (area < w * h / 20) continue;                  // 太小：不是本体那个圆
-                var b = Bounds(mask, w, h);
-                float bw = b.z - b.x + 1, bh = b.w - b.y + 1;
-                float score = area / (Mathf.PI * (bw / 2f) * (bh / 2f));   // 圆 = 1.0
-                if (score > bestScore) { bestScore = score; bestTol = tol; bestMask = mask; }
+                Bounds(mask, w, h, out float bx0, out float by0, out float bx1, out float by1);
+                float bw = bx1 - bx0 + 1, bh = by1 - by0 + 1;
+                float round = area / (Mathf.PI * (bw / 2f) * (bh / 2f));   // 圆 = 1.0
+                // 要"最接近 1"而不是"最大"：容差太松会把背景/阴影也吃进来，
+                // 那时面积会**大于**内切圆（>1）—— 选它等于把宝石周围糊一圈（红宝石踩过）。
+                float score = -Mathf.Abs(round - 1f);
+                if (score > bestScore) { bestScore = score; bestTol = tol; bestRound = round; bestMask = mask; }
             }
             if (bestMask == null)
             {
@@ -133,8 +136,8 @@ namespace BoardGameTutorial.Editor
                     if (bestMask[y * w + x]) { n++; sx += x; sy += y; }
             float cx = (float)(sx / n), cy = (float)(sy / n);
             float rArea = Mathf.Sqrt(n / Mathf.PI);
-            var box = Bounds(bestMask, w, h);
-            float rBox = Mathf.Min(box.z - box.x + 1, box.w - box.y + 1) / 2f;
+            Bounds(bestMask, w, h, out float mx0, out float my0, out float mx1, out float my1);
+            float rBox = Mathf.Min(mx1 - mx0 + 1, my1 - my0 + 1) / 2f;
             float r = Mathf.Min(rArea, rBox) - Shrink;
             float mismatch = Mathf.Abs(rArea - rBox) / Mathf.Max(1f, rBox);
 
@@ -178,7 +181,7 @@ namespace BoardGameTutorial.Editor
 
             Debug.Log($"[Cutout] {name} {w}x{h} → {side}x{side} 背景=({bg.r:0.00},{bg.g:0.00},{bg.b:0.00}) " +
                       $"容差={bestTol:0.00} 圆心=({cx:0},{cy:0}) r={r:0.0}" +
-                      $"（面积法 {rArea:0.0} / 矩形 {rBox:0.0}，差 {mismatch:P0}）圆度={bestScore:0.000} → " +
+                      $"（面积法 {rArea:0.0} / 矩形 {rBox:0.0}，差 {mismatch:P0}）圆度={bestRound:0.000} → " +
                       $"四角max α={cornerMax:0.00} 圆心α={centerAlpha:0.00} 圆外不透明={outside} " +
                       $"不透明占比={frac:0.000}（理想 π/4={Mathf.PI / 4f:0.000}）");
 
@@ -292,10 +295,11 @@ namespace BoardGameTutorial.Editor
             return n;
         }
 
-        /// <summary>外接矩形 (minX, minY, maxX, maxY)。</summary>
-        private static Vector4 Bounds(bool[] mask, int w, int h)
+        /// <summary>外接矩形（minX/minY/maxX/maxY；空 mask 时 max 为 -1）。</summary>
+        private static void Bounds(bool[] mask, int w, int h,
+                                   out float minX, out float minY, out float maxX, out float maxY)
         {
-            float minX = w, minY = h, maxX = -1, maxY = -1;
+            minX = w; minY = h; maxX = -1; maxY = -1;
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                     if (mask[y * w + x])
@@ -305,7 +309,6 @@ namespace BoardGameTutorial.Editor
                         if (y < minY) minY = y;
                         if (y > maxY) maxY = y;
                     }
-            return new Vector4(minX, minY, maxX, maxY);
         }
 
         /// <summary>四角小块的中位色 = 背景色（比平均稳，扫描件角落偶有杂点）。</summary>
