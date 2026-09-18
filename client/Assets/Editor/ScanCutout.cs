@@ -213,11 +213,11 @@ namespace BoardGameTutorial.Editor
                       $"最大色差={maxDist:0.00} 圆心=({cx:0},{cy:0}) r={radius:0.0} → " +
                       $"四角max α={cornerMax:0.00} 圆心α={centerAlpha:0.00} 圆外不透明={outsideOpaque} " +
                       $"占比={frac:0.000}（理想 π/4={Mathf.PI / 4f:0.000}）｜切掉的宝石={100.0 * cut / gemTotal:0.00}% " +
-                      $"圆内底色={100.0 * halo / Mathf.Max(1.0, halo + sw - cut):0.00}%");
+                      $"圆内底色={100.0 * halo / Mathf.Max(1.0, (float)(halo + sw - cut)):0.00}%");
 
             bool ok = cornerMax <= 0.01f && centerAlpha >= 0.99f && outsideOpaque <= 4
                       && Mathf.Abs(frac - Mathf.PI / 4f) < 0.06f
-                      && cut / gemTotal <= 0.02 && halo / Mathf.Max(1.0, halo + sw - cut) <= 0.03;
+                      && cut / gemTotal <= 0.02 && halo / Mathf.Max(1.0, (float)(halo + sw - cut)) <= 0.03;
             if (!ok)
                 Debug.LogError($"[Cutout] {name}: 自检没过（四角全透明 / 圆心不透明 / 圆外无不透明 / 占比≈π/4 /" +
                                $"切掉的宝石≤2% / 圆内底色≤3%）");
