@@ -369,29 +369,15 @@ namespace BoardGameTutorial.Editor
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
 
-            // 编辑器实际用的路径：PlayCue → ApplyEntryState（解入口状态）+ LoadCue。
-            // 所以这里必须**完整复现那两步**，否则采样和真实画面会不一致。
-            var playerGo = new GameObject("AdvPlayer");
-            var player = playerGo.AddComponent<TutorialCuePlayer>();
-            player.autoPlay = false;
-            player.tutorialRoot = Path.Combine(repoRoot, "games");
-            if (!player.LoadRuntime()) { Debug.Log("[Adv] LoadRuntime 失败"); EditorApplication.Exit(1); return; }
-
-            var apply = typeof(TutorialCuePlayer).GetMethod("ApplyEntryState",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var resolve = typeof(TutorialCuePlayer).GetMethod("ResolveEntryCueId",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
+            // 播放器真实用的路径现在**只有一条**：LoadCue 自己负责入口状态
+            // （不接续时从根重放到本条之前，接续时沿用上一条终态）。
+            // 以前这里还要复现 PlayCue → ApplyEntryState + LoadCue 两步（用反射调私有方法），
+            // 而那套重复机制正是"顺序播放也把前一条 create 的东西清掉"的根源 —— 已经删掉。
             string[] path = { "setup.cards.002.1", "setup.cards.002.2",
                               "setup.gems.001.1", "setup.gems.001.2" };
             for (int i = 0; i < path.Length; i++)
             {
-                int idx = player.Document.cues.FindIndex(c => c.id == path[i]);
-                if (idx < 0) { Debug.Log($"[Adv] 找不到 {path[i]}"); continue; }
-                // ① 解入口状态（编辑器里由 PlayCueRoutine 调用）
-                apply.Invoke(player, new object[] { anim, resolve.Invoke(player, new object[] { idx }) });
-                Report(anim, path[i] + " [解入口状态后]");
-                // ② 载入本条，顺序进入时 continueState=true
+                // 顺序进入：i>0 表示接着上一条的终态
                 anim.LoadCue(gameRoot, "full", path[i], i > 0);
                 Report(anim, path[i] + " [LoadCue 后]");
                 for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);

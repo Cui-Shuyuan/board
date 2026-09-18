@@ -221,136 +221,6 @@ namespace BoardGameTutorial
             playbackRoutine = StartCoroutine(PlayCueRoutine(index, continueState));
         }
 
-        /// <summary>
-        /// 从第一条开始，把目标 cue 之前所有带动画数据的 cue 静默推到终态，重建牌桌。
-        /// 这样任意跳转都能看到正确的当前局面，而不依赖播放历史。
-        /// 将来编译器会把每个 cue 的入口状态直接写进 runtime，这一步即可省掉。
-        /// </summary>
-        /// <summary>
-        /// 解出第 targetIndex 条 cue 的**入口状态由哪条 cue 的终态提供**。
-        ///
-        ///   显式写了 entry  → 用它（"initial" 表示牌桌初始态，否则是某条 cue 的 id）
-        ///   没写            → 继承「上一条有动画数据的 cue」的终态；再往上同理
-        ///
-        /// 返回 null 表示"牌桌初始态"。
-        /// </summary>
-        private string ResolveEntryCueId(int targetIndex)
-        {
-            if (doc?.cues == null || targetIndex <= 0 || targetIndex >= doc.cues.Count) return null;
-
-            var me = doc.cues[targetIndex];
-            string declared = string.IsNullOrWhiteSpace(me.entry) ? null : me.entry.Trim();
-            if (!string.IsNullOrEmpty(declared))
-                return declared == "initial" ? null : declared;
-
-            // 未声明：继承上一条「有终态可言」的 cue。
-            // 没有动画数据的 cue 不改牌局，跳过它继续往上找。
-            for (int i = targetIndex - 1; i >= 0; i--)
-                if (HasAnimation(doc.cues[i].id)) return doc.cues[i].id;
-            return null;
-        }
-
-        private bool HasAnimation(string cueId)
-        {
-            if (string.IsNullOrEmpty(cueId) || string.IsNullOrEmpty(gameRoot)) return false;
-            return File.Exists(Path.Combine(gameRoot, "tutorial", "anim", track, cueId + ".json"));
-        }
-
-        /// <summary>
-        /// 把「入口状态」算出来并交给正式播放器。
-        ///
-        /// 做法：拿一个**独立的**播放器实例当草稿纸，从 stage.initial 起，
-        /// 沿入口链把每条祖先 cue 推到终态，再把结果整体交给主播放器。
-        /// 草稿纸与主播放器完全隔离，所以不会污染主播放器的时钟和片段列表。
-        /// </summary>
-        private void ApplyEntryState(TutorialCueAnimPlayer anim, string entryCueId)
-        {
-            var scratchHost = new GameObject("EntryStateHost");
-            scratchHost.transform.SetParent(transform, false);
-            var scratch = scratchHost.AddComponent<TutorialCueAnimPlayer>();
-            scratch.animationEnabled = true;
-
-            try
-            {
-                if (string.IsNullOrEmpty(entryCueId))
-                {
-                    // 入口 = 牌桌初始态
-                    scratch.LoadInitialOnly(gameRoot);
-                }
-                else
-                {
-                    // 沿「祖先链」收集：entry → 它的 entry → …… → initial
-                    var chain = new List<string>();
-                    var guard = 0;
-                    for (string id = entryCueId; !string.IsNullOrEmpty(id) && guard++ < 256; )
-                    {
-                        chain.Insert(0, id);
-                        int idx = IndexOfCue(id);
-                        if (idx < 0) { Debug.LogWarning($"[TutorialCuePlayer] entry 指向未知 cue '{id}'"); break; }
-                        string declared = string.IsNullOrWhiteSpace(doc.cues[idx].entry) ? null : doc.cues[idx].entry.Trim();
-                        if (!string.IsNullOrEmpty(declared))
-                            id = declared == "initial" ? null : declared;
-                        else
-                        {
-                            id = null;
-                            for (int i = idx - 1; i >= 0; i--)
-                                if (HasAnimation(doc.cues[i].id)) { id = doc.cues[i].id; break; }
-                        }
-                    }
-
-                    bool first = true;
-                    foreach (var id in chain)
-                    {
-                        bool applied;
-                        try { applied = scratch.LoadCue(gameRoot, track, id, !first); }
-                        catch (System.Exception e)
-                        {
-                            Debug.LogError($"[TutorialCuePlayer] 解入口状态时异常 cue={id}: {e}");
-                            applied = false;
-                        }
-                        if (!applied) continue;
-                        // 推到终态：SnapTo 会先恢复入口快照，累积不起来，所以用 Seek。
-                        scratch.Seek(scratch.TotalDuration + 1f);
-                        first = false;
-                    }
-                }
-
-                // 交接后，盒面状态由草稿的结果决定（草稿从根开始重放了整条链）。
-                // 顺序很重要：AdoptStateFrom 会 ClearActors 并重建画面，
-                // 若在它之前应用根画面，盒面会被这次重建销毁。
-                bool boxVisible = scratch.BoxVisibleForTest;
-                string boxPic = scratch.BoxPictureForTest;
-                anim.AdoptStateFrom(scratch, gameRoot);
-                anim.ApplyPictureForTest(boxVisible, boxPic);
-
-                // 入口状态诊断：市场/三个牌堆的数量与「可见张数」。
-                // 「数量对但看不见」和「数量就不对」是两类完全不同的 bug，
-                // 必须分开看，否则只能靠肉眼猜。
-                int visibleMarket = 0;
-                foreach (var it in anim.Store.Items)
-                    if (it.ZoneId == "card_market" && it.Actor != null &&
-                        it.Actor.Renderer != null && it.Actor.Renderer.enabled && it.Actor.LiveAlpha > 0.05f)
-                        visibleMarket++;
-                Debug.Log($"[Entry] 入口={(entryCueId ?? "初始态")} " +
-                          $"market={anim.Store.CountInZone("card_market")}(可见 {visibleMarket}) " +
-                          $"deck1={anim.Store.CountInZone("deck_level_1")} " +
-                          $"deck2={anim.Store.CountInZone("deck_level_2")} " +
-                          $"deck3={anim.Store.CountInZone("deck_level_3")} " +
-                          $"总={anim.ActorCount}");
-            }
-            finally
-            {
-                Object.DestroyImmediate(scratchHost);
-            }
-        }
-
-        private int IndexOfCue(string cueId)
-        {
-            if (doc?.cues == null) return -1;
-            for (int i = 0; i < doc.cues.Count; i++) if (doc.cues[i].id == cueId) return i;
-            return -1;
-        }
-
         private IEnumerator PlayCueRoutine(int index, bool continueState)
         {
             if (audioSource.isPlaying) audioSource.Stop();
@@ -367,17 +237,12 @@ namespace BoardGameTutorial
             {
                 animPlayer.animationEnabled = enableCueAnimation;
                 fallbackClock = 0f;   // 每条 cue 重置降级时钟，避免把它累积成「已经播完」
-                // 入口状态**总是**按 cue 声明的 entry 解出来，不再有「顺序播放就沿用当前画面」
-                // 的快捷路径。那条捷径会让两条路得到不同画面：按右跳转到某条 cue 时从根解
-                // （树根画面/盒面会出现或消失），而顺序播到同一条却保留了上一条的画面。
-                // 用户就是这么发现的：按右盒面消失、往回两次又出现。
-                //
-                // 入口状态从根开始解，正是「可以抽一张 / 不可以抽两张」能做兄弟的原因 ——
-                // 两条 cue 声明同一个 entry，各自从同一张桌子出发。
-                if (animPlayer != null)
-                {
-                    ApplyEntryState(animPlayer, ResolveEntryCueId(index));
-                }
+                // 入口状态**由动画播放器自己负责**：`LoadCue` 在"不接续"时从根重放到本条之前，
+                // 在"接续"时沿用上一条的终态。以前这里另有一套 `ApplyEntryState` +
+                // `ResolveEntryCueId`（草稿播放器解入口链 → 交接给主播放器），两套各算一遍 ——
+                // 而 `HasAnimation` 里拼的还是**合并前**的按 cue 路径，于是它永远找不到祖先、
+                // 入口永远被解成初始态，**顺序播放也会把前一条 create 的东西清掉**
+                // （用户报的"cue 11 什么都没有"）。现在只有一条路，不可能再各算一遍。
                 bool continueFromPrevious = continueState && index == previous + 1;
 
                 // 注意：LoadCue 必须无条件调用。曾经写成 `if (showZoneLabels && LoadCue(...))`，

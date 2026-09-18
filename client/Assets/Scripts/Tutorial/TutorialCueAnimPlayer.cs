@@ -90,22 +90,8 @@ namespace BoardGameTutorial
         public IEnumerable<CueAnimEvent> EventsForTest =>
             cueDoc != null && cueDoc.events != null ? cueDoc.events : new List<CueAnimEvent>();
 
-        /// <summary>自检用：当前是否正显示整幅图（盒面等）。</summary>
-        public bool BoxVisibleForTest => boxSprite != null && boxSprite.enabled && boxSprite.sprite != null;
-
         /// <summary>自检用：当前显示的图片名（没有则空）。</summary>
         public string BoxPictureForTest => currentPicture;
-
-        /// <summary>自检/交接用：按给定状态应用整幅图。</summary>
-        public void ApplyPictureForTest(bool visible, string picture)
-        {
-            if (!visible || string.IsNullOrEmpty(picture))
-            {
-                if (boxSprite != null) { Object.DestroyImmediate(boxSprite.gameObject); boxSprite = null; }
-                return;
-            }
-            TriggerShowBox(new CueAnimEvent { action = "showbox", picture = picture, on = 1f });
-        }
 
         /// <summary>自检用：临时注册一个容器。</summary>
         public void RegisterContainerForTest(string id, string[] itemIds)
@@ -943,67 +929,6 @@ namespace BoardGameTutorial
         }
 
         /// <summary>自检用：取某块底板的相机平面包围盒（x/z 范围）。</summary>
-        /// <summary>
-        /// 采纳另一个播放器（重建实例）算出的牌桌状态：把归属/格位搬过来并按新状态摆好。
-        /// 用于「重建用独立实例、正式播放用主实例」，两者状态对接。
-        /// </summary>
-        public void AdoptStateFrom(TutorialCueAnimPlayer other, string gameRoot)
-        {
-            if (other?.Store == null) return;
-
-            // 必须先把**组件本身**登记进来：主播放器的 store 可能是空的，
-            // 只复制 zone/order 是没有对象的。曾经漏了这一步，于是主播放器是一张空桌子，
-            // 牌堆不存在、发牌只能从孤立位置搬来搬去（表现为方向反过来）。
-            Store.AdoptItemsFrom(other.Store);
-
-            // 再对齐归属、格位、正反面
-            foreach (var src in other.Store.Items)
-            {
-                if (!Store.TryGetItem(src.Id, out var dst)) continue;
-                dst.ZoneId = src.ZoneId;
-                dst.Order = src.Order;
-                dst.Flipped = src.Flipped;
-                dst.EntryAnchor = src.EntryAnchor;
-                dst.EntryFrom = src.EntryFrom;
-                Store.SetActiveItem(dst);
-            }
-
-            // 按新状态重建画面对象。
-            // 必须先销毁旧对象：BuildActorObjects 只新建、不替换。
-            // 漏了这一步时每次跳转都在旧对象之上再叠一整套，半透明底板会越叠越浓
-            // （用户反复按左右时看到「框越来越明显」）。
-            ClearActors();
-            LoadStage(gameRoot, null);
-            BuildActorObjects();
-            SyncActorsToStore();
-        }
-
-        /// <summary>
-        /// 只把牌桌摆成 stage.initial 的样子（不载入任何 cue 的动画）。
-        /// 用于「入口状态 = 牌桌初始态」和自检。
-        /// </summary>
-        public bool LoadInitialOnly(string gameRoot)
-        {
-            StopAnimations();
-            ClearActors();
-            clips.Clear();
-            cueDoc = null;
-            CueId = null;
-            clock = -1f;
-            nextIndex = 0;
-
-            LoadStage(gameRoot, null);
-            Store.Reset();
-            Store.ApplyInitial();
-            BuildActorObjects();
-            SyncActorsToStore();
-            EnsureCamera();
-            SetBackground();
-            FitCamera();
-            ApplyRootPicture();     // 树根的根画面（例如背景介绍时的盒面）
-            return true;
-        }
-
         /// <summary>自检/出图用：确保场景里有可用的相机。</summary>
         public void EnsureCameraForCapture() => EnsureCamera();
 
@@ -2129,6 +2054,17 @@ namespace BoardGameTutorial
                 clock = 0f;
                 nextIndex = 0;
             }
+
+            // 把入口状态的事实打出来。上一次这个 bug 就是靠这类"事实行"定位的：
+            // 它显示 `入口=初始态 market=0 deck1=0` —— 一眼看出入口根本没被解出来。
+            int total = 0;
+            foreach (var it in Store.Items) total++;
+            Debug.Log($"[TutorialCueAnim] 入口状态（从根重放到 {targetCueId}）：" +
+                      $"market={Store.CountInZone("card_market")} " +
+                      $"deck1={Store.CountInZone("deck_level_1")} " +
+                      $"deck2={Store.CountInZone("deck_level_2")} " +
+                      $"deck3={Store.CountInZone("deck_level_3")} " +
+                      $"总={total} 整幅图={(string.IsNullOrEmpty(currentPicture) ? "无" : currentPicture)}");
         }
 
         /// <summary>
