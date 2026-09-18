@@ -29,6 +29,10 @@
 - `move` + `from`：不写 `target`，引擎按 order 从顶取
 - 状态查询：`DumpState` / `TraceState` / `ListZone` / `TraceDealOrder`
 - 校验：`scripts/validate_cue_anim.py`（含跨 cue 取景检查 `check_framing_chain`）
+- 概念：`python3 scripts/concept_ref.py --game splendor --concept development_card_level_1`
+  （读本体 + 游戏概念，沿 extends/specifies 合并字段；**别手抄父类字段**）
+- 绑定：stage 里每个模板/zone 的 `concept`（纯视觉写 `null`）与 zone 的 `contains`
+  —— 见 [[tutorial-concept-binding]]
 
 ### 已冻结的约定（开工前必须遵守）
 
