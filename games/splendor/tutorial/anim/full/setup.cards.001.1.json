@@ -26,11 +26,11 @@
       "at": 0.15,
       "dur": 0.0,
       "action": "create",
+      "destination": "showcase",
       "template": "sample_card_1",
       "palette": "card_level_1",
-      "zone": "showcase",
-      "count": 1,
-      "face_up": true
+      "to": "face_up",
+      "count": 1
     }
   ]
 }

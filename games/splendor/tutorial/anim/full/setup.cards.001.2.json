@@ -26,27 +26,27 @@
       "at": 0.15,
       "dur": 0.0,
       "action": "create",
+      "destination": "showcase_1",
       "template": "sample_back_1",
       "palette": "card_level_1",
-      "zone": "showcase_1",
       "count": 1
     },
     {
       "at": 0.15,
       "dur": 0.0,
       "action": "create",
+      "destination": "showcase_2",
       "template": "sample_back_2",
       "palette": "card_level_2",
-      "zone": "showcase_2",
       "count": 1
     },
     {
       "at": 0.15,
       "dur": 0.0,
       "action": "create",
+      "destination": "showcase_3",
       "template": "sample_back_3",
       "palette": "card_level_3",
-      "zone": "showcase_3",
       "count": 1
     },
     {
@@ -54,8 +54,8 @@
       "dur": 1.1,
       "action": "highlight",
       "target": "sample_back_1#1",
-      "grow": 1.16,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "grow": 1.16
     }
   ]
 }

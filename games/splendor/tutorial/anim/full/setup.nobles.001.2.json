@@ -25,32 +25,35 @@
     {
       "at": 1.05,
       "dur": 0.5,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<ontology::random_draw>",
+      "source": [
         "offstage"
       ],
-      "zone": "noble_market",
+      "destination": "noble_market",
       "easing": "easeOutCubic"
     },
     {
       "at": 1.05,
       "dur": 0.5,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<ontology::random_draw>",
+      "source": [
         "offstage"
       ],
-      "zone": "noble_market",
+      "destination": "noble_market",
       "easing": "easeOutCubic",
       "lead": 0.35
     },
     {
       "at": 1.05,
       "dur": 0.5,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<ontology::random_draw>",
+      "source": [
         "offstage"
       ],
-      "zone": "noble_market",
+      "destination": "noble_market",
       "easing": "easeOutCubic",
       "lead": 0.7
     },
@@ -59,24 +62,24 @@
       "dur": 0.3,
       "action": "highlight",
       "target": "noble#1",
-      "grow": 1.16,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "grow": 1.16
     },
     {
       "at": 2.4,
       "dur": 0.3,
       "action": "highlight",
       "target": "noble#2",
-      "grow": 1.16,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "grow": 1.16
     },
     {
       "at": 2.75,
       "dur": 0.3,
       "action": "highlight",
       "target": "noble#3",
-      "grow": 1.16,
-      "easing": "easeInOutCubic"
+      "easing": "easeInOutCubic",
+      "grow": 1.16
     }
   ]
 }

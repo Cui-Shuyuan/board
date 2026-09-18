@@ -42,8 +42,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
+# 原语名尽量与本体对齐：transfer = <ontology::transfer>、flip = <flip>、shuffle = <shuffle>。
+ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
            "showbox", "create", "destroy", "wait", "stack"}
+
+# 原语 → 它在规则上**默认**是哪个本体事件（None = 本体没有对应事件）。
+# 事件可以写 `realizes` 说得更精确（发牌是 <top_draw>，而 <top_draw> 继承 <transfer>，
+# 所以照样挂在 transfer 原语上）；表现层原语没有对应事件，写了 realizes 就是错的。
+PRIMITIVE_EVENT = {
+    "transfer": "<ontology::transfer>",
+    "flip": "<flip>",
+    "shuffle": "<ontology::shuffle>",
+    "rotate": None, "scale": None, "fade": None, "highlight": None,
+    "wait": None, "showbox": None, "create": None, "destroy": None, "stack": None,
+}
 SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
 # camera 可以写的**组取景 token**（与 TutorialCueAnimPlayer.SetFraming 保持一致）。
@@ -391,31 +403,37 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             known_ids.add(f"{ev['template']}#1")
         if zone and zone not in zones:
             report.error(ew, f"未知 zone {zone!r}")
+        dest = ev.get("destination")
+        if dest and dest not in zones:
+            report.error(ew, f"未知 destination {dest!r}")
+        if dest and zone:
+            report.warn(ew, "同时写了 zone 和 destination：zone 是**选择器**（该区域全部），"
+                            "转移的目的地请只写 destination")
         if target and target not in known_ids:
             report.error(ew, f"target {target!r} 不是牌桌上已知的组件 id")
 
-        if action == "move":
-            if not target and not ev.get("from"):
-                report.error(ew, "move 需要 target（指定某件）或 from（指定源 zone）")
-            # from 必须是**数组**。写成字符串时 JsonUtility 会静默丢弃整个字段
-            # （类型不匹配不报错），表现为 move 永远拿不到源 zone、牌堆搭不起来。
-            raw_from = ev.get("from")
+        if action == "transfer":
+            if not target and not ev.get("source"):
+                report.error(ew, "transfer 需要 target（指定某件）或 source（本体 <transfer>.source，源 zone）")
+            # source 必须是**数组**。写成字符串时 JsonUtility 会静默丢弃整个字段
+            # （类型不匹配不报错），表现为 transfer 永远拿不到源 zone、牌堆搭不起来。
+            raw_from = ev.get("source")
             if isinstance(raw_from, str):
-                report.error(ew, f'move.from 必须写成数组：["{raw_from}"]（字符串会被静默丢弃）')
+                report.error(ew, f'transfer.source 必须写成数组：["{raw_from}"]（字符串会被静默丢弃）')
             sources = raw_from if isinstance(raw_from, list) else ([raw_from] if raw_from else [])
             if isinstance(raw_from, list) and not raw_from:
-                report.error(ew, "move.from 是空数组")
+                report.error(ew, "transfer.source 是空数组")
             for source in sources:
                 if source not in zones:
-                    report.error(ew, f"from zone {source!r} 不存在")
-            if not zone and not target:
-                report.error(ew, "move 缺少目的地 zone")
-            if int(ev.get("take", 0)) < 0:
-                report.error(ew, "take 不能为负")
-            # from+take 是按顺序取件：同一个 zone 里混放多种组件时极易取错，
-            # 例如盒子里同时有宝石和卡片。用 take 时建议显式给 template。
-            if ev.get("from") and int(ev.get("take", 0) or 0) > 0 and not ev.get("template"):
-                report.warn(ew, "move 用 from+take 按顺序取件但没写 template；"
+                    report.error(ew, f"source zone {source!r} 不存在")
+            if not dest and not target:
+                report.error(ew, "transfer 缺少目的地 destination")
+            if int(ev.get("quantity", 0)) < 0:
+                report.error(ew, "quantity 不能为负")
+            # source+quantity 是按顺序取件：同一个 zone 里混放多种组件时极易取错，
+            # 例如盒子里同时有宝石和卡片。用 quantity 时建议显式给 template。
+            if ev.get("source") and int(ev.get("quantity", 0) or 0) > 0 and not ev.get("template"):
+                report.warn(ew, "transfer 用 source+quantity 按顺序取件但没写 template；"
                                 "若该 zone 混放多种组件，可能取到不该动的东西")
             if ev.get("order") == -2 and int(ev.get("slot", -1)) < 0:
                 report.error(ew, "order=-2 需要同时给 slot（目标格位）")
@@ -424,12 +442,12 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             # 本体 <zone>.contains 的原话：「程序校验 <transfer> 时以此过滤——
             # 若 what 的类型不在 contains 中，<transfer> 非法」。动画的 move 就是
             # <transfer>，所以这条本来就该在这里查。空 = 不限（纯视觉区/镜头外通道）。
-            if zone:
-                dest_ok = contains_of_zone(stage, zone)
+            if dest:
+                dest_ok = contains_of_zone(stage, dest)
                 moved = concept_of_template(stage, ev.get("template"), ev.get("palette")) \
                     if ev.get("template") else None
                 if moved and dest_ok and not any(is_a(world, moved, c) for c in dest_ok):
-                    report.error(ew, f"要把 {moved} 移进 {zone}，但该区域只允许 {dest_ok}"
+                    report.error(ew, f"要把 {moved} 移进 {dest}，但该区域只允许 {dest_ok}"
                                      f"（本体 <zone>.contains）")
                 elif not moved and dest_ok and sources:
                     # 事件没写 template，说不出搬的是哪一类：至少要求源区与目标区
@@ -438,11 +456,14 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                     cands = [c for c in cands if c]
                     if cands and not any(is_a(world, a, b) for c in cands for a in c for b in dest_ok):
                         report.warn(ew, f"说不出移动的是什么（没写 template）：源区允许 "
-                                        f"{cands}，目标区 {zone} 只允许 {dest_ok}，两者没有交集")
+                                        f"{cands}，目标区 {dest} 只允许 {dest_ok}，两者没有交集")
         elif action == "rotate":
             if "angle" not in ev:
                 report.error(ew, "rotate 需要 angle")
         elif action == "flip":
+            if ev.get("to") not in ("face_up", "face_down"):
+                report.error(ew, "flip 需要 to（本体 <flip> 的写法）：'face_up' 或 'face_down'"
+                                 "—— 不要用「取反」，那正是历史上一堆朝向问题的根因")
             # 本体 <flip>：「将 <card> 或 <tile> 翻至另一面」——只有**声明了 face 的
             # 概念**才谈得上翻面。宝石没有正反面（<card>.face 的说明里写「null 表示
             # 不区分正反」），对宝石 flip 是无声的空动作，要报出来。
@@ -466,10 +487,10 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                 report.error(ew, "create 需要 template（要创建什么）")
             elif ev["template"] not in templates:
                 report.error(ew, f"create 的 template {ev['template']!r} 不在 stage.templates 里")
-            if not ev.get("zone"):
+            if not ev.get("destination"):
                 report.error(ew, "create 需要 zone（创建到哪里）")
-            elif ev["zone"] not in zones:
-                report.error(ew, f"create 的 zone {ev['zone']!r} 不存在")
+            elif (ev.get("destination") or "offstage") not in zones:
+                report.error(ew, f"create 的 destination {ev.get('destination')!r} 不存在")
         elif action == "destroy":
             if not ev.get("target") and not ev.get("zone") and not ev.get("template"):
                 report.error(ew, "destroy 需要 target 或 zone/template（否则要销毁什么不明确）")
@@ -484,13 +505,39 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             if not zone and not target:
                 report.warn(ew, "shuffle 既没有 zone 也没有 target，会对全体生效")
 
+        # ── realizes：这个动画事件在规则上是哪个本体事件 ────────────────
+        wants = PRIMITIVE_EVENT.get(action)
+        got = ev.get("realizes")
+        if got:
+            if wants is None:
+                report.warn(ew, f"{action} 在本体里没有对应事件，不该写 realizes={got!r}")
+            elif not world.resolve(got):
+                report.error(ew, f"realizes={got!r} 在本体/游戏概念里找不到")
+            elif not is_a(world, got, "<ontology::event>"):
+                report.error(ew, f"realizes={got!r} 不是 <ontology::event> 的后代")
+            elif not is_a(world, got, wants):
+                report.error(ew, f"realizes={got!r} 不是 {wants} 的后代 —— {action} 原语只能"
+                                 f"实现 {wants} 及其子类（例：发牌写 <top_draw>，它是 <transfer> 的子类）")
+        elif action == "transfer":
+            # 从暗堆取件却没说 realizes：这里正是 <transfer> 与 <top_draw> 的分界，
+            # 不说清就把"抽"记成了普通"转移"。源区的概念能判断，所以报出来让人确认。
+            hidden = []
+            for src in (ev.get("source") or []):
+                c = next((z.get("concept") for z in stage.get("zones", []) if z.get("id") == src), None)
+                if c and (is_a(world, c, "<ontology::deck>") or is_a(world, c, "<ontology::pool>")):
+                    hidden.append(src)
+            if hidden:
+                report.warn(ew, f"从暗堆 {hidden} 取件却没写 realizes；按本体的判据这是 "
+                                f"<top_draw>（抽取前身份未知），不是普通 <ontology::transfer>")
+
         end = at + lead + dur
         if action != "wait":
             last_end = max(last_end, end)
 
         # 记录发牌格位：用于检查「每行颜色组合是否雷同」
         slot = ev.get("slot")
-        if action == "move" and zone == "card_market" and isinstance(slot, int) and slot >= 0:
+        if action == "transfer" and (ev.get("destination") or target) and \
+                (ev.get("destination") == "card_market") and isinstance(slot, int) and slot >= 0:
             dealt_slots[slot] = target or ""
 
     # 市场是多行网格（4 列）：两行颜色顺序完全相同会误导观众，

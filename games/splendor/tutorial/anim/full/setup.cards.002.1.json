@@ -37,234 +37,249 @@
       "at": 0.05,
       "dur": 0.0,
       "action": "stack",
-      "zone": "deck_level_1",
+      "destination": "deck_level_1",
+      "to": "face_down",
       "capacity": 40,
       "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire",
       "pad_template": "blank_card_1",
-      "plain": true,
-      "face_down": true
+      "plain": true
     },
     {
       "at": 0.052,
       "dur": 0.0,
       "action": "stack",
-      "zone": "deck_level_2",
+      "destination": "deck_level_2",
+      "to": "face_down",
       "capacity": 30,
       "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald",
       "pad_template": "blank_card_2",
-      "plain": true,
-      "face_down": true
+      "plain": true
     },
     {
       "at": 0.054,
       "dur": 0.0,
       "action": "stack",
-      "zone": "deck_level_3",
+      "destination": "deck_level_3",
+      "to": "face_down",
       "capacity": 20,
       "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx",
       "pad_template": "blank_card_3",
-      "plain": true,
-      "face_down": true
+      "plain": true
     },
     {
       "at": 0.3,
       "dur": 1.1,
       "action": "shuffle",
-      "zone": "deck_level_1",
-      "easing": "easeOutCubic"
+      "realizes": "<ontology::shuffle>",
+      "easing": "easeOutCubic",
+      "zone": "deck_level_1"
     },
     {
       "at": 0.3,
       "dur": 1.1,
       "action": "shuffle",
-      "zone": "deck_level_2",
-      "easing": "easeOutCubic"
+      "realizes": "<ontology::shuffle>",
+      "easing": "easeOutCubic",
+      "zone": "deck_level_2"
     },
     {
       "at": 0.3,
       "dur": 1.1,
       "action": "shuffle",
-      "zone": "deck_level_3",
-      "easing": "easeOutCubic"
+      "realizes": "<ontology::shuffle>",
+      "easing": "easeOutCubic",
+      "zone": "deck_level_3"
     },
     {
       "at": 3.58,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_1"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_1_emerald",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 0,
       "slot": 0,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 3.97,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_1"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_1_ruby",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 1,
       "slot": 1,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 4.36,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_1"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_1_diamond",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 2,
       "slot": 2,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 4.75,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_1"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_1_sapphire",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 3,
       "slot": 3,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 5.14,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_2"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_2_sapphire",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 4,
       "slot": 4,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 5.53,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_2"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_2_onyx",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 5,
       "slot": 5,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 5.92,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_2"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_2_ruby",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 6,
       "slot": 6,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 6.31,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_2"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_2_emerald",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 7,
       "slot": 7,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 6.7,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_3"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_3_ruby",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 8,
       "slot": 8,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 7.09,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_3"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_3_diamond",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 9,
       "slot": 9,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 7.48,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_3"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_3_emerald",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 10,
       "slot": 10,
-      "flip": true,
       "easing": "easeInOutCubic"
     },
     {
       "at": 7.87,
       "dur": 0.34,
-      "action": "move",
-      "from": [
+      "action": "transfer",
+      "realizes": "<top_draw>",
+      "source": [
         "deck_level_3"
       ],
-      "take": 1,
+      "quantity": 1,
+      "destination": "card_market",
       "template": "market_card_3_onyx",
-      "zone": "card_market",
+      "to": "face_up",
       "order": 11,
       "slot": 11,
-      "flip": true,
       "easing": "easeInOutCubic"
     }
   ]
