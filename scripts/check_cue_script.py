@@ -239,14 +239,18 @@ def diff_cue(want_part, state):
     """
     diffs = []
     want_part = want_part or {}
-    if "picture" in want_part:
-        if "picture" not in (state or {}):
-            diffs.append("picture: 契约要求比对整幅图，但采样里没有这个字段"
-                         "（采样文件是旧格式，重跑 scripts/dump_states.sh）")
-        else:
-            want_pic, got_pic = want_part.get("picture") or None, (state or {}).get("picture") or None
-            if want_pic != got_pic:
-                diffs.append(f"picture: 期望 {want_pic!r}，实际 {got_pic!r}")
+    # **整幅图默认比对**：契约里没写 picture 就等于"不该有图"（用户 2026-09-19 定的原则：
+    # 该有的有、不该有的就没有；脚本里没写有的就是没有）。
+    # 不能只在契约写了才比 —— 那样"忘了写"就会静默跳过这一维，正是上次漏掉盒面的原因。
+    if "picture" not in (state or {}):
+        diffs.append("picture: 契约要求比对整幅图，但采样里没有这个字段"
+                     "（采样文件是旧格式，重跑 scripts/dump_states.sh）")
+    else:
+        want_pic = want_part.get("picture") or None
+        got_pic = (state or {}).get("picture") or None
+        if want_pic != got_pic:
+            diffs.append(f"picture: 期望 {want_pic!r}，实际 {got_pic!r}"
+                         + ("（契约没写 = 不该有图）" if "picture" not in want_part else ""))
     diffs += diff_contract(want_part.get("zones") or {}, (state or {}).get("zones"))
     return diffs
 

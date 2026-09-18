@@ -503,6 +503,13 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                         f"会重复生成；若只是想让它们就位，删掉这条即可，或改用 expand_to")
 
     events = doc.get("events")
+    # ── 契约覆盖：事件碰过的东西，契约必须声明（用户 2026-09-19 的原则）──────
+    # "该有的有，不该有的就没有；脚本里没写有的那就是没有"。
+    # 推论：**事件改动了哪个 zone，契约的 enter/exit 里就必须有它**（哪怕是 `count: 0`）。
+    # 不声明的话，这一维根本没人比 —— 上一次漏掉盒面就是因为整幅图不在被比的集合里，
+    # 而不是比较逻辑写错了。这条是静态检查：事件与契约现在同在一个文件里，不需要采样。
+    _check_contract_coverage(doc, cue_id, events, report)
+
     if not isinstance(events, list) or not events:
         # 契约写了、动画还没写（例如 setup.nobles.001.1）：这不是错误，跳过动画检查。
         # 两者都没有才是真错误 —— 那条 cue 什么都不说。
@@ -812,6 +819,47 @@ def check_framing_chain(files, report):
                     f"要么确认确实想先停一会儿")
 
         prev_camera = leaves
+
+# 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明
+STATE_CHANGING = {"transfer", "create", "destroy", "stack"}
+
+
+def _check_contract_coverage(doc, cue_id, events, report):
+    """事件碰过的维度，契约里必须声明过 —— 否则那一维无法比对。
+
+    只查"改状态"的动作：highlight/fade/scale/wait 是表现层，不改变"谁在哪、几件"。
+    showbox 单列一条：它改的是整幅图，契约必须声明 `picture`（哪怕写 null）。
+    """
+    declared = set()
+    for part in ("enter", "exit"):
+        declared |= set(((doc.get(part) or {}).get("zones") or {}).keys())
+    declared_picture = any("picture" in (doc.get(part) or {}) for part in ("enter", "exit"))
+
+    touched = set()
+    showbox = False
+    for ev in events:
+        if not isinstance(ev, dict):
+            continue
+        action = ev.get("action")
+        if action == "showbox":
+            showbox = True
+            continue
+        if action not in STATE_CHANGING:
+            continue
+        for src in ev.get("source") or []:
+            touched.add(src)
+        if ev.get("destination"):
+            touched.add(ev["destination"])
+        if action == "destroy" and ev.get("zone"):
+            touched.add(ev["zone"])
+
+    missing = sorted(t for t in touched if t and t not in declared)
+    if missing:
+        report.warn(cue_id, f"这些 zone 被事件改动了，但契约里没声明：{missing} —— "
+                            f"「没写就是不该有」，不声明就没法比对（空也要写 count: 0）")
+    if showbox and not declared_picture:
+        report.warn(cue_id, "有 showbox 事件，但契约没声明 picture —— 整幅图这一维没法比对")
+
 
 def load_script(args):
     """读这条 track 的脚本（一个动画一个文件）。返回 (路径, 文档, runtime 里的 cue 表)。"""
