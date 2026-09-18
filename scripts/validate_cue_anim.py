@@ -786,6 +786,22 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             elif not is_a(world, got, wants):
                 report.error(ew, f"realizes={got!r} 不是 {wants} 的后代 —— {action} 原语只能"
                                  f"实现 {wants} 及其子类（例：发牌写 <top_draw>，它是 <transfer> 的子类）")
+        # 源/目的地是**游戏盒**（画面外）时不该有"移动"：从观众视角，盒里的东西是
+        # "凭空多出来/凭空少掉"，飞进来会横穿整张桌子（用户 2026-09 定的）。
+        # 用 `dur: 0`（出现）而不是新增一个字段 —— 代码更简单，语义仍然是 <transfer>。
+        # 只认 `<ontology::game_box>`：`offstage`（贵族盲抽）是**刻意的**从画外飞入，
+        # 不在这一条里（它的口播本来就是"从所有贵族里随机抽出"）。
+        if action == "transfer" and float(ev.get("dur") or 0.0) > 0.0:
+            box_side = []
+            for zid in list(ev.get("source") or []) + ([ev.get("destination")] if ev.get("destination") else []):
+                zc = _zone_concept(stage, zid)
+                if zc and is_a(world, zc, "<ontology::game_box>"):
+                    box_side.append(zid)
+            if box_side:
+                report.warn(ew, f"{box_side} 是**游戏盒**（画面外），却写了 dur={ev.get('dur')} 的位移动画 —— "
+                                 f"盒里的东西从观众视角是「凭空多出来/少掉」，飞进来会横穿整张桌子。"
+                                 f"写成 `dur: 0`（出现），错峰用 `lead`；语义仍然是 <transfer>")
+
         # 源区是供应堆还是牌堆 —— **无论有没有写 realizes 都要查**。
         # 曾经把它挂在 `elif`（"没写 realizes 才提醒"）上，于是"写了 realizes 但写成抽牌"
         # 从旁边溜过去了（金丝雀验出来的）：写了 ≠ 写对了。
