@@ -25,7 +25,10 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": null,
+      "contains": [],
+      "note": "镜头外通道，不是规则里的 zone：任何东西都从这里进出"
     },
     {
       "id": "deck_level_1",
@@ -51,7 +54,11 @@
         "dx": -0.016,
         "dz": -0.016,
         "max_visible": 8
-      }
+      },
+      "concept": "development_deck_level_1",
+      "contains": [
+        "development_card_level_1"
+      ]
     },
     {
       "id": "deck_level_2",
@@ -77,7 +84,11 @@
         "dx": -0.016,
         "dz": -0.016,
         "max_visible": 8
-      }
+      },
+      "concept": "development_deck_level_2",
+      "contains": [
+        "development_card_level_2"
+      ]
     },
     {
       "id": "deck_level_3",
@@ -103,7 +114,11 @@
         "dx": -0.016,
         "dz": -0.016,
         "max_visible": 8
-      }
+      },
+      "concept": "development_deck_level_3",
+      "contains": [
+        "development_card_level_3"
+      ]
     },
     {
       "id": "card_market",
@@ -126,7 +141,13 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "card_market",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ]
     },
     {
       "id": "noble_market",
@@ -147,7 +168,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "noble_market",
+      "contains": [
+        "noble"
+      ]
     },
     {
       "id": "gem_supply_diamond",
@@ -169,7 +194,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "gem_supply_sapphire",
@@ -191,7 +220,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "gem_supply_ruby",
@@ -213,7 +246,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "gem_supply_emerald",
@@ -235,7 +272,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "gem_supply_onyx",
@@ -257,7 +298,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "gold_supply",
@@ -279,7 +324,11 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "gold_supply",
+      "contains": [
+        "gold"
+      ]
     },
     {
       "id": "player_holding",
@@ -300,7 +349,12 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "<player_holding>",
+      "contains": [
+        "gem",
+        "gold"
+      ]
     },
     {
       "id": "box_level_1",
@@ -310,7 +364,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "development_card_level_1"
+      ]
     },
     {
       "id": "box_level_2",
@@ -320,7 +378,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "development_card_level_2"
+      ]
     },
     {
       "id": "box_level_3",
@@ -330,7 +392,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "development_card_level_3"
+      ]
     },
     {
       "id": "box_gem_diamond",
@@ -340,7 +406,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "box_gem_sapphire",
@@ -350,7 +420,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "box_gem_ruby",
@@ -360,7 +434,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "box_gem_emerald",
@@ -370,7 +448,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "box_gem_onyx",
@@ -380,7 +462,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "gem"
+      ]
     },
     {
       "id": "box_gem_gold",
@@ -390,7 +476,11 @@
         "x": 0.0,
         "z": 0.0
       },
-      "margin": 6.0
+      "margin": 6.0,
+      "concept": "<ontology::game_box>",
+      "contains": [
+        "gold"
+      ]
     },
     {
       "id": "showcase",
@@ -414,7 +504,9 @@
       "size": {
         "w": 0.63,
         "h": 0.88
-      }
+      },
+      "concept": null,
+      "contains": []
     },
     {
       "id": "showcase_1",
@@ -438,7 +530,9 @@
       "size": {
         "w": 0.63,
         "h": 0.88
-      }
+      },
+      "concept": null,
+      "contains": []
     },
     {
       "id": "showcase_2",
@@ -462,7 +556,9 @@
       "size": {
         "w": 0.63,
         "h": 0.88
-      }
+      },
+      "concept": null,
+      "contains": []
     },
     {
       "id": "showcase_3",
@@ -486,7 +582,9 @@
       "size": {
         "w": 0.63,
         "h": 0.88
-      }
+      },
+      "concept": null,
+      "contains": []
     }
   ],
   "templates": [
@@ -495,7 +593,15 @@
       "shape": "gem",
       "world_size": 0.43,
       "sorting_order": 6,
-      "note": "实际尺寸见 games/splendor/components.json：直径 43mm"
+      "note": "实际尺寸见 games/splendor/components.json：直径 43mm",
+      "concept_by_palette": {
+        "gem_diamond": "gem",
+        "gem_ruby": "gem",
+        "gem_emerald": "gem",
+        "gem_sapphire": "gem",
+        "gem_onyx": "gem",
+        "gem_gold": "gold"
+      }
     },
     {
       "id": "noble",
@@ -503,7 +609,8 @@
       "palette": "noble",
       "width": 0.6,
       "height": 0.6,
-      "sorting_order": 2
+      "sorting_order": 2,
+      "concept": "noble"
     },
     {
       "id": "board_market",
@@ -512,7 +619,8 @@
       "width": 2.85,
       "height": 3.1,
       "alpha": 0.16,
-      "sorting_order": -20
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
     },
     {
       "id": "board_supply",
@@ -521,7 +629,8 @@
       "width": 4.1,
       "height": 1.5,
       "alpha": 0.2,
-      "sorting_order": -20
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
     },
     {
       "id": "board_player",
@@ -530,7 +639,8 @@
       "width": 3.0,
       "height": 1.2,
       "alpha": 0.2,
-      "sorting_order": -20
+      "sorting_order": -20,
+      "concept": "<ontology::player_board>"
     },
     {
       "id": "glow_zone",
@@ -540,7 +650,9 @@
       "height": 0.5,
       "alpha": 0.0,
       "sorting_order": -19,
-      "highlight": true
+      "highlight": true,
+      "concept": null,
+      "note": "纯表现：高亮底板，不是棋盘上的东西"
     },
     {
       "id": "board_deck",
@@ -549,7 +661,8 @@
       "width": 0.85,
       "height": 3.1,
       "alpha": 0.16,
-      "sorting_order": -20
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
     },
     {
       "id": "board_noble",
@@ -558,7 +671,8 @@
       "width": 2.4,
       "height": 0.78,
       "alpha": 0.16,
-      "sorting_order": -20
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
     },
     {
       "id": "market_card_1_diamond",
@@ -570,7 +684,11 @@
       "face_image": "media/card/一级发展卡_白.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
       "note": "1 级卡面（diamond），背面同该级卡背",
-      "from_zone": "deck_level_1"
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": {
+        "bonus": "<diamond>"
+      }
     },
     {
       "id": "market_card_1_ruby",
@@ -582,7 +700,11 @@
       "face_image": "media/card/一级发展卡_红.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
       "note": "1 级卡面（ruby），背面同该级卡背",
-      "from_zone": "deck_level_1"
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": {
+        "bonus": "<ruby>"
+      }
     },
     {
       "id": "market_card_1_emerald",
@@ -594,7 +716,11 @@
       "face_image": "media/card/一级发展卡_绿.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
       "note": "1 级卡面（emerald），背面同该级卡背",
-      "from_zone": "deck_level_1"
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": {
+        "bonus": "<emerald>"
+      }
     },
     {
       "id": "market_card_1_sapphire",
@@ -606,7 +732,11 @@
       "face_image": "media/card/一级发展卡_蓝.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
       "note": "1 级卡面（sapphire），背面同该级卡背",
-      "from_zone": "deck_level_1"
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": {
+        "bonus": "<sapphire>"
+      }
     },
     {
       "id": "market_card_1_onyx",
@@ -618,7 +748,11 @@
       "face_image": "media/card/一级发展卡_黑.jpg",
       "back_image": "media/card/一级发展卡_背面.jpg",
       "note": "1 级卡面（onyx），背面同该级卡背",
-      "from_zone": "deck_level_1"
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": {
+        "bonus": "<onyx>"
+      }
     },
     {
       "id": "market_card_2_diamond",
@@ -630,7 +764,11 @@
       "face_image": "media/card/二级发展卡_白.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
       "note": "2 级卡面（diamond），背面同该级卡背",
-      "from_zone": "deck_level_2"
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": {
+        "bonus": "<diamond>"
+      }
     },
     {
       "id": "market_card_2_ruby",
@@ -642,7 +780,11 @@
       "face_image": "media/card/二级发展卡_红.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
       "note": "2 级卡面（ruby），背面同该级卡背",
-      "from_zone": "deck_level_2"
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": {
+        "bonus": "<ruby>"
+      }
     },
     {
       "id": "market_card_2_emerald",
@@ -654,7 +796,11 @@
       "face_image": "media/card/二级发展卡_绿.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
       "note": "2 级卡面（emerald），背面同该级卡背",
-      "from_zone": "deck_level_2"
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": {
+        "bonus": "<emerald>"
+      }
     },
     {
       "id": "market_card_2_sapphire",
@@ -666,7 +812,11 @@
       "face_image": "media/card/二级发展卡_蓝.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
       "note": "2 级卡面（sapphire），背面同该级卡背",
-      "from_zone": "deck_level_2"
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": {
+        "bonus": "<sapphire>"
+      }
     },
     {
       "id": "market_card_2_onyx",
@@ -678,7 +828,11 @@
       "face_image": "media/card/二级发展卡_黑.jpg",
       "back_image": "media/card/二级发展卡_背面.jpg",
       "note": "2 级卡面（onyx），背面同该级卡背",
-      "from_zone": "deck_level_2"
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": {
+        "bonus": "<onyx>"
+      }
     },
     {
       "id": "market_card_3_diamond",
@@ -690,7 +844,11 @@
       "face_image": "media/card/三级发展卡_白.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
       "note": "3 级卡面（diamond），背面同该级卡背",
-      "from_zone": "deck_level_3"
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": {
+        "bonus": "<diamond>"
+      }
     },
     {
       "id": "market_card_3_ruby",
@@ -702,7 +860,11 @@
       "face_image": "media/card/三级发展卡_红.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
       "note": "3 级卡面（ruby），背面同该级卡背",
-      "from_zone": "deck_level_3"
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": {
+        "bonus": "<ruby>"
+      }
     },
     {
       "id": "market_card_3_emerald",
@@ -714,7 +876,11 @@
       "face_image": "media/card/三级发展卡_绿.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
       "note": "3 级卡面（emerald），背面同该级卡背",
-      "from_zone": "deck_level_3"
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": {
+        "bonus": "<emerald>"
+      }
     },
     {
       "id": "market_card_3_sapphire",
@@ -726,7 +892,11 @@
       "face_image": "media/card/三级发展卡_蓝.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
       "note": "3 级卡面（sapphire），背面同该级卡背",
-      "from_zone": "deck_level_3"
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": {
+        "bonus": "<sapphire>"
+      }
     },
     {
       "id": "market_card_3_onyx",
@@ -738,7 +908,11 @@
       "face_image": "media/card/三级发展卡_黑.jpg",
       "back_image": "media/card/三级发展卡_背面.jpg",
       "note": "3 级卡面（onyx），背面同该级卡背",
-      "from_zone": "deck_level_3"
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": {
+        "bonus": "<onyx>"
+      }
     },
     {
       "id": "sample_card_1",
@@ -749,7 +923,9 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 4,
-      "alpha": 1.0
+      "alpha": 1.0,
+      "concept": "development_card_level_1",
+      "sample": true
     },
     {
       "id": "sample_back_1",
@@ -760,7 +936,9 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
-      "alpha": 1.0
+      "alpha": 1.0,
+      "concept": "development_card_level_1",
+      "sample": true
     },
     {
       "id": "sample_back_2",
@@ -771,7 +949,9 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
-      "alpha": 1.0
+      "alpha": 1.0,
+      "concept": "development_card_level_2",
+      "sample": true
     },
     {
       "id": "sample_back_3",
@@ -782,7 +962,9 @@
       "width": 0.63,
       "height": 0.88,
       "sorting_order": 2,
-      "alpha": 1.0
+      "alpha": 1.0,
+      "concept": "development_card_level_3",
+      "sample": true
     },
     {
       "id": "blank_card_1",
@@ -792,7 +974,9 @@
       "height": 0.88,
       "sorting_order": 4,
       "face_image": "media/card/一级发展卡_背面.jpg",
-      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。"
+      "note": "垫牌：只为让牌堆看上去有几十张，永远发不出来（所以没有真卡面）",
+      "concept": "development_card_level_1",
+      "filler": true
     },
     {
       "id": "blank_card_2",
@@ -802,7 +986,9 @@
       "height": 0.88,
       "sorting_order": 4,
       "face_image": "media/card/二级发展卡_背面.jpg",
-      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。"
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
+      "concept": "development_card_level_2",
+      "filler": true
     },
     {
       "id": "blank_card_3",
@@ -812,7 +998,9 @@
       "height": 0.88,
       "sorting_order": 4,
       "face_image": "media/card/三级发展卡_背面.jpg",
-      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。"
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
+      "concept": "development_card_level_3",
+      "filler": true
     }
   ],
   "anchors": [

@@ -104,6 +104,61 @@ def load_json(path: Path):
         return json.load(fh)
 
 
+# ── 概念层：动画实例 ↔ 本体概念（2026-09 起）────────────────────────────
+# 本体（ontology/concepts.json）和游戏概念（games/{game}/concepts.json）描述的是
+# **同一个世界**：动画里的每个模板/区域都是本体某个概念的一个实例。这里的检查就是
+# 让这份对等关系变成可验证的，而不是靠人记着。
+_WORLD_CACHE: dict[str, object] = {}
+
+
+def load_world(game_id: str):
+    """加载本体 + 游戏概念（带缓存）。概念解析逻辑见 scripts/concept_ref.py。"""
+    if game_id not in _WORLD_CACHE:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import concept_ref
+        _WORLD_CACHE[game_id] = concept_ref.World(game_id)
+    return _WORLD_CACHE[game_id]
+
+
+def concept_of_template(stage, tpl_id, palette=None):
+    """模板（+色板）实例化的是哪个概念。找不到/纯视觉返回 None。"""
+    for tpl in stage.get("templates", []):
+        if tpl.get("id") != tpl_id:
+            continue
+        by_pal = tpl.get("concept_by_palette") or {}
+        if palette and palette in by_pal:
+            return by_pal[palette]
+        if by_pal and tpl.get("concept") is None and palette:
+            # 只按色板分身份、又给了个没登记的色板 → 说不清是什么，交给调用方处理
+            return by_pal.get(palette)
+        return tpl.get("concept")
+    return None
+
+
+def contains_of_zone(stage, zone_id):
+    """区域允许存放哪些概念。空/缺省 = 不限（本体 <zone>.contains 的语义）。"""
+    for z in stage.get("zones", []):
+        if z.get("id") == zone_id:
+            return z.get("contains") or []
+    return []
+
+
+def is_a(world, ref, ancestor) -> bool:
+    """ref 是不是 ancestor 的后代（含自身）。概念之间靠 extends/specifies 连成链。"""
+    cid, aid = world.resolve(ref), world.resolve(ancestor)
+    return bool(cid and aid and aid in world.chain(cid))
+
+
+def check_concept_binding(report, where, entity, world):
+    """模板/区域必须显式声明它实例化的概念（可以显式写 null = 纯视觉件）。"""
+    if "concept" not in entity and "concept_by_palette" not in entity:
+        report.error(where, "没有 concept/concept_by_palette —— 必须显式写概念，"
+                            "纯视觉件也要显式写 null（不然没人知道它属于世界观的哪一块）")
+        return
+    if entity.get("concept") and not world.resolve(entity["concept"]):
+        report.error(where, f"concept = {entity['concept']!r} 在本体/游戏概念里找不到")
+
+
 def derive_actor_ids(stage):
     """
     Reproduce ZoneStore.Spawn's id scheme: '{template}#{n}' with a per-template counter,
@@ -155,6 +210,32 @@ def validate_stage(stage_path: Path, report: Report, game_id: str):
             report.error(where, f"未知 shape {tpl['shape']!r}")
         if tpl.get("palette") and tpl["palette"] not in PALETTES:
             report.warn(where, f"未知 palette {tpl['palette']!r}（见 Palette.cs）")
+
+    # ── 概念绑定（动画 ↔ 本体）──────────────────────────────────────────
+    # 规则：每个模板/区域都必须**显式**说清它实例化的是哪个本体概念，或者显式写 null
+    # （纯视觉件）。不许省 —— 省了就没人知道新加的东西属于世界观的哪一块，
+    # 而「牌堆里出现宝石」这类错误正是靠这条链才能自动查出来。
+    world = load_world(game_id)
+    for i, tpl in enumerate(stage.get("templates", [])):
+        if not tpl.get("id"):
+            continue
+        where = f"stage.templates[{i}] {tpl['id']}"
+        check_concept_binding(report, where, tpl, world)
+        by_pal = tpl.get("concept_by_palette") or {}
+        if by_pal:
+            for pal, ref in by_pal.items():
+                if pal not in PALETTES:
+                    report.warn(where, f"concept_by_palette 的键 {pal!r} 不是已知色板")
+                if not world.resolve(ref):
+                    report.error(where, f"concept_by_palette[{pal!r}] = {ref!r} 在本体/游戏概念里找不到")
+    for i, zone in enumerate(stage.get("zones", [])):
+        if not zone.get("id"):
+            continue
+        where = f"stage.zones[{i}] {zone['id']}"
+        check_concept_binding(report, where, zone, world)
+        for ref in zone.get("contains") or []:
+            if not world.resolve(ref):
+                report.error(where, f"contains 里的 {ref!r} 在本体/游戏概念里找不到")
 
     for i, anchor in enumerate(stage.get("anchors", [])):
         where = f"stage.anchors[{i}]"
@@ -231,6 +312,7 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
     stage, zones, templates = validate_stage(stage_path, report, game_id)
     if stage is None:
         return
+    world = load_world(game_id)
 
     known_ids = set(derive_actor_ids(stage)) | collect_created_ids(path.parent)
     # cue 自己 start.set 出来的组件（如发牌前预置在盒里的正面卡）也是合法目标
@@ -337,9 +419,37 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                                 "若该 zone 混放多种组件，可能取到不该动的东西")
             if ev.get("order") == -2 and int(ev.get("slot", -1)) < 0:
                 report.error(ew, "order=-2 需要同时给 slot（目标格位）")
+
+            # ── 概念层：这次转移在规则上合不合法 ────────────────────────
+            # 本体 <zone>.contains 的原话：「程序校验 <transfer> 时以此过滤——
+            # 若 what 的类型不在 contains 中，<transfer> 非法」。动画的 move 就是
+            # <transfer>，所以这条本来就该在这里查。空 = 不限（纯视觉区/镜头外通道）。
+            if zone:
+                dest_ok = contains_of_zone(stage, zone)
+                moved = concept_of_template(stage, ev.get("template"), ev.get("palette")) \
+                    if ev.get("template") else None
+                if moved and dest_ok and not any(is_a(world, moved, c) for c in dest_ok):
+                    report.error(ew, f"要把 {moved} 移进 {zone}，但该区域只允许 {dest_ok}"
+                                     f"（本体 <zone>.contains）")
+                elif not moved and dest_ok and sources:
+                    # 事件没写 template，说不出搬的是哪一类：至少要求源区与目标区
+                    # 允许的类型有交集，否则必然是把不该进去的东西搬进去了。
+                    cands = [contains_of_zone(stage, s) for s in sources]
+                    cands = [c for c in cands if c]
+                    if cands and not any(is_a(world, a, b) for c in cands for a in c for b in dest_ok):
+                        report.warn(ew, f"说不出移动的是什么（没写 template）：源区允许 "
+                                        f"{cands}，目标区 {zone} 只允许 {dest_ok}，两者没有交集")
         elif action == "rotate":
             if "angle" not in ev:
                 report.error(ew, "rotate 需要 angle")
+        elif action == "flip":
+            # 本体 <flip>：「将 <card> 或 <tile> 翻至另一面」——只有**声明了 face 的
+            # 概念**才谈得上翻面。宝石没有正反面（<card>.face 的说明里写「null 表示
+            # 不区分正反」），对宝石 flip 是无声的空动作，要报出来。
+            ref = concept_of_template(stage, ev.get("template"), ev.get("palette")) \
+                if ev.get("template") else None
+            if ref and not world.has_field(ref, "face"):
+                report.warn(ew, f"对 {ref} 翻面，但该概念没有 face（本体 <card>/<tile> 才有）")
         elif action == "scale":
             if "scale" not in ev:
                 report.error(ew, "scale 需要 scale（倍率）")
