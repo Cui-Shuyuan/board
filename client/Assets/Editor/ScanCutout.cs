@@ -108,6 +108,8 @@ namespace BoardGameTutorial.Editor
             Exit(failed == 0 ? 0 : 1);
         }
 
+        private static int edgeRadius;   // 径向密度半高给出的边界半径（诊断用）
+
         private static bool ProcessOne(string path, bool diagOnly)
         {
             string name = Path.GetFileName(path);
@@ -144,30 +146,63 @@ namespace BoardGameTutorial.Editor
             }
             float cx = (float)(swx / sw), cy = (float)(swy / sw);
 
-            // 2) 距离直方图 → 选半径："一点都不切到宝石"里最小的那个 r
+            // 2) 半径：**径向密度的半高判据**（不是"切到宝石≤1%"—— 那条会被稀疏杂点撑爆）
+            //
+            //    dens(r) = 该半径上的宝石权重 / (2πr) ∈ [0,1]
+            //    圆盘内部 dens ≈ 1，出了边缘掉到 0；扫描边框/暗角那种稀疏杂点
+            //    摊在一个巨大的圆周上，dens 趋近 0，**天然被压掉**（所以这个判据稳健）。
+            //    边界 = 最外面那个 dens ≥ 0.5 的 r（半高 = 一半算本体的位置）。
             int maxR = Mathf.CeilToInt(Mathf.Sqrt((float)w * w + (float)h * h)) + 2;
-            var gemAt = new double[maxR + 1];    // 该半径上的宝石权重
-            var bgAt = new double[maxR + 1];     // 该半径上的底色权重
+            for (int pass = 0; pass < 2; pass++)     // 第二遍用边界内的像素重算圆心，剔掉远处杂点
+            {
+                var gemAt = new double[maxR + 1];
+                for (int y = 0; y < h; y++)
+                    for (int x = 0; x < w; x++)
+                    {
+                        float dx = x - cx, dy = y - cy;
+                        int r = Mathf.Clamp(Mathf.RoundToInt(Mathf.Sqrt(dx * dx + dy * dy)), 0, maxR);
+                        gemAt[r] += weight[y * w + x];
+                    }
+                int edgeR = 2;
+                for (int r = 2; r <= maxR; r++)
+                {
+                    double circumference = 2.0 * Math.PI * Mathf.Max(1, r);
+                    if (gemAt[r] / circumference >= 0.5) edgeR = r;
+                }
+                edgeRadius = edgeR;
+                if (pass == 0)
+                {
+                    double cw = 0, cwx = 0, cwy = 0;
+                    for (int y = 0; y < h; y++)
+                        for (int x = 0; x < w; x++)
+                        {
+                            float dx = x - cx, dy = y - cy;
+                            if (Mathf.Sqrt(dx * dx + dy * dy) > edgeR) continue;
+                            double g = weight[y * w + x];
+                            cw += g; cwx += g * x; cwy += g * y;
+                        }
+                    if (cw > 1.0) { cx = (float)(cwx / cw); cy = (float)(cwy / cw); }
+                }
+            }
+            float radius = Mathf.Max(2f, edgeRadius - Shrink);
+            // 质量数：只看半径 1.5 倍以内（远处杂点不该混进"切掉多少宝石"这个数）
+            double cut = 0, halo = 0;
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                 {
-                    int i = y * w + x;
                     float dx = x - cx, dy = y - cy;
-                    int r = Mathf.Clamp(Mathf.RoundToInt(Mathf.Sqrt(dx * dx + dy * dy)), 0, maxR);
-                    gemAt[r] += weight[i];
-                    bgAt[r] += 1f - weight[i];
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    if (d > radius * 1.5f) continue;
+                    if (d > radius) cut += weight[y * w + x];
+                    else halo += 1f - weight[y * w + x];
                 }
-            // 从外往里累加"会被切掉的宝石权重"，找到允许切的上界
-            double gemTotal = sw;
-            double cutSoFar = 0;
-            int chosen = -1;
-            for (int r = maxR; r >= 2; r--)
-            {
-                cutSoFar += gemAt[r];
-                if (cutSoFar > MaxCut * gemTotal) { chosen = r + 1; break; }
-            }
-            if (chosen < 0) chosen = 2;
-            float radius = Mathf.Max(2f, chosen - Shrink);
+            double gemNear = 0;
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    float dx = x - cx, dy = y - cy;
+                    if (Mathf.Sqrt(dx * dx + dy * dy) <= radius * 1.5f) gemNear += weight[y * w + x];
+                }
 
             // 3) 裁到圆的外接正方形 + 烘焙 alpha（RGB 保持扫描原样）
             int side = Mathf.Max(8, Mathf.RoundToInt(2f * (radius + 1f)));
@@ -205,19 +240,17 @@ namespace BoardGameTutorial.Editor
                 }
             float frac = (float)opaque / (side * side);
 
-            double cut = 0, halo = 0;
-            for (int r = chosen + 1; r <= maxR; r++) cut += gemAt[r];
-            for (int r = 0; r <= chosen - 1; r++) halo += bgAt[r];
-
             Debug.Log($"[Cutout] {name} {w}x{h} → {side}x{side} 背景=({bg.r:0.00},{bg.g:0.00},{bg.b:0.00}) " +
                       $"最大色差={maxDist:0.00} 圆心=({cx:0},{cy:0}) r={radius:0.0} → " +
                       $"四角max α={cornerMax:0.00} 圆心α={centerAlpha:0.00} 圆外不透明={outsideOpaque} " +
-                      $"占比={frac:0.000}（理想 π/4={Mathf.PI / 4f:0.000}）｜切掉的宝石={100.0 * cut / gemTotal:0.00}% " +
-                      $"圆内底色={100.0 * halo / Mathf.Max(1f, (float)(halo + sw - cut)):0.00}%");
+                      $"占比={frac:0.000}（理想 π/4={Mathf.PI / 4f:0.000}）｜切掉的宝石=" +
+                      $"{(gemNear > 0 ? 100.0 * cut / gemNear : 0):0.00}% 圆内底色=" +
+                      $"{(gemNear > 0 ? 100.0 * halo / (halo + gemNear) : 0):0.00}%（都在 1.5r 内统计）");
 
             bool ok = cornerMax <= 0.01f && centerAlpha >= 0.99f && outsideOpaque <= 4
                       && Mathf.Abs(frac - Mathf.PI / 4f) < 0.06f
-                      && cut / gemTotal <= 0.02 && halo / Mathf.Max(1f, (float)(halo + sw - cut)) <= 0.03;
+                      && (gemNear <= 0 || cut / gemNear <= 0.02)
+                      && (gemNear <= 0 || halo / (halo + gemNear) <= 0.03);
             if (!ok)
                 Debug.LogError($"[Cutout] {name}: 自检没过（四角全透明 / 圆心不透明 / 圆外无不透明 / 占比≈π/4 /" +
                                $"切掉的宝石≤2% / 圆内底色≤3%）");
