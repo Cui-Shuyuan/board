@@ -1136,50 +1136,19 @@
     },
     {
       "id": "draw",
-      "extends": "<event>",
+      "extends": "<transfer>",
       "name": {
         "zh": "抽取",
         "en": "Draw"
       },
       "abstract": true,
       "description": {
-        "zh": "从隐藏集合中抽取 <object> 的抽象概念——抽取前对象不可见，与 <transfer>（移动已知对象）相对。具体抽取规则由子类决定：<top_draw> 从 <deck> 顶部抽（位置规则确定，顶牌未知）；<random_draw> 从 <pool>（袋）中随机抽。游戏层不直接使用本概念。",
-        "en": "The abstract concept of drawing an <object> from a hidden collection — the object is unseen before drawing, as opposed to <transfer> (moving a known object). The concrete drawing rule is determined by the subclass: <top_draw> draws from the top of a <deck> (deterministic position, unseen card); <random_draw> draws blindly at random from a <pool> (bag). Game files do not use this concept directly."
+        "zh": "从隐藏集合中抽取 <object> 的 <event>——**它是 <transfer> 的特例**：转移的对象在移动前身份未知（<transfer> 移动的是已知对象）。source / destination / <object> / quantity 全部继承自 <transfer>，本概念不再重复声明。具体抽取规则由子类决定：<top_draw> 从 <deck> 顶部抽（位置规则确定，顶牌未知）；<random_draw> 从 <pool>（袋）中随机抽。游戏层不直接使用本概念。",
+        "en": "An <event> that draws an <object> out of a hidden set -- **a special case of <transfer>**: the object's identity is unknown before the move (a <transfer> moves a known object). source / destination / <object> / quantity are all inherited from <transfer> and are not redeclared here. The concrete rule is decided by subclasses: <top_draw> takes from the top of a <deck>; <random_draw> takes randomly from a <pool>. The game layer does not use this concept directly."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "source",
-            "description": {
-              "zh": "抽取的源 <zone>。必须是隐藏集合——<deck>（牌堆）或 <pool>（袋子）。",
-              "en": "The source <zone> the <object> is drawn from. Must be a hidden collection — a <deck> (stack) or a <pool> (bag)."
-            }
-          },
-          {
-            "id": "destination",
-            "description": {
-              "zh": "抽取出的 <object> 移入的目标 <zone>。",
-              "en": "The destination <zone> the drawn <object> moves to."
-            }
-          },
-          {
-            "id": "<object>",
-            "description": {
-              "zh": "被抽取的 <object> 类型。抽取前具体是哪个对象未知。",
-              "en": "The type of <object> being drawn. Which specific object is drawn is unknown beforehand."
-            }
-          }
-        ],
-        "optional": [
-          {
-            "id": "quantity",
-            "default": 1,
-            "description": {
-              "zh": "抽取的 <object> 数量。",
-              "en": "Quantity of <object>s drawn."
-            }
-          }
-        ]
+        "required": [],
+        "optional": []
       }
     },
     {
@@ -1195,29 +1164,7 @@
         "en": "Draw the top 1 card (or a given quantity) from a <deck> — the draw position is deterministic (the top), but the top card is unseen until drawn. Used for revealing cards, dealing, blind draws, etc."
       },
       "constraints": {
-        "required": [
-          {
-            "id": "source",
-            "description": {
-              "zh": "抽牌的来源 <deck>。",
-              "en": "The source <deck> to draw from."
-            }
-          },
-          {
-            "id": "destination",
-            "description": {
-              "zh": "抽出的 <object> 进入的目标区。",
-              "en": "Where drawn <object>s go."
-            }
-          },
-          {
-            "id": "<object>",
-            "description": {
-              "zh": "被抽取的对象类型。",
-              "en": "The type of object being drawn."
-            }
-          }
-        ],
+        "required": [],
         "optional": []
       }
     },
@@ -2286,8 +2233,8 @@
       },
       "abstract": false,
       "description": {
-        "zh": "将 <card> 或 <tile> 翻至另一面。attribute 固定为 face，to 为 face_up 或 face_down。",
-        "en": "Flip a <card> or <tile> to its other side. Attribute is fixed to face; to is face_up or face_down."
+        "zh": "将 <card> 或 <tile> 翻至另一面 —— **它是 <state_change> 的特例**：attribute 固定为 face，to 为 face_up 或 face_down。subject / to / attribute / from 全部继承自 <state_change>，本概念不再重复声明。",
+        "en": "Turns a <card> or <tile> to its other face -- **a special case of <state_change>**: attribute is fixed to face, and to is face_up or face_down. subject / to / attribute / from are inherited from <state_change> and are not redeclared here."
       },
       "subject": {
         "type": "<card> | <tile>",
@@ -2320,7 +2267,8 @@
       "constraints": {
         "required": [],
         "optional": []
-      }
+      },
+      "extends": "<state_change>"
     },
     {
       "id": "upgrade",

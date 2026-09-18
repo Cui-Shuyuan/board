@@ -298,8 +298,9 @@ namespace BoardGameTutorial
         /// <summary>目标 actor id / group / anchor id，用于非 move 动作和显式指定。</summary>
         public string target;
 
-        /// <summary>move / rotate / flip / scale / fade / highlight / shuffle / wait</summary>
-        public string action = "move";
+        /// <summary>transfer / rotate / flip / scale / fade / highlight / shuffle / wait /
+        /// showbox / create / destroy / stack（名字尽量与本体对齐：transfer = &lt;transfer&gt;）</summary>
+        public string action = "transfer";
 
         /// <summary>相对当前 cue 音频开头的秒数。</summary>
         public float at;
@@ -337,24 +338,9 @@ namespace BoardGameTutorial
         /// <summary>stack：这一摞的总张数（含垫牌）。0 = 只用 real_templates 的张数。</summary>
         public int capacity;
 
-        /// <summary>
-        /// create：创建成**正面朝上**（真卡面）。
-        ///
-        /// 与 <see cref="face_down"/> 二选一；两个都不写时默认**背面朝上**
-        /// （牌堆里的牌就是这种：是哪张已定、但还没翻开）。
-        ///
-        /// 有了它，就不需要"create 成背面 + 紧跟一个 flip"来让一张牌翻出来 ——
-        /// 用户明确说过那种做法像"多做了一个动作"，他要的是**直接出现**。
-        /// </summary>
-        public bool face_up;
+        // create 的朝向改用上面的 `to`（"face_up"/"face_down"）：一个字段说清终态，
+        // 不再有"两个布尔互斥"的空子可以钻（以前 face_up 和 face_down 同时写会静默取 face_up）。
 
-        /// <summary>
-        /// create：**保留字段，引擎不读它。** 朝向只由 `face_up` 决定：
-        /// `face_up == true` → 正面；否则（`face_down` 或两者都没写）→ 背面。
-        /// 也就是说"创建一个背面朝上的牌"本来就是默认值，写 `face_down` 只是给人看的冗余声明，
-        /// **不要写 `face_up` + `face_down` 同时为真** —— 那会得到正面朝上的牌。
-        /// </summary>
-        public bool face_down;
 
         /// <summary>
         /// create：不指定色板（用模板自己的）。
@@ -394,22 +380,42 @@ namespace BoardGameTutorial
         public float amount;
 
         /// <summary>
-        /// move：源 zone。留空表示「组件原位」或按 target 指定。
-        /// 写成数组时表示「从这几个 zone 各取 take 件」（例如三种宝石各取一枚）。
+        /// transfer（= 本体 &lt;transfer&gt; 的 source）：源 zone。留空表示「组件原位」或按 target 指定。
+        /// 写成数组时表示「从这几个 zone 各取 quantity 件」（例如三种宝石各取一枚）。
         /// </summary>
-        public List<string> from;
+        public List<string> source;
 
-        /// <summary>move：从每个 from zone 搬几件（0 = 未指定，按 1 处理）。</summary>
-        public int take;
+        /// <summary>transfer（本体 &lt;transfer&gt;.quantity）：从每个 source zone 搬几件（0 = 未指定，按 1 处理）。</summary>
+        public int quantity;
 
         /// <summary>
-        /// move：把这一组当作**一个整体**搬运（同一段位移、同一时刻），而不是逐件飞。
+        /// transfer / create / stack 的**目标 zone**（本体 &lt;transfer&gt;.destination）。
+        ///
+        /// 与 <see cref="zone"/> 分开是刻意的：`zone` 是**选择器**（"这个区域里的全部"，
+        /// 用于 highlight / shuffle），`destination` 是**转移的终点**。以前两者共用一个字段，
+        /// 同一份数据里"zone"一会儿是目的地、一会儿是选择范围，读起来要靠动作去猜。
+        /// </summary>
+        public string destination;
+
+        /// <summary>
+        /// transfer：把这一组当作**一个整体**搬运（同一段位移、同一时刻），而不是逐件飞。
         /// 用于「整摞牌堆从盒子里出来」：逐件飞会让一摞牌像扇形散开。
         /// </summary>
         public bool group;
 
-        /// <summary>move 时若 &gt;=0：从该透明度淡入到 1（用于「发牌前不可见」）。</summary>
+        /// <summary>transfer 时若 &gt;=0：从该透明度淡入到 1（用于「发牌前不可见」）。</summary>
         public float fade_in = -1f;
+
+        /// <summary>
+        /// 这个动画事件在规则上是哪个本体事件（`&lt;top_draw&gt;`、`&lt;ontology::shuffle&gt;` …）。
+        ///
+        /// 「机制」与「语义」分开：原语说的是**怎么动**（transfer / flip / shuffle），
+        /// `realizes` 说的是**这一动在规则里是什么事**。校验器会用本体的继承链检查它
+        /// —— 例如发牌是 `&lt;top_draw&gt;`，而 `&lt;top_draw&gt;` 继承 `&lt;transfer&gt;`，
+        /// 所以它能挂在 transfer 原语上；写个 `&lt;ontology::shuffle&gt;` 就会被拦下。
+        /// 表现层原语（fade / highlight / scale / wait / showbox）没有对应事件，不要写。
+        /// </summary>
+        public string realizes;
 
         /// <summary>
         /// move：只搬这个模板的件（留空表示不限）。
@@ -420,8 +426,17 @@ namespace BoardGameTutorial
 
         public float stagger;
 
-        /// <summary>move 时顺便翻面：到终点恰好转到另一面（用于「翻开四张牌」）。</summary>
-        public bool flip;
+        /// <summary>
+        /// 终态：要把它设成什么状态值（本体 &lt;state_change&gt;.to / &lt;flip&gt; 的同一个词）。
+        ///
+        /// 现在只用 face：`face_up` / `face_down`。transfer / create / stack 都可以带 ——
+        /// 意为「搬过去（创建出来）之后正面朝上」。
+        ///
+        /// **为什么不再用布尔 `flip`**：布尔只能表达「取反」，而取反的规则是"谁最后执行谁赢"
+        /// —— 历史上正是它造成"播完是对的、换 cue 重建后又翻回背面"，查了一整天。
+        /// 写终态就没有这个问题：`to: "face_up"` 无论当前是什么状态，结果都一样。
+        /// </summary>
+        public string to;
 
         /// <summary>
         /// 目的 zone 内的落位序号。

@@ -57,16 +57,16 @@ namespace BoardGameTutorial
             if (cueDoc?.events == null) return null;
             foreach (var ev in cueDoc.events)
             {
-                if (ev.action != "move" || ev.target != targetId) continue;
+                if (ev.action != "transfer" || ev.target != targetId) continue;
                 var actor = FindActor(ev.target);
                 if (actor?.Item == null) continue;
                 int ord = ev.order == -2 ? ev.slot : ev.order;
                 var from = actor.LivePosition;
-                var to = ev.zone != null ? Store.ZonePosition(ev.zone, ord) : Store.CurrentPosition(actor.Item);
+                var to = ev.destination != null ? Store.ZonePosition(ev.destination, ord) : Store.CurrentPosition(actor.Item);
                 return new MovePlan
                 {
-                    Item = actor.Item, Destination = ev.zone, Order = ord, InPlace = false,
-                    From = from, To = to, Flip = ev.flip,
+                    Item = actor.Item, Destination = ev.destination, Order = ord, InPlace = false,
+                    From = from, To = to, ToFace = ev.to,
                 };
             }
             return null;
@@ -1268,7 +1268,7 @@ namespace BoardGameTutorial
             switch (ev.action)
             {
                 case "wait": return;
-                case "move": TriggerMove(ev); return;
+                case "transfer": TriggerMove(ev); return;
                 case "rotate":
                 case "flip": TriggerRotate(ev); return;
                 case "scale": TriggerScale(ev); return;
@@ -1290,7 +1290,7 @@ namespace BoardGameTutorial
         {
             if (ev == null || ev.action == "wait") return;
 
-            if (ev.action == "move")
+            if (ev.action == "transfer")
             {
                 foreach (var step in PlanMove(ev))
                 {
@@ -1335,7 +1335,7 @@ namespace BoardGameTutorial
             public bool InPlace;   // true = 只动画位置，不改占用
             public Vector3 From;   // 补间起点（触发时快照）
             public Vector3 To;     // 补间终点（触发时快照）
-            public bool Flip;      // 是否同时翻面
+            public string ToFace;  // 到终点时的朝向（"face_up"/"face_down"，空 = 不翻）
         }
 
         /// <summary>
@@ -1429,7 +1429,7 @@ namespace BoardGameTutorial
                     plan.Add(new MovePlan
                     {
                         Item = actor.Item,
-                        Destination = ev.zone,
+                        Destination = ev.destination,
                         Order = ord,
                         InPlace = false,
                     });
@@ -1437,13 +1437,13 @@ namespace BoardGameTutorial
                 return plan;
             }
 
-            if (string.IsNullOrEmpty(ev.zone) || Store.GetZone(ev.zone) == null)
+            if (string.IsNullOrEmpty(ev.destination) || Store.GetZone(ev.destination) == null)
             {
-                Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no resolvable destination ('{ev.zone}')");
+                Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no resolvable destination ('{ev.destination}')");
                 return plan;
             }
 
-            var sources = ev.from;
+            var sources = ev.source;
             if (sources == null || sources.Count == 0)
             {
                 Debug.LogWarning($"[TutorialCueAnim] move in cue {CueId} has no from zone");
@@ -1452,7 +1452,7 @@ namespace BoardGameTutorial
 
             // 整组搬运（ev.group）时取该 zone 的**全部**：
             // 缺省的 take=1 只搬一件，一摞牌会只剩一张动（用户会看到"牌堆没出来"）。
-            int take = ev.take > 0 ? ev.take : (ev.group ? int.MaxValue : 1);
+            int take = ev.quantity > 0 ? ev.quantity : (ev.group ? int.MaxValue : 1);
             var picked = new List<ZoneItem>();
 
             // from 写多个 zone = 每个 zone 各取 take 件（三种宝石各一枚）。
@@ -1468,7 +1468,7 @@ namespace BoardGameTutorial
                     var item = PickFront(source, picked, ev.template);
                     if (item == null) break;
                     picked.Add(item);
-                    plan.Add(new MovePlan { Item = item, Destination = ev.zone, Order = ev.order });
+                    plan.Add(new MovePlan { Item = item, Destination = ev.destination, Order = ev.order });
                 }
             }
 
@@ -1532,7 +1532,7 @@ namespace BoardGameTutorial
 
                 step.From = from;
                 step.To = to;
-                step.Flip = ev.flip;
+                step.ToFace = ev.to;
 
                 if (logTweens)
                     Debug.Log($"[Tween] {step.Item.Id} inPlace={step.InPlace} order={step.Order} " +
@@ -1567,11 +1567,11 @@ namespace BoardGameTutorial
                 // 翻转不依赖 back_image：牌堆的牌**正面就是卡背图**（它还没有"另一面"）。
                 // 曾经用 `ev.flip && actor.BackSprite != null` 作为条件，牌堆的牌
                 // 没有 back_image，于是整条翻转+换面都没发生（发到市场的牌一直是卡背）。
-                if (ev.flip)
+                if (!string.IsNullOrEmpty(ev.to))
                 {
                     clip.HasFlip = true;
-                    // **明确朝向**：到市场就是正面朝上。语义统一为"是否正面朝上"。
-                    step.Item.Flipped = true;
+                    // **写终态，不写"取反"**：无论它现在是哪一面，到终点都是 ev.to 指定的那一面。
+                    step.Item.Flipped = ev.to == "face_up";
                 }
             }
 
@@ -1792,7 +1792,7 @@ namespace BoardGameTutorial
         /// </summary>
         private void TriggerStack(CueAnimEvent ev)
         {
-            if (string.IsNullOrEmpty(ev.zone)) { Debug.LogWarning("[TutorialCueAnim] stack 缺少 zone"); return; }
+            if (string.IsNullOrEmpty(ev.destination)) { Debug.LogWarning("[TutorialCueAnim] stack 缺少 zone"); return; }
 
             var realIds = (ev.real_templates ?? "")
                 .Split(new[] { ',', '|', ' ' }, System.StringSplitOptions.RemoveEmptyEntries)
@@ -1814,13 +1814,13 @@ namespace BoardGameTutorial
                     Debug.LogWarning($"[TutorialCueAnim] stack 未知模板 '{tid}'（cue {CueId}）");
                     continue;
                 }
-                if (Store.CountInZone(ev.zone, tid) > 0) continue;   // 幂等
-                var made = Store.Spawn(tid, ev.plain ? null : ev.palette, ev.zone, 1);
+                if (Store.CountInZone(ev.destination, tid) > 0) continue;   // 幂等
+                var made = Store.Spawn(tid, ev.plain ? null : ev.palette, ev.destination, 1);
                 foreach (var it in made)
                 {
                     if (it == null) continue;
                     it.Shown = true;
-                    it.Flipped = false;
+                    it.Flipped = ev.to == "face_up";   // 默认背面朝上（牌堆就是这样）
                     BuildActorObject(it);
                     realMade++;
                 }
@@ -1830,24 +1830,24 @@ namespace BoardGameTutorial
             int padMade = 0;
             if (pad > 0 && !string.IsNullOrEmpty(ev.pad_template))
             {
-                int have = Store.CountInZone(ev.zone, ev.pad_template);
+                int have = Store.CountInZone(ev.destination, ev.pad_template);
                 int need = pad - have;
                 if (need > 0)
                 {
-                    var made = Store.Spawn(ev.pad_template, ev.plain ? null : ev.palette, ev.zone, need);
+                    var made = Store.Spawn(ev.pad_template, ev.plain ? null : ev.palette, ev.destination, need);
                     foreach (var it in made)
                     {
                         if (it == null) continue;
                         it.Shown = true;
-                        it.Flipped = false;           // 背面朝上
+                        it.Flipped = ev.to == "face_up";   // 垫牌默认背面朝上
                         BuildActorObject(it);
                         padMade++;
                     }
                 }
             }
 
-            Debug.Log($"[TutorialCueAnim] stack {ev.zone}: 垫牌 +{padMade} 真牌 +{realMade} " +
-                      $"→ 共 {Store.CountInZone(ev.zone)} 张（capacity {capacity}，顶面 {realIds[0]}）");
+            Debug.Log($"[TutorialCueAnim] stack {ev.destination}: 垫牌 +{padMade} 真牌 +{realMade} " +
+                      $"→ 共 {Store.CountInZone(ev.destination)} 张（capacity {capacity}，顶面 {realIds[0]}）");
         }
 
         private void TriggerCreate(CueAnimEvent ev)
@@ -1862,7 +1862,7 @@ namespace BoardGameTutorial
                 Debug.LogWarning($"[TutorialCueAnim] create 未知模板 '{ev.template}'（cue {CueId}）");
                 return;
             }
-            string zone = string.IsNullOrEmpty(ev.zone) ? "offstage" : ev.zone;
+            string zone = string.IsNullOrEmpty(ev.destination) ? "offstage" : ev.destination;
             int n = ev.count > 0 ? ev.count : 1;
 
             // 幂等：只补齐差额。
@@ -1887,13 +1887,13 @@ namespace BoardGameTutorial
                 // 朝向：face_up 显式正面；否则默认背面（face_down 或都没写）。
                 // 默认背面是有意的 —— 牌堆/待发牌本来就该先看到卡背，
                 // 要正面就别省 face_up（别再靠"create + flip"两个事件凑）。
-                item.Flipped = ev.face_up;
+                item.Flipped = ev.to == "face_up";
                 BuildActorObject(item);
 
                 // create 带 flip = 出场过程中翻到正面（发牌时"翻开四张"）。
                 // 与 move 的翻转走同一套：FlipFromYaw 起翻、逻辑状态立即到终态
                 // （漏了 FlipFromYaw 会一直停在背面 —— 因为它默认 0，翻完恰好是 180°）。
-                if (ev.flip && item.Actor != null && item.Actor.BackSprite != null)
+                if (!string.IsNullOrEmpty(ev.to) && item.Actor != null && item.Actor.BackSprite != null)
                 {
                     var clip = ClipAt(item, item.Actor, ev);
                     clip.HasFlip = true;
