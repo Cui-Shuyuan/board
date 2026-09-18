@@ -93,7 +93,15 @@ from_linux() {
 push_origin() {
   tracked_clean "$LINUX" || die "WSL 工作区有未提交的已跟踪改动"
   echo "推送 WSL 的 $BRANCH → origin（只快进）"
-  git -C "$LINUX" push origin "$BRANCH" || die "推送被拒（远端有新提交？）—— 先 fetch 看清楚"
+  local out
+  if ! out=$(git -C "$LINUX" push origin "$BRANCH" 2>&1); then
+    # 分清是"网络不通"还是"远端有新提交"——两件事的处理完全不同
+    if echo "$out" | grep -qiE 'could not resolve|unable to access|TLS|timed out|Connection'; then
+      die "推送失败：**网络问题**（GitHub 连不上）。本地两个工作区的同步不受影响，用 from-windows / from-linux 即可。"
+    fi
+    die "推送被拒：远端有我们没有的提交 —— 先 fetch 看清楚，别 force"
+  fi
+  echo "$out" | tail -1
 }
 
 case "${1:-status}" in

@@ -155,6 +155,7 @@ Unity.exe -batchmode -projectPath <client> \
 | 牌停在原地 | 补间终点取了「当前 zone」位置，而牌的归属还在盒子 |
 | 牌被后续事件拉回起点 | 只动画面、不记录格位；逻辑归属必须同步落到目标格 |
 | 牌堆看似正面朝上 | 停在牌堆上的市场牌未标记 `Flipped`，正面盖住了卡背 |
+| **本地编译检查报 OK，Unity 报编译错误** | 检查器**没定义 `UNITY_EDITOR`**，而 `Assets/Editor/*.cs` 整段包在 `#if UNITY_EDITOR` 里 → 编译成空文件，里面什么错都查不出来（2026-09-18：`Items.Count`（LINQ 方法组）漏到 Unity 才发现）。已在 `check_unity_scripts.py` 的 csproj 里加 `DefineConstants`，并收录 `Assets/Editor/` 全量 |
 
 **规律**：这些都不报错，只表现为「画面不对」。所以每遇到一种，
 都要**把它变成观察工具能报出来的事实** —— 能静态查的进 `validate_cue_anim.py`，
