@@ -22,6 +22,7 @@
 | 宝石的数量约定 | **已冻结**：增量演法，连演 2/3/4 人三种（1→4→5→7 枚），见下 |
 | 宝石动画 | ✅ **9 条已写完**（在 `anim/full.json` 里），**等用户看实际效果**；静态复算与契约一致、校验器 0 错 0 警告 |
 | 宝石采样 | **还没采**（要在 Windows 侧跑 `dump_states.sh`） |
+| 整幅图状态 | ✅ 采样导出 `picture`、契约可断言（`bg.intro` 有盒面，`setup.cards.001.1` 出口起为 null）；入口整幅图由引擎按 track 复算（修掉"跳跃带盒面"） |
 | 对账 | `check_cue_script.py` 可用（`--all` / `--chain` / `--cue X --which enter`）；宝石那 9 条**还没采样** |
 | 组件状态 | ✅ 采样逐身份 + 每件导出；契约可断言 `face`/`shows`。**`full.exitstate.json` 是旧格式，需在 Windows 侧重跑 `dump_states.sh`** |
 

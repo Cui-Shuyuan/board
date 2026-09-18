@@ -225,9 +225,30 @@ def load_states(path):
     return {}
 
 
-def zones_of(contract, which):
-    """取契约里 enter / exit 那一段。"""
-    return (contract.get(which) or {}).get("zones") or {}
+def part_of(contract, which):
+    """取契约里 enter / exit 那一整段（含 picture 与 zones）。"""
+    return contract.get(which) or {}
+
+
+def diff_cue(want_part, state):
+    """比对一条 cue 的一面（enter / exit）：**整幅图 + 各 zone**。
+
+    整幅图（盒面等）是播放器级状态，2026-09-18 之前既没被采样、也不在契约里，
+    于是"背景多出一张盒面"这类问题对账完全看不见（用户报的 cue 10 就是这么漏的）。
+    现在它和 zone 状态一样是可比字段。
+    """
+    diffs = []
+    want_part = want_part or {}
+    if "picture" in want_part:
+        if "picture" not in (state or {}):
+            diffs.append("picture: 契约要求比对整幅图，但采样里没有这个字段"
+                         "（采样文件是旧格式，重跑 scripts/dump_states.sh）")
+        else:
+            want_pic, got_pic = want_part.get("picture") or None, (state or {}).get("picture") or None
+            if want_pic != got_pic:
+                diffs.append(f"picture: 期望 {want_pic!r}，实际 {got_pic!r}")
+    diffs += diff_contract(want_part.get("zones") or {}, (state or {}).get("zones"))
+    return diffs
 
 
 # ── 三种查法 ──────────────────────────────────────────────────────────
@@ -258,7 +279,7 @@ def check_single(args):
         print(f"还没有 {src} 的采样状态（{spath}）", file=sys.stderr)
         return 3
 
-    diffs = diff_contract(zones_of(contract, args.which), states[src]["zones"])
+    diffs = diff_cue(part_of(contract, args.which), states[src])
     print(f"cue: {args.cue}   比对: {args.which}（对 {src} 的采样终态）")
     print("-" * 60)
     if diffs:
@@ -271,7 +292,9 @@ def check_single(args):
             for line in story[:6]:
                 print(f"  {line}")
         return 1
-    print(f"PASS  状态与契约一致（比对了 {len(zones_of(contract, args.which))} 个 zone）")
+    n = len(part_of(contract, args.which).get("zones") or {})
+    pic = part_of(contract, args.which).get("picture", "（未声明）")
+    print(f"PASS  状态与契约一致（{n} 个 zone；整幅图 {pic!r}）")
     return 0
 
 
@@ -290,15 +313,15 @@ def check_all(args):
 
         # ① 自己的出口
         if cue in states:
-            want = zones_of(contract, "exit")
-            diffs = diff_contract(want, states[cue]["zones"])
+            want = part_of(contract, "exit")
+            diffs = diff_cue(want, states[cue])
             if diffs:
                 print(f"FAIL  {cue}  exit:")
                 for d in diffs:
                     print(f"        - {d}")
                 fails += 1
             else:
-                print(f"PASS  {cue}  exit（{len(want)} 个 zone）")
+                print(f"PASS  {cue}  exit（{len(want.get('zones') or {})} 个 zone）")
         else:
             print(f"SKIP  {cue} exit（还没采样）")
             skipped += 1
@@ -307,8 +330,8 @@ def check_all(args):
         parent = contract.get("entry_from")
         if parent:
             if parent in states:
-                want = zones_of(contract, "enter")
-                diffs = diff_contract(want, states[parent]["zones"])
+                want = part_of(contract, "enter")
+                diffs = diff_cue(want, states[parent])
                 if diffs:
                     print(f"FAIL  {cue}  enter vs 父({parent}) exit:")
                     for d in diffs:
@@ -349,7 +372,7 @@ def chain(args):
         if parent not in states:
             print(f"SKIP  {cue}: 还没有父 cue 的采样状态（{parent}）")
             continue
-        diffs = diff_contract(zones_of(contract, "enter"), states[parent]["zones"])
+        diffs = diff_cue(part_of(contract, "enter"), states[parent])
         if diffs:
             print(f"FAIL  {cue}: 入口与父 cue({parent}) 的终态不一致：")
             for d in diffs:

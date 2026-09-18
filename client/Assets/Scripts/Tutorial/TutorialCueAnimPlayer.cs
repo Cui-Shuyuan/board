@@ -340,15 +340,13 @@ namespace BoardGameTutorial
                 return false;
             }
 
-            // 重建画面会销毁盒面等整幅图，但**图片路径**是状态的一部分，必须留住。
-            // 这里先记下来，重建完再按它恢复（否则载入任意 cue 后盒面都消失）。
-            string keepPicture = currentPicture;
             ClearActors();   // 确定要重建画面了，才销毁旧对象
-            currentPicture = keepPicture;
             cueDoc = found;
             Note = cueDoc.note;
 
             LoadStage(gameRoot, trackDoc.stage);
+            // 入口的整幅图状态（要用刚载入的 stage 的 default_picture 当树根，所以放在这之后）
+            string entryPicture = EntryPictureFor(trackDoc, cueId);
 
             // 续接（顺序播放）：接着上一条的终态。
             // 不续接（跳转 / 重播 / 按 B 预览）：退回牌桌初始态，再按本条 cue 的 start 布置。
@@ -373,9 +371,14 @@ namespace BoardGameTutorial
             SetBackground();
             FitCamera();
 
-            // 恢复整幅图（盒面等）：它的路径是入口状态的一部分
-            if (!string.IsNullOrEmpty(currentPicture))
-                TriggerShowBox(new CueAnimEvent { action = "showbox", picture = currentPicture, on = 1f });
+            // 应用入口的整幅图状态：有图就显示，没有就**清掉**（这一步同样重要 ——
+            // 否则从"有图"的 cue 跳进"没图"的 cue 时，旧图会一直留在画面上）。
+            TriggerShowBox(new CueAnimEvent
+            {
+                action = "showbox",
+                picture = entryPicture,
+                on = string.IsNullOrEmpty(entryPicture) ? 0f : 1f,
+            });
 
             CaptureEntry();
             clock = 0f;
@@ -2069,6 +2072,38 @@ namespace BoardGameTutorial
         /// 入口状态从根开始解，所以每次解入口都会先摆成根的样子，再由 cue 的事件改变。
         /// 这样「按右跳转」和「顺序播到同一条」得到完全相同的画面。
         /// </summary>
+        /// <summary>
+        /// 这条 cue **入口**时该显示哪张整幅图（null = 不显示）。
+        ///
+        /// 从树根画面（`stage.board.default_picture`）出发，把这条 cue **之前**所有 cue 里的
+        /// `showbox` 事件按时间顺序走一遍，最后一个说了算。
+        ///
+        /// 为什么需要它：整幅图是播放器级状态，但它**不属于组件** —— `ZoneSnapshot` 只记
+        /// 「件 → (zone, order)」，所以跳跃时这一维无从恢复。以前的做法是"沿用当前那张图"，
+        /// 于是从有图的 cue 跳进没图的 cue 会把旧图带过去（用户报的"cue 10 背景出现盒面"）。
+        /// 组件那一维靠入口快照，这一维就靠这段复算 —— 与"跳转由编译期复算入口状态"同一思路，
+        /// 只是它便宜到可以在载入时算。
+        /// </summary>
+        private string EntryPictureFor(TrackAnimDoc trackDoc, string cueId)
+        {
+            string pic = stage?.board != null ? stage.board.default_picture : null;
+            if (trackDoc?.cues == null) return pic;
+            var events = new List<CueAnimEvent>();
+            foreach (var c in trackDoc.cues)
+            {
+                if (c == null) continue;
+                if (c.cue == cueId) break;           // 只算这条 cue **之前**的
+                if (c.events == null) continue;
+                events.Clear();
+                events.AddRange(c.events);
+                events.Sort((a, b) => (a?.at ?? 0f).CompareTo(b?.at ?? 0f));  // 同一 cue 内按时间
+                foreach (var ev in events)
+                    if (ev != null && ev.action == "showbox")
+                        pic = (ev.on >= 0.5f && !string.IsNullOrEmpty(ev.picture)) ? ev.picture : null;
+            }
+            return pic;
+        }
+
         private void ApplyRootPicture()
         {
             string pic = stage?.board != null ? stage.board.default_picture : null;

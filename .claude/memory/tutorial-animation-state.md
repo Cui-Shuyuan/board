@@ -155,6 +155,7 @@ Unity.exe -batchmode -projectPath <client> \
 | 牌停在原地 | 补间终点取了「当前 zone」位置，而牌的归属还在盒子 |
 | 牌被后续事件拉回起点 | 只动画面、不记录格位；逻辑归属必须同步落到目标格 |
 | 牌堆看似正面朝上 | 停在牌堆上的市场牌未标记 `Flipped`，正面盖住了卡背 |
+| **跳跃进后面的 cue，背景还留着上一张整幅图（盒面）** | **整幅图是播放器级状态，却不在入口状态里** —— `ZoneSnapshot` 只记「件 → (zone, order)」。以前的做法是"沿用当前那张图"，于是从有图的 cue 跳进没图的 cue 会把旧图带过去。现已按 track 复算入口整幅图（从 `board.default_picture` 出发，把本条之前的 `showbox` 走一遍），并且**采样也会导出 `picture`**，契约可以断言它 |
 | **本地编译检查报 OK，Unity 报编译错误** | 检查器**没定义 `UNITY_EDITOR`**，而 `Assets/Editor/*.cs` 整段包在 `#if UNITY_EDITOR` 里 → 编译成空文件，里面什么错都查不出来（2026-09-18：`Items.Count`（LINQ 方法组）漏到 Unity 才发现）。已在 `check_unity_scripts.py` 的 csproj 里加 `DefineConstants`，并收录 `Assets/Editor/` 全量 |
 
 **规律**：这些都不报错，只表现为「画面不对」。所以每遇到一种，

@@ -131,7 +131,12 @@ namespace BoardGameTutorial.Editor
                     for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
                     var zs = CollectZones(anim);
-                    many.Append($"    \"{ids[k]}\": {{\n      \"zones\": {{\n");
+                    // 整幅图（盒面等）也是状态 —— 不导出它，"背景多出一张盒面"这类问题
+                    // 在采样里根本看不见（用户报的 cue 10 就是这么漏的）。
+                    var pic = anim.BoxPictureForTest;
+                    many.Append($"    \"{ids[k]}\": {{\n      \"picture\": " +
+                                (string.IsNullOrEmpty(pic) ? "null" : $"\"{pic}\"") + "," +
+                                $"\n      \"zones\": {{\n");
                     AppendZoneLines(many, zs, "        ");
                     many.Append("      }");
                     if (withItems)
@@ -190,6 +195,8 @@ namespace BoardGameTutorial.Editor
             var sb = new System.Text.StringBuilder();
             sb.Append("{\n");
             sb.Append($"  \"cue\": \"{cueId}\",\n");
+            var onePic = anim.BoxPictureForTest;
+            sb.Append("  \"picture\": " + (string.IsNullOrEmpty(onePic) ? "null" : $"\"{onePic}\"") + ",\n");
             sb.Append("  \"zones\": {\n");
             AppendZoneLines(sb, zones, "    ");
             sb.Append("  }");

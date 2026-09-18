@@ -15,6 +15,7 @@
         "显示盒面": "0.0（口播 0.00-4.25）"
       },
       "enter": {
+        "picture": "media/box.png",
         "zones": {
           "deck_level_1": {
             "count": 0
@@ -88,6 +89,7 @@
         }
       },
       "exit": {
+        "picture": "media/box.png",
         "zones": {
           "deck_level_1": {
             "count": 0
@@ -170,6 +172,7 @@
         "放出一张卡正面": "0.30-2.50 这是发展卡牌，共90张"
       },
       "enter": {
+        "picture": "media/box.png",
         "zones": {
           "showcase": {
             "count": 0
@@ -180,6 +183,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "showcase": {
             "count": 1,
@@ -233,6 +237,7 @@
         "高亮绿色(一级)": "0.33-2.98 分别是40张绿色的一级发展卡牌"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "showcase": {
             "count": 1,
@@ -244,6 +249,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "showcase": {
             "count": 0
@@ -341,6 +347,7 @@
         "高亮蓝色(三级)": "2.90-5.54 20张蓝色的三级发展卡牌"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "showcase_1": {
             "count": 1,
@@ -357,6 +364,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "showcase_1": {
             "count": 1,
@@ -417,6 +425,7 @@
         "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "showcase_1": {
             "count": 1,
@@ -436,6 +445,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "showcase_1": {
             "count": 0
@@ -940,6 +950,7 @@
         "5 种宝石各 1 枚上场": "0.35-1.75（口播 0.30-2.83「这些是标记，后续称之为宝石」）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 7,
@@ -989,6 +1000,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 6,
@@ -1187,6 +1199,7 @@
         "缟玛瑙高亮": "6.39-6.89（字 6.42-7.00）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 1,
@@ -1221,6 +1234,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 1,
@@ -1315,6 +1329,7 @@
         "五堆一起呼吸一次": "0.60-1.60（口播 0.28-2.71）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 1,
@@ -1349,6 +1364,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 1,
@@ -1445,6 +1461,7 @@
         "五堆宝石一起呼吸": "4.70-5.30（口播 4.75-5.62「这五种宝石」）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "box_gem_gold": {
             "count": 5,
@@ -1473,6 +1490,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "box_gem_gold": {
             "count": 4,
@@ -1588,6 +1606,7 @@
         "五堆一起呼吸（强调 4）": "5.70-6.40"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 6,
@@ -1640,6 +1659,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 3,
@@ -1875,6 +1895,7 @@
         "五堆一起呼吸（强调 5）": "1.60-2.20"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 3,
@@ -1924,6 +1945,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 2,
@@ -2159,6 +2181,7 @@
         "五堆一起呼吸（强调 7）": "2.00-2.70"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 2,
@@ -2208,6 +2231,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "box_gem_diamond": {
             "count": 0
@@ -2427,6 +2451,7 @@
         "五堆一起呼吸（「成为宝石供应堆」）": "1.20-2.40（口播 0.28-5.55）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 7,
@@ -2467,6 +2492,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 7,
@@ -2569,6 +2595,7 @@
         "「其余的宝石放回盒子」": "4.81-6.41 —— **刻意不给画面**（用户决定）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "gold_supply": {
             "count": 1,
@@ -2600,6 +2627,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "gold_supply": {
             "count": 5,
@@ -2685,6 +2713,7 @@
         "每色搬 3 枚回盒子（7→4）": "1.00-2.60（口播 0.00-5.64，背景清理）"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 7,
@@ -2740,6 +2769,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 4,
@@ -2809,6 +2839,7 @@
         "逐块高亮": "2.05 / 2.40 / 2.75"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "offstage": {
             "count": 3
@@ -2849,6 +2880,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "offstage": {
             "count": 0
@@ -3008,6 +3040,7 @@
         "持有区高亮": "4.10"
       },
       "enter": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 4,
@@ -3048,6 +3081,7 @@
         }
       },
       "exit": {
+        "picture": null,
         "zones": {
           "gem_supply_diamond": {
             "count": 3,
