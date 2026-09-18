@@ -45,7 +45,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from framing_geometry import visible_rect, _zone_box, overlaps   # noqa: E402  —— 取景几何只此一份
 
 # 原语名尽量与本体对齐：transfer = <ontology::transfer>、flip = <flip>、shuffle = <shuffle>。
-ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
+ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "zone",
            "showbox", "create", "destroy", "wait", "stack"}
 
 # 原语 → 它在规则上**默认**是哪个本体事件（None = 本体没有对应事件）。
@@ -129,6 +129,8 @@ PRESENTATION_FIELDS = {
     "picture": "整幅图是哪一张（盒面）",
     "amount": "洗混强度",
     "stagger": "同一批件错开起飞（纯节奏）",
+    "op": "`zone` 原语：add（开出区域）/ remove（关掉）——实现层",
+    "index": "`zone` 原语：`zone_defs` 里第几个实例——实现层",
     "group": "整组一起搬（同一段位移）",
     "fade_in": "搬运途中淡入",
 }
@@ -553,6 +555,11 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                         f"会重复生成；若只是想让它们就位，删掉这条即可，或改用 expand_to")
 
     events = doc.get("events")
+    # 这一 cue 里"此刻可用的 zone"：stage 里声明的（一开始就全部建好）+ 本 cue 运行时开出来的
+    available = set(zones)
+    added_in_cue = {e.get("zone") for e in (events or [])
+                    if isinstance(e, dict) and e.get("action") == "zone"
+                    and (e.get("op") or "add") == "add" and e.get("zone")}
     # ── 契约覆盖：事件碰过的东西，契约必须声明（用户 2026-09-19 的原则）──────
     # "该有的有，不该有的就没有；脚本里没写有的那就是没有"。
     # 推论：**事件改动了哪个 zone，契约的 enter/exit 里就必须有它**（哪怕是 `count: 0`）。
@@ -564,9 +571,10 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
     # 而删掉一个 zone（例如游戏盒没有实体之后删掉 box_*）时，旧契约会静静地留在那儿。
     declared = set(((doc.get("enter") or {}).get("zones") or {}).keys()) | \
                set(((doc.get("exit") or {}).get("zones") or {}).keys())
-    for zid in sorted(declared - set(zones)):
+    for zid in sorted(declared - set(zones) - added_in_cue):
         report.error(cue_id, f"契约声明了不存在的 zone {zid!r} —— "
-                             f"它不在 stage 的 zones 里（改名/删掉之后忘了改契约？）"
+                             f"它既不在 stage 的 zones 里、也不是本 cue 用 `zone add` 开出来的"
+                             f"（改名/删掉之后忘了改契约？）"
                              f"对着不存在的区域断言，等于没人比这一维")
 
     if not isinstance(events, list) or not events:
@@ -616,14 +624,43 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
         target = ev.get("target")
         zone = ev.get("zone")
 
+        # ── `zone` 原语：运行时开/关一个区域（世界会长大）────────────────────
+        # 定义必须先在 stage 的 `zone_defs` 里（**坐标只写在 stage**），
+        # 脚本只说"现在把它开出来"；同一个定义要多个就给 `index`（id = `定义#N`）。
+        if action == "zone":
+            op = ev.get("op") or "add"
+            defs = {d.get("id") for d in (stage.get("zone_defs") or [])}
+            if op not in ("add", "remove"):
+                report.error(ew, f"zone 的 op 只能是 add / remove，实际 {op!r}")
+            elif not zone:
+                report.error(ew, "zone 事件要写 zone（要开/关哪个区域）")
+            elif op == "add":
+                if zone in zones:
+                    report.error(ew, f"zone {zone!r} 在 stage.zones 里**已经有了**（一开始就建好了），"
+                                     f"不需要再 add；要后来才长出来的区域请写进 `zone_defs`")
+                elif zone not in defs:
+                    report.error(ew, f"zone add 的 {zone!r} 不在 stage.zone_defs 里 —— "
+                                     f"新增区域的**定义**（坐标/布局/容量）必须写在 stage 这一层")
+                else:
+                    available.add(zone)
+            elif zone not in available:
+                report.error(ew, f"zone remove 的 {zone!r} 此刻并不存在（没在 stage 里、也没在本 cue 前文开出来）")
+            else:
+                available.discard(zone)
+            continue   # zone 事件不改件，后面的检查与它无关
+
+        if zone and zone not in available:
+            report.error(ew, f"未知 zone {zone!r}" +
+                             ("" if zone in zones else "（它是运行时开出来的区域吗？"
+                              "那必须先在本 cue 前文写 `{\"action\":\"zone\",\"op\":\"add\",\"zone\":...}`）"))
+        dest = ev.get("destination")
+        if dest and dest not in available:
+            report.error(ew, f"未知 destination {dest!r}" +
+                             ("" if dest in zones else "（运行时开出来的区域要先 add 再用）"))
+
         # create 出来的组件 id 也算已知（模板名#序号），否则同一 cue 后续 target 会被误报
         if action == "create" and ev.get("template"):
             known_ids.add(f"{ev['template']}#1")
-        if zone and zone not in zones:
-            report.error(ew, f"未知 zone {zone!r}")
-        dest = ev.get("destination")
-        if dest and dest not in zones:
-            report.error(ew, f"未知 destination {dest!r}")
         if dest and zone:
             report.warn(ew, "同时写了 zone 和 destination：zone 是**选择器**（该区域全部），"
                             "转移的目的地请只写 destination")
@@ -722,8 +759,9 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                 report.error(ew, f"create 的 template {ev['template']!r} 不在 stage.templates 里")
             if not ev.get("destination"):
                 report.error(ew, "create 需要 zone（创建到哪里）")
-            elif (ev.get("destination") or "offstage") not in zones:
-                report.error(ew, f"create 的 destination {ev.get('destination')!r} 不存在")
+            elif (ev.get("destination") or "offstage") not in available:
+                report.error(ew, f"create 的 destination {ev.get('destination')!r} 不存在"
+                                 f"（运行时开出来的区域要先 `zone add` 再用）")
         elif action == "destroy":
             if not ev.get("target") and not ev.get("zone") and not ev.get("template"):
                 report.error(ew, "destroy 需要 target 或 zone/template（否则要销毁什么不明确）")

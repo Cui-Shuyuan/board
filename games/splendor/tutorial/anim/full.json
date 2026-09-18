@@ -67,6 +67,9 @@
           },
           "offstage": {
             "count": 0
+          },
+          "workshop": {
+            "count": 0
           }
         }
       },
@@ -111,6 +114,12 @@
           },
           "offstage": {
             "count": 0
+          },
+          "workshop": {
+            "count": 2,
+            "kinds": {
+              "贵族": 2
+            }
           }
         }
       },
@@ -124,6 +133,22 @@
           "action": "showbox",
           "on": 1,
           "picture": "media/box.png"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "zone",
+          "op": "add",
+          "zone": "workshop"
+        },
+        {
+          "at": 0.7,
+          "dur": 0.0,
+          "action": "create",
+          "template": "noble",
+          "palette": "noble",
+          "destination": "workshop",
+          "count": 2
         }
       ]
     },

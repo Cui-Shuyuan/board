@@ -260,6 +260,12 @@ namespace BoardGameTutorial.Editor
         private static SortedDictionary<string, ZoneAgg> CollectZones(TutorialCueAnimPlayer anim)
         {
             var zones = new SortedDictionary<string, ZoneAgg>();
+            // **先把全部 zone 摆上（哪怕是空的）**：zone 是"世界里的位置"，一开始就建好了；
+            // 只列"有件的 zone"会让人以为区域是随件出现的，也分不清"没有这个区域"和"区域是空的"。
+            // （用户 2026-09：这些 zone 应该在动画一开始就创建好。）
+            foreach (var z in anim.Store.Zones)
+                if (z != null && !string.IsNullOrEmpty(z.id) && !zones.ContainsKey(z.id))
+                    zones[z.id] = new ZoneAgg();
             foreach (var it in anim.Store.Items)
             {
                 if (!zones.TryGetValue(it.ZoneId, out var agg))

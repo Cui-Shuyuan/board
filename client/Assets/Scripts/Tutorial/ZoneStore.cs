@@ -309,6 +309,43 @@ namespace BoardGameTutorial
             return false;
         }
 
+        /// <summary>
+        /// 运行时**新增一个 zone**（世界会长大：后续的游戏可能随着卡牌/板块进场新增区域）。
+        ///
+        /// 与"件"的区别：zone 是**世界里的位置/容器**，件是摆在里面的东西。
+        /// 所以"一开始就把 zone 建好"和"开局桌上什么都没有"并不矛盾 ——
+        /// 前者说的是区域（这一步），后者说的是件（`initial`）。
+        ///
+        /// 幂等：同 id 再来一次返回 false（不报错）—— 重复 Seek / 重播时不会建出两个。
+        /// </summary>
+        public bool AddZone(StageZone zone)
+        {
+            if (zone == null || string.IsNullOrEmpty(zone.id)) return false;
+            if (zones.ContainsKey(zone.id)) return false;
+            zones[zone.id] = zone;
+            InvalidateSlots();
+            return true;
+        }
+
+        /// <summary>
+        /// 运行时删除一个 zone。**要求它已经空了** —— 里面还有件就拒绝并报错，
+        /// 否则那些件会留在一个不存在的区域里（位置算不出来、对账也看不见）。
+        /// </summary>
+        public bool RemoveZone(string id)
+        {
+            if (string.IsNullOrEmpty(id) || !zones.ContainsKey(id)) return false;
+            if (CountInZone(id) > 0)
+            {
+                Debug.LogError($"[ZoneStore] 不能删除还有件的 zone '{id}'（{CountInZone(id)} 件）—— 先把件搬走");
+                return false;
+            }
+            zones.Remove(id);
+            occupancy.Remove(id);
+            slots.Remove(id);
+            InvalidateSlots();
+            return true;
+        }
+
         public StageZone GetZone(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;

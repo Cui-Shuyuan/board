@@ -1303,6 +1303,7 @@ namespace BoardGameTutorial
                 case "highlight": TriggerHighlight(ev); return;
                 case "shuffle": TriggerShuffle(ev); return;
                 case "showbox": TriggerShowBox(ev); return;
+                case "zone": TriggerZone(ev); return;
                 case "create": TriggerCreate(ev); return;
                 case "stack": TriggerStack(ev); return;
                 case "destroy": TriggerDestroy(ev); return;
@@ -1956,6 +1957,71 @@ namespace BoardGameTutorial
                     item.Flipped = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// 运行时开/关一个 zone（世界会长大：后续游戏可能随着卡牌/板块进场新增区域）。
+        ///
+        /// 定义来自 `stage.zone_defs` —— **脚本里不写坐标**（坐标只属于 stage 这一层）：
+        ///   {"action": "zone", "op": "add", "zone": "workshop"}        ← 开出来
+        ///   {"action": "zone", "op": "add", "zone": "market_row", "index": 2}  ← 第 3 个实例（id = market_row#2）
+        ///   {"action": "zone", "op": "remove", "zone": "workshop"}     ← 关掉（要求它已经空了）
+        ///
+        /// 幂等：已经存在的 add 不报错（重复 Seek / 回退重放时会走到这里）。
+        /// </summary>
+        private void TriggerZone(CueAnimEvent ev)
+        {
+            string id = !string.IsNullOrEmpty(ev.zone) ? ev.zone : ev.target;
+            string op = string.IsNullOrEmpty(ev.op) ? "add" : ev.op;
+            if (string.IsNullOrEmpty(id))
+            {
+                Debug.LogWarning($"[TutorialCueAnim] zone 事件没写 zone（cue {CueId}）");
+                return;
+            }
+
+            if (op == "remove")
+            {
+                Store.RemoveZone(id);
+                return;
+            }
+
+            var def = stage?.zone_defs?.Find(d => d != null && d.id == id);
+            if (def == null)
+            {
+                Debug.LogError($"[TutorialCueAnim] zone add: stage.zone_defs 里没有 '{id}'（cue {CueId}）—— " +
+                               $"新增的 zone 也必须有定义，坐标只写在 stage 里");
+                return;
+            }
+
+            var inst = new StageZone
+            {
+                id = def.id,
+                label = def.label,
+                role = string.IsNullOrEmpty(def.role) ? "zone" : def.role,
+                center = new StagePoint
+                {
+                    x = def.center != null ? def.center.x : 0f,
+                    z = def.center != null ? def.center.z : 0f,
+                },
+                layout = def.layout,
+                capacity = def.capacity,
+                palette = def.palette,
+                size = def.size,
+                concept = def.concept,
+                contains = def.contains,
+                margin = def.margin,
+                repeat_x = def.repeat_x,
+                repeat_z = def.repeat_z,
+            };
+            if (ev.index > 0)
+            {
+                inst.id = $"{def.id}#{ev.index}";
+                inst.center.x += def.repeat_x * ev.index;
+                inst.center.z += def.repeat_z * ev.index;
+            }
+
+            if (Store.AddZone(inst) && logMoves)
+                Debug.Log($"[Zone] 开出 zone {inst.id}（center=({inst.center.x:0.00},{inst.center.z:0.00})，cue {CueId}）");
         }
 
         /// <summary>

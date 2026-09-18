@@ -31,6 +31,18 @@ namespace BoardGameTutorial
 
 
         public List<StageZone> zones;
+
+        /// <summary>
+        /// **可以后来才长出来的 zone 的定义**（世界会长大）。
+        ///
+        /// 为什么定义放在 stage：脚本里**不写坐标**（坐标只属于 stage 这一层）。
+        /// 脚本只说"现在把 `xxx` 这个区域开出来"（`{"action":"zone","op":"add","zone":"xxx"}`），
+        /// 位置/布局/容量都从这里取。同一个定义要开多个时给 `index`，
+        /// 第 N 个的 id 是 `xxx#N`、位置按 `repeat_x/repeat_z` 平移 ——
+        /// 于是"排第几"仍然由 stage 说，脚本只报数。
+        /// </summary>
+        public List<StageZone> zone_defs;
+
         public List<StageTemplate> templates;
         public List<StageAnchor> anchors;
 
@@ -99,6 +111,10 @@ namespace BoardGameTutorial
 
         /// <summary>offstage 用：偏离桌心的距离。</summary>
         public float margin = 3f;
+
+        /// <summary>`zone_defs` 用：同一个定义实例化多个时的平移量（第 index 个乘它）。</summary>
+        public float repeat_x;
+        public float repeat_z;
 
         public StageLayout layout = new StageLayout();
 
@@ -579,6 +595,15 @@ namespace BoardGameTutorial
         public string to;
 
         /// <summary>
+        /// <summary>
+        /// `action: "zone"` 用：`add`（把 `zone_defs` 里的某个区域开出来）或 `remove`。
+        /// 留空 = `add`。
+        /// </summary>
+        public string op;
+
+        /// <summary>`action: "zone"` 用：`zone_defs` 里第几个实例（0 = 定义自己的 id）。</summary>
+        public int index;
+
         /// 目的 zone 内的落位序号。
         ///   -1 = 追加到末尾
         ///   ≥0 = 放到第 n 格
