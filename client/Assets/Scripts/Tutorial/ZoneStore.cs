@@ -346,6 +346,66 @@ namespace BoardGameTutorial
             return true;
         }
 
+        /// <summary>
+        /// zone 引用 → 具体 zone id。允许脚本写**本体身份**而不是本作专用的 id：
+        ///
+        ///   "gem_supply_diamond"                  ← 直接写 id（老写法，仍然支持）
+        ///   "&lt;gem_supply|color=&lt;diamond&gt;&gt;"        ← 写"哪个概念的哪一份"（推荐）
+        ///   "&lt;card_market&gt;"                     ← 只有概念、没有属性
+        ///
+        /// **唯一性由数据保证**：0 个匹配 = 没有这个区域；多个匹配 = 说不清（要写更具体的属性，
+        /// 例：只写 `&lt;gem_supply&gt;` 会同时命中五个颜色堆 → 报错要求写颜色）。
+        /// 概念按**去掉尖括号后全等**匹配（引擎不加载本体，做不了继承推理 —— 引用要写 stage 里那个概念）。
+        /// </summary>
+        public string ResolveZoneRef(string zoneRef)
+        {
+            if (string.IsNullOrEmpty(zoneRef)) return zoneRef;
+            string s = zoneRef.Trim();
+            if (s.Length < 3 || s[0] != '<' || s[s.Length - 1] != '>') return s;   // 普通 id
+
+            string body = s.Substring(1, s.Length - 2);
+            var segs = body.Split('|');
+            string concept = NormConcept(segs[0]);
+            var want = new List<KeyValuePair<string, string>>();
+            for (int i = 1; i < segs.Length; i++)
+            {
+                var kv = segs[i].Split(new[] { '=' }, 2);
+                if (kv.Length == 2) want.Add(new KeyValuePair<string, string>(kv[0].Trim(), kv[1].Trim()));
+            }
+
+            string found = null;
+            int hits = 0;
+            foreach (var z in zones.Values)
+            {
+                if (z == null || string.IsNullOrEmpty(z.id)) continue;
+                if (NormConcept(z.concept) != concept) continue;
+                if (!PartsMatch(z.parts, want)) continue;
+                hits++;
+                found = z.id;
+            }
+            if (hits == 1) return found;
+            Debug.LogError($"[ZoneStore] zone 引用 '{zoneRef}' " +
+                           (hits == 0 ? "没有任何 zone 匹配（概念/属性写错了？）"
+                                      : $"匹配到 {hits} 个 zone —— 说不清是哪一份，请把属性写全"));
+            return found;
+        }
+
+        private static string NormConcept(string c) =>
+            string.IsNullOrEmpty(c) ? "" : c.Trim().TrimStart('<').TrimEnd('>');
+
+        private static bool PartsMatch(List<StageNamedRef> have, List<KeyValuePair<string, string>> want)
+        {
+            foreach (var w in want)
+            {
+                bool ok = false;
+                if (have != null)
+                    foreach (var h in have)
+                        if (h != null && h.key == w.Key && h.value == w.Value) { ok = true; break; }
+                if (!ok) return false;
+            }
+            return true;
+        }
+
         public StageZone GetZone(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;

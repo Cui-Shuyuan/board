@@ -437,6 +437,7 @@ namespace BoardGameTutorial
             {
                 foreach (var seed in start.set)
                 {
+                    string seedZone = Store.ResolveZoneRef(seed.zone);
                     string seedTemplate = seed.template, seedPalette = seed.palette;
                     if (seed.what != null && !string.IsNullOrEmpty(seed.what.concept))
                     {
@@ -454,7 +455,7 @@ namespace BoardGameTutorial
                         if (!string.IsNullOrEmpty(cands[0].Palette)) seedPalette = cands[0].Palette;
                     }
                     int want = seed.expand_to > 0 ? seed.expand_to : Mathf.Max(1, seed.count);
-                    int have = Store.CountIn(seed.zone, seedPalette, seedTemplate);
+                    int have = Store.CountIn(seedZone, seedPalette, seedTemplate);
                     int need = Mathf.Max(0, want - have);
                     if (need == 0) continue;
 
@@ -462,7 +463,7 @@ namespace BoardGameTutorial
                     // 所以不存在"这一份先放在 offstage 表示还在盒里"这回事了 ——
                     // 缺几件就 create 几件（"从盒子里拿出来" = create）。
                     // 每次重新数一遍现有数量，所以重播/重复载入也不会翻倍。
-                    if (need > 0) Store.Spawn(seedTemplate, seedPalette, seed.zone, need);
+                    if (need > 0) Store.Spawn(seedTemplate, seedPalette, seedZone, need);
                 }
             }
 
@@ -1280,8 +1281,28 @@ namespace BoardGameTutorial
 
         // ── 原语 ──────────────────────────────────────────────────────────
 
+        /// <summary>
+        /// 把事件里的 zone 引用解析成**具体 zone id**（就地归一化，幂等）。
+        ///
+        /// 脚本可以写"本体身份"而不是本作专用的 id：
+        ///   `source: ["<gem_supply|color=<diamond>>"]`、`destination: "<card_market>"`
+        /// 解析在**事件入口**做一次，下游（PlanMove / create / destroy / 高亮 / 取景）
+        /// 全都继续只认 id —— 于是"可复用"这件事只有一个地方需要懂。
+        /// 解析不出来时保持原样并报错（下游的"未知 zone"会再报一次，不会静默）。
+        /// </summary>
+        private void ResolveZoneRefs(CueAnimEvent ev)
+        {
+            if (ev == null) return;
+            ev.zone = Store.ResolveZoneRef(ev.zone);
+            ev.destination = Store.ResolveZoneRef(ev.destination);
+            if (ev.source != null)
+                for (int i = 0; i < ev.source.Count; i++)
+                    ev.source[i] = Store.ResolveZoneRef(ev.source[i]);
+        }
+
         private void Trigger(CueAnimEvent ev)
         {
+            ResolveZoneRefs(ev);
             if (ev == null) return;
             // 记下这条事件在时间轴上的位置：片段起点要用**事件时间**，
             // 而不是「触发到它的那一刻」——后者随帧率/seek 粒度变化，
@@ -1290,7 +1311,13 @@ namespace BoardGameTutorial
 
             // 取景：事件若指定了 camera，先把镜头切过去再执行动作，
             // 否则动作会发生在错误的取景下（例如特写时物体仍很小）。
-            if (!string.IsNullOrEmpty(ev.camera)) SetFraming(ev.camera, ev.camera_padding);
+            if (!string.IsNullOrEmpty(ev.camera))
+            {
+                // 取景也允许写 zone 引用；多 zone 同框（"a,b"）逐段解析
+                var parts = ev.camera.Split(',');
+                for (int i = 0; i < parts.Length; i++) parts[i] = Store.ResolveZoneRef(parts[i].Trim());
+                SetFraming(string.Join(",", parts), ev.camera_padding);
+            }
 
             switch (ev.action)
             {
@@ -1317,6 +1344,7 @@ namespace BoardGameTutorial
         private void TriggerFinal(CueAnimEvent ev)
         {
             if (ev == null || ev.action == "wait") return;
+            ResolveZoneRefs(ev);
 
             if (ev.action == "transfer")
             {

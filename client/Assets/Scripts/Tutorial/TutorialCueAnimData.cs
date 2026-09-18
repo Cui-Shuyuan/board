@@ -143,6 +143,17 @@ namespace BoardGameTutorial
         /// </summary>
         public List<string> contains;
 
+        /// <summary>
+        /// 这个 zone 是"**哪个概念的哪一份**"（stage 的绑定约定，不是本体字段 ——
+        /// 本体里 zone 靠 id 区分；我们用 concept + parts 让它**可复用**）。
+        ///
+        /// 例：五个宝石供应堆的 concept 都是 `gem_supply`，各自 parts 是
+        /// `color=<diamond>` / `<sapphire>` / …。于是脚本可以写
+        /// `source: ["<gem_supply|color=<diamond>>"]` —— **不写本作专用的 zone id**，
+        /// 换游戏/挪位置都不用改动画数据（位置本来就在 stage 里）。
+        /// </summary>
+        public List<StageNamedRef> parts;
+
         /// <summary>这个区域实例化的是哪个本体概念（null = 纯视觉）。</summary>
         public string concept;
     }

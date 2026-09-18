@@ -24,6 +24,55 @@ CARDS_ZONES = ("showcase_1", "showcase_2", "showcase_3")
 CARD_HALF = (0.315, 0.44)
 
 
+def resolve_zone_ref(stage, ref):
+    """zone 引用 → 具体 zone id。
+
+    **与引擎 `ZoneStore.ResolveZoneRef` 互为镜像**（同一套规则，两个用户：几何与校验）：
+      "gem_supply_diamond"                ← 直接写 id（老写法，仍支持）
+      "<gem_supply|color=<diamond>>"      ← 写"哪个概念的哪一份"（推荐，可复用）
+      "<card_market>"                     ← 只有概念、没有属性
+
+    0 个匹配（写错了）或多个匹配（说不清，例如只写 `<gem_supply>`）→ **原样返回**，
+    让下游的"未知 zone"/"说不清"检查去报 —— 这里不猜。
+    """
+    if not ref:
+        return ref
+    s = str(ref).strip()
+    if len(s) < 3 or not s.startswith("<") or not s.endswith(">"):
+        return s
+    body = s[1:-1]
+    segs = body.split("|")
+    concept = _norm_concept(segs[0])
+    want = []
+    for seg in segs[1:]:
+        if "=" in seg:
+            k, v = seg.split("=", 1)
+            want.append((k.strip(), v.strip()))
+    hits = []
+    for z in (stage.get("zones") or []):
+        if not z or not z.get("id"):
+            continue
+        if _norm_concept(z.get("concept")) != concept:
+            continue
+        have = {(p.get("key"), p.get("value")) for p in (z.get("parts") or []) if isinstance(p, dict)}
+        if all(w in have for w in want):
+            hits.append(z["id"])
+    return hits[0] if len(hits) == 1 else s
+
+
+def _norm_concept(c):
+    return (c or "").strip().strip("<>") if c else ""
+
+
+def zone_by_ref(stage, ref):
+    """引用 → stage 里的 zone 字典（找不到 → None）。"""
+    zid = resolve_zone_ref(stage, ref)
+    for z in (stage.get("zones") or []):
+        if z.get("id") == zid:
+            return z
+    return None
+
+
 def _slot_at(stage, zone, order):
     """格位坐标。镜像 ZoneStore.ComputeZonePosition（row/block/grid + stack 台阶）。"""
     center = zone.get("center") or {}
@@ -98,9 +147,10 @@ def frame_bounds(stage, camera, padding=0.0):
     parts = [p.strip() for p in str(camera).split(",") if p.strip()]
     scale = 2.2
 
+    zid = {p: resolve_zone_ref(stage, p) for p in parts}
     if len(parts) > 1:
         scale = 1.25
-        box = _union([_zone_box(stage, zones[p]) for p in parts if p in zones])
+        box = _union([_zone_box(stage, zones[zid[p]]) for p in parts if zid[p] in zones])
     elif parts[0] == "cards":
         scale = 1.5
         box = _union([_zone_box(stage, zones[z]) for z in CARDS_ZONES if z in zones])
@@ -111,8 +161,8 @@ def frame_bounds(stage, camera, padding=0.0):
         scale = 1.25
         box = _union([_zone_box(stage, z) for z in zones.values()
                       if z.get("palette") == SUPPLY_PALETTE and z.get("role") != "offstage"])
-    elif parts[0] in zones:
-        box = _zone_box(stage, zones[parts[0]])
+    elif zid[parts[0]] in zones:
+        box = _zone_box(stage, zones[zid[parts[0]]])
     else:
         return None
     if not box:

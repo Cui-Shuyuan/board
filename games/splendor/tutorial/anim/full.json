@@ -541,7 +541,7 @@
           "at": 0.05,
           "dur": 0.0,
           "action": "stack",
-          "destination": "deck_level_1",
+          "destination": "<development_deck_level_1>",
           "to": "face_down",
           "capacity": 40,
           "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire",
@@ -552,7 +552,7 @@
           "at": 0.052,
           "dur": 0.0,
           "action": "stack",
-          "destination": "deck_level_2",
+          "destination": "<development_deck_level_2>",
           "to": "face_down",
           "capacity": 30,
           "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald",
@@ -563,7 +563,7 @@
           "at": 0.054,
           "dur": 0.0,
           "action": "stack",
-          "destination": "deck_level_3",
+          "destination": "<development_deck_level_3>",
           "to": "face_down",
           "capacity": 20,
           "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx",
@@ -576,7 +576,7 @@
           "action": "shuffle",
           "realizes": "<ontology::shuffle>",
           "easing": "easeOutCubic",
-          "zone": "deck_level_1"
+          "zone": "<development_deck_level_1>"
         },
         {
           "at": 0.3,
@@ -584,7 +584,7 @@
           "action": "shuffle",
           "realizes": "<ontology::shuffle>",
           "easing": "easeOutCubic",
-          "zone": "deck_level_2"
+          "zone": "<development_deck_level_2>"
         },
         {
           "at": 0.3,
@@ -592,7 +592,7 @@
           "action": "shuffle",
           "realizes": "<ontology::shuffle>",
           "easing": "easeOutCubic",
-          "zone": "deck_level_3"
+          "zone": "<development_deck_level_3>"
         },
         {
           "at": 3.58,
@@ -600,10 +600,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_1"
+            "<development_deck_level_1>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_1",
             "parts": [
@@ -624,10 +624,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_1"
+            "<development_deck_level_1>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_1",
             "parts": [
@@ -648,10 +648,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_1"
+            "<development_deck_level_1>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_1",
             "parts": [
@@ -672,10 +672,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_1"
+            "<development_deck_level_1>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_1",
             "parts": [
@@ -696,10 +696,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_2"
+            "<development_deck_level_2>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_2",
             "parts": [
@@ -720,10 +720,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_2"
+            "<development_deck_level_2>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_2",
             "parts": [
@@ -744,10 +744,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_2"
+            "<development_deck_level_2>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_2",
             "parts": [
@@ -768,10 +768,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_2"
+            "<development_deck_level_2>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_2",
             "parts": [
@@ -792,10 +792,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_3"
+            "<development_deck_level_3>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_3",
             "parts": [
@@ -816,10 +816,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_3"
+            "<development_deck_level_3>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_3",
             "parts": [
@@ -840,10 +840,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_3"
+            "<development_deck_level_3>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_3",
             "parts": [
@@ -864,10 +864,10 @@
           "action": "transfer",
           "realizes": "<top_draw>",
           "source": [
-            "deck_level_3"
+            "<development_deck_level_3>"
           ],
           "quantity": 1,
-          "destination": "card_market",
+          "destination": "<card_market>",
           "what": {
             "concept": "development_card_level_3",
             "parts": [
@@ -1429,7 +1429,7 @@
           "at": 4.2,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_diamond",
+          "destination": "<gem_supply|color=<diamond>>",
           "template": "gem",
           "palette": "gem_diamond",
           "count": 4
@@ -1438,7 +1438,7 @@
           "at": 4.3,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_sapphire",
+          "destination": "<gem_supply|color=<sapphire>>",
           "template": "gem",
           "palette": "gem_sapphire",
           "count": 4
@@ -1447,7 +1447,7 @@
           "at": 4.4,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_ruby",
+          "destination": "<gem_supply|color=<ruby>>",
           "template": "gem",
           "palette": "gem_ruby",
           "count": 4
@@ -1456,7 +1456,7 @@
           "at": 4.5,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_emerald",
+          "destination": "<gem_supply|color=<emerald>>",
           "template": "gem",
           "palette": "gem_emerald",
           "count": 4
@@ -1465,7 +1465,7 @@
           "at": 4.6,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_onyx",
+          "destination": "<gem_supply|color=<onyx>>",
           "template": "gem",
           "palette": "gem_onyx",
           "count": 4
@@ -1474,7 +1474,7 @@
           "at": 5.7,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "easing": "easeInOutCubic",
           "grow": 1.14
         },
@@ -1482,7 +1482,7 @@
           "at": 5.7,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "easing": "easeInOutCubic",
           "grow": 1.14
         },
@@ -1490,7 +1490,7 @@
           "at": 5.7,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "easing": "easeInOutCubic",
           "grow": 1.14
         },
@@ -1498,7 +1498,7 @@
           "at": 5.7,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_emerald",
+          "zone": "<gem_supply|color=<emerald>>",
           "easing": "easeInOutCubic",
           "grow": 1.14
         },
@@ -1506,7 +1506,7 @@
           "at": 5.7,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_onyx",
+          "zone": "<gem_supply|color=<onyx>>",
           "easing": "easeInOutCubic",
           "grow": 1.14
         }
@@ -1611,7 +1611,7 @@
           "at": 0.55,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_diamond",
+          "destination": "<gem_supply|color=<diamond>>",
           "template": "gem",
           "palette": "gem_diamond",
           "count": 5
@@ -1620,7 +1620,7 @@
           "at": 0.63,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_sapphire",
+          "destination": "<gem_supply|color=<sapphire>>",
           "template": "gem",
           "palette": "gem_sapphire",
           "count": 5
@@ -1629,7 +1629,7 @@
           "at": 0.71,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_ruby",
+          "destination": "<gem_supply|color=<ruby>>",
           "template": "gem",
           "palette": "gem_ruby",
           "count": 5
@@ -1638,7 +1638,7 @@
           "at": 0.79,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_emerald",
+          "destination": "<gem_supply|color=<emerald>>",
           "template": "gem",
           "palette": "gem_emerald",
           "count": 5
@@ -1647,7 +1647,7 @@
           "at": 0.87,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_onyx",
+          "destination": "<gem_supply|color=<onyx>>",
           "template": "gem",
           "palette": "gem_onyx",
           "count": 5
@@ -1656,7 +1656,7 @@
           "at": 1.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1664,7 +1664,7 @@
           "at": 1.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1672,7 +1672,7 @@
           "at": 1.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1680,7 +1680,7 @@
           "at": 1.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_emerald",
+          "zone": "<gem_supply|color=<emerald>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1688,7 +1688,7 @@
           "at": 1.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_onyx",
+          "zone": "<gem_supply|color=<onyx>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         }
@@ -1787,7 +1787,7 @@
           "at": 0.6,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_diamond",
+          "destination": "<gem_supply|color=<diamond>>",
           "template": "gem",
           "palette": "gem_diamond",
           "count": 7
@@ -1796,7 +1796,7 @@
           "at": 0.68,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_sapphire",
+          "destination": "<gem_supply|color=<sapphire>>",
           "template": "gem",
           "palette": "gem_sapphire",
           "count": 7
@@ -1805,7 +1805,7 @@
           "at": 0.76,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_ruby",
+          "destination": "<gem_supply|color=<ruby>>",
           "template": "gem",
           "palette": "gem_ruby",
           "count": 7
@@ -1814,7 +1814,7 @@
           "at": 0.84,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_emerald",
+          "destination": "<gem_supply|color=<emerald>>",
           "template": "gem",
           "palette": "gem_emerald",
           "count": 7
@@ -1823,7 +1823,7 @@
           "at": 0.92,
           "dur": 0.0,
           "action": "create",
-          "destination": "gem_supply_onyx",
+          "destination": "<gem_supply|color=<onyx>>",
           "template": "gem",
           "palette": "gem_onyx",
           "count": 7
@@ -1832,7 +1832,7 @@
           "at": 2.0,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "easing": "easeInOutCubic",
           "grow": 1.13
         },
@@ -1840,7 +1840,7 @@
           "at": 2.0,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "easing": "easeInOutCubic",
           "grow": 1.13
         },
@@ -1848,7 +1848,7 @@
           "at": 2.0,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "easing": "easeInOutCubic",
           "grow": 1.13
         },
@@ -1856,7 +1856,7 @@
           "at": 2.0,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_emerald",
+          "zone": "<gem_supply|color=<emerald>>",
           "easing": "easeInOutCubic",
           "grow": 1.13
         },
@@ -1864,7 +1864,7 @@
           "at": 2.0,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gem_supply_onyx",
+          "zone": "<gem_supply|color=<onyx>>",
           "easing": "easeInOutCubic",
           "grow": 1.13
         }
@@ -1968,7 +1968,7 @@
           "at": 1.2,
           "dur": 1.0,
           "action": "highlight",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1976,7 +1976,7 @@
           "at": 1.2,
           "dur": 1.0,
           "action": "highlight",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1984,7 +1984,7 @@
           "at": 1.2,
           "dur": 1.0,
           "action": "highlight",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -1992,7 +1992,7 @@
           "at": 1.2,
           "dur": 1.0,
           "action": "highlight",
-          "zone": "gem_supply_emerald",
+          "zone": "<gem_supply|color=<emerald>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         },
@@ -2000,7 +2000,7 @@
           "at": 1.2,
           "dur": 1.0,
           "action": "highlight",
-          "zone": "gem_supply_onyx",
+          "zone": "<gem_supply|color=<onyx>>",
           "easing": "easeInOutCubic",
           "grow": 1.12
         }
@@ -2121,7 +2121,7 @@
           "at": 0.5,
           "dur": 0.0,
           "action": "create",
-          "destination": "gold_supply",
+          "destination": "<gold_supply>",
           "template": "gem",
           "palette": "gem_gold",
           "count": 5
@@ -2130,7 +2130,7 @@
           "at": 2.4,
           "dur": 0.7,
           "action": "highlight",
-          "zone": "gold_supply",
+          "zone": "<gold_supply>",
           "easing": "easeInOutCubic",
           "grow": 1.2
         }
@@ -2254,7 +2254,7 @@
           "action": "destroy",
           "template": "gem",
           "palette": "gem_diamond",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "count": 3
         },
         {
@@ -2263,7 +2263,7 @@
           "action": "destroy",
           "template": "gem",
           "palette": "gem_sapphire",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "count": 3
         },
         {
@@ -2272,7 +2272,7 @@
           "action": "destroy",
           "template": "gem",
           "palette": "gem_ruby",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "count": 3
         },
         {
@@ -2281,7 +2281,7 @@
           "action": "destroy",
           "template": "gem",
           "palette": "gem_emerald",
-          "zone": "gem_supply_emerald",
+          "zone": "<gem_supply|color=<emerald>>",
           "count": 3
         },
         {
@@ -2290,14 +2290,14 @@
           "action": "destroy",
           "template": "gem",
           "palette": "gem_onyx",
-          "zone": "gem_supply_onyx",
+          "zone": "<gem_supply|color=<onyx>>",
           "count": 3
         },
         {
           "at": 2.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "easing": "easeInOutCubic",
           "grow": 1.1
         },
@@ -2305,7 +2305,7 @@
           "at": 2.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "easing": "easeInOutCubic",
           "grow": 1.1
         },
@@ -2313,7 +2313,7 @@
           "at": 2.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "easing": "easeInOutCubic",
           "grow": 1.1
         },
@@ -2321,7 +2321,7 @@
           "at": 2.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_emerald",
+          "zone": "<gem_supply|color=<emerald>>",
           "easing": "easeInOutCubic",
           "grow": 1.1
         },
@@ -2329,7 +2329,7 @@
           "at": 2.6,
           "dur": 0.6,
           "action": "highlight",
-          "zone": "gem_supply_onyx",
+          "zone": "<gem_supply|color=<onyx>>",
           "easing": "easeInOutCubic",
           "grow": 1.1
         }
@@ -2437,7 +2437,7 @@
           "action": "create",
           "template": "noble",
           "palette": "noble",
-          "destination": "noble_market",
+          "destination": "<noble_market>",
           "count": 3
         },
         {
@@ -2447,7 +2447,7 @@
           "what": {
             "concept": "noble"
           },
-          "zone": "noble_market",
+          "zone": "<noble_market>",
           "order": 0,
           "easing": "easeInOutCubic",
           "grow": 1.16
@@ -2459,7 +2459,7 @@
           "what": {
             "concept": "noble"
           },
-          "zone": "noble_market",
+          "zone": "<noble_market>",
           "order": 1,
           "easing": "easeInOutCubic",
           "grow": 1.16
@@ -2471,7 +2471,7 @@
           "what": {
             "concept": "noble"
           },
-          "zone": "noble_market",
+          "zone": "<noble_market>",
           "order": 2,
           "easing": "easeInOutCubic",
           "grow": 1.16
@@ -2587,7 +2587,7 @@
                 }
               ]
             },
-            "zone": "gem_supply_diamond",
+            "zone": "<gem_supply|color=<diamond>>",
             "expand_to": 4
           },
           {
@@ -2600,7 +2600,7 @@
                 }
               ]
             },
-            "zone": "gem_supply_sapphire",
+            "zone": "<gem_supply|color=<sapphire>>",
             "expand_to": 4
           },
           {
@@ -2613,7 +2613,7 @@
                 }
               ]
             },
-            "zone": "gem_supply_ruby",
+            "zone": "<gem_supply|color=<ruby>>",
             "expand_to": 4
           },
           {
@@ -2626,7 +2626,7 @@
                 }
               ]
             },
-            "zone": "gem_supply_emerald",
+            "zone": "<gem_supply|color=<emerald>>",
             "expand_to": 4
           },
           {
@@ -2639,14 +2639,14 @@
                 }
               ]
             },
-            "zone": "gem_supply_onyx",
+            "zone": "<gem_supply|color=<onyx>>",
             "expand_to": 4
           },
           {
             "what": {
               "concept": "gold"
             },
-            "zone": "gold_supply",
+            "zone": "<gold_supply>",
             "expand_to": 5
           }
         ]
@@ -2662,7 +2662,7 @@
           "at": 0.3,
           "dur": 0.35,
           "action": "highlight",
-          "zone": "gem_supply_diamond",
+          "zone": "<gem_supply|color=<diamond>>",
           "easing": "easeInOutCubic",
           "grow": 1.2
         },
@@ -2670,7 +2670,7 @@
           "at": 0.55,
           "dur": 0.35,
           "action": "highlight",
-          "zone": "gem_supply_sapphire",
+          "zone": "<gem_supply|color=<sapphire>>",
           "easing": "easeInOutCubic",
           "grow": 1.2
         },
@@ -2678,7 +2678,7 @@
           "at": 0.8,
           "dur": 0.35,
           "action": "highlight",
-          "zone": "gem_supply_ruby",
+          "zone": "<gem_supply|color=<ruby>>",
           "easing": "easeInOutCubic",
           "grow": 1.2
         },
@@ -2688,11 +2688,11 @@
           "action": "transfer",
           "realizes": "<ontology::transfer>",
           "source": [
-            "gem_supply_diamond",
-            "gem_supply_sapphire",
-            "gem_supply_ruby"
+            "<gem_supply|color=<diamond>>",
+            "<gem_supply|color=<sapphire>>",
+            "<gem_supply|color=<ruby>>"
           ],
-          "destination": "player_holding",
+          "destination": "<player_holding>",
           "stagger": 0.25,
           "easing": "easeInOutCubic"
         },
@@ -2702,7 +2702,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "player_holding"
+          "zone": "<player_holding>"
         }
       ]
     }

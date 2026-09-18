@@ -42,7 +42,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from framing_geometry import visible_rect, _zone_box, overlaps   # noqa: E402  —— 取景几何只此一份
+from framing_geometry import (   # noqa: E402  —— 取景几何只此一份
+    visible_rect, _zone_box, overlaps, resolve_zone_ref,
+)
 
 # 原语名尽量与本体对齐：transfer = <ontology::transfer>、flip = <flip>、shuffle = <shuffle>。
 ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "zone",
@@ -255,7 +257,11 @@ def _real_only(cands):
 
 
 def _zone_concept(stage, zone_id):
-    """这个 zone 绑定的是哪个本体概念（stage 里写的那个）。找不到 → None。"""
+    """这个 zone 绑定的是哪个本体概念（stage 里写的那个）。找不到 → None。
+
+    `zone_id` 可以是**引用**（`<gem_supply|color=<diamond>>`）—— 先解析成 id 再查。
+    """
+    zone_id = resolve_zone_ref(stage, zone_id)
     if not zone_id:
         return None
     for z in (stage.get("zones") or []):
@@ -273,7 +279,7 @@ def _zone_ctx(ev):
     只要事件写清了 zone，运行时就不存在歧义。反过来，一个 zone 都不给才真的说不清。
     """
     if ev.get("zone"):
-        return ev["zone"]
+        return ev["zone"]   # 可能是引用；调用方只把它当"作用域标签"用
     src = ev.get("source")
     if isinstance(src, list) and src:
         return src[0]
@@ -310,6 +316,7 @@ def what_candidates(stage, what, real_only=False):
 
 def contains_of_zone(stage, zone_id):
     """区域允许存放哪些概念。空/缺省 = 不限（本体 <zone>.contains 的语义）。"""
+    zone_id = resolve_zone_ref(stage, zone_id)
     for z in stage.get("zones", []):
         if z.get("id") == zone_id:
             return z.get("contains") or []
@@ -534,8 +541,9 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                                 "template 只在没有对应概念时用")
         elif seed.get("template") not in templates:
             report.error(sw, f"未知 template {seed.get('template')!r}")
-        if seed.get("zone") not in zones:
-            report.error(sw, f"未知 zone {seed.get('zone')!r}")
+        if resolve_zone_ref(stage, seed.get("zone")) not in zones:
+            report.error(sw, f"未知 zone {seed.get('zone')!r}"
+                             f"（按引用解析成 {resolve_zone_ref(stage, seed.get('zone'))!r}）")
         if seed.get("palette") and seed["palette"] not in PALETTES:
             report.warn(sw, f"未知 palette {seed['palette']!r}")
         if int(seed.get("count", 1)) < 1:
@@ -565,7 +573,7 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
     # 推论：**事件改动了哪个 zone，契约的 enter/exit 里就必须有它**（哪怕是 `count: 0`）。
     # 不声明的话，这一维根本没人比 —— 上一次漏掉盒面就是因为整幅图不在被比的集合里，
     # 而不是比较逻辑写错了。这条是静态检查：事件与契约现在同在一个文件里，不需要采样。
-    _check_contract_coverage(doc, cue_id, events, report)
+    _check_contract_coverage(doc, cue_id, events, report, stage)
     # 契约里声明的 zone 必须真的存在 —— 否则它是在**对着空气断言**：
     # 采样里没有这个区域、比较时按 0 算，于是"这里应该有几件"永远对不上（或永远没人比），
     # 而删掉一个 zone（例如游戏盒没有实体之后删掉 box_*）时，旧契约会静静地留在那儿。
@@ -615,7 +623,7 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             # zone 之间不挨着也没关系 —— 框住的是它们的**外接矩形**，中间夹着的
             # 其他区域会一起入镜，所以那条检查（取景里出现了没提到的组件）同样适用。
             for part in [p.strip() for p in cam.split(",") if p.strip()]:
-                if part in CAMERA_TOKENS or part in zones:
+                if part in CAMERA_TOKENS or resolve_zone_ref(stage, part) in zones:
                     continue
                 report.error(ew, f"未知 camera {part!r}（在 {cam!r} 里；每段只能是 "
                                  f"{sorted(CAMERA_TOKENS)} 之一，或某个已存在的 zone id；"
@@ -649,14 +657,19 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                 available.discard(zone)
             continue   # zone 事件不改件，后面的检查与它无关
 
-        if zone and zone not in available:
+        # zone / destination 允许写**引用**（`<gem_supply|color=<diamond>>`）—— 先解析成 id
+        zone_id = resolve_zone_ref(stage, zone) if zone else None
+        if zone_id and zone_id not in available:
             report.error(ew, f"未知 zone {zone!r}" +
-                             ("" if zone in zones else "（它是运行时开出来的区域吗？"
-                              "那必须先在本 cue 前文写 `{\"action\":\"zone\",\"op\":\"add\",\"zone\":...}`）"))
+                             ("" if zone_id in zones else "（它是运行时开出来的区域吗？"
+                              "那必须先在本 cue 前文写 `{\"action\":\"zone\",\"op\":\"add\",\"zone\":...}`）")
+                             + ("" if zone_id == zone else f"（按引用解析成 {zone_id!r}）"))
         dest = ev.get("destination")
-        if dest and dest not in available:
+        dest_id = resolve_zone_ref(stage, dest) if dest else None
+        if dest_id and dest_id not in available:
             report.error(ew, f"未知 destination {dest!r}" +
-                             ("" if dest in zones else "（运行时开出来的区域要先 add 再用）"))
+                             ("" if dest_id in zones else "（运行时开出来的区域要先 add 再用）")
+                             + ("" if dest_id == dest else f"（按引用解析成 {dest_id!r}）"))
 
         # create 出来的组件 id 也算已知（模板名#序号），否则同一 cue 后续 target 会被误报
         if action == "create" and ev.get("template"):
@@ -684,8 +697,10 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             if isinstance(raw_from, list) and not raw_from:
                 report.error(ew, "transfer.source 是空数组")
             for source in sources:
-                if source not in zones:
-                    report.error(ew, f"source zone {source!r} 不存在")
+                if resolve_zone_ref(stage, source) not in available:
+                    report.error(ew, f"source zone {source!r} 不存在"
+                                     + ("" if resolve_zone_ref(stage, source) == source
+                                        else f"（按引用解析成 {resolve_zone_ref(stage, source)!r}）"))
             if not dest and not target:
                 report.error(ew, "transfer 缺少目的地 destination")
             if int(ev.get("quantity", 0)) < 0:
@@ -759,7 +774,7 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
                 report.error(ew, f"create 的 template {ev['template']!r} 不在 stage.templates 里")
             if not ev.get("destination"):
                 report.error(ew, "create 需要 zone（创建到哪里）")
-            elif (ev.get("destination") or "offstage") not in available:
+            elif resolve_zone_ref(stage, ev.get("destination") or "offstage") not in available:
                 report.error(ew, f"create 的 destination {ev.get('destination')!r} 不存在"
                                  f"（运行时开出来的区域要先 `zone add` 再用）")
         elif action == "destroy":
@@ -966,7 +981,7 @@ def check_cleanup_timing(files, report, stage):
                               or (action == "showbox" and float(later.get("on") or 0) == 0))
                     if not clears or float(later.get("at", 0.0)) <= t_cam:
                         continue
-                    zid = later.get("zone")
+                    zid = resolve_zone_ref(stage, later.get("zone"))
                     z = next((x for x in (stage.get("zones") or []) if x.get("id") == zid), None)
                     if not overlaps(rect, _zone_box(stage, z) if z else None):
                         continue                   # 不在取景里：这一下清场看不见
@@ -1083,7 +1098,7 @@ def _check_cleanup_timing(cue_id, events, stage, report):
                 f"看起来就是「初始帧多了几个东西」。清场要与切取景**同帧**（写同一个 at）")
 
 
-def _check_contract_coverage(doc, cue_id, events, report):
+def _check_contract_coverage(doc, cue_id, events, report, stage):
     """事件碰过的维度，契约里必须声明过 —— 否则那一维无法比对。
 
     只查"改状态"的动作：highlight/fade/scale/wait 是表现层，不改变"谁在哪、几件"。
@@ -1105,12 +1120,13 @@ def _check_contract_coverage(doc, cue_id, events, report):
             continue
         if action not in STATE_CHANGING:
             continue
+        # 解析成 id：契约的 zone 键是 id，写引用时也要能对上
         for src in ev.get("source") or []:
-            touched.add(src)
+            touched.add(resolve_zone_ref(stage, src))
         if ev.get("destination"):
-            touched.add(ev["destination"])
+            touched.add(resolve_zone_ref(stage, ev["destination"]))
         if action == "destroy" and ev.get("zone"):
-            touched.add(ev["zone"])
+            touched.add(resolve_zone_ref(stage, ev["zone"]))
 
     missing = sorted(t for t in touched if t and t not in declared)
     if missing:

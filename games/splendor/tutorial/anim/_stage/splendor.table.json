@@ -206,7 +206,13 @@
       "contains": [
         "gem"
       ],
-      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。"
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<diamond>"
+        }
+      ]
     },
     {
       "id": "gem_supply_sapphire",
@@ -237,7 +243,13 @@
       "contains": [
         "gem"
       ],
-      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。"
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<sapphire>"
+        }
+      ]
     },
     {
       "id": "gem_supply_ruby",
@@ -268,7 +280,13 @@
       "contains": [
         "gem"
       ],
-      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。"
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<ruby>"
+        }
+      ]
     },
     {
       "id": "gem_supply_emerald",
@@ -299,7 +317,13 @@
       "contains": [
         "gem"
       ],
-      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。"
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<emerald>"
+        }
+      ]
     },
     {
       "id": "gem_supply_onyx",
@@ -330,7 +354,13 @@
       "contains": [
         "gem"
       ],
-      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。"
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<onyx>"
+        }
+      ]
     },
     {
       "id": "gold_supply",
