@@ -246,14 +246,19 @@ namespace BoardGameTutorial.Editor
                     case "back": agg.ShowsBack++; break;
                     default: agg.Hidden++; break;
                 }
-                if (it.Flipped) agg.FaceUp++; else agg.FaceDown++;
+                // face_up/face_down 只统计**真的有正反面**的件（有背面贴图才有"面"可谈）。
+                // 不这么收的话，单面件会按 `Flipped` 的默认值被记成"3 件朝下"，
+                // 而画面上明明显示的是正面 —— 契约一断言就报"期望朝上、实际朝下"，
+                // 让人去追一个**根本不存在**的状态（贵族板块就是这种：只有一面）。
+                // 判据与逐件输出（AppendItemLines）用同一个 helper，两处不许各写一套。
+                if (HasTwoSides(it)) { if (it.Flipped) agg.FaceUp++; else agg.FaceDown++; }
                 if (!agg.Kinds.TryGetValue(it.KindKey, out var ka))
                 {
                     ka = new KindAgg();
                     agg.Kinds[it.KindKey] = ka;
                 }
                 ka.Count++;
-                if (it.Flipped) ka.FaceUp++; else ka.FaceDown++;
+                if (HasTwoSides(it)) { if (it.Flipped) ka.FaceUp++; else ka.FaceDown++; }
                 switch (it.Showing)
                 {
                     case "face": ka.ShowsFace++; break;
@@ -331,6 +336,16 @@ namespace BoardGameTutorial.Editor
         /// face 只对**真的有正反面**的件输出：判据是它有没有背面贴图（有 back_image 才有）。
         /// 宝石没有背面，硬写个 face 只会让人以为它也能翻面。
         /// </summary>
+        /// <summary>
+        /// 这件**真的有正反面**吗 —— 判据是它有没有背面贴图。
+        ///
+        /// 没有背面的件（宝石、只有一面的贵族板块）不该出现在 `face_up/face_down` 的统计里：
+        /// 那个数一出来，人就会以为它翻了面，而去追一个不存在的状态。
+        /// 逐件输出与区域聚合必须用**同一个判据**，否则同一份采样里两个数字互相矛盾。
+        /// </summary>
+        private static bool HasTwoSides(ZoneItem it) =>
+            it?.Actor != null && it.Actor.BackSprite != null;
+
         private static void AppendItemLines(System.Text.StringBuilder sb, TutorialCueAnimPlayer anim, string indent)
         {
             // 先取成列表再按下标走：Store.Items 是 IEnumerable（每次枚举都是新的），
@@ -341,8 +356,7 @@ namespace BoardGameTutorial.Editor
                 var it = all[i];
                 var actor = it.Actor;
                 string concept = ConceptOf(it);
-                string face = (actor != null && actor.BackSprite != null)
-                    ? (it.Flipped ? "up" : "down") : null;
+                string face = HasTwoSides(it) ? (it.Flipped ? "up" : "down") : null;
                 sb.Append($"{indent}{{ \"id\": \"{it.Id}\", \"kind\": \"{it.KindKey}\"");
                 if (!string.IsNullOrEmpty(concept)) sb.Append($", \"concept\": \"{concept}\"");
                 sb.Append($", \"zone\": \"{it.ZoneId}\", \"order\": {it.Order}");
