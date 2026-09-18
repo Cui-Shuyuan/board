@@ -252,6 +252,16 @@ def _real_only(cands):
     return real or cands
 
 
+def _zone_concept(stage, zone_id):
+    """这个 zone 绑定的是哪个本体概念（stage 里写的那个）。找不到 → None。"""
+    if not zone_id:
+        return None
+    for z in (stage.get("zones") or []):
+        if z.get("id") == zone_id:
+            return z.get("concept")
+    return None
+
+
 def _zone_ctx(ev):
     """这条事件"在哪找/放到哪"的 zone —— what 的**唯一性**只在这个范围内成立。
 
@@ -721,6 +731,12 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
         elif action == "shuffle":
             if not zone and not target:
                 report.warn(ew, "shuffle 既没有 zone 也没有 target，会对全体生效")
+            # 洗牌只对**牌堆/暗池**有意义。供应堆是公开、可互换的一堆东西，没有"洗"这回事 ——
+            # 两者外观都是"一摞"，很容易顺手写错（用户 2026-09 特意提醒过）。
+            zc = _zone_concept(stage, zone)
+            if zc and is_a(world, zc, "<ontology::supply>") and not is_a(world, zc, "<ontology::deck>"):
+                report.error(ew, f"zone {zone!r} 是**供应堆**（{zc}），不是牌堆 —— 供应堆不洗牌"
+                                 f"（它是公开的一堆，拿哪一枚都一样）")
 
         # ── 字段归属：这个事件的每个字段都属于某一层吗 ──────────────────
         concept_ref = ev.get("realizes") or PRIMITIVE_EVENT.get(action)
@@ -770,17 +786,33 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             elif not is_a(world, got, wants):
                 report.error(ew, f"realizes={got!r} 不是 {wants} 的后代 —— {action} 原语只能"
                                  f"实现 {wants} 及其子类（例：发牌写 <top_draw>，它是 <transfer> 的子类）")
-        elif action == "transfer":
-            # 从暗堆取件却没说 realizes：这里正是 <transfer> 与 <top_draw> 的分界，
-            # 不说清就把"抽"记成了普通"转移"。源区的概念能判断，所以报出来让人确认。
-            hidden = []
+        # 源区是供应堆还是牌堆 —— **无论有没有写 realizes 都要查**。
+        # 曾经把它挂在 `elif`（"没写 realizes 才提醒"）上，于是"写了 realizes 但写成抽牌"
+        # 从旁边溜过去了（金丝雀验出来的）：写了 ≠ 写对了。
+        if action == "transfer":
+            # 「抽」与「搬」的分界在**源区是什么**，而这只能看**本体概念**，不能看外观：
+            # 供应堆和牌堆**长得一模一样**（都是一摞），机制也共用（都是从一摞里取）——
+            # 但供应堆是 <supply>（公开、可互换、没有"顶"），牌堆是 <deck>（有顶、抽取前身份未知）。
+            # 用户 2026-09 特意提醒："它们绝对不是一个东西"。所以这条检查按概念判，不按 display.mode。
             for src in (ev.get("source") or []):
-                c = next((z.get("concept") for z in stage.get("zones", []) if z.get("id") == src), None)
-                if c and (is_a(world, c, "<ontology::deck>") or is_a(world, c, "<ontology::pool>")):
-                    hidden.append(src)
-            if hidden:
-                report.warn(ew, f"从暗堆 {hidden} 取件却没写 realizes；按本体的判据这是 "
-                                f"<top_draw>（抽取前身份未知），不是普通 <ontology::transfer>")
+                c = _zone_concept(stage, src)
+                if not c:
+                    continue
+                is_deck = is_a(world, c, "<ontology::deck>") or is_a(world, c, "<ontology::pool>")
+                is_supply = is_a(world, c, "<ontology::supply>") and not is_deck
+                if is_deck:
+                    if not got:
+                        report.warn(ew, f"从暗堆 {src}（{c}）取件却没写 realizes；按本体的判据这是 "
+                                        f"<top_draw>（抽取前身份未知），不是普通 <ontology::transfer>")
+                    elif not is_a(world, got, "<ontology::draw>"):
+                        report.error(ew, f"从牌堆 {src}（{c}）取件，realizes 写的是 {got!r} —— "
+                                         f"从牌堆取出只能**抽**（<draw> 的后代，如 <top_draw>）："
+                                         f"牌堆有「顶」、抽取前身份未知")
+                elif is_supply and got and is_a(world, got, "<ontology::draw>"):
+                    report.error(ew, f"源区 {src} 是**供应堆**（{c}），供应堆没有「顶」可抽 —— "
+                                     f"realizes={got!r} 把它记成了抽牌。供应堆取出就是普通 "
+                                     f"<ontology::transfer>（公开的一堆，拿哪一枚都一样）。"
+                                     f"⚠️ 供应堆与牌堆长得一样、机制也共用，但**不是一个东西**")
 
         end = at + lead + dur
         if action != "wait":

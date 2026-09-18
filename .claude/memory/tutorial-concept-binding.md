@@ -322,3 +322,45 @@ metadata:
 （"期望 3 面朝上、实际 3 面朝下"，而画面上明明是正面）—— 2026-09 为贵族和垫牌各白查了一轮。
 所以：**采样端不统计它们的 face（与逐件输出同一判据），契约端不写它们的 face，
 检查器端一旦看到这种断言就直接说清。** 三处对齐，这类假差异不会再回来。
+
+## 【用户红线】长得一样 ≠ 是一个东西：供应堆 vs 牌堆（2026-09）
+
+用户原话：
+
+> 就是宝石那是**供应堆**没错，它虽然和卡组使用同样的外观，但它们**绝对不是一个东西**，
+> 一个是供应堆，一个是卡组。
+
+这条针对的是我刚做的改动：把宝石供应堆的 `display` 改成和牌堆一样的 `stack`（"稍微错开压在一起"）。
+**展示手法可以共用，本体身份不能混。** 核了一遍，模型本来就是分开的：
+
+| | 宝石/黄金供应堆 | 发展卡牌堆 |
+|---|---|---|
+| zone 绑定的概念 | `gem_supply` / `gold_supply` → **`<ontology::public_supply>`** | `development_deck_level_*` → **`<ontology::deck>`** |
+| 继承链 | `<zone>` → `<reserve>` → `<supply>` → `<public_supply>` | `<zone>` → `<reserve>` → `<deck>` → `<development_deck>` |
+| 有"顶"吗 | 没有（公开的一堆，拿哪一枚都一样） | 有（抽取前身份未知） |
+| 取出时 `realizes` | `<ontology::transfer>` | `<top_draw>`（`<draw>` 的后代） |
+| 能洗吗 | 不能 | 能（`shuffle`） |
+| 展示手法 | `display.mode: stack`（**与牌堆共用**） | `display.mode: stack` |
+
+**注意它们在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家** ——
+这正是"看起来像、其实不是一回事"在本体里的位置。
+
+### 不能只靠自觉，所以写成了检查
+
+`validate_cue_anim.py` 现在按**源区的本体概念**判"这一动是抽还是搬"（不看外观、不看 display.mode）：
+
+```python
+for src in ev.get("source") or []:
+    c = _zone_concept(stage, src)          # 供应堆 or 牌堆，由概念决定
+    if is_deck:    # 从牌堆取 → 必须写 <draw> 的后代（<top_draw>）
+    elif is_supply and is_draw(got):       # 从供应堆取却写成"抽" → 报错
+```
+
+外加：**`shuffle` 打在供应堆上 → 报错**（供应堆不洗牌）。
+
+⚠️ 这两条一开始被我挂在 `elif action == "transfer"`（即"**没写** `realizes` 才提醒"）上，
+于是"写了 `realizes` 但写成抽牌"从旁边溜过去了 —— 是**金丝雀**验出来的（把金丝雀写小一点：
+"没报错"不等于"检查是对的"）。**写了 ≠ 写对了**，所以现在无论有没有写都要查。
+
+同样的话也写进了 stage 里那 9 个 zone 的 `note`（供应堆 6 个、牌堆 3 个）：
+数据自己带着这句话，下次谁想"顺手复用一下牌堆逻辑"都会先读到它。
