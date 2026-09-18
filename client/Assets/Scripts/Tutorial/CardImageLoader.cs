@@ -98,7 +98,11 @@ namespace BoardGameTutorial
         /// 宝石/黄金是圆片，扫描件是方图。先按「与背景的差异」找出圆心与半径，
         /// 再把圆外一律设为透明；圆内仍按亮度处理（含外圈的白色环）。
         /// </summary>
-        private static void ApplyTokenMask(Texture2D tex)
+        /// <summary>
+        /// 圆形 token 的白底 + 圆遮罩处理。**公开**是为了让抠图工具（Editor）复用同一套算法：
+        /// 工具把这里的结果烘焙成 PNG，两边就不会漂移（改一处两边一起变）。
+        /// </summary>
+        public static void ApplyTokenMask(Texture2D tex)
         {
             int w = tex.width, h = tex.height;
             var pixels = tex.GetPixels();
@@ -136,7 +140,7 @@ namespace BoardGameTutorial
         /// 背景色取四角中位色，避免用固定阈值猜白。
         /// 返回 (cx, cy, radius)；找不到时 radius = 0。
         /// </summary>
-        private static Vector3 DetectCircle(Color[] px, int w, int h)
+        public static Vector3 DetectCircle(Color[] px, int w, int h)
         {
             var corners = new List<Color>();
             int pad = Mathf.Clamp(Mathf.Min(w, h) / 12, 4, 16);
