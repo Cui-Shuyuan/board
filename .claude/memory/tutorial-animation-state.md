@@ -851,15 +851,28 @@ PASS 两条兄弟分支抽到不同的牌 —— 共享父状态、但牌堆顶�
 采样坐标算错、读到旧帧、离屏渲染里某些效果根本不发生（早期的 fade 是协程）。
 而"谁在哪个 zone、几件、朝上还是朝下"是**数据**，可以用程序精确比对。
 
-### 三个文件/工具
+### 两个文件 / 三个工具
 
 | 文件 | 作用 |
 |---|---|
-| `games/{game}/tutorial/script/full/<cue>.json` | **契约**：人写的意图 + 首尾状态 |
-| `scripts/dump_states.sh` | 采样若干 cue 的终态（调 Unity 的 `DumpState`） |
-| `scripts/check_cue_script.py` | 对账：`--chain` 查跨 cue，单条查自己 |
+| `games/{game}/tutorial/script/{track}.json` | **契约**：人写的意图 + 首尾状态，**整条 track 一个文件**（`cues` 按轨道顺序排） |
+| `games/{game}/tutorial/script/{track}.exitstate.json` | **采样终态**：引擎生成，别手改（`DumpState -dumpCues`） |
+| `scripts/dump_states.sh` | 采样终态：**一次 Unity 启动**从轨道头播到尾，每条 cue 记一笔 |
+| `scripts/check_cue_script.py` | 对账：`--all` 整条查，`--chain` 只查跨 cue，`--cue X --which enter` 单条查 |
+
+（2026-09 用户要求合并：契约原来一条 cue 一个文件，翻十几条要开十几个文件；
+采样也一样，而且每条 cue 各启动一次 Unity、各自从头重放一遍 entry 链。
+现在两边各一个文件、一次跑完。注意 `script.{track}.json` 是**口播稿编辑源**，
+两条链路互不写对方。）
 
 ### 契约结构
+
+```jsonc
+// script/full.json —— 顶层，cues 按轨道顺序（--chain 依赖这个顺序）
+{ "schema_version": 1, "game_id": "splendor", "track": "full",
+  "kind": "animation_contract",
+  "cues": [ /* 每条一段，见下 */ ] }
+```
 
 ```jsonc
 {

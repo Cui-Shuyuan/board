@@ -18,10 +18,10 @@
 | cue1–13（box / 发展卡） | 已通过用户验收（含牌堆、翻转、`stack` 原语） |
 | `stack` 原语 | 已有，建摞 + 从顶发牌都可复用（宝石供应堆形状相同） |
 | 宝石 zone | 已在 stage 里（`gem_supply_diamond` 等），尚未接动画 |
-| 每 cue 的脚本 | ✅ **已写完 9 条**：`games/splendor/tutorial/script/full/setup.gems.*.json`（001.1～005.2），待用户 review |
+| 宝石脚本 | ✅ **已写完 9 条**，合并在 `games/splendor/tutorial/script/full.json` 里（一个 track 一个文件，`cues` 按轨道顺序），待用户 review |
 | 宝石的数量约定 | **已冻结**：增量演法，连演 2/3/4 人三种（1→4→5→7 枚），见下 |
 | 宝石的动画文件 | **尚未开始**（`anim/full/setup.gems.*.json` 一个都还没有） |
-| 对账脚本 | `check_cue_script.py` 可用（`--all` / `--chain`），但宝石这一节还没采样过 |
+| 对账 | `check_cue_script.py` 可用（`--all` / `--chain` / `--cue X --which enter`）；宝石那 9 条**还没采样** |
 
 **已知可直接复用的东西**：
 
@@ -61,9 +61,22 @@
   以前按文件名字母序，把轨道第 36 条的 `action.take.different.001` 当成第一条，
   「上一条的取景」是错的。改完立刻冒出一条被掩盖的真实警告（该 cue 承接 `board`
   却没显式声明），已按项目规矩补上 `camera: "board"`。
+- **契约与采样各合成一个文件**（用户 2026-09 要求：不要一个 cue 一个 json）：
+  - 契约 `games/splendor/tutorial/script/full.json`（`cues` 按轨道顺序；**别**和
+    `script.full.json`（口播稿编辑源）搞混，两条链路互不写对方）；
+  - 采样 `games/splendor/tutorial/script/full.exitstate.json`（引擎生成）；
+  - `DumpState` 新增 `-dumpCues "a,b,c"`：**一次 Unity 启动**从轨道头顺次播到尾、
+    每条播到终态记一笔（就是播放器的真实路径），把「109 条 cue = 109 次启动 +
+    109 次重放 entry 链」降成 1 次；
+  - `check_cue_script.py` 跟着改成读这两个文件（`--all` / `--chain` /
+    `--cue X --which enter`——查入口时自动对**父 cue** 的采样终态）；
+  - 顺带把 `client/Assets/Editor/TutorialFrameCapture.cs` 纳入
+    `check_unity_scripts.py` 的编译检查（以前编辑器脚本不受检查，只能到 Windows 上才发现写错），
+    现在 17 个 C# 文件一起编。
 
 **下一步（按工作流）**：脚本已可 review → 批准后写这 9 条的 `anim/full/setup.gems.*.json`
-→ 再用 `dump_states.sh` 采样 + `check_cue_script.py --all` 对账。
+→ 同步到 Windows 侧工作区 → `scripts/dump_states.sh`（一次 Unity 启动采完整条轨道）
+→ `python3 scripts/check_cue_script.py --all` 对账。
 
 **注意**：宝石这一节**不能**用 `stack`（那是卡牌牌堆用的）；供应堆是
 `move` 从 `box_gem_*` 逐枚搬进 `gem_supply_*`，`display.mode = count` 按 block 布局
