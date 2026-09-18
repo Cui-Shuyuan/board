@@ -314,9 +314,12 @@ namespace BoardGameTutorial.Editor
         /// </summary>
         private static void AppendItemLines(System.Text.StringBuilder sb, TutorialCueAnimPlayer anim, string indent)
         {
-            int i = 0;
-            foreach (var it in anim.Store.Items)
+            // 先取成列表再按下标走：Store.Items 是 IEnumerable（每次枚举都是新的），
+            // 既避免在循环里反复枚举，也让 .Count 是 List 的属性而不是 LINQ 方法组。
+            var all = new List<ZoneItem>(anim.Store.Items);
+            for (int i = 0; i < all.Count; i++)
             {
+                var it = all[i];
                 var actor = it.Actor;
                 string concept = ConceptOf(it);
                 string face = (actor != null && actor.BackSprite != null)
@@ -326,8 +329,7 @@ namespace BoardGameTutorial.Editor
                 sb.Append($", \"zone\": \"{it.ZoneId}\", \"order\": {it.Order}");
                 if (face != null) sb.Append($", \"face\": \"{face}\"");
                 sb.Append($", \"shows\": \"{it.Showing}\" }}");
-                i++;
-                sb.Append(i < anim.Store.Items.Count ? ",\n" : "\n");
+                sb.Append(i < all.Count - 1 ? ",\n" : "\n");
             }
         }
 
