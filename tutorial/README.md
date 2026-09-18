@@ -126,13 +126,21 @@ games/{game}/tutorial/anim/{track}.json               一个动画一个文件�
 3 颗，而画面上的宝石供应堆按颜色分成五堆，所以 cue 里直接写三条 zone 移动：
 
 ```json
-{ "at": 3.35, "dur": 0.50, "action": "move",
-  "from": "gem_supply_diamond", "zone": "player_holding", "easing": "easeInOutCubic" }
+{ "at": 3.35, "dur": 0.50, "action": "transfer",
+  "realizes": "<ontology::transfer>",
+  "source": ["gem_supply_diamond"], "quantity": 3, "destination": "player_holding",
+  "what": { "concept": "gem", "parts": [ { "key": "color", "value": "<diamond>" } ] },
+  "easing": "easeInOutCubic" }
 ```
 
-需要精确控制某一件时可以指定实例 id（运行时 id = `{template}#{序号}`）：
-`{ "action": "move", "target": "gem#1", "zone": "player_holding" }`；
-不指定 target/from 时按 `from` zone 的最前面 N 件搬（`"take": 3`）。
+- **`what` 用本体语言说"搬的是哪一类件"**（`source` 从哪、`quantity` 几件、`destination` 去哪），
+  引擎按 stage 的模板—概念绑定把它解析成具体素材。写 `template` 就把本作专用素材写进了数据，
+  **transfer 不要用它**（`create` / `stack` 这类本体里没有对应事件的动作才用）。
+- **`to` 写终态**（`"face_up"` / `"face_down"`），不要写"翻转"这种取反动作 ——
+  取反的规则是"谁最后执行谁赢"，历史上正是它造成"播完是对的、换 cue 重建后又翻回去"。
+- **`realizes` 说出这一动在规则上是哪个本体事件**（校验器按继承链检查）。
+- **`camera` 是跨 cue 延续状态**，改画面内容的动作要与它同帧或在其后；
+  特写太松可加 `camera_padding` 收框（宝石展示位就是靠它把发展卡挡在画面外的）。
 
 关键性质：
 
@@ -146,18 +154,34 @@ games/{game}/tutorial/anim/{track}.json               一个动画一个文件�
   用于任意跳转。
 - **`stagger`** 让同一组组件错峰触发，用于「一枚一枚」的节奏。
 
-校验：
+校验（**改完数据随手跑前两条，秒级、不需要 Unity**）：
 
 ```bash
 python scripts/validate_cue_anim.py --game splendor --track full
 python scripts/validate_cue_anim.py --game splendor --track full --cue action.take.different.001
-```
-
-进 Unity 之前还会跑一次 C# 编译检查（用生成的 Unity API stub，不需要 Unity）：
-
-```bash
 python scripts/check_unity_scripts.py
 ```
+
+**对账**（用户指定的工作流"脚本 → 动画 → 对账"的最后一步）：
+契约是**用程序语言写的头尾两帧**，采样器不看脚本、只报桌面实际状态，两边 diff 出来就知道
+"是脚本写错了还是动画做错了"。采样在 WSL 里直接跑（Unity 在 `/mnt/d`）：
+
+```bash
+./scripts/sync_workspaces.sh from-linux    # ① 先把数据推到 Windows（Unity 读的是 D:\workspace\board）
+./scripts/dump_states.sh                   # ② 一次 Unity 启动，整条轨道播到尾，每条 cue 记终态
+python scripts/check_cue_script.py --all   # ③ 自己的终态 + 跨 cue 的链 + 取景 vs 契约
+```
+
+`check_cue_script.py` 报三类东西：
+
+1. **终态 vs 契约**（`enter` / `exit`）：整幅图 + 每个 zone 的件数、身份、朝向。
+   契约里**没写**就按"没有"比（`picture` 尤其如此）。
+2. **跨 cue 的链**：本 cue 的 `enter` 必须等于父 cue（`entry_from`）的终态 ——
+   只查自己那条，看不出**上一条**错没错。
+3. **取景 vs 契约**（警告级）：按引擎 `FitCamera` 的几何算出取景框，
+   框里出现契约没提到的组件就报"该不该入镜"。`--strict-framing` 可升级成错误。
+
+采样文件 `anim/*.exitstate.json` 是**生成物、不进版本管理**（每次采样都会变）。
 
 ## 时间轴口播稿（LRC-like）
 

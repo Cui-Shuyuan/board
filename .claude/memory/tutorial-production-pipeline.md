@@ -112,6 +112,40 @@ cue 的动画数据。理由：这是一次性工作，读一次做好就可以�
 - 下一步：组件扫描、slot 标定、单 cue 动画 pilot、打断问答接线。
 - **分层编辑流程已加入**：编辑源 `games/{game}/tutorial/script.{track}.json`（group_path -> cue -> beat）；`scripts/tutorial_script_tool.py` 支持 import/build/validate/split/merge/set-pause；`scripts/rebuild_tutorial.py` 一条命令跑完 source -> LRC -> TTS -> runtime；`tts_doubao.py` 新增 `--force` / `--prune`。
 
+## 讲规动画的生产闭环：脚本 → 动画 → 对账（2026-09 跑通）
+
+**一个动画一个文件**：`games/{game}/tutorial/anim/{track}.json`（舞台绑定在 `anim/_stage/*.json`）。
+每条 cue 里同时写着 **`events`（动画）** 和 **`enter`/`exit`（契约 = 用程序语言写的头尾两帧）**。
+
+三条命令构成一轮：
+
+```bash
+./scripts/sync_workspaces.sh from-linux    # ① 数据推到 Windows（Unity 读的是 D:\workspace\board）
+./scripts/dump_states.sh                   # ② 一次 Unity 启动，整条轨道播到尾，每条 cue 记终态
+python3 scripts/check_cue_script.py --all  # ③ 对账：终态 vs 契约（+ 跨 cue 链 + 取景）
+```
+
+外加两条**不需要采样**的静态检查（改完数据随手跑，秒级）：
+
+```bash
+python3 scripts/validate_cue_anim.py     # 字段归属、本体概念、取景链、契约覆盖面
+python3 scripts/check_unity_scripts.py   # Unity 侧 C# 能不能编译（含 Assets/Editor）
+```
+
+**采样文件是生成物、不进版本管理**（`anim/*.exitstate.json`）：每次采样都会改它，
+跟踪它就会把工作区弄脏，然后下一次同步被自己的产物挡住。
+
+**三层要分清**（2026-09 一个 bug 查了半天，就因为只看了前两层）：
+
+| 层 | 谁看 | 例子 |
+|---|---|---|
+| 契约/脚本**文件** | 人、`validate_cue_anim.py` | `full.json` 里写的是什么 |
+| 引擎**解析到的对象** | `-dumpEvents 1` | JsonUtility 把没写的 `what` 变成空实例 |
+| **采样**到的状态 | `DumpState` + `check_cue_script.py` | 桌上实际有几件、哪面朝上 |
+
+**当前成绩**（2026-09，17 条已做动画的 cue）：对账 **0 处不一致**；
+12 条取景警告（都是"供应区特写里必然出现发展卡市场与一级牌堆"，待用户裁决：改取景 or 在契约里声明）。
+
 ## 相关记忆
 
 - [[tutorial-module]] — 第五阶段技术选型与 Unity 现状
