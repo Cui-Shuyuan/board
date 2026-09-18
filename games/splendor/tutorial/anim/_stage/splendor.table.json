@@ -1179,31 +1179,5 @@
       "_note": "示例：一级牌堆顶牌 + 即将发出的第一张。两者不同 zone，但可作为一个容器整组操作。"
     }
   ],
-  "zone_defs": [
-    {
-      "id": "workshop",
-      "label": "测试区（金丝雀）",
-      "role": "zone",
-      "center": {
-        "x": 1.8,
-        "z": -3.0
-      },
-      "layout": {
-        "type": "row",
-        "x_step": 0.5
-      },
-      "capacity": 4,
-      "size": {
-        "w": 0.5,
-        "h": 0.5
-      },
-      "display": {
-        "mode": "count"
-      },
-      "concept": null,
-      "repeat_x": 0.0,
-      "repeat_z": 0.0,
-      "note": "金丝雀：运行时才开出来的区域"
-    }
-  ]
+  "zone_defs": []
 }
