@@ -559,9 +559,15 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
     # 不声明的话，这一维根本没人比 —— 上一次漏掉盒面就是因为整幅图不在被比的集合里，
     # 而不是比较逻辑写错了。这条是静态检查：事件与契约现在同在一个文件里，不需要采样。
     _check_contract_coverage(doc, cue_id, events, report)
-    # 切取景之后才清场 = 切换后的第一帧是脏的（用户 2026-09 报的 cue 18）
-    if isinstance(events, list):
-        _check_cleanup_timing(cue_id, events, stage, report)
+    # 契约里声明的 zone 必须真的存在 —— 否则它是在**对着空气断言**：
+    # 采样里没有这个区域、比较时按 0 算，于是"这里应该有几件"永远对不上（或永远没人比），
+    # 而删掉一个 zone（例如游戏盒没有实体之后删掉 box_*）时，旧契约会静静地留在那儿。
+    declared = set(((doc.get("enter") or {}).get("zones") or {}).keys()) | \
+               set(((doc.get("exit") or {}).get("zones") or {}).keys())
+    for zid in sorted(declared - set(zones)):
+        report.error(cue_id, f"契约声明了不存在的 zone {zid!r} —— "
+                             f"它不在 stage 的 zones 里（改名/删掉之后忘了改契约？）"
+                             f"对着不存在的区域断言，等于没人比这一维")
 
     if not isinstance(events, list) or not events:
         # 契约写了、动画还没写（例如 setup.nobles.001.1）：这不是错误，跳过动画检查。
@@ -786,22 +792,6 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             elif not is_a(world, got, wants):
                 report.error(ew, f"realizes={got!r} 不是 {wants} 的后代 —— {action} 原语只能"
                                  f"实现 {wants} 及其子类（例：发牌写 <top_draw>，它是 <transfer> 的子类）")
-        # 源/目的地是**游戏盒**（画面外）时不该有"移动"：从观众视角，盒里的东西是
-        # "凭空多出来/凭空少掉"，飞进来会横穿整张桌子（用户 2026-09 定的）。
-        # 用 `dur: 0`（出现）而不是新增一个字段 —— 代码更简单，语义仍然是 <transfer>。
-        # 只认 `<ontology::game_box>`：`offstage`（贵族盲抽）是**刻意的**从画外飞入，
-        # 不在这一条里（它的口播本来就是"从所有贵族里随机抽出"）。
-        if action == "transfer" and float(ev.get("dur") or 0.0) > 0.0:
-            box_side = []
-            for zid in list(ev.get("source") or []) + ([ev.get("destination")] if ev.get("destination") else []):
-                zc = _zone_concept(stage, zid)
-                if zc and is_a(world, zc, "<ontology::game_box>"):
-                    box_side.append(zid)
-            if box_side:
-                report.warn(ew, f"{box_side} 是**游戏盒**（画面外），却写了 dur={ev.get('dur')} 的位移动画 —— "
-                                 f"盒里的东西从观众视角是「凭空多出来/少掉」，飞进来会横穿整张桌子。"
-                                 f"写成 `dur: 0`（出现），错峰用 `lead`；语义仍然是 <transfer>")
-
         # 源区是供应堆还是牌堆 —— **无论有没有写 realizes 都要查**。
         # 曾经把它挂在 `elif`（"没写 realizes 才提醒"）上，于是"写了 realizes 但写成抽牌"
         # 从旁边溜过去了（金丝雀验出来的）：写了 ≠ 写对了。
@@ -877,6 +867,82 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
 
 
 
+def check_no_game_box_zone(stage, world, report):
+    """**游戏盒是抽象概念，没有实体**（用户 2026-09）。
+
+    说"从盒子里拿出来" = `create`；"放回盒子" = `destroy`。
+    所以 stage 里不该有 concept 是 `<ontology::game_box>`（或其后代）的 zone ——
+    那种 zone 会把盒子变成一个**看得见吗？看不见**的容器：件能在里面躺着、被搬进搬出，
+    而观众什么都看不到，于是"凭空多一件/少一件"在**状态对账里也看不出来**
+    （它只是从一个看不见的 zone 挪到另一个看不见的 zone）。
+
+    这条把那个"藏东西的地方"从根上堵掉 —— 每一枚件都必须在被契约断言着的区域里。
+    """
+    for z in stage.get("zones") or []:
+        c = z.get("concept")
+        if c and is_a(world, c, "<ontology::game_box>"):
+            report.error("stage", f"zone {z.get('id')!r} 的 concept 是 {c}（游戏盒）—— "
+                                  f"游戏盒是抽象概念、没有实体：「从盒里拿出来」写 `create`、"
+                                  f"「放回盒子」写 `destroy`，不要建「盒子 zone」")
+
+
+def check_cleanup_timing(files, report, stage):
+    """**切取景之后才清场** = 切换后的第一帧是脏的（用户 2026-09 报的 cue 18）。
+
+    cue 18（`setup.gems.003.1`）曾经这么写：`at=0.0` 切到供应区特写、`at=0.3` 才销毁
+    展示位上那 6 枚样本 —— 镜头已经对着供应区了，样本还在画面里停了 0.3 秒。
+
+    规则（既有那条"改画面的动作要与改取景同帧"的反方向）：
+
+      - **新增内容**可以在切镜头**之后**（观众等着看它出现）；
+      - **清掉内容**必须在切镜头**之前或同帧**，否则切换后的第一帧里它还在。
+
+    为什么必须放在**跨 cue** 这一层：判据是"取景**变了**没有"。
+    一条 cue 里写了 `camera: "supply"`、而上一条结尾本来就是 `supply`，
+    那就没有切换、也就没有脏帧 —— 单条 cue 的检查看不到上一条的取景，
+    会把这种写法误报（`setup.nobles.001.1` 第一次就误报了）。
+    """
+    prev_camera = None
+    for doc in files:
+        events = doc.get("events") or []
+        cue_id = doc.get("cue") or "?"
+        cur = prev_camera
+        for i, ev in enumerate(events):
+            if not isinstance(ev, dict):
+                continue
+            cam = ev.get("camera")
+            if cam:
+                changed = (cam != cur)
+                cur = cam
+                if not changed:
+                    continue
+                rect = visible_rect(stage, cam, float(ev.get("camera_padding") or 0.0))
+                if rect is None:
+                    continue                       # 整桌取景：没有"出框"可言
+                t_cam = float(ev.get("at", 0.0))
+                for j, later in enumerate(events):
+                    if j <= i or not isinstance(later, dict):
+                        continue
+                    action = later.get("action")
+                    clears = (action == "destroy"
+                              or (action == "showbox" and float(later.get("on") or 0) == 0))
+                    if not clears or float(later.get("at", 0.0)) <= t_cam:
+                        continue
+                    zid = later.get("zone")
+                    z = next((x for x in (stage.get("zones") or []) if x.get("id") == zid), None)
+                    if not overlaps(rect, _zone_box(stage, z) if z else None):
+                        continue                   # 不在取景里：这一下清场看不见
+                    what = f"销毁 {zid}" if action == "destroy" else "关掉整幅图"
+                    report.error(
+                        cue_id,
+                        f"events[{j}]: 取景已在 at={t_cam:.2f} 切到 {cam!r}（上一条留下的是 "
+                        f"{prev_camera!r}），{float(later.get('at', 0.0)):.2f} 才{what}，而它在取景框里 —— "
+                        f"切换后的第一帧里画面还留着它，看起来就是「初始帧多了几个东西」。"
+                        f"清场要与切取景**同帧**（写同一个 at）")
+        cams = [e for e in events if isinstance(e, dict) and e.get("camera")]
+        prev_camera = cams[-1].get("camera") if cams else prev_camera
+
+
 def check_framing_chain(files, report):
     """跨 cue 检查：**取景（camera）是延续状态**，一条 cue 不声明就沿用上一条的。
 
@@ -918,6 +984,10 @@ def check_framing_chain(files, report):
                     f"要么确认确实想先停一会儿")
 
         prev_camera = leaves
+
+# 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明
+STATE_CHANGING = {"transfer", "create", "destroy", "stack"}
+
 
 # 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明
 STATE_CHANGING = {"transfer", "create", "destroy", "stack"}
@@ -1097,6 +1167,15 @@ def main():
     if not args.cue and reports:
         chain = Report(script_path, "（跨 cue 取景链）")
         check_framing_chain(cues, chain)
+        stage_doc = None
+        rel = doc.get("stage")
+        if rel:
+            sp = ROOT / "games" / args.game / "tutorial" / "anim" / f"{rel}.json"
+            if sp.exists():
+                stage_doc = json.loads(sp.read_text(encoding="utf-8"))
+        if stage_doc:
+            check_no_game_box_zone(stage_doc, load_world(args.game), chain)
+            check_cleanup_timing(cues, chain, stage_doc)
         reports.append(chain)
 
     total_errors = sum(len(r.errors) for r in reports)

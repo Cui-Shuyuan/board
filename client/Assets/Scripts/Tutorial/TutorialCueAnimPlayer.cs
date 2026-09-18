@@ -458,16 +458,10 @@ namespace BoardGameTutorial
                     int need = Mathf.Max(0, want - have);
                     if (need == 0) continue;
 
-                    // 必须「先搬后生」：stage.initial 常把这一份放在 offstage（表示还在盒子里），
-                    // 直接 Spawn 会多造一份，出现在画面外的重复件。
-                    // 每一次都重新数一遍现有数量，因此重播/重复载入也不会翻倍。
-                    int guard = 0;
-                    while (need > 0 && guard++ < 64)
-                    {
-                        int moved = Store.PullFrom(OffstageZoneId, seedTemplate, seedPalette, seed.zone, need);
-                        need -= moved;
-                        if (moved == 0) break;
-                    }
+                    // 直接补差额就够：**游戏盒是抽象概念、没有实体**（用户 2026-09），
+                    // 所以不存在"这一份先放在 offstage 表示还在盒里"这回事了 ——
+                    // 缺几件就 create 几件（"从盒子里拿出来" = create）。
+                    // 每次重新数一遍现有数量，所以重播/重复载入也不会翻倍。
                     if (need > 0) Store.Spawn(seedTemplate, seedPalette, seed.zone, need);
                 }
             }
@@ -2003,6 +1997,16 @@ namespace BoardGameTutorial
                 if (doomed.Count == 0)
                     Debug.LogWarning($"[TutorialCueAnim] destroy 没匹配到任何组件" +
                                      $"（zone='{ev.zone}' template='{ev.template}'，cue {CueId}）");
+                // 数量上限：`count` / `quantity` 说了几枚就只销毁几枚。
+                // 为什么需要：「把每色多出来的 3 枚放回盒子」是 destroy 3 枚 ——
+                // 不写上限就会把整堆 7 枚全销毁（盒子没有实体之后，destroy 就是"放回去"，
+                // 而"放回几枚"是脚本里说清的数字，不能由引擎猜）。
+                int limit = ev.count > 0 ? ev.count : ev.quantity;
+                if (limit > 0 && doomed.Count > limit)
+                {
+                    doomed.Sort((a, b) => a.Order.CompareTo(b.Order));   // 从堆顶开始拿（order 小 = 在上）
+                    doomed.RemoveRange(limit, doomed.Count - limit);
+                }
             }
 
             foreach (var item in doomed)

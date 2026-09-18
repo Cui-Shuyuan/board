@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上，实例数按实物（40/30/20）；显示上超过 8 张就只显示 8 张（display.max_visible），多出来的压在最后一层。宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode：count=摊开可数，stack=叠放只显示 max_visible 个。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。 概念绑定：模板/zone 的 concept 指向 ontology 或 games/splendor 的概念；concept_by_palette 与 parts 都写成**列表**（JsonUtility 不支持字典，写成对象会被静默丢弃）。zone.contains = 本体同名字段：这个区域允许存放哪些概念（空数组 = 不限）。 展示位（gem_display / gold_display）是**纯视觉**的：介绍用，和供应堆不是一回事。",
+  "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**（create / stack），不再有\"开局先在盒里躺着\"的实体。\n好处：不再有\"盒子\"这个可能藏东西的地方 —— 每一枚件都在被契约断言着的区域里。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
@@ -386,132 +386,6 @@
       "concept": "<player_holding>",
       "contains": [
         "gem",
-        "gold"
-      ]
-    },
-    {
-      "id": "box_level_1",
-      "label": "1 级牌堆在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "development_card_level_1"
-      ]
-    },
-    {
-      "id": "box_level_2",
-      "label": "2 级牌堆在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "development_card_level_2"
-      ]
-    },
-    {
-      "id": "box_level_3",
-      "label": "3 级牌堆在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "development_card_level_3"
-      ]
-    },
-    {
-      "id": "box_gem_diamond",
-      "label": "gem_diamond 在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "gem"
-      ]
-    },
-    {
-      "id": "box_gem_sapphire",
-      "label": "gem_sapphire 在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "gem"
-      ]
-    },
-    {
-      "id": "box_gem_ruby",
-      "label": "gem_ruby 在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "gem"
-      ]
-    },
-    {
-      "id": "box_gem_emerald",
-      "label": "gem_emerald 在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "gem"
-      ]
-    },
-    {
-      "id": "box_gem_onyx",
-      "label": "gem_onyx 在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
-        "gem"
-      ]
-    },
-    {
-      "id": "box_gem_gold",
-      "label": "gem_gold 在盒中",
-      "role": "offstage",
-      "center": {
-        "x": 0.0,
-        "z": 0.0
-      },
-      "margin": 6.0,
-      "concept": "<ontology::game_box>",
-      "contains": [
         "gold"
       ]
     },
@@ -1293,57 +1167,7 @@
       ]
     }
   ],
-  "initial": [
-    {
-      "count": 7,
-      "template": "gem",
-      "palette": "gem_diamond",
-      "zone": "box_gem_diamond",
-      "from": "bottom"
-    },
-    {
-      "count": 7,
-      "template": "gem",
-      "palette": "gem_sapphire",
-      "zone": "box_gem_sapphire",
-      "from": "bottom"
-    },
-    {
-      "count": 7,
-      "template": "gem",
-      "palette": "gem_ruby",
-      "zone": "box_gem_ruby",
-      "from": "bottom"
-    },
-    {
-      "count": 7,
-      "template": "gem",
-      "palette": "gem_emerald",
-      "zone": "box_gem_emerald",
-      "from": "bottom"
-    },
-    {
-      "count": 7,
-      "template": "gem",
-      "palette": "gem_onyx",
-      "zone": "box_gem_onyx",
-      "from": "bottom"
-    },
-    {
-      "count": 5,
-      "template": "gem",
-      "palette": "gem_gold",
-      "zone": "box_gem_gold",
-      "from": "bottom"
-    },
-    {
-      "count": 3,
-      "template": "noble",
-      "palette": "noble",
-      "zone": "offstage",
-      "from": "top"
-    }
-  ],
+  "initial": [],
   "containers": [
     {
       "id": "level1_deck_and_top",
