@@ -106,22 +106,37 @@ namespace BoardGameTutorial.Editor
             var px = src.GetPixels();
             Color bg = MedianCorner(px, w, h);
 
-            // 自适应容差：选"最像圆"的那个 mask
-            float bestTol = -1f, bestScore = -1f, bestRound = 0f;
+            // 自适应容差：**在不失圆的前提下，取最大的那个盘**。
+            //
+            // 为什么不是"最像圆的那一个"：圆度分不清"真圆盘"和"更小的同心圆盘" ——
+            // 阈值太紧时只剩宝石内的亮斑，圆度依然是 1.000，但半径小一大截，
+            // 结果会把宝石外圈切掉（白宝石踩过：r=222.7 而真圆≈265）。
+            // 曲线形状是：容差放松 → mask 变大且仍是圆盘；再放松 → 泄漏到背景/阴影，圆度掉下来。
+            // 所以判据是"圆度合格（0.97~1.05）里，面积最大的那个"。
+            float bestTol = -1f, bestRound = 0f;
             bool[] bestMask = null;
+            int bestArea = -1;
+            var table = new System.Text.StringBuilder();
             foreach (var tol in Tolerances)
             {
                 var mask = LargestBlob(FillHoles(Foreground(px, w, h, bg, tol), w, h), w, h);
                 int area = Count(mask);
-                if (area < w * h / 20) continue;                  // 太小：不是本体那个圆
+                if (area < w * h / 20)
+                {
+                    table.Append($" {tol:0.00}→太小");
+                    continue;
+                }
                 Bounds(mask, w, h, out float bx0, out float by0, out float bx1, out float by1);
                 float bw = bx1 - bx0 + 1, bh = by1 - by0 + 1;
                 float round = area / (Mathf.PI * (bw / 2f) * (bh / 2f));   // 圆 = 1.0
-                // 要"最接近 1"而不是"最大"：容差太松会把背景/阴影也吃进来，
-                // 那时面积会**大于**内切圆（>1）—— 选它等于把宝石周围糊一圈（红宝石踩过）。
-                float score = -Mathf.Abs(round - 1f);
-                if (score > bestScore) { bestScore = score; bestTol = tol; bestRound = round; bestMask = mask; }
+                table.Append($" {tol:0.00}→(r{Mathf.Sqrt(area / Mathf.PI):0},圆{round:0.000})");
+                bool discLike = round >= 0.97f && round <= 1.05f;
+                if (discLike && area > bestArea)
+                {
+                    bestArea = area; bestTol = tol; bestRound = round; bestMask = mask;
+                }
             }
+            Debug.Log($"[Cutout]   {name} 容差候选：{table}");
             if (bestMask == null)
             {
                 Debug.LogError($"[Cutout] {name}: 找不到前景（宝石和背景几乎同色？）—— 没有输出");
