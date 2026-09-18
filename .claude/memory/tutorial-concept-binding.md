@@ -142,10 +142,41 @@ metadata:
 把牌堆里那批垫牌改成正面朝上，立刻报
 `deck_level_1.kinds[一级垫牌].face: 期望全部背面朝上（face_down），实际 36 件朝上 / 0 件朝下`。
 
+## `what`：用本体语言引用组件（2026-09 已落地）
+
+动画数据不再写"本作专用素材名"，而是说"规则上这是哪一张"：
+
+```json
+{"at":3.58,"dur":0.34,"action":"transfer","realizes":"<top_draw>",
+ "source":["deck_level_1"],"quantity":1,"destination":"card_market",
+ "what":{"concept":"development_card_level_1","parts":[{"key":"bonus","value":"<emerald>"}]},
+ "to":"face_up","order":0,"slot":0}
+```
+
+**为什么字段名不是 `<object>`**：本体的字段名是 `<object>`，值可以是
+`{"<concept>": {属性}}`（概念 id 做 key）。但 **JsonUtility 只按固定字段名反序列化，
+不支持动态键**，那种写法引擎一个字都读不到；`"<object>"` 这个键名在 C# 里也没法做字段名。
+所以摊平成固定形状，字段名取**本体自己散文里用的词**：`<zone>.contains` 写的是
+"若 **what** 的类型不在 contains 中，`<transfer>` 非法"。
+
+**反查表从绑定推导**，不另存一份：
+`concept` / `concept_by_palette[].concept` / `parts` →（模板, 色板）。
+- 引擎：`ZoneStore.BuildConceptIndex` + `ResolveConcept`
+- 校验器：`validate_cue_anim.py` 的 `concept_index` + `resolve_what`
+- **两边是镜像，改一边要改另一边**（各自的注释里都写了对方在哪）
+
+**找不到、或不唯一，都报错，绝不猜**。已注入验证：
+- 属性值写错 → `这个概念下有 8 个候选 […]，要写 parts 才能说清是哪一张`
+- 去掉 parts → `概念+属性 development_card_level_1| 对应多个模板
+  [('sample_card_1', …), ('sample_back_1', …), ('blank_card_1', …)] —— 说不清要哪一张`
+
+**分工是刻意的**：`what` 说"规则上这是什么"（一级发展卡、绿宝石、贵族），
+`template` 说"用哪张素材"（样本卡 / 垫牌 / 真卡），后者只留给 `create` / `stack` ——
+本体里**根本没有"出现/消失"这类事件**，那本来就是实现层。校验器会对
+"transfer 里写 template"报警。
+
 ## 仍未做
 
-- **`<object>`**：让动画用概念+属性引用组件（`{"<object>": {"<development_card_level_1>": {"parts":{"bonus":"<emerald>"}}}}`），
-  引擎建"概念+属性 → 模板"反查表并报歧义。现在数据里仍是 `market_card_1_emerald` 这类本作专用模板名。
 - **牌堆的 create vs transfer**：stage 的 `initial` 里牌堆的 40/30/20 张牌**不在盒子里**
   （`box_level_*` 是空的），cue12 是用 `stack` create 出来的；而 flow 说
   `prepare_level_N_deck: game_box → development_deck_N`。两者要统一。

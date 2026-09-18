@@ -95,6 +95,8 @@
    目的地 `zone`→`destination`、朝向布尔→`to`、新增 `realizes`（说明规则上是哪个本体事件）
 3. **组件状态**：采样逐身份 + 每件导出，契约可断言 `face`/`shows`；`ListZone` 打印每件
 4. `draw` 改成继承 `transfer`、`flip` 改成继承 `state_change`（删掉重复声明）
+5. **`what`**：transfer 用本体语言引用组件（`{concept, parts}`），引擎/校验器各有一份
+   从绑定推导的反查表，找不到或不唯一都报错；`template` 只留给 create/stack
 
 ### 【已完成】收工后清掉的隐患（2026-09）
 
