@@ -452,7 +452,7 @@ def check_all(args):
         #    —— 对账比状态永远看不见，只有引擎知道。所以它随采样一起交出来，在这里报。
         probs = (states.get(cue) or {}).get("problems") or []
         if probs:
-            print(f"FAIL  {cue}  引擎报出 {len(probs)} 条问题（画面多半"什么都没发生"）：")
+            print(f"FAIL  {cue}  引擎报出 {len(probs)} 条问题（画面多半「什么都没发生」）：")
             for pb in probs:
                 print(f"        - {pb}")
             fails += 1

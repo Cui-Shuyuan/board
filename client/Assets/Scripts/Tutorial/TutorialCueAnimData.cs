@@ -184,11 +184,26 @@ namespace BoardGameTutorial
     [Serializable]
     public class StageNamedRef
     {
-        public string key;      // parts 用：印记名（如 bonus）
-        public string value;    // parts 用：指向的概念（如 <diamond>）
-        public string palette;  // concept_by_palette 用：色板名
-        public string concept;  // concept_by_palette 用：该色板对应的概念
-        public List<StageNamedRef> parts;   // concept_by_palette 用：这个色板对应的属性（留空则用模板的）
+        public string key;      // 印记名（如 bonus）
+        public string value;    // 指向的概念（如 <diamond>）
+    }
+
+    /// <summary>
+    /// `concept_by_palette` 的一项：某个色板对应哪个概念、带哪些属性。
+    ///
+    /// 为什么单独一个类型：以前它跟 `StageNamedRef` 共用一个类，于是那个类里
+    /// 有个 `List&lt;StageNamedRef&gt; parts` —— **自己装自己**。
+    /// Unity 的 JsonUtility 对递归类型会报
+    /// `Serialization depth limit 10 exceeded ... object composition cycle`，
+    /// 而且**超过 10 层就静默丢掉**：数据再深一点就会丢字段还查不出来（2026-09 采样时发现）。
+    /// 拆成两个非递归类型，警告没了，超深丢字段的隐患也没了。
+    /// </summary>
+    [Serializable]
+    public class StagePaletteBinding
+    {
+        public string palette;              // 色板名
+        public string concept;              // 该色板对应的概念
+        public List<StageNamedRef> parts;   // 这个色板对应的属性（留空则用模板的）
     }
 
     [Serializable]
@@ -210,7 +225,7 @@ namespace BoardGameTutorial
         public string concept;
 
         /// <summary>同一模板按色板分身份时用（宝石六面共用一个模板，但金黄是 &lt;gold&gt; 不是 &lt;gem&gt;）。</summary>
-        public List<StageNamedRef> concept_by_palette;
+        public List<StagePaletteBinding> concept_by_palette;
 
         /// <summary>
         /// 本体 &lt;piece&gt;.parts：这块物理件上印着的**逻辑组件**（卡面的折扣色、
