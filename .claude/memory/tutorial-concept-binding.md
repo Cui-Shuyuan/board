@@ -65,7 +65,7 @@ metadata:
    校验器会把字段名当概念放行（**假阴性**）。现在规则很笨但正确：
    顶层数组的值是概念、以 `<` 开头的键的值是概念。
 
-## 下一刀：原语改名与字段对齐（未做，待定）
+## 原语改名与字段对齐（2026-09 已落地）
 
 用户明确要求：`move` 应该改成 `transfer` 与本体对等，`flip` 同理。查证后更准确的方案：
 
@@ -79,17 +79,27 @@ metadata:
 | `create` / `destroy` / `stack` | **无对应事件** | 本体只有 `<object>` 本身；`<gain>`/`<lose>` 动的是 property 归属，不是存在 |
 | `fade`/`highlight`/`scale`/`wait`/`showbox` | 无 | **纯表现层**，本就不该有本体概念 → 该显式标注 |
 
-**发现一处两层矛盾（"一套世界观"的第一个实际收益）**：
-`flow.json` 说 `deal_card_market_level_N specifies <ontology::transfer>`，
-而本体 `<top_draw>` 的原话是"从 `<deck>` 顶部抽最上面 1 张……**用于翻牌、发牌**、暗面抽牌"，
-且 `<draw>` 明确与 `<transfer>` 对立（"抽取前对象不可见，与 `<transfer>`（移动已知对象）相对"）。
-按本体自己的判据（**移动前身份是否未知**），洗过的牌堆发牌应该是 `<top_draw>`，flow 那三条该改。
+**已做**：
 
-方向建议：**原语名对齐机制（`move`→`transfer`），另加 `as` 字段说明它在规则上是哪个事件**
-（`<transfer>` / `<top_draw>` / `<random_draw>`）——机制与语义分开，两边都不将就。
-`flip` 顺带从"取反"改成本体写法 `to: "face_up"`，**这是把历史上"取反式语义"那个坑连根拔掉**
-（见 [[tutorial-animation-state]] 的"朝向有两套相反的定义"）。字段名对齐
-（`from`→`source`、`zone`→`destination`、`take`→`quantity`）是最贵也最值钱的一步。
+- 本体：`<draw>` 改成继承 `<transfer>`（并把重复声明的 source/destination/`<object>`/quantity 删掉），
+  `<flip>` 改成继承 `<state_change>`。现在 `<top_draw>` 的字段全部来自 `<transfer>`。
+- 引擎与原语：`move` → **`transfer`**；`from` → **`source`**、`take` → **`quantity`**、
+  目的地从 `zone` 拆出来叫 **`destination`**（`zone` 只剩"选择器"语义：
+  highlight/shuffle/destroy 用它表示"这个区域里的全部"）。
+- 朝向从布尔改成**终态**：`flip: true` / `face_up` / `face_down` 全部并成 **`to: "face_up"/"face_down"`**。
+  这条把历史上"取反式语义"那个坑（谁最后执行谁赢 → 播完对、重建错）**连根拔掉**。
+- 新增 **`realizes`**：说明这个动画事件在规则上是哪个本体事件。校验器用本体继承链检查它 ——
+  发牌写 `<top_draw>`（它是 `<transfer>` 的子类，所以挂在 transfer 原语上合法），
+  写 `<ontology::shuffle>` 就会被拦下；表现层原语不许写。
+- 已迁移 7 个 cue 文件（16 处 source / 12 处 quantity / 12 处 to / 20 处 destination），
+  `realizes` 按 flow/concepts 判定后逐个补上（发牌 `<top_draw>`、贵族 `<ontology::random_draw>`、
+  洗混 `<ontology::shuffle>`、拿宝石与分发宝石 `<ontology::transfer>`）。
+
+**用户的一个洞见解掉了一处两层矛盾**：`flow.json` 说发牌是 `<ontology::transfer>`，
+而本体 `<top_draw>` 说发牌就是抽顶牌、`<draw>` 又写着"与 `<transfer>` 相对"。
+用户指出 **draw 本质上也是 transfer** —— 于是把 `<draw>` 改成 `<transfer>` 的子类，
+两边就相容了：flow 是粗分类（转移），加 `realizes: "<top_draw>"` 是精确分类。
+**不需要二选一，也不需要改 flow。**
 
 ## 相关记忆
 

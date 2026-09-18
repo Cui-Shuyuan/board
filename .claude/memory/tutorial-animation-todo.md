@@ -26,7 +26,7 @@
 **已知可直接复用的东西**：
 
 - `stack` 事件：`real_templates`（顺序 = 取用顺序）+ `pad_template` + `capacity`
-- `move` + `from`：不写 `target`，引擎按 order 从顶取
+- `transfer` + `source`：不写 `target`，引擎按 order 从顶取（原语名与本体对齐）
 - 状态查询：`DumpState` / `TraceState` / `ListZone` / `TraceDealOrder`
 - 校验：`scripts/validate_cue_anim.py`（含跨 cue 取景检查 `check_framing_chain`）
 - 概念：`python3 scripts/concept_ref.py --game splendor --concept development_card_level_1`
@@ -83,7 +83,7 @@
 → `python3 scripts/check_cue_script.py --all` 对账。
 
 **注意**：宝石这一节**不能**用 `stack`（那是卡牌牌堆用的）；供应堆是
-`move` 从 `box_gem_*` 逐枚搬进 `gem_supply_*`，`display.mode = count` 按 block 布局
+`transfer` 从 `box_gem_*` 逐枚搬进 `gem_supply_*`，`display.mode = count` 按 block 布局
 （7 枚 = 4+3 两行）显示，所以 4 / 5 / 7 三种数量靠**形状**就能分辨。
 
 ### 【已完成】收工后清掉的隐患（2026-09）
