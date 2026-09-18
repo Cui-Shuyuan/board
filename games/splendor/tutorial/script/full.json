@@ -7,6 +7,149 @@
   "cues": [
     {
       "schema_version": 1,
+      "cue": "bg.intro.001.1",
+      "entry_from": null,
+      "story": "【背景介绍的开场】整节显示游戏盒封面。这条 cue 只做一件事：把盒面显示出来\n（`showbox on=1 picture=media/box.png`），桌上还没有任何可见组件。\n\n顺带把**实物清单**作为基准记下来：宝石每色 7 枚、黄金 5 枚在盒里（`box_gem_*`），贵族 3 枚在镜头外（`offstage`）—— 开局的全部家当。之后每一节都从这份清单里搬，所以「桌上的数 + 盒里的数 = 实物总数」永远能核。\n\n**已知短板（待补）**：画面根状态（当前显示的是哪张整幅图）**不在采样里** —— DumpState 只导出 zone 里的组件状态，而盒面挂在画面根下（`stage.board.default_picture` + `showbox`）。所以这条契约现在只能声明\"可见区域全空 + 清单在此\"，盒面本身还没有证据可查。",
+      "enter": {
+        "zones": {
+          "deck_level_1": {
+            "count": 0
+          },
+          "deck_level_2": {
+            "count": 0
+          },
+          "deck_level_3": {
+            "count": 0
+          },
+          "card_market": {
+            "count": 0
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 0
+          },
+          "gem_supply_sapphire": {
+            "count": 0
+          },
+          "gem_supply_ruby": {
+            "count": 0
+          },
+          "gem_supply_emerald": {
+            "count": 0
+          },
+          "gem_supply_onyx": {
+            "count": 0
+          },
+          "gold_supply": {
+            "count": 0
+          },
+          "player_holding": {
+            "count": 0
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "showcase_2": {
+            "count": 0
+          },
+          "showcase_3": {
+            "count": 0
+          },
+          "box_gem_diamond": {
+            "count": 7
+          },
+          "box_gem_sapphire": {
+            "count": 7
+          },
+          "box_gem_ruby": {
+            "count": 7
+          },
+          "box_gem_emerald": {
+            "count": 7
+          },
+          "box_gem_onyx": {
+            "count": 7
+          },
+          "box_gem_gold": {
+            "count": 5
+          },
+          "offstage": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "deck_level_1": {
+            "count": 0
+          },
+          "deck_level_2": {
+            "count": 0
+          },
+          "deck_level_3": {
+            "count": 0
+          },
+          "card_market": {
+            "count": 0
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 0
+          },
+          "gem_supply_sapphire": {
+            "count": 0
+          },
+          "gem_supply_ruby": {
+            "count": 0
+          },
+          "gem_supply_emerald": {
+            "count": 0
+          },
+          "gem_supply_onyx": {
+            "count": 0
+          },
+          "gold_supply": {
+            "count": 0
+          },
+          "player_holding": {
+            "count": 0
+          },
+          "box_gem_diamond": {
+            "count": 7
+          },
+          "box_gem_sapphire": {
+            "count": 7
+          },
+          "box_gem_ruby": {
+            "count": 7
+          },
+          "box_gem_emerald": {
+            "count": 7
+          },
+          "box_gem_onyx": {
+            "count": 7
+          },
+          "box_gem_gold": {
+            "count": 5
+          },
+          "offstage": {
+            "count": 3
+          }
+        }
+      },
+      "timing": {
+        "显示盒面": "0.0（口播 0.00-4.25）"
+      }
+    },
+    {
+      "schema_version": 1,
       "cue": "setup.cards.001.1",
       "entry_from": null,
       "story": "【这是发展卡牌，共90张】\n桌上还什么都没有。先把盒子收起来，然后在桌子中央摆出一张发展卡的正面，让观众看清发展卡长什么样。\n此时牌堆还不存在——发展卡只是被介绍，还没有成摞。牌堆要到 cue 12「洗混」时才被创建。",
@@ -1150,6 +1293,320 @@
         "黄金补到 5 枚": "0.50-1.20（口播 0.28-4.25「将全部5枚黄金也放在一旁，成为黄金供应堆」）",
         "黄金呼吸": "2.40-3.10",
         "「其余的宝石放回盒子」": "4.81-6.41 —— **刻意不给画面**（用户决定）"
+      }
+    },
+    {
+      "schema_version": 1,
+      "cue": "setup.nobles.001.1",
+      "entry_from": "setup.gems.005.2",
+      "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n\n这条 cue 的口播讲贵族，**但它同时承担宝石那节留下的收尾**（用户 2026-09 裁决）：\n宝石小节按 2/3/4 人三种数量演到各 7 枚（4 人局），而整篇之后走 2 人局（贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径）。\n所以这里把每色多出来的 **3 枚搬回盒子**：7 → 4。\n\n动作是背景清理，与口播内容无关，所以时间上放在前半句说完之前完成，别抢戏：\n  1.00-2.60：五种颜色各 3 枚，从 `gem_supply_*` 飞回 `box_gem_*`\n\n黄金不在这条里动（5 枚一直放在 `gold_supply`，玩家数不影响它）。",
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 7
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 7,
+            "kinds": {
+              "宝石蓝": 7
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 7,
+            "kinds": {
+              "宝石红": 7
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 7,
+            "kinds": {
+              "宝石绿": 7
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 7,
+            "kinds": {
+              "宝石黑": 7
+            }
+          },
+          "box_gem_diamond": {
+            "count": 0
+          },
+          "box_gem_sapphire": {
+            "count": 0
+          },
+          "box_gem_ruby": {
+            "count": 0
+          },
+          "box_gem_emerald": {
+            "count": 0
+          },
+          "box_gem_onyx": {
+            "count": 0
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "noble_market": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "box_gem_diamond": {
+            "count": 3
+          },
+          "box_gem_sapphire": {
+            "count": 3
+          },
+          "box_gem_ruby": {
+            "count": 3
+          },
+          "box_gem_emerald": {
+            "count": 3
+          },
+          "box_gem_onyx": {
+            "count": 3
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "noble_market": {
+            "count": 0
+          }
+        }
+      },
+      "timing": {
+        "每色搬 3 枚回盒子（7→4）": "1.00-2.60（口播 0.00-5.64，背景清理）"
+      }
+    },
+    {
+      "schema_version": 1,
+      "cue": "setup.nobles.001.2",
+      "entry_from": "setup.nobles.001.1",
+      "story": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n\n贵族从镜头外（`offstage`，「从所有的贵族板块中随机抽出」= 盲抽）飞到贵族市场，**正面朝上**放好 —— 贵族是 `<tile>`，`<tile>.face` 是它的状态，所以这里能断言\"3 枚全朝上\"。\n三块依次落位（`lead` 0.35 错开），对齐台词「放(1.07)置(1.26)」。\n2 人局 = 玩家数 + 1 = 3 块（flow: deal_nobles）。\n\n「其余的放回盒子」不在这条里做：那 20 多枚贵族从来只是概念上\"在盒里\"，动画里没有把它们建出来，所以也就没有要放回的东西。",
+      "enter": {
+        "zones": {
+          "offstage": {
+            "count": 3
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "offstage": {
+            "count": 0
+          },
+          "noble_market": {
+            "count": 3,
+            "face_up": 3,
+            "shows_face": 3,
+            "kinds": {
+              "贵族": {
+                "count": 3,
+                "face": "up",
+                "shows": "face"
+              }
+            }
+          },
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          }
+        }
+      },
+      "timing": {
+        "3 块贵族依次落位": "1.05-2.25（台词「放(1.07)置(1.26)」）",
+        "逐块高亮": "2.05 / 2.40 / 2.75"
+      }
+    },
+    {
+      "schema_version": 1,
+      "cue": "action.take.different.001",
+      "entry_from": "setup.nobles.001.2",
+      "story": "【拿取三种不同宝石】玩法第一条：从宝石供应堆拿三种**不同**颜色的宝石各一枚。\n事实来自 flow 的 `take_gems_different`：`<gem_supply>` → `<ontology::player_holding>`，3 颗。\n\n  0.30 / 0.55 / 0.80：先分别高亮三种宝石（台词在逐一点名）\n  3.35：三枚一起飞到玩家持有区（`stagger` 0.25 依次走）\n  4.10：持有区整体高亮，表示\"这三枚在你手上\"\n\n**已知短板（待重构）**：高亮用的是引擎实例 id（`gem#1` / `gem#8` / `gem#15`），而 id 是\"第几个被创建\"的产物 —— 同一条数据在顺序播放里（不靠 `start.set` 预置）拿到的 id 完全不同。这类\"点名\"要换成本体语言的选法（哪个概念、在哪个 zone、第几位），见 review 里的字段归属审计。",
+      "enter": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1
+            }
+          }
+        }
+      },
+      "timing": {
+        "三种宝石分别高亮": "0.30 / 0.55 / 0.80（三种不同宝石 3.21~4.44）",
+        "三枚飞到持有区": "3.35-3.85（各一枚 4.44~4.99）",
+        "持有区高亮": "4.10"
       }
     }
   ]

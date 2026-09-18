@@ -99,6 +99,63 @@ class Report:
 
 MARKET_COLS = 4          # 市场每行几格（与 stage 的 layout.cols 一致）
 
+# ── 字段归属（2026-09：把"单独声明的变量"逐个交代清楚）────────────────────
+# 目标：**任何一个字段都必须能说出它属于哪一层**，没有归属的字段就是"单独声明的变量"，
+# 要报错。三层分别是：
+#
+#   common       事件的通用部分：哪个原语、规则上是哪个事件、时间轴、取景、选择器
+#   ontology     本体概念的字段 —— **由 realizes（或原语的默认概念）现场推导**，
+#                不在代码里抄一遍。这才是"参数来自 concept"
+#   presentation 表现层：本体对它没有也不该有话说（不影响任何组件状态）
+#   impl         实现层：本体没有"出现/消失"这类事件，也没有"第几格"这个字段
+#
+# 这份清单本身就是"能否去掉单独声明的变量"的答案：
+#   能去掉的 → 已经在 ontology 里（source/destination/quantity/what/to/target）
+#   去不掉的 → 明确挂在 presentation / impl 名下，而不是混在原语参数里
+COMMON_FIELDS = {"action", "realizes", "at", "dur", "lead", "easing",
+                 "camera", "camera_padding", "target", "zone", "container"}
+
+PRESENTATION_FIELDS = {
+    "grow": "高亮放大倍率",
+    "peak_alpha": "高亮峰值透明度",
+    "scale": "缩放倍率",
+    "scale_mode": "缩放模式（by/to）",
+    "to_alpha": "目标透明度",
+    "angle": "旋转角（orientation 本体还没有这一维）",
+    "on": "整幅图显示/隐藏",
+    "picture": "整幅图是哪一张（盒面）",
+    "amount": "洗混强度",
+    "stagger": "同一批件错开起飞（纯节奏）",
+    "group": "整组一起搬（同一段位移）",
+    "fade_in": "搬运途中淡入",
+}
+
+IMPLEMENTATION_FIELDS = {
+    "order": "落位序号 —— 「位置也是状态」，但本体 <zone> 还没有有序表字段",
+    "slot": "order=-2 时的目标格位",
+    "template": "确切素材；transfer 该用 what，这个只给 create/stack",
+    "palette": "确切色板（同上）",
+    "destination": "create/stack 的落点 —— 本体没有「出现/消失」这类事件，所以同名字段在这里"
+                   "只有摆放含义（transfer 的 destination 才是本体 <transfer>.destination）。"
+                   "这也是「牌堆该 create 还是 transfer」那个待决问题的体现",
+    "count": "create 一次建几件",
+    "plain": "create 不区分色板（一整摞牌）",
+    "capacity": "stack 这一摞共几张",
+    "real_templates": "stack 的真牌顺序",
+    "pad_template": "stack 的垫牌模板",
+}
+
+# 字段名与本体的差异（本体叫 <object>，JSON 叫 what —— 见 TutorialCueAnimData.ConceptRef）
+ONTOLOGY_FIELD_ALIAS = {"what": "<object>", "target": "target"}
+
+# 复合字段：一个动画事件其实实现了**两个**本体事件，写起来合并成一条。
+# 必须单独列出来 —— 否则它会以"说不出归属"的样子出现（这正是审计第一次跑出来的结果：
+# 12 个发牌事件上的 `to` 找不到家，因为 <transfer> 没有 to，它是 <state_change> 的字段）。
+COMPOSITE_FIELDS = {
+    "to": "隐含的 <state_change>：搬运/创建的同时把状态设到某个值（本体要求拆成两个事件，"
+          "动画里合并写；取值按 <state_change>.to 校验）",
+}
+
 
 def color_of_target(target: str):
     """从组件 id 里取出颜色名：market_card_1_emerald#1 → emerald。取不到返回 None。"""
@@ -362,6 +419,39 @@ def collect_created_ids(anim_dir: Path):
     return ids
 
 
+# 全轨道累计：字段 → 用了它的原语集合（--fields 报告用）
+used_fields: dict[str, set[str]] = {}
+
+
+def print_field_report():
+    """把所有出现过的字段按归属层列出来 —— "能否去掉单独声明的变量"的答案。"""
+    w = load_world("splendor")
+    # 本体字段：把每个原语的默认概念与 realized 概念合起来看
+    ontology_fields = {}
+    for act, ref in sorted(PRIMITIVE_EVENT.items()):
+        if not ref:
+            continue
+        for f in w.merged_fields(ref):
+            ontology_fields.setdefault(f, set()).add(act)
+    print("字段归属审计（全轨道实际用到的字段）")
+    print("-" * 72)
+    for title, bucket in (("本体概念字段（参数来自 concept）", ontology_fields),
+                          ("复合字段（一条动画事件 = 两个本体事件）", COMPOSITE_FIELDS),
+                          ("表现层（本体没有也不该有）", PRESENTATION_FIELDS),
+                          ("实现层（本体没有对应事件）", IMPLEMENTATION_FIELDS)):
+        print(f"\n【{title}】")
+        for f, info in sorted(bucket.items()):
+            # 字段名可能和 JSON 里写的不一样（本体叫 <object>，数据里写 what），别名也算用到
+            names = {f} | {a for a, real in ONTOLOGY_FIELD_ALIAS.items() if real == f}
+            used = "✔ 用到" if names & set(used_fields) else "·  未用"
+            print(f"  {used}  {f:22s} {info if isinstance(info, str) else ''}")
+    print("\n【通用字段】", ", ".join(sorted(COMMON_FIELDS)))
+    stray = sorted(set(used_fields) - set(COMMON_FIELDS) - set(PRESENTATION_FIELDS)
+                   - set(IMPLEMENTATION_FIELDS) - set(COMPOSITE_FIELDS)
+                   - set(ontology_fields) - set(ONTOLOGY_FIELD_ALIAS))
+    print("\n没有归属的字段:", stray if stray else "无 ✓")
+
+
 def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
     try:
         doc = load_json(path)
@@ -589,6 +679,24 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             if not zone and not target:
                 report.warn(ew, "shuffle 既没有 zone 也没有 target，会对全体生效")
 
+        # ── 字段归属：这个事件的每个字段都属于某一层吗 ──────────────────
+        concept_ref = ev.get("realizes") or PRIMITIVE_EVENT.get(action)
+        allowed = (set(COMMON_FIELDS) | set(PRESENTATION_FIELDS)
+                   | set(IMPLEMENTATION_FIELDS) | set(COMPOSITE_FIELDS))
+        if concept_ref and world.resolve(concept_ref):
+            for f in world.merged_fields(concept_ref):
+                allowed.add(f)
+                for alias, real in ONTOLOGY_FIELD_ALIAS.items():
+                    if real == f:
+                        allowed.add(alias)
+        stray = sorted(set(ev) - allowed)
+        if stray:
+            report.error(ew, f"字段 {stray} 说不出归属层 —— 一个字段要么是本体概念"
+                             f"（{concept_ref}）的字段，要么明确属于表现层/实现层；"
+                             f"没有归属的就是「单独声明的变量」")
+        for f in ev:
+            used_fields.setdefault(f, set()).add(action)
+
         # ── realizes：这个动画事件在规则上是哪个本体事件 ────────────────
         wants = PRIMITIVE_EVENT.get(action)
         got = ev.get("realizes")
@@ -711,7 +819,21 @@ def main():
     parser.add_argument("--cue", help="只校验这一条 cue")
     parser.add_argument("--file", help="直接校验指定文件")
     parser.add_argument("--json", action="store_true", help="机器可读输出")
+    parser.add_argument("--fields", action="store_true",
+                        help="字段归属审计：每个事件字段属于本体/复合/表现层/实现层哪一层")
     args = parser.parse_args()
+
+    if args.fields:
+        # 只会走一遍动画文件把字段收集齐，然后打印归属表（不判对错）
+        anim_dir0 = ROOT / "games" / args.game / "tutorial" / "anim" / args.track
+        rt0 = ROOT / "games" / args.game / "tutorial" / f"{args.track}.runtime.json"
+        runtime0 = load_json(rt0) if rt0.exists() else {}
+        cues0 = {c["id"]: c for c in runtime0.get("cues", [])}
+        if anim_dir0.is_dir():
+            for path0 in sorted(anim_dir0.glob("*.json")):
+                validate_cue(path0, cues0, args.track, args.game, Report(path0))
+        print_field_report()
+        return 0
 
     game_root = ROOT / "games" / args.game
     runtime_path = game_root / "tutorial" / f"{args.track}.runtime.json"

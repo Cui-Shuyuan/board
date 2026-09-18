@@ -70,6 +70,9 @@ def kind_matches(want_key, got_key):
         # 牌堆里的垫牌（只为让牌堆看上去有几十张，永远发不出来）
         if want_key == f"{lv}级垫牌":
             return tmpl == f"blank_card_{num}"
+    # 贵族板块：模板 id 就叫 noble
+    if want_key in ("贵族", "贵族板块"):
+        return tmpl == "noble"
     # 兜底：当作模板 id 前缀
     return want_key == tmpl
 
