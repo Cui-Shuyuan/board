@@ -13,7 +13,10 @@
       "at": 0.05,
       "dur": 0.0,
       "action": "destroy",
-      "target": "sample_card_1#1"
+      "what": {
+        "concept": "development_card_level_1"
+      },
+      "zone": "showcase"
     },
     {
       "at": 0.05,
@@ -53,7 +56,10 @@
       "at": 0.6,
       "dur": 1.1,
       "action": "highlight",
-      "target": "sample_back_1#1",
+      "what": {
+        "concept": "development_card_level_1"
+      },
+      "zone": "showcase_1",
       "easing": "easeInOutCubic",
       "grow": 1.16
     }

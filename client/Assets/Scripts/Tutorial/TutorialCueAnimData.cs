@@ -323,6 +323,12 @@ namespace BoardGameTutorial
     [Serializable]
     public class CueAnimSeed
     {
+        /// <summary>
+        /// 用本体语言说清"预置哪一种组件"（推荐）。与 transfer 的 what 同一套解析。
+        /// 预置是**凭空造**，所以候选必须唯一 —— 说不清就直接报错，不猜。
+        /// </summary>
+        public ConceptRef what;
+
         public string template;
         public string palette;
         public string zone;

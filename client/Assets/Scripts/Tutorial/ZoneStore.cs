@@ -250,43 +250,43 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
-        /// 本体语言的引用 → 具体 (模板, 色板)。
+        /// 本体语言的引用 → **候选的 (模板, 色板) 列表**。
         ///
-        /// 找不到、或找到多个（说不清是哪一张）都返回 null 并给出原因 ——
-        /// **绝不"猜一个最像的"**：那类静默选错正是本项目反复踩的坑。
+        /// 为什么返回候选集而不是唯一解：同一个概念常常对应好几个素材 ——
+        /// 样本卡、卡背样本、垫牌在本体里**都是"一级发展卡"**（它们确实都是），
+        /// 全局说不清是哪一张；但**在某个 zone 里**往往是唯一的。
+        /// 所以"唯一"由调用方结合 zone/order 判断，这里只给候选。
+        ///
+        /// 精确匹配（概念+属性）优先；没有精确匹配时退回"同概念、属性不限"。
+        /// 一个候选都没有 = 数据写错（概念名拼错、属性值不在绑定里）。
         /// </summary>
-        public TemplateChoice ResolveConcept(string concept, List<StageNamedRef> parts, out string error)
+        public List<TemplateChoice> ConceptCandidates(string concept, List<StageNamedRef> parts)
         {
-            error = null;
-            if (string.IsNullOrEmpty(concept))
-            {
-                error = "what.concept 为空";
-                return null;
-            }
+            var found = new List<TemplateChoice>();
+            if (string.IsNullOrEmpty(concept)) return found;
             var key = PartsKey(concept, parts);
-            if (!conceptIndex.TryGetValue(key, out var list) || list.Count == 0)
-            {
-                // 退一步：不带属性时，若这个概念下只登记了唯一一个候选，就用它
-                var loose = new List<TemplateChoice>();
-                foreach (var kv in conceptIndex)
-                    if (kv.Key.StartsWith(concept + "|", System.StringComparison.Ordinal))
-                        foreach (var c in kv.Value)
-                            if (!loose.Exists(x => x.TemplateId == c.TemplateId && x.Palette == c.Palette))
-                                loose.Add(c);
-                if (loose.Count == 1) return loose[0];
-                error = loose.Count == 0
-                    ? $"没有模板实例化这个概念（{key}）"
-                    : $"这个概念下有 {loose.Count} 个候选（{string.Join(", ", loose.ConvertAll(x => x.ToString()))}），" +
-                      $"要写 parts 才能说清是哪一张";
-                return null;
-            }
-            if (list.Count > 1)
-            {
-                error = $"概念+属性 {key} 对应多个模板（{string.Join(", ", list.ConvertAll(x => x.ToString()))}）" +
-                        "—— 动画数据说不清要哪一张，要么补 parts，要么补模板上的 concept/parts";
-                return null;
-            }
-            return list[0];
+            if (conceptIndex.TryGetValue(key, out var exact))
+                foreach (var c in exact)
+                    if (!found.Exists(x => x.TemplateId == c.TemplateId && x.Palette == c.Palette))
+                        found.Add(c);
+            if (found.Count > 0) return found;
+            foreach (var kv in conceptIndex)
+                if (kv.Key.StartsWith(concept + "|", System.StringComparison.Ordinal))
+                    foreach (var c in kv.Value)
+                        if (!found.Exists(x => x.TemplateId == c.TemplateId && x.Palette == c.Palette))
+                            found.Add(c);
+            return found;
+        }
+
+        /// <summary>这一件是不是那个概念（候选集里有没有它的模板+色板）。</summary>
+        public bool MatchesConcept(ZoneItem item, List<TemplateChoice> candidates)
+        {
+            if (item?.Template == null || candidates == null) return false;
+            foreach (var c in candidates)
+                if (c.TemplateId == item.Template.id
+                    && (string.IsNullOrEmpty(c.Palette) || c.Palette == item.PaletteName))
+                    return true;
+            return false;
         }
 
         public StageZone GetZone(string id)

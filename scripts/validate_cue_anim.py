@@ -238,33 +238,26 @@ def concept_index(stage):
     return idx
 
 
-def resolve_what(stage, what):
-    """本体语言的引用 → (模板, 色板)；找不到或不唯一都返回 (None, 原因)。
+def what_candidates(stage, what):
+    """本体语言的引用 → **候选** [(模板, 色板)]。
 
-    绝不"猜一个最像的"：那类静默选错正是本项目反复踩的坑（引擎侧同样这么处理）。
+    与引擎 `ZoneStore.ConceptCandidates` 同一套规则（互为镜像）：精确匹配（概念+属性）
+    优先，没有就退回"同概念、属性不限"。返回空 = 概念名或属性写错了。
     """
     if not isinstance(what, dict) or not what.get("concept"):
-        return None, "what 必须是 {concept, parts:[{key,value}]}，且 concept 不能为空"
+        return []
     concept, parts = what["concept"], what.get("parts") or []
     idx = concept_index(stage)
     key = _parts_key(concept, parts)
-    hits = idx.get(key) or []
-    if len(hits) == 1:
-        return hits[0], None
-    if not hits:
-        loose = []
-        for k, v in idx.items():
-            if k.startswith(concept + "|"):
-                for c in v:
-                    if c not in loose:
-                        loose.append(c)
-        if len(loose) == 1:
-            return loose[0], None
-        if not loose:
-            return None, f"没有模板实例化这个概念（{key}）"
-        return None, (f"这个概念下有 {len(loose)} 个候选 {loose}，"
-                      f"要写 parts 才能说清是哪一张")
-    return None, f"概念+属性 {key} 对应多个模板 {hits} —— 说不清要哪一张"
+    if idx.get(key):
+        return list(idx[key])
+    loose = []
+    for k, v in idx.items():
+        if k.startswith(concept + "|"):
+            for c in v:
+                if c not in loose:
+                    loose.append(c)
+    return loose
 
 
 def contains_of_zone(stage, zone_id):
@@ -498,7 +491,16 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
     start = doc.get("start") or {}
     for i, seed in enumerate(start.get("set") or []):
         sw = f"{where} start.set[{i}]"
-        if seed.get("template") not in templates:
+        # 预置用 what（本体语言）说清是哪一种；预置是凭空造，候选必须唯一
+        if seed.get("what") is not None:
+            cands = what_candidates(stage, seed["what"])
+            if len(cands) != 1:
+                report.error(sw, f"start.set 的 what={seed['what'].get('concept')!r} 有 {len(cands)} 个候选"
+                                 f" {cands} —— 预置必须唯一")
+            if seed.get("template"):
+                report.warn(sw, "start.set 同时写了 what 和 template：what 才是本体语言，"
+                                "template 只在没有对应概念时用")
+        elif seed.get("template") not in templates:
             report.error(sw, f"未知 template {seed.get('template')!r}")
         if seed.get("zone") not in zones:
             report.error(sw, f"未知 zone {seed.get('zone')!r}")
@@ -568,6 +570,11 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if dest and zone:
             report.warn(ew, "同时写了 zone 和 destination：zone 是**选择器**（该区域全部），"
                             "转移的目的地请只写 destination")
+        if target:
+            # 引擎实例 id 是"第几个被创建"的产物：顺序播放（不靠 start.set 预置）时
+            # 拿到的 id 完全不同。点名一件请用 what（+ zone/order）。
+            report.warn(ew, f"用引擎实例 id target={target!r} 点名：id 随创建顺序变，"
+                            f"顺序播放与单条预置会对不上；请改用 what（+ zone/order）")
         if target and target not in known_ids:
             report.error(ew, f"target {target!r} 不是牌桌上已知的组件 id")
 
@@ -603,12 +610,7 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             # 若 what 的类型不在 contains 中，<transfer> 非法」。动画的 move 就是
             # <transfer>，所以这条本来就该在这里查。空 = 不限（纯视觉区/镜头外通道）。
             # what = 本体语言的引用（推荐）；template = 实现层的素材名（transfer 不该用）
-            what = ev.get("what")
-            if what is not None:
-                choice, why = resolve_what(stage, what)
-                if choice is None:
-                    report.error(ew, f"what 解析不了：{why}")
-            elif ev.get("template"):
+            if ev.get("template"):
                 report.warn(ew, "transfer 用 template 指定素材：规则层请用 what（本体语言），"
                                 "template 只留给 create/stack 这类实现层动作 —— 写模板名等于把"
                                 "本作专用素材写进了动画数据")
@@ -651,8 +653,8 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             if ev.get("scale_mode") not in (None, "to", "by"):
                 report.error(ew, f"scale_mode 只能是 by/to，得到 {ev.get('scale_mode')!r}")
         elif action == "highlight":
-            if not zone and not target:
-                report.warn(ew, "highlight 既没有 zone 也没有 target，会对全体生效")
+            if not zone and not target and ev.get("what") is None:
+                report.warn(ew, "highlight 既没有 zone/target 也没有 what，会对全体生效")
             peak = ev.get("peak_alpha")
             if peak is not None and not 0.0 <= float(peak) <= 1.0:
                 report.error(ew, f"peak_alpha 超出 [0,1]: {peak}")
@@ -689,6 +691,23 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                 for alias, real in ONTOLOGY_FIELD_ALIAS.items():
                     if real == f:
                         allowed.add(alias)
+        # `what` 是本体 <object> 槽位 —— <transfer> 的字段说明里写着它
+        # "同时承担 <event> 中 target 的语义"。所以**任何动作**都可以用它点名组件，
+        # 哪怕这个动作本身（highlight/destroy）在本体里没有对应事件：
+        # 它点名的是**组件**，不是事件。这就是"用概念+位置选件"取代引擎 id 的落点。
+        allowed.add("what")
+
+        # what 的解析检查对**任何动作**都做（highlight/destroy 也用它点名组件）
+        what = ev.get("what")
+        if what is not None:
+            cands = what_candidates(stage, what)
+            if not cands:
+                report.error(ew, f"what 一个候选都没有：concept={what.get('concept')!r}"
+                                 f"（概念名或属性写错了？）")
+            elif len(cands) > 1 and not ev.get("zone") and ev.get("order", -1) < 0:
+                report.error(ew, f"what 全局有 {len(cands)} 个候选 {cands}，又没给 zone/order"
+                                 f" —— 说不清要哪一件")
+
         stray = sorted(set(ev) - allowed)
         if stray:
             report.error(ew, f"字段 {stray} 说不出归属层 —— 一个字段要么是本体概念"

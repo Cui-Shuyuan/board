@@ -8,8 +8,9 @@
   "start": {
     "set": [
       {
-        "template": "noble",
-        "palette": "noble",
+        "what": {
+          "concept": "noble"
+        },
         "zone": "noble_market",
         "expand_to": 3
       }
@@ -70,7 +71,11 @@
       "at": 2.05,
       "dur": 0.3,
       "action": "highlight",
-      "target": "noble#1",
+      "what": {
+        "concept": "noble"
+      },
+      "zone": "noble_market",
+      "order": 0,
       "easing": "easeInOutCubic",
       "grow": 1.16
     },
@@ -78,7 +83,11 @@
       "at": 2.4,
       "dur": 0.3,
       "action": "highlight",
-      "target": "noble#2",
+      "what": {
+        "concept": "noble"
+      },
+      "zone": "noble_market",
+      "order": 1,
       "easing": "easeInOutCubic",
       "grow": 1.16
     },
@@ -86,7 +95,11 @@
       "at": 2.75,
       "dur": 0.3,
       "action": "highlight",
-      "target": "noble#3",
+      "what": {
+        "concept": "noble"
+      },
+      "zone": "noble_market",
+      "order": 2,
       "easing": "easeInOutCubic",
       "grow": 1.16
     }

@@ -366,8 +366,21 @@ namespace BoardGameTutorial
             {
                 foreach (var seed in start.set)
                 {
+                    string seedTemplate = seed.template, seedPalette = seed.palette;
+                    if (seed.what != null && !string.IsNullOrEmpty(seed.what.concept))
+                    {
+                        var cands = Store.ConceptCandidates(seed.what.concept, seed.what.parts);
+                        if (cands.Count != 1)
+                        {
+                            Debug.LogError($"[TutorialCueAnim] start.set 的 what='{seed.what.concept}' " +
+                                           $"有 {cands.Count} 个候选，预置必须唯一（cue {CueId}）");
+                            continue;
+                        }
+                        seedTemplate = cands[0].TemplateId;
+                        if (!string.IsNullOrEmpty(cands[0].Palette)) seedPalette = cands[0].Palette;
+                    }
                     int want = seed.expand_to > 0 ? seed.expand_to : Mathf.Max(1, seed.count);
-                    int have = Store.CountIn(seed.zone, seed.palette, seed.template);
+                    int have = Store.CountIn(seed.zone, seedPalette, seedTemplate);
                     int need = Mathf.Max(0, want - have);
                     if (need == 0) continue;
 
@@ -377,11 +390,11 @@ namespace BoardGameTutorial
                     int guard = 0;
                     while (need > 0 && guard++ < 64)
                     {
-                        int moved = Store.PullFrom(OffstageZoneId, seed.template, seed.palette, seed.zone, need);
+                        int moved = Store.PullFrom(OffstageZoneId, seedTemplate, seedPalette, seed.zone, need);
                         need -= moved;
                         if (moved == 0) break;
                     }
-                    if (need > 0) Store.Spawn(seed.template, seed.palette, seed.zone, need);
+                    if (need > 0) Store.Spawn(seedTemplate, seedPalette, seed.zone, need);
                 }
             }
 
@@ -1458,16 +1471,18 @@ namespace BoardGameTutorial
             // 本体语言的引用 → 具体素材。解析不出来就**不动**并报错，不猜。
             string pickTemplate = ev.template;
             string pickPalette = ev.palette;
+            List<ZoneStore.TemplateChoice> pickCandidates = null;
             if (ev.what != null)
             {
-                var choice = Store.ResolveConcept(ev.what.concept, ev.what.parts, out var why);
-                if (choice == null)
+                pickCandidates = Store.ConceptCandidates(ev.what.concept, ev.what.parts);
+                if (pickCandidates.Count == 0)
                 {
-                    Debug.LogError($"[TutorialCueAnim] transfer 的 what 解析不了（cue {CueId}）：{why}");
+                    Debug.LogError($"[TutorialCueAnim] transfer 的 what 一个候选都没有（cue {CueId}）：" +
+                                   $"concept='{ev.what.concept}' —— 概念名或属性写错了？");
                     return plan;
                 }
-                pickTemplate = choice.TemplateId;
-                if (!string.IsNullOrEmpty(choice.Palette)) pickPalette = choice.Palette;
+                pickTemplate = null;   // 改由候选集判定
+                pickPalette = null;
             }
 
             // from 写多个 zone = 每个 zone 各取 take 件（三种宝石各一枚）。
@@ -1480,7 +1495,7 @@ namespace BoardGameTutorial
                 }
                 for (int i = 0; i < take; i++)
                 {
-                    var item = PickFront(source, picked, pickTemplate, pickPalette);
+                    var item = PickFront(source, picked, pickTemplate, pickPalette, pickCandidates);
                     if (item == null) break;
                     picked.Add(item);
                     plan.Add(new MovePlan { Item = item, Destination = ev.destination, Order = ev.order });
@@ -1499,7 +1514,7 @@ namespace BoardGameTutorial
         /// 所以从 order 0 一路发到 order 31，外形**天然不变**；再发才开始变小。
         /// </summary>
         private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded, string template = null,
-            string palette = null)
+            string palette = null, List<ZoneStore.TemplateChoice> candidates = null)
         {
             ZoneItem best = null;
             foreach (var item in Store.Items)
@@ -1508,6 +1523,7 @@ namespace BoardGameTutorial
                 if (excluded != null && excluded.Contains(item)) continue;
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
                 if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
+                if (candidates != null && !Store.MatchesConcept(item, candidates)) continue;
                 if (best == null || item.Order < best.Order) best = item;
             }
             return best;
@@ -1939,9 +1955,22 @@ namespace BoardGameTutorial
             }
             else
             {
+                List<ZoneStore.TemplateChoice> cands = null;
+                if (ev.what != null && !string.IsNullOrEmpty(ev.what.concept))
+                {
+                    cands = Store.ConceptCandidates(ev.what.concept, ev.what.parts);
+                    if (cands.Count == 0)
+                        Debug.LogError($"[TutorialCueAnim] destroy 的 what 一个候选都没有（cue {CueId}）：" +
+                                       $"concept='{ev.what.concept}'");
+                }
                 foreach (var item in Store.Items)
                 {
                     if (!string.IsNullOrEmpty(ev.zone) && item.ZoneId != ev.zone) continue;
+                    if (cands != null)
+                    {
+                        if (Store.MatchesConcept(item, cands)) doomed.Add(item);
+                        continue;
+                    }
                     if (!string.IsNullOrEmpty(ev.template)
                         && (item.Template == null || item.Template.id != ev.template)) continue;
                     if (!string.IsNullOrEmpty(ev.palette) && item.PaletteName != ev.palette) continue;
@@ -2211,7 +2240,7 @@ namespace BoardGameTutorial
             return actors.TryGetValue(id, out var actor) ? actor : null;
         }
 
-        private enum Selector { None, Target, Container, Zone }
+        private enum Selector { None, Target, Container, What, Zone }
 
         /// <summary>判定事件用的是哪种选择器（优先级 target &gt; container &gt; zone）。</summary>
         private Selector PickSelector(CueAnimEvent ev)
@@ -2219,16 +2248,21 @@ namespace BoardGameTutorial
             if (ev == null) return Selector.None;
             bool hasTarget = !string.IsNullOrEmpty(ev.target);
             bool hasContainer = !string.IsNullOrEmpty(ev.container);
+            bool hasWhat = ev.what != null && !string.IsNullOrEmpty(ev.what.concept);
             bool hasZone = !string.IsNullOrEmpty(ev.zone);
 
-            int n = (hasTarget ? 1 : 0) + (hasContainer ? 1 : 0) + (hasZone ? 1 : 0);
+            // `what` + `zone` **不是二选一**：what 说"哪一种"，zone 说"在哪找"。
+            // 只有 target / container / what 三者互相冲突。
+            int n = (hasTarget ? 1 : 0) + (hasContainer ? 1 : 0) + (hasWhat ? 1 : 0);
             if (n > 1)
                 Debug.LogWarning($"[TutorialCueAnim] 事件同时指定了多个选择器" +
-                                 $"（target='{ev.target}' container='{ev.container}' zone='{ev.zone}'，" +
-                                 $"cue {CueId}）：按 target > container > zone 取优先级最高的");
+                                 $"（target='{ev.target}' container='{ev.container}' " +
+                                 $"what='{ev.what?.concept}'，cue {CueId}）：" +
+                                 $"按 target > container > what > zone 取优先级最高的");
 
             if (hasTarget) return Selector.Target;
             if (hasContainer) return Selector.Container;
+            if (hasWhat) return Selector.What;
             if (hasZone) return Selector.Zone;
             return Selector.None;
         }
@@ -2304,6 +2338,38 @@ namespace BoardGameTutorial
             {
                 foreach (var item in ResolveContainer(ev.container))
                     if (item?.Actor != null) result.Add(item.Actor);
+                return result;
+            }
+            if (picked == Selector.What)
+            {
+                // 按**概念**选件：本体 <transfer> 的 <object> 字段说明里写着它
+                // "同时承担 <event> 中 target 的语义"，所以这就是"点名一件"的正规写法。
+                // zone 限定范围，order 指定第几位（-1 = 不限）。
+                var cands = Store.ConceptCandidates(ev.what.concept, ev.what.parts);
+                if (cands.Count == 0)
+                {
+                    Debug.LogError($"[TutorialCueAnim] what 一个候选都没有（cue {CueId}）：" +
+                                   $"concept='{ev.what.concept}'");
+                    return result;
+                }
+                foreach (var item in Store.Items)
+                {
+                    if (item?.Actor == null) continue;
+                    if (!string.IsNullOrEmpty(ev.zone) && item.ZoneId != ev.zone) continue;
+                    if (ev.order >= 0 && item.Order != ev.order) continue;
+                    if (!Store.MatchesConcept(item, cands)) continue;
+                    result.Add(item.Actor);
+                }
+                if (result.Count == 0)
+                    Debug.LogWarning($"[TutorialCueAnim] what='{ev.what.concept}' " +
+                                     $"{(string.IsNullOrEmpty(ev.zone) ? "" : $"在 {ev.zone} ")}" +
+                                     $"没选中任何件（cue {CueId}）");
+                else if (result.Count > 1 && ev.order < 0)
+                    // 静态检查判断不了"在这个 zone 里唯一不唯一"（那要真实状态），
+                    // 所以由运行期把事实报出来：选中了不止一件。
+                    Debug.LogWarning($"[TutorialCueAnim] what='{ev.what.concept}' " +
+                                     $"{(string.IsNullOrEmpty(ev.zone) ? "" : $"在 {ev.zone} ")}" +
+                                     $"选中了 {result.Count} 件（没给 order，cue {CueId}）");
                 return result;
             }
             if (picked == Selector.Zone)
