@@ -705,9 +705,11 @@ def read_csproj_template():
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>9.0</LangVersion>
     <!-- 必须定义 UNITY_EDITOR：`Assets/Editor/*.cs` 与部分脚本整段包在 #if UNITY_EDITOR 里，
-         不定义的话它们编译成空文件，**里面的错误一个都查不出来**（2026-09-18 踩过：
-         TutorialFrameCapture.cs 明明编译错误，检查器却报 OK） -->
-    <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_LINUX;UNITY_2023_1_OR_NEWER</DefineConstants>
+         不定义的话它们编译成空文件，**里面的错误一个都查不出来**（2026-09-18 踩过两次：
+         TutorialFrameCapture.cs 明明编译错误，检查器却报 OK；TutorialCuePlayer.cs 的
+         `#if ENABLE_INPUT_SYSTEM` 同理 —— 工程 activeInputHandler=1，Unity 会定义它）。
+         凡是工程里出现的条件编译开关，这里都要跟着定义。 -->
+    <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_LINUX;UNITY_2023_1_OR_NEWER;ENABLE_INPUT_SYSTEM</DefineConstants>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <NoWarn>CS0168;CS0219;CS0414;CS0649;CS0067;CS0108;CS0114;CS1998;CS0162;CS8981</NoWarn>
