@@ -114,8 +114,8 @@ namespace BoardGameTutorial.Editor
             // 曲线形状是：容差放松 → mask 变大且仍是圆盘；再放松 → 泄漏到背景/阴影，圆度掉下来。
             // 所以判据是"圆度合格（0.97~1.05）里，面积最大的那个"。
             float bestTol = -1f, bestRound = 0f;
-            bool[] bestMask = null;
-            int bestArea = -1;
+            bool[] bestMask = null, coreMask = null;
+            int bestArea = -1, coreArea = int.MaxValue;
             var table = new System.Text.StringBuilder();
             foreach (var tol in Tolerances)
             {
@@ -135,6 +135,8 @@ namespace BoardGameTutorial.Editor
                 {
                     bestArea = area; bestTol = tol; bestRound = round; bestMask = mask;
                 }
+                // 同时记下**最小**的圆盘：它是宝石"本体"（不含阴影/反光外圈），用来定圆心
+                if (discLike && area < coreArea) { coreArea = area; coreMask = mask; }
             }
             Debug.Log($"[Cutout]   {name} 容差候选：{table}");
             if (bestMask == null)
@@ -145,16 +147,23 @@ namespace BoardGameTutorial.Editor
             }
 
             // 圆心/半径：质心 + 面积反推半径，并与外接矩形交叉验证
-            int n = 0; double sx = 0, sy = 0;
-            for (int y = 0; y < h; y++)
-                for (int x = 0; x < w; x++)
-                    if (bestMask[y * w + x]) { n++; sx += x; sy += y; }
-            float cx = (float)(sx / n), cy = (float)(sy / n);
+            // 圆心取**本体**（最小圆盘）的质心：松 mask 常带一圈阴影/反光，质心会被拉偏
+            //（白宝石那次偏了 18px = 7% 半径），拿它当圆心会切到宝石一侧。
+            float cxs, cys; int coreN;
+            Centroid(coreMask != null ? coreMask : bestMask, w, h, out cxs, out cys, out coreN);
+            int n; float bxs, bys;
+            Centroid(bestMask, w, h, out bxs, out bys, out n);
             float rArea = Mathf.Sqrt(n / Mathf.PI);
             Bounds(bestMask, w, h, out float mx0, out float my0, out float mx1, out float my1);
             float rBox = Mathf.Min(mx1 - mx0 + 1, my1 - my0 + 1) / 2f;
             float r = Mathf.Min(rArea, rBox) - Shrink;
             float mismatch = Mathf.Abs(rArea - rBox) / Mathf.Max(1f, rBox);
+            float centerShift = Mathf.Sqrt((bxs - cxs) * (bxs - cxs) + (bys - cys) * (bys - cys));
+            float cx = cxs, cy = cys;
+            if (centerShift > 0.05f * r)
+                Debug.LogWarning($"[Cutout] {name}: 本体质心与最大圆盘质心差 {centerShift:0.0}px" +
+                                 $"（{100f * centerShift / Mathf.Max(1f, r):0}% 半径）—— 松 mask 里混进了阴影/反光？" +
+                                 $"圆心按本体质心 ({cx:0},{cy:0}) 取");
 
             // 裁到圆的外接正方形（边长 2r + 1px 余量，保证边缘过渡不贴边）
             int side = Mathf.Max(8, Mathf.RoundToInt(2f * (r + 1f)));
@@ -195,7 +204,7 @@ namespace BoardGameTutorial.Editor
             float frac = (float)opaque / (side * side);
 
             Debug.Log($"[Cutout] {name} {w}x{h} → {side}x{side} 背景=({bg.r:0.00},{bg.g:0.00},{bg.b:0.00}) " +
-                      $"容差={bestTol:0.00} 圆心=({cx:0},{cy:0}) r={r:0.0}" +
+                      $"容差={bestTol:0.00} 圆心=({cx:0},{cy:0})（最大盘质心 ({bxs:0},{bys:0})，差 {centerShift:0.0}px）r={r:0.0}" +
                       $"（面积法 {rArea:0.0} / 矩形 {rBox:0.0}，差 {mismatch:P0}）圆度={bestRound:0.000} → " +
                       $"四角max α={cornerMax:0.00} 圆心α={centerAlpha:0.00} 圆外不透明={outside} " +
                       $"不透明占比={frac:0.000}（理想 π/4={Mathf.PI / 4f:0.000}）");
@@ -301,6 +310,17 @@ namespace BoardGameTutorial.Editor
             if (!inside || i < 0 || i >= mask.Length || !mask[i] || label[i] != 0) return;
             label[i] = tag;
             stack.Push(i);
+        }
+
+        private static void Centroid(bool[] mask, int w, int h, out float cx, out float cy, out int n)
+        {
+            double sx = 0, sy = 0;
+            n = 0;
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                    if (mask[y * w + x]) { n++; sx += x; sy += y; }
+            cx = n > 0 ? (float)(sx / n) : w / 2f;
+            cy = n > 0 ? (float)(sy / n) : h / 2f;
         }
 
         private static int Count(bool[] mask)
