@@ -204,6 +204,39 @@ namespace BoardGameTutorial
         private int nextIndex;
         private ZoneSnapshot entrySnapshot;
 
+        // 自检：这条 track 的脚本读过没有、里面有多少段（一次就够，别每条 cue 刷屏）
+        private static readonly HashSet<string> preflightDone = new HashSet<string>();
+        private static int scriptMissing;
+
+        /// <summary>
+        /// 第一次读某条 track 的脚本时，把"读到了什么"打出来。
+        ///
+        /// 为什么需要：数据版本不对时（最典型是工作区没同步），引擎的表现是**静默**的 ——
+        /// 每条 cue 都走"没有动画数据，只保留牌桌"，画面就像卡住一样，没有任何报错。
+        /// 2026-09-18 用户就是这样：Windows 工作区落后 124 个提交，宝石那一节 9 条动画
+        /// 根本不在那个脚本里，于是"口播在说宝石、画面停在 cue13"。
+        /// 一行日志换一个小时的排查。
+        /// </summary>
+        private static void PreflightScript(string path)
+        {
+            if (!preflightDone.Add(path)) return;
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"[TutorialCueAnim] 找不到动画脚本 {path} —— " +
+                               $"所有 cue 都会退化成「只保留牌桌」（画面不动）。工作区同步了吗？");
+                return;
+            }
+            TrackAnimDoc doc = null;
+            try { doc = JsonUtility.FromJson<TrackAnimDoc>(File.ReadAllText(path)); }
+            catch (System.Exception e) { Debug.LogError($"[TutorialCueAnim] 脚本解析异常 {path}: {e.Message}"); }
+            int total = doc?.cues?.Count ?? 0;
+            int withEvents = 0;
+            if (doc?.cues != null)
+                foreach (var c in doc.cues)
+                    if (c?.events != null && c.events.Count > 0) withEvents++;
+            Debug.Log($"[TutorialCueAnim] 动画脚本 {path}：{total} 段 cue，其中 {withEvents} 段有事件");
+        }
+
         // ── 加载 ──────────────────────────────────────────────────────────
 
         /// <summary>
@@ -238,6 +271,8 @@ namespace BoardGameTutorial
 
             // 一个动画一个文件：`anim/{track}.json`，里面按轨道顺序放着每条 cue。
             string path = Path.Combine(gameRoot, "tutorial", "anim", track + ".json");
+            PreflightScript(path);
+
             TrackAnimDoc trackDoc = null;
             CueAnimDoc found = null;
             if (File.Exists(path))
@@ -254,8 +289,16 @@ namespace BoardGameTutorial
 
                 if (found == null)
                 {
-                    // 脚本里根本没有这条 cue：数据不一致，要留下痕迹（下面按"无动画"处理）
-                    Debug.LogWarning($"[TutorialCueAnim] {path} 里没有这条 cue: {cueId}");
+                    // 脚本里根本没有这条 cue。这与"契约写了、动画还没写"（有段但 events 为空）
+                    // 是两回事：**脚本里没有这一段**，多半是数据版本不对 ——
+                    // 最典型的就是工作区没同步（引擎读到的是几天前的脚本）。
+                    // 所以第一次遇到就报 error，并把"脚本里到底有多少段"一并说出来，
+                    // 否则这个失败完全是静默的：画面只会"什么都没发生"。
+                    scriptMissing++;
+                    if (scriptMissing <= 3)
+                        Debug.LogError($"[TutorialCueAnim] 动画脚本里没有这条 cue: {cueId}（{path}）。" +
+                                       $"脚本共 {trackDoc.cues.Count} 段；若刚加过动画，多半是工作区没同步 —— " +
+                                       $"检查 {path} 是不是最新版。");
                 }
                 else if (found.events == null || found.events.Count == 0)
                 {
