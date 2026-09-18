@@ -2671,8 +2671,16 @@ namespace BoardGameTutorial
             float distance = orthoSize * 3.2f;
             var focus = new Vector3(cx, 0f, cz);
             var eye = focus + new Vector3(0f, Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad)) * distance;
-            animCamera.transform.SetPositionAndRotation(eye, Quaternion.Euler(pitch, 0f, 0f));
-            animCamera.orthographicSize = orthoSize;
+            // **入口链重放（stateOnly）时相机还没建**：那时我们只关心状态，取景只要记下来
+            // （`frameZoneId` 已经在 SetFraming 里设好了），等 LoadCue 建出相机后再摆一次
+            // —— 它在重放之后一定会调一次 FitCamera（LoadCue 末尾）。
+            // 少了这个判空就是 NullReferenceException：表现是"冷启动跳到某条 cue 直接崩"，
+            // 而顺序播放不会（相机早就有了），所以这条路径特别容易漏。
+            if (animCamera != null)
+            {
+                animCamera.transform.SetPositionAndRotation(eye, Quaternion.Euler(pitch, 0f, 0f));
+                animCamera.orthographicSize = orthoSize;
+            }
 
             CameraOrthoSize = orthoSize;
             CameraGroundHalfWidth = orthoSize * aspect;
