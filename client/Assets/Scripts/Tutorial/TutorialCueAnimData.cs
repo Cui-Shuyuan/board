@@ -240,6 +240,17 @@ namespace BoardGameTutorial
         public float rotation;
         public int sorting_order;
         public bool highlight;
+
+        /// <summary>
+        /// 介绍用的**替身**（样本卡、样本宝石）：外形与真件相同，但不是真件 ——
+        /// 独立模板，所以不混进"每色 7 枚"这类账；介绍完就销毁。
+        ///
+        /// 为什么要标记：样本与真件绑**同一套概念**（一枚样本确实"是"那种宝石），
+        /// 于是"按概念点名"会同时命中两者。凡是"要搬/要补一件真件"的判定
+        /// （transfer 的 what、start.set 预置）都要用 `ConceptCandidatesReal` 把样本排除，
+        /// 否则"盒里的黄金"会被判成"说不清是哪一件"、预置会被整条跳过。
+        /// </summary>
+        public bool sample;
     }
 
     /// <summary>

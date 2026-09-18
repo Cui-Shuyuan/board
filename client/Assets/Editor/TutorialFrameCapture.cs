@@ -93,6 +93,11 @@ namespace BoardGameTutorial.Editor
             // 每件组件的状态（一行一件）。默认开：排查"到底哪一件不对"只能靠它。
             // 整条轨道（100+ 条 cue）会让文件到 MB 级，嫌大就 -dumpItems 0（聚合仍在）。
             bool withItems = ArgValue("-dumpItems", "1") == "1";
+            // 把引擎**解析到**的事件打一行（-dumpEvents 1）。
+            // 为什么要这个：契约是脚本文件里写的，引擎读到的是 JsonUtility 解析后的对象，
+            // 两者不一致时（字段没映射上、默认值、老数据…）表现是"画面什么都不做"，
+            // 只看脚本文件永远查不出来 —— 必须看解析结果（2026-09 的 create/what 就是这么查的）。
+            bool withEvents = ArgValue("-dumpEvents", "0") == "1";
 
             var go = new GameObject("DumpHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
@@ -128,6 +133,13 @@ namespace BoardGameTutorial.Editor
                     bool ok = anim.LoadCue(gameRoot, "full", ids[k], k > 0);
                     if (!ok && anim.ActorCount == 0)
                         Debug.LogWarning($"[Dump] {ids[k]} 没有动画数据、场景也是空的（采到的是空状态）");
+                    if (withEvents)
+                        foreach (var e in anim.EventsForTest)
+                            Debug.Log($"[Dump] {ids[k]} ev@{e.at} {e.action}" +
+                                      $" what={(e.what == null ? "<null>" : $"'{e.what.concept}'")}" +
+                                      $" target='{e.target}' zone='{e.zone}'" +
+                                      $" src={(e.source == null || e.source.Count == 0 ? "-" : string.Join("/", e.source))}" +
+                                      $" qty={e.quantity} dest='{e.destination}'");
                     for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
                     var zs = CollectZones(anim);

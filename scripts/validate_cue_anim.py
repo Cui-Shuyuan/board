@@ -215,7 +215,7 @@ def _parts_key(concept, parts):
 
 
 def concept_index(stage):
-    """概念(+属性) → [(模板, 色板)]。
+    """概念(+属性) → [(模板, 色板, 是不是样本)]。
 
     **与引擎 ZoneStore.BuildConceptIndex 是同一套规则**（互为镜像）：两边都从模板的
     concept / concept_by_palette / parts 推导，谁也不另存索引。改了一边要改另一边 ——
@@ -223,6 +223,7 @@ def concept_index(stage):
     """
     idx = {}
     for tpl in stage.get("templates", []):
+        smp = bool(tpl.get("sample"))
         by_pal = tpl.get("concept_by_palette") or []
         if by_pal:
             for e in by_pal:
@@ -230,13 +231,23 @@ def concept_index(stage):
                     continue
                 parts = e.get("parts") or tpl.get("parts") or []
                 idx.setdefault(_parts_key(e["concept"], parts), []).append(
-                    (tpl["id"], e.get("palette")))
+                    (tpl["id"], e.get("palette"), smp))
             continue
         if not tpl.get("concept"):
             continue
         idx.setdefault(_parts_key(tpl["concept"], tpl.get("parts") or []), []).append(
-            (tpl["id"], tpl.get("palette")))
+            (tpl["id"], tpl.get("palette"), smp))
     return idx
+
+
+def _real_only(cands):
+    """样本（`sample: true`，介绍用的替身）不参与"要一件真件"的竞争。
+
+    与引擎 `ZoneStore.ConceptCandidatesReal` 同一条规则：样本与真件绑同一套概念，
+    所以全局点名会同时命中；但样本只活在介绍用的展示位里，真件区里不可能有它。
+    """
+    real = [c for c in cands if not (len(c) > 2 and c[2])]
+    return real or cands
 
 
 def _zone_ctx(ev):
@@ -257,11 +268,14 @@ def _zone_ctx(ev):
     return ev.get("destination")
 
 
-def what_candidates(stage, what):
-    """本体语言的引用 → **候选** [(模板, 色板)]。
+def what_candidates(stage, what, real_only=False):
+    """本体语言的引用 → **候选** [(模板, 色板, 样本?)]。
 
     与引擎 `ZoneStore.ConceptCandidates` 同一套规则（互为镜像）：精确匹配（概念+属性）
     优先，没有就退回"同概念、属性不限"。返回空 = 概念名或属性写错了。
+
+    real_only=True 时排除样本（`sample: true`）—— 用于"要搬/要补一件真件"的判定
+    （transfer 的 what、start.set 预置）。高亮/销毁**不排除**：它们本来就该能点到展示位上的样本。
     """
     if not isinstance(what, dict) or not what.get("concept"):
         return []
@@ -269,14 +283,15 @@ def what_candidates(stage, what):
     idx = concept_index(stage)
     key = _parts_key(concept, parts)
     if idx.get(key):
-        return list(idx[key])
-    loose = []
-    for k, v in idx.items():
-        if k.startswith(concept + "|"):
-            for c in v:
-                if c not in loose:
-                    loose.append(c)
-    return loose
+        cands = list(idx[key])
+    else:
+        cands = []
+        for k, v in idx.items():
+            if k.startswith(concept + "|"):
+                for c in v:
+                    if c not in cands:
+                        cands.append(c)
+    return _real_only(cands) if real_only else cands
 
 
 def contains_of_zone(stage, zone_id):
@@ -493,7 +508,7 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
         # —— 但"唯一"是**在 zone 里**唯一：同一概念的真件和样本（如 `gem` 与 `gem_sample`）
         # 全局必然都命中，写清 zone 就已经说清了是哪一件。
         if seed.get("what") is not None:
-            cands = what_candidates(stage, seed["what"])
+            cands = what_candidates(stage, seed["what"], real_only=True)
             if not cands:
                 report.error(sw, f"start.set 的 what={seed['what'].get('concept')!r} 一个候选都没有"
                                  f"（概念名或属性写错了？）")
@@ -721,7 +736,7 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
         # what 的解析检查对**任何动作**都做（highlight/destroy 也用它点名组件）
         what = ev.get("what")
         if what is not None:
-            cands = what_candidates(stage, what)
+            cands = what_candidates(stage, what, real_only=(action == "transfer"))
             if not cands:
                 report.error(ew, f"what 一个候选都没有：concept={what.get('concept')!r}"
                                  f"（概念名或属性写错了？）")

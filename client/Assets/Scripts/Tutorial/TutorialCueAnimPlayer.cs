@@ -440,7 +440,10 @@ namespace BoardGameTutorial
                     string seedTemplate = seed.template, seedPalette = seed.palette;
                     if (seed.what != null && !string.IsNullOrEmpty(seed.what.concept))
                     {
-                        var cands = Store.ConceptCandidates(seed.what.concept, seed.what.parts);
+                        // 预置是"凭空保证这里有 N 件真件"，所以用**真件候选**：
+                        // 介绍用的样本（`sample:true`）绑同一套概念，但它不可能在真件区里，
+                        // 让它参与竞争只会把"盒里的黄金"判成说不清（2026-09 踩过）。
+                        var cands = Store.ConceptCandidatesReal(seed.what.concept, seed.what.parts);
                         if (cands.Count != 1)
                         {
                             Debug.LogError($"[TutorialCueAnim] start.set 的 what='{seed.what.concept}' " +
@@ -1491,7 +1494,8 @@ namespace BoardGameTutorial
             List<ZoneStore.TemplateChoice> pickCandidates = null;
             if (ev.what != null)
             {
-                pickCandidates = Store.ConceptCandidates(ev.what.concept, ev.what.parts);
+                // 搬的是**真件**：样本不参与（它只活在介绍用的展示位里）。
+                pickCandidates = Store.ConceptCandidatesReal(ev.what.concept, ev.what.parts);
                 if (pickCandidates.Count == 0)
                 {
                     Debug.LogError($"[TutorialCueAnim] transfer 的 what 一个候选都没有（cue {CueId}）：" +
@@ -1919,7 +1923,10 @@ namespace BoardGameTutorial
             // 「创建 N 件」如果被触发两次（重复 Seek、先解入口状态再载入等），
             // 会把牌堆建两遍（40 张变 80 张）。按已有数量补齐比"每次全建"稳妥，
             // 也让 create 可以安全地写在多条 cue 里（例如"确保牌堆已就位"）。
-            int have = Store.CountInZone(zone, ev.template);
+            // 幂等的判据必须是**这个事件自己指定的东西**：同模板不同色板是不同件
+            // （五枚颜色各一的 `gem_sample`），只数模板会让第二条起全被跳过 ——
+            // 表现是"写了 5 条 create，画面上只出现 1 枚"（2026-09 宝石介绍踩过）。
+            int have = Store.CountInZone(zone, ev.template, ev.plain ? null : ev.palette);
             n -= have;
             if (n <= 0) return;
 

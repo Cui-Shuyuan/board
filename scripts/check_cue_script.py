@@ -60,6 +60,9 @@ def kind_matches(want_key, got_key):
     # "宝石绿" 形式
     if want_key.startswith("宝石") and want_key[2:] in COLORS:
         return got_key.endswith("|gem_" + COLORS[want_key[2:]])
+    # 黄金（和宝石同一个模板/样例模板，但本体上是 <gold> 不是 <gem>）
+    if want_key in ("黄金", "gold", "金币"):
+        return got_key.endswith("|gem_gold")
     # "一级绿"、"三级黑" 形式 → market_card_<级>_<色>
     for lv, num in (("一", 1), ("二", 2), ("三", 3)):
         if want_key.startswith(lv + "级") and want_key[2:] in COLORS:

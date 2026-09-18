@@ -200,6 +200,8 @@ namespace BoardGameTutorial
         {
             public string TemplateId;
             public string Palette;
+            /// <summary>`sample: true` 的模板 —— 介绍用的替身，不是真件。</summary>
+            public bool Sample;
             public override string ToString() =>
                 string.IsNullOrEmpty(Palette) ? TemplateId : $"{TemplateId}({Palette})";
         }
@@ -229,13 +231,13 @@ namespace BoardGameTutorial
                         if (e == null || string.IsNullOrEmpty(e.concept)) continue;
                         var parts = e.parts != null && e.parts.Count > 0 ? e.parts : tpl.parts;
                         AddConceptChoice(PartsKey(e.concept, parts),
-                            new TemplateChoice { TemplateId = tpl.id, Palette = e.palette });
+                            new TemplateChoice { TemplateId = tpl.id, Palette = e.palette, Sample = tpl.sample });
                     }
                     continue;
                 }
                 if (string.IsNullOrEmpty(tpl.concept)) continue;   // 纯视觉件不进索引
                 AddConceptChoice(PartsKey(tpl.concept, tpl.parts),
-                    new TemplateChoice { TemplateId = tpl.id, Palette = tpl.palette });
+                    new TemplateChoice { TemplateId = tpl.id, Palette = tpl.palette, Sample = tpl.sample });
             }
         }
 
@@ -276,6 +278,24 @@ namespace BoardGameTutorial
                         if (!found.Exists(x => x.TemplateId == c.TemplateId && x.Palette == c.Palette))
                             found.Add(c);
             return found;
+        }
+
+        /// <summary>
+        /// 只取**真件**候选：把 `sample: true`（介绍用的替身）排除在外。
+        ///
+        /// 样本与真件绑同一套概念（一枚样本确实"是"那种宝石），所以"按概念点名"会同时命中两者。
+        /// 但样本只活在介绍用的展示位里、**不可能出现在真件所在的区域**，所以凡是
+        /// "要搬/要补一件真件"的判定（transfer 的 what、start.set 预置）都不该让它参与竞争 ——
+        /// 否则"盒里的黄金"会被判成"说不清是哪一件"，预置会被整条跳过。
+        /// 区域内选件（Resolve / PickFront）不受影响：那里由 zone 里实际有什么决定，
+        /// 展示位上的样本照样能被高亮点到。
+        /// </summary>
+        public List<TemplateChoice> ConceptCandidatesReal(string concept, List<StageNamedRef> parts)
+        {
+            var all = ConceptCandidates(concept, parts);
+            var real = new List<TemplateChoice>();
+            foreach (var c in all) if (!c.Sample) real.Add(c);
+            return real.Count > 0 ? real : all;   // 全是样本（纯介绍件）时才退回全量
         }
 
         /// <summary>这一件是不是那个概念（候选集里有没有它的模板+色板）。</summary>
@@ -395,6 +415,23 @@ namespace BoardGameTutorial
             int n = 0;
             foreach (var it in items.Values)
                 if (it.ZoneId == zoneId && it.Template != null && it.Template.id == templateId) n++;
+            return n;
+        }
+
+        /// <summary>数某区域里"某种模板 + 某个色板"的件数（`palette` 为空 = 不限色板）。</summary>
+        /// <remarks>
+        /// create 的幂等补齐要用这个：同一个模板的**不同色板**是不同东西
+        /// （五枚颜色各一的样本都叫 `gem_sample`），只数模板的话第二条起会被当成"已经有了"而跳过。
+        /// </remarks>
+        public int CountInZone(string zoneId, string templateId, string palette)
+        {
+            int n = 0;
+            foreach (var it in items.Values)
+            {
+                if (it.ZoneId != zoneId || it.Template == null || it.Template.id != templateId) continue;
+                if (!string.IsNullOrEmpty(palette) && it.PaletteName != palette) continue;
+                n++;
+            }
             return n;
         }
 
