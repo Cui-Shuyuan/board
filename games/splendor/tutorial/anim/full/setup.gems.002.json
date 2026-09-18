@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "cue": "setup.gems.002",
+  "stage": "_stage/splendor.table",
+  "note": "【这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石】\n  0.30 只出 **1 枚**黄金（「这是黄金」）；另外 4 枚留到 005.2（「将全部 5 枚黄金」）\n  1.40 黄金单独呼吸（「黄金不属于宝石」）\n  4.70 五堆宝石一起呼吸（「这五种宝石」），与刚才单独呼吸的黄金形成对照\n黄金落在 `gold_supply`（供应区下排右端），与五堆宝石同框但位置独立 —— 这就是「放在一旁」的依据。",
+  "start": {
+    "set": []
+  },
+  "events": [
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "supply"
+    },
+    {
+      "at": 0.3,
+      "dur": 0.5,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_gold"
+      ],
+      "quantity": 1,
+      "destination": "gold_supply",
+      "what": {
+        "concept": "gold"
+      },
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 1.4,
+      "dur": 0.6,
+      "action": "highlight",
+      "zone": "gold_supply",
+      "easing": "easeInOutCubic",
+      "grow": 1.2
+    },
+    {
+      "at": 4.7,
+      "dur": 0.6,
+      "action": "highlight",
+      "zone": "gem_supply_diamond",
+      "easing": "easeInOutCubic",
+      "grow": 1.16
+    },
+    {
+      "at": 4.7,
+      "dur": 0.6,
+      "action": "highlight",
+      "zone": "gem_supply_sapphire",
+      "easing": "easeInOutCubic",
+      "grow": 1.16
+    },
+    {
+      "at": 4.7,
+      "dur": 0.6,
+      "action": "highlight",
+      "zone": "gem_supply_ruby",
+      "easing": "easeInOutCubic",
+      "grow": 1.16
+    },
+    {
+      "at": 4.7,
+      "dur": 0.6,
+      "action": "highlight",
+      "zone": "gem_supply_emerald",
+      "easing": "easeInOutCubic",
+      "grow": 1.16
+    },
+    {
+      "at": 4.7,
+      "dur": 0.6,
+      "action": "highlight",
+      "zone": "gem_supply_onyx",
+      "easing": "easeInOutCubic",
+      "grow": 1.16
+    }
+  ]
+}

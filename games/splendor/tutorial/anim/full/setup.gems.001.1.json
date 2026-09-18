@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "cue": "setup.gems.001.1",
+  "stage": "_stage/splendor.table",
+  "note": "【这些是标记，后续称之为宝石】五种颜色**各 1 枚**从盒里飞到供应区各自的位置（`box_gem_*` → `gem_supply_*`）。\n只出 1 枚是刻意的：后面 003.1→004 要演「每种拿 4/5/7 枚」的**增量**，起点必须低于 4。\n五枚同时起飞、只错开 0.12s —— 看起来像一只手一次放出来。取景用 `supply`（供应区整排特写）：整桌取景下宝石只占屏宽 4.3%，数不清。",
+  "start": {
+    "set": []
+  },
+  "events": [
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "supply"
+    },
+    {
+      "at": 0.35,
+      "dur": 0.5,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_diamond"
+      ],
+      "quantity": 1,
+      "destination": "gem_supply_diamond",
+      "what": {
+        "concept": "gem",
+        "parts": [
+          {
+            "key": "color",
+            "value": "<diamond>"
+          }
+        ]
+      },
+      "easing": "easeOutCubic",
+      "lead": 0.0
+    },
+    {
+      "at": 0.35,
+      "dur": 0.5,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_sapphire"
+      ],
+      "quantity": 1,
+      "destination": "gem_supply_sapphire",
+      "what": {
+        "concept": "gem",
+        "parts": [
+          {
+            "key": "color",
+            "value": "<sapphire>"
+          }
+        ]
+      },
+      "easing": "easeOutCubic",
+      "lead": 0.12
+    },
+    {
+      "at": 0.35,
+      "dur": 0.5,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_ruby"
+      ],
+      "quantity": 1,
+      "destination": "gem_supply_ruby",
+      "what": {
+        "concept": "gem",
+        "parts": [
+          {
+            "key": "color",
+            "value": "<ruby>"
+          }
+        ]
+      },
+      "easing": "easeOutCubic",
+      "lead": 0.24
+    },
+    {
+      "at": 0.35,
+      "dur": 0.5,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_emerald"
+      ],
+      "quantity": 1,
+      "destination": "gem_supply_emerald",
+      "what": {
+        "concept": "gem",
+        "parts": [
+          {
+            "key": "color",
+            "value": "<emerald>"
+          }
+        ]
+      },
+      "easing": "easeOutCubic",
+      "lead": 0.36
+    },
+    {
+      "at": 0.35,
+      "dur": 0.5,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_onyx"
+      ],
+      "quantity": 1,
+      "destination": "gem_supply_onyx",
+      "what": {
+        "concept": "gem",
+        "parts": [
+          {
+            "key": "color",
+            "value": "<onyx>"
+          }
+        ]
+      },
+      "easing": "easeOutCubic",
+      "lead": 0.48
+    }
+  ]
+}

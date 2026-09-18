@@ -20,7 +20,8 @@
 | 宝石 zone | 已在 stage 里（`gem_supply_diamond` 等），尚未接动画 |
 | 宝石脚本 | ✅ **已写完 9 条**，合并在 `games/splendor/tutorial/script/full.json` 里（一个 track 一个文件，`cues` 按轨道顺序），待用户 review |
 | 宝石的数量约定 | **已冻结**：增量演法，连演 2/3/4 人三种（1→4→5→7 枚），见下 |
-| 宝石的动画文件 | **尚未开始**（`anim/full/setup.gems.*.json` 一个都还没有） |
+| 宝石动画 | ✅ **9 条已写完**（`anim/full/setup.gems.*.json`），**等用户看实际效果**；静态复算与契约一致、校验器 0 错 0 警告 |
+| 宝石采样 | **还没采**（要在 Windows 侧跑 `dump_states.sh`） |
 | 对账 | `check_cue_script.py` 可用（`--all` / `--chain` / `--cue X --which enter`）；宝石那 9 条**还没采样** |
 | 组件状态 | ✅ 采样逐身份 + 每件导出；契约可断言 `face`/`shows`。**`full.exitstate.json` 是旧格式，需在 Windows 侧重跑 `dump_states.sh`** |
 
@@ -79,9 +80,15 @@
     `check_unity_scripts.py` 的编译检查（以前编辑器脚本不受检查，只能到 Windows 上才发现写错），
     现在 17 个 C# 文件一起编。
 
-**下一步（按工作流）**：脚本已可 review → 批准后写这 9 条的 `anim/full/setup.gems.*.json`
-→ 同步到 Windows 侧工作区 → `scripts/dump_states.sh`（一次 Unity 启动采完整条轨道）
-→ `python3 scripts/check_cue_script.py --all` 对账。
+**下一步（按工作流）**：9 条动画已写完 →
+**同步到 Windows 侧工作区** → ① 看实际动画效果 ② `scripts/dump_states.sh`（一次 Unity 启动
+采完整条轨道）→ `python3 scripts/check_cue_script.py --all` 对账。
+
+**这次新引入、还没在真机上跑过的东西**（看效果时留意）：
+- 取景 token `camera: "supply"` —— 引擎侧新代码，只做了编译与几何复算（宝石占屏宽 4.3% → 7.8%），
+  实际画面没验过。看的时候确认：供应区整排是否都在画面里、宝石是否够大能数。
+- 宝石的搬运全部是 `box_gem_*` → `gem_supply_*` 的 `transfer`，走的是「从镜头外飞入」，
+  入场方向来自 stage.initial 的 `from: "bottom"`。
 
 **注意**：宝石这一节**不能**用 `stack`（那是卡牌牌堆用的）；供应堆是
 `transfer` 从 `box_gem_*` 逐枚搬进 `gem_supply_*`，`display.mode = count` 按 block 布局

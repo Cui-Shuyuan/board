@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "cue": "setup.gems.005.2",
+  "stage": "_stage/splendor.table",
+  "note": "【将全部5枚黄金也放在一旁，成为黄金供应堆】0.50 把盒里剩下的 4 枚黄金搬出来（+002 的 1 枚 = 5 枚），2.40 呼吸一次。\n【其余的宝石放回盒子】**刻意不给画面**（用户决定）—— 所以本 cue 结束时宝石与黄金全在桌上、六个盒子 zone 全 0。\n那一步（每色 3 枚搬回盒子、走 2 人局）放在下一条 cue `setup.nobles.001.1`。",
+  "start": {
+    "set": []
+  },
+  "events": [
+    {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "supply"
+    },
+    {
+      "at": 0.5,
+      "dur": 0.6,
+      "action": "transfer",
+      "realizes": "<ontology::transfer>",
+      "source": [
+        "box_gem_gold"
+      ],
+      "quantity": 4,
+      "destination": "gold_supply",
+      "what": {
+        "concept": "gold"
+      },
+      "easing": "easeOutCubic"
+    },
+    {
+      "at": 2.4,
+      "dur": 0.7,
+      "action": "highlight",
+      "zone": "gold_supply",
+      "easing": "easeInOutCubic",
+      "grow": 1.2
+    }
+  ]
+}
