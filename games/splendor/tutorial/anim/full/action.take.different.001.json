@@ -7,6 +7,12 @@
   "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。move 的 from 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。",
   "events": [
     {
+      "at": 0.0,
+      "dur": 0.0,
+      "action": "wait",
+      "camera": "board"
+    },
+    {
       "at": 0.3,
       "dur": 0.35,
       "action": "highlight",

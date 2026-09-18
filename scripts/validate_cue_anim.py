@@ -46,6 +46,15 @@ ACTIONS = {"move", "flip", "rotate", "scale", "fade", "highlight", "shuffle",
            "showbox", "create", "destroy", "wait", "stack"}
 SHAPES = {"panel", "gem", "shadow", "dot", "card"}
 
+# camera 可以写的**组取景 token**（与 TutorialCueAnimPlayer.SetFraming 保持一致）。
+#   board  = 整桌取景
+#   cards  = 展示位三张卡背并排
+#   supply = 整排供应区（按 panel_supply 色板判定成员）
+# 除这些之外只能写某个已存在的 zone id。
+# 为什么要校验：camera 写错时 SetFraming 会把它当 zone id 查不到 → **静默**沿用上一次取景，
+# 画面悄悄不对，而引擎不报错。这正是本项目最怕的「静默失败」。
+CAMERA_TOKENS = {"board", "cards", "supply"}
+
 EASINGS = {
     "linear", "easeInQuad", "easeOutQuad", "easeInOutQuad",
     "easeInCubic", "easeOutCubic", "easeInOutCubic",
@@ -287,6 +296,11 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
         if easing and easing not in EASINGS:
             report.error(ew, f"未知 easing {easing!r}")
 
+        cam = ev.get("camera")
+        if cam and cam not in CAMERA_TOKENS and cam not in zones:
+            report.error(ew, f"未知 camera {cam!r}（只能是 {sorted(CAMERA_TOKENS)} 之一，"
+                             f"或某个已存在的 zone id；写错会让取景静默退回上一次）")
+
         target = ev.get("target")
         zone = ev.get("zone")
 
@@ -419,19 +433,25 @@ def check_framing_chain(files, report):
     上一帧的画面仍在，却已经被换成新取景，于是会"闪一下"。
 
     这不是硬错误（有时确实想先停一会儿再动），所以报 warning 让人确认。
+
+    一条 cue 里声明**两次** camera 是允许的（例如开头特写、句中切回整桌）。
+    这时：
+      - 「开头有没有声明」看**第一条** camera（决定要不要报上面那个 warning）；
+      - 「留给下一条的取景」看**最后一条** camera（才是这条 cue 结束时的画面）。
+    早期这里两者都用第一条，一条 cue 换两次取景时链就接错了。
     """
     prev_camera = None
     for path in files:
         doc = load_json(path)
         events = doc.get("events") or []
         cams = [e for e in events if e.get("camera")]
-        declared = cams[0].get("camera") if cams else None
-        first_at = min((float(e.get("at", 0.0)) for e in events), default=0.0)
+        first_declared = cams[0].get("camera") if cams else None
+        leaves = cams[-1].get("camera") if cams else prev_camera
         mutating = [e for e in events
                     if e.get("action") not in (None, "wait")
                     and float(e.get("at", 0.0)) > 1e-6]
 
-        if declared is None and prev_camera is not None and mutating:
+        if first_declared is None and prev_camera is not None and mutating:
             earliest = min(float(e.get("at", 0.0)) for e in mutating)
             if earliest > 1e-6:
                 report.warn(
@@ -441,8 +461,7 @@ def check_framing_chain(files, report):
                     f"若与上一条结尾的取景不同就会「闪一下」。要么在 at=0 显式声明 camera，"
                     f"要么确认确实想先停一会儿")
 
-        if declared is not None:
-            prev_camera = declared
+        prev_camera = leaves
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -469,7 +488,13 @@ def main():
         if not anim_dir.is_dir():
             print(f"动画目录不存在: {anim_dir}", file=sys.stderr)
             return 2
-        files = sorted(anim_dir.glob("*.json"))
+        # **按轨道顺序排，不按文件名字母序。**
+        # 取景是延续状态，跨 cue 检查必须走真实播放顺序；字母序会把
+        # action.take.different.001（轨道第 36 条）排到最前面，于是「上一条的取景」
+        # 全是错的。runtime.json 里 cues 的顺序就是轨道顺序。
+        track_order = {c["id"]: i for i, c in enumerate(runtime.get("cues", []))}
+        files = sorted(anim_dir.glob("*.json"),
+                       key=lambda f: (track_order.get(f.stem, len(track_order)), f.stem))
         if args.cue:
             files = [f for f in files if f.stem == args.cue]
             if not files:
