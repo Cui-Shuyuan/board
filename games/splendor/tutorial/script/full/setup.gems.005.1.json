@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "cue": "setup.gems.005.1",
+  "entry_from": "setup.gems.004",
+  "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n这句话**没有新的搬运**：宝石在 003.1→004 里已经一枚一枚落在供应区了。所以这一条只做「确认」：\n\n  镜头留在供应区整排，1.20 起让五堆宝石一起呼吸一次，把「这一排就是宝石供应堆」点出来。\n\n为什么不在这里搬东西：位置在宝石出现的第一刻（001.1）就已经是最终位置了 —— 供应堆不是一个「先放在别处、再挪过来」的对象。这条 cue 的 enter == exit，正是这件事的书面证据。\n\n黄金不在这句里点（下一句 005.2 才说黄金）。",
+  "enter": {
+    "zones": {
+      "gem_supply_diamond": { "count": 7, "kinds": { "宝石白": 7 } },
+      "gem_supply_sapphire": { "count": 7, "kinds": { "宝石蓝": 7 } },
+      "gem_supply_ruby": { "count": 7, "kinds": { "宝石红": 7 } },
+      "gem_supply_emerald": { "count": 7, "kinds": { "宝石绿": 7 } },
+      "gem_supply_onyx": { "count": 7, "kinds": { "宝石黑": 7 } },
+      "gold_supply": { "count": 1 },
+      "box_gem_gold": { "count": 4 }
+    }
+  },
+  "exit": {
+    "zones": {
+      "gem_supply_diamond": { "count": 7, "kinds": { "宝石白": 7 } },
+      "gem_supply_sapphire": { "count": 7, "kinds": { "宝石蓝": 7 } },
+      "gem_supply_ruby": { "count": 7, "kinds": { "宝石红": 7 } },
+      "gem_supply_emerald": { "count": 7, "kinds": { "宝石绿": 7 } },
+      "gem_supply_onyx": { "count": 7, "kinds": { "宝石黑": 7 } },
+      "gold_supply": { "count": 1 },
+      "box_gem_gold": { "count": 4 }
+    }
+  },
+  "timing": {
+    "五堆一起呼吸（「成为宝石供应堆」）": "1.20-2.40（口播 0.28-5.55）"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "cue": "setup.gems.005.2",
+  "entry_from": "setup.gems.005.1",
+  "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n\n  0.50：盒里剩下的 4 枚黄金飞到 gold_supply，加上 002 里先出来的那 1 枚，共 5 枚。2.40 给黄金一次呼吸。\n  4.81 起的「其余的宝石放回盒子」**不给画面**（用户 2026-09 明确：这句话不需要对应画面）。\n\n由此产生一个**刻意的结果**，要写清楚以免以后误判：本 cue 结束时，宝石和黄金**全部在桌上**，六个盒子 zone 全是 0。\n  - 好的一面：`box_gem_*` 全 0 是一条干净的不变量，「桌上的数 + 盒里的数 = 实物总数」永远成立，谁多拿少拿一眼可见。\n  - 这一节的终点是 **4 人局的宝石数（每种 7 枚）**，这不代表整篇教程按 4 人局走。\n\n**数量改回 2 人局（每种 4 枚）放在下一 cue —— `setup.nobles.001.1`（用户 2026-09 裁决）**：\n  - 「其余的宝石放回盒子」在**本 cue 里不做任何动画**（用户明确）。\n  - 下一 cue 的开场动画里，每色从供应堆搬 3 枚回盒子 → 每种 4 枚、盒子每色 3 枚，\n    这样 003.1 先讲的「2 人游戏时每种 4 枚」才和后面整篇的口径一致\n    （贵族下一小节抽 3 块 = 玩家数 2 + 1，本就是 2 人局）。\n  - 也就是说 `setup.nobles.001.1` 的契约里，enter 是 7 枚/色 + 空盒，exit 是 4 枚/色 + 每色 3 枚在盒里。\n\n取景：这一条仍在供应区（黄金落位要看清楚）。切回整桌取景放在下一条 cue（贵族）的开头。",
+  "enter": {
+    "zones": {
+      "gold_supply": { "count": 1, "kinds": { "黄金": 1 } },
+      "box_gem_gold": { "count": 4, "kinds": { "黄金": 4 } },
+      "gem_supply_diamond": { "count": 7 },
+      "gem_supply_sapphire": { "count": 7 },
+      "gem_supply_ruby": { "count": 7 },
+      "gem_supply_emerald": { "count": 7 },
+      "gem_supply_onyx": { "count": 7 }
+    }
+  },
+  "exit": {
+    "zones": {
+      "gold_supply": { "count": 5, "kinds": { "黄金": 5 } },
+      "box_gem_gold": { "count": 0 },
+      "gem_supply_diamond": { "count": 7, "kinds": { "宝石白": 7 } },
+      "gem_supply_sapphire": { "count": 7, "kinds": { "宝石蓝": 7 } },
+      "gem_supply_ruby": { "count": 7, "kinds": { "宝石红": 7 } },
+      "gem_supply_emerald": { "count": 7, "kinds": { "宝石绿": 7 } },
+      "gem_supply_onyx": { "count": 7, "kinds": { "宝石黑": 7 } }
+    }
+  },
+  "timing": {
+    "黄金补到 5 枚": "0.50-1.20（口播 0.28-4.25「将全部5枚黄金也放在一旁，成为黄金供应堆」）",
+    "黄金呼吸": "2.40-3.10",
+    "「其余的宝石放回盒子」": "4.81-6.41 —— **刻意不给画面**（用户决定）"
+  }
+}

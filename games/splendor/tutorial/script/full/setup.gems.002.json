@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "cue": "setup.gems.002",
+  "entry_from": "setup.gems.001.3",
+  "story": "【这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石】\n这句话要同时说清两件事：黄金是什么、黄金**不是**宝石。所以画面分三段：\n\n  0.30（「这是黄金」）：1 枚黄金从盒里飞到 gold_supply。**只出 1 枚** —— 「将全部 5 枚黄金」是 005.2 的事，这里先把这一枚介绍清楚。\n  1.40（「黄金不属于宝石」）：黄金单独呼吸一下。位置本身就是分开的：黄金在供应区下面一排的右端，与五堆宝石不同堆。\n  4.70（「这五种宝石」）：五堆宝石一起呼吸一次，把「宝石 = 这五种」再点一遍，和刚才单独呼吸的黄金形成对照。\n\n黄金落在 gold_supply（供应区最下排右端），与 5 堆宝石同框但位置独立 —— 这就是「放在一旁」的视觉依据，不需要额外搬动。",
+  "enter": {
+    "zones": {
+      "box_gem_gold": { "count": 5, "kinds": { "黄金": 5 } },
+      "gold_supply": { "count": 0 },
+      "gem_supply_diamond": { "count": 1 },
+      "gem_supply_sapphire": { "count": 1 },
+      "gem_supply_ruby": { "count": 1 },
+      "gem_supply_emerald": { "count": 1 },
+      "gem_supply_onyx": { "count": 1 }
+    }
+  },
+  "exit": {
+    "zones": {
+      "box_gem_gold": { "count": 4, "kinds": { "黄金": 4 } },
+      "gold_supply": { "count": 1, "kinds": { "黄金": 1 } },
+      "gem_supply_diamond": { "count": 1 },
+      "gem_supply_sapphire": { "count": 1 },
+      "gem_supply_ruby": { "count": 1 },
+      "gem_supply_emerald": { "count": 1 },
+      "gem_supply_onyx": { "count": 1 }
+    }
+  },
+  "timing": {
+    "黄金 1 枚上场": "0.30-0.80（口播 0.27-1.06「这是黄金」）",
+    "黄金单独呼吸": "1.40-2.00（口播 1.43-2.73「黄金不属于宝石」）",
+    "五堆宝石一起呼吸": "4.70-5.30（口播 4.75-5.62「这五种宝石」）"
+  }
+}

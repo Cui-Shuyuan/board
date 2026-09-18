@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "cue": "setup.gems.004",
+  "entry_from": "setup.gems.003.2",
+  "story": "【4人游戏时则使用全部的7枚宝石】\n第三种数量：**每种 7 枚**。五种颜色各补 2 枚，5 → 7；补完之后盒子里的宝石**全部用完**（box_gem_* 全变 0），因为 7 就是全部。\n\n0.60 起跳、每颗 0.45s、逐色错开 0.08s；2.00 给五堆一次呼吸，把「7」压住。\n\n7 枚在 block 布局里正好是 **4+3 两行**（引擎注释原话：「紧凑且数得清」），和 4 枚（一整排）、5 枚（4+1）形状各不相同 —— 三种数量的区别靠形状就能看出来。\n\n注意账要平：这一步之后盒子里没有任何宝石了。005.x 不会再从盒里拿宝石，只拿黄金。",
+  "enter": {
+    "zones": {
+      "box_gem_diamond": { "count": 2, "kinds": { "宝石白": 2 } },
+      "box_gem_sapphire": { "count": 2, "kinds": { "宝石蓝": 2 } },
+      "box_gem_ruby": { "count": 2, "kinds": { "宝石红": 2 } },
+      "box_gem_emerald": { "count": 2, "kinds": { "宝石绿": 2 } },
+      "box_gem_onyx": { "count": 2, "kinds": { "宝石黑": 2 } },
+      "gem_supply_diamond": { "count": 5 },
+      "gem_supply_sapphire": { "count": 5 },
+      "gem_supply_ruby": { "count": 5 },
+      "gem_supply_emerald": { "count": 5 },
+      "gem_supply_onyx": { "count": 5 }
+    }
+  },
+  "exit": {
+    "zones": {
+      "box_gem_diamond": { "count": 0 },
+      "box_gem_sapphire": { "count": 0 },
+      "box_gem_ruby": { "count": 0 },
+      "box_gem_emerald": { "count": 0 },
+      "box_gem_onyx": { "count": 0 },
+      "gem_supply_diamond": { "count": 7, "kinds": { "宝石白": 7 } },
+      "gem_supply_sapphire": { "count": 7, "kinds": { "宝石蓝": 7 } },
+      "gem_supply_ruby": { "count": 7, "kinds": { "宝石红": 7 } },
+      "gem_supply_emerald": { "count": 7, "kinds": { "宝石绿": 7 } },
+      "gem_supply_onyx": { "count": 7, "kinds": { "宝石黑": 7 } }
+    }
+  },
+  "timing": {
+    "每种补 2 枚 → 各 7 枚（盒子清空）": "0.60-1.40（口播 0.51-3.42）",
+    "五堆一起呼吸（强调 7）": "2.00-2.70"
+  }
+}
