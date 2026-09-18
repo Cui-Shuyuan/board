@@ -181,3 +181,41 @@ metadata:
   （`box_level_*` 是空的），cue12 是用 `stack` create 出来的；而 flow 说
   `prepare_level_N_deck: game_box → development_deck_N`。两者要统一。
 - **orientation（横置/竖置）**：本体还没有这一维（用户：以后用到再加）。本作卡牌不许旋转 = 约束。
+
+## 字段归属审计：每个字段都要能说出自己属于哪一层（2026-09）
+
+用户要求"去掉所有单独声明的变量"。做法不是删字段，而是**让每个字段都有归属**，
+没有归属的字段就是"单独声明的变量"，校验器直接报错。
+
+`python3 scripts/validate_cue_anim.py --fields` 打印这张表。四个层：
+
+| 层 | 谁在里面 | 怎么来的 |
+|---|---|---|
+| **本体概念字段** | `source` / `destination` / `quantity` / `<object>`(写 `what`) / `target` / `to` / `ownership_change` / `actor` / `attribute` / `subject` / `from` / `id` / `rules` | **现场从 `realizes`（或原语的默认概念）沿 extends/specifies 推导**，代码里不抄一遍 |
+| **复合字段** | `to` | 一个动画事件其实实现了两个本体事件（transfer + state_change）。**审计第一次跑就挖出来的**：12 个发牌事件上的 `to` 找不到家，因为 `<transfer>` 没有 `to` |
+| **表现层** | `grow` / `peak_alpha` / `scale` / `scale_mode` / `to_alpha` / `angle` / `on` / `picture` / `amount` / `stagger` / `group` / `fade_in` | 本体没有也不该有（不改组件状态） |
+| **实现层** | `order` / `slot` / `template` / `palette` / `count` / `plain` / `capacity` / `real_templates` / `pad_template` / create·stack 的 `destination` | 本体没有"出现/消失"事件，也没有"第几格"字段 |
+
+**当前状态：没有归属的字段 = 0。** 全轨道实际用到的字段逐个都有归属。
+
+### 审计暴露出的三个真问题（都还没解决）
+
+1. **`target` 的值是引擎实例 id**（`gem#1` / `noble#2` / `sample_back_1#1`）。
+   字段有归属（`<event>.target`），但**值的写法不是本体语言**，
+   而且 id 是"第几个被创建"的产物 —— 顺序播放（不用 `start.set` 预置）时拿到的 id 完全不同。
+   要换成本体语言的选法（哪个概念 + 在哪个 zone + 第几位）。
+2. **`order`/`slot` 是实现层**：用户说"位置也是状态"，但本体 `<zone>` 目前只有
+   `capacity` / `contains` / `information_visibility`，**没有有序表字段**。
+   要让"第几位"成为可断言的状态，本体得补。
+3. **create/stack 的 `destination` 是实现层**：同名字段在 transfer 上是本体字段、
+   在 create/stack 上只是"摆哪儿" —— 这就是"牌堆该 create 还是 transfer"那个待决问题。
+
+### 顺带补齐的脚本
+
+`script/full.json` 现在 17 条契约，把**有动画但没脚本**的三条补上了：
+`bg.intro.001.1`（盒面 + 开局实物清单）、`setup.nobles.001.2`（贵族 3 块正面朝上）、
+`action.take.different.001`（拿三种不同宝石）；外加 `setup.nobles.001.1` ——
+它承担"宝石改回 2 人局 4 枚"那一步（用户裁决），enter 7 枚/色、exit 4 枚/色 + 盒里 3 枚。
+
+**已知短板**：画面根状态（当前显示哪张整幅图）不在采样里 —— 采样只导出 zone 里的组件，
+而盒面挂在画面根下。所以 `bg.intro.001.1` 契约现在只能声明"可见区域全空 + 清单在此"。
