@@ -204,6 +204,13 @@ namespace BoardGameTutorial
         private int nextIndex;
         private ZoneSnapshot entrySnapshot;
 
+        /// <summary>
+        /// 只推状态、不碰渲染对象。用于"从根重放到入口"（跳转/重播/上一条）——
+        /// 重放时不需要也没法动画，只要把 Store 推到最后；渲染对象由本条 cue 的
+        /// BuildActorObjects() 统一建。
+        /// </summary>
+        private bool stateOnly;
+
         // 自检：这条 track 的脚本读过没有、里面有多少段（一次就够，别每条 cue 刷屏）
         private static readonly HashSet<string> preflightDone = new HashSet<string>();
         private static int scriptMissing;
@@ -353,8 +360,18 @@ namespace BoardGameTutorial
             // 必须 Reset+ApplyInitial，否则跳到后面的 cue 会带着上一轮留下的组件。
             if (!continueState)
             {
-                Store.Reset();
-                Store.ApplyInitial();
+                // 跳转 / 重播 / 上一条：**从根重放到本条之前**，得到真正的入口状态。
+                //
+                // 以前这里是 Reset + ApplyInitial —— 那等于"回到开局"：前序 cue 里 create 出来的
+                // 东西全没了（用户报的"跳进 cue 11 什么都看不到"：那三张卡背是 cue 10 create 的）。
+                // 顺序播放（continueState=true）接着上一条的终态，不需要重放。
+                //
+                // 这样"跳转"和"顺序播放"走的是**同一条状态路径**，两种走法不可能再不一致；
+                // 内存里记的"编译器离线复算入口状态"，就是这件重放的结果预先算好而已。
+                ReplayEntryChain(trackDoc, cueId);
+                cueDoc = found;          // 重放会把 cueDoc 换成前序 cue，这里换回来
+                CueId = cueId;
+                Note = found.note;
             }
             ApplyCueStart();
 
@@ -492,6 +509,7 @@ namespace BoardGameTutorial
         /// <summary>为单个组件建立可视对象（开局批量创建与新 create 事件共用）。</summary>
         private void BuildActorObject(ZoneItem item)
         {
+            if (stateOnly) return;   // 重放入口链时只推状态
             if (item == null || actors.ContainsKey(item.Id)) return;
             var itemTpl = EffectiveTemplate(item.Template, item.PaletteName);
             var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor);
@@ -2072,6 +2090,47 @@ namespace BoardGameTutorial
         /// 入口状态从根开始解，所以每次解入口都会先摆成根的样子，再由 cue 的事件改变。
         /// 这样「按右跳转」和「顺序播到同一条」得到完全相同的画面。
         /// </summary>
+        /// <summary>
+        /// 从树根（牌桌 initial）出发，把本条 cue **之前**每一条的事件都推到终态，
+        /// 于是 Store 正好落在这条 cue 的入口状态。
+        ///
+        /// 做法与 `TutorialFrameCapture` 的 `-dumpReplay` 一致：逐条设成当前 cue、Seek 到末尾。
+        /// 期间 `stateOnly = true`：只改状态，不建渲染对象（渲染对象由本条 cue 的
+        /// BuildActorObjects() 一次性建出来）。
+        /// </summary>
+        private void ReplayEntryChain(TrackAnimDoc trackDoc, string targetCueId)
+        {
+            Store.Reset();
+            Store.ApplyInitial();
+            if (trackDoc?.cues == null) return;
+
+            bool prevStateOnly = stateOnly;
+            stateOnly = true;
+            try
+            {
+                foreach (var c in trackDoc.cues)
+                {
+                    if (c == null) continue;
+                    if (c.cue == targetCueId) break;          // 只重放本条之前
+                    if (c.events == null || c.events.Count == 0) continue;
+
+                    cueDoc = c;
+                    CueId = c.cue;
+                    clips.Clear();
+                    clock = 0f;
+                    nextIndex = 0;
+                    for (float t = 0f; t <= TotalDuration + 1f; t += 0.05f) Seek(t);
+                }
+            }
+            finally
+            {
+                stateOnly = prevStateOnly;
+                clips.Clear();
+                clock = 0f;
+                nextIndex = 0;
+            }
+        }
+
         /// <summary>
         /// 这条 cue **入口**时该显示哪张整幅图（null = 不显示）。
         ///
