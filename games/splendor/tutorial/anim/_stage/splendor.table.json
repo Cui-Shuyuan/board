@@ -597,23 +597,53 @@
       "concept_by_palette": [
         {
           "palette": "gem_diamond",
-          "concept": "gem"
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<diamond>"
+            }
+          ]
         },
         {
           "palette": "gem_ruby",
-          "concept": "gem"
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<ruby>"
+            }
+          ]
         },
         {
           "palette": "gem_emerald",
-          "concept": "gem"
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<emerald>"
+            }
+          ]
         },
         {
           "palette": "gem_sapphire",
-          "concept": "gem"
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<sapphire>"
+            }
+          ]
         },
         {
           "palette": "gem_onyx",
-          "concept": "gem"
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<onyx>"
+            }
+          ]
         },
         {
           "palette": "gem_gold",

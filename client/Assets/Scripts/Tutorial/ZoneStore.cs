@@ -187,6 +187,106 @@ namespace BoardGameTutorial
                     if (!string.IsNullOrEmpty(tpl.id)) templates[tpl.id] = tpl;
 
             if (stage.board == null) stage.board = new StageBoard();
+            BuildConceptIndex();
+        }
+
+        // ── 概念 → (模板, 色板) 反查（2026-09）────────────────────────────
+        // 动画数据用本体语言说"要搬的是一级发展卡（绿）"，引擎按这张表落地成具体素材。
+        // **从模板的 concept/concept_by_palette/parts 推导**，不另存一份索引 ——
+        // 另存就会漂移（改了模板忘了改索引），而要查的就是"这类漂移"。
+
+        /// <summary>一个候选：某概念+属性对应哪个模板、哪个色板。</summary>
+        public class TemplateChoice
+        {
+            public string TemplateId;
+            public string Palette;
+            public override string ToString() =>
+                string.IsNullOrEmpty(Palette) ? TemplateId : $"{TemplateId}({Palette})";
+        }
+
+        private readonly Dictionary<string, List<TemplateChoice>> conceptIndex =
+            new Dictionary<string, List<TemplateChoice>>();
+
+        private static string PartsKey(string concept, List<StageNamedRef> parts)
+        {
+            var items = new List<string>();
+            if (parts != null)
+                foreach (var p in parts)
+                    if (p != null && !string.IsNullOrEmpty(p.key)) items.Add($"{p.key}={p.value}");
+            items.Sort(System.StringComparer.Ordinal);
+            return concept + "|" + string.Join(",", items);
+        }
+
+        private void BuildConceptIndex()
+        {
+            conceptIndex.Clear();
+            foreach (var tpl in templates.Values)
+            {
+                if (tpl.concept_by_palette != null && tpl.concept_by_palette.Count > 0)
+                {
+                    foreach (var e in tpl.concept_by_palette)
+                    {
+                        if (e == null || string.IsNullOrEmpty(e.concept)) continue;
+                        var parts = e.parts != null && e.parts.Count > 0 ? e.parts : tpl.parts;
+                        AddConceptChoice(PartsKey(e.concept, parts),
+                            new TemplateChoice { TemplateId = tpl.id, Palette = e.palette });
+                    }
+                    continue;
+                }
+                if (string.IsNullOrEmpty(tpl.concept)) continue;   // 纯视觉件不进索引
+                AddConceptChoice(PartsKey(tpl.concept, tpl.parts),
+                    new TemplateChoice { TemplateId = tpl.id, Palette = tpl.palette });
+            }
+        }
+
+        private void AddConceptChoice(string key, TemplateChoice choice)
+        {
+            if (!conceptIndex.TryGetValue(key, out var list))
+            {
+                list = new List<TemplateChoice>();
+                conceptIndex[key] = list;
+            }
+            list.Add(choice);
+        }
+
+        /// <summary>
+        /// 本体语言的引用 → 具体 (模板, 色板)。
+        ///
+        /// 找不到、或找到多个（说不清是哪一张）都返回 null 并给出原因 ——
+        /// **绝不"猜一个最像的"**：那类静默选错正是本项目反复踩的坑。
+        /// </summary>
+        public TemplateChoice ResolveConcept(string concept, List<StageNamedRef> parts, out string error)
+        {
+            error = null;
+            if (string.IsNullOrEmpty(concept))
+            {
+                error = "what.concept 为空";
+                return null;
+            }
+            var key = PartsKey(concept, parts);
+            if (!conceptIndex.TryGetValue(key, out var list) || list.Count == 0)
+            {
+                // 退一步：不带属性时，若这个概念下只登记了唯一一个候选，就用它
+                var loose = new List<TemplateChoice>();
+                foreach (var kv in conceptIndex)
+                    if (kv.Key.StartsWith(concept + "|", System.StringComparison.Ordinal))
+                        foreach (var c in kv.Value)
+                            if (!loose.Exists(x => x.TemplateId == c.TemplateId && x.Palette == c.Palette))
+                                loose.Add(c);
+                if (loose.Count == 1) return loose[0];
+                error = loose.Count == 0
+                    ? $"没有模板实例化这个概念（{key}）"
+                    : $"这个概念下有 {loose.Count} 个候选（{string.Join(", ", loose.ConvertAll(x => x.ToString()))}），" +
+                      $"要写 parts 才能说清是哪一张";
+                return null;
+            }
+            if (list.Count > 1)
+            {
+                error = $"概念+属性 {key} 对应多个模板（{string.Join(", ", list.ConvertAll(x => x.ToString()))}）" +
+                        "—— 动画数据说不清要哪一张，要么补 parts，要么补模板上的 concept/parts";
+                return null;
+            }
+            return list[0];
         }
 
         public StageZone GetZone(string id)

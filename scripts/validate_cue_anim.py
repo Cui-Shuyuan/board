@@ -150,6 +150,66 @@ def concept_of_template(stage, tpl_id, palette=None):
     return None
 
 
+def _parts_key(concept, parts):
+    items = sorted(f"{p.get('key')}={p.get('value')}"
+                   for p in (parts or []) if isinstance(p, dict) and p.get("key"))
+    return concept + "|" + ",".join(items)
+
+
+def concept_index(stage):
+    """概念(+属性) → [(模板, 色板)]。
+
+    **与引擎 ZoneStore.BuildConceptIndex 是同一套规则**（互为镜像）：两边都从模板的
+    concept / concept_by_palette / parts 推导，谁也不另存索引。改了一边要改另一边 ——
+    所以两边的注释里都写着对方在哪。
+    """
+    idx = {}
+    for tpl in stage.get("templates", []):
+        by_pal = tpl.get("concept_by_palette") or []
+        if by_pal:
+            for e in by_pal:
+                if not isinstance(e, dict) or not e.get("concept"):
+                    continue
+                parts = e.get("parts") or tpl.get("parts") or []
+                idx.setdefault(_parts_key(e["concept"], parts), []).append(
+                    (tpl["id"], e.get("palette")))
+            continue
+        if not tpl.get("concept"):
+            continue
+        idx.setdefault(_parts_key(tpl["concept"], tpl.get("parts") or []), []).append(
+            (tpl["id"], tpl.get("palette")))
+    return idx
+
+
+def resolve_what(stage, what):
+    """本体语言的引用 → (模板, 色板)；找不到或不唯一都返回 (None, 原因)。
+
+    绝不"猜一个最像的"：那类静默选错正是本项目反复踩的坑（引擎侧同样这么处理）。
+    """
+    if not isinstance(what, dict) or not what.get("concept"):
+        return None, "what 必须是 {concept, parts:[{key,value}]}，且 concept 不能为空"
+    concept, parts = what["concept"], what.get("parts") or []
+    idx = concept_index(stage)
+    key = _parts_key(concept, parts)
+    hits = idx.get(key) or []
+    if len(hits) == 1:
+        return hits[0], None
+    if not hits:
+        loose = []
+        for k, v in idx.items():
+            if k.startswith(concept + "|"):
+                for c in v:
+                    if c not in loose:
+                        loose.append(c)
+        if len(loose) == 1:
+            return loose[0], None
+        if not loose:
+            return None, f"没有模板实例化这个概念（{key}）"
+        return None, (f"这个概念下有 {len(loose)} 个候选 {loose}，"
+                      f"要写 parts 才能说清是哪一张")
+    return None, f"概念+属性 {key} 对应多个模板 {hits} —— 说不清要哪一张"
+
+
 def contains_of_zone(stage, zone_id):
     """区域允许存放哪些概念。空/缺省 = 不限（本体 <zone>.contains 的语义）。"""
     for z in stage.get("zones", []):
@@ -441,8 +501,9 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
                 report.error(ew, "quantity 不能为负")
             # source+quantity 是按顺序取件：同一个 zone 里混放多种组件时极易取错，
             # 例如盒子里同时有宝石和卡片。用 quantity 时建议显式给 template。
-            if ev.get("source") and int(ev.get("quantity", 0) or 0) > 0 and not ev.get("template"):
-                report.warn(ew, "transfer 用 source+quantity 按顺序取件但没写 template；"
+            if (ev.get("source") and int(ev.get("quantity", 0) or 0) > 0
+                    and not ev.get("what") and not ev.get("template")):
+                report.warn(ew, "transfer 用 source+quantity 按顺序取件，却没写 what（也说不出是哪一类）；"
                                 "若该 zone 混放多种组件，可能取到不该动的东西")
             if ev.get("order") == -2 and int(ev.get("slot", -1)) < 0:
                 report.error(ew, "order=-2 需要同时给 slot（目标格位）")
@@ -451,10 +512,24 @@ def validate_cue(path: Path, runtime_cues, track, game_id, report: Report):
             # 本体 <zone>.contains 的原话：「程序校验 <transfer> 时以此过滤——
             # 若 what 的类型不在 contains 中，<transfer> 非法」。动画的 move 就是
             # <transfer>，所以这条本来就该在这里查。空 = 不限（纯视觉区/镜头外通道）。
+            # what = 本体语言的引用（推荐）；template = 实现层的素材名（transfer 不该用）
+            what = ev.get("what")
+            if what is not None:
+                choice, why = resolve_what(stage, what)
+                if choice is None:
+                    report.error(ew, f"what 解析不了：{why}")
+            elif ev.get("template"):
+                report.warn(ew, "transfer 用 template 指定素材：规则层请用 what（本体语言），"
+                                "template 只留给 create/stack 这类实现层动作 —— 写模板名等于把"
+                                "本作专用素材写进了动画数据")
+
             if dest:
                 dest_ok = contains_of_zone(stage, dest)
-                moved = concept_of_template(stage, ev.get("template"), ev.get("palette")) \
-                    if ev.get("template") else None
+                if what is not None and what.get("concept"):
+                    moved = what["concept"]
+                else:
+                    moved = concept_of_template(stage, ev.get("template"), ev.get("palette")) \
+                        if ev.get("template") else None
                 if moved and dest_ok and not any(is_a(world, moved, c) for c in dest_ok):
                     report.error(ew, f"要把 {moved} 移进 {dest}，但该区域只允许 {dest_ok}"
                                      f"（本体 <zone>.contains）")

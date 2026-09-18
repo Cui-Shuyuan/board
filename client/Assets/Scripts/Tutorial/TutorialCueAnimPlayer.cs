@@ -1455,6 +1455,21 @@ namespace BoardGameTutorial
             int take = ev.quantity > 0 ? ev.quantity : (ev.group ? int.MaxValue : 1);
             var picked = new List<ZoneItem>();
 
+            // 本体语言的引用 → 具体素材。解析不出来就**不动**并报错，不猜。
+            string pickTemplate = ev.template;
+            string pickPalette = ev.palette;
+            if (ev.what != null)
+            {
+                var choice = Store.ResolveConcept(ev.what.concept, ev.what.parts, out var why);
+                if (choice == null)
+                {
+                    Debug.LogError($"[TutorialCueAnim] transfer 的 what 解析不了（cue {CueId}）：{why}");
+                    return plan;
+                }
+                pickTemplate = choice.TemplateId;
+                if (!string.IsNullOrEmpty(choice.Palette)) pickPalette = choice.Palette;
+            }
+
             // from 写多个 zone = 每个 zone 各取 take 件（三种宝石各一枚）。
             foreach (var source in sources)
             {
@@ -1465,7 +1480,7 @@ namespace BoardGameTutorial
                 }
                 for (int i = 0; i < take; i++)
                 {
-                    var item = PickFront(source, picked, ev.template);
+                    var item = PickFront(source, picked, pickTemplate, pickPalette);
                     if (item == null) break;
                     picked.Add(item);
                     plan.Add(new MovePlan { Item = item, Destination = ev.destination, Order = ev.order });
@@ -1483,7 +1498,8 @@ namespace BoardGameTutorial
         /// 叠放位置把 order 0..容量-9 放在**重合块**里（全部盖在 order 32 上），
         /// 所以从 order 0 一路发到 order 31，外形**天然不变**；再发才开始变小。
         /// </summary>
-        private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded, string template = null)
+        private ZoneItem PickFront(string zoneId, List<ZoneItem> excluded, string template = null,
+            string palette = null)
         {
             ZoneItem best = null;
             foreach (var item in Store.Items)
@@ -1491,6 +1507,7 @@ namespace BoardGameTutorial
                 if (item.ZoneId != zoneId) continue;
                 if (excluded != null && excluded.Contains(item)) continue;
                 if (!string.IsNullOrEmpty(template) && item.Template?.id != template) continue;
+                if (!string.IsNullOrEmpty(palette) && item.PaletteName != palette) continue;
                 if (best == null || item.Order < best.Order) best = item;
             }
             return best;

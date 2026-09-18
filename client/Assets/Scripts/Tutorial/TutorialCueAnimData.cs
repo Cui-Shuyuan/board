@@ -188,6 +188,7 @@ namespace BoardGameTutorial
         public string value;    // parts 用：指向的概念（如 <diamond>）
         public string palette;  // concept_by_palette 用：色板名
         public string concept;  // concept_by_palette 用：该色板对应的概念
+        public List<StageNamedRef> parts;   // concept_by_palette 用：这个色板对应的属性（留空则用模板的）
     }
 
     [Serializable]
@@ -332,6 +333,29 @@ namespace BoardGameTutorial
         public string from;
     }
 
+    /// <summary>
+    /// 用**本体语言**引用一个组件：它是哪个概念、带哪些属性。
+    ///
+    /// ```json
+    /// "what": { "concept": "development_card_level_1",
+    ///           "parts": [ { "key": "bonus", "value": "<emerald>" } ] }
+    /// ```
+    ///
+    /// 为什么不写成本体文档里的 `{"<concept>": {属性}}`：**JsonUtility 不支持动态键**
+    /// （只按固定字段名反序列化），那种写法引擎一个字都读不到 —— 和 `concept_by_palette`
+    /// 一样，只能摊平成固定形状。字段名 `what` 取自本体自己的散文：
+    /// `&lt;zone&gt;.contains` 写的是"若 **what** 的类型不在 contains 中，&lt;transfer&gt; 非法"。
+    ///
+    /// 引擎把它解析成具体的 (模板, 色板) —— **解析不出来或者不唯一都要报错**，
+    /// 不允许"猜一个最像的"，那正是静默失败的老路。
+    /// </summary>
+    [Serializable]
+    public class ConceptRef
+    {
+        public string concept;
+        public List<StageNamedRef> parts;   // 用 key/value 两个字段
+    }
+
     [Serializable]
     public class CueAnimEvent
     {
@@ -461,9 +485,18 @@ namespace BoardGameTutorial
         public string realizes;
 
         /// <summary>
-        /// move：只搬这个模板的件（留空表示不限）。
-        /// 同一个 zone 里混着不同组件时（例如盒子里的宝石和卡片），必须靠它区分，
-        /// 否则按顺序取件会取到不该动的东西。
+        /// transfer：用**本体语言**指定要搬的是哪一类组件（见 <see cref="ConceptRef"/>）。
+        ///
+        /// 与 <see cref="template"/> 的分工：`what` 说的是"规则上这是什么"
+        /// （一级发展卡、绿宝石、贵族），`template` 说的是"用哪张素材"
+        /// （样本卡 / 垫牌 / 真卡），只在 create / stack 这类**本体里没有对应事件**的
+        /// 实现层动作用。迁移完成后 transfer 只写 what。
+        /// </summary>
+        public ConceptRef what;
+
+        /// <summary>
+        /// 实现层：确切的模板 id。**transfer 不要用它** —— 写模板名就把本作专用素材
+        /// 写进了动画数据，换游戏/换素材就得重写。create / stack / destroy 的过滤用它。
         /// </summary>
         public string template;
 

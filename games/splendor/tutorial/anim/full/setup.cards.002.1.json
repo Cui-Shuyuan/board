@@ -100,7 +100,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_1_emerald",
+      "what": {
+        "concept": "development_card_level_1",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<emerald>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 0,
       "slot": 0,
@@ -116,7 +124,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_1_ruby",
+      "what": {
+        "concept": "development_card_level_1",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 1,
       "slot": 1,
@@ -132,7 +148,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_1_diamond",
+      "what": {
+        "concept": "development_card_level_1",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<diamond>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 2,
       "slot": 2,
@@ -148,7 +172,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_1_sapphire",
+      "what": {
+        "concept": "development_card_level_1",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<sapphire>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 3,
       "slot": 3,
@@ -164,7 +196,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_2_sapphire",
+      "what": {
+        "concept": "development_card_level_2",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<sapphire>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 4,
       "slot": 4,
@@ -180,7 +220,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_2_onyx",
+      "what": {
+        "concept": "development_card_level_2",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<onyx>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 5,
       "slot": 5,
@@ -196,7 +244,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_2_ruby",
+      "what": {
+        "concept": "development_card_level_2",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 6,
       "slot": 6,
@@ -212,7 +268,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_2_emerald",
+      "what": {
+        "concept": "development_card_level_2",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<emerald>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 7,
       "slot": 7,
@@ -228,7 +292,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_3_ruby",
+      "what": {
+        "concept": "development_card_level_3",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 8,
       "slot": 8,
@@ -244,7 +316,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_3_diamond",
+      "what": {
+        "concept": "development_card_level_3",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<diamond>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 9,
       "slot": 9,
@@ -260,7 +340,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_3_emerald",
+      "what": {
+        "concept": "development_card_level_3",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<emerald>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 10,
       "slot": 10,
@@ -276,7 +364,15 @@
       ],
       "quantity": 1,
       "destination": "card_market",
-      "template": "market_card_3_onyx",
+      "what": {
+        "concept": "development_card_level_3",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<onyx>"
+          }
+        ]
+      },
       "to": "face_up",
       "order": 11,
       "slot": 11,
