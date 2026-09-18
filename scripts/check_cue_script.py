@@ -402,6 +402,12 @@ def check_single(args):
         print(f"还没有 {src} 的采样状态（{spath}）", file=sys.stderr)
         return 3
 
+    probs = (states.get(src) or {}).get("problems") or []
+    if probs:
+        print(f"引擎在 {src} 里报出 {len(probs)} 条问题（画面多半「什么都没发生」）：")
+        for pb in probs:
+            print(f"  - {pb}")
+
     diffs = diff_cue(part_of(contract, args.which), states[src])
     print(f"cue: {args.cue}   比对: {args.which}（对 {src} 的采样终态）")
     print("-" * 60)
