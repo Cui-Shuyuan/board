@@ -337,7 +337,7 @@ def load_states(path):
         return {}
     doc = load(path)
     if isinstance(doc.get("cues"), dict):
-        return doc["cues"]
+        return doc["cues"]   # 每条 cue 里可能带 "problems"（引擎自己报的警告/错误）
     if doc.get("cue"):
         return {doc["cue"]: {"zones": doc.get("zones") or {}}}
     return {}
@@ -446,6 +446,16 @@ def check_all(args):
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
         first_cam, leave_cam = cue_cameras(contract.get("events"), prev_leave)
+
+        # ⓪ 引擎自己在**这条 cue 里**报的警告/错误。
+        #    "脚本要求的事没发生"（例如 highlight 点了一个已经被搬走的位置）状态是变不了的
+        #    —— 对账比状态永远看不见，只有引擎知道。所以它随采样一起交出来，在这里报。
+        probs = (states.get(cue) or {}).get("problems") or []
+        if probs:
+            print(f"FAIL  {cue}  引擎报出 {len(probs)} 条问题（画面多半"什么都没发生"）：")
+            for pb in probs:
+                print(f"        - {pb}")
+            fails += 1
 
         # ① 自己的出口
         if cue in states:

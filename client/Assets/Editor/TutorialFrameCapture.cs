@@ -118,6 +118,22 @@ namespace BoardGameTutorial.Editor
                     if (id.Length > 0) ids.Add(id);
                 }
 
+                // ── 把引擎**自己说的话**收进采样 ────────────────────────────
+                // 为什么：像"highlight 没选中任何件"这种事，引擎只在日志里说一句，
+                // 画面表现是"什么都没发生"，而对账（比状态）**看不见** —— 状态确实没变，
+                // 因为那一动压根没生效。这类"脚本要求的事没发生"只有引擎知道，
+                // 所以让它随采样一起交出来，由 check_cue_script 报给人看。
+                var problems = new List<string>();
+                Application.LogCallback logCatcher = (condition, stackTrace, type) =>
+                {
+                    if (type != LogType.Warning && type != LogType.Error && type != LogType.Exception)
+                        return;   // Log（例如"本条 cue 没有动画数据"）是正常的，不收
+                    string first = (condition ?? "").Split('\n')[0].Trim();
+                    if (first.Length == 0 || problems.Contains(first)) return;
+                    if (problems.Count < 20) problems.Add(first);
+                };
+                Application.logMessageReceived += logCatcher;
+
                 var many = new System.Text.StringBuilder();
                 many.Append("{\n");
                 many.Append("  \"schema_version\": 1,\n");
@@ -130,6 +146,7 @@ namespace BoardGameTutorial.Editor
                     // 第一条从牌桌初始状态起，之后承接上一条的终态。
                     // 没有动画数据的 cue（例如 setup.cards.002.2）LoadCue 返回 false，
                     // 但它**保留牌桌** —— 那正是要采样的状态。
+                    problems.Clear();   // 每条 cue 单独收，问题归属才清楚
                     bool ok = anim.LoadCue(gameRoot, "full", ids[k], k > 0);
                     if (!ok && anim.ActorCount == 0)
                         Debug.LogWarning($"[Dump] {ids[k]} 没有动画数据、场景也是空的（采到的是空状态）");
@@ -143,6 +160,8 @@ namespace BoardGameTutorial.Editor
                     for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
                     var zs = CollectZones(anim);
+                    // 引擎在**这一条 cue 里**报出的警告/错误（去重、限量）
+                    var cueProblems = new List<string>(problems);
                     // 整幅图（盒面等）也是状态 —— 不导出它，"背景多出一张盒面"这类问题
                     // 在采样里根本看不见（用户报的 cue 10 就是这么漏的）。
                     var pic = anim.BoxPictureForTest;
@@ -157,11 +176,22 @@ namespace BoardGameTutorial.Editor
                         AppendItemLines(many, anim, "        ");
                         many.Append("      ]");
                     }
+                    if (cueProblems.Count > 0)
+                    {
+                        many.Append(",\n      \"problems\": [");
+                        for (int pi = 0; pi < cueProblems.Count; pi++)
+                        {
+                            many.Append("\n        " + JsonEscape(cueProblems[pi]));
+                            if (pi < cueProblems.Count - 1) many.Append(",");
+                        }
+                        many.Append("\n      ]");
+                    }
                     many.Append("\n    }");
                     if (k < ids.Count - 1) many.Append(",");
                     many.Append("\n");
                 }
                 many.Append("  }\n}\n");
+                Application.logMessageReceived -= logCatcher;
 
                 Directory.CreateDirectory(Path.GetDirectoryName(outPath));
                 File.WriteAllText(outPath, many.ToString());
@@ -343,6 +373,29 @@ namespace BoardGameTutorial.Editor
         /// 那个数一出来，人就会以为它翻了面，而去追一个不存在的状态。
         /// 逐件输出与区域聚合必须用**同一个判据**，否则同一份采样里两个数字互相矛盾。
         /// </summary>
+        /// <summary>写进 JSON 的字符串转义（日志内容不可控，必须转义）。</summary>
+        private static string JsonEscape(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return "\"\"";
+            var sb = new System.Text.StringBuilder("\"");
+            foreach (char c in s)
+            {
+                switch (c)
+                {
+                    case '"': sb.Append("\\\""); break;
+                    case '\\': sb.Append("\\\\"); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    default:
+                        if (c < 0x20) sb.Append("\\u" + ((int)c).ToString("x4"));
+                        else sb.Append(c);
+                        break;
+                }
+            }
+            return sb.Append("\"").ToString();
+        }
+
         private static bool HasTwoSides(ZoneItem it) =>
             it?.Actor != null && it.Actor.BackSprite != null;
 

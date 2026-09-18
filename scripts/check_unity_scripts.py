@@ -427,7 +427,13 @@ namespace UnityEngine
         public static string streamingAssetsPath => "";
         public static bool isEditor => true;
         public static int targetFrameRate;
+        // 采样器用它把"引擎自己报的 warning/error"收进采样（见 TutorialFrameCapture）
+        public delegate void LogCallback(string condition, string stackTrace, LogType type);
+        public static event LogCallback logMessageReceived;
+        public static event LogCallback logMessageReceivedThreaded;
     }
+
+    public enum LogType { Error = 0, Assert = 1, Warning = 2, Log = 3, Exception = 4 }
 
     public static class Screen
     {

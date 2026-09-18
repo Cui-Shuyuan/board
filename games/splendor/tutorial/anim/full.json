@@ -3052,7 +3052,7 @@
       "cue": "action.take.different.001",
       "entry_from": "setup.nobles.001.2",
       "story": "【拿取三种不同宝石】玩法第一条：从宝石供应堆拿三种**不同**颜色的宝石各一枚。\n事实来自 flow 的 `take_gems_different`：`<gem_supply>` → `<ontology::player_holding>`，3 颗。\n\n  0.30 / 0.55 / 0.80：先分别高亮三种宝石（台词在逐一点名）\n  3.35：三枚一起飞到玩家持有区（`stagger` 0.25 依次走）\n  4.10：持有区整体高亮，表示\"这三枚在你手上\"\n\n**已知短板（待重构）**：高亮用的是引擎实例 id（`gem#1` / `gem#8` / `gem#15`），而 id 是\"第几个被创建\"的产物 —— 同一条数据在顺序播放里（不靠 `start.set` 预置）拿到的 id 完全不同。这类\"点名\"要换成本体语言的选法（哪个概念、在哪个 zone、第几位），见 review 里的字段归属审计。",
-      "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。",
+      "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。",
       "timing": {
         "三种宝石分别高亮": "0.30 / 0.55 / 0.80（三种不同宝石 3.21~4.44）",
         "三枚飞到持有区": "3.35-3.85（各一枚 4.44~4.99）",
@@ -3232,17 +3232,7 @@
           "at": 0.3,
           "dur": 0.35,
           "action": "highlight",
-          "what": {
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<diamond>"
-              }
-            ]
-          },
           "zone": "gem_supply_diamond",
-          "order": 0,
           "easing": "easeInOutCubic",
           "grow": 1.2
         },
@@ -3250,17 +3240,7 @@
           "at": 0.55,
           "dur": 0.35,
           "action": "highlight",
-          "what": {
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<sapphire>"
-              }
-            ]
-          },
           "zone": "gem_supply_sapphire",
-          "order": 0,
           "easing": "easeInOutCubic",
           "grow": 1.2
         },
@@ -3268,17 +3248,7 @@
           "at": 0.8,
           "dur": 0.35,
           "action": "highlight",
-          "what": {
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<ruby>"
-              }
-            ]
-          },
           "zone": "gem_supply_ruby",
-          "order": 0,
           "easing": "easeInOutCubic",
           "grow": 1.2
         },
