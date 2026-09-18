@@ -498,6 +498,12 @@ namespace BoardGameTutorial
             if (stateOnly) return;   // 重放入口链时只推状态
             if (item == null || actors.ContainsKey(item.Id)) return;
             var itemTpl = EffectiveTemplate(item.Template, item.PaletteName);
+
+            // 扫描件是**实物照片**，不能再乘色板色 —— 那等于给照片套一层滤镜
+            // （用户报的"宝石怎么都加上了滤镜"）。色板色只该给程序化占位图着色。
+            // 判定用"解析得到扫描图路径"，与 ResolveSprite 的选择标准一致。
+            if (ResolveImagePath(itemTpl) != null) item.BaseColor = Color.white;
+
             var go = CreateSpriteObject("item:" + item.Id, itemTpl, item.BaseColor);
             if (animRoot != null) go.transform.SetParent(animRoot.transform, true);
             var sr = go.GetComponent<SpriteRenderer>();
