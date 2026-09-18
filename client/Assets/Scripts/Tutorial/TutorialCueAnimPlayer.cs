@@ -649,22 +649,19 @@ namespace BoardGameTutorial
         }
 
 
-        /// <summary>按「是否已翻开」刷新贴图。有背面贴图且未翻开时显示背面。</summary>
         /// <summary>
-        /// 按组件的朝向决定显示哪一面。
+        /// 按组件的朝向决定显示哪一面 —— **全项目只此一处定义**，flip 片段也必须遵守同一套。
         ///
-        /// **全项目只有这一套约定**（曾经有两套相反的，导致"播完动画是对的、
-        /// 换 cue 重建后又翻回背面"）：
-        ///   ZoneItem.Flipped == true  → 未翻开 / 背面朝上 → 显示 **BackSprite**（没有就用 FaceSprite）
-        ///   ZoneItem.Flipped == false → 已翻开 / 正面朝上 → 显示 **FaceSprite**
+        /// 约定：`ZoneItem.Flipped` = 「这张牌现在是不是正面朝上」。
+        ///   ZoneItem.Flipped == true  → 正面朝上 → 显示 **FaceSprite**（真卡面）
+        ///   ZoneItem.Flipped == false → 背面朝上 → 显示 **BackSprite**（没有独立背图就用 FaceSprite）
         ///
-        /// 名字有点绕（Flipped=true 表示"还没有翻到正面"），但它在代码里已经广泛使用；
-        /// 关键是**只此一处定义**，flip 片段也必须遵守同一套。
+        /// 曾经有两套**相反**的规则，谁最后执行谁赢 —— 表现为"播完动画是对的、
+        /// 换 cue 重建后又翻回背面"。所以这里只留一套。
         /// </summary>
         private static void RefreshFace(CueAnimActor actor)
         {
             if (actor?.Renderer == null) return;
-            // 约定（全项目只此一处）：Flipped 表示**这张牌现在是不是正面朝上**。
             bool faceUp = actor.Item != null && actor.Item.Flipped;
             if (faceUp)
                 actor.Renderer.sprite = actor.FaceSprite;                 // 正面 = 真卡面
@@ -2101,41 +2098,6 @@ namespace BoardGameTutorial
             yield return TutorialPrimitives.TweenPosition(actor.Go.transform, from, to, ev.dur, EasingOr(ev));
             actor.LivePosition = to;
             item.LivePosition = to;
-        }
-
-        /// <summary>
-        /// 边移动边翻转：与位移并行，到终点恰好转到另一面。
-        ///
-        /// 轴向取 actor 的**本地 Y 轴**——actor 已绕 X 转 90° 平躺，本地 Y 正是屏幕竖直方向，
-        /// 绕它转 180° 就是牌面水平翻过去（途中 90° 时收成一条线）。
-        /// 用 Mathf.Cos 判断当前朝哪边，决定显示正面还是背面贴图。
-        /// </summary>
-        private IEnumerator TweenFlip(CueAnimActor actor, ZoneItem item, CueAnimEvent ev)
-        {
-            if (actor?.Go == null || actor.BackSprite == null) yield break;
-            if (ev.lead > 0f) yield return WaitScaled(ev.lead);
-
-            float dur = Mathf.Max(ev.dur, 0.01f);
-            float fromYaw = item.Flipped ? 180f : 0f;
-            float toYaw = fromYaw + 180f;
-
-            float t = 0f;
-            while (t < dur)
-            {
-                t = Mathf.Min(t + TutorialPrimitives.Delta, dur);
-                float k = Easing.Evaluate(EasingOr(ev), t / dur);
-                float yaw = Mathf.LerpUnclamped(fromYaw, toYaw, k);
-                actor.Go.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-
-                // 以 90°/270° 为界切贴图：前半看到原面，后半看到另一面。
-                bool showingBack = Mathf.Cos(yaw * Mathf.Deg2Rad) < 0f;
-                actor.Renderer.sprite = showingBack ? actor.BackSprite : actor.FaceSprite;
-                yield return null;
-            }
-
-            actor.Go.transform.localRotation = Quaternion.identity;
-            item.Flipped = !item.Flipped;
-            actor.Renderer.sprite = item.Flipped ? actor.BackSprite : actor.FaceSprite;
         }
 
         private IEnumerator TweenRotation(CueAnimActor actor, float from, float to, CueAnimEvent ev)

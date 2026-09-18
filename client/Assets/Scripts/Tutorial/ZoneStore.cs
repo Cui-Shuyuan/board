@@ -30,13 +30,13 @@ namespace BoardGameTutorial
 
         public CueAnimActor Actor;     // 渲染实例
 
-        /// <summary>是否已翻到另一面（正面朝上的卡牌为 true）。</summary>
+        /// <summary>逻辑朝向：这张牌现在是不是**正面朝上**（= true 显示 FaceSprite）。</summary>
         public bool Flipped;
 
         /// <summary>
         /// 画面上**实际**显示的是哪一面（由渲染器当前贴图与两面的引用比较得出）。
         ///
-        /// 为什么不复用 Flipped：Flipped 是**逻辑意图**（"要不要显示卡背"），
+        /// 为什么不复用 Flipped：Flipped 是**逻辑意图**（"该不该正面朝上"），
         /// 而它可能和实际显示不一致 —— 那正是画面出问题时最难查的地方。
         /// 导出状态时用这个，才能直接看出"市场里的牌全都朝下"这类异常。
         /// </summary>

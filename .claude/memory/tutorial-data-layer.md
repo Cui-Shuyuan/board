@@ -23,7 +23,10 @@ metadata:
 ## 关键决策
 
 - **slot 坐标数据化**：不再依赖 Unity 编辑器手动摆空物体。slot 的 x/y 是版图归一化坐标，`board.origin` 决定零点；允许超出 [0,1] 表示版图外位置。
-- **动画动作收敛为 8 个原语**：move / flip / rotate / scale / fade / highlight / shuffle / wait。教学动画只允许传参，不允许新写协程。
+- **动画动作收敛为一组固定原语**：最初定 8 个（move / flip / rotate / scale / fade / highlight / shuffle / wait），
+  后按实际需要增补 4 个（`create` / `destroy` / `stack` / `showbox`），**当前共 12 个**，
+  实现在 `client/Assets/Scripts/Tutorial/TutorialCueAnimPlayer.cs` 的 action switch。
+  教学动画只允许传参，不允许新写协程。
 - **sprite 与 slot 分离**：sprite 只描述外观（文件 + 物理尺寸），slot 只描述逻辑位置，事件用 id 引用。
 - **每章一个音频**，字幕按 t 升序；打断后从当前章节重播。
 - 旧 `TutorialPlayer.cs` 原型与 `TutorialDirector` 二选一运行，建议新教程走 TutorialDirector。
@@ -51,7 +54,7 @@ metadata:
 - **L2 动作库层**：同一语义动作只实现一次；quick/full 复用动作内容，但各自按 TTS 音频时长编译时间轴。
 - **编译期起始画面**：为支持任意跳转，编译器离线计算每个叶子开头所有 sprite 的完整画面；运行时只加载「当前叶子起始画面 + 本节时间轴」，不维护历史。
 - **TTS 顺序**：口播定稿 → TTS → 冻结音频/时长 → 动画生成；音频冻结后不再为动画改时间轴。
-- 现有 validator/8 原语继续保留，但 schema 需扩展到口播稿与版本选择。
+- 现有 validator/原语库（当前 12 个，见上）继续保留，但 schema 需扩展到口播稿与版本选择。
 
 详见 `tutorial/下一阶段工作指导.md` 与 [[tutorial-production-pipeline]]。
 

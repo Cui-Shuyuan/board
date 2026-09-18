@@ -349,10 +349,10 @@ namespace BoardGameTutorial
         public bool face_up;
 
         /// <summary>
-        /// create：创建成**背面朝上**。
-        /// 牌堆里的牌就是这种状态：它是哪张牌已经定了，但还没翻开，所以显示卡背。
-        /// 漏了它就会出现"牌堆最上面那张是正面朝上"——因为 Flipped 默认 false，
-        /// 而 RefreshFace 在 Flipped=false 时显示 FaceSprite（真卡面）。
+        /// create：**保留字段，引擎不读它。** 朝向只由 `face_up` 决定：
+        /// `face_up == true` → 正面；否则（`face_down` 或两者都没写）→ 背面。
+        /// 也就是说"创建一个背面朝上的牌"本来就是默认值，写 `face_down` 只是给人看的冗余声明，
+        /// **不要写 `face_up` + `face_down` 同时为真** —— 那会得到正面朝上的牌。
         /// </summary>
         public bool face_down;
 

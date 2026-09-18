@@ -20,7 +20,7 @@ metadata:
 - **一份规则事实，多个讲解版本。** quick / full 共享组件、资产和动作行为，不共享口播文本。
 - **播放单元按 1～3 句口播切。** 不按规则小节切；规则小节只作为 group/导航层。
 - **运行端不跟踪历史状态。** 播放期间只维护当前播放单元（叶子）；任意跳转由编译期生成的每段「起始画面」实现。
-- **LLM 只填动画参数，不写新播放代码。** 沿用 8 个原语，不在 Unity 里为单个动画新写协程。
+- **LLM 只填动画参数，不写新播放代码。** 沿用固定原语集（当前 12 个，见 [[tutorial-data-layer]]），不在 Unity 里为单个动画新写协程。
 - **不做 authoring 界面。** 以 JSON + schema + validator + Unity 播放为准。
 - **试点为《璀璨宝石》。** 以 `doc/splendor/口播稿.md` 的 full 版为标杆，先做 full，再抽出 quick。
 
@@ -115,7 +115,7 @@ cue 的动画数据。理由：这是一次性工作，读一次做好就可以�
 ## 相关记忆
 
 - [[tutorial-module]] — 第五阶段技术选型与 Unity 现状
-- [[tutorial-data-layer]] — 现有 `tutorial.json` schema / validator / 8 原语
+- [[tutorial-data-layer]] — 现有 `tutorial.json` schema / validator / 原语集
 - [[splendor-progress]] — 试点游戏规则与 flow 现状
 - [[user-preferences]] — 程序确定性、数据驱动、截图视觉迭代
 
