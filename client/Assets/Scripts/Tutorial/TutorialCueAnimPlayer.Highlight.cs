@@ -25,7 +25,7 @@ namespace BoardGameTutorial
         private void TriggerHighlight(CueAnimEvent ev)
         {
             if (string.IsNullOrEmpty(ev.target) && string.IsNullOrEmpty(ev.zone)
-                && string.IsNullOrEmpty(ev.container) && ev.what == null)
+                && string.IsNullOrEmpty(ev.container) && !ev.HasWhat)
             {
                 Debug.LogWarning($"[TutorialCueAnim] highlight 未指定 target/container/zone（cue {CueId}），已忽略");
                 return;

@@ -1492,7 +1492,7 @@ namespace BoardGameTutorial
             string pickTemplate = ev.template;
             string pickPalette = ev.palette;
             List<ZoneStore.TemplateChoice> pickCandidates = null;
-            if (ev.what != null)
+            if (ev.HasWhat)   // 不是 `ev.what != null`：JsonUtility 会给它造空实例（见 HasWhat）
             {
                 // 搬的是**真件**：样本不参与（它只活在介绍用的展示位里）。
                 pickCandidates = Store.ConceptCandidatesReal(ev.what.concept, ev.what.parts);
@@ -1980,7 +1980,7 @@ namespace BoardGameTutorial
             else
             {
                 List<ZoneStore.TemplateChoice> cands = null;
-                if (ev.what != null && !string.IsNullOrEmpty(ev.what.concept))
+                if (ev.HasWhat)
                 {
                     cands = Store.ConceptCandidates(ev.what.concept, ev.what.parts);
                     if (cands.Count == 0)
@@ -2356,7 +2356,7 @@ namespace BoardGameTutorial
             if (ev == null) return Selector.None;
             bool hasTarget = !string.IsNullOrEmpty(ev.target);
             bool hasContainer = !string.IsNullOrEmpty(ev.container);
-            bool hasWhat = ev.what != null && !string.IsNullOrEmpty(ev.what.concept);
+            bool hasWhat = ev.HasWhat;
             bool hasZone = !string.IsNullOrEmpty(ev.zone);
 
             // `what` + `zone` **不是二选一**：what 说"哪一种"，zone 说"在哪找"。

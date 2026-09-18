@@ -533,6 +533,17 @@ namespace BoardGameTutorial
         public ConceptRef what;
 
         /// <summary>
+        /// 脚本里**有没有**用本体语言点名（`what.concept` 非空）。
+        ///
+        /// 别用 `what != null` 判断这件事：JsonUtility 会给嵌套的可序列化类字段
+        /// **自动造一个空实例**（`what` 非 null、`concept` 为 null），于是"没写 what"
+        /// 与"写了空 what"在代码里长得一模一样。2026-09 的 bug 就是它：
+        /// 没写 what 的 transfer（"从这三个 zone 各取一枚"）被当成"概念为空"直接报错、
+        /// 一件都不搬 —— 画面上什么都不发生，而脚本看起来完全正常。
+        /// </summary>
+        public bool HasWhat => what != null && !string.IsNullOrEmpty(what.concept);
+
+        /// <summary>
         /// 实现层：确切的模板 id。**transfer 不要用它** —— 写模板名就把本作专用素材
         /// 写进了动画数据，换游戏/换素材就得重写。create / stack / destroy 的过滤用它。
         /// </summary>
