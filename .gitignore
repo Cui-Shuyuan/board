@@ -70,3 +70,9 @@ backend/BoardAI.Api/ml_models/
 games/civolution/page-*.jpg
 games/civolution/*_600dpi*.jpg
 games/civolution/_review_pages/
+
+# ── 本地素材与生成物（不进 Git；见 .claude/memory/workspace-sync.md）──────────
+# 原始扫描/实物照片、盒面图：Unity 要用，但仓库不该背（历史清理时专门移除过一遍）
+games/*/media/
+# 离屏出图与状态导出的默认落点（scratch）
+client/CaptureOut/
