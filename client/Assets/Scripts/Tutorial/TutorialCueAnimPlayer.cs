@@ -2554,6 +2554,28 @@ namespace BoardGameTutorial
                 }
             }
 
+            // 取景写成多个 zone id（逗号分隔）= 把它们**一起**框住。
+            // 用途：「宝石展示位 + 黄金展示位」这种"两块一起看"的镜头。
+            if (!string.IsNullOrEmpty(frameZoneId) && frameZoneId.IndexOf(',') >= 0)
+            {
+                minX = float.MaxValue; maxX = float.MinValue;
+                minZ = float.MaxValue; maxZ = float.MinValue;
+                foreach (var zid in frameZoneId.Split(','))
+                {
+                    var z = Store.GetZone(zid.Trim());
+                    if (z == null || z.role == "offstage") continue;
+                    int c = Mathf.Max(1, z.capacity > 0 ? z.capacity : 1);
+                    float hw = (z.size?.w ?? 0.2f) * 0.5f;
+                    float hh = (z.size?.h ?? 0.2f) * 0.5f;
+                    for (int i = 0; i < c; i++)
+                    {
+                        var q = Store.ZonePosition(z.id, i);
+                        minX = Mathf.Min(minX, q.x - hw); maxX = Mathf.Max(maxX, q.x + hw);
+                        minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
+                    }
+                }
+                orthoScale = framePadding > 0f ? framePadding : 1.25f;
+            }
             // 取景 "supply"：把整排供应堆（凡用 panel_supply 色板的 zone）一起框住。
             // 与 "cards" 同类，但成员按色板判定，不写死 zone 名。
             if (frameZoneId == FrameSupplyToken)

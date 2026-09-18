@@ -59,6 +59,24 @@ namespace BoardGameTutorial
                 return;
             }
 
+            // what = 按**概念**点名（zone 限定范围、order 指定第几位）：点中一件就原地呼吸，
+            // 点中一组就整组缩放。
+            //
+            // 这条分支以前**缺着**：PickSelector 会返回 Selector.What，但本方法直接往下走到
+            // 了 zone 分支 —— `what` 被静默忽略，表现成"整个 zone 一起放大"。
+            // 于是脚本写"念到哪种颜色哪一枚呼吸"，画面上是"五枚一起呼吸"。
+            // 选择器是**一套**机制（和 transfer 共用 Resolve）：少一处实现就会静默降级。
+            if (PickSelector(ev) == Selector.What)
+            {
+                var picked = Resolve(ev);
+                if (picked.Count == 0) return;
+                if (picked.Count == 1) { PulseActor(picked[0], grow, dur, lead, easing); return; }
+                Vector3 sum = Vector3.zero;
+                foreach (var a in picked) sum += a.LivePosition;
+                GroupScaleActors(picked, sum / picked.Count, grow, dur, lead, easing);
+                return;
+            }
+
             var glowZone = Store.GetZone(ev.zone);
             if (glowZone == null)
             {

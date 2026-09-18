@@ -26,6 +26,7 @@
 """
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -191,6 +192,209 @@ def diff_contract(want_zones, state_zones):
 
 # ── 数据装载 ──────────────────────────────────────────────────────────
 
+# ── 取景 vs 契约（用户 2026-09 定的检查）────────────────────────────────
+# 状态对账查的是"该在的在不在"，查不出**不该出现在画面里**的东西：
+# 一级发展卡出现在宝石介绍的镜头里，状态完全正确、只是"入镜了"。
+# 这条检查把两样都对得上的东西拼起来：
+#   **脚本**说这一 cue 的相机框住哪（camera）、契约说这一 cue 有哪些组件，
+#   **采样**说这一刻实际有什么（每件在哪个 zone、第几位）。
+# 取景框内的每一件，如果契约（对应那一面）没提到它的 zone → 就是"没提到的组件入镜了"。
+#
+# 几何必须与引擎 `TutorialCueAnimPlayer.FitCamera` 同源 —— 镜像另写一份，
+# 两边一旦漂移，这条检查就会开始撒谎（宁可写得跟引擎一样笨）。
+
+CAMERA_TOKENS = {"board", "cards", "supply"}
+SUPPLY_PALETTE = "panel_supply"
+CARDS_ZONES = ("showcase_1", "showcase_2", "showcase_3")
+CARD_HALF = (0.315, 0.44)
+
+
+def _slot_at(stage, zone, order):
+    """格位坐标。镜像 ZoneStore.ComputeZonePosition（row/block/grid + stack 台阶）。"""
+    center = zone.get("center") or {}
+    x = float(center.get("x") or 0.0)
+    z = float(center.get("z") or 0.0)
+    layout = zone.get("layout") or {}
+    display = zone.get("display") or {}
+    capacity = int(zone.get("capacity") or 12)
+    slot, overflow = order, 0
+    if slot >= capacity:
+        slot, overflow = capacity - 1, order - capacity + 1
+
+    if display.get("mode") == "stack":
+        max_visible = int(display.get("max_visible") or 8)
+        lift = min(max(0, capacity - 1 - slot), max_visible - 1)
+        return (x + lift * float(display.get("dx") or 0.0),
+                z + lift * float(display.get("dz") or 0.0))
+
+    x_step = float(layout.get("x_step") or 0.0)
+    z_step = float(layout.get("z_step") or 0.0)
+    kind = layout.get("type")
+    if kind == "row":
+        x += (slot - (capacity - 1) * 0.5) * x_step
+    elif kind == "block":
+        cols = max(1, -(-capacity // 2))
+        row, col = slot // cols, slot % cols
+        in_row = min(cols, capacity - row * cols)
+        x += (col - (in_row - 1) * 0.5) * x_step
+        z += (row - 0.5) * z_step
+    else:
+        cols = max(1, int(layout.get("cols") or 1))
+        row, col = slot // cols, slot % cols
+        x += (col - (cols - 1) * 0.5) * x_step
+        z += row * z_step
+    if overflow > 0:
+        x += overflow * x_step * 0.10
+        z += overflow * z_step * 0.10
+    return (x, z)
+
+
+def _zone_box(stage, zone, count=None):
+    """一个 zone 的（外接）范围：按它自己占的格位算，不按容量 —— 空的格子不该撑大画面。"""
+    n = count if count is not None else max(1, int(zone.get("capacity") or 1))
+    size = zone.get("size") or {}
+    hw = float(size.get("w") or 0.2) / 2
+    hh = float(size.get("h") or 0.2) / 2
+    box = None
+    for i in range(max(1, n)):
+        x, z = _slot_at(stage, zone, i)
+        b = (x - hw, x + hw, z - hh, z + hh)
+        box = b if box is None else (min(box[0], b[0]), max(box[1], b[1]),
+                                     min(box[2], b[2]), max(box[3], b[3]))
+    return box
+
+
+def _union(boxes):
+    boxes = [b for b in boxes if b]
+    if not boxes:
+        return None
+    return (min(b[0] for b in boxes), max(b[1] for b in boxes),
+            min(b[2] for b in boxes), max(b[3] for b in boxes))
+
+
+def frame_bounds(stage, camera, padding=0.0):
+    """camera → (取景目标框, orthoScale)。None = 不限制（整桌取景）。
+
+    与 FitCamera 的分支一一对应：多 zone / supply / cards / 单个 zone。
+    """
+    if not camera or camera in ("board",):
+        return None
+    zones = {z.get("id"): z for z in stage.get("zones", [])}
+    parts = [p.strip() for p in str(camera).split(",") if p.strip()]
+    scale = 2.2
+
+    if len(parts) > 1:
+        scale = 1.25
+        box = _union([_zone_box(stage, zones[p]) for p in parts if p in zones])
+    elif parts[0] == "cards":
+        scale = 1.5
+        box = _union([_zone_box(stage, zones[z]) for z in CARDS_ZONES if z in zones])
+        # FitCamera 对 cards 用的是写死的半个卡宽/卡高
+        box = (box[0] - CARD_HALF[0], box[1] + CARD_HALF[0],
+               box[2] - CARD_HALF[1], box[3] + CARD_HALF[1]) if box else None
+    elif parts[0] == "supply":
+        scale = 1.25
+        box = _union([_zone_box(stage, z) for z in zones.values()
+                      if z.get("palette") == SUPPLY_PALETTE and z.get("role") != "offstage"])
+    elif parts[0] in zones:
+        box = _zone_box(stage, zones[parts[0]])
+    else:
+        return None
+    if not box:
+        return None
+    return (box, padding if padding > 0 else scale)
+
+
+def visible_rect(stage, camera, padding=0.0):
+    """取景 → 画面覆盖的地面矩形 (minX, maxX, minZ, maxZ)。镜像 FitCamera 后半段。"""
+    got = frame_bounds(stage, camera, padding)
+    if got is None:
+        return None
+    (min_x, max_x, min_z, max_z), scale = got
+    board = stage.get("board") or {}
+    pitch = float(board.get("camera_pitch") or 50.0)
+    aspect = float(board.get("aspect") or 1.7778)
+    cx, cz = (min_x + max_x) * 0.5, (min_z + max_z) * 0.5
+    half_w = max(0.5, (max_x - min_x) * 0.5 * scale)
+    half_h = max(0.5, (max_z - min_z) * 0.5 * scale)
+    sin_p = max(0.15, math.sin(math.radians(pitch)))
+    ortho = max(half_h * sin_p, half_w / aspect, 0.6)
+    if ortho * aspect < half_w:
+        ortho = half_w / aspect
+    return (cx - ortho * aspect, cx + ortho * aspect, cz - ortho / sin_p, cz + ortho / sin_p)
+
+
+def _in_rect(rect, x, z, hw=0.02, hh=0.02):
+    """中心在框内**或**组件本体压到框边 —— 判据是"这块像素会不会露在画面里"。
+
+    只看中心会把"卡片下沿露在画面顶部"判成没入镜（用户看到的恰恰是那一条边）。
+    """
+    return rect and (rect[0] - hw <= x <= rect[1] + hw and rect[2] - hh <= z <= rect[3] + hh)
+
+
+def load_stage(args):
+    base = ROOT / "games" / args.game / "tutorial" / "anim"
+    doc = load(base / f"{args.track}.json")
+    rel = (doc or {}).get("stage")
+    if not rel:
+        return None
+    p = base / f"{rel}.json"
+    return load(p) if p.exists() else None
+
+
+def visible_items(stage, state, camera, padding=0.0):
+    """这一刻**画面里真的看得见**的组件：取景框内的、且画面上没被隐藏的。
+
+    用采样里的 `shows == "hidden"` 判隐藏（那是引擎自己说的），不另推一套 offstage 规则。
+    """
+    rect = visible_rect(stage, camera, padding)
+    if rect is None:
+        return None
+    zones = {z.get("id"): z for z in stage.get("zones", [])}
+    out = []
+    for it in (state or {}).get("items") or []:
+        if (it.get("shows") or "").lower() == "hidden":
+            continue
+        zone = zones.get(it.get("zone"))
+        if zone is None or zone.get("role") == "offstage":
+            continue
+        x, z = _slot_at(stage, zone, int(it.get("order") or 0))
+        size = zone.get("size") or {}
+        if _in_rect(rect, x, z, float(size.get("w") or 0.2) / 2, float(size.get("h") or 0.2) / 2):
+            out.append(it)
+    return out
+
+
+def framing_diffs(stage, cameras, state, declared_zones, label):
+    """camera 队列 → 取景里出现了契约没提到的组件。
+
+    cameras = (开头在场的取景, 结尾留下的取景)；都可能是 None（承接上一条）。
+    用户定的级别是**警告**：这条说的是"画面里有你没提的东西"，
+    处置办法有两个 —— 改取景（离远一点/藏起来），或在契约里把它写上（写上就是真的在比它了）。
+    """
+    act = cameras[1] if label == "exit" else cameras[0]
+    if not act:
+        return []
+    items = visible_items(stage, state, act[0], act[1])
+    if not items:
+        return []
+    stray = {}
+    for it in items:
+        if it.get("zone") in (declared_zones or {}):
+            continue
+        stray.setdefault(it["zone"], []).append(it)
+    out = []
+    for zone, its in sorted(stray.items()):
+        kinds = {}
+        for it in its:
+            key = it.get("kind") or it.get("concept") or "?"
+            kinds[key] = kinds.get(key, 0) + 1
+        show = "、".join(f"{k}×{v}" for k, v in sorted(kinds.items()))
+        out.append(f"{label} 取景 [{act[0]}] 里有 {zone}: {len(its)} 件（{show}），"
+                   f"契约没提到这个 zone —— 要么改取景，要么在契约里声明它")
+    return out
+
+
 def resolve_paths(args):
     base = ROOT / "games" / args.game / "tutorial" / "anim"
     contract = Path(args.script) if args.script else base / f"{args.track}.json"
@@ -302,18 +506,30 @@ def check_single(args):
     return 0
 
 
+def cue_cameras(events, prev_leave):
+    """一条 cue 的取景：**开头**在场的（第一条 camera，没写就承接上一条）与**结尾**留下的。"""
+    cams = [(e.get("camera"), float(e.get("camera_padding") or 0.0))
+            for e in (events or []) if e.get("camera")]
+    if not cams:
+        return prev_leave, prev_leave
+    return cams[0], cams[-1]
+
+
 def check_all(args):
-    """把整条 track 查一遍：① 每条自己的出口 ② 跨 cue 的链（enter vs 父 exit）。"""
+    """把整条 track 查一遍：① 每条自己的出口 ② 跨 cue 的链（enter vs 父 exit）③ 取景。"""
     cpath, spath = resolve_paths(args)
     doc, contracts = load_contracts(cpath)
     if doc is None:
         return 2
     states = load_states(spath)
+    stage = load_stage(args)
 
-    fails = skipped = 0
+    fails = skipped = frame_warns = 0
+    prev_leave = None
     # 按契约文件里的顺序（= 轨道顺序）走，不按字母序
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
+        first_cam, leave_cam = cue_cameras(contract.get("events"), prev_leave)
 
         # ① 自己的出口
         if cue in states:
@@ -326,6 +542,17 @@ def check_all(args):
                 fails += 1
             else:
                 print(f"PASS  {cue}  exit（{len(want.get('zones') or {})} 个 zone）")
+            if stage:
+                fd = framing_diffs(stage, (first_cam, leave_cam), states[cue],
+                                   want.get("zones") or {}, "exit")
+                if fd:
+                    loud = getattr(args, "strict_framing", False)
+                    print(f"{'FAIL' if loud else 'WARN'}  {cue}  exit 取景:")
+                    for d in fd:
+                        print(f"        - {d}")
+                    if loud:
+                        fails += 1
+                    frame_warns += 1
         else:
             print(f"SKIP  {cue} exit（还没采样）")
             skipped += 1
@@ -343,11 +570,27 @@ def check_all(args):
                     fails += 1
                 else:
                     print(f"PASS  {cue}  enter == 父({parent}) 的终态")
+                if stage:
+                    fd = framing_diffs(stage, (first_cam, leave_cam), states[parent],
+                                       want.get("zones") or {}, "enter")
+                    if fd:
+                        loud = getattr(args, "strict_framing", False)
+                        print(f"{'FAIL' if loud else 'WARN'}  {cue}  enter 取景（入口画面）:")
+                        for d in fd:
+                            print(f"        - {d}")
+                        if loud:
+                            fails += 1
+                        frame_warns += 1
             else:
                 print(f"SKIP  {cue} enter（父 cue 还没采样）")
 
+        prev_leave = leave_cam
+
     print("-" * 60)
-    print(f"{'FAIL' if fails else 'PASS'}  {fails} 处不一致" + (f"，{skipped} 条待采样" if skipped else ""))
+    print(f"{'FAIL' if fails else 'PASS'}  {fails} 处不一致"
+          + (f"，{skipped} 条待采样" if skipped else "")
+          + (f"，{frame_warns} 条取景警告（画面里有契约没提到的组件；--strict-framing 可当作错误）"
+             if frame_warns else ""))
     return 1 if fails else 0
 
 
@@ -399,6 +642,8 @@ def main():
     ap.add_argument("-v", "--verbose", action="store_true", help="（保留）列出被忽略的 zone")
     ap.add_argument("--chain", action="store_true", help="跨 cue 对账：本 cue 的 enter vs 父 cue 的 exit")
     ap.add_argument("--all", action="store_true", help="整条 track 全查：自己的 exit + 跨 cue 的链")
+    ap.add_argument("--strict-framing", action="store_true",
+                    help="把取景警告当成错误（默认只警告：入镜的东西不一定是错的）")
     args = ap.parse_args()
     if args.chain:
         return chain(args)

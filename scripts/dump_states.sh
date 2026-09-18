@@ -15,9 +15,13 @@ set -u
 UNITY="/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe"
 PROJ='D:\workspace\board\client'
 ROOT=/home/cui/workspace/board
-WIN_DIR='D:\workspace\board\games\splendor\tutorial\script'
-WIN_OUT="$WIN_DIR\\full.exitstate.json"
+# 采样落到哪：**同一个相对路径**的两侧写法（写歪过一次：让 Unity 写到 script\、
+# 却从 anim\ 拷回来，于是每次"重跑采样"其实拷的都是仓库里那份旧文件 ——
+# 表现就是"采样是旧格式，重跑一下就好"，而重跑并没有用）。
+WIN_REL='games\splendor\tutorial\anim\full.exitstate.json'
+WIN_OUT="D:\\workspace\\board\\$WIN_REL"
 WSL_OUT="$ROOT/games/splendor/tutorial/anim/full.exitstate.json"
+WIN_SRC="/mnt/d/workspace/board/games/splendor/tutorial/anim/full.exitstate.json"
 LOG='D:\workspace\board\client\Logs\dump_states.log'
 
 CUES=""
@@ -45,13 +49,18 @@ rm -f "$WSL_OUT"
   -logFile "$LOG" -quit >/dev/null 2>&1
 
 # 引擎写的是 Windows 侧的工作区，拷回 WSL 仓库
-cp "/mnt/d/workspace/board/games/splendor/tutorial/anim/full.exitstate.json" "$WSL_OUT" 2>/dev/null
+cp "$WIN_SRC" "$WSL_OUT" 2>/dev/null
 
 if [ -f "$WSL_OUT" ]; then
   python3 -c "
 import json
 d = json.load(open('$WSL_OUT'))
-print(f'  OK   {len(d[\"cues\"])} 条 cue 的终态 → $WSL_OUT')"
+n = len(d['cues'])
+k = next(iter(d['cues'].values()))
+print(f'  OK   {n} 条 cue 的终态 → $WSL_OUT')
+print(f'       格式：picture={\"有\" if \"picture\" in k else \"**缺**\"}，'
+      f'items={\"有（\" + str(len(k.get(\"items\") or [])) + \" 件）\" if \"items\" in k else \"**缺**\"}'
+      f'（缺 = 采样没重跑到，对账会拿旧格式比）')"
 else
   echo "  FAIL 采样失败（见 client/Logs/dump_states.log）" >&2
   exit 1

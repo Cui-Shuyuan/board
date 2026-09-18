@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上，实例数按实物（40/30/20）；显示上超过 8 张就只显示 8 张（display.max_visible），多出来的压在最后一层。宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode：count=摊开可数，stack=叠放只显示 max_visible 个。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。 概念绑定：模板/zone 的 concept 指向 ontology 或 games/splendor 的概念；concept_by_palette 与 parts 都写成**列表**（JsonUtility 不支持字典，写成对象会被静默丢弃）。zone.contains = 本体同名字段：这个区域允许存放哪些概念（空数组 = 不限）。",
+  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上，实例数按实物（40/30/20）；显示上超过 8 张就只显示 8 张（display.max_visible），多出来的压在最后一层。宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode：count=摊开可数，stack=叠放只显示 max_visible 个。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。 概念绑定：模板/zone 的 concept 指向 ontology 或 games/splendor 的概念；concept_by_palette 与 parts 都写成**列表**（JsonUtility 不支持字典，写成对象会被静默丢弃）。zone.contains = 本体同名字段：这个区域允许存放哪些概念（空数组 = 不限）。 展示位（gem_display / gold_display）是**纯视觉**的：介绍用，和供应堆不是一回事。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
@@ -585,6 +585,52 @@
       },
       "concept": null,
       "contains": []
+    },
+    {
+      "id": "gem_display",
+      "label": "宝石展示位（介绍用）",
+      "center": {
+        "x": -1.2,
+        "z": -2.85
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.5
+      },
+      "capacity": 5,
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": null,
+      "contains": [],
+      "note": "介绍宝石用的展示位：**不是供应堆**，只是把宝石摆出来看。介绍完就销毁这里的样本。"
+    },
+    {
+      "id": "gold_display",
+      "label": "黄金展示位（介绍用）",
+      "center": {
+        "x": 0.9,
+        "z": -2.85
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.5
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": null,
+      "contains": [],
+      "note": "介绍黄金用的展示位，和宝石展示位隔开一段距离（“黄金不属于宝石”）。"
     }
   ],
   "templates": [
@@ -1094,6 +1140,70 @@
       "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
       "concept": "development_card_level_3",
       "filler": true
+    },
+    {
+      "id": "gem_sample",
+      "shape": "gem",
+      "world_size": 0.43,
+      "sorting_order": 6,
+      "sample": true,
+      "concept_by_palette": [
+        {
+          "palette": "gem_diamond",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<diamond>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_ruby",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<ruby>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_emerald",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<emerald>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_sapphire",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<sapphire>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_onyx",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<onyx>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_gold",
+          "concept": "gold"
+        }
+      ],
+      "note": "介绍宝石/黄金用的**样本**：概念绑定与 `gem` **完全相同**（一枚样本确实\"是\"那种宝石），差别只在**模板**上 —— 独立模板所以不会混进\"每色 7 枚\"的账，介绍完就销毁。\n正因为绑同一套概念，\"全局 what\"会同时命中真件和样本 → 脚本必须给 zone/order 说清是哪一件。"
     }
   ],
   "anchors": [

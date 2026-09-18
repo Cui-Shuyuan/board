@@ -239,6 +239,24 @@ def concept_index(stage):
     return idx
 
 
+def _zone_ctx(ev):
+    """这条事件"在哪找/放到哪"的 zone —— what 的**唯一性**只在这个范围内成立。
+
+    引擎解析 what 时是**在具体区域里**选的：transfer 从 source 里挑（`PickFront`），
+    预置和 create 落在 zone。所以"全局有两个候选"不等于说不清 ——
+    真件与样本（`gem` / `gem_sample`）概念相同、永远同时命中，
+    只要事件写清了 zone，运行时就不存在歧义。反过来，一个 zone 都不给才真的说不清。
+    """
+    if ev.get("zone"):
+        return ev["zone"]
+    src = ev.get("source")
+    if isinstance(src, list) and src:
+        return src[0]
+    if isinstance(src, str) and src:
+        return src
+    return ev.get("destination")
+
+
 def what_candidates(stage, what):
     """本体语言的引用 → **候选** [(模板, 色板)]。
 
@@ -472,11 +490,16 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
     for i, seed in enumerate(start.get("set") or []):
         sw = f"{where} start.set[{i}]"
         # 预置用 what（本体语言）说清是哪一种；预置是凭空造，候选必须唯一
+        # —— 但"唯一"是**在 zone 里**唯一：同一概念的真件和样本（如 `gem` 与 `gem_sample`）
+        # 全局必然都命中，写清 zone 就已经说清了是哪一件。
         if seed.get("what") is not None:
             cands = what_candidates(stage, seed["what"])
-            if len(cands) != 1:
+            if not cands:
+                report.error(sw, f"start.set 的 what={seed['what'].get('concept')!r} 一个候选都没有"
+                                 f"（概念名或属性写错了？）")
+            elif len(cands) != 1 and not seed.get("zone"):
                 report.error(sw, f"start.set 的 what={seed['what'].get('concept')!r} 有 {len(cands)} 个候选"
-                                 f" {cands} —— 预置必须唯一")
+                                 f" {cands}，又没给 zone —— 预置说不清是哪一件")
             if seed.get("template"):
                 report.warn(sw, "start.set 同时写了 what 和 template：what 才是本体语言，"
                                 "template 只在没有对应概念时用")
@@ -542,9 +565,17 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             report.error(ew, f"未知 easing {easing!r}")
 
         cam = ev.get("camera")
-        if cam and cam not in CAMERA_TOKENS and cam not in zones:
-            report.error(ew, f"未知 camera {cam!r}（只能是 {sorted(CAMERA_TOKENS)} 之一，"
-                             f"或某个已存在的 zone id；写错会让取景静默退回上一次）")
+        if cam:
+            # "a,b" = **一块取景框同时框住几个 zone**（引擎 SetFraming 的分支）。
+            # 用途：介绍宝石的展示位和黄金展示位隔开一段距离，但要同框出现。
+            # zone 之间不挨着也没关系 —— 框住的是它们的**外接矩形**，中间夹着的
+            # 其他区域会一起入镜，所以那条检查（取景里出现了没提到的组件）同样适用。
+            for part in [p.strip() for p in cam.split(",") if p.strip()]:
+                if part in CAMERA_TOKENS or part in zones:
+                    continue
+                report.error(ew, f"未知 camera {part!r}（在 {cam!r} 里；每段只能是 "
+                                 f"{sorted(CAMERA_TOKENS)} 之一，或某个已存在的 zone id；"
+                                 f"写错会让取景静默退回上一次）")
 
         target = ev.get("target")
         zone = ev.get("zone")
@@ -694,7 +725,7 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             if not cands:
                 report.error(ew, f"what 一个候选都没有：concept={what.get('concept')!r}"
                                  f"（概念名或属性写错了？）")
-            elif len(cands) > 1 and not ev.get("zone") and ev.get("order", -1) < 0:
+            elif len(cands) > 1 and not _zone_ctx(ev) and ev.get("order", -1) < 0:
                 report.error(ew, f"what 全局有 {len(cands)} 个候选 {cands}，又没给 zone/order"
                                  f" —— 说不清要哪一件")
 
