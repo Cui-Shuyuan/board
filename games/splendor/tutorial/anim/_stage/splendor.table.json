@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上，实例数按实物（40/30/20）；显示上超过 8 张就只显示 8 张（display.max_visible），多出来的压在最后一层。宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode：count=摊开可数，stack=叠放只显示 max_visible 个。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。",
+  "note": "璀璨宝石的牌桌事实。开局：三摞发展卡在桌上，实例数按实物（40/30/20）；显示上超过 8 张就只显示 8 张（display.max_visible），多出来的压在最后一层。宝石/黄金/贵族还在游戏盒里（zone=offstage，按 from 方向从画面外飞入）。board.extent 是相机取景的唯一依据。display.mode：count=摊开可数，stack=叠放只显示 max_visible 个。组件实物尺寸见 games/splendor/components.json。卡面用扫描件 media/card/（不进 Git）。 概念绑定：模板/zone 的 concept 指向 ontology 或 games/splendor 的概念；concept_by_palette 与 parts 都写成**列表**（JsonUtility 不支持字典，写成对象会被静默丢弃）。zone.contains = 本体同名字段：这个区域允许存放哪些概念（空数组 = 不限）。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 50,
@@ -594,14 +594,32 @@
       "world_size": 0.43,
       "sorting_order": 6,
       "note": "实际尺寸见 games/splendor/components.json：直径 43mm",
-      "concept_by_palette": {
-        "gem_diamond": "gem",
-        "gem_ruby": "gem",
-        "gem_emerald": "gem",
-        "gem_sapphire": "gem",
-        "gem_onyx": "gem",
-        "gem_gold": "gold"
-      }
+      "concept_by_palette": [
+        {
+          "palette": "gem_diamond",
+          "concept": "gem"
+        },
+        {
+          "palette": "gem_ruby",
+          "concept": "gem"
+        },
+        {
+          "palette": "gem_emerald",
+          "concept": "gem"
+        },
+        {
+          "palette": "gem_sapphire",
+          "concept": "gem"
+        },
+        {
+          "palette": "gem_onyx",
+          "concept": "gem"
+        },
+        {
+          "palette": "gem_gold",
+          "concept": "gold"
+        }
+      ]
     },
     {
       "id": "noble",
@@ -686,9 +704,12 @@
       "note": "1 级卡面（diamond），背面同该级卡背",
       "from_zone": "deck_level_1",
       "concept": "development_card_level_1",
-      "parts": {
-        "bonus": "<diamond>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ]
     },
     {
       "id": "market_card_1_ruby",
@@ -702,9 +723,12 @@
       "note": "1 级卡面（ruby），背面同该级卡背",
       "from_zone": "deck_level_1",
       "concept": "development_card_level_1",
-      "parts": {
-        "bonus": "<ruby>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ]
     },
     {
       "id": "market_card_1_emerald",
@@ -718,9 +742,12 @@
       "note": "1 级卡面（emerald），背面同该级卡背",
       "from_zone": "deck_level_1",
       "concept": "development_card_level_1",
-      "parts": {
-        "bonus": "<emerald>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ]
     },
     {
       "id": "market_card_1_sapphire",
@@ -734,9 +761,12 @@
       "note": "1 级卡面（sapphire），背面同该级卡背",
       "from_zone": "deck_level_1",
       "concept": "development_card_level_1",
-      "parts": {
-        "bonus": "<sapphire>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ]
     },
     {
       "id": "market_card_1_onyx",
@@ -750,9 +780,12 @@
       "note": "1 级卡面（onyx），背面同该级卡背",
       "from_zone": "deck_level_1",
       "concept": "development_card_level_1",
-      "parts": {
-        "bonus": "<onyx>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ]
     },
     {
       "id": "market_card_2_diamond",
@@ -766,9 +799,12 @@
       "note": "2 级卡面（diamond），背面同该级卡背",
       "from_zone": "deck_level_2",
       "concept": "development_card_level_2",
-      "parts": {
-        "bonus": "<diamond>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ]
     },
     {
       "id": "market_card_2_ruby",
@@ -782,9 +818,12 @@
       "note": "2 级卡面（ruby），背面同该级卡背",
       "from_zone": "deck_level_2",
       "concept": "development_card_level_2",
-      "parts": {
-        "bonus": "<ruby>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ]
     },
     {
       "id": "market_card_2_emerald",
@@ -798,9 +837,12 @@
       "note": "2 级卡面（emerald），背面同该级卡背",
       "from_zone": "deck_level_2",
       "concept": "development_card_level_2",
-      "parts": {
-        "bonus": "<emerald>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ]
     },
     {
       "id": "market_card_2_sapphire",
@@ -814,9 +856,12 @@
       "note": "2 级卡面（sapphire），背面同该级卡背",
       "from_zone": "deck_level_2",
       "concept": "development_card_level_2",
-      "parts": {
-        "bonus": "<sapphire>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ]
     },
     {
       "id": "market_card_2_onyx",
@@ -830,9 +875,12 @@
       "note": "2 级卡面（onyx），背面同该级卡背",
       "from_zone": "deck_level_2",
       "concept": "development_card_level_2",
-      "parts": {
-        "bonus": "<onyx>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ]
     },
     {
       "id": "market_card_3_diamond",
@@ -846,9 +894,12 @@
       "note": "3 级卡面（diamond），背面同该级卡背",
       "from_zone": "deck_level_3",
       "concept": "development_card_level_3",
-      "parts": {
-        "bonus": "<diamond>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ]
     },
     {
       "id": "market_card_3_ruby",
@@ -862,9 +913,12 @@
       "note": "3 级卡面（ruby），背面同该级卡背",
       "from_zone": "deck_level_3",
       "concept": "development_card_level_3",
-      "parts": {
-        "bonus": "<ruby>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ]
     },
     {
       "id": "market_card_3_emerald",
@@ -878,9 +932,12 @@
       "note": "3 级卡面（emerald），背面同该级卡背",
       "from_zone": "deck_level_3",
       "concept": "development_card_level_3",
-      "parts": {
-        "bonus": "<emerald>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ]
     },
     {
       "id": "market_card_3_sapphire",
@@ -894,9 +951,12 @@
       "note": "3 级卡面（sapphire），背面同该级卡背",
       "from_zone": "deck_level_3",
       "concept": "development_card_level_3",
-      "parts": {
-        "bonus": "<sapphire>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ]
     },
     {
       "id": "market_card_3_onyx",
@@ -910,9 +970,12 @@
       "note": "3 级卡面（onyx），背面同该级卡背",
       "from_zone": "deck_level_3",
       "concept": "development_card_level_3",
-      "parts": {
-        "bonus": "<onyx>"
-      }
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ]
     },
     {
       "id": "sample_card_1",

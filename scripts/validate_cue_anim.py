@@ -133,16 +133,19 @@ def load_world(game_id: str):
 
 
 def concept_of_template(stage, tpl_id, palette=None):
-    """模板（+色板）实例化的是哪个概念。找不到/纯视觉返回 None。"""
+    """模板（+色板）实例化的是哪个概念。找不到/纯视觉返回 None。
+
+    `concept_by_palette` 写成**列表**（`[{"palette":…,"concept":…}]`）而不是对象：
+    JsonUtility 不支持字典，写成对象会被引擎**静默丢弃**。
+    """
     for tpl in stage.get("templates", []):
         if tpl.get("id") != tpl_id:
             continue
-        by_pal = tpl.get("concept_by_palette") or {}
-        if palette and palette in by_pal:
-            return by_pal[palette]
-        if by_pal and tpl.get("concept") is None and palette:
-            # 只按色板分身份、又给了个没登记的色板 → 说不清是什么，交给调用方处理
-            return by_pal.get(palette)
+        by_pal = tpl.get("concept_by_palette") or []
+        if palette:
+            for e in by_pal:
+                if isinstance(e, dict) and e.get("palette") == palette and e.get("concept"):
+                    return e["concept"]
         return tpl.get("concept")
     return None
 
@@ -233,13 +236,19 @@ def validate_stage(stage_path: Path, report: Report, game_id: str):
             continue
         where = f"stage.templates[{i}] {tpl['id']}"
         check_concept_binding(report, where, tpl, world)
-        by_pal = tpl.get("concept_by_palette") or {}
-        if by_pal:
-            for pal, ref in by_pal.items():
-                if pal not in PALETTES:
-                    report.warn(where, f"concept_by_palette 的键 {pal!r} 不是已知色板")
-                if not world.resolve(ref):
-                    report.error(where, f"concept_by_palette[{pal!r}] = {ref!r} 在本体/游戏概念里找不到")
+        by_pal = tpl.get("concept_by_palette") or []
+        for e in by_pal:
+            if not isinstance(e, dict):
+                report.error(where, "concept_by_palette 的每一项都要是 {palette, concept} 对象")
+                continue
+            pal, ref = e.get("palette"), e.get("concept")
+            if pal and pal not in PALETTES:
+                report.warn(where, f"concept_by_palette 的 palette {pal!r} 不是已知色板")
+            if not world.resolve(ref):
+                report.error(where, f"concept_by_palette[{pal!r}] = {ref!r} 在本体/游戏概念里找不到")
+        for e in tpl.get("parts") or []:
+            if isinstance(e, dict) and e.get("value") and not world.resolve(e["value"]):
+                report.error(where, f"parts[{e.get('key')!r}] = {e['value']!r} 在本体/游戏概念里找不到")
     for i, zone in enumerate(stage.get("zones", [])):
         if not zone.get("id"):
             continue

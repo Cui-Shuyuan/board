@@ -26,7 +26,11 @@
             "count": 1,
             "face_up": 1,
             "kinds": {
-              "一级正面": 1
+              "一级正面": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              }
             }
           }
         }
@@ -163,32 +167,101 @@
           },
           "deck_level_1": {
             "count": 36,
-            "face_down": 36
+            "face_down": 36,
+            "kinds": {
+              "一级垫牌": {
+                "count": 36,
+                "face": "down",
+                "shows": "face"
+              }
+            }
           },
           "deck_level_2": {
             "count": 26,
-            "face_down": 26
+            "face_down": 26,
+            "kinds": {
+              "二级垫牌": {
+                "count": 26,
+                "face": "down",
+                "shows": "face"
+              }
+            }
           },
           "deck_level_3": {
             "count": 16,
-            "face_down": 16
+            "face_down": 16,
+            "kinds": {
+              "三级垫牌": {
+                "count": 16,
+                "face": "down",
+                "shows": "face"
+              }
+            }
           },
           "card_market": {
             "count": 12,
             "face_up": 12,
             "kinds": {
-              "一级绿": 1,
-              "一级红": 1,
-              "一级白": 1,
-              "一级蓝": 1,
-              "二级蓝": 1,
-              "二级黑": 1,
-              "二级红": 1,
-              "二级绿": 1,
-              "三级红": 1,
-              "三级白": 1,
-              "三级绿": 1,
-              "三级黑": 1
+              "一级绿": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "一级红": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "一级白": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "一级蓝": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级蓝": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级黑": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级红": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "二级绿": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级红": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级白": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级绿": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              },
+              "三级黑": {
+                "count": 1,
+                "face": "up",
+                "shows": "face"
+              }
             }
           }
         }

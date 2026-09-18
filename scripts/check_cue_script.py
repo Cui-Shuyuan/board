@@ -67,32 +67,106 @@ def kind_matches(want_key, got_key):
             return tmpl in (f"sample_card_{num}", f"market_card_{num}_")
         if want_key == f"{lv}级卡背":
             return tmpl == f"sample_back_{num}"
+        # 牌堆里的垫牌（只为让牌堆看上去有几十张，永远发不出来）
+        if want_key == f"{lv}级垫牌":
+            return tmpl == f"blank_card_{num}"
     # 兜底：当作模板 id 前缀
     return want_key == tmpl
 
 
+def _kind_record(v):
+    """kinds 的值有两种写法：`3`（只报数量）或 `{"count":3,"face_up":3,...}`（带状态）。
+
+    老采样文件里只有计数；新采样（2026-09 起）逐身份带 face/shows。
+    两种都要能读 —— 但**读不出状态时要明说"采样太旧"**，不能让契约里的
+    face 断言悄悄退化成"没查到就当对"。
+    """
+    return v if isinstance(v, dict) else {"count": v}
+
+
+def _kind_state_fields(rec):
+    return {k for k in rec if k in ("face_up", "face_down", "shows_face", "shows_back", "hidden")}
+
+
+# 状态值 → 采样里的计数字段
+_FACE_FIELD = {"up": "face_up", "down": "face_down", "正面": "face_up", "反面": "face_down"}
+_SHOWS_FIELD = {"face": "shows_face", "back": "shows_back", "hidden": "hidden",
+                "正面": "shows_face", "反面": "shows_back"}
+
+
 def check_zone(name, want, got):
-    """比对单个 zone，返回差异列表。"""
+    """比对单个 zone，返回差异列表。
+
+    可比的字段：
+      count / face_up / face_down / shows_face / shows_back / hidden   —— 整个区域
+      kinds[身份] = 数量，或 `{"count":n, "face":"up"/"down", "shows":"face"/"back", ...}`
+        face  = 这一身份的件**全都**是某一面（写起来最像人话，推荐）
+        shows = 画面上**实际显示**的是哪一面（这一条才是"翻面到底成没成"的证据）
+    """
     diffs = []
     got = got or {}
 
-    for field in ("count", "face_up", "face_down"):
+    for field in ("count", "face_up", "face_down", "shows_face", "shows_back", "hidden"):
         if field in want:
             w, g = want[field], got.get(field, 0)
             if w != g:
                 diffs.append(f"{name}.{field}: 期望 {w}，实际 {g}")
 
     if "kinds" in want:
-        got_kinds = got.get("kinds", {})
-        for k, w in want["kinds"].items():
-            g = sum(v for gk, v in got_kinds.items() if kind_matches(k, gk))
-            if g != w:
-                diffs.append(f"{name}.kinds[{k}]: 期望 {w}，实际 {g}")
+        got_kinds = {k: _kind_record(v) for k, v in (got.get("kinds") or {}).items()}
+        for k, wv in want["kinds"].items():
+            w = _kind_record(wv)
+            # 同一语义名可能匹配到多个引擎身份（"宝石白" ↔ gem|gem_diamond），合并计
+            matched = {gk: gv for gk, gv in got_kinds.items() if kind_matches(k, gk)}
+            ga = {}
+            for gv in matched.values():
+                for f, n in gv.items():
+                    if isinstance(n, int):
+                        ga[f] = ga.get(f, 0) + n
+
+            if not matched and w.get("count"):
+                diffs.append(f"{name}.kinds[{k}]: 期望 {w['count']}，实际 0")
+                continue
+
+            for field in ("count", "face_up", "face_down", "shows_face", "shows_back", "hidden"):
+                if field in w and ga.get(field, 0) != w[field]:
+                    diffs.append(f"{name}.kinds[{k}].{field}: 期望 {w[field]}，实际 {ga.get(field, 0)}")
+
+            # face / shows 简写：期望这一身份的件**全都**是某个状态
+            asks_state = "face" in w or "shows" in w
+            if asks_state and matched and not any(_kind_state_fields(gv) for gv in matched.values()):
+                # 采样里根本没状态字段 = 采样是旧格式。报一条就够，不要接着报一堆
+                # "期望 1 实际 0" —— 那是采样的问题，不是画面的问题。
+                diffs.append(f"{name}.kinds[{k}]: 契约要求 face/shows，但采样里没有状态字段"
+                             f"（采样文件是旧格式，重跑 scripts/dump_states.sh）")
+                continue
+            if "face" in w:
+                f = _FACE_FIELD.get(w["face"])
+                if f is None:
+                    diffs.append(f"{name}.kinds[{k}].face: 取值只能是 up/down，实际 {w['face']!r}")
+                else:
+                    other = "face_down" if f == "face_up" else "face_up"
+                    if ga.get(other, 0):
+                        want_word = "正面朝上" if f == "face_up" else "背面朝上"
+                        diffs.append(f"{name}.kinds[{k}].face: 期望全部{want_word}"
+                                     f"（face_{w['face']}），实际 {ga.get('face_up', 0)} 件朝上 / "
+                                     f"{ga.get('face_down', 0)} 件朝下")
+            if "shows" in w:
+                f = _SHOWS_FIELD.get(w["shows"])
+                if f is None:
+                    diffs.append(f"{name}.kinds[{k}].shows: 取值只能是 face/back/hidden，"
+                                 f"实际 {w['shows']!r}")
+                elif ga.get(f, 0) != ga.get("count", 0):
+                    diffs.append(f"{name}.kinds[{k}].shows: 期望全部显示 {w['shows']}，"
+                                 f"实际 {ga.get('shows_face', 0)} 件显真面 / "
+                                 f"{ga.get('shows_back', 0)} 件显背面")
+
         # 反向检查：引擎里有、契约没写 → 说明契约漏了（只在契约写了 kinds 时才查）
         for gk, gv in got_kinds.items():
             if not any(kind_matches(k, gk) for k in want["kinds"]):
-                if gv:
-                    diffs.append(f"{name}.kinds: 契约未列出的身份 {gk} 有 {gv} 件")
+                n = gv.get("count", 0)
+                if n:
+                    diffs.append(f"{name}.kinds: 契约未列出的身份 {gk} 有 {n} 件")
     return diffs
 
 

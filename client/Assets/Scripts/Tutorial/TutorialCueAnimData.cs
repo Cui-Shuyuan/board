@@ -119,6 +119,16 @@ namespace BoardGameTutorial
         /// 没有「一堆」这个独立概念，就是一条显示规则；zone 里的实例数仍按实际数量存在。
         /// </summary>
         public StageDisplay display;
+
+        /// <summary>
+        /// 本体 &lt;zone&gt;.contains：这个区域允许存放哪些概念（空数组 = 不限）。
+        /// 本体的原话就是给程序用的——"程序校验 &lt;transfer&gt; 时以此过滤"。
+        /// 纯视觉区（镜头外通道、展示位）写空数组。
+        /// </summary>
+        public List<string> contains;
+
+        /// <summary>这个区域实例化的是哪个本体概念（null = 纯视觉）。</summary>
+        public string concept;
     }
 
     [Serializable]
@@ -166,6 +176,20 @@ namespace BoardGameTutorial
         public int overflow = 1;
     }
 
+    /// <summary>
+    /// 一个「名字 → 引用」对。概念绑定里要表达 map（按色板分身份、卡面印记），
+    /// 而 **JsonUtility 不支持字典** —— 写成 JSON 对象会被静默丢弃。
+    /// 所以这些地方一律写成这种小对象的列表。
+    /// </summary>
+    [Serializable]
+    public class StageNamedRef
+    {
+        public string key;      // parts 用：印记名（如 bonus）
+        public string value;    // parts 用：指向的概念（如 <diamond>）
+        public string palette;  // concept_by_palette 用：色板名
+        public string concept;  // concept_by_palette 用：该色板对应的概念
+    }
+
     [Serializable]
     public class StageTemplate
     {
@@ -173,6 +197,25 @@ namespace BoardGameTutorial
         public string shape = "gem";
         public string palette;
         public string sprite;
+
+        /// <summary>
+        /// 这个模板实例化的是**哪个本体概念**（ontology/concepts.json 或
+        /// games/{game}/concepts.json 里的 id）。null = 纯视觉件（例如高亮底板）。
+        ///
+        /// 为什么放在模板上：动画与本体描述的是同一个世界，这个字段就是那根线。
+        /// 校验器（scripts/validate_cue_anim.py）用它检查"能不能移进那个区域"、
+        /// "这东西有没有正反面"，采样（DumpState）用它把状态导成本体的说法。
+        /// </summary>
+        public string concept;
+
+        /// <summary>同一模板按色板分身份时用（宝石六面共用一个模板，但金黄是 &lt;gold&gt; 不是 &lt;gem&gt;）。</summary>
+        public List<StageNamedRef> concept_by_palette;
+
+        /// <summary>
+        /// 本体 &lt;piece&gt;.parts：这块物理件上印着的**逻辑组件**（卡面的折扣色、
+        /// 声望点数…）。用「拿刀裁开即独立 piece」来理解。
+        /// </summary>
+        public List<StageNamedRef> parts;
 
         /// <summary>真实扫描图（相对 games/{game}，例如 media/card/一级发展卡_绿.jpg）。找不到则回退到 shape 的程序化图形。</summary>
         public string face_image;

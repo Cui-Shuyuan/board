@@ -79,6 +79,7 @@ namespace BoardGameTutorial.Editor
         ///
         ///   -dumpCue &lt;cueId&gt;  -dumpReplay 0|1  -dumpOut &lt;path&gt;        采一条
         ///   -dumpCues "a,b,c"  -dumpOut &lt;path&gt;                      一次采一整条轨道（一个文件）
+        ///   -dumpItems 0|1（默认 1）每件组件的状态；0 = 只要 zone 聚合
         ///
         /// 采一整条轨道时不需要 -dumpReplay：它本身就是从头顺次播到尾。
         /// </summary>
@@ -89,6 +90,9 @@ namespace BoardGameTutorial.Editor
             string cueId = ArgValue("-dumpCue", "setup.cards.002.1");
             bool replay = ArgValue("-dumpReplay", "0") == "1";
             string outPath = ArgValue("-dumpOut", Path.Combine(Application.dataPath, "..", "CaptureOut", "state.json"));
+            // 每件组件的状态（一行一件）。默认开：排查"到底哪一件不对"只能靠它。
+            // 整条轨道（100+ 条 cue）会让文件到 MB 级，嫌大就 -dumpItems 0（聚合仍在）。
+            bool withItems = ArgValue("-dumpItems", "1") == "1";
 
             var go = new GameObject("DumpHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
@@ -129,7 +133,14 @@ namespace BoardGameTutorial.Editor
                     var zs = CollectZones(anim);
                     many.Append($"    \"{ids[k]}\": {{\n      \"zones\": {{\n");
                     AppendZoneLines(many, zs, "        ");
-                    many.Append("      }\n    }");
+                    many.Append("      }");
+                    if (withItems)
+                    {
+                        many.Append(",\n      \"items\": [\n");
+                        AppendItemLines(many, anim, "        ");
+                        many.Append("      ]");
+                    }
+                    many.Append("\n    }");
                     if (k < ids.Count - 1) many.Append(",");
                     many.Append("\n");
                 }
@@ -181,7 +192,14 @@ namespace BoardGameTutorial.Editor
             sb.Append($"  \"cue\": \"{cueId}\",\n");
             sb.Append("  \"zones\": {\n");
             AppendZoneLines(sb, zones, "    ");
-            sb.Append("  }\n}\n");
+            sb.Append("  }");
+            if (withItems)
+            {
+                sb.Append(",\n  \"items\": [\n");
+                AppendItemLines(sb, anim, "    ");
+                sb.Append("  ]");
+            }
+            sb.Append("\n}\n");
 
             Directory.CreateDirectory(Path.GetDirectoryName(outPath));
             File.WriteAllText(outPath, sb.ToString());
@@ -210,13 +228,34 @@ namespace BoardGameTutorial.Editor
                     default: agg.Hidden++; break;
                 }
                 if (it.Flipped) agg.FaceUp++; else agg.FaceDown++;
-                if (!agg.Kinds.ContainsKey(it.KindKey)) agg.Kinds[it.KindKey] = 0;
-                agg.Kinds[it.KindKey]++;
+                if (!agg.Kinds.TryGetValue(it.KindKey, out var ka))
+                {
+                    ka = new KindAgg();
+                    agg.Kinds[it.KindKey] = ka;
+                }
+                ka.Count++;
+                if (it.Flipped) ka.FaceUp++; else ka.FaceDown++;
+                switch (it.Showing)
+                {
+                    case "face": ka.ShowsFace++; break;
+                    case "back": ka.ShowsBack++; break;
+                    default: ka.Hidden++; break;
+                }
             }
             return zones;
         }
 
-        /// <summary>把 zone 状态写进 JSON（不含外层大括号），每行前置 indent。</summary>
+        /// <summary>
+        /// 把 zone 状态写进 JSON（不含外层大括号），每行前置 indent。
+        ///
+        /// 两种粒度都写：
+        ///   zones[k].count / face_up / face_down / shows_* —— 这个区域整体
+        ///   zones[k].kinds[身份] —— **按身份分的状态**（几张、几张朝上、实际显示哪一面）
+        ///
+        /// 为什么要做到 kinds 这一层：曾经"契约全 PASS 而画面是错的"——契约只统计
+        /// "朝上几张、朝下几张"，看不出"**哪一张**朝上"。牌堆里 4 张真牌 + 32 张垫牌，
+        /// 最上面那张真牌正面朝上时，zone 级统计和契约对得上，只有按身份看才露馅。
+        /// </summary>
         private static void AppendZoneLines(System.Text.StringBuilder sb,
             SortedDictionary<string, ZoneAgg> zones, string indent)
         {
@@ -233,7 +272,14 @@ namespace BoardGameTutorial.Editor
                 foreach (var k in agg.Kinds)
                 {
                     ki++;
-                    sb.Append($"\"{k.Key}\": {k.Value}");
+                    var ka = k.Value;
+                    sb.Append($"\"{k.Key}\": {{ \"count\": {ka.Count}");
+                    if (ka.FaceUp > 0) sb.Append($", \"face_up\": {ka.FaceUp}");
+                    if (ka.FaceDown > 0) sb.Append($", \"face_down\": {ka.FaceDown}");
+                    if (ka.ShowsFace > 0) sb.Append($", \"shows_face\": {ka.ShowsFace}");
+                    if (ka.ShowsBack > 0) sb.Append($", \"shows_back\": {ka.ShowsBack}");
+                    if (ka.Hidden > 0) sb.Append($", \"hidden\": {ka.Hidden}");
+                    sb.Append(" }");
                     if (ki < agg.Kinds.Count) sb.Append(", ");
                 }
                 sb.Append("} }");
@@ -242,11 +288,59 @@ namespace BoardGameTutorial.Editor
             }
         }
 
+        /// <summary>每个身份的合计（件数 + 面 + 实际显示）。</summary>
+        private class KindAgg
+        {
+            public int Count, FaceUp, FaceDown;
+            public int ShowsFace, ShowsBack, Hidden;
+        }
+
         private class ZoneAgg
         {
             public int Count, FaceUp, FaceDown;
             public int ShowsFace, ShowsBack, Hidden;   // 画面上实际显示哪一面
-            public SortedDictionary<string, int> Kinds = new SortedDictionary<string, int>();
+            public SortedDictionary<string, KindAgg> Kinds = new SortedDictionary<string, KindAgg>();
+        }
+
+        /// <summary>
+        /// 每件组件的状态，**一行一件**（要排查具体是哪一件出问题时看这个）。
+        ///
+        /// 字段就是"组件状态"那句话的展开：它在哪个 zone、第几位、哪一面、画面上显示哪一面，
+        /// 以及它**是本体里的什么**（concept —— 由模板的 concept/concept_by_palette 决定，
+        /// 纯视觉件没有）。
+        ///
+        /// face 只对**真的有正反面**的件输出：判据是它有没有背面贴图（有 back_image 才有）。
+        /// 宝石没有背面，硬写个 face 只会让人以为它也能翻面。
+        /// </summary>
+        private static void AppendItemLines(System.Text.StringBuilder sb, TutorialCueAnimPlayer anim, string indent)
+        {
+            int i = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                var actor = it.Actor;
+                string concept = ConceptOf(it);
+                string face = (actor != null && actor.BackSprite != null)
+                    ? (it.Flipped ? "up" : "down") : null;
+                sb.Append($"{indent}{{ \"id\": \"{it.Id}\", \"kind\": \"{it.KindKey}\"");
+                if (!string.IsNullOrEmpty(concept)) sb.Append($", \"concept\": \"{concept}\"");
+                sb.Append($", \"zone\": \"{it.ZoneId}\", \"order\": {it.Order}");
+                if (face != null) sb.Append($", \"face\": \"{face}\"");
+                sb.Append($", \"shows\": \"{it.Showing}\" }}");
+                i++;
+                sb.Append(i < anim.Store.Items.Count ? ",\n" : "\n");
+            }
+        }
+
+        /// <summary>这件组件实例化的是哪个概念：先按色板查，再退回模板上的 concept。</summary>
+        private static string ConceptOf(ZoneItem it)
+        {
+            var tpl = it?.Template;
+            if (tpl == null) return null;
+            if (tpl.concept_by_palette != null)
+                foreach (var e in tpl.concept_by_palette)
+                    if (e != null && e.palette == it.PaletteName && !string.IsNullOrEmpty(e.concept))
+                        return e.concept;
+            return tpl.concept;
         }
 
 
@@ -436,7 +530,17 @@ namespace BoardGameTutorial.Editor
             anim.Seek(float.Parse(ArgValue("-listAt", "2.6")));
 
             var items = anim.Store.Items.Where(x => x.ZoneId == zone).OrderBy(x => x.Order).ToList();
-            Debug.Log($"[List] {cueId} 的 {zone}：共 {items.Count} 件");
+            Debug.Log($"[List] {cueId} @{ArgValue("-listAt", "2.6")}s 的 {zone}：共 {items.Count} 件");
+            // 以前这里只打了"共 N 件"，清单算出来没用 —— "到底哪一件不对"于是只能靠猜。
+            // 一行一件，字段与 DumpState 的 items 一致。
+            foreach (var it in items)
+            {
+                string concept = ConceptOf(it) ?? "-";
+                string face = (it.Actor != null && it.Actor.BackSprite != null)
+                    ? (it.Flipped ? "up" : "down") : "-";
+                Debug.Log($"[List]   order {it.Order,3}  {it.Id,-28} {it.KindKey,-34} " +
+                          $"concept={concept,-28} face={face,-4} shows={it.Showing}");
+            }
             EditorApplication.Exit(0);
         }
 
