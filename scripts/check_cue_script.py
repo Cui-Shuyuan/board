@@ -114,15 +114,26 @@ def check_zone(name, want, got):
     """
     diffs = []
     got = got or {}
+    got_kinds = {k: _kind_record(v) for k, v in (got.get("kinds") or {}).items()}
+    # 这个区域里的件**全都没有背图**吗 —— 是的话，face 这一维对它不存在（见 _TWO_SIDED）
+    sides = [_two_sided(k) for k in got_kinds]
+    face_absent = bool(sides) and all(s is False for s in sides)
+
+    # 单面件断朝向：报一条就够，不要因为它写了 face_up 和 face_down 而报两遍
+    if face_absent and ("face_up" in want or "face_down" in want):
+        diffs.append(f"{name}.face_up/face_down: 契约断了朝向，但这里没有一件有背图（单面件）"
+                     f"—— 这一维对它**不存在**，去掉这条断言；真要谈朝向就先给它一张背图")
 
     for field in ("count", "face_up", "face_down", "shows_face", "shows_back", "hidden"):
-        if field in want:
-            w, g = want[field], got.get(field, 0)
-            if w != g:
-                diffs.append(f"{name}.{field}: 期望 {w}，实际 {g}")
+        if field not in want:
+            continue
+        if field in ("face_up", "face_down") and face_absent:
+            continue
+        w, g = want[field], got.get(field, 0)
+        if w != g:
+            diffs.append(f"{name}.{field}: 期望 {w}，实际 {g}")
 
     if "kinds" in want:
-        got_kinds = {k: _kind_record(v) for k, v in (got.get("kinds") or {}).items()}
         for k, wv in want["kinds"].items():
             w = _kind_record(wv)
             # 同一语义名可能匹配到多个引擎身份（"宝石白" ↔ gem|gem_diamond），合并计
@@ -148,6 +159,10 @@ def check_zone(name, want, got):
                 # "期望 1 实际 0" —— 那是采样的问题，不是画面的问题。
                 diffs.append(f"{name}.kinds[{k}]: 契约要求 face/shows，但采样里没有状态字段"
                              f"（采样文件是旧格式，重跑 scripts/dump_states.sh）")
+                continue
+            if "face" in w and matched and all(_two_sided(gk) is False for gk in matched):
+                diffs.append(f"{name}.kinds[{k}].face: 契约断了朝向，但这件没有背图（单面件）"
+                             f"—— 这一维对它**不存在**，去掉这条断言（它的身份名/`shows` 已经说清了）")
                 continue
             if "face" in w:
                 f = _FACE_FIELD.get(w["face"])
@@ -335,6 +350,28 @@ def _in_rect(rect, x, z, hw=0.02, hh=0.02):
     return rect and (rect[0] - hw <= x <= rect[1] + hw and rect[2] - hh <= z <= rect[3] + hh)
 
 
+# 模板 → 有没有背面贴图（= 这件**真的有正反面**）。由 load_stage 填充。
+#
+# 为什么要它：`face_up/face_down` 只对**有背图**的件成立。垫牌（`blank_card_*`）的
+# "正面"就是卡背图、贵族板块只有一面 —— 它们没有"另一面"可翻，`Flipped` 只是个没被用到的
+# 默认值。契约去断它，就会得到"期望 3 面朝上、实际 3 面朝下"这种**指向不存在状态**的差异，
+# 让人白查半天（2026-09 真发生过两次：贵族、牌堆垫牌）。这条检查让这种断言当场现形。
+_TWO_SIDED = None
+
+
+def set_stage(stage):
+    global _TWO_SIDED
+    _TWO_SIDED = {t.get("id"): bool(t.get("back_image"))
+                  for t in (stage or {}).get("templates", [])}
+
+
+def _two_sided(kind_key):
+    """这个引擎身份（"模板|色板"）真的有正反面吗。不知道 → None（不猜）。"""
+    if _TWO_SIDED is None or not kind_key:
+        return None
+    return _TWO_SIDED.get(str(kind_key).split("|")[0])
+
+
 def load_stage(args):
     base = ROOT / "games" / args.game / "tutorial" / "anim"
     doc = load(base / f"{args.track}.json")
@@ -467,6 +504,7 @@ def diff_cue(want_part, state):
 def check_single(args):
     cpath, spath = resolve_paths(args)
     _, contracts = load_contracts(cpath)
+    set_stage(load_stage(args))
     if not contracts:
         return 2
     contract = contracts.get(args.cue)
@@ -526,6 +564,7 @@ def check_all(args):
         return 2
     states = load_states(spath)
     stage = load_stage(args)
+    set_stage(stage)
 
     fails = skipped = frame_warns = 0
     prev_leave = None
@@ -607,6 +646,7 @@ def chain(args):
     doc, contracts = load_contracts(cpath)
     if doc is None:
         return 2
+    set_stage(load_stage(args))
     states = load_states(spath)
 
     fails = 0

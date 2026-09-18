@@ -1881,3 +1881,184 @@ clip.GroupGrow = grow;
 
 插入 `stack` 事件时把它们放在了前面，而后面还有 `at=0.0` 的 wait —— 校验器报出来了。
 已按 `at` 排序（同 `at` 内保持原顺序，Python sort 稳定）。
+
+---
+
+## 【根因·必须记住】`what != null` 永远为真 —— JsonUtility 会给嵌套类字段造空实例（2026-09）
+
+**现象**：`action.take.different.001` 里一条最普通的 transfer
+
+```json
+{"at": 3.35, "action": "transfer", "realizes": "<ontology::transfer>",
+ "source": ["gem_supply_diamond","gem_supply_sapphire","gem_supply_ruby"],
+ "destination": "player_holding", "stagger": 0.25}
+```
+
+（"从这三个供应堆各取一枚给玩家"）**一件都没搬**，画面上什么都不发生。引擎日志：
+
+```
+transfer 的 what 一个候选都没有（cue action.take.different.001）：concept=''
+```
+
+可脚本里**根本没写 `what`**。查脚本文件、比对 JSON、跑校验器 —— 都没问题。
+
+**根因**：`JsonUtility.FromJson` 会给**嵌套的可序列化类字段自动造一个空实例**。
+`CueAnimEvent.what`（`ConceptRef` 是 class）在"JSON 里没有这个键"时**不是 null**，
+而是 `concept == null` 的空对象。于是引擎里那句
+
+```csharp
+if (ev.what != null)          // 永远成立
+    cands = Store.ConceptCandidates(ev.what.concept, ...);   // concept 为空 → 0 个候选 → 报错返回
+```
+
+把"没写 what"当成了"写了空 what"，直接 `return plan`（不猜、不动）—— 对的行为用在错的前提上。
+
+**修法**：加 `CueAnimEvent.HasWhat => what != null && !string.IsNullOrEmpty(what.concept)`，
+所有"脚本有没有点名"的判断（`PlanMove` / `PickSelector` / `TriggerHighlight` 入口检查）都改走它。
+`start.set` 那处**早就是对的**（写的是 `seed.what != null && !string.IsNullOrEmpty(seed.what.concept)`）
+—— 所以这个坑只在别处，靠"抄旁边那段"能躲过去，但得先知道要抄。
+
+**教训（可推广）**：
+> 判断"脚本里有没有写"，要看**值**，不要看**引用**。
+> 而且要看的是**引擎解析后的对象**，不是脚本文件 —— 文件写对了不等于引擎读对了。
+> 契约（文件里写的）↔ 引擎读到的 ↔ 采样采到的，是**三层**，不是两层。
+
+## 【工具】`-dumpEvents 1`：把引擎**解析到**的事件打出来（2026-09）
+
+```
+Unity.exe -batchmode -projectPath D:\workspace\board\client \
+  -executeMethod BoardGameTutorial.Editor.TutorialFrameCapture.DumpState \
+  -dumpCues "action.take.different.001" \
+  -dumpOut 'D:\workspace\board\client\CaptureOut\probe.json' \
+  -dumpItems 0 -dumpEvents 1 -logFile ... -quit
+```
+
+每条事件一行：
+
+```
+[Dump] action.take.different.001 ev@3.35 transfer what='' target='' zone=''
+       src=gem_supply_diamond/gem_supply_sapphire/gem_supply_ruby qty=0 dest='player_holding'
+```
+
+**为什么必须有它**：上面那个 bug，脚本文件、静态校验、终态对账**全都看不出问题**
+（脚本文件是对的；校验器读的就是文件；对账只看终态，而 `player_holding` 为 0 也能被别的差异掩盖）。
+只有"引擎解析结果"这一层能把三层分开。
+
+## 【根因】`create` 的幂等补齐只数模板 → 同模板不同色板只建出第一件（2026-09）
+
+宝石介绍写 5 条 `create`（五色各一枚样本，同一个模板 `gem_sample`、同一个 zone），
+采样只有 **1 件**（钻石那枚）。原因：
+
+```csharp
+int have = Store.CountInZone(zone, ev.template);   // 只数模板
+n -= have;                                          // 第 2 条起：have=1 → n=0 → return
+```
+
+幂等本身是对的（防重复 Seek 建两遍、防入口重放又建一次），但判据太粗：
+**同模板不同色板是不同件**。改成按 `(zone, template, palette)` 数
+（`ZoneStore.CountInZone` 加了 palette 重载）。
+
+## 【设计】介绍用的**展示位** + **样本**模板（用户 2026-09）
+
+用户对宝石介绍的要求，逐句落成规则：
+
+| 用户原话 | 落地 |
+|---|---|
+| "不该从盒子里飞进来，应该直接出现在画面里" | 用 `create`（瞬时），不用 `transfer` |
+| "画面里不该出现一级发展卡……要么让卡牌暂时不可见，要么离远一点" | 介绍**换个地方**：`gem_display` / `gold_display` |
+| "介绍和供应堆可以不在一起……离供应堆很远" | 展示位是独立 zone：`concept: null`、`contains: []`，放在供应区前方 |
+| "介绍完成后立即被销毁，然后镜头切回来" | 下一条 cue 开头 `destroy` + `camera: "supply"` |
+| "介绍黄金时它也是几个宝石进入一个 zone" | 黄金样本进 `gold_display`，与宝石展示位**隔开一段距离**（"黄金不属于宝石"的视觉依据） |
+
+**样本模板**（`gem_sample`，与 `sample_card_*` 一个路数）：外形与真件相同、概念绑定**完全相同**
+（一枚样本确实"是"那种宝石），但**独立模板** —— 所以不混进"每色 7 枚"的账，销毁也不影响账。
+
+由此产生一条新规则（`ZoneStore.ConceptCandidatesReal`）：
+
+> 样本与真件绑同一套概念 ⇒ "按概念点名"会同时命中两者。
+> 凡是"要搬/要补一件真件"的判定（`transfer` 的 `what`、`start.set` 预置），
+> 样本**不参与竞争**（`sample: true` 的模板排除掉）；
+> 高亮/销毁**不排除** —— 它们本来就该能点到展示位上的样本。
+
+不这么分的后果（都真发生过）：`start.set` 判"候选不唯一"→ 整条预置被跳过；
+盒里的黄金被判成"说不清是哪一件"。
+
+**取景要跟着收**：单个 zone 特写的默认留白倍率是 2.2，z 方向覆盖 ±1.96 ——
+展示位 z=-2.85 时画面顶边到 -0.89，而发展卡市场最低 z=-1.06 **正好落在框里**。
+写 `"camera_padding": 1.25` 收框后顶边到 -1.73，市场被排除干净。
+（多 zone 同框 `"gem_display,gold_display"` 自带 1.25，不用另写。）
+
+## 【已修】冷启动跳转 NRE：入口链重放时相机还没建（2026-09）
+
+`LoadCue(continueState=false)`（**跳转 / 重播 / 上一条**）会先 `ReplayEntryChain` 从根重放 ——
+那时 `animCamera` 还没建（`EnsureCamera()` 在重放之后）。重放里任何 `camera` 事件都会走到
+`FitCamera()` → `animCamera.transform...` → **NullReferenceException**，整轮采样/播放崩掉。
+
+顺序播放碰不到（相机早就在），所以这条路径特别容易漏 —— 而用户恰恰经常跳着看。
+
+修法：`FitCamera` 里判空，只把取景**记下来**（`frameZoneId` 已设好）；
+相机建出来后 `LoadCue` 末尾会再调一次 `FitCamera`，那时才真的摆镜头。
+
+## 【根因】单面件不该谈 `face`：聚合与逐件必须同一判据（2026-09）
+
+`setup.nobles.001.2` 对账报：
+
+```
+noble_market.face_up: 期望 3，实际 0
+noble_market.kinds[贵族].face: 期望全部正面朝上，实际 0 件朝上 / 3 件朝下
+```
+
+可采样里同一区域同时写着 `shows_face: 3` —— **画面显示的是正面，状态说它朝下**。
+
+真相：**贵族素材只有一面**（没有 `back_image`，也不需要有：抽贵族本来就不给看背面）。
+逐件输出早就按"有背图才输出 `face`"的规则**不输出**它；但区域聚合是无条件按 `Flipped`
+统计的，于是给不存在的维度报了 `face_down: 3`，契约一断言就得到指向**假状态**的差异。
+
+修法：聚合与逐件共用 `HasTwoSides(it)`（判据 = 有没有背面贴图），单面件不进 `face_up/face_down`。
+契约也据此**删掉**对贵族的 face 断言 —— 「该有的有，不该有的就没有」：
+没有背图就没有"面"可谈，硬断它只会让人去追一个不存在的东西。
+（要让贵族谈"正面朝上"，先给它一张背图。）
+
+## 【工具】采样怎么跑：其实在 WSL 直接跑（2026-09）
+
+`scripts/dump_states.sh` 里的 Unity 是 `/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe`，
+`-projectPath D:\workspace\board\client` —— **WSL 里直接执行就行**，不用切到 Windows：
+
+```bash
+./scripts/sync_workspaces.sh from-linux    # ① 先把数据推到 Windows（Unity 读的是 D:）
+./scripts/dump_states.sh                   # ② 一次 Unity 启动，整条轨道采到尾
+python3 scripts/check_cue_script.py --all  # ③ 对账
+```
+
+三个必须记住的坑（都踩过）：
+
+1. **采样写在哪**：Unity 写 `D:\...\anim\full.exitstate.json`，脚本再拷回 WSL。
+   曾经让 Unity 写到 `script\`、却从 `anim\` 拷回来 —— 每次"重跑采样"其实拷的是仓库里那份
+   **旧文件**。症状是"对账老说采样是旧格式，重跑一下就好"，而重跑并没有用。
+   现在两侧路径由同一个相对路径拼出来，跑完还会打印采样格式（`picture`/`items` 在不在）。
+2. **采样产物不纳入版本管理**：它每次采样都变，跟踪它就会把工作区弄脏，
+   然后**下一次 `sync_workspaces.sh` 被自己的产物挡住**（"Windows 工作区有未提交的已跟踪改动"）。
+   已 `git rm --cached` + 写进 `.gitignore`。
+3. **先同步再采样**：不同步就是拿旧脚本采样，然后对着一堆"动画没生效"的差异查半天
+   （2026-09 真发生过：一整轮对账跑的是 Windows 上的旧提交，5 个 FAIL 全是假的）。
+
+## 【新】取景 vs 契约：`check_cue_script.py` 的第三类检查（2026-09）
+
+状态对账查的是"**该在的在不在**"，查不出**不该出现在画面里**的东西 ——
+宝石介绍镜头里出现一级发展卡，状态**完全正确**，只是"入镜了"。
+
+所以新增：**取景框 ∩ 有内容的组件 vs 契约声明**。
+
+- 几何**镜像**引擎 `FitCamera`（`frame_bounds` / `visible_rect`）：多 zone / `supply` / `cards` /
+  单 zone 的留白倍率、`orthoSize`、可见地面矩形（`halfW = orthoSize*aspect`、`halfH = orthoSize/sin(pitch)`）。
+  两边一旦漂移，这条检查就开始撒谎 —— 所以写得和引擎一样笨，注释里互相点名。
+- "在画面里"的判据是**组件本体与框相交**（按 zone 的 `size` 算半个宽高），不是"中心在框内"：
+  只看中心会把"卡片下沿露在画面顶部"判成没入镜，而用户看到的恰恰是那一条边。
+- 用采样的 `shows == "hidden"` 判"画面上看不见"，不另推一套 offstage 规则。
+- 级别是**警告**（用户定的措辞就是 warn）：入镜的东西不一定是错的（供应区特写必然带上市场与牌堆）。
+  处置办法两个 —— **改取景**，或**在契约里声明它**（声明了就是真的在比它）。`--strict-framing` 升成错误。
+- `board`（整桌取景）不查：整桌本来就"什么都看得见"，枚举没有意义。
+
+实测：宝石介绍加上 `camera_padding: 1.25` 后，001.1/001.2/001.3/002 四条**取景警告全部消失**；
+供应区那几条（003.1→005.2、nobles.001.1）稳定报 `card_market` + `deck_level_1` ——
+正是"供应区特写必然带上它们"，要不要处理由人决定。
