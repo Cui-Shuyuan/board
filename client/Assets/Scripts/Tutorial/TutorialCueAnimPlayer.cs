@@ -74,12 +74,14 @@ namespace BoardGameTutorial
 
         /// <summary>
         /// 设置取景目标。zoneId 为空或 "board" 表示整桌取景；
-        /// 否则把镜头对准该 zone（用于「这是某件东西」的特写）。
+        /// "cards" / "supply" 是**组取景 token**（分别框住展示位三张卡背、整排供应区）；
+        /// 其余按 zone id 特写该区域。
         /// </summary>
         public void SetFraming(string zoneId, float padding = 0f)
         {
             frameZoneId = string.IsNullOrEmpty(zoneId) || zoneId == "board" ? null
-                : (zoneId == "cards" ? FrameCardsToken : zoneId);
+                : (zoneId == "cards" ? FrameCardsToken
+                : (zoneId == "supply" ? FrameSupplyToken : zoneId));
             framePadding = padding;
             FitCamera();
         }
@@ -159,6 +161,19 @@ namespace BoardGameTutorial
         private GameObject animRoot;
         private Camera animCamera;
         private const string FrameCardsToken = "__cards__";
+
+        /// <summary>
+        /// 取景 "supply"：把整排供应区一起框住 —— 用 <see cref="SupplyPalette"/> 色板的那些 zone
+        /// （璀璨宝石里就是宝石 5 色 + 黄金共 6 堆）。
+        ///
+        /// 为什么需要它：整桌取景（board）按 extent 框，而牌桌「宽 4.5 × 深 6.6」、屏幕是 16:9 ——
+        /// 按深度取景会在左右留一大堆空，宝石只占屏宽 4% 左右，「每种 4/5/7 枚」根本数不清。
+        /// 这与 "cards"（showcase 三张卡背并排）是同一类需求，所以同样做成取景 token；
+        /// 但成员不写死在代码里，而是按**色板**判定，换游戏不用改代码。
+        /// </summary>
+        private const string FrameSupplyToken = "__supply__";
+        private const string SupplyPalette = "panel_supply";
+
         private string frameZoneId;      // 非空 = 特写取景到该 zone
         private float framePadding;
         private SpriteRenderer boxSprite;
@@ -2355,8 +2370,38 @@ namespace BoardGameTutorial
                 }
             }
 
+            // 取景 "supply"：把整排供应堆（凡用 panel_supply 色板的 zone）一起框住。
+            // 与 "cards" 同类，但成员按色板判定，不写死 zone 名。
+            if (frameZoneId == FrameSupplyToken)
+            {
+                minX = float.MaxValue; maxX = float.MinValue;
+                minZ = float.MaxValue; maxZ = float.MinValue;
+                int members = 0;
+                foreach (var zone in Store.Zones)
+                {
+                    if (zone.role == "offstage" || zone.palette != SupplyPalette) continue;
+                    int cnt = Mathf.Max(1, zone.capacity > 0 ? zone.capacity : 1);
+                    float hw = (zone.size?.w ?? 0.2f) * 0.5f;
+                    float hh = (zone.size?.h ?? 0.2f) * 0.5f;
+                    for (int i = 0; i < cnt; i++)
+                    {
+                        var q = Store.ZonePosition(zone.id, i);
+                        minX = Mathf.Min(minX, q.x - hw); maxX = Mathf.Max(maxX, q.x + hw);
+                        minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
+                    }
+                    members++;
+                }
+                if (members == 0)
+                {
+                    // 不静默失败：取景目标找不到成员时，必须留下痕迹（否则画面悄悄退回上一次取景）
+                    Debug.LogWarning($"[CueAnim.FitCamera] 取景 'supply' 没找到任何 palette='{SupplyPalette}' 的 zone，" +
+                                     $"沿用上一次取景（cue {CueId}）");
+                    return;
+                }
+                orthoScale = framePadding > 0f ? framePadding : 1.25f;
+            }
             // 取景 "cards"：把 showcase（1,2,3）三张并排的卡背一起框住
-            if (frameZoneId == FrameCardsToken)
+            else if (frameZoneId == FrameCardsToken)
             {
                 float hw = 0.315f, hh = 0.44f;
                 minX = float.MaxValue; maxX = float.MinValue;
