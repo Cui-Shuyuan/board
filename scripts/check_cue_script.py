@@ -2,18 +2,29 @@
 """对账：把「引擎采样出来的状态」和「脚本里写的契约」比一遍。
 
 用法：
-    python3 scripts/check_cue_script.py --game splendor --cue setup.cards.002.1 \
-        --state client/CaptureOut/state_cue12.json [--which exit]
+    # 单条查自己（默认查出口）
+    python3 scripts/check_cue_script.py --cue setup.gems.003.1
+    python3 scripts/check_cue_script.py --cue setup.gems.003.1 --which enter
+    # 这一小节全查：每条自己的出口 + 跨 cue 的链（入口 vs 父 cue 的终态）
+    python3 scripts/check_cue_script.py --all
+    # 只查跨 cue 的链
+    python3 scripts/check_cue_script.py --chain
 
-为什么要这么做：
-    以前判断"这一 cue 演得对不对"靠**看渲染出来的像素**，而像素会骗人
-    （采样坐标写错、读到旧帧、离屏渲染里某些效果根本不发生）。
-    而"谁在哪个 zone、几件、朝上还是朝下"是**数据**，可以用程序精确比对。
+数据在哪：
+    games/{game}/tutorial/script/{track}.json            契约 —— **人写**，整条 track 一个文件
+    games/{game}/tutorial/script/{track}.exitstate.json  采样终态 —— 引擎生成，别手改
+    --script / --states 覆盖这两条路径；--state 直接给一份单独的采样文件（临时查一条用）
 
-    契约（script/full/<cue>.json）由人写，状态由引擎采样，两者结构相同 → 可 diff。
-    出现差异时，配合契约里的 story 就能判断**是我脚本写错了，还是动画做错了**。
+为什么这么分：契约是人写的意图 + 首尾状态，采样是引擎跑出来的事实，两者结构相同 → 可 diff，
+出现差异时配合契约里的 story 就能判断**是脚本写错了，还是动画做错了**。
+以前契约一条 cue 一个文件，翻起来要开十几个文件；现在一个 track 一个文件、按轨道顺序排。
+
+注意别和 `script.{track}.json`（口播稿编辑源）搞混：那个是口播链路的输入/输出，
+本文件是动画契约，两条链路互不写对方。
 """
-import argparse, json, sys
+import argparse
+import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -85,52 +96,91 @@ def check_zone(name, want, got):
     return diffs
 
 
-args_verbose = False
+def diff_contract(want_zones, state_zones):
+    """契约里声明的那些 zone，逐个和采样状态比。返回差异列表。
+
+    契约**只需声明它关心的 zone**（跟本条无关的宝石盒、贵族等不必写），
+    所以「契约没提但引擎里有东西」不算差异 —— 否则每条 cue 都要把整张桌子抄一遍，
+    契约会膨胀到没人愿意维护，而没人维护的契约等于没有。
+    想查"无关区域有没有被动过"，用不变量（invariants），那才是它的职责。
+    """
+    diffs = []
+    for zname, wz in (want_zones or {}).items():
+        diffs += check_zone(zname, wz, (state_zones or {}).get(zname))
+    return diffs
 
 
-def main():
-    global args_verbose
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--game", default="splendor")
-    ap.add_argument("--cue", default=None)
-    ap.add_argument("--state", help="引擎采样出来的状态 JSON（--chain 模式可省）")
-    ap.add_argument("--which", default="exit", choices=["exit", "enter"])
-    ap.add_argument("--script-dir", default=None)
-    ap.add_argument("-v", "--verbose", action="store_true", help="同时列出被忽略的 zone")
-    ap.add_argument("--chain", action="store_true", help="跨 cue 对账：本 cue 的 enter vs 父 cue 的 exit")
-    ap.add_argument("--all", action="store_true", help="把这一小节全查：自己的 exit + 跨 cue 的链")
-    args = ap.parse_args()
-    args_verbose = args.verbose
-    if args.chain:
-        return chain(args)
-    if args.all:
-        return check_all(args)
+# ── 数据装载 ──────────────────────────────────────────────────────────
 
-    sdir = Path(args.script_dir) if args.script_dir else ROOT / "games" / args.game / "tutorial" / "script" / "full"
-    cpath = sdir / f"{args.cue}.json"
-    if not cpath.exists():
-        print(f"没有这条 cue 的脚本: {cpath}", file=sys.stderr)
+def resolve_paths(args):
+    base = ROOT / "games" / args.game / "tutorial" / "script"
+    contract = Path(args.script) if args.script else base / f"{args.track}.json"
+    states = Path(args.states) if args.states else base / f"{args.track}.exitstate.json"
+    return contract, states
+
+
+def load_contracts(path):
+    if not path.exists():
+        print(f"没有契约文件: {path}", file=sys.stderr)
+        return None, {}
+    doc = load(path)
+    return doc, {c["cue"]: c for c in (doc.get("cues") or []) if c.get("cue")}
+
+
+def load_states(path):
+    """采样文件 → {cue: {"zones": {...}}}。
+
+    兼容两种形态：整条 track 的合并文件（cues 是对象），以及单条 cue 的 dump
+    （顶层就是 cue/zones，老的单文件采样、或 --state 手给的都算）。
+    """
+    if path is None:
+        return {}
+    path = Path(path)
+    if not path.exists():
+        return {}
+    doc = load(path)
+    if isinstance(doc.get("cues"), dict):
+        return doc["cues"]
+    if doc.get("cue"):
+        return {doc["cue"]: {"zones": doc.get("zones") or {}}}
+    return {}
+
+
+def zones_of(contract, which):
+    """取契约里 enter / exit 那一段。"""
+    return (contract.get(which) or {}).get("zones") or {}
+
+
+# ── 三种查法 ──────────────────────────────────────────────────────────
+
+def check_single(args):
+    cpath, spath = resolve_paths(args)
+    _, contracts = load_contracts(cpath)
+    if not contracts:
+        return 2
+    contract = contracts.get(args.cue)
+    if contract is None:
+        print(f"契约里没有这条 cue: {args.cue}", file=sys.stderr)
         return 2
 
-    contract = load(cpath)
-    state = load(args.state)
+    # --state 给了就单独读它（临时采样），否则用整条 track 的采样文件
+    states = load_states(args.state) if args.state else load_states(spath)
+    # 查出口 = 和**自己**采样出来的终态比；
+    # 查入口 = 和**父 cue** 的终态比（入口本来就该等于父 cue 的出口）——
+    # 与 --chain 用的是同一个判据，单条查和整条查不会互相矛盾。
+    if args.which == "enter":
+        src = contract.get("entry_from")
+        if not src:
+            print(f"{args.cue} 没有 entry_from，无法查入口", file=sys.stderr)
+            return 2
+    else:
+        src = args.cue
+    if src not in states:
+        print(f"还没有 {src} 的采样状态（{spath}）", file=sys.stderr)
+        return 3
 
-    want = (contract.get(args.which) or {}).get("zones") or {}
-    got = state.get("zones") or {}
-
-    diffs = []
-    for zname, wz in want.items():
-        diffs += check_zone(zname, wz, got.get(zname))
-
-    # 契约**只需声明它关心的 zone**（跟本条无关的宝石盒、贵族等不必写）。
-    # 所以「契约没提但引擎里有东西」不算差异 —— 否则每条 cue 都要把整张桌子抄一遍，
-    # 契约会膨胀到没人愿意维护，而没人维护的契约等于没有。
-    # 想查"无关区域有没有被动过"，用不变量（invariants），那才是它的职责。
-    ignored = [z for z in got if z not in want and got[z].get("count")]
-    if ignored and args_verbose:
-        print(f"（忽略未声明的 zone：{', '.join(sorted(ignored))}）")
-
-    print(f"cue: {args.cue}   比对: {args.which}")
+    diffs = diff_contract(zones_of(contract, args.which), states[src]["zones"])
+    print(f"cue: {args.cue}   比对: {args.which}（对 {src} 的采样终态）")
     print("-" * 60)
     if diffs:
         print(f"FAIL  发现 {len(diffs)} 处差异：")
@@ -142,30 +192,27 @@ def main():
             for line in story[:6]:
                 print(f"  {line}")
         return 1
-
-    print(f"PASS  状态与契约一致（比对了 {len(want)} 个 zone）")
+    print(f"PASS  状态与契约一致（比对了 {len(zones_of(contract, args.which))} 个 zone）")
     return 0
 
 
 def check_all(args):
-    """把这一小节全部查一遍：① 每条自己的 exit ② 跨 cue 的链（enter vs 父 exit）。"""
-    sdir = Path(args.script_dir) if args.script_dir else ROOT / "games" / args.game / "tutorial" / "script" / "full"
-    sdir = Path(sdir)
+    """把整条 track 查一遍：① 每条自己的出口 ② 跨 cue 的链（enter vs 父 exit）。"""
+    cpath, spath = resolve_paths(args)
+    doc, contracts = load_contracts(cpath)
+    if doc is None:
+        return 2
+    states = load_states(spath)
+
     fails = skipped = 0
-    for cpath in sorted(sdir.glob("*.json")):
-        if cpath.name.endswith(".exitstate.json"):
-            continue
-        cue = cpath.stem
-        contract = load(cpath)
-        state_file = sdir / f"{cue}.exitstate.json"
+    # 按契约文件里的顺序（= 轨道顺序）走，不按字母序
+    for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
+        contract = contracts[cue]
 
         # ① 自己的出口
-        if state_file.exists():
-            want = (contract.get("exit") or {}).get("zones") or {}
-            got = (load(state_file).get("zones") or {})
-            diffs = []
-            for z, wz in want.items():
-                diffs += check_zone(z, wz, got.get(z))
+        if cue in states:
+            want = zones_of(contract, "exit")
+            diffs = diff_contract(want, states[cue]["zones"])
             if diffs:
                 print(f"FAIL  {cue}  exit:")
                 for d in diffs:
@@ -180,13 +227,9 @@ def check_all(args):
         # ② 跨 cue：enter vs 父 exit
         parent = contract.get("entry_from")
         if parent:
-            ps = sdir / f"{parent}.exitstate.json"
-            if ps.exists():
-                want = (contract.get("enter") or {}).get("zones") or {}
-                got = (load(ps).get("zones") or {})
-                diffs = []
-                for z, wz in want.items():
-                    diffs += check_zone(z, wz, got.get(z))
+            if parent in states:
+                want = zones_of(contract, "enter")
+                diffs = diff_contract(want, states[parent]["zones"])
                 if diffs:
                     print(f"FAIL  {cue}  enter vs 父({parent}) exit:")
                     for d in diffs:
@@ -208,36 +251,56 @@ def chain(args):
     这是「头尾都检查」的关键一步 —— 只查自己这条，看不出**上一条**错没错。
     采样父 cue 的真实终态，和本 cue 声明的 enter 比一遍，父 cue 错得离谱就会暴露。
     """
-    sdir = Path(args.script_dir) if args.script_dir else ROOT / "games" / args.game / "tutorial" / "script" / "full"
-    sdir = Path(sdir)
+    cpath, spath = resolve_paths(args)
+    doc, contracts = load_contracts(cpath)
+    if doc is None:
+        return 2
+    states = load_states(spath)
+
     fails = 0
-    for cpath in sorted(sdir.glob("*.json")):
-        contract = load(cpath)
+    for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
+        contract = contracts[cue]
         parent = contract.get("entry_from")
         if not parent:
             continue
-        ppath = sdir / f"{parent}.json"
-        if not ppath.exists():
-            print(f"FAIL  {contract['cue']}: 找不到父 cue 的脚本 {parent}")
+        if parent not in contracts:
+            print(f"FAIL  {cue}: 契约里找不到父 cue {parent}")
             fails += 1
             continue
-        pstate = sdir / f"{parent}.exitstate.json"
-        if not pstate.exists():
-            print(f"SKIP  {contract['cue']}: 还没有父 cue 的采样状态（{pstate.name}）")
+        if parent not in states:
+            print(f"SKIP  {cue}: 还没有父 cue 的采样状态（{parent}）")
             continue
-        want = (contract.get("enter") or {}).get("zones") or {}
-        got = (load(pstate).get("zones") or {})
-        diffs = []
-        for zname, wz in want.items():
-            diffs += check_zone(zname, wz, got.get(zname))
+        diffs = diff_contract(zones_of(contract, "enter"), states[parent]["zones"])
         if diffs:
-            print(f"FAIL  {contract['cue']}: 入口与父 cue({parent}) 的终态不一致：")
+            print(f"FAIL  {cue}: 入口与父 cue({parent}) 的终态不一致：")
             for d in diffs:
                 print(f"        - {d}")
             fails += 1
         else:
-            print(f"PASS  {contract['cue']}: 入口 == 父 cue({parent}) 的终态")
+            print(f"PASS  {cue}: 入口 == 父 cue({parent}) 的终态")
     return 1 if fails else 0
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--game", default="splendor")
+    ap.add_argument("--track", default="full")
+    ap.add_argument("--cue", default=None)
+    ap.add_argument("--script", help="契约文件（默认 games/{game}/tutorial/script/{track}.json）")
+    ap.add_argument("--states", help="采样文件（默认 .../{track}.exitstate.json）")
+    ap.add_argument("--state", help="单条 cue 的采样文件（临时查用，覆盖 --states）")
+    ap.add_argument("--which", default="exit", choices=["exit", "enter"])
+    ap.add_argument("-v", "--verbose", action="store_true", help="（保留）列出被忽略的 zone")
+    ap.add_argument("--chain", action="store_true", help="跨 cue 对账：本 cue 的 enter vs 父 cue 的 exit")
+    ap.add_argument("--all", action="store_true", help="整条 track 全查：自己的 exit + 跨 cue 的链")
+    args = ap.parse_args()
+    if args.chain:
+        return chain(args)
+    if args.all:
+        return check_all(args)
+    if not args.cue:
+        ap.error("要么给 --cue，要么用 --all / --chain")
+    return check_single(args)
 
 
 if __name__ == "__main__":

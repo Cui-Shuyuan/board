@@ -755,6 +755,13 @@ def main():
 
     scripts_dir = Path(args.dir)
     files = sorted(p for p in scripts_dir.rglob("*.cs") if p.name not in EXCLUDED)
+    # 采样入口也要编译检查：`-dumpCues` 这类改动以前只能到 Windows 上才发现写错。
+    # 只收 TutorialFrameCapture.cs —— 它是 Editor 目录里唯一只用 EditorApplication.Exit
+    # 的（stub 有），另外三个 Editor 脚本依赖重度编辑器 API，收了只会增加 stub 负担。
+    dump_entry = ROOT / "client/Assets/Editor/TutorialFrameCapture.cs"
+    if args.dir == str(SCRIPTS_DIR) and dump_entry.exists() and dump_entry not in files:
+        files.append(dump_entry)
+    files.sort()
     if not files:
         print(f"no .cs files under {scripts_dir}", file=sys.stderr)
         return 2

@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "kind": "exit_states",
+  "generator": "client/Assets/Editor/TutorialFrameCapture.cs :: DumpState（-dumpCues 一次跑完整条轨道）",
+  "note": "采样出来的**终态**（引擎生成，不要手改）：沿轨道顺序逐条播到终态后记录各 zone 的件数与身份，供 check_cue_script.py 与契约 diff。只列已经采样过的 cue。",
+  "cues": {
+    "setup.cards.001.1": {
+      "zones": {
+        "box_gem_diamond": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_diamond": 7
+          }
+        },
+        "box_gem_emerald": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_emerald": 7
+          }
+        },
+        "box_gem_gold": {
+          "count": 5,
+          "face_up": 0,
+          "face_down": 5,
+          "kinds": {
+            "gem|gem_gold": 5
+          }
+        },
+        "box_gem_onyx": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_onyx": 7
+          }
+        },
+        "box_gem_ruby": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_ruby": 7
+          }
+        },
+        "box_gem_sapphire": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_sapphire": 7
+          }
+        },
+        "offstage": {
+          "count": 3,
+          "face_up": 0,
+          "face_down": 3,
+          "kinds": {
+            "noble|noble": 3
+          }
+        },
+        "showcase": {
+          "count": 1,
+          "face_up": 1,
+          "face_down": 0,
+          "kinds": {
+            "sample_card_1|card_level_1": 1
+          }
+        }
+      }
+    },
+    "setup.cards.001.2": {
+      "zones": {
+        "box_gem_diamond": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_diamond": 7
+          }
+        },
+        "box_gem_emerald": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_emerald": 7
+          }
+        },
+        "box_gem_gold": {
+          "count": 5,
+          "face_up": 0,
+          "face_down": 5,
+          "kinds": {
+            "gem|gem_gold": 5
+          }
+        },
+        "box_gem_onyx": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_onyx": 7
+          }
+        },
+        "box_gem_ruby": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_ruby": 7
+          }
+        },
+        "box_gem_sapphire": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_sapphire": 7
+          }
+        },
+        "offstage": {
+          "count": 3,
+          "face_up": 0,
+          "face_down": 3,
+          "kinds": {
+            "noble|noble": 3
+          }
+        },
+        "showcase_1": {
+          "count": 1,
+          "face_up": 0,
+          "face_down": 1,
+          "kinds": {
+            "sample_back_1|card_level_1": 1
+          }
+        },
+        "showcase_2": {
+          "count": 1,
+          "face_up": 0,
+          "face_down": 1,
+          "kinds": {
+            "sample_back_2|card_level_2": 1
+          }
+        },
+        "showcase_3": {
+          "count": 1,
+          "face_up": 0,
+          "face_down": 1,
+          "kinds": {
+            "sample_back_3|card_level_3": 1
+          }
+        }
+      }
+    },
+    "setup.cards.001.3": {
+      "zones": {
+        "box_gem_diamond": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_diamond": 7
+          }
+        },
+        "box_gem_emerald": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_emerald": 7
+          }
+        },
+        "box_gem_gold": {
+          "count": 5,
+          "face_up": 0,
+          "face_down": 5,
+          "kinds": {
+            "gem|gem_gold": 5
+          }
+        },
+        "box_gem_onyx": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_onyx": 7
+          }
+        },
+        "box_gem_ruby": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_ruby": 7
+          }
+        },
+        "box_gem_sapphire": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_sapphire": 7
+          }
+        },
+        "offstage": {
+          "count": 3,
+          "face_up": 0,
+          "face_down": 3,
+          "kinds": {
+            "noble|noble": 3
+          }
+        },
+        "showcase_1": {
+          "count": 1,
+          "face_up": 0,
+          "face_down": 1,
+          "kinds": {
+            "sample_back_1|card_level_1": 1
+          }
+        },
+        "showcase_2": {
+          "count": 1,
+          "face_up": 0,
+          "face_down": 1,
+          "kinds": {
+            "sample_back_2|card_level_2": 1
+          }
+        },
+        "showcase_3": {
+          "count": 1,
+          "face_up": 0,
+          "face_down": 1,
+          "kinds": {
+            "sample_back_3|card_level_3": 1
+          }
+        }
+      }
+    },
+    "setup.cards.002.1": {
+      "zones": {
+        "box_gem_diamond": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_diamond": 7
+          }
+        },
+        "box_gem_emerald": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_emerald": 7
+          }
+        },
+        "box_gem_gold": {
+          "count": 5,
+          "face_up": 0,
+          "face_down": 5,
+          "kinds": {
+            "gem|gem_gold": 5
+          }
+        },
+        "box_gem_onyx": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_onyx": 7
+          }
+        },
+        "box_gem_ruby": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_ruby": 7
+          }
+        },
+        "box_gem_sapphire": {
+          "count": 7,
+          "face_up": 0,
+          "face_down": 7,
+          "kinds": {
+            "gem|gem_sapphire": 7
+          }
+        },
+        "card_market": {
+          "count": 12,
+          "face_up": 12,
+          "face_down": 0,
+          "kinds": {
+            "market_card_1_diamond|card_level_1": 1,
+            "market_card_1_emerald|card_level_1": 1,
+            "market_card_1_ruby|card_level_1": 1,
+            "market_card_1_sapphire|card_level_1": 1,
+            "market_card_2_emerald|card_level_2": 1,
+            "market_card_2_onyx|card_level_2": 1,
+            "market_card_2_ruby|card_level_2": 1,
+            "market_card_2_sapphire|card_level_2": 1,
+            "market_card_3_diamond|card_level_3": 1,
+            "market_card_3_emerald|card_level_3": 1,
+            "market_card_3_onyx|card_level_3": 1,
+            "market_card_3_ruby|card_level_3": 1
+          }
+        },
+        "deck_level_1": {
+          "count": 36,
+          "face_up": 0,
+          "face_down": 36,
+          "kinds": {
+            "blank_card_1|card_level_1": 36
+          }
+        },
+        "deck_level_2": {
+          "count": 26,
+          "face_up": 0,
+          "face_down": 26,
+          "kinds": {
+            "blank_card_2|card_level_2": 26
+          }
+        },
+        "deck_level_3": {
+          "count": 16,
+          "face_up": 0,
+          "face_down": 16,
+          "kinds": {
+            "blank_card_3|card_level_3": 16
+          }
+        },
+        "offstage": {
+          "count": 3,
+          "face_up": 0,
+          "face_down": 3,
+          "kinds": {
+            "noble|noble": 3
+          }
+        }
+      }
+    }
+  }
+}

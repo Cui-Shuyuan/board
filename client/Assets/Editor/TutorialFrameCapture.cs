@@ -77,7 +77,10 @@ namespace BoardGameTutorial.Editor
         /// 输出的是**语义状态**（谁在哪个 zone、几件、朝上还是朝下、什么身份），
         /// 不含坐标/缩放 —— 那些是从 zone+格位推出来的表现层，写进契约只会误报。
         ///
-        ///   -dumpCue &lt;cueId&gt;  -dumpReplay 0|1  -dumpOut &lt;path&gt;
+        ///   -dumpCue &lt;cueId&gt;  -dumpReplay 0|1  -dumpOut &lt;path&gt;        采一条
+        ///   -dumpCues "a,b,c"  -dumpOut &lt;path&gt;                      一次采一整条轨道（一个文件）
+        ///
+        /// 采一整条轨道时不需要 -dumpReplay：它本身就是从头顺次播到尾。
         /// </summary>
         public static void DumpState()
         {
@@ -90,6 +93,54 @@ namespace BoardGameTutorial.Editor
             var go = new GameObject("DumpHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
+
+            // ── 一次采一整条轨道（-dumpCues "a,b,c"）─────────────────────────
+            // 以前每条 cue 都要启动一次 Unity（batchmode 启动几十秒）+ 每条都从头重放一遍
+            // entry 链，一整条轨道 109 条就是 109 次启动。合成一次以后：Unity 只启动一次，
+            // 从头顺次播到尾，每条播到终态就记一笔 —— 这也正是播放器的真实路径（顺序播放），
+            // 比一条条重放更接近用户实际看到的画面。
+            var cuesArg = ArgValue("-dumpCues", null);
+            if (!string.IsNullOrEmpty(cuesArg))
+            {
+                var ids = new List<string>();
+                foreach (var raw in cuesArg.Split(','))
+                {
+                    var id = raw.Trim();
+                    if (id.Length > 0) ids.Add(id);
+                }
+
+                var many = new System.Text.StringBuilder();
+                many.Append("{\n");
+                many.Append("  \"schema_version\": 1,\n");
+                many.Append("  \"game_id\": \"splendor\",\n");
+                many.Append("  \"track\": \"full\",\n");
+                many.Append("  \"kind\": \"exit_states\",\n");
+                many.Append("  \"cues\": {\n");
+                for (int k = 0; k < ids.Count; k++)
+                {
+                    // 第一条从牌桌初始状态起，之后承接上一条的终态。
+                    // 没有动画数据的 cue（例如 setup.cards.002.2）LoadCue 返回 false，
+                    // 但它**保留牌桌** —— 那正是要采样的状态。
+                    bool ok = anim.LoadCue(gameRoot, "full", ids[k], k > 0);
+                    if (!ok && anim.ActorCount == 0)
+                        Debug.LogWarning($"[Dump] {ids[k]} 没有动画数据、场景也是空的（采到的是空状态）");
+                    for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+
+                    var zs = CollectZones(anim);
+                    many.Append($"    \"{ids[k]}\": {{\n      \"zones\": {{\n");
+                    AppendZoneLines(many, zs, "        ");
+                    many.Append("      }\n    }");
+                    if (k < ids.Count - 1) many.Append(",");
+                    many.Append("\n");
+                }
+                many.Append("  }\n}\n");
+
+                Directory.CreateDirectory(Path.GetDirectoryName(outPath));
+                File.WriteAllText(outPath, many.ToString());
+                Debug.Log($"[Dump] 一次采样 {ids.Count} 条 cue 的终态 → {outPath}");
+                EditorApplication.Exit(0);
+                return;
+            }
 
             // -dumpReplay 1：沿 entry 链把之前的 cue **逐条播到终态**，再采样本条。
             // 只播上一条不够：样本卡由更早的 cue 创建，漏掉会让父 cue 的出口本身是空的。
@@ -123,6 +174,24 @@ namespace BoardGameTutorial.Editor
             }
             for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
+            var zones = CollectZones(anim);
+
+            var sb = new System.Text.StringBuilder();
+            sb.Append("{\n");
+            sb.Append($"  \"cue\": \"{cueId}\",\n");
+            sb.Append("  \"zones\": {\n");
+            AppendZoneLines(sb, zones, "    ");
+            sb.Append("  }\n}\n");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(outPath));
+            File.WriteAllText(outPath, sb.ToString());
+            Debug.Log($"[Dump] {cueId} 终态已写入 {outPath}（{anim.ActorCount} 件，{zones.Count} 个 zone）");
+            EditorApplication.Exit(0);
+        }
+
+        /// <summary>把当前牌桌按 zone 聚合成**语义状态**（件数 / 身份 / 画面上实际显示哪一面）。</summary>
+        private static SortedDictionary<string, ZoneAgg> CollectZones(TutorialCueAnimPlayer anim)
+        {
             var zones = new SortedDictionary<string, ZoneAgg>();
             foreach (var it in anim.Store.Items)
             {
@@ -144,17 +213,19 @@ namespace BoardGameTutorial.Editor
                 if (!agg.Kinds.ContainsKey(it.KindKey)) agg.Kinds[it.KindKey] = 0;
                 agg.Kinds[it.KindKey]++;
             }
+            return zones;
+        }
 
-            var sb = new System.Text.StringBuilder();
-            sb.Append("{\n");
-            sb.Append($"  \"cue\": \"{cueId}\",\n");
-            sb.Append("  \"zones\": {\n");
+        /// <summary>把 zone 状态写进 JSON（不含外层大括号），每行前置 indent。</summary>
+        private static void AppendZoneLines(System.Text.StringBuilder sb,
+            SortedDictionary<string, ZoneAgg> zones, string indent)
+        {
             int zi = 0;
             foreach (var kv in zones)
             {
                 zi++;
                 var agg = kv.Value;
-                sb.Append($"    \"{kv.Key}\": {{ \"count\": {agg.Count}, " +
+                sb.Append($"{indent}\"{kv.Key}\": {{ \"count\": {agg.Count}, " +
                           $"\"face_up\": {agg.FaceUp}, \"face_down\": {agg.FaceDown}, " +
                           $"\"shows_face\": {agg.ShowsFace}, \"shows_back\": {agg.ShowsBack}, " +
                           $"\"hidden\": {agg.Hidden}, \"kinds\": {{");
@@ -169,12 +240,6 @@ namespace BoardGameTutorial.Editor
                 if (zi < zones.Count) sb.Append(",");
                 sb.Append("\n");
             }
-            sb.Append("  }\n}\n");
-
-            Directory.CreateDirectory(Path.GetDirectoryName(outPath));
-            File.WriteAllText(outPath, sb.ToString());
-            Debug.Log($"[Dump] {cueId} 终态已写入 {outPath}（{anim.ActorCount} 件，{zones.Count} 个 zone）");
-            EditorApplication.Exit(0);
         }
 
         private class ZoneAgg

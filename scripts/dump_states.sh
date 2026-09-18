@@ -1,26 +1,58 @@
 #!/usr/bin/env bash
-# 采样若干条 cue 的终态，写入 script/full/<cue>.exitstate.json
-# 供 check_cue_script.py --chain 做跨 cue 对账。
+# 采样 cue 的**终态** → games/splendor/tutorial/script/full.exitstate.json
+# 供 scripts/check_cue_script.py 与契约（script/full.json）做 diff。
+#
+# 一次 Unity 启动、从轨道头顺次播到尾，每条 cue 播到终态就记一笔 ——
+# 这正是播放器的真实路径（顺序播放），比一条条 cue 各自重放更接近用户看到的画面；
+# 顺带把「109 条 cue = 109 次 Unity 启动」降成 1 次。
+#
+#   ./scripts/dump_states.sh                 # 整条 full 轨道（默认）
+#   ./scripts/dump_states.sh --cues a,b,c    # 只采这几条（按给定顺序；前面的会被重放）
+#
+# 前提：Windows 侧工作区要先和本仓库同步（git push / pull），否则 Unity 读到的是旧动画数据
+# —— 两个工作区的关系见 .claude/memory/workspace-sync.md。
 set -u
 UNITY="/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe"
 PROJ='D:\workspace\board\client'
 ROOT=/home/cui/workspace/board
-WIN_SCRIPT='D:\workspace\board\games\splendor\tutorial\script\full'
-CUES="${*:-setup.cards.001.1 setup.cards.001.2 setup.cards.001.3 setup.cards.002.1}"
-ok=0; bad=0
+WIN_DIR='D:\workspace\board\games\splendor\tutorial\script'
+WIN_OUT="$WIN_DIR\\full.exitstate.json"
+WSL_OUT="$ROOT/games/splendor/tutorial/script/full.exitstate.json"
+LOG='D:\workspace\board\client\Logs\dump_states.log'
 
-for cue in $CUES; do
-  "$UNITY" -batchmode -projectPath "$PROJ" \
-    -executeMethod BoardGameTutorial.Editor.TutorialFrameCapture.DumpState \
-    -dumpCue "$cue" -dumpReplay 1 -dumpOut "$WIN_SCRIPT\\${cue}.exitstate.json" \
-    -logFile "D:\\workspace\\board\\client\\Logs\\dump_${cue}.log" -quit >/dev/null 2>&1
-  # 同步回 WSL 仓库（引擎写的是 Windows 侧）
-  cp "/mnt/d/workspace/board/games/splendor/tutorial/script/full/${cue}.exitstate.json" \
-     "$ROOT/games/splendor/tutorial/script/full/${cue}.exitstate.json" 2>/dev/null
-  if [ -f "$ROOT/games/splendor/tutorial/script/full/${cue}.exitstate.json" ]; then
-    echo "  OK   $cue"; ok=$((ok+1))
-  else
-    echo "  FAIL $cue（见 Logs/dump_${cue}.log）"; bad=$((bad+1))
-  fi
+CUES=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --cues)   CUES="${2:-}"; shift 2 ;;
+    --cues=*) CUES="${1#--cues=}"; shift ;;
+    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+    *) echo "未知参数: $1（用 --cues a,b,c）" >&2; exit 2 ;;
+  esac
 done
-echo "采样完成：$ok 成功 / $bad 失败"
+
+if [ -z "$CUES" ]; then
+  CUES=$(python3 -c "
+import json
+d = json.load(open('$ROOT/games/splendor/tutorial/full.runtime.json'))
+print(','.join(c['id'] for c in d['cues']))")
+fi
+
+echo "一次 Unity 启动，采样 $(( $(echo "$CUES" | tr -cd ',' | wc -c) + 1 )) 条 cue"
+rm -f "$WSL_OUT"
+"$UNITY" -batchmode -projectPath "$PROJ" \
+  -executeMethod BoardGameTutorial.Editor.TutorialFrameCapture.DumpState \
+  -dumpCues "$CUES" -dumpOut "$WIN_OUT" \
+  -logFile "$LOG" -quit >/dev/null 2>&1
+
+# 引擎写的是 Windows 侧的工作区，拷回 WSL 仓库
+cp "/mnt/d/workspace/board/games/splendor/tutorial/script/full.exitstate.json" "$WSL_OUT" 2>/dev/null
+
+if [ -f "$WSL_OUT" ]; then
+  python3 -c "
+import json
+d = json.load(open('$WSL_OUT'))
+print(f'  OK   {len(d[\"cues\"])} 条 cue 的终态 → $WSL_OUT')"
+else
+  echo "  FAIL 采样失败（见 client/Logs/dump_states.log）" >&2
+  exit 1
+fi
