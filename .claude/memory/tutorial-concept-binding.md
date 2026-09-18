@@ -110,3 +110,43 @@ metadata:
 **Why:** 动画与本体本该是一套世界观；这次把绑定做成可校验的数据，并留下两个"手抄必漏"的教训与一处两层矛盾。
 **How to apply:** 改 stage / 加模板时**必须**写 `concept`（纯视觉写 `null`）与 `contains`，
 校验器会拦；想读概念语义用 `python3 scripts/concept_ref.py --concept <id>`，不要手抄父类字段。
+
+## 组件状态：逐身份导出 + face/shows 接入对账（2026-09）
+
+用户最初的想法就是"给每个组件引入状态……这样检查起来更直观"。落地结果：
+
+- **采样（`DumpState`）两种粒度都写**：
+  - `zones[k]`：区域整体（count / face_up / face_down / shows_face / shows_back / hidden）
+  - `zones[k].kinds[身份]`：**逐身份的状态**（几张、几张朝上、实际显示哪一面）
+  - `items[]`：**每件组件一行**（id / kind / concept / zone / order / face / shows）；
+    `-dumpItems 0` 可关掉（整条轨道会让文件到 MB 级）。`face` 只对**真的有正反面**的件输出
+    （判据是它有没有背面贴图），宝石不写 face —— 硬写会让人以为它能翻面。
+- **契约（`script/{track}.json`）可以逐身份断言状态**：
+  ```jsonc
+  "deck_level_1": { "count": 36, "face_down": 36,
+                    "kinds": { "一级垫牌": { "count": 36, "face": "down", "shows": "face" } } },
+  "card_market":   { "kinds": { "一级绿": { "count": 1, "face": "up", "shows": "face" } } }
+  ```
+  - `face: "up"/"down"` = 这一身份的件**全都**是那一面（写起来最像人话）
+  - `shows: "face"/"back"` = **画面上实际显示**的是哪一面 —— 这条才是"翻面到底成没成"的证据
+- **为什么必须做到"身份"这一层**：曾经"契约全 PASS 而画面是错的"——契约只统计
+  "朝上几张、朝下几张"，看不出**哪一张**朝上。牌堆里 4 张真牌 + 32 张垫牌，
+  最上面那张真牌朝上时，区域级统计依然对得上，只有按身份看才露馅。
+- **采样格式变更要能自证**：契约要 face/shows 而采样里没有状态字段时，
+  对账会明确说"采样文件是旧格式，重跑 `scripts/dump_states.sh`"，
+  而不是退化成"期望 1 实际 0"那种看起来像画面错了一样的报法。
+- `ListZone` 以前把每件清单算出来却只打了"共 N 件"；现在一行一件打印
+  （order / id / kind / concept / face / shows）—— 排查"到底哪一件不对"用这个。
+
+**已用 fixture 验证过对账逻辑**（真实采样仍要在 Windows 侧跑）：正常 fixture PASS；
+把牌堆里那批垫牌改成正面朝上，立刻报
+`deck_level_1.kinds[一级垫牌].face: 期望全部背面朝上（face_down），实际 36 件朝上 / 0 件朝下`。
+
+## 仍未做
+
+- **`<object>`**：让动画用概念+属性引用组件（`{"<object>": {"<development_card_level_1>": {"parts":{"bonus":"<emerald>"}}}}`），
+  引擎建"概念+属性 → 模板"反查表并报歧义。现在数据里仍是 `market_card_1_emerald` 这类本作专用模板名。
+- **牌堆的 create vs transfer**：stage 的 `initial` 里牌堆的 40/30/20 张牌**不在盒子里**
+  （`box_level_*` 是空的），cue12 是用 `stack` create 出来的；而 flow 说
+  `prepare_level_N_deck: game_box → development_deck_N`。两者要统一。
+- **orientation（横置/竖置）**：本体还没有这一维（用户：以后用到再加）。本作卡牌不许旋转 = 约束。

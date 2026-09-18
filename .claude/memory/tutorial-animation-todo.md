@@ -22,6 +22,7 @@
 | 宝石的数量约定 | **已冻结**：增量演法，连演 2/3/4 人三种（1→4→5→7 枚），见下 |
 | 宝石的动画文件 | **尚未开始**（`anim/full/setup.gems.*.json` 一个都还没有） |
 | 对账 | `check_cue_script.py` 可用（`--all` / `--chain` / `--cue X --which enter`）；宝石那 9 条**还没采样** |
+| 组件状态 | ✅ 采样逐身份 + 每件导出；契约可断言 `face`/`shows`。**`full.exitstate.json` 是旧格式，需在 Windows 侧重跑 `dump_states.sh`** |
 
 **已知可直接复用的东西**：
 
@@ -85,6 +86,15 @@
 **注意**：宝石这一节**不能**用 `stack`（那是卡牌牌堆用的）；供应堆是
 `transfer` 从 `box_gem_*` 逐枚搬进 `gem_supply_*`，`display.mode = count` 按 block 布局
 （7 枚 = 4+3 两行）显示，所以 4 / 5 / 7 三种数量靠**形状**就能分辨。
+
+### 【已完成】本轮（2026-09）模型改造
+
+1. 动画 ↔ 本体**概念绑定**（模板/zone 的 `concept`、zone 的 `contains`）+ 概念解析器
+   `scripts/concept_ref.py` + 校验器按概念查转移/翻面 —— 见 [[tutorial-concept-binding]]
+2. 原语与字段**对齐本体**：`move`→`transfer`、`from`→`source`、`take`→`quantity`、
+   目的地 `zone`→`destination`、朝向布尔→`to`、新增 `realizes`（说明规则上是哪个本体事件）
+3. **组件状态**：采样逐身份 + 每件导出，契约可断言 `face`/`shows`；`ListZone` 打印每件
+4. `draw` 改成继承 `transfer`、`flip` 改成继承 `state_change`（删掉重复声明）
 
 ### 【已完成】收工后清掉的隐患（2026-09）
 
