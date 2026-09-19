@@ -282,16 +282,13 @@ A(cue("action.cards.market.001.2", "action.cards.market.001.1",
                       "showcase_1": {"count": 1, "kinds": {"sample_card_2_ruby|card_level_2": 1}},
                       DEV: {"count": 1, "kinds": {"一级白": 1}}})),
       [wait(0.0, camera="card_market", padding=1.6),
-       # 合法取 3 种不同的宝石（源区颜色各不相同 → 也顺带演示 3.1 的规矩）
-       ev(0.3, "transfer", dur=0.5, easing="easeInOutCubic", realizes="<ontology::transfer>",
-          source=["<gem_supply|color=<onyx>>"], destination="player_holding", quantity=1,
-          what=gem_what("o")),
-       ev(0.5, "transfer", dur=0.5, easing="easeInOutCubic", realizes="<ontology::transfer>",
-          source=["<gem_supply|color=<diamond>>"], destination="player_holding", quantity=1,
-          what=gem_what("d")),
-       ev(0.7, "transfer", dur=0.5, easing="easeInOutCubic", realizes="<ontology::transfer>",
-          source=["<gem_supply|color=<emerald>>"], destination="player_holding", quantity=1,
-          what=gem_what("e")),
+       # 合法取三色各一：**一个**搬运动作、三个源各 1 颗（口播口径的"拿三种不同"就是这个动作；
+       # 拆成三次单颗搬运在规则上不成立 —— 引擎会当场说"没有只拿一颗这回事"）
+       ev(0.3, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["<gem_supply|color=<onyx>>", "<gem_supply|color=<diamond>>",
+                  "<gem_supply|color=<emerald>>"],
+          destination="player_holding", quantity=1,
+          what={"concept": "gem"}),
        hl(1.3, zone="<card_market>", order=2),
        # 精确付款：一级白 = 1蓝 + 2绿 + 1红 + 1黑
        ev(2.2, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
