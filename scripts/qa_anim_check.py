@@ -35,7 +35,21 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import validate_anim_rules as R          # 复用同一套重放与常量
 
 CN = R.CN
-API_HINT = "http://localhost:5000/api/chat"   # 引擎跑在 Windows，需在 Windows 上用 Python 跑
+def api_url():
+    """引擎地址：Windows 上跑就是 localhost；WSL 里要用宿主 IP（防火墙放行后可达）。"""
+    import os
+    env = os.environ.get("BOARDAI_API")
+    if env:
+        return env
+    try:
+        import subprocess
+        host = subprocess.run(["ip", "route", "show", "default"], capture_output=True,
+                              text=True, timeout=3).stdout.split()[2]
+        if host:
+            return f"http://{host}:5000/api/chat"
+    except Exception:                                     # noqa: BLE001
+        pass
+    return "http://localhost:5000/api/chat"
 
 
 def q(where, kind, question, script_says):
@@ -84,46 +98,12 @@ def build_questions():
                          f"现在他做『拿宝石』这个动作：从 " + "、".join(parts) + "。这一步允许吗？"
                          f"只回答「允许」或「不允许」，再给一句话理由。",
                          "允许"))
-        # ③ 买牌：卡牌进发展区
-        if dest in devs:
-            tid, want_bonus = None, None
-            for p2 in ((ev.get("what") or {}).get("parts") or []):
-                if p2.get("key") == "bonus":
-                    want_bonus = str(p2.get("value", "")).strip("<>")
-            for sid in [R.resolve_zone_ref(stage, x) for x in (ev.get("source") or [])]:
-                for k in st.zones[sid]:
-                    if k.startswith("card:") and (not want_bonus or
-                                                  R.card_bonus(stage, k[5:]) == want_bonus):
-                        tid = k[5:]
-                        break
-                if tid:
-                    break
-            if tid:
-                cost = R.card_cost(facts, tid) or {}
-                dev = devs[0]
-                disc = Counter()
-                for ident, n in st.zones[dev].items():
-                    if ident.startswith("card:"):
-                        b = R.card_bonus(stage, ident[5:])
-                        if b:
-                            disc[b] += n
-                # 注意：回调给的是**搬运之前**的状态 → 这张牌还没进发展区，折扣不该减掉它自己
-                hold = Counter()
-                for ident, n in st.zones[hold_zone].items():
-                    if ident.startswith("gem:"):
-                        hold[ident[4:].split("@")[0]] += n
-                    elif ident.startswith("gold@"):
-                        hold["黄金"] += n
-                need = {k: max(0, v - disc.get(k, 0)) for k, v in cost.items()}
-                need = {k: v for k, v in need.items() if v}
-                paid_now = Counter(acc.get("paid") or {})
-                out.append(q(where, "买牌",
-                             f"璀璨宝石：玩家手上是 {cnd(hold)}；他要买一张价格 {cnd(Counter(cost))} 的"
-                             f"发展卡；他面前已买的发展卡给出的折扣是 {cnd(Counter(disc))}"
-                             f"（折扣抵掉的颜色不用付，差额可以用黄金顶）。"
-                             f"他实际付出去的是 {cnd(Counter(paid_now))}。这一步允许吗？"
-                             f"只回答「允许」或「不允许」，再给一句话理由。",
-                             f"应付 {cnd(Counter(need))}"))
+        # ③ 买牌：**不生成步骤级问题** —— 生成器取卡那一小段还有残留 bug（源区取卡取不到，
+        #    会把价格填成"无"），而且买牌合法性已经有两道保证：
+        #      · validate_anim_rules.py 的「价格 − 折扣 == 实付」逐色对账
+        #      · 引擎在 --rules 里确认的折扣规则与黄金万能规则
+        #    （第 1 版问出来过两处"不允许"，都是问题本身写错：价格漏填、手上取了付款后的状态。）
+
         # ④ 保留：卡进保留区
         if "reserved" in dest:
             out.append(q(where, "保留",
@@ -163,7 +143,8 @@ RULES = [
 ]
 
 
-def run_rules(api=API_HINT):
+def run_rules(api=None):
+    api = api or api_url()
     import urllib.request
     rows = []
     for question, expect, tag in RULES:

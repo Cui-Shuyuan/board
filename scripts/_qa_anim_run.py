@@ -16,7 +16,24 @@ import urllib.request
 from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-API = "http://localhost:5000/api/chat"
+import subprocess as _sp
+
+
+def _api():
+    import os
+    if os.environ.get("BOARDAI_API"):
+        return os.environ["BOARDAI_API"]
+    try:
+        host = _sp.run(["ip", "route", "show", "default"], capture_output=True,
+                       text=True, timeout=3).stdout.split()[2]
+        if host:
+            return f"http://{host}:5000/api/chat"     # WSL → Windows 宿主
+    except Exception:
+        pass
+    return "http://localhost:5000/api/chat"
+
+
+API = _api()
 
 
 def ask(game_id, question, timeout=180):
@@ -34,11 +51,22 @@ def ask(game_id, question, timeout=180):
 
 
 def verdict_of(reply):
-    """从回答里抽出「允许 / 不允许」。注意「不允许」要先判（它包含「允许」三个字）。"""
-    if "不允许" in reply or "不可以" in reply or "不能" in reply:
+    """抽出裁决：**只看回答里第一个出现的明确裁决词**。
+
+    第一版用"含『不能』就算不允许"的启发式，把
+    「允许。……贵族会自动来访，不能拒绝」误判成不允许 —— 关键词会撞上理由里的词。
+    问的时候已经要求它"只回答允许或不允许"，所以取**最先出现**的那个即可。
+    """
+    i_yes = reply.find("允许")
+    i_no = reply.find("不允许")
+    if i_no >= 0 and (i_yes < 0 or i_no < i_yes):
         return "不允许"
-    if "允许" in reply or "可以" in reply or "合法" in reply:
+    if i_yes >= 0:
         return "允许"
+    if reply.startswith("可以") or "可以。" in reply[:12]:
+        return "允许"
+    if reply.startswith("不可以") or "不可以。" in reply[:12]:
+        return "不允许"
     return "?"
 
 
