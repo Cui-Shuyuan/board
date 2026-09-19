@@ -2503,7 +2503,7 @@ slot→坐标的映射得**按件的属性分列**（颜色→第几列，列内
 - `scripts/matte_clean.py` —— 收边：α≥0.5 砍阴影软边 → 最大连通域 → 填小孔留大孔 → 1px 抗锯齿。
 - `scripts/matte_key.py` —— 白底键控：**从边界泛洪**（白色的件内部不会被掏空）。
 - `scripts/gen_comfy.py` —— 本地 ComfyUI + FLUX img2img 客户端（denoise/steps/提示词可调）。
-- 环境：`~/.venvs/matte`（rembg + pillow + numpy，未动系统 Python）；
+- 环境：**`/mnt/d/ai/pyenvs/matte`**（D 盘！rembg + pillow + numpy，未动系统 Python）；
   ComfyUI 在 `D:\ai\ComfyUI_windows_portable_nvidia`，headless：`--listen 0.0.0.0 --port 8188`，
   WSL 侧访问 `http://172.17.208.1:8188`。
 
@@ -2614,3 +2614,34 @@ setup.cards.002.1 Complete() 后: 市场 12 张 → 卡面 **12** / 卡背 0；�
 > ② **画面**（补间/高亮/光晕）—— 可以随时丢，`stateOnly` 时一律不做；
 > ③ **顺序**（一条 cue 的前后）—— 状态重建必须按**整条轨道**的顺序，不能按"有动画的那几条"。
 > 违反任何一条的症状都是"看起来只是画面问题，实际状态已经错了"。
+
+---
+
+## 【约定】大文件一律放 D 盘（WSL 的家目录在 C 盘）（2026-09）
+
+用户："你刚才应该下载了不少东西，这些东西能否移动至D盘，避免过多占用C盘空间。"
+
+**背景**：WSL 的家目录 `/home/cui` 在 **C 盘**（WSL 的 ext4 虚拟盘）；`/mnt/d` 是 Windows 的 D 盘。
+所以任何下载/环境默认都吃 C 盘。已经搬走并留了软链接（默认路径继续有效）：
+
+| 东西 | 现在在哪 | 大小 |
+|---|---|---|
+| Python 环境（rembg 等） | `/mnt/d/ai/pyenvs/matte` | 599M |
+| rembg 模型权重 | `/mnt/d/ai/models/rembg`（`~/.rembg` → 软链接） | 928M |
+| pip 缓存 | `/mnt/d/ai/pip-cache/pip`（`~/.cache/pip` → 软链接） | 189M |
+
+**以后新增下载（模型、数据集、ComfyUI 之类）直接落在 `/mnt/d/ai/` 下**，别放家目录。
+（ComfyUI 本来就在 `D:\ai\ComfyUI_windows_portable_nvidia` ✓，它的输出也在 D 盘 ✓。）
+
+### 顺带两条工程教训（这次搬文件时踩的）
+
+1. **跨盘 `mv` = 复制 + 删除**：WSL 崩溃会把它断在**半路**（实测 D 盘上留了半个 488M 的文件，
+   而源还在）—— 所以跨盘搬大文件要**先复制、校验（size + md5）、再删源**，不要一把 `mv`。
+2. **验收规则要按件类分开**：`matte_eval.py` 原来拿"圆形 token 四角必须透明"去判**矩形件**，
+   于是 18 张卡面全被误报 FAIL（卡的四角本来就是实物的一部分）。
+   同理"台面颜色"不能写死阈值 —— 贵族 0001 的台面是 (230,230,228)、0003 是 (245,248,243)，
+   写死"近白 235"会让 0001 的圆角抠不掉。现在改成**用边界中位色自适应** + "泛洪吃掉太多就不算台面"的兜底，
+   键控后再做一次**最大连通域**清理（去碎屑）。
+
+实测：**29 张成品（宝石 6 + 贵族 5 + 发展卡 18）全部通过验收** ✓
+（宝石 px/mm 完全一致 11.86；报告在 `client/CaptureOut/matte_report.json`）。

@@ -100,14 +100,18 @@ def fit_circle_by_profile(rgb: np.ndarray, bg: np.ndarray, cx0: float, cy0: floa
     return fx, fy, fr, residual, consistency
 
 
-def border_white_mask(rgb: np.ndarray, min_channel: int = 235) -> np.ndarray:
+def border_white_mask(rgb: np.ndarray, tol: float = 0.07, max_frac: float = 0.25) -> np.ndarray:
     """从图像边界泛洪出"近白且与边界连通"的像素（返回 True=背景）。
 
     **泛洪**是关键：贵族板块的插画里也有大片白色（"3"的旗子），
     用亮度阈值一把切会把它们掏空；只有和边界连通的才是台面。
     """
     h, w, _ = rgb.shape
-    near = rgb.min(axis=2) >= min_channel
+    # 台面颜色**因扫描件而异**（实测贵族 0001 是 (230,230,228)、0003 是 (245,248,243)）——
+    # 所以不能写死"近白"阈值，要用**边界中位色**当参考。再按距离泛洪。
+    border = np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]])
+    bed = np.median(border, axis=0)
+    near = np.linalg.norm(rgb - bed, axis=2) <= tol * 255
     bg = np.zeros((h, w), dtype=bool)
     stack = []
     for x in range(w):
@@ -123,6 +127,10 @@ def border_white_mask(rgb: np.ndarray, min_channel: int = 235) -> np.ndarray:
         for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
             if 0 <= nx < w and 0 <= ny < h and near[ny, nx] and not bg[ny, nx]:
                 bg[ny, nx] = True; stack.append((nx, ny))
+    # **兜底**：泛洪吃掉太多（> max_frac）说明它吃进件本身了（例：卡面边缘颜色均匀、
+    # 与边界同色）—— 那就当作"没有台面"，宁可不动也不能把件切掉。
+    if bg.mean() > max_frac:
+        return np.zeros((h, w), dtype=bool)
     return bg
 
 
@@ -151,6 +159,16 @@ def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: floa
     if key_border_white:                  # 贵族：圆角处露出的台面要透明
         bm = border_white_mask(arr)
         if bm.any():
+            # **只保留最大的一块不透明区域**（和宝石那条路一样）：泛洪后常留下孤立小碎块
+            # （实测贵族 0005：最大连通域只占 98.1%，其余是碎屑 → 验收会报"不是一个整体"）。
+            try:
+                import importlib.util
+                spec = importlib.util.spec_from_file_location("matte_clean", ROOT / "scripts/matte_clean.py")
+                mc = importlib.util.module_from_spec(spec); spec.loader.exec_module(mc)
+                keep = mc.largest_component([not v for v in bm.reshape(-1)], W, H)
+                bm = np.array([not v for v in keep], dtype=bool).reshape(H, W)
+            except Exception as e:
+                print(f"  （连通域清理跳过：{e}）")
             # 1px 过渡，避免硬边
             soft = np.clip(bm.astype(np.float32) * 2.0, 0, 1)[..., None]
             a = (1.0 - soft) * 255.0

@@ -141,7 +141,9 @@ def evaluate(path: Path, game: str, mm: dict) -> dict:
     if solid < 0.995:
         why.append(f"不透明像素不是一个整体（最大连通域 {solid:.3f}）—— 有碎块/边框残留")
         verdict = "FAIL"
-    if corner_max > 0.01:
+    # 四角规则**按件类**判：圆形 token 的四角必须透明（实物是圆的，方图的角是台面）；
+    # 矩形件（发展卡、贵族）的四角本来就是实物的一部分 —— 拿 token 的规则去判它们会误报。
+    if shape in ("gem", "gold") and corner_max > 0.01:
         why.append(f"四角不透明（max α={corner_max:.2f}）—— 背景没切干净")
         verdict = "FAIL"
     if edge_w > 3.0:
