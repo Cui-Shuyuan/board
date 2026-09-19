@@ -2800,7 +2800,10 @@ namespace BoardGameTutorial
                 {
                     var z = Store.GetZone(zid.Trim());
                     if (z == null || z.role == "offstage") continue;
-                    int c = Mathf.Max(1, z.capacity > 0 ? z.capacity : 1);
+                    // **按实际有的件算**，不是按容量：发展区容量 12 格、实际可能只摆 3 张，
+                    // 按容量算会宽到超过桌面一半、被跨度闸门打回全局（用户 2026-09-20 报"画面太小"）。
+                    int have = Store.CountInZone(z.id);
+                    int c = Mathf.Max(1, have > 0 ? have : (z.capacity > 0 ? z.capacity : 1));
                     float hw = (z.size?.w ?? 0.2f) * 0.5f;
                     float hh = (z.size?.h ?? 0.2f) * 0.5f;
                     for (int i = 0; i < c; i++)
@@ -2886,7 +2889,9 @@ namespace BoardGameTutorial
                 var fz = Store.GetZone(frameZoneId);
                 if (fz != null && fz.role != "offstage")
                 {
-                    int cnt = Mathf.Max(1, fz.capacity > 0 ? fz.capacity : Store.CountInZone(frameZoneId));
+                    int cnt = Mathf.Max(1, Store.CountInZone(frameZoneId) > 0
+                        ? Store.CountInZone(frameZoneId)
+                        : (fz.capacity > 0 ? fz.capacity : 1));   // 优先实际件数（见上）
                     float hw = (fz.size?.w ?? 0.2f) * 0.5f;
                     float hh = (fz.size?.h ?? 0.2f) * 0.5f;
                     minX = float.MaxValue; maxX = float.MinValue;
