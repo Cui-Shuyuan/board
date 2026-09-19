@@ -2180,20 +2180,41 @@ namespace BoardGameTutorial
         /// 期间 `stateOnly = true`：只改状态，不建渲染对象（渲染对象由本条 cue 的
         /// BuildActorObjects() 一次性建出来）。
         /// </summary>
+        /// <summary>
+        /// 整条轨道的 cue 顺序（**含没有动画的那些**）。由播放器在载入运行时数据后交过来。
+        ///
+        /// 为什么必须有它：入口链重放要"重放到**本条之前**就停"。而动画脚本里只有 17 条
+        /// 有动画的 cue，另外 92 条纯口播 cue **不在里面** —— 按动画脚本的顺序找目标，
+        /// 找不到就会一路重放到整条轨道结束（跳到一条纯口播 cue 会得到"全片终态"）。
+        /// </summary>
+        private List<string> cueOrder;
+
+        public void SetCueOrder(List<string> ids)
+        {
+            cueOrder = ids != null ? new List<string>(ids) : null;
+        }
+
         private void ReplayEntryChain(TrackAnimDoc trackDoc, string targetCueId)
         {
             Store.Reset();
             Store.ApplyInitial();
             if (trackDoc?.cues == null) return;
 
+            // 按**整条轨道**的顺序走，遇到目标就停；动画脚本里没有的 cue 跳过（它没有事件）。
+            var byId = new Dictionary<string, CueAnimDoc>();
+            foreach (var cc in trackDoc.cues)
+                if (cc != null && !string.IsNullOrEmpty(cc.cue)) byId[cc.cue] = cc;
+            var order = cueOrder ?? trackDoc.cues.ConvertAll(c => c != null ? c.cue : null);
+
             bool prevStateOnly = stateOnly;
             stateOnly = true;
             try
             {
-                foreach (var c in trackDoc.cues)
+                foreach (var id in order)
                 {
-                    if (c == null) continue;
-                    if (c.cue == targetCueId) break;          // 只重放本条之前
+                    if (string.IsNullOrEmpty(id)) continue;
+                    if (id == targetCueId) break;             // 只重放本条之前（在**整轨顺序**里找目标）
+                    if (!byId.TryGetValue(id, out var c)) continue;   // 这条没有动画，跳过
                     if (c.events == null || c.events.Count == 0) continue;
 
                     cueDoc = c;
