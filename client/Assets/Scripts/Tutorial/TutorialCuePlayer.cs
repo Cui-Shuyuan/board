@@ -50,6 +50,13 @@ namespace BoardGameTutorial
             "setup.nobles.001.2", // 贵族出场
             "setup.cards.001.1",  // 翻开一张发展卡：卡面近景（看卡面本身）
             "setup.cards.002.1",  // 发满市场：卡背 + 卡面同框（看四角/白边/卡纹）
+            "setup.starting_player.001.3",   // 起始玩家标记出场（新加的实物 + 部位箭头）
+            "action.cards.cost.001.1",       // **部位指示物**：箭头/红圈指到卡面左下角的价格
+            "action.cards.discount.001",     // 部位指示物：指到右上角的折扣宝石
+            "action.purchase_reserved.002.1",// **真付款**：2 颗黄金付回供应堆、牌翻开进发展区
+            "action.reserve.limit_hand.001.2", // **禁止符号**：保留满 3 张之后打叉
+            "action.nobles.source.001",      // 玩家B 的贵族被叉掉（"不可以从别人那里拿"）
+            "endgame.trigger.001",           // **结算红圈**：发展区每张牌的声望 + 贵族的声望
         };
         private int debugJumpCursor;
 
