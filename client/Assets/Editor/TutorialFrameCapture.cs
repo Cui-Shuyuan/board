@@ -465,13 +465,30 @@ namespace BoardGameTutorial.Editor
             // 而那套重复机制正是"顺序播放也把前一条 create 的东西清掉"的根源 —— 已经删掉。
             string[] path = { "setup.cards.002.1", "setup.cards.002.2",
                               "setup.gems.001.1", "setup.gems.001.2" };
+            // -advanceSkip 0.5：复现用户的动作 —— **看到一半就按 →**。
+            // 只对第一条生效：先 Seek 到 50%，再调 Next() 会调的 Complete()，然后照常进入下一条。
+            float skipFraction = 0f;
+            float.TryParse(ArgValue("-advanceSkip", "0"), System.Globalization.NumberStyles.Float,
+                           System.Globalization.CultureInfo.InvariantCulture, out skipFraction);
+
             for (int i = 0; i < path.Length; i++)
             {
                 // 顺序进入：i>0 表示接着上一条的终态
                 anim.LoadCue(gameRoot, "full", path[i], i > 0);
                 Report(anim, path[i] + " [LoadCue 后]");
-                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
-                Report(anim, path[i] + " 播完");
+                if (i == 0 && skipFraction > 0f)
+                {
+                    float cut = anim.TotalDuration * Mathf.Clamp01(skipFraction);
+                    for (float tt = 0f; tt <= cut; tt += 0.05f) anim.Seek(tt);
+                    Report(anim, $"{path[i]} 播到 {skipFraction:P0}（此刻按 →）");
+                    anim.Complete();          // ← Next() 里干的就是这一下
+                    Report(anim, path[i] + " Complete() 之后");
+                }
+                else
+                {
+                    for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+                    Report(anim, path[i] + " 播完");
+                }
             }
             Debug.Log("[Adv] 逐条推进完毕（上面每行的「显示卡背」计数即事实，判定由人来做）");
             EditorApplication.Exit(0);
@@ -488,6 +505,14 @@ namespace BoardGameTutorial.Editor
         private static void Report(TutorialCueAnimPlayer anim, string tag)
         {
             int mk = 0, mkFace = 0, mkBack = 0, mkHidden = 0, flippedTrue = 0;
+            // 「没落位」：件的画面位置与它的格位坐标不一致 —— 快进打断时被卡在半空的那张。
+            int offSlot = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.Actor == null) continue;
+                var want = anim.Store.CurrentPosition(it);
+                if ((want - it.LivePosition).sqrMagnitude > 1e-4f) offSlot++;
+            }
             foreach (var it in anim.Store.Items)
             {
                 if (it.ZoneId != "card_market") continue;
@@ -501,7 +526,7 @@ namespace BoardGameTutorial.Editor
                 }
             }
             Debug.Log($"[Adv] {tag}: 市场 {mk} 张 → 显示卡面 {mkFace} / 显示卡背 {mkBack} / 隐藏 {mkHidden}" +
-                      $"（Flipped=true 的有 {flippedTrue} 张）");
+                      $"（Flipped=true 有 {flippedTrue} 张；没落位 {offSlot} 件）");
         }
 
 
