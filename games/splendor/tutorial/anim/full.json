@@ -3403,6 +3403,13 @@
         "zones": {
           "noble_market": {
             "count": 3
+          },
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_3": {
+            "count": 16
           }
         }
       },
@@ -3411,6 +3418,13 @@
         "zones": {
           "noble_market": {
             "count": 3
+          },
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_3": {
+            "count": 16
           }
         }
       },
@@ -3423,7 +3437,7 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "noble_market",
-          "camera_padding": 1.5
+          "camera_padding": 1.25
         },
         {
           "at": 0.6,
@@ -3584,6 +3598,12 @@
         "zones": {
           "player_marker": {
             "count": 1
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 0
           }
         }
       },
