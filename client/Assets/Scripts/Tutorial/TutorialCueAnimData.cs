@@ -63,7 +63,9 @@ namespace BoardGameTutorial
     public class StageBoard
     {
         public string background = "#1E2126";
-        public float camera_pitch = 50f;
+        /// <summary>取景俯角（度）。90 = 正俯视（组件按原始尺寸显示）；小于 90 会带斜视纵深，
+        /// 但组件面片会跟着相机转（见 TutorialCueAnimPlayer.SpriteRotation），所以不会被压扁。</summary>
+        public float camera_pitch = 90f;
 
         /// <summary>
         /// 牌桌的**根画面**：默认展示的整幅图（例如背景介绍时显示游戏盒封面）。

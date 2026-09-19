@@ -206,7 +206,7 @@ def visible_rect(stage, camera, padding=0.0):
         return None
     (min_x, max_x, min_z, max_z), scale = got
     board = stage.get("board") or {}
-    pitch = float(board.get("camera_pitch") or 50.0)
+    pitch = float(board.get("camera_pitch") or 90.0)
     aspect = float(board.get("aspect") or 1.7778)
     cx, cz = (min_x + max_x) * 0.5, (min_z + max_z) * 0.5
     half_w = max(0.5, (max_x - min_x) * 0.5 * scale)

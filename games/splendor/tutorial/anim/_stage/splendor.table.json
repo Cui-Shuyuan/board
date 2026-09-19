@@ -5,7 +5,7 @@
   "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**。\n\n【zone 的生命周期】zone 是\"世界里的位置\"：`zones` 里声明的这些**一开始就全部建好**\n（空着也是建好了 —— 与\"开局桌上没有件\"不矛盾：一个说的是区域，一个说的是件）。\n后续游戏若要有\"随着卡牌/板块进场新增区域\"，把那种区域的**定义**写进 `zone_defs`，\n脚本里用 {\"action\":\"zone\",\"op\":\"add\",\"zone\":\"<定义 id>\",\"index\":N} 开出来；\n坐标仍只写在 stage（第 N 个实例按 `repeat_x`/`repeat_z` 平移，id 是 `<定义 id>#N`）。",
   "board": {
     "background": "#1E2126",
-    "camera_pitch": 50,
+    "camera_pitch": 90,
     "ortho_scale": 1.1,
     "aspect": 1.7778,
     "extent": {

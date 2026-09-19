@@ -565,10 +565,39 @@ namespace BoardGameTutorial
             return clone;
         }
 
+        /// <summary>取景相机的俯仰角（度）：90 = 正俯视，越小越斜。</summary>
+        private float CameraPitch
+        {
+            get
+            {
+                return stage?.board != null && stage.board.camera_pitch > 0f
+                    ? stage.board.camera_pitch
+                    : 90f;
+            }
+        }
+
+        /// <summary>
+        /// 组件面片的基准朝向：**与相机同朝向**，即面片平面平行于屏幕。
+        ///
+        /// 相机是斜视的（`stage.board.camera_pitch`）。面片如果固定立在世界的 XY 平面里
+        /// （rotation = 0），斜看过去高度就被 cos(pitch) 压扁 —— 50° 时只剩 64%，
+        /// 用户看到的就是"摄像机明明是 50°，组件却像被整体压矮了一截"。
+        /// 让面片跟着相机转，组件在任何 pitch 下都按**原始尺寸、原始宽高比**显示。
+        ///
+        /// `roll` 是组件自己的平面内旋转（洗牌/散开的轻微歪斜），叠加在面片平面里，
+        /// 所以它仍然是绕"贴图中心"转，语义不变。
+        /// </summary>
+        private Quaternion SpriteRotation(float roll)
+        {
+            return Quaternion.Euler(CameraPitch, 0f, 0f) * Quaternion.Euler(0f, 0f, roll);
+        }
+
         private GameObject CreateSpriteObject(string name, StageTemplate tpl, Color color)
         {
             var go = new GameObject(name);
             go.transform.SetParent(animRoot.transform, false);
+            // 建出来就正对相机：否则第一帧还没走到复位分支时会以"立着的"姿态闪一下。
+            go.transform.localRotation = SpriteRotation(tpl.rotation);
 
             var sr = go.AddComponent<SpriteRenderer>();
             var sprite = ResolveSprite(tpl);
@@ -819,7 +848,7 @@ namespace BoardGameTutorial
                 item.Actor.LiveAlpha = item.Template.alpha;
                 item.Actor.LiveColor = item.BaseColor;   // 染色必须一起带上，否则复位时会丢
                 item.Actor.LiveRotation = item.Template.rotation;
-                item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
+                item.Actor.Go.transform.localRotation = SpriteRotation(item.Template.rotation);
                 item.Actor.ApplyColor();
                 RefreshFace(item.Actor);
             }
@@ -1089,7 +1118,7 @@ namespace BoardGameTutorial
                 actor.Go.transform.localPosition = actor.LivePosition;
 
                 actor.LiveRotation = item.Template != null ? item.Template.rotation : 0f;
-                actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
+                actor.Go.transform.localRotation = SpriteRotation(actor.LiveRotation);
                 actor.LiveScale = actor.BaseScale;
                 actor.Go.transform.localScale = actor.LiveScale;
                 // 默认状态：按组件自己的基准透明度。
@@ -1134,7 +1163,7 @@ namespace BoardGameTutorial
                     var scl = clip.Actor.BaseScale;
                     scl.x *= squash;
                     clip.Actor.Go.transform.localScale = scl;
-                    clip.Actor.Go.transform.localRotation = Quaternion.identity;
+                    clip.Actor.Go.transform.localRotation = SpriteRotation(0f);
                     // 同步 LiveScale，否则复位时会把终态缩放当基准、越缩越小
                     clip.Actor.LiveScale = scl;
 
@@ -1188,7 +1217,7 @@ namespace BoardGameTutorial
                 {
                     float rot = Mathf.LerpUnclamped(clip.RotFrom, clip.RotTo, k);
                     clip.Actor.LiveRotation = rot;
-                    clip.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, rot);
+                    clip.Actor.Go.transform.localRotation = SpriteRotation(rot);
                 }
 
                 if (clip.HasShuffle)
@@ -1281,7 +1310,7 @@ namespace BoardGameTutorial
                 item.Actor.LiveColor = item.BaseColor;   // 染色必须一起带上，否则复位时会丢
                 item.Actor.LiveRotation = item.Template.rotation;
                 item.Actor.Go.transform.localScale = item.Actor.BaseScale;
-                item.Actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, item.Template.rotation);
+                item.Actor.Go.transform.localRotation = SpriteRotation(item.Template.rotation);
                 item.Actor.ApplyColor();
                 RefreshFace(item.Actor);
             }
@@ -1412,7 +1441,7 @@ namespace BoardGameTutorial
                 actor.LiveColor = actor.BaseColor;
                 actor.LiveRotation = actor.Item.Template.rotation;
                 actor.Go.transform.localScale = actor.BaseScale;
-                actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, actor.LiveRotation);
+                actor.Go.transform.localRotation = SpriteRotation(actor.LiveRotation);
                 actor.Go.transform.localPosition = Store.CurrentPosition(actor.Item);
                 actor.ApplyColor();
             }
@@ -2442,7 +2471,7 @@ namespace BoardGameTutorial
             float dur = Mathf.Max(ev.dur, 0f);
             if (dur <= 0f)
             {
-                actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, to);
+                actor.Go.transform.localRotation = SpriteRotation(to);
             }
             else
             {
@@ -2451,10 +2480,10 @@ namespace BoardGameTutorial
                 {
                     t = Mathf.Min(t + TutorialPrimitives.Delta, dur);
                     float k = Easing.Evaluate(EasingOr(ev), t / dur);
-                    actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(from, to, k));
+                    actor.Go.transform.localRotation = SpriteRotation(Mathf.LerpUnclamped(from, to, k));
                     yield return null;
                 }
-                actor.Go.transform.localRotation = Quaternion.Euler(0f, 0f, to);
+                actor.Go.transform.localRotation = SpriteRotation(to);
             }
             actor.LiveRotation = to;
         }
@@ -2686,10 +2715,10 @@ namespace BoardGameTutorial
             animCamera.backgroundColor = bg;
         }
 
-        /// <summary>按牌桌的 zone 范围取景，50° 固定俯角。</summary>
+        /// <summary>按牌桌的 zone 范围取景；俯角由 stage.board.camera_pitch 决定（90 = 正俯视）。</summary>
         private void FitCamera()
         {
-            float pitch = stage?.board != null && stage.board.camera_pitch > 0f ? stage.board.camera_pitch : 50f;
+            float pitch = CameraPitch;
             float orthoScale = stage?.board != null && stage.board.ortho_scale > 0f ? stage.board.ortho_scale : 1.18f;
 
             float minX = -1.5f, maxX = 1.5f, minZ = -1f, maxZ = 1.4f;
