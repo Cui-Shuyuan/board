@@ -11,7 +11,7 @@
     "extent": {
       "min_x": -3.23,
       "max_x": 1.31,
-      "min_z": -3.78,
+      "min_z": -5.6,
       "max_z": 2.84
     },
     "default_picture": "media/box.png"
@@ -599,14 +599,16 @@
       "id": "player_development",
       "label": "玩家发展区",
       "center": {
-        "x": -2.3,
-        "z": -3.2
+        "x": -1.1,
+        "z": -4.2
       },
       "layout": {
-        "type": "row",
-        "x_step": 0.66
+        "type": "grid",
+        "cols": 4,
+        "x_step": 0.66,
+        "z_step": 0.46
       },
-      "capacity": 3,
+      "capacity": 12,
       "palette": "panel_player",
       "size": {
         "w": 0.63,
@@ -621,7 +623,33 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "买下的发展卡摊在自己面前的地方（<development_area>：公开信息）。容量写 3：本节演示最多同时摊 3 张；实物不设上限（讲解时说清了），真要做长演示改这一个数 + x_step 即可（坐标只属于 stage）。"
+      "note": "买下的发展卡摊在自己面前的地方（<development_area>，公开信息）。4 列网格、z_step 0.46（两行半叠）：卡片上半部（含右上角折扣）互相让出来，所以『摊开』仍看得清，但占地只有 2.6x1.4 —— 真人摆不下时也是这样叠的。容量 12 是本节演示『满足一块贵族（4白+4红=8 张）』所需。"
+    },
+    {
+      "id": "player_nobles",
+      "label": "玩家结识的贵族",
+      "center": {
+        "x": -1.1,
+        "z": -5.25
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.66
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.6,
+        "h": 0.6
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_zone>",
+      "contains": [
+        "noble"
+      ],
+      "note": "结识的贵族放在自己面前（公开信息）。容量 3 = 一局最多勾到 3 块（本作贵族数=人数+1，四人局 5 块；这里按演示需要写 3，真要更多改这一个数 + x_step）。"
     }
   ],
   "templates": [
@@ -1284,7 +1312,8 @@
       "zones": [
         "player_holding",
         "player_marker",
-        "player_development"
+        "player_development",
+        "player_nobles"
       ]
     }
   ],

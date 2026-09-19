@@ -1127,7 +1127,7 @@
       "cue": "setup.cards.002.1",
       "entry_from": "setup.cards.001.3",
       "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
-      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
       "timing": {
         "样本卡背退场 + 牌堆登场 + 洗混": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列",
         "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
@@ -1167,7 +1167,7 @@
               "一级垫牌": {
                 "count": 35
               },
-              "一红": {
+              "一黑": {
                 "count": 1,
                 "face": "down"
               }
@@ -1179,7 +1179,7 @@
               "二级垫牌": {
                 "count": 25
               },
-              "二蓝": {
+              "二白": {
                 "count": 1,
                 "face": "down"
               }
@@ -1191,7 +1191,7 @@
               "三级垫牌": {
                 "count": 15
               },
-              "三黑": {
+              "三蓝": {
                 "count": 1,
                 "face": "down"
               }
@@ -7653,7 +7653,13 @@
           "order": 2,
           "to": "face_up",
           "what": {
-            "concept": "development_card_level_1"
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
           }
         },
         {
@@ -9837,6 +9843,3084 @@
           "dur": 0.0,
           "action": "destroy",
           "zone": "showcase_1"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.intro.001",
+      "entry_from": "action.cards.limit.001.2",
+      "story": "【我们再介绍一下贵族板块】",
+      "note": "【介绍贵族板块】\n  镜头推近贵族供应堆（3 块）。贵族不是买来的牌，是**条件达成后自动到你面前**的板块 ——所以这里只摆出来看。\n  ⚠ 桌上这 3 块是同一个模板（都显示 贵族_0001）：五张贵族扫描件还没分别接进舞台。本节的演示按 0001 的条件（4白+4红）算，所以画面与账自洽。",
+      "timing": {
+        "镜头推近贵族": "0.00",
+        "点一下": "0.80"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.25
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.value.001.1",
+      "entry_from": "action.nobles.intro.001",
+      "story": "【左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件】",
+      "note": "【贵族的两个信息】\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（0001 是 4白+4红）。\n  ⚠ 又是同一个缺口：没有『指某个角』的指示物原语，只能把整块依次点亮。",
+      "timing": {
+        "依次点三块": "0.60 / 1.80 / 3.00"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.25
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 0
+        },
+        {
+          "at": 1.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 1
+        },
+        {
+          "at": 3.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.value.001.2",
+      "entry_from": "action.nobles.value.001.1",
+      "story": "【也就是已购买的卡牌数量】",
+      "note": "【条件 = 已购买卡牌的种类和数量】\n  点贵族、再点自己面前的已购卡（发展区那 3 张）——『条件看的是这些牌』。\n  这一条**没有状态变化**：3 张还差得远，只是说明『条件』指的是什么。",
+      "timing": {
+        "点贵族": "0.50",
+        "点已购卡": "1.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.5,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>"
+        },
+        {
+          "at": 1.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.trigger.001.1",
+      "entry_from": "action.nobles.value.001.2",
+      "story": "【当玩家结束自己的回合后】",
+      "note": "【回合结束时检查】\n  规则说明，**没有状态变化**：镜头给玩家面前（发展区）—— 检查的对象就是这些牌。",
+      "timing": {
+        "镜头给玩家面前": "0.00",
+        "点发展区": "0.80"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_development",
+          "camera_padding": 1.8
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.trigger.001.2",
+      "entry_from": "action.nobles.trigger.001.1",
+      "story": "【如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件】",
+      "note": "【把『满足条件』这一步真的做出来】\n  口播是假设句（『如果已购买…满足』）→ 脚本说了这个前提，所以这里把它**补出来**：发展区再补 2 张白（一级白）与 4 张红（一级红）→ 凑齐 4 白 + 4 红，正好满足桌上那块贵族（0001：4白+4红）。\n  · 为什么用 `create`：这些牌是脚本假设『你已经买过』的，不是这一步从市场买的；盒子里有牌 = create（游戏盒抽象、没有 box_* zone）。\n  · 为什么补红牌：发展区原有 3 张是 2 白 + 1 蓝，缺的正好是 4 红与 2 白。",
+      "timing": {
+        "补 2 张白": "0.60",
+        "补 4 张红": "1.20",
+        "点发展区（条件达成）": "2.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 3,
+            "kinds": {
+              "一级白": 1,
+              "三级白": 1,
+              "一级蓝": 1
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_development",
+          "camera_padding": 1.8
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "player_development",
+          "template": "market_card_1_diamond",
+          "palette": "card_level_1",
+          "count": 3,
+          "what": {
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 1.2,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "player_development",
+          "template": "market_card_1_ruby",
+          "palette": "card_level_1",
+          "count": 4,
+          "what": {
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.trigger.001.3",
+      "entry_from": "action.nobles.trigger.001.2",
+      "story": "【他必须立即拿取这张贵族板块并立刻获得其声望值】",
+      "note": "【立刻拿走那块贵族】\n  真搬一件：`transfer` 从贵族供应堆 → `player_nobles`（自己面前）。\n  『必须立即』体现为**同一 cue 内**、条件一达成就搬（2.60 点完条件、3.20 就搬）。\n  搬哪一块：供应堆里 order 最小的那块（三块条件相同，所以拿哪块都对）。",
+      "timing": {
+        "点那块贵族": "1.20",
+        "搬到玩家面前": "3.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 3
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.25
+        },
+        {
+          "at": 1.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 0
+        },
+        {
+          "at": 3.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<noble_market>"
+          ],
+          "destination": "player_nobles",
+          "quantity": 1,
+          "what": {
+            "concept": "noble"
+          }
+        },
+        {
+          "at": 4.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.forced.001.1",
+      "entry_from": "action.nobles.trigger.001.3",
+      "story": "【请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动】",
+      "note": "【不是独立行动，是附加行动】\n  规则说明，**没有状态变化**：把三个位置点一遍（市场买牌 → 发展区 → 贵族）——顺序就是『买牌之后附加』。",
+      "timing": {
+        "点市场": "0.60",
+        "点发展区": "2.00",
+        "点贵族": "3.40"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<card_market>"
+        },
+        {
+          "at": 2.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        },
+        {
+          "at": 3.4,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.forced.001.2",
+      "entry_from": "action.nobles.forced.001.1",
+      "story": "【并且这个行动是强制性的，玩家不可以选择跳过】",
+      "note": "【强制，不能跳过】\n  规则说明，**没有状态变化**：点剩下那两块贵族、再点自己面前那块 ——『条件够了就必须拿』。\n  ⚠ 『不可以跳过』这一层仍然只能靠口播：我们没有否定原语。",
+      "timing": {
+        "点供应堆两块": "0.60 / 1.60",
+        "点自己面前那块": "2.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.25
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 0
+        },
+        {
+          "at": 1.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 1
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.source.001",
+      "entry_from": "action.nobles.forced.001.2",
+      "story": "【玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取】",
+      "note": "【只能拿供应堆里的】\n  规则说明，**没有状态变化**：镜头在贵族供应堆，点一下 —— 『贵族只有这一个来源』。\n  ⚠ 『不可以从其他人那里拿』没法演：我们的桌面只有**一位玩家**的位置，没有『别人面前的贵族』这个东西可指（要演就得先有第二个玩家区）。",
+      "timing": {
+        "镜头贵族供应堆": "0.00",
+        "点供应堆": "0.80"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.25
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.choice.001.1",
+      "entry_from": "action.nobles.source.001",
+      "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
+      "note": "【同时满足多名贵族】\n  规则说明，**没有状态变化**：桌上剩的两块贵族条件相同（都是 4白+4红），发展区早就满足 → 现在就是『同时满足多名』的局面，两块一起点出来。\n  顺带点一下市场：这句的前提是『购买一张发展卡牌后』。",
+      "timing": {
+        "点市场": "0.60",
+        "点两块贵族": "1.80 / 2.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<card_market>"
+        },
+        {
+          "at": 1.6,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.4
+        },
+        {
+          "at": 1.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 0
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.choice.001.2",
+      "entry_from": "action.nobles.choice.001.1",
+      "story": "【他必须从这些贵族板块中挑选一个拿取】",
+      "note": "【挑一个拿走】\n  真搬一件：从两块里挑一块（拿 order 0 的那块）→ 搬到 `player_nobles`。\n  『挑』这件事在数据里体现为：源是**供应堆**、每次只搬一件 —— 具体搬哪块由 order 决定，脚本不写坐标也不用点名到那一件（三块条件相同，拿哪块都对）。",
+      "timing": {
+        "点要挑的那块": "0.60",
+        "搬到自己面前": "1.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 2
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 1
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.4
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 0
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<noble_market>"
+          ],
+          "destination": "player_nobles",
+          "quantity": 1,
+          "what": {
+            "concept": "noble"
+          }
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.repeat.001.1",
+      "entry_from": "action.nobles.choice.001.2",
+      "story": "【当他的下一个回合结束时，不管这回合他做了什么行动】",
+      "note": "【下一个回合结束时再检查一次】\n  规则说明，**没有状态变化**：镜头给玩家面前（发展区 + 已经拿到的贵族）。",
+      "timing": {
+        "镜头给玩家面前": "0.00",
+        "点发展区/贵族": "0.80 / 1.80"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 1
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 1
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_development",
+          "camera_padding": 1.8
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        },
+        {
+          "at": 1.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.repeat.001.2",
+      "entry_from": "action.nobles.repeat.001.1",
+      "story": "【只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取】",
+      "note": "【还剩就再拿一块】\n  真搬一件：供应堆还剩最后一块（条件同样满足）→ 再搬到 `player_nobles`（此时 3 块）。\n  这一动把『每回合都要再检查、够了就必须再拿』演成可见的事实。",
+      "timing": {
+        "点剩下那块": "1.00",
+        "搬到自己面前": "3.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 1
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "noble_market",
+          "camera_padding": 1.25
+        },
+        {
+          "at": 1.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>",
+          "order": 0
+        },
+        {
+          "at": 3.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<noble_market>"
+          ],
+          "destination": "player_nobles",
+          "quantity": 1,
+          "what": {
+            "concept": "noble"
+          }
+        },
+        {
+          "at": 4.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles"
+        }
+      ]
+    },
+    {
+      "cue": "action.nobles.repeat.001.3",
+      "entry_from": "action.nobles.repeat.001.2",
+      "story": "【就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止】",
+      "note": "【循环到供应堆里没有满足条件的贵族】\n  镜头拉回整桌，点一下已经空了的贵族供应堆 —— 现在那里一块都不剩，循环就到这里。\n  没有状态变化（上一条已经搬完）。",
+      "timing": {
+        "镜头回整桌": "0.00",
+        "点空了的贵族堆": "1.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 1.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<noble_market>"
+        }
+      ]
+    },
+    {
+      "cue": "action.cards.summary.001.1",
+      "entry_from": "action.nobles.repeat.001.3",
+      "story": "【我们做个总结：玩家可以花费费用购买一张发展卡牌】",
+      "note": "【总结（一）：花费用买牌】\n  规则总结，**没有状态变化**：点市场（要买的那 12 张）、再点发展区（买来放的）。",
+      "timing": {
+        "点市场": "0.60",
+        "点发展区": "2.00"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<card_market>"
+        },
+        {
+          "at": 2.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        }
+      ]
+    },
+    {
+      "cue": "action.cards.summary.001.2",
+      "entry_from": "action.cards.summary.001.1",
+      "story": "【已购买的发展卡牌会为玩家带来声望值和折扣】",
+      "note": "【总结（二）：买的牌给声望与折扣】\n  规则总结，**没有状态变化**：点发展区（那些牌就是声望与折扣的来源）。",
+      "timing": {
+        "点发展区": "0.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_development",
+          "camera_padding": 1.8
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        }
+      ]
+    },
+    {
+      "cue": "action.cards.summary.001.3",
+      "entry_from": "action.cards.summary.001.2",
+      "story": "【当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值】",
+      "note": "【总结（三）：条件够了就结识贵族】\n  规则总结，**没有状态变化**：点发展区、再点自己面前的三块贵族（这就是本节的结果）。\n  本节结束时：发展区 9 张、贵族 3 块（供应堆空了）—— 下一节（3.3 保留卡牌）从这里继续。",
+      "timing": {
+        "点发展区": "0.60",
+        "点三块贵族": "2.00 / 2.60 / 3.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
+        },
+        {
+          "at": 2.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles",
+          "order": 0
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles",
+          "order": 1
+        },
+        {
+          "at": 3.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_nobles",
+          "order": 2
         }
       ]
     }
