@@ -123,12 +123,12 @@ A(cue("setup.cards.002.2", "setup.cards.002.1",
       "  0-3 = 一级那一行、4-7 = 二级、8-11 = 三级（行的划分由 stage 的 `card_market` 布局决定，"
       "脚本只说「第几格」，不说坐标）。\n"
       "  为什么不是「高亮整个市场」一下：那样观众看不出这是 12 个**格位**、每行 4 个。",
-      {"扫过 12 个格位": "0.30 起，每 0.25s 一格（3.05 扫完）"},
+      {"不动作": "整条只把镜头放在整桌，让 12 张牌安静待着"},
       part(None, {"card_market": {"count": 12, "face_up": 12},
                   "deck_level_1": {"count": 36}, "deck_level_2": {"count": 26},
                   "deck_level_3": {"count": 16}}),
       part(None, {"card_market": {"count": 12, "face_up": 12}}),
-      [wait(0.0, camera="board")] + [hl(0.30 + i * 0.25, zone="<card_market>", order=i) for i in range(12)]))
+      [wait(0.0, camera="board", dur=3.4)]))
 
 # ── 2.3 收尾：下一局要重新混洗并抽取贵族板块 ──────────────────────────────────
 A(cue("setup.nobles.002", "setup.nobles.001.2",
@@ -157,7 +157,7 @@ A(cue("setup.starting_player.001.1", "setup.nobles.002",
       {"镜头回整桌": "0.00", "点玩家区": "1.00"},
       part(None, {"player_holding": {"count": 0}, "player_marker": {"count": 0}}),
       part(None, {"player_holding": {"count": 0}, "player_marker": {"count": 0}}),
-      [wait(0.0, camera="board"), hl(1.0, zone="<player_holding>")]))
+      [wait(0.0, camera="board"), hl(1.0, zone="player_holding")]))
 
 A(cue("setup.starting_player.001.2", "setup.starting_player.001.1",
       "【也可以使用所有人都认可的方式决定谁是起始玩家】",
@@ -166,7 +166,7 @@ A(cue("setup.starting_player.001.2", "setup.starting_player.001.1",
       {"镜头整桌": "0.00（承接上一条）", "点玩家区": "0.80"},
       part(None, {"player_holding": {"count": 0}, "player_marker": {"count": 0}}),
       part(None, {"player_holding": {"count": 0}, "player_marker": {"count": 0}}),
-      [wait(0.0, camera="board"), hl(0.8, zone="<player_holding>")]))
+      [wait(0.0, camera="board"), hl(0.8, zone="player_holding")]))
 
 A(cue("setup.starting_player.001.3", "setup.starting_player.001.2",
       "【这是起始玩家标记，起始玩家获得这枚标记】",
@@ -203,7 +203,7 @@ A(cue("setup.end.001.1", "setup.starting_player.001.3",
           ["<gem_supply|color=<diamond>>", "<gem_supply|color=<sapphire>>",
            "<gem_supply|color=<ruby>>", "<gem_supply|color=<emerald>>",
            "<gem_supply|color=<onyx>>"])]
-      + [hl(2.2, zone="<player_holding>")]))
+      + [hl(2.2, zone="player_holding")]))
 
 _seat_note = ("【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n"
               "  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n"
@@ -214,7 +214,7 @@ A(cue("setup.end.001.2", "setup.end.001.1",
       _seat_note + "\n  这一句讲两人并排 → 点公共区（市场）。",
       {"镜头整桌": "0.00", "点市场": "1.00", "点玩家区": "2.50"},
       part(None, SETUP_DONE), part(None, SETUP_DONE),
-      [wait(0.0, camera="board"), hl(1.0, zone="<card_market>"), hl(2.5, zone="<player_holding>")]))
+      [wait(0.0, camera="board"), hl(1.0, zone="<card_market>"), hl(2.5, zone="player_holding")]))
 
 A(cue("setup.end.001.3", "setup.end.001.2",
       "【如果三到四位玩家同时进行游戏，更推荐使用这种设置方式】",
@@ -248,7 +248,7 @@ A(cue("action.turn.001", "setup.end.002",
       {"镜头整桌": "0.00", "点起始玩家标记": "1.00", "点玩家区": "3.00"},
       part(None, SETUP_DONE | {"player_marker": {"count": 1}}),
       part(None, SETUP_DONE | {"player_marker": {"count": 1}}),
-      [wait(0.0, camera="board"), hl(1.0, zone="player_marker"), hl(3.0, zone="<player_holding>")]))
+      [wait(0.0, camera="board"), hl(1.0, zone="player_marker"), hl(3.0, zone="player_holding")]))
 
 A(cue("action.turn.002", "action.turn.001",
       "【玩家在自己回合内可以从如下几种行动中选择其中一种进行】",
