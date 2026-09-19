@@ -32,5 +32,67 @@
       "黑": 1
     }
   },
-  "cost_todo": "其余 14 张的价格待逐张核对后补（本批只用到 1白，且折扣演示不依赖具体数字）"
+  "cost_todo": "其余 14 张的价格待逐张核对后补（本批只用到 1白，且折扣演示不依赖具体数字）",
+  "cost_by_template": {
+    "market_card_1_diamond": {
+      "sapphire": 1,
+      "emerald": 2,
+      "ruby": 1,
+      "onyx": 1
+    },
+    "market_card_1_ruby": {
+      "diamond": 2,
+      "ruby": 2
+    },
+    "market_card_1_emerald": {
+      "onyx": 4
+    },
+    "market_card_1_sapphire": {
+      "onyx": 3
+    },
+    "market_card_1_onyx": {
+      "diamond": 2,
+      "sapphire": 2,
+      "ruby": 1
+    },
+    "market_card_2_diamond": {
+      "emerald": 1,
+      "ruby": 4,
+      "onyx": 2
+    },
+    "market_card_2_ruby": {
+      "ruby": 6
+    },
+    "market_card_2_emerald": {
+      "diamond": 2,
+      "sapphire": 3,
+      "onyx": 2
+    },
+    "market_card_2_sapphire": {
+      "diamond": 5,
+      "sapphire": 3
+    },
+    "market_card_2_onyx": {
+      "diamond": 5
+    },
+    "market_card_3_diamond": {
+      "diamond": 3,
+      "ruby": 3,
+      "onyx": 6
+    },
+    "market_card_3_ruby": {
+      "emerald": 7
+    },
+    "market_card_3_emerald": {
+      "sapphire": 7
+    },
+    "market_card_3_sapphire": {
+      "diamond": 7,
+      "sapphire": 3
+    },
+    "market_card_3_onyx": {
+      "diamond": 7,
+      "onyx": 3
+    }
+  }
 }
