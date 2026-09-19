@@ -636,6 +636,8 @@ namespace UnityEngine.InputSystem
         public KeyControl aKey = new KeyControl();
         public KeyControl gKey = new KeyControl();
         public KeyControl bKey = new KeyControl();
+        public KeyControl shiftKey = new KeyControl();     // Unity 的 Keyboard.shiftKey
+        public KeyControl leftShiftKey = new KeyControl();
         public KeyControl nKey = new KeyControl();
         public KeyControl pKey = new KeyControl();
         public KeyControl leftArrowKey = new KeyControl();

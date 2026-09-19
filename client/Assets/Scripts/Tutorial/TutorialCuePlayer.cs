@@ -39,8 +39,16 @@ namespace BoardGameTutorial
         [Tooltip("调试：播放动画到 cue 结尾后停住不自动进入下一条。")]
         public bool pauseAtCueEnd;
 
-        [Tooltip("调试：按 B 直接跳到当前正在制作的动画（默认是设置段第一条），再按一次回到原来的位置。")]
-        public string debugJumpCueId = "setup.cards.001.1";
+        [Tooltip("调试：按 B 依次跳到这些动画（循环）。默认放设置段里需要反复看的几条" +
+                 "——免得每次都要等前面 100 多条 cue 播完。再按一次 Shift+B 回到跳转前的位置。")]
+        public List<string> debugJumpCueIds = new List<string>
+        {
+            "setup.gems.001.1",   // 宝石介绍：五枚样本出现在展示位
+            "setup.gems.003.1",   // 4 枚/色：供应堆摆成一摞
+            "setup.gems.004",     // 7 枚/色：满摞
+            "setup.nobles.001.2", // 贵族出场
+        };
+        private int debugJumpCursor;
 
         [Tooltip("调试叠层：在画面上标注供应区/持有区的位置。仅用于标定，默认关闭——它会在画面中间画出色块和文字。")]
         public bool showZoneLabels;
@@ -366,26 +374,25 @@ namespace BoardGameTutorial
         /// </summary>
         public void ToggleDebugJump()
         {
-            if (doc == null || doc.cues == null || string.IsNullOrEmpty(debugJumpCueId)) return;
+            if (doc == null || doc.cues == null || debugJumpCueIds == null || debugJumpCueIds.Count == 0) return;
 
-            if (inDebugJump)
-            {
-                inDebugJump = false;
-                PlayCue(debugJumpReturnIndex);
-                return;
-            }
+            // 列表循环：按 B 依次看每一条（review 时最常用）；目标 cue 播完不会自动往下走，
+            // 停在原地看着就行 —— 想回原位按 Shift+B。
+            if (!inDebugJump) debugJumpReturnIndex = currentIndex;
 
+            string want = debugJumpCueIds[debugJumpCursor % debugJumpCueIds.Count];
+            debugJumpCursor = (debugJumpCursor + 1) % debugJumpCueIds.Count;
             for (int i = 0; i < doc.cues.Count; i++)
             {
-                if (doc.cues[i].id == debugJumpCueId)
+                if (doc.cues[i].id == want)
                 {
-                    debugJumpReturnIndex = currentIndex;
                     inDebugJump = true;
                     PlayCue(i);
+                    Debug.Log($"[TutorialCuePlayer] 调试跳转 → {want}（再按 B 看下一条，Shift+B 回原位）");
                     return;
                 }
             }
-            Debug.LogWarning($"[TutorialCuePlayer] debugJumpCueId not found: {debugJumpCueId}");
+            Debug.LogWarning($"[TutorialCuePlayer] 调试跳转目标不在轨道里: {want}");
         }
 
         private void Update()
@@ -415,7 +422,8 @@ namespace BoardGameTutorial
             if (kb.rightArrowKey.wasPressedThisFrame) Next();
             if (kb.aKey.wasPressedThisFrame) autoAdvance = !autoAdvance;
             if (kb.gKey.wasPressedThisFrame) ToggleCueAnimation();
-            if (kb.bKey.wasPressedThisFrame) ToggleDebugJump();
+            if (kb.bKey.wasPressedThisFrame && kb.shiftKey.isPressed) { inDebugJump = false; PlayCue(debugJumpReturnIndex); }
+            else if (kb.bKey.wasPressedThisFrame) ToggleDebugJump();
 #else
             if (Input.GetKeyDown(KeyCode.Space)) TogglePause();
             if (Input.GetKeyDown(KeyCode.R)) ReplayCurrent();
