@@ -67,7 +67,7 @@ def main() -> int:
     if hits:
         print(f"✗ 发现 {len(hits)} 处疑似明文密钥（已跟踪文件里）：")
         for rel, i, why, snippet in hits:
-            masked = re.sub(r"(sk-.\{0,6\})[A-Za-z0-9_-]+", r"\1……", snippet)
+            masked = re.sub(r"(sk-[A-Za-z0-9_-]{6})[A-Za-z0-9_-]+", r"\1……", snippet)
             print(f"    {rel}:{i}  {why}\n        {masked}")
         print("\n处置：把值挪到环境变量/user-secrets，仓库里留空或占位；**并轮换那个密钥**"
               "（进过公开仓库就等于已泄露）。")
