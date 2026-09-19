@@ -537,6 +537,13 @@ namespace BoardGameTutorial
         public float camera_padding;
 
         /// <summary>
+        /// 取景特写时"**这几个 zone 占画面中央多大比例**"（0~1，留空 = 0.8，等价于老的留白 1.25）。
+        /// 用户 2026-09-20 定的口径：给特写不是拍脑袋改倍率，而是说清"我要这几个区域占画面多少"，
+        /// 机位由这个函数算出来。0.8 → 框住的范围占画面 80%，越大越满（越近）。
+        /// </summary>
+        public float camera_fill;
+
+        /// <summary>
         /// showbox：要显示/隐藏的图片（相对 games/{game}，例如 media/box.png）。
         /// 配 action="showbox"，on=1 显示、on=0 隐藏。
         /// </summary>

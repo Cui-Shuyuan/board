@@ -77,12 +77,13 @@ namespace BoardGameTutorial
         /// "cards" / "supply" 是**组取景 token**（分别框住展示位三张卡背、整排供应区）；
         /// 其余按 zone id 特写该区域。
         /// </summary>
-        public void SetFraming(string zoneId, float padding = 0f)
+        public void SetFraming(string zoneId, float padding = 0f, float fill = -1f)
         {
             frameZoneId = string.IsNullOrEmpty(zoneId) || zoneId == "board" ? null
                 : (zoneId == "cards" ? FrameCardsToken
                 : (zoneId == "supply" ? FrameSupplyToken : zoneId));
             framePadding = padding;
+            frameFill = fill;              // <0 = 未指定（按 0.8 算，等价于老的留白 1.25）
             FitCamera();
         }
 
@@ -188,7 +189,8 @@ namespace BoardGameTutorial
         private const string FrameSupplyToken = "__supply__";
         private const string SupplyPalette = "panel_supply";
 
-        private string frameZoneId;      // 非空 = 特写取景到该 zone
+        private string frameZoneId;      // 非空 = 特写取景到该 zone（逗号分隔 = 这几个一起入镜）
+        private float frameFill = -1f;   // 这几个 zone 占画面中央的比例（<0 = 默认 0.8）
         private float framePadding;
         private SpriteRenderer boxSprite;
         private string currentPicture;
@@ -1420,7 +1422,7 @@ namespace BoardGameTutorial
                 // 取景也允许写 zone 引用；多 zone 同框（"a,b"）逐段解析
                 var parts = ev.camera.Split(',');
                 for (int i = 0; i < parts.Length; i++) parts[i] = Store.ResolveZoneRef(parts[i].Trim());
-                SetFraming(string.Join(",", parts), ev.camera_padding);
+                SetFraming(string.Join(",", parts), ev.camera_padding, ev.camera_fill);
             }
 
             switch (ev.action)
@@ -2808,8 +2810,32 @@ namespace BoardGameTutorial
                         minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
                     }
                 }
-                orthoScale = framePadding > 0f ? framePadding : 1.25f;
+                // ── 跨度闸门（用户 2026-09-20）────────────────────────────
+                // 这几个 zone 的外接框若超过整桌长/宽的 50%，说明"这一条讲的本来就是一大片"
+                // → 直接退回全局镜头，别硬凑特写（镜头来回乱切比统一用全局更晕）。
+                var ext = stage?.board?.extent;
+                if (ext != null)
+                {
+                    float spanX = maxX - minX, spanZ = maxZ - minZ;
+                    float tblW = Mathf.Max(0.01f, ext.max_x - ext.min_x);
+                    float tblZ = Mathf.Max(0.01f, ext.max_z - ext.min_z);
+                    if (spanX > tblW * 0.5f || spanZ > tblZ * 0.5f)
+                    {
+                        minX = ext.min_x; maxX = ext.max_x; minZ = ext.min_z; maxZ = ext.max_z;
+                        orthoScale = framePadding > 0f ? framePadding : 1.1f;
+                        if (logCameraFit)
+                            Debug.Log($"[CueAnim.FitCamera] 跨度太大（{spanX:0.00}x{spanZ:0.00} vs 桌 " +
+                                      $"{tblW:0.00}x{tblZ:0.00}）→ 退回全局镜头（cue {CueId}）");
+                        goto fit_done;      // 跳过下面的填充率，直接用整桌范围
+                    }
+                }
+                // 填充率：这几个 zone 占画面中央的比例（默认 0.8 = 老的留白 1.25，观感不变）
+                {
+                    float fill = frameFill > 0f ? Mathf.Clamp(frameFill, 0.2f, 1f) : 0.8f;
+                    orthoScale = 1f / fill;
+                }
             }
+            fit_done:
             // 取景 "supply"：把整排供应堆（凡用 panel_supply 色板的 zone）一起框住。
             // 与 "cards" 同类，但成员按色板判定，不写死 zone 名。
             if (frameZoneId == FrameSupplyToken)
