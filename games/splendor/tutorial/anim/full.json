@@ -1127,7 +1127,7 @@
       "cue": "setup.cards.002.1",
       "entry_from": "setup.cards.001.3",
       "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
-      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
       "timing": {
         "样本卡背退场 + 牌堆登场 + 洗混": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列",
         "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
@@ -7327,11 +7327,12 @@
       "cue": "action.cards.market.001.2",
       "entry_from": "action.cards.market.001.1",
       "story": "【只要卡牌被玩家买走，卡牌供应堆出现了空位】",
-      "note": "【买走一张 → 出现空位】\n  这里做**一次真购买**：把市场里的一张一级白（slot 2）搬到玩家发展区。\n  · 为什么买一级白：下一段折扣例子说『现在我已经购买了 1 张白宝石牌』—— 这一动正好把那个前提**做**出来，后面就不用凭空变一张牌。\n  · ⚠ **没有演付宝石**：口播这一段讲的是『买走之后要补牌』，一个字没提支付；而且玩家手上（白1蓝1红1绿2）也付不起一级白（要 1 黑）。支付本身的演示放在 3.4（购买保留的发展卡牌）那一节 —— 那里口播就是在讲支付。\n  · 空位是**真的**空位：`MoveToSlot` 只搬那一件，市场其余卡不回填 → 画面上第 3 格空出来。",
+      "note": "【买走一张 → 出现空位】\n  这里做**一次真购买**：把市场里的一张一级白（slot 2）搬到玩家发展区。\n  · 为什么买一级白：下一段折扣例子说『现在我已经购买了 1 张白宝石牌』—— 这一动正好把那个前提**做**出来，后面就不用凭空变一张牌。\n  · ⚠ **没有演付宝石**：口播这一段讲的是『买走之后要补牌』，一个字没提支付；而且玩家手上（白1蓝1红1绿2）也付不起一级白（要 1 黑）。支付本身的演示放在 3.4（购买保留的发展卡牌）那一节 —— 那里口播就是在讲支付。\n  · 空位是**真的**空位：`MoveToSlot` 只搬那一件，市场其余卡不回填 → 画面上第 3 格空出来。\n\n  【2026-09 用户要求：状态必须合法 → 这一步改成**真付款**】\n  一级白的价格（读图）：**1蓝 + 2绿 + 1红 + 1黑**；此刻发展区还是空的 → 没有折扣，全价付。\n  演示玩家手上原本是 5 枚（白1蓝1红1绿2），**付不出那 1 枚黑** —— 所以先按 3.1 讲过的规矩\n  **合法地取 3 种不同**（黑1 + 白1 + 绿1，各自供应堆都够，取完 8 枚 ≤ 上限 10），再全价付掉。\n  为什么不能「直接给」那 1 枚黑：2 人局每色在场只有 4 枚，另外 3 枚在盒里、**永远不再回场** ——\n  `create` 出来就是凭空造宝石（`scripts/validate_anim_rules.py` 会当场报错）。\n  ⚠ 严格说这是两个行动（取宝石 / 买牌），画面上是分开的两拍；本作没有「回合」指示物，\n  这两拍属于「演示前提」（口播讲的是买走之后要补牌，支付细节在 3.2.1 讲过）。",
       "timing": {
-        "点要买的那张": "0.60",
-        "搬到玩家发展区": "1.60",
-        "点空位/发展区": "3.00"
+        "合法取 3 种不同": "0.30",
+        "点要买的那张": "1.30",
+        "付 1蓝2绿1红1黑": "2.20",
+        "搬到玩家发展区": "3.20"
       },
       "enter": {
         "picture": null,
@@ -7383,10 +7384,10 @@
             "count": 1
           },
           "showcase": {
-            "count": 1
+            "count": 0
           },
           "showcase_1": {
-            "count": 1
+            "count": 0
           },
           "player_development": {
             "count": 0
@@ -7397,8 +7398,8 @@
         "picture": null,
         "zones": {
           "card_market": {
-            "count": 11,
-            "face_up": 11
+            "count": 12,
+            "face_up": 12
           },
           "deck_level_1": {
             "count": 36
@@ -7413,16 +7414,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7431,29 +7432,28 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
             "count": 1
           },
           "showcase": {
-            "count": 1
+            "count": 0
           },
           "showcase_1": {
-            "count": 1
+            "count": 0
           },
           "player_development": {
             "count": 1,
             "kinds": {
               "一级白": 1
             }
-          }
+          },
+          "market": 11
         }
       },
       "start": {
@@ -7468,7 +7468,70 @@
           "camera_padding": 1.6
         },
         {
-          "at": 0.6,
+          "at": 0.3,
+          "dur": 0.5,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gem_supply|color=<onyx>>"
+          ],
+          "destination": "player_holding",
+          "quantity": 1,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 0.5,
+          "dur": 0.5,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gem_supply|color=<diamond>>"
+          ],
+          "destination": "player_holding",
+          "quantity": 1,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 0.7,
+          "dur": 0.5,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gem_supply|color=<emerald>>"
+          ],
+          "destination": "player_holding",
+          "quantity": 1,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 1.3,
           "dur": 0.5,
           "action": "highlight",
           "easing": "easeInOutCubic",
@@ -7477,7 +7540,91 @@
           "order": 2
         },
         {
-          "at": 1.6,
+          "at": 2.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "player_holding"
+          ],
+          "destination": "<gem_supply|color=<sapphire>>",
+          "quantity": 1,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.4,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "player_holding"
+          ],
+          "destination": "<gem_supply|color=<emerald>>",
+          "quantity": 2,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "player_holding"
+          ],
+          "destination": "<gem_supply|color=<ruby>>",
+          "quantity": 1,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.8,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "player_holding"
+          ],
+          "destination": "<gem_supply|color=<onyx>>",
+          "quantity": 1,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
           "dur": 0.6,
           "action": "transfer",
           "easing": "easeInOutCubic",
@@ -7498,7 +7645,7 @@
           }
         },
         {
-          "at": 3.0,
+          "at": 3.8,
           "dur": 0.5,
           "action": "highlight",
           "easing": "easeInOutCubic",
@@ -7536,16 +7683,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7554,12 +7701,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -7596,16 +7741,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7614,12 +7759,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -7710,16 +7853,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7728,12 +7871,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -7770,16 +7911,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7788,12 +7929,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -7859,16 +7998,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7877,12 +8016,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -7919,16 +8056,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -7937,12 +8074,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8026,16 +8161,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8044,12 +8179,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8086,16 +8219,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8104,12 +8237,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8209,16 +8340,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8227,12 +8358,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8269,16 +8398,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8287,12 +8416,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8375,16 +8502,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8393,12 +8520,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8438,16 +8563,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8456,12 +8581,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8547,16 +8670,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8565,12 +8688,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8610,16 +8731,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8628,12 +8749,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8714,16 +8833,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8732,12 +8851,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8777,16 +8894,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8795,12 +8912,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8909,16 +9024,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8927,12 +9042,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -8974,16 +9087,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -8992,12 +9105,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9076,16 +9187,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9094,12 +9205,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9141,16 +9250,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9159,12 +9268,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9250,16 +9357,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9268,12 +9375,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9315,16 +9420,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9333,12 +9438,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9410,16 +9513,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9428,12 +9531,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9475,16 +9576,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9493,12 +9594,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9569,16 +9668,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9587,12 +9686,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9634,16 +9731,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9652,12 +9749,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9728,16 +9823,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9746,12 +9841,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9793,16 +9886,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9811,12 +9904,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9899,16 +9990,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9917,12 +10008,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -9970,16 +10059,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -9988,12 +10077,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10089,16 +10176,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10107,12 +10194,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10160,16 +10245,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10178,12 +10263,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10289,16 +10372,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10307,12 +10390,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10360,16 +10441,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10378,12 +10459,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10468,16 +10547,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10486,12 +10565,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10539,16 +10616,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10557,12 +10634,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10641,16 +10716,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10659,12 +10734,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10712,16 +10785,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10730,12 +10803,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10850,16 +10921,16 @@
             "count": 3
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10868,12 +10939,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -10922,16 +10991,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -10940,12 +11009,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11049,16 +11116,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11067,12 +11134,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11121,16 +11186,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11139,12 +11204,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11238,16 +11301,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11256,12 +11319,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11310,16 +11371,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11328,12 +11389,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11428,16 +11487,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11446,12 +11505,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11500,16 +11557,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11518,12 +11575,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11626,16 +11681,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11644,12 +11699,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11698,16 +11751,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11716,12 +11769,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11824,16 +11875,16 @@
             "count": 2
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11842,12 +11893,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -11896,16 +11945,16 @@
             "count": 1
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -11914,12 +11963,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12022,16 +12069,16 @@
             "count": 1
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12040,12 +12087,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12094,16 +12139,16 @@
             "count": 1
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12112,12 +12157,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12204,16 +12247,16 @@
             "count": 1
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12222,12 +12265,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12276,16 +12317,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12294,12 +12335,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12402,16 +12441,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12420,12 +12459,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12474,16 +12511,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12492,12 +12529,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12575,16 +12610,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12593,12 +12628,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12647,16 +12680,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12665,12 +12698,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12755,16 +12786,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12773,12 +12804,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12827,16 +12856,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12845,12 +12874,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -12929,16 +12956,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -12947,12 +12974,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -13001,16 +13026,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13019,12 +13044,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -13129,16 +13152,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13147,12 +13170,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -13201,16 +13222,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13219,12 +13240,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -13314,16 +13333,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13332,12 +13351,10 @@
             "count": 5
           },
           "player_holding": {
-            "count": 5,
+            "count": 3,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1
             }
           },
           "player_marker": {
@@ -13386,16 +13403,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13404,12 +13421,10 @@
             "count": 4
           },
           "player_holding": {
-            "count": 6,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 1
             }
           },
@@ -13526,16 +13541,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13544,12 +13559,10 @@
             "count": 4
           },
           "player_holding": {
-            "count": 6,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 1
             }
           },
@@ -13599,16 +13612,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13617,12 +13630,10 @@
             "count": 4
           },
           "player_holding": {
-            "count": 6,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 1
             }
           },
@@ -13711,16 +13722,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13729,12 +13740,10 @@
             "count": 4
           },
           "player_holding": {
-            "count": 6,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 1
             }
           },
@@ -13784,16 +13793,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13802,12 +13811,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -13918,16 +13925,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -13936,12 +13943,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -13991,16 +13996,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14009,12 +14014,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14093,16 +14096,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14111,12 +14114,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14166,16 +14167,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14184,12 +14185,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14278,16 +14277,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14296,12 +14295,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14351,16 +14348,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14369,12 +14366,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14461,16 +14456,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14479,12 +14474,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14534,16 +14527,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14552,12 +14545,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14638,16 +14629,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14656,12 +14647,10 @@
             "count": 3
           },
           "player_holding": {
-            "count": 7,
+            "count": 5,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 2
             }
           },
@@ -14711,16 +14700,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14729,12 +14718,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -14858,16 +14845,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14876,12 +14863,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -14931,16 +14916,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -14949,12 +14934,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15052,16 +15035,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15070,12 +15053,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15125,16 +15106,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15143,12 +15124,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15229,16 +15208,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15247,12 +15226,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15302,16 +15279,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15320,12 +15297,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15421,16 +15396,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15439,12 +15414,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15494,16 +15467,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15512,12 +15485,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15604,16 +15575,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15622,12 +15593,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15677,16 +15646,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15695,12 +15664,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15762,7 +15729,7 @@
       "cue": "action.purchase_reserved.002.1",
       "entry_from": "action.purchase_reserved.001",
       "story": "【按照之前介绍过的规则，支付费用，将一张被保留的、背面朝上的卡牌反面（翻开）】",
-      "note": "【买下保留的那张：这一次**真的付钱**了（用户指示⑤）】\n  那张三级白的实际价格（读图）：**3白 + 3红 + 6黑**。发展区现在的折扣是白 5、红 4、蓝 2\n  （5 张白牌 + 4 张红牌 + 2 张蓝牌），白红被折扣全抵掉 → **实付 6 枚黑宝石**。\n  所以动画做三件事：\n    ① `create` 3 枚黑进持有区（口播 `支付费用` 的前提是「你得付得出」，用户批准了这种补法）；\n    ② 把 **3 枚黄金 + 3 枚黑** 付回供应堆（黄金回黄金堆、黑回黑堆）——\n       这两笔和①**同一帧**完成：否则持有区会短暂到 11 枚，与它自己讲的『上限 10』打架；\n    ③ 牌从保留区搬进发展区（`to: face_up` 就是口播说的『翻开』），再圈出它的价格位置。\n  数学上为什么是 6 黑：价格 12 枚 − 折扣抵掉的 3白+3红（折扣白 5 ≥ 3、红 4 ≥ 3）→ 6 黑；\n  蓝折扣 2 用不上。这套算式**没有写进动画**（没有分数/账单 UI），画面上就是『补 3 黑 → 付 3 金 3 黑 → 牌翻开进发展区』，与口播的『支付费用』一致。",
+      "note": "【买下保留的那张：**真付钱**（用户指示⑤ + 状态必须合法）】\n  买的是保留区第 3 张 **二级红**：价格读图 = **6 红**。\n  为什么不是第 1 张三级白：它要 **3白+3红+6黑**，而 2 人局每色在场只有 4 枚 ——\n  **6 枚黑宝石根本不存在**，而发展区没有黑牌、折扣抵不到黑 → 这张在 2 人局里买不起，\n  留在保留区是对的（真实牌局里『先留着，以后再买』也是常态）。\n  二级红的账：发展区有 4 张红牌（一级红×4）→ 红折扣 4 → 6 − 4 = 实付 **2 红**；\n  手上没有红宝石（白2 绿1 黄金3）→ 用 **2 枚黄金**替代（黄金就是万能宝石，3.3 刚讲过）。\n  这一整套账由 `scripts/validate_anim_rules.py` 在**写脚本时**逐色核对：每色在场恒 4 枚、\n  黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
       "timing": {
         "点保留区那张": "0.80",
         "搬进发展区（翻开）": "2.40"
@@ -15787,16 +15754,16 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
+            "count": 2
           },
           "gem_supply_sapphire": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_ruby": {
-            "count": 3
+            "count": 4
           },
           "gem_supply_emerald": {
-            "count": 2
+            "count": 3
           },
           "gem_supply_onyx": {
             "count": 4
@@ -15805,12 +15772,10 @@
             "count": 2
           },
           "player_holding": {
-            "count": 8,
+            "count": 6,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2,
+              "宝石白": 2,
+              "宝石绿": 1,
               "黄金": 3
             }
           },
@@ -15860,30 +15825,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -15930,49 +15894,10 @@
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
           "zone": "player_reserved",
-          "order": 0
+          "order": 2
         },
         {
           "at": 1.6,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "player_holding",
-          "template": "gem",
-          "palette": "gem_onyx",
-          "count": 3,
-          "what": {
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<onyx>"
-              }
-            ]
-          }
-        },
-        {
-          "at": 2.0,
-          "dur": 0.6,
-          "action": "transfer",
-          "easing": "easeInOutCubic",
-          "realizes": "<ontology::transfer>",
-          "source": [
-            "player_holding"
-          ],
-          "destination": "<gem_supply|color=<onyx>>",
-          "quantity": 3,
-          "what": {
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<onyx>"
-              }
-            ]
-          }
-        },
-        {
-          "at": 2.0,
           "dur": 0.6,
           "action": "transfer",
           "easing": "easeInOutCubic",
@@ -15981,13 +15906,13 @@
             "player_holding"
           ],
           "destination": "<gold_supply>",
-          "quantity": 3,
+          "quantity": 2,
           "what": {
             "concept": "gold"
           }
         },
         {
-          "at": 3.4,
+          "at": 3.0,
           "dur": 0.7,
           "action": "transfer",
           "easing": "easeInOutCubic",
@@ -15999,17 +15924,17 @@
           "quantity": 1,
           "to": "face_up",
           "what": {
-            "concept": "development_card_level_3",
+            "concept": "development_card_level_2",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<diamond>"
+                "value": "<ruby>"
               }
             ]
           }
         },
         {
-          "at": 4.6,
+          "at": 4.4,
           "dur": 0.0,
           "action": "point",
           "part": "cost",
@@ -16048,30 +15973,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16120,30 +16044,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16238,30 +16161,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16310,30 +16232,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16427,30 +16348,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16499,30 +16419,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16608,30 +16527,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16680,30 +16598,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16782,30 +16699,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16854,30 +16770,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -16997,30 +16912,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17070,30 +16984,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17172,30 +17085,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17245,30 +17157,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17355,30 +17266,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17428,30 +17338,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17538,30 +17447,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17611,30 +17519,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17713,30 +17620,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17786,30 +17692,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17896,30 +17801,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -17969,30 +17873,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -18078,30 +17981,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -18151,30 +18053,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -18261,30 +18162,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {
@@ -18334,30 +18234,29 @@
             "count": 0
           },
           "gem_supply_diamond": {
-            "count": 3
-          },
-          "gem_supply_sapphire": {
-            "count": 3
-          },
-          "gem_supply_ruby": {
-            "count": 3
-          },
-          "gem_supply_emerald": {
             "count": 2
           },
+          "gem_supply_sapphire": {
+            "count": 4
+          },
+          "gem_supply_ruby": {
+            "count": 4
+          },
+          "gem_supply_emerald": {
+            "count": 3
+          },
           "gem_supply_onyx": {
-            "count": 7
+            "count": 4
           },
           "gold_supply": {
-            "count": 5
+            "count": 4
           },
           "player_holding": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 2
+              "宝石白": 2,
+              "宝石绿": 1,
+              "黄金": 1
             }
           },
           "player_marker": {

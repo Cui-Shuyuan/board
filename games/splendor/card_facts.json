@@ -32,5 +32,69 @@
       "黑": 1
     }
   },
-  "cost_todo": "其余 14 张的价格待逐张核对后补（本批只用到 1白，且折扣演示不依赖具体数字）"
+  "cost_todo": "其余 14 张的价格待逐张核对后补（本批只用到 1白，且折扣演示不依赖具体数字）",
+  "cost_by_template": {
+    "market_card_1_diamond": {
+      "sapphire": 1,
+      "emerald": 2,
+      "ruby": 1,
+      "onyx": 1
+    },
+    "market_card_1_ruby": {
+      "diamond": 2,
+      "sapphire": 2,
+      "ruby": 2
+    },
+    "market_card_1_emerald": {
+      "onyx": 4
+    },
+    "market_card_1_sapphire": {
+      "onyx": 3
+    },
+    "market_card_1_onyx": {
+      "diamond": 2,
+      "sapphire": 2,
+      "ruby": 1
+    },
+    "market_card_2_diamond": {
+      "emerald": 1,
+      "ruby": 4,
+      "onyx": 2
+    },
+    "market_card_2_ruby": {
+      "ruby": 6
+    },
+    "market_card_2_emerald": {
+      "diamond": 2,
+      "sapphire": 3,
+      "onyx": 2
+    },
+    "market_card_2_sapphire": {
+      "diamond": 5,
+      "sapphire": 3
+    },
+    "market_card_2_onyx": {
+      "diamond": 5
+    },
+    "market_card_3_diamond": {
+      "diamond": 3,
+      "ruby": 3,
+      "onyx": 6
+    },
+    "market_card_3_ruby": {
+      "emerald": 7
+    },
+    "market_card_3_emerald": {
+      "sapphire": 7
+    },
+    "market_card_3_sapphire": {
+      "diamond": 7,
+      "sapphire": 3
+    },
+    "market_card_3_onyx": {
+      "diamond": 7,
+      "onyx": 3
+    }
+  },
+  "cost_note": "价格（左下角竖排圆盘）由人逐张读图得到。**买牌演示按它对账**：实付 = 价格 − 折扣（折扣 = 发展区里同色 bonus 的张数；黄金可补任意差额）。\n⚠ market_card_1_ruby 的第二个圆盘颜色读图时存疑（2白+2蓝+2红 或 2白+2红+2?）：它不参与任何购买演示，但要用它买之前必须复核。"
 }
