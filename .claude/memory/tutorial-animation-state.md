@@ -2506,3 +2506,58 @@ slot→坐标的映射得**按件的属性分列**（颜色→第几列，列内
 - 环境：`~/.venvs/matte`（rembg + pillow + numpy，未动系统 Python）；
   ComfyUI 在 `D:\ai\ComfyUI_windows_portable_nvidia`，headless：`--listen 0.0.0.0 --port 8188`，
   WSL 侧访问 `http://172.17.208.1:8188`。
+
+---
+
+## 【用户报的·已修】看到一半按 →，下一条继承的是**半成品状态**（2026-09）
+
+用户截图：cue12（发牌）看到一半快进，cue13 的三级市场**两张是卡背**，而且牌堆右下角
+**露出一张卡背的角** —— 被快进打断的那张牌停在半空。
+
+### 复现（`-advanceSkip 0.5`，先复现再修，这是规矩）
+
+`DumpAdvancePath` 加了 `-advanceSkip <0..1>`：第一条 cue 只 Seek 到该比例，然后调
+`Complete()`（= 玩家按 → 时播放器干的事），再进下一条。实测（**修之前**）：
+
+```
+setup.cards.002.1 播到 50%      : 市场 2 张 → 卡面 1 / 卡背 1；没落位 1 件
+setup.cards.002.1 Complete() 后 : 市场 12 张 → 卡面 1 / **卡背 11**；没落位 1 件
+setup.cards.002.2（下一条）      : 同样的坏状态，并且一路继承下去
+```
+
+### 根因：`Complete()` 用的是 `TriggerFinal`，而它是个"半成品"
+
+```csharp
+// 旧 TriggerFinal：只处理 transfer 的**位移**，其余原语只当"外观"
+if (ev.action == "transfer") { MoveToSlot(...); ApplyCurrentPlacement(...); return; }
+foreach (var actor in Resolve(ev)) { ...复位缩放/透明度... }
+```
+
+它**不套用 `to`（终态朝向）**，也不处理 `create` / `destroy` / `stack` / `showbox` ——
+于是被"补完"的发牌落在市场却仍是**背面**；被快进打断的补间没人收尾，牌就停在半空。
+
+### 修法：`Complete()` 走**正常播放同一条路**
+
+```csharp
+while (nextIndex < cueDoc.events.Count) { Trigger(cueDoc.events[nextIndex]); nextIndex++; }
+clock = Mathf.Max(clock, TotalDuration);
+clips.Clear();            // 补间作废：不该有"卡在半空"的件
+StopAnimations();
+SyncActorsToStore();      // 画面按 Store 摆到终态
+```
+
+按 → 时走的是 `Next()` → `Complete()` → 下一条 `continueState: true`，所以**状态不可能不一致**。
+
+### 修完实测（同一命令）
+
+```
+setup.cards.002.1 Complete() 后: 市场 12 张 → 卡面 **12** / 卡背 0；没落位 **0** 件
+后面每条 cue 也都正常
+```
+
+### 教训（可推广）
+
+> **"跳着看"和"顺着看"必须落到同一个状态。** 任何"中途离开一条 cue"的路径
+> （→、自动前进、将来的拖动进度条）都必须先把这条 cue **推到终态**，
+> 而"推到终态"必须复用**正常播放的那套处理** —— 另写一份"只改状态"的简化版，
+> 迟早会在某几个原语上漏掉（这次漏的是 `to` 和 create/destroy/stack）。
