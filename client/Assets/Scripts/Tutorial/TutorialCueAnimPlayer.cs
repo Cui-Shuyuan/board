@@ -1204,6 +1204,18 @@ namespace BoardGameTutorial
         }
 
         /// <summary>把这条 cue 直接推到结束（顺序播放进入下一条之前用）。</summary>
+        /// <summary>
+        /// 把本条 cue **推到终态**（离开这条 cue 之前必须调，例如用户看到一半按 →）。
+        ///
+        /// ⚠️ 这里**不能用"只改外观"的 TriggerFinal** —— 它原先只处理 transfer 的位移，
+        /// 既不套用 `to`（终态朝向），也不处理 create / destroy / stack / showbox。
+        /// 后果（用户 2026-09 报的、已用 -advanceSkip 复现）：
+        /// 发牌看到一半按 →，12 张市场牌里 **11 张停在背面**，还有 1 张卡在半空没落位，
+        /// 而且这个坏状态会被后面每一条 cue 继承（"正常播完就没事、快进就坏"）。
+        ///
+        /// 现在走**和正常播放同一条路**（Trigger），状态不可能不一致；排出来的补间
+        /// 随后全部作废，画面直接摆到终态 —— 要的是终态，不是"把动画播完"。
+        /// </summary>
         public void Complete()
         {
             if (cueDoc?.events == null) return;
@@ -1211,9 +1223,12 @@ namespace BoardGameTutorial
             {
                 var ev = cueDoc.events[nextIndex];
                 nextIndex++;
-                TriggerFinal(ev);
+                Trigger(ev);
             }
             clock = Mathf.Max(clock, TotalDuration);
+            clips.Clear();          // 补间作废：不再有"卡在半空"的件
+            StopAnimations();
+            SyncActorsToStore();    // 画面按 Store 摆到终态
         }
 
         /// <summary>恢复到本条 cue 的入口状态（重播 / 向后拖动时用）。</summary>
