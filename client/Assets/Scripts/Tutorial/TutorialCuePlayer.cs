@@ -245,6 +245,15 @@ namespace BoardGameTutorial
             if (animPlayer != null)
             {
                 animPlayer.animationEnabled = enableCueAnimation;
+                // 把**整条轨道**的 cue 顺序交过去：入口链重放要按它找"本条之前"。
+                // 只给动画脚本里的 17 条不够 —— 另外 92 条纯口播 cue 不在里面，
+                // 按动画脚本找目标会找不到、一路重放到全片终态。
+                if (doc?.cues != null)
+                {
+                    var ids = new List<string>(doc.cues.Count);
+                    foreach (var c in doc.cues) if (c != null) ids.Add(c.id);
+                    animPlayer.SetCueOrder(ids);
+                }
                 fallbackClock = 0f;   // 每条 cue 重置降级时钟，避免把它累积成「已经播完」
                 // 入口状态**由动画播放器自己负责**：`LoadCue` 在"不接续"时从根重放到本条之前，
                 // 在"接续"时沿用上一条的终态。以前这里另有一套 `ApplyEntryState` +

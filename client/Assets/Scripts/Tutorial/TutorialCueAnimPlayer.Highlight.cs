@@ -24,6 +24,9 @@ namespace BoardGameTutorial
     {
         private void TriggerHighlight(CueAnimEvent ev)
         {
+            // 状态重放（入口链，stateOnly）时**不做高亮**：它是纯表现，而且那时还没有场景对象，
+            // 建光晕底板会 NullReferenceException（复现"按 ←"时就是崩在这里）。
+            if (stateOnly) return;
             if (string.IsNullOrEmpty(ev.target) && string.IsNullOrEmpty(ev.zone)
                 && string.IsNullOrEmpty(ev.container) && !ev.HasWhat)
             {
