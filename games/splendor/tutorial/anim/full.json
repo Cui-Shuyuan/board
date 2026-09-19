@@ -1127,7 +1127,7 @@
       "cue": "setup.cards.002.1",
       "entry_from": "setup.cards.001.3",
       "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
-      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
       "timing": {
         "样本卡背退场 + 牌堆登场 + 洗混": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列",
         "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
@@ -3523,7 +3523,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -3574,7 +3574,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -3848,7 +3848,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -4000,7 +4000,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -4597,7 +4597,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -4772,7 +4772,7 @@
       "cue": "action.take.different.001",
       "entry_from": "setup.nobles.001.2",
       "story": "【拿取三种不同宝石】玩法第一条：从宝石供应堆拿三种**不同**颜色的宝石各一枚。\n事实来自 flow 的 `take_gems_different`：`<gem_supply>` → `<ontology::player_holding>`，3 颗。\n\n  0.30 / 0.55 / 0.80：先分别高亮三种宝石（台词在逐一点名）\n  3.35：三枚一起飞到玩家持有区（`stagger` 0.25 依次走）\n  4.10：持有区整体高亮，表示\"这三枚在你手上\"\n\n**已知短板（待重构）**：高亮用的是引擎实例 id（`gem#1` / `gem#8` / `gem#15`），而 id 是\"第几个被创建\"的产物 —— 同一条数据在顺序播放里（不靠 `start.set` 预置）拿到的 id 完全不同。这类\"点名\"要换成本体语言的选法（哪个概念、在哪个 zone、第几位），见 review 里的字段归属审计。",
-      "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。",
+      "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。\n  【2026-09 补】演示玩家持有区改成写死 zone id `player_holding`：舞台现在有玩家A/玩家B 两个持有区（concept 都是 <player_holding>），写本体引用会歧义 —— 涉及多份实例的引用，本体身份不够用，得点名 zone。",
       "timing": {
         "三种宝石分别高亮": "0.30 / 0.55 / 0.80（三种不同宝石 3.21~4.44）",
         "三枚飞到持有区": "3.35-3.85（各一枚 4.44~4.99）",
@@ -4982,7 +4982,7 @@
             "<gem_supply|color=<sapphire>>",
             "<gem_supply|color=<ruby>>"
           ],
-          "destination": "<player_holding>",
+          "destination": "player_holding",
           "stagger": 0.25,
           "easing": "easeInOutCubic"
         },
@@ -4992,7 +4992,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -5173,7 +5173,7 @@
             "<gem_supply|color=<emerald>>"
           ],
           "quantity": 2,
-          "destination": "<player_holding>",
+          "destination": "player_holding",
           "stagger": 0.25,
           "what": {
             "concept": "gem",
@@ -5191,7 +5191,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -5908,7 +5908,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -6071,7 +6071,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         },
         {
           "at": 1.6,
@@ -6087,7 +6087,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -6249,7 +6249,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         },
         {
           "at": 2.4,
@@ -6257,7 +6257,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -6412,7 +6412,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         },
         {
           "at": 1.6,
@@ -6596,7 +6596,7 @@
       "cue": "action.cards.cost.001.1",
       "entry_from": "action.cards.intro.001",
       "story": "【左下角是这张牌的价格。要想购买这张牌】",
-      "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。",
+      "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
       "timing": {
         "镜头保持两样本近景": "0.00",
         "点一级白样本": "0.60 / 1.80"
@@ -6734,18 +6734,26 @@
         },
         {
           "at": 0.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "arrow",
           "zone": "showcase"
         },
         {
-          "at": 1.8,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "at": 1.6,
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "circle",
+          "zone": "showcase"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "arrow",
           "zone": "showcase"
         }
       ]
@@ -6754,7 +6762,7 @@
       "cue": "action.cards.cost.001.2",
       "entry_from": "action.cards.cost.001.1",
       "story": "【玩家需要将这里标注的宝石种类和数量返回宝石供应堆】",
-      "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  后半句讲『返回供应堆』→ 讲完价格把镜头切到供应堆（这就是宝石要去的地方）。",
+      "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  后半句讲『返回供应堆』→ 讲完价格把镜头切到供应堆（这就是宝石要去的地方）。\n  （这一条的后半句把镜头切到供应堆：价格圈出来的那些宝石，付掉之后就是回到这里。）",
       "timing": {
         "点样本（价格）": "0.50",
         "镜头切供应堆": "2.60"
@@ -6885,10 +6893,10 @@
       "events": [
         {
           "at": 0.5,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "circle",
           "zone": "showcase"
         },
         {
@@ -6903,7 +6911,7 @@
       "cue": "action.cards.cost.001.3",
       "entry_from": "action.cards.cost.001.2",
       "story": "【之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前】",
-      "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  『从卡牌供应堆中拿取』→ 镜头给市场（那 12 张就是卡牌供应堆）；『放在自己面前』→ 镜头拉回整桌、点玩家区。\n  ⚠ 这一条**没有真的买牌**：它讲的是『买牌的步骤』，真正的购买演示在下一条（market.001.2）。",
+      "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  『从卡牌供应堆中拿取』→ 镜头给市场（那 12 张就是卡牌供应堆）；『放在自己面前』→ 镜头拉回整桌、点玩家区。\n  ⚠ 这一条**没有真的买牌**：它讲的是『买牌的步骤』，真正的购买演示在下一条（market.001.2）。\n  （『拿取并放在自己面前』→ 箭头最后落到自己面前那些牌上。）",
       "timing": {
         "镜头给市场": "0.00",
         "点市场": "0.60",
@@ -7057,11 +7065,20 @@
         },
         {
           "at": 3.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "arrow",
+          "zone": "player_development"
+        },
+        {
+          "at": 4.4,
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "arrow",
+          "zone": "player_development",
+          "order": 0
         }
       ]
     },
@@ -7826,7 +7843,7 @@
       "cue": "action.cards.prestige.001.1",
       "entry_from": "action.cards.market.001.4",
       "story": "【左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值】",
-      "note": "【左上角是声望值】\n  镜头回两个样本（一级白 / 二级红），点**二级红**那张：它左上角的横幅写着 3。\n  （读图得到的事实：一级 0/0/1/0/0、二级 2/2/1/3/2、三级 4/5/4/4/5，见 media/card_facts.json。）\n  ⚠ 同样没有办法『只点左上角』——没有指示物原语，只能点整张牌。",
+      "note": "【左上角是声望值】\n  镜头回两个样本（一级白 / 二级红），点**二级红**那张：它左上角的横幅写着 3。\n  （读图得到的事实：一级 0/0/1/0/0、二级 2/2/1/3/2、三级 4/5/4/4/5，见 media/card_facts.json。）\n  ⚠ 同样没有办法『只点左上角』——没有指示物原语，只能点整张牌。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
       "timing": {
         "镜头给两个样本": "0.00",
         "点二级红": "0.80 / 2.40"
@@ -7964,18 +7981,26 @@
         },
         {
           "at": 0.8,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "arrow",
           "zone": "showcase_1"
         },
         {
-          "at": 2.4,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "at": 1.8,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
+          "zone": "showcase_1"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "arrow",
           "zone": "showcase_1"
         }
       ]
@@ -7984,7 +8009,7 @@
       "cue": "action.cards.prestige.001.2",
       "entry_from": "action.cards.prestige.001.1",
       "story": "【不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值】",
-      "note": "【一级卡多半没有声望】\n  正好用桌上这两张对比：二级红 = 3 点，一级白 = 0 点（它左上角的横幅是空的）。\n  先点二级红、再点一级白，最后把市场里的一级行也扫一下（那一行都是 0 点）。",
+      "note": "【一级卡多半没有声望】\n  正好用桌上这两张对比：二级红 = 3 点，一级白 = 0 点（它左上角的横幅是空的）。\n  先点二级红、再点一级白，最后把市场里的一级行也扫一下（那一行都是 0 点）。\n  （用**叉**表示「这张一级牌没有声望值」：叉在左上角那个位置上。）",
       "timing": {
         "点二级红（有）": "0.60",
         "点一级白（没有）": "1.80",
@@ -8123,18 +8148,18 @@
         },
         {
           "at": 0.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
           "zone": "showcase_1"
         },
         {
           "at": 1.8,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "cross",
           "zone": "showcase"
         },
         {
@@ -8146,19 +8171,19 @@
         },
         {
           "at": 3.4,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "cross",
           "zone": "<card_market>",
           "order": 0
         },
         {
-          "at": 3.7,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "at": 3.8,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "cross",
           "zone": "<card_market>",
           "order": 3
         }
@@ -8168,7 +8193,7 @@
       "cue": "action.cards.discount.001",
       "entry_from": "action.cards.prestige.001.2",
       "story": "【右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣】",
-      "note": "【右上角的宝石 = 折扣】\n  点一级白样本（它右上角是白宝石 → 买下它以后，买别的牌时可以少付 1 枚白宝石）。\n  ⚠ 又一处只能点整张牌：『右上角那颗』没有原语能单独指。",
+      "note": "【右上角的宝石 = 折扣】\n  点一级白样本（它右上角是白宝石 → 买下它以后，买别的牌时可以少付 1 枚白宝石）。\n  ⚠ 又一处只能点整张牌：『右上角那颗』没有原语能单独指。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
       "timing": {
         "镜头给样本": "0.00",
         "点一级白": "0.80 / 2.20"
@@ -8306,18 +8331,26 @@
         },
         {
           "at": 0.8,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "bonus",
+          "indicator": "arrow",
           "zone": "showcase"
         },
         {
-          "at": 2.2,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "at": 1.8,
+          "dur": 0.0,
+          "action": "point",
+          "part": "bonus",
+          "indicator": "circle",
+          "zone": "showcase"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.0,
+          "action": "point",
+          "part": "bonus",
+          "indicator": "arrow",
           "zone": "showcase"
         }
       ]
@@ -8646,7 +8679,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>",
+          "zone": "player_holding",
           "order": 0
         },
         {
@@ -8655,7 +8688,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>",
+          "zone": "player_holding",
           "order": 1
         }
       ]
@@ -9019,7 +9052,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -10016,7 +10049,7 @@
       "cue": "action.nobles.value.001.1",
       "entry_from": "action.nobles.intro.001",
       "story": "【左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件】",
-      "note": "【贵族的两个信息】\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（0001 是 4白+4红）。\n  ⚠ 又是同一个缺口：没有『指某个角』的指示物原语，只能把整块依次点亮。",
+      "note": "【贵族的两个信息】\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（0001 是 4白+4红）。\n  ⚠ 又是同一个缺口：没有『指某个角』的指示物原语，只能把整块依次点亮。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
       "timing": {
         "依次点三块": "0.60 / 1.80 / 3.00"
       },
@@ -10169,30 +10202,39 @@
         },
         {
           "at": 0.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "arrow",
           "zone": "<noble_market>",
           "order": 0
         },
         {
-          "at": 1.8,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "at": 1.6,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
           "zone": "<noble_market>",
-          "order": 1
+          "order": 0
         },
         {
-          "at": 3.0,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "at": 2.6,
+          "dur": 0.0,
+          "action": "point",
+          "part": "condition",
+          "indicator": "arrow",
           "zone": "<noble_market>",
-          "order": 2
+          "order": 0
+        },
+        {
+          "at": 3.6,
+          "dur": 0.0,
+          "action": "point",
+          "part": "condition",
+          "indicator": "circle",
+          "zone": "<noble_market>",
+          "order": 0
         }
       ]
     },
@@ -11119,7 +11161,7 @@
       "cue": "action.nobles.forced.001.2",
       "entry_from": "action.nobles.forced.001.1",
       "story": "【并且这个行动是强制性的，玩家不可以选择跳过】",
-      "note": "【强制，不能跳过】\n  规则说明，**没有状态变化**：点剩下那两块贵族、再点自己面前那块 ——『条件够了就必须拿』。\n  ⚠ 『不可以跳过』这一层仍然只能靠口播：我们没有否定原语。",
+      "note": "【强制，不能跳过】\n  规则说明，**没有状态变化**：点剩下那两块贵族、再点自己面前那块 ——『条件够了就必须拿』。\n  ⚠ 『不可以跳过』这一层仍然只能靠口播：我们没有否定原语。\n  【2026-09 用户指示②：否定用禁止符号】供应堆里满足条件的那两块打上禁止符号 =『不能留着不拿』。\n  ⚠ 另一半（『错误示范然后叉掉』）还做不了：错误示范会改状态，而现在没有撤销/回滚原语 —— 要做就得先有『临时状态』这一层。",
       "timing": {
         "点供应堆两块": "0.60 / 1.60",
         "点自己面前那块": "2.60"
@@ -11275,29 +11317,27 @@
         },
         {
           "at": 0.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "forbid",
           "zone": "<noble_market>",
           "order": 0
         },
         {
           "at": 1.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "forbid",
           "zone": "<noble_market>",
           "order": 1
         },
         {
           "at": 2.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
-          "zone": "player_nobles"
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "arrow",
+          "zone": "player_nobles",
+          "order": 0
         }
       ]
     },
@@ -11305,7 +11345,7 @@
       "cue": "action.nobles.source.001",
       "entry_from": "action.nobles.forced.001.2",
       "story": "【玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取】",
-      "note": "【只能拿供应堆里的】\n  规则说明，**没有状态变化**：镜头在贵族供应堆，点一下 —— 『贵族只有这一个来源』。\n  ⚠ 『不可以从其他人那里拿』没法演：我们的桌面只有**一位玩家**的位置，没有『别人面前的贵族』这个东西可指（要演就得先有第二个玩家区）。",
+      "note": "【只能拿供应堆里的】\n  规则说明，**没有状态变化**：镜头在贵族供应堆，点一下 —— 『贵族只有这一个来源』。\n  ⚠ 『不可以从其他人那里拿』没法演：我们的桌面只有**一位玩家**的位置，没有『别人面前的贵族』这个东西可指（要演就得先有第二个玩家区）。\n  【2026-09 用户指示③：加了玩家B 的区】这一句以前没法演 —— 桌面只有一位玩家。现在 `player_b_nobles`（对面那位的贵族）存在了，用**叉**把 B 的贵族叉掉 =『不可以从其他人那里拿』。镜头同时框住两边的贵族区，对比才成立。",
       "timing": {
         "镜头贵族供应堆": "0.00",
         "点供应堆": "0.80"
@@ -11456,8 +11496,8 @@
           "at": 0.0,
           "dur": 0.0,
           "action": "wait",
-          "camera": "noble_market",
-          "camera_padding": 1.25
+          "camera": "noble_market,player_b_nobles",
+          "camera_padding": 1.5
         },
         {
           "at": 0.8,
@@ -11466,6 +11506,30 @@
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
           "zone": "<noble_market>"
+        },
+        {
+          "at": 2.0,
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "cross",
+          "zone": "player_b_nobles",
+          "order": 0
+        },
+        {
+          "at": 2.6,
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "cross",
+          "zone": "player_b_nobles",
+          "order": 1
+        },
+        {
+          "at": 3.2,
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "cross",
+          "zone": "player_b_nobles",
+          "order": 2
         }
       ]
     },
@@ -13305,7 +13369,7 @@
           "source": [
             "<gold_supply>"
           ],
-          "destination": "<player_holding>",
+          "destination": "player_holding",
           "quantity": 1,
           "what": {
             "concept": "gold"
@@ -13492,7 +13556,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>",
+          "zone": "player_holding",
           "order": 5
         },
         {
@@ -13697,7 +13761,7 @@
           "source": [
             "<gold_supply>"
           ],
-          "destination": "<player_holding>",
+          "destination": "player_holding",
           "quantity": 1,
           "what": {
             "concept": "gold"
@@ -14060,7 +14124,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         },
         {
           "at": 2.6,
@@ -14068,7 +14132,7 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
-          "zone": "<player_holding>"
+          "zone": "player_holding"
         }
       ]
     },
@@ -14436,7 +14500,7 @@
       "cue": "action.reserve.limit_hand.001.2",
       "entry_from": "action.reserve.limit_hand.001.1",
       "story": "【如果一位玩家已经保留了 3 张发展卡牌，就不能继续保留了。此时他必须选择其他行动】",
-      "note": "【到 3 张就满了】\n  真做一次：再从市场保留一张（二级红 → 保留区朝下）+ 拿第三枚黄金 → 保留区正好 3 张。\n  『不能继续保留』这一层**没法演**：我们没有否定原语（没有拒绝/变灰），只能靠『正好到 3 张』这个可见事实 + 口播。\n  ⚠ 这是本节演示的最后一张：3 张后不再演示保留（也正好符合规则）。",
+      "note": "【到 3 张就满了】\n  真做一次：再从市场保留一张（二级红 → 保留区朝下）+ 拿第三枚黄金 → 保留区正好 3 张。\n  『不能继续保留』这一层**没法演**：我们没有否定原语（没有拒绝/变灰），只能靠『正好到 3 张』这个可见事实 + 口播。\n  ⚠ 这是本节演示的最后一张：3 张后不再演示保留（也正好符合规则）。\n  【2026-09 用户指示②】保留区满 3 张后打上禁止符号 =『不能再保留』。",
       "timing": {
         "再从市场保留一张": "1.60",
         "拿第三枚黄金": "3.20",
@@ -14630,7 +14694,7 @@
           "source": [
             "<gold_supply>"
           ],
-          "destination": "<player_holding>",
+          "destination": "player_holding",
           "quantity": 1,
           "what": {
             "concept": "gold"
@@ -14642,6 +14706,13 @@
           "action": "highlight",
           "easing": "easeInOutCubic",
           "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        },
+        {
+          "at": 5.2,
+          "dur": 0.0,
+          "action": "point",
+          "indicator": "forbid",
           "zone": "player_reserved"
         }
       ]
@@ -15579,7 +15650,7 @@
       "cue": "action.purchase_reserved.002.1",
       "entry_from": "action.purchase_reserved.001",
       "story": "【按照之前介绍过的规则，支付费用，将一张被保留的、背面朝上的卡牌反面（翻开）】",
-      "note": "【买下保留的那张：从保留区搬进发展区（顺便翻开）】\n  真搬一件：`transfer` 保留区 → 发展区，**带 `to: face_up`** ——\n  『翻开』不需要单独的翻面事件：一张牌进发展区本来就该正面朝上，写终态一次说清\n  （翻面原语是取反，重复 Seek/重播会翻来翻去，历史上正是它出过 bug）。\n  搬哪张：保留区 order 最小的那张（三级白）。\n  ⚠ **支付这一步没有真的演**：口播说『支付费用』，但手上这 8 枚（含 3 黄金）凑不出这张牌的费用，而且全套教程到现在**还没有一次真正的付宝石买牌** —— 见本项目收尾报告里的缺口清单。",
+      "note": "【买下保留的那张：这一次**真的付钱**了（用户指示⑤）】\n  那张三级白的实际价格（读图）：**3白 + 3红 + 6黑**。发展区现在的折扣是白 5、红 4、蓝 2\n  （5 张白牌 + 4 张红牌 + 2 张蓝牌），白红被折扣全抵掉 → **实付 6 枚黑宝石**。\n  所以动画做三件事：\n    ① `create` 3 枚黑进持有区（口播 `支付费用` 的前提是「你得付得出」，用户批准了这种补法）；\n    ② 把 **3 枚黄金 + 3 枚黑** 付回供应堆（黄金回黄金堆、黑回黑堆）——\n       这两笔和①**同一帧**完成：否则持有区会短暂到 11 枚，与它自己讲的『上限 10』打架；\n    ③ 牌从保留区搬进发展区（`to: face_up` 就是口播说的『翻开』），再圈出它的价格位置。\n  数学上为什么是 6 黑：价格 12 枚 − 折扣抵掉的 3白+3红（折扣白 5 ≥ 3、红 4 ≥ 3）→ 6 黑；\n  蓝折扣 2 用不上。这套算式**没有写进动画**（没有分数/账单 UI），画面上就是『补 3 黑 → 付 3 金 3 黑 → 牌翻开进发展区』，与口播的『支付费用』一致。",
       "timing": {
         "点保留区那张": "0.80",
         "搬进发展区（翻开）": "2.40"
@@ -15689,19 +15760,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -15751,7 +15821,61 @@
           "order": 0
         },
         {
-          "at": 2.4,
+          "at": 1.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "player_holding",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 3,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "player_holding"
+          ],
+          "destination": "<gem_supply|color=<onyx>>",
+          "quantity": 3,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "player_holding"
+          ],
+          "destination": "<gold_supply>",
+          "quantity": 3,
+          "what": {
+            "concept": "gold"
+          }
+        },
+        {
+          "at": 3.4,
           "dur": 0.7,
           "action": "transfer",
           "easing": "easeInOutCubic",
@@ -15773,12 +15897,13 @@
           }
         },
         {
-          "at": 3.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
-          "zone": "player_development"
+          "at": 4.6,
+          "dur": 0.0,
+          "action": "point",
+          "part": "cost",
+          "indicator": "circle",
+          "zone": "player_development",
+          "order": 10
         }
       ]
     },
@@ -15823,19 +15948,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -15896,19 +16020,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16015,19 +16138,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16088,19 +16210,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16206,19 +16327,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16279,19 +16399,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16389,19 +16508,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16462,19 +16580,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16527,7 +16644,7 @@
       "cue": "endgame.trigger.001",
       "entry_from": "action.summary.002.2",
       "story": "【当一位玩家的声望值达到 15 或更多时，触发游戏结束】",
-      "note": "【到达 15 分 → 触发结束】\n  口播说的前提是『达到 15 或更多』→ 脚本给了这个前提，所以把分数**补到位**：发展区再 `create` 一张三级蓝（读图：三级蓝 = 5 分）→\n  发展区 = 一级白×3(0) + 三级白×2(4+4) + 一级蓝(0) + 一级红×4(0) + 三级蓝(5) = 13 分，加上 3 块贵族各 3 分 = **22 分** ≥ 15 ✓。\n  · 为什么补的是三级蓝：现有牌里分数最高的那类，一张就够把 13 推到 15 以上；\n  · 分不在画面上累加（没有分数 UI）—— 数字靠口播，画面上是『这些牌和贵族』。",
+      "note": "【到达 15 分 → 触发结束】\n  口播说的前提是『达到 15 或更多』→ 脚本给了这个前提，所以把分数**补到位**：发展区再 `create` 一张三级蓝（读图：三级蓝 = 5 分）→\n  发展区 = 一级白×3(0) + 三级白×2(4+4) + 一级蓝(0) + 一级红×4(0) + 三级蓝(5) = 13 分，加上 3 块贵族各 3 分 = **22 分** ≥ 15 ✓。\n  · 为什么补的是三级蓝：现有牌里分数最高的那类，一张就够把 13 推到 15 以上；\n  · 分不在画面上累加（没有分数 UI）—— 数字靠口播，画面上是『这些牌和贵族』。\n  【2026-09 用户指示④：结算就是圈声望】发展区每张牌的左上角 + 每块贵族的左上角，用**红圈**一起圈出来 —— 两部分加起来就是总分。\n  用的是①的部位指示物：`point` 带 `zone` 会**对区域里每一件**都画一个圈。",
       "timing": {
         "补一张三级蓝": "0.80",
         "点发展区（13 分）": "2.40",
@@ -16565,19 +16682,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16638,19 +16754,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16717,24 +16832,27 @@
           "zone": "player_development"
         },
         {
-          "at": 3.6,
+          "at": 3.0,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
+          "zone": "player_development"
+        },
+        {
+          "at": 4.2,
           "dur": 0.0,
           "action": "wait",
           "camera": "player_nobles",
           "camera_padding": 1.6
         },
         {
-          "at": 3.8,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
-          "zone": "player_nobles"
-        },
-        {
           "at": 4.6,
           "dur": 0.0,
-          "action": "wait"
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
+          "zone": "player_nobles"
         }
       ]
     },
@@ -16779,19 +16897,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16853,19 +16970,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -16956,19 +17072,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17030,19 +17145,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17141,19 +17255,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17215,19 +17328,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17326,19 +17438,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17400,19 +17511,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17503,19 +17613,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17577,19 +17686,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17651,7 +17759,7 @@
       "cue": "endgame.winner.001",
       "entry_from": "endgame.example.002",
       "story": "【声望值最高的玩家获得胜利】",
-      "note": "【分最高者胜】\n  规则说明，**没有状态变化**：点发展区与三块贵族 —— 声望就来自这两处（13 + 9 = 22）。",
+      "note": "【分最高者胜】\n  规则说明，**没有状态变化**：点发展区与三块贵族 —— 声望就来自这两处（13 + 9 = 22）。\n  【2026-09 用户指示④：结算就是圈声望】发展区每张牌的左上角 + 每块贵族的左上角，用**红圈**一起圈出来 —— 两部分加起来就是总分。\n  用的是①的部位指示物：`point` 带 `zone` 会**对区域里每一件**都画一个圈。",
       "timing": {
         "点发展区": "0.60",
         "点贵族": "1.60"
@@ -17688,19 +17796,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17762,19 +17869,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17816,18 +17922,18 @@
         },
         {
           "at": 0.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
           "zone": "player_development"
         },
         {
           "at": 1.6,
-          "dur": 0.5,
-          "action": "highlight",
-          "easing": "easeInOutCubic",
-          "peak_alpha": 0.65,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
           "zone": "player_nobles"
         }
       ]
@@ -17836,7 +17942,7 @@
       "cue": "endgame.tie.001.1",
       "entry_from": "endgame.winner.001",
       "story": "【如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利】",
-      "note": "【同分 → 买牌少的胜】\n  规则说明，**没有状态变化**：点发展区（要比的就是这里的**张数**）。\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。",
+      "note": "【同分 → 买牌少的胜】\n  规则说明，**没有状态变化**：点发展区（要比的就是这里的**张数**）。\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。\n  【2026-09 用户指示④：结算就是圈声望】发展区每张牌的左上角 + 每块贵族的左上角，用**红圈**一起圈出来 —— 两部分加起来就是总分。\n  用的是①的部位指示物：`point` 带 `zone` 会**对区域里每一件**都画一个圈。\n  （同分时比的是**买牌张数**：这一条把发展区整体点亮，圈的是声望，点的是张数。）",
       "timing": {
         "点发展区": "0.60"
       },
@@ -17872,19 +17978,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -17946,19 +18051,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -18001,6 +18105,14 @@
         },
         {
           "at": 0.6,
+          "dur": 0.0,
+          "action": "point",
+          "part": "prestige",
+          "indicator": "circle",
+          "zone": "player_development"
+        },
+        {
+          "at": 1.8,
           "dur": 0.5,
           "action": "highlight",
           "easing": "easeInOutCubic",
@@ -18049,19 +18161,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {
@@ -18123,19 +18234,18 @@
             "count": 2
           },
           "gem_supply_onyx": {
-            "count": 4
+            "count": 7
           },
           "gold_supply": {
-            "count": 2
+            "count": 5
           },
           "player_holding": {
-            "count": 8,
+            "count": 5,
             "kinds": {
               "宝石白": 1,
               "宝石蓝": 1,
               "宝石红": 1,
-              "宝石绿": 2,
-              "黄金": 3
+              "宝石绿": 2
             }
           },
           "player_marker": {

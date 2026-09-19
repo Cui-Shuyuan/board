@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**。\n\n【zone 的生命周期】zone 是\"世界里的位置\"：`zones` 里声明的这些**一开始就全部建好**\n（空着也是建好了 —— 与\"开局桌上没有件\"不矛盾：一个说的是区域，一个说的是件）。\n后续游戏若要有\"随着卡牌/板块进场新增区域\"，把那种区域的**定义**写进 `zone_defs`，\n脚本里用 {\"action\":\"zone\",\"op\":\"add\",\"zone\":\"<定义 id>\",\"index\":N} 开出来；\n坐标仍只写在 stage（第 N 个实例按 `repeat_x`/`repeat_z` 平移，id 是 `<定义 id>#N`）。",
+  "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**。\n\n【zone 的生命周期】zone 是\"世界里的位置\"：`zones` 里声明的这些**一开始就全部建好**\n（空着也是建好了 —— 与\"开局桌上没有件\"不矛盾：一个说的是区域，一个说的是件）。\n后续游戏若要有\"随着卡牌/板块进场新增区域\"，把那种区域的**定义**写进 `zone_defs`，\n脚本里用 {\"action\":\"zone\",\"op\":\"add\",\"zone\":\"<定义 id>\",\"index\":N} 开出来；\n坐标仍只写在 stage（第 N 个实例按 `repeat_x`/`repeat_z` 平移，id 是 `<定义 id>#N`）。\n\n【玩家区 A/B（2026-09 用户指示）】不带前缀的那几个（player_holding / player_development / player_reserved / player_nobles / player_marker）是**玩家A**= 学习者这一侧，摆在桌面下方；player_b_* 是对面那位。教程里 A 的账是完整的，B 只在『多人对比』的几句话里出现。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 90,
@@ -12,7 +12,7 @@
       "min_x": -3.23,
       "max_x": 1.31,
       "min_z": -5.6,
-      "max_z": 2.84
+      "max_z": 5.0
     },
     "default_picture": "media/box.png"
   },
@@ -678,6 +678,117 @@
         "development_card_level_3"
       ],
       "note": "保留的发展卡放的地方（<reserve>）。x_step 0.35 = 卡片半叠成扇形：保留区**必须**放得下 3 张（规则上限就是 3），而桌子横向不够摊开 —— 真人遇到这种情况也是这样错开叠的，而且朝下的牌只需要露出边缘。"
+    },
+    {
+      "id": "player_b_development",
+      "label": "玩家B的发展区",
+      "center": {
+        "x": -1.6,
+        "z": 3.45
+      },
+      "layout": {
+        "type": "grid",
+        "cols": 3,
+        "x_step": 0.66,
+        "z_step": 0.46
+      },
+      "capacity": 6,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<development_area>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "玩家B（对面）买下的发展卡。容量 6：教程里 B 只是『另一个玩家』，不需要摆满。"
+    },
+    {
+      "id": "player_b_holding",
+      "label": "玩家B的持有区",
+      "center": {
+        "x": 0.3,
+        "z": 3.3
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.3
+      },
+      "capacity": 6,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_holding>",
+      "contains": [
+        "gem",
+        "gold"
+      ],
+      "note": "玩家B手里的宝石/黄金。"
+    },
+    {
+      "id": "player_b_reserved",
+      "label": "玩家B的保留区",
+      "center": {
+        "x": 0.3,
+        "z": 4.15
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.35
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<reserve>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "玩家B保留的卡（朝下，别人看不到内容）。"
+    },
+    {
+      "id": "player_b_nobles",
+      "label": "玩家B结识的贵族",
+      "center": {
+        "x": -1.6,
+        "z": 4.45
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.66
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.6,
+        "h": 0.6
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_zone>",
+      "contains": [
+        "noble"
+      ],
+      "note": "玩家B结识的贵族。3.2.2 那句『不可以从其他人那里拿贵族』就指着这里。"
     }
   ],
   "templates": [
@@ -751,7 +862,23 @@
       "width": 0.6,
       "height": 0.6,
       "sorting_order": 2,
-      "concept": "noble"
+      "concept": "noble",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.215,
+          "dy": 0.215,
+          "r": 0.07
+        },
+        {
+          "id": "condition",
+          "label": "下方：结识条件（已购卡牌的种类与数量）",
+          "dx": -0.04,
+          "dy": -0.175,
+          "r": 0.15
+        }
+      ]
     },
     {
       "id": "board_market",
@@ -832,6 +959,29 @@
           "key": "bonus",
           "value": "<diamond>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -850,6 +1000,29 @@
         {
           "key": "bonus",
           "value": "<ruby>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -870,6 +1043,29 @@
           "key": "bonus",
           "value": "<emerald>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -888,6 +1084,29 @@
         {
           "key": "bonus",
           "value": "<sapphire>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -908,6 +1127,29 @@
           "key": "bonus",
           "value": "<onyx>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -926,6 +1168,29 @@
         {
           "key": "bonus",
           "value": "<diamond>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -946,6 +1211,29 @@
           "key": "bonus",
           "value": "<ruby>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -964,6 +1252,29 @@
         {
           "key": "bonus",
           "value": "<emerald>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -984,6 +1295,29 @@
           "key": "bonus",
           "value": "<sapphire>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -1002,6 +1336,29 @@
         {
           "key": "bonus",
           "value": "<onyx>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -1022,6 +1379,29 @@
           "key": "bonus",
           "value": "<diamond>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -1040,6 +1420,29 @@
         {
           "key": "bonus",
           "value": "<ruby>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -1060,6 +1463,29 @@
           "key": "bonus",
           "value": "<emerald>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -1078,6 +1504,29 @@
         {
           "key": "bonus",
           "value": "<sapphire>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
         }
       ]
     },
@@ -1098,6 +1547,29 @@
           "key": "bonus",
           "value": "<onyx>"
         }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
       ]
     },
     {
@@ -1111,7 +1583,30 @@
       "sorting_order": 4,
       "alpha": 1.0,
       "concept": "development_card_level_1",
-      "sample": true
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "sample_back_1",
@@ -1124,7 +1619,30 @@
       "sorting_order": 2,
       "alpha": 1.0,
       "concept": "development_card_level_1",
-      "sample": true
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "sample_back_2",
@@ -1137,7 +1655,30 @@
       "sorting_order": 2,
       "alpha": 1.0,
       "concept": "development_card_level_2",
-      "sample": true
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "sample_back_3",
@@ -1150,7 +1691,30 @@
       "sorting_order": 2,
       "alpha": 1.0,
       "concept": "development_card_level_3",
-      "sample": true
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "blank_card_1",
@@ -1162,7 +1726,30 @@
       "face_image": "media/card/一级发展卡_背面.jpg",
       "note": "垫牌：只为让牌堆看上去有几十张，永远发不出来（所以没有真卡面）",
       "concept": "development_card_level_1",
-      "filler": true
+      "filler": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "blank_card_2",
@@ -1174,7 +1761,30 @@
       "face_image": "media/card/二级发展卡_背面.jpg",
       "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
       "concept": "development_card_level_2",
-      "filler": true
+      "filler": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "blank_card_3",
@@ -1186,7 +1796,30 @@
       "face_image": "media/card/三级发展卡_背面.jpg",
       "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
       "concept": "development_card_level_3",
-      "filler": true
+      "filler": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "gem_sample",
@@ -1273,7 +1906,30 @@
       "sorting_order": 2,
       "concept": "development_card_level_1",
       "sample": true,
-      "note": "介绍牌面用的**样本**（一级白）：价格 1蓝+2绿+1红+1黑（四种颜色，讲『左下角是价格』最清楚）、声望 0、白折扣。样本不进牌堆/市场的账，讲解完销毁。"
+      "note": "介绍牌面用的**样本**（一级白）：价格 1蓝+2绿+1红+1黑（四种颜色，讲『左下角是价格』最清楚）、声望 0、白折扣。样本不进牌堆/市场的账，讲解完销毁。",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     },
     {
       "id": "sample_card_2_ruby",
@@ -1285,7 +1941,30 @@
       "sorting_order": 2,
       "concept": "development_card_level_2",
       "sample": true,
-      "note": "介绍牌面用的**样本**（二级红）：声望 3，用来讲『左上角是声望值』。"
+      "note": "介绍牌面用的**样本**（二级红）：声望 3，用来讲『左上角是声望值』。",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     }
   ],
   "anchors": [
@@ -1343,6 +2022,18 @@
         "player_development",
         "player_nobles",
         "player_reserved"
+      ]
+    },
+    {
+      "id": "board_player_b_area",
+      "template": "board_player",
+      "x": -0.65,
+      "z": 3.8,
+      "zones": [
+        "player_b_development",
+        "player_b_holding",
+        "player_b_reserved",
+        "player_b_nobles"
       ]
     }
   ],

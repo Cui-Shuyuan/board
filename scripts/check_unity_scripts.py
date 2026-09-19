@@ -64,6 +64,8 @@ namespace UnityEngine
         public static Vector2 one => new Vector2(1, 1);
         public static float Distance(Vector2 a, Vector2 b) => 0f;
         public static Vector2 Lerp(Vector2 a, Vector2 b, float t) => a;
+        public static float Dot(Vector2 a, Vector2 b) => a.x * b.x + a.y * b.y;
+        public Vector2 normalized { get { return this; } }
         public static Vector2 operator +(Vector2 a, Vector2 b) => new Vector2(a.x + b.x, a.y + b.y);
         public static Vector2 operator -(Vector2 a, Vector2 b) => new Vector2(a.x - b.x, a.y - b.y);
         public static Vector2 operator *(Vector2 a, float s) => new Vector2(a.x * s, a.y * s);
@@ -148,6 +150,7 @@ namespace UnityEngine
         public static float Dot(Quaternion a, Quaternion b) => a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
         public static float Angle(Quaternion a, Quaternion b) => 0f;
         public static Quaternion operator *(Quaternion a, Quaternion b) => a;
+        public static Vector3 operator *(Quaternion a, Vector3 v) => v;
     }
 
     public struct Rect

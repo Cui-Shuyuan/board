@@ -218,6 +218,21 @@ namespace BoardGameTutorial
     }
 
     /// <summary>
+    /// 件上的一个**可见部位**在件平面里的相对位置（动画层概念，见 StageTemplate.part_anchors）。
+    /// 偏移是**世界单位**、相对件中心：+x 右、+y 上；件的朝向会带着它一起转。
+    /// `r` 是圈选半径（circle / forbid 用）：圈要把那个部位刚好圈住。
+    /// </summary>
+    [Serializable]
+    public class StagePart
+    {
+        public string id;        // "prestige" / "cost" / "bonus" / "condition" …
+        public string label;     // 人读的说明："左上角：声望值"
+        public float dx;
+        public float dy;
+        public float r = 0.06f;
+    }
+
+    /// <summary>
     /// `concept_by_palette` 的一项：某个色板对应哪个概念、带哪些属性。
     ///
     /// 为什么单独一个类型：以前它跟 `StageNamedRef` 共用一个类，于是那个类里
@@ -261,6 +276,20 @@ namespace BoardGameTutorial
         /// 声望点数…）。用「拿刀裁开即独立 piece」来理解。
         /// </summary>
         public List<StageNamedRef> parts;
+
+        /// <summary>
+        /// **动画独有的「部位」概念**：这块件的某个可见部位，在这块件的**相对坐标**里在哪。
+        ///
+        /// 与上面的 `parts` 的区别：`parts` 是**本体**的说法（"这张牌印着白折扣"），只有语言、
+        /// 没有位置；`part_anchors` 是**动画**的说法 ——「左上角那个声望值」对应这张牌上的哪个点、
+        /// 圈多大。同为 parts，一层说"有什么"、一层说"在哪儿"，所以这里只写**相对件中心**的偏移
+        /// （世界单位，件平面内：+x 右、+y 上），不写任何桌面坐标 —— 桌面坐标仍然只属于 zone。
+        ///
+        /// 有了它，"指着牌角讲"才有可能：`{"action":"point","part":"prestige","indicator":"arrow"}`
+        /// 会把箭头画在某一件（或某一片）牌的左上角；这件被搬到哪、转多少度，指示物都跟着走
+        /// （世界位置 = 件的位置 + 件的朝向 × 相对偏移）。
+        /// </summary>
+        public List<StagePart> part_anchors;
 
         /// <summary>真实扫描图（相对 games/{game}，例如 media/card/一级发展卡_绿.jpg）。找不到则回退到 shape 的程序化图形。</summary>
         public string face_image;
@@ -638,6 +667,19 @@ namespace BoardGameTutorial
         // ---- fade ----
         /// <summary>目标透明度；负数 = 未指定（在 0/1 之间切换）。</summary>
         public float to_alpha = -1f;
+
+        // ---- point（指示物：箭头/圈/禁止/叉）----
+        /// <summary>
+        /// point：指哪一块**部位**（StageTemplate.part_anchors 的 id）。留空 = 指件中心。
+        /// 这是动画层的"局部"概念：本体只说这张牌"印着声望值"，这里说它在牌面的哪儿。
+        /// </summary>
+        public string part;
+
+        /// <summary>
+        /// point：画什么形状 —— `arrow`（箭头）/ `circle`（圈）/ `forbid`（禁止：圈 + 斜杠）/
+        /// `cross`（叉）。四种都是程序化生成的贴图，不需要美术素材。
+        /// </summary>
+        public string indicator;
 
         // ---- highlight ----
         /// <summary>高亮峰值透明度；负数 = 未指定（用默认）。</summary>

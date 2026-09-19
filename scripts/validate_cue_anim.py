@@ -47,13 +47,14 @@ from framing_geometry import (   # noqa: E402  —— 取景几何只此一份
 )
 
 # 原语名尽量与本体对齐：transfer = <ontology::transfer>、flip = <flip>、shuffle = <shuffle>。
-ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "shuffle", "zone",
+ACTIONS = {"transfer", "flip", "rotate", "scale", "fade", "highlight", "point", "shuffle", "zone",
            "showbox", "create", "destroy", "wait", "stack"}
 
 # 原语 → 它在规则上**默认**是哪个本体事件（None = 本体没有对应事件）。
 # 事件可以写 `realizes` 说得更精确（发牌是 <top_draw>，而 <top_draw> 继承 <transfer>，
 # 所以照样挂在 transfer 原语上）；表现层原语没有对应事件，写了 realizes 就是错的。
 PRIMITIVE_EVENT = {
+    "point": None,          # 指示物：纯表现（箭头/圈/禁止/叉），本体里没有"指着看"这件事
     "transfer": "<ontology::transfer>",
     "flip": "<flip>",
     "shuffle": "<ontology::shuffle>",
@@ -121,6 +122,8 @@ COMMON_FIELDS = {"action", "realizes", "at", "dur", "lead", "easing",
                  "camera", "camera_padding", "target", "zone", "container"}
 
 PRESENTATION_FIELDS = {
+    "part": "点哪个部位（模板 part_anchors 的 id）",
+    "indicator": "指示物形状（arrow/circle/forbid/cross）",
     "grow": "高亮放大倍率",
     "peak_alpha": "高亮峰值透明度",
     "scale": "缩放倍率",
@@ -774,6 +777,31 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
             peak = ev.get("peak_alpha")
             if peak is not None and not 0.0 <= float(peak) <= 1.0:
                 report.error(ew, f"peak_alpha 超出 [0,1]: {peak}")
+        elif action == "point":
+            # 指示物：箭头/圈/禁止/叉。它指着**件的某个部位**，部位坐标写在模板的 part_anchors 里
+            # （动画独有的"局部"概念 —— 本体只说这张牌印着什么，不说在牌面哪儿）。
+            ind = ev.get("indicator") or "arrow"
+            if ind not in POINTER_SHAPES:
+                report.error(ew, f"未知 indicator {ind!r}，只能是 {sorted(POINTER_SHAPES)}")
+            if not ev.get("target") and not ev.get("zone") and not ev.get("what") \
+                    and not ev.get("container"):
+                report.error(ew, "point 需要 target/zone/what/container（指哪一件）")
+            part = ev.get("part")
+            if part:
+                # 部位必须在**可能被选中的模板**上存在，否则画面上什么都没有（静默失败）
+                cands = what_candidates(stage, ev["what"], real_only=False) if ev.get("what") else None
+                ids = [c.TemplateId for c in cands] if cands else None
+                if ids is None:
+                    zid = resolve_zone_ref(stage, ev.get("zone") or "") if ev.get("zone") else None
+                    z = next((x for x in (stage.get("zones") or []) if x.get("id") == zid), None)
+                    if z:
+                        ids = [t.get("id") for t in (stage.get("templates") or [])
+                               if _template_zone_compatible(t, z)]
+                if ids:
+                    have = [tid for tid in ids if part in _part_ids(stage, tid)]
+                    if not have:
+                        report.error(ew, f"point 的部位 {part!r} 在这些模板上都没定义：{ids}"
+                                         f"（stage 模板的 part_anchors 里加它 —— 部位只有相对坐标，没有桌面坐标）")
         elif action == "create":
             if not ev.get("template"):
                 report.error(ew, "create 需要 template（要创建什么）")
@@ -1048,6 +1076,27 @@ def check_framing_chain(files, report):
 
 # 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明
 STATE_CHANGING = {"transfer", "create", "destroy", "stack"}
+
+# 指示物形状（与 TutorialCueAnimPlayer.Pointers.cs 的 PointerSprite 一致）
+POINTER_SHAPES = {"arrow", "circle", "forbid", "cross"}
+
+
+def _part_ids(stage, template_id):
+    for t in (stage.get("templates") or []):
+        if t.get("id") == template_id:
+            return {p.get("id") for p in (t.get("part_anchors") or [])}
+    return set()
+
+
+def _template_zone_compatible(tpl, zone):
+    """这个模板有没有可能出现在这个 zone 里（按本体 contains 判）。"""
+    contains = zone.get("contains") or []
+    if not contains:
+        return True
+    concept = tpl.get("concept")
+    if not concept:
+        return True
+    return any(concept == c for c in contains)
 
 
 # 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明

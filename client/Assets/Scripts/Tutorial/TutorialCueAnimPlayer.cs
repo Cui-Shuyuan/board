@@ -968,6 +968,7 @@ namespace BoardGameTutorial
 
             SampleClips(scaled);
             TracePositions(scaled);
+            SyncPointers();          // 指示物是时钟的纯函数：到哪里才亮
 
         }
 
@@ -1366,6 +1367,7 @@ namespace BoardGameTutorial
         {
             actors.Clear();
             zoneGlow.Clear();
+            ClearPointers();
             if (animRoot != null)
             {
                 Object.DestroyImmediate(animRoot);
@@ -1430,6 +1432,7 @@ namespace BoardGameTutorial
                 case "scale": TriggerScale(ev); return;
                 case "fade": TriggerFade(ev); return;
                 case "highlight": TriggerHighlight(ev); return;
+                case "point": TriggerPoint(ev); return;
                 case "shuffle": TriggerShuffle(ev); return;
                 case "showbox": TriggerShowBox(ev); return;
                 case "zone": TriggerZone(ev); return;
