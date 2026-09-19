@@ -661,7 +661,17 @@ namespace BoardGameTutorial
         /// <summary>按顺序尝试的扫描图路径：face_image 优先，其次 media/card/ 的命名约定。</summary>
         private static IEnumerable<string> ImageCandidates(StageTemplate tpl)
         {
-            if (!string.IsNullOrEmpty(tpl.face_image)) yield return tpl.face_image;
+            if (!string.IsNullOrEmpty(tpl.face_image))
+            {
+                // 处理过的图优先：卡面/卡背来自 stage 的 face_image，同样走 `<原名>_cutout.png` 约定
+                // （scripts/matte_pipeline.py 的产物：裁到实物、按 mm 统一尺寸、alpha 已修好）。
+                string faceDir = Path.GetDirectoryName(tpl.face_image);
+                string faceBase = Path.GetFileNameWithoutExtension(tpl.face_image);
+                string dirPrefix = string.IsNullOrEmpty(faceDir)
+                    ? "" : faceDir.Replace('\\', '/') + "/";
+                yield return dirPrefix + faceBase + "_cutout.png";
+                yield return tpl.face_image;
+            }
 
             // 按色板名找实物图（宝石六色、黄金）
             if (!string.IsNullOrEmpty(tpl.palette) && PaletteImages.TryGetValue(tpl.palette, out var image))
@@ -678,6 +688,7 @@ namespace BoardGameTutorial
             // 贵族板块
             if (tpl.palette == "noble")
             {
+                yield return "media/card/贵族_0001_cutout.png";
                 yield return "media/card/贵族_0001.jpg";
                 yield return "media/card/贵族_0001.png";
             }

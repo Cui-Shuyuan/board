@@ -100,6 +100,69 @@ def fit_circle_by_profile(rgb: np.ndarray, bg: np.ndarray, cx0: float, cy0: floa
     return fx, fy, fr, residual, consistency
 
 
+def border_white_mask(rgb: np.ndarray, min_channel: int = 235) -> np.ndarray:
+    """从图像边界泛洪出"近白且与边界连通"的像素（返回 True=背景）。
+
+    **泛洪**是关键：贵族板块的插画里也有大片白色（"3"的旗子），
+    用亮度阈值一把切会把它们掏空；只有和边界连通的才是台面。
+    """
+    h, w, _ = rgb.shape
+    near = rgb.min(axis=2) >= min_channel
+    bg = np.zeros((h, w), dtype=bool)
+    stack = []
+    for x in range(w):
+        for y in (0, h - 1):
+            if near[y, x] and not bg[y, x]:
+                bg[y, x] = True; stack.append((x, y))
+    for y in range(h):
+        for x in (0, w - 1):
+            if near[y, x] and not bg[y, x]:
+                bg[y, x] = True; stack.append((x, y))
+    while stack:
+        x, y = stack.pop()
+        for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if 0 <= nx < w and 0 <= ny < h and near[ny, nx] and not bg[ny, nx]:
+                bg[ny, nx] = True; stack.append((nx, ny))
+    return bg
+
+
+def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: float,
+                 key_border_white: bool, inset: int = 1) -> dict:
+    """矩形件（发展卡/贵族板块）：裁到实物 → 按 mm 统一尺寸 → （贵族）键掉圆角处的台面。
+
+    扫描件的长宽比常常偏（实测卡面 0.681 vs 实物 63:88=0.716，差 5%）——
+    引擎把整张图铺进 width×height 的矩形，所以**重采样到 mm 比例**正好把这点偏差纠回来。
+    """
+    rgb = np.asarray(Image.open(src).convert("RGB"))
+    h, w, _ = rgb.shape
+    bg_mask = border_white_mask(rgb)
+    frac = bg_mask.mean()
+    note = "铺满整幅"
+    if frac > 0.02:                       # 有明显台面 → 裁到件的外接框
+        ys, xs = np.nonzero(~bg_mask)
+        x0, y0, x1, y1 = xs.min() + inset, ys.min() + inset, xs.max() - inset, ys.max() - inset
+        rgb = rgb[y0:y1 + 1, x0:x1 + 1]
+        note = f"裁掉台面 {w}x{h}→{rgb.shape[1]}x{rgb.shape[0]}"
+    W = int(round(w_mm * px_per_mm))
+    H = int(round(h_mm * px_per_mm))
+    im = Image.fromarray(rgb).resize((W, H), Image.LANCZOS)
+    arr = np.asarray(im)
+    alpha = np.full((H, W), 255, dtype=np.uint8)
+    if key_border_white:                  # 贵族：圆角处露出的台面要透明
+        bm = border_white_mask(arr)
+        if bm.any():
+            # 1px 过渡，避免硬边
+            soft = np.clip(bm.astype(np.float32) * 2.0, 0, 1)[..., None]
+            a = (1.0 - soft) * 255.0
+            alpha = a[..., 0].astype(np.uint8)
+    out = Image.fromarray(arr).convert("RGBA")
+    out.putalpha(Image.fromarray(alpha))
+    out.save(dst)
+    return {"out": dst.name, "size": f"{W}x{H}", "note": note,
+            "aspect": round(W / H, 4), "mm": f"{w_mm}x{h_mm}",
+            "border_white": round(float(bm.mean()) if key_border_white else 0.0, 4)}
+
+
 def circle_alpha(size: int, r: float) -> np.ndarray:
     """正方画布内的抗锯齿圆 alpha（半径 r，圆心画布中心）。"""
     yy, xx = np.mgrid[0:size, 0:size]
@@ -122,9 +185,51 @@ def color_lock(gen: np.ndarray, scan: np.ndarray, mask: np.ndarray) -> np.ndarra
     return np.clip(out, 0, 255).astype(np.uint8)
 
 
+RECTS = {
+    # 类 → (文件名通配, 实物 mm)。发展卡 63x88、贵族 60x60（components.json）。
+    "noble": (["贵族_0001.jpg", "贵族_0002.jpg", "贵族_0003.jpg", "贵族_0004.jpg", "贵族_0005.jpg"], 60.0, 60.0, True),
+    "card": (["一级发展卡_白.jpg", "一级发展卡_蓝.jpg", "一级发展卡_绿.jpg", "一级发展卡_红.jpg", "一级发展卡_黑.jpg",
+              "一级发展卡_背面.jpg", "二级发展卡_白.jpg", "二级发展卡_蓝.jpg", "二级发展卡_绿.jpg", "二级发展卡_红.jpg",
+              "二级发展卡_黑.jpg", "二级发展卡_背面.jpg", "三级发展卡_白.jpg", "三级发展卡_蓝.jpg", "三级发展卡_绿.jpg",
+              "三级发展卡_红.jpg", "三级发展卡_黑.jpg", "三级发展卡_背面.jpg"], 63.0, 88.0, False),
+}
+
+
+def run_rect(args) -> int:
+    names, w_mm, h_mm, key_white = RECTS[args.cls]
+    scan_dir = next((c for c in SCAN_CANDIDATES if c.exists()), None)
+    if scan_dir is None:
+        print("找不到扫描件目录", file=sys.stderr)
+        return 2
+    out_dir = Path(args.out) if args.out else scan_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # 统一 px/mm：用宝石那批量到的中位尺度（同一台扫描机、同一档 DPI）。
+    # 这样"卡 63mm / 宝石 43mm"的相对大小在动画里是对的。
+    px_per_mm = args.px_per_mm
+    rows = []
+    print(f"{args.cls}：{len(names)} 个，实物 {w_mm}x{h_mm}mm，统一 {px_per_mm:.2f} px/mm "
+          f"→ {int(round(w_mm * px_per_mm))}x{int(round(h_mm * px_per_mm))}px")
+    for name in names:
+        src = scan_dir / name
+        if not src.exists():
+            print(f"  跳过（没有 {name}）")
+            continue
+        dst = out_dir / (Path(name).stem + "_cutout.png")
+        info = process_rect(src, dst, w_mm, h_mm, px_per_mm, key_white)
+        info["scan"] = name
+        rows.append(info)
+        print(f"  {name:22} → {info['out']:26} {info['size']:>9} 长宽比={info['aspect']:.3f} {info['note']}")
+    if args.report:
+        Path(args.report).write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\n输出目录：{out_dir}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--class", dest="cls", default="gem", choices=["gem", "gold"])
+    ap.add_argument("--class", dest="cls", default="gem",
+                    choices=["gem", "gold", "noble", "card"])
     ap.add_argument("--game", default="splendor")
     ap.add_argument("--out", default=None, help="输出目录（默认写回扫描件同目录，文件名 <原名>_cutout.png）")
     ap.add_argument("--mm", type=float, default=43.0, help="实物直径（mm）——来自 components.json")
@@ -132,7 +237,12 @@ def main() -> int:
     ap.add_argument("--no-generate", action="store_true", help="只做剪影+统一尺度，不跑生成式")
     ap.add_argument("--denoise", type=float, default=0.5)
     ap.add_argument("--report", default=None)
+    ap.add_argument("--px-per-mm", type=float, default=11.88,
+                    help="统一尺度（宝石那批量到的中位值：11.88 px/mm）")
     args = ap.parse_args()
+
+    if args.cls in ("noble", "card"):
+        return run_rect(args)
 
     scan_dir = next((c for c in SCAN_CANDIDATES if c.exists()), None)
     if scan_dir is None:
