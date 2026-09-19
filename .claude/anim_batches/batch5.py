@@ -87,18 +87,18 @@ D9 = {"count": 9, "kinds": {"一级白": 3, "三级白": 1, "一级蓝": 1, "一
 
 
 def T(market=12, gold=5, hold_gold=0, reserved=0, deck1=35, **over):
-    hk = {"宝石白": 1, "宝石蓝": 1, "宝石红": 1, "宝石绿": 2}
+    hk = {"宝石白": 2, "宝石绿": 1}
     if hold_gold:
         hk["黄金"] = hold_gold
     z = {
         "card_market": {"count": market, "face_up": market},
         "deck_level_1": {"count": deck1}, "deck_level_2": {"count": 26}, "deck_level_3": {"count": 16},
         "noble_market": {"count": 0},
-        "gem_supply_diamond": {"count": 3}, "gem_supply_sapphire": {"count": 3},
-        "gem_supply_ruby": {"count": 3}, "gem_supply_emerald": {"count": 2},
+        "gem_supply_diamond": {"count": 2}, "gem_supply_sapphire": {"count": 4},
+        "gem_supply_ruby": {"count": 4}, "gem_supply_emerald": {"count": 3},
         "gem_supply_onyx": {"count": 4},
         "gold_supply": {"count": gold},
-        "player_holding": {"count": 5 + hold_gold, "kinds": hk},
+        "player_holding": {"count": 3 + hold_gold, "kinds": hk},
         "player_marker": {"count": 1},
         "showcase": {"count": 0}, "showcase_1": {"count": 0},
         DEV: D9, NOB: {"count": 3},
@@ -143,7 +143,7 @@ A(cue("action.reserve.intro.001.2", "action.reserve.intro.001.1",
        ev(0.8, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
           source=["<card_market>"], destination=RES, quantity=1, to="face_down", what=L3_DIAMOND),
        ev(2.6, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
-          source=["<gold_supply>"], destination="<player_holding>", quantity=1,
+          source=["<gold_supply>"], destination="player_holding", quantity=1,
           what={"concept": "gold"}),
        hl(4.4, zone=RES)]))
 
@@ -157,7 +157,7 @@ A(cue("action.reserve.gold.001", "action.reserve.intro.001.2",
       part(None, T(market=11, gold=4, hold_gold=1, reserved=1)),
       part(None, T(market=11, gold=4, hold_gold=1, reserved=1)),
       [wait(0.0, camera="board"),
-       hl(0.8, zone="<player_holding>", order=5), hl(2.6, zone=RES)]))
+       hl(0.8, zone="player_holding", order=5), hl(2.6, zone=RES)]))
 
 # 4 也可以从牌堆顶保留（盲抽）+ 再拿一枚黄金
 A(cue("action.reserve.deck.001", "action.reserve.gold.001",
@@ -176,7 +176,7 @@ A(cue("action.reserve.deck.001", "action.reserve.gold.001",
           source=["<development_deck_level_1>"], destination=RES, quantity=1, to="face_down",
           what={"concept": "development_card_level_1"}),
        ev(3.2, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
-          source=["<gold_supply>"], destination="<player_holding>", quantity=1,
+          source=["<gold_supply>"], destination="player_holding", quantity=1,
           what={"concept": "gold"}),
        hl(4.6, zone=RES, order=1)]))
 
@@ -201,7 +201,7 @@ A(cue("action.reserve.limit_gold.001.1", "action.reserve.notes_intro.001",
       part(None, T(market=11, gold=3, hold_gold=2, reserved=2, deck1=34)),
       part(None, T(market=11, gold=3, hold_gold=2, reserved=2, deck1=34)),
       [wait(0.0, camera="player_holding", padding=1.6),
-       hl(0.8, zone="<player_holding>"), hl(2.6, zone="<player_holding>")]))
+       hl(0.8, zone="player_holding"), hl(2.6, zone="player_holding")]))
 
 A(cue("action.reserve.limit_gold.001.2", "action.reserve.limit_gold.001.1",
       "【如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金】",
@@ -238,7 +238,7 @@ A(cue("action.reserve.limit_hand.001.2", "action.reserve.limit_hand.001.1",
        ev(1.6, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
           source=["<card_market>"], destination=RES, quantity=1, to="face_down", what=L2_RUBY),
        ev(3.2, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
-          source=["<gold_supply>"], destination="<player_holding>", quantity=1,
+          source=["<gold_supply>"], destination="player_holding", quantity=1,
           what={"concept": "gold"}),
        hl(4.6, zone=RES)]))
 
@@ -251,7 +251,7 @@ A(cue("action.reserve.private.001.1", "action.reserve.limit_hand.001.2",
       part(None, T(market=10, gold=2, hold_gold=3, reserved=3, deck1=34)),
       part(None, T(market=10, gold=2, hold_gold=3, reserved=3, deck1=34)),
       [wait(0.0, camera=RES, padding=1.6),
-       hl(0.8, zone=RES, order=0), hl(1.8, zone=RES, order=1), hl(2.8, zone=RES, order=2)]))
+       hl(0.8, zone=RES)]))   # 用户：一次点整块
 
 A(cue("action.reserve.private.001.2", "action.reserve.private.001.1",
       "【不可以给其他玩家看，其他玩家也不可以主动去查看】",

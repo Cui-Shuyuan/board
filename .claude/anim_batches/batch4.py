@@ -100,15 +100,16 @@ def T(**over):
         "card_market": {"count": 12, "face_up": 12},
         "deck_level_1": {"count": 35}, "deck_level_2": {"count": 26}, "deck_level_3": {"count": 16},
         "noble_market": {"count": 3},
-        "gem_supply_diamond": {"count": 3}, "gem_supply_sapphire": {"count": 3},
-        "gem_supply_ruby": {"count": 3}, "gem_supply_emerald": {"count": 2},
+        "gem_supply_diamond": {"count": 2}, "gem_supply_sapphire": {"count": 4},
+        "gem_supply_ruby": {"count": 4}, "gem_supply_emerald": {"count": 3},
         "gem_supply_onyx": {"count": 4},
         "gold_supply": {"count": 5},
-        "player_holding": {"count": 5, "kinds": {"宝石白": 1, "宝石蓝": 1, "宝石红": 1, "宝石绿": 2}},
+        "player_holding": {"count": 3, "kinds": {"宝石白": 2, "宝石绿": 1}},
         "player_marker": {"count": 1},
         "showcase": {"count": 0}, "showcase_1": {"count": 0},
         DEV: D3,
         NOB: {"count": 0},
+        "player_b_nobles": {"count": 1},
     }
     z.update(over)
     return z
@@ -126,7 +127,8 @@ A(cue("action.nobles.intro.001", "action.cards.limit.001.2",
       "  ⚠ 桌上这 3 块是同一个模板（都显示 贵族_0001）：五张贵族扫描件还没分别接进舞台。"
       "本节的演示按 0001 的条件（4白+4红）算，所以画面与账自洽。",
       {"镜头推近贵族": "0.00", "点一下": "0.80"},
-      part(None, T()), part(None, T()),
+      part(None, T(**{"player_b_nobles": {"count": 0}})),
+      part(None, T(**{"player_b_nobles": {"count": 1}})),
       [wait(0.0, camera="noble_market", padding=1.25), hl(0.8, zone="<noble_market>")]))
 
 A(cue("action.nobles.value.001.1", "action.nobles.intro.001",
@@ -324,7 +326,7 @@ A(cue("action.cards.summary.001.3", "action.cards.summary.001.2",
       part(None, T(**{DEV: D9, "noble_market": {"count": 0}, NOB: {"count": 3}})),
       part(None, T(**{DEV: D9, "noble_market": {"count": 0}, NOB: {"count": 3}})),
       [wait(0.0, camera="board"), hl(0.6, zone=DEV),
-       hl(2.0, zone=NOB, order=0), hl(2.6, zone=NOB, order=1), hl(3.2, zone=NOB, order=2)]))
+       hl(2.0, zone=NOB)]))   # 用户：一次点整块
 
 
 def main():

@@ -143,9 +143,7 @@ A(cue("setup.nobles.002", "setup.nobles.001.2",
       part(None, {"noble_market": {"count": 3}, "card_market": {"count": 12, "face_up": 12},
                   "deck_level_3": {"count": 16}}),
       [wait(0.0, camera="noble_market", padding=1.25),
-       hl(0.6, zone="<noble_market>"),
-       hl(1.6, zone="<noble_market>", order=1),
-       hl(2.6, zone="<noble_market>", order=2)]))
+       hl(0.6, zone="<noble_market>")]))   # 用户：一次点整块就够，不逐个扫
 
 # ── 2.4 起始玩家（3 条）─────────────────────────────────────────────────────
 A(cue("setup.starting_player.001.1", "setup.nobles.002",
