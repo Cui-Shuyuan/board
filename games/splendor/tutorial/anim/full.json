@@ -1127,7 +1127,7 @@
       "cue": "setup.cards.002.1",
       "entry_from": "setup.cards.001.3",
       "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
-      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
       "timing": {
         "样本卡背退场 + 牌堆登场 + 洗混": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列",
         "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
@@ -1165,8 +1165,7 @@
             "count": 36,
             "kinds": {
               "一级垫牌": {
-                "count": 32,
-                "face": "down"
+                "count": 32
               },
               "一级绿": {
                 "count": 1,
@@ -1190,8 +1189,7 @@
             "count": 26,
             "kinds": {
               "二级垫牌": {
-                "count": 22,
-                "face": "down"
+                "count": 22
               },
               "二级绿": {
                 "count": 1,
@@ -1215,8 +1213,7 @@
             "count": 16,
             "kinds": {
               "三级垫牌": {
-                "count": 12,
-                "face": "down"
+                "count": 12
               },
               "三级绿": {
                 "count": 1,
@@ -1348,7 +1345,7 @@
           "destination": "<development_deck_level_1>",
           "to": "face_down",
           "capacity": 40,
-          "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire,market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire,market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire",
+          "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire,market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire",
           "pad_template": "blank_card_1",
           "plain": true
         },
@@ -1359,7 +1356,7 @@
           "destination": "<development_deck_level_2>",
           "to": "face_down",
           "capacity": 30,
-          "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald,market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald,market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald",
+          "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald,market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald",
           "pad_template": "blank_card_2",
           "plain": true
         },
@@ -1370,7 +1367,7 @@
           "destination": "<development_deck_level_3>",
           "to": "face_down",
           "capacity": 20,
-          "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx,market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx,market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx",
+          "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx,market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx",
           "pad_template": "blank_card_3",
           "plain": true
         },
