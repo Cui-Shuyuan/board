@@ -1,262 +1,82 @@
-# 讲规动画 · 待办与方法论
+# 讲规动画：进度与待办（2026-09-21 收尾，明天继续）
 
-> 本文是**明天开工的第一份读物**。方法论部分是用户 2026-09 的原话整理，
-> 当前进度部分是我（AI）当天收工时的实际状态。
+> 新会话请**先读本文件**，再看 `tutorial-animation-state.md`（大本营：设计、口径、踩坑史）。
 
----
+## 一、当前状态（全绿）
 
-## 一、明天第一件事：宝石那一节
+- **109 条 cue 全部有动画数据**（`games/splendor/tutorial/anim/full.json`，手写资产）。
+- 检查（都可直接跑）：
+  - `python3 scripts/validate_cue_anim.py` → **0 错 0 警**
+  - `python3 scripts/validate_anim_rules.py` → **过账**：109 条逐步合法（每色在场 4、黄金 5、手上限 10、
+    保留上限 3、买牌「价格−折扣==实付」；15 张卡价格已在 `games/splendor/card_facts.json`）
+  - `./scripts/dump_states.sh` + `python3 scripts/check_cue_script.py --all` → **对账 0 处不一致**，
+    另有 **12 条取景警告**（画面里有契约没提到的组件，等用户裁决）
+  - `python3 scripts/check_unity_scripts.py` → 25 个 C# 文件编译通过
+  - `python3 scripts/check_framing_flow.py` → 取景"同主体来回跳"检查，**剩 1 处**
+- 最近提交：`bca5341`（多棵树设计入档）；Windows 已同步。
+- 问答引擎：`backend/BoardAI.Api`（新 key 走环境变量 `DEEPSEEK_API_KEY` ✓；仓库里 `LLM:ApiKey` 已清空 ✓）。
+  日志与手写问题在 `games/splendor/tutorial/anim/_qa/`（**16/16 通过**）。
 
-**目标**：`setup.gems.*` 的几个 cue（从 cue14 往后）。
+## 二、今天定下的工作方式（重要，别再走回头路）
 
-**必须使用用户指定的工作流**（见下节"脚本 → 动画 → 对账"），不要直接改代码试错。
+1. **动画脚本 = 手写的静态资产**（`full.json`）：story/契约/事件/取景全由人写。**不要生成器** ✗；
+   程序只做"确定无疑"的事（体检 / 过账 / 编译 / 对账 / 取景流检查 / 问句的执行）。
+   旧的 `batch*.py` 与 `anim_framing.py` 已退役（`.claude/anim_batches/`，**别再运行**：会整份重写 full.json）。
+2. **合法性问句手写**（`_qa/questions.json` + `run scripts/qa_anim_ask.py`）：一 cue 一事、只带最小状态、
+   不用教程自造词（"样本"）、规则自动发生的事就说成自动 ✓。（机器拼的版本 21 问 / 7 可疑 / 20~125s ✗；
+   手写版 16 问 / 0 可疑 / 2~9s ✓）
+3. **取景**：`camera` 写"要入镜的 zone"（逗号分隔），`camera_fill` = 这几个 zone 占画面中央的比例
+   （默认 0.8 = 老观感；特写 0.6~0.72）。镜头**默认继承父链**（同一 cue 不管怎么跳画面完全一样 ✓）。
+4. **用户验收节奏**：我写 → 用户看 → 我改 → **改完即成固定资产**（只用于播放）。
 
-**现状（收工时的真实状态）**：
+## 三、待办（按优先级）
 
-| 项 | 状态 |
-|---|---|
-| cue1–13（box / 发展卡） | 已通过用户验收（含牌堆、翻转、`stack` 原语） |
-| `stack` 原语 | 已有，建摞 + 从顶发牌都可复用（宝石供应堆形状相同） |
-| 宝石 zone | 已在 stage 里（`gem_supply_diamond` 等），尚未接动画 |
-| 动画脚本 | ✅ **一个动画一个文件**：`games/splendor/tutorial/anim/full.json`（17 条 cue：story/enter/exit/timing + start/events） |
-| 宝石的数量约定 | **已冻结**：增量演法，连演 2/3/4 人三种（1→4→5→7 枚），见下 |
-| 宝石动画 | ✅ **9 条已写完**（在 `anim/full.json` 里），**等用户看实际效果**；静态复算与契约一致、校验器 0 错 0 警告 |
-| 宝石采样 | **还没采**（要在 Windows 侧跑 `dump_states.sh`） |
-| 整幅图状态 | ✅ 采样导出 `picture`、契约可断言（`bg.intro` 有盒面，`setup.cards.001.1` 出口起为 null）；入口整幅图由引擎按 track 复算（修掉"跳跃带盒面"） |
-| 对账 | `check_cue_script.py` 可用（`--all` / `--chain` / `--cue X --which enter`）；宝石那 9 条**还没采样** |
-| 组件状态 | ✅ 采样逐身份 + 每件导出；契约可断言 `face`/`shows`。**`full.exitstate.json` 是旧格式，需在 Windows 侧重跑 `dump_states.sh`** |
+### P0 —— 多棵树迁移（下一个主工程，用户已明确要）
 
-**已知可直接复用的东西**：
+设计见 `tutorial-animation-state.md` 的「★ 多棵树」一节。分四步，**每步都要能单独验收**：
 
-- `stack` 事件：`real_templates`（顺序 = 取用顺序）+ `pad_template` + `capacity`
-- `transfer` + `source`：不写 `target`，引擎按 order 从顶取（原语名与本体对齐）
-- 状态查询：`DumpState` / `TraceState` / `ListZone` / `TraceDealOrder`
-- 校验：`scripts/validate_cue_anim.py`（含跨 cue 取景检查 `check_framing_chain`）
-- 概念：`python3 scripts/concept_ref.py --game splendor --concept development_card_level_1`
-  （读本体 + 游戏概念，沿 extends/specifies 合并字段；**别手抄父类字段**）
-- 绑定：stage 里每个模板/zone 的 `concept`（纯视觉写 `null`）与 zone 的 `contains`
-  —— 见 [[tutorial-concept-binding]]
+1. **先搬最简单的两棵**：盒面树、宝石演示树（样本件搬进各自树；主树里删掉对应的
+   create/destroy 与 `showcase`/`gem_display` 假 zone）。目的：验证"每棵树自带 extent →
+   特写不再被主桌 10.6 的纵深顶住" ✓
+2. **数据**：给 109 条 cue 标 `tree`；`full.json` 顶层加 `trees: [{id, stage, initial}]`；
+   契约链**树内**成立；跨树 cue 声明 tree + 该树入口状态（= cut ✓）
+3. **引擎**：`LoadCue` 按 cue 的 tree 取 stage；**换树 = 换 stage + 重放该树入口链 + 原子换画面** ✓；
+   树内行为不变（不重建 ✓）。顺带根治"引擎读不到 `entry_from`"（每棵树自己的父链 ✓）
+4. **检查按树分治**：采样器按 cue 跳进对应树；对账 / 契约链 / 取景链分别按树校验；
+   把"同一条 cue 的画面由 cue id 唯一决定"变成**可验证的不变量** ✓
 
-### 已冻结的约定（开工前必须遵守）
+### P1 —— 取景（第二批手写，等第一批验收手感）
 
-- **增量演法**（用户 2026-09 定）：`001.1` 各 1 枚 → `003.1` 各 4 枚 → `003.2` 各 5 枚 →
-  `004` 各 7 枚。每枚都是**真件**，从 `box_gem_*` 搬出来，不是 `create`；账要一路平
-  （每色 7 枚、黄金 5 枚，盒 + 堆恒等，`004` 之后盒子清空）。
-- **颜色与顺序固定**：钻石 → 蓝宝石 → 红宝石 → 翡翠 → 缟玛瑙（对应 zone
-  `gem_supply_diamond` / `_sapphire` / `_ruby` / `_emerald` / `_onyx`）。
-  **黄金不属于宝石**（`002` 专门讲这句），单独放 `gold_supply`，5 枚（`002` 先出 1 枚，
-  `005.2` 补到 5）。
-- **`005.2`「其余的宝石放回盒子」不做任何动画**（用户明确）。
-- **数量改回 2 人局（各 4 枚）放在下一 cue `setup.nobles.001.1`**（用户裁决）：
-  宝石小节按三种人数演完停在 7 枚/色，接着在贵族第一条的开场把每色 3 枚搬回盒子，
-  于是整篇之后走 2 人局（贵族抽 3 块 = 玩家数+1），与 `003.1` 先讲的 4 枚口径一致。
-  **写贵族那节时必须记得做这一步**，否则宝石数会一直是 7。
-- **顺带记一笔（等写到玩法那节要处理）**：早先的试点 cue
-  `anim/full.json` 里 `action.take.different.001` 的 `start.set` 写的是
-  `expand_to: 7`（"保证供应堆里有 7 枚"）—— 那是按 4 人局写的。整篇改成 2 人局之后，
-  这个 7 会把盒里的 3 枚又搬进供应堆，得改成 4（或干脆去掉 `expand_to`）。
-- 取景：这一节用 `camera: "supply"`（供应区整排特写）。
+- 第一批**已完成**：`setup.cards.001.1`、`action.cards.intro.001`、`setup.gems.001.2`、
+  `setup.starting_player.001.3`（fill 0.72）、`setup.cards.002.1/002.2`（三摞牌库+市场 0.72 ✓ 用户说"比例很完美"）
+- 第二批候选（横向宽、纵向窄，闸门已不再误伤 ✓）：**买牌进发展区**、**结算（发展区+贵族）**、
+  **拿三色宝石**、**市场一格** —— 每条要顺手把"入镜的 zone"**手写进契约**（现在靠人写，不自动补 ✓）
+- 顺手收掉：`action.nobles.forced.001.1` 的**跳切**（贵族特写 → 整桌 → 又回贵族特写 ✗）
 
-### 这次为宝石一节加的两处引擎/工具
+### P2 —— 遗留问题（等用户裁决/配合）
 
-- **新增取景 token `"supply"`**（`TutorialCueAnimPlayer`）：把用 `panel_supply` 色板的 zone
-  整排框住。因为整桌取景按 extent 框，宝石只占屏宽 4.3%、数不清 4/5/7；换成 supply 取景后
-  是 7.8%（1280px 下 100px）。成员按**色板**判定，不写死 zone 名；找不到成员会 `LogWarning`
-  而不是静默沿用旧取景。
-- **校验器两处修复**（`validate_cue_anim.py`）：① `camera` 值现在会校验（写错字以前会
-  **静默**退回上一次取景）；② 跨 cue 取景检查改成**按轨道顺序**（runtime.json 的 cues 顺序），
-  以前按文件名字母序，把轨道第 36 条的 `action.take.different.001` 当成第一条，
-  「上一条的取景」是错的。改完立刻冒出一条被掩盖的真实警告（该 cue 承接 `board`
-  却没显式声明），已按项目规矩补上 `camera: "board"`。
-- **契约与采样各合成一个文件**（用户 2026-09 要求：不要一个 cue 一个 json）：
-  - 脚本 `games/splendor/tutorial/anim/full.json`（`cues` 按轨道顺序；**别**和
-    `script.full.json`（口播稿编辑源）搞混，两条链路互不写对方）；
-  - 采样 `games/splendor/tutorial/anim/full.exitstate.json`（引擎生成）；
-  - `DumpState` 新增 `-dumpCues "a,b,c"`：**一次 Unity 启动**从轨道头顺次播到尾、
-    每条播到终态记一笔（就是播放器的真实路径），把「109 条 cue = 109 次启动 +
-    109 次重放 entry 链」降成 1 次；
-  - `check_cue_script.py` 跟着改成读这两个文件（`--all` / `--chain` /
-    `--cue X --which enter`——查入口时自动对**父 cue** 的采样终态）；
-  - 顺带把 `client/Assets/Editor/TutorialFrameCapture.cs` 纳入
-    `check_unity_scripts.py` 的编译检查（以前编辑器脚本不受检查，只能到 Windows 上才发现写错），
-    现在 17 个 C# 文件一起编。
+- **12 条取景警告**：供应堆特写里能看见市场/牌堆 —— 收窄取景还是把邻区写进契约？（等裁决）
+- **两处原语缺口**：①"错误示范 + 叉掉"需要**撤销/临时状态**层；②第 4 节 4 人局例子只有 A/B 玩家区
+- **贵族三块长得一样**（都显示 贵族_0001）—— 五张贵族扫描件还没分别接进舞台
+- **起始玩家标记尺寸**是我估的 50×62mm，等用户实测
+- **整桌镜头偏小**：主桌 extent 高（min_z -5.60 / max_z 5.00）—— 多棵树落地后，主树范围可另行收紧
+- `entry_from` 严格解析（让引擎能读运行时轨道）—— 多棵树那步顺带解决 ✓
 
-**下一步（按工作流）**：9 条动画已写完 →
-**同步到 Windows 侧工作区** → ① 看实际动画效果 ② `scripts/dump_states.sh`（一次 Unity 启动
-采完整条轨道）→ `python3 scripts/check_cue_script.py --all` 对账。
+## 四、常用命令
 
-**这次新引入、还没在真机上跑过的东西**（看效果时留意）：
-- 取景 token `camera: "supply"` —— 引擎侧新代码，只做了编译与几何复算（宝石占屏宽 4.3% → 7.8%），
-  实际画面没验过。看的时候确认：供应区整排是否都在画面里、宝石是否够大能数。
-- 宝石的搬运全部是 `box_gem_*` → `gem_supply_*` 的 `transfer`，走的是「从镜头外飞入」，
-  入场方向来自 stage.initial 的 `from: "bottom"`。
+```bash
+python3 scripts/validate_cue_anim.py            # 体检（数据/本体/取景链/字段归属层）
+python3 scripts/validate_anim_rules.py          # 过账（重放状态逐步验规则）
+./scripts/dump_states.sh && python3 scripts/check_cue_script.py --all   # 对账（要 Unity，Windows）
+python3 scripts/check_unity_scripts.py          # C# 编译（带 stub）
+python3 scripts/check_framing_flow.py           # 取景"同主体来回跳"
+python3 scripts/qa_anim_ask.py [--list|--only cue]   # 手写合法性问句问引擎（需后端在跑）
+./scripts/sync_workspaces.sh from-linux|from-windows|status
+```
+Unity：`/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe -batchmode -projectPath 'D:\workspace\board\client' ...`
+（`G` 开动画、`B` 轮换关键帧、空格暂停、`←/→` 逐步、`A` 自动播）
 
-**注意**：宝石这一节**不能**用 `stack`（那是卡牌牌堆用的）；供应堆是
-`transfer` 从 `box_gem_*` 逐枚搬进 `gem_supply_*`，`display.mode = count` 按 block 布局
-（7 枚 = 4+3 两行）显示，所以 4 / 5 / 7 三种数量靠**形状**就能分辨。
+## 五、明天的第一件事（建议）
 
-### 【已完成】本轮（2026-09）模型改造
-
-1. 动画 ↔ 本体**概念绑定**（模板/zone 的 `concept`、zone 的 `contains`）+ 概念解析器
-   `scripts/concept_ref.py` + 校验器按概念查转移/翻面 —— 见 [[tutorial-concept-binding]]
-2. 原语与字段**对齐本体**：`move`→`transfer`、`from`→`source`、`take`→`quantity`、
-   目的地 `zone`→`destination`、朝向布尔→`to`、新增 `realizes`（说明规则上是哪个本体事件）
-3. **组件状态**：采样逐身份 + 每件导出，契约可断言 `face`/`shows`；`ListZone` 打印每件
-4. `draw` 改成继承 `transfer`、`flip` 改成继承 `state_change`（删掉重复声明）
-5. **`what`**：transfer 用本体语言引用组件（`{concept, parts}`），引擎/校验器各有一份
-   从绑定推导的反查表，找不到或不唯一都报错；`template` 只留给 create/stack
-
-### 【已完成】收工后清掉的隐患（2026-09）
-
-- 删除 `TutorialCueAnimPlayer.TweenFlip`（旧极性、已无调用点的死代码）；
-  统一 `Flipped` 注释（`RefreshFace` / `ZoneStore` / `TutorialCueAnimData`）；
-  文档里"8 个原语"改为实际的 12 个；`tutorial-animation-state.md` 清了重复小节、
-  给过期小节加了作废标记与文首阅读须知。
-
----
-
-## 二、用户指定的工作流：脚本 → 动画 → 对账
-
-（用户原话整理，**这是主要的工作方式，不是可选项**）
-
-### 1. 先写脚本，再写动画
-
-> 在拿到口播稿，拆成100个cue后，你其实可以针对每一个cue都写个脚本：
-> 初始帧、结尾帧状态，会看到什么，位置在哪里（不是精确的坐标位置，而是在哪个zone里），
-> 会发生什么动作。
-
-**脚本分两部分，用两种语言写**：
-
-| 部分 | 语言 | 内容 |
-|---|---|---|
-| **这一 cue 发生了什么** | **自然语言** | 人读的故事 |
-| **初始帧 / 结尾帧** | **程序语言** | 机器能比的结构（状态，不是坐标） |
-
-### 2. 状态用"语义"写，不用坐标
-
-- 位置写成**在哪个 zone 里**，不是精确坐标
-- 颜色/身份要**固定下来**：口播说"拿三枚宝石"时，**必须翻译成具体的"蓝、白、红各一枚"**，
-  并固定这套约定 —— 否则动画自己也要临时决定拿哪三枚，对账就无从比起
-
-### 3. 对账：脚本 vs 采样
-
-> 你在做完一个cue后，拿着它的初始帧、结尾帧（**通过采样获取，而非看脚本**）
-> 和脚本里的一对比，就能知道是不是错得离谱，是否需要重做。
-> …检查脚本也输出**相同结构**，对比也可以通过程序去对比。
-> 你写脚本的时候凭感觉去写，对比的时候如果出现偏差，
-> 至少我们可以知道，**要么脚本不对，要么动画不对**。
-
-**要点**：
-- 采样**不要看脚本**（否则就是自己抄自己）
-- 检查脚本输出**与手写脚本同构**，用程序 diff
-- 偏差有两种可能：**脚本写错了** 或 **动画做错了** —— 所以 diff 要能定位到具体字段
-
-### 4. 为什么这条路能少出问题
-
-> 至少头尾你都是会检查的，要错也就是中间错一下，应该很好改。
-
-以及：
-
-> 对于你来说，可能你都不需要去靠视觉判断自己的工作是否正确，
-> 只需要均匀采样，然后获取每一帧的所有配件的状态就足以检查这一cue是否正常。
-
-**动画 = 状态机；判定用状态，不用像素。**（这条已经在今天反复验证过。）
-
----
-
-## 三、必须遵守的既有结论（今天用血换来的）
-
-1. **不许写 `SelfTest*` 自我判定** —— 自己出题自己阅卷是矛盾的。
-   判定交给用户；我只提供**观察工具**（数据，不下结论）。
-2. **不许用离屏出图判定对错** —— 它两次把错画面当证据。已全部删除。
-3. **任何"随时间推进的视觉"必须是 `Seek(t)` 的纯函数（片段），不能用协程。**
-   协程与时钟无关 → 暂停/跳转/倒放都会不一致（高亮踩过）。
-4. **"同时发生" = 同一个 `at`**；不要用递增 `at` 去凑"同时"。
-5. **取景是跨 cue 的延续状态**，必须显式声明；改画面内容的动作要与改取景同帧或在其后。
-   （`validate_cue_anim.py` 的 `check_framing_chain` 会查。）
-6. **牌堆模型**：台阶 = `order capacity-1 … capacity-8`；重合块 = `capacity-9 … 0`；
-   `PickFront` 取 `order` **最小**；位置 `lift = min(capacity-1-order, maxVisible-1)`；
-   `sortingOrder = 模板值 + (张数 - order)`（每次采样都要算）。
-7. **`Flipped` = 是否正面朝上**；`create` 的朝向靠 `face_up` / `face_down` 显式写。
-8. **位置计算不许读 `CountInZone`**（它会读格位表 → 自引用 → 递归崩溃）。
-
----
-
-## 四、开工前先读
-
-- `.claude/memory/tutorial-animation-state.md` —— 全部已定结论与踩坑记录
-- `.claude/memory/user-preferences.md` —— 用户偏好
-- 本文第一节的"现状"表
-
-## 五、第一个具体动作
-
-1. 读 `games/splendor/tutorial/anim/full.json` 里 `setup.gems.*` 那几段与口播稿对应段落
-2. 按第二节格式写**宝石第一节的脚本**（自然语言 + 程序化的首尾帧）
-3. **给用户看脚本**，确认"颜色/数量约定"后再做动画
-4. 再按脚本做动画，最后用采样对账
-
----
-
-## 六、2026-09 这一轮做完了什么（覆盖第一节的旧现状表）
-
-第一~四节是"开工前"的读物，下面是**收工时的真实状态**。旧的现状表（第 14-27 行）已过期。
-
-| 项 | 现状 |
-|---|---|
-| 动画脚本 | `games/splendor/tutorial/anim/full.json`，**17 条 cue 全部有动画 + 契约** |
-| 对账 | **0 处不一致**（`check_cue_script.py --all`：自己的 exit + 跨 cue 链 + 取景） |
-| 静态校验 | `validate_cue_anim.py` 17 条 0 错 0 警告；`check_unity_scripts.py` 23 个 C# 文件编译通过 |
-| 采样 | ✅ 已能在 **WSL 直接跑**（Unity 在 `/mnt/d`）；采样文件是生成物、不进版本管理 |
-| 宝石介绍 | ✅ 改成**展示位 + 样本**（用户 2026-09 定的新设计），见 [[tutorial-animation-state]] |
-| 收尾 | ✅ `setup.nobles.001.1` 的"每色 3 枚回盒（7→4）"补上了 —— 之前只有契约、没有动画 |
-
-### 这一轮修掉的引擎 bug（都是"画面什么都不发生"或"直接崩"级别）
-
-1. `what != null` 永远为真（JsonUtility 给嵌套类造空实例）→ 没写 `what` 的 `transfer` 一件都不搬。
-2. `create` 幂等只数模板 → 同模板不同色板只建出第一件（五色样本只出现 1 枚）。
-3. 入口链重放里 `FitCamera` NRE → **冷启动跳到某条 cue 直接崩**。
-4. 单面件也被计入 `face_up/face_down` → 契约得到指向不存在状态的差异。
-5. `StageNamedRef` 自我递归 → JsonUtility 报深度告警、**超过 10 层静默丢字段**（拆成两个类型）。
-6. `dump_states.sh` 采样输出路径写歪 → "重跑采样"其实一直在拷仓库里的旧文件。
-
-### 用户第二轮反馈修掉的
-
-1. **cue 18 初始帧不干净**（切取景之后 0.3s 才销毁展示位样本）→ 清场改到与切镜头**同帧**，
-   并新增静态检查"**清场必须与切取景同帧或更早**"（状态对账看不见"先后"）。
-2. **4/5/7 枚宝石不该摊成两行**（用户："应该和牌库类似，稍微错开一点压在一起"）→
-   `gem_supply_*` / `gold_supply` 改成 `display.mode: stack`（每枚错开 0.055），
-   高亮底板跟着按摞算；布局包围盒警告 25→11 条。
-3. **三条高亮点了被搬走的格位**（`order: 0` 指着"堆顶那枚"，而堆顶的 order 是 3）→
-   改成整堆高亮；并让**引擎自己报的 warning/error 随采样交出来**，这类"什么都没发生"再也藏不住。
-
-### 第三轮（"再插一嘴"那几条）修掉的
-
-1. **盒 ⇄ 供应堆的动画**：源/目的地是游戏盒时不播位移（`dur: 0` = 出现）；
-   随后用户把这条推到底 —— **游戏盒降为抽象概念**，`box_*` 实体 zone 全删，`initial` 清空，
-   "从盒里拿出来/放回盒子" = `create`/`destroy`（详见 [[tutorial-animation-state]]）。
-2. **宝石/黄金供应堆改成一摞**（`display.mode: stack`，每枚错开 0.055，和牌堆同一手法）。
-3. **坐标只属于 stage**：实测"只挪供应堆坐标 → 采样逐字节相同、动画数据一个字不用改"。
-4. 顺手修的引擎/工具问题：`StageNamedRef` 自我递归（Unity 序列化深度告警 + 超深静默丢字段）；
-   采样器把引擎 warning/error 收进 `problems[]`（"脚本要求的事没发生"从此看得见）。
-
-### 还没做的（按优先级）
-
-0. **`ResetToStart` 不能撤销 create/destroy**（回退/重播的状态纯度缺口）：
-   它只把*还在*的件摆回入口位置 —— 这条 cue 里新建的件不会被删掉、被 destroy 的也回不来。
-   所以 `create` 现在必须幂等（"补齐到 N"）。要根治：快照存下 template/palette/face，
-   恢复时**删掉快照外的件 + 重建快照里缺的件**，之后 `create` 才能安全地变成"加 N"。
-1. **12 条取景警告要人裁决**：供应区特写（003.1→005.2、nobles.001.1）画面里必然有
-   `card_market`（4 张）与 `deck_level_1`（36 张垫牌）。要么改取景（离远/藏起来），
-   要么在契约里声明它们（声明了就是真的在比它们）。用户偏好未知，等问。
-2. **实物总数没有声明处**：去盒之后"每色 7 枚/黄金 5 枚/牌 40·30·20"只活在口播与注释里。
-   要机器也断住"create 总数 = 实物总数"，需要一处声明（`components.json` 现在只有尺寸）。
-   注意牌堆用了垫牌近似（4 真 + 36 垫 = 40），所以这条要容得下"近似"。
-3. **`order` 的语义要定**：现在它是**稳定地址**（搬走不重排，`count` 布局会留空位），
-   而早期记忆写的是"搬走要收拢、顺位前移"。两条必须选一条：
-   - 选"不重排"就得让 `count` 布局容忍空位（或在视觉上跳过空格）；
-   - 选"收拢"就要在移除时重排（牌堆的台阶形状要重新验证）。
-   在定下来之前：**脚本里不要用 `order` 点"第几件"**。
-4. **`create` / `stack` 的 `destination` 仍是实现层**：牌堆"该 create 还是 transfer"没定论。
-5. **动画数据里的 zone id 还是本作专用名**（`gem_supply_diamond` 等）→ 跨游戏复用还不成立。
-   下一步若要复用，zone 的选择应改成"概念 + 属性"（像 `what` 那样），id 只留在 stage 里。
-6. 其余 92 条 cue 还没动画（每条的契约也还没写）。
+问用户"第一批特写验收结果"（`setup.cards.002.1/002.2` 的机位、以及两份走法是否一致 ✓），
+然后**按 P0 第 1 步**开多棵树迁移（先搬盒面树 + 宝石演示树）。
