@@ -48,6 +48,8 @@ namespace BoardGameTutorial
             "setup.gems.003.2",   // 5 枚/色
             "setup.gems.004",     // 7 枚/色：满摞
             "setup.nobles.001.2", // 贵族出场
+            "setup.cards.001.1",  // 翻开一张发展卡：卡面近景（看卡面本身）
+            "setup.cards.002.1",  // 发满市场：卡背 + 卡面同框（看四角/白边/卡纹）
         };
         private int debugJumpCursor;
 
