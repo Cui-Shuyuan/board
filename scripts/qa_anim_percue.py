@@ -94,7 +94,8 @@ def build():
                 return "（展示用）把介绍用的样卡摆出来（不是游戏里的牌，只是讲解道具）"
             concept = str((stage.get("templates") or []) and next(
                 (t.get("concept") for t in stage["templates"] if t.get("id") == tid), "") or "")
-            where = {"noble_market": "桌上贵族供应堆", "card_market": "市场"}.get(dest, "我面前")
+            where = {"noble_market": "桌上贵族供应堆", "card_market": "市场"}.get(
+                dest, "对面玩家面前" if dest.startswith("player_b") else "我面前")
             if concept == "noble" or tid.startswith("noble"):
                 return f"（前提）{where}摆出 {qty} 块贵族"
             if concept == "starting_player_marker" or tid.startswith("starting_marker"):
@@ -122,6 +123,8 @@ def build():
             return "、".join(parts)
         if "holding" in (srcs[0] if srcs else "") and "supply" in dest:
             return f"把 {qty} 颗{CN.get(color, '黄金')}付回供应堆"
+        if srcs and "gold_supply" in srcs[0] and "holding" in dest:
+            return "（保留的奖励）从黄金供应堆顺带拿 1 颗黄金"
         if dest in devs:
             # 卡的身份从事件本身推（等级取 concept 末位、颜色取 what.bonus），**不扫源区** ——
             # 早先扫源区那版取不到 → 问出来"价格是无"，已弃用。
@@ -146,7 +149,8 @@ def build():
         if "reserved" in dest:
             return "保留 1 张发展卡（朝下放自己面前）"
         if dest.endswith("_nobles"):
-            return "把桌上那块要求四白四红的贵族拿走"
+            return ("这一回合结束时，条件已满足的那块贵族**自动归我**"
+                    "（贵族不是主动拿的行动，是回合结束自动到来）")
         return None
 
     def on_event(cid, where, ev, st, acc):
