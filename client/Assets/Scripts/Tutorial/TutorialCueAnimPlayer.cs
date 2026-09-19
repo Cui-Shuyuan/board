@@ -2813,23 +2813,33 @@ namespace BoardGameTutorial
                         minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
                     }
                 }
-                // ── 跨度闸门（用户 2026-09-20）────────────────────────────
-                // 这几个 zone 的外接框若超过整桌长/宽的 50%，说明"这一条讲的本来就是一大片"
-                // → 直接退回全局镜头，别硬凑特写（镜头来回乱切比统一用全局更晕）。
+                // ── 跨度闸门（用户 2026-09-20 提，2026-09-21 按实测精化）──────────
+                // 原判据"外接框超过桌面长/宽 50% 就退全局"会**误伤**最该给特写的主体：
+                // 例：三摞牌库 + 市场横向 4.40 / 桌面宽 4.54 = 97% ✗ 被打回全局，
+                // 但它纵向只要 2.65（桌面纵深 10.6），特写其实比全局近三四倍 ✓。
+                // 真正该问的是"框这几个 zone 到底有没有比全局更近"，不更近才退全局。
                 var ext = stage?.board?.extent;
                 if (ext != null)
                 {
-                    float spanX = maxX - minX, spanZ = maxZ - minZ;
                     float tblW = Mathf.Max(0.01f, ext.max_x - ext.min_x);
                     float tblZ = Mathf.Max(0.01f, ext.max_z - ext.min_z);
-                    if (spanX > tblW * 0.5f || spanZ > tblZ * 0.5f)
+                    // 与下面统一用同一个 aspect 来源（FitCamera 里的 animCamera 只在 2396 那处用）
+                    float asp = Mathf.Max(0.1f, cameraAspectOverride > 0f
+                        ? cameraAspectOverride
+                        : (stage?.board != null && stage.board.aspect > 0f
+                            ? stage.board.aspect : 1.7778f));
+                    float halfW = Mathf.Max(0.01f, (maxX - minX) * 0.5f);
+                    float halfZ = Mathf.Max(0.01f, (maxZ - minZ) * 0.5f);
+                    float orthoZone = Mathf.Max(halfZ, halfW / asp);
+                    float orthoGlobal = Mathf.Max(tblZ * 0.5f, tblW * 0.5f / asp);
+                    if (orthoZone >= orthoGlobal * 0.95f)
                     {
                         minX = ext.min_x; maxX = ext.max_x; minZ = ext.min_z; maxZ = ext.max_z;
                         orthoScale = framePadding > 0f ? framePadding : 1.1f;
                         if (logCameraFit)
-                            Debug.Log($"[CueAnim.FitCamera] 跨度太大（{spanX:0.00}x{spanZ:0.00} vs 桌 " +
-                                      $"{tblW:0.00}x{tblZ:0.00}）→ 退回全局镜头（cue {CueId}）");
-                        goto fit_done;      // 跳过下面的填充率，直接用整桌范围
+                            Debug.Log($"[CueAnim.FitCamera] 框这几个 zone 不比全局更近" +
+                                      $"（{orthoZone:0.00} vs {orthoGlobal:0.00}）→ 用全局（cue {CueId}）");
+                        goto fit_done;
                     }
                 }
                 // 填充率：这几个 zone 占画面中央的比例（默认 0.8 = 老的留白 1.25，观感不变）
