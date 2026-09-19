@@ -315,20 +315,32 @@ namespace BoardGameTutorial
                 // 判据是「画面上有没有对象」，不是「store 里有没有数据」。
                 // 这两者会不一致：store 有 12 张、animRoot 却被清空过。
                 bool hasScene = animRoot != null && animRoot.transform.childCount > 0;
-                if (!hasScene)
+                // **牌桌还没搭过**（!hasScene）**或者本条是跳转/重播/上一条进来的**（!continueState）：
+                // 都要把状态重建到本条的入口。
+                //
+                // 少了后半句就是用户 2026-09 报的那个现象：从宝石介绍按 ← 退回卡牌那条
+                // （`setup.cards.002.2`，它**没有动画数据**），画面还停在宝石上 ——
+                // 状态没重建（展示位那 5 枚样本还在），镜头也没重建（市场其实在，只是被留在镜头外）。
+                if (!hasScene || !continueState)
                 {
-                    // 牌桌还没搭过：先载入 stage（否则模板为空，什么都生成不出来），
-                    // 再按 initial 摆好、建对象、取景。
                     ClearActors();
                     LoadStage(gameRoot, trackDoc != null ? trackDoc.stage : null);
-                    Store.Reset();
-                    Store.ApplyInitial();
+                    // ReplayEntryChain 自己会 Reset + ApplyInitial，再按顺序把本条之前的事件推到终态
+                    ReplayEntryChain(trackDoc, cueId);
                     BuildActorObjects();
                     SyncActorsToStore();
                     EnsureCamera();
                     SetBackground();
                     FitCamera();
-                    ApplyRootPicture();
+                    // 整幅图也要回到**入口**状态（与正常载入那条路一致）：
+                    // 判据是"脚本里没写图就没有图"，不能沿用上一条留下的盒面。
+                    string entryPic = EntryPictureFor(trackDoc, cueId);
+                    TriggerShowBox(new CueAnimEvent
+                    {
+                        action = "showbox",
+                        picture = entryPic,
+                        on = string.IsNullOrEmpty(entryPic) ? 0f : 1f,
+                    });
                 }
                 return false;
             }
@@ -1636,6 +1648,10 @@ namespace BoardGameTutorial
                     : Store.CurrentPosition(step.Item);
 
                 step.Item.LivePosition = to;
+                // **状态先落，再管画面**：`to`（终态朝向）是状态，不能和"有没有 actor"绑在一起。
+                // 以前这行在 `if (actor == null) continue;` 之后，于是**入口链重放**（stateOnly、
+                // 没有 actor）时市场牌全部落在背面 —— "跳到发牌之后的任意一条，市场全是卡背"。
+                if (!string.IsNullOrEmpty(ev.to)) step.Item.Flipped = ev.to == "face_up";
                 if (actor == null) continue;
 
                 step.From = from;
@@ -1677,9 +1693,8 @@ namespace BoardGameTutorial
                 // 没有 back_image，于是整条翻转+换面都没发生（发到市场的牌一直是卡背）。
                 if (!string.IsNullOrEmpty(ev.to))
                 {
+                    // 状态上面已经落了；这里只负责"翻给他看"
                     clip.HasFlip = true;
-                    // **写终态，不写"取反"**：无论它现在是哪一面，到终点都是 ev.to 指定的那一面。
-                    step.Item.Flipped = ev.to == "face_up";
                 }
             }
 
