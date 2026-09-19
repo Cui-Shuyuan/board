@@ -597,6 +597,10 @@ def validate_cue(doc, cue_id, runtime_cues, track, game_id, report: Report,
     for i, ev in enumerate(events):
         ew = f"{where} events[{i}]"
         action = ev.get("action", "move")
+        # `what` 必须在这里就取：下面 <zone>.contains 的检查要用它判断"搬的是哪一类"。
+        # 曾经它在循环末尾才赋值 → 那次检查读到的是**上一条事件的 what**（跨 cue 还会读到别的 cue 的），
+        # 于是把「往持有区搬一枚黄金」误报成「把一张发展卡搬进持有区」。
+        what = ev.get("what")
         if action not in ACTIONS:
             report.error(ew, f"未知 action {action!r}，只能是 {sorted(ACTIONS)}")
             continue

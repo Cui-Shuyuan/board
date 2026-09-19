@@ -599,7 +599,7 @@
       "id": "player_development",
       "label": "玩家发展区",
       "center": {
-        "x": -1.1,
+        "x": -1.45,
         "z": -4.2
       },
       "layout": {
@@ -650,6 +650,34 @@
         "noble"
       ],
       "note": "结识的贵族放在自己面前（公开信息）。容量 3 = 一局最多勾到 3 块（本作贵族数=人数+1，四人局 5 块；这里按演示需要写 3，真要更多改这一个数 + x_step）。"
+    },
+    {
+      "id": "player_reserved",
+      "label": "玩家保留区",
+      "center": {
+        "x": 0.6,
+        "z": -4.2
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.35
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<reserve>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "保留的发展卡放的地方（<reserve>）。x_step 0.35 = 卡片半叠成扇形：保留区**必须**放得下 3 张（规则上限就是 3），而桌子横向不够摊开 —— 真人遇到这种情况也是这样错开叠的，而且朝下的牌只需要露出边缘。"
     }
   ],
   "templates": [
@@ -1313,7 +1341,8 @@
         "player_holding",
         "player_marker",
         "player_development",
-        "player_nobles"
+        "player_nobles",
+        "player_reserved"
       ]
     }
   ],

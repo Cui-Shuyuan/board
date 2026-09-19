@@ -1127,7 +1127,7 @@
       "cue": "setup.cards.002.1",
       "entry_from": "setup.cards.001.3",
       "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
-      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+      "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
       "timing": {
         "样本卡背退场 + 牌堆登场 + 洗混": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列",
         "发牌（12 张，每张 0.39s）": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
@@ -12921,6 +12921,2474 @@
           "peak_alpha": 0.65,
           "zone": "player_nobles",
           "order": 2
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.intro.001.1",
+      "entry_from": "action.cards.summary.001.3",
+      "story": "【除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走】",
+      "note": "【保留（一）：不付钱，把牌拿走】\n  口播前半句先把『保留』这件事说出来 → 镜头推近市场，点一下要保留的那张（三级白）。\n  ⚠ 这一句**没有搬运**：口播讲到『拿走』就切到下一句，牌是下一句（001.2）才真正离桌的 —— 「一句话一条状态变化」比抢半句台词更清楚。",
+      "timing": {
+        "镜头推近市场": "0.00",
+        "点要保留的牌": "1.20 / 3.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 0
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "card_market",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 1.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<card_market>",
+          "order": 9
+        },
+        {
+          "at": 3.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<card_market>",
+          "order": 9
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.intro.001.2",
+      "entry_from": "action.reserve.intro.001.1",
+      "story": "【正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金】",
+      "note": "【保留（二）：朝下放自己面前 + 拿一枚黄金】\n  两件真事，一句口播两个动作：\n    ① `transfer` 那张三级白：市场 → `player_reserved`，**带 `to: face_down`**（终态朝下）；\n    ② `transfer` 一枚黄金：黄金供应堆 → 持有区（保留的奖励）。\n  『朝下』写成终态而不是『翻一下』：翻面是取反、谁最后执行谁赢（历史上正是它出过 bug），写终态则重复 Seek / 重播都得到同一结果。\n  ⚠ 我们没给『只有自己能看』建模：牌在整个 3.3 里一直朝下，观众看到的是『有几张、看不见是哪张』——和实物桌上别人看到的一样。",
+      "timing": {
+        "搬牌到保留区（朝下）": "0.80",
+        "拿一枚黄金": "2.60",
+        "点保留区": "4.40"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 12,
+            "face_up": 12
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 4
+          },
+          "player_holding": {
+            "count": 6,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 1
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "card_market",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.8,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<card_market>"
+          ],
+          "destination": "player_reserved",
+          "quantity": 1,
+          "to": "face_down",
+          "what": {
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 2.6,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gold_supply>"
+          ],
+          "destination": "<player_holding>",
+          "quantity": 1,
+          "what": {
+            "concept": "gold"
+          }
+        },
+        {
+          "at": 4.4,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.gold.001",
+      "entry_from": "action.reserve.intro.001.2",
+      "story": "【黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代】",
+      "note": "【黄金 = 万能宝石】\n  规则说明，**没有状态变化**：先点持有区里那枚黄金（刚拿到的），再点保留的那张牌 ——『买它的时候，这枚黄金可以当任意一种宝石』。",
+      "timing": {
+        "点持有区（黄金）": "0.80",
+        "点保留的牌": "2.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 4
+          },
+          "player_holding": {
+            "count": 6,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 1
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 4
+          },
+          "player_holding": {
+            "count": 6,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 1
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 1
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>",
+          "order": 5
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.deck.001",
+      "entry_from": "action.reserve.gold.001",
+      "story": "【除了供应堆的 12 张卡牌外，玩家也可以从 3 摞牌堆顶选择一张未被翻开的发展卡牌保留】",
+      "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `<development_deck_level_1>` 顶取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 从牌堆取件取的就是 order 最小的那张（= 顶牌），脚本不用点名。\n  · 这一批之前把牌堆真卡表加到了 5 张/级，所以这次翻出来的是一张**真卡**（垫牌只是撑厚度）。\n  · 画面上它朝下 —— 观众和对手一样看不到它是哪张（这正是下一条要讲的信息）。",
+      "timing": {
+        "镜头推近牌堆": "0.00",
+        "从牌堆顶保留": "1.40",
+        "拿第二枚黄金": "3.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 35
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 4
+          },
+          "player_holding": {
+            "count": 6,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 1
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 1
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "deck_level_1,deck_level_2,deck_level_3",
+          "camera_padding": 1.4
+        },
+        {
+          "at": 1.4,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<top_draw>",
+          "source": [
+            "<development_deck_level_1>"
+          ],
+          "destination": "player_reserved",
+          "quantity": 1,
+          "to": "face_down",
+          "what": {
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "at": 3.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gold_supply>"
+          ],
+          "destination": "<player_holding>",
+          "quantity": 1,
+          "what": {
+            "concept": "gold"
+          }
+        },
+        {
+          "at": 4.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.notes_intro.001",
+      "entry_from": "action.reserve.deck.001",
+      "story": "【注意事项如下】",
+      "note": "【注意事项：先把保留区指出来】\n  1.6 秒的过渡句：镜头给保留区（现在有 2 张，都朝下），下面几条都在讲它。没有状态变化。",
+      "timing": {
+        "镜头给保留区": "0.00"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_reserved",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.limit_gold.001.1",
+      "entry_from": "action.reserve.notes_intro.001",
+      "story": "【拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
+      "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 7 枚（5 宝石 + 2 黄金），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出 4 枚（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。",
+      "timing": {
+        "点持有区": "0.80 / 2.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_holding",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.limit_gold.001.2",
+      "entry_from": "action.reserve.limit_gold.001.1",
+      "story": "【如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金】",
+      "note": "【注意事项二：黄金拿完了也能保留，只是不给黄金】\n  规则说明，**没有状态变化**：镜头给黄金供应堆（还有 3 枚）→ 点它、再点保留区。\n  ⚠ 不演示『黄金没了』：那要把供应堆掏空（口播没让人拿那 3 枚）。规则本身靠口播说清，画面只指位置。",
+      "timing": {
+        "镜头黄金供应堆": "0.00",
+        "点黄金堆": "0.80",
+        "点保留区": "2.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "gold_supply",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gold_supply>"
+        },
+        {
+          "at": 2.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.limit_hand.001.1",
+      "entry_from": "action.reserve.limit_gold.001.2",
+      "story": "【每位玩家最多同时保留 3 张发展卡牌】",
+      "note": "【注意事项三：最多保留 3 张】\n  规则说明（前半句），**没有状态变化**：点保留区（现在 2 张）—— 下一句再加一张就正好到 3。",
+      "timing": {
+        "点保留区": "0.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_reserved",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.limit_hand.001.2",
+      "entry_from": "action.reserve.limit_hand.001.1",
+      "story": "【如果一位玩家已经保留了 3 张发展卡牌，就不能继续保留了。此时他必须选择其他行动】",
+      "note": "【到 3 张就满了】\n  真做一次：再从市场保留一张（二级红 → 保留区朝下）+ 拿第三枚黄金 → 保留区正好 3 张。\n  『不能继续保留』这一层**没法演**：我们没有否定原语（没有拒绝/变灰），只能靠『正好到 3 张』这个可见事实 + 口播。\n  ⚠ 这是本节演示的最后一张：3 张后不再演示保留（也正好符合规则）。",
+      "timing": {
+        "再从市场保留一张": "1.60",
+        "拿第三枚黄金": "3.20",
+        "点满 3 张的保留区": "4.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 11,
+            "face_up": 11
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 3
+          },
+          "player_holding": {
+            "count": 7,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 2
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 2
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "card_market",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 1.6,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<card_market>"
+          ],
+          "destination": "player_reserved",
+          "quantity": 1,
+          "to": "face_down",
+          "what": {
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 3.2,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gold_supply>"
+          ],
+          "destination": "<player_holding>",
+          "quantity": 1,
+          "what": {
+            "concept": "gold"
+          }
+        },
+        {
+          "at": 4.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.private.001.1",
+      "entry_from": "action.reserve.limit_hand.001.2",
+      "story": "【已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容】",
+      "note": "【保留的牌是个人信息】\n  规则说明，**没有状态变化**：镜头推近保留区（3 张都朝下）—— 画面本身就说明了这件事：观众看得见『有几张』，看不见『是哪张』。",
+      "timing": {
+        "镜头推近保留区": "0.00",
+        "点三张": "0.80 / 1.80 / 2.80"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_reserved",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved",
+          "order": 0
+        },
+        {
+          "at": 1.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved",
+          "order": 1
+        },
+        {
+          "at": 2.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.private.001.2",
+      "entry_from": "action.reserve.private.001.1",
+      "story": "【不可以给其他玩家看，其他玩家也不可以主动去查看】",
+      "note": "【不给别人看、别人也不能翻】\n  规则说明，**没有状态变化**：继续停在保留区近景，点一下。\n  ⚠ 『不可以』两层意思（不给看 / 别人不主动翻）都没有对应画面 —— 仍然是没有否定原语。",
+      "timing": {
+        "点保留区": "0.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_reserved",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.private.002",
+      "entry_from": "action.reserve.private.001.2",
+      "story": "【如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息】",
+      "note": "【从牌堆顶保留：保留之前也不能看】\n  规则说明，**没有状态变化**：镜头给三摞牌堆（都朝下）→ 再给保留区（也朝下）。『保留前不能看』与『保留后只能自己看』在画面上是同一件事：那张牌一直朝下。\n  ⚠ 认不出哪张是从牌堆保留的：三张保留牌都朝下，没有『来自牌堆』的标记 ——要区分得给件加来源标记（本作暂时不需要）。",
+      "timing": {
+        "镜头给牌堆": "0.00",
+        "点牌堆顶": "1.00",
+        "点保留区": "3.00"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "deck_level_1,deck_level_2,deck_level_3",
+          "camera_padding": 1.4
+        },
+        {
+          "at": 1.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<development_deck_level_1>"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_reserved",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 3.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        }
+      ]
+    },
+    {
+      "cue": "action.reserve.not_purchase.001",
+      "entry_from": "action.reserve.private.002",
+      "story": "【保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值】",
+      "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（真正买到的那 9 张）——对比就是这句话：只有进了发展区的牌才给折扣和声望。\n  保留区的牌**不在**发展区，所以怎么点发展区都数不到它们。",
+      "timing": {
+        "镜头回整桌": "0.00",
+        "点保留区": "0.80",
+        "点发展区": "2.40"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "card_market": {
+            "count": 10,
+            "face_up": 10
+          },
+          "deck_level_1": {
+            "count": 34
+          },
+          "deck_level_2": {
+            "count": 26
+          },
+          "deck_level_3": {
+            "count": 16
+          },
+          "noble_market": {
+            "count": 0
+          },
+          "gem_supply_diamond": {
+            "count": 3
+          },
+          "gem_supply_sapphire": {
+            "count": 3
+          },
+          "gem_supply_ruby": {
+            "count": 3
+          },
+          "gem_supply_emerald": {
+            "count": 2
+          },
+          "gem_supply_onyx": {
+            "count": 4
+          },
+          "gold_supply": {
+            "count": 2
+          },
+          "player_holding": {
+            "count": 8,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2,
+              "黄金": 3
+            }
+          },
+          "player_marker": {
+            "count": 1
+          },
+          "showcase": {
+            "count": 0
+          },
+          "showcase_1": {
+            "count": 0
+          },
+          "player_development": {
+            "count": 9,
+            "kinds": {
+              "一级白": 3,
+              "三级白": 1,
+              "一级蓝": 1,
+              "一级红": 4
+            }
+          },
+          "player_nobles": {
+            "count": 3
+          },
+          "player_reserved": {
+            "count": 3
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_reserved"
+        },
+        {
+          "at": 2.4,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "player_development"
         }
       ]
     }
