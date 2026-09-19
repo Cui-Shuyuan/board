@@ -84,8 +84,6 @@ namespace BoardGameTutorial
                 : (zoneId == "supply" ? FrameSupplyToken : zoneId));
             framePadding = padding;
             frameFill = fill;              // <0 = 未指定（按 0.8 算，等价于老的留白 1.25）
-            // 记住最近一次**显式**取景：跳进一条没写 camera 的 cue 时沿用它（见 LoadCue）
-            lastCamera = zoneId; lastCameraPad = padding; lastCameraFill = fill;
             FitCamera();
         }
 
@@ -193,8 +191,6 @@ namespace BoardGameTutorial
 
         private string frameZoneId;      // 非空 = 特写取景到该 zone（逗号分隔 = 这几个一起入镜）
         private float frameFill = -1f;   // 这几个 zone 占画面中央的比例（<0 = 默认 0.8）
-        private string lastCamera;       // 最近一次显式取景（跳转时的继承来源）
-        private float lastCameraPad, lastCameraFill = -1f;
         private float framePadding;
         private SpriteRenderer boxSprite;
         private string currentPicture;
@@ -413,8 +409,35 @@ namespace BoardGameTutorial
                 if (cueDoc.events != null)
                     foreach (var ce in cueDoc.events)
                         if (!string.IsNullOrEmpty(ce.camera)) { hasCam = true; break; }
-                if (!hasCam && !string.IsNullOrEmpty(lastCamera))
-                    SetFraming(lastCamera, lastCameraPad, lastCameraFill);
+                if (!hasCam)
+                {
+                    // **严格按父链解析**：父 = entry_from（有就用）否则轨道上一条；
+                    // 沿链向上找最近一个显式写了 camera 的祖先。
+                    // 结果只由 cue id 决定 —— 不管从哪跳进来，这一 cue 的画面完全一样 ✓
+                    var byId = new Dictionary<string, CueAnimDoc>();
+                    var idxOf = new Dictionary<string, int>();
+                    for (int i = 0; i < trackDoc.cues.Count; i++)
+                        if (trackDoc.cues[i] != null)
+                        { byId[trackDoc.cues[i].cue] = trackDoc.cues[i]; idxOf[trackDoc.cues[i].cue] = i; }
+                    string cur = cueId;
+                    for (int hop = 0; hop < 128 && !string.IsNullOrEmpty(cur); hop++)
+                    {
+                        if (!byId.ContainsKey(cur)) break;
+                        // 父 = 轨道上一条（动画文档里没有 entry_from；运行时轨道才有，
+                        // 引擎这边拿不到 → 用轨道顺序。对每条 cue 依然是**纯函数**，
+                        // 与"从哪跳进来"无关 ✓；极少数显式 entry_from 的 cue 略有差别，记在记忆里）
+                        if (!idxOf.TryGetValue(cur, out var ci) || ci <= 0) break;
+                        string pid = trackDoc.cues[ci - 1] != null ? trackDoc.cues[ci - 1].cue : null;
+                        if (string.IsNullOrEmpty(pid) || !byId.TryGetValue(pid, out var pdoc) || pdoc == null) break;
+                        bool hit = false;
+                        if (pdoc.events != null)
+                            foreach (var pe in pdoc.events)
+                                if (!string.IsNullOrEmpty(pe.camera))
+                                { SetFraming(pe.camera, pe.camera_padding, pe.camera_fill); hit = true; break; }
+                        if (hit) break;
+                        cur = pid;      // 这一层没写取景 → 继续往上
+                    }
+                }
             }
             ApplyCueStart();
 
