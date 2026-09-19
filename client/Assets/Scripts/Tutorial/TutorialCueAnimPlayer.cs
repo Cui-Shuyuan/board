@@ -84,6 +84,8 @@ namespace BoardGameTutorial
                 : (zoneId == "supply" ? FrameSupplyToken : zoneId));
             framePadding = padding;
             frameFill = fill;              // <0 = 未指定（按 0.8 算，等价于老的留白 1.25）
+            // 记住最近一次**显式**取景：跳进一条没写 camera 的 cue 时沿用它（见 LoadCue）
+            lastCamera = zoneId; lastCameraPad = padding; lastCameraFill = fill;
             FitCamera();
         }
 
@@ -191,6 +193,8 @@ namespace BoardGameTutorial
 
         private string frameZoneId;      // 非空 = 特写取景到该 zone（逗号分隔 = 这几个一起入镜）
         private float frameFill = -1f;   // 这几个 zone 占画面中央的比例（<0 = 默认 0.8）
+        private string lastCamera;       // 最近一次显式取景（跳转时的继承来源）
+        private float lastCameraPad, lastCameraFill = -1f;
         private float framePadding;
         private SpriteRenderer boxSprite;
         private string currentPicture;
@@ -402,6 +406,15 @@ namespace BoardGameTutorial
                 cueDoc = found;          // 重放会把 cueDoc 换成前序 cue，这里换回来
                 CueId = cueId;
                 Note = found.note;
+                // 镜头默认**继承父节点**（用户 2026-09-21："除非你特意改回去，否则自然延续"
+                // —— 顺序播放本来就会保留上一条的机位 ✓，这里补的是**跳转**这条路：
+                // 跳到一条没写 camera 的 cue 时，沿用最近一次显式取景，而不是"跳之前"的机位 ✗）
+                bool hasCam = false;
+                if (cueDoc.events != null)
+                    foreach (var ce in cueDoc.events)
+                        if (!string.IsNullOrEmpty(ce.camera)) { hasCam = true; break; }
+                if (!hasCam && !string.IsNullOrEmpty(lastCamera))
+                    SetFraming(lastCamera, lastCameraPad, lastCameraFill);
             }
             ApplyCueStart();
 
