@@ -74,7 +74,7 @@ def build():
     facts = json.loads(R.FACTS.read_text(encoding="utf-8")) if R.FACTS.exists() else {}
     zones = {z["id"]: z for z in stage.get("zones") or []}
     devs = [z for z in zones if "development" in z]
-    out, per_cue = [], {}
+    out, per_cue, skipped = [], {}, []
     paid_seen = []          # 有没有发生过"把宝石付回供应堆"（决定要不要说"又付掉一些"）
 
     def describe_action(ev, st):
@@ -158,12 +158,16 @@ def build():
             return
         d = per_cue.setdefault(cid, {"acts": [], "counts": {}, "who": where,
                                      "only_samples": True})
-        # 只动"介绍样本"的 cue（摆讲解道具/收走道具）不值得问 —— 与用户说的
-        # "盒面介绍那种不用问"同类：它改的是讲解道具，不是对局状态。
+        # 「讲解道具」= 介绍用的样本件（sample_* / gem_sample）与展示位
+        # （showcase* / gem_display / gold_display）。**只动这些东西的 cue 一律不问** ——
+        # 用户 2026-09-20 的话："那些介绍用的临时对象就别问了"（引擎也不认识"样本"这个概念，
+        # 硬问它只会顺着瞎推）。与"盒面介绍那种不用问"是同一类。
+        PRESENTATION_ZONES = ("showcase", "gem_display", "gold_display")
         tid = ev.get("template") or ""
-        if not (tid.startswith("sample") or tid.startswith("gem_sample")
-                or (ev.get("action") == "destroy" and "display" in
-                    str(R.resolve_zone_ref(stage, ev.get("zone") or "")))):
+        zid = str(R.resolve_zone_ref(stage, ev.get("destination") or ev.get("zone") or ""))
+        is_prop = (tid.startswith("sample") or tid.startswith("gem_sample")
+                   or any(z in zid for z in PRESENTATION_ZONES))
+        if not is_prop:
             d["only_samples"] = False
         line = describe_action(ev, st)
         if not line:
@@ -181,8 +185,10 @@ def build():
         d = per_cue.get(cid)
         if not d or not d["acts"]:
             return                                    # 状态没变 → **不硬挤问题**
-        if d.get("only_samples") and not cid.startswith("setup.cards.002"):
-            return                                    # 只摆/收讲解道具 → 不问
+        if d.get("only_samples"):
+            skipped.append({"cue": cid,
+                            "why": "只摆/收讲解道具（样本件或展示位），不是对局状态 → 不问"})
+            return
         hand = Counter()
         for ident, n in st.zones["player_holding"].items():
             if ident.startswith("gem:"):
@@ -227,7 +233,7 @@ def build():
                     "acts": d["acts"]})
 
     R.run(anim, stage, facts, R.Report(), on_event=on_event, on_cue_end=on_cue_end)
-    return out
+    return out, skipped
 
 
 def verdict_of(reply):
@@ -306,7 +312,9 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--only", default="", help="只重问这些 cue（逗号分隔）；日志里只替换这几行")
     a = ap.parse_args()
-    qs = build()
+    qs, skipped = build()
+    print(f"（另外跳过 {len(skipped)} 条只动讲解道具的 cue：" +
+          "、".join(x['cue'] for x in skipped[:6]) + ("…" if len(skipped) > 6 else "") + "）")
     only = [x.strip() for x in a.only.split(",") if x.strip()]
     if only:
         qs = [x for x in qs if x["cue"] in only]
