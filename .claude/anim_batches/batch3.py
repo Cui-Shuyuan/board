@@ -251,11 +251,11 @@ A(cue("action.cards.market.001.1", "action.cards.cost.001.3",
       "【只能在 12 张里选】\n"
       "  镜头推近市场，把 12 个格位按 order 0→11 扫一遍（0-3 一级行、4-7 二级行、8-11 三级行）。\n"
       "  扫格位而不是只点一下区域：让观众看到『12 张』是 12 个位置。",
-      {"镜头推近市场": "0.00", "扫 12 格": "0.80 起每 0.22s"},
+      {"镜头推近市场": "0.00", "整块市场高亮一次": "0.80"},
       part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
       part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
-      [wait(0.0, camera="card_market", padding=1.6)] +
-      [hl(0.8 + i * 0.22, zone="<card_market>", order=i) for i in range(12)]))
+      # 用户 2026-09-20：**不要逐个扫 12 格** —— 想点出"这 12 张"就把市场整块高亮一次。
+      [wait(0.0, camera="card_market", padding=1.6), hl(0.8, zone="<card_market>")]))
 
 _purchase_note = ("【买走一张 → 出现空位】\n"
                   "  这里做**一次真购买**：把市场里的一张一级白（slot 2）搬到玩家发展区。\n"
