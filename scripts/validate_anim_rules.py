@@ -138,7 +138,7 @@ class State:
                    if ident.startswith("gem:") or ident.startswith("gold"))
 
 
-def run(anim, stage, facts, rep: Report):
+def run(anim, stage, facts, rep: Report, on_event=None):
     zones = {z["id"]: z for z in (stage.get("zones") or [])}
     dev_zones = [z for z in zones if "development" in z]
     frozen = None
@@ -150,6 +150,10 @@ def run(anim, stage, facts, rep: Report):
         for i, ev in enumerate(cue.get("events") or []):
             where = f"{cid} events[{i}]"
             action = ev.get("action")
+            if on_event is not None:
+                # 回调拿到的是**这一步之前**的状态（未包括这一动）—— 生成问题正好要这个
+                on_event(cid, where, ev, st, {"paid": paid, "bought": bought,
+                                              "reserved": reserved, "gold_taken": gold_taken})
 
             if action == "stack":
                 zid = resolve_zone_ref(stage, ev.get("destination"))
@@ -217,6 +221,28 @@ def run(anim, stage, facts, rep: Report):
 
             elif action == "transfer":
                 dest = resolve_zone_ref(stage, ev.get("destination"))
+                # —— 取宝石这个**动作**的构成（引擎教的：只有"三色各一"或"同色两枚"两种）——
+                srcs0 = [resolve_zone_ref(stage, x) for x in (ev.get("source") or [])]
+                takes = [z for z in srcs0 if "supply" in z and "gem_supply" in z]
+                if takes and "holding" in dest:
+                    qty0 = int(ev.get("quantity") or 1)
+                    colors0 = [(zones[z].get("parts") or [{}])[0].get("value", "") for z in takes]
+                    colors0 = [str(c).strip("<>") for c in colors0]
+                    total = qty0 * len(takes)
+                    if len(set(colors0)) == len(takes) and qty0 == 1 and 2 <= len(takes) <= 3:
+                        pass                                   # 三色各一（或两色各一，供应不足时）
+                    elif len(takes) == 1 and qty0 == 2:
+                        col = colors0[0]
+                        pile = sum(n for k, n in st.zones[takes[0]].items()
+                                   if k.startswith(f"gem:{col}@"))
+                        if pile < 4:
+                            rep.error(where, f"同色拿两枚要求该堆 ≥4，实际 {pile}")
+                        elif pile - 2 < 2:
+                            rep.error(where, f"同色拿两枚后必须剩 ≥2，实际会剩 {pile - 2}")
+                    else:
+                        rep.error(where, f"取宝石的动作不合法：从 {len(takes)} 堆共拿 {total} 枚"
+                                            f"（合法只有『三色各一』或『同色两枚』）")
+
                 qty = int(ev.get("quantity") or 1)
                 gold, color = is_gold_event(ev), color_of_event(ev, stage)
                 tid = ev.get("template")
