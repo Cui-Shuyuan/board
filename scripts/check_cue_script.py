@@ -448,10 +448,14 @@ def check_all(args):
 
     fails = skipped = frame_warns = 0
     prev_leave = None
+    # 采样文件里 cue 的**出现顺序 = 整条轨道的顺序**（采样器就是按轨道顺序一条条采的）。
+    # 用它来给"没写 entry_from"的 cue 找默认父节点。
+    sample_order = list(states.keys())
     # 按契约文件里的顺序（= 轨道顺序）走，不按字母序
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
         first_cam, leave_cam = cue_cameras(contract.get("events"), prev_leave)
+        parent_default = False
 
         # ⓪ 引擎自己在**这条 cue 里**报的警告/错误。
         #    "脚本要求的事没发生"（例如 highlight 点了一个已经被搬走的位置）状态是变不了的
@@ -490,18 +494,32 @@ def check_all(args):
             skipped += 1
 
         # ② 跨 cue：enter vs 父 exit
+        #
+        # 父节点的规则（与**运行时**一致）：**默认就是轨道里的上一条** ——
+        # 顺序播放接着上一条的终态；跳转则从根按整轨顺序重放到本条之前。
+        # `entry_from` 是**显式**写法，用来在"时间上的上一条"不是"状态来源"时把话说明白
+        # （典型：两条有动画的 cue 之间夹着若干条纯口播 cue，状态来源其实是更早那条有动画的）。
+        #
+        # 以前只在写了 `entry_from` 时才比 —— 于是**没写的那些 cue 的进入状态根本没人查**
+        # （`setup.cards.001.1` 就是这样漏掉的）。现在默认按采样顺序找上一条。
         parent = contract.get("entry_from")
+        if not parent and sample_order:
+            i = sample_order.index(cue) if cue in sample_order else -1
+            if i > 0:
+                parent = sample_order[i - 1]
+                parent_default = True
         if parent:
             if parent in states:
                 want = part_of(contract, "enter")
+                mark = "（默认：轨道上一条）" if parent_default else ""
                 diffs = diff_cue(want, states[parent])
                 if diffs:
-                    print(f"FAIL  {cue}  enter vs 父({parent}) exit:")
+                    print(f"FAIL  {cue}  enter vs 父({parent}){mark} exit:")
                     for d in diffs:
                         print(f"        - {d}")
                     fails += 1
                 else:
-                    print(f"PASS  {cue}  enter == 父({parent}) 的终态")
+                    print(f"PASS  {cue}  enter == 父({parent}){mark} 的终态")
                 if stage:
                     fd = framing_diffs(stage, (first_cam, leave_cam), states[parent],
                                        want.get("zones") or {}, "enter")
