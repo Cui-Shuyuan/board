@@ -45,6 +45,7 @@ namespace BoardGameTutorial
         {
             "setup.gems.001.1",   // 宝石介绍：五枚样本出现在展示位
             "setup.gems.003.1",   // 4 枚/色：供应堆摆成一摞
+            "setup.gems.003.2",   // 5 枚/色
             "setup.gems.004",     // 7 枚/色：满摞
             "setup.nobles.001.2", // 贵族出场
         };
