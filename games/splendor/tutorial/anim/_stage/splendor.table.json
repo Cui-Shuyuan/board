@@ -594,6 +594,34 @@
         "starting_player_marker"
       ],
       "note": "起始玩家标记放在玩家面前的地方。与 `player_holding` 同一排（z=-3.20）、位于其右侧 —— 持有区那一排最多能铺到 x≈0.80（10 件时），所以两区只在持有区接近满时才轻微重叠（stage 布局校验会报一条 warning，属于已知取舍：标记物理上就该挨着玩家的东西）。"
+    },
+    {
+      "id": "player_development",
+      "label": "玩家发展区",
+      "center": {
+        "x": -2.3,
+        "z": -3.2
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.66
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<development_area>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "买下的发展卡摊在自己面前的地方（<development_area>：公开信息）。容量写 3：本节演示最多同时摊 3 张；实物不设上限（讲解时说清了），真要做长演示改这一个数 + x_step 即可（坐标只属于 stage）。"
     }
   ],
   "templates": [
@@ -1178,6 +1206,30 @@
       "sorting_order": 3,
       "concept": "starting_player_marker",
       "note": "起始玩家标记（2024 新版：菱形纸板件，单面）。图片走 `_cutout.png` 约定 → media/marker/起始玩家标记_clean_cutout.png（裁到件、alpha 已成品，尺寸由 components.json 的 50x62mm 换算）。"
+    },
+    {
+      "id": "sample_card_1_white",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_白.jpg",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "concept": "development_card_level_1",
+      "sample": true,
+      "note": "介绍牌面用的**样本**（一级白）：价格 1蓝+2绿+1红+1黑（四种颜色，讲『左下角是价格』最清楚）、声望 0、白折扣。样本不进牌堆/市场的账，讲解完销毁。"
+    },
+    {
+      "id": "sample_card_2_ruby",
+      "shape": "card",
+      "palette": "card_level_2",
+      "face_image": "media/card/二级发展卡_红.jpg",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "concept": "development_card_level_2",
+      "sample": true,
+      "note": "介绍牌面用的**样本**（二级红）：声望 3，用来讲『左上角是声望值』。"
     }
   ],
   "anchors": [
@@ -1230,7 +1282,9 @@
       "x": -0.55,
       "z": -3.2,
       "zones": [
-        "player_holding"
+        "player_holding",
+        "player_marker",
+        "player_development"
       ]
     }
   ],
