@@ -4986,6 +4986,1092 @@
           "zone": "<player_holding>"
         }
       ]
+    },
+    {
+      "cue": "action.take.same.001",
+      "entry_from": "action.take.different.001",
+      "story": "【当某种宝石在供应堆中的数量大于等于 4 时，也可以改为拿取这种宝石两枚】",
+      "note": "【拿两枚相同：门槛 >= 4】\n  演示拿**两枚绿宝石**：供应堆里现在正好绿 4 枚（>=4 够门槛），拿走后剩 2 —— 这 2 枚正好是\n  下一条（same.002）要讲的「至少剩 2」的下限，两条口播在同一堆上连着讲完。\n  `source` 写的是 zone（哪一堆），`quantity: 2` 说几枚，`what` 说**搬的是哪一类**（本体语言：\n  gem + color=emerald）—— 三个字段各说一件事，不看素材名。\n  没有写 `to`：宝石是单面件，朝向这一维对它不存在。",
+      "timing": {
+        "点绿宝石堆": "0.60",
+        "拿两枚": "3.00",
+        "点玩家持有": "4.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<emerald>>"
+        },
+        {
+          "at": 1.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<emerald>>"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.6,
+          "action": "transfer",
+          "easing": "easeInOutCubic",
+          "realizes": "<ontology::transfer>",
+          "source": [
+            "<gem_supply|color=<emerald>>"
+          ],
+          "quantity": 2,
+          "destination": "<player_holding>",
+          "stagger": 0.25,
+          "what": {
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          }
+        },
+        {
+          "at": 4.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.same.002",
+      "entry_from": "action.take.same.001",
+      "story": "【拿取之后必须保证这种宝石在供应堆中至少剩下 2 枚，否则就不能这样拿取】",
+      "note": "【拿两枚的第二个条件：至少剩 2】\n  这一条**没有状态变化**（是规则说明）：绿宝石堆刚被拿到只剩 2 枚，正好是「刚好合法」的样子。\n  然后把另外三堆只有 3 枚的点出来 —— 它们够不上「>=4」，也就不能一次拿两枚。\n  ⚠ 我们**还没有表示「不行/禁止」的表现原语**（没有摇头、没有打叉），所以这里只能靠「依次点出那三堆」\n  加上口播来表达。要是用户觉得不够清楚，该加的是原语（例如 `forbid` 高亮闪红），不是在这里凑动画。",
+      "timing": {
+        "点绿宝石堆（剩 2）": "0.60",
+        "点三堆只有 3 枚的": "1.80 / 2.40 / 3.00"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<emerald>>"
+        },
+        {
+          "at": 1.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<diamond>>"
+        },
+        {
+          "at": 2.4,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<sapphire>>"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<ruby>>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.draw_rule.001.1",
+      "entry_from": "action.take.same.002",
+      "story": "【除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿】",
+      "note": "【不能故意少拿】\n  规则说明，**没有状态变化**：镜头推到整排供应区，把五堆依次点一遍 ——\n  让观众看到「现在这里还有五个种类」，所以必须拿三种不同的。\n  （演示「只剩两种时才可以拿两种」会把供应堆掏空、破坏后面的账，所以只在口播里讲。）",
+      "timing": {
+        "镜头推近供应区": "0.00",
+        "依次点五堆": "0.60 / 0.90 / 1.20 / 1.50 / 1.80"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<diamond>>"
+        },
+        {
+          "at": 0.8999999999999999,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<sapphire>>"
+        },
+        {
+          "at": 1.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<ruby>>"
+        },
+        {
+          "at": 1.5,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<emerald>>"
+        },
+        {
+          "at": 1.7999999999999998,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<onyx>>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.draw_rule.001.2",
+      "entry_from": "action.take.draw_rule.001.1",
+      "story": "【当供应堆宝石不足时，尽可能拿取宝石】",
+      "note": "【不足时：尽可能拿】\n  同一句话的后半段 —— 承接上一条的供应区特写，把**只剩 3 枚的三堆**点出来，\n  表示「这些是拿不到两枚的」。没有状态变化。",
+      "timing": {
+        "保持供应区特写": "0.00",
+        "点三堆各 3 枚": "0.50 / 1.00 / 1.50"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "supply"
+        },
+        {
+          "at": 0.5,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<diamond>>"
+        },
+        {
+          "at": 1.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<sapphire>>"
+        },
+        {
+          "at": 1.5,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<ruby>>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.limit.001.1",
+      "entry_from": "action.take.draw_rule.001.2",
+      "story": "【玩家持有的宝石和黄金总数上限为 10 个。任何时候当持有数量超过上限时】",
+      "note": "【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**（口播并没有让人拿这些），而本项目的铁律是\n  「脚本里没写有的那就是没有」+ 每色实物总数 7 枚的账要平 → 所以这里不凑那个演示，\n  只把镜头推到玩家持有区、把「手上的宝石」点出来。\n  （前作宝石的出现都有出处：`create` = 从盒里拿，`transfer` = 从供应堆拿。）",
+      "timing": {
+        "镜头推近玩家持有区": "0.00",
+        "点手上的宝石": "1.20"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_holding",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 1.2,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.limit.001.2",
+      "entry_from": "action.take.limit.001.1",
+      "story": "【必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下 10 个为止】",
+      "note": "【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**（口播并没有让人拿这些），而本项目的铁律是\n  「脚本里没写有的那就是没有」+ 每色实物总数 7 枚的账要平 → 所以这里不凑那个演示，\n  只把镜头推到玩家持有区、把「手上的宝石」点出来。\n  （前作宝石的出现都有出处：`create` = 从盒里拿，`transfer` = 从供应堆拿。）\n  这一句讲「还回供应堆」→ 把手上点一下、再把供应堆点一下（一来一回的方向感）。",
+      "timing": {
+        "点手上": "0.50",
+        "点供应堆": "1.60",
+        "再点手上": "3.00"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_holding",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.5,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        },
+        {
+          "at": 1.6,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<gem_supply|color=<diamond>>"
+        },
+        {
+          "at": 3.0,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.public.001.1",
+      "entry_from": "action.take.limit.001.2",
+      "story": "【宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前】",
+      "note": "【宝石是公开信息】\n  规则说明，**没有状态变化**：镜头停在玩家持有区（上一条已经推近），把「放在自己面前」这件事点出来。",
+      "timing": {
+        "保持玩家区特写": "0.00",
+        "点持有区": "0.80 / 2.40"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "player_holding",
+          "camera_padding": 1.6
+        },
+        {
+          "at": 0.8,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        },
+        {
+          "at": 2.4,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        }
+      ]
+    },
+    {
+      "cue": "action.take.public.001.2",
+      "entry_from": "action.take.public.001.1",
+      "story": "【所有人都能清楚看到的地方】",
+      "note": "【公开 = 大家都看得见】\n  「所有人都能清楚看到」用**镜头语言**表达：从持有区特写拉回整桌 —— 手上有多少、别人一眼就看到。\n  没有状态变化。",
+      "timing": {
+        "点持有区": "0.40",
+        "拉回整桌": "1.60"
+      },
+      "enter": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 3,
+            "kinds": {
+              "宝石白": 3
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 3,
+            "kinds": {
+              "宝石蓝": 3
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 3,
+            "kinds": {
+              "宝石红": 3
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 2,
+            "kinds": {
+              "宝石绿": 2
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "player_holding": {
+            "count": 5,
+            "kinds": {
+              "宝石白": 1,
+              "宝石蓝": 1,
+              "宝石红": 1,
+              "宝石绿": 2
+            }
+          }
+        }
+      },
+      "start": {
+        "set": []
+      },
+      "events": [
+        {
+          "at": 0.4,
+          "dur": 0.5,
+          "action": "highlight",
+          "easing": "easeInOutCubic",
+          "peak_alpha": 0.65,
+          "zone": "<player_holding>"
+        },
+        {
+          "at": 1.6,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        }
+      ]
     }
   ]
 }
