@@ -31,6 +31,14 @@
       "diameter": 43,
       "confirmed_by": "user",
       "note": "与宝石同径"
+    },
+    {
+      "id": "starting_player_marker",
+      "zh": "起始玩家标记",
+      "w": 50.0,
+      "h": 62.0,
+      "confirmed_by": "estimated",
+      "note": "⚠ 尺寸是估值（按图片长宽比 0.806 定的 50x62mm），**等用户实测**。2024 新版是一张菱形纸板标记；照片见 media/marker/。"
     }
   ],
   "world_units": {

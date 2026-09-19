@@ -26,6 +26,8 @@ namespace BoardGameTutorial
             { "card_level_2", new Color(0.78f, 0.64f, 0.20f) },
             { "card_level_3", new Color(0.24f, 0.42f, 0.72f) },
             { "noble",        new Color(0.74f, 0.67f, 0.55f) },
+            // 起始玩家标记：菱形纸板件（实物是冷蓝灰的钻石图案）
+            { "marker",       new Color(0.42f, 0.50f, 0.58f) },
             { "shadow",       new Color(0f, 0f, 0f) },
             { "white",        Color.white },
         };
