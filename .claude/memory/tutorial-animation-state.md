@@ -2645,3 +2645,35 @@ setup.cards.002.1 Complete() 后: 市场 12 张 → 卡面 **12** / 卡背 0；�
 
 实测：**29 张成品（宝石 6 + 贵族 5 + 发展卡 18）全部通过验收** ✓
 （宝石 px/mm 完全一致 11.86；报告在 `client/CaptureOut/matte_report.json`）。
+
+## 组件面片必须跟着相机转（billboard）：否则斜视会把组件压扁（2026-09 用户报"组件像被压矮了"）
+
+**用户原话**：「我想去掉 50° 摄像机这个设定……结果现在摄像机还是 90° 的，只不过把所有组件的高给
+压缩了，看起来很难看。还是恢复所有组件的原始尺寸吧。」
+
+**根因**：不是谁在改 `localScale`（`LocalScaleFor` 只按 mm/PPU 做等比缩放，全程没有非等比缩放）。
+是所有**组件面片都立在世界的 XY 平面**里（`localRotation = Quaternion.Euler(0,0,roll)`），
+而取景相机是 50° 斜视的。正交相机没有透视，斜看一个立着的面片，高度方向按 `cos(pitch)` 投影
+—— 50° 时只剩 **64%**。所以"摄像机是 50°，画面却像 90° 俯视 + 组件被压矮"这两件事是同一件事。
+（`showbox` 的整幅图**早就**是 `tr.rotation = cam.transform.rotation` 正对相机摆的，注释里甚至写了
+"俯视 50°，平躺会被压扁" —— 即当年只把盒面摆对了，组件漏了。旧设计文档里写的
+"正交相机 + 微倾 billboard 保证可读性"本来就要求这么做。）
+
+**修法**：`TutorialCueAnimPlayer.SpriteRotation(roll) = Quaternion.Euler(CameraPitch,0,0) * Quaternion.Euler(0,0,roll)`
+—— 面片平面**平行于屏幕**，组件永远按原始尺寸/原始宽高比显示；`roll` 仍然是在面片平面内转（语义不变）。
+9 处设置旋转的地方全部换成它（建对象、复位、翻面、洗牌、旋转补间），`CreateSpriteObject` 里也先摆正
+（否则第一帧会以"立着的"姿态闪一下）。取景俯角 `camera_pitch` 默认值三处统一改成 **90**（stage /
+`TutorialCueAnimData` / `framing_geometry.py` 的兜底值）。
+
+**关键结论**：`camera_pitch` 从此是**纯观感参数** —— 改它只改布局的纵深压缩，不会再压扁组件。
+想要"坐在桌边"的代入感就调小（比如 55~65），组件尺寸始终真实。
+
+**验证（纯表现改动必须"状态一字不变"）**：
+- 采样前后逐 cue 深度比对 `full.exitstate.json`：**109 条 cue 状态完全相同**（`[exit code]` 之外零差异，
+  文件字节数都一样 2281150）—— 证明这次只动了表现、没动状态。
+- 新加 `ShapeReportForTest()`：断言每个 actor 的朝向 == `SpriteRotation(自己的 roll)`（面片平行于屏幕）
+  且 xy 缩放相等；采样器每条 cue 打一行 `[Shape] <cue> 件=… 姿态不符=0 非等比缩放=0 相机俯角=90°`。
+  **状态采样看不见姿态**，所以姿态必须单独断言 —— 这是这一族问题的通用教训。
+- `validate_cue_anim.py` 17 cue 0 错 0 警；`check_cue_script.py --all` 0 处不一致，
+  12 条取景警告与改前**完全相同**（取景几何按 `sin(pitch)` 换算，90° 时画面的地面覆盖比 50° 略小，
+  不会新增越界内容）。
