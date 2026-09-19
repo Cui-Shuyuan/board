@@ -98,10 +98,15 @@ namespace BoardGameTutorial.Editor
             // 两者不一致时（字段没映射上、默认值、老数据…）表现是"画面什么都不做"，
             // 只看脚本文件永远查不出来 —— 必须看解析结果（2026-09 的 create/what 就是这么查的）。
             bool withEvents = ArgValue("-dumpEvents", "0") == "1";
+            // 把"每个模板最终用的是哪张图"打出来（-dumpImages 1）。
+            // 换素材/加处理（例如 <原名>_cutout.png）之后，第一个要确认的就是它 ——
+            // 否则"改了素材但画面没变"要靠猜。
+            bool withImages = ArgValue("-dumpImages", "0") == "1";
 
             var go = new GameObject("DumpHost");
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
+            anim.logImages = withImages;
 
             // ── 一次采一整条轨道（-dumpCues "a,b,c"）─────────────────────────
             // 以前每条 cue 都要启动一次 Unity（batchmode 启动几十秒）+ 每条都从头重放一遍
