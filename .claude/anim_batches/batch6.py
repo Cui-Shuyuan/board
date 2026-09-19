@@ -58,21 +58,30 @@ def cue(cid, parent, story, note, timing, enter, exit_, events):
 
 
 D9 = {"count": 9, "kinds": {"一级白": 3, "三级白": 1, "一级蓝": 1, "一级红": 4}}
-D10 = {"count": 10, "kinds": {"一级白": 3, "三级白": 2, "一级蓝": 1, "一级红": 4}}
-D11 = {"count": 11, "kinds": {"一级白": 3, "三级白": 2, "一级蓝": 1, "一级红": 4, "三级蓝": 1}}
+D10 = {"count": 10, "kinds": {"一级白": 3, "三级白": 1, "一级蓝": 1, "一级红": 4, "二级红": 1}}
+D11 = {"count": 11, "kinds": {"一级白": 3, "三级白": 1, "一级蓝": 1, "一级红": 4,
+                              "二级红": 1, "三级蓝": 1}}
 
 
-def T(market=10, gold=2, reserved=3, dev=None, **over):
+def T(market=10, gold=None, reserved=3, dev=None, pre=False, **over):
+    """整桌账。pre=True = 3.4 那次**真付款之前**（持有区 8 枚含 3 黄金、黄金堆 2、黑宝石堆 4）；
+    默认 = 付款之后（付了 3 黄金 + 3 黑，手上只剩 5 枚宝石、黄金堆回到 5、黑宝石堆 7）。"""
+    if gold is None:
+        gold = 2 if pre else 4          # 3.4 那一步付了 2 枚黄金（黄金堆 2 → 4）
+    hold_gold = 3 if pre else 1
+    onyx = 4
+    hk = {"宝石白": 2, "宝石绿": 1}
+    if hold_gold:
+        hk["黄金"] = hold_gold
     z = {
         "card_market": {"count": market, "face_up": market},
         "deck_level_1": {"count": 34}, "deck_level_2": {"count": 26}, "deck_level_3": {"count": 16},
         "noble_market": {"count": 0},
-        "gem_supply_diamond": {"count": 3}, "gem_supply_sapphire": {"count": 3},
-        "gem_supply_ruby": {"count": 3}, "gem_supply_emerald": {"count": 2},
-        "gem_supply_onyx": {"count": 4},
+        "gem_supply_diamond": {"count": 2}, "gem_supply_sapphire": {"count": 4},
+        "gem_supply_ruby": {"count": 4}, "gem_supply_emerald": {"count": 3},
+        "gem_supply_onyx": {"count": onyx},
         "gold_supply": {"count": gold},
-        "player_holding": {"count": 8, "kinds": {"宝石白": 1, "宝石蓝": 1, "宝石红": 1,
-                                                "宝石绿": 2, "黄金": 3}},
+        "player_holding": {"count": 3 + hold_gold, "kinds": hk},
         "player_marker": {"count": 1},
         "showcase": {"count": 0}, "showcase_1": {"count": 0},
         DEV: dev or D9, NOB: {"count": 3},
@@ -92,7 +101,7 @@ A(cue("action.purchase_reserved.001", "action.reserve.not_purchase.001",
       "  规则说明，**没有状态变化**：点市场（供应堆那 12 张）、再点保留区（自己留的 3 张）——"
       "两条路都能买。",
       {"点市场": "0.60", "点保留区": "2.20"},
-      part(None, T()), part(None, T()),
+      part(None, T(pre=True)), part(None, T(pre=True)),
       [wait(0.0, camera="board"), hl(0.6, zone="<card_market>"), hl(2.2, zone=RES)]))
 
 A(cue("action.purchase_reserved.002.1", "action.purchase_reserved.001",
@@ -105,7 +114,7 @@ A(cue("action.purchase_reserved.002.1", "action.purchase_reserved.001",
       "  ⚠ **支付这一步没有真的演**：口播说『支付费用』，但手上这 8 枚（含 3 黄金）凑不出这张牌的费用，"
       "而且全套教程到现在**还没有一次真正的付宝石买牌** —— 见本项目收尾报告里的缺口清单。",
       {"点保留区那张": "0.80", "搬进发展区（翻开）": "2.40"},
-      part(None, T()),
+      part(None, T(pre=True)),
       part(None, T(market=10, reserved=2, dev=D10)),
       [wait(0.0, camera=RES, padding=1.6),
        hl(0.8, zone=RES, order=0),

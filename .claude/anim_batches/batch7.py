@@ -227,36 +227,29 @@ set_cue('endgame.tie.001.1', [
 # ── ⑤ 3.4 真付一次钱 ───────────────────────────────────────────────────────
 set_cue('action.purchase_reserved.002.1', [
     wait(0.0, camera="player_reserved", padding=1.6),
-    hl(0.8, zone="player_reserved", order=0),
-    # 实付 6 黑（三级白 3白+3红+6黑；发展区折扣 白5/红4/蓝2 → 白红全抵，只剩 6 黑）
-    ev(1.6, "create", destination="player_holding", template="gem", palette="gem_onyx",
-       count=3, what={"concept": "gem", "parts": [{"key": "color", "value": "<onyx>"}]}),
-    ev(2.0, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
-       source=["player_holding"], destination="<gem_supply|color=<onyx>>", quantity=3,
-       what={"concept": "gem", "parts": [{"key": "color", "value": "<onyx>"}]}),
-    ev(2.0, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
-       source=["player_holding"], destination="<gold_supply>", quantity=3,
+    hl(0.8, zone="player_reserved", order=2),
+    # 买二级红：价格 6红（读图）；发展区已有 4 张红牌 → 红折扣 4 → 实付 2 红。
+    # 手上没有红宝石 → 用 2 枚黄金替代（黄金 = 万能宝石，3.3 刚讲过）。
+    ev(1.6, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+       source=["player_holding"], destination="<gold_supply>", quantity=2,
        what={"concept": "gold"}),
-    # 付完再把牌翻开搬进发展区（口播顺序：先支付，再翻开）
-    ev(3.4, "transfer", dur=0.7, easing="easeInOutCubic", realizes="<ontology::transfer>",
+    ev(3.0, "transfer", dur=0.7, easing="easeInOutCubic", realizes="<ontology::transfer>",
        source=["player_reserved"], destination="player_development", quantity=1, to="face_up",
-       what={"concept": "development_card_level_3",
-             "parts": [{"key": "bonus", "value": "<diamond>"}]}),
-    pt(4.6, part="cost", indicator="circle", zone="player_development", order=10),
-], note_replace=None)
+       what={"concept": "development_card_level_2",
+             "parts": [{"key": "bonus", "value": "<ruby>"}]}),
+    pt(4.4, part="cost", indicator="circle", zone="player_development", order=10),
+])
 c = by_id['action.purchase_reserved.002.1']
 c['note'] = (
-    "【买下保留的那张：这一次**真的付钱**了（用户指示⑤）】\n"
-    "  那张三级白的实际价格（读图）：**3白 + 3红 + 6黑**。发展区现在的折扣是白 5、红 4、蓝 2\n"
-    "  （5 张白牌 + 4 张红牌 + 2 张蓝牌），白红被折扣全抵掉 → **实付 6 枚黑宝石**。\n"
-    "  所以动画做三件事：\n"
-    "    ① `create` 3 枚黑进持有区（口播 `支付费用` 的前提是「你得付得出」，用户批准了这种补法）；\n"
-    "    ② 把 **3 枚黄金 + 3 枚黑** 付回供应堆（黄金回黄金堆、黑回黑堆）——\n"
-    "       这两笔和①**同一帧**完成：否则持有区会短暂到 11 枚，与它自己讲的『上限 10』打架；\n"
-    "    ③ 牌从保留区搬进发展区（`to: face_up` 就是口播说的『翻开』），再圈出它的价格位置。\n"
-    "  数学上为什么是 6 黑：价格 12 枚 − 折扣抵掉的 3白+3红（折扣白 5 ≥ 3、红 4 ≥ 3）→ 6 黑；\n"
-    "  蓝折扣 2 用不上。这套算式**没有写进动画**（没有分数/账单 UI），画面上就是"
-    "『补 3 黑 → 付 3 金 3 黑 → 牌翻开进发展区』，与口播的『支付费用』一致。")
+    "【买下保留的那张：**真付钱**（用户指示⑤ + 状态必须合法）】\n"
+    "  买的是保留区第 3 张 **二级红**：价格读图 = **6 红**。\n"
+    "  为什么不是第 1 张三级白：它要 **3白+3红+6黑**，而 2 人局每色在场只有 4 枚 ——\n"
+    "  **6 枚黑宝石根本不存在**，而发展区没有黑牌、折扣抵不到黑 → 这张在 2 人局里买不起，\n"
+    "  留在保留区是对的（真实牌局里『先留着，以后再买』也是常态）。\n"
+    "  二级红的账：发展区有 4 张红牌（一级红×4）→ 红折扣 4 → 6 − 4 = 实付 **2 红**；\n"
+    "  手上没有红宝石（白2 绿1 黄金3）→ 用 **2 枚黄金**替代（黄金就是万能宝石，3.3 刚讲过）。\n"
+    "  这一整套账由 `scripts/validate_anim_rules.py` 在**写脚本时**逐色核对：每色在场恒 4 枚、\n"
+    "  黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。")
 
 ANIM.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 print('batch7 完成：卡面指示物 6 条、贵族 3 条、否定 3 处、结算红圈 3 条、真付款 1 条')

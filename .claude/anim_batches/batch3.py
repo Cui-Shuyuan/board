@@ -122,6 +122,12 @@ for zid in (S1, S2):
     pass
 
 
+def gem_what(k):
+    """本体语言点名一颗宝石（gem + color=<...>）—— 与 batch2 里的同名工具一致。"""
+    en = {'d': 'diamond', 's': 'sapphire', 'r': 'ruby', 'e': 'emerald', 'o': 'onyx'}[k]
+    return {"concept": "gem", "parts": [{"key": "color", "value": f"<{en}>"}]}
+
+
 def part(picture, zones):
     return {"picture": picture, "zones": zones}
 
@@ -156,16 +162,26 @@ def cue(cid, parent, story, note, timing, enter, exit_, events):
 
 
 # 本批期间不变的账（整桌）。宝石/黄金/贵族/标记：行动段开始后的账
-def T(**over):
+def T(pre=False, **over):
+    """整桌账。pre=True = market.001.2 **那次真付款之前**（供应 白3蓝3红3绿2黑4、手上 5 枚）；
+    默认 = 付款之后（取 3 枚黑/白/绿、付掉 1蓝2绿1红1黑 → 供应 白2蓝4红4绿3黑4、手上 白2绿1）。"""
+    if pre:
+        sup = {"diamond": 3, "sapphire": 3, "ruby": 3, "emerald": 2, "onyx": 4}
+        hold = {"count": 5, "kinds": {"宝石白": 1, "宝石蓝": 1, "宝石红": 1, "宝石绿": 2}}
+    else:
+        sup = {"diamond": 2, "sapphire": 4, "ruby": 4, "emerald": 3, "onyx": 4}
+        hold = {"count": 3, "kinds": {"宝石白": 2, "宝石绿": 1}}
     z = {
         "card_market": {"count": 12, "face_up": 12},
         "deck_level_1": {"count": 36}, "deck_level_2": {"count": 26}, "deck_level_3": {"count": 16},
         "noble_market": {"count": 3},
-        "gem_supply_diamond": {"count": 3}, "gem_supply_sapphire": {"count": 3},
-        "gem_supply_ruby": {"count": 3}, "gem_supply_emerald": {"count": 2},
-        "gem_supply_onyx": {"count": 4},
+        "gem_supply_diamond": {"count": sup["diamond"]},
+        "gem_supply_sapphire": {"count": sup["sapphire"]},
+        "gem_supply_ruby": {"count": sup["ruby"]},
+        "gem_supply_emerald": {"count": sup["emerald"]},
+        "gem_supply_onyx": {"count": sup["onyx"]},
         "gold_supply": {"count": 5},
-        "player_holding": {"count": 5, "kinds": {"宝石白": 1, "宝石蓝": 1, "宝石红": 1, "宝石绿": 2}},
+        "player_holding": hold,
         "player_marker": {"count": 1},
         "showcase": {"count": 0}, "showcase_1": {"count": 0},
         DEV: {"count": 0},
@@ -186,8 +202,8 @@ A(cue("action.cards.intro.001", "action.take.public.001.2",
       "  而市场的近景一次框住 12 张，牌角的小字看不清。样本是既有约定"
       "  （2.1 讲卡背时也是这么做的）：独立模板、不进牌堆/市场的账、讲完销毁。",
       {"镜头对准两个样本": "0.00", "两张样本出现": "0.50"},
-      part(None, T()),
-      part(None, T(**{S1: {"count": 1, "kinds": {SAMPLE1 + "|card_level_1": 1}},
+      part(None, T(pre=True)),
+      part(None, T(pre=True, **{S1: {"count": 1, "kinds": {SAMPLE1 + "|card_level_1": 1}},
                       S2: {"count": 1, "kinds": {SAMPLE2 + "|card_level_2": 1}}})),
       [wait(0.0, camera="showcase,showcase_1", padding=1.5),
        ev(0.5, "create", destination=S1, template=SAMPLE1, palette="card_level_1",
@@ -205,8 +221,8 @@ A(cue("action.cards.cost.001.1", "action.cards.intro.001",
       "【左下角是这张牌的价格。要想购买这张牌】",
       _note_cost,
       {"镜头保持两样本近景": "0.00", "点一级白样本": "0.60 / 1.80"},
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
       [wait(0.0, camera="showcase,showcase_1", padding=1.5),
        hl(0.6, zone=S1), hl(1.8, zone=S1)]))
 
@@ -214,8 +230,8 @@ A(cue("action.cards.cost.001.2", "action.cards.cost.001.1",
       "【玩家需要将这里标注的宝石种类和数量返回宝石供应堆】",
       _note_cost + "\n  后半句讲『返回供应堆』→ 讲完价格把镜头切到供应堆（这就是宝石要去的地方）。",
       {"点样本（价格）": "0.50", "镜头切供应堆": "2.60"},
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
       [hl(0.5, zone=S1), wait(2.6, camera="supply")]))
 
 A(cue("action.cards.cost.001.3", "action.cards.cost.001.2",
@@ -224,10 +240,10 @@ A(cue("action.cards.cost.001.3", "action.cards.cost.001.2",
       "『放在自己面前』→ 镜头拉回整桌、点玩家区。\n"
       "  ⚠ 这一条**没有真的买牌**：它讲的是『买牌的步骤』，真正的购买演示在下一条（market.001.2）。",
       {"镜头给市场": "0.00", "点市场": "0.60", "镜头回整桌": "3.20", "点玩家区": "3.60"},
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
       [wait(0.0, camera="card_market", padding=1.6), hl(0.6, zone="<card_market>"),
-       wait(3.2, camera="board"), hl(3.6, zone="<player_holding>")]))
+       wait(3.2, camera="board"), hl(3.6, zone="player_holding")]))
 
 # 5-8 市场与补牌（这里做一次真购买 + 真补牌）
 A(cue("action.cards.market.001.1", "action.cards.cost.001.3",
@@ -236,8 +252,8 @@ A(cue("action.cards.market.001.1", "action.cards.cost.001.3",
       "  镜头推近市场，把 12 个格位按 order 0→11 扫一遍（0-3 一级行、4-7 二级行、8-11 三级行）。\n"
       "  扫格位而不是只点一下区域：让观众看到『12 张』是 12 个位置。",
       {"镜头推近市场": "0.00", "扫 12 格": "0.80 起每 0.22s"},
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
+      part(None, T(pre=True, **{S1: {"count": 1}, S2: {"count": 1}})),
       [wait(0.0, camera="card_market", padding=1.6)] +
       [hl(0.8 + i * 0.22, zone="<card_market>", order=i) for i in range(12)]))
 
@@ -251,19 +267,50 @@ _purchase_note = ("【买走一张 → 出现空位】\n"
                   "  · 空位是**真的**空位：`MoveToSlot` 只搬那一件，市场其余卡不回填 → 画面上第 3 格空出来。")
 A(cue("action.cards.market.001.2", "action.cards.market.001.1",
       "【只要卡牌被玩家买走，卡牌供应堆出现了空位】",
-      _purchase_note,
-      {"点要买的那张": "0.60", "搬到玩家发展区": "1.60", "点空位/发展区": "3.00"},
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1}})),
-      part(None, T(**{S1: {"count": 1}, S2: {"count": 1},
-                      "card_market": {"count": 11, "face_up": 11},
+      _purchase_note + "\n\n  【2026-09 用户要求：状态必须合法 → 这一步改成**真付款**】\n"
+      "  一级白的价格（读图）：**1蓝 + 2绿 + 1红 + 1黑**；此刻发展区还是空的 → 没有折扣，全价付。\n"
+      "  演示玩家手上原本是 5 枚（白1蓝1红1绿2），**付不出那 1 枚黑** —— 所以先按 3.1 讲过的规矩\n"
+      "  **合法地取 3 种不同**（黑1 + 白1 + 绿1，各自供应堆都够，取完 8 枚 ≤ 上限 10），再全价付掉。\n"
+      "  为什么不能「直接给」那 1 枚黑：2 人局每色在场只有 4 枚，另外 3 枚在盒里、**永远不再回场** ——\n"
+      "  `create` 出来就是凭空造宝石（`scripts/validate_anim_rules.py` 会当场报错）。\n"
+      "  ⚠ 严格说这是两个行动（取宝石 / 买牌），画面上是分开的两拍；本作没有「回合」指示物，\n"
+      "  这两拍属于「演示前提」（口播讲的是买走之后要补牌，支付细节在 3.2.1 讲过）。",
+      {"合法取 3 种不同": "0.30", "点要买的那张": "1.30", "付 1蓝2绿1红1黑": "2.20", "搬到玩家发展区": "2.90"},
+      part(None, T(pre=True, **{"showcase": {"count": 1}, "showcase_1": {"count": 1}})),
+      part(None, T(**{"card_market": {"count": 11, "face_up": 11},
+                      "showcase": {"count": 1, "kinds": {"sample_card_1_white|card_level_1": 1}},
+                      "showcase_1": {"count": 1, "kinds": {"sample_card_2_ruby|card_level_2": 1}},
                       DEV: {"count": 1, "kinds": {"一级白": 1}}})),
       [wait(0.0, camera="card_market", padding=1.6),
-       hl(0.6, zone="<card_market>", order=2),
-       ev(1.6, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+       # 合法取 3 种不同的宝石（源区颜色各不相同 → 也顺带演示 3.1 的规矩）
+       ev(0.3, "transfer", dur=0.5, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["<gem_supply|color=<onyx>>"], destination="player_holding", quantity=1,
+          what=gem_what("o")),
+       ev(0.5, "transfer", dur=0.5, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["<gem_supply|color=<diamond>>"], destination="player_holding", quantity=1,
+          what=gem_what("d")),
+       ev(0.7, "transfer", dur=0.5, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["<gem_supply|color=<emerald>>"], destination="player_holding", quantity=1,
+          what=gem_what("e")),
+       hl(1.3, zone="<card_market>", order=2),
+       # 精确付款：一级白 = 1蓝 + 2绿 + 1红 + 1黑
+       ev(2.2, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["player_holding"], destination="<gem_supply|color=<sapphire>>", quantity=1,
+          what=gem_what("s")),
+       ev(2.4, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["player_holding"], destination="<gem_supply|color=<emerald>>", quantity=2,
+          what=gem_what("e")),
+       ev(2.6, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["player_holding"], destination="<gem_supply|color=<ruby>>", quantity=1,
+          what=gem_what("r")),
+       ev(2.8, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
+          source=["player_holding"], destination="<gem_supply|color=<onyx>>", quantity=1,
+          what=gem_what("o")),
+       ev(2.9, "transfer", dur=0.6, easing="easeInOutCubic", realizes="<ontology::transfer>",
           source=["<card_market>"], destination=DEV, quantity=1,
           what={"concept": "development_card_level_1",
                 "parts": [{"key": "bonus", "value": "<diamond>"}]}),
-       hl(3.0, zone=DEV)]))
+       hl(3.4, zone=DEV)]))
 
 A(cue("action.cards.market.001.3", "action.cards.market.001.2",
       "【玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽】",
@@ -362,7 +409,7 @@ A(cue("action.cards.discount.002.2", "action.cards.discount.002.1",
       part(None, T(**{S1: {"count": 1}, S2: {"count": 1}, "deck_level_1": {"count": 35},
                       DEV: {"count": 1, "kinds": {"一级白": 1}}})),
       [wait(0.0, camera="player_holding", padding=1.6),
-       hl(0.6, zone="<player_holding>", order=0), hl(1.6, zone="<player_holding>", order=1)]))
+       hl(0.6, zone="player_holding", order=0), hl(1.6, zone="player_holding", order=1)]))
 
 _more_note = ("【折扣例子（二）：折扣叠起来】\n"
               "  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——"
@@ -397,7 +444,7 @@ A(cue("action.cards.discount.003.2", "action.cards.discount.003.1",
                       DEV: {"count": 3, "kinds": {"一级白": 1, "三级白": 1, "一级蓝": 1}}})),
       part(None, T(**{S1: {"count": 1}, S2: {"count": 1}, "deck_level_1": {"count": 35},
                       DEV: {"count": 3, "kinds": {"一级白": 1, "三级白": 1, "一级蓝": 1}}})),
-      [wait(0.0, camera="board"), hl(0.6, zone=DEV), hl(2.0, zone="<player_holding>")]))
+      [wait(0.0, camera="board"), hl(0.6, zone=DEV), hl(2.0, zone="player_holding")]))
 
 A(cue("action.cards.discount.003.3", "action.cards.discount.003.2",
       "【折扣的上限就是免费】",
