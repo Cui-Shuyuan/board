@@ -68,6 +68,44 @@ def workflow(image_name: str, prompt: str, denoise: float, steps: int, seed: int
     }
 
 
+def run_one(scan_path: str, what: str, denoise: float, steps: int = 20, seed: int = 42,
+            out_dir: str = "/tmp/matte_gen") -> str | None:
+    """跑一张图（给 matte_pipeline 复用）。返回生成的 PNG 路径；失败返回 None。
+
+    先用 `python3 scripts/gen_comfy.py --images xxx.jpg` 单跑一次验证环境，
+    之后流水线里直接调这个函数。
+    """
+    name = Path(scan_path).name
+    in_dir = COMFY / "input"
+    in_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy(scan_path, in_dir / name)
+    prefix = f"gen_{Path(name).stem}"
+    wf = workflow(name, POSITIVE.format(what=what), denoise, steps, seed, prefix)
+    try:
+        res = post("/prompt", {"prompt": wf})
+    except Exception as e:
+        print(f"[gen] 提交失败：{e}", file=sys.stderr)
+        return None
+    pid = res.get("prompt_id")
+    t0 = time.time()
+    while time.time() - t0 < 1800:
+        time.sleep(3)
+        try:
+            h = post(f"/history/{pid}")
+        except Exception:
+            continue
+        if pid in h and h[pid].get("outputs"):
+            for node_out in h[pid]["outputs"].values():
+                for im in node_out.get("images", []):
+                    src_png = COMFY / "output" / im.get("subfolder", "") / im["filename"]
+                    dst = Path(out_dir) / (Path(name).stem + "_gen.png")
+                    dst.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy(src_png, dst)
+                    return str(dst)
+            return None
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--images", nargs="+", required=True, help="扫描件文件名（在 media/card 下）")

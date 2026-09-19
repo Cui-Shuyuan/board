@@ -666,8 +666,13 @@ namespace BoardGameTutorial
             // 按色板名找实物图（宝石六色、黄金）
             if (!string.IsNullOrEmpty(tpl.palette) && PaletteImages.TryGetValue(tpl.palette, out var image))
             {
+                // **处理过的图优先**：`<原名>_cutout.png` 是 scripts/matte_pipeline.py 的产物
+                // （抠好的 alpha / 统一尺寸 / 可选的生成式质感），原始扫描件一个字节不动。
+                // 顺序 = "越处理过的越优先"，于是"换素材处理方式"不用改引擎。
+                string baseName = Path.GetFileNameWithoutExtension(image);
+                yield return "media/card/" + baseName + "_cutout.png";
                 yield return "media/card/" + image;
-                yield return "media/card/" + Path.GetFileNameWithoutExtension(image) + ".png";
+                yield return "media/card/" + baseName + ".png";
             }
 
             // 贵族板块

@@ -58,7 +58,15 @@ namespace BoardGameTutorial
                 return null;
             }
 
-            if (shape == "gem")
+            // **已经抠好的图不再二次处理**：否则运行时的启发式会把烘焙好的 alpha 覆盖掉
+            //（它在这批扫描件上本来就不可靠 —— 背景亮度 0.85 落在半透明带里，四角 alpha 会留 1.0，
+            //  用户看到的就是"方形白边"）。识别约定：文件名以 `_cutout.png` 结尾。
+            bool preCut = absolutePath.EndsWith("_cutout.png", System.StringComparison.OrdinalIgnoreCase);
+            if (preCut)
+            {
+                // alpha 已是成品：什么都不做
+            }
+            else if (shape == "gem")
             {
                 ApplyTokenMask(tex);
             }
