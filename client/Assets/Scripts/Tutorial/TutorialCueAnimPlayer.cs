@@ -93,6 +93,34 @@ namespace BoardGameTutorial
         /// <summary>自检用：当前显示的图片名（没有则空）。</summary>
         public string BoxPictureForTest => currentPicture;
 
+        /// <summary>
+        /// 自检用：组件的**画面姿态**汇总 —— 面片是否正对相机、缩放是否等比。
+        ///
+        /// 状态采样（zone/件数/身份/哪一面）看不见姿态，而"组件被压矮了"正是姿态问题：
+        /// 面片若立在世界的 XY 平面、相机又是斜视的，高度会被 cos(pitch) 投影压扁。
+        /// 这里断言每个 actor 的朝向都等于 `SpriteRotation(自己的 roll)`（即面片平面平行于
+        /// 屏幕），且缩放等比（xyz 里 xy 相等）—— 全部为 0 才说明组件是按原始尺寸画的。
+        ///
+        /// 注意：`flip` 动画中途会故意把 scale.x 压到 0（翻面），所以这条只该在**终态**查。
+        /// </summary>
+        public string ShapeReportForTest()
+        {
+            int n = 0, badRot = 0, badScale = 0;
+            float worst = 0f;
+            foreach (var it in Store.Items)
+            {
+                var go = it?.Actor?.Go;
+                if (go == null) continue;
+                n++;
+                float d = Quaternion.Angle(go.transform.localRotation, SpriteRotation(it.Actor.LiveRotation));
+                if (d > 0.5f) { badRot++; if (d > worst) worst = d; }
+                var s = go.transform.localScale;
+                if (Mathf.Abs(s.x - s.y) > 0.001f * Mathf.Max(1f, Mathf.Abs(s.y))) badScale++;
+            }
+            return $"件={n} 姿态不符={badRot}（最大角差 {worst:0.0}°）非等比缩放={badScale}" +
+                   $" 相机俯角={CameraPitch:0}° orthoSize={CameraOrthoSize:0.00}";
+        }
+
         /// <summary>自检用：临时注册一个容器。</summary>
         public void RegisterContainerForTest(string id, string[] itemIds)
         {
@@ -2372,13 +2400,13 @@ namespace BoardGameTutorial
             float k = Mathf.Min(viewH * 0.92f / nativeH, viewW * 0.92f / nativeW);
             boxSprite.transform.localScale = new Vector3(k, k, 1f);
 
-            // 让它**正对相机**并居中：盒面是一张竖图，相机俯视 50°，
-            // 若像卡牌那样平躺就会被压扁并跑到画面底部。
+            // 让它**正对相机**并居中（与组件面片同一套朝向，见 SpriteRotation）：
+            // 盒面是一张竖图，斜视相机下若平躺就会被压扁并跑到画面底部。
             var cam = animCamera != null ? animCamera : Camera.main;
             if (cam != null)
             {
                 var tr = boxSprite.transform;
-                tr.rotation = cam.transform.rotation;                     // 与相机同朝向
+                tr.rotation = cam.transform.rotation;                     // 与相机同朝向（= SpriteRotation(0)）
                 tr.position = cam.transform.position + cam.transform.forward * ortho;
             }
 

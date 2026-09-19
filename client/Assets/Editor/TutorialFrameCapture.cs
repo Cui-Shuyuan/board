@@ -169,6 +169,9 @@ namespace BoardGameTutorial.Editor
                                       $" qty={e.quantity} dest='{e.destination}'");
                     for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
 
+                    // 画面姿态自检：面片是否正对相机、有没有被压扁（状态采样看不见这一层）。
+                    Debug.Log($"[Shape] {ids[k]} {anim.ShapeReportForTest()}");
+
                     var zs = CollectZones(anim);
                     // 引擎在**这一条 cue 里**报出的警告/错误（去重、限量）
                     var cueProblems = new List<string>(problems);

@@ -139,10 +139,14 @@ namespace UnityEngine
 
     public struct Quaternion
     {
-        public static Quaternion identity => new Quaternion();
+        public float x, y, z, w;
+        public Quaternion(float x, float y, float z, float w) { this.x = x; this.y = y; this.z = z; this.w = w; }
+        public static Quaternion identity => new Quaternion(0f, 0f, 0f, 1f);
         public static Quaternion Euler(float x, float y, float z) => new Quaternion();
         public static Quaternion Euler(Vector3 v) => new Quaternion();
         public static Quaternion SlerpUnclamped(Quaternion a, Quaternion b, float t) => a;
+        public static float Dot(Quaternion a, Quaternion b) => a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        public static float Angle(Quaternion a, Quaternion b) => 0f;
         public static Quaternion operator *(Quaternion a, Quaternion b) => a;
     }
 
