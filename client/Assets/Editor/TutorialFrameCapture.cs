@@ -459,6 +459,21 @@ namespace BoardGameTutorial.Editor
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
 
+            // 像真播放器那样把**整条轨道**的顺序交过去（含没有动画的 cue）。
+            // 少了这一步，入口链重放找不到"没有动画的目标 cue"就会一路重放到全片终态 ——
+            // 复现工具本身就会失真（实测会得到"全片终态"：宝石堆 17 件 = 20−3）。
+            var runtimePath = Path.Combine(gameRoot, "tutorial", "full.runtime.json");
+            if (File.Exists(runtimePath))
+            {
+                var rt = JsonUtility.FromJson<TutorialCueDoc>(File.ReadAllText(runtimePath));
+                if (rt?.cues != null)
+                {
+                    var ids = new List<string>(rt.cues.Count);
+                    foreach (var c in rt.cues) if (c != null) ids.Add(c.id);
+                    anim.SetCueOrder(ids);
+                }
+            }
+
             // 播放器真实用的路径现在**只有一条**：LoadCue 自己负责入口状态
             // （不接续时从根重放到本条之前，接续时沿用上一条终态）。
             // 以前这里还要复现 PlayCue → ApplyEntryState + LoadCue 两步（用反射调私有方法），
