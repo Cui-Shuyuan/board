@@ -75,6 +75,7 @@ def build():
     zones = {z["id"]: z for z in stage.get("zones") or []}
     devs = [z for z in zones if "development" in z]
     out, per_cue = [], {}
+    paid_seen = []          # 有没有发生过"把宝石付回供应堆"（决定要不要说"又付掉一些"）
 
     def describe_action(ev, st):
         a = ev.get("action")
@@ -85,14 +86,19 @@ def build():
         if a == "create":
             tid = ev.get("template") or ""
             if gold or color:
+                if tid.startswith("gem_sample") or dest in ("gem_display", "gold_display"):
+                    return (f"（展示用）把 {qty} 颗{CN.get(color, '黄金')}**样本**摆到展示位"
+                            f"（讲解道具，不进供应堆的账）")
                 return f"（前提）桌上又拿出来 {qty} 颗{CN.get(color, '黄金')}"
             if tid.startswith("sample"):
-                return "（展示用）把介绍用的样卡摆出来"
+                return "（展示用）把介绍用的样卡摆出来（不是游戏里的牌，只是讲解道具）"
             concept = str((stage.get("templates") or []) and next(
                 (t.get("concept") for t in stage["templates"] if t.get("id") == tid), "") or "")
             where = {"noble_market": "桌上贵族供应堆", "card_market": "市场"}.get(dest, "我面前")
             if concept == "noble" or tid.startswith("noble"):
                 return f"（前提）{where}摆出 {qty} 块贵族"
+            if concept == "starting_player_marker" or tid.startswith("starting_marker"):
+                return f"（前提）把 {qty} 枚起始玩家标记拿出来放到玩家面前"
             if not concept and tid.startswith("blank"):
                 return f"（展示用）往 {dest} 里垫了 {qty} 张牌背（只为撑牌堆厚度）"
             lv = R.card_level(stage, tid)
@@ -146,10 +152,20 @@ def build():
     def on_event(cid, where, ev, st, acc):
         if ev.get("action") not in STATE_ACTIONS:
             return
-        d = per_cue.setdefault(cid, {"acts": [], "counts": {}, "who": where})
+        d = per_cue.setdefault(cid, {"acts": [], "counts": {}, "who": where,
+                                     "only_samples": True})
+        # 只动"介绍样本"的 cue（摆讲解道具/收走道具）不值得问 —— 与用户说的
+        # "盒面介绍那种不用问"同类：它改的是讲解道具，不是对局状态。
+        tid = ev.get("template") or ""
+        if not (tid.startswith("sample") or tid.startswith("gem_sample")
+                or (ev.get("action") == "destroy" and "display" in
+                    str(R.resolve_zone_ref(stage, ev.get("zone") or "")))):
+            d["only_samples"] = False
         line = describe_action(ev, st)
         if not line:
             return
+        if line.startswith("把 ") and "付回供应堆" in line:
+            paid_seen.append(True)
         # 同一种动作合并计数（发牌是 12 条 transfer，写成"×12"就够）
         if d["acts"] and d["acts"][-1] == line:
             d["counts"][line] = d["counts"].get(line, 1) + 1
@@ -161,6 +177,8 @@ def build():
         d = per_cue.get(cid)
         if not d or not d["acts"]:
             return                                    # 状态没变 → **不硬挤问题**
+        if d.get("only_samples") and not cid.startswith("setup.cards.002"):
+            return                                    # 只摆/收讲解道具 → 不问
         hand = Counter()
         for ident, n in st.zones["player_holding"].items():
             if ident.startswith("gem:"):
@@ -194,7 +212,9 @@ def build():
                               for a in d["acts"])
         q = (f"我们两个人玩璀璨宝石。{setup_part}我刚刚做了这些事：{acts_text}。\n"
              f"做完之后：我手里一共有 {hand_total} 颗（{cnd(hand)}）"
-             f"——注意这是我前面几轮陆续拿的、又付掉一些之后剩下来的，不是这一次拿的；{gem_part}"
+             + ("——注意这是我前面几轮陆续拿的、又付掉一些之后剩下来的，不是这一次拿的；"
+                if paid_seen else "——这些是前面几轮陆续拿的（不是这一次拿的）；")
+             + f"{gem_part}"
              f"{dev_part}我面前保留着 {st.count('player_reserved')} 张发展卡，"
              f"已经认识 {st.count('player_nobles')} 块贵族。\n"
              f"请检查：我做的这些操作、以及现在的这个局面，有没有违反规则的地方？"
@@ -215,9 +235,15 @@ def verdict_of(reply):
     return "?"
 
 
-def run(questions, limit=0):
+def run(questions, limit=0, only=False):
     QADIR.mkdir(parents=True, exist_ok=True)
     jl = QADIR / "legality_log.jsonl"
+    # --only：把日志里已有的行读进来，只替换这次问的这几条（其余保留，不重问）
+    old = []
+    if only and jl.exists():
+        old = [json.loads(l) for l in jl.read_text(encoding="utf-8").splitlines() if l.strip()]
+        for o in old:
+            o.pop("_note", None)
     rows = []
     with jl.open("w", encoding="utf-8") as f:
         for i, it in enumerate(questions[:limit] if limit else questions, 1):
@@ -238,6 +264,11 @@ def run(questions, limit=0):
             f.write(json.dumps(it, ensure_ascii=False) + "\n")
             f.flush()
             print(f"{i}/{len(questions)} [{it['verdict']}] {it['cue']} ({it['seconds']}s)")
+    if only and old:
+        asked = {r["cue"] for r in rows}
+        merged = rows + [o for o in old if o["cue"] not in asked]
+        merged.sort(key=lambda r: next((i for i, q in enumerate(questions) if q["cue"] == r["cue"]), 999))
+        rows = merged
     (QADIR / "legality_log.json").write_text(
         json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8")
     bad = [r for r in rows if r["verdict"] != "合法"]
@@ -269,14 +300,19 @@ def main() -> int:
     ap.add_argument("--build", action="store_true", help="只生成问题（打印前几条）")
     ap.add_argument("--run", action="store_true", help="生成 + 问 + 写日志")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--only", default="", help="只重问这些 cue（逗号分隔）；日志里只替换这几行")
     a = ap.parse_args()
     qs = build()
+    only = [x.strip() for x in a.only.split(",") if x.strip()]
+    if only:
+        qs = [x for x in qs if x["cue"] in only]
+        print(f"（--only：只问 {len(qs)} 条：{', '.join(x['cue'] for x in qs)}）")
     print(f"（共 {len(qs)} 个问题 / 109 条 cue —— 只挑了改了状态的 cue）\n")
     if a.build or not a.run:
         for x in qs[:3]:
             print(f"[{x['cue']}]\n{x['question']}\n")
         return 0
-    run(qs, a.limit)
+    run(qs, a.limit, only=bool(only))
     return 0
 
 
