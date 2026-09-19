@@ -138,7 +138,7 @@ class State:
                    if ident.startswith("gem:") or ident.startswith("gold"))
 
 
-def run(anim, stage, facts, rep: Report, on_event=None):
+def run(anim, stage, facts, rep: Report, on_event=None, on_cue_end=None):
     zones = {z["id"]: z for z in (stage.get("zones") or [])}
     dev_zones = [z for z in zones if "development" in z]
     frozen = None
@@ -334,6 +334,8 @@ def run(anim, stage, facts, rep: Report, on_event=None):
                 rep.error(cid, f"{zid} 手上 {st.hand(zid)} 枚 > 上限 {HAND_LIMIT}")
         if len(reserved) > gold_taken and st.count("gold_supply") + gold_taken >= len(reserved):
             rep.error(cid, f"保留了 {len(reserved)} 张牌却只拿了 {gold_taken} 枚黄金（黄金堆还有，必须给）")
+        if on_cue_end is not None:
+            on_cue_end(cid, st)
         for tid, where in bought:
             cost = card_cost(facts, tid)
             if cost is None:
