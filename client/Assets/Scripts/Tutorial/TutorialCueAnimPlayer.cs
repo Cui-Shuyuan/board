@@ -312,9 +312,11 @@ namespace BoardGameTutorial
                 clock = -1f;
                 nextIndex = 0;
 
-                // 判据是「画面上有没有对象」，不是「store 里有没有数据」。
-                // 这两者会不一致：store 有 12 张、animRoot 却被清空过。
-                bool hasScene = animRoot != null && animRoot.transform.childCount > 0;
+                // 判据是「**牌桌建过没有**」= stage 载入过。**不要**用"画面上有没有对象"：
+                // 介绍那几条 cue 桌上本来就是空的（一件都没有）—— 那时 animRoot 都不存在，
+                // 用画面判会把"空桌"误判成"还没建桌"，于是顺序播放时也去重建入口状态
+                // （实测：整条轨道的状态被重放一遍，市场 12 张变 24 张）。
+                bool hasScene = stage != null;
                 // **牌桌还没搭过**（!hasScene）**或者本条是跳转/重播/上一条进来的**（!continueState）：
                 // 都要把状态重建到本条的入口。
                 //
