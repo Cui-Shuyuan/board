@@ -63,7 +63,7 @@ def api_url():
 
 
 def cnd(c):
-    return "、".join(f"{CN.get(k, k)} {v} 颗" if k in CN else f"{k} {v} 张"
+    return "、".join(f"{CN.get(k, k)} {v} 颗" if k in CN else f"{k} {v} 颗"
                      for k, v in sorted(c.items())) or "无"
 
 
@@ -88,9 +88,16 @@ def build():
                 return f"（前提）桌上又拿出来 {qty} 颗{CN.get(color, '黄金')}"
             if tid.startswith("sample"):
                 return "（展示用）把介绍用的样卡摆出来"
+            concept = str((stage.get("templates") or []) and next(
+                (t.get("concept") for t in stage["templates"] if t.get("id") == tid), "") or "")
+            where = {"noble_market": "桌上贵族供应堆", "card_market": "市场"}.get(dest, "我面前")
+            if concept == "noble" or tid.startswith("noble"):
+                return f"（前提）{where}摆出 {qty} 块贵族"
+            if not concept and tid.startswith("blank"):
+                return f"（展示用）往 {dest} 里垫了 {qty} 张牌背（只为撑牌堆厚度）"
             lv = R.card_level(stage, tid)
             name = f"{'一二三'[int(lv)-1]}级发展卡" if lv in "123" else "发展卡"
-            return f"（前提）我面前多出 {qty} 张{name}（脚本假设我本来就已经买了）"
+            return f"（前提）{where}多出 {qty} 张{name}（脚本假设我本来就已经买了）"
         if a == "destroy":
             return f"把 {qty} 件介绍用的样本收走"
         if a == "stack":
@@ -110,28 +117,24 @@ def build():
         if "holding" in (srcs[0] if srcs else "") and "supply" in dest:
             return f"把 {qty} 颗{CN.get(color, '黄金')}付回供应堆"
         if dest in devs:
-            tid = None
-            for sid in srcs:
-                for k in st.zones[sid]:
-                    if k.startswith("card:"):
-                        wb = next((str(p.get("value", "")).strip("<>")
-                                   for p in ((ev.get("what") or {}).get("parts") or [])
-                                   if p.get("key") == "bonus"), None)
-                        if wb and R.card_bonus(stage, k[5:]) != wb:
-                            continue
-                        tid = k[5:]
-                        break
-                if tid:
-                    break
-            cost = R.card_cost(facts, tid) or {}
+            # 卡的身份从事件本身推（等级取 concept 末位、颜色取 what.bonus），**不扫源区** ——
+            # 早先扫源区那版取不到 → 问出来"价格是无"，已弃用。
+            lv = str((ev.get("what") or {}).get("concept") or "")[-1:]
+            bonus = next((str(p2.get("value", "")).strip("<>")
+                          for p2 in ((ev.get("what") or {}).get("parts") or [])
+                          if p2.get("key") == "bonus"), None)
+            tid = f"market_card_{lv}_{bonus}" if lv in "123" and bonus else None
+            cost = (R.card_cost(facts, tid) or {}) if tid else {}
             disc = Counter()
             for ident, n in st.zones[devs[0]].items():
                 if ident.startswith("card:"):
                     b = R.card_bonus(stage, ident[5:])
                     if b:
                         disc[b] += n
-            return (f"买下一张价格是 {cnd(Counter(cost))} 的发展卡"
-                    f"（买之前我面前的折扣是 {cnd(disc)}）")
+            if cost:
+                return (f"我买下一张价格是 {cnd(Counter(cost))} 的发展卡"
+                        f"（买之前我面前的折扣是 {cnd(disc)}）")
+            return f"我买下一张发展卡（买之前我面前的折扣是 {cnd(disc)}；价格这一版没查到）"
         if "card_market" in dest:
             return "从那一行牌堆翻出 1 张新牌补到市场空位"
         if "reserved" in dest:
@@ -143,9 +146,15 @@ def build():
     def on_event(cid, where, ev, st, acc):
         if ev.get("action") not in STATE_ACTIONS:
             return
-        d = per_cue.setdefault(cid, {"acts": [], "who": where})
+        d = per_cue.setdefault(cid, {"acts": [], "counts": {}, "who": where})
         line = describe_action(ev, st)
-        if line:
+        if not line:
+            return
+        # 同一种动作合并计数（发牌是 12 条 transfer，写成"×12"就够）
+        if d["acts"] and d["acts"][-1] == line:
+            d["counts"][line] = d["counts"].get(line, 1) + 1
+        else:
+            d["counts"][line] = d["counts"].get(line, 1)
             d["acts"].append(line)
 
     def on_cue_end(cid, st):
@@ -163,9 +172,30 @@ def build():
         gems_line = "、".join(f"{CN.get(c, c)} {n} 颗" for c, n in sorted(gems.items()))
         gem_part = (f"桌上每种颜色的宝石在场总数是 {gems_line}（供应堆加我手里加我面前的，"
                     f"一共 {sum(gems.values())} 颗）；" if gems else "")
-        q = (f"我们两个人玩璀璨宝石。我刚刚做了这些事：{'；'.join(d['acts'])}。\n"
-             f"做完之后：我手里一共 {hand_total} 颗（{cnd(hand)}）；{gem_part}"
-             f"我面前保留着 {st.count('player_reserved')} 张发展卡，"
+        dev = Counter()
+        for ident, n in st.zones[devs[0]].items():
+            if ident.startswith("card:"):
+                b = R.card_bonus(stage, ident[5:])
+                if b:
+                    dev[b] += n
+        dev_part = (f"我面前已经买了发展卡，按颜色统计是 {cnd(dev)}"
+                    f"（每张牌给它那种颜色的折扣一颗）；" if dev else "我面前还没有买过发展卡；")
+        per_color = max(gems.values()) if gems else 0
+        demo = {4: 2, 5: 3, 7: 4}.get(per_color)
+        if cid.startswith("setup.") and demo and demo != 2:
+            setup_part = (f"补充说明：这一段我们其实是在**演示 {demo} 人局**的设置"
+                          f"（每种宝石取 {per_color} 颗）；演示完会把多余的放回盒子，"
+                          f"最后桌上只留两人局该用的四颗。\n")
+        elif cid.startswith("setup."):
+            setup_part = ""
+        else:
+            setup_part = ""
+        acts_text = "；".join(a + (f" ×{d['counts'].get(a, 1)}" if d['counts'].get(a, 1) > 1 else "")
+                              for a in d["acts"])
+        q = (f"我们两个人玩璀璨宝石。{setup_part}我刚刚做了这些事：{acts_text}。\n"
+             f"做完之后：我手里一共有 {hand_total} 颗（{cnd(hand)}）"
+             f"——注意这是我前面几轮陆续拿的、又付掉一些之后剩下来的，不是这一次拿的；{gem_part}"
+             f"{dev_part}我面前保留着 {st.count('player_reserved')} 张发展卡，"
              f"已经认识 {st.count('player_nobles')} 块贵族。\n"
              f"请检查：我做的这些操作、以及现在的这个局面，有没有违反规则的地方？"
              f"如果全部合规，请用「合法」开头；有问题就用「有问题」开头并指出哪里不对。")
