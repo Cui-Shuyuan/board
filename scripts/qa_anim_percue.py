@@ -67,6 +67,123 @@ def cnd(c):
                      for k, v in sorted(c.items())) or "无"
 
 
+def record_action(ev, st, stage, facts):
+    """把一个改状态的事件压成**判定所需的最小事实**（问句只用这些，不再整桌抄一遍）。"""
+    a = ev.get("action")
+    dest = R.resolve_zone_ref(stage, ev.get("destination") or ev.get("zone") or "")
+    srcs = [R.resolve_zone_ref(stage, x) for x in (ev.get("source") or [])]
+    gold, color = R.is_gold_event(ev), R.color_of_event(ev, stage)
+    qty = int(ev.get("quantity") or ev.get("count") or 1)
+    if a == "create":
+        return {"k": "premise", "tid": ev.get("template") or "", "qty": qty, "dest": dest}
+    if a == "destroy":
+        return {"k": "prop", "qty": qty}
+    if a == "stack":
+        return {"k": "stack", "dest": dest}
+    if a != "transfer":
+        return {"k": "other"}
+    if srcs and "gold_supply" in srcs[0] and "holding" in dest:
+        return {"k": "take_gold"}
+    if color and srcs and "supply" in srcs[0] and "holding" in dest:
+        piles = []
+        for z in srcs:
+            col = color
+            for zz in stage.get("zones") or []:
+                if zz.get("id") == z:
+                    for p2 in (zz.get("parts") or []):
+                        if p2.get("key") == "color":
+                            col = str(p2.get("value", "")).strip("<>")
+            n = sum(v for k, v in st.zones[z].items() if k.startswith(f"gem:{col}@"))
+            piles.append({"color": col, "left": n})
+        return {"k": "take", "piles": piles, "qty": qty, "hand_before": st.hand("player_holding")}
+    if srcs and "holding" in srcs[0] and "supply" in dest:
+        return {"k": "pay", "color": color, "qty": qty}
+    if dest.endswith("nobles"):
+        return {"k": "noble"}
+    if "reserved" in dest:
+        return {"k": "reserve"}
+    if "development" in dest:
+        lv = str((ev.get("what") or {}).get("concept") or "")[-1:]
+        bonus = next((str(p2.get("value", "")).strip("<>")
+                      for p2 in ((ev.get("what") or {}).get("parts") or [])
+                      if p2.get("key") == "bonus"), None)
+        tid = f"market_card_{lv}_{bonus}" if lv in "123" and bonus else None
+        return {"k": "buy", "tid": tid}
+    if "card_market" in dest:
+        return {"k": "refill"}
+    return {"k": "other"}
+
+
+def focused_question(cid, recs, st, stage, facts):
+    """**一 cue 只问这一件事 + 最小必要状态**（用户要求先过目再跑）。"""
+    by = {}
+    for r in recs:
+        by.setdefault(r["k"], []).append(r)
+    dev = st.zones["player_development"]
+    if by.get("buy"):
+        b = by["buy"][0]
+        cost = R.card_cost(facts, b.get("tid")) or {}
+        disc = Counter()
+        for ident, n in dev.items():
+            if ident.startswith("card:"):
+                bb = R.card_bonus(stage, ident[5:])
+                if bb:
+                    disc[bb] += n
+        bs = R.card_bonus(stage, b.get("tid") or "")
+        if bs:
+            disc[bs] = max(0, disc[bs] - 1)
+        paid = Counter({r["color"]: r["qty"] for r in by.get("pay", []) if r.get("color")})
+        g = sum(1 for r in by.get("pay", []) if r.get("color") is None)
+        if g:
+            paid["黄金"] = g
+        return (f"璀璨宝石。我要买一张发展卡：价格是 {cnd(Counter(cost))}；我面前同色发展卡给出的"
+                f"折扣是 {cnd(disc)}（被折扣抵掉的颜色不用付，差额可以用黄金顶）；"
+                f"我实际付出去的是 {cnd(paid)}。这笔购买合法吗？"
+                f"只回答「允许」或「不允许」，再说明该付什么。")
+    if by.get("take"):
+        t = by["take"][0]
+        who = "、".join(f"{CN.get(p['color'], p['color'])}（那堆还剩 {p['left']} 颗）"
+                        for p in t["piles"])
+        return (f"璀璨宝石。我手上已经有 {t['hand_before']} 颗宝石和黄金；现在我从 {who} "
+                f"一次共拿 {t['qty'] * len(t['piles'])} 颗。这样拿宝石合法吗？"
+                f"只回答「允许」或「不允许」，再给一句话理由。")
+    if by.get("take_gold"):
+        return ("璀璨宝石。我保留了一张发展卡，并按规则从黄金供应堆顺带拿 1 颗黄金。"
+                "这一步合法吗？只回答「允许」或「不允许」，再给一句话理由。")
+    if by.get("reserve"):
+        return (f"璀璨宝石。我准备再保留一张发展卡（朝下放在自己面前）。我之前已经保留了 "
+                f"{max(0, st.count('player_reserved') - 1)} 张，黄金供应堆还剩 "
+                f"{st.count('gold_supply')} 颗。这一步合法吗？"
+                f"只回答「允许」或「不允许」，再给一句话理由。")
+    if by.get("noble"):
+        bonus = Counter()
+        for ident, n in dev.items():
+            if ident.startswith("card:"):
+                bb = R.card_bonus(stage, ident[5:])
+                if bb:
+                    bonus[bb] += n
+        return (f"璀璨宝石。这一回合结束时，我面前的发展卡按颜色是 {cnd(bonus)}；"
+                f"桌上那块贵族要求四白四红，它自动归我。这一步合法吗？"
+                f"只回答「允许」或「不允许」，再给一句话理由。")
+    if by.get("premise"):
+        bonus = Counter()
+        for ident, n in dev.items():
+            if ident.startswith("card:"):
+                bb = R.card_bonus(stage, ident[5:])
+                if bb:
+                    bonus[bb] += n
+        return (f"璀璨宝石。（脚本假设的前提）我面前现在有这些发展卡，按颜色统计是 {cnd(bonus)}；"
+                f"我手里有 {st.hand('player_holding')} 颗。这个局面本身有没有违反规则的地方？"
+                f"只回答「合法」或「有问题」，再给一句话理由。")
+    if by.get("stack"):
+        return ("璀璨宝石。两人局里发展卡按等级有固定的张数，我把三摞牌堆搭好、又发了 12 张到市场；"
+                "这样对吗？只回答「合法」或「有问题」，再给一句话理由。")
+    if by.get("refill"):
+        return ("璀璨宝石。我买走一张牌之后，市场由规则自动补上一张新牌。这一步合法吗？"
+                "只回答「允许」或「不允许」，再给一句话理由。")
+    return None
+
+
 def build():
     """重放动画，按 cue 收集"做了什么 + 做完什么样"，只留有状态变化的那几条。"""
     anim = json.loads(R.ANIM.read_text(encoding="utf-8"))
@@ -157,7 +274,7 @@ def build():
         if ev.get("action") not in STATE_ACTIONS:
             return
         d = per_cue.setdefault(cid, {"acts": [], "counts": {}, "who": where,
-                                     "only_samples": True})
+                                     "only_samples": True, "recs": []})
         # 「讲解道具」= 介绍用的样本件（sample_* / gem_sample）与展示位
         # （showcase* / gem_display / gold_display）。**只动这些东西的 cue 一律不问** ——
         # 用户 2026-09-20 的话："那些介绍用的临时对象就别问了"（引擎也不认识"样本"这个概念，
@@ -174,6 +291,7 @@ def build():
             return
         if line.startswith("把 ") and "付回供应堆" in line:
             paid_seen.append(True)
+        d["recs"].append(record_action(ev, st, stage, facts))
         # 同一种动作合并计数（发牌是 12 条 transfer，写成"×12"就够）
         if d["acts"] and d["acts"][-1] == line:
             d["counts"][line] = d["counts"].get(line, 1) + 1
@@ -184,53 +302,17 @@ def build():
     def on_cue_end(cid, st):
         d = per_cue.get(cid)
         if not d or not d["acts"]:
-            return                                    # 状态没变 → **不硬挤问题**
+            return
         if d.get("only_samples"):
             skipped.append({"cue": cid,
                             "why": "只摆/收讲解道具（样本件或展示位），不是对局状态 → 不问"})
             return
-        hand = Counter()
-        for ident, n in st.zones["player_holding"].items():
-            if ident.startswith("gem:"):
-                hand[ident[4:].split("@")[0]] += n
-            elif ident.startswith("gold@"):
-                hand["黄金"] += n
-        hand_total = sum(hand.values())
-        gems = st.gems()
-        gems_line = "、".join(f"{CN.get(c, c)} {n} 颗" for c, n in sorted(gems.items()))
-        gem_part = (f"桌上每种颜色的宝石在场总数是 {gems_line}（供应堆加我手里加我面前的，"
-                    f"一共 {sum(gems.values())} 颗）；" if gems else "")
-        dev = Counter()
-        for ident, n in st.zones[devs[0]].items():
-            if ident.startswith("card:"):
-                b = R.card_bonus(stage, ident[5:])
-                if b:
-                    dev[b] += n
-        dev_part = (f"我面前已经买了发展卡，按颜色统计是 {cnd(dev)}"
-                    f"（每张牌给它那种颜色的折扣一颗）；" if dev else "我面前还没有买过发展卡；")
-        per_color = max(gems.values()) if gems else 0
-        demo = {4: 2, 5: 3, 7: 4}.get(per_color)
-        if cid.startswith("setup.") and demo and demo != 2:
-            setup_part = (f"补充说明：这一段我们其实是在**演示 {demo} 人局**的设置"
-                          f"（每种宝石取 {per_color} 颗）；演示完会把多余的放回盒子，"
-                          f"最后桌上只留两人局该用的四颗。\n")
-        elif cid.startswith("setup."):
-            setup_part = ""
-        else:
-            setup_part = ""
-        acts_text = "；".join(a + (f" ×{d['counts'].get(a, 1)}" if d['counts'].get(a, 1) > 1 else "")
-                              for a in d["acts"])
-        q = (f"我们两个人玩璀璨宝石。{setup_part}我刚刚做了这些事：{acts_text}。\n"
-             f"做完之后：我手里一共有 {hand_total} 颗（{cnd(hand)}）"
-             + ("——注意这是我前面几轮陆续拿的、又付掉一些之后剩下来的，不是这一次拿的；"
-                if paid_seen else "——这些是前面几轮陆续拿的（不是这一次拿的）；")
-             + f"{gem_part}"
-             f"{dev_part}我面前保留着 {st.count('player_reserved')} 张发展卡，"
-             f"已经认识 {st.count('player_nobles')} 块贵族。\n"
-             f"请检查：我做的这些操作、以及现在的这个局面，有没有违反规则的地方？"
-             f"如果全部合规，请用「合法」开头；有问题就用「有问题」开头并指出哪里不对。")
+        q = focused_question(cid, d["recs"], st, stage, facts)
+        if not q:
+            skipped.append({"cue": cid, "why": "这一条没有需要引擎判定的动作类型 → 不问"})
+            return
         out.append({"cue": cid, "expected": "脚本认为合法", "question": q,
-                    "acts": d["acts"]})
+                    "acts": d["acts"], "kinds": sorted({r["k"] for r in d["recs"]})})
 
     R.run(anim, stage, facts, R.Report(), on_event=on_event, on_cue_end=on_cue_end)
     return out, skipped
