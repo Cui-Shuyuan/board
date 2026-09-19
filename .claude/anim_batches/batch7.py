@@ -118,9 +118,9 @@ set_cue('action.cards.cost.001.3', [
     wait(0.0, camera="card_market", padding=1.6),
     hl(0.6, zone="<card_market>"),
     wait(3.2, camera="board"),
-    pt(3.6, part="cost", indicator="arrow", zone="player_development"),
-    pt(4.4, part="cost", indicator="arrow", zone="player_development", order=0),
-], note_add="\n  （『拿取并放在自己面前』→ 箭头最后落到自己面前那些牌上。）")
+    hl(3.6, zone="player_development"),
+], note_add=("\n  （『放在自己面前』这里只把玩家发展区点一下 —— 此刻它还是**空的**（第一张牌要到 "
+             "market.001.2 才买进来），所以**不画箭头**：指着空区等于什么都没指。）"))
 
 set_cue('action.cards.prestige.001.1', [
     wait(0.0, camera="showcase,showcase_1", padding=1.5),
@@ -146,6 +146,16 @@ set_cue('action.cards.discount.001', [
 ], note_add=PART_NOTE)
 
 # ── ② 3.2.2 贵族：指部位 + 否定 ─────────────────────────────────────────────
+set_cue('action.nobles.intro.001', [
+    wait(0.0, camera="noble_market,player_b_nobles", padding=1.5),
+    ev(0.4, "create", destination="player_b_nobles", template="noble", palette="noble",
+       what={"concept": "noble"}),
+    hl(1.0, zone="<noble_market>"),
+    pt(1.5, indicator="arrow", zone="player_b_nobles", order=0),
+], note_add=("\n  【2026-09 用户指示③】顺带给玩家B 摆一块贵族：后面那句『不可以从其他人那里拿贵族』"
+             "需要有『其他人那里的贵族』可指，否则那句话在画面上永远没有对象。\n"
+             "  ⚠ 这是**前提补出来**（口播里的『其他人』就是它），不严格按 2 人局只发 3 块贵族的数量算。"))
+
 set_cue('action.nobles.value.001.1', [
     wait(0.0, camera="noble_market", padding=1.25),
     pt(0.6, part="prestige", indicator="arrow", zone="<noble_market>", order=0),
