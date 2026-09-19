@@ -319,6 +319,10 @@ namespace UnityEngine
         public Texture2D(int w, int h, TextureFormat format, bool mipChain) { }
         public FilterMode filterMode;
         public TextureWrapMode wrapMode;
+        public int width => 2;
+        public int height => 2;
+        /// <summary>Unity: Texture.mipmapCount（没有 mip 链时是 1）。</summary>
+        public int mipmapCount => 1;
         public bool isReadable => true;
         public TextureFormat format => TextureFormat.RGBA32;
         public int GetInstanceID() => 0;

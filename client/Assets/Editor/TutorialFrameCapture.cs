@@ -107,6 +107,7 @@ namespace BoardGameTutorial.Editor
             var anim = go.AddComponent<TutorialCueAnimPlayer>();
             anim.animationEnabled = true;
             anim.logImages = withImages;
+            CardImageLoader.logLoads = withImages;   // 顺带把贴图尺寸/mip 层数打出来
 
             // ── 一次采一整条轨道（-dumpCues "a,b,c"）─────────────────────────
             // 以前每条 cue 都要启动一次 Unity（batchmode 启动几十秒）+ 每条都从头重放一遍

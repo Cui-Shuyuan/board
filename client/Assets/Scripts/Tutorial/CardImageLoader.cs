@@ -32,6 +32,18 @@ namespace BoardGameTutorial
 
         private static readonly Dictionary<string, Sprite> Cache = new Dictionary<string, Sprite>();
 
+        /// <summary>诊断开关：打印每张贴图的尺寸/mip 层数（出帧排查"扫描纹"用）。</summary>
+        public static bool logLoads;
+
+        /// <summary>
+        /// 大图才开 mip 链（省内存）：卡面 748x1045，小圆片/小图开了没意义。
+        /// **开 mip 是"扫描纹"的正解**：卡面 1045px 而画面里常常只有 130~560px，
+        /// 没有 mip 的缩小采样会走样（bilinear 只取 4 个像素），那些网点/纸纹不会
+        /// 被平均掉，反而变成闪烁的麻点 —— 用户 2026-09 报的"还有扫描纹"就是这个。
+        /// 有 mip 链 + Trilinear，缩小时按层加权平均，纹路自然淡掉。
+        /// </summary>
+        private const int MipMinPixels = 512 * 512;
+
         public static Sprite Load(string absolutePath, string shape = "card")
         {
             if (string.IsNullOrEmpty(absolutePath)) return null;
@@ -51,7 +63,9 @@ namespace BoardGameTutorial
                 return null;
             }
 
-            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            // mipChain: true —— 见 MipMinPixels 的说明（缩小时的走样就是"扫描纹"）。
+            // 代价是显存 +33%（卡面 1045px 那批是大头），换来的是任何缩放下都不闪。
+            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
             if (!ImageConversion.LoadImage(tex, bytes))
             {
                 Object.Destroy(tex);
@@ -75,8 +89,18 @@ namespace BoardGameTutorial
                 ApplyWhiteKey(tex);
             }
 
-            tex.filterMode = FilterMode.Bilinear;
+            // Trilinear：缩小到 mip 之间时按两层加权（Bilinear 会在层与层之间跳变，
+            // 表现是缩放时"沙沙"闪）。没有 mip 链时 Unity 会退化成 Bilinear，无损。
+            tex.filterMode = tex.mipmapCount > 1 ? FilterMode.Trilinear : FilterMode.Bilinear;
             tex.wrapMode = TextureWrapMode.Clamp;
+            tex.Apply(true);   // 前面 SetPixels 过，这里顺带把 mip 链重算出来
+
+            if (logLoads)
+            {
+                Debug.Log($"[CardImageLoader] {Path.GetFileName(absolutePath)} " +
+                          $"{tex.width}x{tex.height} mip={tex.mipmapCount} filter={tex.filterMode}" +
+                          $" cutout={preCut}");
+            }
 
             var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height),
                 new Vector2(0.5f, 0.5f), 100f);

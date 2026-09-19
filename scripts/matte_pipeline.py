@@ -26,7 +26,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
 SCAN_CANDIDATES = [ROOT / "games/splendor/media/card",
@@ -134,12 +134,34 @@ def border_white_mask(rgb: np.ndarray, tol: float = 0.07, max_frac: float = 0.25
     return bg
 
 
+def rounded_rect_alpha(w: int, h: int, radius_px: float) -> np.ndarray:
+    """抗锯齿的圆角矩形 alpha（0..1，float）。radius_px=0 → 直角矩形。
+
+    用 4× 超采样画再缩回来 —— 逐像素解析算圆角很容易出硬边/锯齿，而卡角本来就小，
+    硬边在画面里反而更显眼。
+    """
+    if radius_px <= 0.05:
+        return np.ones((h, w), dtype=np.float32)
+    s = 4
+    m = Image.new("L", (w * s, h * s), 0)
+    ImageDraw.Draw(m).rounded_rectangle([0, 0, w * s - 1, h * s - 1],
+                                        radius=radius_px * s, fill=255)
+    return np.asarray(m.resize((w, h), Image.LANCZOS)).astype(np.float32) / 255.0
+
+
 def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: float,
-                 key_border_white: bool, inset: int = 1) -> dict:
+                 key_border_white: bool, inset: int = 1,
+                 corner_mm: float = 0.0, rim_px: int = 0, denoise: float = 0.0) -> dict:
     """矩形件（发展卡/贵族板块）：裁到实物 → 按 mm 统一尺寸 → （贵族）键掉圆角处的台面。
 
     扫描件的长宽比常常偏（实测卡面 0.681 vs 实物 63:88=0.716，差 5%）——
     引擎把整张图铺进 width×height 的矩形，所以**重采样到 mm 比例**正好把这点偏差纠回来。
+
+    **卡牌的白边**（用户 2026-09 报"四角有一点点白边"）：扫描时卡放在白纸上，
+    实物卡的四个角本来就是**小圆角**，而铺满整幅的矩形把纸留了下来 —— 所以角上露白。
+    另外扫描里卡并不完全水平（实测左边起点在 0~18px 之间漂），边上也带一条纸边。
+    两条都按几何修：`rim_px` 先收掉纸边（再缩回原尺寸，mm 不变），
+    `corner_mm` 按实物半径把四角挖成透明的圆角（1.0mm ≈ 实物卡的角半径）。
     """
     rgb = np.asarray(Image.open(src).convert("RGB"))
     h, w, _ = rgb.shape
@@ -155,7 +177,20 @@ def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: floa
     H = int(round(h_mm * px_per_mm))
     im = Image.fromarray(rgb).resize((W, H), Image.LANCZOS)
     arr = np.asarray(im)
+    if rim_px > 0:                        # 收掉扫描件四周那条纸边：裁掉再缩回，输出尺寸/尺度都不变
+        arr = np.asarray(Image.fromarray(arr[rim_px:H - rim_px, rim_px:W - rim_px])
+                         .resize((W, H), Image.LANCZOS))
+        note += f"；收边 {rim_px}px"
+    if denoise > 0:                       # 降采样再回采样：把网点/纸纹抹掉，字还在（比高斯糊得少）
+        f = max(2, int(round(1.0 / max(0.05, denoise))))
+        small = Image.fromarray(arr).resize((max(8, W // f), max(8, H // f)), Image.LANCZOS)
+        arr = np.asarray(small.resize((W, H), Image.LANCZOS))
+        note += f"；去纹 1/{f}"
     alpha = np.full((H, W), 255, dtype=np.uint8)
+    if corner_mm > 0:                     # 实物卡的圆角：角上那块纸要透明
+        r = corner_mm * px_per_mm
+        aa = rounded_rect_alpha(W, H, r)
+        alpha = (alpha.astype(np.float32) * aa).astype(np.uint8)
     if key_border_white:                  # 贵族：圆角处露出的台面要透明
         bm = border_white_mask(arr)
         if bm.any():
@@ -172,12 +207,15 @@ def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: floa
             # 1px 过渡，避免硬边
             soft = np.clip(bm.astype(np.float32) * 2.0, 0, 1)[..., None]
             a = (1.0 - soft) * 255.0
-            alpha = a[..., 0].astype(np.uint8)
+            # 与圆角 alpha **相乘**（不是覆盖）：两条路都要生效
+            alpha = np.minimum(alpha, a[..., 0].astype(np.uint8))
     out = Image.fromarray(arr).convert("RGBA")
     out.putalpha(Image.fromarray(alpha))
     out.save(dst)
     return {"out": dst.name, "size": f"{W}x{H}", "note": note,
             "aspect": round(W / H, 4), "mm": f"{w_mm}x{h_mm}",
+            "corner_mm": corner_mm, "rim_px": rim_px, "denoise": denoise,
+            "transparent": round(float((alpha < 250).mean()), 4),
             "border_white": round(float(bm.mean()) if key_border_white else 0.0, 4)}
 
 
@@ -225,16 +263,24 @@ def run_rect(args) -> int:
     # 统一 px/mm：用宝石那批量到的中位尺度（同一台扫描机、同一档 DPI）。
     # 这样"卡 63mm / 宝石 43mm"的相对大小在动画里是对的。
     px_per_mm = args.px_per_mm
+    # 只有矩形件里的**卡牌**要圆角/收边/去纹：贵族那条路本来就靠键台面把角做透明了，
+    # 不动它（29/29 验收是绿的，别顺手改绿的东西）。
+    use_card_fix = args.cls == "card" and not args.no_card_fix
+    corner_mm = args.card_corner_mm if use_card_fix else 0.0
+    rim_px = args.card_rim_px if use_card_fix else 0
+    denoise = args.card_denoise if use_card_fix else 0.0
     rows = []
     print(f"{args.cls}：{len(names)} 个，实物 {w_mm}x{h_mm}mm，统一 {px_per_mm:.2f} px/mm "
-          f"→ {int(round(w_mm * px_per_mm))}x{int(round(h_mm * px_per_mm))}px")
+          f"→ {int(round(w_mm * px_per_mm))}x{int(round(h_mm * px_per_mm))}px"
+          + (f"；圆角 {corner_mm}mm 收边 {rim_px}px 去纹 {denoise}" if use_card_fix else ""))
     for name in names:
         src = scan_dir / name
         if not src.exists():
             print(f"  跳过（没有 {name}）")
             continue
         dst = out_dir / (Path(name).stem + "_cutout.png")
-        info = process_rect(src, dst, w_mm, h_mm, px_per_mm, key_white)
+        info = process_rect(src, dst, w_mm, h_mm, px_per_mm, key_white,
+                            corner_mm=corner_mm, rim_px=rim_px, denoise=denoise)
         info["scan"] = name
         rows.append(info)
         print(f"  {name:22} → {info['out']:26} {info['size']:>9} 长宽比={info['aspect']:.3f} {info['note']}")
@@ -257,6 +303,14 @@ def main() -> int:
     ap.add_argument("--report", default=None)
     ap.add_argument("--px-per-mm", type=float, default=11.88,
                     help="统一尺度（宝石那批量到的中位值：11.88 px/mm）")
+    # ── 卡牌矩形件的几何修正（白边/扫描纹）────────────────────────────────
+    ap.add_argument("--card-corner-mm", type=float, default=1.0,
+                    help="实物卡四角圆角半径（mm）；0=直角（不挖角）")
+    ap.add_argument("--card-rim-px", type=int, default=2,
+                    help="成品四周收掉的纸边像素（收掉再缩回，输出尺寸/尺度不变）")
+    ap.add_argument("--card-denoise", type=float, default=0.0,
+                    help="去扫描纹：先降到 1/N 再放大回来（0=不去纹，0.5→1/2，0.34→1/3）")
+    ap.add_argument("--no-card-fix", action="store_true", help="关掉卡牌的圆角/收边/去纹")
     args = ap.parse_args()
 
     if args.cls in ("noble", "card"):
