@@ -471,6 +471,23 @@ namespace BoardGameTutorial.Editor
             float.TryParse(ArgValue("-advanceSkip", "0"), System.Globalization.NumberStyles.Float,
                            System.Globalization.CultureInfo.InvariantCulture, out skipFraction);
 
+            // -advanceBack "A,B"：复现用户的**按 ←** —— 在 A 播完之后跳回 B。
+            // B 常常是"没有动画数据"的 cue（例如 setup.cards.002.2 纯口播），
+            // 那条路径以前不重建入口状态，于是 A 的世界和镜头都被留在原地。
+            string backArg = ArgValue("-advanceBack", null);
+            if (!string.IsNullOrEmpty(backArg))
+            {
+                var pair = backArg.Split(',');
+                anim.LoadCue(gameRoot, "full", pair[0], false);
+                for (float tt = 0f; tt <= anim.TotalDuration + 1f; tt += 0.05f) anim.Seek(tt);
+                Report(anim, pair[0] + " 播完");
+                anim.LoadCue(gameRoot, "full", pair[1], false);      // ← 按 ← 走的就是这条
+                Report(anim, "按 ← 回到 " + pair[1]);
+                Debug.Log("[Adv] 按 ← 复现完毕（判定由人来做：市场张数/展示位件数/相机大小）");
+                EditorApplication.Exit(0);
+                return;
+            }
+
             for (int i = 0; i < path.Length; i++)
             {
                 // 顺序进入：i>0 表示接着上一条的终态
@@ -525,8 +542,15 @@ namespace BoardGameTutorial.Editor
                     default: mkHidden++; break;
                 }
             }
+            int gemPiles = 0, displays = 0;
+            foreach (var it in anim.Store.Items)
+            {
+                if (it.ZoneId != null && it.ZoneId.StartsWith("gem_supply")) gemPiles++;
+                if (it.ZoneId == "gem_display" || it.ZoneId == "gold_display") displays++;
+            }
             Debug.Log($"[Adv] {tag}: 市场 {mk} 张 → 显示卡面 {mkFace} / 显示卡背 {mkBack} / 隐藏 {mkHidden}" +
-                      $"（Flipped=true 有 {flippedTrue} 张；没落位 {offSlot} 件）");
+                      $"（Flipped=true 有 {flippedTrue} 张；没落位 {offSlot} 件）" +
+                      $"；宝石堆 {gemPiles} / 展示位 {displays}；相机 orthoSize={anim.CameraOrthoSize:0.00}");
         }
 
 
