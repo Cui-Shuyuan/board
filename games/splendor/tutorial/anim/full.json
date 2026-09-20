@@ -1116,7 +1116,7 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "gem_display",
-          "camera_padding": 1.25
+          "camera_fill": 0.72
         },
         {
           "at": 0.35,
@@ -1223,13 +1223,6 @@
         "set": []
       },
       "events": [
-        {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "wait",
-          "camera": "gem_display",
-          "camera_fill": 0.72
-        },
         {
           "at": 2.85,
           "dur": 0.5,
