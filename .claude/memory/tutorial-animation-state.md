@@ -2921,7 +2921,7 @@ LLM 只理解意图、确定性工具照规则数据回答）来判断动画脚�
   不近才用全局 —— 原来"超过桌面长/宽 50% 就全局"会误伤横向宽纵向窄的主体（三摞牌库+市场 97% ✗）。
 - 特写范围按**实际件数**算（不是 zone 容量）：否则发展区按 12 格算会宽过桌面一半、永远拿不到特写 ✗。
 
-## ★ 多棵树（用户 2026-09-21 提的架构点子）——**待实施**
+## ★ 多棵树（用户 2026-09-21 提的架构点子）——**第 1 步已落地**
 
 用户原话："我们应该允许一个动画有**多棵树**。比如说最开始那个盒面图，那就是一个孤零零的节点。
 后面介绍牌，一棵树，可能有几个节点。然后镜头切到真实的桌面时（也就是那 3 个牌堆，实际操作镜头，
@@ -2958,3 +2958,22 @@ LLM 只理解意图、确定性工具照规则数据回答）来判断动画脚�
 所以 `trees` 块里每棵树要用文字写清"叫什么/为什么要它/初始状态/范围"；
 每条 cue 要写清"在哪棵树、是树内推进还是**切树**、为什么此刻切" ✓ ——
 **cut 的语义必须写在数据里**，不能只靠 zone 列表暗示 ✗。详见 `tutorial-animation-todo.md` 第六节。
+
+
+### 2026-09-21 多棵树第 1 步落地记录
+
+已把盒面 + 宝石演示从主树里切出来，并验证了“跨树 = cut”在引擎和校验链路里都成立：
+
+- 数据：`full.json` 顶层新增 `trees: [{id, stage, name, why, initial, extent_note}]`；
+  `bg.intro.*` 8 条标 `tree: "box"`，`setup.gems.001.1/.2/.3` + `setup.gems.002` 4 条标 `tree: "gems_demo"`；
+  其余暂时走默认主树（`TrackAnimDoc.stage`）。
+- 舞台：新增 `_stage/splendor.box.json`（无 zone，只有盒面根图）与
+  `_stage/splendor.gems.json`（只含 `gem_display`、`gold_display`、`gem_sample`）。
+  主树删除这两个假 zone 和 `gem_sample`；`setup.gems.003.1` 不再写 destroy 样本事件。
+- 引擎：`LoadCue` 先按 `cue.tree` 选 stage；跨树时 `continueState` 强制为 false，
+  新 stage 从树根 `ReplayEntryChain`（只重放同树 cue），并 `ResetFramingForTreeCut`。
+  跳转时的 camera 父链也只在树内向上找。
+- 校验：`validate_cue_anim` / `validate_anim_rules` / `check_framing_flow` / `check_cue_script`
+  全部按树分组或不跨树认父；`dump_states.sh + check_cue_script.py --all` 本轮为 0 处不一致、11 条取景警告。
+- 已知留下的：`showcase` 仍在主树。`action.cards.*` 的样卡是搭在真实市场/玩家状态上的临时道具，
+  不能简单当独立小世界；先搬 `setup.cards.001.*` 介绍牌树，再单独设计带主树入口快照的 cards 演示树。

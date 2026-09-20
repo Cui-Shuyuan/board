@@ -2,6 +2,42 @@
 
 > 新会话请**先读本文件**，再看 `tutorial-animation-state.md`（大本营：设计、口径、踩坑史）。
 
+## 〇、最新进展（2026-09-21，本会话）
+
+### P0 第 1 步：多棵树骨架 + 盒面树 / 宝石演示树已落地
+
+- 引擎（C#）：`TrackAnimDoc.trees` + `CueAnimDoc.tree` 已接入；`LoadCue` 按 cue 的 tree 取 stage，
+  **跨树 = cut**：重新 load stage、从该树根重放入口链、重置取景，不接续上一棵树状态。
+- 新增两棵树：
+  - `_stage/splendor.box.json`（盒面树）：无 zone / 无 template，只有 `default_picture=media/box.png`；
+    `bg.intro.*` 共 8 条已迁入。
+  - `_stage/splendor.gems.json`（宝石演示树）：只含 `gem_display`、`gold_display` 和 `gem_sample`；
+    `setup.gems.001.1` / `.2` / `.3` / `setup.gems.002` 共 4 条已迁入。
+- 主树 `_stage/splendor.table.json`：删掉 `gem_display`、`gold_display` 两个假 zone 与 `gem_sample` 模板；
+  `setup.gems.003.1/003.2/005.2`、`setup.nobles.001.1` 的契约/事件已去掉对应引用。
+- `full.json` 顶层新增 `trees`（box / gems_demo / main，含 name/why/initial/extent_note 文字说明）。
+- Python 工具：`validate_cue_anim`、`validate_anim_rules`、`check_cue_script`、`check_framing_flow` 已按树分治；
+  跨树不再默认继承父 cue，取景/状态链都按树各自成立。
+
+### 本会话验收结果
+
+```text
+validate_cue_anim.py          109 条，0 错 0 警
+validate_anim_rules.py        109 条合法性通过
+check_unity_scripts.py        25 个 C# 文件编译通过
+dump_states.sh + check_cue_script.py --all   0 处不一致，11 条取景警告
+check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌→回同一特写）
+```
+
+### 说明 / 下一小步
+
+- `showcase` 卡片演示假 zone **还在主树**：`action.cards.*` 的样卡是在主树真实市场/玩家状态之上临时摆的，
+  直接搬进独立 tree 会丢掉主树状态。下一步先搬最干净的 `setup.cards.001.*` 介绍牌树，
+  再把 `action.cards.*` 的样卡 tree 当成一个“带主树入口快照的演示树”单独设计。
+- `setup.gems.003.1` 现在跨树回到主树时，引擎会从主树根重放 `setup.cards.*` 的真实牌桌状态；
+  所以“宝石介绍时切走、回来桌上有三摞牌/市场”已按多棵树口径工作。
+- 本会话顺手修了两个回退：`camera_fill` 字段白名单未提交；`1f6ad86` 误删 `card_facts.cost_by_template`。
+
 ## 一、当前状态（全绿）
 
 - **109 条 cue 全部有动画数据**（`games/splendor/tutorial/anim/full.json`，手写资产）。
@@ -10,10 +46,10 @@
   - `python3 scripts/validate_anim_rules.py` → **过账**：109 条逐步合法（每色在场 4、黄金 5、手上限 10、
     保留上限 3、买牌「价格−折扣==实付」；15 张卡价格已在 `games/splendor/card_facts.json`）
   - `./scripts/dump_states.sh` + `python3 scripts/check_cue_script.py --all` → **对账 0 处不一致**，
-    另有 **12 条取景警告**（画面里有契约没提到的组件，等用户裁决）
+    另有 **11 条取景警告**（本轮后；画面里有契约没提到的组件，等用户裁决）
   - `python3 scripts/check_unity_scripts.py` → 25 个 C# 文件编译通过
   - `python3 scripts/check_framing_flow.py` → 取景"同主体来回跳"检查，**剩 1 处**
-- 最近提交：`bca5341`（多棵树设计入档）；Windows 已同步。
+- 最近提交：`75885aa`（P0 第 1 步：盒面树 + 宝石演示树落地，引擎按 tree 切 stage）；Windows 已同步。
 - 问答引擎：`backend/BoardAI.Api`（新 key 走环境变量 `DEEPSEEK_API_KEY` ✓；仓库里 `LLM:ApiKey` 已清空 ✓）。
   日志与手写问题在 `games/splendor/tutorial/anim/_qa/`（**16/16 通过**）。
 
@@ -38,6 +74,8 @@
 1. **先搬最简单的两棵**：盒面树、宝石演示树（样本件搬进各自树；主树里删掉对应的
    create/destroy 与 `showcase`/`gem_display` 假 zone）。目的：验证"每棵树自带 extent →
    特写不再被主桌 10.6 的纵深顶住" ✓
+   - ✅ 2026-09-21：盒面树 + 宝石演示树已落地；`gem_display`/`gold_display`/`gem_sample` 已从主树删除。
+   - ⏳ `showcase` 卡片演示区仍在主树；下一步先搬 `setup.cards.001.*` 介绍牌树，再单独设计 `action.cards.*` 的样卡树。
 2. **数据**：给 109 条 cue 标 `tree`；`full.json` 顶层加 `trees: [{id, stage, initial}]`；
    契约链**树内**成立；跨树 cue 声明 tree + 该树入口状态（= cut ✓）
 3. **引擎**：`LoadCue` 按 cue 的 tree 取 stage；**换树 = 换 stage + 重放该树入口链 + 原子换画面** ✓；
