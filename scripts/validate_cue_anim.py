@@ -122,6 +122,8 @@ COMMON_FIELDS = {"action", "realizes", "at", "dur", "lead", "easing",
                  "camera", "camera_padding", "target", "zone", "container"}
 
 PRESENTATION_FIELDS = {
+    "camera_fill": "取景填充率（这几个 zone 占画面中央的比例）",
+    "camera_padding": "取景留白倍率",
     "part": "点哪个部位（模板 part_anchors 的 id）",
     "indicator": "指示物形状（arrow/circle/forbid/cross）",
     "grow": "高亮放大倍率",
