@@ -49,8 +49,9 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
   现已**彻底删除该 cue 的 camera 事件**，自动继承 cue14 的 `gem_display` 机位；
   实测 `dumpCues setup.gems.001.2,setup.gems.001.3` 两条 `orthoSize` 都是 1.50。
 - `check_framing_chain` 不再把“本条没写 camera = 自动继承”误报成脏帧；真正要硬保证的是树入口 at=0 camera。
-- **已知独立问题**：引擎单 zone 特写分支目前没读 `camera_fill`，所以 cue14/15 实际都退回默认留白；
-  这也是“改参数没看出变化”的原因。是否修成与文档一致的 fill 语义，等用户裁决（会影响 cue14 已验收画面）。
+- ✅ 单 zone 特写 `camera_fill` 已修：引擎单 zone 分支现在也按 `1/Clamp(fill,0.2,1)` 取景，
+  Python framing 镜像与取景检查同步。cue14/15 实测 `orthoSize` 都是 **0.95**（真正同一个近景机位）；
+  cue16 因为要同时框 `gem_display,gold_display`，仍是更宽的 1.24，这是有意为之。
 - 这条已升级为**硬规则**：每条“换树/起树”的第一条 cue 必须在 `at=0` 显式声明 `camera`
   （哪怕只是 `camera:"board"`）。`validate_cue_anim.py` 新增“换树镜头口径”检查，
   缺了直接 error；不是靠我记得手改。
