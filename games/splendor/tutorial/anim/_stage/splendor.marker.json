@@ -56,6 +56,18 @@
       "sorting_order": 3,
       "concept": "starting_player_marker",
       "note": "起始玩家标记（2024 新版：菱形纸板件，单面）。图片走 `_cutout.png` 约定 → media/marker/起始玩家标记_clean_cutout.png（裁到件、alpha 已成品，尺寸由 components.json 的 50x62mm 换算）。"
+    },
+    {
+      "id": "glow_zone",
+      "shape": "panel",
+      "palette": "panel_neutral",
+      "width": 0.5,
+      "height": 0.5,
+      "alpha": 0.0,
+      "sorting_order": -19,
+      "highlight": true,
+      "concept": null,
+      "note": "纯表现：高亮底板，不是棋盘上的东西"
     }
   ],
   "anchors": [],
