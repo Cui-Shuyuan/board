@@ -71,6 +71,23 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
   的 15 条 `highlight` 全部删除；只保留 camera + create（4/5/7 枚的逐步出现）。
   用户口径：这种“把每堆都点亮一下”没有意义。
 
+### 追加（用户 2026-09-21）：UI cue23/24 贵族演示独立成树
+
+- 新树 `nobles_demo`（`world=real` overlay） + 舞台 `_stage/splendor.nobles.json`。
+  `noble_market` 在演示舞台里挪到独立空区 `z=8.0`，避免主桌的 `card_market`/`deck_*` 入镜。
+- UI cue23=`setup.nobles.001.1`：不再用 supply 镜头；改为 `noble_market` 特写 + 一次 `create` 3 块贵族。
+  宝石 7→4 的收尾仍在该 world 里执行，但已在贵族特写框外，不会被看见。
+- UI cue24=`setup.nobles.001.2`：同 `nobles_demo` 树、同 `noble_market` 机位；不再重复 create 贵族。
+- 对账（0 处不一致，9 条取景警告）通过；贵族 overlay 的取景警告已清零。
+
+**为什么原对账没抓到？** 这正好暴露了检查口径的边界：
+  - `check_cue_script` 比的是“手写契约 vs 引擎采样”：旧 cue23 的契约和事件**一起写错**（都写 supply + destroy 宝石），
+    所以两边一致 → 对账 PASS；它只能证明“数据 == 引擎”，不能证明“数据 == 口播意图”。
+  - `validate_anim_rules` 只判断规则合法性：7→4 的 destroy 合法、贵族 create 也合法，所以规则也 PASS。
+  - 取景检查只查“切镜头脏帧 / 同主体来回跳”，不查“这条口播讲贵族，但结构里没有贵族”。
+  - 需要补的正是第六节记的「文字与结构一致性 lint」：从 `story/note` 抽“这条在讲什么”，
+    再要求对应 zone/template/事件真的出现。
+
 ### 本会话验收结果（更新版）
 
 ```text
