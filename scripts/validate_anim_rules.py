@@ -47,7 +47,7 @@ GOLD_TOTAL = 5
 HAND_LIMIT = 10
 RESERVE_LIMIT = 3
 LEVEL_CAP = {"1": 40, "2": 30, "3": 20}
-FROZEN_FROM = "setup.nobles.001.1"
+FROZEN_FROM = "setup.gems.005.2"
 
 
 class Report:
