@@ -40,12 +40,29 @@
 **位移/时长/缓动不用我设计** —— 我只声明"状态在什么时刻变成什么"，补间是引擎的事 ✓。
 **"好不好看"由用户验收**；我写错了就改，改完这条 cue 即成为这一版的固定资产 ✓。
 
-## 改一条 cue 的标准动作（旧版流程，保留作参考）
+## 改一条 cue 的标准动作（用户 2026-09-21 定调：**必须从脚本开始走流程**）
 
+以后任何动画内容修改，强制按这个顺序，**不许一上来就改 events/Unity**：
 
-1. 手写/修改这条 cue：`story`/`note`/`timing` + `enter`/`exit` + `start`/`events`
-2. 取景：`camera` 写要入镜的 zone（逗号分隔），`camera_fill` 给填充率（默认 0.8；
-   想更近给 0.6~0.72；跨度超过整桌长/宽 **50%** 时引擎会自动退回全局镜头）
-3. **镜头里会出现的 zone，契约里顺手声明掉**（这是硬要求：漏了 validate 会报，
-   对账也会把"入镜但没声明"标出来）
-4. 跑四道检查（上面那四个），全绿后 commit —— 这一步之后它就是这个版本的固定资产
+1. **先改脚本的“文字版”**：
+   - `story`：这条口播在说什么
+   - `note`：为什么这么演
+   - `tree`：哪棵树、是否切树；组件介绍天然只放该组件
+   - `enter`/`exit`：画面入口/出口要变成什么
+   - `camera`：要看哪几个 zone + `camera_fill`
+   - 这一轮**先不写 `events`**；文字与结构先对齐。
+2. **调 BoardAI API 确定合法性**：
+   - 把文字里的状态变化转成最小合法性问句，先问规则引擎；
+   - 工具：`scripts/qa_anim_ask.py` / `_qa/questions.json`（问句手写）；必要时用 `qa_anim_check`。
+3. **再套原语**：
+   - 只把第 1 步的 `enter/exit` 翻译成 `create/transfer/destroy/stack/showbox/...`；
+   - 不得在这一步改变语义；状态清理必须归到口播真正说它的那条 cue。
+4. **对账与验收**：
+   - `python3 scripts/validate_cue_anim.py`
+   - `python3 scripts/validate_anim_rules.py`
+   - `python3 scripts/check_unity_scripts.py`
+   - `./scripts/dump_states.sh && python3 scripts/check_cue_script.py --all`
+   - 全绿后 commit，再交用户做视觉验收。
+
+**教训**：先改 events、后补文字/树，会把“状态收尾挂到语义无关 cue”“口播讲贵族、画面却做宝石”这类错误写进数据；
+而契约与引擎会一起自洽，所有现有对账都会全绿。
