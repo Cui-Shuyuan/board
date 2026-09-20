@@ -2150,6 +2150,9 @@
             "kinds": {
               "宝石黑": 7
             }
+          },
+          "noble_market": {
+            "count": 0
           }
         }
       },
@@ -2191,6 +2194,9 @@
             "kinds": {
               "宝石黑": 4
             }
+          },
+          "noble_market": {
+            "count": 3
           }
         }
       },
@@ -2202,7 +2208,17 @@
           "at": 0.0,
           "dur": 0.0,
           "action": "wait",
-          "camera": "supply"
+          "camera": "noble_market",
+          "camera_fill": 0.72
+        },
+        {
+          "at": 0.8,
+          "dur": 0.0,
+          "action": "create",
+          "template": "noble",
+          "palette": "noble",
+          "destination": "<noble_market>",
+          "count": 3
         },
         {
           "at": 1.0,
@@ -2248,49 +2264,10 @@
           "palette": "gem_onyx",
           "zone": "<gem_supply|color=<onyx>>",
           "count": 3
-        },
-        {
-          "at": 2.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<diamond>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.1
-        },
-        {
-          "at": 2.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<sapphire>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.1
-        },
-        {
-          "at": 2.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<ruby>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.1
-        },
-        {
-          "at": 2.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<emerald>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.1
-        },
-        {
-          "at": 2.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<onyx>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.1
         }
       ],
-      "note": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n口播讲贵族，但这条 cue 同时做**宝石小节的收尾**（用户 2026-09 裁决）：\n  1.00 起：每色 **destroy 3 枚**（= 放回盒子）—— 供应堆 7 → 4，逐色错开 0.15s。\n  为什么是 3：宝石小节按 2/3/4 人三种数量一路演到各 7 枚（4 人局），而整篇之后走 2 人局\n  —— 贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径。\n  「放回盒子」就是 `destroy`（盒子没有实体）；堆里少 3 枚就少 3 枚。\n  2.60 五堆一起呼吸一次，把「现在每堆是 4」点住。\n黄金不动（玩家数不影响黄金）。贵族本身要等下一 cue 才出场。"
+      "note": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n口播讲贵族，但这条 cue 同时做**宝石小节的收尾**（用户 2026-09 裁决）：\n  1.00 起：每色 **destroy 3 枚**（= 放回盒子）—— 供应堆 7 → 4，逐色错开 0.15s。\n  为什么是 3：宝石小节按 2/3/4 人三种数量一路演到各 7 枚（4 人局），而整篇之后走 2 人局\n  —— 贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径。\n  「放回盒子」就是 `destroy`（盒子没有实体）；堆里少 3 枚就少 3 枚。\n  2.60 五堆一起呼吸一次，把「现在每堆是 4」点住。\n黄金不动（玩家数不影响黄金）。贵族本身要等下一 cue 才出场。",
+      "tree": "nobles_demo"
     },
     {
       "cue": "setup.nobles.001.2",
@@ -2305,7 +2282,7 @@
         "picture": null,
         "zones": {
           "noble_market": {
-            "count": 0
+            "count": 3
           },
           "gem_supply_diamond": {
             "count": 4,
@@ -2343,10 +2320,7 @@
         "picture": null,
         "zones": {
           "noble_market": {
-            "count": 3,
-            "kinds": {
-              "贵族": 3
-            }
+            "count": 3
           },
           "gem_supply_diamond": {
             "count": 4,
@@ -2385,54 +2359,11 @@
           "at": 0.0,
           "dur": 0.0,
           "action": "wait",
-          "camera": "board"
-        },
-        {
-          "at": 1.05,
-          "dur": 0.0,
-          "action": "create",
-          "template": "noble",
-          "palette": "noble",
-          "destination": "<noble_market>",
-          "count": 3
-        },
-        {
-          "at": 2.05,
-          "dur": 0.3,
-          "action": "highlight",
-          "what": {
-            "concept": "noble"
-          },
-          "zone": "<noble_market>",
-          "order": 0,
-          "easing": "easeInOutCubic",
-          "grow": 1.16
-        },
-        {
-          "at": 2.4,
-          "dur": 0.3,
-          "action": "highlight",
-          "what": {
-            "concept": "noble"
-          },
-          "zone": "<noble_market>",
-          "order": 1,
-          "easing": "easeInOutCubic",
-          "grow": 1.16
-        },
-        {
-          "at": 2.75,
-          "dur": 0.3,
-          "action": "highlight",
-          "what": {
-            "concept": "noble"
-          },
-          "zone": "<noble_market>",
-          "order": 2,
-          "easing": "easeInOutCubic",
-          "grow": 1.16
+          "camera": "noble_market",
+          "camera_fill": 0.72
         }
-      ]
+      ],
+      "tree": "nobles_demo"
     },
     {
       "cue": "setup.nobles.002",
@@ -16690,6 +16621,15 @@
       "initial": "五格宝石展示位和黄金展示位都为空。",
       "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。",
       "world": "gems_demo"
+    },
+    {
+      "id": "nobles_demo",
+      "stage": "_stage/splendor.nobles",
+      "world": "real",
+      "name": "贵族演示树（overlay）",
+      "why": "口播讲贵族板块时，需要把镜头只放在贵族供应堆上；宝石 7→4 的收尾是主世界状态，不在这棵树里展示。",
+      "initial": "继承主世界当前状态；noble_market 进入时为空。",
+      "extent_note": "只框 noble_market 一排贵族，不再被主桌纵深顶住。"
     }
   ]
 }
