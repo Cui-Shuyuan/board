@@ -5,6 +5,24 @@ metadata:
   type: project
 ---
 
+## 【2026-09-21】旧路线已退役
+
+**本文描述的 `tutorial.json` / `TutorialDirector` / `TutorialPrimitives` / `flow_to_tutorial.py` /
+`validate_tutorial.py` 已全部退役并从工作区删除。**
+
+当前动画数据层是 v2：
+
+- 源：`games/splendor/tutorial/anim/v2/full.anim.json`
+- 编译器：`scripts/compile_animation_v2.py`
+- 唯一几何源：`scripts/anim_geometry_v2.py`
+- 编译产物：`games/splendor/tutorial/anim/v2/full.compiled.json`
+- 运行时：`client/Assets/Scripts/Tutorial/Animation/`
+- 对账：`check_anim_v2.py` + `TutorialV2Sampler` + `check_anim_v2_sample.py`
+
+以下内容仅作为历史记录保留。
+
+
+
 # 教学动画数据层
 
 ## 定稿内容（2026-09-06）

@@ -5,6 +5,42 @@ metadata:
   type: project
 ---
 
+## 【最终·v2 2026-09-21】生产闭环
+
+**源 → 编译 → 检查 → 采样 → 对账**：
+
+```bash
+# 1. 改 v2 文字脚本 / 树 / 契约 / events
+games/splendor/tutorial/anim/v2/full.anim.json
+
+# 2. 静态字段与文字结构
+python3 scripts/anim_schema_v2.py games/splendor/tutorial/anim/v2/full.anim.json
+
+# 3. 编译（几何唯一源：anim_geometry_v2.py）
+python3 scripts/compile_animation_v2.py --game splendor --track full
+python3 scripts/compile_animation_v2.py --game splendor --track full --check
+
+# 4. 契约 vs 编译快照
+python3 scripts/check_anim_v2.py --game splendor --track full
+
+# 5. Splendor 规则过账
+python3 scripts/validate_anim_rules_v2.py --game splendor --track full
+
+# 6. C# 编译
+python3 scripts/check_unity_scripts.py
+
+# 7. Unity 批处理采样 + 对账
+./scripts/dump_anim_v2.sh --game splendor --track full
+python3 scripts/check_anim_v2_sample.py --game splendor --track full
+```
+
+- 旧 v1 `full.json` / `_stage` / `validate_cue_anim.py` / `check_cue_script.py` /
+  `framing_geometry.py` / `dump_states.sh` 已删除。
+- 本文下方 2026-09-13 的旧生产闭环是历史记录，不要照旧命令执行。
+- BoardAI API 只做**编写阶段合法性裁判**，不进入运行时。
+
+
+
 # 讲规动画制作路线（2026-09-13 讨论定稿）
 
 ## 背景

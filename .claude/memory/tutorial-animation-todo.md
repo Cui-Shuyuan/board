@@ -1,14 +1,40 @@
-# 讲规动画：进度与待办（2026-09-21 收尾，明天继续）
+# 讲规动画：进度与待办（2026-09-21 收工）
 
-> **2026-09-21 v2 全量迁移完成**
->
-> - v2 源：`games/splendor/tutorial/anim/v2/full.anim.json`（109 cues / 8 trees/stages）
-> - v2 compiled：`anim/v2/full.compiled.json`
-> - 静态/编译/规则过账：`anim_schema_v2.py`、`compile_animation_v2.py --check`、`check_anim_v2.py`、`validate_anim_rules_v2.py`
-> - Unity 采样/对账：`TutorialV2Sampler` + `dump_anim_v2.sh` + `check_anim_v2_sample.py`
-> - 旧 v1 C# 与旧 `anim/full.json` / `_stage` 已删除；Unity 默认走 `track=full` 的 compiled 路径。
+> **本文件已按 v2 全量迁移更新；下方“最新进展/追加”是按时间累积的历史记录。**
+> 结论冲突时，以本块和 `tutorial-animation-state.md` 顶部的【最终】为准。
 
+## ✅ 最终状态（2026-09-21）
 
+- **v2 源唯一权威**：`games/splendor/tutorial/anim/v2/full.anim.json`
+  - 109 cues / 8 trees/stages；`script.story/note/tree/transition/camera/enter/exit` + `events`。
+- **v2 编译产物**：`games/splendor/tutorial/anim/v2/full.compiled.json`
+  - 运行时只读 compiled；Unity 默认 `TutorialCuePlayer.track = "full"`。
+  - compiled 是生成物但入库；改源后必须重跑 `compile_animation_v2.py` 并过 `--check`。
+- **旧 v1 已删除**：
+  - `anim/full.json`、`anim/_stage/*.json`、`ui01_30.*`、`games/splendor/tutorial.json`。
+  - `TutorialCueAnimPlayer`、`ZoneStore`、`TutorialCueAnimData`、`CueAnimActor`、`TutorialDirector`、
+    `TeachingPlayer/Data/Assets`、`TweenLibrary`、`TutorialPrimitives`、`GameSpriteFactory`、
+    旧 `TutorialFrameCapture`。
+  - 旧 v1 静态/采样工具：`validate_cue_anim.py`、`check_cue_script.py`、`check_framing_flow.py`、
+    `framing_geometry.py`、`dump_states.sh`、`flow_to_tutorial.py`、`validate_tutorial.py` 等。
+- **v2 工具链**：
+  - 静态 schema / 契约：`anim_schema_v2.py`、`check_anim_v2.py`
+  - 编译 / 几何：`compile_animation_v2.py`、`anim_geometry_v2.py`
+  - 规则过账：`validate_anim_rules_v2.py`（复用共享规则内核）
+  - Unity 采样 / 对账：`TutorialV2Sampler` + `dump_anim_v2.sh` + `check_anim_v2_sample.py`
+  - C# 编译：`check_unity_scripts.py`
+- **最终验收结果**：
+  - schema：109 cues，0 warnings
+  - compile `--check`：通过
+  - 契约 vs 编译快照：109/109 通过
+  - 规则过账：109/109 通过
+  - Unity 批处理采样：109 cues，对账 109/109 通过
+  - C#：18 个文件编译通过
+- **后端 key 问题已解决**：
+  - Linux `.env` 的旧 `DEEPSEEK_API_KEY` 是废弃 key（401）；
+  - Windows 侧全局新 key 可用；已把 Linux `.env` 替换为新 key（`.env` 被 gitignore）。
+  - 现有 16 条手写动画合法性问句 16/16 通过；服务地址 `http://localhost:5000`。
+- **未做**：用户主动跳过的 Unity 视觉验收。
 
 > 新会话请**先读本文件**，再看 `tutorial-animation-state.md`（大本营：设计、口径、踩坑史）。
 

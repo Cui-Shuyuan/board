@@ -5,6 +5,31 @@ metadata:
   type: project
 ---
 
+## 【最终·v2】2026-09-21 全量迁移
+
+> 这一节是当前权威；本文下面从「核心命题」开始是按时间累积的历史踩坑记录，字段名/文件路径可能已被删除或改名。
+
+- **当前源**：`games/splendor/tutorial/anim/v2/full.anim.json`
+  - `script`（story/note/camera/enter/exit）、`tree`/`transition`、`events`。
+- **当前编译产物**：`games/splendor/tutorial/anim/v2/full.compiled.json`；Unity 只读 compiled。
+- **当前运行时**：
+  - `BoardGameTutorial.Animation.TutorialAnimPlayer`（薄 MonoBehaviour）
+  - `WorldRuntime` / `TimelineEvaluator` / `StateStore` / `StageRuntime`
+  - `CameraDirector` / `ActorBinder` / `SpriteLibrary`
+- **旧 v1 已删除**：`TutorialCueAnimPlayer`、`ZoneStore`、`TutorialCueAnimData`、`CueAnimActor`、
+  `TutorialDirector`、`Teaching*`、`TweenLibrary`、`TutorialPrimitives`、`GameSpriteFactory`、
+  旧 `TutorialFrameCapture`、旧 `anim/full.json` / `_stage` / `ui01_30`。
+- **当前检查命令**：
+  - `python3 scripts/anim_schema_v2.py games/splendor/tutorial/anim/v2/full.anim.json`
+  - `python3 scripts/compile_animation_v2.py --game splendor --track full --check`
+  - `python3 scripts/check_anim_v2.py --game splendor --track full`
+  - `python3 scripts/validate_anim_rules_v2.py --game splendor --track full`
+  - `./scripts/dump_anim_v2.sh --game splendor --track full`
+  - `python3 scripts/check_anim_v2_sample.py --game splendor --track full`
+- **几何唯一源**：`scripts/anim_geometry_v2.py` 产 slot table + camera frame；C# 不再算取景/格位。
+- **最终自测**：109 cues 静态/编译/契约/规则通过；Unity 批处理采样 109 条对账通过。
+
+
 # 讲规动画：状态 / zone 模型（2026-09-15 用户定稿）
 
 > ## ⚠️ 阅读须知（2026-09 收工后补）
