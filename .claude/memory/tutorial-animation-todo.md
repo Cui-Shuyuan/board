@@ -89,6 +89,22 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
   - 需要补的正是第六节记的「文字与结构一致性 lint」：从 `story/note` 抽“这条在讲什么”，
     再要求对应 zone/template/事件真的出现。
 
+### 追加（用户 2026-09-21）：组件介绍树审计 + 起始玩家标记补独立树
+
+按“组件介绍应该天然只有该组件”逐段检查：
+  - 盒面介绍 = `box` 独立世界 ✓
+  - 发展卡介绍 = `cards_intro` 独立世界 ✓
+  - 宝石/黄金介绍 = `gems_demo` 独立世界 ✓
+  - 贵族介绍 = `nobles_demo` 独立世界 ✓
+  - **起始玩家标记介绍（UI28）之前仍在主树** ❌
+
+已补：
+  - 新树 `marker_demo`（独立 world） + 舞台 `_stage/splendor.marker.json`，场上只有 `player_marker` 和 1 枚标记。
+  - UI28=`setup.starting_player.001.3`：只 create `starting_marker`，不再和主桌混在同一 world。
+  - UI29=`setup.end.001.1` 回主树时，在主世界补 `create` 标记，后续设置完成检查仍有 `player_marker=1`。
+  - 舞台补了 `glow_zone` 模板，UI28 的区域高亮不再报“stage 缺少 glow_zone”。
+  - 实测 UI28 场景只有 1 件（标记），对账 0 处不一致。
+
 ### 本会话验收结果（更新版）
 
 ```text
