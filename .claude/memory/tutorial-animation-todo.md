@@ -29,14 +29,40 @@ dump_states.sh + check_cue_script.py --all   0 处不一致，11 条取景警告
 check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌→回同一特写）
 ```
 
-### 说明 / 下一小步
+### 2026-09-21 追加：卡片演示也全部切出主树
 
-- `showcase` 卡片演示假 zone **还在主树**：`action.cards.*` 的样卡是在主树真实市场/玩家状态之上临时摆的，
-  直接搬进独立 tree 会丢掉主树状态。下一步先搬最干净的 `setup.cards.001.*` 介绍牌树，
-  再把 `action.cards.*` 的样卡 tree 当成一个“带主树入口快照的演示树”单独设计。
-- `setup.gems.003.1` 现在跨树回到主树时，引擎会从主树根重放 `setup.cards.*` 的真实牌桌状态；
-  所以“宝石介绍时切走、回来桌上有三摞牌/市场”已按多棵树口径工作。
-- 本会话顺手修了两个回退：`camera_fill` 字段白名单未提交；`1f6ad86` 误删 `card_facts.cost_by_template`。
+用户明确：“卡片演示可以切走。所有的演示都可以有自己单独的树。”已继续落地：
+
+- `setup.cards.001.*` → `cards_intro` 独立世界（stage `_stage/splendor.cards_intro.json`）。
+  根画面仍是盒面，第一条 cue 关掉；样卡/卡背模板只存在这棵树里。
+- `action.cards.intro.001` … `action.cards.limit.001.2`（20 条）→ `cards_demo` **overlay 树**
+  （stage `_stage/splendor.cards_demo.json`）。
+- 主树 `_stage/splendor.table.json` 删掉 `showcase*`/`sample_*`；所有不再用样卡的主世界 cue 契约里的
+  空 `showcase` 引用已删除。`action.cards.summary.*` 仍在主树（它讲的是真实发展区）。
+- 引入 `StageTree.world` 状态世界口径：
+  - `box` / `cards_intro` / `gems_demo` 各自独立 world，进入时 Reset + 从树根重放；
+  - `main` 与 `cards_demo` 的 `world` 都是 `real`，换 stage 做视觉 cut，但**共享同一份 Store 状态**。
+  这样 `action.cards` 里的买牌/补市场会继续影响真实主树，后续 nobles/结算契约不用重写。
+- 引擎 `ReplayEntryChain` 已按 **world** 重放：跳进 `cards_demo` 时会先重放主树前序事件，再切到
+  cards_demo stage；跳回主树时状态连续。已实测：
+  `action.cards.market.001.2` 跳转入口 `market=12 deck1=36`、
+  `action.nobles.intro.001` 跳转入口 `market=12 deck1=35`，两条单 cue 对账均 PASS。
+
+### 本会话验收结果（更新版）
+
+```text
+validate_cue_anim.py          109 条，0 错 0 警
+validate_anim_rules.py        109 条合法性通过
+check_unity_scripts.py        25 个 C# 文件编译通过
+dump_states.sh + check_cue_script.py --all   0 处不一致，11 条取景警告
+单 cue 跳转实测                action.cards.market.001.2 / action.nobles.intro.001 均 PASS
+check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌→回同一特写）
+```
+
+### 下一小步
+
+- 给剩余仍走默认主树的 cue 显式补 `tree: "main"`，并补全 `trees` 文字（P0 第 2 步）。
+- 可以开始按「每棵树的 extent 特写」做视觉验收：卡片树、宝石树、主树各自的镜头是否已不受主桌纵深影响。
 
 ## 一、当前状态（全绿）
 

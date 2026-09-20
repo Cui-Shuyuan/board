@@ -2977,3 +2977,19 @@ LLM 只理解意图、确定性工具照规则数据回答）来判断动画脚�
   全部按树分组或不跨树认父；`dump_states.sh + check_cue_script.py --all` 本轮为 0 处不一致、11 条取景警告。
 - 已知留下的：`showcase` 仍在主树。`action.cards.*` 的样卡是搭在真实市场/玩家状态上的临时道具，
   不能简单当独立小世界；先搬 `setup.cards.001.*` 介绍牌树，再单独设计带主树入口快照的 cards 演示树。
+
+
+### 2026-09-21 追加：world 状态世界
+
+实现 `StageTree.world` 后，多棵树分成两层：
+
+- **tree = stage/extent/取景单位**：盒面、介绍牌、卡片演示、宝石演示、主树；
+- **world = 状态世界**：`main` + `cards_demo` 都是 `real`，共享同一份 Store 状态；
+  `box` / `cards_intro` / `gems_demo` 各自独立，进入时 Reset 并从该 world 第一条 cue 重放。
+
+引擎侧：
+- 跨 tree 但同 world：只 `LoadStage` + 重建渲染对象，**不 Replay、不 Reset**；取景仍重置。
+- 跨 world：Reset 后按 world 内 cue 顺序重放；`ReplayEntryChain` 会在重放途中按 cue 切 stage。
+- `action.cards.*` 已迁入 `cards_demo` overlay 树；主树不再有 `showcase` 假 zone。
+- 已实测跳转：`action.cards.market.001.2`（从主树入口跳到卡片 overlay）和
+  `action.nobles.intro.001`（从卡片 overlay 跳回主树）单 cue 对账通过。
