@@ -45,6 +45,8 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
   这样 `action.cards` 里的买牌/补市场会继续影响真实主树，后续 nobles/结算契约不用重写。
 - 换树时的镜头：`LoadCue` 现在会在返回前先应用本条 `at=0` 的事件（尤其 `wait camera`），
   stage 与镜头在同一帧切好；不再出现“树先切、镜头等 Update 才切”的交界脏帧。
+- cue15（`setup.gems.001.3`）原来还带着旧的 `camera_padding:1.25`，和 cue14/cue16 的机位不一致；
+  已改成与 cue14 相同的 `gem_display` + `camera_fill:0.72`。以后同一机位不需要重复写 camera。
 - 这条已升级为**硬规则**：每条“换树/起树”的第一条 cue 必须在 `at=0` 显式声明 `camera`
   （哪怕只是 `camera:"board"`）。`validate_cue_anim.py` 新增“换树镜头口径”检查，
   缺了直接 error；不是靠我记得手改。
