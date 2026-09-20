@@ -1581,8 +1581,8 @@
     {
       "cue": "setup.gems.003.2",
       "entry_from": "setup.gems.003.1",
-      "story": "【3人游戏时，拿取5枚】\n第二种数量：**每种 5 枚**。五种颜色各补 1 枚，4 → 5。\n\n只有 2.83s，动作必须短：0.55 起跳、每颗 0.45s、逐色错开 0.08s，1.2s 内全部落地；1.60 给五堆一次呼吸，把「现在是 5」压住。\n\n观众能自己数出来是关键：宝石供应堆摆成**一摞**（和牌堆同一个手法），每枚错开 0.055 —— 4 枚是一小摞、5 枚多露出一个边、7 枚露出的边最多，靠\"数露出来的边\"就能读数量，不需要字幕报数。（也曾摊成 block 两行、靠轮廓形状分辨，用户 2026-09 否掉了：宝石应该像牌库那样压在一起。）",
-      "note": "第二种数量：**每种 5 枚**（4 → 5）。只有 2.83s，动作要短：\n  0.55：五色**同时**各**出现** 1 枚（`create`，一次到位）——「每种 5 枚」是同一拍。\n  **游戏盒是抽象概念、没有实体**（用户 2026-09）：\"从盒子里拿出来\" 就是 `create`，\n  \"放回盒子\" 就是 `destroy`。所以这里没有 box_* 这个 zone，也不必写 source ——   盒里的东西从观众视角本来就是\"凭空多出来/少掉\"。\n  账仍然平：这一色一共 create 7 枚 = 实物总数 7（003.1 的 4 + 003.2 的 1 + 004 的 2）。\n  `create` 的语义是「**补齐到这个数**」（幂等：重复 Seek / 重播不会建两遍），所以这里写的是**目标数量**（4 → 5 → 7），不是\"再加几枚\"。",
+      "story": "【3人游戏时，拿取5枚】\n口播说明 3 人局每种拿 5 枚；本片以 **2 人局**为例，供应堆保持 003.1 已经摆好的 4 枚，不再实际加第 5 枚。\n不能演成“先全部摆出来、后面再放回盒子”——那会误导客人以为设置时有多余步骤。",
+      "note": "口播讲 3 人局数量；画面按 2 人局口径固定为每色 4 枚（enter == exit，没有 create）。\n这样从始至终只出现“对应人数实际拿出的那一份”，不出现 4→5→7→4 的错误累计/回退。",
       "timing": {
         "五色同时补齐到 5 枚": "0.55（一次到位）",
         "五堆一起呼吸（强调 5）": "1.60-2.20"
@@ -1626,33 +1626,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 5
+              "宝石白": 4
             }
           },
           "gem_supply_sapphire": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石蓝": 5
+              "宝石蓝": 4
             }
           },
           "gem_supply_ruby": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石红": 5
+              "宝石红": 4
             }
           },
           "gem_supply_emerald": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石绿": 5
+              "宝石绿": 4
             }
           },
           "gem_supply_onyx": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石黑": 5
+              "宝石黑": 4
             }
           }
         }
@@ -1666,59 +1666,14 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "supply"
-        },
-        {
-          "at": 0.55,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<diamond>>",
-          "template": "gem",
-          "palette": "gem_diamond",
-          "count": 5
-        },
-        {
-          "at": 0.55,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<sapphire>>",
-          "template": "gem",
-          "palette": "gem_sapphire",
-          "count": 5
-        },
-        {
-          "at": 0.55,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<ruby>>",
-          "template": "gem",
-          "palette": "gem_ruby",
-          "count": 5
-        },
-        {
-          "at": 0.55,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<emerald>>",
-          "template": "gem",
-          "palette": "gem_emerald",
-          "count": 5
-        },
-        {
-          "at": 0.55,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<onyx>>",
-          "template": "gem",
-          "palette": "gem_onyx",
-          "count": 5
         }
       ]
     },
     {
       "cue": "setup.gems.004",
       "entry_from": "setup.gems.003.2",
-      "story": "【4人游戏时则使用全部的7枚宝石】\n第三种数量：**每种 7 枚**。五种颜色各补 2 枚，5 → 7；补完之后盒子里的宝石**全部用完**（box_gem_* 全变 0），因为 7 就是全部。\n\n0.60 起跳、每颗 0.45s、逐色错开 0.08s；2.00 给五堆一次呼吸，把「7」压住。\n\n7 枚就是这一摞的**满摞**（capacity 7）：每枚错开 0.055，一共摊开 0.33 —— 三种数量（4/5/7）的区别靠\"露出来的边有几道\"读出来，和牌堆数张数是同一个办法。\n\n注意账要平：这一步之后盒子里没有任何宝石了。005.x 不会再从盒里拿宝石，只拿黄金。",
-      "note": "第三种数量：**每种 7 枚**（5 → 7）—— 7 就是全部，这一色到此**用完**。\n  0.60：五色**同时**各**出现** 2 枚（`create`，一次到位）。\n  **游戏盒是抽象概念、没有实体**（用户 2026-09）：\"从盒子里拿出来\" 就是 `create`，\n  \"放回盒子\" 就是 `destroy`。所以这里没有 box_* 这个 zone，也不必写 source ——   盒里的东西从观众视角本来就是\"凭空多出来/少掉\"。\n  账仍然平：这一色一共 create 7 枚 = 实物总数 7（003.1 的 4 + 003.2 的 1 + 004 的 2）。\n  7 枚摆成**一摞**（每枚错开 0.055），三种数量的差别靠\"露出来的边\"读出来。\n  `create` 的语义是「**补齐到这个数**」（幂等：重复 Seek / 重播不会建两遍），所以这里写的是**目标数量**（4 → 5 → 7），不是\"再加几枚\"。",
+      "story": "【4人游戏时则使用全部的7枚宝石】\n口播说明 4 人局每种拿 7 枚；本片仍以 **2 人局**为例，供应堆保持每色 4 枚。\n不在画面上真的加到 7 枚，避免出现“摆满 7 枚再收回去”的过程。",
+      "note": "口播讲 4 人局数量；画面按 2 人局口径固定为每色 4 枚（enter == exit，没有 create）。\n只有 003.1 那一次 create 4，是 2 人局实际一开始就会做的动作。",
       "timing": {
         "五色同时补齐到 7 枚": "0.60（一次到位）",
         "五堆一起呼吸（强调 7）": "2.00-2.70"
@@ -1727,33 +1682,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石白": 5
+              "宝石白": 4
             }
           },
           "gem_supply_sapphire": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石蓝": 5
+              "宝石蓝": 4
             }
           },
           "gem_supply_ruby": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石红": 5
+              "宝石红": 4
             }
           },
           "gem_supply_emerald": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石绿": 5
+              "宝石绿": 4
             }
           },
           "gem_supply_onyx": {
-            "count": 5,
+            "count": 4,
             "kinds": {
-              "宝石黑": 5
+              "宝石黑": 4
             }
           }
         }
@@ -1762,33 +1717,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石白": 7
+              "宝石白": 4
             }
           },
           "gem_supply_sapphire": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石蓝": 7
+              "宝石蓝": 4
             }
           },
           "gem_supply_ruby": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石红": 7
+              "宝石红": 4
             }
           },
           "gem_supply_emerald": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石绿": 7
+              "宝石绿": 4
             }
           },
           "gem_supply_onyx": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石黑": 7
+              "宝石黑": 4
             }
           }
         }
@@ -1802,59 +1757,14 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "supply"
-        },
-        {
-          "at": 0.6,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<diamond>>",
-          "template": "gem",
-          "palette": "gem_diamond",
-          "count": 7
-        },
-        {
-          "at": 0.6,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<sapphire>>",
-          "template": "gem",
-          "palette": "gem_sapphire",
-          "count": 7
-        },
-        {
-          "at": 0.6,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<ruby>>",
-          "template": "gem",
-          "palette": "gem_ruby",
-          "count": 7
-        },
-        {
-          "at": 0.6,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<emerald>>",
-          "template": "gem",
-          "palette": "gem_emerald",
-          "count": 7
-        },
-        {
-          "at": 0.6,
-          "dur": 0.0,
-          "action": "create",
-          "destination": "<gem_supply|color=<onyx>>",
-          "template": "gem",
-          "palette": "gem_onyx",
-          "count": 7
         }
       ]
     },
     {
       "cue": "setup.gems.005.1",
       "entry_from": "setup.gems.004",
-      "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n这句话**没有新的搬运**：宝石在 003.1→004 里已经一枚一枚落在供应区了。所以这一条只做「确认」：\n\n  镜头留在供应区整排，1.20 起让五堆宝石一起呼吸一次，把「这一排就是宝石供应堆」点出来。\n\n为什么不在这里搬东西：位置在宝石出现的第一刻（001.1）就已经是最终位置了 —— 供应堆不是一个「先放在别处、再挪过来」的对象。这条 cue 的 enter == exit，正是这件事的书面证据。\n\n黄金不在这句里点（下一句 005.2 才说黄金）。",
-      "note": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n这句话**没有新的搬运**：宝石在 003.1→004 里已经一枚一枚落在供应区了。所以这一条只做「确认」：\n  镜头留在供应区整排，1.20 起让五堆宝石一起呼吸一次，把「这一排就是宝石供应堆」点出来。\n黄金还不在这句里（下一句才说）；供应堆里的黄金此刻是 **0** —— 002 里那枚黄金是**样本**，一出 003.1 就销毁了，真黄金一直还在盒里。",
+      "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n本片按 2 人局，宝石供应堆从 003.1 起就是每色 4 枚；这条只确认“这一排就是供应堆”，不再改变数量。",
+      "note": "口播说“对应数量”；本片已经选定 2 人局 = 每色 4 枚，因此 enter == exit。\n不再从 7 枚往回收——一开始就只拿出对应数量。",
       "timing": {
         "五堆一起呼吸（「成为宝石供应堆」）": "1.20-2.40（口播 0.28-5.55）"
       },
@@ -1862,33 +1772,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石白": 7
+              "宝石白": 4
             }
           },
           "gem_supply_sapphire": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石蓝": 7
+              "宝石蓝": 4
             }
           },
           "gem_supply_ruby": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石红": 7
+              "宝石红": 4
             }
           },
           "gem_supply_emerald": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石绿": 7
+              "宝石绿": 4
             }
           },
           "gem_supply_onyx": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石黑": 7
+              "宝石黑": 4
             }
           },
           "gold_supply": {
@@ -1900,33 +1810,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石白": 7
+              "宝石白": 4
             }
           },
           "gem_supply_sapphire": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石蓝": 7
+              "宝石蓝": 4
             }
           },
           "gem_supply_ruby": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石红": 7
+              "宝石红": 4
             }
           },
           "gem_supply_emerald": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石绿": 7
+              "宝石绿": 4
             }
           },
           "gem_supply_onyx": {
-            "count": 7,
+            "count": 4,
             "kinds": {
-              "宝石黑": 7
+              "宝石黑": 4
             }
           },
           "gold_supply": {
@@ -1989,8 +1899,8 @@
     {
       "cue": "setup.gems.005.2",
       "entry_from": "setup.gems.005.1",
-      "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n\n  0.50：盒里剩下的 4 枚黄金飞到 gold_supply，加上 002 里先出来的那 1 枚，共 5 枚。2.40 给黄金一次呼吸。\n  4.81 起的「其余的宝石放回盒子」**不给画面**（用户 2026-09 明确：这句话不需要对应画面）。\n\n由此产生一个**刻意的结果**，要写清楚以免以后误判：本 cue 结束时，宝石和黄金**全部在桌上**，六个盒子 zone 全是 0。\n  - 好的一面：`box_gem_*` 全 0 是一条干净的不变量，「桌上的数 + 盒里的数 = 实物总数」永远成立，谁多拿少拿一眼可见。\n  - 这一节的终点是 **4 人局的宝石数（每种 7 枚）**，这不代表整篇教程按 4 人局走。\n\n**数量改回 2 人局（每种 4 枚）放在下一 cue —— `setup.nobles.001.1`（用户 2026-09 裁决）**：\n  - 「其余的宝石放回盒子」在**本 cue 里不做任何动画**（用户明确）。\n  - 下一 cue 的开场动画里，每色从供应堆搬 3 枚回盒子 → 每种 4 枚、盒子每色 3 枚，\n    这样 003.1 先讲的「2 人游戏时每种 4 枚」才和后面整篇的口径一致\n    （贵族下一小节抽 3 块 = 玩家数 2 + 1，本就是 2 人局）。\n  - 也就是说 `setup.nobles.001.1` 的契约里，enter 是 7 枚/色 + 空盒，exit 是 4 枚/色 + 每色 3 枚在盒里。\n\n取景：这一条仍在供应区（黄金落位要看清楚）。切回整桌取景放在下一条 cue（贵族）的开头。",
-      "note": "【将全部5枚黄金也放在一旁，成为黄金供应堆】\n  0.50：黄金 **5 枚一次出现**在黄金供应堆（`create`）—— 黄金一共 5 枚、全在这里。\n  2.40 给黄金一次呼吸。4.81 起的「其余的宝石放回盒子」**不给画面**（用户 2026-09 明确）。\n  **游戏盒是抽象概念、没有实体**（用户 2026-09）：\"从盒子里拿出来\" 就是 `create`，\n  \"放回盒子\" 就是 `destroy`。所以这里没有 box_* 这个 zone，也不必写 source ——   盒里的东西从观众视角本来就是\"凭空多出来/少掉\"。\n  账仍然平：这一色一共 create 7 枚 = 实物总数 7（003.1 的 4 + 003.2 的 1 + 004 的 2）。\n  `create` 的语义是「**补齐到这个数**」（幂等：重复 Seek / 重播不会建两遍），所以这里写的是**目标数量**（4 → 5 → 7），不是\"再加几枚\"。",
+      "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n0.50：5 枚黄金一次出现在 gold_supply；2.40 给黄金一次呼吸。\n宝石仍保持每色 4 枚——2 人局一开始就只拿出 4 枚，所以没有“其余的宝石”需要放回，也没有 7→4 的回收动作。",
+      "note": "黄金 5 枚 `create` 到 gold_supply；宝石每色 4 枚保持不变。\n口播里的“其余的宝石放回盒子”在 2 人局示例下没有额外动作：从未多拿，自然也不用放回。\n这样才能避免客人误以为设置流程是“先把所有宝石都拿出来摆好，再把多余的收回去”。",
       "timing": {
         "黄金 5 枚出现": "0.50",
         "黄金呼吸": "2.40-3.10",
@@ -1999,50 +1909,6 @@
       "enter": {
         "picture": null,
         "zones": {
-          "gold_supply": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 7,
-            "kinds": {
-              "宝石白": 7
-            }
-          },
-          "gem_supply_sapphire": {
-            "count": 7,
-            "kinds": {
-              "宝石蓝": 7
-            }
-          },
-          "gem_supply_ruby": {
-            "count": 7,
-            "kinds": {
-              "宝石红": 7
-            }
-          },
-          "gem_supply_emerald": {
-            "count": 7,
-            "kinds": {
-              "宝石绿": 7
-            }
-          },
-          "gem_supply_onyx": {
-            "count": 7,
-            "kinds": {
-              "宝石黑": 7
-            }
-          }
-        }
-      },
-      "exit": {
-        "picture": null,
-        "zones": {
-          "gold_supply": {
-            "count": 5,
-            "kinds": {
-              "黄金": 5
-            }
-          },
           "gem_supply_diamond": {
             "count": 4,
             "kinds": {
@@ -2071,6 +1937,50 @@
             "count": 4,
             "kinds": {
               "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 0
+          }
+        }
+      },
+      "exit": {
+        "picture": null,
+        "zones": {
+          "gem_supply_diamond": {
+            "count": 4,
+            "kinds": {
+              "宝石白": 4
+            }
+          },
+          "gem_supply_sapphire": {
+            "count": 4,
+            "kinds": {
+              "宝石蓝": 4
+            }
+          },
+          "gem_supply_ruby": {
+            "count": 4,
+            "kinds": {
+              "宝石红": 4
+            }
+          },
+          "gem_supply_emerald": {
+            "count": 4,
+            "kinds": {
+              "宝石绿": 4
+            }
+          },
+          "gem_supply_onyx": {
+            "count": 4,
+            "kinds": {
+              "宝石黑": 4
+            }
+          },
+          "gold_supply": {
+            "count": 5,
+            "kinds": {
+              "黄金": 5
             }
           }
         }
@@ -2101,51 +2011,6 @@
           "zone": "<gold_supply>",
           "easing": "easeInOutCubic",
           "grow": 1.2
-        },
-        {
-          "at": 4.81,
-          "dur": 0.0,
-          "action": "destroy",
-          "template": "gem",
-          "palette": "gem_diamond",
-          "zone": "<gem_supply|color=<diamond>>",
-          "count": 3
-        },
-        {
-          "at": 4.93,
-          "dur": 0.0,
-          "action": "destroy",
-          "template": "gem",
-          "palette": "gem_sapphire",
-          "zone": "<gem_supply|color=<sapphire>>",
-          "count": 3
-        },
-        {
-          "at": 5.05,
-          "dur": 0.0,
-          "action": "destroy",
-          "template": "gem",
-          "palette": "gem_ruby",
-          "zone": "<gem_supply|color=<ruby>>",
-          "count": 3
-        },
-        {
-          "at": 5.17,
-          "dur": 0.0,
-          "action": "destroy",
-          "template": "gem",
-          "palette": "gem_emerald",
-          "zone": "<gem_supply|color=<emerald>>",
-          "count": 3
-        },
-        {
-          "at": 5.289999999999999,
-          "dur": 0.0,
-          "action": "destroy",
-          "template": "gem",
-          "palette": "gem_onyx",
-          "zone": "<gem_supply|color=<onyx>>",
-          "count": 3
         }
       ]
     },
