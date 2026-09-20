@@ -15,7 +15,7 @@
     {
       "id": "showcase",
       "world": "showcase_world",
-      "stage": "_stage/_schema_example.stage.json",
+      "stage": "_schema_example.stage.json",
       "purpose": "示例树：只展示一张发展卡正面",
       "initial": "展示位为空，没有整幅图",
       "extent_note": "只框展示位，不受主桌纵深影响"
