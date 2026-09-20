@@ -80,3 +80,4 @@ client/CaptureOut/
 # 采样产物：跑 scripts/dump_states.sh 生成（Unity 写、拷贝回来）。
 # 跟踪它会**每次采样都把工作区弄脏**，于是 sync_workspaces 的下一次同步会被自己的产物挡住。
 games/*/tutorial/anim/*.exitstate.json
+games/*/tutorial/anim/v2/*.v2sample.json
