@@ -377,7 +377,7 @@ def load_states(path):
     if isinstance(doc.get("cues"), dict):
         return doc["cues"]   # 每条 cue 里可能带 "problems"（引擎自己报的警告/错误）
     if doc.get("cue"):
-        return {doc["cue"]: {"zones": doc.get("zones") or {}}}
+        return {doc["cue"]: {"zones": doc.get("zones") or {}, "picture": doc.get("picture")}}
     return {}
 
 
