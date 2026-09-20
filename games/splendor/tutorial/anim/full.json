@@ -2429,14 +2429,8 @@
       "enter": {
         "picture": null,
         "zones": {
-          "player_holding": {
-            "count": 0
-          },
           "player_marker": {
             "count": 0
-          },
-          "gold_supply": {
-            "count": 5
           }
         }
       },
@@ -2445,12 +2439,6 @@
         "zones": {
           "player_marker": {
             "count": 1
-          },
-          "gold_supply": {
-            "count": 5
-          },
-          "player_holding": {
-            "count": 0
           }
         }
       },
@@ -2483,7 +2471,8 @@
           "peak_alpha": 0.65,
           "zone": "player_marker"
         }
-      ]
+      ],
+      "tree": "marker_demo"
     },
     {
       "cue": "setup.end.001.1",
@@ -2550,7 +2539,7 @@
             "count": 0
           },
           "player_marker": {
-            "count": 1
+            "count": 0
           }
         }
       },
@@ -2618,6 +2607,16 @@
         "set": []
       },
       "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "player_marker",
+          "template": "starting_marker",
+          "what": {
+            "concept": "starting_player_marker"
+          }
+        },
         {
           "at": 0.0,
           "dur": 0.0,
@@ -16519,6 +16518,15 @@
       "why": "口播讲贵族板块，天然应该场上什么都没有：只显示随机抽出的 3 块贵族，其他组件不属于这棵树。",
       "initial": "noble_market 为空；本树不继承主桌状态。",
       "extent_note": "只框 3 块贵族的位置，主桌内容完全不在这个 world 里。"
+    },
+    {
+      "id": "marker_demo",
+      "stage": "_stage/splendor.marker",
+      "world": "marker_demo",
+      "name": "起始玩家标记演示树（独立）",
+      "why": "介绍起始玩家标记时，场上天然只应该有这一枚标记，不继承主桌状态。",
+      "initial": "player_marker 为空。",
+      "extent_note": "只框 1 枚标记。"
     }
   ]
 }
