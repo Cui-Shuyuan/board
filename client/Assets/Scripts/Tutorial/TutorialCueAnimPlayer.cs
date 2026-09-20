@@ -522,8 +522,12 @@ namespace BoardGameTutorial
             });
 
             CaptureEntry();
+            // 关键：把本条 **at=0 的事件**在 LoadCue 内先应用掉（尤其是 `wait camera`）。
+            // 否则换树后要等音频 started / Update 第一次 Seek 才切摄像头，
+            // 中间会有一帧是“新树 stage + 旧/全局镜头”，用户看到的就是 cue 交界处不干净。
             clock = 0f;
             nextIndex = 0;
+            Seek(0f);
             return true;
         }
 
