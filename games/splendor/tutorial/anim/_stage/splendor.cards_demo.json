@@ -420,6 +420,110 @@
       ]
     },
     {
+      "id": "showcase",
+      "label": "展示位",
+      "center": {
+        "x": 0.0,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
+      "id": "showcase_1",
+      "label": "卡背展示位 1",
+      "center": {
+        "x": -0.85,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
+      "id": "showcase_2",
+      "label": "卡背展示位 2",
+      "center": {
+        "x": 0.0,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
+      "id": "showcase_3",
+      "label": "卡背展示位 3",
+      "center": {
+        "x": 0.85,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
       "id": "player_marker",
       "label": "起始玩家标记位",
       "center": {
@@ -1423,6 +1527,150 @@
       ]
     },
     {
+      "id": "sample_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_绿.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "alpha": 1.0,
+      "concept": "development_card_level_1",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_back_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "alpha": 1.0,
+      "concept": "development_card_level_1",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_back_2",
+      "shape": "card",
+      "palette": "card_level_2",
+      "face_image": "media/card/二级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "alpha": 1.0,
+      "concept": "development_card_level_2",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_back_3",
+      "shape": "card",
+      "palette": "card_level_3",
+      "face_image": "media/card/三级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "alpha": 1.0,
+      "concept": "development_card_level_3",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
       "id": "blank_card_1",
       "shape": "card",
       "palette": "card_level_1",
@@ -1537,6 +1785,76 @@
       "sorting_order": 3,
       "concept": "starting_player_marker",
       "note": "起始玩家标记（2024 新版：菱形纸板件，单面）。图片走 `_cutout.png` 约定 → media/marker/起始玩家标记_clean_cutout.png（裁到件、alpha 已成品，尺寸由 components.json 的 50x62mm 换算）。"
+    },
+    {
+      "id": "sample_card_1_white",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_白.jpg",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "concept": "development_card_level_1",
+      "sample": true,
+      "note": "介绍牌面用的**样本**（一级白）：价格 1蓝+2绿+1红+1黑（四种颜色，讲『左下角是价格』最清楚）、声望 0、白折扣。样本不进牌堆/市场的账，讲解完销毁。",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_card_2_ruby",
+      "shape": "card",
+      "palette": "card_level_2",
+      "face_image": "media/card/二级发展卡_红.jpg",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "concept": "development_card_level_2",
+      "sample": true,
+      "note": "介绍牌面用的**样本**（二级红）：声望 3，用来讲『左上角是声望值』。",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     }
   ],
   "anchors": [

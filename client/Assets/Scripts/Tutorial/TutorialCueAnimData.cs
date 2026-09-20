@@ -112,6 +112,7 @@ namespace BoardGameTutorial
     {
         public string id;
         public string stage;
+        public string world;      // 状态世界：world 相同的树共享同一份组件状态；不同 world 之间才是状态 cut
         public string name;
         public string why;
         public string initial;

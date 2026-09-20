@@ -5736,7 +5736,8 @@
             "concept": "development_card_level_2"
           }
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.cost.001.1",
@@ -5902,7 +5903,8 @@
           "indicator": "arrow",
           "zone": "showcase"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.cost.001.2",
@@ -6051,7 +6053,8 @@
           "action": "wait",
           "camera": "supply"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.cost.001.3",
@@ -6217,7 +6220,8 @@
           "peak_alpha": 0.65,
           "zone": "player_development"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.market.001.1",
@@ -6367,7 +6371,8 @@
           "peak_alpha": 0.65,
           "zone": "<card_market>"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.market.001.2",
@@ -6657,7 +6662,8 @@
           "peak_alpha": 0.65,
           "zone": "player_development"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.market.001.3",
@@ -6827,7 +6833,8 @@
           "zone": "<card_market>",
           "order": 2
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.market.001.4",
@@ -6972,7 +6979,8 @@
           "peak_alpha": 0.65,
           "zone": "<development_deck_level_1>"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.prestige.001.1",
@@ -7134,7 +7142,8 @@
           "indicator": "arrow",
           "zone": "showcase_1"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.prestige.001.2",
@@ -7314,7 +7323,8 @@
           "zone": "<card_market>",
           "order": 3
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.discount.001",
@@ -7476,7 +7486,8 @@
           "indicator": "arrow",
           "zone": "showcase"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.discount.002.1",
@@ -7643,7 +7654,8 @@
           "peak_alpha": 0.65,
           "zone": "showcase"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.discount.002.2",
@@ -7806,7 +7818,8 @@
           "zone": "player_holding",
           "order": 1
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.discount.003.1",
@@ -7998,7 +8011,8 @@
           "peak_alpha": 0.65,
           "zone": "showcase"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.discount.003.2",
@@ -8161,7 +8175,8 @@
           "peak_alpha": 0.65,
           "zone": "player_holding"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.discount.003.3",
@@ -8331,7 +8346,8 @@
           "peak_alpha": 0.65,
           "zone": "showcase"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.public.001.1",
@@ -8487,7 +8503,8 @@
           "peak_alpha": 0.65,
           "zone": "player_development"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.public.001.2",
@@ -8642,7 +8659,8 @@
           "action": "wait",
           "camera": "board"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.limit.001.1",
@@ -8797,7 +8815,8 @@
           "peak_alpha": 0.65,
           "zone": "player_development"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.cards.limit.001.2",
@@ -8964,7 +8983,8 @@
           "action": "destroy",
           "zone": "showcase_1"
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "cue": "action.nobles.intro.001",
@@ -9021,12 +9041,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 3,
@@ -9090,12 +9104,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 3,
@@ -9208,12 +9216,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 3,
             "kinds": {
@@ -9276,12 +9278,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 3,
@@ -9404,12 +9400,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 3,
             "kinds": {
@@ -9472,12 +9462,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 3,
@@ -9579,12 +9563,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 3,
             "kinds": {
@@ -9647,12 +9625,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 3,
@@ -9748,12 +9720,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 3,
             "kinds": {
@@ -9816,12 +9782,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -9953,12 +9913,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -10022,12 +9976,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -10148,12 +10096,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -10217,12 +10159,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -10333,12 +10269,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -10402,12 +10332,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -10519,12 +10443,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -10588,12 +10506,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -10713,12 +10625,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -10782,12 +10688,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -10907,12 +10807,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -10976,12 +10870,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -11101,12 +10989,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -11170,12 +11052,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -11279,12 +11155,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -11348,12 +11218,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -11473,12 +11337,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -11542,12 +11400,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -11642,12 +11494,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -11711,12 +11557,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -11818,12 +11658,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -11887,12 +11721,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -11988,12 +11816,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -12057,12 +11879,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -12165,12 +11981,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -12234,12 +12044,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -12346,12 +12150,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -12416,12 +12214,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -12555,12 +12347,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -12625,12 +12411,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -12736,12 +12516,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -12806,12 +12580,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -12939,12 +12707,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -13009,12 +12771,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -13110,12 +12866,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -13180,12 +12930,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -13291,12 +13035,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -13361,12 +13099,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -13470,12 +13202,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -13540,12 +13266,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -13643,12 +13363,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -13713,12 +13427,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -13859,12 +13567,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -13929,12 +13631,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -14030,12 +13726,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -14100,12 +13790,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -14203,12 +13887,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -14273,12 +13951,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -14391,12 +14063,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -14461,12 +14127,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -14570,12 +14230,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -14640,12 +14294,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 9,
@@ -14749,12 +14397,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 9,
             "kinds": {
@@ -14819,12 +14461,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 10,
@@ -14969,12 +14605,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 10,
             "kinds": {
@@ -15040,12 +14670,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 10,
@@ -15159,12 +14783,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 10,
             "kinds": {
@@ -15230,12 +14848,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 10,
@@ -15348,12 +14960,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 10,
             "kinds": {
@@ -15419,12 +15025,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 10,
@@ -15529,12 +15129,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 10,
             "kinds": {
@@ -15600,12 +15194,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 10,
@@ -15703,12 +15291,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 10,
             "kinds": {
@@ -15774,12 +15356,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -15918,12 +15494,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -15990,12 +15560,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -16093,12 +15657,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -16165,12 +15723,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -16276,12 +15828,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -16348,12 +15894,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -16459,12 +15999,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -16531,12 +16065,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -16634,12 +16162,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -16706,12 +16228,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -16817,12 +16333,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -16889,12 +16399,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -16999,12 +16503,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -17071,12 +16569,6 @@
           },
           "player_marker": {
             "count": 1
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
           },
           "player_development": {
             "count": 11,
@@ -17182,12 +16674,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -17255,12 +16741,6 @@
           "player_marker": {
             "count": 1
           },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
           "player_development": {
             "count": 11,
             "kinds": {
@@ -17300,7 +16780,8 @@
       "name": "盒面树",
       "why": "第 1 节整节讲的都是游戏盒封面本身；观众这时还不该看到任何桌游组件。把盒面独立成树，天然保证“除了盒面什么都没有”。",
       "initial": "只有整幅盒面图（board.default_picture=media/box.png），没有 zone、没有组件。",
-      "extent_note": "只服务一张盒面图，不继承主桌 10.6 的纵深。"
+      "extent_note": "只服务一张盒面图，不继承主桌 10.6 的纵深。",
+      "world": "box"
     },
     {
       "id": "cards_intro",
@@ -17308,15 +16789,8 @@
       "name": "介绍牌树",
       "why": "介绍发展卡正面/背面与三个等级时，桌上只需出现那几张样卡，不需要真实牌堆/市场/玩家状态。",
       "initial": "四个展示位为空；根画面是盒面（cue 内关掉），之后无整幅图。",
-      "extent_note": "只框住四个展示位，不再被主桌纵深限制。"
-    },
-    {
-      "id": "gems_demo",
-      "stage": "_stage/splendor.gems",
-      "name": "宝石演示树",
-      "why": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。",
-      "initial": "五格宝石展示位和黄金展示位都为空。",
-      "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。"
+      "extent_note": "只框住四个展示位，不再被主桌纵深限制。",
+      "world": "cards_intro"
     },
     {
       "id": "main",
@@ -17324,7 +16798,26 @@
       "name": "主树",
       "why": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。",
       "initial": "空桌；真实组件从 setup.gems.003.1 起按规则 create。根画面在 setup.cards.001.1 已关掉盒面，之后保持无整幅图。",
-      "extent_note": "当前为真实牌桌完整 extent；多棵树全部落地后再按主树实际内容收紧。"
+      "extent_note": "当前为真实牌桌完整 extent；多棵树全部落地后再按主树实际内容收紧。",
+      "world": "real"
+    },
+    {
+      "id": "cards_demo",
+      "stage": "_stage/splendor.cards_demo",
+      "world": "real",
+      "name": "卡片演示树（overlay）",
+      "why": "介绍发展卡正面、价格、折扣、买牌与市场补牌时，在主世界状态之上额外需要样卡；换 stage 切出展示位，但共用同一份真实牌桌状态，讲完裁掉展示位即回到主树。",
+      "initial": "进入时继承主世界当前状态；额外把 showcase/showcase_1 清空，样卡由 action.cards.intro.001 创建。",
+      "extent_note": "包含主桌全部 zone，外加 showcase/showcase_1；卡片特写时用这些 zone 取景。"
+    },
+    {
+      "id": "gems_demo",
+      "stage": "_stage/splendor.gems",
+      "name": "宝石演示树",
+      "why": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。",
+      "initial": "五格宝石展示位和黄金展示位都为空。",
+      "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。",
+      "world": "gems_demo"
     }
   ]
 }

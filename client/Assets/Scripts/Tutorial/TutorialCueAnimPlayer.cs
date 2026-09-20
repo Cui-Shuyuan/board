@@ -289,6 +289,16 @@ namespace BoardGameTutorial
             return doc?.stage;
         }
 
+        /// <summary>树属于哪个状态世界：同 world 的树共享 Store 状态，跨 world 才重置。</summary>
+        private static string WorldForTree(TrackAnimDoc doc, string treeId)
+        {
+            if (doc?.trees != null)
+                foreach (var t in doc.trees)
+                    if (t != null && t.id == treeId)
+                        return string.IsNullOrEmpty(t.world) ? treeId : t.world;
+            return treeId;
+        }
+
         /// <summary>换树 = cut：先清掉上一棵树的取景；本条 cue 的 camera / 父链会重新声明。</summary>
         private void ResetFramingForTreeCut()
         {
@@ -371,7 +381,10 @@ namespace BoardGameTutorial
             string targetStageRel = TreeStageFor(trackDoc, targetTreeId);
             bool hasSceneBefore = stage != null;
             bool treeChanged = hasSceneBefore && currentTreeId != targetTreeId;
-            bool continueInTree = continueState && !treeChanged;
+            // 同一个 world 里的不同树（例如主树 ↔ 卡片演示 overlay）只换 stage，状态继续；
+            // 跨 world（盒面/宝石演示/介绍牌等独立世界）才是状态 cut。
+            bool sameWorld = hasSceneBefore && WorldForTree(trackDoc, currentTreeId) == WorldForTree(trackDoc, targetTreeId);
+            bool continueInTree = continueState && (!treeChanged || sameWorld);
 
             if (found == null)
             {
@@ -389,14 +402,17 @@ namespace BoardGameTutorial
                 // 用画面判会把"空桌"误判成"还没建桌"，于是顺序播放时也去重建入口状态
                 // （实测：整条轨道的状态被重放一遍，市场 12 张变 24 张）。
                 // 现在再加上**跨树**：即使顺序播放，换树也不能接续上一棵树的状态，必须 cut。
-                if (!hasSceneBefore || !continueInTree)
+                if (!hasSceneBefore || !continueInTree || treeChanged)
                 {
                     ClearActors();
                     LoadStage(gameRoot, targetStageRel);
                     currentTreeId = targetTreeId;
                     if (treeChanged) ResetFramingForTreeCut();
-                    // ReplayEntryChain 自己会 Reset + ApplyInitial，再按顺序把本条之前的事件推到终态
-                    ReplayEntryChain(trackDoc, cueId, targetTreeId);
+                    // ReplayEntryChain 自己会 Reset + ApplyInitial，再按顺序把本条之前的事件推到终态；
+                    // 同 world 换 stage（overlay）时状态继续，不重放。
+                    if (!hasSceneBefore || !continueInTree)
+                        ReplayEntryChain(trackDoc, cueId, WorldForTree(trackDoc, targetTreeId), targetStageRel, gameRoot);
+                    LoadStage(gameRoot, targetStageRel);   // 重放途中可能按 world 切过别的 stage，最后切回本条 stage（Store 状态不动）
                     BuildActorObjects();
                     SyncActorsToStore();
                     EnsureCamera();
@@ -437,7 +453,8 @@ namespace BoardGameTutorial
                 //
                 // 这样"跳转"和"顺序播放"走的是**同一条状态路径**，两种走法不可能再不一致；
                 // 内存里记的"编译器离线复算入口状态"，就是这件重放的结果预先算好而已。
-                ReplayEntryChain(trackDoc, cueId, targetTreeId);
+                ReplayEntryChain(trackDoc, cueId, WorldForTree(trackDoc, targetTreeId), targetStageRel, gameRoot);
+                LoadStage(gameRoot, targetStageRel);   // 重放途中可能按 world 切过别的 stage，最后切回本条 stage（Store 状态不动）
                 cueDoc = found;          // 重放会把 cueDoc 换成前序 cue，这里换回来
                 CueId = cueId;
                 Note = found.note;
@@ -2335,7 +2352,8 @@ namespace BoardGameTutorial
             cueOrder = ids != null ? new List<string>(ids) : null;
         }
 
-        private void ReplayEntryChain(TrackAnimDoc trackDoc, string targetCueId, string targetTreeId)
+        private void ReplayEntryChain(TrackAnimDoc trackDoc, string targetCueId, string targetWorldId,
+                                      string targetStageRel, string gameRoot)
         {
             Store.Reset();
             Store.ApplyInitial();
@@ -2356,9 +2374,13 @@ namespace BoardGameTutorial
                     if (string.IsNullOrEmpty(id)) continue;
                     if (id == targetCueId) break;             // 只重放本条之前（在**整轨顺序**里找目标）
                     if (!byId.TryGetValue(id, out var c)) continue;   // 这条没有动画，跳过
-                    if (TreeIdForCue(trackDoc, c) != targetTreeId) continue; // 只重放同一棵树
+                    string cTree = TreeIdForCue(trackDoc, c);
+                    if (WorldForTree(trackDoc, cTree) != targetWorldId) continue; // 只重放同一个状态世界
                     if (c.events == null || c.events.Count == 0) continue;
 
+                    // 同一个 world 里的不同 tree 各有自己的 stage；按 cue 切 stage，
+                    // 但**不 Reset Store** —— 状态在这个 world 内连续。
+                    LoadStage(gameRoot, TreeStageFor(trackDoc, cTree));
                     cueDoc = c;
                     CueId = c.cue;
                     clips.Clear();
@@ -2379,7 +2401,7 @@ namespace BoardGameTutorial
             // 它显示 `入口=初始态 market=0 deck1=0` —— 一眼看出入口根本没被解出来。
             int total = 0;
             foreach (var it in Store.Items) total++;
-            Debug.Log($"[TutorialCueAnim] 入口状态（从 {targetTreeId} 树根重放到 {targetCueId}）：" +
+            Debug.Log($"[TutorialCueAnim] 入口状态（从 world={targetWorldId} 的根重放到 {targetCueId}）：" +
                       $"market={Store.CountInZone("card_market")} " +
                       $"deck1={Store.CountInZone("deck_level_1")} " +
                       $"deck2={Store.CountInZone("deck_level_2")} " +

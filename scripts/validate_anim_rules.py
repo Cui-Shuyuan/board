@@ -156,19 +156,26 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
         default_stage = stage_or_default
         stages = stages_or_facts
         facts = facts_or_rep
-    # 每棵树各有一份“暂停后恢复”的状态：切走的是镜头，不是那棵树的状态。
-    # 这也与引擎“跳回某树时从该树根重放”一致：按轨道顺序只把同树的事件喂给它。
+    # 状态按 **world** 分组，而不是按 tree：
+    #   · box / gems_demo / cards_intro 各自是独立演示世界，world 不同 → 状态 cut；
+    #   · main 与 cards_demo（卡片 overlay）world 相同 → 同一份真实牌桌状态继续。
+    # 镜头/舞台仍按 tree 切。
+    tree_worlds = {}
+    for t in anim.get("trees") or []:
+        tid = t.get("id") or "main"
+        tree_worlds[tid] = t.get("world") or tid
     tree_states = {}
     frozen_by_tree = {}
 
     for cue in anim.get("cues") or []:
         cid = cue.get("cue")
         tree = cue.get("tree") or "main"
+        world = tree_worlds.get(tree, tree)
         stage = stages.get(tree, default_stage)
         zones = {z["id"]: z for z in (stage.get("zones") or [])}
         dev_zones = [z for z in zones if "development" in z]
-        st = tree_states.setdefault(tree, State())
-        frozen = frozen_by_tree.get(tree)
+        st = tree_states.setdefault(world, State())
+        frozen = frozen_by_tree.get(world)
         paid, bought, reserved, gold_taken = Counter(), [], [], 0
         for i, ev in enumerate(cue.get("events") or []):
             where = f"{cid} events[{i}]"
@@ -330,7 +337,7 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
         # ── 本条 cue 的整桌检查 ────────────────────────────────────────────
         if cid == FROZEN_FROM:
             frozen = dict(st.gems())
-            frozen_by_tree[tree] = frozen
+            frozen_by_tree[world] = frozen
         gems = st.gems()
         if frozen is not None:
             for col, want in frozen.items():

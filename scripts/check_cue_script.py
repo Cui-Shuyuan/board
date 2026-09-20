@@ -280,6 +280,20 @@ def stage_for_contract(contract, stages, default_stage):
     return stages.get(tree) or default_stage
 
 
+def load_tree_worlds(args):
+    """tree id → world。world 相同 = 状态继续；world 不同 = cut。"""
+    base = ROOT / "games" / args.game / "tutorial" / "anim"
+    doc = load(base / f"{args.track}.json")
+    if not doc:
+        return {}
+    worlds = {}
+    for tree in doc.get("trees") or []:
+        tid = tree.get("id")
+        if tid:
+            worlds[tid] = tree.get("world") or tid
+    return worlds
+
+
 def visible_items(stage, state, camera, padding=0.0):
     """这一刻**画面里真的看得见**的组件：取景框内的、且画面上没被隐藏的。
 
@@ -421,6 +435,13 @@ def check_single(args):
         if not src:
             print(f"{args.cue} 没有 entry_from，无法查入口", file=sys.stderr)
             return 2
+        worlds = load_tree_worlds(args)
+        tree = contract.get("tree") or "main"
+        parent = contracts.get(src) or {}
+        parent_tree = parent.get("tree") or "main"
+        if worlds.get(tree, tree) != worlds.get(parent_tree, parent_tree):
+            print(f"{args.cue} 与 {src} 跨 world（cut），入口不是父 cue 的终态；跳过 enter 对账")
+            return 0
     else:
         src = args.cue
     if src not in states:
@@ -469,6 +490,7 @@ def check_all(args):
         return 2
     states = load_states(spath)
     stages, default_stage = load_stages(args)
+    tree_worlds = load_tree_worlds(args)
 
     fails = skipped = frame_warns = 0
     prev_leave = None
@@ -480,8 +502,9 @@ def check_all(args):
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
         tree = contract.get("tree") or "main"
+        world = tree_worlds.get(tree, tree)
         if tree != current_tree:
-            # 换树是 cut：取景不延续上一棵树；进入状态也不默认继承上一棵树。
+            # 换 stage 会重置取景；状态是否 cut 看 world。
             current_tree = tree
             prev_leave = None
         stage = stages.get(tree) or default_stage
@@ -540,9 +563,16 @@ def check_all(args):
             if i > 0:
                 candidate = sample_order[i - 1]
                 candidate_contract = contracts.get(candidate) or {}
-                if (candidate_contract.get("tree") or "main") == tree:
+                cand_tree = candidate_contract.get("tree") or "main"
+                if tree_worlds.get(cand_tree, cand_tree) == world:
                     parent = candidate
                     parent_default = True
+        # 跨 world 是 cut：即使数据里显式写了 entry_from，另一个世界的 cue 也不是本 cue 的父。
+        if parent:
+            parent_contract = contracts.get(parent) or {}
+            parent_tree = parent_contract.get("tree") or "main"
+            if tree_worlds.get(parent_tree, parent_tree) != world:
+                parent = None
         if parent:
             if parent in states:
                 want = part_of(contract, "enter")
@@ -590,12 +620,14 @@ def chain(args):
     if doc is None:
         return 2
     stages, default_stage = load_stages(args)
+    tree_worlds = load_tree_worlds(args)
     states = load_states(spath)
 
     fails = 0
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
         tree = contract.get("tree") or "main"
+        world = tree_worlds.get(tree, tree)
         set_stage(stages.get(tree) or default_stage)
         parent = contract.get("entry_from")
         if not parent:
@@ -605,8 +637,9 @@ def chain(args):
             fails += 1
             continue
         parent_contract = contracts.get(parent) or {}
-        if (parent_contract.get("tree") or "main") != tree:
-            print(f"SKIP  {cue}: 父 {parent} 在另一棵树（{parent_contract.get('tree') or 'main'}）—— 跨树是 cut，不按契约链比")
+        parent_tree = parent_contract.get("tree") or "main"
+        if tree_worlds.get(parent_tree, parent_tree) != world:
+            print(f"SKIP  {cue}: 父 {parent} 在另一个 world（{tree_worlds.get(parent_tree, parent_tree)}）—— 跨 world 是 cut，不按契约链比")
             continue
         if parent not in states:
             print(f"SKIP  {cue}: 还没有父 cue 的采样状态（{parent}）")
