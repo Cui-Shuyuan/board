@@ -43,6 +43,8 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
   - `box` / `cards_intro` / `gems_demo` 各自独立 world，进入时 Reset + 从树根重放；
   - `main` 与 `cards_demo` 的 `world` 都是 `real`，换 stage 做视觉 cut，但**共享同一份 Store 状态**。
   这样 `action.cards` 里的买牌/补市场会继续影响真实主树，后续 nobles/结算契约不用重写。
+- 换树时的镜头：`LoadCue` 现在会在返回前先应用本条 `at=0` 的事件（尤其 `wait camera`），
+  stage 与镜头在同一帧切好；不再出现“树先切、镜头等 Update 才切”的交界脏帧。
 - 引擎 `ReplayEntryChain` 已按 **world** 重放：跳进 `cards_demo` 时会先重放主树前序事件，再切到
   cards_demo stage；跳回主树时状态连续。已实测：
   `action.cards.market.001.2` 跳转入口 `market=12 deck1=36`、

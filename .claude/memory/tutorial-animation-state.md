@@ -2993,3 +2993,12 @@ LLM 只理解意图、确定性工具照规则数据回答）来判断动画脚�
 - `action.cards.*` 已迁入 `cards_demo` overlay 树；主树不再有 `showcase` 假 zone。
 - 已实测跳转：`action.cards.market.001.2`（从主树入口跳到卡片 overlay）和
   `action.nobles.intro.001`（从卡片 overlay 跳回主树）单 cue 对账通过。
+
+
+### 2026-09-21 追加：换树与镜头必须同帧
+
+用户报 “cue17 结尾不干净”的根因：换树发生在 `LoadCue`，而本条 `at=0` 的 `wait camera` 要等
+音频加载后的第一次 `Seek` 才生效 —— 中间会露出 “新 stage + 旧/全局镜头”的帧。
+
+修法：`LoadCue` 在 `CaptureEntry()` 后直接 `clock=0; nextIndex=0; Seek(0f);`，
+把本条 `at=0` 的事件（尤其是 `wait camera`）在返回前应用掉。这样 stage 切换和镜头切换在同一帧完成。
