@@ -1076,6 +1076,30 @@ def check_framing_chain(files, report):
 
         prev_camera = leaves
 
+def check_tree_entry_camera(cues, report):
+    """换树的第一条 cue 必须在 at=0 声明 camera（哪怕只是 board）。
+
+    用户 2026-09-21 反复踩到“先把树切了、再等 Update 切镜头”：stage 切完到 camera 生效之间
+    会露出一帧旧/全局镜头。stage 与镜头必须同一帧切，所以把这条变成数据硬规则：
+    每条 **tree 变化**的第一条 cue 都要有 `at=0` 的 camera 事件；靠“上一条/默认镜头”
+    在跨树时没有任何意义。
+    """
+    prev_tree = None
+    for c in cues:
+        tree = c.get("tree") or "main"
+        first_or_changed = prev_tree is None or tree != prev_tree
+        if first_or_changed:
+            cams = [e for e in (c.get("events") or [])
+                    if isinstance(e, dict) and e.get("camera")]
+            hit = any(float(e.get("at", 0.0)) <= 1e-6 for e in cams)
+            if not hit:
+                report.error(c.get("cue") or "?",
+                             "换树/起树的第一条 cue 必须在 at=0 显式声明 camera"
+                             "（哪怕写 `camera: \"board\"`）—— stage 与镜头必须同一帧切换；"
+                             "跨树时“继承上一条/默认镜头”没有意义")
+        prev_tree = tree
+
+
 # 会**改变组件状态**的动作：它们碰过的 zone，契约必须声明
 STATE_CHANGING = {"transfer", "create", "destroy", "stack"}
 
@@ -1311,6 +1335,9 @@ def main():
                 check_no_game_box_zone(stage_doc, load_world(args.game), chain)
                 check_cleanup_timing(group, chain, stage_doc)
             reports.append(chain)
+        cut = Report(script_path, "（换树镜头口径）")
+        check_tree_entry_camera(cues, cut)
+        reports.append(cut)
 
     total_errors = sum(len(r.errors) for r in reports)
     total_warnings = sum(len(r.warnings) for r in reports)

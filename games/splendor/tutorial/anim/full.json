@@ -29,6 +29,12 @@
         {
           "at": 0.0,
           "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
+        {
+          "at": 0.0,
+          "dur": 0.0,
           "action": "showbox",
           "on": 1,
           "picture": "media/box.png"
@@ -315,6 +321,12 @@
         "set": []
       },
       "events": [
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "action": "wait",
+          "camera": "board"
+        },
         {
           "at": 0.05,
           "dur": 0.0,
