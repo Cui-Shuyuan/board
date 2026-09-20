@@ -73,14 +73,13 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
 
 ### 追加（用户 2026-09-21）：UI cue23/24 贵族演示独立成树
 
-- 新树 `nobles_demo`（`world=real` overlay） + 舞台 `_stage/splendor.nobles.json`。
-  `noble_market` 在演示舞台里挪到独立空区 `z=8.0`，避免主桌的 `card_market`/`deck_*` 入镜。
-  容量改为 3：相机在 `create` 贵族之前就按 3 个位置取景（实测 cue23/24 `orthoSize=0.77`），
-  不会先框空位、等贵族后出现。
-- UI cue23=`setup.nobles.001.1`：不再用 supply 镜头；改为 `noble_market` 特写 + 一次 `create` 3 块贵族。
-  宝石 7→4 的收尾仍在该 world 里执行，但已在贵族特写框外，不会被看见。
-- UI cue24=`setup.nobles.001.2`：同 `nobles_demo` 树、同 `noble_market` 机位；不再重复 create 贵族。
-- 对账（0 处不一致，9 条取景警告）通过；贵族 overlay 的取景警告已清零。
+- `nobles_demo` 现在是**独立世界**（`world=nobles_demo`），舞台 `_stage/splendor.nobles.json`
+  只包含 `noble_market` + `noble` 模板，场上天然只有贵族，没有任何主桌状态。
+- UI cue23=`setup.nobles.001.1`：`noble_market` 特写 + 一次 `create` 3 块贵族。
+- UI cue24=`setup.nobles.001.2`：同树、同机位，贵族已在，不再重复 create。
+- 宝石 7→4 的收尾改到 UI cue22=`setup.gems.005.2`（口播“其余的宝石放回盒子”那句）执行。
+- UI cue25=`setup.nobles.002` 回主树时，在主世界 `create` 3 块贵族，后续 `action.nobles.*` 才有贵族可用。
+- 实测：cue23/24 场景里只有 **3 件**（3 块贵族），`orthoSize=0.77`；对账 0 处不一致，9 条取景警告。
 
 **为什么原对账没抓到？** 这正好暴露了检查口径的边界：
   - `check_cue_script` 比的是“手写契约 vs 引擎采样”：旧 cue23 的契约和事件**一起写错**（都写 supply + destroy 宝石），
