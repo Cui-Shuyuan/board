@@ -65,6 +65,12 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
   `action.cards.market.001.2` 跳转入口 `market=12 deck1=36`、
   `action.nobles.intro.001` 跳转入口 `market=12 deck1=35`，两条单 cue 对账均 PASS。
 
+### 追加（用户 2026-09-21）：供应堆数量演示去掉高亮
+
+- UI cue18=`setup.gems.003.1`、cue19=`setup.gems.003.2`、cue20=`setup.gems.004`
+  的 15 条 `highlight` 全部删除；只保留 camera + create（4/5/7 枚的逐步出现）。
+  用户口径：这种“把每堆都点亮一下”没有意义。
+
 ### 本会话验收结果（更新版）
 
 ```text

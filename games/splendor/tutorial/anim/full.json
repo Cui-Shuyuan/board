@@ -1575,46 +1575,6 @@
           "template": "gem",
           "palette": "gem_onyx",
           "count": 4
-        },
-        {
-          "at": 5.7,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<diamond>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.14
-        },
-        {
-          "at": 5.7,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<sapphire>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.14
-        },
-        {
-          "at": 5.7,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<ruby>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.14
-        },
-        {
-          "at": 5.7,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<emerald>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.14
-        },
-        {
-          "at": 5.7,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<onyx>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.14
         }
       ]
     },
@@ -1751,46 +1711,6 @@
           "template": "gem",
           "palette": "gem_onyx",
           "count": 5
-        },
-        {
-          "at": 1.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<diamond>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<sapphire>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<ruby>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<emerald>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.6,
-          "dur": 0.6,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<onyx>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
         }
       ]
     },
@@ -1927,46 +1847,6 @@
           "template": "gem",
           "palette": "gem_onyx",
           "count": 7
-        },
-        {
-          "at": 2.0,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<diamond>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.13
-        },
-        {
-          "at": 2.0,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<sapphire>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.13
-        },
-        {
-          "at": 2.0,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<ruby>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.13
-        },
-        {
-          "at": 2.0,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<emerald>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.13
-        },
-        {
-          "at": 2.0,
-          "dur": 0.7,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<onyx>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.13
         }
       ]
     },
