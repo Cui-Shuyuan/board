@@ -1581,8 +1581,8 @@
     {
       "cue": "setup.gems.003.2",
       "entry_from": "setup.gems.003.1",
-      "story": "【3人游戏时，拿取5枚】\n口播说明 3 人局每种拿 5 枚；本片以 **2 人局**为例，供应堆保持 003.1 已经摆好的 4 枚，不再实际加第 5 枚。\n不能演成“先全部摆出来、后面再放回盒子”——那会误导客人以为设置时有多余步骤。",
-      "note": "口播讲 3 人局数量；画面按 2 人局口径固定为每色 4 枚（enter == exit，没有 create）。\n这样从始至终只出现“对应人数实际拿出的那一份”，不出现 4→5→7→4 的错误累计/回退。",
+      "story": "【3人游戏时，拿取5枚】\n这是 3 人局的宝石数量演示：五种颜色各 5 枚。\n它是一棵**独立演示树**，不改变主桌的 2 人局状态；看完切回主树，主桌仍然只有 4 枚。",
+      "note": "独立 gems_count_demo 世界里 create 5 枚/色，只用于说明 3 人局数量。\n主树在 UI18 已经按 2 人局建立 4 枚，本 cue 不碰主树。",
       "timing": {
         "五色同时补齐到 5 枚": "0.55（一次到位）",
         "五堆一起呼吸（强调 5）": "1.60-2.20"
@@ -1591,34 +1591,19 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 4,
-            "kinds": {
-              "宝石白": 4
-            }
+            "count": 0
           },
           "gem_supply_sapphire": {
-            "count": 4,
-            "kinds": {
-              "宝石蓝": 4
-            }
+            "count": 0
           },
           "gem_supply_ruby": {
-            "count": 4,
-            "kinds": {
-              "宝石红": 4
-            }
+            "count": 0
           },
           "gem_supply_emerald": {
-            "count": 4,
-            "kinds": {
-              "宝石绿": 4
-            }
+            "count": 0
           },
           "gem_supply_onyx": {
-            "count": 4,
-            "kinds": {
-              "宝石黑": 4
-            }
+            "count": 0
           }
         }
       },
@@ -1626,33 +1611,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石白": 4
+              "宝石白": 5
             }
           },
           "gem_supply_sapphire": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石蓝": 4
+              "宝石蓝": 5
             }
           },
           "gem_supply_ruby": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石红": 4
+              "宝石红": 5
             }
           },
           "gem_supply_emerald": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石绿": 4
+              "宝石绿": 5
             }
           },
           "gem_supply_onyx": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石黑": 4
+              "宝石黑": 5
             }
           }
         }
@@ -1666,14 +1651,60 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "supply"
+        },
+        {
+          "at": 0.55,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<diamond>>",
+          "template": "gem",
+          "palette": "gem_diamond",
+          "count": 5
+        },
+        {
+          "at": 0.55,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<sapphire>>",
+          "template": "gem",
+          "palette": "gem_sapphire",
+          "count": 5
+        },
+        {
+          "at": 0.55,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<ruby>>",
+          "template": "gem",
+          "palette": "gem_ruby",
+          "count": 5
+        },
+        {
+          "at": 0.55,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<emerald>>",
+          "template": "gem",
+          "palette": "gem_emerald",
+          "count": 5
+        },
+        {
+          "at": 0.55,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<onyx>>",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 5
         }
-      ]
+      ],
+      "tree": "gems_count_demo"
     },
     {
       "cue": "setup.gems.004",
       "entry_from": "setup.gems.003.2",
-      "story": "【4人游戏时则使用全部的7枚宝石】\n口播说明 4 人局每种拿 7 枚；本片仍以 **2 人局**为例，供应堆保持每色 4 枚。\n不在画面上真的加到 7 枚，避免出现“摆满 7 枚再收回去”的过程。",
-      "note": "口播讲 4 人局数量；画面按 2 人局口径固定为每色 4 枚（enter == exit，没有 create）。\n只有 003.1 那一次 create 4，是 2 人局实际一开始就会做的动作。",
+      "story": "【4人游戏时则使用全部的7枚宝石】\n这是 4 人局的宝石数量演示：五种颜色各 7 枚。\n仍在**独立演示树**里，不改变主桌状态；看完切回主树，主桌仍然只有 4 枚。",
+      "note": "独立世界里 5→7 只用于说明 4 人局数量；这不是实际设置流程，也不影响主树。",
       "timing": {
         "五色同时补齐到 7 枚": "0.60（一次到位）",
         "五堆一起呼吸（强调 7）": "2.00-2.70"
@@ -1682,33 +1713,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石白": 4
+              "宝石白": 5
             }
           },
           "gem_supply_sapphire": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石蓝": 4
+              "宝石蓝": 5
             }
           },
           "gem_supply_ruby": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石红": 4
+              "宝石红": 5
             }
           },
           "gem_supply_emerald": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石绿": 4
+              "宝石绿": 5
             }
           },
           "gem_supply_onyx": {
-            "count": 4,
+            "count": 5,
             "kinds": {
-              "宝石黑": 4
+              "宝石黑": 5
             }
           }
         }
@@ -1717,33 +1748,33 @@
         "picture": null,
         "zones": {
           "gem_supply_diamond": {
-            "count": 4,
+            "count": 7,
             "kinds": {
-              "宝石白": 4
+              "宝石白": 7
             }
           },
           "gem_supply_sapphire": {
-            "count": 4,
+            "count": 7,
             "kinds": {
-              "宝石蓝": 4
+              "宝石蓝": 7
             }
           },
           "gem_supply_ruby": {
-            "count": 4,
+            "count": 7,
             "kinds": {
-              "宝石红": 4
+              "宝石红": 7
             }
           },
           "gem_supply_emerald": {
-            "count": 4,
+            "count": 7,
             "kinds": {
-              "宝石绿": 4
+              "宝石绿": 7
             }
           },
           "gem_supply_onyx": {
-            "count": 4,
+            "count": 7,
             "kinds": {
-              "宝石黑": 4
+              "宝石黑": 7
             }
           }
         }
@@ -1757,14 +1788,60 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "supply"
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<diamond>>",
+          "template": "gem",
+          "palette": "gem_diamond",
+          "count": 7
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<sapphire>>",
+          "template": "gem",
+          "palette": "gem_sapphire",
+          "count": 7
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<ruby>>",
+          "template": "gem",
+          "palette": "gem_ruby",
+          "count": 7
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<emerald>>",
+          "template": "gem",
+          "palette": "gem_emerald",
+          "count": 7
+        },
+        {
+          "at": 0.6,
+          "dur": 0.0,
+          "action": "create",
+          "destination": "<gem_supply|color=<onyx>>",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 7
         }
-      ]
+      ],
+      "tree": "gems_count_demo"
     },
     {
       "cue": "setup.gems.005.1",
       "entry_from": "setup.gems.004",
-      "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n本片按 2 人局，宝石供应堆从 003.1 起就是每色 4 枚；这条只确认“这一排就是供应堆”，不再改变数量。",
-      "note": "口播说“对应数量”；本片已经选定 2 人局 = 每色 4 枚，因此 enter == exit。\n不再从 7 枚往回收——一开始就只拿出对应数量。",
+      "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n本片以 2 人局为例，主桌供应堆从一开始就是每色 4 枚；前面 5/7 枚只是独立数量演示。",
+      "note": "切回主树，确认实际设置的宝石供应堆：每色 4 枚。enter == exit。",
       "timing": {
         "五堆一起呼吸（「成为宝石供应堆」）": "1.20-2.40（口播 0.28-5.55）"
       },
@@ -1853,54 +1930,14 @@
           "dur": 0.0,
           "action": "wait",
           "camera": "supply"
-        },
-        {
-          "at": 1.2,
-          "dur": 1.0,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<diamond>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.2,
-          "dur": 1.0,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<sapphire>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.2,
-          "dur": 1.0,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<ruby>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.2,
-          "dur": 1.0,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<emerald>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
-        },
-        {
-          "at": 1.2,
-          "dur": 1.0,
-          "action": "highlight",
-          "zone": "<gem_supply|color=<onyx>>",
-          "easing": "easeInOutCubic",
-          "grow": 1.12
         }
       ]
     },
     {
       "cue": "setup.gems.005.2",
       "entry_from": "setup.gems.005.1",
-      "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n0.50：5 枚黄金一次出现在 gold_supply；2.40 给黄金一次呼吸。\n宝石仍保持每色 4 枚——2 人局一开始就只拿出 4 枚，所以没有“其余的宝石”需要放回，也没有 7→4 的回收动作。",
-      "note": "黄金 5 枚 `create` 到 gold_supply；宝石每色 4 枚保持不变。\n口播里的“其余的宝石放回盒子”在 2 人局示例下没有额外动作：从未多拿，自然也不用放回。\n这样才能避免客人误以为设置流程是“先把所有宝石都拿出来摆好，再把多余的收回去”。",
+      "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n0.50：5 枚黄金一次出现在 gold_supply；主桌宝石保持每色 4 枚。\n3/4 人局的 5/7 枚已经在独立演示树里看过，不会带回主桌，所以这里没有 7→4 的回收动作。",
+      "note": "黄金 5 枚 create；宝石 4 枚保持不变。\n“其余的宝石放回盒子”在 2 人局实际流程里没有多余动作：一开始就只拿 4 枚。",
       "timing": {
         "黄金 5 枚出现": "0.50",
         "黄金呼吸": "2.40-3.10",
@@ -16374,6 +16411,15 @@
       "initial": "五格宝石展示位和黄金展示位都为空。",
       "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。",
       "world": "gems_demo"
+    },
+    {
+      "id": "gems_count_demo",
+      "stage": "_stage/splendor.gems_count",
+      "world": "gems_count_demo",
+      "name": "宝石数量演示树（独立）",
+      "why": "口播分别说明 3 人局 5 枚、4 人局 7 枚；这些数量只在这棵演示树里展示，不代表实际设置流程，也不改变主桌的 2 人局 4 枚。",
+      "initial": "五个宝石供应堆为空。",
+      "extent_note": "只框五个宝石供应堆。"
     },
     {
       "id": "nobles_demo",
