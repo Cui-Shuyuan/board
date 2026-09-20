@@ -1,0 +1,3454 @@
+{
+  "schema": "tutorial-anim/v2",
+  "kind": "animation_track",
+  "game": "splendor",
+  "track": "ui01_30",
+  "default_tree": "main",
+  "worlds": [
+    {
+      "id": "box",
+      "mode": "isolated",
+      "why": "第 1 节整节讲的都是游戏盒封面本身；观众这时还不该看到任何桌游组件。把盒面独立成树，天然保证“除了盒面什么都没有”。"
+    },
+    {
+      "id": "cards_intro",
+      "mode": "isolated",
+      "why": "介绍发展卡正面/背面与三个等级时，桌上只需出现那几张样卡，不需要真实牌堆/市场/玩家状态。"
+    },
+    {
+      "id": "real",
+      "mode": "shared",
+      "why": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。"
+    },
+    {
+      "id": "gems_demo",
+      "mode": "isolated",
+      "why": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。"
+    },
+    {
+      "id": "gems_count_demo",
+      "mode": "isolated",
+      "why": "口播分别说明 3 人局 5 枚、4 人局 7 枚；这些数量只在这棵演示树里展示，不代表实际设置流程，也不改变主桌的 2 人局 4 枚。"
+    },
+    {
+      "id": "nobles_demo",
+      "mode": "isolated",
+      "why": "口播讲贵族板块，天然应该场上什么都没有：只显示随机抽出的 3 块贵族，其他组件不属于这棵树。"
+    },
+    {
+      "id": "marker_demo",
+      "mode": "isolated",
+      "why": "介绍起始玩家标记时，场上天然只应该有这一枚标记，不继承主桌状态。"
+    }
+  ],
+  "trees": [
+    {
+      "id": "box",
+      "world": "box",
+      "stage": "_stage/splendor.box.stage.json",
+      "purpose": "第 1 节整节讲的都是游戏盒封面本身；观众这时还不该看到任何桌游组件。把盒面独立成树，天然保证“除了盒面什么都没有”。",
+      "initial": "只有整幅盒面图（board.default_picture=media/box.png），没有 zone、没有组件。",
+      "extent_note": "只服务一张盒面图，不继承主桌 10.6 的纵深。"
+    },
+    {
+      "id": "cards_intro",
+      "world": "cards_intro",
+      "stage": "_stage/splendor.cards_intro.stage.json",
+      "purpose": "介绍发展卡正面/背面与三个等级时，桌上只需出现那几张样卡，不需要真实牌堆/市场/玩家状态。",
+      "initial": "四个展示位为空；根画面是盒面（cue 内关掉），之后无整幅图。",
+      "extent_note": "只框住四个展示位，不再被主桌纵深限制。"
+    },
+    {
+      "id": "main",
+      "world": "real",
+      "stage": "_stage/splendor.table.stage.json",
+      "purpose": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。",
+      "initial": "空桌；真实组件从 setup.gems.003.1 起按规则 create。根画面在 setup.cards.001.1 已关掉盒面，之后保持无整幅图。",
+      "extent_note": "当前为真实牌桌完整 extent；多棵树全部落地后再按主树实际内容收紧。"
+    },
+    {
+      "id": "gems_demo",
+      "world": "gems_demo",
+      "stage": "_stage/splendor.gems.stage.json",
+      "purpose": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。",
+      "initial": "五格宝石展示位和黄金展示位都为空。",
+      "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。"
+    },
+    {
+      "id": "gems_count_demo",
+      "world": "gems_count_demo",
+      "stage": "_stage/splendor.gems_count.stage.json",
+      "purpose": "口播分别说明 3 人局 5 枚、4 人局 7 枚；这些数量只在这棵演示树里展示，不代表实际设置流程，也不改变主桌的 2 人局 4 枚。",
+      "initial": "五个宝石供应堆为空。",
+      "extent_note": "只框五个宝石供应堆。"
+    },
+    {
+      "id": "nobles_demo",
+      "world": "nobles_demo",
+      "stage": "_stage/splendor.nobles.stage.json",
+      "purpose": "口播讲贵族板块，天然应该场上什么都没有：只显示随机抽出的 3 块贵族，其他组件不属于这棵树。",
+      "initial": "noble_market 为空；本树不继承主桌状态。",
+      "extent_note": "只框 3 块贵族的位置，主桌内容完全不在这个 world 里。"
+    },
+    {
+      "id": "marker_demo",
+      "world": "marker_demo",
+      "stage": "_stage/splendor.marker.stage.json",
+      "purpose": "介绍起始玩家标记时，场上天然只应该有这一枚标记，不继承主桌状态。",
+      "initial": "player_marker 为空。",
+      "extent_note": "只框 1 枚标记。"
+    }
+  ],
+  "cues": [
+    {
+      "id": "bg.intro.001.1",
+      "parent": null,
+      "tree": "box",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "显示盒面",
+          "text": "0.0（口播 0.00-4.25）"
+        }
+      ],
+      "script": {
+        "story": "【背景介绍的开场】整节显示游戏盒封面。这条 cue 只做一件事：把盒面显示出来\n（`showbox on=1 picture=media/box.png`），桌上还没有任何可见组件。\n\n顺带把**实物清单**作为基准记下来：宝石每色 7 枚、黄金 5 枚在盒里（`box_gem_*`），贵族 3 枚在镜头外（`offstage`）—— 开局的全部家当。之后每一节都从这份清单里搬，所以「桌上的数 + 盒里的数 = 实物总数」永远能核。\n\n**已知短板（待补）**：画面根状态（当前显示的是哪张整幅图）**不在采样里** —— DumpState 只导出 zone 里的组件状态，而盒面挂在画面根下（`stage.board.default_picture` + `showbox`）。所以这条契约现在只能声明\"可见区域全空 + 清单在此\"，盒面本身还没有证据可查。",
+        "note": "第一节（背景介绍）：整节显示游戏盒封面。盒面挂在画面根下，进入第二节时会被自动清掉。\n\n（2026-09）**游戏盒是抽象概念、没有实体**：开局桌上和画面外都没有任何件，宝石/黄金/贵族/发展卡都是用到时才 `create`（\"从盒里拿出来\"）。所以这里不再有 box_* 的断言。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.001.2",
+      "parent": "bg.intro.001.1",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【2015 年出版，2024 年再版；我手里的这一版是 2024 年的新版】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.002.1",
+      "parent": "bg.intro.001.2",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【老版主题：玩家扮演文艺复兴时期的富商，收购宝石矿】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。\n  这一段讲的是**老版**（文艺复兴）的主题。我们手上只有 2024 新版素材 → 画面不换、不编造。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.002.2",
+      "parent": "bg.intro.002.1",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【老版主题：开采宝石、雇佣工匠加工成饰品，最后在城市中售卖】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。\n  这一段讲的是**老版**（文艺复兴）的主题。我们手上只有 2024 新版素材 → 画面不换、不编造。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.002.3",
+      "parent": "bg.intro.002.2",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【老版主题：获得声望的同时收获贵族的青睐】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。\n  这一段讲的是**老版**（文艺复兴）的主题。我们手上只有 2024 新版素材 → 画面不换、不编造。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.003.1",
+      "parent": "bg.intro.002.3",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【新版主题：由文艺复兴改为丝绸之路】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。\n  这一段讲的是 **2024 新版**（丝绸之路）的主题 —— 画面上的盒面正是这一版。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.003.2",
+      "parent": "bg.intro.003.1",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【新版主题：扮演丝路商人，买卖宝石】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。\n  这一段讲的是 **2024 新版**（丝绸之路）的主题 —— 画面上的盒面正是这一版。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "bg.intro.003.3",
+      "parent": "bg.intro.003.2",
+      "tree": "box",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "盒面",
+          "text": "0.00（本条画面 = 2024 新版盒面）"
+        }
+      ],
+      "script": {
+        "story": "【新版主题：结识各地贵族，建立自己的贸易帝国】",
+        "note": "【版本介绍】口播在交代版本/主题。**这一 cue 不搬运任何件**：设置还没开始，桌上本来就该是空的（用户铁律：该有的有、不该有的就没有）。画面保持 2024 新版的盒面，不编造没有素材的老版画面。\n  为什么再写一次 showbox：让「这一条的画面是盒面」留在数据里自洽（契约的 picture 也这么写），而不是靠上一条没关掉。\n  为什么不写 camera：盒面是**显示时**贴在相机前面的，此刻移动相机会把盒面留在原处 → 画面变空。\n  这一段讲的是 **2024 新版**（丝绸之路）的主题 —— 画面上的盒面正是这一版。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "show",
+          "at": 0.0,
+          "dur": 0.0,
+          "picture": "media/box.png"
+        },
+        {
+          "op": "wait",
+          "at": 0.4,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.001.1",
+      "parent": "bg.intro.003.3",
+      "tree": "cards_intro",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "放出一张卡正面",
+          "text": "0.30-2.50 这是发展卡牌，共90张"
+        }
+      ],
+      "script": {
+        "story": "【这是发展卡牌，共90张】\n桌上还什么都没有。先把盒子收起来，然后在桌子中央摆出一张发展卡的正面，让观众看清发展卡长什么样。\n此时牌堆还不存在——发展卡只是被介绍，还没有成摞。牌堆要到 cue 12「洗混」时才被创建。",
+        "note": "「这是发展卡牌，共90张」(0.30–2.50)：特写展示 1 张发展卡正面，不高亮（画面只有它）。牌堆此时尚未创建。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {
+            "showcase": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "showcase": {
+              "items": [
+                {
+                  "template": "sample_card_1",
+                  "palette": "card_level_1",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "show",
+          "at": 0.05,
+          "dur": 0.0,
+          "picture": null
+        },
+        {
+          "op": "wait",
+          "at": 0.1,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.15,
+          "dur": 0.0,
+          "zone": "showcase",
+          "template": "sample_card_1",
+          "palette": "card_level_1",
+          "count": 1,
+          "to": "face_up"
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.001.2",
+      "parent": "setup.cards.001.1",
+      "tree": "cards_intro",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "摆出三种卡背",
+          "text": "3.12-5.97 根据背面可以将所有发展卡牌分为三类"
+        },
+        {
+          "key": "高亮绿色(一级)",
+          "text": "0.33-2.98 分别是40张绿色的一级发展卡牌"
+        }
+      ],
+      "script": {
+        "story": "【根据背面可以将所有发展卡牌分为三类】【分别是40张绿色的一级发展卡牌】\n把刚才那张正面收走。改成并排摆出三张卡背面朝上，对应三个级别；从左到右依次是一级、二级、三级。讲到绿色的一级时，高亮最左边那张。注意：这时仍然没有牌堆，只有这三张样本卡背。",
+        "note": "「根据背面可以分为三类」(3.12–5.97)：删除卡面，创建三张卡背一字排开——左=一级(sample_back_1) 中=二级(sample_back_2) 右=三级(sample_back_3)，**位置即身份**。随后「分别是40张绿色的一级发展卡牌」高亮最左那张。此时桌上没有\"卡堆\"这个对象。",
+        "camera": {
+          "zones": [
+            "showcase_1",
+            "showcase_2",
+            "showcase_3"
+          ],
+          "fill": 0.6667,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "showcase": {
+              "items": [
+                {
+                  "template": "sample_card_1",
+                  "palette": "card_level_1",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "showcase": {
+              "count": 0
+            },
+            "showcase_1": {
+              "items": [
+                {
+                  "template": "sample_back_1",
+                  "palette": "card_level_1",
+                  "count": 1
+                }
+              ]
+            },
+            "showcase_2": {
+              "items": [
+                {
+                  "template": "sample_back_2",
+                  "palette": "card_level_2",
+                  "count": 1
+                }
+              ]
+            },
+            "showcase_3": {
+              "items": [
+                {
+                  "template": "sample_back_3",
+                  "palette": "card_level_3",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "destroy",
+          "at": 0.05,
+          "dur": 0.0,
+          "zone": "showcase",
+          "count": 1,
+          "concept": "development_card_level_1"
+        },
+        {
+          "op": "wait",
+          "at": 0.05,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.15,
+          "dur": 0.0,
+          "zone": "showcase_1",
+          "template": "sample_back_1",
+          "palette": "card_level_1",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.15,
+          "dur": 0.0,
+          "zone": "showcase_2",
+          "template": "sample_back_2",
+          "palette": "card_level_2",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.15,
+          "dur": 0.0,
+          "zone": "showcase_3",
+          "template": "sample_back_3",
+          "palette": "card_level_3",
+          "count": 1
+        },
+        {
+          "op": "highlight",
+          "at": 0.6,
+          "dur": 1.1,
+          "zone": "showcase_1",
+          "concept": "development_card_level_1",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.001.3",
+      "parent": "setup.cards.001.2",
+      "tree": "cards_intro",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "高亮黄色(二级)",
+          "text": "0.00-2.98 30张黄色的二级发展卡牌"
+        },
+        {
+          "key": "高亮蓝色(三级)",
+          "text": "2.90-5.54 20张蓝色的三级发展卡牌"
+        }
+      ],
+      "script": {
+        "story": "【30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌】\n三张样本卡背保持不动。讲到黄色二级时高亮中间那张，讲到蓝色三级时高亮最右边那张。没有新的东西出现或消失。",
+        "note": "「30张黄色的二级发展卡牌」高亮中间那张(sample_back_2)；「20张蓝色的三级发展卡牌」高亮最右那张(sample_back_3)。",
+        "camera": {
+          "zones": [
+            "showcase_1",
+            "showcase_2",
+            "showcase_3"
+          ],
+          "fill": 0.6667,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "showcase_1": {
+              "count": 1
+            },
+            "showcase_2": {
+              "count": 1
+            },
+            "showcase_3": {
+              "count": 1
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "showcase_1": {
+              "count": 1
+            },
+            "showcase_2": {
+              "count": 1
+            },
+            "showcase_3": {
+              "count": 1
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "highlight",
+          "at": 0.1,
+          "dur": 1.3,
+          "zone": "showcase_2",
+          "concept": "development_card_level_2",
+          "grow": 1.16
+        },
+        {
+          "op": "highlight",
+          "at": 2.9,
+          "dur": 1.3,
+          "zone": "showcase_3",
+          "concept": "development_card_level_3",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.002.1",
+      "parent": "setup.cards.001.3",
+      "tree": "main",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "样本卡背退场 + 牌堆登场 + 洗混",
+          "text": "0.28-3.56 将这三类牌分别洗混后按顺序摆成一列"
+        },
+        {
+          "key": "发牌（12 张，每张 0.39s）",
+          "text": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
+        }
+      ],
+      "script": {
+        "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
+        "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+        "camera": {
+          "zones": [
+            "deck_level_1",
+            "deck_level_2",
+            "deck_level_3",
+            "card_market"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "deck_level_1": {
+              "items": [
+                {
+                  "template": "blank_card_1",
+                  "palette": "card_level_1",
+                  "count": 35
+                },
+                {
+                  "template": "market_card_1_onyx",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "deck_level_2": {
+              "items": [
+                {
+                  "template": "blank_card_2",
+                  "palette": "card_level_2",
+                  "count": 25
+                },
+                {
+                  "template": "market_card_2_diamond",
+                  "palette": "card_level_2",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "deck_level_3": {
+              "items": [
+                {
+                  "template": "blank_card_3",
+                  "palette": "card_level_3",
+                  "count": 15
+                },
+                {
+                  "template": "market_card_3_sapphire",
+                  "palette": "card_level_3",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "card_market": {
+              "items": [
+                {
+                  "template": "market_card_1_emerald",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_1_ruby",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_1_diamond",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_1_sapphire",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_2_sapphire",
+                  "palette": "card_level_2",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_2_onyx",
+                  "palette": "card_level_2",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_2_ruby",
+                  "palette": "card_level_2",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_2_emerald",
+                  "palette": "card_level_2",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_3_ruby",
+                  "palette": "card_level_3",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_3_diamond",
+                  "palette": "card_level_3",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_3_emerald",
+                  "palette": "card_level_3",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "market_card_3_onyx",
+                  "palette": "card_level_3",
+                  "count": 1,
+                  "face": "up"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "stack",
+          "at": 0.05,
+          "dur": 0.0,
+          "destination": "deck_level_1",
+          "capacity": 40,
+          "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire,market_card_1_onyx",
+          "pad_template": "blank_card_1",
+          "to": "face_down"
+        },
+        {
+          "op": "stack",
+          "at": 0.052,
+          "dur": 0.0,
+          "destination": "deck_level_2",
+          "capacity": 30,
+          "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald,market_card_2_diamond",
+          "pad_template": "blank_card_2",
+          "to": "face_down"
+        },
+        {
+          "op": "stack",
+          "at": 0.054,
+          "dur": 0.0,
+          "destination": "deck_level_3",
+          "capacity": 20,
+          "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx,market_card_3_sapphire",
+          "pad_template": "blank_card_3",
+          "to": "face_down"
+        },
+        {
+          "op": "shuffle",
+          "at": 0.3,
+          "dur": 1.1,
+          "zone": "deck_level_1"
+        },
+        {
+          "op": "shuffle",
+          "at": 0.3,
+          "dur": 1.1,
+          "zone": "deck_level_2"
+        },
+        {
+          "op": "shuffle",
+          "at": 0.3,
+          "dur": 1.1,
+          "zone": "deck_level_3"
+        },
+        {
+          "op": "transfer",
+          "at": 3.58,
+          "dur": 0.34,
+          "source": "deck_level_1",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<emerald>"
+            }
+          ],
+          "to": "face_up",
+          "order": 0,
+          "slot": 0
+        },
+        {
+          "op": "transfer",
+          "at": 3.97,
+          "dur": 0.34,
+          "source": "deck_level_1",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<ruby>"
+            }
+          ],
+          "to": "face_up",
+          "order": 1,
+          "slot": 1
+        },
+        {
+          "op": "transfer",
+          "at": 4.36,
+          "dur": 0.34,
+          "source": "deck_level_1",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<diamond>"
+            }
+          ],
+          "to": "face_up",
+          "order": 2,
+          "slot": 2
+        },
+        {
+          "op": "transfer",
+          "at": 4.75,
+          "dur": 0.34,
+          "source": "deck_level_1",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<sapphire>"
+            }
+          ],
+          "to": "face_up",
+          "order": 3,
+          "slot": 3
+        },
+        {
+          "op": "transfer",
+          "at": 5.14,
+          "dur": 0.34,
+          "source": "deck_level_2",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_2",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<sapphire>"
+            }
+          ],
+          "to": "face_up",
+          "order": 4,
+          "slot": 4
+        },
+        {
+          "op": "transfer",
+          "at": 5.53,
+          "dur": 0.34,
+          "source": "deck_level_2",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_2",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<onyx>"
+            }
+          ],
+          "to": "face_up",
+          "order": 5,
+          "slot": 5
+        },
+        {
+          "op": "transfer",
+          "at": 5.92,
+          "dur": 0.34,
+          "source": "deck_level_2",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_2",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<ruby>"
+            }
+          ],
+          "to": "face_up",
+          "order": 6,
+          "slot": 6
+        },
+        {
+          "op": "transfer",
+          "at": 6.31,
+          "dur": 0.34,
+          "source": "deck_level_2",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_2",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<emerald>"
+            }
+          ],
+          "to": "face_up",
+          "order": 7,
+          "slot": 7
+        },
+        {
+          "op": "transfer",
+          "at": 6.7,
+          "dur": 0.34,
+          "source": "deck_level_3",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_3",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<ruby>"
+            }
+          ],
+          "to": "face_up",
+          "order": 8,
+          "slot": 8
+        },
+        {
+          "op": "transfer",
+          "at": 7.09,
+          "dur": 0.34,
+          "source": "deck_level_3",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_3",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<diamond>"
+            }
+          ],
+          "to": "face_up",
+          "order": 9,
+          "slot": 9
+        },
+        {
+          "op": "transfer",
+          "at": 7.48,
+          "dur": 0.34,
+          "source": "deck_level_3",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_3",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<emerald>"
+            }
+          ],
+          "to": "face_up",
+          "order": 10,
+          "slot": 10
+        },
+        {
+          "op": "transfer",
+          "at": 7.87,
+          "dur": 0.34,
+          "source": "deck_level_3",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_3",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<onyx>"
+            }
+          ],
+          "to": "face_up",
+          "order": 11,
+          "slot": 11
+        }
+      ]
+    },
+    {
+      "id": "setup.cards.002.2",
+      "parent": "setup.cards.002.1",
+      "tree": "main",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "不动作",
+          "text": "整条只把镜头放在整桌，让 12 张牌安静待着"
+        }
+      ],
+      "script": {
+        "story": "【最终组成一个 3 乘 4 的发展卡牌供应堆】",
+        "note": "【3 乘 4 的发展卡牌供应堆】\n  这一句**不做搬运**：12 张牌在上一条（002.1）已经发完并翻正面朝上。\n  它要做的是把「3 行 × 4 列」这个结构点出来 —— 所以按 **order 0→11 扫一遍**：\n  0-3 = 一级那一行、4-7 = 二级、8-11 = 三级（行的划分由 stage 的 `card_market` 布局决定，脚本只说「第几格」，不说坐标）。\n  为什么不是「高亮整个市场」一下：那样观众看不出这是 12 个**格位**、每行 4 个。",
+        "camera": {
+          "zones": [
+            "deck_level_1",
+            "deck_level_2",
+            "deck_level_3",
+            "card_market"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 3.4
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.001.1",
+      "parent": "setup.cards.002.2",
+      "tree": "gems_demo",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "5 枚样本出现在展示位",
+          "text": "0.35 起（瞬时，各错开 0.12s；口播 0.30-2.83）"
+        }
+      ],
+      "script": {
+        "story": "【这些是标记，后续称之为宝石】宝石第一次露面：五色各 1 枚，**直接出现在展示位**上。\n\n为什么放在展示位：这一 cue 是**介绍**，不是在说宝石该放哪 —— 所以不摆进供应堆、也不从盒里搬，而是用 5 枚**样本**；镜头只框住展示位，发展卡不会入镜。\n样本是独立模板，因此「盒里每色 7 枚」的账一分不动（销毁它们也不影响账）。\n五枚各自瞬时出现、只错开 0.12s。",
+        "note": "【这些是标记，后续称之为宝石】五种颜色各 1 枚**直接出现**在**展示位**上（`gem_display`，介绍用，不是供应堆）。\n这一 cue **不碰供应堆、也不动盒子** —— 它在介绍宝石本身，不是在说宝石该放哪（用户 2026-09 定的）。\n展示位在供应区前方、离发展卡很远，取景能收得很紧：**画面里只有宝石**，没有一级发展卡。\n样本用独立模板 `gem_sample`（和 `sample_card_*` 一个路数），所以不会混进「每色 7 枚」的账。",
+        "camera": {
+          "zones": [
+            "gem_display"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "count": 0
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.35,
+          "dur": 0.0,
+          "zone": "gem_display",
+          "template": "gem_sample",
+          "palette": "gem_diamond",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.35,
+          "dur": 0.0,
+          "lead": 0.12,
+          "zone": "gem_display",
+          "template": "gem_sample",
+          "palette": "gem_sapphire",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.35,
+          "dur": 0.0,
+          "lead": 0.24,
+          "zone": "gem_display",
+          "template": "gem_sample",
+          "palette": "gem_ruby",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.35,
+          "dur": 0.0,
+          "lead": 0.36,
+          "zone": "gem_display",
+          "template": "gem_sample",
+          "palette": "gem_emerald",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.35,
+          "dur": 0.0,
+          "lead": 0.48,
+          "zone": "gem_display",
+          "template": "gem_sample",
+          "palette": "gem_onyx",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.001.2",
+      "parent": "setup.gems.001.1",
+      "tree": "gems_demo",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "白宝石高亮",
+          "text": "2.85"
+        },
+        {
+          "key": "蓝宝石高亮",
+          "text": "3.62"
+        },
+        {
+          "key": "红宝石高亮",
+          "text": "4.51"
+        },
+        {
+          "key": "绿宝石高亮",
+          "text": "5.46"
+        },
+        {
+          "key": "黑宝石高亮",
+          "text": "6.39"
+        }
+      ],
+      "script": {
+        "story": "【宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙】\n念到哪种颜色，展示位上的那一枚就呼吸一下。顺序与展示位从左到右一致 —— 正是阅读顺序。\n这一条不改变任何状态（enter == exit）。",
+        "note": "口播逐一点名五种颜色，**念到哪一种哪一枚就呼吸一下**（不改状态）。\n高亮时刻对齐字幕的**字级时间戳**：钻石 2.88 / 蓝宝石 3.65 / 红宝石 4.54 / 翡翠 5.49 / 缟玛瑙 6.42。\n目标按\"概念+颜色+展示位第几格\"点名，不用引擎实例 id。",
+        "camera": {
+          "zones": [
+            "gem_display"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "highlight",
+          "at": 2.85,
+          "dur": 0.5,
+          "zone": "gem_display",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<diamond>"
+            }
+          ],
+          "order": 0,
+          "grow": 1.18
+        },
+        {
+          "op": "highlight",
+          "at": 3.62,
+          "dur": 0.5,
+          "zone": "gem_display",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<sapphire>"
+            }
+          ],
+          "order": 1,
+          "grow": 1.18
+        },
+        {
+          "op": "highlight",
+          "at": 4.51,
+          "dur": 0.5,
+          "zone": "gem_display",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<ruby>"
+            }
+          ],
+          "order": 2,
+          "grow": 1.18
+        },
+        {
+          "op": "highlight",
+          "at": 5.46,
+          "dur": 0.5,
+          "zone": "gem_display",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<emerald>"
+            }
+          ],
+          "order": 3,
+          "grow": 1.18
+        },
+        {
+          "op": "highlight",
+          "at": 6.39,
+          "dur": 0.5,
+          "zone": "gem_display",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<onyx>"
+            }
+          ],
+          "order": 4,
+          "grow": 1.18
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.001.3",
+      "parent": "setup.gems.001.2",
+      "tree": "gems_demo",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "五堆一起呼吸一次",
+          "text": "0.60-1.60（口播 0.28-2.71）"
+        }
+      ],
+      "script": {
+        "story": "【后续我们就直接以颜色称呼它们了】\n这句话是收束，**画面不需要新信息**。给五堆宝石一次轻微的集体呼吸，让画面不死，然后停住等下一句。\n\n（如果 review 时觉得多余，这条也可以整个不要 —— 但契约建议留着：enter == exit，明确记录「这里什么都没发生」，将来有人怀疑漏做动作时有据可查。）",
+        "note": "【后续我们就直接以颜色称呼它们了】收束句：展示位上五枚一起轻微呼吸一次，不改变状态。",
+        "camera": {
+          "zones": [
+            "gem_display"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "highlight",
+          "at": 0.6,
+          "dur": 0.8,
+          "zone": "gem_display",
+          "grow": 1.1
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.002",
+      "parent": "setup.gems.001.3",
+      "tree": "gems_demo",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "黄金样本出现",
+          "text": "0.30（瞬时）"
+        },
+        {
+          "key": "黄金呼吸",
+          "text": "1.40-2.00"
+        },
+        {
+          "key": "五枚宝石一起呼吸",
+          "text": "4.70-5.30"
+        }
+      ],
+      "script": {
+        "story": "【这是黄金，黄金不属于宝石】黄金样本出现在**另一个**展示位上，和宝石隔开。\n「我们所说的宝石指的就是这五种宝石」时，五枚宝石一起呼吸，与黄金形成对照。\n这一条只增加黄金样本 1 枚，不动真件。",
+        "note": "【这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石】\n  0.30 黄金样本**直接出现**在 `gold_display`（与宝石展示位隔开一段距离 —— 这就是\"不属于宝石\"的视觉依据）\n  1.40 黄金单独呼吸；4.70 五枚宝石一起呼吸，形成对照。\n黄金样本同样是独立模板，不碰「黄金 5 枚」的账。",
+        "camera": {
+          "zones": [
+            "gem_display"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gold_display": {
+              "items": [
+                {
+                  "template": "gem_sample",
+                  "palette": "gem_gold",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "create",
+          "at": 0.3,
+          "dur": 0.0,
+          "zone": "gold_display",
+          "template": "gem_sample",
+          "palette": "gem_gold",
+          "count": 1
+        },
+        {
+          "op": "highlight",
+          "at": 1.4,
+          "dur": 0.6,
+          "zone": "gold_display",
+          "grow": 1.2
+        },
+        {
+          "op": "highlight",
+          "at": 4.7,
+          "dur": 0.6,
+          "zone": "gem_display",
+          "grow": 1.16
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.003.1",
+      "parent": "setup.gems.002",
+      "tree": "main",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "销毁样本 + 镜头切回",
+          "text": "0.00（与切镜头同帧）"
+        },
+        {
+          "key": "五色同时补齐到 4 枚",
+          "text": "4.20（一次到位）"
+        },
+        {
+          "key": "五堆呼吸",
+          "text": "5.70"
+        }
+      ],
+      "script": {
+        "story": "【根据玩家人数拿取对应数量的宝石】【2人游戏时，每种宝石拿取4枚】\n前半句做两件事：销毁介绍用的样本、镜头切回供应区；后半句五色各拿 4 枚摆成供应堆（每堆 4）。\n样本是独立模板，销毁它们不影响真件的账：真宝石仍在盒里，从盒里搬出来的才是供应堆。",
+        "note": "【我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚】\n  0.00：销毁展示位上的 6 枚样本，与「镜头切回供应区」**同一帧**。\n  4.20：五色**同时**各 **出现** 4 枚（`create`，一次到位）—— 供应堆此前是空的。\n  为什么是 create 而不是 transfer：源是游戏盒。\n  **游戏盒是抽象概念、没有实体**（用户 2026-09）：\"从盒子里拿出来\" 就是 `create`，\n  \"放回盒子\" 就是 `destroy`。所以这里没有 box_* 这个 zone，也不必写 source ——   盒里的东西从观众视角本来就是\"凭空多出来/少掉\"。\n  账仍然平：这一色一共 create 7 枚 = 实物总数 7（003.1 的 4 + 003.2 的 1 + 004 的 2）。\n  `create` 的语义是「**补齐到这个数**」（幂等：重复 Seek / 重播不会建两遍），所以这里写的是**目标数量**（4 → 5 → 7），不是\"再加几枚\"。",
+        "camera": {
+          "zones": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire",
+            "gem_supply_ruby",
+            "gem_supply_emerald",
+            "gem_supply_onyx",
+            "gold_supply"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "count": 0
+            },
+            "gem_supply_sapphire": {
+              "count": 0
+            },
+            "gem_supply_ruby": {
+              "count": 0
+            },
+            "gem_supply_emerald": {
+              "count": 0
+            },
+            "gem_supply_onyx": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 4.2,
+          "dur": 0.0,
+          "zone": "gem_supply_diamond",
+          "template": "gem",
+          "palette": "gem_diamond",
+          "count": 4
+        },
+        {
+          "op": "create",
+          "at": 4.2,
+          "dur": 0.0,
+          "zone": "gem_supply_sapphire",
+          "template": "gem",
+          "palette": "gem_sapphire",
+          "count": 4
+        },
+        {
+          "op": "create",
+          "at": 4.2,
+          "dur": 0.0,
+          "zone": "gem_supply_ruby",
+          "template": "gem",
+          "palette": "gem_ruby",
+          "count": 4
+        },
+        {
+          "op": "create",
+          "at": 4.2,
+          "dur": 0.0,
+          "zone": "gem_supply_emerald",
+          "template": "gem",
+          "palette": "gem_emerald",
+          "count": 4
+        },
+        {
+          "op": "create",
+          "at": 4.2,
+          "dur": 0.0,
+          "zone": "gem_supply_onyx",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.003.2",
+      "parent": "setup.gems.003.1",
+      "tree": "gems_count_demo",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "五色同时补齐到 5 枚",
+          "text": "0.55（一次到位）"
+        },
+        {
+          "key": "五堆一起呼吸（强调 5）",
+          "text": "1.60-2.20"
+        }
+      ],
+      "script": {
+        "story": "【3人游戏时，拿取5枚】\n这是 3 人局的宝石数量演示：五种颜色各 5 枚。\n它是一棵**独立演示树**，不改变主桌的 2 人局状态；看完切回主树，主桌仍然只有 4 枚。",
+        "note": "独立 gems_count_demo 世界里 create 5 枚/色，只用于说明 3 人局数量。\n主树在 UI18 已经按 2 人局建立 4 枚，本 cue 不碰主树。",
+        "camera": {
+          "zones": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire",
+            "gem_supply_ruby",
+            "gem_supply_emerald",
+            "gem_supply_onyx"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "count": 0
+            },
+            "gem_supply_sapphire": {
+              "count": 0
+            },
+            "gem_supply_ruby": {
+              "count": 0
+            },
+            "gem_supply_emerald": {
+              "count": 0
+            },
+            "gem_supply_onyx": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 5
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.55,
+          "dur": 0.0,
+          "zone": "gem_supply_diamond",
+          "template": "gem",
+          "palette": "gem_diamond",
+          "count": 5
+        },
+        {
+          "op": "create",
+          "at": 0.55,
+          "dur": 0.0,
+          "zone": "gem_supply_sapphire",
+          "template": "gem",
+          "palette": "gem_sapphire",
+          "count": 5
+        },
+        {
+          "op": "create",
+          "at": 0.55,
+          "dur": 0.0,
+          "zone": "gem_supply_ruby",
+          "template": "gem",
+          "palette": "gem_ruby",
+          "count": 5
+        },
+        {
+          "op": "create",
+          "at": 0.55,
+          "dur": 0.0,
+          "zone": "gem_supply_emerald",
+          "template": "gem",
+          "palette": "gem_emerald",
+          "count": 5
+        },
+        {
+          "op": "create",
+          "at": 0.55,
+          "dur": 0.0,
+          "zone": "gem_supply_onyx",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.004",
+      "parent": "setup.gems.003.2",
+      "tree": "gems_count_demo",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "五色同时补齐到 7 枚",
+          "text": "0.60（一次到位）"
+        },
+        {
+          "key": "五堆一起呼吸（强调 7）",
+          "text": "2.00-2.70"
+        }
+      ],
+      "script": {
+        "story": "【4人游戏时则使用全部的7枚宝石】\n这是 4 人局的宝石数量演示：五种颜色各 7 枚。\n仍在**独立演示树**里，不改变主桌状态；看完切回主树，主桌仍然只有 4 枚。",
+        "note": "独立世界里 5→7 只用于说明 4 人局数量；这不是实际设置流程，也不影响主树。",
+        "camera": {
+          "zones": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire",
+            "gem_supply_ruby",
+            "gem_supply_emerald",
+            "gem_supply_onyx"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 5
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 5
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 7
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 7
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 7
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 7
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 7
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.6,
+          "dur": 0.0,
+          "zone": "gem_supply_diamond",
+          "template": "gem",
+          "palette": "gem_diamond",
+          "count": 7
+        },
+        {
+          "op": "create",
+          "at": 0.6,
+          "dur": 0.0,
+          "zone": "gem_supply_sapphire",
+          "template": "gem",
+          "palette": "gem_sapphire",
+          "count": 7
+        },
+        {
+          "op": "create",
+          "at": 0.6,
+          "dur": 0.0,
+          "zone": "gem_supply_ruby",
+          "template": "gem",
+          "palette": "gem_ruby",
+          "count": 7
+        },
+        {
+          "op": "create",
+          "at": 0.6,
+          "dur": 0.0,
+          "zone": "gem_supply_emerald",
+          "template": "gem",
+          "palette": "gem_emerald",
+          "count": 7
+        },
+        {
+          "op": "create",
+          "at": 0.6,
+          "dur": 0.0,
+          "zone": "gem_supply_onyx",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.005.1",
+      "parent": "setup.gems.004",
+      "tree": "main",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "五堆一起呼吸（「成为宝石供应堆」）",
+          "text": "1.20-2.40（口播 0.28-5.55）"
+        }
+      ],
+      "script": {
+        "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n本片以 2 人局为例，主桌供应堆从一开始就是每色 4 枚；前面 5/7 枚只是独立数量演示。",
+        "note": "切回主树，确认实际设置的宝石供应堆：每色 4 枚。enter == exit。",
+        "camera": {
+          "zones": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire",
+            "gem_supply_ruby",
+            "gem_supply_emerald",
+            "gem_supply_onyx",
+            "gold_supply"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "setup.gems.005.2",
+      "parent": "setup.gems.005.1",
+      "tree": "main",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "黄金 5 枚出现",
+          "text": "0.50"
+        },
+        {
+          "key": "黄金呼吸",
+          "text": "2.40-3.10"
+        },
+        {
+          "key": "「其余的宝石放回盒子」",
+          "text": "4.81-6.41 —— **刻意不给画面**"
+        }
+      ],
+      "script": {
+        "story": "【将全部5枚黄金也放在一旁，成为黄金供应堆】……【其余的宝石放回盒子】\n0.50：5 枚黄金一次出现在 gold_supply；主桌宝石保持每色 4 枚。\n3/4 人局的 5/7 枚已经在独立演示树里看过，不会带回主桌，所以这里没有 7→4 的回收动作。",
+        "note": "黄金 5 枚 create；宝石 4 枚保持不变。\n“其余的宝石放回盒子”在 2 人局实际流程里没有多余动作：一开始就只拿 4 枚。",
+        "camera": {
+          "zones": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire",
+            "gem_supply_ruby",
+            "gem_supply_emerald",
+            "gem_supply_onyx",
+            "gold_supply"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_gold",
+                  "count": 5
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.5,
+          "dur": 0.0,
+          "zone": "gold_supply",
+          "template": "gem",
+          "palette": "gem_gold",
+          "count": 5
+        },
+        {
+          "op": "highlight",
+          "at": 2.4,
+          "dur": 0.7,
+          "zone": "gold_supply",
+          "grow": 1.2
+        }
+      ]
+    },
+    {
+      "id": "setup.nobles.001.1",
+      "parent": "setup.gems.005.2",
+      "tree": "nobles_demo",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "每色 destroy 3 枚（7→4）",
+          "text": "1.00-1.75（逐色错开 0.15s）"
+        },
+        {
+          "key": "五堆一起呼吸（强调 4）",
+          "text": "2.60-3.20"
+        }
+      ],
+      "script": {
+        "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n\n这条 cue 的口播讲贵族，**但它同时承担宝石那节留下的收尾**（用户 2026-09 裁决）：\n宝石小节按 2/3/4 人三种数量演到各 7 枚（4 人局），而整篇之后走 2 人局（贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径）。\n所以这里把每色多出来的 **3 枚搬回盒子**：7 → 4。\n\n动作是背景清理，与口播内容无关，所以时间上放在前半句说完之前完成，别抢戏：\n  1.00-2.60：五种颜色各 3 枚，从 `gem_supply_*` 飞回 `box_gem_*`\n\n黄金不在这条里动（5 枚一直放在 `gold_supply`，玩家数不影响它）。",
+        "note": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n口播讲贵族，但这条 cue 同时做**宝石小节的收尾**（用户 2026-09 裁决）：\n  1.00 起：每色 **destroy 3 枚**（= 放回盒子）—— 供应堆 7 → 4，逐色错开 0.15s。\n  为什么是 3：宝石小节按 2/3/4 人三种数量一路演到各 7 枚（4 人局），而整篇之后走 2 人局\n  —— 贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径。\n  「放回盒子」就是 `destroy`（盒子没有实体）；堆里少 3 枚就少 3 枚。\n  2.60 五堆一起呼吸一次，把「现在每堆是 4」点住。\n黄金不动（玩家数不影响黄金）。贵族本身要等下一 cue 才出场。",
+        "camera": {
+          "zones": [
+            "noble_market"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble",
+                  "palette": "noble",
+                  "count": 3
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 0.8,
+          "dur": 0.0,
+          "zone": "noble_market",
+          "template": "noble",
+          "palette": "noble",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "setup.nobles.001.2",
+      "parent": "setup.nobles.001.1",
+      "tree": "nobles_demo",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "3 块贵族依次落位",
+          "text": "1.05-2.25（台词「放(1.07)置(1.26)」）"
+        },
+        {
+          "key": "逐块高亮",
+          "text": "2.05 / 2.40 / 2.75"
+        }
+      ],
+      "script": {
+        "story": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n贵族从镜头外（`offstage`，「从所有的贵族板块中随机抽出」= 盲抽）飞到贵族市场，依次落位（`lead` 0.35 错开）。\n贵族在**画面上**一直是正面（素材只有一面、没有背图），所以契约只断言「3 块、都是贵族」，不断言 `face` —— 单面件谈\"朝上朝下\"是假状态。\n「其余的放回盒子」不在这条里做：那 20 多枚贵族从来只是概念上\"在盒里\"，动画里没把它们建出来。",
+        "note": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n贵族从**盒子里抽出来**（`create` 一次 3 块 —— `create` 是\"补齐到 N\"，写三条 1 会被后两条的幂等吃掉），对齐台词「放(1.07)置(1.26)」。\n  盒子没有实体（用户 2026-09），所以不再有 `offstage` 里预置的 3 块，也不用写 transfer —— 「从所有的贵族板块中随机抽出」这句话在口播里说，画面上就是\"凭空出现 3 块\"。\n**为什么不写 `to: \"face_up\"`、契约也不断言 face**：`face` 只对**真的有正反面**的件成立，而贵族素材只有一面（没有背图），画面上它一直是正面 —— 断它只会得到指向不存在状态的差异。\n2 人局 = 玩家数 + 1 = 3 块（flow: deal_nobles）。",
+        "camera": {
+          "zones": [
+            "noble_market"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble",
+                  "palette": "noble",
+                  "count": 3
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble",
+                  "palette": "noble",
+                  "count": 3
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        }
+      ]
+    },
+    {
+      "id": "setup.nobles.002",
+      "parent": "setup.nobles.001.2",
+      "tree": "main",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "镜头推近贵族",
+          "text": "0.00"
+        },
+        {
+          "key": "依次点三块",
+          "text": "0.60 / 1.60 / 2.60"
+        }
+      ],
+      "script": {
+        "story": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】",
+        "note": "【贵族板块：下一局要重新混洗、重新抽】\n  口播说的是**未来那一局**的设置，不是本局牌桌的状态 —— 所以这里**没有状态变化**，\n  只把镜头推近贵族、把三块依次点一下（观众要把这句话和桌上的东西对上）。\n  为什么**不**在这里 shuffle：现在洗会让人以为本局要重抽贵族（本局这 3 块已经定了）。",
+        "camera": {
+          "zones": [
+            "noble_market"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "count": 0
+            },
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_3": {
+              "count": 16
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble",
+                  "palette": "noble",
+                  "count": 3
+                }
+              ]
+            },
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_3": {
+              "count": 16
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "create",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "noble_market",
+          "template": "noble",
+          "palette": "noble",
+          "count": 3
+        },
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "highlight",
+          "at": 0.6,
+          "dur": 0.5,
+          "zone": "noble_market",
+          "peak_alpha": 0.65
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.1",
+      "parent": "setup.nobles.002",
+      "tree": "main",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "镜头回整桌",
+          "text": "0.00"
+        },
+        {
+          "key": "点玩家区",
+          "text": "1.00"
+        }
+      ],
+      "script": {
+        "story": "【现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家】",
+        "note": "【决定起始玩家】\n  谁最年轻是**桌外的事**，桌上没有对应的件可以动 → 镜头回到整桌，把「玩家这一侧」点一下，  表示这句话说的是玩家而不是牌桌。\n  标记要等下一句才出现（001.3 才说「这是起始玩家标记」）—— 这里先建出来会抢台词。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "highlight",
+          "at": 1.0,
+          "dur": 0.5,
+          "zone": "player_holding",
+          "peak_alpha": 0.65
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.2",
+      "parent": "setup.starting_player.001.1",
+      "tree": "main",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "镜头整桌",
+          "text": "0.00（承接上一条）"
+        },
+        {
+          "key": "点玩家区",
+          "text": "0.80"
+        }
+      ],
+      "script": {
+        "story": "【也可以使用所有人都认可的方式决定谁是起始玩家】",
+        "note": "【也可以用别的方式决定起始玩家】\n  同样是桌外的约定 → 没有状态变化，保持整桌取景，把玩家区再点一下。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "highlight",
+          "at": 0.8,
+          "dur": 0.5,
+          "zone": "player_holding",
+          "peak_alpha": 0.65
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.3",
+      "parent": "setup.starting_player.001.2",
+      "tree": "marker_demo",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "镜头推近玩家区",
+          "text": "0.00"
+        },
+        {
+          "key": "标记出现",
+          "text": "1.00（『这是起始玩家标记』）"
+        },
+        {
+          "key": "点亮标记",
+          "text": "2.20"
+        }
+      ],
+      "script": {
+        "story": "【这是起始玩家标记，起始玩家获得这枚标记】",
+        "note": "【起始玩家标记出场】\n  这是本作**第一件不是宝石/卡牌的实物**：一张菱形纸板标记。\n  · 从盒里拿出来 = `create`（**游戏盒是抽象概念**，没有 box_* zone，也不写 source）；\n  · 放到玩家面前 = 新 zone `player_marker`（位置/大小在 stage 里，脚本不写坐标）；\n  · 单面件（没有背图）→ 不写 `to`/朝向断言（朝向这一维对它不存在）。\n  ⚠ 实物尺寸**还没实测**：`components.json` 里记的是 50×62mm 估值（`confirmed_by: estimated`），  拿到用户实测值以后改那一个数即可（stage 的 width/height 也跟着换算）。",
+        "camera": {
+          "zones": [
+            "player_marker"
+          ],
+          "fill": 0.72,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "player_marker": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "player_marker": {
+              "count": 1
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "create",
+          "at": 1.0,
+          "dur": 0.0,
+          "zone": "player_marker",
+          "template": "starting_marker",
+          "palette": "",
+          "count": 1,
+          "concept": "starting_player_marker"
+        },
+        {
+          "op": "highlight",
+          "at": 2.2,
+          "dur": 0.5,
+          "zone": "player_marker",
+          "peak_alpha": 0.65
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.1",
+      "parent": "setup.starting_player.001.3",
+      "tree": "main",
+      "transition": "world_cut",
+      "timing": [
+        {
+          "key": "镜头回整桌",
+          "text": "0.00"
+        },
+        {
+          "key": "点四块",
+          "text": "0.40 / 0.80 / 1.20-1.80 / 2.20"
+        }
+      ],
+      "script": {
+        "story": "【至此，整个设置环节就大功告成了】",
+        "note": "【设置完成】\n  收尾的一句 → 镜头拉回整桌，然后把设置出来的**四块东西**依次点一遍：发展卡牌区、贵族、  五堆宝石供应、玩家区。这就是「设置完成」的画面定义。\n  没有状态变化：设置到上一条（起始玩家标记）就全做完了。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 1
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "create",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "player_marker",
+          "template": "starting_marker",
+          "palette": "",
+          "count": 1,
+          "concept": "starting_player_marker"
+        },
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "highlight",
+          "at": 0.4,
+          "dur": 0.5,
+          "zone": "card_market",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 0.8,
+          "dur": 0.5,
+          "zone": "noble_market",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 1.2,
+          "dur": 0.5,
+          "zone": "gem_supply_diamond",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 1.3499999999999999,
+          "dur": 0.5,
+          "zone": "gem_supply_sapphire",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 1.5,
+          "dur": 0.5,
+          "zone": "gem_supply_ruby",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 1.65,
+          "dur": 0.5,
+          "zone": "gem_supply_emerald",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 1.7999999999999998,
+          "dur": 0.5,
+          "zone": "gem_supply_onyx",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 2.2,
+          "dur": 0.5,
+          "zone": "player_holding",
+          "peak_alpha": 0.65
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.2",
+      "parent": "setup.end.001.1",
+      "tree": "main",
+      "transition": "continue",
+      "timing": [
+        {
+          "key": "镜头整桌",
+          "text": "0.00"
+        },
+        {
+          "key": "点市场",
+          "text": "1.00"
+        },
+        {
+          "key": "点玩家区",
+          "text": "2.50"
+        }
+      ],
+      "script": {
+        "story": "【这个设置方式适合两名玩家并排坐在桌子同一侧进行游戏时使用】",
+        "note": "【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n  为什么不摆出一个「3-4 人版桌面」：那需要另一套台面图（我们没有），  编一张假的台面比不动更容易教错。\n  这一句讲两人并排 → 点公共区（市场）。",
+        "camera": {
+          "zones": [
+            "board"
+          ],
+          "fill": 0.8,
+          "at": 0.0
+        },
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
+          "op": "highlight",
+          "at": 1.0,
+          "dur": 0.5,
+          "zone": "card_market",
+          "peak_alpha": 0.65
+        },
+        {
+          "op": "highlight",
+          "at": 2.5,
+          "dur": 0.5,
+          "zone": "player_holding",
+          "peak_alpha": 0.65
+        }
+      ]
+    }
+  ]
+}

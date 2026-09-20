@@ -124,7 +124,8 @@ class StateModel:
         for i, it in enumerate(arr):
             it["order"] = i
 
-    def spawn(self, template: str, palette: str, concept: str, zone: str, count: int, face: int = 2) -> list:
+    def spawn(self, template: str, palette: str, concept: str, zone: str, count: int,
+              face: int = 2, parts=None) -> list:
         if count <= 0:
             return []
         if not zone:
@@ -139,7 +140,7 @@ class StateModel:
                 "template": template,
                 "palette": palette,
                 "concept": concept,
-                "parts": [],
+                "parts": copy.deepcopy(parts or []),
                 "zone": zone,
                 "order": self.count(zone),
                 "face": int(face),
@@ -149,10 +150,11 @@ class StateModel:
         self._normalize(zone)
         return added
 
-    def ensure_at_least(self, template: str, palette: str, concept: str, zone: str, count: int, face: int = 2) -> list:
-        sel = {"template": template, "palette": palette, "concept": concept, "parts": []}
+    def ensure_at_least(self, template: str, palette: str, concept: str, zone: str, count: int,
+                        face: int = 2, parts=None) -> list:
+        sel = {"template": template, "palette": palette, "concept": concept, "parts": parts or []}
         have = self.count(zone, sel)
-        return self.spawn(template, palette, concept, zone, max(0, count - have), face)
+        return self.spawn(template, palette, concept, zone, max(0, count - have), face, parts)
 
     def destroy(self, zone: str, selector: dict, count: int, from_back: bool = False) -> list:
         arr = self.matching(zone, selector)
@@ -292,6 +294,12 @@ class Compiler:
             state = stores[world]
             start = state.snapshot()
             clips = self.compile_events(cue, state, tree, idx)
+            enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
+            if enter_pic is not None and not any(
+                    c.get("kind") in ("picture", "show") and float(c.get("at", 0.0)) <= 1e-6
+                    for c in clips):
+                clips.insert(0, self.clip("picture", 0.0, 0.0, 0.0, "easeOutCubic",
+                                          picture=enter_pic, picture_on=True))
             end = state.snapshot()
             camera = geom.build_camera_frame(self.stages[tree["stage"]], (cue.get("script") or {}).get("camera") or {})
             parent = cue.get("parent")
@@ -330,8 +338,30 @@ class Compiler:
             end = max(end, at + lead + dur)
         return end
 
+    def infer_meta(self, stage: dict, template: str, palette: str, concept: str = "", parts=None):
+        """Fill concept/parts/palette from stage template metadata when omitted."""
+        if concept and parts:
+            return concept, parts, palette
+        for t in stage.get("templates") or []:
+            if t.get("id") != template:
+                continue
+            if not concept and t.get("concept"):
+                concept = t.get("concept")
+            if not parts and t.get("parts"):
+                parts = t.get("parts")
+            if not palette and t.get("palette"):
+                palette = t.get("palette")
+            if not concept and t.get("concept_by_palette"):
+                for b in t.get("concept_by_palette") or []:
+                    if b.get("palette") == palette:
+                        concept = b.get("concept", concept)
+                        parts = b.get("parts", parts)
+                        break
+        return concept, parts or [], palette
+
     def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> list:
         clips = []
+        stage = self.stages[tree["stage"]]
         stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[tree["stage"]]["zones"]}
         cue_id = cue.get("id")
         for ev in cue.get("events") or []:
@@ -351,8 +381,13 @@ class Compiler:
                 if not tpl:
                     raise ValueError(f"cue {cue_id}: create needs template")
                 count = int(ev.get("count", 1) or 1)
-                face = face_int(ev.get("to"))
-                added = state.spawn(tpl, pal, norm(ev.get("concept")), zone, count, face)
+                face = face_int(ev.get("to") or "face_down")
+                concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
+                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts)
+                if ev.get("slot") is not None:
+                    base = int(ev.get("slot") or 0)
+                    for off, it in enumerate(added):
+                        state.move_order(it, zone, base + off)
                 for it in added:
                     clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "ensure":
@@ -362,7 +397,8 @@ class Compiler:
                     raise ValueError(f"cue {cue_id}: ensure needs template")
                 count = int(ev.get("count", 1) or 1)
                 face = face_int(ev.get("to"))
-                added = state.ensure_at_least(tpl, pal, norm(ev.get("concept")), zone, count, face)
+                concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
+                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts)
                 for it in added:
                     clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "destroy":
@@ -385,12 +421,14 @@ class Compiler:
                 face = face_int(ev.get("to") or "face_down")
                 for tpl in real:
                     pal = norm(ev.get("palette"))
-                    added = state.spawn(tpl, pal, "", dest, 1, face)
+                    concept, parts, pal = self.infer_meta(stage, tpl, pal)
+                    added = state.spawn(tpl, pal, concept, dest, 1, face, parts)
                     for it in added:
                         clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
                 pad_count = max(0, capacity - len(real))
                 if pad and pad_count:
-                    added = state.spawn(pad, "", "", dest, pad_count, face)
+                    concept, parts, pal = self.infer_meta(stage, pad, "")
+                    added = state.spawn(pad, pal, concept, dest, pad_count, face, parts)
                     for it in added:
                         clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "shuffle":

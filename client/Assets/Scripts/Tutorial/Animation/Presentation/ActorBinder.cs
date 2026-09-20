@@ -14,6 +14,8 @@ namespace BoardGameTutorial.Animation
         private StageRuntime stage;
         private SpriteLibrary sprites;
         private Camera camera;
+        private SpriteRenderer pictureRenderer;
+        private string currentPicture;
 
         public void Init(Transform root, StageRuntime stage, SpriteLibrary sprites, Camera camera)
         {
@@ -28,6 +30,12 @@ namespace BoardGameTutorial.Animation
             foreach (var kv in actors)
                 if (kv.Value != null) Object.Destroy(kv.Value);
             actors.Clear();
+            if (pictureRenderer != null)
+            {
+                Object.Destroy(pictureRenderer.gameObject);
+                pictureRenderer = null;
+            }
+            currentPicture = null;
         }
 
         public void Sync(FrameState frame)
@@ -50,6 +58,46 @@ namespace BoardGameTutorial.Animation
                 if (actors.TryGetValue(id, out var go) && go != null) Object.Destroy(go);
                 actors.Remove(id);
             }
+
+            SyncPicture(frame.Picture);
+        }
+
+        private void SyncPicture(string picture)
+        {
+            if (string.IsNullOrEmpty(picture))
+            {
+                if (pictureRenderer != null) pictureRenderer.enabled = false;
+                currentPicture = null;
+                return;
+            }
+            if (picture == currentPicture && pictureRenderer != null && pictureRenderer.sprite != null) return;
+
+            var sprite = sprites.LoadRelative(picture, "card");
+            if (sprite == null) return;
+            if (pictureRenderer == null)
+            {
+                var go = new GameObject("v2:BoxArt");
+                if (root != null) go.transform.SetParent(root, false);
+                pictureRenderer = go.AddComponent<SpriteRenderer>();
+                pictureRenderer.sortingOrder = -900;
+            }
+            pictureRenderer.sprite = sprite;
+            pictureRenderer.enabled = true;
+            currentPicture = picture;
+
+            if (camera == null) return;
+            float aspect = camera.aspect > 0.01f ? camera.aspect : 1.7778f;
+            float ortho = camera.orthographicSize > 0.01f ? camera.orthographicSize : 2.8f;
+            float viewH = 2f * ortho;
+            float viewW = viewH * aspect;
+            float ppu = sprite.pixelsPerUnit > 0f ? sprite.pixelsPerUnit : 100f;
+            float nativeW = sprite.rect.width / ppu;
+            float nativeH = sprite.rect.height / ppu;
+            float k = Mathf.Min(viewH * 0.92f / Mathf.Max(0.001f, nativeH),
+                                viewW * 0.92f / Mathf.Max(0.001f, nativeW));
+            pictureRenderer.transform.localScale = new Vector3(k, k, 1f);
+            pictureRenderer.transform.rotation = camera.transform.rotation;
+            pictureRenderer.transform.position = camera.transform.position + camera.transform.forward * ortho;
         }
 
         private void SyncOne(VisualItemState item)

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "kind": "stage",
+  "note": "盒面树：第一节整节只显示游戏盒封面。这里没有 zone、没有 template —— 画面根状态由 board.default_picture 与 showbox 事件维护，天然保证“除了盒面什么都没有”。",
+  "board": {
+    "background": "#1E2126",
+    "camera_pitch": 90,
+    "ortho_scale": 1.1,
+    "aspect": 1.7778,
+    "extent": {
+      "min_x": -0.8,
+      "max_x": 0.8,
+      "min_z": -1.05,
+      "max_z": 1.05
+    },
+    "default_picture": "media/box.png"
+  },
+  "zones": [],
+  "zone_defs": [],
+  "templates": [],
+  "anchors": [],
+  "containers": [],
+  "initial": [],
+  "schema": "tutorial-stage/v2",
+  "game": "splendor",
+  "id": "splendor.box"
+}

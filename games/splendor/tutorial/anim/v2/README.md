@@ -38,3 +38,23 @@ python3 scripts/check_unity_scripts.py
 - C# 纯模型：`client/Assets/Scripts/Tutorial/Animation/Core/`。
 - Unity 薄适配：`client/Assets/Scripts/Tutorial/Animation/Unity/TutorialAnimPlayer.cs`。
 - 运行时只读 `{track}.compiled.json`，不再自己算几何、解析 selector 或重放入口链。
+
+## UI1-30 垂直切片
+
+源：`ui01_30.anim.json`；编译产物：`ui01_30.compiled.json`。
+Unity 侧默认 `TutorialCuePlayer.track = "ui01_30"`，存在 `v2/ui01_30.compiled.json` 时会优先走
+新的 `TutorialAnimPlayer`（音频/字幕仍由 `TutorialCuePlayer` 提供）。
+
+单条/整片检查：
+
+```bash
+python3 scripts/anim_schema_v2.py games/splendor/tutorial/anim/v2/ui01_30.anim.json
+python3 scripts/compile_animation_v2.py --game splendor --track ui01_30 --check
+python3 scripts/check_anim_v2.py --game splendor --track ui01_30
+```
+
+状态迁移对照（旧 v1 采样）：
+
+- UI1-30 的 v2 compiled `end_state` 已与旧 `full.exitstate.json` 按
+  `zone / template|palette / count` 逐 cue 对照，0 差异。
+- 动画行为允许变化；视觉验收以 Unity 播放为准。

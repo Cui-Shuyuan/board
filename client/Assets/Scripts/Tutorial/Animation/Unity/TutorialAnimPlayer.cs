@@ -40,7 +40,9 @@ namespace BoardGameTutorial.Animation
         {
             gameRoot = gameRootPath;
             string name = string.IsNullOrEmpty(trackName) ? track : trackName;
-            string path = Path.Combine(gameRoot, "tutorial", "anim", name + ".compiled.json");
+            string path = Path.Combine(gameRoot, "tutorial", "anim", "v2", name + ".compiled.json");
+            if (!File.Exists(path))
+                path = Path.Combine(gameRoot, "tutorial", "anim", name + ".compiled.json");
             if (!File.Exists(path))
             {
                 Debug.LogError("[TutorialAnimV2] missing compiled track: " + path);
@@ -95,8 +97,8 @@ namespace BoardGameTutorial.Animation
         {
             if (!animationEnabled || currentCue == null) return;
             var frame = runtime.Evaluate(CueId, time);
-            binder.Sync(frame);
             cameraDirector.Apply(currentCue.camera, stageRuntime.Aspect);
+            binder.Sync(frame);
             if (runtimeTrace) Debug.Log($"[TutorialAnimV2] {CueId} t={time:0.00} items={frame.Items.Count}");
         }
 

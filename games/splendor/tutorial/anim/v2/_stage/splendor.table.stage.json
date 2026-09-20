@@ -1,0 +1,1628 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "kind": "stage",
+  "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**。\n\n【zone 的生命周期】zone 是\"世界里的位置\"：`zones` 里声明的这些**一开始就全部建好**\n（空着也是建好了 —— 与\"开局桌上没有件\"不矛盾：一个说的是区域，一个说的是件）。\n后续游戏若要有\"随着卡牌/板块进场新增区域\"，把那种区域的**定义**写进 `zone_defs`，\n脚本里用 {\"action\":\"zone\",\"op\":\"add\",\"zone\":\"<定义 id>\",\"index\":N} 开出来；\n坐标仍只写在 stage（第 N 个实例按 `repeat_x`/`repeat_z` 平移，id 是 `<定义 id>#N`）。\n\n【玩家区 A/B（2026-09 用户指示）】不带前缀的那几个（player_holding / player_development / player_reserved / player_nobles / player_marker）是**玩家A**= 学习者这一侧，摆在桌面下方；player_b_* 是对面那位。教程里 A 的账是完整的，B 只在『多人对比』的几句话里出现。",
+  "board": {
+    "background": "#1E2126",
+    "camera_pitch": 90,
+    "ortho_scale": 1.1,
+    "aspect": 1.7778,
+    "extent": {
+      "min_x": -3.23,
+      "max_x": 1.31,
+      "min_z": -5.6,
+      "max_z": 5.0
+    },
+    "default_picture": null
+  },
+  "zones": [
+    {
+      "id": "offstage",
+      "label": "镜头外",
+      "role": "offstage",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "margin": 6.0,
+      "concept": null,
+      "contains": [],
+      "note": "镜头外通道，不是规则里的 zone：任何东西都从这里进出"
+    },
+    {
+      "id": "deck_level_1",
+      "label": "一级发展卡牌堆",
+      "center": {
+        "x": -2.75,
+        "z": -0.62
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 40,
+      "palette": "accent_green",
+      "size": {
+        "w": 0.56,
+        "h": 0.79
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.016,
+        "dz": -0.016,
+        "max_visible": 8
+      },
+      "concept": "development_deck_level_1",
+      "contains": [
+        "development_card_level_1"
+      ],
+      "note": "**这是牌堆**（`development_deck_level_*` → `<ontology::deck>`）：有「顶」、抽取前身份未知，\n所以从它取件必须写 `realizes: \"<top_draw>\"`（`<draw>` 的后代）。\n⚠️ 它与供应堆（`gem_supply_*` → `<ontology::public_supply>`）**长得一模一样**\n（都是摞着的一堆、共用 `display.mode: stack`），但**绝对不是一个东西**：\n牌堆有「顶」、能洗（`shuffle`）；供应堆公开、可互换、不洗、也没有「顶」可抽。\n校验器按**本体概念**判这两件事（不看外观），写错就报。"
+    },
+    {
+      "id": "deck_level_2",
+      "label": "二级发展卡牌堆",
+      "center": {
+        "x": -2.75,
+        "z": 0.52
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 30,
+      "palette": "accent_yellow",
+      "size": {
+        "w": 0.56,
+        "h": 0.79
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.016,
+        "dz": -0.016,
+        "max_visible": 8
+      },
+      "concept": "development_deck_level_2",
+      "contains": [
+        "development_card_level_2"
+      ],
+      "note": "**这是牌堆**（`development_deck_level_*` → `<ontology::deck>`）：有「顶」、抽取前身份未知，\n所以从它取件必须写 `realizes: \"<top_draw>\"`（`<draw>` 的后代）。\n⚠️ 它与供应堆（`gem_supply_*` → `<ontology::public_supply>`）**长得一模一样**\n（都是摞着的一堆、共用 `display.mode: stack`），但**绝对不是一个东西**：\n牌堆有「顶」、能洗（`shuffle`）；供应堆公开、可互换、不洗、也没有「顶」可抽。\n校验器按**本体概念**判这两件事（不看外观），写错就报。"
+    },
+    {
+      "id": "deck_level_3",
+      "label": "三级发展卡牌堆",
+      "center": {
+        "x": -2.75,
+        "z": 1.66
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 20,
+      "palette": "accent_blue",
+      "size": {
+        "w": 0.56,
+        "h": 0.79
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.016,
+        "dz": -0.016,
+        "max_visible": 8
+      },
+      "concept": "development_deck_level_3",
+      "contains": [
+        "development_card_level_3"
+      ],
+      "note": "**这是牌堆**（`development_deck_level_*` → `<ontology::deck>`）：有「顶」、抽取前身份未知，\n所以从它取件必须写 `realizes: \"<top_draw>\"`（`<draw>` 的后代）。\n⚠️ 它与供应堆（`gem_supply_*` → `<ontology::public_supply>`）**长得一模一样**\n（都是摞着的一堆、共用 `display.mode: stack`），但**绝对不是一个东西**：\n牌堆有「顶」、能洗（`shuffle`）；供应堆公开、可互换、不洗、也没有「顶」可抽。\n校验器按**本体概念**判这两件事（不看外观），写错就报。"
+    },
+    {
+      "id": "card_market",
+      "label": "发展卡牌市场",
+      "center": {
+        "x": -0.73,
+        "z": -0.62
+      },
+      "layout": {
+        "type": "grid",
+        "cols": 4,
+        "x_step": 0.7,
+        "z_step": 1.1400000000000001
+      },
+      "capacity": 12,
+      "palette": "panel_market",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "card_market",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ]
+    },
+    {
+      "id": "noble_market",
+      "label": "贵族供应堆",
+      "center": {
+        "x": -0.55,
+        "z": 2.34
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.68
+      },
+      "capacity": 5,
+      "palette": "panel_market",
+      "size": {
+        "w": 0.6,
+        "h": 0.6
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "noble_market",
+      "contains": [
+        "noble"
+      ]
+    },
+    {
+      "id": "gem_supply_diamond",
+      "label": "钻石供应堆",
+      "center": {
+        "x": -2.0,
+        "z": -1.72
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 7,
+      "palette": "panel_supply",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ],
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<diamond>"
+        }
+      ]
+    },
+    {
+      "id": "gem_supply_sapphire",
+      "label": "蓝宝石供应堆",
+      "center": {
+        "x": -0.55,
+        "z": -1.72
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 7,
+      "palette": "panel_supply",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ],
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<sapphire>"
+        }
+      ]
+    },
+    {
+      "id": "gem_supply_ruby",
+      "label": "红宝石供应堆",
+      "center": {
+        "x": 0.8999999999999999,
+        "z": -1.72
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 7,
+      "palette": "panel_supply",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ],
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<ruby>"
+        }
+      ]
+    },
+    {
+      "id": "gem_supply_emerald",
+      "label": "翡翠供应堆",
+      "center": {
+        "x": -2.0,
+        "z": -2.34
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 7,
+      "palette": "panel_supply",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ],
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<emerald>"
+        }
+      ]
+    },
+    {
+      "id": "gem_supply_onyx",
+      "label": "缟玛瑙供应堆",
+      "center": {
+        "x": -0.55,
+        "z": -2.34
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 7,
+      "palette": "panel_supply",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
+      },
+      "concept": "gem_supply",
+      "contains": [
+        "gem"
+      ],
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gem_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。",
+      "parts": [
+        {
+          "key": "color",
+          "value": "<onyx>"
+        }
+      ]
+    },
+    {
+      "id": "gold_supply",
+      "label": "黄金供应堆",
+      "center": {
+        "x": 0.8999999999999999,
+        "z": -2.34
+      },
+      "layout": {
+        "type": "pile",
+        "cols": 1,
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 7,
+      "palette": "panel_supply",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "stack",
+        "dx": -0.055,
+        "dz": -0.055,
+        "max_visible": 7
+      },
+      "concept": "gold_supply",
+      "contains": [
+        "gold"
+      ],
+      "note": "**这是供应堆，不是牌堆**（用户 2026-09 特意提醒：「它虽然和卡组使用同样的外观，但它们绝对不是一个东西」）：\n本体上是 `gold_supply` → `<ontology::public_supply>`（公开、可互换、**没有「顶」**，取出 = 普通 `<ontology::transfer>`）；\n牌堆是 `<ontology::deck>`（有「顶」、抽取前身份未知，取出 = `<top_draw>`）。\n两者在 `<ontology::reserve>` 上同类、在 `<supply>` / `<deck>` 上分家。\n展示上**共用同一套堆叠手法**（`display.mode: stack`，与 `deck_level_*` 同一套参数语言），\n但「画法像」不等于「是一个东西」—— 别把供应堆当牌堆用（不洗牌、也不必从「顶」取）。\n每枚错开 0.055（≈ 1/8 个直径，比牌堆的 0.016 大）：4/5/7 枚的差别要**数得清**。\norder 0 在最前/最上（与牌堆同一约定）。"
+    },
+    {
+      "id": "player_holding",
+      "label": "玩家持有区",
+      "center": {
+        "x": -0.55,
+        "z": -3.2
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.3
+      },
+      "capacity": 10,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_holding>",
+      "contains": [
+        "gem",
+        "gold"
+      ]
+    },
+    {
+      "id": "player_marker",
+      "label": "起始玩家标记位",
+      "center": {
+        "x": 0.9,
+        "z": -3.2
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.3
+      },
+      "capacity": 1,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.5,
+        "h": 0.62
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": null,
+      "contains": [
+        "starting_player_marker"
+      ],
+      "note": "起始玩家标记放在玩家面前的地方。与 `player_holding` 同一排（z=-3.20）、位于其右侧 —— 持有区那一排最多能铺到 x≈0.80（10 件时），所以两区只在持有区接近满时才轻微重叠（stage 布局校验会报一条 warning，属于已知取舍：标记物理上就该挨着玩家的东西）。"
+    },
+    {
+      "id": "player_development",
+      "label": "玩家发展区",
+      "center": {
+        "x": -1.45,
+        "z": -4.2
+      },
+      "layout": {
+        "type": "grid",
+        "cols": 4,
+        "x_step": 0.66,
+        "z_step": 0.46
+      },
+      "capacity": 12,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<development_area>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "买下的发展卡摊在自己面前的地方（<development_area>，公开信息）。4 列网格、z_step 0.46（两行半叠）：卡片上半部（含右上角折扣）互相让出来，所以『摊开』仍看得清，但占地只有 2.6x1.4 —— 真人摆不下时也是这样叠的。容量 12 是本节演示『满足一块贵族（4白+4红=8 张）』所需。"
+    },
+    {
+      "id": "player_nobles",
+      "label": "玩家结识的贵族",
+      "center": {
+        "x": -1.1,
+        "z": -5.25
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.66
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.6,
+        "h": 0.6
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_zone>",
+      "contains": [
+        "noble"
+      ],
+      "note": "结识的贵族放在自己面前（公开信息）。容量 3 = 一局最多勾到 3 块（本作贵族数=人数+1，四人局 5 块；这里按演示需要写 3，真要更多改这一个数 + x_step）。"
+    },
+    {
+      "id": "player_reserved",
+      "label": "玩家保留区",
+      "center": {
+        "x": 0.6,
+        "z": -4.2
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.35
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<reserve>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "保留的发展卡放的地方（<reserve>）。x_step 0.35 = 卡片半叠成扇形：保留区**必须**放得下 3 张（规则上限就是 3），而桌子横向不够摊开 —— 真人遇到这种情况也是这样错开叠的，而且朝下的牌只需要露出边缘。"
+    },
+    {
+      "id": "player_b_development",
+      "label": "玩家B的发展区",
+      "center": {
+        "x": -1.6,
+        "z": 3.45
+      },
+      "layout": {
+        "type": "grid",
+        "cols": 3,
+        "x_step": 0.66,
+        "z_step": 0.46
+      },
+      "capacity": 6,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<development_area>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "玩家B（对面）买下的发展卡。容量 6：教程里 B 只是『另一个玩家』，不需要摆满。"
+    },
+    {
+      "id": "player_b_holding",
+      "label": "玩家B的持有区",
+      "center": {
+        "x": 0.3,
+        "z": 3.3
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.3
+      },
+      "capacity": 6,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.43,
+        "h": 0.43
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_holding>",
+      "contains": [
+        "gem",
+        "gold"
+      ],
+      "note": "玩家B手里的宝石/黄金。"
+    },
+    {
+      "id": "player_b_reserved",
+      "label": "玩家B的保留区",
+      "center": {
+        "x": 0.3,
+        "z": 4.15
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.35
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<reserve>",
+      "contains": [
+        "development_card_level_1",
+        "development_card_level_2",
+        "development_card_level_3"
+      ],
+      "note": "玩家B保留的卡（朝下，别人看不到内容）。"
+    },
+    {
+      "id": "player_b_nobles",
+      "label": "玩家B结识的贵族",
+      "center": {
+        "x": -1.6,
+        "z": 4.45
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.66
+      },
+      "capacity": 3,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.6,
+        "h": 0.6
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": "<player_zone>",
+      "contains": [
+        "noble"
+      ],
+      "note": "玩家B结识的贵族。3.2.2 那句『不可以从其他人那里拿贵族』就指着这里。"
+    }
+  ],
+  "templates": [
+    {
+      "id": "gem",
+      "shape": "gem",
+      "world_size": 0.43,
+      "sorting_order": 6,
+      "note": "实际尺寸见 games/splendor/components.json：直径 43mm",
+      "concept_by_palette": [
+        {
+          "palette": "gem_diamond",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<diamond>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_ruby",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<ruby>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_emerald",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<emerald>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_sapphire",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<sapphire>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_onyx",
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<onyx>"
+            }
+          ]
+        },
+        {
+          "palette": "gem_gold",
+          "concept": "gold"
+        }
+      ]
+    },
+    {
+      "id": "noble",
+      "shape": "card",
+      "palette": "noble",
+      "width": 0.6,
+      "height": 0.6,
+      "sorting_order": 2,
+      "concept": "noble",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.215,
+          "dy": 0.215,
+          "r": 0.07
+        },
+        {
+          "id": "condition",
+          "label": "下方：结识条件（已购卡牌的种类与数量）",
+          "dx": -0.04,
+          "dy": -0.175,
+          "r": 0.15
+        }
+      ]
+    },
+    {
+      "id": "board_market",
+      "shape": "panel",
+      "palette": "panel_market",
+      "width": 2.85,
+      "height": 3.1,
+      "alpha": 0.16,
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
+    },
+    {
+      "id": "board_supply",
+      "shape": "panel",
+      "palette": "panel_supply",
+      "width": 4.1,
+      "height": 1.5,
+      "alpha": 0.2,
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
+    },
+    {
+      "id": "board_player",
+      "shape": "panel",
+      "palette": "panel_player",
+      "width": 3.0,
+      "height": 1.2,
+      "alpha": 0.2,
+      "sorting_order": -20,
+      "concept": "<ontology::player_board>"
+    },
+    {
+      "id": "glow_zone",
+      "shape": "panel",
+      "palette": "panel_neutral",
+      "width": 0.5,
+      "height": 0.5,
+      "alpha": 0.0,
+      "sorting_order": -19,
+      "highlight": true,
+      "concept": null,
+      "note": "纯表现：高亮底板，不是棋盘上的东西"
+    },
+    {
+      "id": "board_deck",
+      "shape": "panel",
+      "palette": "panel_market",
+      "width": 0.85,
+      "height": 3.1,
+      "alpha": 0.16,
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
+    },
+    {
+      "id": "board_noble",
+      "shape": "panel",
+      "palette": "panel_market",
+      "width": 2.4,
+      "height": 0.78,
+      "alpha": 0.16,
+      "sorting_order": -20,
+      "concept": "<ontology::public_board>"
+    },
+    {
+      "id": "market_card_1_diamond",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（diamond），背面同该级卡背",
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_1_ruby",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（ruby），背面同该级卡背",
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_1_emerald",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_绿.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（emerald），背面同该级卡背",
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_1_sapphire",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_蓝.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（sapphire），背面同该级卡背",
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_1_onyx",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_黑.jpg",
+      "back_image": "media/card/一级发展卡_背面.jpg",
+      "note": "1 级卡面（onyx），背面同该级卡背",
+      "from_zone": "deck_level_1",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_2_diamond",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_白.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（diamond），背面同该级卡背",
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_2_ruby",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_红.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（ruby），背面同该级卡背",
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_2_emerald",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_绿.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（emerald），背面同该级卡背",
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_2_sapphire",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_蓝.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（sapphire），背面同该级卡背",
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_2_onyx",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_黑.jpg",
+      "back_image": "media/card/二级发展卡_背面.jpg",
+      "note": "2 级卡面（onyx），背面同该级卡背",
+      "from_zone": "deck_level_2",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_3_diamond",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_白.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（diamond），背面同该级卡背",
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_3_ruby",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_红.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（ruby），背面同该级卡背",
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_3_emerald",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_绿.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（emerald），背面同该级卡背",
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_3_sapphire",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_蓝.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（sapphire），背面同该级卡背",
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "market_card_3_onyx",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_黑.jpg",
+      "back_image": "media/card/三级发展卡_背面.jpg",
+      "note": "3 级卡面（onyx），背面同该级卡背",
+      "from_zone": "deck_level_3",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "blank_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_背面.jpg",
+      "note": "垫牌：只为让牌堆看上去有几十张，永远发不出来（所以没有真卡面）",
+      "concept": "development_card_level_1",
+      "filler": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "blank_card_2",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_背面.jpg",
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
+      "concept": "development_card_level_2",
+      "filler": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "blank_card_3",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_背面.jpg",
+      "note": "牌堆里的空白牌：只有卡背。它们永远发不出来，所以不需要真卡面。",
+      "concept": "development_card_level_3",
+      "filler": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "starting_marker",
+      "shape": "card",
+      "palette": "marker",
+      "face_image": "media/marker/起始玩家标记_clean.png",
+      "width": 0.5,
+      "height": 0.62,
+      "sorting_order": 3,
+      "concept": "starting_player_marker",
+      "note": "起始玩家标记（2024 新版：菱形纸板件，单面）。图片走 `_cutout.png` 约定 → media/marker/起始玩家标记_clean_cutout.png（裁到件、alpha 已成品，尺寸由 components.json 的 50x62mm 换算）。"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "board_market_area",
+      "template": "board_market",
+      "x": -0.73,
+      "z": -0.62,
+      "zones": [
+        "card_market"
+      ]
+    },
+    {
+      "id": "board_deck_area",
+      "template": "board_deck",
+      "x": -2.75,
+      "z": 0.52,
+      "zones": [
+        "deck_level_1",
+        "deck_level_2",
+        "deck_level_3"
+      ]
+    },
+    {
+      "id": "board_noble_area",
+      "template": "board_noble",
+      "x": -0.55,
+      "z": 2.34,
+      "zones": [
+        "noble_market"
+      ]
+    },
+    {
+      "id": "board_supply_area",
+      "template": "board_supply",
+      "x": 0.0,
+      "z": -2.03,
+      "zones": [
+        "gem_supply_diamond",
+        "gem_supply_sapphire",
+        "gem_supply_ruby",
+        "gem_supply_emerald",
+        "gem_supply_onyx",
+        "gold_supply"
+      ]
+    },
+    {
+      "id": "board_player_area",
+      "template": "board_player",
+      "x": -0.55,
+      "z": -3.2,
+      "zones": [
+        "player_holding",
+        "player_marker",
+        "player_development",
+        "player_nobles",
+        "player_reserved"
+      ]
+    },
+    {
+      "id": "board_player_b_area",
+      "template": "board_player",
+      "x": -0.65,
+      "z": 3.8,
+      "zones": [
+        "player_b_development",
+        "player_b_holding",
+        "player_b_reserved",
+        "player_b_nobles"
+      ]
+    }
+  ],
+  "initial": [],
+  "containers": [
+    {
+      "id": "level1_deck_and_top",
+      "items": [
+        "card_back_1#36",
+        "market_card_1_emerald#1"
+      ],
+      "has_center": false,
+      "_note": "示例：一级牌堆顶牌 + 即将发出的第一张。两者不同 zone，但可作为一个容器整组操作。"
+    }
+  ],
+  "zone_defs": [],
+  "schema": "tutorial-stage/v2",
+  "game": "splendor",
+  "id": "splendor.table"
+}

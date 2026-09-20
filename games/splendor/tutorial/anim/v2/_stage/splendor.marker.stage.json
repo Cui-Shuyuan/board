@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "kind": "stage",
+  "note": "起始玩家标记演示树（独立世界）：场上只有 player_marker 和这枚标记，不继承主桌状态。",
+  "board": {
+    "background": "#1E2126",
+    "camera_pitch": 90,
+    "ortho_scale": 1.1,
+    "aspect": 1.7778,
+    "extent": {
+      "min_x": -0.6,
+      "max_x": 0.6,
+      "min_z": -0.6,
+      "max_z": 0.6
+    },
+    "default_picture": null
+  },
+  "zones": [
+    {
+      "id": "player_marker",
+      "label": "起始玩家标记位",
+      "center": {
+        "x": 0.0,
+        "z": 0.0
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.3
+      },
+      "capacity": 1,
+      "palette": "panel_player",
+      "size": {
+        "w": 0.5,
+        "h": 0.62
+      },
+      "display": {
+        "mode": "count"
+      },
+      "concept": null,
+      "contains": [
+        "starting_player_marker"
+      ],
+      "note": "起始玩家标记放在玩家面前的地方。与 `player_holding` 同一排（z=-3.20）、位于其右侧 —— 持有区那一排最多能铺到 x≈0.80（10 件时），所以两区只在持有区接近满时才轻微重叠（stage 布局校验会报一条 warning，属于已知取舍：标记物理上就该挨着玩家的东西）。"
+    }
+  ],
+  "zone_defs": [],
+  "templates": [
+    {
+      "id": "starting_marker",
+      "shape": "card",
+      "palette": "marker",
+      "face_image": "media/marker/起始玩家标记_clean.png",
+      "width": 0.5,
+      "height": 0.62,
+      "sorting_order": 3,
+      "concept": "starting_player_marker",
+      "note": "起始玩家标记（2024 新版：菱形纸板件，单面）。图片走 `_cutout.png` 约定 → media/marker/起始玩家标记_clean_cutout.png（裁到件、alpha 已成品，尺寸由 components.json 的 50x62mm 换算）。"
+    },
+    {
+      "id": "glow_zone",
+      "shape": "panel",
+      "palette": "panel_neutral",
+      "width": 0.5,
+      "height": 0.5,
+      "alpha": 0.0,
+      "sorting_order": -19,
+      "highlight": true,
+      "concept": null,
+      "note": "纯表现：高亮底板，不是棋盘上的东西"
+    }
+  ],
+  "anchors": [],
+  "containers": [],
+  "initial": [],
+  "schema": "tutorial-stage/v2",
+  "game": "splendor",
+  "id": "splendor.marker"
+}

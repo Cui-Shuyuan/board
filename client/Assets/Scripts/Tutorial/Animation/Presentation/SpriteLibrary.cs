@@ -31,6 +31,11 @@ namespace BoardGameTutorial.Animation
             return LoadFile(tpl.face_image, tpl.shape) ?? White();
         }
 
+        public Sprite LoadRelative(string relative, string shape = "card")
+        {
+            return LoadFile(relative, shape);
+        }
+
         public Sprite LoadBack(CompiledTemplateDef tpl)
         {
             if (tpl == null || string.IsNullOrEmpty(tpl.back_image)) return null;

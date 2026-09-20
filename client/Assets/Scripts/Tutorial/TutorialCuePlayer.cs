@@ -22,7 +22,8 @@ namespace BoardGameTutorial
     {
         [Header("Data")]
         public string gameId = "splendor";
-        public string track = "full";
+        // 阶段4：默认先播放 v2 UI1-30 垂直切片；完整 v1 轨道仍可手动把 track 改回 full。
+        public string track = "ui01_30";
 
         [Tooltip("可留空。编辑器下会自动尝试仓库的 games 目录；打包/安卓可填 persistentDataPath 或 StreamingAssets。")]
         public string tutorialRoot = "";
@@ -72,6 +73,8 @@ namespace BoardGameTutorial
         private string gameRoot;
         private AudioSource audioSource;
         private TutorialCueAnimPlayer animPlayer;
+        private BoardGameTutorial.Animation.TutorialAnimPlayer v2AnimPlayer;
+        private bool useV2Animation;
         private Coroutine playbackRoutine;
         private int currentIndex = -1;
         private int previousIndex = -1;
@@ -138,6 +141,8 @@ namespace BoardGameTutorial
                 animPlayer = gameObject.AddComponent<TutorialCueAnimPlayer>();
             }
             animPlayer.animationEnabled = enableCueAnimation;
+
+            v2AnimPlayer = GetComponent<BoardGameTutorial.Animation.TutorialAnimPlayer>();
         }
 
         private void Start()
@@ -185,6 +190,26 @@ namespace BoardGameTutorial
             }
 
             NormalizeDoc();
+
+            // V2 是编译资产路径：同一个 track 有 {track}.compiled.json 时优先走纯采样运行时。
+            string v2Path = Path.Combine(gameRoot, "tutorial", "anim", "v2", track + ".compiled.json");
+            if (!File.Exists(v2Path)) v2Path = Path.Combine(gameRoot, "tutorial", "anim", track + ".compiled.json");
+            useV2Animation = File.Exists(v2Path);
+            if (useV2Animation)
+            {
+                if (v2AnimPlayer == null)
+                    v2AnimPlayer = gameObject.AddComponent<BoardGameTutorial.Animation.TutorialAnimPlayer>();
+                if (!v2AnimPlayer.LoadTrack(gameRoot, track))
+                {
+                    Debug.LogError($"[TutorialCuePlayer] v2 compiled 加载失败，回退旧动画: {v2Path}");
+                    useV2Animation = false;
+                }
+                else
+                {
+                    animPlayer.animationEnabled = false;
+                    animPlayer.ClearScene();
+                }
+            }
             return true;
         }
 
@@ -251,31 +276,27 @@ namespace BoardGameTutorial
             int previous = previousIndex;   // 先记住上一条：下面的「是否顺序播放」要用它判断
 
             // 动画在音频加载前就复位：重播/切 cue 时画面从头开始。
-            if (animPlayer != null)
+            fallbackClock = 0f;   // 每条 cue 重置降级时钟，避免把它累积成「已经播完」
+            bool loaded = false;
+            if (useV2Animation && v2AnimPlayer != null)
+            {
+                v2AnimPlayer.animationEnabled = enableCueAnimation;
+                loaded = v2AnimPlayer.LoadCue(cue.id);
+                // V2 的 zone 调试叠层由新绑定层自己处理；旧叠层只适配旧 Store。
+                zoneLabels.Clear();
+            }
+            else if (animPlayer != null)
             {
                 animPlayer.animationEnabled = enableCueAnimation;
                 // 把**整条轨道**的 cue 顺序交过去：入口链重放要按它找"本条之前"。
-                // 只给动画脚本里的 17 条不够 —— 另外 92 条纯口播 cue 不在里面，
-                // 按动画脚本找目标会找不到、一路重放到全片终态。
                 if (doc?.cues != null)
                 {
                     var ids = new List<string>(doc.cues.Count);
                     foreach (var c in doc.cues) if (c != null) ids.Add(c.id);
                     animPlayer.SetCueOrder(ids);
                 }
-                fallbackClock = 0f;   // 每条 cue 重置降级时钟，避免把它累积成「已经播完」
-                // 入口状态**由动画播放器自己负责**：`LoadCue` 在"不接续"时从根重放到本条之前，
-                // 在"接续"时沿用上一条的终态。以前这里另有一套 `ApplyEntryState` +
-                // `ResolveEntryCueId`（草稿播放器解入口链 → 交接给主播放器），两套各算一遍 ——
-                // 而 `HasAnimation` 里拼的还是**合并前**的按 cue 路径，于是它永远找不到祖先、
-                // 入口永远被解成初始态，**顺序播放也会把前一条 create 的东西清掉**
-                // （用户报的"cue 11 什么都没有"）。现在只有一条路，不可能再各算一遍。
+                // 入口状态**由动画播放器自己负责**。
                 bool continueFromPrevious = continueState && index == previous + 1;
-
-                // 注意：LoadCue 必须无条件调用。曾经写成 `if (showZoneLabels && LoadCue(...))`，
-                // 而 showZoneLabels 默认 false —— 短路导致动画永远不载入：
-                // 音频照常播放、画面全空、Console 一条日志都没有。
-                bool loaded;
                 try
                 {
                     loaded = animPlayer.LoadCue(gameRoot, track, cue.id, continueFromPrevious);
@@ -285,7 +306,6 @@ namespace BoardGameTutorial
                     Debug.LogError($"[TutorialCuePlayer] 载入动画异常 cue={cue.id}: {e}");
                     loaded = false;
                 }
-
                 if (loaded && showZoneLabels) RefreshZoneLabels();
                 else if (!loaded) zoneLabels.Clear();
             }
@@ -333,7 +353,8 @@ namespace BoardGameTutorial
             if (autoAdvance && index + 1 < doc.cues.Count)
             {
                 // 先把本条动画推到终态，下一条才能在正确的牌桌状态上接续。
-                if (animPlayer != null && animPlayer.IsLoaded) animPlayer.Complete();
+                if (useV2Animation && v2AnimPlayer != null && v2AnimPlayer.IsLoaded) v2AnimPlayer.Complete();
+                else if (animPlayer != null && animPlayer.IsLoaded) animPlayer.Complete();
                 PlayCue(index + 1, true);
             }
         }
@@ -419,7 +440,12 @@ namespace BoardGameTutorial
             // 动画时钟 = 音频时间。暂停时音频时间不再前进，动画自动冻结。
             // 音频尚未就绪（clip 为空）时退回本地计时：否则动画会永远停在 0，
             // 表现为「音频在放、画面什么都没有」——这正是之前排查很久的现象。
-            if (animPlayer != null && animPlayer.IsLoaded)
+            if (useV2Animation && v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
+            {
+                float t = audioSource != null && audioSource.clip != null ? audioSource.time : (fallbackClock += Time.deltaTime);
+                v2AnimPlayer.Seek(t);
+            }
+            else if (animPlayer != null && animPlayer.IsLoaded)
             {
                 if (audioSource != null && audioSource.clip != null)
                 {
@@ -461,6 +487,11 @@ namespace BoardGameTutorial
             {
                 animPlayer.animationEnabled = enableCueAnimation;
                 if (!enableCueAnimation) animPlayer.ClearScene();
+            }
+            if (v2AnimPlayer != null)
+            {
+                v2AnimPlayer.animationEnabled = enableCueAnimation;
+                if (!enableCueAnimation) v2AnimPlayer.ClearScene();
             }
             ReplayCurrent();
         }
