@@ -58,8 +58,6 @@ def _check_selector(report: Report, where: str, ev: dict, required: bool = True)
     if required:
         report.error(f"{where}: state op '{ev.get('op')}' needs a selector "
                      f"(template/palette/concept/parts)")
-    else:
-        report.warn(f"{where}: no selector; operation will use the whole zone")
 
 
 def _check_event(report: Report, where: str, ev: dict):
@@ -105,13 +103,13 @@ def _check_event(report: Report, where: str, ev: dict):
             if int(ev.get("count", 1)) < 0:
                 report.error(f"{where}: create count must be >= 0")
         elif op == "destroy":
-            _check_selector(report, where, ev)
+            _check_selector(report, where, ev, required=False)
             if not ev.get("zone"):
                 report.error(f"{where}: destroy needs zone")
             if int(ev.get("count", 1)) < 0:
                 report.error(f"{where}: destroy count must be >= 0")
         elif op == "transfer":
-            _check_selector(report, where, ev)
+            _check_selector(report, where, ev, required=False)
             if not ev.get("source"):
                 report.error(f"{where}: transfer needs source")
             if not ev.get("destination"):
@@ -144,8 +142,8 @@ def _check_event(report: Report, where: str, ev: dict):
         elif op in ("highlight", "point", "fade", "scale"):
             if not ev.get("zone"):
                 report.error(f"{where}: {op} needs zone")
-            if op == "point" and (not ev.get("part") or not ev.get("indicator")):
-                report.error(f"{where}: point needs part + indicator")
+            if op == "point" and not ev.get("indicator"):
+                report.error(f"{where}: point needs indicator")
             if op == "fade" and "to_alpha" not in ev and "alpha" not in ev:
                 report.error(f"{where}: fade needs to_alpha")
             if op == "scale" and "scale" not in ev:

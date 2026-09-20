@@ -1,5 +1,15 @@
 # 讲规动画：进度与待办（2026-09-21 收尾，明天继续）
 
+> **2026-09-21 v2 全量迁移完成**
+>
+> - v2 源：`games/splendor/tutorial/anim/v2/full.anim.json`（109 cues / 8 trees/stages）
+> - v2 compiled：`anim/v2/full.compiled.json`
+> - 静态/编译/规则过账：`anim_schema_v2.py`、`compile_animation_v2.py --check`、`check_anim_v2.py`、`validate_anim_rules_v2.py`
+> - Unity 采样/对账：`TutorialV2Sampler` + `dump_anim_v2.sh` + `check_anim_v2_sample.py`
+> - 旧 v1 C# 与旧 `anim/full.json` / `_stage` 已删除；Unity 默认走 `track=full` 的 compiled 路径。
+
+
+
 > 新会话请**先读本文件**，再看 `tutorial-animation-state.md`（大本营：设计、口径、踩坑史）。
 
 ## 〇、最新进展（2026-09-21，本会话）

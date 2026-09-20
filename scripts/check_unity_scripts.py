@@ -846,15 +846,14 @@ def main():
 # 出图（离屏渲染）已全部删除：它两次把错画面当成证据，而且状态查询足够回答"对不对"。
 # 现在只保留两类入口：状态查询（DumpState/TraceState）与自检（SelfTest*）。
 ENTRY_METHODS = [
-    # 只保留**状态查询**（观察用）。自检（SelfTest*）已全部删除：
-    # 自己出题自己阅卷，通过只说明"实现了我以为的东西"，不说明"实现了要的东西"。
-    "DumpState", "TraceState", "ListZone", "DumpAdvancePath", "TraceDealOrder", "TraceHighlightScale",
+    # v2 只保留一个批处理采样入口。
+    "DumpStateV2",
 ]
 
 
 def check_entry_methods():
-    """确认 TutorialFrameCapture 里的入口方法都在（防止被静默删除）。"""
-    path = ROOT / "client/Assets/Editor/TutorialFrameCapture.cs"
+    """确认 v2 采样器的入口方法存在（防止被静默删除）。"""
+    path = ROOT / "client/Assets/Editor/TutorialV2Sampler.cs"
     if not path.exists():
         return [f"找不到 {path}"]
     src = path.read_text(encoding="utf-8")

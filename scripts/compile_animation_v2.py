@@ -158,6 +158,8 @@ class StateModel:
 
     def destroy(self, zone: str, selector: dict, count: int, from_back: bool = False) -> list:
         arr = self.matching(zone, selector)
+        if count <= 0:
+            count = len(arr)
         if len(arr) < count:
             raise ValueError(f"destroy needs {count} in {zone}, have {len(arr)}")
         victims = arr[-count:] if from_back else arr[:count]
@@ -359,6 +361,15 @@ class Compiler:
                         break
         return concept, parts or [], palette
 
+    @staticmethod
+    def select_items(state: StateModel, zone: str, selector: dict, order, limit=None):
+        arr = state.matching(zone, selector)
+        if order is not None:
+            arr = [it for it in arr if int(it.get("order", -1)) == int(order)]
+        if limit is not None:
+            arr = arr[:limit]
+        return arr
+
     def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> list:
         clips = []
         stage = self.stages[tree["stage"]]
@@ -402,17 +413,23 @@ class Compiler:
                 for it in added:
                     clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "destroy":
-                count = int(ev.get("count", 1) or 1)
+                count = int(ev.get("count", 0) or 0)
                 victims = state.destroy(zone, sel, count)
                 for it in victims:
                     clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "transfer":
                 quantity = int(ev.get("quantity", ev.get("count", 1)) or 1)
-                source = norm(ev.get("source"))
+                raw_src = ev.get("source")
+                sources = raw_src if isinstance(raw_src, list) else [raw_src]
+                sources = [norm(x) for x in sources if norm(x)]
                 dest = norm(ev.get("destination"))
-                records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)))
-                for rec in records:
-                    clips.append(self.move_clip(rec, at, dur, lead, easing, stage_slots, ev.get("to")))
+                stagger = float(ev.get("stagger", 0.0) or 0.0)
+                index = 0
+                for source in sources:
+                    records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)))
+                    for rec in records:
+                        clips.append(self.move_clip(rec, at, dur, lead + index * stagger, easing, stage_slots, ev.get("to")))
+                        index += 1
             elif op == "stack":
                 dest = norm(ev.get("destination"))
                 capacity = int(ev.get("capacity", 40) or 40)
@@ -442,20 +459,21 @@ class Compiler:
                 if arr:
                     state.move_order(arr[0], zone, int(ev.get("index", ev.get("order", 0)) or 0))
             elif op == "highlight":
-                for it in state.matching(zone, sel):
+                arr = self.select_items(state, zone, sel, ev.get("order"))
+                for it in arr:
                     clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
                                                         to_scale=float(ev.get("grow", 1.16) or 1.16)))
             elif op == "point":
-                arr = state.matching(zone, sel)
+                arr = self.select_items(state, zone, sel, ev.get("order"), limit=1)
                 if arr:
                     clips.append(self.presentation_clip("point", arr[0], at, dur, lead, easing,
                                                         part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
             elif op == "fade":
-                for it in state.matching(zone, sel):
+                for it in self.select_items(state, zone, sel, ev.get("order")):
                     clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
                                                         to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
             elif op == "scale":
-                for it in state.matching(zone, sel):
+                for it in self.select_items(state, zone, sel, ev.get("order")):
                     clips.append(self.presentation_clip("scale", it, at, dur, lead, easing,
                                                         to_scale=float(ev.get("scale", 1.0) or 1.0)))
             elif op == "wait":
@@ -553,7 +571,9 @@ def output_path(src: Path) -> Path:
 
 
 def json_canonical(doc) -> str:
-    return json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=False) + "\n"
+    # Compiled assets are machine-read by Unity; keep them compact to avoid
+    # multi-megabyte pretty-printed snapshots.
+    return json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=False) + "\n"
 
 
 def main() -> int:

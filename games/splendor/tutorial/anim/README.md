@@ -1,76 +1,58 @@
-# 讲规动画脚本（full.json）—— **手写的静态资产**
+# 讲规动画 v2
 
-## 谁写、怎么定位（用户 2026-09-20 定）
+## 唯一权威链路
 
-用户原话：「这个脚本就应该完全由你自己写，**不应该让程序去生成**（过账除外），除非是那种
-非常确定的、没有任何争议的问题，可以让程序去做。因为教学动画，它是个**一次做好永久使用**的东西，
-不像问答功能每次都得对。你就算写错了，我自己验收的时候发现问题，让你改就好了，
-改完之后，动画直接成为了一个**静态的固定资产**，只用于播放。」
+```text
+games/splendor/tutorial/script.full.json / full.lrc     口播编辑源
+                │
+games/splendor/tutorial/full.runtime.json               音频/字幕/时长
+                │
+games/splendor/tutorial/anim/v2/full.anim.json          手写动画源：
+  script.story/note/camera/enter/exit                   文字脚本 + 契约
+  tree / transition                                     树与世界切换
+  events                                                原语执行层
+                │
+scripts/compile_animation_v2.py                          确定性编译器
+  scripts/anim_geometry_v2.py                            唯一几何源
+                ▼
+games/splendor/tutorial/anim/v2/full.compiled.json       运行时只读 compiled
+                ▼
+BoardGameTutorial.Animation.TutorialAnimPlayer           Unity 薄适配
+```
 
-所以：
+旧 v1 `anim/full.json`、`anim/_stage/*`、`TutorialCueAnimPlayer`、`ZoneStore`、
+`TutorialDirector`、`Teaching*`、`TweenLibrary`、旧 `tutorial.json` 已删除。
 
-- **`full.json` 是唯一的资产，由人（我）手写**：story/note/timing、契约 enter/exit、事件、
-  取景（`camera` 写"要入镜的那几个 zone" + `camera_fill` 填充率）——全部是判断，不是推导。
-- **程序只做"确定无疑"的事**：
-  - `scripts/validate_cue_anim.py` —— 数据/本体/取景链/字段归属层的体检
-  - `scripts/validate_anim_rules.py` —— **过账**：把事件重放成状态，逐步验规则（每色在场 4 颗、
-    手上限 10、保留上限 3、买牌「价格−折扣==实付」…）
-  - `scripts/check_unity_scripts.py` —— 编译
-  - `scripts/check_cue_script.py --all` + `scripts/dump_states.sh` —— **对账**（契约 vs 引擎采样）
-  - `scripts/qa_anim_ask.py` + `_qa/questions.json` —— 手写问句问规则引擎（问题也是我手写）
-- **不再有生成器**：以前那批 `batch*.py`（按组批量生成 cue）与 `anim_framing.py`（机械算取景）
-  **已退役**，只作为历史留档在 `.claude/anim_batches/`。要改动画就**直接改 full.json**。
+## 检查命令
 
-## 一条 cue 要做的其实只有两件事（用户 2026-09-20 的定调）
+```bash
+# 1. 静态 schema / 文字结构与字段
+python3 scripts/anim_schema_v2.py games/splendor/tutorial/anim/v2/full.anim.json
 
-用户原话：「我们不是在做什么 3D 模型的骨骼动画，而是在**维护一组组件的创建/销毁，以及它们的
-状态流转**。所谓的『动画』**只不过是在套原语而已**。」
+# 2. 编译并检查 compiled 是否最新
+python3 scripts/compile_animation_v2.py --game splendor --track full
+python3 scripts/compile_animation_v2.py --game splendor --track full --check
 
-所以写一条 cue = **两个判断 + 套原语 + 写契约**：
+# 3. v2 契约 vs 编译快照（静态对账）
+python3 scripts/check_anim_v2.py --game splendor --track full
 
-1. **状态**：这一句口播要改变什么？（规则上是什么事）
-   套原语写下来：`create`（从盒里出来）/ `destroy`（放回盒子）/ `transfer`（zone→zone，
-   带 `what`+`quantity`+短句即可）/ `to: face_up|face_down`（写终态，不写"翻一下"）/
-   `stack`（搭一摞）/ `showbox`（整幅图）/ 以及表现层 `highlight`/`point`/`fade`/`scale`。
-   **没有状态变化就空着** —— 该有的有、不该有的就没有。
-2. **取景**：这一句要看哪几个 zone？`camera` 写那几个 zone，`camera_fill` 给填充率
-   （默认 0.8；特写给 0.6~0.72；跨度超过整桌长/宽 50% 时引擎自动退回全局）。
-3. 然后把 `enter`/`exit` 写清（**镜头里会出现的 zone 顺手声明**），跑四道检查，看一眼，定稿。
+# 4. Splendor 规则过账
+python3 scripts/validate_anim_rules_v2.py --game splendor --track full
 
-**位移/时长/缓动不用我设计** —— 我只声明"状态在什么时刻变成什么"，补间是引擎的事 ✓。
-**"好不好看"由用户验收**；我写错了就改，改完这条 cue 即成为这一版的固定资产 ✓。
+# 5. C# 编译
+python3 scripts/check_unity_scripts.py
 
-## 新建 / 修改一条 cue 的标准动作（用户 2026-09-21 定调：**必须从脚本开始走流程**）
+# 6. Unity 采样 + 对账（需 Windows 工作区同步、Unity 批处理）
+./scripts/dump_anim_v2.sh --game splendor --track full
+python3 scripts/check_anim_v2_sample.py --game splendor --track full
+```
 
-以后**新建动画**和**修改动画**都用这个顺序，强制走同一套流程，**不许一上来就改 events/Unity**：
+## 生产约定
 
-前置原则（用户 2026-09-21）：
+新建/修改动画必须：
 
-- **动画职责越少越好**：文字没说的，动画不做；不做额外装饰、额外状态变化、额外镜头运动。
-- **脚本和动画永远一一对应**：`story/note/enter/exit/tree/camera` 是源，`events` 只是它的执行层；
-  不能出现“文字说了、结构没做”，也不能出现“结构做了、文字没提”。
-- 改文字和改 events 必须同版本：先文字定稿，再套原语；两边不允许各自漂移。
-
-
-1. **先改脚本的“文字版”**：
-   - `story`：这条口播在说什么
-   - `note`：为什么这么演
-   - `tree`：哪棵树、是否切树；组件介绍天然只放该组件
-   - `enter`/`exit`：画面入口/出口要变成什么
-   - `camera`：要看哪几个 zone + `camera_fill`
-   - 这一轮**先不写 `events`**；文字与结构先对齐。
-2. **调 BoardAI API 确定合法性**：
-   - 把文字里的状态变化转成最小合法性问句，先问规则引擎；
-   - 工具：`scripts/qa_anim_ask.py` / `_qa/questions.json`（问句手写）；必要时用 `qa_anim_check`。
-3. **再套原语**：
-   - 只把第 1 步的 `enter/exit` 翻译成 `create/transfer/destroy/stack/showbox/...`；
-   - 不得在这一步改变语义；状态清理必须归到口播真正说它的那条 cue。
-4. **对账与验收**：
-   - `python3 scripts/validate_cue_anim.py`
-   - `python3 scripts/validate_anim_rules.py`
-   - `python3 scripts/check_unity_scripts.py`
-   - `./scripts/dump_states.sh && python3 scripts/check_cue_script.py --all`
-   - 全绿后 commit，再交用户做视觉验收。
-
-**教训**：先改 events、后补文字/树，会把“状态收尾挂到语义无关 cue”“口播讲贵族、画面却做宝石”这类错误写进数据；
-而契约与引擎会一起自洽，所有现有对账都会全绿。
+1. 先改 `full.anim.json` 的 `script.story/note/tree/transition/camera/enter/exit`；
+2. 用 BoardAI API 确认规则合法性；
+3. 再套 `events` 原语；
+4. 跑静态/编译/规则/采样对账；
+5. 视觉验收通过后再定稿。
