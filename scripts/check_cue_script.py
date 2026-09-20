@@ -294,12 +294,12 @@ def load_tree_worlds(args):
     return worlds
 
 
-def visible_items(stage, state, camera, padding=0.0):
+def visible_items(stage, state, camera, padding=0.0, fill=0.0):
     """这一刻**画面里真的看得见**的组件：取景框内的、且画面上没被隐藏的。
 
     用采样里的 `shows == "hidden"` 判隐藏（那是引擎自己说的），不另推一套 offstage 规则。
     """
-    rect = visible_rect(stage, camera, padding)
+    rect = visible_rect(stage, camera, padding, fill)
     if rect is None:
         return None
     zones = {z.get("id"): z for z in stage.get("zones", [])}
@@ -327,7 +327,7 @@ def framing_diffs(stage, cameras, state, declared_zones, label):
     act = cameras[1] if label == "exit" else cameras[0]
     if not act:
         return []
-    items = visible_items(stage, state, act[0], act[1])
+    items = visible_items(stage, state, act[0], act[1], act[2] if len(act) > 2 else 0.0)
     if not items:
         return []
     stray = {}
@@ -475,7 +475,8 @@ def check_single(args):
 
 def cue_cameras(events, prev_leave):
     """一条 cue 的取景：**开头**在场的（第一条 camera，没写就承接上一条）与**结尾**留下的。"""
-    cams = [(e.get("camera"), float(e.get("camera_padding") or 0.0))
+    cams = [(e.get("camera"), float(e.get("camera_padding") or 0.0),
+             float(e.get("camera_fill") or 0.0))
             for e in (events or []) if e.get("camera")]
     if not cams:
         return prev_leave, prev_leave

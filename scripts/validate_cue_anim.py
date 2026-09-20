@@ -1007,7 +1007,8 @@ def check_cleanup_timing(files, report, stage):
                 cur = cam
                 if not changed:
                     continue
-                rect = visible_rect(stage, cam, float(ev.get("camera_padding") or 0.0))
+                rect = visible_rect(stage, cam, float(ev.get("camera_padding") or 0.0),
+                                    float(ev.get("camera_fill") or 0.0))
                 if rect is None:
                     continue                       # 整桌取景：没有"出框"可言
                 t_cam = float(ev.get("at", 0.0))
@@ -1127,7 +1128,8 @@ def _check_cleanup_timing(cue_id, events, stage, report):
         return
     for i, cev in cams:
         cam = cev.get("camera")
-        rect = visible_rect(stage, cam, float(cev.get("camera_padding") or 0.0))
+        rect = visible_rect(stage, cam, float(cev.get("camera_padding") or 0.0),
+                            float(cev.get("camera_fill") or 0.0))
         if rect is None:          # 整桌取景：不限制，跳过
             continue
         t_cam = float(cev.get("at", 0.0))

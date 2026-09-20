@@ -3017,7 +3017,13 @@ namespace BoardGameTutorial
                         minX = Mathf.Min(minX, q.x - hw); maxX = Mathf.Max(maxX, q.x + hw);
                         minZ = Mathf.Min(minZ, q.z - hh); maxZ = Mathf.Max(maxZ, q.z + hh);
                     }
-                    orthoScale = framePadding > 0f ? framePadding : 2.2f;
+                    // 单 zone 特写也要支持 camera_fill：用户口径是"这几个 zone 占画面中央的比例"，
+                    // 不是只有多 zone 才有 fill。旧代码只读 camera_padding，导致 cue14 等
+                    // 写了 camera_fill:0.72 的近景实际一直用默认留白。
+                    if (frameFill > 0f)
+                        orthoScale = 1f / Mathf.Clamp(frameFill, 0.2f, 1f);
+                    else
+                        orthoScale = framePadding > 0f ? framePadding : 2.2f;
                 }
             }
 

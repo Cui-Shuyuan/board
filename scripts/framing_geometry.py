@@ -165,7 +165,14 @@ def _union(boxes):
             min(b[2] for b in boxes), max(b[3] for b in boxes))
 
 
-def frame_bounds(stage, camera, padding=0.0):
+def _fill_scale(fill, fallback):
+    """camera_fill → orthoScale，与引擎 FitCamera 的 `1/Clamp(fill,0.2,1)` 一致。"""
+    if fill and fill > 0:
+        return 1.0 / max(0.2, min(1.0, float(fill)))
+    return fallback
+
+
+def frame_bounds(stage, camera, padding=0.0, fill=0.0):
     """camera → (取景目标框, orthoScale)。None = 不限制（整桌取景）。
 
     与 FitCamera 的分支一一对应：多 zone / supply / cards / 单个 zone。
@@ -178,7 +185,7 @@ def frame_bounds(stage, camera, padding=0.0):
 
     zid = {p: resolve_zone_ref(stage, p) for p in parts}
     if len(parts) > 1:
-        scale = 1.25
+        scale = _fill_scale(fill, 1.25)
         box = _union([_zone_box(stage, zones[zid[p]]) for p in parts if zid[p] in zones])
     elif parts[0] == "cards":
         scale = 1.5
@@ -192,16 +199,21 @@ def frame_bounds(stage, camera, padding=0.0):
                       if z.get("palette") == SUPPLY_PALETTE and z.get("role") != "offstage"])
     elif zid[parts[0]] in zones:
         box = _zone_box(stage, zones[zid[parts[0]]])
+        # 单 zone 特写：优先 camera_fill，其次 camera_padding，最后默认 2.2
+        scale = _fill_scale(fill, padding if padding > 0 else 2.2)
     else:
         return None
     if not box:
         return None
-    return (box, padding if padding > 0 else scale)
+    if parts[0] in ("supply", "cards"):
+        # supply/cards 引擎仍用 camera_padding，不用 fill
+        scale = padding if padding > 0 else scale
+    return (box, scale)
 
 
-def visible_rect(stage, camera, padding=0.0):
+def visible_rect(stage, camera, padding=0.0, fill=0.0):
     """取景 → 画面覆盖的地面矩形 (minX, maxX, minZ, maxZ)。镜像 FitCamera 后半段。"""
-    got = frame_bounds(stage, camera, padding)
+    got = frame_bounds(stage, camera, padding, fill)
     if got is None:
         return None
     (min_x, max_x, min_z, max_z), scale = got
