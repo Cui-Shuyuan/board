@@ -294,9 +294,6 @@
         "zones": {
           "showcase": {
             "count": 0
-          },
-          "card_market": {
-            "count": 0
           }
         }
       },
@@ -341,7 +338,8 @@
           "to": "face_up",
           "count": 1
         }
-      ]
+      ],
+      "tree": "cards_intro"
     },
     {
       "cue": "setup.cards.001.2",
@@ -447,7 +445,8 @@
           "easing": "easeInOutCubic",
           "grow": 1.16
         }
-      ]
+      ],
+      "tree": "cards_intro"
     },
     {
       "cue": "setup.cards.001.3",
@@ -519,7 +518,8 @@
           "easing": "easeInOutCubic",
           "grow": 1.16
         }
-      ]
+      ],
+      "tree": "cards_intro"
     },
     {
       "cue": "setup.cards.002.1",
@@ -533,15 +533,6 @@
       "enter": {
         "picture": null,
         "zones": {
-          "showcase_1": {
-            "count": 1
-          },
-          "showcase_2": {
-            "count": 1
-          },
-          "showcase_3": {
-            "count": 1
-          },
           "card_market": {
             "count": 0
           }
@@ -550,15 +541,6 @@
       "exit": {
         "picture": null,
         "zones": {
-          "showcase_1": {
-            "count": 0
-          },
-          "showcase_2": {
-            "count": 0
-          },
-          "showcase_3": {
-            "count": 0
-          },
           "deck_level_1": {
             "count": 36,
             "kinds": {
@@ -673,33 +655,6 @@
           "action": "wait",
           "camera": "deck_level_1,deck_level_2,deck_level_3,card_market",
           "camera_fill": 0.72
-        },
-        {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "destroy",
-          "what": {
-            "concept": "development_card_level_1"
-          },
-          "zone": "showcase_1"
-        },
-        {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "destroy",
-          "what": {
-            "concept": "development_card_level_2"
-          },
-          "zone": "showcase_2"
-        },
-        {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "destroy",
-          "what": {
-            "concept": "development_card_level_3"
-          },
-          "zone": "showcase_3"
         },
         {
           "at": 0.05,
@@ -17346,6 +17301,14 @@
       "why": "第 1 节整节讲的都是游戏盒封面本身；观众这时还不该看到任何桌游组件。把盒面独立成树，天然保证“除了盒面什么都没有”。",
       "initial": "只有整幅盒面图（board.default_picture=media/box.png），没有 zone、没有组件。",
       "extent_note": "只服务一张盒面图，不继承主桌 10.6 的纵深。"
+    },
+    {
+      "id": "cards_intro",
+      "stage": "_stage/splendor.cards_intro",
+      "name": "介绍牌树",
+      "why": "介绍发展卡正面/背面与三个等级时，桌上只需出现那几张样卡，不需要真实牌堆/市场/玩家状态。",
+      "initial": "四个展示位为空；根画面是盒面（cue 内关掉），之后无整幅图。",
+      "extent_note": "只框住四个展示位，不再被主桌纵深限制。"
     },
     {
       "id": "gems_demo",

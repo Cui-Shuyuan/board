@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "kind": "stage",
+  "note": "介绍牌树：只讲发展卡正面/背面与三个等级，不涉及真实牌堆/市场/玩家状态。根画面是盒面，第一条 cue 里关掉；离开这棵树即 cut，样卡不被带进主树。",
+  "board": {
+    "background": "#1E2126",
+    "camera_pitch": 90,
+    "ortho_scale": 1.1,
+    "aspect": 1.7778,
+    "extent": {
+      "min_x": -1.3,
+      "max_x": 1.3,
+      "min_z": -0.65,
+      "max_z": 0.05
+    },
+    "default_picture": "media/box.png"
+  },
+  "zones": [
+    {
+      "id": "showcase",
+      "label": "展示位",
+      "center": {
+        "x": 0.0,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
+      "id": "showcase_1",
+      "label": "卡背展示位 1",
+      "center": {
+        "x": -0.85,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
+      "id": "showcase_2",
+      "label": "卡背展示位 2",
+      "center": {
+        "x": 0.0,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    },
+    {
+      "id": "showcase_3",
+      "label": "卡背展示位 3",
+      "center": {
+        "x": 0.85,
+        "z": -0.3
+      },
+      "display": {
+        "mode": "stack",
+        "dx": 0.0,
+        "dz": 0.0,
+        "max_visible": 1
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.0,
+        "z_step": 0.0
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "concept": null,
+      "contains": []
+    }
+  ],
+  "zone_defs": [],
+  "templates": [
+    {
+      "id": "sample_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_绿.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "alpha": 1.0,
+      "concept": "development_card_level_1",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_back_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/card/一级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "alpha": 1.0,
+      "concept": "development_card_level_1",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_back_2",
+      "shape": "card",
+      "palette": "card_level_2",
+      "face_image": "media/card/二级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "alpha": 1.0,
+      "concept": "development_card_level_2",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "sample_back_3",
+      "shape": "card",
+      "palette": "card_level_3",
+      "face_image": "media/card/三级发展卡_背面.jpg",
+      "world_size": null,
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "alpha": 1.0,
+      "concept": "development_card_level_3",
+      "sample": true,
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    }
+  ],
+  "anchors": [],
+  "containers": [],
+  "initial": []
+}
