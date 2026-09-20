@@ -1372,13 +1372,6 @@
       },
       "events": [
         {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "wait",
-          "camera": "gem_display",
-          "camera_fill": 0.72
-        },
-        {
           "at": 0.6,
           "dur": 0.8,
           "action": "highlight",

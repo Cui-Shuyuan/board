@@ -1035,46 +1035,19 @@ def check_cleanup_timing(files, report, stage):
 
 
 def check_framing_chain(files, report):
-    """跨 cue 检查：**取景（camera）是延续状态**，一条 cue 不声明就沿用上一条的。
+    """跨 cue 跟踪取景链。
 
-    这在单条 cue 的文件里完全看不出来，于是很容易写出"脏动画"：
-    上一条 cue 结尾的画面，被下一条 cue 的新取景渲染了一小段时间，
-    看起来就是"牌突然变小了一下"（用户报过）。
+    **不写 camera = 自动继承上一条的最终取景**，这是多棵树/镜头继承设计的正常用法，
+    不再因为“第一条改状态的事件在 at>0”而报 warning：那正好证明本条没有动镜头。
 
-    规则：**任何"改变画面内容"的事件，都应该和"改变取景"的事件在同一时刻或之后**。
-    这里只查最容易漏的一种：本条 cue **没有**声明 camera（承接上一条的取景），
-    却在 `at > 0` 的时刻才做第一件改状态的事 —— 那段时间里，
-    上一帧的画面仍在，却已经被换成新取景，于是会"闪一下"。
-
-    这不是硬错误（有时确实想先停一会儿再动），所以报 warning 让人确认。
-
-    一条 cue 里声明**两次** camera 是允许的（例如开头特写、句中切回整桌）。
-    这时：
-      - 「开头有没有声明」看**第一条** camera（决定要不要报上面那个 warning）；
-      - 「留给下一条的取景」看**最后一条** camera（才是这条 cue 结束时的画面）。
-    早期这里两者都用第一条，一条 cue 换两次取景时链就接错了。
+    真正需要硬保证的是**换树/起树**第一条 cue 必须显式给出 at=0 camera；
+    那条现在由 `check_tree_entry_camera` 报 error。
     """
     prev_camera = None
     for doc in files:
         events = doc.get("events") or []
         cams = [e for e in events if e.get("camera")]
-        first_declared = cams[0].get("camera") if cams else None
-        leaves = cams[-1].get("camera") if cams else prev_camera
-        mutating = [e for e in events
-                    if e.get("action") not in (None, "wait")
-                    and float(e.get("at", 0.0)) > 1e-6]
-
-        if first_declared is None and prev_camera is not None and mutating:
-            earliest = min(float(e.get("at", 0.0)) for e in mutating)
-            if earliest > 1e-6:
-                report.warn(
-                    doc.get("cue") or "?",
-                    f"承接上一条的取景 {prev_camera!r}，"
-                    f"但第一件改状态的事在 at={earliest:.2f} —— 这段时间画面会被用新取景渲染，"
-                    f"若与上一条结尾的取景不同就会「闪一下」。要么在 at=0 显式声明 camera，"
-                    f"要么确认确实想先停一会儿")
-
-        prev_camera = leaves
+        prev_camera = cams[-1].get("camera") if cams else prev_camera
 
 def check_tree_entry_camera(cues, report):
     """换树的第一条 cue 必须在 at=0 声明 camera（哪怕只是 board）。
