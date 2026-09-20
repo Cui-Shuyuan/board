@@ -184,6 +184,23 @@ namespace BoardGameTutorial.Animation
         public float z;
     }
 
+
+    [Serializable]
+    public sealed class CompiledTemplateDef
+    {
+        public string id;
+        public string shape;
+        public string palette;
+        public string face_image;
+        public string back_image;
+        public float width;
+        public float height;
+        public float world_size = 0.1f;
+        public float alpha = 1f;
+        public float rotation;
+        public int sorting_order;
+    }
+
     [Serializable]
     public sealed class CompiledZoneDef
     {
@@ -199,7 +216,9 @@ namespace BoardGameTutorial.Animation
         public string stage;
         public float pitch = 90f;
         public float aspect = 1.7778f;
+        public string background;
         public List<CompiledZoneDef> zones = new List<CompiledZoneDef>();
+        public List<CompiledTemplateDef> templates = new List<CompiledTemplateDef>();
     }
 
     [Serializable]

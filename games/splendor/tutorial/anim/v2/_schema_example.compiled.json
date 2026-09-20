@@ -1,0 +1,172 @@
+{
+  "schema": "tutorial-anim-compiled/v2",
+  "source_sha256": "example",
+  "game": "splendor",
+  "track": "_schema_example",
+  "trees": [
+    {
+      "id": "showcase",
+      "world": "showcase_world",
+      "stage": "_schema_example.stage",
+      "purpose": "example",
+      "initial": "empty",
+      "extent_note": "showcase only"
+    }
+  ],
+  "stages": [
+    {
+      "schema": "tutorial-stage-compiled/v2",
+      "game": "splendor",
+      "stage": "_schema_example.stage",
+      "pitch": 90.0,
+      "aspect": 1.7778,
+      "background": "#1E2126",
+      "zones": [
+        {
+          "zone": "showcase",
+          "slots": [
+            {"order": 0, "x": 0.0, "z": 0.0}
+          ]
+        }
+      ],
+      "templates": [
+        {
+          "id": "sample_card_1",
+          "shape": "card",
+          "palette": "card_level_1",
+          "face_image": "",
+          "back_image": "",
+          "width": 0.63,
+          "height": 0.88,
+          "world_size": 0.63,
+          "alpha": 1.0,
+          "rotation": 0.0,
+          "sorting_order": 6
+        }
+      ]
+    }
+  ],
+  "cues": [
+    {
+      "id": "example.show.001",
+      "parent": null,
+      "tree": "showcase",
+      "transition": "world_cut",
+      "duration": 2.0,
+      "camera": {
+        "at": 0.0,
+        "center_x": 0.0,
+        "center_z": 0.0,
+        "ortho_size": 1.2,
+        "pitch": 90.0,
+        "rect_min_x": -1.0668,
+        "rect_max_x": 1.0668,
+        "rect_min_z": -0.6,
+        "rect_max_z": 0.6
+      },
+      "start_state": {
+        "components": [],
+        "nextSeq": []
+      },
+      "end_state": {
+        "components": [
+          {
+            "Id": "sample_card_1|card_level_1#1",
+            "TemplateId": "sample_card_1",
+            "Palette": "card_level_1",
+            "Concept": "development_card_level_1",
+            "parts": [],
+            "ZoneId": "showcase",
+            "Order": 0,
+            "Face": 2
+          }
+        ],
+        "nextSeq": [
+          {"key": "sample_card_1|card_level_1", "value": 1}
+        ]
+      },
+      "clips": [
+        {
+          "kind": "spawn",
+          "at": 0.15,
+          "dur": 0.0,
+          "lead": 0.0,
+          "easing": "easeOutCubic",
+          "item_id": "sample_card_1|card_level_1#1",
+          "template": "sample_card_1",
+          "palette": "card_level_1",
+          "from_zone": "",
+          "from_order": -1,
+          "to_zone": "showcase",
+          "to_order": 0,
+          "from_x": 0.0,
+          "from_z": 0.0,
+          "to_x": 0.0,
+          "to_z": 0.0,
+          "from_scale": 1.0,
+          "to_scale": 1.0,
+          "from_alpha": 1.0,
+          "to_alpha": 1.0,
+          "to_face": "face_up",
+          "part": "",
+          "indicator": "",
+          "picture": "",
+          "picture_on": false
+        }
+      ]
+    },
+    {
+      "id": "example.hold.001",
+      "parent": "example.show.001",
+      "tree": "showcase",
+      "transition": "continue",
+      "duration": 1.0,
+      "camera": {
+        "at": 0.0,
+        "center_x": 0.0,
+        "center_z": 0.0,
+        "ortho_size": 1.2,
+        "pitch": 90.0,
+        "rect_min_x": -1.0668,
+        "rect_max_x": 1.0668,
+        "rect_min_z": -0.6,
+        "rect_max_z": 0.6
+      },
+      "start_state": {
+        "components": [
+          {
+            "Id": "sample_card_1|card_level_1#1",
+            "TemplateId": "sample_card_1",
+            "Palette": "card_level_1",
+            "Concept": "development_card_level_1",
+            "parts": [],
+            "ZoneId": "showcase",
+            "Order": 0,
+            "Face": 2
+          }
+        ],
+        "nextSeq": [
+          {"key": "sample_card_1|card_level_1", "value": 1}
+        ]
+      },
+      "end_state": {
+        "components": [
+          {
+            "Id": "sample_card_1|card_level_1#1",
+            "TemplateId": "sample_card_1",
+            "Palette": "card_level_1",
+            "Concept": "development_card_level_1",
+            "parts": [],
+            "ZoneId": "showcase",
+            "Order": 0,
+            "Face": 2
+          }
+        ],
+        "nextSeq": [
+          {"key": "sample_card_1|card_level_1", "value": 1}
+        ]
+      },
+      "clips": []
+    }
+  ]
+}
