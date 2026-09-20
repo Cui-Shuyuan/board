@@ -524,52 +524,6 @@
       "contains": []
     },
     {
-      "id": "gem_display",
-      "label": "宝石展示位（介绍用）",
-      "center": {
-        "x": -1.2,
-        "z": -2.85
-      },
-      "layout": {
-        "type": "row",
-        "x_step": 0.5
-      },
-      "capacity": 5,
-      "size": {
-        "w": 0.43,
-        "h": 0.43
-      },
-      "display": {
-        "mode": "count"
-      },
-      "concept": null,
-      "contains": [],
-      "note": "介绍宝石用的展示位：**不是供应堆**，只是把宝石摆出来看。介绍完就销毁这里的样本。"
-    },
-    {
-      "id": "gold_display",
-      "label": "黄金展示位（介绍用）",
-      "center": {
-        "x": 0.9,
-        "z": -2.85
-      },
-      "layout": {
-        "type": "row",
-        "x_step": 0.5
-      },
-      "capacity": 1,
-      "size": {
-        "w": 0.43,
-        "h": 0.43
-      },
-      "display": {
-        "mode": "count"
-      },
-      "concept": null,
-      "contains": [],
-      "note": "介绍黄金用的展示位，和宝石展示位隔开一段距离（“黄金不属于宝石”）。"
-    },
-    {
       "id": "player_marker",
       "label": "起始玩家标记位",
       "center": {
@@ -1820,70 +1774,6 @@
           "r": 0.085
         }
       ]
-    },
-    {
-      "id": "gem_sample",
-      "shape": "gem",
-      "world_size": 0.43,
-      "sorting_order": 6,
-      "sample": true,
-      "concept_by_palette": [
-        {
-          "palette": "gem_diamond",
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<diamond>"
-            }
-          ]
-        },
-        {
-          "palette": "gem_ruby",
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ]
-        },
-        {
-          "palette": "gem_emerald",
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<emerald>"
-            }
-          ]
-        },
-        {
-          "palette": "gem_sapphire",
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<sapphire>"
-            }
-          ]
-        },
-        {
-          "palette": "gem_onyx",
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ]
-        },
-        {
-          "palette": "gem_gold",
-          "concept": "gold"
-        }
-      ],
-      "note": "介绍宝石/黄金用的**样本**：概念绑定与 `gem` **完全相同**（一枚样本确实\"是\"那种宝石），差别只在**模板**上 —— 独立模板所以不会混进\"每色 7 枚\"的账，介绍完就销毁。\n正因为绑同一套概念，\"全局 what\"会同时命中真件和样本 → 脚本必须给 zone/order 说清是哪一件。"
     },
     {
       "id": "starting_marker",

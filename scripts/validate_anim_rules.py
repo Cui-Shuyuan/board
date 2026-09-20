@@ -138,14 +138,37 @@ class State:
                    if ident.startswith("gem:") or ident.startswith("gold"))
 
 
-def run(anim, stage, facts, rep: Report, on_event=None, on_cue_end=None):
-    zones = {z["id"]: z for z in (stage.get("zones") or [])}
-    dev_zones = [z for z in zones if "development" in z]
-    frozen = None
-    st = State()
+def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report = None,
+        on_event=None, on_cue_end=None):
+    """按轨道顺序重放；**跨树 = cut**：换树时丢弃上一棵树的状态，从该树入口重新起。
+
+    兼容两种调用：
+      · 新：run(anim, default_stage, stages, facts, rep)
+      · 旧：run(anim, stage, facts, rep)      —— 只跑单棵主树
+    `stages` 是 tree id → StageDoc；没写 tree 的 cue（以及没登记的 tree）走 default_stage。
+    """
+    if rep is None:
+        default_stage = stage_or_default
+        stages = {}
+        facts = stages_or_facts
+        rep = facts_or_rep
+    else:
+        default_stage = stage_or_default
+        stages = stages_or_facts
+        facts = facts_or_rep
+    # 每棵树各有一份“暂停后恢复”的状态：切走的是镜头，不是那棵树的状态。
+    # 这也与引擎“跳回某树时从该树根重放”一致：按轨道顺序只把同树的事件喂给它。
+    tree_states = {}
+    frozen_by_tree = {}
 
     for cue in anim.get("cues") or []:
         cid = cue.get("cue")
+        tree = cue.get("tree") or "main"
+        stage = stages.get(tree, default_stage)
+        zones = {z["id"]: z for z in (stage.get("zones") or [])}
+        dev_zones = [z for z in zones if "development" in z]
+        st = tree_states.setdefault(tree, State())
+        frozen = frozen_by_tree.get(tree)
         paid, bought, reserved, gold_taken = Counter(), [], [], 0
         for i, ev in enumerate(cue.get("events") or []):
             where = f"{cid} events[{i}]"
@@ -307,6 +330,7 @@ def run(anim, stage, facts, rep: Report, on_event=None, on_cue_end=None):
         # ── 本条 cue 的整桌检查 ────────────────────────────────────────────
         if cid == FROZEN_FROM:
             frozen = dict(st.gems())
+            frozen_by_tree[tree] = frozen
         gems = st.gems()
         if frozen is not None:
             for col, want in frozen.items():
@@ -371,9 +395,17 @@ def main() -> int:
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     anim = json.loads(ANIM.read_text(encoding="utf-8"))
-    stage = json.loads(STAGE.read_text(encoding="utf-8"))
+    default_stage = json.loads(STAGE.read_text(encoding="utf-8"))
+    stages = {}
+    anim_dir = ROOT / "games/splendor/tutorial/anim"
+    for tree in anim.get("trees") or []:
+        tid, rel = tree.get("id"), tree.get("stage")
+        if tid and rel:
+            path = anim_dir / f"{rel}.json"
+            if path.exists():
+                stages[tid] = json.loads(path.read_text(encoding="utf-8"))
     facts = json.loads(FACTS.read_text(encoding="utf-8")) if FACTS.exists() else {}
-    rep = run(anim, stage, facts, Report())
+    rep = run(anim, default_stage, stages, facts, Report())
     if a.json:
         print(json.dumps({"errors": [f"{w}: {m}" for w, m in rep.errors],
                           "warnings": [f"{w}: {m}" for w, m in rep.warnings]},

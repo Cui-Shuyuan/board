@@ -16,103 +16,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          },
-          "showcase": {
-            "count": 0
-          },
-          "showcase_1": {
-            "count": 0
-          },
-          "showcase_2": {
-            "count": 0
-          },
-          "showcase_3": {
-            "count": 0
-          },
-          "offstage": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          },
-          "offstage": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -125,7 +33,8 @@
           "on": 1,
           "picture": "media/box.png"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.001.2",
@@ -137,85 +46,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -233,7 +68,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.002.1",
@@ -245,85 +81,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -341,7 +103,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.002.2",
@@ -353,85 +116,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -449,7 +138,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.002.3",
@@ -461,85 +151,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -557,7 +173,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.003.1",
@@ -569,85 +186,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -665,7 +208,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.003.2",
@@ -677,85 +221,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -773,7 +243,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "bg.intro.003.3",
@@ -785,85 +256,11 @@
       },
       "enter": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "exit": {
         "picture": "media/box.png",
-        "zones": {
-          "deck_level_1": {
-            "count": 0
-          },
-          "deck_level_2": {
-            "count": 0
-          },
-          "deck_level_3": {
-            "count": 0
-          },
-          "card_market": {
-            "count": 0
-          },
-          "noble_market": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
-          },
-          "gold_supply": {
-            "count": 0
-          },
-          "player_holding": {
-            "count": 0
-          }
-        }
+        "zones": {}
       },
       "start": {
         "set": []
@@ -881,7 +278,8 @@
           "dur": 0.0,
           "action": "wait"
         }
-      ]
+      ],
+      "tree": "box"
     },
     {
       "cue": "setup.cards.001.1",
@@ -1721,21 +1119,6 @@
           },
           "gold_display": {
             "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
-            "count": 0
           }
         }
       },
@@ -1753,21 +1136,6 @@
             }
           },
           "gold_display": {
-            "count": 0
-          },
-          "gem_supply_diamond": {
-            "count": 0
-          },
-          "gem_supply_sapphire": {
-            "count": 0
-          },
-          "gem_supply_ruby": {
-            "count": 0
-          },
-          "gem_supply_emerald": {
-            "count": 0
-          },
-          "gem_supply_onyx": {
             "count": 0
           }
         }
@@ -1833,7 +1201,8 @@
           "slot": 4,
           "lead": 0.48
         }
-      ]
+      ],
+      "tree": "gems_demo"
     },
     {
       "cue": "setup.gems.001.2",
@@ -1984,7 +1353,8 @@
           "easing": "easeInOutCubic",
           "grow": 1.18
         }
-      ]
+      ],
+      "tree": "gems_demo"
     },
     {
       "cue": "setup.gems.001.3",
@@ -2049,7 +1419,8 @@
           "easing": "easeInOutCubic",
           "grow": 1.1
         }
-      ]
+      ],
+      "tree": "gems_demo"
     },
     {
       "cue": "setup.gems.002",
@@ -2135,7 +1506,8 @@
           "easing": "easeInOutCubic",
           "grow": 1.16
         }
-      ]
+      ],
+      "tree": "gems_demo"
     },
     {
       "cue": "setup.gems.003.1",
@@ -2150,22 +1522,6 @@
       "enter": {
         "picture": null,
         "zones": {
-          "gem_display": {
-            "count": 5,
-            "kinds": {
-              "宝石白": 1,
-              "宝石蓝": 1,
-              "宝石红": 1,
-              "宝石绿": 1,
-              "宝石黑": 1
-            }
-          },
-          "gold_display": {
-            "count": 1,
-            "kinds": {
-              "黄金": 1
-            }
-          },
           "gem_supply_diamond": {
             "count": 0
           },
@@ -2186,12 +1542,6 @@
       "exit": {
         "picture": null,
         "zones": {
-          "gem_display": {
-            "count": 0
-          },
-          "gold_display": {
-            "count": 0
-          },
           "gem_supply_diamond": {
             "count": 4,
             "kinds": {
@@ -2228,18 +1578,6 @@
         "set": []
       },
       "events": [
-        {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "destroy",
-          "zone": "gem_display"
-        },
-        {
-          "at": 0.0,
-          "dur": 0.0,
-          "action": "destroy",
-          "zone": "gold_display"
-        },
         {
           "at": 0.0,
           "dur": 0.0,
@@ -2345,12 +1683,6 @@
       "enter": {
         "picture": null,
         "zones": {
-          "gem_display": {
-            "count": 0
-          },
-          "gold_display": {
-            "count": 0
-          },
           "gem_supply_diamond": {
             "count": 4,
             "kinds": {
@@ -2843,12 +2175,6 @@
           "gold_supply": {
             "count": 0
           },
-          "gem_display": {
-            "count": 0
-          },
-          "gold_display": {
-            "count": 0
-          },
           "gem_supply_diamond": {
             "count": 7,
             "kinds": {
@@ -2889,12 +2215,6 @@
             "kinds": {
               "黄金": 5
             }
-          },
-          "gem_display": {
-            "count": 0
-          },
-          "gold_display": {
-            "count": 0
           },
           "gem_supply_diamond": {
             "count": 7,
@@ -2974,12 +2294,6 @@
               "黄金": 5
             }
           },
-          "gem_display": {
-            "count": 0
-          },
-          "gold_display": {
-            "count": 0
-          },
           "gem_supply_diamond": {
             "count": 7,
             "kinds": {
@@ -3020,12 +2334,6 @@
             "kinds": {
               "黄金": 5
             }
-          },
-          "gem_display": {
-            "count": 0
-          },
-          "gold_display": {
-            "count": 0
           },
           "gem_supply_diamond": {
             "count": 4,
@@ -18028,6 +17336,32 @@
           "camera": "board"
         }
       ]
+    }
+  ],
+  "trees": [
+    {
+      "id": "box",
+      "stage": "_stage/splendor.box",
+      "name": "盒面树",
+      "why": "第 1 节整节讲的都是游戏盒封面本身；观众这时还不该看到任何桌游组件。把盒面独立成树，天然保证“除了盒面什么都没有”。",
+      "initial": "只有整幅盒面图（board.default_picture=media/box.png），没有 zone、没有组件。",
+      "extent_note": "只服务一张盒面图，不继承主桌 10.6 的纵深。"
+    },
+    {
+      "id": "gems_demo",
+      "stage": "_stage/splendor.gems",
+      "name": "宝石演示树",
+      "why": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。",
+      "initial": "五格宝石展示位和黄金展示位都为空。",
+      "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。"
+    },
+    {
+      "id": "main",
+      "stage": "_stage/splendor.table",
+      "name": "主树",
+      "why": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。",
+      "initial": "空桌；真实组件从 setup.gems.003.1 起按规则 create。根画面在 setup.cards.001.1 已关掉盒面，之后保持无整幅图。",
+      "extent_note": "当前为真实牌桌完整 extent；多棵树全部落地后再按主树实际内容收紧。"
     }
   ]
 }

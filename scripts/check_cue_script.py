@@ -256,6 +256,30 @@ def load_stage(args):
     return load(p) if p.exists() else None
 
 
+def load_stages(args):
+    """返回 (tree id → stage, default_stage)。与引擎的多棵树口径一致。"""
+    base = ROOT / "games" / args.game / "tutorial" / "anim"
+    doc = load(base / f"{args.track}.json")
+    if not doc:
+        return {}, None
+    default_rel = doc.get("stage")
+    default_stage = load(base / f"{default_rel}.json") if default_rel else None
+    stages = {}
+    for tree in doc.get("trees") or []:
+        tid, rel = tree.get("id"), tree.get("stage")
+        if not tid or not rel:
+            continue
+        path = base / f"{rel}.json"
+        if path.exists():
+            stages[tid] = load(path)
+    return stages, default_stage
+
+
+def stage_for_contract(contract, stages, default_stage):
+    tree = (contract or {}).get("tree") or "main"
+    return stages.get(tree) or default_stage
+
+
 def visible_items(stage, state, camera, padding=0.0):
     """这一刻**画面里真的看得见**的组件：取景框内的、且画面上没被隐藏的。
 
@@ -378,13 +402,14 @@ def diff_cue(want_part, state):
 def check_single(args):
     cpath, spath = resolve_paths(args)
     _, contracts = load_contracts(cpath)
-    set_stage(load_stage(args))
+    stages, default_stage = load_stages(args)
     if not contracts:
         return 2
     contract = contracts.get(args.cue)
     if contract is None:
         print(f"契约里没有这条 cue: {args.cue}", file=sys.stderr)
         return 2
+    set_stage(stage_for_contract(contract, stages, default_stage))
 
     # --state 给了就单独读它（临时采样），否则用整条 track 的采样文件
     states = load_states(args.state) if args.state else load_states(spath)
@@ -443,17 +468,24 @@ def check_all(args):
     if doc is None:
         return 2
     states = load_states(spath)
-    stage = load_stage(args)
-    set_stage(stage)
+    stages, default_stage = load_stages(args)
 
     fails = skipped = frame_warns = 0
     prev_leave = None
+    current_tree = None
     # 采样文件里 cue 的**出现顺序 = 整条轨道的顺序**（采样器就是按轨道顺序一条条采的）。
     # 用它来给"没写 entry_from"的 cue 找默认父节点。
     sample_order = list(states.keys())
     # 按契约文件里的顺序（= 轨道顺序）走，不按字母序
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
+        tree = contract.get("tree") or "main"
+        if tree != current_tree:
+            # 换树是 cut：取景不延续上一棵树；进入状态也不默认继承上一棵树。
+            current_tree = tree
+            prev_leave = None
+        stage = stages.get(tree) or default_stage
+        set_stage(stage)
         first_cam, leave_cam = cue_cameras(contract.get("events"), prev_leave)
         parent_default = False
 
@@ -506,8 +538,11 @@ def check_all(args):
         if not parent and sample_order:
             i = sample_order.index(cue) if cue in sample_order else -1
             if i > 0:
-                parent = sample_order[i - 1]
-                parent_default = True
+                candidate = sample_order[i - 1]
+                candidate_contract = contracts.get(candidate) or {}
+                if (candidate_contract.get("tree") or "main") == tree:
+                    parent = candidate
+                    parent_default = True
         if parent:
             if parent in states:
                 want = part_of(contract, "enter")
@@ -554,18 +589,24 @@ def chain(args):
     doc, contracts = load_contracts(cpath)
     if doc is None:
         return 2
-    set_stage(load_stage(args))
+    stages, default_stage = load_stages(args)
     states = load_states(spath)
 
     fails = 0
     for cue in [c["cue"] for c in (doc.get("cues") or []) if c.get("cue")]:
         contract = contracts[cue]
+        tree = contract.get("tree") or "main"
+        set_stage(stages.get(tree) or default_stage)
         parent = contract.get("entry_from")
         if not parent:
             continue
         if parent not in contracts:
             print(f"FAIL  {cue}: 契约里找不到父 cue {parent}")
             fails += 1
+            continue
+        parent_contract = contracts.get(parent) or {}
+        if (parent_contract.get("tree") or "main") != tree:
+            print(f"SKIP  {cue}: 父 {parent} 在另一棵树（{parent_contract.get('tree') or 'main'}）—— 跨树是 cut，不按契约链比")
             continue
         if parent not in states:
             print(f"SKIP  {cue}: 还没有父 cue 的采样状态（{parent}）")

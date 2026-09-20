@@ -51,17 +51,24 @@ def main() -> int:
     doc = json.loads(ANIM.read_text(encoding="utf-8"))
     order = [c["id"] for c in json.loads(RT.read_text(encoding="utf-8"))["cues"]]
     by = {c["cue"]: c for c in doc["cues"]}
-    seq = [by[i] for i in order if i in by and frame_of(by[i])]
+    # 跨树是 cut，取景链不跨树 —— 把每棵树分开看。
+    seq = []
+    for i in order:
+        c = by.get(i)
+        if c and frame_of(c):
+            seq.append((c.get("tree") or "main", c))
     warns = []
-    for k in range(1, len(seq)):
-        prev, cur = seq[k - 1], seq[k]
+    for k in range(1, len(seq) - 1):
+        t0, prev = seq[k - 1]
+        t1, cur = seq[k]
+        t2, nxt = seq[k + 1]
+        if not (t0 == t1 == t2):
+            continue
         pf, cf = frame_of(prev), frame_of(cur)
         prev_close = pf not in TOKENS and "," not in pf or ("," in pf)
         cur_global = cf == "board"
-        if k + 1 < len(seq):
-            nxt = seq[k + 1]
-            if prev_close and cur_global and frame_of(nxt) == pf:
-                warns.append(f"{cur['cue']}：特写 {pf} → 整桌 → 又回到同一个特写（跳切）")
+        if prev_close and cur_global and frame_of(nxt) == pf:
+            warns.append(f"{cur['cue']}：特写 {pf} → 整桌 → 又回到同一个特写（跳切）")
     tag = "ERR " if a.strict else "WARN"
     for w in warns:
         print(f"{tag} {w}")

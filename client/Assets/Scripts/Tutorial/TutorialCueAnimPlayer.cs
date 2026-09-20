@@ -171,6 +171,7 @@ namespace BoardGameTutorial
         public ZoneStore Store { get; private set; } = new ZoneStore();
 
         private StageDoc stage;
+        private string currentTreeId;   // 当前画面对应哪棵树；换树 = cut
         private CueAnimDoc cueDoc;
         private string gameRootPath;
         private GameObject animRoot;
@@ -262,9 +263,44 @@ namespace BoardGameTutorial
 
         // ── 加载 ──────────────────────────────────────────────────────────
 
+        private const string DefaultTreeId = "main";
+
+        /// <summary>本条 cue 属于哪棵树；没写 tree 的走默认主树（TrackAnimDoc.stage）。</summary>
+        private static string TreeIdForCue(TrackAnimDoc doc, CueAnimDoc cue)
+        {
+            if (cue != null && !string.IsNullOrEmpty(cue.tree)) return cue.tree;
+            return DefaultTreeId;
+        }
+
+        private static string TreeIdOfCueId(TrackAnimDoc doc, string cueId)
+        {
+            if (doc?.cues != null)
+                foreach (var c in doc.cues)
+                    if (c != null && c.cue == cueId) return TreeIdForCue(doc, c);
+            return DefaultTreeId;
+        }
+
+        /// <summary>树 id → stage 相对路径；树没登记时退回 track 级默认 stage。</summary>
+        private static string TreeStageFor(TrackAnimDoc doc, string treeId)
+        {
+            if (doc?.trees != null)
+                foreach (var t in doc.trees)
+                    if (t != null && t.id == treeId && !string.IsNullOrEmpty(t.stage)) return t.stage;
+            return doc?.stage;
+        }
+
+        /// <summary>换树 = cut：先清掉上一棵树的取景；本条 cue 的 camera / 父链会重新声明。</summary>
+        private void ResetFramingForTreeCut()
+        {
+            frameZoneId = null;
+            framePadding = 0f;
+            frameFill = -1f;
+        }
+
         /// <summary>
         /// 载入牌桌与这一条 cue，并把画面摆到「本条 cue 开始播放时」的状态。
         /// continueState=true 接着上一条的终态；false 从牌桌 initial + 本条 start 起。
+        /// 跨树时不接续上一棵树的状态：换 tree = 一次 cut，重新从该树入口链重放。
         /// </summary>
         public bool LoadCue(string gameRoot, string track, string cueId, bool continueState)
         {
@@ -331,6 +367,12 @@ namespace BoardGameTutorial
                 }
             }
 
+            string targetTreeId = TreeIdOfCueId(trackDoc, cueId);
+            string targetStageRel = TreeStageFor(trackDoc, targetTreeId);
+            bool hasSceneBefore = stage != null;
+            bool treeChanged = hasSceneBefore && currentTreeId != targetTreeId;
+            bool continueInTree = continueState && !treeChanged;
+
             if (found == null)
             {
                 // 没有动画数据（文件不存在 / 没有这条 cue / events 为空）。
@@ -346,19 +388,15 @@ namespace BoardGameTutorial
                 // 介绍那几条 cue 桌上本来就是空的（一件都没有）—— 那时 animRoot 都不存在，
                 // 用画面判会把"空桌"误判成"还没建桌"，于是顺序播放时也去重建入口状态
                 // （实测：整条轨道的状态被重放一遍，市场 12 张变 24 张）。
-                bool hasScene = stage != null;
-                // **牌桌还没搭过**（!hasScene）**或者本条是跳转/重播/上一条进来的**（!continueState）：
-                // 都要把状态重建到本条的入口。
-                //
-                // 少了后半句就是用户 2026-09 报的那个现象：从宝石介绍按 ← 退回卡牌那条
-                // （`setup.cards.002.2`，它**没有动画数据**），画面还停在宝石上 ——
-                // 状态没重建（展示位那 5 枚样本还在），镜头也没重建（市场其实在，只是被留在镜头外）。
-                if (!hasScene || !continueState)
+                // 现在再加上**跨树**：即使顺序播放，换树也不能接续上一棵树的状态，必须 cut。
+                if (!hasSceneBefore || !continueInTree)
                 {
                     ClearActors();
-                    LoadStage(gameRoot, trackDoc != null ? trackDoc.stage : null);
+                    LoadStage(gameRoot, targetStageRel);
+                    currentTreeId = targetTreeId;
+                    if (treeChanged) ResetFramingForTreeCut();
                     // ReplayEntryChain 自己会 Reset + ApplyInitial，再按顺序把本条之前的事件推到终态
-                    ReplayEntryChain(trackDoc, cueId);
+                    ReplayEntryChain(trackDoc, cueId, targetTreeId);
                     BuildActorObjects();
                     SyncActorsToStore();
                     EnsureCamera();
@@ -366,7 +404,7 @@ namespace BoardGameTutorial
                     FitCamera();
                     // 整幅图也要回到**入口**状态（与正常载入那条路一致）：
                     // 判据是"脚本里没写图就没有图"，不能沿用上一条留下的盒面。
-                    string entryPic = EntryPictureFor(trackDoc, cueId);
+                    string entryPic = EntryPictureFor(trackDoc, cueId, targetTreeId);
                     TriggerShowBox(new CueAnimEvent
                     {
                         action = "showbox",
@@ -381,16 +419,17 @@ namespace BoardGameTutorial
             cueDoc = found;
             Note = cueDoc.note;
 
-            LoadStage(gameRoot, trackDoc.stage);
-            // 入口的整幅图状态（要用刚载入的 stage 的 default_picture 当树根，所以放在这之后）
-            string entryPicture = EntryPictureFor(trackDoc, cueId);
+            LoadStage(gameRoot, targetStageRel);
+            currentTreeId = targetTreeId;
+            if (treeChanged) ResetFramingForTreeCut();
 
-            // 续接（顺序播放）：接着上一条的终态。
-            // 不续接（跳转 / 重播 / 按 B 预览）：退回牌桌初始态，再按本条 cue 的 start 布置。
-            // 必须 Reset+ApplyInitial，否则跳到后面的 cue 会带着上一轮留下的组件。
-            if (!continueState)
+            // 入口的整幅图状态（要用刚载入的 stage 的 default_picture 当树根，所以放在这之后）
+            string entryPicture = EntryPictureFor(trackDoc, cueId, targetTreeId);
+
+            // 续接（顺序播放）：接着上一条的终态；跨树不续接，重新从该树入口重放。
+            if (!hasSceneBefore || !continueInTree)
             {
-                // 跳转 / 重播 / 上一条：**从根重放到本条之前**，得到真正的入口状态。
+                // 跳转 / 重播 / 上一条 / 换树：**从该树根重放到本条之前**，得到真正的入口状态。
                 //
                 // 以前这里是 Reset + ApplyInitial —— 那等于"回到开局"：前序 cue 里 create 出来的
                 // 东西全没了（用户报的"跳进 cue 11 什么都看不到"：那三张卡背是 cue 10 create 的）。
@@ -398,7 +437,7 @@ namespace BoardGameTutorial
                 //
                 // 这样"跳转"和"顺序播放"走的是**同一条状态路径**，两种走法不可能再不一致；
                 // 内存里记的"编译器离线复算入口状态"，就是这件重放的结果预先算好而已。
-                ReplayEntryChain(trackDoc, cueId);
+                ReplayEntryChain(trackDoc, cueId, targetTreeId);
                 cueDoc = found;          // 重放会把 cueDoc 换成前序 cue，这里换回来
                 CueId = cueId;
                 Note = found.note;
@@ -414,6 +453,7 @@ namespace BoardGameTutorial
                     // **严格按父链解析**：父 = entry_from（有就用）否则轨道上一条；
                     // 沿链向上找最近一个显式写了 camera 的祖先。
                     // 结果只由 cue id 决定 —— 不管从哪跳进来，这一 cue 的画面完全一样 ✓
+                    // 多棵树：父链只在**同一棵树内**成立，跨树不是父子关系（跨树是 cut）。
                     var byId = new Dictionary<string, CueAnimDoc>();
                     var idxOf = new Dictionary<string, int>();
                     for (int i = 0; i < trackDoc.cues.Count; i++)
@@ -429,6 +469,7 @@ namespace BoardGameTutorial
                         if (!idxOf.TryGetValue(cur, out var ci) || ci <= 0) break;
                         string pid = trackDoc.cues[ci - 1] != null ? trackDoc.cues[ci - 1].cue : null;
                         if (string.IsNullOrEmpty(pid) || !byId.TryGetValue(pid, out var pdoc) || pdoc == null) break;
+                        if (TreeIdForCue(trackDoc, pdoc) != targetTreeId) break;   // 不跨树认父
                         bool hit = false;
                         if (pdoc.events != null)
                             foreach (var pe in pdoc.events)
@@ -2294,7 +2335,7 @@ namespace BoardGameTutorial
             cueOrder = ids != null ? new List<string>(ids) : null;
         }
 
-        private void ReplayEntryChain(TrackAnimDoc trackDoc, string targetCueId)
+        private void ReplayEntryChain(TrackAnimDoc trackDoc, string targetCueId, string targetTreeId)
         {
             Store.Reset();
             Store.ApplyInitial();
@@ -2315,6 +2356,7 @@ namespace BoardGameTutorial
                     if (string.IsNullOrEmpty(id)) continue;
                     if (id == targetCueId) break;             // 只重放本条之前（在**整轨顺序**里找目标）
                     if (!byId.TryGetValue(id, out var c)) continue;   // 这条没有动画，跳过
+                    if (TreeIdForCue(trackDoc, c) != targetTreeId) continue; // 只重放同一棵树
                     if (c.events == null || c.events.Count == 0) continue;
 
                     cueDoc = c;
@@ -2337,7 +2379,7 @@ namespace BoardGameTutorial
             // 它显示 `入口=初始态 market=0 deck1=0` —— 一眼看出入口根本没被解出来。
             int total = 0;
             foreach (var it in Store.Items) total++;
-            Debug.Log($"[TutorialCueAnim] 入口状态（从根重放到 {targetCueId}）：" +
+            Debug.Log($"[TutorialCueAnim] 入口状态（从 {targetTreeId} 树根重放到 {targetCueId}）：" +
                       $"market={Store.CountInZone("card_market")} " +
                       $"deck1={Store.CountInZone("deck_level_1")} " +
                       $"deck2={Store.CountInZone("deck_level_2")} " +
@@ -2357,7 +2399,7 @@ namespace BoardGameTutorial
         /// 组件那一维靠入口快照，这一维就靠这段复算 —— 与"跳转由编译期复算入口状态"同一思路，
         /// 只是它便宜到可以在载入时算。
         /// </summary>
-        private string EntryPictureFor(TrackAnimDoc trackDoc, string cueId)
+        private string EntryPictureFor(TrackAnimDoc trackDoc, string cueId, string targetTreeId)
         {
             string pic = stage?.board != null ? stage.board.default_picture : null;
             if (trackDoc?.cues == null) return pic;
@@ -2366,6 +2408,7 @@ namespace BoardGameTutorial
             {
                 if (c == null) continue;
                 if (c.cue == cueId) break;           // 只算这条 cue **之前**的
+                if (TreeIdForCue(trackDoc, c) != targetTreeId) continue; // 树根画面按树各自算
                 if (c.events == null) continue;
                 events.Clear();
                 events.AddRange(c.events);

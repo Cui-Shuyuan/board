@@ -97,6 +97,27 @@ namespace BoardGameTutorial
         public float max_z;
     }
 
+    /// <summary>
+    /// 一棵动画树：独立场景 + 自己的入口状态。
+    ///
+    /// 多棵树的语义见 .claude/memory/tutorial-animation-state.md 「★ 多棵树」：
+    /// 盒面、介绍牌、宝石演示等各自是完整的“小世界”，只包含该场景该有的东西；
+    /// 主树只维护真实牌桌状态。树之间是 cut，不是把旧树里的件搬过去。
+    ///
+    /// 引擎只读 `id` 与 `stage`；`name`/`why`/`initial`/`extent_note` 是给人和
+    /// 校验工具读的“文字版动画”，让每一棵树为什么存在、入口是什么都能被审阅。
+    /// </summary>
+    [Serializable]
+    public class StageTree
+    {
+        public string id;
+        public string stage;
+        public string name;
+        public string why;
+        public string initial;
+        public string extent_note;
+    }
+
     [Serializable]
     public class StageZone
     {
@@ -392,7 +413,8 @@ namespace BoardGameTutorial
         public int schema_version;
         public string game_id;
         public string track;
-        public string stage;      // 这条 track 用哪张牌桌（相对 tutorial/anim）
+        public string stage;      // 默认牌桌（相对 tutorial/anim）；没有写 tree 的 cue 走这里
+        public List<StageTree> trees;   // 本条 track 用到的独立树；cue.tree 指向这里的 id
         public string note;
         public List<CueAnimDoc> cues;
     }
@@ -404,6 +426,7 @@ namespace BoardGameTutorial
         public string game_id;
         public string track;
         public string cue;
+        public string tree;       // 本条 cue 属于哪棵树；空 = 默认主树（TrackAnimDoc.stage）
         public string note;
 
         /// <summary>本条 cue 播放前对状态做的准备（清空 / 预置），用于单独预览或表达初始局面。</summary>

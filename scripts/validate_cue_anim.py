@@ -1195,6 +1195,19 @@ def _check_contract_coverage(doc, cue_id, events, report, stage):
         report.warn(cue_id, "有 showbox 事件，但契约没声明 picture —— 整幅图这一维没法比对")
 
 
+def tree_id_of_cue(cue):
+    """cue 属于哪棵树；空 = 默认主树。与引擎 TreeIdForCue 同一口径。"""
+    return (cue or {}).get("tree") or "main"
+
+
+def tree_stage_of(doc, tree_id):
+    """树 id → stage 相对路径；没登记时退回 track 级默认 stage。"""
+    for tree in (doc or {}).get("trees") or []:
+        if isinstance(tree, dict) and tree.get("id") == tree_id:
+            return tree.get("stage")
+    return (doc or {}).get("stage")
+
+
 def load_script(args):
     """读这条 track 的脚本（一个动画一个文件）。返回 (路径, 文档, runtime 里的 cue 表)。"""
     game_root = ROOT / "games" / args.game
@@ -1232,8 +1245,9 @@ def main():
             created0 = collect_created_ids(doc0.get("cues") or [])
             for c in doc0.get("cues") or []:
                 if c.get("cue"):
+                    stage_rel = tree_stage_of(doc0, tree_id_of_cue(c))
                     validate_cue(c, c["cue"], {}, args.track, args.game,
-                                 Report(f0, c["cue"]), created0, doc0.get("stage"))
+                                 Report(f0, c["cue"]), created0, stage_rel)
         print_field_report()
         return 0
 
@@ -1271,25 +1285,32 @@ def main():
     reports = []
     for c in cues:
         report = Report(script_path, c["cue"])
+        stage_rel = tree_stage_of(doc, tree_id_of_cue(c))
         validate_cue(c, c["cue"], runtime_cues, args.track, args.game,
-                     report, created, doc.get("stage"))
+                     report, created, stage_rel)
         reports.append(report)
 
     # 跨 cue 检查：取景是延续状态，只有按顺序比才看得出来
     # （只校验整条轨道时做，单条 --cue 没有上下文）
     if not args.cue and reports:
-        chain = Report(script_path, "（跨 cue 取景链）")
-        check_framing_chain(cues, chain)
-        stage_doc = None
-        rel = doc.get("stage")
-        if rel:
-            sp = ROOT / "games" / args.game / "tutorial" / "anim" / f"{rel}.json"
-            if sp.exists():
-                stage_doc = json.loads(sp.read_text(encoding="utf-8"))
-        if stage_doc:
-            check_no_game_box_zone(stage_doc, load_world(args.game), chain)
-            check_cleanup_timing(cues, chain, stage_doc)
-        reports.append(chain)
+        # 取景链、清场时机、舞台检查都必须**按树分治**：跨树是 cut，
+        # 上一棵树的 camera/状态不延续到下一棵树。
+        groups = {}
+        for c in cues:
+            groups.setdefault(tree_id_of_cue(c), []).append(c)
+        for tree_id, group in groups.items():
+            chain = Report(script_path, f"（跨 cue 取景链 {tree_id}）")
+            check_framing_chain(group, chain)
+            stage_doc = None
+            rel = tree_stage_of(doc, tree_id)
+            if rel:
+                sp = ROOT / "games" / args.game / "tutorial" / "anim" / f"{rel}.json"
+                if sp.exists():
+                    stage_doc = json.loads(sp.read_text(encoding="utf-8"))
+            if stage_doc:
+                check_no_game_box_zone(stage_doc, load_world(args.game), chain)
+                check_cleanup_timing(group, chain, stage_doc)
+            reports.append(chain)
 
     total_errors = sum(len(r.errors) for r in reports)
     total_warnings = sum(len(r.warnings) for r in reports)
