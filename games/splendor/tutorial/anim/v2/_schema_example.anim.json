@@ -1,0 +1,95 @@
+{
+  "schema": "tutorial-anim/v2",
+  "kind": "animation_track",
+  "game": "splendor",
+  "track": "_schema_example",
+  "default_tree": "showcase",
+  "worlds": [
+    {
+      "id": "showcase_world",
+      "mode": "isolated",
+      "why": "示例：组件介绍默认独立世界，场上只会出现该组件"
+    }
+  ],
+  "trees": [
+    {
+      "id": "showcase",
+      "world": "showcase_world",
+      "stage": "_stage/_schema_example.stage.json",
+      "purpose": "示例树：只展示一张发展卡正面",
+      "initial": "展示位为空，没有整幅图",
+      "extent_note": "只框展示位，不受主桌纵深影响"
+    }
+  ],
+  "cues": [
+    {
+      "id": "example.show.001",
+      "parent": null,
+      "tree": "showcase",
+      "transition": "world_cut",
+      "timing": [
+        {"key": "展示卡面", "text": "0.15-2.00"}
+      ],
+      "script": {
+        "story": "【这是发展卡牌】把盒面收起，在展示位摆出一张发展卡正面。",
+        "note": "文字只说了展示一张发展卡正面；不额外创建牌堆或市场。",
+        "camera": {"zones": ["showcase"], "fill": 0.72, "at": 0.0},
+        "enter": {
+          "picture": null,
+          "zones": {"showcase": {"items": []}}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "showcase": {
+              "items": [
+                {"template": "sample_card_1", "palette": "card_level_1", "count": 1, "face": "up"}
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {"at": 0.0, "dur": 0.0, "op": "show", "picture": null},
+        {"at": 0.15, "dur": 0.0, "op": "create", "template": "sample_card_1", "palette": "card_level_1", "concept": "development_card_level_1", "zone": "showcase", "count": 1, "to": "face_up"}
+      ]
+    },
+    {
+      "id": "example.hold.001",
+      "parent": "example.show.001",
+      "tree": "showcase",
+      "transition": "continue",
+      "timing": [
+        {"key": "保持卡面", "text": "0.00-1.00"}
+      ],
+      "script": {
+        "story": "【再看一眼这张发展卡】画面保持上一 cue 的终态，不做状态变化。",
+        "note": "没有状态变化；只保留卡面。",
+        "camera": {"zones": ["showcase"], "fill": 0.72, "at": 0.0},
+        "enter": {
+          "picture": null,
+          "zones": {
+            "showcase": {
+              "items": [
+                {"template": "sample_card_1", "palette": "card_level_1", "count": 1, "face": "up"}
+              ]
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "showcase": {
+              "items": [
+                {"template": "sample_card_1", "palette": "card_level_1", "count": 1, "face": "up"}
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {"at": 0.0, "dur": 1.0, "op": "wait"}
+      ]
+    }
+  ]
+}

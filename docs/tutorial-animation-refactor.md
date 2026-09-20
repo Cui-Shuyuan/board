@@ -409,7 +409,7 @@ client/Assets/Scripts/Tutorial/
       "events": [
         {"at": 0.0, "dur": 0.0, "op": "show", "picture": null},
         {"at": 0.15, "dur": 0.0, "op": "create",
-         "selector": {"template": "sample_card_1", "palette": "card_level_1"},
+         "template": "sample_card_1", "palette": "card_level_1",
          "zone": "showcase", "count": 1, "to": "face_up"}
       ]
     }
@@ -455,26 +455,26 @@ v2 契约不再用“一级正面/宝石白”这类需要翻译的语义名，�
 
 | `op` | 字段 | 语义 |
 |---|---|---|
-| `ensure` | `selector`, `zone`, `count`, `to` | 幂等补齐到 count，用于初始状态/重播 |
-| `create` | `selector`, `zone`, `count`, `to` | 从盒里出现 N 件 |
-| `destroy` | `selector`, `zone`, `count` | 放回盒里 |
-| `transfer` | `selector`, `source`, `destination`, `quantity`, `to`, `order`, `slot` | zone→zone，可带终态朝向 |
-| `stack` | `selector`, `destination`, `capacity`, `real`, `pad`, `to` | 一步建一摞确定身份的牌 |
+| `ensure` | 选择器字段, `zone`, `count`, `to` | 幂等补齐到 count，用于初始状态/重播 |
+| `create` | 选择器字段, `zone`, `count`, `to` | 从盒里出现 N 件 |
+| `destroy` | 选择器字段, `zone`, `count` | 放回盒里 |
+| `transfer` | 选择器字段, `source`, `destination`, `quantity`, `to`, `order`, `slot` | zone→zone，可带终态朝向 |
+| `stack` | 选择器字段, `destination`, `capacity`, `real`, `pad`, `to` | 一步建一摞确定身份的牌 |
 | `shuffle` | `zone`, `seed` | 确定性洗混（纯函数 fake shuffle） |
-| `move_order` | `selector`, `zone`, `index` | 仅改 zone 内 order |
+| `move_order` | 选择器字段, `zone`, `index` | 仅改 zone 内 order |
 
 表现类原语（不进入 StateStore）：
 
 | `op` | 字段 | 语义 |
 |---|---|---|
 | `show` | `picture` | 整幅图 on/off |
-| `highlight` | `selector`, `zone`, `grow`, `peak_alpha`, `lead`, `dur`, `easing` | 临时放大/发光 |
-| `point` | `selector`, `part`, `indicator`, `lead`, `dur` | 指示物指向模板部位 |
-| `fade` | `selector`, `to_alpha`, `lead`, `dur`, `easing` | 视觉透明度 |
-| `scale` | `selector`, `scale`, `mode`, `lead`, `dur`, `easing` | 视觉缩放 |
+| `highlight` | 选择器字段, `zone`, `grow`, `peak_alpha`, `lead`, `dur`, `easing` | 临时放大/发光 |
+| `point` | 选择器字段, `part`, `indicator`, `lead`, `dur` | 指示物指向模板部位 |
+| `fade` | 选择器字段, `to_alpha`, `lead`, `dur`, `easing` | 视觉透明度 |
+| `scale` | 选择器字段, `scale`, `mode`, `lead`, `dur`, `easing` | 视觉缩放 |
 | `wait` | `dur`, `lead` | 仅占位/留白，不改变状态 |
 
-`selector` 统一为：
+选择器字段（直接写在事件上，不再额外包一层 `selector`）为：
 
 ```json
 {

@@ -1,0 +1,30 @@
+{
+  "schema": "tutorial-stage/v2",
+  "kind": "stage",
+  "game": "splendor",
+  "id": "showcase",
+  "pitch": 90.0,
+  "aspect": 1.7778,
+  "extent": {"min_x": -0.8, "max_x": 0.8, "min_z": -0.6, "max_z": 0.6},
+  "zones": [
+    {
+      "id": "showcase",
+      "label": "展示位",
+      "role": "zone",
+      "center": {"x": 0.0, "z": 0.0},
+      "size": {"w": 0.63, "h": 0.88},
+      "layout": {"type": "row", "capacity": 4, "x_step": 0.7, "z_step": 0.0},
+      "display": {"mode": "slice", "max_visible": 2}
+    }
+  ],
+  "templates": [
+    {
+      "id": "sample_card_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "face_image": "media/cards/sample_1.png",
+      "back_image": "media/cards/back_1.png",
+      "world_size": {"w": 0.63, "h": 0.88}
+    }
+  ]
+}
