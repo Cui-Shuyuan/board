@@ -3002,3 +3002,7 @@ LLM 只理解意图、确定性工具照规则数据回答）来判断动画脚�
 
 修法：`LoadCue` 在 `CaptureEntry()` 后直接 `clock=0; nextIndex=0; Seek(0f);`，
 把本条 `at=0` 的事件（尤其是 `wait camera`）在返回前应用掉。这样 stage 切换和镜头切换在同一帧完成。
+
+防复发：这条已写进数据硬规则 —— **每条换树/起树的第一条 cue 必须在 `at=0` 显式声明
+`camera`**（哪怕只是 `board`）。`validate_cue_anim.py` 的“换树镜头口径”检查会直接报 error，
+不再依赖事后发现画面脏帧。
