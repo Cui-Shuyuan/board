@@ -75,6 +75,8 @@ check_framing_flow.py         1 处（action.nobles.forced.001.1 特写→整桌
 
 - 新树 `nobles_demo`（`world=real` overlay） + 舞台 `_stage/splendor.nobles.json`。
   `noble_market` 在演示舞台里挪到独立空区 `z=8.0`，避免主桌的 `card_market`/`deck_*` 入镜。
+  容量改为 3：相机在 `create` 贵族之前就按 3 个位置取景（实测 cue23/24 `orthoSize=0.77`），
+  不会先框空位、等贵族后出现。
 - UI cue23=`setup.nobles.001.1`：不再用 supply 镜头；改为 `noble_market` 特写 + 一次 `create` 3 块贵族。
   宝石 7→4 的收尾仍在该 world 里执行，但已在贵族特写框外，不会被看见。
 - UI cue24=`setup.nobles.001.2`：同 `nobles_demo` 树、同 `noble_market` 机位；不再重复 create 贵族。
