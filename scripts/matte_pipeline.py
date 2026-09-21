@@ -16,6 +16,8 @@
     python3 scripts/matte_pipeline.py --class gem --game splendor --out <dir>
     python3 scripts/matte_pipeline.py --class gem --no-generate     # 只要剪影+统一尺度
     python3 scripts/matte_pipeline.py --class gem --denoise 0.5 --report /tmp/report.json
+    python3 scripts/matte_pipeline.py --class noble                # 贵族方板：圆角+收边+键台面
+    python3 scripts/matte_pipeline.py --class noble --card-corner-mm 2.0 --card-rim-px 2
 """
 from __future__ import annotations
 
@@ -263,9 +265,9 @@ def run_rect(args) -> int:
     # 统一 px/mm：用宝石那批量到的中位尺度（同一台扫描机、同一档 DPI）。
     # 这样"卡 63mm / 宝石 43mm"的相对大小在动画里是对的。
     px_per_mm = args.px_per_mm
-    # 只有矩形件里的**卡牌**要圆角/收边/去纹：贵族那条路本来就靠键台面把角做透明了，
-    # 不动它（29/29 验收是绿的，别顺手改绿的东西）。
-    use_card_fix = args.cls == "card" and not args.no_card_fix
+    # 卡牌和贵族都走同一套矩形几何修正：圆角 + 收边（+可选去纹），再去键台面。
+    # 贵族是 60x60 的方板，和卡牌一样会露出扫描纸边/台面角。
+    use_card_fix = args.cls in ("card", "noble") and not args.no_card_fix
     corner_mm = args.card_corner_mm if use_card_fix else 0.0
     rim_px = args.card_rim_px if use_card_fix else 0
     denoise = args.card_denoise if use_card_fix else 0.0
@@ -304,8 +306,8 @@ def main() -> int:
     ap.add_argument("--px-per-mm", type=float, default=11.88,
                     help="统一尺度（宝石那批量到的中位值：11.88 px/mm）")
     # ── 卡牌矩形件的几何修正（白边/扫描纹）────────────────────────────────
-    ap.add_argument("--card-corner-mm", type=float, default=1.0,
-                    help="实物卡四角圆角半径（mm）；0=直角（不挖角）")
+    ap.add_argument("--card-corner-mm", type=float, default=2.0,
+                    help="实物卡/贵族四角圆角半径（mm）；0=直角（不挖角）")
     ap.add_argument("--card-rim-px", type=int, default=2,
                     help="成品四周收掉的纸边像素（收掉再缩回，输出尺寸/尺度不变）")
     ap.add_argument("--card-denoise", type=float, default=0.0,
