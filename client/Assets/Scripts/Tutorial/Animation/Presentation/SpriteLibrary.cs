@@ -20,15 +20,15 @@ namespace BoardGameTutorial.Animation
             cache.Clear();
         }
 
-        public bool HasFaceImage(CompiledTemplateDef tpl)
+        public bool HasFaceImage(CompiledTemplateDef tpl, string palette = null)
         {
-            return tpl != null && !string.IsNullOrEmpty(tpl.face_image);
+            return !string.IsNullOrEmpty(ResolveFacePath(tpl, palette));
         }
 
-        public Sprite LoadFace(CompiledTemplateDef tpl)
+        public Sprite LoadFace(CompiledTemplateDef tpl, string palette = null)
         {
             if (tpl == null) return White();
-            return LoadFile(tpl.face_image, tpl.shape) ?? White();
+            return LoadFile(ResolveFacePath(tpl, palette), tpl.shape) ?? White();
         }
 
         public Sprite LoadRelative(string relative, string shape = "card")
@@ -36,10 +36,30 @@ namespace BoardGameTutorial.Animation
             return LoadFile(relative, shape);
         }
 
-        public Sprite LoadBack(CompiledTemplateDef tpl)
+        public Sprite LoadBack(CompiledTemplateDef tpl, string palette = null)
         {
-            if (tpl == null || string.IsNullOrEmpty(tpl.back_image)) return null;
-            return LoadFile(tpl.back_image, tpl.shape);
+            string path = ResolveBackPath(tpl, palette);
+            return string.IsNullOrEmpty(path) ? null : LoadFile(path, tpl.shape);
+        }
+
+        private static string ResolveFacePath(CompiledTemplateDef tpl, string palette)
+        {
+            if (tpl == null) return null;
+            if (!string.IsNullOrEmpty(palette) && tpl.face_image_by_palette != null)
+                foreach (var m in tpl.face_image_by_palette)
+                    if (m != null && m.palette == palette && !string.IsNullOrEmpty(m.face_image))
+                        return m.face_image;
+            return tpl.face_image;
+        }
+
+        private static string ResolveBackPath(CompiledTemplateDef tpl, string palette)
+        {
+            if (tpl == null) return null;
+            if (!string.IsNullOrEmpty(palette) && tpl.face_image_by_palette != null)
+                foreach (var m in tpl.face_image_by_palette)
+                    if (m != null && m.palette == palette && !string.IsNullOrEmpty(m.back_image))
+                        return m.back_image;
+            return tpl.back_image;
         }
 
         private Sprite LoadFile(string relative, string shape)

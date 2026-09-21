@@ -13,6 +13,9 @@ metadata:
 - stage 增加命名机位 `shots`；cue 用 `{"op":"camera","at":...,"shot":"..."}`。
 - 检查：`check_anim_v2` 做 state_ops/camera_ops 完整性 + 边界脏帧；
   `check_anim_v2_sample` 逐 item 对账 `(zone,order,face)`。
+- 素材路径：stage 模板显式写处理过的 `_cutout.png`；多色模板（gem/gold）
+  用 `face_image_by_palette` 显式映射。v1 的“自动优先 `_cutout.png`”回退已删除，
+  schema 会对非 `_cutout.png` 的显式图给 warning（2026-09-21 修回圆角白边/标记方块）。
 - 本文下方旧 `tutorial.json` / v2 记录全部只作历史参考。
 
 ## 【2026-09-21】旧路线已退役

@@ -393,6 +393,22 @@ def validate_stage(doc: dict, report: Report | None = None) -> Report:
             rep.error(f"shots[{i}].fill must be in (0,1]")
     if len(sids) != len(set(sids)):
         rep.error("stage: duplicate shot id")
+    for t in doc.get("templates") or []:
+        if not isinstance(t, dict):
+            continue
+        for key in ("face_image", "back_image"):
+            img = t.get(key) or ""
+            if not img:
+                continue
+            if not img.endswith("_cutout.png"):
+                rep.warn(f"template {t.get('id')}: {key} 不是 _cutout.png（"
+                         f"运行时会重新走白底/圆角启发式，可能出白边）")
+        for m in t.get("face_image_by_palette") or []:
+            if not isinstance(m, dict):
+                continue
+            img = m.get("face_image") or m.get("back_image") or ""
+            if img and not img.endswith("_cutout.png"):
+                rep.warn(f"template {t.get('id')}: palette 图不是 _cutout.png")
     return rep
 
 

@@ -22,6 +22,23 @@
    位置/缩放/透明度/翻转/洗混。**不得再写 ZoneId/Order/Face**：逻辑状态只由
    `state_ops` 决定。
 
+## 素材路径约定
+
+- stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`
+  （裁到实物、alpha 成品、可选 mm 统一尺寸）。运行时只按字面路径加载，
+  不再做“优先找 `_cutout.png`”的隐式回退。
+- 一个模板对应多种颜色时（如 `gem` / `gem_sample`），在模板里写
+  `face_image_by_palette`：
+
+  ```json
+  "face_image_by_palette": [
+    {"palette": "gem_diamond", "face_image": "media/card/白宝石_cutout.png"}
+  ]
+  ```
+
+  运行时按组件自己的 palette 查表；这是数据里的显式映射，不是颜色启发式。
+- 面板类模板（`shape: panel`）没有 `face_image`，用 palette 染色，这是正常的。
+
 ## 命令
 
 ```bash

@@ -128,7 +128,33 @@
           "concept": "gold"
         }
       ],
-      "note": "介绍宝石/黄金用的**样本**：概念绑定与 `gem` **完全相同**（一枚样本确实\"是\"那种宝石），差别只在**模板**上 —— 独立模板所以不会混进\"每色 7 枚\"的账，介绍完就销毁。\n正因为绑同一套概念，\"全局 what\"会同时命中真件和样本 → 脚本必须给 zone/order 说清是哪一件。"
+      "note": "介绍宝石/黄金用的**样本**：概念绑定与 `gem` **完全相同**（一枚样本确实\"是\"那种宝石），差别只在**模板**上 —— 独立模板所以不会混进\"每色 7 枚\"的账，介绍完就销毁。\n正因为绑同一套概念，\"全局 what\"会同时命中真件和样本 → 脚本必须给 zone/order 说清是哪一件。",
+      "face_image_by_palette": [
+        {
+          "palette": "gem_diamond",
+          "face_image": "media/card/白宝石_cutout.png"
+        },
+        {
+          "palette": "gem_sapphire",
+          "face_image": "media/card/蓝宝石_cutout.png"
+        },
+        {
+          "palette": "gem_emerald",
+          "face_image": "media/card/绿宝石_cutout.png"
+        },
+        {
+          "palette": "gem_ruby",
+          "face_image": "media/card/红宝石_cutout.png"
+        },
+        {
+          "palette": "gem_onyx",
+          "face_image": "media/card/黑宝石_cutout.png"
+        },
+        {
+          "palette": "gem_gold",
+          "face_image": "media/card/黄金_cutout.png"
+        }
+      ]
     }
   ],
   "anchors": [],

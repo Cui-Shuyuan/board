@@ -130,8 +130,8 @@ namespace BoardGameTutorial.Animation
             var sr = go.GetComponent<SpriteRenderer>();
             if (sr == null) sr = go.AddComponent<SpriteRenderer>();
 
-            var face = sprites.LoadFace(tpl);
-            var back = sprites.LoadBack(tpl);
+            var face = sprites.LoadFace(tpl, item.Palette);
+            var back = sprites.LoadBack(tpl, item.Palette);
             sr.sprite = item.Face == FaceState.Down && back != null ? back : face;
             sr.enabled = item.Alpha > 0.001f;
             int baseSortingOrder = tpl != null ? tpl.sorting_order : 0;
@@ -140,7 +140,7 @@ namespace BoardGameTutorial.Animation
             else
                 sr.sortingOrder = baseSortingOrder;
 
-            Color tint = sprites.HasFaceImage(tpl) ? Color.white : Palette.Resolve(item.Palette);
+            Color tint = sprites.HasFaceImage(tpl, item.Palette) ? Color.white : Palette.Resolve(item.Palette);
             tint.a = Mathf.Clamp01(item.Alpha);
             sr.color = tint;
 

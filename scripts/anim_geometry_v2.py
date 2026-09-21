@@ -201,6 +201,15 @@ def build_compiled_stage(stage: dict) -> dict:
             "palette": t.get("palette", ""),
             "face_image": t.get("face_image", ""),
             "back_image": t.get("back_image", ""),
+            "face_image_by_palette": [
+                {
+                    "palette": x.get("palette", ""),
+                    "face_image": x.get("face_image", ""),
+                    "back_image": x.get("back_image", ""),
+                }
+                for x in (t.get("face_image_by_palette") or [])
+                if isinstance(x, dict) and x.get("palette")
+            ],
             "width": round(width, 6),
             "height": round(height, 6),
             "world_size": round(world_size, 6),

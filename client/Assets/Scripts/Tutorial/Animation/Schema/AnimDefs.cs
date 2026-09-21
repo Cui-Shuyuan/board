@@ -187,6 +187,14 @@ namespace BoardGameTutorial.Animation
 
 
     [Serializable]
+    public sealed class PaletteImageDef
+    {
+        public string palette;
+        public string face_image;
+        public string back_image;
+    }
+
+    [Serializable]
     public sealed class CompiledTemplateDef
     {
         public string id;
@@ -194,6 +202,7 @@ namespace BoardGameTutorial.Animation
         public string palette;
         public string face_image;
         public string back_image;
+        public List<PaletteImageDef> face_image_by_palette = new List<PaletteImageDef>();
         public float width;
         public float height;
         public float world_size = 0.1f;

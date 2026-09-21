@@ -266,6 +266,32 @@
           "palette": "gem_gold",
           "concept": "gold"
         }
+      ],
+      "face_image_by_palette": [
+        {
+          "palette": "gem_diamond",
+          "face_image": "media/card/白宝石_cutout.png"
+        },
+        {
+          "palette": "gem_sapphire",
+          "face_image": "media/card/蓝宝石_cutout.png"
+        },
+        {
+          "palette": "gem_emerald",
+          "face_image": "media/card/绿宝石_cutout.png"
+        },
+        {
+          "palette": "gem_ruby",
+          "face_image": "media/card/红宝石_cutout.png"
+        },
+        {
+          "palette": "gem_onyx",
+          "face_image": "media/card/黑宝石_cutout.png"
+        },
+        {
+          "palette": "gem_gold",
+          "face_image": "media/card/黄金_cutout.png"
+        }
       ]
     }
   ],
