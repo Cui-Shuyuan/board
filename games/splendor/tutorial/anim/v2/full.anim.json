@@ -2661,13 +2661,29 @@
         }
       ],
       "script": {
-        "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n\n这条 cue 的口播讲贵族，**但它同时承担宝石那节留下的收尾**（用户 2026-09 裁决）：\n宝石小节按 2/3/4 人三种数量演到各 7 枚（4 人局），而整篇之后走 2 人局（贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径）。\n所以这里把每色多出来的 **3 枚搬回盒子**：7 → 4。\n\n动作是背景清理，与口播内容无关，所以时间上放在前半句说完之前完成，别抢戏：\n  1.00-2.60：五种颜色各 3 枚，从 `gem_supply_*` 飞回 `box_gem_*`\n\n黄金不在这条里动（5 枚一直放在 `gold_supply`，玩家数不影响它）。",
-        "note": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】\n口播讲贵族，但这条 cue 同时做**宝石小节的收尾**（用户 2026-09 裁决）：\n  1.00 起：每色 **destroy 3 枚**（= 放回盒子）—— 供应堆 7 → 4，逐色错开 0.15s。\n  为什么是 3：宝石小节按 2/3/4 人三种数量一路演到各 7 枚（4 人局），而整篇之后走 2 人局\n  —— 贵族抽 3 块 = 玩家数 2 + 1，与 003.1 先讲的「2 人游戏时每种 4 枚」同口径。\n  「放回盒子」就是 `destroy`（盒子没有实体）；堆里少 3 枚就少 3 枚。\n  2.60 五堆一起呼吸一次，把「现在每堆是 4」点住。\n黄金不动（玩家数不影响黄金）。贵族本身要等下一 cue 才出场。",
+        "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】贵族板块在 cue 一开始就摆出：本片按 2 人局，抽 3 块不同的贵族。\n这条 cue 同时承担宝石那节的收尾：把每色多出来的 3 枚收回盒子（7 → 4）。",
+        "note": "贵族在 **t=0 第一帧** 就出现：3 块不同的贵族（noble_1/2/3），不再像旧脚本那样等到下一 cue。\n同时做宝石收尾：1.00 起每色 destroy 3 枚（放回盒子），供应堆 7 → 4。\n黄金不动。",
         "enter": {
           "picture": null,
           "zones": {
             "noble_market": {
-              "count": 0
+              "items": [
+                {
+                  "template": "noble_1",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_2",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_3",
+                  "palette": "noble",
+                  "count": 1
+                }
+              ]
             }
           }
         },
@@ -2677,9 +2693,19 @@
             "noble_market": {
               "items": [
                 {
-                  "template": "noble",
+                  "template": "noble_1",
                   "palette": "noble",
-                  "count": 3
+                  "count": 1
+                },
+                {
+                  "template": "noble_2",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_3",
+                  "palette": "noble",
+                  "count": 1
                 }
               ]
             }
@@ -2701,12 +2727,30 @@
         },
         {
           "op": "create",
-          "at": 0.8,
+          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
-          "template": "noble",
+          "template": "noble_1",
           "palette": "noble",
-          "count": 3
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "noble_market",
+          "template": "noble_2",
+          "palette": "noble",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "noble_market",
+          "template": "noble_3",
+          "palette": "noble",
+          "count": 1
         }
       ]
     },
@@ -2726,17 +2770,27 @@
         }
       ],
       "script": {
-        "story": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n贵族从镜头外（`offstage`，「从所有的贵族板块中随机抽出」= 盲抽）飞到贵族市场，依次落位（`lead` 0.35 错开）。\n贵族在**画面上**一直是正面（素材只有一面、没有背图），所以契约只断言「3 块、都是贵族」，不断言 `face` —— 单面件谈\"朝上朝下\"是假状态。\n「其余的放回盒子」不在这条里做：那 20 多枚贵族从来只是概念上\"在盒里\"，动画里没把它们建出来。",
-        "note": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】\n贵族从**盒子里抽出来**（`create` 一次 3 块 —— `create` 是\"补齐到 N\"，写三条 1 会被后两条的幂等吃掉），对齐台词「放(1.07)置(1.26)」。\n  盒子没有实体（用户 2026-09），所以不再有 `offstage` 里预置的 3 块，也不用写 transfer —— 「从所有的贵族板块中随机抽出」这句话在口播里说，画面上就是\"凭空出现 3 块\"。\n**为什么不写 `to: \"face_up\"`、契约也不断言 face**：`face` 只对**真的有正反面**的件成立，而贵族素材只有一面（没有背图），画面上它一直是正面 —— 断它只会得到指向不存在状态的差异。\n2 人局 = 玩家数 + 1 = 3 块（flow: deal_nobles）。",
+        "story": "【正面朝上放置在一旁成为贵族供应堆，其余的放回盒子】贵族已经在贵族市场里（3 块不同）；本 cue 不重新抽、不新建。",
+        "note": "贵族在上一 cue 已经出现；本 cue 只把「正面朝上放置在一旁」说完，并保持这 3 块不同的贵族。",
         "enter": {
           "picture": null,
           "zones": {
             "noble_market": {
               "items": [
                 {
-                  "template": "noble",
+                  "template": "noble_1",
                   "palette": "noble",
-                  "count": 3
+                  "count": 1
+                },
+                {
+                  "template": "noble_2",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_3",
+                  "palette": "noble",
+                  "count": 1
                 }
               ]
             }
@@ -2748,9 +2802,19 @@
             "noble_market": {
               "items": [
                 {
-                  "template": "noble",
+                  "template": "noble_1",
                   "palette": "noble",
-                  "count": 3
+                  "count": 1
+                },
+                {
+                  "template": "noble_2",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_3",
+                  "palette": "noble",
+                  "count": 1
                 }
               ]
             }
@@ -2789,7 +2853,7 @@
       ],
       "script": {
         "story": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】",
-        "note": "【贵族板块：下一局要重新混洗、重新抽】\n  口播说的是**未来那一局**的设置，不是本局牌桌的状态 —— 所以这里**没有状态变化**，\n  只把镜头推近贵族、把三块依次点一下（观众要把这句话和桌上的东西对上）。\n  为什么**不**在这里 shuffle：现在洗会让人以为本局要重抽贵族（本局这 3 块已经定了）。",
+        "note": "主树里在 t=0 create 同样的 3 块不同贵族（noble_1/2/3），作为本局实际抽到的贵族。之后不再重抽。",
         "enter": {
           "picture": null,
           "zones": {
@@ -2810,9 +2874,19 @@
             "noble_market": {
               "items": [
                 {
-                  "template": "noble",
+                  "template": "noble_1",
                   "palette": "noble",
-                  "count": 3
+                  "count": 1
+                },
+                {
+                  "template": "noble_2",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_3",
+                  "palette": "noble",
+                  "count": 1
                 }
               ]
             },
@@ -2834,18 +2908,36 @@
           "realizes": "<ontology::timing>"
         },
         {
+          "op": "wait",
+          "at": 0.0,
+          "dur": 0.0
+        },
+        {
           "op": "create",
           "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
-          "template": "noble",
+          "template": "noble_1",
           "palette": "noble",
-          "count": 3
+          "count": 1
         },
         {
-          "op": "wait",
+          "op": "create",
           "at": 0.0,
-          "dur": 0.0
+          "dur": 0.0,
+          "zone": "noble_market",
+          "template": "noble_2",
+          "palette": "noble",
+          "count": 1
+        },
+        {
+          "op": "create",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "noble_market",
+          "template": "noble_3",
+          "palette": "noble",
+          "count": 1
         },
         {
           "op": "highlight",
