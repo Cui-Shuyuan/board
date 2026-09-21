@@ -22,6 +22,7 @@ import argparse
 import copy
 import hashlib
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -30,6 +31,18 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import anim_geometry_v2 as geom  # noqa: E402
 import anim_schema_v2 as schema  # noqa: E402
+
+
+# Shuffle feel: all decks share these constants.  Kept in the compiler so the
+# compiled clip carries deterministic per-item parameters and the Unity runtime
+# does not invent motion on its own.
+SHUFFLE_AMP_MIN = 0.040
+SHUFFLE_AMP_MAX = 0.062
+SHUFFLE_FREQ_MIN = 8.0
+SHUFFLE_FREQ_MAX = 14.0
+SHUFFLE_DEPTH_MIN = 0.25
+SHUFFLE_DEPTH_MAX = 0.60
+SHUFFLE_ENVELOPE_POWER = 0.45
 
 
 # ── helpers ────────────────────────────────────────────────────────────────
@@ -226,6 +239,11 @@ def fnv32(s: str, seed: int = 0) -> int:
     return h
 
 
+def hash01(s: str, salt: int) -> float:
+    """Deterministic [0,1) value; replay and compiled clips always agree."""
+    return fnv32(s, salt) / 4294967296.0
+
+
 # ── compiler ────────────────────────────────────────────────────────────────
 
 class Compiler:
@@ -295,7 +313,9 @@ class Compiler:
                 stores[world] = StateModel()
             state = stores[world]
             start = state.snapshot()
-            clips = self.compile_events(cue, state, tree, idx)
+            clips, first_state = self.compile_events(cue, state, tree, idx)
+            if first_state is None:
+                first_state = start
             enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
             if enter_pic is not None and not any(
                     c.get("kind") in ("picture", "show") and float(c.get("at", 0.0)) <= 1e-6
@@ -315,6 +335,7 @@ class Compiler:
                 "duration": round(self.duration(cue, clips), 6),
                 "camera": camera,
                 "start_state": start,
+                "first_state": first_state,
                 "end_state": end,
                 "clips": clips,
             })
@@ -370,8 +391,16 @@ class Compiler:
             arr = arr[:limit]
         return arr
 
-    def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> list:
+    def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> tuple:
+        """Returns (clips, first_state).
+
+        first_state is the logical state after every event whose effective start
+        is t<=0.  It is what the authored first frame should describe; storing it
+        lets the checker catch "old-shot item still present under the new camera"
+        dirty frames without duplicating the whole runtime evaluator.
+        """
         clips = []
+        first_state = None
         stage = self.stages[tree["stage"]]
         stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[tree["stage"]]["zones"]}
         cue_id = cue.get("id")
@@ -449,7 +478,35 @@ class Compiler:
                     for it in added:
                         clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "shuffle":
-                state.shuffle(zone, int(ev.get("seed", 1) or 1))
+                # In-place jitter, exactly like v1 — and **visual only**.
+                # The decks are built with their real cards already on top
+                # (order 0..N), then padded, and the scripted market deal picks
+                # those cards by template/parts.  Permuting the logical order
+                # here would make a scripted card start its flight from the
+                # middle/bottom of the pile, which is exactly the v1 behaviour
+                # this animation was built around.  So the state model is left
+                # untouched; only the pile edge gets the deterministic shake.
+                strength = float(ev.get("amount", ev.get("strength", 1.0)) or 1.0)
+                for it in state.matching(zone, {}):
+                    bx, bz = self.position(stage_slots, zone, it["order"])
+                    r1 = hash01(it["id"], 1)
+                    r2 = hash01(it["id"], 2)
+                    r3 = hash01(it["id"], 3)
+                    r4 = hash01(it["id"], 4)
+                    amp = (SHUFFLE_AMP_MIN + (SHUFFLE_AMP_MAX - SHUFFLE_AMP_MIN) * r1) * strength
+                    c = self.base_clip("shuffle", at, dur, lead, easing)
+                    c.update({
+                        "item_id": it["id"], "template": it["template"], "palette": it["palette"],
+                        "from_zone": zone, "from_order": it["order"],
+                        "to_zone": zone, "to_order": it["order"],
+                        "from_x": bx, "from_z": bz, "to_x": bx, "to_z": bz,
+                        "sh_amp": amp,
+                        "sh_freq": SHUFFLE_FREQ_MIN + (SHUFFLE_FREQ_MAX - SHUFFLE_FREQ_MIN) * r2,
+                        "sh_phase": r3 * 2.0 * math.pi,
+                        "sh_zamp": amp * (SHUFFLE_DEPTH_MIN + (SHUFFLE_DEPTH_MAX - SHUFFLE_DEPTH_MIN) * r4),
+                        "sh_env": SHUFFLE_ENVELOPE_POWER,
+                    })
+                    clips.append(c)
             elif op == "set_face":
                 state.set_face(sel, zone, face_int(ev.get("to")))
                 for it in state.matching(zone, sel):
@@ -480,7 +537,9 @@ class Compiler:
                 pass
             else:
                 raise ValueError(f"cue {cue_id}: unsupported op {op!r}")
-        return clips
+            if at + max(0.0, lead) <= 1e-9:
+                first_state = state.snapshot()
+        return clips, first_state
 
     # ── clip builders ─────────────────────────────────────────────────────
     def base_clip(self, kind, at, dur, lead, easing):
@@ -493,6 +552,7 @@ class Compiler:
             "from_alpha": 1.0, "to_alpha": 1.0,
             "to_face": "", "part": "", "indicator": "",
             "picture": "", "picture_on": False,
+            "sh_amp": 0.0, "sh_freq": 0.0, "sh_phase": 0.0, "sh_zamp": 0.0, "sh_env": 0.0,
         }
 
     def position(self, slots: dict, zone: str, order: int):

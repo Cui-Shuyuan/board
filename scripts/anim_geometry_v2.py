@@ -209,6 +209,11 @@ def build_compiled_stage(stage: dict) -> dict:
             "sorting_order": int(t.get("sorting_order", 0) or 0),
         })
     board = stage.get("board") or stage or {}
+    zone_display = {}
+    for z in stage.get("zones") or []:
+        if not isinstance(z, dict) or not z.get("id"):
+            continue
+        zone_display[z["id"]] = ((z.get("display") or {}).get("mode") or "")
     return {
         "schema": "tutorial-stage-compiled/v2",
         "game": stage.get("game", ""),
@@ -216,6 +221,7 @@ def build_compiled_stage(stage: dict) -> dict:
         "pitch": round(num(board.get("camera_pitch", board.get("pitch")), 90.0) or 90.0, 6),
         "aspect": round(num(board.get("aspect"), 1.7778) or 1.7778, 6),
         "background": board.get("background", "#1E2126"),
-        "zones": [{"zone": zid, "slots": slots} for zid, slots in build_slots(stage).items()],
+        "zones": [{"zone": zid, "display": zone_display.get(zid, ""), "slots": slots}
+                  for zid, slots in build_slots(stage).items()],
         "templates": templates,
     }

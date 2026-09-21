@@ -77,6 +77,79 @@ def check_contract_piece(rep, cue_id, label, part, state):
                     rep.append(f"{where}.face: 期望 {want['face']}，有 {len(bad)} 件朝向不符")
 
 
+def check_shuffle_visuals(rep, cue: dict, compiled_cue: dict):
+    """A shuffle event must leave a visible clip behind.
+
+    v1 had a dedicated in-place jitter; during the v2 rewrite the compiler kept
+    only the state permutation and the compiled cue carried no shuffle clip, so
+    the animation silently disappeared.  This guard makes that failure loud.
+    """
+    want = [ev.get("zone") for ev in (cue.get("events") or [])
+            if ev.get("op") == "shuffle" and ev.get("zone")]
+    if not want:
+        return
+    got = {}
+    for clip in compiled_cue.get("clips") or []:
+        if clip.get("kind") == "shuffle":
+            z = clip.get("to_zone") or clip.get("from_zone")
+            got[z] = got.get(z, 0) + 1
+    for zone in want:
+        if got.get(zone, 0) == 0:
+            rep.append(f"{cue.get('id')}: shuffle({zone}) 有事件，但编译产物没有任何 shuffle 片段（混洗动画丢失）")
+
+
+def camera_eq(a, b):
+    if not a or not b:
+        return a is b
+    for key in ("center_x", "center_z", "ortho_size", "pitch"):
+        if abs(float(a.get(key, 0.0)) - float(b.get(key, 0.0))) > 1e-6:
+            return False
+    return True
+
+
+def check_dirty_boundaries(rep, compiled: dict):
+    """Flag the "old-shot item survives under the new camera" dirty frame.
+
+    A camera cut applies at t=0, but state continuity (start_state) may carry an
+    item from the previous cue.  If that item is still visible in `first_state`
+    under the new camera and only disappears later in the cue, the runtime
+    renders a frame that neither shot describes.  This is the exact class behind
+    the cue9 -> cue10 one-frame shrink.
+
+    The rule is deliberately narrow to avoid false positives: only a *carried*
+    item (present in both previous end_state and current first_state) that is
+    gone by end_state and appears while the camera changes is a hard error.
+    Same-camera intentional removals are not flagged.
+    """
+    cues = compiled.get("cues") or []
+    for i in range(1, len(cues)):
+        prev, cur = cues[i - 1], cues[i]
+        prev_end = {c.get("Id") for c in (prev.get("end_state") or {}).get("components") or []}
+        cur_first_state = (cur.get("first_state") or {}).get("components") or []
+        cur_first = {c.get("Id") for c in cur_first_state}
+        cur_end = {c.get("Id") for c in (cur.get("end_state") or {}).get("components") or []}
+        if not prev_end or not cur_first:
+            continue
+        if camera_eq(prev.get("camera"), cur.get("camera")):
+            continue
+        ghosts = (prev_end & cur_first) - cur_end
+        for iid in sorted(ghosts):
+            comp = next((c for c in cur_first_state if c.get("Id") == iid), {})
+            removal = None
+            for clip in cur.get("clips") or []:
+                if clip.get("item_id") != iid:
+                    continue
+                if clip.get("kind") in ("destroy", "fade"):
+                    removal = clip.get("at")
+                    break
+            when = f"t={removal:g}" if isinstance(removal, (int, float)) else "本 cue 后段"
+            rep.append(
+                f"{cur.get('id')}: 脏帧风险——机位切换后的第一帧仍带着上一镜的 "
+                f"{comp.get('TemplateId') or iid}（{iid}），它到 {when} 才被移除。"
+                f"请把这次移除移到 at=0，或让机位延后切换。"
+            )
+
+
 def picture_at(cue: dict, t: float):
     latest = None
     latest_at = None
@@ -122,6 +195,7 @@ def main() -> int:
         script = cue.get("script") or {}
         check_contract_piece(errors, cid, "enter", script.get("enter") or {}, cc.get("start_state"))
         check_contract_piece(errors, cid, "exit", script.get("exit") or {}, cc.get("end_state"))
+        check_shuffle_visuals(errors, cue, cc)
 
         want_enter_pic = (script.get("enter") or {}).get("picture")
         got_enter_pic = picture_at(cc, 0.0)
@@ -140,6 +214,8 @@ def main() -> int:
                 errors.append(f"{cid}: cut 的 camera.at 必须为 0")
         prev_end = cc.get("end_state")
         prev_id = cid
+
+    check_dirty_boundaries(errors, compiled)
 
     for e in errors:
         print("ERR  " + e)

@@ -205,6 +205,7 @@ namespace BoardGameTutorial.Animation
     public sealed class CompiledZoneDef
     {
         public string zone;
+        public string display;   // stage display mode ("stack" / "count" / "")
         public List<SlotDef> slots = new List<SlotDef>();
     }
 
@@ -263,6 +264,14 @@ namespace BoardGameTutorial.Animation
         public string indicator;
         public string picture;
         public bool picture_on;
+
+        // shuffle clip: per-item deterministic jitter parameters, compiled so
+        // the runtime stays a pure function of the compiled asset.
+        public float sh_amp;
+        public float sh_freq;
+        public float sh_phase;
+        public float sh_zamp;
+        public float sh_env = 0.45f;
     }
 
     [Serializable]

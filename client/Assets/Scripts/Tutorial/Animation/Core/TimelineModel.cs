@@ -51,6 +51,12 @@ namespace BoardGameTutorial.Animation
             return null;
         }
 
+        public static bool IsStackZone(CompiledStageDef stage, string zoneId)
+        {
+            var zone = Zone(stage, zoneId);
+            return zone != null && string.Equals(zone.display, "stack", StringComparison.Ordinal);
+        }
+
         public static bool TrySlot(CompiledStageDef stage, string zoneId, int order, out float x, out float z)
         {
             x = z = 0f;
@@ -175,6 +181,31 @@ namespace BoardGameTutorial.Animation
                             if (end <= start || t + 1e-6f >= end)
                                 v.Face = ParseFace(clip.to_face);
                             break;
+                        case "shuffle":
+                        {
+                            // In-place deterministic jitter.  The envelope starts
+                            // and ends at zero, so shuffling never moves the pile
+                            // to a new location: only the edge gets "fuzzy".
+                            float bx = clip.from_x;
+                            float bz = clip.from_z;
+                            if (end <= start)
+                            {
+                                v.X = bx;
+                                v.Z = bz;
+                            }
+                            else
+                            {
+                                float baseWave = Math.Max(0f, (float)Math.Sin(k * Math.PI));
+                                float envelope = clip.sh_env > 0f ? (float)Math.Pow(baseWave, clip.sh_env) : baseWave;
+                                float elapsed = Math.Max(0f, t - start);
+                                float w = elapsed * clip.sh_freq * 2f * (float)Math.PI + clip.sh_phase;
+                                float dx = (float)Math.Sin(w) * clip.sh_amp * envelope;
+                                float dz = (float)Math.Sin(w * 0.73f + 1.1f) * clip.sh_zamp * envelope;
+                                v.X = bx + dx;
+                                v.Z = bz + dz;
+                            }
+                            break;
+                        }
                         case "scale":
                             v.Scale = Lerp(clip.from_scale, clip.to_scale, eased);
                             break;
