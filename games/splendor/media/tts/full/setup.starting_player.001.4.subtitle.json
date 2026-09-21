@@ -1,0 +1,68 @@
+[
+  {
+    "phonemes": [],
+    "text": "起始玩家获得这枚标记。",
+    "words": [
+      {
+        "confidence": 0.7282731,
+        "endTime": 0.535,
+        "startTime": 0.285,
+        "word": "起"
+      },
+      {
+        "confidence": 0.7228022,
+        "endTime": 0.725,
+        "startTime": 0.535,
+        "word": "始"
+      },
+      {
+        "confidence": 0.9730738,
+        "endTime": 0.905,
+        "startTime": 0.725,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.87994933,
+        "endTime": 1.155,
+        "startTime": 0.905,
+        "word": "家"
+      },
+      {
+        "confidence": 0.84245896,
+        "endTime": 1.375,
+        "startTime": 1.155,
+        "word": "获"
+      },
+      {
+        "confidence": 0.9126075,
+        "endTime": 1.535,
+        "startTime": 1.375,
+        "word": "得"
+      },
+      {
+        "confidence": 0.9344252,
+        "endTime": 1.665,
+        "startTime": 1.535,
+        "word": "这"
+      },
+      {
+        "confidence": 0.957983,
+        "endTime": 1.805,
+        "startTime": 1.665,
+        "word": "枚"
+      },
+      {
+        "confidence": 0.9834783,
+        "endTime": 2.015,
+        "startTime": 1.805,
+        "word": "标"
+      },
+      {
+        "confidence": 0.88567054,
+        "endTime": 2.275,
+        "startTime": 2.015,
+        "word": "记。"
+      }
+    ]
+  }
+]

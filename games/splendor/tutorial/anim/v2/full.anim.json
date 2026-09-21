@@ -2190,21 +2190,21 @@
       "transition": "world_cut",
       "timing": [
         {
-          "key": "镜头推近玩家区",
+          "key": "镜头特写标记",
           "text": "0.00"
         },
         {
           "key": "标记出现",
-          "text": "1.00（『这是起始玩家标记』）"
+          "text": "0.80"
         },
         {
           "key": "点亮标记",
-          "text": "2.20"
+          "text": "1.40"
         }
       ],
       "script": {
-        "story": "【这是起始玩家标记，起始玩家获得这枚标记】",
-        "note": "【起始玩家标记出场】\n  这是本作**第一件不是宝石/卡牌的实物**：一张菱形纸板标记。\n  · 从盒里拿出来 = `create`（**游戏盒是抽象概念**，没有 box_* zone，也不写 source）；\n  · 放到玩家面前 = 新 zone `player_marker`（位置/大小在 stage 里，脚本不写坐标）；\n  · 单面件（没有背图）→ 不写 `to`/朝向断言（朝向这一维对它不存在）。\n  ⚠ 实物尺寸**还没实测**：`components.json` 里记的是 50×62mm 估值（`confirmed_by: estimated`），  拿到用户实测值以后改那一个数即可（stage 的 width/height 也跟着换算）。",
+        "story": "【这是起始玩家标记】",
+        "note": "【起始玩家标记出场】\n  这是本作**第一件不是宝石/卡牌的实物**：一枚菱形纸板标记。\n  它单独在 `marker_demo` 树里展示（孤节点），不牵动主桌状态。\n  · 从盒里拿出来 = `create`（游戏盒是抽象概念，不写 source）；\n  · 单面件（没有背图）→ 不写朝向断言。",
         "enter": {
           "picture": null,
           "zones": {
@@ -2232,7 +2232,7 @@
         },
         {
           "op": "create",
-          "at": 1.0,
+          "at": 0.8,
           "dur": 0.0,
           "zone": "player_marker",
           "template": "starting_marker",
@@ -2242,7 +2242,7 @@
         },
         {
           "op": "highlight",
-          "at": 2.2,
+          "at": 1.4,
           "dur": 0.5,
           "zone": "player_marker",
           "peak_alpha": 0.65
@@ -2250,166 +2250,38 @@
       ]
     },
     {
-      "id": "setup.end.001.1",
+      "id": "setup.starting_player.001.4",
       "parent": "setup.starting_player.001.3",
       "tree": "main",
       "transition": "world_cut",
       "timing": [
         {
-          "key": "镜头回整桌",
+          "key": "镜头切到全景",
           "text": "0.00"
         },
         {
-          "key": "点四块",
-          "text": "0.40 / 0.80 / 1.20-1.80 / 2.20"
+          "key": "标记进入玩家区",
+          "text": "0.80"
+        },
+        {
+          "key": "点亮标记",
+          "text": "1.60"
         }
       ],
       "script": {
-        "story": "【至此，整个设置环节就大功告成了】",
-        "note": "【设置完成】\n  收尾的一句 → 镜头拉回整桌，然后把设置出来的**四块东西**依次点一遍：发展卡牌区、贵族、  五堆宝石供应、玩家区。这就是「设置完成」的画面定义。\n  没有状态变化：设置到上一条（起始玩家标记）就全做完了。",
+        "story": "【起始玩家获得这枚标记】",
+        "note": "【起始玩家标记进入玩家自己的区域】\n  口播说的是起始玩家拿到标记。`<starting_player_marker>` 在本体里是 `<marker>`，不是 `<development_card>` / `<noble>`，所以它不属于 `<development_area>` 的 contains，也不是 `<hand>`（保留区）里的卡牌。\n  舞台上它落在玩家这一侧的 `player_marker` 区域；这里 `create` 到该 zone，并沿用全景镜头让观众看到它和整张桌子的关系。",
         "enter": {
           "picture": null,
           "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 36
-            },
-            "deck_level_2": {
-              "count": 26
-            },
-            "deck_level_3": {
-              "count": 16
-            },
-            "noble_market": {
-              "count": 3
-            },
-            "gem_supply_diamond": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_sapphire": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_ruby": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_emerald": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_onyx": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_onyx",
-                  "count": 4
-                }
-              ]
-            },
-            "gold_supply": {
-              "count": 5
-            },
-            "player_holding": {
-              "count": 0
-            },
             "player_marker": {
-              "count": 1
+              "count": 0
             }
           }
         },
         "exit": {
           "picture": null,
           "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 36
-            },
-            "deck_level_2": {
-              "count": 26
-            },
-            "deck_level_3": {
-              "count": 16
-            },
-            "noble_market": {
-              "count": 3
-            },
-            "gem_supply_diamond": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_sapphire": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_ruby": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_emerald": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_onyx": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_onyx",
-                  "count": 4
-                }
-              ]
-            },
-            "gold_supply": {
-              "count": 5
-            },
-            "player_holding": {
-              "count": 0
-            },
             "player_marker": {
               "count": 1
             }
@@ -2421,12 +2293,12 @@
           "op": "camera",
           "at": 0.0,
           "dur": 0.0,
-          "shot": "shot_board",
+          "shot": "shot_all_zones",
           "realizes": "<ontology::timing>"
         },
         {
           "op": "create",
-          "at": 0.0,
+          "at": 0.8,
           "dur": 0.0,
           "zone": "player_marker",
           "template": "starting_marker",
@@ -2434,6 +2306,33 @@
           "count": 1,
           "concept": "starting_player_marker"
         },
+        {
+          "op": "highlight",
+          "at": 1.6,
+          "dur": 0.5,
+          "zone": "player_marker",
+          "peak_alpha": 0.65
+        }
+      ]
+    },
+    {
+      "id": "setup.end.001.1",
+      "parent": "setup.starting_player.001.4",
+      "timing": [
+        {
+          "key": "镜头保持全景（继承上一条）",
+          "text": "0.00"
+        },
+        {
+          "key": "点四块",
+          "text": "0.40 / 0.80 / 1.20-1.80 / 2.20"
+        }
+      ],
+      "script": {
+        "story": "【至此，整个设置环节就大功告成了】",
+        "note": "【设置完成】\n  镜头沿用上一条的全景，把设置出来的**四块东西**依次点一遍：发展卡牌区、贵族、五堆宝石供应、玩家区。这就是「设置完成」的画面定义。\n  没有状态变化：起始玩家标记已经在上一条进入玩家区。"
+      },
+      "events": [
         {
           "op": "highlight",
           "at": 0.4,

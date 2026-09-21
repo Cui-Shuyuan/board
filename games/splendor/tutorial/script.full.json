@@ -568,7 +568,27 @@
       "beats": [
         {
           "id": "setup.starting_player.001.3.b1",
-          "text": "这是起始玩家标记，起始玩家获得这枚标记。"
+          "text": "这是起始玩家标记。"
+        }
+      ]
+    },
+    {
+      "id": "setup.starting_player.001.4",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "refs": [
+        "flow:choose_starting_player",
+        "flow:give_starting_player_marker",
+        "<starting_player_marker>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup.starting_player.001.4.b1",
+          "text": "起始玩家获得这枚标记。"
         }
       ]
     },
