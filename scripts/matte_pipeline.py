@@ -18,6 +18,7 @@
     python3 scripts/matte_pipeline.py --class gem --denoise 0.5 --report /tmp/report.json
     python3 scripts/matte_pipeline.py --class noble                # 贵族方板：圆角+收边+键台面
     python3 scripts/matte_pipeline.py --class noble --card-corner-mm 2.0 --card-rim-px 2
+    python3 scripts/matte_pipeline.py --class noble --auto-trim    # 通用白边裁剪（平扫件推荐）
 """
 from __future__ import annotations
 
@@ -151,9 +152,47 @@ def rounded_rect_alpha(w: int, h: int, radius_px: float) -> np.ndarray:
     return np.asarray(m.resize((w, h), Image.LANCZOS)).astype(np.float32) / 255.0
 
 
+def _side_cut(profile: np.ndarray, delta: float = 60.0, run: int = 3) -> int:
+    """从外向内找“纸边/台面”结束的位置：连续 run 个像素低于局部阈值。"""
+    cut = max(150.0, float(profile[0]) - delta)
+    n = len(profile)
+    for i in range(0, max(1, n - run)):
+        if all(profile[i + j] < cut for j in range(run)):
+            return i
+    return 0
+
+
+def auto_trim_box(rgb: np.ndarray, delta: float = 60.0, inset: int = 2) -> tuple[int, int, int, int]:
+    """通用白边裁剪：四条边各自扫描纸边/台面，返回裁到件的包围框。
+
+    这是给“平扫件（卡牌/贵族）”用的通用规则，不为单个件调参：
+      · 取每条边中央 60% 做亮度剖面，避免角部旋转/阴影干扰；
+      · 从外向内找“连续低于局部阈值”的位置 = 纸边结束、件开始；
+      · 再向内收 inset 像素，吃掉扫描过渡带。
+    """
+    lum = rgb.mean(axis=2)
+    h, w = lum.shape
+    r0, r1 = int(h * 0.2), max(int(h * 0.2) + 1, int(h * 0.8))
+    c0, c1 = int(w * 0.2), max(int(w * 0.2) + 1, int(w * 0.8))
+    left = lum[r0:r1].mean(axis=0)
+    right = left[::-1]
+    top = lum[:, c0:c1].mean(axis=1)
+    bottom = top[::-1]
+    L = _side_cut(left, delta)
+    R = _side_cut(right, delta)
+    T = _side_cut(top, delta)
+    B = _side_cut(bottom, delta)
+    x0 = min(w - 1, L + inset)
+    y0 = min(h - 1, T + inset)
+    x1 = max(x0 + 1, w - R - inset)
+    y1 = max(y0 + 1, h - B - inset)
+    return x0, y0, x1, y1
+
+
 def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: float,
                  key_border_white: bool, inset: int = 1,
-                 corner_mm: float = 0.0, rim_px: int = 0, denoise: float = 0.0) -> dict:
+                 corner_mm: float = 0.0, rim_px: int = 0, denoise: float = 0.0,
+                 auto_trim: bool = False) -> dict:
     """矩形件（发展卡/贵族板块）：裁到实物 → 按 mm 统一尺寸 → （贵族）键掉圆角处的台面。
 
     扫描件的长宽比常常偏（实测卡面 0.681 vs 实物 63:88=0.716，差 5%）——
@@ -167,14 +206,22 @@ def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: floa
     """
     rgb = np.asarray(Image.open(src).convert("RGB"))
     h, w, _ = rgb.shape
-    bg_mask = border_white_mask(rgb)
-    frac = bg_mask.mean()
-    note = "铺满整幅"
-    if frac > 0.02:                       # 有明显台面 → 裁到件的外接框
-        ys, xs = np.nonzero(~bg_mask)
-        x0, y0, x1, y1 = xs.min() + inset, ys.min() + inset, xs.max() - inset, ys.max() - inset
+    if auto_trim:
+        x0, y0, x1, y1 = auto_trim_box(rgb)
         rgb = rgb[y0:y1 + 1, x0:x1 + 1]
-        note = f"裁掉台面 {w}x{h}→{rgb.shape[1]}x{rgb.shape[0]}"
+        note = f"auto trim {x0},{y0}..{x1},{y1}"
+        bg_mask = np.zeros(rgb.shape[:2], dtype=bool)   # auto trim 后不再走全局键白
+        key_border_white = False
+        rim_px = 0
+    else:
+        bg_mask = border_white_mask(rgb)
+        frac = bg_mask.mean()
+        note = "铺满整幅"
+        if frac > 0.02:                       # 有明显台面 → 裁到件的外接框
+            ys, xs = np.nonzero(~bg_mask)
+            x0, y0, x1, y1 = xs.min() + inset, ys.min() + inset, xs.max() - inset, ys.max() - inset
+            rgb = rgb[y0:y1 + 1, x0:x1 + 1]
+            note = f"裁掉台面 {w}x{h}→{rgb.shape[1]}x{rgb.shape[0]}"
     W = int(round(w_mm * px_per_mm))
     H = int(round(h_mm * px_per_mm))
     im = Image.fromarray(rgb).resize((W, H), Image.LANCZOS)
@@ -274,7 +321,8 @@ def run_rect(args) -> int:
     rows = []
     print(f"{args.cls}：{len(names)} 个，实物 {w_mm}x{h_mm}mm，统一 {px_per_mm:.2f} px/mm "
           f"→ {int(round(w_mm * px_per_mm))}x{int(round(h_mm * px_per_mm))}px"
-          + (f"；圆角 {corner_mm}mm 收边 {rim_px}px 去纹 {denoise}" if use_card_fix else ""))
+          + (f"；圆角 {corner_mm}mm 收边 {rim_px}px 去纹 {denoise}" if use_card_fix else "")
+          + ("；auto-trim" if args.auto_trim else ""))
     for name in names:
         src = scan_dir / name
         if not src.exists():
@@ -282,7 +330,8 @@ def run_rect(args) -> int:
             continue
         dst = out_dir / (Path(name).stem + "_cutout.png")
         info = process_rect(src, dst, w_mm, h_mm, px_per_mm, key_white,
-                            corner_mm=corner_mm, rim_px=rim_px, denoise=denoise)
+                            corner_mm=corner_mm, rim_px=rim_px, denoise=denoise,
+                            auto_trim=args.auto_trim)
         info["scan"] = name
         rows.append(info)
         print(f"  {name:22} → {info['out']:26} {info['size']:>9} 长宽比={info['aspect']:.3f} {info['note']}")
@@ -313,6 +362,8 @@ def main() -> int:
     ap.add_argument("--card-denoise", type=float, default=0.0,
                     help="去扫描纹：先降到 1/N 再放大回来（0=不去纹，0.5→1/2，0.34→1/3）")
     ap.add_argument("--no-card-fix", action="store_true", help="关掉卡牌的圆角/收边/去纹")
+    ap.add_argument("--auto-trim", action="store_true",
+                    help="通用白边裁剪：四条边各自扫描纸边/台面后再裁到件（平扫卡牌/贵族用）")
     args = ap.parse_args()
 
     if args.cls in ("noble", "card"):

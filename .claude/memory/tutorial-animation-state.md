@@ -2773,9 +2773,17 @@ setup.cards.002.1 Complete() 后: 市场 12 张 → 卡面 **12** / 卡背 0；�
 **2mm 才对** —— 半径别拍脑袋，按原扫描的圆弧量）。
 修法：`matte_pipeline.process_rect` 的 `--card-corner-mm`（4× 超采样抗锯齿圆角）
 + `--card-rim-px`（收掉四周纸边再缩回，输出尺寸/mm 尺度不变）。**卡牌和贵族走同一套**
-（2026-09-21 用户报贵族也有白边：实测原 `贵族_*_cutout.png` 四角 α=1.00；改用
-`python3 scripts/matte_pipeline.py --class noble --card-corner-mm 2.0 --card-rim-px 2`
-重做后四角 α=0.00，matte_eval 29/29 PASS）。
+（2026-09-21 用户报贵族也有白边：实测原 `贵族_*_cutout.png` 四角 α=1.00。
+后来确认根因是**每条边的纸边宽度不同**，全局中位色键白检测不到；最终给
+`matte_pipeline.py` 加了通用 `--auto-trim`（逐边亮度剖面自动裁纸边），命令：
+`python3 scripts/matte_pipeline.py --class noble --auto-trim --card-corner-mm 2.0 --card-rim-px 0`。
+重做后四角 α=0.00、matte_eval 29/29 PASS。
+
+**2026-09-21 又复测了 Flux 抠图**：用户要求“先试试 flux 看效果”，跑
+FLUX.1-dev img2img（denoise 0.30/0.45/0.60/0.70）的结果——**白边没去掉，人物被重绘**。
+再次确认 Flux/生成式是错误工具类：它不是 matting，不输出 alpha；抠图应走分割/matting
+（BiRefNet/RMBG/SAM）或平扫件几何裁切。对比图曾落在
+`client/CaptureOut/matte_preview/noble_flux_cmp.png`。
 注：**实物卡背面本来就有一圈打印白边**（扫描里能看到它跟着圆角走，不是纸）—— 别把它当 bug 抠掉。
 
 **"扫描纹"的主因是缩小采样走样，不是素材噪点**。卡面 748×1045，而画面里通常只有 130~560px，
