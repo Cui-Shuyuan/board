@@ -148,10 +148,13 @@ class StateModel:
     def count(self, zone: str, selector: dict = None) -> int:
         return len(self.matching(zone, selector or {}))
 
-    def _normalize(self, zone: str):
-        arr = sorted([i for i in self.items if i["zone"] == zone], key=lambda x: (x["order"], x["id"]))
-        for i, it in enumerate(arr):
-            it["order"] = i
+    def _next_order(self, zone: str) -> int:
+        """Default append position: max(order)+1, never based on count.
+
+        Removal leaves holes; only an explicit move_order event may close them.
+        """
+        orders = [i["order"] for i in self.items if i["zone"] == zone]
+        return (max(orders) + 1) if orders else 0
 
     def spawn(self, template: str, palette: str, concept: str, zone: str, count: int,
               face: int = 2, parts=None) -> list:
@@ -171,12 +174,11 @@ class StateModel:
                 "concept": concept,
                 "parts": copy.deepcopy(parts or []),
                 "zone": zone,
-                "order": self.count(zone),
+                "order": self._next_order(zone),
                 "face": int(face),
             }
             self.items.append(it)
             added.append(it)
-        self._normalize(zone)
         return added
 
     def ensure_at_least(self, template: str, palette: str, concept: str, zone: str, count: int,
@@ -194,7 +196,6 @@ class StateModel:
         victims = arr[-count:] if from_back else arr[:count]
         ids = {v["id"] for v in victims}
         self.items = [i for i in self.items if i["id"] not in ids]
-        self._normalize(zone)
         return victims
 
     def transfer(self, selector: dict, source: str, dest: str, quantity: int,
@@ -209,17 +210,15 @@ class StateModel:
             rec = {"item": it, "from_zone": it["zone"], "from_order": it["order"]}
             records.append(rec)
         self.items = [i for i in self.items if i["id"] not in moved_ids]
-        self._normalize(source)
         for rec in records:
             it = rec["item"]
             it["zone"] = dest
-            it["order"] = self.count(dest)
+            it["order"] = self._next_order(dest)
             if to_face is not None:
                 it["face"] = face_int(to_face)
             self.items.append(it)
             rec["to_zone"] = dest
             rec["to_order"] = it["order"]
-        self._normalize(dest)
         if order >= 0 and moved:
             self.move_order(moved[0], dest, order)
             for rec in records:

@@ -14,8 +14,12 @@ metadata:
 每条 cue 的编译产物 = 三条时间轴：
 
 1. **`state_ops`**：具体到 item_id 的逻辑状态 op（`put` / `remove`）。
-   编译器在事件前后做 diff，`_normalize` 收拢、create/destroy/transfer/move_order
-   全部落成 op。运行端每帧先应用 `at <= t` 的 ops，得到逻辑状态表。
+   编译器在事件前后做 diff，把 create/destroy/transfer/move_order 和**脚本显式
+   写出的 order 变化**落成 op。运行端每帧先应用 `at <= t` 的 ops，得到逻辑状态表。
+
+   **没有隐式 `_normalize` 收拢。** 拿走一件留一个空洞；要前移必须显式
+   `move_order`。默认追加位置是 `max(order)+1`。牌堆的发牌因此天然不改变
+   厚度（lift 只跟 order 走）。
 2. **`camera_ops`**：机位 op。stage 定义命名机位 `shots`（zones+fill），
    源 cue 事件写 `{"op":"camera","at":...,"shot":"..."}`；编译器解析成具体帧，
    运行端按 `at <= t` 取最后一个生效机位。没有 camera 事件的 cue 沿用

@@ -6,8 +6,11 @@
 
 1. **`state_ops`** — 逻辑状态时间轴。
    具体到 item_id 的 `put`/`remove`：谁在哪个 zone、order 几、face 哪面。
-   编译器在每个事件前后做 diff，把 `_normalize` 收拢、move_order、create/destroy
-   全部写成确定性的 op。运行端每帧先应用它，再画面。
+   编译器在每个事件前后做 diff，把 create/destroy/transfer/move_order、以及**脚本
+   显式写出的 order 变化**全部写成确定性的 op。运行端每帧先应用它，再画面。
+
+   **没有隐式收拢。** 拿走一件就留一个空洞；想让剩余组件前移，必须在脚本里
+   显式写 `move_order`。默认追加位置是 `max(order)+1`，不是 `count()`。
 
 2. **`camera_ops`** — 机位时间轴。
    stage 里定义命名机位 `shots`（zones + fill），cue 的 `camera` 事件只写
