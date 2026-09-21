@@ -28,30 +28,63 @@
       "tree": "showcase",
       "transition": "world_cut",
       "timing": [
-        {"key": "展示卡面", "text": "0.15-2.00"}
+        {
+          "key": "展示卡面",
+          "text": "0.15-2.00"
+        }
       ],
       "script": {
         "story": "【这是发展卡牌】把盒面收起，在展示位摆出一张发展卡正面。",
         "note": "文字只说了展示一张发展卡正面；不额外创建牌堆或市场。",
-        "camera": {"zones": ["showcase"], "fill": 0.72, "at": 0.0},
         "enter": {
           "picture": null,
-          "zones": {"showcase": {"items": []}}
+          "zones": {
+            "showcase": {
+              "items": []
+            }
+          }
         },
         "exit": {
           "picture": null,
           "zones": {
             "showcase": {
               "items": [
-                {"template": "sample_card_1", "palette": "card_level_1", "count": 1, "face": "up"}
+                {
+                  "template": "sample_card_1",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
               ]
             }
           }
         }
       },
       "events": [
-        {"at": 0.0, "dur": 0.0, "op": "show", "picture": null},
-        {"at": 0.15, "dur": 0.0, "op": "create", "template": "sample_card_1", "palette": "card_level_1", "concept": "development_card_level_1", "zone": "showcase", "count": 1, "to": "face_up"}
+        {
+          "op": "camera",
+          "at": 0.0,
+          "dur": 0.0,
+          "shot": "shot_card_face",
+          "realizes": "<ontology::timing>"
+        },
+        {
+          "at": 0.0,
+          "dur": 0.0,
+          "op": "show",
+          "picture": null
+        },
+        {
+          "at": 0.15,
+          "dur": 0.0,
+          "op": "create",
+          "template": "sample_card_1",
+          "palette": "card_level_1",
+          "concept": "development_card_level_1",
+          "zone": "showcase",
+          "count": 1,
+          "to": "face_up"
+        }
       ]
     },
     {
@@ -60,18 +93,25 @@
       "tree": "showcase",
       "transition": "continue",
       "timing": [
-        {"key": "保持卡面", "text": "0.00-1.00"}
+        {
+          "key": "保持卡面",
+          "text": "0.00-1.00"
+        }
       ],
       "script": {
         "story": "【再看一眼这张发展卡】画面保持上一 cue 的终态，不做状态变化。",
         "note": "没有状态变化；只保留卡面。",
-        "camera": {"zones": ["showcase"], "fill": 0.72, "at": 0.0},
         "enter": {
           "picture": null,
           "zones": {
             "showcase": {
               "items": [
-                {"template": "sample_card_1", "palette": "card_level_1", "count": 1, "face": "up"}
+                {
+                  "template": "sample_card_1",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
               ]
             }
           }
@@ -81,14 +121,30 @@
           "zones": {
             "showcase": {
               "items": [
-                {"template": "sample_card_1", "palette": "card_level_1", "count": 1, "face": "up"}
+                {
+                  "template": "sample_card_1",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
               ]
             }
           }
         }
       },
       "events": [
-        {"at": 0.0, "dur": 1.0, "op": "wait"}
+        {
+          "op": "camera",
+          "at": 0.0,
+          "dur": 0.0,
+          "shot": "shot_card_face",
+          "realizes": "<ontology::timing>"
+        },
+        {
+          "at": 0.0,
+          "dur": 1.0,
+          "op": "wait"
+        }
       ]
     }
   ]

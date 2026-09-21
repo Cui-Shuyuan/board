@@ -5,6 +5,26 @@ metadata:
   type: project
 ---
 
+## 【最终·v3 2026-09-21】生产闭环（状态/机位 op）
+
+源仍是 `games/splendor/tutorial/anim/v2/full.anim.json`，但 cue 多了
+`state_ops`/`camera_ops` 两条编译时间轴，stage 多了命名机位 `shots`。
+
+```bash
+python3 scripts/anim_schema_v2.py games/splendor/tutorial/anim/v2/full.anim.json
+python3 scripts/compile_animation_v2.py --game splendor --track full
+python3 scripts/compile_animation_v2.py --game splendor --track full --check
+python3 scripts/check_anim_v2.py --game splendor --track full
+python3 scripts/validate_anim_rules_v2.py --game splendor --track full
+python3 scripts/check_unity_scripts.py
+./scripts/dump_anim_v2.sh --game splendor --track full
+python3 scripts/check_anim_v2_sample.py --game splendor --track full
+```
+
+`check_anim_v2` 现在会检查 `state_ops` 完整性（start_state + ops == first/end_state）、
+`camera_ops` 顺序、以及机位切换边界脏帧。`check_anim_v2_sample` 会把 Unity 采样的
+`(zone,order,face)` 逐 item 与 `end_state` 对账。
+
 ## 【最终·v2 2026-09-21】生产闭环
 
 **源 → 编译 → 检查 → 采样 → 对账**：

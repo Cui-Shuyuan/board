@@ -76,5 +76,15 @@
   "initial": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.nobles"
+  "id": "splendor.nobles",
+  "shots": [
+    {
+      "id": "shot_nobles",
+      "zones": [
+        "noble_market"
+      ],
+      "fill": 0.72,
+      "desc": "框 noble_market，占画面 0.72"
+    }
+  ]
 }

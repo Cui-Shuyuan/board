@@ -24,5 +24,15 @@
   "initial": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.box"
+  "id": "splendor.box",
+  "shots": [
+    {
+      "id": "shot_board",
+      "zones": [
+        "board"
+      ],
+      "fill": 0.8,
+      "desc": "整桌，占画面 0.8"
+    }
+  ]
 }

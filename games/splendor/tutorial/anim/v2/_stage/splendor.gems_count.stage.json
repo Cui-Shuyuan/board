@@ -274,5 +274,19 @@
   "initial": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.gems_count"
+  "id": "splendor.gems_count",
+  "shots": [
+    {
+      "id": "shot_gem_supplies",
+      "zones": [
+        "gem_supply_diamond",
+        "gem_supply_sapphire",
+        "gem_supply_ruby",
+        "gem_supply_emerald",
+        "gem_supply_onyx"
+      ],
+      "fill": 0.8,
+      "desc": "框 gem_supply_diamond、gem_supply_sapphire、gem_supply_ruby、gem_supply_emerald、gem_supply_onyx，占画面 0.8"
+    }
+  ]
 }

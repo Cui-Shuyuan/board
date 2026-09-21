@@ -138,6 +138,7 @@ namespace BoardGameTutorial.Animation
         public string part;
         public string indicator;
         public string picture;
+        public string shot;
         public float on = -1f;
         public float grow;
         public float peak_alpha = -1f;
@@ -275,6 +276,25 @@ namespace BoardGameTutorial.Animation
     }
 
     [Serializable]
+    public sealed class CompiledStateOpDef
+    {
+        public string op;           // put | remove
+        public float at;
+        public string item_id;      // remove
+        public ComponentState item; // put
+    }
+
+    [Serializable]
+    public sealed class CompiledCameraOpDef
+    {
+        public float at;
+        public float dur;
+        public string easing;
+        public string shot;
+        public CompiledCameraDef frame;
+    }
+
+    [Serializable]
     public sealed class CompiledCueDef
     {
         public string id;
@@ -282,8 +302,11 @@ namespace BoardGameTutorial.Animation
         public string tree;
         public string transition;
         public float duration;
-        public CompiledCameraDef camera;
+        public CompiledCameraDef camera_in;
+        public List<CompiledCameraOpDef> camera_ops = new List<CompiledCameraOpDef>();
+        public List<CompiledStateOpDef> state_ops = new List<CompiledStateOpDef>();
         public StateSnapshot start_state = new StateSnapshot();
+        public StateSnapshot first_state = new StateSnapshot();
         public StateSnapshot end_state = new StateSnapshot();
         public List<CompiledClipDef> clips = new List<CompiledClipDef>();
     }

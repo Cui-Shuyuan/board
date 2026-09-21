@@ -98,6 +98,70 @@ def check_shuffle_visuals(rep, cue: dict, compiled_cue: dict):
             rep.append(f"{cue.get('id')}: shuffle({zone}) 有事件，但编译产物没有任何 shuffle 片段（混洗动画丢失）")
 
 
+def camera_at(cue: dict, t: float):
+    frame = cue.get("camera_in")
+    for op in cue.get("camera_ops") or []:
+        if op.get("at", 0.0) > t + 1e-6:
+            break
+        if op.get("frame"):
+            frame = op.get("frame")
+    return frame
+
+
+def apply_state_ops(start_state: dict, ops: list, t: float = 1e9):
+    items = {c.get("Id"): c for c in (start_state or {}).get("components") or []}
+    for op in ops or []:
+        if op.get("at", 0.0) > t + 1e-9:
+            break
+        if op.get("op") == "put" and (op.get("item") or {}).get("Id"):
+            items[op["item"]["Id"]] = op["item"]
+        elif op.get("op") == "remove" and op.get("item_id"):
+            items.pop(op["item_id"], None)
+    return items
+
+
+def check_camera_ops(rep, compiled: dict):
+    """Camera is now a timed op stream; validate its shape and order."""
+    for cue in compiled.get("cues") or []:
+        if not cue.get("camera_in"):
+            rep.append(f"{cue.get('id')}: missing camera_in")
+        ops = cue.get("camera_ops") or []
+        for i in range(1, len(ops)):
+            if ops[i].get("at", 0.0) + 1e-9 < ops[i - 1].get("at", 0.0):
+                rep.append(f"{cue.get('id')}: camera_ops not sorted by at")
+                break
+        for op in ops:
+            if not op.get("frame"):
+                rep.append(f"{cue.get('id')}: camera op missing frame")
+                break
+            if float(op.get("at", 0.0)) < -1e-9:
+                rep.append(f"{cue.get('id')}: camera op at must be >= 0")
+                break
+
+
+def check_state_ops(rep, compiled: dict):
+    """Every cue must be explainable as start_state + concrete state_ops.
+
+    The runtime now applies these ops before painting clips.  If the ops do not
+    reproduce first_state/end_state, the runtime logical state and the compiler
+    logical state can drift again.
+    """
+    for cue in compiled.get("cues") or []:
+        ops = cue.get("state_ops") or []
+        for i in range(1, len(ops)):
+            if ops[i]["at"] + 1e-9 < ops[i - 1]["at"]:
+                rep.append(f"{cue.get('id')}: state_ops not sorted by at")
+                break
+        got_first = apply_state_ops(cue.get("start_state") or {}, ops, 1e-9)
+        want_first = {c.get("Id"): c for c in (cue.get("first_state") or {}).get("components") or []}
+        if got_first != want_first:
+            rep.append(f"{cue.get('id')}: state_ops <=0 应用后与 first_state 不一致")
+        got_end = apply_state_ops(cue.get("start_state") or {}, ops, 1e9)
+        want_end = {c.get("Id"): c for c in (cue.get("end_state") or {}).get("components") or []}
+        if got_end != want_end:
+            rep.append(f"{cue.get('id')}: state_ops 应用后与 end_state 不一致")
+
+
 def camera_eq(a, b):
     if not a or not b:
         return a is b
@@ -130,7 +194,7 @@ def check_dirty_boundaries(rep, compiled: dict):
         cur_end = {c.get("Id") for c in (cur.get("end_state") or {}).get("components") or []}
         if not prev_end or not cur_first:
             continue
-        if camera_eq(prev.get("camera"), cur.get("camera")):
+        if camera_eq(camera_at(prev, prev.get("duration", 0.0)), camera_at(cur, 0.0)):
             continue
         ghosts = (prev_end & cur_first) - cur_end
         for iid in sorted(ghosts):
@@ -193,7 +257,7 @@ def main() -> int:
             errors.append(f"{cid}: missing compiled cue")
             continue
         script = cue.get("script") or {}
-        check_contract_piece(errors, cid, "enter", script.get("enter") or {}, cc.get("start_state"))
+        check_contract_piece(errors, cid, "enter", script.get("enter") or {}, cc.get("first_state"))
         check_contract_piece(errors, cid, "exit", script.get("exit") or {}, cc.get("end_state"))
         check_shuffle_visuals(errors, cue, cc)
 
@@ -210,11 +274,14 @@ def main() -> int:
             if cc.get("start_state") != prev_end:
                 errors.append(f"{cid}: {cue.get('transition')} 但 start_state != 上一条 end_state")
         if cue.get("transition") in ("cut", "world_cut"):
-            if cc.get("camera", {}).get("at", 0.0) != 0.0:
-                errors.append(f"{cid}: cut 的 camera.at 必须为 0")
+            first_cam = (cc.get("camera_ops") or [None])[0]
+            if not first_cam or abs(float(first_cam.get("at", 0.0))) > 1e-6:
+                errors.append(f"{cid}: cut/world_cut 必须有 at=0 的 camera op")
         prev_end = cc.get("end_state")
         prev_id = cid
 
+    check_camera_ops(errors, compiled)
+    check_state_ops(errors, compiled)
     check_dirty_boundaries(errors, compiled)
 
     for e in errors:

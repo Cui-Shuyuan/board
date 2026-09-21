@@ -5,6 +5,16 @@ metadata:
   type: project
 ---
 
+## 【最终·v3】2026-09-21 状态/机位 op 重构
+
+- 当前模型：编译 cue = `state_ops`（逻辑状态）+ `camera_ops`（命名机位）+ `clips`（视觉插值）。
+- 运行端 `TimelineEvaluator.Evaluate(cue,t)`：先应用 `state_ops`/`camera_ops` 到 t，
+  再让 clips 只改 X/Z/scale/alpha/face；clips 不再写 ZoneId/Order。
+- stage 增加命名机位 `shots`；cue 用 `{"op":"camera","at":...,"shot":"..."}`。
+- 检查：`check_anim_v2` 做 state_ops/camera_ops 完整性 + 边界脏帧；
+  `check_anim_v2_sample` 逐 item 对账 `(zone,order,face)`。
+- 本文下方旧 `tutorial.json` / v2 记录全部只作历史参考。
+
 ## 【2026-09-21】旧路线已退役
 
 **本文描述的 `tutorial.json` / `TutorialDirector` / `TutorialPrimitives` / `flow_to_tutorial.py` /

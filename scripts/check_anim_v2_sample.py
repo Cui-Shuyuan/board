@@ -38,6 +38,9 @@ def main():
     if not src.exists() or not smp.exists():
         print(f'missing source or sample: {src} / {smp}',file=sys.stderr); return 2
     track=load(src); sdoc=load(smp)
+    compiled_path=src.with_name(src.name.replace('.anim.json','.compiled.json'))
+    compiled=load(compiled_path) if compiled_path.exists() else {'cues':[]}
+    end_by={c['id']:c for c in compiled.get('cues') or []}
     sample={c['cue']:c for c in sdoc.get('cues') or []}
     errors=[]
     for cue in track.get('cues') or []:
@@ -52,6 +55,19 @@ def main():
         got_pic=sc.get('picture')
         if (want_pic or None)!=(got_pic or None):
             errors.append(f'{cid} picture: want {want_pic!r} got {got_pic!r}')
+        # Stronger reconciliation: the sampled logical order/zone/face must
+        # equal the compiled end_state, item by item.  This is what catches the
+        # v2 order-drift class inside a cue.
+        end_cue=end_by.get(cid)
+        if end_cue is not None:
+            want_items={x['Id']:(x['ZoneId'],x['Order'],x['Face']) for x in end_cue.get('end_state',{}).get('components') or []}
+            got_items={it.get('id'):(it.get('zone'),it.get('order'),
+                                     {'up':2,'face_up':2,'down':1,'face_down':1,'hidden':0}.get(it.get('face')))
+                       for it in got if it.get('visible')}
+            for iid in sorted(set(want_items)|set(got_items)):
+                if want_items.get(iid)!=got_items.get(iid):
+                    errors.append(f'{cid} state-sync {iid}: want {want_items.get(iid)} got {got_items.get(iid)}')
+
         for zone,spec in want_zones.items():
             spec=spec or {}
             items=got

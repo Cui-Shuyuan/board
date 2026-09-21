@@ -274,5 +274,33 @@
   "initial": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.cards_intro"
+  "id": "splendor.cards_intro",
+  "shots": [
+    {
+      "id": "shot_board",
+      "zones": [
+        "board"
+      ],
+      "fill": 0.8,
+      "desc": "整桌，占画面 0.8"
+    },
+    {
+      "id": "shot_card_face",
+      "zones": [
+        "showcase"
+      ],
+      "fill": 0.72,
+      "desc": "单张发展卡正面特写"
+    },
+    {
+      "id": "shot_card_backs",
+      "zones": [
+        "showcase_1",
+        "showcase_2",
+        "showcase_3"
+      ],
+      "fill": 0.6667,
+      "desc": "框 showcase_1、showcase_2、showcase_3，占画面 0.6667"
+    }
+  ]
 }

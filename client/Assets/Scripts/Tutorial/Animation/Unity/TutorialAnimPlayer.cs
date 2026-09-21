@@ -97,7 +97,7 @@ namespace BoardGameTutorial.Animation
         {
             if (!animationEnabled || currentCue == null) return;
             var frame = runtime.Evaluate(CueId, time);
-            cameraDirector.Apply(currentCue.camera, stageRuntime.Aspect);
+            cameraDirector.Apply(frame.Camera, stageRuntime.Aspect);
             binder.Sync(frame);
             if (runtimeTrace) Debug.Log($"[TutorialAnimV2] {CueId} t={time:0.00} items={frame.Items.Count}");
         }

@@ -75,5 +75,15 @@
   "initial": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.marker"
+  "id": "splendor.marker",
+  "shots": [
+    {
+      "id": "shot_marker",
+      "zones": [
+        "player_marker"
+      ],
+      "fill": 0.72,
+      "desc": "框 player_marker，占画面 0.72"
+    }
+  ]
 }

@@ -109,6 +109,22 @@ class StateModel:
         return {"components": comps,
                 "nextSeq": [{"key": k, "value": v} for k, v in sorted(self.next_seq.items())]}
 
+    def component_map(self) -> dict:
+        """id -> full concrete component dict (matches ComponentState)."""
+        out = {}
+        for it in self.items:
+            out[it["id"]] = {
+                "Id": it["id"],
+                "TemplateId": it["template"],
+                "Palette": it["palette"],
+                "Concept": it["concept"],
+                "parts": copy.deepcopy(it.get("parts") or []),
+                "ZoneId": it["zone"],
+                "Order": int(it["order"]),
+                "Face": int(it["face"]),
+            }
+        return out
+
     def matching(self, zone: str, selector: dict) -> list:
         out = []
         for it in self.items:
@@ -294,10 +310,30 @@ class Compiler:
                 "extent_note": tree.get("extent_note", ""),
             }
 
+    def shot_frame(self, stage_id: str, shot_id: str) -> dict:
+        stage = self.stages[stage_id]
+        for sh in stage.get("shots") or []:
+            if sh.get("id") == shot_id:
+                return geom.build_camera_frame(stage, {
+                    "zones": sh.get("zones") or [],
+                    "fill": sh.get("fill", 0.8),
+                    "at": 0.0,
+                })
+        raise ValueError(f"stage {stage_id}: unknown shot {shot_id!r}")
+
+    def default_camera_frame(self, stage_id: str) -> dict:
+        stage = self.stages[stage_id]
+        shots = stage.get("shots") or []
+        if shots:
+            return self.shot_frame(stage_id, shots[0]["id"])
+        return geom.build_camera_frame(stage, {})
+
     def compile(self) -> dict:
         self.load()
         stores = {}
         prev_world = None
+        prev_stage = None
+        camera_by_stage = {}
         cues_out = []
         for idx, cue in enumerate(self.doc.get("cues") or []):
             tree = self.trees.get(cue.get("tree"))
@@ -313,7 +349,7 @@ class Compiler:
                 stores[world] = StateModel()
             state = stores[world]
             start = state.snapshot()
-            clips, first_state = self.compile_events(cue, state, tree, idx)
+            clips, state_ops, camera_ops, first_state = self.compile_events(cue, state, tree, idx)
             if first_state is None:
                 first_state = start
             enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
@@ -323,7 +359,15 @@ class Compiler:
                 clips.insert(0, self.clip("picture", 0.0, 0.0, 0.0, "easeOutCubic",
                                           picture=enter_pic, picture_on=True))
             end = state.snapshot()
-            camera = geom.build_camera_frame(self.stages[tree["stage"]], (cue.get("script") or {}).get("camera") or {})
+            stage_id = tree["stage"]
+            transition = cue.get("transition", "continue")
+            same_stage = prev_stage == stage_id
+            if idx == 0 or transition in ("cut", "world_cut") or not same_stage:
+                camera_in = self.default_camera_frame(stage_id)
+            else:
+                camera_in = camera_by_stage.get(stage_id, self.default_camera_frame(stage_id))
+            camera_out = camera_ops[-1]["frame"] if camera_ops else camera_in
+            camera_by_stage[stage_id] = camera_out
             parent = cue.get("parent")
             if not parent and cues_out:
                 parent = cues_out[-1]["id"] if (cue.get("transition") != "world_cut") else None
@@ -333,13 +377,16 @@ class Compiler:
                 "tree": cue.get("tree"),
                 "transition": cue.get("transition", "continue"),
                 "duration": round(self.duration(cue, clips), 6),
-                "camera": camera,
+                "camera_in": camera_in,
+                "camera_ops": camera_ops,
+                "state_ops": state_ops,
                 "start_state": start,
                 "first_state": first_state,
                 "end_state": end,
                 "clips": clips,
             })
             prev_world = world
+            prev_stage = stage_id
 
         src_bytes = self.track_path.read_bytes()
         return {
@@ -392,17 +439,21 @@ class Compiler:
         return arr
 
     def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> tuple:
-        """Returns (clips, first_state).
+        """Returns (clips, state_ops, camera_ops, first_state).
 
-        first_state is the logical state after every event whose effective start
-        is t<=0.  It is what the authored first frame should describe; storing it
-        lets the checker catch "old-shot item still present under the new camera"
-        dirty frames without duplicating the whole runtime evaluator.
+        * state_ops are concrete item-id puts/removes: the logical truth the
+          runtime applies before its visual clips.
+        * camera_ops are concrete compiled camera frames at their switch times.
+        * first_state is the logical state after every op whose effective time
+          is <= 0.
         """
-        clips = []
+        clips: list = []
+        state_ops: list = []
+        camera_ops: list = []
         first_state = None
-        stage = self.stages[tree["stage"]]
-        stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[tree["stage"]]["zones"]}
+        stage_id = tree["stage"]
+        stage = self.stages[stage_id]
+        stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[stage_id]["zones"]}
         cue_id = cue.get("id")
         for ev in cue.get("events") or []:
             op = ev.get("op")
@@ -412,7 +463,20 @@ class Compiler:
             easing = ev.get("easing") or "easeOutCubic"
             sel = selector_from_event(ev)
             zone = norm(ev.get("zone"))
-            if op == "show":
+            before = state.component_map()
+            if op == "camera":
+                shot_id = norm(ev.get("shot"))
+                if not shot_id:
+                    raise ValueError(f"cue {cue_id}: camera needs shot")
+                frame = self.shot_frame(stage_id, shot_id)
+                camera_ops.append({
+                    "at": at + max(0.0, lead),
+                    "dur": dur,
+                    "easing": easing,
+                    "shot": shot_id,
+                    "frame": frame,
+                })
+            elif op == "show":
                 clips.append(self.clip("picture", at, dur, lead, easing,
                                        picture=ev.get("picture"), picture_on=ev.get("picture") is not None))
             elif op in ("create",):
@@ -537,9 +601,31 @@ class Compiler:
                 pass
             else:
                 raise ValueError(f"cue {cue_id}: unsupported op {op!r}")
-            if at + max(0.0, lead) <= 1e-9:
+
+            # Effective time of this event's state step.  Spawn/create/move/
+            # destroy logical changes happen when the visual action starts
+            # (destroy with dur>0 leaves the item until the end).
+            op_time = at + max(0.0, lead)
+            if op == "destroy" and dur > 0:
+                op_time += dur
+            if op != "camera":
+                after = state.component_map()
+                for iid, comp in after.items():
+                    if before.get(iid) != comp:
+                        state_ops.append({"op": "put", "at": op_time, "item": comp})
+                for iid in sorted(set(before) - set(after)):
+                    state_ops.append({"op": "remove", "at": op_time, "item_id": iid})
+            if op_time <= 1e-9:
                 first_state = state.snapshot()
-        return clips, first_state
+
+        # Stable chronological order; camera ops are already naturally ordered
+        # but explicit sorting keeps the runtime/evaluator independent of source
+        # event ordering edge cases.
+        # Stable chronological order.  Python's sort is stable, so same-time
+        # ops keep source event order (important for conflicting ops).
+        state_ops.sort(key=lambda x: x["at"])
+        camera_ops.sort(key=lambda x: x["at"])
+        return clips, state_ops, camera_ops, first_state
 
     # ── clip builders ─────────────────────────────────────────────────────
     def base_clip(self, kind, at, dur, lead, easing):

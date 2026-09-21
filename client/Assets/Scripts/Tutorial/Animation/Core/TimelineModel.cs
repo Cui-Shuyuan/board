@@ -31,6 +31,7 @@ namespace BoardGameTutorial.Animation
     public sealed class FrameState
     {
         public string Picture;
+        public CompiledCameraDef Camera;
         public readonly List<VisualItemState> Items = new List<VisualItemState>();
 
         public VisualItemState Find(string id)
@@ -88,18 +89,32 @@ namespace BoardGameTutorial.Animation
             var frame = new FrameState();
             if (cue == null) return frame;
 
-            var byId = new Dictionary<string, VisualItemState>(StringComparer.Ordinal);
-            if (cue.start_state?.components != null)
-                foreach (var c in cue.start_state.components)
-                {
-                    if (c == null || string.IsNullOrEmpty(c.Id)) continue;
-                    var v = FromComponent(c, stage);
-                    byId[v.Id] = v;
-                    frame.Items.Add(v);
-                }
+            // 1. logical truth: start_state + all concrete state_ops <= t
+            var logical = BuildLogicalState(cue.start_state, cue.state_ops, t);
 
-            // Compiler should put all created items in start_state via zero-time
-            // clips; this fallback keeps hand-written compiled examples expressive.
+            // 2. camera truth: camera_in + all camera_ops <= t
+            CompiledCameraDef camera = cue.camera_in;
+            if (cue.camera_ops != null)
+                foreach (var op in cue.camera_ops)
+                {
+                    if (op == null || op.frame == null) continue;
+                    if (op.at > t + 1e-6f) break;
+                    camera = op.frame;
+                }
+            frame.Camera = camera;
+
+            // 3. base visual items come from logical state, never from clips.
+            var byId = new Dictionary<string, VisualItemState>(StringComparer.Ordinal);
+            foreach (var c in logical.Values)
+            {
+                if (c == null || string.IsNullOrEmpty(c.Id)) continue;
+                var v = FromComponent(c, stage);
+                byId[v.Id] = v;
+                frame.Items.Add(v);
+            }
+
+            // 4. clips are presentation only: they move/scale/fade existing
+            //    logical items.  They must not create or delete items.
             var clipsByItem = new Dictionary<string, List<CompiledClipDef>>(StringComparer.Ordinal);
             if (cue.clips != null)
                 foreach (var clip in cue.clips)
@@ -108,25 +123,12 @@ namespace BoardGameTutorial.Animation
                     if (!clipsByItem.TryGetValue(clip.item_id, out var list))
                         clipsByItem[clip.item_id] = list = new List<CompiledClipDef>();
                     list.Add(clip);
-                    if (!byId.ContainsKey(clip.item_id))
-                    {
-                        var v = new VisualItemState
-                        {
-                            Id = clip.item_id,
-                            TemplateId = clip.template,
-                            Palette = clip.palette,
-                            Visible = false,
-                        };
-                        byId[v.Id] = v;
-                        frame.Items.Add(v);
-                    }
                 }
 
             foreach (var kv in clipsByItem)
             {
-                var v = byId[kv.Key];
+                if (!byId.TryGetValue(kv.Key, out var v)) continue;
                 kv.Value.Sort((a, b) => (a.at + Math.Max(0f, a.lead)).CompareTo(b.at + Math.Max(0f, b.lead)));
-                bool exists = v.Visible;
 
                 foreach (var clip in kv.Value)
                 {
@@ -145,23 +147,24 @@ namespace BoardGameTutorial.Animation
                     switch (clip.kind)
                     {
                         case "spawn":
-                            exists = true;
-                            ApplyPlacement(v, clip.to_zone, clip.to_order, clip.to_x, clip.to_z, stage, v.X, v.Z);
+                            // Logical state_ops already placed the item.  Never
+                            // let a presentation clip write ZoneId/Order again:
+                            // doing so would undo later compaction ops.
                             if (!string.IsNullOrEmpty(clip.to_face)) v.Face = ParseFace(clip.to_face);
                             break;
                         case "destroy":
-                            if (end <= start || t + 1e-6f >= end) exists = false;
+                            // Logical state_ops already removed the item at the
+                            // destroy op time; this clip is only kept for
+                            // hand-written compiled fallbacks.
                             break;
                         case "move":
                         {
-                            float fx = v.X, fz = v.Z;
-                            string fzId = v.ZoneId;
-                            int fo = v.Order;
-                            ResolveFrom(clip, stage, ref fx, ref fz, ref fzId, ref fo, v.X, v.Z);
-                            float tx = fx, tz = fz;
-                            string tzId = fzId;
-                            int to = fo;
-                            ResolveTo(clip, stage, ref tx, ref tz, ref tzId, ref to, fx, fz);
+                            // Compiler already wrote exact from/to slots.  Do not
+                            // re-resolve from the logical zone: during a transfer
+                            // the item is logically in the destination, but the
+                            // visual still has to fly from the source slot.
+                            float fx = clip.from_x, fz = clip.from_z;
+                            float tx = clip.to_x, tz = clip.to_z;
                             if (end > start && t < end)
                             {
                                 v.X = Lerp(fx, tx, eased);
@@ -171,8 +174,6 @@ namespace BoardGameTutorial.Animation
                             {
                                 v.X = tx;
                                 v.Z = tz;
-                                v.ZoneId = tzId;
-                                v.Order = to;
                             }
                             if (!string.IsNullOrEmpty(clip.to_face)) v.Face = ParseFace(clip.to_face);
                             break;
@@ -183,9 +184,6 @@ namespace BoardGameTutorial.Animation
                             break;
                         case "shuffle":
                         {
-                            // In-place deterministic jitter.  The envelope starts
-                            // and ends at zero, so shuffling never moves the pile
-                            // to a new location: only the edge gets "fuzzy".
                             float bx = clip.from_x;
                             float bz = clip.from_z;
                             if (end <= start)
@@ -226,12 +224,6 @@ namespace BoardGameTutorial.Animation
                             break;
                     }
                 }
-
-                v.Visible = exists;
-                if (!exists)
-                {
-                    v.Alpha = 0f;
-                }
             }
 
             // Whole-picture state (box cover, etc.).
@@ -254,6 +246,25 @@ namespace BoardGameTutorial.Animation
             }
 
             return frame;
+        }
+
+        private static Dictionary<string, ComponentState> BuildLogicalState(StateSnapshot start, List<CompiledStateOpDef> ops, float t)
+        {
+            var map = new Dictionary<string, ComponentState>(StringComparer.Ordinal);
+            if (start?.components != null)
+                foreach (var c in start.components)
+                    if (c != null && !string.IsNullOrEmpty(c.Id)) map[c.Id] = c.Clone();
+            if (ops != null)
+                foreach (var op in ops)
+                {
+                    if (op == null) continue;
+                    if (op.at > t + 1e-6f) break;
+                    if (op.op == "put" && op.item != null && !string.IsNullOrEmpty(op.item.Id))
+                        map[op.item.Id] = op.item.Clone();
+                    else if (op.op == "remove" && !string.IsNullOrEmpty(op.item_id))
+                        map.Remove(op.item_id);
+                }
+            return map;
         }
 
         private static VisualItemState FromComponent(ComponentState c, CompiledStageDef stage)

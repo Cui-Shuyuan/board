@@ -24,7 +24,7 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
-PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait"}
+PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera"}
 OPS = STATE_OPS | PRESENTATION_OPS
 FACES = {"up", "down", "hidden", None, ""}
 
@@ -150,6 +150,9 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: scale needs scale")
         elif op == "wait":
             pass
+        elif op == "camera":
+            if not ev.get("shot"):
+                report.error(f"{where}: camera needs shot")
 
     to = ev.get("to")
     if to not in ("face_up", "face_down", None, ""):
@@ -301,17 +304,20 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         if not script.get("note"):
             rep.warn(f"{where}: script.note is empty")
         cam = script.get("camera")
-        if not isinstance(cam, dict):
-            rep.error(f"{where}: script.camera required")
-        else:
-            zones = cam.get("zones", [])
-            if not isinstance(zones, list) or not zones:
-                rep.error(f"{where}: script.camera.zones must be a non-empty list")
-            if trans != "continue" and abs(float(cam.get("at", 0.0))) > 1e-6:
-                rep.error(f"{where}: tree/world transition camera must be at=0")
-            fill = cam.get("fill", 0.8)
-            if fill is not None and not (0 < float(fill) <= 1):
-                rep.error(f"{where}: script.camera.fill must be in (0,1]")
+        if cam is not None:
+            # Legacy carrier field: cameras are now timed `camera` events that
+            # reference a named stage shot.  Keep accepting it for a transition
+            # period, but warn so data gets migrated.
+            rep.warn(f"{where}: script.camera is deprecated; use a camera event + stage shot")
+            if not isinstance(cam, dict):
+                rep.error(f"{where}: script.camera must be an object")
+            else:
+                zones = cam.get("zones", [])
+                if not isinstance(zones, list) or not zones:
+                    rep.error(f"{where}: script.camera.zones must be a non-empty list")
+                fill = cam.get("fill", 0.8)
+                if fill is not None and not (0 < float(fill) <= 1):
+                    rep.error(f"{where}: script.camera.fill must be in (0,1]")
         _check_contract(rep, f"{where}.script.enter", script.get("enter"))
         _check_contract(rep, f"{where}.script.exit", script.get("exit"))
 
@@ -369,6 +375,24 @@ def validate_stage(doc: dict, report: Report | None = None) -> Report:
     tids = [t.get("id") for t in (doc.get("templates") or []) if isinstance(t, dict)]
     if len(tids) != len(set(tids)):
         rep.error("stage: duplicate template id")
+    shots = doc.get("shots") or []
+    if not isinstance(shots, list):
+        rep.error("stage: shots must be a list")
+    sids = []
+    for i, sh in enumerate(shots):
+        if not isinstance(sh, dict):
+            rep.error(f"shots[{i}]: must be object"); continue
+        if not sh.get("id"):
+            rep.error(f"shots[{i}].id required")
+        sids.append(sh.get("id"))
+        zones = sh.get("zones")
+        if not isinstance(zones, list) or not zones:
+            rep.error(f"shots[{i}].zones must be a non-empty list")
+        fill = sh.get("fill", 0.8)
+        if not (0 < float(fill) <= 1):
+            rep.error(f"shots[{i}].fill must be in (0,1]")
+    if len(sids) != len(set(sids)):
+        rep.error("stage: duplicate shot id")
     return rep
 
 

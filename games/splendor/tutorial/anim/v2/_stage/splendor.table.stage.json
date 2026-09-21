@@ -1624,5 +1624,122 @@
   "zone_defs": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.table"
+  "id": "splendor.table",
+  "shots": [
+    {
+      "id": "shot_decks_market",
+      "zones": [
+        "deck_level_1",
+        "deck_level_2",
+        "deck_level_3",
+        "card_market"
+      ],
+      "fill": 0.72,
+      "desc": "框 deck_level_1、deck_level_2、deck_level_3、card_market，占画面 0.72"
+    },
+    {
+      "id": "shot_gem_supplies",
+      "zones": [
+        "gem_supply_diamond",
+        "gem_supply_sapphire",
+        "gem_supply_ruby",
+        "gem_supply_emerald",
+        "gem_supply_onyx",
+        "gold_supply"
+      ],
+      "fill": 0.8,
+      "desc": "框 gem_supply_diamond、gem_supply_sapphire、gem_supply_ruby、gem_supply_emerald、gem_supply_onyx、gold_supply，占画面 0.8"
+    },
+    {
+      "id": "shot_nobles",
+      "zones": [
+        "noble_market"
+      ],
+      "fill": 0.72,
+      "desc": "框 noble_market，占画面 0.72"
+    },
+    {
+      "id": "shot_board",
+      "zones": [
+        "board"
+      ],
+      "fill": 0.8,
+      "desc": "整桌，占画面 0.8"
+    },
+    {
+      "id": "shot_market",
+      "zones": [
+        "card_market"
+      ],
+      "fill": 0.625,
+      "desc": "框 card_market，占画面 0.625"
+    },
+    {
+      "id": "shot_holding",
+      "zones": [
+        "player_holding"
+      ],
+      "fill": 0.625,
+      "desc": "框 player_holding，占画面 0.625"
+    },
+    {
+      "id": "shot_nobles_player_b",
+      "zones": [
+        "noble_market",
+        "player_b_nobles"
+      ],
+      "fill": 0.6667,
+      "desc": "框 noble_market、player_b_nobles，占画面 0.6667"
+    },
+    {
+      "id": "shot_nobles_f08",
+      "zones": [
+        "noble_market"
+      ],
+      "fill": 0.8,
+      "desc": "框 noble_market，占画面 0.8"
+    },
+    {
+      "id": "shot_development",
+      "zones": [
+        "player_development"
+      ],
+      "fill": 0.5556,
+      "desc": "框 player_development，占画面 0.5556"
+    },
+    {
+      "id": "shot_nobles_f07143",
+      "zones": [
+        "noble_market"
+      ],
+      "fill": 0.7143,
+      "desc": "框 noble_market，占画面 0.7143"
+    },
+    {
+      "id": "shot_decks",
+      "zones": [
+        "deck_level_1",
+        "deck_level_2",
+        "deck_level_3"
+      ],
+      "fill": 0.7143,
+      "desc": "框 deck_level_1、deck_level_2、deck_level_3，占画面 0.7143"
+    },
+    {
+      "id": "shot_reserved",
+      "zones": [
+        "player_reserved"
+      ],
+      "fill": 0.625,
+      "desc": "框 player_reserved，占画面 0.625"
+    },
+    {
+      "id": "shot_gold",
+      "zones": [
+        "gold_supply"
+      ],
+      "fill": 0.625,
+      "desc": "框 gold_supply，占画面 0.625"
+    }
+  ]
 }

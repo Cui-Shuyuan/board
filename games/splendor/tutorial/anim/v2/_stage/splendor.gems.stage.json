@@ -136,5 +136,15 @@
   "initial": [],
   "schema": "tutorial-stage/v2",
   "game": "splendor",
-  "id": "splendor.gems"
+  "id": "splendor.gems",
+  "shots": [
+    {
+      "id": "shot_gems",
+      "zones": [
+        "gem_display"
+      ],
+      "fill": 0.72,
+      "desc": "框 gem_display，占画面 0.72"
+    }
+  ]
 }

@@ -17,7 +17,10 @@ import validate_anim_rules as ledger  # noqa: E402
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 
 def to_old_event(ev):
-    op=ev.get('op'); out={'action':op,'at':ev.get('at',0),'dur':ev.get('dur',0)}
+    op=ev.get('op')
+    if op == 'camera':
+        return None
+    out={'action':op,'at':ev.get('at',0),'dur':ev.get('dur',0)}
     if ev.get('lead') is not None: out['lead']=ev['lead']
     if ev.get('easing'): out['easing']=ev['easing']
     what={}
@@ -58,7 +61,7 @@ def main():
           'cues':[]}
     for c in track.get('cues') or []:
         anim['cues'].append({'cue':c['id'],'tree':c.get('tree') or 'main',
-                             'events':[to_old_event(e) for e in (c.get('events') or [])]})
+                             'events':[x for x in (to_old_event(e) for e in (c.get('events') or [])) if x]})
     rep=ledger.Report()
     ledger.run(anim, default_stage, stages, facts, rep)
     for w in rep.warnings: print('WARN',*w)

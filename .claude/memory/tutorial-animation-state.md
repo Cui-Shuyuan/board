@@ -5,6 +5,62 @@ metadata:
   type: project
 ---
 
+## 【最终·v3】2026-09-21 状态/机位 op 重构
+
+> 这一节是当前权威；下面的【最终·v2】及更早内容都退为历史记录。
+
+### 模型
+
+每条 cue 的编译产物 = 三条时间轴：
+
+1. **`state_ops`**：具体到 item_id 的逻辑状态 op（`put` / `remove`）。
+   编译器在事件前后做 diff，`_normalize` 收拢、create/destroy/transfer/move_order
+   全部落成 op。运行端每帧先应用 `at <= t` 的 ops，得到逻辑状态表。
+2. **`camera_ops`**：机位 op。stage 定义命名机位 `shots`（zones+fill），
+   源 cue 事件写 `{"op":"camera","at":...,"shot":"..."}`；编译器解析成具体帧，
+   运行端按 `at <= t` 取最后一个生效机位。没有 camera 事件的 cue 沿用
+   `camera_in`（上一条终态）——**不再有隐式 t=0 套 camera 的 cue 属性**。
+3. **`clips`**：纯视觉插值。位置/缩放/透明度/翻转/洗混。
+   **绝不允许再写 ZoneId/Order/Face**：spawn 不再写 order，move 不再改 order；
+   逻辑状态只由 state_ops 决定。
+
+### 为什么
+
+v2 的运行时只按 per-item clips 播放，不维护逻辑 zone/order；编译器却会
+`_normalize` 收拢。结果任何“同一 zone 多次移除 + 后续 move”都会出现
+`move.from_order` 与运行时实际 order 不一致，造成单 cue 内瞬移（已实测
+`action.cards.market.001.2` 的 onyx 从 x=-0.4 一帧跳到 x=-1.6）。
+v3 把逻辑状态和视觉插值彻底分开：state_ops 是逻辑真相，clips 只画。
+
+### 检查
+
+- `check_anim_v2.py`：
+  - `start_state + state_ops == first_state / end_state`；
+  - `camera_ops` 结构/排序；
+  - 边界脏帧：机位切换第一帧不得残留上一镜“即将消失”的组件。
+- `check_anim_v2_sample.py`：Unity 采样 `(zone, order, face)` 必须逐 item 等于
+  `end_state`。实测 109/109 通过。
+- `check_unity_scripts.py`：C# 编译。
+- 全量 Unity 采样：109 cues 全部通过。
+
+### 源数据写法
+
+stage:
+```json
+"shots": [
+  {"id":"shot_market","zones":["card_market"],"fill":0.625,"desc":"市场特写"}
+]
+```
+
+cue:
+```json
+{"op":"camera","at":0.0,"shot":"shot_market"}
+{"op":"transfer","at":0.3,"source":"gem_supply_onyx","destination":"player_holding","quantity":1}
+```
+
+迁移脚本：`scripts/migrate_cameras_to_shots_v2.py`（已执行；旧 `script.camera`
+被转换成 at=0 的 camera 事件）。
+
 ## 【最终·v2】2026-09-21 全量迁移
 
 > 这一节是当前权威；本文下面从「核心命题」开始是按时间累积的历史踩坑记录，字段名/文件路径可能已被删除或改名。
