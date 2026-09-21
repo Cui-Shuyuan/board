@@ -38,8 +38,8 @@
 `setup.starting_player.001.2` 连 `tree`、`transition`、`enter/exit` 都不写，自动继承父节点，
 镜头也自然保持 `shot_holding`。
 
-`full.anim.json` 已按这套规则做过一次确定性最小化：当前文件里 109 条 cue 中，
-90 条没有写 `enter`、72 条没有写 `exit`、98 条没有写 `tree/transition`——都是继承，不是遗漏。
+`full.anim.json` 已按这套规则做过一次确定性最小化：当前文件里 110 条 cue 中，
+91 条没有写 `enter`、73 条没有写 `exit`、99 条没有写 `tree/transition`——都是继承，不是遗漏。
 
 ## 全景 shot
 
