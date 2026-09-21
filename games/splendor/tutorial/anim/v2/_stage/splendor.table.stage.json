@@ -1824,22 +1824,12 @@
       "desc": "整桌，占画面 0.8"
     },
     {
-      "id": "shot_setup_overview",
+      "id": "shot_all_zones",
       "zones": [
-        "deck_level_1",
-        "deck_level_2",
-        "deck_level_3",
-        "card_market",
-        "noble_market",
-        "gem_supply_diamond",
-        "gem_supply_sapphire",
-        "gem_supply_ruby",
-        "gem_supply_emerald",
-        "gem_supply_onyx",
-        "gold_supply"
+        "*"
       ],
-      "fill": 0.98,
-      "desc": "框住设置好的桌面中景：三摞牌堆、市场、贵族、五色宝石供应堆与黄金供应堆，占画面 0.98"
+      "fill": 0.95,
+      "desc": "全景：所有已定义 zone 都入镜，并占据画面 0.95（不靠 board.extent 的空边距）"
     },
     {
       "id": "shot_market",

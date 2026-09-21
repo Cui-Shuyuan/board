@@ -41,6 +41,18 @@
 `full.anim.json` 已按这套规则做过一次确定性最小化：当前文件里 109 条 cue 中，
 90 条没有写 `enter`、72 条没有写 `exit`、98 条没有写 `tree/transition`——都是继承，不是遗漏。
 
+## 全景 shot
+
+stage 里定义 shot 时，`zones` 可以写 `["*"]`：
+
+- 表示「当前 stage 中所有已定义 zone（不含 offstage）的并集」；
+- 相机按这个并集取景，`fill` 是并集包围盒占据画面的比例；
+- 当前主桌全景用 `fill: 0.95`，比 `shot_board` 依赖 `board.extent` 的取景更贴近实际 zone，
+  不会因为空边距把镜头拉得更远。
+
+这个 token 专门给“所有 zone 都要入镜，但又不要拉出多余留白”的全景镜头使用。
+`zone:["board"]` 仍保留旧语义（按 `board.extent` + 固定比例），不要混用。
+
 ## 素材路径约定
 
 - stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`

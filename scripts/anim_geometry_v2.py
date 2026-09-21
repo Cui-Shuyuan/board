@@ -126,6 +126,20 @@ def union(boxes):
             min(b[2] for b in boxes), max(b[3] for b in boxes))
 
 
+def zone_union_box(stage: dict):
+    """Bounding box of every on-stage zone in `stage` (offstage excluded)."""
+    boxes = []
+    for zone in stage.get("zones") or []:
+        if not isinstance(zone, dict) or not zone.get("id"):
+            continue
+        if (zone.get("role") or "zone") == "offstage":
+            continue
+        if not zone.get("center"):
+            continue
+        boxes.append(zone_box(zone, zone_capacity(zone)))
+    return union(boxes)
+
+
 def build_camera_frame(stage: dict, camera: dict) -> dict:
     """Compile a camera declaration into runtime values.
 
@@ -140,6 +154,7 @@ def build_camera_frame(stage: dict, camera: dict) -> dict:
     zones = [z for z in ((camera or {}).get("zones") or []) if z]
     zones_by_id = {z.get("id"): z for z in (stage.get("zones") or []) if isinstance(z, dict) and z.get("id")}
 
+    all_zone_token = any(str(z).strip() in ("*", "all", "all_zones") for z in zones)
     if not zones or zones == ["board"]:
         if extent:
             box = (num(extent.get("min_x")), num(extent.get("max_x")),
@@ -147,6 +162,17 @@ def build_camera_frame(stage: dict, camera: dict) -> dict:
         else:
             box = (-1.5, 1.5, -1.0, 1.4)
         scale = 1.18
+    elif all_zone_token:
+        # Panorama: fit every on-stage zone tightly, instead of using the
+        # possibly much larger board.extent / empty margins.
+        box = zone_union_box(stage)
+        if box is None:
+            if extent:
+                box = (num(extent.get("min_x")), num(extent.get("max_x")),
+                       num(extent.get("min_z")), num(extent.get("max_z")))
+            else:
+                box = (-1.5, 1.5, -1.0, 1.4)
+        scale = 1.0 / clamp(fill, 0.2, 1.0)
     else:
         boxes = []
         for zid in zones:
