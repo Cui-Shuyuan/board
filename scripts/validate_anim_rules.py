@@ -176,6 +176,7 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
         dev_zones = [z for z in zones if "development" in z]
         st = tree_states.setdefault(world, State())
         frozen = frozen_by_tree.get(world)
+        is_demo = bool(cue.get("demo"))
         paid, bought, reserved, gold_taken = Counter(), [], [], 0
         for i, ev in enumerate(cue.get("events") or []):
             where = f"{cid} events[{i}]"
@@ -214,7 +215,7 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
                         tot = st.gems().get(color, 0)
                         if tot > GEM_TOTAL:
                             rep.error(where, f"create {CN[color]}宝石 → 场上共 {tot} 枚 > 实物 {GEM_TOTAL} 枚")
-                        if frozen is not None and tot > frozen.get(color, GEMS_PER_COLOR):
+                        if not is_demo and frozen is not None and tot > frozen.get(color, GEMS_PER_COLOR):
                             rep.error(where, f"create {CN[color]}宝石 → 场上 {tot} 枚 > 本局在场 "
                                              f"{frozen.get(color, GEMS_PER_COLOR)} 枚（**盒子不该再打开**）")
                 else:
@@ -339,7 +340,7 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
             frozen = dict(st.gems())
             frozen_by_tree[world] = frozen
         gems = st.gems()
-        if frozen is not None:
+        if frozen is not None and not is_demo:
             for col, want in frozen.items():
                 n = gems.get(col, 0)
                 if n != want:

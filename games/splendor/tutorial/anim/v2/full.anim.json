@@ -26,11 +26,6 @@
       "why": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。"
     },
     {
-      "id": "gems_count_demo",
-      "mode": "isolated",
-      "why": "口播分别说明 3 人局 5 枚、4 人局 7 枚；这些数量只在这棵演示树里展示，不代表实际设置流程，也不改变主桌的 2 人局 4 枚。"
-    },
-    {
       "id": "nobles_demo",
       "mode": "isolated",
       "why": "口播讲贵族板块，天然应该场上什么都没有：只显示随机抽出的 3 块贵族，其他组件不属于这棵树。"
@@ -73,14 +68,6 @@
       "purpose": "介绍宝石和黄金时只摆样本，让观众认得实物；此时真实供应堆/牌桌状态不该被牵动。介绍完直接 cut 回主树，样本不会被带出去。",
       "initial": "五格宝石展示位和黄金展示位都为空。",
       "extent_note": "只框住五枚宝石样本 + 一枚黄金样本，避免主桌供应区/牌桌的取景范围干扰特写。"
-    },
-    {
-      "id": "gems_count_demo",
-      "world": "gems_count_demo",
-      "stage": "_stage/splendor.gems_count.stage.json",
-      "purpose": "口播分别说明 3 人局 5 枚、4 人局 7 枚；这些数量只在这棵演示树里展示，不代表实际设置流程，也不改变主桌的 2 人局 4 枚。",
-      "initial": "五个宝石供应堆为空。",
-      "extent_note": "只框五个宝石供应堆。"
     },
     {
       "id": "nobles_demo",
@@ -1949,8 +1936,8 @@
     {
       "id": "setup.gems.003.2",
       "parent": "setup.gems.003.1",
-      "tree": "gems_count_demo",
-      "transition": "world_cut",
+      "tree": "main",
+      "transition": "continue",
       "timing": [
         {
           "key": "五色同时补齐到 5 枚",
@@ -1962,25 +1949,55 @@
         }
       ],
       "script": {
-        "story": "【3人游戏时，拿取5枚】\n这是 3 人局的宝石数量演示：五种颜色各 5 枚。\n它是一棵**独立演示树**，不改变主桌的 2 人局状态；看完切回主树，主桌仍然只有 4 枚。",
-        "note": "独立 gems_count_demo 世界里 create 5 枚/色，只用于说明 3 人局数量。\n主树在 UI18 已经按 2 人局建立 4 枚，本 cue 不碰主树。",
+        "story": "【3人游戏时，拿取5枚】这是 3 人局的宝石数量演示：在主桌上把五种颜色从 2 人局的 4 枚补到 5 枚；演示完会在 005.1 把多出来的 1 枚/色收回，回到实际设置。",
+        "note": "主树 main 里从每色 4 枚 create 到 5 枚（幂等目标数量），只用于说明 3 人局数量；不切树，卡牌/市场保持可见。演示用的额外 1 枚/色会在 005.1 destroy 回盒子。",
         "enter": {
           "picture": null,
           "zones": {
             "gem_supply_diamond": {
-              "count": 0
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
             },
             "gem_supply_sapphire": {
-              "count": 0
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
             },
             "gem_supply_ruby": {
-              "count": 0
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
             },
             "gem_supply_emerald": {
-              "count": 0
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 4
+                }
+              ]
             },
             "gem_supply_onyx": {
-              "count": 0
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
             }
           }
         },
@@ -2093,12 +2110,13 @@
           "palette": "gem_onyx",
           "count": 5
         }
-      ]
+      ],
+      "demo": true
     },
     {
       "id": "setup.gems.004",
       "parent": "setup.gems.003.2",
-      "tree": "gems_count_demo",
+      "tree": "main",
       "transition": "continue",
       "timing": [
         {
@@ -2111,8 +2129,8 @@
         }
       ],
       "script": {
-        "story": "【4人游戏时则使用全部的7枚宝石】\n这是 4 人局的宝石数量演示：五种颜色各 7 枚。\n仍在**独立演示树**里，不改变主桌状态；看完切回主树，主桌仍然只有 4 枚。",
-        "note": "独立世界里 5→7 只用于说明 4 人局数量；这不是实际设置流程，也不影响主树。",
+        "story": "【4人游戏时则使用全部的7枚宝石】这是 4 人局的宝石数量演示：在同一张主桌上把五种颜色补到 7 枚；演示完会在 005.1 收回多出来的 3 枚/色。",
+        "note": "主树 main 里从每色 5 枚 create 到 7 枚，只用于说明 4 人局数量；不切树，卡牌/市场保持可见。演示用的额外 3 枚/色会在 005.1 destroy 回盒子。",
         "enter": {
           "picture": null,
           "zones": {
@@ -2272,13 +2290,14 @@
           "palette": "gem_onyx",
           "count": 7
         }
-      ]
+      ],
+      "demo": true
     },
     {
       "id": "setup.gems.005.1",
       "parent": "setup.gems.004",
       "tree": "main",
-      "transition": "world_cut",
+      "transition": "continue",
       "timing": [
         {
           "key": "五堆一起呼吸（「成为宝石供应堆」）",
@@ -2286,8 +2305,8 @@
         }
       ],
       "script": {
-        "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】\n本片以 2 人局为例，主桌供应堆从一开始就是每色 4 枚；前面 5/7 枚只是独立数量演示。",
-        "note": "切回主树，确认实际设置的宝石供应堆：每色 4 枚。enter == exit。",
+        "story": "【将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆】本片以 2 人局为例：先把演示用的多余宝石收回盒子，回到每色 4 枚。",
+        "note": "本 cue 开头把演示多出来的 3 枚/色收回盒子（destroy from_back），回到实际设置的每色 4 枚。enter == exit。",
         "enter": {
           "picture": null,
           "zones": {
@@ -2407,6 +2426,56 @@
           "op": "wait",
           "at": 0.0,
           "dur": 0.0
+        },
+        {
+          "op": "destroy",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "gem_supply_diamond",
+          "template": "gem",
+          "palette": "gem_diamond",
+          "count": 3,
+          "from_back": true
+        },
+        {
+          "op": "destroy",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "gem_supply_sapphire",
+          "template": "gem",
+          "palette": "gem_sapphire",
+          "count": 3,
+          "from_back": true
+        },
+        {
+          "op": "destroy",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "gem_supply_ruby",
+          "template": "gem",
+          "palette": "gem_ruby",
+          "count": 3,
+          "from_back": true
+        },
+        {
+          "op": "destroy",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "gem_supply_emerald",
+          "template": "gem",
+          "palette": "gem_emerald",
+          "count": 3,
+          "from_back": true
+        },
+        {
+          "op": "destroy",
+          "at": 0.0,
+          "dur": 0.0,
+          "zone": "gem_supply_onyx",
+          "template": "gem",
+          "palette": "gem_onyx",
+          "count": 3,
+          "from_back": true
         }
       ]
     },

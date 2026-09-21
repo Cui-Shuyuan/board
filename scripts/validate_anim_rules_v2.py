@@ -27,7 +27,7 @@ def to_old_event(ev):
     if ev.get('concept'): what['concept']=ev['concept']
     if ev.get('parts'): what['parts']=ev['parts']
     if what: out['what']=what
-    for k in ('template','palette','zone','source','destination','quantity','count','to','order','slot','stagger'):
+    for k in ('template','palette','zone','source','destination','quantity','count','to','order','slot','stagger','from_back'):
         if ev.get(k) is not None: out[k]=ev[k]
     if op in ('create','ensure'):
         out['destination']=ev.get('zone') or ev.get('destination')
@@ -61,6 +61,7 @@ def main():
           'cues':[]}
     for c in track.get('cues') or []:
         anim['cues'].append({'cue':c['id'],'tree':c.get('tree') or 'main',
+                             'demo':bool(c.get('demo')),
                              'events':[x for x in (to_old_event(e) for e in (c.get('events') or [])) if x]})
     rep=ledger.Report()
     ledger.run(anim, default_stage, stages, facts, rep)

@@ -506,7 +506,7 @@ class Compiler:
                     clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "destroy":
                 count = int(ev.get("count", 0) or 0)
-                victims = state.destroy(zone, sel, count)
+                victims = state.destroy(zone, sel, count, from_back=bool(ev.get("from_back")))
                 for it in victims:
                     clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "transfer":

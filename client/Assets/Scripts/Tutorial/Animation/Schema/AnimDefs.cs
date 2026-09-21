@@ -150,6 +150,7 @@ namespace BoardGameTutorial.Animation
         public string pad_template;
         public bool plain;
         public float stagger;
+        public bool from_back;
     }
 
     [Serializable]

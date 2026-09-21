@@ -108,6 +108,8 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: destroy needs zone")
             if int(ev.get("count", 1)) < 0:
                 report.error(f"{where}: destroy count must be >= 0")
+            if "from_back" in ev and not isinstance(ev["from_back"], bool):
+                report.error(f"{where}: destroy from_back must be boolean")
         elif op == "transfer":
             _check_selector(report, where, ev, required=False)
             if not ev.get("source"):
