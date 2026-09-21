@@ -26,6 +26,11 @@
 
 每条 cue 仍通过 `parent` 组成树。**子 cue 不写的属性自动继承父 cue 的对应值；写了就以子 cue 为准**：
 
+- `entry`：这条 cue 的**入口状态**来自哪条 cue 的终态。
+  - 写 `"initial"`：从该世界初始状态开始（孤立树/重置点常用）。
+  - 写某条 cue id：从那条 cue 的 `end_state` 开始。
+  - 不写：如果 `parent` 同 world 且不是 `cut/world_cut`，默认继承 `parent` 的终态；否则视为 `initial`。
+  - 轨道顺序只决定播放顺序，不再隐式决定状态继承。
 - `tree`、`timing`、`script.story/note` 等普通属性：缺省继承。
 - `script.enter` / `script.exit`：缺省继承父 cue 的**终态**；如果子 cue 自己写了，则按
   **zone 级覆盖**——只替换它写到的 zone，其余 zone 仍继承父终态。所以子 cue 只声明变化的部分。

@@ -125,6 +125,25 @@ class StateModel:
             }
         return out
 
+    def load_snapshot(self, snap: dict):
+        """Initialize from a compiled StateSnapshot (cue entry state)."""
+        self.items = []
+        self.next_seq = {}
+        for comp in (snap or {}).get("components") or []:
+            self.items.append({
+                "id": comp.get("Id"),
+                "template": comp.get("TemplateId"),
+                "palette": comp.get("Palette"),
+                "concept": comp.get("Concept"),
+                "parts": copy.deepcopy(comp.get("parts") or []),
+                "zone": comp.get("ZoneId"),
+                "order": int(comp.get("Order", 0) or 0),
+                "face": int(comp.get("Face", 2) or 2),
+            })
+        for kv in (snap or {}).get("nextSeq") or []:
+            self.next_seq[kv.get("key")] = int(kv.get("value", 0) or 0)
+        return self
+
     def matching(self, zone: str, selector: dict) -> list:
         out = []
         for it in self.items:
@@ -327,28 +346,54 @@ class Compiler:
             return self.shot_frame(stage_id, shots[0]["id"])
         return geom.build_camera_frame(stage, {})
 
+    def entry_ref(self, cue: dict, tree: dict, by_id: dict) -> tuple:
+        """Return ("initial", None) or ("cue", id) for this cue's entry state."""
+        entry = cue.get("entry")
+        if entry:
+            return ("initial", None) if entry == "initial" else ("cue", entry)
+        transition = cue.get("transition", "continue")
+        parent_id = cue.get("parent")
+        if parent_id and parent_id in by_id and transition not in ("cut", "world_cut"):
+            parent = by_id[parent_id]
+            parent_tree = self.trees.get(parent.get("tree"))
+            if parent_tree and parent_tree.get("world") == tree.get("world"):
+                return ("cue", parent_id)
+        return ("initial", None)
+
     def compile(self) -> dict:
         self.load()
-        stores = {}
-        prev_world = None
-        prev_stage = None
-        camera_by_stage = {}
-        cues_out = []
-        for idx, cue in enumerate(self.doc.get("cues") or []):
+        cues = self.doc.get("cues") or []
+        by_id = {c.get("id"): c for c in cues if c.get("id")}
+        results = {}
+        visiting = set()
+
+        def evaluate(cid: str) -> dict:
+            if cid in results:
+                return results[cid]
+            if cid in visiting:
+                raise ValueError(f"cue entry cycle at {cid!r}")
+            cue = by_id.get(cid)
+            if cue is None:
+                raise ValueError(f"unknown cue in entry graph: {cid!r}")
             tree = self.trees.get(cue.get("tree"))
             if tree is None:
-                raise ValueError(f"cue {cue.get('id')}: unknown tree {cue.get('tree')!r}")
-            world = tree["world"]
-            if world not in stores:
-                stores[world] = StateModel()
-            # Independent worlds reset when re-entered; shared worlds preserve state.
-            if prev_world is not None and prev_world != world and self.world_modes.get(world, "isolated") == "isolated":
-                stores[world] = StateModel()
-            if prev_world is None and self.world_modes.get(world, "isolated") == "isolated":
-                stores[world] = StateModel()
-            state = stores[world]
+                raise ValueError(f"cue {cid}: unknown tree {cue.get('tree')!r}")
+            visiting.add(cid)
+            transition = cue.get("transition", "continue")
+            mode, entry_id = self.entry_ref(cue, tree, by_id)
+            if mode == "cue":
+                entry_res = evaluate(entry_id)
+                entry_state = copy.deepcopy(entry_res["end_state"])
+                entry_stage = entry_res.get("_stage")
+                entry_camera_out = copy.deepcopy(entry_res.get("_camera_out"))
+            else:
+                entry_state = {"components": [], "nextSeq": []}
+                entry_stage = None
+                entry_camera_out = None
+
+            state = StateModel().load_snapshot(entry_state)
             start = state.snapshot()
-            clips, state_ops, camera_ops, first_state = self.compile_events(cue, state, tree, idx)
+            clips, state_ops, camera_ops, first_state = self.compile_events(cue, state, tree, 0)
             if first_state is None:
                 first_state = start
             enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
@@ -359,22 +404,16 @@ class Compiler:
                                           picture=enter_pic, picture_on=True))
             end = state.snapshot()
             stage_id = tree["stage"]
-            transition = cue.get("transition", "continue")
-            same_stage = prev_stage == stage_id
-            if idx == 0 or transition in ("cut", "world_cut") or not same_stage:
-                camera_in = self.default_camera_frame(stage_id)
+            if (mode == "cue" and transition not in ("cut", "world_cut")
+                    and entry_stage == stage_id):
+                camera_in = copy.deepcopy(entry_camera_out) or self.default_camera_frame(stage_id)
             else:
-                camera_in = camera_by_stage.get(stage_id, self.default_camera_frame(stage_id))
+                camera_in = self.default_camera_frame(stage_id)
             camera_out = camera_ops[-1]["frame"] if camera_ops else camera_in
-            camera_by_stage[stage_id] = camera_out
-            parent = cue.get("parent")
-            if not parent and cues_out:
-                parent = cues_out[-1]["id"] if (cue.get("transition") != "world_cut") else None
-            cues_out.append({
+            result = {
                 "id": cue.get("id"),
-                "parent": parent,
                 "tree": cue.get("tree"),
-                "transition": cue.get("transition", "continue"),
+                "transition": transition,
                 "duration": round(self.duration(cue, clips), 6),
                 "camera_in": camera_in,
                 "camera_ops": camera_ops,
@@ -383,9 +422,43 @@ class Compiler:
                 "first_state": first_state,
                 "end_state": end,
                 "clips": clips,
-            })
-            prev_world = world
-            prev_stage = stage_id
+                "_stage": stage_id,
+                "_camera_out": camera_out,
+            }
+            results[cid] = result
+            visiting.discard(cid)
+            return result
+
+        for cue in cues:
+            if cue.get("id"):
+                evaluate(cue["id"])
+
+        cues_out = []
+        for idx, cue in enumerate(cues):
+            cid = cue.get("id")
+            if cid not in results:
+                continue
+            result = {k: v for k, v in results[cid].items() if not k.startswith("_")}
+            parent = cue.get("parent")
+            if not parent and idx > 0 and cue.get("transition") != "world_cut":
+                parent = cues[idx - 1].get("id")
+            result["parent"] = parent
+            # Keep the schema's canonical field order close to the old output.
+            ordered = {
+                "id": result.pop("id"),
+                "parent": result.pop("parent"),
+                "tree": result.pop("tree"),
+                "transition": result.pop("transition"),
+                "duration": result.pop("duration"),
+                "camera_in": result.pop("camera_in"),
+                "camera_ops": result.pop("camera_ops"),
+                "state_ops": result.pop("state_ops"),
+                "start_state": result.pop("start_state"),
+                "first_state": result.pop("first_state"),
+                "end_state": result.pop("end_state"),
+                "clips": result.pop("clips"),
+            }
+            cues_out.append(ordered)
 
         src_bytes = self.track_path.read_bytes()
         return {

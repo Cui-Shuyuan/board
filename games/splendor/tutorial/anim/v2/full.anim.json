@@ -286,6 +286,7 @@
     {
       "id": "setup.cards.001.1",
       "parent": "bg.intro.003.3",
+      "entry": "initial",
       "tree": "cards_intro",
       "transition": "world_cut",
       "timing": [
@@ -538,6 +539,7 @@
     {
       "id": "setup.cards.002.1",
       "parent": "setup.cards.001.3",
+      "entry": "initial",
       "tree": "main",
       "transition": "world_cut",
       "timing": [
@@ -1018,6 +1020,7 @@
     {
       "id": "setup.gems.001.1",
       "parent": "setup.cards.002.2",
+      "entry": "initial",
       "tree": "gems_demo",
       "transition": "world_cut",
       "timing": [
@@ -1331,6 +1334,7 @@
     {
       "id": "setup.gems.003.1",
       "parent": "setup.gems.002",
+      "entry": "setup.cards.002.2",
       "tree": "main",
       "transition": "world_cut",
       "timing": [
@@ -1931,6 +1935,7 @@
     {
       "id": "setup.nobles.001.1",
       "parent": "setup.gems.005.2",
+      "entry": "initial",
       "tree": "nobles_demo",
       "transition": "world_cut",
       "timing": [
@@ -2053,6 +2058,7 @@
     {
       "id": "setup.nobles.002",
       "parent": "setup.nobles.001.2",
+      "entry": "setup.gems.005.2",
       "tree": "main",
       "transition": "world_cut",
       "timing": [
@@ -2186,6 +2192,7 @@
     {
       "id": "setup.starting_player.001.3",
       "parent": "setup.starting_player.001.2",
+      "entry": "initial",
       "tree": "marker_demo",
       "transition": "world_cut",
       "timing": [
@@ -2252,6 +2259,7 @@
     {
       "id": "setup.starting_player.001.4",
       "parent": "setup.starting_player.001.3",
+      "entry": "setup.starting_player.001.2",
       "tree": "main",
       "transition": "world_cut",
       "timing": [

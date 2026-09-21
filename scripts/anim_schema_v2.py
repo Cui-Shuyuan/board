@@ -228,7 +228,7 @@ def _check_contract(report: Report, where: str, part: dict):
 # zones/picture it changes.  `cut` / `world_cut` are reset points and do not
 # inherit state contracts.
 
-_LOCAL_CUE_KEYS = {"id", "parent", "events"}
+_LOCAL_CUE_KEYS = {"id", "parent", "entry", "events"}
 
 
 def _deep_copy(v):
@@ -360,6 +360,8 @@ def resolve_track(doc: dict) -> dict:
         # Structural defaults.
         eff["id"] = raw.get("id")
         eff["parent"] = raw.get("parent")
+        if raw.get("entry") is not None:
+            eff["entry"] = _deep_copy(raw.get("entry"))
         eff["events"] = _deep_copy(raw.get("events") or [])
         if "transition" not in raw:
             eff["transition"] = "continue"
@@ -465,6 +467,9 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         parent = c.get("parent")
         if parent is not None and parent not in cue_ids:
             rep.error(f"{where}: parent {parent!r} does not exist")
+        entry = c.get("entry")
+        if entry is not None and entry != "initial" and entry not in cue_ids:
+            rep.error(f"{where}: entry {entry!r} does not exist")
         if i > 0 and trans != "continue" and not c.get("parent"):
             rep.warn(f"{where}: non-continue transition should declare parent explicitly")
 
