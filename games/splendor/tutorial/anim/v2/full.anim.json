@@ -1245,7 +1245,7 @@
         }
       ],
       "script": {
-        "story": "【这些是标记，后续称之为宝石】宝石第一次露面：五色各 1 枚，**直接出现在展示位**上。\n\n为什么放在展示位：这一 cue 是**介绍**，不是在说宝石该放哪 —— 所以不摆进供应堆、也不从盒里搬，而是用 5 枚**样本**；镜头只框住展示位，发展卡不会入镜。\n样本是独立模板，因此「盒里每色 7 枚」的账一分不动（销毁它们也不影响账）。\n五枚各自瞬时出现、只错开 0.12s。",
+        "story": "【这些是标记，后续称之为宝石】宝石第一次露面：五色各 1 枚，**直接出现在展示位**上。\n\n为什么放在展示位：这一 cue 是**介绍**，不是在说宝石该放哪 —— 所以不摆进供应堆、也不从盒里搬，而是用 5 枚**样本**；镜头只框住展示位，发展卡不会入镜。\n样本是独立模板，因此「盒里每色 7 枚」的账一分不动（销毁它们也不影响账）。\n五枚同时瞬时出现。",
         "note": "【这些是标记，后续称之为宝石】五种颜色各 1 枚**直接出现**在**展示位**上（`gem_display`，介绍用，不是供应堆）。\n这一 cue **不碰供应堆、也不动盒子** —— 它在介绍宝石本身，不是在说宝石该放哪（用户 2026-09 定的）。\n展示位在供应区前方、离发展卡很远，取景能收得很紧：**画面里只有宝石**，没有一级发展卡。\n样本用独立模板 `gem_sample`（和 `sample_card_*` 一个路数），所以不会混进「每色 7 枚」的账。",
         "enter": {
           "picture": null,
@@ -1316,13 +1316,14 @@
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_diamond",
-          "count": 1
+          "count": 1,
+          "lead": 0.0
         },
         {
           "op": "create",
           "at": 0.35,
           "dur": 0.0,
-          "lead": 0.12,
+          "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_sapphire",
@@ -1332,7 +1333,7 @@
           "op": "create",
           "at": 0.35,
           "dur": 0.0,
-          "lead": 0.24,
+          "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_ruby",
@@ -1342,7 +1343,7 @@
           "op": "create",
           "at": 0.35,
           "dur": 0.0,
-          "lead": 0.36,
+          "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_emerald",
@@ -1352,7 +1353,7 @@
           "op": "create",
           "at": 0.35,
           "dur": 0.0,
-          "lead": 0.48,
+          "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_onyx",
