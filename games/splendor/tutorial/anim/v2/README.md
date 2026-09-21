@@ -105,6 +105,36 @@ python scripts/cue_graph_v2.py merge  --source full.anim.json   --first A --seco
 - 紧接的真实设置 cue（`setup.gems.005.1`）必须把数量恢复成实际值；
 - 其它物理总量（每色全场 7 枚）仍然检查。
 
+## 总控编译入口
+
+源数据只改两处：
+
+- `games/splendor/tutorial/script.full.json`：口播文本/refs
+- `games/splendor/tutorial/anim/v2/full.anim.json`：动画事件/camera/parent/entry
+
+看效果前跑一次：
+
+```bash
+python3 scripts/compile_tutorial.py --game splendor --track full
+```
+
+它会：
+
+1. 对照当前 `full.tts.lrc` 文本，只找出真正变了的 cue；
+2. 只为这些 cue 做增量 TTS（生成 mp3 + subtitle）；
+3. 更新 `tts_manifest.json` / `full.tts.lrc`；
+4. 重建 `full.runtime.json`；
+5. 编译 `full.compiled.json`；
+6. 可选 `--validate-qa` 调 BoardAI 做合法性校验。
+
+只想检查将发生什么、不动文件：
+
+```bash
+python3 scripts/compile_tutorial.py --game splendor --track full --dry-run
+```
+
+如果当前环境没有 TTS 依赖或不想调 API，可加 `--skip-tts`；但要求 TTS 已被增量更新过的 cue 才会通过。
+
 ## 命令
 
 ```bash
