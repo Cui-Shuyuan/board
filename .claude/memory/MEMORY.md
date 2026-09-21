@@ -17,6 +17,7 @@
 - [JSON 编写约定](json-writing-conventions.md) — flow.json/concepts.json 编写时必须遵守的格式规则
 - [讲规模块](tutorial-module.md) — 第五阶段定稿：Unity 原生安卓 + 数据驱动 2D/2.5D sprite 动画（50° 固定俯角）；Unity 6 环境全落 D 盘；client 骨架与首个原型已跑通，观感待截图迭代
 - [教学动画数据层](tutorial-data-layer.md) — 旧 tutorial.json 路线已退役；v3：state_ops + camera_ops + clips + Unity 薄运行时（2026-09-21）
+- [讲规动画总控编译](tutorial-compile.md) — v2 entry 树 + cue graph + compile_tutorial 增量构建（2026-09-22）
 - [讲规动画制作路线](tutorial-production-pipeline.md) — 口播稿主/动画从；Splendor 109 cue 已完成 v3 状态/机位 op 重构、规则过账、Unity 采样对账；生产闭环 v3（2026-09-21）
 - [讲规动画状态模型](tutorial-animation-state.md) — 已加【最终·v3】；state_ops=逻辑状态、camera_ops=命名机位、clips=视觉插值；动画=时间的纯函数（2026-09-21）
 - [动画制作流水线](animation-pipeline.md) — 3D 车道备用参考：Image-to-3D vs LLM vs 手动标注分工边界（视觉层已转 2.5D，slot 空物体方案仍适用）
