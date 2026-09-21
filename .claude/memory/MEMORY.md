@@ -1,4 +1,5 @@
 - [AI桌游讲师项目总览](project-overview.md) — 核心架构、设计理念、技术选型
+- [流程向导（Flow Guide）](flow-guide.md) — 不追踪棋盘状态，只掌握流程游标带客人走完一局；动画告一段落后的下一个项目
 - [桌游本体设计](ontology-design.md) — JSON schema 约定、关键决策、当前进度（71 概念）
 - [ontology 概念直接引用约定](ontology-direct-use.md) — 设计约定：已有 ontology 概念不在游戏层重复封装
 - [璀璨宝石规则进度](splendor-progress.md) — 概念层与流程层已完成，Runtime 已验证
