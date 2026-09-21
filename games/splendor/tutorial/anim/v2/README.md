@@ -58,6 +58,26 @@ stage 里定义 shot 时，`zones` 可以写 `["*"]`：
 这个 token 专门给“所有 zone 都要入镜，但又不要拉出多余留白”的全景镜头使用。
 `zone:["board"]` 仍保留旧语义（按 `board.extent` + 固定比例），不要混用。
 
+## 结构编辑工具（cue graph）
+
+`scripts/cue_graph_v2.py` 是 v2 的链表式结构编辑工具，只负责轨道结构：
+
+```bash
+python scripts/cue_graph_v2.py insert --source full.anim.json   --after A --new B --cue-file B.json
+python scripts/cue_graph_v2.py delete --source full.anim.json --cue B
+python scripts/cue_graph_v2.py split  --source full.anim.json   --cue A --at 1.5 --new A.s2
+python scripts/cue_graph_v2.py merge  --source full.anim.json   --first A --second A.s2
+```
+
+它维护的是：
+
+- cue 在轨道里的顺序；
+- `parent` / `entry` 指针；
+- 删除/合并时把 children 重接到新的 state owner。
+
+它**不替写** story/note、TTS 音频和 runtime；这些属于单独的口播层。结构改完后仍需按
+`script.full.json → TTS → runtime → full.anim.json → compiled` 的链路补齐对应资产。
+
 ## 素材路径约定
 
 - stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`
