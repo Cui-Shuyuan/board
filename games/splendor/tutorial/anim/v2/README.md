@@ -72,7 +72,10 @@ python3 scripts/check_anim_v2_sample.py --game splendor --track full
 - 契约 vs 编译快照；
 - `state_ops` 完整性（start_state + ops == first_state/end_state）；
 - `camera_ops` 结构与顺序；
-- 边界脏帧检查（机位切换第一帧不得残留上一镜的“即将消失”组件）。
+- 边界脏帧检查（机位切换第一帧不得残留上一镜的“即将消失”组件）；
+- **stage 布局重叠检查**：按编译态里每个 cue 的实际占用件，用同一套 `slot_at` 几何算出各 zone 的
+  实际包围盒；同一状态下两个 zone 的矩形相交就报 warning（例如贵族市场向上调整前会被三级发展卡
+  压住、2/3/4 人局实际件数不同都直接反映在检查里）。已知的堆叠/相邻取舍也是 warning，不阻断编译。
 
 `check_anim_v2_sample` 会把 Unity 采样到的 `(zone, order, face)` 与
 `end_state` 逐 item 对账，单 cue 内的 order 漂移会当场暴露。

@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 import anim_schema_v2 as schema  # noqa: E402
+import anim_geometry_v2 as geom  # noqa: E402
 
 
 def load(p: Path):
@@ -227,6 +228,116 @@ def picture_at(cue: dict, t: float):
     return latest
 
 
+# ── stage layout overlap check ──────────────────────────────────────────────
+#
+# zones are logical, so a wrong stage center/step is invisible in the event
+# stream and only explodes visually in Unity.  Replay the compiled component
+# states through the same geometry module the runtime uses, and report any
+# state where two zones' occupied rectangles overlap.  This is deliberately
+# a warning: some overlaps (stacked piles, a marker next to a row) are known
+# trade-offs, but the noble/card_market collision should not be silent again.
+
+def _resolve_stage_path(track_path: Path, rel: str) -> Path | None:
+    rel = (rel or "").strip()
+    if not rel:
+        return None
+    d = track_path.parent
+    for cand in (d / rel, d / (rel + ".json"), d / ".." / rel, d / ".." / (rel + ".json")):
+        if cand.exists():
+            return cand.resolve()
+    return None
+
+
+def _occupied_zone_boxes(components, zone_defs: dict) -> dict:
+    """zone id -> (min_x, max_x, min_z, max_z, item_count) for this state."""
+    grouped = {}
+    for comp in components or []:
+        zid = comp.get("ZoneId")
+        zone = zone_defs.get(zid)
+        if not zone:
+            continue
+        x, z = geom.slot_at(zone, int(comp.get("Order", 0) or 0))
+        w, h = geom.zone_size(zone)
+        box = (x - w * 0.5, x + w * 0.5, z - h * 0.5, z + h * 0.5)
+        grouped.setdefault(zid, []).append(box)
+    out = {}
+    for zid, boxes in grouped.items():
+        out[zid] = (min(b[0] for b in boxes), max(b[1] for b in boxes),
+                    min(b[2] for b in boxes), max(b[3] for b in boxes), len(boxes))
+    return out
+
+
+def _rect_overlap(a, b):
+    ox = min(a[1], b[1]) - max(a[0], b[0])
+    oz = min(a[3], b[3]) - max(a[2], b[2])
+    return ox, oz
+
+
+def check_stage_layouts(warnings: list, track: dict, compiled: dict, track_path: Path):
+    tree_stage = {t.get("id"): t.get("stage") for t in (compiled.get("trees") or [])}
+    stage_defs = {}
+    for tree in track.get("trees") or []:
+        path = _resolve_stage_path(track_path, tree.get("stage"))
+        if path is None:
+            continue
+        stage = load(path)
+        sid = stage.get("id") or path.stem
+        stage_defs[sid] = {
+            z.get("id"): z for z in (stage.get("zones") or [])
+            if isinstance(z, dict) and z.get("id")
+            and (z.get("role") or "zone") != "offstage"
+        }
+
+    found = {}
+    for cue in compiled.get("cues") or []:
+        sid = tree_stage.get(cue.get("tree"))
+        zone_defs = stage_defs.get(sid)
+        if not zone_defs:
+            continue
+        components = {c.get("Id"): c for c in (cue.get("start_state") or {}).get("components") or []
+                      if c.get("Id")}
+
+        def capture(when: str):
+            boxes = _occupied_zone_boxes(components.values(), zone_defs)
+            zids = sorted(boxes)
+            for i in range(len(zids)):
+                for j in range(i + 1, len(zids)):
+                    a, b = zids[i], zids[j]
+                    ox, oz = _rect_overlap(boxes[a], boxes[b])
+                    if ox <= 1e-9 or oz <= 1e-9:
+                        continue
+                    key = (a, b) if a < b else (b, a)
+                    rec = found.setdefault(key, {"ox": 0.0, "oz": 0.0, "n": 0,
+                                                 "score": (-1.0, -1), "ex": None})
+                    rec["ox"] = max(rec["ox"], ox)
+                    rec["oz"] = max(rec["oz"], oz)
+                    rec["n"] += 1
+                    # Keep the state with the largest overlap area, tie-broken by
+                    # the number of items, so the warning shows "3 nobles vs 12
+                    # market cards" instead of the first one-noble create op.
+                    score = (round(ox * oz, 6), boxes[a][4] + boxes[b][4])
+                    if score > rec["score"]:
+                        rec["score"] = score
+                        rec["ex"] = (cue.get("id"), when, boxes[a][4], boxes[b][4])
+
+        capture("start")
+        for op in cue.get("state_ops") or []:
+            if op.get("op") == "put" and (op.get("item") or {}).get("Id"):
+                components[op["item"]["Id"]] = op["item"]
+            elif op.get("op") == "remove" and op.get("item_id"):
+                components.pop(op["item_id"], None)
+            capture(f"t={op.get('at', 0):g}")
+
+    for (a, b), rec in sorted(found.items(), key=lambda kv: max(kv[1]["ox"], kv[1]["oz"]), reverse=True):
+        ex = rec["ex"]
+        where = f"{ex[0]} {ex[1]}" if ex else "?"
+        counts = f"{ex[2]} 件 vs {ex[3]} 件" if ex else "?"
+        warnings.append(
+            f"stage 布局重叠：{a} × {b} 占用矩形重叠 {rec['ox']:.2f}×{rec['oz']:.2f}"
+            f"（{rec['n']} 个状态，例如 {where}：{counts}）"
+        )
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--game", default="splendor")
@@ -244,6 +355,7 @@ def main() -> int:
     schema_rep = schema.validate_track(track)
     errors = []
     warnings = list(schema_rep.warnings)
+    check_stage_layouts(warnings, track, compiled, src)
     for e in schema_rep.errors:
         errors.append("schema: " + e)
 

@@ -157,7 +157,7 @@
       "label": "贵族供应堆",
       "center": {
         "x": -0.55,
-        "z": 2.34
+        "z": 2.55
       },
       "layout": {
         "type": "row",
@@ -1909,7 +1909,7 @@
       "id": "board_noble_area",
       "template": "board_noble",
       "x": -0.55,
-      "z": 2.34,
+      "z": 2.55,
       "zones": [
         "noble_market"
       ]

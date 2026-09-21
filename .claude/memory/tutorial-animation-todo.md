@@ -19,6 +19,8 @@
     `framing_geometry.py`、`dump_states.sh`、`flow_to_tutorial.py`、`validate_tutorial.py` 等。
 - **v2 工具链**：
   - 静态 schema / 契约：`anim_schema_v2.py`、`check_anim_v2.py`
+    - `check_anim_v2` 2026-09 追加 **stage 布局重叠检查**：用同一套 `slot_at` 几何 + 编译态实际件数，
+      同一状态下两个 zone 的占用矩形相交就报 warning。cue25 的贵族市场因此从 z=2.34 上移到 2.55。
   - 编译 / 几何：`compile_animation_v2.py`、`anim_geometry_v2.py`
   - 规则过账：`validate_anim_rules_v2.py`（复用共享规则内核）
   - Unity 采样 / 对账：`TutorialV2Sampler` + `dump_anim_v2.sh` + `check_anim_v2_sample.py`
