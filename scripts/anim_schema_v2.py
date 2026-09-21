@@ -13,6 +13,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import sys
 from pathlib import Path
@@ -213,8 +214,177 @@ def _check_contract(report: Report, where: str, part: dict):
                 report.error(f"{il}.face must be up/down/hidden/empty, got {face!r}")
 
 
+# ── parent-child attribute inheritance ──────────────────────────────────────
+#
+# A cue is a small node.  The parent link is not only an entry-state pointer:
+# a child inherits every attribute that it does not explicitly assign, and a
+# child assignment overrides the inherited value.  `events` are different:
+# they are this node's own state delta, so they are never inherited.
+#
+# State contracts (`script.enter` / `script.exit`) are inherited from the
+# parent's *exit* state, not from the parent's entry state: a child naturally
+# starts where the parent ended.  If the child writes its own contract, it is
+# deep-merged over that inherited state, so a child only has to declare the
+# zones/picture it changes.  `cut` / `world_cut` are reset points and do not
+# inherit state contracts.
+
+_LOCAL_CUE_KEYS = {"id", "parent", "events"}
+
+
+def _deep_copy(v):
+    return copy.deepcopy(v)
+
+
+def _deep_merge(base, overlay):
+    """Recursive map merge; child values override, arrays/scalars replace."""
+    if isinstance(base, dict) and isinstance(overlay, dict):
+        out = {k: _deep_copy(v) for k, v in base.items()}
+        for k, v in overlay.items():
+            out[k] = _deep_merge(out[k], v) if k in out else _deep_copy(v)
+        return out
+    return _deep_copy(overlay)
+
+
+def _merge_contract(base, overlay):
+    """Merge an inherited state contract with a child's contract.
+
+    Contract zones are merged at the zone level: if the child writes a zone,
+    that whole zone spec replaces the inherited one.  This matters for counts
+    and item lists (e.g. child writes `showcase: {count: 0}` to clear it).
+    """
+    if not isinstance(base, dict) or not isinstance(overlay, dict):
+        return _deep_copy(overlay)
+    out = {k: _deep_copy(v) for k, v in base.items()}
+    for k, v in overlay.items():
+        if k == "zones" and isinstance(v, dict):
+            zones = _deep_copy(out.get("zones") or {})
+            for zid, spec in v.items():
+                zones[zid] = _deep_copy(spec)
+            out["zones"] = zones
+        else:
+            out[k] = _deep_copy(v)
+    return out
+
+
+def resolve_track(doc: dict) -> dict:
+    """Return a copy of a track document with cue inheritance expanded."""
+    if not isinstance(doc, dict) or not isinstance(doc.get("cues"), list):
+        return doc
+    raw_cues = doc["cues"]
+    by_id = {}
+    duplicate = False
+    for c in raw_cues:
+        if not isinstance(c, dict) or not c.get("id"):
+            continue
+        if c["id"] in by_id:
+            duplicate = True
+        by_id[c["id"]] = c
+    if duplicate:
+        return doc
+
+    resolved = {}
+    visiting = set()
+
+    def resolve_one(cid):
+        if cid in resolved:
+            return resolved[cid]
+        if cid in visiting:
+            return {}
+        raw = by_id.get(cid)
+        if raw is None:
+            return {}
+        visiting.add(cid)
+        parent_id = raw.get("parent")
+        base = resolve_one(parent_id) if parent_id in by_id else {}
+
+        transition = raw.get("transition", "continue")
+        tree = raw.get("tree", base.get("tree"))
+        same_tree = tree is not None and tree == base.get("tree")
+        inherit = (bool(base) and transition in ("continue", "overlay") and same_tree)
+
+        eff = {}
+        if inherit:
+            for k, v in base.items():
+                # `transition` describes this node's relation to its parent,
+                # so an omitted transition defaults to continue instead of
+                # inheriting a world_cut from the parent.
+                if k not in _LOCAL_CUE_KEYS and k != "transition":
+                    eff[k] = _deep_copy(v)
+
+        # Generic attributes: child assignment overrides inherited attribute.
+        for k, v in raw.items():
+            if k in _LOCAL_CUE_KEYS:
+                continue
+            if k == "script":
+                continue  # handled below
+            eff[k] = _deep_copy(v)
+
+        # Script is a small object: story/note/camera etc. inherit field-wise;
+        # enter/exit are the state contract and have special parent-exit
+        # ordinary inheritance.
+        base_script = base.get("script") or {}
+        child_script = raw.get("script") if isinstance(raw.get("script"), dict) else {}
+
+        script = {}
+        for k, v in base_script.items():
+            if k not in ("enter", "exit"):
+                script[k] = _deep_copy(v)
+        for k, v in child_script.items():
+            if k not in ("enter", "exit"):
+                script[k] = _deep_copy(v)
+
+        inherited_state = base_script.get("exit")
+        if inherited_state is None:
+            inherited_state = base_script.get("enter")
+        if inherit and isinstance(inherited_state, dict):
+            if isinstance(child_script.get("enter"), dict):
+                script["enter"] = _merge_contract(inherited_state, child_script["enter"])
+            else:
+                script["enter"] = _deep_copy(inherited_state)
+            if isinstance(child_script.get("exit"), dict):
+                script["exit"] = _merge_contract(inherited_state, child_script["exit"])
+            else:
+                script["exit"] = _deep_copy(inherited_state)
+        else:
+            if "enter" in child_script:
+                script["enter"] = _deep_copy(child_script["enter"])
+            if "exit" in child_script:
+                script["exit"] = _deep_copy(child_script["exit"])
+        if child_script:
+            eff["script"] = script
+        elif base_script:
+            eff["script"] = script
+        elif "script" in raw:
+            eff["script"] = _deep_copy(raw["script"])
+
+        # Structural defaults.
+        eff["id"] = raw.get("id")
+        eff["parent"] = raw.get("parent")
+        eff["events"] = _deep_copy(raw.get("events") or [])
+        if "transition" not in raw:
+            eff["transition"] = "continue"
+        if "tree" not in raw and base:
+            eff["tree"] = _deep_copy(base.get("tree"))
+
+        visiting.discard(cid)
+        resolved[cid] = eff
+        return eff
+
+    new_cues = []
+    for c in raw_cues:
+        if isinstance(c, dict) and c.get("id"):
+            new_cues.append(resolve_one(c["id"]))
+        else:
+            new_cues.append(c)
+    out = dict(doc)
+    out["cues"] = new_cues
+    return out
+
+
+
 def validate_track(doc: dict, report: Report | None = None) -> Report:
     rep = report or Report()
+    doc = resolve_track(doc)
     if not isinstance(doc, dict):
         rep.error("track root must be an object")
         return rep

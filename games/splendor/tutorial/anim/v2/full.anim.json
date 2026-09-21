@@ -2940,8 +2940,6 @@
     {
       "id": "setup.starting_player.001.1",
       "parent": "setup.nobles.002",
-      "tree": "main",
-      "transition": "continue",
       "timing": [
         {
           "key": "镜头推近玩家区",
@@ -2950,29 +2948,7 @@
       ],
       "script": {
         "story": "【现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家】",
-        "note": "【决定起始玩家】\n  谁最年轻是**桌外的事**，桌上没有对应的件可以动 → 镜头推近玩家区，表示这句话说的是玩家而不是牌桌。\n  标记要等下一句才出现（001.3 才说「这是起始玩家标记」）—— 这里先建出来会抢台词。",
-        "enter": {
-          "picture": null,
-          "zones": {
-            "player_holding": {
-              "count": 0
-            },
-            "player_marker": {
-              "count": 0
-            }
-          }
-        },
-        "exit": {
-          "picture": null,
-          "zones": {
-            "player_holding": {
-              "count": 0
-            },
-            "player_marker": {
-              "count": 0
-            }
-          }
-        }
+        "note": "【决定起始玩家】\n  谁最年轻是**桌外的事**，桌上没有对应的件可以动 → 镜头推近玩家区，表示这句话说的是玩家而不是牌桌。\n  标记要等下一句才出现（001.3 才说「这是起始玩家标记」）—— 这里先建出来会抢台词。"
       },
       "events": [
         {
@@ -2992,8 +2968,6 @@
     {
       "id": "setup.starting_player.001.2",
       "parent": "setup.starting_player.001.1",
-      "tree": "main",
-      "transition": "continue",
       "timing": [
         {
           "key": "镜头保持玩家区（继承 cue26）",
@@ -3002,29 +2976,7 @@
       ],
       "script": {
         "story": "【也可以使用所有人都认可的方式决定谁是起始玩家】",
-        "note": "【也可以用别的方式决定起始玩家】\n  同样是桌外的约定 → 没有状态变化，镜头沿用上一条的玩家区取景，让观众继续对上「玩家这一侧」。",
-        "enter": {
-          "picture": null,
-          "zones": {
-            "player_holding": {
-              "count": 0
-            },
-            "player_marker": {
-              "count": 0
-            }
-          }
-        },
-        "exit": {
-          "picture": null,
-          "zones": {
-            "player_holding": {
-              "count": 0
-            },
-            "player_marker": {
-              "count": 0
-            }
-          }
-        }
+        "note": "【也可以用别的方式决定起始玩家】\n  同样是桌外的约定 → 没有状态变化，镜头沿用上一条的玩家区取景，让观众继续对上「玩家这一侧」。"
       },
       "events": [
         {

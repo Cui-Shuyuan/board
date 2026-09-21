@@ -9,6 +9,8 @@ import argparse, json, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / 'scripts'))
+import anim_schema_v2 as schema  # noqa: E402
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 
@@ -37,7 +39,7 @@ def main():
     smp=Path(a.sample) if a.sample else src.with_name(f'{a.track}.v2sample.json')
     if not src.exists() or not smp.exists():
         print(f'missing source or sample: {src} / {smp}',file=sys.stderr); return 2
-    track=load(src); sdoc=load(smp)
+    track=schema.resolve_track(load(src)); sdoc=load(smp)
     compiled_path=src.with_name(src.name.replace('.anim.json','.compiled.json'))
     compiled=load(compiled_path) if compiled_path.exists() else {'cues':[]}
     end_by={c['id']:c for c in compiled.get('cues') or []}

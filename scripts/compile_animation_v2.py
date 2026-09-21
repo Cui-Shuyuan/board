@@ -265,7 +265,7 @@ class Compiler:
     def __init__(self, track_path: Path):
         self.track_path = track_path
         self.track_dir = track_path.parent
-        self.doc = json.loads(track_path.read_text(encoding="utf-8"))
+        self.doc = schema.resolve_track(json.loads(track_path.read_text(encoding="utf-8")))
         self.rep = schema.validate_track(self.doc)
         self.stages = {}       # stage id -> source stage
         self.compiled_stages = {}

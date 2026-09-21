@@ -22,6 +22,22 @@
    位置/缩放/透明度/翻转/洗混。**不得再写 ZoneId/Order/Face**：逻辑状态只由
    `state_ops` 决定。
 
+## 父子 cue 属性继承
+
+每条 cue 仍通过 `parent` 组成树。**子 cue 不写的属性自动继承父 cue 的对应值；写了就以子 cue 为准**：
+
+- `tree`、`timing`、`script.story/note` 等普通属性：缺省继承。
+- `script.enter` / `script.exit`：缺省继承父 cue 的**终态**；如果子 cue 自己写了，则按
+  **zone 级覆盖**——只替换它写到的 zone，其余 zone 仍继承父终态。所以子 cue 只声明变化的部分。
+- `events`：是当前 cue 自己的状态增量，**永不继承**；缺省为空列表。
+- `id`、`parent`、`transition`：结构字段。`transition` 缺省固定为 `continue`，不会继承父级的
+  `world_cut` 等切换语义。
+- `cut` / `world_cut` / 跨 tree 的 cue：状态不继承，作为重置点处理。
+
+例：`setup.starting_player.001.1` 只显式写自己变化的 `camera`（`shot_holding`）和台词；
+`setup.starting_player.001.2` 连 `tree`、`transition`、`enter/exit` 都不写，自动继承父节点，
+镜头也自然保持 `shot_holding`。
+
 ## 素材路径约定
 
 - stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`

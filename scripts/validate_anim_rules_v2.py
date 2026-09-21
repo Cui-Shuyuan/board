@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/'scripts'))
 import validate_anim_rules as ledger  # noqa: E402
+import anim_schema_v2 as schema  # noqa: E402
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 
@@ -48,7 +49,7 @@ def main():
     ap.add_argument('--game',default='splendor'); ap.add_argument('--track',default='full')
     a=ap.parse_args()
     base=ROOT/'games'/a.game/'tutorial'/'anim'/'v2'
-    track=load(base/f'{a.track}.anim.json')
+    track=schema.resolve_track(load(base/f'{a.track}.anim.json'))
     stages={}
     default_stage=None
     for t in track.get('trees') or []:

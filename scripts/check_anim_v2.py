@@ -350,7 +350,7 @@ def main() -> int:
         print(f"missing {src} or {out}", file=sys.stderr)
         return 2
 
-    track = load(src)
+    track = schema.resolve_track(load(src))
     compiled = load(out)
     schema_rep = schema.validate_track(track)
     errors = []
