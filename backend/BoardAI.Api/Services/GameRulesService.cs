@@ -306,6 +306,37 @@ public class GameRulesService
 
     private readonly Dictionary<string, Dictionary<string, string>> _nameMaps = new();
 
+    /// <summary>游戏概念 id → type，用于 execute_plan 的 relation 级类型约束。</summary>
+    private readonly Dictionary<string, Dictionary<string, string>> _conceptTypeMaps = new();
+
+    /// <summary>特定 relation 下，实体最可能属于的 concept 类型。</summary>
+    private static readonly Dictionary<string, string[]> PlanRelationExpectedTypes = new()
+    {
+        ["condition"] = new[] { "actions", "triggers", "conditions", "flow" },
+        ["ordering"] = new[] { "flow", "triggers", "actions" },
+        ["boundary"] = new[] { "triggers", "conditions", "flow" },
+    };
+
+    private Dictionary<string, string> GetConceptTypeMap(string game)
+    {
+        if (_conceptTypeMaps.TryGetValue(game, out var cached)) return cached;
+        var map = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var type in GetConceptTypes(game))
+            foreach (var summary in ListConcepts(game, type))
+                if (!string.IsNullOrEmpty(summary.Id))
+                    map[summary.Id] = type;
+        _conceptTypeMaps[game] = map;
+        return map;
+    }
+
+    private bool IsExpectedPlanType(string game, string relation, string conceptId)
+    {
+        if (string.IsNullOrEmpty(conceptId)) return false;
+        if (!PlanRelationExpectedTypes.TryGetValue(relation, out var expected)) return true;
+        var map = GetConceptTypeMap(game);
+        return map.TryGetValue(conceptId, out var type) && expected.Contains(type);
+    }
+
     /// <summary>
     /// 把文本中的概念引用 <concept_id> / <ontology::concept_id> 注解为 <id>(中文名)，
     /// 让 LLM 无需自行翻译英文 id（如 <idea_marker>(创意标记)）。
@@ -528,7 +559,12 @@ public class GameRulesService
             if (_vectorSearch != null)
             {
                 var semantic = await SearchConceptsAsync(game, entity, searchMode: "name");
-                foreach (var c in semantic.Results.Where(r => r.Score >= SemanticCandidateThreshold))
+                var semItems = semantic.Results.Where(r => r.Score >= SemanticCandidateThreshold).ToList();
+                // relation 级类型优先：condition 问句不要被 zone/对象抢走实体。
+                // 只有在存在符合类型的候选时才收窄，避免把原本可用的泛候选误杀。
+                var expected = semItems.Where(c => IsExpectedPlanType(game, relation, c.Id)).ToList();
+                if (expected.Count > 0) semItems = expected;
+                foreach (var c in semItems)
                 {
                     if (indexById.TryGetValue(c.Id, out var i))
                     {
@@ -551,7 +587,9 @@ public class GameRulesService
             // 只有语义也弱/为空时，才启用问题级直呼作为兜底。
             if (merged.Count == 0 || merged[0].Score < 0.55f)
             {
-                var qhits = ResolveFromQuestion(game, question, out var qsource);
+                var qhits = ResolveFromQuestion(game, question, out var qsource)
+                    .Where(el => IsExpectedPlanType(game, relation, GetElementId(el)))
+                    .ToList();
                 if (qhits.Count > 0)
                     return BuildOkResult(game, relation, entity, qhits, qsource, question);
             }

@@ -117,6 +117,16 @@ C# 端 `VectorSearchService.SyncIndexAsync`（`dotnet run --rebuild-all/--rebuil
 - 验证：同问题不再撞 `gem_supply`，Round 1 直接返回 `take_gems_same` 等 action 候选；
   全量手写 QA 16/16 通过。
 
+## Relation 级实体类型约束（2026-09-22）
+
+- 在实体解析候选合并和「问题级直呼」兜底上增加 relation 级类型过滤：
+  `condition` 期望 `actions/triggers/conditions/flow`，`ordering` 期望 `flow/triggers/actions`，
+  `boundary` 期望 `triggers/conditions/flow`。
+- 语义候选里若存在符合期望类型的候选，就优先收窄到这些候选；否则保留原候选，避免误杀。
+- 目的：防止「宝石供应堆」这类 zone 名在 condition 问题里抢走 action 实体；同时不放弃同名 flow 节点。
+- 已用 agricola/civolution/puerto-rico 的 FAQ 子集做基线/后测；单次回答文本相似度噪声较大，
+  但能看到部分 `question_hit` 劫持减少、轮数下降。后续需要固定 gold 实体集的重复评测。
+
 ## 相关记忆
 
 - [[runtime-architecture]] — 后端接口与工具设计
