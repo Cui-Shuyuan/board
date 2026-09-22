@@ -51,6 +51,16 @@ def norm(s) -> str:
     return (str(s or "")).strip()
 
 
+def norm_text(s) -> str:
+    """Whitespace-insensitive text used only for beat -> subtitle matching."""
+    return "".join((str(s or "")).split())
+
+
+def key_text(s) -> str:
+    """Punctuation/whitespace-insensitive key for beat -> TTS word matching."""
+    return "".join(ch for ch in str(s or "") if ch.isalnum())
+
+
 def face_int(v) -> int:
     if v in ("up", "face_up", 2, "2"):
         return 2
@@ -290,6 +300,111 @@ class Compiler:
         self.compiled_stages = {}
         self.trees = {}
         self.world_modes = {w.get("id"): w.get("mode", "isolated") for w in (self.doc.get("worlds") or [])}
+        self.time_anchors = self._resolve_time_anchors()
+
+    def _resolve_time_anchors(self) -> dict:
+        """Resolve symbolic time anchors to cue-local seconds.
+
+        Anchor definitions live at the top of the track script, next to worlds.
+        Times are resolved from script beats + TTS subtitles, never from raw
+        seconds written at the event site.
+        """
+        anchors = self.doc.get("time_anchors") or []
+        if not anchors:
+            return {}
+        game = norm(self.doc.get("game"))
+        track = norm(self.doc.get("track"))
+        script_path = ROOT / "games" / game / "tutorial" / f"script.{track}.json"
+        runtime_path = ROOT / "games" / game / "tutorial" / f"{track}.runtime.json"
+        if not script_path.exists():
+            raise FileNotFoundError(f"time_anchors: missing narration script {script_path}")
+        if not runtime_path.exists():
+            raise FileNotFoundError(f"time_anchors: missing runtime timing {runtime_path}")
+
+        script_doc = json.loads(script_path.read_text(encoding="utf-8"))
+        runtime_doc = json.loads(runtime_path.read_text(encoding="utf-8"))
+        self.beat_times = self._build_beat_times(script_doc, runtime_doc)
+        runtime_cues = {c.get("id"): c for c in (runtime_doc.get("cues") or []) if c.get("id")}
+
+        out = {}
+        for a in anchors:
+            if not isinstance(a, dict) or not a.get("id"):
+                raise ValueError(f"time_anchors: anchor needs id: {a!r}")
+            aid = norm(a.get("id"))
+            cue_id = norm(a.get("cue"))
+            edge = norm(a.get("edge")) or "start"
+            offset = float(a.get("offset", 0.0) or 0.0)
+            runtime_cue = runtime_cues.get(cue_id)
+            if runtime_cue is None:
+                raise ValueError(f"time_anchor {aid!r}: unknown cue {cue_id!r}")
+            if edge == "cue_start":
+                base = 0.0
+            elif edge == "cue_end":
+                base = float(runtime_cue.get("duration", 0.0) or 0.0)
+            else:
+                beat_id = norm(a.get("beat"))
+                beat_time = self.beat_times.get((cue_id, beat_id))
+                if beat_time is None:
+                    raise ValueError(f"time_anchor {aid!r}: unknown beat {cue_id}/{beat_id}")
+                base = beat_time[0] if edge == "start" else beat_time[1]
+            out[aid] = max(0.0, base + offset)
+        return out
+
+    @staticmethod
+    def _build_beat_times(script_doc: dict, runtime_doc: dict) -> dict:
+        """(cue_id, beat_id) -> (start_seconds, end_seconds).
+
+        TTS subtitle events may split one written beat into several pieces, so we
+        match against the flattened word stream instead of requiring an exact
+        subtitle-event equality.
+        """
+        runtime_cues = {c.get("id"): c for c in (runtime_doc.get("cues") or []) if c.get("id")}
+        out = {}
+        for c in script_doc.get("cues") or []:
+            cid = c.get("id")
+            rt = runtime_cues.get(cid)
+            if not cid or not rt:
+                continue
+            words = []
+            for sub in rt.get("subtitles") or []:
+                for w in sub.get("words") or []:
+                    if w:
+                        words.append(w)
+            if not words:
+                continue
+            flat = "".join(key_text(w.get("word", "")) for w in words)
+            char_word = []
+            for wi, w in enumerate(words):
+                for _ in key_text(w.get("word", "")):
+                    char_word.append(wi)
+            cursor = 0
+            for b in c.get("beats") or []:
+                bid = b.get("id")
+                bkey = key_text(b.get("text"))
+                if not bid or not bkey:
+                    continue
+                pos = flat.find(bkey, cursor)
+                if pos < 0:
+                    pos = flat.find(bkey)
+                if pos < 0:
+                    raise ValueError(f"beat text not found in TTS words: {cid}/{bid} {b.get('text')!r}")
+                si = char_word[pos]
+                ei = char_word[pos + len(bkey) - 1]
+                out[(cid, bid)] = (
+                    float(words[si].get("start", 0.0) or 0.0),
+                    float(words[ei].get("end", words[ei].get("start", 0.0)) or 0.0),
+                )
+                cursor = pos + len(bkey)
+        return out
+
+    def event_at(self, ev: dict, cue_id=None) -> float:
+        aid = norm(ev.get("anchor"))
+        if not aid:
+            return round(float(ev.get("at", 0.0) or 0.0), 6)
+        if aid not in self.time_anchors:
+            raise ValueError(f"cue {cue_id}: unknown time anchor {aid!r}")
+        offset = float(ev.get("offset", 0.0) or 0.0)
+        return round(max(0.0, self.time_anchors[aid] + offset), 6)
 
     def resolve_stage_path(self, rel: str) -> Path:
         rel = norm(rel)
@@ -336,7 +451,7 @@ class Compiler:
                 # "*" 全景：动态收窄到当前真的有组件的 zone；
                 # 只有没有可见 zone 时才退回全部 zone。这样空玩家区不会
                 # 把设置完成前的桌面中景硬拉成整桌远景。
-                if "*" in zones and visible_zones:
+                if "*" in zones and visible_zones and not sh.get("static"):
                     stage_ids = {z.get("id") for z in (stage.get("zones") or [])}
                     live = [z for z in visible_zones if z in stage_ids]
                     if live:
@@ -487,7 +602,7 @@ class Compiler:
     def duration(self, cue: dict, clips: list) -> float:
         end = 0.0
         for ev in cue.get("events") or []:
-            at = float(ev.get("at", 0.0) or 0.0)
+            at = self.event_at(ev, cue.get("id"))
             lead = float(ev.get("lead", 0.0) or 0.0)
             dur = float(ev.get("dur", 0.0) or 0.0)
             end = max(end, at + lead + dur)
@@ -542,7 +657,7 @@ class Compiler:
         cue_id = cue.get("id")
         for ev in cue.get("events") or []:
             op = ev.get("op")
-            at = float(ev.get("at", 0.0) or 0.0)
+            at = self.event_at(ev, cue_id)
             dur = float(ev.get("dur", 0.0) or 0.0)
             lead = float(ev.get("lead", 0.0) or 0.0)
             easing = ev.get("easing") or "easeOutCubic"

@@ -125,6 +125,8 @@ namespace UnityEngine
         public static Color grey => new Color(.5f, .5f, .5f);
         public static Color Lerp(Color a, Color b, float t) => a;
         public static Color LerpUnclamped(Color a, Color b, float t) => a;
+        public static Color HSVToRGB(float h, float s, float v) => new Color(1f, 1f, 1f, 1f);
+        public static Color HSVToRGB(float h, float s, float v, bool hdr) => new Color(1f, 1f, 1f, 1f);
         public static Color operator *(Color a, float s) => a;
         public static bool operator ==(Color a, Color b) => false;
         public static bool operator !=(Color a, Color b) => false;
@@ -149,6 +151,8 @@ namespace UnityEngine
         public static Quaternion SlerpUnclamped(Quaternion a, Quaternion b, float t) => a;
         public static float Dot(Quaternion a, Quaternion b) => a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
         public static float Angle(Quaternion a, Quaternion b) => 0f;
+        public static Quaternion LookRotation(Vector3 forward) => new Quaternion();
+        public static Quaternion LookRotation(Vector3 forward, Vector3 upwards) => new Quaternion();
         public static Quaternion operator *(Quaternion a, Quaternion b) => a;
         public static Vector3 operator *(Quaternion a, Vector3 v) => v;
     }
@@ -366,6 +370,20 @@ namespace UnityEngine
         public bool flipY;
     }
 
+    public class MeshRenderer : Renderer { }
+
+    public class LineRenderer : Renderer
+    {
+        public bool useWorldSpace;
+        public bool loop;
+        public int positionCount;
+        public float startWidth;
+        public float endWidth;
+        public Color startColor;
+        public Color endColor;
+        public void SetPositions(Vector3[] positions) { }
+    }
+
     public class Material : Object
     {
         public Material(Shader s) { }
@@ -504,6 +522,18 @@ namespace UnityEngine
     public class GUIStyleState { public Color textColor; public Texture2D background; }
     public class RectOffset { public RectOffset() { } public RectOffset(int l, int r, int t, int b) { } }
     public enum TextAnchor { UpperLeft, UpperCenter, UpperRight, MiddleLeft, MiddleCenter, MiddleRight, LowerLeft, LowerCenter, LowerRight }
+    public enum TextAlignment { Left, Center, Right }
+
+    public class TextMesh : Component
+    {
+        public Font font;
+        public string text;
+        public int fontSize;
+        public float characterSize;
+        public TextAnchor anchor;
+        public TextAlignment alignment;
+        public Color color;
+    }
 
     public class GUIContent
     {
@@ -657,6 +687,7 @@ namespace UnityEngine.InputSystem
         public KeyControl downArrowKey = new KeyControl();
         public KeyControl leftBracketKey = new KeyControl();
         public KeyControl rightBracketKey = new KeyControl();
+        public KeyControl zKey = new KeyControl();
     }
 }
 
@@ -701,7 +732,7 @@ namespace UnityEngine
         public static Vector3 mousePosition => Vector3.zero;
     }
 
-    public enum KeyCode { Space, R, A, G, B, N, P, LeftArrow, RightArrow, UpArrow, DownArrow, LeftBracket, RightBracket, Escape, Return }
+    public enum KeyCode { Space, R, A, G, B, N, P, Z, LeftArrow, RightArrow, UpArrow, DownArrow, LeftBracket, RightBracket, Escape, Return }
 }
 """
 

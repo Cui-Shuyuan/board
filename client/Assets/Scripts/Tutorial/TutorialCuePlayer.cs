@@ -68,6 +68,19 @@ namespace BoardGameTutorial
         private float fallbackClock;
         private string currentSubtitle = "";
         private GUIStyle debugStyle;
+        private GUIStyle subtitleStyle;
+        private GUIStyle subtitleOutlineStyle;
+        private static readonly Vector2[] SubtitleOutlineOffsets =
+        {
+            new Vector2(-2f, -2f),
+            new Vector2( 0f, -2f),
+            new Vector2( 2f, -2f),
+            new Vector2(-2f,  0f),
+            new Vector2( 2f,  0f),
+            new Vector2(-2f,  2f),
+            new Vector2( 0f,  2f),
+            new Vector2( 2f,  2f),
+        };
 
         public TutorialCue CurrentCue
         {
@@ -326,6 +339,10 @@ namespace BoardGameTutorial
                 v2AnimPlayer.Seek(t);
             }
 
+            // 音频播放期间每帧刷新字幕；不依赖协程 while 的 isPlaying 时序。
+            if (audioSource != null && audioSource.clip != null && audioSource.isPlaying && !isPaused)
+                UpdateSubtitle();
+
 #if ENABLE_INPUT_SYSTEM
             var kb = Keyboard.current;
             if (kb == null) return;
@@ -377,7 +394,14 @@ namespace BoardGameTutorial
 
         private void OnGUI()
         {
-            if (!showDebugUI || doc == null) return;
+            if (doc == null) return;
+
+            DrawSubtitle();
+
+            // 左上角信息只在 zone debug 模式下显示；正常播放时屏幕底部只有字幕。
+            bool zoneDebugVisible = v2AnimPlayer != null && v2AnimPlayer.debugZones;
+            if (!showDebugUI || !zoneDebugVisible) return;
+
             if (debugStyle == null)
             {
                 debugStyle = new GUIStyle(GUI.skin.label)
@@ -387,25 +411,70 @@ namespace BoardGameTutorial
                     normal = { textColor = Color.white }
                 };
             }
-            GUI.Box(new Rect(10, 10, Screen.width - 20, 214), doc.title ?? "Tutorial");
+
+            GUI.Box(new Rect(10, 10, Screen.width - 20, 202), doc.title ?? "Tutorial");
             GUI.Label(new Rect(24, 28, Screen.width - 48, 24), $"cue {currentIndex + 1}/{doc.cues.Count}  {CurrentCueId}", debugStyle);
             GUI.Label(new Rect(24, 52, Screen.width - 48, 24), CurrentCueGroupPath, debugStyle);
-            GUI.Label(new Rect(24, 76, Screen.width - 48, 28), currentSubtitle, debugStyle);
-            GUI.Label(new Rect(24, 108, Screen.width - 48, 56), CurrentCueText, debugStyle);
+            GUI.Label(new Rect(24, 78, Screen.width - 48, 56), CurrentCueText, debugStyle);
 
             float t = (audioSource != null && audioSource.clip != null) ? audioSource.time : 0f;
             string animInfo = v2AnimPlayer != null && v2AnimPlayer.IsLoaded
                 ? $"anim: ON  {v2AnimPlayer.CueId}  t={t:0.00}s  动画总长 {v2AnimPlayer.TotalDuration:0.00}s"
                 : $"anim: none  (t={t:0.00}s)";
             if (inDebugJump) animInfo += "   [B 返回]";
-            GUI.Label(new Rect(24, 150, Screen.width - 48, 24), animInfo, debugStyle);
+            GUI.Label(new Rect(24, 138, Screen.width - 48, 24), animInfo, debugStyle);
 
             string animSwitch = enableCueAnimation ? "动画开关: 开" : "动画开关: 关 —— 按 G 打开（现在画面是空的）";
             var switchStyle = new GUIStyle(debugStyle);
             switchStyle.normal.textColor = enableCueAnimation ? Color.white : new Color(1f, 0.5f, 0.4f);
-            GUI.Label(new Rect(24, 172, Screen.width - 48, 24), animSwitch, switchStyle);
-            GUI.Label(new Rect(24, 194, Screen.width - 48, 24),
-                "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关  B 跳到动画切片", debugStyle);
+            GUI.Label(new Rect(24, 160, Screen.width - 48, 24), animSwitch, switchStyle);
+            GUI.Label(new Rect(24, 182, Screen.width - 48, 24),
+                "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关  B 跳到动画切片  Z 调试模式", debugStyle);
         }
+
+        private void DrawSubtitle()
+        {
+            string text = SubtitleText();
+            if (string.IsNullOrEmpty(text)) return;
+
+            if (subtitleStyle == null)
+            {
+                subtitleStyle = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    wordWrap = true,
+                    fontSize = 28
+                };
+                subtitleStyle.normal.textColor = Color.white;
+
+                // 不要从 subtitleStyle 复制后再改色，避免 GUIStyleState 被共享。
+                subtitleOutlineStyle = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    wordWrap = true,
+                    fontSize = 28
+                };
+                subtitleOutlineStyle.normal.textColor = Color.black;
+            }
+
+            float width = Mathf.Min(1100f, Screen.width - 64f);
+            float height = 96f;
+            float x = (Screen.width - width) * 0.5f;
+            float y = Screen.height - height - 28f;
+
+            foreach (var offset in SubtitleOutlineOffsets)
+                GUI.Label(new Rect(x + offset.x, y + offset.y, width, height), text, subtitleOutlineStyle);
+            GUI.Label(new Rect(x, y, width, height), text, subtitleStyle);
+        }
+
+        private string SubtitleText()
+        {
+            if (!string.IsNullOrEmpty(currentSubtitle)) return currentSubtitle;
+            var cue = CurrentCue;
+            if (cue == null) return "";
+            if (cue.subtitles == null || cue.subtitles.Count == 0) return cue.text ?? "";
+            return "";
+        }
+
     }
 }

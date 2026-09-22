@@ -2,17 +2,17 @@
   "schema_version": 1,
   "game_id": "splendor",
   "kind": "stage",
-  "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**。\n\n【zone 的生命周期】zone 是\"世界里的位置\"：`zones` 里声明的这些**一开始就全部建好**\n（空着也是建好了 —— 与\"开局桌上没有件\"不矛盾：一个说的是区域，一个说的是件）。\n后续游戏若要有\"随着卡牌/板块进场新增区域\"，把那种区域的**定义**写进 `zone_defs`，\n脚本里用 {\"action\":\"zone\",\"op\":\"add\",\"zone\":\"<定义 id>\",\"index\":N} 开出来；\n坐标仍只写在 stage（第 N 个实例按 `repeat_x`/`repeat_z` 平移，id 是 `<定义 id>#N`）。\n\n【玩家区 A/B（2026-09 用户指示）】不带前缀的那几个（player_holding / player_development / player_reserved / player_nobles / player_marker）是**玩家A**= 学习者这一侧，摆在桌面下方；player_b_* 是对面那位。教程里 A 的账是完整的，B 只在『多人对比』的几句话里出现。",
+  "note": "【游戏盒是抽象概念，没有实体】（用户 2026-09）\n说\"从盒子里拿出来\" = `create`；说\"放回盒子\" = `destroy`。\n所以这里没有 box_* 这种 zone，`initial` 也是空的 —— 宝石/黄金/贵族/发展卡都是**用到时才出现**。\n\n【zone 的生命周期】zone 是\"世界里的位置\"：`zones` 里声明的这些**一开始就全部建好**\n（空着也是建好了 —— 与\"开局桌上没有件\"不矛盾：一个说的是区域，一个说的是件）。\n后续游戏若要有\"随着卡牌/板块进场新增区域\"，把那种区域的**定义**写进 `zone_defs`，\n脚本里用 {\"action\":\"zone\",\"op\":\"add\",\"zone\":\"<定义 id>\",\"index\":N} 开出来；\n坐标仍只写在 stage（第 N 个实例按 `repeat_x`/`repeat_z` 平移，id 是 `<定义 id>#N`）。\n\n【玩家区 A/B（2026-09 用户指示）】不带前缀的那几个（player_holding / player_development / player_reserved / player_nobles / player_marker）是**玩家A**= 学习者这一侧，摆在桌面下方；player_b_* 现在也摆到屏幕下方右侧，和 A 一样是一整块玩家区，内部再分宝石/手牌/发展/起始标记/贵族子区。教程里 A 的账完整，B 只在『多人对比』的几句话里出现。",
   "board": {
     "background": "#1E2126",
     "camera_pitch": 90,
     "ortho_scale": 1.1,
     "aspect": 1.7778,
     "extent": {
-      "min_x": -3.23,
-      "max_x": 1.31,
-      "min_z": -5.6,
-      "max_z": 5.0
+      "min_x": -3.95,
+      "max_x": 3.45,
+      "min_z": -4.8,
+      "max_z": 3.0
     },
     "default_picture": null
   },
@@ -181,8 +181,8 @@
       "id": "gem_supply_diamond",
       "label": "钻石供应堆",
       "center": {
-        "x": -2.0,
-        "z": -1.72
+        "x": 1.65,
+        "z": 0.45
       },
       "layout": {
         "type": "pile",
@@ -198,8 +198,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": -0.055,
-        "dz": -0.055,
+        "dx": -0.03,
+        "dz": -0.03,
         "max_visible": 7
       },
       "concept": "gem_supply",
@@ -218,8 +218,8 @@
       "id": "gem_supply_sapphire",
       "label": "蓝宝石供应堆",
       "center": {
-        "x": -0.55,
-        "z": -1.72
+        "x": 2.3,
+        "z": 0.45
       },
       "layout": {
         "type": "pile",
@@ -235,8 +235,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": -0.055,
-        "dz": -0.055,
+        "dx": -0.03,
+        "dz": -0.03,
         "max_visible": 7
       },
       "concept": "gem_supply",
@@ -255,8 +255,8 @@
       "id": "gem_supply_ruby",
       "label": "红宝石供应堆",
       "center": {
-        "x": 0.8999999999999999,
-        "z": -1.72
+        "x": 2.95,
+        "z": 0.45
       },
       "layout": {
         "type": "pile",
@@ -272,8 +272,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": -0.055,
-        "dz": -0.055,
+        "dx": -0.03,
+        "dz": -0.03,
         "max_visible": 7
       },
       "concept": "gem_supply",
@@ -292,8 +292,8 @@
       "id": "gem_supply_emerald",
       "label": "翡翠供应堆",
       "center": {
-        "x": -2.0,
-        "z": -2.34
+        "x": 1.65,
+        "z": -0.25
       },
       "layout": {
         "type": "pile",
@@ -309,8 +309,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": -0.055,
-        "dz": -0.055,
+        "dx": -0.03,
+        "dz": -0.03,
         "max_visible": 7
       },
       "concept": "gem_supply",
@@ -329,8 +329,8 @@
       "id": "gem_supply_onyx",
       "label": "缟玛瑙供应堆",
       "center": {
-        "x": -0.55,
-        "z": -2.34
+        "x": 2.3,
+        "z": -0.25
       },
       "layout": {
         "type": "pile",
@@ -346,8 +346,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": -0.055,
-        "dz": -0.055,
+        "dx": -0.03,
+        "dz": -0.03,
         "max_visible": 7
       },
       "concept": "gem_supply",
@@ -366,8 +366,8 @@
       "id": "gold_supply",
       "label": "黄金供应堆",
       "center": {
-        "x": 0.8999999999999999,
-        "z": -2.34
+        "x": 2.95,
+        "z": -0.25
       },
       "layout": {
         "type": "pile",
@@ -383,8 +383,8 @@
       },
       "display": {
         "mode": "stack",
-        "dx": -0.055,
-        "dz": -0.055,
+        "dx": -0.03,
+        "dz": -0.03,
         "max_visible": 7
       },
       "concept": "gold_supply",
@@ -395,14 +395,15 @@
     },
     {
       "id": "player_holding",
-      "label": "玩家持有区",
+      "label": "玩家A宝石区",
       "center": {
-        "x": -0.55,
-        "z": -3.2
+        "x": -3.15,
+        "z": -1.8
       },
       "layout": {
-        "type": "row",
-        "x_step": 0.3
+        "type": "block",
+        "x_step": 0.2,
+        "z_step": 0.42
       },
       "capacity": 10,
       "palette": "panel_player",
@@ -417,14 +418,15 @@
       "contains": [
         "gem",
         "gold"
-      ]
+      ],
+      "group": "player_a"
     },
     {
       "id": "player_marker",
-      "label": "起始玩家标记位",
+      "label": "玩家A起始玩家标记区",
       "center": {
-        "x": 0.9,
-        "z": -3.2
+        "x": -1.0,
+        "z": -1.8
       },
       "layout": {
         "type": "row",
@@ -443,20 +445,21 @@
       "contains": [
         "starting_player_marker"
       ],
-      "note": "起始玩家标记放在玩家面前的地方。与 `player_holding` 同一排（z=-3.20）、位于其右侧 —— 持有区那一排最多能铺到 x≈0.80（10 件时），所以两区只在持有区接近满时才轻微重叠（stage 布局校验会报一条 warning，属于已知取舍：标记物理上就该挨着玩家的东西）。"
+      "note": "起始玩家标记放在玩家面前的地方。与 `player_holding` 同一排（z=-3.20）、位于其右侧 —— 持有区那一排最多能铺到 x≈0.80（10 件时），所以两区只在持有区接近满时才轻微重叠（stage 布局校验会报一条 warning，属于已知取舍：标记物理上就该挨着玩家的东西）。",
+      "group": "player_a"
     },
     {
       "id": "player_development",
-      "label": "玩家发展区",
+      "label": "玩家A发展区",
       "center": {
-        "x": -1.45,
-        "z": -4.2
+        "x": -2.15,
+        "z": -3.38
       },
       "layout": {
         "type": "grid",
         "cols": 4,
-        "x_step": 0.66,
-        "z_step": 0.46
+        "x_step": 0.6,
+        "z_step": 0.3
       },
       "capacity": 12,
       "palette": "panel_player",
@@ -473,18 +476,19 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "买下的发展卡摊在自己面前的地方（<development_area>，公开信息）。4 列网格、z_step 0.46（两行半叠）：卡片上半部（含右上角折扣）互相让出来，所以『摊开』仍看得清，但占地只有 2.6x1.4 —— 真人摆不下时也是这样叠的。容量 12 是本节演示『满足一块贵族（4白+4红=8 张）』所需。"
+      "note": "买下的发展卡摊在自己面前的地方（<development_area>，公开信息）。4 列网格、z_step 0.46（两行半叠）：卡片上半部（含右上角折扣）互相让出来，所以『摊开』仍看得清，但占地只有 2.6x1.4 —— 真人摆不下时也是这样叠的。容量 12 是本节演示『满足一块贵族（4白+4红=8 张）』所需。",
+      "group": "player_a"
     },
     {
       "id": "player_nobles",
-      "label": "玩家结识的贵族",
+      "label": "玩家A贵族区",
       "center": {
-        "x": -1.1,
-        "z": -5.25
+        "x": -2.15,
+        "z": -4.22
       },
       "layout": {
         "type": "row",
-        "x_step": 0.66
+        "x_step": 0.6
       },
       "capacity": 3,
       "palette": "panel_player",
@@ -499,18 +503,19 @@
       "contains": [
         "noble"
       ],
-      "note": "结识的贵族放在自己面前（公开信息）。容量 3 = 一局最多勾到 3 块（本作贵族数=人数+1，四人局 5 块；这里按演示需要写 3，真要更多改这一个数 + x_step）。"
+      "note": "结识的贵族放在自己面前（公开信息）。容量 3 = 一局最多勾到 3 块（本作贵族数=人数+1，四人局 5 块；这里按演示需要写 3，真要更多改这一个数 + x_step）。",
+      "group": "player_a"
     },
     {
       "id": "player_reserved",
-      "label": "玩家保留区",
+      "label": "玩家A手牌区（保留卡）",
       "center": {
-        "x": 0.6,
-        "z": -4.2
+        "x": -1.8,
+        "z": -1.8
       },
       "layout": {
         "type": "row",
-        "x_step": 0.35
+        "x_step": 0.22
       },
       "capacity": 3,
       "palette": "panel_player",
@@ -527,22 +532,23 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "保留的发展卡放的地方（<reserve>）。x_step 0.35 = 卡片半叠成扇形：保留区**必须**放得下 3 张（规则上限就是 3），而桌子横向不够摊开 —— 真人遇到这种情况也是这样错开叠的，而且朝下的牌只需要露出边缘。"
+      "note": "保留的发展卡放的地方（<reserve>）。x_step 0.35 = 卡片半叠成扇形：保留区**必须**放得下 3 张（规则上限就是 3），而桌子横向不够摊开 —— 真人遇到这种情况也是这样错开叠的，而且朝下的牌只需要露出边缘。",
+      "group": "player_a"
     },
     {
       "id": "player_b_development",
-      "label": "玩家B的发展区",
+      "label": "玩家B发展区",
       "center": {
-        "x": -1.6,
-        "z": 3.45
+        "x": 1.065,
+        "z": -3.38
       },
       "layout": {
         "type": "grid",
-        "cols": 3,
-        "x_step": 0.66,
-        "z_step": 0.46
+        "cols": 4,
+        "x_step": 0.6,
+        "z_step": 0.3
       },
-      "capacity": 6,
+      "capacity": 12,
       "palette": "panel_player",
       "size": {
         "w": 0.63,
@@ -557,18 +563,20 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "玩家B（对面）买下的发展卡。容量 6：教程里 B 只是『另一个玩家』，不需要摆满。"
+      "note": "玩家B（对面）买下的发展卡。容量 6：教程里 B 只是『另一个玩家』，不需要摆满。",
+      "group": "player_b"
     },
     {
       "id": "player_b_holding",
-      "label": "玩家B的持有区",
+      "label": "玩家B宝石区",
       "center": {
-        "x": 0.3,
-        "z": 3.3
+        "x": 0.065,
+        "z": -1.8
       },
       "layout": {
-        "type": "row",
-        "x_step": 0.3
+        "type": "block",
+        "x_step": 0.4,
+        "z_step": 0.42
       },
       "capacity": 6,
       "palette": "panel_player",
@@ -584,18 +592,19 @@
         "gem",
         "gold"
       ],
-      "note": "玩家B手里的宝石/黄金。"
+      "note": "玩家B手里的宝石/黄金。",
+      "group": "player_b"
     },
     {
       "id": "player_b_reserved",
-      "label": "玩家B的保留区",
+      "label": "玩家B手牌区（保留卡）",
       "center": {
-        "x": 0.3,
-        "z": 4.15
+        "x": 1.415,
+        "z": -1.8
       },
       "layout": {
         "type": "row",
-        "x_step": 0.35
+        "x_step": 0.22
       },
       "capacity": 3,
       "palette": "panel_player",
@@ -612,18 +621,19 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "玩家B保留的卡（朝下，别人看不到内容）。"
+      "note": "玩家B保留的卡（朝下，别人看不到内容）。",
+      "group": "player_b"
     },
     {
       "id": "player_b_nobles",
-      "label": "玩家B结识的贵族",
+      "label": "玩家B贵族区",
       "center": {
-        "x": -1.6,
-        "z": 4.45
+        "x": 1.065,
+        "z": -4.22
       },
       "layout": {
         "type": "row",
-        "x_step": 0.66
+        "x_step": 0.6
       },
       "capacity": 3,
       "palette": "panel_player",
@@ -638,7 +648,29 @@
       "contains": [
         "noble"
       ],
-      "note": "玩家B结识的贵族。3.2.2 那句『不可以从其他人那里拿贵族』就指着这里。"
+      "note": "玩家B结识的贵族。3.2.2 那句『不可以从其他人那里拿贵族』就指着这里。",
+      "group": "player_b"
+    },
+    {
+      "id": "player_b_marker",
+      "label": "玩家B起始玩家标记区",
+      "group": "player_b",
+      "center": {
+        "x": 2.215,
+        "z": -1.8
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.3
+      },
+      "capacity": 1,
+      "size": {
+        "w": 0.5,
+        "h": 0.62
+      },
+      "display": {
+        "mode": "count"
+      }
     }
   ],
   "templates": [
@@ -1850,11 +1882,10 @@
     {
       "id": "shot_nobles_player_b",
       "zones": [
-        "noble_market",
         "player_b_nobles"
       ],
-      "fill": 0.6667,
-      "desc": "框 noble_market、player_b_nobles，占画面 0.6667"
+      "fill": 0.625,
+      "desc": "框玩家B贵族区，占画面 0.625"
     },
     {
       "id": "shot_nobles_f08",
@@ -1905,6 +1936,25 @@
       ],
       "fill": 0.625,
       "desc": "框 gold_supply，占画面 0.625"
+    },
+    {
+      "id": "shot_all_zones_static",
+      "zones": [
+        "*"
+      ],
+      "fill": 0.95,
+      "static": true,
+      "desc": "全景：主树所有 zone 都入镜（包括空玩家区），占画面 0.95"
+    }
+  ],
+  "groups": [
+    {
+      "id": "player_a",
+      "label": "玩家 A 区域"
+    },
+    {
+      "id": "player_b",
+      "label": "玩家 B 区域"
     }
   ]
 }

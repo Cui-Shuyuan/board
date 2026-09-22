@@ -217,7 +217,25 @@ namespace BoardGameTutorial.Animation
     {
         public string zone;
         public string display;   // stage display mode ("stack" / "count" / "")
+        public string role = "zone"; // "zone" | "offstage" (debug overlay skips offstage)
+        public string label = "";    // human-readable zone name for the debug overlay
+        public string group = "";    // optional player-area group, drawn as one larger box
+        public float min_x;
+        public float max_x;
+        public float min_z;
+        public float max_z;
         public List<SlotDef> slots = new List<SlotDef>();
+    }
+
+    [Serializable]
+    public sealed class CompiledGroupDef
+    {
+        public string group;
+        public string label;
+        public float min_x;
+        public float max_x;
+        public float min_z;
+        public float max_z;
     }
 
     [Serializable]
@@ -230,6 +248,7 @@ namespace BoardGameTutorial.Animation
         public float aspect = 1.7778f;
         public string background;
         public List<CompiledZoneDef> zones = new List<CompiledZoneDef>();
+        public List<CompiledGroupDef> groups = new List<CompiledGroupDef>();
         public List<CompiledTemplateDef> templates = new List<CompiledTemplateDef>();
     }
 

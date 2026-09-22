@@ -1,5 +1,8 @@
 using System.IO;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace BoardGameTutorial.Animation
 {
@@ -22,6 +25,11 @@ namespace BoardGameTutorial.Animation
         public bool animationEnabled = true;
         public bool runtimeTrace;
 
+        [Header("Debug")]
+        [Tooltip("调试模式：显示 zone 彩色范围框和左上角调试信息（运行时按 Z 切换）")]
+        public bool debugZones;
+        public KeyCode debugZonesKey = KeyCode.Z;
+
         public string CueId { get; private set; }
         public bool IsLoaded { get; private set; }
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
@@ -35,6 +43,7 @@ namespace BoardGameTutorial.Animation
         private GameObject animRoot;
         private CompiledCueDef currentCue;
         private string gameRoot;
+        private ZoneDebugOverlay zoneDebug;
 
         public bool LoadTrack(string gameRootPath, string trackName = null)
         {
@@ -66,6 +75,12 @@ namespace BoardGameTutorial.Animation
                 animRoot = new GameObject("TutorialAnimV2Root");
                 animRoot.transform.SetParent(transform, false);
             }
+            if (zoneDebug == null)
+            {
+                var debugGo = new GameObject("TutorialZoneDebug");
+                debugGo.transform.SetParent(transform, false);
+                zoneDebug = debugGo.AddComponent<ZoneDebugOverlay>();
+            }
             binder.Init(animRoot.transform, stageRuntime, sprites, cameraDirector.Camera);
             IsLoaded = true;
             return true;
@@ -90,6 +105,7 @@ namespace BoardGameTutorial.Animation
             cameraDirector.SetBackground(stageRuntime.Stage != null ? stageRuntime.Stage.background : null);
             binder.Clear();
             Seek(0f);
+            RebuildZoneDebug();
             return true;
         }
 
@@ -109,6 +125,33 @@ namespace BoardGameTutorial.Animation
             currentCue = null;
             CueId = null;
             binder.Clear();
+            if (zoneDebug != null) zoneDebug.Clear();
+        }
+
+        public void RebuildZoneDebug()
+        {
+            if (zoneDebug == null) return;
+            if (!debugZones)
+            {
+                zoneDebug.Clear();
+                return;
+            }
+            zoneDebug.Sync(stageRuntime.Stage, cameraDirector.Camera);
+        }
+
+        private void Update()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var keyboard = Keyboard.current;
+            bool toggleDebugZones = keyboard != null && keyboard.zKey.wasPressedThisFrame;
+#else
+            bool toggleDebugZones = Input.GetKeyDown(debugZonesKey);
+#endif
+            if (toggleDebugZones)
+            {
+                debugZones = !debugZones;
+                RebuildZoneDebug();
+            }
         }
     }
 }

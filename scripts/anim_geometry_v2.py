@@ -100,6 +100,11 @@ def zone_size(zone: dict) -> tuple[float, float]:
 
 
 def zone_box(zone: dict, count: int) -> tuple[float, float, float, float] | None:
+    """Bounding footprint of a zone, including every visible slot.
+
+    Used consistently by camera framing and the runtime debug overlay; there is
+    intentionally no separate logical/debug box.
+    """
     if not zone:
         return None
     cap = zone_capacity(zone)
@@ -245,10 +250,43 @@ def build_compiled_stage(stage: dict) -> dict:
         })
     board = stage.get("board") or stage or {}
     zone_display = {}
+    zone_debug = {}
     for z in stage.get("zones") or []:
         if not isinstance(z, dict) or not z.get("id"):
             continue
-        zone_display[z["id"]] = ((z.get("display") or {}).get("mode") or "")
+        zid = z["id"]
+        zone_display[zid] = ((z.get("display") or {}).get("mode") or "")
+        box = zone_box(z, zone_capacity(z))
+        if box is not None:
+            min_x, max_x, min_z, max_z = box
+            zone_debug[zid] = {
+                "role": z.get("role") or "zone",
+                "label": z.get("label") or zid,
+                "group": z.get("group") or "",
+                "min_x": round(min_x, 6), "max_x": round(max_x, 6),
+                "min_z": round(min_z, 6), "max_z": round(max_z, 6),
+            }
+    group_decl = {}
+    for g in stage.get("groups") or []:
+        if isinstance(g, dict) and g.get("id"):
+            group_decl[g["id"]] = g
+    group_ids = set(group_decl)
+    group_ids.update(v.get("group") for v in zone_debug.values() if v.get("group"))
+    groups = []
+    for gid in sorted(group_ids):
+        members = [v for v in zone_debug.values() if v.get("group") == gid]
+        if not members:
+            continue
+        decl = group_decl.get(gid) or {}
+        groups.append({
+            "group": gid,
+            "label": decl.get("label") or gid,
+            "min_x": round(min(v["min_x"] for v in members), 6),
+            "max_x": round(max(v["max_x"] for v in members), 6),
+            "min_z": round(min(v["min_z"] for v in members), 6),
+            "max_z": round(max(v["max_z"] for v in members), 6),
+        })
+
     return {
         "schema": "tutorial-stage-compiled/v2",
         "game": stage.get("game", ""),
@@ -256,7 +294,9 @@ def build_compiled_stage(stage: dict) -> dict:
         "pitch": round(num(board.get("camera_pitch", board.get("pitch")), 90.0) or 90.0, 6),
         "aspect": round(num(board.get("aspect"), 1.7778) or 1.7778, 6),
         "background": board.get("background", "#1E2126"),
-        "zones": [{"zone": zid, "display": zone_display.get(zid, ""), "slots": slots}
+        "zones": [dict({"zone": zid, "display": zone_display.get(zid, ""), "slots": slots},
+                       **(zone_debug.get(zid) or {}))
                   for zid, slots in build_slots(stage).items()],
+        "groups": groups,
         "templates": templates,
     }

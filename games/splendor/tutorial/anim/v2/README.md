@@ -1,5 +1,7 @@
 # v2 动画管线（v3 运行时模型）
 
+> LLM/人编写动画脚本前，先读 [LLM-ANIMATION-GUIDE.md](LLM-ANIMATION-GUIDE.md)。
+
 ## 数据模型：三条时间轴
 
 编译产物里每条 cue 由三部分组成：
@@ -18,9 +20,65 @@
    center/ortho/pitch/rect 写进 `camera_ops`。没有 camera 事件的 cue
    沿用上一条 cue 的终态机位（`camera_in`）。
 
+   同一个 cue 内连续两个 camera 事件之间的间隔必须 >= `MIN_CAMERA_SHOT_SECONDS`
+   （当前 `0.4s`）。比这更短的机位只持续一两帧，对观众没有信息量，属于书写事故；
+   schema 校验会直接报错，而不是等到 Unity 里肉眼发现脏帧。
+
 3. **`clips`** — 纯视觉插值。
    位置/缩放/透明度/翻转/洗混。**不得再写 ZoneId/Order/Face**：逻辑状态只由
    `state_ops` 决定。
+
+## 时间锚点（全量）
+
+空间有 `zone + order -> x/z`，时间也有同样的映射层：`anchor + offset -> at`。
+
+- 轨道顶层 `time_anchors` 是“时间坐标声明”，一开始就全部写好；
+  当前 full 轨道有 468 个锚点，覆盖每条 cue 的 start/end 和每个 beat 的 start/end。
+- 所有事件不再写裸 `at`，而是写 `anchor`；只有原始时间点没有正好落在锚点上时，
+  才补一个相对 `offset`。
+- 编译器从 `script.{track}.json` 的 beat 文本 + `{track}.runtime.json` 的
+  TTS word timing 里解析出 cue 内秒数。匹配时按**词流顺序**做
+  “去标点/空白后的连续文本”匹配，所以 TTS 把一句话切成多个 subtitle event
+  也能正确对上。
+- 编译产物仍然是数值 `at`，Unity runtime 不感知锚点。
+
+锚点命名约定：
+
+```text
+<cue_id>.start                   cue 起点（t=0）
+<cue_id>.end                     cue 终点（runtime duration）
+<beat_id>.start                  beat 第一个词 start
+<beat_id>.end                    beat 最后一个词 end
+```
+
+示例：
+
+```json
+"time_anchors": [
+  { "id": "setup.cards.001.1.start",
+    "cue": "setup.cards.001.1", "edge": "cue_start" },
+  { "id": "setup.cards.001.1.b1.start",
+    "cue": "setup.cards.001.1", "beat": "setup.cards.001.1.b1", "edge": "start" }
+]
+```
+
+```json
+{ "op": "camera", "anchor": "setup.cards.001.1.start", "shot": "shot_card_face" }
+{ "op": "create", "anchor": "setup.cards.001.1.b1.start",
+  "zone": "showcase", "template": "sample_card_1" }
+```
+
+`edge` 当前支持：
+
+- `cue_start` / `cue_end`；
+- `start` / `end`：beat 对应字/词流的起止。
+
+维护：
+
+- 一次性迁移脚本：`scripts/migrate_time_anchors_v2.py`；
+- 改完 `script.{track}.json` / TTS 后，如果 beat 增删或时间漂移，重跑该脚本：
+  它会重新生成 `time_anchors`，并把仍是裸 `at` 的事件并入最近锚点；
+- 锚点解析失败、文本对不上、同一 beat 文本歧义都会直接编译失败，不会静默 fallback 到秒数。
 
 ## 父子 cue 属性继承
 

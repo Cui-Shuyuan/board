@@ -26,6 +26,8 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
 PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera"}
+# 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
+MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS
 FACES = {"up", "down", "hidden", None, ""}
 
@@ -69,13 +71,23 @@ def _check_event(report: Report, where: str, ev: dict):
     if op not in OPS:
         report.error(f"{where}: unknown op {op!r}; expected one of {sorted(OPS)}")
         return
-    if "at" not in ev:
-        report.error(f"{where}: event '{op}' missing at")
+    anchor = ev.get("anchor")
+    if anchor is not None:
+        if not isinstance(anchor, str) or not anchor.strip():
+            report.error(f"{where}: event '{op}' anchor must be a non-empty string")
+        if "offset" in ev:
+            try:
+                float(ev["offset"])
+            except (TypeError, ValueError):
+                report.error(f"{where}: event '{op}' offset must be numeric")
     else:
-        try:
-            float(ev["at"])
-        except (TypeError, ValueError):
-            report.error(f"{where}: event '{op}' at must be numeric")
+        if "at" not in ev:
+            report.error(f"{where}: event '{op}' needs at or anchor")
+        else:
+            try:
+                float(ev["at"])
+            except (TypeError, ValueError):
+                report.error(f"{where}: event '{op}' at must be numeric")
 
     if "dur" in ev:
         try:
@@ -504,12 +516,31 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         last_at = -1.0
         for j, ev in enumerate(events):
             _check_event(rep, f"{where}.events[{j}]", ev)
-            if isinstance(ev, dict):
+            if isinstance(ev, dict) and "at" in ev:
                 at = float(ev.get("at", 0.0))
                 if at + 1e-9 < last_at:
                     rep.error(f"{where}.events[{j}]: events are not sorted by at "
                              f"({last_at} -> {at})")
                 last_at = max(last_at, at)
+        camera_events = [ev for ev in events
+                         if isinstance(ev, dict) and ev.get("op") == "camera"]
+        # Anchored camera events are resolved against TTS beats by the compiler;
+        # numeric camera events can be checked here directly.
+        if not any("at" not in ev and ev.get("anchor") for ev in camera_events):
+            camera_times = []
+            for ev in camera_events:
+                at = float(ev.get("at", 0.0) or 0.0) + max(0.0, float(ev.get("lead", 0.0) or 0.0))
+                camera_times.append((at, ev.get("shot", "")))
+            camera_times.sort(key=lambda x: x[0])
+            for j in range(len(camera_times) - 1):
+                t0, shot0 = camera_times[j]
+                t1, shot1 = camera_times[j + 1]
+                hold = t1 - t0
+                if hold < MIN_CAMERA_SHOT_SECONDS - 1e-9:
+                    rep.error(
+                        f"{where}: camera shot {shot0!r} holds only {hold:.3f}s before "
+                        f"{shot1!r}; minimum shot hold is {MIN_CAMERA_SHOT_SECONDS:.2f}s "
+                        f"(one-frame camera shots are authoring bugs)")
         prev = cid
 
     if rep.errors:

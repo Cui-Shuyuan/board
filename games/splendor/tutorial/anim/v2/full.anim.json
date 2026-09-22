@@ -4,6 +4,2596 @@
   "game": "splendor",
   "track": "full",
   "default_tree": "main",
+  "time_anchors": [
+    {
+      "id": "bg.intro.001.1.start",
+      "cue": "bg.intro.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.001.1.end",
+      "cue": "bg.intro.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.001.1.b1.start",
+      "cue": "bg.intro.001.1",
+      "beat": "bg.intro.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.001.1.b1.end",
+      "cue": "bg.intro.001.1",
+      "beat": "bg.intro.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.001.2.start",
+      "cue": "bg.intro.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.001.2.end",
+      "cue": "bg.intro.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.001.2.b1.start",
+      "cue": "bg.intro.001.2",
+      "beat": "bg.intro.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.001.2.b1.end",
+      "cue": "bg.intro.001.2",
+      "beat": "bg.intro.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.001.2.b2.start",
+      "cue": "bg.intro.001.2",
+      "beat": "bg.intro.001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.001.2.b2.end",
+      "cue": "bg.intro.001.2",
+      "beat": "bg.intro.001.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.002.1.start",
+      "cue": "bg.intro.002.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.002.1.end",
+      "cue": "bg.intro.002.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.002.1.b1.start",
+      "cue": "bg.intro.002.1",
+      "beat": "bg.intro.002.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.002.1.b1.end",
+      "cue": "bg.intro.002.1",
+      "beat": "bg.intro.002.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.002.2.start",
+      "cue": "bg.intro.002.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.002.2.end",
+      "cue": "bg.intro.002.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.002.2.b1.start",
+      "cue": "bg.intro.002.2",
+      "beat": "bg.intro.002.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.002.2.b1.end",
+      "cue": "bg.intro.002.2",
+      "beat": "bg.intro.002.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.002.3.start",
+      "cue": "bg.intro.002.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.002.3.end",
+      "cue": "bg.intro.002.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.002.3.b1.start",
+      "cue": "bg.intro.002.3",
+      "beat": "bg.intro.002.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.002.3.b1.end",
+      "cue": "bg.intro.002.3",
+      "beat": "bg.intro.002.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.003.1.start",
+      "cue": "bg.intro.003.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.003.1.end",
+      "cue": "bg.intro.003.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.003.1.b1.start",
+      "cue": "bg.intro.003.1",
+      "beat": "bg.intro.003.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.003.1.b1.end",
+      "cue": "bg.intro.003.1",
+      "beat": "bg.intro.003.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.003.2.start",
+      "cue": "bg.intro.003.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.003.2.end",
+      "cue": "bg.intro.003.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.003.2.b1.start",
+      "cue": "bg.intro.003.2",
+      "beat": "bg.intro.003.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.003.2.b1.end",
+      "cue": "bg.intro.003.2",
+      "beat": "bg.intro.003.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.003.2.b2.start",
+      "cue": "bg.intro.003.2",
+      "beat": "bg.intro.003.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.003.2.b2.end",
+      "cue": "bg.intro.003.2",
+      "beat": "bg.intro.003.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "bg.intro.003.3.start",
+      "cue": "bg.intro.003.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "bg.intro.003.3.end",
+      "cue": "bg.intro.003.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "bg.intro.003.3.b1.start",
+      "cue": "bg.intro.003.3",
+      "beat": "bg.intro.003.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "bg.intro.003.3.b1.end",
+      "cue": "bg.intro.003.3",
+      "beat": "bg.intro.003.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.001.1.start",
+      "cue": "setup.cards.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.cards.001.1.end",
+      "cue": "setup.cards.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.cards.001.1.b1.start",
+      "cue": "setup.cards.001.1",
+      "beat": "setup.cards.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.001.1.b1.end",
+      "cue": "setup.cards.001.1",
+      "beat": "setup.cards.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.001.1.b2.start",
+      "cue": "setup.cards.001.1",
+      "beat": "setup.cards.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.001.1.b2.end",
+      "cue": "setup.cards.001.1",
+      "beat": "setup.cards.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.001.2.start",
+      "cue": "setup.cards.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.cards.001.2.end",
+      "cue": "setup.cards.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.cards.001.2.b1.start",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.001.2.b1.end",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.001.3.start",
+      "cue": "setup.cards.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.cards.001.3.end",
+      "cue": "setup.cards.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.cards.001.3.b1.start",
+      "cue": "setup.cards.001.3",
+      "beat": "setup.cards.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.001.3.b1.end",
+      "cue": "setup.cards.001.3",
+      "beat": "setup.cards.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.002.1.start",
+      "cue": "setup.cards.002.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.cards.002.1.end",
+      "cue": "setup.cards.002.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.cards.002.1.b1.start",
+      "cue": "setup.cards.002.1",
+      "beat": "setup.cards.002.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.002.1.b1.end",
+      "cue": "setup.cards.002.1",
+      "beat": "setup.cards.002.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.002.1.b2.start",
+      "cue": "setup.cards.002.1",
+      "beat": "setup.cards.002.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.002.1.b2.end",
+      "cue": "setup.cards.002.1",
+      "beat": "setup.cards.002.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.002.2.start",
+      "cue": "setup.cards.002.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.cards.002.2.end",
+      "cue": "setup.cards.002.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.cards.002.2.b1.start",
+      "cue": "setup.cards.002.2",
+      "beat": "setup.cards.002.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.002.2.b1.end",
+      "cue": "setup.cards.002.2",
+      "beat": "setup.cards.002.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.001.1.start",
+      "cue": "setup.gems.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.001.1.end",
+      "cue": "setup.gems.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.001.1.b1.start",
+      "cue": "setup.gems.001.1",
+      "beat": "setup.gems.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.001.1.b1.end",
+      "cue": "setup.gems.001.1",
+      "beat": "setup.gems.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.001.2.start",
+      "cue": "setup.gems.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.001.2.end",
+      "cue": "setup.gems.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.001.2.b1.start",
+      "cue": "setup.gems.001.2",
+      "beat": "setup.gems.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.001.2.b1.end",
+      "cue": "setup.gems.001.2",
+      "beat": "setup.gems.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.001.3.start",
+      "cue": "setup.gems.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.001.3.end",
+      "cue": "setup.gems.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.001.3.b1.start",
+      "cue": "setup.gems.001.3",
+      "beat": "setup.gems.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.001.3.b1.end",
+      "cue": "setup.gems.001.3",
+      "beat": "setup.gems.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.002.start",
+      "cue": "setup.gems.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.002.end",
+      "cue": "setup.gems.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.002.b1.start",
+      "cue": "setup.gems.002",
+      "beat": "setup.gems.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.002.b1.end",
+      "cue": "setup.gems.002",
+      "beat": "setup.gems.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.002.b2.start",
+      "cue": "setup.gems.002",
+      "beat": "setup.gems.002.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.002.b2.end",
+      "cue": "setup.gems.002",
+      "beat": "setup.gems.002.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.003.1.start",
+      "cue": "setup.gems.003.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.003.1.end",
+      "cue": "setup.gems.003.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.003.1.b1.start",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.003.1.b1.end",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.003.1.b2.start",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.003.1.b2.end",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.003.2.start",
+      "cue": "setup.gems.003.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.003.2.end",
+      "cue": "setup.gems.003.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.003.2.b1.start",
+      "cue": "setup.gems.003.2",
+      "beat": "setup.gems.003.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.003.2.b1.end",
+      "cue": "setup.gems.003.2",
+      "beat": "setup.gems.003.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.004.start",
+      "cue": "setup.gems.004",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.004.end",
+      "cue": "setup.gems.004",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.004.b1.start",
+      "cue": "setup.gems.004",
+      "beat": "setup.gems.004.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.004.b1.end",
+      "cue": "setup.gems.004",
+      "beat": "setup.gems.004.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.005.1.start",
+      "cue": "setup.gems.005.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.005.1.end",
+      "cue": "setup.gems.005.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.005.1.b1.start",
+      "cue": "setup.gems.005.1",
+      "beat": "setup.gems.005.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.005.1.b1.end",
+      "cue": "setup.gems.005.1",
+      "beat": "setup.gems.005.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.005.2.start",
+      "cue": "setup.gems.005.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.gems.005.2.end",
+      "cue": "setup.gems.005.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.gems.005.2.b1.start",
+      "cue": "setup.gems.005.2",
+      "beat": "setup.gems.005.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.005.2.b1.end",
+      "cue": "setup.gems.005.2",
+      "beat": "setup.gems.005.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.gems.005.2.b2.start",
+      "cue": "setup.gems.005.2",
+      "beat": "setup.gems.005.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup.gems.005.2.b2.end",
+      "cue": "setup.gems.005.2",
+      "beat": "setup.gems.005.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.nobles.001.1.start",
+      "cue": "setup.nobles.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.nobles.001.1.end",
+      "cue": "setup.nobles.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.nobles.001.1.b1.start",
+      "cue": "setup.nobles.001.1",
+      "beat": "setup.nobles.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.nobles.001.1.b1.end",
+      "cue": "setup.nobles.001.1",
+      "beat": "setup.nobles.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.nobles.001.2.start",
+      "cue": "setup.nobles.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.nobles.001.2.end",
+      "cue": "setup.nobles.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.nobles.001.2.b1.start",
+      "cue": "setup.nobles.001.2",
+      "beat": "setup.nobles.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.nobles.001.2.b1.end",
+      "cue": "setup.nobles.001.2",
+      "beat": "setup.nobles.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.nobles.002.start",
+      "cue": "setup.nobles.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.nobles.002.end",
+      "cue": "setup.nobles.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.nobles.002.b1.start",
+      "cue": "setup.nobles.002",
+      "beat": "setup.nobles.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.nobles.002.b1.end",
+      "cue": "setup.nobles.002",
+      "beat": "setup.nobles.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.starting_player.001.1.start",
+      "cue": "setup.starting_player.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.starting_player.001.1.end",
+      "cue": "setup.starting_player.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.starting_player.001.1.b1.start",
+      "cue": "setup.starting_player.001.1",
+      "beat": "setup.starting_player.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.starting_player.001.1.b1.end",
+      "cue": "setup.starting_player.001.1",
+      "beat": "setup.starting_player.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.starting_player.001.1.b2.start",
+      "cue": "setup.starting_player.001.1",
+      "beat": "setup.starting_player.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup.starting_player.001.1.b2.end",
+      "cue": "setup.starting_player.001.1",
+      "beat": "setup.starting_player.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.starting_player.001.2.start",
+      "cue": "setup.starting_player.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.starting_player.001.2.end",
+      "cue": "setup.starting_player.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.starting_player.001.2.b1.start",
+      "cue": "setup.starting_player.001.2",
+      "beat": "setup.starting_player.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.starting_player.001.2.b1.end",
+      "cue": "setup.starting_player.001.2",
+      "beat": "setup.starting_player.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.starting_player.001.3.start",
+      "cue": "setup.starting_player.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.starting_player.001.3.end",
+      "cue": "setup.starting_player.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.starting_player.001.3.b1.start",
+      "cue": "setup.starting_player.001.3",
+      "beat": "setup.starting_player.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.starting_player.001.3.b1.end",
+      "cue": "setup.starting_player.001.3",
+      "beat": "setup.starting_player.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.starting_player.001.4.start",
+      "cue": "setup.starting_player.001.4",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.starting_player.001.4.end",
+      "cue": "setup.starting_player.001.4",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.starting_player.001.4.b1.start",
+      "cue": "setup.starting_player.001.4",
+      "beat": "setup.starting_player.001.4.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.starting_player.001.4.b1.end",
+      "cue": "setup.starting_player.001.4",
+      "beat": "setup.starting_player.001.4.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.end.001.1.start",
+      "cue": "setup.end.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.end.001.1.end",
+      "cue": "setup.end.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.end.001.1.b1.start",
+      "cue": "setup.end.001.1",
+      "beat": "setup.end.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.end.001.1.b1.end",
+      "cue": "setup.end.001.1",
+      "beat": "setup.end.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.end.001.2.start",
+      "cue": "setup.end.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.end.001.2.end",
+      "cue": "setup.end.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.end.001.2.b1.start",
+      "cue": "setup.end.001.2",
+      "beat": "setup.end.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.end.001.2.b1.end",
+      "cue": "setup.end.001.2",
+      "beat": "setup.end.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.end.001.3.start",
+      "cue": "setup.end.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.end.001.3.end",
+      "cue": "setup.end.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.end.001.3.b1.start",
+      "cue": "setup.end.001.3",
+      "beat": "setup.end.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.end.001.3.b1.end",
+      "cue": "setup.end.001.3",
+      "beat": "setup.end.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.end.001.4.start",
+      "cue": "setup.end.001.4",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.end.001.4.end",
+      "cue": "setup.end.001.4",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.end.001.4.b1.start",
+      "cue": "setup.end.001.4",
+      "beat": "setup.end.001.4.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.end.001.4.b1.end",
+      "cue": "setup.end.001.4",
+      "beat": "setup.end.001.4.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup.end.002.start",
+      "cue": "setup.end.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup.end.002.end",
+      "cue": "setup.end.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup.end.002.b1.start",
+      "cue": "setup.end.002",
+      "beat": "setup.end.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup.end.002.b1.end",
+      "cue": "setup.end.002",
+      "beat": "setup.end.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.turn.001.start",
+      "cue": "action.turn.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.turn.001.end",
+      "cue": "action.turn.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.turn.001.b1.start",
+      "cue": "action.turn.001",
+      "beat": "action.turn.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.turn.001.b1.end",
+      "cue": "action.turn.001",
+      "beat": "action.turn.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.turn.002.start",
+      "cue": "action.turn.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.turn.002.end",
+      "cue": "action.turn.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.turn.002.b1.start",
+      "cue": "action.turn.002",
+      "beat": "action.turn.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.turn.002.b1.end",
+      "cue": "action.turn.002",
+      "beat": "action.turn.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.different.001.start",
+      "cue": "action.take.different.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.different.001.end",
+      "cue": "action.take.different.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.different.001.b1.start",
+      "cue": "action.take.different.001",
+      "beat": "action.take.different.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.different.001.b1.end",
+      "cue": "action.take.different.001",
+      "beat": "action.take.different.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.same.001.start",
+      "cue": "action.take.same.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.same.001.end",
+      "cue": "action.take.same.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.same.001.b1.start",
+      "cue": "action.take.same.001",
+      "beat": "action.take.same.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.same.001.b1.end",
+      "cue": "action.take.same.001",
+      "beat": "action.take.same.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.same.002.start",
+      "cue": "action.take.same.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.same.002.end",
+      "cue": "action.take.same.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.same.002.b1.start",
+      "cue": "action.take.same.002",
+      "beat": "action.take.same.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.same.002.b1.end",
+      "cue": "action.take.same.002",
+      "beat": "action.take.same.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.draw_rule.001.1.start",
+      "cue": "action.take.draw_rule.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.draw_rule.001.1.end",
+      "cue": "action.take.draw_rule.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.draw_rule.001.1.b1.start",
+      "cue": "action.take.draw_rule.001.1",
+      "beat": "action.take.draw_rule.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.draw_rule.001.1.b1.end",
+      "cue": "action.take.draw_rule.001.1",
+      "beat": "action.take.draw_rule.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.draw_rule.001.2.start",
+      "cue": "action.take.draw_rule.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.draw_rule.001.2.end",
+      "cue": "action.take.draw_rule.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.draw_rule.001.2.b1.start",
+      "cue": "action.take.draw_rule.001.2",
+      "beat": "action.take.draw_rule.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.draw_rule.001.2.b1.end",
+      "cue": "action.take.draw_rule.001.2",
+      "beat": "action.take.draw_rule.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.limit.001.1.start",
+      "cue": "action.take.limit.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.limit.001.1.end",
+      "cue": "action.take.limit.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.limit.001.1.b1.start",
+      "cue": "action.take.limit.001.1",
+      "beat": "action.take.limit.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.limit.001.1.b1.end",
+      "cue": "action.take.limit.001.1",
+      "beat": "action.take.limit.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.limit.001.1.b2.start",
+      "cue": "action.take.limit.001.1",
+      "beat": "action.take.limit.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.limit.001.1.b2.end",
+      "cue": "action.take.limit.001.1",
+      "beat": "action.take.limit.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.limit.001.2.start",
+      "cue": "action.take.limit.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.limit.001.2.end",
+      "cue": "action.take.limit.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.limit.001.2.b1.start",
+      "cue": "action.take.limit.001.2",
+      "beat": "action.take.limit.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.limit.001.2.b1.end",
+      "cue": "action.take.limit.001.2",
+      "beat": "action.take.limit.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.public.001.1.start",
+      "cue": "action.take.public.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.public.001.1.end",
+      "cue": "action.take.public.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.public.001.1.b1.start",
+      "cue": "action.take.public.001.1",
+      "beat": "action.take.public.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.public.001.1.b1.end",
+      "cue": "action.take.public.001.1",
+      "beat": "action.take.public.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.take.public.001.2.start",
+      "cue": "action.take.public.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.take.public.001.2.end",
+      "cue": "action.take.public.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.take.public.001.2.b1.start",
+      "cue": "action.take.public.001.2",
+      "beat": "action.take.public.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.take.public.001.2.b1.end",
+      "cue": "action.take.public.001.2",
+      "beat": "action.take.public.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.intro.001.start",
+      "cue": "action.cards.intro.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.intro.001.end",
+      "cue": "action.cards.intro.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.intro.001.b1.start",
+      "cue": "action.cards.intro.001",
+      "beat": "action.cards.intro.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.intro.001.b1.end",
+      "cue": "action.cards.intro.001",
+      "beat": "action.cards.intro.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.cost.001.1.start",
+      "cue": "action.cards.cost.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.cost.001.1.end",
+      "cue": "action.cards.cost.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.cost.001.1.b1.start",
+      "cue": "action.cards.cost.001.1",
+      "beat": "action.cards.cost.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.cost.001.1.b1.end",
+      "cue": "action.cards.cost.001.1",
+      "beat": "action.cards.cost.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.cost.001.1.b2.start",
+      "cue": "action.cards.cost.001.1",
+      "beat": "action.cards.cost.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.cost.001.1.b2.end",
+      "cue": "action.cards.cost.001.1",
+      "beat": "action.cards.cost.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.cost.001.2.start",
+      "cue": "action.cards.cost.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.cost.001.2.end",
+      "cue": "action.cards.cost.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.cost.001.2.b1.start",
+      "cue": "action.cards.cost.001.2",
+      "beat": "action.cards.cost.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.cost.001.2.b1.end",
+      "cue": "action.cards.cost.001.2",
+      "beat": "action.cards.cost.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.cost.001.3.start",
+      "cue": "action.cards.cost.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.cost.001.3.end",
+      "cue": "action.cards.cost.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.cost.001.3.b1.start",
+      "cue": "action.cards.cost.001.3",
+      "beat": "action.cards.cost.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.cost.001.3.b1.end",
+      "cue": "action.cards.cost.001.3",
+      "beat": "action.cards.cost.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.market.001.1.start",
+      "cue": "action.cards.market.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.market.001.1.end",
+      "cue": "action.cards.market.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.market.001.1.b1.start",
+      "cue": "action.cards.market.001.1",
+      "beat": "action.cards.market.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.market.001.1.b1.end",
+      "cue": "action.cards.market.001.1",
+      "beat": "action.cards.market.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.market.001.2.start",
+      "cue": "action.cards.market.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.market.001.2.end",
+      "cue": "action.cards.market.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.market.001.2.b1.start",
+      "cue": "action.cards.market.001.2",
+      "beat": "action.cards.market.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.market.001.2.b1.end",
+      "cue": "action.cards.market.001.2",
+      "beat": "action.cards.market.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.market.001.3.start",
+      "cue": "action.cards.market.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.market.001.3.end",
+      "cue": "action.cards.market.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.market.001.3.b1.start",
+      "cue": "action.cards.market.001.3",
+      "beat": "action.cards.market.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.market.001.3.b1.end",
+      "cue": "action.cards.market.001.3",
+      "beat": "action.cards.market.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.market.001.4.start",
+      "cue": "action.cards.market.001.4",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.market.001.4.end",
+      "cue": "action.cards.market.001.4",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.market.001.4.b1.start",
+      "cue": "action.cards.market.001.4",
+      "beat": "action.cards.market.001.4.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.market.001.4.b1.end",
+      "cue": "action.cards.market.001.4",
+      "beat": "action.cards.market.001.4.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.prestige.001.1.start",
+      "cue": "action.cards.prestige.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.prestige.001.1.end",
+      "cue": "action.cards.prestige.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.prestige.001.1.b1.start",
+      "cue": "action.cards.prestige.001.1",
+      "beat": "action.cards.prestige.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.prestige.001.1.b1.end",
+      "cue": "action.cards.prestige.001.1",
+      "beat": "action.cards.prestige.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.prestige.001.1.b2.start",
+      "cue": "action.cards.prestige.001.1",
+      "beat": "action.cards.prestige.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.prestige.001.1.b2.end",
+      "cue": "action.cards.prestige.001.1",
+      "beat": "action.cards.prestige.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.prestige.001.2.start",
+      "cue": "action.cards.prestige.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.prestige.001.2.end",
+      "cue": "action.cards.prestige.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.prestige.001.2.b1.start",
+      "cue": "action.cards.prestige.001.2",
+      "beat": "action.cards.prestige.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.prestige.001.2.b1.end",
+      "cue": "action.cards.prestige.001.2",
+      "beat": "action.cards.prestige.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.prestige.001.2.b2.start",
+      "cue": "action.cards.prestige.001.2",
+      "beat": "action.cards.prestige.001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.prestige.001.2.b2.end",
+      "cue": "action.cards.prestige.001.2",
+      "beat": "action.cards.prestige.001.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.discount.001.start",
+      "cue": "action.cards.discount.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.discount.001.end",
+      "cue": "action.cards.discount.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.discount.001.b1.start",
+      "cue": "action.cards.discount.001",
+      "beat": "action.cards.discount.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.discount.001.b1.end",
+      "cue": "action.cards.discount.001",
+      "beat": "action.cards.discount.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.discount.002.1.start",
+      "cue": "action.cards.discount.002.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.discount.002.1.end",
+      "cue": "action.cards.discount.002.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.discount.002.1.b1.start",
+      "cue": "action.cards.discount.002.1",
+      "beat": "action.cards.discount.002.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.discount.002.1.b1.end",
+      "cue": "action.cards.discount.002.1",
+      "beat": "action.cards.discount.002.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.discount.002.2.start",
+      "cue": "action.cards.discount.002.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.discount.002.2.end",
+      "cue": "action.cards.discount.002.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.discount.002.2.b1.start",
+      "cue": "action.cards.discount.002.2",
+      "beat": "action.cards.discount.002.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.discount.002.2.b1.end",
+      "cue": "action.cards.discount.002.2",
+      "beat": "action.cards.discount.002.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.discount.003.1.start",
+      "cue": "action.cards.discount.003.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.discount.003.1.end",
+      "cue": "action.cards.discount.003.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.discount.003.1.b1.start",
+      "cue": "action.cards.discount.003.1",
+      "beat": "action.cards.discount.003.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.discount.003.1.b1.end",
+      "cue": "action.cards.discount.003.1",
+      "beat": "action.cards.discount.003.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.discount.003.2.start",
+      "cue": "action.cards.discount.003.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.discount.003.2.end",
+      "cue": "action.cards.discount.003.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.discount.003.2.b1.start",
+      "cue": "action.cards.discount.003.2",
+      "beat": "action.cards.discount.003.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.discount.003.2.b1.end",
+      "cue": "action.cards.discount.003.2",
+      "beat": "action.cards.discount.003.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.discount.003.3.start",
+      "cue": "action.cards.discount.003.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.discount.003.3.end",
+      "cue": "action.cards.discount.003.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.discount.003.3.b1.start",
+      "cue": "action.cards.discount.003.3",
+      "beat": "action.cards.discount.003.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.discount.003.3.b1.end",
+      "cue": "action.cards.discount.003.3",
+      "beat": "action.cards.discount.003.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.public.001.1.start",
+      "cue": "action.cards.public.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.public.001.1.end",
+      "cue": "action.cards.public.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.public.001.1.b1.start",
+      "cue": "action.cards.public.001.1",
+      "beat": "action.cards.public.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.public.001.1.b1.end",
+      "cue": "action.cards.public.001.1",
+      "beat": "action.cards.public.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.public.001.2.start",
+      "cue": "action.cards.public.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.public.001.2.end",
+      "cue": "action.cards.public.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.public.001.2.b1.start",
+      "cue": "action.cards.public.001.2",
+      "beat": "action.cards.public.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.public.001.2.b1.end",
+      "cue": "action.cards.public.001.2",
+      "beat": "action.cards.public.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.limit.001.1.start",
+      "cue": "action.cards.limit.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.limit.001.1.end",
+      "cue": "action.cards.limit.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.limit.001.1.b1.start",
+      "cue": "action.cards.limit.001.1",
+      "beat": "action.cards.limit.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.limit.001.1.b1.end",
+      "cue": "action.cards.limit.001.1",
+      "beat": "action.cards.limit.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.limit.001.2.start",
+      "cue": "action.cards.limit.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.limit.001.2.end",
+      "cue": "action.cards.limit.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.limit.001.2.b1.start",
+      "cue": "action.cards.limit.001.2",
+      "beat": "action.cards.limit.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.limit.001.2.b1.end",
+      "cue": "action.cards.limit.001.2",
+      "beat": "action.cards.limit.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.intro.001.start",
+      "cue": "action.nobles.intro.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.intro.001.end",
+      "cue": "action.nobles.intro.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.intro.001.b1.start",
+      "cue": "action.nobles.intro.001",
+      "beat": "action.nobles.intro.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.intro.001.b1.end",
+      "cue": "action.nobles.intro.001",
+      "beat": "action.nobles.intro.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.value.001.1.start",
+      "cue": "action.nobles.value.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.value.001.1.end",
+      "cue": "action.nobles.value.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.value.001.1.b1.start",
+      "cue": "action.nobles.value.001.1",
+      "beat": "action.nobles.value.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.value.001.1.b1.end",
+      "cue": "action.nobles.value.001.1",
+      "beat": "action.nobles.value.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.value.001.2.start",
+      "cue": "action.nobles.value.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.value.001.2.end",
+      "cue": "action.nobles.value.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.value.001.2.b1.start",
+      "cue": "action.nobles.value.001.2",
+      "beat": "action.nobles.value.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.value.001.2.b1.end",
+      "cue": "action.nobles.value.001.2",
+      "beat": "action.nobles.value.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.trigger.001.1.start",
+      "cue": "action.nobles.trigger.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.trigger.001.1.end",
+      "cue": "action.nobles.trigger.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.trigger.001.1.b1.start",
+      "cue": "action.nobles.trigger.001.1",
+      "beat": "action.nobles.trigger.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.trigger.001.1.b1.end",
+      "cue": "action.nobles.trigger.001.1",
+      "beat": "action.nobles.trigger.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.trigger.001.2.start",
+      "cue": "action.nobles.trigger.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.trigger.001.2.end",
+      "cue": "action.nobles.trigger.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.trigger.001.2.b1.start",
+      "cue": "action.nobles.trigger.001.2",
+      "beat": "action.nobles.trigger.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.trigger.001.2.b1.end",
+      "cue": "action.nobles.trigger.001.2",
+      "beat": "action.nobles.trigger.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.trigger.001.3.start",
+      "cue": "action.nobles.trigger.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.trigger.001.3.end",
+      "cue": "action.nobles.trigger.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.trigger.001.3.b1.start",
+      "cue": "action.nobles.trigger.001.3",
+      "beat": "action.nobles.trigger.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.trigger.001.3.b1.end",
+      "cue": "action.nobles.trigger.001.3",
+      "beat": "action.nobles.trigger.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.forced.001.1.start",
+      "cue": "action.nobles.forced.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.forced.001.1.end",
+      "cue": "action.nobles.forced.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.forced.001.1.b1.start",
+      "cue": "action.nobles.forced.001.1",
+      "beat": "action.nobles.forced.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.forced.001.1.b1.end",
+      "cue": "action.nobles.forced.001.1",
+      "beat": "action.nobles.forced.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.forced.001.2.start",
+      "cue": "action.nobles.forced.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.forced.001.2.end",
+      "cue": "action.nobles.forced.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.forced.001.2.b1.start",
+      "cue": "action.nobles.forced.001.2",
+      "beat": "action.nobles.forced.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.forced.001.2.b1.end",
+      "cue": "action.nobles.forced.001.2",
+      "beat": "action.nobles.forced.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.source.001.start",
+      "cue": "action.nobles.source.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.source.001.end",
+      "cue": "action.nobles.source.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.source.001.b1.start",
+      "cue": "action.nobles.source.001",
+      "beat": "action.nobles.source.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.source.001.b1.end",
+      "cue": "action.nobles.source.001",
+      "beat": "action.nobles.source.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.choice.001.1.start",
+      "cue": "action.nobles.choice.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.choice.001.1.end",
+      "cue": "action.nobles.choice.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.choice.001.1.b1.start",
+      "cue": "action.nobles.choice.001.1",
+      "beat": "action.nobles.choice.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.choice.001.1.b1.end",
+      "cue": "action.nobles.choice.001.1",
+      "beat": "action.nobles.choice.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.choice.001.2.start",
+      "cue": "action.nobles.choice.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.choice.001.2.end",
+      "cue": "action.nobles.choice.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.choice.001.2.b1.start",
+      "cue": "action.nobles.choice.001.2",
+      "beat": "action.nobles.choice.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.choice.001.2.b1.end",
+      "cue": "action.nobles.choice.001.2",
+      "beat": "action.nobles.choice.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.repeat.001.1.start",
+      "cue": "action.nobles.repeat.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.repeat.001.1.end",
+      "cue": "action.nobles.repeat.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.repeat.001.1.b1.start",
+      "cue": "action.nobles.repeat.001.1",
+      "beat": "action.nobles.repeat.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.repeat.001.1.b1.end",
+      "cue": "action.nobles.repeat.001.1",
+      "beat": "action.nobles.repeat.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.repeat.001.2.start",
+      "cue": "action.nobles.repeat.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.repeat.001.2.end",
+      "cue": "action.nobles.repeat.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.repeat.001.2.b1.start",
+      "cue": "action.nobles.repeat.001.2",
+      "beat": "action.nobles.repeat.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.repeat.001.2.b1.end",
+      "cue": "action.nobles.repeat.001.2",
+      "beat": "action.nobles.repeat.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.nobles.repeat.001.3.start",
+      "cue": "action.nobles.repeat.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.nobles.repeat.001.3.end",
+      "cue": "action.nobles.repeat.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.nobles.repeat.001.3.b1.start",
+      "cue": "action.nobles.repeat.001.3",
+      "beat": "action.nobles.repeat.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.nobles.repeat.001.3.b1.end",
+      "cue": "action.nobles.repeat.001.3",
+      "beat": "action.nobles.repeat.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.summary.001.1.start",
+      "cue": "action.cards.summary.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.summary.001.1.end",
+      "cue": "action.cards.summary.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.summary.001.1.b1.start",
+      "cue": "action.cards.summary.001.1",
+      "beat": "action.cards.summary.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.summary.001.1.b1.end",
+      "cue": "action.cards.summary.001.1",
+      "beat": "action.cards.summary.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.summary.001.2.start",
+      "cue": "action.cards.summary.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.summary.001.2.end",
+      "cue": "action.cards.summary.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.summary.001.2.b1.start",
+      "cue": "action.cards.summary.001.2",
+      "beat": "action.cards.summary.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.summary.001.2.b1.end",
+      "cue": "action.cards.summary.001.2",
+      "beat": "action.cards.summary.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.summary.001.3.start",
+      "cue": "action.cards.summary.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.cards.summary.001.3.end",
+      "cue": "action.cards.summary.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.cards.summary.001.3.b1.start",
+      "cue": "action.cards.summary.001.3",
+      "beat": "action.cards.summary.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.summary.001.3.b1.end",
+      "cue": "action.cards.summary.001.3",
+      "beat": "action.cards.summary.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.intro.001.1.start",
+      "cue": "action.reserve.intro.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.intro.001.1.end",
+      "cue": "action.reserve.intro.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.intro.001.1.b1.start",
+      "cue": "action.reserve.intro.001.1",
+      "beat": "action.reserve.intro.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.intro.001.1.b1.end",
+      "cue": "action.reserve.intro.001.1",
+      "beat": "action.reserve.intro.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.intro.001.2.start",
+      "cue": "action.reserve.intro.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.intro.001.2.end",
+      "cue": "action.reserve.intro.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.intro.001.2.b1.start",
+      "cue": "action.reserve.intro.001.2",
+      "beat": "action.reserve.intro.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.intro.001.2.b1.end",
+      "cue": "action.reserve.intro.001.2",
+      "beat": "action.reserve.intro.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.gold.001.start",
+      "cue": "action.reserve.gold.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.gold.001.end",
+      "cue": "action.reserve.gold.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.gold.001.b1.start",
+      "cue": "action.reserve.gold.001",
+      "beat": "action.reserve.gold.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.gold.001.b1.end",
+      "cue": "action.reserve.gold.001",
+      "beat": "action.reserve.gold.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.deck.001.start",
+      "cue": "action.reserve.deck.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.deck.001.end",
+      "cue": "action.reserve.deck.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.deck.001.b1.start",
+      "cue": "action.reserve.deck.001",
+      "beat": "action.reserve.deck.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.deck.001.b1.end",
+      "cue": "action.reserve.deck.001",
+      "beat": "action.reserve.deck.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.notes_intro.001.start",
+      "cue": "action.reserve.notes_intro.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.notes_intro.001.end",
+      "cue": "action.reserve.notes_intro.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.notes_intro.001.b1.start",
+      "cue": "action.reserve.notes_intro.001",
+      "beat": "action.reserve.notes_intro.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.notes_intro.001.b1.end",
+      "cue": "action.reserve.notes_intro.001",
+      "beat": "action.reserve.notes_intro.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.1.start",
+      "cue": "action.reserve.limit_gold.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.1.end",
+      "cue": "action.reserve.limit_gold.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.1.b1.start",
+      "cue": "action.reserve.limit_gold.001.1",
+      "beat": "action.reserve.limit_gold.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.1.b1.end",
+      "cue": "action.reserve.limit_gold.001.1",
+      "beat": "action.reserve.limit_gold.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.2.start",
+      "cue": "action.reserve.limit_gold.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.2.end",
+      "cue": "action.reserve.limit_gold.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.2.b1.start",
+      "cue": "action.reserve.limit_gold.001.2",
+      "beat": "action.reserve.limit_gold.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.limit_gold.001.2.b1.end",
+      "cue": "action.reserve.limit_gold.001.2",
+      "beat": "action.reserve.limit_gold.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.1.start",
+      "cue": "action.reserve.limit_hand.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.1.end",
+      "cue": "action.reserve.limit_hand.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.1.b1.start",
+      "cue": "action.reserve.limit_hand.001.1",
+      "beat": "action.reserve.limit_hand.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.1.b1.end",
+      "cue": "action.reserve.limit_hand.001.1",
+      "beat": "action.reserve.limit_hand.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2.start",
+      "cue": "action.reserve.limit_hand.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2.end",
+      "cue": "action.reserve.limit_hand.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2.b1.start",
+      "cue": "action.reserve.limit_hand.001.2",
+      "beat": "action.reserve.limit_hand.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2.b1.end",
+      "cue": "action.reserve.limit_hand.001.2",
+      "beat": "action.reserve.limit_hand.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2.b2.start",
+      "cue": "action.reserve.limit_hand.001.2",
+      "beat": "action.reserve.limit_hand.001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.limit_hand.001.2.b2.end",
+      "cue": "action.reserve.limit_hand.001.2",
+      "beat": "action.reserve.limit_hand.001.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.private.001.1.start",
+      "cue": "action.reserve.private.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.private.001.1.end",
+      "cue": "action.reserve.private.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.private.001.1.b1.start",
+      "cue": "action.reserve.private.001.1",
+      "beat": "action.reserve.private.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.private.001.1.b1.end",
+      "cue": "action.reserve.private.001.1",
+      "beat": "action.reserve.private.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.private.001.2.start",
+      "cue": "action.reserve.private.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.private.001.2.end",
+      "cue": "action.reserve.private.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.private.001.2.b1.start",
+      "cue": "action.reserve.private.001.2",
+      "beat": "action.reserve.private.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.private.001.2.b1.end",
+      "cue": "action.reserve.private.001.2",
+      "beat": "action.reserve.private.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.private.002.start",
+      "cue": "action.reserve.private.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.private.002.end",
+      "cue": "action.reserve.private.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.private.002.b1.start",
+      "cue": "action.reserve.private.002",
+      "beat": "action.reserve.private.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.private.002.b1.end",
+      "cue": "action.reserve.private.002",
+      "beat": "action.reserve.private.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.reserve.not_purchase.001.start",
+      "cue": "action.reserve.not_purchase.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.reserve.not_purchase.001.end",
+      "cue": "action.reserve.not_purchase.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.reserve.not_purchase.001.b1.start",
+      "cue": "action.reserve.not_purchase.001",
+      "beat": "action.reserve.not_purchase.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.reserve.not_purchase.001.b1.end",
+      "cue": "action.reserve.not_purchase.001",
+      "beat": "action.reserve.not_purchase.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.purchase_reserved.001.start",
+      "cue": "action.purchase_reserved.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.purchase_reserved.001.end",
+      "cue": "action.purchase_reserved.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.purchase_reserved.001.b1.start",
+      "cue": "action.purchase_reserved.001",
+      "beat": "action.purchase_reserved.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.purchase_reserved.001.b1.end",
+      "cue": "action.purchase_reserved.001",
+      "beat": "action.purchase_reserved.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.purchase_reserved.002.1.start",
+      "cue": "action.purchase_reserved.002.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.purchase_reserved.002.1.end",
+      "cue": "action.purchase_reserved.002.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.purchase_reserved.002.1.b1.start",
+      "cue": "action.purchase_reserved.002.1",
+      "beat": "action.purchase_reserved.002.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.purchase_reserved.002.1.b1.end",
+      "cue": "action.purchase_reserved.002.1",
+      "beat": "action.purchase_reserved.002.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.purchase_reserved.002.2.start",
+      "cue": "action.purchase_reserved.002.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.purchase_reserved.002.2.end",
+      "cue": "action.purchase_reserved.002.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.purchase_reserved.002.2.b1.start",
+      "cue": "action.purchase_reserved.002.2",
+      "beat": "action.purchase_reserved.002.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.purchase_reserved.002.2.b1.end",
+      "cue": "action.purchase_reserved.002.2",
+      "beat": "action.purchase_reserved.002.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.summary.001.start",
+      "cue": "action.summary.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.summary.001.end",
+      "cue": "action.summary.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.summary.001.b1.start",
+      "cue": "action.summary.001",
+      "beat": "action.summary.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.summary.001.b1.end",
+      "cue": "action.summary.001",
+      "beat": "action.summary.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.summary.002.1.start",
+      "cue": "action.summary.002.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.summary.002.1.end",
+      "cue": "action.summary.002.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.summary.002.1.b1.start",
+      "cue": "action.summary.002.1",
+      "beat": "action.summary.002.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.summary.002.1.b1.end",
+      "cue": "action.summary.002.1",
+      "beat": "action.summary.002.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.summary.002.2.start",
+      "cue": "action.summary.002.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action.summary.002.2.end",
+      "cue": "action.summary.002.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action.summary.002.2.b1.start",
+      "cue": "action.summary.002.2",
+      "beat": "action.summary.002.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action.summary.002.2.b1.end",
+      "cue": "action.summary.002.2",
+      "beat": "action.summary.002.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action.summary.002.2.b2.start",
+      "cue": "action.summary.002.2",
+      "beat": "action.summary.002.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.summary.002.2.b2.end",
+      "cue": "action.summary.002.2",
+      "beat": "action.summary.002.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.trigger.001.start",
+      "cue": "endgame.trigger.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.trigger.001.end",
+      "cue": "endgame.trigger.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.trigger.001.b1.start",
+      "cue": "endgame.trigger.001",
+      "beat": "endgame.trigger.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.trigger.001.b1.end",
+      "cue": "endgame.trigger.001",
+      "beat": "endgame.trigger.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.final_rounds.001.1.start",
+      "cue": "endgame.final_rounds.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.final_rounds.001.1.end",
+      "cue": "endgame.final_rounds.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.final_rounds.001.1.b1.start",
+      "cue": "endgame.final_rounds.001.1",
+      "beat": "endgame.final_rounds.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.final_rounds.001.1.b1.end",
+      "cue": "endgame.final_rounds.001.1",
+      "beat": "endgame.final_rounds.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.final_rounds.001.2.start",
+      "cue": "endgame.final_rounds.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.final_rounds.001.2.end",
+      "cue": "endgame.final_rounds.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.final_rounds.001.2.b1.start",
+      "cue": "endgame.final_rounds.001.2",
+      "beat": "endgame.final_rounds.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.final_rounds.001.2.b1.end",
+      "cue": "endgame.final_rounds.001.2",
+      "beat": "endgame.final_rounds.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.example.001.1.start",
+      "cue": "endgame.example.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.example.001.1.end",
+      "cue": "endgame.example.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.example.001.1.b1.start",
+      "cue": "endgame.example.001.1",
+      "beat": "endgame.example.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.example.001.1.b1.end",
+      "cue": "endgame.example.001.1",
+      "beat": "endgame.example.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.example.001.2.start",
+      "cue": "endgame.example.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.example.001.2.end",
+      "cue": "endgame.example.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.example.001.2.b1.start",
+      "cue": "endgame.example.001.2",
+      "beat": "endgame.example.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.example.001.2.b1.end",
+      "cue": "endgame.example.001.2",
+      "beat": "endgame.example.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.example.002.start",
+      "cue": "endgame.example.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.example.002.end",
+      "cue": "endgame.example.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.example.002.b1.start",
+      "cue": "endgame.example.002",
+      "beat": "endgame.example.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.example.002.b1.end",
+      "cue": "endgame.example.002",
+      "beat": "endgame.example.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.winner.001.start",
+      "cue": "endgame.winner.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.winner.001.end",
+      "cue": "endgame.winner.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.winner.001.b1.start",
+      "cue": "endgame.winner.001",
+      "beat": "endgame.winner.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.winner.001.b1.end",
+      "cue": "endgame.winner.001",
+      "beat": "endgame.winner.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.tie.001.1.start",
+      "cue": "endgame.tie.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.tie.001.1.end",
+      "cue": "endgame.tie.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.tie.001.1.b1.start",
+      "cue": "endgame.tie.001.1",
+      "beat": "endgame.tie.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.tie.001.1.b1.end",
+      "cue": "endgame.tie.001.1",
+      "beat": "endgame.tie.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame.tie.001.2.start",
+      "cue": "endgame.tie.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame.tie.001.2.end",
+      "cue": "endgame.tie.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame.tie.001.2.b1.start",
+      "cue": "endgame.tie.001.2",
+      "beat": "endgame.tie.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame.tie.001.2.b1.end",
+      "cue": "endgame.tie.001.2",
+      "beat": "endgame.tie.001.2.b1",
+      "edge": "end"
+    }
+  ],
   "worlds": [
     {
       "id": "box",
@@ -121,16 +2711,16 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "bg.intro.001.1.start"
         },
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.001.1.start"
         }
       ]
     },
@@ -150,14 +2740,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.001.2.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.001.2.b1.start",
+          "offset": 0.115
         }
       ]
     },
@@ -171,14 +2762,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.002.1.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.002.1.b1.start",
+          "offset": 0.105
         }
       ]
     },
@@ -191,14 +2783,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.002.2.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.002.2.b1.start",
+          "offset": 0.105
         }
       ]
     },
@@ -211,14 +2804,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.002.3.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.002.3.b1.start",
+          "offset": 0.105
         }
       ]
     },
@@ -232,14 +2826,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.003.1.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.003.1.b1.start",
+          "offset": 0.105
         }
       ]
     },
@@ -252,14 +2847,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.003.2.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.003.2.b1.start",
+          "offset": 0.115
         }
       ]
     },
@@ -272,14 +2868,15 @@
       "events": [
         {
           "op": "show",
-          "at": 0.0,
           "dur": 0.0,
-          "picture": "media/box.png"
+          "picture": "media/box.png",
+          "anchor": "bg.intro.003.3.start"
         },
         {
           "op": "wait",
-          "at": 0.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "bg.intro.003.3.b1.start",
+          "offset": 0.115
         }
       ]
     },
@@ -299,7 +2896,7 @@
         "story": "【这是发展卡牌，共90张】\n桌上还什么都没有。先把盒子收起来，然后在桌子中央摆出一张发展卡的正面，让观众看清发展卡长什么样。\n此时牌堆还不存在——发展卡只是被介绍，还没有成摞。牌堆要到 cue 12「洗混」时才被创建。",
         "note": "「这是发展卡牌，共90张」(0.30–2.50)：特写展示 1 张发展卡正面，不高亮（画面只有它）。牌堆此时尚未创建。",
         "enter": {
-          "picture": "media/box.png",
+          "picture": null,
           "zones": {
             "showcase": {
               "count": 0
@@ -324,32 +2921,14 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "show",
-          "at": 0.05,
-          "dur": 0.0,
-          "picture": null
-        },
-        {
-          "op": "wait",
-          "at": 0.1,
-          "dur": 0.0
-        },
-        {
-          "op": "camera",
-          "at": 0.1,
+          "anchor": "setup.cards.001.1.start",
           "dur": 0.0,
           "shot": "shot_card_face",
           "realizes": "<ontology::timing>"
         },
         {
           "op": "create",
-          "at": 0.15,
+          "anchor": "setup.cards.001.1.b1.start",
           "dur": 0.0,
           "zone": "showcase",
           "template": "sample_card_1",
@@ -420,57 +2999,62 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_card_backs",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.cards.001.2.start"
         },
         {
           "op": "destroy",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "showcase",
-          "concept": "development_card_level_1"
+          "concept": "development_card_level_1",
+          "anchor": "setup.cards.001.2.start"
         },
         {
           "op": "wait",
-          "at": 0.05,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "setup.cards.001.2.start",
+          "offset": 0.05
         },
         {
           "op": "create",
-          "at": 0.15,
           "dur": 0.0,
           "zone": "showcase_1",
           "template": "sample_back_1",
           "palette": "card_level_1",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.cards.001.2.start",
+          "offset": 0.15
         },
         {
           "op": "create",
-          "at": 0.15,
           "dur": 0.0,
           "zone": "showcase_2",
           "template": "sample_back_2",
           "palette": "card_level_2",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.cards.001.2.start",
+          "offset": 0.15
         },
         {
           "op": "create",
-          "at": 0.15,
           "dur": 0.0,
           "zone": "showcase_3",
           "template": "sample_back_3",
           "palette": "card_level_3",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.cards.001.2.start",
+          "offset": 0.15
         },
         {
           "op": "highlight",
-          "at": 0.6,
           "dur": 1.1,
           "zone": "showcase_1",
           "concept": "development_card_level_1",
-          "grow": 1.16
+          "grow": 1.16,
+          "anchor": "setup.cards.001.2.b1.start",
+          "offset": 0.275
         }
       ]
     },
@@ -520,19 +3104,21 @@
       "events": [
         {
           "op": "highlight",
-          "at": 0.1,
           "dur": 1.3,
           "zone": "showcase_2",
           "concept": "development_card_level_2",
-          "grow": 1.16
+          "grow": 1.16,
+          "anchor": "setup.cards.001.3.b1.start",
+          "offset": 0.1
         },
         {
           "op": "highlight",
-          "at": 2.9,
           "dur": 1.3,
           "zone": "showcase_3",
           "concept": "development_card_level_3",
-          "grow": 1.16
+          "grow": 1.16,
+          "anchor": "setup.cards.001.3.b1.end",
+          "offset": -2.635
         }
       ]
     },
@@ -693,62 +3279,67 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_decks_market",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.cards.002.1.start"
         },
         {
           "op": "stack",
-          "at": 0.05,
           "dur": 0.0,
           "destination": "deck_level_1",
           "capacity": 40,
           "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire,market_card_1_onyx",
           "pad_template": "blank_card_1",
-          "to": "face_down"
+          "to": "face_down",
+          "anchor": "setup.cards.002.1.start",
+          "offset": 0.05
         },
         {
           "op": "stack",
-          "at": 0.052,
           "dur": 0.0,
           "destination": "deck_level_2",
           "capacity": 30,
           "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald,market_card_2_diamond",
           "pad_template": "blank_card_2",
-          "to": "face_down"
+          "to": "face_down",
+          "anchor": "setup.cards.002.1.start",
+          "offset": 0.052
         },
         {
           "op": "stack",
-          "at": 0.054,
           "dur": 0.0,
           "destination": "deck_level_3",
           "capacity": 20,
           "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx,market_card_3_sapphire",
           "pad_template": "blank_card_3",
-          "to": "face_down"
+          "to": "face_down",
+          "anchor": "setup.cards.002.1.start",
+          "offset": 0.054
         },
         {
           "op": "shuffle",
-          "at": 0.3,
           "dur": 1.1,
-          "zone": "deck_level_1"
+          "zone": "deck_level_1",
+          "anchor": "setup.cards.002.1.b1.start",
+          "offset": 0.015
         },
         {
           "op": "shuffle",
-          "at": 0.3,
           "dur": 1.1,
-          "zone": "deck_level_2"
+          "zone": "deck_level_2",
+          "anchor": "setup.cards.002.1.b1.start",
+          "offset": 0.015
         },
         {
           "op": "shuffle",
-          "at": 0.3,
           "dur": 1.1,
-          "zone": "deck_level_3"
+          "zone": "deck_level_3",
+          "anchor": "setup.cards.002.1.b1.start",
+          "offset": 0.015
         },
         {
           "op": "transfer",
-          "at": 3.58,
           "dur": 0.34,
           "source": "deck_level_1",
           "destination": "card_market",
@@ -762,11 +3353,12 @@
           ],
           "to": "face_up",
           "order": 0,
-          "slot": 0
+          "slot": 0,
+          "anchor": "setup.cards.002.1.b1.end",
+          "offset": 0.015
         },
         {
           "op": "transfer",
-          "at": 3.97,
           "dur": 0.34,
           "source": "deck_level_1",
           "destination": "card_market",
@@ -780,11 +3372,12 @@
           ],
           "to": "face_up",
           "order": 1,
-          "slot": 1
+          "slot": 1,
+          "anchor": "setup.cards.002.1.b2.start",
+          "offset": -0.07
         },
         {
           "op": "transfer",
-          "at": 4.36,
           "dur": 0.34,
           "source": "deck_level_1",
           "destination": "card_market",
@@ -798,11 +3391,12 @@
           ],
           "to": "face_up",
           "order": 2,
-          "slot": 2
+          "slot": 2,
+          "anchor": "setup.cards.002.1.b2.start",
+          "offset": 0.32
         },
         {
           "op": "transfer",
-          "at": 4.75,
           "dur": 0.34,
           "source": "deck_level_1",
           "destination": "card_market",
@@ -816,11 +3410,12 @@
           ],
           "to": "face_up",
           "order": 3,
-          "slot": 3
+          "slot": 3,
+          "anchor": "setup.cards.002.1.b2.start",
+          "offset": 0.71
         },
         {
           "op": "transfer",
-          "at": 5.14,
           "dur": 0.34,
           "source": "deck_level_2",
           "destination": "card_market",
@@ -834,11 +3429,12 @@
           ],
           "to": "face_up",
           "order": 4,
-          "slot": 4
+          "slot": 4,
+          "anchor": "setup.cards.002.1.b2.start",
+          "offset": 1.1
         },
         {
           "op": "transfer",
-          "at": 5.53,
           "dur": 0.34,
           "source": "deck_level_2",
           "destination": "card_market",
@@ -852,11 +3448,12 @@
           ],
           "to": "face_up",
           "order": 5,
-          "slot": 5
+          "slot": 5,
+          "anchor": "setup.cards.002.1.b2.start",
+          "offset": 1.49
         },
         {
           "op": "transfer",
-          "at": 5.92,
           "dur": 0.34,
           "source": "deck_level_2",
           "destination": "card_market",
@@ -870,11 +3467,12 @@
           ],
           "to": "face_up",
           "order": 6,
-          "slot": 6
+          "slot": 6,
+          "anchor": "setup.cards.002.1.b2.start",
+          "offset": 1.88
         },
         {
           "op": "transfer",
-          "at": 6.31,
           "dur": 0.34,
           "source": "deck_level_2",
           "destination": "card_market",
@@ -888,11 +3486,12 @@
           ],
           "to": "face_up",
           "order": 7,
-          "slot": 7
+          "slot": 7,
+          "anchor": "setup.cards.002.1.b2.end",
+          "offset": -1.585
         },
         {
           "op": "transfer",
-          "at": 6.7,
           "dur": 0.34,
           "source": "deck_level_3",
           "destination": "card_market",
@@ -906,11 +3505,12 @@
           ],
           "to": "face_up",
           "order": 8,
-          "slot": 8
+          "slot": 8,
+          "anchor": "setup.cards.002.1.b2.end",
+          "offset": -1.195
         },
         {
           "op": "transfer",
-          "at": 7.09,
           "dur": 0.34,
           "source": "deck_level_3",
           "destination": "card_market",
@@ -924,11 +3524,12 @@
           ],
           "to": "face_up",
           "order": 9,
-          "slot": 9
+          "slot": 9,
+          "anchor": "setup.cards.002.1.b2.end",
+          "offset": -0.805
         },
         {
           "op": "transfer",
-          "at": 7.48,
           "dur": 0.34,
           "source": "deck_level_3",
           "destination": "card_market",
@@ -942,11 +3543,12 @@
           ],
           "to": "face_up",
           "order": 10,
-          "slot": 10
+          "slot": 10,
+          "anchor": "setup.cards.002.1.b2.end",
+          "offset": -0.415
         },
         {
           "op": "transfer",
-          "at": 7.87,
           "dur": 0.34,
           "source": "deck_level_3",
           "destination": "card_market",
@@ -960,7 +3562,9 @@
           ],
           "to": "face_up",
           "order": 11,
-          "slot": 11
+          "slot": 11,
+          "anchor": "setup.cards.002.1.b2.end",
+          "offset": -0.025
         }
       ]
     },
@@ -1012,8 +3616,8 @@
       "events": [
         {
           "op": "wait",
-          "at": 0.0,
-          "dur": 3.4
+          "dur": 3.4,
+          "anchor": "setup.cards.002.2.start"
         }
       ]
     },
@@ -1084,60 +3688,65 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_gems",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.gems.001.1.start"
         },
         {
           "op": "create",
-          "at": 0.35,
           "dur": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_diamond",
           "count": 1,
-          "lead": 0.0
+          "lead": 0.0,
+          "anchor": "setup.gems.001.1.b1.start",
+          "offset": 0.045
         },
         {
           "op": "create",
-          "at": 0.35,
           "dur": 0.0,
           "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_sapphire",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.gems.001.1.b1.start",
+          "offset": 0.045
         },
         {
           "op": "create",
-          "at": 0.35,
           "dur": 0.0,
           "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_ruby",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.gems.001.1.b1.start",
+          "offset": 0.045
         },
         {
           "op": "create",
-          "at": 0.35,
           "dur": 0.0,
           "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_emerald",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.gems.001.1.b1.start",
+          "offset": 0.045
         },
         {
           "op": "create",
-          "at": 0.35,
           "dur": 0.0,
           "lead": 0.0,
           "zone": "gem_display",
           "template": "gem_sample",
           "palette": "gem_onyx",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.gems.001.1.b1.start",
+          "offset": 0.045
         }
       ]
     },
@@ -1173,7 +3782,6 @@
       "events": [
         {
           "op": "highlight",
-          "at": 2.85,
           "dur": 0.5,
           "zone": "gem_display",
           "concept": "gem",
@@ -1184,11 +3792,12 @@
             }
           ],
           "order": 0,
-          "grow": 1.18
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.start",
+          "offset": 2.575
         },
         {
           "op": "highlight",
-          "at": 3.62,
           "dur": 0.5,
           "zone": "gem_display",
           "concept": "gem",
@@ -1199,11 +3808,12 @@
             }
           ],
           "order": 1,
-          "grow": 1.18
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.start",
+          "offset": 3.345
         },
         {
           "op": "highlight",
-          "at": 4.51,
           "dur": 0.5,
           "zone": "gem_display",
           "concept": "gem",
@@ -1214,11 +3824,12 @@
             }
           ],
           "order": 2,
-          "grow": 1.18
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.end",
+          "offset": -2.495
         },
         {
           "op": "highlight",
-          "at": 5.46,
           "dur": 0.5,
           "zone": "gem_display",
           "concept": "gem",
@@ -1229,11 +3840,12 @@
             }
           ],
           "order": 3,
-          "grow": 1.18
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.end",
+          "offset": -1.545
         },
         {
           "op": "highlight",
-          "at": 6.39,
           "dur": 0.5,
           "zone": "gem_display",
           "concept": "gem",
@@ -1244,7 +3856,9 @@
             }
           ],
           "order": 4,
-          "grow": 1.18
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.end",
+          "offset": -0.615
         }
       ]
     },
@@ -1264,10 +3878,11 @@
       "events": [
         {
           "op": "highlight",
-          "at": 0.6,
           "dur": 0.8,
           "zone": "gem_display",
-          "grow": 1.1
+          "grow": 1.1,
+          "anchor": "setup.gems.001.3.b1.start",
+          "offset": 0.325
         }
       ]
     },
@@ -1308,26 +3923,29 @@
       "events": [
         {
           "op": "create",
-          "at": 0.3,
           "dur": 0.0,
           "zone": "gold_display",
           "template": "gem_sample",
           "palette": "gem_gold",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.gems.002.b1.start",
+          "offset": 0.035
         },
         {
           "op": "highlight",
-          "at": 1.4,
           "dur": 0.6,
           "zone": "gold_display",
-          "grow": 1.2
+          "grow": 1.2,
+          "anchor": "setup.gems.002.b1.start",
+          "offset": 1.135
         },
         {
           "op": "highlight",
-          "at": 4.7,
           "dur": 0.6,
           "zone": "gem_display",
-          "grow": 1.16
+          "grow": 1.16,
+          "anchor": "setup.gems.002.b2.end",
+          "offset": -0.915
         }
       ]
     },
@@ -1428,55 +4046,60 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_gem_supplies",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.gems.003.1.start"
         },
         {
           "op": "create",
-          "at": 4.2,
           "dur": 0.0,
           "zone": "gem_supply_diamond",
           "template": "gem",
           "palette": "gem_diamond",
-          "count": 4
+          "count": 4,
+          "anchor": "setup.gems.003.1.b2.start",
+          "offset": 0.055
         },
         {
           "op": "create",
-          "at": 4.2,
           "dur": 0.0,
           "zone": "gem_supply_sapphire",
           "template": "gem",
           "palette": "gem_sapphire",
-          "count": 4
+          "count": 4,
+          "anchor": "setup.gems.003.1.b2.start",
+          "offset": 0.055
         },
         {
           "op": "create",
-          "at": 4.2,
           "dur": 0.0,
           "zone": "gem_supply_ruby",
           "template": "gem",
           "palette": "gem_ruby",
-          "count": 4
+          "count": 4,
+          "anchor": "setup.gems.003.1.b2.start",
+          "offset": 0.055
         },
         {
           "op": "create",
-          "at": 4.2,
           "dur": 0.0,
           "zone": "gem_supply_emerald",
           "template": "gem",
           "palette": "gem_emerald",
-          "count": 4
+          "count": 4,
+          "anchor": "setup.gems.003.1.b2.start",
+          "offset": 0.055
         },
         {
           "op": "create",
-          "at": 4.2,
           "dur": 0.0,
           "zone": "gem_supply_onyx",
           "template": "gem",
           "palette": "gem_onyx",
-          "count": 4
+          "count": 4,
+          "anchor": "setup.gems.003.1.b2.start",
+          "offset": 0.055
         }
       ]
     },
@@ -1550,48 +4173,53 @@
       "events": [
         {
           "op": "create",
-          "at": 0.55,
           "dur": 0.0,
           "zone": "gem_supply_diamond",
           "template": "gem",
           "palette": "gem_diamond",
-          "count": 5
+          "count": 5,
+          "anchor": "setup.gems.003.2.b1.start",
+          "offset": 0.105
         },
         {
           "op": "create",
-          "at": 0.55,
           "dur": 0.0,
           "zone": "gem_supply_sapphire",
           "template": "gem",
           "palette": "gem_sapphire",
-          "count": 5
+          "count": 5,
+          "anchor": "setup.gems.003.2.b1.start",
+          "offset": 0.105
         },
         {
           "op": "create",
-          "at": 0.55,
           "dur": 0.0,
           "zone": "gem_supply_ruby",
           "template": "gem",
           "palette": "gem_ruby",
-          "count": 5
+          "count": 5,
+          "anchor": "setup.gems.003.2.b1.start",
+          "offset": 0.105
         },
         {
           "op": "create",
-          "at": 0.55,
           "dur": 0.0,
           "zone": "gem_supply_emerald",
           "template": "gem",
           "palette": "gem_emerald",
-          "count": 5
+          "count": 5,
+          "anchor": "setup.gems.003.2.b1.start",
+          "offset": 0.105
         },
         {
           "op": "create",
-          "at": 0.55,
           "dur": 0.0,
           "zone": "gem_supply_onyx",
           "template": "gem",
           "palette": "gem_onyx",
-          "count": 5
+          "count": 5,
+          "anchor": "setup.gems.003.2.b1.start",
+          "offset": 0.105
         }
       ]
     },
@@ -1664,48 +4292,53 @@
       "events": [
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "gem_supply_diamond",
           "template": "gem",
           "palette": "gem_diamond",
-          "count": 7
+          "count": 7,
+          "anchor": "setup.gems.004.b1.start",
+          "offset": 0.095
         },
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "gem_supply_sapphire",
           "template": "gem",
           "palette": "gem_sapphire",
-          "count": 7
+          "count": 7,
+          "anchor": "setup.gems.004.b1.start",
+          "offset": 0.095
         },
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "gem_supply_ruby",
           "template": "gem",
           "palette": "gem_ruby",
-          "count": 7
+          "count": 7,
+          "anchor": "setup.gems.004.b1.start",
+          "offset": 0.095
         },
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "gem_supply_emerald",
           "template": "gem",
           "palette": "gem_emerald",
-          "count": 7
+          "count": 7,
+          "anchor": "setup.gems.004.b1.start",
+          "offset": 0.095
         },
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "gem_supply_onyx",
           "template": "gem",
           "palette": "gem_onyx",
-          "count": 7
+          "count": 7,
+          "anchor": "setup.gems.004.b1.start",
+          "offset": 0.095
         }
       ]
     },
@@ -1829,53 +4462,53 @@
       "events": [
         {
           "op": "destroy",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_diamond",
           "template": "gem",
           "palette": "gem_diamond",
           "count": 3,
-          "from_back": true
+          "from_back": true,
+          "anchor": "setup.gems.005.1.start"
         },
         {
           "op": "destroy",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_sapphire",
           "template": "gem",
           "palette": "gem_sapphire",
           "count": 3,
-          "from_back": true
+          "from_back": true,
+          "anchor": "setup.gems.005.1.start"
         },
         {
           "op": "destroy",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_ruby",
           "template": "gem",
           "palette": "gem_ruby",
           "count": 3,
-          "from_back": true
+          "from_back": true,
+          "anchor": "setup.gems.005.1.start"
         },
         {
           "op": "destroy",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_emerald",
           "template": "gem",
           "palette": "gem_emerald",
           "count": 3,
-          "from_back": true
+          "from_back": true,
+          "anchor": "setup.gems.005.1.start"
         },
         {
           "op": "destroy",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_onyx",
           "template": "gem",
           "palette": "gem_onyx",
           "count": 3,
-          "from_back": true
+          "from_back": true,
+          "anchor": "setup.gems.005.1.start"
         }
       ]
     },
@@ -1916,19 +4549,21 @@
       "events": [
         {
           "op": "create",
-          "at": 0.5,
           "dur": 0.0,
           "zone": "gold_supply",
           "template": "gem",
           "palette": "gem_gold",
-          "count": 5
+          "count": 5,
+          "anchor": "setup.gems.005.2.b1.start",
+          "offset": 0.215
         },
         {
           "op": "highlight",
-          "at": 2.4,
           "dur": 0.7,
           "zone": "gold_supply",
-          "grow": 1.2
+          "grow": 1.2,
+          "anchor": "setup.gems.005.2.b1.end",
+          "offset": -1.845
         }
       ]
     },
@@ -2003,37 +4638,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.nobles.001.1.start"
         },
         {
           "op": "create",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
           "template": "noble_1",
           "palette": "noble",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.nobles.001.1.start"
         },
         {
           "op": "create",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
           "template": "noble_2",
           "palette": "noble",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.nobles.001.1.start"
         },
         {
           "op": "create",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
           "template": "noble_3",
           "palette": "noble",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.nobles.001.1.start"
         }
       ]
     },
@@ -2118,37 +4753,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.nobles.002.start"
         },
         {
           "op": "create",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
           "template": "noble_1",
           "palette": "noble",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.nobles.002.start"
         },
         {
           "op": "create",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
           "template": "noble_2",
           "palette": "noble",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.nobles.002.start"
         },
         {
           "op": "create",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "noble_market",
           "template": "noble_3",
           "palette": "noble",
-          "count": 1
+          "count": 1,
+          "anchor": "setup.nobles.002.start"
         }
       ]
     },
@@ -2168,10 +4803,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
-          "shot": "shot_all_zones",
-          "realizes": "<ontology::timing>"
+          "shot": "shot_all_zones_static",
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.starting_player.001.1.start"
         }
       ]
     },
@@ -2232,27 +4867,29 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_marker",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.starting_player.001.3.start"
         },
         {
           "op": "create",
-          "at": 0.8,
           "dur": 0.0,
           "zone": "player_marker",
           "template": "starting_marker",
           "palette": "",
           "count": 1,
-          "concept": "starting_player_marker"
+          "concept": "starting_player_marker",
+          "anchor": "setup.starting_player.001.3.b1.start",
+          "offset": 0.525
         },
         {
           "op": "highlight",
-          "at": 1.4,
           "dur": 0.5,
           "zone": "player_marker",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "setup.starting_player.001.3.b1.end",
+          "offset": -0.295
         }
       ]
     },
@@ -2270,10 +4907,6 @@
         {
           "key": "标记进入玩家区",
           "text": "0.80"
-        },
-        {
-          "key": "点亮标记",
-          "text": "1.60"
         }
       ],
       "script": {
@@ -2299,27 +4932,21 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
-          "shot": "shot_all_zones",
-          "realizes": "<ontology::timing>"
+          "shot": "shot_all_zones_static",
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.starting_player.001.4.start"
         },
         {
           "op": "create",
-          "at": 0.8,
           "dur": 0.0,
           "zone": "player_marker",
           "template": "starting_marker",
           "palette": "",
           "count": 1,
-          "concept": "starting_player_marker"
-        },
-        {
-          "op": "highlight",
-          "at": 1.6,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
+          "concept": "starting_player_marker",
+          "anchor": "setup.starting_player.001.4.b1.start",
+          "offset": 0.515
         }
       ]
     },
@@ -2330,74 +4957,13 @@
         {
           "key": "镜头保持全景（继承上一条）",
           "text": "0.00"
-        },
-        {
-          "key": "点四块",
-          "text": "0.40 / 0.80 / 1.20-1.80 / 2.20"
         }
       ],
       "script": {
         "story": "【至此，整个设置环节就大功告成了】",
-        "note": "【设置完成】\n  镜头沿用上一条的全景，把设置出来的**四块东西**依次点一遍：发展卡牌区、贵族、五堆宝石供应、玩家区。这就是「设置完成」的画面定义。\n  没有状态变化：起始玩家标记已经在上一条进入玩家区。"
+        "note": "【设置完成】\n镜头沿用上一条的全景，让观众看到设置完成后的整张桌子。\n没有状态变化：起始玩家标记已经在上一条进入玩家区。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.4,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.2,
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.3499999999999999,
-          "dur": 0.5,
-          "zone": "gem_supply_sapphire",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.5,
-          "dur": 0.5,
-          "zone": "gem_supply_ruby",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.65,
-          "dur": 0.5,
-          "zone": "gem_supply_emerald",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.7999999999999998,
-          "dur": 0.5,
-          "zone": "gem_supply_onyx",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.2,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "setup.end.001.2",
@@ -2406,36 +4972,13 @@
         {
           "key": "镜头整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点市场",
-          "text": "1.00"
-        },
-        {
-          "key": "点玩家区",
-          "text": "2.50"
         }
       ],
       "script": {
         "story": "【这个设置方式适合两名玩家并排坐在桌子同一侧进行游戏时使用】",
         "note": "【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n  为什么不摆出一个「3-4 人版桌面」：那需要另一套台面图（我们没有），  编一张假的台面比不动更容易教错。\n  这一句讲两人并排 → 点公共区（市场）。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 1.0,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.5,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "setup.end.001.3",
@@ -2444,36 +4987,13 @@
         {
           "key": "镜头整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点市场",
-          "text": "0.80"
-        },
-        {
-          "key": "点贵族",
-          "text": "2.00"
         }
       ],
       "script": {
         "story": "【如果三到四位玩家同时进行游戏，更推荐使用这种设置方式】",
         "note": "【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n  为什么不摆出一个「3-4 人版桌面」：那需要另一套台面图（我们没有），  编一张假的台面比不动更容易教错。\n  这一句讲三四人围坐 → 点市场（放中间）与贵族。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.0,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "setup.end.001.4",
@@ -2482,10 +5002,6 @@
         {
           "key": "镜头推近市场",
           "text": "0.00"
-        },
-        {
-          "key": "点市场",
-          "text": "0.60"
         }
       ],
       "script": {
@@ -2495,17 +5011,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_market",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.end.001.4.start"
         }
       ]
     },
@@ -2516,10 +5025,6 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点市场",
-          "text": "0.60"
         }
       ],
       "script": {
@@ -2529,17 +5034,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.end.002.start"
         }
       ]
     },
@@ -2567,17 +5065,19 @@
       "events": [
         {
           "op": "highlight",
-          "at": 1.0,
           "dur": 0.5,
           "zone": "player_marker",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.turn.001.b1.start",
+          "offset": 0.715
         },
         {
           "op": "highlight",
-          "at": 3.0,
           "dur": 0.5,
           "zone": "player_holding",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.turn.001.b1.start",
+          "offset": 2.715
         }
       ]
     },
@@ -2609,24 +5109,27 @@
       "events": [
         {
           "op": "highlight",
-          "at": 0.8,
           "dur": 0.5,
           "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.turn.002.b1.start",
+          "offset": 0.485
         },
         {
           "op": "highlight",
-          "at": 1.8,
           "dur": 0.5,
           "zone": "card_market",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.turn.002.b1.start",
+          "offset": 1.485
         },
         {
           "op": "highlight",
-          "at": 2.8,
           "dur": 0.5,
           "zone": "deck_level_1",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.turn.002.b1.end",
+          "offset": -2.275
         }
       ]
     },
@@ -2704,7 +5207,6 @@
       "events": [
         {
           "op": "ensure",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_diamond",
           "template": "gem",
@@ -2716,11 +5218,11 @@
               "key": "color",
               "value": "<diamond>"
             }
-          ]
+          ],
+          "anchor": "action.take.different.001.start"
         },
         {
           "op": "ensure",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_sapphire",
           "template": "gem",
@@ -2732,11 +5234,11 @@
               "key": "color",
               "value": "<sapphire>"
             }
-          ]
+          ],
+          "anchor": "action.take.different.001.start"
         },
         {
           "op": "ensure",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_ruby",
           "template": "gem",
@@ -2748,11 +5250,11 @@
               "key": "color",
               "value": "<ruby>"
             }
-          ]
+          ],
+          "anchor": "action.take.different.001.start"
         },
         {
           "op": "ensure",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_emerald",
           "template": "gem",
@@ -2764,11 +5266,11 @@
               "key": "color",
               "value": "<emerald>"
             }
-          ]
+          ],
+          "anchor": "action.take.different.001.start"
         },
         {
           "op": "ensure",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gem_supply_onyx",
           "template": "gem",
@@ -2780,42 +5282,45 @@
               "key": "color",
               "value": "<onyx>"
             }
-          ]
+          ],
+          "anchor": "action.take.different.001.start"
         },
         {
           "op": "ensure",
-          "at": 0.0,
           "dur": 0.0,
           "zone": "gold_supply",
           "template": "gem",
           "palette": "gem_gold",
           "count": 5,
-          "concept": "gold"
+          "concept": "gold",
+          "anchor": "action.take.different.001.start"
         },
         {
           "op": "highlight",
-          "at": 0.3,
           "dur": 0.35,
           "zone": "gem_supply_diamond",
-          "grow": 1.2
+          "grow": 1.2,
+          "anchor": "action.take.different.001.b1.start",
+          "offset": 0.005
         },
         {
           "op": "highlight",
-          "at": 0.55,
           "dur": 0.35,
           "zone": "gem_supply_sapphire",
-          "grow": 1.2
+          "grow": 1.2,
+          "anchor": "action.take.different.001.b1.start",
+          "offset": 0.255
         },
         {
           "op": "highlight",
-          "at": 0.8,
           "dur": 0.35,
           "zone": "gem_supply_ruby",
-          "grow": 1.2
+          "grow": 1.2,
+          "anchor": "action.take.different.001.b1.start",
+          "offset": 0.505
         },
         {
           "op": "transfer",
-          "at": 3.35,
           "dur": 0.5,
           "source": [
             "gem_supply_diamond",
@@ -2824,14 +5329,17 @@
           ],
           "destination": "player_holding",
           "quantity": 1,
-          "stagger": 0.25
+          "stagger": 0.25,
+          "anchor": "action.take.different.001.b1.end",
+          "offset": -1.635
         },
         {
           "op": "highlight",
-          "at": 4.1,
           "dur": 0.5,
           "zone": "player_holding",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.take.different.001.b1.end",
+          "offset": -0.885
         }
       ]
     },
@@ -2896,21 +5404,14 @@
       "events": [
         {
           "op": "highlight",
-          "at": 0.6,
           "dur": 0.5,
           "zone": "gem_supply_emerald",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.8,
-          "dur": 0.5,
-          "zone": "gem_supply_emerald",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.take.same.001.b1.start",
+          "offset": 0.305
         },
         {
           "op": "transfer",
-          "at": 3.0,
           "dur": 0.6,
           "source": "gem_supply_emerald",
           "destination": "player_holding",
@@ -2922,64 +5423,29 @@
               "value": "<emerald>"
             }
           ],
-          "stagger": 0.25
+          "stagger": 0.25,
+          "anchor": "action.take.same.001.b1.start",
+          "offset": 2.705
         },
         {
           "op": "highlight",
-          "at": 4.2,
           "dur": 0.5,
           "zone": "player_holding",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.take.same.001.b1.end",
+          "offset": -2.475
         }
       ]
     },
     {
       "id": "action.take.same.002",
       "parent": "action.take.same.001",
-      "timing": [
-        {
-          "key": "点绿宝石堆（剩 2）",
-          "text": "0.60"
-        },
-        {
-          "key": "点三堆只有 3 枚的",
-          "text": "1.80 / 2.40 / 3.00"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【拿取之后必须保证这种宝石在供应堆中至少剩下 2 枚，否则就不能这样拿取】",
         "note": "【拿两枚的第二个条件：至少剩 2】\n  这一条**没有状态变化**（是规则说明）：绿宝石堆刚被拿到只剩 2 枚，正好是「刚好合法」的样子。\n  然后把另外三堆只有 3 枚的点出来 —— 它们够不上「>=4」，也就不能一次拿两枚。\n  ⚠ 我们**还没有表示「不行/禁止」的表现原语**（没有摇头、没有打叉），所以这里只能靠「依次点出那三堆」\n  加上口播来表达。要是用户觉得不够清楚，该加的是原语（例如 `forbid` 高亮闪红），不是在这里凑动画。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "gem_supply_emerald",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.8,
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.4,
-          "dur": 0.5,
-          "zone": "gem_supply_sapphire",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 3.0,
-          "dur": 0.5,
-          "zone": "gem_supply_ruby",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.take.draw_rule.001.1",
@@ -2988,10 +5454,6 @@
         {
           "key": "镜头推近供应区",
           "text": "0.00"
-        },
-        {
-          "key": "依次点五堆",
-          "text": "0.60 / 0.90 / 1.20 / 1.50 / 1.80"
         }
       ],
       "script": {
@@ -3001,45 +5463,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_gem_supplies",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 0.8999999999999999,
-          "dur": 0.5,
-          "zone": "gem_supply_sapphire",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.2,
-          "dur": 0.5,
-          "zone": "gem_supply_ruby",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.5,
-          "dur": 0.5,
-          "zone": "gem_supply_emerald",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.7999999999999998,
-          "dur": 0.5,
-          "zone": "gem_supply_onyx",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.draw_rule.001.1.start"
         }
       ]
     },
@@ -3050,39 +5477,13 @@
         {
           "key": "保持供应区特写",
           "text": "0.00"
-        },
-        {
-          "key": "点三堆各 3 枚",
-          "text": "0.50 / 1.00 / 1.50"
         }
       ],
       "script": {
         "story": "【当供应堆宝石不足时，尽可能拿取宝石】",
         "note": "【不足时：尽可能拿】\n  同一句话的后半段 —— 承接上一条的供应区特写，把**只剩 3 枚的三堆**点出来，\n  表示「这些是拿不到两枚的」。没有状态变化。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.5,
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.0,
-          "dur": 0.5,
-          "zone": "gem_supply_sapphire",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.5,
-          "dur": 0.5,
-          "zone": "gem_supply_ruby",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.take.limit.001.1",
@@ -3091,10 +5492,6 @@
         {
           "key": "镜头推近玩家持有区",
           "text": "0.00"
-        },
-        {
-          "key": "点手上的宝石",
-          "text": "1.20"
         }
       ],
       "script": {
@@ -3104,64 +5501,22 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_holding",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 1.2,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.limit.001.1.start"
         }
       ]
     },
     {
       "id": "action.take.limit.001.2",
       "parent": "action.take.limit.001.1",
-      "timing": [
-        {
-          "key": "点手上",
-          "text": "0.50"
-        },
-        {
-          "key": "点供应堆",
-          "text": "1.60"
-        },
-        {
-          "key": "再点手上",
-          "text": "3.00"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下 10 个为止】",
         "note": "【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**（口播并没有让人拿这些），而本项目的铁律是\n  「脚本里没写有的那就是没有」+ 每色实物总数 7 枚的账要平 → 所以这里不凑那个演示，\n  只把镜头推到玩家持有区、把「手上的宝石」点出来。\n  （前作宝石的出现都有出处：`create` = 从盒里拿，`transfer` = 从供应堆拿。）\n  这一句讲「还回供应堆」→ 把手上点一下、再把供应堆点一下（一来一回的方向感）。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.5,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.6,
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 3.0,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.take.public.001.1",
@@ -3170,41 +5525,18 @@
         {
           "key": "保持玩家区特写",
           "text": "0.00"
-        },
-        {
-          "key": "点持有区",
-          "text": "0.80 / 2.40"
         }
       ],
       "script": {
         "story": "【宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前】",
         "note": "【宝石是公开信息】\n  规则说明，**没有状态变化**：镜头停在玩家持有区（上一条已经推近），把「放在自己面前」这件事点出来。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.4,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.take.public.001.2",
       "parent": "action.take.public.001.1",
       "timing": [
-        {
-          "key": "点持有区",
-          "text": "0.40"
-        },
         {
           "key": "拉回整桌",
           "text": "1.60"
@@ -3217,22 +5549,16 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.4,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.public.001.2.start"
         },
         {
           "op": "wait",
-          "at": 1.6,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "action.take.public.001.2.b1.end",
+          "offset": -0.875
         }
       ]
     },
@@ -3418,30 +5744,32 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_card_samples",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.intro.001.start"
         },
         {
           "op": "create",
-          "at": 0.5,
           "dur": 0.0,
           "zone": "showcase",
           "template": "sample_card_1_white",
           "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1"
+          "concept": "development_card_level_1",
+          "anchor": "action.cards.intro.001.b1.start",
+          "offset": 0.205
         },
         {
           "op": "create",
-          "at": 0.5,
           "dur": 0.0,
           "zone": "showcase_1",
           "template": "sample_card_2_ruby",
           "palette": "card_level_2",
           "count": 1,
-          "concept": "development_card_level_2"
+          "concept": "development_card_level_2",
+          "anchor": "action.cards.intro.001.b1.start",
+          "offset": 0.205
         }
       ]
     },
@@ -3485,34 +5813,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_card_samples_f06667",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.cost.001.1.start"
         },
         {
           "op": "point",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "arrow",
-          "part": "cost"
+          "part": "cost",
+          "anchor": "action.cards.cost.001.1.b1.start",
+          "offset": 0.315
         },
         {
           "op": "point",
-          "at": 1.6,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "circle",
-          "part": "cost"
+          "part": "cost",
+          "anchor": "action.cards.cost.001.1.b1.end",
+          "offset": -0.405
         },
         {
           "op": "point",
-          "at": 3.0,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "arrow",
-          "part": "cost"
+          "part": "cost",
+          "anchor": "action.cards.cost.001.1.b2.end",
+          "offset": -0.545
         }
       ]
     },
@@ -3536,23 +5867,25 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_gem_supplies",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.cost.001.2.start"
         },
         {
           "op": "point",
-          "at": 0.5,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "circle",
-          "part": "cost"
+          "part": "cost",
+          "anchor": "action.cards.cost.001.2.b1.start",
+          "offset": 0.195
         },
         {
           "op": "wait",
-          "at": 2.6,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "action.cards.cost.001.2.b1.end",
+          "offset": -1.905
         }
       ]
     },
@@ -3584,29 +5917,32 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_market",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.cost.001.3.start"
         },
         {
           "op": "highlight",
-          "at": 0.6,
           "dur": 0.5,
           "zone": "card_market",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.cost.001.3.b1.start",
+          "offset": 0.325
         },
         {
           "op": "wait",
-          "at": 3.2,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "action.cards.cost.001.3.b1.end",
+          "offset": -1.875
         },
         {
           "op": "highlight",
-          "at": 3.6,
           "dur": 0.5,
           "zone": "player_development",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.cost.001.3.b1.end",
+          "offset": -1.475
         }
       ]
     },
@@ -3630,10 +5966,11 @@
       "events": [
         {
           "op": "highlight",
-          "at": 0.8,
           "dur": 0.5,
           "zone": "card_market",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.market.001.1.b1.start",
+          "offset": 0.505
         }
       ]
     },
@@ -3725,7 +6062,6 @@
       "events": [
         {
           "op": "transfer",
-          "at": 0.3,
           "dur": 0.6,
           "source": [
             "gem_supply_onyx",
@@ -3734,19 +6070,21 @@
           ],
           "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem"
+          "concept": "gem",
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 0.005
         },
         {
           "op": "highlight",
-          "at": 1.3,
           "dur": 0.5,
           "zone": "card_market",
           "order": 2,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 1.005
         },
         {
           "op": "transfer",
-          "at": 2.2,
           "dur": 0.6,
           "source": "player_holding",
           "destination": "gem_supply_sapphire",
@@ -3757,11 +6095,12 @@
               "key": "color",
               "value": "<sapphire>"
             }
-          ]
+          ],
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 1.905
         },
         {
           "op": "transfer",
-          "at": 2.4,
           "dur": 0.6,
           "source": "player_holding",
           "destination": "gem_supply_emerald",
@@ -3772,11 +6111,12 @@
               "key": "color",
               "value": "<emerald>"
             }
-          ]
+          ],
+          "anchor": "action.cards.market.001.2.b1.end",
+          "offset": -1.715
         },
         {
           "op": "transfer",
-          "at": 2.6,
           "dur": 0.6,
           "source": "player_holding",
           "destination": "gem_supply_ruby",
@@ -3787,11 +6127,12 @@
               "key": "color",
               "value": "<ruby>"
             }
-          ]
+          ],
+          "anchor": "action.cards.market.001.2.b1.end",
+          "offset": -1.515
         },
         {
           "op": "transfer",
-          "at": 2.8,
           "dur": 0.6,
           "source": "player_holding",
           "destination": "gem_supply_onyx",
@@ -3802,11 +6143,12 @@
               "key": "color",
               "value": "<onyx>"
             }
-          ]
+          ],
+          "anchor": "action.cards.market.001.2.b1.end",
+          "offset": -1.315
         },
         {
           "op": "transfer",
-          "at": 2.9,
           "dur": 0.6,
           "source": "card_market",
           "destination": "player_development",
@@ -3817,14 +6159,17 @@
               "key": "bonus",
               "value": "<diamond>"
             }
-          ]
+          ],
+          "anchor": "action.cards.market.001.2.b1.end",
+          "offset": -1.215
         },
         {
           "op": "highlight",
-          "at": 3.4,
           "dur": 0.5,
           "zone": "player_development",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.market.001.2.b1.end",
+          "offset": -0.715
         }
       ]
     },
@@ -3880,7 +6225,6 @@
       "events": [
         {
           "op": "transfer",
-          "at": 1.2,
           "dur": 0.6,
           "source": "deck_level_1",
           "destination": "card_market",
@@ -3893,15 +6237,18 @@
             }
           ],
           "to": "face_up",
-          "order": 2
+          "order": 2,
+          "anchor": "action.cards.market.001.3.b1.start",
+          "offset": 0.925
         },
         {
           "op": "highlight",
-          "at": 2.6,
           "dur": 0.5,
           "zone": "card_market",
           "order": 2,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.market.001.3.b1.start",
+          "offset": 2.325
         }
       ]
     },
@@ -3912,10 +6259,6 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点一级牌堆",
-          "text": "1.00"
         }
       ],
       "script": {
@@ -3925,17 +6268,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 1.0,
-          "dur": 0.5,
-          "zone": "deck_level_1",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.market.001.4.start"
         }
       ]
     },
@@ -3959,34 +6295,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_card_samples_f06667",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.prestige.001.1.start"
         },
         {
           "op": "point",
-          "at": 0.8,
           "dur": 0.0,
           "zone": "showcase_1",
           "indicator": "arrow",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.1.b1.start",
+          "offset": 0.505
         },
         {
           "op": "point",
-          "at": 1.8,
           "dur": 0.0,
           "zone": "showcase_1",
           "indicator": "circle",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.1.b1.end",
+          "offset": -0.585
         },
         {
           "op": "point",
-          "at": 3.0,
           "dur": 0.0,
           "zone": "showcase_1",
           "indicator": "arrow",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.1.b2.start",
+          "offset": 0.11
         }
       ]
     },
@@ -4014,42 +6353,47 @@
       "events": [
         {
           "op": "point",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "showcase_1",
           "indicator": "circle",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.2.b1.start",
+          "offset": 0.315
         },
         {
           "op": "point",
-          "at": 1.8,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "cross",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.2.b1.end",
+          "offset": -1.035
         },
         {
           "op": "wait",
-          "at": 3.2,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "action.cards.prestige.001.2.b2.start",
+          "offset": -0.11
         },
         {
           "op": "point",
-          "at": 3.4,
           "dur": 0.0,
           "zone": "card_market",
           "indicator": "cross",
           "part": "prestige",
-          "order": 0
+          "order": 0,
+          "anchor": "action.cards.prestige.001.2.b2.start",
+          "offset": 0.09
         },
         {
           "op": "point",
-          "at": 3.8,
           "dur": 0.0,
           "zone": "card_market",
           "indicator": "cross",
           "part": "prestige",
-          "order": 3
+          "order": 3,
+          "anchor": "action.cards.prestige.001.2.b2.start",
+          "offset": 0.49
         }
       ]
     },
@@ -4073,43 +6417,37 @@
       "events": [
         {
           "op": "point",
-          "at": 0.8,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "arrow",
-          "part": "bonus"
+          "part": "bonus",
+          "anchor": "action.cards.discount.001.b1.start",
+          "offset": 0.475
         },
         {
           "op": "point",
-          "at": 1.8,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "circle",
-          "part": "bonus"
+          "part": "bonus",
+          "anchor": "action.cards.discount.001.b1.start",
+          "offset": 1.475
         },
         {
           "op": "point",
-          "at": 3.0,
           "dur": 0.0,
           "zone": "showcase",
           "indicator": "arrow",
-          "part": "bonus"
+          "part": "bonus",
+          "anchor": "action.cards.discount.001.b1.start",
+          "offset": 2.675
         }
       ]
     },
     {
       "id": "action.cards.discount.002.1",
       "parent": "action.cards.discount.001",
-      "timing": [
-        {
-          "key": "点发展区那张白牌",
-          "text": "0.60"
-        },
-        {
-          "key": "点想买的牌",
-          "text": "2.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【举个例子：现在我已经购买了 1 张白宝石牌，那么下一回合我想购买这张牌时】",
         "note": "【折扣例子（一）】\n  『我已经购买了 1 张白宝石牌』**不是凭空说的**：上一段 market.001.2 已经真的把一张一级白买进发展区了 → 这里点它一下（画面上的事实与口播对得上）。\n  然后点想买的那张（一级白样本）——『这张牌』指的是它。",
@@ -4143,29 +6481,16 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.discount.002.1.start"
         },
         {
           "op": "wait",
-          "at": 2.4,
-          "dur": 0.0
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "showcase",
-          "peak_alpha": 0.65
+          "dur": 0.0,
+          "anchor": "action.cards.discount.002.1.b1.start",
+          "offset": 2.105
         }
       ]
     },
@@ -4176,14 +6501,6 @@
         {
           "key": "镜头推近玩家持有区",
           "text": "0.00"
-        },
-        {
-          "key": "点白宝石",
-          "text": "0.60"
-        },
-        {
-          "key": "点蓝宝石",
-          "text": "1.60"
         }
       ],
       "script": {
@@ -4193,26 +6510,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_holding",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "order": 0,
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.6,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "order": 1,
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.discount.002.2.start"
         }
       ]
     },
@@ -4263,65 +6564,61 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.discount.003.1.start"
         },
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "player_development",
           "template": "market_card_3_diamond",
           "palette": "card_level_3",
           "count": 1,
-          "concept": "development_card_level_3"
+          "concept": "development_card_level_3",
+          "anchor": "action.cards.discount.003.1.b1.start",
+          "offset": 0.315
         },
         {
           "op": "create",
-          "at": 0.9,
           "dur": 0.0,
           "zone": "player_development",
           "template": "market_card_1_sapphire",
           "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1"
+          "concept": "development_card_level_1",
+          "anchor": "action.cards.discount.003.1.b1.start",
+          "offset": 0.615
         },
         {
           "op": "highlight",
-          "at": 2.0,
           "dur": 0.5,
           "zone": "player_development",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.discount.003.1.b1.start",
+          "offset": 1.715
         },
         {
           "op": "wait",
-          "at": 3.4,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "action.cards.discount.003.1.b1.start",
+          "offset": 3.115
         },
         {
           "op": "highlight",
-          "at": 3.6,
           "dur": 0.5,
           "zone": "showcase",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.discount.003.1.b1.start",
+          "offset": 3.315
         }
       ]
     },
     {
       "id": "action.cards.discount.003.2",
       "parent": "action.cards.discount.003.1",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.60"
-        },
-        {
-          "key": "点持有区（没变多）",
-          "text": "2.00"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石】",
         "note": "【折扣不能反过来『赚钱』】\n  规则说明，**没有状态变化**：点发展区（折扣多）、再点玩家持有区（手上的宝石**没有变多**）。「没有变多」靠『点一下但什么都不发生』+ 口播表达 —— 我们仍然没有『否定』的原语。"
@@ -4329,63 +6626,27 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.0,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.discount.003.2.start"
         }
       ]
     },
     {
       "id": "action.cards.discount.003.3",
       "parent": "action.cards.discount.003.2",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.40"
-        },
-        {
-          "key": "点样本牌",
-          "text": "1.20"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【折扣的上限就是免费】",
         "note": "【上限就是免费】\n  规则说明，**没有状态变化**：点发展区（折扣已经够多了）、再点想买的样本牌 —— 折扣再多也不会变成『倒拿宝石』，最多到 0 元。"
       },
       "events": [
         {
-          "op": "highlight",
-          "at": 0.4,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        },
-        {
           "op": "wait",
-          "at": 1.2,
-          "dur": 0.0
-        },
-        {
-          "op": "highlight",
-          "at": 1.3,
-          "dur": 0.5,
-          "zone": "showcase",
-          "peak_alpha": 0.65
+          "dur": 0.0,
+          "anchor": "action.cards.discount.003.3.b1.start",
+          "offset": 0.925
         }
       ]
     },
@@ -4396,10 +6657,6 @@
         {
           "key": "镜头给发展区",
           "text": "0.00"
-        },
-        {
-          "key": "点发展区",
-          "text": "0.80"
         }
       ],
       "script": {
@@ -4409,17 +6666,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.public.001.1.start"
         }
       ]
     },
@@ -4427,10 +6677,6 @@
       "id": "action.cards.public.001.2",
       "parent": "action.cards.public.001.1",
       "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.60"
-        },
         {
           "key": "镜头回整桌",
           "text": "2.60"
@@ -4443,22 +6689,16 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.public.001.2.start"
         },
         {
           "op": "wait",
-          "at": 2.6,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "action.cards.public.001.2.b1.start",
+          "offset": 2.305
         }
       ]
     },
@@ -4469,25 +6709,13 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点发展区",
-          "text": "0.80"
         }
       ],
       "script": {
         "story": "【和宝石不同的是，玩家一回合只能购买一张发展卡牌】",
         "note": "【一回合只能买一张】\n  规则说明，**没有状态变化**：镜头回整桌，点发展区（这就是『一回合一张』的落点）。\n  ⚠ 想表达『只能一张』同样缺少否定原语 → 只点一下。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.cards.limit.001.2",
@@ -4519,22 +6747,25 @@
       "events": [
         {
           "op": "highlight",
-          "at": 0.5,
           "dur": 0.5,
           "zone": "player_development",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.limit.001.2.b1.start",
+          "offset": 0.245
         },
         {
           "op": "destroy",
-          "at": 2.2,
           "dur": 0.0,
-          "zone": "showcase"
+          "zone": "showcase",
+          "anchor": "action.cards.limit.001.2.b1.end",
+          "offset": -1.475
         },
         {
           "op": "destroy",
-          "at": 2.2,
           "dur": 0.0,
-          "zone": "showcase_1"
+          "zone": "showcase_1",
+          "anchor": "action.cards.limit.001.2.b1.end",
+          "offset": -1.475
         }
       ]
     },
@@ -4720,35 +6951,46 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
-          "shot": "shot_nobles_player_b",
-          "realizes": "<ontology::timing>"
+          "shot": "shot_nobles",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.intro.001.start"
         },
         {
           "op": "create",
-          "at": 0.4,
           "dur": 0.0,
           "zone": "player_b_nobles",
           "template": "noble",
           "palette": "noble",
           "count": 1,
-          "concept": "noble"
+          "concept": "noble",
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 0.115
         },
         {
           "op": "highlight",
-          "at": 1.0,
           "dur": 0.5,
           "zone": "noble_market",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 0.715
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_nobles_player_b",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.intro.001.b1.end",
+          "offset": -0.615
         },
         {
           "op": "point",
-          "at": 1.5,
           "dur": 0.0,
           "zone": "player_b_nobles",
           "indicator": "arrow",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.intro.001.b1.end",
+          "offset": -0.515
         }
       ]
     },
@@ -4768,62 +7010,57 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles_f08",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.value.001.1.start"
         },
         {
           "op": "point",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "noble_market",
           "indicator": "arrow",
           "part": "prestige",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.value.001.1.b1.start",
+          "offset": 0.235
         },
         {
           "op": "point",
-          "at": 1.6,
           "dur": 0.0,
           "zone": "noble_market",
           "indicator": "circle",
           "part": "prestige",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.value.001.1.b1.start",
+          "offset": 1.235
         },
         {
           "op": "point",
-          "at": 2.6,
           "dur": 0.0,
           "zone": "noble_market",
           "indicator": "arrow",
           "part": "condition",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.value.001.1.b1.start",
+          "offset": 2.235
         },
         {
           "op": "point",
-          "at": 3.6,
           "dur": 0.0,
           "zone": "noble_market",
           "indicator": "circle",
           "part": "condition",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.value.001.1.b1.end",
+          "offset": -1.905
         }
       ]
     },
     {
       "id": "action.nobles.value.001.2",
       "parent": "action.nobles.value.001.1",
-      "timing": [
-        {
-          "key": "点贵族",
-          "text": "0.50"
-        },
-        {
-          "key": "点已购卡",
-          "text": "1.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【也就是已购买的卡牌数量】",
         "note": "【条件 = 已购买卡牌的种类和数量】\n  点贵族、再点自己面前的已购卡（发展区那 3 张）——『条件看的是这些牌』。\n  这一条**没有状态变化**：3 张还差得远，只是说明『条件』指的是什么。"
@@ -4831,24 +7068,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.5,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.value.001.2.start"
         }
       ]
     },
@@ -4859,10 +7082,6 @@
         {
           "key": "镜头给玩家面前",
           "text": "0.00"
-        },
-        {
-          "key": "点发展区",
-          "text": "0.80"
         }
       ],
       "script": {
@@ -4872,17 +7091,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.trigger.001.1.start"
         }
       ]
     },
@@ -4938,7 +7150,6 @@
       "events": [
         {
           "op": "create",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "player_development",
           "template": "market_card_1_diamond",
@@ -4950,11 +7161,12 @@
               "key": "bonus",
               "value": "<diamond>"
             }
-          ]
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.315
         },
         {
           "op": "create",
-          "at": 1.2,
           "dur": 0.0,
           "zone": "player_development",
           "template": "market_card_1_ruby",
@@ -4966,14 +7178,17 @@
               "key": "bonus",
               "value": "<ruby>"
             }
-          ]
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.915
         },
         {
           "op": "highlight",
-          "at": 2.6,
           "dur": 0.5,
           "zone": "player_development",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 2.315
         }
       ]
     },
@@ -5007,54 +7222,44 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles_f08",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.trigger.001.3.start"
         },
         {
           "op": "highlight",
-          "at": 1.2,
           "dur": 0.5,
           "zone": "noble_market",
           "order": 0,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.trigger.001.3.b1.start",
+          "offset": 0.915
         },
         {
           "op": "transfer",
-          "at": 3.2,
           "dur": 0.6,
           "source": "noble_market",
           "destination": "player_nobles",
           "quantity": 1,
-          "concept": "noble"
+          "concept": "noble",
+          "anchor": "action.nobles.trigger.001.3.b1.end",
+          "offset": -1.305
         },
         {
           "op": "highlight",
-          "at": 4.0,
           "dur": 0.5,
           "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.trigger.001.3.b1.end",
+          "offset": -0.505
         }
       ]
     },
     {
       "id": "action.nobles.forced.001.1",
       "parent": "action.nobles.trigger.001.3",
-      "timing": [
-        {
-          "key": "点市场",
-          "text": "0.60"
-        },
-        {
-          "key": "点发展区",
-          "text": "2.00"
-        },
-        {
-          "key": "点贵族",
-          "text": "3.40"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动】",
         "note": "【不是独立行动，是附加行动】\n  规则说明，**没有状态变化**：把三个位置点一遍（市场买牌 → 发展区 → 贵族）——顺序就是『买牌之后附加』。"
@@ -5062,31 +7267,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.0,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 3.4,
-          "dur": 0.5,
-          "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.forced.001.1.start"
         }
       ]
     },
@@ -5110,34 +7294,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles_f08",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.forced.001.2.start"
         },
         {
           "op": "point",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "noble_market",
           "indicator": "forbid",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.forced.001.2.b1.start",
+          "offset": 0.345
         },
         {
           "op": "point",
-          "at": 1.6,
           "dur": 0.0,
           "zone": "noble_market",
           "indicator": "forbid",
-          "order": 1
+          "order": 1,
+          "anchor": "action.nobles.forced.001.2.b1.start",
+          "offset": 1.345
         },
         {
           "op": "point",
-          "at": 2.6,
           "dur": 0.0,
           "zone": "player_nobles",
           "indicator": "arrow",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.forced.001.2.b1.end",
+          "offset": -1.495
         }
       ]
     },
@@ -5148,10 +7335,6 @@
         {
           "key": "镜头贵族供应堆",
           "text": "0.00"
-        },
-        {
-          "key": "点供应堆",
-          "text": "0.80"
         }
       ],
       "script": {
@@ -5161,57 +7344,52 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
+          "dur": 0.0,
+          "shot": "shot_nobles",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.source.001.start"
+        },
+        {
+          "op": "camera",
           "dur": 0.0,
           "shot": "shot_nobles_player_b",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.source.001.b1.start",
+          "offset": 1.105
         },
         {
           "op": "point",
-          "at": 2.0,
           "dur": 0.0,
           "zone": "player_b_nobles",
           "indicator": "cross",
-          "order": 0
+          "order": 0,
+          "anchor": "action.nobles.source.001.b1.start",
+          "offset": 1.705
         },
         {
           "op": "point",
-          "at": 2.6,
           "dur": 0.0,
           "zone": "player_b_nobles",
           "indicator": "cross",
-          "order": 1
+          "order": 1,
+          "anchor": "action.nobles.source.001.b1.end",
+          "offset": -2.235
         },
         {
           "op": "point",
-          "at": 3.2,
           "dur": 0.0,
           "zone": "player_b_nobles",
           "indicator": "cross",
-          "order": 2
+          "order": 2,
+          "anchor": "action.nobles.source.001.b1.end",
+          "offset": -1.635
         }
       ]
     },
     {
       "id": "action.nobles.choice.001.1",
       "parent": "action.nobles.source.001",
-      "timing": [
-        {
-          "key": "点市场",
-          "text": "0.60"
-        },
-        {
-          "key": "点两块贵族",
-          "text": "1.80 / 2.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
         "note": "【同时满足多名贵族】\n  规则说明，**没有状态变化**：桌上剩的两块贵族条件相同（都是 4白+4红），发展区早就满足 → 现在就是『同时满足多名』的局面，两块一起点出来。\n  顺带点一下市场：这句的前提是『购买一张发展卡牌后』。"
@@ -5219,38 +7397,16 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.choice.001.1.start"
         },
         {
           "op": "wait",
-          "at": 1.6,
-          "dur": 0.0
-        },
-        {
-          "op": "highlight",
-          "at": 1.8,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "order": 0,
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "order": 1,
-          "peak_alpha": 0.65
+          "dur": 0.0,
+          "anchor": "action.nobles.choice.001.1.b1.start",
+          "offset": 1.305
         }
       ]
     },
@@ -5284,34 +7440,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles_f07143",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.choice.001.2.start"
         },
         {
           "op": "highlight",
-          "at": 0.6,
           "dur": 0.5,
           "zone": "noble_market",
           "order": 0,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.choice.001.2.b1.start",
+          "offset": 0.325
         },
         {
           "op": "transfer",
-          "at": 1.6,
           "dur": 0.6,
           "source": "noble_market",
           "destination": "player_nobles",
           "quantity": 1,
-          "concept": "noble"
+          "concept": "noble",
+          "anchor": "action.nobles.choice.001.2.b1.start",
+          "offset": 1.325
         },
         {
           "op": "highlight",
-          "at": 2.6,
           "dur": 0.5,
           "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.choice.001.2.b1.end",
+          "offset": -0.485
         }
       ]
     },
@@ -5322,10 +7481,6 @@
         {
           "key": "镜头给玩家面前",
           "text": "0.00"
-        },
-        {
-          "key": "点发展区/贵族",
-          "text": "0.80 / 1.80"
         }
       ],
       "script": {
@@ -5335,24 +7490,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.8,
-          "dur": 0.5,
-          "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.repeat.001.1.start"
         }
       ]
     },
@@ -5386,34 +7527,37 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_nobles_f08",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.repeat.001.2.start"
         },
         {
           "op": "highlight",
-          "at": 1.0,
           "dur": 0.5,
           "zone": "noble_market",
           "order": 0,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.repeat.001.2.b1.start",
+          "offset": 0.705
         },
         {
           "op": "transfer",
-          "at": 3.2,
           "dur": 0.6,
           "source": "noble_market",
           "destination": "player_nobles",
           "quantity": 1,
-          "concept": "noble"
+          "concept": "noble",
+          "anchor": "action.nobles.repeat.001.2.b1.start",
+          "offset": 2.905
         },
         {
           "op": "highlight",
-          "at": 4.0,
           "dur": 0.5,
           "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.repeat.001.2.b1.end",
+          "offset": -3.055
         }
       ]
     },
@@ -5424,10 +7568,6 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点空了的贵族堆",
-          "text": "1.60"
         }
       ],
       "script": {
@@ -5437,63 +7577,27 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 1.6,
-          "dur": 0.5,
-          "zone": "noble_market",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.repeat.001.3.start"
         }
       ]
     },
     {
       "id": "action.cards.summary.001.1",
       "parent": "action.nobles.repeat.001.3",
-      "timing": [
-        {
-          "key": "点市场",
-          "text": "0.60"
-        },
-        {
-          "key": "点发展区",
-          "text": "2.00"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【我们做个总结：玩家可以花费费用购买一张发展卡牌】",
         "note": "【总结（一）：花费用买牌】\n  规则总结，**没有状态变化**：点市场（要买的那 12 张）、再点发展区（买来放的）。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.0,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.cards.summary.001.2",
       "parent": "action.cards.summary.001.1",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【已购买的发展卡牌会为玩家带来声望值和折扣】",
         "note": "【总结（二）：买的牌给声望与折扣】\n  规则总结，**没有状态变化**：点发展区（那些牌就是声望与折扣的来源）。"
@@ -5501,33 +7605,17 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.summary.001.2.start"
         }
       ]
     },
     {
       "id": "action.cards.summary.001.3",
       "parent": "action.cards.summary.001.2",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.60"
-        },
-        {
-          "key": "点三块贵族",
-          "text": "2.00 / 2.60 / 3.20"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值】",
         "note": "【总结（三）：条件够了就结识贵族】\n  规则总结，**没有状态变化**：点发展区、再点自己面前的三块贵族（这就是本节的结果）。\n  本节结束时：发展区 9 张、贵族 3 块（供应堆空了）—— 下一节（3.3 保留卡牌）从这里继续。"
@@ -5535,24 +7623,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.0,
-          "dur": 0.5,
-          "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.summary.001.3.start"
         }
       ]
     },
@@ -5590,26 +7664,19 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_market",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.intro.001.1.start"
         },
         {
           "op": "highlight",
-          "at": 1.2,
           "dur": 0.5,
           "zone": "card_market",
           "order": 9,
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 3.2,
-          "dur": 0.5,
-          "zone": "card_market",
-          "order": 9,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.intro.001.1.b1.start",
+          "offset": 0.925
         }
       ]
     },
@@ -5669,7 +7736,6 @@
       "events": [
         {
           "op": "transfer",
-          "at": 0.8,
           "dur": 0.6,
           "source": "card_market",
           "destination": "player_reserved",
@@ -5681,23 +7747,27 @@
               "value": "<diamond>"
             }
           ],
-          "to": "face_down"
+          "to": "face_down",
+          "anchor": "action.reserve.intro.001.2.b1.start",
+          "offset": 0.505
         },
         {
           "op": "transfer",
-          "at": 2.6,
           "dur": 0.6,
           "source": "gold_supply",
           "destination": "player_holding",
           "quantity": 1,
-          "concept": "gold"
+          "concept": "gold",
+          "anchor": "action.reserve.intro.001.2.b1.start",
+          "offset": 2.305
         },
         {
           "op": "highlight",
-          "at": 4.4,
           "dur": 0.5,
           "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.intro.001.2.b1.end",
+          "offset": -1.785
         }
       ]
     },
@@ -5721,25 +7791,27 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.gold.001.start"
         },
         {
           "op": "highlight",
-          "at": 0.8,
           "dur": 0.5,
           "zone": "player_holding",
           "order": 5,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.gold.001.b1.start",
+          "offset": 0.535
         },
         {
           "op": "highlight",
-          "at": 2.6,
           "dur": 0.5,
           "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.gold.001.b1.start",
+          "offset": 2.335
         }
       ]
     },
@@ -5799,37 +7871,40 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_decks",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.deck.001.start"
         },
         {
           "op": "transfer",
-          "at": 1.4,
           "dur": 0.6,
           "source": "deck_level_1",
           "destination": "player_reserved",
           "quantity": 1,
           "concept": "development_card_level_1",
-          "to": "face_down"
+          "to": "face_down",
+          "anchor": "action.reserve.deck.001.b1.start",
+          "offset": 1.115
         },
         {
           "op": "transfer",
-          "at": 3.2,
           "dur": 0.6,
           "source": "gold_supply",
           "destination": "player_holding",
           "quantity": 1,
-          "concept": "gold"
+          "concept": "gold",
+          "anchor": "action.reserve.deck.001.b1.start",
+          "offset": 2.915
         },
         {
           "op": "highlight",
-          "at": 4.6,
           "dur": 0.5,
           "zone": "player_reserved",
           "order": 1,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.deck.001.b1.end",
+          "offset": -2.675
         }
       ]
     },
@@ -5849,29 +7924,25 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_reserved",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.notes_intro.001.start"
         },
         {
           "op": "highlight",
-          "at": 0.6,
           "dur": 0.5,
           "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.notes_intro.001.b1.start",
+          "offset": 0.305
         }
       ]
     },
     {
       "id": "action.reserve.limit_gold.001.1",
       "parent": "action.reserve.notes_intro.001",
-      "timing": [
-        {
-          "key": "点持有区",
-          "text": "0.80 / 2.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
         "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 7 枚（5 宝石 + 2 黄金），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出 4 枚（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。"
@@ -5879,24 +7950,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_holding",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "player_holding",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.limit_gold.001.1.start"
         }
       ]
     },
@@ -5907,14 +7964,6 @@
         {
           "key": "镜头黄金供应堆",
           "text": "0.00"
-        },
-        {
-          "key": "点黄金堆",
-          "text": "0.80"
-        },
-        {
-          "key": "点保留区",
-          "text": "2.60"
         }
       ],
       "script": {
@@ -5924,36 +7973,17 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_gold",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "gold_supply",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.limit_gold.001.2.start"
         }
       ]
     },
     {
       "id": "action.reserve.limit_hand.001.1",
       "parent": "action.reserve.limit_gold.001.2",
-      "timing": [
-        {
-          "key": "点保留区",
-          "text": "0.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【每位玩家最多同时保留 3 张发展卡牌】",
         "note": "【注意事项三：最多保留 3 张】\n  规则说明（前半句），**没有状态变化**：点保留区（现在 2 张）—— 下一句再加一张就正好到 3。"
@@ -5961,17 +7991,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_reserved",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.limit_hand.001.1.start"
         }
       ]
     },
@@ -6031,14 +8054,13 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_market",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.limit_hand.001.2.start"
         },
         {
           "op": "transfer",
-          "at": 1.6,
           "dur": 0.6,
           "source": "card_market",
           "destination": "player_reserved",
@@ -6050,30 +8072,35 @@
               "value": "<ruby>"
             }
           ],
-          "to": "face_down"
+          "to": "face_down",
+          "anchor": "action.reserve.limit_hand.001.2.b1.start",
+          "offset": 1.315
         },
         {
           "op": "transfer",
-          "at": 3.2,
           "dur": 0.6,
           "source": "gold_supply",
           "destination": "player_holding",
           "quantity": 1,
-          "concept": "gold"
+          "concept": "gold",
+          "anchor": "action.reserve.limit_hand.001.2.b1.end",
+          "offset": -1.665
         },
         {
           "op": "highlight",
-          "at": 4.6,
           "dur": 0.5,
           "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.limit_hand.001.2.b1.end",
+          "offset": -0.265
         },
         {
           "op": "point",
-          "at": 5.2,
           "dur": 0.0,
           "zone": "player_reserved",
-          "indicator": "forbid"
+          "indicator": "forbid",
+          "anchor": "action.reserve.limit_hand.001.2.b2.start",
+          "offset": -0.03
         }
       ]
     },
@@ -6084,10 +8111,6 @@
         {
           "key": "镜头推近保留区",
           "text": "0.00"
-        },
-        {
-          "key": "点三张",
-          "text": "0.80 / 1.80 / 2.80"
         }
       ],
       "script": {
@@ -6097,42 +8120,22 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_reserved",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.private.001.1.start"
         }
       ]
     },
     {
       "id": "action.reserve.private.001.2",
       "parent": "action.reserve.private.001.1",
-      "timing": [
-        {
-          "key": "点保留区",
-          "text": "0.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【不可以给其他玩家看，其他玩家也不可以主动去查看】",
         "note": "【不给别人看、别人也不能翻】\n  规则说明，**没有状态变化**：继续停在保留区近景，点一下。\n  ⚠ 『不可以』两层意思（不给看 / 别人不主动翻）都没有对应画面 —— 仍然是没有否定原语。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.reserve.private.002",
@@ -6141,14 +8144,6 @@
         {
           "key": "镜头给牌堆",
           "text": "0.00"
-        },
-        {
-          "key": "点牌堆顶",
-          "text": "1.00"
-        },
-        {
-          "key": "点保留区",
-          "text": "3.00"
         }
       ],
       "script": {
@@ -6158,29 +8153,16 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_decks",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 1.0,
-          "dur": 0.5,
-          "zone": "deck_level_1",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.private.002.start"
         },
         {
           "op": "wait",
-          "at": 3.0,
-          "dur": 0.0
-        },
-        {
-          "op": "highlight",
-          "at": 3.2,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "dur": 0.0,
+          "anchor": "action.reserve.private.002.b1.start",
+          "offset": 2.715
         }
       ]
     },
@@ -6191,14 +8173,6 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点保留区",
-          "text": "0.80"
-        },
-        {
-          "key": "点发展区",
-          "text": "2.40"
         }
       ],
       "script": {
@@ -6208,60 +8182,22 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.8,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.4,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.not_purchase.001.start"
         }
       ]
     },
     {
       "id": "action.purchase_reserved.001",
       "parent": "action.reserve.not_purchase.001",
-      "timing": [
-        {
-          "key": "点市场",
-          "text": "0.60"
-        },
-        {
-          "key": "点保留区",
-          "text": "2.20"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买】",
         "note": "【买牌的两个来源】\n  规则说明，**没有状态变化**：点市场（供应堆那 12 张）、再点保留区（自己留的 3 张）——两条路都能买。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.2,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.purchase_reserved.002.1",
@@ -6341,31 +8277,32 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_reserved",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "action.purchase_reserved.002.1.start"
         },
         {
           "op": "highlight",
-          "at": 0.8,
           "dur": 0.5,
           "zone": "player_reserved",
           "order": 2,
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "action.purchase_reserved.002.1.b1.start",
+          "offset": 0.465
         },
         {
           "op": "transfer",
-          "at": 1.6,
           "dur": 0.6,
           "source": "player_holding",
           "destination": "gold_supply",
           "quantity": 2,
-          "concept": "gold"
+          "concept": "gold",
+          "anchor": "action.purchase_reserved.002.1.b1.start",
+          "offset": 1.265
         },
         {
           "op": "transfer",
-          "at": 3.0,
           "dur": 0.7,
           "source": "player_reserved",
           "destination": "player_development",
@@ -6377,32 +8314,26 @@
               "value": "<ruby>"
             }
           ],
-          "to": "face_up"
+          "to": "face_up",
+          "anchor": "action.purchase_reserved.002.1.b1.start",
+          "offset": 2.665
         },
         {
           "op": "point",
-          "at": 4.4,
           "dur": 0.0,
           "zone": "player_development",
           "indicator": "circle",
           "part": "cost",
-          "order": 10
+          "order": 10,
+          "anchor": "action.purchase_reserved.002.1.b1.end",
+          "offset": -2.005
         }
       ]
     },
     {
       "id": "action.purchase_reserved.002.2",
       "parent": "action.purchase_reserved.002.1",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.60"
-        },
-        {
-          "key": "点贵族",
-          "text": "2.40"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣】",
         "note": "【买完之后的结算】\n  规则说明，**没有状态变化**：点发展区（声望 + 折扣）→ 点自己面前的贵族（看条件是否满足）。\n  · 这张三级白值 4 分（读图得到）：发展区现在 4 张白 + 4 张红 + 那么几张，贵族条件早就满足了；\n  · 但**贵族供应堆已经空了**（3.2.2 把 3 块都拿完了）→ 『查看是否满足』这一步现在没有对象可查。这是演示顺序造成的：先把贵族讲透，后面就没得抽了。"
@@ -6410,49 +8341,23 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.purchase_reserved.002.2.start"
         },
         {
           "op": "wait",
-          "at": 2.4,
-          "dur": 0.0
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "player_nobles",
-          "peak_alpha": 0.65
+          "dur": 0.0,
+          "anchor": "action.purchase_reserved.002.2.b1.start",
+          "offset": 2.125
         }
       ]
     },
     {
       "id": "action.summary.001",
       "parent": "action.purchase_reserved.002.2",
-      "timing": [
-        {
-          "key": "点供应堆",
-          "text": "0.60"
-        },
-        {
-          "key": "点市场",
-          "text": "1.80"
-        },
-        {
-          "key": "点保留区",
-          "text": "3.20"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌】",
         "note": "【三种行动：回顾一遍】\n  规则总结，**没有状态变化**：按口播的三样依次点：宝石供应堆 → 市场/发展区 → 保留区。"
@@ -6460,67 +8365,22 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 1.8,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 3.2,
-          "dur": 0.5,
-          "zone": "player_reserved",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "action.summary.001.start"
         }
       ]
     },
     {
       "id": "action.summary.002.1",
       "parent": "action.summary.001",
-      "timing": [
-        {
-          "key": "点市场",
-          "text": "0.60"
-        },
-        {
-          "key": "点起始玩家标记",
-          "text": "2.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序】",
         "note": "【一回合一件事，然后轮到下一位】\n  规则说明，**没有状态变化**：点市场（三种行动都在这里发生）、再点起始玩家标记（『按顺时针顺序』的锚点就是它）。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.summary.002.2",
@@ -6529,25 +8389,13 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点起始标记",
-          "text": "1.60"
         }
       ],
       "script": {
         "story": "【左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束】",
         "note": "【循环到游戏结束】\n  规则说明，**没有状态变化**：镜头拉回整桌收尾。\n  ⚠ 『左手边的玩家』没法演：桌面只有**一位玩家**的位置（起始玩家标记只说明谁是起始玩家）。要演轮流，得先有第二个玩家区 —— 与 3.2.2 的 source 那条是同一个缺口。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 1.6,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "endgame.trigger.001",
@@ -6611,14 +8459,13 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "endgame.trigger.001.start"
         },
         {
           "op": "create",
-          "at": 0.8,
           "dur": 0.0,
           "zone": "player_development",
           "template": "market_card_3_sapphire",
@@ -6630,35 +8477,41 @@
               "key": "bonus",
               "value": "<sapphire>"
             }
-          ]
+          ],
+          "anchor": "endgame.trigger.001.b1.start",
+          "offset": 0.525
         },
         {
           "op": "highlight",
-          "at": 2.4,
           "dur": 0.5,
           "zone": "player_development",
-          "peak_alpha": 0.65
+          "peak_alpha": 0.65,
+          "anchor": "endgame.trigger.001.b1.start",
+          "offset": 2.125
         },
         {
           "op": "point",
-          "at": 3.0,
           "dur": 0.0,
           "zone": "player_development",
           "indicator": "circle",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "endgame.trigger.001.b1.end",
+          "offset": -1.915
         },
         {
           "op": "wait",
-          "at": 4.2,
-          "dur": 0.0
+          "dur": 0.0,
+          "anchor": "endgame.trigger.001.b1.end",
+          "offset": -0.715
         },
         {
           "op": "point",
-          "at": 4.6,
           "dur": 0.0,
           "zone": "player_nobles",
           "indicator": "circle",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "endgame.trigger.001.b1.end",
+          "offset": -0.315
         }
       ]
     },
@@ -6669,10 +8522,6 @@
         {
           "key": "镜头回整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点起始标记",
-          "text": "1.20"
         }
       ],
       "script": {
@@ -6682,87 +8531,32 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
-        },
-        {
-          "op": "highlight",
-          "at": 1.2,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
+          "realizes": "<ontology::timing>",
+          "anchor": "endgame.final_rounds.001.1.start"
         }
       ]
     },
     {
       "id": "endgame.final_rounds.001.2",
       "parent": "endgame.final_rounds.001.1",
-      "timing": [
-        {
-          "key": "点起始标记",
-          "text": "0.60"
-        },
-        {
-          "key": "点整桌",
-          "text": "2.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【直到起始玩家右手边的玩家结束他的回合时，整场游戏结束】",
         "note": "【起始玩家右手边的人走完 → 结束】\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "endgame.example.001.1",
       "parent": "endgame.final_rounds.001.2",
-      "timing": [
-        {
-          "key": "点起始标记",
-          "text": "0.60"
-        },
-        {
-          "key": "点发展区",
-          "text": "2.20"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【以 4 人局为例：如果起始玩家的声望值达到 15】",
         "note": "【举例：4 人局、起始玩家先到 15】\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.2,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "endgame.example.001.2",
@@ -6771,59 +8565,23 @@
         {
           "key": "镜头整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点起始标记",
-          "text": "1.00"
         }
       ],
       "script": {
         "story": "【剩下 3 位玩家各自还有最后一回合可以行动，之后游戏才结束】",
         "note": "【其余 3 人各还有最后一回合】\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 1.0,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "endgame.example.002",
       "parent": "endgame.example.001.2",
-      "timing": [
-        {
-          "key": "点起始标记",
-          "text": "0.60"
-        },
-        {
-          "key": "点整桌",
-          "text": "2.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【但如果是起始玩家左手边的玩家声望值达到 15，就没有人可以行动了，游戏立刻结束】",
         "note": "【换成末位玩家到 15 → 立刻结束】\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "at": 0.6,
-          "dur": 0.5,
-          "zone": "player_marker",
-          "peak_alpha": 0.65
-        },
-        {
-          "op": "highlight",
-          "at": 2.6,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
-        }
-      ]
+      "events": []
     },
     {
       "id": "endgame.winner.001",
@@ -6845,31 +8603,28 @@
       "events": [
         {
           "op": "point",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "player_development",
           "indicator": "circle",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "endgame.winner.001.b1.start",
+          "offset": 0.315
         },
         {
           "op": "point",
-          "at": 1.6,
           "dur": 0.0,
           "zone": "player_nobles",
           "indicator": "circle",
-          "part": "prestige"
+          "part": "prestige",
+          "anchor": "endgame.winner.001.b1.end",
+          "offset": -1.075
         }
       ]
     },
     {
       "id": "endgame.tie.001.1",
       "parent": "endgame.winner.001",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.60"
-        }
-      ],
+      "timing": [],
       "script": {
         "story": "【如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利】",
         "note": "【同分 → 买牌少的胜】\n  规则说明，**没有状态变化**：点发展区（要比的就是这里的**张数**）。\n  ⚠ 这一句是**多人对比**（谁的声望到 15、谁还剩回合），而桌面只有一个玩家区、牌面也没有分数累加显示（UI 只有字幕）→ 只能指桌面与起始玩家标记，没法把『4 人局谁还没走完』画出来。要补就得加：玩家区 ×4 + 一个分数读数。\n  【2026-09 用户指示④：结算就是圈声望】发展区每张牌的左上角 + 每块贵族的左上角，用**红圈**一起圈出来 —— 两部分加起来就是总分。\n  用的是①的部位指示物：`point` 带 `zone` 会**对区域里每一件**都画一个圈。\n  （同分时比的是**买牌张数**：这一条把发展区整体点亮，圈的是声望，点的是张数。）"
@@ -6877,25 +8632,19 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_development",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "endgame.tie.001.1.start"
         },
         {
           "op": "point",
-          "at": 0.6,
           "dur": 0.0,
           "zone": "player_development",
           "indicator": "circle",
-          "part": "prestige"
-        },
-        {
-          "op": "highlight",
-          "at": 1.8,
-          "dur": 0.5,
-          "zone": "player_development",
-          "peak_alpha": 0.65
+          "part": "prestige",
+          "anchor": "endgame.tie.001.1.b1.start",
+          "offset": 0.285
         }
       ]
     },
@@ -6915,10 +8664,10 @@
       "events": [
         {
           "op": "camera",
-          "at": 0.0,
           "dur": 0.0,
           "shot": "shot_board",
-          "realizes": "<ontology::timing>"
+          "realizes": "<ontology::timing>",
+          "anchor": "endgame.tie.001.2.start"
         }
       ]
     }
