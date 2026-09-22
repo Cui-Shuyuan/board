@@ -144,12 +144,10 @@ AI 不需要知道棋盘上实际有什么，只需要知道流程走到哪一�
 
 真正的工程关键不是 prompt，而是一层面向人的 `guide` 投影：哪些节点要问、问什么、选项是什么、下一步去哪。
 
-## 相关记忆
+## 相关文档
 
-- [[project-overview]] — 项目阶段与当前重点
-- [[interaction-model]] — LLM 与程序分工边界
-- [[runtime-architecture]] — 现有问答 Runtime / execute_plan
-- [[pipeline-model]] — pipeline、options、do_after、loop 原语
-- [[json-writing-conventions]] — flow.json / concepts.json 编写约定
-- [[civolution-progress]] — Civolution 流程与终局计分现状
-- [[splendor-progress]] — 简单流程回归用例
+- [project-overview.md](project-overview.md) — 项目阶段与当前重点
+- [architecture.md](architecture.md) — LLM 与程序分工、现有问答 Runtime / execute_plan
+- [conventions.md](conventions.md) — pipeline、options、do_after、loop 原语与 JSON 编写约定
+- [game-status.md](game-status.md) — Civolution 流程与终局计分现状、Splendor 回归用例
+- 历史细节：`.claude/archive/memory/2026-09-23/civolution-progress.md`、`pipeline-model.md`

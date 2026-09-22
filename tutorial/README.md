@@ -17,5 +17,5 @@ v1 `tutorial.json` 动画 schema 已退役，旧示例与旧 schema 已删除。
    - Unity 运行时：`client/Assets/Scripts/Tutorial/Animation/`
    - 生产说明：`games/splendor/tutorial/anim/README.md`
 
-`tutorial/下一阶段工作指导.md` 是历史路线记录；新动画一律以
-`games/splendor/tutorial/anim/README.md` 的 v2 流程为准。
+旧版 `下一阶段工作指导.md` 已归档到 `.claude/archive/tutorial/`；新动画一律以
+`games/splendor/tutorial/anim/README.md` 和 `.claude/memory/tutorial-animation.md` 为准。

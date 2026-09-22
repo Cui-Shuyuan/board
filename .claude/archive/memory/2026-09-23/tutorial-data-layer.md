@@ -11,6 +11,8 @@ metadata:
 - 运行端 `TimelineEvaluator.Evaluate(cue,t)`：先应用 `state_ops`/`camera_ops` 到 t，
   再让 clips 只改 X/Z/scale/alpha/face；clips 不再写 ZoneId/Order。
 - stage 增加命名机位 `shots`；cue 用 `{"op":"camera","at":...,"shot":"..."}`。
+- 时间：轨道顶层 `time_anchors`；事件写 `anchor` + 可选 `offset`，不写裸 `at`
+  （2026-09-23 全量迁移，编译产物不变）。
 - 检查：`check_anim_v2` 做 state_ops/camera_ops 完整性 + 边界脏帧；
   `check_anim_v2_sample` 逐 item 对账 `(zone,order,face)`。
 - 素材路径：stage 模板显式写处理过的 `_cutout.png`；多色模板（gem/gold）

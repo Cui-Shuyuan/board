@@ -15,7 +15,7 @@ metadata:
 - 愿意花时间讨论和推敲概念边界的细微差别（如 Piece vs Token vs Resource）
 - 设计目标是长期可扩展的平台，不是一次性 demo
 - **ontology 概念优先直接复用**：当 ontology 已有通用概念时，不在游戏层重复封装一个 `<game_xxx>` 包装，避免同一语义两层定义
-- **FAQ 只当测试，不当真理来源（2026-08-16 用户裁决）**：好的程序设计不需要任何 FAQ 也能推理出正确答案。数据口径以规则书 + 用户本人为准——FAQ 答错的、用户拍板的，以用户为准。禁止把 FAQ 答案口径塞进 description 凑测试通过（过拟合，会被错误答案污染）；QA 答错时只修真实数据 bug（规则书支持）或检索层（aliases/正则），description 保持规则书口径。执行记录见 [[faq-tools]]
+- **FAQ 只当测试，不当真理来源（2026-08-16 用户裁决）**：好的程序设计不需要任何 FAQ 也能推理出正确答案。数据口径以规则书 + 用户本人为准——FAQ 答错的、用户拍板的，以用户为准。禁止把 FAQ 答案口径塞进 description 凑测试通过（过拟合，会被错误答案污染）；QA 答错时只修真实数据 bug（规则书支持）或检索层（aliases/正则），description 保持规则书口径。执行记录见 [conventions.md](conventions.md) 第 9 节；完整历史见 `.claude/archive/memory/2026-09-23/faq-tools.md`
 
 ## 工作方式
 - 偏好结对编程式协作——AI 写代码/设计，用户审查决策

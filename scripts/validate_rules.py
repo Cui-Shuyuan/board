@@ -2,7 +2,7 @@
 """
 Board AI 规则文件语法校验脚本。
 
-按 .claude/memory/json-writing-conventions.md 的检查清单逐条校验，
+按 .claude/memory/conventions.md 的检查清单逐条校验，
 防止新增/修改概念、流程时引入悬空引用或格式违规。
 
 用法:

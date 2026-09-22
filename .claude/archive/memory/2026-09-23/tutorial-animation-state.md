@@ -58,9 +58,12 @@ stage:
 
 cue:
 ```json
-{"op":"camera","at":0.0,"shot":"shot_market"}
-{"op":"transfer","at":0.3,"source":"gem_supply_onyx","destination":"player_holding","quantity":1}
+{"op":"camera","anchor":"cue_id.start","shot":"shot_market"}
+{"op":"transfer","anchor":"cue_id.b1.start","source":"gem_supply_onyx","destination":"player_holding","quantity":1}
 ```
+
+时间锚点定义在轨道顶层 `time_anchors`，由 beat + TTS 字级 timing 解析；
+不再写裸 `at`。规范见 `games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
 
 迁移脚本：`scripts/migrate_cameras_to_shots_v2.py`（已执行；旧 `script.camera`
 被转换成 at=0 的 camera 事件）。

@@ -7,6 +7,16 @@ metadata:
 
 # 讲规动画总控编译（2026-09-22）
 
+## 时间锚点（2026-09-23 全量）
+
+- 轨道顶层新增 `time_anchors`：所有事件用 `anchor`（+ 必要时 `offset`）表达时间，
+  不再写裸 `at`。当前 full 轨道 110 cue / 266 event / 468 anchors。
+- 锚点从 `script.{track}.json` 的 beats + `{track}.runtime.json` 的 TTS 字级 timing 解析。
+- 编译器输出仍是 numeric `at`，Unity runtime 不变。
+- 迁移工具：`scripts/migrate_time_anchors_v2.py`。
+- 全量迁移前后 compiled JSON 除 `source_sha256` 外逐字段一致。
+- 面 LLM 的写作规范：`games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
+
 ## 定位
 
 源数据只改两处：
