@@ -216,6 +216,46 @@ def update_lrc_refs(lrc_path: Path, script: dict):
     lrc_path.write_text("\n".join(out) + "\n", encoding="utf-8")
 
 
+def run_qa_gate(ids: list[str] | None = None) -> int:
+    """Ask BoardAI the handwritten QA questions before compiling.
+
+    ids=None -> all questions; ids=[...] -> only questions belonging to those
+    cue ids (including action.cards.market.001.2#1 style suffixes).
+    """
+    import os
+    import tempfile
+    qa_path = ROOT / "games" / "splendor" / "tutorial" / "anim" / "_qa" / "questions.json"
+    if not qa_path.exists():
+        print(f"[qa] missing questions file: {qa_path}", file=sys.stderr)
+        return 2
+    spec = load_json(qa_path)
+    asks = spec.get("asks") or []
+    if ids is not None:
+        wanted = set(ids)
+        selected = [a for a in asks if (a.get("cue", "").split("#", 1)[0] in wanted)]
+    else:
+        selected = asks
+    if not selected:
+        print("[qa] no matching questions; skip")
+        return 0
+    tmp = Path(tempfile.mkstemp(prefix="compile_qa_", suffix=".json")[1])
+    try:
+        tmp.write_text(json.dumps({"note": "compile gate", "asks": selected}, ensure_ascii=False, indent=2),
+                       encoding="utf-8")
+        env = os.environ.copy()
+        env.setdefault("BOARDAI_API", "http://localhost:5000/api/chat")
+        cmd = [sys.executable, str(ROOT / "scripts" / "qa_anim_ask.py"),
+               "--in", str(tmp), "--jobs", "4", "--tag", "compile_validation", "--strict"]
+        print(f"[qa] validating {len(selected)} question(s) via BoardAI ...")
+        rc = subprocess.run(cmd, cwd=ROOT, env=env).returncode
+        if rc != 0:
+            print(f"[qa] validation failed (rc={rc}); compile aborted", file=sys.stderr)
+            return rc
+        return 0
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--game", default="splendor")
@@ -224,7 +264,8 @@ def main() -> int:
     ap.add_argument("--skip-tts", action="store_true")
     ap.add_argument("--force-full-tts", action="store_true")
     ap.add_argument("--tts-python", default=sys.executable)
-    ap.add_argument("--validate-qa", action="store_true", help="run qa_anim_ask.py for changed cues")
+    ap.add_argument("--validate-qa", action="store_true", help="run qa_anim_ask.py for changed cues before compiling")
+    ap.add_argument("--validate-qa-all", action="store_true", help="run the full handwritten QA set before compiling")
     args = ap.parse_args()
 
     game_dir = ROOT / "games" / args.game
@@ -257,6 +298,16 @@ def main() -> int:
             changed.append(cue)
         elif (m.get("refs") or []) != refs:
             refs_changed.append(cid)
+
+    if not args.dry_run:
+        qa_ids = None if args.validate_qa_all else ([c["id"] for c in changed] if args.validate_qa else [])
+        if qa_ids is None or qa_ids:
+            if qa_ids == []:
+                pass
+            else:
+                rc = run_qa_gate(qa_ids)
+                if rc != 0:
+                    return rc
 
     manifest, removed = prune_removed(game_dir, args.track, script, manifest, args.dry_run)
     if changed:
@@ -300,10 +351,6 @@ def main() -> int:
     # Lightweight checks.
     subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_anim_rules_v2.py"),
                     "--game", args.game, "--track", args.track], check=True)
-    if args.validate_qa and changed:
-        ids = ",".join(c["id"] for c in changed)
-        subprocess.run([sys.executable, str(ROOT / "scripts" / "qa_anim_ask.py"), "--only", ids], check=True)
-
     print(f"OK   compiled {args.game}/{args.track}: tts_regenerated={len(changed)} removed={len(removed)}")
     return 0
 

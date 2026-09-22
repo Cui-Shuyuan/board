@@ -34,7 +34,14 @@ python3 scripts/compile_tutorial.py --game splendor --track full
   - 对照 `full.tts.lrc` 文本，只挑真正变化的 cue；
   - 只对变化 cue 调 TTS 增量；
   - 重建 manifest / tts.lrc / runtime / compiled；
-  - `--dry-run` 只报计划；`--skip-tts` 跳过 TTS；`--validate-qa` 可选走 BoardAI 合法性问句。
+  - `--dry-run` 只报计划；`--skip-tts` 跳过 TTS；
+  - `--validate-qa` 编译前只问变化 cue 的手写问句；`--validate-qa-all` 走全部手写问句，
+    任一“不允许/有问题”直接中止编译。
+- **2026-09-22 全量带校验编译通过**：启动 Qdrant（18 collections）+ BoardAI.Api 后，
+  `compile_tutorial.py --validate-qa-all` 先跑 16 条手写合法性问句，16/16 通过，
+  再全量编译 110 cue；`tts_regenerated=0`（源文本未变，增量 TTS 按预期不重生成）。
+  `qa_anim_ask.py` 已加并发（`--jobs`）与严格模式（`--strict`），并修了
+  “模型先答错后自我纠正”时取最后一处判定词的问题。
 - **marker cue 已拆分**：
   - `setup.starting_player.001.3`：独立 `marker_demo` 树展示起始玩家标记；
   - `setup.starting_player.001.4`：回主树全景，`create` 到玩家侧的 `player_marker`；
