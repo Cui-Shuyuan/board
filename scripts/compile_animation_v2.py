@@ -328,16 +328,29 @@ class Compiler:
                 "extent_note": tree.get("extent_note", ""),
             }
 
-    def shot_frame(self, stage_id: str, shot_id: str) -> dict:
+    def shot_frame(self, stage_id: str, shot_id: str, visible_zones: set | None = None) -> dict:
         stage = self.stages[stage_id]
         for sh in stage.get("shots") or []:
             if sh.get("id") == shot_id:
+                zones = sh.get("zones") or []
+                # "*" 全景：动态收窄到当前真的有组件的 zone；
+                # 只有没有可见 zone 时才退回全部 zone。这样空玩家区不会
+                # 把设置完成前的桌面中景硬拉成整桌远景。
+                if "*" in zones and visible_zones:
+                    stage_ids = {z.get("id") for z in (stage.get("zones") or [])}
+                    live = [z for z in visible_zones if z in stage_ids]
+                    if live:
+                        zones = live
                 return geom.build_camera_frame(stage, {
-                    "zones": sh.get("zones") or [],
+                    "zones": zones,
                     "fill": sh.get("fill", 0.8),
                     "at": 0.0,
                 })
         raise ValueError(f"stage {stage_id}: unknown shot {shot_id!r}")
+
+    @staticmethod
+    def visible_zone_set(state: StateModel) -> set:
+        return {it.get("zone") for it in state.items if it.get("zone")}
 
     def default_camera_frame(self, stage_id: str) -> dict:
         stage = self.stages[stage_id]
@@ -540,7 +553,7 @@ class Compiler:
                 shot_id = norm(ev.get("shot"))
                 if not shot_id:
                     raise ValueError(f"cue {cue_id}: camera needs shot")
-                frame = self.shot_frame(stage_id, shot_id)
+                frame = self.shot_frame(stage_id, shot_id, visible_zones=self.visible_zone_set(state))
                 camera_ops.append({
                     "at": at + max(0.0, lead),
                     "dur": dur,
