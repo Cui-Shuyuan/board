@@ -35,3 +35,33 @@
 {"game":"brass-birmingham","relation":"condition","entity":"煤可得","question":"附近有煤可以买吗？","expected":["coal_obtainable"],"note":"condition"}
 {"game":"brass-birmingham","relation":"condition","entity":"啤酒可得","question":"我需要啤酒，哪里有？","expected":["beer_obtainable"],"note":"condition"}
 {"game":"brass-birmingham","relation":"condition","entity":"可以覆盖自己的板块吗","question":"我能用自己的板块盖住旧板块吗？","expected":["overbuild_own_allowed"],"note":"condition"}
+{"game": "ark-nova", "relation": "explain", "entity": "协会工人", "question": "协会工人是干什么的？", "expected": ["association_worker"]}
+{"game": "ark-nova", "relation": "explain", "entity": "X Token", "question": "X Token 是什么？", "expected": ["x_token"]}
+{"game": "ark-nova", "relation": "explain", "entity": "保护分计数器", "question": "保护分怎么记录？", "expected": ["conservation_counter"]}
+{"game": "ark-nova", "relation": "explain", "entity": "吸引力计数器", "question": "吸引力计数器有什么用？", "expected": ["appeal_counter"]}
+{"game": "ark-nova", "relation": "explain", "entity": "动物园卡", "question": "动物园卡是什么？", "expected": ["zoo_card"]}
+{"game": "ark-nova", "relation": "explain", "entity": "动作卡", "question": "动作卡怎么用？", "expected": ["action_card"]}
+{"game": "ark-nova", "relation": "explain", "entity": "终局计分卡", "question": "终局计分卡怎么结算？", "expected": ["final_scoring_card"]}
+{"game": "civolution", "relation": "explain", "entity": "创意标记", "question": "创意标记是干什么的？", "expected": ["idea_marker"]}
+{"game": "civolution", "relation": "explain", "entity": "焦点标记", "question": "焦点标记怎么用？", "expected": ["focus_marker"]}
+{"game": "civolution", "relation": "explain", "entity": "激活骰", "question": "激活骰和命运骰有什么区别？", "expected": ["activation_die"]}
+{"game": "civolution", "relation": "explain", "entity": "命运骰", "question": "命运骰是什么？", "expected": ["fate_die"]}
+{"game": "civolution", "relation": "explain", "entity": "阿格拉恩惠轨", "question": "阿格拉恩惠轨是干嘛的？", "expected": ["favor_of_ager_track"]}
+{"game": "civolution", "relation": "explain", "entity": "收入芯片", "question": "收入芯片怎么获得？", "expected": ["income_chip"]}
+{"game": "civolution", "relation": "explain", "entity": "目标芯片", "question": "目标芯片有什么用？", "expected": ["goal_chip"]}
+{"game": "civolution", "relation": "explain", "entity": "天气轨", "question": "天气轨怎么移动？", "expected": ["weather_gauge"]}
+{"game": "civolution", "relation": "explain", "entity": "篝火营地", "question": "篝火营地是什么？", "expected": ["fire_encampment"]}
+{"game": "seasons", "relation": "explain", "entity": "水晶", "question": "水晶怎么获得？", "expected": ["crystal"]}
+{"game": "seasons", "relation": "explain", "entity": "季节骰", "question": "季节骰有什么用？", "expected": ["season_die"]}
+{"game": "seasons", "relation": "explain", "entity": "能量转化表", "question": "能量转化表怎么看？", "expected": ["transmutation_chart"]}
+{"game": "seasons", "relation": "explain", "entity": "召唤量表", "question": "召唤量表怎么用？", "expected": ["summoning_gauge"]}
+{"game": "seasons", "relation": "explain", "entity": "力量卡", "question": "力量卡是什么？", "expected": ["power_card"]}
+{"game": "seasons", "relation": "explain", "entity": "使魔", "question": "使魔有什么用？", "expected": ["familiar"]}
+{"game": "wingspan", "relation": "explain", "entity": "鸟牌", "question": "鸟牌怎么打出来？", "expected": ["bird_card"]}
+{"game": "wingspan", "relation": "explain", "entity": "奖励牌", "question": "奖励牌怎么结算？", "expected": ["bonus_card"]}
+{"game": "wingspan", "relation": "explain", "entity": "行动方块", "question": "行动方块怎么用？", "expected": ["action_cube"]}
+{"game": "wingspan", "relation": "explain", "entity": "鸟食骰塔", "question": "鸟食骰塔是什么？", "expected": ["birdfeeder"]}
+{"game": "wingspan", "relation": "explain", "entity": "栖息地", "question": "栖息地有哪几种？", "expected": ["habitat"]}
+{"game": "wingspan", "relation": "explain", "entity": "目标板", "question": "目标板怎么用？", "expected": ["goal_board"]}
+{"game": "wingspan", "relation": "explain", "entity": "先手玩家标记", "question": "先手玩家标记给谁？", "expected": ["first_player_marker"]}
+{"game": "wingspan", "relation": "explain", "entity": "鸟蛋", "question": "鸟蛋怎么获得？", "expected": ["egg"]}
