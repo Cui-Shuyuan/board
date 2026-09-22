@@ -105,6 +105,18 @@ C# 端 `VectorSearchService.SyncIndexAsync`（`dotnet run --rebuild-all/--rebuil
 首次从旧索引迁移时（无 content_hash 或旧 C# point ID 端序），会自动重算该游戏全部点一次；
 迁移完成后即恢复为真正的点级增量。
 
+## 实体解析 fallback 顺序修复（2026-09-22）
+
+- 现象：`execute_plan` 对实体 `拿取宝石` 前几轮返回 `gem_supply` / `gold_supply`，
+  LLM 先答错再靠 `list` + 精确 id 自我纠正。
+- 根因：`ExecutePlanQueryAsync` 原来把 `ResolveFromQuestion`（扫客人问题原文）放在
+  Tier 2 名称语义检索**之前**。问题原文里出现了「宝石供应堆」，于是区域名 `gem_supply`
+  被问题级直呼拍板，覆盖了实体 `拿取宝石` 本该解析出的 action 概念。
+- 修复：Tier 2 名称语义检索优先；只有 `merged.Count == 0` 或 top1 分数 < 0.55 时，
+  才启用问题级直呼兜底。
+- 验证：同问题不再撞 `gem_supply`，Round 1 直接返回 `take_gems_same` 等 action 候选；
+  全量手写 QA 16/16 通过。
+
 ## 相关记忆
 
 - [[runtime-architecture]] — 后端接口与工具设计

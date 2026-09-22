@@ -518,14 +518,10 @@ public class GameRulesService
         var matched = ResolvePlanEntity(game, entity, out var candidates, out var source);
         if (matched.Count == 0)
         {
-            // 问题级直呼（广播第二站）：实体转述失败时扫客人问题原文。
-            // 命中即拍板（source=question_hit），返回的概念就是程序给出的全部事实——
-            // related 轻量化不展开本体概念，减少 LLM 接收的噪声
-            var qhits = ResolveFromQuestion(game, question, out var qsource);
-            if (qhits.Count > 0)
-                return BuildOkResult(game, relation, entity, qhits, qsource, question);
             // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
             // 名称包含的确定性候选无条件保留；语义候选须过分数阈值。
+            // 注意：语义要优先于“问题级直呼”。否则问题原文里偶然出现的区域名
+            // （如「宝石供应堆」）会把 action 实体（如「拿取宝石」）错误拍板成 zone。
             var merged = new List<ConceptSummary>(candidates);
             var indexById = new Dictionary<string, int>(StringComparer.Ordinal);
             for (var i = 0; i < merged.Count; i++) indexById[merged[i].Id] = i;
@@ -550,6 +546,15 @@ public class GameRulesService
             }
             // 更新/合并后重新排序，保证候选列表按分数降序呈现给 LLM
             merged = merged.OrderByDescending(c => c.Score).ToList();
+
+            // 语义候选已经可用时，不再让“问题原文里出现的名字”抢走实体。
+            // 只有语义也弱/为空时，才启用问题级直呼作为兜底。
+            if (merged.Count == 0 || merged[0].Score < 0.55f)
+            {
+                var qhits = ResolveFromQuestion(game, question, out var qsource);
+                if (qhits.Count > 0)
+                    return BuildOkResult(game, relation, entity, qhits, qsource, question);
+            }
 
             if (merged.Count > 0)
             {
