@@ -136,8 +136,13 @@ C# 端 `VectorSearchService.SyncIndexAsync`（`dotnet run --rebuild-all/--rebuil
   `/api/rules/games/{game}/execute-plan`，不经过 LLM 回答，测实体解析：
   resolved_hit / resolved_wrong / candidate_top1 / candidate_top3 / unresolved / no_match。
 - 新增评测用 debug 端点：`POST /api/rules/games/{game}/execute-plan`（body: question + plan）。
-- 当前基线（66/67 resolved hit；唯一 unresolved 是「拿取宝石」action family，
-  candidates top1/top3 均为正确 action；wrong=0，no_match=0）。
+- 当前状态（85 条，含 18 条口语转述/陷阱题）：82/85 resolved_hit，wrong=0，no_match=0；
+  3 条 unresolved 全部在 candidates top3 里包含 expected：
+  · splendor「拿取宝石」action family ×2（top1/top3 正确，适合候选二选一）
+  · civolution「白色和粉色的骰子」（top3 = fate_die / prepare_dice_pool / activation_die）
+- 评测驱动的改动：`explain` 不再统一走某个 collection，而是按 entity 长度选择——
+  短实体（≤6 字，偏概念名转述）走名称索引；长实体（>6 字，偏颜色/外观描述）走完整索引；
+  condition/ordering/boundary 仍一律走名称索引。
 - 这套指标以后作为检索改动的回归门禁，不再只看单轮自然语言 QA 的“感觉”。
 
 ## 相关记忆

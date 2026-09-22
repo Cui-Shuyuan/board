@@ -558,8 +558,20 @@ public class GameRulesService
             for (var i = 0; i < merged.Count; i++) indexById[merged[i].Id] = i;
             if (_vectorSearch != null)
             {
-                var semantic = await SearchConceptsAsync(game, entity, searchMode: "name");
-                var semItems = semantic.Results.Where(r => r.Score >= SemanticCandidateThreshold).ToList();
+                // 名称索引擅长 action/短实体的消歧；完整索引擅长颜色/外观/描述型问法。
+                // 两条路都不要滥用：entity 型（condition/ordering/boundary）走名称索引，
+                // 描述型 explain 才走完整索引。
+                // explain 里短实体多是概念名转述（走名称索引），长实体才更像
+                // 颜色/外观/描述型问法（走完整索引）；condition/ordering/boundary
+                // 仍一律走名称索引。
+                var explainDescriptive = relation == "explain" && entity.Length > 6;
+                var semantic = explainDescriptive
+                    ? await SearchConceptsAsync(game, entity)
+                    : await SearchConceptsAsync(game, entity, searchMode: "name");
+                var semItems = semantic.Results
+                    .Where(r => r.Score >= SemanticCandidateThreshold)
+                    .OrderByDescending(r => r.Score)
+                    .ToList();
                 // relation 级类型优先：condition 问句不要被 zone/对象抢走实体。
                 // 只有在存在符合类型的候选时才收窄，避免把原本可用的泛候选误杀。
                 var expected = semItems.Where(c => IsExpectedPlanType(game, relation, c.Id)).ToList();

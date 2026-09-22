@@ -65,3 +65,21 @@
 {"game": "wingspan", "relation": "explain", "entity": "目标板", "question": "目标板怎么用？", "expected": ["goal_board"]}
 {"game": "wingspan", "relation": "explain", "entity": "先手玩家标记", "question": "先手玩家标记给谁？", "expected": ["first_player_marker"]}
 {"game": "wingspan", "relation": "explain", "entity": "鸟蛋", "question": "鸟蛋怎么获得？", "expected": ["egg"]}
+{"game": "splendor", "relation": "condition", "entity": "拿取同色宝石", "question": "宝石供应堆里某种颜色还剩四颗，我拿两枚合法吗？", "expected": ["take_gems_same"], "note": "trap: 问题含 zone gem_supply"}
+{"game": "splendor", "relation": "condition", "entity": "拿取宝石", "question": "供应堆只剩四颗时，一次拿走两颗可以吗？", "expected": ["take_gems_same", "take_gems_different"], "note": "trap: 问题含 zone gem_supply + action family"}
+{"game": "agricola", "relation": "condition", "entity": "家庭成长", "question": "房间里还有空位，就能让家庭成员增加吗？", "expected": ["family_growth_with_room", "family_growth_without_room"], "note": "trap: 问题含 condition has_empty_room"}
+{"game": "agricola", "relation": "condition", "entity": "烘焙面包", "question": "我有烤炉，把谷物烤成面包合法吗？", "expected": ["bake_bread"], "note": "trap: 问题含 oven 对象"}
+{"game": "agricola", "relation": "condition", "entity": "翻新", "question": "我想把木屋换成石屋，可以吗？", "expected": ["renovation"], "note": "paraphrase + trap: 描述的是翻新"}
+{"game": "puerto-rico", "relation": "condition", "entity": "商人阶段", "question": "交易所已经满了，我还能卖货吗？", "expected": ["trader_role"], "note": "trap: 问题含 trading_house"}
+{"game": "puerto-rico", "relation": "condition", "entity": "有货可装", "question": "船长阶段我应该把货装到哪艘船上？", "expected": ["can_ship_goods"], "note": "trap: 问题含 captain_role"}
+{"game": "castles-of-burgundy", "relation": "condition", "entity": "拿取六边形板块", "question": "仓库里有板块，我就能拿吗？", "expected": ["take_hex_tile"], "note": "trap: 问题含 depot"}
+{"game": "castles-of-burgundy", "relation": "condition", "entity": "出售货物", "question": "市场里的货能换成银币吗？", "expected": ["sell_goods"], "note": "trap: 问题含 market/goods"}
+{"game": "brass-birmingham", "relation": "condition", "entity": "建造", "question": "场上有煤和铁，我可以盖建筑吗？", "expected": ["build"], "note": "trap: 问题含 coal/iron"}
+{"game": "brass-birmingham", "relation": "condition", "entity": "售卖", "question": "我把方块放到市场是不是就卖掉了？", "expected": ["sell"], "note": "trap: 问题含 market"}
+{"game": "ark-nova", "relation": "explain", "entity": "协会工人", "question": "协会板上的工人怎么用？", "expected": ["association_worker"], "note": "trap: 问题含 association_board"}
+{"game": "civolution", "relation": "explain", "entity": "创意标记", "question": "创意格上的标记有什么用？", "expected": ["idea_marker"], "note": "trap: 问题含 idea_space"}
+{"game": "seasons", "relation": "explain", "entity": "能量转化表", "question": "能量储备里的能量怎么转换？", "expected": ["transmutation_chart"], "note": "trap: 问题含 energy_reserve"}
+{"game": "wingspan", "relation": "explain", "entity": "鸟牌", "question": "森林栖息地里能打鸟牌吗？", "expected": ["bird_card"], "note": "trap: 问题含 habitat"}
+{"game": "wingspan", "relation": "explain", "entity": "行动方块", "question": "草原栖息地行动用掉的方块去哪了？", "expected": ["action_cube"], "note": "trap: 问题含 habitat"}
+{"game": "civolution", "relation": "explain", "entity": "白色和粉色的骰子", "question": "白色和粉色的骰子有什么区别？", "expected": ["activation_die", "fate_die"], "note": "paraphrase: 靠语义找骰子概念"}
+{"game": "agricola", "relation": "explain", "entity": "盖房子", "question": "我想盖房子，需要什么？", "expected": ["build_rooms"], "note": "paraphrase: 盖房子 -> build_rooms"}
