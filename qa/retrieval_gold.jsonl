@@ -1,0 +1,37 @@
+{"game":"splendor","relation":"condition","entity":"拿取宝石","question":"我一次拿走同一种颜色的两颗宝石，可以吗？","expected":["take_gems_same","take_gems_different"],"note":"action family + question 里含区域名"}
+{"game":"splendor","relation":"condition","entity":"拿取同色宝石","question":"供应堆里某种颜色还剩四颗，我拿走两颗，合法吗？","expected":["take_gems_same"],"note":"exact action name"}
+{"game":"splendor","relation":"condition","entity":"拿取不同色宝石","question":"我可以从三种不同颜色各拿一颗吗？","expected":["take_gems_different"],"note":"exact action name"}
+{"game":"splendor","relation":"condition","entity":"同色供应充足","question":"拿两颗同色宝石需要满足什么条件？","expected":["gems_available_same_color"],"note":"condition"}
+{"game":"splendor","relation":"explain","entity":"贵族来访","question":"贵族是怎么自动到玩家面前的？","expected":["attract_noble"],"note":"trigger"}
+{"game":"splendor","relation":"condition","entity":"购买发展卡","question":"我想买一张发展卡，需要满足什么条件？","expected":["purchase_development_card"],"note":"action"}
+{"game":"splendor","relation":"explain","entity":"保留发展卡","question":"保留一张卡是什么意思？","expected":["reserve_development_card"],"note":"action"}
+{"game":"splendor","relation":"explain","entity":"黄金供应堆","question":"桌上的黄金堆是干什么的？","expected":["gold_supply"],"note":"object"}
+{"game":"agricola","relation":"condition","entity":"播种","question":"我想把谷物种到田里，可以吗？","expected":["sow"],"note":"action"}
+{"game":"agricola","relation":"condition","entity":"烘焙面包","question":"我能把谷物烤成面包吗？","expected":["bake_bread"],"note":"action"}
+{"game":"agricola","relation":"condition","entity":"家庭成长","question":"家庭成长需要有空房间吗？","expected":["family_growth_with_room","family_growth_without_room"],"note":"action family"}
+{"game":"agricola","relation":"condition","entity":"翻新","question":"我能直接把木屋翻成石屋吗？","expected":["renovation"],"note":"action"}
+{"game":"agricola","relation":"explain","entity":"收获喂养","question":"收获阶段的喂养是怎么结算的？","expected":["harvest_feeding"],"note":"trigger"}
+{"game":"agricola","relation":"condition","entity":"有空房间","question":"现在可以执行家庭成长吗？","expected":["has_empty_room"],"note":"condition"}
+{"game":"agricola","relation":"condition","entity":"建栅栏","question":"牧场要建栅栏吗？","expected":["build_fences"],"note":"action"}
+{"game":"agricola","relation":"condition","entity":"能养动物吗","question":"这个房子里能养一只宠物吗？","expected":["can_accommodate_animal"],"note":"condition"}
+{"game":"puerto-rico","relation":"explain","entity":"船长阶段","question":"船长阶段怎么装货？","expected":["captain_role"],"note":"action"}
+{"game":"puerto-rico","relation":"explain","entity":"商人阶段","question":"商人阶段是干什么的？","expected":["trader_role"],"note":"action"}
+{"game":"puerto-rico","relation":"explain","entity":"建筑师阶段","question":"建筑师阶段能干什么？","expected":["builder_role"],"note":"action"}
+{"game":"puerto-rico","relation":"condition","entity":"码头被占了","question":"别人用了码头，我还能用吗？","expected":["wharf_occupied"],"note":"condition"}
+{"game":"puerto-rico","relation":"condition","entity":"有货可装","question":"我现在有货可以装船吗？","expected":["can_ship_goods"],"note":"condition"}
+{"game":"puerto-rico","relation":"condition","entity":"工作登记册已空","question":"工作登记册空了怎么办？","expected":["work_register_empty"],"note":"condition"}
+{"game":"puerto-rico","relation":"condition","entity":"有采石场可取","question":"我能拿一块采石场吗？","expected":["quarry_available"],"note":"condition"}
+{"game":"castles-of-burgundy","relation":"condition","entity":"拿取六边形板块","question":"我能拿一块六边形板块吗？","expected":["take_hex_tile"],"note":"action"}
+{"game":"castles-of-burgundy","relation":"condition","entity":"出售货物","question":"我可以把货物卖掉吗？","expected":["sell_goods"],"note":"action"}
+{"game":"castles-of-burgundy","relation":"explain","entity":"船板块放置效果","question":"船板块放上去会触发什么？","expected":["ship_effect"],"note":"trigger"}
+{"game":"castles-of-burgundy","relation":"explain","entity":"区域完成计分","question":"区域完成怎么计分？","expected":["area_completion_scoring"],"note":"trigger"}
+{"game":"castles-of-burgundy","relation":"condition","entity":"存储格已满","question":"仓储格满了还能拿板块吗？","expected":["key_space_full"],"note":"condition"}
+{"game":"castles-of-burgundy","relation":"condition","entity":"存在匹配空位","question":"我可以把这个板块放到那里吗？","expected":["matching_space_available"],"note":"condition"}
+{"game":"brass-birmingham","relation":"condition","entity":"建造","question":"我可以在伯明翰建造吗？","expected":["build"],"note":"action"}
+{"game":"brass-birmingham","relation":"condition","entity":"网络行动","question":"我可以建铁路网络吗？","expected":["network_action"],"note":"action"}
+{"game":"brass-birmingham","relation":"condition","entity":"开发","question":"我能把板块开发掉吗？","expected":["develop"],"note":"action"}
+{"game":"brass-birmingham","relation":"condition","entity":"售卖","question":"我手里的方块能卖吗？","expected":["sell"],"note":"action"}
+{"game":"brass-birmingham","relation":"condition","entity":"贷款","question":"我可以向银行借钱吗？","expected":["loan"],"note":"action"}
+{"game":"brass-birmingham","relation":"condition","entity":"煤可得","question":"附近有煤可以买吗？","expected":["coal_obtainable"],"note":"condition"}
+{"game":"brass-birmingham","relation":"condition","entity":"啤酒可得","question":"我需要啤酒，哪里有？","expected":["beer_obtainable"],"note":"condition"}
+{"game":"brass-birmingham","relation":"condition","entity":"可以覆盖自己的板块吗","question":"我能用自己的板块盖住旧板块吗？","expected":["overbuild_own_allowed"],"note":"condition"}

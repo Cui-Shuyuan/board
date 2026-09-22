@@ -65,6 +65,25 @@ public class RulesController : ControllerBase
     }
 
     /// <summary>
+    /// 直接执行一个 execute_plan，用于检索/实体解析评测。
+    /// Body: { "question": "客人原话", "plan": { "queries": [{ "relation": "...", "entity": "..." }] } }
+    /// </summary>
+    [HttpPost("games/{game}/execute-plan")]
+    public async Task<IActionResult> ExecutePlan(string game, [FromBody] JsonElement body)
+    {
+        if (body.ValueKind != JsonValueKind.Object ||
+            !body.TryGetProperty("plan", out var plan) ||
+            plan.ValueKind != JsonValueKind.Object)
+        {
+            return BadRequest(new { error = "body.plan object is required" });
+        }
+        var question = body.TryGetProperty("question", out var qp) && qp.ValueKind == JsonValueKind.String
+            ? qp.GetString() ?? ""
+            : "";
+        return Ok(await _rulesService.ExecutePlanAsync(game, plan, question));
+    }
+
+    /// <summary>
     /// 重建指定游戏的向量索引（改了规则文件后调用）。
     /// </summary>
     [HttpPost("admin/rebuild-index/{game}")]

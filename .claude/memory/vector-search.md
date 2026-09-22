@@ -127,6 +127,18 @@ C# 端 `VectorSearchService.SyncIndexAsync`（`dotnet run --rebuild-all/--rebuil
 - 已用 agricola/civolution/puerto-rico 的 FAQ 子集做基线/后测；单次回答文本相似度噪声较大，
   但能看到部分 `question_hit` 劫持减少、轮数下降。后续需要固定 gold 实体集的重复评测。
 
+## 检索 gold set 与离线评测（2026-09-22）
+
+- 新增 `qa/retrieval_gold.jsonl`：37 条 query → expected concept id，覆盖 splendor / agricola /
+  puerto-rico / castles-of-burgundy / brass-birmingham。
+- 新增 `scripts/eval_retrieval.py`：直接 POST
+  `/api/rules/games/{game}/execute-plan`，不经过 LLM 回答，测实体解析：
+  resolved_hit / resolved_wrong / candidate_top1 / candidate_top3 / unresolved / no_match。
+- 新增评测用 debug 端点：`POST /api/rules/games/{game}/execute-plan`（body: question + plan）。
+- 当前基线（36/37 resolved hit；唯一 unresolved 是「拿取宝石」action family，
+  candidates top1/top3 均为正确 action；wrong=0）。
+- 这套指标以后作为检索改动的回归门禁，不再只看单轮自然语言 QA 的“感觉”。
+
 ## 相关记忆
 
 - [[runtime-architecture]] — 后端接口与工具设计
