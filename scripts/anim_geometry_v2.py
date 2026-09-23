@@ -287,6 +287,27 @@ def build_compiled_stage(stage: dict) -> dict:
             "max_z": round(max(v["max_z"] for v in members), 6),
         })
 
+    overlays = []
+    for o in stage.get("overlays") or []:
+        if not isinstance(o, dict) or not o.get("id"):
+            continue
+        space = (o.get("space") or "screen").strip().lower()
+        if space == "world":
+            center = o.get("center") or {}
+            size = o.get("size") or {}
+            overlays.append({
+                "id": o["id"], "space": "world",
+                "x": num(center.get("x"), 0.0), "y": 0.0, "z": num(center.get("z"), 0.0),
+                "w": num(size.get("w"), 0.5), "h": num(size.get("h"), 0.3),
+            })
+        else:
+            rect = o.get("rect") or {}
+            overlays.append({
+                "id": o["id"], "space": "screen",
+                "x": num(rect.get("x"), 0.05), "y": num(rect.get("y"), 0.05),
+                "z": 0.0, "w": num(rect.get("w"), 0.4), "h": num(rect.get("h"), 0.1),
+            })
+
     return {
         "schema": "tutorial-stage-compiled/v2",
         "game": stage.get("game", ""),
@@ -299,4 +320,5 @@ def build_compiled_stage(stage: dict) -> dict:
                   for zid, slots in build_slots(stage).items()],
         "groups": groups,
         "templates": templates,
+        "overlays": overlays,
     }

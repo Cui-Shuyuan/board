@@ -34,6 +34,7 @@ namespace BoardGameTutorial.Animation
         public bool IsLoaded { get; private set; }
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
         public CompiledCueDef CurrentCue => currentCue;
+        public FrameState CurrentFrame { get; private set; }
 
         private readonly WorldRuntime runtime = new WorldRuntime();
         private readonly StageRuntime stageRuntime = new StageRuntime();
@@ -113,6 +114,7 @@ namespace BoardGameTutorial.Animation
         {
             if (!animationEnabled || currentCue == null) return;
             var frame = runtime.Evaluate(CueId, time);
+            CurrentFrame = frame;
             cameraDirector.Apply(frame.Camera, stageRuntime.Aspect);
             binder.Sync(frame);
             if (runtimeTrace) Debug.Log($"[TutorialAnimV2] {CueId} t={time:0.00} items={frame.Items.Count}");
@@ -124,6 +126,7 @@ namespace BoardGameTutorial.Animation
         {
             currentCue = null;
             CueId = null;
+            CurrentFrame = null;
             binder.Clear();
             if (zoneDebug != null) zoneDebug.Clear();
         }

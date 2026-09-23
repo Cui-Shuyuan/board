@@ -886,6 +886,40 @@ class Compiler:
                 if arr:
                     clips.append(self.presentation_clip("point", arr[0], at, dur, lead, easing,
                                                         part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
+            elif op == "label":
+                overlay_id = norm(ev.get("overlay"))
+                if not overlay_id:
+                    raise ValueError(f"cue {cue_id}: label needs overlay")
+                overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
+                            if isinstance(o, dict) and o.get("id")}
+                overlay = overlays.get(overlay_id)
+                if overlay is None:
+                    raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
+                space = norm(overlay.get("space") or "screen").lower()
+                c = self.base_clip("label", at, dur, lead, easing)
+                c.update({
+                    "overlay": overlay_id,
+                    "text": str(ev.get("text") or ""),
+                })
+                if space == "world":
+                    center = overlay.get("center") or {}
+                    c.update({
+                        "screen_space": False,
+                        "label_x": float(center.get("x", 0.0) or 0.0),
+                        "label_y": 0.0,
+                        "label_w": 0.0,
+                        "label_h": 0.0,
+                    })
+                else:
+                    rect = overlay.get("rect") or {}
+                    c.update({
+                        "screen_space": True,
+                        "label_x": float(rect.get("x", 0.0) or 0.0),
+                        "label_y": float(rect.get("y", 0.0) or 0.0),
+                        "label_w": float(rect.get("w", 0.3) or 0.3),
+                        "label_h": float(rect.get("h", 0.1) or 0.1),
+                    })
+                clips.append(c)
             elif op == "fade":
                 for it in self.select_items(state, zone, sel, ev.get("order")):
                     clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,

@@ -37,12 +37,23 @@ namespace BoardGameTutorial.Animation
         public float Radius = 0.2f;
     }
 
+    public sealed class VisualLabelState
+    {
+        public string Text;
+        public bool ScreenSpace = true;
+        public float X;
+        public float Y;
+        public float W;
+        public float H;
+    }
+
     public sealed class FrameState
     {
         public string Picture;
         public CompiledCameraDef Camera;
         public readonly List<VisualItemState> Items = new List<VisualItemState>();
         public readonly List<VisualMarkerState> Markers = new List<VisualMarkerState>();
+        public readonly List<VisualLabelState> Labels = new List<VisualLabelState>();
 
         public VisualItemState Find(string id)
         {
@@ -270,6 +281,27 @@ namespace BoardGameTutorial.Animation
                         X = clip.marker_x,
                         Z = clip.marker_z,
                         Radius = clip.marker_radius > 0f ? clip.marker_radius : 0.2f,
+                    });
+                }
+            }
+
+            // Presentation-only screen/world labels (overlay anchors).
+            if (cue.clips != null)
+            {
+                foreach (var clip in cue.clips)
+                {
+                    if (clip == null || clip.kind != "label") continue;
+                    float start = clip.at + Math.Max(0f, clip.lead);
+                    if (t + 1e-6f < start) continue;
+                    if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
+                    frame.Labels.Add(new VisualLabelState
+                    {
+                        Text = clip.text ?? "",
+                        ScreenSpace = clip.screen_space,
+                        X = clip.label_x,
+                        Y = clip.label_y,
+                        W = clip.label_w,
+                        H = clip.label_h,
                     });
                 }
             }

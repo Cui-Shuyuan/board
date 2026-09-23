@@ -56,7 +56,7 @@ def _start_states(compiled):
 
 def to_old_event(ev):
     op=ev.get('op')
-    if op == 'camera':
+    if op in ('camera', 'label'):
         return None
     out={'action':op,'at':ev.get('at',0),'dur':ev.get('dur',0)}
     if ev.get('lead') is not None: out['lead']=ev['lead']

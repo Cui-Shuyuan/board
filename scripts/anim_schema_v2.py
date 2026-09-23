@@ -25,7 +25,7 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
-PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera"}
+PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera", "label"}
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS
@@ -165,6 +165,11 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: scale needs scale")
         elif op == "wait":
             pass
+        elif op == "label":
+            if not ev.get("overlay"):
+                report.error(f"{where}: label needs overlay")
+            if "text" not in ev or ev.get("text") is None:
+                report.error(f"{where}: label needs text")
         elif op == "camera":
             if not ev.get("shot"):
                 report.error(f"{where}: camera needs shot")

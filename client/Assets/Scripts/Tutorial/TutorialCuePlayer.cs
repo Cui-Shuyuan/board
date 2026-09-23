@@ -70,6 +70,7 @@ namespace BoardGameTutorial
         private GUIStyle debugStyle;
         private GUIStyle subtitleStyle;
         private GUIStyle subtitleOutlineStyle;
+        private GUIStyle overlayLabelStyle;
         private static readonly Vector2[] SubtitleOutlineOffsets =
         {
             new Vector2(-2f, -2f),
@@ -397,6 +398,7 @@ namespace BoardGameTutorial
             if (doc == null) return;
 
             DrawSubtitle();
+            DrawOverlayLabels(v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null);
 
             // 左上角信息只在 zone debug 模式下显示；正常播放时屏幕底部只有字幕。
             bool zoneDebugVisible = v2AnimPlayer != null && v2AnimPlayer.debugZones;
@@ -430,6 +432,32 @@ namespace BoardGameTutorial
             GUI.Label(new Rect(24, 160, Screen.width - 48, 24), animSwitch, switchStyle);
             GUI.Label(new Rect(24, 182, Screen.width - 48, 24),
                 "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关  B 跳到动画切片  Z 调试模式", debugStyle);
+        }
+
+        private void DrawOverlayLabels(FrameState frame)
+        {
+            if (frame == null || frame.Labels == null || frame.Labels.Count == 0) return;
+            if (overlayLabelStyle == null)
+            {
+                overlayLabelStyle = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleLeft,
+                    wordWrap = true,
+                    fontSize = 34,
+                    normal = { textColor = Color.white }
+                };
+            }
+            foreach (var label in frame.Labels)
+            {
+                if (label == null || !label.ScreenSpace || string.IsNullOrEmpty(label.Text)) continue;
+                var rect = new Rect(
+                    label.X * Screen.width,
+                    label.Y * Screen.height,
+                    Mathf.Max(40f, label.W * Screen.width),
+                    Mathf.Max(28f, label.H * Screen.height));
+                GUI.Box(rect, GUIContent.none);
+                GUI.Label(rect, label.Text, overlayLabelStyle);
+            }
         }
 
         private void DrawSubtitle()

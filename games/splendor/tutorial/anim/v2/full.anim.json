@@ -5115,7 +5115,7 @@
       ],
       "script": {
         "story": "【拿取三种不同宝石】玩法第一条：从宝石供应堆拿三种**不同**颜色的宝石各一枚。\n事实来自 flow 的 `take_gems_different`：`<gem_supply>` → `<ontology::player_holding>`，3 颗。\n\n  0.30 / 0.55 / 0.80：先分别高亮三种宝石（台词在逐一点名）\n  3.35：三枚一起飞到玩家持有区（`stagger` 0.25 依次走）\n  4.10：持有区整体高亮，表示\"这三枚在你手上\"\n\n**已知短板（待重构）**：高亮用的是引擎实例 id（`gem#1` / `gem#8` / `gem#15`），而 id 是\"第几个被创建\"的产物 —— 同一条数据在顺序播放里（不靠 `start.set` 预置）拿到的 id 完全不同。这类\"点名\"要换成本体语言的选法（哪个概念、在哪个 zone、第几位），见 review 里的字段归属审计。",
-        "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。\n  【2026-09 补】演示玩家持有区改成写死 zone id `player_holding`：舞台现在有玩家A/玩家B 两个持有区（concept 都是 <player_holding>），写本体引用会歧义 —— 涉及多份实例的引用，本体身份不够用，得点名 zone。",
+        "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。\n  【2026-09 补】演示玩家持有区改成写死 zone id `player_holding`：舞台现在有玩家A/玩家B 两个持有区（concept 都是 <player_holding>），写本体引用会歧义 —— 涉及多份实例的引用，本体身份不够用，得点名 zone。\n【屏幕提示】本 cue 左上角显示“第一个行动：拿取3枚不同颜色的宝石”，用 overlay 屏幕锚点实现；只做辅助文字，不参与状态和取景。",
         "exit": {
           "zones": {
             "gem_supply_diamond": {
@@ -5168,6 +5168,13 @@
         }
       },
       "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "overlay": "hint_action_first",
+          "text": "第一个行动：拿取3枚不同颜色的宝石",
+          "anchor": "action.take.different.001.start"
+        },
         {
           "op": "ensure",
           "dur": 0.0,

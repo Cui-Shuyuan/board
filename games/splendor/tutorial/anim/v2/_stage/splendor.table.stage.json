@@ -1970,5 +1970,18 @@
       "id": "player_b",
       "label": "玩家 B 区域"
     }
+  ],
+  "overlays": [
+    {
+      "id": "hint_action_first",
+      "space": "screen",
+      "rect": {
+        "x": 0.035,
+        "y": 0.055,
+        "w": 0.62,
+        "h": 0.11
+      },
+      "note": "屏幕左上角行动提示。overlay 只做屏幕锚点，不参与游戏 zone / 全景 / 重叠检查。"
+    }
   ]
 }

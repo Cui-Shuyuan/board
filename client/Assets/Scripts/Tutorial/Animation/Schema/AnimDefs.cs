@@ -22,7 +22,7 @@ namespace BoardGameTutorial.Animation
 
         public static readonly string[] PresentationOps =
         {
-            "show", "highlight", "point", "fade", "scale", "wait"
+            "show", "highlight", "point", "fade", "scale", "wait", "label"
         };
 
         public static bool IsStateOp(string op)
@@ -239,6 +239,18 @@ namespace BoardGameTutorial.Animation
     }
 
     [Serializable]
+    public sealed class CompiledOverlayDef
+    {
+        public string id;
+        public string space; // screen | world
+        public float x;
+        public float y;
+        public float z;
+        public float w;
+        public float h;
+    }
+
+    [Serializable]
     public sealed class CompiledStageDef
     {
         public string schema;
@@ -250,6 +262,7 @@ namespace BoardGameTutorial.Animation
         public List<CompiledZoneDef> zones = new List<CompiledZoneDef>();
         public List<CompiledGroupDef> groups = new List<CompiledGroupDef>();
         public List<CompiledTemplateDef> templates = new List<CompiledTemplateDef>();
+        public List<CompiledOverlayDef> overlays = new List<CompiledOverlayDef>();
     }
 
     [Serializable]
@@ -295,6 +308,13 @@ namespace BoardGameTutorial.Animation
         public float marker_x;
         public float marker_z;
         public float marker_radius;
+        public string overlay;
+        public string text;
+        public bool screen_space;
+        public float label_x;
+        public float label_y;
+        public float label_w;
+        public float label_h;
         public string picture;
         public bool picture_on;
 
