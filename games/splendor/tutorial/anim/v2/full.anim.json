@@ -5088,50 +5088,13 @@
         {
           "key": "镜头整桌",
           "text": "0.00"
-        },
-        {
-          "key": "点供应堆",
-          "text": "0.80"
-        },
-        {
-          "key": "点市场",
-          "text": "1.80"
-        },
-        {
-          "key": "点牌堆",
-          "text": "2.80"
         }
       ],
       "script": {
         "story": "【玩家在自己回合内可以从如下几种行动中选择其中一种进行】",
-        "note": "【一个回合做一件事：三种行动】\n  三种行动在桌面对应**三个地方**，依次点出来（这是本节后面要展开的目录）：\n    ① 拿宝石 → 宝石供应堆；② 买发展卡 → 市场（正面朝上的 12 张）；③ 保留发展卡 → 牌堆。\n  没有状态变化 —— 只是把目录指给人看。"
+        "note": "【一个回合做一件事：三种行动】\n  三种行动在桌面对应**三个地方**：\n    ① 拿宝石 → 宝石供应堆；② 买发展卡 → 市场（正面朝上的 12 张）；③ 保留发展卡 → 牌堆。\n  本节只建立目录，不做高亮；没有状态变化。"
       },
-      "events": [
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "zone": "gem_supply_diamond",
-          "peak_alpha": 0.65,
-          "anchor": "action.turn.002.b1.start",
-          "offset": 0.485
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "zone": "card_market",
-          "peak_alpha": 0.65,
-          "anchor": "action.turn.002.b1.start",
-          "offset": 1.485
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "zone": "deck_level_1",
-          "peak_alpha": 0.65,
-          "anchor": "action.turn.002.b1.end",
-          "offset": -2.275
-        }
-      ]
+      "events": []
     },
     {
       "id": "action.take.different.001",
