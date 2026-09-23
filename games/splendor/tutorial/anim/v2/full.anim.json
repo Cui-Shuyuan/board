@@ -5499,19 +5499,173 @@
       "parent": "action.take.draw_rule.001.1",
       "timing": [
         {
-          "key": "保持供应区特写",
+          "key": "供应堆只剩钻石/蓝宝石",
           "text": "0.00"
+        },
+        {
+          "key": "允许少拿：各拿一枚",
+          "text": "2.45-3.60"
         }
       ],
       "script": {
         "story": "【当供应堆宝石不足时，尽可能拿取宝石】",
-        "note": "【不足时：尽可能拿】\n  同一句话的后半段 —— 承接上一条的供应区特写，把**只剩 3 枚的三堆**点出来，\n  表示「这些是拿不到两枚的」。没有状态变化。"
+        "note": "【不足时：尽可能拿｜允许少拿】\n  本 cue 的演示前提：宝石供应堆只剩**钻石**和**蓝宝石**两种颜色，其余三种宝石已经不在供应堆中。\n  做法：开 cue 时把绿、红、黑三种供应堆整堆移到镜头外的 `offstage`（仍然计入实物总数，不是销毁）。\n  因此现在供应堆不足三个种类；规则允许玩家少拿——从钻石和蓝宝石各拿 1 枚即可。\n  这不是反例：本 cue 不使用 `forbid`，结尾也不打禁止标记。\n  口播“尽可能拿取宝石”期间，实际演示拿走这两枚不同宝石到玩家持有区。",
+        "enter": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": []
+            },
+            "gem_supply_ruby": {
+              "items": []
+            },
+            "gem_supply_onyx": {
+              "items": []
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": []
+            },
+            "gem_supply_ruby": {
+              "items": []
+            },
+            "gem_supply_onyx": {
+              "items": []
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
       },
-      "events": []
+      "events": [
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "source": "gem_supply_emerald",
+          "destination": "offstage",
+          "quantity": 2,
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<emerald>"
+            }
+          ],
+          "anchor": "action.take.draw_rule.001.2.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "source": "gem_supply_ruby",
+          "destination": "offstage",
+          "quantity": 4,
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<ruby>"
+            }
+          ],
+          "anchor": "action.take.draw_rule.001.2.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "source": "gem_supply_onyx",
+          "destination": "offstage",
+          "quantity": 4,
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<onyx>"
+            }
+          ],
+          "anchor": "action.take.draw_rule.001.2.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "source": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire"
+          ],
+          "destination": "player_holding",
+          "quantity": 1,
+          "concept": "gem",
+          "stagger": 0.25,
+          "anchor": "action.take.draw_rule.001.2.b1.start",
+          "offset": 2.45
+        }
+      ]
     },
     {
       "id": "action.take.limit.001.1",
-      "parent": "action.take.draw_rule.001.2",
+      "parent": "action.take.draw_rule.001.1",
       "timing": [
         {
           "key": "镜头推近玩家持有区",
@@ -5520,7 +5674,7 @@
       ],
       "script": {
         "story": "【玩家持有的宝石和黄金总数上限为 10 个。任何时候当持有数量超过上限时】",
-        "note": "【演示手牌状态重置】本 cue 开始时，把玩家持有区从 same.001 分叉留下的「绿2」\n  补齐成后续卡牌示例需要的「白1、蓝1、红1、绿2」：从对应供应堆各补 1 枚白/蓝/红。\n  这一步不是新的拿取动作，只是 cue 树在这里切换演示前提；后面的上限、公开信息和买牌示例\n  继续继承这 5 枚。\n【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**（口播并没有让人拿这些），而本项目的铁律是\n  「脚本里没写有的那就是没有」+ 每色实物总数 7 枚的账要平 → 所以这里不凑那个演示，\n  只把镜头推到玩家持有区、把「手上的宝石」点出来。\n  （前作宝石的出现都有出处：`create` = 从盒里拿，`transfer` = 从供应堆拿。）"
+        "note": "【状态继承】本 cue 不继承 draw_rule.001.2 的“只剩两种宝石”临时演示状态；\n  它直接从 action.take.draw_rule.001.1（negative）的干净入口开始，后面卡牌示例仍按正常五色供应堆计算。\n【演示手牌状态重置】本 cue 开始时，把玩家持有区从 same.001 分叉留下的「绿2」\n  补齐成后续卡牌示例需要的「白1、蓝1、红1、绿2」：从对应供应堆各补 1 枚白/蓝/红。\n  这一步不是新的拿取动作，只是 cue 树在这里切换演示前提；后面的上限、公开信息和买牌示例\n  继续继承这 5 枚。\n【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**（口播并没有让人拿这些），而本项目的铁律是\n  「脚本里没写有的那就是没有」+ 每色实物总数 7 枚的账要平 → 所以这里不凑那个演示，\n  只把镜头推到玩家持有区、把「手上的宝石」点出来。\n  （前作宝石的出现都有出处：`create` = 从盒里拿，`transfer` = 从供应堆拿。）"
       },
       "events": [
         {
