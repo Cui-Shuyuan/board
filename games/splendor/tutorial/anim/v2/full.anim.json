@@ -5101,6 +5101,10 @@
       "parent": "action.turn.002",
       "timing": [
         {
+          "key": "全景：宝石供应区 + 玩家A宝石区",
+          "text": "0.00"
+        },
+        {
           "key": "三种宝石分别高亮",
           "text": "0.30 / 0.55 / 0.80（三种不同宝石 3.21~4.44）"
         },
@@ -5115,7 +5119,7 @@
       ],
       "script": {
         "story": "【拿取三种不同宝石】玩法第一条：从宝石供应堆拿三种**不同**颜色的宝石各一枚。\n事实来自 flow 的 `take_gems_different`：`<gem_supply>` → `<ontology::player_holding>`，3 颗。\n\n  0.30 / 0.55 / 0.80：先分别高亮三种宝石（台词在逐一点名）\n  3.35：三枚一起飞到玩家持有区（`stagger` 0.25 依次走）\n  4.10：持有区整体高亮，表示\"这三枚在你手上\"\n\n**已知短板（待重构）**：高亮用的是引擎实例 id（`gem#1` / `gem#8` / `gem#15`），而 id 是\"第几个被创建\"的产物 —— 同一条数据在顺序播放里（不靠 `start.set` 预置）拿到的 id 完全不同。这类\"点名\"要换成本体语言的选法（哪个概念、在哪个 zone、第几位），见 review 里的字段归属审计。",
-        "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。\n  【2026-09 补】演示玩家持有区改成写死 zone id `player_holding`：舞台现在有玩家A/玩家B 两个持有区（concept 都是 <player_holding>），写本体引用会歧义 —— 涉及多份实例的引用，本体身份不够用，得点名 zone。\n【屏幕提示】本 cue 左上角显示“第一个行动：拿取3枚不同颜色的宝石”，用 overlay 屏幕锚点实现；只做辅助文字，不参与状态和取景。",
+        "note": "拿取三种不同宝石。事实来自 flow/concepts 的 take_gems_different：<gem_supply> → <ontology::player_holding>，3 颗。start.set 用 expand_to 表达「保证供应堆里有 7 枚」：已经在 offstage 的会被搬进来，不会重复生成。transfer 的 source 写成数组，表示三种宝石各取一枚，stagger 让它们依次走。时间对齐字级口播（三种不同宝石 3.21~4.44，各一枚 4.44~4.99）。\n\n（2026-09 修）三条高亮改成**整堆**：写法上用 `order: 0` 指\"堆顶那枚宝石\"是错的 —— order 是**稳定地址**，被搬走的那格会空着，堆顶其实是剩下的最小 order。现在宝石是一摞，点整堆本来就对。\n  【2026-09 补】演示玩家持有区改成写死 zone id `player_holding`：舞台现在有玩家A/玩家B 两个持有区（concept 都是 <player_holding>），写本体引用会歧义 —— 涉及多份实例的引用，本体身份不够用，得点名 zone。\n【屏幕提示】本 cue 左上角显示“第一个行动：拿取3枚不同颜色的宝石”，用 overlay 屏幕锚点实现；只做辅助文字，不参与状态和取景。\n【机位】整条 cue 使用 shot_gem_flow 全景，与 cue40 同机位；同时框住宝石供应区和玩家A宝石区，让拿取动作的起飞点和落点都在画面内。",
         "exit": {
           "zones": {
             "gem_supply_diamond": {
@@ -5168,6 +5172,13 @@
         }
       },
       "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.different.001.start"
+        },
         {
           "op": "label",
           "dur": 0.0,
@@ -5318,6 +5329,10 @@
       "parent": "action.turn.002",
       "timing": [
         {
+          "key": "全景：宝石供应区 + 玩家A宝石区",
+          "text": "0.00"
+        },
+        {
           "key": "点绿宝石堆",
           "text": "0.60"
         },
@@ -5332,7 +5347,7 @@
       ],
       "script": {
         "story": "【当某种宝石在供应堆中的数量大于等于 4 时，也可以改为拿取这种宝石两枚】",
-        "note": "【拿两枚相同：门槛 >= 4】\n  演示拿**两枚绿宝石**：供应堆里现在正好绿 4 枚（>=4 够门槛），拿走后剩 2 —— 这 2 枚正好是\n  下一条（same.002）要讲的「至少剩 2」的下限，两条口播在同一堆上连着讲完。\n  `source` 写的是 zone（哪一堆），`quantity: 2` 说几枚，`what` 说**搬的是哪一类**（本体语言：\n  gem + color=emerald）—— 三个字段各说一件事，不看素材名。\n  没有写 `to`：宝石是单面件，朝向这一维对它不存在。\n【cue 树】本 cue 与 action.take.different.001 是 action.turn.002 下的两个并列行动示例；\n  入口状态来自 action.turn.002，不继承 action.take.different.001 的演示结果。\n  玩家持有区从空开始，只放这两枚绿宝石。\n",
+        "note": "【拿两枚相同：门槛 >= 4】\n  演示拿**两枚绿宝石**：供应堆里现在正好绿 4 枚（>=4 够门槛），拿走后剩 2 —— 这 2 枚正好是\n  下一条（same.002）要讲的「至少剩 2」的下限，两条口播在同一堆上连着讲完。\n  `source` 写的是 zone（哪一堆），`quantity: 2` 说几枚，`what` 说**搬的是哪一类**（本体语言：\n  gem + color=emerald）—— 三个字段各说一件事，不看素材名。\n  没有写 `to`：宝石是单面件，朝向这一维对它不存在。\n【cue 树】本 cue 与 action.take.different.001 是 action.turn.002 下的两个并列行动示例；\n  入口状态来自 action.turn.002，不继承 action.take.different.001 的演示结果。\n  玩家持有区从空开始，只放这两枚绿宝石。\n\n【机位】整条 cue 使用 shot_gem_flow 全景，与 cue40 同机位；同时框住宝石供应区和玩家A宝石区，让拿取动作的起飞点和落点都在画面内。",
         "exit": {
           "zones": {
             "gem_supply_emerald": {
@@ -5357,6 +5372,13 @@
         }
       },
       "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.same.001.start"
+        },
         {
           "op": "highlight",
           "dur": 0.5,
@@ -5395,12 +5417,25 @@
     {
       "id": "action.take.same.002",
       "parent": "action.take.same.001",
-      "timing": [],
+      "timing": [
+        {
+          "key": "全景：宝石供应区 + 玩家A宝石区",
+          "text": "0.00"
+        }
+      ],
       "script": {
         "story": "【拿取之后必须保证这种宝石在供应堆中至少剩下 2 枚，否则就不能这样拿取】",
-        "note": "【拿两枚的第二个条件：至少剩 2】\n  这一条**没有状态变化**（是规则说明）：绿宝石堆刚被拿到只剩 2 枚，正好是「刚好合法」的样子。\n  然后把另外三堆只有 3 枚的点出来 —— 它们够不上「>=4」，也就不能一次拿两枚。\n  ⚠ 我们**还没有表示「不行/禁止」的表现原语**（没有摇头、没有打叉），所以这里只能靠「依次点出那三堆」\n  加上口播来表达。要是用户觉得不够清楚，该加的是原语（例如 `forbid` 高亮闪红），不是在这里凑动画。"
+        "note": "【拿两枚的第二个条件：至少剩 2】\n  这一条**没有状态变化**（是规则说明）：绿宝石堆刚被拿到只剩 2 枚，正好是「刚好合法」的样子。\n  然后把另外三堆只有 3 枚的点出来 —— 它们够不上「>=4」，也就不能一次拿两枚。\n  ⚠ 我们**还没有表示「不行/禁止」的表现原语**（没有摇头、没有打叉），所以这里只能靠「依次点出那三堆」\n  加上口播来表达。要是用户觉得不够清楚，该加的是原语（例如 `forbid` 高亮闪红），不是在这里凑动画。\n【机位】整条 cue 使用 shot_gem_flow 全景，与 cue40 同机位；同时框住宝石供应区和玩家A宝石区，让拿取动作的起飞点和落点都在画面内。"
       },
-      "events": []
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.same.002.start"
+        }
+      ]
     },
     {
       "id": "action.take.draw_rule.001.1",
