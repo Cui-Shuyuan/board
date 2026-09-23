@@ -397,7 +397,7 @@
       "id": "player_holding",
       "label": "玩家A宝石区",
       "center": {
-        "x": -3.15,
+        "x": -3.4,
         "z": -1.8
       },
       "layout": {
@@ -545,7 +545,7 @@
       "id": "player_marker",
       "label": "玩家A起始玩家标记区",
       "center": {
-        "x": -4.365,
+        "x": -4.615,
         "z": -1.8
       },
       "layout": {
@@ -572,7 +572,7 @@
       "id": "player_development",
       "label": "玩家A发展区",
       "center": {
-        "x": -2.15,
+        "x": -2.4,
         "z": -3.38
       },
       "layout": {
@@ -603,7 +603,7 @@
       "id": "player_nobles",
       "label": "玩家A贵族区",
       "center": {
-        "x": -2.15,
+        "x": -2.4,
         "z": -4.22
       },
       "layout": {
@@ -630,7 +630,7 @@
       "id": "player_reserved",
       "label": "玩家A手牌区（保留卡）",
       "center": {
-        "x": -1.8,
+        "x": -2.05,
         "z": -1.8
       },
       "layout": {
@@ -659,7 +659,7 @@
       "id": "player_b_development",
       "label": "玩家B发展区",
       "center": {
-        "x": 1.5,
+        "x": 1.75,
         "z": -3.38
       },
       "layout": {
@@ -690,7 +690,7 @@
       "id": "player_b_holding",
       "label": "玩家B宝石区",
       "center": {
-        "x": 0.5,
+        "x": 0.75,
         "z": -1.8
       },
       "layout": {
@@ -734,7 +734,7 @@
       "id": "player_b_reserved",
       "label": "玩家B手牌区（保留卡）",
       "center": {
-        "x": 1.85,
+        "x": 2.1,
         "z": -1.8
       },
       "layout": {
@@ -763,7 +763,7 @@
       "id": "player_b_nobles",
       "label": "玩家B贵族区",
       "center": {
-        "x": 1.5,
+        "x": 1.75,
         "z": -4.22
       },
       "layout": {
@@ -791,7 +791,7 @@
       "label": "玩家B起始玩家标记区",
       "group": "player_b",
       "center": {
-        "x": -0.715,
+        "x": -0.465,
         "z": -1.8
       },
       "layout": {
