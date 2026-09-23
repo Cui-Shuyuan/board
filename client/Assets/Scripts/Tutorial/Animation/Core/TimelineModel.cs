@@ -330,6 +330,7 @@ namespace BoardGameTutorial.Animation
 
         private static VisualItemState FromComponent(ComponentState c, CompiledStageDef stage)
         {
+            var zone = StageLookup.Zone(stage, c.ZoneId);
             var v = new VisualItemState
             {
                 Id = c.Id,
@@ -339,7 +340,9 @@ namespace BoardGameTutorial.Animation
                 Order = c.Order,
                 Layer = c.Layer,
                 Face = c.Face,
-                Visible = true,
+                // offstage is logical-only: keep the component in state for
+                // counts/rollback, but never draw it on screen.
+                Visible = zone == null || !string.Equals(zone.role, "offstage", StringComparison.Ordinal),
                 Alpha = 1f,
                 Scale = 1f,
             };
