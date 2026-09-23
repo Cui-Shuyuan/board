@@ -99,9 +99,12 @@ class StateModel:
     start/end snapshots, so the Unity runtime never resolves selectors.
     """
 
-    def __init__(self):
+    def __init__(self, stack_zones=None):
         self.items = []
         self.next_seq = {}
+        # Stack-style zones keep the old pile convention: append goes underneath
+        # (order 0 = top).  Other zones default new items on top.
+        self.stack_zones = set(stack_zones or [])
 
     def snapshot(self) -> dict:
         comps = []
@@ -114,6 +117,7 @@ class StateModel:
                 "parts": copy.deepcopy(it.get("parts") or []),
                 "ZoneId": it["zone"],
                 "Order": int(it["order"]),
+                "Layer": int(it.get("layer", 0) or 0),
                 "Face": int(it["face"]),
             })
         return {"components": comps,
@@ -131,6 +135,7 @@ class StateModel:
                 "parts": copy.deepcopy(it.get("parts") or []),
                 "ZoneId": it["zone"],
                 "Order": int(it["order"]),
+                "Layer": int(it.get("layer", 0) or 0),
                 "Face": int(it["face"]),
             }
         return out
@@ -148,6 +153,7 @@ class StateModel:
                 "parts": copy.deepcopy(comp.get("parts") or []),
                 "zone": comp.get("ZoneId"),
                 "order": int(comp.get("Order", 0) or 0),
+                "layer": int(comp.get("Layer", 0) or 0),
                 "face": int(comp.get("Face", 2) or 2),
             })
         for kv in (snap or {}).get("nextSeq") or []:
@@ -171,6 +177,8 @@ class StateModel:
                     if not all((p.get("key"), p.get("value")) in have for p in selector["parts"]):
                         continue
             out.append(it)
+        # Keep legacy selection order (stable address) so scripts continue to
+        # pick the same concrete items; layer only controls cover/overlap order.
         out.sort(key=lambda x: (x["order"], x["id"]))
         return out
 
@@ -185,14 +193,52 @@ class StateModel:
         orders = [i["order"] for i in self.items if i["zone"] == zone]
         return (max(orders) + 1) if orders else 0
 
+    def _zone_layers(self, zone: str) -> list:
+        return [int(i.get("layer", 0) or 0) for i in self.items if i["zone"] == zone]
+
+    def _default_layer(self, zone: str) -> int:
+        """Layer for a new item entering this zone.
+
+        General zones: later item goes on top (max + 1).
+        Stack zones: append goes underneath, matching the existing order-0-top
+        pile convention used by decks and supply heaps.
+        """
+        layers = self._zone_layers(zone)
+        if not layers:
+            return 0
+        if zone in self.stack_zones:
+            return min(layers) - 1
+        return max(layers) + 1
+
+    def _resolve_layer(self, zone: str, raw, ordinal: int = 0) -> int:
+        if raw is None or str(raw).strip() == "":
+            return self._default_layer(zone)
+        if isinstance(raw, bool):
+            raise ValueError(f"layer must be int/top/bottom, got {raw!r}")
+        if isinstance(raw, (int, float)):
+            return int(raw) + ordinal
+        text = str(raw).strip().lower()
+        if text in ("top",):
+            layers = self._zone_layers(zone)
+            return max(layers) + 1 if layers else 0
+        if text in ("default",):
+            return self._default_layer(zone)
+        if text in ("bottom", "below"):
+            layers = self._zone_layers(zone)
+            return min(layers) - 1 if layers else 0
+        try:
+            return int(text) + ordinal
+        except ValueError:
+            raise ValueError(f"layer must be int/top/bottom, got {raw!r}") from None
+
     def spawn(self, template: str, palette: str, concept: str, zone: str, count: int,
-              face: int = 2, parts=None) -> list:
+              face: int = 2, parts=None, layer=None) -> list:
         if count <= 0:
             return []
         if not zone:
             raise ValueError("spawn zone required")
         added = []
-        for _ in range(count):
+        for idx in range(count):
             key = f"{template}|{palette}"
             seq = self.next_seq.get(key, 0) + 1
             self.next_seq[key] = seq
@@ -204,6 +250,7 @@ class StateModel:
                 "parts": copy.deepcopy(parts or []),
                 "zone": zone,
                 "order": self._next_order(zone),
+                "layer": self._resolve_layer(zone, layer, idx),
                 "face": int(face),
             }
             self.items.append(it)
@@ -211,10 +258,10 @@ class StateModel:
         return added
 
     def ensure_at_least(self, template: str, palette: str, concept: str, zone: str, count: int,
-                        face: int = 2, parts=None) -> list:
+                        face: int = 2, parts=None, layer=None) -> list:
         sel = {"template": template, "palette": palette, "concept": concept, "parts": parts or []}
         have = self.count(zone, sel)
-        return self.spawn(template, palette, concept, zone, max(0, count - have), face, parts)
+        return self.spawn(template, palette, concept, zone, max(0, count - have), face, parts, layer)
 
     def destroy(self, zone: str, selector: dict, count: int, from_back: bool = False) -> list:
         arr = self.matching(zone, selector)
@@ -228,7 +275,7 @@ class StateModel:
         return victims
 
     def transfer(self, selector: dict, source: str, dest: str, quantity: int,
-                 to_face=None, order: int = -1) -> list:
+                 to_face=None, order: int = -1, layer=None) -> list:
         arr = self.matching(source, selector)
         if len(arr) < quantity:
             raise ValueError(f"transfer needs {quantity} from {source}, have {len(arr)}")
@@ -236,18 +283,21 @@ class StateModel:
         moved_ids = {m["id"] for m in moved}
         records = []
         for it in moved:
-            rec = {"item": it, "from_zone": it["zone"], "from_order": it["order"]}
+            rec = {"item": it, "from_zone": it["zone"], "from_order": it["order"],
+                   "from_layer": int(it.get("layer", 0) or 0)}
             records.append(rec)
         self.items = [i for i in self.items if i["id"] not in moved_ids]
-        for rec in records:
+        for idx, rec in enumerate(records):
             it = rec["item"]
             it["zone"] = dest
             it["order"] = self._next_order(dest)
+            it["layer"] = self._resolve_layer(dest, layer, idx)
             if to_face is not None:
                 it["face"] = face_int(to_face)
             self.items.append(it)
             rec["to_zone"] = dest
             rec["to_order"] = it["order"]
+            rec["to_layer"] = int(it["layer"])
         if order >= 0 and moved:
             self.move_order(moved[0], dest, order)
             for rec in records:
@@ -300,6 +350,7 @@ class Compiler:
         self.compiled_stages = {}
         self.trees = {}
         self.world_modes = {w.get("id"): w.get("mode", "isolated") for w in (self.doc.get("worlds") or [])}
+        self.stack_zones = set()
         self.time_anchors = self._resolve_time_anchors()
 
     def _resolve_time_anchors(self) -> dict:
@@ -434,6 +485,9 @@ class Compiler:
             sid = stage.get("id") or path.stem
             self.stages[sid] = stage
             self.compiled_stages[sid] = geom.build_compiled_stage(stage)
+            for z in stage.get("zones") or []:
+                if ((z.get("display") or {}).get("mode") == "stack") and z.get("id"):
+                    self.stack_zones.add(z["id"])
             self.trees[tree["id"]] = {
                 "id": tree["id"],
                 "world": tree.get("world") or tree["id"],
@@ -519,7 +573,7 @@ class Compiler:
                 entry_stage = None
                 entry_camera_out = None
 
-            state = StateModel().load_snapshot(entry_state)
+            state = StateModel(self.stack_zones).load_snapshot(entry_state)
             start = state.snapshot()
             clips, state_ops, camera_ops, first_state = self.compile_events(cue, state, tree, 0)
             if first_state is None:
@@ -696,7 +750,7 @@ class Compiler:
                 count = int(ev.get("count", 1) or 1)
                 face = face_int(ev.get("to") or "face_down")
                 concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
-                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts)
+                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
                 if ev.get("slot") is not None:
                     base = int(ev.get("slot") or 0)
                     for off, it in enumerate(added):
@@ -711,7 +765,7 @@ class Compiler:
                 count = int(ev.get("count", 1) or 1)
                 face = face_int(ev.get("to"))
                 concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
-                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts)
+                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
                 for it in added:
                     clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "destroy":
@@ -729,7 +783,7 @@ class Compiler:
                 index = 0
                 records_with_times = []
                 for source in sources:
-                    records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)))
+                    records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)), ev.get("layer"))
                     for rec in records:
                         # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
                         record_at = at + max(0.0, lead) + index * stagger
@@ -750,18 +804,25 @@ class Compiler:
                 real = [x.strip() for x in norm(ev.get("real_templates")).split(",") if x.strip()]
                 pad = norm(ev.get("pad_template"))
                 face = face_int(ev.get("to") or "face_down")
+                pad_count = max(0, capacity - len(real)) if pad else 0
+                total = len(real) + pad_count
+                # Keep current pile semantics: first real card remains the top card.
+                # Layer is cover order, so assign it in reverse build order.
+                layer_cursor = total - 1
                 for tpl in real:
                     pal = norm(ev.get("palette"))
                     concept, parts, pal = self.infer_meta(stage, tpl, pal)
-                    added = state.spawn(tpl, pal, concept, dest, 1, face, parts)
+                    added = state.spawn(tpl, pal, concept, dest, 1, face, parts, layer_cursor)
+                    layer_cursor -= 1
                     for it in added:
                         clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
-                pad_count = max(0, capacity - len(real))
                 if pad and pad_count:
                     concept, parts, pal = self.infer_meta(stage, pad, "")
-                    added = state.spawn(pad, pal, concept, dest, pad_count, face, parts)
-                    for it in added:
-                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+                    for _ in range(pad_count):
+                        added = state.spawn(pad, pal, concept, dest, 1, face, parts, layer_cursor)
+                        layer_cursor -= 1
+                        for it in added:
+                            clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "shuffle":
                 # In-place jitter, exactly like v1 — and **visual only**.
                 # The decks are built with their real cards already on top

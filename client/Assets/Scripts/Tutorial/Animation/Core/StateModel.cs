@@ -121,6 +121,7 @@ namespace BoardGameTutorial.Animation
         public List<PartRef> parts = new List<PartRef>();
         public string ZoneId;
         public int Order;
+        public int Layer;
         public FaceState Face = FaceState.Up;
 
         public ComponentState Clone()
@@ -133,6 +134,7 @@ namespace BoardGameTutorial.Animation
                 Concept = Concept,
                 ZoneId = ZoneId,
                 Order = Order,
+                Layer = Layer,
                 Face = Face,
             };
             if (parts != null)

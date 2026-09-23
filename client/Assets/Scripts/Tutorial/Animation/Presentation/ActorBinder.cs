@@ -42,28 +42,13 @@ namespace BoardGameTutorial.Animation
         {
             if (frame == null) return;
 
-            // Stack zones have no per-card sorting_order in the data: every card
-            // in a deck shares its template's value.  Without an explicit draw
-            // order Unity falls back to depth and the "bottom-looking" card can
-            // cover the top one.  Mirror v1: order 0 is the deck top, so it must
-            // get the highest sortingOrder.  Counts are recomputed every sample
-            // because a deck shrinks as cards are drawn.
-            var stackTop = new Dictionary<string, int>(System.StringComparer.Ordinal);
-            foreach (var item in frame.Items)
-            {
-                if (item == null || !item.Visible || string.IsNullOrEmpty(item.ZoneId)) continue;
-                if (!StageLookup.IsStackZone(stage.Stage, item.ZoneId)) continue;
-                if (!stackTop.TryGetValue(item.ZoneId, out int top) || item.Order + 1 > top)
-                    stackTop[item.ZoneId] = item.Order + 1;
-            }
-
             var alive = new HashSet<string>();
             foreach (var item in frame.Items)
             {
                 if (item == null || string.IsNullOrEmpty(item.Id)) continue;
                 if (!item.Visible) continue;
                 alive.Add(item.Id);
-                SyncOne(item, stackTop);
+                SyncOne(item);
             }
 
             var remove = new List<string>();
@@ -116,7 +101,7 @@ namespace BoardGameTutorial.Animation
             pictureRenderer.transform.position = camera.transform.position + camera.transform.forward * ortho;
         }
 
-        private void SyncOne(VisualItemState item, Dictionary<string, int> stackTop)
+        private void SyncOne(VisualItemState item)
         {
             if (!actors.TryGetValue(item.Id, out var go) || go == null)
             {
@@ -135,10 +120,8 @@ namespace BoardGameTutorial.Animation
             sr.sprite = item.Face == FaceState.Down && back != null ? back : face;
             sr.enabled = item.Alpha > 0.001f;
             int baseSortingOrder = tpl != null ? tpl.sorting_order : 0;
-            if (stackTop != null && stackTop.TryGetValue(item.ZoneId ?? "", out int stackSize) && stackSize > 0)
-                sr.sortingOrder = baseSortingOrder + (stackSize - item.Order);
-            else
-                sr.sortingOrder = baseSortingOrder;
+            // Layer is canonical cover order: larger layer = closer to the top.
+            sr.sortingOrder = baseSortingOrder + item.Layer;
 
             Color tint = sprites.HasFaceImage(tpl, item.Palette) ? Color.white : Palette.Resolve(item.Palette);
             tint.a = Mathf.Clamp01(item.Alpha);

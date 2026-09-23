@@ -13,6 +13,7 @@ namespace BoardGameTutorial.Animation
         public string Palette;
         public string ZoneId;
         public int Order;
+        public int Layer;
         public float X;
         public float Z;
         public float Scale = 1f;
@@ -276,6 +277,7 @@ namespace BoardGameTutorial.Animation
                 Palette = c.Palette,
                 ZoneId = c.ZoneId,
                 Order = c.Order,
+                Layer = c.Layer,
                 Face = c.Face,
                 Visible = true,
                 Alpha = 1f,
