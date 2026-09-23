@@ -105,6 +105,12 @@ class State:
     def __init__(self):
         self.zones = defaultdict(Counter)
 
+    def clone(self):
+        out = State()
+        for zid, items in self.zones.items():
+            out.zones[zid] = Counter(items)
+        return out
+
     def add(self, zid, ident, n=1):
         if n:
             self.zones[zid][ident] += n
@@ -139,7 +145,7 @@ class State:
 
 
 def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report = None,
-        on_event=None, on_cue_end=None):
+        on_event=None, on_cue_end=None, cue_start_states=None):
     """按轨道顺序重放；**跨树 = cut**：换树时丢弃上一棵树的状态，从该树入口重新起。
 
     兼容两种调用：
@@ -174,7 +180,11 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
         stage = stages.get(tree, default_stage)
         zones = {z["id"]: z for z in (stage.get("zones") or [])}
         dev_zones = [z for z in zones if "development" in z]
-        st = tree_states.setdefault(world, State())
+        if cue_start_states is not None and cid in cue_start_states:
+            st = cue_start_states[cid].clone()
+            tree_states[world] = st
+        else:
+            st = tree_states.setdefault(world, State())
         frozen = frozen_by_tree.get(world)
         is_demo = bool(cue.get("demo"))
         paid, bought, reserved, gold_taken = Counter(), [], [], 0

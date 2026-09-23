@@ -382,9 +382,21 @@ def main() -> int:
         if want_exit_pic != got_exit_pic:
             errors.append(f"{cid} picture(exit): 期望 {want_exit_pic!r}，编译 {got_exit_pic!r}")
 
-        if cue.get("transition") in ("continue", "overlay") and prev_end is not None:
-            if cc.get("start_state") != prev_end:
-                errors.append(f"{cid}: {cue.get('transition')} 但 start_state != 上一条 end_state")
+        if cue.get("transition") in ("continue", "overlay"):
+            # State inheritance is cue-tree based, not track-order based.
+            # A cue with an explicit parent may branch away from the previous
+            # cue; its start state must match that parent, not the previous item.
+            expected_id = cue.get("entry") or cue.get("parent")
+            if expected_id == "initial":
+                expected_start = {"components": [], "nextSeq": []}
+            elif expected_id and expected_id in by_id:
+                expected_start = by_id[expected_id].get("end_state")
+            else:
+                expected_start = None
+            if expected_start is not None and cc.get("start_state") != expected_start:
+                errors.append(
+                    f"{cid}: {cue.get('transition')} 但 start_state != {expected_id} 的 end_state"
+                )
         if cue.get("transition") in ("cut", "world_cut"):
             first_cam = (cc.get("camera_ops") or [None])[0]
             if not first_cam or abs(float(first_cam.get("at", 0.0))) > 1e-6:

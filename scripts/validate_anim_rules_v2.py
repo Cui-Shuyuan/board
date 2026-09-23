@@ -17,6 +17,43 @@ import anim_schema_v2 as schema  # noqa: E402
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 
+def _component_ident(comp):
+    """Map a compiled ComponentState to the simplified ledger identity.
+
+    The rule ledger only distinguishes gem color/type, gold and cards; this is
+    the same identity vocabulary its event replay uses.
+    """
+    tpl = comp.get('TemplateId') or ''
+    pal = comp.get('Palette') or ''
+    concept = comp.get('Concept') or ''
+    parts = comp.get('parts') or []
+    color = None
+    for part in parts:
+        if isinstance(part, dict) and part.get('key') == 'color':
+            color = str(part.get('value', '')).strip('<>')
+            break
+    if concept == 'gold' or pal == 'gem_gold':
+        return f'gold@{tpl}@{pal}'
+    if color is None and pal.startswith('gem_'):
+        color = pal[4:]
+    if color:
+        return f'gem:{color}@{tpl}@{pal}'
+    return f'card:{tpl}'
+
+def _start_states(compiled):
+    out = {}
+    for cue in compiled.get('cues') or []:
+        cid = cue.get('id')
+        if not cid:
+            continue
+        st = ledger.State()
+        for comp in (cue.get('start_state') or {}).get('components') or []:
+            zid = comp.get('ZoneId')
+            if zid:
+                st.add(zid, _component_ident(comp), 1)
+        out[cid] = st
+    return out
+
 def to_old_event(ev):
     op=ev.get('op')
     if op == 'camera':
@@ -58,6 +95,7 @@ def main():
             stages[t['id']]=load(p)
             if t['id']==track.get('default_tree') or default_stage is None: default_stage=load(p)
     facts=load(ROOT/'games'/a.game/'card_facts.json')
+    compiled=load(base/f'{a.track}.compiled.json')
     anim={'trees':[{'id':t['id'],'world':t.get('world') or t['id']} for t in (track.get('trees') or [])],
           'cues':[]}
     for c in track.get('cues') or []:
@@ -65,7 +103,7 @@ def main():
                              'demo':bool(c.get('demo')),
                              'events':[x for x in (to_old_event(e) for e in (c.get('events') or [])) if x]})
     rep=ledger.Report()
-    ledger.run(anim, default_stage, stages, facts, rep)
+    ledger.run(anim, default_stage, stages, facts, rep, cue_start_states=_start_states(compiled))
     for w in rep.warnings: print('WARN',*w)
     for e in rep.errors: print('ERR ',*e)
     if rep.errors:
