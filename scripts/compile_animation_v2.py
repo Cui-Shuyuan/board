@@ -957,7 +957,27 @@ class Compiler:
                 if forbid_at is None:
                     forbid_at = at + max(0.0, lead) + max(0.0, dur)
                 indicator = ev.get("forbid") if isinstance(ev.get("forbid"), str) else "forbid"
-                mx, mz, mr = self.marker_geometry(stage_id, stage_slots, state, affected_ids)
+                overlay_id = norm(ev.get("overlay"))
+                if overlay_id:
+                    overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
+                                if isinstance(o, dict) and o.get("id")}
+                    overlay = overlays.get(overlay_id)
+                    if overlay is None:
+                        raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
+                    if norm(overlay.get("space") or "screen").lower() != "world":
+                        raise ValueError(
+                            f"cue {cue_id}: forbid overlay {overlay_id!r} must be space='world' "
+                            f"(screen-space markers are not supported yet)"
+                        )
+                    center = overlay.get("center") or {}
+                    size = overlay.get("size") or {}
+                    mx = float(center.get("x", 0.0) or 0.0)
+                    mz = float(center.get("z", 0.0) or 0.0)
+                    mr = max(float(size.get("w", 0.0) or 0.0), float(size.get("h", 0.0) or 0.0)) * 0.5
+                    if mr <= 0.0:
+                        mr = 0.25
+                else:
+                    mx, mz, mr = self.marker_geometry(stage_id, stage_slots, state, affected_ids)
                 clips.append(self.marker_clip(forbid_at, indicator or "forbid", mx, mz, mr))
             if op_time <= 1e-9:
                 first_state = state.snapshot()
