@@ -240,7 +240,7 @@ def _check_contract(report: Report, where: str, part: dict):
 # zones/picture it changes.  `cut` / `world_cut` are reset points and do not
 # inherit state contracts.
 
-_LOCAL_CUE_KEYS = {"id", "parent", "entry", "events"}
+_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "events"}
 
 
 def _deep_copy(v):
@@ -345,7 +345,13 @@ def resolve_track(doc: dict) -> dict:
             if k not in ("enter", "exit"):
                 script[k] = _deep_copy(v)
 
-        inherited_state = base_script.get("exit")
+        raw_parent = by_id.get(raw.get("parent")) if raw.get("parent") in by_id else None
+        if raw_parent is not None and bool(raw_parent.get("negative")):
+            # A negative cue's error state is temporary; its child starts from
+            # the negative cue's entry contract, not its illegal exit contract.
+            inherited_state = base_script.get("enter")
+        else:
+            inherited_state = base_script.get("exit")
         if inherited_state is None:
             inherited_state = base_script.get("enter")
         if inherit and isinstance(inherited_state, dict):
@@ -372,6 +378,8 @@ def resolve_track(doc: dict) -> dict:
         # Structural defaults.
         eff["id"] = raw.get("id")
         eff["parent"] = raw.get("parent")
+        if raw.get("negative") is not None:
+            eff["negative"] = bool(raw.get("negative"))
         if raw.get("entry") is not None:
             eff["entry"] = _deep_copy(raw.get("entry"))
         eff["events"] = _deep_copy(raw.get("events") or [])

@@ -16,6 +16,10 @@ namespace BoardGameTutorial.Animation
         private Camera camera;
         private SpriteRenderer pictureRenderer;
         private string currentPicture;
+        private readonly List<GameObject> markerObjects = new List<GameObject>();
+        private Transform markerRoot;
+        private static readonly Dictionary<string, Sprite> MarkerSprites = new Dictionary<string, Sprite>();
+        private static readonly Color MarkerColor = new Color(0.92f, 0.24f, 0.20f, 1f);
 
         public void Init(Transform root, StageRuntime stage, SpriteLibrary sprites, Camera camera)
         {
@@ -34,6 +38,14 @@ namespace BoardGameTutorial.Animation
             {
                 Object.Destroy(pictureRenderer.gameObject);
                 pictureRenderer = null;
+            }
+            foreach (var go in markerObjects)
+                if (go != null) Object.Destroy(go);
+            markerObjects.Clear();
+            if (markerRoot != null)
+            {
+                Object.Destroy(markerRoot.gameObject);
+                markerRoot = null;
             }
             currentPicture = null;
         }
@@ -61,6 +73,7 @@ namespace BoardGameTutorial.Animation
             }
 
             SyncPicture(frame.Picture);
+            SyncMarkers(frame.Markers);
         }
 
         private void SyncPicture(string picture)
@@ -138,6 +151,115 @@ namespace BoardGameTutorial.Animation
                 // Point/part is intentionally carried in FrameState.  The final
                 // marker animation is a presentation primitive and may be swapped
                 // without changing the pure timeline model.
+            }
+        }
+
+        private void SyncMarkers(List<VisualMarkerState> markers)
+        {
+            int count = markers != null ? markers.Count : 0;
+            if (count == 0)
+            {
+                foreach (var go in markerObjects)
+                    if (go != null) go.SetActive(false);
+                return;
+            }
+            if (markerRoot == null)
+            {
+                var rootGo = new GameObject("v2:Markers");
+                if (root != null) rootGo.transform.SetParent(root, false);
+                markerRoot = rootGo.transform;
+            }
+            while (markerObjects.Count < count)
+            {
+                var go = new GameObject("v2:marker");
+                go.transform.SetParent(markerRoot, false);
+                go.AddComponent<SpriteRenderer>();
+                markerObjects.Add(go);
+            }
+            for (int i = 0; i < markerObjects.Count; i++)
+            {
+                var go = markerObjects[i];
+                if (go == null) continue;
+                if (i >= count)
+                {
+                    go.SetActive(false);
+                    continue;
+                }
+                var m = markers[i];
+                var sr = go.GetComponent<SpriteRenderer>();
+                if (sr == null) sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = MarkerSprite(m != null ? m.Kind : "forbid");
+                sr.color = MarkerColor;
+                sr.sortingOrder = 1000;
+                sr.enabled = true;
+                float radius = m != null && m.Radius > 0f ? m.Radius : 0.2f;
+                float d = Mathf.Max(0.05f, radius * 2f);
+                go.transform.localScale = new Vector3(d, d, 1f);
+                if (m != null) go.transform.localPosition = new Vector3(m.X, 0f, m.Z);
+                if (stage != null && stage.Stage != null) go.transform.localRotation = stage.SpriteRotation(0f);
+                go.SetActive(true);
+            }
+        }
+
+        private static Sprite MarkerSprite(string kind)
+        {
+            string key = string.IsNullOrEmpty(kind) ? "forbid" : kind;
+            if (MarkerSprites.TryGetValue(key, out var cached)) return cached;
+
+            const int N = 128;
+            const int S = 2;
+            var tex = new Texture2D(N, N, TextureFormat.RGBA32, false);
+            var px = new Color[N * N];
+            for (int y = 0; y < N; y++)
+            {
+                for (int x = 0; x < N; x++)
+                {
+                    float acc = 0f;
+                    for (int sy = 0; sy < S; sy++)
+                        for (int sx = 0; sx < S; sx++)
+                        {
+                            float u = ((x + (sx + 0.5f) / S) / N) * 2f - 1f;
+                            float v = ((y + (sy + 0.5f) / S) / N) * 2f - 1f;
+                            acc += MarkerCoverage(key, u, v);
+                        }
+                    px[y * N + x] = new Color(1f, 1f, 1f, Mathf.Clamp01(acc / (S * S)));
+                }
+            }
+            tex.SetPixels(px);
+            tex.Apply();
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+            var sprite = Sprite.Create(tex, new Rect(0, 0, N, N), new Vector2(0.5f, 0.5f), N);
+            MarkerSprites[key] = sprite;
+            return sprite;
+        }
+
+        private static float MarkerCoverage(string kind, float u, float v)
+        {
+            float r = Mathf.Sqrt(u * u + v * v);
+            switch (kind)
+            {
+                case "circle":
+                    return r <= 0.98f && r >= 0.78f ? 1f : 0f;
+                case "forbid":
+                    if (r <= 0.98f && r >= 0.78f) return 1f;
+                    if (Mathf.Abs(u - v) <= 0.075f && r <= 0.95f) return 1f;
+                    return 0f;
+                case "cross":
+                    if (Mathf.Abs(u - v) <= 0.10f && r <= 0.72f) return 1f;
+                    if (Mathf.Abs(u + v) <= 0.10f && r <= 0.72f) return 1f;
+                    return 0f;
+                default:
+                    float a = (u + 0.1f) - (v - 0.1f);
+                    if (Mathf.Abs(a) <= 0.055f && r <= 0.80f) return 1f;
+                    Vector2 tip = new Vector2(-0.72f, 0.72f);
+                    Vector2 p = new Vector2(u, v);
+                    Vector2 dir = new Vector2(1f, -1f).normalized;
+                    Vector2 perp = new Vector2(1f, 1f).normalized;
+                    Vector2 d = p - tip;
+                    float along = Vector2.Dot(d, dir);
+                    float side = Mathf.Abs(Vector2.Dot(d, perp));
+                    return along >= 0f && along <= 0.34f && side <= along * 0.85f ? 1f : 0f;
             }
         }
 

@@ -292,6 +292,9 @@ namespace BoardGameTutorial.Animation
         public string to_face;
         public string part;
         public string indicator;
+        public float marker_x;
+        public float marker_z;
+        public float marker_radius;
         public string picture;
         public bool picture_on;
 

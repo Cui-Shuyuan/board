@@ -360,6 +360,7 @@ def main() -> int:
         errors.append("schema: " + e)
 
     by_id = {c["id"]: c for c in compiled.get("cues") or []}
+    src_by_id = {c.get("id"): c for c in track.get("cues") or [] if isinstance(c, dict) and c.get("id")}
     prev_end = None
     prev_id = None
     for cue in track.get("cues") or []:
@@ -390,7 +391,9 @@ def main() -> int:
             if expected_id == "initial":
                 expected_start = {"components": [], "nextSeq": []}
             elif expected_id and expected_id in by_id:
-                expected_start = by_id[expected_id].get("end_state")
+                parent_decl = src_by_id.get(expected_id) or {}
+                state_key = "start_state" if parent_decl.get("negative") else "end_state"
+                expected_start = by_id[expected_id].get(state_key)
             else:
                 expected_start = None
             if expected_start is not None and cc.get("start_state") != expected_start:

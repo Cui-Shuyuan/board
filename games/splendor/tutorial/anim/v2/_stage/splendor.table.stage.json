@@ -1840,6 +1840,20 @@
       "desc": "框 gem_supply_diamond、gem_supply_sapphire、gem_supply_ruby、gem_supply_emerald、gem_supply_onyx、gold_supply，占画面 0.8"
     },
     {
+      "id": "shot_gem_flow",
+      "zones": [
+        "gem_supply_diamond",
+        "gem_supply_sapphire",
+        "gem_supply_ruby",
+        "gem_supply_emerald",
+        "gem_supply_onyx",
+        "gold_supply",
+        "player_holding"
+      ],
+      "fill": 0.8,
+      "desc": "框宝石供应堆与玩家 A 持有区：反例拿取时同时看得到起飞点和落点，占画面 0.8"
+    },
+    {
       "id": "shot_nobles",
       "zones": [
         "noble_market"

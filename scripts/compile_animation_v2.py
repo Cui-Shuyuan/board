@@ -565,7 +565,11 @@ class Compiler:
             mode, entry_id = self.entry_ref(cue, tree, by_id)
             if mode == "cue":
                 entry_res = evaluate(entry_id)
-                entry_state = copy.deepcopy(entry_res["end_state"])
+                parent_decl = by_id.get(entry_id) or {}
+                # 反例 cue 的错误状态不能泄漏：子节点继承它的 start_state。
+                entry_state = copy.deepcopy(
+                    entry_res["start_state"] if parent_decl.get("negative") else entry_res["end_state"]
+                )
                 entry_stage = entry_res.get("_stage")
                 entry_camera_out = copy.deepcopy(entry_res.get("_camera_out"))
             else:
@@ -727,6 +731,8 @@ class Compiler:
             before = state.component_map()
             manual_state_ops = None
             manual_state_item_ids = set()
+            affected_ids = []
+            forbid_at = None
             if op == "camera":
                 shot_id = norm(ev.get("shot"))
                 if not shot_id:
@@ -751,6 +757,7 @@ class Compiler:
                 face = face_int(ev.get("to") or "face_down")
                 concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
                 added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
+                affected_ids = [it["id"] for it in added]
                 if ev.get("slot") is not None:
                     base = int(ev.get("slot") or 0)
                     for off, it in enumerate(added):
@@ -766,11 +773,13 @@ class Compiler:
                 face = face_int(ev.get("to"))
                 concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
                 added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
+                affected_ids = [it["id"] for it in added]
                 for it in added:
                     clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "destroy":
                 count = int(ev.get("count", 0) or 0)
                 victims = state.destroy(zone, sel, count, from_back=bool(ev.get("from_back")))
+                affected_ids = [it["id"] for it in victims]
                 for it in victims:
                     clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "transfer":
@@ -798,6 +807,10 @@ class Compiler:
                         for record_at, item_id in records_with_times
                         if item_id in after_map
                     ]
+                    affected_ids = [item_id for _, item_id in records_with_times]
+                    if ev.get("forbid"):
+                        last_start = at + max(0.0, lead) + max(0, len(records_with_times) - 1) * stagger
+                        forbid_at = last_start + max(0.0, dur)
             elif op == "stack":
                 dest = norm(ev.get("destination"))
                 capacity = int(ev.get("capacity", 40) or 40)
@@ -855,7 +868,9 @@ class Compiler:
                     clips.append(c)
             elif op == "set_face":
                 state.set_face(sel, zone, face_int(ev.get("to")))
-                for it in state.matching(zone, sel):
+                affected = state.matching(zone, sel)
+                affected_ids = [it["id"] for it in affected]
+                for it in affected:
                     clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
             elif op == "move_order":
                 arr = state.matching(zone, sel)
@@ -904,6 +919,12 @@ class Compiler:
                     state_ops.append({"op": "remove", "at": op_time, "item_id": iid})
                 if manual_state_ops:
                     state_ops.extend(manual_state_ops)
+            if ev.get("forbid"):
+                if forbid_at is None:
+                    forbid_at = at + max(0.0, lead) + max(0.0, dur)
+                indicator = ev.get("forbid") if isinstance(ev.get("forbid"), str) else "forbid"
+                mx, mz, mr = self.marker_geometry(stage_id, stage_slots, state, affected_ids)
+                clips.append(self.marker_clip(forbid_at, indicator or "forbid", mx, mz, mr))
             if op_time <= 1e-9:
                 first_state = state.snapshot()
 
@@ -971,6 +992,49 @@ class Compiler:
         })
         if to_face:
             c["to_face"] = face_name(face_int(to_face))
+        return c
+
+    def template_radius(self, stage_id: str, template: str) -> float:
+        stage = self.compiled_stages.get(stage_id) or {}
+        for tpl in stage.get("templates") or []:
+            if tpl.get("id") != template:
+                continue
+            w = float(tpl.get("width", 0.0) or 0.0)
+            h = float(tpl.get("height", 0.0) or 0.0)
+            if w > 0.0 and h > 0.0:
+                return min(w, h) * 0.5
+            ws = float(tpl.get("world_size", 0.0) or 0.0)
+            if ws > 0.0:
+                return ws * 0.5
+        return 0.12
+
+    def marker_geometry(self, stage_id: str, slots: dict, state: StateModel, item_ids: list) -> tuple:
+        """Average position / bounding radius of the components affected by an action."""
+        unique_ids = list(dict.fromkeys(item_ids))
+        if not unique_ids:
+            raise ValueError("forbid marker needs at least one affected item")
+        by_id = {it["id"]: it for it in state.items}
+        points = []
+        for iid in unique_ids:
+            it = by_id.get(iid)
+            if it is None:
+                raise ValueError(f"forbid marker: affected item {iid!r} no longer exists after action")
+            x, z = self.position(slots, it["zone"], int(it["order"]))
+            points.append((x, z, self.template_radius(stage_id, it["template"])))
+        ax = sum(p[0] for p in points) / len(points)
+        az = sum(p[1] for p in points) / len(points)
+        spread = max(math.hypot(p[0] - ax, p[1] - az) for p in points)
+        item_r = max(p[2] for p in points)
+        return (round(ax, 6), round(az, 6), round(max(0.12, spread + item_r), 6))
+
+    def marker_clip(self, at: float, indicator: str, x: float, z: float, radius: float):
+        c = self.base_clip("marker", at, 0.0, 0.0, "linear")
+        c.update({
+            "indicator": indicator or "forbid",
+            "marker_x": x,
+            "marker_z": z,
+            "marker_radius": radius,
+        })
         return c
 
     def face_clip(self, it, at, dur, lead, easing, to_face):

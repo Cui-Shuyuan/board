@@ -5402,11 +5402,65 @@
         {
           "key": "镜头推近供应区",
           "text": "0.00"
+        },
+        {
+          "key": "反例：只拿两枚不同",
+          "text": "4.60-5.20"
         }
       ],
       "script": {
         "story": "【除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿】",
-        "note": "【不能故意少拿】\n  规则说明，**没有状态变化**：镜头推到整排供应区，把五堆依次点一遍 ——\n  让观众看到「现在这里还有五个种类」，所以必须拿三种不同的。\n  （演示「只剩两种时才可以拿两种」会把供应堆掏空、破坏后面的账，所以只在口播里讲。）"
+        "note": "【不能故意少拿｜反例】\n  供应堆现在有五个种类（>=3），所以不可以故意只拿两个种类。\n  本 cue 演示错误操作：从钻石、蓝宝石供应堆各拿 1 枚到玩家持有区；\n  飞行结束后，在两枚宝石落点坐标的平均值处打一个红色禁止标记（圈+斜杠）。\n  `negative: true`：错误状态只在本 cue 内存在；下一条 cue 继承本 cue 的 start_state，\n  错误拿到的宝石不会泄漏到后面的规则讲解。\n  transfer 上写 `forbid: true`，编译器自动记录受影响的两枚宝石并在动作结束后生成标记。",
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
       },
       "events": [
         {
@@ -5415,8 +5469,31 @@
           "shot": "shot_gem_supplies",
           "realizes": "<ontology::timing>",
           "anchor": "action.take.draw_rule.001.1.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.take.draw_rule.001.1.b1.start",
+          "offset": 4.5
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "source": [
+            "gem_supply_diamond",
+            "gem_supply_sapphire"
+          ],
+          "destination": "player_holding",
+          "quantity": 1,
+          "concept": "gem",
+          "forbid": true,
+          "anchor": "action.take.draw_rule.001.1.b1.start",
+          "offset": 4.6
         }
-      ]
+      ],
+      "negative": true
     },
     {
       "id": "action.take.draw_rule.001.2",
