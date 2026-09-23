@@ -5439,7 +5439,7 @@
     },
     {
       "id": "action.take.draw_rule.001.1",
-      "parent": "action.take.same.002",
+      "parent": "action.turn.002",
       "timing": [
         {
           "key": "全景：宝石供应区 + 玩家A持有区",
@@ -5452,7 +5452,7 @@
       ],
       "script": {
         "story": "【除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿】",
-        "note": "【不能故意少拿｜反例】\n  整条 cue 使用同一个 `shot_gem_flow` 全景：同时框住宝石供应区和玩家 A 持有区，\n  前半段不再单独推近供应堆。这样错误拿取从起飞到落点始终在画面内。\n  供应堆现在有五个种类（>=3），所以不可以故意只拿两个种类。\n  本 cue 演示错误操作：从钻石、蓝宝石供应堆各拿 1 枚到玩家持有区；\n  飞行结束后，在两枚宝石落点坐标的平均值处打一个红色禁止标记（圈+斜杠）。\n  `negative: true`：错误状态只在本 cue 内存在；下一条 cue 继承本 cue 的 start_state，\n  错误拿到的宝石不会泄漏到后面的规则讲解。\n  transfer 上写 `forbid: true`，编译器自动记录受影响的两枚宝石并在动作结束后生成标记。",
+        "note": "【不能故意少拿｜反例】\n  整条 cue 使用同一个 `shot_gem_flow` 全景：同时框住宝石供应区和玩家 A 持有区。\n  本 cue 直接继承 action.turn.002 的干净入口：玩家 A 持有区为空，五色供应堆都完整（各 4 枚）。\n  因此不存在“刚刚已经拿过两枚绿宝石”的上下文；错误操作从零开始演示。\n  供应堆现在有五个种类（>=3），所以不可以故意只拿两个种类。\n  演示错误操作：从钻石、蓝宝石供应堆各拿 1 枚到玩家持有区；\n  飞行结束后，在两枚宝石落点坐标的平均值处打一个红色禁止标记（圈+斜杠）。\n  `negative: true`：错误状态只在本 cue 内存在；下一条 cue 继承本 cue 的 start_state。",
         "exit": {
           "zones": {
             "gem_supply_diamond": {
@@ -5478,17 +5478,30 @@
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 2
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
                 }
               ]
             },
             "player_holding": {
               "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 2
-                },
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
@@ -5527,7 +5540,13 @@
           "offset": 4.6
         }
       ],
-      "negative": true
+      "negative": true,
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。供应堆五种颜色都齐全（每色4颗），玩家A手上没有宝石。玩家A从钻石和蓝宝石供应堆各拿1枚。这样拿合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+          "expect": "不允许"
+        }
+      ]
     },
     {
       "id": "action.take.draw_rule.001.2",
@@ -5544,7 +5563,7 @@
       ],
       "script": {
         "story": "【当供应堆宝石不足时，尽可能拿取宝石】",
-        "note": "【不足时：尽可能拿｜允许少拿】\n  本 cue 的演示前提：宝石供应堆只剩**钻石**和**蓝宝石**两种颜色。\n  其余三色不是消失，而是合法地分布在玩家 A/B 持有区：\n    · 玩家 A：原有绿 2，再补绿 2、黑 2 → 绿 4 + 黑 2；\n    · 玩家 B：红 4、黑 2 → 红 4 + 黑 2；\n  这样钻石/蓝宝石各 4 在供应堆，绿/红/黑各 4 在玩家区，五色实物总数仍然完整。\n  因此当前供应堆不足三个种类，规则允许少拿——从钻石和蓝宝石各拿 1 枚即可。\n  这不是反例：本 cue 不使用 `forbid`，结尾也不打禁止标记。\n  口播“尽可能拿取宝石”期间，实际演示拿走这两枚不同宝石到玩家持有区。",
+        "note": "【不足时：尽可能拿｜允许少拿】\n  本 cue 的演示前提：宝石供应堆只剩**钻石**和**蓝宝石**两种颜色。\n  其余三色不是消失，而是合法地分布在玩家 A/B 持有区：\n    · 玩家 A：绿宝石 4 全部移入，再移入黑 2 → 绿 4 + 黑 2；\n    · 玩家 B：红 4、黑 2 → 红 4 + 黑 2；\n  这样钻石/蓝宝石各 4 在供应堆，绿/红/黑各 4 在玩家区，五色实物总数仍然完整。\n  因此当前供应堆不足三个种类，规则允许少拿——从钻石和蓝宝石各拿 1 枚即可。\n  这不是反例：本 cue 不使用 `forbid`，结尾也不打禁止标记。\n  口播“尽可能拿取宝石”期间，实际演示拿走这两枚不同宝石到玩家持有区。",
         "enter": {
           "zones": {
             "gem_supply_diamond": {
@@ -5681,7 +5700,7 @@
           "setup": true,
           "source": "gem_supply_emerald",
           "destination": "player_holding",
-          "quantity": 2,
+          "quantity": 4,
           "concept": "gem",
           "parts": [
             {
@@ -5770,7 +5789,153 @@
       ],
       "script": {
         "story": "【玩家持有的宝石和黄金总数上限为 10 个。任何时候当持有数量超过上限时】",
-        "note": "【状态继承】本 cue 不继承 draw_rule.001.2 的“只剩两种宝石”临时演示状态；\n  它直接从 action.take.draw_rule.001.1（negative）的干净入口开始，后面卡牌示例仍按正常五色供应堆计算。\n【演示手牌状态重置】本 cue 开始时，把玩家持有区从 same.001 分叉留下的「绿2」\n  补齐成后续卡牌示例需要的「白1、蓝1、红1、绿2」：从对应供应堆各补 1 枚白/蓝/红。\n  这一步不是新的拿取动作，只是 cue 树在这里切换演示前提；后面的上限、公开信息和买牌示例\n  继续继承这 5 枚。\n【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**（口播并没有让人拿这些），而本项目的铁律是\n  「脚本里没写有的那就是没有」+ 每色实物总数 7 枚的账要平 → 所以这里不凑那个演示，\n  只把镜头推到玩家持有区、把「手上的宝石」点出来。\n  （前作宝石的出现都有出处：`create` = 从盒里拿，`transfer` = 从供应堆拿。）"
+        "note": "【状态继承】本 cue 从 action.take.draw_rule.001.1（negative）的干净入口开始；\n  它不继承 draw_rule.001.2 的“只剩两种宝石”临时演示状态。\n【演示手牌状态重置】本 cue 开始时用 setup transfer 把玩家持有区补齐成后续卡牌示例需要的\n  「白1、蓝1、红1、绿2」：钻石/蓝宝石/红宝石各 1 枚，绿宝石 2 枚。\n  这一步不是新的拿取动作，只是 cue 树在这里切换演示前提；后面的上限、公开信息和买牌示例\n  继续继承这 5 枚。\n【持有上限 10】\n  规则说明，**没有状态变化**。玩家现在手里是 5 枚 —— 讲上限本来更该演示「超过 10 再还回去」，\n  但那需要**凭空多出 6 枚宝石**，所以这里只把镜头推到玩家持有区、把「手上的宝石」点出来。",
+        "enter": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        }
       },
       "events": [
         {
@@ -5787,11 +5952,33 @@
           "anchor": "action.take.limit.001.1.start"
         },
         {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "source": "gem_supply_emerald",
+          "destination": "player_holding",
+          "quantity": 2,
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<emerald>"
+            }
+          ],
+          "anchor": "action.take.limit.001.1.start"
+        },
+        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_holding",
           "realizes": "<ontology::timing>",
           "anchor": "action.take.limit.001.1.start"
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。五色宝石各4枚：供应堆钻石3枚、蓝宝石3枚、红宝石3枚、绿宝石2枚、黑宝石4枚；玩家A持有白1枚、蓝1枚、红1枚、绿2枚；玩家B没有宝石；A手上5枚，B手上0枚。这个局面合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
         }
       ]
     },

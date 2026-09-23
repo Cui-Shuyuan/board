@@ -62,9 +62,14 @@ def load_asks(path: Path):
         asks = []
         for cue in spec.get("cues") or []:
             cid = cue.get("id")
-            for q in cue.get("qa") or []:
-                if isinstance(q, str) and q.strip():
-                    asks.append({"cue": cid, "q": q})
+            for item in cue.get("qa") or []:
+                if isinstance(item, str) and item.strip():
+                    asks.append({"cue": cid, "q": item})
+                elif isinstance(item, dict) and str(item.get("q") or "").strip():
+                    ask = {"cue": cid, "q": str(item["q"])}
+                    if item.get("expect"):
+                        ask["expect"] = str(item["expect"])
+                    asks.append(ask)
         return {"source": str(path), "asks": asks}
     return spec
 
@@ -123,7 +128,14 @@ def main() -> int:
     with jl.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
-    bad = [r for r in rows if r["verdict"] not in ("允许", "合法")]
+
+    def ok(row):
+        expect = row.get("expect")
+        if expect:
+            return row["verdict"] == expect
+        return row["verdict"] in ("允许", "合法")
+
+    bad = [r for r in rows if not ok(r)]
     md = ["# 动画合法性问答（手写问题，规则引擎当裁判）", "",
           f"- 问题：`{Path(a.inp).name}`（**手写**，写动画时连脚本一起写；只用状态与动作，"
           f"不用教程自造词，规则自动发生的事就说成自动）",
