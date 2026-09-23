@@ -99,12 +99,15 @@ class StateModel:
     start/end snapshots, so the Unity runtime never resolves selectors.
     """
 
-    def __init__(self, stack_zones=None):
+    def __init__(self, stack_zones=None, zone_order_policies=None):
         self.items = []
         self.next_seq = {}
         # Stack-style zones keep the old pile convention: append goes underneath
         # (order 0 = top).  Other zones default new items on top.
         self.stack_zones = set(stack_zones or [])
+        # color_stack zones address items by (color, rank): different colors
+        # occupy different base slots, same color stacks in its own slot.
+        self.zone_order_policies = dict(zone_order_policies or {})
 
     def snapshot(self) -> dict:
         comps = []
@@ -185,11 +188,33 @@ class StateModel:
     def count(self, zone: str, selector: dict = None) -> int:
         return len(self.matching(zone, selector or {}))
 
-    def _next_order(self, zone: str) -> int:
-        """Default append position: max(order)+1, never based on count.
+    @staticmethod
+    def _color_key(it: dict) -> str:
+        for p in it.get("parts") or []:
+            if p.get("key") == "color":
+                return str(p.get("value", "")).strip("<>")
+        pal = str(it.get("palette") or "")
+        if pal == "gem_gold":
+            return "gold"
+        if pal.startswith("gem_"):
+            return pal[4:]
+        return ""
+
+    def _next_order(self, zone: str, item: dict = None) -> int:
+        """Default append position, with optional per-zone color grouping.
 
         Removal leaves holes; only an explicit move_order event may close them.
         """
+        policy = self.zone_order_policies.get(zone)
+        if policy and item is not None:
+            key = self._color_key(item)
+            colors = list(policy.get("colors") or [])
+            if key and key in colors:
+                per = max(1, int(policy.get("per_color_capacity", 4) or 4))
+                idx = colors.index(key)
+                used = sum(1 for x in self.items
+                           if x["zone"] == zone and self._color_key(x) == key)
+                return idx * per + used
         orders = [i["order"] for i in self.items if i["zone"] == zone]
         return (max(orders) + 1) if orders else 0
 
@@ -249,10 +274,11 @@ class StateModel:
                 "concept": concept,
                 "parts": copy.deepcopy(parts or []),
                 "zone": zone,
-                "order": self._next_order(zone),
+                "order": 0,
                 "layer": self._resolve_layer(zone, layer, idx),
                 "face": int(face),
             }
+            it["order"] = self._next_order(zone, it)
             self.items.append(it)
             added.append(it)
         return added
@@ -290,7 +316,7 @@ class StateModel:
         for idx, rec in enumerate(records):
             it = rec["item"]
             it["zone"] = dest
-            it["order"] = self._next_order(dest)
+            it["order"] = self._next_order(dest, it)
             it["layer"] = self._resolve_layer(dest, layer, idx)
             if to_face is not None:
                 it["face"] = face_int(to_face)
@@ -351,6 +377,7 @@ class Compiler:
         self.trees = {}
         self.world_modes = {w.get("id"): w.get("mode", "isolated") for w in (self.doc.get("worlds") or [])}
         self.stack_zones = set()
+        self.zone_order_policies = {}
         self.time_anchors = self._resolve_time_anchors()
 
     def _resolve_time_anchors(self) -> dict:
@@ -486,8 +513,18 @@ class Compiler:
             self.stages[sid] = stage
             self.compiled_stages[sid] = geom.build_compiled_stage(stage)
             for z in stage.get("zones") or []:
-                if ((z.get("display") or {}).get("mode") == "stack") and z.get("id"):
-                    self.stack_zones.add(z["id"])
+                disp = z.get("display") or {}
+                mode = disp.get("mode")
+                zid = z.get("id")
+                if not zid:
+                    continue
+                if mode == "stack":
+                    self.stack_zones.add(zid)
+                elif mode == "color_stack":
+                    self.zone_order_policies[zid] = {
+                        "colors": list(disp.get("colors") or []),
+                        "per_color_capacity": int(disp.get("per_color_capacity", 4) or 4),
+                    }
             self.trees[tree["id"]] = {
                 "id": tree["id"],
                 "world": tree.get("world") or tree["id"],
@@ -577,7 +614,7 @@ class Compiler:
                 entry_stage = None
                 entry_camera_out = None
 
-            state = StateModel(self.stack_zones).load_snapshot(entry_state)
+            state = StateModel(self.stack_zones, self.zone_order_policies).load_snapshot(entry_state)
             start = state.snapshot()
             clips, state_ops, camera_ops, first_state = self.compile_events(cue, state, tree, 0)
             if first_state is None:

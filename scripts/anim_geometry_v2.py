@@ -50,6 +50,24 @@ def slot_at(zone: dict, order: int) -> tuple[float, float]:
     if slot >= cap:
         slot, overflow = cap - 1, slot - cap + 1
 
+    if display.get("mode") == "color_stack":
+        colors = list(display.get("colors") or [])
+        if not colors:
+            colors = ["default"]
+        per = max(1, int(display.get("per_color_capacity", 4) or 4))
+        cols = max(1, int(display.get("cols", 3) or 3))
+        idx = min(len(colors) - 1, max(0, slot // per))
+        rank = max(0, slot - idx * per)
+        rows = max(1, (len(colors) + cols - 1) // cols)
+        col = idx % cols
+        row = idx // cols
+        base_x = cx + (col - (cols - 1) * 0.5) * num(display.get("x_step"), 0.5)
+        base_z = cz + (row - (rows - 1) * 0.5) * num(display.get("z_step"), 0.5)
+        max_visible = max(1, int(display.get("max_visible", per) or per))
+        lift = min(rank, max_visible - 1)
+        return (base_x + lift * num(display.get("stack_dx"), -0.03),
+                base_z + lift * num(display.get("stack_dz"), -0.03))
+
     if display.get("mode") == "stack":
         max_visible = max(1, int(display.get("max_visible", 8) or 8))
         lift = min(max(0, cap - 1 - slot), max_visible - 1)

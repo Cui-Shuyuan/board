@@ -405,21 +405,37 @@
         "x_step": 0.2,
         "z_step": 0.42
       },
-      "capacity": 10,
+      "capacity": 36,
       "palette": "panel_player",
       "size": {
         "w": 0.43,
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "color_stack",
+        "colors": [
+          "diamond",
+          "sapphire",
+          "emerald",
+          "ruby",
+          "onyx",
+          "gold"
+        ],
+        "per_color_capacity": 6,
+        "cols": 3,
+        "x_step": 0.55,
+        "z_step": 0.55,
+        "stack_dx": -0.03,
+        "stack_dz": -0.01,
+        "max_visible": 6
       },
       "concept": "<player_holding>",
       "contains": [
         "gem",
         "gold"
       ],
-      "group": "player_a"
+      "group": "player_a",
+      "note": "玩家宝石区：不同颜色占不同槽位，相同颜色在该槽位内堆叠（与供应堆同一套堆叠手法）；手牌上限仍按规则 10 枚。"
     },
     {
       "id": "showcase",
@@ -674,7 +690,7 @@
       "id": "player_b_holding",
       "label": "玩家B宝石区",
       "center": {
-        "x": 0.065,
+        "x": 0.2,
         "z": -1.8
       },
       "layout": {
@@ -682,21 +698,36 @@
         "x_step": 0.4,
         "z_step": 0.42
       },
-      "capacity": 6,
+      "capacity": 36,
       "palette": "panel_player",
       "size": {
         "w": 0.43,
         "h": 0.43
       },
       "display": {
-        "mode": "count"
+        "mode": "color_stack",
+        "colors": [
+          "diamond",
+          "sapphire",
+          "emerald",
+          "ruby",
+          "onyx",
+          "gold"
+        ],
+        "per_color_capacity": 6,
+        "cols": 3,
+        "x_step": 0.55,
+        "z_step": 0.55,
+        "stack_dx": -0.03,
+        "stack_dz": -0.01,
+        "max_visible": 6
       },
       "concept": "<player_holding>",
       "contains": [
         "gem",
         "gold"
       ],
-      "note": "玩家B手里的宝石/黄金。",
+      "note": "玩家B手里的宝石/黄金。\n玩家宝石区：不同颜色占不同槽位，相同颜色在该槽位内堆叠（与供应堆同一套堆叠手法）；手牌上限仍按规则 10 枚。",
       "group": "player_b"
     },
     {
