@@ -117,6 +117,7 @@ JSON 格式：
 ## 10. 动画 cue 的 Board API 合法性问答（人工步骤）
 
 - 每改一个真的改状态的 cue，必须由 AI/人根据改动点**手写最小事实问题**，问运行中的 Board API `POST /api/chat`，判断这条 cue 的状态前提、动作和结果是否合法。
+- **qa 必须随 cue 改动同步更新。** 只要 script/events/state/contract 改了，就必须重写/补充该 cue 的 `qa`；不改问题视为未完成，不允许提交。旧问题重复问新动作，等于没有校验。
 - 一 cue 一事，只带判定需要的事实；不用教程自造词，不整桌抄状态。规则自动发生的事就说成自动。
 - 问题提前写进该 cue 的 `qa` 字段（历史问题可继续放 `_qa/questions.json`）；`scripts/qa_anim_ask.py` 支持直接从 `full.anim.json` 提取这类问题并自动发送/留档；脚本只负责问答与日志，**不负责生成问题**。
 - 本地 `validate_anim_rules*` 是精确算术层；Board API 问答是独立裁判层。两层都过，这一步才算站得住。

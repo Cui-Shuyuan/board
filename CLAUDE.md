@@ -42,4 +42,5 @@
 - 所有 ontology 概念在 `ontology/concepts.json` 统一定义，不再分拆。
 - 讲规动画按“文字脚本 → BoardAI 校验 → 原语 → 对账”顺序改，禁止先改 events 再补文字。
 - 改任何一个 cue 后，必须由 AI/人根据改动点**手写最小事实问题**，提前写进该 cue 的 `qa` 字段（或 `_qa/questions.json`），再由脚本自动问运行中的 Board API `/api/chat` 判断合法性；脚本只负责发送和留档，不自动生成问题。
+- 改 cue 的 script/events/state/contract 时，必须同步修改该 cue 的 `qa`。只改动画不改问题视为未完成，不允许提交；过期问题重复问等于没有校验。
 - `offstage` / 可见性隐藏只用于引擎确实需要的隐藏，不得用来掩盖非法棋盘状态；隐藏后每色宝石、黄金、卡牌实物总数仍必须守恒。

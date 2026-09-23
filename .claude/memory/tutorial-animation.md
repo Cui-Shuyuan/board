@@ -94,7 +94,8 @@ metadata:
    - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），手写进该 cue 的 `qa` 字段；
    - 用 `python3 scripts/qa_anim_ask.py --in games/splendor/tutorial/anim/v2/full.anim.json --only <cue>` 自动发送并留档；
    - 回答必须是「允许/合法」；不是就停下改脚本或改数据；
-   - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题。
+   - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题；
+   - **cue 改一次，qa 必须跟着改一次**。只改 events/state 不改问题 = 未完成，不允许提交。
 3. 改动画树/契约/events：`full.anim.json`。
 4. 编译与检查（可用 `--validate-qa` 做机器侧补充）。
 5. Unity 采样对账。
@@ -107,6 +108,7 @@ metadata:
 这一层是**独立裁判**：`validate_anim_rules*` 是精确算术层，Board API 问答负责抓“规则理解错了”的问题。
 
 - 每改一个真的改状态的 cue，都由 AI/人手写问题；问题无法自动生成，因为要先判断这条 cue 到底在做什么、哪些前提必须带。
+- **qa 与 cue 同步更新是硬约束。** 旧问题问新动作会直接失去校验意义；只要 event/state/contract 变了，就必须重新审视并改写问题。
 - 问法遵守一 cue 一事、只带最小必要状态、不用教程自造词；规则自动发生的事就说成自动。
 - 问题作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；`qa_anim_ask.py` 自动从 `full.anim.json` 提取、发送、留档 `ask_log_<tag>.md/.jsonl`，不再需要临时拼问句。
 

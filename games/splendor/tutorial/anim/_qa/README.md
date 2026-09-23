@@ -2,6 +2,8 @@
 
 **没有生成器**（用户 2026-09-20 拍板：「不要那个生成器了，由你自己在写脚本时，连带着就把问题一起写了」）。
 
+> **硬规则**：cue 改一次，`qa` 必须跟着改一次。只改 script/events/state/contract、不改问题 = 未完成。旧问题重复问新动作，等于没有校验。
+
 - 问题：优先写在各 cue 的 `qa` 字段（`full.anim.json`）；历史问题仍可在 `questions.json` —— **都手写**，写动画时连脚本一起写
 - 问＋记日志：`python3 scripts/qa_anim_ask.py --in <questions.json 或 full.anim.json>`（`--list` 只看问题，`--only cue1,cue2` 只问几条）
 - `qa_anim_ask.py` 会自动从 `full.anim.json` 的 `qa` 字段提取问题；它不生成问题。
