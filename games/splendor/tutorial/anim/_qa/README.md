@@ -2,8 +2,9 @@
 
 **没有生成器**（用户 2026-09-20 拍板：「不要那个生成器了，由你自己在写脚本时，连带着就把问题一起写了」）。
 
-- 问题：`questions.json` —— **手写**，写动画时连脚本一起写
-- 问＋记日志：`python3 scripts/qa_anim_ask.py`（`--list` 只看问题，`--only cue1,cue2` 只问几条）
+- 问题：优先写在各 cue 的 `qa` 字段（`full.anim.json`）；历史问题仍可在 `questions.json` —— **都手写**，写动画时连脚本一起写
+- 问＋记日志：`python3 scripts/qa_anim_ask.py --in <questions.json 或 full.anim.json>`（`--list` 只看问题，`--only cue1,cue2` 只问几条）
+- `qa_anim_ask.py` 会自动从 `full.anim.json` 的 `qa` 字段提取问题；它不生成问题。
 - 日志：`ask_log_<tag>.md` / `.jsonl`（最新一版是 `ask_log_handwritten.*`）
 
 ## 手写问句的五条原则（这轮实测出来的）

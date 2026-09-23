@@ -50,6 +50,24 @@ def verdict_of(reply):
     matches = list(re.finditer(r"不合法|合法|有问题|不允许|允许", reply))
     return matches[-1].group(0) if matches else "?"
 
+def load_asks(path: Path):
+    """Load either a questions.json spec or cue.qa fields from a track file.
+
+    Questions stay hand-written.  They can live next to the cue as:
+        cue = { "id": ..., "qa": ["question 1", "question 2"] }
+    and this loader simply extracts them for the API sender.
+    """
+    spec = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(spec, dict) and "cues" in spec and "asks" not in spec:
+        asks = []
+        for cue in spec.get("cues") or []:
+            cid = cue.get("id")
+            for q in cue.get("qa") or []:
+                if isinstance(q, str) and q.strip():
+                    asks.append({"cue": cid, "q": q})
+        return {"source": str(path), "asks": asks}
+    return spec
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -60,7 +78,7 @@ def main() -> int:
     ap.add_argument("--jobs", type=int, default=4, help="并发问数（默认 4）")
     ap.add_argument("--strict", action="store_true", help="有可疑答案时返回非零")
     a = ap.parse_args()
-    spec = json.loads(Path(a.inp).read_text(encoding="utf-8"))
+    spec = load_asks(Path(a.inp))
     items = spec["asks"]
     only = [x.strip() for x in a.only.split(",") if x.strip()]
     if only:

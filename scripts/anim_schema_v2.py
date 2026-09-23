@@ -245,7 +245,7 @@ def _check_contract(report: Report, where: str, part: dict):
 # zones/picture it changes.  `cut` / `world_cut` are reset points and do not
 # inherit state contracts.
 
-_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "events"}
+_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "qa", "events"}
 
 
 def _deep_copy(v):
@@ -385,6 +385,8 @@ def resolve_track(doc: dict) -> dict:
         eff["parent"] = raw.get("parent")
         if raw.get("negative") is not None:
             eff["negative"] = bool(raw.get("negative"))
+        if raw.get("qa") is not None:
+            eff["qa"] = _deep_copy(raw.get("qa"))
         if raw.get("entry") is not None:
             eff["entry"] = _deep_copy(raw.get("entry"))
         eff["events"] = _deep_copy(raw.get("events") or [])

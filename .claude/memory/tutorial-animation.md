@@ -91,8 +91,8 @@ metadata:
 
 1. 改文字脚本：`script.full.json`。
 2. **手写这一 cue 的合法性问答，问运行中的 Board API**：
-   - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），写进 `_qa/questions.json`；
-   - 用 `python3 scripts/qa_anim_ask.py --only <cue>` 发送并留档；
+   - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），手写进该 cue 的 `qa` 字段；
+   - 用 `python3 scripts/qa_anim_ask.py --in games/splendor/tutorial/anim/v2/full.anim.json --only <cue>` 自动发送并留档；
    - 回答必须是「允许/合法」；不是就停下改脚本或改数据；
    - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题。
 3. 改动画树/契约/events：`full.anim.json`。
@@ -108,7 +108,7 @@ metadata:
 
 - 每改一个真的改状态的 cue，都由 AI/人手写问题；问题无法自动生成，因为要先判断这条 cue 到底在做什么、哪些前提必须带。
 - 问法遵守一 cue 一事、只带最小必要状态、不用教程自造词；规则自动发生的事就说成自动。
-- 存进 `_qa/questions.json` 后跑 `python3 scripts/qa_anim_ask.py --only <cue>`，日志留 `ask_log_<tag>.md/.jsonl`。
+- 问题作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；`qa_anim_ask.py` 自动从 `full.anim.json` 提取、发送、留档 `ask_log_<tag>.md/.jsonl`，不再需要临时拼问句。
 
 ### 总控命令
 
