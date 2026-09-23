@@ -606,6 +606,13 @@ class Compiler:
             lead = float(ev.get("lead", 0.0) or 0.0)
             dur = float(ev.get("dur", 0.0) or 0.0)
             end = max(end, at + lead + dur)
+        # Staggered transfers move the per-record start into clips[].at;
+        # the cue duration must cover the actual node timeline.
+        for cl in clips or []:
+            at = float(cl.get("at", 0.0) or 0.0)
+            lead = max(0.0, float(cl.get("lead", 0.0) or 0.0))
+            dur = max(0.0, float(cl.get("dur", 0.0) or 0.0))
+            end = max(end, at + lead + dur)
         return end
 
     def infer_meta(self, stage: dict, template: str, palette: str, concept: str = "", parts=None):
@@ -664,6 +671,8 @@ class Compiler:
             sel = selector_from_event(ev)
             zone = norm(ev.get("zone"))
             before = state.component_map()
+            manual_state_ops = None
+            manual_state_item_ids = set()
             if op == "camera":
                 shot_id = norm(ev.get("shot"))
                 if not shot_id:
@@ -718,11 +727,23 @@ class Compiler:
                 dest = norm(ev.get("destination"))
                 stagger = float(ev.get("stagger", 0.0) or 0.0)
                 index = 0
+                records_with_times = []
                 for source in sources:
                     records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)))
                     for rec in records:
-                        clips.append(self.move_clip(rec, at, dur, lead + index * stagger, easing, stage_slots, ev.get("to")))
+                        # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
+                        record_at = at + max(0.0, lead) + index * stagger
+                        clips.append(self.move_clip(rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to")))
+                        records_with_times.append((record_at, rec["item"]["id"]))
+                        manual_state_item_ids.add(rec["item"]["id"])
                         index += 1
+                if records_with_times:
+                    after_map = state.component_map()
+                    manual_state_ops = [
+                        {"op": "put", "at": record_at, "item": after_map[item_id]}
+                        for record_at, item_id in records_with_times
+                        if item_id in after_map
+                    ]
             elif op == "stack":
                 dest = norm(ev.get("destination"))
                 capacity = int(ev.get("capacity", 40) or 40)
@@ -810,11 +831,18 @@ class Compiler:
                 op_time += dur
             if op != "camera":
                 after = state.component_map()
+                handled_ids = manual_state_item_ids if manual_state_ops is not None else set()
                 for iid, comp in after.items():
+                    if iid in handled_ids:
+                        continue
                     if before.get(iid) != comp:
                         state_ops.append({"op": "put", "at": op_time, "item": comp})
                 for iid in sorted(set(before) - set(after)):
+                    if iid in handled_ids:
+                        continue
                     state_ops.append({"op": "remove", "at": op_time, "item_id": iid})
+                if manual_state_ops:
+                    state_ops.extend(manual_state_ops)
             if op_time <= 1e-9:
                 first_state = state.snapshot()
 
