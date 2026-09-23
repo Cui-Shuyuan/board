@@ -5407,7 +5407,7 @@
       "parent": "action.take.same.002",
       "timing": [
         {
-          "key": "镜头推近供应区",
+          "key": "全景：宝石供应区 + 玩家A持有区",
           "text": "0.00"
         },
         {
@@ -5417,7 +5417,7 @@
       ],
       "script": {
         "story": "【除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿】",
-        "note": "【不能故意少拿｜反例】\n  供应堆现在有五个种类（>=3），所以不可以故意只拿两个种类。\n  本 cue 演示错误操作：从钻石、蓝宝石供应堆各拿 1 枚到玩家持有区；\n  飞行结束后，在两枚宝石落点坐标的平均值处打一个红色禁止标记（圈+斜杠）。\n  `negative: true`：错误状态只在本 cue 内存在；下一条 cue 继承本 cue 的 start_state，\n  错误拿到的宝石不会泄漏到后面的规则讲解。\n  transfer 上写 `forbid: true`，编译器自动记录受影响的两枚宝石并在动作结束后生成标记。",
+        "note": "【不能故意少拿｜反例】\n  整条 cue 使用同一个 `shot_gem_flow` 全景：同时框住宝石供应区和玩家 A 持有区，\n  前半段不再单独推近供应堆。这样错误拿取从起飞到落点始终在画面内。\n  供应堆现在有五个种类（>=3），所以不可以故意只拿两个种类。\n  本 cue 演示错误操作：从钻石、蓝宝石供应堆各拿 1 枚到玩家持有区；\n  飞行结束后，在两枚宝石落点坐标的平均值处打一个红色禁止标记（圈+斜杠）。\n  `negative: true`：错误状态只在本 cue 内存在；下一条 cue 继承本 cue 的 start_state，\n  错误拿到的宝石不会泄漏到后面的规则讲解。\n  transfer 上写 `forbid: true`，编译器自动记录受影响的两枚宝石并在动作结束后生成标记。",
         "exit": {
           "zones": {
             "gem_supply_diamond": {
@@ -5473,17 +5473,9 @@
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_gem_supplies",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.take.draw_rule.001.1.start"
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
           "shot": "shot_gem_flow",
           "realizes": "<ontology::timing>",
-          "anchor": "action.take.draw_rule.001.1.b1.start",
-          "offset": 4.5
+          "anchor": "action.take.draw_rule.001.1.start"
         },
         {
           "op": "transfer",
