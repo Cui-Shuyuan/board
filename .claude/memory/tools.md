@@ -134,7 +134,7 @@ python3 scripts/cue_graph_v2.py --help
 
 - 规则 QA 脚本按游戏散落在 `scripts/_qa_<game>_run.py`、`_qa_<game>_log_analysis.py`。
 - 结果文件：`scripts/_qa_<game>_results.jsonl`。
-- 动画 QA：`scripts/qa_anim_check.py`、`qa_anim_ask.py`、`qa_anim_percue.py`，支持并发与 strict。
+- 动画 QA：`scripts/qa_anim_ask.py` 是主流程——**问题必须手写**，脚本只发送 Board API 问答并留档；`qa_anim_check.py` 可交叉验证；`qa_anim_percue.py` 是旧生成器，不作为主流程。
 - 常用检查：
   - `scripts/check_unity_scripts.py`：Unity C# 编译检查。
   - `scripts/check_anim_v2.py`：编译/契约/状态/机位检查。
