@@ -65,7 +65,7 @@ def to_old_event(ev):
     if ev.get('concept'): what['concept']=ev['concept']
     if ev.get('parts'): what['parts']=ev['parts']
     if what: out['what']=what
-    for k in ('template','palette','zone','source','destination','quantity','count','to','order','slot','stagger','from_back'):
+    for k in ('template','palette','zone','source','destination','quantity','count','to','order','slot','stagger','from_back','setup'):
         if ev.get(k) is not None: out[k]=ev[k]
     if op in ('create','ensure'):
         out['destination']=ev.get('zone') or ev.get('destination')

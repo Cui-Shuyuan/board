@@ -5509,7 +5509,7 @@
       ],
       "script": {
         "story": "【当供应堆宝石不足时，尽可能拿取宝石】",
-        "note": "【不足时：尽可能拿｜允许少拿】\n  本 cue 的演示前提：宝石供应堆只剩**钻石**和**蓝宝石**两种颜色，其余三种宝石已经不在供应堆中。\n  做法：开 cue 时把绿、红、黑三种供应堆整堆移到镜头外的 `offstage`（仍然计入实物总数，不是销毁）。\n  因此现在供应堆不足三个种类；规则允许玩家少拿——从钻石和蓝宝石各拿 1 枚即可。\n  这不是反例：本 cue 不使用 `forbid`，结尾也不打禁止标记。\n  口播“尽可能拿取宝石”期间，实际演示拿走这两枚不同宝石到玩家持有区。",
+        "note": "【不足时：尽可能拿｜允许少拿】\n  本 cue 的演示前提：宝石供应堆只剩**钻石**和**蓝宝石**两种颜色。\n  其余三色不是消失，而是合法地分布在玩家 A/B 持有区：\n    · 玩家 A：原有绿 2，再补绿 2、黑 2 → 绿 4 + 黑 2；\n    · 玩家 B：红 4、黑 2 → 红 4 + 黑 2；\n  这样钻石/蓝宝石各 4 在供应堆，绿/红/黑各 4 在玩家区，五色实物总数仍然完整。\n  因此当前供应堆不足三个种类，规则允许少拿——从钻石和蓝宝石各拿 1 枚即可。\n  这不是反例：本 cue 不使用 `forbid`，结尾也不打禁止标记。\n  口播“尽可能拿取宝石”期间，实际演示拿走这两枚不同宝石到玩家持有区。",
         "enter": {
           "zones": {
             "gem_supply_diamond": {
@@ -5544,6 +5544,25 @@
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
+                  "count": 4
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 2
+                }
+              ]
+            },
+            "player_b_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
                   "count": 2
                 }
               ]
@@ -5584,6 +5603,11 @@
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
+                  "count": 4
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
                   "count": 2
                 },
                 {
@@ -5597,6 +5621,20 @@
                   "count": 1
                 }
               ]
+            },
+            "player_b_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 4
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 2
+                }
+              ]
             }
           }
         }
@@ -5605,8 +5643,9 @@
         {
           "op": "transfer",
           "dur": 0.0,
+          "setup": true,
           "source": "gem_supply_emerald",
-          "destination": "offstage",
+          "destination": "player_holding",
           "quantity": 2,
           "concept": "gem",
           "parts": [
@@ -5620,8 +5659,9 @@
         {
           "op": "transfer",
           "dur": 0.0,
+          "setup": true,
           "source": "gem_supply_ruby",
-          "destination": "offstage",
+          "destination": "player_b_holding",
           "quantity": 4,
           "concept": "gem",
           "parts": [
@@ -5635,9 +5675,26 @@
         {
           "op": "transfer",
           "dur": 0.0,
+          "setup": true,
           "source": "gem_supply_onyx",
-          "destination": "offstage",
-          "quantity": 4,
+          "destination": "player_holding",
+          "quantity": 2,
+          "concept": "gem",
+          "parts": [
+            {
+              "key": "color",
+              "value": "<onyx>"
+            }
+          ],
+          "anchor": "action.take.draw_rule.001.2.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "source": "gem_supply_onyx",
+          "destination": "player_b_holding",
+          "quantity": 2,
           "concept": "gem",
           "parts": [
             {

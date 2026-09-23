@@ -264,7 +264,9 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
                 dest = resolve_zone_ref(stage, ev.get("destination"))
                 # —— 取宝石这个**动作**的构成（引擎教的：只有"三色各一"或"同色两枚"两种）——
                 srcs0 = [resolve_zone_ref(stage, x) for x in (ev.get("source") or [])]
-                takes = [z for z in srcs0 if "supply" in z and "gem_supply" in z]
+                # setup transfers establish a cue's starting premise; they are not
+                # player take actions, so the take-action shape check does not apply.
+                takes = [] if ev.get("setup") else [z for z in srcs0 if "supply" in z and "gem_supply" in z]
                 if takes and "holding" in dest:
                     qty0 = int(ev.get("quantity") or 1)
                     colors0 = [(zones[z].get("parts") or [{}])[0].get("value", "") for z in takes]
