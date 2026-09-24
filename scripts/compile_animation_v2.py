@@ -828,12 +828,15 @@ class Compiler:
                 stagger = float(ev.get("stagger", 0.0) or 0.0)
                 index = 0
                 records_with_times = []
+                is_setup = bool(ev.get("setup"))
                 for source in sources:
                     records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)), ev.get("layer"))
                     for rec in records:
                         # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
+                        # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
                         record_at = at + max(0.0, lead) + index * stagger
-                        clips.append(self.move_clip(rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to")))
+                        if not is_setup:
+                            clips.append(self.move_clip(rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to")))
                         records_with_times.append((record_at, rec["item"]["id"]))
                         manual_state_item_ids.add(rec["item"]["id"])
                         index += 1
