@@ -187,10 +187,13 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
             st = tree_states.setdefault(world, State())
         frozen = frozen_by_tree.get(world)
         is_demo = bool(cue.get("demo"))
+        over_limit_demo = False
         paid, bought, reserved, gold_taken = Counter(), [], [], 0
         for i, ev in enumerate(cue.get("events") or []):
             where = f"{cid} events[{i}]"
             action = ev.get("action")
+            if ev.get("over_limit_demo"):
+                over_limit_demo = True
             if on_event is not None:
                 # 回调拿到的是**这一步之前**的状态（未包括这一动）—— 生成问题正好要这个
                 on_event(cid, where, ev, st, {"paid": paid, "bought": bought,
@@ -343,9 +346,10 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
                                 bought.append((ident[5:], where))
                             if "reserved" in dest:
                                 reserved.append((ident[5:], dest))
-                for zid in zones:
-                    if "holding" in zid and st.hand(zid) > HAND_LIMIT:
-                        rep.error(where, f"{zid} 手上 {st.hand(zid)} 枚 > 上限 {HAND_LIMIT}")
+                if not ev.get("over_limit_demo"):
+                    for zid in zones:
+                        if "holding" in zid and st.hand(zid) > HAND_LIMIT:
+                            rep.error(where, f"{zid} 手上 {st.hand(zid)} 枚 > 上限 {HAND_LIMIT}")
 
         # ── 本条 cue 的整桌检查 ────────────────────────────────────────────
         if cid == FROZEN_FROM:
@@ -374,7 +378,7 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
         for zid in zones:
             if "reserved" in zid and st.count(zid) > RESERVE_LIMIT:
                 rep.error(cid, f"{zid} 保留 {st.count(zid)} 张 > 上限 {RESERVE_LIMIT}")
-            if "holding" in zid and st.hand(zid) > HAND_LIMIT:
+            if not over_limit_demo and "holding" in zid and st.hand(zid) > HAND_LIMIT:
                 rep.error(cid, f"{zid} 手上 {st.hand(zid)} 枚 > 上限 {HAND_LIMIT}")
         if len(reserved) > gold_taken and st.count("gold_supply") + gold_taken >= len(reserved):
             rep.error(cid, f"保留了 {len(reserved)} 张牌却只拿了 {gold_taken} 枚黄金（黄金堆还有，必须给）")
