@@ -5791,8 +5791,8 @@
           "text": "4.20-4.80"
         },
         {
-          "key": "屏幕提示（提前于动作）",
-          "text": "约2.9s-结束"
+          "key": "屏幕提示（提前约2.7s）",
+          "text": "约1.5s-结束"
         }
       ],
       "script": {
@@ -6029,8 +6029,8 @@
           "dur": 0.0,
           "overlay": "hint_limit",
           "text": "现在是这位玩家的回合，他选择拿取3枚不同宝石",
-          "anchor": "action.take.limit.001.1.b1.end",
-          "offset": -0.6
+          "anchor": "action.take.limit.001.1.b1.start",
+          "offset": 1.2
         }
       ],
       "qa": [
@@ -6053,8 +6053,8 @@
           "text": "4.00-4.86"
         },
         {
-          "key": "屏幕提示（提前于动作）",
-          "text": "约3.27s-结束"
+          "key": "屏幕提示（提前约2.7s）",
+          "text": "约1.57s-结束"
         }
       ],
       "script": {
@@ -6240,7 +6240,7 @@
           "overlay": "hint_limit",
           "text": "现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆",
           "anchor": "action.take.limit.001.2.b1.start",
-          "offset": 3.0
+          "offset": 1.3
         }
       ],
       "qa": [
