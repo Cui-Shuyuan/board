@@ -399,6 +399,24 @@ fun TutorialPlayerOverlay(
                 modifier = Modifier.align(Alignment.TopCenter)
             )
 
+        if (unityReady && !chapterPathText.isNullOrBlank()) {
+            Text(
+                text = chapterPathText,
+                color = Color.White,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 12.dp, top = 8.dp)
+                    .widthIn(max = 420.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.Black.copy(alpha = 0.42f))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+
             CenterPlayPause(
                 paused = paused,
                 enabled = unityReady,
@@ -476,24 +494,6 @@ fun TutorialPlayerOverlay(
                     revealControls()
                 },
                 modifier = Modifier.align(Alignment.BottomCenter)
-            )
-        }
-
-        if (unityReady && !chapterPathText.isNullOrBlank()) {
-            Text(
-                text = chapterPathText,
-                color = Color.White,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 12.dp, top = 8.dp)
-                    .widthIn(max = 420.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Color.Black.copy(alpha = 0.42f))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
 
