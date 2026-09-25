@@ -587,6 +587,117 @@ namespace UnityEditor
     public class InitializeOnLoadAttribute : System.Attribute { }
 }
 
+namespace UnityEditor
+{
+    public enum BuildTarget
+    {
+        Android,
+        StandaloneWindows,
+        StandaloneWindows64,
+        StandaloneLinux64,
+        iOS,
+        WebGL,
+    }
+
+    public enum BuildTargetGroup
+    {
+        Android,
+        Standalone,
+        iOS,
+        WebGL,
+    }
+
+    [System.Flags]
+    public enum BuildOptions
+    {
+        None = 0,
+        Development = 1,
+        AllowDebugging = 2,
+        AutoRunPlayer = 4,
+    }
+
+    public class BuildPlayerOptions
+    {
+        public string[] scenes;
+        public string locationPathName;
+        public BuildTarget target;
+        public BuildOptions options;
+    }
+
+    public enum ScriptingImplementation
+    {
+        Mono2x,
+        IL2CPP,
+    }
+
+    [System.Flags]
+    public enum AndroidArchitecture
+    {
+        None = 0,
+        ARMv7 = 1,
+        ARM64 = 2,
+        X86 = 4,
+        All = 0x7fffffff,
+    }
+
+    public class EditorBuildSettingsScene
+    {
+        public bool enabled;
+        public string path;
+    }
+
+    public static class EditorBuildSettings
+    {
+        public static EditorBuildSettingsScene[] scenes = new EditorBuildSettingsScene[0];
+    }
+
+    public static class EditorUserBuildSettings
+    {
+        public static bool buildAppBundle;
+        public static bool development;
+        public static bool allowDebugging;
+        public static bool SwitchActiveBuildTarget(BuildTargetGroup targetGroup, BuildTarget target) => true;
+    }
+
+    public static class PlayerSettings
+    {
+        public static void SetApplicationIdentifier(BuildTargetGroup targetGroup, string identifier) { }
+        public static void SetScriptingBackend(BuildTargetGroup targetGroup, ScriptingImplementation backend) { }
+
+        public static class Android
+        {
+            public static AndroidArchitecture targetArchitectures;
+        }
+    }
+
+    public static class BuildPipeline
+    {
+        public static UnityEditor.Build.Reporting.BuildReport BuildPlayer(BuildPlayerOptions options) => null;
+    }
+}
+
+namespace UnityEditor.Build.Reporting
+{
+    public enum BuildResult
+    {
+        Unknown,
+        Succeeded,
+        Failed,
+        Cancelled,
+    }
+
+    public class BuildSummary
+    {
+        public BuildResult result;
+        public ulong totalSize;
+    }
+
+    public class BuildReport
+    {
+        public BuildSummary summary;
+    }
+}
+
 namespace UnityEngine
 {
     public enum FindObjectsSortMode { None, InstanceID }
