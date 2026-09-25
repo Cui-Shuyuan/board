@@ -456,6 +456,7 @@ namespace UnityEngine
         public static string streamingAssetsPath => "";
         public static bool isEditor => true;
         public static int targetFrameRate;
+        public static void Quit() { }
         // 采样器用它把"引擎自己报的 warning/error"收进采样（见 TutorialFrameCapture）
         public delegate void LogCallback(string condition, string stackTrace, LogType type);
         public static event LogCallback logMessageReceived;
@@ -822,6 +823,7 @@ namespace UnityEngine.InputSystem
     {
         public static Keyboard current => null;
         public KeyControl spaceKey = new KeyControl();
+        public KeyControl escapeKey = new KeyControl();
         public KeyControl rKey = new KeyControl();
         public KeyControl aKey = new KeyControl();
         public KeyControl gKey = new KeyControl();
@@ -908,7 +910,7 @@ def read_csproj_template():
          TutorialFrameCapture.cs 明明编译错误，检查器却报 OK；TutorialCuePlayer.cs 的
          `#if ENABLE_INPUT_SYSTEM` 同理 —— 工程 activeInputHandler=1，Unity 会定义它）。
          凡是工程里出现的条件编译开关，这里都要跟着定义。 -->
-    <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_LINUX;UNITY_2023_1_OR_NEWER;ENABLE_INPUT_SYSTEM</DefineConstants>
+    <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_LINUX;UNITY_2023_1_OR_NEWER;ENABLE_INPUT_SYSTEM;UNITY_ANDROID</DefineConstants>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <NoWarn>CS0168;CS0219;CS0414;CS0649;CS0067;CS0108;CS0114;CS1998;CS0162;CS8981</NoWarn>

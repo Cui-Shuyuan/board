@@ -388,6 +388,15 @@ namespace BoardGameTutorial
 
         private void Update()
         {
+#if UNITY_ANDROID
+            if (AndroidBackPressed())
+            {
+                Debug.Log("[TutorialCuePlayer] Android back -> Application.Quit()");
+                Application.Quit();
+                return;
+            }
+#endif
+
             if (v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
             {
                 float t = audioSource != null && audioSource.clip != null ? audioSource.time : fallbackClock;
@@ -421,6 +430,27 @@ namespace BoardGameTutorial
             if (Input.GetKeyDown(KeyCode.B)) ToggleDebugJump();
 #endif
         }
+
+#if UNITY_ANDROID
+        private static bool AndroidBackPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+                return true;
+#endif
+            // Android KEYCODE_BACK 在部分 Unity / Input System 组合下不会走 Keyboard.escapeKey，
+            // 但旧 Input 通道仍能看到它。
+            try
+            {
+                return Input.GetKeyDown(KeyCode.Escape);
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+#endif
 
         public void ToggleCueAnimation()
         {
