@@ -3,6 +3,7 @@ package com.boardai.tutorial.uaal
 import android.os.SystemClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -97,6 +98,7 @@ fun TutorialPlayerOverlay(
     var showContentPanel by remember { mutableStateOf(false) }
     var seekFlash by remember { mutableStateOf<String?>(null) }
     var localVolume by remember { mutableFloatStateOf(1f) }
+    var volumeDragging by remember { mutableStateOf(false) }
 
     // Native smoothing anchor.  Unity posts roughly every 0.5 s; between posts
     // we advance the displayed cue-local position from the last known anchor.
@@ -107,12 +109,18 @@ fun TutorialPlayerOverlay(
 
     val paused = status?.isPaused == true
     val unityReady = status?.unityReady == true
-    val volume = (status?.volume ?: localVolume).coerceIn(0f, 1f)
+    val volume = if (volumeDragging) {
+        localVolume.coerceIn(0f, 1f)
+    } else {
+        (status?.volume ?: localVolume).coerceIn(0f, 1f)
+    }
     val totalDuration = timeline?.totalDuration ?: status?.duration ?: 0f
     val currentCueIndex = status?.cueIndex ?: -1
 
-    LaunchedEffect(status?.volume) {
-        status?.volume?.let { localVolume = it.coerceIn(0f, 1f) }
+    LaunchedEffect(status?.volume, volumeDragging) {
+        if (!volumeDragging) {
+            status?.volume?.let { localVolume = it.coerceIn(0f, 1f) }
+        }
     }
 
     LaunchedEffect(status) {
@@ -167,7 +175,8 @@ fun TutorialPlayerOverlay(
             sendTimelineSeek(
                 target = currentTimeline.globalToCue(desired),
                 currentCueIndex = currentCueIndex,
-                send = onCommand
+                send = onCommand,
+                startPaused = paused
             )
         } else {
             onCommand("SeekRelative", formatPayload(seconds))
@@ -179,7 +188,8 @@ fun TutorialPlayerOverlay(
     fun jumpToCue(cueId: String) {
         if (cueId.isBlank()) return
         revealControls()
-        onCommand("PlayCueAt", "$cueId|0")
+        val pausedFlag = if (paused) "1" else "0"
+        onCommand("PlayCueAt", "$cueId|0|$pausedFlag")
         showChapters = false
     }
 
@@ -213,12 +223,94 @@ fun TutorialPlayerOverlay(
     val statusState = rememberUpdatedState(status)
     val timelineState = rememberUpdatedState(timeline)
     val shownGlobalState = rememberUpdatedState(shownGlobal)
+    val totalDurationState = rememberUpdatedState(totalDuration)
     val onCommandState = rememberUpdatedState(onCommand)
+
+    fun finishScrubFromGesture() {
+        val currentTimeline = timelineState.value
+        val target = if (currentTimeline != null && currentTimeline.cueCount > 0) {
+            currentTimeline.globalToCue(scrubGlobal)
+        } else {
+            scrubTarget
+        }
+        val currentIndex = statusState.value?.cueIndex ?: -1
+        val startPaused = statusState.value?.isPaused == true
+        if (target != null) {
+            sendTimelineSeek(
+                target = target,
+                currentCueIndex = currentIndex,
+                send = onCommandState.value,
+                startPaused = startPaused
+            )
+        } else if (totalDurationState.value > 0f) {
+            onCommandState.value("SeekTo", formatPayload(scrubGlobal))
+        }
+        scrubbing = false
+        scrubTarget = null
+        controlsVisible = true
+        controlGeneration++
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility)
+            .pointerInput(Unit) {
+                var dragActive = false
+                var dragBaseGlobal = 0f
+                var dragAccumulatedX = 0f
+
+                detectHorizontalDragGestures(
+                    onDragStart = {
+                        val currentTimeline = timelineState.value
+                        val total = totalDurationState.value
+                        if (currentTimeline != null &&
+                            currentTimeline.cueCount > 0 &&
+                            total > 0f
+                        ) {
+                            dragActive = true
+                            dragBaseGlobal = shownGlobalState.value
+                            dragAccumulatedX = 0f
+                            scrubbing = true
+                            scrubGlobal = dragBaseGlobal
+                            scrubTarget = currentTimeline.globalToCue(dragBaseGlobal)
+                            controlsVisible = true
+                            controlGeneration++
+                        } else {
+                            dragActive = false
+                        }
+                    },
+                    onHorizontalDrag = { change, dragAmount ->
+                        if (dragActive) {
+                            val currentTimeline = timelineState.value
+                            val total = totalDurationState.value
+                            if (currentTimeline != null &&
+                                total > 0f &&
+                                size.width > 0
+                            ) {
+                                dragAccumulatedX += dragAmount
+                                // Full screen width from left to right == +20% total duration.
+                                val secondsPerPixel = (0.20f * total) / size.width
+                                val desired = (
+                                    dragBaseGlobal +
+                                        dragAccumulatedX * secondsPerPixel
+                                    ).coerceIn(0f, total)
+                                scrubGlobal = desired
+                                scrubTarget = currentTimeline.globalToCue(desired)
+                                change.consume()
+                            }
+                        }
+                    },
+                    onDragEnd = {
+                        if (dragActive) finishScrubFromGesture()
+                        dragActive = false
+                    },
+                    onDragCancel = {
+                        if (dragActive) finishScrubFromGesture()
+                        dragActive = false
+                    }
+                )
+            }
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
@@ -229,21 +321,15 @@ fun TutorialPlayerOverlay(
                             controlGeneration++
                         }
                     },
-                    onDoubleTap = { offset ->
-                        val delta = if (offset.x < size.width / 2f) -15f else 15f
-                        val currentTimeline = timelineState.value
-                        if (currentTimeline != null && currentTimeline.cueCount > 0) {
-                            val desired = (shownGlobalState.value + delta)
-                                .coerceIn(0f, currentTimeline.totalDuration)
-                            sendTimelineSeek(
-                                target = currentTimeline.globalToCue(desired),
-                                currentCueIndex = statusState.value?.cueIndex ?: -1,
-                                send = onCommandState.value
-                            )
-                        } else {
-                            onCommandState.value("SeekRelative", formatPayload(delta))
-                        }
-                        seekFlash = if (delta < 0f) "-15s" else "+15s"
+                    onDoubleTap = {
+                        // Double-tap anywhere is play/pause, matching video sites.
+                        controlsVisible = true
+                        controlGeneration++
+                        val currentlyPaused = statusState.value?.isPaused == true
+                        onCommandState.value(
+                            if (currentlyPaused) "Resume" else "Pause",
+                            ""
+                        )
                     }
                 )
             }
@@ -278,9 +364,15 @@ fun TutorialPlayerOverlay(
                 shownGlobal = shownGlobal,
                 totalDuration = totalDuration,
                 progressTotal = progressTotal,
-                onVolumeChange = { delta ->
-                    localVolume = (volume + delta).coerceIn(0f, 1f)
-                    onCommand("AdjustVolume", formatPayload(delta))
+                onVolumeChange = { value ->
+                    volumeDragging = true
+                    localVolume = value.coerceIn(0f, 1f)
+                    onCommand("SetVolume", formatPayload(localVolume))
+                    revealControls()
+                },
+                onVolumeChangeFinished = {
+                    volumeDragging = false
+                    onCommand("SetVolume", formatPayload(localVolume))
                     revealControls()
                 },
                 onOpenChapters = {
@@ -315,25 +407,17 @@ fun TutorialPlayerOverlay(
                         scrubTarget
                     }
                     if (target != null) {
-                        sendTimelineSeek(target, currentCueIndex, onCommand)
+                        sendTimelineSeek(
+                            target = target,
+                            currentCueIndex = currentCueIndex,
+                            send = onCommand,
+                            startPaused = paused
+                        )
                     } else if (totalDuration > 0f) {
                         onCommand("SeekTo", formatPayload(scrubGlobal))
                     }
                     scrubbing = false
                     scrubTarget = null
-                    revealControls()
-                },
-                onSeekToGlobal = { value ->
-                    val currentTimeline = timeline
-                    if (currentTimeline != null && currentTimeline.cueCount > 0) {
-                        sendTimelineSeek(
-                            target = currentTimeline.globalToCue(value),
-                            currentCueIndex = currentCueIndex,
-                            send = onCommand
-                        )
-                    } else if (totalDuration > 0f) {
-                        onCommand("SeekTo", formatPayload(value))
-                    }
                     revealControls()
                 },
                 modifier = Modifier.align(Alignment.BottomCenter)
@@ -435,7 +519,7 @@ private fun CenterPlayPause(
     val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
-            .size(86.dp)
+            .size(64.dp)
             .clip(CircleShape)
             .background(Color.Black.copy(alpha = if (enabled) 0.55f else 0.28f))
             .clickable(
@@ -449,7 +533,7 @@ private fun CenterPlayPause(
         Text(
             text = if (paused) "▶" else "❚❚",
             color = Color.White.copy(alpha = if (enabled) 1f else 0.4f),
-            fontSize = 34.sp,
+            fontSize = 26.sp,
             fontWeight = FontWeight.Bold
         )
     }
@@ -469,6 +553,7 @@ private fun BottomControlBar(
     totalDuration: Float,
     progressTotal: Float,
     onVolumeChange: (Float) -> Unit,
+    onVolumeChangeFinished: () -> Unit,
     onOpenChapters: () -> Unit,
     onSeekRelative: (Float) -> Unit,
     onPrevious: () -> Unit,
@@ -477,7 +562,6 @@ private fun BottomControlBar(
     onScrubStart: (Float) -> Unit,
     onScrubChange: (Float) -> Unit,
     onScrubFinished: () -> Unit,
-    onSeekToGlobal: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -491,7 +575,7 @@ private fun BottomControlBar(
             .padding(horizontal = 12.dp, vertical = 10.dp)
     ) {
         val cueText = status?.cueText.orEmpty()
-        if (cueText.isNotBlank()) {
+        if (!scrubbing && cueText.isNotBlank()) {
             Text(
                 text = cueText,
                 color = Color.White.copy(alpha = 0.92f),
@@ -504,11 +588,11 @@ private fun BottomControlBar(
         }
 
         if (scrubbing) {
-            ScrubPreview(
+            ChapterRibbon(
                 timeline = timeline,
                 target = scrubTarget,
                 globalSeconds = scrubGlobal,
-                modifier = Modifier.padding(bottom = 6.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             )
         }
 
@@ -554,7 +638,7 @@ private fun BottomControlBar(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ControlButton(
@@ -596,24 +680,27 @@ private fun BottomControlBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "音量 ${(volume * 100f).toInt()}%",
+                text = "音量",
                 color = Color.White.copy(alpha = 0.86f),
                 fontSize = 12.sp,
                 maxLines = 1
             )
-            Spacer(Modifier.width(6.dp))
-            ControlButton(
-                label = "−",
-                compact = true,
-                modifier = Modifier.width(38.dp),
-                onClick = { onVolumeChange(-0.1f) }
+            Slider(
+                value = volume.coerceIn(0f, 1f),
+                valueRange = 0f..1f,
+                onValueChange = onVolumeChange,
+                onValueChangeFinished = onVolumeChangeFinished,
+                modifier = Modifier
+                    .width(150.dp)
+                    .padding(horizontal = 6.dp)
             )
-            Spacer(Modifier.width(6.dp))
-            ControlButton(
-                label = "+",
-                compact = true,
-                modifier = Modifier.width(38.dp),
-                onClick = { onVolumeChange(0.1f) }
+            Text(
+                text = "${(volume * 100f).toInt()}%",
+                color = Color.White.copy(alpha = 0.86f),
+                fontSize = 12.sp,
+                maxLines = 1,
+                textAlign = TextAlign.End,
+                modifier = Modifier.width(40.dp)
             )
             Spacer(Modifier.weight(1f))
             Text(
@@ -626,7 +713,7 @@ private fun BottomControlBar(
             ControlButton(
                 label = "章节",
                 compact = true,
-                modifier = Modifier.width(84.dp),
+                modifier = Modifier.width(72.dp),
                 onClick = onOpenChapters
             )
         }
@@ -634,84 +721,46 @@ private fun BottomControlBar(
 }
 
 @Composable
-private fun ScrubPreview(
+private fun ChapterRibbon(
     timeline: TutorialTimeline?,
     target: TimelineTarget?,
     globalSeconds: Float,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    val cue = target?.targetCue
+    val chapterText = cue?.groupPath
+        ?.joinToString(" > ")
+        ?.takeIf { it.isNotBlank() }
+        ?: cue?.id
+        ?: "章节未加载"
+    val snapText = when {
+        target?.snappedToChapterStart == true ->
+            " · 已吸附：${target.snappedChapter?.title ?: chapterText}"
+        target?.snappedToCueStart == true -> " · 已吸附"
+        else -> ""
+    }
+    val extra = when {
+        cue != null && timeline != null ->
+            " · cue ${cue.index + 1}/${timeline.cueCount} · ${formatTime(globalSeconds)}"
+        else -> " · ${formatTime(globalSeconds)}"
+    }
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.Black.copy(alpha = 0.86f))
-            .padding(horizontal = 10.dp, vertical = 8.dp)
+            .height(22.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(Color.Black.copy(alpha = 0.78f))
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.CenterStart
     ) {
-        val cue = target?.targetCue
-        if (cue != null && timeline != null) {
-            if (cue.groupPath.isNotEmpty()) {
-                Text(
-                    text = cue.groupPath.joinToString(" > "),
-                    color = Color.White.copy(alpha = 0.74f),
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            Text(
-                text = cue.id,
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = "cue ${cue.index + 1}/${timeline.cueCount} · " +
-                    "${formatTime(target.localSeconds)} / ${formatTime(cue.duration)}",
-                color = Color.White.copy(alpha = 0.86f),
-                fontSize = 12.sp,
-                maxLines = 1
-            )
-            if (cue.text.isNotBlank()) {
-                Text(
-                    text = cue.text,
-                    color = Color.White.copy(alpha = 0.72f),
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            Text(
-                text = "目标 ${formatTime(globalSeconds)}",
-                color = Color.White.copy(alpha = 0.78f),
-                fontSize = 11.sp,
-                maxLines = 1
-            )
-            if (target.snappedToChapterStart) {
-                Text(
-                    text = "已吸附：${target.snappedChapter?.title ?: cue.text.ifBlank { cue.id }}",
-                    color = Color(0xFFFFCC80),
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            } else if (target.snappedToCueStart) {
-                Text(
-                    text = "已吸附：${cue.text.ifBlank { cue.id }}",
-                    color = Color(0xFFFFCC80),
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        } else {
-            Text(
-                text = "目标 ${formatTime(globalSeconds)}",
-                color = Color.White.copy(alpha = 0.86f),
-                fontSize = 12.sp
-            )
-        }
+        Text(
+            text = "即将播放：$chapterText$extra$snapText",
+            color = Color.White.copy(alpha = 0.88f),
+            fontSize = 11.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -938,8 +987,8 @@ private fun ControlButton(
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val buttonHeight = if (compact) 40.dp else 54.dp
-    val buttonFontSize = if (compact) 13.sp else 18.sp
+    val buttonHeight = if (compact) 34.dp else 46.dp
+    val buttonFontSize = if (compact) 12.sp else 16.sp
     val backgroundAlpha = if (enabled) 0.14f else 0.06f
     val textColor = if (enabled) {
         Color.White
@@ -950,7 +999,7 @@ private fun ControlButton(
     Box(
         modifier = modifier
             .height(buttonHeight)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(Color.White.copy(alpha = backgroundAlpha))
             .clickable(
                 interactionSource = interactionSource,
@@ -974,14 +1023,16 @@ private fun ControlButton(
 private fun sendTimelineSeek(
     target: TimelineTarget,
     currentCueIndex: Int,
-    send: (method: String, value: String) -> Unit
+    send: (method: String, value: String) -> Unit,
+    startPaused: Boolean
 ) {
     val cue = target.targetCue
     val local = target.localSeconds.coerceIn(0f, cue.duration)
     if (currentCueIndex == cue.index) {
         send("SeekTo", formatPayload(local))
     } else {
-        send("PlayCueAt", "${cue.id}|${formatPayload(local)}")
+        val pausedFlag = if (startPaused) "1" else "0"
+        send("PlayCueAt", "${cue.id}|${formatPayload(local)}|$pausedFlag")
     }
 }
 

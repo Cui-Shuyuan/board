@@ -126,23 +126,28 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
-        /// Payload format is "cueId|localSeconds", e.g.
-        /// "setup.cards.001.1|3.25".  This is the cross-cue route used by
-        /// the native seek bar and chapter menu.
+        /// Payload format is "cueId|localSeconds|paused", e.g.
+        /// "setup.cards.001.1|3.25|1".  The third field is optional (0/1);
+        /// it preserves the native paused state across cross-cue seeks.
         /// </summary>
         public void PlayCueAt(string payload)
         {
             var player = FindPlayer();
             if (player == null) return;
 
-            if (!TryParseCueAt(payload, out string cueId, out float localSeconds))
+            if (!TryParseCueAt(
+                    payload,
+                    out string cueId,
+                    out float localSeconds,
+                    out bool startPaused))
             {
                 Debug.LogWarning("[AndroidTutorialBridge] PlayCueAt received invalid payload: " + payload);
                 return;
             }
 
-            bool found = player.PlayCueAt(cueId, localSeconds);
-            Debug.Log($"[AndroidTutorialBridge] PlayCueAt({cueId}|{localSeconds:0.###}) found={found}.");
+            bool found = player.PlayCueAt(cueId, localSeconds, startPaused);
+            Debug.Log(
+                $"[AndroidTutorialBridge] PlayCueAt({cueId}|{localSeconds:0.###}|paused={startPaused}) found={found}.");
             PostStatus();
         }
 
@@ -280,29 +285,23 @@ namespace BoardGameTutorial
         private static bool TryParseCueAt(
             string payload,
             out string cueId,
-            out float localSeconds)
+            out float localSeconds,
+            out bool startPaused)
         {
             cueId = "";
             localSeconds = 0f;
+            startPaused = false;
             if (string.IsNullOrEmpty(payload)) return false;
 
-            int separator = payload.IndexOf('|');
-            string idPart;
-            string secondsPart;
-            if (separator < 0)
-            {
-                idPart = payload.Trim();
-                secondsPart = "0";
-            }
-            else
-            {
-                idPart = payload.Substring(0, separator).Trim();
-                secondsPart = payload.Substring(separator + 1).Trim();
-            }
+            string[] parts = payload.Split('|');
+            string idPart = parts.Length > 0 ? parts[0].Trim() : "";
+            string secondsPart = parts.Length > 1 ? parts[1].Trim() : "0";
+            string pausedPart = parts.Length > 2 ? parts[2].Trim() : "0";
 
             if (idPart.Length == 0) return false;
             if (!TryParseFloat(secondsPart, out localSeconds)) return false;
             if (localSeconds < 0f) localSeconds = 0f;
+            startPaused = ParseBool(pausedPart, false);
             cueId = idPart;
             return true;
         }

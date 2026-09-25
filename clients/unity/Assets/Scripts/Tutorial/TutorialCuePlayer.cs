@@ -80,6 +80,7 @@ namespace BoardGameTutorial
         private int debugJumpCursor;
         private bool inDebugJump;
         private bool isPaused;
+        private bool pausedBeforePlay;
         private float fallbackClock;
         private string currentSubtitle = "";
         private GUIStyle debugStyle;
@@ -309,13 +310,21 @@ namespace BoardGameTutorial
             }
         }
 
-        public void PlayCue(int index, bool continueState = false, float localTime = 0f)
+        public void PlayCue(
+            int index,
+            bool continueState = false,
+            float localTime = 0f,
+            bool startPaused = false)
         {
             if (doc == null || doc.cues == null || doc.cues.Count == 0) return;
             index = Mathf.Clamp(index, 0, doc.cues.Count - 1);
             if (playbackRoutine != null) StopCoroutine(playbackRoutine);
             playbackRoutine = StartCoroutine(
-                PlayCueRoutine(index, continueState, Mathf.Max(0f, localTime)));
+                PlayCueRoutine(
+                    index,
+                    continueState,
+                    Mathf.Max(0f, localTime),
+                    startPaused));
         }
 
         /// <summary>
@@ -323,25 +332,33 @@ namespace BoardGameTutorial
         /// This is the route used by the native Android seek bar for cross-cue
         /// scrubbing and chapter jumps.
         /// </summary>
-        public bool PlayCueAt(string cueId, float localSeconds)
+        public bool PlayCueAt(
+            string cueId,
+            float localSeconds,
+            bool startPaused = false)
         {
             if (doc == null || doc.cues == null) return false;
             for (int i = 0; i < doc.cues.Count; i++)
             {
                 if (doc.cues[i].id != cueId) continue;
-                PlayCue(i, false, localSeconds);
+                PlayCue(i, false, localSeconds, startPaused);
                 return true;
             }
             Debug.LogWarning($"[TutorialCuePlayer] PlayCueAt target not found: {cueId}");
             return false;
         }
 
-        private IEnumerator PlayCueRoutine(int index, bool continueState, float localTime)
+        private IEnumerator PlayCueRoutine(
+            int index,
+            bool continueState,
+            float localTime,
+            bool startPaused)
         {
             if (audioSource.isPlaying) audioSource.Stop();
             audioSource.clip = null;
             currentIndex = index;
-            isPaused = false;
+            isPaused = startPaused;
+            pausedBeforePlay = startPaused;
             currentSubtitle = "";
             fallbackClock = 0f;
 
@@ -371,7 +388,20 @@ namespace BoardGameTutorial
                 float seekTime = ClampCueLocalTime(localTime, clip.length);
                 audioSource.time = seekTime;
                 if (v2AnimPlayer != null) v2AnimPlayer.Seek(seekTime);
-                audioSource.Play();
+
+                if (startPaused)
+                {
+                    // Keep the clip positioned but do not start playback.  The
+                    // next Resume() uses Play() rather than UnPause().
+                    isPaused = true;
+                    pausedBeforePlay = true;
+                }
+                else
+                {
+                    isPaused = false;
+                    pausedBeforePlay = false;
+                    audioSource.Play();
+                }
             }
 
             UpdateSubtitle();
@@ -441,8 +471,17 @@ namespace BoardGameTutorial
         {
             if (audioSource == null || audioSource.clip == null || !isPaused) return;
 
-            audioSource.UnPause();
-            isPaused = false;
+            if (pausedBeforePlay)
+            {
+                pausedBeforePlay = false;
+                isPaused = false;
+                audioSource.Play();
+            }
+            else
+            {
+                audioSource.UnPause();
+                isPaused = false;
+            }
         }
 
         public void SetVolume(float value)
@@ -513,7 +552,8 @@ namespace BoardGameTutorial
         {
             if (audioSource == null || audioSource.clip == null)
             {
-                if (CurrentCue != null) PlayCueAt(CurrentCue.id, localSeconds);
+                if (CurrentCue != null)
+                    PlayCueAt(CurrentCue.id, localSeconds, isPaused);
                 return;
             }
 
