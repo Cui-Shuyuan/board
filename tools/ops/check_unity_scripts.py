@@ -468,6 +468,13 @@ namespace UnityEngine
     {
         public static int width => 1920;
         public static int height => 1080;
+        public static int sleepTimeout;
+    }
+
+    public static class SleepTimeout
+    {
+        public const int NeverSleep = -1;
+        public const int SystemSetting = -2;
     }
 
     public static class Time
@@ -779,6 +786,25 @@ namespace UnityEngine
 
 namespace UnityEngine.InputSystem
 {
+    public class ButtonControl
+    {
+        public bool wasPressedThisFrame;
+        public bool wasReleasedThisFrame;
+        public bool isPressed;
+    }
+
+    public class Vector2Control
+    {
+        public Vector2 ReadValue() => Vector2.zero;
+    }
+
+    public class Pointer
+    {
+        public static Pointer current => null;
+        public Vector2Control position = new Vector2Control();
+        public ButtonControl press = new ButtonControl();
+    }
+
     public class KeyControl { public bool wasPressedThisFrame; public bool isPressed; }
     public class Keyboard
     {

@@ -100,6 +100,10 @@ namespace BoardGameTutorial
         public bool IsPlaying => audioSource != null && audioSource.isPlaying;
         public TutorialCueDoc Document => doc;
         public TutorialAnimPlayer AnimPlayer => v2AnimPlayer;
+        public bool IsPaused => isPaused;
+        public int CurrentCueIndex => currentIndex;
+        public int TotalCueCount => doc != null && doc.cues != null ? doc.cues.Count : 0;
+        public float Volume => audioSource != null ? audioSource.volume : 1f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -119,6 +123,11 @@ namespace BoardGameTutorial
 
             v2AnimPlayer = GetComponent<TutorialAnimPlayer>();
             if (v2AnimPlayer == null) v2AnimPlayer = gameObject.AddComponent<TutorialAnimPlayer>();
+
+            // 临时真机触控层：必须由播放器自动挂载，避免依赖场景手工绑定。
+            var touchControls = GetComponent<TutorialTouchControls>();
+            if (touchControls == null) touchControls = gameObject.AddComponent<TutorialTouchControls>();
+            touchControls.Bind(this);
         }
 
         private void Start()
@@ -295,6 +304,53 @@ namespace BoardGameTutorial
                 isPaused = true;
                 UpdateSubtitle();
             }
+        }
+
+        public void AdjustVolume(float delta)
+        {
+            if (audioSource == null) return;
+            audioSource.volume = Mathf.Clamp(audioSource.volume + delta, 0f, 1f);
+        }
+
+        public void SeekRelative(float seconds)
+        {
+            if (audioSource == null || audioSource.clip == null) return;
+
+            float duration = audioSource.clip.length;
+            if (duration <= 0f && CurrentCue != null) duration = CurrentCue.duration;
+            float target = audioSource.time + seconds;
+
+            if (target < 0f)
+            {
+                // 负方向越过 cue 开头：优先跳上一条；第一条则停在 0。
+                if (doc != null && doc.cues != null && currentIndex > 0)
+                    PlayCue(currentIndex - 1, true);
+                else
+                    SeekToCurrentTime(0f);
+                return;
+            }
+
+            if (duration > 0f && target > duration)
+            {
+                // 正方向越过 cue 末尾：优先跳下一条；最后一条则停在末尾附近。
+                if (doc != null && doc.cues != null && currentIndex + 1 < doc.cues.Count)
+                    PlayCue(currentIndex + 1, true);
+                else
+                    SeekToCurrentTime(Mathf.Max(0f, duration - 0.05f));
+                return;
+            }
+
+            SeekToCurrentTime(Mathf.Clamp(target, 0f, duration));
+        }
+
+        private void SeekToCurrentTime(float time)
+        {
+            if (audioSource == null || audioSource.clip == null) return;
+            float duration = Mathf.Max(0f, audioSource.clip.length);
+            float clamped = Mathf.Clamp(time, 0f, duration);
+            audioSource.time = clamped;
+            if (v2AnimPlayer != null) v2AnimPlayer.Seek(clamped);
+            UpdateSubtitle();
         }
 
         public bool JumpToCue(string cueId)
@@ -488,7 +544,11 @@ namespace BoardGameTutorial
             float width = Mathf.Min(1100f, Screen.width - 64f);
             float height = 96f;
             float x = (Screen.width - width) * 0.5f;
-            float y = Screen.height - height - 28f;
+            float bottomInset = 28f;
+            var touchControls = GetComponent<TutorialTouchControls>();
+            if (touchControls != null && touchControls.enabled)
+                bottomInset += touchControls.PanelHeightPixels;
+            float y = Screen.height - height - bottomInset;
 
             foreach (var offset in SubtitleOutlineOffsets)
                 GUI.Label(new Rect(x + offset.x, y + offset.y, width, height), text, subtitleOutlineStyle);
