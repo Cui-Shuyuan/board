@@ -1,7 +1,7 @@
 # 讲规动画系统整体重构
 
 > 状态：阶段 0 已审计，目标架构与 v2 schema 初稿。
-> 适用：`games/{game}/tutorial/anim/`、`client/Assets/Scripts/Tutorial/`、`scripts/*anim*`。
+> 适用：`content/games/{game}/tutorial/anim/`、`clients/unity/Assets/Scripts/Tutorial/`、`animation/*anim*`。
 > 原则：**源数据先文字化，运行时编译后只做确定性执行；一个几何源；没有 god class。**
 
 ---
@@ -38,7 +38,7 @@
 
 | 区域 | 文件 | 行数/规模 | 结论 |
 |---|---|---:|---|
-| 动画播放 god class | `client/Assets/Scripts/Tutorial/TutorialCueAnimPlayer.cs` | 3249 行 / 约 96 个方法 | **重写并拆散** |
+| 动画播放 god class | `clients/unity/Assets/Scripts/Tutorial/TutorialCueAnimPlayer.cs` | 3249 行 / 约 96 个方法 | **重写并拆散** |
 | 高亮 partial | `TutorialCueAnimPlayer.Highlight.cs` | 262 行 | 并入亮显处理器，旧实现删除 |
 | 指示物 partial | `TutorialCueAnimPlayer.Pointers.cs` | 218 行 | 并入 Primitive 表现层，旧实现删除 |
 | 状态账本 | `Tutorial/ZoneStore.cs` | 966 行 / 约 44 个方法 | **重写为纯 C# StateStore** |
@@ -51,20 +51,20 @@
 | 旧补间库 | `Scripts/TweenLibrary.cs` | 207 行 | 删除 |
 | 旧精灵工厂 | `Scripts/GameSpriteFactory.cs` | 272 行 | 保留/评估，只给占位兜底 |
 | 旧动画原语 | `Tutorial/TutorialPrimitives.cs` | 200 行 | 删除，语义已进新 compiler/event |
-| 编辑器采样 | `client/Assets/Editor/TutorialFrameCapture.cs` | 762 行 | 重写为加载编译资产并采样 |
+| 编辑器采样 | `clients/unity/Assets/Editor/TutorialFrameCapture.cs` | 762 行 | 重写为加载编译资产并采样 |
 | Python 动画工具 | `validate_cue_anim.py` 等 9 个文件 | 约 3583 行 | 分阶段重写/适配 |
 
 数据现状：
 
 | 文件 | 大小 | 结论 |
 |---|---:|---|
-| `games/splendor/tutorial/anim/full.json` | 443,730 B | v1 源数据，**schema 重写为 v2** |
+| `content/games/splendor/tutorial/anim/full.json` | 443,730 B | v1 源数据，**schema 重写为 v2** |
 | `_stage/splendor.table.json` | 46,848 B | 拆成 v2 stage，保留内容，重命名/整理 |
 | `_stage/splendor.cards_demo.json` | 54,238 B | overlay tree stage，保留语义，进入 v2 |
 | 其余 6 个独立 stage | 666 B–9,885 B | 保留语义，进入 v2 |
-| `games/splendor/tutorial/script.full.json` | 54,535 B | 口播编辑源，保留，只做 cue id 对齐 |
-| `games/splendor/tutorial/full.runtime.json` | 497,761 B | 音频/字幕 runtime，保留 |
-| `games/splendor/tutorial/anim/full.exitstate.json` | 2.2 MB | 生成物，不入库/不手改，继续采样生成 |
+| `content/games/splendor/tutorial/script.full.json` | 54,535 B | 口播编辑源，保留，只做 cue id 对齐 |
+| `content/games/splendor/tutorial/full.runtime.json` | 497,761 B | 音频/字幕 runtime，保留 |
+| `content/games/splendor/tutorial/anim/full.exitstate.json` | 2.2 MB | 生成物，不入库/不手改，继续采样生成 |
 
 ### 1.2 现有职责图
 
@@ -132,7 +132,7 @@ framing_geometry.py ◀── Python 校验/对账 ────────┘
 | `Tutorial/TutorialCuePlayer.cs` | 保留外壳，改为驱动 `TutorialAnimPlayer` |
 | `Tutorial/TutorialCueData.cs` | 保留音频 runtime cue 模型，删除未用字段 |
 | `Scripts/GameSpriteFactory.cs` | 先保留兜底，评估后决定是否删 |
-| `scripts/qa_anim_ask.py` | 保留，阶段 3 接入 v2 校验流程 |
+| `animation/qa_anim_ask.py` | 保留，阶段 3 接入 v2 校验流程 |
 
 #### 重写
 
@@ -144,12 +144,12 @@ framing_geometry.py ◀── Python 校验/对账 ────────┘
 | `Tutorial/ZoneStore.cs` | 重写为 `Core/StateStore.cs`，纯逻辑、无 Unity、无坐标 |
 | `Tutorial/TutorialCueAnimData.cs` | 重写为 `Schema/*.cs`（v2） |
 | `Editor/TutorialFrameCapture.cs` | 重写为加载 `*.compiled.json` 的采样器 |
-| `scripts/framing_geometry.py` | 升级为唯一几何编译源；不再被 C# 运行时镜像 |
-| `scripts/validate_cue_anim.py` | 拆成 schema/契约/文字结构校验 |
-| `scripts/validate_anim_rules.py` | 适配 v2 event selector |
-| `scripts/check_cue_script.py` | 适配 v2 contract + compiled snapshot |
-| `scripts/check_framing_flow.py` | 适配 v2 compiled camera |
-| `scripts/dump_states.sh` | 改为采样新 Player 的 compiled track |
+| `animation/framing_geometry.py` | 升级为唯一几何编译源；不再被 C# 运行时镜像 |
+| `animation/validate_cue_anim.py` | 拆成 schema/契约/文字结构校验 |
+| `animation/validate_anim_rules.py` | 适配 v2 event selector |
+| `animation/check_cue_script.py` | 适配 v2 contract + compiled snapshot |
+| `animation/check_framing_flow.py` | 适配 v2 compiled camera |
+| `animation/dump_states.sh` | 改为采样新 Player 的 compiled track |
 
 #### 删除
 
@@ -162,11 +162,11 @@ framing_geometry.py ◀── Python 校验/对账 ────────┘
 | `Scripts/TeachingAssets.cs` | 旧 Resources/teaching 加载 |
 | `Scripts/TweenLibrary.cs` | 旧 shot 补间库，与时间纯函数模型冲突 |
 | `Tutorial/TutorialPrimitives.cs` | 旧 shot 原语，职责被 compiler 取代 |
-| `client/Assets/Resources/teaching_splendor_setup.json` | 旧 teaching 数据 |
-| `client/Assets/Resources/teaching/**` | 旧 teaching 资源路径 |
-| `client/Assets/Scripts/Tutorial/TutorialCueAnimPlayer.cs` 旧实现 | 阶段 4 替换后删除 |
-| `client/Assets/Scripts/Tutorial/ZoneStore.cs` 旧实现 | 阶段 4 替换后删除 |
-| `client/Assets/Scripts/Tutorial/TutorialCueAnimData.cs` 旧实现 | 阶段 4 替换后删除 |
+| `clients/unity/Assets/Resources/teaching_splendor_setup.json` | 旧 teaching 数据 |
+| `clients/unity/Assets/Resources/teaching/**` | 旧 teaching 资源路径 |
+| `clients/unity/Assets/Scripts/Tutorial/TutorialCueAnimPlayer.cs` 旧实现 | 阶段 4 替换后删除 |
+| `clients/unity/Assets/Scripts/Tutorial/ZoneStore.cs` 旧实现 | 阶段 4 替换后删除 |
+| `clients/unity/Assets/Scripts/Tutorial/TutorialCueAnimData.cs` 旧实现 | 阶段 4 替换后删除 |
 | `tutorial/` 旧 tutorial.json 文档/示例 | 阶段 5 改为新流程说明，不保留旧 schema 权威 |
 
 > 删除动作放在阶段 5 统一执行；阶段 1–4 新代码并存，稳定切换后再删。
@@ -215,7 +215,7 @@ framing_geometry.py ◀── Python 校验/对账 ────────┘
 
 #### A. 几何只留一份：Python compiler 产出，C# 只读
 
-`scripts/framing_geometry.py` 升级为 `stage_geometry.py` 的核心，负责：
+`animation/framing_geometry.py` 升级为 `stage_geometry.py` 的核心，负责：
 
 - `zone -> slot table`：每个 `(zone, order)` 的 `(x,z)`。
 - `camera spec -> frame`：`center`、`ortho_size`、`pitch`、可见矩形。
@@ -311,7 +311,7 @@ WorldState:
 #### E. C# 目录与 assembly
 
 ```text
-client/Assets/Scripts/Tutorial/
+clients/unity/Assets/Scripts/Tutorial/
   BoardGameTutorial.Animation.asmdef
   Schema/
     TrackDef.cs             // v2 手写源数据序列化模型
@@ -598,8 +598,8 @@ v2 契约不再用“一级正面/宝石白”这类需要翻译的语义名，�
 
 - `Schema/TrackDef.cs`、`StageDef.cs`、`EventDef.cs`、`ContractDef.cs`。
 - `Core/ComponentState.cs`、`WorldState.cs`、`StateStore.cs`。
-- `scripts/anim_schema_v2.py`：schema 常量、加载、基本校验。
-- 示例数据 `games/splendor/tutorial/anim/v2/_schema_example.anim.json`。
+- `animation/anim_schema_v2.py`：schema 常量、加载、基本校验。
+- 示例数据 `content/games/splendor/tutorial/anim/v2/_schema_example.anim.json`。
 
 删除：无。
 
@@ -616,7 +616,7 @@ v2 契约不再用“一级正面/宝石白”这类需要翻译的语义名，�
 - `Core/TimelineEvaluator.cs`、`Core/WorldRuntime.cs`。
 - `Presentation/CameraDirector.cs`、`ActorBinder.cs`、`SpriteLibrary.cs`、`PrimitivePresenter.cs`。
 - `Unity/TutorialAnimPlayer.cs`。
-- `scripts/compile_animation.py`：源 → compiled；几何由 `stage_geometry.py` 唯一实现。
+- `animation/compile_animation.py`：源 → compiled；几何由 `stage_geometry.py` 唯一实现。
 
 删除：旧 `TutorialCueAnimPlayer` 的三个 partial 暂时保留但从新 Player 路径解耦。
 
@@ -657,8 +657,8 @@ v2 契约不再用“一级正面/宝石白”这类需要翻译的语义名，�
 ### 阶段 5：清理旧代码与文档
 
 - 删除第 1.4 节“删除”清单。
-- 更新 `.claude/memory/*.md` 与 `games/splendor/tutorial/anim/README.md`。
-- 更新 `tutorial/README.md`，声明 v1 `tutorial.json` 退役。
+- 更新 `.claude/memory/*.md` 与 `content/games/splendor/tutorial/anim/README.md`。
+- 更新 `docs/tutorial/README.md`，声明 v1 `tutorial.json` 退役。
 
 ---
 
@@ -679,9 +679,9 @@ v2 契约不再用“一级正面/宝石白”这类需要翻译的语义名，�
 推荐在 CI 中增加三条硬门槛：
 
 ```bash
-python3 scripts/compile_animation.py --check
-python3 scripts/validate_anim_schema.py
-python3 scripts/check_unity_scripts.py
+python3 animation/compile_animation.py --check
+python3 animation/validate_anim_schema.py
+python3 tools/ops/check_unity_scripts.py
 ```
 
 涉及 Unity 采样的两条保持本地/Windows 链路。
@@ -707,11 +707,11 @@ python3 scripts/check_unity_scripts.py
 ## 7. 当前基线（阶段 0 前最后一次全绿）
 
 ```text
-python3 scripts/validate_cue_anim.py        109 条，0 错 0 警
-python3 scripts/validate_anim_rules.py      109 条合法性通过
-python3 scripts/check_unity_scripts.py      25 个 C# 文件编译通过
-python3 scripts/check_framing_flow.py       1 处警告（action.nobles.forced.001.1 跳切）
-python3 scripts/check_cue_script.py --all   0 处不一致，4 条取景警告
+python3 animation/validate_cue_anim.py        109 条，0 错 0 警
+python3 animation/validate_anim_rules.py      109 条合法性通过
+python3 tools/ops/check_unity_scripts.py      25 个 C# 文件编译通过
+python3 animation/check_framing_flow.py       1 处警告（action.nobles.forced.001.1 跳切）
+python3 animation/check_cue_script.py --all   0 处不一致，4 条取景警告
 ```
 
 阶段 0 不修改运行时代码，以上基线保持不变。
@@ -732,14 +732,14 @@ python3 scripts/check_cue_script.py --all   0 处不一致，4 条取景警告
 每次 commit 前至少跑：
 
 ```bash
-python3 scripts/validate_cue_anim.py
-python3 scripts/validate_anim_rules.py
-python3 scripts/check_unity_scripts.py
+python3 animation/validate_cue_anim.py
+python3 animation/validate_anim_rules.py
+python3 tools/ops/check_unity_scripts.py
 ```
 
 阶段 2 之后追加：
 
 ```bash
-python3 scripts/compile_animation.py --check
-python3 scripts/validate_anim_schema.py
+python3 animation/compile_animation.py --check
+python3 animation/validate_anim_schema.py
 ```

@@ -51,8 +51,8 @@ metadata:
 - 当前 full 轨道约 468 个锚点，覆盖 cue 和 beat 的 start/end。
 - 锚点命名：`<cue_id>.start`、`<cue_id>.end`、`<beat_id>.start`、`<beat_id>.end`。
 - 解析来源：`script.{track}.json` 的 beats + `{track}.runtime.json` 的 TTS 字级 timing。
-- 一次性迁移/重生成：`scripts/migrate_time_anchors_v2.py`。
-- LLM 编写规范见 `games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
+- 一次性迁移/重生成：`animation/migrate_time_anchors_v2.py`。
+- LLM 编写规范见 `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
 
 ## 父子 cue 与 entry 继承
 
@@ -67,22 +67,22 @@ metadata:
 
 ### 源数据
 
-- `games/splendor/tutorial/script.full.json`：口播文本、分组、refs。
-- `games/splendor/tutorial/anim/v2/full.anim.json`：动画事件、camera、parent/entry、tree、契约。
-- `games/splendor/tutorial/anim/v2/_stage/*.stage.json`：各树舞台、zone、模板、命名机位。
-- `games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`：LLM 写作规范。
+- `content/games/splendor/tutorial/script.full.json`：口播文本、分组、refs。
+- `content/games/splendor/tutorial/anim/v2/full.anim.json`：动画事件、camera、parent/entry、tree、契约。
+- `content/games/splendor/tutorial/anim/v2/_stage/*.stage.json`：各树舞台、zone、模板、命名机位。
+- `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`：LLM 写作规范。
 
 ### 编译/运行产物
 
-- `games/splendor/tutorial/full.tts.lrc`：TTS 后时间轴。
-- `games/splendor/tutorial/full.runtime.json`：cue 顺序、音频、字幕、入口状态。
-- `games/splendor/tutorial/anim/v2/full.compiled.json`：Unity 实际读取的 compiled。
-- `games/splendor/media/tts/full/`：mp3 + subtitle.json。
+- `content/games/splendor/tutorial/full.tts.lrc`：TTS 后时间轴。
+- `content/games/splendor/tutorial/full.runtime.json`：cue 顺序、音频、字幕、入口状态。
+- `content/games/splendor/tutorial/anim/v2/full.compiled.json`：Unity 实际读取的 compiled。
+- `content/games/splendor/media/tts/full/`：mp3 + subtitle.json。
 
 ### Unity 运行时
 
-- `client/Assets/Scripts/Tutorial/Animation/`：v3 运行时。
-- `client/Assets/Scripts/Tutorial/TutorialCuePlayer.cs`：音频/字幕/跳转/重播入口。
+- `clients/unity/Assets/Scripts/Tutorial/Animation/`：v3 运行时。
+- `clients/unity/Assets/Scripts/Tutorial/TutorialCuePlayer.cs`：音频/字幕/跳转/重播入口。
 - 旧 `TutorialDirector` / v1 原语 / `tutorial.json` / 相关脚本已删除，不要再参考。
 
 ## 生产流程
@@ -92,7 +92,7 @@ metadata:
 1. 改文字脚本：`script.full.json`。
 2. **手写这一 cue 的合法性问答，问运行中的 Board API**：
    - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），手写进该 cue 的 `qa` 字段；
-   - 用 `python3 scripts/qa_anim_ask.py --in games/splendor/tutorial/anim/v2/full.anim.json --only <cue>` 自动发送并留档；
+   - 用 `python3 animation/qa_anim_ask.py --in content/games/splendor/tutorial/anim/v2/full.anim.json --only <cue>` 自动发送并留档；
    - 回答必须是「允许/合法」；不是就停下改脚本或改数据；
    - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题；
    - **cue 改一次，qa 必须跟着改一次**。只改 events/state 不改问题 = 未完成，不允许提交。
@@ -115,10 +115,10 @@ metadata:
 ### 总控命令
 
 ```bash
-python3 scripts/compile_tutorial.py --game splendor --track full
-python3 scripts/compile_tutorial.py --game splendor --track full --dry-run
-python3 scripts/compile_tutorial.py --game splendor --track full --skip-tts
-python3 scripts/compile_tutorial.py --game splendor --track full --validate-qa
+python3 animation/compile_tutorial.py --game splendor --track full
+python3 animation/compile_tutorial.py --game splendor --track full --dry-run
+python3 animation/compile_tutorial.py --game splendor --track full --skip-tts
+python3 animation/compile_tutorial.py --game splendor --track full --validate-qa
 ```
 
 `compile_tutorial.py` 负责：对照文本只挑变化 cue → 增量 TTS → 更新 manifest/tts.lrc → 重建 runtime → 编译 compiled。
@@ -126,19 +126,19 @@ python3 scripts/compile_tutorial.py --game splendor --track full --validate-qa
 ### 检查命令
 
 ```bash
-python3 scripts/anim_schema_v2.py games/splendor/tutorial/anim/v2/full.anim.json
-python3 scripts/compile_animation_v2.py --game splendor --track full
-python3 scripts/compile_animation_v2.py --game splendor --track full --check
-python3 scripts/check_anim_v2.py --game splendor --track full
-python3 scripts/validate_anim_rules_v2.py --game splendor --track full
-python3 scripts/check_unity_scripts.py
+python3 animation/anim_schema_v2.py content/games/splendor/tutorial/anim/v2/full.anim.json
+python3 animation/compile_animation_v2.py --game splendor --track full
+python3 animation/compile_animation_v2.py --game splendor --track full --check
+python3 animation/check_anim_v2.py --game splendor --track full
+python3 animation/validate_anim_rules_v2.py --game splendor --track full
+python3 tools/ops/check_unity_scripts.py
 ```
 
 ### Unity 采样对账
 
 ```bash
-./scripts/dump_anim_v2.sh --game splendor --track full
-python3 scripts/check_anim_v2_sample.py --game splendor --track full
+./animation/dump_anim_v2.sh --game splendor --track full
+python3 animation/check_anim_v2_sample.py --game splendor --track full
 ```
 
 `check_anim_v2` 检查契约 vs 编译快照、`state_ops` 完整性、`camera_ops` 顺序与边界脏帧。
@@ -157,7 +157,7 @@ python3 scripts/check_anim_v2_sample.py --game splendor --track full
 ## 工作方式（不要走回头路）
 
 - 动画脚本是**手写的静态资产**，story / note / tree / 契约 / events / camera 全由人或 LLM 写入源 JSON；程序只做体检、过账、编译、对账、取景链检查。
-- 旧的 `scripts/batch*.py` / `.claude/anim_batches/` 一律不要运行——它们会整份重写 `full.anim.json`，已退役。
+- 旧的 `.claude/anim_batches/` 批处理脚本一律不要运行——它们会整份重写 `full.anim.json`，已退役。
 - 合法性问句手写：一 cue 一事、只带最小状态；机器拼的版本不稳定，已废弃。
 - `camera` 写“要入镜的 zone”（逗号分隔）；`camera_fill` 是这些 zone 占画面中央的比例，默认 0.8，特写 0.6–0.72；镜头默认沿父链继承。
 - 用户验收节奏：AI 写 → 用户看 → AI 改 → 改完即成为固定资产，只用于确定性播放。

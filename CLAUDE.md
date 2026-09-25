@@ -21,25 +21,25 @@
 
 ## 关键文件
 
-- `ontology/concepts.json` — 统一本体（当前 89 个概念）
-- `ontology/flow.json` — 通用 trigger pipeline
-- `games/{game}/concepts.json` — 游戏概念层
-- `games/{game}/flow.json` — 游戏流程层
+- `content/ontology/concepts.json` — 统一本体（当前 89 个概念）
+- `content/ontology/flow.json` — 通用 trigger pipeline
+- `content/games/{game}/concepts.json` — 游戏概念层
+- `content/games/{game}/flow.json` — 游戏流程层
 - `backend/BoardAI.Api/` — .NET 9 Runtime 服务
-- `client/` — Unity 6 安卓客户端
-- `games/splendor/tutorial/anim/v2/full.anim.json` — 当前动画源
-- `games/splendor/tutorial/anim/v2/full.compiled.json` — Unity 实际读取的编译产物
+- `clients/unity/` — Unity 6 安卓客户端
+- `content/games/splendor/tutorial/anim/v2/full.anim.json` — 当前动画源
+- `content/games/splendor/tutorial/anim/v2/full.compiled.json` — Unity 实际读取的编译产物
 - `.claude/archive/` — 历史日志、旧版长文档、聊天记录，默认不读
 
 ## 工作约定
 
 - 新增概念前先查两个 v0 文档和 `conventions.md`，确认是本体扩展还是游戏层实例。
-- 写完规则 JSON 必跑 `python scripts/validate_rules.py`。
+- 写完规则 JSON 必跑 `python tools/content/validate_rules.py`。
 - 改规则文件后按“重建索引 → 重启 API”处理。
 - 每个满意节点用 git commit。
 - 代码/数据优先考虑程序确定性，LLM 只做语言理解与表达。
 - 中英文双语字段以中文为主。
-- 所有 ontology 概念在 `ontology/concepts.json` 统一定义，不再分拆。
+- 所有 ontology 概念在 `content/ontology/concepts.json` 统一定义，不再分拆。
 - 讲规动画按“文字脚本 → BoardAI 校验 → 原语 → 对账”顺序改，禁止先改 events 再补文字。
 - 改任何一个 cue 后，必须由 AI/人根据改动点**手写最小事实问题**，提前写进该 cue 的 `qa` 字段（或 `_qa/questions.json`），再由脚本自动问运行中的 Board API `/api/chat` 判断合法性；脚本只负责发送和留档，不自动生成问题。
 - 改 cue 的 script/events/state/contract 时，必须同步修改该 cue 的 `qa`。只改动画不改问题视为未完成，不允许提交；过期问题重复问等于没有校验。

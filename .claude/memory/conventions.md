@@ -9,22 +9,22 @@ metadata:
 
 ## 1. 校验是前提
 
-写完任何 `concepts.json` / `flow.json` / `ontology/concepts.json` 后必跑：
+写完任何 `concepts.json` / `flow.json` / `content/ontology/concepts.json` 后必跑：
 
 ```bash
-python scripts/validate_rules.py [--game <game>] [--errors-only]
+python tools/content/validate_rules.py [--game <game>] [--errors-only]
 ```
 
 当前全库 0 errors / 72 warnings。被 hook 使用时只关心 ERROR。JSON 是程序运行前提，不是给人看的草稿。
 
 JSON 格式：
 - UTF-8 无 BOM，LF 换行，2 空格缩进，末尾换行，无行尾空白。
-- 需要规范化时用 `scripts/normalize_json.py`。
+- 需要规范化时用 `tools/content/normalize_json.py`。
 - `id` 唯一；中文名精确重复会被 W06 警告，可能造成实体解析歧义。
 
 ## 2. 本体结构
 
-文件：`ontology/concepts.json`。
+文件：`content/ontology/concepts.json`。
 
 每个概念包含：
 - `id`、`name`（zh/en）、`abstract`、`definition`、`constraints`。
@@ -119,7 +119,7 @@ JSON 格式：
 - 每改一个真的改状态的 cue，必须由 AI/人根据改动点**手写最小事实问题**，问运行中的 Board API `POST /api/chat`，判断这条 cue 的状态前提、动作和结果是否合法。
 - **qa 必须随 cue 改动同步更新。** 只要 script/events/state/contract 改了，就必须重写/补充该 cue 的 `qa`；不改问题视为未完成，不允许提交。旧问题重复问新动作，等于没有校验。
 - 一 cue 一事，只带判定需要的事实；不用教程自造词，不整桌抄状态。规则自动发生的事就说成自动。
-- 问题提前写进该 cue 的 `qa` 字段（历史问题可继续放 `_qa/questions.json`）；`scripts/qa_anim_ask.py` 支持直接从 `full.anim.json` 提取这类问题并自动发送/留档；脚本只负责问答与日志，**不负责生成问题**。
+- 问题提前写进该 cue 的 `qa` 字段（历史问题可继续放 `_qa/questions.json`）；`animation/qa_anim_ask.py` 支持直接从 `full.anim.json` 提取这类问题并自动发送/留档；脚本只负责问答与日志，**不负责生成问题**。
 - 本地 `validate_anim_rules*` 是精确算术层；Board API 问答是独立裁判层。两层都过，这一步才算站得住。
 - `offstage` / 可见性隐藏只用于引擎确实需要的隐藏；不得用来把非法棋盘状态“画成合法”。任何隐藏后，每色宝石、黄金、卡牌实物总数仍必须守恒。
 

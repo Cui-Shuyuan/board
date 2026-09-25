@@ -31,8 +31,7 @@ doc/
 *.pdf
 # Runtime logs & QA artifacts
 backend/api_run.log
-scripts/_qa_*.log
-scripts/_qa_results.json
+archive/tools/qa-artifacts/
 
 # Editor swap files
 *.swp
@@ -67,17 +66,17 @@ backend/BoardAI.Api/ml_models/
 
 # 规则书 PDF / 大页原始扫描
 *.pdf
-games/civolution/page-*.jpg
-games/civolution/*_600dpi*.jpg
-games/civolution/_review_pages/
+content/games/civolution/page-*.jpg
+content/games/civolution/*_600dpi*.jpg
+content/games/civolution/_review_pages/
 
 # ── 本地素材与生成物（不进 Git；见 .claude/memory/tools.md）──────────
 # 原始扫描/实物照片、盒面图：Unity 要用，但仓库不该背（历史清理时专门移除过一遍）
-games/*/media/
+content/games/*/media/
 # 离屏出图与状态导出的默认落点（scratch）
-client/CaptureOut/
+clients/unity/CaptureOut/
 
-# 采样产物：跑 scripts/dump_states.sh 生成（Unity 写、拷贝回来）。
+# 采样产物：跑 animation/dump_anim_v2.sh 生成（Unity 写、拷贝回来）。
 # 跟踪它会**每次采样都把工作区弄脏**，于是 sync_workspaces 的下一次同步会被自己的产物挡住。
-games/*/tutorial/anim/*.exitstate.json
-games/*/tutorial/anim/v2/*.v2sample.json
+content/games/*/tutorial/anim/*.exitstate.json
+content/games/*/tutorial/anim/v2/*.v2sample.json

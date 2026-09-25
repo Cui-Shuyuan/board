@@ -39,7 +39,7 @@ public class GameRulesService
 
     public IReadOnlyList<string> GetGames()
     {
-        var gamesDir = Path.Combine(_basePath, "games");
+        var gamesDir = Path.Combine(_basePath, "content", "games");
         if (!Directory.Exists(gamesDir)) return Array.Empty<string>();
         return Directory.GetDirectories(gamesDir)
             .Select(Path.GetFileName)
@@ -1898,7 +1898,7 @@ public class GameRulesService
             if (detail.HasValue) ExtractSlots(detail.Value, result);
         }
 
-        // ontology/flow.json
+        // content/ontology/flow.json
         var ontologyFlow = LoadOntologyFlow();
         if (ontologyFlow != null)
         {
@@ -2127,34 +2127,34 @@ public class GameRulesService
 
     private JsonDocument LoadOntology()
     {
-        var path = Path.Combine(_basePath, "ontology", "concepts.json");
+        var path = Path.Combine(_basePath, "content", "ontology", "concepts.json");
         return LoadJson(path);
     }
 
     private JsonDocument? LoadGameConcepts(string game)
     {
-        var path = Path.Combine(_basePath, "games", game, "concepts.json");
+        var path = Path.Combine(_basePath, "content", "games", game, "concepts.json");
         if (!File.Exists(path)) return null;
         return LoadJson(path);
     }
 
     private JsonDocument? LoadOntologyFlow()
     {
-        var path = Path.Combine(_basePath, "ontology", "flow.json");
+        var path = Path.Combine(_basePath, "content", "ontology", "flow.json");
         if (!File.Exists(path)) return null;
         return LoadJson(path);
     }
 
     private JsonDocument? LoadGameFlow(string game)
     {
-        var path = Path.Combine(_basePath, "games", game, "flow.json");
+        var path = Path.Combine(_basePath, "content", "games", game, "flow.json");
         if (!File.Exists(path)) return null;
         return LoadJson(path);
     }
 
     private JsonDocument? LoadGameInstances(string game)
     {
-        var path = Path.Combine(_basePath, "games", game, "instances.json");
+        var path = Path.Combine(_basePath, "content", "games", game, "instances.json");
         if (!File.Exists(path)) return null;
         return LoadJson(path);
     }

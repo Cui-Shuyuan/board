@@ -10,8 +10,8 @@ metadata:
 ## 1. 分层总览
 
 ```text
-L0 本体层：ontology/concepts.json + ontology/flow.json
-L1 游戏规则层：games/{game}/concepts.json + flow.json + instances.json
+L0 本体层：content/ontology/concepts.json + content/ontology/flow.json
+L1 游戏规则层：content/games/{game}/concepts.json + flow.json + instances.json
 L2 Runtime 层：backend/BoardAI.Api（Chat + Rules + 检索）
 L3 教案/动画源：script.full.json + full.anim.json + _stage/*.stage.json
 L4 运行产物：full.runtime.json + full.compiled.json + TTS 音频
@@ -20,10 +20,10 @@ L5 客户端：Unity 6 安卓 App
 
 ## 2. 本体与规则层
 
-- `ontology/concepts.json`：通用概念。当前 89 个。
-- `ontology/flow.json`：通用 `trigger_pipeline`。
-- `games/{game}/concepts.json`：游戏概念，按 `objects / actions / triggers / conditions / top_level_refs` 分组。
-- `games/{game}/flow.json`：具体游戏流程。
+- `content/ontology/concepts.json`：通用概念。当前 89 个。
+- `content/ontology/flow.json`：通用 `trigger_pipeline`。
+- `content/games/{game}/concepts.json`：游戏概念，按 `objects / actions / triggers / conditions / top_level_refs` 分组。
+- `content/games/{game}/flow.json`：具体游戏流程。
 - 关键关系：
   - `extends`：结构扩展，增加父概念没有的字段。
   - `specifies`：参数绑定，填充父概念已有字段。
@@ -97,11 +97,11 @@ LLM 不再直接调用 search/get_concept，只输出查询计划：
 - Qdrant：独立 Windows 进程，按游戏分 collection `board_{gameId}`。
 - Embedding：`bge-base-zh-v1.5` fp32 ONNX，768 维；模型目录 `ml_models/` 不进 Git。
 - 索引内容：ontology 概念、游戏 concepts、flow 递归节点。
-- 重建：`scripts/rebuild_index.py`，默认增量同步；模型或提取逻辑大改时 `--full`。
+- 重建：`tools/indexing/rebuild_index.py`，默认增量同步；模型或提取逻辑大改时 `--full`。
 - 搜索路由：向量优先 + 关键词降级。
 - 短查询（≤2 字）走名称索引，长查询/整句走完整索引。
 - namespace：`ontology::concept_id` 限定本体概念，避免与游戏层重名冲突。
-- 检索回归门禁：`qa/retrieval_gold.jsonl` + `scripts/eval_retrieval.py`。
+- 检索回归门禁：`tools/qa/retrieval_gold.jsonl` + `tools/indexing/eval_retrieval.py`。
 
 ## 5. 交互模型
 

@@ -19,8 +19,8 @@
 
 ## 权威来源
 
-- 当前代码：`backend/`、`client/`、`scripts/`
-- 当前规则数据：`ontology/`、`games/`
-- 当前动画数据：`games/splendor/tutorial/anim/v2/`
-- 当前检索基准：`qa/retrieval_gold.jsonl`
+- 当前代码：`backend/`、`clients/`、`animation/`、`tools/`
+- 当前规则数据：`content/ontology/`、`content/games/`
+- 当前动画数据：`content/games/splendor/tutorial/anim/v2/`
+- 当前检索基准：`tools/qa/retrieval_gold.jsonl`
 - 遇到文档与代码/数据冲突，以代码和 JSON 数据为准，并顺手更新本目录。

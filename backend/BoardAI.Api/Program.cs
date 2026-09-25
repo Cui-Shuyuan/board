@@ -73,9 +73,10 @@ public class Program
         app.UseDefaultFiles();
         app.UseStaticFiles();
 
-        // 暴露 games/ 目录下的图片等媒体资源
+        // 暴露 content/games/ 目录下的图片等媒体资源
         var gamesPath = Path.Combine(
             builder.Configuration.GetValue<string>("Rules:BasePath") ?? builder.Environment.ContentRootPath,
+            "content",
             "games");
         app.UseStaticFiles(new StaticFileOptions
         {

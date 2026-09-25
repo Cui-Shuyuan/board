@@ -17,7 +17,7 @@ Runtime 规则问答已跑通；当前重心是《璀璨宝石》讲规动画 v3
 
 - `time_anchors` 全量迁移：事件从裸 `at` 改为 `anchor + offset`，编译产物仍输出数值 `at`。
 - Unity 侧新增 `ZoneDebugOverlay`（未跟踪），以及 Animation/CuePlayer 相关调整。
-- `games/splendor/tutorial/anim/v2/full.anim.json`、`full.compiled.json` 和多个 stage/脚本有未提交修改。
+- `content/games/splendor/tutorial/anim/v2/full.anim.json`、`full.compiled.json` 和多个 stage/脚本有未提交修改。
 - 旧 `.claude/memory/` 长文档已归档到 `.claude/archive/memory/2026-09-23/`，本目录的新文档是当前权威。
 
 > 改完动画数据的标准顺序：`anim_schema_v2` → `compile_animation_v2 --check` → `check_anim_v2` → `validate_anim_rules_v2` → `check_unity_scripts` → Unity 采样对账。
@@ -29,7 +29,7 @@ Runtime 规则问答已跑通；当前重心是《璀璨宝石》讲规动画 v3
 - 检索：Qdrant + `bge-base-zh-v1.5` ONNX，增量索引。
 - 讲规动画：Splendor full 版约 110 cue，TTS、runtime、compiled、Unity 播放器与编译链已跑通。
 - 最新规则校验：`validate_rules.py --errors-only` 为 0 errors / 72 warnings（主要是缺 appearance 的 W07 和孤立概念 W05）。
-- 检索 gold set：`qa/retrieval_gold.jsonl` 共 85 条，覆盖全部 9 款游戏；最近记录 82/85 resolved_hit，wrong=0，no_match=0，3 条 unresolved 的 expected 都在 top3。
+- 检索 gold set：`tools/qa/retrieval_gold.jsonl` 共 85 条，覆盖全部 9 款游戏；最近记录 82/85 resolved_hit，wrong=0，no_match=0，3 条 unresolved 的 expected 都在 top3。
 
 ## 当前优先待办
 

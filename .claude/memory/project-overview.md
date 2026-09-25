@@ -35,7 +35,7 @@ metadata:
 ## 核心原则
 
 - **程序确定性优先**：规则查询、校验、判定、编译、播放全部由程序完成。
-- **数据驱动**：每款游戏一个 `games/{game}/` 目录，新增游戏尽量不改代码。
+- **数据驱动**：每款游戏一个 `content/games/{game}/` 目录，新增游戏尽量不改代码。
 - **规则结构化**：用 `concepts.json` / `flow.json` 表达，不以 Markdown 规则书作为运行时来源。
 - **Agent 时代边界**：代码实现可以快速生成，契约、数据、校验、评测必须清晰。
 - **LLM 只做语言层**：不依赖 LLM 记忆规则；所有事实来自程序返回。
@@ -43,15 +43,15 @@ metadata:
 ## 技术选型
 
 - 后端：C# / .NET 9 Web API（`backend/BoardAI.Api`），默认 `http://localhost:5000`。
-- 前端：Unity 6 原生安卓（`client/`），URP，2.5D sprite。
+- 前端：Unity 6 原生安卓（`clients/unity/`），URP，2.5D sprite。
 - LLM：`ILLMService` 抽象，当前 DeepSeek 兼容接口；system prompt 配置在 `appsettings.json`。
 - 检索：Qdrant 独立进程 + `bge-base-zh-v1.5` fp32 ONNX。
-- TTS：火山豆包语音合成 2.0（`scripts/tts_doubao.py`）。
+- TTS：火山豆包语音合成 2.0（`animation/tts_doubao.py`）。
 - 部署：Windows 本地主机 + 店内内网；模型、音频、视频、PDF、原始照片不进 Git。
 
 ## 开发阶段
 
-1. **世界模型 / 本体**：已完成，持续小步扩展。当前 `ontology/concepts.json` 有 89 个概念。
+1. **世界模型 / 本体**：已完成，持续小步扩展。当前 `content/ontology/concepts.json` 有 89 个概念。
 2. **Rule DSL**：已完成 Splendor 首版，后续游戏沿用。
 3. **Runtime / 意图接口**：已完成；单工具 `execute_plan` + 三层回答 + 向量检索。
 4. **扩游戏与游戏元信息**：进行中；已有 9 款游戏数据，`manifest.json` 待补。
@@ -77,11 +77,12 @@ metadata:
 
 ## 关键目录
 
-- `ontology/`：通用本体与 trigger pipeline。
-- `games/`：各游戏规则数据、素材、教程、动画。
+- `content/ontology/`：通用本体与 trigger pipeline。
+- `content/games/`：各游戏规则数据、素材、教程、动画。
 - `backend/BoardAI.Api/`：Runtime 服务。
-- `client/`：Unity 客户端。
-- `scripts/`：校验、索引、TTS、动画编译、QA 工具。
-- `qa/`：检索 gold set 等评测数据。
+- `clients/unity/`：Unity 客户端。
+- `animation/`：动画生产链工具（schema、编译、TTS、动画 QA）。
+- `tools/`：跨游戏/跨项目的开发与运维工具（content / indexing / media / qa / ops）。
+- `tools/qa/`：检索 gold set 等评测数据。
 - `.claude/memory/`：新会话必读的当前记忆。
 - `.claude/archive/`：历史日志与旧版长文档，默认不读。

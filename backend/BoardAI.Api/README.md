@@ -3,7 +3,7 @@
 桌游规则 AI 的最小后端服务。目前包含两个部分：
 
 1. **Chat 接口**：接收客人文字，转发给 LLM，返回回答。
-2. **Rules 接口**：读取 `ontology/` 和 `games/splendor/` 下的 JSON 规则文件，按概念 ID / 类型 / 关键词返回结构化信息。
+2. **Rules 接口**：读取 `content/ontology/` 和 `content/games/splendor/` 下的 JSON 规则文件，按概念 ID / 类型 / 关键词返回结构化信息。
 
 ## 运行
 
