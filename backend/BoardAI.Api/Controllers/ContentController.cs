@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using BoardAI.Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace BoardAI.Api.Controllers;
 public class ContentController : ControllerBase
 {
     private static readonly Regex SafeGameId = new("^[A-Za-z0-9_-]+$", RegexOptions.Compiled);
+    private static readonly Regex SafeVersion = new("^[0-9a-fA-F]{8,64}$", RegexOptions.Compiled);
     private static readonly FileExtensionContentTypeProvider MimeTypes = new();
 
     private readonly string _contentRoot;
@@ -47,7 +49,7 @@ public class ContentController : ControllerBase
         // regenerated manifest is picked up immediately without restarting API.
         var info = new FileInfo(manifestPath);
         var etag = BuildEtag(info);
-        ApplyCacheHeaders(etag);
+        ApplyRevalidatedCacheHeaders(etag);
 
         if (IsNotModified(etag))
             return StatusCode(StatusCodes.Status304NotModified);
@@ -58,6 +60,75 @@ public class ContentController : ControllerBase
             enableRangeProcessing: true);
     }
 
+    /// <summary>
+    /// Versioned content URL:
+    ///   GET /api/content/games/{game}/files/{version}/{**filePath}
+    ///
+    /// The URL version must match the current manifest version.  If it does not,
+    /// the client receives 409 Conflict and must fetch a fresh manifest before
+    /// retrying.  A successful response is safe for long-lived immutable
+    /// caching.
+    /// </summary>
+    [HttpGet("files/{version:regex(^[[0-9a-fA-F]]{{8,64}}$)}/{**filePath}")]
+    public IActionResult GetVersionedFile(
+        [FromRoute] string game,
+        [FromRoute] string version,
+        [FromRoute] string? filePath)
+    {
+        if (!TryValidateGame(game, out var gameError))
+            return BadRequest(new { message = gameError });
+
+        if (string.IsNullOrWhiteSpace(version) || !SafeVersion.IsMatch(version))
+            return BadRequest(new { message = "invalid content version" });
+
+        if (string.IsNullOrWhiteSpace(filePath))
+            return BadRequest(new { message = "file path is required" });
+
+        if (!TryReadManifestVersion(
+                game,
+                out var currentVersion,
+                out var manifestError,
+                out var manifestMissing))
+        {
+            return manifestMissing
+                ? NotFound(new { message = manifestError })
+                : StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new { message = manifestError });
+        }
+
+        if (!string.Equals(currentVersion, version, StringComparison.OrdinalIgnoreCase))
+        {
+            return Conflict(new
+            {
+                message = $"Content version '{version}' is no longer current for game " +
+                          $"'{game}'. Reload the manifest and retry."
+            });
+        }
+
+        if (!TryResolveGameFile(game, filePath!, out var fullPath, out var pathError))
+            return BadRequest(new { message = pathError });
+
+        if (!System.IO.File.Exists(fullPath))
+            return NotFound(new { message = $"Content file was not found: {filePath}" });
+
+        var info = new FileInfo(fullPath);
+        var etag = BuildEtag(info);
+        ApplyImmutableCacheHeaders(etag);
+
+        if (IsNotModified(etag))
+            return StatusCode(StatusCodes.Status304NotModified);
+
+        return PhysicalFile(
+            fullPath,
+            ResolveContentType(fullPath),
+            enableRangeProcessing: true);
+    }
+
+    // Legacy compatibility route.  New clients should use the versioned
+    // /files/{version}/{**filePath} route above.  Kept so old app builds keep
+    // working; it intentionally uses revalidation instead of immutable caching
+    // and can be removed once no supported client depends on it.
     [HttpGet("files/{**filePath}")]
     public IActionResult GetFile([FromRoute] string game, [FromRoute] string? filePath)
     {
@@ -73,13 +144,9 @@ public class ContentController : ControllerBase
         if (!System.IO.File.Exists(fullPath))
             return NotFound(new { message = $"Content file was not found: {filePath}" });
 
-        // File URLs intentionally do not contain the manifest version yet.
-        // no-cache + ETag prevents stale bytes while keeping a future CDN
-        // upgrade path open (a versioned /files/{version}/ route is the
-        // long-term solution).
         var info = new FileInfo(fullPath);
         var etag = BuildEtag(info);
-        ApplyCacheHeaders(etag);
+        ApplyRevalidatedCacheHeaders(etag);
 
         if (IsNotModified(etag))
             return StatusCode(StatusCodes.Status304NotModified);
@@ -93,7 +160,13 @@ public class ContentController : ControllerBase
     private static string BuildEtag(FileInfo info) =>
         $"\"{info.Length:x}-{info.LastWriteTimeUtc.Ticks:x}\"";
 
-    private void ApplyCacheHeaders(string etag)
+    private void ApplyImmutableCacheHeaders(string etag)
+    {
+        Response.Headers.ETag = etag;
+        Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+    }
+
+    private void ApplyRevalidatedCacheHeaders(string etag)
     {
         Response.Headers.ETag = etag;
         Response.Headers.CacheControl = "no-cache, must-revalidate";
@@ -126,6 +199,59 @@ public class ContentController : ControllerBase
         }
 
         return false;
+    }
+
+    private bool TryReadManifestVersion(
+        string game,
+        out string version,
+        out string error,
+        out bool manifestMissing)
+    {
+        version = "";
+        error = "";
+        manifestMissing = false;
+
+        var manifestPath = Path.Combine(_contentRoot, "content", "manifests", $"{game}.json");
+        if (!System.IO.File.Exists(manifestPath))
+        {
+            manifestMissing = true;
+            error = $"Content manifest for game '{game}' was not found. " +
+                    $"Run: python3 tools/content/build_content_manifest.py --game {game}";
+            return false;
+        }
+
+        try
+        {
+            using var stream = System.IO.File.OpenRead(manifestPath);
+            using var document = JsonDocument.Parse(stream);
+
+            if (!document.RootElement.TryGetProperty("version", out var versionElement) ||
+                versionElement.ValueKind != JsonValueKind.String)
+            {
+                error = $"Content manifest for game '{game}' has no valid version field.";
+                return false;
+            }
+
+            var value = versionElement.GetString()?.Trim() ?? "";
+            if (!SafeVersion.IsMatch(value))
+            {
+                error = $"Content manifest for game '{game}' has an invalid version: '{value}'.";
+                return false;
+            }
+
+            version = value;
+            return true;
+        }
+        catch (JsonException ex)
+        {
+            error = $"Content manifest for game '{game}' is not valid JSON: {ex.Message}";
+            return false;
+        }
+        catch (IOException ex)
+        {
+            error = $"Content manifest for game '{game}' could not be read: {ex.Message}";
+            return false;
+        }
     }
 
     private bool TryValidateGame(string? game, out string error)

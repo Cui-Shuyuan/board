@@ -16,12 +16,19 @@ namespace BoardGameTutorial
     {
         public const string GameObjectName = "AndroidTutorialBridge";
 
-        private const float StatusIntervalSeconds = 0.5f;
-        private float nextStatusAt;
         private bool unityReady;
         private bool readyLogged;
         private bool startupStatusPosted;
         private static bool statusCallbackWarned;
+
+        // Low-cost state-change detection.  Update checks every frame, but the
+        // JNI callback is only invoked when one of these values changes.
+        private bool hasStatusSnapshot;
+        private bool lastIsPlaying;
+        private bool lastIsPaused;
+        private int lastCueIndex = -1;
+        private string lastCueId = "";
+        private float lastVolume = 1f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -34,7 +41,6 @@ namespace BoardGameTutorial
         private void Start()
         {
             MarkUnityReady();
-            nextStatusAt = 0f;
             PostStartupStatusIfPossible();
         }
 
@@ -44,7 +50,6 @@ namespace BoardGameTutorial
             if (!unityReady)
             {
                 MarkUnityReady();
-                nextStatusAt = 0f;
             }
 
             // If Start ran before TutorialCuePlayer existed, keep trying once
@@ -54,10 +59,22 @@ namespace BoardGameTutorial
                 PostStartupStatusIfPossible();
             }
 
-            if (Time.unscaledTime < nextStatusAt) return;
-            nextStatusAt = Time.unscaledTime + StatusIntervalSeconds;
-            PostStatus();
+            // Fixed-interval polling is gone.  The per-frame check remains
+            // cheap and only crosses JNI when player state actually changes;
+            // SeekTo positions between events are interpolated natively.
+            PostStatusIfChanged();
 #endif
+        }
+
+        /// <summary>
+        /// Immediately posts the current player snapshot.  Native code calls
+        /// this after Unity is ready, when returning to the foreground, after
+        /// ReloadGame, and whenever an authoritative refresh is useful.
+        /// </summary>
+        public void RequestStatus()
+        {
+            Debug.Log("[AndroidTutorialBridge] RequestStatus forwarded.");
+            PostStatus();
         }
 
         private void MarkUnityReady()
@@ -314,11 +331,44 @@ namespace BoardGameTutorial
             return fallback;
         }
 
+        private void PostStatusIfChanged()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            var player = FindFirstObjectByType<TutorialCuePlayer>();
+            if (player == null) return;
+
+            string currentCueId = player.CurrentCueId ?? "";
+            if (hasStatusSnapshot &&
+                lastIsPlaying == player.IsPlaying &&
+                lastIsPaused == player.IsPaused &&
+                lastCueIndex == player.CurrentCueIndex &&
+                string.Equals(lastCueId, currentCueId, StringComparison.Ordinal) &&
+                Mathf.Abs(lastVolume - player.Volume) <= 0.0001f)
+            {
+                return;
+            }
+
+            PostStatus();
+#endif
+        }
+
+        private void CaptureStatusSnapshot(TutorialCuePlayer player)
+        {
+            hasStatusSnapshot = true;
+            lastIsPlaying = player.IsPlaying;
+            lastIsPaused = player.IsPaused;
+            lastCueIndex = player.CurrentCueIndex;
+            lastCueId = player.CurrentCueId ?? "";
+            lastVolume = player.Volume;
+        }
+
         private void PostStatus()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             var player = FindFirstObjectByType<TutorialCuePlayer>();
             if (player == null) return;
+
+            CaptureStatusSnapshot(player);
 
             var status = new BridgeStatus
             {

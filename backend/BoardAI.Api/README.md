@@ -113,14 +113,17 @@ curl -s "http://localhost:5000/api/rules/games/splendor/search?q=%E8%B4%B5%E6%97
 
 ## 内容接口缓存
 
-`GET /api/content/games/{game}/manifest` 和 `GET /api/content/games/{game}/files/{**filePath}` 都返回：
+内容接口：
 
 ```text
-Cache-Control: no-cache, must-revalidate
-ETag: "<length-x>-<lastWriteTimeUtcTicks-x>"
+GET /api/content/games/{game}/manifest
+GET /api/content/games/{game}/files/{version}/{**filePath}
+GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可删
 ```
 
-并支持 `If-None-Match` 返回 `304 Not Modified`。当前文件 URL 不含 version，未来若引入 CDN/长期缓存，应升级为 versioned URL（例如 `/files/{version}/...`）。
+- `manifest` 与旧文件 URL 返回 `Cache-Control: no-cache, must-revalidate` + ETag，支持 `If-None-Match` 304。
+- `files/{version}/...` 是 versioned URL：version 必须与当前 manifest.version 一致，否则返回 `409 Conflict` 并提示重新拉 manifest。成功返回 `Cache-Control: public, max-age=31536000, immutable` + ETag，可长期缓存/接 CDN。
+- 旧 `/files/{**filePath}` 路由保留给旧客户端兼容，继续使用 `no-cache, must-revalidate`，后续版本可删除。
 
 ## 项目结构
 

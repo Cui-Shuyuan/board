@@ -18,6 +18,7 @@ import com.boardai.tutorial.uaal.content.ContentStore
 import com.boardai.tutorial.uaal.content.ContentUpdateStateHolder
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
 import com.boardai.tutorial.uaal.content.ContentUpdater
+import com.boardai.tutorial.uaal.player.TutorialPlayerOverlay
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerGameActivity
@@ -69,6 +70,12 @@ class MainActivity : UnityPlayerGameActivity() {
         super.onResume()
         // Re-assert after Unity/GameActivity has finished its own window setup.
         keepScreenOn()
+        // Coming back from background can happen after Unity/Android moved to
+        // a paused state.  Ask the bridge for an authoritative snapshot
+        // instead of relying on periodic polling.
+        if (unityReadyHandled) {
+            sendToUnity("RequestStatus", "")
+        }
     }
 
     private fun keepScreenOn() {
@@ -128,6 +135,7 @@ class MainActivity : UnityPlayerGameActivity() {
         // so the policy stays visible and can be changed later through the
         // bridge API.
         sendToUnity("SetUnityTouchControlsEnabled", "false")
+        sendToUnity("RequestStatus", "")
         checkContentUpdate()
     }
 
@@ -162,6 +170,7 @@ class MainActivity : UnityPlayerGameActivity() {
                     // still appends the game id (splendor/).
                     sendToUnity("SetContentRoot", result.versionRoot.absolutePath)
                     sendToUnity("ReloadGame", "")
+                    sendToUnity("RequestStatus", "")
                     result.gameRoot?.let { reloadTimeline(it) }
                 } else {
                     if (tutorialTimeline.value == null) {

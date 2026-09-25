@@ -1,6 +1,7 @@
 package com.boardai.tutorial.uaal
 
 import android.os.Handler
+import android.util.Log
 import android.os.Looper
 import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateOf
@@ -17,11 +18,13 @@ import org.json.JSONObject
  */
 @Keep
 object UnityBridgeCallback {
+    private const val TAG = "BoardAI-Status"
     private val mainHandler = Handler(Looper.getMainLooper())
 
     @JvmStatic
     @Keep
     fun postStatus(json: String) {
+        Log.d(TAG, "postStatus: $json")
         mainHandler.post {
             UnityStatusHolder.updateFromJson(json)
         }

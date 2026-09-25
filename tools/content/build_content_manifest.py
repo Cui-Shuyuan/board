@@ -7,8 +7,9 @@ Usage:
 
 The manifest is written to content/manifests/{game}.json and contains a
 deterministic version derived only from the file paths and their SHA-256
-values.  Non-runtime cruft files such as .DS_Store, Thumbs.db, *.tmp and *.log
-are skipped.
+values.  Each file URL embeds that version so the backend can serve immutable
+content safely.  Non-runtime cruft files such as .DS_Store, Thumbs.db, *.tmp
+and *.log are skipped.
 """
 
 from __future__ import annotations
@@ -59,29 +60,34 @@ def build_manifest(game: str, repo_root: Path) -> dict:
     if not game_dir.is_dir():
         raise FileNotFoundError(f"game content directory not found: {game_dir}")
 
-    entries: list[dict] = []
+    # Version is computed from path + sha256 only.  URL generation happens
+    # after the version is known so versioned URLs stay deterministic too.
+    file_specs: list[tuple[str, int, str]] = []
     version_source_lines: list[str] = []
     for path in content_files(game_dir):
         relative = path.relative_to(game_dir).as_posix()
         digest = sha256_file(path)
-        # The URL intentionally does not contain the manifest version yet.
-        # The API compensates with Cache-Control: no-cache + ETag so an
-        # unchanged URL cannot silently serve stale bytes.  If long-lived
-        # CDN caching is introduced later, upgrade this to a versioned route
-        # such as /api/content/games/{game}/files/{version}/{path}.
-        entries.append(
-            {
-                "path": relative,
-                "size": path.stat().st_size,
-                "sha256": digest,
-                "url": f"/api/content/games/{quote(game, safe='')}/files/{quote(relative, safe='/')}",
-            }
-        )
+        file_specs.append((relative, path.stat().st_size, digest))
         version_source_lines.append(f"{relative}\t{digest}")
 
     version_source_lines.sort()
     version_source = "\n".join(version_source_lines).encode("utf-8")
     version = hashlib.sha256(version_source).hexdigest()[:16]
+    safe_game = quote(game, safe="")
+    safe_version = quote(version, safe="")
+
+    entries = [
+        {
+            "path": relative,
+            "size": size,
+            "sha256": digest,
+            "url": (
+                f"/api/content/games/{safe_game}/files/{safe_version}/"
+                f"{quote(relative, safe='/')}"
+            ),
+        }
+        for relative, size, digest in file_specs
+    ]
 
     return {
         "schema": SCHEMA,

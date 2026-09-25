@@ -291,10 +291,11 @@ manifest 记录每个可运行文件的 `path / size / sha256 / url`；`version`
 
 ```text
 GET /api/content/games/{game}/manifest
-GET /api/content/games/{game}/files/{**filePath}
+GET /api/content/games/{game}/files/{version}/{**filePath}
+GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL
 ```
 
-后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。manifest 与文件接口都返回 `Cache-Control: no-cache, must-revalidate` 和基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；当前 URL 不带 version，未来若做 CDN 或长期缓存应升级为 versioned URL。
+后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。manifest 里的文件 URL 已升级为 versioned URL，成功响应返回 `Cache-Control: public, max-age=31536000, immutable` + 基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；version 过期返回 `409 Conflict`，客户端会重新拉 manifest。旧无版本 URL 继续保留，返回 `no-cache, must-revalidate`，未来可删除。
 
 ### Android 本地仓库
 
