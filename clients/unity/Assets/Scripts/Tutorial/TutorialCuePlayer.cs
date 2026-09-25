@@ -309,15 +309,34 @@ namespace BoardGameTutorial
             }
         }
 
-        public void PlayCue(int index, bool continueState = false)
+        public void PlayCue(int index, bool continueState = false, float localTime = 0f)
         {
             if (doc == null || doc.cues == null || doc.cues.Count == 0) return;
             index = Mathf.Clamp(index, 0, doc.cues.Count - 1);
             if (playbackRoutine != null) StopCoroutine(playbackRoutine);
-            playbackRoutine = StartCoroutine(PlayCueRoutine(index, continueState));
+            playbackRoutine = StartCoroutine(
+                PlayCueRoutine(index, continueState, Mathf.Max(0f, localTime)));
         }
 
-        private IEnumerator PlayCueRoutine(int index, bool continueState)
+        /// <summary>
+        /// Jumps to a specific cue and then seeks to a cue-local second offset.
+        /// This is the route used by the native Android seek bar for cross-cue
+        /// scrubbing and chapter jumps.
+        /// </summary>
+        public bool PlayCueAt(string cueId, float localSeconds)
+        {
+            if (doc == null || doc.cues == null) return false;
+            for (int i = 0; i < doc.cues.Count; i++)
+            {
+                if (doc.cues[i].id != cueId) continue;
+                PlayCue(i, false, localSeconds);
+                return true;
+            }
+            Debug.LogWarning($"[TutorialCuePlayer] PlayCueAt target not found: {cueId}");
+            return false;
+        }
+
+        private IEnumerator PlayCueRoutine(int index, bool continueState, float localTime)
         {
             if (audioSource.isPlaying) audioSource.Stop();
             audioSource.clip = null;
@@ -349,7 +368,9 @@ namespace BoardGameTutorial
                     yield break;
                 }
                 audioSource.clip = clip;
-                audioSource.time = 0f;
+                float seekTime = ClampCueLocalTime(localTime, clip.length);
+                audioSource.time = seekTime;
+                if (v2AnimPlayer != null) v2AnimPlayer.Seek(seekTime);
                 audioSource.Play();
             }
 
@@ -386,6 +407,18 @@ namespace BoardGameTutorial
         {
             if (doc == null || doc.cues == null) return;
             PlayCue(currentIndex - 1);
+        }
+
+        /// <summary>Bridge-friendly alias for the native next-section button.</summary>
+        public void NextCue()
+        {
+            Next();
+        }
+
+        /// <summary>Bridge-friendly alias for the native previous-section button.</summary>
+        public void PreviousCue()
+        {
+            Previous();
         }
 
         public void TogglePause()
@@ -471,14 +504,40 @@ namespace BoardGameTutorial
             SeekToCurrentTime(Mathf.Clamp(target, 0f, duration));
         }
 
+        /// <summary>
+        /// Absolute cue-local seek used while scrubbing within the current cue.
+        /// If the clip has not loaded yet, restart the cue and position it after
+        /// loading instead of silently dropping the seek.
+        /// </summary>
+        public void SeekTo(float localSeconds)
+        {
+            if (audioSource == null || audioSource.clip == null)
+            {
+                if (CurrentCue != null) PlayCueAt(CurrentCue.id, localSeconds);
+                return;
+            }
+
+            SeekToCurrentTime(localSeconds);
+        }
+
         private void SeekToCurrentTime(float time)
         {
             if (audioSource == null || audioSource.clip == null) return;
             float duration = Mathf.Max(0f, audioSource.clip.length);
-            float clamped = Mathf.Clamp(time, 0f, duration);
+            float clamped = ClampCueLocalTime(time, duration);
             audioSource.time = clamped;
             if (v2AnimPlayer != null) v2AnimPlayer.Seek(clamped);
             UpdateSubtitle();
+        }
+
+        private static float ClampCueLocalTime(float localSeconds, float clipLength)
+        {
+            float duration = Mathf.Max(0f, clipLength);
+            if (duration <= 0f) return 0f;
+            // Unity audio playback cannot reliably start exactly at clip.length.
+            // Keep end-seeks just inside the clip; the normal auto-advance then
+            // carries playback to the following cue.
+            return Mathf.Clamp(localSeconds, 0f, Mathf.Max(0f, duration - 0.02f));
         }
 
         public bool JumpToCue(string cueId)

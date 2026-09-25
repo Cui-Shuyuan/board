@@ -106,6 +106,66 @@ namespace BoardGameTutorial
             PostStatus();
         }
 
+        /// <summary>
+        /// Native absolute seek to a cue-local second offset.
+        /// </summary>
+        public void SeekTo(string seconds)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            if (!TryParseFloat(seconds, out float value))
+            {
+                Debug.LogWarning("[AndroidTutorialBridge] SeekTo received invalid seconds: " + seconds);
+                return;
+            }
+
+            player.SeekTo(value);
+            Debug.Log($"[AndroidTutorialBridge] SeekTo({value:0.###}) forwarded.");
+            PostStatus();
+        }
+
+        /// <summary>
+        /// Payload format is "cueId|localSeconds", e.g.
+        /// "setup.cards.001.1|3.25".  This is the cross-cue route used by
+        /// the native seek bar and chapter menu.
+        /// </summary>
+        public void PlayCueAt(string payload)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            if (!TryParseCueAt(payload, out string cueId, out float localSeconds))
+            {
+                Debug.LogWarning("[AndroidTutorialBridge] PlayCueAt received invalid payload: " + payload);
+                return;
+            }
+
+            bool found = player.PlayCueAt(cueId, localSeconds);
+            Debug.Log($"[AndroidTutorialBridge] PlayCueAt({cueId}|{localSeconds:0.###}) found={found}.");
+            PostStatus();
+        }
+
+        public void NextCue(string ignored)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            player.NextCue();
+            Debug.Log("[AndroidTutorialBridge] NextCue forwarded.");
+            PostStatus();
+        }
+
+        public void PreviousCue(string ignored)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            player.PreviousCue();
+            Debug.Log("[AndroidTutorialBridge] PreviousCue forwarded.");
+            PostStatus();
+        }
+
         public void SeekRelative(string seconds)
         {
             var player = FindPlayer();
@@ -215,6 +275,36 @@ namespace BoardGameTutorial
                 NumberStyles.Float,
                 CultureInfo.InvariantCulture,
                 out result);
+        }
+
+        private static bool TryParseCueAt(
+            string payload,
+            out string cueId,
+            out float localSeconds)
+        {
+            cueId = "";
+            localSeconds = 0f;
+            if (string.IsNullOrEmpty(payload)) return false;
+
+            int separator = payload.IndexOf('|');
+            string idPart;
+            string secondsPart;
+            if (separator < 0)
+            {
+                idPart = payload.Trim();
+                secondsPart = "0";
+            }
+            else
+            {
+                idPart = payload.Substring(0, separator).Trim();
+                secondsPart = payload.Substring(separator + 1).Trim();
+            }
+
+            if (idPart.Length == 0) return false;
+            if (!TryParseFloat(secondsPart, out localSeconds)) return false;
+            if (localSeconds < 0f) localSeconds = 0f;
+            cueId = idPart;
+            return true;
         }
 
         private static bool ParseBool(string value, bool fallback)
