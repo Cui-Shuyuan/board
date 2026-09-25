@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The release APK is still a local/device POC using the API at
+         http://127.0.0.1:5000 through adb reverse.  Keep cleartext available
+         for that local endpoint so the release visibility test can fetch the
+         catalog and content.  A production build should replace this with an
+         HTTPS-only network security config. -->
+    <application android:usesCleartextTraffic="true" />
+</manifest>

@@ -161,7 +161,14 @@ namespace BoardGameTutorial
 
         private void Start()
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // UaaL native home/player owns game selection.  The Android bridge
+            // calls LoadGame(gameId) only after the catalog game is selected and
+            // its content has been activated in active.json.
+#else
+            // Editor / desktop prototype keeps the original autoPlay behavior.
             if (autoPlay) LoadAndPlay();
+#endif
         }
 
         public bool LoadAndPlay()
@@ -178,6 +185,19 @@ namespace BoardGameTutorial
 
         public void ReloadGame()
         {
+            StopAndClear();
+
+            if (!LoadAndPlay())
+                Debug.LogWarning("[TutorialCuePlayer] ReloadGame could not load the new content root.");
+        }
+
+        /// <summary>
+        /// Stops the current coroutine/audio, clears animation state, and drops
+        /// the parsed runtime document.  Native UnloadGame uses this when the
+        /// user returns from the tutorial player to the home screen.
+        /// </summary>
+        public void StopAndClear()
+        {
             if (playbackRoutine != null)
             {
                 StopCoroutine(playbackRoutine);
@@ -187,6 +207,7 @@ namespace BoardGameTutorial
             {
                 audioSource.Stop();
                 audioSource.clip = null;
+                audioSource.time = 0f;
             }
             if (v2AnimPlayer != null)
             {
@@ -201,11 +222,9 @@ namespace BoardGameTutorial
             debugJumpCursor = 0;
             inDebugJump = false;
             isPaused = false;
+            pausedBeforePlay = false;
             fallbackClock = 0f;
             currentSubtitle = "";
-
-            if (!LoadAndPlay())
-                Debug.LogWarning("[TutorialCuePlayer] ReloadGame could not load the new content root.");
         }
 
         public bool LoadRuntime()
@@ -618,8 +637,8 @@ namespace BoardGameTutorial
 #if UNITY_ANDROID
             if (AndroidBackPressed())
             {
-                Debug.Log("[TutorialCuePlayer] Android back -> Application.Quit()");
-                Application.Quit();
+                Debug.Log("[TutorialCuePlayer] Android back -> native home request");
+                AndroidTutorialBridge.NotifyNativeBack();
                 return;
             }
 #endif

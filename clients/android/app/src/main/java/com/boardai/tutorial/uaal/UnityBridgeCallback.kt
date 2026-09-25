@@ -29,6 +29,27 @@ object UnityBridgeCallback {
             UnityStatusHolder.updateFromJson(json)
         }
     }
+
+    /**
+     * Unity sees the Android back key while the player owns input.  Forward it
+     * to the native layer so MainActivity can return to the home screen and
+     * unload the game instead of quitting the process.
+     */
+    @JvmStatic
+    @Keep
+    fun postBackPressed() {
+        mainHandler.post {
+            UnityBackRequestHolder.request()
+        }
+    }
+}
+
+object UnityBackRequestHolder {
+    val requestVersion = mutableStateOf(0)
+
+    fun request() {
+        requestVersion.value += 1
+    }
 }
 
 data class UnityStatus(

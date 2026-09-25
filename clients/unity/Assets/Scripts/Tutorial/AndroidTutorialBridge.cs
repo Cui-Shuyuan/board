@@ -262,6 +262,58 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
+        /// Selects and loads one catalog game.  The native side has already
+        /// switched active.json to the downloaded version; clearing
+        /// tutorialRoot makes ResolveGameRoot read that active pointer.
+        /// </summary>
+        public void LoadGame(string gameId)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            player.gameId = string.IsNullOrWhiteSpace(gameId) ? "" : gameId.Trim();
+            player.tutorialRoot = "";
+            player.ReloadGame();
+            Debug.Log("[AndroidTutorialBridge] LoadGame(" + player.gameId + ") forwarded.");
+            PostStatus();
+        }
+
+        /// <summary>
+        /// Stops playback, clears the current audio and animation scene, and
+        /// leaves the runtime idle until the next LoadGame call.
+        /// </summary>
+        public void UnloadGame(string ignored)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            player.StopAndClear();
+            Debug.Log("[AndroidTutorialBridge] UnloadGame forwarded.");
+            PostStatus();
+        }
+
+        /// <summary>
+        /// Called by TutorialCuePlayer when Android back is observed in the
+        /// Unity input loop.  The native Activity owns the actual navigation.
+        /// </summary>
+        public static void NotifyNativeBack()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using (var callback = new AndroidJavaClass("com.boardai.tutorial.uaal.UnityBridgeCallback"))
+                {
+                    callback.CallStatic("postBackPressed");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[AndroidTutorialBridge] native back callback failed: " + ex.Message);
+            }
+#endif
+        }
+
+        /// <summary>
         /// Content updates are driven by the native Compose layer.  This entry
         /// point exists for protocol completeness; Unity itself has no direct
         /// reverse call into the Activity.
