@@ -53,7 +53,6 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -304,15 +303,13 @@ fun TutorialPlayerOverlay(
                     onDragStart = { offset ->
                         val currentTimeline = timelineState.value
                         val total = totalDurationState.value
-                        val center = Offset(size.width / 2f, size.height / 2f)
-                        val centerRadius = 42.dp.toPx()
-                        val inTopChrome = controlsVisible && offset.y < 92.dp.toPx()
+                        // Only the progress bar and the controls below it are
+                        // protected from screen-swipe seeking.  Everything above
+                        // (including the top row and the central play button)
+                        // remains available for horizontal picture swipes.
                         val inBottomChrome = controlsVisible &&
-                            offset.y > size.height - 185.dp.toPx()
-                        val inCenterButton = controlsVisible &&
-                            (offset - center).getDistance() < centerRadius
-                        val blocked = inTopChrome || inBottomChrome || inCenterButton
-                        if (!blocked &&
+                            offset.y >= size.height - 142.dp.toPx()
+                        if (!inBottomChrome &&
                             currentTimeline != null &&
                             currentTimeline.cueCount > 0 &&
                             total > 0f
@@ -619,14 +616,6 @@ private fun BottomControlBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color.Black.copy(alpha = 0.34f),
-                        Color.Black.copy(alpha = 0.94f)
-                    )
-                )
-            )
             .padding(horizontal = 12.dp, vertical = 10.dp)
     ) {
         val cueText = status?.cueText.orEmpty()
@@ -658,12 +647,26 @@ private fun BottomControlBar(
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        // Visual mask starts at the progress row and covers everything below it;
+        // the cue/subtitle and chapter overview area above stays unobscured.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Black.copy(alpha = 0.34f),
+                            Color.Black.copy(alpha = 0.94f)
+                        )
+                    )
+                )
         ) {
-            Text(
-                text = formatTime(scrubGlobalOr(scrubbing, scrubGlobal, shownGlobal)),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = formatTime(scrubGlobalOr(scrubbing, scrubGlobal, shownGlobal)),
                 color = Color.White,
                 fontSize = 12.sp,
                 maxLines = 1,
@@ -778,6 +781,7 @@ private fun BottomControlBar(
                 modifier = Modifier.width(64.dp),
                 onClick = onOpenChapters
             )
+            }
         }
     }
 }
