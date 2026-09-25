@@ -33,6 +33,12 @@ doc/
 backend/api_run.log
 archive/tools/qa-artifacts/
 
+# Generated content manifests (README documents the build command)
+content/manifests/*.json
+
+# Local content repository mirror / downloaded versions
+board-content/
+
 # Android UaaL POC local/generated artifacts
 clients/android/local.properties
 clients/android/.gradle/

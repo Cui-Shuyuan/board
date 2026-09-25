@@ -1,3 +1,4 @@
+using System;
 // BoardGameTutorial
 // 音频/字幕/导航外壳（v2-only）。
 //
@@ -53,6 +54,20 @@ namespace BoardGameTutorial
         };
 
         public static bool CueModeEnabled = true;
+
+        [Serializable]
+        private class ActiveContentDoc
+        {
+            public ActiveContentEntry[] games;
+        }
+
+        [Serializable]
+        private class ActiveContentEntry
+        {
+            public string game;
+            public string version;
+            public string root;
+        }
 
         private TutorialCueDoc doc;
         private string gameRoot;
@@ -160,6 +175,38 @@ namespace BoardGameTutorial
             return true;
         }
 
+        public void ReloadGame()
+        {
+            if (playbackRoutine != null)
+            {
+                StopCoroutine(playbackRoutine);
+                playbackRoutine = null;
+            }
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+                audioSource.clip = null;
+            }
+            if (v2AnimPlayer != null)
+            {
+                v2AnimPlayer.ClearScene();
+            }
+
+            doc = null;
+            gameRoot = null;
+            currentIndex = -1;
+            previousIndex = -1;
+            debugJumpReturnIndex = -1;
+            debugJumpCursor = 0;
+            inDebugJump = false;
+            isPaused = false;
+            fallbackClock = 0f;
+            currentSubtitle = "";
+
+            if (!LoadAndPlay())
+                Debug.LogWarning("[TutorialCuePlayer] ReloadGame could not load the new content root.");
+        }
+
         public bool LoadRuntime()
         {
             gameRoot = ResolveGameRoot();
@@ -195,19 +242,57 @@ namespace BoardGameTutorial
 
         private string ResolveGameRoot()
         {
+            // 1) Explicit Inspector/bridge override.  SetContentRoot passes the
+            //    version directory; gameId is still appended by this method.
             if (!string.IsNullOrEmpty(tutorialRoot))
             {
                 string custom = Path.Combine(tutorialRoot, gameId);
                 if (Directory.Exists(custom)) return custom;
                 Debug.LogWarning($"[TutorialCuePlayer] tutorialRoot does not contain {gameId}: {tutorialRoot}");
             }
+
+            // 2) Native content repository active pointer.
+            string active = ResolveActiveGameRoot();
+            if (!string.IsNullOrEmpty(active)) return active;
+
+            // 3) Legacy manual adb push target: persistentDataPath/{gameId}.
+            string persistent = Path.Combine(Application.persistentDataPath, gameId);
+            if (Directory.Exists(persistent)) return persistent;
+
+            // 4) StreamingAssets / repository fallback, useful in Editor Play.
+            string streaming = Path.Combine(Application.streamingAssetsPath, gameId);
+            if (Directory.Exists(streaming)) return streaming;
+
             string repoGames = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "..", "content", "games"));
             string repoGame = Path.Combine(repoGames, gameId);
             if (Directory.Exists(repoGame)) return repoGame;
-            string persistent = Path.Combine(Application.persistentDataPath, gameId);
-            if (Directory.Exists(persistent)) return persistent;
-            string streaming = Path.Combine(Application.streamingAssetsPath, gameId);
-            if (Directory.Exists(streaming)) return streaming;
+
+            return null;
+        }
+
+        private string ResolveActiveGameRoot()
+        {
+            try
+            {
+                string activePath = Path.Combine(Application.persistentDataPath, "board-content", "active.json");
+                if (!File.Exists(activePath)) return null;
+
+                var document = JsonUtility.FromJson<ActiveContentDoc>(File.ReadAllText(activePath));
+                if (document == null || document.games == null) return null;
+
+                foreach (var entry in document.games)
+                {
+                    if (entry == null || entry.game != gameId) continue;
+                    if (string.IsNullOrEmpty(entry.root)) continue;
+                    if (Directory.Exists(entry.root)) return entry.root;
+                    Debug.LogWarning($"[TutorialCuePlayer] active root does not exist: {entry.root}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[TutorialCuePlayer] failed to read active.json: " + ex.Message);
+            }
+
             return null;
         }
 

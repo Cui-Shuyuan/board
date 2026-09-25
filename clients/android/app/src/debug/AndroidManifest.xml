@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Debug-only plaintext HTTP for local manifest/content development.
+         Release builds keep the platform default (cleartext blocked). -->
+    <application android:usesCleartextTraffic="true" />
+</manifest>

@@ -19,3 +19,26 @@
 - 从 WSL 启动 Windows 侧服务时，**WSL 的环境变量不会自动传过去**：
   用 `cmd.exe /c "set DEEPSEEK_API_KEY=…&& D:\dotnet\dotnet.exe run …"`，
   否则服务读到空 key → `401 Authorization Required`。
+
+## 内容 manifest / 文件接口（v1）
+
+Android 内容更新 v1 使用两个只读接口，不经过 Qdrant：
+
+```text
+GET /api/content/games/{game}/manifest
+GET /api/content/games/{game}/files/{**filePath}
+```
+
+- manifest 读取 `content/manifests/{game}.json`，文件不存在返回 404 和明确 message；每次请求重新读文件，并生成基于 `Length + LastWriteTimeUtc` 的 ETag，支持 `If-None-Match`。
+- 文件接口从 `content/games/{game}/{filePath}` 流式返回，支持 Range，按扩展名设置 Content-Type。
+- 路径安全：拒绝绝对路径、`..` / `.` 段、编码的 `%2e` / `%2f` / `%5c`，并用 `Path.GetFullPath` + game 根目录前缀做第二层校验；非法路径返回 400。
+- 内容文件/ manifest 更新后无需重启 API。
+
+生成 manifest：
+
+```bash
+cd D:\workspace\board
+python3 tools/content/build_content_manifest.py --game splendor
+```
+
+输出 `content/manifests/splendor.json`（生成物不入 Git）。version 由所有文件的 `path + sha256` 排序拼接后再取 SHA-256 前 16 位，只由内容决定。

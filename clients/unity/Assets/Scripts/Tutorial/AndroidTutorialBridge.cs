@@ -116,8 +116,10 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
-        /// Reserved for the next content-loading stage. It stores the root for
-        /// TutorialCuePlayer but deliberately does not reload anything now.
+        /// Stores the content version directory for TutorialCuePlayer.
+        /// TutorialCuePlayer still appends the configured game id, so native
+        /// code passes board-content/versions/{version}/ (not .../splendor).
+        /// Call ReloadGame() afterwards to apply it.
         /// </summary>
         public void SetContentRoot(string path)
         {
@@ -125,7 +127,27 @@ namespace BoardGameTutorial
             if (player == null) return;
 
             player.tutorialRoot = path ?? "";
-            Debug.Log("[AndroidTutorialBridge] SetContentRoot stored (no reload): " + player.tutorialRoot);
+            Debug.Log("[AndroidTutorialBridge] SetContentRoot stored (call ReloadGame to apply): " + player.tutorialRoot);
+        }
+
+        public void ReloadGame()
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            player.ReloadGame();
+            Debug.Log("[AndroidTutorialBridge] ReloadGame forwarded.");
+            PostStatus();
+        }
+
+        /// <summary>
+        /// Content updates are driven by the native Compose layer.  This entry
+        /// point exists for protocol completeness; Unity itself has no direct
+        /// reverse call into the Activity.
+        /// </summary>
+        public void CheckContentUpdate()
+        {
+            Debug.Log("[AndroidTutorialBridge] CheckContentUpdate is native-driven; use the Compose button.");
         }
 
         public void SetUnityTouchControlsEnabled(string enabled)

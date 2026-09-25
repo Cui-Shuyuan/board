@@ -10,7 +10,7 @@
 - Compose 原生控制层只占顶部安全区，不永久遮挡 Unity 字幕；
 - 通过固定 GameObject `AndroidTutorialBridge` 的字符串协议控制播放。
 
-本阶段不接后端、不做内容更新、不做 ASR/TTS/问答、不拆仓、不改游戏 JSON / animation / compiled 语义。
+本阶段已接入内容 manifest / 本地内容仓库 / 增量下载 v1；仍不做 ASR/TTS/问答、不拆仓、不改游戏 JSON / animation / compiled 语义。
 
 ## 目录
 
@@ -21,11 +21,18 @@ clients/android/
   gradle.properties     AndroidX、Kotlin、Compose 通用配置
   gradlew / gradlew.bat Gradle 入口；路径不写死在 wrapper 中
   build-uaal.bat        唯一的机器路径配置块 + 固定构建顺序
+  local.properties.example  本地配置模板（真正的 local.properties 不入 Git）
   app/
     build.gradle
     src/main/AndroidManifest.xml
+    src/debug/AndroidManifest.xml          debug 明文 HTTP 配置
     src/main/java/com/boardai/tutorial/uaal/MainActivity.kt
     src/main/java/com/boardai/tutorial/uaal/UnityBridgeCallback.kt
+    src/main/java/com/boardai/tutorial/uaal/content/
+      ContentManifest.kt                  manifest JSON 模型
+      ContentStore.kt                     本地版本仓库 / active.json
+      ContentUpdater.kt                   manifest 拉取、SHA-256、增量下载
+      ContentUpdateState.kt               Compose 更新状态
 ```
 
 Unity 侧：
@@ -67,11 +74,14 @@ set GRADLE_USER_HOME=D:\gradle-home-boardai
 2. 否则回退到标准 Gradle Wrapper；
 3. `JAVA_HOME` 未设置时直接使用 `PATH` 中的 `java`。
 
-`local.properties` 由 `build-uaal.bat` 在缺失时根据 `ANDROID_HOME` 生成，不入 Git。手工维护时：
+`local.properties` 由 `build-uaal.bat` 在缺失时根据 `ANDROID_HOME` 生成，不入 Git。可复制 `local.properties.example` 后手工维护：
 
 ```properties
 sdk.dir=D:/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK
+board.api.baseUrl=http://127.0.0.1:5000
 ```
+
+`board.api.baseUrl` 通过 `BuildConfig.BOARD_API_BASE_URL` 注入；不写死 PC IP。开发时推荐真机 `adb reverse`，见下文“内容更新 v1”。
 
 ## 构建 UaaL APK
 
@@ -183,7 +193,9 @@ public const string GameObjectName = "AndroidTutorialBridge";
 | `SeekRelative` | `"-15"` / `"15"` | 相对快退/快进 |
 | `AdjustVolume` | `"-0.1"` / `"0.1"` | 相对调节音量 |
 | `SetVolume` | `"0"` ~ `"1"` | 绝对设置音量 |
-| `SetContentRoot` | path | 预留；只保存 `tutorialRoot`，本次不改变默认加载路径 |
+| `SetContentRoot` | version 目录 | 保存到 `TutorialCuePlayer.tutorialRoot`；Unity 仍会拼接 `gameId`，所以传 `board-content/versions/{version}/`，不是 `.../splendor` |
+| `ReloadGame` | `""` | 停止当前播放，重新 ResolveGameRoot + LoadAndPlay |
+| `CheckContentUpdate` | `""` | 协议占位；更新由 Compose 原生层触发 |
 | `SetUnityTouchControlsEnabled` | `"true"` / `"false"` | 启用/禁用旧 Unity IMGUI 触控层 |
 
 `TutorialCuePlayer` 新增：
@@ -191,12 +203,20 @@ public const string GameObjectName = "AndroidTutorialBridge";
 ```csharp
 public void Pause()
 public void Resume()
+public void ReloadGame()
 public void SetVolume(float value)
 public void SetUnityTouchControlsEnabled(bool enabled)
 public float Position
 public float Duration
 public bool UnityTouchControlsEnabled
 ```
+
+`TutorialCuePlayer.ResolveGameRoot()` 优先级：
+
+1. 显式 `tutorialRoot`（Android 更新成功后用 `SetContentRoot` 设置）；
+2. `Application.persistentDataPath/board-content/active.json` 中当前 game 的 `root`；
+3. 旧 fallback：`Application.persistentDataPath/{gameId}`（手动 adb push）；
+4. StreamingAssets / 仓库 `content/games/{gameId}`。
 
 ## 状态回传
 
@@ -241,27 +261,105 @@ Android 构建默认不再挂载 `TutorialTouchControls`：
 - 原生层启动后也会显式发送 `SetUnityTouchControlsEnabled("false")`；
 - 旧 Unity 独立 APK 构建入口仍保留在 `Assets/Editor/AndroidDebugBuild.cs`，使用旧包名 `com.boardai.tutorial`，不会覆盖 `com.boardai.tutorial.uaal`。
 
-## 默认内容加载
+## 内容更新 v1
 
-本阶段保持 POC 默认路径不变：
+### 生成 manifest
+
+PC 侧：
+
+```bash
+cd D:\workspace\board
+python3 tools/content/build_content_manifest.py --game splendor
+```
+
+输出：
+
+```text
+content/manifests/splendor.json
+```
+
+manifest 记录每个可运行文件的 `path / size / sha256 / url`；`version` 只由内容决定，文件不变则版本不变。生成物不入 Git。
+
+### 后端接口
+
+```text
+GET /api/content/games/{game}/manifest
+GET /api/content/games/{game}/files/{**filePath}
+```
+
+后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。
+
+### Android 本地仓库
+
+`context.getExternalFilesDir(null)/board-content/`：
+
+```text
+board-content/
+  active.json
+  versions/
+    {version}/
+      complete.json
+      splendor/
+        tutorial/
+        media/
+        concepts.json
+        ...
+```
+
+- `complete.json` 记录版本、game 和已校验文件；
+- 更新先写 `versions/{version}.partial`，全部文件 SHA-256 校验通过并写 `complete.json` 后，原子 rename 为 `versions/{version}`；
+- `active.json` 先写 `active.json.tmp`，再原子 rename；失败时保留旧 active，不删除旧版本；
+- 已存在完整同版本的旧文件会通过硬链接（失败则复制）复用，网络只下载新增/变化文件；
+- 默认保留当前版本和上一版本。
+
+### 配置服务端地址与 adb reverse
+
+`local.properties`：
+
+```properties
+board.api.baseUrl=http://127.0.0.1:5000
+```
+
+开发机执行：
+
+```bat
+%ADB% reverse tcp:5000 tcp:5000
+```
+
+App 访问 `http://127.0.0.1:5000` 即转发到 PC `5000` 端口。使用真机内网时，把 `board.api.baseUrl` 改成 PC 的局域网 IP，并放行防火墙。
+
+### 更新 UI
+
+顶部控制条显示：
+
+- 当前 active 内容版本；
+- `未检查 / 检查更新中 / 下载中 x/y · 文件 / 已是最新 / 已更新 / 更新失败`；
+- “检查更新”按钮。
+
+App 启动后自动检查一次；用户可手动检查；更新期间动画继续播放，完成后调用 bridge：
+
+```text
+SetContentRoot(board-content/versions/{version})
+ReloadGame
+```
+
+logcat TAG `BoardAI-Content` 会逐文件打印 `reuse` / `download`，便于确认增量更新只下载变化文件。
+
+### 手动内容 fallback
+
+旧的手动 push 仍可用：
 
 ```text
 Application.persistentDataPath/splendor
 ```
 
-Android 上对应：
+Android 上：
 
 ```text
 /sdcard/Android/data/com.boardai.tutorial.uaal/files/splendor
 ```
 
-推送：
-
-```bat
-set ADB=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\platform-tools\adb.exe
-%ADB% shell mkdir -p /sdcard/Android/data/com.boardai.tutorial.uaal/files
-%ADB% push D:\workspace\board\content\games\splendor /sdcard/Android/data/com.boardai.tutorial.uaal/files/
-```
+它位于 Unity active pointer 之后，因此没有新 active 版本时仍能播放。
 
 ## 安装与验收
 
@@ -319,6 +417,6 @@ ping -n 20 127.0.0.1 >nul
 ## 下一步建议
 
 - 把 `UnityBridgeCallback` 的状态字段扩展到进度条和章节树；
-- 用 `SetContentRoot` 接入下一阶段的内容 manifest / 增量下载；
+- 后续可做内容版本回滚、断点续传和更积极的旧版本清理；
 - 将 Unity 状态回传节流策略改为事件驱动，降低每 0.5 秒的 JNI 调用频率；
 - 后续如果移除 `hardwareAccelerated=false`，可以恢复 Material ripple。

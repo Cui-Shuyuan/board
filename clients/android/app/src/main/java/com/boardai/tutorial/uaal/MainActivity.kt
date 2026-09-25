@@ -2,11 +2,19 @@ package com.boardai.tutorial.uaal
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import com.boardai.tutorial.uaal.content.ContentStore
+import com.boardai.tutorial.uaal.content.ContentUpdateStateHolder
+import com.boardai.tutorial.uaal.content.ContentUpdateStatus
+import com.boardai.tutorial.uaal.content.ContentUpdateUiState
+import com.boardai.tutorial.uaal.content.ContentUpdater
+import com.boardai.tutorial.uaal.content.toDisplayText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -42,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerGameActivity
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * Kotlin + Jetpack Compose playback shell for the UaaL runtime.
@@ -55,8 +65,20 @@ import com.unity3d.player.UnityPlayerGameActivity
  */
 class MainActivity : UnityPlayerGameActivity() {
 
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val contentExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private lateinit var contentStore: ContentStore
+    private lateinit var contentUpdater: ContentUpdater
+    private var contentCheckInProgress = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        contentStore = ContentStore(this)
+        contentUpdater = ContentUpdater(this, BuildConfig.BOARD_API_BASE_URL, contentStore)
+        ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
+            activeVersion = contentStore.readActive(CONTENT_GAME_ID)?.version
+        )
 
         keepScreenOn()
         addComposeControlLayer()
@@ -66,6 +88,16 @@ class MainActivity : UnityPlayerGameActivity() {
         window.decorView.postDelayed({
             sendToUnity("SetUnityTouchControlsEnabled", "false")
         }, 1_500L)
+
+        // Auto-check once after Unity has had time to create the bridge object.
+        window.decorView.postDelayed({
+            checkContentUpdate()
+        }, 2_000L)
+    }
+
+    override fun onDestroy() {
+        contentExecutor.shutdownNow()
+        super.onDestroy()
     }
 
     override fun onResume() {
@@ -85,9 +117,12 @@ class MainActivity : UnityPlayerGameActivity() {
             setContent {
                 MaterialTheme(colorScheme = darkColorScheme()) {
                     val status = UnityStatusHolder.status.value
+                    val contentState = ContentUpdateStateHolder.state.value
                     BoardAiControls(
                         status = status,
-                        onCommand = { method, value -> sendToUnity(method, value) }
+                        contentState = contentState,
+                        onCommand = { method, value -> sendToUnity(method, value) },
+                        onCheckContentUpdate = { checkContentUpdate() }
                     )
                 }
             }
@@ -106,6 +141,48 @@ class MainActivity : UnityPlayerGameActivity() {
         }
     }
 
+    private fun checkContentUpdate() {
+        if (contentCheckInProgress) return
+        contentCheckInProgress = true
+        publishContentStatus(ContentUpdateStatus.Checking)
+
+        contentExecutor.execute {
+            val result = contentUpdater.update(CONTENT_GAME_ID) { status ->
+                mainHandler.post { publishContentStatus(status) }
+            }
+
+            mainHandler.post {
+                contentCheckInProgress = false
+                val activeVersion = when (val status = result.status) {
+                    is ContentUpdateStatus.UpToDate -> status.version
+                    is ContentUpdateStatus.Updated -> status.version
+                    else -> contentStore.readActive(CONTENT_GAME_ID)?.version
+                }
+                ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
+                    activeVersion = activeVersion,
+                    status = result.status
+                )
+
+                result.error?.let {
+                    Log.w(TAG, "content update failed; keeping previous active version", it)
+                }
+
+                if (result.changed && result.versionRoot != null) {
+                    // SetContentRoot takes the version directory; TutorialCuePlayer
+                    // still appends the game id (splendor/).
+                    sendToUnity("SetContentRoot", result.versionRoot.absolutePath)
+                    sendToUnity("ReloadGame", "")
+                }
+            }
+        }
+    }
+
+    private fun publishContentStatus(status: ContentUpdateStatus) {
+        ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
+            status = status
+        )
+    }
+
     private fun sendToUnity(method: String, value: String = "") {
         try {
             UnityPlayer.UnitySendMessage(BRIDGE_OBJECT, method, value)
@@ -117,13 +194,16 @@ class MainActivity : UnityPlayerGameActivity() {
     companion object {
         private const val TAG = "BoardAI-UaaL"
         private const val BRIDGE_OBJECT = "AndroidTutorialBridge"
+        private const val CONTENT_GAME_ID = "splendor"
     }
 }
 
 @Composable
 private fun BoardAiControls(
     status: UnityStatus?,
-    onCommand: (method: String, value: String) -> Unit
+    contentState: ContentUpdateUiState,
+    onCommand: (method: String, value: String) -> Unit,
+    onCheckContentUpdate: () -> Unit
 ) {
     var localPaused by remember { mutableStateOf(false) }
     var localVolume by remember { mutableStateOf(1f) }
@@ -222,6 +302,34 @@ private fun BoardAiControls(
                     onCommand("AdjustVolume", "0.1")
                 }
             }
+
+            Spacer(Modifier.height(6.dp))
+
+            val contentBusy = contentState.status == ContentUpdateStatus.Checking ||
+                contentState.status is ContentUpdateStatus.Downloading
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "内容 " +
+                        (contentState.activeVersion?.let { "v$it" } ?: "未激活") +
+                        " · " + contentState.status.toDisplayText(),
+                    color = ComposeColor.White.copy(alpha = 0.86f),
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(8.dp))
+                ControlButton(
+                    label = if (contentBusy) "检查中…" else "检查更新",
+                    modifier = Modifier.width(112.dp),
+                    enabled = !contentBusy,
+                    compact = true,
+                    onClick = onCheckContentUpdate
+                )
+            }
         }
     }
 }
@@ -230,28 +338,40 @@ private fun BoardAiControls(
 private fun ControlButton(
     label: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    compact: Boolean = false,
     onClick: () -> Unit
 ) {
     // Do not use a Material ripple here. The Unity Activity deliberately keeps
     // android:hardwareAccelerated=false, and Android 10's RippleDrawable cannot
     // start its RenderNodeAnimator in software-rendered windows.
     val interactionSource = remember { MutableInteractionSource() }
+    val buttonHeight = if (compact) 38.dp else 56.dp
+    val buttonFontSize = if (compact) 14.sp else 18.sp
+    val backgroundAlpha = if (enabled) 0.14f else 0.06f
+    val textColor = if (enabled) {
+        ComposeColor.White
+    } else {
+        ComposeColor.White.copy(alpha = 0.42f)
+    }
+
     Box(
         modifier = modifier
-            .height(56.dp)
+            .height(buttonHeight)
             .clip(RoundedCornerShape(12.dp))
-            .background(ComposeColor.White.copy(alpha = 0.14f))
+            .background(ComposeColor.White.copy(alpha = backgroundAlpha))
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
+                enabled = enabled,
                 onClick = onClick
             ),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            color = ComposeColor.White,
-            fontSize = 18.sp,
+            color = textColor,
+            fontSize = buttonFontSize,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

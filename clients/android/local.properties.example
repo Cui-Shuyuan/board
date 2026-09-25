@@ -1,0 +1,5 @@
+# Copy to local.properties and adjust for this machine.
+sdk.dir=D:/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK
+# BoardAI.Api base URL. Use adb reverse and keep 127.0.0.1 for USB dev:
+#   adb reverse tcp:5000 tcp:5000
+board.api.baseUrl=http://127.0.0.1:5000

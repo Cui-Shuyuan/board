@@ -67,6 +67,7 @@ public class Program
         var app = builder.Build();
 
         app.UseMiddleware<RequestIdMiddleware>();
+        app.UseMiddleware<ContentPathGuardMiddleware>();
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
