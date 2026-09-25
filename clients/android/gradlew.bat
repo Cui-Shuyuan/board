@@ -4,28 +4,40 @@ setlocal EnableExtensions
 rem ---------------------------------------------------------------------------
 rem BoardAI UaaL Gradle launcher
 rem
-rem Prefer the Gradle distribution embedded in the Unity Android player. This
-rem keeps the POC reproducible without downloading a second Gradle distribution.
-rem If no Unity Gradle installation is found, fall back to the standard wrapper.
+rem Machine-specific paths are intentionally not hard-coded here. build-uaal.bat
+rem sets them from its single configuration block (or they can be supplied by
+rem the caller). If UNITY_GRADLE_HOME is not set, fall back to the standard
+rem Gradle wrapper, which downloads the distribution declared in
+rem gradle/wrapper/gradle-wrapper.properties.
 rem ---------------------------------------------------------------------------
 
-if not defined GRADLE_USER_HOME set "GRADLE_USER_HOME=%~d0\gradle-home-boardai"
 set "APP_HOME=%~dp0"
 set "WRAPPER_JAR=%APP_HOME%gradle\wrapper\gradle-wrapper.jar"
 
-if not defined UNITY_GRADLE_HOME set "UNITY_GRADLE_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\Tools\gradle"
-if exist "%UNITY_GRADLE_HOME%\lib\gradle-launcher-9.1.0.jar" goto embedded
+if defined UNITY_GRADLE_HOME (
+    if exist "%UNITY_GRADLE_HOME%\lib\gradle-launcher-9.1.0.jar" goto embedded
+    dir /b "%UNITY_GRADLE_HOME%\lib\gradle-launcher-*.jar" >nul 2>nul && goto embedded
+)
 
-goto wrapper
+call :resolve_java
+"%JAVA_EXE%" -classpath "%WRAPPER_JAR%" org.gradle.wrapper.GradleWrapperMain %*
+exit /b %ERRORLEVEL%
 
 :embedded
-if not defined JAVA_HOME set "JAVA_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\OpenJDK"
-if exist "%JAVA_HOME%\bin\java.exe" (set "JAVA_EXE=%JAVA_HOME%\bin\java.exe") else (set "JAVA_EXE=java.exe")
+call :resolve_java
 "%JAVA_EXE%" -classpath "%UNITY_GRADLE_HOME%\lib\*;%UNITY_GRADLE_HOME%\lib\plugins\*" org.gradle.launcher.GradleMain %*
 exit /b %ERRORLEVEL%
 
-:wrapper
-if not defined JAVA_HOME set "JAVA_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\OpenJDK"
-if exist "%JAVA_HOME%\bin\java.exe" (set "JAVA_EXE=%JAVA_HOME%\bin\java.exe") else (set "JAVA_EXE=java.exe")
-"%JAVA_EXE%" -classpath "%WRAPPER_JAR%" org.gradle.wrapper.GradleWrapperMain %*
-exit /b %ERRORLEVEL%
+:resolve_java
+if defined JAVA_HOME (
+    if exist "%JAVA_HOME%\bin\java.exe" (
+        set "JAVA_EXE=%JAVA_HOME%\bin\java.exe"
+        exit /b 0
+    )
+    if exist "%JAVA_HOME%\bin\java" (
+        set "JAVA_EXE=%JAVA_HOME%\bin\java"
+        exit /b 0
+    )
+)
+set "JAVA_EXE=java.exe"
+exit /b 0

@@ -664,11 +664,14 @@ namespace UnityEditor
         public static bool buildAppBundle;
         public static bool development;
         public static bool allowDebugging;
+        public static bool exportAsGoogleAndroidProject;
         public static bool SwitchActiveBuildTarget(BuildTargetGroup targetGroup, BuildTarget target) => true;
     }
 
     public static class PlayerSettings
     {
+        public static string GetApplicationIdentifier(BuildTargetGroup targetGroup) => "";
+        public static ScriptingImplementation GetScriptingBackend(BuildTargetGroup targetGroup) => ScriptingImplementation.IL2CPP;
         public static void SetApplicationIdentifier(BuildTargetGroup targetGroup, string identifier) { }
         public static void SetScriptingBackend(BuildTargetGroup targetGroup, ScriptingImplementation backend) { }
 

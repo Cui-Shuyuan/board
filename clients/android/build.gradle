@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application' version '9.0.0' apply false
     id 'com.android.library' version '9.0.0' apply false
+    id 'com.android.built-in-kotlin' version '9.0.0' apply false
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.10' apply false
 }
 
 // Root build file for the native UaaL POC.

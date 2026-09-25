@@ -104,6 +104,16 @@ namespace BoardGameTutorial
         public int CurrentCueIndex => currentIndex;
         public int TotalCueCount => doc != null && doc.cues != null ? doc.cues.Count : 0;
         public float Volume => audioSource != null ? audioSource.volume : 1f;
+        public float Position => audioSource != null && audioSource.clip != null ? audioSource.time : 0f;
+        public float Duration => audioSource != null && audioSource.clip != null ? audioSource.clip.length : 0f;
+        public bool UnityTouchControlsEnabled
+        {
+            get
+            {
+                var controls = GetComponent<TutorialTouchControls>();
+                return controls != null && controls.enabled;
+            }
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -124,10 +134,13 @@ namespace BoardGameTutorial
             v2AnimPlayer = GetComponent<TutorialAnimPlayer>();
             if (v2AnimPlayer == null) v2AnimPlayer = gameObject.AddComponent<TutorialAnimPlayer>();
 
-            // 临时真机触控层：必须由播放器自动挂载，避免依赖场景手工绑定。
-            var touchControls = GetComponent<TutorialTouchControls>();
-            if (touchControls == null) touchControls = gameObject.AddComponent<TutorialTouchControls>();
-            touchControls.Bind(this);
+            // UaaL 正式客户端由原生 Compose 层提供控件；Android 构建默认不再
+            // 挂载旧的 Unity IMGUI 触控层，避免出现第二套控制条。
+#if UNITY_ANDROID && !UNITY_EDITOR
+            SetUnityTouchControlsEnabled(false);
+#else
+            SetUnityTouchControlsEnabled(true);
+#endif
         }
 
         private void Start()
@@ -292,24 +305,54 @@ namespace BoardGameTutorial
 
         public void TogglePause()
         {
-            if (audioSource == null || audioSource.clip == null) return;
-            if (isPaused)
-            {
-                audioSource.UnPause();
-                isPaused = false;
-            }
-            else if (audioSource.isPlaying)
-            {
-                audioSource.Pause();
-                isPaused = true;
-                UpdateSubtitle();
-            }
+            if (isPaused) Resume();
+            else Pause();
+        }
+
+        public void Pause()
+        {
+            if (audioSource == null || audioSource.clip == null || isPaused) return;
+            if (!audioSource.isPlaying) return;
+
+            audioSource.Pause();
+            isPaused = true;
+            UpdateSubtitle();
+        }
+
+        public void Resume()
+        {
+            if (audioSource == null || audioSource.clip == null || !isPaused) return;
+
+            audioSource.UnPause();
+            isPaused = false;
+        }
+
+        public void SetVolume(float value)
+        {
+            if (audioSource == null) return;
+            audioSource.volume = Mathf.Clamp01(value);
         }
 
         public void AdjustVolume(float delta)
         {
             if (audioSource == null) return;
-            audioSource.volume = Mathf.Clamp(audioSource.volume + delta, 0f, 1f);
+            SetVolume(audioSource.volume + delta);
+        }
+
+        /// <summary>
+        /// Enables or disables the legacy Unity IMGUI touch controls. Android
+        /// builds start with this off so only the native Compose layer is visible.
+        /// </summary>
+        public void SetUnityTouchControlsEnabled(bool enabled)
+        {
+            var controls = GetComponent<TutorialTouchControls>();
+            if (controls == null && enabled)
+                controls = gameObject.AddComponent<TutorialTouchControls>();
+
+            if (controls == null) return;
+
+            controls.Bind(this);
+            controls.enabled = enabled;
         }
 
         public void SeekRelative(float seconds)

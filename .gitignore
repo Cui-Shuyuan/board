@@ -37,8 +37,10 @@ archive/tools/qa-artifacts/
 clients/android/local.properties
 clients/android/.gradle/
 clients/android/.gradle-user-home/
+clients/android/.kotlin/
 clients/android/build/
 clients/android/app/build/
+clients/android/app/.cxx/
 clients/android/**/build/
 
 # Editor swap files
@@ -83,6 +85,7 @@ content/games/civolution/_review_pages/
 content/games/*/media/
 # 离屏出图与状态导出的默认落点（scratch）
 clients/unity/CaptureOut/
+clients/unity/.utmp/
 
 # 采样产物：跑 animation/dump_anim_v2.sh 生成（Unity 写、拷贝回来）。
 # 跟踪它会**每次采样都把工作区弄脏**，于是 sync_workspaces 的下一次同步会被自己的产物挡住。
