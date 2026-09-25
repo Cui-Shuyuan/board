@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.application' version '9.0.0' apply false
+    id 'com.android.library' version '9.0.0' apply false
+}
+
+// Root build file for the native UaaL POC.
+//
+// The Unity-generated project remains the source of truth for the AGP version.
+// We load its gradle.properties (written by Builds/AndroidLibrary) so the
+// external unityLibrary project receives the SDK/NDK/JDK properties it expects.
+def generatedUnityProperties = new Properties()
+def generatedUnityPropertiesFile = file('../unity/Builds/AndroidLibrary/gradle.properties')
+if (generatedUnityPropertiesFile.exists()) {
+    generatedUnityPropertiesFile.withInputStream { generatedUnityProperties.load(it) }
+} else {
+    logger.warn('[uaal] Missing ' + generatedUnityPropertiesFile.absolutePath +
+        '. Run clients/android/build-uaal.bat or the Unity export first.')
+}
+
+allprojects {
+    generatedUnityProperties.each { key, value ->
+        if (!project.hasProperty(key)) {
+            project.ext.set(key, value)
+        }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

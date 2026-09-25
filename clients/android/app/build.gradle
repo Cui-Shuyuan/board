@@ -1,0 +1,75 @@
+plugins {
+    id 'com.android.application'
+}
+
+def unityNdkPath = project.findProperty('unity.androidNdkPath')
+def unityNdkVersion = project.findProperty('unity.androidNdkVersion')
+
+android {
+    namespace 'com.boardai.tutorial.uaal'
+    compileSdk 36
+    buildToolsVersion '36.0.0'
+
+    if (unityNdkPath != null) {
+        ndkPath unityNdkPath
+    }
+    if (unityNdkVersion != null) {
+        ndkVersion unityNdkVersion
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        applicationId 'com.boardai.tutorial.uaal'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '0.1.0'
+
+        ndk {
+            abiFilters 'arm64-v8a'
+            debugSymbolLevel 'none'
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation project(':unityLibrary')
+
+    // Unity 6's generated GameActivity is built on AndroidX GameActivity.
+    // :unityLibrary has this as an implementation dependency, so expose it to
+    // this module's compile/runtime classpaths explicitly.
+    implementation 'androidx.games:games-activity:4.4.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.9.0'
+
+    // AGP does not expose a library module's implementation file dependencies
+    // (unity-classes.jar) on the consumer's compile classpath. MainActivity
+    // references UnityPlayer directly, so add it here only for compilation;
+    // the runtime copy is packaged through :unityLibrary.
+    compileOnly files(new File(project(':unityLibrary').projectDir, 'libs/unity-classes.jar'))
+}

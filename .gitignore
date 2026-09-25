@@ -33,6 +33,14 @@ doc/
 backend/api_run.log
 archive/tools/qa-artifacts/
 
+# Android UaaL POC local/generated artifacts
+clients/android/local.properties
+clients/android/.gradle/
+clients/android/.gradle-user-home/
+clients/android/build/
+clients/android/app/build/
+clients/android/**/build/
+
 # Editor swap files
 *.swp
 
