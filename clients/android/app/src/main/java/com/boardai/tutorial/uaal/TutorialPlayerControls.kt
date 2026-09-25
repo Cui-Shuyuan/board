@@ -609,12 +609,16 @@ private fun BottomControlBar(
                 target = scrubTarget,
                 modifier = Modifier.padding(bottom = 2.dp)
             )
-            ChapterOverviewBar(
-                timeline = timeline,
-                target = scrubTarget,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
         }
+
+        // Keep the chapter overview permanently available while the control
+        // layer is visible.  During scrubbing only the target segment highlight
+        // changes; the segment list itself is stable.
+        ChapterOverviewBar(
+            timeline = timeline,
+            target = if (scrubbing) scrubTarget else null,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -658,7 +662,7 @@ private fun BottomControlBar(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ControlButton(
