@@ -64,6 +64,11 @@ def build_manifest(game: str, repo_root: Path) -> dict:
     for path in content_files(game_dir):
         relative = path.relative_to(game_dir).as_posix()
         digest = sha256_file(path)
+        # The URL intentionally does not contain the manifest version yet.
+        # The API compensates with Cache-Control: no-cache + ETag so an
+        # unchanged URL cannot silently serve stale bytes.  If long-lived
+        # CDN caching is introduced later, upgrade this to a versioned route
+        # such as /api/content/games/{game}/files/{version}/{path}.
         entries.append(
             {
                 "path": relative,

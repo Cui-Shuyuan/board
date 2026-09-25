@@ -28,6 +28,7 @@ class ContentUpdater(
         onStatus: (ContentUpdateStatus) -> Unit
     ): ContentUpdateResult {
         return try {
+            Log.i(TAG, "检查更新")
             onStatus(ContentUpdateStatus.Checking)
 
             val manifest = fetchManifest(game)
@@ -80,8 +81,12 @@ class ContentUpdater(
                 throw IOException("cannot create game partial directory: ${gamePartial.absolutePath}")
             }
 
-            var completed = 0
             val total = manifest.files.size
+            val reusableIndex = store.buildReusableIndex(manifest.version, game)
+            var completed = 0
+            var reused = 0
+            var downloaded = 0
+
             onStatus(ContentUpdateStatus.Downloading(manifest.version, completed, total, ""))
 
             for (file in manifest.files) {
@@ -115,11 +120,11 @@ class ContentUpdater(
                 }
 
                 var installed = false
-                val reusable = store.findReusableSource(manifest.version, game, file)
+                val reusable = reusableIndex.find(file)
                 if (reusable != null) {
                     installed = reuseFile(reusable, target) && matches(file, target)
                     if (installed) {
-                        Log.i(TAG, "reuse ${file.path} <- ${reusable.absolutePath}")
+                        reused += 1
                     } else {
                         target.delete()
                     }
@@ -141,6 +146,7 @@ class ContentUpdater(
                         part.delete()
                         throw t
                     }
+                    downloaded += 1
                 }
 
                 completed += 1
@@ -153,6 +159,8 @@ class ContentUpdater(
                     )
                 )
             }
+
+            Log.i(TAG, "reused=$reused downloaded=$downloaded total=$total")
 
             store.writeCompleteMarker(manifest, game, partial)
 

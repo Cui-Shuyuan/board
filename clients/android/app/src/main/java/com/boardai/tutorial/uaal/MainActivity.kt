@@ -70,6 +70,7 @@ class MainActivity : UnityPlayerGameActivity() {
     private lateinit var contentStore: ContentStore
     private lateinit var contentUpdater: ContentUpdater
     private var contentCheckInProgress = false
+    private var unityReadyHandled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,17 +83,6 @@ class MainActivity : UnityPlayerGameActivity() {
 
         keepScreenOn()
         addComposeControlLayer()
-
-        // The bridge defaults to disabled on Android, but send this explicitly so
-        // the policy stays visible and can be changed later through the bridge API.
-        window.decorView.postDelayed({
-            sendToUnity("SetUnityTouchControlsEnabled", "false")
-        }, 1_500L)
-
-        // Auto-check once after Unity has had time to create the bridge object.
-        window.decorView.postDelayed({
-            checkContentUpdate()
-        }, 2_000L)
     }
 
     override fun onDestroy() {
@@ -118,6 +108,17 @@ class MainActivity : UnityPlayerGameActivity() {
                 MaterialTheme(colorScheme = darkColorScheme()) {
                     val status = UnityStatusHolder.status.value
                     val contentState = ContentUpdateStateHolder.state.value
+
+                    // Unity commands can only be delivered after the bridge
+                    // sends its first status containing unityReady=true.  The
+                    // activity-level flag makes this a one-shot event even if
+                    // Compose re-enters this effect.
+                    LaunchedEffect(status?.unityReady) {
+                        if (status?.unityReady == true) {
+                            onUnityReady()
+                        }
+                    }
+
                     BoardAiControls(
                         status = status,
                         contentState = contentState,
@@ -139,6 +140,18 @@ class MainActivity : UnityPlayerGameActivity() {
         } else {
             addContentView(composeView, params)
         }
+    }
+
+    private fun onUnityReady() {
+        if (unityReadyHandled) return
+        unityReadyHandled = true
+
+        Log.i(TAG, "Unity ready; sending initial commands")
+        // The bridge defaults to disabled on Android, but send this explicitly
+        // so the policy stays visible and can be changed later through the
+        // bridge API.
+        sendToUnity("SetUnityTouchControlsEnabled", "false")
+        checkContentUpdate()
     }
 
     private fun checkContentUpdate() {
@@ -218,7 +231,7 @@ private fun BoardAiControls(
     val paused = status?.isPaused ?: localPaused
     val volume = (status?.volume ?: localVolume).coerceIn(0f, 1f)
     val stateLabel = when {
-        status == null -> "本地状态"
+        status?.unityReady != true -> "等待 Unity…"
         paused -> "已暂停"
         status.isPlaying -> "播放中"
         else -> "加载中 / 停止"
@@ -342,9 +355,8 @@ private fun ControlButton(
     compact: Boolean = false,
     onClick: () -> Unit
 ) {
-    // Do not use a Material ripple here. The Unity Activity deliberately keeps
-    // android:hardwareAccelerated=false, and Android 10's RippleDrawable cannot
-    // start its RenderNodeAnimator in software-rendered windows.
+    // Keep the custom non-Material button for now. Round 1 only re-enables
+    // hardware acceleration; restoring the Material ripple is a follow-up.
     val interactionSource = remember { MutableInteractionSource() }
     val buttonHeight = if (compact) 38.dp else 56.dp
     val buttonFontSize = if (compact) 14.sp else 18.sp
@@ -380,7 +392,7 @@ private fun ControlButton(
 }
 
 private fun buildCueLabel(status: UnityStatus?): String? {
-    if (status == null || status.cueId.isBlank()) return null
+    if (status == null || !status.unityReady || status.cueId.isBlank()) return null
     val current = if (status.cueIndex >= 0) status.cueIndex + 1 else "?"
     val total = if (status.cueTotal > 0) status.cueTotal.toString() else "?"
     return "cue $current/$total · ${status.cueId}"

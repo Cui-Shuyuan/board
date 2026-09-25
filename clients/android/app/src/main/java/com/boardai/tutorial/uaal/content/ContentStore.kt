@@ -5,6 +5,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.util.Locale
 import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -168,24 +169,33 @@ class ContentStore(context: Context) {
     }
 
     /**
-     * Finds an existing complete version that already contains a byte-identical
-     * copy of [file].  This is what makes incremental updates possible: only
-     * changed/new files need to be fetched from the server.
+     * Builds the reuse lookup once per update run.  Each old version's
+     * complete.json is read and parsed exactly once, instead of once per
+     * manifest file.
+     *
+     * Only complete version directories for [game] are considered.  The target
+     * version and any *.partial directory are skipped.  A recorded reuse source
+     * is kept only when it still exists and its size matches complete.json.
      */
-    fun findReusableSource(targetVersion: String, game: String, file: ContentFile): File? {
+    fun buildReusableIndex(targetVersion: String, game: String): ReusableContentIndex {
+        val byPath = HashMap<String, MutableMap<String, File>>()
+
         val candidates = versionsDir.listFiles()
+            ?.asSequence()
             ?.filter {
                 it.isDirectory &&
                     !it.name.endsWith(".partial") &&
                     it.name != targetVersion
             }
             ?.sortedByDescending { it.lastModified() }
-            ?: return null
+            ?.toList()
+            ?: emptyList()
 
         for (versionDirectory in candidates) {
             val marker = File(versionDirectory, COMPLETE_MARKER)
             if (!marker.isFile) continue
 
+            // Each old version is parsed at most once during the whole update.
             val markerJson = try {
                 JSONObject(marker.readText(Charsets.UTF_8))
             } catch (_: Exception) {
@@ -196,23 +206,30 @@ class ContentStore(context: Context) {
             if (markerJson.optString("game", "") != game) continue
 
             val recordedFiles = markerJson.optJSONArray("files") ?: continue
-            var hashMatched = false
             for (i in 0 until recordedFiles.length()) {
                 val recorded = recordedFiles.optJSONObject(i) ?: continue
-                if (recorded.optString("path", "") == file.path &&
-                    recorded.optString("sha256", "").equals(file.sha256, ignoreCase = true)
-                ) {
-                    hashMatched = true
-                    break
-                }
-            }
-            if (!hashMatched) continue
+                val path = recorded.optString("path", "")
+                if (!ContentManifest.isSafeRelativePath(path)) continue
 
-            val source = File(File(versionDirectory, game), file.path)
-            if (source.isFile && source.length() == file.size) return source
+                val sha256 = recorded.optString("sha256", "")
+                if (sha256.isBlank()) continue
+
+                val recordedSize = recorded.optLong("size", -1L)
+                if (recordedSize < 0L) continue
+
+                val source = File(File(versionDirectory, game), path)
+                if (!source.isFile || source.length() != recordedSize) continue
+
+                val normalizedSha = sha256.lowercase(Locale.ROOT)
+                val byHash = byPath.getOrPut(path) { HashMap() }
+                // Candidates are newest-first, so putIfAbsent keeps the newest
+                // available copy for a given path + sha256 pair.
+                byHash.putIfAbsent(normalizedSha, source)
+            }
         }
 
-        return null
+        val immutable = byPath.mapValues { (_, byHash) -> byHash.toMap() }
+        return ReusableContentIndex(immutable)
     }
 
     /**

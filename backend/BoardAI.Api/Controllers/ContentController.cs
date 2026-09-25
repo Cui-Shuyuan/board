@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using BoardAI.Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -18,19 +19,15 @@ public class ContentController : ControllerBase
 
     private readonly string _contentRoot;
 
-    public ContentController(IConfiguration configuration, IWebHostEnvironment environment)
+    public ContentController(IConfiguration configuration)
     {
-        // Keep the same root resolution as Program.cs: Rules:BasePath is the
-        // repository root in normal local development.  Falling back to the
-        // ASP.NET content root lets a self-contained publish work too.
-        var configuredBase = configuration.GetValue<string>("Rules:BasePath");
-        _contentRoot = string.IsNullOrWhiteSpace(configuredBase)
-            ? environment.ContentRootPath
-            : configuredBase;
+        // Use the exact same portable resolution as Program.cs and
+        // GameRulesService.  Rules:BasePath remains an optional override.
+        _contentRoot = BoardPaths.ResolveBasePath(
+            configuration.GetValue<string>("Rules:BasePath"));
     }
 
     [HttpGet("manifest")]
-    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult GetManifest([FromRoute] string game)
     {
         if (!TryValidateGame(game, out var gameError))
@@ -49,16 +46,11 @@ public class ContentController : ControllerBase
         // Read fresh file metadata on every request.  No in-memory cache means a
         // regenerated manifest is picked up immediately without restarting API.
         var info = new FileInfo(manifestPath);
-        var etag = $"\"{info.Length:x}-{info.LastWriteTimeUtc.Ticks:x}\"";
-        Response.Headers.ETag = etag;
-        Response.Headers.CacheControl = "no-cache, must-revalidate";
+        var etag = BuildEtag(info);
+        ApplyCacheHeaders(etag);
 
-        if (Request.Headers.IfNoneMatch.Count > 0 &&
-            Request.Headers.IfNoneMatch.ToString().Split(',').Any(tag =>
-                string.Equals(tag.Trim(), etag, StringComparison.Ordinal) || tag.Trim() == "*"))
-        {
+        if (IsNotModified(etag))
             return StatusCode(StatusCodes.Status304NotModified);
-        }
 
         return PhysicalFile(
             manifestPath,
@@ -81,10 +73,59 @@ public class ContentController : ControllerBase
         if (!System.IO.File.Exists(fullPath))
             return NotFound(new { message = $"Content file was not found: {filePath}" });
 
+        // File URLs intentionally do not contain the manifest version yet.
+        // no-cache + ETag prevents stale bytes while keeping a future CDN
+        // upgrade path open (a versioned /files/{version}/ route is the
+        // long-term solution).
+        var info = new FileInfo(fullPath);
+        var etag = BuildEtag(info);
+        ApplyCacheHeaders(etag);
+
+        if (IsNotModified(etag))
+            return StatusCode(StatusCodes.Status304NotModified);
+
         return PhysicalFile(
             fullPath,
             ResolveContentType(fullPath),
             enableRangeProcessing: true);
+    }
+
+    private static string BuildEtag(FileInfo info) =>
+        $"\"{info.Length:x}-{info.LastWriteTimeUtc.Ticks:x}\"";
+
+    private void ApplyCacheHeaders(string etag)
+    {
+        Response.Headers.ETag = etag;
+        Response.Headers.CacheControl = "no-cache, must-revalidate";
+    }
+
+    private bool IsNotModified(string etag)
+    {
+        if (Request.Headers.IfNoneMatch.Count == 0)
+            return false;
+
+        foreach (var rawValue in Request.Headers.IfNoneMatch)
+        {
+            if (string.IsNullOrWhiteSpace(rawValue))
+                continue;
+
+            foreach (var rawTag in rawValue.Split(','))
+            {
+                var tag = rawTag.Trim();
+                if (tag == "*")
+                    return true;
+
+                // If-None-Match uses the weak comparison algorithm, so W/"..."
+                // and "..." are equivalent for this endpoint's purpose.
+                if (tag.StartsWith("W/", StringComparison.Ordinal))
+                    tag = tag[2..].Trim();
+
+                if (string.Equals(tag, etag, StringComparison.Ordinal))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     private bool TryValidateGame(string? game, out string error)

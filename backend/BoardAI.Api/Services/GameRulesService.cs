@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -29,11 +30,9 @@ public class GameRulesService
 
     public GameRulesService(IOptions<RulesOptions> options, VectorSearchService? vectorSearch = null)
     {
-        _basePath = options.Value.BasePath;
-        if (string.IsNullOrWhiteSpace(_basePath))
-        {
-            throw new InvalidOperationException("Rules:BasePath is not configured.");
-        }
+        // Rules:BasePath is an optional override; when empty, resolve the
+        // repository root with the same portable logic used by the API host.
+        _basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
         _vectorSearch = vectorSearch;
     }
 

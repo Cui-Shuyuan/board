@@ -31,11 +31,16 @@ public class Program
         builder.Services.Configure<RulesOptions>(
             builder.Configuration.GetSection("Rules"));
 
+        var boardBase = BoardPaths.GetBasePath();
+        var rulesBasePath = BoardPaths.ResolveBasePath(
+            builder.Configuration.GetValue<string>("Rules:BasePath"));
+
         // 自定义 Console Formatter：每行日志带请求 ID
         builder.Logging.AddConsoleFormatter<RequestIdConsoleFormatter, SimpleConsoleFormatterOptions>();
 
-        var modelDir = builder.Configuration.GetValue<string>("Embedding:ModelDir")
-            ?? Path.Combine(builder.Environment.ContentRootPath, "ml_models", "bge-small-zh");
+        var modelDir = BoardPaths.ResolveModelDir(
+            builder.Configuration.GetValue<string>("Embedding:ModelDir"),
+            boardBase);
         var embedder = new EmbeddingService(modelDir);
         builder.Services.AddSingleton(embedder);
 
@@ -75,10 +80,7 @@ public class Program
         app.UseStaticFiles();
 
         // 暴露 content/games/ 目录下的图片等媒体资源
-        var gamesPath = Path.Combine(
-            builder.Configuration.GetValue<string>("Rules:BasePath") ?? builder.Environment.ContentRootPath,
-            "content",
-            "games");
+        var gamesPath = Path.Combine(rulesBasePath, "content", "games");
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(gamesPath),
@@ -115,19 +117,22 @@ public class Program
 
     private static (GameRulesService, EmbeddingService, VectorSearchService) CreateRebuildServices()
     {
-        // 手动读取配置，不走 WebApplication 那套
+        // 手动读取配置，不走 WebApplication 那套。 配置从输出目录读取；
+        // 路径则交给 BoardPaths，与 Web 启动共用同一套可移植解析。
+        var boardBase = BoardPaths.GetBasePath();
         var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false)
             .Build();
 
         var rulesOptions = Options.Create(new RulesOptions
         {
-            BasePath = config.GetValue<string>("Rules:BasePath") ?? string.Empty
+            BasePath = BoardPaths.ResolveBasePath(config.GetValue<string>("Rules:BasePath"))
         });
 
-        var modelDir = config.GetValue<string>("Embedding:ModelDir")
-            ?? Path.Combine(Directory.GetCurrentDirectory(), "ml_models", "bge-small-zh");
+        var modelDir = BoardPaths.ResolveModelDir(
+            config.GetValue<string>("Embedding:ModelDir"),
+            boardBase);
         var embedder = new EmbeddingService(modelDir);
 
         var qdrantHost = config.GetValue<string>("Qdrant:Host") ?? "localhost";

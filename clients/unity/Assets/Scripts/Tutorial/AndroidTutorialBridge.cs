@@ -18,6 +18,9 @@ namespace BoardGameTutorial
 
         private const float StatusIntervalSeconds = 0.5f;
         private float nextStatusAt;
+        private bool unityReady;
+        private bool readyLogged;
+        private bool startupStatusPosted;
         private static bool statusCallbackWarned;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -28,13 +31,49 @@ namespace BoardGameTutorial
             go.AddComponent<AndroidTutorialBridge>();
         }
 
+        private void Start()
+        {
+            MarkUnityReady();
+            nextStatusAt = 0f;
+            PostStartupStatusIfPossible();
+        }
+
         private void Update()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
+            if (!unityReady)
+            {
+                MarkUnityReady();
+                nextStatusAt = 0f;
+            }
+
+            // If Start ran before TutorialCuePlayer existed, keep trying once
+            // per frame until the first ready status has been posted.
+            if (!startupStatusPosted)
+            {
+                PostStartupStatusIfPossible();
+            }
+
             if (Time.unscaledTime < nextStatusAt) return;
             nextStatusAt = Time.unscaledTime + StatusIntervalSeconds;
             PostStatus();
 #endif
+        }
+
+        private void MarkUnityReady()
+        {
+            unityReady = true;
+            if (readyLogged) return;
+            readyLogged = true;
+            Debug.Log("[AndroidTutorialBridge] unityReady");
+        }
+
+        private void PostStartupStatusIfPossible()
+        {
+            if (startupStatusPosted) return;
+            if (FindFirstObjectByType<TutorialCuePlayer>() == null) return;
+            startupStatusPosted = true;
+            PostStatus();
         }
 
         public void TogglePause()
@@ -186,7 +225,7 @@ namespace BoardGameTutorial
             return fallback;
         }
 
-        private static void PostStatus()
+        private void PostStatus()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             var player = FindFirstObjectByType<TutorialCuePlayer>();
@@ -194,6 +233,7 @@ namespace BoardGameTutorial
 
             var status = new BridgeStatus
             {
+                unityReady = unityReady,
                 isPlaying = player.IsPlaying,
                 isPaused = player.IsPaused,
                 volume = player.Volume,
@@ -228,6 +268,7 @@ namespace BoardGameTutorial
         [Serializable]
         private sealed class BridgeStatus
         {
+            public bool unityReady;
             public bool isPlaying;
             public bool isPaused;
             public float volume;

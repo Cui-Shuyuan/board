@@ -161,7 +161,14 @@ D:\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe ^
 - 大按钮 56dp 高，横向均分；
 - 按钮：暂停/继续、-15 秒、+15 秒、音量 -、音量 +；
 - 状态：播放中/已暂停、cue `当前/总数 · id`、音量百分比；
-- 避免 Material ripple：Unity Activity 的 `android:hardwareAccelerated=false` 在 Android 10 上会让 `RippleDrawable` 在软件绘制路径中崩溃，因此控制按钮使用无 ripple 的 Compose `clickable(indication = null)`。
+- 本轮已移除 `android:hardwareAccelerated=false`，让 Unity Surface 和 Compose 都走硬件加速；控制按钮暂时仍保留无 ripple 的 Compose 自定义实现，Material ripple 留作后续单独验证。
+
+Unity ready 握手：
+
+- `AndroidTutorialBridge` 在 `Start()` 后通过状态 JSON 上报 `unityReady`；
+- `MainActivity` 不再使用固定 `postDelayed` 发送 Unity 命令，而是观察 `UnityStatusHolder.status`；
+- 收到 `unityReady=true` 后只执行一次 `SetUnityTouchControlsEnabled("false")` 和 `checkContentUpdate()`；
+- Unity 未就绪时控制条状态显示“等待 Unity…”。
 
 字幕避让：
 
@@ -238,7 +245,7 @@ com.boardai.tutorial.uaal.UnityBridgeCallback.postStatus(String)
 Kotlin 侧用主线程 `Handler(Looper.getMainLooper())` 更新 Compose 状态。状态字段：
 
 ```text
-isPlaying, isPaused, volume, cueId, cueText, cueIndex, cueTotal,
+unityReady, isPlaying, isPaused, volume, cueId, cueText, cueIndex, cueTotal,
 position, duration, touchControlsEnabled
 ```
 
@@ -287,7 +294,7 @@ GET /api/content/games/{game}/manifest
 GET /api/content/games/{game}/files/{**filePath}
 ```
 
-后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。
+后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。manifest 与文件接口都返回 `Cache-Control: no-cache, must-revalidate` 和基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；当前 URL 不带 version，未来若做 CDN 或长期缓存应升级为 versioned URL。
 
 ### Android 本地仓库
 
@@ -309,7 +316,7 @@ board-content/
 - `complete.json` 记录版本、game 和已校验文件；
 - 更新先写 `versions/{version}.partial`，全部文件 SHA-256 校验通过并写 `complete.json` 后，原子 rename 为 `versions/{version}`；
 - `active.json` 先写 `active.json.tmp`，再原子 rename；失败时保留旧 active，不删除旧版本；
-- 已存在完整同版本的旧文件会通过硬链接（失败则复制）复用，网络只下载新增/变化文件；
+- 下载循环开始前一次性建立旧版本复用索引（`path -> sha256 -> File`）；每个旧版本只读取、解析一次 `complete.json`，循环内只查索引，网络只下载新增/变化文件；
 - 默认保留当前版本和上一版本。
 
 ### 配置服务端地址与 adb reverse
@@ -336,14 +343,14 @@ App 访问 `http://127.0.0.1:5000` 即转发到 PC `5000` 端口。使用真机�
 - `未检查 / 检查更新中 / 下载中 x/y · 文件 / 已是最新 / 已更新 / 更新失败`；
 - “检查更新”按钮。
 
-App 启动后自动检查一次；用户可手动检查；更新期间动画继续播放，完成后调用 bridge：
+App 启动后，Unity 回传 `unityReady=true` 后自动检查一次；用户可手动检查；更新期间动画继续播放，完成后调用 bridge：
 
 ```text
 SetContentRoot(board-content/versions/{version})
 ReloadGame
 ```
 
-logcat TAG `BoardAI-Content` 会逐文件打印 `reuse` / `download`，便于确认增量更新只下载变化文件。
+logcat TAG `BoardAI-Content` 会输出 `检查更新` 和最终汇总（例如 `reused=328 downloaded=1 total=329`）；不再逐文件打印 reuse 日志。
 
 ### 手动内容 fallback
 
@@ -419,4 +426,4 @@ ping -n 20 127.0.0.1 >nul
 - 把 `UnityBridgeCallback` 的状态字段扩展到进度条和章节树；
 - 后续可做内容版本回滚、断点续传和更积极的旧版本清理；
 - 将 Unity 状态回传节流策略改为事件驱动，降低每 0.5 秒的 JNI 调用频率；
-- 后续如果移除 `hardwareAccelerated=false`，可以恢复 Material ripple。
+- 后续可在较新 Android 版本上单独恢复 Material ripple 并做对比验证。

@@ -29,6 +29,7 @@ object UnityBridgeCallback {
 }
 
 data class UnityStatus(
+    val unityReady: Boolean = false,
     val isPlaying: Boolean = false,
     val isPaused: Boolean = false,
     val volume: Float = 1f,
@@ -48,6 +49,7 @@ object UnityStatusHolder {
         try {
             val obj = JSONObject(json)
             status.value = UnityStatus(
+                unityReady = obj.optBoolean("unityReady", false),
                 isPlaying = obj.optBoolean("isPlaying", false),
                 isPaused = obj.optBoolean("isPaused", false),
                 volume = obj.optDouble("volume", 1.0).toFloat().coerceIn(0f, 1f),

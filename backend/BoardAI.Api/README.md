@@ -7,18 +7,38 @@
 
 ## 运行
 
-本项目使用 .NET 9 SDK，安装位置：`D:\dotnet`
+本项目使用 .NET 9 SDK。
 
 直接双击项目目录下的 `start.bat`，或在终端执行：
 
 ```bash
 cd backend/BoardAI.Api
-D:\dotnet\dotnet.exe run --urls "http://localhost:5000"
+dotnet run --urls "http://0.0.0.0:5000"
 ```
 
-默认监听 `http://localhost:5000`。
+默认监听 `http://localhost:5000`；`start.bat` 可通过 `DOTNET_EXE`、`BOARD_API_URLS`、`QDRANT_EXE` 等环境变量覆盖本机工具路径。
 
-> 如果你已经在系统 PATH 里加了 `D:\dotnet`，也可以直接用 `dotnet run`。
+## 可移植路径配置
+
+`appsettings.json` 不再保存机器绝对路径。服务端统一通过 `Infrastructure/BoardPaths.cs` 解析：
+
+1. 优先读取环境变量 `BOARD_BASE_PATH`；
+2. 否则从 `AppContext.BaseDirectory` 向上查找同时包含 `content/games` 和 `backend` 的仓库根；
+3. 否则回退到 `Directory.GetCurrentDirectory()`。
+
+然后：
+
+- `Rules:BasePath` 是可选的显式覆盖；为空时使用上面的仓库根。相对路径按仓库根解析。
+- `Embedding:ModelDir` 为空时默认使用 `{仓库根}/backend/BoardAI.Api/ml_models/bge-base-zh-v1.5-fp32`；相对路径按仓库根解析，绝对路径原样使用。
+- `ContentController`、`Program.cs`、`GameRulesService` 共用同一套解析逻辑。
+
+示例：
+
+```bash
+set BOARD_BASE_PATH=D:\path\to\board
+set Embedding__ModelDir=D:\models\bge-base-zh-v1.5-fp32
+dotnet run --urls "http://0.0.0.0:5000"
+```
 
 ## 配置 LLM
 
@@ -91,10 +111,23 @@ curl -s "http://localhost:5000/api/rules/games/splendor/actions/take_gems_same/c
 curl -s "http://localhost:5000/api/rules/games/splendor/search?q=%E8%B4%B5%E6%97%8F"
 ```
 
+## 内容接口缓存
+
+`GET /api/content/games/{game}/manifest` 和 `GET /api/content/games/{game}/files/{**filePath}` 都返回：
+
+```text
+Cache-Control: no-cache, must-revalidate
+ETag: "<length-x>-<lastWriteTimeUtcTicks-x>"
+```
+
+并支持 `If-None-Match` 返回 `304 Not Modified`。当前文件 URL 不含 version，未来若引入 CDN/长期缓存，应升级为 versioned URL（例如 `/files/{version}/...`）。
+
 ## 项目结构
 
 - `Controllers/ChatController.cs`：Chat HTTP 入口
 - `Controllers/RulesController.cs`：规则查询 HTTP 入口
+- `Controllers/ContentController.cs`：manifest / 内容文件只读接口
+- `Infrastructure/BoardPaths.cs`：可移植仓库路径解析
 - `Services/ILLMService.cs`：LLM 抽象
 - `Services/DeepSeekLLMService.cs`：DeepSeek v4 Pro 实现
 - `Services/GameRulesService.cs`：读取 ontology / game JSON 规则
