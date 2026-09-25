@@ -69,6 +69,7 @@ import com.boardai.tutorial.uaal.timeline.TimelineTarget
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 import kotlinx.coroutines.delay
 import java.util.Locale
+import kotlin.math.abs
 
 private data class ChapterRow(
     val node: ChapterNode,
@@ -103,6 +104,13 @@ fun TutorialPlayerOverlay(
     var localVolume by remember { mutableFloatStateOf(1f) }
     var volumeDragging by remember { mutableStateOf(false) }
 
+    // Optimistic seek display.  When the user commits a scrub, keep showing the
+    // requested position until Unity sends a status that reflects the new cue /
+    // position.  This prevents the handle from flashing back to the old anchor.
+    var pendingSeekTarget by remember { mutableStateOf<TimelineTarget?>(null) }
+    var pendingSeekGlobal by remember { mutableFloatStateOf(0f) }
+    var pendingSeekStartedAt by remember { mutableLongStateOf(0L) }
+
     // Native smoothing anchor.  Unity posts roughly every 0.5 s; between posts
     // we advance the displayed cue-local position from the last known anchor.
     var anchorPosition by remember { mutableFloatStateOf(0f) }
@@ -132,6 +140,19 @@ fun TutorialPlayerOverlay(
         anchorCueIndex = current.cueIndex
         receivedAtMs = SystemClock.elapsedRealtime()
         frameNowMs = receivedAtMs
+
+        val pending = pendingSeekTarget
+        if (pending != null) {
+            val sameCue = current.cueIndex == pending.targetCue.index
+            val closeEnough = abs(current.position - pending.localSeconds) <= 1.5f
+            val elapsed = SystemClock.elapsedRealtime() - pendingSeekStartedAt
+            val timedOut = elapsed > 1500L
+            // Ignore a status that was already in flight before the scrub.
+            if ((sameCue && closeEnough && elapsed > 250L) || timedOut) {
+                pendingSeekTarget = null
+                pendingSeekGlobal = 0f
+            }
+        }
     }
 
     val isActuallyPlaying = status?.isPlaying == true && !paused
@@ -157,7 +178,11 @@ fun TutorialPlayerOverlay(
     } else {
         interpolatedLocal.coerceIn(0f, totalDuration.coerceAtLeast(0f))
     }
-    val shownGlobal = if (scrubbing) scrubGlobal else displayGlobal
+    val shownGlobal = when {
+        scrubbing -> scrubGlobal
+        pendingSeekTarget != null -> pendingSeekGlobal
+        else -> displayGlobal
+    }
     val progressTotal = totalDuration.coerceAtLeast(1f)
 
     fun revealControls() {
@@ -170,13 +195,24 @@ fun TutorialPlayerOverlay(
         if (paused) onCommand("Resume", "") else onCommand("Pause", "")
     }
 
+    fun rememberOptimisticSeek(target: TimelineTarget, timelineForMapped: TutorialTimeline?) {
+        pendingSeekTarget = target
+        pendingSeekGlobal = timelineForMapped?.cueIndexToGlobal(
+            target.targetCue.index,
+            target.localSeconds
+        ) ?: target.targetCue.start
+        pendingSeekStartedAt = SystemClock.elapsedRealtime()
+    }
+
     fun seekBy(seconds: Float, reveal: Boolean) {
         val base = if (scrubbing) scrubGlobal else shownGlobal
         val currentTimeline = timeline
         if (currentTimeline != null && currentTimeline.cueCount > 0) {
             val desired = (base + seconds).coerceIn(0f, currentTimeline.totalDuration)
+            val target = currentTimeline.globalToCue(desired)
+            rememberOptimisticSeek(target, currentTimeline)
             sendTimelineSeek(
-                target = currentTimeline.globalToCue(desired),
+                target = target,
                 currentCueIndex = currentCueIndex,
                 send = onCommand,
                 startPaused = paused
@@ -239,6 +275,7 @@ fun TutorialPlayerOverlay(
         val currentIndex = statusState.value?.cueIndex ?: -1
         val startPaused = statusState.value?.isPaused == true
         if (target != null) {
+            rememberOptimisticSeek(target, currentTimeline)
             sendTimelineSeek(
                 target = target,
                 currentCueIndex = currentIndex,
@@ -418,6 +455,7 @@ fun TutorialPlayerOverlay(
                         scrubTarget
                     }
                     if (target != null) {
+                        rememberOptimisticSeek(target, currentTimeline)
                         sendTimelineSeek(
                             target = target,
                             currentCueIndex = currentCueIndex,
