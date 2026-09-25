@@ -1,10 +1,10 @@
 # embedding （确保qdrant进程正在运行）
 
 ## 单个游戏
-D:\Python\Python312\python.exe D:\workspace\board\scripts\rebuild_index.py --game <game_name>
+D:\Python\Python312\python.exe D:\workspace\board\tools\indexing\rebuild_index.py --game <game_name>
 
 ## 全部游戏
-D:\Python\Python312\python.exe D:\workspace\board\scripts\rebuild_index.py --all
+D:\Python\Python312\python.exe D:\workspace\board\tools\indexing\rebuild_index.py --all
 
 # 启动服务
 
