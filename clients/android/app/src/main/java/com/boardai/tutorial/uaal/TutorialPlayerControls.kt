@@ -644,7 +644,7 @@ private fun BottomControlBar(
         ChapterOverviewBar(
             timeline = timeline,
             target = if (scrubbing) scrubTarget else null,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp, start = 12.dp, end = 12.dp)
         )
 
         // Visual mask starts at the progress row and covers everything below it;
@@ -661,18 +661,6 @@ private fun BottomControlBar(
                     )
                 )
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = formatTime(scrubGlobalOr(scrubbing, scrubGlobal, shownGlobal)),
-                color = Color.White,
-                fontSize = 12.sp,
-                maxLines = 1,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.width(56.dp)
-            )
             Slider(
                 value = (if (scrubbing) scrubGlobal else shownGlobal)
                     .coerceIn(0f, progressTotal),
@@ -685,19 +673,8 @@ private fun BottomControlBar(
                 onValueChangeFinished = {
                     if (status?.unityReady == true) onScrubFinished()
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             )
-            Text(
-                text = formatTime(totalDuration),
-                color = Color.White,
-                fontSize = 12.sp,
-                maxLines = 1,
-                textAlign = TextAlign.End,
-                modifier = Modifier.width(56.dp)
-            )
-        }
 
         Spacer(Modifier.height(4.dp))
 
@@ -735,6 +712,14 @@ private fun BottomControlBar(
                 compact = true,
                 modifier = Modifier.width(52.dp),
                 onClick = onNext
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "${formatTime(shownGlobal)} / ${formatTime(totalDuration)}",
+                color = Color.White.copy(alpha = 0.86f),
+                fontSize = 12.sp,
+                maxLines = 1,
+                textAlign = TextAlign.End
             )
         }
 
