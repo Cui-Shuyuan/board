@@ -565,6 +565,15 @@ namespace UnityEngine
         public static void DrawTexture(Rect r, Texture2D tex) { }
     }
 
+    public class Event
+    {
+        public static Event current => null;
+        public EventType type;
+        public Vector2 mousePosition;
+    }
+
+    public enum EventType { MouseDown, MouseUp, Repaint, Layout }
+
     public class WaitForSeconds : YieldInstruction { public WaitForSeconds(float seconds) { } }
     public class WaitForSecondsRealtime : CustomYieldInstruction { public WaitForSecondsRealtime(float seconds) { } public override bool keepWaiting => false; }
     public class WaitForEndOfFrame : YieldInstruction { }
@@ -803,6 +812,18 @@ namespace UnityEngine.InputSystem
         public static Pointer current => null;
         public Vector2Control position = new Vector2Control();
         public ButtonControl press = new ButtonControl();
+    }
+
+    public class TouchControl
+    {
+        public Vector2Control position = new Vector2Control();
+        public ButtonControl press = new ButtonControl();
+    }
+
+    public class Touchscreen : Pointer
+    {
+        public new static Touchscreen current => null;
+        public TouchControl primaryTouch = new TouchControl();
     }
 
     public class KeyControl { public bool wasPressedThisFrame; public bool isPressed; }

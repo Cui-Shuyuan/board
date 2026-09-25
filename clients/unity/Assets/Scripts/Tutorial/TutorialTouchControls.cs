@@ -75,26 +75,80 @@ namespace BoardGameTutorial
             Screen.sleepTimeout = SleepTimeout.SystemSetting;
         }
 
+        private bool inputSystemHandledPointer;
+        private bool inputSystemHandledRelease;
+
         private void Update()
         {
             RefreshLayout();
+            inputSystemHandledPointer = false;
+            inputSystemHandledRelease = false;
 #if ENABLE_INPUT_SYSTEM
-            var pointer = Pointer.current;
-            if (pointer == null) return;
-            Vector2 position = pointer.position.ReadValue();
-            if (pointer.press.wasPressedThisFrame) OnPointerDown(position);
-            if (pointer.press.wasReleasedThisFrame) OnPointerUp(position);
+            PollInputSystem();
 #else
-            if (Input.GetMouseButtonDown(0))
-                OnPointerDown(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-            if (Input.GetMouseButtonUp(0))
-                OnPointerUp(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+            PollLegacyInput();
 #endif
         }
+
+#if ENABLE_INPUT_SYSTEM
+        private void PollInputSystem()
+        {
+            // Android 触摸必须读 primaryTouch。Touchscreen 顶层的 Pointer.press/position
+            // 是 stateFrom primaryTouch 的合成控件，直接拿 Pointer.current.press 的
+            // wasPressedThisFrame 在部分 Unity / Input System 版本上不可靠。
+            var touchscreen = Touchscreen.current;
+            if (touchscreen != null)
+            {
+                var touch = touchscreen.primaryTouch;
+                Vector2 touchPosition = ToGuiPosition(touch.position.ReadValue());
+                if (touch.press.wasPressedThisFrame)
+                {
+                    inputSystemHandledPointer = true;
+                    OnPointerDown(touchPosition);
+                }
+                if (touch.press.wasReleasedThisFrame)
+                {
+                    inputSystemHandledRelease = true;
+                    OnPointerUp(touchPosition);
+                }
+                return;
+            }
+
+            var pointer = Pointer.current;
+            if (pointer == null) return;
+            Vector2 position = ToGuiPosition(pointer.position.ReadValue());
+            if (pointer.press.wasPressedThisFrame)
+            {
+                inputSystemHandledPointer = true;
+                OnPointerDown(position);
+            }
+            if (pointer.press.wasReleasedThisFrame)
+            {
+                inputSystemHandledRelease = true;
+                OnPointerUp(position);
+            }
+        }
+#else
+        private void PollLegacyInput()
+        {
+            if (Input.GetMouseButtonDown(0))
+                OnPointerDown(ToGuiPosition(new Vector2(Input.mousePosition.x, Input.mousePosition.y)));
+            if (Input.GetMouseButtonUp(0))
+                OnPointerUp(ToGuiPosition(new Vector2(Input.mousePosition.x, Input.mousePosition.y)));
+        }
+#endif
 
         private void OnPointerDown(Vector2 position)
         {
             activeButton = HitTest(position);
+            Debug.Log($"[TutorialTouchControls] pointer down pos={position} hit={activeButton}");
+        }
+
+        private static Vector2 ToGuiPosition(Vector2 screenPosition)
+        {
+            // Input System / Input.mousePosition 使用屏幕坐标（原点左下），
+            // OnGUI 和 Event.mousePosition 使用 GUI 坐标（原点左上）。
+            return new Vector2(screenPosition.x, Screen.height - screenPosition.y);
         }
 
         private void OnPointerUp(Vector2 position)
@@ -124,6 +178,7 @@ namespace BoardGameTutorial
             if (player == null) player = GetComponent<TutorialCuePlayer>();
             if (player == null) return;
 
+            Debug.Log($"[TutorialTouchControls] tap button {index}: {buttonLabels[index]}");
             switch (index)
             {
                 case 0: player.TogglePause(); break;
@@ -168,6 +223,7 @@ namespace BoardGameTutorial
             if (!enabled) return;
             EnsureResources();
             RefreshLayout();
+            HandleImGuiFallback();
 
             GUI.DrawTexture(panelRect, panelTexture);
             GUI.Label(statusRect, BuildStatusText(), statusStyle);
@@ -179,6 +235,19 @@ namespace BoardGameTutorial
                 buttonStyle.fontSize = Mathf.RoundToInt(fontSize);
                 GUI.Label(buttonRects[i], buttonLabels[i], buttonStyle);
             }
+        }
+
+        private void HandleImGuiFallback()
+        {
+            // Input System 没有拿到 press/release 时，再用 IMGUI 的鼠标事件兜底。
+            // 仍不使用 GUI.Button；这里只做命中测试。
+            if (inputSystemHandledPointer || inputSystemHandledRelease) return;
+            Event evt = Event.current;
+            if (evt == null) return;
+            if (evt.type == EventType.MouseDown)
+                OnPointerDown(evt.mousePosition);
+            else if (evt.type == EventType.MouseUp)
+                OnPointerUp(evt.mousePosition);
         }
 
         private void EnsureResources()
