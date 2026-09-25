@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -264,6 +265,16 @@ fun TutorialPlayerOverlay(
     val totalDurationState = rememberUpdatedState(totalDuration)
     val onCommandState = rememberUpdatedState(onCommand)
 
+    val chapterCue = when {
+        scrubbing -> scrubTarget?.targetCue
+        pendingSeekTarget != null -> pendingSeekTarget?.targetCue
+        else -> timeline?.cueAt(currentCueIndex)
+    }
+    val chapterPathText = chapterCue
+        ?.groupPath
+        ?.joinToString(" > ")
+        ?.takeIf { it.isNotBlank() }
+
     fun finishScrubFromGesture() {
         val currentTimeline = timelineState.value
         val target = if (currentTimeline != null && currentTimeline.cueCount > 0) {
@@ -381,8 +392,6 @@ fun TutorialPlayerOverlay(
     ) {
         if (controlsVisible || scrubbing) {
             TopControlRow(
-                status = status,
-                timedOut = !unityReady,
                 onOpenContent = {
                     revealControls()
                     showContentPanel = true
@@ -470,6 +479,24 @@ fun TutorialPlayerOverlay(
             )
         }
 
+        if (unityReady && !chapterPathText.isNullOrBlank()) {
+            Text(
+                text = chapterPathText,
+                color = Color.White,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 12.dp, top = 8.dp)
+                    .widthIn(max = 420.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.Black.copy(alpha = 0.42f))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+
         seekFlash?.let { flash ->
             Box(
                 modifier = Modifier
@@ -508,8 +535,6 @@ fun TutorialPlayerOverlay(
 
 @Composable
 private fun TopControlRow(
-    status: UnityStatus?,
-    timedOut: Boolean,
     onOpenContent: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -527,28 +552,7 @@ private fun TopControlRow(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "BoardAI · ${buildStateLabel(status, timedOut)}",
-            color = Color.White,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        val cueLabel = buildCueLabel(status)
-        if (!cueLabel.isNullOrBlank()) {
-            Spacer(Modifier.width(10.dp))
-            Text(
-                text = cueLabel,
-                color = Color.White.copy(alpha = 0.82f),
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-        } else {
-            Spacer(Modifier.weight(1f))
-        }
+        Spacer(Modifier.weight(1f))
         ControlButton(
             label = "内容",
             compact = true,
@@ -628,13 +632,6 @@ private fun BottomControlBar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(bottom = 4.dp)
-            )
-        }
-
-        if (scrubbing) {
-            ChapterRibbon(
-                target = scrubTarget,
-                modifier = Modifier.padding(bottom = 2.dp)
             )
         }
 
@@ -796,30 +793,6 @@ private fun buildChapterSegments(timeline: TutorialTimeline): List<ChapterSegmen
             durationSeconds = (end - start).coerceAtLeast(0.1f)
         )
     }
-}
-
-@Composable
-private fun ChapterRibbon(
-    target: TimelineTarget?,
-    modifier: Modifier = Modifier
-) {
-    val chapterText = target?.targetCue
-        ?.groupPath
-        ?.joinToString(" > ")
-        ?.takeIf { it.isNotBlank() }
-        ?: return
-
-    Text(
-        text = chapterText,
-        color = Color.White.copy(alpha = 0.90f),
-        fontSize = 11.sp,
-        fontWeight = FontWeight.Medium,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 2.dp)
-    )
 }
 
 @Composable
@@ -1170,20 +1143,6 @@ private fun scrubGlobalOr(
     scrubGlobal: Float,
     displayGlobal: Float
 ): Float = if (scrubbing) scrubGlobal else displayGlobal
-
-private fun buildStateLabel(status: UnityStatus?, timedOut: Boolean): String = when {
-    timedOut -> "等待 Unity…"
-    status?.isPaused == true -> "已暂停"
-    status?.isPlaying == true -> "播放中"
-    else -> "加载中 / 停止"
-}
-
-private fun buildCueLabel(status: UnityStatus?): String? {
-    if (status == null || !status.unityReady || status.cueId.isBlank()) return null
-    val current = if (status.cueIndex >= 0) status.cueIndex + 1 else "?"
-    val total = if (status.cueTotal > 0) status.cueTotal.toString() else "?"
-    return "cue $current/$total · ${status.cueId}"
-}
 
 private fun pathKey(path: List<String>): String =
     path.joinToString(ChapterNode.CHAPTER_KEY_SEPARATOR)
