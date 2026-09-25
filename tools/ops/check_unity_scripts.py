@@ -565,15 +565,6 @@ namespace UnityEngine
         public static void DrawTexture(Rect r, Texture2D tex) { }
     }
 
-    public class Event
-    {
-        public static Event current => null;
-        public EventType type;
-        public Vector2 mousePosition;
-    }
-
-    public enum EventType { MouseDown, MouseUp, Repaint, Layout }
-
     public class WaitForSeconds : YieldInstruction { public WaitForSeconds(float seconds) { } }
     public class WaitForSecondsRealtime : CustomYieldInstruction { public WaitForSecondsRealtime(float seconds) { } public override bool keepWaiting => false; }
     public class WaitForEndOfFrame : YieldInstruction { }

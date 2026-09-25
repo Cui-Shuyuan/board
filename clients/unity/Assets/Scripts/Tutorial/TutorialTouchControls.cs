@@ -75,14 +75,9 @@ namespace BoardGameTutorial
             Screen.sleepTimeout = SleepTimeout.SystemSetting;
         }
 
-        private bool inputSystemHandledPointer;
-        private bool inputSystemHandledRelease;
-
         private void Update()
         {
             RefreshLayout();
-            inputSystemHandledPointer = false;
-            inputSystemHandledRelease = false;
 #if ENABLE_INPUT_SYSTEM
             PollInputSystem();
 #else
@@ -103,12 +98,10 @@ namespace BoardGameTutorial
                 Vector2 touchPosition = ToGuiPosition(touch.position.ReadValue());
                 if (touch.press.wasPressedThisFrame)
                 {
-                    inputSystemHandledPointer = true;
                     OnPointerDown(touchPosition);
                 }
                 if (touch.press.wasReleasedThisFrame)
                 {
-                    inputSystemHandledRelease = true;
                     OnPointerUp(touchPosition);
                 }
                 return;
@@ -119,12 +112,10 @@ namespace BoardGameTutorial
             Vector2 position = ToGuiPosition(pointer.position.ReadValue());
             if (pointer.press.wasPressedThisFrame)
             {
-                inputSystemHandledPointer = true;
                 OnPointerDown(position);
             }
             if (pointer.press.wasReleasedThisFrame)
             {
-                inputSystemHandledRelease = true;
                 OnPointerUp(position);
             }
         }
@@ -147,7 +138,7 @@ namespace BoardGameTutorial
         private static Vector2 ToGuiPosition(Vector2 screenPosition)
         {
             // Input System / Input.mousePosition 使用屏幕坐标（原点左下），
-            // OnGUI 和 Event.mousePosition 使用 GUI 坐标（原点左上）。
+            // OnGUI 的 Rect 使用 GUI 坐标（原点左上）。
             return new Vector2(screenPosition.x, Screen.height - screenPosition.y);
         }
 
@@ -223,7 +214,6 @@ namespace BoardGameTutorial
             if (!enabled) return;
             EnsureResources();
             RefreshLayout();
-            HandleImGuiFallback();
 
             GUI.DrawTexture(panelRect, panelTexture);
             GUI.Label(statusRect, BuildStatusText(), statusStyle);
@@ -235,19 +225,6 @@ namespace BoardGameTutorial
                 buttonStyle.fontSize = Mathf.RoundToInt(fontSize);
                 GUI.Label(buttonRects[i], buttonLabels[i], buttonStyle);
             }
-        }
-
-        private void HandleImGuiFallback()
-        {
-            // Input System 没有拿到 press/release 时，再用 IMGUI 的鼠标事件兜底。
-            // 仍不使用 GUI.Button；这里只做命中测试。
-            if (inputSystemHandledPointer || inputSystemHandledRelease) return;
-            Event evt = Event.current;
-            if (evt == null) return;
-            if (evt.type == EventType.MouseDown)
-                OnPointerDown(evt.mousePosition);
-            else if (evt.type == EventType.MouseUp)
-                OnPointerUp(evt.mousePosition);
         }
 
         private void EnsureResources()
