@@ -2,6 +2,7 @@ package com.boardai.tutorial.uaal
 
 import android.os.SystemClock
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +53,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -261,10 +264,19 @@ fun TutorialPlayerOverlay(
                 var dragAccumulatedX = 0f
 
                 detectHorizontalDragGestures(
-                    onDragStart = {
+                    onDragStart = { offset ->
                         val currentTimeline = timelineState.value
                         val total = totalDurationState.value
-                        if (currentTimeline != null &&
+                        val center = Offset(size.width / 2f, size.height / 2f)
+                        val centerRadius = 42.dp.toPx()
+                        val inTopChrome = controlsVisible && offset.y < 92.dp.toPx()
+                        val inBottomChrome = controlsVisible &&
+                            offset.y > size.height - 185.dp.toPx()
+                        val inCenterButton = controlsVisible &&
+                            (offset - center).getDistance() < centerRadius
+                        val blocked = inTopChrome || inBottomChrome || inCenterButton
+                        if (!blocked &&
+                            currentTimeline != null &&
                             currentTimeline.cueCount > 0 &&
                             total > 0f
                         ) {
@@ -322,9 +334,8 @@ fun TutorialPlayerOverlay(
                         }
                     },
                     onDoubleTap = {
-                        // Double-tap anywhere is play/pause, matching video sites.
-                        controlsVisible = true
-                        controlGeneration++
+                        // Double-tap anywhere is play/pause and intentionally
+                        // leaves the control chrome exactly as it is.
                         val currentlyPaused = statusState.value?.isPaused == true
                         onCommandState.value(
                             if (currentlyPaused) "Resume" else "Pause",
@@ -472,7 +483,10 @@ private fun TopControlRow(
             .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color.Black.copy(alpha = 0.68f), Color.Transparent)
+                    listOf(
+                        Color.Black.copy(alpha = 0.82f),
+                        Color.Black.copy(alpha = 0.28f)
+                    )
                 )
             )
             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -503,7 +517,7 @@ private fun TopControlRow(
         ControlButton(
             label = "内容",
             compact = true,
-            modifier = Modifier.width(72.dp),
+            modifier = Modifier.width(64.dp),
             onClick = onOpenContent
         )
     }
@@ -519,7 +533,7 @@ private fun CenterPlayPause(
     val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
-            .size(64.dp)
+            .size(52.dp)
             .clip(CircleShape)
             .background(Color.Black.copy(alpha = if (enabled) 0.55f else 0.28f))
             .clickable(
@@ -533,7 +547,7 @@ private fun CenterPlayPause(
         Text(
             text = if (paused) "▶" else "❚❚",
             color = Color.White.copy(alpha = if (enabled) 1f else 0.4f),
-            fontSize = 26.sp,
+            fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
     }
@@ -569,7 +583,10 @@ private fun BottomControlBar(
             .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black.copy(alpha = 0.88f))
+                    listOf(
+                        Color.Black.copy(alpha = 0.34f),
+                        Color.Black.copy(alpha = 0.94f)
+                    )
                 )
             )
             .padding(horizontal = 12.dp, vertical = 10.dp)
@@ -589,9 +606,12 @@ private fun BottomControlBar(
 
         if (scrubbing) {
             ChapterRibbon(
+                target = scrubTarget,
+                modifier = Modifier.padding(bottom = 2.dp)
+            )
+            ChapterOverviewBar(
                 timeline = timeline,
                 target = scrubTarget,
-                globalSeconds = scrubGlobal,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
         }
@@ -638,37 +658,37 @@ private fun BottomControlBar(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ControlButton(
                 label = if (paused) "▶" else "❚❚",
                 compact = true,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.width(52.dp),
                 onClick = onTogglePlayPause
             )
             ControlButton(
                 label = "⏮",
                 compact = true,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.width(52.dp),
                 onClick = onPrevious
             )
             ControlButton(
                 label = "-15",
                 compact = true,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.width(52.dp),
                 onClick = { onSeekRelative(-15f) }
             )
             ControlButton(
                 label = "+15",
                 compact = true,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.width(52.dp),
                 onClick = { onSeekRelative(15f) }
             )
             ControlButton(
                 label = "⏭",
                 compact = true,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.width(52.dp),
                 onClick = onNext
             )
         }
@@ -713,54 +733,117 @@ private fun BottomControlBar(
             ControlButton(
                 label = "章节",
                 compact = true,
-                modifier = Modifier.width(72.dp),
+                modifier = Modifier.width(64.dp),
                 onClick = onOpenChapters
             )
         }
     }
 }
 
-@Composable
-private fun ChapterRibbon(
-    timeline: TutorialTimeline?,
-    target: TimelineTarget?,
-    globalSeconds: Float,
-    modifier: Modifier = Modifier
-) {
-    val cue = target?.targetCue
-    val chapterText = cue?.groupPath
-        ?.joinToString(" > ")
-        ?.takeIf { it.isNotBlank() }
-        ?: cue?.id
-        ?: "章节未加载"
-    val snapText = when {
-        target?.snappedToChapterStart == true ->
-            " · 已吸附：${target.snappedChapter?.title ?: chapterText}"
-        target?.snappedToCueStart == true -> " · 已吸附"
-        else -> ""
-    }
-    val extra = when {
-        cue != null && timeline != null ->
-            " · cue ${cue.index + 1}/${timeline.cueCount} · ${formatTime(globalSeconds)}"
-        else -> " · ${formatTime(globalSeconds)}"
+private data class ChapterSegment(
+    val key: String,
+    val title: String,
+    val durationSeconds: Float
+)
+
+private fun buildChapterSegments(timeline: TutorialTimeline): List<ChapterSegment> {
+    val firstStarts = LinkedHashMap<String, Pair<List<String>, Float>>()
+    timeline.cues.sortedBy { it.start }.forEach { cue ->
+        val key = pathKey(cue.groupPath)
+        if (key.isNotEmpty() && !firstStarts.containsKey(key)) {
+            firstStarts[key] = cue.groupPath to cue.start
+        }
     }
 
-    Box(
+    val entries = firstStarts.entries.toList()
+    return entries.mapIndexed { index, entry ->
+        val start = entry.value.second
+        val end = entries.getOrNull(index + 1)?.value?.second ?: timeline.totalDuration
+        ChapterSegment(
+            key = entry.key,
+            title = entry.value.first.lastOrNull()?.takeIf { it.isNotBlank() } ?: entry.key,
+            durationSeconds = (end - start).coerceAtLeast(0.1f)
+        )
+    }
+}
+
+@Composable
+private fun ChapterRibbon(
+    target: TimelineTarget?,
+    modifier: Modifier = Modifier
+) {
+    val chapterText = target?.targetCue
+        ?.groupPath
+        ?.joinToString(" > ")
+        ?.takeIf { it.isNotBlank() }
+        ?: return
+
+    Text(
+        text = chapterText,
+        color = Color.White.copy(alpha = 0.90f),
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Medium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .fillMaxWidth()
-            .height(22.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(Color.Black.copy(alpha = 0.78f))
-            .padding(horizontal = 8.dp),
-        contentAlignment = Alignment.CenterStart
+            .padding(start = 2.dp)
+    )
+}
+
+@Composable
+private fun ChapterOverviewBar(
+    timeline: TutorialTimeline?,
+    target: TimelineTarget?,
+    modifier: Modifier = Modifier
+) {
+    if (timeline == null || timeline.cueCount == 0) return
+
+    val segments = remember(timeline) { buildChapterSegments(timeline) }
+    if (segments.isEmpty()) return
+
+    val targetKey = target?.targetCue?.groupPath?.let { pathKey(it) }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .clip(RoundedCornerShape(3.dp))
+            .background(Color.Black.copy(alpha = 0.42f))
     ) {
-        Text(
-            text = "即将播放：$chapterText$extra$snapText",
-            color = Color.White.copy(alpha = 0.88f),
-            fontSize = 11.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        segments.forEachIndexed { index, segment ->
+            val selected = targetKey != null && segment.key == targetKey
+            Box(
+                modifier = Modifier
+                    .weight(segment.durationSeconds)
+                    .fillMaxHeight()
+                    .background(
+                        when {
+                            selected -> Color(0xFFFFCC80).copy(alpha = 0.58f)
+                            index % 2 == 0 -> Color.White.copy(alpha = 0.12f)
+                            else -> Color.White.copy(alpha = 0.06f)
+                        }
+                    )
+                    .border(
+                        width = 0.5.dp,
+                        color = Color.White.copy(alpha = 0.22f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = segment.title,
+                    color = if (selected) {
+                        Color.Black.copy(alpha = 0.86f)
+                    } else {
+                        Color.White.copy(alpha = 0.78f)
+                    },
+                    fontSize = 8.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 1.dp)
+                )
+            }
+        }
     }
 }
 
@@ -931,7 +1014,7 @@ private fun ChapterRowItem(
             ControlButton(
                 label = "跳到本节",
                 compact = true,
-                modifier = Modifier.width(84.dp),
+                modifier = Modifier.width(72.dp),
                 onClick = onJump
             )
         }
@@ -987,8 +1070,8 @@ private fun ControlButton(
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val buttonHeight = if (compact) 34.dp else 46.dp
-    val buttonFontSize = if (compact) 12.sp else 16.sp
+    val buttonHeight = if (compact) 28.dp else 42.dp
+    val buttonFontSize = if (compact) 11.sp else 15.sp
     val backgroundAlpha = if (enabled) 0.14f else 0.06f
     val textColor = if (enabled) {
         Color.White
@@ -999,7 +1082,7 @@ private fun ControlButton(
     Box(
         modifier = modifier
             .height(buttonHeight)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(7.dp))
             .background(Color.White.copy(alpha = backgroundAlpha))
             .clickable(
                 interactionSource = interactionSource,
