@@ -1,0 +1,408 @@
+package com.boardai.tutorial.uaal.home
+
+import android.os.Handler
+import android.os.Looper
+import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
+import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
+import com.boardai.tutorial.uaal.content.ContentStatus
+import com.boardai.tutorial.uaal.content.ContentStore
+import com.boardai.tutorial.uaal.content.ContentUpdateStatus
+import com.boardai.tutorial.uaal.content.ContentUpdater
+import com.boardai.tutorial.uaal.content.DownloadControl
+import com.boardai.tutorial.uaal.content.DownloadOverlayState
+import com.boardai.tutorial.uaal.content.GamePromptAction
+import com.boardai.tutorial.uaal.content.GamePromptState
+import com.boardai.tutorial.uaal.content.resolveContentStatus
+import com.boardai.tutorial.uaal.history.PlayHistoryEntry
+import com.boardai.tutorial.uaal.history.PlayHistoryRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
+/**
+ * Owns the home catalog, content status, resource manager, download and
+ * content-prompt state that used to live directly in MainActivity.
+ *
+ * All state mutation happens on the Android main thread.  Blocking catalog and
+ * content work runs on the same single-thread executors the Activity used
+ * before, and results are posted back through [mainHandler].
+ */
+class HomeContentCoordinator(
+    private val catalogRepository: GameCatalogRepository,
+    private val contentStore: ContentStore,
+    private val contentUpdater: ContentUpdater,
+    private val historyRepository: PlayHistoryRepository,
+    private val onEnterGame: (GameCatalogEntry) -> Unit,
+    private val onToast: (String) -> Unit,
+    private val log: (String, Throwable?) -> Unit,
+    private val selectedGameIdProvider: () -> String? = { null },
+    private val onSelectedGameUnavailable: () -> Unit = {},
+    private val onBeforeDownload: () -> Unit = {},
+    private val onPlaybackErrorCleared: () -> Unit = {}
+) {
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val contentExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val catalogExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
+    private val _state = MutableStateFlow(HomeContentState())
+    val state: StateFlow<HomeContentState> = _state.asStateFlow()
+
+    private var allCatalogGames: List<GameCatalogEntry> = emptyList()
+    private var historyEntries: List<PlayHistoryEntry> = emptyList()
+    private var catalogRefreshInProgress = false
+    private var activeDownloadGameId: String? = null
+    private var currentDownloadControl: DownloadControl? = null
+    private var downloadGeneration = 0
+    private var started = false
+    private var disposed = false
+
+    fun start() {
+        if (started || disposed) return
+        started = true
+
+        allCatalogGames = catalogRepository.readCache()
+        historyEntries = historyRepository.read()
+        recomputeCatalogState()
+        refreshCatalog(showLoading = allCatalogGames.isEmpty())
+    }
+
+    fun dispose() {
+        if (disposed) return
+        disposed = true
+        currentDownloadControl?.requestPause()
+        contentExecutor.shutdownNow()
+        catalogExecutor.shutdownNow()
+    }
+
+    fun refreshCatalog(showLoading: Boolean) {
+        if (disposed || catalogRefreshInProgress) return
+        catalogRefreshInProgress = true
+        if (showLoading) {
+            updateState { it.copy(isLoading = true) }
+        }
+
+        catalogExecutor.execute {
+            try {
+                val fetched = catalogRepository.fetchCatalog()
+                mainHandler.post {
+                    if (disposed) return@post
+                    catalogRefreshInProgress = false
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            resourceChecking = false,
+                            errorMessage = null
+                        )
+                    }
+                    allCatalogGames = fetched
+                    recomputeCatalogState()
+                }
+            } catch (t: Throwable) {
+                log("catalog refresh failed", t)
+                mainHandler.post {
+                    if (disposed) return@post
+                    catalogRefreshInProgress = false
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            resourceChecking = false,
+                            errorMessage = if (allCatalogGames.isEmpty()) {
+                                "无法加载游戏目录，请检查网络后重试"
+                            } else {
+                                it.errorMessage
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun checkUpdates() {
+        if (catalogRefreshInProgress) {
+            updateState { it.copy(resourceChecking = false) }
+            return
+        }
+        updateState { it.copy(resourceChecking = true) }
+        refreshCatalog(showLoading = false)
+    }
+
+    fun onGameClick(game: GameCatalogEntry) {
+        val downloading = activeDownloadGameId
+        if (downloading == game.id) {
+            onToast("正在下载《${game.nameZh}》，请稍后")
+            return
+        }
+        if (downloading != null) {
+            val name = _state.value.activeDownload?.game?.nameZh ?: "其他游戏"
+            onToast("正在下载《$name》，请稍后")
+            return
+        }
+
+        val status = resolveContentStatus(game, contentStore)
+        updateState { it.copy(contentStatuses = it.contentStatuses + (game.id to status)) }
+        when (status) {
+            ContentStatus.NoServerResource -> {
+                updateState { it.copy(gamePrompt = GamePromptState(game, status)) }
+            }
+            is ContentStatus.InstalledOffline,
+            is ContentStatus.InstalledCurrent -> {
+                onEnterGame(game)
+            }
+            else -> {
+                updateState { it.copy(gamePrompt = GamePromptState(game, status)) }
+            }
+        }
+    }
+
+    fun handlePromptAction(action: GamePromptAction) {
+        val prompt = _state.value.gamePrompt ?: return
+        updateState { it.copy(gamePrompt = null) }
+
+        when (action) {
+            GamePromptAction.DOWNLOAD -> startDownload(prompt.game)
+            GamePromptAction.REDOWNLOAD -> startDownload(prompt.game, redownload = true)
+            GamePromptAction.CONTINUE_DOWNLOAD,
+            GamePromptAction.UPDATE,
+            GamePromptAction.CONTINUE_UPDATE -> startDownload(prompt.game)
+            GamePromptAction.USE_CURRENT -> onEnterGame(prompt.game)
+            GamePromptAction.CANCEL -> Unit
+        }
+    }
+
+    fun dismissPrompt() {
+        updateState { it.copy(gamePrompt = null) }
+    }
+
+    fun openResourceManager() {
+        updateState { it.copy(resourceManagerOpen = true) }
+        refreshContentStatuses()
+    }
+
+    fun closeResourceManager() {
+        updateState { it.copy(resourceManagerOpen = false) }
+    }
+
+    fun startDownload(game: GameCatalogEntry, redownload: Boolean = false) {
+        if (activeDownloadGameId != null) {
+            val name = _state.value.activeDownload?.game?.nameZh ?: "其他游戏"
+            onToast("正在下载《$name》，请稍后")
+            return
+        }
+
+        if (redownload) {
+            try {
+                contentStore.deletePaused(game.id)
+            } catch (t: Throwable) {
+                log("failed to clear partial before redownload for ${game.id}", t)
+            }
+        }
+
+        updateState { it.copy(resourceManagerOpen = false, gamePrompt = null) }
+        onBeforeDownload()
+        onPlaybackErrorCleared()
+
+        val generation = ++downloadGeneration
+        activeDownloadGameId = game.id
+        currentDownloadControl = DownloadControl()
+        val control = currentDownloadControl!!
+        updateState {
+            it.copy(
+                activeDownload = DownloadOverlayState(game, ContentUpdateStatus.Checking),
+                preparingGameId = game.id,
+                downloadBusy = true
+            )
+        }
+
+        contentExecutor.execute {
+            val result = contentUpdater.update(
+                game = game.id,
+                onStatus = { status ->
+                    mainHandler.post {
+                        if (disposed ||
+                            generation != downloadGeneration ||
+                            activeDownloadGameId != game.id ||
+                            _state.value.activeDownload == null
+                        ) {
+                            return@post
+                        }
+                        updateState { it.copy(activeDownload = DownloadOverlayState(game, status)) }
+                    }
+                },
+                control = control
+            )
+
+            mainHandler.post {
+                if (disposed || generation != downloadGeneration) return@post
+                when (val status = result.status) {
+                    is ContentUpdateStatus.Paused -> {
+                        clearDownloadRun(activeDownload = null)
+                        refreshContentStatuses()
+                    }
+
+                    is ContentUpdateStatus.Failed -> {
+                        clearDownloadRun(
+                            activeDownload = DownloadOverlayState(game, status)
+                        )
+                        refreshContentStatuses()
+                    }
+
+                    is ContentUpdateStatus.Updated,
+                    is ContentUpdateStatus.UpToDate -> {
+                        clearDownloadRun(activeDownload = null)
+                        refreshContentStatuses()
+                        onEnterGame(game)
+                    }
+
+                    else -> {
+                        clearDownloadRun(activeDownload = null)
+                        refreshContentStatuses()
+                    }
+                }
+            }
+        }
+    }
+
+    fun pauseDownloadAndReturnHome() {
+        currentDownloadControl?.requestPause()
+        updateState {
+            it.copy(
+                resourceManagerOpen = false,
+                activeDownload = null,
+                preparingGameId = null
+            )
+        }
+        onPlaybackErrorCleared()
+    }
+
+    fun hasActiveDownload(): Boolean =
+        activeDownloadGameId != null || _state.value.activeDownload != null
+
+    fun deleteLocalResources(game: GameCatalogEntry) {
+        if (activeDownloadGameId != null) {
+            onToast("下载进行中，暂不能删除资源")
+            return
+        }
+
+        contentExecutor.execute {
+            try {
+                contentStore.deleteLocalContent(game.id)
+            } catch (t: Throwable) {
+                log("failed to delete local content for ${game.id}", t)
+            }
+            mainHandler.post {
+                if (disposed) return@post
+                refreshContentStatuses()
+                onToast("已删除《${game.nameZh}》本地资源")
+            }
+        }
+    }
+
+    fun refreshContentStatuses() {
+        refreshContentStatuses(_state.value.visibleGames)
+    }
+
+    fun recordPlay(gameId: String) {
+        val visibleGames = _state.value.visibleGames
+        val visibleGameIds = visibleGames.map { it.id }.toSet()
+
+        contentExecutor.execute {
+            val updated = try {
+                historyRepository.recordPlay(gameId, visibleGameIds)
+            } catch (t: Throwable) {
+                log("failed to record play history for $gameId", t)
+                null
+            }
+
+            mainHandler.post {
+                if (disposed || updated == null) return@post
+                historyEntries = updated
+                updateState {
+                    it.copy(
+                        recentGames = historyRepository.recentGames(
+                            visibleGames = _state.value.visibleGames,
+                            history = updated
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun setPreparingGame(gameId: String?) {
+        updateState { it.copy(preparingGameId = gameId) }
+    }
+
+    /**
+     * Schedules a blocking content task on the same single-thread executor used
+     * by downloads.  MainActivity uses this for local timeline loading so
+     * playback setup remains serialized with downloads exactly as before.
+     */
+    internal fun runContentTask(block: () -> Unit) {
+        contentExecutor.execute(block)
+    }
+
+    fun dismissDownloadError() {
+        updateState { it.copy(activeDownload = null) }
+        refreshContentStatuses()
+    }
+
+    private fun clearDownloadRun(activeDownload: DownloadOverlayState?) {
+        activeDownloadGameId = null
+        currentDownloadControl = null
+        updateState {
+            it.copy(
+                activeDownload = activeDownload,
+                preparingGameId = null,
+                downloadBusy = false
+            )
+        }
+    }
+
+    private fun refreshContentStatuses(games: List<GameCatalogEntry>) {
+        val statuses = games.associate { game ->
+            game.id to resolveContentStatus(game, contentStore)
+        }
+        updateState { it.copy(contentStatuses = statuses) }
+    }
+
+    private fun recomputeCatalogState() {
+        val orderedVisible = catalogRepository.visibleGames(allCatalogGames)
+            .sortedWith(
+                compareBy<GameCatalogEntry> { it.nameZh.lowercase(Locale.ROOT) }
+                    .thenBy { it.nameEn.lowercase(Locale.ROOT) }
+                    .thenBy { it.id }
+            )
+        val statuses = orderedVisible.associate { game ->
+            game.id to resolveContentStatus(game, contentStore)
+        }
+        updateState {
+            it.copy(
+                visibleGames = orderedVisible,
+                contentStatuses = statuses
+            )
+        }
+
+        val currentGameId = selectedGameIdProvider()
+        if (currentGameId != null && orderedVisible.none { it.id == currentGameId }) {
+            onSelectedGameUnavailable()
+            return
+        }
+
+        updateState {
+            it.copy(
+                recentGames = historyRepository.recentGames(
+                    visibleGames = orderedVisible,
+                    history = historyEntries
+                )
+            )
+        }
+    }
+
+    private fun updateState(transform: (HomeContentState) -> HomeContentState) {
+        _state.value = transform(_state.value)
+    }
+}
