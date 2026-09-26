@@ -130,7 +130,7 @@ class MainActivity : UnityPlayerGameActivity() {
         loadCachedCatalogAndHistory()
         refreshCatalog(showLoading = allCatalogGames.value.isEmpty())
 
-        applyKeepScreenOn(true)
+        applyKeepScreenOn(shouldKeepScreenOn())
         addComposeControlLayer()
         applyLockScreenPolicy()
     }
@@ -236,11 +236,23 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private fun shouldKeepScreenOn(): Boolean {
         val status = UnityStatusHolder.status.value
-        val activelyPlaying = status?.isPlaying == true && status?.isPaused != true
-        // Keep the catalog/home screen awake; once a tutorial is selected,
-        // only active playback may keep the screen on. Paused playback and the
-        // QA panel fall back to the system screen timeout after inactivity.
-        return selectedGame.value == null || (activelyPlaying && !qaOpen.value)
+        val activelyPlaying =
+            status?.isPlaying == true && status?.isPaused != true
+
+        val downloadStatus = activeDownload.value?.status
+        val downloadActive = when (downloadStatus) {
+            ContentUpdateStatus.Checking,
+            is ContentUpdateStatus.Downloading,
+            is ContentUpdateStatus.Verifying,
+            is ContentUpdateStatus.Switching -> true
+            else -> false
+        }
+
+        return downloadActive ||
+            (selectedGame.value != null &&
+                playerActive.value &&
+                activelyPlaying &&
+                !qaOpen.value)
     }
 
     private fun loadCachedCatalogAndHistory() {
@@ -319,8 +331,7 @@ class MainActivity : UnityPlayerGameActivity() {
                         val resourceOpen = resourceManagerOpen.value
                         val resourceCheck = resourceChecking.value
 
-                        val keepScreenOn = selected == null ||
-                            (status?.isPlaying == true && status?.isPaused != true && !qaOpen.value)
+                        val keepScreenOn = shouldKeepScreenOn()
                         LaunchedEffect(keepScreenOn) {
                             applyKeepScreenOn(keepScreenOn)
                         }
