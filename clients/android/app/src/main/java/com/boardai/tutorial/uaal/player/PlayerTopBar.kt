@@ -4,12 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -28,35 +25,21 @@ import androidx.compose.ui.unit.sp
 @Composable
 internal fun PlayerTopBar(
     chapterPathText: String?,
-    onOpenContent: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.Black.copy(alpha = 0.30f),
-                            Color.Black.copy(alpha = 0.06f)
-                        )
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color.Black.copy(alpha = 0.30f),
+                        Color.Black.copy(alpha = 0.06f)
                     )
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(Modifier.weight(1f))
-            PlayerControlButton(
-                label = "内容",
-                compact = true,
-                modifier = Modifier.width(64.dp),
-                onClick = onOpenContent
             )
-        }
-
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
         if (!chapterPathText.isNullOrBlank()) {
             Text(
                 text = chapterPathText,
@@ -67,8 +50,7 @@ internal fun PlayerTopBar(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(start = 12.dp, top = 8.dp)
-                    .widthIn(max = 420.dp)
+                    .widthIn(max = 520.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .background(Color.Black.copy(alpha = 0.22f))
                     .padding(horizontal = 8.dp, vertical = 4.dp)

@@ -32,7 +32,8 @@ fun GameCard(
     modifier: Modifier = Modifier,
     compact: Boolean = false,
     extraInfo: String? = null,
-    busy: Boolean = false
+    busy: Boolean = false,
+    statusText: String? = null
 ) {
     val playerText = when {
         game.minPlayers > 0 && game.maxPlayers > 0 -> "${game.minPlayers}-${game.maxPlayers} 人"
@@ -103,6 +104,17 @@ fun GameCard(
                         fontWeight = FontWeight.Medium
                     )
                 }
+                Spacer(Modifier.weight(1f))
+                if (!statusText.isNullOrBlank()) {
+                    Text(
+                        text = statusText,
+                        color = statusTextColor(statusText),
+                        fontSize = if (compact) 10.sp else 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
 
             if (BuildConfig.DEBUG && !game.released) {
@@ -119,4 +131,12 @@ fun GameCard(
             }
         }
     }
+}
+
+private fun statusTextColor(statusText: String): Color = when {
+    statusText.startsWith("已暂停") || statusText.startsWith("更新暂停") -> Color(0xFFFFB86B)
+    statusText == "已是最新" || statusText == "已安装" -> Color(0xFF9AD29A)
+    statusText.startsWith("可更新") -> Color(0xFFFFB86B)
+    statusText == "暂无资源" -> Color(0xFF98A2B3)
+    else -> Color(0xFF8AB4F8)
 }

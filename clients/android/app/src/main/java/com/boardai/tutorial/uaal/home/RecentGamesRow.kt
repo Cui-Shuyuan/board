@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
+import com.boardai.tutorial.uaal.content.ContentStatus
+import com.boardai.tutorial.uaal.content.shortCardText
 import com.boardai.tutorial.uaal.history.RecentGame
 
 @Composable
@@ -16,7 +18,8 @@ fun RecentGamesRow(
     recentGames: List<RecentGame>,
     onGameClick: (GameCatalogEntry) -> Unit,
     modifier: Modifier = Modifier,
-    preparingGameId: String? = null
+    preparingGameId: String? = null,
+    contentStatuses: Map<String, ContentStatus> = emptyMap()
 ) {
     LazyRow(
         modifier = modifier,
@@ -30,6 +33,7 @@ fun RecentGamesRow(
                 compact = true,
                 extraInfo = "玩过 ${recent.playCount} 次",
                 busy = preparingGameId == recent.game.id,
+                statusText = contentStatuses[recent.game.id]?.shortCardText(),
                 modifier = Modifier.width(190.dp)
             )
         }

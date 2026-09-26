@@ -200,7 +200,8 @@ public const string GameObjectName = "AndroidTutorialBridge";
 | `SeekRelative` | `"-15"` / `"15"` | 相对快退/快进 |
 | `AdjustVolume` | `"-0.1"` / `"0.1"` | 相对调节音量 |
 | `SetVolume` | `"0"` ~ `"1"` | 绝对设置音量 |
-| `SetContentRoot` | version 目录 | 保存到 `TutorialCuePlayer.tutorialRoot`；Unity 仍会拼接 `gameId`，所以传 `board-content/versions/{version}/`，不是 `.../splendor` |
+| `LoadGameWithRoot` | `{gameId}|{versionRoot}` | 正式流程：设置 `gameId` 和 `tutorialRoot`（`versionRoot`）后 `ReloadGame`；`versionRoot` 为 `context.filesDir/board-content/versions/{version}` |
+| `SetContentRoot` | version 目录 | 旧接口兼容；Unity 仍会拼接 `gameId`，正式流程使用 `LoadGameWithRoot` |
 | `ReloadGame` | `""` | 停止当前播放，重新 ResolveGameRoot + LoadAndPlay |
 | `CheckContentUpdate` | `""` | 协议占位；更新由 Compose 原生层触发 |
 | `SetUnityTouchControlsEnabled` | `"true"` / `"false"` | 启用/禁用旧 Unity IMGUI 触控层 |
@@ -220,8 +221,8 @@ public bool UnityTouchControlsEnabled
 
 `TutorialCuePlayer.ResolveGameRoot()` 优先级：
 
-1. 显式 `tutorialRoot`（Android 更新成功后用 `SetContentRoot` 设置）；
-2. `Application.persistentDataPath/board-content/active.json` 中当前 game 的 `root`；
+1. 显式 `tutorialRoot`（Android 正式流程由 `LoadGameWithRoot` 设置，指向 App 内部私有版本目录）；
+2. `Application.persistentDataPath/board-content/active.json` 中当前 game 的 `root`（旧外部路径兼容读取，Android 正式流程不再依赖）；
 3. 旧 fallback：`Application.persistentDataPath/{gameId}`（手动 adb push）；
 4. StreamingAssets / 仓库 `content/games/{gameId}`。
 
@@ -299,7 +300,7 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL
 
 ### Android 本地仓库
 
-`context.getExternalFilesDir(null)/board-content/`：
+`context.filesDir/board-content/`（App 内部私有目录）：
 
 ```text
 board-content/
@@ -312,13 +313,20 @@ board-content/
         media/
         concepts.json
         ...
+    {version}.partial/
+      progress.json
+      splendor/
+        ...
+        media/marker/xxx.jpg.part
 ```
 
 - `complete.json` 记录版本、game 和已校验文件；
 - 更新先写 `versions/{version}.partial`，全部文件 SHA-256 校验通过并写 `complete.json` 后，原子 rename 为 `versions/{version}`；
 - `active.json` 先写 `active.json.tmp`，再原子 rename；失败时保留旧 active，不删除旧版本；
 - 下载循环开始前一次性建立旧版本复用索引（`path -> sha256 -> File`）；每个旧版本只读取、解析一次 `complete.json`，循环内只查索引，网络只下载新增/变化文件；
-- 默认保留当前版本和上一版本。
+- 下载使用同目录 `*.part` + HTTP Range 续传；`progress.json` 只用于 UI 显示“已暂停 xx%”，实际断点以 `.part` 文件长度为准；
+- 下载开始时若服务端 manifest 版本与 partial 目录版本不一致，会清理 stale partial；
+- 默认保留当前版本和上一版本；旧的外部 `getExternalFilesDir(null)/board-content` 在 `ContentStore` 初始化时直接删除，不做迁移。
 
 ### 配置服务端地址与 adb reverse
 
@@ -336,22 +344,29 @@ board.api.baseUrl=http://127.0.0.1:5000
 
 App 访问 `http://127.0.0.1:5000` 即转发到 PC `5000` 端口。使用真机内网时，把 `board.api.baseUrl` 改成 PC 的局域网 IP，并放行防火墙。
 
-### 更新 UI
+### 资源管理与下载 UI
 
-顶部控制条显示：
+播放页不再显示“内容”按钮，所有资源状态和更新入口统一在首页：
 
-- 当前 active 内容版本；
-- `未检查 / 检查更新中 / 下载中 x/y · 文件 / 已是最新 / 已更新 / 更新失败`；
-- “检查更新”按钮。
-
-App 启动后，Unity 回传 `unityReady=true` 后自动检查一次；用户可手动检查；更新期间动画继续播放，完成后调用 bridge：
+- 首页顶部“资源管理”：
+  - 每款游戏显示本地版本、服务端版本、状态和大小；
+  - 操作按钮按状态动态显示：`下载` / `继续下载 xx%` / `更新` / `继续更新 xx%` / `删除本地资源`；
+  - `检查更新` 只刷新 catalog 和状态，不自动下载；
+- 游戏卡右下角显示：`未下载` / `已暂停 xx%` / `更新暂停 xx%` / `已是最新` / `可更新到 vXXXX` / `暂无资源` / `已安装`；
+- 首次点击游戏按状态弹窗；下载/更新显示全屏进度层（阶段、当前文件、字节与百分比、暂停按钮）；
+- 下载中按返回键或“暂停并返回”：
+  - `DownloadControl.requestPause()`；
+  - 保存 `.part` 和 `progress.json`；
+  - 回首页显示“已暂停 xx%”；
+  - 下次点击可继续，不删除 partial；
+- 下载成功后才进入教程；失败或暂停不修改旧 `active.json`；
+- 正式流程使用 `LoadGameWithRoot`：
 
 ```text
-SetContentRoot(board-content/versions/{version})
-ReloadGame
+LoadGameWithRoot("{gameId}|{versionRoot}")
 ```
 
-logcat TAG `BoardAI-Content` 会输出 `检查更新` 和最终汇总（例如 `reused=328 downloaded=1 total=329`）；不再逐文件打印 reuse 日志。
+其中 `versionRoot = context.filesDir/board-content/versions/{version}`，Unity 直接读取内部私有目录，不依赖 `Application.persistentDataPath`。
 
 ### 手动内容 fallback
 
@@ -425,6 +440,6 @@ ping -n 20 127.0.0.1 >nul
 ## 下一步建议
 
 - 把 `UnityBridgeCallback` 的状态字段扩展到进度条和章节树；
-- 后续可做内容版本回滚、断点续传和更积极的旧版本清理；
+- 后续可做内容版本回滚和更积极的旧版本清理；
 - 将 Unity 状态回传节流策略改为事件驱动，降低每 0.5 秒的 JNI 调用频率；
 - 后续可在较新 Android 版本上单独恢复 Material ripple 并做对比验证。

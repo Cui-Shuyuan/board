@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.catalog.GameSearch
+import com.boardai.tutorial.uaal.content.ContentStatus
+import com.boardai.tutorial.uaal.content.shortCardText
 import com.boardai.tutorial.uaal.history.RecentGame
 
 private val HomeBackground = Color(0xFF0F1116)
@@ -44,6 +48,8 @@ fun HomeScreen(
     errorMessage: String?,
     preparingGameId: String?,
     playbackError: String?,
+    contentStatuses: Map<String, ContentStatus>,
+    onOpenResourceManager: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchResults = if (query.isBlank()) {
@@ -59,12 +65,24 @@ fun HomeScreen(
             .windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility)
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-            Text(
-                text = "BoardAI",
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "BoardAI",
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = "资源管理",
+                    color = Color(0xFF8AB4F8),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .clickable(onClick = onOpenResourceManager)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
             GameSearchBar(
                 query = query,
                 onQueryChange = onQueryChange,
@@ -143,7 +161,8 @@ fun HomeScreen(
                             GameCard(
                                 game = game,
                                 onClick = { onGameClick(game) },
-                                busy = preparingGameId == game.id
+                                busy = preparingGameId == game.id,
+                                statusText = contentStatuses[game.id]?.shortCardText()
                             )
                         }
                     }
@@ -174,7 +193,8 @@ fun HomeScreen(
                             RecentGamesRow(
                                 recentGames = recentGames,
                                 onGameClick = onGameClick,
-                                preparingGameId = preparingGameId
+                                preparingGameId = preparingGameId,
+                                contentStatuses = contentStatuses
                             )
                         }
                     }
@@ -201,6 +221,7 @@ fun HomeScreen(
                                 game = game,
                                 onClick = { onGameClick(game) },
                                 busy = preparingGameId == game.id,
+                                statusText = contentStatuses[game.id]?.shortCardText(),
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
                         }

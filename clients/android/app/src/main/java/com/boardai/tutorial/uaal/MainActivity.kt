@@ -11,16 +11,28 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
+import com.boardai.tutorial.uaal.content.ContentStatus
 import com.boardai.tutorial.uaal.content.ContentStore
+import com.boardai.tutorial.uaal.content.DownloadControl
+import com.boardai.tutorial.uaal.content.DownloadOverlayState
+import com.boardai.tutorial.uaal.content.DownloadProgressOverlay
+import com.boardai.tutorial.uaal.content.GameContentPromptDialog
+import com.boardai.tutorial.uaal.content.GamePromptAction
+import com.boardai.tutorial.uaal.content.GamePromptState
+import com.boardai.tutorial.uaal.content.resolveContentStatus
 import com.boardai.tutorial.uaal.content.ContentUpdateStateHolder
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
 import com.boardai.tutorial.uaal.content.ContentUpdater
@@ -28,6 +40,7 @@ import com.boardai.tutorial.uaal.history.PlayHistoryEntry
 import com.boardai.tutorial.uaal.history.PlayHistoryRepository
 import com.boardai.tutorial.uaal.history.RecentGame
 import com.boardai.tutorial.uaal.home.HomeScreen
+import com.boardai.tutorial.uaal.home.ResourceManagerOverlay
 import com.boardai.tutorial.uaal.player.TutorialPlayerOverlay
 import com.boardai.tutorial.uaal.qa.QaSessionHolder
 import com.boardai.tutorial.uaal.qa.QaRepository
@@ -66,11 +79,14 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private var pendingMicPermissionCallback: ((Boolean) -> Unit)? = null
 
-    private var contentCheckInProgress = false
     private var catalogRefreshInProgress = false
     private var unityReadyHandled = false
     private var pendingLoadGameId: String? = null
+    private var pendingLoadGameVersionRoot: String? = null
     private var pendingUnload = false
+    private var activeDownloadGameId: String? = null
+    private var currentDownloadControl: DownloadControl? = null
+    private var downloadGeneration = 0
 
     @Volatile
     private var selectionGeneration = 0
@@ -83,6 +99,11 @@ class MainActivity : UnityPlayerGameActivity() {
     private val catalogError = mutableStateOf<String?>(null)
 
     private val searchQuery = mutableStateOf("")
+    private val contentStatuses = mutableStateOf<Map<String, ContentStatus>>(emptyMap())
+    private val gamePrompt = mutableStateOf<GamePromptState?>(null)
+    private val activeDownload = mutableStateOf<DownloadOverlayState?>(null)
+    private val resourceManagerOpen = mutableStateOf(false)
+    private val resourceChecking = mutableStateOf(false)
     private val selectedGame = mutableStateOf<GameCatalogEntry?>(null)
     private val playerActive = mutableStateOf(false)
     private val preparingGameId = mutableStateOf<String?>(null)
@@ -177,13 +198,17 @@ class MainActivity : UnityPlayerGameActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (qaOpen.value) {
-            closeQa()
-        } else if (selectedGame.value != null) {
-            returnToHome()
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
+        when {
+            qaOpen.value -> closeQa()
+            gamePrompt.value != null -> gamePrompt.value = null
+            resourceManagerOpen.value -> resourceManagerOpen.value = false
+            activeDownload.value != null || activeDownloadGameId != null ->
+                pauseDownloadAndReturnHome()
+            selectedGame.value != null -> returnToHome()
+            else -> {
+                @Suppress("DEPRECATION")
+                super.onBackPressed()
+            }
         }
     }
 
@@ -233,6 +258,7 @@ class MainActivity : UnityPlayerGameActivity() {
                     .thenBy { it.id }
             )
         visibleGames.value = orderedVisible
+        refreshContentStatuses(orderedVisible)
 
         val current = selectedGame.value
         if (current != null && orderedVisible.none { it.id == current.id }) {
@@ -257,6 +283,7 @@ class MainActivity : UnityPlayerGameActivity() {
                 mainHandler.post {
                     catalogRefreshInProgress = false
                     catalogLoading.value = false
+                    resourceChecking.value = false
                     catalogError.value = null
                     allCatalogGames.value = fetched
                     recomputeCatalogState()
@@ -266,6 +293,7 @@ class MainActivity : UnityPlayerGameActivity() {
                 mainHandler.post {
                     catalogRefreshInProgress = false
                     catalogLoading.value = false
+                    resourceChecking.value = false
                     if (allCatalogGames.value.isEmpty()) {
                         catalogError.value = "无法加载游戏目录，请检查网络后重试"
                     }
@@ -279,93 +307,140 @@ class MainActivity : UnityPlayerGameActivity() {
             setBackgroundColor(Color.TRANSPARENT)
             setContent {
                 MaterialTheme(colorScheme = darkColorScheme()) {
-                    val status = UnityStatusHolder.status.value
-                    val contentState = ContentUpdateStateHolder.state.value
-                    val timeline = tutorialTimeline.value
-                    val selected = selectedGame.value
-                    val showPlayer = selected != null && playerActive.value
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        val status = UnityStatusHolder.status.value
+                        val contentState = ContentUpdateStateHolder.state.value
+                        val timeline = tutorialTimeline.value
+                        val selected = selectedGame.value
+                        val showPlayer = selected != null && playerActive.value
+                        val contentStatusesState = contentStatuses.value
+                        val promptState = gamePrompt.value
+                        val downloadState = activeDownload.value
+                        val resourceOpen = resourceManagerOpen.value
+                        val resourceCheck = resourceChecking.value
 
-                    val keepScreenOn = selected == null ||
-                        (status?.isPlaying == true && status?.isPaused != true && !qaOpen.value)
-                    LaunchedEffect(keepScreenOn) {
-                        applyKeepScreenOn(keepScreenOn)
-                    }
-
-                    // Unity can only deliver the back key while the player owns
-                    // the input surface.  Route it into the native home state
-                    // instead of letting the old prototype call Application.Quit.
-                    val backRequest = UnityBackRequestHolder.requestVersion.value
-                    LaunchedEffect(backRequest) {
-                        if (backRequest <= 0) return@LaunchedEffect
-                        if (qaOpen.value) {
-                            closeQa()
-                        } else if (selectedGame.value != null) {
-                            returnToHome()
+                        val keepScreenOn = selected == null ||
+                            (status?.isPlaying == true && status?.isPaused != true && !qaOpen.value)
+                        LaunchedEffect(keepScreenOn) {
+                            applyKeepScreenOn(keepScreenOn)
                         }
-                    }
 
-                    // Unity commands can only be delivered after the bridge
-                    // sends its first status containing unityReady=true.
-                    LaunchedEffect(status?.unityReady) {
-                        if (status?.unityReady == true) {
-                            onUnityReady()
+                        // Unity can only deliver the back key while the player
+                        // owns the input surface.  Route it into the native
+                        // state machine instead of letting the prototype quit.
+                        val backRequest = UnityBackRequestHolder.requestVersion.value
+                        LaunchedEffect(backRequest) {
+                            if (backRequest <= 0) return@LaunchedEffect
+                            when {
+                                qaOpen.value -> closeQa()
+                                gamePrompt.value != null -> gamePrompt.value = null
+                                resourceManagerOpen.value -> resourceManagerOpen.value = false
+                                activeDownload.value != null || activeDownloadGameId != null ->
+                                    pauseDownloadAndReturnHome()
+                                selectedGame.value != null -> returnToHome()
+                            }
                         }
-                    }
 
-                    // The Pause command is asynchronous.  Once Unity confirms
-                    // the same cue is paused, use that authoritative position
-                    // for the exact resume command instead of the pre-pause
-                    // interpolation anchor.
-                    LaunchedEffect(status?.cueId, status?.isPaused, qaOpen.value) {
-                        val current = status ?: return@LaunchedEffect
-                        if (!qaOpen.value || !current.isPaused || current.cueId.isBlank()) {
-                            return@LaunchedEffect
+                        // Unity commands can only be delivered after the
+                        // bridge sends its first status with unityReady=true.
+                        LaunchedEffect(status?.unityReady) {
+                            if (status?.unityReady == true) {
+                                onUnityReady()
+                            }
                         }
-                        if (qaResumeCueId.isNullOrBlank() || qaResumeCueId == current.cueId) {
-                            qaResumeCueId = current.cueId
-                            current.position
-                                .takeIf { it.isFinite() && it >= 0f }
-                                ?.let { qaResumePositionInCue = it }
-                        }
-                    }
 
-                    if (showPlayer) {
-                        TutorialPlayerOverlay(
-                            status = status,
-                            timeline = timeline,
-                            contentState = contentState,
-                            game = selected,
-                            qaOpen = qaOpen.value,
-                            qaRepository = qaRepository,
-                            asrRepository = asrRepository,
-                            ttsRepository = ttsRepository,
-                            hasRecordPermission = { hasRecordPermission() },
-                            requestRecordPermission = { callback ->
-                                requestRecordPermission(callback)
-                            },
-                            onOpenQa = { cueId, positionInCue, wasPlaying ->
-                                openQa(cueId, positionInCue, wasPlaying)
-                            },
-                            onCloseQa = { closeQa() },
-                            onCommand = { method, value -> sendToUnity(method, value) },
-                            onCheckContentUpdate = { refreshCurrentContent() }
-                        )
-                    } else {
-                        HomeScreen(
-                            games = visibleGames.value,
-                            recentGames = recentGames.value,
-                            query = searchQuery.value,
-                            onQueryChange = { searchQuery.value = it },
-                            onGameClick = { game -> prepareGame(game) },
-                            onRetry = {
-                                catalogError.value = null
-                                refreshCatalog(showLoading = true)
-                            },
-                            isLoading = catalogLoading.value,
-                            errorMessage = catalogError.value,
-                            preparingGameId = preparingGameId.value,
-                            playbackError = playbackError.value
-                        )
+                        // The Pause command is asynchronous.  Once Unity
+                        // confirms the same cue is paused, use that
+                        // authoritative position for the exact resume command.
+                        LaunchedEffect(status?.cueId, status?.isPaused, qaOpen.value) {
+                            val current = status ?: return@LaunchedEffect
+                            if (!qaOpen.value || !current.isPaused || current.cueId.isBlank()) {
+                                return@LaunchedEffect
+                            }
+                            if (qaResumeCueId.isNullOrBlank() || qaResumeCueId == current.cueId) {
+                                qaResumeCueId = current.cueId
+                                current.position
+                                    .takeIf { it.isFinite() && it >= 0f }
+                                    ?.let { qaResumePositionInCue = it }
+                            }
+                        }
+
+                        if (showPlayer) {
+                            TutorialPlayerOverlay(
+                                status = status,
+                                timeline = timeline,
+                                game = selected,
+                                activeVersion = contentState.activeVersion,
+                                qaOpen = qaOpen.value,
+                                qaRepository = qaRepository,
+                                asrRepository = asrRepository,
+                                ttsRepository = ttsRepository,
+                                hasRecordPermission = { hasRecordPermission() },
+                                requestRecordPermission = { callback ->
+                                    requestRecordPermission(callback)
+                                },
+                                onOpenQa = { cueId, positionInCue, wasPlaying ->
+                                    openQa(cueId, positionInCue, wasPlaying)
+                                },
+                                onCloseQa = { closeQa() },
+                                onCommand = { method, value -> sendToUnity(method, value) }
+                            )
+                        } else {
+                            HomeScreen(
+                                games = visibleGames.value,
+                                recentGames = recentGames.value,
+                                query = searchQuery.value,
+                                onQueryChange = { searchQuery.value = it },
+                                onGameClick = { game -> onGameClick(game) },
+                                onRetry = {
+                                    catalogError.value = null
+                                    refreshCatalog(showLoading = true)
+                                },
+                                isLoading = catalogLoading.value,
+                                errorMessage = catalogError.value,
+                                preparingGameId = preparingGameId.value,
+                                playbackError = playbackError.value,
+                                contentStatuses = contentStatusesState,
+                                onOpenResourceManager = {
+                                    resourceManagerOpen.value = true
+                                    refreshContentStatuses()
+                                }
+                            )
+                        }
+
+                        if (resourceOpen) {
+                            ResourceManagerOverlay(
+                                games = visibleGames.value,
+                                statuses = contentStatusesState,
+                                checking = resourceCheck,
+                                onDismiss = { resourceManagerOpen.value = false },
+                                onCheckUpdates = { requestCatalogCheck() },
+                                onDownload = { game -> startDownload(game) },
+                                onContinueDownload = { game -> startDownload(game) },
+                                onUpdate = { game -> startDownload(game) },
+                                onContinueUpdate = { game -> startDownload(game) },
+                                onDelete = { game -> deleteLocalResources(game) }
+                            )
+                        }
+
+                        if (downloadState != null) {
+                            DownloadProgressOverlay(
+                                state = downloadState,
+                                onPause = { pauseDownloadAndReturnHome() },
+                                onRetry = { startDownload(downloadState.game) },
+                                onReturnHome = {
+                                    activeDownload.value = null
+                                    refreshContentStatuses()
+                                }
+                            )
+                        }
+
+                        if (promptState != null) {
+                            GameContentPromptDialog(
+                                state = promptState,
+                                onAction = { action -> handleGamePromptAction(action) }
+                            )
+                        }
                     }
                 }
             }
@@ -395,163 +470,257 @@ class MainActivity : UnityPlayerGameActivity() {
             pendingUnload = false
             sendToUnity("UnloadGame", "")
         }
-        pendingLoadGameId?.let { gameId ->
-            pendingLoadGameId = null
-            sendToUnity("LoadGame", gameId)
+
+        val gameId = pendingLoadGameId
+        val versionRoot = pendingLoadGameVersionRoot
+        pendingLoadGameId = null
+        pendingLoadGameVersionRoot = null
+        if (gameId != null) {
+            if (versionRoot != null) {
+                sendToUnity("LoadGameWithRoot", "$gameId|$versionRoot")
+            } else {
+                sendToUnity("LoadGame", gameId)
+            }
         }
         sendToUnity("RequestStatus", "")
     }
 
-    /**
-     * Full selection flow:
-     *   1. select a catalog game;
-     *   2. update/download its content;
-     *   3. load its tutorial timeline;
-     *   4. record the play in local JSON;
-     *   5. ask Unity to load the same game.
-     */
-    private fun prepareGame(game: GameCatalogEntry, recordPlay: Boolean = true) {
+    private fun onGameClick(game: GameCatalogEntry) {
+        val downloading = activeDownloadGameId
+        if (downloading == game.id) {
+            showToast("正在下载《${game.nameZh}》，请稍后")
+            return
+        }
+        if (downloading != null) {
+            val name = activeDownload.value?.game?.nameZh ?: "其他游戏"
+            showToast("正在下载《$name》，请稍后")
+            return
+        }
+
+        val status = resolveContentStatus(game, contentStore)
+        contentStatuses.value = contentStatuses.value + (game.id to status)
+        when (status) {
+            ContentStatus.NoServerResource -> {
+                gamePrompt.value = GamePromptState(game, status)
+            }
+            is ContentStatus.InstalledOffline,
+            is ContentStatus.InstalledCurrent -> {
+                enterGameWithLocalContent(game)
+            }
+            else -> {
+                gamePrompt.value = GamePromptState(game, status)
+            }
+        }
+    }
+
+    private fun handleGamePromptAction(action: GamePromptAction) {
+        val state = gamePrompt.value ?: return
+        gamePrompt.value = null
+
+        when (action) {
+            GamePromptAction.DOWNLOAD -> startDownload(state.game)
+            GamePromptAction.REDOWNLOAD -> startDownload(state.game, redownload = true)
+            GamePromptAction.CONTINUE_DOWNLOAD,
+            GamePromptAction.UPDATE,
+            GamePromptAction.CONTINUE_UPDATE -> startDownload(state.game)
+            GamePromptAction.USE_CURRENT -> enterGameWithLocalContent(state.game)
+            GamePromptAction.CANCEL -> Unit
+        }
+    }
+
+    private fun startDownload(game: GameCatalogEntry, redownload: Boolean = false) {
+        if (activeDownloadGameId != null) {
+            val name = activeDownload.value?.game?.nameZh ?: "其他游戏"
+            showToast("正在下载《$name》，请稍后")
+            return
+        }
+
+        if (redownload) {
+            try {
+                contentStore.deletePaused(game.id)
+            } catch (t: Throwable) {
+                Log.w(TAG, "failed to clear partial before redownload for ${game.id}", t)
+            }
+        }
+
+        clearQaState()
+        selectionGeneration++
+        val generation = ++downloadGeneration
+        activeDownloadGameId = game.id
+        currentDownloadControl = DownloadControl()
+        val control = currentDownloadControl!!
+        activeDownload.value = DownloadOverlayState(game, ContentUpdateStatus.Checking)
+        preparingGameId.value = game.id
+        playbackError.value = null
+
+        contentExecutor.execute {
+            val result = contentUpdater.update(
+                game = game.id,
+                onStatus = { status ->
+                    mainHandler.post {
+                        if (generation == downloadGeneration &&
+                            activeDownloadGameId == game.id &&
+                            activeDownload.value != null
+                        ) {
+                            activeDownload.value = DownloadOverlayState(game, status)
+                        }
+                    }
+                },
+                control = control
+            )
+
+            mainHandler.post {
+                if (generation != downloadGeneration) return@post
+
+                when (val status = result.status) {
+                    is ContentUpdateStatus.Paused -> {
+                        activeDownloadGameId = null
+                        currentDownloadControl = null
+                        activeDownload.value = null
+                        preparingGameId.value = null
+                        refreshContentStatuses()
+                    }
+
+                    is ContentUpdateStatus.Failed -> {
+                        activeDownloadGameId = null
+                        currentDownloadControl = null
+                        preparingGameId.value = null
+                        activeDownload.value = DownloadOverlayState(game, status)
+                        refreshContentStatuses()
+                    }
+
+                    is ContentUpdateStatus.Updated,
+                    is ContentUpdateStatus.UpToDate -> {
+                        activeDownloadGameId = null
+                        currentDownloadControl = null
+                        activeDownload.value = null
+                        preparingGameId.value = null
+                        refreshContentStatuses()
+                        enterGameWithLocalContent(game)
+                    }
+
+                    else -> {
+                        activeDownloadGameId = null
+                        currentDownloadControl = null
+                        activeDownload.value = null
+                        preparingGameId.value = null
+                        refreshContentStatuses()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun pauseDownloadAndReturnHome() {
+        currentDownloadControl?.requestPause()
+        activeDownload.value = null
+        preparingGameId.value = null
+        playbackError.value = null
+    }
+
+    private fun enterGameWithLocalContent(game: GameCatalogEntry) {
         clearQaState()
         val generation = ++selectionGeneration
         val visibleGameIds = visibleGames.value.map { it.id }.toSet()
-        val cachedVersion = contentStore.readActive(game.id)?.version
-
-        selectedGame.value = game
-        playerActive.value = false
         preparingGameId.value = game.id
         playbackError.value = null
-        tutorialTimeline.value = null
-        ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
-            activeVersion = cachedVersion,
-            status = ContentUpdateStatus.Idle
-        )
+        activeDownload.value = null
 
         contentExecutor.execute {
-            val result = contentUpdater.update(game.id) { status ->
-                mainHandler.post { publishContentStatus(status) }
-            }
-
-            if (generation != selectionGeneration) return@execute
-
-            val gameRoot = result.gameRoot ?: contentStore.readActive(game.id)?.root
-            if (gameRoot == null) {
-                mainHandler.post {
-                    if (generation == selectionGeneration) {
-                        preparingGameId.value = null
-                        playbackError.value = result.error?.message
-                            ?.takeIf { it.isNotBlank() }
-                            ?.let { "内容更新失败：$it" }
-                            ?: "无法加载游戏内容"
-                    }
-                }
-                return@execute
-            }
-
-            val loaded = loadTimelineSync(gameRoot, game.tutorialTrack)
-            if (loaded == null) {
-                mainHandler.post {
-                    if (generation == selectionGeneration) {
-                        preparingGameId.value = null
-                        playbackError.value = "该游戏教程内容缺失或损坏"
-                    }
-                }
-                return@execute
-            }
-
-            val activeVersion = resolveActiveVersion(result.status, game.id)
-            val updatedHistory = if (recordPlay) {
-                try {
-                    historyRepository.recordPlay(game.id, visibleGameIds)
-                } catch (t: Throwable) {
-                    Log.w(TAG, "failed to record play history for ${game.id}", t)
-                    null
-                }
-            } else {
-                null
-            }
-
+            val loaded = loadLocalContentSync(game, visibleGameIds)
             mainHandler.post {
                 if (generation != selectionGeneration) return@post
 
-                tutorialTimeline.value = loaded
-                ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
-                    activeVersion = activeVersion,
-                    status = result.status
-                )
-
-                if (recordPlay && updatedHistory != null) {
-                    historyEntries.value = updatedHistory
-                    recentGames.value = historyRepository.recentGames(
-                        visibleGames = visibleGames.value,
-                        history = updatedHistory
-                    )
-                }
-
-                preparingGameId.value = null
-                playerActive.value = true
-                playbackError.value = null
-                sendLoadGame(game.id)
-            }
-        }
-    }
-
-    /**
-     * Re-check content for the already visible game without touching the home
-     * selection state.  Used by the player content panel.
-     */
-    private fun refreshCurrentContent() {
-        val game = selectedGame.value ?: return
-        if (contentCheckInProgress) return
-        contentCheckInProgress = true
-        publishContentStatus(ContentUpdateStatus.Checking)
-
-        val generation = selectionGeneration
-        contentExecutor.execute {
-            val result = contentUpdater.update(game.id) { status ->
-                mainHandler.post { publishContentStatus(status) }
-            }
-
-            if (generation != selectionGeneration || selectedGame.value?.id != game.id) {
-                mainHandler.post { contentCheckInProgress = false }
-                return@execute
-            }
-
-            val gameRoot = result.gameRoot ?: contentStore.readActive(game.id)?.root
-            val loaded = gameRoot?.let { loadTimelineSync(it, game.tutorialTrack) }
-
-            mainHandler.post {
-                contentCheckInProgress = false
-                if (generation != selectionGeneration || selectedGame.value?.id != game.id) {
+                if (loaded == null) {
+                    preparingGameId.value = null
+                    playbackError.value = "本地内容缺失或损坏，请重新下载"
+                    refreshContentStatuses()
                     return@post
                 }
 
-                val activeVersion = resolveActiveVersion(result.status, game.id)
+                tutorialTimeline.value = loaded.timeline
                 ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
-                    activeVersion = activeVersion,
-                    status = result.status
+                    activeVersion = loaded.version,
+                    status = ContentUpdateStatus.UpToDate(loaded.version)
                 )
-                loaded?.let { tutorialTimeline.value = it }
 
-                result.error?.let {
-                    Log.w(TAG, "content refresh failed; keeping previous active version", it)
+                if (loaded.history != null) {
+                    historyEntries.value = loaded.history
+                    recentGames.value = historyRepository.recentGames(
+                        visibleGames = visibleGames.value,
+                        history = loaded.history
+                    )
                 }
 
-                if (result.changed) {
-                    sendLoadGame(game.id)
-                } else {
-                    sendToUnity("RequestStatus", "")
-                }
+                selectedGame.value = game
+                playerActive.value = true
+                preparingGameId.value = null
+                playbackError.value = null
+                sendLoadGameWithRoot(game.id, loaded.versionRoot.absolutePath)
             }
         }
     }
 
-    private fun resolveActiveVersion(
-        status: ContentUpdateStatus,
-        gameId: String
-    ): String? = when (status) {
-        is ContentUpdateStatus.UpToDate -> status.version
-        is ContentUpdateStatus.Updated -> status.version
-        else -> contentStore.readActive(gameId)?.version
+    private fun loadLocalContentSync(
+        game: GameCatalogEntry,
+        visibleGameIds: Set<String>
+    ): LoadedLocalContent? {
+        val active = contentStore.readActiveValid(game.id) ?: return null
+        val gameRoot = contentStore.gameRoot(active.version, game.id)
+        if (!gameRoot.isDirectory) return null
+
+        val timeline = loadTimelineSync(gameRoot, game.tutorialTrack) ?: return null
+        val history = try {
+            historyRepository.recordPlay(game.id, visibleGameIds)
+        } catch (t: Throwable) {
+            Log.w(TAG, "failed to record play history for ${game.id}", t)
+            null
+        }
+
+        return LoadedLocalContent(
+            version = active.version,
+            versionRoot = contentStore.versionDir(active.version),
+            timeline = timeline,
+            history = history
+        )
+    }
+
+    private fun deleteLocalResources(game: GameCatalogEntry) {
+        if (activeDownloadGameId != null) {
+            showToast("下载进行中，暂不能删除资源")
+            return
+        }
+
+        contentExecutor.execute {
+            try {
+                contentStore.deleteLocalContent(game.id)
+            } catch (t: Throwable) {
+                Log.w(TAG, "failed to delete local content for ${game.id}", t)
+            }
+            mainHandler.post {
+                refreshContentStatuses()
+                showToast("已删除《${game.nameZh}》本地资源")
+            }
+        }
+    }
+
+    private fun requestCatalogCheck() {
+        if (catalogRefreshInProgress) {
+            resourceChecking.value = false
+            return
+        }
+        resourceChecking.value = true
+        refreshCatalog(showLoading = false)
+    }
+
+    private fun refreshContentStatuses(games: List<GameCatalogEntry> = visibleGames.value) {
+        contentStatuses.value = games.associate { game ->
+            game.id to resolveContentStatus(game, contentStore)
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun loadTimelineSync(gameRoot: File, track: String): TutorialTimeline? {
@@ -575,15 +744,31 @@ class MainActivity : UnityPlayerGameActivity() {
         }
     }
 
+    private fun sendLoadGameWithRoot(gameId: String, versionRoot: String) {
+        if (unityReadyHandled) {
+            pendingUnload = false
+            pendingLoadGameId = null
+            pendingLoadGameVersionRoot = null
+            sendToUnity("LoadGameWithRoot", "$gameId|$versionRoot")
+            sendToUnity("RequestStatus", "")
+        } else {
+            pendingUnload = false
+            pendingLoadGameId = gameId
+            pendingLoadGameVersionRoot = versionRoot
+        }
+    }
+
     private fun sendLoadGame(gameId: String) {
         if (unityReadyHandled) {
             pendingUnload = false
             pendingLoadGameId = null
+            pendingLoadGameVersionRoot = null
             sendToUnity("LoadGame", gameId)
             sendToUnity("RequestStatus", "")
         } else {
             pendingUnload = false
             pendingLoadGameId = gameId
+            pendingLoadGameVersionRoot = null
         }
     }
 
@@ -591,11 +776,13 @@ class MainActivity : UnityPlayerGameActivity() {
         clearQaState()
         if (unityReadyHandled) {
             pendingLoadGameId = null
+            pendingLoadGameVersionRoot = null
             pendingUnload = false
             sendToUnity("UnloadGame", "")
             sendToUnity("RequestStatus", "")
         } else {
             pendingLoadGameId = null
+            pendingLoadGameVersionRoot = null
             pendingUnload = true
         }
     }
@@ -683,11 +870,6 @@ class MainActivity : UnityPlayerGameActivity() {
         sendUnloadGame()
     }
 
-    private fun publishContentStatus(status: ContentUpdateStatus) {
-        ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
-            status = status
-        )
-    }
 
     private fun sendToUnity(method: String, value: String = "") {
         try {
@@ -696,6 +878,13 @@ class MainActivity : UnityPlayerGameActivity() {
             Log.e(TAG, "UnitySendMessage failed: $method($value)", t)
         }
     }
+
+    private data class LoadedLocalContent(
+        val version: String,
+        val versionRoot: File,
+        val timeline: TutorialTimeline,
+        val history: List<PlayHistoryEntry>?
+    )
 
     companion object {
         private const val TAG = "BoardAI-UaaL"

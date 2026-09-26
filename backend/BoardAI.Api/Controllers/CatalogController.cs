@@ -18,6 +18,7 @@ namespace BoardAI.Api.Controllers;
 public class CatalogController : ControllerBase
 {
     private static readonly Regex SafeGameId = new("^[A-Za-z0-9_-]+$", RegexOptions.Compiled);
+    private static readonly Regex SafeVersion = new("^[0-9a-fA-F]{8,64}$", RegexOptions.Compiled);
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         PropertyNameCaseInsensitive = true
@@ -69,6 +70,7 @@ public class CatalogController : ControllerBase
 
                 game.Aliases ??= new List<string>();
                 game.SearchKeys ??= new List<string>();
+                PopulateContentInfo(game);
                 games.Add(game);
             }
             catch (JsonException ex)
@@ -88,6 +90,112 @@ public class CatalogController : ControllerBase
             .ToArray();
 
         return Ok(ordered);
+    }
+
+    /// <summary>
+    /// Reads content/manifests/{gameId}.json on every request and exposes the
+    /// version, total byte size and file count.  A missing/invalid manifest
+    /// leaves the three fields null and never fails the whole catalog.
+    /// </summary>
+    private void PopulateContentInfo(CatalogGame game)
+    {
+        var manifestPath = Path.Combine(
+            _contentRoot, "content", "manifests", $"{game.Id}.json");
+
+        if (!System.IO.File.Exists(manifestPath))
+        {
+            _logger.LogWarning(
+                "Content manifest not found for catalog game {GameId}: {ManifestPath}",
+                game.Id,
+                manifestPath);
+            return;
+        }
+
+        try
+        {
+            using var document = JsonDocument.Parse(
+                System.IO.File.ReadAllText(manifestPath));
+            var root = document.RootElement;
+
+            if (!root.TryGetProperty("version", out var versionElement) ||
+                versionElement.ValueKind != JsonValueKind.String)
+            {
+                _logger.LogWarning(
+                    "Content manifest has no valid version for catalog game {GameId}: {ManifestPath}",
+                    game.Id,
+                    manifestPath);
+                return;
+            }
+
+            var version = versionElement.GetString()?.Trim() ?? "";
+            if (!SafeVersion.IsMatch(version))
+            {
+                _logger.LogWarning(
+                    "Content manifest has invalid version '{Version}' for catalog game {GameId}: {ManifestPath}",
+                    version,
+                    game.Id,
+                    manifestPath);
+                return;
+            }
+
+            if (!root.TryGetProperty("files", out var filesElement) ||
+                filesElement.ValueKind != JsonValueKind.Array)
+            {
+                _logger.LogWarning(
+                    "Content manifest has no valid files array for catalog game {GameId}: {ManifestPath}",
+                    game.Id,
+                    manifestPath);
+                return;
+            }
+
+            long totalBytes = 0;
+            var fileCount = filesElement.GetArrayLength();
+            foreach (var fileElement in filesElement.EnumerateArray())
+            {
+                if (fileElement.ValueKind != JsonValueKind.Object ||
+                    !fileElement.TryGetProperty("size", out var sizeElement) ||
+                    sizeElement.ValueKind != JsonValueKind.Number ||
+                    !sizeElement.TryGetInt64(out var size) ||
+                    size < 0)
+                {
+                    _logger.LogWarning(
+                        "Content manifest has an invalid file size for catalog game {GameId}: {ManifestPath}",
+                        game.Id,
+                        manifestPath);
+                    return;
+                }
+
+                totalBytes = checked(totalBytes + size);
+            }
+
+            game.ContentVersion = version.ToLowerInvariant();
+            game.ContentSizeBytes = totalBytes;
+            game.ContentFileCount = fileCount;
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Content manifest is malformed for catalog game {GameId}: {ManifestPath}",
+                game.Id,
+                manifestPath);
+        }
+        catch (IOException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Content manifest could not be read for catalog game {GameId}: {ManifestPath}",
+                game.Id,
+                manifestPath);
+        }
+        catch (OverflowException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Content manifest size overflow for catalog game {GameId}: {ManifestPath}",
+                game.Id,
+                manifestPath);
+        }
     }
 
     private sealed class CatalogGame
@@ -118,5 +226,14 @@ public class CatalogController : ControllerBase
 
         [JsonPropertyName("tutorial_track")]
         public string TutorialTrack { get; set; } = "full";
+
+        [JsonPropertyName("content_version")]
+        public string? ContentVersion { get; set; }
+
+        [JsonPropertyName("content_size_bytes")]
+        public long? ContentSizeBytes { get; set; }
+
+        [JsonPropertyName("content_file_count")]
+        public int? ContentFileCount { get; set; }
     }
 }

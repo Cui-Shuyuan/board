@@ -32,7 +32,6 @@ internal class PlayerOverlayUiState {
     var scrubGlobal by mutableFloatStateOf(0f)
     var scrubTarget by mutableStateOf<TimelineTarget?>(null)
     var showChapters by mutableStateOf(false)
-    var showContentPanel by mutableStateOf(false)
     var seekFlash by mutableStateOf<String?>(null)
     var localVolume by mutableFloatStateOf(1f)
     var volumeDragging by mutableStateOf(false)
@@ -261,7 +260,6 @@ internal fun PlayerAutoHideEffect(
         uiState.controlsVisible,
         uiState.scrubbing,
         uiState.showChapters,
-        uiState.showContentPanel,
         uiState.controlGeneration,
         paused,
         qaOpen
@@ -269,8 +267,7 @@ internal fun PlayerAutoHideEffect(
         if (!qaOpen &&
             uiState.controlsVisible &&
             !uiState.scrubbing &&
-            !uiState.showChapters &&
-            !uiState.showContentPanel
+            !uiState.showChapters
         ) {
             delay(3000)
             uiState.controlsVisible = false

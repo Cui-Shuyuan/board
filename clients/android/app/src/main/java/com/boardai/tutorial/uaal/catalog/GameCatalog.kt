@@ -19,18 +19,27 @@ data class GameCatalogEntry(
     val searchKeys: List<String>,
     val minPlayers: Int,
     val maxPlayers: Int,
-    val tutorialTrack: String
+    val tutorialTrack: String,
+    val contentVersion: String? = null,
+    val contentSizeBytes: Long? = null,
+    val contentFileCount: Int? = null
 ) {
-    fun toJson(): JSONObject = JSONObject()
-        .put("id", id)
-        .put("released", released)
-        .put("name_zh", nameZh)
-        .put("name_en", nameEn)
-        .put("aliases", JSONArray(aliases))
-        .put("search_keys", JSONArray(searchKeys))
-        .put("min_players", minPlayers)
-        .put("max_players", maxPlayers)
-        .put("tutorial_track", tutorialTrack)
+    fun toJson(): JSONObject {
+        val json = JSONObject()
+            .put("id", id)
+            .put("released", released)
+            .put("name_zh", nameZh)
+            .put("name_en", nameEn)
+            .put("aliases", JSONArray(aliases))
+            .put("search_keys", JSONArray(searchKeys))
+            .put("min_players", minPlayers)
+            .put("max_players", maxPlayers)
+            .put("tutorial_track", tutorialTrack)
+        contentVersion?.let { json.put("content_version", it) }
+        contentSizeBytes?.let { json.put("content_size_bytes", it) }
+        contentFileCount?.let { json.put("content_file_count", it) }
+        return json
+    }
 
     companion object {
         fun fromJson(json: JSONObject): GameCatalogEntry? {
@@ -39,6 +48,22 @@ data class GameCatalogEntry(
 
             val aliases = json.optJSONArray("aliases").toStringList()
             val searchKeys = json.optJSONArray("search_keys").toStringList()
+
+            val contentVersion = if (json.has("content_version") && !json.isNull("content_version")) {
+                json.optString("content_version", "").trim().takeIf { it.isNotBlank() }
+            } else {
+                null
+            }
+            val contentSizeBytes = if (json.has("content_size_bytes") && !json.isNull("content_size_bytes")) {
+                json.optLong("content_size_bytes", -1L).takeIf { it >= 0L }
+            } else {
+                null
+            }
+            val contentFileCount = if (json.has("content_file_count") && !json.isNull("content_file_count")) {
+                json.optInt("content_file_count", -1).takeIf { it >= 0 }
+            } else {
+                null
+            }
 
             return GameCatalogEntry(
                 id = id,
@@ -51,7 +76,10 @@ data class GameCatalogEntry(
                 maxPlayers = json.optInt("max_players", 0).coerceAtLeast(0),
                 tutorialTrack = json.optString("tutorial_track", "full")
                     .trim()
-                    .ifBlank { "full" }
+                    .ifBlank { "full" },
+                contentVersion = contentVersion,
+                contentSizeBytes = contentSizeBytes,
+                contentFileCount = contentFileCount
             )
         }
     }

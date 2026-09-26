@@ -279,6 +279,50 @@ namespace BoardGameTutorial
         }
 
         /// <summary>
+        /// Selects a game and supplies the absolute version directory directly.
+        /// Payload format: "{gameId}|{versionRoot}".
+        ///
+        /// The version root is the directory that contains
+        /// {versionRoot}/{gameId}/tutorial/... .  Native code uses this for the
+        /// app-private content repository, avoiding any dependency on
+        /// Application.persistentDataPath/active.json.
+        /// </summary>
+        public void LoadGameWithRoot(string payload)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            if (string.IsNullOrWhiteSpace(payload))
+            {
+                Debug.LogWarning("[AndroidTutorialBridge] LoadGameWithRoot received empty payload.");
+                return;
+            }
+
+            int separator = payload.IndexOf('|');
+            if (separator <= 0 || separator >= payload.Length - 1)
+            {
+                Debug.LogWarning("[AndroidTutorialBridge] LoadGameWithRoot invalid payload: " + payload);
+                return;
+            }
+
+            string gameId = payload.Substring(0, separator).Trim();
+            string versionRoot = payload.Substring(separator + 1).Trim();
+            if (gameId.Length == 0 || versionRoot.Length == 0)
+            {
+                Debug.LogWarning("[AndroidTutorialBridge] LoadGameWithRoot missing game/root: " + payload);
+                return;
+            }
+
+            player.gameId = gameId;
+            player.tutorialRoot = versionRoot;
+            player.ReloadGame();
+            Debug.Log(
+                "[AndroidTutorialBridge] LoadGameWithRoot(game=" + gameId +
+                ", root=" + versionRoot + ") forwarded.");
+            PostStatus();
+        }
+
+        /// <summary>
         /// Stops playback, clears the current audio and animation scene, and
         /// leaves the runtime idle until the next LoadGame call.
         /// </summary>

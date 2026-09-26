@@ -1,6 +1,7 @@
 package com.boardai.tutorial.uaal.content
 
 import android.content.Context
+import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -16,32 +17,63 @@ data class ActiveContent(
     val root: File
 )
 
+data class PausedContent(
+    val game: String,
+    val version: String,
+    val completedFiles: Int = 0,
+    val totalFiles: Int = 0,
+    val bytesCompleted: Long = 0L,
+    val totalBytes: Long = 0L,
+    val currentPath: String = "",
+    val updatedAt: Long = 0L
+) {
+    val percent: Int
+        get() {
+            if (totalBytes > 0L) {
+                return ((bytesCompleted * 100L) / totalBytes)
+                    .toInt()
+                    .coerceIn(0, 100)
+            }
+            if (totalFiles > 0) {
+                return ((completedFiles * 100L) / totalFiles)
+                    .toInt()
+                    .coerceIn(0, 100)
+            }
+            return 0
+        }
+}
+
 /**
  * Local content repository rooted at:
  *
- *   context.getExternalFilesDir(null)/board-content/
+ *   context.filesDir/board-content/
  *
  * Layout:
  *   active.json
  *   versions/{version}/complete.json
  *   versions/{version}/{game}/...
+ *   versions/{version}.partial/{game}/...
+ *   versions/{version}.partial/progress.json
+ *
+ * The external app-specific directory used by older builds is deleted once on
+ * construction.  Nothing in this class reads from or writes to external storage.
  */
 class ContentStore(context: Context) {
-    private val externalFilesDir: File = context.getExternalFilesDir(null)
-        ?: context.filesDir
-
-    val contentRoot: File = File(externalFilesDir, "board-content")
+    val contentRoot: File = File(context.filesDir, "board-content")
     val versionsDir: File = File(contentRoot, "versions")
     val activeFile: File = File(contentRoot, "active.json")
 
     init {
-        contentRoot.mkdirs()
-        versionsDir.mkdirs()
+        deleteLegacyExternalRoot(context)
     }
 
     fun versionDir(version: String): File = File(versionsDir, version)
 
     fun partialDir(version: String): File = File(versionsDir, "$version.partial")
+
+    fun partialGameDir(version: String, game: String): File = File(partialDir(version), game)
+
+    fun progressFile(version: String): File = File(partialDir(version), PROGRESS_MARKER)
 
     fun gameRoot(version: String, game: String): File = File(versionDir(version), game)
 
@@ -65,6 +97,15 @@ class ContentStore(context: Context) {
         } catch (_: Exception) {
             false
         }
+    }
+
+    /** Active pointer plus the complete marker and real game directory. */
+    fun readActiveValid(game: String): ActiveContent? {
+        val active = readActive(game) ?: return null
+        if (!isVersionComplete(active.version, game)) return null
+        val root = gameRoot(active.version, game)
+        if (!root.isDirectory) return null
+        return ActiveContent(game = game, version = active.version, root = root)
     }
 
     fun writeCompleteMarker(
@@ -168,6 +209,174 @@ class ContentStore(context: Context) {
         }
     }
 
+    fun clearActive(game: String) {
+        if (!activeFile.isFile) return
+
+        val document = try {
+            JSONObject(activeFile.readText(Charsets.UTF_8))
+        } catch (_: Exception) {
+            return
+        }
+        val games = document.optJSONArray("games") ?: return
+        val kept = JSONArray()
+        for (i in 0 until games.length()) {
+            val entry = games.optJSONObject(i) ?: continue
+            if (entry.optString("game", "") == game) continue
+            kept.put(entry)
+        }
+        document.put("games", kept)
+
+        val temp = File(contentRoot, "active.json.tmp")
+        temp.writeText(document.toString(2), Charsets.UTF_8)
+        if (!moveAtomically(temp, activeFile)) {
+            temp.delete()
+            throw IOException("failed to atomically replace active.json")
+        }
+    }
+
+    /**
+     * Reads the newest progress marker for [game].  A corrupt marker is ignored;
+     * if a partial game directory still exists, a zero-progress marker is
+     * returned so the UI still reports PAUSED and the `.part` files can resume.
+     */
+    fun readPaused(game: String): PausedContent? {
+        val directories = versionsDir.listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?: return null
+
+        var best: PausedContent? = null
+        for (directory in directories) {
+            val version = directory.name.removeSuffix(PARTIAL_SUFFIX)
+            if (version.isBlank()) continue
+
+            val marker = readProgressMarker(directory)
+            val candidate = when {
+                marker?.game == game -> marker.copy(version = version)
+                File(directory, game).isDirectory -> PausedContent(
+                    game = game,
+                    version = version,
+                    updatedAt = directory.lastModified()
+                )
+                else -> null
+            }
+
+            if (candidate != null && (best == null || candidate.updatedAt >= best.updatedAt)) {
+                best = candidate
+            }
+        }
+        return best
+    }
+
+    /**
+     * Writes progress.json via progress.json.tmp + atomic rename.  This is
+     * intentionally best-effort: the real `.part` files remain the source of
+     * truth for resume offsets.
+     */
+    fun writePausedProgress(
+        version: String,
+        game: String,
+        completedFiles: Int,
+        totalFiles: Int,
+        bytesCompleted: Long,
+        totalBytes: Long,
+        currentPath: String
+    ): PausedContent? {
+        val partial = partialDir(version)
+        if (!partial.isDirectory && !partial.mkdirs()) return null
+
+        val updatedAt = System.currentTimeMillis()
+        val payload = JSONObject()
+            .put("schema", PROGRESS_SCHEMA)
+            .put("game", game)
+            .put("version", version)
+            .put("completedFiles", completedFiles.coerceAtLeast(0))
+            .put("totalFiles", totalFiles.coerceAtLeast(0))
+            .put("bytesCompleted", bytesCompleted.coerceAtLeast(0L))
+            .put("totalBytes", totalBytes.coerceAtLeast(0L))
+            .put("currentPath", currentPath)
+            .put("updatedAt", updatedAt)
+
+        return try {
+            val temp = File(partial, "$PROGRESS_MARKER.tmp")
+            temp.writeText(payload.toString(), Charsets.UTF_8)
+            if (!moveAtomically(temp, progressFile(version))) {
+                temp.delete()
+                return null
+            }
+            PausedContent(
+                game = game,
+                version = version,
+                completedFiles = completedFiles.coerceAtLeast(0),
+                totalFiles = totalFiles.coerceAtLeast(0),
+                bytesCompleted = bytesCompleted.coerceAtLeast(0L),
+                totalBytes = totalBytes.coerceAtLeast(0L),
+                currentPath = currentPath,
+                updatedAt = updatedAt
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /** Deletes partial directories/markers belonging to [game]. */
+    fun deletePaused(game: String) {
+        val directories = versionsDir.listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?: return
+
+        for (directory in directories) {
+            val marker = readProgressMarker(directory)
+            val gameDir = File(directory, game)
+            if (marker?.game != game && !gameDir.isDirectory) continue
+
+            if (gameDir.isDirectory) gameDir.deleteRecursively()
+            if (marker?.game == game) {
+                File(directory, PROGRESS_MARKER).delete()
+            }
+            File(directory, "$PROGRESS_MARKER.tmp").delete()
+            if (directory.listFiles().isNullOrEmpty()) directory.delete()
+        }
+    }
+
+    /** Removes partials for [game] whose version is not [currentVersion]. */
+    fun deleteStalePartials(game: String, currentVersion: String) {
+        val directories = versionsDir.listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?: return
+
+        val keepName = "$currentVersion$PARTIAL_SUFFIX"
+        for (directory in directories) {
+            if (directory.name == keepName) continue
+            val marker = readProgressMarker(directory)
+            val gameDir = File(directory, game)
+            if (marker?.game != game && !gameDir.isDirectory) continue
+
+            if (gameDir.isDirectory) gameDir.deleteRecursively()
+            if (marker?.game == game) File(directory, PROGRESS_MARKER).delete()
+            File(directory, "$PROGRESS_MARKER.tmp").delete()
+            if (directory.listFiles().isNullOrEmpty()) directory.delete()
+        }
+    }
+
+    /**
+     * Deletes every complete version for [game], all of its partials and its
+     * active pointer.  No other game's files are touched.
+     */
+    fun deleteLocalContent(game: String) {
+        val versionDirectories = versionsDir.listFiles()
+            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
+            ?: emptyList()
+
+        for (directory in versionDirectories) {
+            val markerGame = readCompleteMarkerGame(directory)
+            if (markerGame != game && !File(directory, game).isDirectory) continue
+            directory.deleteRecursively()
+        }
+
+        deletePaused(game)
+        clearActive(game)
+    }
+
     /**
      * Builds the reuse lookup once per update run.  Each old version's
      * complete.json is read and parsed exactly once, instead of once per
@@ -184,7 +393,7 @@ class ContentStore(context: Context) {
             ?.asSequence()
             ?.filter {
                 it.isDirectory &&
-                    !it.name.endsWith(".partial") &&
+                    !it.name.endsWith(PARTIAL_SUFFIX) &&
                     it.name != targetVersion
             }
             ?.sortedByDescending { it.lastModified() }
@@ -239,9 +448,9 @@ class ContentStore(context: Context) {
      */
     fun cleanupOldVersions(game: String, keep: Int = 2) {
         if (keep < 1) return
-        val activeVersion = readActive(game)?.version
+        val activeVersion = readActiveValid(game)?.version
         val all = versionsDir.listFiles()
-            ?.filter { it.isDirectory && !it.name.endsWith(".partial") }
+            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
             ?.sortedByDescending { it.lastModified() }
             ?: return
 
@@ -259,14 +468,71 @@ class ContentStore(context: Context) {
         }
     }
 
+    private fun readProgressMarker(partialDirectory: File): PausedContent? {
+        val marker = File(partialDirectory, PROGRESS_MARKER)
+        if (!marker.isFile) return null
+
+        return try {
+            val json = JSONObject(marker.readText(Charsets.UTF_8))
+            val game = json.optString("game", "")
+            if (game.isBlank()) return null
+
+            PausedContent(
+                game = game,
+                version = json.optString("version", "").ifBlank {
+                    partialDirectory.name.removeSuffix(PARTIAL_SUFFIX)
+                },
+                completedFiles = json.optInt("completedFiles", 0).coerceAtLeast(0),
+                totalFiles = json.optInt("totalFiles", 0).coerceAtLeast(0),
+                bytesCompleted = json.optLong("bytesCompleted", 0L).coerceAtLeast(0L),
+                totalBytes = json.optLong("totalBytes", 0L).coerceAtLeast(0L),
+                currentPath = json.optString("currentPath", ""),
+                updatedAt = json.optLong("updatedAt", 0L).coerceAtLeast(0L)
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun readCompleteMarkerGame(versionDirectory: File): String? {
+        val marker = File(versionDirectory, COMPLETE_MARKER)
+        if (!marker.isFile) return null
+        return try {
+            JSONObject(marker.readText(Charsets.UTF_8))
+                .optString("game", "")
+                .takeIf { it.isNotBlank() }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun deleteLegacyExternalRoot(context: Context) {
+        try {
+            val externalRoot = context.getExternalFilesDir(null) ?: return
+            val legacy = File(externalRoot, "board-content")
+            if (!legacy.exists()) return
+            if (!legacy.deleteRecursively()) {
+                Log.w(TAG, "failed to delete legacy external content root: ${legacy.absolutePath}")
+            } else {
+                Log.i(TAG, "deleted legacy external content root: ${legacy.absolutePath}")
+            }
+        } catch (t: Throwable) {
+            Log.w(TAG, "failed to clean legacy external content root", t)
+        }
+    }
+
     private companion object {
+        const val TAG = "BoardAI-ContentStore"
         const val COMPLETE_MARKER = "complete.json"
+        const val PROGRESS_MARKER = "progress.json"
+        const val PROGRESS_SCHEMA = "board-content-progress/v1"
+        const val PARTIAL_SUFFIX = ".partial"
     }
 }
 
 /**
  * Same-directory rename is the atomic-switch primitive used for both version
- * directories and active.json.  Android external storage is normally a POSIX
+ * directories and active.json.  Internal storage is normally a POSIX
  * filesystem, so rename either fully succeeds or leaves the original in place.
  */
 internal fun moveAtomically(source: File, target: File): Boolean {

@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
-import com.boardai.tutorial.uaal.content.ContentUpdateUiState
 import com.boardai.tutorial.uaal.qa.QaPanel
 import com.boardai.tutorial.uaal.qa.QaRepository
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
@@ -59,8 +58,8 @@ private const val QA_TRANSITION_MILLIS = 280
 fun TutorialPlayerOverlay(
     status: UnityStatus?,
     timeline: TutorialTimeline?,
-    contentState: ContentUpdateUiState,
     game: GameCatalogEntry?,
+    activeVersion: String?,
     qaOpen: Boolean,
     qaRepository: QaRepository,
     asrRepository: AsrRepository,
@@ -70,7 +69,6 @@ fun TutorialPlayerOverlay(
     onOpenQa: (cueId: String, positionInCue: Float, wasPlaying: Boolean) -> Unit,
     onCloseQa: () -> Unit,
     onCommand: (method: String, value: String) -> Unit,
-    onCheckContentUpdate: () -> Unit,
     gesturePolicy: PlayerGesturePolicy = PlayerGesturePolicy()
 ) {
     val uiState = rememberPlayerOverlayUiState()
@@ -105,7 +103,6 @@ fun TutorialPlayerOverlay(
     LaunchedEffect(qaOpen) {
         if (qaOpen) {
             uiState.showChapters = false
-            uiState.showContentPanel = false
             uiState.scrubbing = false
         }
     }
@@ -264,10 +261,6 @@ fun TutorialPlayerOverlay(
             Box(modifier = Modifier.fillMaxSize()) {
                 PlayerTopBar(
                     chapterPathText = if (display.unityReady) chapterPathTextWithGame else null,
-                    onOpenContent = {
-                        revealControls()
-                        uiState.showContentPanel = true
-                    },
                     modifier = Modifier.align(Alignment.TopCenter)
                 )
 
@@ -281,7 +274,7 @@ fun TutorialPlayerOverlay(
                 PlayerTransportBar(
                     status = status,
                     timeline = timeline,
-                    contentState = contentState,
+                    activeVersion = activeVersion,
                     volume = display.volume,
                     paused = display.paused,
                     scrubbing = uiState.scrubbing,
@@ -307,7 +300,6 @@ fun TutorialPlayerOverlay(
                     },
                     onOpenQa = {
                         uiState.showChapters = false
-                        uiState.showContentPanel = false
                         uiState.scrubbing = false
                         onOpenQa(resumeCueId, resumePositionInCue, wasPlayingBeforeQuestion)
                     },
@@ -365,13 +357,6 @@ fun TutorialPlayerOverlay(
             )
         }
 
-        if (!qaOpen && uiState.showContentPanel) {
-            PlayerContentPanel(
-                contentState = contentState,
-                onDismiss = { uiState.showContentPanel = false },
-                onCheck = onCheckContentUpdate
-            )
-        }
 
         AnimatedVisibility(
             visible = qaOpen,

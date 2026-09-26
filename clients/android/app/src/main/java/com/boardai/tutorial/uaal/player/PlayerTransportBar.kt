@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.UnityStatus
-import com.boardai.tutorial.uaal.content.ContentUpdateUiState
 import com.boardai.tutorial.uaal.timeline.TimelineTarget
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 
@@ -67,7 +66,7 @@ internal fun PlayerCenterPlayPause(
 internal fun PlayerTransportBar(
     status: UnityStatus?,
     timeline: TutorialTimeline?,
-    contentState: ContentUpdateUiState,
+    activeVersion: String?,
     volume: Float,
     paused: Boolean,
     scrubbing: Boolean,
@@ -219,7 +218,7 @@ internal fun PlayerTransportBar(
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = contentState.activeVersion?.let { "v$it" } ?: "内容未激活",
+                    text = activeVersion?.let { "v$it" } ?: "内容未激活",
                     color = Color.White.copy(alpha = 0.62f),
                     fontSize = 11.sp,
                     maxLines = 1
