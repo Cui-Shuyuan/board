@@ -1,5 +1,6 @@
 package com.boardai.tutorial.uaal.qa
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -31,6 +32,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -68,6 +70,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 private const val QA_VOICE_TAG = "BoardAI-QaVoice"
+private const val QA_PREFS = "qa_prefs"
+private const val KEY_AUTO_TTS = "auto_tts_enabled"
 
 private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
@@ -100,11 +104,18 @@ fun QaPanel(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val appContext = LocalContext.current.applicationContext
+    val prefs = remember(appContext) {
+        appContext.getSharedPreferences(QA_PREFS, Context.MODE_PRIVATE)
+    }
 
     val audioRecorder = remember { AudioRecorder(appContext) }
     val answerPlayer = remember { AnswerAudioPlayer() }
 
     var input by remember { mutableStateOf("") }
+    var autoTtsEnabled by remember {
+        mutableStateOf(prefs.getBoolean(KEY_AUTO_TTS, true))
+    }
+    var autoTtsGeneration by remember { mutableStateOf(0) }
     var sendState by remember { mutableStateOf<QaSendState>(QaSendState.Idle) }
     val sending = sendState is QaSendState.Sending
 
@@ -149,6 +160,21 @@ fun QaPanel(
     fun stopPlayback() {
         answerPlayer.stop()
         playingMessageId = null
+    }
+
+    fun setAutoTtsEnabled(enabled: Boolean) {
+        autoTtsEnabled = enabled
+        autoTtsGeneration += 1
+        prefs.edit()
+            .putBoolean(KEY_AUTO_TTS, enabled)
+            .apply()
+
+        if (!enabled) {
+            stopPlayback()
+            voiceStatus = null
+        }
+
+        Log.d(QA_VOICE_TAG, "auto TTS enabled=$enabled")
     }
 
     fun handleRecorded(file: File?) {
@@ -261,10 +287,19 @@ fun QaPanel(
         )
     }
 
-    fun synthesizeAndPlay(message: QaMessage) {
+    fun synthesizeAndPlay(message: QaMessage, autoPlay: Boolean) {
+        if (autoPlay && !autoTtsEnabled) {
+            Log.d(QA_VOICE_TAG, "auto TTS disabled; skip auto playback")
+            return
+        }
+
         val existing = answerAudioFiles[message.timestamp]
         if (existing != null && existing.exists()) {
-            playAnswerFile(message, existing)
+            if (!autoPlay || autoTtsEnabled) {
+                playAnswerFile(message, existing)
+            } else {
+                Log.d(QA_VOICE_TAG, "auto playback skipped: toggle off")
+            }
             return
         }
 
@@ -272,6 +307,13 @@ fun QaPanel(
         ttsMessageInFlight = message.timestamp
         ttsBusy = true
         voiceStatus = "正在合成语音…"
+        if (autoPlay) {
+            Log.d(
+                QA_VOICE_TAG,
+                "auto TTS request starting, textLength=${message.content.length}"
+            )
+        }
+        val requestGeneration = autoTtsGeneration
 
         scope.launch {
             ttsRepository.synthesize(
@@ -287,7 +329,15 @@ fun QaPanel(
                 if (voiceStatus == "正在合成语音…") {
                     voiceStatus = null
                 }
-                playAnswerFile(message, file)
+
+                val shouldAutoPlay = autoPlay &&
+                    autoTtsEnabled &&
+                    requestGeneration == autoTtsGeneration
+                if (!autoPlay || shouldAutoPlay) {
+                    playAnswerFile(message, file)
+                } else {
+                    Log.d(QA_VOICE_TAG, "auto playback skipped: toggle off")
+                }
             }.onFailure {
                 if (ttsMessageInFlight == message.timestamp) {
                     ttsMessageInFlight = null
@@ -303,7 +353,7 @@ fun QaPanel(
         if (existing != null && existing.exists()) {
             playAnswerFile(message, existing)
         } else {
-            synthesizeAndPlay(message)
+            synthesizeAndPlay(message, autoPlay = false)
         }
     }
 
@@ -350,7 +400,11 @@ fun QaPanel(
                 QaSessionHolder.appendMessage(replyMessage, context)
                 sendState = QaSendState.Idle
                 if (replyText != "（未收到回答）") {
-                    synthesizeAndPlay(replyMessage)
+                    if (autoTtsEnabled) {
+                        synthesizeAndPlay(replyMessage, autoPlay = true)
+                    } else {
+                        Log.d(QA_VOICE_TAG, "auto TTS disabled; skip auto playback")
+                    }
                 }
             }.onFailure {
                 QaSessionHolder.appendMessage(
@@ -414,6 +468,8 @@ fun QaPanel(
             QaComposer(
                 value = input,
                 onValueChange = { input = it },
+                autoTtsEnabled = autoTtsEnabled,
+                onAutoTtsEnabledChange = { setAutoTtsEnabled(it) },
                 sending = sending,
                 errorMessage = (sendState as? QaSendState.Error)?.message,
                 voiceStatus = voiceStatus,
@@ -587,6 +643,8 @@ private fun QaTypingBubble() {
 private fun QaComposer(
     value: String,
     onValueChange: (String) -> Unit,
+    autoTtsEnabled: Boolean,
+    onAutoTtsEnabledChange: (Boolean) -> Unit,
     sending: Boolean,
     errorMessage: String?,
     voiceStatus: String?,
@@ -602,6 +660,33 @@ private fun QaComposer(
             .fillMaxWidth()
             .padding(top = 6.dp, bottom = 12.dp)
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "回答自动播报",
+                color = Color.White.copy(alpha = 0.90f),
+                fontSize = 13.sp
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = if (autoTtsEnabled) "开启" else "关闭",
+                color = if (autoTtsEnabled) QaAccentYellow else Color.White.copy(alpha = 0.55f),
+                fontSize = 12.sp
+            )
+            Spacer(Modifier.width(8.dp))
+            Switch(
+                checked = autoTtsEnabled,
+                onCheckedChange = onAutoTtsEnabledChange,
+                modifier = Modifier.semantics {
+                    contentDescription = "回答自动播报"
+                }
+            )
+        }
+
         if (!errorMessage.isNullOrBlank()) {
             Text(
                 text = errorMessage,
