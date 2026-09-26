@@ -13,7 +13,9 @@ data class TimelineCue(
     val start: Float,
     val duration: Float,
     val text: String,
-    val groupPath: List<String>
+    val groupPath: List<String>,
+    val refs: List<String> = emptyList(),
+    val actions: List<String> = emptyList()
 ) {
     val endExclusive: Float get() = start + duration
 }

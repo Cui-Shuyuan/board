@@ -38,4 +38,41 @@ public class ChatContext
 
     [JsonPropertyName("position")]
     public float? Position { get; set; }
+
+    [JsonPropertyName("recent_cues")]
+    public List<RecentCueContext>? RecentCues { get; set; }
+}
+
+/// <summary>
+/// One entry in Android's rolling recent-cue window.  The list is sent in
+/// chronological order and the final entry is the cue active at question time.
+/// </summary>
+public class RecentCueContext
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
+
+    [JsonPropertyName("index")]
+    public int? Index { get; set; }
+
+    [JsonPropertyName("text")]
+    public string? Text { get; set; }
+
+    [JsonPropertyName("group_path")]
+    public List<string>? GroupPath { get; set; }
+
+    [JsonPropertyName("refs")]
+    public List<string>? Refs { get; set; }
+
+    [JsonPropertyName("actions")]
+    public List<string>? Actions { get; set; }
+
+    [JsonPropertyName("start")]
+    public float? Start { get; set; }
+
+    [JsonPropertyName("duration")]
+    public float? Duration { get; set; }
+
+    [JsonPropertyName("is_current")]
+    public bool IsCurrent { get; set; }
 }

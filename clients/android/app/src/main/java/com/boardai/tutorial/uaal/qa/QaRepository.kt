@@ -89,6 +89,22 @@ class QaRepository(
             )
         }
 
+        val recentCues = JSONArray()
+        context.recentCues.forEach { cue ->
+            recentCues.put(
+                JSONObject()
+                    .put("id", cue.id)
+                    .put("index", cue.index)
+                    .put("text", cue.text)
+                    .put("group_path", JSONArray(cue.groupPath))
+                    .put("refs", JSONArray(cue.refs))
+                    .put("actions", JSONArray(cue.actions))
+                    .put("start", cue.start.toDouble())
+                    .put("duration", cue.duration.toDouble())
+                    .put("is_current", cue.isCurrent)
+            )
+        }
+
         val contextObject = JSONObject()
             .put("game_name", context.gameName)
             .put("cue_id", context.cueId)
@@ -96,6 +112,7 @@ class QaRepository(
             .put("cue_text", context.cueText)
             .put("group_path", JSONArray(context.groupPath))
             .put("position", context.positionInCue.toDouble())
+            .put("recent_cues", recentCues)
 
         return JSONObject()
             .put("game_id", gameId)

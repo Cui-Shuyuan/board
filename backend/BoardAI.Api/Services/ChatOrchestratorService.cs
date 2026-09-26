@@ -148,20 +148,23 @@ public class ChatOrchestratorService
         return finalReply;
     }
 
-    private static string? BuildContextMessage(ChatContext? context)
+    private string? BuildContextMessage(ChatContext? context)
     {
         if (context == null) return null;
 
-        var groupPath = context.GroupPath?
-            .Where(pathPart => !string.IsNullOrWhiteSpace(pathPart))
-            .ToList();
+        var groupPath = CleanPath(context.GroupPath);
+        var recentCues = context.RecentCues?
+            .Where(HasRecentCueContent)
+            .Take(5)
+            .ToList() ?? new List<RecentCueContext>();
 
         var hasContent = !string.IsNullOrWhiteSpace(context.GameName)
             || !string.IsNullOrWhiteSpace(context.CueId)
             || !string.IsNullOrWhiteSpace(context.CueText)
             || context.CueIndex.HasValue
             || context.Position.HasValue
-            || (groupPath?.Count > 0);
+            || groupPath.Count > 0
+            || recentCues.Count > 0;
 
         if (!hasContent) return null;
 
@@ -171,20 +174,99 @@ public class ChatOrchestratorService
         if (!string.IsNullOrWhiteSpace(context.GameName))
             builder.AppendLine($"游戏：{context.GameName}");
 
-        if (groupPath?.Count > 0)
+        if (groupPath.Count > 0)
             builder.AppendLine($"当前小节：{string.Join(" > ", groupPath)}");
 
         if (!string.IsNullOrWhiteSpace(context.CueId))
             builder.AppendLine($"当前 cue：{context.CueId}");
 
         if (!string.IsNullOrWhiteSpace(context.CueText))
-            builder.AppendLine($"当前台词：{context.CueText}");
+            builder.AppendLine($"当前台词：{Truncate(context.CueText.Trim(), 300)}");
 
         if (context.Position.HasValue)
             builder.AppendLine(
                 $"当前播放位置：{context.Position.Value.ToString("0.##", CultureInfo.InvariantCulture)} 秒");
 
+        if (recentCues.Count > 0)
+        {
+            builder.AppendLine();
+            builder.AppendLine("最近观看内容（按时间顺序，最后一条是客人提问时的当前 cue）：");
+
+            foreach (var cue in recentCues)
+            {
+                AppendRecentCue(builder, cue);
+            }
+
+            _logger.LogInformation(
+                "[Chat] context injected: cues={Count}, current={CueId}",
+                recentCues.Count,
+                context.CueId ?? recentCues.LastOrDefault()?.Id ?? "");
+        }
+
         return builder.ToString().TrimEnd();
+    }
+
+    private static void AppendRecentCue(StringBuilder builder, RecentCueContext cue)
+    {
+        var indexText = cue.Index?.ToString(CultureInfo.InvariantCulture) ?? "?";
+        var path = CleanPath(cue.GroupPath);
+
+        var header = new StringBuilder();
+        header.Append("[cue ").Append(indexText).Append(']');
+        if (cue.IsCurrent) header.Append(" 当前 cue");
+        if (path.Count > 0)
+            header.Append(cue.IsCurrent ? "：" : " ").Append(string.Join(" > ", path));
+        builder.AppendLine(header.ToString());
+
+        if (!string.IsNullOrWhiteSpace(cue.Text))
+            builder.AppendLine($"口播：{Truncate(cue.Text.Trim(), 300)}");
+
+        var refs = cue.Refs?
+            .Where(item => !string.IsNullOrWhiteSpace(item))
+            .Select(item => item.Trim())
+            .ToList();
+        if (refs?.Count > 0)
+            builder.AppendLine($"引用：{string.Join("、", refs)}");
+
+        var actions = cue.Actions?
+            .Where(action => !string.IsNullOrWhiteSpace(action))
+            .Select(action => action.Trim())
+            .Take(8)
+            .ToList();
+        if (actions?.Count > 0)
+        {
+            builder.AppendLine("动作：");
+            foreach (var action in actions)
+                builder.AppendLine($"- {action}");
+        }
+
+        builder.AppendLine();
+    }
+
+    private static bool HasRecentCueContent(RecentCueContext cue)
+    {
+        return !string.IsNullOrWhiteSpace(cue.Id)
+            || cue.Index.HasValue
+            || !string.IsNullOrWhiteSpace(cue.Text)
+            || cue.GroupPath?.Any(part => !string.IsNullOrWhiteSpace(part)) == true
+            || cue.Refs?.Any(item => !string.IsNullOrWhiteSpace(item)) == true
+            || cue.Actions?.Any(action => !string.IsNullOrWhiteSpace(action)) == true
+            || cue.Start.HasValue
+            || cue.Duration.HasValue;
+    }
+
+    private static List<string> CleanPath(List<string>? path)
+    {
+        return path?
+            .Where(part => !string.IsNullOrWhiteSpace(part))
+            .Select(part => part.Trim())
+            .ToList() ?? new List<string>();
+    }
+
+    private static string Truncate(string value, int maxLength)
+    {
+        if (maxLength <= 0 || value.Length <= maxLength) return value;
+        return value[..maxLength] + "…";
     }
 
     /// <summary>回答证据分级：tier1 = 有 ok 数据支撑；tier2 = 只有候选兜底；tier3 = 无任何数据（自行发挥）。</summary>

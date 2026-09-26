@@ -18,10 +18,30 @@ data class QaContext(
     val cueIndex: Int,
     val cueText: String,
     val groupPath: List<String>,
-    val positionInCue: Float
+    val positionInCue: Float,
+    val recentCues: List<RecentCueContext> = emptyList()
 ) {
     val sectionPath: List<String> get() = groupPath
 }
+
+/**
+ * One entry in the rolling recent-cue window sent to /api/chat.
+ *
+ * [isCurrent] is true only for the cue that was active when the question was
+ * sent.  The list is rebuilt from UnityStatus + TutorialTimeline at send time,
+ * so a late question can still see the previous one or two cues.
+ */
+data class RecentCueContext(
+    val id: String,
+    val index: Int,
+    val text: String,
+    val groupPath: List<String>,
+    val refs: List<String>,
+    val actions: List<String>,
+    val start: Float,
+    val duration: Float,
+    val isCurrent: Boolean
+)
 
 /**
  * Builds a [QaContext] from the currently selected catalog game and the latest
@@ -46,8 +66,33 @@ fun buildQaContext(
         cueIndex = timelineCue?.index ?: status?.cueIndex ?: -1,
         cueText = timelineCue?.text?.takeIf { it.isNotBlank() } ?: status?.cueText.orEmpty(),
         groupPath = timelineCue?.groupPath.orEmpty(),
-        positionInCue = statusPosition
+        positionInCue = statusPosition,
+        recentCues = buildRecentCues(timeline, timelineCue)
     )
+}
+
+private fun buildRecentCues(
+    timeline: TutorialTimeline?,
+    currentCue: TimelineCue?
+): List<RecentCueContext> {
+    if (timeline == null || currentCue == null) return emptyList()
+
+    val currentIndex = currentCue.index.coerceIn(0, timeline.cues.lastIndex)
+    val firstIndex = (currentIndex - 2).coerceAtLeast(0)
+
+    return timeline.cues.subList(firstIndex, currentIndex + 1).map { cue ->
+        RecentCueContext(
+            id = cue.id,
+            index = cue.index,
+            text = cue.text,
+            groupPath = cue.groupPath,
+            refs = cue.refs,
+            actions = cue.actions,
+            start = cue.start,
+            duration = cue.duration,
+            isCurrent = cue.index == currentIndex
+        )
+    }
 }
 
 private fun resolveTimelineCue(

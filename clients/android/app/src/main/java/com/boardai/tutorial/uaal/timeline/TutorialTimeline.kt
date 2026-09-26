@@ -161,6 +161,7 @@ class TutorialTimeline private constructor(
     companion object {
         const val CUE_START_SNAP_SECONDS = 0.3f
         const val CHAPTER_START_SNAP_SECONDS = 0.5f
+        private const val MAX_ACTIONS_PER_CUE = 8
 
         fun load(gameRoot: File, track: String = "full"): TutorialTimeline {
             val runtimeFile = File(gameRoot, "tutorial/$track.runtime.json")
@@ -183,13 +184,17 @@ class TutorialTimeline private constructor(
                     start = item.optDouble("start", 0.0).toFloat().coerceAtLeast(0f),
                     duration = item.optDouble("duration", 0.0).toFloat().coerceAtLeast(0f),
                     text = item.optString("text", ""),
-                    groupPath = item.optJSONArray("group_path").toStringList()
+                    groupPath = item.optJSONArray("group_path").toStringList(),
+                    refs = item.optJSONArray("refs").toStringList()
                 )
             }
 
+            val actionsByCue = loadActionsByCue(gameRoot, track)
             val sorted = parsed
                 .sortedWith(compareBy<TimelineCue> { it.start }.thenBy { it.index })
-                .mapIndexed { index, cue -> cue.copy(index = index) }
+                .mapIndexed { index, cue ->
+                    cue.copy(index = index, actions = actionsByCue[cue.id].orEmpty())
+                }
 
             val total = sorted.maxOfOrNull { it.start + it.duration } ?: 0f
             val chapters = buildChapterTree(sorted)
@@ -199,6 +204,172 @@ class TutorialTimeline private constructor(
                 totalDuration = total,
                 rootChapters = chapters
             )
+        }
+
+        /**
+         * Reads the hand-written v2 animation source and keeps only a short,
+         * deterministic state-action summary per cue.  Missing or malformed
+         * anim data never blocks the timeline / QA path.
+         */
+        private fun loadActionsByCue(gameRoot: File, track: String): Map<String, List<String>> {
+            val animFile = File(gameRoot, "tutorial/anim/v2/$track.anim.json")
+            if (!animFile.isFile) return emptyMap()
+
+            return try {
+                val root = JSONObject(animFile.readText(Charsets.UTF_8))
+                val cueArray = root.optJSONArray("cues") ?: return emptyMap()
+                val result = LinkedHashMap<String, List<String>>()
+
+                for (i in 0 until cueArray.length()) {
+                    val cue = cueArray.optJSONObject(i) ?: continue
+                    val cueId = cue.optString("id", "").trim()
+                    if (cueId.isEmpty()) continue
+
+                    val events = cue.optJSONArray("events") ?: continue
+                    val actions = ArrayList<String>(MAX_ACTIONS_PER_CUE)
+                    for (j in 0 until events.length()) {
+                        if (actions.size >= MAX_ACTIONS_PER_CUE) break
+                        val event = events.optJSONObject(j) ?: continue
+                        summarizeStateAction(event)?.let { actions += it }
+                    }
+                    if (actions.isNotEmpty()) result[cueId] = actions
+                }
+
+                result
+            } catch (_: Exception) {
+                emptyMap()
+            }
+        }
+
+        private fun summarizeStateAction(event: JSONObject): String? {
+            val op = event.optString("op", "").trim()
+            return when (op) {
+                "create" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) return null
+                    val count = event.eventCount(default = 1)
+                    "生成 $count 个 ${event.actionLabel().ifBlank { "物件" }} 到 $zone"
+                }
+
+                "ensure" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) return null
+                    val count = event.eventCount(default = 1)
+                    "确保 $zone 中至少有 $count 个 ${event.actionLabel().ifBlank { "物件" }}"
+                }
+
+                "destroy" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) return null
+                    val count = event.eventCount(default = 1)
+                    "从 $zone 移除 $count 个 ${event.actionLabel().ifBlank { "物件" }}"
+                }
+
+                "transfer" -> {
+                    val destination = event.optString("destination", "").trim()
+                    val source = event.zoneText(event.opt("source"))
+                    if (destination.isEmpty() || source.isEmpty()) return null
+                    val count = event.eventCount(default = 1, quantityFirst = true)
+                    val label = event.actionLabel().ifBlank {
+                        event.inferredLabelFromZones(destination)
+                    }
+                    "$count 个 $label：$source -> $destination"
+                }
+
+                "move_order" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) return null
+                    val label = event.actionLabel().ifBlank { "物件" }
+                    "调整 $zone 中 $label 的 order"
+                }
+
+                "stack" -> {
+                    val destination = event.optString("destination", "").trim()
+                        .ifBlank { event.optString("zone", "").trim() }
+                    if (destination.isEmpty()) return null
+                    val count = event.eventCount(default = event.optInt("capacity", 1), quantityFirst = false)
+                    val label = event.actionLabel().ifBlank {
+                        event.inferredLabelFromZones(destination).ifBlank { "牌" }
+                    }
+                    "在 $destination 堆叠 $count 个 $label"
+                }
+
+                "shuffle" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) null else "洗混 $zone"
+                }
+
+                "set_face" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) return null
+                    val label = event.actionLabel().ifBlank { "物件" }
+                    val to = event.optString("to", "").trim().ifBlank { "?" }
+                    "将 $zone 中 $label 翻到 $to"
+                }
+
+                else -> null
+            }
+        }
+
+        private fun JSONObject.eventCount(default: Int, quantityFirst: Boolean = false): Int {
+            val raw = when {
+                quantityFirst && has("quantity") -> optInt("quantity", default)
+                has("count") -> optInt("count", default)
+                has("quantity") -> optInt("quantity", default)
+                else -> default
+            }
+            return raw.coerceAtLeast(0)
+        }
+
+        /**
+         * Label preference follows the QA spec: concept, then template, then
+         * palette.  If both template and palette exist, keep both so a generic
+         * concept (gem) does not lose its concrete kind (gem|gem_diamond).
+         */
+        private fun JSONObject.actionLabel(): String {
+            val concept = optString("concept", "").trim()
+            if (concept.isNotEmpty()) return concept
+
+            val template = optString("template", "").trim()
+            val palette = optString("palette", "").trim()
+            return when {
+                template.isNotEmpty() && palette.isNotEmpty() -> "$template|$palette"
+                template.isNotEmpty() -> template
+                palette.isNotEmpty() -> palette
+                else -> ""
+            }
+        }
+
+        private fun JSONObject.inferredLabelFromZones(destination: String): String {
+            val zones = buildList {
+                add(destination)
+                val source = opt("source")
+                if (source is JSONArray) {
+                    for (i in 0 until source.length()) {
+                        source.optString(i, "").trim().takeIf { it.isNotEmpty() }?.let(::add)
+                    }
+                } else if (source is String && source.isNotBlank()) {
+                    add(source.trim())
+                }
+            }
+            val joined = zones.joinToString(" ")
+            return when {
+                joined.contains("gold") -> "黄金"
+                joined.contains("gem") -> "宝石"
+                joined.contains("noble") -> "贵族"
+                joined.contains("card") || joined.contains("deck") -> "发展卡"
+                else -> "物件"
+            }
+        }
+
+        private fun JSONObject.zoneText(value: Any?): String = when (value) {
+            is JSONArray -> buildList {
+                for (i in 0 until value.length()) {
+                    value.optString(i, "").trim().takeIf { it.isNotEmpty() }?.let(::add)
+                }
+            }.joinToString("、")
+            is String -> value.trim()
+            else -> ""
         }
 
         private fun buildChapterTree(cues: List<TimelineCue>): List<ChapterNode> {
