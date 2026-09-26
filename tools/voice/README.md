@@ -1,6 +1,6 @@
 # Voice bridge (ASR + TTS)
 
-This directory contains the v1 Python bridge used by `BoardAI.Api`.  The API
+This directory contains the v1 Python bridge used by `BoardAI.Api`. The API
 starts these scripts as short-lived child processes; Android never talks to
 Volcengine directly and no key is shipped in the APK.
 
@@ -10,74 +10,117 @@ Volcengine directly and no key is shipped in the APK.
 pip install -r animation/requirements-tts.txt
 ```
 
-`websockets` is used by both scripts. `mutagen` is used by the existing
-`animation/tts_doubao.py` to report mp3 duration.
+`websockets` is used by both scripts. `mutagen` is used by the TTS bridge to
+report mp3 duration.
 
-## Credentials
+## Recommended `.env`
 
-Put the following in the repository-root `.env` (already ignored by git) or
-export them in the shell before starting the API:
+Keep credentials in the repository-root `.env` (git-ignored) or export them
+in the shell before starting the API. The new-console project-scoped API key
+is shared by the enabled speech services; do not create separate ASR/TTS keys.
 
 ```dotenv
-# ASR (Volcengine one-sentence WebSocket API v2)
-VOLCENGINE_ASR_APP_ID=
-VOLCENGINE_ASR_ACCESS_TOKEN=
-VOLCENGINE_ASR_CLUSTER=
-# Optional:
-# VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
-# VOLCENGINE_ASR_UID=boardai-android
-# VOLCENGINE_ASR_WORKFLOW=audio_in,resample,partition,vad,fe,decode,itn,nlu_punctuate
-
-# TTS (Doubao speech synthesis 2.0, same credentials as the tutorial pipeline)
+# Shared new-console API key
 VOLCENGINE_API_KEY=
-# Optional:
+
+# TTS: standard small-model is the default
+DOUBAO_TTS_PROVIDER=standard
+DOUBAO_TTS_VOICE=BV700_streaming
+DOUBAO_TTS_CLUSTER=volcano_tts
+DOUBAO_TTS_ENDPOINT=wss://openspeech.bytedance.com/api/v1/tts/ws_binary
+# Usage/billing resource id for 语音合成(小模型版); recorded in manifest,
+# not sent as an X-Api-Resource-Id header on the v1 endpoint.
+DOUBAO_TTS_RESOURCE_ID=volc.tts.default
+
+# ASR: one-sentence small-model. Prefer the shared API key above. If the
+# new-console API key is not accepted by the selected old v2 service, use the
+# legacy small-model credentials instead (VOLCENGINE_ASR_AUTH=legacy).
+VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
+# Optional legacy fallback:
+# VOLCENGINE_ASR_APP_ID=
+# VOLCENGINE_ASR_ACCESS_TOKEN=
+# VOLCENGINE_ASR_CLUSTER=
+# VOLCENGINE_ASR_AUTH=legacy
+# VOLCENGINE_ASR_RESOURCE_ID=volc.onesentenceasr.office.cn
+
+# Legacy speech synthesis 2.0 fallback only:
 # DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts
 # DOUBAO_RESOURCE_ID=seed-tts-2.0
 ```
 
-`asr_once.py` uses token auth: it sends
-`Authorization: Bearer; <VOLCENGINE_ASR_ACCESS_TOKEN>` and also puts
-`appid/token/cluster` in the first full-client-request JSON payload.  The
-cluster value must be the Cluster ID shown in the Volcengine console after the
-one-sentence ASR service is enabled.  If any of the three values is missing the
-script exits non-zero and the API returns an error instead of hard-coding a
-credential.
+## TTS: standard small-model by default
 
-`tts_once.py` reuses `animation/tts_doubao.py` for the WebSocket v3
-connection, `X-Api-Key` auth, request payload, synthesis loop and mp3 duration.
-It only wraps that existing code in a one-text CLI; it does not modify the
-tutorial compilation chain.
-
-## ASR usage
+`tools/voice/tts_once.py` and the tutorial scripts (`animation/tts_doubao.py`,
+`animation/compile_tutorial.py`, `animation/rebuild_tutorial.py`) use the
+standard small-model service unless explicitly switched back:
 
 ```bash
-python tools/voice/asr_once.py --input /absolute/path/test.wav
-# {"text":"这个游戏怎么拿宝石？","request_id":"...","log_id":"..."}
-```
-
-The API only accepts `Content-Type: audio/wav`, bodies up to 10 MB and WAV
-duration up to 60 seconds.  The script itself relies on the v2 one-sentence
-WebSocket protocol and segments the WAV bytes into roughly 10-second packets.
-
-## TTS usage
-
-```bash
+# default: standard small-model WebSocket v1
 python tools/voice/tts_once.py \
   --text "这是一次语音测试" \
-  --out-file /tmp/test.mp3 \
-  --voice zh_female_vv_uranus_bigtts \
-  --speed 1.0
-# {"file":"/tmp/test.mp3","duration":3.21}
+  --out-file /tmp/test.mp3
+
+# legacy speech synthesis 2.0
+python tools/voice/tts_once.py \
+  --provider seed2 \
+  --text "这是一次语音测试" \
+  --out-file /tmp/test-seed2.mp3
 ```
 
-`--text-file` is the preferred form for arbitrary text from the API.  The
-friendly `--speed` value is mapped to the Doubao `speech_rate` field:
-`1.0 -> 0`, `2.0 -> 100`, `0.5 -> -50`.
+Confirmed standard-service parameters:
+
+| Item | Value |
+|---|---|
+| Endpoint | `wss://openspeech.bytedance.com/api/v1/tts/ws_binary` |
+| Auth (new console) | `X-Api-Key: ${VOLCENGINE_API_KEY}` |
+| Auth (legacy) | `Authorization: Bearer; ${VOLCENGINE_TTS_ACCESS_TOKEN}` + `app.appid/token/cluster` |
+| Cluster | `volcano_tts` for standard small-model v1 |
+| Voice parameter | `audio.voice_type` |
+| Recommended tutorials/QA voice | `BV700_streaming` (灿灿，中文女声，通用/讲故事). Safe alternatives: `BV001_streaming` (通用女声), `BV002_streaming` (通用男声) |
+| Audio format | `audio.encoding=mp3`, `audio.rate=24000` |
+| Request fields | `audio.voice_type`, `audio.encoding`, `audio.rate`, `audio.speed_ratio`, `audio.volume_ratio`, `audio.pitch_ratio`; `request.operation=submit`, `request.text`, `request.text_type=plain`, `request.reqid` |
+| Response | binary audio-only server response; no v3 subtitle events |
+| Subtitle timing | **unavailable through this implementation**. `*.subtitle.json` is not written for standard TTS. The runtime must degrade without pretending word-level timestamps exist. |
+
+The seed-tts-2.0 v3 code path is still present and can be selected with
+`--provider seed2` or `DOUBAO_TTS_PROVIDER=seed2`.
+
+`tts_once.py` always outputs `{"file":"...","duration":3.21}` on stdout and
+always returns mp3 bytes through `/api/tts`; Android `TtsRepository` does not
+need to change because the content type remains `audio/mpeg`.
+
+## ASR: one-sentence small-model
+
+`tools/voice/asr_once.py` still uses the v2 one-sentence WebSocket protocol:
+
+| Item | Value |
+|---|---|
+| Endpoint | `wss://openspeech.bytedance.com/api/v2/asr` |
+| Shared API key mode | `X-Api-Key: ${VOLCENGINE_API_KEY}`; `appid` is not required by the new console |
+| Legacy mode | `Authorization: Bearer; ${VOLCENGINE_ASR_ACCESS_TOKEN}` plus `app.appid/app.token/app.cluster` |
+| Legacy cluster | `VOLCENGINE_ASR_CLUSTER` from the console's Cluster ID |
+| Audio | 16 kHz, 16-bit, mono WAV |
+| Return | `{"text":"...","request_id":"...","log_id":"..."}` on stdout |
+
+If the shared API key is not accepted by the old v2 small-model endpoint for
+your project, set `VOLCENGINE_ASR_AUTH=legacy` and fill the three legacy
+credentials. The script reports the failure to stderr and exits non-zero; it
+does not fake a successful transcription.
+
+Android keeps calling:
+
+```text
+POST /api/asr/once
+Content-Type: audio/wav
+Body: WAV bytes
+```
+
+The backend still returns `{"text":"...","request_id":"..."}`.
 
 ## Failure behavior
 
 Both scripts write human-readable errors to stderr and exit non-zero on
 missing dependencies, missing credentials, timeout, protocol errors, empty
-recognition or empty audio output.  `BoardAI.Api` captures stdout/stderr
+recognition or empty audio output. `BoardAI.Api` captures stdout/stderr
 asynchronously, applies a timeout, and deletes its temporary WAV/text/mp3
 files after each request.

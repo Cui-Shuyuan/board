@@ -6,14 +6,19 @@ Protocol: Volcengine API v2 one-sentence WebSocket ASR.
 Docs: https://www.volcengine.com/docs/6561/80816
 Auth: https://www.volcengine.com/docs/6561/107789 (token auth)
 
-Required environment variables (normally loaded from repo-root .env):
-    VOLCENGINE_ASR_APP_ID
-    VOLCENGINE_ASR_ACCESS_TOKEN
-    VOLCENGINE_ASR_CLUSTER
+Credentials (normally loaded from repo-root .env):
+    Option A (new console, shared key; preferred when present):
+        VOLCENGINE_API_KEY
+    Option B (legacy console small-model one-sentence ASR):
+        VOLCENGINE_ASR_APP_ID
+        VOLCENGINE_ASR_ACCESS_TOKEN
+        VOLCENGINE_ASR_CLUSTER
 Optional:
+    VOLCENGINE_ASR_AUTH      apikey / legacy (otherwise auto)
     VOLCENGINE_ASR_ENDPOINT  default wss://openspeech.bytedance.com/api/v2/asr
     VOLCENGINE_ASR_UID       default boardai-android
     VOLCENGINE_ASR_WORKFLOW  default audio_in,...,itn,nlu_punctuate
+    VOLCENGINE_ASR_RESOURCE_ID  optional v3-style X-Api-Resource-Id header
 
 Usage:
     python tools/voice/asr_once.py --input /absolute/path/rec.wav
@@ -39,6 +44,7 @@ from typing import Any, AsyncIterator
 
 try:
     import websockets
+    from websockets.exceptions import ConnectionClosed, InvalidStatusCode
 except ImportError as exc:  # pragma: no cover - dependency check
     print("错误：缺少 websockets，请执行 pip install -r animation/requirements-tts.txt", file=sys.stderr)
     raise SystemExit(2) from exc
@@ -214,26 +220,67 @@ def collect_text(payload: dict[str, Any] | None) -> str:
 async def recognize(input_path: Path) -> dict[str, str]:
     load_dotenv(REPO_ROOT / ".env")
 
+    api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
     app_id = os.environ.get("VOLCENGINE_ASR_APP_ID", "").strip()
     access_token = os.environ.get("VOLCENGINE_ASR_ACCESS_TOKEN", "").strip()
     cluster = os.environ.get("VOLCENGINE_ASR_CLUSTER", "").strip()
-    missing = [
-        name
-        for name, value in (
-            ("VOLCENGINE_ASR_APP_ID", app_id),
-            ("VOLCENGINE_ASR_ACCESS_TOKEN", access_token),
-            ("VOLCENGINE_ASR_CLUSTER", cluster),
-        )
-        if not value
-    ]
-    if missing:
-        raise RuntimeError("缺少 ASR 凭证：" + ", ".join(missing))
+    resource_id = os.environ.get("VOLCENGINE_ASR_RESOURCE_ID", "").strip()
+    auth_mode = (
+        os.environ.get("VOLCENGINE_ASR_AUTH", "")
+        or os.environ.get("DOUBAO_ASR_AUTH", "")
+    ).strip().lower()
+
+    if auth_mode in {"legacy", "token", "authorization"}:
+        use_api_key = False
+    elif auth_mode in {"apikey", "api_key", "api-key", "x-api-key"}:
+        use_api_key = True
+    else:
+        # New-console shared API key is preferred when present; otherwise use
+        # the documented v2 appid/access_token/cluster credentials.
+        use_api_key = bool(api_key)
+
+    headers: dict[str, str] = {}
+    app: dict[str, str] = {}
+    if use_api_key:
+        if not api_key:
+            raise RuntimeError("缺少 VOLCENGINE_API_KEY（API Key 模式）")
+        headers["X-Api-Key"] = api_key
+        if cluster:
+            app["cluster"] = cluster
+        if app_id:
+            app["appid"] = app_id
+        if access_token:
+            app["token"] = access_token
+        # Optional v3-style resource id.  The v2 one-sentence API documents
+        # app.cluster, not X-Api-Resource-Id; only send this when the user
+        # explicitly configured it for their new-console product.
+        if resource_id:
+            headers["X-Api-Resource-Id"] = resource_id
+    else:
+        missing = [
+            name
+            for name, value in (
+                ("VOLCENGINE_ASR_APP_ID", app_id),
+                ("VOLCENGINE_ASR_ACCESS_TOKEN", access_token),
+                ("VOLCENGINE_ASR_CLUSTER", cluster),
+            )
+            if not value
+        ]
+        if missing:
+            raise RuntimeError("缺少 ASR 凭证：" + ", ".join(missing))
+        headers["Authorization"] = f"Bearer; {access_token}"
+        app = {"appid": app_id, "token": access_token, "cluster": cluster}
 
     endpoint = os.environ.get("VOLCENGINE_ASR_ENDPOINT", DEFAULT_ENDPOINT).strip() or DEFAULT_ENDPOINT
     uid = os.environ.get("VOLCENGINE_ASR_UID", "boardai-android").strip() or "boardai-android"
     workflow = os.environ.get("VOLCENGINE_ASR_WORKFLOW", DEFAULT_WORKFLOW).strip() or DEFAULT_WORKFLOW
 
     channels, bits, sample_rate, frames, duration = read_wav_info(input_path)
+    if (channels, bits, sample_rate) != (1, 16, 16000):
+        raise RuntimeError(
+            "ASR 输入必须是 16k/16bit/单声道 WAV；"
+            f"当前为 {sample_rate}Hz/{bits}bit/{channels}ch"
+        )
     if duration > 60.0:
         raise RuntimeError(f"音频时长 {duration:.1f}s 超过 60 秒限制")
 
@@ -246,11 +293,7 @@ async def recognize(input_path: Path) -> dict[str, str]:
 
     reqid = str(uuid.uuid4())
     request_params = {
-        "app": {
-            "appid": app_id,
-            "token": access_token,
-            "cluster": cluster,
-        },
+        "app": app,
         "user": {"uid": uid},
         "audio": {
             "format": "wav",
@@ -274,13 +317,18 @@ async def recognize(input_path: Path) -> dict[str, str]:
     full_request = bytearray(generate_header(CLIENT_FULL_REQUEST))
     full_request.extend(len(full_payload).to_bytes(4, "big"))
     full_request.extend(full_payload)
-
-    headers = {"Authorization": f"Bearer; {access_token}"}
     text = ""
     request_id = reqid
     log_id = ""
 
-    websocket = await connect_websocket(endpoint, headers)
+    try:
+        websocket = await connect_websocket(endpoint, headers)
+    except InvalidStatusCode as exc:
+        raise RuntimeError(
+            f"ASR WebSocket 建连被拒绝（HTTP {getattr(exc, 'status_code', '?')}）；"
+            "请检查凭证、endpoint 与项目是否开通一句话识别"
+        ) from exc
+
     try:
         await websocket.send(bytes(full_request))
         response = parse_response(await asyncio.wait_for(websocket.recv(), timeout=30))
@@ -324,6 +372,14 @@ async def recognize(input_path: Path) -> dict[str, str]:
             # going until the server has acknowledged every chunk.
             if not is_last:
                 continue
+    except ConnectionClosed as exc:
+        raise RuntimeError(
+            "ASR WebSocket 被服务端关闭（常见原因：共享 API Key 不属于当前项目、"
+            "API Key 模式与小模型 v2 接口不匹配，或缺少 cluster/资源）。"
+            "如坚持旧版一句话识别小模型，请设置 VOLCENGINE_ASR_APP_ID / "
+            "VOLCENGINE_ASR_ACCESS_TOKEN / VOLCENGINE_ASR_CLUSTER，"
+            "或显式设置 VOLCENGINE_ASR_AUTH=legacy。"
+        ) from exc
     finally:
         try:
             await websocket.close()
