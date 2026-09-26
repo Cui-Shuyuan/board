@@ -30,6 +30,8 @@ public class Program
             builder.Configuration.GetSection("LLM"));
         builder.Services.Configure<RulesOptions>(
             builder.Configuration.GetSection("Rules"));
+        builder.Services.Configure<VoiceOptions>(
+            builder.Configuration.GetSection("Voice"));
 
         var boardBase = BoardPaths.GetBasePath();
         var rulesBasePath = BoardPaths.ResolveBasePath(
@@ -53,6 +55,12 @@ public class Program
 
         builder.Services.AddSingleton<GameRulesService>();
         builder.Services.AddScoped<ChatOrchestratorService>();
+
+        // v1 voice bridge: .NET starts short-lived Python scripts; credentials
+        // stay in the Python process environment / repo .env.
+        builder.Services.AddSingleton<VoiceProcessRunner>();
+        builder.Services.AddScoped<AsrService>();
+        builder.Services.AddScoped<TtsService>();
 
         // 本地模型走 OpenAI 兼容接口（Ollama / llama.cpp / vLLM 等）；
         // DeepSeek 保持原实现，配置在 appsettings*.json 的 LLM:Provider。
