@@ -229,9 +229,17 @@ private fun ResourceManagerRow(
                     is ContentStatus.InstalledCurrent -> Unit
                 }
 
-                if (status.hasLocalContent) {
+                val canDelete = status.hasLocalContent || status is ContentStatus.Paused
+                if (canDelete) {
                     TextButton(onClick = onDelete) {
-                        Text("删除本地资源", color = Color(0xFFFFB4AB))
+                        Text(
+                            text = if (status is ContentStatus.Paused) {
+                                "删除下载"
+                            } else {
+                                "删除本地资源"
+                            },
+                            color = Color(0xFFFFB4AB)
+                        )
                     }
                 }
             }
