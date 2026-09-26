@@ -12,7 +12,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
 
-const val DEFAULT_TTS_VOICE = "zh_female_vv_uranus_bigtts"
+const val DEFAULT_TTS_VOICE = "BV700_streaming"
 
 /**
  * Requests mp3 bytes from BoardAI.Api /api/tts and stores the result in

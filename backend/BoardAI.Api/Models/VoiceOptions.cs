@@ -12,4 +12,10 @@ public class VoiceOptions
     public string TtsScript { get; set; } = "tools/voice/tts_once.py";
     public int AsrTimeoutSeconds { get; set; } = 75;
     public int TtsTimeoutSeconds { get; set; } = 75;
+
+    /// <summary>Standard small-model default voice used when Android omits voice.</summary>
+    public string DefaultTtsVoice { get; set; } = "BV700_streaming";
+
+    /// <summary>Passed to tts_once.py as --provider; standard is the default small model.</summary>
+    public string TtsProvider { get; set; } = "standard";
 }

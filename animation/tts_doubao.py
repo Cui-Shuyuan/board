@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """
-LRC-like 口播稿 -> 豆包语音合成 2.0（WebSocket 双向流式接口）音频。
+LRC-like 口播稿 -> 豆包语音合成音频。
+
+默认使用 **标准语音合成（小模型 WebSocket v1）**：
+    wss://openspeech.bytedance.com/api/v1/tts/ws_binary
+
+可通过 ``--provider seed2`` 或 ``DOUBAO_TTS_PROVIDER=seed2`` 切回旧的
+豆包语音合成 2.0 双向流式实现。旧实现保留，便于以后对照或复用。
 
 依赖：
     pip install websockets mutagen
@@ -9,23 +15,27 @@ LRC-like 口播稿 -> 豆包语音合成 2.0（WebSocket 双向流式接口）�
     # 只解析和预览，不调用 API
     python animation/tts_doubao.py --input content/games/splendor/tutorial/full.lrc --dry-run
 
-    # 先合成前 3 条 cue 试听
+    # 标准语音合成前 3 条 cue 试听（默认 provider=standard）
     python animation/tts_doubao.py \
       --input content/games/splendor/tutorial/full.lrc \
       --out-dir content/games/splendor/media/tts/full \
-      --voice zh_female_vv_uranus_bigtts \
       --limit 3
 
-    # 全量合成，并生成 full.tts.lrc + tts_manifest.json
+    # 显式切回旧语音合成 2.0
     python animation/tts_doubao.py \
+      --provider seed2 \
       --input content/games/splendor/tutorial/full.lrc \
-      --out-dir content/games/splendor/media/tts/full \
-      --voice zh_female_vv_uranus_bigtts
+      --out-dir content/games/splendor/media/tts/full
 
 环境变量（从仓库根目录 .env 读取，或设置到 shell）：
-    VOLCENGINE_API_KEY
-    DOUBAO_SPEAKER          # 可选，默认 zh_female_vv_uranus_bigtts
-    DOUBAO_RESOURCE_ID      # 可选，默认 seed-tts-2.0
+    VOLCENGINE_API_KEY              # 新版控制台共享 API Key（推荐）
+    DOUBAO_TTS_PROVIDER             # standard（默认）/ seed2
+    DOUBAO_TTS_VOICE                # 标准音色，默认 BV700_streaming
+    DOUBAO_TTS_CLUSTER              # 标准 v1 默认 volcano_tts
+    DOUBAO_TTS_ENDPOINT             # 可选，默认 v1 ws_binary
+    DOUBAO_TTS_RESOURCE_ID          # 用量查询/清单用，默认 volc.tts.default
+    DOUBAO_SPEAKER                  # seed2 provider 的旧默认音色
+    DOUBAO_RESOURCE_ID              # seed2 provider 的旧 resource id
 """
 
 from __future__ import annotations
@@ -39,6 +49,7 @@ import sys
 import uuid
 import wave
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 try:
@@ -68,7 +79,23 @@ from volcengine_ws_protocols import (  # noqa: E402
     task_request,
     wait_for_event,
 )
+from tts_volcengine_standard import (  # noqa: E402
+    DEFAULT_ENDPOINT as STANDARD_DEFAULT_ENDPOINT,
+    DEFAULT_RESOURCE_ID as STANDARD_DEFAULT_RESOURCE_ID,
+    DEFAULT_VOICE as STANDARD_DEFAULT_VOICE,
+    is_standard_voice,
+    resolve_voice,
+    synthesize_all as standard_synthesize_all,
+    synthesize_text as standard_synthesize_text,
+)
 
+PROVIDER_STANDARD = "standard"
+PROVIDER_SEED2 = "seed2"
+DEFAULT_PROVIDER = PROVIDER_STANDARD
+
+# seed2 / v3 compatibility constants.  The names DEFAULT_* are kept for
+# callers that still import them, but tts_once.py now uses the provider-aware
+# high-level helper instead of hard-coded protocol defaults.
 DEFAULT_ENDPOINT = "wss://openspeech.bytedance.com/api/v3/tts/bidirection"
 DEFAULT_VOICE = "zh_female_vv_uranus_bigtts"
 DEFAULT_RESOURCE_ID = "seed-tts-2.0"
@@ -91,6 +118,40 @@ def load_dotenv(path: Path) -> None:
         key, value = key.strip(), value.strip().strip('"').strip("'")
         if key:
             os.environ.setdefault(key, value)
+
+
+def resolve_provider(value: str | None = None) -> str:
+    provider = (value or os.environ.get("DOUBAO_TTS_PROVIDER", "") or DEFAULT_PROVIDER).strip().lower()
+    if provider in {PROVIDER_STANDARD, PROVIDER_SEED2}:
+        return provider
+    raise SystemExit(f"不支持的 DOUBAO_TTS_PROVIDER/--provider：{provider!r}（可选 standard/seed2）")
+
+
+def apply_provider_defaults(args: argparse.Namespace) -> argparse.Namespace:
+    """Fill provider-specific defaults after dotenv/CLI parsing."""
+    provider = resolve_provider(getattr(args, "provider", None))
+    args.provider = provider
+
+    if provider == PROVIDER_STANDARD:
+        args.voice = (getattr(args, "voice", None) or os.environ.get("DOUBAO_TTS_VOICE", "").strip() or STANDARD_DEFAULT_VOICE)
+        args.resource_id = (
+            getattr(args, "resource_id", None)
+            or os.environ.get("DOUBAO_TTS_RESOURCE_ID", "").strip()
+            or STANDARD_DEFAULT_RESOURCE_ID
+        )
+        args.endpoint = (getattr(args, "endpoint", None) or os.environ.get("DOUBAO_TTS_ENDPOINT", "").strip() or STANDARD_DEFAULT_ENDPOINT)
+    else:
+        args.voice = (getattr(args, "voice", None) or os.environ.get("DOUBAO_SPEAKER", "").strip() or DEFAULT_VOICE)
+        args.resource_id = (getattr(args, "resource_id", None) or os.environ.get("DOUBAO_RESOURCE_ID", "").strip() or DEFAULT_RESOURCE_ID)
+        args.endpoint = (getattr(args, "endpoint", None) or DEFAULT_ENDPOINT)
+
+    if getattr(args, "root", None) is None:
+        args.root = ROOT
+    return args
+
+
+def provider_subtitle_mode(provider: str) -> str:
+    return "seed2-v3-events" if provider == PROVIDER_SEED2 else "unavailable-standard-v1"
 
 
 def format_time(seconds: float) -> str:
@@ -234,7 +295,7 @@ async def synthesize_cue(
     return audio_duration(audio_path, args.format, args.sample_rate)
 
 
-async def synthesize_all(cues: list[dict[str, Any]], args: argparse.Namespace) -> list[dict[str, Any]]:
+async def _synthesize_all_seed2(cues: list[dict[str, Any]], args: argparse.Namespace) -> list[dict[str, Any]]:
     api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
     if not api_key:
         raise SystemExit("缺少 VOLCENGINE_API_KEY，请写入 .env 或设置为 shell 环境变量")
@@ -294,6 +355,120 @@ async def synthesize_all(cues: list[dict[str, Any]], args: argparse.Namespace) -
     return results
 
 
+
+async def synthesize_all(cues: list[dict[str, Any]], args: argparse.Namespace) -> list[dict[str, Any]]:
+    """Provider-aware compile/CLI entry point."""
+    provider = resolve_provider(getattr(args, "provider", None))
+    args.provider = provider
+    if provider == PROVIDER_STANDARD:
+        return await standard_synthesize_all(cues, args)
+    return await _synthesize_all_seed2(cues, args)
+
+
+def speed_to_speech_rate(speed: float) -> int:
+    """Map the friendly 1.0 = normal multiplier to seed2 speech_rate."""
+    return max(-50, min(100, int(round((speed - 1.0) * 100))))
+
+
+async def synthesize_once(
+    text: str,
+    out_file: Path,
+    voice: str | None = None,
+    resource_id: str | None = None,
+    speed: float = 1.0,
+    provider: str | None = None,
+    endpoint: str | None = None,
+    format: str = "mp3",
+    sample_rate: int = DEFAULT_SAMPLE_RATE,
+    bit_rate: int = DEFAULT_BIT_RATE,
+    cluster: str | None = None,
+) -> float:
+    """One-text TTS used by ``tools/voice/tts_once.py``.
+
+    Keeps stdout/JSON and mp3 output stable while switching the protocol
+    implementation behind the provider flag.
+    """
+    provider = resolve_provider(provider)
+    if not (0.5 <= float(speed) <= 2.0):
+        raise RuntimeError("speed must be between 0.5 and 2.0")
+
+    if provider == PROVIDER_STANDARD:
+        args = SimpleNamespace(
+            voice=voice or os.environ.get("DOUBAO_TTS_VOICE", "").strip(),
+            endpoint=endpoint or os.environ.get("DOUBAO_TTS_ENDPOINT", "").strip(),
+            format=format,
+            sample_rate=sample_rate,
+            speed_ratio=float(speed),
+            volume_ratio=1.0,
+            pitch_ratio=1.0,
+            cluster=cluster,
+            uid="board-qa",
+            resource_id=resource_id,
+        )
+        return await standard_synthesize_text(text, out_file, args.voice, args)
+
+    # ---- seed2 / v3 one-shot path (old behaviour kept) ----
+    api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("缺少 VOLCENGINE_API_KEY，请写入 .env 或设置为环境变量")
+    resolved_endpoint = endpoint or DEFAULT_ENDPOINT
+    resolved_resource_id = resource_id or os.environ.get("DOUBAO_RESOURCE_ID", DEFAULT_RESOURCE_ID)
+
+    out_file = out_file.resolve()
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    subtitle_file = out_file.with_suffix(".subtitle.json")
+
+    args = SimpleNamespace(
+        format="mp3",
+        sample_rate=DEFAULT_SAMPLE_RATE,
+        bit_rate=bit_rate,
+        speech_rate=speed_to_speech_rate(float(speed)),
+        loudness_rate=0,
+        voice=voice or os.environ.get("DOUBAO_SPEAKER", DEFAULT_VOICE),
+    )
+
+    headers = {
+        "X-Api-Key": api_key,
+        "X-Api-Resource-Id": resolved_resource_id,
+        "X-Api-Connect-Id": str(uuid.uuid4()),
+    }
+
+    websocket = await connect_websocket(resolved_endpoint, headers)
+    try:
+        await start_connection(websocket)
+        await wait_for_event(websocket, MsgType.FullServerResponse, EventType.ConnectionStarted)
+
+        cue = {"id": "answer", "text": text}
+        duration = await synthesize_cue(
+            websocket,
+            cue,
+            out_file,
+            subtitle_file,
+            args.voice,
+            args,
+        )
+
+        await finish_connection(websocket)
+        try:
+            await wait_for_event(websocket, MsgType.FullServerResponse, EventType.ConnectionFinished)
+        except Exception:
+            # Some server versions close without sending ConnectionFinished.
+            pass
+        return float(duration)
+    finally:
+        try:
+            await websocket.close()
+        except Exception:
+            pass
+        try:
+            if subtitle_file.exists():
+                subtitle_file.unlink()
+        except Exception:
+            pass
+
+
+
+
 def prune_stale(out_dir: Path, cues: list[dict[str, Any]], audio_format: str) -> None:
     expected = {cue["id"] for cue in cues}
     removed = 0
@@ -334,13 +509,16 @@ def write_manifest(out_dir: Path, cues: list[dict[str, Any]], results: list[dict
             "refs": cue["refs"],
         })
 
+    provider = resolve_provider(getattr(args, "provider", None))
     manifest = {
         "track": args.track,
+        "provider": provider,
         "voice": args.voice,
         "resource_id": args.resource_id,
         "format": args.format,
         "sample_rate": args.sample_rate,
         "gap_seconds": args.gap,
+        "subtitle_timing": provider_subtitle_mode(provider),
         "generator": "animation/tts_doubao.py",
         "cues": manifest_cues,
     }
@@ -422,10 +600,14 @@ def write_tts_lrc(input_lrc: Path, output_lrc: Path, cues: list[dict[str, Any]],
 
 def print_dry_run(cues: list[dict[str, Any]], args: argparse.Namespace) -> None:
     total_chars = sum(len(c["text"]) for c in cues)
+    provider = resolve_provider(getattr(args, "provider", None))
+    display_voice = resolve_voice(args.voice) if provider == PROVIDER_STANDARD else args.voice
+    print(f"provider: {provider}")
     print(f"cues: {len(cues)}")
     print(f"total chars: {total_chars}")
-    print(f"voice: {args.voice}")
+    print(f"voice: {display_voice}")
     print(f"resource_id: {args.resource_id}")
+    print(f"endpoint: {args.endpoint}")
     print(f"out_dir: {args.out_dir}")
     print("---")
     for cue in cues:
@@ -434,31 +616,36 @@ def print_dry_run(cues: list[dict[str, Any]], args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     load_dotenv(ROOT / ".env")
-    parser = argparse.ArgumentParser(description="LRC-like 口播稿 -> 豆包语音合成 2.0 音频")
+    parser = argparse.ArgumentParser(description="LRC-like 口播稿 -> 豆包语音合成音频（默认标准小模型）")
     parser.add_argument("--input", type=Path, default=ROOT / "content/games/splendor/tutorial/full.lrc")
     parser.add_argument("--out-dir", type=Path, default=ROOT / "content/games/splendor/media/tts/full")
-    parser.add_argument("--voice", default=os.environ.get("DOUBAO_SPEAKER", DEFAULT_VOICE))
-    parser.add_argument("--resource-id", default=os.environ.get("DOUBAO_RESOURCE_ID", DEFAULT_RESOURCE_ID))
+    parser.add_argument("--provider", default=None, choices=[PROVIDER_STANDARD, PROVIDER_SEED2], help="standard（默认）/ seed2（旧语音合成 2.0）")
+    parser.add_argument("--voice", default=None, help="音色；标准默认 BV700_streaming")
+    parser.add_argument("--resource-id", default=None, help="resource id；标准 v1 仅记录清单，不发送该 header")
+    parser.add_argument("--cluster", default=None, help="标准 v1 app.cluster，默认 volcano_tts")
     parser.add_argument("--track", default="full")
-    parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT)
+    parser.add_argument("--endpoint", default=None)
     parser.add_argument("--format", default="mp3", choices=["mp3", "wav", "pcm", "ogg_opus"])
     parser.add_argument("--sample-rate", type=int, default=DEFAULT_SAMPLE_RATE)
     parser.add_argument("--bit-rate", type=int, default=DEFAULT_BIT_RATE)
-    parser.add_argument("--speech-rate", type=int, default=DEFAULT_SPEECH_RATE)
+    parser.add_argument("--speech-rate", type=int, default=DEFAULT_SPEECH_RATE, help="seed2 兼容；standard 下建议改用 --speed-ratio")
+    parser.add_argument("--speed-ratio", type=float, default=None, help="标准语音合成语速倍数，0.2..3.0")
+    parser.add_argument("--volume-ratio", type=float, default=None, help="标准语音合成音量倍数，0.1..3.0")
+    parser.add_argument("--pitch-ratio", type=float, default=None, help="标准语音合成音高倍数，0.1..3.0")
     parser.add_argument("--loudness-rate", type=int, default=DEFAULT_LOUDNESS_RATE)
     parser.add_argument("--gap", type=float, default=DEFAULT_GAP_SECONDS, help="cue 之间的额外停顿秒数")
     parser.add_argument("--limit", type=int, default=None, help="只处理前 N 条 cue")
     parser.add_argument("--overwrite", action="store_true", help="覆盖已存在的音频")
     parser.add_argument("--force", action="store_true", help="忽略已有音频，全部重新合成")
     parser.add_argument("--prune", action="store_true", help="删除 source LRC 中已不存在的旧音频和字幕")
-    parser.add_argument("--usage", action="store_true", help="请求返回计费用量")
+    parser.add_argument("--usage", action="store_true", help="seed2 请求返回计费用量")
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不调用 API")
     parser.add_argument("--write-lrc", action="store_true", help="合成后生成 full.tts.lrc")
     return parser.parse_args()
 
 
 def main() -> int:
-    args = parse_args()
+    args = apply_provider_defaults(parse_args())
     args.input = args.input.resolve()
     args.out_dir = args.out_dir.resolve()
 
@@ -482,7 +669,11 @@ def main() -> int:
         print("error: Python 3.9+ required", file=sys.stderr)
         return 2
 
-    results = asyncio.run(synthesize_all(cues, args))
+    try:
+        results = asyncio.run(synthesize_all(cues, args))
+    except Exception as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     if args.prune:
         prune_stale(args.out_dir, cues, args.format)
     write_manifest(args.out_dir, cues, results, args)

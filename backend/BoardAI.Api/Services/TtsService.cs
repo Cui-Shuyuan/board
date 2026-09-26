@@ -31,7 +31,7 @@ public sealed class TtsService
             throw new VoiceServiceException($"text 不能超过 {MaxTextLength} 字", 400);
 
         var normalizedVoice = string.IsNullOrWhiteSpace(voice)
-            ? "zh_female_vv_uranus_bigtts"
+            ? _options.DefaultTtsVoice
             : voice.Trim();
         var normalizedSpeed = speed ?? 1.0;
         if (normalizedSpeed is < 0.5 or > 2.0)
@@ -52,15 +52,22 @@ public sealed class TtsService
                 new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
                 cancellationToken);
 
+            var ttsArguments = new List<string>
+            {
+                "--text-file", tempTextPath,
+                "--out-file", tempAudioPath,
+                "--voice", normalizedVoice,
+                "--speed", normalizedSpeed.ToString("0.###", CultureInfo.InvariantCulture),
+            };
+            if (!string.IsNullOrWhiteSpace(_options.TtsProvider))
+            {
+                ttsArguments.Add("--provider");
+                ttsArguments.Add(_options.TtsProvider.Trim());
+            }
+
             await _runner.RunJsonAsync(
                 _options.TtsScript,
-                new[]
-                {
-                    "--text-file", tempTextPath,
-                    "--out-file", tempAudioPath,
-                    "--voice", normalizedVoice,
-                    "--speed", normalizedSpeed.ToString("0.###", CultureInfo.InvariantCulture),
-                },
+                ttsArguments,
                 _options.TtsTimeoutSeconds,
                 "TTS",
                 cancellationToken);
