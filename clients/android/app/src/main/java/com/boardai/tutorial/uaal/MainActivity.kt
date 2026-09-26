@@ -97,7 +97,7 @@ class MainActivity : UnityPlayerGameActivity() {
         loadCachedCatalogAndHistory()
         refreshCatalog(showLoading = allCatalogGames.value.isEmpty())
 
-        keepScreenOn()
+        applyKeepScreenOn(true)
         addComposeControlLayer()
     }
 
@@ -112,7 +112,7 @@ class MainActivity : UnityPlayerGameActivity() {
     override fun onResume() {
         super.onResume()
         // Re-assert after Unity/GameActivity has finished its own window setup.
-        keepScreenOn()
+        applyKeepScreenOn(shouldKeepScreenOn())
         if (unityReadyHandled) {
             sendToUnity("RequestStatus", "")
         }
@@ -130,9 +130,23 @@ class MainActivity : UnityPlayerGameActivity() {
         }
     }
 
-    private fun keepScreenOn() {
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        window.decorView.keepScreenOn = true
+    private fun applyKeepScreenOn(keepOn: Boolean) {
+        if (keepOn) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            window.decorView.keepScreenOn = true
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            window.decorView.keepScreenOn = false
+        }
+    }
+
+    private fun shouldKeepScreenOn(): Boolean {
+        val status = UnityStatusHolder.status.value
+        val activelyPlaying = status?.isPlaying == true && status?.isPaused != true
+        // Keep the catalog/home screen awake; once a tutorial is selected,
+        // only active playback may keep the screen on. Paused playback and the
+        // QA panel fall back to the system screen timeout after inactivity.
+        return selectedGame.value == null || (activelyPlaying && !qaOpen.value)
     }
 
     private fun loadCachedCatalogAndHistory() {
@@ -201,6 +215,12 @@ class MainActivity : UnityPlayerGameActivity() {
                     val timeline = tutorialTimeline.value
                     val selected = selectedGame.value
                     val showPlayer = selected != null && playerActive.value
+
+                    val keepScreenOn = selected == null ||
+                        (status?.isPlaying == true && status?.isPaused != true && !qaOpen.value)
+                    LaunchedEffect(keepScreenOn) {
+                        applyKeepScreenOn(keepScreenOn)
+                    }
 
                     // Unity can only deliver the back key while the player owns
                     // the input surface.  Route it into the native home state
