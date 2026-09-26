@@ -189,6 +189,16 @@ public class ChatOrchestratorService
 
         if (recentCues.Count > 0)
         {
+            var hasActionSummaries = recentCues.Any(cue =>
+                cue.Actions?.Any(action => !string.IsNullOrWhiteSpace(action)) == true);
+            if (hasActionSummaries)
+            {
+                builder.AppendLine("重要说明：客人正在观看教程动画。下面的“动画脚本动作”只是预先编排的动画演示，"
+                    + "不代表玩家实际手动拿取、移动或点击了组件，也不代表系统当前支持这些操作。"
+                    + "回答相关问题时必须使用“教程动画演示”“动画脚本里”等表述，"
+                    + "不要把动作说成玩家刚刚真实完成了操作。");
+            }
+
             builder.AppendLine();
             builder.AppendLine("最近观看内容（按时间顺序，最后一条是客人提问时的当前 cue）：");
 
@@ -235,7 +245,7 @@ public class ChatOrchestratorService
             .ToList();
         if (actions?.Count > 0)
         {
-            builder.AppendLine("动作：");
+            builder.AppendLine("动画脚本动作（演示，非玩家手动操作）：");
             foreach (var action in actions)
                 builder.AppendLine($"- {action}");
         }
