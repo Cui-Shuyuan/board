@@ -60,18 +60,16 @@ fun HomeScreen(
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
-                text = "BoardAI 教程",
+                text = "BoardAI",
                 color = Color.White,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
-            Text(
-                text = "选一款桌游，开始交互式教程",
-                color = Color(0xFF98A2B3),
-                fontSize = 13.sp,
-                modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
+            GameSearchBar(
+                query = query,
+                onQueryChange = onQueryChange,
+                modifier = Modifier.padding(top = 12.dp)
             )
-            GameSearchBar(query = query, onQueryChange = onQueryChange)
         }
 
         Box(
