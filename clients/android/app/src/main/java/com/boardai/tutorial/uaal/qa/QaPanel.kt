@@ -164,21 +164,7 @@ fun QaPanel(
             )
 
             if (messages.isEmpty() && !sending) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(vertical = 18.dp),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    Text(
-                        text = "可以问我这一小节的规则、操作和卡牌含义。\n" +
-                            "发送问题时会自动带上当前游戏和播放位置。",
-                        color = Color.White.copy(alpha = 0.68f),
-                        fontSize = 14.sp,
-                        lineHeight = 21.sp
-                    )
-                }
+                Spacer(Modifier.weight(1f))
             } else {
                 LazyColumn(
                     modifier = Modifier
