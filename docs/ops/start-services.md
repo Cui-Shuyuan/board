@@ -34,9 +34,9 @@ VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
 # 旧 v2 一句话小模型实测可能不接受共享 API Key（403 resource not granted）；
 # 三件套齐全时 asr_once.py 会自动优先用旧版 token，无需额外设置。
 # 想强制试共享 API Key 再设 VOLCENGINE_ASR_AUTH=apikey。
-# VOLCENGINE_ASR_APP_ID=...
-# VOLCENGINE_ASR_ACCESS_TOKEN=...
-# VOLCENGINE_ASR_CLUSTER=...
+# VOLCENGINE_ASR_APP_ID=...   # 或 VOLCENGINE_APP_ID
+# VOLCENGINE_ASR_ACCESS_TOKEN=...  # 或 VOLCENGINE_ACCESS_TOKEN
+# VOLCENGINE_ASR_CLUSTER=...   # 或 VOLCENGINE_CLUSTER；ASR 的 Cluster ID（不是 Secret Key）
 ```
 
 切回语音合成 2.0：

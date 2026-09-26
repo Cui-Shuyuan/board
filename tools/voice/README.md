@@ -36,10 +36,10 @@ DOUBAO_TTS_RESOURCE_ID=volc.tts.default
 # new-console API key is not accepted by the selected old v2 service, use the
 # legacy small-model credentials instead (VOLCENGINE_ASR_AUTH=legacy).
 VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
-# Optional legacy fallback:
-# VOLCENGINE_ASR_APP_ID=
-# VOLCENGINE_ASR_ACCESS_TOKEN=
-# VOLCENGINE_ASR_CLUSTER=
+# Optional legacy fallback (generic names are also accepted):
+# VOLCENGINE_ASR_APP_ID=       # or VOLCENGINE_APP_ID
+# VOLCENGINE_ASR_ACCESS_TOKEN= # or VOLCENGINE_ACCESS_TOKEN
+# VOLCENGINE_ASR_CLUSTER=      # or VOLCENGINE_CLUSTER; not SECRET_KEY
 # VOLCENGINE_ASR_AUTH=legacy
 # VOLCENGINE_ASR_RESOURCE_ID=volc.onesentenceasr.office.cn
 
@@ -97,8 +97,8 @@ need to change because the content type remains `audio/mpeg`.
 |---|---|
 | Endpoint | `wss://openspeech.bytedance.com/api/v2/asr` |
 | Shared API key mode | `X-Api-Key: ${VOLCENGINE_API_KEY}`; `appid` is not required by the new console |
-| Legacy mode | `Authorization: Bearer; ${VOLCENGINE_ASR_ACCESS_TOKEN}` plus `app.appid/app.token/app.cluster` |
-| Legacy cluster | `VOLCENGINE_ASR_CLUSTER` from the console's Cluster ID |
+| Legacy mode | `Authorization: Bearer; ${VOLCENGINE_ASR_ACCESS_TOKEN}` / `VOLCENGINE_ACCESS_TOKEN` plus `app.appid/token/cluster` |
+| Legacy cluster | `VOLCENGINE_ASR_CLUSTER` or `VOLCENGINE_CLUSTER` from the console's Cluster ID. **Not `VOLCENGINE_SECRET_KEY`.** |
 | Audio | 16 kHz, 16-bit, mono WAV |
 | Return | `{"text":"...","request_id":"...","log_id":"..."}` on stdout |
 

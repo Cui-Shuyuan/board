@@ -221,9 +221,20 @@ async def recognize(input_path: Path) -> dict[str, str]:
     load_dotenv(REPO_ROOT / ".env")
 
     api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
-    app_id = os.environ.get("VOLCENGINE_ASR_APP_ID", "").strip()
-    access_token = os.environ.get("VOLCENGINE_ASR_ACCESS_TOKEN", "").strip()
-    cluster = os.environ.get("VOLCENGINE_ASR_CLUSTER", "").strip()
+    # ASR-specific names take precedence, then fall back to the generic
+    # speech-app names users often copy from the old console.
+    app_id = (
+        os.environ.get("VOLCENGINE_ASR_APP_ID", "").strip()
+        or os.environ.get("VOLCENGINE_APP_ID", "").strip()
+    )
+    access_token = (
+        os.environ.get("VOLCENGINE_ASR_ACCESS_TOKEN", "").strip()
+        or os.environ.get("VOLCENGINE_ACCESS_TOKEN", "").strip()
+    )
+    cluster = (
+        os.environ.get("VOLCENGINE_ASR_CLUSTER", "").strip()
+        or os.environ.get("VOLCENGINE_CLUSTER", "").strip()
+    )
     resource_id = os.environ.get("VOLCENGINE_ASR_RESOURCE_ID", "").strip()
     auth_mode = (
         os.environ.get("VOLCENGINE_ASR_AUTH", "")
