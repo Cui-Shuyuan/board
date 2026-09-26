@@ -24,10 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
 import com.boardai.tutorial.uaal.content.ContentStore
-import com.boardai.tutorial.uaal.content.ContentUpdateStateHolder
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
 import com.boardai.tutorial.uaal.content.ContentUpdater
 import com.boardai.tutorial.uaal.content.DownloadProgressOverlay
@@ -36,16 +34,15 @@ import com.boardai.tutorial.uaal.history.PlayHistoryRepository
 import com.boardai.tutorial.uaal.home.HomeContentCoordinator
 import com.boardai.tutorial.uaal.home.HomeScreen
 import com.boardai.tutorial.uaal.home.ResourceManagerOverlay
+import com.boardai.tutorial.uaal.player.PlayerSessionController
 import com.boardai.tutorial.uaal.player.TutorialPlayerOverlay
 import com.boardai.tutorial.uaal.qa.QaSessionHolder
 import com.boardai.tutorial.uaal.qa.QaRepository
 import com.boardai.tutorial.uaal.qa.buildQaContext
-import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 import com.boardai.tutorial.uaal.voice.AsrRepository
 import com.boardai.tutorial.uaal.voice.TtsRepository
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerGameActivity
-import java.io.File
 import java.util.Locale
 
 /**
@@ -65,28 +62,16 @@ class MainActivity : UnityPlayerGameActivity() {
     private lateinit var asrRepository: AsrRepository
     private lateinit var ttsRepository: TtsRepository
     private lateinit var homeContent: HomeContentCoordinator
+    private lateinit var playerSession: PlayerSessionController
 
     private var pendingMicPermissionCallback: ((Boolean) -> Unit)? = null
 
-    private var unityReadyHandled = false
-    private var pendingLoadGameId: String? = null
-    private var pendingLoadGameVersionRoot: String? = null
-    private var pendingUnload = false
-
-    @Volatile
-    private var selectionGeneration = 0
-
     private val searchQuery = mutableStateOf("")
-    private val selectedGame = mutableStateOf<GameCatalogEntry?>(null)
-    private val playerActive = mutableStateOf(false)
-    private val playbackError = mutableStateOf<String?>(null)
     private val qaOpen = mutableStateOf(false)
 
     private var qaWasPlayingBeforeQuestion = false
     private var qaResumeCueId: String? = null
     private var qaResumePositionInCue = 0f
-
-    private val tutorialTimeline = mutableStateOf<TutorialTimeline?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +89,11 @@ class MainActivity : UnityPlayerGameActivity() {
             contentStore = contentStore,
             contentUpdater = contentUpdater,
             historyRepository = historyRepository,
-            onEnterGame = { game -> enterGameWithLocalContent(game) },
+            onEnterGame = { game ->
+                homeContent.closeResourceManager()
+                clearQaState()
+                playerSession.enterGame(game)
+            },
             onToast = { message -> showToast(message) },
             log = { message, throwable ->
                 if (throwable == null) {
@@ -113,14 +102,32 @@ class MainActivity : UnityPlayerGameActivity() {
                     Log.w(TAG, message, throwable)
                 }
             },
-            selectedGameIdProvider = { selectedGame.value?.id },
+            selectedGameIdProvider = { playerSession.state.value.selectedGame?.id },
             onSelectedGameUnavailable = { returnToHome() },
             onBeforeDownload = {
                 clearQaState()
-                selectionGeneration++
+                playerSession.cancelPendingEnter()
             },
-            onPlaybackErrorCleared = { playbackError.value = null }
+            onPlaybackErrorCleared = { playerSession.clearPlaybackError() }
         )
+
+        playerSession = PlayerSessionController(
+            contentStore = contentStore,
+            runIoTask = { block -> homeContent.runContentTask(block) },
+            postToMain = { block -> mainHandler.post(block) },
+            onSendToUnity = { method, value -> sendToUnity(method, value) },
+            onRecordPlay = { gameId -> homeContent.recordPlay(gameId) },
+            onSetPreparingGame = { gameId -> homeContent.setPreparingGame(gameId) },
+            onRefreshHomeContentStatuses = { homeContent.refreshContentStatuses() },
+            log = { message, throwable ->
+                if (throwable == null) {
+                    Log.w(TAG, message)
+                } else {
+                    Log.w(TAG, message, throwable)
+                }
+            }
+        )
+
         homeContent.start()
 
         applyKeepScreenOn(shouldKeepScreenOn())
@@ -129,7 +136,7 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     override fun onDestroy() {
-        selectionGeneration++
+        playerSession.dispose()
         QaSessionHolder.clear()
         homeContent.dispose()
         super.onDestroy()
@@ -176,9 +183,7 @@ class MainActivity : UnityPlayerGameActivity() {
         // Re-assert after Unity/GameActivity has finished its own window setup.
         applyLockScreenPolicy()
         applyKeepScreenOn(shouldKeepScreenOn())
-        if (unityReadyHandled) {
-            sendToUnity("RequestStatus", "")
-        }
+        playerSession.requestStatusIfReady()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -218,7 +223,7 @@ class MainActivity : UnityPlayerGameActivity() {
                 homeContent.pauseDownloadAndReturnHome()
                 true
             }
-            selectedGame.value != null -> {
+            playerSession.state.value.selectedGame != null -> {
                 returnToHome()
                 true
             }
@@ -262,9 +267,10 @@ class MainActivity : UnityPlayerGameActivity() {
             else -> false
         }
 
+        val playerState = playerSession.state.value
         return downloadActive ||
-            (selectedGame.value != null &&
-                playerActive.value &&
+            (playerState.selectedGame != null &&
+                playerState.playerActive &&
                 activelyPlaying &&
                 !qaOpen.value)
     }
@@ -276,11 +282,11 @@ class MainActivity : UnityPlayerGameActivity() {
                 MaterialTheme(colorScheme = darkColorScheme()) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         val homeState by homeContent.state.collectAsState()
+                        val playerState by playerSession.state.collectAsState()
                         val status = UnityStatusHolder.status.value
-                        val contentState = ContentUpdateStateHolder.state.value
-                        val timeline = tutorialTimeline.value
-                        val selected = selectedGame.value
-                        val showPlayer = selected != null && playerActive.value
+                        val timeline = playerState.timeline
+                        val selected = playerState.selectedGame
+                        val showPlayer = selected != null && playerState.playerActive
 
                         val keepScreenOn = shouldKeepScreenOn()
                         LaunchedEffect(keepScreenOn) {
@@ -325,7 +331,7 @@ class MainActivity : UnityPlayerGameActivity() {
                                 status = status,
                                 timeline = timeline,
                                 game = selected,
-                                activeVersion = contentState.activeVersion,
+                                activeVersion = playerState.activeVersion,
                                 qaOpen = qaOpen.value,
                                 qaRepository = qaRepository,
                                 asrRepository = asrRepository,
@@ -353,7 +359,7 @@ class MainActivity : UnityPlayerGameActivity() {
                                 isLoading = homeState.isLoading,
                                 errorMessage = homeState.errorMessage,
                                 preparingGameId = homeState.preparingGameId,
-                                playbackError = playbackError.value,
+                                playbackError = playerState.playbackError,
                                 contentStatuses = homeState.contentStatuses,
                                 onOpenResourceManager = {
                                     homeContent.openResourceManager()
@@ -410,145 +416,11 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     private fun onUnityReady() {
-        if (unityReadyHandled) return
-        unityReadyHandled = true
-
-        Log.i(TAG, "Unity ready; sending initial commands")
-        sendToUnity("SetUnityTouchControlsEnabled", "false")
-
-        if (pendingUnload) {
-            pendingUnload = false
-            sendToUnity("UnloadGame", "")
-        }
-
-        val gameId = pendingLoadGameId
-        val versionRoot = pendingLoadGameVersionRoot
-        pendingLoadGameId = null
-        pendingLoadGameVersionRoot = null
-        if (gameId != null) {
-            if (versionRoot != null) {
-                sendToUnity("LoadGameWithRoot", "$gameId|$versionRoot")
-            } else {
-                sendToUnity("LoadGame", gameId)
-            }
-        }
-        sendToUnity("RequestStatus", "")
-    }
-
-    private fun enterGameWithLocalContent(game: GameCatalogEntry) {
-        homeContent.closeResourceManager()
-        clearQaState()
-        val generation = ++selectionGeneration
-        homeContent.setPreparingGame(game.id)
-        playbackError.value = null
-
-        homeContent.runContentTask {
-            val loaded = loadLocalContentSync(game)
-            mainHandler.post {
-                if (generation != selectionGeneration) return@post
-
-                if (loaded == null) {
-                    homeContent.setPreparingGame(null)
-                    playbackError.value = "本地内容缺失或损坏，请重新下载"
-                    homeContent.refreshContentStatuses()
-                    return@post
-                }
-
-                tutorialTimeline.value = loaded.timeline
-                ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
-                    activeVersion = loaded.version,
-                    status = ContentUpdateStatus.UpToDate(loaded.version)
-                )
-
-                homeContent.recordPlay(game.id)
-                homeContent.setPreparingGame(null)
-                selectedGame.value = game
-                playerActive.value = true
-                playbackError.value = null
-                sendLoadGameWithRoot(game.id, loaded.versionRoot.absolutePath)
-            }
-        }
-    }
-
-    private fun loadLocalContentSync(game: GameCatalogEntry): LoadedLocalContent? {
-        val active = contentStore.readActiveValid(game.id) ?: return null
-        val gameRoot = contentStore.gameRoot(active.version, game.id)
-        if (!gameRoot.isDirectory) return null
-
-        val timeline = loadTimelineSync(gameRoot, game.tutorialTrack) ?: return null
-        return LoadedLocalContent(
-            version = active.version,
-            versionRoot = contentStore.versionDir(active.version),
-            timeline = timeline
-        )
+        playerSession.onUnityReady()
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun loadTimelineSync(gameRoot: File, track: String): TutorialTimeline? {
-        if (!gameRoot.isDirectory) {
-            Log.w(TAG, "cannot load timeline; game root missing: ${gameRoot.absolutePath}")
-            return null
-        }
-
-        return try {
-            val loaded = TutorialTimeline.load(gameRoot, track)
-            Log.i(
-                TAG,
-                "timeline loaded: ${loaded.cueCount} cues, " +
-                    "${"%.2f".format(loaded.totalDuration)}s, " +
-                    "${loaded.allChapters.size} chapter nodes"
-            )
-            loaded
-        } catch (t: Throwable) {
-            Log.w(TAG, "failed to load timeline from ${gameRoot.absolutePath} track=$track", t)
-            null
-        }
-    }
-
-    private fun sendLoadGameWithRoot(gameId: String, versionRoot: String) {
-        if (unityReadyHandled) {
-            pendingUnload = false
-            pendingLoadGameId = null
-            pendingLoadGameVersionRoot = null
-            sendToUnity("LoadGameWithRoot", "$gameId|$versionRoot")
-            sendToUnity("RequestStatus", "")
-        } else {
-            pendingUnload = false
-            pendingLoadGameId = gameId
-            pendingLoadGameVersionRoot = versionRoot
-        }
-    }
-
-    private fun sendLoadGame(gameId: String) {
-        if (unityReadyHandled) {
-            pendingUnload = false
-            pendingLoadGameId = null
-            pendingLoadGameVersionRoot = null
-            sendToUnity("LoadGame", gameId)
-            sendToUnity("RequestStatus", "")
-        } else {
-            pendingUnload = false
-            pendingLoadGameId = gameId
-            pendingLoadGameVersionRoot = null
-        }
-    }
-
-    private fun sendUnloadGame() {
-        clearQaState()
-        if (unityReadyHandled) {
-            pendingLoadGameId = null
-            pendingLoadGameVersionRoot = null
-            pendingUnload = false
-            sendToUnity("UnloadGame", "")
-            sendToUnity("RequestStatus", "")
-        } else {
-            pendingLoadGameId = null
-            pendingLoadGameVersionRoot = null
-            pendingUnload = true
-        }
     }
 
     private fun openQa(
@@ -556,11 +428,11 @@ class MainActivity : UnityPlayerGameActivity() {
         capturedPositionInCue: Float,
         wasPlaying: Boolean
     ) {
-        val game = selectedGame.value ?: return
+        val game = playerSession.state.value.selectedGame ?: return
         if (qaOpen.value) return
 
         val status = UnityStatusHolder.status.value
-        val timeline = tutorialTimeline.value
+        val timeline = playerSession.state.value.timeline
         val timelineCue = status?.let { current ->
             timeline?.cueAt(current.cueIndex)
                 ?: timeline?.cueById(current.cueId)
@@ -617,23 +489,12 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     private fun returnToHome() {
-        val hadSelection = selectedGame.value != null ||
-            playerActive.value ||
+        val hadSelection = playerSession.hasSession() ||
             homeContent.state.value.preparingGameId != null
         if (!hadSelection) return
 
         clearQaState()
-        selectionGeneration++
-        selectedGame.value = null
-        playerActive.value = false
-        homeContent.setPreparingGame(null)
-        playbackError.value = null
-        tutorialTimeline.value = null
-        ContentUpdateStateHolder.state.value = ContentUpdateStateHolder.state.value.copy(
-            activeVersion = null,
-            status = ContentUpdateStatus.Idle
-        )
-        sendUnloadGame()
+        playerSession.returnToHome()
     }
 
     private fun sendToUnity(method: String, value: String = "") {
@@ -643,12 +504,6 @@ class MainActivity : UnityPlayerGameActivity() {
             Log.e(TAG, "UnitySendMessage failed: $method($value)", t)
         }
     }
-
-    private data class LoadedLocalContent(
-        val version: String,
-        val versionRoot: File,
-        val timeline: TutorialTimeline
-    )
 
     companion object {
         private const val TAG = "BoardAI-UaaL"
