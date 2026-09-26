@@ -107,6 +107,13 @@ your project, set `VOLCENGINE_ASR_AUTH=legacy` and fill the three legacy
 credentials. The script reports the failure to stderr and exits non-zero; it
 does not fake a successful transcription.
 
+Practical note from a real key test: the same `X-Api-Key` that works for
+standard TTS returned `403 [resource_id=] requested resource not granted` on
+the old v2 `/api/v2/asr` endpoint. That means the project/key did not expose
+the v2 one-sentence resource through the shared API-key path. When all three
+legacy variables are present, `asr_once.py` now automatically prefers them;
+set `VOLCENGINE_ASR_AUTH=apikey` only to force the shared-key experiment.
+
 Android keeps calling:
 
 ```text

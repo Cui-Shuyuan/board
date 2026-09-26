@@ -230,13 +230,21 @@ async def recognize(input_path: Path) -> dict[str, str]:
         or os.environ.get("DOUBAO_ASR_AUTH", "")
     ).strip().lower()
 
+    legacy_configured = all((app_id, access_token, cluster))
+
     if auth_mode in {"legacy", "token", "authorization"}:
         use_api_key = False
     elif auth_mode in {"apikey", "api_key", "api-key", "x-api-key"}:
         use_api_key = True
+    elif legacy_configured:
+        # The old v2 one-sentence small-model endpoint is documented around
+        # app.appid/token/cluster.  In practice some projects' shared
+        # X-Api-Key is not granted for this v2 resource (403
+        # "[resource_id=] requested resource not granted"), so when all
+        # legacy values are present prefer them automatically.  Set
+        # VOLCENGINE_ASR_AUTH=apikey to force the shared-key experiment.
+        use_api_key = False
     else:
-        # New-console shared API key is preferred when present; otherwise use
-        # the documented v2 appid/access_token/cluster credentials.
         use_api_key = bool(api_key)
 
     headers: dict[str, str] = {}
