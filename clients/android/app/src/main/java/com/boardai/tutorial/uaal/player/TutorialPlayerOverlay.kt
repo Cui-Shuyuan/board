@@ -70,6 +70,13 @@ fun TutorialPlayerOverlay(
     val uiState = rememberPlayerOverlayUiState()
     val display = rememberPlayerDisplayState(uiState, status, timeline)
 
+    val gameName = game?.nameZh?.trim().orEmpty().ifBlank {
+        game?.nameEn?.trim().orEmpty()
+    }
+    val chapterPathTextWithGame = display.chapterPathText?.let { path ->
+        if (gameName.isNotBlank()) "$gameName > $path" else path
+    }
+
     val resumeCue = timeline?.cueAt(display.currentCueIndex)
     val resumeCueId = resumeCue?.id?.takeIf { it.isNotBlank() } ?: status?.cueId.orEmpty()
     val resumePositionInCue = if (resumeCue != null) {
@@ -250,7 +257,7 @@ fun TutorialPlayerOverlay(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 PlayerTopBar(
-                    chapterPathText = if (display.unityReady) display.chapterPathText else null,
+                    chapterPathText = if (display.unityReady) chapterPathTextWithGame else null,
                     onOpenContent = {
                         revealControls()
                         uiState.showContentPanel = true
