@@ -38,6 +38,8 @@ import com.boardai.tutorial.uaal.content.ContentUpdateUiState
 import com.boardai.tutorial.uaal.qa.QaPanel
 import com.boardai.tutorial.uaal.qa.QaRepository
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
+import com.boardai.tutorial.uaal.voice.AsrRepository
+import com.boardai.tutorial.uaal.voice.TtsRepository
 
 private const val QA_TRANSITION_MILLIS = 280
 
@@ -61,6 +63,10 @@ fun TutorialPlayerOverlay(
     game: GameCatalogEntry?,
     qaOpen: Boolean,
     qaRepository: QaRepository,
+    asrRepository: AsrRepository,
+    ttsRepository: TtsRepository,
+    hasRecordPermission: () -> Boolean,
+    requestRecordPermission: (onResult: (Boolean) -> Unit) -> Unit,
     onOpenQa: (cueId: String, positionInCue: Float, wasPlaying: Boolean) -> Unit,
     onCloseQa: () -> Unit,
     onCommand: (method: String, value: String) -> Unit,
@@ -384,6 +390,10 @@ fun TutorialPlayerOverlay(
                 status = status,
                 timeline = timeline,
                 repository = qaRepository,
+                asrRepository = asrRepository,
+                ttsRepository = ttsRepository,
+                hasRecordPermission = hasRecordPermission,
+                requestRecordPermission = requestRecordPermission,
                 onClose = onCloseQa,
                 modifier = Modifier.fillMaxSize()
             )

@@ -1,5 +1,7 @@
 package com.boardai.tutorial.uaal
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +16,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
 import com.boardai.tutorial.uaal.content.ContentStore
@@ -29,6 +33,8 @@ import com.boardai.tutorial.uaal.qa.QaSessionHolder
 import com.boardai.tutorial.uaal.qa.QaRepository
 import com.boardai.tutorial.uaal.qa.buildQaContext
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
+import com.boardai.tutorial.uaal.voice.AsrRepository
+import com.boardai.tutorial.uaal.voice.TtsRepository
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerGameActivity
 import java.io.File
@@ -55,6 +61,10 @@ class MainActivity : UnityPlayerGameActivity() {
     private lateinit var catalogRepository: GameCatalogRepository
     private lateinit var historyRepository: PlayHistoryRepository
     private lateinit var qaRepository: QaRepository
+    private lateinit var asrRepository: AsrRepository
+    private lateinit var ttsRepository: TtsRepository
+
+    private var pendingMicPermissionCallback: ((Boolean) -> Unit)? = null
 
     private var contentCheckInProgress = false
     private var catalogRefreshInProgress = false
@@ -93,6 +103,8 @@ class MainActivity : UnityPlayerGameActivity() {
         catalogRepository = GameCatalogRepository(this, BuildConfig.BOARD_API_BASE_URL)
         historyRepository = PlayHistoryRepository(this)
         qaRepository = QaRepository(BuildConfig.BOARD_API_BASE_URL)
+        asrRepository = AsrRepository(BuildConfig.BOARD_API_BASE_URL)
+        ttsRepository = TtsRepository(this, BuildConfig.BOARD_API_BASE_URL)
 
         loadCachedCatalogAndHistory()
         refreshCatalog(showLoading = allCatalogGames.value.isEmpty())
@@ -107,6 +119,42 @@ class MainActivity : UnityPlayerGameActivity() {
         contentExecutor.shutdownNow()
         catalogExecutor.shutdownNow()
         super.onDestroy()
+    }
+
+    fun hasRecordPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun requestRecordPermission(onResult: (Boolean) -> Unit) {
+        if (hasRecordPermission()) {
+            onResult(true)
+            return
+        }
+
+        pendingMicPermissionCallback = onResult
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.RECORD_AUDIO),
+            REQUEST_RECORD_AUDIO
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != REQUEST_RECORD_AUDIO) return
+
+        val granted = grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        val callback = pendingMicPermissionCallback
+        pendingMicPermissionCallback = null
+        callback?.invoke(granted)
     }
 
     override fun onResume() {
@@ -268,6 +316,12 @@ class MainActivity : UnityPlayerGameActivity() {
                             game = selected,
                             qaOpen = qaOpen.value,
                             qaRepository = qaRepository,
+                            asrRepository = asrRepository,
+                            ttsRepository = ttsRepository,
+                            hasRecordPermission = { hasRecordPermission() },
+                            requestRecordPermission = { callback ->
+                                requestRecordPermission(callback)
+                            },
                             onOpenQa = { cueId, positionInCue, wasPlaying ->
                                 openQa(cueId, positionInCue, wasPlaying)
                             },
@@ -625,5 +679,6 @@ class MainActivity : UnityPlayerGameActivity() {
     companion object {
         private const val TAG = "BoardAI-UaaL"
         private const val BRIDGE_OBJECT = "AndroidTutorialBridge"
+        private const val REQUEST_RECORD_AUDIO = 3401
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +44,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +56,13 @@ import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
+import com.boardai.tutorial.uaal.voice.AnswerAudioPlayer
+import com.boardai.tutorial.uaal.voice.AsrRepository
+import com.boardai.tutorial.uaal.voice.AudioRecorder
+import com.boardai.tutorial.uaal.voice.DEFAULT_TTS_VOICE
+import com.boardai.tutorial.uaal.voice.TtsRepository
 import kotlinx.coroutines.launch
+import java.io.File
 
 private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
@@ -62,6 +72,9 @@ private val QaPanelColor = Color(0x801B1B20)
  *
  * Playback metadata (game / cue / chapter / position) is built into every
  * request by [buildQaContext], but is intentionally not shown to the guest.
+ *
+ * Voice is an enhancement: ASR fills the normal text input and TTS runs after
+ * the text answer exists.  Any voice failure leaves the text flow untouched.
  */
 @Composable
 fun QaPanel(
@@ -69,6 +82,10 @@ fun QaPanel(
     status: UnityStatus?,
     timeline: TutorialTimeline?,
     repository: QaRepository,
+    asrRepository: AsrRepository,
+    ttsRepository: TtsRepository,
+    hasRecordPermission: () -> Boolean,
+    requestRecordPermission: (onResult: (Boolean) -> Unit) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -77,10 +94,22 @@ fun QaPanel(
     val messages = session?.messages.orEmpty()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val appContext = LocalContext.current.applicationContext
+
+    val audioRecorder = remember { AudioRecorder(appContext) }
+    val answerPlayer = remember { AnswerAudioPlayer() }
 
     var input by remember { mutableStateOf("") }
     var sendState by remember { mutableStateOf<QaSendState>(QaSendState.Idle) }
     val sending = sendState is QaSendState.Sending
+
+    var voiceStatus by remember { mutableStateOf<String?>(null) }
+    var isRecording by remember { mutableStateOf(false) }
+    var recordingToken by remember { mutableStateOf(0) }
+    var ttsBusy by remember { mutableStateOf(false) }
+    var ttsMessageInFlight by remember { mutableStateOf<Long?>(null) }
+    var answerAudioFiles by remember { mutableStateOf<Map<Long, File>>(emptyMap()) }
+    var playingMessageId by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(game?.id) {
         if (game != null) {
@@ -95,7 +124,175 @@ fun QaPanel(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (!hasRecordPermission()) {
+            requestRecordPermission { granted ->
+                if (!granted) {
+                    voiceStatus = "未授予麦克风权限，可键盘输入"
+                }
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            audioRecorder.cancel()
+            answerPlayer.stop()
+        }
+    }
+
+    fun stopPlayback() {
+        answerPlayer.stop()
+        playingMessageId = null
+    }
+
+    fun handleRecorded(file: File?) {
+        if (file == null) {
+            voiceStatus = "录音太短，请按住多说一会儿"
+            return
+        }
+
+        voiceStatus = "识别中…"
+        scope.launch {
+            try {
+                asrRepository.transcribe(file).onSuccess { recognized ->
+                    val text = recognized.trim()
+                    if (text.isBlank()) {
+                        voiceStatus = "没有识别到内容，请重试"
+                    } else {
+                        input = text
+                        voiceStatus = null
+                    }
+                }.onFailure {
+                    voiceStatus = "识别失败，可键盘输入"
+                }
+            } finally {
+                file.delete()
+            }
+        }
+    }
+
+    fun beginRecording() {
+        if (isRecording) return
+        stopPlayback()
+
+        val token = recordingToken + 1
+        recordingToken = token
+        val started = audioRecorder.start { file ->
+            if (recordingToken == token) {
+                isRecording = false
+                recordingToken += 1
+                handleRecorded(file)
+            }
+        }
+
+        if (started) {
+            isRecording = true
+            voiceStatus = "正在聆听…"
+        } else {
+            voiceStatus = "录音启动失败，请重试"
+        }
+    }
+
+    fun startListening() {
+        if (isRecording) return
+        stopPlayback()
+        voiceStatus = null
+
+        if (!hasRecordPermission()) {
+            voiceStatus = "需要麦克风权限"
+            requestRecordPermission { granted ->
+                if (granted) {
+                    voiceStatus = null
+                    beginRecording()
+                } else {
+                    voiceStatus = "未授予麦克风权限，可键盘输入"
+                }
+            }
+            return
+        }
+
+        beginRecording()
+    }
+
+    fun finishListening() {
+        if (!isRecording) return
+        isRecording = false
+        recordingToken += 1
+        handleRecorded(audioRecorder.stop())
+    }
+
+    fun playAnswerFile(message: QaMessage, file: File) {
+        stopPlayback()
+        playingMessageId = message.timestamp
+        answerPlayer.play(
+            file = file,
+            onCompletion = {
+                if (playingMessageId == message.timestamp) {
+                    playingMessageId = null
+                }
+            },
+            onError = {
+                if (playingMessageId == message.timestamp) {
+                    playingMessageId = null
+                }
+                voiceStatus = "语音播放失败，已保留文字回答"
+            }
+        )
+    }
+
+    fun synthesizeAndPlay(message: QaMessage) {
+        val existing = answerAudioFiles[message.timestamp]
+        if (existing != null && existing.exists()) {
+            playAnswerFile(message, existing)
+            return
+        }
+
+        if (ttsMessageInFlight == message.timestamp) return
+        ttsMessageInFlight = message.timestamp
+        ttsBusy = true
+        voiceStatus = "正在合成语音…"
+
+        scope.launch {
+            ttsRepository.synthesize(
+                text = message.content,
+                voice = DEFAULT_TTS_VOICE,
+                speed = 1.0
+            ).onSuccess { file ->
+                answerAudioFiles = answerAudioFiles + (message.timestamp to file)
+                if (ttsMessageInFlight == message.timestamp) {
+                    ttsMessageInFlight = null
+                }
+                ttsBusy = false
+                if (voiceStatus == "正在合成语音…") {
+                    voiceStatus = null
+                }
+                playAnswerFile(message, file)
+            }.onFailure {
+                if (ttsMessageInFlight == message.timestamp) {
+                    ttsMessageInFlight = null
+                }
+                ttsBusy = false
+                voiceStatus = "语音合成失败，已保留文字回答"
+            }
+        }
+    }
+
+    fun replayAnswer(message: QaMessage) {
+        val existing = answerAudioFiles[message.timestamp]
+        if (existing != null && existing.exists()) {
+            playAnswerFile(message, existing)
+        } else {
+            synthesizeAndPlay(message)
+        }
+    }
+
     fun startNewSession() {
+        stopPlayback()
+        answerAudioFiles = emptyMap()
+        ttsMessageInFlight = null
+        ttsBusy = false
+        voiceStatus = null
         QaSessionHolder.startNewSession(buildQaContext(game, status, timeline))
         input = ""
         sendState = QaSendState.Idle
@@ -125,14 +322,16 @@ fun QaPanel(
                 context = context
             )
             result.onSuccess { reply ->
-                QaSessionHolder.appendMessage(
-                    QaMessage(
-                        role = QaMessage.ROLE_ASSISTANT,
-                        content = reply.trim().ifBlank { "（未收到回答）" }
-                    ),
-                    context
+                val replyText = reply.trim().ifBlank { "（未收到回答）" }
+                val replyMessage = QaMessage(
+                    role = QaMessage.ROLE_ASSISTANT,
+                    content = replyText
                 )
+                QaSessionHolder.appendMessage(replyMessage, context)
                 sendState = QaSendState.Idle
+                if (replyText != "（未收到回答）") {
+                    synthesizeAndPlay(replyMessage)
+                }
             }.onFailure {
                 QaSessionHolder.appendMessage(
                     QaMessage(
@@ -159,7 +358,10 @@ fun QaPanel(
                 gameName = currentContext.gameName.ifBlank {
                     game?.nameZh.orEmpty()
                 },
-                onClose = onClose,
+                onClose = {
+                    stopPlayback()
+                    onClose()
+                },
                 onNewSession = { startNewSession() }
             )
 
@@ -173,7 +375,16 @@ fun QaPanel(
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(messages) { message -> QaMessageBubble(message) }
+                    items(messages) { message ->
+                        QaMessageBubble(
+                            message = message,
+                            isPlaying = playingMessageId == message.timestamp,
+                            canReplay = message.role == QaMessage.ROLE_ASSISTANT &&
+                                !ttsBusy &&
+                                message.content.isNotBlank(),
+                            onReplay = { replayAnswer(message) }
+                        )
+                    }
                     if (sending) {
                         item { QaTypingBubble() }
                     }
@@ -185,6 +396,10 @@ fun QaPanel(
                 onValueChange = { input = it },
                 sending = sending,
                 errorMessage = (sendState as? QaSendState.Error)?.message,
+                voiceStatus = voiceStatus,
+                recording = isRecording,
+                onStartListening = { startListening() },
+                onStopListening = { finishListening() },
                 onSend = { sendQuestion() }
             )
         }
@@ -241,11 +456,16 @@ private fun QaTopBar(
 }
 
 @Composable
-private fun QaMessageBubble(message: QaMessage) {
+private fun QaMessageBubble(
+    message: QaMessage,
+    isPlaying: Boolean,
+    canReplay: Boolean,
+    onReplay: () -> Unit
+) {
     val isUser = message.role == QaMessage.ROLE_USER
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
+        horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
     ) {
         Box(
             modifier = Modifier
@@ -273,6 +493,21 @@ private fun QaMessageBubble(message: QaMessage) {
                 fontSize = 14.sp,
                 lineHeight = 21.sp
             )
+        }
+
+        if (!isUser) {
+            TextButton(
+                onClick = onReplay,
+                enabled = canReplay,
+                modifier = Modifier.padding(top = 1.dp)
+            ) {
+                Text(
+                    text = if (isPlaying) "播放中…" else "重播",
+                    color = if (canReplay) QaAccentYellow else QaAccentYellow.copy(alpha = 0.45f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
@@ -334,6 +569,10 @@ private fun QaComposer(
     onValueChange: (String) -> Unit,
     sending: Boolean,
     errorMessage: String?,
+    voiceStatus: String?,
+    recording: Boolean,
+    onStartListening: () -> Unit,
+    onStopListening: () -> Unit,
     onSend: () -> Unit
 ) {
     Column(
@@ -346,7 +585,16 @@ private fun QaComposer(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 6.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
+
+        if (!voiceStatus.isNullOrBlank()) {
+            Text(
+                text = voiceStatus,
+                color = QaAccentYellow,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(bottom = 4.dp)
             )
         }
 
@@ -354,12 +602,49 @@ private fun QaComposer(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom
         ) {
+            Button(
+                onClick = {},
+                enabled = true,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (recording) Color.White else QaAccentYellow,
+                    contentColor = Color(0xFF1B1B1B),
+                    disabledContainerColor = QaAccentYellow.copy(alpha = 0.28f),
+                    disabledContentColor = Color(0xFF1B1B1B).copy(alpha = 0.55f)
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .height(52.dp)
+                    .width(98.dp)
+                    .pointerInput(sending) {
+                        if (!sending) {
+                            detectTapGestures(
+                                onPress = {
+                                    onStartListening()
+                                    try {
+                                        tryAwaitRelease()
+                                    } finally {
+                                        onStopListening()
+                                    }
+                                }
+                            )
+                        }
+                    }
+            ) {
+                Text(
+                    text = if (recording) "放手结束" else "按住说话",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(Modifier.width(8.dp))
+
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier
                     .weight(1f)
-                    .widthIn(min = 180.dp),
+                    .widthIn(min = 140.dp),
                 enabled = !sending,
                 placeholder = {
                     Text(
@@ -372,7 +657,7 @@ private fun QaComposer(
                 keyboardActions = KeyboardActions(onSend = { onSend() })
             )
 
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(8.dp))
 
             Button(
                 onClick = onSend,
