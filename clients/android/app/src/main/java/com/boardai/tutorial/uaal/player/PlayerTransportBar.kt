@@ -233,7 +233,7 @@ internal fun PlayerTransportBar(
                 )
                 Spacer(Modifier.width(8.dp))
                 PlayerAskButton(
-                    modifier = Modifier.width(88.dp),
+                    modifier = Modifier.width(104.dp),
                     onClick = onOpenQa
                 )
             }
@@ -249,8 +249,8 @@ private fun PlayerAskButton(
     val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
-            .height(48.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .height(56.dp)
+            .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFFFFC107))
             .clickable(
                 interactionSource = interactionSource,
@@ -260,9 +260,9 @@ private fun PlayerAskButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "？ 提问",
+            text = "提问",
             color = Color(0xFF1B1B1B),
-            fontSize = 15.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
