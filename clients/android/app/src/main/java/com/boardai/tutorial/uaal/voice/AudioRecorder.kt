@@ -7,6 +7,7 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.max
@@ -43,27 +44,40 @@ class AudioRecorder(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun start(onAutoStop: (File?) -> Unit): Boolean {
         synchronized(lock) {
-            if (recording) return false
+            if (recording) {
+                Log.d(TAG, "start ignored: already recording")
+                return false
+            }
 
+            Log.d(TAG, "start requested")
             val voiceDir = File(context.cacheDir, "voice").apply { mkdirs() }
             val stamp = System.currentTimeMillis()
             val pcm = File(voiceDir, "rec-$stamp.pcm")
             val wav = File(voiceDir, "rec-$stamp.wav")
-            val record = createAudioRecord() ?: run {
+            val choice = createAudioRecord() ?: run {
+                Log.w(TAG, "start failed: no usable AudioRecord source")
                 pcm.delete()
                 wav.delete()
                 return false
             }
+            val record = choice.record
+            val sourceName = audioSourceName(choice.source)
+            Log.d(TAG, "start selected AudioSource=$sourceName")
 
             try {
                 record.startRecording()
                 if (record.recordingState != AudioRecord.RECORDSTATE_RECORDING) {
+                    Log.w(
+                        TAG,
+                        "start failed: source=$sourceName recordingState=${record.recordingState}"
+                    )
                     record.release()
                     pcm.delete()
                     wav.delete()
                     return false
                 }
-            } catch (_: Throwable) {
+            } catch (t: Throwable) {
+                Log.w(TAG, "start failed: source=$sourceName", t)
                 try {
                     record.release()
                 } catch (_: Throwable) {
@@ -90,12 +104,16 @@ class AudioRecorder(private val context: Context) {
             thread.start()
 
             mainHandler.postDelayed(autoStopRunnable, MAX_DURATION_MS)
+            Log.i(TAG, "start succeeded: source=$sourceName pcm=${pcm.name}")
             return true
         }
     }
 
     /** Stops the current recording and returns a valid WAV, or null if it was too short. */
-    fun stop(): File? = finishRecording(notifyCallback = false)
+    fun stop(): File? {
+        Log.d(TAG, "stop requested")
+        return finishRecording(notifyCallback = false)
+    }
 
     /** Stops and deletes the partial recording. */
     fun cancel() {
@@ -112,6 +130,7 @@ class AudioRecorder(private val context: Context) {
         synchronized(lock) {
             if (!recording) return null
 
+            Log.d(TAG, "finishRecording started notifyCallback=$notifyCallback")
             recording = false
             stopRequested = true
             mainHandler.removeCallbacks(autoStopRunnable)
@@ -147,12 +166,18 @@ class AudioRecorder(private val context: Context) {
 
         var result: File? = null
         if (pcm != null && wav != null) {
-            val longEnough = pcm.length() >= MIN_PCM_BYTES
+            val pcmBytes = pcm.length()
+            val longEnough = pcmBytes >= MIN_PCM_BYTES
             if (longEnough && WavWriter.pcmToWav(pcm, wav, SAMPLE_RATE, CHANNELS, BITS_PER_SAMPLE)) {
                 result = wav
+                Log.i(TAG, "finishRecording: pcmBytes=$pcmBytes validWav=true wav=${wav.name}")
             } else {
                 wav.delete()
+                val reason = if (!longEnough) "too short" else "wav write failed"
+                Log.i(TAG, "finishRecording: pcmBytes=$pcmBytes validWav=false reason=$reason")
             }
+        } else {
+            Log.w(TAG, "finishRecording: missing temp files pcm=${pcm != null} wav=${wav != null}")
         }
         pcm?.delete()
 
@@ -172,11 +197,14 @@ class AudioRecorder(private val context: Context) {
                 if (read > 0) {
                     output.write(buffer, 0, read)
                 } else if (read < 0) {
+                    if (!stopRequested) {
+                        Log.w(TAG, "recordLoop read error code=$read")
+                    }
                     break
                 }
             }
-        } catch (_: Throwable) {
-            // stop()/release() will decide whether a usable clip exists.
+        } catch (t: Throwable) {
+            Log.w(TAG, "recordLoop failed to read/write PCM", t)
         } finally {
             try {
                 output?.flush()
@@ -187,13 +215,16 @@ class AudioRecorder(private val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    private fun createAudioRecord(): AudioRecord? {
+    private fun createAudioRecord(): AudioRecordChoice? {
         val minBuffer = AudioRecord.getMinBufferSize(
             SAMPLE_RATE,
             CHANNEL_CONFIG,
             AUDIO_FORMAT
         )
-        if (minBuffer <= 0) return null
+        if (minBuffer <= 0) {
+            Log.w(TAG, "createAudioRecord failed: minBuffer=$minBuffer")
+            return null
+        }
 
         val bufferSize = max(minBuffer, SAMPLE_RATE * BITS_PER_SAMPLE / 8 * CHANNELS)
         val sources = intArrayOf(
@@ -202,6 +233,7 @@ class AudioRecorder(private val context: Context) {
         )
 
         for (source in sources) {
+            val sourceName = audioSourceName(source)
             try {
                 val record = AudioRecord(
                     source,
@@ -211,17 +243,32 @@ class AudioRecorder(private val context: Context) {
                     bufferSize
                 )
                 if (record.state == AudioRecord.STATE_INITIALIZED) {
-                    return record
+                    Log.d(TAG, "createAudioRecord: selected source=$sourceName")
+                    return AudioRecordChoice(source, record)
                 }
+                Log.w(TAG, "createAudioRecord: source=$sourceName state=${record.state}")
                 record.release()
-            } catch (_: Throwable) {
-                // Try the next source.
+            } catch (t: Throwable) {
+                Log.w(TAG, "createAudioRecord: source=$sourceName failed", t)
             }
         }
+        Log.w(TAG, "createAudioRecord: no source initialized")
         return null
     }
 
+    private fun audioSourceName(source: Int): String = when (source) {
+        MediaRecorder.AudioSource.MIC -> "MIC"
+        MediaRecorder.AudioSource.VOICE_RECOGNITION -> "VOICE_RECOGNITION"
+        else -> "UNKNOWN($source)"
+    }
+
+    private data class AudioRecordChoice(
+        val source: Int,
+        val record: AudioRecord
+    )
+
     companion object {
+        const val TAG = "BoardAI-AudioRecorder"
         const val SAMPLE_RATE = 16_000
         const val CHANNELS = 1
         const val BITS_PER_SAMPLE = 16

@@ -1,5 +1,6 @@
 package com.boardai.tutorial.uaal.qa
 
+import android.util.Log
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -46,7 +47,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -63,6 +66,8 @@ import com.boardai.tutorial.uaal.voice.DEFAULT_TTS_VOICE
 import com.boardai.tutorial.uaal.voice.TtsRepository
 import kotlinx.coroutines.launch
 import java.io.File
+
+private const val QA_VOICE_TAG = "BoardAI-QaVoice"
 
 private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
@@ -148,31 +153,41 @@ fun QaPanel(
 
     fun handleRecorded(file: File?) {
         if (file == null) {
+            Log.d(QA_VOICE_TAG, "recording dropped: too short or invalid")
             voiceStatus = "录音太短，请按住多说一会儿"
             return
         }
 
+        Log.d(QA_VOICE_TAG, "ASR request starting, wavBytes=${file.length()}")
         voiceStatus = "识别中…"
         scope.launch {
             try {
                 asrRepository.transcribe(file).onSuccess { recognized ->
                     val text = recognized.trim()
                     if (text.isBlank()) {
+                        Log.w(QA_VOICE_TAG, "ASR success but text blank")
                         voiceStatus = "没有识别到内容，请重试"
                     } else {
+                        Log.d(QA_VOICE_TAG, "ASR success: textLength=${text.length}")
                         input = text
                         voiceStatus = null
                     }
-                }.onFailure {
+                }.onFailure { error ->
+                    Log.w(
+                        QA_VOICE_TAG,
+                        "ASR failed: ${error.javaClass.simpleName}: ${error.message}"
+                    )
                     voiceStatus = "识别失败，可键盘输入"
                 }
             } finally {
-                file.delete()
+                val deleted = file.delete()
+                Log.d(QA_VOICE_TAG, "ASR temp wav deleted=$deleted")
             }
         }
     }
 
     fun beginRecording() {
+        Log.d(QA_VOICE_TAG, "beginRecording requested, isRecording=$isRecording")
         if (isRecording) return
         stopPlayback()
 
@@ -185,6 +200,7 @@ fun QaPanel(
                 handleRecorded(file)
             }
         }
+        Log.d(QA_VOICE_TAG, "audioRecorder.start returned started=$started")
 
         if (started) {
             isRecording = true
@@ -195,28 +211,32 @@ fun QaPanel(
     }
 
     fun startListening() {
+        Log.d(QA_VOICE_TAG, "PTT down: isRecording=$isRecording")
         if (isRecording) return
         stopPlayback()
         voiceStatus = null
 
         if (!hasRecordPermission()) {
+            Log.d(QA_VOICE_TAG, "PTT down without RECORD_AUDIO permission")
             voiceStatus = "需要麦克风权限"
             requestRecordPermission { granted ->
-                if (granted) {
-                    voiceStatus = null
-                    beginRecording()
+                voiceStatus = if (granted) {
+                    "权限已授予，请再次按住说话"
                 } else {
-                    voiceStatus = "未授予麦克风权限，可键盘输入"
+                    "未授予麦克风权限，可键盘输入"
                 }
             }
             return
         }
 
+        Log.d(QA_VOICE_TAG, "PTT down with RECORD_AUDIO permission")
         beginRecording()
     }
 
     fun finishListening() {
+        Log.d(QA_VOICE_TAG, "PTT up: isRecording=$isRecording")
         if (!isRecording) return
+        Log.d(QA_VOICE_TAG, "PTT recording stopping")
         isRecording = false
         recordingToken += 1
         handleRecorded(audioRecorder.stop())
@@ -575,6 +595,8 @@ private fun QaComposer(
     onStopListening: () -> Unit,
     onSend: () -> Unit
 ) {
+    var pttPressed by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -602,36 +624,47 @@ private fun QaComposer(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom
         ) {
-            Button(
-                onClick = {},
-                enabled = true,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (recording) Color.White else QaAccentYellow,
-                    contentColor = Color(0xFF1B1B1B),
-                    disabledContainerColor = QaAccentYellow.copy(alpha = 0.28f),
-                    disabledContentColor = Color(0xFF1B1B1B).copy(alpha = 0.55f)
-                ),
-                shape = RoundedCornerShape(12.dp),
+            Box(
                 modifier = Modifier
                     .height(52.dp)
                     .width(98.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (pttPressed || recording) {
+                            Color.White
+                        } else {
+                            QaAccentYellow
+                        }
+                    )
                     .pointerInput(sending) {
                         if (!sending) {
                             detectTapGestures(
                                 onPress = {
-                                    onStartListening()
+                                    pttPressed = true
                                     try {
+                                        onStartListening()
                                         tryAwaitRelease()
                                     } finally {
+                                        pttPressed = false
                                         onStopListening()
                                     }
                                 }
                             )
                         }
                     }
+                    .semantics {
+                        role = Role.Button
+                        contentDescription = "按住说话"
+                    },
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (recording) "放手结束" else "按住说话",
+                    text = when {
+                        recording -> "放手结束"
+                        pttPressed -> "聆听中…"
+                        else -> "按住说话"
+                    },
+                    color = Color(0xFF1B1B1B),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
