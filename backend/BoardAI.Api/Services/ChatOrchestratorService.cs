@@ -193,10 +193,10 @@ public class ChatOrchestratorService
                 cue.Actions?.Any(action => !string.IsNullOrWhiteSpace(action)) == true);
             if (hasActionSummaries)
             {
-                builder.AppendLine("重要说明：客人正在观看教程动画。下面的“动画脚本动作”只是预先编排的动画演示，"
-                    + "不代表玩家实际手动拿取、移动或点击了组件，也不代表系统当前支持这些操作。"
-                    + "回答相关问题时必须使用“教程动画演示”“动画脚本里”等表述，"
-                    + "不要把动作说成玩家刚刚真实完成了操作。");
+                builder.AppendLine("以下“动画脚本动作”只用于理解当前教程画面里演示了什么。"
+                    + "它们是预先编排的演示，不代表客人自己的操作记录，也不代表系统支持玩家拖动或点击组件。"
+                    + "回答时请顺着客人问题的正常意图解释规则或画面，不要主动补充“这不是玩家真实操作”之类的话；"
+                    + "只有客人明确把动画动作当成自己的操作或当前游戏状态时，才简短说明这是教程演示。");
             }
 
             builder.AppendLine();
