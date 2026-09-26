@@ -10,7 +10,7 @@ import java.io.IOException
  * Callbacks are invoked on the main thread by MediaPlayer.  stop() is safe to
  * call repeatedly and is used when the QA panel closes or "继续播放" is tapped.
  */
-class AnswerAudioPlayer {
+class AnswerAudioPlayer : QaAnswerPlayer {
     private var player: MediaPlayer? = null
 
     val isPlaying: Boolean
@@ -20,7 +20,7 @@ class AnswerAudioPlayer {
             false
         }
 
-    fun play(
+    override fun play(
         file: File,
         onCompletion: () -> Unit,
         onError: (Throwable) -> Unit
@@ -49,7 +49,7 @@ class AnswerAudioPlayer {
         }
     }
 
-    fun stop() {
+    override fun stop() {
         val current = player
         player = null
         try {

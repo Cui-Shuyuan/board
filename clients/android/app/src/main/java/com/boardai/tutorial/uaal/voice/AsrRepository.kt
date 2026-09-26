@@ -17,10 +17,10 @@ import java.net.URL
  */
 class AsrRepository(
     baseUrl: String = BuildConfig.BOARD_API_BASE_URL
-) {
+) : QaAsrEngine {
     private val baseUrl = baseUrl.trimEnd('/')
 
-    suspend fun transcribe(wavFile: File): Result<String> = withContext(Dispatchers.IO) {
+    override suspend fun transcribe(wavFile: File): Result<String> = withContext(Dispatchers.IO) {
         try {
             val wavBytes = wavFile.readBytes()
             if (wavBytes.isEmpty()) {

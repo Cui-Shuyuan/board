@@ -19,7 +19,7 @@ import kotlin.math.max
  * 20-second limit, rejects clips shorter than 300 ms, and wraps the final PCM
  * with a standard WAV header in cacheDir/voice.
  */
-class AudioRecorder(private val context: Context) {
+class AudioRecorder(private val context: Context) : QaAudioRecorder {
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val lock = Any()
@@ -42,7 +42,7 @@ class AudioRecorder(private val context: Context) {
 
     /** Returns false when a recording is already active or AudioRecord fails. */
     @SuppressLint("MissingPermission")
-    fun start(onAutoStop: (File?) -> Unit): Boolean {
+    override fun start(onAutoStop: (File?) -> Unit): Boolean {
         synchronized(lock) {
             if (recording) {
                 Log.d(TAG, "start ignored: already recording")
@@ -110,13 +110,13 @@ class AudioRecorder(private val context: Context) {
     }
 
     /** Stops the current recording and returns a valid WAV, or null if it was too short. */
-    fun stop(): File? {
+    override fun stop(): File? {
         Log.d(TAG, "stop requested")
         return finishRecording(notifyCallback = false)
     }
 
     /** Stops and deletes the partial recording. */
-    fun cancel() {
+    override fun cancel() {
         finishRecording(notifyCallback = false)?.delete()
     }
 

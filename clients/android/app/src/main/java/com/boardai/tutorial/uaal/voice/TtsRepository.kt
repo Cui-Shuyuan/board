@@ -21,13 +21,13 @@ const val DEFAULT_TTS_VOICE = "BV700_streaming"
 class TtsRepository(
     private val context: Context,
     baseUrl: String = BuildConfig.BOARD_API_BASE_URL
-) {
+) : QaTtsEngine {
     private val baseUrl = baseUrl.trimEnd('/')
 
-    suspend fun synthesize(
+    override suspend fun synthesize(
         text: String,
-        voice: String = DEFAULT_TTS_VOICE,
-        speed: Double = 1.0
+        voice: String,
+        speed: Double
     ): Result<File> = withContext(Dispatchers.IO) {
         try {
             val normalizedText = text.trim()
