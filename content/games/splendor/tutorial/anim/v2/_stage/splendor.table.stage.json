@@ -28,7 +28,8 @@
       "margin": 6.0,
       "concept": null,
       "contains": [],
-      "note": "镜头外通道，不是规则里的 zone：任何东西都从这里进出"
+      "note": "镜头外通道，不是规则里的 zone：任何东西都从这里进出",
+      "qa_ignore": true
     },
     {
       "id": "deck_level_1",
@@ -457,7 +458,7 @@
       "display": {
         "mode": "count"
       },
-      "concept": null,
+      "concept": "<starting_player_marker>",
       "contains": [
         "starting_player_marker"
       ],
@@ -701,7 +702,8 @@
       },
       "display": {
         "mode": "count"
-      }
+      },
+      "concept": "<starting_player_marker>"
     }
   ],
   "templates": [

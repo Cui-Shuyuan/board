@@ -41,7 +41,8 @@
         "h": 0.88
       },
       "concept": null,
-      "contains": []
+      "contains": [],
+      "qa_ignore": true
     },
     {
       "id": "showcase_1",
@@ -67,7 +68,8 @@
         "h": 0.88
       },
       "concept": null,
-      "contains": []
+      "contains": [],
+      "qa_ignore": true
     },
     {
       "id": "showcase_2",
@@ -93,7 +95,8 @@
         "h": 0.88
       },
       "concept": null,
-      "contains": []
+      "contains": [],
+      "qa_ignore": true
     },
     {
       "id": "showcase_3",
@@ -119,7 +122,8 @@
         "h": 0.88
       },
       "concept": null,
-      "contains": []
+      "contains": [],
+      "qa_ignore": true
     }
   ],
   "zone_defs": [],

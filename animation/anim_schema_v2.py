@@ -607,6 +607,11 @@ def validate_stage(doc: dict, report: Report | None = None) -> Report:
         concept = z.get("concept")
         label = z.get("label")
         parts = z.get("parts")
+        qa_ignore = z.get("qa_ignore")
+        if qa_ignore is not None and not isinstance(qa_ignore, bool):
+            rep.error(f"{where}.qa_ignore must be boolean")
+            qa_ignore = False
+        qa_ignore = bool(qa_ignore)
         concept_text = ""
         if concept is not None:
             if not isinstance(concept, str):
@@ -626,7 +631,7 @@ def validate_stage(doc: dict, report: Report | None = None) -> Report:
             if not isinstance(parts, list):
                 rep.error(f"{where}.parts must be a list")
             else:
-                if parts and not concept_text:
+                if parts and not concept_text and not qa_ignore:
                     rep.warn(f"{where}.parts is non-empty but concept is empty; "
                              f"logical mapping will be ignored")
                 for j, part in enumerate(parts):

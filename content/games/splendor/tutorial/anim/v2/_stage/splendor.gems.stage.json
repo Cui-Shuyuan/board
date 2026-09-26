@@ -38,7 +38,8 @@
       },
       "concept": null,
       "contains": [],
-      "note": "介绍宝石用的展示位：**不是供应堆**，只是把宝石摆出来看。介绍完就销毁这里的样本。"
+      "note": "介绍宝石用的展示位：**不是供应堆**，只是把宝石摆出来看。介绍完就销毁这里的样本。",
+      "qa_ignore": true
     },
     {
       "id": "gold_display",
@@ -61,7 +62,8 @@
       },
       "concept": null,
       "contains": [],
-      "note": "介绍黄金用的展示位；在 gems_demo 树里放在宝石展示位右侧一臂内，使 cue15 的近景机位能同时覆盖它。"
+      "note": "介绍黄金用的展示位；在 gems_demo 树里放在宝石展示位右侧一臂内，使 cue15 的近景机位能同时覆盖它。",
+      "qa_ignore": true
     }
   ],
   "zone_defs": [],

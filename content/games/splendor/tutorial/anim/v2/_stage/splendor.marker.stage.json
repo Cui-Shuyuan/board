@@ -19,7 +19,7 @@
   "zones": [
     {
       "id": "player_marker",
-      "label": "起始玩家标记位",
+      "label": "玩家A起始玩家标记区",
       "center": {
         "x": 0.0,
         "z": 0.0
@@ -37,7 +37,7 @@
       "display": {
         "mode": "count"
       },
-      "concept": null,
+      "concept": "<starting_player_marker>",
       "contains": [
         "starting_player_marker"
       ],

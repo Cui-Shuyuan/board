@@ -238,7 +238,8 @@ class TutorialTimeline private constructor(
                     result[zoneId] = ZoneBinding(
                         logicalZone = binding.optString("logical_zone", "").trim(),
                         label = binding.optString("label", "").trim(),
-                        parts = binding.optJSONArray("parts").toPartRefs()
+                        parts = binding.optJSONArray("parts").toPartRefs(),
+                        qaIgnore = binding.optBoolean("qa_ignore", false)
                     )
                 }
                 result
@@ -304,6 +305,10 @@ class TutorialTimeline private constructor(
             event: JSONObject,
             zoneBindings: Map<String, ZoneBinding>
         ): List<String> {
+            if (qaZoneRefs(event).any { isQaIgnored(it, zoneBindings) }) {
+                return emptyList()
+            }
+
             return when (event.optString("op", "").trim()) {
                 "transfer" -> transferActions(event, zoneBindings)
 
@@ -470,6 +475,36 @@ class TutorialTimeline private constructor(
             if (zone.isEmpty()) return ""
             val binding = bindings[zone] ?: return zone
             return binding.label.ifBlank { binding.logicalZone.ifBlank { zone } }
+        }
+
+        /**
+         * True when the compiled binding marks this physical zone as
+         * animation-only and therefore excluded from QA action summaries.
+         */
+        private fun isQaIgnored(zone: String, bindings: Map<String, ZoneBinding>): Boolean {
+            return bindings[zone.trim()]?.qaIgnore == true
+        }
+
+        /**
+         * Physical zones that make this state action visible to QA.  Unlike
+         * [zoneName], these are deliberately not label fallbacks: unknown
+         * zones keep the legacy raw-id behavior, while known `qa_ignore`
+         * zones suppress the whole action line.
+         */
+        private fun qaZoneRefs(event: JSONObject): List<String> {
+            return when (event.optString("op", "").trim()) {
+                "create", "destroy", "move_order", "set_face", "shuffle" ->
+                    listOf(event.optString("zone", "").trim())
+
+                "transfer" -> buildList {
+                    val destination = event.optString("destination", "").trim()
+                    if (destination.isNotEmpty()) add(destination)
+                    addAll(event.sourceZones())
+                }
+
+                "stack" -> listOf(event.optString("destination", "").trim())
+                else -> emptyList()
+            }
         }
 
         private fun countedLabel(count: Int, label: String): String {

@@ -15,12 +15,14 @@ data class PartRef(
  * top-level `zone_bindings` object.
  *
  * [label] is preferred for QA text.  If it is blank, callers fall back to
- * [logicalZone], then to the raw physical zone id.
+ * [logicalZone], then to the raw physical zone id.  [qaIgnore] marks an
+ * animation-only physical space that must not appear in QA action summaries.
  */
 data class ZoneBinding(
     val logicalZone: String,
     val label: String,
-    val parts: List<PartRef> = emptyList()
+    val parts: List<PartRef> = emptyList(),
+    val qaIgnore: Boolean = false
 )
 
 /**

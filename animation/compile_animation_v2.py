@@ -503,6 +503,7 @@ class Compiler:
     def load(self):
         if not self.rep.ok():
             raise ValueError("schema errors:\n" + "\n".join(self.rep.errors))
+        qa_ignore_by_zone = {}
         for tree in self.doc.get("trees") or []:
             rel = tree.get("stage")
             path = self.resolve_stage_path(rel)
@@ -523,6 +524,14 @@ class Compiler:
                 zid = z.get("id")
                 if not zid:
                     continue
+                qa_ignore = z.get("qa_ignore") is True
+                previous_qa_ignore = qa_ignore_by_zone.get(zid)
+                if previous_qa_ignore is not None and previous_qa_ignore != qa_ignore:
+                    raise ValueError(
+                        f"zone qa_ignore conflict for {zid!r} in stage {sid!r}: "
+                        f"{previous_qa_ignore!r} vs {qa_ignore!r}"
+                    )
+                qa_ignore_by_zone[zid] = qa_ignore
                 binding = geom.zone_binding(z)
                 if binding is not None:
                     previous = self.zone_bindings.get(zid)
@@ -582,7 +591,9 @@ class Compiler:
                     refs.extend(str(x).strip() for x in source if str(x).strip())
                 for zid in refs:
                     zone = zones.get(zid)
-                    if zone is None or str(zone.get("concept") or "").strip():
+                    if (zone is None
+                            or zone.get("qa_ignore") is True
+                            or str(zone.get("concept") or "").strip()):
                         continue
                     key = (cue.get("id"), zid)
                     if key in seen:
