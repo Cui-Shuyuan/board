@@ -39,7 +39,7 @@ VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
 # Optional legacy fallback (generic names are also accepted):
 # VOLCENGINE_ASR_APP_ID=       # or VOLCENGINE_APP_ID
 # VOLCENGINE_ASR_ACCESS_TOKEN= # or VOLCENGINE_ACCESS_TOKEN
-# VOLCENGINE_ASR_CLUSTER=      # or VOLCENGINE_CLUSTER; not SECRET_KEY
+# VOLCENGINE_ASR_CLUSTER=volcengine_input  # or VOLCENGINE_CLUSTER; not SECRET_KEY
 # VOLCENGINE_ASR_AUTH=legacy
 # VOLCENGINE_ASR_RESOURCE_ID=volc.onesentenceasr.office.cn
 
@@ -98,7 +98,7 @@ need to change because the content type remains `audio/mpeg`.
 | Endpoint | `wss://openspeech.bytedance.com/api/v2/asr` |
 | Shared API key mode | `X-Api-Key: ${VOLCENGINE_API_KEY}`; `appid` is not required by the new console |
 | Legacy mode | `Authorization: Bearer; ${VOLCENGINE_ASR_ACCESS_TOKEN}` / `VOLCENGINE_ACCESS_TOKEN` plus `app.appid/token/cluster` |
-| Legacy cluster | `VOLCENGINE_ASR_CLUSTER` or `VOLCENGINE_CLUSTER` from the console's Cluster ID. **Not `VOLCENGINE_SECRET_KEY`.** |
+| Legacy cluster | one-sentence small-model cluster is `volcengine_input` (not TTS `volcano_tts`); configure `VOLCENGINE_ASR_CLUSTER` or `VOLCENGINE_CLUSTER`. `VOLCENGINE_SECRET_KEY` is HMAC signing material, not a cluster. |
 | Audio | 16 kHz, 16-bit, mono WAV |
 | Return | `{"text":"...","request_id":"...","log_id":"..."}` on stdout |
 
@@ -107,12 +107,19 @@ your project, set `VOLCENGINE_ASR_AUTH=legacy` and fill the three legacy
 credentials. The script reports the failure to stderr and exits non-zero; it
 does not fake a successful transcription.
 
-Practical note from a real key test: the same `X-Api-Key` that works for
-standard TTS returned `403 [resource_id=] requested resource not granted` on
-the old v2 `/api/v2/asr` endpoint. That means the project/key did not expose
-the v2 one-sentence resource through the shared API-key path. When all three
-legacy variables are present, `asr_once.py` now automatically prefers them;
-set `VOLCENGINE_ASR_AUTH=apikey` only to force the shared-key experiment.
+Real test result: standard TTS works with the shared `X-Api-Key`; the old v2
+one-sentence small-model endpoint is authenticated with the APP's
+AppID/AccessToken plus cluster `volcengine_input`. Example:
+
+```dotenv
+VOLCENGINE_APP_ID=...
+VOLCENGINE_ACCESS_TOKEN=...
+VOLCENGINE_ASR_CLUSTER=volcengine_input
+```
+
+`asr_once.py` automatically prefers these legacy credentials when all three
+are present. Set `VOLCENGINE_ASR_AUTH=apikey` only to force the shared-key
+experiment.
 
 Android keeps calling:
 
