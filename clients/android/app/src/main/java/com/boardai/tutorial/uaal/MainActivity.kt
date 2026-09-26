@@ -543,6 +543,9 @@ class MainActivity : UnityPlayerGameActivity() {
             }
         }
 
+        resourceManagerOpen.value = false
+        gamePrompt.value = null
+
         clearQaState()
         selectionGeneration++
         val generation = ++downloadGeneration
@@ -613,12 +616,14 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private fun pauseDownloadAndReturnHome() {
         currentDownloadControl?.requestPause()
+        resourceManagerOpen.value = false
         activeDownload.value = null
         preparingGameId.value = null
         playbackError.value = null
     }
 
     private fun enterGameWithLocalContent(game: GameCatalogEntry) {
+        resourceManagerOpen.value = false
         clearQaState()
         val generation = ++selectionGeneration
         val visibleGameIds = visibleGames.value.map { it.id }.toSet()
