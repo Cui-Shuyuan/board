@@ -1,17 +1,5 @@
 package com.boardai.tutorial.uaal.content
 
-import androidx.compose.runtime.mutableStateOf
-
-/**
- * UI-facing update state.  The updater reports progress through these values;
- * MainActivity always writes them on the Android main thread so Compose can
- * recompose safely.
- */
-data class ContentUpdateUiState(
-    val activeVersion: String? = null,
-    val status: ContentUpdateStatus = ContentUpdateStatus.Idle
-)
-
 sealed interface ContentUpdateStatus {
     data object Idle : ContentUpdateStatus
     data object Checking : ContentUpdateStatus
@@ -54,10 +42,6 @@ sealed interface ContentUpdateStatus {
     data class UpToDate(val version: String) : ContentUpdateStatus
     data class Updated(val version: String) : ContentUpdateStatus
     data class Failed(val message: String) : ContentUpdateStatus
-}
-
-object ContentUpdateStateHolder {
-    val state = mutableStateOf(ContentUpdateUiState())
 }
 
 fun ContentUpdateStatus.toDisplayText(): String = when (this) {

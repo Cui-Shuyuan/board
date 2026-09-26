@@ -223,7 +223,7 @@ class MainActivity : UnityPlayerGameActivity() {
                 homeContent.pauseDownloadAndReturnHome()
                 true
             }
-            playerSession.state.value.selectedGame != null -> {
+            playerSession.hasSessionOrPending() -> {
                 returnToHome()
                 true
             }
@@ -489,7 +489,7 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     private fun returnToHome() {
-        val hadSelection = playerSession.hasSession() ||
+        val hadSelection = playerSession.hasSessionOrPending() ||
             homeContent.state.value.preparingGameId != null
         if (!hadSelection) return
 

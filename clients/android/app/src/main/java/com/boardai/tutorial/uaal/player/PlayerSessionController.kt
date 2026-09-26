@@ -140,6 +140,9 @@ class PlayerSessionController(
     fun hasSession(): Boolean =
         _state.value.selectedGame != null || _state.value.playerActive
 
+    fun hasSessionOrPending(): Boolean =
+        hasSession() || hasPending()
+
     fun dispose() {
         generation++
         localLoadInProgress = false
