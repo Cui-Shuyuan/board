@@ -1,6 +1,8 @@
 package com.boardai.tutorial.uaal.player
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -235,14 +237,15 @@ fun TutorialPlayerOverlay(
     ) {
         AnimatedVisibility(
             visible = (uiState.controlsVisible || uiState.scrubbing) && !qaOpen,
-            enter = slideInVertically(
-                animationSpec = tween(durationMillis = QA_TRANSITION_MILLIS),
-                initialOffsetY = { fullHeight -> fullHeight }
-            ) + fadeIn(animationSpec = tween(durationMillis = QA_TRANSITION_MILLIS)),
-            exit = slideOutVertically(
-                animationSpec = tween(durationMillis = QA_TRANSITION_MILLIS),
-                targetOffsetY = { fullHeight -> fullHeight }
-            ) + fadeOut(animationSpec = tween(durationMillis = QA_TRANSITION_MILLIS)),
+            enter = EnterTransition.None,
+            exit = if (qaOpen) {
+                slideOutVertically(
+                    animationSpec = tween(durationMillis = QA_TRANSITION_MILLIS),
+                    targetOffsetY = { fullHeight -> fullHeight }
+                ) + fadeOut(animationSpec = tween(durationMillis = QA_TRANSITION_MILLIS))
+            } else {
+                ExitTransition.None
+            },
             modifier = Modifier.fillMaxSize()
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -328,7 +331,7 @@ fun TutorialPlayerOverlay(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color.Black.copy(alpha = 0.72f))
+                        .background(Color.Black.copy(alpha = 0.52f))
                         .padding(horizontal = 22.dp, vertical = 12.dp)
                 ) {
                     Text(

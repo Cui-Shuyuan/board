@@ -40,8 +40,8 @@ internal fun PlayerTopBar(
                 .background(
                     Brush.verticalGradient(
                         listOf(
-                            Color.Black.copy(alpha = 0.82f),
-                            Color.Black.copy(alpha = 0.28f)
+                            Color.Black.copy(alpha = 0.30f),
+                            Color.Black.copy(alpha = 0.06f)
                         )
                     )
                 )
@@ -70,7 +70,7 @@ internal fun PlayerTopBar(
                     .padding(start = 12.dp, top = 8.dp)
                     .widthIn(max = 420.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(Color.Black.copy(alpha = 0.42f))
+                    .background(Color.Black.copy(alpha = 0.22f))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }

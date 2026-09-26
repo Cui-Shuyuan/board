@@ -1,21 +1,27 @@
 package com.boardai.tutorial.uaal.qa
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,15 +55,13 @@ import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 import kotlinx.coroutines.launch
 
 private val QaAccentYellow = Color(0xFFFFC107)
-private val QaPanelColor = Color(0xF21B1B20)
-private const val QaPanelHeightFraction = 0.72f
+private val QaPanelColor = Color(0x801B1B20)
 
 /**
- * Top-anchored text QA panel with a translucent animation backdrop.
+ * Full-height text QA panel with the composer pinned to the bottom.
  *
- * The panel intentionally owns only transient UI state (input text / sending
- * state).  Durable-for-the-player-lifetime session data lives in
- * [QaSessionHolder], which MainActivity clears when the tutorial is unloaded.
+ * Playback metadata (game / cue / chapter / position) is built into every
+ * request by [buildQaContext], but is intentionally not shown to the guest.
  */
 @Composable
 fun QaPanel(
@@ -83,8 +89,9 @@ fun QaPanel(
     }
 
     LaunchedEffect(messages.size, sending) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.lastIndex)
+        val targetIndex = if (sending) messages.size else messages.lastIndex
+        if (messages.isNotEmpty() || sending) {
+            listState.animateScrollToItem(targetIndex)
         }
     }
 
@@ -140,21 +147,11 @@ fun QaPanel(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.35f))
+        modifier = modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(QaPanelHeightFraction)
-                .clip(
-                    RoundedCornerShape(
-                        bottomStart = 22.dp,
-                        bottomEnd = 22.dp
-                    )
-                )
+                .fillMaxSize()
                 .background(QaPanelColor)
                 .padding(horizontal = 16.dp)
         ) {
@@ -166,9 +163,7 @@ fun QaPanel(
                 onNewSession = { startNewSession() }
             )
 
-            QaContextStrip(context = currentContext)
-
-            if (messages.isEmpty()) {
+            if (messages.isEmpty() && !sending) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -193,6 +188,9 @@ fun QaPanel(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(messages) { message -> QaMessageBubble(message) }
+                    if (sending) {
+                        item { QaTypingBubble() }
+                    }
                 }
             }
 
@@ -257,50 +255,6 @@ private fun QaTopBar(
 }
 
 @Composable
-private fun QaContextStrip(context: QaContext) {
-    val section = context.sectionPath
-        .takeIf { it.isNotEmpty() }
-        ?.joinToString(" > ")
-        ?.takeIf { it.isNotBlank() }
-        ?: context.cueText.takeIf { it.isNotBlank() }
-        ?: "当前小节"
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.07f))
-            .padding(horizontal = 12.dp, vertical = 9.dp)
-    ) {
-        Text(
-            text = section,
-            color = Color.White.copy(alpha = 0.88f),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        Spacer(Modifier.height(3.dp))
-        Text(
-            text = buildString {
-                append(if (context.cueIndex >= 0) "Cue ${context.cueIndex + 1}" else "Cue --")
-                if (context.cueId.isNotBlank()) {
-                    append("  ")
-                    append(context.cueId)
-                }
-                append("  ·  ")
-                append("${"%.2f".format(context.positionInCue)}s")
-            },
-            color = Color.White.copy(alpha = 0.56f),
-            fontSize = 11.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-    Spacer(Modifier.height(10.dp))
-}
-
-@Composable
 private fun QaMessageBubble(message: QaMessage) {
     val isUser = message.role == QaMessage.ROLE_USER
     Row(
@@ -309,7 +263,7 @@ private fun QaMessageBubble(message: QaMessage) {
     ) {
         Box(
             modifier = Modifier
-                .widthIn(max = 560.dp)
+                .widthIn(max = 1000.dp)
                 .clip(
                     RoundedCornerShape(
                         topStart = 14.dp,
@@ -322,7 +276,7 @@ private fun QaMessageBubble(message: QaMessage) {
                     if (isUser) {
                         QaAccentYellow
                     } else {
-                        Color.White.copy(alpha = 0.10f)
+                        Color.White.copy(alpha = 0.16f)
                     }
                 )
                 .padding(horizontal = 13.dp, vertical = 10.dp)
@@ -333,6 +287,57 @@ private fun QaMessageBubble(message: QaMessage) {
                 fontSize = 14.sp,
                 lineHeight = 21.sp
             )
+        }
+    }
+}
+
+@Composable
+private fun QaTypingBubble() {
+    val transition = rememberInfiniteTransition(label = "qa-typing")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = "LLM 正在组织语言" },
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 14.dp,
+                        topEnd = 14.dp,
+                        bottomStart = 3.dp,
+                        bottomEnd = 14.dp
+                    )
+                )
+                .background(Color.White.copy(alpha = 0.16f))
+                .padding(horizontal = 14.dp, vertical = 12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                repeat(3) { index ->
+                    val alpha by transition.animateFloat(
+                        initialValue = 0.25f,
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(
+                                durationMillis = 520,
+                                delayMillis = index * 160
+                            ),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "qa-dot-$index"
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = alpha))
+                    )
+                    if (index < 2) {
+                        Spacer(Modifier.width(5.dp))
+                    }
+                }
+            }
         }
     }
 }
@@ -350,14 +355,7 @@ private fun QaComposer(
             .fillMaxWidth()
             .padding(top = 6.dp, bottom = 12.dp)
     ) {
-        if (sending) {
-            Text(
-                text = "思考中…",
-                color = QaAccentYellow.copy(alpha = 0.9f),
-                fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-        } else if (!errorMessage.isNullOrBlank()) {
+        if (!errorMessage.isNullOrBlank()) {
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,
@@ -403,7 +401,7 @@ private fun QaComposer(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = if (sending) "思考中…" else "发送",
+                    text = "发送",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )

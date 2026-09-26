@@ -45,7 +45,7 @@ internal fun PlayerCenterPlayPause(
         modifier = modifier
             .size(52.dp)
             .clip(CircleShape)
-            .background(Color.Black.copy(alpha = if (enabled) 0.55f else 0.28f))
+            .background(Color.Black.copy(alpha = if (enabled) 0.38f else 0.18f))
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -124,8 +124,8 @@ internal fun PlayerTransportBar(
                 .background(
                     Brush.verticalGradient(
                         listOf(
-                            Color.Black.copy(alpha = 0.34f),
-                            Color.Black.copy(alpha = 0.94f)
+                            Color.Black.copy(alpha = 0.08f),
+                            Color.Black.copy(alpha = 0.55f)
                         )
                     )
                 )

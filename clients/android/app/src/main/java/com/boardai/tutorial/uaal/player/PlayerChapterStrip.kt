@@ -47,7 +47,7 @@ internal fun PlayerChapterStrip(
             .fillMaxWidth()
             .height(20.dp)
             .clip(RoundedCornerShape(3.dp))
-            .background(Color.Black.copy(alpha = 0.42f))
+            .background(Color.Black.copy(alpha = 0.22f))
     ) {
         segments.forEachIndexed { index, segment ->
             val selected = targetKey != null && segment.key == targetKey
