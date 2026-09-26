@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using BoardAI.Api.Models;
@@ -42,6 +44,7 @@ public class ChatOrchestratorService
     public async Task<string> ProcessAsync(
         string gameId,
         List<ChatMessage> history,
+        ChatContext? context = null,
         CancellationToken cancellationToken = default)
     {
         var sw = Stopwatch.StartNew();
@@ -58,6 +61,12 @@ public class ChatOrchestratorService
         if (!string.IsNullOrWhiteSpace(systemPrompt))
         {
             messages.Add(new() { Role = "system", Content = systemPrompt });
+        }
+
+        var contextMessage = BuildContextMessage(context);
+        if (!string.IsNullOrWhiteSpace(contextMessage))
+        {
+            messages.Add(new() { Role = "system", Content = contextMessage });
         }
 
         messages.AddRange(history);
@@ -137,6 +146,45 @@ public class ChatOrchestratorService
         _logger.LogInformation("[Chat] Game {GameId}, Final reply after {Rounds} rounds ({Elapsed:F0}ms, {Tier}): {Reply}",
             gameId, MaxToolRounds, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), finalReply);
         return finalReply;
+    }
+
+    private static string? BuildContextMessage(ChatContext? context)
+    {
+        if (context == null) return null;
+
+        var groupPath = context.GroupPath?
+            .Where(pathPart => !string.IsNullOrWhiteSpace(pathPart))
+            .ToList();
+
+        var hasContent = !string.IsNullOrWhiteSpace(context.GameName)
+            || !string.IsNullOrWhiteSpace(context.CueId)
+            || !string.IsNullOrWhiteSpace(context.CueText)
+            || context.CueIndex.HasValue
+            || context.Position.HasValue
+            || (groupPath?.Count > 0);
+
+        if (!hasContent) return null;
+
+        var builder = new StringBuilder();
+        builder.AppendLine("当前上下文（仅用于理解客人提问，不要逐字复述）：");
+
+        if (!string.IsNullOrWhiteSpace(context.GameName))
+            builder.AppendLine($"游戏：{context.GameName}");
+
+        if (groupPath?.Count > 0)
+            builder.AppendLine($"当前小节：{string.Join(" > ", groupPath)}");
+
+        if (!string.IsNullOrWhiteSpace(context.CueId))
+            builder.AppendLine($"当前 cue：{context.CueId}");
+
+        if (!string.IsNullOrWhiteSpace(context.CueText))
+            builder.AppendLine($"当前台词：{context.CueText}");
+
+        if (context.Position.HasValue)
+            builder.AppendLine(
+                $"当前播放位置：{context.Position.Value.ToString("0.##", CultureInfo.InvariantCulture)} 秒");
+
+        return builder.ToString().TrimEnd();
     }
 
     /// <summary>回答证据分级：tier1 = 有 ok 数据支撑；tier2 = 只有候选兜底；tier3 = 无任何数据（自行发挥）。</summary>

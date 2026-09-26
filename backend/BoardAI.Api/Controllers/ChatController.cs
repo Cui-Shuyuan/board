@@ -20,7 +20,7 @@ public class ChatController : ControllerBase
     {
         try
         {
-            var reply = await _orchestrator.ProcessAsync(request.GameId, request.Messages);
+            var reply = await _orchestrator.ProcessAsync(request.GameId, request.Messages, request.Context);
             return Ok(new ChatResponse { Reply = reply });
         }
         catch (Exception ex)

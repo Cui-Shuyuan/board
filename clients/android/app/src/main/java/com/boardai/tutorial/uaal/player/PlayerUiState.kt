@@ -254,7 +254,8 @@ internal fun rememberPlayerDisplayState(
 @Composable
 internal fun PlayerAutoHideEffect(
     uiState: PlayerOverlayUiState,
-    paused: Boolean
+    paused: Boolean,
+    qaOpen: Boolean
 ) {
     LaunchedEffect(
         uiState.controlsVisible,
@@ -262,9 +263,11 @@ internal fun PlayerAutoHideEffect(
         uiState.showChapters,
         uiState.showContentPanel,
         uiState.controlGeneration,
-        paused
+        paused,
+        qaOpen
     ) {
-        if (uiState.controlsVisible &&
+        if (!qaOpen &&
+            uiState.controlsVisible &&
             !uiState.scrubbing &&
             !uiState.showChapters &&
             !uiState.showContentPanel

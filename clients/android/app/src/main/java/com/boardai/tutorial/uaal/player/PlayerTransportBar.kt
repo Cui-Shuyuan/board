@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -78,6 +79,7 @@ internal fun PlayerTransportBar(
     onVolumeChange: (Float) -> Unit,
     onVolumeChangeFinished: () -> Unit,
     onOpenChapters: () -> Unit,
+    onOpenQa: () -> Unit,
     onSeekRelative: (Float) -> Unit,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
@@ -229,7 +231,41 @@ internal fun PlayerTransportBar(
                     modifier = Modifier.width(64.dp),
                     onClick = onOpenChapters
                 )
+                Spacer(Modifier.width(8.dp))
+                PlayerAskButton(
+                    modifier = Modifier.width(88.dp),
+                    onClick = onOpenQa
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun PlayerAskButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier = modifier
+            .height(48.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFFFFC107))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "？ 提问",
+            color = Color(0xFF1B1B1B),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
