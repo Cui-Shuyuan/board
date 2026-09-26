@@ -243,7 +243,6 @@ class ContentUpdater(
                         return pausedResult()
                     }
 
-                    onStatus(ContentUpdateStatus.Verifying(version, totalFiles))
                     if (matches(file, part)) {
                         if (!moveAtomically(part, target)) {
                             throw IOException("cannot move downloaded file into place: ${file.path}")
@@ -264,7 +263,16 @@ class ContentUpdater(
                 emitDownloading()
             }
 
-            onStatus(ContentUpdateStatus.Verifying(version, totalFiles))
+            onStatus(
+                ContentUpdateStatus.Verifying(
+                    version = version,
+                    totalFiles = totalFiles,
+                    completedFiles = completedFiles,
+                    bytesCompleted = bytesCompleted,
+                    totalBytes = totalBytes,
+                    currentPath = currentPath
+                )
+            )
             store.writeCompleteMarker(manifest, game, partialDirectory)
 
             // The partial marker must never end up in the active version
@@ -272,7 +280,15 @@ class ContentUpdater(
             store.progressFile(version).delete()
             File(partialDirectory, "progress.json.tmp").delete()
 
-            onStatus(ContentUpdateStatus.Switching(version))
+            onStatus(
+                ContentUpdateStatus.Switching(
+                    version = version,
+                    completedFiles = completedFiles,
+                    bytesCompleted = bytesCompleted,
+                    totalBytes = totalBytes,
+                    currentPath = currentPath
+                )
+            )
             val finalDirectory = store.versionDir(version)
             if (finalDirectory.exists() && !finalDirectory.deleteRecursively()) {
                 throw IOException("cannot clear incomplete version directory: ${finalDirectory.absolutePath}")

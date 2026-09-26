@@ -182,6 +182,16 @@ fun DownloadProgressOverlay(
             bytesTotal = status.totalBytes
             currentPath = status.currentPath
         }
+        is ContentUpdateStatus.Verifying -> {
+            bytesCompleted = status.bytesCompleted
+            bytesTotal = status.totalBytes
+            currentPath = status.currentPath
+        }
+        is ContentUpdateStatus.Switching -> {
+            bytesCompleted = status.bytesCompleted
+            bytesTotal = status.totalBytes
+            currentPath = status.currentPath
+        }
         else -> {
             bytesCompleted = 0L
             bytesTotal = 0L

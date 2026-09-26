@@ -27,11 +27,19 @@ sealed interface ContentUpdateStatus {
 
     data class Verifying(
         val version: String,
-        val totalFiles: Int
+        val totalFiles: Int,
+        val completedFiles: Int = 0,
+        val bytesCompleted: Long = 0L,
+        val totalBytes: Long = 0L,
+        val currentPath: String = ""
     ) : ContentUpdateStatus
 
     data class Switching(
-        val version: String
+        val version: String,
+        val completedFiles: Int = 0,
+        val bytesCompleted: Long = 0L,
+        val totalBytes: Long = 0L,
+        val currentPath: String = ""
     ) : ContentUpdateStatus
 
     data class Paused(
@@ -57,7 +65,7 @@ fun ContentUpdateStatus.toDisplayText(): String = when (this) {
     ContentUpdateStatus.Checking -> "检查中"
     is ContentUpdateStatus.Downloading ->
         if (totalFiles <= 0) "下载中" else "下载中 $completedFiles/$totalFiles"
-    is ContentUpdateStatus.Verifying -> "校验中"
+    is ContentUpdateStatus.Verifying -> "下载中"
     is ContentUpdateStatus.Switching -> "切换中"
     is ContentUpdateStatus.Paused -> "已暂停"
     is ContentUpdateStatus.UpToDate -> "已是最新"
@@ -69,7 +77,7 @@ fun ContentUpdateStatus.phaseText(): String = when (this) {
     ContentUpdateStatus.Idle -> "准备中"
     ContentUpdateStatus.Checking -> "检查中"
     is ContentUpdateStatus.Downloading -> "下载中"
-    is ContentUpdateStatus.Verifying -> "校验中"
+    is ContentUpdateStatus.Verifying -> "下载中"
     is ContentUpdateStatus.Switching -> "切换中"
     is ContentUpdateStatus.Paused -> "已暂停"
     is ContentUpdateStatus.UpToDate -> "已是最新"
