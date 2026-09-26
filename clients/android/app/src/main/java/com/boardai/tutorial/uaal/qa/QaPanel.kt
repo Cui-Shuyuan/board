@@ -73,6 +73,11 @@ private const val QA_VOICE_TAG = "BoardAI-QaVoice"
 private const val QA_PREFS = "qa_prefs"
 private const val KEY_AUTO_TTS = "auto_tts_enabled"
 
+private fun isTtsVoiceStatus(text: String?): Boolean =
+    text == "正在合成语音…" ||
+        text == "语音合成失败，已保留文字回答" ||
+        text == "语音播放失败，已保留文字回答"
+
 private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
 
@@ -115,7 +120,9 @@ fun QaPanel(
     var autoTtsEnabled by remember {
         mutableStateOf(prefs.getBoolean(KEY_AUTO_TTS, true))
     }
-    var autoTtsGeneration by remember { mutableStateOf(0) }
+    var ttsGeneration by remember { mutableStateOf(0) }
+    var ttsRequestSeq by remember { mutableStateOf(0L) }
+    var activeTtsRequestId by remember { mutableStateOf<Long?>(null) }
     var sendState by remember { mutableStateOf<QaSendState>(QaSendState.Idle) }
     val sending = sendState is QaSendState.Sending
 
@@ -164,14 +171,16 @@ fun QaPanel(
 
     fun setAutoTtsEnabled(enabled: Boolean) {
         autoTtsEnabled = enabled
-        autoTtsGeneration += 1
+        ttsGeneration += 1
         prefs.edit()
             .putBoolean(KEY_AUTO_TTS, enabled)
             .apply()
 
         if (!enabled) {
             stopPlayback()
-            voiceStatus = null
+            if (isTtsVoiceStatus(voiceStatus)) {
+                voiceStatus = null
+            }
         }
 
         Log.d(QA_VOICE_TAG, "auto TTS enabled=$enabled")
@@ -304,6 +313,9 @@ fun QaPanel(
         }
 
         if (ttsMessageInFlight == message.timestamp) return
+        val requestId = ++ttsRequestSeq
+        val requestGeneration = ttsGeneration
+        activeTtsRequestId = requestId
         ttsMessageInFlight = message.timestamp
         ttsBusy = true
         voiceStatus = "正在合成语音…"
@@ -313,7 +325,6 @@ fun QaPanel(
                 "auto TTS request starting, textLength=${message.content.length}"
             )
         }
-        val requestGeneration = autoTtsGeneration
 
         scope.launch {
             ttsRepository.synthesize(
@@ -321,29 +332,49 @@ fun QaPanel(
                 voice = DEFAULT_TTS_VOICE,
                 speed = 1.0
             ).onSuccess { file ->
-                answerAudioFiles = answerAudioFiles + (message.timestamp to file)
-                if (ttsMessageInFlight == message.timestamp) {
+                val isOwner = activeTtsRequestId == requestId
+
+                if (isOwner) {
+                    activeTtsRequestId = null
                     ttsMessageInFlight = null
-                }
-                ttsBusy = false
-                if (voiceStatus == "正在合成语音…") {
-                    voiceStatus = null
+                    ttsBusy = false
+                    if (voiceStatus == "正在合成语音…") {
+                        voiceStatus = null
+                    }
                 }
 
-                val shouldAutoPlay = autoPlay &&
-                    autoTtsEnabled &&
-                    requestGeneration == autoTtsGeneration
-                if (!autoPlay || shouldAutoPlay) {
+                answerAudioFiles = answerAudioFiles + (message.timestamp to file)
+
+                val generationCurrent = requestGeneration == ttsGeneration
+                val canPlay = isOwner &&
+                    generationCurrent &&
+                    (!autoPlay || autoTtsEnabled)
+
+                if (canPlay) {
                     playAnswerFile(message, file)
                 } else {
-                    Log.d(QA_VOICE_TAG, "auto playback skipped: toggle off")
+                    Log.d(
+                        QA_VOICE_TAG,
+                        "stale TTS synthesis ignored: autoPlay=$autoPlay owner=$isOwner generationCurrent=$generationCurrent"
+                    )
                 }
             }.onFailure {
-                if (ttsMessageInFlight == message.timestamp) {
+                val isOwner = activeTtsRequestId == requestId
+
+                if (isOwner) {
+                    activeTtsRequestId = null
                     ttsMessageInFlight = null
+                    ttsBusy = false
                 }
-                ttsBusy = false
-                voiceStatus = "语音合成失败，已保留文字回答"
+
+                if (isOwner && requestGeneration == ttsGeneration) {
+                    voiceStatus = "语音合成失败，已保留文字回答"
+                } else {
+                    Log.d(
+                        QA_VOICE_TAG,
+                        "stale TTS failure ignored: owner=$isOwner generationCurrent=${requestGeneration == ttsGeneration}"
+                    )
+                }
             }
         }
     }
@@ -358,10 +389,12 @@ fun QaPanel(
     }
 
     fun startNewSession() {
-        stopPlayback()
-        answerAudioFiles = emptyMap()
+        ttsGeneration += 1
+        activeTtsRequestId = null
         ttsMessageInFlight = null
         ttsBusy = false
+        stopPlayback()
+        answerAudioFiles = emptyMap()
         voiceStatus = null
         QaSessionHolder.startNewSession(buildQaContext(game, status, timeline))
         input = ""
