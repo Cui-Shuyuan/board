@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
@@ -257,26 +258,39 @@ fun DownloadProgressOverlay(
 
                     Spacer(Modifier.height(8.dp))
                     Text(
+                        // Reserve a fixed one-line slot even before byte totals
+                        // are known.  This keeps the card height stable while
+                        // the download moves through Checking/Downloading.
                         text = if (bytesTotal > 0L) {
                             "${Formatter.formatShortFileSize(context, bytesCompleted)} / " +
                                 Formatter.formatShortFileSize(context, bytesTotal) +
                                 "  ${(fraction * 100f).toInt()}%"
                         } else {
-                            "正在准备…"
+                            " "
                         },
                         color = Color(0xFFE6EAF0),
-                        fontSize = 13.sp
+                        fontSize = 13.sp,
+                        minLines = 1,
+                        maxLines = 1,
+                        softWrap = false
                     )
 
-                    if (currentPath.isNotBlank()) {
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = "当前文件：$currentPath",
-                            color = Color(0xFF98A2B3),
-                            fontSize = 11.sp,
-                            maxLines = 1
-                        )
-                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        // Keep this line present from the first frame so the
+                        // card does not grow when the first file path arrives.
+                        text = if (currentPath.isNotBlank()) {
+                            "当前文件：$currentPath"
+                        } else {
+                            " "
+                        },
+                        color = Color(0xFF98A2B3),
+                        fontSize = 11.sp,
+                        minLines = 1,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
                     Spacer(Modifier.height(16.dp))
                     Button(onClick = onPause) {
