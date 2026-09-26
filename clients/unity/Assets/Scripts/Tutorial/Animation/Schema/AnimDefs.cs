@@ -220,6 +220,9 @@ namespace BoardGameTutorial.Animation
         public string role = "zone"; // "zone" | "offstage" (debug overlay skips offstage)
         public string label = "";    // human-readable zone name for the debug overlay
         public string group = "";    // optional player-area group, drawn as one larger box
+        public string logical_zone = "";  // stage concept; empty for display-only zones
+        public string logical_label = ""; // stage label used by QA summaries
+        public List<PartRef> logical_parts = new List<PartRef>();
         public float min_x;
         public float max_x;
         public float min_z;
@@ -372,6 +375,10 @@ namespace BoardGameTutorial.Animation
         public string track;
         public List<TreeDef> trees = new List<TreeDef>();
         public List<CompiledStageDef> stages = new List<CompiledStageDef>();
+        // zone_bindings is intentionally not modeled here.  Unity's JsonUtility
+        // cannot deserialize a JSON object into a Dictionary; leaving the field
+        // unknown is safe because Unity ignores it.  The Android QA layer and
+        // editor tools read the top-level map directly.
         public List<CompiledCueDef> cues = new List<CompiledCueDef>();
     }
 }

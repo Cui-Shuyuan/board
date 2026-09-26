@@ -1,5 +1,28 @@
 package com.boardai.tutorial.uaal.timeline
 
+
+/**
+ * A key/value dimension inside a logical zone, for example
+ * `color = <diamond>` on a physical gem supply pile.
+ */
+data class PartRef(
+    val key: String,
+    val value: String
+)
+
+/**
+ * Physical zone -> logical zone mapping read from the compiled track's
+ * top-level `zone_bindings` object.
+ *
+ * [label] is preferred for QA text.  If it is blank, callers fall back to
+ * [logicalZone], then to the raw physical zone id.
+ */
+data class ZoneBinding(
+    val logicalZone: String,
+    val label: String,
+    val parts: List<PartRef> = emptyList()
+)
+
 /**
  * One cue on the tutorial's continuous global audio timeline.
  *

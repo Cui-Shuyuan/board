@@ -189,7 +189,8 @@ class TutorialTimeline private constructor(
                 )
             }
 
-            val actionsByCue = loadActionsByCue(gameRoot, track)
+            val zoneBindings = loadZoneBindings(gameRoot, track)
+            val actionsByCue = loadActionsByCue(gameRoot, track, zoneBindings)
             val sorted = parsed
                 .sortedWith(compareBy<TimelineCue> { it.start }.thenBy { it.index })
                 .mapIndexed { index, cue ->
@@ -206,12 +207,59 @@ class TutorialTimeline private constructor(
             )
         }
 
+        private val ACTION_OP_PRIORITY = listOf(
+            "transfer",
+            "create",
+            "destroy",
+            "move_order",
+            "stack",
+            "set_face",
+            "shuffle"
+        )
+
+        /**
+         * Reads the compiled track's top-level `zone_bindings` map.  Missing or
+         * malformed compiled data never blocks the timeline / QA path; callers
+         * simply fall back to raw physical zone ids.
+         */
+        private fun loadZoneBindings(gameRoot: File, track: String): Map<String, ZoneBinding> {
+            val compiledFile = File(gameRoot, "tutorial/anim/v2/$track.compiled.json")
+            if (!compiledFile.isFile) return emptyMap()
+
+            return try {
+                val root = JSONObject(compiledFile.readText(Charsets.UTF_8))
+                val raw = root.optJSONObject("zone_bindings") ?: return emptyMap()
+                val result = LinkedHashMap<String, ZoneBinding>()
+                val keys = raw.keys()
+                while (keys.hasNext()) {
+                    val zoneId = keys.next().trim()
+                    if (zoneId.isEmpty()) continue
+                    val binding = raw.optJSONObject(zoneId) ?: continue
+                    result[zoneId] = ZoneBinding(
+                        logicalZone = binding.optString("logical_zone", "").trim(),
+                        label = binding.optString("label", "").trim(),
+                        parts = binding.optJSONArray("parts").toPartRefs()
+                    )
+                }
+                result
+            } catch (_: Exception) {
+                emptyMap()
+            }
+        }
+
         /**
          * Reads the hand-written v2 animation source and keeps only a short,
          * deterministic state-action summary per cue.  Missing or malformed
          * anim data never blocks the timeline / QA path.
+         *
+         * Action summaries are emitted in priority order and multi-source
+         * transfers expand to one line per source.
          */
-        private fun loadActionsByCue(gameRoot: File, track: String): Map<String, List<String>> {
+        private fun loadActionsByCue(
+            gameRoot: File,
+            track: String,
+            zoneBindings: Map<String, ZoneBinding>
+        ): Map<String, List<String>> {
             val animFile = File(gameRoot, "tutorial/anim/v2/$track.anim.json")
             if (!animFile.isFile) return emptyMap()
 
@@ -227,11 +275,7 @@ class TutorialTimeline private constructor(
 
                     val events = cue.optJSONArray("events") ?: continue
                     val actions = ArrayList<String>(MAX_ACTIONS_PER_CUE)
-                    for (j in 0 until events.length()) {
-                        if (actions.size >= MAX_ACTIONS_PER_CUE) break
-                        val event = events.optJSONObject(j) ?: continue
-                        summarizeStateAction(event)?.let { actions += it }
-                    }
+                    collectActionSummaries(events, zoneBindings, actions)
                     if (actions.isNotEmpty()) result[cueId] = actions
                 }
 
@@ -241,73 +285,122 @@ class TutorialTimeline private constructor(
             }
         }
 
-        private fun summarizeStateAction(event: JSONObject): String? {
-            val op = event.optString("op", "").trim()
-            return when (op) {
+        private fun collectActionSummaries(
+            events: JSONArray,
+            zoneBindings: Map<String, ZoneBinding>,
+            actions: MutableList<String>
+        ) {
+            for (op in ACTION_OP_PRIORITY) {
+                for (i in 0 until events.length()) {
+                    if (actions.size >= MAX_ACTIONS_PER_CUE) return
+                    val event = events.optJSONObject(i) ?: continue
+                    if (event.optString("op", "").trim() != op) continue
+                    actions.addAll(summarizeStateAction(event, zoneBindings))
+                }
+            }
+        }
+
+        private fun summarizeStateAction(
+            event: JSONObject,
+            zoneBindings: Map<String, ZoneBinding>
+        ): List<String> {
+            return when (event.optString("op", "").trim()) {
+                "transfer" -> transferActions(event, zoneBindings)
+
                 "create" -> {
                     val zone = event.optString("zone", "").trim()
-                    if (zone.isEmpty()) return null
-                    val count = event.eventCount(default = 1)
-                    "生成 $count 个 ${event.actionLabel().ifBlank { "物件" }} 到 $zone"
-                }
-
-                "ensure" -> {
-                    val zone = event.optString("zone", "").trim()
-                    if (zone.isEmpty()) return null
-                    val count = event.eventCount(default = 1)
-                    "确保 $zone 中至少有 $count 个 ${event.actionLabel().ifBlank { "物件" }}"
+                    if (zone.isEmpty()) emptyList()
+                    else {
+                        val count = event.eventCount(default = 1)
+                        val label = event.actionLabel().ifBlank {
+                            event.inferredLabelFromZones(zone).ifBlank { "物件" }
+                        }
+                        listOf("生成 ${countedLabel(count, label)} 到 ${zoneName(zone, zoneBindings)}")
+                    }
                 }
 
                 "destroy" -> {
                     val zone = event.optString("zone", "").trim()
-                    if (zone.isEmpty()) return null
-                    val count = event.eventCount(default = 1)
-                    "从 $zone 移除 $count 个 ${event.actionLabel().ifBlank { "物件" }}"
-                }
-
-                "transfer" -> {
-                    val destination = event.optString("destination", "").trim()
-                    val source = event.zoneText(event.opt("source"))
-                    if (destination.isEmpty() || source.isEmpty()) return null
-                    val count = event.eventCount(default = 1, quantityFirst = true)
-                    val label = event.actionLabel().ifBlank {
-                        event.inferredLabelFromZones(destination)
+                    if (zone.isEmpty()) emptyList()
+                    else {
+                        val count = event.eventCount(default = 1)
+                        val label = event.actionLabel().ifBlank {
+                            event.inferredLabelFromZones(zone).ifBlank { "物件" }
+                        }
+                        listOf("从 ${zoneName(zone, zoneBindings)} 移除 ${countedLabel(count, label)}")
                     }
-                    "$count 个 $label：$source -> $destination"
                 }
 
                 "move_order" -> {
                     val zone = event.optString("zone", "").trim()
-                    if (zone.isEmpty()) return null
-                    val label = event.actionLabel().ifBlank { "物件" }
-                    "调整 $zone 中 $label 的 order"
+                    if (zone.isEmpty()) emptyList()
+                    else {
+                        val label = event.actionLabel().ifBlank { "物件" }
+                        listOf("调整 ${zoneName(zone, zoneBindings)} 中 $label 的 order")
+                    }
                 }
 
                 "stack" -> {
                     val destination = event.optString("destination", "").trim()
                         .ifBlank { event.optString("zone", "").trim() }
-                    if (destination.isEmpty()) return null
-                    val count = event.eventCount(default = event.optInt("capacity", 1), quantityFirst = false)
-                    val label = event.actionLabel().ifBlank {
-                        event.inferredLabelFromZones(destination).ifBlank { "牌" }
+                    if (destination.isEmpty()) emptyList()
+                    else {
+                        val count = event.eventCount(
+                            default = event.optInt("capacity", 1),
+                            quantityFirst = false
+                        )
+                        val label = event.actionLabel().ifBlank {
+                            event.inferredLabelFromZones(destination).ifBlank { "牌" }
+                        }
+                        listOf("在 ${zoneName(destination, zoneBindings)} 堆叠 ${countedLabel(count, label)}")
                     }
-                    "在 $destination 堆叠 $count 个 $label"
-                }
-
-                "shuffle" -> {
-                    val zone = event.optString("zone", "").trim()
-                    if (zone.isEmpty()) null else "洗混 $zone"
                 }
 
                 "set_face" -> {
                     val zone = event.optString("zone", "").trim()
-                    if (zone.isEmpty()) return null
-                    val label = event.actionLabel().ifBlank { "物件" }
-                    val to = event.optString("to", "").trim().ifBlank { "?" }
-                    "将 $zone 中 $label 翻到 $to"
+                    if (zone.isEmpty()) emptyList()
+                    else {
+                        val label = event.actionLabel().ifBlank {
+                            event.inferredLabelFromZones(zone).ifBlank { "物件" }
+                        }
+                        val to = event.optString("to", "").trim().ifBlank { "?" }
+                        listOf("将 ${zoneName(zone, zoneBindings)} 中 $label 翻到 $to")
+                    }
                 }
 
-                else -> null
+                "shuffle" -> {
+                    val zone = event.optString("zone", "").trim()
+                    if (zone.isEmpty()) emptyList()
+                    else listOf("洗混 ${zoneName(zone, zoneBindings)}")
+                }
+
+                // `ensure` is authoritative state plumbing, not a player-facing
+                // action; omit it so it does not consume the 8 action slots.
+                else -> emptyList()
+            }
+        }
+
+        /**
+         * A multi-source transfer means one transfer from each source.  Keep
+         * one summary per source instead of collapsing the list into a single
+         * misleading line.
+         */
+        private fun transferActions(
+            event: JSONObject,
+            zoneBindings: Map<String, ZoneBinding>
+        ): List<String> {
+            val destination = event.optString("destination", "").trim()
+            val sources = event.sourceZones()
+            if (destination.isEmpty() || sources.isEmpty()) return emptyList()
+
+            val count = event.eventCount(default = 1, quantityFirst = true)
+            val explicitLabel = event.actionLabel()
+            return sources.map { source ->
+                val label = explicitLabel.ifBlank {
+                    event.inferredLabelFromZones(source, destination).ifBlank { "物件" }
+                }
+                "${countedLabel(count, label)}：${zoneName(source, zoneBindings)} -> " +
+                    zoneName(destination, zoneBindings)
             }
         }
 
@@ -340,18 +433,21 @@ class TutorialTimeline private constructor(
             }
         }
 
-        private fun JSONObject.inferredLabelFromZones(destination: String): String {
-            val zones = buildList {
-                add(destination)
-                val source = opt("source")
-                if (source is JSONArray) {
-                    for (i in 0 until source.length()) {
-                        source.optString(i, "").trim().takeIf { it.isNotEmpty() }?.let(::add)
+        private fun JSONObject.sourceZones(): List<String> {
+            val raw = opt("source") ?: return emptyList()
+            return when (raw) {
+                is JSONArray -> buildList {
+                    for (i in 0 until raw.length()) {
+                        raw.optString(i, "").trim().takeIf { it.isNotEmpty() }?.let(::add)
                     }
-                } else if (source is String && source.isNotBlank()) {
-                    add(source.trim())
                 }
+
+                is String -> listOfNotNull(raw.trim().takeIf { it.isNotEmpty() })
+                else -> emptyList()
             }
+        }
+
+        private fun JSONObject.inferredLabelFromZones(vararg zones: String): String {
             val joined = zones.joinToString(" ")
             return when {
                 joined.contains("gold") -> "黄金"
@@ -362,14 +458,41 @@ class TutorialTimeline private constructor(
             }
         }
 
-        private fun JSONObject.zoneText(value: Any?): String = when (value) {
-            is JSONArray -> buildList {
-                for (i in 0 until value.length()) {
-                    value.optString(i, "").trim().takeIf { it.isNotEmpty() }?.let(::add)
-                }
-            }.joinToString("、")
-            is String -> value.trim()
-            else -> ""
+        /**
+         * Turn a raw physical zone id into its logical label.
+         *
+         * Priority is compiled `label`, then `logical_zone`, then the original
+         * id.  The short functions below exist so every zone reference in the
+         * summary path goes through this one fallback chain.
+         */
+        private fun zoneName(raw: String, bindings: Map<String, ZoneBinding>): String {
+            val zone = raw.trim()
+            if (zone.isEmpty()) return ""
+            val binding = bindings[zone] ?: return zone
+            return binding.label.ifBlank { binding.logicalZone.ifBlank { zone } }
+        }
+
+        private fun countedLabel(count: Int, label: String): String {
+            val safeCount = count.coerceAtLeast(0)
+            val unit = when {
+                label.contains("宝石") -> "颗"
+                label.contains("发展卡") || label.contains("牌") -> "张"
+                label.contains("贵族") || label.contains("标记") -> "枚"
+                else -> "个"
+            }
+            return "$safeCount $unit$label"
+        }
+
+        private fun JSONArray?.toPartRefs(): List<PartRef> {
+            if (this == null) return emptyList()
+            val result = ArrayList<PartRef>(length())
+            for (i in 0 until length()) {
+                val item = optJSONObject(i) ?: continue
+                val key = item.optString("key", "").trim()
+                if (key.isEmpty()) continue
+                result += PartRef(key, item.optString("value", ""))
+            }
+            return result
         }
 
         private fun buildChapterTree(cues: List<TimelineCue>): List<ChapterNode> {

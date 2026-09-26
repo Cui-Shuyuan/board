@@ -230,6 +230,39 @@ def build_camera_frame(stage: dict, camera: dict) -> dict:
     }
 
 
+def zone_logical_parts(zone: dict) -> list[dict]:
+    """Normalize a stage zone's logical dimension list for compiled output."""
+    out = []
+    for part in zone.get("parts") or []:
+        if not isinstance(part, dict):
+            continue
+        key = part.get("key")
+        value = part.get("value")
+        if key is None or value is None:
+            continue
+        out.append({"key": str(key), "value": str(value)})
+    return out
+
+
+def zone_binding(zone: dict) -> dict | None:
+    """Return the physical-zone -> logical-zone binding, if declared.
+
+    `concept` names the logical object/area; `label` is the human-readable name
+    used by QA summaries; `parts` identifies the physical slice (for example a
+    gem color) inside that logical object.
+    """
+    if not isinstance(zone, dict):
+        return None
+    logical_zone = str(zone.get("concept") or "").strip()
+    if not logical_zone:
+        return None
+    return {
+        "logical_zone": logical_zone,
+        "label": str(zone.get("label") or "").strip(),
+        "parts": zone_logical_parts(zone),
+    }
+
+
 def build_compiled_stage(stage: dict) -> dict:
     templates = []
     for t in stage.get("templates") or []:
@@ -281,6 +314,9 @@ def build_compiled_stage(stage: dict) -> dict:
                 "role": z.get("role") or "zone",
                 "label": z.get("label") or zid,
                 "group": z.get("group") or "",
+                "logical_zone": str(z.get("concept") or "").strip(),
+                "logical_label": str(z.get("label") or "").strip(),
+                "logical_parts": zone_logical_parts(z),
                 "min_x": round(min_x, 6), "max_x": round(max_x, 6),
                 "min_z": round(min_z, 6), "max_z": round(max_z, 6),
             }

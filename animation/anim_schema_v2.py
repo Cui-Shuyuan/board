@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -30,6 +31,12 @@ PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "came
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS
 FACES = {"up", "down", "hidden", None, ""}
+CONCEPT_ID_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.:\-]*$")
+SPECIAL_CONCEPT_RE = re.compile(r"^<[A-Za-z_][A-Za-z0-9_.:\-]*>$")
+
+def _valid_stage_concept(value: str) -> bool:
+    text = (value or "").strip()
+    return bool(CONCEPT_ID_RE.match(text) or SPECIAL_CONCEPT_RE.match(text))
 
 
 class Report:
@@ -591,10 +598,47 @@ def validate_stage(doc: dict, report: Report | None = None) -> Report:
     for i, z in enumerate(zones):
         if not isinstance(z, dict):
             rep.error(f"zones[{i}]: must be object"); continue
-        if not z.get("id"):
+        zid = z.get("id")
+        if not zid:
             rep.error(f"zones[{i}].id required")
+        where = f"zones[{i}]"
         if not isinstance(z.get("layout", {}), dict):
-            rep.error(f"zones[{i}].layout must be object")
+            rep.error(f"{where}.layout must be object")
+        concept = z.get("concept")
+        label = z.get("label")
+        parts = z.get("parts")
+        concept_text = ""
+        if concept is not None:
+            if not isinstance(concept, str):
+                rep.error(f"{where}.concept must be a string or null")
+            else:
+                concept_text = concept.strip()
+                if concept_text and not _valid_stage_concept(concept_text):
+                    rep.error(
+                        f"{where}.concept must be a concept id or special reference "
+                        f"like <player_holding>; got {concept!r}"
+                    )
+                if concept_text and not (isinstance(label, str) and label.strip()):
+                    rep.warn(f"{where}.label is empty; QA summaries will fall back to concept")
+        if label is not None and not isinstance(label, str):
+            rep.error(f"{where}.label must be a string or null")
+        if parts is not None:
+            if not isinstance(parts, list):
+                rep.error(f"{where}.parts must be a list")
+            else:
+                if parts and not concept_text:
+                    rep.warn(f"{where}.parts is non-empty but concept is empty; "
+                             f"logical mapping will be ignored")
+                for j, part in enumerate(parts):
+                    pl = f"{where}.parts[{j}]"
+                    if not isinstance(part, dict):
+                        rep.error(f"{pl}: must be an object")
+                        continue
+                    key = part.get("key")
+                    if not isinstance(key, str) or not key.strip():
+                        rep.error(f"{pl}.key is required and must be a non-empty string")
+                    if "value" not in part or part.get("value") is None:
+                        rep.error(f"{pl}.value is required")
     tids = [t.get("id") for t in (doc.get("templates") or []) if isinstance(t, dict)]
     if len(tids) != len(set(tids)):
         rep.error("stage: duplicate template id")

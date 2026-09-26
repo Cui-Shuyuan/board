@@ -378,6 +378,7 @@ class Compiler:
         self.world_modes = {w.get("id"): w.get("mode", "isolated") for w in (self.doc.get("worlds") or [])}
         self.stack_zones = set()
         self.zone_order_policies = {}
+        self.zone_bindings = {}   # physical zone id -> logical mapping
         self.time_anchors = self._resolve_time_anchors()
 
     def _resolve_time_anchors(self) -> dict:
@@ -509,15 +510,28 @@ class Compiler:
             sr = schema.validate_stage(stage)
             if not sr.ok():
                 raise ValueError(f"stage schema errors in {path}:\n" + "\n".join(sr.errors))
+            for warning in sr.warnings:
+                self.rep.warn(f"{path}: {warning}")
             sid = stage.get("id") or path.stem
             self.stages[sid] = stage
             self.compiled_stages[sid] = geom.build_compiled_stage(stage)
             for z in stage.get("zones") or []:
+                if not isinstance(z, dict):
+                    continue
                 disp = z.get("display") or {}
                 mode = disp.get("mode")
                 zid = z.get("id")
                 if not zid:
                     continue
+                binding = geom.zone_binding(z)
+                if binding is not None:
+                    previous = self.zone_bindings.get(zid)
+                    if previous is not None and previous != binding:
+                        raise ValueError(
+                            f"zone binding conflict for {zid!r} in stage {sid!r}: "
+                            f"{previous!r} vs {binding!r}"
+                        )
+                    self.zone_bindings[zid] = binding
                 if mode == "stack":
                     self.stack_zones.add(zid)
                 elif mode == "color_stack":
@@ -533,6 +547,51 @@ class Compiler:
                 "initial": tree.get("initial", ""),
                 "extent_note": tree.get("extent_note", ""),
             }
+        self._warn_display_zone_state_ops()
+
+    def _warn_display_zone_state_ops(self):
+        """Warn when a state event targets a zone that has no logical mapping."""
+        state_ops = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
+        seen = set()
+        for cue in self.doc.get("cues") or []:
+            if not isinstance(cue, dict):
+                continue
+            tree = self.trees.get(cue.get("tree") or self.doc.get("default_tree"))
+            if tree is None:
+                continue
+            stage = self.stages.get(tree.get("stage"))
+            if stage is None:
+                continue
+            zones = {
+                z.get("id"): z
+                for z in (stage.get("zones") or [])
+                if isinstance(z, dict) and z.get("id")
+            }
+            for ev in cue.get("events") or []:
+                if not isinstance(ev, dict) or ev.get("op") not in state_ops:
+                    continue
+                refs = []
+                for key in ("zone", "destination"):
+                    value = ev.get(key)
+                    if isinstance(value, str) and value.strip():
+                        refs.append(value.strip())
+                source = ev.get("source")
+                if isinstance(source, str) and source.strip():
+                    refs.append(source.strip())
+                elif isinstance(source, list):
+                    refs.extend(str(x).strip() for x in source if str(x).strip())
+                for zid in refs:
+                    zone = zones.get(zid)
+                    if zone is None or str(zone.get("concept") or "").strip():
+                        continue
+                    key = (cue.get("id"), zid)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    self.rep.warn(
+                        f"cue {cue.get('id')}: state op {ev.get('op')} uses display-only "
+                        f"zone {zid!r} without concept; QA summary falls back to the raw id"
+                    )
 
     def shot_frame(self, stage_id: str, shot_id: str, visible_zones: set | None = None) -> dict:
         stage = self.stages[stage_id]
@@ -691,6 +750,7 @@ class Compiler:
             "track": self.doc.get("track"),
             "trees": list(self.trees.values()),
             "stages": list(self.compiled_stages.values()),
+            "zone_bindings": self.zone_bindings,
             "cues": cues_out,
         }
 
@@ -1188,6 +1248,9 @@ def main() -> int:
     except Exception as e:
         print(f"COMPILE FAIL {src}: {e}", file=sys.stderr)
         return 1
+
+    for warning in c.rep.warnings:
+        print(f"WARN {src}: {warning}", file=sys.stderr)
 
     text = json_canonical(compiled)
     out = output_path(src)
