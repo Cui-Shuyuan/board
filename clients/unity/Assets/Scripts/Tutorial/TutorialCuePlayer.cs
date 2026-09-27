@@ -837,7 +837,7 @@ namespace BoardGameTutorial
                 {
                     alignment = TextAnchor.MiddleCenter,
                     wordWrap = true,
-                    fontSize = 28
+                    fontSize = 34
                 };
                 subtitleStyle.normal.textColor = Color.white;
 
@@ -846,13 +846,13 @@ namespace BoardGameTutorial
                 {
                     alignment = TextAnchor.MiddleCenter,
                     wordWrap = true,
-                    fontSize = 28
+                    fontSize = 34
                 };
                 subtitleOutlineStyle.normal.textColor = Color.black;
             }
 
             float width = Mathf.Min(1100f, Screen.width - 64f);
-            float height = 96f;
+            float height = 120f;
             float x = (Screen.width - width) * 0.5f;
             float bottomInset = 28f;
             var touchControls = GetComponent<TutorialTouchControls>();
