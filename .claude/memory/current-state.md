@@ -37,6 +37,11 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 4. **动画检查遗留**：当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning，待用户裁决调 stage 还是允许叠加。
 5. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
 
+6. **Splendor 发展卡身份保真（方案 B，次日优先）**
+   - 现状：cue46–110 的 canonical face-up 状态中，市场/玩家发展区把同一张代表卡复制多份来冒充不同真卡，尤其 cue70+ 的 4 张一级白 / 4 张一级红，以及 cue102+ 重复出现的三级蓝。
+   - 决策：不接受重复代表卡长期冒充不同真卡；所有 face-up 发展卡必须有唯一的真卡扫描件。
+   - 下一步：先逐 cue 输出精确补扫清单（等级、bonus、声望、价格、数量、涉及 cue、建议文件名），用户扫描提供后更新 `media/card`、stage templates、`card_facts.json`、`full.anim.json` 与 QA，循环直到 canonical face-up 不再出现同一卡面冒充多张真卡。
+
 ## 已知未做 / 未闭环
 
 - Unity 视觉验收被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环。
