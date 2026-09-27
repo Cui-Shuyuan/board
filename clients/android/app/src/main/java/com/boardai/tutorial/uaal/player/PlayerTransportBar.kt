@@ -112,17 +112,26 @@ internal fun PlayerTransportBar(
             )
         }
 
-        // Keep the chapter overview permanently available while the control
-        // layer is visible.  During scrubbing only the target segment highlight
-        // changes; the segment list itself is stable.
-        PlayerChapterStrip(
+        // One interactive bar carries chapter segments, progress, the played
+        // overlay, and the playhead.  It sits above the gradient mask so the
+        // chapter labels stay readable.
+        PlayerTimelineBar(
             timeline = timeline,
-            target = if (scrubbing) scrubTarget else null,
-            modifier = Modifier.padding(bottom = 4.dp, start = 12.dp, end = 12.dp)
+            status = status,
+            scrubbing = scrubbing,
+            scrubGlobal = scrubGlobal,
+            scrubTarget = scrubTarget,
+            shownGlobal = shownGlobal,
+            totalDuration = totalDuration,
+            enabled = status?.unityReady == true,
+            onScrubStart = onScrubStart,
+            onScrubChange = onScrubChange,
+            onScrubFinished = onScrubFinished,
+            modifier = Modifier.padding(bottom = 6.dp)
         )
 
-        // Visual mask starts at the progress row and covers everything below it;
-        // the cue/subtitle and chapter overview area above stays unobscured.
+        // Visual mask starts below the unified timeline and covers the control
+        // rows; the cue/subtitle and timeline stay unobscured above it.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,17 +144,6 @@ internal fun PlayerTransportBar(
                     )
                 )
         ) {
-            PlayerSeekBar(
-                scrubbing = scrubbing,
-                scrubGlobal = scrubGlobal,
-                shownGlobal = shownGlobal,
-                progressTotal = progressTotal,
-                enabled = status?.unityReady == true,
-                onScrubStart = onScrubStart,
-                onScrubChange = onScrubChange,
-                onScrubFinished = onScrubFinished
-            )
-
             Spacer(Modifier.height(4.dp))
 
             Row(
