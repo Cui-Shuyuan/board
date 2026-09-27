@@ -230,7 +230,7 @@ public bool UnityTouchControlsEnabled
 
 ## Debug APK 调试模式（当前 cue + zone 范围）
 
-只有 Debug APK 会在播放控制条显示“调试 开/关”按钮：
+只有 Debug APK 会在播放控制条显示调试开关；该开关复用“回答自动播报”同款的“标签 + 开启/关闭状态 + Switch”组件样式：
 
 - 打开后，Unity 左上角显示当前 cue 的序号/id、章节路径、文本和播放时间，同时绘制当前 stage 中所有 on-stage zone 的彩色范围框与名称；
 - 关闭后两者消失；
@@ -241,7 +241,7 @@ Release APK 没有调试入口，并且原生层会显式关闭 Unity 调试开�
 相关代码位置：
 
 - `MainActivity.kt`: `debugOverlayEnabled`、`toggleDebugOverlay()`、`onUnityReady()`
-- `TutorialPlayerOverlay.kt` / `PlayerTransportBar.kt`: `debugOverlayEnabled` 参数和调试按钮
+- `TutorialPlayerOverlay.kt` / `PlayerTransportBar.kt`: `debugOverlayEnabled` 参数和调试 Switch 行
 - `AndroidTutorialBridge.cs`: `SetDebugBuild(string)` / `SetDebugOverlay(string)`
 - `TutorialCuePlayer.cs`: `SetDebugBuildAllowed(bool)` / `SetDebugOverlay(bool)` / `ApplyDebugOverlay()`
 - `TutorialAnimPlayer.cs`: `debugToggleEnabled` / `SetDebugOverlay(bool)`

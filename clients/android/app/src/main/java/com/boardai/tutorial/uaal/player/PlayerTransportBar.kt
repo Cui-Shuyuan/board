@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +35,8 @@ import com.boardai.tutorial.uaal.BuildConfig
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.timeline.TimelineTarget
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
+
+private val DebugAccentYellow = Color(0xFFFFC107)
 
 @Composable
 internal fun PlayerCenterPlayPause(
@@ -180,15 +185,6 @@ internal fun PlayerTransportBar(
                     modifier = Modifier.width(52.dp),
                     onClick = onNext
                 )
-                if (BuildConfig.DEBUG) {
-                    PlayerControlButton(
-                        label = if (debugOverlayEnabled) "调试 开" else "调试 关",
-                        compact = true,
-                        enabled = status?.unityReady == true,
-                        modifier = Modifier.width(72.dp),
-                        onClick = onToggleDebugOverlay
-                    )
-                }
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = "${formatTime(shownGlobal)} / ${formatTime(totalDuration)}",
@@ -248,7 +244,50 @@ internal fun PlayerTransportBar(
                     onClick = onOpenQa
                 )
             }
+
+            if (BuildConfig.DEBUG) {
+                PlayerDebugToggleRow(
+                    enabled = debugOverlayEnabled,
+                    interactive = status?.unityReady == true,
+                    onToggle = onToggleDebugOverlay
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun PlayerDebugToggleRow(
+    enabled: Boolean,
+    interactive: Boolean,
+    onToggle: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "调试",
+            color = Color.White.copy(alpha = 0.90f),
+            fontSize = 13.sp
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = if (enabled) "开启" else "关闭",
+            color = if (enabled) DebugAccentYellow else Color.White.copy(alpha = 0.55f),
+            fontSize = 12.sp
+        )
+        Spacer(Modifier.width(8.dp))
+        Switch(
+            checked = enabled,
+            onCheckedChange = { onToggle() },
+            enabled = interactive,
+            modifier = Modifier.semantics {
+                contentDescription = "调试"
+            }
+        )
     }
 }
 
