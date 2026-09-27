@@ -1,15 +1,20 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
-using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+/// <summary>
+/// 事实卡协作类：数量/容量公式、quantity.numeric 分支、score_table 计分事实。
+/// 自身不做除 score_table 外的缓存；规则文档变化时由调用方 Clear。
+/// </summary>
+public sealed class RulesFactService
 {
+    private readonly RulesContentStore _content;
+
+    public RulesFactService(RulesContentStore content)
+    {
+        _content = content;
+    }
 
     // ---- 事实卡（广播第三站）：数量/计分题的程序化计算 ----
     // 程序算得出的数不交给 LLM 从散文里读：容量公式求值、计分表区间查表、
@@ -36,7 +41,7 @@ public partial class GameRulesService
     /// 事实卡入口：数量词触发 quantity/容量事实，分数词触发计分表事实。
     /// 返回 null = 无可抽取的结构化事实（序列化时 Facts 字段省略）。
     /// </summary>
-    private List<JsonElement>? ExtractFacts(string game, List<JsonElement> matched, string question)
+    public List<JsonElement>? ExtractFacts(string game, List<JsonElement> matched, string question)
     {
         if (string.IsNullOrWhiteSpace(question) || matched.Count == 0) return null;
         var scoreQ = ScoreWordRegex.IsMatch(question);
@@ -49,6 +54,14 @@ public partial class GameRulesService
         if (facts.Count == 0) return null;
 
         return facts.Select(f => JsonSerializer.SerializeToElement(f, RulesJsonUtils.RelaxedJsonOptions)).ToList();
+    }
+
+
+    /// <summary>清空 score_table 缓存（规则文档变化时调用）。</summary>
+    public void Clear()
+    {
+        _scoreTableGame = null;
+        _scoreTable = null;
     }
 
 
@@ -421,14 +434,5 @@ public partial class GameRulesService
     {
         var rounded = Math.Round(d);
         return Math.Abs(d - rounded) < 1e-9 ? (object)(long)rounded : d;
-    }
-
-
-    /// <summary>提取概念顶层的指定字段（无则 null）。</summary>
-    private static JsonElement? ExtractTopField(JsonElement element, string key)
-    {
-        return element.ValueKind == JsonValueKind.Object && element.TryGetProperty(key, out var v)
-            ? v
-            : null;
     }
 }

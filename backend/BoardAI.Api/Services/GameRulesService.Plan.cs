@@ -327,7 +327,7 @@ public partial class GameRulesService
         // quantity.numeric 分支选择与求和。程序算得出的数不交给 LLM 从散文里读（1+1 交给计算器）。
         // 问题不含数量词/分数词、或命中概念无结构化数据时返回 null，序列化时省略。
         if (!string.IsNullOrWhiteSpace(question))
-            item.Facts = ExtractFacts(game, matched, question);
+            item.Facts = _factService.ExtractFacts(game, matched, question);
 
         return item;
     }
@@ -430,4 +430,15 @@ public partial class GameRulesService
         if (result.Count > 0) source = "question_hit";
         return result;
     }
+
+
+
+    /// <summary>提取概念顶层的指定字段（无则 null）。</summary>
+    private static JsonElement? ExtractTopField(JsonElement element, string key)
+    {
+        return element.ValueKind == JsonValueKind.Object && element.TryGetProperty(key, out var v)
+            ? v
+            : null;
+    }
+
 }
