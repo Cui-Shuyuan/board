@@ -129,7 +129,73 @@ class HomeContentCoordinatorTest {
     }
 
     @Test
-    fun startDownloadSuccessClearsOverlayAndEntersGame() {
+    fun openResourceManagerAutomaticallyFetchesCatalogAndShowsUpdate() {
+        val game = game("auto", contentVersion = "v1")
+        val store = FakeHomeContentStore(active = active(game.id, "v1"))
+        val events = mutableListOf<String>()
+        val catalog = FakeHomeCatalogSource(
+            cache = listOf(game),
+            fetched = listOf(game),
+            events = events
+        )
+        val coordinator = coordinator(catalog = catalog, contentStore = store)
+
+        coordinator.start()
+        assertEquals(
+            ContentStatus.InstalledCurrent("v1"),
+            coordinator.state.value.contentStatuses[game.id]
+        )
+
+        catalog.fetched = listOf(game.copy(contentVersion = "v2"))
+        coordinator.openResourceManager()
+
+        assertTrue(coordinator.state.value.resourceManagerOpen)
+        assertEquals(2, events.count { it == "catalog.fetch" })
+        assertEquals(
+            ContentStatus.UpdateAvailable(localVersion = "v1", serverVersion = "v2"),
+            coordinator.state.value.contentStatuses[game.id]
+        )
+        assertFalse(coordinator.state.value.resourceChecking)
+    }
+
+    @Test
+    fun openResourceManagerWhileCatalogRefreshInFlightKeepsCheckingUntilDone() {
+        val game = game("inflight", contentVersion = "v1")
+        val store = FakeHomeContentStore(active = active(game.id, "v1"))
+        val scheduler = QueuedHomeContentScheduler()
+        val catalog = FakeHomeCatalogSource(
+            cache = listOf(game),
+            fetched = listOf(game.copy(contentVersion = "v2"))
+        )
+        val coordinator = coordinator(
+            catalog = catalog,
+            contentStore = store,
+            scheduler = scheduler
+        )
+
+        coordinator.start()
+        assertFalse(coordinator.state.value.resourceChecking)
+
+        coordinator.openResourceManager()
+
+        assertTrue(coordinator.state.value.resourceManagerOpen)
+        assertTrue(coordinator.state.value.resourceChecking)
+        assertEquals(
+            ContentStatus.InstalledCurrent("v1"),
+            coordinator.state.value.contentStatuses[game.id]
+        )
+
+        scheduler.drainCatalog()
+
+        assertFalse(coordinator.state.value.resourceChecking)
+        assertEquals(
+            ContentStatus.UpdateAvailable(localVersion = "v1", serverVersion = "v2"),
+            coordinator.state.value.contentStatuses[game.id]
+        )
+    }
+
+    @Test
+    fun startDownloadSuccessClearsOverlayAndStaysHome() {
         val game = game("success", contentVersion = "v2")
         val store = FakeHomeContentStore()
         val updater = FakeContentUpdateExecutor(
@@ -140,11 +206,13 @@ class HomeContentCoordinatorTest {
             }
         )
         val entered = mutableListOf<GameCatalogEntry>()
+        val toasts = mutableListOf<String>()
         val coordinator = coordinator(
             catalog = FakeHomeCatalogSource(cache = listOf(game), fetched = listOf(game)),
             contentStore = store,
             updater = updater,
-            onEnterGame = { entered += it }
+            onEnterGame = { entered += it },
+            onToast = { toasts += it }
         )
         coordinator.start()
 
@@ -153,9 +221,12 @@ class HomeContentCoordinatorTest {
         assertFalse(coordinator.state.value.resourceManagerOpen)
         assertNull(coordinator.state.value.activeDownload)
         assertFalse(coordinator.state.value.downloadBusy)
-        assertEquals(listOf(game), entered)
+        assertNull(coordinator.state.value.preparingGameId)
+        assertFalse(coordinator.hasActiveDownload())
+        assertTrue(entered.isEmpty())
         assertEquals(listOf(game.id), updater.calls)
         assertEquals(ContentStatus.InstalledCurrent("v2"), coordinator.state.value.contentStatuses[game.id])
+        assertEquals(listOf("《${game.nameZh}》已就绪，请选择游戏开始"), toasts)
     }
 
     @Test
@@ -437,16 +508,26 @@ class HomeContentCoordinatorTest {
     }
 
     private class QueuedHomeContentScheduler : HomeContentScheduler {
+        private val catalogTasks = mutableListOf<() -> Unit>()
         private val contentTasks = mutableListOf<() -> Unit>()
 
         override fun postToMain(block: () -> Unit) = block()
-        override fun runCatalogTask(block: () -> Unit) = block()
+
+        override fun runCatalogTask(block: () -> Unit) {
+            catalogTasks += block
+        }
 
         override fun runContentTask(block: () -> Unit) {
             contentTasks += block
         }
 
         override fun dispose() = Unit
+
+        fun drainCatalog() {
+            val tasks = catalogTasks.toList()
+            catalogTasks.clear()
+            tasks.forEach { it() }
+        }
 
         fun drainContent() {
             val tasks = contentTasks.toList()

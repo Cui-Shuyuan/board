@@ -97,6 +97,7 @@ class HomeContentCoordinator(
                 log("catalog refresh failed", t)
                 scheduler.postToMain {
                     if (disposed) return@postToMain
+                    val wasChecking = _state.value.resourceChecking
                     catalogRefreshInProgress = false
                     updateState {
                         it.copy(
@@ -109,17 +110,23 @@ class HomeContentCoordinator(
                             }
                         )
                     }
+                    if (wasChecking) {
+                        onToast("检查更新失败，请稍后重试")
+                    }
                 }
             }
         }
     }
 
     fun checkUpdates() {
+        // 只要用户/页面发起了检查，就保持 checking
+        updateState { it.copy(resourceChecking = true) }
+
         if (catalogRefreshInProgress) {
-            updateState { it.copy(resourceChecking = false) }
+            // 已有刷新在飞行中；等它完成即可，refreshCatalog 成功/失败会负责清掉 resourceChecking
             return
         }
-        updateState { it.copy(resourceChecking = true) }
+
         refreshCatalog(showLoading = false)
     }
 
@@ -172,7 +179,8 @@ class HomeContentCoordinator(
 
     fun openResourceManager() {
         updateState { it.copy(resourceManagerOpen = true) }
-        refreshContentStatuses()
+        refreshContentStatuses()  // 先用当前本地状态快速渲染
+        checkUpdates()            // 再异步请求最新 catalog
     }
 
     fun closeResourceManager() {
@@ -243,11 +251,16 @@ class HomeContentCoordinator(
                         refreshContentStatuses()
                     }
 
-                    is ContentUpdateStatus.Updated,
+                    is ContentUpdateStatus.Updated -> {
+                        clearDownloadRun(activeDownload = null)
+                        refreshContentStatuses()
+                        onToast("《${game.nameZh}》已就绪，请选择游戏开始")
+                    }
+
                     is ContentUpdateStatus.UpToDate -> {
                         clearDownloadRun(activeDownload = null)
                         refreshContentStatuses()
-                        onEnterGame(game)
+                        onToast("《${game.nameZh}》已是最新")
                     }
 
                     else -> {

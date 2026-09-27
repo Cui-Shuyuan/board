@@ -136,7 +136,7 @@ fun ResourceManagerOverlay(
                         Spacer(Modifier.width(8.dp))
                     }
                     Text(
-                        text = if (checking) "检查更新中…" else "只刷新目录和状态，不自动下载",
+                        text = if (checking) "检查更新中…" else "进入本页会自动检查更新；不会自动下载",
                         color = Color(0xFF98A2B3),
                         fontSize = 12.sp,
                         modifier = Modifier.weight(1f)
