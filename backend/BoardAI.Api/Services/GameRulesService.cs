@@ -10,11 +10,9 @@ namespace BoardAI.Api.Services;
 
 public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 {
-    private readonly string _basePath;
-
     private readonly VectorSearchService? _vectorSearch;
 
-    private readonly RulesDocumentStore _documentStore;
+    private readonly RulesContentStore _content;
 
     private readonly RulesSearchService _searchService;
 
@@ -41,14 +39,14 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     {
         // Rules:BasePath is an optional override; when empty, resolve the
         // repository root with the same portable logic used by the API host.
-        _basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
+        var basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
+        _content = new RulesContentStore(basePath, ClearDerivedCaches);
         _vectorSearch = vectorSearch;
         _searchService = new RulesSearchService(this, vectorSearch);
-        _documentStore = new RulesDocumentStore(ClearDerivedCaches);
     }
 
 
-    public void Dispose() => _documentStore.Dispose();
+    public void Dispose() => _content.Dispose();
 
 
     public Task<SearchConceptsResult> SearchConceptsAsync(
@@ -65,21 +63,13 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         => _searchService.ListAllConceptIds(game);
 
 
-    public IReadOnlyList<string> GetGames()
-    {
-        var gamesDir = Path.Combine(_basePath, "content", "games");
-        if (!Directory.Exists(gamesDir)) return Array.Empty<string>();
-        return Directory.GetDirectories(gamesDir)
-            .Select(Path.GetFileName)
-            .Where(n => !string.IsNullOrEmpty(n))
-            .ToList()!;
-    }
+    public IReadOnlyList<string> GetGames() => _content.GetGames();
 
 
     public IReadOnlyList<string> GetConceptTypes(string game)
     {
         var types = new List<string> { "ontology" };
-        var concepts = LoadGameConcepts(game);
+        var concepts = _content.LoadGameConcepts(game);
         if (concepts != null)
         {
             foreach (var type in ConceptArrayTypes)
@@ -90,7 +80,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
             types.Add("top_level_refs");
             types.Add("flow");
         }
-        var instances = LoadGameInstances(game);
+        var instances = _content.LoadGameInstances(game);
         if (instances != null)
         {
             foreach (var type in InstanceArrayTypes)
@@ -107,17 +97,17 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     {
         if (type == "ontology")
         {
-            var ontology = LoadOntology();
+            var ontology = _content.LoadOntology();
             return ExtractArrayConcepts(ontology, "concepts");
         }
 
         if (type == "flow")
         {
-            var flow = LoadGameFlow(game);
+            var flow = _content.LoadGameFlow(game);
             return flow == null ? Array.Empty<ConceptSummary>() : ExtractFlowConcepts(flow);
         }
 
-        var concepts = LoadGameConcepts(game);
+        var concepts = _content.LoadGameConcepts(game);
         if (concepts == null) return Array.Empty<ConceptSummary>();
 
         if (type == "top_level_refs")
@@ -145,7 +135,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
         if (InstanceArrayTypes.Contains(type))
         {
-            var instances = LoadGameInstances(game);
+            var instances = _content.LoadGameInstances(game);
             return instances == null ? Array.Empty<ConceptSummary>() : ExtractArrayConcepts(instances, type);
         }
 
@@ -178,7 +168,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
                 }
             }
             CollectSlots(concepts.RootElement);
-            var inst = LoadGameInstances(game);
+            var inst = _content.LoadGameInstances(game);
             if (inst != null) CollectSlots(inst.RootElement);
             return results;
         }
@@ -198,7 +188,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         // Search ontology when no namespace or explicitly "ontology"
         if (string.IsNullOrEmpty(ns) || ns == "ontology")
         {
-            var ontology = LoadOntology();
+            var ontology = _content.LoadOntology();
             if (TryFindInArray(ontology.RootElement, "concepts", localId, out var ontologyConcept))
                 results.Add(ontologyConcept);
         }
@@ -206,7 +196,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         // Search game concepts when no namespace
         if (string.IsNullOrEmpty(ns))
         {
-            var concepts = LoadGameConcepts(game);
+            var concepts = _content.LoadGameConcepts(game);
             if (concepts != null)
             {
                 foreach (var type in ConceptArrayTypes)
@@ -223,7 +213,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
             }
 
             // Search flow
-            var flow = LoadGameFlow(game);
+            var flow = _content.LoadGameFlow(game);
             if (flow != null)
             {
                 if (TryFindFlowProcedure(flow.RootElement, localId, out var procedure))
@@ -231,7 +221,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
             }
 
             // Search instances (effects, modules, cards, tiles, sites, chips)
-            var instances = LoadGameInstances(game);
+            var instances = _content.LoadGameInstances(game);
             if (instances != null)
             {
                 foreach (var type in InstanceArrayTypes)
@@ -339,45 +329,6 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     }
 
 
-    private JsonDocument LoadOntology()
-    {
-        var path = Path.Combine(_basePath, "content", "ontology", "concepts.json");
-        return LoadJson(path);
-    }
-
-
-    private JsonDocument? LoadGameConcepts(string game)
-    {
-        var path = Path.Combine(_basePath, "content", "games", game, "concepts.json");
-        if (!File.Exists(path)) return null;
-        return LoadJson(path);
-    }
-
-
-    private JsonDocument? LoadOntologyFlow()
-    {
-        var path = Path.Combine(_basePath, "content", "ontology", "flow.json");
-        if (!File.Exists(path)) return null;
-        return LoadJson(path);
-    }
-
-
-    private JsonDocument? LoadGameFlow(string game)
-    {
-        var path = Path.Combine(_basePath, "content", "games", game, "flow.json");
-        if (!File.Exists(path)) return null;
-        return LoadJson(path);
-    }
-
-
-    private JsonDocument? LoadGameInstances(string game)
-    {
-        var path = Path.Combine(_basePath, "content", "games", game, "instances.json");
-        if (!File.Exists(path)) return null;
-        return LoadJson(path);
-    }
-
-
     private static IEnumerable<string> GetTopLevelRefKeys(JsonDocument concepts)
     {
         var results = new List<string>();
@@ -388,12 +339,6 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
             results.Add(property.Name);
         }
         return results;
-    }
-
-
-    private JsonDocument LoadJson(string path)
-    {
-        return _documentStore.GetDocument(path);
     }
 
 

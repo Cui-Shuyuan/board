@@ -84,14 +84,14 @@ public partial class GameRulesService
         }
 
         // content/ontology/flow.json
-        var ontologyFlow = LoadOntologyFlow();
+        var ontologyFlow = _content.LoadOntologyFlow();
         if (ontologyFlow != null)
         {
             ExtractFlowItems(ontologyFlow.RootElement, result);
         }
 
         // flow.json 流程
-        var flow = LoadGameFlow(game);
+        var flow = _content.LoadGameFlow(game);
         if (flow != null)
         {
             ExtractFlowItems(flow.RootElement, result);

@@ -61,7 +61,7 @@ public partial class GameRulesService
     private JsonElement? GetScoreTable(string game)
     {
         if (_scoreTableGame == game && _scoreTable.HasValue) return _scoreTable;
-        var flow = LoadGameFlow(game);
+        var flow = _content.LoadGameFlow(game);
         _scoreTableGame = game;
         _scoreTable = flow == null ? null : FindKeyInTree(flow.RootElement, "score_table");
         return _scoreTable;

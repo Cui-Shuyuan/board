@@ -29,9 +29,9 @@ public partial class GameRulesService
         }
 
         // flow.json 递归节点（procedures/triggers 内嵌的 id + name.zh）
-        var flow = LoadGameFlow(game);
+        var flow = _content.LoadGameFlow(game);
         if (flow != null) WalkFlowForNames(flow.RootElement, map);
-        var ontologyFlow = LoadOntologyFlow();
+        var ontologyFlow = _content.LoadOntologyFlow();
         if (ontologyFlow != null) WalkFlowForNames(ontologyFlow.RootElement, map);
 
         _nameMaps[game] = map;
@@ -98,16 +98,16 @@ public partial class GameRulesService
                 Add(summary.Name, summary.Id, "exact_name_zh");
 
         // 2) 游戏概念 + 实例的 zh/en 名与 aliases（只有原始 JSON 才有这些字段）
-        AddRawNames(LoadGameConcepts(game), ConceptArrayTypes, Add);
-        AddRawNames(LoadGameInstances(game), InstanceArrayTypes, Add);
+        AddRawNames(_content.LoadGameConcepts(game), ConceptArrayTypes, Add);
+        AddRawNames(_content.LoadGameInstances(game), InstanceArrayTypes, Add);
 
         // 3) 本体概念 en 名（zh 名太通用——行动/转移/对象——不进直呼表，避免噪声）
-        AddRawNames(LoadOntology(), new[] { "concepts" }, Add);
+        AddRawNames(_content.LoadOntology(), new[] { "concepts" }, Add);
 
         // 4) flow 节点 zh/en 名
-        var flow = LoadGameFlow(game);
+        var flow = _content.LoadGameFlow(game);
         if (flow != null) WalkFlowNames(flow.RootElement, Add);
-        var ontologyFlow = LoadOntologyFlow();
+        var ontologyFlow = _content.LoadOntologyFlow();
         if (ontologyFlow != null) WalkFlowNames(ontologyFlow.RootElement, Add);
 
         // 5) 基名：把 zh 名里的括号注解剥掉（「家庭成长（需空房间）」→「家庭成长」），

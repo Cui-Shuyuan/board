@@ -6,7 +6,7 @@ namespace BoardAI.Api.Tests;
 public sealed class RulesSearchServiceTests
 {
     [Fact]
-    public void KeywordSearch_NameContainsQuery_ReturnsWidget()
+    public void KeywordSearch_IdContainsQuery_ReturnsWidget()
     {
         var catalog = new FakeRulesConceptCatalog(
             types: new[] { "objects" },
@@ -20,6 +20,31 @@ public sealed class RulesSearchServiceTests
         var results = service.KeywordSearch("testgame", "widget");
 
         Assert.Contains(results, r => r.Id == "widget");
+    }
+
+    [Fact]
+    public void KeywordSearch_NameContainsQueryButIdDoesNot_ReturnsConcept()
+    {
+        var catalog = new FakeRulesConceptCatalog(
+            types: new[] { "objects" },
+            conceptsByType: new Dictionary<string, IReadOnlyList<ConceptSummary>>
+            {
+                ["objects"] = new[]
+                {
+                    new ConceptSummary
+                    {
+                        Id = "concept_a",
+                        Name = "blue widget",
+                        Type = "objects"
+                    }
+                }
+            });
+
+        var service = new RulesSearchService(catalog, vectorSearch: null);
+
+        var results = service.KeywordSearch("testgame", "widget");
+
+        Assert.Contains(results, r => r.Id == "concept_a");
     }
 
     [Fact]

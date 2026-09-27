@@ -32,7 +32,7 @@ public partial class GameRulesService
     {
         if (_flowPositions != null) return _flowPositions;
         var result = new Dictionary<string, FlowPosition>();
-        var flow = LoadGameFlow(game);
+        var flow = _content.LoadGameFlow(game);
         if (flow != null)
             WalkFlowPositions(flow.RootElement, new List<string>(), null, -1, null, result);
         _flowPositions = result;
