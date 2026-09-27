@@ -98,8 +98,8 @@ public partial class GameRulesService
                 Add(summary.Name, summary.Id, "exact_name_zh");
 
         // 2) 游戏概念 + 实例的 zh/en 名与 aliases（只有原始 JSON 才有这些字段）
-        AddRawNames(_content.LoadGameConcepts(game), ConceptArrayTypes, Add);
-        AddRawNames(_content.LoadGameInstances(game), InstanceArrayTypes, Add);
+        AddRawNames(_content.LoadGameConcepts(game), RulesConceptTypes.ConceptArrayTypes, Add);
+        AddRawNames(_content.LoadGameInstances(game), RulesConceptTypes.InstanceArrayTypes, Add);
 
         // 3) 本体概念 en 名（zh 名太通用——行动/转移/对象——不进直呼表，避免噪声）
         AddRawNames(_content.LoadOntology(), new[] { "concepts" }, Add);

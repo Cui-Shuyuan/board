@@ -33,7 +33,7 @@ public partial class GameRulesService
             if (detail.HasValue) ExtractSlots(detail.Value, result);
         }
 
-        foreach (var type in ConceptArrayTypes)
+        foreach (var type in RulesConceptTypes.ConceptArrayTypes)
         {
             foreach (var c in ListConcepts(game, type))
             {
@@ -51,7 +51,7 @@ public partial class GameRulesService
         }
 
         // instances.json 实例
-        foreach (var type in InstanceArrayTypes)
+        foreach (var type in RulesConceptTypes.InstanceArrayTypes)
         {
             foreach (var c in ListConcepts(game, type))
             {
