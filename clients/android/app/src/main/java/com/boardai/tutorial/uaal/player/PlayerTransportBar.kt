@@ -221,13 +221,24 @@ internal fun PlayerTransportBar(
                     modifier = Modifier.width(40.dp)
                 )
                 Spacer(Modifier.weight(1f))
-                Text(
-                    text = activeVersion?.let { "v$it" } ?: "内容未激活",
-                    color = Color.White.copy(alpha = 0.62f),
-                    fontSize = 11.sp,
-                    maxLines = 1
-                )
-                Spacer(Modifier.width(8.dp))
+                if (BuildConfig.DEBUG) {
+                    Text(
+                        text = "调试",
+                        color = Color.White.copy(alpha = 0.90f),
+                        fontSize = 12.sp,
+                        maxLines = 1
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Switch(
+                        checked = debugOverlayEnabled,
+                        onCheckedChange = { onToggleDebugOverlay() },
+                        enabled = status?.unityReady == true,
+                        modifier = Modifier.semantics {
+                            contentDescription = "调试"
+                        }
+                    )
+                    Spacer(Modifier.width(8.dp))
+                }
                 PlayerControlButton(
                     label = "章节",
                     compact = true,
@@ -241,44 +252,7 @@ internal fun PlayerTransportBar(
                 )
             }
 
-            if (BuildConfig.DEBUG) {
-                PlayerDebugToggleRow(
-                    enabled = debugOverlayEnabled,
-                    interactive = status?.unityReady == true,
-                    onToggle = onToggleDebugOverlay
-                )
-            }
         }
-    }
-}
-
-@Composable
-private fun PlayerDebugToggleRow(
-    enabled: Boolean,
-    interactive: Boolean,
-    onToggle: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = "调试",
-            color = Color.White.copy(alpha = 0.90f),
-            fontSize = 13.sp
-        )
-        Spacer(Modifier.width(8.dp))
-        Switch(
-            checked = enabled,
-            onCheckedChange = { onToggle() },
-            enabled = interactive,
-            modifier = Modifier.semantics {
-                contentDescription = "调试"
-            }
-        )
     }
 }
 
