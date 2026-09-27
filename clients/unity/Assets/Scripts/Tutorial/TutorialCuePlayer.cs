@@ -79,6 +79,8 @@ namespace BoardGameTutorial
         private int debugJumpReturnIndex = -1;
         private int debugJumpCursor;
         private bool inDebugJump;
+        private bool debugOverlayRequested;
+        private bool debugBuildAllowed;
         private bool isPaused;
         private bool pausedBeforePlay;
         private float fallbackClock;
@@ -149,6 +151,17 @@ namespace BoardGameTutorial
 
             v2AnimPlayer = GetComponent<TutorialAnimPlayer>();
             if (v2AnimPlayer == null) v2AnimPlayer = gameObject.AddComponent<TutorialAnimPlayer>();
+
+            // 调试开关打开时，OnGUI 的 cue 信息必须显示；显式修正旧场景中被
+            // 序列化为 false 的 showDebugUI。
+            showDebugUI = true;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            debugBuildAllowed = false;
+#else
+            debugBuildAllowed = true;
+#endif
+            ApplyDebugOverlay();
 
             // UaaL 正式客户端由原生 Compose 层提供控件；Android 构建默认不再
             // 挂载旧的 Unity IMGUI 触控层，避免出现第二套控制条。
@@ -257,6 +270,7 @@ namespace BoardGameTutorial
                 return false;
             }
             v2AnimPlayer.animationEnabled = enableCueAnimation;
+            ApplyDebugOverlay();
             return true;
         }
 
@@ -513,6 +527,26 @@ namespace BoardGameTutorial
         {
             if (audioSource == null) return;
             SetVolume(audioSource.volume + delta);
+        }
+
+        public void SetDebugBuildAllowed(bool allowed)
+        {
+            debugBuildAllowed = allowed;
+            ApplyDebugOverlay();
+        }
+
+        public void SetDebugOverlay(bool enabled)
+        {
+            debugOverlayRequested = enabled;
+            ApplyDebugOverlay();
+        }
+
+        private void ApplyDebugOverlay()
+        {
+            if (v2AnimPlayer == null) return;
+            v2AnimPlayer.debugToggleEnabled = debugBuildAllowed;
+            if (debugOverlayRequested && debugBuildAllowed) showDebugUI = true;
+            v2AnimPlayer.SetDebugOverlay(debugOverlayRequested && debugBuildAllowed);
         }
 
         /// <summary>

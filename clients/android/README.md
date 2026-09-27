@@ -205,6 +205,8 @@ public const string GameObjectName = "AndroidTutorialBridge";
 | `ReloadGame` | `""` | 停止当前播放，重新 ResolveGameRoot + LoadAndPlay |
 | `CheckContentUpdate` | `""` | 协议占位；更新由 Compose 原生层触发 |
 | `SetUnityTouchControlsEnabled` | `"true"` / `"false"` | 启用/禁用旧 Unity IMGUI 触控层 |
+| `SetDebugBuild` | `"1"` / `"0"` | 原生告知 Unity 当前是否是 debug 可调包包；release 显式关闭调试门禁 |
+| `SetDebugOverlay` | `"1"` / `"0"` | 打开/关闭当前 cue 信息和 on-stage zone 范围框 |
 
 `TutorialCuePlayer` 新增：
 
@@ -225,6 +227,24 @@ public bool UnityTouchControlsEnabled
 2. `Application.persistentDataPath/board-content/active.json` 中当前 game 的 `root`（旧外部路径兼容读取，Android 正式流程不再依赖）；
 3. 旧 fallback：`Application.persistentDataPath/{gameId}`（手动 adb push）；
 4. StreamingAssets / 仓库 `content/games/{gameId}`。
+
+## Debug APK 调试模式（当前 cue + zone 范围）
+
+只有 Debug APK 会在播放控制条显示“调试 开/关”按钮：
+
+- 打开后，Unity 左上角显示当前 cue 的序号/id、章节路径、文本和播放时间，同时绘制当前 stage 中所有 on-stage zone 的彩色范围框与名称；
+- 关闭后两者消失；
+- 开关状态保存在原生 Compose 状态和 Unity `TutorialCuePlayer` 请求状态中，换游戏 / 内容 reload 后保留。
+
+Release APK 没有调试入口，并且原生层会显式关闭 Unity 调试开关：`MainActivity.onUnityReady()` 在 `playerSession.onUnityReady()` 之后发送 `SetDebugBuild("0")`。Unity 侧 `TutorialAnimPlayer` 的键盘 Z 切换受 `debugToggleEnabled` 门禁，release 下无法通过键盘打开。
+
+相关代码位置：
+
+- `MainActivity.kt`: `debugOverlayEnabled`、`toggleDebugOverlay()`、`onUnityReady()`
+- `TutorialPlayerOverlay.kt` / `PlayerTransportBar.kt`: `debugOverlayEnabled` 参数和调试按钮
+- `AndroidTutorialBridge.cs`: `SetDebugBuild(string)` / `SetDebugOverlay(string)`
+- `TutorialCuePlayer.cs`: `SetDebugBuildAllowed(bool)` / `SetDebugOverlay(bool)` / `ApplyDebugOverlay()`
+- `TutorialAnimPlayer.cs`: `debugToggleEnabled` / `SetDebugOverlay(bool)`
 
 ## 状态回传
 

@@ -30,6 +30,9 @@ namespace BoardGameTutorial.Animation
         public bool debugZones;
         public KeyCode debugZonesKey = KeyCode.Z;
 
+        [Tooltip("是否允许调试开关。Android release 会由原生层显式关闭。")]
+        public bool debugToggleEnabled = true;
+
         public string CueId { get; private set; }
         public bool IsLoaded { get; private set; }
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
@@ -142,6 +145,12 @@ namespace BoardGameTutorial.Animation
             zoneDebug.Sync(stageRuntime.Stage, cameraDirector.Camera);
         }
 
+        public void SetDebugOverlay(bool enabled)
+        {
+            debugZones = enabled && debugToggleEnabled;
+            RebuildZoneDebug();
+        }
+
         private void Update()
         {
 #if ENABLE_INPUT_SYSTEM
@@ -150,7 +159,7 @@ namespace BoardGameTutorial.Animation
 #else
             bool toggleDebugZones = Input.GetKeyDown(debugZonesKey);
 #endif
-            if (toggleDebugZones)
+            if (toggleDebugZones && debugToggleEnabled)
             {
                 debugZones = !debugZones;
                 RebuildZoneDebug();

@@ -378,6 +378,26 @@ namespace BoardGameTutorial
             PostStatus();
         }
 
+        public void SetDebugBuild(string enabled)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            bool value = ParseBool(enabled, false);
+            player.SetDebugBuildAllowed(value);
+            Debug.Log("[AndroidTutorialBridge] SetDebugBuild(" + value + ") forwarded.");
+        }
+
+        public void SetDebugOverlay(string enabled)
+        {
+            var player = FindPlayer();
+            if (player == null) return;
+
+            bool value = ParseBool(enabled, false);
+            player.SetDebugOverlay(value);
+            Debug.Log("[AndroidTutorialBridge] SetDebugOverlay(" + value + ") forwarded.");
+        }
+
         private static TutorialCuePlayer FindPlayer()
         {
             var player = FindFirstObjectByType<TutorialCuePlayer>();

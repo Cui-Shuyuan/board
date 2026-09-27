@@ -70,6 +70,7 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private val searchQuery = mutableStateOf("")
     private val qaOpen = mutableStateOf(false)
+    private val debugOverlayEnabled = mutableStateOf(false)
 
     private var qaWasPlayingBeforeQuestion = false
     private var qaResumeCueId: String? = null
@@ -337,6 +338,8 @@ class MainActivity : UnityPlayerGameActivity() {
                                 game = selected,
                                 activeVersion = playerState.activeVersion,
                                 qaOpen = qaOpen.value,
+                                debugOverlayEnabled = debugOverlayEnabled.value,
+                                onToggleDebugOverlay = { toggleDebugOverlay() },
                                 qaRepository = qaRepository,
                                 asrRepository = asrRepository,
                                 ttsRepository = ttsRepository,
@@ -421,6 +424,20 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private fun onUnityReady() {
         playerSession.onUnityReady()
+
+        // Release builds explicitly disable Unity's debug gate.  Debug builds
+        // enable the gate first, then restore the user's overlay state.
+        sendToUnity("SetDebugBuild", if (BuildConfig.DEBUG) "1" else "0")
+        if (BuildConfig.DEBUG) {
+            sendToUnity("SetDebugOverlay", if (debugOverlayEnabled.value) "1" else "0")
+        }
+    }
+
+    private fun toggleDebugOverlay() {
+        if (!BuildConfig.DEBUG) return
+        val enabled = !debugOverlayEnabled.value
+        debugOverlayEnabled.value = enabled
+        sendToUnity("SetDebugOverlay", if (enabled) "1" else "0")
     }
 
     private fun showToast(message: String) {

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.boardai.tutorial.uaal.BuildConfig
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.timeline.TimelineTarget
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
@@ -69,6 +70,8 @@ internal fun PlayerTransportBar(
     activeVersion: String?,
     volume: Float,
     paused: Boolean,
+    debugOverlayEnabled: Boolean,
+    onToggleDebugOverlay: () -> Unit,
     scrubbing: Boolean,
     scrubGlobal: Float,
     scrubTarget: TimelineTarget?,
@@ -177,6 +180,15 @@ internal fun PlayerTransportBar(
                     modifier = Modifier.width(52.dp),
                     onClick = onNext
                 )
+                if (BuildConfig.DEBUG) {
+                    PlayerControlButton(
+                        label = if (debugOverlayEnabled) "调试 开" else "调试 关",
+                        compact = true,
+                        enabled = status?.unityReady == true,
+                        modifier = Modifier.width(72.dp),
+                        onClick = onToggleDebugOverlay
+                    )
+                }
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = "${formatTime(shownGlobal)} / ${formatTime(totalDuration)}",
