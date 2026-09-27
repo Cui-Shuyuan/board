@@ -1,7 +1,6 @@
 package com.boardai.tutorial.uaal.player
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
@@ -256,12 +255,7 @@ internal fun PlayerTimelineBar(
                                 blurRadius = 2.5f
                             )
                         ),
-                        modifier = Modifier
-                            .background(
-                                color = Color.Black.copy(alpha = 0.16f),
-                                shape = RoundedCornerShape(2.dp)
-                            )
-                            .padding(horizontal = 2.dp)
+                        modifier = Modifier.padding(horizontal = 2.dp)
                     )
                 }
             }
