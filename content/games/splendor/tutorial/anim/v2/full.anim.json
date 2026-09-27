@@ -4577,26 +4577,16 @@
       ],
       "script": {
         "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】贵族板块在 cue 一开始就摆出：本片按 2 人局，抽 3 块不同的贵族。\n这条 cue 同时承担宝石那节的收尾：把每色多出来的 3 枚收回盒子（7 → 4）。",
-        "note": "贵族在 **t=0 第一帧** 就出现：3 块不同的贵族（noble_1/2/3），不再像旧脚本那样等到下一 cue。\n同时做宝石收尾：1.00 起每色 destroy 3 枚（放回盒子），供应堆 7 → 4。\n黄金不动。",
+        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，桌上统一用 noble（贵族_0001）模板。\n这样贵族供应堆的可见条件与后文讲解的 4白+4红 自洽；0002..0005 扫描件保留给以后需要区分条件的章节。\n同时做宝石收尾：每色 destroy 3 枚（放回盒子），供应堆 7 → 4。黄金不动。\n",
         "enter": {
           "picture": null,
           "zones": {
             "noble_market": {
               "items": [
                 {
-                  "template": "noble_1",
+                  "template": "noble",
                   "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_2",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_3",
-                  "palette": "noble",
-                  "count": 1
+                  "count": 3
                 }
               ]
             }
@@ -4608,19 +4598,9 @@
             "noble_market": {
               "items": [
                 {
-                  "template": "noble_1",
+                  "template": "noble",
                   "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_2",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_3",
-                  "palette": "noble",
-                  "count": 1
+                  "count": 3
                 }
               ]
             }
@@ -4639,28 +4619,12 @@
           "op": "create",
           "dur": 0.0,
           "zone": "noble_market",
-          "template": "noble_1",
+          "template": "noble",
           "palette": "noble",
-          "count": 1,
-          "anchor": "setup.nobles.001.1.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_2",
-          "palette": "noble",
-          "count": 1,
-          "anchor": "setup.nobles.001.1.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_3",
-          "palette": "noble",
-          "count": 1,
-          "anchor": "setup.nobles.001.1.start"
+          "count": 3,
+          "concept": "noble",
+          "anchor": "setup.nobles.001.1.start",
+          "to": "face_up"
         }
       ]
     },
@@ -4696,12 +4660,18 @@
       ],
       "script": {
         "story": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】",
-        "note": "主树里在 t=0 create 同样的 3 块不同贵族（noble_1/2/3），作为本局实际抽到的贵族。之后不再重抽。",
+        "note": "主树里在 t=0 create 同样的 3 块 noble（贵族_0001），作为本局实际抽到的贵族。之后不再重抽。\n",
         "enter": {
           "picture": null,
           "zones": {
             "noble_market": {
-              "count": 3
+              "items": [
+                {
+                  "template": "noble",
+                  "palette": "noble",
+                  "count": 3
+                }
+              ]
             },
             "card_market": {
               "count": 12
@@ -4717,19 +4687,9 @@
             "noble_market": {
               "items": [
                 {
-                  "template": "noble_1",
+                  "template": "noble",
                   "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_2",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_3",
-                  "palette": "noble",
-                  "count": 1
+                  "count": 3
                 }
               ]
             },
@@ -4754,28 +4714,12 @@
           "op": "create",
           "dur": 0.0,
           "zone": "noble_market",
-          "template": "noble_1",
+          "template": "noble",
           "palette": "noble",
-          "count": 1,
-          "anchor": "setup.nobles.002.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_2",
-          "palette": "noble",
-          "count": 1,
-          "anchor": "setup.nobles.002.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_3",
-          "palette": "noble",
-          "count": 1,
-          "anchor": "setup.nobles.002.start"
+          "count": 3,
+          "concept": "noble",
+          "anchor": "setup.nobles.002.start",
+          "to": "face_up"
         }
       ]
     },
@@ -6782,17 +6726,17 @@
       ],
       "script": {
         "story": "【只要卡牌被玩家买走，卡牌供应堆出现了空位】",
-        "note": "【买走一张 → 出现空位】\n  这里做**一次真购买**：把市场里的一张一级白（slot 2）搬到玩家发展区。\n  · 为什么买一级白：下一段折扣例子说『现在我已经购买了 1 张白宝石牌』—— 这一动正好把那个前提**做**出来，后面就不用凭空变一张牌。\n  · ⚠ **没有演付宝石**：口播这一段讲的是『买走之后要补牌』，一个字没提支付；而且玩家手上（白1蓝1红1绿2）也付不起一级白（要 1 黑）。支付本身的演示放在 3.4（购买保留的发展卡牌）那一节 —— 那里口播就是在讲支付。\n  · 空位是**真的**空位：`MoveToSlot` 只搬那一件，市场其余卡不回填 → 画面上第 3 格空出来。\n\n  【2026-09 用户要求：状态必须合法 → 这一步改成**真付款**】\n  一级白的价格（读图）：**1蓝 + 2绿 + 1红 + 1黑**；此刻发展区还是空的 → 没有折扣，全价付。\n  演示玩家手上原本是 5 枚（白1蓝1红1绿2），**付不出那 1 枚黑** —— 所以先按 3.1 讲过的规矩\n  **合法地取 3 种不同**（黑1 + 白1 + 绿1，各自供应堆都够，取完 8 枚 ≤ 上限 10），再全价付掉。\n  为什么不能「直接给」那 1 枚黑：2 人局每色在场只有 4 枚，另外 3 枚在盒里、**永远不再回场** ——\n  `create` 出来就是凭空造宝石（`animation/validate_anim_rules.py` 会当场报错）。\n  ⚠ 严格说这是两个行动（取宝石 / 买牌），画面上是分开的两拍；本作没有「回合」指示物，\n  这两拍属于「演示前提」（口播讲的是买走之后要补牌，支付细节在 3.2.1 讲过）。",
+        "note": "【买走一张 → 出现空位；顺带合法补款】\n  这里做一次真购买：把市场里的一张一级白（slot 2）搬到玩家发展区。\n  一级白价格（读图）：1蓝+2绿+1红+1黑；此刻发展区空 → 无折扣全价付。\n  玩家原本持有 5 枚（白1蓝1红1绿2），付不出那 1 枚黑 —— 所以先合法地取 3 种不同\n  （黑1+蓝1+绿1，供应都够，取完 9 枚 ≤ 上限 10），再全价付掉。\n  付款会把刚取的蓝放回供应堆，付款后持有区正好剩 白1蓝1绿1；\n  这正是下一段折扣例子『只需要支付 1 枚白宝石和 1 枚蓝宝石』所需且可见的状态。\n  为什么不能直接给黑：2 人局每色在场只有 4 枚，另 3 枚在盒里、永远不再回场；create 就是凭空造宝石。\n",
         "exit": {
           "zones": {
             "card_market": {
               "count": 11
             },
             "gem_supply_diamond": {
-              "count": 2
+              "count": 3
             },
             "gem_supply_sapphire": {
-              "count": 4
+              "count": 3
             },
             "gem_supply_ruby": {
               "count": 4
@@ -6805,12 +6749,20 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 }
               ]
             },
@@ -6850,7 +6802,7 @@
           "dur": 0.6,
           "source": [
             "gem_supply_onyx",
-            "gem_supply_diamond",
+            "gem_supply_sapphire",
             "gem_supply_emerald"
           ],
           "destination": "player_holding",
@@ -7133,7 +7085,7 @@
       ],
       "script": {
         "story": "【不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值】",
-        "note": "【一级卡多半没有声望】\n  正好用桌上这两张对比：二级红 = 3 点，一级白 = 0 点（它左上角的横幅是空的）。\n  先点二级红、再点一级白，最后把市场里的一级行也扫一下（那一行都是 0 点）。\n  （用**叉**表示「这张一级牌没有声望值」：叉在左上角那个位置上。）"
+        "note": "【一级卡多半没有声望】\n  正好用桌上这两张对比：二级红 = 3 点，一级白 = 0 点（它左上角横幅是空的）。\n  市场一级行四张读图是 0/0/0/1：点其中两张 0 点的一级牌（红、蓝），说明并非所有一级牌都没有声望。\n"
       },
       "events": [
         {
@@ -7166,7 +7118,7 @@
           "zone": "card_market",
           "indicator": "cross",
           "part": "prestige",
-          "order": 0,
+          "order": 1,
           "anchor": "action.cards.prestige.001.2.b2.start",
           "offset": 0.09
         },
@@ -7235,7 +7187,7 @@
       "timing": [],
       "script": {
         "story": "【举个例子：现在我已经购买了 1 张白宝石牌，那么下一回合我想购买这张牌时】",
-        "note": "【折扣例子（一）】\n  『我已经购买了 1 张白宝石牌』**不是凭空说的**：上一段 market.001.2 已经真的把一张一级白买进发展区了 → 这里点它一下（画面上的事实与口播对得上）。\n  然后点想买的那张（一级白样本）——『这张牌』指的是它。",
+        "note": "【折扣例子（一）】\n  『我已经购买了 1 张白宝石牌』不是凭空说的：上一段 market.001.2 真的把一级白买进了发展区。\n  这里点发展区那张白牌，再点想买的目标牌 —— 目标牌是『下一回合购买』的假设，\n  因此本 cue 起进入 demo:true 假设分支；只提示要付哪些宝石，不改变真实账。\n",
         "enter": {
           "zones": {
             "player_development": {
@@ -7277,7 +7229,8 @@
           "anchor": "action.cards.discount.002.1.b1.start",
           "offset": 2.105
         }
-      ]
+      ],
+      "demo": true
     },
     {
       "id": "action.cards.discount.002.2",
@@ -7290,7 +7243,7 @@
       ],
       "script": {
         "story": "【只需要支付 1 枚白宝石和 1 枚蓝宝石即可】",
-        "note": "【折扣例子（一）：只要付这两枚】\n  这一句口播说的数字是 **1 白 + 1 蓝**，而**我们手上正好有 1 白 1 蓝**（持有区 order 0 = 白、order 1 = 蓝，来自 3.1 的两次拿取）→ 镜头推近持有区，把这两枚点出来 = 「只要付这两枚」。\n  **没有真的支付**：口播是『下一回合我想购买这张牌时』——是假设，不是这一回合真的买。所以只做『需要付哪些』的提示，不动状态（这也正是『脚本没写有的就是没有』）。\n  ⚠ 已知不一致：口播这句隐含那张牌的价格是 **2白+1蓝**，而我们扫的 15 张里没有这个价格的牌（一级白是 1蓝+2绿+1红+1黑）。要严格对上，要么补扫那张牌、要么改这一句口播。现在画面上只点『要付的这两枚』，不声称样本牌的价格等于它。"
+        "note": "【折扣例子（一）：只要付这两枚】\n  口播数字是 1 白 + 1 蓝；现在持有区确实有 白1+蓝1（market.001.2 真付款后剩下的可见状态）。\n  这里不真支付：口播是『下一回合我想购买这张牌时』，属于假设。\n  ⚠ 目标牌很可能是价格 2白+1蓝 的某张真卡，但不在已扫的 15 张里。\n  本 cue 镜头只推近持有区、展示要付的这两枚，不展示目标牌正面，避免把一级白样本的\n  cost 1蓝+2绿+1红+1黑 冒充成它。若要正面讲解目标牌，需另补扫描件（MISSING_SCAN）。\n"
       },
       "events": [
         {
@@ -7329,17 +7282,20 @@
                 {
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 },
                 {
                   "template": "market_card_3_diamond",
                   "palette": "card_level_3",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 },
                 {
                   "template": "market_card_1_sapphire",
                   "palette": "card_level_1",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             }
@@ -7363,7 +7319,8 @@
           "count": 1,
           "concept": "development_card_level_3",
           "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 0.315
+          "offset": 0.315,
+          "to": "face_up"
         },
         {
           "op": "create",
@@ -7374,7 +7331,8 @@
           "count": 1,
           "concept": "development_card_level_1",
           "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 0.615
+          "offset": 0.615,
+          "to": "face_up"
         },
         {
           "op": "highlight",
@@ -7560,7 +7518,7 @@
           "offset": -1.475
         }
       ],
-      "entry": "action.cards.discount.002.2",
+      "entry": "action.cards.discount.001",
       "demo": false
     },
     {
@@ -7580,7 +7538,7 @@
       ],
       "script": {
         "story": "【我们再介绍一下贵族板块】",
-        "note": "【介绍贵族板块】\n  镜头推近贵族供应堆（3 块）。贵族不是买来的牌，是**条件达成后自动到你面前**的板块 ——所以这里只摆出来看。\n  ⚠ 桌上这 3 块是同一个模板（都显示 贵族_0001）：五张贵族扫描件还没分别接进舞台。本节的演示按 0001 的条件（4白+4红）算，所以画面与账自洽。\n  【2026-09 用户指示③】顺带给玩家B 摆一块贵族：后面那句『不可以从其他人那里拿贵族』需要有『其他人那里的贵族』可指，否则那句话在画面上永远没有对象。\n  ⚠ 这是**前提补出来**（口播里的『其他人』就是它），不严格按 2 人局只发 3 块贵族的数量算。",
+        "note": "【介绍贵族板块】\n  贵族供应堆 3 块（统一 0001 正面），本节按 0001 的条件（4白+4红）演示。\n  贵族不是买来的牌，是条件达成后自动到你面前的板块。\n  【2026-09 用户指示③】顺带给玩家B 摆一块贵族作『其他人』的可见前提；它不是 2 人局物理账的一部分，\n  显式标 concept=noble_premise（普通 noble 才计入 3 块物理贵族），仅用于被指点/画叉。\n",
         "enter": {
           "picture": null,
           "zones": {
@@ -7600,10 +7558,10 @@
               "count": 3
             },
             "gem_supply_diamond": {
-              "count": 2
+              "count": 3
             },
             "gem_supply_sapphire": {
-              "count": 4
+              "count": 3
             },
             "gem_supply_ruby": {
               "count": 4
@@ -7622,12 +7580,20 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 }
               ]
             },
@@ -7670,10 +7636,10 @@
               "count": 3
             },
             "gem_supply_diamond": {
-              "count": 2
+              "count": 3
             },
             "gem_supply_sapphire": {
-              "count": 4
+              "count": 3
             },
             "gem_supply_ruby": {
               "count": 4
@@ -7692,12 +7658,20 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 }
               ]
             },
@@ -7737,9 +7711,10 @@
           "template": "noble",
           "palette": "noble",
           "count": 1,
-          "concept": "noble",
+          "concept": "noble_premise",
           "anchor": "action.nobles.intro.001.b1.start",
-          "offset": 0.115
+          "offset": 0.115,
+          "to": "face_up"
         },
         {
           "op": "highlight",
@@ -7893,7 +7868,7 @@
       ],
       "script": {
         "story": "【如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件】",
-        "note": "【把『满足条件』这一步真的做出来】\n  口播是假设句（『如果已购买…满足』）→ 脚本说了这个前提，所以这里把它**补出来**：发展区再补 2 张白（一级白）与 4 张红（一级红）→ 凑齐 4 白 + 4 红，正好满足桌上那块贵族（0001：4白+4红）。\n  · 为什么用 `create`：这些牌是脚本假设『你已经买过』的，不是这一步从市场买的；盒子里有牌 = create（游戏盒抽象、没有 box_* zone）。\n  · 为什么补红牌：发展区原有 3 张是 2 白 + 1 蓝，缺的正好是 4 红与 2 白。",
+        "note": "【把『满足条件』这一步真的做出来】\n  口播是假设句（如果已购买…满足）→ 这里把前提补出来：发展区凑齐 4 白 + 4 红，\n  正好满足供应堆第一块贵族（0001：4白+4红）。\n  canonical 此刻发展区原有 1 张一级白；需要再补 3 张白折扣代表卡与 4 张红折扣代表卡。\n  · 为不破坏 40 张一级牌账，先从 deck_level_1 移除 7 张 blank_card_1 垫牌，\n    再以 market_card_1_diamond / market_card_1_ruby 代表卡 create 同数量（净 L1 不变）。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌，不能以默认朝下的卡背出现。\n  · 代表的是一级白/红这一类牌，不声称牌面 cost/声望与某张具体真卡一一对应。\n",
         "exit": {
           "zones": {
             "player_development": {
@@ -7901,7 +7876,7 @@
                 {
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
-                  "count": 3
+                  "count": 4
                 },
                 {
                   "template": "market_card_1_ruby",
@@ -7909,18 +7884,32 @@
                   "count": 4
                 }
               ]
+            },
+            "deck_level_1": {
+              "count": 28
             }
           }
         }
       },
       "events": [
         {
+          "op": "destroy",
+          "dur": 0.0,
+          "zone": "deck_level_1",
+          "template": "blank_card_1",
+          "palette": "card_level_1",
+          "concept": "development_card_level_1",
+          "count": 7,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.0
+        },
+        {
           "op": "create",
           "dur": 0.0,
           "zone": "player_development",
           "template": "market_card_1_diamond",
           "palette": "card_level_1",
-          "count": 3,
+          "count": 4,
           "concept": "development_card_level_1",
           "parts": [
             {
@@ -7929,7 +7918,8 @@
             }
           ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.315
+          "offset": 0.315,
+          "to": "face_up"
         },
         {
           "op": "create",
@@ -7946,7 +7936,8 @@
             }
           ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.915
+          "offset": 0.915,
+          "to": "face_up"
         },
         {
           "op": "highlight",
@@ -8366,7 +8357,7 @@
       "timing": [],
       "script": {
         "story": "【当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值】",
-        "note": "【总结（三）：条件够了就结识贵族】\n  规则总结，**没有状态变化**：点发展区、再点自己面前的三块贵族（这就是本节的结果）。\n  本节结束时：发展区 9 张、贵族 3 块（供应堆空了）—— 下一节（3.3 保留卡牌）从这里继续。"
+        "note": "【总结（三）：条件够了就结识贵族】\n  规则总结，没有状态变化：点发展区、再点自己面前的三块贵族。\n  本节结束时：发展区 8 张（4白代表卡 + 4红代表卡）、贵族 3 块（供应堆空了）—— 下一节从这里继续。\n"
       },
       "events": [
         {
@@ -8447,11 +8438,11 @@
       ],
       "script": {
         "story": "【正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金】",
-        "note": "【保留（二）：朝下放自己面前 + 拿一枚黄金】\n  两件真事，一句口播两个动作：\n    ① `transfer` 那张三级白：市场 → `player_reserved`，**带 `to: face_down`**（终态朝下）；\n    ② `transfer` 一枚黄金：黄金供应堆 → 持有区（保留的奖励）。\n  『朝下』写成终态而不是『翻一下』：翻面是取反、谁最后执行谁赢（历史上正是它出过 bug），写终态则重复 Seek / 重播都得到同一结果。\n  ⚠ 我们没给『只有自己能看』建模：牌在整个 3.3 里一直朝下，观众看到的是『有几张、看不见是哪张』——和实物桌上别人看到的一样。",
+        "note": "【保留（二）：朝下放自己面前 + 拿一枚黄金 + 补牌】\n  ① 市场三级白 → player_reserved，终态 face_down；\n  ② 黄金供应堆 → 持有区（保留奖励）；\n  ③ 市场空位按规则从 deck_level_3 翻一张真牌补回（当前牌堆真牌是三级蓝），保持市场 12 张。\n  『朝下』写成终态而不是翻一下，重复 Seek/重播一致。\n",
         "exit": {
           "zones": {
             "card_market": {
-              "count": 11
+              "count": 12
             },
             "gold_supply": {
               "count": 4
@@ -8461,22 +8452,34 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_gold",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 }
               ]
             },
             "player_reserved": {
               "count": 1
+            },
+            "deck_level_3": {
+              "count": 15
             }
           }
         }
@@ -8498,6 +8501,24 @@
           "to": "face_down",
           "anchor": "action.reserve.intro.001.2.b1.start",
           "offset": 0.505
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "source": "deck_level_3",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_3",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<sapphire>"
+            }
+          ],
+          "to": "face_up",
+          "order": 9,
+          "anchor": "action.reserve.intro.001.2.b1.start",
+          "offset": 1.205
         },
         {
           "op": "transfer",
@@ -8586,7 +8607,7 @@
         "exit": {
           "zones": {
             "deck_level_1": {
-              "count": 34
+              "count": 27
             },
             "gold_supply": {
               "count": 3
@@ -8596,17 +8617,26 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_gold",
-                  "count": 2
+                  "count": 2,
+                  "face": "down"
                 }
               ]
             },
@@ -8765,11 +8795,11 @@
       ],
       "script": {
         "story": "【如果一位玩家已经保留了 3 张发展卡牌，就不能继续保留了。此时他必须选择其他行动】",
-        "note": "【到 3 张就满了】\n  真做一次：再从市场保留一张（二级红 → 保留区朝下）+ 拿第三枚黄金 → 保留区正好 3 张。\n  『不能继续保留』这一层**没法演**：我们没有否定原语（没有拒绝/变灰），只能靠『正好到 3 张』这个可见事实 + 口播。\n  ⚠ 这是本节演示的最后一张：3 张后不再演示保留（也正好符合规则）。\n  【2026-09 用户指示②】保留区满 3 张后打上禁止符号 =『不能再保留』。",
+        "note": "【到 3 张就满了；同时补回市场】\n  真做一次：从市场保留一张二级红（保留区朝下）+ 拿第三枚黄金 → 保留区正好 3 张。\n  市场空位按规则从 deck_level_2 翻一张真牌补回（当前牌堆真牌是二级白），保持市场 12 张。\n  『不能继续保留』仍靠『正好 3 张』+ 禁止符号表达。\n",
         "exit": {
           "zones": {
             "card_market": {
-              "count": 10
+              "count": 12
             },
             "gold_supply": {
               "count": 2
@@ -8779,22 +8809,34 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_gold",
-                  "count": 3
+                  "count": 3,
+                  "face": "down"
                 }
               ]
             },
             "player_reserved": {
               "count": 3
+            },
+            "deck_level_2": {
+              "count": 25
             }
           }
         }
@@ -8823,6 +8865,24 @@
           "to": "face_down",
           "anchor": "action.reserve.limit_hand.001.2.b1.start",
           "offset": 1.315
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "source": "deck_level_2",
+          "destination": "card_market",
+          "quantity": 1,
+          "concept": "development_card_level_2",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<diamond>"
+            }
+          ],
+          "to": "face_up",
+          "order": 6,
+          "anchor": "action.reserve.limit_hand.001.2.b1.start",
+          "offset": 1.915
         },
         {
           "op": "transfer",
@@ -8973,17 +9033,26 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 2
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_emerald",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_gold",
-                  "count": 1
+                  "count": 1,
+                  "face": "down"
                 }
               ]
             },
@@ -8992,7 +9061,7 @@
                 {
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
-                  "count": 3
+                  "count": 4
                 },
                 {
                   "template": "market_card_1_ruby",
@@ -9077,7 +9146,7 @@
       "timing": [],
       "script": {
         "story": "【正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣】",
-        "note": "【买完之后的结算】\n  规则说明，**没有状态变化**：点发展区（声望 + 折扣）→ 点自己面前的贵族（看条件是否满足）。\n  · 这张三级白值 4 分（读图得到）：发展区现在 4 张白 + 4 张红 + 那么几张，贵族条件早就满足了；\n  · 但**贵族供应堆已经空了**（3.2.2 把 3 块都拿完了）→ 『查看是否满足』这一步现在没有对象可查。这是演示顺序造成的：先把贵族讲透，后面就没得抽了。"
+        "note": "【买完之后的结算】\n  规则说明，没有状态变化：点发展区（声望 + 折扣）→ 点自己面前贵族（看条件）。\n  刚买进的是二级红，读图 3 分（不是三级白 4 分）；发展区现在 4 张白 + 4 张红 + 二级红。\n  贵族供应堆已空（前面 3 块都拿完）→ 这一步没有对象可查，是演示顺序造成的；下一步 endgame 会把分数补到触发线。\n"
       },
       "events": [
         {
@@ -9157,7 +9226,7 @@
       ],
       "script": {
         "story": "【当一位玩家的声望值达到 15 或更多时，触发游戏结束】",
-        "note": "【到达 15 分 → 触发结束】\n  口播说的前提是『达到 15 或更多』→ 脚本给了这个前提，所以把分数**补到位**：发展区再 `create` 一张三级蓝（读图：三级蓝 = 5 分）→\n  发展区 = 一级白×3(0) + 三级白×2(4+4) + 一级蓝(0) + 一级红×4(0) + 三级蓝(5) = 13 分，加上 3 块贵族各 3 分 = **22 分** ≥ 15 ✓。\n  · 为什么补的是三级蓝：现有牌里分数最高的那类，一张就够把 13 推到 15 以上；\n  · 分不在画面上累加（没有分数 UI）—— 数字靠口播，画面上是『这些牌和贵族』。\n  【2026-09 用户指示④：结算就是圈声望】发展区每张牌的左上角 + 每块贵族的左上角，用**红圈**一起圈出来 —— 两部分加起来就是总分。\n  用的是①的部位指示物：`point` 带 `zone` 会**对区域里每一件**都画一个圈。",
+        "note": "【到达 15 分 → 触发结束】\n  口播前提是达到 15 或更多 → 这里把可见前提补到位：\n  当前发展区 4 张一级白(0) + 4 张一级红(0) + 1 张二级红(3) = 3 分；\n  再从 deck_level_3 移除 1 张 blank_card_3 垫牌，以 market_card_3_sapphire 代表卡 create 一张，净 L3 不变，该卡读图 5 分、显式 face_up。\n  发展区 = 3 + 5 = 8 分，加 3 块贵族各 3 分 = 17 分 ≥ 15。\n  圈声望时发展区每张牌左上角 + 贵族左上角都圈，画面与账一致。\n",
         "exit": {
           "zones": {
             "player_development": {
@@ -9165,7 +9234,7 @@
                 {
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
-                  "count": 3
+                  "count": 4
                 },
                 {
                   "template": "market_card_1_ruby",
@@ -9183,11 +9252,18 @@
                   "count": 1
                 }
               ]
+            },
+            "deck_level_3": {
+              "count": 14
             }
           }
         },
         "enter": {
-          "zones": {}
+          "zones": {
+            "deck_level_3": {
+              "count": 14
+            }
+          }
         }
       },
       "events": [
@@ -9197,6 +9273,17 @@
           "shot": "shot_development",
           "realizes": "<ontology::timing>",
           "anchor": "endgame.trigger.001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "zone": "deck_level_3",
+          "template": "blank_card_3",
+          "palette": "card_level_3",
+          "concept": "development_card_level_3",
+          "count": 1,
+          "anchor": "endgame.trigger.001.start",
+          "offset": 0.0
         },
         {
           "op": "create",
@@ -9213,7 +9300,8 @@
             }
           ],
           "anchor": "endgame.trigger.001.b1.start",
-          "offset": 0.525
+          "offset": 0.525,
+          "to": "face_up"
         },
         {
           "op": "highlight",
@@ -9332,7 +9420,7 @@
       ],
       "script": {
         "story": "【声望值最高的玩家获得胜利】",
-        "note": "【分最高者胜】\n  规则说明，**没有状态变化**：点发展区与三块贵族 —— 声望就来自这两处（13 + 9 = 22）。\n  【2026-09 用户指示④：结算就是圈声望】发展区每张牌的左上角 + 每块贵族的左上角，用**红圈**一起圈出来 —— 两部分加起来就是总分。\n  用的是①的部位指示物：`point` 带 `zone` 会**对区域里每一件**都画一个圈。"
+        "note": "【分最高者胜】\n  规则说明，没有状态变化：点发展区与三块贵族 —— 声望来自这两处。\n  当前可见发展区 8 分 + 贵族 9 分 = 17 分。\n  圈声望时发展区每张牌左上角 + 贵族左上角都圈，画面与账一致。\n"
       },
       "events": [
         {
