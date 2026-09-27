@@ -1,6 +1,10 @@
 package com.boardai.tutorial.uaal.home
 
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
+import com.boardai.tutorial.uaal.catalog.HomeCatalogSource
+import com.boardai.tutorial.uaal.history.HomeHistorySource
+import com.boardai.tutorial.uaal.content.ContentUpdateExecutor
+import com.boardai.tutorial.uaal.content.HomeContentStore
 import com.boardai.tutorial.uaal.content.ContentStatus
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
 import com.boardai.tutorial.uaal.content.DownloadControl

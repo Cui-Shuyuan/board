@@ -1,7 +1,6 @@
 package com.boardai.tutorial.uaal.content
 
 import android.content.Context
-import com.boardai.tutorial.uaal.home.HomeContentStore
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject

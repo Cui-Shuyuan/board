@@ -1,4 +1,4 @@
-package com.boardai.tutorial.uaal.home
+package com.boardai.tutorial.uaal.content
 
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.content.ActiveContent

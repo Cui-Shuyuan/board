@@ -3,7 +3,6 @@ package com.boardai.tutorial.uaal.history
 import android.content.Context
 import android.util.Log
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
-import com.boardai.tutorial.uaal.home.HomeHistorySource
 import java.io.File
 import java.io.IOException
 import java.nio.file.AtomicMoveNotSupportedException

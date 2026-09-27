@@ -3,7 +3,6 @@ package com.boardai.tutorial.uaal.catalog
 import android.content.Context
 import android.util.Log
 import com.boardai.tutorial.uaal.BuildConfig
-import com.boardai.tutorial.uaal.home.HomeCatalogSource
 import org.json.JSONException
 import java.io.File
 import java.io.IOException

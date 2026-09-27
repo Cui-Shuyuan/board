@@ -1,7 +1,6 @@
 package com.boardai.tutorial.uaal.content
 
 import android.util.Log
-import com.boardai.tutorial.uaal.home.ContentUpdateExecutor
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
