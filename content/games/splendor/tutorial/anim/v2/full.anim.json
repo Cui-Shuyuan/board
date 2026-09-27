@@ -6486,91 +6486,25 @@
     {
       "id": "action.cards.intro.001",
       "parent": "action.take.public.001.2",
-      "tree": "cards_demo",
-      "transition": "overlay",
+      "tree": "cards_intro",
+      "transition": "world_cut",
       "timing": [
         {
-          "key": "镜头对准两个样本",
+          "key": "镜头对准一张牌面",
           "text": "0.00"
         },
         {
-          "key": "两张样本出现",
+          "key": "牌面出现",
           "text": "0.50"
         }
       ],
       "script": {
         "story": "【我们介绍一下发展卡牌】",
-        "note": "【介绍发展卡牌】\n  摆出**两张样本**：左边一级白（价格四种颜色、声望 0），右边二级红（声望 3）。\n  为什么用样本而不是市场里的真牌：讲解要『一张牌占满画面』，  而市场的近景一次框住 12 张，牌角的小字看不清。样本是既有约定  （2.1 讲卡背时也是这么做的）：独立模板、不进牌堆/市场的账、讲完销毁。",
+        "note": "【介绍发展卡牌】\n  在独立介绍树 `cards_intro` 里只摆出**一张样本正面**：二级红，左上角声望 3。\n  牌面用 `showcase` 单张特写展示，样本不进真实牌堆/市场的账。\n  下一 cue 回到真实牌桌，再用两张样本讲价格、声望和折扣。",
         "enter": {
           "picture": null,
           "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 36
-            },
-            "deck_level_2": {
-              "count": 26
-            },
-            "deck_level_3": {
-              "count": 16
-            },
-            "noble_market": {
-              "count": 3
-            },
-            "gem_supply_diamond": {
-              "count": 3
-            },
-            "gem_supply_sapphire": {
-              "count": 3
-            },
-            "gem_supply_ruby": {
-              "count": 3
-            },
-            "gem_supply_emerald": {
-              "count": 2
-            },
-            "gem_supply_onyx": {
-              "count": 4
-            },
-            "gold_supply": {
-              "count": 5
-            },
-            "player_holding": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 1
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 1
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 1
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 2
-                }
-              ]
-            },
-            "player_marker": {
-              "count": 1
-            },
             "showcase": {
-              "count": 0
-            },
-            "showcase_1": {
-              "count": 0
-            },
-            "player_development": {
               "count": 0
             }
           }
@@ -6578,86 +6512,15 @@
         "exit": {
           "picture": null,
           "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 36
-            },
-            "deck_level_2": {
-              "count": 26
-            },
-            "deck_level_3": {
-              "count": 16
-            },
-            "noble_market": {
-              "count": 3
-            },
-            "gem_supply_diamond": {
-              "count": 3
-            },
-            "gem_supply_sapphire": {
-              "count": 3
-            },
-            "gem_supply_ruby": {
-              "count": 3
-            },
-            "gem_supply_emerald": {
-              "count": 2
-            },
-            "gem_supply_onyx": {
-              "count": 4
-            },
-            "gold_supply": {
-              "count": 5
-            },
-            "player_holding": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 1
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 1
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 1
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 2
-                }
-              ]
-            },
-            "player_marker": {
-              "count": 1
-            },
             "showcase": {
-              "items": [
-                {
-                  "template": "sample_card_1_white",
-                  "palette": "card_level_1",
-                  "count": 1
-                }
-              ]
-            },
-            "showcase_1": {
               "items": [
                 {
                   "template": "sample_card_2_ruby",
                   "palette": "card_level_2",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 }
               ]
-            },
-            "player_development": {
-              "count": 0
             }
           }
         }
@@ -6666,7 +6529,7 @@
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_card_samples",
+          "shot": "shot_card_face",
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.intro.001.start"
         },
@@ -6674,32 +6537,23 @@
           "op": "create",
           "dur": 0.0,
           "zone": "showcase",
-          "template": "sample_card_1_white",
-          "palette": "card_level_1",
-          "count": 1,
-          "concept": "development_card_level_1",
-          "anchor": "action.cards.intro.001.b1.start",
-          "offset": 0.205
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "zone": "showcase_1",
           "template": "sample_card_2_ruby",
           "palette": "card_level_2",
           "count": 1,
           "concept": "development_card_level_2",
+          "to": "face_up",
           "anchor": "action.cards.intro.001.b1.start",
           "offset": 0.205
         }
-      ]
+      ],
+      "entry": "initial"
     },
     {
       "id": "action.cards.cost.001.1",
       "parent": "action.cards.intro.001",
       "timing": [
         {
-          "key": "镜头保持两样本近景",
+          "key": "镜头回到两样本近景",
           "text": "0.00"
         },
         {
@@ -6709,8 +6563,9 @@
       ],
       "script": {
         "story": "【左下角是这张牌的价格。要想购买这张牌】",
-        "note": "【左下角是这张牌的价格】\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
+        "note": "【左下角是这张牌的价格】\n  切入本 cue 时把两张样本正面摆回真实牌桌（上一 cue 在独立介绍树里只展示一张正面）。\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
         "enter": {
+          "picture": null,
           "zones": {
             "showcase": {
               "count": 1
@@ -6721,6 +6576,7 @@
           }
         },
         "exit": {
+          "picture": null,
           "zones": {
             "showcase": {
               "count": 1
@@ -6737,6 +6593,28 @@
           "dur": 0.0,
           "shot": "shot_card_samples_f06667",
           "realizes": "<ontology::timing>",
+          "anchor": "action.cards.cost.001.1.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "showcase",
+          "template": "sample_card_1_white",
+          "palette": "card_level_1",
+          "count": 1,
+          "concept": "development_card_level_1",
+          "to": "face_up",
+          "anchor": "action.cards.cost.001.1.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "showcase_1",
+          "template": "sample_card_2_ruby",
+          "palette": "card_level_2",
+          "count": 1,
+          "concept": "development_card_level_2",
+          "to": "face_up",
           "anchor": "action.cards.cost.001.1.start"
         },
         {
@@ -6766,7 +6644,10 @@
           "anchor": "action.cards.cost.001.1.b2.end",
           "offset": -0.545
         }
-      ]
+      ],
+      "tree": "cards_demo",
+      "entry": "action.take.public.001.2",
+      "transition": "overlay"
     },
     {
       "id": "action.cards.cost.001.2",

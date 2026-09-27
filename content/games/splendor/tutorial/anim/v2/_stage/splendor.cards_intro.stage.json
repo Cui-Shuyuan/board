@@ -165,6 +165,41 @@
       ]
     },
     {
+      "id": "sample_card_2_ruby",
+      "shape": "card",
+      "palette": "card_level_2",
+      "face_image": "media/card/二级发展卡_红_cutout.png",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 2,
+      "concept": "development_card_level_2",
+      "sample": true,
+      "note": "介绍牌面用的**样本**（二级红）：声望 3，用来讲『左上角是声望值』。",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
       "id": "sample_back_1",
       "shape": "card",
       "palette": "card_level_1",
