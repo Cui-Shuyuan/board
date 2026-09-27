@@ -1,15 +1,26 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
-using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+/// <summary>
+/// 规则向量索引协作类：从概念目录、游戏实例、顶层引用与流程 JSON 提取索引条目，
+/// 并负责触发向量索引重建。自身不缓存；规则文档变化时由调用方重新提取。
+/// </summary>
+public sealed class RulesIndexService
 {
+    private readonly IRulesConceptCatalog _catalog;
+    private readonly RulesContentStore _content;
+    private readonly VectorSearchService? _vectorSearch;
+
+    public RulesIndexService(
+        IRulesConceptCatalog catalog,
+        RulesContentStore content,
+        VectorSearchService? vectorSearch)
+    {
+        _catalog = catalog;
+        _content = content;
+        _vectorSearch = vectorSearch;
+    }
 
     /// <summary>
     /// 提取游戏所有概念的索引条目，用于向量化。
@@ -19,9 +30,9 @@ public partial class GameRulesService
         var result = new List<ConceptIndexItem>();
 
         // ontology 概念（不限定 game）
-        foreach (var c in ListConcepts(game, "ontology"))
+        foreach (var c in _catalog.ListConcepts(game, "ontology"))
         {
-            var detail = GetConcept(game, c.Id);
+            var detail = _catalog.GetConcept(game, c.Id);
             result.Add(new ConceptIndexItem
             {
                 ConceptId = c.Id,
@@ -35,9 +46,9 @@ public partial class GameRulesService
 
         foreach (var type in RulesConceptTypes.ConceptArrayTypes)
         {
-            foreach (var c in ListConcepts(game, type))
+            foreach (var c in _catalog.ListConcepts(game, type))
             {
-                var detail = GetConcept(game, c.Id);
+                var detail = _catalog.GetConcept(game, c.Id);
                 result.Add(new ConceptIndexItem
                 {
                     ConceptId = c.Id,
@@ -53,9 +64,9 @@ public partial class GameRulesService
         // instances.json 实例
         foreach (var type in RulesConceptTypes.InstanceArrayTypes)
         {
-            foreach (var c in ListConcepts(game, type))
+            foreach (var c in _catalog.ListConcepts(game, type))
             {
-                var detail = GetConcept(game, c.Id);
+                var detail = _catalog.GetConcept(game, c.Id);
                 result.Add(new ConceptIndexItem
                 {
                     ConceptId = c.Id,
@@ -69,9 +80,9 @@ public partial class GameRulesService
         }
 
         // 顶层引用
-        foreach (var c in ListConcepts(game, "top_level_refs"))
+        foreach (var c in _catalog.ListConcepts(game, "top_level_refs"))
         {
-            var detail = GetConcept(game, c.Id);
+            var detail = _catalog.GetConcept(game, c.Id);
             result.Add(new ConceptIndexItem
             {
                 ConceptId = c.Id,
@@ -100,6 +111,15 @@ public partial class GameRulesService
         return result;
     }
 
+    /// <summary>
+    /// 为指定游戏重建向量索引。
+    /// </summary>
+    public async Task BuildEmbeddingIndexAsync(string game)
+    {
+        if (_vectorSearch == null) return;
+        var items = GetIndexItems(game);
+        await _vectorSearch.RebuildIndexAsync(game, items);
+    }
 
     /// <summary>递归提取 slots 元素 (裸键槽名如 population/expansion 作为概念, 与 Python rebuild_index 一致)</summary>
     private static void ExtractSlots(JsonElement node, List<ConceptIndexItem> result)
@@ -138,7 +158,6 @@ public partial class GameRulesService
         }
     }
 
-
     /// <summary>递归收集 id/name/description 文本 (slots 深层效果描述)</summary>
     private static void CollectIndexText(JsonElement node, List<string> parts)
     {
@@ -171,7 +190,6 @@ public partial class GameRulesService
         }
     }
 
-
     private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result)
     {
         // 游戏 flow.json：procedures 树 + triggers 组
@@ -195,11 +213,13 @@ public partial class GameRulesService
         }
     }
 
-
-
-
     private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result)
     {
+        // 游戏 flow 的 options 中可能存在 <concept_id> 字符串引用；
+        // 跳过非对象节点，保持与 rebuild_index.py 相同的下钻语义。
+        if (node.ValueKind != JsonValueKind.Object)
+            return;
+
         var id = node.TryGetProperty("id", out var idProp) ? idProp.GetString() ?? "" : "";
         // 只索引独立概念节点（有 id 且有 specifies/extends/instance_of）：
         // 局部步骤（仅 id+name，do_after 引用用）不入索引——短名短描述是向量噪音，
@@ -226,7 +246,7 @@ public partial class GameRulesService
                     ? nz.GetString() : id,
                 NameEn = null,
                 // <> 引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
-                SearchText = ConceptRefRegex.Replace(
+                SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
                     string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))), ""),
             });
         }
@@ -262,18 +282,6 @@ public partial class GameRulesService
         }
     }
 
-
-    /// <summary>
-    /// 为指定游戏重建向量索引。
-    /// </summary>
-    public async Task BuildEmbeddingIndexAsync(string game)
-    {
-        if (_vectorSearch == null) return;
-        var items = GetIndexItems(game);
-        await _vectorSearch.RebuildIndexAsync(game, items);
-    }
-
-
     // ---- 私有辅助 ----
 
     private static string BuildSearchText(ConceptSummary summary, JsonElement? detail)
@@ -294,9 +302,8 @@ public partial class GameRulesService
             }
         }
         // <> 包裹的概念引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
-        return ConceptRefRegex.Replace(string.Join(" ", parts.Where(p => !string.IsNullOrEmpty(p))), "");
+        return RulesJsonUtils.ConceptRefRegex.Replace(string.Join(" ", parts.Where(p => !string.IsNullOrEmpty(p))), "");
     }
-
 
     private static string? ExtractEnName(JsonElement? element)
     {

@@ -20,7 +20,7 @@ public partial class GameRulesService
     {
         var map = _nameIndex.GetNameMap(game);
         if (map.Count == 0) return text;
-        return ConceptRefRegex.Replace(
+        return RulesJsonUtils.ConceptRefRegex.Replace(
             text,
             m =>
             {
@@ -68,7 +68,7 @@ public partial class GameRulesService
         foreach (var element in matched)
         {
             var text = JsonSerializer.Serialize(element, RelaxedJsonOptions);
-            foreach (Match m in ConceptRefRegex.Matches(text))
+            foreach (Match m in RulesJsonUtils.ConceptRefRegex.Matches(text))
             {
                 var raw = m.Groups[1].Value;
                 if (!seen.Add(raw)) continue;
@@ -127,7 +127,7 @@ public partial class GameRulesService
         foreach (var el in matched)
         {
             var text = JsonSerializer.Serialize(el, RelaxedJsonOptions);
-            foreach (Match m in ConceptRefRegex.Matches(text))
+            foreach (Match m in RulesJsonUtils.ConceptRefRegex.Matches(text))
             {
                 var raw = m.Groups[1].Value;
                 if (!seen.Add(raw)) continue;

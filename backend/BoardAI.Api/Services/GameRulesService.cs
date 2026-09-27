@@ -1,7 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
@@ -18,13 +17,9 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
     private readonly RulesNameIndexService _nameIndex;
 
+    private readonly RulesIndexService _indexService;
+
     private readonly RulesSearchService _searchService;
-
-
-    /// <summary>概念引用正则——注解（AnnotateReferences）与一层扩展（GetConceptsWithExpansion）共用。</summary>
-    private static readonly Regex ConceptRefRegex = new(
-        @"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>",
-        RegexOptions.Compiled);
 
 
     /// <summary>不转义 &lt;&gt; 的序列化选项——引用提取必须看到字面 &lt;concept_id&gt;（与工具返回的 ToolResultOptions 同理）。</summary>
@@ -43,6 +38,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         _catalog = new RulesConceptCatalog(_content);
         _nameIndex = new RulesNameIndexService(_catalog, _content);
         _vectorSearch = vectorSearch;
+        _indexService = new RulesIndexService(_catalog, _content, vectorSearch);
         _searchService = new RulesSearchService(_catalog, vectorSearch);
     }
 
@@ -85,6 +81,14 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
     public IReadOnlyList<JsonElement> GetActionConditions(string game, string actionId)
         => _catalog.GetActionConditions(game, actionId);
+
+
+    public IReadOnlyList<ConceptIndexItem> GetIndexItems(string game)
+        => _indexService.GetIndexItems(game);
+
+
+    public Task BuildEmbeddingIndexAsync(string game)
+        => _indexService.BuildEmbeddingIndexAsync(game);
 
 
     /// <summary>
