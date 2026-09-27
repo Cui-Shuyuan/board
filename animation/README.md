@@ -6,3 +6,16 @@
 - 编译产物：`content/games/{game}/tutorial/`
 - Unity 播放器：`clients/unity/Assets/Scripts/Tutorial/`
 - 本目录只放跨游戏动画生产工具，不放 Unity 工程，也不放 per-game 动画数据。
+
+## 审计
+
+```bash
+python3 animation/audit_anim_v2.py --game splendor --track full
+python3 -m unittest animation/test_audit_anim_v2.py
+```
+
+三个 v2 checker 的分工：
+
+- `animation/check_anim_v2.py`：契约 vs compiled、机位顺序、脏帧、stage 布局；
+- `animation/validate_anim_rules_v2.py`：逐 cue 事件重放规则，每条 cue 从自己的 `start_state` 起算；
+- `animation/audit_anim_v2.py`：跨 cue 实物守恒、`card_market` 补牌、`point`/`highlight` pointer 解析。

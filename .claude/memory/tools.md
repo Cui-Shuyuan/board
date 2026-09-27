@@ -168,8 +168,12 @@ python3 animation/compile_animation_v2.py --game splendor --track full
 python3 animation/compile_animation_v2.py --game splendor --track full --check
 python3 animation/check_anim_v2.py --game splendor --track full
 python3 animation/validate_anim_rules_v2.py --game splendor --track full
+python3 animation/audit_anim_v2.py --game splendor --track full
+python3 -m unittest animation/test_audit_anim_v2.py
 python3 tools/ops/check_unity_scripts.py
 ```
+
+`check_anim_v2.py` 管契约 vs compiled、机位、脏帧与 stage；`validate_anim_rules_v2.py` 管单 cue 事件重放规则；`audit_anim_v2.py` 管跨 cue 实物守恒、`card_market` 补牌和 `point`/`highlight` pointer 解析。
 
 ### 时间锚点
 
@@ -219,6 +223,8 @@ python3 animation/cue_graph_v2.py --help
 - 常用检查：
   - `tools/ops/check_unity_scripts.py`：Unity C# 编译检查。
   - `animation/check_anim_v2.py`：编译/契约/状态/机位检查。
+  - `animation/validate_anim_rules_v2.py`：单 cue 事件重放规则。
+  - `animation/audit_anim_v2.py`：跨 cue 实物守恒、补牌、pointer 解析。
   - `animation/check_anim_v2_sample.py`：Unity 采样与 compiled 逐 item 对账。
 
 ## 10. Content / Catalog / Manifest
