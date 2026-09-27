@@ -18,6 +18,8 @@ import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
+private const val PENDING_SEEK_TIMEOUT_MS = 5000L
+
 /**
  * Compose state owned by [TutorialPlayerOverlay].
  *
@@ -191,9 +193,12 @@ internal fun rememberPlayerDisplayState(
             val sameCue = current.cueIndex == pending.targetCue.index
             val closeEnough = abs(current.position - pending.localSeconds) <= 1.5f
             val elapsed = SystemClock.elapsedRealtime() - uiState.pendingSeekStartedAt
-            val timedOut = elapsed > 1500L
-            // Ignore a status that was already in flight before the scrub.
-            if ((sameCue && closeEnough && elapsed > 250L) || timedOut) {
+            val timedOut = elapsed > PENDING_SEEK_TIMEOUT_MS
+            // Keep the optimistic position until Unity confirms the target
+            // cue/position.  The old 1.5 s timeout could clear during an
+            // in-flight pre-seek status and make the handle flash back to the
+            // previous position before the real status arrived.
+            if ((sameCue && closeEnough) || timedOut) {
                 uiState.clearPendingSeek()
             }
         }
