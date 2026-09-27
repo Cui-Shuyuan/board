@@ -278,7 +278,7 @@ public partial class GameRulesService
             Status = "ok",
             Source = source,
             Matched = matched,
-            Related = ExpandRelated(game, matched, light: source == "question_hit")
+            Related = _referenceService.ExpandRelated(game, matched, light: source == "question_hit")
         };
 
         var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;

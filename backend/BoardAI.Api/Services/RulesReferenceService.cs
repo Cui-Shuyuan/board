@@ -1,15 +1,24 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
-using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+/// <summary>
+/// 规则引用协作类：概念引用注解、一层 related 扩展，以及 Plan ok 结果的引用扩展。
+/// 自身不缓存。
+/// </summary>
+public sealed class RulesReferenceService
 {
+    private readonly RulesConceptCatalog _catalog;
+    private readonly RulesNameIndexService _nameIndex;
+
+    public RulesReferenceService(
+        RulesConceptCatalog catalog,
+        RulesNameIndexService nameIndex)
+    {
+        _catalog = catalog;
+        _nameIndex = nameIndex;
+    }
 
     /// <summary>
     /// 把文本中的概念引用 <concept_id> / <ontology::concept_id> 注解为 <id>(中文名)，
@@ -44,7 +53,7 @@ public partial class GameRulesService
 
     public GetConceptResult GetConceptsWithExpansion(string game, string id)
     {
-        var matched = GetConcepts(game, id).ToList();
+        var matched = _catalog.GetConcepts(game, id).ToList();
         if (matched.Count == 0)
             return new GetConceptResult();
 
@@ -67,7 +76,7 @@ public partial class GameRulesService
 
         foreach (var element in matched)
         {
-            var text = JsonSerializer.Serialize(element, RelaxedJsonOptions);
+            var text = JsonSerializer.Serialize(element, RulesJsonUtils.RelaxedJsonOptions);
             foreach (Match m in RulesJsonUtils.ConceptRefRegex.Matches(text))
             {
                 var raw = m.Groups[1].Value;
@@ -78,7 +87,7 @@ public partial class GameRulesService
                     : raw;
                 if (excluded.Contains(local)) continue;
 
-                foreach (var found in GetConcepts(game, raw))
+                foreach (var found in _catalog.GetConcepts(game, raw))
                 {
                     var foundId = RulesTextUtils.GetElementId(found);
                     if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))
@@ -112,7 +121,7 @@ public partial class GameRulesService
     /// 上限 MaxRelatedConcepts）。light=true（问题级直呼）时跳过本体引用
     /// （&lt;ontology::x&gt;）——程序已拍板目标概念，只给游戏概念引用，减少 LLM 噪声。
     /// </summary>
-    private List<JsonElement> ExpandRelated(string game, List<JsonElement> matched, bool light)
+    public List<JsonElement> ExpandRelated(string game, List<JsonElement> matched, bool light)
     {
         var related = new List<JsonElement>();
         var excluded = new HashSet<string>(StringComparer.Ordinal);
@@ -126,7 +135,7 @@ public partial class GameRulesService
         var appendedIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var el in matched)
         {
-            var text = JsonSerializer.Serialize(el, RelaxedJsonOptions);
+            var text = JsonSerializer.Serialize(el, RulesJsonUtils.RelaxedJsonOptions);
             foreach (Match m in RulesJsonUtils.ConceptRefRegex.Matches(text))
             {
                 var raw = m.Groups[1].Value;
@@ -136,7 +145,7 @@ public partial class GameRulesService
                 var local = raw.Contains("::") ? raw[(raw.IndexOf("::", StringComparison.Ordinal) + 2)..] : raw;
                 if (excluded.Contains(local)) continue;
 
-                foreach (var found in GetConcepts(game, raw))
+                foreach (var found in _catalog.GetConcepts(game, raw))
                 {
                     var foundId = RulesTextUtils.GetElementId(found);
                     if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))

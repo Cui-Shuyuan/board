@@ -1,6 +1,4 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
@@ -19,16 +17,11 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
     private readonly RulesNameIndexService _nameIndex;
 
+    private readonly RulesReferenceService _referenceService;
+
     private readonly RulesIndexService _indexService;
 
     private readonly RulesSearchService _searchService;
-
-
-    /// <summary>不转义 &lt;&gt; 的序列化选项——引用提取必须看到字面 &lt;concept_id&gt;（与工具返回的 ToolResultOptions 同理）。</summary>
-    private static readonly JsonSerializerOptions RelaxedJsonOptions = new()
-    {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-    };
 
 
     public GameRulesService(IOptions<RulesOptions> options, VectorSearchService? vectorSearch = null)
@@ -40,6 +33,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         _flowService = new RulesFlowService(_content);
         _catalog = new RulesConceptCatalog(_content);
         _nameIndex = new RulesNameIndexService(_catalog, _content);
+        _referenceService = new RulesReferenceService(_catalog, _nameIndex);
         _vectorSearch = vectorSearch;
         _indexService = new RulesIndexService(_catalog, _content, vectorSearch);
         _searchService = new RulesSearchService(_catalog, vectorSearch);
@@ -47,6 +41,14 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
 
     public void Dispose() => _content.Dispose();
+
+
+    public string AnnotateReferences(string text, string game)
+        => _referenceService.AnnotateReferences(text, game);
+
+
+    public GetConceptResult GetConceptsWithExpansion(string game, string id)
+        => _referenceService.GetConceptsWithExpansion(game, id);
 
 
     public Task<SearchConceptsResult> SearchConceptsAsync(

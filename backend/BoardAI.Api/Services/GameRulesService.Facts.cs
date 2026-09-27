@@ -48,7 +48,7 @@ public partial class GameRulesService
         if (quantityQ) ExtractQuantityFacts(matched, question, facts);
         if (facts.Count == 0) return null;
 
-        return facts.Select(f => JsonSerializer.SerializeToElement(f, RelaxedJsonOptions)).ToList();
+        return facts.Select(f => JsonSerializer.SerializeToElement(f, RulesJsonUtils.RelaxedJsonOptions)).ToList();
     }
 
 
