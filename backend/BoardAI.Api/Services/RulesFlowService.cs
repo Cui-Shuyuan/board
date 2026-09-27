@@ -1,44 +1,49 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
-using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+/// <summary>flow 节点 id → 流程位置（祖先链 + 同级选项顺序 + 位置 + 最近 loop）。</summary>
+public sealed class FlowPosition
 {
+    /// <summary>同级 options 的 id/引用列表（按序）——回答「之后是什么」。</summary>
+    public List<string> Siblings { get; set; } = new();
+    /// <summary>在同级 options 中的下标。</summary>
+    public int Index { get; set; } = -1;
+    /// <summary>祖先链 zh 名（不含自己）。</summary>
+    public List<string> Ancestors { get; set; } = new();
+    /// <summary>最近的 loop 结构（round/phase 的 count/until）——回答「何时结束」。</summary>
+    public JsonElement? Loop { get; set; }
+}
 
-    /// <summary>flow 节点 id → 流程位置（祖先链 + 同级选项顺序 + 位置 + 最近 loop）。</summary>
-    private Dictionary<string, FlowPosition>? _flowPositions;
+/// <summary>
+/// 规则流程位置协作类：从 game flow.json 构建节点 id → FlowPosition 映射。
+/// 按 game 分别缓存；缺少 flow 文件时缓存空字典。
+/// </summary>
+public sealed class RulesFlowService
+{
+    private readonly RulesContentStore _content;
+    private readonly Dictionary<string, Dictionary<string, FlowPosition>> _flowPositionsByGame = new();
 
-
-    public class FlowPosition
+    public RulesFlowService(RulesContentStore content)
     {
-        /// <summary>同级 options 的 id/引用列表（按序）——回答「之后是什么」。</summary>
-        public List<string> Siblings { get; set; } = new();
-        /// <summary>在同级 options 中的下标。</summary>
-        public int Index { get; set; } = -1;
-        /// <summary>祖先链 zh 名（不含自己）。</summary>
-        public List<string> Ancestors { get; set; } = new();
-        /// <summary>最近的 loop 结构（round/phase 的 count/until）——回答「何时结束」。</summary>
-        public JsonElement? Loop { get; set; }
+        _content = content;
     }
 
-
-    private Dictionary<string, FlowPosition> GetFlowPositions(string game)
+    public IReadOnlyDictionary<string, FlowPosition> GetFlowPositions(string game)
     {
-        if (_flowPositions != null) return _flowPositions;
+        if (_flowPositionsByGame.TryGetValue(game, out var cached))
+            return cached;
+
         var result = new Dictionary<string, FlowPosition>();
         var flow = _content.LoadGameFlow(game);
         if (flow != null)
             WalkFlowPositions(flow.RootElement, new List<string>(), null, -1, null, result);
-        _flowPositions = result;
+
+        _flowPositionsByGame[game] = result;
         return result;
     }
 
+    public void Clear() => _flowPositionsByGame.Clear();
 
     private static void WalkFlowPositions(
         JsonElement node, List<string> ancestors,

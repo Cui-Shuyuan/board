@@ -282,7 +282,7 @@ public partial class GameRulesService
         };
 
         var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
-        GetFlowPositions(game).TryGetValue(localId, out var pos);
+        _flowService.GetFlowPositions(game).TryGetValue(localId, out var pos);
 
         // 流程位置链（flow 节点才有）：回答「在哪个阶段/回合」类语境
         if (pos != null)

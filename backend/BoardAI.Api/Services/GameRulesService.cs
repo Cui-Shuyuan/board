@@ -13,6 +13,8 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
     private readonly RulesContentStore _content;
 
+    private readonly RulesFlowService _flowService;
+
     private readonly RulesConceptCatalog _catalog;
 
     private readonly RulesNameIndexService _nameIndex;
@@ -35,6 +37,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         // repository root with the same portable logic used by the API host.
         var basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
         _content = new RulesContentStore(basePath, ClearDerivedCaches);
+        _flowService = new RulesFlowService(_content);
         _catalog = new RulesConceptCatalog(_content);
         _nameIndex = new RulesNameIndexService(_catalog, _content);
         _vectorSearch = vectorSearch;
@@ -99,7 +102,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     {
         _nameIndex.Clear();
         _conceptTypeMaps.Clear();
-        _flowPositions = null;
+        _flowService.Clear();
         _scoreTableGame = null;
         _scoreTable = null;
     }
