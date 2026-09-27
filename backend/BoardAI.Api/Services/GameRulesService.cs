@@ -7,8 +7,6 @@ namespace BoardAI.Api.Services;
 
 public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 {
-    private readonly VectorSearchService? _vectorSearch;
-
     private readonly RulesContentStore _content;
 
     private readonly RulesFactService _factService;
@@ -25,6 +23,8 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
     private readonly RulesSearchService _searchService;
 
+    private readonly RulesPlanService _planService;
+
 
     public GameRulesService(IOptions<RulesOptions> options, VectorSearchService? vectorSearch = null)
     {
@@ -37,9 +37,16 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         _catalog = new RulesConceptCatalog(_content);
         _nameIndex = new RulesNameIndexService(_catalog, _content);
         _referenceService = new RulesReferenceService(_catalog, _nameIndex);
-        _vectorSearch = vectorSearch;
         _indexService = new RulesIndexService(_catalog, _content, vectorSearch);
         _searchService = new RulesSearchService(_catalog, vectorSearch);
+        _planService = new RulesPlanService(
+            _catalog,
+            _searchService,
+            _nameIndex,
+            _flowService,
+            _referenceService,
+            _factService,
+            vectorSearch);
     }
 
 
@@ -91,6 +98,11 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         => _catalog.GetActionConditions(game, actionId);
 
 
+    public Task<PlanExecutionResult> ExecutePlanAsync(
+        string game, JsonElement plan, string question = "")
+        => _planService.ExecutePlanAsync(game, plan, question);
+
+
     public IReadOnlyList<ConceptIndexItem> GetIndexItems(string game)
         => _indexService.GetIndexItems(game);
 
@@ -106,7 +118,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     private void ClearDerivedCaches()
     {
         _nameIndex.Clear();
-        _conceptTypeMaps.Clear();
+        _planService.Clear();
         _flowService.Clear();
         _factService.Clear();
     }

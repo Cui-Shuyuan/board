@@ -1,15 +1,39 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
-using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+/// <summary>
+/// 查询计划协作类：承载 execute_plan 的实体解析、relation 导航与结果构造。
+/// 自身只缓存 relation 类型映射；规则文档变化时由调用方 Clear。
+/// </summary>
+public sealed class RulesPlanService
 {
+    private readonly RulesConceptCatalog _catalog;
+    private readonly RulesSearchService _searchService;
+    private readonly RulesNameIndexService _nameIndex;
+    private readonly RulesFlowService _flowService;
+    private readonly RulesReferenceService _referenceService;
+    private readonly RulesFactService _factService;
+    private readonly VectorSearchService? _vectorSearch;
+
+    public RulesPlanService(
+        RulesConceptCatalog catalog,
+        RulesSearchService searchService,
+        RulesNameIndexService nameIndex,
+        RulesFlowService flowService,
+        RulesReferenceService referenceService,
+        RulesFactService factService,
+        VectorSearchService? vectorSearch)
+    {
+        _catalog = catalog;
+        _searchService = searchService;
+        _nameIndex = nameIndex;
+        _flowService = flowService;
+        _referenceService = referenceService;
+        _factService = factService;
+        _vectorSearch = vectorSearch;
+    }
+
 
     /// <summary>游戏概念 id → type，用于 execute_plan 的 relation 级类型约束。</summary>
     private readonly Dictionary<string, Dictionary<string, string>> _conceptTypeMaps = new();
@@ -28,8 +52,8 @@ public partial class GameRulesService
     {
         if (_conceptTypeMaps.TryGetValue(game, out var cached)) return cached;
         var map = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var type in GetConceptTypes(game))
-            foreach (var summary in ListConcepts(game, type))
+        foreach (var type in _catalog.GetConceptTypes(game))
+            foreach (var summary in _catalog.ListConcepts(game, type))
                 if (!string.IsNullOrEmpty(summary.Id))
                     map[summary.Id] = type;
         _conceptTypeMaps[game] = map;
@@ -43,6 +67,13 @@ public partial class GameRulesService
         if (!PlanRelationExpectedTypes.TryGetValue(relation, out var expected)) return true;
         var map = GetConceptTypeMap(game);
         return map.TryGetValue(conceptId, out var type) && expected.Contains(type);
+    }
+
+
+    /// <summary>清空 relation 类型缓存。</summary>
+    public void Clear()
+    {
+        _conceptTypeMaps.Clear();
     }
 
 
@@ -126,7 +157,7 @@ public partial class GameRulesService
             if (qhits.Count > 0)
                 return BuildOkResult(game, relation, entity, qhits, qsource, question);
 
-            var search = await SearchConceptsAsync(game, entity);
+            var search = await _searchService.SearchConceptsAsync(game, entity);
             return new PlanItemResult
             {
                 Relation = relation,
@@ -140,7 +171,7 @@ public partial class GameRulesService
         // flow/list 不需要实体解析
         if (relation == "flow")
         {
-            var gameConcept = GetConcepts(game, "game");
+            var gameConcept = _catalog.GetConcepts(game, "game");
             return gameConcept.Count > 0
                 ? new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Matched = gameConcept.ToList() }
                 : new PlanItemResult
@@ -153,7 +184,7 @@ public partial class GameRulesService
         }
         if (relation == "list")
         {
-            return new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Catalog = ListAllConceptIds(game) };
+            return new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Catalog = _searchService.ListAllConceptIds(game) };
         }
 
         // 实体解析：精确 id → 精确名/别名/基名（直呼工具）→ 名称包含候选
@@ -177,8 +208,8 @@ public partial class GameRulesService
                 // 仍一律走名称索引。
                 var explainDescriptive = relation == "explain" && entity.Length > 6;
                 var semantic = explainDescriptive
-                    ? await SearchConceptsAsync(game, entity)
-                    : await SearchConceptsAsync(game, entity, searchMode: "name");
+                    ? await _searchService.SearchConceptsAsync(game, entity)
+                    : await _searchService.SearchConceptsAsync(game, entity, searchMode: "name");
                 var semItems = semantic.Results
                     .Where(r => r.Score >= SemanticCandidateThreshold)
                     .OrderByDescending(r => r.Score)
@@ -230,7 +261,7 @@ public partial class GameRulesService
                     || (autoGap >= 0.15f && autoTop.Score >= 0.60f)
                     || (autoTop.Score >= 1.0f && autoGap >= 0.05f))
                 {
-                    var autoMatched = GetConcepts(game, autoTop.Id).ToList();
+                    var autoMatched = _catalog.GetConcepts(game, autoTop.Id).ToList();
                     if (autoMatched.Count > 0)
                         return BuildOkResult(game, relation, entity, autoMatched, "auto_semantic", question);
                 }
@@ -339,7 +370,7 @@ public partial class GameRulesService
         source = "";
         entity = entity.Trim();
 
-        var byId = GetConcepts(game, entity).ToList();
+        var byId = _catalog.GetConcepts(game, entity).ToList();
         if (byId.Count > 0)
         {
             source = "exact_id";
@@ -353,7 +384,7 @@ public partial class GameRulesService
         if (lookup.TryGetValue(entity, out var hits))
         {
             var exact = new List<JsonElement>();
-            foreach (var h in hits) exact.AddRange(GetConcepts(game, h.Id));
+            foreach (var h in hits) exact.AddRange(_catalog.GetConcepts(game, h.Id));
             if (exact.Count > 0)
             {
                 source = hits[0].Kind;
@@ -367,7 +398,7 @@ public partial class GameRulesService
         if (containing.Count == 1)
         {
             source = "contain_unique";
-            return GetConcepts(game, containing[0].Key).ToList();
+            return _catalog.GetConcepts(game, containing[0].Key).ToList();
         }
 
         candidates = containing
@@ -418,7 +449,7 @@ public partial class GameRulesService
             foreach (var h in lookup[key])
             {
                 if (!seen.Add(h.Id)) continue;
-                result.AddRange(GetConcepts(game, h.Id));
+                result.AddRange(_catalog.GetConcepts(game, h.Id));
                 if (result.Count >= MaxQuestionHits)
                 {
                     source = "question_hit";
