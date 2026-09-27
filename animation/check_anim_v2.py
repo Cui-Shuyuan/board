@@ -274,12 +274,15 @@ def _rect_overlap(a, b):
 
 
 def check_stage_layouts(warnings: list, track: dict, compiled: dict, track_path: Path):
-    tree_stage = {t.get("id"): t.get("stage") for t in (compiled.get("trees") or [])}
     stage_defs = {}
-    for tree in track.get("trees") or []:
-        path = _resolve_stage_path(track_path, tree.get("stage"))
-        if path is None:
+    loaded_paths = set()
+    refs = [t.get("stage") for t in (track.get("trees") or [])]
+    refs.extend(c.get("stage") for c in (track.get("cues") or []))
+    for rel in refs:
+        path = _resolve_stage_path(track_path, rel)
+        if path is None or str(path) in loaded_paths:
             continue
+        loaded_paths.add(str(path))
         stage = load(path)
         sid = stage.get("id") or path.stem
         stage_defs[sid] = {
@@ -288,9 +291,10 @@ def check_stage_layouts(warnings: list, track: dict, compiled: dict, track_path:
             and (z.get("role") or "zone") != "offstage"
         }
 
+    tree_stage = {t.get("id"): t.get("stage") for t in (compiled.get("trees") or [])}
     found = {}
     for cue in compiled.get("cues") or []:
-        sid = tree_stage.get(cue.get("tree"))
+        sid = cue.get("stage") or tree_stage.get(cue.get("tree"))
         zone_defs = stage_defs.get(sid)
         if not zone_defs:
             continue
@@ -383,23 +387,34 @@ def main() -> int:
         if want_exit_pic != got_exit_pic:
             errors.append(f"{cid} picture(exit): 期望 {want_exit_pic!r}，编译 {got_exit_pic!r}")
 
-        if cue.get("transition") in ("continue", "overlay"):
-            # State inheritance is cue-tree based, not track-order based.
-            # A cue with an explicit parent may branch away from the previous
-            # cue; its start state must match that parent, not the previous item.
-            expected_id = cue.get("entry") or cue.get("parent")
-            if expected_id == "initial":
-                expected_start = {"components": [], "nextSeq": []}
-            elif expected_id and expected_id in by_id:
-                parent_decl = src_by_id.get(expected_id) or {}
-                state_key = "start_state" if parent_decl.get("negative") else "end_state"
-                expected_start = by_id[expected_id].get(state_key)
-            else:
-                expected_start = None
-            if expected_start is not None and cc.get("start_state") != expected_start:
+        # State inheritance is a graph edge, never track order.
+        if cue.get("entry"):
+            expected_id = cue.get("entry")
+        elif cue.get("parent"):
+            expected_id = cue.get("parent")
+            parent_decl = src_by_id.get(expected_id) or {}
+            if parent_decl.get("tree") != cue.get("tree"):
                 errors.append(
-                    f"{cid}: {cue.get('transition')} 但 start_state != {expected_id} 的 end_state"
+                    f"{cid}: default parent {expected_id!r} crosses tree "
+                    f"{parent_decl.get('tree')!r} -> {cue.get('tree')!r}; use entry"
                 )
+        elif cue.get("transition") in ("cut", "world_cut"):
+            expected_id = "initial"
+        else:
+            expected_id = None
+            errors.append(f"{cid}: no state source (entry or same-tree parent)")
+        if expected_id == "initial":
+            expected_start = {"components": [], "nextSeq": []}
+        elif expected_id and expected_id in by_id:
+            source_decl = src_by_id.get(expected_id) or {}
+            state_key = "start_state" if source_decl.get("negative") else "end_state"
+            expected_start = by_id[expected_id].get(state_key)
+        else:
+            expected_start = None
+        if expected_start is not None and cc.get("start_state") != expected_start:
+            errors.append(
+                f"{cid}: start_state != {expected_id} 的 end_state"
+            )
         if cue.get("transition") in ("cut", "world_cut"):
             first_cam = (cc.get("camera_ops") or [None])[0]
             if not first_cam or abs(float(first_cam.get("at", 0.0))) > 1e-6:

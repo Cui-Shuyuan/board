@@ -2607,7 +2607,6 @@
     },
     {
       "id": "real",
-      "mode": "shared",
       "why": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。"
     },
     {
@@ -2674,14 +2673,6 @@
       "purpose": "介绍起始玩家标记时，场上天然只应该有这一枚标记，不继承主桌状态。",
       "initial": "player_marker 为空。",
       "extent_note": "只框 1 枚标记。"
-    },
-    {
-      "id": "cards_demo",
-      "world": "real",
-      "stage": "_stage/splendor.cards_demo.stage.json",
-      "purpose": "介绍发展卡正面、价格、折扣、买牌与市场补牌时，在主世界状态之上额外需要样卡；换 stage 切出展示位，但共用同一份真实牌桌状态，讲完裁掉展示位即回到主树。",
-      "initial": "进入时继承主世界当前状态；额外把 showcase/showcase_1 清空，样卡由 action.cards.intro.001 创建。",
-      "extent_note": "包含主桌全部 zone，外加 showcase/showcase_1；卡片特写时用这些 zone 取景。"
     }
   ],
   "cues": [
@@ -2722,7 +2713,8 @@
           "picture": "media/box.png",
           "anchor": "bg.intro.001.1.start"
         }
-      ]
+      ],
+      "entry": "initial"
     },
     {
       "id": "bg.intro.001.2",
@@ -6550,7 +6542,7 @@
     },
     {
       "id": "action.cards.cost.001.1",
-      "parent": "action.cards.intro.001",
+      "parent": "action.take.public.001.2",
       "timing": [
         {
           "key": "镜头回到两样本近景",
@@ -6645,9 +6637,10 @@
           "offset": -0.545
         }
       ],
-      "tree": "cards_demo",
+      "tree": "main",
       "entry": "action.take.public.001.2",
-      "transition": "overlay"
+      "transition": "overlay",
+      "stage": "_stage/splendor.cards_closeup.stage.json"
     },
     {
       "id": "action.cards.cost.001.2",
@@ -7328,7 +7321,7 @@
       ],
       "script": {
         "story": "【如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌，那么我购买这张牌时无需支付任何宝石】",
-        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是：一级白再来 1 张（`sample`? 不 —— 这是**真的**买过的牌，用市场模板 `market_card_3_diamond`(三级白) 与 `market_card_1_sapphire`(一级蓝)）、以及 1 张蓝。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。",
+        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是：一级白再来 1 张（`sample`? 不 —— 这是假设买过的牌，用市场模板 `market_card_3_diamond`(三级白) 与 `market_card_1_sapphire`(一级蓝)）、以及 1 张蓝。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。\n  ⚠ 本 cue 是 `demo: true` 的假设分支，不写回 canonical；后续 canonical 通过 `action.cards.limit.001.2` 显式 `entry` 回 `discount.002.2`，不能默认继承这里的假设牌。",
         "exit": {
           "zones": {
             "player_development": {
@@ -7405,7 +7398,8 @@
           "anchor": "action.cards.discount.003.1.b1.start",
           "offset": 3.315
         }
-      ]
+      ],
+      "demo": true
     },
     {
       "id": "action.cards.discount.003.2",
@@ -7511,7 +7505,7 @@
     },
     {
       "id": "action.cards.limit.001.2",
-      "parent": "action.cards.limit.001.1",
+      "parent": "action.cards.discount.002.2",
       "timing": [
         {
           "key": "点发展区",
@@ -7524,7 +7518,7 @@
       ],
       "script": {
         "story": "【但玩家总计可以购买的发展卡牌数量没有上限】",
-        "note": "【总数没有上限】\n  规则说明 + 本组收尾：点发展区，然后把两件**介绍样本**销毁（它们只是讲解道具，不是这一局里的牌 —— 留着会让后面的『发展区里有几张牌』说不清）。\n  销毁后发展区仍是 3 张真牌：一级白（market.001.2 买的）+ 三级白 + 一级蓝（折扣例子补的）。",
+        "note": "【总数没有上限】\n  规则说明 + 本组收尾：点发展区，然后把两件**介绍样本**销毁（它们只是讲解道具，不是这一局里的牌）。\n  回到真实 canonical 分支后，发展区只有 market.001.2 买入的一级白。\n  折扣例子里的三级白和一级蓝属于 demo 假设分支，不进入真实账；本 cue 收尾销毁两张介绍样本。",
         "exit": {
           "zones": {
             "showcase": {
@@ -7537,6 +7531,12 @@
         }
       },
       "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "anchor": "action.cards.limit.001.2.start"
+        },
         {
           "op": "highlight",
           "dur": 0.5,
@@ -7559,7 +7559,9 @@
           "anchor": "action.cards.limit.001.2.b1.end",
           "offset": -1.475
         }
-      ]
+      ],
+      "entry": "action.cards.discount.002.2",
+      "demo": false
     },
     {
       "id": "action.nobles.intro.001",
@@ -7638,16 +7640,6 @@
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
                   "count": 1
-                },
-                {
-                  "template": "market_card_3_diamond",
-                  "palette": "card_level_3",
-                  "count": 1
-                },
-                {
-                  "template": "market_card_1_sapphire",
-                  "palette": "card_level_1",
-                  "count": 1
                 }
               ]
             },
@@ -7718,16 +7710,6 @@
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
                   "count": 1
-                },
-                {
-                  "template": "market_card_3_diamond",
-                  "palette": "card_level_3",
-                  "count": 1
-                },
-                {
-                  "template": "market_card_1_sapphire",
-                  "palette": "card_level_1",
-                  "count": 1
                 }
               ]
             },
@@ -7784,7 +7766,9 @@
           "anchor": "action.nobles.intro.001.b1.end",
           "offset": -0.515
         }
-      ]
+      ],
+      "entry": "action.cards.limit.001.2",
+      "stage": "_stage/splendor.table.stage.json"
     },
     {
       "id": "action.nobles.value.001.1",
@@ -7918,16 +7902,6 @@
                   "template": "market_card_1_diamond",
                   "palette": "card_level_1",
                   "count": 3
-                },
-                {
-                  "template": "market_card_3_diamond",
-                  "palette": "card_level_3",
-                  "count": 1
-                },
-                {
-                  "template": "market_card_1_sapphire",
-                  "palette": "card_level_1",
-                  "count": 1
                 },
                 {
                   "template": "market_card_1_ruby",
@@ -9021,16 +8995,6 @@
                   "count": 3
                 },
                 {
-                  "template": "market_card_3_diamond",
-                  "palette": "card_level_3",
-                  "count": 1
-                },
-                {
-                  "template": "market_card_1_sapphire",
-                  "palette": "card_level_1",
-                  "count": 1
-                },
-                {
                   "template": "market_card_1_ruby",
                   "palette": "card_level_1",
                   "count": 4
@@ -9046,6 +9010,9 @@
               "count": 2
             }
           }
+        },
+        "enter": {
+          "zones": {}
         }
       },
       "events": [
@@ -9201,16 +9168,6 @@
                   "count": 3
                 },
                 {
-                  "template": "market_card_3_diamond",
-                  "palette": "card_level_3",
-                  "count": 1
-                },
-                {
-                  "template": "market_card_1_sapphire",
-                  "palette": "card_level_1",
-                  "count": 1
-                },
-                {
                   "template": "market_card_1_ruby",
                   "palette": "card_level_1",
                   "count": 4
@@ -9228,6 +9185,9 @@
               ]
             }
           }
+        },
+        "enter": {
+          "zones": {}
         }
       },
       "events": [

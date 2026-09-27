@@ -374,8 +374,9 @@ class Compiler:
         self.rep = schema.validate_track(self.doc)
         self.stages = {}       # stage id -> source stage
         self.compiled_stages = {}
+        self.stage_path_to_id = {}
+        self.tree_stage_ids = {}
         self.trees = {}
-        self.world_modes = {w.get("id"): w.get("mode", "isolated") for w in (self.doc.get("worlds") or [])}
         self.stack_zones = set()
         self.zone_order_policies = {}
         self.zone_bindings = {}   # physical zone id -> logical mapping
@@ -488,7 +489,7 @@ class Compiler:
     def resolve_stage_path(self, rel: str) -> Path:
         rel = norm(rel)
         if not rel:
-            raise ValueError("tree.stage is empty")
+            raise ValueError("stage path is empty")
         candidates = [
             self.track_dir / rel,
             self.track_dir / (rel + ".json"),
@@ -500,54 +501,113 @@ class Compiler:
                 return p.resolve()
         raise FileNotFoundError(f"stage not found: {rel}")
 
+    def _validate_stage_shot_zones(self, sid: str) -> None:
+        stage = self.stages[sid]
+        zones = {
+            z.get("id") for z in (stage.get("zones") or [])
+            if isinstance(z, dict) and z.get("id")
+        }
+        special = {"*", "all", "all_zones", "board"}
+        for shot in stage.get("shots") or []:
+            if not isinstance(shot, dict):
+                continue
+            for zone in shot.get("zones") or []:
+                zone = norm(zone)
+                if not zone or zone in special:
+                    continue
+                if zone not in zones:
+                    raise ValueError(
+                        f"stage {sid}: shot {shot.get('id')!r} references missing zone {zone!r}"
+                    )
+
+    def _register_stage_zones(self, sid: str, qa_ignore_by_zone: dict) -> None:
+        stage = self.stages[sid]
+        for z in stage.get("zones") or []:
+            if not isinstance(z, dict):
+                continue
+            disp = z.get("display") or {}
+            mode = disp.get("mode")
+            zid = z.get("id")
+            if not zid:
+                continue
+            qa_ignore = z.get("qa_ignore") is True
+            previous_qa_ignore = qa_ignore_by_zone.get(zid)
+            if previous_qa_ignore is not None and previous_qa_ignore != qa_ignore:
+                raise ValueError(
+                    f"zone qa_ignore conflict for {zid!r} in stage {sid!r}: "
+                    f"{previous_qa_ignore!r} vs {qa_ignore!r}"
+                )
+            qa_ignore_by_zone[zid] = qa_ignore
+            binding = geom.zone_binding(z)
+            if binding is not None:
+                previous = self.zone_bindings.get(zid)
+                if previous is not None and previous != binding:
+                    raise ValueError(
+                        f"zone binding conflict for {zid!r} in stage {sid!r}: "
+                        f"{previous!r} vs {binding!r}"
+                    )
+                self.zone_bindings[zid] = binding
+            if mode == "stack":
+                self.stack_zones.add(zid)
+            elif mode == "color_stack":
+                self.zone_order_policies[zid] = {
+                    "colors": list(disp.get("colors") or []),
+                    "per_color_capacity": int(disp.get("per_color_capacity", 4) or 4),
+                }
+
+    def _load_stage(self, rel: str, qa_ignore_by_zone: dict | None = None) -> str:
+        rel = norm(rel)
+        if not rel:
+            raise ValueError("stage path is empty")
+        path = self.resolve_stage_path(rel)
+        key = str(path)
+        cached = self.stage_path_to_id.get(key)
+        if cached is not None:
+            return cached
+        stage = json.loads(path.read_text(encoding="utf-8"))
+        sr = schema.validate_stage(stage)
+        if not sr.ok():
+            raise ValueError(f"stage schema errors in {path}:\n" + "\n".join(sr.errors))
+        for warning in sr.warnings:
+            self.rep.warn(f"{path}: {warning}")
+        sid = stage.get("id") or path.stem
+        if sid in self.stages and self.stages[sid] is not stage:
+            raise ValueError(f"stage id {sid!r} is declared by more than one file")
+        self.stages[sid] = stage
+        self.compiled_stages[sid] = geom.build_compiled_stage(stage)
+        self.stage_path_to_id[key] = sid
+        if qa_ignore_by_zone is not None:
+            self._register_stage_zones(sid, qa_ignore_by_zone)
+        self._validate_stage_shot_zones(sid)
+        return sid
+
+    def stage_id_for_cue(self, cue: dict, by_id: dict, cache: dict) -> str:
+        cid = cue.get("id")
+        if cid in cache:
+            return cache[cid]
+        rel = norm(cue.get("stage"))
+        if rel:
+            sid = self._load_stage(rel)
+        else:
+            parent_id = cue.get("parent")
+            parent = by_id.get(parent_id)
+            if (parent is not None and parent.get("id") in by_id
+                    and parent.get("tree") == cue.get("tree")):
+                sid = self.stage_id_for_cue(parent, by_id, cache)
+            else:
+                sid = self.tree_stage_ids.get(str(cue.get("tree")))
+        if not sid or sid not in self.stages:
+            raise ValueError(f"cue {cid}: no resolved stage for tree {cue.get('tree')!r}")
+        cache[cid] = sid
+        return sid
+
     def load(self):
         if not self.rep.ok():
             raise ValueError("schema errors:\n" + "\n".join(self.rep.errors))
-        qa_ignore_by_zone = {}
+        qa_ignore_by_zone: dict = {}
         for tree in self.doc.get("trees") or []:
-            rel = tree.get("stage")
-            path = self.resolve_stage_path(rel)
-            stage = json.loads(path.read_text(encoding="utf-8"))
-            sr = schema.validate_stage(stage)
-            if not sr.ok():
-                raise ValueError(f"stage schema errors in {path}:\n" + "\n".join(sr.errors))
-            for warning in sr.warnings:
-                self.rep.warn(f"{path}: {warning}")
-            sid = stage.get("id") or path.stem
-            self.stages[sid] = stage
-            self.compiled_stages[sid] = geom.build_compiled_stage(stage)
-            for z in stage.get("zones") or []:
-                if not isinstance(z, dict):
-                    continue
-                disp = z.get("display") or {}
-                mode = disp.get("mode")
-                zid = z.get("id")
-                if not zid:
-                    continue
-                qa_ignore = z.get("qa_ignore") is True
-                previous_qa_ignore = qa_ignore_by_zone.get(zid)
-                if previous_qa_ignore is not None and previous_qa_ignore != qa_ignore:
-                    raise ValueError(
-                        f"zone qa_ignore conflict for {zid!r} in stage {sid!r}: "
-                        f"{previous_qa_ignore!r} vs {qa_ignore!r}"
-                    )
-                qa_ignore_by_zone[zid] = qa_ignore
-                binding = geom.zone_binding(z)
-                if binding is not None:
-                    previous = self.zone_bindings.get(zid)
-                    if previous is not None and previous != binding:
-                        raise ValueError(
-                            f"zone binding conflict for {zid!r} in stage {sid!r}: "
-                            f"{previous!r} vs {binding!r}"
-                        )
-                    self.zone_bindings[zid] = binding
-                if mode == "stack":
-                    self.stack_zones.add(zid)
-                elif mode == "color_stack":
-                    self.zone_order_policies[zid] = {
-                        "colors": list(disp.get("colors") or []),
-                        "per_color_capacity": int(disp.get("per_color_capacity", 4) or 4),
-                    }
+            sid = self._load_stage(tree.get("stage"), qa_ignore_by_zone)
+            self.tree_stage_ids[tree["id"]] = sid
             self.trees[tree["id"]] = {
                 "id": tree["id"],
                 "world": tree.get("world") or tree["id"],
@@ -556,6 +616,10 @@ class Compiler:
                 "initial": tree.get("initial", ""),
                 "extent_note": tree.get("extent_note", ""),
             }
+        # Cue-level stage overrides may reference additional stage resources.
+        for cue in self.doc.get("cues") or []:
+            if isinstance(cue, dict) and norm(cue.get("stage")):
+                self._load_stage(cue.get("stage"), qa_ignore_by_zone)
         self._warn_display_zone_state_ops()
 
     def _warn_display_zone_state_ops(self):
@@ -635,19 +699,62 @@ class Compiler:
             return self.shot_frame(stage_id, shots[0]["id"])
         return geom.build_camera_frame(stage, {})
 
-    def entry_ref(self, cue: dict, tree: dict, by_id: dict) -> tuple:
-        """Return ("initial", None) or ("cue", id) for this cue's entry state."""
+    def state_source_ref(self, cue: dict, tree: dict, by_id: dict) -> tuple:
+        """Resolve the explicit state-inheritance edge for one cue.
+
+        * ``entry`` is authoritative and may cross tree/world.
+        * ``parent`` is only a same-tree default source.
+        * ``cut`` / ``world_cut`` without an explicit ``entry`` reset to the
+          empty initial state.
+        * Track order is never consulted.
+        """
+        cid = cue.get("id")
         entry = cue.get("entry")
         if entry:
-            return ("initial", None) if entry == "initial" else ("cue", entry)
+            if entry == "initial":
+                return ("initial", None)
+            if entry not in by_id:
+                raise ValueError(f"cue {cid}: entry source {entry!r} does not exist")
+            return ("cue", entry)
         transition = cue.get("transition", "continue")
         parent_id = cue.get("parent")
-        if parent_id and parent_id in by_id and transition not in ("cut", "world_cut"):
+        if parent_id:
+            if parent_id not in by_id:
+                raise ValueError(f"cue {cid}: parent {parent_id!r} does not exist")
             parent = by_id[parent_id]
-            parent_tree = self.trees.get(parent.get("tree"))
-            if parent_tree and parent_tree.get("world") == tree.get("world"):
-                return ("cue", parent_id)
-        return ("initial", None)
+            if parent.get("tree") != cue.get("tree"):
+                raise ValueError(
+                    f"cue {cid}: parent {parent_id!r} crosses tree "
+                    f"{parent.get('tree')!r} -> {cue.get('tree')!r}; "
+                    f"use an explicit entry for cross-tree state"
+                )
+            if transition in ("cut", "world_cut"):
+                return ("initial", None)
+            return ("cue", parent_id)
+        if transition in ("cut", "world_cut"):
+            return ("initial", None)
+        raise ValueError(
+            f"cue {cid}: no state source (declare entry or a same-tree parent)"
+        )
+
+    def check_zone_coverage(self, cue: dict, stage_id: str, snapshots: list[tuple[str, dict]]) -> None:
+        """Hard-fail if a resolved stage does not contain a state component zone."""
+        stage = self.stages.get(stage_id)
+        if stage is None:
+            raise ValueError(f"cue {cue.get('id')}: unknown resolved stage {stage_id!r}")
+        zones = {
+            z.get("id") for z in (stage.get("zones") or [])
+            if isinstance(z, dict) and z.get("id")
+        }
+        for label, snap in snapshots:
+            for comp in (snap or {}).get("components") or []:
+                zone = comp.get("ZoneId")
+                if zone not in zones:
+                    raise ValueError(
+                        f"cue {cue.get('id')}: zone coverage failed in {label}: "
+                        f"component {comp.get('Id')!r} uses zone {zone!r}, "
+                        f"but stage {stage_id!r} has no such zone"
+                    )
 
     def compile(self) -> dict:
         self.load()
@@ -655,6 +762,7 @@ class Compiler:
         by_id = {c.get("id"): c for c in cues if c.get("id")}
         results = {}
         visiting = set()
+        stage_cache: dict = {}
 
         def evaluate(cid: str) -> dict:
             if cid in results:
@@ -669,7 +777,8 @@ class Compiler:
                 raise ValueError(f"cue {cid}: unknown tree {cue.get('tree')!r}")
             visiting.add(cid)
             transition = cue.get("transition", "continue")
-            mode, entry_id = self.entry_ref(cue, tree, by_id)
+            stage_id = self.stage_id_for_cue(cue, by_id, stage_cache)
+            mode, entry_id = self.state_source_ref(cue, tree, by_id)
             if mode == "cue":
                 entry_res = evaluate(entry_id)
                 parent_decl = by_id.get(entry_id) or {}
@@ -687,7 +796,7 @@ class Compiler:
             state = StateModel(self.stack_zones, self.zone_order_policies).load_snapshot(entry_state)
             start = state.snapshot()
             clips, state_ops, camera_ops, first_state, pointer_resolution = self.compile_events(
-                cue, state, tree, 0
+                cue, state, tree, 0, stage_id
             )
             if first_state is None:
                 first_state = start
@@ -698,7 +807,11 @@ class Compiler:
                 clips.insert(0, self.clip("picture", 0.0, 0.0, 0.0, "easeOutCubic",
                                           picture=enter_pic, picture_on=True))
             end = state.snapshot()
-            stage_id = tree["stage"]
+            self.check_zone_coverage(cue, stage_id, [
+                ("start_state", start),
+                ("first_state", first_state),
+                ("end_state", end),
+            ])
             if (mode == "cue" and transition not in ("cut", "world_cut")
                     and entry_stage == stage_id):
                 camera_in = copy.deepcopy(entry_camera_out) or self.default_camera_frame(stage_id)
@@ -709,6 +822,8 @@ class Compiler:
                 "id": cue.get("id"),
                 "tree": cue.get("tree"),
                 "transition": transition,
+                "stage": stage_id,
+                "demo": bool(cue.get("demo")),
                 "duration": round(self.duration(cue, clips), 6),
                 "camera_in": camera_in,
                 "camera_ops": camera_ops,
@@ -735,16 +850,18 @@ class Compiler:
             if cid not in results:
                 continue
             result = {k: v for k, v in results[cid].items() if not k.startswith("_")}
-            parent = cue.get("parent")
-            if not parent and idx > 0 and cue.get("transition") != "world_cut":
-                parent = cues[idx - 1].get("id")
-            result["parent"] = parent
+            # `parent` is the declared attribute/same-tree parent only.  It is
+            # never synthesized from track order and therefore never determines
+            # state inheritance.
+            result["parent"] = cue.get("parent")
             # Keep the schema's canonical field order close to the old output.
             ordered = {
                 "id": result.pop("id"),
                 "parent": result.pop("parent"),
                 "tree": result.pop("tree"),
                 "transition": result.pop("transition"),
+                "stage": result.pop("stage"),
+                "demo": result.pop("demo"),
                 "duration": result.pop("duration"),
                 "camera_in": result.pop("camera_in"),
                 "camera_ops": result.pop("camera_ops"),
@@ -815,7 +932,8 @@ class Compiler:
             arr = arr[:limit]
         return arr
 
-    def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> tuple:
+    def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int,
+                       stage_id: str | None = None) -> tuple:
         """Returns (clips, state_ops, camera_ops, first_state, pointer_resolution).
 
         * state_ops are concrete item-id puts/removes: the logical truth the
@@ -831,7 +949,7 @@ class Compiler:
         camera_ops: list = []
         first_state = None
         pointer_resolution: list = []
-        stage_id = tree["stage"]
+        stage_id = stage_id or tree["stage"]
         stage = self.stages[stage_id]
         stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[stage_id]["zones"]}
         cue_id = cue.get("id")

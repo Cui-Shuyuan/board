@@ -59,12 +59,15 @@ metadata:
 
 ## 父子 cue 与 entry 继承
 
-- cue 通过 `parent` 组成树；子 cue 不写属性时继承父 cue。
-- `entry` 指定入口状态来自哪条 cue 的终态；写 `"initial"` 从世界初始状态开始。
-- 轨道顺序只决定播放顺序，不隐式决定状态继承。
+- 每个 tree 独占一个 world / state scope；一个 world 不能被多个 tree 引用。
+- cue 通过 `parent` 组成同 tree 的属性/默认状态链；子 cue 不写的属性继承父 cue。
+- `entry` 是唯一显式状态继承边，可指向任意更早 cue，允许跨 tree/world；语义是复制来源 cue 的 `end_state` 快照，形成 fork 分支。
+- 同 tree 的 `parent` 只在未写 `entry` 且 transition 非 `cut`/`world_cut` 时提供默认状态来源；跨 tree 未写 `entry` 直接编译失败。
+- 轨道顺序只决定播放顺序，不隐式决定状态继承；兄弟 cue 的状态修改互不泄漏。
+- `stage` 是 cue 级可继承资源：`cue.stage -> parent resolved stage -> tree.stage`；切换 stage 不等同于切换/复制状态。
 - `events` 永不继承，只属于当前 cue。
-- 跨 tree / `cut` / `world_cut` 作为重置点处理。
-- 同 world 的不同 stage 可以共享 Store 状态，例如主树与 cards_demo。
+- `cut` / `world_cut` 在没有显式 `entry` 时重置到空初始状态；不再作为跨 tree 共享状态的机制。
+- `demo: true` 分支允许“牌堆清空 / 假设买牌”等假设性增减；canonical 分支必须保持真实实物守恒，demo 假设不写回 canonical。
 
 ## 文件结构（Splendor）
 
@@ -154,7 +157,9 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 ## 关键设计规则
 
 - 组件介绍默认独立 world，场上天然只有该组件。
-- 所有演示可以有独立 tree；跨 tree 作为 cut 重置，同 world 不同 stage 可共享状态。
+- 跨 tree 状态复制必须写显式 `entry`；`parent` 只负责同 tree 默认继承。
+- cue 级 `stage` 由 `cue.stage -> parent resolved stage -> tree.stage` 解析；换 stage 不是状态重置，也不是共享状态的手段。
+- demo 分支通过 `demo: true` 显式标出，audit 会在 `state_graph` 中区分 `is_demo` 并对 canonical/demo 采用不同守恒口径。
 - 换树/起树第一条 cue 必须在 `at=0` 显式声明 camera（校验器 error）。
 - 素材路径必须直接写处理过的 `_cutout.png`；多色模板用 `face_image_by_palette` 显式映射。
 - `demo: true` 的 cue 只用于临时数量演示，紧跟的真实 setup cue 必须恢复实际数量。

@@ -451,7 +451,10 @@ namespace BoardGameTutorial.Animation
 
         public CompiledStageDef StageForCue(CompiledCueDef cue)
         {
-            if (cue == null || !trees.TryGetValue(cue.tree ?? "", out var tree)) return null;
+            if (cue == null) return null;
+            if (!string.IsNullOrEmpty(cue.stage))
+                return stages.TryGetValue(cue.stage, out var cueStage) ? cueStage : null;
+            if (!trees.TryGetValue(cue.tree ?? "", out var tree)) return null;
             return stages.TryGetValue(tree.stage ?? "", out var stage) ? stage : null;
         }
 

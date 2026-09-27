@@ -33,6 +33,9 @@ from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parent.parent
 
+sys.path.insert(0, str(ROOT / "animation"))
+import anim_schema_v2 as schema  # noqa: E402
+
 GEM_COLORS = ("diamond", "onyx", "emerald", "ruby", "sapphire")
 INVENTORY_ORDER = (
     "L1",
@@ -58,7 +61,7 @@ INVENTORY_LABELS = {
     "sapphire": "宝石 sapphire",
     "gold": "黄金",
 }
-CHECK_ORDER = {"conservation": 0, "refill": 1, "pointer": 2}
+CHECK_ORDER = {"boundary": 0, "demo": 1, "conservation": 2, "refill": 3, "pointer": 4}
 LEVEL_CN = {1: "一", 2: "二", 3: "三"}
 
 
@@ -251,30 +254,180 @@ def resolve_worlds(compiled_doc: dict) -> list[str | None]:
 # check 1: physical conservation
 
 
+def build_state_graph(track_doc: dict, compiled_doc: dict) -> tuple[dict, dict, dict, dict]:
+    """Resolve each cue's single state source and branch identity.
+
+    Returns ``(resolved_track, graph, compiled_by_id, source_by_id)``.
+    ``entry`` wins over ``parent`` and may cross tree/world.  ``parent`` is only
+    a same-tree default source.  ``cut`` / ``world_cut`` without explicit entry
+    reset to the empty initial snapshot.  Track order is never used.
+    """
+    track = schema.resolve_track(track_doc)
+    source_cues = [
+        c for c in (track.get("cues") or [])
+        if isinstance(c, dict) and c.get("id")
+    ]
+    source_by_id = {str(c["id"]): c for c in source_cues}
+    compiled_by_id = {
+        str(c.get("id")): c
+        for c in (compiled_doc.get("cues") or [])
+        if isinstance(c, dict) and c.get("id")
+    }
+
+    graph: dict[str, dict] = {}
+    branch_ids: dict[str, str] = {}
+    default_tree = str(track.get("default_tree") or "main")
+
+    for idx, cue in enumerate(source_cues):
+        cid = str(cue.get("id"))
+        entry = cue.get("entry")
+        parent = cue.get("parent")
+        transition = cue.get("transition", "continue")
+        if entry:
+            if str(entry) == "initial":
+                source_kind = "initial"
+                source_id = None
+                source_label = "entry:initial"
+            else:
+                source_kind = "cue"
+                source_id = str(entry)
+                source_label = f"entry:{entry}"
+        elif parent and str(parent) in source_by_id:
+            source_kind = "cue"
+            source_id = str(parent)
+            source_label = f"parent:{parent}"
+        elif transition in ("cut", "world_cut"):
+            source_kind = "initial"
+            source_id = None
+            source_label = "cut:initial"
+        elif idx == 0:
+            # Legacy/synthetic single-cue documents are treated as an explicit
+            # initial root.  Real tracks must declare entry/parent.
+            source_kind = "initial"
+            source_id = None
+            source_label = "legacy:initial"
+        else:
+            source_kind = "none"
+            source_id = None
+            source_label = "none"
+
+        is_demo = bool(cue.get("demo"))
+        source_cue = source_by_id.get(source_id or "")
+        source_is_demo = bool((source_cue or {}).get("demo")) if source_kind == "cue" else False
+        if (source_kind == "cue"
+                and str(parent) == source_id
+                and source_id in branch_ids
+                and is_demo == source_is_demo):
+            branch_id = branch_ids[source_id]
+        else:
+            branch_id = cid
+        branch_ids[cid] = branch_id
+
+        compiled = compiled_by_id.get(cid) or {}
+        tree_id = str(compiled.get("tree") or cue.get("tree") or "")
+        graph[cid] = {
+            "cue_id": cid,
+            "tree": tree_id,
+            "canonical": tree_id == default_tree,
+            "stage": compiled.get("stage") or cue.get("stage"),
+            "parent": parent,
+            "entry": entry,
+            "state_source": source_label,
+            "source_kind": source_kind,
+            "source_id": source_id,
+            "source_negative": bool((source_cue or {}).get("negative")),
+            "is_demo": is_demo,
+            "branch_id": branch_id,
+        }
+
+    return track, graph, compiled_by_id, source_by_id
+
+
+def check_boundary(
+    selected_cues: list[dict],
+    selected_start_indices: list[int],
+    graph: dict[str, dict],
+    compiled_by_id: dict[str, dict],
+    source_by_id: dict[str, dict],
+    errors: list[dict],
+    stats: dict,
+) -> None:
+    """Check every explicit inherited edge copies the source snapshot exactly."""
+    for offset, cue in enumerate(selected_cues):
+        index = selected_start_indices[offset]
+        cid = str(cue.get("id") or "?")
+        info = graph.get(cid) or {}
+        if info.get("source_kind") != "cue":
+            continue
+        source_id = str(info.get("source_id"))
+        source_compiled = compiled_by_id.get(source_id)
+        if source_compiled is None:
+            errors.append(_finding(
+                "ERR", "boundary", index, cid,
+                f"状态来源 {source_id!r} 没有编译快照，无法核对 entry 边界",
+            ))
+            continue
+        source_decl = source_by_id.get(source_id) or {}
+        source_key = "start_state" if source_decl.get("negative") else "end_state"
+        expected = source_compiled.get(source_key)
+        if expected is not None and cue.get("start_state") != expected:
+            errors.append(_finding(
+                "ERR", "boundary", index, cid,
+                f"start_state != {info.get('state_source')} 的 {source_key}",
+            ))
+        src_info = graph.get(source_id) or {}
+        if not info.get("is_demo") and src_info.get("is_demo"):
+            errors.append(_finding(
+                "ERR", "demo", index, cid,
+                f"canonical cue 不能把 demo cue {source_id!r} 当作状态来源；"
+                f"请显式 entry 回 canonical 分支",
+            ))
+        stats["boundary_edges"] += 1
+
+
 def check_conservation(
     selected_cues: list[dict],
-    selected_worlds: list[str | None],
     selected_start_indices: list[int],
+    graph: dict[str, dict],
     expected: dict[str, int],
     errors: list[dict],
     stats: dict,
 ) -> None:
-    previous_counts: dict[str, int] | None = None
-    previous_world: str | None | object = object()
+    """Replay physical totals along canonical state-graph edges.
 
+    Each canonical cue is compared against its own start snapshot.  Because the
+    boundary check has already asserted ``start_state == source.end_state`` this
+    is the graph equivalent of the old previous-end comparison, but branches
+    cannot borrow each other's deltas.  Demo branches are skipped here; their
+    entry boundaries are still checked.
+    """
     for offset, cue in enumerate(selected_cues):
         index = selected_start_indices[offset]
         cue_id = cue.get("id") or "?"
-        world = selected_worlds[offset]
+        info = graph.get(cue_id) or {}
         start_state = (cue.get("start_state") or {}).get("components") or []
         end_state = (cue.get("end_state") or {}).get("components") or []
         start_counts = count_inventory(start_state)
         end_counts = count_inventory(end_state)
 
-        if previous_counts is None:
-            # First selected checkpoint: use start_state as the baseline, as
-            # required by --from-cue.  Still make the baseline itself loud if it
-            # already violates physical totals.
+        if not info.get("canonical"):
+            stats["noncanonical_cues_skipped"] += 1
+            continue
+
+        if info.get("is_demo"):
+            stats["demo_cues_skipped"] += 1
+            continue
+
+        if info.get("source_kind") == "cue":
+            # Boundary equality makes this equivalent to comparing against the
+            # source cue's end_state, without relying on track order.
+            if end_counts != start_counts:
+                changed = format_inventory_delta(start_counts, end_counts, expected)
+                errors.append(_finding(
+                    "ERR", "conservation", index, cue_id,
+                    f"实物守恒变化: {changed}",
+                ))
+        else:
             baseline_bad = format_inventory_counts(start_counts, expected)
             if baseline_bad != "无差异":
                 errors.append(_finding(
@@ -287,26 +440,6 @@ def check_conservation(
                     "ERR", "conservation", index, cue_id,
                     f"实物守恒变化: {changed}",
                 ))
-            previous_counts = end_counts
-            previous_world = world
-            stats["conservation_checkpoints"] += 1
-            continue
-
-        # Re-establish the baseline across a world cut / tree-world switch and
-        # skip the cross-world comparison itself.
-        if world != previous_world or cue.get("transition") == "world_cut":
-            previous_counts = end_counts
-            previous_world = world
-            continue
-
-        if end_counts != previous_counts:
-            changed = format_inventory_delta(previous_counts, end_counts, expected)
-            errors.append(_finding(
-                "ERR", "conservation", index, cue_id,
-                f"实物守恒变化: {changed}",
-            ))
-        previous_counts = end_counts
-        previous_world = world
         stats["conservation_checkpoints"] += 1
 
 
@@ -358,19 +491,44 @@ def card_market_counts(components: Iterable[dict] | None) -> dict[int, int]:
     return dict(counts)
 
 
+def _empty_refill_pending() -> dict[int, list[tuple[int, str]]]:
+    return {1: [], 2: [], 3: []}
+
+
+def _copy_refill_pending(pending: dict[int, list[tuple[int, str]]]) -> dict[int, list[tuple[int, str]]]:
+    return {level: list(entries) for level, entries in pending.items()}
+
+
 def check_refill(
     selected_cues: list[dict],
     selected_start_indices: list[int],
     final_market_components: Iterable[dict] | None,
+    graph: dict[str, dict],
+    source_by_id: dict[str, dict],
+    index_by_id: dict[str, int],
     errors: list[dict],
     warnings: list[dict],
     stats: dict,
 ) -> None:
-    pending: dict[int, list[tuple[int, str]]] = {1: [], 2: [], 3: []}
+    """Refill audit along the state graph, branch-locally."""
+    memo: dict[str, dict[int, list[tuple[int, str]]]] = {}
+    visiting: set[str] = set()
 
-    for offset, cue in enumerate(selected_cues):
-        index = selected_start_indices[offset]
-        cue_id = cue.get("id") or "?"
+    def pending_for(cid: str) -> dict[int, list[tuple[int, str]]]:
+        cid = str(cid)
+        if cid in memo:
+            return _copy_refill_pending(memo[cid])
+        if cid in visiting:
+            return _empty_refill_pending()
+        visiting.add(cid)
+        info = graph.get(cid) or {}
+        if info.get("source_kind") == "cue" and info.get("source_id"):
+            pending = pending_for(str(info["source_id"]))
+        else:
+            pending = _empty_refill_pending()
+
+        cue = source_by_id.get(cid) or {}
+        index = index_by_id.get(cid, -1)
         for event in cue.get("events") or []:
             if not isinstance(event, dict) or event.get("op") != "transfer":
                 continue
@@ -379,38 +537,58 @@ def check_refill(
             quantity = max(1, int(event.get("quantity") or 1))
 
             # Move out of the market into a player area -> expect a future
-            # deck_level_N -> card_market refill.
+            # same-branch deck_level_N -> card_market refill.
             if source == "card_market" and isinstance(destination, str) and destination.startswith("player_"):
                 level = infer_event_development_level(event)
                 if level in (1, 2, 3):
                     for _ in range(quantity):
-                        pending[level].append((index, str(cue_id)))
+                        pending[level].append((index, cid))
                 else:
                     warnings.append(_finding(
-                        "WARN", "refill", index, cue_id,
+                        "WARN", "refill", index, cid,
                         f"无法解析 card_market -> {destination} 的发展卡等级，未纳入补牌审计",
                     ))
 
-            # Refill event.  If there is no pending entry it may be the initial
-            # setup deal (deck -> market) or an over-refill; only pending
-            # removals are audited here.
+            # Refill event.  Only pending removals on this same branch can be
+            # satisfied; sibling branches keep their own copies of the state.
             if isinstance(destination, str) and destination == "card_market":
                 level = infer_source_deck_level(event)
                 if level in (1, 2, 3) and pending[level]:
                     for _ in range(min(quantity, len(pending[level]))):
                         pending[level].pop(0)
 
+        visiting.discard(cid)
+        memo[cid] = _copy_refill_pending(pending)
+        return _copy_refill_pending(pending)
+
+    selected_ids = [str(cue.get("id")) for cue in selected_cues if cue.get("id")]
+    selected_set = set(selected_ids)
+    child_ids: set[str] = set()
+    for cid in selected_ids:
+        info = graph.get(cid) or {}
+        source_id = info.get("source_id")
+        if (not info.get("is_demo")
+                and info.get("source_kind") == "cue"
+                and source_id in selected_set):
+            child_ids.add(str(source_id))
+    leaf_ids = [
+        cid for cid in selected_ids
+        if cid not in child_ids and not (graph.get(cid) or {}).get("is_demo")
+    ]
+
     final_market = card_market_counts(final_market_components)
     stats["refill_final_market"] = {str(level): final_market.get(level, 0) for level in (1, 2, 3)}
-    for level in (1, 2, 3):
-        for index, cue_id in pending[level]:
-            stats["refill_missing"] += 1
-            errors.append(_finding(
-                "ERR", "refill", index, cue_id,
-                f"缺{LEVEL_CN[level]}级补牌：从 card_market 移出后没有在后续事件用 "
-                f"deck_level_{level} -> card_market 补回；最终 card_market L{level} 数量="
-                f"{final_market.get(level, 0)}",
-            ))
+    for leaf_id in leaf_ids:
+        pending = pending_for(leaf_id)
+        for level in (1, 2, 3):
+            for index, cue_id in pending[level]:
+                stats["refill_missing"] += 1
+                errors.append(_finding(
+                    "ERR", "refill", index, cue_id,
+                    f"缺{LEVEL_CN[level]}级补牌：从 card_market 移出后没有在后续事件用 "
+                    f"deck_level_{level} -> card_market 补回；最终 card_market L{level} 数量="
+                    f"{final_market.get(level, 0)}",
+                ))
 
 
 # ---------------------------------------------------------------------------
@@ -525,15 +703,8 @@ def audit_documents(
 
     selected_cues = cues[start_index:]
     selected_start_indices = list(range(start_index, len(cues)))
-    worlds = resolve_worlds(compiled_doc)
-    selected_worlds = worlds[start_index:]
-
-    source_by_id = {
-        str(cue.get("id")): cue
-        for cue in (track_doc.get("cues") or [])
-        if isinstance(cue, dict) and cue.get("id")
-    }
-    selected_source_cues = [source_by_id.get(str(cue.get("id"))) or {} for cue in selected_cues]
+    index_by_id = {str(cue.get("id")): idx for idx, cue in enumerate(cues) if cue.get("id")}
+    _, graph, compiled_by_id, source_by_id = build_state_graph(track_doc, compiled_doc)
 
     errors: list[dict] = []
     warnings: list[dict] = []
@@ -543,6 +714,9 @@ def audit_documents(
         "from_cue": from_cue,
         "start_index": start_index,
         "cues_checked": len(selected_cues),
+        "boundary_edges": 0,
+        "demo_cues_skipped": 0,
+        "noncanonical_cues_skipped": 0,
         "conservation_checkpoints": 0,
         "refill_missing": 0,
         "refill_final_market": {},
@@ -552,10 +726,19 @@ def audit_documents(
     }
 
     # Keep check order stable in the JSON output; human output is sorted by cue.
+    check_boundary(
+        selected_cues,
+        selected_start_indices,
+        graph,
+        compiled_by_id,
+        source_by_id,
+        errors,
+        stats,
+    )
     check_conservation(
         selected_cues,
-        selected_worlds,
         selected_start_indices,
+        graph,
         expected_inventory(nobles),
         errors,
         stats,
@@ -564,19 +747,39 @@ def audit_documents(
         selected_cues[-1].get("end_state") or {}
     ).get("components") or []
     check_refill(
-        selected_source_cues,
+        selected_cues,
         selected_start_indices,
         final_market_components,
+        graph,
+        source_by_id,
+        index_by_id,
         errors,
         warnings,
         stats,
     )
     check_pointer(selected_cues, selected_start_indices, source_by_id, errors, warnings, stats)
 
+    state_graph = []
+    for cue in selected_cues:
+        cid = str(cue.get("id"))
+        info = graph.get(cid) or {}
+        state_graph.append({
+            "cue_id": cid,
+            "tree": info.get("tree"),
+            "stage": info.get("stage") or cue.get("stage"),
+            "parent": info.get("parent"),
+            "entry": info.get("entry"),
+            "state_source": info.get("state_source"),
+            "source_id": info.get("source_id"),
+            "is_demo": bool(info.get("is_demo")),
+            "branch_id": info.get("branch_id"),
+        })
+
     return {
         "game": game,
         "track": track,
         "from_cue": from_cue,
+        "state_graph": state_graph,
         "errors": _sort_findings(errors),
         "warnings": _sort_findings(warnings),
         "stats": stats,

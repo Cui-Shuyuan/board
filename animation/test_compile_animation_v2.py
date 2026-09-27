@@ -20,6 +20,7 @@ SCHEMA_STAGE = SCHEMA_DIR / "_schema_example.stage.json"
 sys.path.insert(0, str(HERE))
 
 import compile_animation_v2 as compile_anim  # noqa: E402
+import anim_schema_v2 as schema  # noqa: E402
 
 
 def write_schema_track(tmp: Path, point_event: dict) -> tuple[Path, int]:
@@ -115,6 +116,280 @@ class CompileAnimationV2Tests(unittest.TestCase):
             and "offset=" in warning
             for warning in compiler.rep.warnings
         ), compiler.rep.warnings)
+
+
+def _stage_doc(stage_id: str, zone_ids: list[str]) -> dict:
+    zones = []
+    for idx, zid in enumerate(zone_ids):
+        zones.append({
+            "id": zid,
+            "label": zid,
+            "role": "zone",
+            "center": {"x": float(idx) * 0.5, "z": 0.0},
+            "size": {"w": 0.2, "h": 0.2},
+            "layout": {"type": "row", "capacity": 4, "x_step": 0.25, "z_step": 0.0},
+        })
+    return {
+        "schema": "tutorial-stage/v2",
+        "kind": "stage",
+        "game": "splendor",
+        "id": stage_id,
+        "extent": {"min_x": -1.0, "max_x": 1.0, "min_z": -1.0, "max_z": 1.0},
+        "zones": zones,
+        "templates": [],
+        "shots": [{"id": "shot", "zones": [zone_ids[0]] if zone_ids else [], "fill": 0.8}],
+    }
+
+
+def _contract(zones: dict | None = None) -> dict:
+    return {"picture": None, "zones": zones or {}}
+
+
+def _cue_doc(cid: str, tree: str, *, entry=None, parent=None, events=None,
+             stage=None, transition="continue", demo=None) -> dict:
+    cue = {
+        "id": cid,
+        "tree": tree,
+        "script": {"story": cid, "enter": _contract(), "exit": _contract()},
+        "events": events or [],
+    }
+    if entry is not None:
+        cue["entry"] = entry
+    if parent is not None:
+        cue["parent"] = parent
+    if stage is not None:
+        cue["stage"] = stage
+    if transition != "continue":
+        cue["transition"] = transition
+    if demo is not None:
+        cue["demo"] = demo
+    return cue
+
+
+def _write_test_track(tmp: Path, track: dict, stages: dict[str, dict]) -> Path:
+    for filename, stage in stages.items():
+        (tmp / filename).write_text(json.dumps(stage, ensure_ascii=False), encoding="utf-8")
+    path = tmp / "track.anim.json"
+    path.write_text(json.dumps(track, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+class StateGraphCompileTests(unittest.TestCase):
+    def test_sibling_branches_share_common_entry_without_crossing(self):
+        stage = _stage_doc("s1", ["deck", "market"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc("common", "main", entry="initial", transition="world_cut",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "deck", "count": 2}]),
+                _cue_doc("refill.001", "main", entry="common", parent="common",
+                         events=[{"op": "transfer", "at": 0.0, "source": "deck",
+                                  "destination": "market", "quantity": 1}]),
+                _cue_doc("no_refill.001", "main", entry="common", parent="common",
+                         events=[{"op": "destroy", "at": 0.0, "zone": "deck", "count": 2}]),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        common = _compiled_cue(compiled, "common")
+        refill = _compiled_cue(compiled, "refill.001")
+        no_refill = _compiled_cue(compiled, "no_refill.001")
+        self.assertEqual(common["end_state"], refill["start_state"])
+        self.assertEqual(common["end_state"], no_refill["start_state"])
+        self.assertNotEqual(refill["end_state"], no_refill["end_state"])
+        self.assertEqual(2, len(refill["end_state"]["components"]))
+        self.assertEqual(0, len(no_refill["end_state"]["components"]))
+
+    def test_cross_tree_entry_copies_snapshot_and_does_not_leak(self):
+        stage_a = _stage_doc("sa", ["a"])
+        stage_b = _stage_doc("sb", ["a", "b"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "A",
+            "time_anchors": [],
+            "worlds": [{"id": "wa", "why": "a"}, {"id": "wb", "why": "b"}],
+            "trees": [
+                {"id": "A", "world": "wa", "stage": "sa.stage.json",
+                 "purpose": "p", "initial": "i", "extent_note": "e"},
+                {"id": "B", "world": "wb", "stage": "sb.stage.json",
+                 "purpose": "p", "initial": "i", "extent_note": "e"},
+            ],
+            "cues": [
+                _cue_doc("A1", "A", entry="initial", transition="world_cut",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "a", "count": 1}]),
+                _cue_doc("A2", "A", parent="A1"),
+                _cue_doc("B1", "B", entry="A1", parent="A1",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "b", "count": 1}]),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {
+                "sa.stage.json": stage_a,
+                "sb.stage.json": stage_b,
+            })
+            compiled = compile_anim.Compiler(path).compile()
+        a1 = _compiled_cue(compiled, "A1")
+        a2 = _compiled_cue(compiled, "A2")
+        b1 = _compiled_cue(compiled, "B1")
+        self.assertEqual(a1["end_state"], b1["start_state"])
+        self.assertEqual(a1["end_state"], a2["start_state"])
+        self.assertEqual(2, len(b1["end_state"]["components"]))
+        self.assertEqual(1, len(a2["end_state"]["components"]))
+        self.assertNotEqual(b1["end_state"], a1["end_state"])
+
+    def test_cross_tree_default_parent_is_schema_error(self):
+        stage = _stage_doc("s1", ["a"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "A",
+            "time_anchors": [],
+            "worlds": [{"id": "wa", "why": "a"}, {"id": "wb", "why": "b"}],
+            "trees": [
+                {"id": "A", "world": "wa", "stage": "s1.stage.json",
+                 "purpose": "p", "initial": "i", "extent_note": "e"},
+                {"id": "B", "world": "wb", "stage": "s1.stage.json",
+                 "purpose": "p", "initial": "i", "extent_note": "e"},
+            ],
+            "cues": [
+                _cue_doc("A1", "A", entry="initial", transition="world_cut"),
+                _cue_doc("B1", "B", parent="A1"),
+            ],
+        }
+        rep = schema.validate_track(track)
+        self.assertTrue(rep.errors, rep)
+        self.assertTrue(any("default parent" in e and "crosses tree" in e for e in rep.errors), rep.errors)
+
+    def test_track_order_does_not_supply_state(self):
+        stage = _stage_doc("s1", ["a"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc("c1", "main", entry="initial", transition="world_cut",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "a", "count": 1}]),
+                _cue_doc("c2", "main"),
+            ],
+        }
+        rep = schema.validate_track(track)
+        self.assertTrue(rep.errors, rep)
+        self.assertTrue(any("root cue must declare" in e for e in rep.errors), rep.errors)
+
+    def test_cue_stage_inherits_parent_then_tree_and_overrides(self):
+        s1 = _stage_doc("s1", ["a"])
+        s2 = _stage_doc("s2", ["a"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc("c1", "main", entry="initial", transition="world_cut"),
+                _cue_doc("c2", "main", parent="c1"),
+                _cue_doc("c3", "main", parent="c2", stage="s2.stage.json"),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {
+                "s1.stage.json": s1,
+                "s2.stage.json": s2,
+            })
+            compiled = compile_anim.Compiler(path).compile()
+        self.assertEqual("s1", _compiled_cue(compiled, "c1")["stage"])
+        self.assertEqual("s1", _compiled_cue(compiled, "c2")["stage"])
+        self.assertEqual("s2", _compiled_cue(compiled, "c3")["stage"])
+
+    def test_zone_coverage_missing_zone_fails_with_diagnostic(self):
+        stage = _stage_doc("s1", ["a"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc("c1", "main", entry="initial", transition="world_cut",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "missing", "count": 1}]),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            with self.assertRaises(ValueError) as cm:
+                compile_anim.Compiler(path).compile()
+        message = str(cm.exception)
+        self.assertIn("zone coverage failed", message)
+        self.assertIn("c1", message)
+        self.assertIn("missing", message)
+        self.assertIn("s1", message)
+
+    def test_demo_branch_can_modify_assumptions_without_leaking_back(self):
+        stage = _stage_doc("s1", ["deck"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc("canon.1", "main", entry="initial", transition="world_cut",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "deck", "count": 1}]),
+                _cue_doc("demo.1", "main", parent="canon.1", demo=True,
+                         events=[{"op": "destroy", "at": 0.0, "zone": "deck", "count": 1}]),
+                _cue_doc("canon.2", "main", parent="canon.1", entry="canon.1"),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        canon1 = _compiled_cue(compiled, "canon.1")
+        demo1 = _compiled_cue(compiled, "demo.1")
+        canon2 = _compiled_cue(compiled, "canon.2")
+        self.assertTrue(demo1["demo"])
+        self.assertFalse(canon2["demo"])
+        self.assertEqual(canon1["end_state"], demo1["start_state"])
+        self.assertEqual(0, len(demo1["end_state"]["components"]))
+        self.assertEqual(canon1["end_state"], canon2["start_state"])
+        self.assertEqual(1, len(canon2["start_state"]["components"]))
 
 
 if __name__ == "__main__":

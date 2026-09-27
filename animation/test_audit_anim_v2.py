@@ -302,5 +302,101 @@ class AuditAnimV2Tests(unittest.TestCase):
         self.assertEqual([], payload["errors"])
 
 
+class DemoBranchAuditTests(unittest.TestCase):
+    def test_demo_branch_is_skipped_but_canonical_boundary_still_checked(self):
+        base = base_components() + [marker_component()]
+        track_doc = {
+            "game": "splendor",
+            "track": "full",
+            "default_tree": "main",
+            "trees": [{"id": "main", "world": "real"}],
+            "cues": [
+                {"id": "canon.1", "tree": "main", "entry": "initial"},
+                {"id": "demo.1", "tree": "main", "parent": "canon.1", "demo": True},
+                {"id": "canon.2", "tree": "main", "parent": "canon.1", "entry": "canon.1"},
+            ],
+        }
+
+        def compiled_cue(cid, start, end, demo=False):
+            return {
+                "id": cid,
+                "tree": "main",
+                "transition": "continue",
+                "start_state": {"components": copy.deepcopy(start)},
+                "end_state": {"components": copy.deepcopy(end)},
+                "clips": [],
+                "pointer_resolution": [],
+                "demo": demo,
+            }
+
+        compiled_doc = {
+            "game": "splendor",
+            "track": "full",
+            "trees": [{"id": "main", "world": "real"}],
+            "cues": [
+                compiled_cue("canon.1", base, base),
+                compiled_cue("demo.1", base, [], demo=True),
+                compiled_cue("canon.2", base, base),
+            ],
+        }
+
+        result = audit.audit_documents(track_doc, compiled_doc)
+
+        self.assertEqual([], result["errors"], result)
+        self.assertEqual([], result["warnings"], result)
+        self.assertEqual(1, result["stats"]["demo_cues_skipped"])
+        demo_entry = next(item for item in result["state_graph"] if item["cue_id"] == "demo.1")
+        self.assertTrue(demo_entry["is_demo"])
+        self.assertNotEqual(demo_entry["branch_id"], "canon.1")
+
+    def test_refill_pending_does_not_leak_between_sibling_branches(self):
+        base = base_components() + [marker_component()]
+        track_doc = {
+            "game": "splendor",
+            "track": "full",
+            "default_tree": "main",
+            "trees": [{"id": "main", "world": "real"}],
+            "cues": [
+                {"id": "common", "tree": "main", "entry": "initial"},
+                {"id": "no_refill.001", "tree": "main", "parent": "common", "entry": "common",
+                 "events": [{"op": "transfer", "source": "card_market",
+                             "destination": "player_development",
+                             "concept": "development_card_level_1", "quantity": 1}]},
+                {"id": "refill.001", "tree": "main", "parent": "common", "entry": "common",
+                 "events": [{"op": "transfer", "source": "card_market",
+                             "destination": "player_development",
+                             "concept": "development_card_level_1", "quantity": 1}]},
+                {"id": "refill.002", "tree": "main", "parent": "refill.001",
+                 "events": [{"op": "transfer", "source": "deck_level_1",
+                             "destination": "card_market", "quantity": 1}]},
+            ],
+        }
+
+        def compiled_cue(cid):
+            return {
+                "id": cid,
+                "tree": "main",
+                "transition": "continue",
+                "start_state": {"components": copy.deepcopy(base)},
+                "end_state": {"components": copy.deepcopy(base)},
+                "clips": [],
+                "pointer_resolution": [],
+            }
+
+        compiled_doc = {
+            "game": "splendor",
+            "track": "full",
+            "trees": [{"id": "main", "world": "real"}],
+            "cues": [compiled_cue(cid) for cid in
+                     ("common", "no_refill.001", "refill.001", "refill.002")],
+        }
+
+        result = audit.audit_documents(track_doc, compiled_doc)
+
+        refill_errors = [item for item in result["errors"] if item["check"] == "refill"]
+        self.assertEqual(1, len(refill_errors), result)
+        self.assertEqual("no_refill.001", refill_errors[0]["cue_id"])
+
+
 if __name__ == "__main__":
     unittest.main()

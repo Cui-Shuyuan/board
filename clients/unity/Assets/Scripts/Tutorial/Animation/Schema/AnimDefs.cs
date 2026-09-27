@@ -356,6 +356,8 @@ namespace BoardGameTutorial.Animation
         public string parent;
         public string tree;
         public string transition;
+        public string stage;
+        public bool demo;
         public float duration;
         public CompiledCameraDef camera_in;
         public List<CompiledCameraOpDef> camera_ops = new List<CompiledCameraOpDef>();

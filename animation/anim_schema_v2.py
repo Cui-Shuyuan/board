@@ -252,7 +252,7 @@ def _check_contract(report: Report, where: str, part: dict):
 # zones/picture it changes.  `cut` / `world_cut` are reset points and do not
 # inherit state contracts.
 
-_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "qa", "events"}
+_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "qa", "events", "stage", "demo"}
 
 
 def _deep_copy(v):
@@ -306,6 +306,12 @@ def resolve_track(doc: dict) -> dict:
     if duplicate:
         return doc
 
+    tree_stage_paths = {
+        str(t.get("id")): t.get("stage")
+        for t in (doc.get("trees") or [])
+        if isinstance(t, dict) and t.get("id")
+    }
+
     resolved = {}
     visiting = set()
 
@@ -325,6 +331,20 @@ def resolve_track(doc: dict) -> dict:
         tree = raw.get("tree", base.get("tree"))
         same_tree = tree is not None and tree == base.get("tree")
         inherit = (bool(base) and transition in ("continue", "overlay") and same_tree)
+
+        raw_stage = raw.get("stage")
+        if raw_stage:
+            resolved_stage = _deep_copy(raw_stage)
+        elif base and same_tree and base.get("stage"):
+            resolved_stage = _deep_copy(base.get("stage"))
+        else:
+            resolved_stage = _deep_copy(tree_stage_paths.get(str(tree)))
+        if "demo" in raw:
+            resolved_demo = bool(raw.get("demo"))
+        elif base and same_tree:
+            resolved_demo = bool(base.get("demo"))
+        else:
+            resolved_demo = False
 
         eff = {}
         if inherit:
@@ -396,6 +416,9 @@ def resolve_track(doc: dict) -> dict:
             eff["qa"] = _deep_copy(raw.get("qa"))
         if raw.get("entry") is not None:
             eff["entry"] = _deep_copy(raw.get("entry"))
+        if resolved_stage is not None:
+            eff["stage"] = _deep_copy(resolved_stage)
+        eff["demo"] = bool(resolved_demo)
         eff["events"] = _deep_copy(raw.get("events") or [])
         if "transition" not in raw:
             eff["transition"] = "continue"
@@ -448,8 +471,11 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
             rep.error(f"{where}.id duplicated: {wid}")
         world_ids.add(wid)
         mode = w.get("mode", "isolated")
-        if mode not in ("isolated", "shared"):
-            rep.error(f"{where}.mode must be isolated/shared, got {mode!r}")
+        if mode != "isolated":
+            rep.error(
+                f"{where}.mode {mode!r} is no longer supported; "
+                f"every tree must own its world (one tree = one world)"
+            )
         if not w.get("why"):
             rep.warn(f"{where}.why is empty; write why this world exists")
 
@@ -476,6 +502,18 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
             if not t.get(k):
                 rep.warn(f"{where}.{k} is empty; write it in the text script")
 
+    world_refs: dict[str, list[str]] = {}
+    for t in trees:
+        if not isinstance(t, dict) or not t.get("id"):
+            continue
+        world_refs.setdefault(str(t.get("world")), []).append(str(t.get("id")))
+    for wid, refs in sorted(world_refs.items()):
+        if len(refs) > 1:
+            rep.error(
+                f"world {wid!r} is referenced by multiple trees: {refs}; "
+                f"one tree must own exactly one world"
+            )
+
     cues = doc.get("cues")
     if not isinstance(cues, list):
         rep.error("cues: list required")
@@ -483,6 +521,11 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
     cue_ids = [c.get("id") for c in cues if isinstance(c, dict) and c.get("id")]
     if len(cue_ids) != len(set(cue_ids)):
         rep.error("cues: duplicate cue id")
+    cue_order = {cid: idx for idx, cid in enumerate(cue_ids)}
+    by_resolved = {
+        c["id"]: c for c in cues
+        if isinstance(c, dict) and c.get("id")
+    }
 
     prev = None
     for i, c in enumerate(cues):
@@ -495,15 +538,35 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         where = f"cue {cid}"
         if c.get("tree") not in tree_ids:
             rep.error(f"{where}: tree {c.get('tree')!r} is not declared")
+        if not c.get("parent") and not c.get("entry"):
+            rep.error(f"{where}: root cue must declare an explicit entry: 'initial'")
+        stage_ref = c.get("stage")
+        if stage_ref is not None:
+            if not isinstance(stage_ref, str) or not stage_ref.strip():
+                rep.error(f"{where}: stage must be a non-empty string")
+        demo_flag = c.get("demo")
+        if demo_flag is not None and not isinstance(demo_flag, bool):
+            rep.error(f"{where}: demo must be boolean")
         trans = c.get("transition")
         if trans not in TRANSITIONS:
             rep.error(f"{where}: transition must be one of {sorted(TRANSITIONS)}, got {trans!r}")
         parent = c.get("parent")
         if parent is not None and parent not in cue_ids:
             rep.error(f"{where}: parent {parent!r} does not exist")
+        if parent is not None and parent in by_resolved:
+            parent_cue = by_resolved[parent]
+            if parent_cue.get("tree") != c.get("tree") and not c.get("entry"):
+                rep.error(
+                    f"{where}: default parent {parent!r} crosses tree "
+                    f"{parent_cue.get('tree')!r} -> {c.get('tree')!r}; "
+                    f"cross-tree state inheritance must use entry"
+                )
         entry = c.get("entry")
         if entry is not None and entry != "initial" and entry not in cue_ids:
             rep.error(f"{where}: entry {entry!r} does not exist")
+        if entry is not None and entry != "initial" and entry in cue_order:
+            if cue_order[entry] >= i:
+                rep.error(f"{where}: entry {entry!r} must point to an earlier cue")
         if i > 0 and trans != "continue" and not c.get("parent"):
             rep.warn(f"{where}: non-continue transition should declare parent explicitly")
 

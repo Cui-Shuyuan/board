@@ -162,10 +162,9 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
         default_stage = stage_or_default
         stages = stages_or_facts
         facts = facts_or_rep
-    # 状态按 **world** 分组，而不是按 tree：
-    #   · box / gems_demo / cards_intro 各自是独立演示世界，world 不同 → 状态 cut；
-    #   · main 与 cards_demo（卡片 overlay）world 相同 → 同一份真实牌桌状态继续。
-    # 镜头/舞台仍按 tree 切。
+    # 状态按 **world** 分组，而每个 tree 独占一个 world；跨 world 状态天然 cut。
+    # 跨 tree 复制状态必须由动画数据里的显式 entry 边表达，不能靠共享 world。
+    # 镜头/舞台仍按 cue/tree 切。
     tree_worlds = {}
     for t in anim.get("trees") or []:
         tid = t.get("id") or "main"
