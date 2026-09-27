@@ -1,241 +1,20 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+public sealed class RulesSearchService
 {
+    private readonly IRulesConceptCatalog _catalog;
+    private readonly VectorSearchService? _vectorSearch;
 
-    private readonly Dictionary<string, Dictionary<string, string>> _nameMaps = new();
-
-
-    private Dictionary<string, string> GetNameMap(string game)
+    public RulesSearchService(
+        IRulesConceptCatalog catalog,
+        VectorSearchService? vectorSearch)
     {
-        if (_nameMaps.TryGetValue(game, out var cached)) return cached;
-        var map = new Dictionary<string, string>();
-
-        foreach (var type in GetConceptTypes(game))
-        {
-            foreach (var summary in ListConcepts(game, type))
-            {
-                if (!string.IsNullOrEmpty(summary.Id) && !string.IsNullOrEmpty(summary.Name) && summary.Id != summary.Name)
-                    map[summary.Id] = summary.Name;
-            }
-        }
-
-        // flow.json 递归节点（procedures/triggers 内嵌的 id + name.zh）
-        var flow = LoadGameFlow(game);
-        if (flow != null) WalkFlowForNames(flow.RootElement, map);
-        var ontologyFlow = LoadOntologyFlow();
-        if (ontologyFlow != null) WalkFlowForNames(ontologyFlow.RootElement, map);
-
-        _nameMaps[game] = map;
-        return map;
+        _catalog = catalog;
+        _vectorSearch = vectorSearch;
     }
-
-
-    private static void WalkFlowForNames(JsonElement node, Dictionary<string, string> map)
-    {
-        if (node.ValueKind == JsonValueKind.Object)
-        {
-            if (node.TryGetProperty("id", out var idProp))
-            {
-                var id = idProp.GetString() ?? "";
-                if (!string.IsNullOrEmpty(id)
-                    && node.TryGetProperty("name", out var name)
-                    && name.TryGetProperty("zh", out var zh))
-                {
-                    var zhName = zh.GetString() ?? "";
-                    if (!string.IsNullOrEmpty(zhName) && !map.ContainsKey(id))
-                        map[id] = zhName;
-                }
-            }
-            foreach (var prop in node.EnumerateObject())
-                WalkFlowForNames(prop.Value, map);
-        }
-        else if (node.ValueKind == JsonValueKind.Array)
-        {
-            foreach (var item in node.EnumerateArray())
-                WalkFlowForNames(item, map);
-        }
-    }
-
-
-    private readonly Dictionary<string, Dictionary<string, List<(string Id, string Kind)>>> _exactLookups = new();
-
-
-    /// <summary>
-    /// 「名词直呼」精确查找表：zh 名 / en 名（大小写不敏感）/ aliases / 基名（括号注解剥除）
-    /// → 概念 id 列表 + 匹配类别。一个键可以映射多个概念（如基名「家庭成长」→ 需空房间与
-    /// 无需房间两个行动；别名「随时转换效果」→ 烹饪与生吃），多命中全部返回由 LLM 读数据取舍。
-    /// 与 GetNameMap 同源（概念 + 实例 + flow + 本体）。首次访问时构建并缓存；
-    /// 规则 JSON 变化时由 RulesDocumentStore 回调自动清空重建。
-    /// </summary>
-    private Dictionary<string, List<(string Id, string Kind)>> GetExactLookup(string game)
-    {
-        if (_exactLookups.TryGetValue(game, out var cached)) return cached;
-
-        var map = new Dictionary<string, List<(string, string)>>(StringComparer.OrdinalIgnoreCase);
-        void Add(string key, string id, string kind)
-        {
-            if (string.IsNullOrEmpty(key)) return;
-            if (!map.TryGetValue(key, out var list))
-            {
-                list = new List<(string, string)>();
-                map[key] = list;
-            }
-            if (!list.Any(e => e.Item1 == id)) list.Add((id, kind));
-        }
-
-        // 1) 既有来源的 zh 名（与 GetNameMap 同源，保持原行为）
-        foreach (var type in GetConceptTypes(game))
-            foreach (var summary in ListConcepts(game, type))
-                Add(summary.Name, summary.Id, "exact_name_zh");
-
-        // 2) 游戏概念 + 实例的 zh/en 名与 aliases（只有原始 JSON 才有这些字段）
-        AddRawNames(LoadGameConcepts(game), ConceptArrayTypes, Add);
-        AddRawNames(LoadGameInstances(game), InstanceArrayTypes, Add);
-
-        // 3) 本体概念 en 名（zh 名太通用——行动/转移/对象——不进直呼表，避免噪声）
-        AddRawNames(LoadOntology(), new[] { "concepts" }, Add);
-
-        // 4) flow 节点 zh/en 名
-        var flow = LoadGameFlow(game);
-        if (flow != null) WalkFlowNames(flow.RootElement, Add);
-        var ontologyFlow = LoadOntologyFlow();
-        if (ontologyFlow != null) WalkFlowNames(ontologyFlow.RootElement, Add);
-
-        // 5) 基名：把 zh 名里的括号注解剥掉（「家庭成长（需空房间）」→「家庭成长」），
-        //    让客人/LLM 只说名字主体也能直呼命中——2026-08-16 QA 显示 C 类题几乎全是
-        //    转述与全名不一致导致的实体解析失败
-        var bases = new List<(string Key, string Id)>();
-        foreach (var (key, list) in map)
-            foreach (var (id, kind) in list)
-                if (kind == "exact_name_zh")
-                {
-                    var b = StripAnnotations(key);
-                    if (b != null && !string.Equals(b, key, StringComparison.Ordinal))
-                        bases.Add((b, id));
-                }
-        foreach (var (key, id) in bases)
-            Add(key, id, "exact_base");
-
-        _exactLookups[game] = map;
-        return map;
-    }
-
-
-    /// <summary>剥除中文名里的括号注解（全角/半角均可），剥后不足 2 字返回 null。</summary>
-    private static string? StripAnnotations(string name)
-    {
-        var s = ParentheticalRegex.Replace(name, "");
-        s = s.Trim();
-        return s.Length >= 2 ? s : null;
-    }
-
-
-    private static readonly Regex ParentheticalRegex = new(@"[（(][^（）()]*[）)]");
-
-
-    private static void AddRawNames(JsonDocument? doc, string[] arrays,
-        Action<string, string, string> add)
-    {
-        if (doc == null) return;
-        foreach (var type in arrays)
-        {
-            if (!doc.RootElement.TryGetProperty(type, out var arr) || arr.ValueKind != JsonValueKind.Array)
-                continue;
-            foreach (var el in arr.EnumerateArray())
-            {
-                var id = GetElementId(el);
-                if (string.IsNullOrEmpty(id)) continue;
-                if (el.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
-                {
-                    if (name.TryGetProperty("zh", out var zh))
-                    {
-                        var zhName = zh.GetString() ?? "";
-                        if (!string.IsNullOrEmpty(zhName)) add(zhName, id, "exact_name_zh");
-                    }
-                    if (name.TryGetProperty("en", out var en))
-                    {
-                        var enName = en.GetString() ?? "";
-                        if (!string.IsNullOrEmpty(enName)) add(enName, id, "exact_name_en");
-                    }
-                }
-                if (el.TryGetProperty("aliases", out var al) && al.ValueKind == JsonValueKind.Object)
-                {
-                    foreach (var lang in new[] { "zh", "en" })
-                    {
-                        if (al.TryGetProperty(lang, out var list) && list.ValueKind == JsonValueKind.Array)
-                        {
-                            foreach (var a in list.EnumerateArray())
-                            {
-                                var s = a.GetString() ?? "";
-                                if (!string.IsNullOrEmpty(s)) add(s, id, "exact_alias");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    private static void WalkFlowNames(JsonElement node, Action<string, string, string> add)
-    {
-        if (node.ValueKind == JsonValueKind.Object)
-        {
-            if (node.TryGetProperty("id", out var idProp))
-            {
-                var id = idProp.GetString() ?? "";
-                if (!string.IsNullOrEmpty(id))
-                {
-                    if (node.TryGetProperty("name", out var name)
-                        && name.ValueKind == JsonValueKind.Object)
-                    {
-                        if (name.TryGetProperty("zh", out var zh))
-                        {
-                            var zhName = zh.GetString() ?? "";
-                            if (!string.IsNullOrEmpty(zhName)) add(zhName, id, "exact_name_zh");
-                        }
-                        if (name.TryGetProperty("en", out var en))
-                        {
-                            var enName = en.GetString() ?? "";
-                            if (!string.IsNullOrEmpty(enName)) add(enName, id, "exact_name_en");
-                        }
-                    }
-                    // flow 节点别名（与概念同形）——如 give_starting_food 别名「开局食物」
-                    if (node.TryGetProperty("aliases", out var al) && al.ValueKind == JsonValueKind.Object)
-                    {
-                        foreach (var lang in new[] { "zh", "en" })
-                        {
-                            if (al.TryGetProperty(lang, out var list) && list.ValueKind == JsonValueKind.Array)
-                            {
-                                foreach (var a in list.EnumerateArray())
-                                {
-                                    var s = a.GetString() ?? "";
-                                    if (!string.IsNullOrEmpty(s)) add(s, id, "exact_alias");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            foreach (var prop in node.EnumerateObject())
-                WalkFlowNames(prop.Value, add);
-        }
-        else if (node.ValueKind == JsonValueKind.Array)
-        {
-            foreach (var item in node.EnumerateArray())
-                WalkFlowNames(item, add);
-        }
-    }
-
 
     public async Task<SearchConceptsResult> SearchConceptsAsync(string game, string query, string searchMode = "full")
     {
@@ -361,10 +140,10 @@ public partial class GameRulesService
         foreach (var r in results)
         {
             if (!string.IsNullOrEmpty(r.Description)) continue;
-            var detail = GetConcept(game, r.Id);
+            var detail = _catalog.GetConcept(game, r.Id);
             if (detail.HasValue)
             {
-                r.Description = ExtractDescriptionZh(detail.Value);
+                r.Description = RulesTextUtils.ExtractDescriptionZh(detail.Value);
             }
         }
     }
@@ -373,9 +152,9 @@ public partial class GameRulesService
     public ListConceptsResult ListAllConceptIds(string game)
     {
         var byType = new Dictionary<string, List<ConceptSummary>>();
-        foreach (var type in GetConceptTypes(game))
+        foreach (var type in _catalog.GetConceptTypes(game))
         {
-            var concepts = ListConcepts(game, type);
+            var concepts = _catalog.ListConcepts(game, type);
             if (concepts.Count > 0)
                 byType[type] = concepts.Select(c => new ConceptSummary
                 {
@@ -460,28 +239,28 @@ public partial class GameRulesService
         var terms = Tokenize(query).ToList();
         if (terms.Count == 0) return Array.Empty<ConceptSummary>();
 
-        var (ns, localQuery) = ParseNamespace(query);
+        var (ns, localQuery) = RulesTextUtils.ParseNamespace(query);
         var localTerms = Tokenize(localQuery).ToList();
 
         var all = new List<ConceptSummary>();
         if (string.IsNullOrEmpty(ns) || ns == "ontology")
-            all.AddRange(ListConcepts(game, "ontology"));
+            all.AddRange(_catalog.ListConcepts(game, "ontology"));
 
         if (string.IsNullOrEmpty(ns))
         {
-            all.AddRange(ListConcepts(game, "objects"));
-            all.AddRange(ListConcepts(game, "actions"));
-            all.AddRange(ListConcepts(game, "triggers"));
-            all.AddRange(ListConcepts(game, "conditions"));
-            all.AddRange(ListConcepts(game, "top_level_refs"));
-            all.AddRange(ListConcepts(game, "effects"));
-            all.AddRange(ListConcepts(game, "modules"));
-            all.AddRange(ListConcepts(game, "cards"));
-            all.AddRange(ListConcepts(game, "continent_tiles"));
-            all.AddRange(ListConcepts(game, "sites"));
-            all.AddRange(ListConcepts(game, "chips"));
-            all.AddRange(ListConcepts(game, "slots"));
-            all.AddRange(ListConcepts(game, "flow"));
+            all.AddRange(_catalog.ListConcepts(game, "objects"));
+            all.AddRange(_catalog.ListConcepts(game, "actions"));
+            all.AddRange(_catalog.ListConcepts(game, "triggers"));
+            all.AddRange(_catalog.ListConcepts(game, "conditions"));
+            all.AddRange(_catalog.ListConcepts(game, "top_level_refs"));
+            all.AddRange(_catalog.ListConcepts(game, "effects"));
+            all.AddRange(_catalog.ListConcepts(game, "modules"));
+            all.AddRange(_catalog.ListConcepts(game, "cards"));
+            all.AddRange(_catalog.ListConcepts(game, "continent_tiles"));
+            all.AddRange(_catalog.ListConcepts(game, "sites"));
+            all.AddRange(_catalog.ListConcepts(game, "chips"));
+            all.AddRange(_catalog.ListConcepts(game, "slots"));
+            all.AddRange(_catalog.ListConcepts(game, "flow"));
         }
 
         var activeTerms = localTerms.Count > 0 ? localTerms : terms;
@@ -494,7 +273,7 @@ public partial class GameRulesService
                 continue;
             }
 
-            var detail = GetConcept(game, summary.Id);
+            var detail = _catalog.GetConcept(game, summary.Id);
             if (detail.HasValue && activeTerms.Any(t => ContainsTerm(detail.Value, t)))
             {
                 results.Add(summary);

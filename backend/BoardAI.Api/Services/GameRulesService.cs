@@ -8,13 +8,15 @@ using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService : IDisposable
+public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 {
     private readonly string _basePath;
 
     private readonly VectorSearchService? _vectorSearch;
 
     private readonly RulesDocumentStore _documentStore;
+
+    private readonly RulesSearchService _searchService;
 
 
     /// <summary>概念引用正则——注解（AnnotateReferences）与一层扩展（GetConceptsWithExpansion）共用。</summary>
@@ -41,11 +43,26 @@ public partial class GameRulesService : IDisposable
         // repository root with the same portable logic used by the API host.
         _basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
         _vectorSearch = vectorSearch;
+        _searchService = new RulesSearchService(this, vectorSearch);
         _documentStore = new RulesDocumentStore(ClearDerivedCaches);
     }
 
 
     public void Dispose() => _documentStore.Dispose();
+
+
+    public Task<SearchConceptsResult> SearchConceptsAsync(
+        string game, string query, string searchMode = "full")
+        => _searchService.SearchConceptsAsync(game, query, searchMode);
+
+
+    public IReadOnlyList<ConceptSummary> KeywordSearch(
+        string game, string query)
+        => _searchService.KeywordSearch(game, query);
+
+
+    public ListConceptsResult ListAllConceptIds(string game)
+        => _searchService.ListAllConceptIds(game);
 
 
     public IReadOnlyList<string> GetGames()
@@ -176,7 +193,7 @@ public partial class GameRulesService : IDisposable
         if (string.IsNullOrWhiteSpace(id)) return results;
 
         // Parse namespace prefix if present, e.g. "ontology::resource"
-        var (ns, localId) = ParseNamespace(id);
+        var (ns, localId) = RulesTextUtils.ParseNamespace(id);
 
         // Search ontology when no namespace or explicitly "ontology"
         if (string.IsNullOrEmpty(ns) || ns == "ontology")
@@ -361,19 +378,6 @@ public partial class GameRulesService : IDisposable
     }
 
 
-    private static (string? ns, string localId) ParseNamespace(string id)
-    {
-        // Strip surrounding angle brackets if any, e.g. "<ontology::resource>" -> "ontology::resource"
-        var trimmed = id.Trim('<', '>');
-        var parts = trimmed.Split(new[] { "::" }, StringSplitOptions.None);
-        if (parts.Length == 2 && !string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
-        {
-            return (parts[0], parts[1]);
-        }
-        return (null, trimmed);
-    }
-
-
     private static IEnumerable<string> GetTopLevelRefKeys(JsonDocument concepts)
     {
         var results = new List<string>();
@@ -420,7 +424,7 @@ public partial class GameRulesService : IDisposable
                 Id = id,
                 Name = ExtractName(item),
                 Type = propertyName,
-                Description = ExtractDescriptionZh(item),
+                Description = RulesTextUtils.ExtractDescriptionZh(item),
                 Media = ExtractMedia(item)
             };
             results.Add(summary);
@@ -597,16 +601,5 @@ public partial class GameRulesService : IDisposable
             return id.GetString() ?? string.Empty;
         }
         return string.Empty;
-    }
-
-
-    private static string? ExtractDescriptionZh(JsonElement element)
-    {
-        if (element.TryGetProperty("description", out var desc) &&
-            desc.TryGetProperty("zh", out var zh))
-        {
-            return zh.GetString();
-        }
-        return null;
     }
 }

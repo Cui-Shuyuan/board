@@ -48,7 +48,7 @@ public partial class GameRulesService
         if (matched.Count == 0)
             return new GetConceptResult();
 
-        var (_, localId) = ParseNamespace(id);
+        var (_, localId) = RulesTextUtils.ParseNamespace(id);
 
         // 排除集合：查询概念自身 + 已命中的概念（避免 related 里出现 matched 副本）
         var excluded = new HashSet<string>(StringComparer.Ordinal) { localId };
