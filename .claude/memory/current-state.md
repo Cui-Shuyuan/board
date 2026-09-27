@@ -1,54 +1,49 @@
 ---
 name: current-state
-description: 新会话入口——截至 2026-09-23 的当前进度、工作区状态、待办与不做事项
+description: 新会话入口——截至 2026-09-27 的当前进度、工作区状态、待办与不做事项
 metadata:
   type: project
 ---
 
-# 当前状态（2026-09-23）
+> 最后更新：2026-09-27 · 基线 HEAD `204ce35` · 后端 xUnit 75/75
+
+# 当前状态（2026-09-27）
 
 ## 一句话
 
-Runtime 规则问答已跑通；当前重心是《璀璨宝石》讲规动画 v3 生产闭环收尾。动画告一段落后进入 Flow Guide。
+Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class 已完成服务化拆分，75 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 已进入收尾/暂停状态，Flow Guide 是动画收口后的下一产品方向。
 
-## 当前工作区状态（未提交）
+## 当前工作区状态
 
-2026-09-23 工作区有动画相关改动，尚未 commit：
-
-- `time_anchors` 全量迁移：事件从裸 `at` 改为 `anchor + offset`，编译产物仍输出数值 `at`。
-- Unity 侧新增 `ZoneDebugOverlay`（未跟踪），以及 Animation/CuePlayer 相关调整。
-- `content/games/splendor/tutorial/anim/v2/full.anim.json`、`full.compiled.json` 和多个 stage/脚本有未提交修改。
-- 旧 `.claude/memory/` 长文档已归档到 `.claude/archive/memory/2026-09-23/`，本目录的新文档是当前权威。
-
-> 改完动画数据的标准顺序：`anim_schema_v2` → `compile_animation_v2 --check` → `check_anim_v2` → `validate_anim_rules_v2` → `check_unity_scripts` → Unity 采样对账。
+- 工作区干净，HEAD = `204ce35 refactor(rules): extract RulesPlanService`。
+- 2026-09-23 记录的动画待收口项已经由后续提交收口（time_anchors 见 `38971d4`）。
+- `.claude/archive/memory/2026-09-23/` 只用于追溯历史，不作为现状依据。
 
 ## 当前已具备的能力
 
-- 规则问答：`POST /api/chat`，单工具 `execute_plan`，三层回答 tier1/tier2/tier3。
-- 规则数据：9 款游戏目录；8 款有 `flow.json`，`seasons` 目前只有 concepts。
-- 检索：Qdrant + `bge-base-zh-v1.5` ONNX，增量索引。
-- 讲规动画：Splendor full 版约 110 cue，TTS、runtime、compiled、Unity 播放器与编译链已跑通。
-- 最新规则校验：`validate_rules.py --errors-only` 为 0 errors / 72 warnings（主要是缺 appearance 的 W07 和孤立概念 W05）。
-- 检索 gold set：`tools/qa/retrieval_gold.jsonl` 共 85 条，覆盖全部 9 款游戏；最近记录 82/85 resolved_hit，wrong=0，no_match=0，3 条 unresolved 的 expected 都在 top3。
+- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、public wrapper、`Dispose`、`ClearDerivedCaches`；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。后端 xUnit 测试 75/75 全绿。
+- **规则数据与检索**：9 款游戏目录，8 款有 `flow.json`，Splendor 是 Runtime + 动画试点；Qdrant + `bge-base-zh-v1.5` ONNX 检索链可用；`validate_rules.py --errors-only` 为 0 errors / 72 warnings；`tools/qa/retrieval_gold.jsonl` 85 条。
+- **规则文件 freshness**：`RulesDocumentStore` 按文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务；`ClearDerivedCaches()` 会清名称索引、Plan 类型缓存、Flow 位置缓存、Fact score 缓存；语义检索仍需要重建 Qdrant 索引（`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all` 或 `python tools/indexing/rebuild_index.py ...`）。
+- **Android 客户端**：已有 Unity as a Library（UaaL）原生 Android 壳、Kotlin + Jetpack Compose 控制层、首页游戏目录/搜索/历史/资源管理、manifest → 本地内容仓库 → 增量下载/断点续传 v1、教程播放器 Compose 控制层与 Unity 状态回传、问答面板、按住说话 PTT、ASR、回答 TTS、自动播放/重播/继续播放。已有 6 个 Android JVM 测试文件（ContentStatusTest、ContentUpdaterTest、HomeContentCoordinatorTest、PlayerSessionControllerTest、QaVoiceControllerTest、UnityLoadQueueTest）；真机结论只保留已有记录部分，完整范围待复测。
+- **语音链路**：后端运行时走 Python 短进程桥 `tools/voice/asr_once.py` / `tools/voice/tts_once.py`，对外接口 `POST /api/asr/once`、`POST /api/tts`；默认 TTS provider 是 `standard`（豆包标准语音合成小模型 v1），`--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 可切回旧 2.0；standard 路径没有字级 subtitle，旧 seed2 路径有；已存在 Splendor full 音频 manifest 来源为 seed2（`zh_female_vv_uranus_bigtts` / `seed-tts-2.0`）。Android 不直接接触火山凭证，密钥只在仓库根 `.env`（git-ignored）。
+- **Catalog / Manifest**：`content/catalog/splendor.json` 已入 Git；`content/manifests/splendor.json` 为生成物、不入 Git（已由 `.gitignore` 排除），当前只有 Splendor 一套。`/api/catalog/games` 是 Android 首页来源，`/api/content/games/{game}/manifest` 和 `/api/content/games/{game}/files/...` 提供 manifest 拉取与内容文件。
+- **动画 full**：Splendor full 约 110 cue，`time_anchors` 已全量迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
 
 ## 当前优先待办
 
-1. **收口 time_anchors 迁移**：跑完整验证链，确认 compiled 除 `source_sha256` 外一致，然后 commit。
-2. **真正跑一次 TTS 增量**：改一条 cue 文本，确认只生成该 cue 的 mp3/subtitle，其他 cue 不动。
-3. **cue_graph 接入总控编译**：insert/delete/split/merge 后自动改 source + 增量 TTS + 重编译 + 回归。
-4. **编辑回归自动化**：编辑前后对比 compiled，除受影响 cue 外所有 `start_state/end_state/camera_in/state_ops/clips` 逐字段不变。
-5. **BoardAI 校验前置**：`compile_tutorial.py --validate-qa` 从可选变成默认流程。
-6. **7 条 stage 布局 warning**：player/development、showcase、供应堆相邻重叠，等用户裁决调 stage 还是允许叠加。
-7. **首次正式构建后**：确认 `full.tts.lrc` 的 generator 变为 `compile_tutorial.py` 的 diff 只有这一次。
-8. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
+1. **其余 8 款游戏 catalog / manifest**：补 `content/catalog/{game}.json` 与 `content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已有 v1。
+2. **Android 真机端到端验收**：验证 PTT → ASR → 提问 → 回答 TTS → 回到动画/继续播放的完整链路，以及打断后回跳重播。
+3. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
+4. **动画检查遗留**：当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning，待用户裁决调 stage 还是允许叠加。
+5. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
 
 ## 已知未做 / 未闭环
 
-- Unity 视觉验收被用户主动跳过；观感仍靠截图迭代。
-- Android 模块未装，尚未在真实平板上跑完整 App。
-- `manifest.json` 尚未普遍落地，前端选游戏仍需补。
-- PTT/Controller、打断问答到动画播放器的完整接线尚未完成。
-- 改规则文件后必须手动重建索引并重启 API；`GameRulesService` 的 JSON 缓存尚无 mtime 失效。
+- Unity 视觉验收被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环。
+- Android UaaL 与 Compose 代码已有；完整真机范围（店内平板规模、PTT → 回答 → 回到动画、打断后回跳重播）待复测，不能写成已验收。
+- 仅 Splendor 有 catalog / manifest；其余 8 款待补。
+- 语义检索仍需重建 Qdrant 索引；规则文件本身由 `RulesDocumentStore` 自动刷新，无需重新启动 API 服务。
+- 动画 Quick 版未开始；真实增量 TTS、cue_graph 总控接入、编辑回归自动化仍待完成。
 
 ## 当前不建议做
 

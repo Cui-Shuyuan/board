@@ -6,7 +6,7 @@
 2. 按索引读当前文档：
    - `current-state.md` — 进度、待办、工作区状态
    - `project-overview.md` — 定位、功能、阶段
-   - `architecture.md` — 本体 / Runtime / 检索 / 交互
+   - `architecture.md` — 本体 / Runtime / 检索 / Android 与语音接口
    - `tutorial-animation.md` — 讲规动画 v3
    - `game-status.md` — 九款游戏状态
    - `conventions.md` — JSON / 本体 / pipeline 规范
@@ -17,7 +17,7 @@
 
 ## 当前状态
 
-见 `.claude/memory/current-state.md`。一句话：Runtime 规则问答已跑通；当前重心是《璀璨宝石》讲规动画 v3 生产闭环收尾；之后进入 Flow Guide。
+见 `.claude/memory/current-state.md`。一句话：Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，75 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 进入收尾/暂停状态，Flow Guide 是动画收口后的下一产品方向。
 
 ## 关键文件
 
@@ -25,8 +25,11 @@
 - `content/ontology/flow.json` — 通用 trigger pipeline
 - `content/games/{game}/concepts.json` — 游戏概念层
 - `content/games/{game}/flow.json` — 游戏流程层
+- `content/catalog/splendor.json` — Android 首页游戏目录（当前仅 Splendor）
+- `content/manifests/splendor.json` — 内容同步 manifest 生成物，不入 Git（当前仅 Splendor）
 - `backend/BoardAI.Api/` — .NET 9 Runtime 服务
-- `clients/unity/` — Unity 6 安卓客户端
+- `clients/android/` — UaaL 原生 Android 壳 + Compose 控制层
+- `clients/unity/` — Unity 6 客户端 / Unity as a Library 导出侧
 - `content/games/splendor/tutorial/anim/v2/full.anim.json` — 当前动画源
 - `content/games/splendor/tutorial/anim/v2/full.compiled.json` — Unity 实际读取的编译产物
 - `.claude/archive/` — 历史日志、旧版长文档、聊天记录，默认不读
@@ -35,7 +38,7 @@
 
 - 新增概念前先查两个 v0 文档和 `conventions.md`，确认是本体扩展还是游戏层实例。
 - 写完规则 JSON 必跑 `python tools/content/validate_rules.py`。
-- 改规则文件后按“重建索引 → 重启 API”处理。
+- 改规则文件后由 `RulesDocumentStore` 自动失效，无需重新启动 API 服务；语义检索需重建 Qdrant 索引（admin/rebuild-index 或 `tools/indexing/rebuild_index.py`）。
 - 每个满意节点用 git commit。
 - 代码/数据优先考虑程序确定性，LLM 只做语言理解与表达。
 - 中英文双语字段以中文为主。

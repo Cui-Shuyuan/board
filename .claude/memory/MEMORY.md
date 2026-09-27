@@ -2,13 +2,13 @@
 
 新会话按顺序读：
 
-1. [current-state.md](current-state.md) — 当前进度、待办、工作区状态
+1. [current-state.md](current-state.md) — 截至 2026-09-27，含 HEAD `204ce35`、后端服务化状态、工作区/待办
 2. [project-overview.md](project-overview.md) — 项目定位、功能、阶段、技术选型
-3. [architecture.md](architecture.md) — 本体/Runtime/检索/交互架构
-4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3 当前模型与生产流程
+3. [architecture.md](architecture.md) — Runtime 服务拆分、自动 freshness、检索、Android/语音接口
+4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3：time_anchors / QA 同置 / 当前动画遗留
 5. [game-status.md](game-status.md) — 九款游戏数据与 QA 状态
 6. [conventions.md](conventions.md) — 规则 JSON / 本体 / pipeline / 命名规范
-7. [tools.md](tools.md) — 服务、脚本、校验、编译命令
+7. [tools.md](tools.md) — 服务、规则 freshness、后端测试、语音桥、Android、编译命令
 8. [user-preferences.md](user-preferences.md) — 用户偏好与协作方式
 9. [flow-guide.md](flow-guide.md) — 讲规动画之后的 Flow Guide 方向
 
@@ -21,6 +21,9 @@
 
 - 当前代码：`backend/`、`clients/`、`animation/`、`tools/`
 - 当前规则数据：`content/ontology/`、`content/games/`
+- 当前游戏目录：`content/catalog/`
+- 当前内容 manifest：`content/manifests/`（生成物，不入 Git）
 - 当前动画数据：`content/games/splendor/tutorial/anim/v2/`
 - 当前检索基准：`tools/qa/retrieval_gold.jsonl`
+- 语音桥：`tools/voice/README.md`、`docs/ops/start-services.md`
 - 遇到文档与代码/数据冲突，以代码和 JSON 数据为准，并顺手更新本目录。

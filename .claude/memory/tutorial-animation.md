@@ -1,6 +1,6 @@
 ---
 name: tutorial-animation
-description: 讲规动画 v3 当前模型、文件结构、生产流程与状态（2026-09-23）
+description: 讲规动画 v3 当前模型、文件结构、生产流程与状态（2026-09-27）
 metadata:
   type: project
 ---
@@ -12,16 +12,18 @@ metadata:
 讲规动画是离线编译的静态数字资产，播放端只做确定性播放，不实时调用 LLM。口播稿是主，动画是次；TTS 冻结后，音频时长是动画硬边界。
 
 现状：
-- 试点为《璀璨宝石》full 版，当前约 110 cue。
-- full TTS 已全量生成；runtime、compiled、Unity 播放器、编译/校验/采样对账链路已跑通。
-- quick 版尚未开始；正式视觉验收被用户主动跳过。
+- 试点为《璀璨宝石》full 版，当前 110 cue。
+- full TTS、runtime、compiled、Unity 播放器、编译/校验/采样对账链路已跑通。
+- `time_anchors` 已迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。
+- QA 与 cue 同置流程已落地：问题优先/可写在 `full.anim.json` 的 `qa` 字段，历史问题继续放 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取 cue 内问题，`compile_tutorial.py --validate-qa` / `--validate-qa-all` 当前从 `_qa/questions.json` 提供机器侧门禁。
+- quick 版尚未开始；正式视觉验收被用户主动跳过，仍未闭环。
 
 ## 技术选型
 
 - 客户端：Unity 6 原生安卓 App，URP。
 - 视觉：2D/2.5D 实物照片 sprite，不做自由视角 3D。
 - 相机：正交相机；`stage.board.camera_pitch = 90`（正俯视，地面 1:1）；pitch 可调，组件面片跟随相机。
-- 音频：火山豆包 TTS，按 cue 生成 mp3 + 字级 subtitle。
+- 音频：默认火山豆包标准语音合成小模型 v1（`standard`），按 cue 生成 mp3；旧 `seed2` 路径仍可切回并额外输出字级 subtitle。standard 路径当前没有字级 subtitle / 词级时间戳，运行时按无精确字幕降级。已有 full 资产的实际来源以 `tts_manifest.json` 为准（当前该文件记录 `seed-tts-2.0`）。
 - 动画制作：JSON + schema + validator + 固定原语；LLM 不写新 C# 协程。
 
 ## v3 数据模型
@@ -48,9 +50,10 @@ metadata:
 ## 时间锚点 `time_anchors`
 
 - 轨道顶层声明时间坐标；事件写 `anchor`，必要时加 `offset`；编译产物仍写数值 `at`。
-- 当前 full 轨道约 468 个锚点，覆盖 cue 和 beat 的 start/end。
+- 当前 full 轨道 468 个锚点，覆盖 cue 和 beat 的 start/end。
 - 锚点命名：`<cue_id>.start`、`<cue_id>.end`、`<beat_id>.start`、`<beat_id>.end`。
 - 解析来源：`script.{track}.json` 的 beats + `{track}.runtime.json` 的 TTS 字级 timing。
+- 迁移与提交状态：`38971d4` 已把 `time_anchors` 全量迁移并 commit；`full.runtime.json` / `full.compiled.json` 输出数值 `at`，源数据保留 anchor。
 - 一次性迁移/重生成：`animation/migrate_time_anchors_v2.py`。
 - LLM 编写规范见 `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
 
@@ -68,16 +71,18 @@ metadata:
 ### 源数据
 
 - `content/games/splendor/tutorial/script.full.json`：口播文本、分组、refs。
-- `content/games/splendor/tutorial/anim/v2/full.anim.json`：动画事件、camera、parent/entry、tree、契约。
+- `content/games/splendor/tutorial/anim/v2/full.anim.json`：动画事件、camera、parent/entry、tree、契约、可选的 `qa` 字段。
 - `content/games/splendor/tutorial/anim/v2/_stage/*.stage.json`：各树舞台、zone、模板、命名机位。
 - `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`：LLM 写作规范。
+- `content/games/splendor/tutorial/anim/_qa/questions.json`：历史手写合法性问句。
+- `content/games/splendor/tutorial/anim/_qa/ask_log_*`：问答留档。
 
 ### 编译/运行产物
 
 - `content/games/splendor/tutorial/full.tts.lrc`：TTS 后时间轴。
 - `content/games/splendor/tutorial/full.runtime.json`：cue 顺序、音频、字幕、入口状态。
 - `content/games/splendor/tutorial/anim/v2/full.compiled.json`：Unity 实际读取的 compiled。
-- `content/games/splendor/media/tts/full/`：mp3 + subtitle.json。
+- `content/games/splendor/media/tts/full/`：mp3 + subtitle.json + `tts_manifest.json`。
 
 ### Unity 运行时
 
@@ -91,26 +96,26 @@ metadata:
 
 1. 改文字脚本：`script.full.json`。
 2. **手写这一 cue 的合法性问答，问运行中的 Board API**：
-   - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），手写进该 cue 的 `qa` 字段；
+   - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），优先手写进该 cue 的 `qa` 字段；历史遗留问题继续保留在 `_qa/questions.json`；
    - 用 `python3 animation/qa_anim_ask.py --in content/games/splendor/tutorial/anim/v2/full.anim.json --only <cue>` 自动发送并留档；
    - 回答必须是「允许/合法」；不是就停下改脚本或改数据；
    - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题；
    - **cue 改一次，qa 必须跟着改一次**。只改 events/state 不改问题 = 未完成，不允许提交。
 3. 改动画树/契约/events：`full.anim.json`。
-4. 编译与检查（可用 `--validate-qa` 做机器侧补充）。
+4. 编译与检查（可用 `--validate-qa` / `--validate-qa-all` 做机器侧补充）。
 5. Unity 采样对账。
 6. 截图做视觉验收。
 
 > 新建或修改动画必须按“文字版 → Board API 问答校验 → 原语 → 对账”的顺序。禁止先改 events 再补文字，也禁止用 `offstage`/隐藏来掩盖非法状态。
 
-### Board API 合法性问答（人工步骤，不是自动脚本）
+### Board API 合法性问答（人工写问题 + 自动发送留档）
 
 这一层是**独立裁判**：`validate_anim_rules*` 是精确算术层，Board API 问答负责抓“规则理解错了”的问题。
 
 - 每改一个真的改状态的 cue，都由 AI/人手写问题；问题无法自动生成，因为要先判断这条 cue 到底在做什么、哪些前提必须带。
 - **qa 与 cue 同步更新是硬约束。** 旧问题问新动作会直接失去校验意义；只要 event/state/contract 变了，就必须重新审视并改写问题。
 - 问法遵守一 cue 一事、只带最小必要状态、不用教程自造词；规则自动发生的事就说成自动。
-- 问题作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；`qa_anim_ask.py` 自动从 `full.anim.json` 提取、发送、留档 `ask_log_<tag>.md/.jsonl`，不再需要临时拼问句。
+- 问题可/优先作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；`animation/qa_anim_ask.py` 可从 `full.anim.json` 自动提取、发送、留档 `ask_log_<tag>.md/.jsonl`。历史问题仍在 `_qa/questions.json`，`compile_tutorial.py --validate-qa` 当前从该文件选中受影响 cue 做门禁，`--validate-qa-all` 跑全部手写 QA。
 
 ### 总控命令
 
@@ -118,7 +123,9 @@ metadata:
 python3 animation/compile_tutorial.py --game splendor --track full
 python3 animation/compile_tutorial.py --game splendor --track full --dry-run
 python3 animation/compile_tutorial.py --game splendor --track full --skip-tts
+python3 animation/compile_tutorial.py --game splendor --track full --force-full-tts
 python3 animation/compile_tutorial.py --game splendor --track full --validate-qa
+python3 animation/compile_tutorial.py --game splendor --track full --validate-qa-all
 ```
 
 `compile_tutorial.py` 负责：对照文本只挑变化 cue → 增量 TTS → 更新 manifest/tts.lrc → 重建 runtime → 编译 compiled。
@@ -166,14 +173,14 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 
 ## 当前遗留
 
-- time_anchors 全量迁移尚未 commit。
-- TTS 增量尚未真实跑过一次。
-- cue_graph insert/delete/split/merge 尚未接入 compile_tutorial。
+- TTS 增量尚未真实跑过一次（改一条 cue 文本，验证只生成该 cue 的 mp3/subtitle，其他 cue 不动）。
+- `cue_graph_v2.py` 的 insert/delete/split/merge 尚未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。
-- 7 条 stage 布局 warning 待用户裁决。
-- 第二批取景待手写：买牌进发展区、发展区+贵族结算、拿三色宝石、市场一格；需顺手把入镜 zone 写进契约。
-- `action.nobles.forced.001.1` 仍有“贵族特写 → 整桌 → 又回贵族特写”的跳切。
-- 两处原语缺口：错误示范的撤销/临时状态层；4 人局例子只有 A/B 玩家区。
-- 起始玩家标记尺寸待用户实测。
-- 主桌 extent 偏大导致整桌镜头偏小；多棵树落地后可再收紧。
-- 打断问答到播放器的接线、Android 真机测试未完成。
+- Quick 版尚未开始；正式视觉验收未闭环。
+- 当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning（`card_market × showcase`、`card_market × showcase_1`），待用户裁决调 stage 还是允许叠加。
+- 第二批取景待手写：买牌进发展区、发展区+贵族结算、拿三色宝石、市场一格（待复核，沿用 2026-09-23 记录）。
+- `action.nobles.forced.001.1` 仍有“贵族特写 → 整桌 → 又回贵族特写”的跳切（待复核，沿用 2026-09-23 记录）。
+- 两处原语缺口：错误示范的撤销/临时状态层；4 人局例子只有 A/B 玩家区（待复核，沿用 2026-09-23 记录）。
+- 起始玩家标记尺寸待用户实测（待复核，沿用 2026-09-23 记录）。
+- 主桌 extent 偏大导致整桌镜头偏小；多棵树落地后可再收紧（待复核，沿用 2026-09-23 记录）。
+- Android PTT / 回答 TTS / 继续播放代码已存在；打断问答回到动画播放器的端到端真机验收仍未完成，待复测。
