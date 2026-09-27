@@ -232,6 +232,7 @@ public bool UnityTouchControlsEnabled
 
 只有 Debug APK 会在播放控制条显示调试开关；该开关复用“回答自动播报”同款的“标签 + Switch”组件样式，标签紧贴开关：
 
+- Debug APK 启动时默认开启调试；Release 初始状态关闭；
 - 打开后，Unity 左上角显示当前 cue 的序号/id、章节路径、文本和播放时间，同时绘制当前 stage 中所有 on-stage zone 的彩色范围框与名称；
 - 关闭后两者消失；
 - 开关状态保存在原生 Compose 状态和 Unity `TutorialCuePlayer` 请求状态中，换游戏 / 内容 reload 后保留。

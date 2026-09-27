@@ -70,7 +70,7 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private val searchQuery = mutableStateOf("")
     private val qaOpen = mutableStateOf(false)
-    private val debugOverlayEnabled = mutableStateOf(false)
+    private val debugOverlayEnabled = mutableStateOf(BuildConfig.DEBUG)
 
     private var qaWasPlayingBeforeQuestion = false
     private var qaResumeCueId: String? = null
