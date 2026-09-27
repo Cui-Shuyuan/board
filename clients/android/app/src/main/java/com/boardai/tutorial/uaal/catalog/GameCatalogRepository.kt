@@ -3,6 +3,7 @@ package com.boardai.tutorial.uaal.catalog
 import android.content.Context
 import android.util.Log
 import com.boardai.tutorial.uaal.BuildConfig
+import com.boardai.tutorial.uaal.home.HomeCatalogSource
 import org.json.JSONException
 import java.io.File
 import java.io.IOException
@@ -24,13 +25,13 @@ import java.nio.file.StandardCopyOption
 class GameCatalogRepository(
     context: Context,
     baseUrl: String
-) {
+) : HomeCatalogSource {
     private val baseUrl = baseUrl.trimEnd('/')
     private val catalogDir = File(context.filesDir, "catalog")
     private val cacheFile = File(catalogDir, "games.json")
 
     /** Reads the last successful catalog cache.  Network failures never clear it. */
-    fun readCache(): List<GameCatalogEntry> {
+    override fun readCache(): List<GameCatalogEntry> {
         if (!cacheFile.isFile) return emptyList()
         return try {
             GameCatalogCodec.decode(cacheFile.readText(Charsets.UTF_8))
@@ -44,7 +45,7 @@ class GameCatalogRepository(
      * Fetches GET /api/catalog/games and atomically replaces the local cache.
      * Throws on network/parse failure so the caller can keep showing old data.
      */
-    fun fetchCatalog(): List<GameCatalogEntry> {
+    override fun fetchCatalog(): List<GameCatalogEntry> {
         val connection = (URL("$baseUrl/api/catalog/games").openConnection()
             as HttpURLConnection).apply {
             requestMethod = "GET"
@@ -82,7 +83,7 @@ class GameCatalogRepository(
      * BuildConfig.DEBUG == true  -> all catalog entries (released true + false)
      * BuildConfig.DEBUG == false -> released entries only
      */
-    fun visibleGames(allGames: List<GameCatalogEntry>): List<GameCatalogEntry> =
+    override fun visibleGames(allGames: List<GameCatalogEntry>): List<GameCatalogEntry> =
         if (BuildConfig.DEBUG) allGames else allGames.filter { it.released }
 
     private fun writeCache(games: List<GameCatalogEntry>) {

@@ -1,40 +1,34 @@
 package com.boardai.tutorial.uaal.home
 
-import android.os.Handler
-import android.os.Looper
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
-import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
 import com.boardai.tutorial.uaal.content.ContentStatus
-import com.boardai.tutorial.uaal.content.ContentStore
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
-import com.boardai.tutorial.uaal.content.ContentUpdater
 import com.boardai.tutorial.uaal.content.DownloadControl
 import com.boardai.tutorial.uaal.content.DownloadOverlayState
 import com.boardai.tutorial.uaal.content.GamePromptAction
 import com.boardai.tutorial.uaal.content.GamePromptState
 import com.boardai.tutorial.uaal.content.resolveContentStatus
 import com.boardai.tutorial.uaal.history.PlayHistoryEntry
-import com.boardai.tutorial.uaal.history.PlayHistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 /**
  * Owns the home catalog, content status, resource manager, download and
  * content-prompt state that used to live directly in MainActivity.
  *
  * All state mutation happens on the Android main thread.  Blocking catalog and
- * content work runs on the same single-thread executors the Activity used
- * before, and results are posted back through [mainHandler].
+ * content work is scheduled through [scheduler], whose production
+ * implementation preserves the original single-thread executors and main
+ * handler.
  */
 class HomeContentCoordinator(
-    private val catalogRepository: GameCatalogRepository,
-    private val contentStore: ContentStore,
-    private val contentUpdater: ContentUpdater,
-    private val historyRepository: PlayHistoryRepository,
+    private val catalogRepository: HomeCatalogSource,
+    private val contentStore: HomeContentStore,
+    private val contentUpdater: ContentUpdateExecutor,
+    private val historyRepository: HomeHistorySource,
+    private val scheduler: HomeContentScheduler,
     private val onEnterGame: (GameCatalogEntry) -> Unit,
     private val onToast: (String) -> Unit,
     private val log: (String, Throwable?) -> Unit,
@@ -43,10 +37,6 @@ class HomeContentCoordinator(
     private val onBeforeDownload: () -> Unit = {},
     private val onPlaybackErrorCleared: () -> Unit = {}
 ) {
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private val contentExecutor: ExecutorService = Executors.newSingleThreadExecutor()
-    private val catalogExecutor: ExecutorService = Executors.newSingleThreadExecutor()
-
     private val _state = MutableStateFlow(HomeContentState())
     val state: StateFlow<HomeContentState> = _state.asStateFlow()
 
@@ -73,8 +63,7 @@ class HomeContentCoordinator(
         if (disposed) return
         disposed = true
         currentDownloadControl?.requestPause()
-        contentExecutor.shutdownNow()
-        catalogExecutor.shutdownNow()
+        scheduler.dispose()
     }
 
     fun refreshCatalog(showLoading: Boolean) {
@@ -84,11 +73,11 @@ class HomeContentCoordinator(
             updateState { it.copy(isLoading = true) }
         }
 
-        catalogExecutor.execute {
+        scheduler.runCatalogTask {
             try {
                 val fetched = catalogRepository.fetchCatalog()
-                mainHandler.post {
-                    if (disposed) return@post
+                scheduler.postToMain {
+                    if (disposed) return@postToMain
                     catalogRefreshInProgress = false
                     updateState {
                         it.copy(
@@ -102,8 +91,8 @@ class HomeContentCoordinator(
                 }
             } catch (t: Throwable) {
                 log("catalog refresh failed", t)
-                mainHandler.post {
-                    if (disposed) return@post
+                scheduler.postToMain {
+                    if (disposed) return@postToMain
                     catalogRefreshInProgress = false
                     updateState {
                         it.copy(
@@ -217,17 +206,17 @@ class HomeContentCoordinator(
             )
         }
 
-        contentExecutor.execute {
+        scheduler.runContentTask {
             val result = contentUpdater.update(
                 game = game.id,
                 onStatus = { status ->
-                    mainHandler.post {
+                    scheduler.postToMain {
                         if (disposed ||
                             generation != downloadGeneration ||
                             activeDownloadGameId != game.id ||
                             _state.value.activeDownload == null
                         ) {
-                            return@post
+                            return@postToMain
                         }
                         updateState { it.copy(activeDownload = DownloadOverlayState(game, status)) }
                     }
@@ -235,8 +224,8 @@ class HomeContentCoordinator(
                 control = control
             )
 
-            mainHandler.post {
-                if (disposed || generation != downloadGeneration) return@post
+            scheduler.postToMain {
+                if (disposed || generation != downloadGeneration) return@postToMain
                 when (val status = result.status) {
                     is ContentUpdateStatus.Paused -> {
                         clearDownloadRun(activeDownload = null)
@@ -287,14 +276,14 @@ class HomeContentCoordinator(
             return
         }
 
-        contentExecutor.execute {
+        scheduler.runContentTask {
             try {
                 contentStore.deleteLocalContent(game.id)
             } catch (t: Throwable) {
                 log("failed to delete local content for ${game.id}", t)
             }
-            mainHandler.post {
-                if (disposed) return@post
+            scheduler.postToMain {
+                if (disposed) return@postToMain
                 refreshContentStatuses()
                 onToast("已删除《${game.nameZh}》本地资源")
             }
@@ -309,7 +298,7 @@ class HomeContentCoordinator(
         val visibleGames = _state.value.visibleGames
         val visibleGameIds = visibleGames.map { it.id }.toSet()
 
-        contentExecutor.execute {
+        scheduler.runContentTask {
             val updated = try {
                 historyRepository.recordPlay(gameId, visibleGameIds)
             } catch (t: Throwable) {
@@ -317,8 +306,8 @@ class HomeContentCoordinator(
                 null
             }
 
-            mainHandler.post {
-                if (disposed || updated == null) return@post
+            scheduler.postToMain {
+                if (disposed || updated == null) return@postToMain
                 historyEntries = updated
                 updateState {
                     it.copy(
@@ -337,12 +326,12 @@ class HomeContentCoordinator(
     }
 
     /**
-     * Schedules a blocking content task on the same single-thread executor used
-     * by downloads.  MainActivity uses this for local timeline loading so
+     * Schedules a blocking content task on the same scheduler slot used by
+     * downloads.  MainActivity uses this for local timeline loading so
      * playback setup remains serialized with downloads exactly as before.
      */
     internal fun runContentTask(block: () -> Unit) {
-        contentExecutor.execute(block)
+        scheduler.runContentTask(block)
     }
 
     fun dismissDownloadError() {

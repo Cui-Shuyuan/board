@@ -3,6 +3,7 @@ package com.boardai.tutorial.uaal.history
 import android.content.Context
 import android.util.Log
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
+import com.boardai.tutorial.uaal.home.HomeHistorySource
 import java.io.File
 import java.io.IOException
 import java.nio.file.AtomicMoveNotSupportedException
@@ -18,11 +19,11 @@ import java.nio.file.StandardCopyOption
  * Writes use a temporary file plus rename so a process death cannot leave a
  * partially-written document behind.
  */
-class PlayHistoryRepository(context: Context) {
+class PlayHistoryRepository(context: Context) : HomeHistorySource {
     private val historyDir = File(context.filesDir, "history")
     private val historyFile = File(historyDir, "play_history.json")
 
-    fun read(): List<PlayHistoryEntry> {
+    override fun read(): List<PlayHistoryEntry> {
         if (!historyFile.isFile) return emptyList()
         return try {
             PlayHistoryCodec.decode(historyFile.readText(Charsets.UTF_8))
@@ -39,6 +40,12 @@ class PlayHistoryRepository(context: Context) {
      * prefers games that the current build can actually show.  Invisible rows
      * may be kept while under the 100-row cap, but are never joined into the UI.
      */
+    override fun recordPlay(
+        gameId: String,
+        visibleGameIds: Set<String>
+    ): List<PlayHistoryEntry> =
+        recordPlay(gameId, visibleGameIds, System.currentTimeMillis(), MAX_ENTRIES)
+
     fun recordPlay(
         gameId: String,
         visibleGameIds: Set<String>,
@@ -77,6 +84,12 @@ class PlayHistoryRepository(context: Context) {
      * applied after joining so hidden/unreleased rows cannot consume a visible
      * slot.
      */
+    override fun recentGames(
+        visibleGames: List<GameCatalogEntry>,
+        history: List<PlayHistoryEntry>
+    ): List<RecentGame> =
+        recentGames(visibleGames, history, RECENT_LIMIT)
+
     fun recentGames(
         visibleGames: List<GameCatalogEntry>,
         history: List<PlayHistoryEntry> = read(),

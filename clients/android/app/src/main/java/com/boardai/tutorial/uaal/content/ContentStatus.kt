@@ -1,6 +1,7 @@
 package com.boardai.tutorial.uaal.content
 
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
+import com.boardai.tutorial.uaal.home.ContentStatusSource
 
 /**
  * Per-game resource state shown on the home screen and in the resource manager.
@@ -75,7 +76,7 @@ fun ContentStatus.serverVersionText(game: GameCatalogEntry): String =
  */
 fun resolveContentStatus(
     game: GameCatalogEntry,
-    store: ContentStore
+    store: ContentStatusSource
 ): ContentStatus {
     val serverVersion = game.contentVersion?.trim()?.takeIf { it.isNotBlank() }
     val active = store.readActiveValid(game.id)

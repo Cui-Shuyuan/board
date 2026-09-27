@@ -1,12 +1,9 @@
 package com.boardai.tutorial.uaal.player
 
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
-import com.boardai.tutorial.uaal.content.ContentStore
-import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.io.File
 
 /**
  * Owns the local playback-session state machine: selected game, timeline
@@ -19,7 +16,7 @@ import java.io.File
  * back through [postToMain].
  */
 class PlayerSessionController(
-    private val contentStore: ContentStore,
+    private val localContentLoader: LocalContentLoader,
     private val runIoTask: (() -> Unit) -> Unit,
     private val postToMain: (() -> Unit) -> Unit,
     private val onSendToUnity: (String, String) -> Unit,
@@ -31,10 +28,8 @@ class PlayerSessionController(
     private val _state = MutableStateFlow(PlayerSessionState())
     val state: StateFlow<PlayerSessionState> = _state.asStateFlow()
 
-    private var unityReadyHandled = false
-    private var pendingLoadGameId: String? = null
-    private var pendingLoadGameVersionRoot: String? = null
-    private var pendingUnload = false
+    private val loadQueue = UnityLoadQueue(onSendToUnity)
+
     private var localLoadInProgress = false
 
     @Volatile
@@ -48,7 +43,7 @@ class PlayerSessionController(
 
         val enteredGeneration = generation
         runIoTask {
-            val loaded = loadLocalContentSync(game)
+            val loaded = localContentLoader.load(game)
             postToMain {
                 if (enteredGeneration != generation) return@postToMain
                 localLoadInProgress = false
@@ -69,7 +64,7 @@ class PlayerSessionController(
                 )
                 onRecordPlay(game.id)
                 onSetPreparingGame(null)
-                sendLoadGameWithRoot(game.id, loaded.versionRoot.absolutePath)
+                loadQueue.queueLoad(game.id, loaded.versionRoot.absolutePath)
             }
         }
     }
@@ -94,7 +89,7 @@ class PlayerSessionController(
         localLoadInProgress = false
         _state.value = PlayerSessionState()
         onSetPreparingGame(null)
-        sendUnloadGame()
+        loadQueue.queueUnload()
         return true
     }
 
@@ -105,36 +100,12 @@ class PlayerSessionController(
     }
 
     fun onUnityReady() {
-        if (unityReadyHandled) return
-        unityReadyHandled = true
-
-        log("Unity ready; sending initial commands", null)
-        onSendToUnity("SetUnityTouchControlsEnabled", "false")
-
-        if (pendingUnload) {
-            pendingUnload = false
-            onSendToUnity("UnloadGame", "")
-        }
-
-        val gameId = pendingLoadGameId
-        val versionRoot = pendingLoadGameVersionRoot
-        pendingLoadGameId = null
-        pendingLoadGameVersionRoot = null
-        if (gameId != null) {
-            if (versionRoot != null) {
-                onSendToUnity("LoadGameWithRoot", "$gameId|$versionRoot")
-            } else {
-                onSendToUnity("LoadGame", gameId)
-            }
-        }
-        onSendToUnity("RequestStatus", "")
+        loadQueue.onUnityReady()
     }
 
     /** Re-asserts Unity status after Activity resume, matching the old behavior. */
     fun requestStatusIfReady() {
-        if (unityReadyHandled) {
-            onSendToUnity("RequestStatus", "")
-        }
+        loadQueue.requestStatusIfReady()
     }
 
     fun hasSession(): Boolean =
@@ -146,79 +117,11 @@ class PlayerSessionController(
     fun dispose() {
         generation++
         localLoadInProgress = false
-        pendingLoadGameId = null
-        pendingLoadGameVersionRoot = null
-        pendingUnload = false
-    }
-
-    private fun sendLoadGameWithRoot(gameId: String, versionRoot: String) {
-        if (unityReadyHandled) {
-            pendingUnload = false
-            pendingLoadGameId = null
-            pendingLoadGameVersionRoot = null
-            onSendToUnity("LoadGameWithRoot", "$gameId|$versionRoot")
-            onSendToUnity("RequestStatus", "")
-        } else {
-            pendingUnload = false
-            pendingLoadGameId = gameId
-            pendingLoadGameVersionRoot = versionRoot
-        }
-    }
-
-    private fun sendUnloadGame() {
-        pendingLoadGameId = null
-        pendingLoadGameVersionRoot = null
-        if (unityReadyHandled) {
-            pendingUnload = false
-            onSendToUnity("UnloadGame", "")
-            onSendToUnity("RequestStatus", "")
-        } else {
-            pendingUnload = true
-        }
+        loadQueue.clear()
     }
 
     private fun hasPending(): Boolean =
-        localLoadInProgress || pendingLoadGameId != null || pendingUnload
-
-    private fun loadLocalContentSync(game: GameCatalogEntry): LoadedLocalContent? {
-        val active = contentStore.readActiveValid(game.id) ?: return null
-        val gameRoot = contentStore.gameRoot(active.version, game.id)
-        if (!gameRoot.isDirectory) return null
-
-        val timeline = loadTimelineSync(gameRoot, game.tutorialTrack) ?: return null
-        return LoadedLocalContent(
-            version = active.version,
-            versionRoot = contentStore.versionDir(active.version),
-            timeline = timeline
-        )
-    }
-
-    private fun loadTimelineSync(gameRoot: File, track: String): TutorialTimeline? {
-        if (!gameRoot.isDirectory) {
-            log("cannot load timeline; game root missing: ${gameRoot.absolutePath}", null)
-            return null
-        }
-
-        return try {
-            val loaded = TutorialTimeline.load(gameRoot, track)
-            log(
-                "timeline loaded: ${loaded.cueCount} cues, " +
-                    "${"%.2f".format(loaded.totalDuration)}s, " +
-                    "${loaded.allChapters.size} chapter nodes",
-                null
-            )
-            loaded
-        } catch (t: Throwable) {
-            log("failed to load timeline from ${gameRoot.absolutePath} track=$track", t)
-            null
-        }
-    }
-
-    private data class LoadedLocalContent(
-        val version: String,
-        val versionRoot: File,
-        val timeline: TutorialTimeline
-    )
+        localLoadInProgress || loadQueue.hasPending()
 
     private companion object {
         const val LOCAL_CONTENT_ERROR = "本地内容缺失或损坏，请重新下载"

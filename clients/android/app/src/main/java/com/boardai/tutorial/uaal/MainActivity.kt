@@ -31,9 +31,11 @@ import com.boardai.tutorial.uaal.content.ContentUpdater
 import com.boardai.tutorial.uaal.content.DownloadProgressOverlay
 import com.boardai.tutorial.uaal.content.GameContentPromptDialog
 import com.boardai.tutorial.uaal.history.PlayHistoryRepository
+import com.boardai.tutorial.uaal.home.AndroidHomeContentScheduler
 import com.boardai.tutorial.uaal.home.HomeContentCoordinator
 import com.boardai.tutorial.uaal.home.HomeScreen
 import com.boardai.tutorial.uaal.home.ResourceManagerOverlay
+import com.boardai.tutorial.uaal.player.DefaultLocalContentLoader
 import com.boardai.tutorial.uaal.player.PlayerSessionController
 import com.boardai.tutorial.uaal.player.TutorialPlayerOverlay
 import com.boardai.tutorial.uaal.qa.QaSessionHolder
@@ -80,6 +82,7 @@ class MainActivity : UnityPlayerGameActivity() {
         val contentUpdater = ContentUpdater(BuildConfig.BOARD_API_BASE_URL, contentStore)
         val catalogRepository = GameCatalogRepository(this, BuildConfig.BOARD_API_BASE_URL)
         val historyRepository = PlayHistoryRepository(this)
+        val homeScheduler = AndroidHomeContentScheduler()
         qaRepository = QaRepository(BuildConfig.BOARD_API_BASE_URL)
         asrRepository = AsrRepository(BuildConfig.BOARD_API_BASE_URL)
         ttsRepository = TtsRepository(this, BuildConfig.BOARD_API_BASE_URL)
@@ -89,6 +92,7 @@ class MainActivity : UnityPlayerGameActivity() {
             contentStore = contentStore,
             contentUpdater = contentUpdater,
             historyRepository = historyRepository,
+            scheduler = homeScheduler,
             onEnterGame = { game ->
                 homeContent.closeResourceManager()
                 clearQaState()
@@ -112,7 +116,7 @@ class MainActivity : UnityPlayerGameActivity() {
         )
 
         playerSession = PlayerSessionController(
-            contentStore = contentStore,
+            localContentLoader = DefaultLocalContentLoader(contentStore),
             runIoTask = { block -> homeContent.runContentTask(block) },
             postToMain = { block -> mainHandler.post(block) },
             onSendToUnity = { method, value -> sendToUnity(method, value) },

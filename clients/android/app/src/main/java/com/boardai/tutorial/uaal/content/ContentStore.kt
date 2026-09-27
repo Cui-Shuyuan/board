@@ -1,6 +1,7 @@
 package com.boardai.tutorial.uaal.content
 
 import android.content.Context
+import com.boardai.tutorial.uaal.home.HomeContentStore
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
@@ -60,7 +61,7 @@ data class PausedContent(
  */
 class ContentStore private constructor(
     val contentRoot: File
-) {
+) : HomeContentStore {
     val versionsDir: File = File(contentRoot, "versions")
     val activeFile: File = File(contentRoot, "active.json")
 
@@ -78,11 +79,11 @@ class ContentStore private constructor(
 
     fun progressFile(version: String): File = File(partialDir(version), PROGRESS_MARKER)
 
-    fun gameRoot(version: String, game: String): File = File(versionDir(version), game)
+    override fun gameRoot(version: String, gameId: String): File = File(versionDir(version), gameId)
 
     fun completeMarker(version: String): File = File(versionDir(version), COMPLETE_MARKER)
 
-    fun isVersionComplete(version: String, game: String? = null): Boolean {
+    override fun isVersionComplete(version: String, gameId: String?): Boolean {
         val directory = versionDir(version)
         if (!directory.isDirectory) return false
 
@@ -92,9 +93,9 @@ class ContentStore private constructor(
         return try {
             val json = JSONObject(marker.readText(Charsets.UTF_8))
             if (json.optString("version", "") != version) return false
-            if (game != null) {
-                if (json.optString("game", "") != game) return false
-                if (!File(directory, game).isDirectory) return false
+            if (gameId != null) {
+                if (json.optString("game", "") != gameId) return false
+                if (!File(directory, gameId).isDirectory) return false
             }
             true
         } catch (_: Exception) {
@@ -103,12 +104,12 @@ class ContentStore private constructor(
     }
 
     /** Active pointer plus the complete marker and real game directory. */
-    fun readActiveValid(game: String): ActiveContent? {
-        val active = readActive(game) ?: return null
-        if (!isVersionComplete(active.version, game)) return null
-        val root = gameRoot(active.version, game)
+    override fun readActiveValid(gameId: String): ActiveContent? {
+        val active = readActive(gameId) ?: return null
+        if (!isVersionComplete(active.version, gameId)) return null
+        val root = gameRoot(active.version, gameId)
         if (!root.isDirectory) return null
-        return ActiveContent(game = game, version = active.version, root = root)
+        return ActiveContent(game = gameId, version = active.version, root = root)
     }
 
     fun writeCompleteMarker(
@@ -242,7 +243,7 @@ class ContentStore private constructor(
      * if a partial game directory still exists, a zero-progress marker is
      * returned so the UI still reports PAUSED and the `.part` files can resume.
      */
-    fun readPaused(game: String): PausedContent? {
+    override fun readPaused(gameId: String): PausedContent? {
         val directories = versionsDir.listFiles()
             ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
             ?: return null
@@ -254,9 +255,9 @@ class ContentStore private constructor(
 
             val marker = readProgressMarker(directory)
             val candidate = when {
-                marker?.game == game -> marker.copy(version = version)
-                File(directory, game).isDirectory -> PausedContent(
-                    game = game,
+                marker?.game == gameId -> marker.copy(version = version)
+                File(directory, gameId).isDirectory -> PausedContent(
+                    game = gameId,
                     version = version,
                     updatedAt = directory.lastModified()
                 )
@@ -322,18 +323,18 @@ class ContentStore private constructor(
     }
 
     /** Deletes partial directories/markers belonging to [game]. */
-    fun deletePaused(game: String) {
+    override fun deletePaused(gameId: String) {
         val directories = versionsDir.listFiles()
             ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
             ?: return
 
         for (directory in directories) {
             val marker = readProgressMarker(directory)
-            val gameDir = File(directory, game)
-            if (marker?.game != game && !gameDir.isDirectory) continue
+            val gameDir = File(directory, gameId)
+            if (marker?.game != gameId && !gameDir.isDirectory) continue
 
             if (gameDir.isDirectory) gameDir.deleteRecursively()
-            if (marker?.game == game) {
+            if (marker?.game == gameId) {
                 File(directory, PROGRESS_MARKER).delete()
             }
             File(directory, "$PROGRESS_MARKER.tmp").delete()
@@ -365,19 +366,19 @@ class ContentStore private constructor(
      * Deletes every complete version for [game], all of its partials and its
      * active pointer.  No other game's files are touched.
      */
-    fun deleteLocalContent(game: String) {
+    override fun deleteLocalContent(gameId: String) {
         val versionDirectories = versionsDir.listFiles()
             ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
             ?: emptyList()
 
         for (directory in versionDirectories) {
             val markerGame = readCompleteMarkerGame(directory)
-            if (markerGame != game && !File(directory, game).isDirectory) continue
+            if (markerGame != gameId && !File(directory, gameId).isDirectory) continue
             directory.deleteRecursively()
         }
 
-        deletePaused(game)
-        clearActive(game)
+        deletePaused(gameId)
+        clearActive(gameId)
     }
 
     /**

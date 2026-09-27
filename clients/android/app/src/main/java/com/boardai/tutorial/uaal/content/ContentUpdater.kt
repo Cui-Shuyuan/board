@@ -1,6 +1,7 @@
 package com.boardai.tutorial.uaal.content
 
 import android.util.Log
+import com.boardai.tutorial.uaal.home.ContentUpdateExecutor
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -18,7 +19,7 @@ class ContentUpdater(
     baseUrl: String,
     private val store: ContentStore,
     private val fetcher: ContentFetcher = HttpContentFetcher(baseUrl)
-) {
+) : ContentUpdateExecutor {
     private data class ResumeState(
         val completedPaths: Set<String>,
         val completedFiles: Int,
@@ -28,10 +29,10 @@ class ContentUpdater(
 
     private val nowMillis: () -> Long = { System.nanoTime() / 1_000_000 }
 
-    fun update(
+    override fun update(
         game: String,
         onStatus: (ContentUpdateStatus) -> Unit,
-        control: DownloadControl = DownloadControl()
+        control: DownloadControl
     ): ContentUpdateResult {
         var version = ""
         var totalFiles = 0
