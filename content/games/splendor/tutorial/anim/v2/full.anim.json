@@ -7274,7 +7274,7 @@
       ],
       "script": {
         "story": "【如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌，那么我购买这张牌时无需支付任何宝石】",
-        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是：一级白再来 1 张（`sample`? 不 —— 这是假设买过的牌，用市场模板 `market_card_3_diamond`(三级白) 与 `market_card_1_sapphire`(一级蓝)）、以及 1 张蓝。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。\n  ⚠ 本 cue 是 `demo: true` 的假设分支，不写回 canonical；后续 canonical 通过 `action.cards.limit.001.2` 显式 `entry` 回 `discount.002.2`，不能默认继承这里的假设牌。",
+        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是：一级白再来 1 张（`sample`? 不 —— 这是假设买过的牌，用市场模板 `market_card_3_diamond`(三级白) 与 `market_card_1_sapphire`(一级蓝)）、以及 1 张蓝。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。\n  ⚠ 本 cue 是 `demo: true` 的假设分支，不写回 canonical；后续 canonical 通过 `action.cards.limit.001.2` 显式 `entry` 回 `action.cards.discount.001`（demo 分支之前最后一个 canonical cue），不能默认继承这里的假设牌。",
         "exit": {
           "zones": {
             "player_development": {
