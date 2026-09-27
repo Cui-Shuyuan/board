@@ -160,9 +160,9 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 - 跨 tree 状态复制必须写显式 `entry`；`parent` 只负责同 tree 默认继承。
 - cue 级 `stage` 由 `cue.stage -> parent resolved stage -> tree.stage` 解析；换 stage 不是状态重置，也不是共享状态的手段。
 - demo 分支通过 `demo: true` 显式标出，audit 会在 `state_graph` 中区分 `is_demo` 并对 canonical/demo 采用不同守恒口径。
-- 换树/起树第一条 cue 必须在 `at=0` 显式声明 camera（校验器 error）。
+- 起 cue / `world_cut` 的第一条 camera 事件必须锚定在 cue start（编译后 `at=0`）；校验器会检查。
 - 素材路径必须直接写处理过的 `_cutout.png`；多色模板用 `face_image_by_palette` 显式映射。
-- `demo: true` 的 cue 只用于临时数量演示，紧跟的真实 setup cue 必须恢复实际数量。
+- `demo: true` 允许“牌堆清空 / 假设买牌”等假设性增减；canonical 分支必须显式 `entry` 回真实来源，不能默认继承 demo 结局。
 - 动画职责越少越好；文字、契约、events 必须一一对应。
 - 任意跳转由编译期入口状态 + 运行时维护当前状态结合实现。
 
@@ -171,7 +171,7 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 - 动画脚本是**手写的静态资产**，story / note / tree / 契约 / events / camera 全由人或 LLM 写入源 JSON；程序只做体检、过账、编译、对账、取景链检查。
 - 旧的 `.claude/anim_batches/` 批处理脚本一律不要运行——它们会整份重写 `full.anim.json`，已退役。
 - 合法性问句手写：一 cue 一事、只带最小状态；机器拼的版本不稳定，已废弃。
-- `camera` 写“要入镜的 zone”（逗号分隔）；`camera_fill` 是这些 zone 占画面中央的比例，默认 0.8，特写 0.6–0.72；镜头默认沿父链继承。
+- `camera` 写“要入镜的 zone”（逗号分隔）；`camera_fill` 是这些 zone 占画面中央的比例，默认 0.8，特写 0.6–0.72；镜头继承状态来源 cue 的 `camera_out`，没有可用来源时用当前 resolved stage 的默认机位。
 - 用户验收节奏：AI 写 → 用户看 → AI 改 → 改完即成为固定资产，只用于确定性播放。
 - 每条 cue 的文字至少包含：念什么（story） + 画面要变成什么（enter/exit） + 为什么这么演（note） + 在哪棵树/怎么切树（tree） + 看哪几个 zone（camera）。
 - 动画文字与结构必须一一对应；后续应增加“文字与结构一致性”lint，防止“文字说了、结构没做”或反过来。
