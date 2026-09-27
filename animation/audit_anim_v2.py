@@ -414,32 +414,16 @@ def check_refill(
 
 
 # ---------------------------------------------------------------------------
-# check 3: pointer event / clip reconciliation
+# check 3: pointer event / compilation-resolution reconciliation
 
 
-def _compiled_pointer_ids(compiled_cue: dict) -> list[str]:
-    item_ids = []
-    for clip in compiled_cue.get("clips") or []:
-        if not isinstance(clip, dict):
-            continue
-        if clip.get("kind") in ("point", "highlight"):
-            item_ids.append(str(clip.get("item_id") or ""))
-    return item_ids
-
-
-def _source_pointer_events(source_cue: dict) -> list[dict]:
-    return [
-        event for event in (source_cue.get("events") or [])
-        if isinstance(event, dict) and event.get("op") in ("point", "highlight")
-    ]
-
-
-def _zone_item_count(compiled_cue: dict, zone: str | None) -> int:
-    if not zone:
-        return 0
-    state = compiled_cue.get("end_state") or {}
-    return sum(1 for comp in state.get("components") or []
-               if isinstance(comp, dict) and comp.get("ZoneId") == zone)
+def _source_pointer_events(source_cue: dict) -> list[tuple[int, dict]]:
+    """Return ``(event_index, event)`` for every source point/highlight."""
+    out = []
+    for event_index, event in enumerate(source_cue.get("events") or []):
+        if isinstance(event, dict) and event.get("op") in ("point", "highlight"):
+            out.append((event_index, event))
+    return out
 
 
 def check_pointer(
@@ -462,48 +446,61 @@ def check_pointer(
             continue
 
         source_pointers = _source_pointer_events(source_cue)
-        compiled_pointers = _compiled_pointer_ids(compiled_cue)
-        src_n = len(source_pointers)
-        comp_n = len(compiled_pointers)
-        stats["pointer_src_total"] += src_n
-        stats["pointer_comp_total"] += comp_n
-
-        if comp_n >= src_n:
+        stats["pointer_src_total"] += len(source_pointers)
+        if not source_pointers:
             continue
 
-        item_ids = compiled_pointers
-        source_zones = [event.get("zone") for event in source_pointers if event.get("zone")]
-        same_source_zone = (
-            len(source_zones) == len(source_pointers)
-            and len(set(source_zones)) == 1
-        )
-        zone = str(source_zones[0]) if same_source_zone else None
-        zone_items = _zone_item_count(compiled_cue, zone)
+        resolution_by_index: dict[int, dict] = {}
+        for record in compiled_cue.get("pointer_resolution") or []:
+            if not isinstance(record, dict):
+                continue
+            event_index = record.get("event_index")
+            if isinstance(event_index, int):
+                resolution_by_index[event_index] = record
 
-        # A repeated pointer to the same single physical item is redundant
-        # source data, not a silently dropped target.  Only downgrade when the
-        # compiled cue explicitly resolves that one item and the source events
-        # all point at the same one-item zone.
-        duplicate_same_item = (
-            comp_n == 1
-            and len(set(item_ids)) == 1
-            and same_source_zone
-            and zone_items == 1
-        )
-        if duplicate_same_item:
-            stats["pointer_duplicate_warnings"] += 1
-            warnings.append(_finding(
-                "WARN", "pointer", index, cue_id,
-                f"pointer 解析降级 WARN: src={src_n} comp={comp_n}, 编译后唯一 "
-                f"item_id={item_ids}; 源事件均指向 {zone} 且该 zone 在 compiled "
-                f"end_state 中仅 1 件实物，判定为重复指向同一件，按 WARN 处理",
-            ))
+        unresolved: list[dict] = []
+        for event_index, event in source_pointers:
+            op = event.get("op")
+            record = resolution_by_index.get(event_index)
+            item_ids = record.get("item_ids") if isinstance(record, dict) else None
+            if not isinstance(item_ids, list):
+                item_ids = []
+
+            reason = None
+            if record is None:
+                reason = "缺少 resolution record"
+            elif not item_ids:
+                reason = "item_ids 为空"
+            elif op == "point" and len(item_ids) != 1:
+                reason = f"point 需要 1 个 item，实际 {len(item_ids)} 个"
+            elif op == "highlight" and len(item_ids) == 0:
+                reason = "highlight item_ids 为空"
+
+            if reason is not None:
+                unresolved.append({
+                    "event_index": event_index,
+                    "op": op,
+                    "zone": event.get("zone"),
+                    "order": event.get("order"),
+                    "anchor": event.get("anchor"),
+                    "offset": event.get("offset"),
+                    "reason": reason,
+                })
+
+        if not unresolved:
             continue
 
-        stats["pointer_deficit_cues"] += 1
+        stats["pointer_unresolved_events"] += len(unresolved)
+        stats["pointer_unresolved_cues"] += 1
+        detail = "；".join(
+            f"event_index={item['event_index']} op={item['op']} zone={item['zone']} "
+            f"order={item['order']} anchor={item['anchor']!r} offset={item['offset']!r} "
+            f"({item['reason']})"
+            for item in unresolved
+        )
         errors.append(_finding(
             "ERR", "pointer", index, cue_id,
-            f"pointer 解析: src={src_n} comp={comp_n}, 编译后 pointer item_id={item_ids}",
+            f"pointer 解析未完成: {detail}",
         ))
 
 
@@ -550,9 +547,8 @@ def audit_documents(
         "refill_missing": 0,
         "refill_final_market": {},
         "pointer_src_total": 0,
-        "pointer_comp_total": 0,
-        "pointer_deficit_cues": 0,
-        "pointer_duplicate_warnings": 0,
+        "pointer_unresolved_events": 0,
+        "pointer_unresolved_cues": 0,
     }
 
     # Keep check order stable in the JSON output; human output is sorted by cue.

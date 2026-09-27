@@ -84,6 +84,7 @@ def make_docs(
     start_components: list[dict] | None = None,
     end_components: list[dict] | None = None,
     clips: list[dict] | None = None,
+    pointer_resolution: list[dict] | None = None,
     cue_id: str = "cue.1",
 ) -> tuple[dict, dict]:
     source_events = source_events if source_events is not None else []
@@ -101,18 +102,21 @@ def make_docs(
             "events": copy.deepcopy(source_events),
         }],
     }
+    compiled_cue = {
+        "id": cue_id,
+        "tree": "main",
+        "transition": "continue",
+        "start_state": {"components": copy.deepcopy(start_components)},
+        "end_state": {"components": copy.deepcopy(end_components)},
+        "clips": copy.deepcopy(clips),
+    }
+    if pointer_resolution is not None:
+        compiled_cue["pointer_resolution"] = copy.deepcopy(pointer_resolution)
     compiled_doc = {
         "game": "splendor",
         "track": "full",
         "trees": [{"id": "main", "world": "real"}],
-        "cues": [{
-            "id": cue_id,
-            "tree": "main",
-            "transition": "continue",
-            "start_state": {"components": copy.deepcopy(start_components)},
-            "end_state": {"components": copy.deepcopy(end_components)},
-            "clips": copy.deepcopy(clips),
-        }],
+        "cues": [compiled_cue],
     }
     return track_doc, compiled_doc
 
@@ -121,7 +125,19 @@ class AuditAnimV2Tests(unittest.TestCase):
     def test_valid_synthetic_track_passes_all_checks(self):
         source_events = [{"op": "highlight", "zone": "player_holding"}]
         clips = [{"kind": "highlight", "item_id": "starting_marker|marker#1"}]
-        track_doc, compiled_doc = make_docs(source_events=source_events, clips=clips)
+        pointer_resolution = [{
+            "event_index": 0,
+            "op": "highlight",
+            "zone": "player_holding",
+            "order": None,
+            "matched_count": 1,
+            "item_ids": ["starting_marker|marker#1"],
+        }]
+        track_doc, compiled_doc = make_docs(
+            source_events=source_events,
+            clips=clips,
+            pointer_resolution=pointer_resolution,
+        )
 
         result = audit.audit_documents(track_doc, compiled_doc)
 
@@ -167,16 +183,97 @@ class AuditAnimV2Tests(unittest.TestCase):
         self.assertIn("缺一级补牌", refill_errors[0]["message"])
         self.assertEqual("cue.1", refill_errors[0]["cue_id"])
 
-    def test_pointer_count_deficit_reports_error(self):
-        source_events = [{"op": "point", "zone": "player_holding", "order": 0}]
-        track_doc, compiled_doc = make_docs(source_events=source_events, clips=[])
+    def test_pointer_empty_resolution_reports_error(self):
+        source_events = [{
+            "op": "point",
+            "zone": "player_holding",
+            "order": 0,
+            "anchor": "hold.marker",
+            "offset": 1.5,
+        }]
+        pointer_resolution = [{
+            "event_index": 0,
+            "op": "point",
+            "zone": "player_holding",
+            "order": 0,
+            "matched_count": 0,
+            "item_ids": [],
+        }]
+        track_doc, compiled_doc = make_docs(
+            source_events=source_events,
+            clips=[],
+            pointer_resolution=pointer_resolution,
+        )
 
         result = audit.audit_documents(track_doc, compiled_doc)
 
         pointer_errors = [item for item in result["errors"] if item["check"] == "pointer"]
         self.assertEqual(1, len(pointer_errors), result)
-        self.assertIn("src=1 comp=0", pointer_errors[0]["message"])
-        self.assertIn("pointer item_id=[]", pointer_errors[0]["message"])
+        self.assertIn("event_index=0", pointer_errors[0]["message"])
+        self.assertIn("op=point", pointer_errors[0]["message"])
+        self.assertIn("zone=player_holding", pointer_errors[0]["message"])
+        self.assertIn("anchor='hold.marker'", pointer_errors[0]["message"])
+        self.assertIn("offset=1.5", pointer_errors[0]["message"])
+        self.assertIn("item_ids 为空", pointer_errors[0]["message"])
+        self.assertEqual(1, result["stats"]["pointer_unresolved_events"])
+        self.assertEqual(1, result["stats"]["pointer_unresolved_cues"])
+
+    def test_highlight_multiple_clips_do_not_mask_empty_pointer(self):
+        source_events = [
+            {"op": "highlight", "zone": "player_holding", "order": 0},
+            {"op": "highlight", "zone": "player_development", "order": 0},
+        ]
+        clips = [
+            {"kind": "highlight", "item_id": "a|card#1"},
+            {"kind": "highlight", "item_id": "b|card#1"},
+            {"kind": "highlight", "item_id": "c|card#1"},
+        ]
+        pointer_resolution = [
+            {
+                "event_index": 0,
+                "op": "highlight",
+                "zone": "player_holding",
+                "order": 0,
+                "matched_count": 3,
+                "item_ids": ["a|card#1", "b|card#1", "c|card#1"],
+            },
+            {
+                "event_index": 1,
+                "op": "highlight",
+                "zone": "player_development",
+                "order": 0,
+                "matched_count": 0,
+                "item_ids": [],
+            },
+        ]
+        track_doc, compiled_doc = make_docs(
+            source_events=source_events,
+            clips=clips,
+            pointer_resolution=pointer_resolution,
+        )
+
+        result = audit.audit_documents(track_doc, compiled_doc)
+
+        pointer_errors = [item for item in result["errors"] if item["check"] == "pointer"]
+        self.assertEqual(1, len(pointer_errors), result)
+        message = pointer_errors[0]["message"]
+        self.assertIn("event_index=1", message)
+        self.assertIn("op=highlight", message)
+        self.assertIn("zone=player_development", message)
+        self.assertNotIn("event_index=0", message)
+        self.assertEqual([], result["warnings"], result["warnings"])
+
+    def test_missing_resolution_record_reports_error(self):
+        source_events = [{"op": "point", "zone": "player_holding", "order": 0}]
+        clips = [{"kind": "point", "item_id": "starting_marker|marker#1"}]
+        track_doc, compiled_doc = make_docs(source_events=source_events, clips=clips)
+
+        result = audit.audit_documents(track_doc, compiled_doc)
+
+        pointer_errors = [item for item in result["errors"] if item["check"] == "pointer"]
+        self.assertEqual(1, len(pointer_errors), result)
+        self.assertIn("event_index=0", pointer_errors[0]["message"])
+        self.assertIn("缺少 resolution record", pointer_errors[0]["message"])
 
     def test_json_output_contains_errors_warnings_and_stats(self):
         track_doc, compiled_doc = make_docs()

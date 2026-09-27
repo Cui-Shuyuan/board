@@ -686,7 +686,9 @@ class Compiler:
 
             state = StateModel(self.stack_zones, self.zone_order_policies).load_snapshot(entry_state)
             start = state.snapshot()
-            clips, state_ops, camera_ops, first_state = self.compile_events(cue, state, tree, 0)
+            clips, state_ops, camera_ops, first_state, pointer_resolution = self.compile_events(
+                cue, state, tree, 0
+            )
             if first_state is None:
                 first_state = start
             enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
@@ -715,6 +717,7 @@ class Compiler:
                 "first_state": first_state,
                 "end_state": end,
                 "clips": clips,
+                "pointer_resolution": pointer_resolution,
                 "_stage": stage_id,
                 "_camera_out": camera_out,
             }
@@ -750,6 +753,7 @@ class Compiler:
                 "first_state": result.pop("first_state"),
                 "end_state": result.pop("end_state"),
                 "clips": result.pop("clips"),
+                "pointer_resolution": result.pop("pointer_resolution"),
             }
             cues_out.append(ordered)
 
@@ -812,23 +816,26 @@ class Compiler:
         return arr
 
     def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int) -> tuple:
-        """Returns (clips, state_ops, camera_ops, first_state).
+        """Returns (clips, state_ops, camera_ops, first_state, pointer_resolution).
 
         * state_ops are concrete item-id puts/removes: the logical truth the
           runtime applies before its visual clips.
         * camera_ops are concrete compiled camera frames at their switch times.
         * first_state is the logical state after every op whose effective time
           is <= 0.
+        * pointer_resolution records every source point/highlight resolution so
+          the audit can compare source events one-by-one.
         """
         clips: list = []
         state_ops: list = []
         camera_ops: list = []
         first_state = None
+        pointer_resolution: list = []
         stage_id = tree["stage"]
         stage = self.stages[stage_id]
         stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[stage_id]["zones"]}
         cue_id = cue.get("id")
-        for ev in cue.get("events") or []:
+        for event_index, ev in enumerate(cue.get("events") or []):
             op = ev.get("op")
             at = self.event_at(ev, cue_id)
             dur = float(ev.get("dur", 0.0) or 0.0)
@@ -988,14 +995,45 @@ class Compiler:
                 if arr:
                     state.move_order(arr[0], zone, int(ev.get("index", ev.get("order", 0)) or 0))
             elif op == "highlight":
-                arr = self.select_items(state, zone, sel, ev.get("order"))
-                for it in arr:
+                matched = self.select_items(state, zone, sel, ev.get("order"))
+                item_ids = [it["id"] for it in matched]
+                pointer_resolution.append({
+                    "event_index": event_index,
+                    "op": op,
+                    "zone": zone,
+                    "order": ev.get("order"),
+                    "matched_count": len(matched),
+                    "item_ids": item_ids,
+                })
+                if not item_ids:
+                    self.rep.warn(
+                        f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
+                        f"zone={zone!r} order={ev.get('order')!r} "
+                        f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                    )
+                for it in matched:
                     clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
                                                         to_scale=float(ev.get("grow", 1.16) or 1.16)))
             elif op == "point":
-                arr = self.select_items(state, zone, sel, ev.get("order"), limit=1)
-                if arr:
-                    clips.append(self.presentation_clip("point", arr[0], at, dur, lead, easing,
+                matched = self.select_items(state, zone, sel, ev.get("order"))
+                selected = matched[:1]
+                item_ids = [it["id"] for it in selected]
+                pointer_resolution.append({
+                    "event_index": event_index,
+                    "op": op,
+                    "zone": zone,
+                    "order": ev.get("order"),
+                    "matched_count": len(matched),
+                    "item_ids": item_ids,
+                })
+                if not item_ids:
+                    self.rep.warn(
+                        f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
+                        f"zone={zone!r} order={ev.get('order')!r} "
+                        f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                    )
+                if selected:
+                    clips.append(self.presentation_clip("point", selected[0], at, dur, lead, easing,
                                                         part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
             elif op == "label":
                 overlay_id = norm(ev.get("overlay"))
@@ -1100,7 +1138,7 @@ class Compiler:
         # ops keep source event order (important for conflicting ops).
         state_ops.sort(key=lambda x: x["at"])
         camera_ops.sort(key=lambda x: x["at"])
-        return clips, state_ops, camera_ops, first_state
+        return clips, state_ops, camera_ops, first_state, pointer_resolution
 
     # ── clip builders ─────────────────────────────────────────────────────
     def base_clip(self, kind, at, dur, lead, easing):
