@@ -4,9 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -25,9 +28,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 internal fun PlayerTopBar(
     chapterPathText: String?,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .background(
@@ -38,9 +42,17 @@ internal fun PlayerTopBar(
                     )
                 )
             )
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        PlayerControlButton(
+            label = "返回",
+            compact = true,
+            modifier = Modifier.width(56.dp),
+            onClick = onBack
+        )
         if (!chapterPathText.isNullOrBlank()) {
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = chapterPathText,
                 color = Color.White,
@@ -49,7 +61,6 @@ internal fun PlayerTopBar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .align(Alignment.TopStart)
                     .widthIn(max = 520.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .background(Color.Black.copy(alpha = 0.22f))

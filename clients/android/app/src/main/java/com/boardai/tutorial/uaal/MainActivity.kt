@@ -351,6 +351,7 @@ class MainActivity : UnityPlayerGameActivity() {
                                     openQa(cueId, positionInCue, wasPlaying)
                                 },
                                 onCloseQa = { closeQa() },
+                                onBack = { returnToHome() },
                                 onCommand = { method, value -> sendToUnity(method, value) }
                             )
                         } else {

@@ -70,6 +70,7 @@ fun TutorialPlayerOverlay(
     requestRecordPermission: (onResult: (Boolean) -> Unit) -> Unit,
     onOpenQa: (cueId: String, positionInCue: Float, wasPlaying: Boolean) -> Unit,
     onCloseQa: () -> Unit,
+    onBack: () -> Unit,
     onCommand: (method: String, value: String) -> Unit,
     gesturePolicy: PlayerGesturePolicy = PlayerGesturePolicy()
 ) {
@@ -263,6 +264,7 @@ fun TutorialPlayerOverlay(
             Box(modifier = Modifier.fillMaxSize()) {
                 PlayerTopBar(
                     chapterPathText = if (display.unityReady) chapterPathTextWithGame else null,
+                    onBack = onBack,
                     modifier = Modifier.align(Alignment.TopCenter)
                 )
 
