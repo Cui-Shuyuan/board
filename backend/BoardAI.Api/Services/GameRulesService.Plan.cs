@@ -211,7 +211,7 @@ public partial class GameRulesService
             if (merged.Count == 0 || merged[0].Score < 0.55f)
             {
                 var qhits = ResolveFromQuestion(game, question, out var qsource)
-                    .Where(el => IsExpectedPlanType(game, relation, GetElementId(el)))
+                    .Where(el => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(el)))
                     .ToList();
                 if (qhits.Count > 0)
                     return BuildOkResult(game, relation, entity, qhits, qsource, question);
@@ -269,7 +269,7 @@ public partial class GameRulesService
     /// </summary>
     private PlanItemResult BuildOkResult(string game, string relation, string entity, List<JsonElement> matched, string source = "", string question = "")
     {
-        var resolvedId = GetElementId(matched[0]);
+        var resolvedId = RulesTextUtils.GetElementId(matched[0]);
 
         var item = new PlanItemResult
         {
@@ -349,7 +349,7 @@ public partial class GameRulesService
         // 精确匹配：中文名 / 英文名 / 别名 / 基名（大小写不敏感；覆盖 flow 节点与实例）。
         // 「名词直呼」工具：客人按名字提到概念时，程序直接确定检索目标，不走向量。
         // 一个键可映射多个概念（基名「家庭成长」→ 需/无需房间两个行动），多命中全部返回。
-        var lookup = GetExactLookup(game);
+        var lookup = _nameIndex.GetExactLookup(game);
         if (lookup.TryGetValue(entity, out var hits))
         {
             var exact = new List<JsonElement>();
@@ -362,7 +362,7 @@ public partial class GameRulesService
         }
 
         // 名称包含 → 唯一则直接解析，多个则返回候选供消歧
-        var map = GetNameMap(game);
+        var map = _nameIndex.GetNameMap(game);
         var containing = map.Where(kv => kv.Value.Contains(entity, StringComparison.Ordinal)).Take(6).ToList();
         if (containing.Count == 1)
         {
@@ -391,7 +391,7 @@ public partial class GameRulesService
         source = "";
         if (string.IsNullOrWhiteSpace(question)) return new List<JsonElement>();
 
-        var lookup = GetExactLookup(game);
+        var lookup = _nameIndex.GetExactLookup(game);
 
         // 收集所有命中区间（key, 起点, 长度）
         var spans = new List<(string Key, int Start, int Len)>();

@@ -16,6 +16,8 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
     private readonly RulesConceptCatalog _catalog;
 
+    private readonly RulesNameIndexService _nameIndex;
+
     private readonly RulesSearchService _searchService;
 
 
@@ -39,6 +41,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         var basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
         _content = new RulesContentStore(basePath, ClearDerivedCaches);
         _catalog = new RulesConceptCatalog(_content);
+        _nameIndex = new RulesNameIndexService(_catalog, _content);
         _vectorSearch = vectorSearch;
         _searchService = new RulesSearchService(_catalog, vectorSearch);
     }
@@ -90,8 +93,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     /// </summary>
     private void ClearDerivedCaches()
     {
-        _nameMaps.Clear();
-        _exactLookups.Clear();
+        _nameIndex.Clear();
         _conceptTypeMaps.Clear();
         _flowPositions = null;
         _scoreTableGame = null;

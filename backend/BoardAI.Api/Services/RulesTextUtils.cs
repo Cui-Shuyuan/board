@@ -25,4 +25,14 @@ internal static class RulesTextUtils
         }
         return null;
     }
+
+    /// <summary>读取概念的 id 属性（无则空字符串）。</summary>
+    public static string GetElementId(JsonElement element)
+    {
+        return element.ValueKind == JsonValueKind.Object
+            && element.TryGetProperty("id", out var idProp)
+            && idProp.ValueKind == JsonValueKind.String
+            ? idProp.GetString() ?? ""
+            : "";
+    }
 }

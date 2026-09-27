@@ -1,27 +1,38 @@
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using BoardAI.Api.Infrastructure;
-using BoardAI.Api.Models;
-using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+public sealed record ExactNameMatch(string Id, string Kind);
+
+/// <summary>
+/// 规则名称索引协作类：从概念目录与规则 JSON 构建 id→zh 名映射，以及
+/// 「名词直呼」精确查找表（zh/en 名、aliases、基名）。按 game 缓存，
+/// 规则文档变化时由 <see cref="Clear"/> 清空重建。
+/// </summary>
+public sealed class RulesNameIndexService
 {
+    private readonly IRulesConceptCatalog _catalog;
+    private readonly RulesContentStore _content;
 
     private readonly Dictionary<string, Dictionary<string, string>> _nameMaps = new();
+    private readonly Dictionary<string, Dictionary<string, IReadOnlyList<ExactNameMatch>>> _exactLookups = new();
 
+    public RulesNameIndexService(IRulesConceptCatalog catalog, RulesContentStore content)
+    {
+        _catalog = catalog;
+        _content = content;
+    }
 
-    private Dictionary<string, string> GetNameMap(string game)
+    /// <summary>游戏概念 id → zh 名（概念目录 + 游戏流 + 本体流）。</summary>
+    public IReadOnlyDictionary<string, string> GetNameMap(string game)
     {
         if (_nameMaps.TryGetValue(game, out var cached)) return cached;
         var map = new Dictionary<string, string>();
 
-        foreach (var type in GetConceptTypes(game))
+        foreach (var type in _catalog.GetConceptTypes(game))
         {
-            foreach (var summary in ListConcepts(game, type))
+            foreach (var summary in _catalog.ListConcepts(game, type))
             {
                 if (!string.IsNullOrEmpty(summary.Id) && !string.IsNullOrEmpty(summary.Name) && summary.Id != summary.Name)
                     map[summary.Id] = summary.Name;
@@ -37,7 +48,6 @@ public partial class GameRulesService
         _nameMaps[game] = map;
         return map;
     }
-
 
     private static void WalkFlowForNames(JsonElement node, Dictionary<string, string> map)
     {
@@ -65,10 +75,6 @@ public partial class GameRulesService
         }
     }
 
-
-    private readonly Dictionary<string, Dictionary<string, List<(string Id, string Kind)>>> _exactLookups = new();
-
-
     /// <summary>
     /// 「名词直呼」精确查找表：zh 名 / en 名（大小写不敏感）/ aliases / 基名（括号注解剥除）
     /// → 概念 id 列表 + 匹配类别。一个键可以映射多个概念（如基名「家庭成长」→ 需空房间与
@@ -76,25 +82,25 @@ public partial class GameRulesService
     /// 与 GetNameMap 同源（概念 + 实例 + flow + 本体）。首次访问时构建并缓存；
     /// 规则 JSON 变化时由 RulesDocumentStore 回调自动清空重建。
     /// </summary>
-    private Dictionary<string, List<(string Id, string Kind)>> GetExactLookup(string game)
+    public IReadOnlyDictionary<string, IReadOnlyList<ExactNameMatch>> GetExactLookup(string game)
     {
         if (_exactLookups.TryGetValue(game, out var cached)) return cached;
 
-        var map = new Dictionary<string, List<(string, string)>>(StringComparer.OrdinalIgnoreCase);
+        var map = new Dictionary<string, List<ExactNameMatch>>(StringComparer.OrdinalIgnoreCase);
         void Add(string key, string id, string kind)
         {
             if (string.IsNullOrEmpty(key)) return;
             if (!map.TryGetValue(key, out var list))
             {
-                list = new List<(string, string)>();
+                list = new List<ExactNameMatch>();
                 map[key] = list;
             }
-            if (!list.Any(e => e.Item1 == id)) list.Add((id, kind));
+            if (!list.Any(e => e.Id == id)) list.Add(new ExactNameMatch(id, kind));
         }
 
         // 1) 既有来源的 zh 名（与 GetNameMap 同源，保持原行为）
-        foreach (var type in GetConceptTypes(game))
-            foreach (var summary in ListConcepts(game, type))
+        foreach (var type in _catalog.GetConceptTypes(game))
+            foreach (var summary in _catalog.ListConcepts(game, type))
                 Add(summary.Name, summary.Id, "exact_name_zh");
 
         // 2) 游戏概念 + 实例的 zh/en 名与 aliases（只有原始 JSON 才有这些字段）
@@ -115,20 +121,31 @@ public partial class GameRulesService
         //    转述与全名不一致导致的实体解析失败
         var bases = new List<(string Key, string Id)>();
         foreach (var (key, list) in map)
-            foreach (var (id, kind) in list)
-                if (kind == "exact_name_zh")
+            foreach (var match in list)
+                if (match.Kind == "exact_name_zh")
                 {
                     var b = StripAnnotations(key);
                     if (b != null && !string.Equals(b, key, StringComparison.Ordinal))
-                        bases.Add((b, id));
+                        bases.Add((b, match.Id));
                 }
         foreach (var (key, id) in bases)
             Add(key, id, "exact_base");
 
-        _exactLookups[game] = map;
-        return map;
+        var frozen = map.ToDictionary(
+            kv => kv.Key,
+            kv => (IReadOnlyList<ExactNameMatch>)kv.Value.AsReadOnly(),
+            StringComparer.OrdinalIgnoreCase);
+
+        _exactLookups[game] = frozen;
+        return frozen;
     }
 
+    /// <summary>清空名称映射与精确查找缓存（规则文档变化时调用）。</summary>
+    public void Clear()
+    {
+        _nameMaps.Clear();
+        _exactLookups.Clear();
+    }
 
     /// <summary>剥除中文名里的括号注解（全角/半角均可），剥后不足 2 字返回 null。</summary>
     private static string? StripAnnotations(string name)
@@ -138,9 +155,7 @@ public partial class GameRulesService
         return s.Length >= 2 ? s : null;
     }
 
-
     private static readonly Regex ParentheticalRegex = new(@"[（(][^（）()]*[）)]");
-
 
     private static void AddRawNames(JsonDocument? doc, string[] arrays,
         Action<string, string, string> add)
@@ -152,7 +167,7 @@ public partial class GameRulesService
                 continue;
             foreach (var el in arr.EnumerateArray())
             {
-                var id = GetElementId(el);
+                var id = RulesTextUtils.GetElementId(el);
                 if (string.IsNullOrEmpty(id)) continue;
                 if (el.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
                 {
@@ -184,7 +199,6 @@ public partial class GameRulesService
             }
         }
     }
-
 
     private static void WalkFlowNames(JsonElement node, Action<string, string, string> add)
     {

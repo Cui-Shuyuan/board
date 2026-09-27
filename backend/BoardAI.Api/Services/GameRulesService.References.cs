@@ -18,7 +18,7 @@ public partial class GameRulesService
     /// </summary>
     public string AnnotateReferences(string text, string game)
     {
-        var map = GetNameMap(game);
+        var map = _nameIndex.GetNameMap(game);
         if (map.Count == 0) return text;
         return ConceptRefRegex.Replace(
             text,
@@ -54,7 +54,7 @@ public partial class GameRulesService
         var excluded = new HashSet<string>(StringComparer.Ordinal) { localId };
         foreach (var element in matched)
         {
-            var matchedId = GetElementId(element);
+            var matchedId = RulesTextUtils.GetElementId(element);
             if (!string.IsNullOrEmpty(matchedId))
                 excluded.Add(matchedId);
         }
@@ -80,7 +80,7 @@ public partial class GameRulesService
 
                 foreach (var found in GetConcepts(game, raw))
                 {
-                    var foundId = GetElementId(found);
+                    var foundId = RulesTextUtils.GetElementId(found);
                     if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))
                         continue; // 已扩展过该概念
                     if (related.Count >= MaxRelatedConcepts)
@@ -105,15 +105,6 @@ public partial class GameRulesService
     }
 
 
-    /// <summary>读取概念的 id 属性（无则空字符串）。</summary>
-    private static string GetElementId(JsonElement element)
-    {
-        return element.ValueKind == JsonValueKind.Object
-            && element.TryGetProperty("id", out var idProp)
-            && idProp.ValueKind == JsonValueKind.String
-            ? idProp.GetString() ?? ""
-            : "";
-    }
 
 
     /// <summary>
@@ -127,7 +118,7 @@ public partial class GameRulesService
         var excluded = new HashSet<string>(StringComparer.Ordinal);
         foreach (var el in matched)
         {
-            var mid = GetElementId(el);
+            var mid = RulesTextUtils.GetElementId(el);
             if (!string.IsNullOrEmpty(mid)) excluded.Add(mid);
         }
 
@@ -147,7 +138,7 @@ public partial class GameRulesService
 
                 foreach (var found in GetConcepts(game, raw))
                 {
-                    var foundId = GetElementId(found);
+                    var foundId = RulesTextUtils.GetElementId(found);
                     if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))
                         continue;
                     if (related.Count >= MaxRelatedConcepts) return related;

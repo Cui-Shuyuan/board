@@ -196,15 +196,6 @@ public partial class GameRulesService
     }
 
 
-    /// <summary>
-    /// 独立概念节点判据：带层级关系字段（specifies/extends/instance_of）的节点才是
-    /// 可被搜索的概念；仅 id+name 的节点是 pipeline 局部步骤（do_after 引用名），
-    /// 不入搜索索引与目录（get_concept 按 id 仍可查到）。
-    /// </summary>
-    private static bool IsStandaloneFlowNode(JsonElement node) =>
-        node.TryGetProperty("specifies", out _)
-        || node.TryGetProperty("extends", out _)
-        || node.TryGetProperty("instance_of", out _);
 
 
     private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result)
@@ -214,7 +205,7 @@ public partial class GameRulesService
         // 局部步骤（仅 id+name，do_after 引用用）不入索引——短名短描述是向量噪音，
         // 且同 id 跨位置重复互相覆盖；步骤信息随父概念的 get_concept 完整返回。
         // game 等通用容器概念（各游戏共有的顶层流程宿主）也不入索引。
-        if (!string.IsNullOrEmpty(id) && id != "game" && IsStandaloneFlowNode(node))
+        if (!string.IsNullOrEmpty(id) && id != "game" && RulesConceptTypes.IsStandaloneFlowNode(node))
         {
             var zhParts = new List<string> { id };
 

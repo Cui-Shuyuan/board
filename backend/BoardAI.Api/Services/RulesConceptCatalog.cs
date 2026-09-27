@@ -351,7 +351,7 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
         {
             var id = idProp.GetString() ?? string.Empty;
             // game 等通用容器不进关键词搜索与目录（整体流程走 get_game_flow 工具）
-            if (!string.IsNullOrEmpty(id) && id != "game" && IsStandaloneFlowNode(node) && seen.Add(id))
+            if (!string.IsNullOrEmpty(id) && id != "game" && RulesConceptTypes.IsStandaloneFlowNode(node) && seen.Add(id))
             {
                 results.Add(new ConceptSummary
                 {
@@ -475,13 +475,4 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
         }
         return string.Empty;
     }
-
-    /// <summary>
-    /// 独立流程概念节点判据（与 GameRulesService.Index 的同名逻辑一致）：
-    /// 带层级关系字段的节点才进入 flow 目录，避免 pipeline 局部步骤成为目录噪音。
-    /// </summary>
-    private static bool IsStandaloneFlowNode(JsonElement node) =>
-        node.TryGetProperty("specifies", out _)
-        || node.TryGetProperty("extends", out _)
-        || node.TryGetProperty("instance_of", out _);
 }

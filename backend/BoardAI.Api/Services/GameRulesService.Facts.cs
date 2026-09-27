@@ -104,7 +104,7 @@ public partial class GameRulesService
         var matchedIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var m in matched)
         {
-            var id = GetElementId(m);
+            var id = RulesTextUtils.GetElementId(m);
             if (id.Contains("::")) id = id[(id.IndexOf("::", StringComparison.Ordinal) + 2)..];
             matchedIds.Add(id);
         }
@@ -261,7 +261,7 @@ public partial class GameRulesService
         var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (var el in matched)
         {
-            var id = GetElementId(el);
+            var id = RulesTextUtils.GetElementId(el);
             if (string.IsNullOrEmpty(id) || !seen.Add(id) || el.ValueKind != JsonValueKind.Object)
                 continue;
             var subject = $"<{id}>";
