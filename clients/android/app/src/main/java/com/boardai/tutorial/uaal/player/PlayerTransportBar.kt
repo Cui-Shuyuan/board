@@ -36,8 +36,6 @@ import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.timeline.TimelineTarget
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 
-private val DebugAccentYellow = Color(0xFFFFC107)
-
 @Composable
 internal fun PlayerCenterPlayPause(
     paused: Boolean,
@@ -268,16 +266,11 @@ private fun PlayerDebugToggleRow(
             .padding(top = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Spacer(Modifier.weight(1f))
         Text(
             text = "调试",
             color = Color.White.copy(alpha = 0.90f),
             fontSize = 13.sp
-        )
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = if (enabled) "开启" else "关闭",
-            color = if (enabled) DebugAccentYellow else Color.White.copy(alpha = 0.55f),
-            fontSize = 12.sp
         )
         Spacer(Modifier.width(8.dp))
         Switch(

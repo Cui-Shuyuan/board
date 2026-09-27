@@ -460,16 +460,11 @@ private fun QaComposer(
                 .padding(bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(Modifier.weight(1f))
             Text(
                 text = "回答自动播报",
                 color = Color.White.copy(alpha = 0.90f),
                 fontSize = 13.sp
-            )
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = if (autoTtsEnabled) "开启" else "关闭",
-                color = if (autoTtsEnabled) QaAccentYellow else Color.White.copy(alpha = 0.55f),
-                fontSize = 12.sp
             )
             Spacer(Modifier.width(8.dp))
             Switch(
