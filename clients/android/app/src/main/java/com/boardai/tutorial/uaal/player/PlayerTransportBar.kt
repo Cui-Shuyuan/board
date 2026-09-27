@@ -104,7 +104,7 @@ internal fun PlayerTransportBar(
             Text(
                 text = cueText,
                 color = Color.White.copy(alpha = 0.92f),
-                fontSize = 13.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
