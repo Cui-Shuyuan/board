@@ -8,13 +8,13 @@ using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
 
-public partial class GameRulesService
+public partial class GameRulesService : IDisposable
 {
     private readonly string _basePath;
 
     private readonly VectorSearchService? _vectorSearch;
 
-    private readonly Dictionary<string, JsonDocument> _loadedFiles = new();
+    private readonly RulesDocumentStore _documentStore;
 
 
     /// <summary>概念引用正则——注解（AnnotateReferences）与一层扩展（GetConceptsWithExpansion）共用。</summary>
@@ -41,7 +41,11 @@ public partial class GameRulesService
         // repository root with the same portable logic used by the API host.
         _basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
         _vectorSearch = vectorSearch;
+        _documentStore = new RulesDocumentStore(ClearDerivedCaches);
     }
+
+
+    public void Dispose() => _documentStore.Dispose();
 
 
     public IReadOnlyList<string> GetGames()
@@ -385,11 +389,22 @@ public partial class GameRulesService
 
     private JsonDocument LoadJson(string path)
     {
-        if (_loadedFiles.TryGetValue(path, out var doc)) return doc;
-        var json = File.ReadAllText(path);
-        var document = JsonDocument.Parse(json, new JsonDocumentOptions { AllowTrailingCommas = true });
-        _loadedFiles[path] = document;
-        return document;
+        return _documentStore.GetDocument(path);
+    }
+
+
+    /// <summary>
+    /// 任意被缓存规则文档变化时清空派生缓存，下次访问会从新文档重建。
+    /// 这里不区分 game：保持简单，且避免遗漏任何依赖规则 JSON 的缓存。
+    /// </summary>
+    private void ClearDerivedCaches()
+    {
+        _nameMaps.Clear();
+        _exactLookups.Clear();
+        _conceptTypeMaps.Clear();
+        _flowPositions = null;
+        _scoreTableGame = null;
+        _scoreTable = null;
     }
 
 

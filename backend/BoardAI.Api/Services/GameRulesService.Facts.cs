@@ -57,7 +57,7 @@ public partial class GameRulesService
     private JsonElement? _scoreTable;
 
 
-    /// <summary>flow 终局计分里的结构化计分表（缓存；JSON 修改后需重启 API）。</summary>
+    /// <summary>flow 终局计分里的结构化计分表（缓存；规则 JSON 变化时自动失效）。</summary>
     private JsonElement? GetScoreTable(string game)
     {
         if (_scoreTableGame == game && _scoreTable.HasValue) return _scoreTable;

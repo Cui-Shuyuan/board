@@ -74,7 +74,7 @@ public partial class GameRulesService
     /// → 概念 id 列表 + 匹配类别。一个键可以映射多个概念（如基名「家庭成长」→ 需空房间与
     /// 无需房间两个行动；别名「随时转换效果」→ 烹饪与生吃），多命中全部返回由 LLM 读数据取舍。
     /// 与 GetNameMap 同源（概念 + 实例 + flow + 本体）。首次访问时构建并缓存；
-    /// JSON 修改后需重启 API 才生效（与 LoadGameConcepts 一致）。
+    /// 规则 JSON 变化时由 RulesDocumentStore 回调自动清空重建。
     /// </summary>
     private Dictionary<string, List<(string Id, string Kind)>> GetExactLookup(string game)
     {
