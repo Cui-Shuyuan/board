@@ -1,16 +1,9 @@
 package com.boardai.tutorial.uaal.content
 
-import android.content.Context
-import android.os.SystemClock
 import android.util.Log
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
 import java.nio.file.Files
-import java.security.MessageDigest
 import kotlin.math.abs
 
 /**
@@ -22,23 +15,18 @@ import kotlin.math.abs
  * same-directory `.part` files and cooperative [DownloadControl] pausing.
  */
 class ContentUpdater(
-    @Suppress("UNUSED_PARAMETER") context: Context,
     baseUrl: String,
-    private val store: ContentStore
+    private val store: ContentStore,
+    private val fetcher: ContentFetcher = HttpContentFetcher(baseUrl)
 ) {
-    private val baseUrl: String = baseUrl.trimEnd('/')
-
-    private enum class FileOutcome {
-        COMPLETED,
-        PAUSED
-    }
-
     private data class ResumeState(
         val completedPaths: Set<String>,
         val completedFiles: Int,
         val bytesCompleted: Long,
         val currentPath: String
     )
+
+    private val nowMillis: () -> Long = { System.nanoTime() / 1_000_000 }
 
     fun update(
         game: String,
@@ -56,7 +44,7 @@ class ContentUpdater(
 
         fun persistProgress(force: Boolean): Boolean {
             if (version.isBlank()) return false
-            val now = SystemClock.elapsedRealtime()
+            val now = nowMillis()
             if (!force &&
                 now - lastProgressAt < PROGRESS_WRITE_INTERVAL_MS &&
                 abs(bytesCompleted - lastProgressBytes) < PROGRESS_WRITE_BYTES
@@ -114,7 +102,7 @@ class ContentUpdater(
             Log.i(TAG, "checking content for game=$game")
             onStatus(ContentUpdateStatus.Checking)
 
-            val manifest = fetchManifest(game)
+            val manifest = fetcher.fetchManifest(game)
             require(manifest.game == game) {
                 "manifest game mismatch: expected '$game', got '${manifest.game}'"
             }
@@ -187,7 +175,7 @@ class ContentUpdater(
                     throw IOException("cannot replace stale file: ${target.absolutePath}")
                 }
 
-                val part = partFile(target)
+                val part = downloadPartFile(target)
                 val partSizeBefore = if (part.isFile) {
                     part.length().coerceIn(0L, file.size)
                 } else {
@@ -211,7 +199,8 @@ class ContentUpdater(
                 var installedFromOldVersion = false
                 val reusable = reusableIndex.find(file)
                 if (reusable != null) {
-                    installedFromOldVersion = reuseFile(reusable, target) && matches(file, target)
+                    installedFromOldVersion = reuseFile(reusable, target) &&
+                        contentMatches(file, target)
                     if (installedFromOldVersion) {
                         part.delete()
                     } else {
@@ -229,21 +218,21 @@ class ContentUpdater(
 
                 var retriedAfterMismatch = false
                 while (true) {
-                    val outcome = downloadFile(file, target, control) { written ->
+                    val outcome = fetcher.downloadFile(file, target, control) { written ->
                         bytesCompleted = (otherBytes + written).coerceAtMost(totalBytes)
                         if (persistProgress(force = false)) {
                             emitDownloading()
                         }
                     }
 
-                    if (outcome == FileOutcome.PAUSED) {
+                    if (outcome == ContentFileDownloadOutcome.PAUSED) {
                         bytesCompleted = (
                             otherBytes + part.length().coerceIn(0L, file.size)
                             ).coerceAtMost(totalBytes)
                         return pausedResult()
                     }
 
-                    if (matches(file, part)) {
+                    if (contentMatches(file, part)) {
                         if (!moveAtomically(part, target)) {
                             throw IOException("cannot move downloaded file into place: ${file.path}")
                         }
@@ -339,7 +328,7 @@ class ContentUpdater(
 
         for (file in manifest.files) {
             val target = File(gamePartial, file.path)
-            if (matches(file, target)) {
+            if (contentMatches(file, target)) {
                 completedPaths += file.path
                 completedFiles += 1
                 bytesCompleted += file.size
@@ -348,7 +337,7 @@ class ContentUpdater(
 
             if (target.exists()) target.delete()
 
-            val part = partFile(target)
+            val part = downloadPartFile(target)
             if (part.isFile) {
                 bytesCompleted += part.length().coerceIn(0L, file.size)
             }
@@ -371,182 +360,6 @@ class ContentUpdater(
         }
     }
 
-    private fun fetchManifest(game: String): ContentManifest {
-        val encodedGame = URLEncoder.encode(game, Charsets.UTF_8.name())
-        val connection = (URL("$baseUrl/api/content/games/$encodedGame/manifest").openConnection()
-            as HttpURLConnection).apply {
-            requestMethod = "GET"
-            connectTimeout = 15_000
-            readTimeout = 30_000
-            instanceFollowRedirects = true
-            setRequestProperty("Accept", "application/json")
-        }
-
-        try {
-            val code = connection.responseCode
-            if (code !in 200..299) {
-                val detail = connection.errorStream
-                    ?.bufferedReader(Charsets.UTF_8)
-                    ?.use { it.readText() }
-                    .orEmpty()
-                throw IOException("HTTP $code from manifest endpoint: $detail")
-            }
-
-            val body = connection.inputStream
-                .bufferedReader(Charsets.UTF_8)
-                .use { it.readText() }
-            return ContentManifest.parse(body)
-        } finally {
-            connection.disconnect()
-        }
-    }
-
-    /**
-     * Downloads one file into `target.name + ".part"`.  Existing partial data is
-     * reused through HTTP Range.  The file is NOT renamed to `target` here; the
-     * caller verifies SHA-256 first.
-     */
-    private fun downloadFile(
-        file: ContentFile,
-        target: File,
-        control: DownloadControl,
-        onBytesWritten: (Long) -> Unit
-    ): FileOutcome {
-        val part = partFile(target)
-        part.parentFile?.mkdirs()
-        var offset = if (part.isFile) part.length() else 0L
-        if (offset > 0L) {
-            Log.i(TAG, "resume offset=$offset for ${file.path}")
-        }
-
-        if (offset == file.size) {
-            if (matches(file, part)) {
-                // The caller performs verification and the atomic move so that
-                // a fully-written `.part` is handled exactly once.
-                onBytesWritten(file.size)
-                return FileOutcome.COMPLETED
-            }
-            part.delete()
-            offset = 0L
-        } else if (offset > file.size) {
-            part.delete()
-            offset = 0L
-        }
-
-        var retriedAfter416 = false
-        while (true) {
-            val connection = (resolveUrl(file.url).openConnection() as HttpURLConnection).apply {
-                requestMethod = "GET"
-                connectTimeout = 15_000
-                readTimeout = 60_000
-                instanceFollowRedirects = true
-                setRequestProperty("Accept-Encoding", "identity")
-                if (offset > 0L) {
-                    setRequestProperty("Range", "bytes=$offset-")
-                }
-            }
-
-            try {
-                val code = connection.responseCode
-                when {
-                    code == 416 -> {
-                        connection.disconnect()
-                        if (retriedAfter416) {
-                            throw IOException("HTTP 416 downloading ${file.path}")
-                        }
-                        retriedAfter416 = true
-                        part.delete()
-                        offset = 0L
-                        continue
-                    }
-                    code == 200 && offset > 0L -> {
-                        // Server ignored Range or content changed.  Do not append
-                        // to an unknown partial: start this file over once.
-                        connection.disconnect()
-                        part.delete()
-                        offset = 0L
-                        continue
-                    }
-                    code !in 200..299 -> {
-                        throw IOException("HTTP $code downloading ${file.path}")
-                    }
-                    code == 206 -> {
-                        if (offset <= 0L) {
-                            throw IOException("unexpected HTTP 206 without range for ${file.path}")
-                        }
-                        val contentRange = connection.getHeaderField("Content-Range")
-                        val start = parseContentRangeStart(contentRange)
-                            ?: throw IOException("missing/invalid Content-Range for ${file.path}: $contentRange")
-                        if (start != offset) {
-                            throw IOException(
-                                "Content-Range start mismatch for ${file.path}: " +
-                                    "expected $offset, got $start"
-                            )
-                        }
-                    }
-                }
-
-                val append = code == 206 && offset > 0L
-                var written = offset
-                connection.inputStream.use { input ->
-                    FileOutputStream(part, append).use { output ->
-                        val buffer = ByteArray(64 * 1024)
-                        while (true) {
-                            if (control.pauseRequested) {
-                                output.flush()
-                                return FileOutcome.PAUSED
-                            }
-
-                            val read = input.read(buffer)
-                            if (read < 0) break
-                            output.write(buffer, 0, read)
-                            written += read
-                            onBytesWritten(written)
-
-                            if (control.pauseRequested) {
-                                output.flush()
-                                return FileOutcome.PAUSED
-                            }
-                        }
-                    }
-                }
-
-                return FileOutcome.COMPLETED
-            } finally {
-                connection.disconnect()
-            }
-        }
-    }
-
-    private fun resolveUrl(raw: String): URL {
-        val value = raw.trim()
-        return if (value.startsWith("http://", ignoreCase = true) ||
-            value.startsWith("https://", ignoreCase = true)
-        ) {
-            URL(value)
-        } else {
-            URL("$baseUrl/${value.trimStart('/')}")
-        }
-    }
-
-    private fun matches(file: ContentFile, path: File): Boolean {
-        if (!path.isFile || path.length() != file.size) return false
-        return sha256(path).equals(file.sha256, ignoreCase = true)
-    }
-
-    private fun sha256(path: File): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        path.inputStream().use { input ->
-            val buffer = ByteArray(64 * 1024)
-            while (true) {
-                val read = input.read(buffer)
-                if (read < 0) break
-                digest.update(buffer, 0, read)
-            }
-        }
-        return digest.digest().toHex()
-    }
-
     private fun reuseFile(source: File, target: File): Boolean {
         target.parentFile?.mkdirs()
 
@@ -566,25 +379,9 @@ class ContentUpdater(
         }
     }
 
-    private fun ByteArray.toHex(): String =
-        joinToString(separator = "") { byte -> "%02x".format(byte.toInt() and 0xff) }
-
-    private fun parseContentRangeStart(value: String?): Long? {
-        if (value.isNullOrBlank()) return null
-        val match = CONTENT_RANGE_RE.find(value.trim()) ?: return null
-        return match.groupValues[1].toLongOrNull()
-    }
-
-    private fun partFile(target: File): File =
-        File(target.parentFile, "${target.name}.part")
-
     private companion object {
         const val TAG = "BoardAI-Content"
         const val PROGRESS_WRITE_INTERVAL_MS = 500L
         const val PROGRESS_WRITE_BYTES = 1_500_000L
-        val CONTENT_RANGE_RE = Regex(
-            "^bytes\\s+(\\d+)-(\\d+)/(\\d+|\\*)$",
-            RegexOption.IGNORE_CASE
-        )
     }
 }

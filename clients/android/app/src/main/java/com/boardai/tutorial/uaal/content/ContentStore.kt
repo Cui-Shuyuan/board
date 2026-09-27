@@ -58,12 +58,15 @@ data class PausedContent(
  * The external app-specific directory used by older builds is deleted once on
  * construction.  Nothing in this class reads from or writes to external storage.
  */
-class ContentStore(context: Context) {
-    val contentRoot: File = File(context.filesDir, "board-content")
+class ContentStore private constructor(
+    val contentRoot: File
+) {
     val versionsDir: File = File(contentRoot, "versions")
     val activeFile: File = File(contentRoot, "active.json")
 
-    init {
+    constructor(context: Context) : this(
+        File(context.filesDir, "board-content")
+    ) {
         deleteLegacyExternalRoot(context)
     }
 
@@ -521,12 +524,14 @@ class ContentStore(context: Context) {
         }
     }
 
-    private companion object {
-        const val TAG = "BoardAI-ContentStore"
-        const val COMPLETE_MARKER = "complete.json"
-        const val PROGRESS_MARKER = "progress.json"
-        const val PROGRESS_SCHEMA = "board-content-progress/v1"
-        const val PARTIAL_SUFFIX = ".partial"
+    companion object {
+        private const val TAG = "BoardAI-ContentStore"
+        private const val COMPLETE_MARKER = "complete.json"
+        private const val PROGRESS_MARKER = "progress.json"
+        private const val PROGRESS_SCHEMA = "board-content-progress/v1"
+        private const val PARTIAL_SUFFIX = ".partial"
+
+        internal fun forTesting(root: File): ContentStore = ContentStore(root)
     }
 }
 

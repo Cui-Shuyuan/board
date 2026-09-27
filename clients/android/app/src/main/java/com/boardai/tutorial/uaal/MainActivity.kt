@@ -77,7 +77,7 @@ class MainActivity : UnityPlayerGameActivity() {
         super.onCreate(savedInstanceState)
 
         contentStore = ContentStore(this)
-        val contentUpdater = ContentUpdater(this, BuildConfig.BOARD_API_BASE_URL, contentStore)
+        val contentUpdater = ContentUpdater(BuildConfig.BOARD_API_BASE_URL, contentStore)
         val catalogRepository = GameCatalogRepository(this, BuildConfig.BOARD_API_BASE_URL)
         val historyRepository = PlayHistoryRepository(this)
         qaRepository = QaRepository(BuildConfig.BOARD_API_BASE_URL)
