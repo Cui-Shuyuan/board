@@ -2901,7 +2901,7 @@
             "showcase": {
               "items": [
                 {
-                  "template": "sample_card_1",
+                  "template": "card_l1_emerald_30",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -2923,7 +2923,7 @@
           "anchor": "setup.cards.001.1.b1.start",
           "dur": 0.0,
           "zone": "showcase",
-          "template": "sample_card_1",
+          "template": "card_l1_emerald_30",
           "palette": "card_level_1",
           "count": 1,
           "to": "face_up"
@@ -3152,7 +3152,7 @@
                   "count": 35
                 },
                 {
-                  "template": "market_card_1_onyx",
+                  "template": "card_l1_onyx_3",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "down"
@@ -3167,7 +3167,7 @@
                   "count": 25
                 },
                 {
-                  "template": "market_card_2_diamond",
+                  "template": "card_l2_diamond_55",
                   "palette": "card_level_2",
                   "count": 1,
                   "face": "down"
@@ -3182,7 +3182,7 @@
                   "count": 15
                 },
                 {
-                  "template": "market_card_3_sapphire",
+                  "template": "card_l3_sapphire_78",
                   "palette": "card_level_3",
                   "count": 1,
                   "face": "down"
@@ -3192,73 +3192,73 @@
             "card_market": {
               "items": [
                 {
-                  "template": "market_card_1_emerald",
+                  "template": "card_l1_emerald_32",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_1_ruby",
+                  "template": "card_l1_ruby_38",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_1_sapphire",
+                  "template": "card_l1_sapphire_15",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_2_sapphire",
+                  "template": "card_l2_sapphire_49",
                   "palette": "card_level_2",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_2_onyx",
+                  "template": "card_l2_onyx_45",
                   "palette": "card_level_2",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_2_ruby",
+                  "template": "card_l2_ruby_70",
                   "palette": "card_level_2",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_2_emerald",
+                  "template": "card_l2_emerald_60",
                   "palette": "card_level_2",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_3_ruby",
+                  "template": "card_l3_ruby_88",
                   "palette": "card_level_3",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_3_diamond",
+                  "template": "card_l3_diamond_81",
                   "palette": "card_level_3",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_3_emerald",
+                  "template": "card_l3_emerald_84",
                   "palette": "card_level_3",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_3_onyx",
+                  "template": "card_l3_onyx_74",
                   "palette": "card_level_3",
                   "count": 1,
                   "face": "up"
@@ -3281,7 +3281,7 @@
           "dur": 0.0,
           "destination": "deck_level_1",
           "capacity": 40,
-          "real_templates": "market_card_1_emerald,market_card_1_ruby,market_card_1_diamond,market_card_1_sapphire,market_card_1_onyx",
+          "real_templates": "card_l1_emerald_32,card_l1_ruby_38,card_l1_diamond_18,card_l1_sapphire_15,card_l1_onyx_3",
           "pad_template": "blank_card_1",
           "to": "face_down",
           "anchor": "setup.cards.002.1.start",
@@ -3292,7 +3292,7 @@
           "dur": 0.0,
           "destination": "deck_level_2",
           "capacity": 30,
-          "real_templates": "market_card_2_sapphire,market_card_2_onyx,market_card_2_ruby,market_card_2_emerald,market_card_2_diamond",
+          "real_templates": "card_l2_sapphire_49,card_l2_onyx_45,card_l2_ruby_70,card_l2_emerald_60,card_l2_diamond_55",
           "pad_template": "blank_card_2",
           "to": "face_down",
           "anchor": "setup.cards.002.1.start",
@@ -3303,7 +3303,7 @@
           "dur": 0.0,
           "destination": "deck_level_3",
           "capacity": 20,
-          "real_templates": "market_card_3_ruby,market_card_3_diamond,market_card_3_emerald,market_card_3_onyx,market_card_3_sapphire",
+          "real_templates": "card_l3_ruby_88,card_l3_diamond_81,card_l3_emerald_84,card_l3_onyx_74,card_l3_sapphire_78",
           "pad_template": "blank_card_3",
           "to": "face_down",
           "anchor": "setup.cards.002.1.start",
@@ -6451,7 +6451,7 @@
             "showcase": {
               "items": [
                 {
-                  "template": "sample_card_2_ruby",
+                  "template": "card_l2_ruby_69",
                   "palette": "card_level_2",
                   "count": 1,
                   "face": "up"
@@ -6473,7 +6473,7 @@
           "op": "create",
           "dur": 0.0,
           "zone": "showcase",
-          "template": "sample_card_2_ruby",
+          "template": "card_l2_ruby_69",
           "palette": "card_level_2",
           "count": 1,
           "concept": "development_card_level_2",
@@ -6535,7 +6535,7 @@
           "op": "create",
           "dur": 0.0,
           "zone": "showcase",
-          "template": "sample_card_1_white",
+          "template": "card_l1_diamond_17",
           "palette": "card_level_1",
           "count": 1,
           "concept": "development_card_level_1",
@@ -6546,7 +6546,7 @@
           "op": "create",
           "dur": 0.0,
           "zone": "showcase_1",
-          "template": "sample_card_2_ruby",
+          "template": "card_l2_ruby_69",
           "palette": "card_level_2",
           "count": 1,
           "concept": "development_card_level_2",
@@ -6769,7 +6769,7 @@
             "showcase": {
               "items": [
                 {
-                  "template": "sample_card_1_white",
+                  "template": "card_l1_diamond_17",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -6778,7 +6778,7 @@
             "showcase_1": {
               "items": [
                 {
-                  "template": "sample_card_2_ruby",
+                  "template": "card_l2_ruby_69",
                   "palette": "card_level_2",
                   "count": 1
                 }
@@ -6787,7 +6787,7 @@
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -7193,7 +7193,7 @@
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -7206,7 +7206,7 @@
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -7274,25 +7274,25 @@
       ],
       "script": {
         "story": "【如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌，那么我购买这张牌时无需支付任何宝石】",
-        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是：一级白再来 1 张（`sample`? 不 —— 这是假设买过的牌，用市场模板 `market_card_3_diamond`(三级白) 与 `market_card_1_sapphire`(一级蓝)）、以及 1 张蓝。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。\n  ⚠ 本 cue 是 `demo: true` 的假设分支，不写回 canonical；后续 canonical 通过 `action.cards.limit.001.2` 显式 `entry` 回 `action.cards.discount.001`（demo 分支之前最后一个 canonical cue），不能默认继承这里的假设牌。",
+        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是两张有独立真卡扫描的牌：card_l3_diamond_80（三级白，凑成 2 白折扣）与 card_l1_sapphire_14（一级蓝，凑成 1 蓝折扣）。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。\n  ⚠ 本 cue 是 `demo: true` 的假设分支，不写回 canonical；后续 canonical 通过 `action.cards.limit.001.2` 显式 `entry` 回 `action.cards.discount.001`（demo 分支之前最后一个 canonical cue），不能默认继承这里的假设牌。",
         "exit": {
           "zones": {
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_3_diamond",
+                  "template": "card_l3_diamond_80",
                   "palette": "card_level_3",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "market_card_1_sapphire",
+                  "template": "card_l1_sapphire_14",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
@@ -7314,7 +7314,7 @@
           "op": "create",
           "dur": 0.0,
           "zone": "player_development",
-          "template": "market_card_3_diamond",
+          "template": "card_l3_diamond_80",
           "palette": "card_level_3",
           "count": 1,
           "concept": "development_card_level_3",
@@ -7326,7 +7326,7 @@
           "op": "create",
           "dur": 0.0,
           "zone": "player_development",
-          "template": "market_card_1_sapphire",
+          "template": "card_l1_sapphire_14",
           "palette": "card_level_1",
           "count": 1,
           "concept": "development_card_level_1",
@@ -7603,7 +7603,7 @@
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -7681,7 +7681,7 @@
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
                   "count": 1
                 }
@@ -7868,20 +7868,58 @@
       ],
       "script": {
         "story": "【如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件】",
-        "note": "【把『满足条件』这一步真的做出来】\n  口播是假设句（如果已购买…满足）→ 这里把前提补出来：发展区凑齐 4 白 + 4 红，\n  正好满足供应堆第一块贵族（0001：4白+4红）。\n  canonical 此刻发展区原有 1 张一级白；需要再补 3 张白折扣代表卡与 4 张红折扣代表卡。\n  · 为不破坏 40 张一级牌账，先从 deck_level_1 移除 7 张 blank_card_1 垫牌，\n    再以 market_card_1_diamond / market_card_1_ruby 代表卡 create 同数量（净 L1 不变）。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌，不能以默认朝下的卡背出现。\n  · 代表的是一级白/红这一类牌，不声称牌面 cost/声望与某张具体真卡一一对应。\n",
+        "note": "【把『满足条件』这一步真的做出来】\n  口播是假设句（如果已购买…满足）→ 这里把前提补出来：发展区凑齐 4 白 + 4 红，\n  正好满足供应堆第一块贵族（0001：4白+4红）。\n  canonical 此刻发展区原有 1 张一级白 card_l1_diamond_18；再补 3 张不同的真白卡\n  （card_l1_diamond_20 / card_l1_diamond_22 / card_l1_diamond_24）与 4 张不同的真红卡\n  （card_l1_ruby_33 / card_l1_ruby_35 / card_l1_ruby_37 / card_l1_ruby_40），每张卡都有独立扫描件与独立 card_facts。\n  · 先从 deck_level_1 移除 7 张 blank_card_1 垫牌，再 create 这些真卡；实物账由 audit 按等级上限与守恒检查。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌，不能以默认朝下的卡背出现。\n  · 不再用同一张 market_card_1_diamond / market_card_1_ruby 代表多张真卡。",
         "exit": {
           "zones": {
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
-                  "count": 4
+                  "count": 1,
+                  "face": "up"
                 },
                 {
-                  "template": "market_card_1_ruby",
+                  "template": "card_l1_diamond_20",
                   "palette": "card_level_1",
-                  "count": 4
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
@@ -7907,9 +7945,9 @@
           "op": "create",
           "dur": 0.0,
           "zone": "player_development",
-          "template": "market_card_1_diamond",
+          "template": "card_l1_diamond_20",
           "palette": "card_level_1",
-          "count": 4,
+          "count": 1,
           "concept": "development_card_level_1",
           "parts": [
             {
@@ -7925,9 +7963,45 @@
           "op": "create",
           "dur": 0.0,
           "zone": "player_development",
-          "template": "market_card_1_ruby",
+          "template": "card_l1_diamond_22",
           "palette": "card_level_1",
-          "count": 4,
+          "count": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<diamond>"
+            }
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.395,
+          "to": "face_up"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "player_development",
+          "template": "card_l1_diamond_24",
+          "palette": "card_level_1",
+          "count": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<diamond>"
+            }
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.475,
+          "to": "face_up"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "player_development",
+          "template": "card_l1_ruby_33",
+          "palette": "card_level_1",
+          "count": 1,
           "concept": "development_card_level_1",
           "parts": [
             {
@@ -7937,6 +8011,60 @@
           ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.915,
+          "to": "face_up"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "player_development",
+          "template": "card_l1_ruby_35",
+          "palette": "card_level_1",
+          "count": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<ruby>"
+            }
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.995,
+          "to": "face_up"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "player_development",
+          "template": "card_l1_ruby_37",
+          "palette": "card_level_1",
+          "count": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<ruby>"
+            }
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.075,
+          "to": "face_up"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "zone": "player_development",
+          "template": "card_l1_ruby_40",
+          "palette": "card_level_1",
+          "count": 1,
+          "concept": "development_card_level_1",
+          "parts": [
+            {
+              "key": "bonus",
+              "value": "<ruby>"
+            }
+          ],
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.155,
           "to": "face_up"
         },
         {
@@ -9059,19 +9187,58 @@
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
-                  "count": 4
+                  "count": 1,
+                  "face": "up"
                 },
                 {
-                  "template": "market_card_1_ruby",
+                  "template": "card_l1_diamond_20",
                   "palette": "card_level_1",
-                  "count": 4
+                  "count": 1,
+                  "face": "up"
                 },
                 {
-                  "template": "market_card_2_ruby",
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l2_ruby_70",
                   "palette": "card_level_2",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
@@ -9132,7 +9299,7 @@
           "op": "point",
           "dur": 0.0,
           "zone": "player_development",
-          "template": "market_card_2_ruby",
+          "template": "card_l2_ruby_70",
           "part": "cost",
           "indicator": "circle",
           "anchor": "action.purchase_reserved.002.1.b1.end",
@@ -9226,30 +9393,70 @@
       ],
       "script": {
         "story": "【当一位玩家的声望值达到 15 或更多时，触发游戏结束】",
-        "note": "【到达 15 分 → 触发结束】\n  口播前提是达到 15 或更多 → 这里把可见前提补到位：\n  当前发展区 4 张一级白(0) + 4 张一级红(0) + 1 张二级红(3) = 3 分；\n  再从 deck_level_3 移除 1 张 blank_card_3 垫牌，以 market_card_3_sapphire 代表卡 create 一张，净 L3 不变，该卡读图 5 分、显式 face_up。\n  发展区 = 3 + 5 = 8 分，加 3 块贵族各 3 分 = 17 分 ≥ 15。\n  圈声望时发展区每张牌左上角 + 贵族左上角都圈，画面与账一致。\n",
+        "note": "【到达 15 分 → 触发结束】\n  口播前提是达到 15 或更多 → 这里把可见前提补到位：\n  发展区 4 张一级白 card_l1_diamond_18/20/22/24，读图 VPs = 0/0/0/1；\n  4 张一级红 card_l1_ruby_33/35/37/40，VPs = 0/0/0/1；\n  二级红 card_l2_ruby_70 = 3；再从 deck_level_3 移除 1 张 blank_card_3 垫牌，\n  create card_l3_sapphire_77（4 VP）并显式 face_up。\n  发展区 = 1 + 1 + 3 + 4 = 9 分；玩家面前 3 块贵族各 3 分 = 9；总计 18 ≥ 15。\n  圈声望时发展区每张牌左上角 + 贵族左上角都圈，画面与账一致。",
         "exit": {
           "zones": {
             "player_development": {
               "items": [
                 {
-                  "template": "market_card_1_diamond",
+                  "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
-                  "count": 4
+                  "count": 1,
+                  "face": "up"
                 },
                 {
-                  "template": "market_card_1_ruby",
+                  "template": "card_l1_diamond_20",
                   "palette": "card_level_1",
-                  "count": 4
+                  "count": 1,
+                  "face": "up"
                 },
                 {
-                  "template": "market_card_2_ruby",
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l2_ruby_70",
                   "palette": "card_level_2",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 },
                 {
-                  "template": "market_card_3_sapphire",
+                  "template": "card_l3_sapphire_77",
                   "palette": "card_level_3",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
@@ -9289,7 +9496,7 @@
           "op": "create",
           "dur": 0.0,
           "zone": "player_development",
-          "template": "market_card_3_sapphire",
+          "template": "card_l3_sapphire_77",
           "palette": "card_level_3",
           "count": 1,
           "concept": "development_card_level_3",

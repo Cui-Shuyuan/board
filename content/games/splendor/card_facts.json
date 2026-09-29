@@ -1,5 +1,468 @@
 {
-  "note": "发展卡面的事实：声望值（左上横幅）、折扣宝石（右上圆）、价格（左下圆盘）。由人逐张读图得到（scripts 里的自动圆盘检测在这批扫描件上不可靠：宝石图标会把圆盘切成两块、暗色/白色的圆盘会被饱和度阈值滤掉）。3.4 购买演示与第 4 节结算都要用它。",
+  "note": "发展卡面的事实：声望值（左上横幅）、折扣宝石（右上圆）、价格（左下圆盘）。现在按真卡模板 ID 记录；一张真卡一个模板（card_registry.json 是同一份数据的可读索引）。",
+  "cards": {
+    "card_l1_diamond_18": {
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "emerald": 2,
+        "ruby": 1
+      },
+      "source_card_id": 18,
+      "image": "media/card/一级发展卡_白_cutout.png"
+    },
+    "card_l1_sapphire_15": {
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 3
+      },
+      "source_card_id": 15,
+      "image": "media/card/一级发展卡_蓝_cutout.png"
+    },
+    "card_l1_emerald_32": {
+      "level": 1,
+      "bonus": "emerald",
+      "prestige": 1,
+      "cost": {
+        "onyx": 4
+      },
+      "source_card_id": 32,
+      "image": "media/card/一级发展卡_绿_cutout.png"
+    },
+    "card_l1_ruby_38": {
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "ruby": 2,
+        "diamond": 2
+      },
+      "source_card_id": 38,
+      "image": "media/card/一级发展卡_红_cutout.png"
+    },
+    "card_l1_onyx_3": {
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "source_card_id": 3,
+      "image": "media/card/一级发展卡_黑_cutout.png"
+    },
+    "card_l2_diamond_55": {
+      "level": 2,
+      "bonus": "diamond",
+      "prestige": 2,
+      "cost": {
+        "onyx": 2,
+        "emerald": 1,
+        "ruby": 4
+      },
+      "source_card_id": 55,
+      "image": "media/card/二级发展卡_白_cutout.png"
+    },
+    "card_l2_sapphire_49": {
+      "level": 2,
+      "bonus": "sapphire",
+      "prestige": 2,
+      "cost": {
+        "sapphire": 3,
+        "diamond": 5
+      },
+      "source_card_id": 49,
+      "image": "media/card/二级发展卡_蓝_cutout.png"
+    },
+    "card_l2_emerald_60": {
+      "level": 2,
+      "bonus": "emerald",
+      "prestige": 1,
+      "cost": {
+        "onyx": 2,
+        "sapphire": 3,
+        "diamond": 2
+      },
+      "source_card_id": 60,
+      "image": "media/card/二级发展卡_绿_cutout.png"
+    },
+    "card_l2_ruby_70": {
+      "level": 2,
+      "bonus": "ruby",
+      "prestige": 3,
+      "cost": {
+        "ruby": 6
+      },
+      "source_card_id": 70,
+      "image": "media/card/二级发展卡_红_cutout.png"
+    },
+    "card_l2_onyx_45": {
+      "level": 2,
+      "bonus": "onyx",
+      "prestige": 2,
+      "cost": {
+        "diamond": 5
+      },
+      "source_card_id": 45,
+      "image": "media/card/二级发展卡_黑_cutout.png"
+    },
+    "card_l3_diamond_81": {
+      "level": 3,
+      "bonus": "diamond",
+      "prestige": 4,
+      "cost": {
+        "onyx": 6,
+        "ruby": 3,
+        "diamond": 3
+      },
+      "source_card_id": 81,
+      "image": "media/card/三级发展卡_白_cutout.png"
+    },
+    "card_l3_sapphire_78": {
+      "level": 3,
+      "bonus": "sapphire",
+      "prestige": 5,
+      "cost": {
+        "sapphire": 3,
+        "diamond": 7
+      },
+      "source_card_id": 78,
+      "image": "media/card/三级发展卡_蓝_cutout.png"
+    },
+    "card_l3_emerald_84": {
+      "level": 3,
+      "bonus": "emerald",
+      "prestige": 4,
+      "cost": {
+        "sapphire": 7
+      },
+      "source_card_id": 84,
+      "image": "media/card/三级发展卡_绿_cutout.png"
+    },
+    "card_l3_ruby_88": {
+      "level": 3,
+      "bonus": "ruby",
+      "prestige": 4,
+      "cost": {
+        "emerald": 7
+      },
+      "source_card_id": 88,
+      "image": "media/card/三级发展卡_红_cutout.png"
+    },
+    "card_l3_onyx_74": {
+      "level": 3,
+      "bonus": "onyx",
+      "prestige": 5,
+      "cost": {
+        "onyx": 3,
+        "ruby": 7
+      },
+      "source_card_id": 74,
+      "image": "media/card/三级发展卡_黑_cutout.png"
+    },
+    "card_l1_diamond_17": {
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "emerald": 1,
+        "ruby": 1
+      },
+      "source_card_id": 17,
+      "image": "media/card/一级发展卡_白_17_cutout.png"
+    },
+    "card_l1_diamond_20": {
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "diamond": 3
+      },
+      "source_card_id": 20,
+      "image": "media/card/一级发展卡_白_20_cutout.png"
+    },
+    "card_l1_diamond_22": {
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "sapphire": 2
+      },
+      "source_card_id": 22,
+      "image": "media/card/一级发展卡_白_22_cutout.png"
+    },
+    "card_l1_diamond_24": {
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 1,
+      "cost": {
+        "emerald": 4
+      },
+      "source_card_id": 24,
+      "image": "media/card/一级发展卡_白_24_cutout.png"
+    },
+    "card_l1_sapphire_14": {
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "source_card_id": 14,
+      "image": "media/card/一级发展卡_蓝_14_cutout.png"
+    },
+    "card_l1_emerald_30": {
+      "level": 1,
+      "bonus": "emerald",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 2
+      },
+      "source_card_id": 30,
+      "image": "media/card/一级发展卡_绿_30_cutout.png"
+    },
+    "card_l1_ruby_33": {
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "emerald": 1,
+        "diamond": 1
+      },
+      "source_card_id": 33,
+      "image": "media/card/一级发展卡_红_33_cutout.png"
+    },
+    "card_l1_ruby_35": {
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 1,
+        "diamond": 2
+      },
+      "source_card_id": 35,
+      "image": "media/card/一级发展卡_红_35_cutout.png"
+    },
+    "card_l1_ruby_37": {
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "emerald": 1
+      },
+      "source_card_id": 37,
+      "image": "media/card/一级发展卡_红_37_cutout.png"
+    },
+    "card_l1_ruby_40": {
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 1,
+      "cost": {
+        "diamond": 4
+      },
+      "source_card_id": 40,
+      "image": "media/card/一级发展卡_红_40_cutout.png"
+    },
+    "card_l2_ruby_69": {
+      "level": 2,
+      "bonus": "ruby",
+      "prestige": 2,
+      "cost": {
+        "onyx": 5
+      },
+      "source_card_id": 69,
+      "image": "media/card/二级发展卡_红_69_cutout.png"
+    },
+    "card_l3_diamond_80": {
+      "level": 3,
+      "bonus": "diamond",
+      "prestige": 4,
+      "cost": {
+        "onyx": 7
+      },
+      "source_card_id": 80,
+      "image": "media/card/三级发展卡_白_80_cutout.png"
+    },
+    "card_l3_sapphire_77": {
+      "level": 3,
+      "bonus": "sapphire",
+      "prestige": 4,
+      "cost": {
+        "onyx": 3,
+        "sapphire": 3,
+        "diamond": 6
+      },
+      "source_card_id": 77,
+      "image": "media/card/三级发展卡_蓝_77_cutout.png"
+    }
+  },
+  "cost_by_template": {
+    "card_l1_diamond_18": {
+      "onyx": 1,
+      "sapphire": 1,
+      "emerald": 2,
+      "ruby": 1
+    },
+    "card_l1_sapphire_15": {
+      "onyx": 3
+    },
+    "card_l1_emerald_32": {
+      "onyx": 4
+    },
+    "card_l1_ruby_38": {
+      "ruby": 2,
+      "diamond": 2
+    },
+    "card_l1_onyx_3": {
+      "sapphire": 2,
+      "ruby": 1,
+      "diamond": 2
+    },
+    "card_l2_diamond_55": {
+      "onyx": 2,
+      "emerald": 1,
+      "ruby": 4
+    },
+    "card_l2_sapphire_49": {
+      "sapphire": 3,
+      "diamond": 5
+    },
+    "card_l2_emerald_60": {
+      "onyx": 2,
+      "sapphire": 3,
+      "diamond": 2
+    },
+    "card_l2_ruby_70": {
+      "ruby": 6
+    },
+    "card_l2_onyx_45": {
+      "diamond": 5
+    },
+    "card_l3_diamond_81": {
+      "onyx": 6,
+      "ruby": 3,
+      "diamond": 3
+    },
+    "card_l3_sapphire_78": {
+      "sapphire": 3,
+      "diamond": 7
+    },
+    "card_l3_emerald_84": {
+      "sapphire": 7
+    },
+    "card_l3_ruby_88": {
+      "emerald": 7
+    },
+    "card_l3_onyx_74": {
+      "onyx": 3,
+      "ruby": 7
+    },
+    "card_l1_diamond_17": {
+      "onyx": 1,
+      "sapphire": 1,
+      "emerald": 1,
+      "ruby": 1
+    },
+    "card_l1_diamond_20": {
+      "onyx": 1,
+      "sapphire": 1,
+      "diamond": 3
+    },
+    "card_l1_diamond_22": {
+      "onyx": 2,
+      "sapphire": 2
+    },
+    "card_l1_diamond_24": {
+      "emerald": 4
+    },
+    "card_l1_sapphire_14": {
+      "onyx": 2,
+      "emerald": 2
+    },
+    "card_l1_emerald_30": {
+      "sapphire": 2,
+      "ruby": 2
+    },
+    "card_l1_ruby_33": {
+      "onyx": 1,
+      "sapphire": 1,
+      "emerald": 1,
+      "diamond": 1
+    },
+    "card_l1_ruby_35": {
+      "onyx": 2,
+      "emerald": 1,
+      "diamond": 2
+    },
+    "card_l1_ruby_37": {
+      "sapphire": 2,
+      "emerald": 1
+    },
+    "card_l1_ruby_40": {
+      "diamond": 4
+    },
+    "card_l2_ruby_69": {
+      "onyx": 5
+    },
+    "card_l3_diamond_80": {
+      "onyx": 7
+    },
+    "card_l3_sapphire_77": {
+      "onyx": 3,
+      "sapphire": 3,
+      "diamond": 6
+    }
+  },
+  "prestige_by_template": {
+    "card_l1_diamond_18": 0,
+    "card_l1_sapphire_15": 0,
+    "card_l1_emerald_32": 1,
+    "card_l1_ruby_38": 0,
+    "card_l1_onyx_3": 0,
+    "card_l2_diamond_55": 2,
+    "card_l2_sapphire_49": 2,
+    "card_l2_emerald_60": 1,
+    "card_l2_ruby_70": 3,
+    "card_l2_onyx_45": 2,
+    "card_l3_diamond_81": 4,
+    "card_l3_sapphire_78": 5,
+    "card_l3_emerald_84": 4,
+    "card_l3_ruby_88": 4,
+    "card_l3_onyx_74": 5,
+    "card_l1_diamond_17": 0,
+    "card_l1_diamond_20": 0,
+    "card_l1_diamond_22": 0,
+    "card_l1_diamond_24": 1,
+    "card_l1_sapphire_14": 0,
+    "card_l1_emerald_30": 0,
+    "card_l1_ruby_33": 0,
+    "card_l1_ruby_35": 0,
+    "card_l1_ruby_37": 0,
+    "card_l1_ruby_40": 1,
+    "card_l2_ruby_69": 2,
+    "card_l3_diamond_80": 4,
+    "card_l3_sapphire_77": 4
+  },
+  "bonus": "每张卡右上角的折扣宝石 = bonus 字段（diamond/sapphire/emerald/ruby/onyx；<gem> 映射同动画本体）。",
+  "cost_note": "价格来自卡面左下角圆盘；键用宝石名字：diamond=白、sapphire=蓝、emerald=绿、ruby=红、onyx=黑。validate_anim_rules 用 cost_by_template 做买牌对账。",
+  "legacy_note": "旧 market_card_{level}_{bonus} / sample_card_* 模板已退出；不要再往这里加“颜色代表卡”。",
   "prestige": {
     "1": {
       "白": 0,
@@ -22,78 +485,5 @@
       "红": 4,
       "黑": 5
     }
-  },
-  "bonus": "每张卡右上角的折扣宝石 = 它同名的那颗（白牌给 <diamond>，依此类推）",
-  "cost": {
-    "1白": {
-      "蓝": 1,
-      "绿": 2,
-      "红": 1,
-      "黑": 1
-    }
-  },
-  "cost_todo": "15 张全部读过并复核（一级红已改正）。",
-  "cost_by_template": {
-    "market_card_1_diamond": {
-      "sapphire": 1,
-      "emerald": 2,
-      "ruby": 1,
-      "onyx": 1
-    },
-    "market_card_1_ruby": {
-      "diamond": 2,
-      "ruby": 2
-    },
-    "market_card_1_emerald": {
-      "onyx": 4
-    },
-    "market_card_1_sapphire": {
-      "onyx": 3
-    },
-    "market_card_1_onyx": {
-      "diamond": 2,
-      "sapphire": 2,
-      "ruby": 1
-    },
-    "market_card_2_diamond": {
-      "emerald": 1,
-      "ruby": 4,
-      "onyx": 2
-    },
-    "market_card_2_ruby": {
-      "ruby": 6
-    },
-    "market_card_2_emerald": {
-      "diamond": 2,
-      "sapphire": 3,
-      "onyx": 2
-    },
-    "market_card_2_sapphire": {
-      "diamond": 5,
-      "sapphire": 3
-    },
-    "market_card_2_onyx": {
-      "diamond": 5
-    },
-    "market_card_3_diamond": {
-      "diamond": 3,
-      "ruby": 3,
-      "onyx": 6
-    },
-    "market_card_3_ruby": {
-      "emerald": 7
-    },
-    "market_card_3_emerald": {
-      "sapphire": 7
-    },
-    "market_card_3_sapphire": {
-      "diamond": 7,
-      "sapphire": 3
-    },
-    "market_card_3_onyx": {
-      "diamond": 7,
-      "onyx": 3
-    }
-  },
-  "cost_note": "价格（左下角竖排圆盘）由人逐张读图得到，**买牌演示按它对账**：实付 = 价格 − 折扣（折扣 = 发展区同色 bonus 张数；黄金可补任意差额）。\n读法：先整张细看，再只裁**左边缘那一条**放大复核 —— 裁宽了会把邻图的圆盘看进来（一级红就被误读成 2白+2蓝+2红，实际 2白+2红）。"
+  }
 }

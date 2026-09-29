@@ -885,636 +885,6 @@
       "concept": "<ontology::public_board>"
     },
     {
-      "id": "market_card_1_diamond",
-      "shape": "card",
-      "palette": "card_level_1",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/一级发展卡_白_cutout.png",
-      "back_image": "media/card/一级发展卡_背面_cutout.png",
-      "note": "1 级卡面（diamond），背面同该级卡背",
-      "from_zone": "deck_level_1",
-      "concept": "development_card_level_1",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<diamond>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_1_ruby",
-      "shape": "card",
-      "palette": "card_level_1",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/一级发展卡_红_cutout.png",
-      "back_image": "media/card/一级发展卡_背面_cutout.png",
-      "note": "1 级卡面（ruby），背面同该级卡背",
-      "from_zone": "deck_level_1",
-      "concept": "development_card_level_1",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<ruby>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_1_emerald",
-      "shape": "card",
-      "palette": "card_level_1",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/一级发展卡_绿_cutout.png",
-      "back_image": "media/card/一级发展卡_背面_cutout.png",
-      "note": "1 级卡面（emerald），背面同该级卡背",
-      "from_zone": "deck_level_1",
-      "concept": "development_card_level_1",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<emerald>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_1_sapphire",
-      "shape": "card",
-      "palette": "card_level_1",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/一级发展卡_蓝_cutout.png",
-      "back_image": "media/card/一级发展卡_背面_cutout.png",
-      "note": "1 级卡面（sapphire），背面同该级卡背",
-      "from_zone": "deck_level_1",
-      "concept": "development_card_level_1",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<sapphire>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_1_onyx",
-      "shape": "card",
-      "palette": "card_level_1",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/一级发展卡_黑_cutout.png",
-      "back_image": "media/card/一级发展卡_背面_cutout.png",
-      "note": "1 级卡面（onyx），背面同该级卡背",
-      "from_zone": "deck_level_1",
-      "concept": "development_card_level_1",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<onyx>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_2_diamond",
-      "shape": "card",
-      "palette": "card_level_2",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/二级发展卡_白_cutout.png",
-      "back_image": "media/card/二级发展卡_背面_cutout.png",
-      "note": "2 级卡面（diamond），背面同该级卡背",
-      "from_zone": "deck_level_2",
-      "concept": "development_card_level_2",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<diamond>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_2_ruby",
-      "shape": "card",
-      "palette": "card_level_2",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/二级发展卡_红_cutout.png",
-      "back_image": "media/card/二级发展卡_背面_cutout.png",
-      "note": "2 级卡面（ruby），背面同该级卡背",
-      "from_zone": "deck_level_2",
-      "concept": "development_card_level_2",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<ruby>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_2_emerald",
-      "shape": "card",
-      "palette": "card_level_2",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/二级发展卡_绿_cutout.png",
-      "back_image": "media/card/二级发展卡_背面_cutout.png",
-      "note": "2 级卡面（emerald），背面同该级卡背",
-      "from_zone": "deck_level_2",
-      "concept": "development_card_level_2",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<emerald>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_2_sapphire",
-      "shape": "card",
-      "palette": "card_level_2",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/二级发展卡_蓝_cutout.png",
-      "back_image": "media/card/二级发展卡_背面_cutout.png",
-      "note": "2 级卡面（sapphire），背面同该级卡背",
-      "from_zone": "deck_level_2",
-      "concept": "development_card_level_2",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<sapphire>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_2_onyx",
-      "shape": "card",
-      "palette": "card_level_2",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/二级发展卡_黑_cutout.png",
-      "back_image": "media/card/二级发展卡_背面_cutout.png",
-      "note": "2 级卡面（onyx），背面同该级卡背",
-      "from_zone": "deck_level_2",
-      "concept": "development_card_level_2",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<onyx>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_3_diamond",
-      "shape": "card",
-      "palette": "card_level_3",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/三级发展卡_白_cutout.png",
-      "back_image": "media/card/三级发展卡_背面_cutout.png",
-      "note": "3 级卡面（diamond），背面同该级卡背",
-      "from_zone": "deck_level_3",
-      "concept": "development_card_level_3",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<diamond>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_3_ruby",
-      "shape": "card",
-      "palette": "card_level_3",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/三级发展卡_红_cutout.png",
-      "back_image": "media/card/三级发展卡_背面_cutout.png",
-      "note": "3 级卡面（ruby），背面同该级卡背",
-      "from_zone": "deck_level_3",
-      "concept": "development_card_level_3",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<ruby>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_3_emerald",
-      "shape": "card",
-      "palette": "card_level_3",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/三级发展卡_绿_cutout.png",
-      "back_image": "media/card/三级发展卡_背面_cutout.png",
-      "note": "3 级卡面（emerald），背面同该级卡背",
-      "from_zone": "deck_level_3",
-      "concept": "development_card_level_3",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<emerald>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_3_sapphire",
-      "shape": "card",
-      "palette": "card_level_3",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/三级发展卡_蓝_cutout.png",
-      "back_image": "media/card/三级发展卡_背面_cutout.png",
-      "note": "3 级卡面（sapphire），背面同该级卡背",
-      "from_zone": "deck_level_3",
-      "concept": "development_card_level_3",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<sapphire>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
-      "id": "market_card_3_onyx",
-      "shape": "card",
-      "palette": "card_level_3",
-      "width": 0.63,
-      "height": 0.88,
-      "sorting_order": 4,
-      "face_image": "media/card/三级发展卡_黑_cutout.png",
-      "back_image": "media/card/三级发展卡_背面_cutout.png",
-      "note": "3 级卡面（onyx），背面同该级卡背",
-      "from_zone": "deck_level_3",
-      "concept": "development_card_level_3",
-      "parts": [
-        {
-          "key": "bonus",
-          "value": "<onyx>"
-        }
-      ],
-      "part_anchors": [
-        {
-          "id": "prestige",
-          "label": "左上角：声望值",
-          "dx": -0.235,
-          "dy": 0.315,
-          "r": 0.075
-        },
-        {
-          "id": "cost",
-          "label": "左下角：价格（宝石种类与数量）",
-          "dx": -0.235,
-          "dy": -0.215,
-          "r": 0.16
-        },
-        {
-          "id": "bonus",
-          "label": "右上角：折扣宝石",
-          "dx": 0.205,
-          "dy": 0.325,
-          "r": 0.085
-        }
-      ]
-    },
-    {
       "id": "blank_card_1",
       "shape": "card",
       "palette": "card_level_1",
@@ -1759,6 +1129,1154 @@
         }
       ],
       "face_image": "media/card/贵族_0005_cutout.png"
+    },
+    {
+      "id": "card_l1_diamond_18",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "一级发展卡（白折扣，声望 0，价格 1黑 + 1蓝 + 2绿 + 1红；真卡 id=18）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_sapphire_15",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_蓝_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "note": "一级发展卡（蓝折扣，声望 0，价格 3黑；真卡 id=15）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_emerald_32",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_绿_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "note": "一级发展卡（绿折扣，声望 1，价格 4黑；真卡 id=32）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_ruby_38",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "一级发展卡（红折扣，声望 0，价格 2红 + 2白；真卡 id=38）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_onyx_3",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_黑_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "note": "一级发展卡（黑折扣，声望 0，价格 2蓝 + 1红 + 2白；真卡 id=3）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l2_diamond_55",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_白_cutout.png",
+      "back_image": "media/card/二级发展卡_背面_cutout.png",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "二级发展卡（白折扣，声望 2，价格 2黑 + 1绿 + 4红；真卡 id=55）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l2_sapphire_49",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_蓝_cutout.png",
+      "back_image": "media/card/二级发展卡_背面_cutout.png",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "note": "二级发展卡（蓝折扣，声望 2，价格 3蓝 + 5白；真卡 id=49）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l2_emerald_60",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_绿_cutout.png",
+      "back_image": "media/card/二级发展卡_背面_cutout.png",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "note": "二级发展卡（绿折扣，声望 1，价格 2黑 + 3蓝 + 2白；真卡 id=60）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l2_ruby_70",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_红_cutout.png",
+      "back_image": "media/card/二级发展卡_背面_cutout.png",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "二级发展卡（红折扣，声望 3，价格 6红；真卡 id=70）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l2_onyx_45",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_黑_cutout.png",
+      "back_image": "media/card/二级发展卡_背面_cutout.png",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "note": "二级发展卡（黑折扣，声望 2，价格 5白；真卡 id=45）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_diamond_81",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_白_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "三级发展卡（白折扣，声望 4，价格 6黑 + 3红 + 3白；真卡 id=81）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_sapphire_78",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_蓝_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "note": "三级发展卡（蓝折扣，声望 5，价格 3蓝 + 7白；真卡 id=78）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_emerald_84",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_绿_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "note": "三级发展卡（绿折扣，声望 4，价格 7蓝；真卡 id=84）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_ruby_88",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_红_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "三级发展卡（红折扣，声望 4，价格 7绿；真卡 id=88）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_onyx_74",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_黑_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "note": "三级发展卡（黑折扣，声望 5，价格 3黑 + 7红；真卡 id=74）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_diamond_17",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白_17_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "一级发展卡（白折扣，声望 0，价格 1黑 + 1蓝 + 1绿 + 1红；真卡 id=17）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_diamond_20",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白_20_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "一级发展卡（白折扣，声望 0，价格 1黑 + 1蓝 + 3白；真卡 id=20）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_diamond_22",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白_22_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "一级发展卡（白折扣，声望 0，价格 2黑 + 2蓝；真卡 id=22）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_diamond_24",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_白_24_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "一级发展卡（白折扣，声望 1，价格 4绿；真卡 id=24）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_sapphire_14",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_蓝_14_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "note": "一级发展卡（蓝折扣，声望 0，价格 2黑 + 2绿；真卡 id=14）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_emerald_30",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_绿_30_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<emerald>"
+        }
+      ],
+      "note": "一级发展卡（绿折扣，声望 0，价格 2蓝 + 2红；真卡 id=30）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_ruby_33",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红_33_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "一级发展卡（红折扣，声望 0，价格 1黑 + 1蓝 + 1绿 + 1白；真卡 id=33）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_ruby_35",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红_35_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "一级发展卡（红折扣，声望 0，价格 2黑 + 1绿 + 2白；真卡 id=35）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_ruby_37",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红_37_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "一级发展卡（红折扣，声望 0，价格 2蓝 + 1绿；真卡 id=37）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l1_ruby_40",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红_40_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "一级发展卡（红折扣，声望 1，价格 4白；真卡 id=40）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l2_ruby_69",
+      "shape": "card",
+      "palette": "card_level_2",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/二级发展卡_红_69_cutout.png",
+      "back_image": "media/card/二级发展卡_背面_cutout.png",
+      "concept": "development_card_level_2",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "二级发展卡（红折扣，声望 2，价格 5黑；真卡 id=69）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_diamond_80",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_白_80_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<diamond>"
+        }
+      ],
+      "note": "三级发展卡（白折扣，声望 4，价格 7黑；真卡 id=80）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_sapphire_77",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_蓝_77_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<sapphire>"
+        }
+      ],
+      "note": "三级发展卡（蓝折扣，声望 4，价格 3黑 + 3蓝 + 6白；真卡 id=77）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.235,
+          "dy": 0.315,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.215,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     }
   ],
   "anchors": [

@@ -1,0 +1,373 @@
+{
+  "game": "splendor",
+  "note": "发展卡物理身份表。template_id 是动画 stage 中真正的模板 ID；一张真卡一个模板，不允许再用 market_card_1_diamond 这种“颜色代表卡”去复制多张真卡。cost 的键用宝石名（diamond/sapphire/emerald/ruby/onyx），与动画事件 what.parts.color 一致。",
+  "cards": [
+    {
+      "template_id": "card_l1_diamond_18",
+      "source_card_id": 18,
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "emerald": 2,
+        "ruby": 1
+      },
+      "image": "media/card/一级发展卡_白_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l1_sapphire_15",
+      "source_card_id": 15,
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 3
+      },
+      "image": "media/card/一级发展卡_蓝_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l1_emerald_32",
+      "source_card_id": 32,
+      "level": 1,
+      "bonus": "emerald",
+      "prestige": 1,
+      "cost": {
+        "onyx": 4
+      },
+      "image": "media/card/一级发展卡_绿_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l1_ruby_38",
+      "source_card_id": 38,
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "ruby": 2,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_红_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l1_onyx_3",
+      "source_card_id": 3,
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_黑_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l2_diamond_55",
+      "source_card_id": 55,
+      "level": 2,
+      "bonus": "diamond",
+      "prestige": 2,
+      "cost": {
+        "onyx": 2,
+        "emerald": 1,
+        "ruby": 4
+      },
+      "image": "media/card/二级发展卡_白_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l2_sapphire_49",
+      "source_card_id": 49,
+      "level": 2,
+      "bonus": "sapphire",
+      "prestige": 2,
+      "cost": {
+        "sapphire": 3,
+        "diamond": 5
+      },
+      "image": "media/card/二级发展卡_蓝_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l2_emerald_60",
+      "source_card_id": 60,
+      "level": 2,
+      "bonus": "emerald",
+      "prestige": 1,
+      "cost": {
+        "onyx": 2,
+        "sapphire": 3,
+        "diamond": 2
+      },
+      "image": "media/card/二级发展卡_绿_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l2_ruby_70",
+      "source_card_id": 70,
+      "level": 2,
+      "bonus": "ruby",
+      "prestige": 3,
+      "cost": {
+        "ruby": 6
+      },
+      "image": "media/card/二级发展卡_红_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l2_onyx_45",
+      "source_card_id": 45,
+      "level": 2,
+      "bonus": "onyx",
+      "prestige": 2,
+      "cost": {
+        "diamond": 5
+      },
+      "image": "media/card/二级发展卡_黑_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l3_diamond_81",
+      "source_card_id": 81,
+      "level": 3,
+      "bonus": "diamond",
+      "prestige": 4,
+      "cost": {
+        "onyx": 6,
+        "ruby": 3,
+        "diamond": 3
+      },
+      "image": "media/card/三级发展卡_白_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l3_sapphire_78",
+      "source_card_id": 78,
+      "level": 3,
+      "bonus": "sapphire",
+      "prestige": 5,
+      "cost": {
+        "sapphire": 3,
+        "diamond": 7
+      },
+      "image": "media/card/三级发展卡_蓝_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l3_emerald_84",
+      "source_card_id": 84,
+      "level": 3,
+      "bonus": "emerald",
+      "prestige": 4,
+      "cost": {
+        "sapphire": 7
+      },
+      "image": "media/card/三级发展卡_绿_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l3_ruby_88",
+      "source_card_id": 88,
+      "level": 3,
+      "bonus": "ruby",
+      "prestige": 4,
+      "cost": {
+        "emerald": 7
+      },
+      "image": "media/card/三级发展卡_红_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l3_onyx_74",
+      "source_card_id": 74,
+      "level": 3,
+      "bonus": "onyx",
+      "prestige": 5,
+      "cost": {
+        "onyx": 3,
+        "ruby": 7
+      },
+      "image": "media/card/三级发展卡_黑_cutout.png",
+      "role": "existing"
+    },
+    {
+      "template_id": "card_l1_diamond_17",
+      "source_card_id": 17,
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "emerald": 1,
+        "ruby": 1
+      },
+      "image": "media/card/一级发展卡_白_17_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_diamond_20",
+      "source_card_id": 20,
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "diamond": 3
+      },
+      "image": "media/card/一级发展卡_白_20_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_diamond_22",
+      "source_card_id": 22,
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "sapphire": 2
+      },
+      "image": "media/card/一级发展卡_白_22_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_diamond_24",
+      "source_card_id": 24,
+      "level": 1,
+      "bonus": "diamond",
+      "prestige": 1,
+      "cost": {
+        "emerald": 4
+      },
+      "image": "media/card/一级发展卡_白_24_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_sapphire_14",
+      "source_card_id": 14,
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "image": "media/card/一级发展卡_蓝_14_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_emerald_30",
+      "source_card_id": 30,
+      "level": 1,
+      "bonus": "emerald",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 2
+      },
+      "image": "media/card/一级发展卡_绿_30_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_ruby_33",
+      "source_card_id": 33,
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "onyx": 1,
+        "sapphire": 1,
+        "emerald": 1,
+        "diamond": 1
+      },
+      "image": "media/card/一级发展卡_红_33_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_ruby_35",
+      "source_card_id": 35,
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 1,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_红_35_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_ruby_37",
+      "source_card_id": 37,
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "emerald": 1
+      },
+      "image": "media/card/一级发展卡_红_37_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_ruby_40",
+      "source_card_id": 40,
+      "level": 1,
+      "bonus": "ruby",
+      "prestige": 1,
+      "cost": {
+        "diamond": 4
+      },
+      "image": "media/card/一级发展卡_红_40_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l2_ruby_69",
+      "source_card_id": 69,
+      "level": 2,
+      "bonus": "ruby",
+      "prestige": 2,
+      "cost": {
+        "onyx": 5
+      },
+      "image": "media/card/二级发展卡_红_69_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l3_diamond_80",
+      "source_card_id": 80,
+      "level": 3,
+      "bonus": "diamond",
+      "prestige": 4,
+      "cost": {
+        "onyx": 7
+      },
+      "image": "media/card/三级发展卡_白_80_cutout.png",
+      "role": "new_scan"
+    },
+    {
+      "template_id": "card_l3_sapphire_77",
+      "source_card_id": 77,
+      "level": 3,
+      "bonus": "sapphire",
+      "prestige": 4,
+      "cost": {
+        "onyx": 3,
+        "sapphire": 3,
+        "diamond": 6
+      },
+      "image": "media/card/三级发展卡_蓝_77_cutout.png",
+      "role": "new_scan"
+    }
+  ]
+}

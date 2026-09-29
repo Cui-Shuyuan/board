@@ -293,11 +293,30 @@ def color_lock(gen: np.ndarray, scan: np.ndarray, mask: np.ndarray) -> np.ndarra
 RECTS = {
     # 类 → (文件名通配, 实物 mm)。发展卡 63x88、贵族 60x60（components.json）。
     "noble": (["贵族_0001.jpg", "贵族_0002.jpg", "贵族_0003.jpg", "贵族_0004.jpg", "贵族_0005.jpg"], 60.0, 60.0, True),
-    "card": (["一级发展卡_白.jpg", "一级发展卡_蓝.jpg", "一级发展卡_绿.jpg", "一级发展卡_红.jpg", "一级发展卡_黑.jpg",
-              "一级发展卡_背面.jpg", "二级发展卡_白.jpg", "二级发展卡_蓝.jpg", "二级发展卡_绿.jpg", "二级发展卡_红.jpg",
-              "二级发展卡_黑.jpg", "二级发展卡_背面.jpg", "三级发展卡_白.jpg", "三级发展卡_蓝.jpg", "三级发展卡_绿.jpg",
-              "三级发展卡_红.jpg", "三级发展卡_黑.jpg", "三级发展卡_背面.jpg"], 63.0, 88.0, False),
+    # 卡牌改名后不再维护固定文件名清单：运行 --class card 时用
+    # glob 收集 raw 扫描件（排除已成品 *_cutout.png）。新增卡只需丢进目录。
+    "card": (["*发展卡_*.jpg", "*发展卡_*.png"], 63.0, 88.0, False),
 }
+
+
+def _expand_card_names(patterns: list[str], scan_dir: Path) -> list[str]:
+    """把 RECTS 里的文件名/通配模式展开成实际 raw 扫描件清单。
+
+    `--class card` 需要承接以后不断增加的实际卡扫描件；如果写死旧 15 个名字，
+    新增卡就会静默跳过。这里统一 glob，并排除已经处理过的 `_cutout.png`。
+    """
+    out: list[str] = []
+    seen: set[str] = set()
+    for pattern in patterns:
+        matches = sorted(scan_dir.glob(pattern))
+        for p in matches:
+            name = p.name
+            if name.endswith("_cutout.png"):
+                continue
+            if name not in seen:
+                seen.add(name)
+                out.append(name)
+    return out
 
 
 def run_rect(args) -> int:
@@ -305,6 +324,14 @@ def run_rect(args) -> int:
     scan_dir = next((c for c in SCAN_CANDIDATES if c.exists()), None)
     if scan_dir is None:
         print("找不到扫描件目录", file=sys.stderr)
+        return 2
+    if args.cls == "card":
+        names = _expand_card_names(names, scan_dir)
+    if getattr(args, "only", None):
+        wanted = [s.strip() for s in args.only.split(",") if s.strip()]
+        names = [n for n in names if any(w in n for w in wanted)]
+    if not names:
+        print(f"{args.cls}: 没有匹配到待处理扫描件", file=sys.stderr)
         return 2
     out_dir = Path(args.out) if args.out else scan_dir
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -364,6 +391,8 @@ def main() -> int:
     ap.add_argument("--no-card-fix", action="store_true", help="关掉卡牌的圆角/收边/去纹")
     ap.add_argument("--auto-trim", action="store_true",
                     help="通用白边裁剪：四条边各自扫描纸边/台面后再裁到件（平扫卡牌/贵族用）")
+    ap.add_argument("--only", default=None,
+                    help="只处理文件名包含这些子串的扫描件（逗号分隔；用于补扫少量卡）")
     args = ap.parse_args()
 
     if args.cls in ("noble", "card"):
