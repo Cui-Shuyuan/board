@@ -74,6 +74,7 @@ metadata:
 ### 源数据
 
 - `content/games/splendor/tutorial/script.full.json`：口播文本、分组、refs。
+- `content/games/splendor/card_registry.json`：发展卡真卡身份表；一张真卡一个 stage 模板，禁止再用 `market_card_{lv}_{bonus}` 代表多张。
 - `content/games/splendor/tutorial/anim/v2/full.anim.json`：动画事件、camera、parent/entry、tree、契约、可选的 `qa` 字段。
 - `content/games/splendor/tutorial/anim/v2/_stage/*.stage.json`：各树舞台、zone、模板、命名机位。
 - `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`：LLM 写作规范。
@@ -152,6 +153,7 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 ```
 
 `check_anim_v2` 检查契约 vs 编译快照、`state_ops` 完整性、`camera_ops` 顺序与边界脏帧。
+`check_card_identity_v2` 检查每个 state 内 face-up 发展卡真卡身份不重复；发展卡身份保真（方案 B）已主体完成：28 个独立卡位各有独立真卡模板/扫描件。
 `check_anim_v2_sample` 逐 item 对账 Unity 采样的 `(zone,order,face)` 与 `end_state`。
 
 ## 关键设计规则

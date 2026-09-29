@@ -271,6 +271,7 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 | 动画契约 | `python3 animation/check_anim_v2.py --game splendor --track full` | 契约 vs compiled |
 | 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放 |
 | 动画审计 | `python3 animation/audit_anim_v2.py --game splendor --track full` | 跨 cue 守恒 / 补牌 / pointer |
+| 卡身份 | `python3 animation/check_card_identity_v2.py --game splendor --track full` | 同一 state 无重复真卡 |
 | Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 110 cue 状态对账 |
 | 单元测试 | `python3 -m unittest animation/test_compile_animation_v2.py animation/test_audit_anim_v2.py` | 动画工具测试 |
 

@@ -2,10 +2,10 @@
 
 新会话按顺序读：
 
-1. [current-state.md](current-state.md) — 截至 2026-09-27，含 HEAD `204ce35`、后端服务化状态、工作区/待办
+1. [current-state.md](current-state.md) — 截至 2026-09-30，含 HEAD `1a636be`、后端服务化状态、发展卡身份保真、工作区/待办
 2. [project-overview.md](project-overview.md) — 项目定位、功能、阶段、技术选型
 3. [architecture.md](architecture.md) — Runtime 服务拆分、自动 freshness、检索、Android/语音接口
-4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3：time_anchors / QA 同置 / 当前动画遗留
+4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3：time_anchors / QA 同置 / 发展卡身份保真 / 当前动画遗留
 5. [game-status.md](game-status.md) — 九款游戏数据与 QA 状态
 6. [conventions.md](conventions.md) — 规则 JSON / 本体 / pipeline / 命名规范
 7. [tools.md](tools.md) — 服务、规则 freshness、后端测试、语音桥、Android、编译命令

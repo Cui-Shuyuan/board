@@ -1,13 +1,13 @@
 ---
 name: current-state
-description: 新会话入口——截至 2026-09-27 的当前进度、工作区状态、待办与不做事项
+description: 新会话入口——截至 2026-09-30 的当前进度、工作区状态、待办与不做事项
 metadata:
   type: project
 ---
 
-> 最后更新：2026-09-27 · 基线 HEAD `204ce35` · 后端 xUnit 75/75
+> 最后更新：2026-09-30 · 基线 HEAD `1a636be` · 后端 xUnit 75/75
 
-# 当前状态（2026-09-27）
+# 当前状态（2026-09-30）
 
 ## 一句话
 
@@ -15,7 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前工作区状态
 
-- 工作区干净，HEAD = `204ce35 refactor(rules): extract RulesPlanService`。
+- 工作区干净，HEAD = `1a636be feat(anim): give Splendor development cards unique physical identities`。
 - 2026-09-23 记录的动画待收口项已经由后续提交收口（time_anchors 见 `38971d4`）。
 - `.claude/archive/memory/2026-09-23/` 只用于追溯历史，不作为现状依据。
 
@@ -28,6 +28,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - **语音链路**：后端运行时走 Python 短进程桥 `tools/voice/asr_once.py` / `tools/voice/tts_once.py`，对外接口 `POST /api/asr/once`、`POST /api/tts`；默认 TTS provider 是 `standard`（豆包标准语音合成小模型 v1），`--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 可切回旧 2.0；standard 路径没有字级 subtitle，旧 seed2 路径有；已存在 Splendor full 音频 manifest 来源为 seed2（`zh_female_vv_uranus_bigtts` / `seed-tts-2.0`）。Android 不直接接触火山凭证，密钥只在仓库根 `.env`（git-ignored）。
 - **Catalog / Manifest**：`content/catalog/splendor.json` 已入 Git；`content/manifests/splendor.json` 为生成物、不入 Git（已由 `.gitignore` 排除），当前只有 Splendor 一套。`/api/catalog/games` 是 Android 首页来源，`/api/content/games/{game}/manifest` 和 `/api/content/games/{game}/files/...` 提供 manifest 拉取与内容文件。
 - **动画 full**：Splendor full 约 110 cue，`time_anchors` 已全量迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
+- **发展卡身份保真（方案 B）**：Splendor 28 个独立 face-up 发展卡卡位各有一张真卡模板/扫描件；`content/games/splendor/card_registry.json` 是真卡身份表，`check_card_identity_v2.py` 检查任一 state 内不出现两张同一真卡。Android 真机已验证新内容版本可下载并正常播放 110 cue。
 
 ## 当前优先待办
 
@@ -37,14 +38,16 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 4. **动画检查遗留**：当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning，待用户裁决调 stage 还是允许叠加。
 5. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
 
-6. **Splendor 发展卡身份保真（方案 B，次日优先）**
-   - 现状：cue46–110 的 canonical face-up 状态中，市场/玩家发展区把同一张代表卡复制多份来冒充不同真卡，尤其 cue70+ 的 4 张一级白 / 4 张一级红，以及 cue102+ 重复出现的三级蓝。
-   - 决策：不接受重复代表卡长期冒充不同真卡；所有 face-up 发展卡必须有唯一的真卡扫描件。
-   - 下一步：先逐 cue 输出精确补扫清单（等级、bonus、声望、价格、数量、涉及 cue、建议文件名），用户扫描提供后更新 `media/card`、stage templates、`card_facts.json`、`full.anim.json` 与 QA，循环直到 canonical face-up 不再出现同一卡面冒充多张真卡。
+6. **Splendor 发展卡身份保真（方案 B）— 工程侧已完成**
+   - 28 个独立 face-up 发展卡卡位已有独立真卡模板与扫描件；`market_card_{lv}_{bonus}` / `sample_card_*` 代表卡已退场。
+   - `card_registry.json` + `card_facts.json` 记录每张真卡等级、bonus、声望、价格、图片。
+   - `full.anim.json` 的 setup deck、样本、cue70 补牌、cue59 demo、cue102 终局补牌均已改成具体真卡。
+   - `python3 animation/check_card_identity_v2.py --game splendor --track full` 通过：374 个 state 无重复真卡。
+   - 真机已下载内容版本并播放新 compiled；逐 cue 视觉观感仍归入总体视觉验收。
 
 ## 已知未做 / 未闭环
 
-- Unity 视觉验收被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环。
+- Unity 视觉验收被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环（发展卡身份保真只做了结构/state/真机加载验证）。
 - Android UaaL 与 Compose 代码已有；完整真机范围（店内平板规模、PTT → 回答 → 回到动画、打断后回跳重播）待复测，不能写成已验收。
 - 仅 Splendor 有 catalog / manifest；其余 8 款待补。
 - 语义检索仍需重建 Qdrant 索引；规则文件本身由 `RulesDocumentStore` 自动刷新，无需重新启动 API 服务。

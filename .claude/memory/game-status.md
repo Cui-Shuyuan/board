@@ -28,6 +28,7 @@ metadata:
 - `time_anchors` 已全量迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。
 - 口播 QA 已与 cue 同置流程落地：问题可/优先写在 `full.anim.json` 的 `qa` 字段，历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 自动提取发送。
 - 当前工作不是“动画时间锚点收口”；动画遗留见 `tutorial-animation.md`。
+- 发展卡身份保真（方案 B）已主体完成：28 个 face-up 卡位各有独立真卡模板/扫描，`check_card_identity_v2.py` 通过。
 - catalog + manifest 已生成：`content/catalog/splendor.json` 入 Git；`content/manifests/splendor.json` 为生成物，不入 Git。
 - 路径：`content/games/splendor/`。
 
