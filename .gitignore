@@ -22,6 +22,8 @@ obj/
 
 # Qdrant runtime data
 backend/BoardAI.Api/storage/
+# 误在仓库目录内启动 Qdrant 留下的存储/二进制残渣
+content/games/*/qdrant/
 
 # ML 模型（下载/转换产物，不进 git——所有模型统一放 ml_models/ 下）
 backend/BoardAI.Api/ml_models/
@@ -55,6 +57,8 @@ clients/android/**/build/
 # Claude local-only files
 .claude/worktrees/
 .claude/settings.local.json
+# 每台机器自己的环境说明（路径、编辑器版本、构建注意事项）
+.claude/memory/*.local.md
 
 # 模型文件（不进 git）
 *.onnx

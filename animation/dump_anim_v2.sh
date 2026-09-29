@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # V2 sampling: Unity batchmode -> content/games/{game}/tutorial/anim/v2/{track}.v2sample.json
 set -u
-UNITY="/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe"
+UNITY="${UNITY_EXE:-/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe}"
 PROJ='D:\workspace\board\clients\unity'
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ROOT="$REPO"
