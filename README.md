@@ -300,6 +300,7 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 - 9 款游戏有规则数据，8 款有 `flow.json`；Splendor 是 Runtime + 动画试点。
 - Splendor full 约 110 cue；QA、time_anchors、compiled、Unity 采样链可运行。
 - Android UaaL / 内容更新 / 播放器 / 问答语音首版已落地；完整真机端到端验收待复测。
+- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 动画，逐 cue 看真卡画面。
 - 其余 8 款游戏 catalog / manifest 待补。
 - Flow Guide 尚未开始；动画 Quick 版尚未开始。
 

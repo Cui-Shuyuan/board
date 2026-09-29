@@ -180,6 +180,7 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 
 ## 当前遗留
 
+- **下一步（最高优先）：Splendor full 重新过动画。** 发展卡扫描件/真卡模板已补齐，`check_card_identity_v2.py` 通过；现在需要从头到尾重新看一遍 110 cue，重点 cue46–110 的真卡画面、cue59 demo、cue70 补 4 白/4 红、cue102 终局补三级蓝，以及原有的 2 条 stage 重叠 warning 是否实际影响观感。
 - TTS 增量尚未真实跑过一次（改一条 cue 文本，验证只生成该 cue 的 mp3/subtitle，其他 cue 不动）。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 尚未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。

@@ -32,22 +32,21 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前优先待办
 
-1. **其余 8 款游戏 catalog / manifest**：补 `content/catalog/{game}.json` 与 `content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已有 v1。
-2. **Android 真机端到端验收**：验证 PTT → ASR → 提问 → 回答 TTS → 回到动画/继续播放的完整链路，以及打断后回跳重播。
-3. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
-4. **动画检查遗留**：当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning，待用户裁决调 stage 还是允许叠加。
-5. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
-
-6. **Splendor 发展卡身份保真（方案 B）— 工程侧已完成**
-   - 28 个独立 face-up 发展卡卡位已有独立真卡模板与扫描件；`market_card_{lv}_{bonus}` / `sample_card_*` 代表卡已退场。
-   - `card_registry.json` + `card_facts.json` 记录每张真卡等级、bonus、声望、价格、图片。
-   - `full.anim.json` 的 setup deck、样本、cue70 补牌、cue59 demo、cue102 终局补牌均已改成具体真卡。
-   - `python3 animation/check_card_identity_v2.py --game splendor --track full` 通过：374 个 state 无重复真卡。
-   - 真机已下载内容版本并播放新 compiled；逐 cue 视觉观感仍归入总体视觉验收。
+1. **Splendor full 重新过动画（扫描件已补，下一步就是这一项）**
+   - 28 个 face-up 发展卡卡位已有独立真卡扫描件/模板，`check_card_identity_v2.py` 已通过。
+   - 现在需要从头到尾重新过一遍 Splendor full 110 cue：真实播放/真机观看，逐段确认画面、卡面、镜头、字幕和口播仍然一致。
+   - 重点：cue46–110 市场/玩家发展区的卡面是否都是对应真卡、无重复；cue59 demo、cue70 补 4 白/4 红、cue102 终局补三级蓝的画面观感；之前 2 条 stage 重叠 warning 是否实际影响观感。
+   - 产出逐 cue 问题清单；能当场改的改，需要用户裁决的记录待办。
+2. **其余 8 款游戏 catalog / manifest**：补 `content/catalog/{game}.json` 与 `content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已有 v1。
+3. **Android 真机端到端验收**：验证 PTT → ASR → 提问 → 回答 TTS → 回到动画/继续播放的完整链路，以及打断后回跳重播。
+4. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
+5. **动画检查遗留**：当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning，待用户裁决调 stage 还是允许叠加。
+6. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
 
 ## 已知未做 / 未闭环
 
-- Unity 视觉验收被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环（发展卡身份保真只做了结构/state/真机加载验证）。
+- Splendor 发展卡扫描件/真卡身份已补齐，但**还没有重新逐 cue 过动画**；结构/state/真机加载已通过，画面观感待本轮重审。
+- Unity 视觉验收此前被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环。
 - Android UaaL 与 Compose 代码已有；完整真机范围（店内平板规模、PTT → 回答 → 回到动画、打断后回跳重播）待复测，不能写成已验收。
 - 仅 Splendor 有 catalog / manifest；其余 8 款待补。
 - 语义检索仍需重建 Qdrant 索引；规则文件本身由 `RulesDocumentStore` 自动刷新，无需重新启动 API 服务。
