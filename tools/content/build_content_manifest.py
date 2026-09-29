@@ -9,7 +9,11 @@ The manifest is written to content/manifests/{game}.json and contains a
 deterministic version derived only from the file paths and their SHA-256
 values.  Each file URL embeds that version so the backend can serve immutable
 content safely.  Non-runtime cruft files such as .DS_Store, Thumbs.db, *.tmp
-and *.log are skipped.
+and *.log are skipped, as are the sampling scratch artefacts that .gitignore
+already excludes (*.exitstate.json, *.v2sample.json).  Shipping those was a real
+bug: the animation tooling regenerates them, they are absent from a clean
+checkout, and including them made the manifest depend on which machine happened
+to generate it.
 """
 
 from __future__ import annotations
@@ -23,7 +27,7 @@ from urllib.parse import quote
 
 SCHEMA = "board-content/v1"
 SKIPPED_NAMES = {".DS_Store", "Thumbs.db"}
-SKIPPED_SUFFIXES = {".tmp", ".log"}
+SKIPPED_SUFFIXES = {".tmp", ".log", ".exitstate.json", ".v2sample.json"}
 
 
 def is_skipped_name(name: str) -> bool:
