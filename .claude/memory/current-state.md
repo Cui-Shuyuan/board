@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-09-30 · 基线 HEAD `1a636be` · 后端 xUnit 75/75
+> 最后更新：2026-09-30 · 基线 HEAD `7ad18e5` · 后端 xUnit 75/75
 
 # 当前状态（2026-09-30）
 
@@ -23,11 +23,12 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 - **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、public wrapper、`Dispose`、`ClearDerivedCaches`；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。后端 xUnit 测试 75/75 全绿。
 - **规则数据与检索**：9 款游戏目录，8 款有 `flow.json`，Splendor 是 Runtime + 动画试点；Qdrant + `bge-base-zh-v1.5` ONNX 检索链可用；`validate_rules.py --errors-only` 为 0 errors / 72 warnings；`tools/qa/retrieval_gold.jsonl` 85 条。
+- **动画 tree/状态模型（2026-09-30 修正）**：tree 只决定 stage/可见性，不再作为状态边界；cue 默认按 `entry -> parent -> 轨道前一条` 继承完整状态，允许跨 tree。当前 stage 缺少的 zone 不渲染，组件仍保留在逻辑状态中，切回对应 tree 后恢复显示。cue46 默认继承主桌状态，cue47 在 `cards_intro` 树里继续样卡，市场不再泄漏进样卡特写。
 - **规则文件 freshness**：`RulesDocumentStore` 按文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务；`ClearDerivedCaches()` 会清名称索引、Plan 类型缓存、Flow 位置缓存、Fact score 缓存；语义检索仍需要重建 Qdrant 索引（`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all` 或 `python tools/indexing/rebuild_index.py ...`）。
 - **Android 客户端**：已有 Unity as a Library（UaaL）原生 Android 壳、Kotlin + Jetpack Compose 控制层、首页游戏目录/搜索/历史/资源管理、manifest → 本地内容仓库 → 增量下载/断点续传 v1、教程播放器 Compose 控制层与 Unity 状态回传、问答面板、按住说话 PTT、ASR、回答 TTS、自动播放/重播/继续播放。已有 6 个 Android JVM 测试文件（ContentStatusTest、ContentUpdaterTest、HomeContentCoordinatorTest、PlayerSessionControllerTest、QaVoiceControllerTest、UnityLoadQueueTest）；真机结论只保留已有记录部分，完整范围待复测。
 - **语音链路**：后端运行时走 Python 短进程桥 `tools/voice/asr_once.py` / `tools/voice/tts_once.py`，对外接口 `POST /api/asr/once`、`POST /api/tts`；默认 TTS provider 是 `standard`（豆包标准语音合成小模型 v1），`--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 可切回旧 2.0；standard 路径没有字级 subtitle，旧 seed2 路径有；已存在 Splendor full 音频 manifest 来源为 seed2（`zh_female_vv_uranus_bigtts` / `seed-tts-2.0`）。Android 不直接接触火山凭证，密钥只在仓库根 `.env`（git-ignored）。
 - **Catalog / Manifest**：`content/catalog/splendor.json` 已入 Git；`content/manifests/splendor.json` 为生成物、不入 Git（已由 `.gitignore` 排除），当前只有 Splendor 一套。`/api/catalog/games` 是 Android 首页来源，`/api/content/games/{game}/manifest` 和 `/api/content/games/{game}/files/...` 提供 manifest 拉取与内容文件。
-- **动画 full**：Splendor full 约 110 cue，`time_anchors` 已全量迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
+- **动画 full**：Splendor full 约 110 cue，`time_anchors` 已全量迁移并 commit（`38971d4`）；cue47 的样卡/桌面可见性问题已按 tree/stage 机制修正（`7ad18e5`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
 - **发展卡身份保真（方案 B）**：Splendor 28 个独立 face-up 发展卡卡位各有一张真卡模板/扫描件；`content/games/splendor/card_registry.json` 是真卡身份表，`check_card_identity_v2.py` 检查任一 state 内不出现两张同一真卡。Android 真机已验证新内容版本可下载并正常播放 110 cue。
 
 ## 当前优先待办
