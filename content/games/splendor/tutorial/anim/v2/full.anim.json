@@ -2883,9 +2883,8 @@
     {
       "id": "setup.cards.001.1",
       "parent": "bg.intro.003.3",
-      "entry": "initial",
       "tree": "cards_intro",
-      "transition": "world_cut",
+      "transition": "overlay",
       "timing": [
         {
           "key": "放出一张卡正面",
@@ -3125,9 +3124,8 @@
     {
       "id": "setup.cards.002.1",
       "parent": "setup.cards.001.3",
-      "entry": "initial",
       "tree": "main",
-      "transition": "world_cut",
+      "transition": "overlay",
       "timing": [
         {
           "key": "样本卡背退场 + 牌堆登场 + 洗混",
@@ -3145,6 +3143,15 @@
           "picture": null,
           "zones": {
             "card_market": {
+              "count": 0
+            },
+            "showcase_1": {
+              "count": 0
+            },
+            "showcase_2": {
+              "count": 0
+            },
+            "showcase_3": {
               "count": 0
             }
           }
@@ -3272,6 +3279,15 @@
                   "face": "up"
                 }
               ]
+            },
+            "showcase_1": {
+              "count": 0
+            },
+            "showcase_2": {
+              "count": 0
+            },
+            "showcase_3": {
+              "count": 0
             }
           }
         }
@@ -3282,6 +3298,30 @@
           "dur": 0.0,
           "shot": "shot_decks_market",
           "realizes": "<ontology::timing>",
+          "anchor": "setup.cards.002.1.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "zone": "showcase_1",
+          "template": "sample_back_1",
+          "count": 1,
+          "anchor": "setup.cards.002.1.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "zone": "showcase_2",
+          "template": "sample_back_2",
+          "count": 1,
+          "anchor": "setup.cards.002.1.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "zone": "showcase_3",
+          "template": "sample_back_3",
+          "count": 1,
           "anchor": "setup.cards.002.1.start"
         },
         {
@@ -3624,9 +3664,8 @@
     {
       "id": "setup.gems.001.1",
       "parent": "setup.cards.002.2",
-      "entry": "initial",
       "tree": "gems_demo",
-      "transition": "world_cut",
+      "transition": "overlay",
       "timing": [
         {
           "key": "5 枚样本出现在展示位",
@@ -3635,7 +3674,7 @@
       ],
       "script": {
         "story": "【这些是标记，后续称之为宝石】宝石第一次露面：五色各 1 枚，**直接出现在展示位**上。\n\n为什么放在展示位：这一 cue 是**介绍**，不是在说宝石该放哪 —— 所以不摆进供应堆、也不从盒里搬，而是用 5 枚**样本**；镜头只框住展示位，发展卡不会入镜。\n样本是独立模板，因此「盒里每色 7 枚」的账一分不动（销毁它们也不影响账）。\n五枚同时瞬时出现。",
-        "note": "【这些是标记，后续称之为宝石】五种颜色各 1 枚**直接出现**在**展示位**上（`gem_display`，介绍用，不是供应堆）。\n这一 cue **不碰供应堆、也不动盒子** —— 它在介绍宝石本身，不是在说宝石该放哪（用户 2026-09 定的）。\n展示位在供应区前方、离发展卡很远，取景能收得很紧：**画面里只有宝石**，没有一级发展卡。\n样本用独立模板 `gem_sample`（和 `sample_card_*` 一个路数），所以不会混进「每色 7 枚」的账。",
+        "note": "【这些是标记，后续称之为宝石】五种颜色各 1 枚**直接出现**在**展示位**上（`gem_display`，介绍用，不是供应堆）。\n这一 cue **不碰供应堆、也不动盒子** —— 它在介绍宝石本身，不是在说宝石该放哪（用户 2026-09 定的）。\n展示位在供应区前方、离发展卡很远，取景能收得很紧：**画面里只有宝石**，没有一级发展卡。\n样本用独立模板 `gem_sample`（和 `sample_card_*` 一个路数），所以不会混进「每色 7 枚」的账。\n  【继承关系】本 tree 默认继承上一 cue 的完整主桌状态，但 stage 只显示宝石展示位；cue18 用显式 entry 回 setup.cards.002.2 canonical 快照，演示样本不会带进主账。",
         "enter": {
           "picture": null,
           "zones": {
@@ -3971,7 +4010,7 @@
       ],
       "script": {
         "story": "【根据玩家人数拿取对应数量的宝石】【2人游戏时，每种宝石拿取4枚】\n前半句做两件事：销毁介绍用的样本、镜头切回供应区；后半句五色各拿 4 枚摆成供应堆（每堆 4）。\n样本是独立模板，销毁它们不影响真件的账：真宝石仍在盒里，从盒里搬出来的才是供应堆。",
-        "note": "【我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚】\n  0.00：销毁展示位上的 6 枚样本，与「镜头切回供应区」**同一帧**。\n  4.20：五色**同时**各 **出现** 4 枚（`create`，一次到位）—— 供应堆此前是空的。\n  为什么是 create 而不是 transfer：源是游戏盒。\n  **游戏盒是抽象概念、没有实体**（用户 2026-09）：\"从盒子里拿出来\" 就是 `create`，\n  \"放回盒子\" 就是 `destroy`。所以这里没有 box_* 这个 zone，也不必写 source ——   盒里的东西从观众视角本来就是\"凭空多出来/少掉\"。\n  账仍然平：这一色一共 create 7 枚 = 实物总数 7（003.1 的 4 + 003.2 的 1 + 004 的 2）。\n  `create` 的语义是「**补齐到这个数**」（幂等：重复 Seek / 重播不会建两遍），所以这里写的是**目标数量**（4 → 5 → 7），不是\"再加几枚\"。",
+        "note": "【我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚】\n  0.00：销毁展示位上的 6 枚样本，与「镜头切回供应区」**同一帧**。\n  4.20：五色**同时**各 **出现** 4 枚（`create`，一次到位）—— 供应堆此前是空的。\n  为什么是 create 而不是 transfer：源是游戏盒。\n  **游戏盒是抽象概念、没有实体**（用户 2026-09）：\"从盒子里拿出来\" 就是 `create`，\n  \"放回盒子\" 就是 `destroy`。所以这里没有 box_* 这个 zone，也不必写 source ——   盒里的东西从观众视角本来就是\"凭空多出来/少掉\"。\n  账仍然平：这一色一共 create 7 枚 = 实物总数 7（003.1 的 4 + 003.2 的 1 + 004 的 2）。\n  `create` 的语义是「**补齐到这个数**」（幂等：重复 Seek / 重播不会建两遍），所以这里写的是**目标数量**（4 → 5 → 7），不是\"再加几枚\"。\n  【继承关系】显式 entry 回 setup.cards.002.2，丢弃 gem_demo 分支里的样卡状态；这是有意的 demo→canonical 分支返回。",
         "enter": {
           "picture": null,
           "zones": {
@@ -4570,9 +4609,8 @@
     {
       "id": "setup.nobles.001.1",
       "parent": "setup.gems.005.2",
-      "entry": "initial",
       "tree": "nobles_demo",
-      "transition": "world_cut",
+      "transition": "overlay",
       "timing": [
         {
           "key": "每色 destroy 3 枚（7→4）",
@@ -4585,7 +4623,7 @@
       ],
       "script": {
         "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】贵族板块在 cue 一开始就摆出：本片按 2 人局，抽 3 块不同的贵族。\n这条 cue 同时承担宝石那节的收尾：把每色多出来的 3 枚收回盒子（7 → 4）。",
-        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，桌上统一用 noble（贵族_0001）模板。\n这样贵族供应堆的可见条件与后文讲解的 4白+4红 自洽；0002..0005 扫描件保留给以后需要区分条件的章节。\n同时做宝石收尾：每色 destroy 3 枚（放回盒子），供应堆 7 → 4。黄金不动。\n",
+        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，桌上统一用 noble（贵族_0001）模板。\n这样贵族供应堆的可见条件与后文讲解的 4白+4红 自洽；0002..0005 扫描件保留给以后需要区分条件的章节。\n同时做宝石收尾：每色 destroy 3 枚（放回盒子），供应堆 7 → 4。黄金不动。\n\n  【继承关系】本 tree 默认继承上一 cue 的完整主桌状态，但 stage 只显示 noble_market；cue25 用显式 entry 回 setup.gems.005.2 canonical 快照。",
         "enter": {
           "picture": null,
           "zones": {
@@ -4668,7 +4706,7 @@
       ],
       "script": {
         "story": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】",
-        "note": "主树里在 t=0 create 同样的 3 块 noble（贵族_0001），作为本局实际抽到的贵族。之后不再重抽。\n",
+        "note": "主树里在 t=0 create 同样的 3 块 noble（贵族_0001），作为本局实际抽到的贵族。之后不再重抽。\n\n  【继承关系】显式 entry 回 setup.gems.005.2，丢弃 nobles_demo 分支状态；随后 create 在主树上落下真实贵族。",
         "enter": {
           "picture": null,
           "zones": {
@@ -4771,9 +4809,8 @@
     {
       "id": "setup.starting_player.001.3",
       "parent": "setup.starting_player.001.2",
-      "entry": "initial",
       "tree": "marker_demo",
-      "transition": "world_cut",
+      "transition": "overlay",
       "timing": [
         {
           "key": "镜头特写标记",
@@ -4790,7 +4827,7 @@
       ],
       "script": {
         "story": "【这是起始玩家标记】",
-        "note": "【起始玩家标记出场】\n  这是本作**第一件不是宝石/卡牌的实物**：一枚菱形纸板标记。\n  它单独在 `marker_demo` 树里展示（孤节点），不牵动主桌状态。\n  · 从盒里拿出来 = `create`（游戏盒是抽象概念，不写 source）；\n  · 单面件（没有背图）→ 不写朝向断言。",
+        "note": "【起始玩家标记出场】\n  这是本作**第一件不是宝石/卡牌的实物**：一枚菱形纸板标记。\n  它单独在 `marker_demo` 树里展示；本 cue 仍默认继承主桌隐藏状态，cue29 用显式 entry 回 setup.starting_player.001.2 canonical 快照，演示标记不写回主账。\n  · 从盒里拿出来 = `create`（游戏盒是抽象概念，不写 source）；\n  · 单面件（没有背图）→ 不写朝向断言。",
         "enter": {
           "picture": null,
           "zones": {
@@ -4855,7 +4892,7 @@
       ],
       "script": {
         "story": "【起始玩家获得这枚标记】",
-        "note": "【起始玩家标记进入玩家自己的区域】\n  口播说的是起始玩家拿到标记。`<starting_player_marker>` 在本体里是 `<marker>`，不是 `<development_card>` / `<noble>`，所以它不属于 `<development_area>` 的 contains，也不是 `<hand>`（保留区）里的卡牌。\n  舞台上它落在玩家这一侧的 `player_marker` 区域；这里 `create` 到该 zone，并沿用全景镜头让观众看到它和整张桌子的关系。",
+        "note": "【起始玩家标记进入玩家自己的区域】\n  口播说的是起始玩家拿到标记。`<starting_player_marker>` 在本体里是 `<marker>`，不是 `<development_card>` / `<noble>`，所以它不属于 `<development_area>` 的 contains，也不是 `<hand>`（保留区）里的卡牌。\n  舞台上它落在玩家这一侧的 `player_marker` 区域；这里 `create` 到该 zone，并沿用全景镜头让观众看到它和整张桌子的关系。\n  【继承关系】显式 entry 回 setup.starting_player.001.2，丢弃 marker_demo 分支状态；随后 create 在主树上落下真实标记。",
         "enter": {
           "picture": null,
           "zones": {
@@ -7764,7 +7801,6 @@
           "offset": -0.515
         }
       ],
-      "entry": "action.cards.limit.001.2",
       "stage": "_stage/splendor.table.stage.json"
     },
     {
