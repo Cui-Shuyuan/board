@@ -291,18 +291,29 @@ def _merge_contract(base, overlay):
 
 
 def resolve_track(doc: dict) -> dict:
-    """Return a copy of a track document with cue inheritance expanded."""
+    """Return a copy of a track document with cue inheritance expanded.
+
+    ``tree`` is the visual scope (stage/zones/camera); it is not a state
+    partition.  ``cue_n`` inherits the full state of its effective source by
+    default: explicit ``entry`` wins, otherwise ``parent``; if neither is
+    present, the previous cue in track order is the source.  State contracts
+    follow the same effective source.  A stage may display only a subset of the
+    inherited state; components in zones absent from the current stage stay in
+    the logical state and are hidden at render time.
+    """
     if not isinstance(doc, dict) or not isinstance(doc.get("cues"), list):
         return doc
     raw_cues = doc["cues"]
     by_id = {}
+    order = {}
     duplicate = False
-    for c in raw_cues:
+    for i, c in enumerate(raw_cues):
         if not isinstance(c, dict) or not c.get("id"):
             continue
         if c["id"] in by_id:
             duplicate = True
         by_id[c["id"]] = c
+        order[c["id"]] = i
     if duplicate:
         return doc
 
@@ -314,6 +325,13 @@ def resolve_track(doc: dict) -> dict:
 
     resolved = {}
     visiting = set()
+
+    def _prev_raw_id(cid):
+        idx = order.get(cid, -1)
+        if idx <= 0:
+            return None
+        prev = raw_cues[idx - 1]
+        return prev.get("id") if isinstance(prev, dict) else None
 
     def resolve_one(cid):
         if cid in resolved:
@@ -328,45 +346,60 @@ def resolve_track(doc: dict) -> dict:
         base = resolve_one(parent_id) if parent_id in by_id else {}
 
         transition = raw.get("transition", "continue")
-        tree = raw.get("tree", base.get("tree"))
-        same_tree = tree is not None and tree == base.get("tree")
-        inherit = (bool(base) and transition in ("continue", "overlay") and same_tree)
+        # tree resolution: explicit -> parent -> previous cue -> default
+        tree = raw.get("tree")
+        if tree is None and base:
+            tree = base.get("tree")
+        if tree is None:
+            prev_id = _prev_raw_id(cid)
+            prev_res = resolve_one(prev_id) if prev_id in by_id else {}
+            tree = prev_res.get("tree")
+        if tree is None:
+            tree = doc.get("default_tree")
 
-        raw_stage = raw.get("stage")
-        if raw_stage:
-            resolved_stage = _deep_copy(raw_stage)
-        elif base and same_tree and base.get("stage"):
-            resolved_stage = _deep_copy(base.get("stage"))
-        else:
-            resolved_stage = _deep_copy(tree_stage_paths.get(str(tree)))
-        if "demo" in raw:
-            resolved_demo = bool(raw.get("demo"))
-        elif base and same_tree:
-            resolved_demo = bool(base.get("demo"))
-        else:
-            resolved_demo = False
+        # effective state source (mirrors the compiler)
+        entry = raw.get("entry")
+        state_source_id = None
+        if entry:
+            if entry != "initial" and entry in by_id:
+                state_source_id = entry
+        elif transition not in ("cut", "world_cut"):
+            if parent_id in by_id:
+                state_source_id = parent_id
+            else:
+                prev_id = _prev_raw_id(cid)
+                if prev_id in by_id:
+                    state_source_id = prev_id
+        source_raw = by_id.get(state_source_id) if state_source_id else None
 
+        # authoring-parent inheritance may cross trees now
+        inherit = bool(base) and transition in ("continue", "overlay")
         eff = {}
         if inherit:
             for k, v in base.items():
-                # `transition` describes this node's relation to its parent,
-                # so an omitted transition defaults to continue instead of
-                # inheriting a world_cut from the parent.
-                if k not in _LOCAL_CUE_KEYS and k != "transition":
+                if k not in _LOCAL_CUE_KEYS and k not in ("transition", "tree", "stage"):
                     eff[k] = _deep_copy(v)
 
-        # Generic attributes: child assignment overrides inherited attribute.
         for k, v in raw.items():
             if k in _LOCAL_CUE_KEYS:
                 continue
             if k == "script":
-                continue  # handled below
+                continue
             eff[k] = _deep_copy(v)
 
-        # Script is a small object: story/note/camera etc. inherit field-wise;
-        # enter/exit are the state contract and have special parent-exit
-        # ordinary inheritance.
+        eff["tree"] = _deep_copy(tree)
+        raw_stage = raw.get("stage")
+        if raw_stage:
+            resolved_stage = _deep_copy(raw_stage)
+        elif base and raw.get("tree") is None and base.get("stage"):
+            resolved_stage = _deep_copy(base.get("stage"))
+        else:
+            resolved_stage = _deep_copy(tree_stage_paths.get(str(tree)))
+        if resolved_stage is not None:
+            eff["stage"] = resolved_stage
+
         base_script = base.get("script") or {}
+        source_script = (resolved.get(state_source_id) or {}).get("script") or {} if state_source_id else {}
         child_script = raw.get("script") if isinstance(raw.get("script"), dict) else {}
 
         script = {}
@@ -377,37 +410,33 @@ def resolve_track(doc: dict) -> dict:
             if k not in ("enter", "exit"):
                 script[k] = _deep_copy(v)
 
-        raw_parent = by_id.get(raw.get("parent")) if raw.get("parent") in by_id else None
-        if raw_parent is not None and bool(raw_parent.get("negative")):
-            # A negative cue's error state is temporary; its child starts from
-            # the negative cue's entry contract, not its illegal exit contract.
-            inherited_state = base_script.get("enter")
+        if source_raw is not None and bool(source_raw.get("negative")):
+            inherited_state = source_script.get("enter")
         else:
-            inherited_state = base_script.get("exit")
-        if inherited_state is None:
-            inherited_state = base_script.get("enter")
-        if inherit and isinstance(inherited_state, dict):
-            if isinstance(child_script.get("enter"), dict):
-                script["enter"] = _merge_contract(inherited_state, child_script["enter"])
+            inherited_state = source_script.get("exit")
+        if inherited_state is None and source_script:
+            inherited_state = source_script.get("enter")
+
+        child_enter = child_script.get("enter")
+        child_exit = child_script.get("exit")
+        if isinstance(inherited_state, dict):
+            if isinstance(child_enter, dict):
+                script["enter"] = _merge_contract(inherited_state, child_enter)
             else:
                 script["enter"] = _deep_copy(inherited_state)
-            if isinstance(child_script.get("exit"), dict):
-                script["exit"] = _merge_contract(inherited_state, child_script["exit"])
+            if isinstance(child_exit, dict):
+                script["exit"] = _merge_contract(inherited_state, child_exit)
             else:
                 script["exit"] = _deep_copy(inherited_state)
         else:
-            if "enter" in child_script:
-                script["enter"] = _deep_copy(child_script["enter"])
-            if "exit" in child_script:
-                script["exit"] = _deep_copy(child_script["exit"])
-        if child_script:
-            eff["script"] = script
-        elif base_script:
-            eff["script"] = script
-        elif "script" in raw:
-            eff["script"] = _deep_copy(raw["script"])
+            if isinstance(child_enter, dict):
+                script["enter"] = _deep_copy(child_enter)
+            if isinstance(child_exit, dict):
+                script["exit"] = _deep_copy(child_exit)
 
-        # Structural defaults.
+        if script or "script" in raw:
+            eff["script"] = script
+
         eff["id"] = raw.get("id")
         eff["parent"] = raw.get("parent")
         if raw.get("negative") is not None:
@@ -416,14 +445,17 @@ def resolve_track(doc: dict) -> dict:
             eff["qa"] = _deep_copy(raw.get("qa"))
         if raw.get("entry") is not None:
             eff["entry"] = _deep_copy(raw.get("entry"))
-        if resolved_stage is not None:
-            eff["stage"] = _deep_copy(resolved_stage)
-        eff["demo"] = bool(resolved_demo)
+        if "demo" in raw:
+            eff["demo"] = bool(raw.get("demo"))
+        elif base and inherit:
+            eff["demo"] = bool(base.get("demo"))
+        else:
+            eff["demo"] = False
         eff["events"] = _deep_copy(raw.get("events") or [])
         if "transition" not in raw:
             eff["transition"] = "continue"
-        if "tree" not in raw and base:
-            eff["tree"] = _deep_copy(base.get("tree"))
+        if "tree" not in eff or eff.get("tree") is None:
+            eff["tree"] = _deep_copy(tree)
 
         visiting.discard(cid)
         resolved[cid] = eff
@@ -438,7 +470,6 @@ def resolve_track(doc: dict) -> dict:
     out = dict(doc)
     out["cues"] = new_cues
     return out
-
 
 
 def validate_track(doc: dict, report: Report | None = None) -> Report:
@@ -471,11 +502,8 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
             rep.error(f"{where}.id duplicated: {wid}")
         world_ids.add(wid)
         mode = w.get("mode", "isolated")
-        if mode != "isolated":
-            rep.error(
-                f"{where}.mode {mode!r} is no longer supported; "
-                f"every tree must own its world (one tree = one world)"
-            )
+        if mode not in ("isolated", "shared"):
+            rep.error(f"{where}.mode must be isolated/shared, got {mode!r}")
         if not w.get("why"):
             rep.warn(f"{where}.why is empty; write why this world exists")
 
@@ -502,18 +530,6 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
             if not t.get(k):
                 rep.warn(f"{where}.{k} is empty; write it in the text script")
 
-    world_refs: dict[str, list[str]] = {}
-    for t in trees:
-        if not isinstance(t, dict) or not t.get("id"):
-            continue
-        world_refs.setdefault(str(t.get("world")), []).append(str(t.get("id")))
-    for wid, refs in sorted(world_refs.items()):
-        if len(refs) > 1:
-            rep.error(
-                f"world {wid!r} is referenced by multiple trees: {refs}; "
-                f"one tree must own exactly one world"
-            )
-
     cues = doc.get("cues")
     if not isinstance(cues, list):
         rep.error("cues: list required")
@@ -538,8 +554,8 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         where = f"cue {cid}"
         if c.get("tree") not in tree_ids:
             rep.error(f"{where}: tree {c.get('tree')!r} is not declared")
-        if not c.get("parent") and not c.get("entry"):
-            rep.error(f"{where}: root cue must declare an explicit entry: 'initial'")
+        if i == 0 and not c.get("parent") and not c.get("entry"):
+            rep.error(f"{where}: first cue must declare an explicit entry: 'initial'")
         stage_ref = c.get("stage")
         if stage_ref is not None:
             if not isinstance(stage_ref, str) or not stage_ref.strip():
@@ -553,14 +569,6 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         parent = c.get("parent")
         if parent is not None and parent not in cue_ids:
             rep.error(f"{where}: parent {parent!r} does not exist")
-        if parent is not None and parent in by_resolved:
-            parent_cue = by_resolved[parent]
-            if parent_cue.get("tree") != c.get("tree") and not c.get("entry"):
-                rep.error(
-                    f"{where}: default parent {parent!r} crosses tree "
-                    f"{parent_cue.get('tree')!r} -> {c.get('tree')!r}; "
-                    f"cross-tree state inheritance must use entry"
-                )
         entry = c.get("entry")
         if entry is not None and entry != "initial" and entry not in cue_ids:
             rep.error(f"{where}: entry {entry!r} does not exist")
@@ -631,16 +639,9 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
     if rep.errors:
         return rep
 
-    # Cross-cue continuity is deliberately cheap here; full continuity is
-    # checked by the compiler against snapshots.
-    by_id = {c["id"]: c for c in cues if isinstance(c, dict) and c.get("id")}
-    for cid, c in by_id.items():
-        if c.get("parent") and c["parent"] in by_id:
-            p = by_id[c["parent"]]
-            if (p.get("tree"), p.get("transition")) != (c.get("tree"), c.get("transition")):
-                # This is normal for cut cues; only warn when both sides claim continue.
-                if c.get("transition") == "continue" and p.get("transition") == "continue":
-                    rep.warn(f"cue {cid}: continue parent {c['parent']} uses different tree")
+    # Tree is the visual scope, not a state boundary.  A child may continue
+    # its parent's state while switching stage/tree; the compiler validates the
+    # copied snapshots directly.
     return rep
 
 

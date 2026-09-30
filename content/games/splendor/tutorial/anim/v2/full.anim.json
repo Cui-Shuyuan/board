@@ -2673,6 +2673,14 @@
       "purpose": "介绍起始玩家标记时，场上天然只应该有这一枚标记，不继承主桌状态。",
       "initial": "player_marker 为空。",
       "extent_note": "只框 1 枚标记。"
+    },
+    {
+      "id": "cards_demo",
+      "world": "real",
+      "stage": "_stage/splendor.cards_closeup.stage.json",
+      "purpose": "展示发展卡样卡时仍保留真实主桌状态；由镜头决定看样卡还是桌面。",
+      "initial": "继承上一 cue 的状态；不重置。",
+      "extent_note": "包含主桌全部 zone，外加 showcase 展示位。"
     }
   ],
   "cues": [
@@ -6423,7 +6431,7 @@
       "id": "action.cards.intro.001",
       "parent": "action.take.public.001.2",
       "tree": "cards_intro",
-      "transition": "world_cut",
+      "transition": "overlay",
       "timing": [
         {
           "key": "镜头对准一张牌面",
@@ -6436,7 +6444,7 @@
       ],
       "script": {
         "story": "【我们介绍一下发展卡牌】",
-        "note": "【介绍发展卡牌】\n  在独立介绍树 `cards_intro` 里只摆出**一张样本正面**：二级红，左上角声望 3。\n  牌面用 `showcase` 单张特写展示，样本不进真实牌堆/市场的账。\n  下一 cue 回到真实牌桌，再用两张样本讲价格、声望和折扣。",
+        "note": "【介绍发展卡牌】\n  在独立介绍树 `cards_intro` 里只显示**一张样本正面**：二级红，左上角声望 3。\n  本 cue 默认继承上一 cue 的完整主桌逻辑状态，但当前 stage 没有主桌 zone，\n  所以画面里只有展示位；这些主桌组件仍保留在状态链里，后面的 tree 可以切回来显示。\n  样卡是讲解道具，不进真实牌堆/市场的账。下一 cue 在同一棵树下继续使用这张样卡。",
         "enter": {
           "picture": null,
           "zones": {
@@ -6481,12 +6489,11 @@
           "anchor": "action.cards.intro.001.b1.start",
           "offset": 0.205
         }
-      ],
-      "entry": "initial"
+      ]
     },
     {
       "id": "action.cards.cost.001.1",
-      "parent": "action.take.public.001.2",
+      "parent": "action.cards.intro.001",
       "timing": [
         {
           "key": "镜头回到两样本近景",
@@ -6499,7 +6506,7 @@
       ],
       "script": {
         "story": "【左下角是这张牌的价格。要想购买这张牌】",
-        "note": "【左下角是这张牌的价格】\n  切入本 cue 时把两张样本正面摆回真实牌桌（上一 cue 在独立介绍树里只展示一张正面）。\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
+        "note": "【左下角是这张牌的价格】\n  本 cue 继承上一 cue 的完整状态：二级红样卡仍在 `showcase`，主桌组件继续隐藏在逻辑状态里。\n  这里把二级红样卡从 `showcase` 移到 `showcase_1`，再补一张一级白样卡到 `showcase`；\n  本 cue 仍在 `cards_intro` 树，只显示展示位，不显示主桌。\n  下一 cue 切到 `cards_demo` 树，把主桌供应堆/市场重新纳入画面。\n  ⚠ 我们**没有『指某个角』的原语**：高亮只能整件/整区。所以这里只能把一级白那张样本（价格 1蓝+2绿+1红+1黑，四种颜色）推到近景点亮整张 —— 观众自己看左下角。\n  要让『点某个角』真正演出来，该加的是原语（stage 里给卡的四个角各定义一个锚点 + 一个指示物），  而不是在动画数据里写坐标。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。",
         "enter": {
           "picture": null,
           "zones": {
@@ -6532,6 +6539,17 @@
           "anchor": "action.cards.cost.001.1.start"
         },
         {
+          "op": "transfer",
+          "dur": 0.0,
+          "source": "showcase",
+          "destination": "showcase_1",
+          "template": "card_l2_ruby_69",
+          "palette": "card_level_2",
+          "concept": "development_card_level_2",
+          "quantity": 1,
+          "anchor": "action.cards.cost.001.1.start"
+        },
+        {
           "op": "create",
           "dur": 0.0,
           "zone": "showcase",
@@ -6539,17 +6557,6 @@
           "palette": "card_level_1",
           "count": 1,
           "concept": "development_card_level_1",
-          "to": "face_up",
-          "anchor": "action.cards.cost.001.1.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "zone": "showcase_1",
-          "template": "card_l2_ruby_69",
-          "palette": "card_level_2",
-          "count": 1,
-          "concept": "development_card_level_2",
           "to": "face_up",
           "anchor": "action.cards.cost.001.1.start"
         },
@@ -6581,10 +6588,7 @@
           "offset": -0.545
         }
       ],
-      "tree": "main",
-      "entry": "action.take.public.001.2",
-      "transition": "overlay",
-      "stage": "_stage/splendor.cards_closeup.stage.json"
+      "transition": "overlay"
     },
     {
       "id": "action.cards.cost.001.2",
@@ -6626,7 +6630,8 @@
           "anchor": "action.cards.cost.001.2.b1.end",
           "offset": -1.905
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "id": "action.cards.cost.001.3",
@@ -6673,7 +6678,8 @@
           "anchor": "action.cards.cost.001.3.b1.end",
           "offset": -1.875
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.market.001.1",
@@ -6701,7 +6707,8 @@
           "anchor": "action.cards.market.001.1.b1.start",
           "offset": 0.505
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.market.001.2",
@@ -6908,7 +6915,8 @@
           "anchor": "action.cards.market.001.2.b1.end",
           "offset": -0.715
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.market.001.3",
@@ -6987,7 +6995,8 @@
           "anchor": "action.cards.market.001.3.b1.start",
           "offset": 2.325
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.market.001.4",
@@ -7010,7 +7019,8 @@
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.market.001.4.start"
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.prestige.001.1",
@@ -7064,7 +7074,8 @@
           "anchor": "action.cards.prestige.001.1.b2.start",
           "offset": 0.11
         }
-      ]
+      ],
+      "tree": "cards_intro"
     },
     {
       "id": "action.cards.prestige.001.2",
@@ -7132,7 +7143,8 @@
           "anchor": "action.cards.prestige.001.2.b2.start",
           "offset": 0.49
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "id": "action.cards.discount.001",
@@ -7179,7 +7191,8 @@
           "anchor": "action.cards.discount.001.b1.start",
           "offset": 2.675
         }
-      ]
+      ],
+      "tree": "cards_demo"
     },
     {
       "id": "action.cards.discount.002.1",
@@ -7230,7 +7243,8 @@
           "offset": 2.105
         }
       ],
-      "demo": true
+      "demo": true,
+      "tree": "main"
     },
     {
       "id": "action.cards.discount.002.2",
@@ -7253,7 +7267,8 @@
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.discount.002.2.start"
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.discount.003.1",
@@ -7357,7 +7372,8 @@
           "offset": 3.315
         }
       ],
-      "demo": true
+      "demo": true,
+      "tree": "cards_demo"
     },
     {
       "id": "action.cards.discount.003.2",
@@ -7375,7 +7391,8 @@
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.discount.003.2.start"
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.discount.003.3",
@@ -7392,7 +7409,8 @@
           "anchor": "action.cards.discount.003.3.b1.start",
           "offset": 0.925
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.public.001.1",
@@ -7415,7 +7433,8 @@
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.public.001.1.start"
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.public.001.2",
@@ -7444,7 +7463,8 @@
           "anchor": "action.cards.public.001.2.b1.start",
           "offset": 2.305
         }
-      ]
+      ],
+      "tree": "main"
     },
     {
       "id": "action.cards.limit.001.1",
@@ -7459,7 +7479,8 @@
         "story": "【和宝石不同的是，玩家一回合只能购买一张发展卡牌】",
         "note": "【一回合只能买一张】\n  规则说明，**没有状态变化**：镜头回整桌，点发展区（这就是『一回合一张』的落点）。\n  ⚠ 想表达『只能一张』同样缺少否定原语 → 只点一下。"
       },
-      "events": []
+      "events": [],
+      "tree": "main"
     },
     {
       "id": "action.cards.limit.001.2",
@@ -7519,7 +7540,8 @@
         }
       ],
       "entry": "action.cards.discount.001",
-      "demo": false
+      "demo": false,
+      "tree": "cards_demo"
     },
     {
       "id": "action.nobles.intro.001",

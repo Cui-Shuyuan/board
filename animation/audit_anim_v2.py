@@ -258,9 +258,10 @@ def build_state_graph(track_doc: dict, compiled_doc: dict) -> tuple[dict, dict, 
     """Resolve each cue's single state source and branch identity.
 
     Returns ``(resolved_track, graph, compiled_by_id, source_by_id)``.
-    ``entry`` wins over ``parent`` and may cross tree/world.  ``parent`` is only
-    a same-tree default source.  ``cut`` / ``world_cut`` without explicit entry
-    reset to the empty initial snapshot.  Track order is never used.
+    ``entry`` wins over ``parent`` and may cross tree/world.  ``parent`` is the
+    default state source regardless of tree.  With neither entry nor parent,
+    the previous cue in track order is the source (tree is only stage/scope).
+    Explicit ``cut`` / ``world_cut`` resets to the empty initial snapshot.
     """
     track = schema.resolve_track(track_doc)
     source_cues = [
@@ -292,14 +293,18 @@ def build_state_graph(track_doc: dict, compiled_doc: dict) -> tuple[dict, dict, 
                 source_kind = "cue"
                 source_id = str(entry)
                 source_label = f"entry:{entry}"
-        elif parent and str(parent) in source_by_id:
-            source_kind = "cue"
-            source_id = str(parent)
-            source_label = f"parent:{parent}"
         elif transition in ("cut", "world_cut"):
             source_kind = "initial"
             source_id = None
             source_label = "cut:initial"
+        elif parent and str(parent) in source_by_id:
+            source_kind = "cue"
+            source_id = str(parent)
+            source_label = f"parent:{parent}"
+        elif idx > 0:
+            source_kind = "cue"
+            source_id = str(source_cues[idx - 1].get("id"))
+            source_label = f"prev:{source_id}"
         elif idx == 0:
             # Legacy/synthetic single-cue documents are treated as an explicit
             # initial root.  Real tracks must declare entry/parent.

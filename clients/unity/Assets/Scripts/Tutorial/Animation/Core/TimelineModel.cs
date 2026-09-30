@@ -340,9 +340,12 @@ namespace BoardGameTutorial.Animation
                 Order = c.Order,
                 Layer = c.Layer,
                 Face = c.Face,
-                // offstage is logical-only: keep the component in state for
-                // counts/rollback, but never draw it on screen.
-                Visible = zone == null || !string.Equals(zone.role, "offstage", StringComparison.Ordinal),
+                // Tree/stage decides what is visible.  A component whose zone
+                // is absent from the current stage (for example table state
+                // while a card-intro tree is playing) stays in the logical
+                // state for inheritance, but is not drawn.
+                Visible = zone != null
+                    && !string.Equals(zone.role, "offstage", StringComparison.Ordinal),
                 Alpha = 1f,
                 Scale = 1f,
             };

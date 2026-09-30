@@ -252,7 +252,7 @@ class StateGraphCompileTests(unittest.TestCase):
         self.assertEqual(1, len(a2["end_state"]["components"]))
         self.assertNotEqual(b1["end_state"], a1["end_state"])
 
-    def test_cross_tree_default_parent_is_schema_error(self):
+    def test_cross_tree_default_parent_copies_state(self):
         stage = _stage_doc("s1", ["a"])
         track = {
             "schema": "tutorial-anim/v2",
@@ -269,15 +269,21 @@ class StateGraphCompileTests(unittest.TestCase):
                  "purpose": "p", "initial": "i", "extent_note": "e"},
             ],
             "cues": [
-                _cue_doc("A1", "A", entry="initial", transition="world_cut"),
+                _cue_doc("A1", "A", entry="initial", transition="world_cut",
+                         events=[{"op": "create", "at": 0.0, "template": "token",
+                                  "palette": "p", "zone": "a", "count": 1}]),
                 _cue_doc("B1", "B", parent="A1"),
             ],
         }
         rep = schema.validate_track(track)
-        self.assertTrue(rep.errors, rep)
-        self.assertTrue(any("default parent" in e and "crosses tree" in e for e in rep.errors), rep.errors)
+        self.assertFalse(rep.errors, rep.errors)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        self.assertEqual(_compiled_cue(compiled, "A1")["end_state"],
+                         _compiled_cue(compiled, "B1")["start_state"])
 
-    def test_track_order_does_not_supply_state(self):
+    def test_track_order_supplies_state_by_default(self):
         stage = _stage_doc("s1", ["a"])
         track = {
             "schema": "tutorial-anim/v2",
@@ -297,8 +303,12 @@ class StateGraphCompileTests(unittest.TestCase):
             ],
         }
         rep = schema.validate_track(track)
-        self.assertTrue(rep.errors, rep)
-        self.assertTrue(any("root cue must declare" in e for e in rep.errors), rep.errors)
+        self.assertFalse(rep.errors, rep.errors)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        self.assertEqual(_compiled_cue(compiled, "c1")["end_state"],
+                         _compiled_cue(compiled, "c2")["start_state"])
 
     def test_cue_stage_inherits_parent_then_tree_and_overrides(self):
         s1 = _stage_doc("s1", ["a"])
@@ -329,7 +339,8 @@ class StateGraphCompileTests(unittest.TestCase):
         self.assertEqual("s1", _compiled_cue(compiled, "c2")["stage"])
         self.assertEqual("s2", _compiled_cue(compiled, "c3")["stage"])
 
-    def test_zone_coverage_missing_zone_fails_with_diagnostic(self):
+    def test_state_zone_may_be_hidden_from_current_stage(self):
+        """Tree/stage decides visibility; logical state may carry hidden zones."""
         stage = _stage_doc("s1", ["a"])
         track = {
             "schema": "tutorial-anim/v2",
@@ -349,13 +360,10 @@ class StateGraphCompileTests(unittest.TestCase):
         }
         with tempfile.TemporaryDirectory() as tmp:
             path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
-            with self.assertRaises(ValueError) as cm:
-                compile_anim.Compiler(path).compile()
-        message = str(cm.exception)
-        self.assertIn("zone coverage failed", message)
-        self.assertIn("c1", message)
-        self.assertIn("missing", message)
-        self.assertIn("s1", message)
+            compiled = compile_anim.Compiler(path).compile()
+        end = _compiled_cue(compiled, "c1")["end_state"]["components"]
+        self.assertEqual(1, len(end))
+        self.assertEqual("missing", end[0]["ZoneId"])
 
     def test_demo_branch_can_modify_assumptions_without_leaking_back(self):
         stage = _stage_doc("s1", ["deck"])

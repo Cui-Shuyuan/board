@@ -21,35 +21,38 @@
 | `content/games/splendor/tutorial/full.runtime.json` | 编译产物：音频、时长、字级字幕 timing |
 | `content/games/splendor/tutorial/anim/v2/full.compiled.json` | 编译产物，Unity 只读 |
 
-## 1.5 状态继承图、cue stage 与 demo 分支
+## 1.5 tree、状态继承与 demo 分支
 
-### 一 tree 一 world
+### tree 是舞台边界，不是状态边界
 
-- 每个 tree 独占一个 world / state scope；一个 world 不能被多个 tree 引用。
-- 跨 tree 复制状态必须写显式 `entry`；不要再通过“同 world 不同 stage”共享 Store 状态。
+- 每棵 tree 有自己的 stage、zone、模板、命名机位。
+- 换 tree 只换舞台/可见性，不重置、不分叉逻辑状态。
+- 同一个 world 可以被多棵树复用；不要把“一 tree 一 world”当成状态隔离手段。
 
-### 状态继承边
+### 状态继承
 
-- `entry` 是唯一显式状态继承边，可指向任意更早 cue，**允许跨 tree/world**。
-- `entry` 的语义是复制来源 cue 的 `end_state` 快照，作为当前 cue 的 `start_state`；当前分支之后的修改不回写来源分支。
-- 未写 `entry` 时，只有**同 tree** 的 `parent` 可以作为默认状态来源。
-- 跨 tree 未写 `entry` 一律编译失败；世界/分支根 cue 必须显式 `entry: "initial"`。
-- 轨道顺序只决定播放顺序，绝不决定状态继承；两个兄弟 cue 可以 `entry` 同一个 common cue，各自 fork。
-- `cut` / `world_cut` 在没有显式 `entry` 时重置为空初始状态。
+- `cue_n` 默认继承有效状态来源：`entry` 最优先；没有 `entry` 时用 `parent`；没有 `parent` 时用轨道顺序里的前一条 cue。
+- 继承的是完整 `end_state`，包括所有 zone 的组件；cue 可以只改其中一部分，不必重述整张桌面。
+- 状态继承与 tree 无关：`parent` 可以跨 tree，换 tree 不会切断 `cue_n` 继承 `cue_{n-1}`。
+- `entry` 仍可用于显式分叉/假设分支，语义是复制来源 cue 的 `end_state` 快照。
+- `cut` / `world_cut` 在没有显式 `entry` 时表示显式重置到空状态。
+
+### 状态契约
+
+- `script.enter` / `script.exit` 跟随有效状态来源：`entry` 对应来源的终态；否则 `parent`/前一条 cue 的终态。
+- `events` 永不继承，只属于当前 cue。
 
 ### cue stage
 
-- `stage` 解析顺序：`cue.stage -> parent resolved stage -> tree.stage`。
-- cue 可以显式覆盖 stage；每个 compiled cue 都输出 resolved `stage`。
-- Unity 运行端按当前 cue 的 `stage` 加载布景；stage 切换是离散资源切换，不复制、不重置状态。
-- compiler 对每个 cue 的 `start_state` / `first_state` / `end_state` 和 camera shot 引用做 zone coverage 硬校验；缺失 zone 直接编译失败，禁止 `(0,0)` fallback。
+- `stage` 解析：`cue.stage -> tree.stage`；换 tree 自然用新 tree 的 stage。
+- 当前 stage 不需要包含 state 里所有 zone。没有对应 zone 的组件保留在逻辑状态中，运行时不可见；切回包含该 zone 的 tree 后恢复显示。
+- 不要在动画数据里为了绕过校验而把组件搬到别的 zone。
 
 ### demo / hypothetical 分支
 
-- 假设性内容必须显式标 `demo: true`；demo 会沿 `parent` 链继承。
+- 假设性内容必须显式标 `demo: true`。
 - demo 允许“牌堆清空 / 假设我买了 3 张牌”等 hypothetical 状态。
-- demo 分支仍要满足 `entry` 边界快照一致和分支内 `state_ops` 可解释，但其假设性增减不参与 canonical 实物守恒。
-- canonical 分支必须显式 `entry` 回 canonical 来源，不能默认继承 demo 结局；audit JSON 的 `state_graph` 会输出 `state_source`、`is_demo`、`branch_id`。
+- canonical 分支通过显式 `entry` 回真实来源，不能默认继承 demo 结局；audit JSON 的 `state_graph` 会输出 `state_source`、`is_demo`、`branch_id`。
 
 ## 2. 空间：只写 zone + order
 
@@ -162,7 +165,7 @@ python3 tools/ops/check_unity_scripts.py
 - [ ] camera 用的是 stage 中已有的 shot id。
 - [ ] 没有同 cue 内重复点同一个 zone 的高亮。
 - [ ] `cut` / `world_cut` 没有隐式继承画面。
-- [ ] 跨 tree 状态复制写了显式 `entry`；同 tree 默认继承才用 `parent`。
-- [ ] cue stage 按 `cue.stage -> parent resolved stage -> tree.stage` 解析，且换 stage 后所有 component/camera zone 都被覆盖。
+- [ ] cue 换 tree 时只改 stage/可见性；状态按 `entry -> parent -> 前一条 cue` 继承，换 tree 不重置状态。
+- [ ] 当前 stage 可以不包含全部 state zone；缺失 zone 的组件应保留在逻辑状态中、运行时隐藏，而不是搬卡或 offstage。
 - [ ] 假设性增减已标 `demo: true`；canonical 已显式 `entry` 回真实分支。
 - [ ] 跑过 `compile_tutorial.py --dry-run` 和 `check_anim_v2.py`。

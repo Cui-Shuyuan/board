@@ -380,6 +380,15 @@ class Compiler:
         self.stack_zones = set()
         self.zone_order_policies = {}
         self.zone_bindings = {}   # physical zone id -> logical mapping
+        self.cue_order = {
+            str(c.get("id")): i
+            for i, c in enumerate(self.doc.get("cues") or [])
+            if isinstance(c, dict) and c.get("id")
+        }
+        self.prev_cue = {}
+        ordered = [c for c in (self.doc.get("cues") or []) if isinstance(c, dict) and c.get("id")]
+        for i in range(1, len(ordered)):
+            self.prev_cue[str(ordered[i].get("id"))] = str(ordered[i - 1].get("id"))
         self.time_anchors = self._resolve_time_anchors()
 
     def _resolve_time_anchors(self) -> dict:
@@ -589,13 +598,7 @@ class Compiler:
         if rel:
             sid = self._load_stage(rel)
         else:
-            parent_id = cue.get("parent")
-            parent = by_id.get(parent_id)
-            if (parent is not None and parent.get("id") in by_id
-                    and parent.get("tree") == cue.get("tree")):
-                sid = self.stage_id_for_cue(parent, by_id, cache)
-            else:
-                sid = self.tree_stage_ids.get(str(cue.get("tree")))
+            sid = self.tree_stage_ids.get(str(cue.get("tree") or ""))
         if not sid or sid not in self.stages:
             raise ValueError(f"cue {cid}: no resolved stage for tree {cue.get('tree')!r}")
         cache[cid] = sid
@@ -700,13 +703,14 @@ class Compiler:
         return geom.build_camera_frame(stage, {})
 
     def state_source_ref(self, cue: dict, tree: dict, by_id: dict) -> tuple:
-        """Resolve the explicit state-inheritance edge for one cue.
+        """Resolve the effective state-inheritance edge for one cue.
+
+        ``tree`` selects stage/visibility, not a state partition:
 
         * ``entry`` is authoritative and may cross tree/world.
-        * ``parent`` is only a same-tree default source.
-        * ``cut`` / ``world_cut`` without an explicit ``entry`` reset to the
-          empty initial state.
-        * Track order is never consulted.
+        * otherwise ``parent`` is the state source regardless of tree;
+        * otherwise the previous cue in track order is the source;
+        * explicit ``cut`` / ``world_cut`` without ``entry`` resets to initial.
         """
         cid = cue.get("id")
         entry = cue.get("entry")
@@ -717,44 +721,17 @@ class Compiler:
                 raise ValueError(f"cue {cid}: entry source {entry!r} does not exist")
             return ("cue", entry)
         transition = cue.get("transition", "continue")
+        if transition in ("cut", "world_cut"):
+            return ("initial", None)
         parent_id = cue.get("parent")
         if parent_id:
             if parent_id not in by_id:
                 raise ValueError(f"cue {cid}: parent {parent_id!r} does not exist")
-            parent = by_id[parent_id]
-            if parent.get("tree") != cue.get("tree"):
-                raise ValueError(
-                    f"cue {cid}: parent {parent_id!r} crosses tree "
-                    f"{parent.get('tree')!r} -> {cue.get('tree')!r}; "
-                    f"use an explicit entry for cross-tree state"
-                )
-            if transition in ("cut", "world_cut"):
-                return ("initial", None)
             return ("cue", parent_id)
-        if transition in ("cut", "world_cut"):
-            return ("initial", None)
-        raise ValueError(
-            f"cue {cid}: no state source (declare entry or a same-tree parent)"
-        )
-
-    def check_zone_coverage(self, cue: dict, stage_id: str, snapshots: list[tuple[str, dict]]) -> None:
-        """Hard-fail if a resolved stage does not contain a state component zone."""
-        stage = self.stages.get(stage_id)
-        if stage is None:
-            raise ValueError(f"cue {cue.get('id')}: unknown resolved stage {stage_id!r}")
-        zones = {
-            z.get("id") for z in (stage.get("zones") or [])
-            if isinstance(z, dict) and z.get("id")
-        }
-        for label, snap in snapshots:
-            for comp in (snap or {}).get("components") or []:
-                zone = comp.get("ZoneId")
-                if zone not in zones:
-                    raise ValueError(
-                        f"cue {cue.get('id')}: zone coverage failed in {label}: "
-                        f"component {comp.get('Id')!r} uses zone {zone!r}, "
-                        f"but stage {stage_id!r} has no such zone"
-                    )
+        prev_id = self.prev_cue.get(str(cid))
+        if prev_id and prev_id in by_id:
+            return ("cue", prev_id)
+        return ("initial", None)
 
     def compile(self) -> dict:
         self.load()
@@ -807,11 +784,6 @@ class Compiler:
                 clips.insert(0, self.clip("picture", 0.0, 0.0, 0.0, "easeOutCubic",
                                           picture=enter_pic, picture_on=True))
             end = state.snapshot()
-            self.check_zone_coverage(cue, stage_id, [
-                ("start_state", start),
-                ("first_state", first_state),
-                ("end_state", end),
-            ])
             if (mode == "cue" and transition not in ("cut", "world_cut")
                     and entry_stage == stage_id):
                 camera_in = copy.deepcopy(entry_camera_out) or self.default_camera_frame(stage_id)
@@ -850,9 +822,8 @@ class Compiler:
             if cid not in results:
                 continue
             result = {k: v for k, v in results[cid].items() if not k.startswith("_")}
-            # `parent` is the declared attribute/same-tree parent only.  It is
-            # never synthesized from track order and therefore never determines
-            # state inheritance.
+            # `parent` is the authoring hierarchy; state source may also fall
+            # back to the previous cue in track order (see state_source_ref).
             result["parent"] = cue.get("parent")
             # Keep the schema's canonical field order close to the old output.
             ordered = {

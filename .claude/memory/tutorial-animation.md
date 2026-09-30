@@ -57,17 +57,19 @@ metadata:
 - 一次性迁移/重生成：`animation/migrate_time_anchors_v2.py`。
 - LLM 编写规范见 `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
 
-## 父子 cue 与 entry 继承
+## 父子 cue、tree 与状态继承
 
-- 每个 tree 独占一个 world / state scope；一个 world 不能被多个 tree 引用。
-- cue 通过 `parent` 组成同 tree 的属性/默认状态链；子 cue 不写的属性继承父 cue。
-- `entry` 是唯一显式状态继承边，可指向任意更早 cue，允许跨 tree/world；语义是复制来源 cue 的 `end_state` 快照，形成 fork 分支。
-- 同 tree 的 `parent` 只在未写 `entry` 且 transition 非 `cut`/`world_cut` 时提供默认状态来源；跨 tree 未写 `entry` 直接编译失败。
-- 轨道顺序只决定播放顺序，不隐式决定状态继承；兄弟 cue 的状态修改互不泄漏。
-- `stage` 是 cue 级可继承资源：`cue.stage -> parent resolved stage -> tree.stage`；切换 stage 不等同于切换/复制状态。
+- `tree` 是舞台/可见性边界：每棵树有自己的 stage、zone、模板、命名机位。
+- tree 切换只换 stage/镜头，不重置、不分叉逻辑状态。
+- 状态默认线性继承：`entry` 显式指定时以 `entry` 为准；否则 `parent`；没有 `parent` 时默认继承轨道顺序里的前一条 cue `cue_{n-1}`。整条链不因换 tree 而切断。
+- cue_n 可以只改其中一部分状态，其余全部继承上一条；例如继承整张桌面后替换其中一张卡，是合法写法。
+- `entry` 仍可用于显式分叉/假设分支；语义是复制来源 cue 的 `end_state` 快照。
+- 状态契约 `script.enter/exit` 跟随有效状态来源（entry/parent/前一条 cue），不要求 tree 相同。
+- 当前 stage 没有某个 zone，不代表状态里不能有该 zone 的组件。组件保留在逻辑状态中，运行时隐藏；切回包含该 zone 的 tree 后再显示。禁止为了通过校验把卡牌挪到别的位置。
+- `stage` 解析：`cue.stage -> tree.stage`；换 tree 自然换 stage。
 - `events` 永不继承，只属于当前 cue。
-- `cut` / `world_cut` 在没有显式 `entry` 时重置到空初始状态；不再作为跨 tree 共享状态的机制。
-- `demo: true` 分支允许“牌堆清空 / 假设买牌”等假设性增减；canonical 分支必须保持真实实物守恒，demo 假设不写回 canonical。
+- `cut` / `world_cut` 在没有显式 `entry` 时仍表示显式重置到空状态；正常换 tree 不需要 cut。
+- `demo: true` 分支允许“牌堆清空 / 假设买牌”等假设性增减；canonical 分支通过显式 `entry` 回真实来源，demo 假设不写回 canonical。
 
 ## 文件结构（Splendor）
 
@@ -158,9 +160,9 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 
 ## 关键设计规则
 
-- 组件介绍默认独立 world，场上天然只有该组件。
-- 跨 tree 状态复制必须写显式 `entry`；`parent` 只负责同 tree 默认继承。
-- cue 级 `stage` 由 `cue.stage -> parent resolved stage -> tree.stage` 解析；换 stage 不是状态重置，也不是共享状态的手段。
+- tree 只决定舞台/可见性；状态按 `entry -> parent -> 轨道前一条 cue` 继承，不因换 tree 而切断。
+- 当前 stage 不包含的 zone 不渲染，但组件仍保留在逻辑状态里，后续切回对应 tree 时恢复显示。
+- cue 级 `stage` 由 `cue.stage -> tree.stage` 解析；换 stage/tree 不是状态重置。
 - demo 分支通过 `demo: true` 显式标出，audit 会在 `state_graph` 中区分 `is_demo` 并对 canonical/demo 采用不同守恒口径。
 - 起 cue / `world_cut` 的第一条 camera 事件必须锚定在 cue start（编译后 `at=0`）；校验器会检查。
 - 素材路径必须直接写处理过的 `_cutout.png`；多色模板用 `face_image_by_palette` 显式映射。

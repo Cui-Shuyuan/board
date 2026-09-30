@@ -387,22 +387,18 @@ def main() -> int:
         if want_exit_pic != got_exit_pic:
             errors.append(f"{cid} picture(exit): 期望 {want_exit_pic!r}，编译 {got_exit_pic!r}")
 
-        # State inheritance is a graph edge, never track order.
+        # State source: tree is stage/visibility scope, not a state boundary.
         if cue.get("entry"):
             expected_id = cue.get("entry")
-        elif cue.get("parent"):
-            expected_id = cue.get("parent")
-            parent_decl = src_by_id.get(expected_id) or {}
-            if parent_decl.get("tree") != cue.get("tree"):
-                errors.append(
-                    f"{cid}: default parent {expected_id!r} crosses tree "
-                    f"{parent_decl.get('tree')!r} -> {cue.get('tree')!r}; use entry"
-                )
         elif cue.get("transition") in ("cut", "world_cut"):
             expected_id = "initial"
+        elif cue.get("parent"):
+            expected_id = cue.get("parent")
+        elif prev_id:
+            expected_id = prev_id
         else:
             expected_id = None
-            errors.append(f"{cid}: no state source (entry or same-tree parent)")
+            errors.append(f"{cid}: no state source (entry, parent, or previous cue)")
         if expected_id == "initial":
             expected_start = {"components": [], "nextSeq": []}
         elif expected_id and expected_id in by_id:

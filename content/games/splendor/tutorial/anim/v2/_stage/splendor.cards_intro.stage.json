@@ -1417,6 +1417,15 @@
       ],
       "fill": 0.6667,
       "desc": "框 showcase_1、showcase_2、showcase_3，占画面 0.6667"
+    },
+    {
+      "id": "shot_card_samples_f06667",
+      "zones": [
+        "showcase",
+        "showcase_1"
+      ],
+      "fill": 0.6667,
+      "desc": "框 showcase、showcase_1，占画面 0.6667"
     }
   ]
 }
