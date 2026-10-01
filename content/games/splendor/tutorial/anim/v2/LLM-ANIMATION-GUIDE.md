@@ -95,13 +95,51 @@
   "target": { "space": "screen", "id": "sample_card" } }
 ```
 
+### 2.1 标注：显式区分 world / screen 锚定
+
+`point` / `shape` / `label` 是标注原语。它们统一编译成运行时
+`FrameState.Annotations`，每条带 `annotation_space`：
+
+- `world`：锚在桌面实体上，每帧按 item 当前世界位置 + 部位锚点投影到屏幕；
+  镜头/卡牌移动时标注跟着动。
+- `screen`：锚在 mask/屏幕对象或屏幕槽位上，不经过相机；镜头移动时标注不动。
+
+目标仍由 `target` 给出（`target.space` 决定收件人类型）；标注语义上建议再写一次
+顶层 `space`，编译器也会从 target 推导。`shape` 支持 `arrow` / `circle` /
+`cross` / `forbid` / `box`，其中 `box` 是外框。`part` 用语义部位名
+（`whole` / `prestige` / `cost` / `bonus` / `condition`）表达锚点，不用 x/y 硬编码。
+
+```json
+// 桌面卡牌外框：镜头移动要跟
+{ "op": "shape", "shape": "box", "space": "world",
+  "anchor": "action.cards.market.001.1.start",
+  "target": { "space": "entity", "zone": "card_market", "order": 2 },
+  "part": "whole" }
+
+// 指向 mask 上某处：镜头移动不能跟
+{ "op": "shape", "shape": "arrow", "space": "screen",
+  "anchor": "action.cards.cost.001.1.start",
+  "target": { "space": "screen", "id": "purchase_card" },
+  "part": "cost",
+  "offset": { "x": 0.02, "y": -0.03 } }
+
+// 世界文字：跟着桌面卡牌
+{ "op": "label", "space": "world", "text": "这张卡提供 2 分",
+  "anchor": "...", "target": { "space": "entity", "zone": "card_market", "order": 2 },
+  "part": "prestige" }
+```
+
 规则：
 
 - `create` / `ensure` / `destroy` / `transfer` / `stack` / `shuffle` /
   `move_order` / `set_face` 是状态原语，只实现实体对象。
-- `show` / `hide` / `highlight` / `point` / `fade` / `scale` 是对象表现原语，
+- `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
-- `label` 是屏幕/锚点文字原语，目前只接受 screen target；它不是实体对象操作。
+- `label` 实体和屏幕空间都实现：实体 target → world label 跟卡走；screen target
+  （stage overlay 槽位）→ screen label 固定不动。
+- `point` / `shape` 的 `offset` 写成数字时仍是**时间偏移**；写成
+  `{"x": ..., "y": ...}` 时是标注的屏幕微调（viewport 比例）。为避免歧义，也可以显式写
+  `nudge`。
 - 实体的 `show`/`hide` 只改表现层透明度（复用 fade），不创建/销毁逻辑状态；
   创建/销毁仍用 `create`/`destroy`。
 - `show` 带 `picture` 且无 `target` 时是整个舞台的整幅图原语，不走对象接口。

@@ -92,6 +92,96 @@ def selector_from_event(ev: dict) -> dict:
     }
 
 
+# Annotation anchor maps.  A "part" names a semantic corner of a card/token;
+# the compiler writes it as a normalized (u, v) position in the target rect so
+# Unity does not need to know card layout.  (0,0) is top-left in a GUI/screen
+# rect and +z is "up" on the stage plane.
+PART_ANCHORS = {
+    "whole": (0.5, 0.5),
+    "": (0.5, 0.5),
+    "prestige": (0.16, 0.16),
+    "cost": (0.16, 0.84),
+    "bonus": (0.84, 0.16),
+    "condition": (0.50, 0.84),
+}
+SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
+
+
+def annotation_space_of(ev: dict) -> str:
+    """Return the annotation coordinate space: ``world`` or ``screen``.
+
+    New source data may write an explicit top-level ``space`` (world/screen).
+    Older data still derives it from ``target.space`` (entity/screen);
+    ``_normalize_event`` stores that as ``annotation_space`` for us.
+    """
+    space = norm(ev.get("annotation_space")).lower()
+    if space in ("world", "screen"):
+        return space
+    return "screen" if norm(ev.get("space")).lower() == "screen" else "world"
+
+
+def part_uv(ev: dict) -> tuple[float, float]:
+    pu = ev.get("part_u")
+    pv = ev.get("part_v")
+    if pu is not None or pv is not None:
+        return (float(pu) if pu is not None else 0.5,
+                float(pv) if pv is not None else 0.5)
+    part = norm(ev.get("part")).lower()
+    return PART_ANCHORS.get(part, (0.5, 0.5))
+
+
+def nudge_xy(ev: dict) -> tuple[float, float]:
+    """Screen-space nudge applied after the annotation anchor is projected.
+
+    The event's historical scalar ``offset`` remains a *time* offset.  To keep
+    the authoring surface simple, a mapping-valued ``offset``/``nudge`` is a
+    screen-space nudge (x right / y down, in viewport fractions).
+    """
+    for key in ("nudge", "marker_offset", "offset"):
+        raw = ev.get(key)
+        if isinstance(raw, dict):
+            return (float(raw.get("x", 0.0) or 0.0),
+                    float(raw.get("y", 0.0) or 0.0))
+    return (0.0, 0.0)
+
+
+def find_overlay_rect(stage: dict | None, overlay_id: str) -> dict | None:
+    for o in (stage or {}).get("overlays") or []:
+        if isinstance(o, dict) and o.get("id") == overlay_id:
+            return o.get("rect") if isinstance(o.get("rect"), dict) else None
+    return None
+
+
+def event_annotation_fields(ev: dict, stage: dict | None = None) -> dict:
+    """Compiled clip fields shared by every annotation primitive.
+
+    ``annotation_space`` is the explicit authoring answer to "is this anchored
+    to the table (world) or to the viewport/mask (screen)?".
+    """
+    u, v = part_uv(ev)
+    nx, ny = nudge_xy(ev)
+    out = {
+        "annotation_space": annotation_space_of(ev),
+        "part": norm(ev.get("part")),
+        "part_u": u,
+        "part_v": v,
+        "has_part_uv": True,
+        "nudge_x": nx,
+        "nudge_y": ny,
+    }
+    overlay_id = norm(ev.get("overlay"))
+    if out["annotation_space"] == "screen" and overlay_id:
+        rect = find_overlay_rect(stage, overlay_id)
+        if rect is not None:
+            out.update({
+                "screen_x": float(rect.get("x", 0.0) or 0.0),
+                "screen_y": float(rect.get("y", 0.0) or 0.0),
+                "screen_w": float(rect.get("w", 0.0) or 0.0),
+                "screen_h": float(rect.get("h", 0.0) or 0.0),
+            })
+    return out
+
+
 class StateModel:
     """Small pure simulator used only at compile time.
 
@@ -492,7 +582,10 @@ class Compiler:
             return round(float(ev.get("at", 0.0) or 0.0), 6)
         if aid not in self.time_anchors:
             raise ValueError(f"cue {cue_id}: unknown time anchor {aid!r}")
-        offset = float(ev.get("offset", 0.0) or 0.0)
+        raw_offset = ev.get("offset", 0.0) or 0.0
+        # Mapping-valued offset is a screen-space annotation nudge; the event
+        # still starts exactly at its anchor.
+        offset = 0.0 if isinstance(raw_offset, dict) else float(raw_offset)
         return round(max(0.0, self.time_anchors[aid] + offset), 6)
 
     def resolve_stage_path(self, rel: str) -> Path:
@@ -1161,18 +1254,30 @@ class Compiler:
                     for it in matched:
                         clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
                                                             to_scale=float(ev.get("grow", 1.16) or 1.16)))
-            elif op == "point":
-                if ev.get("space") == "screen":
+            elif op in ("point", "shape"):
+                ann_space = annotation_space_of(ev)
+                kind = norm(ev.get("indicator")) if op == "point" else (
+                    norm(ev.get("shape")) or norm(ev.get("indicator")) or "circle")
+                if op == "point" and not kind:
+                    kind = "circle"
+                if op == "shape" and kind not in SHAPE_KINDS:
+                    raise ValueError(
+                        f"cue {cue_id}: unknown shape {kind!r}; expected one of {sorted(SHAPE_KINDS)}")
+                if ann_space == "screen":
                     overlay_id = norm(ev.get("overlay"))
                     if not overlay_id:
-                        raise ValueError(f"cue {cue_id}: screen point needs overlay id")
-                    clips.append(self.screen_presentation_clip(
-                        "point", overlay_id, at, dur, lead, easing,
-                        part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
+                        raise ValueError(f"cue {cue_id}: screen {op} needs overlay id")
+                    c = self.screen_presentation_clip(
+                        "point" if op == "point" else "shape",
+                        overlay_id, at, dur, lead, easing,
+                        part=norm(ev.get("part")), indicator=kind)
+                    c.update(event_annotation_fields(ev, stage))
+                    clips.append(c)
                     pointer_resolution.append({
                         "event_index": event_index,
                         "op": op,
                         "object_space": "screen",
+                        "annotation_space": "screen",
                         "overlay": overlay_id,
                         "matched_count": 1,
                         "item_ids": [overlay_id],
@@ -1185,6 +1290,7 @@ class Compiler:
                         "event_index": event_index,
                         "op": op,
                         "object_space": "entity",
+                        "annotation_space": "world",
                         "zone": zone,
                         "order": ev.get("order"),
                         "matched_count": len(matched),
@@ -1197,8 +1303,12 @@ class Compiler:
                             f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
                         )
                     if selected:
-                        clips.append(self.presentation_clip("point", selected[0], at, dur, lead, easing,
-                                                            part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
+                        c = self.presentation_clip(
+                            "point" if op == "point" else "shape", selected[0],
+                            at, dur, lead, easing,
+                            part=norm(ev.get("part")), indicator=kind)
+                        c.update(event_annotation_fields(ev, stage))
+                        clips.append(c)
             elif op == "overlay_show":
                 overlay_id = norm(ev.get("overlay"))
                 if not overlay_id:
@@ -1245,38 +1355,66 @@ class Compiler:
                 clips.append(c)
             elif op == "label":
                 overlay_id = norm(ev.get("overlay"))
-                if not overlay_id:
-                    raise ValueError(f"cue {cue_id}: label needs overlay")
+                ann_space = annotation_space_of(ev)
                 overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
                             if isinstance(o, dict) and o.get("id")}
-                overlay = overlays.get(overlay_id)
-                if overlay is None:
-                    raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
-                space = norm(overlay.get("space") or "screen").lower()
-                c = self.base_clip("label", at, dur, lead, easing)
-                c.update({
-                    "overlay": overlay_id,
-                    "text": str(ev.get("text") or ""),
-                })
-                if space == "world":
-                    center = overlay.get("center") or {}
+                if ann_space == "world" and not overlay_id:
+                    # World label anchored to a concrete entity.  This is the
+                    # "text follows the table card" case; the runtime resolves
+                    # the current item each frame and projects it through the
+                    # live camera, so camera moves keep the text attached.
+                    matched = self.select_items(state, zone, sel, ev.get("order"))
+                    selected = matched[:1]
+                    if not selected:
+                        self.rep.warn(
+                            f"unresolved label: cue={cue_id} event_index={event_index} "
+                            f"zone={zone!r} order={ev.get('order')!r} "
+                            f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                        )
+                        continue
+                    c = self.presentation_clip("label", selected[0], at, dur, lead, easing)
                     c.update({
+                        "text": str(ev.get("text") or ""),
                         "screen_space": False,
-                        "label_x": float(center.get("x", 0.0) or 0.0),
-                        "label_y": 0.0,
-                        "label_w": 0.0,
-                        "label_h": 0.0,
+                        "label_x": 0.0, "label_y": 0.0,
+                        "label_w": 0.0, "label_h": 0.0,
                     })
-                else:
-                    rect = overlay.get("rect") or {}
+                    c.update(event_annotation_fields(ev, stage))
+                    clips.append(c)
+                elif overlay_id:
+                    overlay = overlays.get(overlay_id)
+                    if overlay is None:
+                        raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
+                    overlay_space = norm(overlay.get("space") or "screen").lower()
+                    c = self.base_clip("label", at, dur, lead, easing)
                     c.update({
-                        "screen_space": True,
-                        "label_x": float(rect.get("x", 0.0) or 0.0),
-                        "label_y": float(rect.get("y", 0.0) or 0.0),
-                        "label_w": float(rect.get("w", 0.3) or 0.3),
-                        "label_h": float(rect.get("h", 0.1) or 0.1),
+                        "overlay": overlay_id,
+                        "text": str(ev.get("text") or ""),
                     })
-                clips.append(c)
+                    if overlay_space == "world" or ann_space == "world":
+                        center = overlay.get("center") or {}
+                        c.update({
+                            "annotation_space": "world",
+                            "screen_space": False,
+                            "world_x": float(center.get("x", 0.0) or 0.0),
+                            "world_z": float(center.get("z", 0.0) or 0.0),
+                            "nudge_x": nudge_xy(ev)[0],
+                            "nudge_y": nudge_xy(ev)[1],
+                        })
+                    else:
+                        rect = overlay.get("rect") or {}
+                        c.update({
+                            "annotation_space": "screen",
+                            "screen_space": True,
+                            "label_x": float(rect.get("x", 0.0) or 0.0),
+                            "label_y": float(rect.get("y", 0.0) or 0.0),
+                            "label_w": float(rect.get("w", 0.3) or 0.3),
+                            "label_h": float(rect.get("h", 0.1) or 0.1),
+                        })
+                        c.update(event_annotation_fields(ev, stage))
+                    clips.append(c)
+                else:
+                    raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")
             elif op == "fade":
                 if ev.get("space") == "screen":
                     overlay_id = norm(ev.get("overlay"))
@@ -1462,6 +1600,12 @@ class Compiler:
             "marker_x": x,
             "marker_z": z,
             "marker_radius": radius,
+            "annotation_space": "world",
+            "part_u": 0.5,
+            "part_v": 0.5,
+            "has_part_uv": False,
+            "nudge_x": 0.0,
+            "nudge_y": 0.0,
         })
         return c
 

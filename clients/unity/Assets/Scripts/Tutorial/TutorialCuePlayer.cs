@@ -773,8 +773,7 @@ namespace BoardGameTutorial
             //   6. debug HUD (only in debug mode)
             var frame = v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null;
             DrawScreenOverlays(frame);
-            DrawScreenMarkers(frame);
-            DrawOverlayLabels(frame);
+            DrawAnnotations(frame);
             DrawSubtitle();
 
             // 左上角信息只在 zone debug 模式下显示；正常播放时屏幕底部只有字幕。
@@ -820,6 +819,48 @@ namespace BoardGameTutorial
             return overlayPanelTexture;
         }
 
+        private bool TryGetOverlayRects(VisualOverlayState overlay, out Rect panelRect, out Rect cardRect)
+        {
+            panelRect = new Rect();
+            cardRect = new Rect();
+            if (overlay == null) return false;
+
+            float baseX = overlay.X * Screen.width;
+            float baseY = overlay.Y * Screen.height;
+            float baseW = Mathf.Max(1f, overlay.W * Screen.width);
+            float baseH = Mathf.Max(1f, overlay.H * Screen.height);
+
+            // scale/highlight are part of the common IAnimVisualObject
+            // interface; screen overlays apply them around their rect center.
+            float zoom = Mathf.Max(0.05f, overlay.Scale);
+            if (overlay.Highlighted) zoom *= Mathf.Max(1f, overlay.HighlightGrow);
+            float w = Mathf.Max(1f, baseW * zoom);
+            float h = Mathf.Max(1f, baseH * zoom);
+            float x = baseX + (baseW - w) * 0.5f;
+            float y = baseY + (baseH - h) * 0.5f;
+            panelRect = new Rect(x, y, w, h);
+            cardRect = panelRect;
+
+            var sprite = v2AnimPlayer != null ? v2AnimPlayer.LoadOverlaySprite(overlay) : null;
+            if (sprite != null && sprite.texture != null)
+            {
+                float inset = Mathf.Min(w, h) * 0.06f;
+                float availW = Mathf.Max(1f, w - inset * 2f);
+                float availH = Mathf.Max(1f, h - inset * 2f);
+                float srcW = Mathf.Max(1f, sprite.rect.width);
+                float srcH = Mathf.Max(1f, sprite.rect.height);
+                float k = Mathf.Min(availW / srcW, availH / srcH);
+                float cardW = srcW * k;
+                float cardH = srcH * k;
+                cardRect = new Rect(
+                    x + (w - cardW) * 0.5f,
+                    y + (h - cardH) * 0.5f,
+                    cardW,
+                    cardH);
+            }
+            return true;
+        }
+
         private void DrawScreenOverlays(FrameState frame)
         {
             if (frame == null || frame.Overlays == null || frame.Overlays.Count == 0) return;
@@ -833,21 +874,7 @@ namespace BoardGameTutorial
             foreach (var overlay in ordered)
             {
                 if (overlay == null || overlay.Alpha <= 0.001f) continue;
-
-                float baseX = overlay.X * Screen.width;
-                float baseY = overlay.Y * Screen.height;
-                float baseW = Mathf.Max(1f, overlay.W * Screen.width);
-                float baseH = Mathf.Max(1f, overlay.H * Screen.height);
-
-                // scale/highlight are part of the common IAnimVisualObject
-                // interface; screen overlays apply them around their rect center.
-                float zoom = Mathf.Max(0.05f, overlay.Scale);
-                if (overlay.Highlighted) zoom *= Mathf.Max(1f, overlay.HighlightGrow);
-                float w = Mathf.Max(1f, baseW * zoom);
-                float h = Mathf.Max(1f, baseH * zoom);
-                float x = baseX + (baseW - w) * 0.5f;
-                float y = baseY + (baseH - h) * 0.5f;
-                var panelRect = new Rect(x, y, w, h);
+                if (!TryGetOverlayRects(overlay, out var panelRect, out var cardRect)) continue;
 
                 // A panel is drawn only when the data explicitly asks for a
                 // background.  The default filled panel made every card carry
@@ -867,96 +894,23 @@ namespace BoardGameTutorial
                 }
 
                 var sprite = v2AnimPlayer.LoadOverlaySprite(overlay);
-                var cardRect = panelRect;
                 if (sprite != null && sprite.texture != null)
                 {
-                    float inset = Mathf.Min(w, h) * 0.06f;
-                    float availW = Mathf.Max(1f, w - inset * 2f);
-                    float availH = Mathf.Max(1f, h - inset * 2f);
-                    float srcW = Mathf.Max(1f, sprite.rect.width);
-                    float srcH = Mathf.Max(1f, sprite.rect.height);
-                    float k = Mathf.Min(availW / srcW, availH / srcH);
-                    float cardW = srcW * k;
-                    float cardH = srcH * k;
-                    cardRect = new Rect(
-                        x + (w - cardW) * 0.5f,
-                        y + (h - cardH) * 0.5f,
-                        cardW,
-                        cardH);
-
                     GUI.color = new Color(1f, 1f, 1f, overlay.Alpha);
                     GUI.DrawTexture(cardRect, sprite.texture);
-                }
-
-                // Highlight is the same grow/breath animation as the entity
-                // implementation (VisualClipPlayer), already folded into zoom
-                // above.  Do not draw a border here: a rectangle outline around
-                // the overlay rect reads as an extra object following the card.
-                if (!string.IsNullOrEmpty(overlay.Indicator) || !string.IsNullOrEmpty(overlay.PointPart))
-                {
-                    float u = 0.5f;
-                    float v = 0.5f;
-                    switch (overlay.PointPart)
-                    {
-                        case "prestige": u = 0.16f; v = 0.16f; break;
-                        case "cost": u = 0.16f; v = 0.84f; break;
-                        case "bonus": u = 0.84f; v = 0.16f; break;
-                        case "condition": u = 0.50f; v = 0.84f; break;
-                    }
-                    float markerSize = Mathf.Max(28f, Mathf.Min(cardRect.width, cardRect.height) * 0.20f);
-                    var markerRect = new Rect(
-                        cardRect.x + cardRect.width * u - markerSize * 0.5f,
-                        cardRect.y + cardRect.height * v - markerSize * 0.5f,
-                        markerSize,
-                        markerSize);
-                    string markerKind = string.IsNullOrEmpty(overlay.Indicator)
-                        ? "circle" : overlay.Indicator;
-                    var markerSprite = ActorBinder.GetMarkerSprite(markerKind);
-                    if (markerSprite != null && markerSprite.texture != null)
-                    {
-                        GUI.color = new Color(0.92f, 0.24f, 0.20f, overlay.Alpha);
-                        GUI.DrawTexture(markerRect, markerSprite.texture);
-                    }
                 }
                 GUI.color = savedColor;
             }
             GUI.color = savedColor;
         }
 
-        private void DrawScreenMarkers(FrameState frame)
+        private void DrawAnnotations(FrameState frame)
         {
-            if (frame == null || frame.Markers == null || frame.Markers.Count == 0) return;
+            if (frame == null || frame.Annotations == null || frame.Annotations.Count == 0) return;
             if (v2AnimPlayer == null || !v2AnimPlayer.IsLoaded) return;
             var cam = v2AnimPlayer.Camera;
             if (cam == null) return;
 
-            // Markers are presentation annotations, so draw them in screen
-            // space after the mask/overlay layer.  This keeps arrows/circles/
-            // boxes above a full-screen mask and independent of camera pitch.
-            float pixelsPerUnit = Screen.height / Mathf.Max(0.001f, 2f * cam.orthographicSize);
-            var savedColor = GUI.color;
-            foreach (var marker in frame.Markers)
-            {
-                if (marker == null) continue;
-                var screen = cam.WorldToScreenPoint(new Vector3(marker.X, 0f, marker.Z));
-                if (screen.z < 0f) continue;
-                float size = Mathf.Max(24f, marker.Radius * 2f * pixelsPerUnit);
-                var rect = new Rect(
-                    screen.x - size * 0.5f,
-                    (Screen.height - screen.y) - size * 0.5f,
-                    size,
-                    size);
-                var sprite = ActorBinder.GetMarkerSprite(marker.Kind);
-                if (sprite == null || sprite.texture == null) continue;
-                GUI.color = new Color(0.92f, 0.24f, 0.20f, 1f);
-                GUI.DrawTexture(rect, sprite.texture);
-            }
-            GUI.color = savedColor;
-        }
-
-        private void DrawOverlayLabels(FrameState frame)
-        {
-            if (frame == null || frame.Labels == null || frame.Labels.Count == 0) return;
             if (overlayLabelStyle == null)
             {
                 overlayLabelStyle = new GUIStyle(GUI.skin.label)
@@ -967,17 +921,145 @@ namespace BoardGameTutorial
                     normal = { textColor = Color.white }
                 };
             }
-            foreach (var label in frame.Labels)
+
+            // Shapes first, then labels, then subtitles/debug HUD.  Both
+            // annotation spaces draw in this single OnGUI pass, i.e. always
+            // above the mask/screen-object layer.
+            foreach (var annotation in frame.Annotations)
             {
-                if (label == null || !label.ScreenSpace || string.IsNullOrEmpty(label.Text)) continue;
-                var rect = new Rect(
-                    label.X * Screen.width,
-                    label.Y * Screen.height,
-                    Mathf.Max(40f, label.W * Screen.width),
-                    Mathf.Max(28f, label.H * Screen.height));
-                GUI.Box(rect, GUIContent.none);
-                GUI.Label(rect, label.Text, overlayLabelStyle);
+                if (annotation == null || annotation.Kind == "label") continue;
+                DrawShapeAnnotation(frame, annotation, cam);
             }
+            foreach (var annotation in frame.Annotations)
+            {
+                if (annotation == null || annotation.Kind != "label") continue;
+                DrawLabelAnnotation(frame, annotation, cam);
+            }
+        }
+
+        private void DrawShapeAnnotation(FrameState frame, VisualAnnotationState annotation, Camera cam)
+        {
+            if (annotation == null) return;
+            float ppu = Screen.height / Mathf.Max(0.001f, 2f * cam.orthographicSize);
+            bool world = annotation.Space == "world";
+
+            if (world)
+            {
+                var screen = cam.WorldToScreenPoint(new Vector3(annotation.X, 0f, annotation.Z));
+                if (screen.z < 0f) return;
+                float cx = screen.x + annotation.NudgeX * Screen.width;
+                float cy = (Screen.height - screen.y) + annotation.NudgeY * Screen.height;
+                if (annotation.Kind == "box")
+                {
+                    float w = Mathf.Max(8f, annotation.W * ppu);
+                    float h = Mathf.Max(8f, annotation.H * ppu);
+                    DrawBoxOutline(new Rect(cx - w * 0.5f, cy - h * 0.5f, w, h));
+                    return;
+                }
+                float size = Mathf.Max(24f, annotation.Radius * 2f * ppu);
+                DrawMarkerSprite(annotation.Kind,
+                    new Rect(cx - size * 0.5f, cy - size * 0.5f, size, size));
+                return;
+            }
+
+            // Screen annotation: resolve the live overlay rect first, then the
+            // compiler-baked fallback rect (for static screen anchors).
+            Rect rect;
+            if (!TryGetAnnotationScreenRect(frame, annotation, out rect)) return;
+            if (annotation.Kind == "box")
+            {
+                DrawBoxOutline(rect);
+                return;
+            }
+            float markerSize = Mathf.Max(28f, Mathf.Min(rect.width, rect.height) * 0.20f);
+            float mx = rect.x + rect.width * annotation.PartU + annotation.NudgeX * Screen.width;
+            float my = rect.y + rect.height * annotation.PartV + annotation.NudgeY * Screen.height;
+            DrawMarkerSprite(annotation.Kind,
+                new Rect(mx - markerSize * 0.5f, my - markerSize * 0.5f, markerSize, markerSize));
+        }
+
+        private void DrawLabelAnnotation(FrameState frame, VisualAnnotationState annotation, Camera cam)
+        {
+            if (annotation == null || string.IsNullOrEmpty(annotation.Text)) return;
+            Rect rect;
+            if (annotation.Space == "world")
+            {
+                var screen = cam.WorldToScreenPoint(new Vector3(annotation.X, 0f, annotation.Z));
+                if (screen.z < 0f) return;
+                float w = annotation.LabelW > 0f ? annotation.LabelW * Screen.width : Screen.width * 0.42f;
+                float h = annotation.LabelH > 0f ? annotation.LabelH * Screen.height : Screen.height * 0.12f;
+                float cx = screen.x + annotation.NudgeX * Screen.width;
+                float cy = (Screen.height - screen.y) + annotation.NudgeY * Screen.height;
+                rect = new Rect(cx - w * 0.5f, cy - h - 8f, w, h);
+            }
+            else
+            {
+                if (!TryGetAnnotationScreenRect(frame, annotation, out var anchorRect)) return;
+                rect = anchorRect;
+                if (annotation.LabelW > 0f && annotation.LabelH > 0f)
+                {
+                    rect = new Rect(
+                        rect.x + annotation.NudgeX * Screen.width,
+                        rect.y + annotation.NudgeY * Screen.height,
+                        annotation.LabelW * Screen.width,
+                        annotation.LabelH * Screen.height);
+                }
+            }
+            GUI.Box(rect, GUIContent.none);
+            GUI.Label(rect, annotation.Text, overlayLabelStyle);
+        }
+
+        private bool TryGetAnnotationScreenRect(FrameState frame, VisualAnnotationState annotation, out Rect rect)
+        {
+            rect = new Rect();
+            if (annotation == null) return false;
+            if (!string.IsNullOrEmpty(annotation.OverlayId))
+            {
+                VisualOverlayState overlay = null;
+                foreach (var candidate in frame.Overlays)
+                {
+                    if (candidate != null && candidate.Id == annotation.OverlayId)
+                    {
+                        overlay = candidate;
+                        break;
+                    }
+                }
+                if (overlay != null && TryGetOverlayRects(overlay, out _, out rect)) return true;
+            }
+            if (annotation.ScreenW <= 0f || annotation.ScreenH <= 0f) return false;
+            rect = new Rect(
+                annotation.ScreenX * Screen.width,
+                annotation.ScreenY * Screen.height,
+                Mathf.Max(1f, annotation.ScreenW * Screen.width),
+                Mathf.Max(1f, annotation.ScreenH * Screen.height));
+            return true;
+        }
+
+        private void DrawMarkerSprite(string kind, Rect rect)
+        {
+            var sprite = ActorBinder.GetMarkerSprite(kind);
+            if (sprite == null || sprite.texture == null) return;
+            var savedColor = GUI.color;
+            GUI.color = new Color(0.92f, 0.24f, 0.20f, 1f);
+            GUI.DrawTexture(rect, sprite.texture);
+            GUI.color = savedColor;
+        }
+
+        private void DrawBoxOutline(Rect rect)
+        {
+            DrawBoxOutline(rect, Mathf.Max(3f, Mathf.Min(rect.width, rect.height) * 0.018f));
+        }
+
+        private void DrawBoxOutline(Rect rect, float thickness)
+        {
+            var panel = GetOverlayPanelTexture();
+            var savedColor = GUI.color;
+            GUI.color = new Color(0.92f, 0.24f, 0.20f, 1f);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, thickness), panel);
+            GUI.DrawTexture(new Rect(rect.x, rect.y + rect.height - thickness, rect.width, thickness), panel);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, thickness, rect.height), panel);
+            GUI.DrawTexture(new Rect(rect.x + rect.width - thickness, rect.y, thickness, rect.height), panel);
+            GUI.color = savedColor;
         }
 
         private void DrawSubtitle()

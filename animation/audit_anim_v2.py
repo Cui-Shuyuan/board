@@ -8,8 +8,8 @@ blind spots of the existing checkers:
 
 1. global physical conservation of development cards, nobles, gems and gold;
 2. refill of the card market after a purchase/reserve removes a market card;
-3. source ``point`` / ``highlight`` events that never become compiled pointer
-   clips.
+3. source ``point`` / ``shape`` / ``highlight`` events that never become
+   compiled pointer clips.
 
 Usage:
     python3 animation/audit_anim_v2.py --game splendor --track full
@@ -601,10 +601,10 @@ def check_refill(
 
 
 def _source_pointer_events(source_cue: dict) -> list[tuple[int, dict]]:
-    """Return ``(event_index, event)`` for every source point/highlight."""
+    """Return ``(event_index, event)`` for every source pointer annotation."""
     out = []
     for event_index, event in enumerate(source_cue.get("events") or []):
-        if isinstance(event, dict) and event.get("op") in ("point", "highlight"):
+        if isinstance(event, dict) and event.get("op") in ("point", "shape", "highlight"):
             out.append((event_index, event))
     return out
 
@@ -624,7 +624,7 @@ def check_pointer(
         if source_cue is None:
             warnings.append(_finding(
                 "WARN", "pointer", index, cue_id,
-                "源 track 缺少同名 cue，无法校验 point/highlight 解析",
+                "源 track 缺少同名 cue，无法校验 pointer 解析",
             ))
             continue
 
@@ -654,8 +654,8 @@ def check_pointer(
                 reason = "缺少 resolution record"
             elif not item_ids:
                 reason = "item_ids 为空"
-            elif op == "point" and len(item_ids) != 1:
-                reason = f"point 需要 1 个 item，实际 {len(item_ids)} 个"
+            elif op in ("point", "shape") and len(item_ids) != 1:
+                reason = f"{op} 需要 1 个 item/overlay，实际 {len(item_ids)} 个"
             elif op == "highlight" and len(item_ids) == 0:
                 reason = "highlight item_ids 为空"
 

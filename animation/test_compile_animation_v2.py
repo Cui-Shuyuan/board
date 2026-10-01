@@ -147,6 +147,96 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("purchase_card", clips[0]["overlay"])
         self.assertEqual("cost", clips[0]["part"])
 
+    def test_world_shape_box_compiles_to_annotation_clip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "shape",
+                "at": 0.3,
+                "dur": 0.0,
+                "shape": "box",
+                "space": "world",
+                "part": "whole",
+                "target": {
+                    "space": "entity",
+                    "zone": "showcase",
+                    "template": "sample_card_1",
+                },
+            }
+            track_path, event_index = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "shape"]
+        self.assertEqual(1, len(clips), clips)
+        clip = clips[0]
+        self.assertEqual("world", clip["annotation_space"])
+        self.assertTrue(clip["item_id"])
+        self.assertEqual("box", clip["indicator"])
+        self.assertTrue(clip["has_part_uv"])
+        self.assertAlmostEqual(0.5, clip["part_u"])
+        self.assertAlmostEqual(0.5, clip["part_v"])
+        resolution = [r for r in cue["pointer_resolution"] if r["event_index"] == event_index]
+        self.assertEqual(1, len(resolution), resolution)
+        self.assertEqual("world", resolution[0]["annotation_space"])
+        self.assertEqual(1, resolution[0]["matched_count"])
+
+    def test_world_label_targets_entity_and_keeps_part_anchor(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "label",
+                "at": 0.3,
+                "dur": 0.0,
+                "text": "跟随卡牌的世界文字",
+                "space": "world",
+                "part": "bonus",
+                "target": {
+                    "space": "entity",
+                    "zone": "showcase",
+                    "template": "sample_card_1",
+                },
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "label" and c.get("text")]
+        self.assertEqual(1, len(clips), clips)
+        clip = clips[0]
+        self.assertEqual("world", clip["annotation_space"])
+        self.assertTrue(clip["item_id"])
+        self.assertEqual("bonus", clip["part"])
+        self.assertAlmostEqual(0.84, clip["part_u"], places=6)
+        self.assertAlmostEqual(0.16, clip["part_v"], places=6)
+
+    def test_screen_shape_uses_mapping_offset_as_spatial_nudge(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "shape",
+                "at": 0.3,
+                "dur": 0.0,
+                "shape": "arrow",
+                "space": "screen",
+                "part": "prestige",
+                "offset": {"x": 0.02, "y": -0.03},
+                "target": {"space": "screen", "id": "sample_red"},
+            }
+            track_path, event_index = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "shape"]
+        self.assertEqual(1, len(clips), clips)
+        clip = clips[0]
+        self.assertEqual("screen", clip["annotation_space"])
+        self.assertEqual("sample_red", clip["overlay"])
+        self.assertEqual("arrow", clip["indicator"])
+        self.assertAlmostEqual(0.02, clip["nudge_x"], places=6)
+        self.assertAlmostEqual(-0.03, clip["nudge_y"], places=6)
+        self.assertAlmostEqual(0.3, clip["at"], places=6)
+        resolution = [r for r in cue["pointer_resolution"] if r["event_index"] == event_index]
+        self.assertEqual(1, len(resolution), resolution)
+        self.assertEqual("screen", resolution[0]["annotation_space"])
+
     def test_unresolved_pointer_records_empty_item_ids_and_warns(self):
         with tempfile.TemporaryDirectory() as tmp:
             point_event = {

@@ -218,6 +218,35 @@ class AuditAnimV2Tests(unittest.TestCase):
         self.assertEqual(1, result["stats"]["pointer_unresolved_events"])
         self.assertEqual(1, result["stats"]["pointer_unresolved_cues"])
 
+    def test_shape_empty_resolution_reports_error(self):
+        source_events = [{
+            "op": "shape",
+            "shape": "box",
+            "zone": "player_holding",
+            "order": 0,
+            "anchor": "hold.marker",
+        }]
+        pointer_resolution = [{
+            "event_index": 0,
+            "op": "shape",
+            "zone": "player_holding",
+            "order": 0,
+            "matched_count": 0,
+            "item_ids": [],
+        }]
+        track_doc, compiled_doc = make_docs(
+            source_events=source_events,
+            clips=[],
+            pointer_resolution=pointer_resolution,
+        )
+
+        result = audit.audit_documents(track_doc, compiled_doc)
+
+        pointer_errors = [item for item in result["errors"] if item["check"] == "pointer"]
+        self.assertEqual(1, len(pointer_errors), result)
+        self.assertIn("op=shape", pointer_errors[0]["message"])
+        self.assertIn("item_ids 为空", pointer_errors[0]["message"])
+
     def test_highlight_multiple_clips_do_not_mask_empty_pointer(self):
         source_events = [
             {"op": "highlight", "zone": "player_holding", "order": 0},

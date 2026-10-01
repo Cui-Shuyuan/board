@@ -26,8 +26,9 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
-PRESENTATION_OPS = {"show", "hide", "highlight", "point", "fade", "scale", "wait", "camera", "label",
+PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label",
                      "overlay_show", "overlay_hide"}
+SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
 # 对象接口：原语不再各自区分世界/屏幕，而是统一指向一个 target。
 #   {"space": "entity", "zone": ..., "template": ..., "palette": ..., "concept": ..., "parts": [...], "order": n}
 #   {"space": "screen", "id": "overlay_slot"}
@@ -97,6 +98,14 @@ def _normalize_event(ev):
         return ev
     op = ev.get("op")
     target = ev.get("target")
+    explicit_space = str(ev.get("space") or "").strip().lower()
+    if explicit_space in ("world", "screen"):
+        ev["annotation_space"] = explicit_space
+        # Keep the old internal flat form meaningful: world == entity,
+        # screen == overlay/screen object.
+        ev["space"] = "entity" if explicit_space == "world" else "screen"
+    elif explicit_space in ("entity", "screen"):
+        ev["space"] = explicit_space
     if isinstance(target, list):
         # Multi-target form (transfer from several source zones).  Selection
         # fields are taken from the first target; V2 transfer already applies
@@ -164,8 +173,44 @@ def _normalize_event(ev):
     return ev
 
 
+def _check_offset(report: Report, where: str, ev: dict) -> None:
+    """``offset`` is numeric time or mapping-valued spatial nudge."""
+    if "offset" not in ev:
+        return
+    raw = ev.get("offset")
+    if isinstance(raw, dict):
+        for key in ("x", "y"):
+            if key in raw:
+                try:
+                    float(raw[key])
+                except (TypeError, ValueError):
+                    report.error(f"{where}: offset.{key} must be numeric")
+        return
+    try:
+        float(raw)
+    except (TypeError, ValueError):
+        report.error(f"{where}: event offset must be numeric; mapping offset = spatial nudge")
+
+
+def _check_nudge(report: Report, where: str, ev: dict) -> None:
+    for key in ("nudge", "marker_offset"):
+        raw = ev.get(key)
+        if raw is None:
+            continue
+        if not isinstance(raw, dict):
+            report.error(f"{where}: {key} must be an object like {{x, y}}")
+            continue
+        for axis in ("x", "y"):
+            if axis in raw:
+                try:
+                    float(raw[axis])
+                except (TypeError, ValueError):
+                    report.error(f"{where}: {key}.{axis} must be numeric")
+
+
 def _check_object_target(report: Report, where: str, ev: dict):
     target = ev.get("target")
+    ann_space = ev.get("annotation_space")
     if target is None:
         return
     targets = target if isinstance(target, list) else [target]
@@ -179,10 +224,19 @@ def _check_object_target(report: Report, where: str, ev: dict):
             report.error(f"{label}: target.space must be one of {sorted(TARGET_SPACES)}, got {space!r}")
             continue
         if space == "screen":
+            if ann_space == "world":
+                report.error(
+                    f"{label}: explicit space='world' conflicts with a screen target; "
+                    f"remove the top-level space or use target.space='entity'")
             if not (item.get("id") or item.get("overlay")):
                 report.error(f"{label}: screen target needs id/overlay")
-        elif not (item.get("zone") or item.get("zones")):
-            report.warn(f"{label}: entity target has no zone/zones")
+        else:
+            if ann_space == "screen":
+                report.error(
+                    f"{label}: explicit space='screen' conflicts with an entity target; "
+                    f"remove the top-level space or use target.space='screen'")
+            if not (item.get("zone") or item.get("zones")):
+                report.warn(f"{label}: entity target has no zone/zones")
 
 
 def _check_selector(report: Report, where: str, ev: dict, required: bool = True):
@@ -202,15 +256,12 @@ def _check_event(report: Report, where: str, ev: dict):
         report.error(f"{where}: unknown op {op!r}; expected one of {sorted(OPS)}")
         return
     _check_object_target(report, where, ev)
+    _check_offset(report, where, ev)
+    _check_nudge(report, where, ev)
     anchor = ev.get("anchor")
     if anchor is not None:
         if not isinstance(anchor, str) or not anchor.strip():
             report.error(f"{where}: event '{op}' anchor must be a non-empty string")
-        if "offset" in ev:
-            try:
-                float(ev["offset"])
-            except (TypeError, ValueError):
-                report.error(f"{where}: event '{op}' offset must be numeric")
     else:
         if "at" not in ev:
             report.error(f"{where}: event '{op}' needs at or anchor")
@@ -288,7 +339,7 @@ def _check_event(report: Report, where: str, ev: dict):
                     report.error(f"{where}: entity show needs zone")
             elif "picture" not in ev:
                 report.error(f"{where}: show needs picture (may be null)")
-        elif op in ("highlight", "point", "fade", "scale"):
+        elif op in ("highlight", "point", "shape", "fade", "scale"):
             if ev.get("space") == "screen":
                 if not ev.get("overlay"):
                     report.error(f"{where}: {op} screen target needs overlay id")
@@ -296,6 +347,10 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: {op} needs zone")
             if op == "point" and not ev.get("indicator"):
                 report.error(f"{where}: point needs indicator")
+            if op == "shape":
+                kind = ev.get("shape") or ev.get("indicator")
+                if kind not in SHAPE_KINDS:
+                    report.error(f"{where}: shape kind must be one of {sorted(SHAPE_KINDS)}, got {kind!r}")
             if op == "fade" and "to_alpha" not in ev and "alpha" not in ev:
                 report.error(f"{where}: fade needs to_alpha")
             if op == "scale" and "scale" not in ev:
@@ -309,10 +364,15 @@ def _check_event(report: Report, where: str, ev: dict):
         elif op == "wait":
             pass
         elif op == "label":
-            if not ev.get("overlay"):
-                report.error(f"{where}: label needs overlay")
             if "text" not in ev or ev.get("text") is None:
                 report.error(f"{where}: label needs text")
+            if ev.get("space") == "screen" and not ev.get("overlay"):
+                report.error(f"{where}: screen label needs overlay id")
+            if (not ev.get("overlay")
+                    and ev.get("space") != "entity"
+                    and not ev.get("zone")
+                    and not _has_selector(ev)):
+                report.error(f"{where}: label needs an entity target or overlay id")
         elif op == "overlay_show":
             if not ev.get("overlay"):
                 report.error(f"{where}: overlay_show needs overlay")

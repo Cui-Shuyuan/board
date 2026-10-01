@@ -16,10 +16,7 @@ namespace BoardGameTutorial.Animation
         private Camera camera;
         private SpriteRenderer pictureRenderer;
         private string currentPicture;
-        private readonly List<GameObject> markerObjects = new List<GameObject>();
-        private Transform markerRoot;
         private static readonly Dictionary<string, Sprite> MarkerSprites = new Dictionary<string, Sprite>();
-        private static readonly Color MarkerColor = new Color(0.92f, 0.24f, 0.20f, 1f);
 
         public void Init(Transform root, StageRuntime stage, SpriteLibrary sprites, Camera camera)
         {
@@ -38,14 +35,6 @@ namespace BoardGameTutorial.Animation
             {
                 Object.Destroy(pictureRenderer.gameObject);
                 pictureRenderer = null;
-            }
-            foreach (var go in markerObjects)
-                if (go != null) Object.Destroy(go);
-            markerObjects.Clear();
-            if (markerRoot != null)
-            {
-                Object.Destroy(markerRoot.gameObject);
-                markerRoot = null;
             }
             currentPicture = null;
         }
@@ -73,9 +62,6 @@ namespace BoardGameTutorial.Animation
             }
 
             SyncPicture(frame.Picture);
-            // Markers are annotations: the player renders them in screen space
-            // above the mask/overlays and below labels/subtitles.  Do not draw
-            // a second copy in world space.
         }
 
         private void SyncPicture(string picture)
@@ -153,53 +139,6 @@ namespace BoardGameTutorial.Animation
                 // Point/part is intentionally carried in FrameState.  The final
                 // marker animation is a presentation primitive and may be swapped
                 // without changing the pure timeline model.
-            }
-        }
-
-        private void SyncMarkers(List<VisualMarkerState> markers)
-        {
-            int count = markers != null ? markers.Count : 0;
-            if (count == 0)
-            {
-                foreach (var go in markerObjects)
-                    if (go != null) go.SetActive(false);
-                return;
-            }
-            if (markerRoot == null)
-            {
-                var rootGo = new GameObject("v2:Markers");
-                if (root != null) rootGo.transform.SetParent(root, false);
-                markerRoot = rootGo.transform;
-            }
-            while (markerObjects.Count < count)
-            {
-                var go = new GameObject("v2:marker");
-                go.transform.SetParent(markerRoot, false);
-                go.AddComponent<SpriteRenderer>();
-                markerObjects.Add(go);
-            }
-            for (int i = 0; i < markerObjects.Count; i++)
-            {
-                var go = markerObjects[i];
-                if (go == null) continue;
-                if (i >= count)
-                {
-                    go.SetActive(false);
-                    continue;
-                }
-                var m = markers[i];
-                var sr = go.GetComponent<SpriteRenderer>();
-                if (sr == null) sr = go.AddComponent<SpriteRenderer>();
-                sr.sprite = MarkerSprite(m != null ? m.Kind : "forbid");
-                sr.color = MarkerColor;
-                sr.sortingOrder = 1000;
-                sr.enabled = true;
-                float radius = m != null && m.Radius > 0f ? m.Radius : 0.2f;
-                float d = Mathf.Max(0.05f, radius * 2f);
-                go.transform.localScale = new Vector3(d, d, 1f);
-                if (m != null) go.transform.localPosition = new Vector3(m.X, 0f, m.Z);
-                if (stage != null && stage.Stage != null) go.transform.localRotation = stage.SpriteRotation(0f);
-                go.SetActive(true);
             }
         }
 

@@ -54,22 +54,39 @@ namespace BoardGameTutorial.Animation
         string IAnimVisualObject.Indicator { get { return Indicator; } set { Indicator = value; } }
     }
 
-    public sealed class VisualMarkerState
+    /// <summary>
+    /// A presentation annotation.  It is fully described by two explicit
+    /// answers: *space* selects the coordinate system (world follows the
+    /// camera / item; screen is fixed to the viewport), and *kind* selects the
+    /// drawing primitive (arrow/circle/cross/forbid/box/label).
+    ///
+    /// World annotations below/right of a card are resolved to their current
+    /// world position while evaluating the frame; screen annotations reference
+    /// an overlay (or a baked viewport rect) and never touch the camera.
+    /// </summary>
+    public sealed class VisualAnnotationState
     {
-        public string Kind;      // forbid | circle | cross | arrow
-        public float X;
+        public string Space;      // world | screen
+        public string Kind;       // arrow | circle | cross | forbid | box | label
+        public string Text;       // label only
+        public string ItemId;     // world anchor (optional)
+        public string OverlayId;  // screen anchor (optional)
+        public string Part;
+        public float X;           // current world position for world
         public float Z;
         public float Radius = 0.2f;
-    }
-
-    public sealed class VisualLabelState
-    {
-        public string Text;
-        public bool ScreenSpace = true;
-        public float X;
-        public float Y;
-        public float W;
-        public float H;
+        public float W;           // world box width; screen fallback width
+        public float H;           // world box height; screen fallback height
+        public float PartU = 0.5f;
+        public float PartV = 0.5f;
+        public float NudgeX;
+        public float NudgeY;
+        public float ScreenX;     // baked viewport fallback (screen)
+        public float ScreenY;
+        public float ScreenW;
+        public float ScreenH;
+        public float LabelW;
+        public float LabelH;
     }
 
     /// <summary>
@@ -115,8 +132,7 @@ namespace BoardGameTutorial.Animation
         public string Picture;
         public CompiledCameraDef Camera;
         public readonly List<VisualItemState> Items = new List<VisualItemState>();
-        public readonly List<VisualMarkerState> Markers = new List<VisualMarkerState>();
-        public readonly List<VisualLabelState> Labels = new List<VisualLabelState>();
+        public readonly List<VisualAnnotationState> Annotations = new List<VisualAnnotationState>();
         public readonly List<VisualOverlayState> Overlays = new List<VisualOverlayState>();
 
         public VisualItemState Find(string id)
@@ -347,32 +363,6 @@ namespace BoardGameTutorial.Animation
                 }
             }
 
-            // Entity point markers.  A point clip is duration-less in the
-            // current data, so it marks the item for the rest of the cue; the
-            // binder renders a marker at the item's stage position.  Screen
-            // point markers are applied to VisualOverlayState below instead.
-            foreach (var item in frame.Items)
-            {
-                if (item == null || (string.IsNullOrEmpty(item.Indicator) && string.IsNullOrEmpty(item.PointPart)))
-                    continue;
-                float radius = 0.2f;
-                var tpl = StageLookup.Template(stage, item.TemplateId);
-                if (tpl != null)
-                {
-                    if (tpl.width > 0f && tpl.height > 0f)
-                        radius = Math.Min(tpl.width, tpl.height) * 0.5f;
-                    else if (tpl.world_size > 0f)
-                        radius = tpl.world_size * 0.5f;
-                }
-                frame.Markers.Add(new VisualMarkerState
-                {
-                    Kind = string.IsNullOrEmpty(item.Indicator) ? "circle" : item.Indicator,
-                    X = item.X,
-                    Z = item.Z,
-                    Radius = radius,
-                });
-            }
-
             // Whole-picture state (box cover, etc.).
             if (cue.clips != null)
             {
@@ -392,46 +382,6 @@ namespace BoardGameTutorial.Animation
                 frame.Picture = picture;
             }
 
-            // Presentation-only markers (forbid / circle / cross / arrow).
-            if (cue.clips != null)
-            {
-                foreach (var clip in cue.clips)
-                {
-                    if (clip == null || clip.kind != "marker") continue;
-                    float start = clip.at + Math.Max(0f, clip.lead);
-                    if (t + 1e-6f < start) continue;
-                    if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
-                    frame.Markers.Add(new VisualMarkerState
-                    {
-                        Kind = string.IsNullOrEmpty(clip.indicator) ? "forbid" : clip.indicator,
-                        X = clip.marker_x,
-                        Z = clip.marker_z,
-                        Radius = clip.marker_radius > 0f ? clip.marker_radius : 0.2f,
-                    });
-                }
-            }
-
-            // Presentation-only screen/world labels (overlay anchors).
-            if (cue.clips != null)
-            {
-                foreach (var clip in cue.clips)
-                {
-                    if (clip == null || clip.kind != "label") continue;
-                    float start = clip.at + Math.Max(0f, clip.lead);
-                    if (t + 1e-6f < start) continue;
-                    if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
-                    frame.Labels.Add(new VisualLabelState
-                    {
-                        Text = clip.text ?? "",
-                        ScreenSpace = clip.screen_space,
-                        X = clip.label_x,
-                        Y = clip.label_y,
-                        W = clip.label_w,
-                        H = clip.label_h,
-                    });
-                }
-            }
-
             // Screen-space presentation overlays.  They are intentionally
             // outside the ComponentState list: a real card may be shown here
             // while it still lives in card_market / player_development, and the
@@ -445,8 +395,13 @@ namespace BoardGameTutorial.Animation
                 foreach (var clip in cue.clips)
                 {
                     if (clip == null) continue;
+                    // Only overlay lifecycle and the three object modifiers
+                    // actually mutate VisualOverlayState.  Annotation clips
+                    // (point/shape/label) are rendered by DrawAnnotations and
+                    // must not be folded into the overlay state as well.
                     if (clip.kind == "overlay_show" || clip.kind == "overlay_hide"
-                        || clip.object_space == "screen")
+                        || (clip.object_space == "screen"
+                            && (clip.kind == "fade" || clip.kind == "scale" || clip.kind == "highlight")))
                         overlayClips.Add(clip);
                 }
                 overlayClips.Sort((a, b) =>
@@ -512,7 +467,259 @@ namespace BoardGameTutorial.Animation
                 foreach (var ov in active.Values) frame.Overlays.Add(ov);
             }
 
+            BuildAnnotations(cue, stage, frame, byId, t);
             return frame;
+        }
+
+        private sealed class AnnotationPick
+        {
+            public CompiledClipDef Clip;
+            public float Start;
+        }
+
+        /// <summary>
+        /// Convert presentation clips into drawable annotations.  Point and
+        /// shape clips win per matching target; a later start replaces an
+        /// earlier one (same as the old VisualClipPlayer point semantics).
+        /// Labels and action-geometry marker clips are all emitted.
+        /// </summary>
+        private static void BuildAnnotations(CompiledCueDef cue, CompiledStageDef stage,
+            FrameState frame, Dictionary<string, VisualItemState> byId, float t)
+        {
+            if (cue?.clips == null) return;
+            var activeOverlays = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var ov in frame.Overlays)
+                if (ov != null && !string.IsNullOrEmpty(ov.Id)) activeOverlays.Add(ov.Id);
+
+            var pointPicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
+            var shapePicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
+            foreach (var clip in cue.clips)
+            {
+                if (clip == null || (clip.kind != "point" && clip.kind != "shape")) continue;
+                float start = clip.at + Math.Max(0f, clip.lead);
+                if (t + 1e-6f < start) continue;
+                if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
+                string space = AnnotationSpace(clip);
+                string target = AnnotationTarget(clip, space);
+                if (string.IsNullOrEmpty(target)) continue;
+                string key = space + "|" + target + "|" + (clip.kind == "shape" ? AnnotationKind(clip) : "point");
+                var picks = clip.kind == "point" ? pointPicks : shapePicks;
+                if (!picks.TryGetValue(key, out var existing) || start >= existing.Start)
+                    picks[key] = new AnnotationPick { Clip = clip, Start = start };
+            }
+            foreach (var pick in pointPicks.Values) AddAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
+            foreach (var pick in shapePicks.Values) AddAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
+
+            foreach (var clip in cue.clips)
+            {
+                if (clip == null || clip.kind != "marker") continue;
+                float start = clip.at + Math.Max(0f, clip.lead);
+                if (t + 1e-6f < start) continue;
+                if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
+                frame.Annotations.Add(new VisualAnnotationState
+                {
+                    Space = "world",
+                    Kind = AnnotationKind(clip),
+                    X = clip.marker_x,
+                    Z = clip.marker_z,
+                    Radius = clip.marker_radius > 0f ? clip.marker_radius : 0.2f,
+                    NudgeX = clip.nudge_x,
+                    NudgeY = clip.nudge_y,
+                });
+            }
+
+            foreach (var clip in cue.clips)
+            {
+                if (clip == null || clip.kind != "label") continue;
+                float start = clip.at + Math.Max(0f, clip.lead);
+                if (t + 1e-6f < start) continue;
+                if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
+                AddLabelAnnotation(clip, stage, frame, byId, activeOverlays);
+            }
+        }
+
+        private static void AddAnnotation(CompiledClipDef clip, CompiledStageDef stage,
+            FrameState frame, Dictionary<string, VisualItemState> byId,
+            HashSet<string> activeOverlays)
+        {
+            string space = AnnotationSpace(clip);
+            ResolvePart(clip, out float u, out float v);
+            if (space == "world")
+            {
+                if (string.IsNullOrEmpty(clip.item_id) || !byId.TryGetValue(clip.item_id, out var item)
+                    || item == null || !item.Visible) return;
+                GetTemplateSize(stage, item.TemplateId, out float w, out float h);
+                frame.Annotations.Add(new VisualAnnotationState
+                {
+                    Space = "world",
+                    Kind = AnnotationKind(clip),
+                    ItemId = clip.item_id,
+                    Part = clip.part,
+                    X = item.X + (u - 0.5f) * w,
+                    Z = item.Z + (0.5f - v) * h,
+                    Radius = Math.Min(w, h) * 0.5f,
+                    W = w,
+                    H = h,
+                    PartU = u,
+                    PartV = v,
+                    NudgeX = clip.nudge_x,
+                    NudgeY = clip.nudge_y,
+                });
+                return;
+            }
+
+            string id = clip.overlay ?? "";
+            bool active = !string.IsNullOrEmpty(id) && activeOverlays.Contains(id);
+            bool fallbackRect = clip.screen_w > 0f && clip.screen_h > 0f;
+            if (!active && !fallbackRect) return;
+            frame.Annotations.Add(new VisualAnnotationState
+            {
+                Space = "screen",
+                Kind = AnnotationKind(clip),
+                OverlayId = id,
+                Part = clip.part,
+                PartU = u,
+                PartV = v,
+                NudgeX = clip.nudge_x,
+                NudgeY = clip.nudge_y,
+                ScreenX = clip.screen_x,
+                ScreenY = clip.screen_y,
+                ScreenW = clip.screen_w,
+                ScreenH = clip.screen_h,
+                LabelW = clip.label_w,
+                LabelH = clip.label_h,
+            });
+        }
+
+        private static void AddLabelAnnotation(CompiledClipDef clip, CompiledStageDef stage,
+            FrameState frame, Dictionary<string, VisualItemState> byId,
+            HashSet<string> activeOverlays)
+        {
+            string space = AnnotationSpace(clip);
+            ResolvePart(clip, out float u, out float v);
+            if (space == "world")
+            {
+                if (!string.IsNullOrEmpty(clip.item_id) && byId.TryGetValue(clip.item_id, out var item)
+                    && item != null && item.Visible)
+                {
+                    GetTemplateSize(stage, item.TemplateId, out float w, out float h);
+                    frame.Annotations.Add(new VisualAnnotationState
+                    {
+                        Space = "world",
+                        Kind = "label",
+                        Text = clip.text ?? "",
+                        ItemId = clip.item_id,
+                        Part = clip.part,
+                        X = item.X + (u - 0.5f) * w,
+                        Z = item.Z + (0.5f - v) * h,
+                        Radius = Math.Min(w, h) * 0.5f,
+                        W = w,
+                        H = h,
+                        PartU = u,
+                        PartV = v,
+                        NudgeX = clip.nudge_x,
+                        NudgeY = clip.nudge_y,
+                        LabelW = clip.label_w,
+                        LabelH = clip.label_h,
+                    });
+                    return;
+                }
+                if (clip.world_x != 0f || clip.world_z != 0f)
+                {
+                    frame.Annotations.Add(new VisualAnnotationState
+                    {
+                        Space = "world",
+                        Kind = "label",
+                        Text = clip.text ?? "",
+                        X = clip.world_x,
+                        Z = clip.world_z,
+                        NudgeX = clip.nudge_x,
+                        NudgeY = clip.nudge_y,
+                        LabelW = clip.label_w,
+                        LabelH = clip.label_h,
+                    });
+                }
+                return;
+            }
+
+            string id = clip.overlay ?? "";
+            bool active = !string.IsNullOrEmpty(id) && activeOverlays.Contains(id);
+            bool fallbackRect = (clip.screen_w > 0f && clip.screen_h > 0f)
+                || (clip.label_w > 0f && clip.label_h > 0f);
+            if (!active && !fallbackRect) return;
+            frame.Annotations.Add(new VisualAnnotationState
+            {
+                Space = "screen",
+                Kind = "label",
+                Text = clip.text ?? "",
+                OverlayId = id,
+                Part = clip.part,
+                PartU = u,
+                PartV = v,
+                NudgeX = clip.nudge_x,
+                NudgeY = clip.nudge_y,
+                ScreenX = clip.screen_w > 0f ? clip.screen_x : clip.label_x,
+                ScreenY = clip.screen_w > 0f ? clip.screen_y : clip.label_y,
+                ScreenW = clip.screen_w > 0f ? clip.screen_w : clip.label_w,
+                ScreenH = clip.screen_w > 0f ? clip.screen_h : clip.label_h,
+                LabelW = clip.label_w,
+                LabelH = clip.label_h,
+            });
+        }
+
+        private static string AnnotationSpace(CompiledClipDef clip)
+        {
+            string explicitSpace = (clip.annotation_space ?? "").Trim().ToLowerInvariant();
+            if (explicitSpace == "world" || explicitSpace == "screen") return explicitSpace;
+            if (clip.kind == "label") return clip.screen_space ? "screen" : "world";
+            return clip.object_space == "screen" ? "screen" : "world";
+        }
+
+        private static string AnnotationTarget(CompiledClipDef clip, string space)
+        {
+            return space == "screen" ? (clip.overlay ?? "") : (clip.item_id ?? "");
+        }
+
+        private static string AnnotationKind(CompiledClipDef clip)
+        {
+            if (clip.kind == "label") return "label";
+            string kind = (clip.indicator ?? "").Trim().ToLowerInvariant();
+            if (!string.IsNullOrEmpty(kind)) return kind;
+            return clip.kind == "marker" ? "forbid" : "circle";
+        }
+
+        private static void ResolvePart(CompiledClipDef clip, out float u, out float v)
+        {
+            if (clip.has_part_uv)
+            {
+                u = clip.part_u;
+                v = clip.part_v;
+                return;
+            }
+            switch ((clip.part ?? "").Trim().ToLowerInvariant())
+            {
+                case "prestige": u = 0.16f; v = 0.16f; return;
+                case "cost": u = 0.16f; v = 0.84f; return;
+                case "bonus": u = 0.84f; v = 0.16f; return;
+                case "condition": u = 0.50f; v = 0.84f; return;
+                default: u = 0.5f; v = 0.5f; return;
+            }
+        }
+
+        private static void GetTemplateSize(CompiledStageDef stage, string templateId,
+            out float w, out float h)
+        {
+            w = 0.2f;
+            h = 0.2f;
+            var tpl = StageLookup.Template(stage, templateId);
+            if (tpl == null) return;
+            if (tpl.width > 0f) w = tpl.width;
+            if (tpl.height > 0f) h = tpl.height;
+            if (tpl.world_size > 0f && (tpl.width <= 0f || tpl.height <= 0f))
+            {
+                if (tpl.width <= 0f) w = tpl.world_size;
+                if (tpl.height <= 0f) h = tpl.world_size;
+            }
         }
 
         private static Dictionary<string, ComponentState> BuildLogicalState(StateSnapshot start, List<CompiledStateOpDef> ops, float t)

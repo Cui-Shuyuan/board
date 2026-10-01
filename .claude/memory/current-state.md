@@ -15,7 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前工作区状态
 
-- 最近提交为动画对象接口重构与文档同步，HEAD 以 `git log` 为准。
+- 最近提交为动画 world/screen 标注统一（`point`/`shape`/`label` + box/world label）；HEAD 以 `git log` 为准。
 - 动画对象原语已统一为 `target` 接口（`entity` / `screen`）；Splendor full 与 schema 示例已迁移，屏幕空间对象也支持 highlight/point/fade/scale。
 - 工作区仍有 5 个 Unity 编辑器回写的 Settings/ProjectSettings 文件未提交（与本次动画任务无关）。
 - API 接口重构后的 Android APK 已构建成功（`clients/android/app/build/outputs/apk/debug/app-debug.apk`）并安装到测试机；内容已更新到 `2b777171251141ad`，设备 compiled 中 screen modifier clips 与 `entity/screen` 两种 `object_space` 已确认存在。
@@ -29,6 +29,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - **动画 tree/状态模型（2026-09-30 修正）**：tree 只决定 stage/可见性，不再作为状态边界；cue 默认按 `entry -> parent -> 轨道前一条` 继承完整状态，允许跨 tree。当前 stage 缺少的 zone 不渲染，组件仍保留在逻辑状态中，切回对应 tree 后恢复显示。full 轨道现只有 `main` 一棵 tree，其它展示内容改走 screen 对象；该机制仍保留给多树轨道/其它游戏。
 - **动画全脚本继承关系（2026-09-30）**：tree 切换默认继承上一条 cue 的完整状态；仅在盒面/卡牌/宝石/贵族/标记等显式 demo 返回点用 `entry` 跳回 canonical 快照。full 现在只有 main，旧展示树切换点已收口。
 - **动画对象接口（2026-10-01）**：所有对象原语通过 `target` 接口选择接收者；编译器展开为 flat 字段，Unity 用 `IAnimVisualObject` 同时执行实体和屏幕对象的表现原语。旧的 `overlay_show/overlay_hide` 只在编译内部保留为兼容别名，源数据统一写 `show/hide`。迁移工具 `animation/migrate_object_targets_v2.py`。
+- **动画标注层（2026-10-01 收口）**：`point` / 新增 `shape`（`arrow`/`circle`/`cross`/`forbid`/`box`）/ `label` 统一编译成运行时 `FrameState.Annotations`，每条显式带 `annotation_space=world|screen`：world 锚实体并每帧投影（跟镜头/卡牌），screen 锚 overlay/屏幕槽位（不跟镜头）。`label` 新增 world 锚定；`part` 语义锚点和 mapping `offset`/`nudge` 屏幕微调已落地。
 - **规则文件 freshness**：`RulesDocumentStore` 按文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务；`ClearDerivedCaches()` 会清名称索引、Plan 类型缓存、Flow 位置缓存、Fact score 缓存；语义检索仍需要重建 Qdrant 索引（`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all` 或 `python tools/indexing/rebuild_index.py ...`）。
 - **Android 客户端**：已有 Unity as a Library（UaaL）原生 Android 壳、Kotlin + Jetpack Compose 控制层、首页游戏目录/搜索/历史/资源管理、manifest → 本地内容仓库 → 增量下载/断点续传 v1、教程播放器 Compose 控制层与 Unity 状态回传、问答面板、按住说话 PTT、ASR、回答 TTS、自动播放/重播/继续播放。已有 6 个 Android JVM 测试文件（ContentStatusTest、ContentUpdaterTest、HomeContentCoordinatorTest、PlayerSessionControllerTest、QaVoiceControllerTest、UnityLoadQueueTest）；真机结论只保留已有记录部分，完整范围待复测。
 - **语音链路**：后端运行时走 Python 短进程桥 `tools/voice/asr_once.py` / `tools/voice/tts_once.py`，对外接口 `POST /api/asr/once`、`POST /api/tts`；默认 TTS provider 是 `standard`（豆包标准语音合成小模型 v1），`--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 可切回旧 2.0；standard 路径没有字级 subtitle，旧 seed2 路径有；已存在 Splendor full 音频 manifest 来源为 seed2（`zh_female_vv_uranus_bigtts` / `seed-tts-2.0`）。Android 不直接接触火山凭证，密钥只在仓库根 `.env`（git-ignored）。

@@ -22,7 +22,7 @@ namespace BoardGameTutorial.Animation
 
         public static readonly string[] PresentationOps =
         {
-            "show", "highlight", "point", "fade", "scale", "wait", "label",
+            "show", "highlight", "point", "shape", "fade", "scale", "wait", "label",
             "overlay_show", "overlay_hide"
         };
 
@@ -320,6 +320,25 @@ namespace BoardGameTutorial.Animation
         public float label_y;
         public float label_w;
         public float label_h;
+
+        // Unified annotation fields.  ``annotation_space`` is world (anchor
+        // projected through the live camera) or screen (anchor fixed to a
+        // viewport rect/overlay).  These fields are only emitted for
+        // point/shape/label/marker clips; Unity treats absent values with the
+        // legacy fallbacks in TimelineEvaluator.
+        public string annotation_space;
+        public float part_u;
+        public float part_v;
+        public bool has_part_uv;
+        public float nudge_x;
+        public float nudge_y;
+        public float screen_x;
+        public float screen_y;
+        public float screen_w;
+        public float screen_h;
+        public float world_x;
+        public float world_z;
+
         public string picture;
         public bool picture_on;
 

@@ -63,7 +63,11 @@ metadata:
   - 屏幕：`{"space":"screen","id":"overlay_id"}`。
 - `create/ensure/destroy/transfer/stack/shuffle/move_order/set_face` 是实体状态原语；
 - `show/hide/highlight/point/fade/scale` 是对象表现原语，两种空间都实现；
-  `label` 目前只按 screen/锚点文字解析。
+- `shape` 是标注原语（`arrow`/`circle`/`cross`/`forbid`/`box`），`point` 也按标注渲染；
+  `label` 实体和屏幕空间都实现。
+- 所有标注编译为运行时 `FrameState.Annotations`：`annotation_space` 显式为 `world`
+  （跟桌面实体投影）或 `screen`（不经过相机，跟 overlay / 屏幕槽位）。`part`/`part_u`/`part_v`
+  表达卡面语义锚点，mapping 形式的 `offset`/`nudge` 表示屏幕比例微调。
 - 全局原语：`camera`、`wait`、无 target 的整幅图 `show`。
 - 旧数据迁移：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
 
