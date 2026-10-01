@@ -764,10 +764,12 @@ namespace BoardGameTutorial
         {
             if (doc == null) return;
 
-            DrawSubtitle();
+            // Draw screen overlays first: a full-screen mask must sit behind
+            // subtitles, otherwise the opaque mask hides the spoken text.
             var frame = v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null;
-            DrawOverlayLabels(frame);
             DrawScreenOverlays(frame);
+            DrawOverlayLabels(frame);
+            DrawSubtitle();
 
             // 左上角信息只在 zone debug 模式下显示；正常播放时屏幕底部只有字幕。
             bool zoneDebugVisible = v2AnimPlayer != null && v2AnimPlayer.debugZones;
