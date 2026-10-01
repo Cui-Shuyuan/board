@@ -24,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
 import com.boardai.tutorial.uaal.content.ContentStore
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
@@ -197,10 +195,6 @@ class MainActivity : UnityPlayerGameActivity() {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
             applyLockScreenPolicy()
-            if (::playerSession.isInitialized) {
-                val state = playerSession.state.value
-                applyPlayerChromeColor(state.selectedGame != null && state.playerActive)
-            }
         }
     }
 
@@ -286,34 +280,6 @@ class MainActivity : UnityPlayerGameActivity() {
                 !qaOpen.value)
     }
 
-    /**
-     * Match the system bars to the tutorial table while the player owns the
-     * screen.  The Unity surface does not always extend under a transparent
-     * status bar on Android 10, which left a dark strip above the mask.
-     */
-    @Suppress("DEPRECATION")
-    private fun applyPlayerChromeColor(playerActive: Boolean) {
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        if (playerActive) {
-            // MIUI still shows a translucent status-bar strip on Android 10
-            // even after window.statusBarColor is set, so use the standard
-            // sticky immersive path in the player.  The one-time system
-            // confirmation ("currently in full screen") is acceptable here.
-            controller.hide(WindowInsetsCompat.Type.statusBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
-        } else {
-            controller.show(WindowInsetsCompat.Type.statusBars())
-        }
-        // Fallback for devices that keep the bar visible.
-        val color = if (playerActive) Color.parseColor(PLAYER_CHROME_COLOR) else Color.TRANSPARENT
-        window.statusBarColor = color
-        window.navigationBarColor = color
-    }
-
     private fun addComposeControlLayer() {
         val composeView = ComposeView(this).apply {
             setBackgroundColor(Color.TRANSPARENT)
@@ -326,9 +292,6 @@ class MainActivity : UnityPlayerGameActivity() {
                         val timeline = playerState.timeline
                         val selected = playerState.selectedGame
                         val showPlayer = selected != null && playerState.playerActive
-                        LaunchedEffect(showPlayer) {
-                            applyPlayerChromeColor(showPlayer)
-                        }
 
                         val keepScreenOn = shouldKeepScreenOn()
                         LaunchedEffect(keepScreenOn) {
@@ -568,8 +531,5 @@ class MainActivity : UnityPlayerGameActivity() {
         private const val TAG = "BoardAI-UaaL"
         private const val BRIDGE_OBJECT = "AndroidTutorialBridge"
         private const val REQUEST_RECORD_AUDIO = 3401
-
-        // stage background for the current Splendor table (content stage data).
-        private const val PLAYER_CHROME_COLOR = "#1E2126"
     }
 }
