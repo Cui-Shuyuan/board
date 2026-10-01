@@ -878,16 +878,10 @@ namespace BoardGameTutorial
                     GUI.DrawTexture(cardRect, sprite.texture);
                 }
 
-                if (overlay.Highlighted)
-                {
-                    float bw = Mathf.Max(2f, Mathf.Min(w, h) * 0.02f);
-                    GUI.color = new Color(1f, 0.82f, 0.22f, 0.65f * overlay.Alpha);
-                    GUI.DrawTexture(new Rect(x, y, w, bw), panel);
-                    GUI.DrawTexture(new Rect(x, y + h - bw, w, bw), panel);
-                    GUI.DrawTexture(new Rect(x, y, bw, h), panel);
-                    GUI.DrawTexture(new Rect(x + w - bw, y, bw, h), panel);
-                }
-
+                // Highlight is the same grow/breath animation as the entity
+                // implementation (VisualClipPlayer), already folded into zoom
+                // above.  Do not draw a border here: a rectangle outline around
+                // the overlay rect reads as an extra object following the card.
                 if (!string.IsNullOrEmpty(overlay.Indicator) || !string.IsNullOrEmpty(overlay.PointPart))
                 {
                     float u = 0.5f;
