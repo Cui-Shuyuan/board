@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-01 · 基线 HEAD `f334155` · 后端 xUnit 75/75
+> 最后更新：2026-10-01 · 基线见 git log · 后端 xUnit 75/75
 
 # 当前状态（2026-10-01）
 
@@ -15,7 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前工作区状态
 
-- HEAD = `f334155 feat(anim): support entity show and hide via target interface`。
+- 最近提交为动画对象接口重构与文档同步，HEAD 以 `git log` 为准。
 - 动画对象原语已统一为 `target` 接口（`entity` / `screen`）；Splendor full 与 schema 示例已迁移，屏幕空间对象也支持 highlight/point/fade/scale。
 - 工作区仍有 5 个 Unity 编辑器回写的 Settings/ProjectSettings 文件未提交（与本次动画任务无关）。
 - API 接口重构后的 Android APK 已构建成功（`clients/android/app/build/outputs/apk/debug/app-debug.apk`）并安装到测试机；内容已更新到 `2b777171251141ad`，设备 compiled 中 screen modifier clips 与 `entity/screen` 两种 `object_space` 已确认存在。
