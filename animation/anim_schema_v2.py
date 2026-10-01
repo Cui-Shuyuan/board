@@ -283,7 +283,10 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: set_face to must be face_up/face_down")
     else:
         if op == "show":
-            if "picture" not in ev:
+            if ev.get("space") == "entity":
+                if not ev.get("zone"):
+                    report.error(f"{where}: entity show needs zone")
+            elif "picture" not in ev:
                 report.error(f"{where}: show needs picture (may be null)")
         elif op in ("highlight", "point", "fade", "scale"):
             if ev.get("space") == "screen":
@@ -298,7 +301,10 @@ def _check_event(report: Report, where: str, ev: dict):
             if op == "scale" and "scale" not in ev:
                 report.error(f"{where}: scale needs scale")
         elif op == "hide":
-            if ev.get("space") != "screen" and not ev.get("overlay"):
+            if ev.get("space") == "entity":
+                if not ev.get("zone"):
+                    report.error(f"{where}: entity hide needs zone")
+            elif ev.get("space") != "screen" and not ev.get("overlay"):
                 report.error(f"{where}: hide needs screen target")
         elif op == "wait":
             pass

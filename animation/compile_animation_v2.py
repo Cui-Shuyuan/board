@@ -980,8 +980,19 @@ class Compiler:
                     "frame": frame,
                 })
             elif op == "show":
-                clips.append(self.clip("picture", at, dur, lead, easing,
-                                       picture=ev.get("picture"), picture_on=ev.get("picture") is not None))
+                if ev.get("space") == "entity":
+                    for it in self.select_items(state, zone, sel, ev.get("order")):
+                        clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
+                                                            to_alpha=1.0))
+                else:
+                    clips.append(self.clip("picture", at, dur, lead, easing,
+                                           picture=ev.get("picture"), picture_on=ev.get("picture") is not None))
+            elif op == "hide":
+                if ev.get("space") != "entity":
+                    raise ValueError(f"cue {cue_id}: hide without screen target must use entity target")
+                for it in self.select_items(state, zone, sel, ev.get("order")):
+                    clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
+                                                        to_alpha=0.0))
             elif op in ("create",):
                 tpl = norm(ev.get("template"))
                 pal = norm(ev.get("palette"))

@@ -83,6 +83,27 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertTrue(record["item_ids"][0])
         self.assertTrue(all("pointer_resolution" in c for c in compiled["cues"]))
 
+    def test_entity_show_hide_compile_to_fade_clips(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "show",
+                "at": 0.2,
+                "dur": 0.25,
+                "target": {
+                    "space": "entity",
+                    "zone": "showcase",
+                    "template": "sample_card_1",
+                },
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"]
+                 if c.get("object_space") == "entity" and c.get("kind") == "fade"]
+        self.assertEqual(1, len(clips), clips)
+        self.assertAlmostEqual(1.0, clips[0]["to_alpha"])
+
     def test_screen_target_highlight_compiles_common_screen_clip(self):
         with tempfile.TemporaryDirectory() as tmp:
             event = {
