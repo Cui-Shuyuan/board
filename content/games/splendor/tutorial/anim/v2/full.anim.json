@@ -2839,8 +2839,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -2850,7 +2849,11 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.cards.001.1.start"
+          "anchor": "setup.cards.001.1.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
           "op": "camera",
@@ -2860,8 +2863,7 @@
           "anchor": "setup.cards.001.1.start"
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_face",
+          "op": "show",
           "rect": {
             "x": 0.34,
             "y": 0.08,
@@ -2871,7 +2873,11 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.1.start",
           "image": "media/card/一级发展卡_绿_30_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_face"
+          }
         }
       ]
     },
@@ -2900,8 +2906,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -2911,7 +2916,11 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.cards.001.2.start"
+          "anchor": "setup.cards.001.2.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
           "op": "camera",
@@ -2921,8 +2930,7 @@
           "anchor": "setup.cards.001.2.start"
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_back_1",
+          "op": "show",
           "rect": {
             "x": 0.17,
             "y": 0.14,
@@ -2932,11 +2940,14 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.2.start",
           "image": "media/card/一级发展卡_背面_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_1"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_back_2",
+          "op": "show",
           "rect": {
             "x": 0.41,
             "y": 0.14,
@@ -2946,11 +2957,14 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.2.start",
           "image": "media/card/二级发展卡_背面_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_2"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_back_3",
+          "op": "show",
           "rect": {
             "x": 0.65,
             "y": 0.14,
@@ -2960,7 +2974,22 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.2.start",
           "image": "media/card/三级发展卡_背面_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_3"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 1.1,
+          "grow": 1.16,
+          "anchor": "setup.cards.001.2.b1.start",
+          "offset": 0.275,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_1"
+          }
         }
       ],
       "tree": "main"
@@ -2990,8 +3019,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -3001,11 +3029,14 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.cards.001.3.start"
+          "anchor": "setup.cards.001.3.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_back_1",
+          "op": "show",
           "rect": {
             "x": 0.17,
             "y": 0.14,
@@ -3015,11 +3046,14 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.3.start",
           "image": "media/card/一级发展卡_背面_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_1"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_back_2",
+          "op": "show",
           "rect": {
             "x": 0.41,
             "y": 0.14,
@@ -3029,11 +3063,14 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.3.start",
           "image": "media/card/二级发展卡_背面_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_2"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "card_intro_back_3",
+          "op": "show",
           "rect": {
             "x": 0.65,
             "y": 0.14,
@@ -3043,7 +3080,33 @@
           "dur": 0.0,
           "anchor": "setup.cards.001.3.start",
           "image": "media/card/三级发展卡_背面_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_3"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 1.3,
+          "grow": 1.16,
+          "anchor": "setup.cards.001.3.b1.start",
+          "offset": 0.1,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_2"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 1.3,
+          "grow": 1.16,
+          "anchor": "setup.cards.001.3.b1.end",
+          "offset": -2.635,
+          "target": {
+            "space": "screen",
+            "id": "card_intro_back_3"
+          }
         }
       ],
       "tree": "main"
@@ -3212,284 +3275,374 @@
         {
           "op": "stack",
           "dur": 0.0,
-          "destination": "deck_level_1",
           "capacity": 40,
           "real_templates": "card_l1_emerald_32,card_l1_ruby_38,card_l1_diamond_18,card_l1_sapphire_15,card_l1_onyx_3",
           "pad_template": "blank_card_1",
           "to": "face_down",
           "anchor": "setup.cards.002.1.start",
-          "offset": 0.05
+          "offset": 0.05,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1"
+          }
         },
         {
           "op": "stack",
           "dur": 0.0,
-          "destination": "deck_level_2",
           "capacity": 30,
           "real_templates": "card_l2_sapphire_49,card_l2_onyx_45,card_l2_ruby_70,card_l2_emerald_60,card_l2_diamond_55",
           "pad_template": "blank_card_2",
           "to": "face_down",
           "anchor": "setup.cards.002.1.start",
-          "offset": 0.052
+          "offset": 0.052,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2"
+          }
         },
         {
           "op": "stack",
           "dur": 0.0,
-          "destination": "deck_level_3",
           "capacity": 20,
           "real_templates": "card_l3_ruby_88,card_l3_diamond_81,card_l3_emerald_84,card_l3_onyx_74,card_l3_sapphire_78",
           "pad_template": "blank_card_3",
           "to": "face_down",
           "anchor": "setup.cards.002.1.start",
-          "offset": 0.054
+          "offset": 0.054,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3"
+          }
         },
         {
           "op": "shuffle",
           "dur": 1.1,
-          "zone": "deck_level_1",
           "anchor": "setup.cards.002.1.b1.start",
-          "offset": 0.015
+          "offset": 0.015,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1"
+          }
         },
         {
           "op": "shuffle",
           "dur": 1.1,
-          "zone": "deck_level_2",
           "anchor": "setup.cards.002.1.b1.start",
-          "offset": 0.015
+          "offset": 0.015,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2"
+          }
         },
         {
           "op": "shuffle",
           "dur": 1.1,
-          "zone": "deck_level_3",
           "anchor": "setup.cards.002.1.b1.start",
-          "offset": 0.015
+          "offset": 0.015,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_1",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<emerald>"
-            }
-          ],
           "to": "face_up",
-          "order": 0,
           "slot": 0,
           "anchor": "setup.cards.002.1.b1.end",
-          "offset": 0.015
+          "offset": 0.015,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ],
+            "order": 0
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_1",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "to": "face_up",
-          "order": 1,
           "slot": 1,
           "anchor": "setup.cards.002.1.b2.start",
-          "offset": -0.07
+          "offset": -0.07,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ],
+            "order": 1
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_1",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "to": "face_up",
-          "order": 2,
           "slot": 2,
           "anchor": "setup.cards.002.1.b2.start",
-          "offset": 0.32
+          "offset": 0.32,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ],
+            "order": 2
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_1",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<sapphire>"
-            }
-          ],
           "to": "face_up",
-          "order": 3,
           "slot": 3,
           "anchor": "setup.cards.002.1.b2.start",
-          "offset": 0.71
+          "offset": 0.71,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ],
+            "order": 3
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_2",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<sapphire>"
-            }
-          ],
           "to": "face_up",
-          "order": 4,
           "slot": 4,
           "anchor": "setup.cards.002.1.b2.start",
-          "offset": 1.1
+          "offset": 1.1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ],
+            "order": 4
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_2",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<onyx>"
-            }
-          ],
           "to": "face_up",
-          "order": 5,
           "slot": 5,
           "anchor": "setup.cards.002.1.b2.start",
-          "offset": 1.49
+          "offset": 1.49,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ],
+            "order": 5
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_2",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "to": "face_up",
-          "order": 6,
           "slot": 6,
           "anchor": "setup.cards.002.1.b2.start",
-          "offset": 1.88
+          "offset": 1.88,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ],
+            "order": 6
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_2",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<emerald>"
-            }
-          ],
           "to": "face_up",
-          "order": 7,
           "slot": 7,
           "anchor": "setup.cards.002.1.b2.end",
-          "offset": -1.585
+          "offset": -1.585,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ],
+            "order": 7
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_3",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "to": "face_up",
-          "order": 8,
           "slot": 8,
           "anchor": "setup.cards.002.1.b2.end",
-          "offset": -1.195
+          "offset": -1.195,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ],
+            "order": 8
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_3",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "to": "face_up",
-          "order": 9,
           "slot": 9,
           "anchor": "setup.cards.002.1.b2.end",
-          "offset": -0.805
+          "offset": -0.805,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ],
+            "order": 9
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_3",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<emerald>"
-            }
-          ],
           "to": "face_up",
-          "order": 10,
           "slot": 10,
           "anchor": "setup.cards.002.1.b2.end",
-          "offset": -0.415
+          "offset": -0.415,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ],
+            "order": 10
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.34,
-          "source": "deck_level_3",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<onyx>"
-            }
-          ],
           "to": "face_up",
-          "order": 11,
           "slot": 11,
           "anchor": "setup.cards.002.1.b2.end",
-          "offset": -0.025
+          "offset": -0.025,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ],
+            "order": 11
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         }
       ]
     },
@@ -3572,8 +3725,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -3583,7 +3735,11 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.gems.001.1.start"
+          "anchor": "setup.gems.001.1.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
           "op": "camera",
@@ -3593,8 +3749,7 @@
           "anchor": "setup.gems.001.1.start"
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_diamond",
+          "op": "show",
           "rect": {
             "x": 0.15,
             "y": 0.29,
@@ -3604,11 +3759,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.1.start",
           "image": "media/card/白宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_sapphire",
+          "op": "show",
           "rect": {
             "x": 0.29,
             "y": 0.29,
@@ -3618,11 +3776,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.1.start",
           "image": "media/card/蓝宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_ruby",
+          "op": "show",
           "rect": {
             "x": 0.43,
             "y": 0.29,
@@ -3632,11 +3793,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.1.start",
           "image": "media/card/红宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_emerald",
+          "op": "show",
           "rect": {
             "x": 0.57,
             "y": 0.29,
@@ -3646,11 +3810,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.1.start",
           "image": "media/card/绿宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_onyx",
+          "op": "show",
           "rect": {
             "x": 0.71,
             "y": 0.29,
@@ -3660,7 +3827,11 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.1.start",
           "image": "media/card/黑宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
         }
       ]
     },
@@ -3695,8 +3866,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -3706,11 +3876,14 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.gems.001.2.start"
+          "anchor": "setup.gems.001.2.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_diamond",
+          "op": "show",
           "rect": {
             "x": 0.15,
             "y": 0.29,
@@ -3720,11 +3893,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.2.start",
           "image": "media/card/白宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_sapphire",
+          "op": "show",
           "rect": {
             "x": 0.29,
             "y": 0.29,
@@ -3734,11 +3910,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.2.start",
           "image": "media/card/蓝宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_ruby",
+          "op": "show",
           "rect": {
             "x": 0.43,
             "y": 0.29,
@@ -3748,11 +3927,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.2.start",
           "image": "media/card/红宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_emerald",
+          "op": "show",
           "rect": {
             "x": 0.57,
             "y": 0.29,
@@ -3762,11 +3944,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.2.start",
           "image": "media/card/绿宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_onyx",
+          "op": "show",
           "rect": {
             "x": 0.71,
             "y": 0.29,
@@ -3776,7 +3961,66 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.2.start",
           "image": "media/card/黑宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.start",
+          "offset": 2.575,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.start",
+          "offset": 3.345,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.end",
+          "offset": -2.495,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.end",
+          "offset": -1.545,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "grow": 1.18,
+          "anchor": "setup.gems.001.2.b1.end",
+          "offset": -0.615,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
         }
       ],
       "tree": "main"
@@ -3796,8 +4040,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -3807,11 +4050,14 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.gems.001.3.start"
+          "anchor": "setup.gems.001.3.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_diamond",
+          "op": "show",
           "rect": {
             "x": 0.15,
             "y": 0.29,
@@ -3821,11 +4067,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.3.start",
           "image": "media/card/白宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_sapphire",
+          "op": "show",
           "rect": {
             "x": 0.29,
             "y": 0.29,
@@ -3835,11 +4084,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.3.start",
           "image": "media/card/蓝宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_ruby",
+          "op": "show",
           "rect": {
             "x": 0.43,
             "y": 0.29,
@@ -3849,11 +4101,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.3.start",
           "image": "media/card/红宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_emerald",
+          "op": "show",
           "rect": {
             "x": 0.57,
             "y": 0.29,
@@ -3863,11 +4118,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.3.start",
           "image": "media/card/绿宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_onyx",
+          "op": "show",
           "rect": {
             "x": 0.71,
             "y": 0.29,
@@ -3877,7 +4135,66 @@
           "dur": 0.0,
           "anchor": "setup.gems.001.3.start",
           "image": "media/card/黑宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.8,
+          "grow": 1.1,
+          "anchor": "setup.gems.001.3.b1.start",
+          "offset": 0.325,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.8,
+          "grow": 1.1,
+          "anchor": "setup.gems.001.3.b1.start",
+          "offset": 0.325,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.8,
+          "grow": 1.1,
+          "anchor": "setup.gems.001.3.b1.start",
+          "offset": 0.325,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.8,
+          "grow": 1.1,
+          "anchor": "setup.gems.001.3.b1.start",
+          "offset": 0.325,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.8,
+          "grow": 1.1,
+          "anchor": "setup.gems.001.3.b1.start",
+          "offset": 0.325,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
         }
       ],
       "tree": "main"
@@ -3908,8 +4225,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -3919,11 +4235,14 @@
           "background": "#0E1016",
           "layer": 0,
           "dur": 0.0,
-          "anchor": "setup.gems.002.start"
+          "anchor": "setup.gems.002.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_diamond",
+          "op": "show",
           "rect": {
             "x": 0.15,
             "y": 0.29,
@@ -3933,11 +4252,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.002.start",
           "image": "media/card/白宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_sapphire",
+          "op": "show",
           "rect": {
             "x": 0.29,
             "y": 0.29,
@@ -3947,11 +4269,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.002.start",
           "image": "media/card/蓝宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_ruby",
+          "op": "show",
           "rect": {
             "x": 0.43,
             "y": 0.29,
@@ -3961,11 +4286,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.002.start",
           "image": "media/card/红宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_emerald",
+          "op": "show",
           "rect": {
             "x": 0.57,
             "y": 0.29,
@@ -3975,11 +4303,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.002.start",
           "image": "media/card/绿宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_onyx",
+          "op": "show",
           "rect": {
             "x": 0.71,
             "y": 0.29,
@@ -3989,11 +4320,14 @@
           "dur": 0.0,
           "anchor": "setup.gems.002.start",
           "image": "media/card/黑宝石_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "gem_sample_gold",
+          "op": "show",
           "rect": {
             "x": 0.43,
             "y": 0.58,
@@ -4003,7 +4337,77 @@
           "dur": 0.0,
           "anchor": "setup.gems.002.start",
           "image": "media/card/黄金_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_gold"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "grow": 1.2,
+          "anchor": "setup.gems.002.b1.start",
+          "offset": 1.135,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_gold"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "grow": 1.16,
+          "anchor": "setup.gems.002.b2.end",
+          "offset": -0.915,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "grow": 1.16,
+          "anchor": "setup.gems.002.b2.end",
+          "offset": -0.915,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "grow": 1.16,
+          "anchor": "setup.gems.002.b2.end",
+          "offset": -0.915,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "grow": 1.16,
+          "anchor": "setup.gems.002.b2.end",
+          "offset": -0.915,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "grow": 1.16,
+          "anchor": "setup.gems.002.b2.end",
+          "offset": -0.915,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          }
         }
       ],
       "tree": "main"
@@ -4113,52 +4517,67 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_diamond",
-          "template": "gem",
-          "palette": "gem_diamond",
           "count": 4,
           "anchor": "setup.gems.003.1.b2.start",
-          "offset": 0.055
+          "offset": 0.055,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_sapphire",
-          "template": "gem",
-          "palette": "gem_sapphire",
           "count": 4,
           "anchor": "setup.gems.003.1.b2.start",
-          "offset": 0.055
+          "offset": 0.055,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_ruby",
-          "template": "gem",
-          "palette": "gem_ruby",
           "count": 4,
           "anchor": "setup.gems.003.1.b2.start",
-          "offset": 0.055
+          "offset": 0.055,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_emerald",
-          "template": "gem",
-          "palette": "gem_emerald",
           "count": 4,
           "anchor": "setup.gems.003.1.b2.start",
-          "offset": 0.055
+          "offset": 0.055,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_onyx",
-          "template": "gem",
-          "palette": "gem_onyx",
           "count": 4,
           "anchor": "setup.gems.003.1.b2.start",
-          "offset": 0.055
+          "offset": 0.055,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
         }
       ]
     },
@@ -4233,52 +4652,67 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_diamond",
-          "template": "gem",
-          "palette": "gem_diamond",
           "count": 5,
           "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_sapphire",
-          "template": "gem",
-          "palette": "gem_sapphire",
           "count": 5,
           "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_ruby",
-          "template": "gem",
-          "palette": "gem_ruby",
           "count": 5,
           "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_emerald",
-          "template": "gem",
-          "palette": "gem_emerald",
           "count": 5,
           "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_onyx",
-          "template": "gem",
-          "palette": "gem_onyx",
           "count": 5,
           "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
         }
       ],
       "tree": "main"
@@ -4353,52 +4787,67 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_diamond",
-          "template": "gem",
-          "palette": "gem_diamond",
           "count": 7,
           "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_sapphire",
-          "template": "gem",
-          "palette": "gem_sapphire",
           "count": 7,
           "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_ruby",
-          "template": "gem",
-          "palette": "gem_ruby",
           "count": 7,
           "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_emerald",
-          "template": "gem",
-          "palette": "gem_emerald",
           "count": 7,
           "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gem_supply_onyx",
-          "template": "gem",
-          "palette": "gem_onyx",
           "count": 7,
           "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
         }
       ],
       "tree": "main"
@@ -4524,52 +4973,67 @@
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "gem_supply_diamond",
-          "template": "gem",
-          "palette": "gem_diamond",
           "count": 3,
           "from_back": true,
-          "anchor": "setup.gems.005.1.start"
+          "anchor": "setup.gems.005.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
         },
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "gem_supply_sapphire",
-          "template": "gem",
-          "palette": "gem_sapphire",
           "count": 3,
           "from_back": true,
-          "anchor": "setup.gems.005.1.start"
+          "anchor": "setup.gems.005.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
         },
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "gem_supply_ruby",
-          "template": "gem",
-          "palette": "gem_ruby",
           "count": 3,
           "from_back": true,
-          "anchor": "setup.gems.005.1.start"
+          "anchor": "setup.gems.005.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
         },
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "gem_supply_emerald",
-          "template": "gem",
-          "palette": "gem_emerald",
           "count": 3,
           "from_back": true,
-          "anchor": "setup.gems.005.1.start"
+          "anchor": "setup.gems.005.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
         },
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "gem_supply_onyx",
-          "template": "gem",
-          "palette": "gem_onyx",
           "count": 3,
           "from_back": true,
-          "anchor": "setup.gems.005.1.start"
+          "anchor": "setup.gems.005.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
         }
       ],
       "tree": "main"
@@ -4612,20 +5076,26 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "gold_supply",
-          "template": "gem",
-          "palette": "gem_gold",
           "count": 5,
           "anchor": "setup.gems.005.2.b1.start",
-          "offset": 0.215
+          "offset": 0.215,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "template": "gem",
+            "palette": "gem_gold"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.7,
-          "zone": "gold_supply",
           "grow": 1.2,
           "anchor": "setup.gems.005.2.b1.end",
-          "offset": -1.845
+          "offset": -1.845,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
         }
       ],
       "tree": "main"
@@ -4708,35 +5178,44 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_1",
-          "palette": "noble",
-          "concept": "noble",
           "count": 1,
           "anchor": "setup.nobles.001.1.start",
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_2",
-          "palette": "noble",
-          "concept": "noble",
           "count": 1,
           "anchor": "setup.nobles.001.1.start",
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_2",
+            "palette": "noble",
+            "concept": "noble"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "noble_market",
-          "template": "noble_3",
-          "palette": "noble",
-          "concept": "noble",
           "count": 1,
           "anchor": "setup.nobles.001.1.start",
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_3",
+            "palette": "noble",
+            "concept": "noble"
+          }
         }
       ]
     },
@@ -4934,21 +5413,27 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_marker",
-          "template": "starting_marker",
-          "palette": "",
           "count": 1,
-          "concept": "starting_player_marker",
           "anchor": "setup.starting_player.001.3.b1.start",
-          "offset": 0.525
+          "offset": 0.525,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker",
+            "template": "starting_marker",
+            "palette": "",
+            "concept": "starting_player_marker"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_marker",
           "peak_alpha": 0.65,
           "anchor": "setup.starting_player.001.3.b1.end",
-          "offset": -0.295
+          "offset": -0.295,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker"
+          }
         }
       ]
     },
@@ -5114,10 +5599,13 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_marker",
           "peak_alpha": 0.65,
           "anchor": "action.turn.001.b1.start",
-          "offset": 0.715
+          "offset": 0.715,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker"
+          }
         }
       ],
       "tree": "main"
@@ -5224,145 +5712,184 @@
         {
           "op": "label",
           "dur": 0.0,
-          "overlay": "hint_action_first",
           "text": "第一个行动：拿取3枚不同颜色的宝石",
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          }
         },
         {
           "op": "ensure",
           "dur": 0.0,
-          "zone": "gem_supply_diamond",
-          "template": "gem",
-          "palette": "gem_diamond",
           "count": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<diamond>"
-            }
-          ],
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          }
         },
         {
           "op": "ensure",
           "dur": 0.0,
-          "zone": "gem_supply_sapphire",
-          "template": "gem",
-          "palette": "gem_sapphire",
           "count": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<sapphire>"
-            }
-          ],
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          }
         },
         {
           "op": "ensure",
           "dur": 0.0,
-          "zone": "gem_supply_ruby",
-          "template": "gem",
-          "palette": "gem_ruby",
           "count": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ],
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          }
         },
         {
           "op": "ensure",
           "dur": 0.0,
-          "zone": "gem_supply_emerald",
-          "template": "gem",
-          "palette": "gem_emerald",
           "count": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<emerald>"
-            }
-          ],
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          }
         },
         {
           "op": "ensure",
           "dur": 0.0,
-          "zone": "gem_supply_onyx",
-          "template": "gem",
-          "palette": "gem_onyx",
           "count": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ],
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          }
         },
         {
           "op": "ensure",
           "dur": 0.0,
-          "zone": "gold_supply",
-          "template": "gem",
-          "palette": "gem_gold",
           "count": 5,
-          "concept": "gold",
-          "anchor": "action.take.different.001.start"
+          "anchor": "action.take.different.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "template": "gem",
+            "palette": "gem_gold",
+            "concept": "gold"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.35,
-          "zone": "gem_supply_diamond",
           "grow": 1.2,
           "anchor": "action.take.different.001.b1.start",
-          "offset": 0.005
+          "offset": 0.005,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.35,
-          "zone": "gem_supply_sapphire",
           "grow": 1.2,
           "anchor": "action.take.different.001.b1.start",
-          "offset": 0.255
+          "offset": 0.255,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.35,
-          "zone": "gem_supply_ruby",
           "grow": 1.2,
           "anchor": "action.take.different.001.b1.start",
-          "offset": 0.505
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.5,
-          "source": [
-            "gem_supply_diamond",
-            "gem_supply_sapphire",
-            "gem_supply_ruby"
-          ],
-          "destination": "player_holding",
           "quantity": 1,
           "stagger": 0.25,
           "anchor": "action.take.different.001.b1.end",
-          "offset": -1.635
+          "offset": -1.635,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_holding",
           "peak_alpha": 0.65,
           "anchor": "action.take.different.001.b1.end",
-          "offset": -0.885
+          "offset": -0.885,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         }
       ],
       "tree": "main"
@@ -5425,35 +5952,47 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "gem_supply_emerald",
           "peak_alpha": 0.65,
           "anchor": "action.take.same.001.b1.start",
-          "offset": 0.305
+          "offset": 0.305,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "gem_supply_emerald",
-          "destination": "player_holding",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<emerald>"
-            }
-          ],
           "stagger": 0.25,
           "anchor": "action.take.same.001.b1.start",
-          "offset": 2.705
+          "offset": 2.705,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_holding",
           "peak_alpha": 0.65,
           "anchor": "action.take.same.001.b1.end",
-          "offset": -2.475
+          "offset": -2.475,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         }
       ],
       "tree": "main"
@@ -5573,16 +6112,22 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": [
-            "gem_supply_diamond",
-            "gem_supply_sapphire"
-          ],
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
           "forbid": true,
           "anchor": "action.take.draw_rule.001.1.b1.start",
-          "offset": 4.6
+          "offset": 4.6,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         }
       ],
       "negative": true,
@@ -5744,79 +6289,109 @@
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "gem_supply_emerald",
-          "destination": "player_holding",
           "quantity": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<emerald>"
-            }
-          ],
-          "anchor": "action.take.draw_rule.001.2.start"
+          "anchor": "action.take.draw_rule.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "gem_supply_ruby",
-          "destination": "player_b_holding",
           "quantity": 4,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ],
-          "anchor": "action.take.draw_rule.001.2.start"
+          "anchor": "action.take.draw_rule.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "gem_supply_onyx",
-          "destination": "player_holding",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ],
-          "anchor": "action.take.draw_rule.001.2.start"
+          "anchor": "action.take.draw_rule.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "gem_supply_onyx",
-          "destination": "player_b_holding",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ],
-          "anchor": "action.take.draw_rule.001.2.start"
+          "anchor": "action.take.draw_rule.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": [
-            "gem_supply_diamond",
-            "gem_supply_sapphire"
-          ],
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
           "stagger": 0.25,
           "anchor": "action.take.draw_rule.001.2.b1.start",
-          "offset": 2.45
+          "offset": 2.45,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         }
       ],
       "qa": [
@@ -6007,47 +6582,65 @@
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": [
-            "gem_supply_diamond",
-            "gem_supply_sapphire",
-            "gem_supply_ruby"
-          ],
-          "destination": "player_holding",
           "quantity": 2,
-          "concept": "gem",
-          "anchor": "action.take.limit.001.1.start"
+          "anchor": "action.take.limit.001.1.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "gem_supply_emerald",
-          "destination": "player_holding",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<emerald>"
-            }
-          ],
-          "anchor": "action.take.limit.001.1.start"
+          "anchor": "action.take.limit.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "gem_supply_onyx",
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ],
-          "anchor": "action.take.limit.001.1.start"
+          "anchor": "action.take.limit.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "camera",
@@ -6059,25 +6652,34 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": [
-            "gem_supply_diamond",
-            "gem_supply_sapphire",
-            "gem_supply_ruby"
-          ],
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
           "over_limit_demo": true,
           "anchor": "action.take.limit.001.1.b2.start",
-          "offset": 0.2
+          "offset": 0.2,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "label",
           "dur": 0.0,
-          "overlay": "hint_limit",
           "text": "现在是这位玩家的回合，他选择拿取3枚不同宝石",
           "anchor": "action.take.limit.001.1.b1.start",
-          "offset": 1.2
+          "offset": 1.2,
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          }
         }
       ],
       "qa": [
@@ -6269,26 +6871,35 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "player_holding",
-          "destination": "gem_supply_diamond",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<diamond>"
-            }
-          ],
           "anchor": "action.take.limit.001.2.b1.start",
-          "offset": 4.0
+          "offset": 4.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
         },
         {
           "op": "label",
           "dur": 0.0,
-          "overlay": "hint_limit",
           "text": "现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆",
           "anchor": "action.take.limit.001.2.b1.start",
-          "offset": 1.3
+          "offset": 1.3,
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          }
         }
       ],
       "qa": [
@@ -6463,49 +7074,67 @@
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "player_holding",
-          "destination": "gem_supply_sapphire",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<sapphire>"
-            }
-          ],
-          "anchor": "action.take.public.001.1.start"
+          "anchor": "action.take.public.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "player_holding",
-          "destination": "gem_supply_ruby",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ],
-          "anchor": "action.take.public.001.1.start"
+          "anchor": "action.take.public.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
           "setup": true,
-          "source": "player_holding",
-          "destination": "gem_supply_onyx",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ],
-          "anchor": "action.take.public.001.1.start"
+          "anchor": "action.take.public.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
         }
       ],
       "qa": [
@@ -6591,8 +7220,7 @@
           "anchor": "action.cards.intro.001.start"
         },
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -6602,11 +7230,14 @@
           "dur": 0.0,
           "anchor": "action.cards.intro.001.start",
           "background": "#0E1016",
-          "layer": 0
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "purchase_card",
+          "op": "show",
           "rect": {
             "x": 0.028,
             "y": 0.1,
@@ -6616,7 +7247,11 @@
           "dur": 0.0,
           "anchor": "action.cards.intro.001.start",
           "image": "media/card/一级发展卡_红_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
         }
       ],
       "demo": true
@@ -6663,8 +7298,7 @@
           "anchor": "action.cards.cost.001.1.start"
         },
         {
-          "op": "overlay_show",
-          "overlay": "scene_backdrop",
+          "op": "show",
           "rect": {
             "x": 0,
             "y": 0,
@@ -6674,11 +7308,14 @@
           "dur": 0.0,
           "anchor": "action.cards.cost.001.1.start",
           "background": "#0E1016",
-          "layer": 0
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "purchase_card",
+          "op": "show",
           "rect": {
             "x": 0.028,
             "y": 0.1,
@@ -6688,7 +7325,47 @@
           "dur": 0.0,
           "anchor": "action.cards.cost.001.1.start",
           "image": "media/card/一级发展卡_红_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "cost",
+          "anchor": "action.cards.cost.001.1.b1.start",
+          "offset": 0.315,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "cost",
+          "anchor": "action.cards.cost.001.1.b1.end",
+          "offset": -0.405,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "cost",
+          "anchor": "action.cards.cost.001.1.b2.end",
+          "offset": -0.545,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
         }
       ],
       "transition": "overlay",
@@ -6765,8 +7442,7 @@
           "anchor": "action.cards.cost.001.2.start"
         },
         {
-          "op": "overlay_show",
-          "overlay": "purchase_card",
+          "op": "show",
           "rect": {
             "x": 0.028,
             "y": 0.1,
@@ -6776,83 +7452,129 @@
           "dur": 0.0,
           "anchor": "action.cards.cost.001.2.start",
           "image": "media/card/一级发展卡_红_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
         },
         {
           "op": "transfer",
           "setup": true,
           "dur": 0.0,
-          "source": "gem_supply_diamond",
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<diamond>"
-            }
-          ],
-          "anchor": "action.cards.cost.001.2.start"
+          "anchor": "action.cards.cost.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "transfer",
           "setup": true,
           "dur": 0.0,
-          "source": "gem_supply_ruby",
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ],
-          "anchor": "action.cards.cost.001.2.start"
+          "anchor": "action.cards.cost.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
-          "source": "player_holding",
-          "destination": "gem_supply_ruby",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ],
           "anchor": "action.cards.cost.001.2.b1.start",
-          "offset": 0.35
+          "offset": 0.35,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.0,
-          "source": "player_holding",
-          "destination": "gem_supply_diamond",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<diamond>"
-            }
-          ],
           "anchor": "action.cards.cost.001.2.b1.start",
-          "offset": 0.55
+          "offset": 0.55,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.5,
-          "source": "card_market",
-          "destination": "player_development",
-          "order": 1,
-          "template": "card_l1_ruby_38",
-          "palette": "card_level_1",
-          "concept": "development_card_level_1",
           "quantity": 1,
-          "anchor": "action.cards.cost.001.2.end"
+          "anchor": "action.cards.cost.001.2.end",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_ruby_38",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "order": 1
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "cost",
+          "anchor": "action.cards.cost.001.2.b1.start",
+          "offset": 0.195,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
         }
       ],
       "tree": "main",
@@ -7006,10 +7728,13 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "card_market",
           "peak_alpha": 0.65,
           "anchor": "action.cards.market.001.1.b1.start",
-          "offset": 0.505
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         }
       ],
       "tree": "main",
@@ -7095,113 +7820,155 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": [
-            "gem_supply_onyx",
-            "gem_supply_sapphire",
-            "gem_supply_emerald"
-          ],
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gem",
           "anchor": "action.cards.market.001.2.b1.start",
-          "offset": 0.005
+          "offset": 0.005,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_onyx",
+              "gem_supply_sapphire",
+              "gem_supply_emerald"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "card_market",
-          "order": 2,
           "peak_alpha": 0.65,
           "anchor": "action.cards.market.001.2.b1.start",
-          "offset": 1.005
+          "offset": 1.005,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "player_holding",
-          "destination": "gem_supply_sapphire",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<sapphire>"
-            }
-          ],
           "anchor": "action.cards.market.001.2.b1.start",
-          "offset": 1.905
+          "offset": 1.905,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "player_holding",
-          "destination": "gem_supply_emerald",
           "quantity": 2,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<emerald>"
-            }
-          ],
           "anchor": "action.cards.market.001.2.b1.end",
-          "offset": -1.715
+          "offset": -1.715,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "player_holding",
-          "destination": "gem_supply_ruby",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<ruby>"
-            }
-          ],
           "anchor": "action.cards.market.001.2.b1.end",
-          "offset": -1.515
+          "offset": -1.515,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "player_holding",
-          "destination": "gem_supply_onyx",
           "quantity": 1,
-          "concept": "gem",
-          "parts": [
-            {
-              "key": "color",
-              "value": "<onyx>"
-            }
-          ],
           "anchor": "action.cards.market.001.2.b1.end",
-          "offset": -1.315
+          "offset": -1.315,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "card_market",
-          "destination": "player_development",
           "quantity": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "anchor": "action.cards.market.001.2.b1.end",
-          "offset": -1.215
+          "offset": -1.215,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_development",
           "peak_alpha": 0.65,
           "anchor": "action.cards.market.001.2.b1.end",
-          "offset": -0.715
+          "offset": -0.715,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         }
       ],
       "tree": "main"
@@ -7247,29 +8014,38 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "deck_level_1",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<onyx>"
-            }
-          ],
           "to": "face_up",
-          "order": 2,
           "anchor": "action.cards.market.001.3.b1.start",
-          "offset": 0.925
+          "offset": 0.925,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ],
+            "order": 2
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "card_market",
-          "order": 2,
           "peak_alpha": 0.65,
           "anchor": "action.cards.market.001.3.b1.start",
-          "offset": 2.325
+          "offset": 2.325,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
         }
       ],
       "tree": "main"
@@ -7325,8 +8101,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "sample_red",
+          "op": "show",
           "rect": {
             "x": 0.24,
             "y": 0.11,
@@ -7336,7 +8111,47 @@
           "dur": 0.0,
           "anchor": "action.cards.prestige.001.1.start",
           "image": "media/card/二级发展卡_红_69_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.1.b1.start",
+          "offset": 0.505,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.1.b1.end",
+          "offset": -0.585,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.1.b2.start",
+          "offset": 0.11,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
         }
       ],
       "tree": "main"
@@ -7372,8 +8187,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "sample_red",
+          "op": "show",
           "rect": {
             "x": 0.24,
             "y": 0.11,
@@ -7383,11 +8197,14 @@
           "dur": 0.0,
           "anchor": "action.cards.prestige.001.2.start",
           "image": "media/card/二级发展卡_红_69_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "sample_white",
+          "op": "show",
           "rect": {
             "x": 0.52,
             "y": 0.11,
@@ -7397,7 +8214,35 @@
           "dur": 0.0,
           "anchor": "action.cards.prestige.001.2.start",
           "image": "media/card/一级发展卡_白_17_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.2.b1.start",
+          "offset": 0.315,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "cross",
+          "part": "prestige",
+          "anchor": "action.cards.prestige.001.2.b1.end",
+          "offset": -1.035,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
         }
       ],
       "tree": "main"
@@ -7421,8 +8266,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "sample_red",
+          "op": "show",
           "rect": {
             "x": 0.24,
             "y": 0.11,
@@ -7432,11 +8276,14 @@
           "dur": 0.0,
           "anchor": "action.cards.discount.001.start",
           "image": "media/card/二级发展卡_红_69_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "sample_white",
+          "op": "show",
           "rect": {
             "x": 0.52,
             "y": 0.11,
@@ -7446,7 +8293,47 @@
           "dur": 0.0,
           "anchor": "action.cards.discount.001.start",
           "image": "media/card/一级发展卡_白_17_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "bonus",
+          "anchor": "action.cards.discount.001.b1.start",
+          "offset": 0.475,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "bonus",
+          "anchor": "action.cards.discount.001.b1.start",
+          "offset": 1.475,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "bonus",
+          "anchor": "action.cards.discount.001.b1.start",
+          "offset": 2.675,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
         }
       ],
       "tree": "main"
@@ -7576,8 +8463,7 @@
       },
       "events": [
         {
-          "op": "overlay_show",
-          "overlay": "sample_red",
+          "op": "show",
           "rect": {
             "x": 0.24,
             "y": 0.11,
@@ -7587,11 +8473,14 @@
           "dur": 0.0,
           "anchor": "action.cards.discount.003.1.start",
           "image": "media/card/二级发展卡_红_69_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
         },
         {
-          "op": "overlay_show",
-          "overlay": "sample_white",
+          "op": "show",
           "rect": {
             "x": 0.52,
             "y": 0.11,
@@ -7601,7 +8490,11 @@
           "dur": 0.0,
           "anchor": "action.cards.discount.003.1.start",
           "image": "media/card/一级发展卡_白_17_cutout.png",
-          "layer": 10
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
         },
         {
           "op": "camera",
@@ -7613,40 +8506,60 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l3_diamond_80",
-          "palette": "card_level_3",
           "count": 1,
-          "concept": "development_card_level_3",
           "anchor": "action.cards.discount.003.1.b1.start",
           "offset": 0.315,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_sapphire_14",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
           "anchor": "action.cards.discount.003.1.b1.start",
           "offset": 0.615,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_14",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_development",
           "peak_alpha": 0.65,
           "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 1.715
+          "offset": 1.715,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         },
         {
           "op": "wait",
           "dur": 0.0,
           "anchor": "action.cards.discount.003.1.b1.start",
           "offset": 3.115
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.discount.003.1.b1.start",
+          "offset": 3.315,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
         }
       ],
       "demo": true,
@@ -7789,10 +8702,13 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_development",
           "peak_alpha": 0.65,
           "anchor": "action.cards.limit.001.2.b1.start",
-          "offset": 0.245
+          "offset": 0.245,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         }
       ],
       "entry": "action.cards.discount.001",
@@ -7985,22 +8901,28 @@
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_b_nobles",
-          "template": "noble_4",
-          "palette": "noble",
           "count": 1,
-          "concept": "noble_premise",
           "anchor": "action.nobles.intro.001.b1.start",
           "offset": 0.115,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_nobles",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble_premise"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "noble_market",
           "peak_alpha": 0.65,
           "anchor": "action.nobles.intro.001.b1.start",
-          "offset": 0.715
+          "offset": 0.715,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          }
         },
         {
           "op": "camera",
@@ -8013,11 +8935,14 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_b_nobles",
           "indicator": "arrow",
-          "order": 0,
           "anchor": "action.nobles.intro.001.b1.end",
-          "offset": -0.515
+          "offset": -0.515,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_nobles",
+            "order": 0
+          }
         }
       ]
     },
@@ -8045,42 +8970,54 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "noble_market",
           "indicator": "arrow",
           "part": "prestige",
-          "order": 0,
           "anchor": "action.nobles.value.001.1.b1.start",
-          "offset": 0.235
+          "offset": 0.235,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 0
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "noble_market",
           "indicator": "circle",
           "part": "prestige",
-          "order": 0,
           "anchor": "action.nobles.value.001.1.b1.start",
-          "offset": 1.235
+          "offset": 1.235,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 0
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "noble_market",
           "indicator": "arrow",
           "part": "condition",
-          "order": 0,
           "anchor": "action.nobles.value.001.1.b1.start",
-          "offset": 2.235
+          "offset": 2.235,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 0
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "noble_market",
           "indicator": "circle",
           "part": "condition",
-          "order": 0,
           "anchor": "action.nobles.value.001.1.b1.end",
-          "offset": -1.905
+          "offset": -1.905,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 0
+          }
         }
       ],
       "tree": "main"
@@ -8212,147 +9149,174 @@
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "deck_level_1",
-          "template": "blank_card_1",
-          "palette": "card_level_1",
-          "concept": "development_card_level_1",
           "count": 7,
           "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.0
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_diamond_20",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.315,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_diamond_22",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.395,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_diamond_24",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.475,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_ruby_33",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.915,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_33",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_ruby_35",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.995,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_35",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_ruby_37",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 1.075,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_37",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l1_ruby_40",
-          "palette": "card_level_1",
           "count": 1,
-          "concept": "development_card_level_1",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 1.155,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_development",
           "peak_alpha": 0.65,
           "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 2.315
+          "offset": 2.315,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         }
       ],
       "tree": "main"
@@ -8395,29 +9359,41 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "noble_market",
-          "order": 0,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.trigger.001.3.b1.start",
-          "offset": 0.915
+          "offset": 0.915,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 0
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "noble_market",
-          "destination": "player_nobles",
           "quantity": 1,
-          "concept": "noble",
           "anchor": "action.nobles.trigger.001.3.b1.end",
-          "offset": -1.305
+          "offset": -1.305,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_nobles",
           "peak_alpha": 0.65,
           "anchor": "action.nobles.trigger.001.3.b1.end",
-          "offset": -0.505
+          "offset": -0.505,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         }
       ],
       "tree": "main"
@@ -8469,29 +9445,38 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "noble_market",
           "indicator": "forbid",
-          "order": 1,
           "anchor": "action.nobles.forced.001.2.b1.start",
-          "offset": 0.345
+          "offset": 0.345,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 1
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "noble_market",
           "indicator": "forbid",
-          "order": 2,
           "anchor": "action.nobles.forced.001.2.b1.start",
-          "offset": 1.345
+          "offset": 1.345,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 2
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_nobles",
           "indicator": "arrow",
-          "order": 0,
           "anchor": "action.nobles.forced.001.2.b1.end",
-          "offset": -1.495
+          "offset": -1.495,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles",
+            "order": 0
+          }
         }
       ],
       "tree": "main"
@@ -8528,11 +9513,14 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_b_nobles",
           "indicator": "cross",
-          "order": 0,
           "anchor": "action.nobles.source.001.b1.start",
-          "offset": 1.705
+          "offset": 1.705,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_nobles",
+            "order": 0
+          }
         }
       ],
       "tree": "main"
@@ -8600,29 +9588,41 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "noble_market",
-          "order": 1,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.choice.001.2.b1.start",
-          "offset": 0.325
+          "offset": 0.325,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 1
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "noble_market",
-          "destination": "player_nobles",
           "quantity": 1,
-          "concept": "noble",
           "anchor": "action.nobles.choice.001.2.b1.start",
-          "offset": 1.325
+          "offset": 1.325,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_nobles",
           "peak_alpha": 0.65,
           "anchor": "action.nobles.choice.001.2.b1.end",
-          "offset": -0.485
+          "offset": -0.485,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         }
       ],
       "tree": "main"
@@ -8689,29 +9689,41 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "noble_market",
-          "order": 2,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.repeat.001.2.b1.start",
-          "offset": 0.705
+          "offset": 0.705,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "order": 2
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "noble_market",
-          "destination": "player_nobles",
           "quantity": 1,
-          "concept": "noble",
           "anchor": "action.nobles.repeat.001.2.b1.start",
-          "offset": 2.905
+          "offset": 2.905,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_nobles",
           "peak_alpha": 0.65,
           "anchor": "action.nobles.repeat.001.2.b1.end",
-          "offset": -3.055
+          "offset": -3.055,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         }
       ],
       "tree": "main"
@@ -8831,11 +9843,14 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "card_market",
-          "order": 9,
           "peak_alpha": 0.65,
           "anchor": "action.reserve.intro.001.1.b1.start",
-          "offset": 0.925
+          "offset": 0.925,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 9
+          }
         }
       ],
       "tree": "main"
@@ -8909,55 +9924,76 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "card_market",
-          "destination": "player_reserved",
           "quantity": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "to": "face_down",
           "anchor": "action.reserve.intro.001.2.b1.start",
-          "offset": 0.505
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "deck_level_3",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<sapphire>"
-            }
-          ],
           "to": "face_up",
-          "order": 9,
           "anchor": "action.reserve.intro.001.2.b1.start",
-          "offset": 1.205
+          "offset": 1.205,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ],
+            "order": 9
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "gold_supply",
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gold",
           "anchor": "action.reserve.intro.001.2.b1.start",
-          "offset": 2.305
+          "offset": 2.305,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_reserved",
           "peak_alpha": 0.65,
           "anchor": "action.reserve.intro.001.2.b1.end",
-          "offset": -1.785
+          "offset": -1.785,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         }
       ],
       "tree": "main"
@@ -8990,19 +10026,25 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_holding",
-          "concept": "gold",
           "peak_alpha": 0.65,
           "anchor": "action.reserve.gold.001.b1.start",
-          "offset": 0.535
+          "offset": 0.535,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_reserved",
           "peak_alpha": 0.65,
           "anchor": "action.reserve.gold.001.b1.start",
-          "offset": 2.335
+          "offset": 2.335,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         }
       ],
       "tree": "main"
@@ -9080,32 +10122,47 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "deck_level_1",
-          "destination": "player_reserved",
           "quantity": 1,
-          "concept": "development_card_level_1",
           "to": "face_down",
           "anchor": "action.reserve.deck.001.b1.start",
-          "offset": 1.115
+          "offset": 1.115,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "gold_supply",
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gold",
           "anchor": "action.reserve.deck.001.b1.start",
-          "offset": 2.915
+          "offset": 2.915,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_reserved",
-          "order": 1,
           "peak_alpha": 0.65,
           "anchor": "action.reserve.deck.001.b1.end",
-          "offset": -2.675
+          "offset": -2.675,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "order": 1
+          }
         }
       ],
       "tree": "main"
@@ -9134,10 +10191,13 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_reserved",
           "peak_alpha": 0.65,
           "anchor": "action.reserve.notes_intro.001.b1.start",
-          "offset": 0.305
+          "offset": 0.305,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         }
       ],
       "tree": "main"
@@ -9280,63 +10340,87 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "card_market",
-          "destination": "player_reserved",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "to": "face_down",
           "anchor": "action.reserve.limit_hand.001.2.b1.start",
-          "offset": 1.315
+          "offset": 1.315,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "deck_level_2",
-          "destination": "card_market",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<diamond>"
-            }
-          ],
           "to": "face_up",
-          "order": 6,
           "anchor": "action.reserve.limit_hand.001.2.b1.start",
-          "offset": 1.915
+          "offset": 1.915,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ],
+            "order": 6
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "gold_supply",
-          "destination": "player_holding",
           "quantity": 1,
-          "concept": "gold",
           "anchor": "action.reserve.limit_hand.001.2.b1.end",
-          "offset": -1.665
+          "offset": -1.665,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_reserved",
           "peak_alpha": 0.65,
           "anchor": "action.reserve.limit_hand.001.2.b1.end",
-          "offset": -0.265
+          "offset": -0.265,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_reserved",
           "indicator": "forbid",
           "anchor": "action.reserve.limit_hand.001.2.b2.start",
-          "offset": -0.03
+          "offset": -0.03,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         }
       ],
       "tree": "main"
@@ -9568,48 +10652,66 @@
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_reserved",
-          "order": 2,
           "peak_alpha": 0.65,
           "anchor": "action.purchase_reserved.002.1.b1.start",
-          "offset": 0.465
+          "offset": 0.465,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "order": 2
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "source": "player_holding",
-          "destination": "gold_supply",
           "quantity": 2,
-          "concept": "gold",
           "anchor": "action.purchase_reserved.002.1.b1.start",
-          "offset": 1.265
+          "offset": 1.265,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
         },
         {
           "op": "transfer",
           "dur": 0.7,
-          "source": "player_reserved",
-          "destination": "player_development",
           "quantity": 1,
-          "concept": "development_card_level_2",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<ruby>"
-            }
-          ],
           "to": "face_up",
           "anchor": "action.purchase_reserved.002.1.b1.start",
-          "offset": 2.665
+          "offset": 2.665,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l2_ruby_70",
           "part": "cost",
           "indicator": "circle",
           "anchor": "action.purchase_reserved.002.1.b1.end",
-          "offset": -2.005
+          "offset": -2.005,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l2_ruby_70"
+          }
         }
       ],
       "tree": "main"
@@ -9795,48 +10897,60 @@
         {
           "op": "destroy",
           "dur": 0.0,
-          "zone": "deck_level_3",
-          "template": "blank_card_3",
-          "palette": "card_level_3",
-          "concept": "development_card_level_3",
           "count": 1,
           "anchor": "endgame.trigger.001.start",
-          "offset": 0.0
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "template": "blank_card_3",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          }
         },
         {
           "op": "create",
           "dur": 0.0,
-          "zone": "player_development",
-          "template": "card_l3_sapphire_77",
-          "palette": "card_level_3",
           "count": 1,
-          "concept": "development_card_level_3",
-          "parts": [
-            {
-              "key": "bonus",
-              "value": "<sapphire>"
-            }
-          ],
           "anchor": "endgame.trigger.001.b1.start",
           "offset": 0.525,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_sapphire_77",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "zone": "player_development",
           "peak_alpha": 0.65,
           "anchor": "endgame.trigger.001.b1.start",
-          "offset": 2.125
+          "offset": 2.125,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_development",
           "indicator": "circle",
           "part": "prestige",
           "anchor": "endgame.trigger.001.b1.end",
-          "offset": -1.915
+          "offset": -1.915,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         },
         {
           "op": "wait",
@@ -9847,11 +10961,14 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_nobles",
           "indicator": "circle",
           "part": "prestige",
           "anchor": "endgame.trigger.001.b1.end",
-          "offset": -0.315
+          "offset": -0.315,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         }
       ],
       "tree": "main"
@@ -9950,20 +11067,26 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_development",
           "indicator": "circle",
           "part": "prestige",
           "anchor": "endgame.winner.001.b1.start",
-          "offset": 0.315
+          "offset": 0.315,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_nobles",
           "indicator": "circle",
           "part": "prestige",
           "anchor": "endgame.winner.001.b1.end",
-          "offset": -1.075
+          "offset": -1.075,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         }
       ],
       "tree": "main"
@@ -9987,11 +11110,14 @@
         {
           "op": "point",
           "dur": 0.0,
-          "zone": "player_development",
           "indicator": "circle",
           "part": "prestige",
           "anchor": "endgame.tie.001.1.b1.start",
-          "offset": 0.285
+          "offset": 0.285,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         }
       ],
       "tree": "main"

@@ -826,10 +826,19 @@ namespace BoardGameTutorial
             {
                 if (overlay == null || overlay.Alpha <= 0.001f) continue;
 
-                float x = overlay.X * Screen.width;
-                float y = overlay.Y * Screen.height;
-                float w = Mathf.Max(1f, overlay.W * Screen.width);
-                float h = Mathf.Max(1f, overlay.H * Screen.height);
+                float baseX = overlay.X * Screen.width;
+                float baseY = overlay.Y * Screen.height;
+                float baseW = Mathf.Max(1f, overlay.W * Screen.width);
+                float baseH = Mathf.Max(1f, overlay.H * Screen.height);
+
+                // scale/highlight are part of the common IAnimVisualObject
+                // interface; screen overlays apply them around their rect center.
+                float zoom = Mathf.Max(0.05f, overlay.Scale);
+                if (overlay.Highlighted) zoom *= Mathf.Max(1f, overlay.HighlightGrow);
+                float w = Mathf.Max(1f, baseW * zoom);
+                float h = Mathf.Max(1f, baseH * zoom);
+                float x = baseX + (baseW - w) * 0.5f;
+                float y = baseY + (baseH - h) * 0.5f;
                 var panelRect = new Rect(x, y, w, h);
 
                 // panel background: keeps the card visually separate from the
@@ -848,28 +857,63 @@ namespace BoardGameTutorial
                 GUI.DrawTexture(panelRect, panel);
 
                 var sprite = v2AnimPlayer.LoadOverlaySprite(overlay);
-                if (sprite == null || sprite.texture == null)
+                var cardRect = panelRect;
+                if (sprite != null && sprite.texture != null)
                 {
-                    GUI.color = savedColor;
-                    continue;
+                    float inset = Mathf.Min(w, h) * 0.06f;
+                    float availW = Mathf.Max(1f, w - inset * 2f);
+                    float availH = Mathf.Max(1f, h - inset * 2f);
+                    float srcW = Mathf.Max(1f, sprite.rect.width);
+                    float srcH = Mathf.Max(1f, sprite.rect.height);
+                    float k = Mathf.Min(availW / srcW, availH / srcH);
+                    float cardW = srcW * k;
+                    float cardH = srcH * k;
+                    cardRect = new Rect(
+                        x + (w - cardW) * 0.5f,
+                        y + (h - cardH) * 0.5f,
+                        cardW,
+                        cardH);
+
+                    GUI.color = new Color(1f, 1f, 1f, overlay.Alpha);
+                    GUI.DrawTexture(cardRect, sprite.texture);
                 }
 
-                float inset = Mathf.Min(w, h) * 0.06f;
-                float availW = Mathf.Max(1f, w - inset * 2f);
-                float availH = Mathf.Max(1f, h - inset * 2f);
-                float srcW = Mathf.Max(1f, sprite.rect.width);
-                float srcH = Mathf.Max(1f, sprite.rect.height);
-                float k = Mathf.Min(availW / srcW, availH / srcH);
-                float cardW = srcW * k;
-                float cardH = srcH * k;
-                var cardRect = new Rect(
-                    x + (w - cardW) * 0.5f,
-                    y + (h - cardH) * 0.5f,
-                    cardW,
-                    cardH);
+                if (overlay.Highlighted)
+                {
+                    float bw = Mathf.Max(2f, Mathf.Min(w, h) * 0.02f);
+                    GUI.color = new Color(1f, 0.82f, 0.22f, 0.65f * overlay.Alpha);
+                    GUI.DrawTexture(new Rect(x, y, w, bw), panel);
+                    GUI.DrawTexture(new Rect(x, y + h - bw, w, bw), panel);
+                    GUI.DrawTexture(new Rect(x, y, bw, h), panel);
+                    GUI.DrawTexture(new Rect(x + w - bw, y, bw, h), panel);
+                }
 
-                GUI.color = new Color(1f, 1f, 1f, overlay.Alpha);
-                GUI.DrawTexture(cardRect, sprite.texture);
+                if (!string.IsNullOrEmpty(overlay.Indicator) || !string.IsNullOrEmpty(overlay.PointPart))
+                {
+                    float u = 0.5f;
+                    float v = 0.5f;
+                    switch (overlay.PointPart)
+                    {
+                        case "prestige": u = 0.16f; v = 0.16f; break;
+                        case "cost": u = 0.16f; v = 0.84f; break;
+                        case "bonus": u = 0.84f; v = 0.16f; break;
+                        case "condition": u = 0.50f; v = 0.84f; break;
+                    }
+                    float markerSize = Mathf.Max(28f, Mathf.Min(cardRect.width, cardRect.height) * 0.20f);
+                    var markerRect = new Rect(
+                        cardRect.x + cardRect.width * u - markerSize * 0.5f,
+                        cardRect.y + cardRect.height * v - markerSize * 0.5f,
+                        markerSize,
+                        markerSize);
+                    string markerKind = string.IsNullOrEmpty(overlay.Indicator)
+                        ? "circle" : overlay.Indicator;
+                    var markerSprite = ActorBinder.GetMarkerSprite(markerKind);
+                    if (markerSprite != null && markerSprite.texture != null)
+                    {
+                        GUI.color = new Color(0.92f, 0.24f, 0.20f, overlay.Alpha);
+                        GUI.DrawTexture(markerRect, markerSprite.texture);
+                    }
+                }
                 GUI.color = savedColor;
             }
             GUI.color = savedColor;

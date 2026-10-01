@@ -17,6 +17,13 @@ metadata:
 - `time_anchors` 已迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。
 - QA 与 cue 同置流程已落地：问题优先/可写在 `full.anim.json` 的 `qa` 字段，历史问题继续放 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取 cue 内问题，`compile_tutorial.py --validate-qa` / `--validate-qa-all` 当前从 `_qa/questions.json` 提供机器侧门禁。
 - quick 版尚未开始；正式视觉验收被用户主动跳过，仍未闭环。
+- **2026-10-01：展示树收成 main + screen mask。** full 当前只有 `main` 一棵 tree；
+  发展卡/宝石/购买样卡等非实体展示改为屏幕空间 `show/hide` 对象，
+  贵族和起始玩家标记保留真实组件，在 main 树用近景 shot 介绍。
+- **2026-10-01：对象原语统一 target 接口。** 所有对象原语不再各自摊平写
+  `zone`/`overlay`/`source`，统一指向 `{"space":"entity"|"screen", ...}`；
+  编译器把接口展开成旧的 flat 字段，Unity 运行时用 `IAnimVisualObject`
+  同时处理实体和屏幕对象。屏幕对象也支持 highlight/point/fade/scale。
 
 ## 技术选型
 
@@ -44,8 +51,20 @@ metadata:
    - 没有 camera 事件的 cue 继承上一 cue 终态机位。
 
 3. **`clips`**
-   - 纯视觉插值：位置 / 缩放 / 透明度 / 翻转 / 洗混。
+   - 纯视觉插值：位置 / 缩放 / 透明度 / 翻转 / 洗混 / 高亮 / 指示物。
+   - `object_space` 标记片段作用在 `entity` 还是 `screen` 对象；表现原语
+     通过 `IAnimVisualObject` 对两种对象执行同一套逻辑。
    - 不得写 ZoneId / Order / Face，逻辑状态只由 `state_ops` 决定。
+
+### 对象接口 `target`
+
+- 源事件统一用 `target` 选对象：
+  - 实体：`{"space":"entity","zone":"...","template":"...","parts":[...],"order":n}`；
+  - 屏幕：`{"space":"screen","id":"overlay_id"}`。
+- `create/ensure/destroy/transfer/stack/shuffle/move_order/set_face` 是实体状态原语；
+- `show/hide/highlight/point/fade/scale/label` 是对象表现原语，两种空间都实现。
+- 全局原语：`camera`、`wait`、无 target 的整幅图 `show`。
+- 旧数据迁移：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
 
 ## 时间锚点 `time_anchors`
 

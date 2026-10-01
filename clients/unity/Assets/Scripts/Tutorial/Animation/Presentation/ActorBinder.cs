@@ -201,6 +201,11 @@ namespace BoardGameTutorial.Animation
             }
         }
 
+        public static Sprite GetMarkerSprite(string kind)
+        {
+            return MarkerSprite(kind);
+        }
+
         private static Sprite MarkerSprite(string kind)
         {
             string key = string.IsNullOrEmpty(kind) ? "forbid" : kind;

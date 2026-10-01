@@ -6,7 +6,24 @@ using System.Linq;
 
 namespace BoardGameTutorial.Animation
 {
-    public sealed class VisualItemState
+    /// <summary>
+    /// Common target interface for every animated object, regardless of whether
+    /// it lives in world space (entity/component) or screen space (overlay).
+    /// Presentation primitives are written against this interface; the two
+    /// concrete states below are the two implementations.
+    /// </summary>
+    public interface IAnimVisualObject
+    {
+        string ObjectId { get; }
+        float Alpha { get; set; }
+        float Scale { get; set; }
+        bool Highlighted { get; set; }
+        float HighlightGrow { get; set; }
+        string PointPart { get; set; }
+        string Indicator { get; set; }
+    }
+
+    public sealed class VisualItemState : IAnimVisualObject
     {
         public string Id;
         public string TemplateId;
@@ -27,6 +44,14 @@ namespace BoardGameTutorial.Animation
         public float HighlightGrow = 1f;
         public string PointPart;
         public string Indicator;
+
+        string IAnimVisualObject.ObjectId { get { return Id; } }
+        float IAnimVisualObject.Alpha { get { return Alpha; } set { Alpha = value; } }
+        float IAnimVisualObject.Scale { get { return Scale; } set { Scale = value; } }
+        bool IAnimVisualObject.Highlighted { get { return Highlighted; } set { Highlighted = value; } }
+        float IAnimVisualObject.HighlightGrow { get { return HighlightGrow; } set { HighlightGrow = value; } }
+        string IAnimVisualObject.PointPart { get { return PointPart; } set { PointPart = value; } }
+        string IAnimVisualObject.Indicator { get { return Indicator; } set { Indicator = value; } }
     }
 
     public sealed class VisualMarkerState
@@ -53,7 +78,7 @@ namespace BoardGameTutorial.Animation
     /// counted by card-identity checks.  It is a camera/viewport-fixed asset
     /// reference, optionally linked to a source item for tooling.
     /// </summary>
-    public sealed class VisualOverlayState
+    public sealed class VisualOverlayState : IAnimVisualObject
     {
         public string Id;
         public string TemplateId;
@@ -68,8 +93,21 @@ namespace BoardGameTutorial.Animation
         public float H;
         public int Layer;
         public float Alpha = 1f;
+        public float Scale = 1f;
+        public bool Highlighted;
+        public float HighlightGrow = 1f;
+        public string PointPart;
+        public string Indicator;
         public string SourceItemId;
         public bool PersistOnSourceMissing = true;
+
+        string IAnimVisualObject.ObjectId { get { return Id; } }
+        float IAnimVisualObject.Alpha { get { return Alpha; } set { Alpha = value; } }
+        float IAnimVisualObject.Scale { get { return Scale; } set { Scale = value; } }
+        bool IAnimVisualObject.Highlighted { get { return Highlighted; } set { Highlighted = value; } }
+        float IAnimVisualObject.HighlightGrow { get { return HighlightGrow; } set { HighlightGrow = value; } }
+        string IAnimVisualObject.PointPart { get { return PointPart; } set { PointPart = value; } }
+        string IAnimVisualObject.Indicator { get { return Indicator; } set { Indicator = value; } }
     }
 
     public sealed class FrameState
@@ -86,6 +124,54 @@ namespace BoardGameTutorial.Animation
             for (int i = 0; i < Items.Count; i++)
                 if (Items[i].Id == id) return Items[i];
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Applies the presentation primitives that are meaningful for every
+    /// object implementation of <see cref="IAnimVisualObject"/>.
+    /// </summary>
+    public static class VisualClipPlayer
+    {
+        public static void Apply(IAnimVisualObject target, CompiledClipDef clip, float t)
+        {
+            if (target == null || clip == null) return;
+            float start = clip.at + Math.Max(0f, clip.lead);
+            float end = start + Math.Max(0f, clip.dur);
+            if (t + 1e-6f < start) return;
+            float k = end > start ? Clamp01((t - start) / (end - start)) : 1f;
+            float eased = Easing.Evaluate(clip.easing, k);
+            switch (clip.kind)
+            {
+                case "scale":
+                    target.Scale = Lerp(1f, clip.to_scale, eased);
+                    break;
+                case "fade":
+                    target.Alpha = Lerp(1f, clip.to_alpha, eased);
+                    break;
+                case "highlight":
+                    target.Highlighted = t < end || end <= start;
+                    if (target.Highlighted)
+                    {
+                        float half = k < 0.5f ? k * 2f : (1f - k) * 2f;
+                        target.HighlightGrow = Lerp(1f, Math.Max(1f, clip.to_scale), half);
+                    }
+                    break;
+                case "point":
+                    target.PointPart = clip.part;
+                    target.Indicator = clip.indicator;
+                    break;
+            }
+        }
+
+        private static float Clamp01(float v)
+        {
+            return v < 0f ? 0f : (v > 1f ? 1f : v);
+        }
+
+        private static float Lerp(float a, float b, float t)
+        {
+            return a + (b - a) * t;
         }
     }
 
@@ -252,25 +338,39 @@ namespace BoardGameTutorial.Animation
                             break;
                         }
                         case "scale":
-                            v.Scale = Lerp(clip.from_scale, clip.to_scale, eased);
-                            break;
                         case "fade":
-                            v.Alpha = Lerp(clip.from_alpha, clip.to_alpha, eased);
-                            break;
                         case "highlight":
-                            v.Highlighted = t < end || end <= start;
-                            if (v.Highlighted)
-                            {
-                                float half = k < 0.5f ? k * 2f : (1f - k) * 2f;
-                                v.HighlightGrow = Lerp(1f, Math.Max(1f, clip.to_scale), half);
-                            }
-                            break;
                         case "point":
-                            v.PointPart = clip.part;
-                            v.Indicator = clip.indicator;
+                            VisualClipPlayer.Apply(v, clip, t);
                             break;
                     }
                 }
+            }
+
+            // Entity point markers.  A point clip is duration-less in the
+            // current data, so it marks the item for the rest of the cue; the
+            // binder renders a marker at the item's stage position.  Screen
+            // point markers are applied to VisualOverlayState below instead.
+            foreach (var item in frame.Items)
+            {
+                if (item == null || (string.IsNullOrEmpty(item.Indicator) && string.IsNullOrEmpty(item.PointPart)))
+                    continue;
+                float radius = 0.2f;
+                var tpl = StageLookup.Template(stage, item.TemplateId);
+                if (tpl != null)
+                {
+                    if (tpl.width > 0f && tpl.height > 0f)
+                        radius = Math.Min(tpl.width, tpl.height) * 0.5f;
+                    else if (tpl.world_size > 0f)
+                        radius = tpl.world_size * 0.5f;
+                }
+                frame.Markers.Add(new VisualMarkerState
+                {
+                    Kind = string.IsNullOrEmpty(item.Indicator) ? "circle" : item.Indicator,
+                    X = item.X,
+                    Z = item.Z,
+                    Radius = radius,
+                });
             }
 
             // Whole-picture state (box cover, etc.).
@@ -336,13 +436,17 @@ namespace BoardGameTutorial.Animation
             // outside the ComponentState list: a real card may be shown here
             // while it still lives in card_market / player_development, and the
             // overlay persists independently of world camera/rotation/destroy.
+            // Screen-targeted presentation clips use the same IAnimVisualObject
+            // interface as entity clips, so highlight/point/fade/scale are not
+            // duplicated per object kind.
             if (cue.clips != null)
             {
                 var overlayClips = new List<CompiledClipDef>();
                 foreach (var clip in cue.clips)
                 {
                     if (clip == null) continue;
-                    if (clip.kind == "overlay_show" || clip.kind == "overlay_hide")
+                    if (clip.kind == "overlay_show" || clip.kind == "overlay_hide"
+                        || clip.object_space == "screen")
                         overlayClips.Add(clip);
                 }
                 overlayClips.Sort((a, b) =>
@@ -355,34 +459,55 @@ namespace BoardGameTutorial.Animation
                     if (t + 1e-6f < start) continue;
                     string id = clip.overlay ?? "";
                     if (string.IsNullOrEmpty(id)) continue;
+
                     if (clip.kind == "overlay_hide")
                     {
                         active.Remove(id);
                         continue;
                     }
-
-                    float alpha = 1f;
-                    if (clip.dur > 0f)
-                        alpha = Clamp01((t - start) / clip.dur);
-
-                    active[id] = new VisualOverlayState
+                    if (clip.kind == "overlay_show")
                     {
-                        Id = id,
-                        TemplateId = clip.template,
-                        Palette = clip.palette,
-                        FaceImage = clip.face_image,
-                        BackImage = clip.back_image,
-                        Mask = clip.mask,
-                        Background = clip.background,
-                        X = clip.label_x,
-                        Y = clip.label_y,
-                        W = clip.label_w,
-                        H = clip.label_h,
-                        Layer = clip.layer,
-                        Alpha = alpha,
-                        SourceItemId = clip.source_item_id,
-                        PersistOnSourceMissing = clip.persist_on_source_missing,
-                    };
+                        float alpha = 1f;
+                        if (clip.dur > 0f)
+                            alpha = Clamp01((t - start) / clip.dur);
+                        active[id] = new VisualOverlayState
+                        {
+                            Id = id,
+                            TemplateId = clip.template,
+                            Palette = clip.palette,
+                            FaceImage = clip.face_image,
+                            BackImage = clip.back_image,
+                            Mask = clip.mask,
+                            Background = clip.background,
+                            X = clip.label_x,
+                            Y = clip.label_y,
+                            W = clip.label_w,
+                            H = clip.label_h,
+                            Layer = clip.layer,
+                            Alpha = alpha,
+                            SourceItemId = clip.source_item_id,
+                            PersistOnSourceMissing = clip.persist_on_source_missing,
+                        };
+                        continue;
+                    }
+
+                }
+
+                // Apply the common presentation primitives in a second pass.
+                // This keeps source-event ordering irrelevant: a highlight or
+                // point may appear before its overlay_show in the file and the
+                // interface still resolves against the object active at t.
+                foreach (var clip in overlayClips)
+                {
+                    if (clip == null || clip.kind == "overlay_show" || clip.kind == "overlay_hide")
+                        continue;
+                    if (clip.object_space != "screen") continue;
+                    float start = clip.at + Math.Max(0f, clip.lead);
+                    if (t + 1e-6f < start) continue;
+                    string id = clip.overlay ?? "";
+                    if (string.IsNullOrEmpty(id)) continue;
+                    if (active.TryGetValue(id, out var existing) && existing != null)
+                        VisualClipPlayer.Apply(existing, clip, t);
                 }
                 foreach (var ov in active.Values) frame.Overlays.Add(ov);
             }

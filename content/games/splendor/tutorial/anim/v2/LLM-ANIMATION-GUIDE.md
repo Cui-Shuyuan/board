@@ -54,16 +54,59 @@
 - demo 允许“牌堆清空 / 假设我买了 3 张牌”等 hypothetical 状态。
 - canonical 分支通过显式 `entry` 回真实来源，不能默认继承 demo 结局；audit JSON 的 `state_graph` 会输出 `state_source`、`is_demo`、`branch_id`。
 
-## 2. 空间：只写 zone + order
+## 2. 对象接口：`target` 同时支持实体与屏幕空间
+
+所有“对象原语”都不再各自摊平写 `zone`/`overlay`/`source`，而是统一指向一个
+`target` 接口。`space` 只有两种实现：
+
+- `"entity"`：世界实体/逻辑组件。字段为 `zone`（或 `zones`）加选择器
+  `template`/`palette`/`concept`/`parts`/`order`。
+- `"screen"`：屏幕空间展示对象（mask/展示牌/提示条等），按 `id` 引用。
 
 ```json
-{ "op": "transfer", "anchor": "...", "source": "gem_supply_diamond",
-  "destination": "player_holding", "quantity": 1 }
+// 实体：destination 集合 + 创建身份
+{ "op": "create", "anchor": "...",
+  "target": { "space": "entity", "zone": "showcase",
+              "template": "sample_card_1", "palette": "card_level_1" } }
+
+// 实体：把宝石从供应堆转移到玩家持有区
+{ "op": "transfer", "anchor": "...",
+  "target": { "space": "entity", "zone": "gem_supply_diamond", "concept": "gem" },
+  "destination": { "space": "entity", "zone": "player_holding" },
+  "quantity": 1 }
+
+// 实体：高亮一个市场卡位
+{ "op": "highlight", "anchor": "...", "dur": 0.5,
+  "target": { "space": "entity", "zone": "card_market", "order": 2 } }
+
+// 屏幕空间：创建/替换一个展示对象
+{ "op": "show", "anchor": "...",
+  "target": { "space": "screen", "id": "sample_card" },
+  "image": "media/card/一级发展卡_绿_30_cutout.png",
+  "rect": { "x": 0.24, "y": 0.10, "w": 0.24, "h": 0.68 },
+  "layer": 10 }
+
+// 屏幕空间：同一套表现原语
+{ "op": "highlight", "anchor": "...", "dur": 0.5, "grow": 1.08,
+  "target": { "space": "screen", "id": "sample_card" } }
+{ "op": "point", "anchor": "...", "indicator": "arrow", "part": "prestige",
+  "target": { "space": "screen", "id": "sample_card" } }
+{ "op": "hide", "anchor": "...",
+  "target": { "space": "screen", "id": "sample_card" } }
 ```
 
-- 不要写 x/z。
+规则：
+
+- `create` / `ensure` / `destroy` / `transfer` / `stack` / `shuffle` /
+  `move_order` / `set_face` 是状态原语，只实现实体对象。
+- `show` / `hide` / `highlight` / `point` / `fade` / `scale` / `label` 是对象
+  表现原语，实体和屏幕空间都实现。
+- `show` 带 `picture` 且无 `target` 时是整个舞台的整幅图原语，不走对象接口。
+- `camera` / `wait` 是全局原语，没有对象目标。
+- 世界对象的空间仍然只写 `zone`（或 `zones`）+ 选择器；不要写 x/z。
 - 同一区域多个件用 `order`/`slot` 表达，不靠坐标偏移表达。
 - 空位、堆叠、添加位置由 stage 的 `layout` / `display` 决定。
+- 旧数据迁移脚本：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
 
 ## 3. 时间：只写 anchor + offset
 
@@ -71,7 +114,7 @@
 
 ```json
 { "op": "create", "anchor": "setup.cards.001.1.b1.start",
-  "zone": "showcase", "template": "sample_card_1" }
+  "target": { "space": "entity", "zone": "showcase", "template": "sample_card_1" } }
 ```
 
 锚点在轨道顶层 `time_anchors` 中预定义，命名约定：
@@ -87,7 +130,8 @@
 
 ```json
 { "op": "highlight", "anchor": "action.take.same.001.b1.start",
-  "offset": 0.25, "zone": "gem_supply_emerald" }
+  "offset": 0.25,
+  "target": { "space": "entity", "zone": "gem_supply_emerald" } }
 ```
 
 规则：

@@ -1114,46 +1114,80 @@ class Compiler:
                 if arr:
                     state.move_order(arr[0], zone, int(ev.get("index", ev.get("order", 0)) or 0))
             elif op == "highlight":
-                matched = self.select_items(state, zone, sel, ev.get("order"))
-                item_ids = [it["id"] for it in matched]
-                pointer_resolution.append({
-                    "event_index": event_index,
-                    "op": op,
-                    "zone": zone,
-                    "order": ev.get("order"),
-                    "matched_count": len(matched),
-                    "item_ids": item_ids,
-                })
-                if not item_ids:
-                    self.rep.warn(
-                        f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
-                        f"zone={zone!r} order={ev.get('order')!r} "
-                        f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
-                    )
-                for it in matched:
-                    clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
-                                                        to_scale=float(ev.get("grow", 1.16) or 1.16)))
+                if ev.get("space") == "screen":
+                    overlay_id = norm(ev.get("overlay"))
+                    if not overlay_id:
+                        raise ValueError(f"cue {cue_id}: screen highlight needs overlay id")
+                    grow = float(ev.get("grow", 1.16) or 1.16)
+                    clips.append(self.screen_presentation_clip(
+                        "highlight", overlay_id, at, dur, lead, easing, to_scale=grow))
+                    pointer_resolution.append({
+                        "event_index": event_index,
+                        "op": op,
+                        "object_space": "screen",
+                        "overlay": overlay_id,
+                        "matched_count": 1,
+                        "item_ids": [overlay_id],
+                    })
+                else:
+                    matched = self.select_items(state, zone, sel, ev.get("order"))
+                    item_ids = [it["id"] for it in matched]
+                    pointer_resolution.append({
+                        "event_index": event_index,
+                        "op": op,
+                        "object_space": "entity",
+                        "zone": zone,
+                        "order": ev.get("order"),
+                        "matched_count": len(matched),
+                        "item_ids": item_ids,
+                    })
+                    if not item_ids:
+                        self.rep.warn(
+                            f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
+                            f"zone={zone!r} order={ev.get('order')!r} "
+                            f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                        )
+                    for it in matched:
+                        clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
+                                                            to_scale=float(ev.get("grow", 1.16) or 1.16)))
             elif op == "point":
-                matched = self.select_items(state, zone, sel, ev.get("order"))
-                selected = matched[:1]
-                item_ids = [it["id"] for it in selected]
-                pointer_resolution.append({
-                    "event_index": event_index,
-                    "op": op,
-                    "zone": zone,
-                    "order": ev.get("order"),
-                    "matched_count": len(matched),
-                    "item_ids": item_ids,
-                })
-                if not item_ids:
-                    self.rep.warn(
-                        f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
-                        f"zone={zone!r} order={ev.get('order')!r} "
-                        f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
-                    )
-                if selected:
-                    clips.append(self.presentation_clip("point", selected[0], at, dur, lead, easing,
-                                                        part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
+                if ev.get("space") == "screen":
+                    overlay_id = norm(ev.get("overlay"))
+                    if not overlay_id:
+                        raise ValueError(f"cue {cue_id}: screen point needs overlay id")
+                    clips.append(self.screen_presentation_clip(
+                        "point", overlay_id, at, dur, lead, easing,
+                        part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
+                    pointer_resolution.append({
+                        "event_index": event_index,
+                        "op": op,
+                        "object_space": "screen",
+                        "overlay": overlay_id,
+                        "matched_count": 1,
+                        "item_ids": [overlay_id],
+                    })
+                else:
+                    matched = self.select_items(state, zone, sel, ev.get("order"))
+                    selected = matched[:1]
+                    item_ids = [it["id"] for it in selected]
+                    pointer_resolution.append({
+                        "event_index": event_index,
+                        "op": op,
+                        "object_space": "entity",
+                        "zone": zone,
+                        "order": ev.get("order"),
+                        "matched_count": len(matched),
+                        "item_ids": item_ids,
+                    })
+                    if not item_ids:
+                        self.rep.warn(
+                            f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
+                            f"zone={zone!r} order={ev.get('order')!r} "
+                            f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                        )
+                    if selected:
+                        clips.append(self.presentation_clip("point", selected[0], at, dur, lead, easing,
+                                                            part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
             elif op == "overlay_show":
                 overlay_id = norm(ev.get("overlay"))
                 if not overlay_id:
@@ -1170,6 +1204,7 @@ class Compiler:
                 rect = ev.get("rect") if isinstance(ev.get("rect"), dict) else {}
                 c = self.base_clip("overlay_show", at, dur, lead, easing)
                 c.update({
+                    "object_space": "screen",
                     "overlay": overlay_id,
                     "template": tpl,
                     "palette": pal,
@@ -1194,6 +1229,7 @@ class Compiler:
                 if not overlay_id:
                     raise ValueError(f"cue {cue_id}: overlay_hide needs overlay")
                 c = self.base_clip("overlay_hide", at, dur, lead, easing)
+                c["object_space"] = "screen"
                 c["overlay"] = overlay_id
                 clips.append(c)
             elif op == "label":
@@ -1231,13 +1267,29 @@ class Compiler:
                     })
                 clips.append(c)
             elif op == "fade":
-                for it in self.select_items(state, zone, sel, ev.get("order")):
-                    clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
-                                                        to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
+                if ev.get("space") == "screen":
+                    overlay_id = norm(ev.get("overlay"))
+                    if not overlay_id:
+                        raise ValueError(f"cue {cue_id}: screen fade needs overlay id")
+                    clips.append(self.screen_presentation_clip(
+                        "fade", overlay_id, at, dur, lead, easing,
+                        to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
+                else:
+                    for it in self.select_items(state, zone, sel, ev.get("order")):
+                        clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
+                                                            to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
             elif op == "scale":
-                for it in self.select_items(state, zone, sel, ev.get("order")):
-                    clips.append(self.presentation_clip("scale", it, at, dur, lead, easing,
-                                                        to_scale=float(ev.get("scale", 1.0) or 1.0)))
+                if ev.get("space") == "screen":
+                    overlay_id = norm(ev.get("overlay"))
+                    if not overlay_id:
+                        raise ValueError(f"cue {cue_id}: screen scale needs overlay id")
+                    clips.append(self.screen_presentation_clip(
+                        "scale", overlay_id, at, dur, lead, easing,
+                        to_scale=float(ev.get("scale", 1.0) or 1.0)))
+                else:
+                    for it in self.select_items(state, zone, sel, ev.get("order")):
+                        clips.append(self.presentation_clip("scale", it, at, dur, lead, easing,
+                                                            to_scale=float(ev.get("scale", 1.0) or 1.0)))
             elif op == "wait":
                 pass
             else:
@@ -1305,6 +1357,7 @@ class Compiler:
     def base_clip(self, kind, at, dur, lead, easing):
         return {
             "kind": kind, "at": at, "dur": dur, "lead": lead, "easing": easing,
+            "object_space": "entity",
             "item_id": "", "template": "", "palette": "",
             "from_zone": "", "from_order": -1, "to_zone": "", "to_order": -1,
             "from_x": 0.0, "from_z": 0.0, "to_x": 0.0, "to_z": 0.0,
@@ -1413,6 +1466,13 @@ class Compiler:
         for k, v in kw.items():
             if k in c:
                 c[k] = v
+        return c
+
+    def screen_presentation_clip(self, kind, overlay_id, at, dur, lead, easing, **kw):
+        c = self.base_clip(kind, at, dur, lead, easing)
+        c.update({"object_space": "screen", "overlay": overlay_id})
+        for k, v in kw.items():
+            c[k] = v
         return c
 
     def clip(self, kind, at, dur, lead, easing, **kw):

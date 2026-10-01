@@ -65,8 +65,13 @@
 ```json
 { "op": "camera", "anchor": "setup.cards.001.1.start", "shot": "shot_card_face" }
 { "op": "create", "anchor": "setup.cards.001.1.b1.start",
-  "zone": "showcase", "template": "sample_card_1" }
+  "target": { "space": "entity", "zone": "showcase", "template": "sample_card_1" } }
 ```
+
+对象原语统一使用 `target` 接口选择接收者：
+`{"space":"entity","zone":"...",...selector...}` 或 `{"space":"screen","id":"..."}`。
+`create/transfer/destroy/...` 实现实体对象；`show/hide/highlight/point/fade/scale/label`
+同时实现实体和屏幕对象。详见 LLM-ANIMATION-GUIDE.md 第 2 节。
 
 `edge` 当前支持：
 

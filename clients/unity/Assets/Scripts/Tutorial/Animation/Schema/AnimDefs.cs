@@ -287,6 +287,7 @@ namespace BoardGameTutorial.Animation
     public sealed class CompiledClipDef
     {
         public string kind;      // spawn | move | destroy | face | scale | fade | highlight | point | picture
+        public string object_space = "entity"; // entity | screen
         public float at;
         public float dur;
         public float lead;

@@ -26,8 +26,14 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
-PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera", "label",
+PRESENTATION_OPS = {"show", "hide", "highlight", "point", "fade", "scale", "wait", "camera", "label",
                      "overlay_show", "overlay_hide"}
+# 对象接口：原语不再各自区分世界/屏幕，而是统一指向一个 target。
+#   {"space": "entity", "zone": ..., "template": ..., "palette": ..., "concept": ..., "parts": [...], "order": n}
+#   {"space": "screen", "id": "overlay_slot"}
+TARGET_SPACES = {"entity", "screen"}
+ENTITY_TARGET_FIELDS = ("zone", "template", "palette", "concept", "parts", "order")
+SCREEN_TARGET_FIELDS = ("id", "overlay")
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS
@@ -63,6 +69,123 @@ def _has_selector(ev: dict) -> bool:
     return any(ev.get(k) for k in ("template", "palette", "concept", "parts"))
 
 
+def _entity_target_zone(target: dict):
+    if not isinstance(target, dict):
+        return None
+    zones = target.get("zones")
+    if isinstance(zones, list):
+        return [str(z) for z in zones if z]
+    return target.get("zone")
+
+
+def _merge_entity_target_fields(ev: dict, target: dict):
+    """Copy selector fields from an entity target object onto the flat event."""
+    for key in ENTITY_TARGET_FIELDS:
+        if key in target and (key not in ev or ev.get(key) in (None, "")):
+            ev[key] = target[key]
+
+
+def _normalize_event(ev):
+    """Normalize the source-level object-target interface into the older flat
+    fields that the rest of the pipeline already consumes.
+
+    Source events may target either an entity (zone + selector) or a screen
+    object (overlay slot id).  Keeping the flattened form means the compiler,
+    validators and audit tools share one implementation; the interface is the
+    authoring surface, not a second data model.
+    """
+    if not isinstance(ev, dict):
+        return ev
+    op = ev.get("op")
+    target = ev.get("target")
+    if isinstance(target, list):
+        # Multi-target form (transfer from several source zones).  Selection
+        # fields are taken from the first target; V2 transfer already applies
+        # one selector across all source zones.
+        zones = []
+        first = None
+        for item in target:
+            if not isinstance(item, dict) or item.get("space") != "entity":
+                continue
+            first = first or item
+            z = _entity_target_zone(item)
+            if isinstance(z, list):
+                zones.extend(z)
+            elif z:
+                zones.append(z)
+        if first is not None:
+            _merge_entity_target_fields(ev, first)
+        if op == "transfer":
+            ev["source"] = zones
+            ev["space"] = "entity"
+    elif isinstance(target, dict):
+        space = target.get("space")
+        if space == "screen":
+            slot = target.get("id") or target.get("overlay")
+            ev["space"] = "screen"
+            if slot:
+                ev["overlay"] = slot
+            if op == "show":
+                ev["op"] = "overlay_show"
+            elif op == "hide":
+                ev["op"] = "overlay_hide"
+        elif space == "entity":
+            ev["space"] = "entity"
+            if op == "stack":
+                zone = _entity_target_zone(target)
+                if isinstance(zone, list):
+                    zone = zone[0] if zone else None
+                if not ev.get("destination") and zone:
+                    ev["destination"] = zone
+            else:
+                _merge_entity_target_fields(ev, target)
+                zone = _entity_target_zone(target)
+                if op == "transfer":
+                    if isinstance(zone, list):
+                        ev["source"] = zone
+                    elif zone and not ev.get("source"):
+                        ev["source"] = zone
+                elif zone and not ev.get("zone"):
+                    ev["zone"] = zone
+    # transfer destination may itself be an object reference
+    dest = ev.get("destination")
+    if isinstance(dest, dict):
+        dspace = dest.get("space")
+        if dspace == "entity":
+            ev["destination"] = dest.get("zone")
+        elif dspace == "screen":
+            ev["destination"] = dest.get("id") or dest.get("overlay")
+            ev["destination_space"] = "screen"
+    # some hand-written states may wrap the source in an object reference
+    src = ev.get("source")
+    if isinstance(src, dict):
+        sspace = src.get("space")
+        if sspace == "entity":
+            ev["source"] = src.get("zone")
+    return ev
+
+
+def _check_object_target(report: Report, where: str, ev: dict):
+    target = ev.get("target")
+    if target is None:
+        return
+    targets = target if isinstance(target, list) else [target]
+    for i, item in enumerate(targets):
+        label = f"{where}.target[{i}]" if isinstance(target, list) else f"{where}.target"
+        if not isinstance(item, dict):
+            report.error(f"{label}: target item must be an object")
+            continue
+        space = item.get("space")
+        if space not in TARGET_SPACES:
+            report.error(f"{label}: target.space must be one of {sorted(TARGET_SPACES)}, got {space!r}")
+            continue
+        if space == "screen":
+            if not (item.get("id") or item.get("overlay")):
+                report.error(f"{label}: screen target needs id/overlay")
+        elif not (item.get("zone") or item.get("zones")):
+            report.warn(f"{label}: entity target has no zone/zones")
+
+
 def _check_selector(report: Report, where: str, ev: dict, required: bool = True):
     if _has_selector(ev):
         return
@@ -79,6 +202,7 @@ def _check_event(report: Report, where: str, ev: dict):
     if op not in OPS:
         report.error(f"{where}: unknown op {op!r}; expected one of {sorted(OPS)}")
         return
+    _check_object_target(report, where, ev)
     anchor = ev.get("anchor")
     if anchor is not None:
         if not isinstance(anchor, str) or not anchor.strip():
@@ -163,7 +287,10 @@ def _check_event(report: Report, where: str, ev: dict):
             if "picture" not in ev:
                 report.error(f"{where}: show needs picture (may be null)")
         elif op in ("highlight", "point", "fade", "scale"):
-            if not ev.get("zone"):
+            if ev.get("space") == "screen":
+                if not ev.get("overlay"):
+                    report.error(f"{where}: {op} screen target needs overlay id")
+            elif not ev.get("zone"):
                 report.error(f"{where}: {op} needs zone")
             if op == "point" and not ev.get("indicator"):
                 report.error(f"{where}: point needs indicator")
@@ -171,6 +298,9 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: fade needs to_alpha")
             if op == "scale" and "scale" not in ev:
                 report.error(f"{where}: scale needs scale")
+        elif op == "hide":
+            if ev.get("space") != "screen" and not ev.get("overlay"):
+                report.error(f"{where}: hide needs screen target")
         elif op == "wait":
             pass
         elif op == "label":
@@ -471,7 +601,8 @@ def resolve_track(doc: dict) -> dict:
             eff["demo"] = bool(base.get("demo"))
         else:
             eff["demo"] = False
-        eff["events"] = _deep_copy(raw.get("events") or [])
+        eff["events"] = [_normalize_event(_deep_copy(ev))
+                         for ev in (raw.get("events") or [])]
         if "transition" not in raw:
             eff["transition"] = "continue"
         if "tree" not in eff or eff.get("tree") is None:

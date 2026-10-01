@@ -78,12 +78,15 @@
           "at": 0.15,
           "dur": 0.0,
           "op": "create",
-          "template": "sample_card_1",
-          "palette": "card_level_1",
-          "concept": "development_card_level_1",
-          "zone": "showcase",
           "count": 1,
-          "to": "face_up"
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "showcase",
+            "template": "sample_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
         }
       ],
       "entry": "initial"

@@ -83,6 +83,49 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertTrue(record["item_ids"][0])
         self.assertTrue(all("pointer_resolution" in c for c in compiled["cues"]))
 
+    def test_screen_target_highlight_compiles_common_screen_clip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "highlight",
+                "at": 0.2,
+                "dur": 0.5,
+                "grow": 1.25,
+                "target": {"space": "screen", "id": "sample_red"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"]
+                 if c.get("object_space") == "screen" and c.get("overlay") == "sample_red"]
+        self.assertEqual(1, len(clips), clips)
+        self.assertEqual("highlight", clips[0]["kind"])
+        self.assertAlmostEqual(1.25, clips[0]["to_scale"])
+
+    def test_screen_target_point_records_overlay_resolution(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "point",
+                "at": 0.2,
+                "dur": 0.0,
+                "part": "cost",
+                "indicator": "arrow",
+                "target": {"space": "screen", "id": "purchase_card"},
+            }
+            track_path, event_index = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        record = cue["pointer_resolution"][0]
+        self.assertEqual(event_index, record["event_index"])
+        self.assertEqual("screen", record["object_space"])
+        self.assertEqual("purchase_card", record["overlay"])
+        self.assertEqual(["purchase_card"], record["item_ids"])
+        clips = [c for c in cue["clips"] if c.get("kind") == "point"]
+        self.assertEqual(1, len(clips), clips)
+        self.assertEqual("purchase_card", clips[0]["overlay"])
+        self.assertEqual("cost", clips[0]["part"])
+
     def test_unresolved_pointer_records_empty_item_ids_and_warns(self):
         with tempfile.TemporaryDirectory() as tmp:
             point_event = {
