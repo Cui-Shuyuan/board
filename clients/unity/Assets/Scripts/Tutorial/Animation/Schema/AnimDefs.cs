@@ -22,7 +22,8 @@ namespace BoardGameTutorial.Animation
 
         public static readonly string[] PresentationOps =
         {
-            "show", "highlight", "point", "fade", "scale", "wait", "label"
+            "show", "highlight", "point", "fade", "scale", "wait", "label",
+            "overlay_show", "overlay_hide"
         };
 
         public static bool IsStateOp(string op)
@@ -320,6 +321,15 @@ namespace BoardGameTutorial.Animation
         public float label_h;
         public string picture;
         public bool picture_on;
+
+        // screen-space presentation overlay (does not create a ComponentState)
+        public int layer;
+        public string face_image;
+        public string back_image;
+        public string mask;
+        public string background;
+        public string source_item_id;
+        public bool persist_on_source_missing = true;
 
         // shuffle clip: per-item deterministic jitter parameters, compiled so
         // the runtime stays a pure function of the compiled asset.

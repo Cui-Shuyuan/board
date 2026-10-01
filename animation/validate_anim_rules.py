@@ -297,7 +297,12 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
                         want_bonus = str(p.get("value", "")).strip("<>")
                 want_lv = str((ev.get("what") or {}).get("concept") or "")[-1:]
                 for sid in [resolve_zone_ref(stage, x) for x in (ev.get("source") or [])]:
-                    if sid not in zones:
+                    # State is inherited across tree/stage boundaries.  A cue may
+                    # operate on a logical zone that is not rendered by the current
+                    # stage (for example moving one inherited market card into the
+                    # card-intro showcase).  The zone must exist in the inherited
+                    # state even if it is absent from this stage.
+                    if sid not in zones and sid not in getattr(st, "zones", {}):
                         rep.error(where, f"source zone {sid!r} 不存在")
                         continue
                     src_color = color

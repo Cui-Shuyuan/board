@@ -90,6 +90,20 @@ namespace BoardGameTutorial.Animation
             return true;
         }
 
+        /// <summary>
+        /// Load the asset for a screen-space presentation overlay.  The overlay
+        /// references a face image directly, so it does not need the template to
+        /// exist in the current cue stage.
+        /// </summary>
+        public Sprite LoadOverlaySprite(VisualOverlayState overlay)
+        {
+            if (overlay == null || !IsLoaded) return null;
+            string relative = !string.IsNullOrEmpty(overlay.FaceImage)
+                ? overlay.FaceImage
+                : overlay.BackImage;
+            return string.IsNullOrEmpty(relative) ? null : sprites.LoadRelative(relative, "card");
+        }
+
         public bool LoadCue(string cueId)
         {
             if (!IsLoaded)

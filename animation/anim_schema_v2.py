@@ -26,7 +26,8 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
-PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera", "label"}
+PRESENTATION_OPS = {"show", "highlight", "point", "fade", "scale", "wait", "camera", "label",
+                     "overlay_show", "overlay_hide"}
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS
@@ -177,6 +178,25 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: label needs overlay")
             if "text" not in ev or ev.get("text") is None:
                 report.error(f"{where}: label needs text")
+        elif op == "overlay_show":
+            if not ev.get("overlay"):
+                report.error(f"{where}: overlay_show needs overlay")
+            if not (ev.get("template") or ev.get("image") or ev.get("background")):
+                report.error(f"{where}: overlay_show needs template/image/background")
+            rect = ev.get("rect")
+            if rect is not None:
+                if not isinstance(rect, dict):
+                    report.error(f"{where}: overlay_show rect must be an object")
+                else:
+                    for key in ("x", "y", "w", "h"):
+                        if key in rect:
+                            try:
+                                float(rect[key])
+                            except (TypeError, ValueError):
+                                report.error(f"{where}: overlay_show rect.{key} must be numeric")
+        elif op == "overlay_hide":
+            if not ev.get("overlay"):
+                report.error(f"{where}: overlay_hide needs overlay")
         elif op == "camera":
             if not ev.get("shot"):
                 report.error(f"{where}: camera needs shot")

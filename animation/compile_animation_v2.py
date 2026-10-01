@@ -590,6 +590,36 @@ class Compiler:
         self._validate_stage_shot_zones(sid)
         return sid
 
+    def find_asset_meta(self, template_id: str, palette: str) -> dict:
+        """Resolve a template's display asset without requiring it in the
+        current cue stage.  Screen-space presentation overlays may show a real
+        card while the current tree renders a different stage; the card asset
+        still has to be found from any loaded stage definition."""
+        tpl_id = norm(template_id)
+        pal = norm(palette)
+        for stage in self.stages.values():
+            for t in stage.get("templates") or []:
+                if t.get("id") != tpl_id:
+                    continue
+                face = t.get("face_image") or ""
+                back = t.get("back_image") or ""
+                for m in t.get("face_image_by_palette") or []:
+                    if not isinstance(m, dict):
+                        continue
+                    if norm(m.get("palette")) == pal:
+                        face = m.get("face_image") or face
+                        back = m.get("back_image") or back
+                if not face:
+                    raise ValueError(f"template {tpl_id!r} has no face_image for overlay")
+                return {
+                    "face_image": face,
+                    "back_image": back,
+                    "shape": norm(t.get("shape")) or "card",
+                    "width": float(t.get("width", 0.0) or 0.0),
+                    "height": float(t.get("height", 0.0) or 0.0),
+                }
+        raise ValueError(f"template {tpl_id!r} not found in any stage; cannot build overlay")
+
     def stage_id_for_cue(self, cue: dict, by_id: dict, cache: dict) -> str:
         cid = cue.get("id")
         if cid in cache:
@@ -1124,6 +1154,48 @@ class Compiler:
                 if selected:
                     clips.append(self.presentation_clip("point", selected[0], at, dur, lead, easing,
                                                         part=norm(ev.get("part")), indicator=norm(ev.get("indicator"))))
+            elif op == "overlay_show":
+                overlay_id = norm(ev.get("overlay"))
+                if not overlay_id:
+                    raise ValueError(f"cue {cue_id}: overlay_show needs overlay")
+                tpl = norm(ev.get("template"))
+                pal = norm(ev.get("palette"))
+                image = norm(ev.get("image"))
+                face_image = image
+                back_image = ""
+                if not face_image and tpl:
+                    meta = self.find_asset_meta(tpl, pal)
+                    face_image = meta["face_image"]
+                    back_image = meta["back_image"]
+                rect = ev.get("rect") if isinstance(ev.get("rect"), dict) else {}
+                c = self.base_clip("overlay_show", at, dur, lead, easing)
+                c.update({
+                    "overlay": overlay_id,
+                    "template": tpl,
+                    "palette": pal,
+                    "face_image": face_image,
+                    "back_image": back_image,
+                    "mask": norm(ev.get("mask")),
+                    "background": norm(ev.get("background")),
+                    "source_item_id": norm(ev.get("source_item_id")),
+                    "persist_on_source_missing": bool(ev.get("persist_on_source_missing", True)),
+                    "layer": int(ev.get("layer", 0) or 0),
+                    "label_x": float(rect.get("x", 0.03) or 0.03),
+                    "label_y": float(rect.get("y", 0.10) or 0.10),
+                    "label_w": float(rect.get("w", 0.28) or 0.28),
+                    "label_h": float(rect.get("h", 0.62) or 0.62),
+                    "screen_space": True,
+                    "from_alpha": 1.0,
+                    "to_alpha": 1.0,
+                })
+                clips.append(c)
+            elif op == "overlay_hide":
+                overlay_id = norm(ev.get("overlay"))
+                if not overlay_id:
+                    raise ValueError(f"cue {cue_id}: overlay_hide needs overlay")
+                c = self.base_clip("overlay_hide", at, dur, lead, easing)
+                c["overlay"] = overlay_id
+                clips.append(c)
             elif op == "label":
                 overlay_id = norm(ev.get("overlay"))
                 if not overlay_id:

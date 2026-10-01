@@ -2367,6 +2367,14 @@
   "id": "splendor.table",
   "shots": [
     {
+      "id": "shot_marker",
+      "zones": [
+        "player_marker"
+      ],
+      "fill": 0.72,
+      "desc": "起始玩家标记特写"
+    },
+    {
       "id": "shot_decks_market",
       "zones": [
         "deck_level_1",

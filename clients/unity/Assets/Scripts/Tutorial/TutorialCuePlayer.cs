@@ -89,6 +89,7 @@ namespace BoardGameTutorial
         private GUIStyle subtitleStyle;
         private GUIStyle subtitleOutlineStyle;
         private GUIStyle overlayLabelStyle;
+        private Texture2D overlayPanelTexture;
         private static readonly Vector2[] SubtitleOutlineOffsets =
         {
             new Vector2(-2f, -2f),
@@ -764,7 +765,9 @@ namespace BoardGameTutorial
             if (doc == null) return;
 
             DrawSubtitle();
-            DrawOverlayLabels(v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null);
+            var frame = v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null;
+            DrawOverlayLabels(frame);
+            DrawScreenOverlays(frame);
 
             // 左上角信息只在 zone debug 模式下显示；正常播放时屏幕底部只有字幕。
             bool zoneDebugVisible = v2AnimPlayer != null && v2AnimPlayer.debugZones;
@@ -798,6 +801,78 @@ namespace BoardGameTutorial
             GUI.Label(new Rect(24, 160, Screen.width - 48, 24), animSwitch, switchStyle);
             GUI.Label(new Rect(24, 182, Screen.width - 48, 24),
                 "Space 暂停/继续  R 重播  ← 上一段  → 下一段  A 自动播放  G 动画开关  B 跳到动画切片  Z 调试模式", debugStyle);
+        }
+
+        private Texture2D GetOverlayPanelTexture()
+        {
+            if (overlayPanelTexture != null) return overlayPanelTexture;
+            overlayPanelTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            overlayPanelTexture.SetPixel(0, 0, Color.white);
+            overlayPanelTexture.Apply();
+            return overlayPanelTexture;
+        }
+
+        private void DrawScreenOverlays(FrameState frame)
+        {
+            if (frame == null || frame.Overlays == null || frame.Overlays.Count == 0) return;
+            if (v2AnimPlayer == null || !v2AnimPlayer.IsLoaded) return;
+
+            var ordered = new List<VisualOverlayState>(frame.Overlays);
+            ordered.Sort((a, b) => a.Layer.CompareTo(b.Layer));
+
+            var panel = GetOverlayPanelTexture();
+            var savedColor = GUI.color;
+            foreach (var overlay in ordered)
+            {
+                if (overlay == null || overlay.Alpha <= 0.001f) continue;
+
+                float x = overlay.X * Screen.width;
+                float y = overlay.Y * Screen.height;
+                float w = Mathf.Max(1f, overlay.W * Screen.width);
+                float h = Mathf.Max(1f, overlay.H * Screen.height);
+                var panelRect = new Rect(x, y, w, h);
+
+                // panel background: keeps the card visually separate from the
+                // table and makes clear this is a screen-space presentation
+                // view, not a second card lying on the table.  A slot with no
+                // image is usable as a full-screen backdrop/mask.
+                Color panelColor = new Color(0.05f, 0.06f, 0.08f, 0.92f);
+                if (!string.IsNullOrEmpty(overlay.Background)
+                    && Palette.TryResolveRgb(overlay.Background, out var parsed))
+                {
+                    parsed.a = 1f;
+                    panelColor = parsed;
+                }
+                panelColor.a *= overlay.Alpha;
+                GUI.color = panelColor;
+                GUI.DrawTexture(panelRect, panel);
+
+                var sprite = v2AnimPlayer.LoadOverlaySprite(overlay);
+                if (sprite == null || sprite.texture == null)
+                {
+                    GUI.color = savedColor;
+                    continue;
+                }
+
+                float inset = Mathf.Min(w, h) * 0.06f;
+                float availW = Mathf.Max(1f, w - inset * 2f);
+                float availH = Mathf.Max(1f, h - inset * 2f);
+                float srcW = Mathf.Max(1f, sprite.rect.width);
+                float srcH = Mathf.Max(1f, sprite.rect.height);
+                float k = Mathf.Min(availW / srcW, availH / srcH);
+                float cardW = srcW * k;
+                float cardH = srcH * k;
+                var cardRect = new Rect(
+                    x + (w - cardW) * 0.5f,
+                    y + (h - cardH) * 0.5f,
+                    cardW,
+                    cardH);
+
+                GUI.color = new Color(1f, 1f, 1f, overlay.Alpha);
+                GUI.DrawTexture(cardRect, sprite.texture);
+                GUI.color = savedColor;
+            }
+            GUI.color = savedColor;
         }
 
         private void DrawOverlayLabels(FrameState frame)

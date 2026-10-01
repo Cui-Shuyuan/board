@@ -47,6 +47,31 @@ namespace BoardGameTutorial.Animation
         public float H;
     }
 
+    /// <summary>
+    /// Screen-space presentation overlay.  This is NOT a ComponentState: it
+    /// never owns a physical card, never enters zone/order logic and is not
+    /// counted by card-identity checks.  It is a camera/viewport-fixed asset
+    /// reference, optionally linked to a source item for tooling.
+    /// </summary>
+    public sealed class VisualOverlayState
+    {
+        public string Id;
+        public string TemplateId;
+        public string Palette;
+        public string FaceImage;
+        public string BackImage;
+        public string Mask;
+        public string Background;
+        public float X;
+        public float Y;
+        public float W;
+        public float H;
+        public int Layer;
+        public float Alpha = 1f;
+        public string SourceItemId;
+        public bool PersistOnSourceMissing = true;
+    }
+
     public sealed class FrameState
     {
         public string Picture;
@@ -54,6 +79,7 @@ namespace BoardGameTutorial.Animation
         public readonly List<VisualItemState> Items = new List<VisualItemState>();
         public readonly List<VisualMarkerState> Markers = new List<VisualMarkerState>();
         public readonly List<VisualLabelState> Labels = new List<VisualLabelState>();
+        public readonly List<VisualOverlayState> Overlays = new List<VisualOverlayState>();
 
         public VisualItemState Find(string id)
         {
@@ -304,6 +330,61 @@ namespace BoardGameTutorial.Animation
                         H = clip.label_h,
                     });
                 }
+            }
+
+            // Screen-space presentation overlays.  They are intentionally
+            // outside the ComponentState list: a real card may be shown here
+            // while it still lives in card_market / player_development, and the
+            // overlay persists independently of world camera/rotation/destroy.
+            if (cue.clips != null)
+            {
+                var overlayClips = new List<CompiledClipDef>();
+                foreach (var clip in cue.clips)
+                {
+                    if (clip == null) continue;
+                    if (clip.kind == "overlay_show" || clip.kind == "overlay_hide")
+                        overlayClips.Add(clip);
+                }
+                overlayClips.Sort((a, b) =>
+                    (a.at + Math.Max(0f, a.lead)).CompareTo(b.at + Math.Max(0f, b.lead)));
+
+                var active = new Dictionary<string, VisualOverlayState>(StringComparer.Ordinal);
+                foreach (var clip in overlayClips)
+                {
+                    float start = clip.at + Math.Max(0f, clip.lead);
+                    if (t + 1e-6f < start) continue;
+                    string id = clip.overlay ?? "";
+                    if (string.IsNullOrEmpty(id)) continue;
+                    if (clip.kind == "overlay_hide")
+                    {
+                        active.Remove(id);
+                        continue;
+                    }
+
+                    float alpha = 1f;
+                    if (clip.dur > 0f)
+                        alpha = Clamp01((t - start) / clip.dur);
+
+                    active[id] = new VisualOverlayState
+                    {
+                        Id = id,
+                        TemplateId = clip.template,
+                        Palette = clip.palette,
+                        FaceImage = clip.face_image,
+                        BackImage = clip.back_image,
+                        Mask = clip.mask,
+                        Background = clip.background,
+                        X = clip.label_x,
+                        Y = clip.label_y,
+                        W = clip.label_w,
+                        H = clip.label_h,
+                        Layer = clip.layer,
+                        Alpha = alpha,
+                        SourceItemId = clip.source_item_id,
+                        PersistOnSourceMissing = clip.persist_on_source_missing,
+                    };
+                }
+                foreach (var ov in active.Values) frame.Overlays.Add(ov);
             }
 
             return frame;
