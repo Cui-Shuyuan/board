@@ -33,7 +33,6 @@ PRESENTATION_OPS = {"show", "hide", "highlight", "point", "fade", "scale", "wait
 #   {"space": "screen", "id": "overlay_slot"}
 TARGET_SPACES = {"entity", "screen"}
 ENTITY_TARGET_FIELDS = ("zone", "template", "palette", "concept", "parts", "order")
-SCREEN_TARGET_FIELDS = ("id", "overlay")
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS
