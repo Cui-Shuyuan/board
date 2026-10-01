@@ -99,8 +99,9 @@
 
 - `create` / `ensure` / `destroy` / `transfer` / `stack` / `shuffle` /
   `move_order` / `set_face` 是状态原语，只实现实体对象。
-- `show` / `hide` / `highlight` / `point` / `fade` / `scale` / `label` 是对象
-  表现原语，实体和屏幕空间都实现。
+- `show` / `hide` / `highlight` / `point` / `fade` / `scale` 是对象表现原语，
+  实体和屏幕空间都实现。
+- `label` 是屏幕/锚点文字原语，目前只接受 screen target；它不是实体对象操作。
 - 实体的 `show`/`hide` 只改表现层透明度（复用 fade），不创建/销毁逻辑状态；
   创建/销毁仍用 `create`/`destroy`。
 - `show` 带 `picture` 且无 `target` 时是整个舞台的整幅图原语，不走对象接口。

@@ -62,7 +62,8 @@ metadata:
   - 实体：`{"space":"entity","zone":"...","template":"...","parts":[...],"order":n}`；
   - 屏幕：`{"space":"screen","id":"overlay_id"}`。
 - `create/ensure/destroy/transfer/stack/shuffle/move_order/set_face` 是实体状态原语；
-- `show/hide/highlight/point/fade/scale/label` 是对象表现原语，两种空间都实现。
+- `show/hide/highlight/point/fade/scale` 是对象表现原语，两种空间都实现；
+  `label` 目前只按 screen/锚点文字解析。
 - 全局原语：`camera`、`wait`、无 target 的整幅图 `show`。
 - 旧数据迁移：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
 
