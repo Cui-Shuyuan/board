@@ -841,20 +841,22 @@ namespace BoardGameTutorial
                 float y = baseY + (baseH - h) * 0.5f;
                 var panelRect = new Rect(x, y, w, h);
 
-                // panel background: keeps the card visually separate from the
-                // table and makes clear this is a screen-space presentation
-                // view, not a second card lying on the table.  A slot with no
-                // image is usable as a full-screen backdrop/mask.
-                Color panelColor = new Color(0.05f, 0.06f, 0.08f, 0.92f);
+                // A panel is drawn only when the data explicitly asks for a
+                // background.  The default filled panel made every card carry
+                // a visible rectangle; a screen-space card should be just the
+                // cutout sprite.
                 if (!string.IsNullOrEmpty(overlay.Background)
                     && Palette.TryResolveRgb(overlay.Background, out var parsed))
                 {
-                    parsed.a = 1f;
-                    panelColor = parsed;
+                    // Project is Linear; OnGUI consumes this color as a linear
+                    // value while the authored hex is sRGB.  Use .linear so
+                    // scene_backdrop renders with exactly the stage/table
+                    // color instead of a lighter conversion.
+                    Color panelColor = parsed.linear;
+                    panelColor.a = overlay.Alpha;
+                    GUI.color = panelColor;
+                    GUI.DrawTexture(panelRect, panel);
                 }
-                panelColor.a *= overlay.Alpha;
-                GUI.color = panelColor;
-                GUI.DrawTexture(panelRect, panel);
 
                 var sprite = v2AnimPlayer.LoadOverlaySprite(overlay);
                 var cardRect = panelRect;
