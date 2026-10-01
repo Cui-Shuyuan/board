@@ -38,6 +38,8 @@ namespace BoardGameTutorial.Animation
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
         public CompiledCueDef CurrentCue => currentCue;
         public FrameState CurrentFrame { get; private set; }
+        public Camera Camera => cameraDirector.Camera;
+        public bool FullScreenMaskActive => fullScreenMaskActive;
 
         private readonly WorldRuntime runtime = new WorldRuntime();
         private readonly StageRuntime stageRuntime = new StageRuntime();

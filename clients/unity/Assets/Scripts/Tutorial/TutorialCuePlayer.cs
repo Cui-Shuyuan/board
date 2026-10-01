@@ -764,10 +764,16 @@ namespace BoardGameTutorial
         {
             if (doc == null) return;
 
-            // Draw screen overlays first: a full-screen mask must sit behind
-            // subtitles, otherwise the opaque mask hides the spoken text.
+            // Render order (bottom to top):
+            //   1. world/table (camera)
+            //   2. mask + screen objects (DrawScreenOverlays)
+            //   3. annotation markers / arrows / circles / boxes
+            //   4. explanation labels
+            //   5. subtitles
+            //   6. debug HUD (only in debug mode)
             var frame = v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null;
             DrawScreenOverlays(frame);
+            DrawScreenMarkers(frame);
             DrawOverlayLabels(frame);
             DrawSubtitle();
 
@@ -913,6 +919,37 @@ namespace BoardGameTutorial
                     }
                 }
                 GUI.color = savedColor;
+            }
+            GUI.color = savedColor;
+        }
+
+        private void DrawScreenMarkers(FrameState frame)
+        {
+            if (frame == null || frame.Markers == null || frame.Markers.Count == 0) return;
+            if (v2AnimPlayer == null || !v2AnimPlayer.IsLoaded) return;
+            var cam = v2AnimPlayer.Camera;
+            if (cam == null) return;
+
+            // Markers are presentation annotations, so draw them in screen
+            // space after the mask/overlay layer.  This keeps arrows/circles/
+            // boxes above a full-screen mask and independent of camera pitch.
+            float pixelsPerUnit = Screen.height / Mathf.Max(0.001f, 2f * cam.orthographicSize);
+            var savedColor = GUI.color;
+            foreach (var marker in frame.Markers)
+            {
+                if (marker == null) continue;
+                var screen = cam.WorldToScreenPoint(new Vector3(marker.X, 0f, marker.Z));
+                if (screen.z < 0f) continue;
+                float size = Mathf.Max(24f, marker.Radius * 2f * pixelsPerUnit);
+                var rect = new Rect(
+                    screen.x - size * 0.5f,
+                    (Screen.height - screen.y) - size * 0.5f,
+                    size,
+                    size);
+                var sprite = ActorBinder.GetMarkerSprite(marker.Kind);
+                if (sprite == null || sprite.texture == null) continue;
+                GUI.color = new Color(0.92f, 0.24f, 0.20f, 1f);
+                GUI.DrawTexture(rect, sprite.texture);
             }
             GUI.color = savedColor;
         }

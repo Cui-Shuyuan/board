@@ -73,7 +73,9 @@ namespace BoardGameTutorial.Animation
             }
 
             SyncPicture(frame.Picture);
-            SyncMarkers(frame.Markers);
+            // Markers are annotations: the player renders them in screen space
+            // above the mask/overlays and below labels/subtitles.  Do not draw
+            // a second copy in world space.
         }
 
         private void SyncPicture(string picture)
