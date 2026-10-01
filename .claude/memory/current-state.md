@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-01 · 基线 HEAD `eb1c8e1` · 后端 xUnit 75/75
+> 最后更新：2026-10-01 · 基线 HEAD `f334155` · 后端 xUnit 75/75
 
 # 当前状态（2026-10-01）
 
@@ -15,9 +15,10 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前工作区状态
 
-- HEAD = `eb1c8e1 feat(anim): unify object primitives behind target interface`。
+- HEAD = `f334155 feat(anim): support entity show and hide via target interface`。
 - 动画对象原语已统一为 `target` 接口（`entity` / `screen`）；Splendor full 与 schema 示例已迁移，屏幕空间对象也支持 highlight/point/fade/scale。
 - 工作区仍有 5 个 Unity 编辑器回写的 Settings/ProjectSettings 文件未提交（与本次动画任务无关）。
+- API 接口重构后的 Android APK 已构建成功（`clients/android/app/build/outputs/apk/debug/app-debug.apk`）并安装到测试机；内容已更新到 `d090a24c80bb9dcf`，设备 compiled 中 screen modifier clips 与 `entity/screen` 两种 `object_space` 已确认存在。
 - 2026-09-23 记录的动画待收口项已经由后续提交收口（time_anchors 见 `38971d4`）。
 - `.claude/archive/memory/2026-09-23/` 只用于追溯历史，不作为现状依据。
 
