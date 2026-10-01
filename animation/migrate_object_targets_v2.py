@@ -50,6 +50,8 @@ def _entity_target(ev: dict, zone_key: str = "zone") -> dict:
 
 def migrate_event(ev: dict) -> dict:
     op = ev.get("op")
+    if "target" in ev:
+        return ev
     if op in ("camera", "wait"):
         return ev
     # Whole-stage picture is a singleton environment primitive, not an object.
