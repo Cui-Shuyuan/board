@@ -30,7 +30,13 @@ namespace BoardGameTutorial.Animation
             EnsureCamera();
             var bg = new Color(0.12f, 0.13f, 0.16f, 1f);
             if (!string.IsNullOrEmpty(hex) && Palette.TryResolveRgb(hex, out var parsed)) bg = parsed;
-            Camera.backgroundColor = bg;
+            SetBackground(bg);
+        }
+
+        public void SetBackground(Color color)
+        {
+            EnsureCamera();
+            Camera.backgroundColor = color;
             Camera.clearFlags = CameraClearFlags.SolidColor;
         }
 

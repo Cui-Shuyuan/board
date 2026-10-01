@@ -48,6 +48,7 @@ namespace BoardGameTutorial.Animation
         private CompiledCueDef currentCue;
         private string gameRoot;
         private ZoneDebugOverlay zoneDebug;
+        private bool fullScreenMaskActive;
 
         public bool LoadTrack(string gameRootPath, string trackName = null)
         {
@@ -132,9 +133,48 @@ namespace BoardGameTutorial.Animation
             if (!animationEnabled || currentCue == null) return;
             var frame = runtime.Evaluate(CueId, time);
             CurrentFrame = frame;
+            ApplyFullScreenMask(frame);
             cameraDirector.Apply(frame.Camera, stageRuntime.Aspect);
             binder.Sync(frame);
             if (runtimeTrace) Debug.Log($"[TutorialAnimV2] {CueId} t={time:0.00} items={frame.Items.Count}");
+        }
+
+        private void ApplyFullScreenMask(FrameState frame)
+        {
+            VisualOverlayState mask = null;
+            if (frame != null && frame.Overlays != null)
+            {
+                foreach (var overlay in frame.Overlays)
+                {
+                    if (overlay == null) continue;
+                    if (overlay.W < 0.999f || overlay.H < 0.999f) continue;
+                    if (string.IsNullOrEmpty(overlay.Background)) continue;
+                    mask = overlay;
+                    break;
+                }
+            }
+
+            bool active = mask != null;
+            if (active)
+            {
+                var bg = Color.black;
+                if (Palette.TryResolveRgb(mask.Background, out var parsed)) bg = parsed;
+                // A full-screen mask owns the whole picture.  Hide the world
+                // renderers and the zone debug layer so no world-space border
+                // can leak through outside the OnGUI panel rect; keep the
+                // camera clearing the full viewport with the mask color.
+                cameraDirector.SetBackground(bg);
+                if (animRoot != null) animRoot.SetActive(false);
+                if (zoneDebug != null) zoneDebug.gameObject.SetActive(false);
+            }
+            else if (fullScreenMaskActive)
+            {
+                if (animRoot != null) animRoot.SetActive(true);
+                if (zoneDebug != null) zoneDebug.gameObject.SetActive(true);
+                cameraDirector.SetBackground(stageRuntime.Stage != null ? stageRuntime.Stage.background : null);
+                RebuildZoneDebug();
+            }
+            fullScreenMaskActive = active;
         }
 
         public void Complete() => Seek(TotalDuration);
@@ -144,6 +184,13 @@ namespace BoardGameTutorial.Animation
             currentCue = null;
             CueId = null;
             CurrentFrame = null;
+            if (fullScreenMaskActive)
+            {
+                fullScreenMaskActive = false;
+                if (animRoot != null) animRoot.SetActive(true);
+                if (zoneDebug != null) zoneDebug.gameObject.SetActive(true);
+                cameraDirector.SetBackground(stageRuntime.Stage != null ? stageRuntime.Stage.background : null);
+            }
             binder.Clear();
             if (zoneDebug != null) zoneDebug.Clear();
         }
@@ -151,7 +198,7 @@ namespace BoardGameTutorial.Animation
         public void RebuildZoneDebug()
         {
             if (zoneDebug == null) return;
-            if (!debugZones)
+            if (!debugZones || fullScreenMaskActive)
             {
                 zoneDebug.Clear();
                 return;
