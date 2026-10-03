@@ -27,12 +27,12 @@ Android 内容更新 v1 使用两个只读接口，不经过 Qdrant：
 ```text
 GET /api/content/games/{game}/manifest
 GET /api/content/games/{game}/files/{version}/{**filePath}
-GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL
+GET /api/content/games/{game}/files/{**filePath}   # 无版本兼容 URL
 ```
 
 - manifest 读取 `content/manifests/{game}.json`，文件不存在返回 404 和明确 message；每次请求重新读文件，并生成基于 `Length + LastWriteTimeUtc.Ticks` 的 ETag，支持 `If-None-Match`。
 - versioned 文件接口从 `content/games/{game}/{filePath}` 流式返回，支持 Range，按扩展名设置 Content-Type。请求 version 与当前 manifest.version 不一致时返回 `409 Conflict`；匹配时返回 `Cache-Control: public, max-age=31536000, immutable` + ETag。
-- 旧 `/files/{**filePath}` 路由是兼容路径，继续返回 `Cache-Control: no-cache, must-revalidate`，后续版本可删。
+- 无版本的 `/files/{**filePath}` 路由走兼容路径，返回 `Cache-Control: no-cache, must-revalidate`。
 - 路径安全：拒绝绝对路径、`..` / `.` 段、编码的 `%2e` / `%2f` / `%5c`，并用 `Path.GetFullPath` + game 根目录前缀做第二层校验；非法路径返回 400。
 - 内容文件/ manifest 更新后无需重启 API。
 

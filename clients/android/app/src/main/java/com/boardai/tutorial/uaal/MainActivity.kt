@@ -237,10 +237,9 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     private fun applyLockScreenPolicy() {
-        // Unity GameActivity / MIUI Game Turbo may place the game window above
-        // the keyguard with these legacy flags.  This app is a normal tutorial
-        // app: after the screen is locked, waking it should show the system
-        // keyguard until the user unlocks the phone.
+        // Clear the window flags Unity GameActivity / MIUI Game Turbo may set.
+        // This is a normal tutorial app: after the screen is locked, waking it
+        // shows the system keyguard until the user unlocks the phone.
         window.clearFlags(
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or

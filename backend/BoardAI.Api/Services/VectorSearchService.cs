@@ -46,13 +46,13 @@ public class VectorSearchService : IDisposable
 
     /// <summary>
     /// 重建某一款游戏的全部概念索引（每个游戏独享一个 collection）。
-    /// 先删掉整个旧 collection，再创建新的并写入。
+    /// 先删掉同名 collection，再创建新的并写入。
     /// </summary>
     public async Task RebuildIndexAsync(string gameId, IReadOnlyList<ConceptIndexItem> concepts)
     {
         var name = CollectionName(gameId);
 
-        // 删掉旧 collection（如果存在），重新建
+        // 删掉同名 collection（如果存在），重新建
         if (await _client.CollectionExistsAsync(name))
         {
             await _client.DeleteCollectionAsync(name);
@@ -110,8 +110,8 @@ public class VectorSearchService : IDisposable
         var collection = searchMode == "name"
             ? CollectionName(gameId) + "_name"
             : CollectionName(gameId);
-        // 查询侧不加 BGE 官方指令前缀：离线实验（tools/indexing/_embed_gap_experiment.py）证明
-        // 短概念名查询加前缀后 top1 分数整体下降约 0.3、排序变差（2026-08-16 回退）。
+        // 查询侧不加 BGE 官方指令前缀：短概念名查询加前缀会整体降低 top1 分数
+        // 并让排序变差（2026-08-16 实测）。
         var queryVec = _embedder.Embed(query);
 
         try

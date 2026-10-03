@@ -43,8 +43,8 @@ JSON 格式：
 
 - 概念引用统一写 `<concept_id>`，可带 namespace：`<ontology::concept_id>`。
 - 数组标记直接写进 key：`"<event>[]"`。
-- 字段 key 本身是 `<concept_id>` 时，不再重复写 `type`；只有语义化 key 或需要窄化类型时才写 `type`。
-- 可空性由 `constraints.optional` 或 `default: null` 表达，`type` 不再写 `| null`。
+- 字段 key 本身是 `<concept_id>` 时，不重复写 `type`；只有语义化 key 或需要窄化类型时才写 `type`。
+- 可空性由 `constraints.optional` 或 `default: null` 表达；`type` 不写 `| null`。
 - `concept_ref` 已弃用，统一用 `<concept_id>`。
 - `definition` 和 `description` 中用 `<concept_id>` 标交叉引用。
 - 引用条目是纯引用且语义相同时可省略 description；不同语境下含义不同时才写 description。
@@ -81,7 +81,7 @@ JSON 格式：
   - `{ "until": <condition> }`：条件循环。
 - Round 缺省无 loop = 1 次 = 每位玩家按座次各行动一轮。
 - 一个动作不叫 pipeline；直接写 `"<ontology::action>": { "options": [...], "type": "CHOOSE_ONE" }`。
-- `children` / `actor` / `start` / `end` 已废弃。
+- Pipeline / Trigger / Action 结构不写 `children` / `actor` / `start` / `end`。
 
 ## 7. 常出现的结构
 

@@ -210,7 +210,7 @@ def process_rect(src: Path, dst: Path, w_mm: float, h_mm: float, px_per_mm: floa
         x0, y0, x1, y1 = auto_trim_box(rgb)
         rgb = rgb[y0:y1 + 1, x0:x1 + 1]
         note = f"auto trim {x0},{y0}..{x1},{y1}"
-        bg_mask = np.zeros(rgb.shape[:2], dtype=bool)   # auto trim 后不再走全局键白
+        bg_mask = np.zeros(rgb.shape[:2], dtype=bool)   # auto trim 后跳过全局键白
         key_border_white = False
         rim_px = 0
     else:
@@ -293,8 +293,8 @@ def color_lock(gen: np.ndarray, scan: np.ndarray, mask: np.ndarray) -> np.ndarra
 RECTS = {
     # 类 → (文件名通配, 实物 mm)。发展卡 63x88、贵族 60x60（components.json）。
     "noble": (["贵族_0001.jpg", "贵族_0002.jpg", "贵族_0003.jpg", "贵族_0004.jpg", "贵族_0005.jpg"], 60.0, 60.0, True),
-    # 卡牌改名后不再维护固定文件名清单：运行 --class card 时用
-    # glob 收集 raw 扫描件（排除已成品 *_cutout.png）。新增卡只需丢进目录。
+    # card 文件名会变：运行 --class card 时用 glob 收集 raw 扫描件
+    #（排除已成品 *_cutout.png）。新增卡只需丢进目录。
     "card": (["*发展卡_*.jpg", "*发展卡_*.png"], 63.0, 88.0, False),
 }
 
@@ -302,8 +302,8 @@ RECTS = {
 def _expand_card_names(patterns: list[str], scan_dir: Path) -> list[str]:
     """把 RECTS 里的文件名/通配模式展开成实际 raw 扫描件清单。
 
-    `--class card` 需要承接以后不断增加的实际卡扫描件；如果写死旧 15 个名字，
-    新增卡就会静默跳过。这里统一 glob，并排除已经处理过的 `_cutout.png`。
+    `--class card` 需要承接不断增加的实际卡扫描件；统一 glob 并排除已经
+    处理过的 `_cutout.png`，避免新增卡被静默跳过。
     """
     out: list[str] = []
     seen: set[str] = set()

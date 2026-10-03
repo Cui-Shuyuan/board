@@ -237,8 +237,8 @@ public sealed class RulesPlanService
             // 更新/合并后重新排序，保证候选列表按分数降序呈现给 LLM
             merged = merged.OrderByDescending(c => c.Score).ToList();
 
-            // 语义候选已经可用时，不再让“问题原文里出现的名字”抢走实体。
-            // 只有语义也弱/为空时，才启用问题级直呼作为兜底。
+            // 语义候选可用时以语义结果为实体；语义弱/为空时才启用
+            // 问题级直呼作为兜底。
             if (merged.Count == 0 || merged[0].Score < 0.55f)
             {
                 var qhits = ResolveFromQuestion(game, question, out var qsource)
@@ -410,8 +410,8 @@ public sealed class RulesPlanService
 
     /// <summary>
     /// 「问题级直呼」（广播第二站）：实体解析失败时，直接扫客人问题原文——命中的
-    /// 概念名/别名/基名即拍板，不再依赖 LLM 的转述质量（2026-08-16 QA：C 类 10 题
-    /// 的查询几乎全是转述失败，如「谷物播种」「开局食物」「农场空格」）。
+    /// 概念名/别名/基名即拍板，避免 LLM 转述失败造成漏检（2026-08-16 QA：C 类
+    /// 10 题的查询几乎全是转述失败，如「谷物播种」「开局食物」「农场空格」）。
     /// 最长名字优先 + 区间不重叠；命中概念去重后最多返回 MaxQuestionHits 个。
     /// </summary>
     private const int MaxQuestionHits = 4;

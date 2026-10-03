@@ -20,7 +20,7 @@ dotnet run --urls "http://0.0.0.0:5000"
 
 ## 可移植路径配置
 
-`appsettings.json` 不再保存机器绝对路径。服务端统一通过 `Infrastructure/BoardPaths.cs` 解析：
+`appsettings.json` 不保存机器绝对路径；服务端统一通过 `Infrastructure/BoardPaths.cs` 解析：
 
 1. 优先读取环境变量 `BOARD_BASE_PATH`；
 2. 否则从 `AppContext.BaseDirectory` 向上查找同时包含 `content/games` 和 `backend` 的仓库根；

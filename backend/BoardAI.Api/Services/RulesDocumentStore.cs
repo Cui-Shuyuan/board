@@ -4,7 +4,7 @@ namespace BoardAI.Api.Services;
 
 /// <summary>
 /// 规则 JSON 文档缓存：以绝对路径为 key，按文件长度与最后写入时间自动失效。
-/// 旧文档在替换时进入 retired 列表延迟释放，避免并发请求仍持有旧 JsonElement。
+/// 被替换的文档进入 retired 列表延迟释放，避免并发请求仍持有其 JsonElement。
 /// </summary>
 public sealed class RulesDocumentStore : IDisposable
 {
@@ -48,7 +48,7 @@ public sealed class RulesDocumentStore : IDisposable
 
             if (_documents.TryGetValue(absolutePath, out var old))
             {
-                // 不立即释放旧文档：已构建的派生缓存仍可能引用旧 JsonElement。
+                // 不立即释放被替换的文档：已构建的派生缓存仍可能引用其 JsonElement。
                 _retired.Add(old.Document);
                 _onDocumentChanged?.Invoke();
             }

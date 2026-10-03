@@ -19,8 +19,9 @@ dotnet run
 
 # 语音服务配置（标准 TTS + 一句话 ASR）
 
-当前默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**，不再默认使用
-`seed-tts-2.0` 双向流式接口。仓库根目录 `.env` 建议配置：
+语音服务默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**；
+需要 `seed-tts-2.0` 双向流式接口时设置 `DOUBAO_TTS_PROVIDER=seed2`。
+仓库根目录 `.env` 建议配置：
 
 ```dotenv
 VOLCENGINE_API_KEY=...
@@ -31,10 +32,10 @@ DOUBAO_TTS_ENDPOINT=wss://openspeech.bytedance.com/api/v1/tts/ws_binary
 DOUBAO_TTS_RESOURCE_ID=volc.tts.default
 
 VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
-# 旧 v2 一句话小模型实测可能不接受共享 API Key（403 resource not granted）；
-# 三件套齐全时 asr_once.py 会自动优先用旧版 token，无需额外设置。
+# v2 一句话小模型可能不接受共享 API Key（403 resource not granted）；
+# 三件套齐全时 asr_once.py 自动优先用 console token，无需额外设置。
 # 想强制试共享 API Key 再设 VOLCENGINE_ASR_AUTH=apikey。
-# 旧版一句话小模型实测使用 AppID/AccessToken + cluster=volcengine_input：
+# 一句话小模型使用 AppID/AccessToken + cluster=volcengine_input：
 # VOLCENGINE_ASR_APP_ID=...   # 或 VOLCENGINE_APP_ID
 # VOLCENGINE_ASR_ACCESS_TOKEN=...  # 或 VOLCENGINE_ACCESS_TOKEN
 # VOLCENGINE_ASR_CLUSTER=volcengine_input  # 或 VOLCENGINE_CLUSTER；不是 TTS 的 volcano_tts，也不是 SECRET_KEY

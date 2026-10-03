@@ -9,10 +9,8 @@ import java.net.URL
 import java.net.URLEncoder
 
 /**
- * HTTP transport for board content.
- *
- * This class contains the old `ContentUpdater` network code verbatim apart from
- * replacing the local file helpers with [ContentFileUtils].
+ * HTTP transport for board content.  Local file writes are delegated to
+ * [ContentFileUtils].
  */
 class HttpContentFetcher(baseUrl: String) : ContentFetcher {
     private val baseUrl: String = baseUrl.trimEnd('/')

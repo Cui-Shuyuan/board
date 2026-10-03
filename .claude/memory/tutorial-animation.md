@@ -20,9 +20,9 @@ metadata:
 - **2026-10-01：展示树收成 main + screen mask。** full 当前只有 `main` 一棵 tree；
   发展卡/宝石/购买样卡等非实体展示改为屏幕空间 `show/hide` 对象，
   贵族和起始玩家标记保留真实组件，在 main 树用近景 shot 介绍。
-- **2026-10-01：对象原语统一 target 接口。** 所有对象原语不再各自摊平写
+- **2026-10-01：对象原语统一 target 接口。** 所有对象原语统一写
   `zone`/`overlay`/`source`，统一指向 `{"space":"entity"|"screen", ...}`；
-  编译器把接口展开成旧的 flat 字段，Unity 运行时用 `IAnimVisualObject`
+  编译器把接口展开成 flat 字段，Unity 运行时用 `IAnimVisualObject`
   同时处理实体和屏幕对象。屏幕对象也支持 highlight/point/fade/scale。
 
 ## 技术选型
@@ -61,7 +61,8 @@ metadata:
 - 源事件统一用 `target` 选对象：
   - 实体：`{"space":"entity","zone":"...","template":"...","parts":[...],"order":n}`；
   - 屏幕：`{"space":"screen","id":"overlay_id"}`。
-- `create/ensure/destroy/transfer/stack/shuffle/move_order/set_face` 是实体状态原语；
+- `create/ensure/destroy/transfer/stack/move_order/set_face` 是实体状态原语；
+  `shuffle` 写在实体事件序列里，但当前只生成视觉抖动 clip、不重排逻辑 order；
 - `show/hide/highlight/point/fade/scale` 是对象表现原语，两种空间都实现；
 - `shape` 是标注原语（`arrow`/`circle`/`cross`/`forbid`/`box`），`point` 也按标注渲染；
   `label` 实体和屏幕空间都实现。
@@ -118,7 +119,6 @@ metadata:
 
 - `clients/unity/Assets/Scripts/Tutorial/Animation/`：v3 运行时。
 - `clients/unity/Assets/Scripts/Tutorial/TutorialCuePlayer.cs`：音频/字幕/跳转/重播入口。
-- 旧 `TutorialDirector` / v1 原语 / `tutorial.json` / 相关脚本已删除，不要再参考。
 
 ## 生产流程
 
@@ -194,11 +194,25 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 - 动画职责越少越好；文字、契约、events 必须一一对应。
 - 任意跳转由编译期入口状态 + 运行时维护当前状态结合实现。
 
+## 牌堆 order 契约（2026-10 定稿）
+
+牌堆（`display.mode = "stack"` 的 zone）只有一套顺序，没有「逻辑顶」「视觉顶」之分：
+
+- **order 0 = 牌堆底**：最先放上桌，不会被先抽走。
+- **order 最大 = 牌堆顶**：下一张被抽走的牌。
+- 抽顶 = `transfer` 取 **order 最大** 的那件；抽走 order39 后下一张就是 order38，**任何牌都不重排 order**。
+- 放回/加牌到顶 = 新 order = 当前最大 order + 1；已有牌保持原 order。
+- 视觉台阶由 **order 0..7** 这八个底部位错槽产生（容量 40、`max_visible = 8` 时）；order 8 及以上重合在顶面。
+  即：`lift = min(order, max_visible - 1)`，底部 order 小的一端有台阶，顶部 order 大的一端是顶面。
+- `stack` 事件的 `real_templates[0]` 仍表示「最先被抽的牌」，实现时给列表**反序**赋 order，使它拿到最大 order。
+- `transfer` 的落点 `order` 写在事件顶层（市场补空位等）；它只对非堆叠目标生效，不是源选择器，不允许塞回 `target` 冒充源 order。
+- `shuffle` 只抖动，不重排；不允许再出现 `order 0 = 顶`、`PickFront 取最小 order`、或为了抽牌而 `move_order` 压紧牌堆的路径。
+
 ## 工作方式（不要走回头路）
 
 - 动画脚本是**手写的静态资产**，story / note / tree / 契约 / events / camera 全由人或 LLM 写入源 JSON；程序只做体检、过账、编译、对账、取景链检查。
-- 旧的 `.claude/anim_batches/` 批处理脚本一律不要运行——它们会整份重写 `full.anim.json`，已退役。
-- 合法性问句手写：一 cue 一事、只带最小状态；机器拼的版本不稳定，已废弃。
+- **动画问题归因脚本。** 画面里出现的任何视觉元素都必须能追溯到源 JSON 里的显式事件/原语；改动画默认只改 `full.anim.json` / stage 等源数据后重编译 `full.compiled.json`，不要为单条 cue 在 Unity C# 里加特判。C# 只负责解释通用原语；如果确认是通用原语实现缺口/缺陷，作为基础设施问题单独修，再回到脚本层完成动画修改。
+- 合法性问句手写：一 cue 一事、只带最小状态；不要使用机器拼接的问句。
 - `camera` 写“要入镜的 zone”（逗号分隔）；`camera_fill` 是这些 zone 占画面中央的比例，默认 0.8，特写 0.6–0.72；镜头继承状态来源 cue 的 `camera_out`，没有可用来源时用当前 resolved stage 的默认机位。
 - 用户验收节奏：AI 写 → 用户看 → AI 改 → 改完即成为固定资产，只用于确定性播放。
 - 每条 cue 的文字至少包含：念什么（story） + 画面要变成什么（enter/exit） + 为什么这么演（note） + 在哪棵树/怎么切树（tree） + 看哪几个 zone（camera）。

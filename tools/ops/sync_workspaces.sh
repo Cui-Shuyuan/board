@@ -84,9 +84,9 @@ from_windows() {
 from_linux() {
   [ -d "$WIN/.git" ] || die "找不到 Windows 仓库 $WIN"
   tracked_clean "$WIN" || die "Windows 工作区有未提交的已跟踪改动 —— 先在那边 commit 或 stash"
-  # git 只搬**提交**：WSL 侧改了但没提交的文件**不会**过去（Unity 读的是旧的）。
-  # 这个坑很安静 —— 同步"成功"、采样却是旧数据，所以必须明说。
-  tracked_clean "$LINUX" || echo "⚠ WSL 有未提交的已跟踪改动：git 只传提交，这些改动**不会**过去（先 commit）" >&2
+  # git fetch/merge 只搬已提交内容；WSL 侧改动先 commit，否则 Windows/Unity
+  # 读取的还是上一次提交的数据。
+  tracked_clean "$LINUX" || echo "⚠ WSL 有未提交的已跟踪改动：先 commit 再同步，否则 Windows/Unity 看不到。" >&2
   git -C "$WIN" fetch wsl || die "fetch wsl 失败"
   if ! git -C "$WIN" merge --ff-only "wsl/$BRANCH" >/dev/null 2>&1; then
     die "不是快进（两边各有新提交）。先看清：./tools/ops/sync_workspaces.sh status"

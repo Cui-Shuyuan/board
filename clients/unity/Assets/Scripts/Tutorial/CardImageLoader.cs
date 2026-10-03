@@ -72,9 +72,9 @@ namespace BoardGameTutorial
                 return null;
             }
 
-            // **已经抠好的图不再二次处理**：否则运行时的启发式会把烘焙好的 alpha 覆盖掉
-            //（它在这批扫描件上本来就不可靠 —— 背景亮度 0.85 落在半透明带里，四角 alpha 会留 1.0，
-            //  用户看到的就是"方形白边"）。识别约定：文件名以 `_cutout.png` 结尾。
+            // File names ending in `_cutout.png` mark alpha-ready cutouts.  Skip
+            // the runtime heuristic, which would overwrite the baked alpha and
+            // leave opaque square corners on this scan set.
             bool preCut = absolutePath.EndsWith("_cutout.png", System.StringComparison.OrdinalIgnoreCase);
             if (preCut)
             {

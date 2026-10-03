@@ -328,7 +328,7 @@ public class ChatOrchestratorService
     private List<ToolDefinition> BuildTools(string gameId)
     {
         // 架构：LLM 只提交查询计划，规则检索全部由程序执行。
-        // 其他检索接口不再对 LLM 暴露，作为程序内部能力被 ExecutePlan 使用。
+        // 这些检索接口只作为程序内部能力被 ExecutePlan 使用，不暴露给 LLM。
         return new List<ToolDefinition>
         {
             new()

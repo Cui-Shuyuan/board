@@ -103,7 +103,7 @@ class PlayerSessionController(
         loadQueue.onUnityReady()
     }
 
-    /** Re-asserts Unity status after Activity resume, matching the old behavior. */
+    /** Re-asserts Unity status after Activity resume. */
     fun requestStatusIfReady() {
         loadQueue.requestStatusIfReady()
     }

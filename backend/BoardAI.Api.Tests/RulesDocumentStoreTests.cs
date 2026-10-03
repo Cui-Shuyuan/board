@@ -92,7 +92,7 @@ public sealed class RulesDocumentStoreTests : IDisposable
         var second = store.GetDocument(path);
 
         Assert.NotSame(first, second);
-        // 不 Clone；如果旧 JsonDocument 被立即释放，这里会抛 ObjectDisposedException。
+        // 不 Clone；如果 JsonDocument 被立即释放，这里会抛 ObjectDisposedException。
         Assert.Equal(1, oldRoot.GetProperty("value").GetInt32());
     }
 

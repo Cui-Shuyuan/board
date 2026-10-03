@@ -9,7 +9,7 @@ Auth: https://www.volcengine.com/docs/6561/107789 (token auth)
 Credentials (normally loaded from repo-root .env):
     Option A (new console, shared key; preferred when present):
         VOLCENGINE_API_KEY
-    Option B (legacy console small-model one-sentence ASR):
+    Option B (console-token small-model one-sentence ASR):
         VOLCENGINE_ASR_APP_ID
         VOLCENGINE_ASR_ACCESS_TOKEN
         VOLCENGINE_ASR_CLUSTER
@@ -222,7 +222,7 @@ async def recognize(input_path: Path) -> dict[str, str]:
 
     api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
     # ASR-specific names take precedence, then fall back to the generic
-    # speech-app names users often copy from the old console.
+    # speech-app names used by the console.
     app_id = (
         os.environ.get("VOLCENGINE_ASR_APP_ID", "").strip()
         or os.environ.get("VOLCENGINE_APP_ID", "").strip()
@@ -241,19 +241,19 @@ async def recognize(input_path: Path) -> dict[str, str]:
         or os.environ.get("DOUBAO_ASR_AUTH", "")
     ).strip().lower()
 
-    legacy_configured = all((app_id, access_token, cluster))
+    console_token_configured = all((app_id, access_token, cluster))
 
     if auth_mode in {"legacy", "token", "authorization"}:
         use_api_key = False
     elif auth_mode in {"apikey", "api_key", "api-key", "x-api-key"}:
         use_api_key = True
-    elif legacy_configured:
-        # The old v2 one-sentence small-model endpoint is documented around
-        # app.appid/token/cluster.  In practice some projects' shared
-        # X-Api-Key is not granted for this v2 resource (403
-        # "[resource_id=] requested resource not granted"), so when all
-        # legacy values are present prefer them automatically.  Set
-        # VOLCENGINE_ASR_AUTH=apikey to force the shared-key experiment.
+    elif console_token_configured:
+        # The v2 one-sentence small-model endpoint is documented around
+        # app.appid/token/cluster.  Some projects' shared X-Api-Key is not
+        # granted for this v2 resource (403 "[resource_id=] requested resource
+        # not granted"), so when all three console-token values are present
+        # prefer them automatically.  Set VOLCENGINE_ASR_AUTH=apikey to force
+        # the shared-key experiment.
         use_api_key = False
     else:
         use_api_key = bool(api_key)
@@ -395,7 +395,7 @@ async def recognize(input_path: Path) -> dict[str, str]:
         raise RuntimeError(
             "ASR WebSocket 被服务端关闭（常见原因：共享 API Key 不属于当前项目、"
             "API Key 模式与小模型 v2 接口不匹配，或缺少 cluster/资源）。"
-            "如坚持旧版一句话识别小模型，请设置 VOLCENGINE_ASR_APP_ID / "
+            "如使用一句话识别小模型（console token 认证），请设置 VOLCENGINE_ASR_APP_ID / "
             "VOLCENGINE_ASR_ACCESS_TOKEN / VOLCENGINE_ASR_CLUSTER，"
             "或显式设置 VOLCENGINE_ASR_AUTH=legacy。"
         ) from exc

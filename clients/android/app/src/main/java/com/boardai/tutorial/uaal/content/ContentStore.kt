@@ -67,7 +67,7 @@ class ContentStore private constructor(
     constructor(context: Context) : this(
         File(context.filesDir, "board-content")
     ) {
-        deleteLegacyExternalRoot(context)
+        deleteStaleExternalRoot(context)
     }
 
     fun versionDir(version: String): File = File(versionsDir, version)
@@ -509,18 +509,18 @@ class ContentStore private constructor(
         }
     }
 
-    private fun deleteLegacyExternalRoot(context: Context) {
+    private fun deleteStaleExternalRoot(context: Context) {
         try {
             val externalRoot = context.getExternalFilesDir(null) ?: return
-            val legacy = File(externalRoot, "board-content")
-            if (!legacy.exists()) return
-            if (!legacy.deleteRecursively()) {
-                Log.w(TAG, "failed to delete legacy external content root: ${legacy.absolutePath}")
+            val staleRoot = File(externalRoot, "board-content")
+            if (!staleRoot.exists()) return
+            if (!staleRoot.deleteRecursively()) {
+                Log.w(TAG, "failed to delete stale external content root: ${staleRoot.absolutePath}")
             } else {
-                Log.i(TAG, "deleted legacy external content root: ${legacy.absolutePath}")
+                Log.i(TAG, "deleted stale external content root: ${staleRoot.absolutePath}")
             }
         } catch (t: Throwable) {
-            Log.w(TAG, "failed to clean legacy external content root", t)
+            Log.w(TAG, "failed to clean stale external content root", t)
         }
     }
 

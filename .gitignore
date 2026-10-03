@@ -33,7 +33,6 @@ doc/
 *.pdf
 # Runtime logs & QA artifacts
 backend/api_run.log
-archive/tools/qa-artifacts/
 
 # Generated content manifests (README documents the build command)
 content/manifests/*.json

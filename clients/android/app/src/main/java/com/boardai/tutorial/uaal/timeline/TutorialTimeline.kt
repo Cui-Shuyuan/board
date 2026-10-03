@@ -487,9 +487,8 @@ class TutorialTimeline private constructor(
 
         /**
          * Physical zones that make this state action visible to QA.  Unlike
-         * [zoneName], these are deliberately not label fallbacks: unknown
-         * zones keep the legacy raw-id behavior, while known `qa_ignore`
-         * zones suppress the whole action line.
+         * [zoneName], no label fallback is applied: unknown zones use raw ids,
+         * while known `qa_ignore` zones suppress the whole action line.
          */
         private fun qaZoneRefs(event: JSONObject): List<String> {
             return when (event.optString("op", "").trim()) {

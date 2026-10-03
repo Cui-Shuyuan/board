@@ -40,7 +40,7 @@ internal class PlayerOverlayUiState {
 
     // Optimistic seek display.  When the user commits a scrub, keep showing the
     // requested position until Unity sends a status that reflects the new cue /
-    // position.  This prevents the handle from flashing back to the old anchor.
+    // position.  This prevents the handle from flashing back to the confirmed position.
     var pendingSeekTarget by mutableStateOf<TimelineTarget?>(null)
     var pendingSeekGlobal by mutableFloatStateOf(0f)
     var pendingSeekStartedAt by mutableLongStateOf(0L)
@@ -195,9 +195,9 @@ internal fun rememberPlayerDisplayState(
             val elapsed = SystemClock.elapsedRealtime() - uiState.pendingSeekStartedAt
             val timedOut = elapsed > PENDING_SEEK_TIMEOUT_MS
             // Keep the optimistic position until Unity confirms the target
-            // cue/position.  The old 1.5 s timeout could clear during an
-            // in-flight pre-seek status and make the handle flash back to the
-            // previous position before the real status arrived.
+            // cue/position.  A short timeout can fire during an in-flight
+            // pre-seek status and make the handle flash back before the real
+            // status arrives.
             if ((sameCue && closeEnough) || timedOut) {
                 uiState.clearPendingSeek()
             }

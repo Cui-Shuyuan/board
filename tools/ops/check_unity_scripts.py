@@ -36,10 +36,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 SCRIPTS_DIR = ROOT / "clients" / "unity" / "Assets" / "Scripts"
 
-# Files that depend on the Unity editor / Input System package in ways the stubs
-# do not model.  They are the legacy prototype players and are not part of the
-# cue-animation path.
-EXCLUDED = set()   # 三个 legacy 文件现在也编（补了 stub 之后它们本来就是干净的）
+# Add filenames here if a Unity-editor-only script needs APIs that the stubs do
+# not model; everything else under Assets/Scripts and Assets/Editor is checked.
+EXCLUDED = set()
 
 DOTNET_CANDIDATES = [
     Path.home() / ".dotnet" / "dotnet",
@@ -909,11 +908,9 @@ def read_csproj_template():
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>9.0</LangVersion>
-    <!-- 必须定义 UNITY_EDITOR：`Assets/Editor/*.cs` 与部分脚本整段包在 #if UNITY_EDITOR 里，
-         不定义的话它们编译成空文件，**里面的错误一个都查不出来**（2026-09-18 踩过两次：
-         TutorialFrameCapture.cs 明明编译错误，检查器却报 OK；TutorialCuePlayer.cs 的
-         `#if ENABLE_INPUT_SYSTEM` 同理 —— 工程 activeInputHandler=2（Both），Unity 会同时定义新旧输入开关）。
-         凡是工程里出现的条件编译开关，这里都要跟着定义。 -->
+    <!-- 必须定义 UNITY_EDITOR 和输入系统开关：`Assets/Editor/*.cs` 与部分脚本
+         整段包在 #if 里，不定义对应符号就会编译成空文件，里面的错误全部漏检。
+         工程 activeInputHandler=2（Both），Unity 会同时定义 Input System 和 Input Manager 两套开关。 -->
     <DefineConstants>UNITY_EDITOR;UNITY_EDITOR_LINUX;UNITY_2023_1_OR_NEWER;ENABLE_INPUT_SYSTEM;ENABLE_LEGACY_INPUT_MANAGER;UNITY_ANDROID</DefineConstants>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -974,19 +971,15 @@ def main():
 
     scripts_dir = Path(args.dir)
     files = sorted(p for p in scripts_dir.rglob("*.cs") if p.name not in EXCLUDED)
-    # 采样入口也要编译检查：`-dumpCues` 这类改动以前只能到 Windows 上才发现写错。
-    # 只收 TutorialFrameCapture.cs —— 它是 Editor 目录里唯一只用 EditorApplication.Exit
-    # 的（stub 有），另外三个 Editor 脚本依赖重度编辑器 API，收了只会增加 stub 负担。
-    # 编辑器脚本与模板附带脚本：以前只收了 TutorialFrameCapture.cs，
-    # 剩下的（Editor/ 下另外 3 个 + TutorialInfo/）从来没被编译检查过 —— 又一处盲区。
     if args.dir == str(SCRIPTS_DIR):
-        # `Assets/Editor/` 全收：里面的工具脚本以前完全没有编译检查（盲区）。
+        # Compile the Editor entry points too: sampler/execution errors surface
+        # here instead of on a later Windows run.
         editor_dir = ROOT / "clients/unity/Assets/Editor"
         if editor_dir.is_dir():
             files += [p for p in editor_dir.rglob("*.cs") if p.name not in EXCLUDED]
-        # `Assets/TutorialInfo/` **不收**：那是 Unity 模板自带的 readme 脚本，与本项目无关，
-        # 而它要的 Editor/ScriptableObject/GUILayout 一大堆 stub 面只为它补不值。
-        # （万一它出错，检查器看不见 —— 这一点是知情的。）
+        # `Assets/TutorialInfo/` is Unity template code and is intentionally not
+        # checked: it needs a broad Editor/ScriptableObject/GUILayout stub
+        # surface unrelated to this project.
     files = sorted(set(files))
     if not files:
         print(f"no .cs files under {scripts_dir}", file=sys.stderr)

@@ -125,10 +125,9 @@ public class ContentController : ControllerBase
             enableRangeProcessing: true);
     }
 
-    // Legacy compatibility route.  New clients should use the versioned
-    // /files/{version}/{**filePath} route above.  Kept so old app builds keep
-    // working; it intentionally uses revalidation instead of immutable caching
-    // and can be removed once no supported client depends on it.
+    // Compatibility route for clients that still request unversioned URLs.
+    // New clients use /files/{version}/{**filePath} above.  This route uses
+    // revalidation instead of immutable caching.
     [HttpGet("files/{**filePath}")]
     public IActionResult GetFile([FromRoute] string game, [FromRoute] string? filePath)
     {

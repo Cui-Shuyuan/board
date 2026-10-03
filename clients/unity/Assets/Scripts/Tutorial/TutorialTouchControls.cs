@@ -2,8 +2,8 @@
 // 临时移动端触控控制层：底部半透明面板 + 大尺寸触控按钮。
 //
 // 仅用于 Unity 验证 APK 的真机交互验收；不是原生 Android UI，也不接后端。
-// 触摸输入优先走 Input System 的 Pointer.current，同时保留旧 Input 轮询作为无 Input
-// System 时的兜底。按钮由 OnGUI 绘制，但点击判定不依赖 GUI.Button，避免 Android
+// 触摸输入优先走 Input System 的 Pointer.current；无 Input System 时回退到
+// Input 轮询。按钮由 OnGUI 绘制，但点击判定不依赖 GUI.Button，避免 Android
 // 触摸事件在 IMGUI 下不生效。
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM

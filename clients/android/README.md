@@ -45,7 +45,7 @@ clients/unity/Assets/Scripts/Tutorial/TutorialTouchControls.cs
 
 ## 构建环境：集中配置
 
-机器相关路径全部集中到 `build-uaal.bat` 顶部配置块，`gradlew.bat` 不再写死用户路径。
+机器相关路径全部集中到 `build-uaal.bat` 顶部配置块；`gradlew.bat` 只从该配置块读取路径。
 
 默认值：
 
@@ -166,7 +166,7 @@ D:\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe ^
 Unity ready 握手：
 
 - `AndroidTutorialBridge` 在 `Start()` 后通过状态 JSON 上报 `unityReady`；
-- `MainActivity` 不再使用固定 `postDelayed` 发送 Unity 命令，而是观察 `UnityStatusHolder.status`；
+- `MainActivity` 通过观察 `UnityStatusHolder.status` 发送 Unity 命令，不使用固定 `postDelayed`；
 - 收到 `unityReady=true` 后只执行一次 `SetUnityTouchControlsEnabled("false")` 和 `checkContentUpdate()`；
 - Unity 未就绪时控制条状态显示“等待 Unity…”。
 
@@ -224,7 +224,7 @@ public bool UnityTouchControlsEnabled
 `TutorialCuePlayer.ResolveGameRoot()` 优先级：
 
 1. 显式 `tutorialRoot`（Android 正式流程由 `LoadGameWithRoot` 设置，指向 App 内部私有版本目录）；
-2. `Application.persistentDataPath/board-content/active.json` 中当前 game 的 `root`（旧外部路径兼容读取，Android 正式流程不再依赖）；
+2. `Application.persistentDataPath/board-content/active.json` 中当前 game 的 `root`（兼容读取 root 元数据；Android 正式流程不依赖）；
 3. 旧 fallback：`Application.persistentDataPath/{gameId}`（手动 adb push）；
 4. StreamingAssets / 仓库 `content/games/{gameId}`。
 
@@ -273,7 +273,7 @@ position, duration, touchControlsEnabled
 
 ## Unity 临时触控层策略
 
-Android 构建默认不再挂载 `TutorialTouchControls`：
+Android 构建不挂载 `TutorialTouchControls`：
 
 ```csharp
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -286,9 +286,9 @@ Android 构建默认不再挂载 `TutorialTouchControls`：
 作用：
 
 - 正式 UaaL 客户端只显示一套 Compose 控件；
-- Editor / Desktop 仍保留旧 Unity 控制层，方便调试；
+- Editor / Desktop 使用 Unity 控制层，方便调试；
 - 原生层启动后也会显式发送 `SetUnityTouchControlsEnabled("false")`；
-- 旧 Unity 独立 APK 构建入口仍保留在 `Assets/Editor/AndroidDebugBuild.cs`，使用旧包名 `com.boardai.tutorial`，不会覆盖 `com.boardai.tutorial.uaal`。
+- Unity 独立 APK 构建入口在 `Assets/Editor/AndroidDebugBuild.cs`，包名 `com.boardai.tutorial`，不会覆盖 `com.boardai.tutorial.uaal`。
 
 ## 内容更新 v1
 
@@ -314,10 +314,10 @@ manifest 记录每个可运行文件的 `path / size / sha256 / url`；`version`
 ```text
 GET /api/content/games/{game}/manifest
 GET /api/content/games/{game}/files/{version}/{**filePath}
-GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL
+GET /api/content/games/{game}/files/{**filePath}   # 无版本兼容 URL
 ```
 
-后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。manifest 里的文件 URL 已升级为 versioned URL，成功响应返回 `Cache-Control: public, max-age=31536000, immutable` + 基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；version 过期返回 `409 Conflict`，客户端会重新拉 manifest。旧无版本 URL 继续保留，返回 `no-cache, must-revalidate`，未来可删除。
+后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。manifest 里的文件 URL 已升级为 versioned URL，成功响应返回 `Cache-Control: public, max-age=31536000, immutable` + 基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；version 过期返回 `409 Conflict`，客户端会重新拉 manifest。无版本 URL 走兼容路径，返回 `no-cache, must-revalidate`。
 
 ### Android 本地仓库
 
@@ -367,7 +367,7 @@ App 访问 `http://127.0.0.1:5000` 即转发到 PC `5000` 端口。使用真机�
 
 ### 资源管理与下载 UI
 
-播放页不再显示“内容”按钮，所有资源状态和更新入口统一在首页：
+播放页只保留播放控制，资源状态和更新入口统一放在首页：
 
 - 首页顶部“资源管理”：
   - 每款游戏显示本地版本、服务端版本、状态和大小；
@@ -441,7 +441,7 @@ ping -n 20 127.0.0.1 >nul
 - 音量 - / + 生效并回传百分比；
 - 屏幕常亮；
 - 字幕位于底部，控制层位于顶部，不永久遮挡；
-- 不再出现 Unity 第二套触控条；
+- 只显示一套原生 Compose 触控条，没有 Unity 第二套触控条；
 - logcat 无 FATAL EXCEPTION / JNI 崩溃 / 内容缺失；
 - Unity 日志中仍可能看到可选 Play Asset Delivery 模块探测产生的
   `ClassNotFoundException: com.google.android.play.core.assetpacks.AssetPackManager`，

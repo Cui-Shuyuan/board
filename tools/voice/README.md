@@ -33,17 +33,17 @@ DOUBAO_TTS_ENDPOINT=wss://openspeech.bytedance.com/api/v1/tts/ws_binary
 DOUBAO_TTS_RESOURCE_ID=volc.tts.default
 
 # ASR: one-sentence small-model. Prefer the shared API key above. If the
-# new-console API key is not accepted by the selected old v2 service, use the
-# legacy small-model credentials instead (VOLCENGINE_ASR_AUTH=legacy).
+# shared API key is not accepted by the v2 service, use the console-token
+# credentials instead (VOLCENGINE_ASR_AUTH=legacy).
 VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
-# Optional legacy fallback (generic names are also accepted):
+# Optional console-token credentials (generic names are also accepted):
 # VOLCENGINE_ASR_APP_ID=       # or VOLCENGINE_APP_ID
 # VOLCENGINE_ASR_ACCESS_TOKEN= # or VOLCENGINE_ACCESS_TOKEN
 # VOLCENGINE_ASR_CLUSTER=volcengine_input  # or VOLCENGINE_CLUSTER; not SECRET_KEY
 # VOLCENGINE_ASR_AUTH=legacy
 # VOLCENGINE_ASR_RESOURCE_ID=volc.onesentenceasr.office.cn
 
-# Legacy speech synthesis 2.0 fallback only:
+# Speech synthesis 2.0 (seed2) only:
 # DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts
 # DOUBAO_RESOURCE_ID=seed-tts-2.0
 ```
@@ -60,7 +60,7 @@ python tools/voice/tts_once.py \
   --text "这是一次语音测试" \
   --out-file /tmp/test.mp3
 
-# legacy speech synthesis 2.0
+# speech synthesis 2.0 (seed2)
 python tools/voice/tts_once.py \
   --provider seed2 \
   --text "这是一次语音测试" \
@@ -73,7 +73,7 @@ Confirmed standard-service parameters:
 |---|---|
 | Endpoint | `wss://openspeech.bytedance.com/api/v1/tts/ws_binary` |
 | Auth (new console) | `X-Api-Key: ${VOLCENGINE_API_KEY}` |
-| Auth (legacy) | `Authorization: Bearer; ${VOLCENGINE_TTS_ACCESS_TOKEN}` + `app.appid/token/cluster` |
+| Auth (console token) | `Authorization: Bearer; ${VOLCENGINE_TTS_ACCESS_TOKEN}` + `app.appid/token/cluster` |
 | Cluster | `volcano_tts` for standard small-model v1 |
 | Voice parameter | `audio.voice_type` |
 | Recommended tutorials/QA voice | `BV700_streaming` (灿灿，中文女声，通用/讲故事). Safe alternatives: `BV001_streaming` (通用女声), `BV002_streaming` (通用男声) |
@@ -97,13 +97,13 @@ need to change because the content type remains `audio/mpeg`.
 |---|---|
 | Endpoint | `wss://openspeech.bytedance.com/api/v2/asr` |
 | Shared API key mode | `X-Api-Key: ${VOLCENGINE_API_KEY}`; `appid` is not required by the new console |
-| Legacy mode | `Authorization: Bearer; ${VOLCENGINE_ASR_ACCESS_TOKEN}` / `VOLCENGINE_ACCESS_TOKEN` plus `app.appid/token/cluster` |
-| Legacy cluster | one-sentence small-model cluster is `volcengine_input` (not TTS `volcano_tts`); configure `VOLCENGINE_ASR_CLUSTER` or `VOLCENGINE_CLUSTER`. `VOLCENGINE_SECRET_KEY` is HMAC signing material, not a cluster. |
+| Console-token mode | `Authorization: Bearer; ${VOLCENGINE_ASR_ACCESS_TOKEN}` / `VOLCENGINE_ACCESS_TOKEN` plus `app.appid/token/cluster` |
+| Console-token cluster | one-sentence small-model cluster is `volcengine_input` (not TTS `volcano_tts`); configure `VOLCENGINE_ASR_CLUSTER` or `VOLCENGINE_CLUSTER`. `VOLCENGINE_SECRET_KEY` is HMAC signing material, not a cluster. |
 | Audio | 16 kHz, 16-bit, mono WAV |
 | Return | `{"text":"...","request_id":"...","log_id":"..."}` on stdout |
 
 If the shared API key is not accepted by the old v2 small-model endpoint for
-your project, set `VOLCENGINE_ASR_AUTH=legacy` and fill the three legacy
+your project, set `VOLCENGINE_ASR_AUTH=legacy` and fill the three console-token
 credentials. The script reports the failure to stderr and exits non-zero; it
 does not fake a successful transcription.
 
@@ -117,7 +117,7 @@ VOLCENGINE_ACCESS_TOKEN=...
 VOLCENGINE_ASR_CLUSTER=volcengine_input
 ```
 
-`asr_once.py` automatically prefers these legacy credentials when all three
+`asr_once.py` automatically prefers these console-token credentials when all three
 are present. Set `VOLCENGINE_ASR_AUTH=apikey` only to force the shared-key
 experiment.
 

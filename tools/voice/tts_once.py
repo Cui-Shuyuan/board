@@ -12,7 +12,7 @@ wrapper only owns the API-facing CLI contract:
 
 Default provider is ``standard`` (Doubao standard small-model TTS v1).
 Set ``DOUBAO_TTS_PROVIDER=seed2`` or pass ``--provider seed2`` to use the
-legacy speech synthesis 2.0 path.
+speech synthesis 2.0 path.
 
 Environment variables (normally loaded from repo-root .env):
     VOLCENGINE_API_KEY      shared new-console API key (preferred)
@@ -20,8 +20,8 @@ Environment variables (normally loaded from repo-root .env):
     DOUBAO_TTS_VOICE        standard voice, default BV700_streaming
     DOUBAO_TTS_CLUSTER      standard v1 app.cluster, default volcano_tts
     DOUBAO_TTS_ENDPOINT     optional standard endpoint override
-    DOUBAO_SPEAKER          seed2 fallback voice
-    DOUBAO_RESOURCE_ID      seed2 fallback resource id
+    DOUBAO_SPEAKER          seed2 voice
+    DOUBAO_RESOURCE_ID      seed2 resource id
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ def parse_args() -> argparse.Namespace:
         "--provider",
         default=os.environ.get("DOUBAO_TTS_PROVIDER", DEFAULT_PROVIDER),
         choices=[PROVIDER_STANDARD, PROVIDER_SEED2],
-        help="standard (default) or seed2 (legacy speech synthesis 2.0)",
+        help="standard (default) or seed2 (speech synthesis 2.0)",
     )
     return parser.parse_args()
 

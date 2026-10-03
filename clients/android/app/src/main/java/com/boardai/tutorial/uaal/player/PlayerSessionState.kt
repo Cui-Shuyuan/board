@@ -4,8 +4,7 @@ import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 
 /**
- * UI-facing state for the local playback session that used to live directly in
- * MainActivity.
+ * UI-facing state for the local playback session.
  */
 data class PlayerSessionState(
     val selectedGame: GameCatalogEntry? = null,

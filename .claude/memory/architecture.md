@@ -91,7 +91,7 @@ L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 
 ### 单工具 `execute_plan`
 
-LLM 不再直接调用 search/get_concept，只输出查询计划：
+LLM 只输出查询计划，search/get_concept 由程序执行：
 
 - `relation`：`explain / condition / ordering / boundary / flow / list / identify`
 - `entity`：概念 id、准确中文名或自然语言描述

@@ -220,7 +220,7 @@ python3 animation/cue_graph_v2.py --help
 
 - 规则 QA 脚本按游戏散落在 `tools/qa/_qa_<game>_run.py`、`tools/qa/_qa_<game>_log_analysis.py`。
 - 结果文件：`tools/qa/_qa_<game>_results.jsonl`。
-- 动画 QA：`animation/qa_anim_ask.py` 是主流程——**问题必须手写**，可放在 cue 的 `qa` 字段或 `_qa/questions.json`；脚本自动提取、发送 Board API 问答并留档。`qa_anim_check.py` 可交叉验证；`qa_anim_percue.py` 是旧生成器，不作为主流程。
+- 动画 QA：`animation/qa_anim_ask.py` 是唯一流程——**问题必须手写**，可放在 cue 的 `qa` 字段或 `_qa/questions.json`；脚本自动提取、发送 Board API 问答并留档。
 - 常用检查：
   - `tools/ops/check_unity_scripts.py`：Unity C# 编译检查。
   - `animation/check_anim_v2.py`：编译/契约/状态/机位检查。
@@ -263,7 +263,6 @@ Unity 批处理采样使用 Windows 侧编辑器（项目文档中的路径）�
 - `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`
 - `docs/ops/start-services.md`
 - `docs/tutorial/README.md`
-- `docs/tutorial-animation-refactor.md`
 - `tools/voice/README.md`
 
 ## 13. 环境注意

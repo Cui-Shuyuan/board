@@ -227,7 +227,7 @@ def process_page(doc, pdf_page_idx, page_num):
     out_dir = OUT_DIR / f"page-{page_num:02d}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 清空旧结果
+    # 清空上一轮结果
     for old in out_dir.glob("*.jpg"):
         old.unlink()
 

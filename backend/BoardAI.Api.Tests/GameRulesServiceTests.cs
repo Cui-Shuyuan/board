@@ -136,8 +136,8 @@ public sealed class GameRulesServiceTests
         Assert.Equal("exact_name_zh", updated.Results[0].Source);
         Assert.Equal("widget", updated.Results[0].Matched[0].GetProperty("id").GetString());
 
-        // 旧中文名「小装置」是「小装置改」的子串，生产的名称包含兜底仍会命中
-        // contain_unique。本测试至少锁定：派生索引确实按新文档重建，并优先命中新精确名。
+        // 中文名存在子串重叠时，名称包含兜底仍会命中 contain_unique。
+        // 本测试锁定：派生索引按最新文档重建，并优先命中精确名。
     }
 
     [Fact]

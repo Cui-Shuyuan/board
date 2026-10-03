@@ -45,7 +45,7 @@ public sealed class RulesReferenceService
     /// <summary>
     /// get_concept 的一层引用扩展：matched 概念直接引用的概念一并返回为 related。
     /// 引用提取与注解共用同一个正则；能解析（GetConcepts 查得到）的才扩展，
-    /// 排除自身与 matched 集合；related 内部的引用不再递归扩展。
+    /// 排除自身与 matched 集合；related 内部的引用不递归扩展。
     /// 按首现顺序最多扩展 MaxRelatedConcepts 个，超出截断并在 Note 提示。
     /// </summary>
     private const int MaxRelatedConcepts = 10;

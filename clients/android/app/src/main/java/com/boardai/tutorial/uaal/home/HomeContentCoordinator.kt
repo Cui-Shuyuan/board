@@ -20,7 +20,7 @@ import java.util.Locale
 
 /**
  * Owns the home catalog, content status, resource manager, download and
- * content-prompt state that used to live directly in MainActivity.
+ * content-prompt state.
  *
  * All state mutation happens on the Android main thread.  Blocking catalog and
  * content work is scheduled through [scheduler], whose production

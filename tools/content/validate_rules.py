@@ -18,7 +18,7 @@ Board AI 规则文件语法校验脚本。
   E05  type 不是完整引用 <ontology::multiple_choice_enum.XXX>
   E06  do_after 引用不存在的步骤 id
   E07  cost 写 null (应省略)
-  E08  type 值含 " | null" (旧写法)
+  E08  type 值含 " | null" (不允许的写法)
   E09  游戏层用 definition 键 (应 description)
   E10  _skip 缺 id 或缺 description
   E13  <ontology::cost>/<ontology::content> 缺 instant/continuous 子层、
