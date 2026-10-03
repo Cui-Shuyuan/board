@@ -268,13 +268,6 @@ fun TutorialPlayerOverlay(
                     modifier = Modifier.align(Alignment.TopCenter)
                 )
 
-                PlayerCenterPlayPause(
-                    paused = display.paused,
-                    enabled = display.unityReady,
-                    modifier = Modifier.align(Alignment.Center),
-                    onClick = { togglePlayPause() }
-                )
-
                 PlayerTransportBar(
                     status = status,
                     timeline = timeline,
@@ -331,6 +324,29 @@ fun TutorialPlayerOverlay(
                     },
                     onScrubFinished = { finishScrubFromGesture() },
                     modifier = Modifier.align(Alignment.BottomCenter)
+                )
+            }
+        }
+
+        // Paused state keeps a single central ▶ affordance even after the
+        // transport chrome auto-hides.  A single tap resumes playback.
+        AnimatedVisibility(
+            visible = !qaOpen && !uiState.showChapters && display.paused,
+            enter = fadeIn(animationSpec = tween(durationMillis = 160)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 160)),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                PlayerCenterPlayPause(
+                    paused = true,
+                    enabled = display.unityReady,
+                    modifier = Modifier.align(Alignment.Center),
+                    onClick = {
+                        // Resume only.  Do not call revealControls() here:
+                        // tapping the central ▶ should not pop the control
+                        // chrome back onto the picture.
+                        if (display.paused) onCommand("Resume", "")
+                    }
                 )
             }
         }
