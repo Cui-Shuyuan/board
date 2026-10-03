@@ -311,6 +311,86 @@
       },
       "source_card_id": 77,
       "image": "media/card/三级发展卡_蓝_77_cutout.png"
+    },
+    "card_l1_sapphire_901": {
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "source_card_id": 901,
+      "image": "media/card/一级发展卡_蓝_14_cutout.png"
+    },
+    "card_l1_sapphire_902": {
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "source_card_id": 902,
+      "image": "media/card/一级发展卡_蓝_14_cutout.png"
+    },
+    "card_l1_sapphire_903": {
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "source_card_id": 903,
+      "image": "media/card/一级发展卡_蓝_cutout.png"
+    },
+    "card_l1_sapphire_904": {
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "source_card_id": 904,
+      "image": "media/card/一级发展卡_蓝_cutout.png"
+    },
+    "card_l1_onyx_905": {
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "source_card_id": 905,
+      "image": "media/card/一级发展卡_黑_cutout.png"
+    },
+    "card_l1_onyx_906": {
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "source_card_id": 906,
+      "image": "media/card/一级发展卡_黑_cutout.png"
+    },
+    "card_l1_onyx_907": {
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "source_card_id": 907,
+      "image": "media/card/一级发展卡_黑_cutout.png"
     }
   },
   "cost_by_template": {
@@ -428,6 +508,37 @@
       "onyx": 3,
       "sapphire": 3,
       "diamond": 6
+    },
+    "card_l1_sapphire_901": {
+      "onyx": 2,
+      "emerald": 2
+    },
+    "card_l1_sapphire_902": {
+      "onyx": 2,
+      "emerald": 2
+    },
+    "card_l1_sapphire_903": {
+      "onyx": 2,
+      "emerald": 2
+    },
+    "card_l1_sapphire_904": {
+      "onyx": 2,
+      "emerald": 2
+    },
+    "card_l1_onyx_905": {
+      "sapphire": 2,
+      "ruby": 1,
+      "diamond": 2
+    },
+    "card_l1_onyx_906": {
+      "sapphire": 2,
+      "ruby": 1,
+      "diamond": 2
+    },
+    "card_l1_onyx_907": {
+      "sapphire": 2,
+      "ruby": 1,
+      "diamond": 2
     }
   },
   "prestige_by_template": {
@@ -458,11 +569,17 @@
     "card_l1_ruby_40": 1,
     "card_l2_ruby_69": 2,
     "card_l3_diamond_80": 4,
-    "card_l3_sapphire_77": 4
+    "card_l3_sapphire_77": 4,
+    "card_l1_sapphire_901": 0,
+    "card_l1_sapphire_902": 0,
+    "card_l1_sapphire_903": 0,
+    "card_l1_sapphire_904": 0,
+    "card_l1_onyx_905": 0,
+    "card_l1_onyx_906": 0,
+    "card_l1_onyx_907": 0
   },
   "bonus": "每张卡右上角的折扣宝石 = bonus 字段（diamond/sapphire/emerald/ruby/onyx；<gem> 映射同动画本体）。",
   "cost_note": "价格来自卡面左下角圆盘；键用宝石名字：diamond=白、sapphire=蓝、emerald=绿、ruby=红、onyx=黑。validate_anim_rules 用 cost_by_template 做买牌对账。",
-  "legacy_note": "旧 market_card_{level}_{bonus} / sample_card_* 模板已退出；不要再往这里加“颜色代表卡”。",
   "prestige": {
     "1": {
       "白": 0,

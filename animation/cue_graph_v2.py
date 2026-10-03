@@ -98,9 +98,11 @@ class CueGraph:
         idx = self.index(cue_id)
         target = self.cues[idx]
         # A deleted node with state-changing events cannot be removed while
-        # preserving its children's old state.  The caller must opt in.
+        # preserving its children's state.  The caller must opt in.
+        # `shuffle` is intentionally absent: it only adds visual jitter and
+        # never permutes the logical pile.
         state_ops = {"create", "ensure", "destroy", "transfer", "stack",
-                     "shuffle", "set_face", "move_order"}
+                     "set_face", "move_order"}
         changed = any(e.get("op") in state_ops for e in (target.get("events") or []))
         if changed and not force:
             raise CueGraphError(
@@ -149,8 +151,8 @@ class CueGraph:
         second["events"] = shifted
         self.cues[idx] = first
         self.cues.insert(idx + 1, second)
-        # Move direct children from the old cue to the second half, because
-        # the old cue's terminal state is now the second half's terminal state.
+        # Move direct children from the split cue to the second half, because
+        # the second half now carries the cue's terminal state.
         for c in self.cues:
             if c is second:
                 continue

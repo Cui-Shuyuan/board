@@ -4,190 +4,448 @@
     "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，",
     "words": [
       {
-        "confidence": 0.7917102,
-        "endTime": 0.455,
-        "startTime": 0.295,
+        "confidence": 0.8294528,
+        "endTime": 0.425,
+        "startTime": 0.265,
         "word": "玩"
       },
       {
-        "confidence": 0.9185774,
-        "endTime": 0.695,
-        "startTime": 0.455,
+        "confidence": 0.93737924,
+        "endTime": 0.645,
+        "startTime": 0.425,
         "word": "家"
       },
       {
-        "confidence": 0.9168687,
-        "endTime": 0.845,
-        "startTime": 0.695,
+        "confidence": 0.93919355,
+        "endTime": 0.805,
+        "startTime": 0.645,
         "word": "只"
       },
       {
-        "confidence": 0.8143743,
-        "endTime": 1.005,
-        "startTime": 0.845,
+        "confidence": 0.8254197,
+        "endTime": 0.955,
+        "startTime": 0.805,
         "word": "可"
       },
       {
-        "confidence": 0.83830315,
-        "endTime": 1.165,
-        "startTime": 1.005,
+        "confidence": 0.7913688,
+        "endTime": 1.095,
+        "startTime": 0.955,
         "word": "以"
       },
       {
-        "confidence": 0.9301057,
-        "endTime": 1.495,
-        "startTime": 1.165,
+        "confidence": 0.96033,
+        "endTime": 1.405,
+        "startTime": 1.095,
         "word": "从"
       },
       {
-        "confidence": 0.9890969,
-        "endTime": 1.645,
-        "startTime": 1.495,
+        "confidence": 0.98657274,
+        "endTime": 1.565,
+        "startTime": 1.405,
         "word": "被"
       },
       {
-        "confidence": 0.68220603,
-        "endTime": 1.835,
-        "startTime": 1.645,
+        "confidence": 0.8660116,
+        "endTime": 1.745,
+        "startTime": 1.565,
         "word": "翻"
       },
       {
-        "confidence": 0.95062864,
-        "endTime": 2.095,
-        "startTime": 1.835,
+        "confidence": 0.96955633,
+        "endTime": 2.005,
+        "startTime": 1.745,
         "word": "开"
       },
       {
-        "confidence": 0.7467684,
-        "endTime": 2.205,
-        "startTime": 2.095,
+        "confidence": 0.7726736,
+        "endTime": 2.115,
+        "startTime": 2.005,
         "word": "的"
       },
       {
-        "confidence": 0.17067531,
-        "endTime": 2.595,
-        "startTime": 2.565,
+        "confidence": 0.27095315,
+        "endTime": 2.505,
+        "startTime": 2.475,
         "word": "12"
       },
       {
-        "confidence": 0.9223609,
-        "endTime": 2.805,
-        "startTime": 2.595,
+        "confidence": 0.9366432,
+        "endTime": 2.715,
+        "startTime": 2.505,
         "word": "张"
       },
       {
-        "confidence": 0.98659784,
-        "endTime": 2.995,
-        "startTime": 2.805,
+        "confidence": 0.98242396,
+        "endTime": 2.895,
+        "startTime": 2.715,
         "word": "发"
       },
       {
-        "confidence": 0.9215577,
-        "endTime": 3.125,
-        "startTime": 2.995,
+        "confidence": 0.88564134,
+        "endTime": 3.025,
+        "startTime": 2.895,
         "word": "展"
       },
       {
-        "confidence": 0.9497611,
-        "endTime": 3.305,
-        "startTime": 3.125,
+        "confidence": 0.9614029,
+        "endTime": 3.215,
+        "startTime": 3.025,
         "word": "卡"
       },
       {
-        "confidence": 0.9281778,
-        "endTime": 3.495,
-        "startTime": 3.305,
+        "confidence": 0.9569505,
+        "endTime": 3.415,
+        "startTime": 3.215,
         "word": "牌"
       },
       {
-        "confidence": 0.97107893,
-        "endTime": 3.705,
-        "startTime": 3.495,
+        "confidence": 0.9770219,
+        "endTime": 3.605,
+        "startTime": 3.415,
         "word": "中"
       },
       {
-        "confidence": 0.9761428,
-        "endTime": 3.945,
-        "startTime": 3.705,
+        "confidence": 0.96452993,
+        "endTime": 3.865,
+        "startTime": 3.605,
         "word": "选"
       },
       {
-        "confidence": 0.98097086,
-        "endTime": 4.105,
-        "startTime": 3.945,
+        "confidence": 0.9793231,
+        "endTime": 4.055,
+        "startTime": 3.865,
         "word": "择"
       },
       {
-        "confidence": 0.93172765,
-        "endTime": 4.205,
-        "startTime": 4.105,
+        "confidence": 0.9441352,
+        "endTime": 4.145,
+        "startTime": 4.055,
         "word": "一"
       },
       {
-        "confidence": 0.9454369,
-        "endTime": 4.375,
-        "startTime": 4.205,
+        "confidence": 0.960892,
+        "endTime": 4.305,
+        "startTime": 4.145,
         "word": "张"
       },
       {
-        "confidence": 0.959277,
-        "endTime": 4.565,
-        "startTime": 4.375,
+        "confidence": 0.9381157,
+        "endTime": 4.495,
+        "startTime": 4.305,
         "word": "购"
       },
       {
-        "confidence": 0.9669846,
-        "endTime": 4.735,
-        "startTime": 4.565,
+        "confidence": 0.92985195,
+        "endTime": 4.655,
+        "startTime": 4.495,
         "word": "买，"
       }
     ]
   },
   {
     "phonemes": [],
-    "text": "并且在任何时间，\n",
+    "text": "并且在任何时间，只要卡牌被玩家买走，",
     "words": [
       {
-        "confidence": 0.6530739,
-        "endTime": 5.2250414,
-        "startTime": 5.1500416,
+        "confidence": 0.77025366,
+        "endTime": 5.2150416,
+        "startTime": 5.120042,
         "word": "并"
       },
       {
-        "confidence": 0.87774897,
-        "endTime": 5.4550414,
-        "startTime": 5.2250414,
+        "confidence": 0.9355786,
+        "endTime": 5.455042,
+        "startTime": 5.2150416,
         "word": "且"
       },
       {
-        "confidence": 0.898473,
-        "endTime": 5.6450415,
-        "startTime": 5.4550414,
+        "confidence": 0.88006854,
+        "endTime": 5.715042,
+        "startTime": 5.455042,
         "word": "在"
       },
       {
-        "confidence": 0.24565722,
-        "endTime": 5.7050414,
-        "startTime": 5.6450415,
+        "confidence": 0.95880705,
+        "endTime": 5.855042,
+        "startTime": 5.715042,
         "word": "任"
       },
       {
-        "confidence": 0.1348831,
-        "endTime": 5.7650414,
-        "startTime": 5.7050414,
+        "confidence": 0.97314113,
+        "endTime": 5.995042,
+        "startTime": 5.855042,
         "word": "何"
       },
       {
-        "confidence": 0.091155276,
-        "endTime": 5.825042,
-        "startTime": 5.7650414,
+        "confidence": 0.934317,
+        "endTime": 6.1550417,
+        "startTime": 5.995042,
         "word": "时"
       },
       {
-        "confidence": 0.18454327,
-        "endTime": 5.8850417,
-        "startTime": 5.825042,
+        "confidence": 0.9793147,
+        "endTime": 6.4250417,
+        "startTime": 6.1550417,
         "word": "间，"
+      },
+      {
+        "confidence": 0.97732604,
+        "endTime": 6.825042,
+        "startTime": 6.665042,
+        "word": "只"
+      },
+      {
+        "confidence": 0.9790023,
+        "endTime": 6.935042,
+        "startTime": 6.825042,
+        "word": "要"
+      },
+      {
+        "confidence": 0.8874665,
+        "endTime": 7.145042,
+        "startTime": 6.935042,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9615975,
+        "endTime": 7.4050417,
+        "startTime": 7.145042,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9764894,
+        "endTime": 7.5650415,
+        "startTime": 7.4050417,
+        "word": "被"
+      },
+      {
+        "confidence": 0.9720091,
+        "endTime": 7.705042,
+        "startTime": 7.5650415,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9513578,
+        "endTime": 7.8650417,
+        "startTime": 7.705042,
+        "word": "家"
+      },
+      {
+        "confidence": 0.90981454,
+        "endTime": 8.045042,
+        "startTime": 7.8650417,
+        "word": "买"
+      },
+      {
+        "confidence": 0.91694826,
+        "endTime": 8.305042,
+        "startTime": 8.045042,
+        "word": "走，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "卡牌供应堆出现了空位，",
+    "words": [
+      {
+        "confidence": 0.7803977,
+        "endTime": 8.725084,
+        "startTime": 8.580084,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9740488,
+        "endTime": 8.905084,
+        "startTime": 8.725084,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.94152147,
+        "endTime": 9.085084,
+        "startTime": 8.905084,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8539461,
+        "endTime": 9.235084,
+        "startTime": 9.085084,
+        "word": "应"
+      },
+      {
+        "confidence": 0.86876404,
+        "endTime": 9.475084,
+        "startTime": 9.235084,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.9625307,
+        "endTime": 9.645084,
+        "startTime": 9.475084,
+        "word": "出"
+      },
+      {
+        "confidence": 0.9715947,
+        "endTime": 9.835084,
+        "startTime": 9.645084,
+        "word": "现"
+      },
+      {
+        "confidence": 0.9800917,
+        "endTime": 9.925084,
+        "startTime": 9.835084,
+        "word": "了"
+      },
+      {
+        "confidence": 0.9550487,
+        "endTime": 10.165084,
+        "startTime": 9.925084,
+        "word": "空"
+      },
+      {
+        "confidence": 0.9713227,
+        "endTime": 10.325084,
+        "startTime": 10.165084,
+        "word": "位，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "玩家必须从对应行翻出一张新的卡牌填补这个空位，\n",
+    "words": [
+      {
+        "confidence": 0.79256874,
+        "endTime": 10.855125,
+        "startTime": 10.780126,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9128603,
+        "endTime": 11.075126,
+        "startTime": 10.855125,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9356219,
+        "endTime": 11.215126,
+        "startTime": 11.075126,
+        "word": "必"
+      },
+      {
+        "confidence": 0.97418267,
+        "endTime": 11.385126,
+        "startTime": 11.215126,
+        "word": "须"
+      },
+      {
+        "confidence": 0.96659917,
+        "endTime": 11.645125,
+        "startTime": 11.385126,
+        "word": "从"
+      },
+      {
+        "confidence": 0.9653087,
+        "endTime": 11.795126,
+        "startTime": 11.645125,
+        "word": "对"
+      },
+      {
+        "confidence": 0.9242532,
+        "endTime": 11.945126,
+        "startTime": 11.795126,
+        "word": "应"
+      },
+      {
+        "confidence": 0.8632629,
+        "endTime": 12.235126,
+        "startTime": 11.945126,
+        "word": "行"
+      },
+      {
+        "confidence": 0.8480087,
+        "endTime": 12.415126,
+        "startTime": 12.235126,
+        "word": "翻"
+      },
+      {
+        "confidence": 0.9796359,
+        "endTime": 12.575126,
+        "startTime": 12.415126,
+        "word": "出"
+      },
+      {
+        "confidence": 0.9247936,
+        "endTime": 12.705126,
+        "startTime": 12.575126,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9793543,
+        "endTime": 12.885126,
+        "startTime": 12.705126,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9788303,
+        "endTime": 13.115126,
+        "startTime": 12.885126,
+        "word": "新"
+      },
+      {
+        "confidence": 0.96935225,
+        "endTime": 13.205126,
+        "startTime": 13.115126,
+        "word": "的"
+      },
+      {
+        "confidence": 0.90793335,
+        "endTime": 13.385126,
+        "startTime": 13.205126,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.96265423,
+        "endTime": 13.685125,
+        "startTime": 13.385126,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.90682256,
+        "endTime": 13.915126,
+        "startTime": 13.725125,
+        "word": "填"
+      },
+      {
+        "confidence": 0.79961604,
+        "endTime": 14.135126,
+        "startTime": 13.915126,
+        "word": "补"
+      },
+      {
+        "confidence": 0.84146225,
+        "endTime": 14.285126,
+        "startTime": 14.135126,
+        "word": "这"
+      },
+      {
+        "confidence": 0.56140685,
+        "endTime": 14.365126,
+        "startTime": 14.285126,
+        "word": "个"
+      },
+      {
+        "confidence": 0.8908282,
+        "endTime": 14.575126,
+        "startTime": 14.365126,
+        "word": "空"
+      },
+      {
+        "confidence": 0.851484,
+        "endTime": 14.715126,
+        "startTime": 14.575126,
+        "word": "位，"
       }
     ]
   }

@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """Run the Splendor rule ledger over v2 animation source events.
 
-The ledger itself is the same rule checker used before, but this adapter feeds
-it v2 events independently from the v2 compiler.  It does not use v1 sampled
-state as truth.
+Each cue is replayed from its compiled v2 ``start_state``; the adapter builds
+ledger events independently from the v2 compiler so the rule checks do not
+reuse compiler logic.
 """
 from __future__ import annotations
 import argparse, json, sys
@@ -54,7 +54,7 @@ def _start_states(compiled):
         out[cid] = st
     return out
 
-def to_old_event(ev):
+def to_ledger_event(ev):
     op=ev.get('op')
     if op in ('camera', 'label', 'shape', 'overlay_show', 'overlay_hide'):
         return None
@@ -101,7 +101,7 @@ def main():
     for c in track.get('cues') or []:
         anim['cues'].append({'cue':c['id'],'tree':c.get('tree') or 'main',
                              'demo':bool(c.get('demo')),
-                             'events':[x for x in (to_old_event(e) for e in (c.get('events') or [])) if x]})
+                             'events':[x for x in (to_ledger_event(e) for e in (c.get('events') or [])) if x]})
     rep=ledger.Report()
     ledger.run(anim, default_stage, stages, facts, rep, cue_start_states=_start_states(compiled))
     for w in rep.warnings: print('WARN',*w)

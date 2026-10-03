@@ -142,14 +142,16 @@ namespace BoardGameTutorial.Animation
             }
         }
 
-        public static Sprite GetMarkerSprite(string kind)
+        public static Sprite GetMarkerSprite(string kind, float strokeNorm)
         {
-            return MarkerSprite(kind);
+            return MarkerSprite(kind, strokeNorm);
         }
 
-        private static Sprite MarkerSprite(string kind)
+        private static Sprite MarkerSprite(string kind, float strokeNorm)
         {
-            string key = string.IsNullOrEmpty(kind) ? "forbid" : kind;
+            string baseKey = string.IsNullOrEmpty(kind) ? "forbid" : kind;
+            float safeStroke = Mathf.Clamp(strokeNorm, 0.015f, 0.22f);
+            string key = baseKey + "|" + safeStroke.ToString("F3");
             if (MarkerSprites.TryGetValue(key, out var cached)) return cached;
 
             const int N = 128;
@@ -166,7 +168,7 @@ namespace BoardGameTutorial.Animation
                         {
                             float u = ((x + (sx + 0.5f) / S) / N) * 2f - 1f;
                             float v = ((y + (sy + 0.5f) / S) / N) * 2f - 1f;
-                            acc += MarkerCoverage(key, u, v);
+                            acc += MarkerCoverage(baseKey, u, v, safeStroke);
                         }
                     px[y * N + x] = new Color(1f, 1f, 1f, Mathf.Clamp01(acc / (S * S)));
                 }
@@ -180,33 +182,56 @@ namespace BoardGameTutorial.Animation
             return sprite;
         }
 
-        private static float MarkerCoverage(string kind, float u, float v)
+        private static float MarkerCoverage(string kind, float u, float v, float strokeNorm)
         {
             float r = Mathf.Sqrt(u * u + v * v);
             switch (kind)
             {
                 case "circle":
-                    return r <= 0.98f && r >= 0.78f ? 1f : 0f;
+                {
+                    float inner = Mathf.Max(0.40f, 0.98f - 2f * strokeNorm);
+                    return r <= 0.98f && r >= inner ? 1f : 0f;
+                }
                 case "forbid":
-                    if (r <= 0.98f && r >= 0.78f) return 1f;
-                    if (Mathf.Abs(u - v) <= 0.075f && r <= 0.95f) return 1f;
+                {
+                    float inner = Mathf.Max(0.40f, 0.98f - 2f * strokeNorm);
+                    if (r <= 0.98f && r >= inner) return 1f;
+                    if (Mathf.Abs(u - v) <= strokeNorm && r <= 0.95f) return 1f;
                     return 0f;
+                }
                 case "cross":
-                    if (Mathf.Abs(u - v) <= 0.10f && r <= 0.72f) return 1f;
-                    if (Mathf.Abs(u + v) <= 0.10f && r <= 0.72f) return 1f;
+                    if (Mathf.Abs(u - v) <= strokeNorm * 1.4f && r <= 0.72f) return 1f;
+                    if (Mathf.Abs(u + v) <= strokeNorm * 1.4f && r <= 0.72f) return 1f;
                     return 0f;
                 default:
-                    float a = (u + 0.1f) - (v - 0.1f);
-                    if (Mathf.Abs(a) <= 0.055f && r <= 0.80f) return 1f;
-                    Vector2 tip = new Vector2(-0.72f, 0.72f);
-                    Vector2 p = new Vector2(u, v);
-                    Vector2 dir = new Vector2(1f, -1f).normalized;
-                    Vector2 perp = new Vector2(1f, 1f).normalized;
-                    Vector2 d = p - tip;
-                    float along = Vector2.Dot(d, dir);
-                    float side = Mathf.Abs(Vector2.Dot(d, perp));
-                    return along >= 0f && along <= 0.34f && side <= along * 0.85f ? 1f : 0f;
+                {
+                    // Big right-pointing arrow (→), drawn with a shaft and two
+                    // straight head strokes.
+                    float thickness = strokeNorm;
+                    if (DistanceToSegment(u, v, -0.92f, 0f, 0.82f, 0f) <= thickness)
+                        return 1f;
+                    if (DistanceToSegment(u, v, 0.82f, 0f, -0.02f, 0.52f) <= thickness)
+                        return 1f;
+                    if (DistanceToSegment(u, v, 0.82f, 0f, -0.02f, -0.52f) <= thickness)
+                        return 1f;
+                    return 0f;
+                }
             }
+        }
+
+        private static float DistanceToSegment(float px, float py,
+                                                float ax, float ay,
+                                                float bx, float by)
+        {
+            float dx = bx - ax;
+            float dy = by - ay;
+            float lenSq = dx * dx + dy * dy;
+            if (lenSq <= 0.000001f)
+                return Mathf.Sqrt((px - ax) * (px - ax) + (py - ay) * (py - ay));
+            float t = Mathf.Clamp01(((px - ax) * dx + (py - ay) * dy) / lenSq);
+            float qx = ax + t * dx;
+            float qy = ay + t * dy;
+            return Mathf.Sqrt((px - qx) * (px - qx) + (py - qy) * (py - qy));
         }
 
         private static Vector3 BaseScale(CompiledTemplateDef tpl, Sprite sprite)

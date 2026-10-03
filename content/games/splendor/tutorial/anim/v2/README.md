@@ -34,7 +34,7 @@
 
 - 轨道顶层 `time_anchors` 是“时间坐标声明”，一开始就全部写好；
   当前 full 轨道有 468 个锚点，覆盖每条 cue 的 start/end 和每个 beat 的 start/end。
-- 所有事件不再写裸 `at`，而是写 `anchor`；只有原始时间点没有正好落在锚点上时，
+- 所有事件写 `anchor`；只有原始时间点没有正好落在锚点上时，
   才补一个相对 `offset`。
 - 编译器从 `script.{track}.json` 的 beat 文本 + `{track}.runtime.json` 的
   TTS word timing 里解析出 cue 内秒数。匹配时按**词流顺序**做
@@ -124,7 +124,7 @@ stage 里定义 shot 时，`zones` 可以写 `["*"]`：
   不会因为空边距把镜头拉得更远。
 
 这个 token 专门给“所有 zone 都要入镜，但又不要拉出多余留白”的全景镜头使用。
-`zone:["board"]` 仍保留旧语义（按 `board.extent` + 固定比例），不要混用。
+`zone:["board"]` 按 `board.extent` + 固定比例取景；不要与 `["*"]` 混用。
 
 ## 结构编辑工具（cue graph）
 
@@ -149,8 +149,8 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 ## 素材路径约定
 
 - stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`
-  （裁到实物、alpha 成品、可选 mm 统一尺寸）。运行时只按字面路径加载，
-  不再做“优先找 `_cutout.png`”的隐式回退。
+  （裁到实物、alpha 成品、可选 mm 统一尺寸）。运行时按字面路径加载，
+  不做“优先找 `_cutout.png`”的隐式回退。
 - 一个模板对应多种颜色时（如 `gem` / `gem_sample`），在模板里写
   `face_image_by_palette`：
 

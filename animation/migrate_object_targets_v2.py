@@ -14,6 +14,10 @@ surface is now:
 The compiler normalizes that interface back to the flat internal fields, so
 this script is a source-data migration only.
 
+For `transfer`, the destination `order` stays a flat field: it selects a slot
+in the destination row (market refill, etc.), not a source item.  If it is
+present inside `target`, this script moves it back to the event.
+
 Usage:
     python3 animation/migrate_object_targets_v2.py <track.anim.json> [--write]
 """
@@ -29,9 +33,13 @@ SINGLE_TARGET_OPS = {"ensure", "create", "destroy", "shuffle", "move_order", "se
                      "stack", "highlight", "point", "fade", "scale"}
 
 
-def _take_selector(ev: dict) -> dict:
+def _take_selector(ev: dict, include_order: bool = True) -> dict:
     out = {}
     for key in SELECTOR_KEYS:
+        if key == "order" and not include_order:
+            # For transfer, `order` is the destination slot, not a source
+            # selector; it must stay on the flat event.
+            continue
         if key in ev:
             out[key] = ev.pop(key)
     return out
@@ -48,8 +56,27 @@ def _entity_target(ev: dict, zone_key: str = "zone") -> dict:
     return target
 
 
+def _repair_transfer_destination_order(ev: dict) -> None:
+    """Keep transfer destination placement on the flat event.
+
+    Older migrations folded the destination `order` into `target`, where it
+    looked like a source selector.  `slot` was an ignored duplicate of it.
+    """
+    target = ev.get("target")
+    if isinstance(target, dict) and "order" in target:
+        raw = target.pop("order")
+        if ev.get("order") in (None, ""):
+            ev["order"] = raw
+    if "slot" in ev:
+        raw_slot = ev.pop("slot")
+        if ev.get("order") in (None, "") and raw_slot not in (None, ""):
+            ev["order"] = raw_slot
+
+
 def migrate_event(ev: dict) -> dict:
     op = ev.get("op")
+    if op == "transfer":
+        _repair_transfer_destination_order(ev)
     if "target" in ev:
         return ev
     if op in ("camera", "wait"):
@@ -87,7 +114,7 @@ def migrate_event(ev: dict) -> dict:
             target["zones"] = list(src)
         else:
             target["zone"] = src
-        target.update(_take_selector(ev))
+        target.update(_take_selector(ev, include_order=False))
         ev["target"] = target
         dest = ev.pop("destination", None)
         ev["destination"] = {"space": "entity", "zone": dest}

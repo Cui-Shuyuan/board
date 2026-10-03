@@ -29,10 +29,13 @@ STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "mov
 PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label",
                      "overlay_show", "overlay_hide"}
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
-# 对象接口：原语不再各自区分世界/屏幕，而是统一指向一个 target。
+# 对象接口：世界/屏幕对象的原语统一指向一个 target。
 #   {"space": "entity", "zone": ..., "template": ..., "palette": ..., "concept": ..., "parts": [...], "order": n}
 #   {"space": "screen", "id": "overlay_slot"}
 TARGET_SPACES = {"entity", "screen"}
+# `order` is a normal selector field for most entity ops.  For transfer it is
+# destination placement and must stay on the event; `_check_object_target`
+# warns when it is written inside target instead.
 ENTITY_TARGET_FIELDS = ("zone", "template", "palette", "concept", "parts", "order")
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
@@ -79,15 +82,19 @@ def _entity_target_zone(target: dict):
 
 
 def _merge_entity_target_fields(ev: dict, target: dict):
-    """Copy selector fields from an entity target object onto the flat event."""
+    """Copy selector fields from an entity target object onto the flat event.
+
+    Transfer `order` is a compatibility pass-through (destination placement);
+    new source data must write it on the event itself, not in `target`.
+    """
     for key in ENTITY_TARGET_FIELDS:
         if key in target and (key not in ev or ev.get(key) in (None, "")):
             ev[key] = target[key]
 
 
 def _normalize_event(ev):
-    """Normalize the source-level object-target interface into the older flat
-    fields that the rest of the pipeline already consumes.
+    """Normalize the source-level object-target interface into the flat fields
+    that the compiler, validators and audit tools consume.
 
     Source events may target either an entity (zone + selector) or a screen
     object (overlay slot id).  Keeping the flattened form means the compiler,
@@ -101,7 +108,7 @@ def _normalize_event(ev):
     explicit_space = str(ev.get("space") or "").strip().lower()
     if explicit_space in ("world", "screen"):
         ev["annotation_space"] = explicit_space
-        # Keep the old internal flat form meaningful: world == entity,
+        # Keep the internal flat form meaningful: world == entity,
         # screen == overlay/screen object.
         ev["space"] = "entity" if explicit_space == "world" else "screen"
     elif explicit_space in ("entity", "screen"):
@@ -237,6 +244,11 @@ def _check_object_target(report: Report, where: str, ev: dict):
                     f"remove the top-level space or use target.space='screen'")
             if not (item.get("zone") or item.get("zones")):
                 report.warn(f"{label}: entity target has no zone/zones")
+            if item.get("order") is not None and ev.get("op") == "transfer":
+                report.warn(
+                    f"{label}: transfer order is a destination slot; "
+                    f"write it on the event, not in target"
+                )
 
 
 def _check_selector(report: Report, where: str, ev: dict, required: bool = True):
@@ -258,6 +270,30 @@ def _check_event(report: Report, where: str, ev: dict):
     _check_object_target(report, where, ev)
     _check_offset(report, where, ev)
     _check_nudge(report, where, ev)
+    for key in ("part_w", "part_h"):
+        if key in ev and ev.get(key) is not None:
+            try:
+                if float(ev[key]) <= 0:
+                    report.error(f"{where}: {key} must be > 0")
+            except (TypeError, ValueError):
+                report.error(f"{where}: {key} must be numeric")
+    style = ev.get("style")
+    if style is not None and not isinstance(style, dict):
+        report.error(f"{where}: style must be an object")
+    style = style if isinstance(style, dict) else {}
+    for key in ("color", "stroke", "size", "gap"):
+        raw = ev[key] if key in ev else style.get(key)
+        if raw is None:
+            continue
+        if key == "color":
+            if not isinstance(raw, str) or not raw.strip():
+                report.error(f"{where}: style.color must be a non-empty string")
+            continue
+        try:
+            if float(raw) <= 0:
+                report.error(f"{where}: style.{key} must be > 0")
+        except (TypeError, ValueError):
+            report.error(f"{where}: style.{key} must be numeric")
     anchor = ev.get("anchor")
     if anchor is not None:
         if not isinstance(anchor, str) or not anchor.strip():
@@ -701,6 +737,23 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
     for key in ("game", "track", "default_tree"):
         if not doc.get(key):
             rep.error(f"{key}: required")
+    top_style = doc.get("annotation_style")
+    if top_style is not None and not isinstance(top_style, dict):
+        rep.error("annotation_style: must be an object")
+    elif isinstance(top_style, dict):
+        for key in ("color", "stroke", "size", "gap"):
+            raw = top_style.get(key)
+            if raw is None:
+                continue
+            if key == "color":
+                if not isinstance(raw, str) or not raw.strip():
+                    rep.error("annotation_style.color must be a non-empty string")
+                continue
+            try:
+                if float(raw) <= 0:
+                    rep.error(f"annotation_style.{key} must be > 0")
+            except (TypeError, ValueError):
+                rep.error(f"annotation_style.{key} must be numeric")
 
     worlds = doc.get("worlds")
     if not isinstance(worlds, list) or not worlds:
@@ -801,21 +854,8 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
             rep.error(f"{where}: script.story required")
         if not script.get("note"):
             rep.warn(f"{where}: script.note is empty")
-        cam = script.get("camera")
-        if cam is not None:
-            # Legacy carrier field: cameras are now timed `camera` events that
-            # reference a named stage shot.  Keep accepting it for a transition
-            # period, but warn so data gets migrated.
-            rep.warn(f"{where}: script.camera is deprecated; use a camera event + stage shot")
-            if not isinstance(cam, dict):
-                rep.error(f"{where}: script.camera must be an object")
-            else:
-                zones = cam.get("zones", [])
-                if not isinstance(zones, list) or not zones:
-                    rep.error(f"{where}: script.camera.zones must be a non-empty list")
-                fill = cam.get("fill", 0.8)
-                if fill is not None and not (0 < float(fill) <= 1):
-                    rep.error(f"{where}: script.camera.fill must be in (0,1]")
+        if "camera" in script:
+            rep.error(f"{where}: script.camera is not supported; use a camera event + stage shot")
         _check_contract(rep, f"{where}.script.enter", script.get("enter"))
         _check_contract(rep, f"{where}.script.exit", script.get("exit"))
 

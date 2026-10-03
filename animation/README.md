@@ -16,7 +16,7 @@ python3 animation/check_card_identity_v2.py --game splendor --track full
 python3 -m unittest animation/test_audit_anim_v2.py
 ```
 
-三个 v2 checker 的分工：
+四个 v2 checker 的分工：
 
 - `animation/check_anim_v2.py`：契约 vs compiled、机位顺序、脏帧、stage 布局；
 - `animation/validate_anim_rules_v2.py`：逐 cue 事件重放规则，每条 cue 从自己的 `start_state` 起算；

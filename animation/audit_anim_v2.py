@@ -306,11 +306,11 @@ def build_state_graph(track_doc: dict, compiled_doc: dict) -> tuple[dict, dict, 
             source_id = str(source_cues[idx - 1].get("id"))
             source_label = f"prev:{source_id}"
         elif idx == 0:
-            # Legacy/synthetic single-cue documents are treated as an explicit
-            # initial root.  Real tracks must declare entry/parent.
+            # A single-cue document starts from an implicit initial root;
+            # multi-cue tracks declare entry/parent explicitly.
             source_kind = "initial"
             source_id = None
-            source_label = "legacy:initial"
+            source_label = "implicit:initial"
         else:
             source_kind = "none"
             source_id = None
@@ -402,9 +402,9 @@ def check_conservation(
 
     Each canonical cue is compared against its own start snapshot.  Because the
     boundary check has already asserted ``start_state == source.end_state`` this
-    is the graph equivalent of the old previous-end comparison, but branches
-    cannot borrow each other's deltas.  Demo branches are skipped here; their
-    entry boundaries are still checked.
+    is equivalent to comparing against the source end_state, but branches cannot
+    borrow each other's deltas.  Demo branches are skipped here; their entry
+    boundaries are still checked.
     """
     for offset, cue in enumerate(selected_cues):
         index = selected_start_indices[offset]

@@ -79,8 +79,14 @@ namespace BoardGameTutorial.Animation
         public float H;           // world box height; screen fallback height
         public float PartU = 0.5f;
         public float PartV = 0.5f;
+        public float PartW;      // semantic sub-rect width, fraction of target rect
+        public float PartH;      // semantic sub-rect height, fraction of target rect
         public float NudgeX;
         public float NudgeY;
+        public string ColorHex;   // annotation style, from source script
+        public float StrokePx;    // 1080p-reference pixels
+        public float SizePx;      // 1080p-reference pixels, 0 = auto
+        public float GapPx;       // 1080p-reference pixels, 0 = auto
         public float ScreenX;     // baked viewport fallback (screen)
         public float ScreenY;
         public float ScreenW;
@@ -201,12 +207,6 @@ namespace BoardGameTutorial.Animation
             return null;
         }
 
-        public static bool IsStackZone(CompiledStageDef stage, string zoneId)
-        {
-            var zone = Zone(stage, zoneId);
-            return zone != null && string.Equals(zone.display, "stack", StringComparison.Ordinal);
-        }
-
         public static bool TrySlot(CompiledStageDef stage, string zoneId, int order, out float x, out float z)
         {
             x = z = 0f;
@@ -302,9 +302,9 @@ namespace BoardGameTutorial.Animation
                             if (!string.IsNullOrEmpty(clip.to_face)) v.Face = ParseFace(clip.to_face);
                             break;
                         case "destroy":
-                            // Logical state_ops already removed the item at the
-                            // destroy op time; this clip is only kept for
-                            // hand-written compiled fallbacks.
+                            // Logical state_ops removed the item at the destroy
+                            // op time; this clip is the visual fallback for
+                            // hand-authored compiled assets.
                             break;
                         case "move":
                         {
@@ -480,7 +480,7 @@ namespace BoardGameTutorial.Animation
         /// <summary>
         /// Convert presentation clips into drawable annotations.  Point and
         /// shape clips win per matching target; a later start replaces an
-        /// earlier one (same as the old VisualClipPlayer point semantics).
+        /// earlier one.
         /// Labels and action-geometry marker clips are all emitted.
         /// </summary>
         private static void BuildAnnotations(CompiledCueDef cue, CompiledStageDef stage,
@@ -491,8 +491,11 @@ namespace BoardGameTutorial.Animation
             foreach (var ov in frame.Overlays)
                 if (ov != null && !string.IsNullOrEmpty(ov.Id)) activeOverlays.Add(ov.Id);
 
-            var pointPicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
-            var shapePicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
+            // One annotation per (space, target): the latest-started point/shape
+            // replaces the earlier one.  Without this, a box and an arrow on the
+            // same target would draw on top of each other (e.g. cost rectangle
+            // with the previous arrow marker still visible inside it).
+            var annotationPicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
             foreach (var clip in cue.clips)
             {
                 if (clip == null || (clip.kind != "point" && clip.kind != "shape")) continue;
@@ -502,13 +505,11 @@ namespace BoardGameTutorial.Animation
                 string space = AnnotationSpace(clip);
                 string target = AnnotationTarget(clip, space);
                 if (string.IsNullOrEmpty(target)) continue;
-                string key = space + "|" + target + "|" + (clip.kind == "shape" ? AnnotationKind(clip) : "point");
-                var picks = clip.kind == "point" ? pointPicks : shapePicks;
-                if (!picks.TryGetValue(key, out var existing) || start >= existing.Start)
-                    picks[key] = new AnnotationPick { Clip = clip, Start = start };
+                string key = space + "|" + target;
+                if (!annotationPicks.TryGetValue(key, out var existing) || start >= existing.Start)
+                    annotationPicks[key] = new AnnotationPick { Clip = clip, Start = start };
             }
-            foreach (var pick in pointPicks.Values) AddAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
-            foreach (var pick in shapePicks.Values) AddAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
+            foreach (var pick in annotationPicks.Values) AddAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
 
             foreach (var clip in cue.clips)
             {
@@ -549,6 +550,8 @@ namespace BoardGameTutorial.Animation
                 if (string.IsNullOrEmpty(clip.item_id) || !byId.TryGetValue(clip.item_id, out var item)
                     || item == null || !item.Visible) return;
                 GetTemplateSize(stage, item.TemplateId, out float w, out float h);
+                float bw = clip.part_w > 0f ? clip.part_w * w : w;
+                float bh = clip.part_h > 0f ? clip.part_h * h : h;
                 frame.Annotations.Add(new VisualAnnotationState
                 {
                     Space = "world",
@@ -558,12 +561,18 @@ namespace BoardGameTutorial.Animation
                     X = item.X + (u - 0.5f) * w,
                     Z = item.Z + (0.5f - v) * h,
                     Radius = Math.Min(w, h) * 0.5f,
-                    W = w,
-                    H = h,
+                    W = bw,
+                    H = bh,
                     PartU = u,
                     PartV = v,
+                    PartW = clip.part_w,
+                    PartH = clip.part_h,
                     NudgeX = clip.nudge_x,
                     NudgeY = clip.nudge_y,
+                    ColorHex = clip.annotation_color,
+                    StrokePx = clip.annotation_stroke,
+                    SizePx = clip.annotation_size,
+                    GapPx = clip.annotation_gap,
                 });
                 return;
             }
@@ -580,8 +589,14 @@ namespace BoardGameTutorial.Animation
                 Part = clip.part,
                 PartU = u,
                 PartV = v,
+                PartW = clip.part_w,
+                PartH = clip.part_h,
                 NudgeX = clip.nudge_x,
                 NudgeY = clip.nudge_y,
+                ColorHex = clip.annotation_color,
+                StrokePx = clip.annotation_stroke,
+                SizePx = clip.annotation_size,
+                GapPx = clip.annotation_gap,
                 ScreenX = clip.screen_x,
                 ScreenY = clip.screen_y,
                 ScreenW = clip.screen_w,
@@ -698,9 +713,9 @@ namespace BoardGameTutorial.Animation
             }
             switch ((clip.part ?? "").Trim().ToLowerInvariant())
             {
-                case "prestige": u = 0.16f; v = 0.16f; return;
-                case "cost": u = 0.16f; v = 0.84f; return;
-                case "bonus": u = 0.84f; v = 0.16f; return;
+                case "prestige": u = 0.126984f; v = 0.142045f; return;
+                case "cost": u = 0.126984f; v = 0.744318f; return;
+                case "bonus": u = 0.825397f; v = 0.130682f; return;
                 case "condition": u = 0.50f; v = 0.84f; return;
                 default: u = 0.5f; v = 0.5f; return;
             }
@@ -835,7 +850,7 @@ namespace BoardGameTutorial.Animation
 
     /// <summary>
     /// Stateless per-cue runtime: every cue carries compiled start/end snapshots,
-    /// so jumping is a pure lookup.  This replaces the old replay-entry-chain code.
+    /// so state resolution happens at compile time and jumping is a pure lookup.
     /// </summary>
     public sealed class WorldRuntime
     {

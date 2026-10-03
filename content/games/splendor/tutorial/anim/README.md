@@ -20,9 +20,6 @@ content/games/splendor/tutorial/anim/v2/full.compiled.json       运行时只读
 BoardGameTutorial.Animation.TutorialAnimPlayer           Unity 薄适配
 ```
 
-旧 v1 `anim/full.json`、`anim/_stage/*`、`TutorialCueAnimPlayer`、`ZoneStore`、
-`TutorialDirector`、`Teaching*`、`TweenLibrary`、旧 `tutorial.json` 已删除。
-
 ## 检查命令
 
 ```bash

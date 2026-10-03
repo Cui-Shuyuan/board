@@ -196,8 +196,8 @@ def run_tts_delta(game_dir: Path, track: str, script: dict, manifest: dict,
     subprocess.run(cmd, cwd=ROOT, check=True)
     delta_manifest = load_json(media / "tts_manifest.json")
 
-    # Propagate provider-level metadata so future incremental runs do not
-    # keep issuing the old seed2 voice/resource id.
+    # Propagate provider-level metadata so future incremental runs keep the
+    # voice/resource selected for this delta.
     for key in ("provider", "voice", "resource_id", "format", "sample_rate", "subtitle_timing", "generator"):
         if key in delta_manifest:
             manifest[key] = delta_manifest[key]
@@ -263,7 +263,7 @@ def run_qa_gate(ids: list[str] | None = None) -> int:
     """Ask BoardAI the handwritten QA questions before compiling.
 
     ids=None -> all questions; ids=[...] -> only questions belonging to those
-    cue ids (including action.cards.market.001.2#1 style suffixes).
+    cue ids (including action.cards.market.001.1#1 style suffixes).
     """
     import os
     import tempfile

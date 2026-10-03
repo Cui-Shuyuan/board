@@ -5,8 +5,8 @@ LRC-like 口播稿 -> 豆包语音合成音频。
 默认使用 **标准语音合成（小模型 WebSocket v1）**：
     wss://openspeech.bytedance.com/api/v1/tts/ws_binary
 
-可通过 ``--provider seed2`` 或 ``DOUBAO_TTS_PROVIDER=seed2`` 切回旧的
-豆包语音合成 2.0 双向流式实现。旧实现保留，便于以后对照或复用。
+也可通过 ``--provider seed2`` 或 ``DOUBAO_TTS_PROVIDER=seed2`` 使用
+豆包语音合成 2.0 双向流式实现。
 
 依赖：
     pip install websockets mutagen
@@ -21,7 +21,7 @@ LRC-like 口播稿 -> 豆包语音合成音频。
       --out-dir content/games/splendor/media/tts/full \
       --limit 3
 
-    # 显式切回旧语音合成 2.0
+    # 显式使用语音合成 2.0
     python animation/tts_doubao.py \
       --provider seed2 \
       --input content/games/splendor/tutorial/full.lrc \
@@ -34,8 +34,8 @@ LRC-like 口播稿 -> 豆包语音合成音频。
     DOUBAO_TTS_CLUSTER              # 标准 v1 默认 volcano_tts
     DOUBAO_TTS_ENDPOINT             # 可选，默认 v1 ws_binary
     DOUBAO_TTS_RESOURCE_ID          # 用量查询/清单用，默认 volc.tts.default
-    DOUBAO_SPEAKER                  # seed2 provider 的旧默认音色
-    DOUBAO_RESOURCE_ID              # seed2 provider 的旧 resource id
+    DOUBAO_SPEAKER                  # seed2 provider 的默认音色
+    DOUBAO_RESOURCE_ID              # seed2 provider 的默认 resource id
 """
 
 from __future__ import annotations
@@ -234,7 +234,7 @@ def write_subtitle_file(path: Path, subtitle_events: list[dict[str, Any]]) -> No
 
 
 async def connect_websocket(url: str, headers: dict[str, str]):
-    """兼容 websockets 新旧版本的 additional_headers / extra_headers。"""
+    """Use the auth-header argument name supported by the installed websockets."""
     kwargs = {"max_size": 10 * 1024 * 1024}
     try:
         return await websockets.connect(url, additional_headers=headers, **kwargs)
@@ -407,7 +407,7 @@ async def synthesize_once(
         )
         return await standard_synthesize_text(text, out_file, args.voice, args)
 
-    # ---- seed2 / v3 one-shot path (old behaviour kept) ----
+    # ---- seed2 / v3 one-shot path ----
     api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("缺少 VOLCENGINE_API_KEY，请写入 .env 或设置为环境变量")
@@ -619,7 +619,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="LRC-like 口播稿 -> 豆包语音合成音频（默认标准小模型）")
     parser.add_argument("--input", type=Path, default=ROOT / "content/games/splendor/tutorial/full.lrc")
     parser.add_argument("--out-dir", type=Path, default=ROOT / "content/games/splendor/media/tts/full")
-    parser.add_argument("--provider", default=None, choices=[PROVIDER_STANDARD, PROVIDER_SEED2], help="standard（默认）/ seed2（旧语音合成 2.0）")
+    parser.add_argument("--provider", default=None, choices=[PROVIDER_STANDARD, PROVIDER_SEED2], help="standard（默认）/ seed2（语音合成 2.0）")
     parser.add_argument("--voice", default=None, help="音色；标准默认 BV700_streaming")
     parser.add_argument("--resource-id", default=None, help="resource id；标准 v1 仅记录清单，不发送该 header")
     parser.add_argument("--cluster", default=None, help="标准 v1 app.cluster，默认 volcano_tts")
@@ -637,7 +637,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=None, help="只处理前 N 条 cue")
     parser.add_argument("--overwrite", action="store_true", help="覆盖已存在的音频")
     parser.add_argument("--force", action="store_true", help="忽略已有音频，全部重新合成")
-    parser.add_argument("--prune", action="store_true", help="删除 source LRC 中已不存在的旧音频和字幕")
+    parser.add_argument("--prune", action="store_true", help="删除 source LRC 中已不存在的音频和字幕")
     parser.add_argument("--usage", action="store_true", help="seed2 请求返回计费用量")
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不调用 API")
     parser.add_argument("--write-lrc", action="store_true", help="合成后生成 full.tts.lrc")

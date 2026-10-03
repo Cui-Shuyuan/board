@@ -56,7 +56,7 @@
 
 ## 2. 对象接口：`target` 同时支持实体与屏幕空间
 
-所有“对象原语”都不再各自摊平写 `zone`/`overlay`/`source`，而是统一指向一个
+所有“对象原语”统一指向一个
 `target` 接口。`space` 只有两种实现：
 
 - `"entity"`：世界实体/逻辑组件。字段为 `zone`（或 `zones`）加选择器
@@ -131,10 +131,17 @@
 
 规则：
 
-- `create` / `ensure` / `destroy` / `transfer` / `stack` / `shuffle` /
-  `move_order` / `set_face` 是状态原语，只实现实体对象。
+- `create` / `ensure` / `destroy` / `transfer` / `stack` /
+  `move_order` / `set_face` 改变逻辑状态，只实现实体对象。
+  `shuffle` 也写在实体事件序列里，但它是牌堆的**纯视觉**抖动：只生成抖动 clip，
+  不重排逻辑 order；源数据里的 `real_templates` 顺序就是抽牌顺序。
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
+- `shape: "box"` 可用 `part_w` / `part_h` 指定矩形尺寸（占目标 rect 的宽/高比例），
+  矩形以 `part` 的语义锚点为中心；不写则沿用目标整体 rect。费用这种 2×2 图标区域
+  用 box 框比 circle 更稳，例：
+  `{ "op": "shape", "shape": "box", "part": "cost", "part_w": 0.50, "part_h": 0.36,
+     "target": { "space": "screen", "id": "purchase_card" } }`。
 - `label` 实体和屏幕空间都实现：实体 target → world label 跟卡走；screen target
   （stage overlay 槽位）→ screen label 固定不动。
 - `point` / `shape` 的 `offset` 写成数字时仍是**时间偏移**；写成
@@ -145,9 +152,47 @@
 - `show` 带 `picture` 且无 `target` 时是整个舞台的整幅图原语，不走对象接口。
 - `camera` / `wait` 是全局原语，没有对象目标。
 - 世界对象的空间仍然只写 `zone`（或 `zones`）+ 选择器；不要写 x/z。
-- 同一区域多个件用 `order`/`slot` 表达，不靠坐标偏移表达。
+- 同一区域多个件用 `order`/`slot` 表达，不靠坐标偏移表达。`slot` 只用于 `create` 的落点；
+  `transfer` 的落点是事件顶层 `order`（例如市场补回空位），不要把它塞进 `target` 当选择器。
 - 空位、堆叠、添加位置由 stage 的 `layout` / `display` 决定。
-- 旧数据迁移脚本：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
+- 数据迁移脚本：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
+
+### 牌堆 order 契约（`display.mode = "stack"`）
+
+- `order 0` = 牌堆底，最大 `order` = 牌堆顶；`transfer` 默认取最大 `order` = 抽顶，
+  取走不重排、空洞留在原地。
+- `stack` 的 `real_templates[0]` = 最先被抽的牌；编译时按反序赋 `order`，让它拿到最大 `order`。
+- `shuffle` 只做视觉抖动，不改牌序；跳转/重播必须得到同一套 `order`。
+- 从牌堆取具体真牌用 `template`/`parts` 点名；盲抽不写选择器，绝不要写
+  `target.order` 当“源是第几张”；供应堆虽然共用同一套 `stack` 渲染，但没有牌堆的“顶”语义。
+
+### 2.2 屏幕文字说明的统一格式
+
+所有面向观众的说明文字（行动提示、上限提示、规则补充等）统一用 `label` + screen
+overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里自己画黑底方框。
+运行时的 label 绘制路径只有一条，会自动使用统一格式：
+
+- 字号约为屏高的 `4.6%`（手机 1080p 下约 50px），比普通字幕提示大一档；
+- 白色正文 + 深色描边，保证去掉底色后仍能看清；
+- 无背景框 / 无黑底；
+- 自动换行：运行时按每行最多 **15 个字** 自动插入换行；stage overlay 的 rect 是文字槽位，
+  建议宽度 `0.5~0.7`、高度至少 `0.12`（两行大字建议 `0.15~0.16`），
+  并在 x/y 留安全边距。
+
+示例：
+
+```json
+// stage overlays
+{ "id": "hint_text", "space": "screen",
+  "rect": { "x": 0.03, "y": 0.42, "w": 0.62, "h": 0.16 } }
+
+// cue event
+{ "op": "label", "text": "这里写需要观众看清的说明文字",
+  "anchor": "<cue>.start", "target": { "space": "screen", "id": "hint_text" } }
+```
+
+不要按 cue 单独调字号或加框；如果文字太长，优先缩短文案或调整槽位宽高。
+Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 ## 3. 时间：只写 anchor + offset
 

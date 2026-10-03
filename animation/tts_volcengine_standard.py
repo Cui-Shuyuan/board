@@ -18,7 +18,7 @@ The new console can use a project-scoped API key:
 
     X-Api-Key: <VOLCENGINE_API_KEY>
 
-The legacy console uses a bearer token in the connect header:
+Console-token auth uses a bearer token in the connect header:
 
     Authorization: Bearer; <VOLCENGINE_TTS_ACCESS_TOKEN>
 
@@ -29,10 +29,10 @@ The standard small-model service ignores ``app.token`` and historically used
 Output
 ------
 mp3 (default) or another encoding supported by the v1 service.  The v1
-WebSocket streaming response does not provide the v3 subtitle events the old
-seed-tts-2.0 implementation consumed, so this module intentionally does not
-write ``*.subtitle.json``.  Callers must treat subtitle timing as unavailable
-and must not pretend the missing data exists.
+WebSocket streaming response does not provide the v3 subtitle events emitted
+by the seed-tts-2.0 provider, so this module intentionally does not write
+``*.subtitle.json``.  Callers must treat subtitle timing as unavailable and
+must not pretend the missing data exists.
 """
 
 from __future__ import annotations
@@ -96,11 +96,11 @@ def _env_first(*names: str) -> str:
 
 
 def resolve_voice(requested: str | None) -> str:
-    """Resolve a standard small-model voice and avoid stale v3 voice ids.
+    """Resolve a standard small-model voice and reject v3 voice ids.
 
-    ``compile_tutorial.py`` can pass a ``voice`` value from an older
-    seed-tts-2.0 manifest.  Rather than failing a delta TTS run, a mismatched
-    voice is reported and the current standard default is used.
+    ``compile_tutorial.py`` can pass a ``voice`` value from a seed-tts-2.0
+    manifest.  Rather than failing a delta TTS run, a mismatched voice is
+    reported and the current standard default is used.
     """
     requested = (requested or "").strip()
     if is_standard_voice(requested):
@@ -183,8 +183,8 @@ def _app_and_headers(cluster: str) -> tuple[dict[str, dict[str, str]], dict[str,
     """Build the ``app`` request object and connection headers.
 
     The new-console shared API key is preferred when ``VOLCENGINE_API_KEY`` is
-    present.  The API-key docs say appid is not needed; the legacy JSON field
-    is therefore omitted.  ``app.token`` is documented as an arbitrary
+    present.  The API-key docs say appid is not needed, so the JSON ``appid``
+    field is omitted.  ``app.token`` is documented as an arbitrary
     non-empty value for the standard TTS service.
     """
     api_key = _env_first("VOLCENGINE_API_KEY")
@@ -205,11 +205,11 @@ def _app_and_headers(cluster: str) -> tuple[dict[str, dict[str, str]], dict[str,
     if app_id and access_token:
         headers = {"Authorization": f"Bearer; {access_token}"}
         app = {"appid": app_id, "token": access_token, "cluster": cluster}
-        return app, headers, "legacy_token"
+        return app, headers, "console_token"
 
     raise RuntimeError(
         "缺少语音合成凭证：请设置 VOLCENGINE_API_KEY，"
-        "或旧版控制台 VOLCENGINE_TTS_APP_ID + VOLCENGINE_TTS_ACCESS_TOKEN"
+        "或控制台 token 认证 VOLCENGINE_TTS_APP_ID + VOLCENGINE_TTS_ACCESS_TOKEN"
     )
 
 
@@ -414,7 +414,7 @@ async def synthesize_text(
         raise RuntimeError(
             "标准语音合成 WebSocket 被服务端关闭（常见原因：VOLCENGINE_API_KEY 无效、" 
             "项目未开通标准语音合成，或音色/参数与标准小模型不匹配）。"
-            "旧版控制台可设置 VOLCENGINE_TTS_APP_ID + "
+            "控制台 token 认证可设置 VOLCENGINE_TTS_APP_ID + "
             "VOLCENGINE_TTS_ACCESS_TOKEN。"
         ) from exc
     finally:

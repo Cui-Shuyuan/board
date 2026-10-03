@@ -600,84 +600,17 @@
         "2.5 设置完成"
       ],
       "refs": [
-        "rulebook:setup"
+        "rulebook:setup",
+        "flow:main_gameplay"
       ],
       "pause_after": 0.0,
       "beats": [
         {
           "id": "setup.end.001.1.b1",
           "text": "至此，整个设置环节就大功告成了。"
-        }
-      ]
-    },
-    {
-      "id": "setup.end.001.2",
-      "group": "2.5 设置完成",
-      "group_path": [
-        "2 设置",
-        "2.5 设置完成"
-      ],
-      "refs": [
-        "rulebook:setup"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.end.001.2.b1",
-          "text": "需要注意的是，这个设置方式适合两名玩家并排坐在桌子同一侧进行游戏时使用。"
-        }
-      ]
-    },
-    {
-      "id": "setup.end.001.3",
-      "group": "2.5 设置完成",
-      "group_path": [
-        "2 设置",
-        "2.5 设置完成"
-      ],
-      "refs": [
-        "rulebook:setup"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "setup.end.001.3.b1",
-          "text": "如果三到四位玩家同时进行游戏，更推荐使用这种设置方式，"
-        }
-      ]
-    },
-    {
-      "id": "setup.end.001.4",
-      "group": "2.5 设置完成",
-      "group_path": [
-        "2 设置",
-        "2.5 设置完成"
-      ],
-      "refs": [
-        "rulebook:setup"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "setup.end.001.4.b1",
-          "text": "这样可以避免对侧玩家阅读卡牌吃力。"
-        }
-      ]
-    },
-    {
-      "id": "setup.end.002",
-      "group": "2.5 设置完成",
-      "group_path": [
-        "2 设置",
-        "2.5 设置完成"
-      ],
-      "refs": [
-        "flow:main_gameplay"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "setup.end.002.b1",
+          "id": "setup.end.001.1.b2",
           "text": "接下来可以正式开始游戏了。"
         }
       ]
@@ -955,26 +888,9 @@
         {
           "id": "action.cards.cost.001.2.b1",
           "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，"
-        }
-      ]
-    },
-    {
-      "id": "action.cards.cost.001.3",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "refs": [
-        "<development_card>",
-        "<cost>",
-        "<purchase_development_card>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.cards.cost.001.3.b1",
+          "id": "action.cards.cost.001.2.b2",
           "text": "之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。"
         }
       ]
@@ -996,6 +912,14 @@
         {
           "id": "action.cards.market.001.1.b1",
           "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，"
+        },
+        {
+          "id": "action.cards.market.001.1.b2",
+          "text": "只要卡牌被玩家买走，卡牌供应堆出现了空位，"
+        },
+        {
+          "id": "action.cards.market.001.1.b3",
+          "text": "玩家必须从对应行翻出一张新的卡牌填补这个空位，"
         }
       ]
     },
@@ -1015,46 +939,10 @@
       "beats": [
         {
           "id": "action.cards.market.001.2.b1",
-          "text": "只要卡牌被玩家买走，卡牌供应堆出现了空位，"
-        }
-      ]
-    },
-    {
-      "id": "action.cards.market.001.3",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "refs": [
-        "<card_market>",
-        "<refill_market>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+          "text": "除非这一行所有卡牌都已经耗尽，"
+        },
         {
-          "id": "action.cards.market.001.3.b1",
-          "text": "玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，"
-        }
-      ]
-    },
-    {
-      "id": "action.cards.market.001.4",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "refs": [
-        "<card_market>",
-        "<refill_market>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "action.cards.market.001.4.b1",
+          "id": "action.cards.market.001.2.b2",
           "text": "此时不再填补，而是用剩余的发展卡牌继续游戏。"
         }
       ]
@@ -1142,25 +1030,10 @@
         {
           "id": "action.cards.discount.002.1.b1",
           "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，"
-        }
-      ]
-    },
-    {
-      "id": "action.cards.discount.002.2",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "refs": [
-        "<discount>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.cards.discount.002.2.b1",
-          "text": "只需要支付1枚白宝石和1枚蓝宝石即可。"
+          "id": "action.cards.discount.002.1.b2",
+          "text": "只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。"
         }
       ]
     },
@@ -1179,7 +1052,7 @@
       "beats": [
         {
           "id": "action.cards.discount.003.1.b1",
-          "text": "如果我已经购买了2张白宝石牌和1张蓝宝石牌，那么我购买这张牌时无需支付任何宝石。"
+          "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。"
         }
       ]
     },

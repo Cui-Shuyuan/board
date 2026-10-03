@@ -104,6 +104,29 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual(1, len(clips), clips)
         self.assertAlmostEqual(1.0, clips[0]["to_alpha"])
 
+    def test_screen_show_explicit_zero_rect_keeps_zero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "show",
+                "at": 0.2,
+                "dur": 0.0,
+                "rect": {"x": 0, "y": 0, "w": 1, "h": 1},
+                "background": "#1E2126",
+                "layer": 0,
+                "target": {"space": "screen", "id": "scene_backdrop"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"]
+                 if c.get("kind") == "overlay_show" and c.get("overlay") == "scene_backdrop"]
+        self.assertEqual(1, len(clips), clips)
+        self.assertAlmostEqual(0.0, clips[0]["label_x"], places=6)
+        self.assertAlmostEqual(0.0, clips[0]["label_y"], places=6)
+        self.assertAlmostEqual(1.0, clips[0]["label_w"], places=6)
+        self.assertAlmostEqual(1.0, clips[0]["label_h"], places=6)
+
     def test_screen_target_highlight_compiles_common_screen_clip(self):
         with tempfile.TemporaryDirectory() as tmp:
             event = {
@@ -205,8 +228,12 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("world", clip["annotation_space"])
         self.assertTrue(clip["item_id"])
         self.assertEqual("bonus", clip["part"])
-        self.assertAlmostEqual(0.84, clip["part_u"], places=6)
-        self.assertAlmostEqual(0.16, clip["part_v"], places=6)
+        # Canonical development-card geometry: bonus is at the fixed upper-right
+        # badge position, with a fixed badge size.
+        self.assertAlmostEqual(0.825397, clip["part_u"], places=6)
+        self.assertAlmostEqual(0.130682, clip["part_v"], places=6)
+        self.assertAlmostEqual(0.269841, clip["part_w"], places=6)
+        self.assertAlmostEqual(0.193182, clip["part_h"], places=6)
 
     def test_screen_shape_uses_mapping_offset_as_spatial_nudge(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -270,6 +297,47 @@ class CompileAnimationV2Tests(unittest.TestCase):
             and "offset=" in warning
             for warning in compiler.rep.warnings
         ), compiler.rep.warnings)
+
+    def test_transfer_from_top_uses_largest_order_not_layer(self):
+        model = compile_anim.StateModel(stack_zones={"src", "dest"})
+
+        def add(zone: str, layer: int):
+            return model.spawn(
+                "gem", "gem_diamond", "gem", zone, count=1,
+                parts=[{"key": "color", "value": "<diamond>"}], layer=layer,
+            )[0]
+
+        # Layers deliberately disagree with orders: order is the canonical
+        # pile sequence, so order 2 must win as the top card.
+        add("src", 9)   # order 0
+        add("src", 0)   # order 1
+        add("src", 3)   # order 2 = pile top
+        existing = add("dest", -3)
+        existing["order"] = 3  # supply/deck holes stay open after removals
+
+        # Omit both options: defaults pick the source top by largest order and
+        # put it on top of the existing destination without renumbering it.
+        records = model.transfer(
+            {"template": "gem", "palette": "gem_diamond"},
+            "src", "dest", 2,
+        )
+        self.assertEqual(
+            {"gem|gem_diamond#2", "gem|gem_diamond#3"},
+            {rec["item"]["id"] for rec in records},
+        )
+        dest_items = sorted(
+            (item for item in model.items if item["zone"] == "dest"),
+            key=lambda item: item["order"],
+        )
+        self.assertEqual(
+            ["gem|gem_diamond#4", "gem|gem_diamond#2", "gem|gem_diamond#3"],
+            [item["id"] for item in dest_items],
+        )
+        # Existing gem keeps its order/layer; the higher source card stays on
+        # top with the higher order/layer.
+        self.assertEqual("gem|gem_diamond#3", dest_items[-1]["id"])
+        self.assertEqual([3, 4, 5], [item["order"] for item in dest_items])
+        self.assertEqual([-3, -2, -1], [item["layer"] for item in dest_items])
 
 
 def _stage_doc(stage_id: str, zone_ids: list[str]) -> dict:
@@ -463,6 +531,42 @@ class StateGraphCompileTests(unittest.TestCase):
             compiled = compile_anim.Compiler(path).compile()
         self.assertEqual(_compiled_cue(compiled, "c1")["end_state"],
                          _compiled_cue(compiled, "c2")["start_state"])
+
+    def test_shuffle_event_is_visual_only_and_keeps_logical_order(self):
+        stage = _stage_doc("s1", ["deck"])
+        stage["zones"][0]["display"] = {"mode": "stack", "max_visible": 4}
+
+        base_events = [
+            {"op": "create", "at": 0.0, "template": "token", "palette": "p",
+             "zone": "deck", "count": 3},
+        ]
+        shuffle_event = {"op": "shuffle", "at": 0.5, "dur": 0.5, "zone": "deck"}
+
+        def compile_cue(events):
+            track = {
+                "schema": "tutorial-anim/v2",
+                "kind": "animation_track",
+                "game": "splendor",
+                "track": "test",
+                "default_tree": "main",
+                "time_anchors": [],
+                "worlds": [{"id": "w", "why": "test"}],
+                "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                           "purpose": "p", "initial": "i", "extent_note": "e"}],
+                "cues": [
+                    _cue_doc("c1", "main", entry="initial", transition="world_cut",
+                             events=copy.deepcopy(events)),
+                ],
+            }
+            with tempfile.TemporaryDirectory() as tmp:
+                path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+                return _compiled_cue(compile_anim.Compiler(path).compile(), "c1")
+
+        plain = compile_cue(base_events)
+        shuffled = compile_cue(base_events + [shuffle_event])
+        self.assertEqual(plain["end_state"], shuffled["end_state"])
+        self.assertTrue(any(c.get("kind") == "shuffle" for c in shuffled["clips"]))
+        self.assertFalse(any(c.get("kind") == "shuffle" for c in plain["clips"]))
 
     def test_cue_stage_inherits_parent_then_tree_and_overrides(self):
         s1 = _stage_doc("s1", ["a"])

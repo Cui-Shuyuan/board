@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""把**手写**的合法性问句问规则引擎，并落日志（不再有生成器）。
+"""把**手写**的合法性问句问规则引擎，并落日志。
 
 问题在 `content/games/splendor/tutorial/anim/_qa/questions.json` 里手写（写新动画时连脚本一起写）：
 只看这一条的状态与动作，用玩家口吻问一句话。本脚本只负责"问 + 记"。

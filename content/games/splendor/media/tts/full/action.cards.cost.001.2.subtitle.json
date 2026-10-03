@@ -1,151 +1,307 @@
 [
   {
     "phonemes": [],
-    "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，\n",
+    "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，",
     "words": [
       {
-        "confidence": 0.92699623,
-        "endTime": 0.445,
-        "startTime": 0.305,
+        "confidence": 0.94181955,
+        "endTime": 0.435,
+        "startTime": 0.285,
         "word": "玩"
       },
       {
-        "confidence": 0.9662249,
-        "endTime": 0.635,
-        "startTime": 0.445,
+        "confidence": 0.8953441,
+        "endTime": 0.675,
+        "startTime": 0.435,
         "word": "家"
       },
       {
-        "confidence": 0.77878183,
-        "endTime": 0.785,
-        "startTime": 0.635,
+        "confidence": 0.8681176,
+        "endTime": 0.865,
+        "startTime": 0.675,
         "word": "需"
       },
       {
-        "confidence": 0.9156942,
-        "endTime": 0.895,
-        "startTime": 0.785,
+        "confidence": 0.88822055,
+        "endTime": 0.995,
+        "startTime": 0.865,
         "word": "要"
       },
       {
-        "confidence": 0.9013942,
-        "endTime": 1.075,
-        "startTime": 0.895,
+        "confidence": 0.9237859,
+        "endTime": 1.205,
+        "startTime": 0.995,
         "word": "将"
       },
       {
-        "confidence": 0.94191074,
-        "endTime": 1.235,
-        "startTime": 1.075,
+        "confidence": 0.94295853,
+        "endTime": 1.385,
+        "startTime": 1.205,
         "word": "这"
       },
       {
-        "confidence": 0.9660682,
-        "endTime": 1.335,
-        "startTime": 1.235,
+        "confidence": 0.9647928,
+        "endTime": 1.495,
+        "startTime": 1.385,
         "word": "里"
       },
       {
-        "confidence": 0.97643423,
-        "endTime": 1.535,
-        "startTime": 1.335,
+        "confidence": 0.9750491,
+        "endTime": 1.705,
+        "startTime": 1.495,
         "word": "标"
       },
       {
-        "confidence": 0.9783519,
-        "endTime": 1.705,
-        "startTime": 1.535,
+        "confidence": 0.9808333,
+        "endTime": 1.915,
+        "startTime": 1.705,
         "word": "注"
       },
       {
-        "confidence": 0.96699965,
-        "endTime": 1.825,
-        "startTime": 1.705,
+        "confidence": 0.95284414,
+        "endTime": 2.095,
+        "startTime": 1.915,
         "word": "的"
       },
       {
-        "confidence": 0.97412884,
-        "endTime": 1.985,
-        "startTime": 1.825,
+        "confidence": 0.95652854,
+        "endTime": 2.265,
+        "startTime": 2.095,
         "word": "宝"
       },
       {
-        "confidence": 0.9569843,
-        "endTime": 2.145,
-        "startTime": 1.985,
+        "confidence": 0.9462863,
+        "endTime": 2.445,
+        "startTime": 2.265,
         "word": "石"
       },
       {
-        "confidence": 0.9503686,
-        "endTime": 2.365,
-        "startTime": 2.145,
+        "confidence": 0.9485957,
+        "endTime": 2.685,
+        "startTime": 2.445,
         "word": "种"
       },
       {
-        "confidence": 0.9655902,
-        "endTime": 2.545,
-        "startTime": 2.365,
+        "confidence": 0.96003526,
+        "endTime": 2.885,
+        "startTime": 2.685,
         "word": "类"
       },
       {
-        "confidence": 0.9738566,
-        "endTime": 2.715,
-        "startTime": 2.545,
+        "confidence": 0.9702721,
+        "endTime": 3.055,
+        "startTime": 2.885,
         "word": "和"
       },
       {
-        "confidence": 0.9679312,
-        "endTime": 2.955,
-        "startTime": 2.715,
+        "confidence": 0.9695888,
+        "endTime": 3.325,
+        "startTime": 3.055,
         "word": "数"
       },
       {
-        "confidence": 0.83476824,
-        "endTime": 3.175,
-        "startTime": 2.955,
+        "confidence": 0.90320474,
+        "endTime": 3.565,
+        "startTime": 3.325,
         "word": "量"
       },
       {
-        "confidence": 0.82353294,
-        "endTime": 3.435,
-        "startTime": 3.175,
+        "confidence": 0.8313077,
+        "endTime": 3.845,
+        "startTime": 3.565,
         "word": "返"
       },
       {
-        "confidence": 0.9525912,
-        "endTime": 3.675,
-        "startTime": 3.435,
+        "confidence": 0.9353066,
+        "endTime": 4.125,
+        "startTime": 3.845,
         "word": "回"
       },
       {
-        "confidence": 0.9353739,
-        "endTime": 3.835,
-        "startTime": 3.675,
+        "confidence": 0.9443624,
+        "endTime": 4.295,
+        "startTime": 4.125,
         "word": "宝"
       },
       {
-        "confidence": 0.972924,
-        "endTime": 3.995,
-        "startTime": 3.835,
+        "confidence": 0.9680669,
+        "endTime": 4.475,
+        "startTime": 4.295,
         "word": "石"
       },
       {
-        "confidence": 0.9545793,
-        "endTime": 4.165,
-        "startTime": 3.995,
+        "confidence": 0.9107372,
+        "endTime": 4.675,
+        "startTime": 4.475,
         "word": "供"
       },
       {
-        "confidence": 0.87784797,
-        "endTime": 4.305,
-        "startTime": 4.165,
+        "confidence": 0.9071533,
+        "endTime": 4.795,
+        "startTime": 4.675,
         "word": "应"
       },
       {
-        "confidence": 0.86635077,
-        "endTime": 4.505,
-        "startTime": 4.305,
+        "confidence": 0.8252818,
+        "endTime": 5.005,
+        "startTime": 4.795,
         "word": "堆，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。",
+    "words": [
+      {
+        "confidence": 0.87781554,
+        "endTime": 5.6250415,
+        "startTime": 5.4800415,
+        "word": "之"
+      },
+      {
+        "confidence": 0.96555424,
+        "endTime": 5.8450413,
+        "startTime": 5.6250415,
+        "word": "后"
+      },
+      {
+        "confidence": 0.96210355,
+        "endTime": 6.0050416,
+        "startTime": 5.8450413,
+        "word": "才"
+      },
+      {
+        "confidence": 0.88982135,
+        "endTime": 6.1250415,
+        "startTime": 6.0050416,
+        "word": "可"
+      },
+      {
+        "confidence": 0.7404793,
+        "endTime": 6.2650414,
+        "startTime": 6.1250415,
+        "word": "以"
+      },
+      {
+        "confidence": 0.93460584,
+        "endTime": 6.5150414,
+        "startTime": 6.2650414,
+        "word": "从"
+      },
+      {
+        "confidence": 0.94496894,
+        "endTime": 6.7050414,
+        "startTime": 6.5150414,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.97481686,
+        "endTime": 6.885041,
+        "startTime": 6.7050414,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.9553862,
+        "endTime": 7.0550413,
+        "startTime": 6.885041,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8465662,
+        "endTime": 7.1750417,
+        "startTime": 7.0550413,
+        "word": "应"
+      },
+      {
+        "confidence": 0.7227631,
+        "endTime": 7.3650417,
+        "startTime": 7.1750417,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.9118662,
+        "endTime": 7.5950413,
+        "startTime": 7.3650417,
+        "word": "中"
+      },
+      {
+        "confidence": 0.9228015,
+        "endTime": 7.825042,
+        "startTime": 7.5950413,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.90863,
+        "endTime": 7.995042,
+        "startTime": 7.825042,
+        "word": "取"
+      },
+      {
+        "confidence": 0.9708068,
+        "endTime": 8.125042,
+        "startTime": 7.995042,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9437415,
+        "endTime": 8.275042,
+        "startTime": 8.125042,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9751563,
+        "endTime": 8.625042,
+        "startTime": 8.275042,
+        "word": "牌，"
+      },
+      {
+        "confidence": 0.9493855,
+        "endTime": 9.025042,
+        "startTime": 8.8550415,
+        "word": "并"
+      },
+      {
+        "confidence": 0.98183626,
+        "endTime": 9.225041,
+        "startTime": 9.025042,
+        "word": "放"
+      },
+      {
+        "confidence": 0.97081375,
+        "endTime": 9.395041,
+        "startTime": 9.225041,
+        "word": "置"
+      },
+      {
+        "confidence": 0.97264916,
+        "endTime": 9.555041,
+        "startTime": 9.395041,
+        "word": "在"
+      },
+      {
+        "confidence": 0.18437979,
+        "endTime": 9.615042,
+        "startTime": 9.555041,
+        "word": "自"
+      },
+      {
+        "confidence": 0.091811314,
+        "endTime": 9.675041,
+        "startTime": 9.615042,
+        "word": "己"
+      },
+      {
+        "confidence": 0.07605011,
+        "endTime": 9.735042,
+        "startTime": 9.675041,
+        "word": "面"
+      },
+      {
+        "confidence": 0.44075906,
+        "endTime": 9.795042,
+        "startTime": 9.735042,
+        "word": "前。"
       }
     ]
   }

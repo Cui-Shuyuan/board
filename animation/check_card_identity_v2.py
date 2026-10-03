@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """Check that every face-up development card in each compiled state has a unique physical identity.
 
-The old animation had one template per (level, bonus) colour and intentionally
-copied it to impersonate several real cards.  Plan B removes that: each real
-card gets its own template (`content/games/splendor/card_registry.json`) and the
-same physical card must never appear twice in one state.
+Each real card gets its own template (`content/games/splendor/card_registry.json`)
+and the same physical card never appears twice in one state; template reuse for
+different physical cards would make every inventory check ambiguous.
 
 The checker walks every cue's start state and every `put` state op (i.e. every
 intermediate state the runtime can render) and reports duplicate registry card

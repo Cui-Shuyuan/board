@@ -79,11 +79,12 @@ def check_contract_piece(rep, cue_id, label, part, state):
 
 
 def check_shuffle_visuals(rep, cue: dict, compiled_cue: dict):
-    """A shuffle event must leave a visible clip behind.
+    """A shuffle event must leave a visible jitter clip behind.
 
-    v1 had a dedicated in-place jitter; during the v2 rewrite the compiler kept
-    only the state permutation and the compiled cue carried no shuffle clip, so
-    the animation silently disappeared.  This guard makes that failure loud.
+    The compiled `shuffle` is deliberately visual-only: the deck's draw order
+    is authored in `real_templates` and must stay stable across seek/replay,
+    so the compiler emits deterministic jitter clips instead of reordering the
+    logical pile.  This guard catches an event whose clip silently disappeared.
     """
     want = [ev.get("zone") for ev in (cue.get("events") or [])
             if ev.get("op") == "shuffle" and ev.get("zone")]
@@ -173,7 +174,7 @@ def camera_eq(a, b):
 
 
 def check_dirty_boundaries(rep, compiled: dict):
-    """Flag the "old-shot item survives under the new camera" dirty frame.
+    """Flag dirty frames where a carried item survives under a new camera.
 
     A camera cut applies at t=0, but state continuity (start_state) may carry an
     item from the previous cue.  If that item is still visible in `first_state`

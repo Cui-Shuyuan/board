@@ -4,6 +4,11 @@
   "game": "splendor",
   "track": "full",
   "default_tree": "main",
+  "annotation_style": {
+    "color": "#FF2020",
+    "stroke": 11,
+    "gap": 65
+  },
   "time_anchors": [
     {
       "id": "bg.intro.001.1.start",
@@ -762,91 +767,15 @@
       "edge": "end"
     },
     {
-      "id": "setup.end.001.2.start",
-      "cue": "setup.end.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.end.001.2.end",
-      "cue": "setup.end.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.end.001.2.b1.start",
-      "cue": "setup.end.001.2",
-      "beat": "setup.end.001.2.b1",
+      "id": "setup.end.001.1.b2.start",
+      "cue": "setup.end.001.1",
+      "beat": "setup.end.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "setup.end.001.2.b1.end",
-      "cue": "setup.end.001.2",
-      "beat": "setup.end.001.2.b1",
-      "edge": "end"
-    },
-    {
-      "id": "setup.end.001.3.start",
-      "cue": "setup.end.001.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.end.001.3.end",
-      "cue": "setup.end.001.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.end.001.3.b1.start",
-      "cue": "setup.end.001.3",
-      "beat": "setup.end.001.3.b1",
-      "edge": "start"
-    },
-    {
-      "id": "setup.end.001.3.b1.end",
-      "cue": "setup.end.001.3",
-      "beat": "setup.end.001.3.b1",
-      "edge": "end"
-    },
-    {
-      "id": "setup.end.001.4.start",
-      "cue": "setup.end.001.4",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.end.001.4.end",
-      "cue": "setup.end.001.4",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.end.001.4.b1.start",
-      "cue": "setup.end.001.4",
-      "beat": "setup.end.001.4.b1",
-      "edge": "start"
-    },
-    {
-      "id": "setup.end.001.4.b1.end",
-      "cue": "setup.end.001.4",
-      "beat": "setup.end.001.4.b1",
-      "edge": "end"
-    },
-    {
-      "id": "setup.end.002.start",
-      "cue": "setup.end.002",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.end.002.end",
-      "cue": "setup.end.002",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.end.002.b1.start",
-      "cue": "setup.end.002",
-      "beat": "setup.end.002.b1",
-      "edge": "start"
-    },
-    {
-      "id": "setup.end.002.b1.end",
-      "cue": "setup.end.002",
-      "beat": "setup.end.002.b1",
+      "id": "setup.end.001.1.b2.end",
+      "cue": "setup.end.001.1",
+      "beat": "setup.end.001.1.b2",
       "edge": "end"
     },
     {
@@ -1182,25 +1111,15 @@
       "edge": "end"
     },
     {
-      "id": "action.cards.cost.001.3.start",
-      "cue": "action.cards.cost.001.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.cost.001.3.end",
-      "cue": "action.cards.cost.001.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.cost.001.3.b1.start",
-      "cue": "action.cards.cost.001.3",
-      "beat": "action.cards.cost.001.3.b1",
+      "id": "action.cards.cost.001.2.b2.start",
+      "cue": "action.cards.cost.001.2",
+      "beat": "action.cards.cost.001.2.b2",
       "edge": "start"
     },
     {
-      "id": "action.cards.cost.001.3.b1.end",
-      "cue": "action.cards.cost.001.3",
-      "beat": "action.cards.cost.001.3.b1",
+      "id": "action.cards.cost.001.2.b2.end",
+      "cue": "action.cards.cost.001.2",
+      "beat": "action.cards.cost.001.2.b2",
       "edge": "end"
     },
     {
@@ -1226,6 +1145,30 @@
       "edge": "end"
     },
     {
+      "id": "action.cards.market.001.1.b2.start",
+      "cue": "action.cards.market.001.1",
+      "beat": "action.cards.market.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.market.001.1.b2.end",
+      "cue": "action.cards.market.001.1",
+      "beat": "action.cards.market.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "action.cards.market.001.1.b3.start",
+      "cue": "action.cards.market.001.1",
+      "beat": "action.cards.market.001.1.b3",
+      "edge": "start"
+    },
+    {
+      "id": "action.cards.market.001.1.b3.end",
+      "cue": "action.cards.market.001.1",
+      "beat": "action.cards.market.001.1.b3",
+      "edge": "end"
+    },
+    {
       "id": "action.cards.market.001.2.start",
       "cue": "action.cards.market.001.2",
       "edge": "cue_start"
@@ -1248,47 +1191,15 @@
       "edge": "end"
     },
     {
-      "id": "action.cards.market.001.3.start",
-      "cue": "action.cards.market.001.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.market.001.3.end",
-      "cue": "action.cards.market.001.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.market.001.3.b1.start",
-      "cue": "action.cards.market.001.3",
-      "beat": "action.cards.market.001.3.b1",
+      "id": "action.cards.market.001.2.b2.start",
+      "cue": "action.cards.market.001.2",
+      "beat": "action.cards.market.001.2.b2",
       "edge": "start"
     },
     {
-      "id": "action.cards.market.001.3.b1.end",
-      "cue": "action.cards.market.001.3",
-      "beat": "action.cards.market.001.3.b1",
-      "edge": "end"
-    },
-    {
-      "id": "action.cards.market.001.4.start",
-      "cue": "action.cards.market.001.4",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.market.001.4.end",
-      "cue": "action.cards.market.001.4",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.market.001.4.b1.start",
-      "cue": "action.cards.market.001.4",
-      "beat": "action.cards.market.001.4.b1",
-      "edge": "start"
-    },
-    {
-      "id": "action.cards.market.001.4.b1.end",
-      "cue": "action.cards.market.001.4",
-      "beat": "action.cards.market.001.4.b1",
+      "id": "action.cards.market.001.2.b2.end",
+      "cue": "action.cards.market.001.2",
+      "beat": "action.cards.market.001.2.b2",
       "edge": "end"
     },
     {
@@ -1404,25 +1315,15 @@
       "edge": "end"
     },
     {
-      "id": "action.cards.discount.002.2.start",
-      "cue": "action.cards.discount.002.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.discount.002.2.end",
-      "cue": "action.cards.discount.002.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.discount.002.2.b1.start",
-      "cue": "action.cards.discount.002.2",
-      "beat": "action.cards.discount.002.2.b1",
+      "id": "action.cards.discount.002.1.b2.start",
+      "cue": "action.cards.discount.002.1",
+      "beat": "action.cards.discount.002.1.b2",
       "edge": "start"
     },
     {
-      "id": "action.cards.discount.002.2.b1.end",
-      "cue": "action.cards.discount.002.2",
-      "beat": "action.cards.discount.002.2.b1",
+      "id": "action.cards.discount.002.1.b2.end",
+      "cue": "action.cards.discount.002.1",
+      "beat": "action.cards.discount.002.1.b2",
       "edge": "end"
     },
     {
@@ -2624,7 +2525,7 @@
       ],
       "script": {
         "story": "【背景介绍的开场】整节显示游戏盒封面。这条 cue 只做一件事：把盒面显示出来\n（`showbox on=1 picture=media/box.png`），桌上还没有任何可见组件。\n\n顺带把**实物清单**作为基准记下来：宝石每色 7 枚、黄金 5 枚在盒里（`box_gem_*`），贵族 3 枚在镜头外（`offstage`）—— 开局的全部家当。之后每一节都从这份清单里搬，所以「桌上的数 + 盒里的数 = 实物总数」永远能核。\n\n**已知短板（待补）**：画面根状态（当前显示的是哪张整幅图）**不在采样里** —— DumpState 只导出 zone 里的组件状态，而盒面挂在画面根下（`stage.board.default_picture` + `showbox`）。所以这条契约现在只能声明\"可见区域全空 + 清单在此\"，盒面本身还没有证据可查。",
-        "note": "第一节（背景介绍）：整节显示游戏盒封面。盒面挂在画面根下，进入第二节时会被自动清掉。\n\n（2026-09）**游戏盒是抽象概念、没有实体**：开局桌上和画面外都没有任何件，宝石/黄金/贵族/发展卡都是用到时才 `create`（\"从盒里拿出来\"）。所以这里不再有 box_* 的断言。",
+        "note": "第一节（背景介绍）：整节显示游戏盒封面。盒面挂在画面根下，进入第二节时会被自动清掉。\n\n（2026-09）**游戏盒是抽象概念、没有实体**：开局桌上和画面外都没有任何件，宝石/黄金/贵族/发展卡都是用到时才 `create`（\"从盒里拿出来\"）。所以这里不写 box_* 断言。",
         "enter": {
           "picture": "media/box.png",
           "zones": {}
@@ -3127,8 +3028,8 @@
         }
       ],
       "script": {
-        "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌，发牌就是把最上面那张真的搬走并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞里只有 4 张是真牌（会被发出去的那 4 张），其余是空白牌 —— 它们只为让牌堆看上去有几十张，永远不会被发出来。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
-        "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：先创建每级 4 张**真牌**（占据牌堆顶 order 0..3），再用空白牌补足到 40/30/20，然后洗混。「从每摞牌上方分别翻开四张」(3.60 起)：搬走最上面那张并翻开 —— 牌一开始就是它自己，所以不需要换面。空白牌只是让牌堆看上去有几十张，它们永远发不出来（这是刻意的）。 发牌时明确取哪张牌（what：一级发展卡 + bonus 颜色）—— 牌堆里混着空白牌，不指定就可能把空白牌发到市场上。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。\n  【2026-09 补】牌堆真卡表从 4 张/级加长到 8 张/级：原来只排了刚好发满市场的 4 张，牌堆里剩下的全是垫牌 —— 后面『买走一张要从牌堆翻一张补空位』就会翻出垫牌（卡背），看着就是错的。前 4 张顺序没动，所以市场发出来的那 12 张一个字都没变。",
+        "story": "【将这三类牌分别洗混后按顺序摆成一列】【从每摞牌上方分别翻开四张牌，在一侧摆成一行】\n\n这句话前半段讲\"洗混、摆成一列\"，后半段讲\"从每摞上方翻开四张\"。所以：\n  0.28-3.56（前半句）：**那三张样本卡背被销毁**，同时**三摞牌堆被创建**（在左，按级别从下到上）；每摞洗混（左右快速颤抖，像搓牌）。\n  3.60 之后（后半句）：从每摞牌堆顶上各取四张，逐张翻面后飞到右侧摆成一行。\n\n要点：\n  - 在 cue 12 之前，桌上**只有那几张样本卡**在来回换，**没有\"牌堆\"这个对象**。\n  - cue 12 洗混时，样本卡被**销毁**、牌堆被**创建** —— 对象是新出现的，不是把样本卡\"变大\"。\n  - 每摞牌堆是**真正的** 40/30/20 张牌；发牌就是从每摞的可见顶面取走 4 张并翻开，所以发完之后牌堆真的少了四张（40→36、30→26、20→16）。\n  - 每摞只排 5 张真牌：前 4 张会被发出，第 5 张留作后续补位；其余是空白牌，只为让牌堆看上去有几十张。这是刻意为之。\n\n三行发牌的颜色分布（由我决定，固定下来）：\n  一级（下面一行）：绿、红、白、蓝\n  二级（中间一行）：蓝、黑、红、绿\n  三级（上面一行）：红、白、绿、黑\n即每级各发 5 种颜色中的 4 种，每行都不重样 —— 免得看起来像\"必须这样摆\"。",
+        "note": "「将这三类牌分别洗混后按顺序摆成一列」(0.28–3.56)：每级先建 5 张**真牌**，再用空白牌补足到 40/30/20，并对三摞做**纯视觉**抖动。「从每摞牌上方分别翻开四张」(3.60 起)：从牌堆可见顶面依次取走 4 张、翻到正面发到市场；牌堆真的从 40/30/20 变成 36/26/16。空白牌只负责撑厚度，脚本用选择器（bonus 颜色）点名要发的真牌，绝不能让空白牌飞进市场。\n  【order 契约】`display.mode = \"stack\"` 的 zone 只有一套顺序：**order 0 = 底，最大 order = 顶**。`real_templates` 按“最先被抽”排序，[0] 在编译时最后创建、拿到最大 order（顶）。抽顶/补位由 `transfer` 默认取 order 最大，取走不重排 order；`shuffle` 只抖动，不洗乱已排定的牌序。\n  本片每级只排 5 张真牌：前 4 张按 `real_templates` 顺序发到市场，第 5 张留在牌堆供后续一次补位；之后若再补牌只会翻到垫牌，所以脚本只在确定还有真牌时才用选择器点名。",
         "enter": {
           "picture": null,
           "zones": {
@@ -3349,7 +3250,6 @@
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 0,
           "anchor": "setup.cards.002.1.b1.end",
           "offset": 0.015,
           "target": {
@@ -3361,20 +3261,19 @@
                 "key": "bonus",
                 "value": "<emerald>"
               }
-            ],
-            "order": 0
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 0
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 1,
           "anchor": "setup.cards.002.1.b2.start",
           "offset": -0.07,
           "target": {
@@ -3386,20 +3285,19 @@
                 "key": "bonus",
                 "value": "<ruby>"
               }
-            ],
-            "order": 1
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 1
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 2,
           "anchor": "setup.cards.002.1.b2.start",
           "offset": 0.32,
           "target": {
@@ -3411,20 +3309,19 @@
                 "key": "bonus",
                 "value": "<diamond>"
               }
-            ],
-            "order": 2
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 2
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 3,
           "anchor": "setup.cards.002.1.b2.start",
           "offset": 0.71,
           "target": {
@@ -3436,20 +3333,19 @@
                 "key": "bonus",
                 "value": "<sapphire>"
               }
-            ],
-            "order": 3
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 3
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 4,
           "anchor": "setup.cards.002.1.b2.start",
           "offset": 1.1,
           "target": {
@@ -3461,20 +3357,19 @@
                 "key": "bonus",
                 "value": "<sapphire>"
               }
-            ],
-            "order": 4
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 4
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 5,
           "anchor": "setup.cards.002.1.b2.start",
           "offset": 1.49,
           "target": {
@@ -3486,20 +3381,19 @@
                 "key": "bonus",
                 "value": "<onyx>"
               }
-            ],
-            "order": 5
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 5
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 6,
           "anchor": "setup.cards.002.1.b2.start",
           "offset": 1.88,
           "target": {
@@ -3511,20 +3405,19 @@
                 "key": "bonus",
                 "value": "<ruby>"
               }
-            ],
-            "order": 6
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 6
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 7,
           "anchor": "setup.cards.002.1.b2.end",
           "offset": -1.585,
           "target": {
@@ -3536,20 +3429,19 @@
                 "key": "bonus",
                 "value": "<emerald>"
               }
-            ],
-            "order": 7
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 7
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 8,
           "anchor": "setup.cards.002.1.b2.end",
           "offset": -1.195,
           "target": {
@@ -3561,20 +3453,19 @@
                 "key": "bonus",
                 "value": "<ruby>"
               }
-            ],
-            "order": 8
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 8
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 9,
           "anchor": "setup.cards.002.1.b2.end",
           "offset": -0.805,
           "target": {
@@ -3586,20 +3477,19 @@
                 "key": "bonus",
                 "value": "<diamond>"
               }
-            ],
-            "order": 9
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 9
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 10,
           "anchor": "setup.cards.002.1.b2.end",
           "offset": -0.415,
           "target": {
@@ -3611,20 +3501,19 @@
                 "key": "bonus",
                 "value": "<emerald>"
               }
-            ],
-            "order": 10
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 10
         },
         {
           "op": "transfer",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
-          "slot": 11,
           "anchor": "setup.cards.002.1.b2.end",
           "offset": -0.025,
           "target": {
@@ -3636,13 +3525,13 @@
                 "key": "bonus",
                 "value": "<onyx>"
               }
-            ],
-            "order": 11
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 11
         }
       ]
     },
@@ -5107,17 +4996,17 @@
       "transition": "overlay",
       "timing": [
         {
-          "key": "每色 destroy 3 枚（7→4）",
-          "text": "1.00-1.75（逐色错开 0.15s）"
+          "key": "三块贵族板块在 mask 上出现",
+          "text": "0.00（与 cue 同帧）"
         },
         {
-          "key": "五堆一起呼吸（强调 4）",
-          "text": "2.60-3.20"
+          "key": "保持 mask + 三块贵族到口播结束",
+          "text": "整条 cue"
         }
       ],
       "script": {
-        "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】贵族板块在 cue 一开始就摆出：本片按 2 人局，抽 3 块不同的贵族。\n这条 cue 同时承担宝石那节的收尾：把每色多出来的 3 枚收回盒子（7 → 4）。",
-        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，桌上用 noble_1/2/3 三张不同贵族（贵族_0001/0002/0003）。\n这样贵族供应堆的可见条件与后文讲解的 4白+4红 自洽；0002..0005 扫描件保留给以后需要区分条件的章节。\n同时做宝石收尾：每色 destroy 3 枚（放回盒子），供应堆 7 → 4。黄金不动。\n\n  【继承关系】本 tree 默认继承上一 cue 的完整主桌状态，但 stage 只显示 noble_market；cue25 用显式 entry 回 setup.gems.005.2 canonical 快照。",
+        "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】贵族板块在 cue 一开始就摆出：本片按 2 人局，抽 3 块不同的贵族。本 cue 用 screen mask 展示这三块贵族，真实 noble_market 状态从 cue24 回到桌面继续。",
+        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，用 noble_1/4/5 建立真实状态（贵族_0001/0004/0005）。\n这一 cue 的画面改为 screen mask：scene_backdrop 打底 + noble_intro_1/2/3 三张贵族板块图，不拍桌子；真实实体仍在状态里，cue24 切回桌面后显示在 noble_market。\n这 3 块贵族的条件将分别由后文 A 的 4白4红、4蓝4白、3黑3红3白发展卡合法满足。\n\n  【继承关系】本 cue 继承上一 cue 的完整主桌状态；后续 setup.nobles.001.2 / setup.nobles.002 继续继承本 cue 的 noble_market 状态。",
         "enter": {
           "picture": null,
           "zones": {
@@ -5129,12 +5018,12 @@
                   "count": 1
                 },
                 {
-                  "template": "noble_2",
+                  "template": "noble_4",
                   "palette": "noble",
                   "count": 1
                 },
                 {
-                  "template": "noble_3",
+                  "template": "noble_5",
                   "palette": "noble",
                   "count": 1
                 }
@@ -5153,12 +5042,12 @@
                   "count": 1
                 },
                 {
-                  "template": "noble_2",
+                  "template": "noble_4",
                   "palette": "noble",
                   "count": 1
                 },
                 {
-                  "template": "noble_3",
+                  "template": "noble_5",
                   "palette": "noble",
                   "count": 1
                 }
@@ -5198,7 +5087,7 @@
           "target": {
             "space": "entity",
             "zone": "noble_market",
-            "template": "noble_2",
+            "template": "noble_4",
             "palette": "noble",
             "concept": "noble"
           }
@@ -5212,9 +5101,77 @@
           "target": {
             "space": "entity",
             "zone": "noble_market",
-            "template": "noble_3",
+            "template": "noble_5",
             "palette": "noble",
             "concept": "noble"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "dur": 0.0,
+          "anchor": "setup.nobles.001.1.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.07,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.533
+          },
+          "dur": 0.0,
+          "anchor": "setup.nobles.001.1.start",
+          "image": "media/card/贵族_0001_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_intro_1"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.38,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.533
+          },
+          "dur": 0.0,
+          "anchor": "setup.nobles.001.1.start",
+          "image": "media/card/贵族_0004_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_intro_2"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.69,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.533
+          },
+          "dur": 0.0,
+          "anchor": "setup.nobles.001.1.start",
+          "image": "media/card/贵族_0005_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_intro_3"
           }
         }
       ]
@@ -5251,7 +5208,7 @@
       ],
       "script": {
         "story": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】",
-        "note": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】\n  现在只有一棵 real tree，cue23 已经在本局主桌上放好 3 块贵族；\n  本 cue 不再重置状态、也不再重复创建，只把镜头给到 noble_market。",
+        "note": "【这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块】\n  现在只有一棵 real tree，cue23 已经在本局主桌上放好 3 块贵族；\n  本 cue 只把镜头给到 noble_market，不重置状态、不重复创建。",
         "enter": {
           "picture": null,
           "zones": {
@@ -5263,12 +5220,12 @@
                   "count": 1
                 },
                 {
-                  "template": "noble_2",
+                  "template": "noble_4",
                   "palette": "noble",
                   "count": 1
                 },
                 {
-                  "template": "noble_3",
+                  "template": "noble_5",
                   "palette": "noble",
                   "count": 1
                 }
@@ -5293,12 +5250,12 @@
                   "count": 1
                 },
                 {
-                  "template": "noble_2",
+                  "template": "noble_4",
                   "palette": "noble",
                   "count": 1
                 },
                 {
-                  "template": "noble_3",
+                  "template": "noble_5",
                   "palette": "noble",
                   "count": 1
                 }
@@ -5384,7 +5341,7 @@
       ],
       "script": {
         "story": "【这是起始玩家标记】",
-        "note": "【起始玩家标记出场】\n  这是本作**第一件不是宝石/卡牌的实物**：一枚菱形纸板标记。\n  它单独在 `marker_demo` 树里展示；本 cue 仍默认继承主桌隐藏状态，cue29 用显式 entry 回 setup.starting_player.001.2 canonical 快照，演示标记不写回主账。\n  · 从盒里拿出来 = `create`（游戏盒是抽象概念，不写 source）；\n  · 单面件（没有背图）→ 不写朝向断言。",
+        "note": "【起始玩家标记出场】\n  这是本作第一件不是宝石/卡牌的实物：一枚菱形纸板标记。\n  为了和 setup.nobles 等展示保持一致，本 cue 用 screen mask：scene_backdrop 打底 + `marker_intro` 图片固定展示，不碰主桌 `player_marker`，也不产生逻辑状态。\n  · 真正的落桌放在下一 cue：`setup.starting_player.001.4` 才在 `player_marker` create 标记。\n  · 单面件（没有背图）→ 不写朝向断言；mask 展示也不需要状态。",
         "enter": {
           "picture": null,
           "zones": {
@@ -5397,7 +5354,7 @@
           "picture": null,
           "zones": {
             "player_marker": {
-              "count": 1
+              "count": 0
             }
           }
         }
@@ -5411,28 +5368,48 @@
           "anchor": "setup.starting_player.001.3.start"
         },
         {
-          "op": "create",
+          "op": "show",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#1E2126",
+          "layer": 0,
           "dur": 0.0,
-          "count": 1,
-          "anchor": "setup.starting_player.001.3.b1.start",
-          "offset": 0.525,
+          "anchor": "setup.starting_player.001.3.start",
           "target": {
-            "space": "entity",
-            "zone": "player_marker",
-            "template": "starting_marker",
-            "palette": "",
-            "concept": "starting_player_marker"
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.38,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.529
+          },
+          "dur": 0.0,
+          "anchor": "setup.starting_player.001.3.start",
+          "image": "media/marker/起始玩家标记_clean_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "marker_intro"
           }
         },
         {
           "op": "highlight",
           "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "setup.starting_player.001.3.b1.end",
-          "offset": -0.295,
+          "grow": 1.08,
+          "anchor": "setup.starting_player.001.3.b1.start",
+          "offset": 0.515,
           "target": {
-            "space": "entity",
-            "zone": "player_marker"
+            "space": "screen",
+            "id": "marker_intro"
           }
         }
       ]
@@ -5453,7 +5430,7 @@
       ],
       "script": {
         "story": "【起始玩家获得这枚标记】",
-        "note": "【起始玩家获得这枚标记】\n  现在只有一棵 real tree，cue28 已经把标记放到 player_marker；\n  本 cue 不再重置/重建标记，只切回全景，让观众看到标记与整张桌子的关系。",
+        "note": "【起始玩家获得这枚标记】\n  cue28 用 screen mask 展示过标记；本 cue 把它正式 `create` 到主桌 `player_marker`，\n  再切回全景，让观众看到标记与整张桌子的关系。\n  单面件、无朝向断言；标记从本 cue 起进入 canonical 状态。",
         "enter": {
           "picture": null,
           "zones": {
@@ -5478,7 +5455,36 @@
           "shot": "shot_all_zones_static",
           "realizes": "<ontology::timing>",
           "anchor": "setup.starting_player.001.4.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "setup.starting_player.001.4.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker",
+            "template": "starting_marker",
+            "palette": "",
+            "concept": "starting_player_marker"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "grow": 1.0,
+          "anchor": "setup.starting_player.001.4.start",
+          "offset": 0.45,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker"
+          }
         }
+      ],
+      "qa": [
+        "两人局。已经决定玩家A为起始玩家：把起始玩家标记从盒子里取出，放在玩家A面前的起始玩家标记区。这个状态变化是否合法？"
       ]
     },
     {
@@ -5486,101 +5492,21 @@
       "parent": "setup.starting_player.001.4",
       "timing": [
         {
-          "key": "镜头保持全景（继承上一条）",
-          "text": "0.00"
+          "key": "两 cue 合并，全景不切镜头",
+          "text": "整条 cue"
         }
       ],
       "script": {
-        "story": "【至此，整个设置环节就大功告成了】",
-        "note": "【设置完成】\n镜头沿用上一条的全景，让观众看到设置完成后的整张桌子。\n没有状态变化：起始玩家标记已经在上一条进入玩家区。"
+        "story": "【至此，整个设置环节就大功告成了】【接下来可以正式开始游戏了】",
+        "note": "【设置完成，准备开打】\n合并原 setup.end.001.1 / setup.end.002 两句口播：画面延续上一条 shot_all_zones_static 全景，不切镜头——这是「一切就绪」的连续画面。\n没有状态变化：起始玩家标记已经在上一条进入玩家区；下一段讲的就是行动。"
       },
       "events": [],
-      "tree": "main"
-    },
-    {
-      "id": "setup.end.001.2",
-      "parent": "setup.end.001.1",
-      "timing": [
-        {
-          "key": "镜头整桌",
-          "text": "0.00"
-        }
-      ],
-      "script": {
-        "story": "【这个设置方式适合两名玩家并排坐在桌子同一侧进行游戏时使用】",
-        "note": "【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n  为什么不摆出一个「3-4 人版桌面」：那需要另一套台面图（我们没有），  编一张假的台面比不动更容易教错。\n  这一句讲两人并排 → 点公共区（市场）。"
-      },
-      "events": [],
-      "tree": "main"
-    },
-    {
-      "id": "setup.end.001.3",
-      "parent": "setup.end.001.2",
-      "timing": [
-        {
-          "key": "镜头整桌",
-          "text": "0.00"
-        }
-      ],
-      "script": {
-        "story": "【如果三到四位玩家同时进行游戏，更推荐使用这种设置方式】",
-        "note": "【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n  为什么不摆出一个「3-4 人版桌面」：那需要另一套台面图（我们没有），  编一张假的台面比不动更容易教错。\n  这一句讲三四人围坐 → 点市场（放中间）与贵族。"
-      },
-      "events": [],
-      "tree": "main"
-    },
-    {
-      "id": "setup.end.001.4",
-      "parent": "setup.end.001.3",
-      "timing": [
-        {
-          "key": "镜头推近市场",
-          "text": "0.00"
-        }
-      ],
-      "script": {
-        "story": "【这样可以避免对侧玩家阅读卡牌吃力】",
-        "note": "【座位建议】口播在说「怎么坐」——这是**桌外的事**（谁坐哪一侧），不是牌桌状态。\n  所以这一 cue 没有搬运，只是把镜头留在整桌、把被提到的区域点一下，帮观众对上位置。\n  为什么不摆出一个「3-4 人版桌面」：那需要另一套台面图（我们没有），  编一张假的台面比不动更容易教错。\n  这一句讲「卡牌要人人看得清」→ 镜头推近市场，让观众看清卡面。"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_market",
-          "realizes": "<ontology::timing>",
-          "anchor": "setup.end.001.4.start"
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "setup.end.002",
-      "parent": "setup.end.001.4",
-      "timing": [
-        {
-          "key": "镜头回整桌",
-          "text": "0.00"
-        }
-      ],
-      "script": {
-        "story": "【接下来可以正式开始游戏了】",
-        "note": "【设置结束，准备开打】\n  镜头拉回整桌（这是「一切就绪」的画面），点一下市场 —— 下一段讲的就是行动。"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "setup.end.002.start"
-        }
-      ],
       "tree": "main",
       "demo": false
     },
     {
       "id": "action.turn.001",
-      "parent": "setup.end.002",
+      "parent": "setup.end.001.1",
       "timing": [
         {
           "key": "镜头整桌",
@@ -6709,7 +6635,7 @@
       ],
       "script": {
         "story": "【必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下 10 个为止】",
-        "note": "【持有上限 10｜回到 10 枚】\n  承接上一条：玩家 A 现在手里是 12 枚（白3、蓝3、红3、绿2、黑1）。\n  口播到“直到恰好剩下 10 个为止”时，真实执行返还：把 2 枚钻石放回钻石供应堆。\n  手牌从 12 → 10 枚，正好回到上限；供应堆相应从白1 → 白3。\n  这是规则自动要求的动作，不是玩家可选的额外行动。\n【屏幕提示】返还动作开始时，画面左上显示：“现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆。”\n【屏幕提示】返还动作前约1秒，左侧玩家A宝石区上方提前显示：“现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆。”",
+        "note": "【持有上限 10｜回到 10 枚】\n  承接上一条：玩家 A 现在手里是 12 枚（白3、蓝3、红3、绿2、黑1）。\n  口播到“直到恰好剩下 10 个为止”时，真实执行返还：把 2 枚钻石放回钻石供应堆。\n  手牌从 12 → 10 枚，正好回到上限；供应堆相应从白1 → 白3。\n  · 堆叠区 transfer 默认 `from_top/to_top=true`：从玩家持有区钻石堆的可见顶部抽出两枚，\n    放回供应堆时插到最上方/最前面，而不是塞到底部；因此本 cue 不需要再显式写这两个字段。\n  · 这是规则自动要求的动作，不是玩家可选的额外行动。\n  【屏幕提示】返还动作开始时，画面左上显示：“现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆。”\n  【屏幕提示】返还动作前约1秒，左侧玩家A宝石区上方提前显示：“现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆。”",
         "enter": {
           "zones": {
             "gem_supply_diamond": {
@@ -6903,10 +6829,7 @@
         }
       ],
       "qa": [
-        {
-          "q": "璀璨宝石，两人局。玩家A持有12枚宝石（白3、蓝3、红3、绿2、黑1），已经超过10枚上限；现在他把2枚钻石放回钻石供应堆，手上变成白1、蓝3、红3、绿2、黑1，共10枚。这个返还操作合法吗？只回答「允许」或「不允许」，再给一句话理由。",
-          "expect": "允许"
-        }
+        "两人局。玩家A当前持有12枚宝石：白3、蓝3、红3、绿2、黑1。他选择把2枚钻石还回钻石供应堆，使持有数降到上限10，供应堆钻石从1枚变回3枚。这个行动是否合法？"
       ],
       "tree": "main"
     },
@@ -7271,12 +7194,21 @@
       ],
       "script": {
         "story": "【左下角是这张牌的价格。要想购买这张牌】",
-        "note": "【左下角是这张牌的价格】\n  继续显示同一块屏幕 overlay `purchase_card`（card_l1_ruby_38，2 红 + 2 钻）。\n  它固定在屏幕左侧，主摄像机如果在后续 cue 移动，它不会跟着桌面移动。\n  左下角的价格只是卡面信息的一部分；overlay 不参与世界状态。",
+        "note": "【从左下角认识这张牌的价格】\n镜头回到单样本近景，卡面固定在屏幕左侧。\ncue 开始时用 setup 前提把 1 钻 + 1 红从供应堆补进玩家持有区，为下一 cue 的“支付 2 白 + 2 红”演示凑出 2 红 + 2 钻；本 cue 画面是 mask，不展示这个前提动作。",
         "enter": {
           "picture": null,
           "zones": {
             "card_market": {
               "count": 12
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "player_holding": {
+              "count": 7
             }
           }
         },
@@ -7285,6 +7217,15 @@
           "zones": {
             "card_market": {
               "count": 12
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "player_holding": {
+              "count": 7
             }
           }
         }
@@ -7332,40 +7273,59 @@
           }
         },
         {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
+          "op": "shape",
+          "shape": "box",
           "part": "cost",
-          "anchor": "action.cards.cost.001.1.b1.start",
-          "offset": 0.315,
+          "dur": 0.0,
+          "anchor": "action.cards.cost.001.1.start",
           "target": {
             "space": "screen",
             "id": "purchase_card"
           }
         },
         {
-          "op": "point",
+          "op": "transfer",
           "dur": 0.0,
-          "indicator": "circle",
-          "part": "cost",
-          "anchor": "action.cards.cost.001.1.b1.end",
-          "offset": -0.405,
+          "quantity": 1,
+          "anchor": "action.cards.cost.001.1.start",
           "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          }
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
         },
         {
-          "op": "point",
+          "op": "transfer",
           "dur": 0.0,
-          "indicator": "arrow",
-          "part": "cost",
-          "anchor": "action.cards.cost.001.1.b2.end",
-          "offset": -0.545,
+          "quantity": 1,
+          "anchor": "action.cards.cost.001.1.start",
           "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          }
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
         }
       ],
       "transition": "overlay",
@@ -7378,16 +7338,20 @@
       "timing": [
         {
           "key": "玩家持有区已有 2 红 + 2 钻",
-          "text": "0.50"
+          "text": "0.00-3.60"
         },
         {
-          "key": "宝石回供应堆 → 从市场拿到发展区",
-          "text": "2.60"
+          "key": "宝石回供应堆（可见飞行）",
+          "text": "3.60-4.35"
+        },
+        {
+          "key": "拿取这张牌并放置到发展区",
+          "text": "7.60-9.00"
         }
       ],
       "script": {
-        "story": "【玩家需要将这里标注的宝石种类和数量返回宝石供应堆】",
-        "note": "【玩家需要将这里标注的宝石种类和数量返回宝石供应堆】\n  overlay `purchase_card` 一直固定在屏幕上，显示 card_l1_ruby_38 的卡面信息。\n  主摄像机给整桌 shot_board：\n  · demo 前提：把 1 钻 + 1 红从供应堆补进玩家持有区，凑出 2 红 + 2 钻；\n  · 台词说「返回供应堆」时，把持有区的 2 红和 2 钻分别转回供应堆；\n  · 最后真实卡牌从 card_market 进入 player_development。\n  全程 real 世界里只有这一张 card_l1_ruby_38，overlay 只是屏幕视图，不参与卡牌身份去重。",
+        "story": "【玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前】",
+        "note": "【支付价格 → 拿取卡牌】\n一条 cue 内完成两句话：\n· 前半句：玩家持有区已有 2 红 + 2 钻（上一 cue 的 setup 前提），台词说到「返回供应堆」时，在 3.60/3.85s 用可见飞行把 2 红和 2 钻送回对应供应堆；\n· 后半句：台词说到「拿取这张牌，并放置在自己面前」时，卡牌 7.595s 从 card_market 起飞，飞行 1.4s 落到 player_development（发展区按 bonus 颜色分列；每列第一张贴着发展区上侧，后取得的卡向下错开，只露出上方的声望与折扣信息）。\n动画时间按 seed2 合并音轨（10.68s）的字级时间戳对齐；overlay `purchase_card` 固定显示卡面。",
         "enter": {
           "picture": null,
           "zones": {
@@ -7459,55 +7423,22 @@
           }
         },
         {
-          "op": "transfer",
-          "setup": true,
+          "op": "shape",
+          "shape": "box",
+          "part": "cost",
           "dur": 0.0,
-          "quantity": 1,
           "anchor": "action.cards.cost.001.2.start",
           "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<diamond>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
+            "space": "screen",
+            "id": "purchase_card"
           }
         },
         {
           "op": "transfer",
-          "setup": true,
-          "dur": 0.0,
-          "quantity": 1,
-          "anchor": "action.cards.cost.001.2.start",
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<ruby>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
-          }
-        },
-        {
-          "op": "transfer",
-          "dur": 0.0,
+          "dur": 0.5,
           "quantity": 2,
-          "anchor": "action.cards.cost.001.2.b1.start",
-          "offset": 0.35,
+          "anchor": "action.cards.cost.001.2.start",
+          "offset": 3.6,
           "target": {
             "space": "entity",
             "zone": "player_holding",
@@ -7526,10 +7457,10 @@
         },
         {
           "op": "transfer",
-          "dur": 0.0,
+          "dur": 0.5,
           "quantity": 2,
-          "anchor": "action.cards.cost.001.2.b1.start",
-          "offset": 0.55,
+          "anchor": "action.cards.cost.001.2.start",
+          "offset": 3.85,
           "target": {
             "space": "entity",
             "zone": "player_holding",
@@ -7548,120 +7479,21 @@
         },
         {
           "op": "transfer",
-          "dur": 0.5,
+          "dur": 1.4,
           "quantity": 1,
-          "anchor": "action.cards.cost.001.2.end",
+          "anchor": "action.cards.cost.001.2.start",
           "target": {
             "space": "entity",
             "zone": "card_market",
             "template": "card_l1_ruby_38",
             "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "order": 1
+            "concept": "development_card_level_1"
           },
           "destination": {
             "space": "entity",
             "zone": "player_development"
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "circle",
-          "part": "cost",
-          "anchor": "action.cards.cost.001.2.b1.start",
-          "offset": 0.195,
-          "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          }
-        }
-      ],
-      "tree": "main",
-      "demo": true
-    },
-    {
-      "id": "action.cards.cost.001.3",
-      "parent": "action.cards.cost.001.2",
-      "timing": [
-        {
-          "key": "整桌镜头",
-          "text": "0.00"
-        },
-        {
-          "key": "从市场拿牌",
-          "text": "0.60"
-        },
-        {
-          "key": "放到玩家发展区",
-          "text": "3.20"
-        }
-      ],
-      "script": {
-        "story": "【之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前】",
-        "note": "【之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前】\n  购买动作已经在 cue48 末尾完成。这里 overlay 收起，保留整桌镜头，\n  让观众看到 card_l1_ruby_38 已经在玩家发展区。\n  下一 cue entry 回 canonical 市场，再继续讲真实购买/补牌流程。",
-        "enter": {
-          "picture": null,
-          "zones": {
-            "card_market": {
-              "count": 11
-            },
-            "player_development": {
-              "items": [
-                {
-                  "template": "card_l1_ruby_38",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                }
-              ]
-            },
-            "player_holding": {
-              "count": 3
-            },
-            "gem_supply_diamond": {
-              "count": 4
-            },
-            "gem_supply_ruby": {
-              "count": 4
-            }
-          }
-        },
-        "exit": {
-          "picture": null,
-          "zones": {
-            "card_market": {
-              "count": 11
-            },
-            "player_development": {
-              "items": [
-                {
-                  "template": "card_l1_ruby_38",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                }
-              ]
-            },
-            "player_holding": {
-              "count": 3
-            },
-            "gem_supply_diamond": {
-              "count": 4
-            },
-            "gem_supply_ruby": {
-              "count": 4
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.cards.cost.001.3.start"
+          },
+          "offset": 7.595
         }
       ],
       "tree": "main",
@@ -7669,20 +7501,44 @@
     },
     {
       "id": "action.cards.market.001.1",
-      "parent": "action.cards.cost.001.3",
+      "parent": "action.cards.cost.001.2",
       "timing": [
         {
           "key": "镜头推近市场",
           "text": "0.00"
         },
         {
+          "key": "前提：玩家已有 8 枚宝石（白1蓝2红1绿3黑1）",
+          "text": "0.00"
+        },
+        {
           "key": "整块市场高亮一次",
-          "text": "0.80"
+          "text": "0.77"
+        },
+        {
+          "key": "点要买的那张",
+          "text": "7.67"
+        },
+        {
+          "key": "付 1蓝2绿1红1黑",
+          "text": "8.57~9.11"
+        },
+        {
+          "key": "搬到玩家发展区",
+          "text": "9.11"
+        },
+        {
+          "key": "翻牌补位",
+          "text": "11.71"
+        },
+        {
+          "key": "点补上的新牌",
+          "text": "13.11"
         }
       ],
       "script": {
-        "story": "【玩家只可以从被翻开的 12 张发展卡牌中选择一张购买，并且在任何时间】",
-        "note": "【只能在 12 张里选】\n  镜头推近市场，把 12 个格位按 order 0→11 扫一遍（0-3 一级行、4-7 二级行、8-11 三级行）。\n  扫格位而不是只点一下区域：让观众看到『12 张』是 12 个位置。",
+        "story": "【玩家只可以从被翻开的 12 张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位】",
+        "note": "【前提：玩家已凑够钱 → 12 张里选 → 买走出现空位 → 从对应行翻牌补上】\n  · 前提：cue 开始前，玩家持有 8 枚宝石（白1、蓝2、红1、绿3、黑1）。这是本 cue 的起始状态，不是台词中的动作；\n    为了买得起那张一级白（读图价格：1蓝+2绿+1红+1黑），玩家已经合法地拿过黑/蓝/绿三种不同宝石。\n  · 12 张：镜头推近市场，把 12 个格位按 order 0→11 扫一遍（0-3 一级行、4-7 二级行、8-11 三级行）。扫格位而不是只点一下区域。\n  · 真购买：把市场里的一张一级白（slot 2）搬到玩家发展区，落到白（diamond）列、贴着发展区上侧。\n    全价付 1蓝+2绿+1红+1黑；付款后持有区正好剩 白1、蓝1、绿1。\n  · 补位：从对应行牌堆顶翻一张真卡落到市场的 slot 2（空位）。`realizes: <top_draw>`：从牌堆顶抽牌在规则上就是 top_draw。\n    每级只有 5 张真牌（前 4 张发市场 + 第 5 张供本次补位）；一级的这第 5 张就是 setup 留下的 `card_l1_onyx_3`，脚本用 `parts` 点名；源选择不写 `order`。\n",
         "enter": {
           "picture": null,
           "zones": {
@@ -7693,82 +7549,55 @@
               "count": 0
             },
             "player_holding": {
-              "count": 5
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
             },
             "gem_supply_diamond": {
               "count": 3
             },
             "gem_supply_ruby": {
               "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 1
             }
           }
         },
         "exit": {
-          "picture": null,
           "zones": {
             "card_market": {
               "count": 12
-            },
-            "player_development": {
-              "count": 0
-            },
-            "player_holding": {
-              "count": 5
-            },
-            "gem_supply_diamond": {
-              "count": 3
-            },
-            "gem_supply_ruby": {
-              "count": 3
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.cards.market.001.1.b1.start",
-          "offset": 0.505,
-          "target": {
-            "space": "entity",
-            "zone": "card_market"
-          }
-        }
-      ],
-      "tree": "main",
-      "entry": "action.take.public.001.2",
-      "demo": false
-    },
-    {
-      "id": "action.cards.market.001.2",
-      "parent": "action.cards.market.001.1",
-      "timing": [
-        {
-          "key": "合法取 3 种不同",
-          "text": "0.30"
-        },
-        {
-          "key": "点要买的那张",
-          "text": "1.30"
-        },
-        {
-          "key": "付 1蓝2绿1红1黑",
-          "text": "2.20"
-        },
-        {
-          "key": "搬到玩家发展区",
-          "text": "2.90"
-        }
-      ],
-      "script": {
-        "story": "【只要卡牌被玩家买走，卡牌供应堆出现了空位】",
-        "note": "【买走一张 → 出现空位；顺带合法补款】\n  这里做一次真购买：把市场里的一张一级白（slot 2）搬到玩家发展区。\n  一级白价格（读图）：1蓝+2绿+1红+1黑；此刻发展区空 → 无折扣全价付。\n  玩家原本持有 5 枚（白1蓝1红1绿2），付不出那 1 枚黑 —— 所以先合法地取 3 种不同\n  （黑1+蓝1+绿1，供应都够，取完 9 枚 ≤ 上限 10），再全价付掉。\n  付款会把刚取的蓝放回供应堆，付款后持有区正好剩 白1蓝1绿1；\n  这正是下一段折扣例子『只需要支付 1 枚白宝石和 1 枚蓝宝石』所需且可见的状态。\n  为什么不能直接给黑：2 人局每色在场只有 4 枚，另 3 枚在盒里、永远不再回场；create 就是凭空造宝石。\n",
-        "exit": {
-          "zones": {
-            "card_market": {
-              "count": 11
             },
             "gem_supply_diamond": {
               "count": 3
@@ -7805,13 +7634,10 @@
               ]
             },
             "player_development": {
-              "items": [
-                {
-                  "template": "card_l1_diamond_18",
-                  "palette": "card_level_1",
-                  "count": 1
-                }
-              ]
+              "count": 1
+            },
+            "deck_level_1": {
+              "count": 35
             }
           }
         }
@@ -7819,10 +7645,9 @@
       "events": [
         {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
           "quantity": 1,
-          "anchor": "action.cards.market.001.2.b1.start",
-          "offset": 0.005,
+          "anchor": "action.cards.market.001.1.start",
           "target": {
             "space": "entity",
             "zones": [
@@ -7835,13 +7660,25 @@
           "destination": {
             "space": "entity",
             "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.market.001.1.b1.start",
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "card_market"
           }
         },
         {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.cards.market.001.2.b1.start",
+          "anchor": "action.cards.market.001.1.b2.start",
           "offset": 1.005,
           "target": {
             "space": "entity",
@@ -7853,7 +7690,7 @@
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.cards.market.001.2.b1.start",
+          "anchor": "action.cards.market.001.1.b2.start",
           "offset": 1.905,
           "target": {
             "space": "entity",
@@ -7875,7 +7712,7 @@
           "op": "transfer",
           "dur": 0.6,
           "quantity": 2,
-          "anchor": "action.cards.market.001.2.b1.end",
+          "anchor": "action.cards.market.001.1.b2.end",
           "offset": -1.715,
           "target": {
             "space": "entity",
@@ -7897,7 +7734,7 @@
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.cards.market.001.2.b1.end",
+          "anchor": "action.cards.market.001.1.b2.end",
           "offset": -1.515,
           "target": {
             "space": "entity",
@@ -7919,7 +7756,7 @@
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.cards.market.001.2.b1.end",
+          "anchor": "action.cards.market.001.1.b2.end",
           "offset": -1.315,
           "target": {
             "space": "entity",
@@ -7941,7 +7778,7 @@
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.cards.market.001.2.b1.end",
+          "anchor": "action.cards.market.001.1.b2.end",
           "offset": -1.215,
           "target": {
             "space": "entity",
@@ -7963,60 +7800,19 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.cards.market.001.2.b1.end",
+          "anchor": "action.cards.market.001.1.b2.end",
           "offset": -0.715,
           "target": {
             "space": "entity",
             "zone": "player_development"
           }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.cards.market.001.3",
-      "parent": "action.cards.market.001.2",
-      "timing": [
-        {
-          "key": "翻牌补位",
-          "text": "1.20"
         },
-        {
-          "key": "点补上的新牌",
-          "text": "2.60"
-        }
-      ],
-      "script": {
-        "story": "【玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽】",
-        "note": "【从对应行的牌堆翻一张补上】\n  `transfer` 从 `<development_deck_level_1>` 取一张、落到市场的 **slot 2**（就是刚才空出来的那格）——『对应行』这件事由 destination 的 `order` 说，不由坐标说。\n  `realizes: <top_draw>`：从牌堆顶抽牌在规则上就是 top_draw（本体里它继承 transfer）。\n  ⚠ 为什么这条能翻出**真卡**：原来牌堆每级只排了 4 张真卡（刚好发满市场），剩下 36 张全是垫牌；这一批把真卡表加长到 8 张/级（前 4 张顺序不变，所以市场那 12 张没变）。",
-        "enter": {
-          "zones": {
-            "player_development": {
-              "count": 1
-            }
-          }
-        },
-        "exit": {
-          "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 35
-            },
-            "player_development": {
-              "count": 1
-            }
-          }
-        }
-      },
-      "events": [
         {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
-          "anchor": "action.cards.market.001.3.b1.start",
+          "anchor": "action.cards.market.001.1.b3.start",
           "offset": 0.925,
           "target": {
             "space": "entity",
@@ -8027,19 +7823,19 @@
                 "key": "bonus",
                 "value": "<onyx>"
               }
-            ],
-            "order": 2
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 2
         },
         {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.cards.market.001.3.b1.start",
+          "anchor": "action.cards.market.001.1.b3.start",
           "offset": 2.325,
           "target": {
             "space": "entity",
@@ -8048,20 +7844,127 @@
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.take.public.001.2",
+      "demo": false
     },
     {
-      "id": "action.cards.market.001.4",
-      "parent": "action.cards.market.001.3",
+      "id": "action.cards.market.001.2",
+      "parent": "action.cards.cost.001.2",
       "timing": [
         {
-          "key": "镜头回整桌",
+          "key": "demo 前提：1 级牌堆为空",
           "text": "0.00"
+        },
+        {
+          "key": "玩家 A 再买一次那张一级白",
+          "text": "0.10-2.40"
+        },
+        {
+          "key": "买走后空位不补",
+          "text": "约 2.40-结束"
         }
       ],
       "script": {
-        "story": "【此时不再填补，而是用剩余的发展卡牌继续游戏】",
-        "note": "【一行耗尽就不补了】\n  规则说明，**没有状态变化**：镜头拉回整桌 —— 一句『用剩下的牌继续玩』用整桌画面收尾。"
+        "story": "【除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏】",
+        "note": "【异常分支：这一行牌堆已经耗尽 → 不补位】\n  这是 demo 分支，允许非法推进：这一小段不要求把整副发展卡在两位玩家之间守恒，\n  只演示「对应等级牌堆已经空了，所以买走一张后空位保持空着」。\n  · 开场状态与 cue45 相同：玩家已有 8 枚宝石，可以合法购买那张一级白；\n  · 但这一分支里 `deck_level_1` 没有牌：把牌堆放空（demo 前提，不演发牌过程）；\n  · 玩家 A 再买一次那张一级白：付 1蓝+2绿+1红+1黑，卡牌从市场 slot 2 飞到玩家发展区；\n  · 买走后 slot 2 留空，**不从 deck_level_1 补牌** —— 对应口播「除非这一行所有卡牌都已经耗尽，\n    此时不再填补，而是用剩余的发展卡牌继续游戏」。\n",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "offstage": {
+              "count": 36
+            },
+            "player_holding": {
+              "count": 8
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 3
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 1
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "deck_level_1": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "player_development": {
+              "count": 1
+            },
+            "card_market": {
+              "count": 11
+            },
+            "offstage": {
+              "count": 36
+            },
+            "player_holding": {
+              "count": 3
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 3
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "deck_level_1": {
+              "count": 0
+            }
+          }
+        }
       },
       "events": [
         {
@@ -8069,27 +7972,183 @@
           "dur": 0.0,
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
-          "anchor": "action.cards.market.001.4.start"
+          "anchor": "action.cards.market.001.2.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "action.cards.market.001.2.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_onyx",
+              "gem_supply_sapphire",
+              "gem_supply_emerald"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 36,
+          "anchor": "action.cards.market.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "offstage"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 0.1,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 0.5,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 0.78,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 1.04,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 1.28,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "action.cards.market.001.2.b1.start",
+          "offset": 1.58,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_diamond_18",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.take.public.001.2",
+      "demo": true
     },
     {
       "id": "action.cards.prestige.001.1",
-      "parent": "action.cards.market.001.4",
+      "parent": "action.cards.market.001.1",
       "timing": [
         {
-          "key": "镜头给两个样本",
+          "key": "镜头给样本卡",
           "text": "0.00"
         },
         {
-          "key": "点二级红",
-          "text": "0.80 / 2.40"
+          "key": "红色箭头固定指向左上角声望点数",
+          "text": "0.80-结束"
         }
       ],
       "script": {
         "story": "【左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值】",
-        "note": "【左上角是声望值】\n  cue50 已把购买演示复位；这里重新摆出二级红样卡 `card_l2_ruby_69`（有声望），\n  点它左上角的声望。白样卡下一 cue 再加入做「一级卡未必有声望」的对比。\n  样卡是讲解道具，不进真实牌堆/市场的账。",
+        "note": "【左上角是声望值】\n  cue50 已把购买演示复位；这里重新摆出二级红样卡 `card_l2_ruby_69`（有声望），\n  用一支固定的红色箭头指向左上角声望点数，整条 cue 只保留同一支固定箭头。\n  声望/折扣位置使用卡模板 part_anchors 的统一几何，不在脚本里手写近似坐标。\n",
         "enter": {
           "picture": null,
           "zones": {}
@@ -8100,6 +8159,23 @@
         }
       },
       "events": [
+        {
+          "op": "show",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
+          },
+          "dur": 0.0,
+          "anchor": "action.cards.prestige.001.1.start",
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
         {
           "op": "show",
           "rect": {
@@ -8127,30 +8203,9 @@
           "target": {
             "space": "screen",
             "id": "sample_red"
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "circle",
-          "part": "prestige",
-          "anchor": "action.cards.prestige.001.1.b1.end",
-          "offset": -0.585,
-          "target": {
-            "space": "screen",
-            "id": "sample_red"
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
-          "part": "prestige",
-          "anchor": "action.cards.prestige.001.1.b2.start",
-          "offset": 0.11,
-          "target": {
-            "space": "screen",
-            "id": "sample_red"
+          },
+          "style": {
+            "gap": 65
           }
         }
       ],
@@ -8161,12 +8216,12 @@
       "parent": "action.cards.prestige.001.1",
       "timing": [
         {
-          "key": "点二级红（有）",
-          "text": "0.60"
+          "key": "二级红卡与箭头继承/保持",
+          "text": "0.00"
         },
         {
-          "key": "点一级白（没有）",
-          "text": "1.80"
+          "key": "一级白卡与箭头同时出现",
+          "text": "0.00"
         },
         {
           "key": "扫市场一级行",
@@ -8175,7 +8230,7 @@
       ],
       "script": {
         "story": "【不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值】",
-        "note": "【一级卡多半没有声望】\n  这一 cue 才把白样卡补出来，同时把二级红样卡从 `showcase` 移到 `showcase_1`，形成两样本对比。\n  二级红 = 有声望，一级白 = 0 点（它左上角横幅是空的）。\n  市场一级行四张读图是 0/0/0/1：点其中两张 0 点的一级牌（红、蓝），说明并非所有一级牌都没有声望。\n  样卡仍是讲解道具，不进真实牌堆/市场的账。",
+        "note": "【一级卡多半没有声望】\n  cue48 继承 cue47：二级红样卡和它的箭头保持可见。\n  开场同时出现一级白样卡和指向它左上角声望位置的箭头，形成两卡对比。\n  二级红左上角声望为 2；一级白左上角声望为 0（横幅为空）。\n  市场一级行四张读图是 0/0/0/1：再点其中两张 0 点的一级牌（红、蓝），说明并非所有一级牌都没有声望。\n  样卡仍是讲解道具，不进真实牌堆/市场的账。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -8186,6 +8241,23 @@
         }
       },
       "events": [
+        {
+          "op": "show",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
+          },
+          "dur": 0.0,
+          "anchor": "action.cards.prestige.001.2.start",
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
         {
           "op": "show",
           "rect": {
@@ -8223,25 +8295,29 @@
         {
           "op": "point",
           "dur": 0.0,
-          "indicator": "circle",
+          "indicator": "arrow",
           "part": "prestige",
-          "anchor": "action.cards.prestige.001.2.b1.start",
-          "offset": 0.315,
+          "anchor": "action.cards.prestige.001.2.start",
           "target": {
             "space": "screen",
             "id": "sample_red"
+          },
+          "style": {
+            "gap": 65
           }
         },
         {
           "op": "point",
           "dur": 0.0,
-          "indicator": "cross",
+          "indicator": "arrow",
           "part": "prestige",
-          "anchor": "action.cards.prestige.001.2.b1.end",
-          "offset": -1.035,
+          "anchor": "action.cards.prestige.001.2.start",
           "target": {
             "space": "screen",
             "id": "sample_white"
+          },
+          "style": {
+            "gap": 65
           }
         }
       ],
@@ -8256,36 +8332,36 @@
           "text": "0.00"
         },
         {
-          "key": "点一级白",
-          "text": "0.80 / 2.20"
+          "key": "箭头固定指向一级白右上角折扣宝石",
+          "text": "0.80-结束"
         }
       ],
       "script": {
         "story": "【右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣】",
-        "note": "【右上角的宝石 = 折扣】\n  点一级白样本（它右上角是白宝石 → 买下它以后，买别的牌时可以少付 1 枚白宝石）。\n  ⚠ 又一处只能点整张牌：『右上角那颗』没有原语能单独指。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。"
+        "note": "【右上角的宝石 = 折扣】\n  只用 screen mask 展示一级白这一张样卡：用一支固定箭头指向它右上角的宝石图案，\n  说明买下它以后，买别的牌时可以少付 1 枚白宝石。\n  本 cue 只展示一级白样卡；二级红只用在上一条的声望对比里，这里不出现。\n  整条 cue 保持同一支箭头，不切换圈、不重复箭头。\n  样卡是讲解道具，不进真实牌堆/市场的账。"
       },
       "events": [
         {
           "op": "show",
           "rect": {
-            "x": 0.24,
-            "y": 0.11,
-            "w": 0.24,
-            "h": 0.68
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
           },
           "dur": 0.0,
           "anchor": "action.cards.discount.001.start",
-          "image": "media/card/二级发展卡_红_69_cutout.png",
-          "layer": 10,
+          "background": "#1E2126",
+          "layer": 0,
           "target": {
             "space": "screen",
-            "id": "sample_red"
+            "id": "scene_backdrop"
           }
         },
         {
           "op": "show",
           "rect": {
-            "x": 0.52,
+            "x": 0.38,
             "y": 0.11,
             "w": 0.24,
             "h": 0.68
@@ -8310,30 +8386,6 @@
             "space": "screen",
             "id": "sample_white"
           }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "circle",
-          "part": "bonus",
-          "anchor": "action.cards.discount.001.b1.start",
-          "offset": 1.475,
-          "target": {
-            "space": "screen",
-            "id": "sample_white"
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
-          "part": "bonus",
-          "anchor": "action.cards.discount.001.b1.start",
-          "offset": 2.675,
-          "target": {
-            "space": "screen",
-            "id": "sample_white"
-          }
         }
       ],
       "tree": "main"
@@ -8341,10 +8393,19 @@
     {
       "id": "action.cards.discount.002.1",
       "parent": "action.cards.discount.001",
-      "timing": [],
+      "timing": [
+        {
+          "key": "整桌：高亮已买白卡 → 市场里找目标牌",
+          "text": "第一句"
+        },
+        {
+          "key": "目标牌上 mask → 支付 2白1蓝1黑 → 买进发展区",
+          "text": "第二句"
+        }
+      ],
       "script": {
-        "story": "【举个例子：现在我已经购买了 1 张白宝石牌，那么下一回合我想购买这张牌时】",
-        "note": "【折扣例子（一）】\n  『我已经购买了 1 张白宝石牌』不是凭空说的：上一段 market.001.2 真的把一级白买进了发展区。\n  这里点发展区那张白牌，再点想买的目标牌 —— 目标牌是『下一回合购买』的假设，\n  因此本 cue 起进入 demo:true 假设分支；只提示要付哪些宝石，不改变真实账。\n",
+        "story": "【举个例子：现在我已经购买了 1 张白宝石牌，那么下一回合我想购买这张牌时】【只需要支付 2 枚白宝石、1 枚蓝宝石和 1 枚黑宝石即可】",
+        "note": "【折扣例子（一）：2白 + 1蓝 + 1黑】\n  口播是假设句（『下一回合我想购买这张牌』），所以本 cue 起进入 demo:true 假设分支。\n  镜头先给整桌：高亮发展区里已经买到的一级白 card_l1_diamond_18——它提供 1 枚白宝石折扣。\n  市场里用 setup 前提换上目标牌 card_l1_diamond_20（一级白，价格 3白 + 1蓝 + 1黑；真卡 id=20）。\n  后半句把目标牌放上 screen mask 展示价格，再真实演示支付：3白 − 1白折扣 = 2白，外加 1蓝 + 1黑。\n  支付后目标牌从市场搬进发展区；它将成为下一条『2白+1蓝折扣』例子里的第二张白牌。\n  ⚠ 真牌里没有『2白+1蓝』的已扫描卡；这里挑素材里已有的 card_l1_diamond_20（3白1蓝1黑）来演示白折扣。\n  · 市场里的 card_l1_onyx_3 是 setup 前提换下的，本分支结束由 entry 回 canonical 时自动还原。\n  · 样卡/假设购买的卡不进真实账；后续在 action.cards.limit.001.2 显式 entry 回 action.cards.discount.001。",
         "enter": {
           "zones": {
             "player_development": {
@@ -8352,6 +8413,52 @@
                 {
                   "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 3
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 3
+            },
+            "card_market": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
                   "count": 1
                 }
               ]
@@ -8365,75 +8472,328 @@
                 {
                   "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
                   "count": 1
                 }
               ]
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
             }
           }
         }
       },
       "events": [
         {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.cards.discount.002.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "slot": 2,
+          "anchor": "action.cards.discount.002.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "quantity": 1,
+          "setup": true,
+          "anchor": "action.cards.discount.002.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "quantity": 1,
+          "setup": true,
+          "anchor": "action.cards.discount.002.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_development",
+          "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.discount.002.1.start"
         },
         {
-          "op": "wait",
-          "dur": 0.0,
+          "op": "highlight",
+          "dur": 0.6,
+          "peak_alpha": 0.65,
           "anchor": "action.cards.discount.002.1.b1.start",
-          "offset": 2.105
+          "offset": 0.5,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "order": 0
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "peak_alpha": 0.65,
+          "anchor": "action.cards.discount.002.1.b1.start",
+          "offset": 3.8,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "action.cards.discount.002.1.b1.end",
+          "offset": -1.45,
+          "rect": {
+            "x": 0.028,
+            "y": 0.1,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "image": "media/card/一级发展卡_白_20_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost",
+          "part_u": 0.21,
+          "part_v": 0.83,
+          "part_w": 0.4,
+          "part_h": 0.34,
+          "dur": 0.0,
+          "anchor": "action.cards.discount.002.1.b1.end",
+          "offset": -0.7,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "action.cards.discount.002.1.b2.start",
+          "offset": 0.6,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.cards.discount.002.1.b2.start",
+          "offset": 0.85,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.cards.discount.002.1.b2.start",
+          "offset": 1.1,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "action.cards.discount.002.1.b2.end",
+          "offset": -0.35,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_down",
+          "anchor": "action.cards.discount.002.1.b2.end",
+          "offset": 0.05,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 2,
+          "anchor": "action.cards.discount.002.1.b2.end",
+          "offset": 0.15,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         }
       ],
       "demo": true,
       "tree": "main"
     },
     {
-      "id": "action.cards.discount.002.2",
+      "id": "action.cards.discount.003.1",
       "parent": "action.cards.discount.002.1",
       "timing": [
         {
-          "key": "镜头推近玩家持有区",
-          "text": "0.00"
+          "key": "整桌镜头，2白+2红已在 A 面前",
+          "text": "整条 cue"
+        },
+        {
+          "key": "左侧 mask 展示目标牌",
+          "text": "第二句"
+        },
+        {
+          "key": "免费飞入发展区",
+          "text": "结尾"
         }
       ],
       "script": {
-        "story": "【只需要支付 1 枚白宝石和 1 枚蓝宝石即可】",
-        "note": "【折扣例子（一）：只要付这两枚】\n  口播数字是 1 白 + 1 蓝；现在持有区确实有 白1+蓝1（market.001.2 真付款后剩下的可见状态）。\n  这里不真支付：口播是『下一回合我想购买这张牌时』，属于假设。\n  ⚠ 目标牌很可能是价格 2白+1蓝 的某张真卡，但不在已扫的 15 张里。\n  本 cue 镜头只推近持有区、展示要付的这两枚，不展示目标牌正面，避免把一级白样本的\n  cost 1蓝+2绿+1红+1黑 冒充成它。若要正面讲解目标牌，需另补扫描件（MISSING_SCAN）。\n"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_holding",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.cards.discount.002.2.start"
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.cards.discount.003.1",
-      "parent": "action.cards.discount.002.2",
-      "timing": [
-        {
-          "key": "补出两张牌",
-          "text": "0.60 / 0.90"
-        },
-        {
-          "key": "点发展区三张",
-          "text": "2.00"
-        },
-        {
-          "key": "点想买的牌",
-          "text": "3.60"
-        }
-      ],
-      "script": {
-        "story": "【如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌，那么我购买这张牌时无需支付任何宝石】",
-        "note": "【折扣例子（二）：折扣叠起来】\n  口播是**假设句**（『如果我已经购买了 2 张白宝石牌和 1 张蓝宝石牌』）——这个前提是脚本说的，所以这里把缺的两张牌**补出来**（`create`，从盒里），而不是装作它们本来就在。\n  · 补的是两张有独立真卡扫描的牌：card_l3_diamond_80（三级白，凑成 2 白折扣）与 card_l1_sapphire_14（一级蓝，凑成 1 蓝折扣）。\n  · 白牌给白折扣、蓝牌给蓝折扣 → 发展区总共 2 白 + 1 蓝。\n  ⚠ 本 cue 是 `demo: true` 的假设分支，不写回 canonical；后续 canonical 通过 `action.cards.limit.001.2` 显式 `entry` 回 `action.cards.discount.001`（demo 分支之前最后一个 canonical cue），不能默认继承这里的假设牌。",
+        "story": "【如果我已经购买了 2 张白宝石牌和 2 张红宝石牌，那么我购买这张牌时无需支付任何宝石】",
+        "note": "【折扣例子（二）：免费拿牌】\n  cue 开场即是前提状态：玩家 A 已有 2 白 + 2 红发展卡\n  （card_l1_diamond_18 / card_l1_diamond_20 / card_l1_ruby_33 / card_l1_ruby_35），\n  折扣正好是 2 白 + 2 红。\n  目标牌 card_l1_ruby_38（一级红，价格 2 白 + 2 红）已经在市场里。\n  本 cue 只有 shot_board 一个机位；目标牌在屏幕左侧 mask 上静态展示，\n  支付阶段不做任何宝石 transfer，只让市场里那张真牌飞进发展区——\n  观众看到的是「没有付款，牌却拿走了」＝折扣抵满、免费拿牌。\n  ⚠ 本 cue 是 demo:true 假设分支，不写回 canonical；后续 action.cards.limit.001.2 显式 entry 回 action.cards.discount.001。",
         "exit": {
           "zones": {
             "player_development": {
@@ -8445,13 +8805,63 @@
                   "face": "up"
                 },
                 {
-                  "template": "card_l3_diamond_80",
-                  "palette": "card_level_3",
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
                 },
                 {
-                  "template": "card_l1_sapphire_14",
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_38",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
+              ]
+            },
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            }
+          }
+        },
+        "enter": {
+          "zones": {
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
@@ -8463,102 +8873,123 @@
       },
       "events": [
         {
-          "op": "show",
-          "rect": {
-            "x": 0.24,
-            "y": 0.11,
-            "w": 0.24,
-            "h": 0.68
-          },
-          "dur": 0.0,
-          "anchor": "action.cards.discount.003.1.start",
-          "image": "media/card/二级发展卡_红_69_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "sample_red"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.52,
-            "y": 0.11,
-            "w": 0.24,
-            "h": 0.68
-          },
-          "dur": 0.0,
-          "anchor": "action.cards.discount.003.1.start",
-          "image": "media/card/一级发展卡_白_17_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "sample_white"
-          }
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_development",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.cards.discount.003.1.start"
-        },
-        {
           "op": "create",
           "dur": 0.0,
           "count": 1,
-          "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 0.315,
           "to": "face_up",
+          "anchor": "action.cards.discount.003.1.start",
           "target": {
             "space": "entity",
             "zone": "player_development",
-            "template": "card_l3_diamond_80",
-            "palette": "card_level_3",
-            "concept": "development_card_level_3"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 0.615,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_sapphire_14",
+            "template": "card_l1_ruby_33",
             "palette": "card_level_1",
             "concept": "development_card_level_1"
           }
         },
         {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 1.715,
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.cards.discount.003.1.start",
           "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_35",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.cards.discount.003.1.start"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "action.cards.discount.003.1.start",
+          "rect": {
+            "x": 0.028,
+            "y": 0.1,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "image": "media/card/一级发展卡_红_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost",
+          "part_u": 0.21,
+          "part_v": 0.83,
+          "part_w": 0.4,
+          "part_h": 0.34,
+          "dur": 0.0,
+          "anchor": "action.cards.discount.003.1.start",
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "action.cards.discount.003.1.b1.end",
+          "offset": -0.35,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_ruby_38",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
             "space": "entity",
             "zone": "player_development"
           }
         },
         {
-          "op": "wait",
+          "op": "create",
           "dur": 0.0,
-          "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 3.115
+          "count": 1,
+          "to": "face_down",
+          "anchor": "action.cards.discount.003.1.b1.end",
+          "offset": 0.05,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
         },
         {
-          "op": "highlight",
+          "op": "transfer",
           "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.cards.discount.003.1.b1.start",
-          "offset": 3.315,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 1,
+          "anchor": "action.cards.discount.003.1.b1.end",
+          "offset": 0.15,
           "target": {
-            "space": "screen",
-            "id": "sample_white"
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
           }
         }
       ],
@@ -8613,7 +9044,7 @@
       ],
       "script": {
         "story": "【和宝石相同，已购买的发展卡牌也属于公开信息】",
-        "note": "【发展卡也是公开信息】\n  规则说明，**没有状态变化**：镜头给玩家面前（发展区 3 张已买的牌），点一下。"
+        "note": "【发展卡也是公开信息】\n  规则说明，**没有状态变化**：镜头给玩家发展区，点一下。\n  此时发展区是折扣例子（demo 分支）里的 5 张牌：2 白 + 3 红；\n  其中红牌 card_l1_ruby_38 就是上一条免费拿到的目标牌。"
       },
       "events": [
         {
@@ -8674,7 +9105,7 @@
     },
     {
       "id": "action.cards.limit.001.2",
-      "parent": "action.cards.discount.002.2",
+      "parent": "action.cards.discount.002.1",
       "timing": [
         {
           "key": "点发展区",
@@ -8687,7 +9118,7 @@
       ],
       "script": {
         "story": "【但玩家总计可以购买的发展卡牌数量没有上限】",
-        "note": "【总数没有上限】\n  规则说明 + 本组收尾：点发展区，然后把两件**介绍样本**销毁（它们只是讲解道具，不是这一局里的牌）。\n  回到真实 canonical 分支后，发展区只有 market.001.2 买入的一级白。\n  折扣例子里的三级白和一级蓝属于 demo 假设分支，不进入真实账；本 cue 收尾销毁两张介绍样本。",
+        "note": "【总数没有上限】\n  规则说明 + 本组收尾：点发展区，然后通过显式 entry 回到 canonical。\n  折扣例子（demo 假设分支）里补出来的白牌/红牌、以及免费拿到的 card_l1_ruby_38 都不进入真实账；\n  回到 action.cards.discount.001 的 canonical 状态后，发展区只剩 market.001.2 买入的一级白 card_l1_diamond_18。",
         "exit": {
           "zones": {}
         }
@@ -8732,7 +9163,7 @@
       ],
       "script": {
         "story": "【我们再介绍一下贵族板块】",
-        "note": "【介绍贵族板块】\n  贵族供应堆 3 块（统一 0001 正面），本节按 0001 的条件（4白+4红）演示。\n  贵族不是买来的牌，是条件达成后自动到你面前的板块。\n  【2026-09 用户指示③】顺带给玩家B 摆一块贵族作『其他人』的可见前提；它不是 2 人局物理账的一部分，\n  显式标 concept=noble_premise（普通 noble 才计入 3 块物理贵族），仅用于被指点/画叉。\n",
+        "note": "【介绍贵族板块】\n  贵族供应堆 3 块：noble_1/0001（4白+4红）、noble_4/0004（4蓝+4白）、noble_5/0005（3黑+3红+3白）。\n  贵族不是买来的牌，是条件达成后自动到你面前的板块。\n  贵族只摆在规则成立的位置：玩家B 没有发展卡，因此不摆贵族；贵族合法性以“发展卡真能满足条件”为准。",
         "enter": {
           "picture": null,
           "zones": {
@@ -8885,7 +9316,7 @@
               "count": 0
             },
             "player_b_nobles": {
-              "count": 1
+              "count": 0
             }
           }
         }
@@ -8899,21 +9330,6 @@
           "anchor": "action.nobles.intro.001.start"
         },
         {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.intro.001.b1.start",
-          "offset": 0.115,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_b_nobles",
-            "template": "noble_4",
-            "palette": "noble",
-            "concept": "noble_premise"
-          }
-        },
-        {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
@@ -8922,26 +9338,6 @@
           "target": {
             "space": "entity",
             "zone": "noble_market"
-          }
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_nobles_player_b",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.intro.001.b1.end",
-          "offset": -0.615
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
-          "anchor": "action.nobles.intro.001.b1.end",
-          "offset": -0.515,
-          "target": {
-            "space": "entity",
-            "zone": "player_b_nobles",
-            "order": 0
           }
         }
       ]
@@ -8957,7 +9353,7 @@
       ],
       "script": {
         "story": "【左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件】",
-        "note": "【贵族的两个信息】\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（0001 是 4白+4红）。\n  ⚠ 又是同一个缺口：没有『指某个角』的指示物原语，只能把整块依次点亮。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。"
+        "note": "【贵族的两个信息】\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（本片三块：4白+4红 / 4蓝+4白 / 3黑+3红+3白）。\n  ⚠ 又是同一个缺口：没有『指某个角』的指示物原语，只能把整块依次点亮。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。"
       },
       "events": [
         {
@@ -9084,7 +9480,7 @@
       ],
       "script": {
         "story": "【如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件】",
-        "note": "【把『满足条件』这一步真的做出来】\n  口播是假设句（如果已购买…满足）→ 这里把前提补出来：发展区凑齐 4 白 + 4 红，\n  正好满足供应堆第一块贵族（0001：4白+4红）。\n  canonical 此刻发展区原有 1 张一级白 card_l1_diamond_18；再补 3 张不同的真白卡\n  （card_l1_diamond_20 / card_l1_diamond_22 / card_l1_diamond_24）与 4 张不同的真红卡\n  （card_l1_ruby_33 / card_l1_ruby_35 / card_l1_ruby_37 / card_l1_ruby_40），每张卡都有独立扫描件与独立 card_facts。\n  · 先从 deck_level_1 移除 7 张 blank_card_1 垫牌，再 create 这些真卡；实物账由 audit 按等级上限与守恒检查。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌，不能以默认朝下的卡背出现。\n  · 不再用同一张 market_card_1_diamond / market_card_1_ruby 代表多张真卡。",
+        "note": "【把「满足条件」这一步真的做出来】\n  口播是假设句（如果已购买…满足）→ 这里把前提补出来：发展区凑齐 4 白 + 4 红 + 4 蓝 + 3 黑，\n  同时满足三块贵族的条件（4白4红 / 4蓝4白 / 3黑3红3白），三块贵族后续各拿一块都合法。\n  canonical 此刻发展区原有 1 张一级白 card_l1_diamond_18；再从 deck_level_1 移除 14 张垫牌后，\n  创建补齐：3 张一级白（20/22/24）、4 张一级红（33/35/37/40）、\n  4 张一级蓝（901–904）与 3 张一级黑（905–907）。这些补位卡都对应实际牌组中的未建模真卡，\n  每张有独立 template/registry 身份，只用于把贵族条件补成合法状态；都是 0 分牌，不影响原本的声望账。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌，不能以默认朝下的卡背出现。\n  · 条件一满足，必须在同一回合结束立即获得贵族：因此本 cue 在补牌后立即从供应堆搬 1 块 noble_1（4白4红）到 `player_nobles`；剩余 noble_4/noble_5 也仍满足条件，留待后续回合各拿一块。",
         "exit": {
           "zones": {
             "player_development": {
@@ -9136,11 +9532,59 @@
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
+                },
+                {
+                  "template": "card_l1_sapphire_901",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_sapphire_902",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_sapphire_903",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_sapphire_904",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
             "deck_level_1": {
-              "count": 28
+              "count": 21
+            },
+            "noble_market": {
+              "count": 2
+            },
+            "player_nobles": {
+              "count": 1
             }
           }
         }
@@ -9149,7 +9593,7 @@
         {
           "op": "destroy",
           "dur": 0.0,
-          "count": 7,
+          "count": 14,
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.0,
           "target": {
@@ -9308,6 +9752,111 @@
           }
         },
         {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.235,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_901",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.3150000000000002,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_902",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.395,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_903",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.475,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_904",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.5550000000000002,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_905",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.6350000000000002,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_906",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.715,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_907",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
@@ -9317,9 +9866,28 @@
             "space": "entity",
             "zone": "player_development"
           }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 2.415,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A在结束回合时，发展区有4张白、4张红、4张蓝、3张黑；贵族供应堆3块（4白4红、4蓝4白、3黑3红3白）的条件都被满足。按照规则，他立即从中获得1块（4白4红），另外2块留在供应堆。这个结算是否合法？"
+      ]
     },
     {
       "id": "action.nobles.trigger.001.3",
@@ -9336,7 +9904,7 @@
       ],
       "script": {
         "story": "【他必须立即拿取这张贵族板块并立刻获得其声望值】",
-        "note": "【立刻拿走那块贵族】\n  真搬一件：`transfer` 从贵族供应堆 → `player_nobles`（自己面前）。\n  『必须立即』体现为**同一 cue 内**、条件一达成就搬（2.60 点完条件、3.20 就搬）。\n  搬哪一块：供应堆里 order 最小的那块（三块条件相同，所以拿哪块都对）。",
+        "note": "【立刻拿走那块贵族】\n  真搬一件：`transfer` 从贵族供应堆 → `player_nobles`（自己面前）。\n  『必须立即』体现为**同一 cue 内**、条件一达成就搬（2.60 点完条件、3.20 就搬）。\n  搬哪一块：供应堆里 order 最小的那块（三块条件此时都已满足；拿哪块都合法）。\n  第一块贵族已在上一 cue 补牌后立即搬入 `player_nobles`；本 cue 只对已到手贵族做规则说明，没有状态变化。",
         "exit": {
           "zones": {
             "noble_market": {
@@ -9360,34 +9928,6 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.trigger.001.3.b1.start",
-          "offset": 0.915,
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "order": 0
-          }
-        },
-        {
-          "op": "transfer",
-          "dur": 0.6,
-          "quantity": 1,
-          "anchor": "action.nobles.trigger.001.3.b1.end",
-          "offset": -1.305,
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "concept": "noble"
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_nobles"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
           "anchor": "action.nobles.trigger.001.3.b1.end",
           "offset": -0.505,
           "target": {
@@ -9396,7 +9936,10 @@
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A面前的4白4红4蓝3黑发展卡已经让他在上一回合结束时获得了1块贵族（4白4红）；贵族供应堆还剩2块（4蓝4白、3黑3红3白），条件仍然满足。这个局面是否合法？"
+      ]
     },
     {
       "id": "action.nobles.forced.001.1",
@@ -9492,7 +10035,7 @@
       ],
       "script": {
         "story": "【玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取】",
-        "note": "【只能拿供应堆里的】\n  规则说明，**没有状态变化**：镜头在贵族供应堆，点一下 —— 『贵族只有这一个来源』。\n  ⚠ 『不可以从其他人那里拿』没法演：我们的桌面只有**一位玩家**的位置，没有『别人面前的贵族』这个东西可指（要演就得先有第二个玩家区）。\n  【2026-09 用户指示③：加了玩家B 的区】这一句以前没法演 —— 桌面只有一位玩家。现在 `player_b_nobles`（对面那位的贵族）存在了，用**叉**把 B 的贵族叉掉 =『不可以从其他人那里拿』。镜头同时框住两边的贵族区，对比才成立。"
+        "note": "【只能拿供应堆里的】\n  规则说明，**没有状态变化**：镜头给贵族供应堆 —— 『贵族只有这一个来源』；\n  贵族由发展卡满足条件后在回合结束时自动来访，不能主动从别人那里拿。\n  【2026-10 修正】玩家B 没有发展卡，不能合法持有贵族；玩家B 没有发展卡，已移除 B 的贵族前提；本 cue 只说明来源规则，不对空区画叉。"
       },
       "events": [
         {
@@ -9501,29 +10044,12 @@
           "shot": "shot_nobles",
           "realizes": "<ontology::timing>",
           "anchor": "action.nobles.source.001.start"
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_nobles_player_b",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 1.105
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "cross",
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 1.705,
-          "target": {
-            "space": "entity",
-            "zone": "player_b_nobles",
-            "order": 0
-          }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家B没有任何发展卡，所以没有贵族；玩家A的贵族都是由发展卡满足条件后在回合结束时自动来访的，不能主动从中央拿走，也不能从其他玩家那里拿。这个局面和规则是否合法一致？"
+      ]
     },
     {
       "id": "action.nobles.choice.001.1",
@@ -9531,7 +10057,7 @@
       "timing": [],
       "script": {
         "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
-        "note": "【同时满足多名贵族】\n  规则说明，**没有状态变化**：桌上剩的两块贵族条件相同（都是 4白+4红），发展区早就满足 → 现在就是『同时满足多名』的局面，两块一起点出来。\n  顺带点一下市场：这句的前提是『购买一张发展卡牌后』。"
+        "note": "【同时满足多名贵族】\n  规则说明，**没有状态变化**：桌上剩的两块贵族（0004 4蓝+4白、0005 3黑+3红+3白）都被 A 的\n  4白+4红+4蓝+3黑发展卡满足 → 现在就是『同时满足多名』的局面，两块一起点出来。\n  顺带点一下市场：这句的前提是『购买一张发展卡牌后』。"
       },
       "events": [
         {
@@ -9548,7 +10074,10 @@
           "offset": 1.305
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A已经合法拿到1块4白4红贵族，发展区仍有4白4红4蓝3黑；贵族供应堆还剩2块（4蓝4白、3黑3红3白），都满足A的条件。这个局面是否合法？"
+      ]
     },
     {
       "id": "action.nobles.choice.001.2",
@@ -9565,7 +10094,7 @@
       ],
       "script": {
         "story": "【他必须从这些贵族板块中挑选一个拿取】",
-        "note": "【挑一个拿走】\n  真搬一件：从两块里挑一块（拿当前 order 最小的那一块，当前是 order 1）→ 搬到 `player_nobles`。\n  『挑』这件事在数据里体现为：源是**供应堆**、每次只搬一件 —— 具体搬哪块由 order 决定，脚本不写坐标也不用点名到那一件（三块条件相同，拿哪块都对）。",
+        "note": "【挑一个拿走】\n  真搬一件：从两块里挑一块（拿当前 order 最小的那一块，当前是 order 1 的 0004）→ 搬到 `player_nobles`。\n  源是贵族供应堆、每次只搬一件；两块条件此刻都满足，拿哪块都合法。",
         "exit": {
           "zones": {
             "noble_market": {
@@ -9625,7 +10154,10 @@
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A在结束回合时发展区有4白4红4蓝3黑，贵族供应堆剩2块（4蓝4白、3黑3红3白）且都满足条件。按照规则，他从中选择1块（4蓝4白）自动获得，另1块留下。这个结算是否合法？"
+      ]
     },
     {
       "id": "action.nobles.repeat.001.1",
@@ -9726,7 +10258,10 @@
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A已有2块贵族，发展区有4白4红4蓝3黑；贵族供应堆还剩1块3黑3红3白贵族且条件满足。下一个回合结束时，A再自动获得这最后1块。这个结算是否合法？"
+      ]
     },
     {
       "id": "action.nobles.repeat.001.3",
@@ -9750,7 +10285,10 @@
           "anchor": "action.nobles.repeat.001.3.start"
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A发展区有4白4红4蓝3黑，已经分三个回合获得供应堆全部3块贵族（4白4红、4蓝4白、3黑3红3白）；玩家B没有任何发展卡，也没有贵族。这个最终局面是否合法？"
+      ]
     },
     {
       "id": "action.cards.summary.001.1",
@@ -9960,13 +10498,13 @@
                 "key": "bonus",
                 "value": "<sapphire>"
               }
-            ],
-            "order": 9
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 9
         },
         {
           "op": "transfer",
@@ -10068,11 +10606,11 @@
       ],
       "script": {
         "story": "【除了供应堆的 12 张卡牌外，玩家也可以从 3 摞牌堆顶选择一张未被翻开的发展卡牌保留】",
-        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `<development_deck_level_1>` 顶取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 从牌堆取件取的就是 order 最小的那张（= 顶牌），脚本不用点名。\n  · 这一批之前把牌堆真卡表加到了 5 张/级，所以这次翻出来的是一张**真卡**（垫牌只是撑厚度）。\n  · 画面上它朝下 —— 观众和对手一样看不到它是哪张（这正是下一条要讲的信息）。",
+        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `<development_deck_level_1>` 取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻一级牌堆顶是空白垫牌，脚本不点名、也不得用 `target.order` 当源选择。\n  · 牌面朝下，观众和对手都看不到这张垫牌是哪张；这一条演示的是“可以盲抽并保留”，不依赖它是不是真卡。",
         "exit": {
           "zones": {
             "deck_level_1": {
-              "count": 27
+              "count": 20
             },
             "gold_supply": {
               "count": 3
@@ -10376,13 +10914,13 @@
                 "key": "bonus",
                 "value": "<diamond>"
               }
-            ],
-            "order": 6
+            ]
           },
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
+          },
+          "order": 6
         },
         {
           "op": "transfer",

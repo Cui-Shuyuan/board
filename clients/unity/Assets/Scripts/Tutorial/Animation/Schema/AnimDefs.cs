@@ -132,8 +132,8 @@ namespace BoardGameTutorial.Animation
         public int count = 1;
         public int quantity;
         public string to;        // face_up | face_down
-        public int order = -1;
-        public int slot = -1;
+        public int order = -1;   // transfer: explicit destination slot in a row
+        public int slot = -1;    // create: initial order inside the destination zone
 
         // presentation fields
         public string part;
@@ -323,15 +323,23 @@ namespace BoardGameTutorial.Animation
 
         // Unified annotation fields.  ``annotation_space`` is world (anchor
         // projected through the live camera) or screen (anchor fixed to a
-        // viewport rect/overlay).  These fields are only emitted for
-        // point/shape/label/marker clips; Unity treats absent values with the
-        // legacy fallbacks in TimelineEvaluator.
+        // viewport rect/overlay).  Emitted for point/shape/label/marker clips;
+        // TimelineEvaluator applies its built-in defaults for absent values.
         public string annotation_space;
         public float part_u;
         public float part_v;
+        public float part_w;
+        public float part_h;
         public bool has_part_uv;
         public float nudge_x;
         public float nudge_y;
+        // Optional annotation visual style, resolvable from the track-level
+        // annotation_style + per-event style override in the source script.
+        // Numeric values are pixels at a 1080p reference resolution.
+        public string annotation_color;
+        public float annotation_stroke;
+        public float annotation_size;
+        public float annotation_gap;
         public float screen_x;
         public float screen_y;
         public float screen_w;
@@ -351,8 +359,10 @@ namespace BoardGameTutorial.Animation
         public string source_item_id;
         public bool persist_on_source_missing = true;
 
-        // shuffle clip: per-item deterministic jitter parameters, compiled so
-        // the runtime stays a pure function of the compiled asset.
+        // Shuffle is visual-only: deterministic per-item jitter parameters
+        // compiled so the runtime stays a pure function of the compiled asset.
+        // Logical deck order is carried by state_ops/snapshots and is never
+        // permuted by a shuffle event.
         public float sh_amp;
         public float sh_freq;
         public float sh_phase;

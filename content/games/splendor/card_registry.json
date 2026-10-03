@@ -368,6 +368,107 @@
       },
       "image": "media/card/三级发展卡_蓝_77_cutout.png",
       "role": "new_scan"
+    },
+    {
+      "template_id": "card_l1_sapphire_901",
+      "source_card_id": 901,
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "image": "media/card/一级发展卡_蓝_14_cutout.png",
+      "role": "new_scan",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_sapphire_902",
+      "source_card_id": 902,
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "image": "media/card/一级发展卡_蓝_14_cutout.png",
+      "role": "new_scan",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_sapphire_903",
+      "source_card_id": 903,
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "image": "media/card/一级发展卡_蓝_cutout.png",
+      "role": "new_scan",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_sapphire_904",
+      "source_card_id": 904,
+      "level": 1,
+      "bonus": "sapphire",
+      "prestige": 0,
+      "cost": {
+        "onyx": 2,
+        "emerald": 2
+      },
+      "image": "media/card/一级发展卡_蓝_cutout.png",
+      "role": "new_scan",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_onyx_905",
+      "source_card_id": 905,
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_黑_cutout.png",
+      "role": "existing",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_onyx_906",
+      "source_card_id": 906,
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_黑_cutout.png",
+      "role": "existing",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_onyx_907",
+      "source_card_id": 907,
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_黑_cutout.png",
+      "role": "existing",
+      "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
     }
   ]
 }

@@ -70,7 +70,12 @@ def slot_at(zone: dict, order: int) -> tuple[float, float]:
 
     if display.get("mode") == "stack":
         max_visible = max(1, int(display.get("max_visible", 8) or 8))
-        lift = min(max(0, cap - 1 - slot), max_visible - 1)
+        # Pile order is bottom-to-top: order 0 is the first card laid down
+        # (bottom), the largest occupied order is the top card.  The bottom
+        # `max_visible` orders produce the visible offset steps; everything
+        # above them coincides at the top face.  Drawing a card removes the
+        # largest order and never renumbers the pile.
+        lift = min(max(0, slot), max_visible - 1)
         return (cx + lift * num(display.get("dx"), 0.03),
                 cz + lift * num(display.get("dz"), 0.03))
 

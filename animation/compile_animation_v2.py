@@ -96,13 +96,23 @@ def selector_from_event(ev: dict) -> dict:
 # the compiler writes it as a normalized (u, v) position in the target rect so
 # Unity does not need to know card layout.  (0,0) is top-left in a GUI/screen
 # rect and +z is "up" on the stage plane.
-PART_ANCHORS = {
+# Canonical development-card geometry.  Every development card template uses
+# the same 0.63 x 0.88 card face, and its `part_anchors` define these positions
+# in card-local units (dx, dy, r).  Normalized to the card rect:
+#   u = 0.5 + dx / width, v = 0.5 - dy / height
+#   part_w = 2*r / width, part_h = 2*r / height
+CARD_PART_ANCHORS = {
     "whole": (0.5, 0.5),
     "": (0.5, 0.5),
-    "prestige": (0.16, 0.16),
-    "cost": (0.16, 0.84),
-    "bonus": (0.84, 0.16),
+    "prestige": (0.149733, 0.094258),
+    "cost": (0.126984, 0.840909),
+    "bonus": (0.825397, 0.130682),
     "condition": (0.50, 0.84),
+}
+CARD_PART_SIZES = {
+    "prestige": (0.238095, 0.170455),
+    "cost": (0.5, 0.30),
+    "bonus": (0.269841, 0.193182),
 }
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
 
@@ -127,7 +137,7 @@ def part_uv(ev: dict) -> tuple[float, float]:
         return (float(pu) if pu is not None else 0.5,
                 float(pv) if pv is not None else 0.5)
     part = norm(ev.get("part")).lower()
-    return PART_ANCHORS.get(part, (0.5, 0.5))
+    return CARD_PART_ANCHORS.get(part, (0.5, 0.5))
 
 
 def nudge_xy(ev: dict) -> tuple[float, float]:
@@ -152,7 +162,41 @@ def find_overlay_rect(stage: dict | None, overlay_id: str) -> dict | None:
     return None
 
 
-def event_annotation_fields(ev: dict, stage: dict | None = None) -> dict:
+def _annotation_style(ev: dict, defaults: dict | None = None) -> dict:
+    """Resolve annotation visual parameters for one clip.
+
+    Track-level ``annotation_style`` supplies defaults; event-level ``style``
+    or flat keys override them.  Numeric values are pixels at a 1080p reference
+    so scripts stay readable across screen sizes.
+    """
+    merged = dict(defaults or {})
+    style = ev.get("style")
+    if isinstance(style, dict):
+        merged.update(style)
+    for key in ("color", "stroke", "size", "gap"):
+        if ev.get(key) is not None:
+            merged[key] = ev.get(key)
+    out = {}
+    color = merged.get("color")
+    if isinstance(color, str) and color.strip():
+        out["annotation_color"] = color.strip()
+    for key, field in (("stroke", "annotation_stroke"),
+                       ("size", "annotation_size"),
+                       ("gap", "annotation_gap")):
+        value = merged.get(key)
+        if value is None:
+            continue
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            continue
+        if number > 0:
+            out[field] = number
+    return out
+
+
+def event_annotation_fields(ev: dict, stage: dict | None = None,
+                            style_defaults: dict | None = None) -> dict:
     """Compiled clip fields shared by every annotation primitive.
 
     ``annotation_space`` is the explicit authoring answer to "is this anchored
@@ -169,6 +213,20 @@ def event_annotation_fields(ev: dict, stage: dict | None = None) -> dict:
         "nudge_x": nx,
         "nudge_y": ny,
     }
+    out.update(_annotation_style(ev, style_defaults))
+    # Semantic sub-rect around the part anchor.  Known development-card parts
+    # get their fixed size from the canonical card geometry; an explicit
+    # event value always wins.  For shape=box this is the rectangle; for
+    # point/circle/arrow it is the fixed marker size around the anchor.
+    part = out["part"].lower()
+    default_size = CARD_PART_SIZES.get(part)
+    for key, default in (("part_w", default_size[0] if default_size else None),
+                         ("part_h", default_size[1] if default_size else None)):
+        value = ev.get(key)
+        if value is not None:
+            out[key] = float(value)
+        elif default is not None:
+            out[key] = float(default)
     overlay_id = norm(ev.get("overlay"))
     if out["annotation_space"] == "screen" and overlay_id:
         rect = find_overlay_rect(stage, overlay_id)
@@ -192,8 +250,9 @@ class StateModel:
     def __init__(self, stack_zones=None, zone_order_policies=None):
         self.items = []
         self.next_seq = {}
-        # Stack-style zones keep the old pile convention: append goes underneath
-        # (order 0 = top).  Other zones default new items on top.
+        # Pile convention: order 0 is the bottom (first card laid down), the
+        # largest occupied order is the top (next card drawn).  New cards go on
+        # top; drawing removes the largest order and never renumbers the pile.
         self.stack_zones = set(stack_zones or [])
         # color_stack zones address items by (color, rank): different colors
         # occupy different base slots, same color stacks in its own slot.
@@ -270,8 +329,8 @@ class StateModel:
                     if not all((p.get("key"), p.get("value")) in have for p in selector["parts"]):
                         continue
             out.append(it)
-        # Keep legacy selection order (stable address) so scripts continue to
-        # pick the same concrete items; layer only controls cover/overlap order.
+        # Stable address order: scripts address concrete items by (order, id);
+        # layer only controls cover/overlap order, not selection identity.
         out.sort(key=lambda x: (x["order"], x["id"]))
         return out
 
@@ -280,8 +339,10 @@ class StateModel:
 
     @staticmethod
     def _color_key(it: dict) -> str:
+        # Gems use parts[color]; development cards use parts[bonus].
         for p in it.get("parts") or []:
-            if p.get("key") == "color":
+            key = str(p.get("key", "")).strip().lower()
+            if key in ("color", "bonus"):
                 return str(p.get("value", "")).strip("<>")
         pal = str(it.get("palette") or "")
         if pal == "gem_gold":
@@ -314,16 +375,12 @@ class StateModel:
     def _default_layer(self, zone: str) -> int:
         """Layer for a new item entering this zone.
 
-        General zones: later item goes on top (max + 1).
-        Stack zones: append goes underneath, matching the existing order-0-top
-        pile convention used by decks and supply heaps.
+        New items always go on top: max(existing layer) + 1.  Stack zones use
+        the same direction for order (bottom-to-top), so drawing removes the
+        largest order without renumbering the pile.
         """
         layers = self._zone_layers(zone)
-        if not layers:
-            return 0
-        if zone in self.stack_zones:
-            return min(layers) - 1
-        return max(layers) + 1
+        return max(layers) + 1 if layers else 0
 
     def _resolve_layer(self, zone: str, raw, ordinal: int = 0) -> int:
         if raw is None or str(raw).strip() == "":
@@ -391,12 +448,55 @@ class StateModel:
         return victims
 
     def transfer(self, selector: dict, source: str, dest: str, quantity: int,
-                 to_face=None, order: int = -1, layer=None) -> list:
+                 to_face=None, order: int = -1, layer=None,
+                 from_top: bool = True, to_top: bool = True) -> list:
+        """Move items between zones.
+
+        ``from_top`` / ``to_top`` are optional; when omitted they default to
+        ``True`` for visible pile movement:
+
+        * from_top: take the ``quantity`` items with the largest ``order`` from
+          the source pile (order is bottom-to-top, so the largest order is the
+          top / next drawn card).
+        * to_top: place the moved items at the top of the destination pile by
+          assigning new orders/layers above the existing maximum.  Existing
+          items are never renumbered, so holes left by earlier removals stay
+          open.
+
+        Grid / row zones (market, nobles, reserved cards...) have no inherent
+        "top"; for those, the defaults preserve stable address order.  Pass an
+        explicit ``False`` to disable the pile behavior for a transfer.
+
+        ``order`` is only used for non-pile destinations: it is the explicit
+        destination order/slot (for example refilling a market hole after a
+        purchase).  It is not a source selector; deck draw picks the source
+        stack top via ``from_top``.
+        """
+        # from_top/to_top are defaults for visible pile movement only.  Grid /
+        # row zones (market, nobles, reserved...) have no inherent "top" and
+        # must keep their stable address order.  color_stack zones already
+        # append new gems into their own top slot via _next_order, so only pure
+        # stack zones need to_top.
+        source_is_pile = source in self.stack_zones or source in self.zone_order_policies
+        dest_is_stack = dest in self.stack_zones
+        use_from_top = bool(from_top) and source_is_pile
+        use_to_top = bool(to_top) and dest_is_stack
+
         arr = self.matching(source, selector)
         if len(arr) < quantity:
             raise ValueError(f"transfer needs {quantity} from {source}, have {len(arr)}")
-        moved = arr[:quantity]
+        if use_from_top:
+            arr = sorted(arr, key=lambda x: (int(x["order"]), str(x["id"])))
+            moved = list(reversed(arr[-quantity:]))
+        else:
+            moved = arr[:quantity]
         moved_ids = {m["id"] for m in moved}
+        # Snapshot the destination before insertion, so to_top lands above the
+        # original pile even when several records move together.
+        dest_items_before = sorted(
+            (it for it in self.items if it["zone"] == dest and it["id"] not in moved_ids),
+            key=lambda x: (int(x.get("order", 0) or 0), str(x.get("id", ""))),
+        )
         records = []
         for it in moved:
             rec = {"item": it, "from_zone": it["zone"], "from_order": it["order"],
@@ -414,25 +514,39 @@ class StateModel:
             rec["to_zone"] = dest
             rec["to_order"] = it["order"]
             rec["to_layer"] = int(it["layer"])
-        if order >= 0 and moved:
+        if use_to_top:
+            # Keep records in source top-to-bottom order so records[0] (the
+            # item taken from the source top) also ends up on top of the
+            # destination; existing items are never renumbered.
+            base_order = max((int(it.get("order", 0) or 0) for it in dest_items_before), default=-1) + 1
+            base_layer = max((int(it.get("layer", 0) or 0) for it in dest_items_before), default=-1) + 1
+            count = len(records)
+            for idx, rec in enumerate(records):
+                lift = count - 1 - idx
+                it = rec["item"]
+                it["order"] = base_order + lift
+                it["layer"] = base_layer + lift
+                rec["to_order"] = int(it["order"])
+                rec["to_layer"] = int(it["layer"])
+        if order >= 0 and moved and not use_to_top:
+            # Explicit destination slot, e.g. refilling a market hole.
             self.move_order(moved[0], dest, order)
             for rec in records:
                 rec["to_order"] = rec["item"]["order"]
         return records
 
     def move_order(self, item: dict, zone: str, order: int):
+        """Renumber one item to an explicit slot inside a non-pile zone.
+
+        Never use this to compact a deck: stack draw uses the largest order and
+        deliberately leaves holes in the remaining cards.
+        """
         arr = sorted([i for i in self.items if i["zone"] == zone], key=lambda x: (x["order"], x["id"]))
         arr = [i for i in arr if i["id"] != item["id"]]
         at = max(0, min(order, len(arr)))
         arr.insert(at, item)
         self.items = [i for i in self.items if i["zone"] != zone]
         self.items.extend(arr)
-        for i, it in enumerate(arr):
-            it["order"] = i
-
-    def shuffle(self, zone: str, seed: int):
-        arr = sorted([i for i in self.items if i["zone"] == zone], key=lambda x: (x["order"], x["id"]))
-        arr.sort(key=lambda it: (fnv32(it["id"], seed), it["id"]))
         for i, it in enumerate(arr):
             it["order"] = i
 
@@ -461,6 +575,9 @@ class Compiler:
         self.track_path = track_path
         self.track_dir = track_path.parent
         self.doc = schema.resolve_track(json.loads(track_path.read_text(encoding="utf-8")))
+        self.annotation_style = self.doc.get("annotation_style")
+        if not isinstance(self.annotation_style, dict):
+            self.annotation_style = {}
         self.rep = schema.validate_track(self.doc)
         self.stages = {}       # stage id -> source stage
         self.compiled_stages = {}
@@ -948,7 +1065,7 @@ class Compiler:
             # `parent` is the authoring hierarchy; state source may also fall
             # back to the previous cue in track order (see state_source_ref).
             result["parent"] = cue.get("parent")
-            # Keep the schema's canonical field order close to the old output.
+            # Keep the schema's canonical field order stable.
             ordered = {
                 "id": result.pop("id"),
                 "parent": result.pop("parent"),
@@ -1131,7 +1248,12 @@ class Compiler:
                 records_with_times = []
                 is_setup = bool(ev.get("setup"))
                 for source in sources:
-                    records = state.transfer(sel, source, dest, quantity, ev.get("to"), int(ev.get("order", -1)), ev.get("layer"))
+                    records = state.transfer(
+                        sel, source, dest, quantity, ev.get("to"),
+                        int(ev.get("order", -1)), ev.get("layer"),
+                        from_top=bool(ev.get("from_top", True)),
+                        to_top=bool(ev.get("to_top", True)),
+                    )
                     for rec in records:
                         # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
                         # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
@@ -1159,33 +1281,33 @@ class Compiler:
                 pad = norm(ev.get("pad_template"))
                 face = face_int(ev.get("to") or "face_down")
                 pad_count = max(0, capacity - len(real)) if pad else 0
-                total = len(real) + pad_count
-                # Keep current pile semantics: first real card remains the top card.
-                # Layer is cover order, so assign it in reverse build order.
-                layer_cursor = total - 1
-                for tpl in real:
-                    pal = norm(ev.get("palette"))
-                    concept, parts, pal = self.infer_meta(stage, tpl, pal)
-                    added = state.spawn(tpl, pal, concept, dest, 1, face, parts, layer_cursor)
-                    layer_cursor -= 1
-                    for it in added:
-                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+                # Deck and gem-supply piles share one construction path: both
+                # are just ordered spawns into a display.mode=stack zone.
+                # Order is bottom-to-top.  Lay the padding first (deep/bottom
+                # orders), then lay real templates from the END of the list
+                # backwards, so real_templates[0] ends up at the highest order
+                # (top / first drawn), matching the authored draw order.
                 if pad and pad_count:
                     concept, parts, pal = self.infer_meta(stage, pad, "")
                     for _ in range(pad_count):
-                        added = state.spawn(pad, pal, concept, dest, 1, face, parts, layer_cursor)
-                        layer_cursor -= 1
+                        added = state.spawn(pad, pal, concept, dest, 1, face, parts)
                         for it in added:
                             clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+                # Reverse the authored top-first list so the first template
+                # (first to be drawn) is spawned last and receives the highest
+                # order = the visible/current top.
+                for tpl in reversed(real):
+                    pal = norm(ev.get("palette"))
+                    concept, parts, pal = self.infer_meta(stage, tpl, pal)
+                    added = state.spawn(tpl, pal, concept, dest, 1, face, parts)
+                    for it in added:
+                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "shuffle":
-                # In-place jitter, exactly like v1 — and **visual only**.
-                # The decks are built with their real cards already on top
-                # (order 0..N), then padded, and the scripted market deal picks
-                # those cards by template/parts.  Permuting the logical order
-                # here would make a scripted card start its flight from the
-                # middle/bottom of the pile, which is exactly the v1 behaviour
-                # this animation was built around.  So the state model is left
-                # untouched; only the pile edge gets the deterministic shake.
+                # Visual-only jitter.  `shuffle` means the deck is being mixed,
+                # but the tutorial's draw order is already authored in
+                # `real_templates` and must stay stable across seek/replay.
+                # Permuting state here would desync end_state and scripted
+                # selectors, so emit deterministic jitter and leave state alone.
                 strength = float(ev.get("amount", ev.get("strength", 1.0)) or 1.0)
                 for it in state.matching(zone, {}):
                     bx, bz = self.position(stage_slots, zone, it["order"])
@@ -1271,7 +1393,7 @@ class Compiler:
                         "point" if op == "point" else "shape",
                         overlay_id, at, dur, lead, easing,
                         part=norm(ev.get("part")), indicator=kind)
-                    c.update(event_annotation_fields(ev, stage))
+                    c.update(event_annotation_fields(ev, stage, self.annotation_style))
                     clips.append(c)
                     pointer_resolution.append({
                         "event_index": event_index,
@@ -1307,7 +1429,7 @@ class Compiler:
                             "point" if op == "point" else "shape", selected[0],
                             at, dur, lead, easing,
                             part=norm(ev.get("part")), indicator=kind)
-                        c.update(event_annotation_fields(ev, stage))
+                        c.update(event_annotation_fields(ev, stage, self.annotation_style))
                         clips.append(c)
             elif op == "overlay_show":
                 overlay_id = norm(ev.get("overlay"))
@@ -1336,10 +1458,10 @@ class Compiler:
                     "source_item_id": norm(ev.get("source_item_id")),
                     "persist_on_source_missing": bool(ev.get("persist_on_source_missing", True)),
                     "layer": int(ev.get("layer", 0) or 0),
-                    "label_x": float(rect.get("x", 0.03) or 0.03),
-                    "label_y": float(rect.get("y", 0.10) or 0.10),
-                    "label_w": float(rect.get("w", 0.28) or 0.28),
-                    "label_h": float(rect.get("h", 0.62) or 0.62),
+                    "label_x": float(rect["x"]) if rect.get("x") is not None else 0.03,
+                    "label_y": float(rect["y"]) if rect.get("y") is not None else 0.10,
+                    "label_w": float(rect["w"]) if rect.get("w") is not None else 0.28,
+                    "label_h": float(rect["h"]) if rect.get("h") is not None else 0.62,
                     "screen_space": True,
                     "from_alpha": 1.0,
                     "to_alpha": 1.0,
@@ -1379,7 +1501,7 @@ class Compiler:
                         "label_x": 0.0, "label_y": 0.0,
                         "label_w": 0.0, "label_h": 0.0,
                     })
-                    c.update(event_annotation_fields(ev, stage))
+                    c.update(event_annotation_fields(ev, stage, self.annotation_style))
                     clips.append(c)
                 elif overlay_id:
                     overlay = overlays.get(overlay_id)
@@ -1411,7 +1533,7 @@ class Compiler:
                             "label_w": float(rect.get("w", 0.3) or 0.3),
                             "label_h": float(rect.get("h", 0.1) or 0.1),
                         })
-                        c.update(event_annotation_fields(ev, stage))
+                        c.update(event_annotation_fields(ev, stage, self.annotation_style))
                     clips.append(c)
                 else:
                     raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")

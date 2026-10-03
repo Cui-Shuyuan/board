@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""**写脚本时的规则合法性检查**：拿动画数据本身（事件流）把状态机重放一遍，逐步判断每一步是否合法。
-
-与 check_cue_script.py 的分工：
-  · check_cue_script.py：数据 == 引擎（契约 vs 采样）→ 证明"我说会发生的事真的发生了"；
-  · 本文件：事件流本身**合不合规则** → 证明"发生的事在规则上允许"。
-两者缺一不可：契约与引擎可以一起错（例：凭空 create 3 枚黑宝石再"付"回供应堆，
-场上就变成 7 枚黑 —— 对账全绿，规则已崩）。
+"""规则合法性账本：拿动画事件流把状态机重放一遍，逐步判断每一步是否合法。
 
 本作演示的是 **2 人局**（由 setup 的"把多余的宝石放回盒子"定下来）：
   每色宝石在场 4 枚（实物 7，另 3 枚在盒里且**永不回场**）、黄金 5、贵族 3、
@@ -14,31 +8,18 @@
 
 做法：从空桌开始，按轨道顺序重放每条 cue 的事件，维护"每个 zone 里有什么身份、场上每色几枚"。
 买牌那一步额外对账：**价格 − 折扣 == 实际付出去的宝石**（价格来自 content/games/splendor/card_facts.json，
-没有价格的牌会报 warning 提醒补数据，不给它蒙混过关）。
+没有价格的牌会报 warning 提醒补数据）。
 
-用法：
-    python3 animation/validate_anim_rules.py            # 写脚本时跑这个
-    python3 animation/validate_anim_rules.py --json
-退出码：0 = 合法；1 = 有硬伤。
+`validate_anim_rules_v2.py` 负责把 v2 事件适配成账本输入，并提供命令行入口。
 """
 from __future__ import annotations
 
-import argparse
-import json
-import sys
 from collections import Counter, defaultdict
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-try:
-    from validate_cue_anim import resolve_zone_ref          # 与对账共用同一套 zone 引用解析
-except Exception:                                           # pragma: no cover
-    def resolve_zone_ref(stage, ref):
-        return ref
-ANIM = ROOT / "content/games/splendor/tutorial/anim/full.json"
-STAGE = ROOT / "content/games/splendor/tutorial/anim/_stage/splendor.table.json"
-FACTS = ROOT / "content/games/splendor/card_facts.json"
+
+def resolve_zone_ref(stage, ref):
+    """v2 events already carry concrete zone ids; resolve them as-is."""
+    return ref
 
 CN = {"diamond": "白", "sapphire": "蓝", "emerald": "绿", "ruby": "红", "onyx": "黑"}
 GEMS_PER_COLOR = 4
@@ -144,24 +125,13 @@ class State:
                    if ident.startswith("gem:") or ident.startswith("gold"))
 
 
-def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report = None,
+def run(anim, default_stage, stages, facts, rep: Report = None,
         on_event=None, on_cue_end=None, cue_start_states=None):
-    """按轨道顺序重放；**跨树 = cut**：换树时丢弃上一棵树的状态，从该树入口重新起。
+    """按轨道顺序重放；**跨 tree 不重置状态**，跨 world 状态天然 cut。
 
-    兼容两种调用：
-      · 新：run(anim, default_stage, stages, facts, rep)
-      · 旧：run(anim, stage, facts, rep)      —— 只跑单棵主树
     `stages` 是 tree id → StageDoc；没写 tree 的 cue（以及没登记的 tree）走 default_stage。
     """
-    if rep is None:
-        default_stage = stage_or_default
-        stages = {}
-        facts = stages_or_facts
-        rep = facts_or_rep
-    else:
-        default_stage = stage_or_default
-        stages = stages_or_facts
-        facts = facts_or_rep
+    rep = rep or Report()
     # 状态按 **world** 分组，而每个 tree 独占一个 world；跨 world 状态天然 cut。
     # 跨 tree 复制状态必须由动画数据里的显式 entry 边表达，不能靠共享 world。
     # 镜头/舞台仍按 cue/tree 切。
@@ -416,41 +386,3 @@ def run(anim, stage_or_default, stages_or_facts, facts_or_rep=None, rep: Report 
             if not got and not gold_used and need:
                 rep.error(where, f"买 {tid}：需要 {need}，但这一步**一枚宝石都没付**")
     return rep
-
-
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--json", action="store_true")
-    a = ap.parse_args()
-    anim = json.loads(ANIM.read_text(encoding="utf-8"))
-    default_stage = json.loads(STAGE.read_text(encoding="utf-8"))
-    stages = {}
-    anim_dir = ROOT / "content/games/splendor/tutorial/anim"
-    for tree in anim.get("trees") or []:
-        tid, rel = tree.get("id"), tree.get("stage")
-        if tid and rel:
-            path = anim_dir / f"{rel}.json"
-            if path.exists():
-                stages[tid] = json.loads(path.read_text(encoding="utf-8"))
-    facts = json.loads(FACTS.read_text(encoding="utf-8")) if FACTS.exists() else {}
-    rep = run(anim, default_stage, stages, facts, Report())
-    if a.json:
-        print(json.dumps({"errors": [f"{w}: {m}" for w, m in rep.errors],
-                          "warnings": [f"{w}: {m}" for w, m in rep.warnings]},
-                         ensure_ascii=False, indent=2))
-    else:
-        for w, m in rep.warnings:
-            print(f"  warn  {w}\n        {m}")
-        for w, m in rep.errors:
-            print(f"  ERR   {w}\n        {m}")
-        n = len(anim.get("cues") or [])
-        if rep.errors:
-            print(f"\n✗ 规则合法性：{len(rep.errors)} 处硬伤（{n} 条 cue）")
-        else:
-            print(f"\n✓ 规则合法性通过：{n} 条 cue 的每一步都合法"
-                  f"（每色 {GEMS_PER_COLOR} 枚在场 / 黄金 {GOLD_TOTAL} / 手上限 {HAND_LIMIT} / 保留上限 {RESERVE_LIMIT}）")
-    return 1 if rep.errors else 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
