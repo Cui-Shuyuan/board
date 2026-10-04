@@ -10221,13 +10221,13 @@
           "text": "整条 cue"
         },
         {
-          "key": "“玩家不可以选择跳过” → 发展区贴禁止标记",
+          "key": "“玩家不可以选择跳过” → 贵族区出禁止标记和说明",
           "text": "第二句"
         }
       ],
       "script": {
         "story": "【请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。】",
-        "note": "【错误示范：买了牌但不拿贵族】\n  这是 action.nobles.trigger.001.1 的兄弟分支：从 action.nobles.intro.001 的 1白+4红+3黑 开场，\n  玩家A照常买下市场 slot 2 的一级黑卡 card_l1_onyx_3，付款、补位都和上一个 cue 一样；\n  但这次**不把 noble_1 搬进 player_nobles**：条件已经满足，A 的贵族区仍然空着，贵族_0001 留在 noble_market order0。\n  说到『玩家不可以选择跳过』时，不切镜头；用 set_face + forbid 给 player_development 整体生成一个 world marker 禁止标记 ——『不拿是犯规的』。\n  本 cue 是错误示范分支，后续 canonical 剧情仍从 action.nobles.trigger.001.1 已拿贵族的终态继续（action.nobles.source.001 parent 已指回 trigger）。",
+        "note": "【错误示范：买了牌但不拿贵族】\n  这是 action.nobles.trigger.001.1 的兄弟分支：从 action.nobles.intro.001 的 1白+4红+3黑 开场，\n  玩家A照常买下市场 slot 2 的一级黑卡 card_l1_onyx_3，付款、补位都和上一个 cue 一样；\n  但这次**不把 noble_1 搬进 player_nobles**：条件已经满足，A 的贵族区仍然空着，贵族_0001 留在 noble_market order0。\n  说到『玩家不可以选择跳过』时，镜头保持 shot_board 不切；\n  在 player_nobles 空槽（world overlay noble_forbid_a，0.6×0.6，和贵族板块同大）打一个 forbid 标记，\n  并在标记旁用 world label 补上说明文字『满足贵族条件就必须立即拿取，不能跳过。』 —— 说明为什么不拿是犯规。\n  本 cue 是错误示范分支，后续 canonical 剧情仍从 action.nobles.trigger.001.1 已拿贵族的终态继续（action.nobles.source.001 parent 已指回 trigger）。",
         "enter": {
           "zones": {
             "card_market": {
@@ -10756,16 +10756,25 @@
           }
         },
         {
-          "op": "set_face",
+          "op": "wait",
           "dur": 0.0,
           "forbid": "forbid",
+          "overlay": "noble_forbid_a",
           "anchor": "action.nobles.forced.001.1.b2.start",
-          "offset": 2.38,
-          "target": {
-            "space": "entity",
-            "zone": "player_development"
+          "offset": 2.38
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "满足贵族条件就必须立即拿取，不能跳过。",
+          "overlay": "noble_forbid_a",
+          "annotation_space": "world",
+          "nudge": {
+            "x": 0.18,
+            "y": 0.03
           },
-          "to": "face_up"
+          "anchor": "action.nobles.forced.001.1.b2.start",
+          "offset": 2.38
         }
       ],
       "tree": "main",
