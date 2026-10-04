@@ -9029,11 +9029,10 @@
       ],
       "script": {
         "story": "【和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限】",
-        "note": "【购买上限：一回合一张，总数没有上限】\n  规则说明 + 本组收尾：合并后不切镜头、不做高亮，整条 cue 安静展示桌面（shot_board）。\n  cue 开场用 entry 回到 action.cards.discount.001 的 canonical；\n  折扣例子（demo 假设分支）里补出来的白牌/红牌、以及免费拿到的 card_l1_ruby_38 都不进入真实账；\n  回到 canonical 后发展区只剩 market.001.2 买入的一级白 card_l1_diamond_18。"
+        "note": "【购买上限：一回合一张，总数没有上限】\n  规则说明 + 本组收尾：延续上一条的 demo 展示状态，整条 cue 不切镜头、不高亮，安静展示桌面。\n  canonical 还原放到下一条 action.nobles.intro.001 切贵族镜头时用 entry 完成；\n  折扣例子（demo 假设分支）里补出来的白牌/红牌、以及免费拿到的 card_l1_ruby_38 都不进入真实账。"
       },
       "events": [],
       "tree": "main",
-      "entry": "action.cards.discount.001",
       "qa": [
         "璀璨宝石。玩家每回合只能购买一张发展卡牌，但整局游戏能购买的发展卡牌总数没有上限。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
       ]
@@ -9232,7 +9231,8 @@
             "zone": "noble_market"
           }
         }
-      ]
+      ],
+      "entry": "action.cards.discount.001"
     },
     {
       "id": "action.nobles.value.001.1",
