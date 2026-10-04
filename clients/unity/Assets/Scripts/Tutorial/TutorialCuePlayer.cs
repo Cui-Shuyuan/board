@@ -918,16 +918,72 @@ namespace BoardGameTutorial
             GUI.color = savedColor;
         }
 
+        private void LateUpdate()
+        {
+            // Keep lens cameras enabled so URP renders them as normal cameras
+            // into their RenderTextures.  Calling Camera.Render() manually
+            // from OnGUI nests a URP pass inside the main camera's render
+            // context (UniversalCameraData already created) and throws every
+            // frame; this path must stay out of any manual render callback.
+            var frame = (v2AnimPlayer != null && v2AnimPlayer.IsLoaded && enableCueAnimation)
+                ? v2AnimPlayer.CurrentFrame
+                : null;
+            PrepareMagnifiers(frame);
+        }
+
+        private void PrepareMagnifiers(FrameState frame)
+        {
+            var alive = new HashSet<string>(StringComparer.Ordinal);
+            var mainCam = v2AnimPlayer != null ? v2AnimPlayer.Camera : null;
+            if (frame != null && frame.Magnifiers != null)
+            {
+                foreach (var m in frame.Magnifiers)
+                {
+                    if (m == null || m.Alpha <= 0.001f) continue;
+                    float pw = Mathf.Max(24f, m.W * Screen.width);
+                    float ph = Mathf.Max(24f, m.H * Screen.height);
+                    int texW = Mathf.Clamp(Mathf.RoundToInt(pw), 64, 1024);
+                    int texH = Mathf.Clamp(Mathf.RoundToInt(ph), 64, 1024);
+                    var view = GetMagnifierView(m.Id, texW, texH);
+                    if (view == null || view.Cam == null) continue;
+
+                    // Disable while mutating the camera to avoid a stale
+                    // transform/size being submitted on the same frame.
+                    view.Cam.enabled = false;
+                    view.Cam.cullingMask = mainCam != null ? mainCam.cullingMask : ~0;
+                    view.Cam.clearFlags = CameraClearFlags.SolidColor;
+                    view.Cam.backgroundColor = mainCam != null ? mainCam.backgroundColor : Color.black;
+                    view.Cam.aspect = (float)view.Width / Mathf.Max(1, view.Height);
+                    view.Cam.orthographic = true;
+                    view.Cam.orthographicSize = Mathf.Max(0.05f, m.OrthoSize);
+                    float distance = Mathf.Max(0.1f, m.OrthoSize) * 3.2f;
+                    view.Cam.transform.position = new Vector3(m.CenterX, distance, m.CenterZ);
+                    view.Cam.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+                    view.Cam.targetTexture = view.Rt;
+                    view.Cam.enabled = true;
+                    alive.Add(m.Id);
+                }
+            }
+
+            var stale = new List<string>();
+            foreach (var kv in magnifierViews)
+                if (!alive.Contains(kv.Key)) stale.Add(kv.Key);
+            foreach (var id in stale)
+                if (magnifierViews.TryGetValue(id, out var view) && view != null && view.Cam != null)
+                    view.Cam.enabled = false;
+        }
+
         private void DrawMagnifiers(FrameState frame)
         {
-            if (frame == null || frame.Magnifiers == null || frame.Magnifiers.Count == 0) return;
+            if (frame == null || frame.Magnifiers == null || frame.Magnifiers.Count == 0)
+            {
+                ReleaseStaleMagnifiers(new HashSet<string>(StringComparer.Ordinal));
+                return;
+            }
             if (v2AnimPlayer == null || !v2AnimPlayer.IsLoaded) return;
             if (Event.current == null || Event.current.type != EventType.Repaint) return;
             if (magnifierRenderedFrame == Time.frameCount) return;
             magnifierRenderedFrame = Time.frameCount;
-
-            var mainCam = v2AnimPlayer.Camera;
-            if (mainCam == null) return;
 
             var ordered = new List<VisualMagnifierState>(frame.Magnifiers);
             ordered.Sort((a, b) => a.Layer.CompareTo(b.Layer));
@@ -937,28 +993,12 @@ namespace BoardGameTutorial
             foreach (var m in ordered)
             {
                 if (m == null || m.Alpha <= 0.001f) continue;
+                if (!magnifierViews.TryGetValue(m.Id, out var view) || view == null) continue;
                 float px = m.X * Screen.width;
                 float py = m.Y * Screen.height;
                 float pw = Mathf.Max(24f, m.W * Screen.width);
                 float ph = Mathf.Max(24f, m.H * Screen.height);
                 Rect rect = new Rect(px, py, pw, ph);
-
-                int texW = Mathf.Clamp(Mathf.RoundToInt(pw), 64, 1024);
-                int texH = Mathf.Clamp(Mathf.RoundToInt(ph), 64, 1024);
-                var view = GetMagnifierView(m.Id, texW, texH);
-                if (view == null) continue;
-
-                view.Cam.cullingMask = mainCam.cullingMask;
-                view.Cam.clearFlags = CameraClearFlags.SolidColor;
-                view.Cam.backgroundColor = mainCam.backgroundColor;
-                view.Cam.aspect = (float)view.Width / Mathf.Max(1, view.Height);
-                view.Cam.orthographic = true;
-                view.Cam.orthographicSize = Mathf.Max(0.05f, m.OrthoSize);
-                float distance = Mathf.Max(0.1f, m.OrthoSize) * 3.2f;
-                view.Cam.transform.position = new Vector3(m.CenterX, distance, m.CenterZ);
-                view.Cam.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-                view.Cam.targetTexture = view.Rt;
-                view.Cam.Render();
 
                 var savedColor = GUI.color;
                 GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
@@ -968,6 +1008,11 @@ namespace BoardGameTutorial
                 alive.Add(m.Id);
             }
 
+            ReleaseStaleMagnifiers(alive);
+        }
+
+        private void ReleaseStaleMagnifiers(HashSet<string> alive)
+        {
             var stale = new List<string>();
             foreach (var kv in magnifierViews)
                 if (!alive.Contains(kv.Key)) stale.Add(kv.Key);
@@ -976,7 +1021,11 @@ namespace BoardGameTutorial
                 var view = magnifierViews[id];
                 if (view != null)
                 {
-                    if (view.Cam != null) view.Cam.targetTexture = null;
+                    if (view.Cam != null)
+                    {
+                        view.Cam.enabled = false;
+                        view.Cam.targetTexture = null;
+                    }
                     if (view.Rt != null) view.Rt.Release();
                     if (view.Go != null) Destroy(view.Go);
                 }
