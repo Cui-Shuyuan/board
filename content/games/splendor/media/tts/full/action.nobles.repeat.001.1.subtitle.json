@@ -1,145 +1,385 @@
 [
   {
     "phonemes": [],
-    "text": "当他的下一个回合结束时，不管这回合他做了什么行动，\n",
+    "text": "当他的下一个回合结束时，",
     "words": [
       {
-        "confidence": 0.97272986,
+        "confidence": 0.95417446,
         "endTime": 0.445,
-        "startTime": 0.285,
+        "startTime": 0.275,
         "word": "当"
       },
       {
-        "confidence": 0.9648101,
-        "endTime": 0.605,
+        "confidence": 0.97652704,
+        "endTime": 0.635,
         "startTime": 0.445,
         "word": "他"
       },
       {
-        "confidence": 0.90906584,
-        "endTime": 0.725,
-        "startTime": 0.605,
+        "confidence": 0.9056415,
+        "endTime": 0.755,
+        "startTime": 0.635,
         "word": "的"
       },
       {
-        "confidence": 0.8038935,
-        "endTime": 0.915,
-        "startTime": 0.725,
+        "confidence": 0.8189471,
+        "endTime": 0.955,
+        "startTime": 0.755,
         "word": "下"
       },
       {
-        "confidence": 0.92374724,
-        "endTime": 1.015,
-        "startTime": 0.915,
+        "confidence": 0.85693336,
+        "endTime": 1.055,
+        "startTime": 0.955,
         "word": "一"
       },
       {
-        "confidence": 0.92712206,
-        "endTime": 1.115,
-        "startTime": 1.015,
+        "confidence": 0.92846113,
+        "endTime": 1.155,
+        "startTime": 1.055,
         "word": "个"
       },
       {
-        "confidence": 0.96630055,
-        "endTime": 1.265,
-        "startTime": 1.115,
+        "confidence": 0.9652085,
+        "endTime": 1.315,
+        "startTime": 1.155,
         "word": "回"
       },
       {
-        "confidence": 0.89498645,
-        "endTime": 1.405,
-        "startTime": 1.265,
+        "confidence": 0.9341241,
+        "endTime": 1.465,
+        "startTime": 1.315,
         "word": "合"
       },
       {
-        "confidence": 0.9483249,
-        "endTime": 1.575,
-        "startTime": 1.405,
+        "confidence": 0.94759023,
+        "endTime": 1.625,
+        "startTime": 1.465,
         "word": "结"
       },
       {
-        "confidence": 0.98482805,
-        "endTime": 1.765,
-        "startTime": 1.575,
+        "confidence": 0.98384744,
+        "endTime": 1.825,
+        "startTime": 1.625,
         "word": "束"
       },
       {
-        "confidence": 0.96768355,
-        "endTime": 2.145,
-        "startTime": 1.765,
+        "confidence": 0.96432656,
+        "endTime": 2.215,
+        "startTime": 1.825,
         "word": "时，"
-      },
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "不管这回合他做了什么行动，",
+    "words": [
       {
-        "confidence": 0.97303855,
-        "endTime": 2.465,
-        "startTime": 2.335,
+        "confidence": 0.49250212,
+        "endTime": 2.6650417,
+        "startTime": 2.5900416,
         "word": "不"
       },
       {
-        "confidence": 0.9797299,
-        "endTime": 2.655,
-        "startTime": 2.465,
+        "confidence": 0.54050857,
+        "endTime": 2.7450416,
+        "startTime": 2.6650417,
         "word": "管"
       },
       {
-        "confidence": 0.8721389,
-        "endTime": 2.815,
-        "startTime": 2.655,
+        "confidence": 0.8591198,
+        "endTime": 2.8950417,
+        "startTime": 2.7450416,
         "word": "这"
       },
       {
-        "confidence": 0.97148645,
-        "endTime": 2.965,
-        "startTime": 2.815,
+        "confidence": 0.9762656,
+        "endTime": 3.0450416,
+        "startTime": 2.8950417,
         "word": "回"
       },
       {
-        "confidence": 0.97010183,
-        "endTime": 3.185,
-        "startTime": 2.965,
+        "confidence": 0.97276366,
+        "endTime": 3.2450416,
+        "startTime": 3.0450416,
         "word": "合"
       },
       {
-        "confidence": 0.964279,
-        "endTime": 3.355,
-        "startTime": 3.185,
+        "confidence": 0.97414595,
+        "endTime": 3.4050417,
+        "startTime": 3.2450416,
         "word": "他"
       },
       {
-        "confidence": 0.9828575,
-        "endTime": 3.545,
-        "startTime": 3.355,
+        "confidence": 0.97801733,
+        "endTime": 3.5750418,
+        "startTime": 3.4050417,
         "word": "做"
       },
       {
-        "confidence": 0.94876,
-        "endTime": 3.625,
-        "startTime": 3.545,
+        "confidence": 0.951388,
+        "endTime": 3.6450415,
+        "startTime": 3.5750418,
         "word": "了"
       },
       {
-        "confidence": 0.9833187,
-        "endTime": 3.765,
-        "startTime": 3.625,
+        "confidence": 0.9895799,
+        "endTime": 3.7950416,
+        "startTime": 3.6450415,
         "word": "什"
       },
       {
-        "confidence": 0.97706693,
-        "endTime": 3.845,
-        "startTime": 3.765,
+        "confidence": 0.98212844,
+        "endTime": 3.8850417,
+        "startTime": 3.7950416,
         "word": "么"
       },
       {
-        "confidence": 0.5323205,
-        "endTime": 3.925,
-        "startTime": 3.845,
+        "confidence": 0.9675134,
+        "endTime": 4.1150417,
+        "startTime": 3.8850417,
         "word": "行"
       },
       {
-        "confidence": 0.18246898,
-        "endTime": 3.985,
-        "startTime": 3.925,
+        "confidence": 0.9872228,
+        "endTime": 4.325042,
+        "startTime": 4.1150417,
         "word": "动，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "只要供应堆中还保留着其他满足条件的贵族，",
+    "words": [
+      {
+        "confidence": 0.9270997,
+        "endTime": 4.845083,
+        "startTime": 4.670083,
+        "word": "只"
+      },
+      {
+        "confidence": 0.9414683,
+        "endTime": 5.005083,
+        "startTime": 4.845083,
+        "word": "要"
+      },
+      {
+        "confidence": 0.91726345,
+        "endTime": 5.185083,
+        "startTime": 5.005083,
+        "word": "供"
+      },
+      {
+        "confidence": 0.80918604,
+        "endTime": 5.315083,
+        "startTime": 5.185083,
+        "word": "应"
+      },
+      {
+        "confidence": 0.6902362,
+        "endTime": 5.485083,
+        "startTime": 5.315083,
+        "word": "堆"
+      },
+      {
+        "confidence": 0.8641406,
+        "endTime": 5.685083,
+        "startTime": 5.485083,
+        "word": "中"
+      },
+      {
+        "confidence": 0.95422107,
+        "endTime": 5.895083,
+        "startTime": 5.685083,
+        "word": "还"
+      },
+      {
+        "confidence": 0.9639791,
+        "endTime": 6.075083,
+        "startTime": 5.895083,
+        "word": "保"
+      },
+      {
+        "confidence": 0.98294973,
+        "endTime": 6.255083,
+        "startTime": 6.075083,
+        "word": "留"
+      },
+      {
+        "confidence": 0.9262553,
+        "endTime": 6.375083,
+        "startTime": 6.255083,
+        "word": "着"
+      },
+      {
+        "confidence": 0.87842387,
+        "endTime": 6.585083,
+        "startTime": 6.375083,
+        "word": "其"
+      },
+      {
+        "confidence": 0.97385454,
+        "endTime": 6.8050833,
+        "startTime": 6.585083,
+        "word": "他"
+      },
+      {
+        "confidence": 0.60033864,
+        "endTime": 6.965083,
+        "startTime": 6.8050833,
+        "word": "满"
+      },
+      {
+        "confidence": 0.9339884,
+        "endTime": 7.1150827,
+        "startTime": 6.965083,
+        "word": "足"
+      },
+      {
+        "confidence": 0.95097464,
+        "endTime": 7.3050833,
+        "startTime": 7.1150827,
+        "word": "条"
+      },
+      {
+        "confidence": 0.96514076,
+        "endTime": 7.455083,
+        "startTime": 7.3050833,
+        "word": "件"
+      },
+      {
+        "confidence": 0.9504507,
+        "endTime": 7.5550833,
+        "startTime": 7.455083,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9686869,
+        "endTime": 7.745083,
+        "startTime": 7.5550833,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.9691324,
+        "endTime": 8.045083,
+        "startTime": 7.745083,
+        "word": "族，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "他必须再从这些贵族板块中挑选一个拿取。",
+    "words": [
+      {
+        "confidence": 0.9280988,
+        "endTime": 8.465125,
+        "startTime": 8.290125,
+        "word": "他"
+      },
+      {
+        "confidence": 0.95982695,
+        "endTime": 8.615125,
+        "startTime": 8.465125,
+        "word": "必"
+      },
+      {
+        "confidence": 0.97652185,
+        "endTime": 8.855124,
+        "startTime": 8.615125,
+        "word": "须"
+      },
+      {
+        "confidence": 0.93027145,
+        "endTime": 9.0651245,
+        "startTime": 8.855124,
+        "word": "再"
+      },
+      {
+        "confidence": 0.9404698,
+        "endTime": 9.265125,
+        "startTime": 9.0651245,
+        "word": "从"
+      },
+      {
+        "confidence": 0.96221215,
+        "endTime": 9.405125,
+        "startTime": 9.265125,
+        "word": "这"
+      },
+      {
+        "confidence": 0.98048884,
+        "endTime": 9.555125,
+        "startTime": 9.405125,
+        "word": "些"
+      },
+      {
+        "confidence": 0.9693991,
+        "endTime": 9.715125,
+        "startTime": 9.555125,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.9248511,
+        "endTime": 9.845125,
+        "startTime": 9.715125,
+        "word": "族"
+      },
+      {
+        "confidence": 0.9618778,
+        "endTime": 10.015125,
+        "startTime": 9.845125,
+        "word": "板"
+      },
+      {
+        "confidence": 0.978893,
+        "endTime": 10.225124,
+        "startTime": 10.015125,
+        "word": "块"
+      },
+      {
+        "confidence": 0.96552646,
+        "endTime": 10.455125,
+        "startTime": 10.225124,
+        "word": "中"
+      },
+      {
+        "confidence": 0.90342885,
+        "endTime": 10.665125,
+        "startTime": 10.455125,
+        "word": "挑"
+      },
+      {
+        "confidence": 0.78921694,
+        "endTime": 10.795125,
+        "startTime": 10.665125,
+        "word": "选"
+      },
+      {
+        "confidence": 0.1944985,
+        "endTime": 10.825125,
+        "startTime": 10.795125,
+        "word": "一"
+      },
+      {
+        "confidence": 0.16254228,
+        "endTime": 10.885125,
+        "startTime": 10.825125,
+        "word": "个"
+      },
+      {
+        "confidence": 0.12062695,
+        "endTime": 10.945125,
+        "startTime": 10.885125,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.13733767,
+        "endTime": 11.005125,
+        "startTime": 10.945125,
+        "word": "取。"
       }
     ]
   }

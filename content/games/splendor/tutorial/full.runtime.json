@@ -11935,9 +11935,9 @@
         "3.2 发展卡牌与贵族",
         "3.2.2 贵族结算"
       ],
-      "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，",
+      "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.choice.001.1.mp3",
-      "duration": 5.472,
+      "duration": 8.832,
       "start": 378.96,
       "refs": [
         "<attract_noble>",
@@ -11945,294 +11945,281 @@
       ],
       "subtitles": [
         {
-          "t": 0.295,
-          "end": 5.065,
-          "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，\n",
+          "t": 0.265,
+          "end": 2.435,
+          "text": "当玩家购买一张发展卡牌后，",
           "words": [
             {
               "word": "当",
-              "start": 0.295,
-              "end": 0.435,
-              "confidence": 0.8884
+              "start": 0.265,
+              "end": 0.415,
+              "confidence": 0.934
             },
             {
               "word": "玩",
-              "start": 0.435,
-              "end": 0.585,
-              "confidence": 0.843
+              "start": 0.415,
+              "end": 0.555,
+              "confidence": 0.8013
             },
             {
               "word": "家",
-              "start": 0.585,
-              "end": 0.775,
-              "confidence": 0.9597
+              "start": 0.555,
+              "end": 0.785,
+              "confidence": 0.9431
             },
             {
               "word": "购",
-              "start": 0.775,
-              "end": 0.915,
-              "confidence": 0.92
+              "start": 0.785,
+              "end": 0.925,
+              "confidence": 0.9153
             },
             {
               "word": "买",
-              "start": 0.915,
+              "start": 0.925,
               "end": 1.045,
-              "confidence": 0.9582
+              "confidence": 0.9574
             },
             {
               "word": "一",
               "start": 1.045,
-              "end": 1.165,
-              "confidence": 0.9436
+              "end": 1.185,
+              "confidence": 0.9453
             },
             {
               "word": "张",
-              "start": 1.165,
-              "end": 1.375,
-              "confidence": 0.9712
+              "start": 1.185,
+              "end": 1.395,
+              "confidence": 0.975
             },
             {
               "word": "发",
-              "start": 1.375,
-              "end": 1.565,
-              "confidence": 0.987
+              "start": 1.395,
+              "end": 1.595,
+              "confidence": 0.9936
             },
             {
               "word": "展",
-              "start": 1.565,
-              "end": 1.695,
-              "confidence": 0.9075
+              "start": 1.595,
+              "end": 1.715,
+              "confidence": 0.8955
             },
             {
               "word": "卡",
-              "start": 1.695,
-              "end": 1.875,
-              "confidence": 0.9381
+              "start": 1.715,
+              "end": 1.905,
+              "confidence": 0.947
             },
             {
               "word": "牌",
-              "start": 1.875,
-              "end": 2.095,
-              "confidence": 0.9634
+              "start": 1.905,
+              "end": 2.105,
+              "confidence": 0.9613
             },
             {
               "word": "后，",
-              "start": 2.095,
-              "end": 2.405,
-              "confidence": 0.9383
-            },
+              "start": 2.105,
+              "end": 2.435,
+              "confidence": 0.9441
+            }
+          ]
+        },
+        {
+          "t": 2.74,
+          "end": 5.115,
+          "text": "如果同时满足了多名贵族的条件，",
+          "words": [
             {
               "word": "如",
-              "start": 2.575,
-              "end": 2.735,
-              "confidence": 0.9786
+              "start": 2.74,
+              "end": 2.815,
+              "confidence": 0.5191
             },
             {
               "word": "果",
-              "start": 2.735,
-              "end": 2.865,
-              "confidence": 0.9754
+              "start": 2.815,
+              "end": 2.935,
+              "confidence": 0.8355
             },
             {
               "word": "同",
-              "start": 2.865,
-              "end": 3.055,
-              "confidence": 0.9804
+              "start": 2.935,
+              "end": 3.135,
+              "confidence": 0.9687
             },
             {
               "word": "时",
-              "start": 3.055,
-              "end": 3.265,
-              "confidence": 0.969
+              "start": 3.135,
+              "end": 3.325,
+              "confidence": 0.977
             },
             {
               "word": "满",
-              "start": 3.265,
-              "end": 3.455,
-              "confidence": 0.9347
+              "start": 3.325,
+              "end": 3.505,
+              "confidence": 0.9429
             },
             {
               "word": "足",
-              "start": 3.455,
-              "end": 3.655,
-              "confidence": 0.9768
+              "start": 3.505,
+              "end": 3.705,
+              "confidence": 0.9717
             },
             {
               "word": "了",
-              "start": 3.655,
-              "end": 3.795,
-              "confidence": 0.9517
+              "start": 3.705,
+              "end": 3.835,
+              "confidence": 0.9649
             },
             {
               "word": "多",
-              "start": 3.795,
-              "end": 4.015,
-              "confidence": 0.9657
+              "start": 3.835,
+              "end": 4.025,
+              "confidence": 0.9706
             },
             {
               "word": "名",
-              "start": 4.015,
-              "end": 4.195,
-              "confidence": 0.9781
+              "start": 4.025,
+              "end": 4.185,
+              "confidence": 0.9742
             },
             {
               "word": "贵",
-              "start": 4.195,
-              "end": 4.355,
-              "confidence": 0.9552
+              "start": 4.185,
+              "end": 4.345,
+              "confidence": 0.9532
             },
             {
               "word": "族",
-              "start": 4.355,
-              "end": 4.485,
-              "confidence": 0.8372
+              "start": 4.345,
+              "end": 4.475,
+              "confidence": 0.9359
             },
             {
               "word": "的",
-              "start": 4.485,
-              "end": 4.595,
-              "confidence": 0.9286
+              "start": 4.475,
+              "end": 4.585,
+              "confidence": 0.8721
             },
             {
               "word": "条",
-              "start": 4.595,
-              "end": 4.805,
-              "confidence": 0.9627
+              "start": 4.585,
+              "end": 4.795,
+              "confidence": 0.9643
             },
             {
               "word": "件，",
-              "start": 4.805,
-              "end": 5.065,
-              "confidence": 0.9764
+              "start": 4.795,
+              "end": 5.115,
+              "confidence": 0.984
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.nobles.choice.001.2",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "text": "他必须从这些贵族板块中挑选一个拿取。",
-      "audio": "media/tts/full/action.nobles.choice.001.2.mp3",
-      "duration": 3.456,
-      "start": 384.43,
-      "refs": [
-        "<attract_noble>",
-        "<noble>"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.275,
-          "end": 3.085,
+          "t": 5.34,
+          "end": 7.995,
           "text": "他必须从这些贵族板块中挑选一个拿取。",
           "words": [
             {
               "word": "他",
-              "start": 0.275,
-              "end": 0.435,
-              "confidence": 0.9826
+              "start": 5.34,
+              "end": 5.515,
+              "confidence": 0.9064
             },
             {
               "word": "必",
-              "start": 0.435,
-              "end": 0.565,
-              "confidence": 0.9713
+              "start": 5.515,
+              "end": 5.665,
+              "confidence": 0.9351
             },
             {
               "word": "须",
-              "start": 0.565,
-              "end": 0.745,
-              "confidence": 0.9794
+              "start": 5.665,
+              "end": 5.925,
+              "confidence": 0.9766
             },
             {
               "word": "从",
-              "start": 0.745,
-              "end": 0.915,
-              "confidence": 0.9657
+              "start": 5.925,
+              "end": 6.125,
+              "confidence": 0.9523
             },
             {
               "word": "这",
-              "start": 0.915,
-              "end": 1.045,
-              "confidence": 0.9811
+              "start": 6.125,
+              "end": 6.265,
+              "confidence": 0.9691
             },
             {
               "word": "些",
-              "start": 1.045,
-              "end": 1.195,
-              "confidence": 0.9862
+              "start": 6.265,
+              "end": 6.425,
+              "confidence": 0.9585
             },
             {
               "word": "贵",
-              "start": 1.195,
-              "end": 1.385,
-              "confidence": 0.9529
+              "start": 6.425,
+              "end": 6.595,
+              "confidence": 0.9631
             },
             {
               "word": "族",
-              "start": 1.385,
-              "end": 1.505,
-              "confidence": 0.8323
+              "start": 6.595,
+              "end": 6.725,
+              "confidence": 0.9356
             },
             {
               "word": "板",
-              "start": 1.505,
-              "end": 1.685,
-              "confidence": 0.9391
+              "start": 6.725,
+              "end": 6.895,
+              "confidence": 0.9442
             },
             {
               "word": "块",
-              "start": 1.685,
-              "end": 1.905,
-              "confidence": 0.9756
+              "start": 6.895,
+              "end": 7.105,
+              "confidence": 0.9844
             },
             {
               "word": "中",
-              "start": 1.905,
-              "end": 2.105,
-              "confidence": 0.9695
+              "start": 7.105,
+              "end": 7.335,
+              "confidence": 0.9647
             },
             {
               "word": "挑",
-              "start": 2.105,
-              "end": 2.275,
-              "confidence": 0.9455
+              "start": 7.335,
+              "end": 7.515,
+              "confidence": 0.9247
             },
             {
               "word": "选",
-              "start": 2.275,
-              "end": 2.435,
-              "confidence": 0.9128
+              "start": 7.515,
+              "end": 7.695,
+              "confidence": 0.9476
             },
             {
               "word": "一",
-              "start": 2.435,
-              "end": 2.545,
-              "confidence": 0.9626
+              "start": 7.695,
+              "end": 7.815,
+              "confidence": 0.9269
             },
             {
               "word": "个",
-              "start": 2.545,
-              "end": 2.635,
-              "confidence": 0.9849
+              "start": 7.815,
+              "end": 7.875,
+              "confidence": 0.2386
             },
             {
               "word": "拿",
-              "start": 2.635,
-              "end": 2.825,
-              "confidence": 0.7752
+              "start": 7.875,
+              "end": 7.935,
+              "confidence": 0.0847
             },
             {
               "word": "取。",
-              "start": 2.825,
-              "end": 3.085,
-              "confidence": 0.906
+              "start": 7.935,
+              "end": 7.995,
+              "confidence": 0.1912
             }
           ]
         }
@@ -12247,413 +12234,400 @@
         "3.2 发展卡牌与贵族",
         "3.2.2 贵族结算"
       ],
-      "text": "当他的下一个回合结束时，不管这回合他做了什么行动，",
+      "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.repeat.001.1.mp3",
-      "duration": 4.68,
-      "start": 387.89,
+      "duration": 11.856,
+      "start": 387.79,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
       ],
       "subtitles": [
         {
-          "t": 0.285,
-          "end": 3.985,
-          "text": "当他的下一个回合结束时，不管这回合他做了什么行动，\n",
+          "t": 0.275,
+          "end": 2.215,
+          "text": "当他的下一个回合结束时，",
           "words": [
             {
               "word": "当",
-              "start": 0.285,
+              "start": 0.275,
               "end": 0.445,
-              "confidence": 0.9727
+              "confidence": 0.9542
             },
             {
               "word": "他",
               "start": 0.445,
-              "end": 0.605,
-              "confidence": 0.9648
+              "end": 0.635,
+              "confidence": 0.9765
             },
             {
               "word": "的",
-              "start": 0.605,
-              "end": 0.725,
-              "confidence": 0.9091
+              "start": 0.635,
+              "end": 0.755,
+              "confidence": 0.9056
             },
             {
               "word": "下",
-              "start": 0.725,
-              "end": 0.915,
-              "confidence": 0.8039
+              "start": 0.755,
+              "end": 0.955,
+              "confidence": 0.8189
             },
             {
               "word": "一",
-              "start": 0.915,
-              "end": 1.015,
-              "confidence": 0.9237
+              "start": 0.955,
+              "end": 1.055,
+              "confidence": 0.8569
             },
             {
               "word": "个",
-              "start": 1.015,
-              "end": 1.115,
-              "confidence": 0.9271
+              "start": 1.055,
+              "end": 1.155,
+              "confidence": 0.9285
             },
             {
               "word": "回",
-              "start": 1.115,
-              "end": 1.265,
-              "confidence": 0.9663
+              "start": 1.155,
+              "end": 1.315,
+              "confidence": 0.9652
             },
             {
               "word": "合",
-              "start": 1.265,
-              "end": 1.405,
-              "confidence": 0.895
+              "start": 1.315,
+              "end": 1.465,
+              "confidence": 0.9341
             },
             {
               "word": "结",
-              "start": 1.405,
-              "end": 1.575,
-              "confidence": 0.9483
+              "start": 1.465,
+              "end": 1.625,
+              "confidence": 0.9476
             },
             {
               "word": "束",
-              "start": 1.575,
-              "end": 1.765,
-              "confidence": 0.9848
+              "start": 1.625,
+              "end": 1.825,
+              "confidence": 0.9838
             },
             {
               "word": "时，",
-              "start": 1.765,
-              "end": 2.145,
-              "confidence": 0.9677
-            },
-            {
-              "word": "不",
-              "start": 2.335,
-              "end": 2.465,
-              "confidence": 0.973
-            },
-            {
-              "word": "管",
-              "start": 2.465,
-              "end": 2.655,
-              "confidence": 0.9797
-            },
-            {
-              "word": "这",
-              "start": 2.655,
-              "end": 2.815,
-              "confidence": 0.8721
-            },
-            {
-              "word": "回",
-              "start": 2.815,
-              "end": 2.965,
-              "confidence": 0.9715
-            },
-            {
-              "word": "合",
-              "start": 2.965,
-              "end": 3.185,
-              "confidence": 0.9701
-            },
-            {
-              "word": "他",
-              "start": 3.185,
-              "end": 3.355,
-              "confidence": 0.9643
-            },
-            {
-              "word": "做",
-              "start": 3.355,
-              "end": 3.545,
-              "confidence": 0.9829
-            },
-            {
-              "word": "了",
-              "start": 3.545,
-              "end": 3.625,
-              "confidence": 0.9488
-            },
-            {
-              "word": "什",
-              "start": 3.625,
-              "end": 3.765,
-              "confidence": 0.9833
-            },
-            {
-              "word": "么",
-              "start": 3.765,
-              "end": 3.845,
-              "confidence": 0.9771
-            },
-            {
-              "word": "行",
-              "start": 3.845,
-              "end": 3.925,
-              "confidence": 0.5323
-            },
-            {
-              "word": "动，",
-              "start": 3.925,
-              "end": 3.985,
-              "confidence": 0.1825
-            }
-          ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.nobles.repeat.001.2",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "text": "只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。",
-      "audio": "media/tts/full/action.nobles.repeat.001.2.mp3",
-      "duration": 7.488,
-      "start": 392.57,
-      "refs": [
-        "<attract_noble>",
-        "<noble_market>"
-      ],
-      "subtitles": [
-        {
-          "t": 0.295,
-          "end": 3.835,
-          "text": "只要供应堆中还保留着其他满足条件的贵族，",
-          "words": [
-            {
-              "word": "只",
-              "start": 0.295,
-              "end": 0.515,
-              "confidence": 0.9545
-            },
-            {
-              "word": "要",
-              "start": 0.515,
-              "end": 0.695,
-              "confidence": 0.9068
-            },
-            {
-              "word": "供",
-              "start": 0.695,
-              "end": 0.895,
-              "confidence": 0.9303
-            },
-            {
-              "word": "应",
-              "start": 0.895,
-              "end": 1.025,
-              "confidence": 0.8064
-            },
-            {
-              "word": "堆",
-              "start": 1.025,
-              "end": 1.235,
-              "confidence": 0.7325
-            },
-            {
-              "word": "中",
-              "start": 1.235,
-              "end": 1.445,
-              "confidence": 0.8813
-            },
-            {
-              "word": "还",
-              "start": 1.445,
-              "end": 1.645,
-              "confidence": 0.9704
-            },
-            {
-              "word": "保",
-              "start": 1.645,
-              "end": 1.825,
-              "confidence": 0.978
-            },
-            {
-              "word": "留",
               "start": 1.825,
-              "end": 1.995,
-              "confidence": 0.9808
-            },
-            {
-              "word": "着",
-              "start": 1.995,
-              "end": 2.125,
-              "confidence": 0.8755
-            },
-            {
-              "word": "其",
-              "start": 2.125,
-              "end": 2.315,
-              "confidence": 0.8947
-            },
-            {
-              "word": "他",
-              "start": 2.315,
-              "end": 2.545,
-              "confidence": 0.9851
-            },
-            {
-              "word": "满",
-              "start": 2.545,
-              "end": 2.705,
-              "confidence": 0.5765
-            },
-            {
-              "word": "足",
-              "start": 2.705,
-              "end": 2.845,
-              "confidence": 0.9249
-            },
-            {
-              "word": "条",
-              "start": 2.845,
-              "end": 3.045,
-              "confidence": 0.9614
-            },
-            {
-              "word": "件",
-              "start": 3.045,
-              "end": 3.205,
-              "confidence": 0.9712
-            },
-            {
-              "word": "的",
-              "start": 3.205,
-              "end": 3.305,
-              "confidence": 0.9646
-            },
-            {
-              "word": "贵",
-              "start": 3.305,
-              "end": 3.495,
-              "confidence": 0.9768
-            },
-            {
-              "word": "族，",
-              "start": 3.495,
-              "end": 3.835,
-              "confidence": 0.958
+              "end": 2.215,
+              "confidence": 0.9643
             }
           ]
         },
         {
-          "t": 4.16,
-          "end": 7.055,
+          "t": 2.59,
+          "end": 4.325,
+          "text": "不管这回合他做了什么行动，",
+          "words": [
+            {
+              "word": "不",
+              "start": 2.59,
+              "end": 2.665,
+              "confidence": 0.4925
+            },
+            {
+              "word": "管",
+              "start": 2.665,
+              "end": 2.745,
+              "confidence": 0.5405
+            },
+            {
+              "word": "这",
+              "start": 2.745,
+              "end": 2.895,
+              "confidence": 0.8591
+            },
+            {
+              "word": "回",
+              "start": 2.895,
+              "end": 3.045,
+              "confidence": 0.9763
+            },
+            {
+              "word": "合",
+              "start": 3.045,
+              "end": 3.245,
+              "confidence": 0.9728
+            },
+            {
+              "word": "他",
+              "start": 3.245,
+              "end": 3.405,
+              "confidence": 0.9741
+            },
+            {
+              "word": "做",
+              "start": 3.405,
+              "end": 3.575,
+              "confidence": 0.978
+            },
+            {
+              "word": "了",
+              "start": 3.575,
+              "end": 3.645,
+              "confidence": 0.9514
+            },
+            {
+              "word": "什",
+              "start": 3.645,
+              "end": 3.795,
+              "confidence": 0.9896
+            },
+            {
+              "word": "么",
+              "start": 3.795,
+              "end": 3.885,
+              "confidence": 0.9821
+            },
+            {
+              "word": "行",
+              "start": 3.885,
+              "end": 4.115,
+              "confidence": 0.9675
+            },
+            {
+              "word": "动，",
+              "start": 4.115,
+              "end": 4.325,
+              "confidence": 0.9872
+            }
+          ]
+        },
+        {
+          "t": 4.67,
+          "end": 8.045,
+          "text": "只要供应堆中还保留着其他满足条件的贵族，",
+          "words": [
+            {
+              "word": "只",
+              "start": 4.67,
+              "end": 4.845,
+              "confidence": 0.9271
+            },
+            {
+              "word": "要",
+              "start": 4.845,
+              "end": 5.005,
+              "confidence": 0.9415
+            },
+            {
+              "word": "供",
+              "start": 5.005,
+              "end": 5.185,
+              "confidence": 0.9173
+            },
+            {
+              "word": "应",
+              "start": 5.185,
+              "end": 5.315,
+              "confidence": 0.8092
+            },
+            {
+              "word": "堆",
+              "start": 5.315,
+              "end": 5.485,
+              "confidence": 0.6902
+            },
+            {
+              "word": "中",
+              "start": 5.485,
+              "end": 5.685,
+              "confidence": 0.8641
+            },
+            {
+              "word": "还",
+              "start": 5.685,
+              "end": 5.895,
+              "confidence": 0.9542
+            },
+            {
+              "word": "保",
+              "start": 5.895,
+              "end": 6.075,
+              "confidence": 0.964
+            },
+            {
+              "word": "留",
+              "start": 6.075,
+              "end": 6.255,
+              "confidence": 0.9829
+            },
+            {
+              "word": "着",
+              "start": 6.255,
+              "end": 6.375,
+              "confidence": 0.9263
+            },
+            {
+              "word": "其",
+              "start": 6.375,
+              "end": 6.585,
+              "confidence": 0.8784
+            },
+            {
+              "word": "他",
+              "start": 6.585,
+              "end": 6.805,
+              "confidence": 0.9739
+            },
+            {
+              "word": "满",
+              "start": 6.805,
+              "end": 6.965,
+              "confidence": 0.6003
+            },
+            {
+              "word": "足",
+              "start": 6.965,
+              "end": 7.115,
+              "confidence": 0.934
+            },
+            {
+              "word": "条",
+              "start": 7.115,
+              "end": 7.305,
+              "confidence": 0.951
+            },
+            {
+              "word": "件",
+              "start": 7.305,
+              "end": 7.455,
+              "confidence": 0.9651
+            },
+            {
+              "word": "的",
+              "start": 7.455,
+              "end": 7.555,
+              "confidence": 0.9505
+            },
+            {
+              "word": "贵",
+              "start": 7.555,
+              "end": 7.745,
+              "confidence": 0.9687
+            },
+            {
+              "word": "族，",
+              "start": 7.745,
+              "end": 8.045,
+              "confidence": 0.9691
+            }
+          ]
+        },
+        {
+          "t": 8.29,
+          "end": 11.005,
           "text": "他必须再从这些贵族板块中挑选一个拿取。",
           "words": [
             {
               "word": "他",
-              "start": 4.16,
-              "end": 4.245,
-              "confidence": 0.924
+              "start": 8.29,
+              "end": 8.465,
+              "confidence": 0.9281
             },
             {
               "word": "必",
-              "start": 4.245,
-              "end": 4.395,
-              "confidence": 0.8792
+              "start": 8.465,
+              "end": 8.615,
+              "confidence": 0.9598
             },
             {
               "word": "须",
-              "start": 4.395,
-              "end": 4.645,
-              "confidence": 0.977
+              "start": 8.615,
+              "end": 8.855,
+              "confidence": 0.9765
             },
             {
               "word": "再",
-              "start": 4.645,
-              "end": 4.825,
-              "confidence": 0.9503
+              "start": 8.855,
+              "end": 9.065,
+              "confidence": 0.9303
             },
             {
               "word": "从",
-              "start": 4.825,
-              "end": 5.045,
-              "confidence": 0.949
+              "start": 9.065,
+              "end": 9.265,
+              "confidence": 0.9405
             },
             {
               "word": "这",
-              "start": 5.045,
-              "end": 5.175,
-              "confidence": 0.9625
+              "start": 9.265,
+              "end": 9.405,
+              "confidence": 0.9622
             },
             {
               "word": "些",
-              "start": 5.175,
-              "end": 5.325,
-              "confidence": 0.9788
+              "start": 9.405,
+              "end": 9.555,
+              "confidence": 0.9805
             },
             {
               "word": "贵",
-              "start": 5.325,
-              "end": 5.495,
-              "confidence": 0.9608
+              "start": 9.555,
+              "end": 9.715,
+              "confidence": 0.9694
             },
             {
               "word": "族",
-              "start": 5.495,
-              "end": 5.615,
-              "confidence": 0.9322
+              "start": 9.715,
+              "end": 9.845,
+              "confidence": 0.9249
             },
             {
               "word": "板",
-              "start": 5.615,
-              "end": 5.775,
-              "confidence": 0.9308
+              "start": 9.845,
+              "end": 10.015,
+              "confidence": 0.9619
             },
             {
               "word": "块",
-              "start": 5.775,
-              "end": 5.985,
-              "confidence": 0.9758
+              "start": 10.015,
+              "end": 10.225,
+              "confidence": 0.9789
             },
             {
               "word": "中",
-              "start": 5.985,
-              "end": 6.215,
-              "confidence": 0.9668
+              "start": 10.225,
+              "end": 10.455,
+              "confidence": 0.9655
             },
             {
               "word": "挑",
-              "start": 6.215,
-              "end": 6.405,
-              "confidence": 0.9181
+              "start": 10.455,
+              "end": 10.665,
+              "confidence": 0.9034
             },
             {
               "word": "选",
-              "start": 6.405,
-              "end": 6.575,
-              "confidence": 0.9624
+              "start": 10.665,
+              "end": 10.795,
+              "confidence": 0.7892
             },
             {
               "word": "一",
-              "start": 6.575,
-              "end": 6.685,
-              "confidence": 0.9505
+              "start": 10.795,
+              "end": 10.825,
+              "confidence": 0.1945
             },
             {
               "word": "个",
-              "start": 6.685,
-              "end": 6.785,
-              "confidence": 0.9864
+              "start": 10.825,
+              "end": 10.885,
+              "confidence": 0.1625
             },
             {
               "word": "拿",
-              "start": 6.785,
-              "end": 6.985,
-              "confidence": 0.8259
+              "start": 10.885,
+              "end": 10.945,
+              "confidence": 0.1206
             },
             {
               "word": "取。",
-              "start": 6.985,
-              "end": 7.055,
-              "confidence": 0.3945
+              "start": 10.945,
+              "end": 11.005,
+              "confidence": 0.1373
             }
           ]
         }
@@ -12671,7 +12645,7 @@
       "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。",
       "audio": "media/tts/full/action.nobles.repeat.001.3.mp3",
       "duration": 6.672,
-      "start": 400.06,
+      "start": 399.65,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12891,7 +12865,7 @@
       "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，",
       "audio": "media/tts/full/action.cards.summary.001.1.mp3",
       "duration": 5.064,
-      "start": 406.73,
+      "start": 406.32,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13052,7 +13026,7 @@
       "text": "已购买的发展卡牌会为玩家带来声望值和折扣。",
       "audio": "media/tts/full/action.cards.summary.001.2.mp3",
       "duration": 4.44,
-      "start": 411.79,
+      "start": 411.38,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13201,7 +13175,7 @@
       "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
       "audio": "media/tts/full/action.cards.summary.001.3.mp3",
       "duration": 6.432,
-      "start": 416.23,
+      "start": 415.82,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13422,7 +13396,7 @@
       "text": "除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，",
       "audio": "media/tts/full/action.reserve.intro.001.1.mp3",
       "duration": 6.672,
-      "start": 422.66,
+      "start": 422.26,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13636,7 +13610,7 @@
       "text": "正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金。",
       "audio": "media/tts/full/action.reserve.intro.001.2.mp3",
       "duration": 6.432,
-      "start": 429.34,
+      "start": 428.93,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13819,7 +13793,7 @@
       "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。",
       "audio": "media/tts/full/action.reserve.gold.001.mp3",
       "duration": 6.84,
-      "start": 435.77,
+      "start": 435.36,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -14050,7 +14024,7 @@
       "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。",
       "audio": "media/tts/full/action.reserve.deck.001.mp3",
       "duration": 7.656,
-      "start": 442.61,
+      "start": 442.2,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -14307,7 +14281,7 @@
       "text": "注意事项如下：",
       "audio": "media/tts/full/action.reserve.notes_intro.001.mp3",
       "duration": 1.632,
-      "start": 450.26,
+      "start": 449.86,
       "refs": [
         "<reserve_development_card>"
       ],
@@ -14368,7 +14342,7 @@
       "text": "拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.1.mp3",
       "duration": 7.464,
-      "start": 451.9,
+      "start": 451.49,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14600,7 +14574,7 @@
       "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.2.mp3",
       "duration": 5.472,
-      "start": 459.36,
+      "start": 458.95,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14783,7 +14757,7 @@
       "text": "每位玩家最多同时保留3张发展卡牌。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.1.mp3",
       "duration": 3.648,
-      "start": 464.83,
+      "start": 464.42,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -14905,7 +14879,7 @@
       "text": "如果一位玩家已经保留了3张发展卡牌，就不能继续保留了。此时他必须选择其他行动。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.2.mp3",
       "duration": 7.464,
-      "start": 468.48,
+      "start": 468.07,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -15154,7 +15128,7 @@
       "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容，",
       "audio": "media/tts/full/action.reserve.private.001.1.mp3",
       "duration": 6.456,
-      "start": 475.94,
+      "start": 475.54,
       "refs": [
         "<hand>"
       ],
@@ -15384,7 +15358,7 @@
       "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。",
       "audio": "media/tts/full/action.reserve.private.001.2.mp3",
       "duration": 4.68,
-      "start": 482.4,
+      "start": 481.99,
       "refs": [
         "<hand>"
       ],
@@ -15541,7 +15515,7 @@
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
       "audio": "media/tts/full/action.reserve.private.002.mp3",
       "duration": 6.456,
-      "start": 487.08,
+      "start": 486.67,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15741,7 +15715,7 @@
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
       "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
       "duration": 7.08,
-      "start": 493.54,
+      "start": 493.13,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -15961,7 +15935,7 @@
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
       "duration": 5.472,
-      "start": 500.62,
+      "start": 500.21,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -16143,7 +16117,7 @@
       "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，",
       "audio": "media/tts/full/action.purchase_reserved.002.1.mp3",
       "duration": 6.696,
-      "start": 506.09,
+      "start": 505.68,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16364,7 +16338,7 @@
       "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.002.2.mp3",
       "duration": 7.272,
-      "start": 512.78,
+      "start": 512.38,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16614,7 +16588,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 520.06,
+      "start": 519.65,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16847,7 +16821,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 7.08,
-      "start": 527.28,
+      "start": 526.87,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17061,7 +17035,7 @@
       "text": "左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 6.288,
-      "start": 534.36,
+      "start": 533.95,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17256,7 +17230,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 540.65,
+      "start": 540.24,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17413,7 +17387,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 5.472,
-      "start": 545.88,
+      "start": 545.47,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17583,7 +17557,7 @@
       "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.2.mp3",
       "duration": 5.664,
-      "start": 551.35,
+      "start": 550.94,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17759,7 +17733,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 4.464,
-      "start": 557.02,
+      "start": 556.61,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17897,7 +17871,7 @@
       "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
       "audio": "media/tts/full/endgame.example.001.2.mp3",
       "duration": 5.448,
-      "start": 561.48,
+      "start": 561.07,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18077,7 +18051,7 @@
       "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.002.mp3",
       "duration": 7.464,
-      "start": 566.93,
+      "start": 566.52,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18318,7 +18292,7 @@
       "text": "声望值最高的玩家获得胜利。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 3.072,
-      "start": 574.39,
+      "start": 573.98,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18415,7 +18389,7 @@
       "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
       "audio": "media/tts/full/endgame.tie.001.1.mp3",
       "duration": 6.264,
-      "start": 577.46,
+      "start": 577.06,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18614,7 +18588,7 @@
       "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
       "audio": "media/tts/full/endgame.tie.001.2.mp3",
       "duration": 6.456,
-      "start": 583.73,
+      "start": 583.32,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

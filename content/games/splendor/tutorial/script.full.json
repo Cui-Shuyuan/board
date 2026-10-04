@@ -1234,25 +1234,9 @@
         {
           "id": "action.nobles.choice.001.1.b1",
           "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，"
-        }
-      ]
-    },
-    {
-      "id": "action.nobles.choice.001.2",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "refs": [
-        "<attract_noble>",
-        "<noble>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.nobles.choice.001.2.b1",
+          "id": "action.nobles.choice.001.1.b2",
           "text": "他必须从这些贵族板块中挑选一个拿取。"
         }
       ]
@@ -1274,25 +1258,9 @@
         {
           "id": "action.nobles.repeat.001.1.b1",
           "text": "当他的下一个回合结束时，不管这回合他做了什么行动，"
-        }
-      ]
-    },
-    {
-      "id": "action.nobles.repeat.001.2",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "refs": [
-        "<attract_noble>",
-        "<noble_market>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.nobles.repeat.001.2.b1",
+          "id": "action.nobles.repeat.001.1.b2",
           "text": "只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
         }
       ]

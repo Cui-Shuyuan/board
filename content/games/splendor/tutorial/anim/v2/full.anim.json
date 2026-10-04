@@ -1597,25 +1597,15 @@
       "edge": "end"
     },
     {
-      "id": "action.nobles.choice.001.2.start",
-      "cue": "action.nobles.choice.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.nobles.choice.001.2.end",
-      "cue": "action.nobles.choice.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.nobles.choice.001.2.b1.start",
-      "cue": "action.nobles.choice.001.2",
-      "beat": "action.nobles.choice.001.2.b1",
+      "id": "action.nobles.choice.001.1.b2.start",
+      "cue": "action.nobles.choice.001.1",
+      "beat": "action.nobles.choice.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "action.nobles.choice.001.2.b1.end",
-      "cue": "action.nobles.choice.001.2",
-      "beat": "action.nobles.choice.001.2.b1",
+      "id": "action.nobles.choice.001.1.b2.end",
+      "cue": "action.nobles.choice.001.1",
+      "beat": "action.nobles.choice.001.1.b2",
       "edge": "end"
     },
     {
@@ -1641,25 +1631,15 @@
       "edge": "end"
     },
     {
-      "id": "action.nobles.repeat.001.2.start",
-      "cue": "action.nobles.repeat.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.nobles.repeat.001.2.end",
-      "cue": "action.nobles.repeat.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.nobles.repeat.001.2.b1.start",
-      "cue": "action.nobles.repeat.001.2",
-      "beat": "action.nobles.repeat.001.2.b1",
+      "id": "action.nobles.repeat.001.1.b2.start",
+      "cue": "action.nobles.repeat.001.1",
+      "beat": "action.nobles.repeat.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "action.nobles.repeat.001.2.b1.end",
-      "cue": "action.nobles.repeat.001.2",
-      "beat": "action.nobles.repeat.001.2.b1",
+      "id": "action.nobles.repeat.001.1.b2.end",
+      "cue": "action.nobles.repeat.001.1",
+      "beat": "action.nobles.repeat.001.1.b2",
       "edge": "end"
     },
     {
@@ -11820,7 +11800,7 @@
       "timing": [],
       "script": {
         "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
-        "note": "【同时满足多名贵族】\n  进入本 cue 时，玩家A发展区仍是 1 白 + 4 红 + 4 黑，只满足已经拿走的 4黑4红贵族，其余条件未满足。\n  本 cue 开头以 setup 事件补齐 3 白 + 4 蓝（代表之前几个回合已购买的发展卡，不逐一重演），\n  发展区变成 4 白 + 4 蓝 + 4 红 + 4 黑，剩下两块贵族（0004 4蓝+4白、0005 3黑+3红+3白）的条件同时满足。\n  规则说明，铺垫完成后**没有其他状态变化**：两块贵族一起点出来，顺带点一下市场。",
+        "note": "【同时满足多名贵族 → 挑一个拿走】\n  进入本 cue 时，A 已合法拿到 noble_1；发展区以 setup 补齐为 4白+4蓝+4红+4黑（当前回合之前的购买作前提），\n  供应堆剩 noble_4（4蓝+4白）与 noble_5（3黑+3红+3白），两块条件都满足。\n  第一句讲『同时满足了多名贵族的条件』，镜头看整桌；第二句讲到『必须挑选一个拿取』时切贵族供应堆，\n  真搬一件：把当前 order 最小的 noble_4 搬到 player_nobles，noble_5 留供应堆。\n  规则说明 + 真动作合并为一条 cue。",
         "enter": {
           "zones": {
             "deck_level_1": {
@@ -12258,10 +12238,10 @@
               ]
             },
             "noble_market": {
-              "count": 2
+              "count": 1
             },
             "player_nobles": {
-              "count": 1
+              "count": 2
             }
           }
         }
@@ -12436,59 +12416,18 @@
           "anchor": "action.nobles.choice.001.1.start"
         },
         {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "action.nobles.choice.001.1.b1.start",
-          "offset": 1.305
-        }
-      ],
-      "tree": "main",
-      "qa": [
-        "两人局。玩家A已经合法拿到1块4黑4红贵族，发展区仍有4白4红4蓝4黑；贵族供应堆还剩2块（4蓝4白、3黑3红3白），都满足A的条件。这个局面是否合法？"
-      ],
-      "entry": "action.nobles.trigger.001.1"
-    },
-    {
-      "id": "action.nobles.choice.001.2",
-      "parent": "action.nobles.choice.001.1",
-      "timing": [
-        {
-          "key": "点要挑的那块",
-          "text": "0.60"
-        },
-        {
-          "key": "搬到自己面前",
-          "text": "1.60"
-        }
-      ],
-      "script": {
-        "story": "【他必须从这些贵族板块中挑选一个拿取】",
-        "note": "【挑一个拿走】\n  真搬一件：从两块里挑一块（拿当前 order 最小的那一块，当前是 order 1 的 0004）→ 搬到 `player_nobles`。\n  源是贵族供应堆、每次只搬一件；两块条件此刻都满足，拿哪块都合法。",
-        "exit": {
-          "zones": {
-            "noble_market": {
-              "count": 1
-            },
-            "player_nobles": {
-              "count": 2
-            }
-          }
-        }
-      },
-      "events": [
-        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_nobles_f07143",
           "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.choice.001.2.start"
+          "anchor": "action.nobles.choice.001.1.b2.start"
         },
         {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.choice.001.2.b1.start",
-          "offset": 0.325,
+          "anchor": "action.nobles.choice.001.1.b2.start",
+          "offset": 0.3,
           "target": {
             "space": "entity",
             "zone": "noble_market",
@@ -12497,10 +12436,10 @@
         },
         {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.8,
           "quantity": 1,
-          "anchor": "action.nobles.choice.001.2.b1.start",
-          "offset": 1.325,
+          "anchor": "action.nobles.choice.001.1.b2.start",
+          "offset": 0.8,
           "target": {
             "space": "entity",
             "zone": "noble_market",
@@ -12515,8 +12454,8 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.choice.001.2.b1.end",
-          "offset": -0.485,
+          "anchor": "action.nobles.choice.001.1.b2.start",
+          "offset": 1.8,
           "target": {
             "space": "entity",
             "zone": "player_nobles"
@@ -12525,12 +12464,13 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A在结束回合时发展区有4白4红4蓝4黑，贵族供应堆剩2块（4蓝4白、3黑3红3白）且都满足条件。按照规则，他从中选择1块（4蓝4白）自动获得，另1块留下。这个结算是否合法？"
-      ]
+        "两人局。玩家A已合法拿到1块贵族，发展区为4白4红4蓝4黑；贵族供应堆还剩2块（4蓝4白、3黑3红3白）都满足条件。他从中挑1块拿走，另1块留在供应堆。这个结算是否合法？只回答「合法」或「有问题」，再给一句话理由。"
+      ],
+      "entry": "action.nobles.trigger.001.1"
     },
     {
       "id": "action.nobles.repeat.001.1",
-      "parent": "action.nobles.choice.001.2",
+      "parent": "action.nobles.choice.001.1",
       "timing": [
         {
           "key": "镜头给玩家面前",
@@ -12539,35 +12479,7 @@
       ],
       "script": {
         "story": "【当他的下一个回合结束时，不管这回合他做了什么行动】",
-        "note": "【下一个回合结束时再检查一次】\n  规则说明，**没有状态变化**：镜头给玩家面前（发展区 + 已经拿到的贵族）。"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_development",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.repeat.001.1.start"
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.nobles.repeat.001.2",
-      "parent": "action.nobles.repeat.001.1",
-      "timing": [
-        {
-          "key": "点剩下那块",
-          "text": "1.00"
-        },
-        {
-          "key": "搬到自己面前",
-          "text": "3.20"
-        }
-      ],
-      "script": {
-        "story": "【只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取】",
-        "note": "【还剩就再拿一块】\n  真搬一件：供应堆还剩最后一块（条件同样满足）→ 再搬到 `player_nobles`（此时 3 块）。\n  这一动把『每回合都要再检查、够了就必须再拿』演成可见的事实。",
+        "note": "【下一个回合结束再检查一次 → 还剩就再拿】\n  第一句讲『下一个回合结束时不管做了什么行动』，镜头给玩家面前的发展区和已有贵族；\n  第二句讲到『只要供应堆中还保留着其他满足条件的贵族』时切贵族供应堆，\n  真搬最后一块 noble_5 到 player_nobles（此时共3块）；最后高亮 A 的贵族区。\n  规则说明 + 真动作合并为一条 cue。",
         "exit": {
           "zones": {
             "noble_market": {
@@ -12583,16 +12495,23 @@
         {
           "op": "camera",
           "dur": 0.0,
+          "shot": "shot_development",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.repeat.001.1.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
           "shot": "shot_nobles_f08",
           "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.repeat.001.2.start"
+          "anchor": "action.nobles.repeat.001.1.b2.start"
         },
         {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.repeat.001.2.b1.start",
-          "offset": 0.705,
+          "anchor": "action.nobles.repeat.001.1.b2.start",
+          "offset": 0.3,
           "target": {
             "space": "entity",
             "zone": "noble_market",
@@ -12601,10 +12520,10 @@
         },
         {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.8,
           "quantity": 1,
-          "anchor": "action.nobles.repeat.001.2.b1.start",
-          "offset": 2.905,
+          "anchor": "action.nobles.repeat.001.1.b2.start",
+          "offset": 1.4,
           "target": {
             "space": "entity",
             "zone": "noble_market",
@@ -12619,8 +12538,8 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.repeat.001.2.b1.end",
-          "offset": -3.055,
+          "anchor": "action.nobles.repeat.001.1.b2.end",
+          "offset": -0.5,
           "target": {
             "space": "entity",
             "zone": "player_nobles"
@@ -12629,12 +12548,12 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A已有2块贵族，发展区有4白4红4蓝4黑；贵族供应堆还剩1块3黑3红3白贵族且条件满足。下一个回合结束时，A再自动获得这最后1块。这个结算是否合法？"
+        "两人局。玩家A已有2块贵族，发展区为4白4红4蓝4黑；贵族供应堆还剩1块（3黑3红3白）且条件满足。到下一个回合结束时，A必须再拿取这最后1块。这个结算是否合法？只回答「合法」或「有问题」，再给一句话理由。"
       ]
     },
     {
       "id": "action.nobles.repeat.001.3",
-      "parent": "action.nobles.repeat.001.2",
+      "parent": "action.nobles.repeat.001.1",
       "timing": [
         {
           "key": "镜头回整桌",
