@@ -10790,13 +10790,13 @@
       "parent": "action.nobles.trigger.001.1",
       "timing": [
         {
-          "key": "B已有合法贵族+足够发展卡 → A也满足条件 → 搬B贵族 → 禁止标记（节奏放慢）",
+          "key": "B合法有贵族 / A也已满足条件 → 搬B贵族 → 禁止标记（节奏放慢）",
           "text": "整条 cue"
         }
       ],
       "script": {
         "story": "【玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取】",
-        "note": "【来源反例：只能从供应堆拿贵族】\n  cue 开始时玩家B的贵族区已经有 noble_5，并且 player_b_development 里已有 3白+3红+3黑 发展卡，\n  所以B持有这枚贵族是合法的。\n  A 补 2 张白牌后发展区变成 3白+4红+4黑，也满足 noble_5 的 3黑+3红+3白条件；\n  接着 A 把 noble_5 从玩家B的贵族区搬到自己的贵族区 —— 双方都满足条件，但贵族不是无主的，\n  从其他玩家那里拿仍然是犯规；最后在新来的 noble_5 上打 forbid 标记。\n  本 cue 是错误示范分支，不进入 canonical；action.nobles.choice.001.1 用 entry 回 action.nobles.trigger.001.1 继续。\n  【节奏】cue 音频尾部追加了 3.504s 静音，动作在 0s / 1.8s / 2.5s / 3.8s / 5.3s / 7.4s 分阶段发生，给客人反应时间。",
+        "note": "【来源反例：只能从供应堆拿贵族】\n  cue 开始时玩家B贵族区已有 noble_5，且B的发展区已有 3白+3红+3黑，B合法满足该贵族；\n  玩家A的发展区也已经满足 noble_5（3白+4红+4黑，白牌都是之前回合买到的，本 cue 不演购买）。\n  本 cue 唯一的真动作是：A 把 noble_5 从玩家B的贵族区搬到自己的贵族区。\n  双方条件虽然都满足，但贵族不是无主的，不能从其他玩家那里拿；最后在新来的 noble_5 上打 forbid 标记。\n  本 cue 是错误示范分支，不进入 canonical；action.nobles.choice.001.1 用 entry 回 action.nobles.trigger.001.1 继续。\n  【节奏】cue 音频尾部追加了 3.504s 静音，动作在 0s / 1.8s / 4.0s / 6.5s 分阶段发生，留出反应时间。",
         "enter": {
           "zones": {
             "deck_level_1": {
@@ -10927,6 +10927,32 @@
                     {
                       "key": "bonus",
                       "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
                     }
                   ]
                 }
@@ -11550,6 +11576,48 @@
           }
         },
         {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
@@ -11579,53 +11647,11 @@
           }
         },
         {
-          "op": "create",
-          "dur": 1.0,
-          "count": 1,
-          "to": "face_up",
-          "anchor": "action.nobles.source.001.start",
-          "offset": 1.8,
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_20",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 1.0,
-          "count": 1,
-          "to": "face_up",
-          "anchor": "action.nobles.source.001.start",
-          "offset": 2.5,
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_22",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
           "op": "highlight",
-          "dur": 1.0,
+          "dur": 1.2,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.source.001.start",
-          "offset": 3.8,
+          "offset": 1.8,
           "target": {
             "space": "entity",
             "zone": "player_development"
@@ -11636,7 +11662,7 @@
           "dur": 1.5,
           "quantity": 1,
           "anchor": "action.nobles.source.001.start",
-          "offset": 5.3,
+          "offset": 4.0,
           "target": {
             "space": "entity",
             "zone": "player_b_nobles",
@@ -11654,7 +11680,7 @@
           "dur": 0.0,
           "indicator": "forbid",
           "anchor": "action.nobles.source.001.start",
-          "offset": 7.4,
+          "offset": 6.5,
           "target": {
             "space": "entity",
             "zone": "player_nobles",
@@ -11665,7 +11691,7 @@
       "tree": "main",
       "qa": [
         {
-          "q": "两人局。玩家B有3黑3红3白发展卡，合法持有对应的贵族；玩家A的发展区也满足这枚贵族的条件。A把贵族从玩家B的贵族区拿到自己面前。A的做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "q": "两人局。玩家A和玩家B的发展区都满足了同一枚贵族的条件，该贵族在玩家B的贵族区；A把它从B那里拿到自己面前。A的做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
           "expect": "有问题"
         }
       ]
