@@ -1163,46 +1163,14 @@
         {
           "id": "action.nobles.trigger.001.1.b1",
           "text": "当玩家结束自己的回合后，"
-        }
-      ]
-    },
-    {
-      "id": "action.nobles.trigger.001.2",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "refs": [
-        "<attract_noble>",
-        "<noble>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.nobles.trigger.001.2.b1",
-          "text": "如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件，"
-        }
-      ]
-    },
-    {
-      "id": "action.nobles.trigger.001.3",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "refs": [
-        "<attract_noble>",
-        "<noble>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+          "id": "action.nobles.trigger.001.1.b2",
+          "text": "如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，"
+        },
         {
-          "id": "action.nobles.trigger.001.3.b1",
-          "text": "他必须立即拿取这张贵族板块并立刻获得其声望值。"
+          "id": "action.nobles.trigger.001.1.b3",
+          "text": "他必须立即拿取这张贵族板块，并立刻获得其声望值。"
         }
       ]
     },
