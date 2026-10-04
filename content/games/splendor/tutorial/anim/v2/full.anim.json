@@ -1439,25 +1439,15 @@
       "edge": "end"
     },
     {
-      "id": "action.cards.limit.001.2.start",
-      "cue": "action.cards.limit.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.limit.001.2.end",
-      "cue": "action.cards.limit.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.limit.001.2.b1.start",
-      "cue": "action.cards.limit.001.2",
-      "beat": "action.cards.limit.001.2.b1",
+      "id": "action.cards.limit.001.1.b2.start",
+      "cue": "action.cards.limit.001.1",
+      "beat": "action.cards.limit.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "action.cards.limit.001.2.b1.end",
-      "cue": "action.cards.limit.001.2",
-      "beat": "action.cards.limit.001.2.b1",
+      "id": "action.cards.limit.001.1.b2.end",
+      "cue": "action.cards.limit.001.1",
+      "beat": "action.cards.limit.001.1.b2",
       "edge": "end"
     },
     {
@@ -9033,63 +9023,24 @@
       "parent": "action.cards.public.001.1",
       "timing": [
         {
-          "key": "镜头回整桌",
-          "text": "0.00"
+          "key": "安静展示桌面",
+          "text": "整条 cue"
         }
       ],
       "script": {
-        "story": "【和宝石不同的是，玩家一回合只能购买一张发展卡牌】",
-        "note": "【一回合只能买一张】\n  规则说明，**没有状态变化**：镜头回整桌，点发展区（这就是『一回合一张』的落点）。\n  ⚠ 想表达『只能一张』同样缺少否定原语 → 只点一下。"
+        "story": "【和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限】",
+        "note": "【购买上限：一回合一张，总数没有上限】\n  规则说明 + 本组收尾：合并后不切镜头、不做高亮，整条 cue 安静展示桌面（shot_board）。\n  cue 开场用 entry 回到 action.cards.discount.001 的 canonical；\n  折扣例子（demo 假设分支）里补出来的白牌/红牌、以及免费拿到的 card_l1_ruby_38 都不进入真实账；\n  回到 canonical 后发展区只剩 market.001.2 买入的一级白 card_l1_diamond_18。"
       },
       "events": [],
-      "tree": "main"
-    },
-    {
-      "id": "action.cards.limit.001.2",
-      "parent": "action.cards.discount.002.1",
-      "timing": [
-        {
-          "key": "点发展区",
-          "text": "0.50"
-        },
-        {
-          "key": "样本退场",
-          "text": "2.20"
-        }
-      ],
-      "script": {
-        "story": "【但玩家总计可以购买的发展卡牌数量没有上限】",
-        "note": "【总数没有上限】\n  规则说明 + 本组收尾：点发展区，然后通过显式 entry 回到 canonical。\n  折扣例子（demo 假设分支）里补出来的白牌/红牌、以及免费拿到的 card_l1_ruby_38 都不进入真实账；\n  回到 action.cards.discount.001 的 canonical 状态后，发展区只剩 market.001.2 买入的一级白 card_l1_diamond_18。",
-        "exit": {
-          "zones": {}
-        }
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "anchor": "action.cards.limit.001.2.start"
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.cards.limit.001.2.b1.start",
-          "offset": 0.245,
-          "target": {
-            "space": "entity",
-            "zone": "player_development"
-          }
-        }
-      ],
+      "tree": "main",
       "entry": "action.cards.discount.001",
-      "demo": false,
-      "tree": "main"
+      "qa": [
+        "璀璨宝石。玩家每回合只能购买一张发展卡牌，但整局游戏能购买的发展卡牌总数没有上限。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ]
     },
     {
       "id": "action.nobles.intro.001",
-      "parent": "action.cards.limit.001.2",
+      "parent": "action.cards.limit.001.1",
       "tree": "main",
       "transition": "overlay",
       "timing": [

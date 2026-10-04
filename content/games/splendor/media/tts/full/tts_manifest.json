@@ -655,21 +655,9 @@
       "id": "action.cards.limit.001.1",
       "group": "3.2.1 认识发展卡牌",
       "start": 326.76,
-      "duration": 4.824,
+      "duration": 8.856,
       "file": "content/games/splendor/media/tts/full/action.cards.limit.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.cards.limit.001.1.subtitle.json",
-      "refs": [
-        "<purchase_development_card>",
-        "<development_area>"
-      ]
-    },
-    {
-      "id": "action.cards.limit.001.2",
-      "group": "3.2.1 认识发展卡牌",
-      "start": 331.584,
-      "duration": 4.032,
-      "file": "content/games/splendor/media/tts/full/action.cards.limit.001.2.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.cards.limit.001.2.subtitle.json",
       "refs": [
         "<purchase_development_card>",
         "<development_area>"

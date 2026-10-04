@@ -1119,25 +1119,9 @@
         {
           "id": "action.cards.limit.001.1.b1",
           "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，"
-        }
-      ]
-    },
-    {
-      "id": "action.cards.limit.001.2",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "refs": [
-        "<purchase_development_card>",
-        "<development_area>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.cards.limit.001.2.b1",
+          "id": "action.cards.limit.001.1.b2",
           "text": "但玩家总计可以购买的发展卡牌数量没有上限。"
         }
       ]

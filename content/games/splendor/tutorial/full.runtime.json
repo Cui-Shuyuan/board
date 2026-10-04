@@ -10371,9 +10371,9 @@
         "3.2 发展卡牌与贵族",
         "3.2.1 认识发展卡牌"
       ],
-      "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，",
+      "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
       "audio": "media/tts/full/action.cards.limit.001.1.mp3",
-      "duration": 4.824,
+      "duration": 8.856,
       "start": 326.76,
       "refs": [
         "<purchase_development_card>",
@@ -10381,288 +10381,268 @@
       ],
       "subtitles": [
         {
-          "t": 0.305,
-          "end": 4.385,
-          "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，\n",
+          "t": 0.285,
+          "end": 4.595,
+          "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，",
           "words": [
             {
               "word": "和",
-              "start": 0.305,
-              "end": 0.455,
-              "confidence": 0.9249
+              "start": 0.285,
+              "end": 0.485,
+              "confidence": 0.9417
             },
             {
               "word": "宝",
-              "start": 0.455,
-              "end": 0.625,
-              "confidence": 0.9724
+              "start": 0.485,
+              "end": 0.655,
+              "confidence": 0.9704
             },
             {
               "word": "石",
-              "start": 0.625,
-              "end": 0.785,
-              "confidence": 0.9361
+              "start": 0.655,
+              "end": 0.835,
+              "confidence": 0.9653
             },
             {
               "word": "不",
-              "start": 0.785,
-              "end": 0.895,
-              "confidence": 0.925
+              "start": 0.835,
+              "end": 0.955,
+              "confidence": 0.9359
             },
             {
               "word": "同",
-              "start": 0.895,
-              "end": 1.075,
-              "confidence": 0.9677
+              "start": 0.955,
+              "end": 1.145,
+              "confidence": 0.965
             },
             {
               "word": "的",
-              "start": 1.075,
-              "end": 1.175,
-              "confidence": 0.9288
+              "start": 1.145,
+              "end": 1.265,
+              "confidence": 0.9496
             },
             {
               "word": "是，",
-              "start": 1.175,
-              "end": 1.545,
-              "confidence": 0.9382
+              "start": 1.265,
+              "end": 1.655,
+              "confidence": 0.895
             },
             {
               "word": "玩",
-              "start": 1.735,
-              "end": 1.845,
-              "confidence": 0.9549
+              "start": 1.875,
+              "end": 1.985,
+              "confidence": 0.9486
             },
             {
               "word": "家",
-              "start": 1.845,
-              "end": 2.035,
-              "confidence": 0.9543
+              "start": 1.985,
+              "end": 2.185,
+              "confidence": 0.9646
             },
             {
               "word": "一",
-              "start": 2.035,
-              "end": 2.125,
-              "confidence": 0.9347
+              "start": 2.185,
+              "end": 2.285,
+              "confidence": 0.908
             },
             {
               "word": "回",
-              "start": 2.125,
-              "end": 2.295,
-              "confidence": 0.9762
+              "start": 2.285,
+              "end": 2.465,
+              "confidence": 0.9731
             },
             {
               "word": "合",
-              "start": 2.295,
-              "end": 2.535,
-              "confidence": 0.9771
+              "start": 2.465,
+              "end": 2.715,
+              "confidence": 0.9786
             },
             {
               "word": "只",
-              "start": 2.535,
-              "end": 2.685,
-              "confidence": 0.9563
+              "start": 2.715,
+              "end": 2.865,
+              "confidence": 0.966
             },
             {
               "word": "能",
-              "start": 2.685,
-              "end": 2.835,
-              "confidence": 0.9873
+              "start": 2.865,
+              "end": 3.025,
+              "confidence": 0.9857
             },
             {
               "word": "购",
-              "start": 2.835,
-              "end": 2.985,
-              "confidence": 0.9707
+              "start": 3.025,
+              "end": 3.185,
+              "confidence": 0.9805
             },
             {
               "word": "买",
-              "start": 2.985,
-              "end": 3.165,
-              "confidence": 0.9579
+              "start": 3.185,
+              "end": 3.345,
+              "confidence": 0.9682
             },
             {
               "word": "一",
-              "start": 3.205,
-              "end": 3.335,
-              "confidence": 0.9566
+              "start": 3.345,
+              "end": 3.545,
+              "confidence": 0.924
             },
             {
               "word": "张",
-              "start": 3.335,
-              "end": 3.555,
-              "confidence": 0.9738
+              "start": 3.545,
+              "end": 3.735,
+              "confidence": 0.9719
             },
             {
               "word": "发",
-              "start": 3.555,
-              "end": 3.735,
-              "confidence": 0.9785
+              "start": 3.735,
+              "end": 3.925,
+              "confidence": 0.9803
             },
             {
               "word": "展",
-              "start": 3.735,
-              "end": 3.875,
-              "confidence": 0.9175
+              "start": 3.925,
+              "end": 4.055,
+              "confidence": 0.8865
             },
             {
               "word": "卡",
-              "start": 3.875,
-              "end": 4.065,
-              "confidence": 0.9376
+              "start": 4.055,
+              "end": 4.255,
+              "confidence": 0.949
             },
             {
               "word": "牌，",
-              "start": 4.065,
-              "end": 4.385,
-              "confidence": 0.934
+              "start": 4.255,
+              "end": 4.595,
+              "confidence": 0.965
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.cards.limit.001.2",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "text": "但玩家总计可以购买的发展卡牌数量没有上限。",
-      "audio": "media/tts/full/action.cards.limit.001.2.mp3",
-      "duration": 4.032,
-      "start": 331.58,
-      "refs": [
-        "<purchase_development_card>",
-        "<development_area>"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.255,
-          "end": 3.675,
+          "t": 5.01,
+          "end": 8.025,
           "text": "但玩家总计可以购买的发展卡牌数量没有上限。",
           "words": [
             {
               "word": "但",
-              "start": 0.255,
-              "end": 0.425,
-              "confidence": 0.782
+              "start": 5.01,
+              "end": 5.225,
+              "confidence": 0.7016
             },
             {
               "word": "玩",
-              "start": 0.425,
-              "end": 0.575,
-              "confidence": 0.7905
+              "start": 5.225,
+              "end": 5.375,
+              "confidence": 0.8606
             },
             {
               "word": "家",
-              "start": 0.575,
-              "end": 0.805,
-              "confidence": 0.9319
-            },
-            {
-              "word": "总",
-              "start": 0.805,
-              "end": 0.985,
-              "confidence": 0.9678
-            },
-            {
-              "word": "计",
-              "start": 0.985,
-              "end": 1.165,
-              "confidence": 0.8057
-            },
-            {
-              "word": "可",
-              "start": 1.165,
-              "end": 1.295,
-              "confidence": 0.8535
-            },
-            {
-              "word": "以",
-              "start": 1.295,
-              "end": 1.405,
-              "confidence": 0.8461
-            },
-            {
-              "word": "购",
-              "start": 1.405,
-              "end": 1.575,
-              "confidence": 0.9172
-            },
-            {
-              "word": "买",
-              "start": 1.575,
-              "end": 1.765,
-              "confidence": 0.9757
-            },
-            {
-              "word": "的",
-              "start": 1.765,
-              "end": 1.935,
-              "confidence": 0.9524
-            },
-            {
-              "word": "发",
-              "start": 1.935,
-              "end": 2.115,
-              "confidence": 0.9842
-            },
-            {
-              "word": "展",
-              "start": 2.115,
-              "end": 2.245,
-              "confidence": 0.8956
-            },
-            {
-              "word": "卡",
-              "start": 2.245,
-              "end": 2.415,
+              "start": 5.375,
+              "end": 5.585,
               "confidence": 0.9336
             },
             {
+              "word": "总",
+              "start": 5.585,
+              "end": 5.775,
+              "confidence": 0.9645
+            },
+            {
+              "word": "计",
+              "start": 5.775,
+              "end": 5.985,
+              "confidence": 0.8087
+            },
+            {
+              "word": "可",
+              "start": 5.985,
+              "end": 6.135,
+              "confidence": 0.8562
+            },
+            {
+              "word": "以",
+              "start": 6.135,
+              "end": 6.265,
+              "confidence": 0.8051
+            },
+            {
+              "word": "购",
+              "start": 6.265,
+              "end": 6.425,
+              "confidence": 0.8881
+            },
+            {
+              "word": "买",
+              "start": 6.425,
+              "end": 6.615,
+              "confidence": 0.9802
+            },
+            {
+              "word": "的",
+              "start": 6.615,
+              "end": 6.745,
+              "confidence": 0.9838
+            },
+            {
+              "word": "发",
+              "start": 6.745,
+              "end": 6.915,
+              "confidence": 0.9846
+            },
+            {
+              "word": "展",
+              "start": 6.915,
+              "end": 7.035,
+              "confidence": 0.9007
+            },
+            {
+              "word": "卡",
+              "start": 7.035,
+              "end": 7.225,
+              "confidence": 0.9418
+            },
+            {
               "word": "牌",
-              "start": 2.415,
-              "end": 2.555,
-              "confidence": 0.9558
+              "start": 7.225,
+              "end": 7.365,
+              "confidence": 0.9548
             },
             {
               "word": "数",
-              "start": 2.555,
-              "end": 2.775,
-              "confidence": 0.9777
+              "start": 7.365,
+              "end": 7.615,
+              "confidence": 0.9692
             },
             {
               "word": "量",
-              "start": 2.775,
-              "end": 2.945,
-              "confidence": 0.9534
+              "start": 7.615,
+              "end": 7.805,
+              "confidence": 0.9524
             },
             {
               "word": "没",
-              "start": 2.945,
-              "end": 3.145,
-              "confidence": 0.9681
+              "start": 7.805,
+              "end": 7.875,
+              "confidence": 0.281
             },
             {
               "word": "有",
-              "start": 3.145,
-              "end": 3.195,
-              "confidence": 0.9647
+              "start": 7.875,
+              "end": 7.905,
+              "confidence": 0.1389
             },
             {
               "word": "上",
-              "start": 3.195,
-              "end": 3.375,
-              "confidence": 0.9409
+              "start": 7.905,
+              "end": 7.965,
+              "confidence": 0.0489
             },
             {
               "word": "限。",
-              "start": 3.375,
-              "end": 3.675,
-              "confidence": 0.8769
+              "start": 7.965,
+              "end": 8.025,
+              "confidence": 0.1045
             }
           ]
         }

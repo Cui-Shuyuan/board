@@ -68,8 +68,7 @@
 [04:59.04][id:action.cards.discount.003.1][ref:<discount>]如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。
 [05:06.70][id:action.cards.discount.003.2][ref:<discount>]但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。
 [05:14.74][id:action.cards.public.001.1][ref:<development_area>]和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。
-[05:26.76][id:action.cards.limit.001.1][ref:<purchase_development_card>|<development_area>]和宝石不同的是，玩家一回合只能购买一张发展卡牌，
-[05:31.58][id:action.cards.limit.001.2][ref:<purchase_development_card>|<development_area>]但玩家总计可以购买的发展卡牌数量没有上限。
+[05:26.76][id:action.cards.limit.001.1][ref:<purchase_development_card>|<development_area>]和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。
 [group:3.2.2 贵族结算]
 [05:35.62][id:action.nobles.intro.001][ref:<noble>]我们再介绍一下贵族板块。
 [05:37.90][id:action.nobles.value.001.1][ref:<noble>|<prestige_point>]左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，
