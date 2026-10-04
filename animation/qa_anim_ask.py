@@ -46,7 +46,9 @@ def api_url():
 def verdict_of(reply):
     # Take the *last* verdict token.  Some LLM answers start with a wrong
     # "不允许/有问题" and then self-correct to "允许/合法" in the same reply;
-    # the final sentence is the operative answer.
+    # the final sentence is the operative answer.  Normalize negated problem
+    # phrases first: "没有问题" contains "有问题" but is a positive verdict.
+    reply = reply.replace("没有问题", "合法").replace("没有不合法", "合法")
     matches = list(re.finditer(r"不合法|合法|有问题|不允许|允许", reply))
     return matches[-1].group(0) if matches else "?"
 
