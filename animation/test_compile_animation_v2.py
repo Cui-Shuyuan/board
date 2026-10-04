@@ -172,10 +172,10 @@ class CompileAnimationV2Tests(unittest.TestCase):
 
     def test_cost_kind_parts_use_measured_box_geometry(self):
         expected = {
-            "cost_1": (0.135, 0.920, 0.27, 0.16),
-            "cost_2": (0.135, 0.845, 0.27, 0.31),
-            "cost_3": (0.135, 0.770, 0.27, 0.46),
-            "cost_4": (0.135, 0.700, 0.27, 0.60),
+            "cost_1": (0.120, 0.920, 0.30, 0.22),
+            "cost_2": (0.120, 0.845, 0.30, 0.37),
+            "cost_3": (0.120, 0.770, 0.30, 0.52),
+            "cost_4": (0.120, 0.700, 0.30, 0.66),
         }
         for part, (u, v, w, h) in expected.items():
             with self.subTest(part=part), tempfile.TemporaryDirectory() as tmp:
