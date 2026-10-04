@@ -107,7 +107,7 @@
 目标仍由 `target` 给出（`target.space` 决定收件人类型）；标注语义上建议再写一次
 顶层 `space`，编译器也会从 target 推导。`shape` 支持 `arrow` / `circle` /
 `cross` / `forbid` / `box`，其中 `box` 是外框。`part` 用语义部位名
-（`whole` / `prestige` / `cost` / `bonus` / `condition`）表达锚点，不用 x/y 硬编码。
+（`whole` / `prestige` / `cost_1`..`cost_4` / `bonus` / `condition`）表达锚点，不用 x/y 硬编码。
 
 ```json
 // 桌面卡牌外框：镜头移动要跟
@@ -120,7 +120,7 @@
 { "op": "shape", "shape": "arrow", "space": "screen",
   "anchor": "action.cards.cost.001.1.start",
   "target": { "space": "screen", "id": "purchase_card" },
-  "part": "cost",
+  "part": "cost_2",
   "offset": { "x": 0.02, "y": -0.03 } }
 
 // 世界文字：跟着桌面卡牌
@@ -137,10 +137,16 @@
   不重排逻辑 order；源数据里的 `real_templates` 顺序就是抽牌顺序。
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
-- `shape: "box"` 可用 `part_w` / `part_h` 指定矩形尺寸（占目标 rect 的宽/高比例），
-  矩形以 `part` 的语义锚点为中心；不写则沿用目标整体 rect。费用这种 2×2 图标区域
-  用 box 框比 circle 更稳，例：
-  `{ "op": "shape", "shape": "box", "part": "cost", "part_w": 0.50, "part_h": 0.36,
+- **费用框按宝石种类数选择 `part`**：发展卡左下角的价格是一列彩色圆盘，一个颜色一个
+  圆盘；1/2/3/4 种宝石的圆盘总高度不同，所以不能再用一个固定的 `cost` 框。写
+  `cost_1`..`cost_4`（数字 = 该卡 cost 里不同宝石颜色数），编译器按真卡扫描件测量好的
+  四个框自动取锚点和尺寸，不要再手写 `part_u` / `part_v` / `part_w` / `part_h` 去凑。
+  例：红 38（2 红 + 2 白）→ `part: "cost_2"`；白 20（3 白 + 1 蓝 + 1 黑）→
+  `part: "cost_3"`；三级红 70（6 红）→ `part: "cost_1"`；四色卡 → `part: "cost_4"`。
+- `shape: "box"` 仍可用 `part_w` / `part_h` 覆盖默认矩形尺寸（占目标 rect 的宽/高比例），
+  矩形以 `part` 的语义锚点为中心；不写则自动使用该 `part` 的测量尺寸。费用框统一用
+  `part: "cost_N"` + box 即可，不要按 cue 手写近似坐标：
+  `{ "op": "shape", "shape": "box", "part": "cost_3",
      "target": { "space": "screen", "id": "purchase_card" } }`。
 - `label` 实体和屏幕空间都实现：实体 target → world label 跟卡走；screen target
   （stage overlay 槽位）→ screen label 固定不动。

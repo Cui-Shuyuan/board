@@ -105,13 +105,27 @@ CARD_PART_ANCHORS = {
     "whole": (0.5, 0.5),
     "": (0.5, 0.5),
     "prestige": (0.149733, 0.094258),
+    # Cost is a vertical stack of one colored disc per gem type (1-4 types).
+    # A single fixed anchor cannot cover the stack, so the four layouts get
+    # distinct semantic part ids; new data should write cost_1..cost_4.
+    # "cost" remains only a legacy compatibility alias.
     "cost": (0.126984, 0.840909),
+    "cost_1": (0.135, 0.920),
+    "cost_2": (0.135, 0.845),
+    "cost_3": (0.135, 0.770),
+    "cost_4": (0.135, 0.700),
     "bonus": (0.825397, 0.130682),
     "condition": (0.50, 0.84),
 }
 CARD_PART_SIZES = {
     "prestige": (0.238095, 0.170455),
     "cost": (0.5, 0.30),
+    # Box extents measured from the true-card scans.  The column is always
+    # left-aligned; only the vertical extent grows with the number of discs.
+    "cost_1": (0.27, 0.16),
+    "cost_2": (0.27, 0.31),
+    "cost_3": (0.27, 0.46),
+    "cost_4": (0.27, 0.60),
     "bonus": (0.269841, 0.193182),
 }
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}

@@ -7265,7 +7265,7 @@
         {
           "op": "shape",
           "shape": "box",
-          "part": "cost",
+          "part": "cost_2",
           "dur": 0.0,
           "anchor": "action.cards.cost.001.1.start",
           "target": {
@@ -7415,7 +7415,7 @@
         {
           "op": "shape",
           "shape": "box",
-          "part": "cost",
+          "part": "cost_2",
           "dur": 0.0,
           "anchor": "action.cards.cost.001.2.start",
           "target": {
@@ -8628,11 +8628,7 @@
         {
           "op": "shape",
           "shape": "box",
-          "part": "cost",
-          "part_u": 0.21,
-          "part_v": 0.83,
-          "part_w": 0.4,
-          "part_h": 0.34,
+          "part": "cost_3",
           "dur": 0.0,
           "anchor": "action.cards.discount.002.1.b1.end",
           "offset": -0.7,
@@ -8917,11 +8913,7 @@
         {
           "op": "shape",
           "shape": "box",
-          "part": "cost",
-          "part_u": 0.13,
-          "part_v": 0.83,
-          "part_w": 0.4,
-          "part_h": 0.34,
+          "part": "cost_2",
           "dur": 0.0,
           "anchor": "action.cards.discount.003.1.start",
           "target": {
@@ -11216,7 +11208,7 @@
         {
           "op": "point",
           "dur": 0.0,
-          "part": "cost",
+          "part": "cost_1",
           "indicator": "circle",
           "anchor": "action.purchase_reserved.002.1.b1.end",
           "offset": -2.005,

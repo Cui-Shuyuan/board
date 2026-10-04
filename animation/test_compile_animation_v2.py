@@ -170,6 +170,36 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("purchase_card", clips[0]["overlay"])
         self.assertEqual("cost", clips[0]["part"])
 
+    def test_cost_kind_parts_use_measured_box_geometry(self):
+        expected = {
+            "cost_1": (0.135, 0.920, 0.27, 0.16),
+            "cost_2": (0.135, 0.845, 0.27, 0.31),
+            "cost_3": (0.135, 0.770, 0.27, 0.46),
+            "cost_4": (0.135, 0.700, 0.27, 0.60),
+        }
+        for part, (u, v, w, h) in expected.items():
+            with self.subTest(part=part), tempfile.TemporaryDirectory() as tmp:
+                event = {
+                    "op": "shape",
+                    "at": 0.2,
+                    "dur": 0.0,
+                    "shape": "box",
+                    "part": part,
+                    "target": {"space": "screen", "id": "purchase_card"},
+                }
+                track_path, _ = write_schema_track(Path(tmp), event)
+                compiled = compile_anim.Compiler(track_path).compile()
+                cue = _compiled_cue(compiled, "example.show.001")
+
+            clips = [c for c in cue["clips"]
+                     if c.get("kind") == "shape" and c.get("part") == part]
+            self.assertEqual(1, len(clips), clips)
+            clip = clips[0]
+            self.assertAlmostEqual(u, clip["part_u"], places=6)
+            self.assertAlmostEqual(v, clip["part_v"], places=6)
+            self.assertAlmostEqual(w, clip["part_w"], places=6)
+            self.assertAlmostEqual(h, clip["part_h"], places=6)
+
     def test_world_shape_box_compiles_to_annotation_clip(self):
         with tempfile.TemporaryDirectory() as tmp:
             event = {
