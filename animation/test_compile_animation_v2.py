@@ -194,12 +194,15 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertAlmostEqual(base["center_x"] - 2.0, shifted["center_x"], places=6)
         self.assertAlmostEqual(base["center_z"] - 0.5, shifted["center_z"], places=6)
 
-    def test_cost_kind_parts_use_measured_box_geometry(self):
+    def test_card_part_variants_use_measured_box_geometry(self):
         expected = {
             "cost_1": (0.1125, 0.920, 0.315, 0.22),
             "cost_2": (0.1125, 0.845, 0.315, 0.37),
             "cost_3": (0.1125, 0.770, 0.315, 0.52),
             "cost_4": (0.1125, 0.700, 0.315, 0.66),
+            "noble_prestige": (0.1417, 0.1417, 0.44, 0.44),
+            "condition_2": (0.515, 0.840, 0.53, 0.28),
+            "condition_3": (0.525, 0.840, 0.81, 0.28),
         }
         for part, (u, v, w, h) in expected.items():
             with self.subTest(part=part), tempfile.TemporaryDirectory() as tmp:

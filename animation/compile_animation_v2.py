@@ -116,6 +116,11 @@ CARD_PART_ANCHORS = {
     "cost_4": (0.1125, 0.700),
     "bonus": (0.825397, 0.130682),
     "condition": (0.50, 0.84),
+    # Noble-specific parts.  The noble face is square; its condition row
+    # grows horizontally with the number of required gem kinds (2 or 3).
+    "noble_prestige": (0.1417, 0.1417),
+    "condition_2": (0.515, 0.840),
+    "condition_3": (0.525, 0.840),
 }
 CARD_PART_SIZES = {
     "prestige": (0.238095, 0.170455),
@@ -129,6 +134,9 @@ CARD_PART_SIZES = {
     "cost_3": (0.315, 0.52),
     "cost_4": (0.315, 0.66),
     "bonus": (0.269841, 0.193182),
+    "noble_prestige": (0.44, 0.44),
+    "condition_2": (0.53, 0.28),
+    "condition_3": (0.81, 0.28),
 }
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
 

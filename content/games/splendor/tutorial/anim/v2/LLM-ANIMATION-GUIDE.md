@@ -107,7 +107,7 @@
 目标仍由 `target` 给出（`target.space` 决定收件人类型）；标注语义上建议再写一次
 顶层 `space`，编译器也会从 target 推导。`shape` 支持 `arrow` / `circle` /
 `cross` / `forbid` / `box`，其中 `box` 是外框。`part` 用语义部位名
-（`whole` / `prestige` / `cost_1`..`cost_4` / `bonus` / `condition`）表达锚点，不用 x/y 硬编码。
+（`whole` / `prestige` / `cost_1`..`cost_4` / `bonus` / `condition` / `noble_prestige` / `condition_2` / `condition_3`）表达锚点，不用 x/y 硬编码。
 
 ```json
 // 桌面卡牌外框：镜头移动要跟
@@ -149,6 +149,9 @@
   `part: "cost_N"` + box 即可，不要按 cue 手写近似坐标：
   `{ "op": "shape", "shape": "box", "part": "cost_3",
      "target": { "space": "screen", "id": "purchase_card" } }`。
+- **贵族 mask 的标注**：左上角声望用 `part: "noble_prestige"` + circle；下方条件按条件宝石种类数
+  用 `condition_2` / `condition_3` + `shape: "box"`（2 种或 3 种颜色），不要用通用 `condition` 圆框，
+  也不要写近似坐标。
 - `label` 实体和屏幕空间都实现：实体 target → world label 跟卡走；screen target
   （stage overlay 槽位）→ screen label 固定不动。
 - `point` / `shape` 的 `offset` 写成数字时仍是**时间偏移**；写成

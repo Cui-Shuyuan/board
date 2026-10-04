@@ -9000,13 +9000,13 @@
       "transition": "overlay",
       "timing": [
         {
-          "key": "左：贵族 mask / 右：玩家发展区",
+          "key": "左侧 mask 贵族 / 右侧 4白+4红已购牌",
           "text": "整条 cue"
         }
       ],
       "script": {
         "story": "【我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。】",
-        "note": "【贵族板块：左边 mask，右边玩家发展区】\n  不隐藏贵族 mask：开场镜头切到玩家发展区，并通过 shot_development_side 把发展区放到画面右侧；\n  左侧用 scene_backdrop 面板 + 贵族卡 mask 讲贵族板块，两边同屏。\n  左上角和下方各用一个 circle 圈出对应区域，全程不切换指示物类型。\n  讲到“已购买的卡牌数量”时高亮右侧 player_development 里的已购买发展卡，\n  让客人把“条件”与面前的实体卡对应起来；全程不切镜头、不隐藏 mask。\n  canonical 还原仍在本 cue 开场 entry 完成；发展区只有 market.001.2 买入的一级白 card_l1_diamond_18。",
+        "note": "【贵族板块：左边 mask，右边玩家发展区已有 4 白 + 4 红】\n  右侧 player_development 里补出足够的发展卡：4 白（含 canonical 的 card_l1_diamond_18）+ 4 红，\n  正好满足左侧贵族_0001 的 4白+4红条件。7 张真卡从 deck_level_1 垫牌替换而来，卡身份唯一。\n  左上角用一个 circle（noble_prestige，已加大）圈声望；下方用 condition_2 框住 2 种宝石的条件区。\n  讲到“已购买的卡牌数量”时高亮右侧发展区里的已购卡，让客人把条件和实体卡对应起来；\n  全程不切镜头、不隐藏 mask。",
         "enter": {
           "picture": null,
           "zones": {
@@ -9014,7 +9014,7 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 35
+              "count": 28
             },
             "deck_level_2": {
               "count": 26
@@ -9073,7 +9073,50 @@
                 {
                   "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
@@ -9092,7 +9135,7 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 35
+              "count": 28
             },
             "deck_level_2": {
               "count": 26
@@ -9151,7 +9194,50 @@
                 {
                   "template": "card_l1_diamond_18",
                   "palette": "card_level_1",
-                  "count": 1
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
@@ -9166,6 +9252,167 @@
       },
       "events": [
         {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_33",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_35",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_37",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_development_side",
@@ -9179,7 +9426,7 @@
           "rect": {
             "x": 0.0,
             "y": 0.02,
-            "w": 0.42,
+            "w": 0.34,
             "h": 0.96
           },
           "background": "#1E2126",
@@ -9194,10 +9441,10 @@
           "dur": 0.0,
           "anchor": "action.nobles.intro.001.start",
           "rect": {
-            "x": 0.035,
+            "x": 0.03,
             "y": 0.18,
-            "w": 0.34,
-            "h": 0.604
+            "w": 0.28,
+            "h": 0.498
           },
           "image": "media/card/贵族_0001_cutout.png",
           "layer": 10,
@@ -9210,7 +9457,7 @@
           "op": "point",
           "dur": 0.0,
           "indicator": "circle",
-          "part": "prestige",
+          "part": "noble_prestige",
           "anchor": "action.nobles.intro.001.b1.start",
           "offset": 3.7,
           "target": {
@@ -9219,10 +9466,10 @@
           }
         },
         {
-          "op": "point",
+          "op": "shape",
+          "shape": "box",
+          "part": "condition_2",
           "dur": 0.0,
-          "indicator": "circle",
-          "part": "condition",
           "anchor": "action.nobles.intro.001.b1.start",
           "offset": 7.07,
           "target": {
@@ -9276,21 +9523,17 @@
       "parent": "action.nobles.trigger.001.1",
       "timing": [
         {
-          "key": "补 2 张白",
-          "text": "0.60"
+          "key": "补 4 蓝 + 3 黑",
+          "text": "0.00 / 1.24"
         },
         {
-          "key": "补 4 张红",
-          "text": "1.20"
-        },
-        {
-          "key": "点发展区（条件达成）",
-          "text": "2.60"
+          "key": "点发展区、拿贵族",
+          "text": "2.32"
         }
       ],
       "script": {
         "story": "【如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件】",
-        "note": "【把「满足条件」这一步真的做出来】\n  口播是假设句（如果已购买…满足）→ 这里把前提补出来：发展区凑齐 4 白 + 4 红 + 4 蓝 + 3 黑，\n  同时满足三块贵族的条件（4白4红 / 4蓝4白 / 3黑3红3白），三块贵族后续各拿一块都合法。\n  canonical 此刻发展区原有 1 张一级白 card_l1_diamond_18；再从 deck_level_1 移除 14 张垫牌后，\n  创建补齐：3 张一级白（20/22/24）、4 张一级红（33/35/37/40）、\n  4 张一级蓝（901–904）与 3 张一级黑（905–907）。这些补位卡都对应实际牌组中的未建模真卡，\n  每张有独立 template/registry 身份，只用于把贵族条件补成合法状态；都是 0 分牌，不影响原本的声望账。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌，不能以默认朝下的卡背出现。\n  · 条件一满足，必须在同一回合结束立即获得贵族：因此本 cue 在补牌后立即从供应堆搬 1 块 noble_1（4白4红）到 `player_nobles`；剩余 noble_4/noble_5 也仍满足条件，留待后续回合各拿一块。",
+        "note": "【把「满足条件」这一步补齐，并拿取第一块贵族】\n  上一条 noble intro 已经在玩家A发展区摆出 4 白 + 4 红（满足 noble_1 的 4白4红）。\n  本 cue 再从 deck_level_1 移除 7 张垫牌，补 4 张一级蓝 + 3 张一级黑，凑齐 4白+4红+4蓝+3黑，\n  同时满足三块贵族的条件（4白4红 / 4蓝4白 / 3黑3红3白）。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌。\n  · 条件一满足，必须在同一回合结束立即获得贵族：本 cue 在补牌后从供应堆搬 1 块 noble_1 到 player_nobles。\n  剩余 noble_4/noble_5 仍满足条件，留待后续回合各拿一块。",
         "exit": {
           "zones": {
             "player_development": {
@@ -9403,7 +9646,7 @@
         {
           "op": "destroy",
           "dur": 0.0,
-          "count": 14,
+          "count": 7,
           "anchor": "action.nobles.trigger.001.2.b1.start",
           "offset": 0.0,
           "target": {
@@ -9412,153 +9655,6 @@
             "template": "blank_card_1",
             "palette": "card_level_1",
             "concept": "development_card_level_1"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.315,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_20",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.395,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_22",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.475,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_24",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.915,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_ruby_33",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 0.995,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_ruby_35",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.075,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_ruby_37",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.155,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_ruby_40",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
           }
         },
         {

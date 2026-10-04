@@ -2803,10 +2803,10 @@
       "zones": [
         "player_development"
       ],
-      "fill": 0.5556,
-      "view_offset_x": -2.1,
-      "view_offset_z": -0.3,
-      "desc": "玩家A发展区偏到画面右侧，给左侧 mask 留位"
+      "fill": 0.9,
+      "view_offset_x": -0.961,
+      "view_offset_z": 0.382,
+      "desc": "玩家A发展区偏到画面右侧、镜头下移；给左侧 mask 留位"
     },
     {
       "id": "shot_nobles_f07143",
