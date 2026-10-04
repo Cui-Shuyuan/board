@@ -4,70 +4,322 @@
     "text": "我们再介绍一下贵族板块。",
     "words": [
       {
-        "confidence": 0.9687822,
+        "confidence": 0.9713264,
         "endTime": 0.375,
-        "startTime": 0.285,
+        "startTime": 0.295,
         "word": "我"
       },
       {
-        "confidence": 0.9767026,
+        "confidence": 0.9826572,
         "endTime": 0.485,
         "startTime": 0.375,
         "word": "们"
       },
       {
-        "confidence": 0.9732023,
-        "endTime": 0.655,
+        "confidence": 0.97644556,
+        "endTime": 0.665,
         "startTime": 0.485,
         "word": "再"
       },
       {
-        "confidence": 0.92905796,
+        "confidence": 0.9103414,
         "endTime": 0.795,
-        "startTime": 0.655,
+        "startTime": 0.665,
         "word": "介"
       },
       {
-        "confidence": 0.9740703,
-        "endTime": 0.955,
+        "confidence": 0.92571515,
+        "endTime": 0.945,
         "startTime": 0.795,
         "word": "绍"
       },
       {
-        "confidence": 0.9309292,
-        "endTime": 1.045,
-        "startTime": 0.955,
+        "confidence": 0.90228784,
+        "endTime": 1.055,
+        "startTime": 0.945,
         "word": "一"
       },
       {
-        "confidence": 0.9690331,
+        "confidence": 0.95635366,
         "endTime": 1.265,
-        "startTime": 1.045,
+        "startTime": 1.055,
         "word": "下"
       },
       {
-        "confidence": 0.94505346,
+        "confidence": 0.9534558,
         "endTime": 1.455,
         "startTime": 1.265,
         "word": "贵"
       },
       {
-        "confidence": 0.8952544,
+        "confidence": 0.910151,
         "endTime": 1.575,
         "startTime": 1.455,
         "word": "族"
       },
       {
-        "confidence": 0.93183637,
-        "endTime": 1.755,
+        "confidence": 0.90837014,
+        "endTime": 1.745,
         "startTime": 1.575,
         "word": "板"
       },
       {
-        "confidence": 0.9678053,
-        "endTime": 2.015,
-        "startTime": 1.755,
+        "confidence": 0.95498043,
+        "endTime": 2.025,
+        "startTime": 1.745,
         "word": "块。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "左上角是这位贵族的声望值，",
+    "words": [
+      {
+        "confidence": 0.32454684,
+        "endTime": 2.6050417,
+        "startTime": 2.5300417,
+        "word": "左"
+      },
+      {
+        "confidence": 0.6831142,
+        "endTime": 2.7150416,
+        "startTime": 2.6050417,
+        "word": "上"
+      },
+      {
+        "confidence": 0.9223662,
+        "endTime": 2.9750416,
+        "startTime": 2.7150416,
+        "word": "角"
+      },
+      {
+        "confidence": 0.8539578,
+        "endTime": 3.1550417,
+        "startTime": 2.9750416,
+        "word": "是"
+      },
+      {
+        "confidence": 0.9419217,
+        "endTime": 3.3050418,
+        "startTime": 3.1550417,
+        "word": "这"
+      },
+      {
+        "confidence": 0.95251817,
+        "endTime": 3.4650416,
+        "startTime": 3.3050418,
+        "word": "位"
+      },
+      {
+        "confidence": 0.9608479,
+        "endTime": 3.6650417,
+        "startTime": 3.4650416,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.8847842,
+        "endTime": 3.8450418,
+        "startTime": 3.6650417,
+        "word": "族"
+      },
+      {
+        "confidence": 0.91981643,
+        "endTime": 3.9950418,
+        "startTime": 3.8450418,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8663996,
+        "endTime": 4.165042,
+        "startTime": 3.9950418,
+        "word": "声"
+      },
+      {
+        "confidence": 0.9611641,
+        "endTime": 4.325042,
+        "startTime": 4.165042,
+        "word": "望"
+      },
+      {
+        "confidence": 0.9157487,
+        "endTime": 4.6550417,
+        "startTime": 4.325042,
+        "word": "值，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "下方则是结识这位贵族所需要的条件，",
+    "words": [
+      {
+        "confidence": 0.9032095,
+        "endTime": 5.175083,
+        "startTime": 5.050083,
+        "word": "下"
+      },
+      {
+        "confidence": 0.9790746,
+        "endTime": 5.385083,
+        "startTime": 5.175083,
+        "word": "方"
+      },
+      {
+        "confidence": 0.8255521,
+        "endTime": 5.545083,
+        "startTime": 5.385083,
+        "word": "则"
+      },
+      {
+        "confidence": 0.823902,
+        "endTime": 5.755083,
+        "startTime": 5.545083,
+        "word": "是"
+      },
+      {
+        "confidence": 0.97332567,
+        "endTime": 5.9350834,
+        "startTime": 5.755083,
+        "word": "结"
+      },
+      {
+        "confidence": 0.85216665,
+        "endTime": 6.105083,
+        "startTime": 5.9350834,
+        "word": "识"
+      },
+      {
+        "confidence": 0.85447407,
+        "endTime": 6.2450833,
+        "startTime": 6.105083,
+        "word": "这"
+      },
+      {
+        "confidence": 0.93933445,
+        "endTime": 6.365083,
+        "startTime": 6.2450833,
+        "word": "位"
+      },
+      {
+        "confidence": 0.96762097,
+        "endTime": 6.565083,
+        "startTime": 6.365083,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.95158786,
+        "endTime": 6.8050833,
+        "startTime": 6.565083,
+        "word": "族"
+      },
+      {
+        "confidence": 0.86027586,
+        "endTime": 6.965083,
+        "startTime": 6.8050833,
+        "word": "所"
+      },
+      {
+        "confidence": 0.8999895,
+        "endTime": 7.1450834,
+        "startTime": 6.965083,
+        "word": "需"
+      },
+      {
+        "confidence": 0.98150504,
+        "endTime": 7.255083,
+        "startTime": 7.1450834,
+        "word": "要"
+      },
+      {
+        "confidence": 0.94624805,
+        "endTime": 7.365083,
+        "startTime": 7.255083,
+        "word": "的"
+      },
+      {
+        "confidence": 0.967571,
+        "endTime": 7.5750833,
+        "startTime": 7.365083,
+        "word": "条"
+      },
+      {
+        "confidence": 0.9754203,
+        "endTime": 7.8250833,
+        "startTime": 7.5750833,
+        "word": "件，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "也就是已购买的卡牌数量。",
+    "words": [
+      {
+        "confidence": 0.8301402,
+        "endTime": 8.255125,
+        "startTime": 8.185124,
+        "word": "也"
+      },
+      {
+        "confidence": 0.90840626,
+        "endTime": 8.405125,
+        "startTime": 8.255125,
+        "word": "就"
+      },
+      {
+        "confidence": 0.89309865,
+        "endTime": 8.735125,
+        "startTime": 8.405125,
+        "word": "是"
+      },
+      {
+        "confidence": 0.7926493,
+        "endTime": 8.875125,
+        "startTime": 8.735125,
+        "word": "已"
+      },
+      {
+        "confidence": 0.87168145,
+        "endTime": 9.0651245,
+        "startTime": 8.875125,
+        "word": "购"
+      },
+      {
+        "confidence": 0.97466993,
+        "endTime": 9.235125,
+        "startTime": 9.0651245,
+        "word": "买"
+      },
+      {
+        "confidence": 0.91483194,
+        "endTime": 9.335125,
+        "startTime": 9.235125,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8803727,
+        "endTime": 9.515124,
+        "startTime": 9.335125,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.5250882,
+        "endTime": 9.605124,
+        "startTime": 9.515124,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.17948566,
+        "endTime": 9.665125,
+        "startTime": 9.605124,
+        "word": "数"
+      },
+      {
+        "confidence": 0.16019621,
+        "endTime": 9.725124,
+        "startTime": 9.665125,
+        "word": "量。"
       }
     ]
   }

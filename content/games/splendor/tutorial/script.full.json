@@ -1135,52 +1135,21 @@
         "3.2.2 贵族结算"
       ],
       "refs": [
-        "<noble>"
+        "<noble>",
+        "<prestige_point>"
       ],
       "pause_after": 0.0,
       "beats": [
         {
           "id": "action.nobles.intro.001.b1",
           "text": "我们再介绍一下贵族板块。"
-        }
-      ]
-    },
-    {
-      "id": "action.nobles.value.001.1",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "refs": [
-        "<noble>",
-        "<prestige_point>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.nobles.value.001.1.b1",
+          "id": "action.nobles.intro.001.b2",
           "text": "左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，"
-        }
-      ]
-    },
-    {
-      "id": "action.nobles.value.001.2",
-      "group": "3.2.2 贵族结算",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.2 贵族结算"
-      ],
-      "refs": [
-        "<noble>",
-        "<prestige_point>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.nobles.value.001.2.b1",
+          "id": "action.nobles.intro.001.b3",
           "text": "也就是已购买的卡牌数量。"
         }
       ]

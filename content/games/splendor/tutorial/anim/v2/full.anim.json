@@ -1473,47 +1473,27 @@
       "edge": "end"
     },
     {
-      "id": "action.nobles.value.001.1.start",
-      "cue": "action.nobles.value.001.1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.nobles.value.001.1.end",
-      "cue": "action.nobles.value.001.1",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.nobles.value.001.1.b1.start",
-      "cue": "action.nobles.value.001.1",
-      "beat": "action.nobles.value.001.1.b1",
+      "id": "action.nobles.intro.001.b2.start",
+      "cue": "action.nobles.intro.001",
+      "beat": "action.nobles.intro.001.b2",
       "edge": "start"
     },
     {
-      "id": "action.nobles.value.001.1.b1.end",
-      "cue": "action.nobles.value.001.1",
-      "beat": "action.nobles.value.001.1.b1",
+      "id": "action.nobles.intro.001.b2.end",
+      "cue": "action.nobles.intro.001",
+      "beat": "action.nobles.intro.001.b2",
       "edge": "end"
     },
     {
-      "id": "action.nobles.value.001.2.start",
-      "cue": "action.nobles.value.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.nobles.value.001.2.end",
-      "cue": "action.nobles.value.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.nobles.value.001.2.b1.start",
-      "cue": "action.nobles.value.001.2",
-      "beat": "action.nobles.value.001.2.b1",
+      "id": "action.nobles.intro.001.b3.start",
+      "cue": "action.nobles.intro.001",
+      "beat": "action.nobles.intro.001.b3",
       "edge": "start"
     },
     {
-      "id": "action.nobles.value.001.2.b1.end",
-      "cue": "action.nobles.value.001.2",
-      "beat": "action.nobles.value.001.2.b1",
+      "id": "action.nobles.intro.001.b3.end",
+      "cue": "action.nobles.intro.001",
+      "beat": "action.nobles.intro.001.b3",
       "edge": "end"
     },
     {
@@ -9050,11 +9030,15 @@
         {
           "key": "点一下",
           "text": "0.80"
+        },
+        {
+          "key": "依次点三块",
+          "text": "第二句 0.60 / 1.80 / 3.00"
         }
       ],
       "script": {
-        "story": "【我们再介绍一下贵族板块】",
-        "note": "【介绍贵族板块】\n  贵族供应堆 3 块：noble_1/0001（4白+4红）、noble_4/0004（4蓝+4白）、noble_5/0005（3黑+3红+3白）。\n  贵族不是买来的牌，是条件达成后自动到你面前的板块。\n  贵族只摆在规则成立的位置：玩家B 没有发展卡，因此不摆贵族；贵族合法性以“发展卡真能满足条件”为准。",
+        "story": "【我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。】",
+        "note": "【介绍贵族板块：声望与条件】\n  贵族供应堆 3 块：noble_1/0001（4白+4红）、noble_4/0004（4蓝+4白）、noble_5/0005（3黑+3红+3白）。\n  贵族不是买来的牌，是条件达成后自动到你面前的板块。\n  贵族只摆在规则成立的位置：玩家B 没有发展卡，因此不摆贵族；贵族合法性以“发展卡真能满足条件”为准。\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（本片三块：4白+4红 / 4蓝+4白 / 3黑+3红+3白）。\n  条件看的是已购买卡牌的种类和数量：点贵族、再点自己面前的发展区；这一步没有状态变化，3 张还差得远，只是说明『条件』指的是什么。",
         "enter": {
           "picture": null,
           "zones": {
@@ -9230,37 +9214,20 @@
             "space": "entity",
             "zone": "noble_market"
           }
-        }
-      ],
-      "entry": "action.cards.discount.001"
-    },
-    {
-      "id": "action.nobles.value.001.1",
-      "parent": "action.nobles.intro.001",
-      "timing": [
-        {
-          "key": "依次点三块",
-          "text": "0.60 / 1.80 / 3.00"
-        }
-      ],
-      "script": {
-        "story": "【左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件】",
-        "note": "【贵族的两个信息】\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（本片三块：4白+4红 / 4蓝+4白 / 3黑+3红+3白）。\n  ⚠ 又是同一个缺口：没有『指某个角』的指示物原语，只能把整块依次点亮。\n  【2026-09 用户指示①：加了『部位的相对坐标』+ 指示物原语】\n  原来这里只能把整张牌点亮 —— 因为高亮是「整件/整区」，而口播在说「左上角/左下角/右上角」。\n  现在 stage 的模板上有了 `part_anchors`（声望/价格/折扣/条件各自的**相对件中心**偏移，\n  世界单位、件平面内），脚本写 `{\"action\":\"point\",\"part\":\"cost\",\"indicator\":\"arrow\"}`\n  就能把箭头指到那个角上；牌被搬到哪、转多少度，指示物跟着走。\n  部位坐标只在模板里（相对件），桌面坐标仍然只属于 zone —— 两层各管各的。"
-      },
-      "events": [
+        },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_nobles_f08",
           "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.value.001.1.start"
+          "anchor": "action.nobles.intro.001.b2.start"
         },
         {
           "op": "point",
           "dur": 0.0,
           "indicator": "arrow",
           "part": "prestige",
-          "anchor": "action.nobles.value.001.1.b1.start",
+          "anchor": "action.nobles.intro.001.b2.start",
           "offset": 0.235,
           "target": {
             "space": "entity",
@@ -9273,7 +9240,7 @@
           "dur": 0.0,
           "indicator": "circle",
           "part": "prestige",
-          "anchor": "action.nobles.value.001.1.b1.start",
+          "anchor": "action.nobles.intro.001.b2.start",
           "offset": 1.235,
           "target": {
             "space": "entity",
@@ -9286,7 +9253,7 @@
           "dur": 0.0,
           "indicator": "arrow",
           "part": "condition",
-          "anchor": "action.nobles.value.001.1.b1.start",
+          "anchor": "action.nobles.intro.001.b2.start",
           "offset": 2.235,
           "target": {
             "space": "entity",
@@ -9299,39 +9266,30 @@
           "dur": 0.0,
           "indicator": "circle",
           "part": "condition",
-          "anchor": "action.nobles.value.001.1.b1.end",
+          "anchor": "action.nobles.intro.001.b2.end",
           "offset": -1.905,
           "target": {
             "space": "entity",
             "zone": "noble_market",
             "order": 0
           }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.nobles.value.001.2",
-      "parent": "action.nobles.value.001.1",
-      "timing": [],
-      "script": {
-        "story": "【也就是已购买的卡牌数量】",
-        "note": "【条件 = 已购买卡牌的种类和数量】\n  点贵族、再点自己面前的已购卡（发展区那 3 张）——『条件看的是这些牌』。\n  这一条**没有状态变化**：3 张还差得远，只是说明『条件』指的是什么。"
-      },
-      "events": [
+        },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.value.001.2.start"
+          "anchor": "action.nobles.intro.001.b3.start"
         }
       ],
-      "tree": "main"
+      "entry": "action.cards.discount.001",
+      "qa": [
+        "璀璨宝石。贵族板块左上角是它的声望值，下方是结识条件；条件看的是玩家已购买的发展卡牌的种类和数量。这样理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ]
     },
     {
       "id": "action.nobles.trigger.001.1",
-      "parent": "action.nobles.value.001.2",
+      "parent": "action.nobles.intro.001",
       "timing": [
         {
           "key": "镜头给玩家面前",
