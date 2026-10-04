@@ -469,6 +469,21 @@
       "image": "media/card/一级发展卡_黑_cutout.png",
       "role": "existing",
       "note": "实际牌组中的未建模补位卡；仅用于补齐贵族条件，不参与购买价格对账。"
+    },
+    {
+      "template_id": "card_l1_onyx_908",
+      "source_card_id": 908,
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "image": "media/card/一级发展卡_黑_cutout.png",
+      "role": "existing",
+      "note": "实际牌组中的未建模补位卡；用于 noble intro 把黑宝石条件补到 4 张。"
     }
   ]
 }

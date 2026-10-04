@@ -391,6 +391,18 @@
       },
       "source_card_id": 907,
       "image": "media/card/一级发展卡_黑_cutout.png"
+    },
+    "card_l1_onyx_908": {
+      "level": 1,
+      "bonus": "onyx",
+      "prestige": 0,
+      "cost": {
+        "sapphire": 2,
+        "ruby": 1,
+        "diamond": 2
+      },
+      "source_card_id": 908,
+      "image": "media/card/一级发展卡_黑_cutout.png"
     }
   },
   "cost_by_template": {
@@ -539,6 +551,11 @@
       "sapphire": 2,
       "ruby": 1,
       "diamond": 2
+    },
+    "card_l1_onyx_908": {
+      "sapphire": 2,
+      "ruby": 1,
+      "diamond": 2
     }
   },
   "prestige_by_template": {
@@ -576,7 +593,8 @@
     "card_l1_sapphire_904": 0,
     "card_l1_onyx_905": 0,
     "card_l1_onyx_906": 0,
-    "card_l1_onyx_907": 0
+    "card_l1_onyx_907": 0,
+    "card_l1_onyx_908": 0
   },
   "bonus": "每张卡右上角的折扣宝石 = bonus 字段（diamond/sapphire/emerald/ruby/onyx；<gem> 映射同动画本体）。",
   "cost_note": "价格来自卡面左下角圆盘；键用宝石名字：diamond=白、sapphire=蓝、emerald=绿、ruby=红、onyx=黑。validate_anim_rules 用 cost_by_template 做买牌对账。",

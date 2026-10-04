@@ -4932,7 +4932,7 @@
       ],
       "script": {
         "story": "【这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块】贵族板块在 cue 一开始就摆出：本片按 2 人局，抽 3 块不同的贵族。本 cue 用 screen mask 展示这三块贵族，真实 noble_market 状态从 cue24 回到桌面继续。",
-        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，用 noble_1/4/5 建立真实状态（贵族_0001/0004/0005）。\n这一 cue 的画面改为 screen mask：scene_backdrop 打底 + noble_intro_1/2/3 三张贵族板块图，不拍桌子；真实实体仍在状态里，cue24 切回桌面后显示在 noble_market。\n这 3 块贵族的条件将分别由后文 A 的 4白4红、4蓝4白、3黑3红3白发展卡合法满足。\n\n  【继承关系】本 cue 继承上一 cue 的完整主桌状态；后续 setup.nobles.001.2 / setup.nobles.002 继续继承本 cue 的 noble_market 状态。",
+        "note": "贵族在 t=0 第一帧就出现：本片按 2 人局抽 3 块，用 noble_1/4/5 建立真实状态（贵族_0001/0004/0005）。\n这一 cue 的画面改为 screen mask：scene_backdrop 打底 + noble_intro_1/2/3 三张贵族板块图，不拍桌子；真实实体仍在状态里，cue24 切回桌面后显示在 noble_market。\n这 3 块贵族的条件将分别由后文 A 的 4黑4红、4蓝4白、3黑3红3白发展卡合法满足。\n\n  【继承关系】本 cue 继承上一 cue 的完整主桌状态；后续 setup.nobles.001.2 / setup.nobles.002 继续继承本 cue 的 noble_market 状态。",
         "enter": {
           "picture": null,
           "zones": {
@@ -9000,13 +9000,13 @@
       "transition": "overlay",
       "timing": [
         {
-          "key": "左侧 mask 贵族 / 右侧 4白+4红已购牌",
+          "key": "左 mask 贵族 / 右 4黑+4红已购牌",
           "text": "整条 cue"
         }
       ],
       "script": {
         "story": "【我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。】",
-        "note": "【贵族板块：左边 mask，右边玩家发展区已有 4 白 + 4 红】\n  右侧 player_development 里补出足够的发展卡：4 白（含 canonical 的 card_l1_diamond_18）+ 4 红，\n  正好满足左侧贵族_0001 的 4白+4红条件。7 张真卡从 deck_level_1 垫牌替换而来，卡身份唯一。\n  左上角用一个 circle（noble_prestige，已加大）圈声望；下方用 condition_2 框住 2 种宝石的条件区。\n  讲到“已购买的卡牌数量”时高亮右侧发展区里的已购卡，让客人把条件和实体卡对应起来；\n  全程不切镜头、不隐藏 mask。",
+        "note": "【贵族板块：左边 mask，右边玩家发展区已有 4 黑 + 4 红】\n  右侧 player_development 里补出 4 黑 + 4 红，正好满足左侧贵族_0001 的 4黑+4红条件；\n  canonical 的 card_l1_diamond_18 仍在白列，但不影响这条条件（镜头也取在右半边的红/黑列）。\n  8 张真卡从 deck_level_1 垫牌替换而来，卡身份唯一。\n  左上角用一个 circle（noble_prestige，已加大）圈声望；下方用 condition_2 框住 2 种宝石的条件区。\n  讲到“已购买的卡牌数量”时高亮右侧发展区里的已购卡；全程不切镜头、不隐藏 mask。",
         "enter": {
           "picture": null,
           "zones": {
@@ -9014,7 +9014,7 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 28
+              "count": 27
             },
             "deck_level_2": {
               "count": 26
@@ -9077,24 +9077,6 @@
                   "face": "up"
                 },
                 {
-                  "template": "card_l1_diamond_20",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_22",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_24",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
                   "template": "card_l1_ruby_33",
                   "palette": "card_level_1",
                   "count": 1,
@@ -9114,6 +9096,30 @@
                 },
                 {
                   "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_908",
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
@@ -9135,7 +9141,7 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 28
+              "count": 27
             },
             "deck_level_2": {
               "count": 26
@@ -9198,24 +9204,6 @@
                   "face": "up"
                 },
                 {
-                  "template": "card_l1_diamond_20",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_22",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_24",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
                   "template": "card_l1_ruby_33",
                   "palette": "card_level_1",
                   "count": 1,
@@ -9238,6 +9226,30 @@
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_908",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
@@ -9254,7 +9266,7 @@
         {
           "op": "destroy",
           "dur": 0.0,
-          "count": 7,
+          "count": 8,
           "anchor": "action.nobles.intro.001.start",
           "offset": 0.0,
           "target": {
@@ -9263,69 +9275,6 @@
             "template": "blank_card_1",
             "palette": "card_level_1",
             "concept": "development_card_level_1"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
-          "anchor": "action.nobles.intro.001.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_20",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
-          "anchor": "action.nobles.intro.001.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_22",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
-          "anchor": "action.nobles.intro.001.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_24",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
           }
         },
         {
@@ -9408,6 +9357,90 @@
               {
                 "key": "bonus",
                 "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_905",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_906",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_907",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_908",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
               }
             ]
           }
@@ -9523,8 +9556,8 @@
       "parent": "action.nobles.trigger.001.1",
       "timing": [
         {
-          "key": "补 4 蓝 + 3 黑",
-          "text": "0.00 / 1.24"
+          "key": "补 3 白 + 4 蓝",
+          "text": "0.00 / 0.92"
         },
         {
           "key": "点发展区、拿贵族",
@@ -9533,7 +9566,7 @@
       ],
       "script": {
         "story": "【如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件】",
-        "note": "【把「满足条件」这一步补齐，并拿取第一块贵族】\n  上一条 noble intro 已经在玩家A发展区摆出 4 白 + 4 红（满足 noble_1 的 4白4红）。\n  本 cue 再从 deck_level_1 移除 7 张垫牌，补 4 张一级蓝 + 3 张一级黑，凑齐 4白+4红+4蓝+3黑，\n  同时满足三块贵族的条件（4白4红 / 4蓝4白 / 3黑3红3白）。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌。\n  · 条件一满足，必须在同一回合结束立即获得贵族：本 cue 在补牌后从供应堆搬 1 块 noble_1 到 player_nobles。\n  剩余 noble_4/noble_5 仍满足条件，留待后续回合各拿一块。",
+        "note": "【把「满足条件」这一步补齐，并拿取第一块贵族】\n  上一条 noble intro 已经在玩家A发展区摆出 4 红 + 4 黑（满足 noble_1 的 4黑4红）。\n  本 cue 再从 deck_level_1 移除 7 张垫牌，补 3 张一级白 + 4 张一级蓝，凑成 4白+4红+4蓝+4黑，\n  同时满足三块贵族实际条件（4黑4红 / 4蓝4白 / 3黑3红3白）。\n  · create 显式 to:face_up：这些是『已购买并公开』的牌。\n  · 条件一满足，必须在同一回合结束立即获得贵族：本 cue 在补牌后从供应堆搬 1 块 noble_1 到 player_nobles。\n  剩余 noble_4/noble_5 仍满足条件，留待后续回合各拿一块。",
         "exit": {
           "zones": {
             "player_development": {
@@ -9627,11 +9660,17 @@
                   "palette": "card_level_1",
                   "count": 1,
                   "face": "up"
+                },
+                {
+                  "template": "card_l1_onyx_908",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
                 }
               ]
             },
             "deck_level_1": {
-              "count": 21
+              "count": 20
             },
             "noble_market": {
               "count": 2
@@ -9661,9 +9700,72 @@
           "op": "create",
           "dur": 0.0,
           "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.235,
           "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.315,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.395,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.475,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.915,
           "target": {
             "space": "entity",
             "zone": "player_development",
@@ -9676,9 +9778,9 @@
           "op": "create",
           "dur": 0.0,
           "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.3150000000000002,
           "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 0.995,
           "target": {
             "space": "entity",
             "zone": "player_development",
@@ -9691,9 +9793,9 @@
           "op": "create",
           "dur": 0.0,
           "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.395,
           "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.075,
           "target": {
             "space": "entity",
             "zone": "player_development",
@@ -9706,58 +9808,13 @@
           "op": "create",
           "dur": 0.0,
           "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.475,
           "to": "face_up",
+          "anchor": "action.nobles.trigger.001.2.b1.start",
+          "offset": 1.155,
           "target": {
             "space": "entity",
             "zone": "player_development",
             "template": "card_l1_sapphire_904",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.5550000000000002,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_onyx_905",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.6350000000000002,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_onyx_906",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "action.nobles.trigger.001.2.b1.start",
-          "offset": 1.715,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_onyx_907",
             "palette": "card_level_1",
             "concept": "development_card_level_1"
           }
@@ -9792,7 +9849,7 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A在结束回合时，发展区有4张白、4张红、4张蓝、3张黑；贵族供应堆3块（4白4红、4蓝4白、3黑3红3白）的条件都被满足。按照规则，他立即从中获得1块（4白4红），另外2块留在供应堆。这个结算是否合法？"
+        "两人局。玩家A在结束回合时，发展区有4张白、4张红、4张蓝、4张黑；贵族供应堆3块（4黑4红、4蓝4白、3黑3红3白）的条件都被满足。按照规则，他立即从中获得1块（4黑4红），另外2块留在供应堆。这个结算是否合法？"
       ]
     },
     {
@@ -9844,7 +9901,7 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A面前的4白4红4蓝3黑发展卡已经让他在上一回合结束时获得了1块贵族（4白4红）；贵族供应堆还剩2块（4蓝4白、3黑3红3白），条件仍然满足。这个局面是否合法？"
+        "两人局。玩家A面前的4白4红4蓝4黑发展卡已经让他在上一回合结束时获得了1块贵族（4黑4红）；贵族供应堆还剩2块（4蓝4白、3黑3红3白），条件仍然满足。这个局面是否合法？"
       ]
     },
     {
@@ -9963,7 +10020,7 @@
       "timing": [],
       "script": {
         "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
-        "note": "【同时满足多名贵族】\n  规则说明，**没有状态变化**：桌上剩的两块贵族（0004 4蓝+4白、0005 3黑+3红+3白）都被 A 的\n  4白+4红+4蓝+3黑发展卡满足 → 现在就是『同时满足多名』的局面，两块一起点出来。\n  顺带点一下市场：这句的前提是『购买一张发展卡牌后』。"
+        "note": "【同时满足多名贵族】\n  规则说明，**没有状态变化**：桌上剩的两块贵族（0004 4蓝+4白、0005 3黑+3红+3白）都被 A 的\n  4白+4红+4蓝+4黑发展卡满足 → 现在就是『同时满足多名』的局面，两块一起点出来。\n  顺带点一下市场：这句的前提是『购买一张发展卡牌后』。"
       },
       "events": [
         {
@@ -9982,7 +10039,7 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A已经合法拿到1块4白4红贵族，发展区仍有4白4红4蓝3黑；贵族供应堆还剩2块（4蓝4白、3黑3红3白），都满足A的条件。这个局面是否合法？"
+        "两人局。玩家A已经合法拿到1块4黑4红贵族，发展区仍有4白4红4蓝4黑；贵族供应堆还剩2块（4蓝4白、3黑3红3白），都满足A的条件。这个局面是否合法？"
       ]
     },
     {
@@ -10062,7 +10119,7 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A在结束回合时发展区有4白4红4蓝3黑，贵族供应堆剩2块（4蓝4白、3黑3红3白）且都满足条件。按照规则，他从中选择1块（4蓝4白）自动获得，另1块留下。这个结算是否合法？"
+        "两人局。玩家A在结束回合时发展区有4白4红4蓝4黑，贵族供应堆剩2块（4蓝4白、3黑3红3白）且都满足条件。按照规则，他从中选择1块（4蓝4白）自动获得，另1块留下。这个结算是否合法？"
       ]
     },
     {
@@ -10166,7 +10223,7 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A已有2块贵族，发展区有4白4红4蓝3黑；贵族供应堆还剩1块3黑3红3白贵族且条件满足。下一个回合结束时，A再自动获得这最后1块。这个结算是否合法？"
+        "两人局。玩家A已有2块贵族，发展区有4白4红4蓝4黑；贵族供应堆还剩1块3黑3红3白贵族且条件满足。下一个回合结束时，A再自动获得这最后1块。这个结算是否合法？"
       ]
     },
     {
@@ -10193,7 +10250,7 @@
       ],
       "tree": "main",
       "qa": [
-        "两人局。玩家A发展区有4白4红4蓝3黑，已经分三个回合获得供应堆全部3块贵族（4白4红、4蓝4白、3黑3红3白）；玩家B没有任何发展卡，也没有贵族。这个最终局面是否合法？"
+        "两人局。玩家A发展区有4白4红4蓝4黑，已经分三个回合获得供应堆全部3块贵族（4黑4红、4蓝4白、3黑3红3白）；玩家B没有任何发展卡，也没有贵族。这个最终局面是否合法？"
       ]
     },
     {
@@ -10232,7 +10289,7 @@
       "timing": [],
       "script": {
         "story": "【当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值】",
-        "note": "【总结（三）：条件够了就结识贵族】\n  规则总结，没有状态变化：点发展区、再点自己面前的三块贵族。\n  本节结束时：发展区 8 张（4白代表卡 + 4红代表卡）、贵族 3 块（供应堆空了）—— 下一节从这里继续。\n"
+        "note": "【总结（三）：条件够了就结识贵族】\n  规则总结，没有状态变化：点发展区、再点自己面前的三块贵族。\n  本节结束时：发展区 16 张（4白 + 4红 + 4蓝 + 4黑）、贵族 3 块（供应堆空了）—— 下一节从这里继续。"
       },
       "events": [
         {
@@ -10516,7 +10573,7 @@
         "exit": {
           "zones": {
             "deck_level_1": {
-              "count": 20
+              "count": 19
             },
             "gold_supply": {
               "count": 3

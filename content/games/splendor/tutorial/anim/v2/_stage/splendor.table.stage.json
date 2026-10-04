@@ -2599,6 +2599,47 @@
           "r": 0.085
         }
       ]
+    },
+    {
+      "id": "card_l1_onyx_908",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_黑_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "note": "一级发展卡（黑折扣，声望 0；未建模补位卡，用于把贵族条件补成 4 黑）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.220668,
+          "dy": 0.357053,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.3,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
     }
   ],
   "anchors": [
@@ -2803,10 +2844,10 @@
       "zones": [
         "player_development"
       ],
-      "fill": 0.9,
-      "view_offset_x": -0.961,
-      "view_offset_z": 0.382,
-      "desc": "玩家A发展区偏到画面右侧、镜头下移；给左侧 mask 留位"
+      "fill": 1.0,
+      "view_offset_x": 0.482,
+      "view_offset_z": 0.36,
+      "desc": "玩家A发展区（红/黑列）偏到画面右侧；给左侧 mask 留位"
     },
     {
       "id": "shot_nobles_f07143",
