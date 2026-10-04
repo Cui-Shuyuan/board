@@ -26,7 +26,7 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
-PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label",
+PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label", "magnifier",
                      "overlay_show", "overlay_hide"}
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
 # 对象接口：世界/屏幕对象的原语统一指向一个 target。
@@ -399,6 +399,40 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: hide needs screen target")
         elif op == "wait":
             pass
+        elif op == "magnifier":
+            if ev.get("space") == "screen" or (ev.get("overlay") and not ev.get("zone")):
+                report.error(f"{where}: magnifier only supports an entity target")
+            elif not ev.get("zone"):
+                report.error(f"{where}: magnifier needs zone")
+            rect = ev.get("rect")
+            if not isinstance(rect, dict):
+                report.error(f"{where}: magnifier needs rect")
+            else:
+                for key in ("x", "y", "w", "h"):
+                    if key in rect:
+                        try:
+                            float(rect[key])
+                        except (TypeError, ValueError):
+                            report.error(f"{where}: magnifier rect.{key} must be numeric")
+                for key in ("w", "h"):
+                    if key in rect:
+                        try:
+                            if float(rect[key]) <= 0:
+                                report.error(f"{where}: magnifier rect.{key} must be > 0")
+                        except (TypeError, ValueError):
+                            pass
+            for key in ("zoom", "padding"):
+                raw = ev.get(key)
+                if raw is None:
+                    continue
+                try:
+                    if float(raw) <= 0:
+                        report.error(f"{where}: magnifier {key} must be > 0")
+                except (TypeError, ValueError):
+                    report.error(f"{where}: magnifier {key} must be numeric")
+            ident = ev.get("id") if "id" in ev else ev.get("overlay")
+            if ident is not None and not isinstance(ident, str):
+                report.error(f"{where}: magnifier id must be a string")
         elif op == "label":
             if "text" not in ev or ev.get("text") is None:
                 report.error(f"{where}: label needs text")

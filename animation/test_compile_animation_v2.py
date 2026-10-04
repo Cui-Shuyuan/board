@@ -170,6 +170,35 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("purchase_card", clips[0]["overlay"])
         self.assertEqual("cost", clips[0]["part"])
 
+    def test_magnifier_compiles_to_live_lens_clip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "magnifier",
+                "at": 0.9,
+                "dur": 0.2,
+                "id": "lens",
+                "zoom": 1.3,
+                "padding": 0.1,
+                "rect": {"x": 0.6, "y": 0.1, "w": 0.3, "h": 0.3},
+                "target": {"space": "entity", "zone": "showcase"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "magnifier_show"]
+        self.assertEqual(1, len(clips), clips)
+        clip = clips[0]
+        self.assertEqual("screen", clip["object_space"])
+        self.assertEqual("lens", clip["overlay"])
+        self.assertAlmostEqual(0.6, clip["mag_x"])
+        self.assertAlmostEqual(0.3, clip["mag_w"])
+        self.assertGreater(clip["mag_ortho_size"], 0.0)
+
+        resolution = [r for r in cue["pointer_resolution"] if r.get("op") == "magnifier"]
+        self.assertEqual(1, len(resolution), resolution)
+        self.assertEqual(["sample_card_1|card_level_1#1"], resolution[0]["item_ids"])
+
     def test_camera_shot_view_offset_shifts_frame_center(self):
         stage = {
             "id": "offset_test",

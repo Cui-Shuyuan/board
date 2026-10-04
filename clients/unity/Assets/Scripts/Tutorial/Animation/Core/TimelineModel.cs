@@ -133,6 +133,26 @@ namespace BoardGameTutorial.Animation
         string IAnimVisualObject.Indicator { get { return Indicator; } set { Indicator = value; } }
     }
 
+    /// <summary>
+    /// A magnification lens: a viewport rect plus the world-space region that
+    /// a dedicated camera renders into it each frame.  Because the lens shows
+    /// the live world, highlighted items stay highlighted inside the lens and
+    /// items flying out of the region also fly out of the lens.
+    /// </summary>
+    public sealed class VisualMagnifierState
+    {
+        public string Id;
+        public float X;
+        public float Y;
+        public float W;
+        public float H;
+        public float CenterX;
+        public float CenterZ;
+        public float OrthoSize;
+        public int Layer;
+        public float Alpha = 1f;
+    }
+
     public sealed class FrameState
     {
         public string Picture;
@@ -140,6 +160,7 @@ namespace BoardGameTutorial.Animation
         public readonly List<VisualItemState> Items = new List<VisualItemState>();
         public readonly List<VisualAnnotationState> Annotations = new List<VisualAnnotationState>();
         public readonly List<VisualOverlayState> Overlays = new List<VisualOverlayState>();
+        public readonly List<VisualMagnifierState> Magnifiers = new List<VisualMagnifierState>();
 
         public VisualItemState Find(string id)
         {
@@ -465,6 +486,43 @@ namespace BoardGameTutorial.Animation
                         VisualClipPlayer.Apply(existing, clip, t);
                 }
                 foreach (var ov in active.Values) frame.Overlays.Add(ov);
+            }
+
+            // Magnifier lenses are independent screen-space viewports.  They
+            // persist from their show clip until an optional hide clip.
+            if (cue.clips != null)
+            {
+                var activeMagnifiers = new Dictionary<string, VisualMagnifierState>(StringComparer.Ordinal);
+                foreach (var clip in cue.clips)
+                {
+                    if (clip == null) continue;
+                    if (clip.kind != "magnifier_show" && clip.kind != "magnifier_hide") continue;
+                    float start = clip.at + Math.Max(0f, clip.lead);
+                    if (t + 1e-6f < start) continue;
+                    string id = clip.overlay ?? "";
+                    if (string.IsNullOrEmpty(id)) continue;
+                    if (clip.kind == "magnifier_hide")
+                    {
+                        activeMagnifiers.Remove(id);
+                        continue;
+                    }
+                    float alpha = 1f;
+                    if (clip.dur > 0f) alpha = Clamp01((t - start) / clip.dur);
+                    activeMagnifiers[id] = new VisualMagnifierState
+                    {
+                        Id = id,
+                        X = clip.mag_x,
+                        Y = clip.mag_y,
+                        W = clip.mag_w,
+                        H = clip.mag_h,
+                        CenterX = clip.mag_center_x,
+                        CenterZ = clip.mag_center_z,
+                        OrthoSize = clip.mag_ortho_size,
+                        Layer = clip.layer,
+                        Alpha = alpha,
+                    };
+                }
+                foreach (var m in activeMagnifiers.Values) frame.Magnifiers.Add(m);
             }
 
             BuildAnnotations(cue, stage, frame, byId, t);

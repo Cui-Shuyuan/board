@@ -312,9 +312,14 @@ namespace UnityEngine
     public class RenderTexture : Texture
     {
         public static RenderTexture active;
+        public RenderTexture(int width, int height, int depth) { }
+        public RenderTexture(int width, int height, int depth, RenderTextureFormat format) { }
         public static RenderTexture GetTemporary(int width, int height, int depth) => null;
         public static RenderTexture GetTemporary(int width, int height, int depth, RenderTextureFormat format) => null;
         public static void ReleaseTemporary(RenderTexture rt) { }
+        public FilterMode filterMode;
+        public TextureWrapMode wrapMode;
+        public void Release() { }
     }
 
     public enum RenderTextureFormat { ARGB32, RGB24, Default }
@@ -402,6 +407,9 @@ namespace UnityEngine
         public RenderTexture targetTexture;
         public float depth;
         public Rect rect;
+        public int cullingMask;
+        public bool allowHDR;
+        public bool allowMSAA;
         public void Render() { }
         public bool orthographic;
         public float orthographicSize;
@@ -552,6 +560,14 @@ namespace UnityEngine
 
     public class GUISkin { public GUIStyle label; public GUIStyle box; public GUIStyle button; }
 
+    public enum ScaleMode { StretchToFill, ScaleAndCrop, ScaleToFit }
+    public enum EventType { Layout, Repaint, MouseDown, MouseUp, KeyDown, KeyUp, Ignore, Used }
+    public class Event
+    {
+        public static Event current;
+        public EventType type;
+    }
+
     public static class GUI
     {
         public static GUISkin skin = new GUISkin();
@@ -564,6 +580,9 @@ namespace UnityEngine
         public static void Box(Rect r, GUIContent content) { }
         public static bool Button(Rect r, string text) => false;
         public static void DrawTexture(Rect r, Texture2D tex) { }
+        public static void DrawTexture(Rect r, Texture tex, ScaleMode mode) { }
+        public static void DrawTexture(Rect r, Texture tex, ScaleMode mode, bool alphaBlend) { }
+        public static void DrawTexture(Rect r, Texture tex, ScaleMode mode, bool alphaBlend, float imageAspect, Color color, float borderWidth, float borderRadius) { }
     }
 
     public class WaitForSeconds : YieldInstruction { public WaitForSeconds(float seconds) { } }

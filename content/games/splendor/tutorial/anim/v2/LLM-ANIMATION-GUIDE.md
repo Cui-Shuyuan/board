@@ -204,6 +204,30 @@ overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里
 不要按 cue 单独调字号或加框；如果文字太长，优先缩短文案或调整槽位宽高。
 Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
+### 2.3 放大镜：放大桌面上的一部分实体
+
+`magnifier` 把目标实体所在的世界区域**实时**渲染到屏幕上的放大镜 rect 里。
+它不是截图或影子副本：桌面实体高亮 / 变大时，放大镜里看到的是同一帧的同一个实体；
+实体被 `transfer` 飞走时，放大镜里的那件也会同时飞走。
+
+```json
+{ "op": "magnifier", "anchor": "<cue>.start", "offset": 4.6,
+  "id": "magnifier_nobles",
+  "target": { "space": "entity", "zone": "noble_market" },
+  "rect": { "x": 0.60, "y": 0.16, "w": 0.34, "h": 0.34 },
+  "zoom": 1.25, "padding": 0.16, "layer": 10 }
+```
+
+规则：
+
+- 只支持 `target.space="entity"`；取 `zone` + 选择器匹配到的全部实体，
+  按它们的 world 包围盒确定镜头中心，再生成 lens 参数。
+- `rect` 是屏幕比例（左上角原点）；`zoom` 控制放大倍率，`padding` 是包围盒外扩的世界单位。
+- `layer` 用于同一 cue 内多个放大镜的前后层叠；`id` 省略时默认 `magnifier`。
+- 可选 `dur`（秒）：放大镜淡入时长；省略时立即出现。放大镜随 cue 结束消失。
+- `magnifier` 是纯表现原语，不改变逻辑状态；桌面对象的高亮 / 飞牌仍必须由
+  `highlight` / `transfer` 等原语自己声明，放大镜只负责把它们实时放大给观众看。
+
 ## 3. 时间：只写 anchor + offset
 
 所有事件（包括 camera）都不要再写裸 `at`：

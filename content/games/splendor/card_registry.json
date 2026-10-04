@@ -484,6 +484,19 @@
       "image": "media/card/一级发展卡_黑_cutout.png",
       "role": "existing",
       "note": "实际牌组中的未建模补位卡；用于 noble intro 把黑宝石条件补到 4 张。"
+    },
+    {
+      "template_id": "card_l2_onyx_909",
+      "source_card_id": 909,
+      "level": 2,
+      "bonus": "onyx",
+      "prestige": 2,
+      "cost": {
+        "diamond": 5
+      },
+      "image": "media/card/二级发展卡_黑_cutout.png",
+      "role": "existing",
+      "note": "未建模补位卡；用于 noble choice 买牌后的二级黑市场补位。"
     }
   ]
 }

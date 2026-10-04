@@ -69,6 +69,15 @@ namespace BoardGameTutorial
             public string root;
         }
 
+        private sealed class MagnifierView
+        {
+            public GameObject Go;
+            public Camera Cam;
+            public RenderTexture Rt;
+            public int Width;
+            public int Height;
+        }
+
         private TutorialCueDoc doc;
         private string gameRoot;
         private AudioSource audioSource;
@@ -91,6 +100,9 @@ namespace BoardGameTutorial
         private GUIStyle overlayLabelStyle;
         private GUIStyle labelShadowStyle;
         private Texture2D overlayPanelTexture;
+        private Texture2D magnifierMaskTexture;
+        private readonly Dictionary<string, MagnifierView> magnifierViews = new Dictionary<string, MagnifierView>(StringComparer.Ordinal);
+        private int magnifierRenderedFrame = -1;
         private static readonly Vector2[] SubtitleOutlineOffsets =
         {
             new Vector2(-2f, -2f),
@@ -774,6 +786,7 @@ namespace BoardGameTutorial
             //   6. debug HUD (only in debug mode)
             var frame = v2AnimPlayer != null ? v2AnimPlayer.CurrentFrame : null;
             DrawScreenOverlays(frame);
+            DrawMagnifiers(frame);
             DrawAnnotations(frame);
             DrawSubtitle();
 
@@ -903,6 +916,140 @@ namespace BoardGameTutorial
                 GUI.color = savedColor;
             }
             GUI.color = savedColor;
+        }
+
+        private void DrawMagnifiers(FrameState frame)
+        {
+            if (frame == null || frame.Magnifiers == null || frame.Magnifiers.Count == 0) return;
+            if (v2AnimPlayer == null || !v2AnimPlayer.IsLoaded) return;
+            if (Event.current == null || Event.current.type != EventType.Repaint) return;
+            if (magnifierRenderedFrame == Time.frameCount) return;
+            magnifierRenderedFrame = Time.frameCount;
+
+            var mainCam = v2AnimPlayer.Camera;
+            if (mainCam == null) return;
+
+            var ordered = new List<VisualMagnifierState>(frame.Magnifiers);
+            ordered.Sort((a, b) => a.Layer.CompareTo(b.Layer));
+            var alive = new HashSet<string>(StringComparer.Ordinal);
+            var mask = GetMagnifierMaskTexture();
+
+            foreach (var m in ordered)
+            {
+                if (m == null || m.Alpha <= 0.001f) continue;
+                float px = m.X * Screen.width;
+                float py = m.Y * Screen.height;
+                float pw = Mathf.Max(24f, m.W * Screen.width);
+                float ph = Mathf.Max(24f, m.H * Screen.height);
+                Rect rect = new Rect(px, py, pw, ph);
+
+                int texW = Mathf.Clamp(Mathf.RoundToInt(pw), 64, 1024);
+                int texH = Mathf.Clamp(Mathf.RoundToInt(ph), 64, 1024);
+                var view = GetMagnifierView(m.Id, texW, texH);
+                if (view == null) continue;
+
+                view.Cam.cullingMask = mainCam.cullingMask;
+                view.Cam.clearFlags = CameraClearFlags.SolidColor;
+                view.Cam.backgroundColor = mainCam.backgroundColor;
+                view.Cam.aspect = (float)view.Width / Mathf.Max(1, view.Height);
+                view.Cam.orthographic = true;
+                view.Cam.orthographicSize = Mathf.Max(0.05f, m.OrthoSize);
+                float distance = Mathf.Max(0.1f, m.OrthoSize) * 3.2f;
+                view.Cam.transform.position = new Vector3(m.CenterX, distance, m.CenterZ);
+                view.Cam.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+                view.Cam.targetTexture = view.Rt;
+                view.Cam.Render();
+
+                var savedColor = GUI.color;
+                GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
+                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, false);
+                if (mask != null) GUI.DrawTexture(rect, mask, ScaleMode.StretchToFill, false);
+                GUI.color = savedColor;
+                alive.Add(m.Id);
+            }
+
+            var stale = new List<string>();
+            foreach (var kv in magnifierViews)
+                if (!alive.Contains(kv.Key)) stale.Add(kv.Key);
+            foreach (var id in stale)
+            {
+                var view = magnifierViews[id];
+                if (view != null)
+                {
+                    if (view.Cam != null) view.Cam.targetTexture = null;
+                    if (view.Rt != null) view.Rt.Release();
+                    if (view.Go != null) Destroy(view.Go);
+                }
+                magnifierViews.Remove(id);
+            }
+        }
+
+        private MagnifierView GetMagnifierView(string id, int width, int height)
+        {
+            if (string.IsNullOrEmpty(id)) id = "magnifier";
+            if (!magnifierViews.TryGetValue(id, out var view) || view == null)
+            {
+                var go = new GameObject("TutorialMagnifier_" + id);
+                go.transform.SetParent(transform, false);
+                var cam = go.AddComponent<Camera>();
+                cam.enabled = false;
+                cam.orthographic = true;
+                cam.clearFlags = CameraClearFlags.SolidColor;
+                cam.allowHDR = false;
+                cam.allowMSAA = false;
+                cam.depth = -100f;
+                view = new MagnifierView
+                {
+                    Go = go,
+                    Cam = cam,
+                    Rt = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32),
+                    Width = width,
+                    Height = height,
+                };
+                view.Rt.filterMode = FilterMode.Bilinear;
+                view.Rt.wrapMode = TextureWrapMode.Clamp;
+                cam.targetTexture = view.Rt;
+                magnifierViews[id] = view;
+            }
+            else if (view.Width != width || view.Height != height)
+            {
+                if (view.Rt != null) view.Rt.Release();
+                view.Rt = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
+                view.Rt.filterMode = FilterMode.Bilinear;
+                view.Rt.wrapMode = TextureWrapMode.Clamp;
+                view.Width = width;
+                view.Height = height;
+                if (view.Cam != null) view.Cam.targetTexture = view.Rt;
+            }
+            return view;
+        }
+
+        private Texture2D GetMagnifierMaskTexture()
+        {
+            if (magnifierMaskTexture != null) return magnifierMaskTexture;
+            const int size = 256;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+            var outside = new Color(0.09f, 0.10f, 0.13f, 1f);
+            var rim = new Color(0.95f, 0.82f, 0.36f, 1f);
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = (x + 0.5f) / size * 2f - 1f;
+                    float dy = (y + 0.5f) / size * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    Color c;
+                    if (d <= 0.455f) c = new Color(1f, 1f, 1f, 0f);
+                    else if (d <= 0.5f) c = rim;
+                    else c = outside;
+                    tex.SetPixel(x, y, c);
+                }
+            }
+            tex.Apply();
+            magnifierMaskTexture = tex;
+            return tex;
         }
 
         private void DrawAnnotations(FrameState frame)

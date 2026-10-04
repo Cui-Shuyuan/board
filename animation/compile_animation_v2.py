@@ -1215,6 +1215,53 @@ class Compiler:
                     "shot": shot_id,
                     "frame": frame,
                 })
+            elif op == "magnifier":
+                rect = ev.get("rect") or {}
+                rx = float(rect.get("x", 0.58) or 0.58)
+                ry = float(rect.get("y", 0.18) or 0.18)
+                rw = float(rect.get("w", 0.36) or 0.36)
+                rh = float(rect.get("h", 0.36) or 0.36)
+                matched = state.matching(zone, sel)
+                if not matched:
+                    raise ValueError(f"cue {cue_id}: magnifier needs at least one target item")
+                overlay_id = norm(ev.get("id") or ev.get("overlay") or "magnifier")
+                pointer_resolution.append({
+                    "event_index": event_index,
+                    "op": op,
+                    "object_space": "screen",
+                    "overlay": overlay_id,
+                    "zone": zone,
+                    "order": ev.get("order"),
+                    "matched_count": len(matched),
+                    "item_ids": [it["id"] for it in matched],
+                })
+                xs = []
+                zs = []
+                for it in matched:
+                    x, z = self.position(stage_slots, it["zone"], it["order"])
+                    r = self.template_radius(stage_id, it["template"])
+                    xs.extend([x - r, x + r])
+                    zs.extend([z - r, z + r])
+                pad = float(ev.get("padding", 0.12) or 0.12)
+                minx, maxx = min(xs) - pad, max(xs) + pad
+                minz, maxz = min(zs) - pad, max(zs) + pad
+                lens_aspect = (rw * 16.0) / max(0.001, rh * 9.0)
+                half_w = (maxx - minx) * 0.5
+                half_h = (maxz - minz) * 0.5
+                zoom = float(ev.get("zoom", 1.2) or 1.2)
+                ortho = max(0.32, half_h, half_w / max(0.2, lens_aspect)) * zoom
+                c = self.base_clip("magnifier_show", at, dur, lead, easing)
+                c.update({
+                    "object_space": "screen",
+                    "overlay": overlay_id,
+                    "mag_x": round(rx, 6), "mag_y": round(ry, 6),
+                    "mag_w": round(rw, 6), "mag_h": round(rh, 6),
+                    "mag_center_x": round((minx + maxx) * 0.5, 6),
+                    "mag_center_z": round((minz + maxz) * 0.5, 6),
+                    "mag_ortho_size": round(ortho, 6),
+                    "layer": int(ev.get("layer", 10) or 10),
+                })
+                clips.append(c)
             elif op == "show":
                 if ev.get("space") == "entity":
                     for it in self.select_items(state, zone, sel, ev.get("order")):

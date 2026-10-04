@@ -23,7 +23,7 @@ namespace BoardGameTutorial.Animation
         public static readonly string[] PresentationOps =
         {
             "show", "highlight", "point", "shape", "fade", "scale", "wait", "label",
-            "overlay_show", "overlay_hide"
+            "overlay_show", "overlay_hide", "magnifier"
         };
 
         public static bool IsStateOp(string op)
@@ -346,6 +346,15 @@ namespace BoardGameTutorial.Animation
         public float screen_h;
         public float world_x;
         public float world_z;
+
+        // Magnifier lens: viewport rect plus the world-space region it shows.
+        public float mag_x;
+        public float mag_y;
+        public float mag_w;
+        public float mag_h;
+        public float mag_center_x;
+        public float mag_center_z;
+        public float mag_ortho_size;
 
         public string picture;
         public bool picture_on;
