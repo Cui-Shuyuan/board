@@ -9572,7 +9572,7 @@
           "indicator": "circle",
           "part": "noble_prestige",
           "anchor": "action.nobles.intro.001.b1.start",
-          "offset": 3.7,
+          "offset": 2.235,
           "target": {
             "space": "screen",
             "id": "noble_explain"
@@ -9584,7 +9584,7 @@
           "part": "condition_2",
           "dur": 0.0,
           "anchor": "action.nobles.intro.001.b1.start",
-          "offset": 7.07,
+          "offset": 4.755,
           "target": {
             "space": "screen",
             "id": "noble_explain"
