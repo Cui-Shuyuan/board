@@ -1371,25 +1371,15 @@
       "edge": "end"
     },
     {
-      "id": "action.cards.discount.003.3.start",
-      "cue": "action.cards.discount.003.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.discount.003.3.end",
-      "cue": "action.cards.discount.003.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.discount.003.3.b1.start",
-      "cue": "action.cards.discount.003.3",
-      "beat": "action.cards.discount.003.3.b1",
+      "id": "action.cards.discount.003.2.b2.start",
+      "cue": "action.cards.discount.003.2",
+      "beat": "action.cards.discount.003.2.b2",
       "edge": "start"
     },
     {
-      "id": "action.cards.discount.003.3.b1.end",
-      "cue": "action.cards.discount.003.3",
-      "beat": "action.cards.discount.003.3.b1",
+      "id": "action.cards.discount.003.2.b2.end",
+      "cue": "action.cards.discount.003.2",
+      "beat": "action.cards.discount.003.2.b2",
       "edge": "end"
     },
     {
@@ -9001,8 +8991,8 @@
       "parent": "action.cards.discount.003.1",
       "timing": [],
       "script": {
-        "story": "【但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石】",
-        "note": "【折扣不能反过来『赚钱』】\n  规则说明，**没有状态变化**：点发展区（折扣多）、再点玩家持有区（手上的宝石**没有变多**）。「没有变多」靠『点一下但什么都不发生』+ 口播表达 —— 我们仍然没有『否定』的原语。"
+        "story": "【但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费】",
+        "note": "【折扣不能反过来『赚钱』，上限就是免费】\n  规则说明，**没有状态变化**：\n  前半句：点发展区（折扣多）、再点玩家持有区（手上的宝石**没有变多**）——「没有变多」靠『点一下但什么都不发生』+ 口播表达；\n  后半句：点发展区（折扣已经够多了）、再点想买的样本牌 —— 折扣再多也不会变成『倒拿宝石』，最多到 0 元。\n  我们仍然没有『否定』的原语。"
       },
       "events": [
         {
@@ -9013,29 +9003,14 @@
           "anchor": "action.cards.discount.003.2.start"
         }
       ],
-      "tree": "main"
-    },
-    {
-      "id": "action.cards.discount.003.3",
-      "parent": "action.cards.discount.003.2",
-      "timing": [],
-      "script": {
-        "story": "【折扣的上限就是免费】",
-        "note": "【上限就是免费】\n  规则说明，**没有状态变化**：点发展区（折扣已经够多了）、再点想买的样本牌 —— 折扣再多也不会变成『倒拿宝石』，最多到 0 元。"
-      },
-      "events": [
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "action.cards.discount.003.3.b1.start",
-          "offset": 0.925
-        }
-      ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。我已有足够的发展卡折扣，折扣总数超过想买的这张牌的费用。购买时费用最低只到零，不能反过来从供应堆拿宝石。这样理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ]
     },
     {
       "id": "action.cards.public.001.1",
-      "parent": "action.cards.discount.003.3",
+      "parent": "action.cards.discount.003.2",
       "timing": [
         {
           "key": "镜头给发展区",

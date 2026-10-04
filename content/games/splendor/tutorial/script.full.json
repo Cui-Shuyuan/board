@@ -1072,24 +1072,9 @@
         {
           "id": "action.cards.discount.003.2.b1",
           "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，"
-        }
-      ]
-    },
-    {
-      "id": "action.cards.discount.003.3",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "refs": [
-        "<discount>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.cards.discount.003.3.b1",
+          "id": "action.cards.discount.003.2.b2",
           "text": "折扣的上限就是免费。"
         }
       ]

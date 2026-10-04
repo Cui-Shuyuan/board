@@ -4,190 +4,244 @@
     "text": "但如果我已购买更多的发展卡牌，",
     "words": [
       {
-        "confidence": 0.90396076,
-        "endTime": 0.425,
-        "startTime": 0.295,
+        "confidence": 0.9115402,
+        "endTime": 0.405,
+        "startTime": 0.255,
         "word": "但"
       },
       {
-        "confidence": 0.9793326,
-        "endTime": 0.605,
-        "startTime": 0.425,
+        "confidence": 0.97976816,
+        "endTime": 0.575,
+        "startTime": 0.405,
         "word": "如"
       },
       {
-        "confidence": 0.8979919,
-        "endTime": 0.865,
-        "startTime": 0.605,
+        "confidence": 0.85998005,
+        "endTime": 0.765,
+        "startTime": 0.575,
         "word": "果"
       },
       {
-        "confidence": 0.65148973,
-        "endTime": 0.955,
-        "startTime": 0.865,
+        "confidence": 0.64200544,
+        "endTime": 0.845,
+        "startTime": 0.765,
         "word": "我"
       },
       {
-        "confidence": 0.9025798,
-        "endTime": 1.085,
-        "startTime": 0.955,
+        "confidence": 0.9084056,
+        "endTime": 0.965,
+        "startTime": 0.845,
         "word": "已"
       },
       {
-        "confidence": 0.8365286,
-        "endTime": 1.235,
-        "startTime": 1.085,
+        "confidence": 0.84578854,
+        "endTime": 1.145,
+        "startTime": 0.965,
         "word": "购"
       },
       {
-        "confidence": 0.96398306,
-        "endTime": 1.405,
-        "startTime": 1.235,
+        "confidence": 0.97268105,
+        "endTime": 1.325,
+        "startTime": 1.145,
         "word": "买"
       },
       {
-        "confidence": 0.9244158,
-        "endTime": 1.615,
-        "startTime": 1.405,
+        "confidence": 0.8354635,
+        "endTime": 1.535,
+        "startTime": 1.325,
         "word": "更"
       },
       {
-        "confidence": 0.9850098,
-        "endTime": 1.765,
-        "startTime": 1.615,
+        "confidence": 0.9716681,
+        "endTime": 1.685,
+        "startTime": 1.535,
         "word": "多"
       },
       {
-        "confidence": 0.97777,
-        "endTime": 1.865,
-        "startTime": 1.765,
+        "confidence": 0.96958643,
+        "endTime": 1.795,
+        "startTime": 1.685,
         "word": "的"
       },
       {
-        "confidence": 0.98485875,
-        "endTime": 2.005,
-        "startTime": 1.865,
+        "confidence": 0.9913032,
+        "endTime": 1.955,
+        "startTime": 1.795,
         "word": "发"
       },
       {
-        "confidence": 0.90762275,
-        "endTime": 2.125,
-        "startTime": 2.005,
+        "confidence": 0.90043265,
+        "endTime": 2.085,
+        "startTime": 1.955,
         "word": "展"
       },
       {
-        "confidence": 0.9535955,
-        "endTime": 2.325,
-        "startTime": 2.125,
+        "confidence": 0.9376203,
+        "endTime": 2.285,
+        "startTime": 2.085,
         "word": "卡"
       },
       {
-        "confidence": 0.94815624,
-        "endTime": 2.665,
-        "startTime": 2.325,
+        "confidence": 0.9470967,
+        "endTime": 2.655,
+        "startTime": 2.285,
         "word": "牌，"
       }
     ]
   },
   {
     "phonemes": [],
-    "text": "也不可以反过来从供应堆中拿取宝石，\n",
+    "text": "也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。",
     "words": [
       {
-        "confidence": 0.82933563,
-        "endTime": 2.9750416,
-        "startTime": 2.9000416,
+        "confidence": 0.863511,
+        "endTime": 2.9350417,
+        "startTime": 2.8600416,
         "word": "也"
       },
       {
-        "confidence": 0.93865865,
-        "endTime": 3.0850415,
-        "startTime": 2.9750416,
+        "confidence": 0.9352494,
+        "endTime": 3.0550416,
+        "startTime": 2.9350417,
         "word": "不"
       },
       {
-        "confidence": 0.8224966,
-        "endTime": 3.2250416,
-        "startTime": 3.0850415,
+        "confidence": 0.78624773,
+        "endTime": 3.1950417,
+        "startTime": 3.0550416,
         "word": "可"
       },
       {
-        "confidence": 0.6526852,
-        "endTime": 3.3450415,
-        "startTime": 3.2250416,
+        "confidence": 0.6292156,
+        "endTime": 3.3050416,
+        "startTime": 3.1950417,
         "word": "以"
       },
       {
-        "confidence": 0.9509097,
-        "endTime": 3.5750415,
-        "startTime": 3.3450415,
+        "confidence": 0.9430144,
+        "endTime": 3.5350416,
+        "startTime": 3.3050416,
         "word": "反"
       },
       {
-        "confidence": 0.96745557,
-        "endTime": 3.7950416,
-        "startTime": 3.5750415,
+        "confidence": 0.959398,
+        "endTime": 3.7050416,
+        "startTime": 3.5350416,
         "word": "过"
       },
       {
-        "confidence": 0.9555451,
-        "endTime": 4.0250416,
-        "startTime": 3.7950416,
+        "confidence": 0.970747,
+        "endTime": 3.8950415,
+        "startTime": 3.7050416,
         "word": "来"
       },
       {
-        "confidence": 0.9654046,
-        "endTime": 4.2650414,
-        "startTime": 4.0250416,
+        "confidence": 0.9663471,
+        "endTime": 4.0950418,
+        "startTime": 3.8950415,
         "word": "从"
       },
       {
-        "confidence": 0.9403463,
-        "endTime": 4.4650416,
-        "startTime": 4.2650414,
+        "confidence": 0.93865716,
+        "endTime": 4.2750416,
+        "startTime": 4.0950418,
         "word": "供"
       },
       {
-        "confidence": 0.85458684,
-        "endTime": 4.6050415,
-        "startTime": 4.4650416,
+        "confidence": 0.88761115,
+        "endTime": 4.4250417,
+        "startTime": 4.2750416,
         "word": "应"
       },
       {
-        "confidence": 0.63994485,
-        "endTime": 4.7950416,
-        "startTime": 4.6050415,
+        "confidence": 0.7536864,
+        "endTime": 4.6050415,
+        "startTime": 4.4250417,
         "word": "堆"
       },
       {
-        "confidence": 0.90839636,
-        "endTime": 5.0050416,
-        "startTime": 4.7950416,
+        "confidence": 0.9058868,
+        "endTime": 4.805042,
+        "startTime": 4.6050415,
         "word": "中"
       },
       {
-        "confidence": 0.90501815,
-        "endTime": 5.1750417,
-        "startTime": 5.0050416,
+        "confidence": 0.9235881,
+        "endTime": 4.9750414,
+        "startTime": 4.805042,
         "word": "拿"
       },
       {
-        "confidence": 0.6946151,
-        "endTime": 5.325042,
-        "startTime": 5.1750417,
+        "confidence": 0.6948334,
+        "endTime": 5.125042,
+        "startTime": 4.9750414,
         "word": "取"
       },
       {
-        "confidence": 0.9370725,
-        "endTime": 5.4850416,
-        "startTime": 5.325042,
+        "confidence": 0.94542354,
+        "endTime": 5.3050413,
+        "startTime": 5.125042,
         "word": "宝"
       },
       {
-        "confidence": 0.96549076,
-        "endTime": 5.8050413,
-        "startTime": 5.4850416,
+        "confidence": 0.96624523,
+        "endTime": 5.7150416,
+        "startTime": 5.3050413,
         "word": "石，"
+      },
+      {
+        "confidence": 0.88949484,
+        "endTime": 6.2650414,
+        "startTime": 6.0950413,
+        "word": "折"
+      },
+      {
+        "confidence": 0.96659434,
+        "endTime": 6.4350414,
+        "startTime": 6.2650414,
+        "word": "扣"
+      },
+      {
+        "confidence": 0.94206125,
+        "endTime": 6.5250416,
+        "startTime": 6.4350414,
+        "word": "的"
+      },
+      {
+        "confidence": 0.92146426,
+        "endTime": 6.7150416,
+        "startTime": 6.5250416,
+        "word": "上"
+      },
+      {
+        "confidence": 0.85994786,
+        "endTime": 6.9550414,
+        "startTime": 6.7150416,
+        "word": "限"
+      },
+      {
+        "confidence": 0.26648885,
+        "endTime": 7.015042,
+        "startTime": 6.9550414,
+        "word": "就"
+      },
+      {
+        "confidence": 0.08638232,
+        "endTime": 7.075042,
+        "startTime": 7.015042,
+        "word": "是"
+      },
+      {
+        "confidence": 0.046401147,
+        "endTime": 7.1350417,
+        "startTime": 7.075042,
+        "word": "免"
+      },
+      {
+        "confidence": 0.13182615,
+        "endTime": 7.1950417,
+        "startTime": 7.1350417,
+        "word": "费。"
       }
     ]
   }
