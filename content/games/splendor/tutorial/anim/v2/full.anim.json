@@ -11682,51 +11682,6 @@
           "anchor": "action.nobles.source.001.start"
         },
         {
-          "op": "highlight",
-          "dur": 1.2,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "player_b_development"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 1.2,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "player_b_nobles"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 1.0,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.start",
-          "offset": 1.6,
-          "target": {
-            "space": "entity",
-            "zone": "player_development"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.6,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.start",
-          "offset": 2.2,
-          "target": {
-            "space": "entity",
-            "zone": "card_market",
-            "order": 9
-          }
-        },
-        {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 2,
@@ -11790,17 +11745,6 @@
             ]
           },
           "destination": {
-            "space": "entity",
-            "zone": "player_development"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.8,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.start",
-          "offset": 4.3,
-          "target": {
             "space": "entity",
             "zone": "player_development"
           }
