@@ -110,10 +110,10 @@ CARD_PART_ANCHORS = {
     # distinct semantic part ids; new data should write cost_1..cost_4.
     # "cost" remains only a legacy compatibility alias.
     "cost": (0.126984, 0.840909),
-    "cost_1": (0.120, 0.920),
-    "cost_2": (0.120, 0.845),
-    "cost_3": (0.120, 0.770),
-    "cost_4": (0.120, 0.700),
+    "cost_1": (0.105, 0.920),
+    "cost_2": (0.105, 0.845),
+    "cost_3": (0.105, 0.770),
+    "cost_4": (0.105, 0.700),
     "bonus": (0.825397, 0.130682),
     "condition": (0.50, 0.84),
 }
@@ -124,10 +124,10 @@ CARD_PART_SIZES = {
     # left-aligned; only the vertical extent grows with the number of discs.
     # The left/top/bottom edges deliberately project a little past the card
     # face; only the right edge stays fixed at 0.27.
-    "cost_1": (0.30, 0.22),
-    "cost_2": (0.30, 0.37),
-    "cost_3": (0.30, 0.52),
-    "cost_4": (0.30, 0.66),
+    "cost_1": (0.33, 0.22),
+    "cost_2": (0.33, 0.37),
+    "cost_3": (0.33, 0.52),
+    "cost_4": (0.33, 0.66),
     "bonus": (0.269841, 0.193182),
 }
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
