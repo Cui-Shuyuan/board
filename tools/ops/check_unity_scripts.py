@@ -320,6 +320,7 @@ namespace UnityEngine
         public FilterMode filterMode;
         public TextureWrapMode wrapMode;
         public void Release() { }
+        public void Create() { }
     }
 
     public enum RenderTextureFormat { ARGB32, RGB24, Default }

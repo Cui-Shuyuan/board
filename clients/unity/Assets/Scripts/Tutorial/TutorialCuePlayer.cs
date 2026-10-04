@@ -1051,26 +1051,35 @@ namespace BoardGameTutorial
                 {
                     Go = go,
                     Cam = cam,
-                    Rt = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32),
+                    Rt = CreateMagnifierTexture(width, height),
                     Width = width,
                     Height = height,
                 };
-                view.Rt.filterMode = FilterMode.Bilinear;
-                view.Rt.wrapMode = TextureWrapMode.Clamp;
                 cam.targetTexture = view.Rt;
                 magnifierViews[id] = view;
             }
             else if (view.Width != width || view.Height != height)
             {
+                if (view.Cam != null) view.Cam.enabled = false;
                 if (view.Rt != null) view.Rt.Release();
-                view.Rt = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
-                view.Rt.filterMode = FilterMode.Bilinear;
-                view.Rt.wrapMode = TextureWrapMode.Clamp;
+                view.Rt = CreateMagnifierTexture(width, height);
                 view.Width = width;
                 view.Height = height;
                 if (view.Cam != null) view.Cam.targetTexture = view.Rt;
             }
             return view;
+        }
+
+        private static RenderTexture CreateMagnifierTexture(int width, int height)
+        {
+            // URP RenderGraph imports the output texture; it must have a depth
+            // buffer and be explicitly created before a camera renders into it,
+            // otherwise the device logs `Fake or uninitialized surface`.
+            var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            rt.filterMode = FilterMode.Bilinear;
+            rt.wrapMode = TextureWrapMode.Clamp;
+            rt.Create();
+            return rt;
         }
 
         private Texture2D GetMagnifierMaskTexture()
